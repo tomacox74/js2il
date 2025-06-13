@@ -33,7 +33,7 @@ namespace Js2IL.Tests
 
             generator.Generate(ast, "TestAssembly", "output");
 
-            Assert.NotNull(generator.metadataBuilder);
+            Assert.NotNull(generator._metadataBuilder);
 
         }
     }

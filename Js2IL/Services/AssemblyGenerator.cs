@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PowerArgs.Samples;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -8,7 +9,9 @@ using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 using static System.Net.Mime.MediaTypeNames;
+using Js2IL.Services.ILGenerators;
 
 namespace Js2IL.Services
 {
@@ -20,85 +23,101 @@ namespace Js2IL.Services
             0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
         };
 
-        public MetadataBuilder metadataBuilder = new MetadataBuilder();
+        public MetadataBuilder _metadataBuilder = new MetadataBuilder();
+        private AssemblyName _systemRuntimeAssembly;
+        private BlobBuilder _ilBuilder = new BlobBuilder();
+        private MethodDefinitionHandle _entryPoint;
+        private BaseClassLibraryReferences _bclReferences;
+
+        public AssemblyGenerator()
+        {
+            // get the version and public key toketn for the System.Runtime assembly reference
+            // we use the same that this assembly is compiled against for consistency
+            if (!ReferenceAssemblyResolver.TryFindSystemRuntime(out this._systemRuntimeAssembly))
+            {
+                throw new InvalidOperationException("Could not find System.Runtime assembly reference.");
+            }
+
+            this._bclReferences = new BaseClassLibraryReferences(_metadataBuilder, _systemRuntimeAssembly.Version!, _systemRuntimeAssembly.GetPublicKeyToken()!);
+        }
 
         public void Generate(Acornima.Ast.Program ast, string name, string outputPath)
         {
             createAssemblyMetadata(name);
-        }
-
-        private void createAssemblyMetadata(string name)
-        {
-            var assemblyName = metadataBuilder.GetOrAddString(name);
-            var culture = metadataBuilder.GetOrAddString("");
-            var publicKey = metadataBuilder.GetOrAddBlob(StandardPublicKey);
-            this.metadataBuilder.AddAssembly(
-                name: assemblyName,
-                version: new Version(1, 0, 0, 0),
-                culture: culture,
-                publicKey: publicKey,
-                flags: AssemblyFlags.PublicKey,
-                hashAlgorithm: AssemblyHashAlgorithm.None
-            );
-
-            metadataBuilder.AddModule(0, assemblyName, metadataBuilder.GetOrAddGuid(Guid.NewGuid()), default, default);
-
-            var mscorlibAssemblyRef = metadataBuilder.AddAssemblyReference(
-                name: metadataBuilder.GetOrAddString("System.Runtime"),
-                version: new Version(9, 0, 0, 0),
-                culture: default,
-                publicKeyOrToken: default,
-                flags: 0,
-                hashValue: default
-            );
-
-            // Program type definition
-            var appNamespace = assemblyName;
-            var programTypeDef = metadataBuilder.AddTypeDefinition(
-                TypeAttributes.Public,
-                appNamespace,
-                metadataBuilder.GetOrAddString("Program"),
-                MetadataTokens.TypeDefinitionHandle(1),
-                MetadataTokens.FieldDefinitionHandle(1),
-                MetadataTokens.MethodDefinitionHandle(1)
-            );
 
             // Method signature for Main method
             var sigBuilder = new BlobBuilder();
             new BlobEncoder(sigBuilder)
                 .MethodSignature()
                 .Parameters(0, returnType => returnType.Void(), parameters => { });
-            var methodSig = metadataBuilder.GetOrAddBlob(sigBuilder);
+            var methodSig = this._metadataBuilder.GetOrAddBlob(sigBuilder);
 
             // IL: return
-            var ilBuilder = new BlobBuilder();
-            var methodBodyStream = new MethodBodyStreamEncoder(ilBuilder);
-            var methodIl = new BlobBuilder();
-            var il = new InstructionEncoder(methodIl);
-            il.OpCode(ILOpCode.Ret);
-            var bodyOffset = methodBodyStream.AddMethodBody(il);
+            var methodBodyStream = new MethodBodyStreamEncoder(this._ilBuilder);
+            var bodyOffset = MainGenerator.GenerateMethod(ast, _metadataBuilder, methodBodyStream, _bclReferences);
 
-            var methodDef = metadataBuilder.AddMethodDefinition(
+            this._entryPoint = _metadataBuilder.AddMethodDefinition(
                 MethodAttributes.Static | MethodAttributes.Public,
                 MethodImplAttributes.IL,
-                metadataBuilder.GetOrAddString("Main"),
+                _metadataBuilder.GetOrAddString("Main"),
                 methodSig,
                 bodyOffset,
                 parameterList: default);
 
+            this.CreateAssembly();
+        }
+
+        private void createAssemblyMetadata(string name)
+        {
+            var assemblyName = _metadataBuilder.GetOrAddString(name);
+            var culture = _metadataBuilder.GetOrAddString("");
+            var publicKey = _metadataBuilder.GetOrAddBlob(StandardPublicKey);
+            this._metadataBuilder.AddAssembly(
+                name: assemblyName,
+                version: new Version(1, 0, 0, 0),
+                culture: culture,
+                publicKey: publicKey,
+                flags: 0,
+                hashAlgorithm: AssemblyHashAlgorithm.None
+            );
+
+            _metadataBuilder.AddModule(0, assemblyName, _metadataBuilder.GetOrAddGuid(Guid.NewGuid()), default, default);
+
+            var systemObjectTypeRef = _metadataBuilder.AddTypeReference(
+                this._bclReferences.SystemRuntime,
+                _metadataBuilder.GetOrAddString("System"),
+                _metadataBuilder.GetOrAddString("Object")
+             );
+
+            // Program type definition
+            //var appNamespace = assemblyName;
+            var programTypeDef = _metadataBuilder.AddTypeDefinition(
+                TypeAttributes.Public,
+                _metadataBuilder.GetOrAddString(""),
+                _metadataBuilder.GetOrAddString("Program"),
+                systemObjectTypeRef,
+                MetadataTokens.FieldDefinitionHandle(1),
+                MetadataTokens.MethodDefinitionHandle(1)
+            );
+        }
+
+        private void CreateAssembly()
+        {
             var pe = new ManagedPEBuilder(
-                PEHeaderBuilder.CreateExecutableHeader(),
-                new MetadataRootBuilder(metadataBuilder),
-                ilBuilder,
+                PEHeaderBuilder.CreateLibraryHeader(),
+                new MetadataRootBuilder(_metadataBuilder),
+                _ilBuilder,
                 mappedFieldData: null,
-                entryPoint: methodDef,
+                entryPoint: this._entryPoint,
                 flags: CorFlags.ILOnly);
 
             var peImage = new BlobBuilder();
             pe.Serialize(peImage);
 
-            var dllPath = "c:\\git\\test.exe";
+            var dllPath = "c:\\git\\test.dll";
             File.WriteAllBytes(dllPath, peImage.ToArray());
+
+            RuntimeConfigWriter.WriteRuntimeConfigJson(dllPath, _systemRuntimeAssembly);
         }
     }
 }

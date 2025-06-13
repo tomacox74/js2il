@@ -4,7 +4,7 @@ namespace Js2IL.Services;
 
 public class AstWalker
 {
-    public void Visit(Node node, Action<Node> visitor)
+    public void Visit(Node? node, Action<Node> visitor)
     {
         if (node == null) return;
 
@@ -157,7 +157,7 @@ public class AstWalker
         }
     }
 
-    private void VisitNodes<T>(IEnumerable<T> nodes, Action<Node> visitor) where T : Node
+    private void VisitNodes<T>(IEnumerable<T> nodes, Action<Node> visitor) where T : Node?
     {
         if (nodes == null) return;
         foreach (var node in nodes)

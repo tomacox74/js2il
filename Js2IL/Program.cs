@@ -10,11 +10,11 @@ public class Js2ILArgs
     [ArgRequired]
     [ArgPosition(0)]
     [ArgDescription("The JavaScript file to convert")]
-    public string InputFile { get; set; }
+    public required string InputFile { get; set; }
 
     [ArgPosition(1)]
     [ArgDescription("The output file path for the generated IL")]
-    public string OutputFile { get; set; }
+    public string? OutputFile { get; set; }
 
     [ArgDescription("Enable verbose output")]
     public bool Verbose { get; set; }
