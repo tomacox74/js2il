@@ -31,9 +31,33 @@ namespace Js2IL.Services
                 flags: 0,
                 hashValue: default
             );
+
+            // Common Type References
+            this.ObjectType = metadataBuilder.AddTypeReference(
+                this.SystemRuntime,
+                metadataBuilder.GetOrAddString("System"),
+                metadataBuilder.GetOrAddString("Object")
+            );
+
+            this.Int32Type = metadataBuilder.AddTypeReference(
+                this.SystemRuntime,
+                metadataBuilder.GetOrAddString("System"),
+                metadataBuilder.GetOrAddString("Int32")
+            );
+
+            this.DoubleType = metadataBuilder.AddTypeReference(
+                this.SystemRuntime,
+                metadataBuilder.GetOrAddString("System"),
+                metadataBuilder.GetOrAddString("Double")
+            );
         }
 
         public AssemblyReferenceHandle SystemRuntime { get; private set; }
         public AssemblyReferenceHandle SystemConsole { get; private set; }
+        public TypeReferenceHandle ObjectType { get; private set; }
+
+        public TypeReferenceHandle Int32Type { get; private set; }
+
+        public TypeReferenceHandle DoubleType { get; private set; }
     }
 }

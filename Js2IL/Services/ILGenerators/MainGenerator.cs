@@ -13,41 +13,140 @@ namespace Js2IL.Services.ILGenerators
     /// </summary>
     internal class MainGenerator
     {
-        public static int GenerateMethod(Acornima.Ast.Program ast, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStream, BaseClassLibraryReferences bclReferences)
+        public static int GenerateMethod(Acornima.Ast.Program ast, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStream, BaseClassLibraryReferences bclReferences, Variables variables)
         {
+            // local variables
+            var localSig = new BlobBuilder();
+            var localVariableEncoder = new BlobEncoder(localSig).LocalVariableSignature(1);
+
+            // il code
             var methodIl = new BlobBuilder();
             var il = new InstructionEncoder(methodIl);
 
-            callConsoleWriteLine(bclReferences, metadataBuilder, il, "Hello World!");
-
-            /*
             foreach (var expression in ast.Body)
             {
-                switch (expression.Type) {
-                    case Acornima.Ast.NodeType.ExpressionStatement:
-                        var exprStmt = (Acornima.Ast.ExpressionStatement)expression;
-                        if (exprStmt.Expression.Type == Acornima.Ast.NodeType.CallExpression)
-                        {
-
-                            //var callExpr = (Acornima.Ast.CallExpression)exprStmt.Expression;
-                            //il.OpCode(ILOpCode.Call, methodBodyStream.GetMethodHandle(callExpr.Callee));
-                            foreach (var arg in callExpr.Arguments)
-                            {
-                                // Assuming all arguments are pushed onto the stack
-                                il.OpCode(ILOpCode.Ldarg, methodBodyStream.GetArgumentHandle(arg));
-                            }
-                        }
+                switch (expression) {
+                    case Acornima.Ast.VariableDeclaration:
+                        DeclareVariable((expression as Acornima.Ast.VariableDeclaration)!, variables, bclReferences, localVariableEncoder, il);
                         break;
+                    case Acornima.Ast.ExpressionStatement:
+                        GenerateExpressionStatement((expression as Acornima.Ast.ExpressionStatement)!, metadataBuilder, il, variables, bclReferences);
+                        break;
+
+                    default:
+                        throw new NotSupportedException($"Unsupported AST node type: {expression.Type}");
                 }
             }
-            */
 
             il.OpCode(ILOpCode.Ret);
-            return methodBodyStream.AddMethodBody(il);
+
+            var localSignature = metadataBuilder.AddStandaloneSignature(metadataBuilder.GetOrAddBlob(localSig));
+
+            return methodBodyStream.AddMethodBody(
+                il, 
+                localVariablesSignature: localSignature,
+                attributes: MethodBodyAttributes.InitLocals);
         }
 
-        private static void callConsoleWriteLine(BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, InstructionEncoder il, string message)
+        private static void GenerateExpression(Acornima.Ast.Expression expression, InstructionEncoder il, BaseClassLibraryReferences bclReferences)
         {
+            switch (expression) {
+                case Acornima.Ast.BinaryExpression binaryExpression:
+                    GenerateBinaryExpression(binaryExpression, il, bclReferences);
+                    break;
+                default:
+                    throw new NotSupportedException($"Unsupported expression type: {expression.Type}");
+            }
+        }
+
+        private static void DeclareVariable(Acornima.Ast.VariableDeclaration variableDeclaraion, Variables variables, BaseClassLibraryReferences bclReferences, LocalVariablesEncoder localVariableEncoder, InstructionEncoder il)
+        {
+            // TODO need to handle multiple
+            var variableAST = variableDeclaraion.Declarations.FirstOrDefault()!;
+            var variableName = (variableAST.Id as Acornima.Ast.Identifier)!.Name;
+
+            // add the variable to the collection
+            var variable = variables.GetOrCreate(variableName);
+            variable.LocalIndex = 0;
+
+            // how do we know the type of the variable?
+            // variable 0
+            localVariableEncoder.AddVariable().Type().Object();
+
+            // now we need to generate the expession portion
+            if (variableAST.Init != null && variable.LocalIndex != null) {
+                // otherwise we need to generate the expression
+                GenerateExpression(variableAST.Init, il, bclReferences);
+                il.OpCode(ILOpCode.Box);
+                il.Token(bclReferences.DoubleType);
+                il.StoreLocal(variable.LocalIndex.Value);
+            }
+        }
+
+        private static void GenerateExpressionStatement(Acornima.Ast.ExpressionStatement expressionStatement, MetadataBuilder metadataBuilder, InstructionEncoder il, Variables variables, BaseClassLibraryReferences bclReferences)
+        {
+            if (expressionStatement.Expression is Acornima.Ast.CallExpression callExpression) {
+                // Handle CallExpression
+                GenerateCallExpression(callExpression, metadataBuilder, il, variables, bclReferences);
+            } else if (expressionStatement.Expression is Acornima.Ast.BinaryExpression binaryExpression) {
+                // Handle BinaryExpression
+                GenerateBinaryExpression(binaryExpression, il, bclReferences);
+            } else {
+                throw new NotSupportedException($"Unsupported expression type in statement: {expressionStatement.Expression.Type}");
+            }
+        }
+
+        private static void GenerateCallExpression(Acornima.Ast.CallExpression callExpression, MetadataBuilder metadataBuilder, InstructionEncoder il, Variables variables, BaseClassLibraryReferences bclReferences)
+        {
+            // For simplicity, we assume the call expression is a console write line
+            if (callExpression.Callee is not Acornima.Ast.MemberExpression memberExpression || 
+                memberExpression.Object is not Acornima.Ast.Identifier objectIdentifier || 
+                objectIdentifier.Name != "console" ||
+                memberExpression.Property is not Acornima.Ast.Identifier propertyIdentifier ||
+                propertyIdentifier.Name != "log") {
+                throw new NotSupportedException($"Unsupported call expression: {callExpression.Callee.Type}");
+            }
+            if (callExpression.Arguments.Count != 2) {
+                throw new ArgumentException("console.log implementation supports two argument.");
+            }
+            CallConsoleWriteLine(callExpression, variables, bclReferences, metadataBuilder, il);
+        }
+
+        private static void GenerateBinaryExpression(Acornima.Ast.BinaryExpression binaryExpression, InstructionEncoder il, BaseClassLibraryReferences bclReferences)
+        {
+            // Assuming binaryExpression is a simple addition for now
+            if (binaryExpression.Operator != Acornima.Operator.Addition) {
+                throw new NotSupportedException($"Unsupported binary operator: {binaryExpression.Operator}");
+            }
+
+            if (binaryExpression.Left == null || binaryExpression.Right == null) {
+                throw new ArgumentException("Binary expression must have both left and right operands.");
+            }
+
+            if (!(binaryExpression.Left is Acornima.Ast.NumericLiteral) || !(binaryExpression.Right is Acornima.Ast.NumericLiteral))
+            {
+                throw new NotSupportedException("Only numeric literals are supported for addition in this example.");
+            }
+
+            var leftValue = (binaryExpression.Left as Acornima.Ast.NumericLiteral)!.Value;
+            var rightValue = (binaryExpression.Right as Acornima.Ast.NumericLiteral)!.Value;
+
+            // Load the left operand (assuming it's a constant for simplicity)
+            il.LoadConstantR8(leftValue); // Replace with actual left operand evaluation
+            // Load the right operand (assuming it's a constant for simplicity)
+            il.LoadConstantR8(rightValue); // Replace with actual right operand evaluation
+            // Perform addition
+            il.OpCode(ILOpCode.Add);
+        }
+
+        private static void CallConsoleWriteLine(Acornima.Ast.CallExpression callConsoleLog, Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, InstructionEncoder il)
+        {
+            // use formatstring to append the additonal parameters
+            var message = (callConsoleLog.Arguments[0] as Acornima.Ast.StringLiteral)!.Value + " {0}";
+            var additionalParameterVariable = (callConsoleLog.Arguments[1] as Acornima.Ast.Identifier)!.Name;
+            var variable = variables.GetOrCreate(additionalParameterVariable);
+
+
             // Reference to System.Console
             var systemConsoleTypeReference = metadataBuilder.AddTypeReference(
                 bclReferences.SystemConsole,
@@ -58,9 +157,12 @@ namespace Js2IL.Services.ILGenerators
             var consoleSig = new BlobBuilder();
             new BlobEncoder(consoleSig)
                 .MethodSignature(isInstanceMethod: false)
-                .Parameters(1,
+                .Parameters(2,
                     returnType => returnType.Void(),
-                    parameters => parameters.AddParameter().Type().String());
+                    parameters => {
+                        parameters.AddParameter().Type().String();
+                        parameters.AddParameter().Type().Object();
+                    });
             var writeLineSig = metadataBuilder.GetOrAddBlob(consoleSig);
 
             // Add a MemberRef to Console.WriteLine(string)
@@ -71,8 +173,12 @@ namespace Js2IL.Services.ILGenerators
 
             var messageHandle = metadataBuilder.GetOrAddUserString(message);
 
-            // Assuming Console.WriteLine(string) is available in the BCL references
+            // Assuming Console.WriteLine(string, object) is available in the BCL references
             il.LoadString(messageHandle);
+
+            // Load local 0 (which is assumed to be the int x)
+            il.LoadLocal(variable.LocalIndex!.Value);
+
             il.OpCode(ILOpCode.Call);
             il.Token(writeLineMemberRef);
         }

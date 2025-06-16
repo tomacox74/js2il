@@ -29,6 +29,8 @@ namespace Js2IL.Services
         private MethodDefinitionHandle _entryPoint;
         private BaseClassLibraryReferences _bclReferences;
 
+        private Variables _variables = new Variables();
+
         public AssemblyGenerator()
         {
             // get the version and public key toketn for the System.Runtime assembly reference
@@ -54,7 +56,7 @@ namespace Js2IL.Services
 
             // IL: return
             var methodBodyStream = new MethodBodyStreamEncoder(this._ilBuilder);
-            var bodyOffset = MainGenerator.GenerateMethod(ast, _metadataBuilder, methodBodyStream, _bclReferences);
+            var bodyOffset = MainGenerator.GenerateMethod(ast, _metadataBuilder, methodBodyStream, _bclReferences, _variables);
 
             this._entryPoint = _metadataBuilder.AddMethodDefinition(
                 MethodAttributes.Static | MethodAttributes.Public,
@@ -83,19 +85,13 @@ namespace Js2IL.Services
 
             _metadataBuilder.AddModule(0, assemblyName, _metadataBuilder.GetOrAddGuid(Guid.NewGuid()), default, default);
 
-            var systemObjectTypeRef = _metadataBuilder.AddTypeReference(
-                this._bclReferences.SystemRuntime,
-                _metadataBuilder.GetOrAddString("System"),
-                _metadataBuilder.GetOrAddString("Object")
-             );
-
             // Program type definition
             //var appNamespace = assemblyName;
             var programTypeDef = _metadataBuilder.AddTypeDefinition(
                 TypeAttributes.Public,
                 _metadataBuilder.GetOrAddString(""),
                 _metadataBuilder.GetOrAddString("Program"),
-                systemObjectTypeRef,
+                _bclReferences.ObjectType,
                 MetadataTokens.FieldDefinitionHandle(1),
                 MetadataTokens.MethodDefinitionHandle(1)
             );
