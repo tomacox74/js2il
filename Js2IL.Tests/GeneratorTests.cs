@@ -1,4 +1,5 @@
 ﻿using Js2IL.Services;
+using PowerArgs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -35,6 +36,8 @@ namespace Js2IL.Tests
 
             Assert.NotNull(generator._metadataBuilder);
 
+            var il = Utilities.AssemblyToText.ConvertToText(@"c:\\git\test.dll");
+            Assert.False(il.IsNullOrEmpty());
         }
     }
 }
