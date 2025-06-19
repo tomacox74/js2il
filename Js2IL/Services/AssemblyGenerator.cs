@@ -43,6 +43,12 @@ namespace Js2IL.Services
             this._bclReferences = new BaseClassLibraryReferences(_metadataBuilder, _systemRuntimeAssembly.Version!, _systemRuntimeAssembly.GetPublicKeyToken()!);
         }
 
+        /// <summary>
+        /// Generates a new assembly from the provided AST
+        /// </summary>
+        /// <param name="ast">The javascript ast</param>
+        /// <param name="name">The assemlby name</param>
+        /// <param name="outputPath">The directory to output the generated assembly and related files to</param>
         public void Generate(Acornima.Ast.Program ast, string name, string outputPath)
         {
             createAssemblyMetadata(name);
@@ -66,7 +72,7 @@ namespace Js2IL.Services
                 bodyOffset,
                 parameterList: default);
 
-            this.CreateAssembly();
+            this.CreateAssembly(name, outputPath);
         }
 
         private void createAssemblyMetadata(string name)
@@ -97,7 +103,7 @@ namespace Js2IL.Services
             );
         }
 
-        private void CreateAssembly()
+        private void CreateAssembly(string name, string outputPath)
         {
             var pe = new ManagedPEBuilder(
                 PEHeaderBuilder.CreateLibraryHeader(),
@@ -110,10 +116,10 @@ namespace Js2IL.Services
             var peImage = new BlobBuilder();
             pe.Serialize(peImage);
 
-            var dllPath = "c:\\git\\test.dll";
-            File.WriteAllBytes(dllPath, peImage.ToArray());
+            string assemblyDll = Path.Combine(outputPath, $"{name}.dll");
+            File.WriteAllBytes(assemblyDll, peImage.ToArray());
 
-            RuntimeConfigWriter.WriteRuntimeConfigJson(dllPath, _systemRuntimeAssembly);
+            RuntimeConfigWriter.WriteRuntimeConfigJson(assemblyDll, _systemRuntimeAssembly);
         }
     }
 }

@@ -200,7 +200,7 @@ namespace Js2IL.Services.ILGenerators
 
             // Reference to System.Console
             var systemConsoleTypeReference = metadataBuilder.AddTypeReference(
-                bclReferences.SystemConsole,
+                bclReferences.SystemConsoleAssembly,
                 metadataBuilder.GetOrAddString("System"),
                 metadataBuilder.GetOrAddString("Console"));
 

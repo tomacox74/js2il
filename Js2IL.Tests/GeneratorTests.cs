@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using VerifyTests;
+using System.IO;
 
 
 namespace Js2IL.Tests
@@ -17,11 +18,19 @@ namespace Js2IL.Tests
     {
         private readonly JavaScriptParser _parser;
         private readonly JavaScriptAstValidator _validator;
+        private readonly string _outputPath;
 
         public GeneratorTests()
         {
             _parser = new JavaScriptParser();
             _validator = new JavaScriptAstValidator();
+
+            // create a temp directory for the generated assemblies
+            _outputPath = Path.Combine(Path.GetTempPath(), "Js2IL.Tests");
+            if (!Directory.Exists(_outputPath))
+            {
+                Directory.CreateDirectory(_outputPath);
+            }
         }
 
         [Fact]
@@ -29,16 +38,7 @@ namespace Js2IL.Tests
         {
             // Arrange
             var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
-            var js = GetJavaScript(testName);
-            var ast = _parser.ParseJavaScript(js);
-            _validator.Validate(ast);
-
-            var generator = new AssemblyGenerator();
-
-            generator.Generate(ast, "TestAssembly", "output");
-
-            var il = Utilities.AssemblyToText.ConvertToText(@"c:\\git\test.dll");
-            return Verify(il);
+            return GenerateTest(testName);
         }
 
         [Fact]
@@ -46,16 +46,7 @@ namespace Js2IL.Tests
         {
             // Arrange
             var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
-            var js = GetJavaScript(testName);
-            var ast = _parser.ParseJavaScript(js);
-            _validator.Validate(ast);
-
-            var generator = new AssemblyGenerator();
-
-            generator.Generate(ast, "TestAssembly", "output");
-
-            var il = Utilities.AssemblyToText.ConvertToText(@"c:\\git\test.dll");
-            return Verify(il);
+            return GenerateTest(testName);
         }
 
         [Fact]
@@ -63,15 +54,22 @@ namespace Js2IL.Tests
         {
             // Arrange
             var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            return GenerateTest(testName);
+        }
+
+        private Task GenerateTest(string testName)
+        {
             var js = GetJavaScript(testName);
             var ast = _parser.ParseJavaScript(js);
             _validator.Validate(ast);
 
             var generator = new AssemblyGenerator();
 
-            generator.Generate(ast, "TestAssembly", "output");
+            generator.Generate(ast, testName, _outputPath);
 
-            var il = Utilities.AssemblyToText.ConvertToText(@"c:\\git\test.dll");
+            var expectedPath = Path.Combine(_outputPath, $"{testName}.dll");
+
+            var il = Utilities.AssemblyToText.ConvertToText(expectedPath);
             return Verify(il);
         }
 

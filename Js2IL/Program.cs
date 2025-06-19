@@ -1,6 +1,7 @@
 ﻿using PowerArgs;
 using Js2IL.Services;
 using Acornima.Ast;
+using System.IO;
 
 namespace Js2IL;
 
@@ -10,11 +11,13 @@ public class Js2ILArgs
     [ArgRequired]
     [ArgPosition(0)]
     [ArgDescription("The JavaScript file to convert")]
+    [ArgExistingFile]
     public required string InputFile { get; set; }
 
     [ArgPosition(1)]
-    [ArgDescription("The output file path for the generated IL")]
-    public string? OutputFile { get; set; }
+    [ArgDescription("The output path for the generated IL")]
+    [ArgExistingDirectory]
+    public string? OutputPath { get; set; }
 
     [ArgDescription("Enable verbose output")]
     public bool Verbose { get; set; }
@@ -66,12 +69,20 @@ class Program
             }
 
             // Step 3: Generate IL
-            Console.WriteLine("\nStep 3: Generating IL...");
-            // TODO: Implement IL generation
-            // var ilGenerator = new ILGenerator();
-            // ilGenerator.GenerateIL(ast, parsed.OutputFile);
+            // NOTE: some checkes such as the existance of the the file parsed.InputFile are done by powerargs for us
+            Console.WriteLine("\nStep 3: Generating dotnet assembly...");
+            var assemblyGenerator = new AssemblyGenerator();
+            var outputPath = parsed.OutputPath;
+            if (parsed.OutputPath == null)
+            {
+                outputPath = Path.GetDirectoryName(Path.GetFullPath(parsed.InputFile));
+            }
             
-            Console.WriteLine($"\nConversion complete. Output written to {parsed.OutputFile}");
+            var assemblyName = Path.GetFileNameWithoutExtension(parsed.InputFile);
+
+            assemblyGenerator.Generate(ast, assemblyName, outputPath!);
+
+            Console.WriteLine($"\nConversion complete. Output written to {outputPath}");
         }
         catch (ArgException ex)
         {
