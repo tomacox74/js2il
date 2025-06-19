@@ -121,12 +121,21 @@ namespace Js2IL.Services.ILGenerators
                 throw new ArgumentException("Binary expression must have both left and right operands.");
             }
 
-            var loadLiteral = (Acornima.Ast.Expression literalExpression) =>
+            var loadLiteral = (Acornima.Ast.Expression literalExpression, bool forceString = false) =>
             {
                 switch (literalExpression)
                 {
                     case Acornima.Ast.NumericLiteral numericLiteral:
-                        il.LoadConstantR8(numericLiteral.Value); // Load numeric literal
+                        if (forceString)
+                        {
+                            //does dotnet ToString behave the same as JavaScript?
+                            var numberAsString = numericLiteral.Value.ToString();
+                            il.LoadString(metadataBuilder.GetOrAddUserString(numberAsString)); // Load numeric literal as string
+                        }
+                        else
+                        {
+                            il.LoadConstantR8(numericLiteral.Value); // Load numeric literal
+                        }
                         break;
                     case Acornima.Ast.StringLiteral stringLiteral:
                         il.LoadString(metadataBuilder.GetOrAddUserString(stringLiteral.Value)); // Load string literal
@@ -137,7 +146,7 @@ namespace Js2IL.Services.ILGenerators
             };
 
             loadLiteral(binaryExpression.Left);
-            loadLiteral(binaryExpression.Right);
+            loadLiteral(binaryExpression.Right, binaryExpression.Left is Acornima.Ast.StringLiteral);
 
             if (binaryExpression.Left is Acornima.Ast.NumericLiteral && binaryExpression.Right is Acornima.Ast.NumericLiteral)
             {
@@ -149,7 +158,7 @@ namespace Js2IL.Services.ILGenerators
                 il.Token(bclReferences.DoubleType);
 
             }
-            else if (binaryExpression.Left is Acornima.Ast.StringLiteral || binaryExpression.Right is Acornima.Ast.StringLiteral)
+            else if (binaryExpression.Left is Acornima.Ast.StringLiteral && (binaryExpression.Right is Acornima.Ast.StringLiteral || binaryExpression.Right is Acornima.Ast.NumericLiteral))
             {
 
                 // Create method signature: string Concat(string, string)

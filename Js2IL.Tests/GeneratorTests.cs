@@ -58,6 +58,23 @@ namespace Js2IL.Tests
             return Verify(il);
         }
 
+        [Fact]
+        public Task Generate_AdditionStringNumber()
+        {
+            // Arrange
+            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var js = GetJavaScript(testName);
+            var ast = _parser.ParseJavaScript(js);
+            _validator.Validate(ast);
+
+            var generator = new AssemblyGenerator();
+
+            generator.Generate(ast, "TestAssembly", "output");
+
+            var il = Utilities.AssemblyToText.ConvertToText(@"c:\\git\test.dll");
+            return Verify(il);
+        }
+
         private string GetJavaScript(string testName)
         {
             var assembly = Assembly.GetExecutingAssembly();
