@@ -27,7 +27,7 @@ namespace Js2IL.Services.ILGenerators
             {
                 switch (expression) {
                     case Acornima.Ast.VariableDeclaration:
-                        DeclareVariable((expression as Acornima.Ast.VariableDeclaration)!, variables, bclReferences, localVariableEncoder, il);
+                        DeclareVariable((expression as Acornima.Ast.VariableDeclaration)!, variables, bclReferences, localVariableEncoder, metadataBuilder, il);
                         break;
                     case Acornima.Ast.ExpressionStatement:
                         GenerateExpressionStatement((expression as Acornima.Ast.ExpressionStatement)!, metadataBuilder, il, variables, bclReferences);
@@ -48,18 +48,18 @@ namespace Js2IL.Services.ILGenerators
                 attributes: MethodBodyAttributes.InitLocals);
         }
 
-        private static void GenerateExpression(Acornima.Ast.Expression expression, InstructionEncoder il, BaseClassLibraryReferences bclReferences)
+        private static void GenerateExpression(Acornima.Ast.Expression expression, MetadataBuilder metadataBuilder, InstructionEncoder il, BaseClassLibraryReferences bclReferences)
         {
             switch (expression) {
                 case Acornima.Ast.BinaryExpression binaryExpression:
-                    GenerateBinaryExpression(binaryExpression, il, bclReferences);
+                    GenerateBinaryExpression(binaryExpression, metadataBuilder, il, bclReferences);
                     break;
                 default:
                     throw new NotSupportedException($"Unsupported expression type: {expression.Type}");
             }
         }
 
-        private static void DeclareVariable(Acornima.Ast.VariableDeclaration variableDeclaraion, Variables variables, BaseClassLibraryReferences bclReferences, LocalVariablesEncoder localVariableEncoder, InstructionEncoder il)
+        private static void DeclareVariable(Acornima.Ast.VariableDeclaration variableDeclaraion, Variables variables, BaseClassLibraryReferences bclReferences, LocalVariablesEncoder localVariableEncoder, MetadataBuilder metadataBuilder, InstructionEncoder il)
         {
             // TODO need to handle multiple
             var variableAST = variableDeclaraion.Declarations.FirstOrDefault()!;
@@ -76,9 +76,7 @@ namespace Js2IL.Services.ILGenerators
             // now we need to generate the expession portion
             if (variableAST.Init != null && variable.LocalIndex != null) {
                 // otherwise we need to generate the expression
-                GenerateExpression(variableAST.Init, il, bclReferences);
-                il.OpCode(ILOpCode.Box);
-                il.Token(bclReferences.DoubleType);
+                GenerateExpression(variableAST.Init, metadataBuilder, il, bclReferences);
                 il.StoreLocal(variable.LocalIndex.Value);
             }
         }
@@ -90,7 +88,7 @@ namespace Js2IL.Services.ILGenerators
                 GenerateCallExpression(callExpression, metadataBuilder, il, variables, bclReferences);
             } else if (expressionStatement.Expression is Acornima.Ast.BinaryExpression binaryExpression) {
                 // Handle BinaryExpression
-                GenerateBinaryExpression(binaryExpression, il, bclReferences);
+                GenerateBinaryExpression(binaryExpression, metadataBuilder, il, bclReferences);
             } else {
                 throw new NotSupportedException($"Unsupported expression type in statement: {expressionStatement.Expression.Type}");
             }
@@ -112,7 +110,7 @@ namespace Js2IL.Services.ILGenerators
             CallConsoleWriteLine(callExpression, variables, bclReferences, metadataBuilder, il);
         }
 
-        private static void GenerateBinaryExpression(Acornima.Ast.BinaryExpression binaryExpression, InstructionEncoder il, BaseClassLibraryReferences bclReferences)
+        private static void GenerateBinaryExpression(Acornima.Ast.BinaryExpression binaryExpression, MetadataBuilder metadataBuilder, InstructionEncoder il, BaseClassLibraryReferences bclReferences)
         {
             // Assuming binaryExpression is a simple addition for now
             if (binaryExpression.Operator != Acornima.Operator.Addition) {
@@ -123,20 +121,64 @@ namespace Js2IL.Services.ILGenerators
                 throw new ArgumentException("Binary expression must have both left and right operands.");
             }
 
-            if (!(binaryExpression.Left is Acornima.Ast.NumericLiteral) || !(binaryExpression.Right is Acornima.Ast.NumericLiteral))
+            var loadLiteral = (Acornima.Ast.Expression literalExpression) =>
             {
-                throw new NotSupportedException("Only numeric literals are supported for addition in this example.");
+                switch (literalExpression)
+                {
+                    case Acornima.Ast.NumericLiteral numericLiteral:
+                        il.LoadConstantR8(numericLiteral.Value); // Load numeric literal
+                        break;
+                    case Acornima.Ast.StringLiteral stringLiteral:
+                        il.LoadString(metadataBuilder.GetOrAddUserString(stringLiteral.Value)); // Load string literal
+                        break;
+                    default:
+                        throw new NotSupportedException($"Unsupported expression type: {literalExpression.Type}");
+                }
+            };
+
+            loadLiteral(binaryExpression.Left);
+            loadLiteral(binaryExpression.Right);
+
+            if (binaryExpression.Left is Acornima.Ast.NumericLiteral && binaryExpression.Right is Acornima.Ast.NumericLiteral)
+            {
+                // If both are numeric literals, we can directly add them
+                il.OpCode(ILOpCode.Add);
+
+                // box numeric values
+                il.OpCode(ILOpCode.Box);
+                il.Token(bclReferences.DoubleType);
+
             }
+            else if (binaryExpression.Left is Acornima.Ast.StringLiteral || binaryExpression.Right is Acornima.Ast.StringLiteral)
+            {
 
-            var leftValue = (binaryExpression.Left as Acornima.Ast.NumericLiteral)!.Value;
-            var rightValue = (binaryExpression.Right as Acornima.Ast.NumericLiteral)!.Value;
+                // Create method signature: string Concat(string, string)
+                var stringSig = new BlobBuilder();
+                new BlobEncoder(stringSig)
+                    .MethodSignature(isInstanceMethod: false)
+                    .Parameters(2,
+                        returnType => returnType.Type().String(),
+                        parameters => {
+                            parameters.AddParameter().Type().String();
+                            parameters.AddParameter().Type().String();
+                        });
+                var concatSig = metadataBuilder.GetOrAddBlob(stringSig);
 
-            // Load the left operand (assuming it's a constant for simplicity)
-            il.LoadConstantR8(leftValue); // Replace with actual left operand evaluation
-            // Load the right operand (assuming it's a constant for simplicity)
-            il.LoadConstantR8(rightValue); // Replace with actual right operand evaluation
-            // Perform addition
-            il.OpCode(ILOpCode.Add);
+                // Add a MemberRef to Console.WriteLine(string)
+                var stringConcatMethodRef = metadataBuilder.AddMemberReference(
+                    bclReferences.StringType,
+                    metadataBuilder.GetOrAddString("Concat"),
+                    concatSig);
+
+
+                // If either is a string literal, we need to concatenate them
+                il.OpCode(ILOpCode.Call);
+                il.Token(stringConcatMethodRef);
+            }
+            else
+            {
+                throw new NotSupportedException($"Unsupported binary expression types: {binaryExpression.Left.Type} and {binaryExpression.Right.Type}");
+            }
         }
 
         private static void CallConsoleWriteLine(Acornima.Ast.CallExpression callConsoleLog, Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, InstructionEncoder il)

@@ -50,14 +50,19 @@ namespace Js2IL.Services
                 metadataBuilder.GetOrAddString("System"),
                 metadataBuilder.GetOrAddString("Double")
             );
+
+            this.StringType = metadataBuilder.AddTypeReference(
+                this.SystemRuntime,
+                metadataBuilder.GetOrAddString("System"),
+                metadataBuilder.GetOrAddString("String")
+            );
         }
 
         public AssemblyReferenceHandle SystemRuntime { get; private set; }
         public AssemblyReferenceHandle SystemConsole { get; private set; }
         public TypeReferenceHandle ObjectType { get; private set; }
-
         public TypeReferenceHandle Int32Type { get; private set; }
-
         public TypeReferenceHandle DoubleType { get; private set; }
+        public TypeReferenceHandle StringType { get; private set; }
     }
 }

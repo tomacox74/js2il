@@ -4,8 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using VerifyTests;
+
 
 namespace Js2IL.Tests
 {
@@ -21,12 +25,11 @@ namespace Js2IL.Tests
         }
 
         [Fact]
-        public void Generate_ValidProgram_CreatesAssemblyMetadata()
+        public Task Generate_AdditionNumberNumber()
         {
             // Arrange
-            var js = @"var x = 1 + 2;
-            console.log('X is',x);
-        ";
+            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var js = GetJavaScript(testName);
             var ast = _parser.ParseJavaScript(js);
             _validator.Validate(ast);
 
@@ -34,10 +37,42 @@ namespace Js2IL.Tests
 
             generator.Generate(ast, "TestAssembly", "output");
 
-            Assert.NotNull(generator._metadataBuilder);
+            var il = Utilities.AssemblyToText.ConvertToText(@"c:\\git\test.dll");
+            return Verify(il);
+        }
+
+        [Fact]
+        public Task Generate_AdditionStringString()
+        {
+            // Arrange
+            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var js = GetJavaScript(testName);
+            var ast = _parser.ParseJavaScript(js);
+            _validator.Validate(ast);
+
+            var generator = new AssemblyGenerator();
+
+            generator.Generate(ast, "TestAssembly", "output");
 
             var il = Utilities.AssemblyToText.ConvertToText(@"c:\\git\test.dll");
-            Assert.False(il.IsNullOrEmpty());
+            return Verify(il);
+        }
+
+        private string GetJavaScript(string testName)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceName = $"Js2IL.Tests.JavaScript.{testName}.js";
+            using (var stream = assembly.GetManifestResourceStream(resourceName))
+            {
+                if (stream == null)
+                {
+                    throw new InvalidOperationException($"Resource '{resourceName}' not found in assembly '{assembly.FullName}'.");
+                }
+                using (var reader = new StreamReader(stream))
+                {
+                    return reader.ReadToEnd();
+                }
+            }
         }
     }
 }
