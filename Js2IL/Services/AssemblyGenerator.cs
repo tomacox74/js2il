@@ -62,7 +62,8 @@ namespace Js2IL.Services
 
             // IL: return
             var methodBodyStream = new MethodBodyStreamEncoder(this._ilBuilder);
-            var bodyOffset = MainGenerator.GenerateMethod(ast, _metadataBuilder, methodBodyStream, _bclReferences, _variables);
+            var mainGenerator = new MainGenerator(_variables, _bclReferences, _metadataBuilder);
+            var bodyOffset = mainGenerator.GenerateMethod(ast, methodBodyStream);
 
             this._entryPoint = _metadataBuilder.AddMethodDefinition(
                 MethodAttributes.Static | MethodAttributes.Public,

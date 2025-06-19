@@ -33,7 +33,7 @@ class Program
             Console.WriteLine($"Converting {parsed.InputFile} to IL...");
 
             // Step 1: Parse JavaScript to AST
-            Console.WriteLine("Step 1: Parsing JavaScript...");
+            Console.WriteLine("Parsing JavaScript...");
             var jsSource = File.ReadAllText(parsed.InputFile);
             var parser = new JavaScriptParser();
             var ast = parser.ParseJavaScript(jsSource);
@@ -45,7 +45,7 @@ class Program
             }
 
             // Step 2: Validate AST
-            Console.WriteLine("\nStep 2: Validating AST...");
+            Console.WriteLine("\nValidating the Javascript is supported...");
             var validator = new JavaScriptAstValidator();
             var validationResult = validator.Validate(ast);
 
@@ -70,7 +70,7 @@ class Program
 
             // Step 3: Generate IL
             // NOTE: some checkes such as the existance of the the file parsed.InputFile are done by powerargs for us
-            Console.WriteLine("\nStep 3: Generating dotnet assembly...");
+            Console.WriteLine("\nGenerating dotnet assembly...");
             var assemblyGenerator = new AssemblyGenerator();
             var outputPath = parsed.OutputPath;
             if (parsed.OutputPath == null)
