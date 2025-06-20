@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Acornima.Ast;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
@@ -10,16 +11,14 @@ using System.Threading.Tasks;
 namespace Js2IL.Services.ILGenerators
 {
     /// <summary>
-    /// Generates Intermediate Language (IL) code from a JavaScript Abstract Syntax Tree (AST).
+    /// Generates Intermediate Language (IL) code from a JavaScript Abstract Syntax Tree (AST) for a method
     /// </summary>
-    internal class ILGenerator
+    internal class ILMethodGenerator
     {
         private Variables _variables;
         private BaseClassLibraryReferences _bclReferences;
         private MetadataBuilder _metadataBuilder;
 
-
-        
         /*
          * Temporary exposure of private members until refactoring gets cleaner
          * need to determine what the difference is between generating the main method and generating any generic method
@@ -28,7 +27,7 @@ namespace Js2IL.Services.ILGenerators
         public BaseClassLibraryReferences BclReferences => _bclReferences;
         public MetadataBuilder MetadataBuilder => _metadataBuilder;
 
-        public ILGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder)
+        public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder)
         {
             _variables = variables;
             _bclReferences = bclReferences;
@@ -59,21 +58,38 @@ namespace Js2IL.Services.ILGenerators
         }
 
         public void GenerateExpressionStatement(Acornima.Ast.ExpressionStatement expressionStatement, InstructionEncoder il)
-        {
-            if (expressionStatement.Expression is Acornima.Ast.CallExpression callExpression)
+        { 
+            switch (expressionStatement.Expression)
             {
-                // Handle CallExpression
-                GenerateCallExpression(callExpression, il);
+                case Acornima.Ast.CallExpression callExpression:
+                    // Handle CallExpression
+                    GenerateCallExpression(callExpression, il);
+                    break;
+                case Acornima.Ast.BinaryExpression binaryExpression:
+                    // Handle BinaryExpression
+                    GenerateBinaryExpression(binaryExpression, il);
+                    break;
+                case Acornima.Ast.UpdateExpression updateExpression:
+                    // Handle UpdateExpression
+                    GenerateUpdateExpression(updateExpression, il);
+                    break;
+                default:
+                    throw new NotSupportedException($"Unsupported expression type in statement: {expressionStatement.Expression.Type}");
             }
-            else if (expressionStatement.Expression is Acornima.Ast.BinaryExpression binaryExpression)
+        }
+
+        public void GenerateForStatement(Acornima.Ast.ForStatement forStatement, LocalVariablesEncoder localVariableEncoder, InstructionEncoder il)
+        {
+            // first lets encode the initalizer
+            if (forStatement.Init is Acornima.Ast.VariableDeclaration variableDeclaration)
             {
-                // Handle BinaryExpression
-                GenerateBinaryExpression(binaryExpression, il);
+                DeclareVariable(variableDeclaration, localVariableEncoder, il);
             }
             else
             {
-                throw new NotSupportedException($"Unsupported expression type in statement: {expressionStatement.Expression.Type}");
+                throw new NotSupportedException($"Unsupported for statement initializer type: {forStatement.Init?.Type}");
             }
+
         }
 
         private void GenerateExpression(Acornima.Ast.Expression expression, MetadataBuilder metadataBuilder, InstructionEncoder il, BaseClassLibraryReferences bclReferences)
@@ -82,6 +98,15 @@ namespace Js2IL.Services.ILGenerators
             {
                 case Acornima.Ast.BinaryExpression binaryExpression:
                     GenerateBinaryExpression(binaryExpression, il);
+                    break;
+                case Acornima.Ast.NumericLiteral numericLiteral:
+                    // Load numeric literal
+                    il.LoadConstantR8(numericLiteral.Value); 
+                    
+                    // box numeric values
+                    il.OpCode(ILOpCode.Box);
+                    il.Token(_bclReferences.DoubleType);
+
                     break;
                 default:
                     throw new NotSupportedException($"Unsupported expression type: {expression.Type}");
@@ -168,6 +193,31 @@ namespace Js2IL.Services.ILGenerators
             {
                 throw new NotSupportedException($"Unsupported binary expression types: {binaryExpression.Left.Type} and {binaryExpression.Right.Type}");
             }
+        }
+
+        private void GenerateUpdateExpression(Acornima.Ast.UpdateExpression updateExpression, InstructionEncoder il)
+        {
+            if (updateExpression.Operator != Acornima.Operator.Increment || updateExpression.Prefix)
+            {
+                throw new NotSupportedException($"Unsupported update expression operator: {updateExpression.Operator} or prefix: {updateExpression.Prefix}");
+            }
+            // Handle postfix increment (e.g., x++)
+            var variableName = (updateExpression.Argument as Acornima.Ast.Identifier)!.Name;
+            var variable = _variables[variableName];
+            // Load the variable
+            il.LoadLocal(variable.LocalIndex!.Value);
+            // unbox the variable
+            il.OpCode(ILOpCode.Unbox_any);
+            // Assuming the variable is a double because it is the only option that has parity with javascript numbers
+            il.Token(_bclReferences.DoubleType); 
+            // increment by 1
+            il.LoadConstantR8(1.0);
+            il.OpCode(ILOpCode.Add);
+            // box the result back to an object
+            il.OpCode(ILOpCode.Box);
+            il.Token(_bclReferences.DoubleType);
+            // Store the result back to the variable because it is a update expression
+            il.StoreLocal(variable.LocalIndex.Value);
         }
 
         private void GenerateCallExpression(Acornima.Ast.CallExpression callExpression, InstructionEncoder il)

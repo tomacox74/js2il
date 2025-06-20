@@ -13,11 +13,11 @@ namespace Js2IL.Services.ILGenerators
     /// </summary>
     internal class MainGenerator
     {
-        private ILGenerator _ilGenerator;
+        private ILMethodGenerator _ilGenerator;
 
         public MainGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder)
         {
-            _ilGenerator = new ILGenerator(variables, bclReferences, metadataBuilder);
+            _ilGenerator = new ILMethodGenerator(variables, bclReferences, metadataBuilder);
         }
 
 
@@ -38,13 +38,15 @@ namespace Js2IL.Services.ILGenerators
             foreach (var expression in ast.Body)
             {
                 switch (expression) {
-                    case Acornima.Ast.VariableDeclaration:
-                        _ilGenerator.DeclareVariable((expression as Acornima.Ast.VariableDeclaration)!, localVariableEncoder, il);
+                    case Acornima.Ast.VariableDeclaration variableDeclaration:
+                        _ilGenerator.DeclareVariable(variableDeclaration, localVariableEncoder, il);
                         break;
-                    case Acornima.Ast.ExpressionStatement:
-                        _ilGenerator.GenerateExpressionStatement((expression as Acornima.Ast.ExpressionStatement)!, il);
+                    case Acornima.Ast.ExpressionStatement expressionStatement:
+                        _ilGenerator.GenerateExpressionStatement(expressionStatement, il);
                         break;
-
+                    case Acornima.Ast.ForStatement forStatement:
+                        _ilGenerator.GenerateForStatement(forStatement, localVariableEncoder, il);
+                        break;
                     default:
                         throw new NotSupportedException($"Unsupported AST node type: {expression.Type}");
                 }
