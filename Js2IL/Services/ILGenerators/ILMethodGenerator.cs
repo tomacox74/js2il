@@ -52,8 +52,39 @@ namespace Js2IL.Services.ILGenerators
             if (variableAST.Init != null && variable.LocalIndex != null)
             {
                 // otherwise we need to generate the expression
-                GenerateExpression(variableAST.Init, _metadataBuilder, il, _bclReferences);
+                GenerateExpression(variableAST.Init, il, null, null);
                 il.StoreLocal(variable.LocalIndex.Value);
+            }
+        }
+
+        public void GenerateStatements(NodeList<Statement> statements, LocalVariablesEncoder localVariableEncoder, InstructionEncoder il)
+        {
+            // Iterate through each statement in the block
+            foreach (var statement in statements)
+            {
+                GenerateStatement(statement, localVariableEncoder, il);
+            }
+        }
+
+        public void GenerateStatement(Statement statement, LocalVariablesEncoder localVariableEncoder, InstructionEncoder il)
+        {
+            switch (statement)
+            {
+                case VariableDeclaration variableDeclaration:
+                    DeclareVariable(variableDeclaration, localVariableEncoder, il);
+                    break;
+                case ExpressionStatement expressionStatement:
+                    GenerateExpressionStatement(expressionStatement, il);
+                    break;
+                case ForStatement forStatement:
+                    GenerateForStatement(forStatement, localVariableEncoder, il);
+                    break;
+                case BlockStatement blockStatement:
+                    // Handle BlockStatement
+                    GenerateStatements(blockStatement.Body, localVariableEncoder, il);
+                    break;
+                default:
+                    throw new NotSupportedException($"Unsupported statement type: {statement.Type}");
             }
         }
 
@@ -67,7 +98,7 @@ namespace Js2IL.Services.ILGenerators
                     break;
                 case Acornima.Ast.BinaryExpression binaryExpression:
                     // Handle BinaryExpression
-                    GenerateBinaryExpression(binaryExpression, il);
+                    GenerateBinaryExpression(binaryExpression, il, null, null);
                     break;
                 case Acornima.Ast.UpdateExpression updateExpression:
                     // Handle UpdateExpression
@@ -90,16 +121,52 @@ namespace Js2IL.Services.ILGenerators
                 throw new NotSupportedException($"Unsupported for statement initializer type: {forStatement.Init?.Type}");
             }
 
+            // the labels used in the loop flow control
+            var loopStartLabel = il.DefineLabel();
+            var loopEndLabel = il.DefineLabel();
+            var loopBodyLabel = il.DefineLabel();
+
+            il.MarkLabel(loopStartLabel);
+
+            //the test condition in the for loop
+            if (forStatement.Test != null)
+            {
+                GenerateExpression(forStatement.Test, il, loopBodyLabel, loopEndLabel);
+            }
+
+            // now the body
+            il.MarkLabel(loopBodyLabel);
+
+            GenerateStatement(forStatement.Body, localVariableEncoder, il);
+
+            if (forStatement.Update != null)
+            {
+                GenerateExpression(forStatement.Update, il, null, null);
+            }
+
+            // branch back to the start of the loop
+            il.Branch(ILOpCode.Br, loopStartLabel);
+
+            // here is the end
+            il.MarkLabel(loopEndLabel);
         }
 
-        private void GenerateExpression(Acornima.Ast.Expression expression, MetadataBuilder metadataBuilder, InstructionEncoder il, BaseClassLibraryReferences bclReferences)
+        /// <summary>
+        /// Generate the IL for a expression
+        /// </summary>
+        /// <param name="expression">the expression to generate the IL for</param>
+        /// <param name="il">the il encoder</param>
+        /// <param name="matchBranch">optional, this is when the expression is for control flow</param>
+        /// <param name="notMatchBranch">optional, this is the expression is for control flow</param>
+        /// <exception cref="NotSupportedException"></exception>
+        private void GenerateExpression(Expression expression, InstructionEncoder il, LabelHandle? matchBranch, LabelHandle? notMatchBranch)
         {
             switch (expression)
             {
-                case Acornima.Ast.BinaryExpression binaryExpression:
-                    GenerateBinaryExpression(binaryExpression, il);
+                case BinaryExpression binaryExpression:
+                    GenerateBinaryExpression(binaryExpression, il, matchBranch, notMatchBranch);
                     break;
-                case Acornima.Ast.NumericLiteral numericLiteral:
+                case NumericLiteral numericLiteral:
                     // Load numeric literal
                     il.LoadConstantR8(numericLiteral.Value); 
                     
@@ -108,15 +175,17 @@ namespace Js2IL.Services.ILGenerators
                     il.Token(_bclReferences.DoubleType);
 
                     break;
+                case UpdateExpression updateExpression:
+                    GenerateUpdateExpression(updateExpression, il);
+                    break;
                 default:
                     throw new NotSupportedException($"Unsupported expression type: {expression.Type}");
             }
         }
 
-        private void GenerateBinaryExpression(Acornima.Ast.BinaryExpression binaryExpression, InstructionEncoder il)
+        private void GenerateBinaryExpression(Acornima.Ast.BinaryExpression binaryExpression, InstructionEncoder il, LabelHandle? matchBranch, LabelHandle? notMatchBranch)
         {
-            // Assuming binaryExpression is a simple addition for now
-            if (binaryExpression.Operator != Acornima.Operator.Addition)
+            if (binaryExpression.Operator != Acornima.Operator.Addition && binaryExpression.Operator != Acornima.Operator.LessThan)
             {
                 throw new NotSupportedException($"Unsupported binary operator: {binaryExpression.Operator}");
             }
@@ -126,9 +195,9 @@ namespace Js2IL.Services.ILGenerators
                 throw new ArgumentException("Binary expression must have both left and right operands.");
             }
 
-            var loadLiteral = (Acornima.Ast.Expression literalExpression, bool forceString = false) =>
+            var load = (Acornima.Ast.Expression expression, bool forceString = false) =>
             {
-                switch (literalExpression)
+                switch (expression)
                 {
                     case Acornima.Ast.NumericLiteral numericLiteral:
                         if (forceString)
@@ -145,23 +214,66 @@ namespace Js2IL.Services.ILGenerators
                     case Acornima.Ast.StringLiteral stringLiteral:
                         il.LoadString(_metadataBuilder.GetOrAddUserString(stringLiteral.Value)); // Load string literal
                         break;
+                    case Acornima.Ast.Identifier identifier:     
+                        var name = identifier.Name;
+                        var variable = _variables[name];
+                        il.LoadLocal(variable.LocalIndex!.Value); // Load variable
+
+                        // this is fragile at the moment.. need to handle all types and not assume it is a number
+                        il.OpCode(ILOpCode.Unbox_any);
+                        il.Token(_bclReferences.DoubleType); // unbox the variable as a double
+
+                        break;
                     default:
-                        throw new NotSupportedException($"Unsupported expression type: {literalExpression.Type}");
+                        throw new NotSupportedException($"Unsupported expression type: {expression.Type}");
                 }
             };
 
-            loadLiteral(binaryExpression.Left);
-            loadLiteral(binaryExpression.Right, binaryExpression.Left is Acornima.Ast.StringLiteral);
+            load(binaryExpression.Left);
+            load(binaryExpression.Right, binaryExpression.Left is Acornima.Ast.StringLiteral);
 
-            if (binaryExpression.Left is Acornima.Ast.NumericLiteral && binaryExpression.Right is Acornima.Ast.NumericLiteral)
+            if ((binaryExpression.Left is Acornima.Ast.NumericLiteral || binaryExpression.Left is Acornima.Ast.Identifier) && binaryExpression.Right is Acornima.Ast.NumericLiteral)
             {
-                // If both are numeric literals, we can directly add them
-                il.OpCode(ILOpCode.Add);
 
-                // box numeric values
-                il.OpCode(ILOpCode.Box);
-                il.Token(_bclReferences.DoubleType);
+                if (binaryExpression.Operator == Acornima.Operator.LessThan)
+                {
+                    // If both are numeric literals, we can directly compare them
 
+
+                    if (!matchBranch.HasValue)
+                    {
+                        il.OpCode(ILOpCode.Clt); // compare less than
+
+                        //box it as a boolean resule
+                        il.OpCode(ILOpCode.Box);
+                        il.Token(_bclReferences.BooleanType);
+                    }
+                    else
+                    {
+                        // instead of a comparison which outputs a 1 or 0 we want to branch
+                        il.Branch(ILOpCode.Blt, matchBranch.Value); // branch if less than
+
+                        if (notMatchBranch.HasValue)
+                        {
+                            // if we have a not match branch, we need to branch there as well
+                            il.Branch(ILOpCode.Br, notMatchBranch.Value);
+                        }
+                        else
+                        {
+                            // if we don't have a not match branch, we just continue
+                            il.OpCode(ILOpCode.Pop); // pop the result of the comparison
+                        }
+                    }
+                }
+                else
+                {
+                    // If both are numeric literals, we can directly add them
+                    il.OpCode(ILOpCode.Add);
+
+                    // box numeric values
+                    il.OpCode(ILOpCode.Box);
+                    il.Token(_bclReferences.DoubleType);
+                }
             }
             else if (binaryExpression.Left is Acornima.Ast.StringLiteral && (binaryExpression.Right is Acornima.Ast.StringLiteral || binaryExpression.Right is Acornima.Ast.NumericLiteral))
             {

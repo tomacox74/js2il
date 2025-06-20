@@ -33,24 +33,9 @@ namespace Js2IL.Services.ILGenerators
 
             // il code
             var methodIl = new BlobBuilder();
-            var il = new InstructionEncoder(methodIl);
+            var il = new InstructionEncoder(methodIl, new ControlFlowBuilder());
 
-            foreach (var expression in ast.Body)
-            {
-                switch (expression) {
-                    case Acornima.Ast.VariableDeclaration variableDeclaration:
-                        _ilGenerator.DeclareVariable(variableDeclaration, localVariableEncoder, il);
-                        break;
-                    case Acornima.Ast.ExpressionStatement expressionStatement:
-                        _ilGenerator.GenerateExpressionStatement(expressionStatement, il);
-                        break;
-                    case Acornima.Ast.ForStatement forStatement:
-                        _ilGenerator.GenerateForStatement(forStatement, localVariableEncoder, il);
-                        break;
-                    default:
-                        throw new NotSupportedException($"Unsupported AST node type: {expression.Type}");
-                }
-            }
+            _ilGenerator.GenerateStatements(ast.Body, localVariableEncoder, il);
 
             il.OpCode(ILOpCode.Ret);
 

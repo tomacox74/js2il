@@ -33,22 +33,22 @@ namespace Js2IL.Services
             );
 
             // Common Type References
-            this.ObjectType = metadataBuilder.AddTypeReference(
+            this.BooleanType = metadataBuilder.AddTypeReference(
                 this.SystemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Object")
-            );
-
-            this.Int32Type = metadataBuilder.AddTypeReference(
-                this.SystemRuntimeAssembly,
-                metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Int32")
+                metadataBuilder.GetOrAddString("Boolean")
             );
 
             this.DoubleType = metadataBuilder.AddTypeReference(
                 this.SystemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
                 metadataBuilder.GetOrAddString("Double")
+            );
+
+            this.ObjectType = metadataBuilder.AddTypeReference(
+                this.SystemRuntimeAssembly,
+                metadataBuilder.GetOrAddString("System"),
+                metadataBuilder.GetOrAddString("Object")
             );
 
             this.StringType = metadataBuilder.AddTypeReference(
@@ -60,9 +60,9 @@ namespace Js2IL.Services
 
         public AssemblyReferenceHandle SystemRuntimeAssembly { get; private set; }
         public AssemblyReferenceHandle SystemConsoleAssembly { get; private set; }
-        public TypeReferenceHandle ObjectType { get; private set; }
-        public TypeReferenceHandle Int32Type { get; private set; }
+        public TypeReferenceHandle BooleanType { get; private set; }
         public TypeReferenceHandle DoubleType { get; private set; }
+        public TypeReferenceHandle ObjectType { get; private set; }
         public TypeReferenceHandle StringType { get; private set; }
     }
 }
