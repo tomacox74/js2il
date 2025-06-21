@@ -1,4 +1,5 @@
-﻿using Acornima.Ast;
+﻿using Acornima;
+using Acornima.Ast;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace Js2IL.Services.ILGenerators
         private BaseClassLibraryReferences _bclReferences;
         private MetadataBuilder _metadataBuilder;
         private InstructionEncoder _il;
+        private BinaryOperators _binaryOperators;
 
         /*
          * Temporary exposure of private members until refactoring gets cleaner
@@ -36,6 +38,7 @@ namespace Js2IL.Services.ILGenerators
             _metadataBuilder = metadataBuilder;
             var methodIl = new BlobBuilder();
             _il = new InstructionEncoder(methodIl, new ControlFlowBuilder());
+            _binaryOperators = new BinaryOperators(metadataBuilder, _il, variables, bclReferences);
         }
 
         public void DeclareVariable(VariableDeclaration variableDeclaraion, LocalVariablesEncoder localVariableEncoder)
@@ -102,7 +105,7 @@ namespace Js2IL.Services.ILGenerators
                     break;
                 case Acornima.Ast.BinaryExpression binaryExpression:
                     // Handle BinaryExpression
-                    GenerateBinaryExpression(binaryExpression, null, null);
+                    _binaryOperators.Generate(binaryExpression, null, null);
                     break;
                 case Acornima.Ast.UpdateExpression updateExpression:
                     // Handle UpdateExpression
@@ -167,7 +170,7 @@ namespace Js2IL.Services.ILGenerators
             switch (expression)
             {
                 case BinaryExpression binaryExpression:
-                    GenerateBinaryExpression(binaryExpression, matchBranch, notMatchBranch);
+                    _binaryOperators.Generate(binaryExpression, matchBranch, notMatchBranch);
                     break;
                 case NumericLiteral numericLiteral:
                     // Load numeric literal
@@ -183,130 +186,6 @@ namespace Js2IL.Services.ILGenerators
                     break;
                 default:
                     throw new NotSupportedException($"Unsupported expression type: {expression.Type}");
-            }
-        }
-
-        private void GenerateBinaryExpression(Acornima.Ast.BinaryExpression binaryExpression, LabelHandle? matchBranch, LabelHandle? notMatchBranch)
-        {
-            if (binaryExpression.Operator != Acornima.Operator.Addition && binaryExpression.Operator != Acornima.Operator.LessThan)
-            {
-                throw new NotSupportedException($"Unsupported binary operator: {binaryExpression.Operator}");
-            }
-
-            if (binaryExpression.Left == null || binaryExpression.Right == null)
-            {
-                throw new ArgumentException("Binary expression must have both left and right operands.");
-            }
-
-            var load = (Acornima.Ast.Expression expression, bool forceString = false) =>
-            {
-                switch (expression)
-                {
-                    case Acornima.Ast.NumericLiteral numericLiteral:
-                        if (forceString)
-                        {
-                            //does dotnet ToString behave the same as JavaScript?
-                            var numberAsString = numericLiteral.Value.ToString();
-                            _il.LoadString(_metadataBuilder.GetOrAddUserString(numberAsString)); // Load numeric literal as string
-                        }
-                        else
-                        {
-                            _il.LoadConstantR8(numericLiteral.Value); // Load numeric literal
-                        }
-                        break;
-                    case Acornima.Ast.StringLiteral stringLiteral:
-                        _il.LoadString(_metadataBuilder.GetOrAddUserString(stringLiteral.Value)); // Load string literal
-                        break;
-                    case Acornima.Ast.Identifier identifier:     
-                        var name = identifier.Name;
-                        var variable = _variables[name];
-                        _il.LoadLocal(variable.LocalIndex!.Value); // Load variable
-
-                        // this is fragile at the moment.. need to handle all types and not assume it is a number
-                        _il.OpCode(ILOpCode.Unbox_any);
-                        _il.Token(_bclReferences.DoubleType); // unbox the variable as a double
-
-                        break;
-                    default:
-                        throw new NotSupportedException($"Unsupported expression type: {expression.Type}");
-                }
-            };
-
-            load(binaryExpression.Left);
-            load(binaryExpression.Right, binaryExpression.Left is Acornima.Ast.StringLiteral);
-
-            if ((binaryExpression.Left is Acornima.Ast.NumericLiteral || binaryExpression.Left is Acornima.Ast.Identifier) && binaryExpression.Right is Acornima.Ast.NumericLiteral)
-            {
-
-                if (binaryExpression.Operator == Acornima.Operator.LessThan)
-                {
-                    // If both are numeric literals, we can directly compare them
-
-
-                    if (!matchBranch.HasValue)
-                    {
-                        _il.OpCode(ILOpCode.Clt); // compare less than
-
-                        //box it as a boolean resule
-                        _il.OpCode(ILOpCode.Box);
-                        _il.Token(_bclReferences.BooleanType);
-                    }
-                    else
-                    {
-                        // instead of a comparison which outputs a 1 or 0 we want to branch
-                        _il.Branch(ILOpCode.Blt, matchBranch.Value); // branch if less than
-
-                        if (notMatchBranch.HasValue)
-                        {
-                            // if we have a not match branch, we need to branch there as well
-                            _il.Branch(ILOpCode.Br, notMatchBranch.Value);
-                        }
-                        else
-                        {
-                            // if we don't have a not match branch, we just continue
-                            _il.OpCode(ILOpCode.Pop); // pop the result of the comparison
-                        }
-                    }
-                }
-                else
-                {
-                    // If both are numeric literals, we can directly add them
-                    _il.OpCode(ILOpCode.Add);
-
-                    // box numeric values
-                    _il.OpCode(ILOpCode.Box);
-                    _il.Token(_bclReferences.DoubleType);
-                }
-            }
-            else if (binaryExpression.Left is Acornima.Ast.StringLiteral && (binaryExpression.Right is Acornima.Ast.StringLiteral || binaryExpression.Right is Acornima.Ast.NumericLiteral))
-            {
-
-                // Create method signature: string Concat(string, string)
-                var stringSig = new BlobBuilder();
-                new BlobEncoder(stringSig)
-                    .MethodSignature(isInstanceMethod: false)
-                    .Parameters(2,
-                        returnType => returnType.Type().String(),
-                        parameters => {
-                            parameters.AddParameter().Type().String();
-                            parameters.AddParameter().Type().String();
-                        });
-                var concatSig = _metadataBuilder.GetOrAddBlob(stringSig);
-
-                // Add a MemberRef to Console.WriteLine(string)
-                var stringConcatMethodRef = _metadataBuilder.AddMemberReference(
-                    _bclReferences.StringType,
-                    _metadataBuilder.GetOrAddString("Concat"),
-                    concatSig);
-
-
-                // If either is a string literal, we need to concatenate them
-                _il.OpCode(ILOpCode.Call);
-                _il.Token(stringConcatMethodRef);
-            }
-            else
-            {
-                throw new NotSupportedException($"Unsupported binary expression types: {binaryExpression.Left.Type} and {binaryExpression.Right.Type}");
             }
         }
 
