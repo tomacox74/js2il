@@ -18,6 +18,7 @@ namespace Js2IL.Services.ILGenerators
         private Variables _variables;
         private BaseClassLibraryReferences _bclReferences;
         private MetadataBuilder _metadataBuilder;
+        private InstructionEncoder _il;
 
         /*
          * Temporary exposure of private members until refactoring gets cleaner
@@ -26,15 +27,18 @@ namespace Js2IL.Services.ILGenerators
         public Variables Variables => _variables;
         public BaseClassLibraryReferences BclReferences => _bclReferences;
         public MetadataBuilder MetadataBuilder => _metadataBuilder;
+        public InstructionEncoder IL => _il;
 
         public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder)
         {
             _variables = variables;
             _bclReferences = bclReferences;
             _metadataBuilder = metadataBuilder;
+            var methodIl = new BlobBuilder();
+            _il = new InstructionEncoder(methodIl, new ControlFlowBuilder());
         }
 
-        public void DeclareVariable(Acornima.Ast.VariableDeclaration variableDeclaraion, LocalVariablesEncoder localVariableEncoder, InstructionEncoder il)
+        public void DeclareVariable(VariableDeclaration variableDeclaraion, LocalVariablesEncoder localVariableEncoder)
         {
             // TODO need to handle multiple
             var variableAST = variableDeclaraion.Declarations.FirstOrDefault()!;
@@ -52,69 +56,69 @@ namespace Js2IL.Services.ILGenerators
             if (variableAST.Init != null && variable.LocalIndex != null)
             {
                 // otherwise we need to generate the expression
-                GenerateExpression(variableAST.Init, il, null, null);
-                il.StoreLocal(variable.LocalIndex.Value);
+                GenerateExpression(variableAST.Init, null, null);
+                _il.StoreLocal(variable.LocalIndex.Value);
             }
         }
 
-        public void GenerateStatements(NodeList<Statement> statements, LocalVariablesEncoder localVariableEncoder, InstructionEncoder il)
+        public void GenerateStatements(NodeList<Statement> statements, LocalVariablesEncoder localVariableEncoder)
         {
             // Iterate through each statement in the block
             foreach (var statement in statements)
             {
-                GenerateStatement(statement, localVariableEncoder, il);
+                GenerateStatement(statement, localVariableEncoder);
             }
         }
 
-        public void GenerateStatement(Statement statement, LocalVariablesEncoder localVariableEncoder, InstructionEncoder il)
+        public void GenerateStatement(Statement statement, LocalVariablesEncoder localVariableEncoder)
         {
             switch (statement)
             {
                 case VariableDeclaration variableDeclaration:
-                    DeclareVariable(variableDeclaration, localVariableEncoder, il);
+                    DeclareVariable(variableDeclaration, localVariableEncoder);
                     break;
                 case ExpressionStatement expressionStatement:
-                    GenerateExpressionStatement(expressionStatement, il);
+                    GenerateExpressionStatement(expressionStatement);
                     break;
                 case ForStatement forStatement:
-                    GenerateForStatement(forStatement, localVariableEncoder, il);
+                    GenerateForStatement(forStatement, localVariableEncoder);
                     break;
                 case BlockStatement blockStatement:
                     // Handle BlockStatement
-                    GenerateStatements(blockStatement.Body, localVariableEncoder, il);
+                    GenerateStatements(blockStatement.Body, localVariableEncoder);
                     break;
                 default:
                     throw new NotSupportedException($"Unsupported statement type: {statement.Type}");
             }
         }
 
-        public void GenerateExpressionStatement(Acornima.Ast.ExpressionStatement expressionStatement, InstructionEncoder il)
+        public void GenerateExpressionStatement(Acornima.Ast.ExpressionStatement expressionStatement)
         { 
             switch (expressionStatement.Expression)
             {
                 case Acornima.Ast.CallExpression callExpression:
                     // Handle CallExpression
-                    GenerateCallExpression(callExpression, il);
+                    GenerateCallExpression(callExpression);
                     break;
                 case Acornima.Ast.BinaryExpression binaryExpression:
                     // Handle BinaryExpression
-                    GenerateBinaryExpression(binaryExpression, il, null, null);
+                    GenerateBinaryExpression(binaryExpression, null, null);
                     break;
                 case Acornima.Ast.UpdateExpression updateExpression:
                     // Handle UpdateExpression
-                    GenerateUpdateExpression(updateExpression, il);
+                    GenerateUpdateExpression(updateExpression);
                     break;
                 default:
                     throw new NotSupportedException($"Unsupported expression type in statement: {expressionStatement.Expression.Type}");
             }
         }
 
-        public void GenerateForStatement(Acornima.Ast.ForStatement forStatement, LocalVariablesEncoder localVariableEncoder, InstructionEncoder il)
+        public void GenerateForStatement(Acornima.Ast.ForStatement forStatement, LocalVariablesEncoder localVariableEncoder)
         {
             // first lets encode the initalizer
             if (forStatement.Init is Acornima.Ast.VariableDeclaration variableDeclaration)
             {
-                DeclareVariable(variableDeclaration, localVariableEncoder, il);
+                DeclareVariable(variableDeclaration, localVariableEncoder);
             }
             else
             {
@@ -122,68 +126,67 @@ namespace Js2IL.Services.ILGenerators
             }
 
             // the labels used in the loop flow control
-            var loopStartLabel = il.DefineLabel();
-            var loopEndLabel = il.DefineLabel();
-            var loopBodyLabel = il.DefineLabel();
+            var loopStartLabel = _il.DefineLabel();
+            var loopEndLabel = _il.DefineLabel();
+            var loopBodyLabel = _il.DefineLabel();
 
-            il.MarkLabel(loopStartLabel);
+            _il.MarkLabel(loopStartLabel);
 
             //the test condition in the for loop
             if (forStatement.Test != null)
             {
-                GenerateExpression(forStatement.Test, il, loopBodyLabel, loopEndLabel);
+                GenerateExpression(forStatement.Test, loopBodyLabel, loopEndLabel);
             }
 
             // now the body
-            il.MarkLabel(loopBodyLabel);
+            _il.MarkLabel(loopBodyLabel);
 
-            GenerateStatement(forStatement.Body, localVariableEncoder, il);
+            GenerateStatement(forStatement.Body, localVariableEncoder);
 
             if (forStatement.Update != null)
             {
-                GenerateExpression(forStatement.Update, il, null, null);
+                GenerateExpression(forStatement.Update, null, null);
             }
 
             // branch back to the start of the loop
-            il.Branch(ILOpCode.Br, loopStartLabel);
+            _il.Branch(ILOpCode.Br, loopStartLabel);
 
             // here is the end
-            il.MarkLabel(loopEndLabel);
+            _il.MarkLabel(loopEndLabel);
         }
 
         /// <summary>
         /// Generate the IL for a expression
         /// </summary>
         /// <param name="expression">the expression to generate the IL for</param>
-        /// <param name="il">the il encoder</param>
         /// <param name="matchBranch">optional, this is when the expression is for control flow</param>
         /// <param name="notMatchBranch">optional, this is the expression is for control flow</param>
         /// <exception cref="NotSupportedException"></exception>
-        private void GenerateExpression(Expression expression, InstructionEncoder il, LabelHandle? matchBranch, LabelHandle? notMatchBranch)
+        private void GenerateExpression(Expression expression, LabelHandle? matchBranch, LabelHandle? notMatchBranch)
         {
             switch (expression)
             {
                 case BinaryExpression binaryExpression:
-                    GenerateBinaryExpression(binaryExpression, il, matchBranch, notMatchBranch);
+                    GenerateBinaryExpression(binaryExpression, matchBranch, notMatchBranch);
                     break;
                 case NumericLiteral numericLiteral:
                     // Load numeric literal
-                    il.LoadConstantR8(numericLiteral.Value); 
+                    _il.LoadConstantR8(numericLiteral.Value);
                     
                     // box numeric values
-                    il.OpCode(ILOpCode.Box);
-                    il.Token(_bclReferences.DoubleType);
+                    _il.OpCode(ILOpCode.Box);
+                    _il.Token(_bclReferences.DoubleType);
 
                     break;
                 case UpdateExpression updateExpression:
-                    GenerateUpdateExpression(updateExpression, il);
+                    GenerateUpdateExpression(updateExpression);
                     break;
                 default:
                     throw new NotSupportedException($"Unsupported expression type: {expression.Type}");
             }
         }
 
-        private void GenerateBinaryExpression(Acornima.Ast.BinaryExpression binaryExpression, InstructionEncoder il, LabelHandle? matchBranch, LabelHandle? notMatchBranch)
+        private void GenerateBinaryExpression(Acornima.Ast.BinaryExpression binaryExpression, LabelHandle? matchBranch, LabelHandle? notMatchBranch)
         {
             if (binaryExpression.Operator != Acornima.Operator.Addition && binaryExpression.Operator != Acornima.Operator.LessThan)
             {
@@ -204,24 +207,24 @@ namespace Js2IL.Services.ILGenerators
                         {
                             //does dotnet ToString behave the same as JavaScript?
                             var numberAsString = numericLiteral.Value.ToString();
-                            il.LoadString(_metadataBuilder.GetOrAddUserString(numberAsString)); // Load numeric literal as string
+                            _il.LoadString(_metadataBuilder.GetOrAddUserString(numberAsString)); // Load numeric literal as string
                         }
                         else
                         {
-                            il.LoadConstantR8(numericLiteral.Value); // Load numeric literal
+                            _il.LoadConstantR8(numericLiteral.Value); // Load numeric literal
                         }
                         break;
                     case Acornima.Ast.StringLiteral stringLiteral:
-                        il.LoadString(_metadataBuilder.GetOrAddUserString(stringLiteral.Value)); // Load string literal
+                        _il.LoadString(_metadataBuilder.GetOrAddUserString(stringLiteral.Value)); // Load string literal
                         break;
                     case Acornima.Ast.Identifier identifier:     
                         var name = identifier.Name;
                         var variable = _variables[name];
-                        il.LoadLocal(variable.LocalIndex!.Value); // Load variable
+                        _il.LoadLocal(variable.LocalIndex!.Value); // Load variable
 
                         // this is fragile at the moment.. need to handle all types and not assume it is a number
-                        il.OpCode(ILOpCode.Unbox_any);
-                        il.Token(_bclReferences.DoubleType); // unbox the variable as a double
+                        _il.OpCode(ILOpCode.Unbox_any);
+                        _il.Token(_bclReferences.DoubleType); // unbox the variable as a double
 
                         break;
                     default:
@@ -242,37 +245,37 @@ namespace Js2IL.Services.ILGenerators
 
                     if (!matchBranch.HasValue)
                     {
-                        il.OpCode(ILOpCode.Clt); // compare less than
+                        _il.OpCode(ILOpCode.Clt); // compare less than
 
                         //box it as a boolean resule
-                        il.OpCode(ILOpCode.Box);
-                        il.Token(_bclReferences.BooleanType);
+                        _il.OpCode(ILOpCode.Box);
+                        _il.Token(_bclReferences.BooleanType);
                     }
                     else
                     {
                         // instead of a comparison which outputs a 1 or 0 we want to branch
-                        il.Branch(ILOpCode.Blt, matchBranch.Value); // branch if less than
+                        _il.Branch(ILOpCode.Blt, matchBranch.Value); // branch if less than
 
                         if (notMatchBranch.HasValue)
                         {
                             // if we have a not match branch, we need to branch there as well
-                            il.Branch(ILOpCode.Br, notMatchBranch.Value);
+                            _il.Branch(ILOpCode.Br, notMatchBranch.Value);
                         }
                         else
                         {
                             // if we don't have a not match branch, we just continue
-                            il.OpCode(ILOpCode.Pop); // pop the result of the comparison
+                            _il.OpCode(ILOpCode.Pop); // pop the result of the comparison
                         }
                     }
                 }
                 else
                 {
                     // If both are numeric literals, we can directly add them
-                    il.OpCode(ILOpCode.Add);
+                    _il.OpCode(ILOpCode.Add);
 
                     // box numeric values
-                    il.OpCode(ILOpCode.Box);
-                    il.Token(_bclReferences.DoubleType);
+                    _il.OpCode(ILOpCode.Box);
+                    _il.Token(_bclReferences.DoubleType);
                 }
             }
             else if (binaryExpression.Left is Acornima.Ast.StringLiteral && (binaryExpression.Right is Acornima.Ast.StringLiteral || binaryExpression.Right is Acornima.Ast.NumericLiteral))
@@ -298,8 +301,8 @@ namespace Js2IL.Services.ILGenerators
 
 
                 // If either is a string literal, we need to concatenate them
-                il.OpCode(ILOpCode.Call);
-                il.Token(stringConcatMethodRef);
+                _il.OpCode(ILOpCode.Call);
+                _il.Token(stringConcatMethodRef);
             }
             else
             {
@@ -307,7 +310,7 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-        private void GenerateUpdateExpression(Acornima.Ast.UpdateExpression updateExpression, InstructionEncoder il)
+        private void GenerateUpdateExpression(Acornima.Ast.UpdateExpression updateExpression)
         {
             if (updateExpression.Operator != Acornima.Operator.Increment || updateExpression.Prefix)
             {
@@ -317,22 +320,22 @@ namespace Js2IL.Services.ILGenerators
             var variableName = (updateExpression.Argument as Acornima.Ast.Identifier)!.Name;
             var variable = _variables[variableName];
             // Load the variable
-            il.LoadLocal(variable.LocalIndex!.Value);
+            _il.LoadLocal(variable.LocalIndex!.Value);
             // unbox the variable
-            il.OpCode(ILOpCode.Unbox_any);
+            _il.OpCode(ILOpCode.Unbox_any);
             // Assuming the variable is a double because it is the only option that has parity with javascript numbers
-            il.Token(_bclReferences.DoubleType); 
+            _il.Token(_bclReferences.DoubleType); 
             // increment by 1
-            il.LoadConstantR8(1.0);
-            il.OpCode(ILOpCode.Add);
+            _il.LoadConstantR8(1.0);
+            _il.OpCode(ILOpCode.Add);
             // box the result back to an object
-            il.OpCode(ILOpCode.Box);
-            il.Token(_bclReferences.DoubleType);
+            _il.OpCode(ILOpCode.Box);
+            _il.Token(_bclReferences.DoubleType);
             // Store the result back to the variable because it is a update expression
-            il.StoreLocal(variable.LocalIndex.Value);
+            _il.StoreLocal(variable.LocalIndex.Value);
         }
 
-        private void GenerateCallExpression(Acornima.Ast.CallExpression callExpression, InstructionEncoder il)
+        private void GenerateCallExpression(Acornima.Ast.CallExpression callExpression)
         {
             // For simplicity, we assume the call expression is a console write line
             if (callExpression.Callee is not Acornima.Ast.MemberExpression memberExpression ||
@@ -348,10 +351,10 @@ namespace Js2IL.Services.ILGenerators
                 throw new ArgumentException("console.log implementation supports two argument.");
             }
 
-            CallConsoleWriteLine(callExpression, il);
+            CallConsoleWriteLine(callExpression);
         }
 
-        private void CallConsoleWriteLine(Acornima.Ast.CallExpression callConsoleLog, InstructionEncoder il)
+        private void CallConsoleWriteLine(Acornima.Ast.CallExpression callConsoleLog)
         {
             // use formatstring to append the additonal parameters
             var message = (callConsoleLog.Arguments[0] as Acornima.Ast.StringLiteral)!.Value + " {0}";
@@ -386,13 +389,13 @@ namespace Js2IL.Services.ILGenerators
             var messageHandle = _metadataBuilder.GetOrAddUserString(message);
 
             // Assuming Console.WriteLine(string, object) is available in the BCL references
-            il.LoadString(messageHandle);
+            _il.LoadString(messageHandle);
 
             // Load local 0 (which is assumed to be the int x)
-            il.LoadLocal(variable.LocalIndex!.Value);
+            _il.LoadLocal(variable.LocalIndex!.Value);
 
-            il.OpCode(ILOpCode.Call);
-            il.Token(writeLineMemberRef);
+            _il.OpCode(ILOpCode.Call);
+            _il.Token(writeLineMemberRef);
         }
     }
 }

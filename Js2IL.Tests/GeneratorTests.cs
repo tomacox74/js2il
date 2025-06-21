@@ -34,7 +34,7 @@ namespace Js2IL.Tests
         }
 
         [Fact]
-        public Task Generate_AdditionNumberNumber()
+        public Task BinaryOperator_AddNumberNumber()
         {
             // Arrange
             var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
@@ -42,7 +42,7 @@ namespace Js2IL.Tests
         }
 
         [Fact]
-        public Task Generate_AdditionStringString()
+        public Task BinaryOperator_AddStringString()
         {
             // Arrange
             var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
@@ -50,7 +50,7 @@ namespace Js2IL.Tests
         }
 
         [Fact]
-        public Task Generate_AdditionStringNumber()
+        public Task BinaryOperator_AddStringNumber()
         {
             // Arrange
             var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;

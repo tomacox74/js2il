@@ -31,18 +31,14 @@ namespace Js2IL.Services.ILGenerators
             var localSig = new BlobBuilder();
             var localVariableEncoder = new BlobEncoder(localSig).LocalVariableSignature(1);
 
-            // il code
-            var methodIl = new BlobBuilder();
-            var il = new InstructionEncoder(methodIl, new ControlFlowBuilder());
+            _ilGenerator.GenerateStatements(ast.Body, localVariableEncoder);
 
-            _ilGenerator.GenerateStatements(ast.Body, localVariableEncoder, il);
-
-            il.OpCode(ILOpCode.Ret);
+            _ilGenerator.IL.OpCode(ILOpCode.Ret);
 
             var localSignature = metadataBuilder.AddStandaloneSignature(metadataBuilder.GetOrAddBlob(localSig));
 
             return methodBodyStream.AddMethodBody(
-                il, 
+                _ilGenerator.IL, 
                 localVariablesSignature: localSignature,
                 attributes: MethodBodyAttributes.InitLocals);
         }
