@@ -82,6 +82,14 @@ namespace Js2IL.Tests
         }
 
         [Fact]
+        public Task BinaryOperator_ModNumberNumber()
+        {
+            // Arrange
+            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task Generate_OperatorPlusPlusPostfix()
         {
             // Arrange
