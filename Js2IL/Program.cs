@@ -41,7 +41,15 @@ class Program
             if (parsed.Verbose)
             {
                 Console.WriteLine("AST Structure:");
-                parser.VisitAst(ast, node => Console.WriteLine($"Node Type: {node.Type}"));
+                parser.VisitAst(ast, node =>
+                {
+                    Console.Write($"Node Type: {node.Type}");
+                    if (node is Acornima.Ast.NumericLiteral num)
+                        Console.Write($", Value: {num.Value}");
+                    if (node is Acornima.Ast.UnaryExpression unary)
+                        Console.Write($", Operator: {unary.Operator}");
+                    Console.WriteLine();
+                });
             }
 
             // Step 2: Validate AST

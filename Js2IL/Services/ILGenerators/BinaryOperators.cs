@@ -238,6 +238,25 @@ namespace Js2IL.Services.ILGenerators
                     _il.Token(_bclReferences.DoubleType); // unbox the variable as a double
 
                     break;
+                case Acornima.Ast.UnaryExpression unaryExpression:
+                    // Handle unary expressions like -16
+                    if (unaryExpression.Operator.ToString() == "UnaryNegation" && unaryExpression.Argument is Acornima.Ast.NumericLiteral numericArg)
+                    {
+                        if (forceString)
+                        {
+                            var numberAsString = (-numericArg.Value).ToString();
+                            _il.LoadString(_metadataBuilder.GetOrAddUserString(numberAsString));
+                        }
+                        else
+                        {
+                            _il.LoadConstantR8(-numericArg.Value);
+                        }
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"Unsupported unary expression: {unaryExpression.Operator}");
+                    }
+                    break;
                 default:
                     throw new NotSupportedException($"Unsupported expression type: {expression.Type}");
             }
