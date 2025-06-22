@@ -20,6 +20,8 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
+    - name: Restore .NET tools
+      run: dotnet tool restore 
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
