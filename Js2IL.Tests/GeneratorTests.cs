@@ -31,6 +31,12 @@ namespace Js2IL.Tests
             {
                 Directory.CreateDirectory(_outputPath);
             }
+
+            _outputPath = Path.Combine(_outputPath, "GeneratorTests");
+            if (!Directory.Exists(_outputPath))
+            {
+                Directory.CreateDirectory(_outputPath);
+            }
         }
 
         [Fact]
