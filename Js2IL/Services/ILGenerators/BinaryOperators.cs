@@ -39,9 +39,17 @@ namespace Js2IL.Services.ILGenerators
 
             var operatorType = binaryExpression.Operator;
 
-            // For all operators, just load the operands as-is (as r8)
-            LoadValue(binaryExpression.Left);
-            LoadValue(binaryExpression.Right, binaryExpression.Left is StringLiteral);
+            bool isBitwiseOrShift = operatorType == Operator.BitwiseAnd || operatorType == Operator.BitwiseOr || operatorType == Operator.BitwiseXor ||
+                                    operatorType == Operator.LeftShift || operatorType == Operator.RightShift || operatorType == Operator.UnsignedRightShift;
+            if (isBitwiseOrShift) {
+                LoadValue(binaryExpression.Left);
+                _il.OpCode(ILOpCode.Conv_i4);
+                LoadValue(binaryExpression.Right);
+                _il.OpCode(ILOpCode.Conv_i4);
+            } else {
+                LoadValue(binaryExpression.Left);
+                LoadValue(binaryExpression.Right, binaryExpression.Left is StringLiteral);
+            }
 
             switch (operatorType)
             {
@@ -57,11 +65,9 @@ namespace Js2IL.Services.ILGenerators
                 case Operator.LeftShift:
                 case Operator.RightShift:
                 case Operator.UnsignedRightShift:
-                    // Handle arithmetic operators
-                    ApplyArithmeticOperator(operatorType, binaryExpression);
+                    ApplyArithmeticOperator(operatorType, binaryExpression, isBitwiseOrShift);
                     break;
                 case Operator.LessThan:
-                    // Handle less than operator
                     ApplyComparisonOperator(Operator.LessThan, matchBranch, notMatchBranch);
                     break;
                 default:
@@ -69,7 +75,7 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-        private void ApplyArithmeticOperator(Operator op, BinaryExpression binaryExpression)
+        private void ApplyArithmeticOperator(Operator op, BinaryExpression binaryExpression, bool isBitwiseOrShift = false)
         {
             var isStaticString = binaryExpression.Left is Acornima.Ast.StringLiteral && (binaryExpression.Right is Acornima.Ast.StringLiteral || binaryExpression.Right is Acornima.Ast.NumericLiteral);
             if (isStaticString && op == Operator.Addition)
@@ -133,10 +139,15 @@ namespace Js2IL.Services.ILGenerators
                             Operator.BitwiseXor => ILOpCode.Xor,
                             Operator.LeftShift => ILOpCode.Shl,
                             Operator.RightShift => ILOpCode.Shr,
-                            Operator.UnsignedRightShift => ILOpCode.Shr, // Use signed shift to match expected IL
+                            Operator.UnsignedRightShift => ILOpCode.Shr_un,
                             _ => throw new NotSupportedException($"Unsupported bitwise operator: {op}")
                         };
                         _il.OpCode(bitwiseOpCode);
+                        if (op == Operator.UnsignedRightShift) {
+                            // Convert result to uint32 then to double for JS >>>
+                            _il.OpCode(ILOpCode.Conv_u4);
+                        }
+                        _il.OpCode(ILOpCode.Conv_r8);
                         _il.OpCode(ILOpCode.Box);
                         _il.Token(_bclReferences.DoubleType);
                         break;

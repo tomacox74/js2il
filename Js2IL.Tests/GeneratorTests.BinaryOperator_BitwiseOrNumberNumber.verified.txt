@@ -8,7 +8,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 37 (0x25)
+		// Code size: 40 (0x28)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -16,14 +16,17 @@
 		)
 
 		IL_0000: ldc.r8 5
-		IL_0009: ldc.r8 3
-		IL_0012: or
-		IL_0013: box [System.Runtime]System.Double
-		IL_0018: stloc.0
-		IL_0019: ldstr "x is {0}"
-		IL_001e: ldloc.0
-		IL_001f: call void [System.Console]System.Console::WriteLine(string, object)
-		IL_0024: ret
+		IL_0009: conv.i4
+		IL_000a: ldc.r8 3
+		IL_0013: conv.i4
+		IL_0014: or
+		IL_0015: conv.r8
+		IL_0016: box [System.Runtime]System.Double
+		IL_001b: stloc.0
+		IL_001c: ldstr "x is {0}"
+		IL_0021: ldloc.0
+		IL_0022: call void [System.Console]System.Console::WriteLine(string, object)
+		IL_0027: ret
 	} // end of method Program::Main
 
 } // end of class Program

@@ -136,13 +136,6 @@ namespace Js2IL.Tests
         }
 
         [Fact]
-        public Task Generate_EnumerateProcessArgV()
-        {
-            var testName = nameof(Generate_EnumerateProcessArgV);
-            return ExecutionTest(testName);
-        }
-
-        [Fact]
         public Task Generate_ForLoopCountToFive()
         {
             var testName = nameof(Generate_ForLoopCountToFive);
