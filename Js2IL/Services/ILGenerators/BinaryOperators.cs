@@ -46,7 +46,8 @@ namespace Js2IL.Services.ILGenerators
             {
                 case Operator.Addition:
                 case Operator.Subtraction:
-                    // Handle addition operator
+                case Operator.Multiplication:
+                    // Handle arithmetic operators
                     ApplyArithmeticOperator(operatorType, binaryExpression);
                     break;
                 case Operator.LessThan:
@@ -94,9 +95,16 @@ namespace Js2IL.Services.ILGenerators
                 {
                     case Operator.Addition:
                     case Operator.Subtraction:
-                        var opCode = op == Operator.Addition ? ILOpCode.Add : ILOpCode.Sub;
+                    case Operator.Multiplication:
+                        var opCode = op switch
+                        {
+                            Operator.Addition => ILOpCode.Add,
+                            Operator.Subtraction => ILOpCode.Sub,
+                            Operator.Multiplication => ILOpCode.Mul,
+                            _ => throw new NotSupportedException($"Unsupported arithmetic operator: {op}")
+                        };
 
-                        // If both are numeric literals, we can directly add them
+                        // If both are numeric literals, we can directly perform the operation
                         _il.OpCode(opCode);
 
                         // box numeric values
