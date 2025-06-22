@@ -49,6 +49,13 @@ namespace Js2IL.Services.ILGenerators
                 case Operator.Multiplication:
                 case Operator.Division:
                 case Operator.Remainder:
+                case Operator.Exponentiation:
+                case Operator.BitwiseAnd:
+                case Operator.BitwiseOr:
+                case Operator.BitwiseXor:
+                case Operator.LeftShift:
+                case Operator.RightShift:
+                case Operator.UnsignedRightShift:
                     // Handle arithmetic operators
                     ApplyArithmeticOperator(operatorType, binaryExpression);
                     break;
@@ -100,6 +107,12 @@ namespace Js2IL.Services.ILGenerators
                     case Operator.Multiplication:
                     case Operator.Division:
                     case Operator.Remainder:
+                    case Operator.BitwiseAnd:
+                    case Operator.BitwiseOr:
+                    case Operator.BitwiseXor:
+                    case Operator.LeftShift:
+                    case Operator.RightShift:
+                    case Operator.UnsignedRightShift:
                         var opCode = op switch
                         {
                             Operator.Addition => ILOpCode.Add,
@@ -107,6 +120,12 @@ namespace Js2IL.Services.ILGenerators
                             Operator.Multiplication => ILOpCode.Mul,
                             Operator.Division => ILOpCode.Div,
                             Operator.Remainder => ILOpCode.Rem,
+                            Operator.BitwiseAnd => ILOpCode.And,
+                            Operator.BitwiseOr => ILOpCode.Or,
+                            Operator.BitwiseXor => ILOpCode.Xor,
+                            Operator.LeftShift => ILOpCode.Shl,
+                            Operator.RightShift => ILOpCode.Shr,
+                            Operator.UnsignedRightShift => ILOpCode.Shr,
                             _ => throw new NotSupportedException($"Unsupported arithmetic operator: {op}")
                         };
 
@@ -117,10 +136,44 @@ namespace Js2IL.Services.ILGenerators
                         _il.OpCode(ILOpCode.Box);
                         _il.Token(_bclReferences.DoubleType);
                         break;
+                    case Operator.Exponentiation:
+                        // Exponentiation requires calling Math.Pow()
+                        ApplyExponentiationOperator();
+                        break;
                     default:
                         throw new NotSupportedException($"Unsupported arithmetic operator: {op}");
                 }
             }
+        }
+
+        private void ApplyExponentiationOperator()
+        {
+            // Create method signature: double Pow(double, double)
+            var powSig = new BlobBuilder();
+            new BlobEncoder(powSig)
+                .MethodSignature(isInstanceMethod: false)
+                .Parameters(2,
+                    returnType => returnType.Type().Double(),
+                    parameters =>
+                    {
+                        parameters.AddParameter().Type().Double();
+                        parameters.AddParameter().Type().Double();
+                    });
+            var powMethodSig = _metadataBuilder.GetOrAddBlob(powSig);
+
+            // Add a MemberRef to Math.Pow(double, double)
+            var mathPowMethodRef = _metadataBuilder.AddMemberReference(
+                _bclReferences.SystemMathType,
+                _metadataBuilder.GetOrAddString("Pow"),
+                powMethodSig);
+
+            // Call Math.Pow
+            _il.OpCode(ILOpCode.Call);
+            _il.Token(mathPowMethodRef);
+
+            // box the result as a double
+            _il.OpCode(ILOpCode.Box);
+            _il.Token(_bclReferences.DoubleType);
         }
 
         private void ApplyComparisonOperator(Operator op, LabelHandle? matchBranch, LabelHandle? notMatchBranch)

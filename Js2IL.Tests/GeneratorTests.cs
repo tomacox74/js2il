@@ -105,6 +105,62 @@ namespace Js2IL.Tests
             return GenerateTest(testName);
         }
 
+        [Fact]
+        public Task BinaryOperator_ExpNumberNumber()
+        {
+            // Arrange
+            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task BinaryOperator_BitwiseAndNumberNumber()
+        {
+            // Arrange
+            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task BinaryOperator_BitwiseOrNumberNumber()
+        {
+            // Arrange
+            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task BinaryOperator_BitwiseXorNumberNumber()
+        {
+            // Arrange
+            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task BinaryOperator_LeftShiftNumberNumber()
+        {
+            // Arrange
+            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task BinaryOperator_RightShiftNumberNumber()
+        {
+            // Arrange
+            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task BinaryOperator_UnsignedRightShiftNumberNumber()
+        {
+            // Arrange
+            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            return GenerateTest(testName);
+        }
+
         private Task GenerateTest(string testName)
         {
             var js = GetJavaScript(testName);

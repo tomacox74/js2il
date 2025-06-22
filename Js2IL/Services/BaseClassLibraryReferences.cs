@@ -56,6 +56,12 @@ namespace Js2IL.Services
                 metadataBuilder.GetOrAddString("System"),
                 metadataBuilder.GetOrAddString("String")
             );
+
+            this.SystemMathType = metadataBuilder.AddTypeReference(
+                this.SystemRuntimeAssembly,
+                metadataBuilder.GetOrAddString("System"),
+                metadataBuilder.GetOrAddString("Math")
+            );
         }
 
         public AssemblyReferenceHandle SystemRuntimeAssembly { get; private set; }
@@ -64,5 +70,6 @@ namespace Js2IL.Services
         public TypeReferenceHandle DoubleType { get; private set; }
         public TypeReferenceHandle ObjectType { get; private set; }
         public TypeReferenceHandle StringType { get; private set; }
+        public TypeReferenceHandle SystemMathType { get; private set; }
     }
 }
