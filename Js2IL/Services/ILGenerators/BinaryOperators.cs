@@ -47,6 +47,7 @@ namespace Js2IL.Services.ILGenerators
                 case Operator.Addition:
                 case Operator.Subtraction:
                 case Operator.Multiplication:
+                case Operator.Division:
                     // Handle arithmetic operators
                     ApplyArithmeticOperator(operatorType, binaryExpression);
                     break;
@@ -96,11 +97,13 @@ namespace Js2IL.Services.ILGenerators
                     case Operator.Addition:
                     case Operator.Subtraction:
                     case Operator.Multiplication:
+                    case Operator.Division:
                         var opCode = op switch
                         {
                             Operator.Addition => ILOpCode.Add,
                             Operator.Subtraction => ILOpCode.Sub,
                             Operator.Multiplication => ILOpCode.Mul,
+                            Operator.Division => ILOpCode.Div,
                             _ => throw new NotSupportedException($"Unsupported arithmetic operator: {op}")
                         };
 
