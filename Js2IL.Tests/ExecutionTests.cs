@@ -44,6 +44,118 @@ namespace Js2IL.Tests
             return ExecutionTest(testName);
         }
 
+        [Fact]
+        public Task BinaryOperator_AddStringNumber()
+        {
+            var testName = nameof(BinaryOperator_AddStringNumber);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task BinaryOperator_AddStringString()
+        {
+            var testName = nameof(BinaryOperator_AddStringString);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task BinaryOperator_BitwiseAndNumberNumber()
+        {
+            var testName = nameof(BinaryOperator_BitwiseAndNumberNumber);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task BinaryOperator_BitwiseOrNumberNumber()
+        {
+            var testName = nameof(BinaryOperator_BitwiseOrNumberNumber);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task BinaryOperator_BitwiseXorNumberNumber()
+        {
+            var testName = nameof(BinaryOperator_BitwiseXorNumberNumber);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task BinaryOperator_DivNumberNumber()
+        {
+            var testName = nameof(BinaryOperator_DivNumberNumber);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task BinaryOperator_ExpNumberNumber()
+        {
+            var testName = nameof(BinaryOperator_ExpNumberNumber);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task BinaryOperator_LeftShiftNumberNumber()
+        {
+            var testName = nameof(BinaryOperator_LeftShiftNumberNumber);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task BinaryOperator_ModNumberNumber()
+        {
+            var testName = nameof(BinaryOperator_ModNumberNumber);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task BinaryOperator_MulNumberNumber()
+        {
+            var testName = nameof(BinaryOperator_MulNumberNumber);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task BinaryOperator_RightShiftNumberNumber()
+        {
+            var testName = nameof(BinaryOperator_RightShiftNumberNumber);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task BinaryOperator_SubNumberNumber()
+        {
+            var testName = nameof(BinaryOperator_SubNumberNumber);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task BinaryOperator_UnsignedRightShiftNumberNumber()
+        {
+            var testName = nameof(BinaryOperator_UnsignedRightShiftNumberNumber);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task Generate_EnumerateProcessArgV()
+        {
+            var testName = nameof(Generate_EnumerateProcessArgV);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task Generate_ForLoopCountToFive()
+        {
+            var testName = nameof(Generate_ForLoopCountToFive);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task Generate_OperatorPlusPlusPostfix()
+        {
+            var testName = nameof(Generate_OperatorPlusPlusPostfix);
+            return ExecutionTest(testName);
+        }
+
         private Task ExecutionTest(string testName)
         {
             var js = GetJavaScript(testName);

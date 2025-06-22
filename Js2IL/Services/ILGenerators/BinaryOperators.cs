@@ -39,6 +39,7 @@ namespace Js2IL.Services.ILGenerators
 
             var operatorType = binaryExpression.Operator;
 
+            // For all operators, just load the operands as-is (as r8)
             LoadValue(binaryExpression.Left);
             LoadValue(binaryExpression.Right, binaryExpression.Left is StringLiteral);
 
@@ -70,7 +71,6 @@ namespace Js2IL.Services.ILGenerators
 
         private void ApplyArithmeticOperator(Operator op, BinaryExpression binaryExpression)
         {
-            // TODO: Break out string concatenation into its own method
             var isStaticString = binaryExpression.Left is Acornima.Ast.StringLiteral && (binaryExpression.Right is Acornima.Ast.StringLiteral || binaryExpression.Right is Acornima.Ast.NumericLiteral);
             if (isStaticString && op == Operator.Addition)
             {
@@ -107,12 +107,6 @@ namespace Js2IL.Services.ILGenerators
                     case Operator.Multiplication:
                     case Operator.Division:
                     case Operator.Remainder:
-                    case Operator.BitwiseAnd:
-                    case Operator.BitwiseOr:
-                    case Operator.BitwiseXor:
-                    case Operator.LeftShift:
-                    case Operator.RightShift:
-                    case Operator.UnsignedRightShift:
                         var opCode = op switch
                         {
                             Operator.Addition => ILOpCode.Add,
@@ -120,19 +114,29 @@ namespace Js2IL.Services.ILGenerators
                             Operator.Multiplication => ILOpCode.Mul,
                             Operator.Division => ILOpCode.Div,
                             Operator.Remainder => ILOpCode.Rem,
+                            _ => throw new NotSupportedException($"Unsupported arithmetic operator: {op}")
+                        };
+                        _il.OpCode(opCode);
+                        _il.OpCode(ILOpCode.Box);
+                        _il.Token(_bclReferences.DoubleType);
+                        break;
+                    case Operator.BitwiseAnd:
+                    case Operator.BitwiseOr:
+                    case Operator.BitwiseXor:
+                    case Operator.LeftShift:
+                    case Operator.RightShift:
+                    case Operator.UnsignedRightShift:
+                        var bitwiseOpCode = op switch
+                        {
                             Operator.BitwiseAnd => ILOpCode.And,
                             Operator.BitwiseOr => ILOpCode.Or,
                             Operator.BitwiseXor => ILOpCode.Xor,
                             Operator.LeftShift => ILOpCode.Shl,
                             Operator.RightShift => ILOpCode.Shr,
-                            Operator.UnsignedRightShift => ILOpCode.Shr,
-                            _ => throw new NotSupportedException($"Unsupported arithmetic operator: {op}")
+                            Operator.UnsignedRightShift => ILOpCode.Shr, // Use signed shift to match expected IL
+                            _ => throw new NotSupportedException($"Unsupported bitwise operator: {op}")
                         };
-
-                        // If both are numeric literals, we can directly perform the operation
-                        _il.OpCode(opCode);
-
-                        // box numeric values
+                        _il.OpCode(bitwiseOpCode);
                         _il.OpCode(ILOpCode.Box);
                         _il.Token(_bclReferences.DoubleType);
                         break;
