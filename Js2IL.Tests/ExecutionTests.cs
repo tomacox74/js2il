@@ -162,6 +162,13 @@ namespace Js2IL.Tests
             return ExecutionTest(testName);
         }
 
+        [Fact]
+        public Task UnaryOperator_MinusMinusPostfix()
+        {
+            var testName = nameof(UnaryOperator_MinusMinusPostfix);
+            return ExecutionTest(testName);
+        }
+
         private Task ExecutionTest(string testName)
         {
             var js = GetJavaScript(testName);

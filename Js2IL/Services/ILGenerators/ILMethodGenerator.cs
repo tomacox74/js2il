@@ -186,11 +186,11 @@ namespace Js2IL.Services.ILGenerators
 
         private void GenerateUpdateExpression(Acornima.Ast.UpdateExpression updateExpression)
         {
-            if (updateExpression.Operator != Acornima.Operator.Increment || updateExpression.Prefix)
+            if ((updateExpression.Operator != Acornima.Operator.Increment && updateExpression.Operator != Acornima.Operator.Decrement) || updateExpression.Prefix)
             {
                 throw new NotSupportedException($"Unsupported update expression operator: {updateExpression.Operator} or prefix: {updateExpression.Prefix}");
             }
-            // Handle postfix increment (e.g., x++)
+            // Handle postfix increment (x++) and decrement (x--)
             var variableName = (updateExpression.Argument as Acornima.Ast.Identifier)!.Name;
             var variable = _variables[variableName];
             // Load the variable
@@ -198,10 +198,17 @@ namespace Js2IL.Services.ILGenerators
             // unbox the variable
             _il.OpCode(ILOpCode.Unbox_any);
             // Assuming the variable is a double because it is the only option that has parity with javascript numbers
-            _il.Token(_bclReferences.DoubleType); 
-            // increment by 1
+            _il.Token(_bclReferences.DoubleType);
+            // increment or decrement by 1
             _il.LoadConstantR8(1.0);
-            _il.OpCode(ILOpCode.Add);
+            if (updateExpression.Operator == Acornima.Operator.Increment)
+            {
+                _il.OpCode(ILOpCode.Add);
+            }
+            else // Decrement
+            {
+                _il.OpCode(ILOpCode.Sub);
+            }
             // box the result back to an object
             _il.OpCode(ILOpCode.Box);
             _il.Token(_bclReferences.DoubleType);
