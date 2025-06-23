@@ -19,11 +19,13 @@ namespace Js2IL.Tests
         private readonly JavaScriptParser _parser;
         private readonly JavaScriptAstValidator _validator;
         private readonly string _outputPath;
+        private readonly VerifySettings _verifySettings = new();
 
         public GeneratorTests()
         {
             _parser = new JavaScriptParser();
             _validator = new JavaScriptAstValidator();
+            _verifySettings.DisableDiff();
 
             // create a temp directory for the generated assemblies
             _outputPath = Path.Combine(Path.GetTempPath(), "Js2IL.Tests");
@@ -104,7 +106,7 @@ namespace Js2IL.Tests
         }
 
         [Fact]
-        public Task Generate_OperatorPlusPlusPostfix()
+        public Task UnaryOperator_PlusPlusPostfix()
         {
             // Arrange
             var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
@@ -188,7 +190,7 @@ namespace Js2IL.Tests
             var expectedPath = Path.Combine(_outputPath, $"{testName}.dll");
 
             var il = Utilities.AssemblyToText.ConvertToText(expectedPath);
-            return Verify(il);
+            return Verify(il, _verifySettings);
         }
 
         private string GetJavaScript(string testName)

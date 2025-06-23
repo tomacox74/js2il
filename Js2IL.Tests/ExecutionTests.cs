@@ -158,9 +158,9 @@ namespace Js2IL.Tests
         }
 
         [Fact]
-        public Task Generate_OperatorPlusPlusPostfix()
+        public Task UnaryOperator_PlusPlusPostfix()
         {
-            var testName = nameof(Generate_OperatorPlusPlusPostfix);
+            var testName = nameof(UnaryOperator_PlusPlusPostfix);
             return ExecutionTest(testName);
         }
 
