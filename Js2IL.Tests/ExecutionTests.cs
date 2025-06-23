@@ -39,7 +39,6 @@ namespace Js2IL.Tests
         [Fact]
         public Task BinaryOperator_AddNumberNumber()
         {
-            // Arrange
             var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
             return ExecutionTest(testName);
         }
@@ -94,9 +93,23 @@ namespace Js2IL.Tests
         }
 
         [Fact]
+        public Task BinaryOperator_GreaterThan()
+        {
+            var testName = nameof(BinaryOperator_GreaterThan);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
         public Task BinaryOperator_LeftShiftNumberNumber()
         {
             var testName = nameof(BinaryOperator_LeftShiftNumberNumber);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task BinaryOperator_LessThan()
+        {
+            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
             return ExecutionTest(testName);
         }
 
@@ -132,21 +145,6 @@ namespace Js2IL.Tests
         public Task BinaryOperator_UnsignedRightShiftNumberNumber()
         {
             var testName = nameof(BinaryOperator_UnsignedRightShiftNumberNumber);
-            return ExecutionTest(testName);
-        }
-
-        [Fact]
-        public Task BinaryOperator_LessThan()
-        {
-            // Arrange
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
-            return ExecutionTest(testName);
-        }
-
-        [Fact]
-        public Task BinaryOperator_GreaterThan()
-        {
-            var testName = nameof(BinaryOperator_GreaterThan);
             return ExecutionTest(testName);
         }
 
