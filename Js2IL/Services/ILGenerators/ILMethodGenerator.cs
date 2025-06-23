@@ -235,31 +235,6 @@ namespace Js2IL.Services.ILGenerators
             var additionalParameterVariable = (callConsoleLog.Arguments[1] as Acornima.Ast.Identifier)!.Name;
             var variable = _variables.Get(additionalParameterVariable);
 
-
-            // Reference to System.Console
-            var systemConsoleTypeReference = _metadataBuilder.AddTypeReference(
-                _bclReferences.SystemConsoleAssembly,
-                _metadataBuilder.GetOrAddString("System"),
-                _metadataBuilder.GetOrAddString("Console"));
-
-            // Create method signature: void WriteLine(string)
-            var consoleSig = new BlobBuilder();
-            new BlobEncoder(consoleSig)
-                .MethodSignature(isInstanceMethod: false)
-                .Parameters(2,
-                    returnType => returnType.Void(),
-                    parameters => {
-                        parameters.AddParameter().Type().String();
-                        parameters.AddParameter().Type().Object();
-                    });
-            var writeLineSig = _metadataBuilder.GetOrAddBlob(consoleSig);
-
-            // Add a MemberRef to Console.WriteLine(string)
-            var writeLineMemberRef = _metadataBuilder.AddMemberReference(
-                systemConsoleTypeReference,
-                _metadataBuilder.GetOrAddString("WriteLine"),
-                writeLineSig);
-
             var messageHandle = _metadataBuilder.GetOrAddUserString(message);
 
             // Assuming Console.WriteLine(string, object) is available in the BCL references
@@ -269,7 +244,7 @@ namespace Js2IL.Services.ILGenerators
             _il.LoadLocal(variable.LocalIndex!.Value);
 
             _il.OpCode(ILOpCode.Call);
-            _il.Token(writeLineMemberRef);
+            _il.Token(_bclReferences.ConsoleWriteLine_StringObject_Ref);
         }
     }
 }
