@@ -143,6 +143,12 @@ namespace Js2IL.Tests
             return ExecutionTest(testName);
         }
 
+        [Fact]
+        public Task BinaryOperator_GreaterThan()
+        {
+            var testName = nameof(BinaryOperator_GreaterThan);
+            return ExecutionTest(testName);
+        }
 
         [Fact]
         public Task Generate_ForLoopCountToFive()

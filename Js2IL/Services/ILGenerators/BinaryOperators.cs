@@ -68,7 +68,8 @@ namespace Js2IL.Services.ILGenerators
                     ApplyArithmeticOperator(operatorType, binaryExpression, isBitwiseOrShift);
                     break;
                 case Operator.LessThan:
-                    ApplyComparisonOperator(Operator.LessThan, matchBranch, notMatchBranch);
+                case Operator.GreaterThan:
+                    ApplyComparisonOperator(operatorType, matchBranch, notMatchBranch);
                     break;
                 default:
                     throw new NotSupportedException($"Unsupported binary operator: {operatorType}");
@@ -193,34 +194,43 @@ namespace Js2IL.Services.ILGenerators
 
         private void ApplyComparisonOperator(Operator op, LabelHandle? matchBranch, LabelHandle? notMatchBranch)
         {
+            ILOpCode? compareOpCode = null;
+            ILOpCode? branchOpCode = null;
             switch (op)
             {
                 case Operator.LessThan:
-                    if (!matchBranch.HasValue)
-                    {
-                        _il.OpCode(ILOpCode.Clt); // compare less than
-                        // box it as a boolean result
-                        _il.OpCode(ILOpCode.Box);
-                        _il.Token(_bclReferences.BooleanType);
-                    }
-                    else
-                    {
-                        // instead of a comparison which outputs a 1 or 0 we want to branch
-                        _il.Branch(ILOpCode.Blt, matchBranch.Value); // branch if less than
-                        if (notMatchBranch.HasValue)
-                        {
-                            // if we have a not match branch, we need to branch there as well
-                            _il.Branch(ILOpCode.Br, notMatchBranch.Value);
-                        }
-                        else
-                        {
-                            // if we don't have a not match branch, we just continue
-                            _il.OpCode(ILOpCode.Pop); // pop the result of the comparison
-                        }
-                    }
+                    compareOpCode = ILOpCode.Clt;
+                    branchOpCode = ILOpCode.Blt;
+                    break;
+                case Operator.GreaterThan:
+                    compareOpCode = ILOpCode.Cgt;
+                    branchOpCode = ILOpCode.Bgt;
                     break;
                 default:
                     throw new NotSupportedException($"Unsupported comparison operator: {op}");
+            }
+
+            if (!matchBranch.HasValue)
+            {
+                _il.OpCode(compareOpCode.Value); // compare
+                // box it as a boolean result
+                _il.OpCode(ILOpCode.Box);
+                _il.Token(_bclReferences.BooleanType);
+            }
+            else
+            {
+                // instead of a comparison which outputs a 1 or 0 we want to branch
+                _il.Branch(branchOpCode.Value, matchBranch.Value); // branch if condition met
+                if (notMatchBranch.HasValue)
+                {
+                    // if we have a not match branch, we need to branch there as well
+                    _il.Branch(ILOpCode.Br, notMatchBranch.Value);
+                }
+                else
+                {
+                    // if we don't have a not match branch, we just continue
+                    _il.OpCode(ILOpCode.Pop); // pop the result of the comparison
+                }
             }
         }
 
