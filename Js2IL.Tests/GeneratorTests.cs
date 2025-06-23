@@ -154,6 +154,13 @@ namespace Js2IL.Tests
         }
 
         [Fact]
+        public Task Generate_ForLoopCountDownFromFive()
+        {
+            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task UnaryOperator_PlusPlusPostfix()
         {
             var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
