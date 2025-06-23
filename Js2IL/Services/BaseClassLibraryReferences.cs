@@ -32,7 +32,7 @@ namespace Js2IL.Services
                 hashValue: default
             );
 
-            // Common Type References
+            // Common Runtime References
             this.BooleanType = metadataBuilder.AddTypeReference(
                 this.SystemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
@@ -57,11 +57,34 @@ namespace Js2IL.Services
                 metadataBuilder.GetOrAddString("String")
             );
 
+            // System.Math References
             this.SystemMathType = metadataBuilder.AddTypeReference(
                 this.SystemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Math")
-            );
+                metadataBuilder.GetOrAddString("Math"));
+
+            // System.Console References
+            var systemConsoleTypeReference = metadataBuilder.AddTypeReference(
+                this.SystemConsoleAssembly,
+                metadataBuilder.GetOrAddString("System"),
+                metadataBuilder.GetOrAddString("Console"));
+
+            // Create method signature: void WriteLine(string)
+            var consoleSig = new BlobBuilder();
+            new BlobEncoder(consoleSig)
+                .MethodSignature(isInstanceMethod: false)
+                .Parameters(2,
+                    returnType => returnType.Void(),
+                    parameters => {
+                        parameters.AddParameter().Type().String();
+                        parameters.AddParameter().Type().Object();
+                    });
+            var writeLineSig = metadataBuilder.GetOrAddBlob(consoleSig);
+
+            this.ConsoleWriteLine_StringObject_Ref = metadataBuilder.AddMemberReference(
+                systemConsoleTypeReference,
+                metadataBuilder.GetOrAddString("WriteLine"),
+                writeLineSig);
         }
 
         public AssemblyReferenceHandle SystemRuntimeAssembly { get; private set; }
@@ -71,5 +94,7 @@ namespace Js2IL.Services
         public TypeReferenceHandle ObjectType { get; private set; }
         public TypeReferenceHandle StringType { get; private set; }
         public TypeReferenceHandle SystemMathType { get; private set; }
+
+        public MemberReferenceHandle ConsoleWriteLine_StringObject_Ref { get; private set; }
     }
 }

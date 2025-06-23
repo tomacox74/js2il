@@ -9,28 +9,38 @@ namespace Js2IL.Services
     internal record Variable
     {
         public required string Name;
-
         public int? LocalIndex = null;
     }
 
 
     internal class Variables : Dictionary<string, Variable>
     {
-        public Variable GetOrCreate(string name)
+        private int _nextLocalIndex = 0;
+
+        public Variable CreateLocal(string name)
         {
-            if (!this.TryGetValue(name, out var variable))
+            var variable = new Variable { Name = name };
+            variable.LocalIndex = _nextLocalIndex++;
+            if (this.ContainsKey(name))
             {
-                variable = new Variable { Name = name };
-                this[name] = variable;
+                throw new InvalidOperationException($"Variable '{name}' already exists.");
             }
+            this[name] = variable;
             return variable;
         }
-        public void SetLocalIndex(string name, int localIndex)
+
+        public Variable Get(string name)
         {
             if (this.TryGetValue(name, out var variable))
             {
-                variable.LocalIndex = localIndex;
+                return variable;
             }
+            throw new KeyNotFoundException($"Variable '{name}' not found.");
+        }
+
+        public int GetNumberOfLocals()
+        {
+            return _nextLocalIndex;
         }
     }
 }

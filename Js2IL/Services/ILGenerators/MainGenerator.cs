@@ -27,13 +27,18 @@ namespace Js2IL.Services.ILGenerators
             var variables = _ilGenerator.Variables;
             var bclReferences = _ilGenerator.BclReferences;
 
-            // local variables
-            var localSig = new BlobBuilder();
-            var localVariableEncoder = new BlobEncoder(localSig).LocalVariableSignature(1);
-
-            _ilGenerator.GenerateStatements(ast.Body, localVariableEncoder);
+            _ilGenerator.GenerateStatements(ast.Body);
 
             _ilGenerator.IL.OpCode(ILOpCode.Ret);
+
+            // local variables
+            int numberOfLocals = variables.GetNumberOfLocals();
+            var localSig = new BlobBuilder();
+            var localVariableEncoder = new BlobEncoder(localSig).LocalVariableSignature(numberOfLocals);
+            for (int i = 0; i < numberOfLocals; i++)
+            {
+                localVariableEncoder.AddVariable().Type().Object();
+            }
 
             var localSignature = metadataBuilder.AddStandaloneSignature(metadataBuilder.GetOrAddBlob(localSig));
 

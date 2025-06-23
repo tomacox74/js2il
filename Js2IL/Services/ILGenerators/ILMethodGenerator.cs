@@ -41,19 +41,14 @@ namespace Js2IL.Services.ILGenerators
             _binaryOperators = new BinaryOperators(metadataBuilder, _il, variables, bclReferences);
         }
 
-        public void DeclareVariable(VariableDeclaration variableDeclaraion, LocalVariablesEncoder localVariableEncoder)
+        public void DeclareVariable(VariableDeclaration variableDeclaraion)
         {
             // TODO need to handle multiple
             var variableAST = variableDeclaraion.Declarations.FirstOrDefault()!;
             var variableName = (variableAST.Id as Acornima.Ast.Identifier)!.Name;
 
             // add the variable to the collection
-            var variable = _variables.GetOrCreate(variableName);
-            variable.LocalIndex = 0;
-
-            // how do we know the type of the variable?
-            // variable 0
-            localVariableEncoder.AddVariable().Type().Object();
+            var variable = _variables.CreateLocal(variableName);
 
             // now we need to generate the expession portion
             if (variableAST.Init != null && variable.LocalIndex != null)
@@ -64,31 +59,31 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-        public void GenerateStatements(NodeList<Statement> statements, LocalVariablesEncoder localVariableEncoder)
+        public void GenerateStatements(NodeList<Statement> statements)
         {
             // Iterate through each statement in the block
             foreach (var statement in statements)
             {
-                GenerateStatement(statement, localVariableEncoder);
+                GenerateStatement(statement);
             }
         }
 
-        public void GenerateStatement(Statement statement, LocalVariablesEncoder localVariableEncoder)
+        public void GenerateStatement(Statement statement)
         {
             switch (statement)
             {
                 case VariableDeclaration variableDeclaration:
-                    DeclareVariable(variableDeclaration, localVariableEncoder);
+                    DeclareVariable(variableDeclaration);
                     break;
                 case ExpressionStatement expressionStatement:
                     GenerateExpressionStatement(expressionStatement);
                     break;
                 case ForStatement forStatement:
-                    GenerateForStatement(forStatement, localVariableEncoder);
+                    GenerateForStatement(forStatement);
                     break;
                 case BlockStatement blockStatement:
                     // Handle BlockStatement
-                    GenerateStatements(blockStatement.Body, localVariableEncoder);
+                    GenerateStatements(blockStatement.Body);
                     break;
                 default:
                     throw new NotSupportedException($"Unsupported statement type: {statement.Type}");
@@ -116,12 +111,12 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-        public void GenerateForStatement(Acornima.Ast.ForStatement forStatement, LocalVariablesEncoder localVariableEncoder)
+        public void GenerateForStatement(Acornima.Ast.ForStatement forStatement)
         {
             // first lets encode the initalizer
             if (forStatement.Init is Acornima.Ast.VariableDeclaration variableDeclaration)
             {
-                DeclareVariable(variableDeclaration, localVariableEncoder);
+                DeclareVariable(variableDeclaration);
             }
             else
             {
@@ -144,7 +139,7 @@ namespace Js2IL.Services.ILGenerators
             // now the body
             _il.MarkLabel(loopBodyLabel);
 
-            GenerateStatement(forStatement.Body, localVariableEncoder);
+            GenerateStatement(forStatement.Body);
 
             if (forStatement.Update != null)
             {
@@ -238,7 +233,7 @@ namespace Js2IL.Services.ILGenerators
             // use formatstring to append the additonal parameters
             var message = (callConsoleLog.Arguments[0] as Acornima.Ast.StringLiteral)!.Value + " {0}";
             var additionalParameterVariable = (callConsoleLog.Arguments[1] as Acornima.Ast.Identifier)!.Name;
-            var variable = _variables.GetOrCreate(additionalParameterVariable);
+            var variable = _variables.Get(additionalParameterVariable);
 
 
             // Reference to System.Console
