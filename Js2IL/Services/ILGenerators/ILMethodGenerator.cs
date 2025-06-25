@@ -14,13 +14,14 @@ namespace Js2IL.Services.ILGenerators
     /// <summary>
     /// Generates Intermediate Language (IL) code from a JavaScript Abstract Syntax Tree (AST) for a method
     /// </summary>
-    internal class ILMethodGenerator
+    internal class ILMethodGenerator : IMethodExpressionEmitter
     {
         private Variables _variables;
         private BaseClassLibraryReferences _bclReferences;
         private MetadataBuilder _metadataBuilder;
         private InstructionEncoder _il;
         private BinaryOperators _binaryOperators;
+        private IMethodExpressionEmitter _expressionEmitter;
 
         /*
          * Temporary exposure of private members until refactoring gets cleaner
@@ -39,6 +40,9 @@ namespace Js2IL.Services.ILGenerators
             var methodIl = new BlobBuilder();
             _il = new InstructionEncoder(methodIl, new ControlFlowBuilder());
             _binaryOperators = new BinaryOperators(metadataBuilder, _il, variables, bclReferences);
+
+            // temporary as we set the table for further refactoring
+            this._expressionEmitter = this;
         }
 
         public void DeclareVariable(VariableDeclaration variableDeclaraion)
@@ -54,7 +58,7 @@ namespace Js2IL.Services.ILGenerators
             if (variableAST.Init != null && variable.LocalIndex != null)
             {
                 // otherwise we need to generate the expression
-                GenerateExpression(variableAST.Init, null, null);
+                this._expressionEmitter.Emit(variableAST.Init);
                 _il.StoreLocal(variable.LocalIndex.Value);
             }
         }
@@ -100,7 +104,7 @@ namespace Js2IL.Services.ILGenerators
                     break;
                 case Acornima.Ast.BinaryExpression binaryExpression:
                     // Handle BinaryExpression
-                    _binaryOperators.Generate(binaryExpression, null, null);
+                    _binaryOperators.Generate(binaryExpression);
                     break;
                 case Acornima.Ast.UpdateExpression updateExpression:
                     // Handle UpdateExpression
@@ -133,7 +137,11 @@ namespace Js2IL.Services.ILGenerators
             //the test condition in the for loop
             if (forStatement.Test != null)
             {
-                GenerateExpression(forStatement.Test, loopBodyLabel, loopEndLabel);
+                this._expressionEmitter.Emit(forStatement.Test, branching: new ConditionalBranching
+                {
+                    BranchOnTrue = loopBodyLabel,
+                    BranchOnFalse = loopEndLabel
+                });
             }
 
             // now the body
@@ -143,7 +151,7 @@ namespace Js2IL.Services.ILGenerators
 
             if (forStatement.Update != null)
             {
-                GenerateExpression(forStatement.Update, null, null);
+                _expressionEmitter.Emit(forStatement.Update);
             }
 
             // branch back to the start of the loop
@@ -153,35 +161,62 @@ namespace Js2IL.Services.ILGenerators
             _il.MarkLabel(loopEndLabel);
         }
 
-        /// <summary>
-        /// Generate the IL for a expression
-        /// </summary>
-        /// <param name="expression">the expression to generate the IL for</param>
-        /// <param name="matchBranch">optional, this is when the expression is for control flow</param>
-        /// <param name="notMatchBranch">optional, this is the expression is for control flow</param>
-        /// <exception cref="NotSupportedException"></exception>
-        private void GenerateExpression(Expression expression, LabelHandle? matchBranch, LabelHandle? notMatchBranch)
+        private void GenerateObjectExpresion(ObjectExpression objectExpression)
         {
-            switch (expression)
-            {
-                case BinaryExpression binaryExpression:
-                    _binaryOperators.Generate(binaryExpression, matchBranch, notMatchBranch);
-                    break;
-                case NumericLiteral numericLiteral:
-                    // Load numeric literal
-                    _il.LoadConstantR8(numericLiteral.Value);
-                    
-                    // box numeric values
-                    _il.OpCode(ILOpCode.Box);
-                    _il.Token(_bclReferences.DoubleType);
+            // this is some test code
+            object myExpandoSample = new System.Dynamic.ExpandoObject();
+            (myExpandoSample as IDictionary<string, object?>)!["test"] = "test value";
 
-                    break;
-                case UpdateExpression updateExpression:
-                    GenerateUpdateExpression(updateExpression);
-                    break;
-                default:
-                    throw new NotSupportedException($"Unsupported expression type: {expression.Type}");
+            // first we need to creat a new instance of the expando object
+            _il.OpCode(ILOpCode.Newobj);
+            _il.Token(_bclReferences.Expando_Ctor_Ref);
+
+            // create a temp variable to hold the ExpandoObject reference
+            // this is a hmmmmm... more literal translation
+            var tempVariable = _variables.CreateLocal("tempExpandoObject");
+            _il.StoreLocal(tempVariable.LocalIndex!.Value);
+
+            // we create a new object instance for the object expression
+            // the generic solution is to use the ExpandoObject
+            // will apply optimizations in the future when we can calculate the object schema
+            foreach (var property in objectExpression.Properties)
+            {
+                if (property is not ObjectProperty objectProperty)
+                {
+                    throw new NotSupportedException($"Unsupported object property type: {property.Type}");
+                }
+
+                if (objectProperty.Key is not Identifier propertyKey)
+                {
+                    throw new NotSupportedException($"Unsupported object property key type: {objectProperty.Key.Type}");
+                }
+
+                if (objectProperty.Value is not Expression propertyValue)
+                {
+                    throw new NotSupportedException($"Unsupported object property value type: {objectProperty.Value.Type}");
+                }
+
+                // load the expando object reference from the temp variable
+                _il.LoadLocal(tempVariable.LocalIndex!.Value);
+
+                // in a perfect world we could support any expression for the property name
+                // but not feature rich enough to support that yet
+                //_expressionEmitter.Emit(objectProperty.Key);
+                _il.LoadString(_metadataBuilder.GetOrAddUserString(propertyKey.Name));
+
+                // Load the value of the property
+                _expressionEmitter.Emit(propertyValue);
+
+                // call set_Item on the ExpandoObject to set the property value
+                _il.OpCode(ILOpCode.Callvirt);
+                _il.Token(_bclReferences.IDictionary_SetItem_Ref);
             }
+
+            // load the ExpandoObject reference from the temp variable
+            _il.LoadLocal(tempVariable.LocalIndex!.Value);
+
+            // After all properties are set, the ExpandoObject is on the stack
+            // this is the expected behavior.  The consumer for this expression output chooses what to do with it.
         }
 
         private void GenerateUpdateExpression(Acornima.Ast.UpdateExpression updateExpression)
@@ -252,6 +287,34 @@ namespace Js2IL.Services.ILGenerators
 
             _il.OpCode(ILOpCode.Call);
             _il.Token(_bclReferences.ConsoleWriteLine_StringObject_Ref);
+        }
+
+        void IMethodExpressionEmitter.Emit(Expression expression, bool coerceToString, ConditionalBranching? branching)
+        {
+            switch (expression)
+            {
+                case BinaryExpression binaryExpression:
+                    _binaryOperators.Generate(binaryExpression, branching);
+                    break;
+                case NumericLiteral numericLiteral:
+                    // Load numeric literal
+                    _binaryOperators.LoadValue(expression, coerceToString);
+
+                    // box numeric values
+                    _il.OpCode(ILOpCode.Box);
+                    _il.Token(_bclReferences.DoubleType);
+
+                    break;
+                case UpdateExpression updateExpression:
+                    GenerateUpdateExpression(updateExpression);
+                    break;
+                case ObjectExpression objectExpression:
+                    GenerateObjectExpresion(objectExpression);
+                    break;
+                default:
+                    _binaryOperators.LoadValue(expression, coerceToString);
+                    break;
+            }
         }
     }
 }

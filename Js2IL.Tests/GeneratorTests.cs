@@ -174,6 +174,13 @@ namespace Js2IL.Tests
             return GenerateTest(testName);
         }
 
+        [Fact]
+        public Task ObjectLiteral()
+        {
+            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            return GenerateTest(testName);
+        }
+
         private Task GenerateTest(string testName)
         {
             var js = GetJavaScript(testName);

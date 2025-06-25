@@ -30,7 +30,7 @@ namespace Js2IL.Services.ILGenerators
             _bclReferences = bclReferences;
         }
 
-        public void Generate(BinaryExpression binaryExpression, LabelHandle? matchBranch, LabelHandle? notMatchBranch)
+        public void Generate(BinaryExpression binaryExpression, ConditionalBranching? branching = null)
         {
             if (binaryExpression.Left == null || binaryExpression.Right == null)
             {
@@ -69,7 +69,7 @@ namespace Js2IL.Services.ILGenerators
                     break;
                 case Operator.LessThan:
                 case Operator.GreaterThan:
-                    ApplyComparisonOperator(operatorType, matchBranch, notMatchBranch);
+                    ApplyComparisonOperator(operatorType, branching);
                     break;
                 default:
                     throw new NotSupportedException($"Unsupported binary operator: {operatorType}");
@@ -192,7 +192,7 @@ namespace Js2IL.Services.ILGenerators
             _il.Token(_bclReferences.DoubleType);
         }
 
-        private void ApplyComparisonOperator(Operator op, LabelHandle? matchBranch, LabelHandle? notMatchBranch)
+        private void ApplyComparisonOperator(Operator op, ConditionalBranching? branching = null)
         {
             ILOpCode? compareOpCode = null;
             ILOpCode? branchOpCode = null;
@@ -210,7 +210,7 @@ namespace Js2IL.Services.ILGenerators
                     throw new NotSupportedException($"Unsupported comparison operator: {op}");
             }
 
-            if (!matchBranch.HasValue)
+            if (branching == null)
             {
                 _il.OpCode(compareOpCode.Value); // compare
                 // box it as a boolean result
@@ -219,8 +219,11 @@ namespace Js2IL.Services.ILGenerators
             }
             else
             {
+                var matchBranch = branching.BranchOnTrue;
+                var notMatchBranch = branching.BranchOnFalse;
+
                 // instead of a comparison which outputs a 1 or 0 we want to branch
-                _il.Branch(branchOpCode.Value, matchBranch.Value); // branch if condition met
+                _il.Branch(branchOpCode.Value, matchBranch); // branch if condition met
                 if (notMatchBranch.HasValue)
                 {
                     // if we have a not match branch, we need to branch there as well
@@ -234,7 +237,17 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-        private void LoadValue(Expression expression, bool forceString = false)
+        /// <summary>
+        /// for loading literal expresions onto the IL stack.
+        /// i.e. 
+        /// x = 5;
+        /// x = "hello world";
+        /// x = true;
+        /// </summary>
+        /// <remarks>
+        /// This does not belong here.. need to refactor
+        /// </remarks>
+        public void LoadValue(Expression expression, bool forceString = false)
         {
             switch (expression)
             {
