@@ -22,6 +22,7 @@ namespace Js2IL.Services.ILGenerators
         private InstructionEncoder _il;
         private BinaryOperators _binaryOperators;
         private IMethodExpressionEmitter _expressionEmitter;
+        private Runtime _runtime;
 
         /*
          * Temporary exposure of private members until refactoring gets cleaner
@@ -43,6 +44,7 @@ namespace Js2IL.Services.ILGenerators
 
             // temporary as we set the table for further refactoring
             this._expressionEmitter = this;
+            this._runtime = new Runtime(metadataBuilder, _il);
         }
 
         public void DeclareVariable(VariableDeclaration variableDeclaraion)
@@ -163,18 +165,9 @@ namespace Js2IL.Services.ILGenerators
 
         private void GenerateObjectExpresion(ObjectExpression objectExpression)
         {
-            // this is some test code
-            object myExpandoSample = new System.Dynamic.ExpandoObject();
-            (myExpandoSample as IDictionary<string, object?>)!["test"] = "test value";
-
             // first we need to creat a new instance of the expando object
             _il.OpCode(ILOpCode.Newobj);
             _il.Token(_bclReferences.Expando_Ctor_Ref);
-
-            // create a temp variable to hold the ExpandoObject reference
-            // this is a hmmmmm... more literal translation
-            var tempVariable = _variables.CreateLocal("tempExpandoObject");
-            _il.StoreLocal(tempVariable.LocalIndex!.Value);
 
             // we create a new object instance for the object expression
             // the generic solution is to use the ExpandoObject
@@ -196,8 +189,8 @@ namespace Js2IL.Services.ILGenerators
                     throw new NotSupportedException($"Unsupported object property value type: {objectProperty.Value.Type}");
                 }
 
-                // load the expando object reference from the temp variable
-                _il.LoadLocal(tempVariable.LocalIndex!.Value);
+                // Duplicate the ExpandoObject reference on the stack
+                _il.OpCode(ILOpCode.Dup); 
 
                 // in a perfect world we could support any expression for the property name
                 // but not feature rich enough to support that yet
@@ -211,9 +204,6 @@ namespace Js2IL.Services.ILGenerators
                 _il.OpCode(ILOpCode.Callvirt);
                 _il.Token(_bclReferences.IDictionary_SetItem_Ref);
             }
-
-            // load the ExpandoObject reference from the temp variable
-            _il.LoadLocal(tempVariable.LocalIndex!.Value);
 
             // After all properties are set, the ExpandoObject is on the stack
             // this is the expected behavior.  The consumer for this expression output chooses what to do with it.
@@ -284,6 +274,7 @@ namespace Js2IL.Services.ILGenerators
 
             // Load local 0 (which is assumed to be the int x)
             _il.LoadLocal(variable.LocalIndex!.Value);
+            _runtime.InvokeToString();
 
             _il.OpCode(ILOpCode.Call);
             _il.Token(_bclReferences.ConsoleWriteLine_StringObject_Ref);

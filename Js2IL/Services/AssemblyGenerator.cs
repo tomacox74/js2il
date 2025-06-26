@@ -121,6 +121,11 @@ namespace Js2IL.Services
             File.WriteAllBytes(assemblyDll, peImage.ToArray());
 
             RuntimeConfigWriter.WriteRuntimeConfigJson(assemblyDll, _systemRuntimeAssembly);
+
+            var thisAssemblyPath = typeof(AssemblyGenerator).Assembly.Location;
+            var thisAssemblyFileName = Path.GetFileName(thisAssemblyPath);
+            var copyAssemblyToLocation = Path.Combine(outputPath, thisAssemblyFileName);
+            File.Copy(thisAssemblyPath, copyAssemblyToLocation, true);
         }
     }
 }

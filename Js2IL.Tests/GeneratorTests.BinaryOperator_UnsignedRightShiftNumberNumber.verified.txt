@@ -8,7 +8,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 41 (0x29)
+		// Code size: 46 (0x2e)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -26,8 +26,9 @@
 		IL_001c: stloc.0
 		IL_001d: ldstr "x is {0}"
 		IL_0022: ldloc.0
-		IL_0023: call void [System.Console]System.Console::WriteLine(string, object)
-		IL_0028: ret
+		IL_0023: call string [Js2IL]Js2IL.Runtime.DotNet2JSConversions::ToString(object)
+		IL_0028: call void [System.Console]System.Console::WriteLine(string, object)
+		IL_002d: ret
 	} // end of method Program::Main
 
 } // end of class Program
