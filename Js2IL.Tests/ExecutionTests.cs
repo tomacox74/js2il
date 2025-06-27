@@ -197,6 +197,13 @@ namespace Js2IL.Tests
             return ExecutionTest(testName);
         }
 
+        [Fact]
+        public Task BinaryOperator_Equal()
+        {
+            var testName = nameof(BinaryOperator_Equal);
+            return ExecutionTest(testName);
+        }
+
         private Task ExecutionTest(string testName)
         {
             var js = GetJavaScript(testName);

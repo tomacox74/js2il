@@ -195,6 +195,13 @@ namespace Js2IL.Tests
             return GenerateTest(testName);
         }
 
+        [Fact]
+        public Task BinaryOperator_Equal()
+        {
+            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            return GenerateTest(testName);
+        }
+
         private Task GenerateTest(string testName)
         {
             var js = GetJavaScript(testName);

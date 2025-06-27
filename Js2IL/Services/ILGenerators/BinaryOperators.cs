@@ -71,6 +71,7 @@ namespace Js2IL.Services.ILGenerators
                 case Operator.GreaterThan:
                 case Operator.LessThanOrEqual:
                 case Operator.GreaterThanOrEqual:
+                case Operator.Equality:
                     ApplyComparisonOperator(operatorType, branching);
                     break;
                 default:
@@ -196,8 +197,8 @@ namespace Js2IL.Services.ILGenerators
 
         private void ApplyComparisonOperator(Operator op, ConditionalBranching? branching = null)
         {
-            ILOpCode? compareOpCode = null;
-            ILOpCode? branchOpCode = null;
+            ILOpCode compareOpCode;
+            ILOpCode branchOpCode;
             switch (op)
             {
                 case Operator.LessThan:
@@ -209,14 +210,16 @@ namespace Js2IL.Services.ILGenerators
                     branchOpCode = ILOpCode.Bgt;
                     break;
                 case Operator.LessThanOrEqual:
-                    // a <= b  <=> !(a > b)
-                    compareOpCode = null;
+                    compareOpCode = ILOpCode.Cgt;
                     branchOpCode = ILOpCode.Ble;
                     break;
                 case Operator.GreaterThanOrEqual:
-                    // a >= b  <=> !(a < b)
-                    compareOpCode = null;
+                    compareOpCode = ILOpCode.Clt;
                     branchOpCode = ILOpCode.Bge;
+                    break;
+                case Operator.Equality:
+                    compareOpCode = ILOpCode.Ceq;
+                    branchOpCode = ILOpCode.Beq;
                     break;
                 default:
                     throw new NotSupportedException($"Unsupported comparison operator: {op}");
@@ -229,14 +232,8 @@ namespace Js2IL.Services.ILGenerators
                     // For <=: !(a > b) => (a > b) == false
                     // For >=: !(a < b) => (a < b) == false
                     // We'll emit the opposite comparison and negate the result
-                    if (op == Operator.LessThanOrEqual)
-                    {
-                        _il.OpCode(ILOpCode.Cgt); // a > b
-                    }
-                    else // GreaterThanOrEqual
-                    {
-                        _il.OpCode(ILOpCode.Clt); // a < b
-                    }
+                    _il.OpCode(compareOpCode); // compare
+
                     // Negate the result (0 -> 1, 1 -> 0)
                     _il.OpCode(ILOpCode.Ldc_i4_0);
                     _il.OpCode(ILOpCode.Ceq);
@@ -246,7 +243,7 @@ namespace Js2IL.Services.ILGenerators
                 }
                 else
                 {
-                    _il.OpCode(compareOpCode.Value); // compare
+                    _il.OpCode(compareOpCode); // compare
                     // box it as a boolean result
                     _il.OpCode(ILOpCode.Box);
                     _il.Token(_bclReferences.BooleanType);
@@ -257,7 +254,7 @@ namespace Js2IL.Services.ILGenerators
                 var matchBranch = branching.BranchOnTrue;
                 var notMatchBranch = branching.BranchOnFalse;
 
-                _il.Branch(branchOpCode.Value, matchBranch); // branch if condition met
+                _il.Branch(branchOpCode, matchBranch); // branch if condition met
                 if (notMatchBranch.HasValue)
                 {
                     _il.Branch(ILOpCode.Br, notMatchBranch.Value);
