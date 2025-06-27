@@ -163,6 +163,20 @@ namespace Js2IL.Tests
         }
 
         [Fact]
+        public Task Generate_ForLoopGreaterThanOrEqual()
+        {
+            var testName = nameof(Generate_ForLoopGreaterThanOrEqual);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
+        public Task Generate_ForLoopLessThanOrEqual()
+        {
+            var testName = nameof(Generate_ForLoopLessThanOrEqual);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
         public Task UnaryOperator_PlusPlusPostfix()
         {
             var testName = nameof(UnaryOperator_PlusPlusPostfix);

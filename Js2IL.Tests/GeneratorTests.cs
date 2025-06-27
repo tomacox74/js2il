@@ -161,6 +161,20 @@ namespace Js2IL.Tests
         }
 
         [Fact]
+        public Task Generate_ForLoopGreaterThanOrEqual()
+        {
+            var testName = "Generate_ForLoopGreaterThanOrEqual";
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task Generate_ForLoopLessThanOrEqual()
+        {
+            var testName = "Generate_ForLoopLessThanOrEqual";
+            return GenerateTest(testName);
+        }
+
+        [Fact]
         public Task UnaryOperator_PlusPlusPostfix()
         {
             var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
@@ -185,6 +199,13 @@ namespace Js2IL.Tests
         public Task BinaryOperator_LessThanOrEqual()
         {
             var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            return GenerateTest(testName);
+        }
+
+        [Fact]
+        public Task BinaryOperator_GreaterThan()
+        {
+            var testName = nameof(BinaryOperator_GreaterThan);
             return GenerateTest(testName);
         }
 
