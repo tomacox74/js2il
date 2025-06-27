@@ -69,6 +69,8 @@ namespace Js2IL.Services.ILGenerators
                     break;
                 case Operator.LessThan:
                 case Operator.GreaterThan:
+                case Operator.LessThanOrEqual:
+                case Operator.GreaterThanOrEqual:
                     ApplyComparisonOperator(operatorType, branching);
                     break;
                 default:
@@ -206,32 +208,62 @@ namespace Js2IL.Services.ILGenerators
                     compareOpCode = ILOpCode.Cgt;
                     branchOpCode = ILOpCode.Bgt;
                     break;
+                case Operator.LessThanOrEqual:
+                    // a <= b  <=> !(a > b)
+                    compareOpCode = null;
+                    branchOpCode = ILOpCode.Ble;
+                    break;
+                case Operator.GreaterThanOrEqual:
+                    // a >= b  <=> !(a < b)
+                    compareOpCode = null;
+                    branchOpCode = ILOpCode.Bge;
+                    break;
                 default:
                     throw new NotSupportedException($"Unsupported comparison operator: {op}");
             }
 
             if (branching == null)
             {
-                _il.OpCode(compareOpCode.Value); // compare
-                // box it as a boolean result
-                _il.OpCode(ILOpCode.Box);
-                _il.Token(_bclReferences.BooleanType);
+                if (op == Operator.LessThanOrEqual || op == Operator.GreaterThanOrEqual)
+                {
+                    // For <=: !(a > b) => (a > b) == false
+                    // For >=: !(a < b) => (a < b) == false
+                    // We'll emit the opposite comparison and negate the result
+                    if (op == Operator.LessThanOrEqual)
+                    {
+                        _il.OpCode(ILOpCode.Cgt); // a > b
+                    }
+                    else // GreaterThanOrEqual
+                    {
+                        _il.OpCode(ILOpCode.Clt); // a < b
+                    }
+                    // Negate the result (0 -> 1, 1 -> 0)
+                    _il.OpCode(ILOpCode.Ldc_i4_0);
+                    _il.OpCode(ILOpCode.Ceq);
+                    // box as boolean
+                    _il.OpCode(ILOpCode.Box);
+                    _il.Token(_bclReferences.BooleanType);
+                }
+                else
+                {
+                    _il.OpCode(compareOpCode.Value); // compare
+                    // box it as a boolean result
+                    _il.OpCode(ILOpCode.Box);
+                    _il.Token(_bclReferences.BooleanType);
+                }
             }
             else
             {
                 var matchBranch = branching.BranchOnTrue;
                 var notMatchBranch = branching.BranchOnFalse;
 
-                // instead of a comparison which outputs a 1 or 0 we want to branch
                 _il.Branch(branchOpCode.Value, matchBranch); // branch if condition met
                 if (notMatchBranch.HasValue)
                 {
-                    // if we have a not match branch, we need to branch there as well
                     _il.Branch(ILOpCode.Br, notMatchBranch.Value);
                 }
                 else
                 {
-                    // if we don't have a not match branch, we just continue
                     _il.OpCode(ILOpCode.Pop); // pop the result of the comparison
                 }
             }
