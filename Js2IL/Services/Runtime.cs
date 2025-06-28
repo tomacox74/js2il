@@ -11,6 +11,7 @@ namespace Js2IL.Services
     internal class Runtime
     {
         private MemberReferenceHandle _toStringMethodRef;
+        private MemberReferenceHandle _consoleLogMethodRef;
         private InstructionEncoder _il;
 
         public Runtime(MetadataBuilder metadataBuilder, InstructionEncoder il) 
@@ -53,6 +54,29 @@ namespace Js2IL.Services
                 dotNet2JsType,
                 metadataBuilder.GetOrAddString("ToString"),
                 toStringSig);
+
+            // create the method body for Console.Log(string, object)
+            var consoleLogSigBuilder = new BlobBuilder();
+            new BlobEncoder(consoleLogSigBuilder)
+                .MethodSignature(isInstanceMethod: false)
+                .Parameters(2,
+                    returnType => returnType.Void(),
+                    parameters => {
+                        parameters.AddParameter().Type().String();
+                        parameters.AddParameter().Type().Object();
+                    });
+            var consoleLogSig = metadataBuilder.GetOrAddBlob(consoleLogSigBuilder);
+
+            var consoleType = metadataBuilder.AddTypeReference(
+                thisAssemblyReference,
+                metadataBuilder.GetOrAddString("Js2IL.Runtime"),
+                metadataBuilder.GetOrAddString("Console")
+            );
+
+            _consoleLogMethodRef = metadataBuilder.AddMemberReference(
+                consoleType,
+                metadataBuilder.GetOrAddString("Log"),
+                consoleLogSig);
         }
 
         /// <summary>
@@ -66,6 +90,18 @@ namespace Js2IL.Services
             // we assume the object to covert to a string is already on the stack
             _il.OpCode(ILOpCode.Call);
             _il.Token(_toStringMethodRef);
+        }
+
+        /// <summary>
+        /// Inserts IL to call Console.Log(string, object) with the string representation of the object on the stack.
+        /// </summary>
+        /// <remarks>
+        /// Assumes the parameters for Console.Log are already on the stack
+        /// </remarks>
+        public void InvokeConsoleLog()
+        {
+            _il.OpCode(ILOpCode.Call);
+            _il.Token(_consoleLogMethodRef);
         }
     }
 }

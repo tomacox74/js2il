@@ -274,10 +274,9 @@ namespace Js2IL.Services.ILGenerators
 
             // Load local 0 (which is assumed to be the int x)
             _il.LoadLocal(variable.LocalIndex!.Value);
-            _runtime.InvokeToString();
 
-            _il.OpCode(ILOpCode.Call);
-            _il.Token(_bclReferences.ConsoleWriteLine_StringObject_Ref);
+            // call the runtime helper Console.Log
+            _runtime.InvokeConsoleLog();
         }
 
         void IMethodExpressionEmitter.Emit(Expression expression, bool coerceToString, ConditionalBranching? branching)

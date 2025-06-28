@@ -8,7 +8,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 136 (0x88)
+		// Code size: 121 (0x79)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -40,17 +40,14 @@
 		IL_0056: stloc.2
 		IL_0057: ldstr "x is {0}"
 		IL_005c: ldloc.0
-		IL_005d: call string [Js2IL]Js2IL.Runtime.DotNet2JSConversions::ToString(object)
-		IL_0062: call void [System.Console]System.Console::WriteLine(string, object)
-		IL_0067: ldstr "y is {0}"
-		IL_006c: ldloc.1
-		IL_006d: call string [Js2IL]Js2IL.Runtime.DotNet2JSConversions::ToString(object)
-		IL_0072: call void [System.Console]System.Console::WriteLine(string, object)
-		IL_0077: ldstr "z is {0}"
-		IL_007c: ldloc.2
-		IL_007d: call string [Js2IL]Js2IL.Runtime.DotNet2JSConversions::ToString(object)
-		IL_0082: call void [System.Console]System.Console::WriteLine(string, object)
-		IL_0087: ret
+		IL_005d: call void [Js2IL]Js2IL.Runtime.Console::Log(string, object)
+		IL_0062: ldstr "y is {0}"
+		IL_0067: ldloc.1
+		IL_0068: call void [Js2IL]Js2IL.Runtime.Console::Log(string, object)
+		IL_006d: ldstr "z is {0}"
+		IL_0072: ldloc.2
+		IL_0073: call void [Js2IL]Js2IL.Runtime.Console::Log(string, object)
+		IL_0078: ret
 	} // end of method Program::Main
 
 } // end of class Program
