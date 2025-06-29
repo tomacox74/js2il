@@ -1,15 +1,29 @@
-﻿using System;
+﻿using ICSharpCode.Decompiler.Disassembler;
+using ICSharpCode.Decompiler.Metadata;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Metadata;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
-using System.Diagnostics;
+using System;
+using System.IO;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
+using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Disassembler;
+using ICSharpCode.Decompiler.Metadata;
+
+
 
 namespace Js2IL.Tests.Utilities
 {
     internal class AssemblyToText
     {
-        public static string ConvertToText(string assemblyPath)
+        public static string ConvertToTextUsingIlSpyCmd(string assemblyPath)
         {
             var processInfo = new ProcessStartInfo
             {
@@ -35,5 +49,34 @@ namespace Js2IL.Tests.Utilities
 
             return stdOut;
         }
+
+        public static string ConvertToText(string assemblyPath)
+        {
+            //return ConvertToTextUsingIlSpyCmd(assemblyPath);
+            return ILSpyBasedDisassembler.DisassembleIL(assemblyPath);
+        }
+    }
+
+    public static class ILSpyBasedDisassembler
+    {
+        public static string DisassembleIL(string dllPath)
+        {
+            using var peFile = new PEFile(dllPath); 
+            var stringWriter = new StringWriter();
+            var output = new PlainTextOutput(stringWriter);
+
+            output.WriteLine($"// IL code: {peFile.Name}");
+
+            var disassembler = new ReflectionDisassembler(output, CancellationToken.None)
+            {
+                ShowSequencePoints = true,
+            };
+
+            disassembler.WriteModuleContents(peFile);
+
+            return output.ToString();
+        }
     }
 }
+
+
