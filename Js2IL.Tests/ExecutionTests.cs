@@ -39,14 +39,14 @@ namespace Js2IL.Tests
         [Fact]
         public Task ArrayLiteral()
         {
-            var testNode = nameof(ArrayLiteral);
-            return ExecutionTest(testNode);
+            var testName = nameof(ArrayLiteral);
+            return ExecutionTest(testName);
         }
 
         [Fact]
         public Task BinaryOperator_AddNumberNumber()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(BinaryOperator_AddNumberNumber);
             return ExecutionTest(testName);
         }
 
@@ -116,7 +116,7 @@ namespace Js2IL.Tests
         [Fact]
         public Task BinaryOperator_LessThan()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(BinaryOperator_LessThan);
             return ExecutionTest(testName);
         }
 
@@ -222,6 +222,13 @@ namespace Js2IL.Tests
         public Task BinaryOperator_Equal()
         {
             var testName = nameof(BinaryOperator_Equal);
+            return ExecutionTest(testName);
+        }
+
+        [Fact(Skip = "process/argv not yet supported")]
+        public Task Environment_EnumerateProcessArgV()
+        {
+            var testName = nameof(Environment_EnumerateProcessArgV);
             return ExecutionTest(testName);
         }
 

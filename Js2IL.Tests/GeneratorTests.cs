@@ -44,126 +44,126 @@ namespace Js2IL.Tests
         [Fact]
         public Task ArrayLiteral()
         {
-            var testNode = nameof(ArrayLiteral);
-            return GenerateTest(testNode);
+            var testName = nameof(ArrayLiteral);
+            return GenerateTest(testName);
         }
 
         [Fact]
         public Task BinaryOperator_AddNumberNumber()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(BinaryOperator_AddNumberNumber);
             return GenerateTest(testName);
         }
 
         [Fact]
         public Task BinaryOperator_AddStringNumber()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(BinaryOperator_AddStringNumber);
             return GenerateTest(testName);
         }
 
         [Fact]
         public Task BinaryOperator_AddStringString()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(BinaryOperator_AddStringString);
             return GenerateTest(testName);
         }
 
         [Fact]
         public Task BinaryOperator_BitwiseAndNumberNumber()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(BinaryOperator_BitwiseAndNumberNumber);
             return GenerateTest(testName);
         }
 
         [Fact]
         public Task BinaryOperator_BitwiseOrNumberNumber()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(BinaryOperator_BitwiseOrNumberNumber);
             return GenerateTest(testName);
         }
 
         [Fact]
         public Task BinaryOperator_BitwiseXorNumberNumber()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(BinaryOperator_BitwiseXorNumberNumber);
             return GenerateTest(testName);
         }
 
         [Fact]
         public Task BinaryOperator_DivNumberNumber()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(BinaryOperator_DivNumberNumber);
             return GenerateTest(testName);
         }
 
         [Fact]
         public Task BinaryOperator_ExpNumberNumber()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(BinaryOperator_ExpNumberNumber);
             return GenerateTest(testName);
         }
 
         [Fact]
         public Task BinaryOperator_LeftShiftNumberNumber()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(BinaryOperator_LeftShiftNumberNumber);
             return GenerateTest(testName);
         }
 
         [Fact]
         public Task BinaryOperator_LessThan()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(BinaryOperator_LessThan);
             return GenerateTest(testName);
         }
 
         [Fact]
         public Task BinaryOperator_ModNumberNumber()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(BinaryOperator_ModNumberNumber);
             return GenerateTest(testName);
         }
 
         [Fact]
         public Task BinaryOperator_MulNumberNumber()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(BinaryOperator_MulNumberNumber);
             return GenerateTest(testName);
         }
 
         [Fact]
         public Task BinaryOperator_RightShiftNumberNumber()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(BinaryOperator_RightShiftNumberNumber);
             return GenerateTest(testName);
         }
 
         [Fact]
         public Task BinaryOperator_SubNumberNumber()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(BinaryOperator_SubNumberNumber);
             return GenerateTest(testName);
         }
 
         [Fact]
         public Task BinaryOperator_UnsignedRightShiftNumberNumber()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(BinaryOperator_UnsignedRightShiftNumberNumber);
             return GenerateTest(testName);
         }
 
         [Fact]
         public Task Generate_ForLoopCountToFive()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = "Generate_ForLoopCountToFive";
             return GenerateTest(testName);
         }
 
         [Fact]
         public Task Generate_ForLoopCountDownFromFive()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = "Generate_ForLoopCountDownFromFive";
             return GenerateTest(testName);
         }
 
@@ -184,28 +184,28 @@ namespace Js2IL.Tests
         [Fact]
         public Task UnaryOperator_PlusPlusPostfix()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(UnaryOperator_PlusPlusPostfix);
             return GenerateTest(testName);
         }
 
         [Fact]
         public Task UnaryOperator_MinusMinusPostfix()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(UnaryOperator_MinusMinusPostfix);
             return GenerateTest(testName);
         }
 
         [Fact]
         public Task ObjectLiteral()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(ObjectLiteral);
             return GenerateTest(testName);
         }
 
         [Fact]
         public Task BinaryOperator_LessThanOrEqual()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(BinaryOperator_LessThanOrEqual);
             return GenerateTest(testName);
         }
 
@@ -219,14 +219,21 @@ namespace Js2IL.Tests
         [Fact]
         public Task BinaryOperator_GreaterThanOrEqual()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(BinaryOperator_GreaterThanOrEqual);
             return GenerateTest(testName);
         }
 
         [Fact]
         public Task BinaryOperator_Equal()
         {
-            var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
+            var testName = nameof(BinaryOperator_Equal);
+            return GenerateTest(testName);
+        }
+
+        [Fact(Skip = "process/argv not yet supported")]
+        public Task Environment_EnumerateProcessArgV()
+        {
+            var testName = nameof(Environment_EnumerateProcessArgV);
             return GenerateTest(testName);
         }
 
