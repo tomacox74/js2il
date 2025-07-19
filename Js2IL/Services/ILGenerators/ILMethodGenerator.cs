@@ -40,11 +40,12 @@ namespace Js2IL.Services.ILGenerators
             _metadataBuilder = metadataBuilder;
             var methodIl = new BlobBuilder();
             _il = new InstructionEncoder(methodIl, new ControlFlowBuilder());
-            _binaryOperators = new BinaryOperators(metadataBuilder, _il, variables, bclReferences);
+            this._runtime = new Runtime(metadataBuilder, _il, _bclReferences);
+            _binaryOperators = new BinaryOperators(metadataBuilder, _il, variables, bclReferences, _runtime);
 
             // temporary as we set the table for further refactoring
             this._expressionEmitter = this;
-            this._runtime = new Runtime(metadataBuilder, _il);
+            
         }
 
         public void DeclareVariable(VariableDeclaration variableDeclaraion)
@@ -60,7 +61,13 @@ namespace Js2IL.Services.ILGenerators
             if (variableAST.Init != null && variable.LocalIndex != null)
             {
                 // otherwise we need to generate the expression
-                this._expressionEmitter.Emit(variableAST.Init);
+                variable.Type = this._expressionEmitter.Emit(variableAST.Init, new TypeCoercion());
+                if (variable.Type == JavascriptType.Number)
+                {
+                    _il.OpCode(ILOpCode.Box);
+                    _il.Token(_bclReferences.DoubleType);
+                }
+
                 _il.StoreLocal(variable.LocalIndex.Value);
             }
         }
@@ -119,6 +126,7 @@ namespace Js2IL.Services.ILGenerators
 
         public void GenerateForStatement(Acornima.Ast.ForStatement forStatement)
         {
+
             // first lets encode the initalizer
             if (forStatement.Init is Acornima.Ast.VariableDeclaration variableDeclaration)
             {
@@ -129,6 +137,7 @@ namespace Js2IL.Services.ILGenerators
                 throw new NotSupportedException($"Unsupported for statement initializer type: {forStatement.Init?.Type}");
             }
 
+            
             // the labels used in the loop flow control
             var loopStartLabel = _il.DefineLabel();
             var loopEndLabel = _il.DefineLabel();
@@ -139,7 +148,7 @@ namespace Js2IL.Services.ILGenerators
             //the test condition in the for loop
             if (forStatement.Test != null)
             {
-                this._expressionEmitter.Emit(forStatement.Test, branching: new ConditionalBranching
+                this._expressionEmitter.Emit(forStatement.Test, new TypeCoercion(), branching: new ConditionalBranching
                 {
                     BranchOnTrue = loopBodyLabel,
                     BranchOnFalse = loopEndLabel
@@ -153,7 +162,7 @@ namespace Js2IL.Services.ILGenerators
 
             if (forStatement.Update != null)
             {
-                _expressionEmitter.Emit(forStatement.Update);
+                _expressionEmitter.Emit(forStatement.Update, new TypeCoercion());
             }
 
             // branch back to the start of the loop
@@ -198,7 +207,13 @@ namespace Js2IL.Services.ILGenerators
                 _il.LoadString(_metadataBuilder.GetOrAddUserString(propertyKey.Name));
 
                 // Load the value of the property
-                _expressionEmitter.Emit(propertyValue);
+                var valueType = _expressionEmitter.Emit(propertyValue, new TypeCoercion());
+                if (valueType == JavascriptType.Number)
+                {
+                    // If the value is a number, we need to box it to an object
+                    _il.OpCode(ILOpCode.Box);
+                    _il.Token(_bclReferences.DoubleType);
+                }
 
                 // call set_Item on the ExpandoObject to set the property value
                 _il.OpCode(ILOpCode.Callvirt);
@@ -207,6 +222,37 @@ namespace Js2IL.Services.ILGenerators
 
             // After all properties are set, the ExpandoObject is on the stack
             // this is the expected behavior.  The consumer for this expression output chooses what to do with it.
+        }
+
+        private void GenerateArrayExpression(ArrayExpression arrayExpression)
+        {
+            var test = new Js2IL.Runtime.Array();
+
+            for (int i = 0; i < test.Count; i++)
+            {
+                Console.WriteLine(test[i]);
+            }
+
+            // create a new array of type object
+            // push the array size onto the stack
+            _il.LoadConstantI4(arrayExpression.Elements.Count);
+            _runtime.InvokeArrayCtor();
+
+            // enumerate over the array elements loading each one and setting it in the array
+            for (int i = 0; i < arrayExpression.Elements.Count; i++)
+            {
+                var element = arrayExpression.Elements[i];
+
+                // Duplicate the array reference on the stack
+                _il.OpCode(ILOpCode.Dup);
+
+                // Emit the element expression to get its value
+                _expressionEmitter.Emit(element!, new TypeCoercion());
+
+                // Store the value in the array at the specified index
+                _il.OpCode(ILOpCode.Callvirt);
+                _il.Token(_bclReferences.Array_Add_Ref);
+            }
         }
 
         private void GenerateUpdateExpression(Acornima.Ast.UpdateExpression updateExpression)
@@ -264,35 +310,40 @@ namespace Js2IL.Services.ILGenerators
         {
             // use formatstring to append the additonal parameters
             var message = (callConsoleLog.Arguments[0] as Acornima.Ast.StringLiteral)!.Value + " {0}";
-            var additionalParameterVariable = (callConsoleLog.Arguments[1] as Acornima.Ast.Identifier)!.Name;
-            var variable = _variables.Get(additionalParameterVariable);
 
             var messageHandle = _metadataBuilder.GetOrAddUserString(message);
 
             // Assuming Console.WriteLine(string, object) is available in the BCL references
             _il.LoadString(messageHandle);
 
-            // Load local 0 (which is assumed to be the int x)
-            _il.LoadLocal(variable.LocalIndex!.Value);
+            var javascriptType = this._expressionEmitter.Emit(callConsoleLog.Arguments[1], new TypeCoercion() {  boxed = true });
+
+            // hack hack hack.. 
+
 
             // call the runtime helper Console.Log
             _runtime.InvokeConsoleLog();
         }
 
-        void IMethodExpressionEmitter.Emit(Expression expression, bool coerceToString, ConditionalBranching? branching)
+        JavascriptType IMethodExpressionEmitter.Emit(Expression expression, TypeCoercion typeCoercion, ConditionalBranching? branching)
         {
+            JavascriptType javascriptType = JavascriptType.Unknown;
+
             switch (expression)
             {
+                case ArrayExpression arrayExpression:
+                    // Generate code for ArrayExpression
+                    GenerateArrayExpression(arrayExpression);
+                    javascriptType = JavascriptType.Object; // Arrays are treated as objects in JavaScript
+                    break;
                 case BinaryExpression binaryExpression:
                     _binaryOperators.Generate(binaryExpression, branching);
                     break;
                 case NumericLiteral numericLiteral:
                     // Load numeric literal
-                    _binaryOperators.LoadValue(expression, coerceToString);
+                    _binaryOperators.LoadValue(expression, typeCoercion);
 
-                    // box numeric values
-                    _il.OpCode(ILOpCode.Box);
-                    _il.Token(_bclReferences.DoubleType);
+                    javascriptType = JavascriptType.Number;
 
                     break;
                 case UpdateExpression updateExpression:
@@ -300,11 +351,15 @@ namespace Js2IL.Services.ILGenerators
                     break;
                 case ObjectExpression objectExpression:
                     GenerateObjectExpresion(objectExpression);
+
+                    javascriptType = JavascriptType.Object;
                     break;
                 default:
-                    _binaryOperators.LoadValue(expression, coerceToString);
+                    javascriptType = _binaryOperators.LoadValue(expression, typeCoercion);
                     break;
             }
+
+            return javascriptType;
         }
     }
 }

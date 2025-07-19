@@ -11,6 +11,9 @@ namespace Js2IL.Services
 {
     internal class BaseClassLibraryReferences
     {
+        private readonly AssemblyReferenceHandle _systemLinqExpressions;
+        private readonly AssemblyReferenceHandle _systemCollections;
+
         public BaseClassLibraryReferences(MetadataBuilder metadataBuilder, Version bclVersion, byte[] publicKeyToken)
         {
             // public key token
@@ -35,8 +38,17 @@ namespace Js2IL.Services
                 hashValue: default
             );
 
-            var systemLinqExpressions = metadataBuilder.AddAssemblyReference(
+            _systemLinqExpressions = metadataBuilder.AddAssemblyReference(
                 name: metadataBuilder.GetOrAddString("System.Linq.Expressions"),
+                version: bclVersion,
+                culture: default,
+                publicKeyOrToken: publicKeyTokenHandle,
+                flags: 0,
+                hashValue: default
+            );
+
+            _systemCollections = metadataBuilder.AddAssemblyReference(
+                name: metadataBuilder.GetOrAddString("System.Collections"),
                 version: bclVersion,
                 culture: default,
                 publicKeyOrToken: publicKeyTokenHandle,
@@ -67,7 +79,83 @@ namespace Js2IL.Services
                 this.SystemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
                 metadataBuilder.GetOrAddString("String")
-            );
+            );            
+
+            // System.Math References
+            this.SystemMathType = metadataBuilder.AddTypeReference(
+                this.SystemRuntimeAssembly,
+                metadataBuilder.GetOrAddString("System"),
+                metadataBuilder.GetOrAddString("Math"));
+
+            // System.Console References
+            var systemConsoleTypeReference = metadataBuilder.AddTypeReference(
+                this.SystemConsoleAssembly,
+                metadataBuilder.GetOrAddString("System"),
+                metadataBuilder.GetOrAddString("Console"));
+
+            // Create method signature: void WriteLine(string)
+            var consoleSig = new BlobBuilder();
+            new BlobEncoder(consoleSig)
+                .MethodSignature(isInstanceMethod: false)
+                .Parameters(2,
+                    returnType => returnType.Void(),
+                    parameters =>
+                    {
+                        parameters.AddParameter().Type().String();
+                        parameters.AddParameter().Type().Object();
+                    });
+            var writeLineSig = metadataBuilder.GetOrAddBlob(consoleSig);
+
+            this.ConsoleWriteLine_StringObject_Ref = metadataBuilder.AddMemberReference(
+                systemConsoleTypeReference,
+                metadataBuilder.GetOrAddString("WriteLine"),
+                writeLineSig);
+
+            LoadObjectTypes(metadataBuilder);
+
+            LoadArrayTypes(metadataBuilder);
+        }
+
+        public AssemblyReferenceHandle SystemRuntimeAssembly { get; private init; }
+        public AssemblyReferenceHandle SystemConsoleAssembly { get; private init; }
+        public TypeReferenceHandle BooleanType { get; private init; }
+        public TypeReferenceHandle DoubleType { get; private init; }
+        public TypeReferenceHandle ObjectType { get; private init; }
+        public TypeReferenceHandle StringType { get; private init; }
+        public TypeReferenceHandle SystemMathType { get; private init; }
+
+        public TypeSpecificationHandle IDictionary_StringObject_Type { get; private set; }
+        public MemberReferenceHandle ConsoleWriteLine_StringObject_Ref { get; private init; }
+
+        public MemberReferenceHandle Expando_Ctor_Ref { get; private set; }
+
+        public MemberReferenceHandle IDictionary_SetItem_Ref { get; private set; }
+
+        public MemberReferenceHandle Array_Add_Ref { get; private set; }
+
+        public MemberReferenceHandle Array_SetItem_Ref { get; private set; }
+
+        public MemberReferenceHandle Array_GetCount_Ref { get; private set; }
+
+        private void LoadObjectTypes(MetadataBuilder metadataBuilder)
+        {
+            var dynamicNamespace = metadataBuilder.GetOrAddString("System.Dynamic");
+
+            // ExpandObject reference
+            // important for the generic case in JavaScript where objects are just property bags
+            var systemCoreExpandoType = metadataBuilder.AddTypeReference(
+                _systemLinqExpressions,
+                dynamicNamespace,
+                metadataBuilder.GetOrAddString("ExpandoObject"));
+            var expandoSigBuilder = new BlobBuilder();
+            new BlobEncoder(expandoSigBuilder)
+                .MethodSignature(isInstanceMethod: true)
+                .Parameters(0, returnType => returnType.Void(), parameters => { });
+            var expandoCtorSig = metadataBuilder.GetOrAddBlob(expandoSigBuilder);
+            Expando_Ctor_Ref = metadataBuilder.AddMemberReference(
+                systemCoreExpandoType,
+                metadataBuilder.GetOrAddString(".ctor"),
+                expandoCtorSig);
 
             // IDictionary Bound Type Reference <System.String, System.Object>
             var unboundIDictionaryType = metadataBuilder.AddTypeReference(
@@ -109,8 +197,6 @@ namespace Js2IL.Services
                     {
                         parameters.AddParameter().Type().GenericTypeParameter(0);
                         parameters.AddParameter().Type().GenericTypeParameter(1);
-                        //parameters.AddParameter().Type().String();
-                        //parameters.AddParameter().Type().Object();
                     });
 
             var setItemSig = metadataBuilder.GetOrAddBlob(msBlob);
@@ -123,101 +209,96 @@ namespace Js2IL.Services
                 metadataBuilder.GetOrAddString("set_Item"),
                 setItemSig);
 
+        }
 
-            /*
-            var typeSpecBlob = new BlobBuilder();
-            var dictionaryTypeArgs = new BlobEncoder(typeSpecBlob)
+        private void LoadArrayTypes(MetadataBuilder metadataBuilder)
+        {
+            // List Bound Type Reference <System.Object>
+            var unboundListType = metadataBuilder.AddTypeReference(
+                _systemCollections,
+                metadataBuilder.GetOrAddString("System.Collections.Generic"),
+                metadataBuilder.GetOrAddString("List`1"));
+
+            // 3) Build a TypeSpec blob for IDictionary<string, object>
+            var tsBlob = new BlobBuilder();
+            var tsEncoder = new BlobEncoder(tsBlob);
+
+            // .TypeSpecificationSignature() kicks off a TypeSpec
+            var genInst = tsEncoder
                 .TypeSpecificationSignature()
-                .GenericInstantiation(unboundIDictionaryType, 2, false);
+                .GenericInstantiation(
+                    unboundListType,   // our open-generic TypeReferenceHandle
+                    genericArgumentCount: 1,
+                    isValueType: false);
 
-            dictionaryTypeArgs.AddArgument().String(); // Key type
-            dictionaryTypeArgs.AddArgument().Object(); // Value type
+            // now emit the type arg
+            genInst.AddArgument().PrimitiveType(PrimitiveTypeCode.Object);  // System.Object
 
-            var dictionaryTypeSpecHandle = metadataBuilder.GetOrAddBlob(typeSpecBlob);
-            var closedIDictionarySpec = metadataBuilder.AddTypeSpecification(dictionaryTypeSpecHandle);
+            // bake it into metadata
+            var tsBlobHandle = metadataBuilder.GetOrAddBlob(tsBlob);
+            var closedListSpec = metadataBuilder.AddTypeSpecification(tsBlobHandle);
 
-            // IDictionary.set_Item Reference
-            var setItemSigBuilder = new BlobBuilder();
-            new BlobEncoder(setItemSigBuilder)
-                .MethodSignature(genericParameterCount: 2, isInstanceMethod: true)
+            // 4) Create the signature for set_Item(int,object)
+            var setItemBuilder = new BlobBuilder();
+            new BlobEncoder(setItemBuilder)
+                .MethodSignature(
+                    genericParameterCount: 0,  // NOT a generic *method*
+                    isInstanceMethod: true)
                 .Parameters(
                     parameterCount: 2,
                     returnType => returnType.Void(),
                     parameters =>
                     {
-                        parameters.AddParameter().Type().String();
-                        parameters.AddParameter().Type().Object();
+                        parameters.AddParameter().Type().Int32();
+                        parameters.AddParameter().Type().GenericTypeParameter(0);
                     });
 
-            var setItemSig = metadataBuilder.GetOrAddBlob(setItemSigBuilder);
+            var setItemSig = metadataBuilder.GetOrAddBlob(setItemBuilder);
 
-            IDictionary_SetItem_Ref = metadataBuilder.AddMemberReference(
-                closedIDictionarySpec,
+            // 5) The MemberReference on the *closed* IDictionary<string,object>
+            Array_SetItem_Ref = metadataBuilder.AddMemberReference(
+                closedListSpec,                             // <string,object> TypeSpec
                 metadataBuilder.GetOrAddString("set_Item"),
-                setItemSig);*/
+                setItemSig);
 
-            // System.Core References
-            var dynamicNamespace = metadataBuilder.GetOrAddString("System.Dynamic");
+            var getCountBuilder = new BlobBuilder();
+            new BlobEncoder(getCountBuilder)
+                .MethodSignature(
+                    genericParameterCount: 0,  // NOT a generic *method*
+                    isInstanceMethod: true)
+                .Parameters(
+                    parameterCount: 0,
+                    returnType => returnType.Type().Int32(),
+                    parameters => { });
 
-            // ExpandObject reference
-            // important for the generic case in JavaScript where objects are just property bags
-            var systemCoreExpandoType = metadataBuilder.AddTypeReference(
-                systemLinqExpressions,
-                dynamicNamespace,
-                metadataBuilder.GetOrAddString("ExpandoObject"));
-            var expandoSigBuilder = new BlobBuilder();
-            new BlobEncoder(expandoSigBuilder)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(0, returnType => returnType.Void(), parameters => { });
-            var expandoCtorSig = metadataBuilder.GetOrAddBlob(expandoSigBuilder);
-            Expando_Ctor_Ref = metadataBuilder.AddMemberReference(
-                systemCoreExpandoType,
-                metadataBuilder.GetOrAddString(".ctor"),
-                expandoCtorSig);
+            var getCountSig = metadataBuilder.GetOrAddBlob(getCountBuilder);
 
-            // System.Math References
-            this.SystemMathType = metadataBuilder.AddTypeReference(
-                this.SystemRuntimeAssembly,
-                metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Math"));
+            Array_GetCount_Ref = metadataBuilder.AddMemberReference(
+                closedListSpec,
+                metadataBuilder.GetOrAddString("get_Count"),
+                getCountSig);
 
-            // System.Console References
-            var systemConsoleTypeReference = metadataBuilder.AddTypeReference(
-                this.SystemConsoleAssembly,
-                metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Console"));
-
-            // Create method signature: void WriteLine(string)
-            var consoleSig = new BlobBuilder();
-            new BlobEncoder(consoleSig)
-                .MethodSignature(isInstanceMethod: false)
-                .Parameters(2,
+            // 4) Create the signature for set_Item(int,object)
+            var addItemBuilder = new BlobBuilder();
+            new BlobEncoder(addItemBuilder)
+                .MethodSignature(
+                    genericParameterCount: 0,  // NOT a generic *method*
+                    isInstanceMethod: true)
+                .Parameters(
+                    parameterCount: 1,
                     returnType => returnType.Void(),
-                    parameters => {
-                        parameters.AddParameter().Type().String();
-                        parameters.AddParameter().Type().Object();
+                    parameters =>
+                    {
+                        parameters.AddParameter().Type().GenericTypeParameter(0);
                     });
-            var writeLineSig = metadataBuilder.GetOrAddBlob(consoleSig);
 
-            this.ConsoleWriteLine_StringObject_Ref = metadataBuilder.AddMemberReference(
-                systemConsoleTypeReference,
-                metadataBuilder.GetOrAddString("WriteLine"),
-                writeLineSig);
+            var addItemSig = metadataBuilder.GetOrAddBlob(addItemBuilder);
+
+            // 5) The MemberReference on the *closed* IDictionary<string,object>
+            Array_Add_Ref = metadataBuilder.AddMemberReference(
+                closedListSpec,                             // <string,object> TypeSpec
+                metadataBuilder.GetOrAddString("Add"),
+                addItemSig);
         }
-
-        public AssemblyReferenceHandle SystemRuntimeAssembly { get; private init; }
-        public AssemblyReferenceHandle SystemConsoleAssembly { get; private init; }
-        public TypeReferenceHandle BooleanType { get; private init; }
-        public TypeReferenceHandle DoubleType { get; private init; }
-        public TypeReferenceHandle ObjectType { get; private init; }
-        public TypeReferenceHandle StringType { get; private init; }
-        public TypeReferenceHandle SystemMathType { get; private init; }
-
-        public TypeSpecificationHandle IDictionary_StringObject_Type { get; private init; }
-        public MemberReferenceHandle ConsoleWriteLine_StringObject_Ref { get; private init; }
-
-        public MemberReferenceHandle Expando_Ctor_Ref { get; private init; }
-
-        public MemberReferenceHandle IDictionary_SetItem_Ref { get; private init; }
     }
 }

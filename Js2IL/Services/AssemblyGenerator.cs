@@ -126,6 +126,13 @@ namespace Js2IL.Services
             var thisAssemblyFileName = Path.GetFileName(thisAssemblyPath);
             var copyAssemblyToLocation = Path.Combine(outputPath, thisAssemblyFileName);
             File.Copy(thisAssemblyPath, copyAssemblyToLocation, true);
+
+            var thisAssemblySymbolsPath = Path.ChangeExtension(thisAssemblyPath, ".pdb");
+            var copySymbolsToLocation = Path.ChangeExtension(copyAssemblyToLocation, ".pdb");
+            if (File.Exists(thisAssemblySymbolsPath))
+            {
+                File.Copy(thisAssemblySymbolsPath, copySymbolsToLocation, true);
+            }
         }
     }
 }

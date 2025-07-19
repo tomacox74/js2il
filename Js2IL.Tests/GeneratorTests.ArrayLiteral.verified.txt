@@ -1,0 +1,62 @@
+﻿// IL code: ArrayLiteral
+.class public auto ansi Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 127 (0x7f)
+		.maxstack 8
+		.entrypoint
+		.locals init (
+			[0] object,
+			[1] object
+		)
+
+		IL_0000: ldc.i4.3
+		IL_0001: newobj instance void [Js2IL]Js2IL.Runtime.Array::.ctor(int32)
+		IL_0006: dup
+		IL_0007: ldstr "cat"
+		IL_000c: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0011: dup
+		IL_0012: ldstr "dog"
+		IL_0017: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_001c: dup
+		IL_001d: ldstr "dotnet bot"
+		IL_0022: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0027: stloc.0
+		IL_0028: ldc.r8 0.0
+		IL_0031: box [System.Runtime]System.Double
+		IL_0036: stloc.1
+		// loop start (head: IL_0037)
+			IL_0037: ldloc.1
+			IL_0038: unbox.any [System.Runtime]System.Double
+			IL_003d: ldloc.0
+			IL_003e: callvirt instance float64 [Js2IL]Js2IL.Runtime.Array::get_length()
+			IL_0043: blt IL_004d
+
+			IL_0048: br IL_007e
+
+			IL_004d: ldstr " {0}"
+			IL_0052: ldloc.0
+			IL_0053: ldloc.1
+			IL_0054: unbox.any [System.Runtime]System.Double
+			IL_0059: call object [Js2IL]Js2IL.Runtime.Object::GetItem(object, float64)
+			IL_005e: call void [Js2IL]Js2IL.Runtime.Console::Log(string, object)
+			IL_0063: ldloc.1
+			IL_0064: unbox.any [System.Runtime]System.Double
+			IL_0069: ldc.r8 1
+			IL_0072: add
+			IL_0073: box [System.Runtime]System.Double
+			IL_0078: stloc.1
+			IL_0079: br IL_0037
+		// end loop
+
+		IL_007e: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

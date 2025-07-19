@@ -21,13 +21,15 @@ namespace Js2IL.Services.ILGenerators
         // shared state for all generators
         private BaseClassLibraryReferences _bclReferences;
         private Variables _variables;
+        private Runtime _runtime;
 
-        public BinaryOperators(MetadataBuilder metadataBuilder, InstructionEncoder il, Variables variables, BaseClassLibraryReferences bclReferences)
+        public BinaryOperators(MetadataBuilder metadataBuilder, InstructionEncoder il, Variables variables, BaseClassLibraryReferences bclReferences, Runtime runtime)
         {
             _metadataBuilder = metadataBuilder;
             _il = il;
             _variables = variables;
             _bclReferences = bclReferences;
+            _runtime = runtime;
         }
 
         public void Generate(BinaryExpression binaryExpression, ConditionalBranching? branching = null)
@@ -42,13 +44,13 @@ namespace Js2IL.Services.ILGenerators
             bool isBitwiseOrShift = operatorType == Operator.BitwiseAnd || operatorType == Operator.BitwiseOr || operatorType == Operator.BitwiseXor ||
                                     operatorType == Operator.LeftShift || operatorType == Operator.RightShift || operatorType == Operator.UnsignedRightShift;
             if (isBitwiseOrShift) {
-                LoadValue(binaryExpression.Left);
+                LoadValue(binaryExpression.Left, new TypeCoercion());
                 _il.OpCode(ILOpCode.Conv_i4);
-                LoadValue(binaryExpression.Right);
+                LoadValue(binaryExpression.Right, new TypeCoercion());
                 _il.OpCode(ILOpCode.Conv_i4);
             } else {
-                LoadValue(binaryExpression.Left);
-                LoadValue(binaryExpression.Right, binaryExpression.Left is StringLiteral);
+                LoadValue(binaryExpression.Left, new TypeCoercion());
+                LoadValue(binaryExpression.Right, new TypeCoercion() { toString = binaryExpression.Left is StringLiteral });
             }
 
             switch (operatorType)
@@ -276,12 +278,14 @@ namespace Js2IL.Services.ILGenerators
         /// <remarks>
         /// This does not belong here.. need to refactor
         /// </remarks>
-        public void LoadValue(Expression expression, bool forceString = false)
+        public JavascriptType LoadValue(Expression expression, TypeCoercion typeCoercion)
         {
+            JavascriptType type = JavascriptType.Unknown;
+
             switch (expression)
             {
                 case Acornima.Ast.NumericLiteral numericLiteral:
-                    if (forceString)
+                    if (typeCoercion.toString)
                     {
                         //does dotnet ToString behave the same as JavaScript?
                         var numberAsString = numericLiteral.Value.ToString();
@@ -291,6 +295,9 @@ namespace Js2IL.Services.ILGenerators
                     {
                         _il.LoadConstantR8(numericLiteral.Value); // Load numeric literal
                     }
+
+                    type = JavascriptType.Number;
+
                     break;
                 case Acornima.Ast.StringLiteral stringLiteral:
                     _il.LoadString(_metadataBuilder.GetOrAddUserString(stringLiteral.Value)); // Load string literal
@@ -300,16 +307,23 @@ namespace Js2IL.Services.ILGenerators
                     var variable = _variables[name];
                     _il.LoadLocal(variable.LocalIndex!.Value); // Load variable
 
-                    // this is fragile at the moment.. need to handle all types and not assume it is a number
-                    _il.OpCode(ILOpCode.Unbox_any);
-                    _il.Token(_bclReferences.DoubleType); // unbox the variable as a double
+                    // this is fragile at the moment.. need to handle all types
+                    // need a runtime type check for unknown types
+                    // and unboxing for boolean
+                    if (variable.Type != JavascriptType.Object && !typeCoercion.boxed)
+                    {
+                        _il.OpCode(ILOpCode.Unbox_any);
+                        _il.Token(_bclReferences.DoubleType); // unbox the variable as a double
+                    }
+
+                    type = variable.Type;
 
                     break;
                 case Acornima.Ast.UnaryExpression unaryExpression:
                     // Handle unary expressions like -16
                     if (unaryExpression.Operator.ToString() == "UnaryNegation" && unaryExpression.Argument is Acornima.Ast.NumericLiteral numericArg)
                     {
-                        if (forceString)
+                        if (typeCoercion.toString)
                         {
                             var numberAsString = (-numericArg.Value).ToString();
                             _il.LoadString(_metadataBuilder.GetOrAddUserString(numberAsString));
@@ -324,9 +338,40 @@ namespace Js2IL.Services.ILGenerators
                         throw new NotSupportedException($"Unsupported unary expression: {unaryExpression.Operator}");
                     }
                     break;
+                case MemberExpression memberExpression:
+                    LoadValue(memberExpression.Object, new TypeCoercion()); // Load the object part of the member expression
+
+                    // temporary.. need make generic for any object
+                    if (memberExpression.Property is Identifier propertyIdentifier)
+                    {
+                        if (propertyIdentifier.Name == "length")
+                        {
+                            _runtime.InvokeArrayGetCount();
+                            type = JavascriptType.Number;
+                        }
+                        else if (memberExpression.Computed)
+                        {
+                            // computed means someObject["propertyName"] or someObject[someIndex]
+                            LoadValue(propertyIdentifier, new TypeCoercion());
+                            _runtime.InvokeGetItemFromObject();
+                            type = JavascriptType.Object;
+                        }
+                        else
+                        {
+                            throw new NotSupportedException($"Unsupported member property expression: {memberExpression.Property}");
+                        }
+
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"Unsupported member expression: {memberExpression.Property}");
+                    }
+                    break;
                 default:
                     throw new NotSupportedException($"Unsupported expression type: {expression.Type}");
             }
+
+            return type;
         }
     }
 }

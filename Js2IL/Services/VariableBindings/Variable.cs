@@ -10,6 +10,7 @@ namespace Js2IL.Services
     {
         public required string Name;
         public int? LocalIndex = null;
+        public JavascriptType Type = JavascriptType.Unknown;
     }
 
 

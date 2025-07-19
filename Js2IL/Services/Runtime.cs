@@ -12,11 +12,16 @@ namespace Js2IL.Services
     {
         private MemberReferenceHandle _toStringMethodRef;
         private MemberReferenceHandle _consoleLogMethodRef;
+        private MemberReferenceHandle _objectGetItem;
+        private MemberReferenceHandle _arrayCtorRef;
+        private MemberReferenceHandle _arrayLengthRef;
         private InstructionEncoder _il;
+        private BaseClassLibraryReferences _baseClassLibraryReferences;
 
-        public Runtime(MetadataBuilder metadataBuilder, InstructionEncoder il) 
+        public Runtime(MetadataBuilder metadataBuilder, InstructionEncoder il, BaseClassLibraryReferences baseClassLibraryReferences) 
         { 
             _il = il;
+            _baseClassLibraryReferences = baseClassLibraryReferences;
 
             var thisAssembly = typeof(Runtime).Assembly;
             var thisAssemblyName = thisAssembly.GetName();
@@ -77,6 +82,57 @@ namespace Js2IL.Services
                 consoleType,
                 metadataBuilder.GetOrAddString("Log"),
                 consoleLogSig);
+
+            // Array type ---------
+            var arrayType = metadataBuilder.AddTypeReference(
+                thisAssemblyReference,
+                metadataBuilder.GetOrAddString("Js2IL.Runtime"),
+                metadataBuilder.GetOrAddString("Array"));
+
+            //  - Constructor
+            var arraySigBuilder = new BlobBuilder();
+            new BlobEncoder(arraySigBuilder)
+                .MethodSignature(isInstanceMethod: true)
+                .Parameters(1, returnType => returnType.Void(), parameters => 
+                 { 
+                     parameters.AddParameter().Type().Int32(); 
+                 });
+            var arrayCtorSig = metadataBuilder.GetOrAddBlob(arraySigBuilder);
+            _arrayCtorRef = metadataBuilder.AddMemberReference(
+                arrayType,
+                metadataBuilder.GetOrAddString(".ctor"),
+                arrayCtorSig);
+
+            // - length
+            var arrayLengthSigBuilder = new BlobBuilder();
+            new BlobEncoder(arrayLengthSigBuilder)
+                .MethodSignature(isInstanceMethod: true)
+                .Parameters(0, returnType => returnType.Type().Double(), parameters => { });
+            var arrayLengthSig = metadataBuilder.GetOrAddBlob(arrayLengthSigBuilder);
+            _arrayLengthRef = metadataBuilder.AddMemberReference(
+                arrayType,
+                metadataBuilder.GetOrAddString("get_length"),
+                arrayLengthSig);
+
+
+            var objectType = metadataBuilder.AddTypeReference(
+                thisAssemblyReference,
+                metadataBuilder.GetOrAddString("Js2IL.Runtime"),
+                metadataBuilder.GetOrAddString("Object"));
+
+            var objectGetItemSigBuilder = new BlobBuilder();
+            new BlobEncoder(objectGetItemSigBuilder)
+                .MethodSignature(isInstanceMethod: false)
+                .Parameters(2, returnType => returnType.Type().Object(), parameters => 
+                { 
+                    parameters.AddParameter().Type().Object();
+                    parameters.AddParameter().Type().Double();
+                });
+            var objectGetItemSig = metadataBuilder.GetOrAddBlob(objectGetItemSigBuilder);
+            _objectGetItem = metadataBuilder.AddMemberReference(
+                objectType,
+                metadataBuilder.GetOrAddString("GetItem"),
+                objectGetItemSig);
         }
 
         /// <summary>
@@ -102,6 +158,28 @@ namespace Js2IL.Services
         {
             _il.OpCode(ILOpCode.Call);
             _il.Token(_consoleLogMethodRef);
+        }
+
+        public void InvokeArrayCtor()
+        {
+            // we assume the size of the array is already on the stack
+            _il.OpCode(ILOpCode.Newobj);
+            _il.Token(_arrayCtorRef);
+        }
+
+        public void InvokeArrayGetCount()
+        {
+            // we assume the array is already on the stack
+            _il.OpCode(ILOpCode.Callvirt);
+            // this can be moved into the runtime as a length property in the future
+            _il.Token(_arrayLengthRef);            
+        }
+
+        public void InvokeGetItemFromObject()
+        {
+            // we assume the object and index are already on the stack
+            _il.OpCode(ILOpCode.Call);
+            _il.Token(_objectGetItem);
         }
     }
 }

@@ -37,6 +37,13 @@ namespace Js2IL.Tests
         }
 
         [Fact]
+        public Task ArrayLiteral()
+        {
+            var testNode = nameof(ArrayLiteral);
+            return ExecutionTest(testNode);
+        }
+
+        [Fact]
         public Task BinaryOperator_AddNumberNumber()
         {
             var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
@@ -231,6 +238,7 @@ namespace Js2IL.Tests
             var expectedPath = Path.Combine(_outputPath, $"{testName}.dll");
 
             var il = ExecuteGeneratedAssembly(expectedPath);
+            //ExecuteGeneratedAssemblyInProc(expectedPath);
             return Verify(il, _verifySettings);
         }
 
@@ -259,6 +267,21 @@ namespace Js2IL.Tests
             }
 
             return stdOut;
+        }
+
+        private string ExecuteGeneratedAssemblyInProc(string assemblyPath)
+        {
+            var assembly = Assembly.LoadFrom(assemblyPath);
+            var entryPoint = assembly.EntryPoint;
+            if (entryPoint == null)
+            {
+                throw new InvalidOperationException("No entry point found in the generated assembly.");
+            }
+            var parameters = entryPoint.GetParameters().Select(p => p.ParameterType).ToArray();
+            var instance = Activator.CreateInstance(assembly.GetType(entryPoint.DeclaringType!.FullName!)!);
+            entryPoint.Invoke(instance, parameters.Length == 0 ? null : new object[] { });
+
+            return "Execution completed successfully.";
         }
 
         private string GetJavaScript(string testName)

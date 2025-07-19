@@ -42,6 +42,13 @@ namespace Js2IL.Tests
         }
 
         [Fact]
+        public Task ArrayLiteral()
+        {
+            var testNode = nameof(ArrayLiteral);
+            return GenerateTest(testNode);
+        }
+
+        [Fact]
         public Task BinaryOperator_AddNumberNumber()
         {
             var testName = System.Reflection.MethodBase.GetCurrentMethod()!.Name;
