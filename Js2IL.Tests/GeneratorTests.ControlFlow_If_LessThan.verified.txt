@@ -1,0 +1,36 @@
+﻿// IL code: ControlFlow_If_LessThan
+.class public auto ansi Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 12
+		// Code size: 82 (0x52)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: ldc.r8 1
+		IL_0009: ldc.r8 2
+		IL_0012: blt IL_001c
+
+		IL_0017: br IL_0039
+
+		IL_001c: ldstr "if branch {0}"
+		IL_0021: ldc.r8 42
+		IL_002a: box [System.Runtime]System.Double
+		IL_002f: call void [Js2IL]Js2IL.Runtime.Console::Log(string, object)
+		IL_0034: br IL_0051
+
+		IL_0039: ldstr "else branch {0}"
+		IL_003e: ldc.r8 99
+		IL_0047: box [System.Runtime]System.Double
+		IL_004c: call void [Js2IL]Js2IL.Runtime.Console::Log(string, object)
+
+		IL_0051: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

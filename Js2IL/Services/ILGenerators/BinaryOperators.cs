@@ -296,6 +296,12 @@ namespace Js2IL.Services.ILGenerators
                         _il.LoadConstantR8(numericLiteral.Value); // Load numeric literal
                     }
 
+                    if (typeCoercion.boxed)
+                    {
+                        _il.OpCode(ILOpCode.Box);
+                        _il.Token(_bclReferences.DoubleType); // box the numeric literal as a double
+                    }
+
                     type = JavascriptType.Number;
 
                     break;

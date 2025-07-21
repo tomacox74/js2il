@@ -184,6 +184,13 @@ namespace Js2IL.Tests
         }
 
         [Fact]
+        public Task ControlFlow_If_LessThan()
+        {
+            var testName = nameof(ControlFlow_If_LessThan);
+            return ExecutionTest(testName);
+        }
+
+        [Fact]
         public Task UnaryOperator_PlusPlusPostfix()
         {
             var testName = nameof(UnaryOperator_PlusPlusPostfix);

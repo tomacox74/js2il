@@ -94,6 +94,9 @@ namespace Js2IL.Services.ILGenerators
                 case ForStatement forStatement:
                     GenerateForStatement(forStatement);
                     break;
+                case IfStatement ifStatement:
+                    GenerateIfStatement(ifStatement);
+                    break;
                 case BlockStatement blockStatement:
                     // Handle BlockStatement
                     GenerateStatements(blockStatement.Body);
@@ -170,6 +173,38 @@ namespace Js2IL.Services.ILGenerators
 
             // here is the end
             _il.MarkLabel(loopEndLabel);
+        }
+
+        private void GenerateIfStatement(IfStatement ifStatement)
+        {
+            var consequentLabel = _il.DefineLabel();
+            var elseLabel = _il.DefineLabel();
+            var endLabel = _il.DefineLabel();
+
+
+            // Actually, we want: if (test) { consequent } else { alternate }
+            // So: if test is false, jump to elseLabel, otherwise fall through to consequent
+            // Fix: BranchOnTrue = consequentLabel, BranchOnFalse = elseLabel            
+            
+            _expressionEmitter.Emit(ifStatement.Test, new TypeCoercion(), new ConditionalBranching
+            {
+                BranchOnTrue = consequentLabel,
+                BranchOnFalse = elseLabel
+            });
+
+            // Consequent (if block)\
+            _il.MarkLabel(consequentLabel);
+            GenerateStatement(ifStatement.Consequent);
+            _il.Branch(ILOpCode.Br, endLabel);
+
+            // Else/Alternate
+            _il.MarkLabel(elseLabel);
+            if (ifStatement.Alternate != null)
+            {
+                GenerateStatement(ifStatement.Alternate);
+            }
+
+            _il.MarkLabel(endLabel);
         }
 
         private void GenerateObjectExpresion(ObjectExpression objectExpression)
@@ -317,9 +352,6 @@ namespace Js2IL.Services.ILGenerators
             _il.LoadString(messageHandle);
 
             var javascriptType = this._expressionEmitter.Emit(callConsoleLog.Arguments[1], new TypeCoercion() {  boxed = true });
-
-            // hack hack hack.. 
-
 
             // call the runtime helper Console.Log
             _runtime.InvokeConsoleLog();

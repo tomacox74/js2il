@@ -32,20 +32,26 @@ namespace Js2IL.Services.ILGenerators
             _ilGenerator.IL.OpCode(ILOpCode.Ret);
 
             // local variables
+            MethodBodyAttributes methodBodyAttributes = MethodBodyAttributes.None;
+            StandaloneSignatureHandle localSignature = default;
             int numberOfLocals = variables.GetNumberOfLocals();
-            var localSig = new BlobBuilder();
-            var localVariableEncoder = new BlobEncoder(localSig).LocalVariableSignature(numberOfLocals);
-            for (int i = 0; i < numberOfLocals; i++)
+            if (numberOfLocals > 0)
             {
-                localVariableEncoder.AddVariable().Type().Object();
-            }
+                var localSig = new BlobBuilder();
+                var localVariableEncoder = new BlobEncoder(localSig).LocalVariableSignature(numberOfLocals);
+                for (int i = 0; i < numberOfLocals; i++)
+                {
+                    localVariableEncoder.AddVariable().Type().Object();
+                }
 
-            var localSignature = metadataBuilder.AddStandaloneSignature(metadataBuilder.GetOrAddBlob(localSig));
+                localSignature = metadataBuilder.AddStandaloneSignature(metadataBuilder.GetOrAddBlob(localSig));
+                methodBodyAttributes = MethodBodyAttributes.InitLocals;
+            }
 
             return methodBodyStream.AddMethodBody(
                 _ilGenerator.IL, 
                 localVariablesSignature: localSignature,
-                attributes: MethodBodyAttributes.InitLocals);
+                attributes: methodBodyAttributes);
         }
     }
 }
