@@ -156,30 +156,30 @@ namespace Js2IL.Tests
         }
 
         [Fact]
-        public Task Generate_ForLoopCountToFive()
+        public Task ControlFlow_ForLoop_CountToFive()
         {
-            var testName = nameof(Generate_ForLoopCountToFive);
+            var testName = nameof(ControlFlow_ForLoop_CountToFive);
             return ExecutionTest(testName);
         }
 
         [Fact]
-        public Task Generate_ForLoopCountDownFromFive()
+        public Task ControlFlow_ForLoop_CountDownFromFive()
         {
-            var testName = nameof(Generate_ForLoopCountDownFromFive);
+            var testName = nameof(ControlFlow_ForLoop_CountDownFromFive);
             return ExecutionTest(testName);
         }
 
         [Fact]
-        public Task Generate_ForLoopGreaterThanOrEqual()
+        public Task ControlFlow_ForLoop_GreaterThanOrEqual()
         {
-            var testName = nameof(Generate_ForLoopGreaterThanOrEqual);
+            var testName = nameof(ControlFlow_ForLoop_GreaterThanOrEqual);
             return ExecutionTest(testName);
         }
 
         [Fact]
-        public Task Generate_ForLoopLessThanOrEqual()
+        public Task ControlFlow_ForLoop_LessThanOrEqual()
         {
-            var testName = nameof(Generate_ForLoopLessThanOrEqual);
+            var testName = nameof(ControlFlow_ForLoop_LessThanOrEqual);
             return ExecutionTest(testName);
         }
 
