@@ -244,6 +244,14 @@ namespace Js2IL.Tests
             return GenerateTest(testName);
         }
 
+        [Fact]
+        public Task Function_HelloWorld()
+        {
+            var testName = nameof(Function_HelloWorld);
+            return GenerateTest(testName);
+        }
+
+
         private Task GenerateTest(string testName)
         {
             var js = GetJavaScript(testName);

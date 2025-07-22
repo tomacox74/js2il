@@ -3,6 +3,7 @@ using Acornima.Ast;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
@@ -23,6 +24,8 @@ namespace Js2IL.Services.ILGenerators
         private BinaryOperators _binaryOperators;
         private IMethodExpressionEmitter _expressionEmitter;
         private Runtime _runtime;
+        private MethodBodyStreamEncoder _methodBodyStreamEncoder;
+        private MethodDefinitionHandle _firstMethod = default;
 
         /*
          * Temporary exposure of private members until refactoring gets cleaner
@@ -33,7 +36,9 @@ namespace Js2IL.Services.ILGenerators
         public MetadataBuilder MetadataBuilder => _metadataBuilder;
         public InstructionEncoder IL => _il;
 
-        public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder)
+        public MethodDefinitionHandle FirstMethod => _firstMethod;
+
+        public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder)
         {
             _variables = variables;
             _bclReferences = bclReferences;
@@ -45,7 +50,7 @@ namespace Js2IL.Services.ILGenerators
 
             // temporary as we set the table for further refactoring
             this._expressionEmitter = this;
-            
+            _methodBodyStreamEncoder = methodBodyStreamEncoder;
         }
 
         public void DeclareVariable(VariableDeclaration variableDeclaraion)
@@ -74,10 +79,73 @@ namespace Js2IL.Services.ILGenerators
 
         public void GenerateStatements(NodeList<Statement> statements)
         {
+            // functions are hosted so we need to declare them first
+            DeclareFunctions(statements.OfType<FunctionDeclaration>());
+
             // Iterate through each statement in the block
-            foreach (var statement in statements)
+            foreach (var statement in statements.Where(s => s is not FunctionDeclaration))
             {
                 GenerateStatement(statement);
+            }
+        }
+
+        public void DeclareFunctions(IEnumerable<FunctionDeclaration> functionDeclarations)
+        {
+            // Iterate through each function declaration in the block
+            foreach (var functionDeclaration in functionDeclarations)
+            {
+                DeclareFunction(functionDeclaration);
+            }
+        }
+
+        public void DeclareFunction(FunctionDeclaration functionDeclaration)
+        {
+            var functionName = (functionDeclaration.Id as Acornima.Ast.Identifier)!.Name;
+            var functionVariable = _variables.CreateLocal(functionName);
+
+            // create a new method generator to have the correct context for the function
+            var methodGenerator = new ILMethodGenerator(_variables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder);
+
+            if (functionDeclaration.Body is BlockStatement blockStatement)
+            {
+                methodGenerator.GenerateStatements(blockStatement.Body);
+
+                methodGenerator.IL.OpCode(ILOpCode.Ret);
+
+                var bodyoffset = _methodBodyStreamEncoder.AddMethodBody(
+                    methodGenerator.IL,
+                    localVariablesSignature: default,
+                    attributes: MethodBodyAttributes.None);
+
+                var sigBuilder = new BlobBuilder();
+                new BlobEncoder(sigBuilder)
+                    .MethodSignature()
+                    .Parameters(0, returnType => returnType.Void(), parameters => { });
+                var methodSig = this._metadataBuilder.GetOrAddBlob(sigBuilder);
+
+                this._firstMethod = _metadataBuilder.AddMethodDefinition(
+                    MethodAttributes.Static | MethodAttributes.Public,
+                    MethodImplAttributes.IL,
+                    _metadataBuilder.GetOrAddString(functionName),
+                    methodSig,
+                    bodyoffset,
+                    parameterList: default);
+
+
+                // now we add a delegate to invoke the function
+                _il.OpCode(ILOpCode.Ldnull);
+                _il.OpCode(ILOpCode.Ldftn);
+                _il.Token(this._firstMethod);
+
+                _il.OpCode(ILOpCode.Newobj);
+                _il.Token(_bclReferences.Action_Ctor_Ref);
+
+                _il.StoreLocal(functionVariable.LocalIndex!.Value);
+
+            }
+            else
+            {
+                throw new NotSupportedException($"Unsupported function body type: {functionDeclaration.Body.Type}");
             }
         }
 
@@ -331,7 +399,27 @@ namespace Js2IL.Services.ILGenerators
                 memberExpression.Property is not Acornima.Ast.Identifier propertyIdentifier ||
                 propertyIdentifier.Name != "log")
             {
-                throw new NotSupportedException($"Unsupported call expression: {callExpression.Callee.Type}");
+                // try to invoke local function
+                if (callExpression.Callee is Acornima.Ast.Identifier identifier)
+                {
+                    var functionVariable = _variables[identifier.Name];
+                    if (functionVariable == null)
+                    {
+                        throw new ArgumentException($"Function {identifier.Name} is not defined.");
+                    }
+                    // Load the function delegate
+                    _il.LoadLocal(functionVariable.LocalIndex!.Value);
+
+                    // Call the function delegate
+                    _il.OpCode(ILOpCode.Callvirt);
+                    _il.Token(_bclReferences.Action_Invoke_Ref);
+                    return;
+                }
+                else
+                {
+                    throw new NotSupportedException($"Unsupported call expression callee type: {callExpression.Callee.Type}");
+                }
+
             }
             if (callExpression.Arguments.Count != 2)
             {

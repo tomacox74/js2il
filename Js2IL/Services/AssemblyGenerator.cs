@@ -62,8 +62,8 @@ namespace Js2IL.Services
 
             // IL: return
             var methodBodyStream = new MethodBodyStreamEncoder(this._ilBuilder);
-            var mainGenerator = new MainGenerator(_variables, _bclReferences, _metadataBuilder);
-            var bodyOffset = mainGenerator.GenerateMethod(ast, methodBodyStream);
+            var mainGenerator = new MainGenerator(_variables, _bclReferences, _metadataBuilder, methodBodyStream);
+            var bodyOffset = mainGenerator.GenerateMethod(ast);
 
             this._entryPoint = _metadataBuilder.AddMethodDefinition(
                 MethodAttributes.Static | MethodAttributes.Public,
@@ -72,6 +72,17 @@ namespace Js2IL.Services
                 methodSig,
                 bodyOffset,
                 parameterList: default);
+
+            // Program type definition
+            //var appNamespace = assemblyName;
+            var programTypeDef = _metadataBuilder.AddTypeDefinition(
+                TypeAttributes.Public,
+                _metadataBuilder.GetOrAddString(""),
+                _metadataBuilder.GetOrAddString("Program"),
+                _bclReferences.ObjectType,
+                MetadataTokens.FieldDefinitionHandle(1),
+                MetadataTokens.MethodDefinitionHandle(1)
+            );
 
             this.CreateAssembly(name, outputPath);
         }
@@ -91,17 +102,6 @@ namespace Js2IL.Services
             );
 
             _metadataBuilder.AddModule(0, assemblyName, _metadataBuilder.GetOrAddGuid(Guid.NewGuid()), default, default);
-
-            // Program type definition
-            //var appNamespace = assemblyName;
-            var programTypeDef = _metadataBuilder.AddTypeDefinition(
-                TypeAttributes.Public,
-                _metadataBuilder.GetOrAddString(""),
-                _metadataBuilder.GetOrAddString("Program"),
-                _bclReferences.ObjectType,
-                MetadataTokens.FieldDefinitionHandle(1),
-                MetadataTokens.MethodDefinitionHandle(1)
-            );
         }
 
         private void CreateAssembly(string name, string outputPath)

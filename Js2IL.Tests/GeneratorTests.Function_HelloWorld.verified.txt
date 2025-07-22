@@ -1,0 +1,43 @@
+﻿// IL code: Function_HelloWorld
+.class public auto ansi Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void helloWorld () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 25 (0x19)
+		.maxstack 8
+
+		IL_0000: ldstr "Hello, World! {0}"
+		IL_0005: ldc.r8 0.0
+		IL_000e: box [System.Runtime]System.Double
+		IL_0013: call void [Js2IL]Js2IL.Runtime.Console::Log(string, object)
+		IL_0018: ret
+	} // end of method Program::helloWorld
+
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x206c
+		// Header size: 12
+		// Code size: 20 (0x14)
+		.maxstack 8
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: ldnull
+		IL_0001: ldftn void Program::helloWorld()
+		IL_0007: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
+		IL_000c: stloc.0
+		IL_000d: ldloc.0
+		IL_000e: callvirt instance void [System.Runtime]System.Action::Invoke()
+		IL_0013: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

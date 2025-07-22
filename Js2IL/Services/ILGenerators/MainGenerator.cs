@@ -14,14 +14,16 @@ namespace Js2IL.Services.ILGenerators
     internal class MainGenerator
     {
         private ILMethodGenerator _ilGenerator;
+        private MethodBodyStreamEncoder _methodBodyStreamEncoder;
 
-        public MainGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder)
+        public MainGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder)
         {
-            _ilGenerator = new ILMethodGenerator(variables, bclReferences, metadataBuilder);
+            _ilGenerator = new ILMethodGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder);
+            this._methodBodyStreamEncoder = methodBodyStreamEncoder;
         }
 
 
-        public int GenerateMethod(Acornima.Ast.Program ast, MethodBodyStreamEncoder methodBodyStream)
+        public int GenerateMethod(Acornima.Ast.Program ast)
         {
             var metadataBuilder = _ilGenerator.MetadataBuilder;
             var variables = _ilGenerator.Variables;
@@ -48,7 +50,7 @@ namespace Js2IL.Services.ILGenerators
                 methodBodyAttributes = MethodBodyAttributes.InitLocals;
             }
 
-            return methodBodyStream.AddMethodBody(
+            return _methodBodyStreamEncoder.AddMethodBody(
                 _ilGenerator.IL, 
                 localVariablesSignature: localSignature,
                 attributes: methodBodyAttributes);

@@ -22,5 +22,17 @@ namespace Js2IL.Runtime
                 throw new Exception("Object does not support index access. Only arrays are supported for index access.");
             }
         }
+
+        public static void Test1()
+        {
+            System.Console.WriteLine("Object Test1 called");
+        }
+
+        public static void Test2()
+        {
+            object test1 = new Action(Object.Test1);
+
+            ((Action)test1)();
+        }
     }
 }

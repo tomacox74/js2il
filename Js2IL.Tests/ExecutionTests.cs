@@ -239,6 +239,13 @@ namespace Js2IL.Tests
             return ExecutionTest(testName);
         }
 
+        [Fact]
+        public Task Function_HelloWorld()
+        {
+            var testName = nameof(Function_HelloWorld);
+            return ExecutionTest(testName);
+        }
+
         private Task ExecutionTest(string testName)
         {
             var js = GetJavaScript(testName);
