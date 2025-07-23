@@ -122,16 +122,19 @@ namespace Js2IL.Services
 
             RuntimeConfigWriter.WriteRuntimeConfigJson(assemblyDll, _systemRuntimeAssembly);
 
-            var thisAssemblyPath = typeof(AssemblyGenerator).Assembly.Location;
-            var thisAssemblyFileName = Path.GetFileName(thisAssemblyPath);
-            var copyAssemblyToLocation = Path.Combine(outputPath, thisAssemblyFileName);
-            File.Copy(thisAssemblyPath, copyAssemblyToLocation, true);
-
-            var thisAssemblySymbolsPath = Path.ChangeExtension(thisAssemblyPath, ".pdb");
-            var copySymbolsToLocation = Path.ChangeExtension(copyAssemblyToLocation, ".pdb");
-            if (File.Exists(thisAssemblySymbolsPath))
+            // Copy JavaScriptRuntime.dll instead of js2il.dll
+            var js2ilDir = Path.GetDirectoryName(typeof(AssemblyGenerator).Assembly.Location)!;
+            var jsRuntimeDll = Path.Combine(js2ilDir, "JavaScriptRuntime.dll");
+            var jsRuntimeDllDest = Path.Combine(outputPath, "JavaScriptRuntime.dll");
+            if (File.Exists(jsRuntimeDll))
             {
-                File.Copy(thisAssemblySymbolsPath, copySymbolsToLocation, true);
+                File.Copy(jsRuntimeDll, jsRuntimeDllDest, true);
+                var jsRuntimePdb = Path.ChangeExtension(jsRuntimeDll, ".pdb");
+                var jsRuntimePdbDest = Path.ChangeExtension(jsRuntimeDllDest, ".pdb");
+                if (File.Exists(jsRuntimePdb))
+                {
+                    File.Copy(jsRuntimePdb, jsRuntimePdbDest, true);
+                }
             }
         }
     }

@@ -329,13 +329,6 @@ namespace Js2IL.Services.ILGenerators
 
         private void GenerateArrayExpression(ArrayExpression arrayExpression)
         {
-            var test = new Js2IL.Runtime.Array();
-
-            for (int i = 0; i < test.Count; i++)
-            {
-                Console.WriteLine(test[i]);
-            }
-
             // create a new array of type object
             // push the array size onto the stack
             _il.LoadConstantI4(arrayExpression.Elements.Count);

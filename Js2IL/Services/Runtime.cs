@@ -23,13 +23,13 @@ namespace Js2IL.Services
             _il = il;
             _baseClassLibraryReferences = baseClassLibraryReferences;
 
-            var thisAssembly = typeof(Runtime).Assembly;
-            var thisAssemblyName = thisAssembly.GetName();
-            var thisAssemblyVersion = thisAssemblyName.Version;
+            var runtimeAssembly = typeof(JavaScriptRuntime.Console).Assembly;
+            var runtimeAssemblyName = runtimeAssembly.GetName();
+            var runtimeAssemblyVersion = runtimeAssemblyName.Version;
 
-            var thisAssemblyReference = metadataBuilder.AddAssemblyReference(
-                metadataBuilder.GetOrAddString(thisAssemblyName.Name!),
-                version: thisAssemblyVersion!,
+            var runtimeAssemblyReference = metadataBuilder.AddAssemblyReference(
+                metadataBuilder.GetOrAddString(runtimeAssemblyName.Name!),
+                version: runtimeAssemblyVersion!,
                 culture: default,
                 publicKeyOrToken: default,
                 flags: 0,
@@ -37,9 +37,9 @@ namespace Js2IL.Services
             );
 
             var dotNet2JsType = metadataBuilder.AddTypeReference(
-                thisAssemblyReference,
-                metadataBuilder.GetOrAddString("Js2IL.Runtime"),
-                metadataBuilder.GetOrAddString("DotNet2JSConversions")
+                runtimeAssemblyReference,
+                metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime)),
+                metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime.DotNet2JSConversions))
             );
 
 
@@ -73,9 +73,9 @@ namespace Js2IL.Services
             var consoleLogSig = metadataBuilder.GetOrAddBlob(consoleLogSigBuilder);
 
             var consoleType = metadataBuilder.AddTypeReference(
-                thisAssemblyReference,
-                metadataBuilder.GetOrAddString("Js2IL.Runtime"),
-                metadataBuilder.GetOrAddString("Console")
+                runtimeAssemblyReference,
+                metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime)),
+                metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime.Console))
             );
 
             _consoleLogMethodRef = metadataBuilder.AddMemberReference(
@@ -85,9 +85,9 @@ namespace Js2IL.Services
 
             // Array type ---------
             var arrayType = metadataBuilder.AddTypeReference(
-                thisAssemblyReference,
-                metadataBuilder.GetOrAddString("Js2IL.Runtime"),
-                metadataBuilder.GetOrAddString("Array"));
+                runtimeAssemblyReference,
+                metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime)),
+                metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime.Array)));
 
             //  - Constructor
             var arraySigBuilder = new BlobBuilder();
@@ -116,9 +116,9 @@ namespace Js2IL.Services
 
 
             var objectType = metadataBuilder.AddTypeReference(
-                thisAssemblyReference,
-                metadataBuilder.GetOrAddString("Js2IL.Runtime"),
-                metadataBuilder.GetOrAddString("Object"));
+                runtimeAssemblyReference,
+                metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime)),
+                metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime.Object)));
 
             var objectGetItemSigBuilder = new BlobBuilder();
             new BlobEncoder(objectGetItemSigBuilder)
