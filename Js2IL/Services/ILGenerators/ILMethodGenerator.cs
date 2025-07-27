@@ -27,6 +27,8 @@ namespace Js2IL.Services.ILGenerators
         private MethodBodyStreamEncoder _methodBodyStreamEncoder;
         private MethodDefinitionHandle _firstMethod = default;
 
+        private Dispatch.DispatchTableGenerator _dispatchTableGenerator;
+
         /*
          * Temporary exposure of private members until refactoring gets cleaner
          * need to determine what the difference is between generating the main method and generating any generic method
@@ -38,7 +40,7 @@ namespace Js2IL.Services.ILGenerators
 
         public MethodDefinitionHandle FirstMethod => _firstMethod;
 
-        public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder)
+        public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator)
         {
             _variables = variables;
             _bclReferences = bclReferences;
@@ -51,6 +53,7 @@ namespace Js2IL.Services.ILGenerators
             // temporary as we set the table for further refactoring
             this._expressionEmitter = this;
             _methodBodyStreamEncoder = methodBodyStreamEncoder;
+            _dispatchTableGenerator = dispatchTableGenerator ?? throw new ArgumentNullException(nameof(dispatchTableGenerator));
         }
 
         public void DeclareVariable(VariableDeclaration variableDeclaraion)
@@ -79,9 +82,6 @@ namespace Js2IL.Services.ILGenerators
 
         public void GenerateStatements(NodeList<Statement> statements)
         {
-            // functions are hosted so we need to declare them first
-            DeclareFunctions(statements.OfType<FunctionDeclaration>());
-
             // Iterate through each statement in the block
             foreach (var statement in statements.Where(s => s is not FunctionDeclaration))
             {
@@ -98,13 +98,36 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-        public void DeclareFunction(FunctionDeclaration functionDeclaration)
+        public void InitializeLocalFunctionVariables(IEnumerable<FunctionDeclaration> functionDeclarations)
+        {
+            // Iterate through each function declaration in the block
+            foreach (var functionDeclaration in functionDeclarations)
+            {
+                InitializeLocalFunctionVariable(functionDeclaration);
+            }
+        }
+
+        public void InitializeLocalFunctionVariable(FunctionDeclaration functionDeclaration)
         {
             var functionName = (functionDeclaration.Id as Acornima.Ast.Identifier)!.Name;
             var functionVariable = _variables.CreateLocal(functionName);
 
+            var dispatchDelegateField = _dispatchTableGenerator.GetFieldDefinitionHandle(functionName);
+
+            // now we assign a local variable to the function delegate
+            // in the general case the local feels wasteful but there is scenarons where it could be assigned a different value
+            _il.OpCode(ILOpCode.Ldsfld);
+            _il.Token(dispatchDelegateField);
+            _il.StoreLocal(functionVariable.LocalIndex!.Value);
+        }
+
+
+        public void DeclareFunction(FunctionDeclaration functionDeclaration)
+        {
+            var functionName = (functionDeclaration.Id as Acornima.Ast.Identifier)!.Name;
+
             // create a new method generator to have the correct context for the function
-            var methodGenerator = new ILMethodGenerator(_variables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder);
+            var methodGenerator = new ILMethodGenerator(_variables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator);
 
             if (functionDeclaration.Body is BlockStatement blockStatement)
             {
@@ -123,7 +146,7 @@ namespace Js2IL.Services.ILGenerators
                     .Parameters(0, returnType => returnType.Void(), parameters => { });
                 var methodSig = this._metadataBuilder.GetOrAddBlob(sigBuilder);
 
-                this._firstMethod = _metadataBuilder.AddMethodDefinition(
+                var methodDefinition = this._firstMethod = _metadataBuilder.AddMethodDefinition(
                     MethodAttributes.Static | MethodAttributes.Public,
                     MethodImplAttributes.IL,
                     _metadataBuilder.GetOrAddString(functionName),
@@ -131,16 +154,7 @@ namespace Js2IL.Services.ILGenerators
                     bodyoffset,
                     parameterList: default);
 
-
-                // now we add a delegate to invoke the function
-                _il.OpCode(ILOpCode.Ldnull);
-                _il.OpCode(ILOpCode.Ldftn);
-                _il.Token(this._firstMethod);
-
-                _il.OpCode(ILOpCode.Newobj);
-                _il.Token(_bclReferences.Action_Ctor_Ref);
-
-                _il.StoreLocal(functionVariable.LocalIndex!.Value);
+                _dispatchTableGenerator.SetMethodDefinitionHandle(functionName, methodDefinition);
 
             }
             else
@@ -395,6 +409,7 @@ namespace Js2IL.Services.ILGenerators
                 // try to invoke local function
                 if (callExpression.Callee is Acornima.Ast.Identifier identifier)
                 {
+
                     var functionVariable = _variables[identifier.Name];
                     if (functionVariable == null)
                     {

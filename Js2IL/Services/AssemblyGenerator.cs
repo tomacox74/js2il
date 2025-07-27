@@ -1,16 +1,7 @@
-﻿using PowerArgs.Samples;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
+﻿using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using static System.Net.Mime.MediaTypeNames;
 using Js2IL.Services.ILGenerators;
 
 namespace Js2IL.Services
@@ -33,8 +24,8 @@ namespace Js2IL.Services
 
         public AssemblyGenerator()
         {
-            // get the version and public key toketn for the System.Runtime assembly reference
-            // we use the same that this assembly is compiled against for consistency
+            // Get the version and public key token for the System.Runtime assembly reference.
+            // We use the same one that this assembly is compiled against for consistency.
             if (!ReferenceAssemblyResolver.TryFindSystemRuntime(out this._systemRuntimeAssembly))
             {
                 throw new InvalidOperationException("Could not find System.Runtime assembly reference.");
@@ -44,25 +35,36 @@ namespace Js2IL.Services
         }
 
         /// <summary>
-        /// Generates a new assembly from the provided AST
+        /// Generates a new assembly from the provided AST.
         /// </summary>
-        /// <param name="ast">The javascript ast</param>
-        /// <param name="name">The assemlby name</param>
-        /// <param name="outputPath">The directory to output the generated assembly and related files to</param>
+        /// <param name="ast">The JavaScript AST.</param>
+        /// <param name="name">The assembly name.</param>
+        /// <param name="outputPath">The directory to output the generated assembly and related files to.</param>
         public void Generate(Acornima.Ast.Program ast, string name, string outputPath)
         {
             createAssemblyMetadata(name);
 
-            // Method signature for Main method
+            // the API for generating IL is a little confusing
+            // there is 1 MethodBodyStreamEncoder for all methods in the assembly
+            var methodBodyStream = new MethodBodyStreamEncoder(this._ilBuilder);
+
+            // Create the dispatch table.
+            // The dispatch table exists for two reasons:
+            // 1. It is necessary because JavaScript allows for circular references.
+            // 2. It allows you to dynamically change function implementations at runtime.
+            var dispatchTableGenerator = new Dispatch.DispatchTableGenerator(_metadataBuilder, _bclReferences, methodBodyStream);
+            dispatchTableGenerator.GenerateDispatchTable(ast.Body);
+
+            // Create the method signature for the Main method.
             var sigBuilder = new BlobBuilder();
             new BlobEncoder(sigBuilder)
                 .MethodSignature()
                 .Parameters(0, returnType => returnType.Void(), parameters => { });
             var methodSig = this._metadataBuilder.GetOrAddBlob(sigBuilder);
 
-            // IL: return
-            var methodBodyStream = new MethodBodyStreamEncoder(this._ilBuilder);
-            var mainGenerator = new MainGenerator(_variables, _bclReferences, _metadataBuilder, methodBodyStream);
+
+            // Emit IL: return.
+            var mainGenerator = new MainGenerator(_variables, _bclReferences, _metadataBuilder, methodBodyStream, dispatchTableGenerator);
             var bodyOffset = mainGenerator.GenerateMethod(ast);
 
             this._entryPoint = _metadataBuilder.AddMethodDefinition(
@@ -73,15 +75,20 @@ namespace Js2IL.Services
                 bodyOffset,
                 parameterList: default);
 
-            // Program type definition
-            //var appNamespace = assemblyName;
+            var nextField = MetadataTokens.FieldDefinitionHandle(_metadataBuilder.GetRowCount(TableIndex.Field) + 1);
+
+            // I smell a refactor is needed how we track method lists
+            var firstMethod = mainGenerator.FirstMethod.IsNil ? MetadataTokens.MethodDefinitionHandle(1) : mainGenerator.FirstMethod;
+        
+            // Define the Program type.
+            // var appNamespace = assemblyName;
             var programTypeDef = _metadataBuilder.AddTypeDefinition(
                 TypeAttributes.Public,
                 _metadataBuilder.GetOrAddString(""),
                 _metadataBuilder.GetOrAddString("Program"),
                 _bclReferences.ObjectType,
-                MetadataTokens.FieldDefinitionHandle(1),
-                MetadataTokens.MethodDefinitionHandle(1)
+                nextField,
+                firstMethod
             );
 
             this.CreateAssembly(name, outputPath);
@@ -89,6 +96,7 @@ namespace Js2IL.Services
 
         private void createAssemblyMetadata(string name)
         {
+            // Create the assembly metadata.
             var assemblyName = _metadataBuilder.GetOrAddString(name);
             var culture = _metadataBuilder.GetOrAddString("");
             var publicKey = _metadataBuilder.GetOrAddBlob(StandardPublicKey);
@@ -122,10 +130,10 @@ namespace Js2IL.Services
 
             RuntimeConfigWriter.WriteRuntimeConfigJson(assemblyDll, _systemRuntimeAssembly);
 
-            // Copy JavaScriptRuntime.dll instead of js2il.dll
-            var js2ilDir = Path.GetDirectoryName(typeof(AssemblyGenerator).Assembly.Location)!;
-            var jsRuntimeDll = Path.Combine(js2ilDir, "JavaScriptRuntime.dll");
-            var jsRuntimeDllDest = Path.Combine(outputPath, "JavaScriptRuntime.dll");
+            // Copy JavaScriptRuntime.dll instead of js2il.dll.
+            var jsRuntimeDll = typeof(JavaScriptRuntime.Object).Assembly.Location!;
+            var jsRuntimeAssemblyFileName = Path.GetFileName(jsRuntimeDll);
+            var jsRuntimeDllDest = Path.Combine(outputPath, jsRuntimeAssemblyFileName);
             if (File.Exists(jsRuntimeDll))
             {
                 File.Copy(jsRuntimeDll, jsRuntimeDllDest, true);

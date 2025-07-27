@@ -16,9 +16,19 @@ namespace Js2IL.Services.ILGenerators
         private ILMethodGenerator _ilGenerator;
         private MethodBodyStreamEncoder _methodBodyStreamEncoder;
 
-        public MainGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder)
+        private Dispatch.DispatchTableGenerator _dispatchTableGenerator;
+
+        public MethodDefinitionHandle FirstMethod { get; private set; }
+
+        public MainGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator)
         {
-            _ilGenerator = new ILMethodGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder);
+            _dispatchTableGenerator = dispatchTableGenerator ?? throw new ArgumentNullException(nameof(dispatchTableGenerator));
+
+            if (variables == null) throw new ArgumentNullException(nameof(variables));
+            if (bclReferences == null) throw new ArgumentNullException(nameof(bclReferences));
+            if (metadataBuilder == null) throw new ArgumentNullException(nameof(metadataBuilder));
+
+            _ilGenerator = new ILMethodGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator);
             this._methodBodyStreamEncoder = methodBodyStreamEncoder;
         }
 
@@ -27,7 +37,18 @@ namespace Js2IL.Services.ILGenerators
         {
             var metadataBuilder = _ilGenerator.MetadataBuilder;
             var variables = _ilGenerator.Variables;
-            var bclReferences = _ilGenerator.BclReferences;
+
+            // create the dispatch
+            // functions are hosted so we need to declare them first
+            _ilGenerator.DeclareFunctions(ast.Body.OfType<Acornima.Ast.FunctionDeclaration>());
+
+            var loadDispatchTableMethod = _dispatchTableGenerator.GenerateLoadDispatchTableMethod();
+            if (!loadDispatchTableMethod.IsNil)
+            {
+                _ilGenerator.IL.OpCode(ILOpCode.Call);
+                _ilGenerator.IL.Token(loadDispatchTableMethod);
+                _ilGenerator.InitializeLocalFunctionVariables(ast.Body.OfType<Acornima.Ast.FunctionDeclaration>());
+            }
 
             _ilGenerator.GenerateStatements(ast.Body);
 
@@ -50,8 +71,10 @@ namespace Js2IL.Services.ILGenerators
                 methodBodyAttributes = MethodBodyAttributes.InitLocals;
             }
 
+            FirstMethod = _ilGenerator.FirstMethod;
+
             return _methodBodyStreamEncoder.AddMethodBody(
-                _ilGenerator.IL, 
+                _ilGenerator.IL,
                 localVariablesSignature: localSignature,
                 attributes: methodBodyAttributes);
         }

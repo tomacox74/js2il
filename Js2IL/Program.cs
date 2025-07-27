@@ -23,10 +23,21 @@ public class Js2ILArgs
     public bool Verbose { get; set; }
 }
 
+public static class TestClass
+{
+}
+
 class Program
 {
+    static void HelloWorld()
+    {
+        Console.WriteLine("Hello, World!");
+    }
+
     static void Main(string[] args)
     {
+        HelloWorld();
+
         try
         {
             var parsed = Args.Parse<Js2ILArgs>(args);
@@ -85,7 +96,7 @@ class Program
             {
                 outputPath = Path.GetDirectoryName(Path.GetFullPath(parsed.InputFile));
             }
-            
+
             var assemblyName = Path.GetFileNameWithoutExtension(parsed.InputFile);
 
             assemblyGenerator.Generate(ast, assemblyName, outputPath!);
