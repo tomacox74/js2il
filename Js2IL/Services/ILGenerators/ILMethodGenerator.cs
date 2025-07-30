@@ -429,35 +429,35 @@ namespace Js2IL.Services.ILGenerators
                 }
 
             }
-            if (callExpression.Arguments.Count != 2)
-            {
-                throw new ArgumentException("console.log implementation supports two argument.");
-            }
 
             CallConsoleWriteLine(callExpression);
         }
 
         private void CallConsoleWriteLine(Acornima.Ast.CallExpression callConsoleLog)
         {
+            var arguments = callConsoleLog.Arguments;
+            var argumentCount = arguments.Count;
+
+            _il.LoadConstantI4(argumentCount);
+
             // create a array of parameters to pass to log
-            _il.OpCode(ILOpCode.Ldc_i4_2); // array size of 2
             _il.OpCode(ILOpCode.Newarr);
             _il.Token(_bclReferences.ObjectType);
 
-            // add the string parameter
-            _il.OpCode(ILOpCode.Dup); // Duplicate the array reference on the stack
-            _il.LoadConstantI4(0); // Load the index 0 for the first parameter
-            
-            var message = (callConsoleLog.Arguments[0] as Acornima.Ast.StringLiteral)!.Value;
-            var messageHandle = _metadataBuilder.GetOrAddUserString(message);
-            _il.LoadString(messageHandle);
-            _il.OpCode(ILOpCode.Stelem_ref); // Store the string in the array at index 0
+            for (int i = 0; i < argumentCount; i++)
+            {
+                // Duplicate the array reference on the stack
+                _il.OpCode(ILOpCode.Dup);
+                _il.LoadConstantI4(i); // Load the index for the parameter
+                var argument = callConsoleLog.Arguments[i];
+                
+                // Emit the argument expression
+                this._expressionEmitter.Emit(argument, new TypeCoercion() { boxed = true });
+                
+                // Store the argument in the array at the specified index
+                _il.OpCode(ILOpCode.Stelem_ref);
+            }
 
-            // now add the second parameter
-            _il.OpCode(ILOpCode.Dup); // Duplicate the array reference on the stack
-            _il.LoadConstantI4(1); // Load the index 1 for the second parameter
-            this._expressionEmitter.Emit(callConsoleLog.Arguments[1], new TypeCoercion() {  boxed = true });
-            _il.OpCode(ILOpCode.Stelem_ref); // Store the second parameter in the array at index 1
 
             // call the runtime helper Console.Log
             _runtime.InvokeConsoleLog();
