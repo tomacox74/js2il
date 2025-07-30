@@ -21,6 +21,9 @@ public class Js2ILArgs
 
     [ArgDescription("Enable verbose output")]
     public bool Verbose { get; set; }
+
+    [ArgDescription("Analyze and report unused properties and methods")]
+    public bool AnalyzeUnused { get; set; }
 }
 
 public static class TestClass
@@ -83,7 +86,51 @@ class Program
                 }
             }
 
-            // Step 3: Generate IL
+            // Step 3: Analyze unused code (if requested)
+            if (parsed.AnalyzeUnused)
+            {
+                Console.WriteLine("\nAnalyzing unused code...");
+                var unusedCodeAnalyzer = new UnusedCodeAnalyzer();
+                var unusedCodeResult = unusedCodeAnalyzer.Analyze(ast);
+
+                if (unusedCodeResult.UnusedFunctions.Any())
+                {
+                    Console.WriteLine("\nUnused Functions:");
+                    foreach (var unusedFunc in unusedCodeResult.UnusedFunctions)
+                    {
+                        Console.WriteLine($"  - {unusedFunc}");
+                    }
+                }
+
+                if (unusedCodeResult.UnusedProperties.Any())
+                {
+                    Console.WriteLine("\nUnused Properties:");
+                    foreach (var unusedProp in unusedCodeResult.UnusedProperties)
+                    {
+                        Console.WriteLine($"  - {unusedProp}");
+                    }
+                }
+
+                if (unusedCodeResult.UnusedVariables.Any())
+                {
+                    Console.WriteLine("\nUnused Variables:");
+                    foreach (var unusedVar in unusedCodeResult.UnusedVariables)
+                    {
+                        Console.WriteLine($"  - {unusedVar}");
+                    }
+                }
+
+                if (unusedCodeResult.Warnings.Any())
+                {
+                    Console.WriteLine("\nUnused Code Analysis Warnings:");
+                    foreach (var warning in unusedCodeResult.Warnings)
+                    {
+                        Console.WriteLine($"Warning: {warning}");
+                    }
+                }
+            }
+
+            // Step 4: Generate IL
             // NOTE: some checkes such as the existance of the the file parsed.InputFile are done by powerargs for us
             Console.WriteLine("\nGenerating dotnet assembly...");
             var assemblyGenerator = new AssemblyGenerator();
