@@ -29,5 +29,7 @@ namespace Js2IL.Services
          * Distincly different than undefined in JavaScript.
          */
         Null,
+
+        Function
     }
 }

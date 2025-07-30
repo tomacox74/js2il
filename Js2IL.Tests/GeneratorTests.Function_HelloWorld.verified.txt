@@ -16,20 +16,28 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 1
-		// Code size: 25 (0x19)
+		// Code size: 37 (0x25)
 		.maxstack 8
 
-		IL_0000: ldstr "Hello, World! {0}"
-		IL_0005: ldc.r8 0.0
-		IL_000e: box [System.Runtime]System.Double
-		IL_0013: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(string, object)
-		IL_0018: ret
+		IL_0000: ldc.i4.2
+		IL_0001: newarr [System.Runtime]System.Object
+		IL_0006: dup
+		IL_0007: ldc.i4.0
+		IL_0008: ldstr "Hello, World!"
+		IL_000d: stelem.ref
+		IL_000e: dup
+		IL_000f: ldc.i4.1
+		IL_0010: ldc.r8 0.0
+		IL_0019: box [System.Runtime]System.Double
+		IL_001e: stelem.ref
+		IL_001f: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0024: ret
 	} // end of method Program::helloWorld
 
 	.method public static 
 		void _LoadDispatchTable () cil managed 
 	{
-		// Method begins at RVA 0x206a
+		// Method begins at RVA 0x2076
 		// Header size: 1
 		// Code size: 18 (0x12)
 		.maxstack 8
@@ -44,7 +52,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2080
+		// Method begins at RVA 0x208c
 		// Header size: 12
 		// Code size: 18 (0x12)
 		.maxstack 8

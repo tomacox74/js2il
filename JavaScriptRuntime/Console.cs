@@ -8,10 +8,18 @@ namespace JavaScriptRuntime
 {
     public class Console
     {
-        public static void Log(string message, object arg1)
+        private static IConsoleOutput _output = new DefaultConsoleOutput();
+
+        public static void SetOutput(IConsoleOutput output)
         {
-            arg1 = DotNet2JSConversions.ToString(arg1);
-            System.Console.WriteLine(message,arg1);
+            _output = output ?? new DefaultConsoleOutput();
+        }
+
+        public static void Log(params object[] args)
+        {
+            var parts = args.Select(arg => DotNet2JSConversions.ToString(arg));
+            var line = string.Join(" ", parts);
+            _output.WriteLine(line);
         }
     }
 }

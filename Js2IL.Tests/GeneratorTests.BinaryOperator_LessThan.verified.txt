@@ -8,7 +8,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 75 (0x4b)
+		// Code size: 99 (0x63)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -26,13 +26,29 @@
 		IL_002c: clt
 		IL_002e: box [System.Runtime]System.Boolean
 		IL_0033: stloc.1
-		IL_0034: ldstr "x is {0}"
-		IL_0039: ldloc.0
-		IL_003a: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(string, object)
-		IL_003f: ldstr "y is {0}"
-		IL_0044: ldloc.1
-		IL_0045: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(string, object)
-		IL_004a: ret
+		IL_0034: ldc.i4.2
+		IL_0035: newarr [System.Runtime]System.Object
+		IL_003a: dup
+		IL_003b: ldc.i4.0
+		IL_003c: ldstr "x is"
+		IL_0041: stelem.ref
+		IL_0042: dup
+		IL_0043: ldc.i4.1
+		IL_0044: ldloc.0
+		IL_0045: stelem.ref
+		IL_0046: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_004b: ldc.i4.2
+		IL_004c: newarr [System.Runtime]System.Object
+		IL_0051: dup
+		IL_0052: ldc.i4.0
+		IL_0053: ldstr "y is"
+		IL_0058: stelem.ref
+		IL_0059: dup
+		IL_005a: ldc.i4.1
+		IL_005b: ldloc.1
+		IL_005c: stelem.ref
+		IL_005d: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0062: ret
 	} // end of method Program::Main
 
 } // end of class Program

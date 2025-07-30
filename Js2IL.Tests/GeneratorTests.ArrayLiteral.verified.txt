@@ -8,7 +8,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 127 (0x7f)
+		// Code size: 139 (0x8b)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -38,24 +38,32 @@
 			IL_003e: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
 			IL_0043: blt IL_004d
 
-			IL_0048: br IL_007e
+			IL_0048: br IL_008a
 
-			IL_004d: ldstr " {0}"
-			IL_0052: ldloc.0
-			IL_0053: ldloc.1
-			IL_0054: unbox.any [System.Runtime]System.Double
-			IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-			IL_005e: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(string, object)
-			IL_0063: ldloc.1
-			IL_0064: unbox.any [System.Runtime]System.Double
-			IL_0069: ldc.r8 1
-			IL_0072: add
-			IL_0073: box [System.Runtime]System.Double
-			IL_0078: stloc.1
-			IL_0079: br IL_0037
+			IL_004d: ldc.i4.2
+			IL_004e: newarr [System.Runtime]System.Object
+			IL_0053: dup
+			IL_0054: ldc.i4.0
+			IL_0055: ldstr ""
+			IL_005a: stelem.ref
+			IL_005b: dup
+			IL_005c: ldc.i4.1
+			IL_005d: ldloc.0
+			IL_005e: ldloc.1
+			IL_005f: unbox.any [System.Runtime]System.Double
+			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_0069: stelem.ref
+			IL_006a: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_006f: ldloc.1
+			IL_0070: unbox.any [System.Runtime]System.Double
+			IL_0075: ldc.r8 1
+			IL_007e: add
+			IL_007f: box [System.Runtime]System.Double
+			IL_0084: stloc.1
+			IL_0085: br IL_0037
 		// end loop
 
-		IL_007e: ret
+		IL_008a: ret
 	} // end of method Program::Main
 
 } // end of class Program

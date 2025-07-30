@@ -11,12 +11,25 @@ namespace Js2IL.Services
         public required string Name;
         public int? LocalIndex = null;
         public JavascriptType Type = JavascriptType.Unknown;
+
+        public bool IsLocal => LocalIndex.HasValue;
     }
 
 
     internal class Variables : Dictionary<string, Variable>
     {
         private int _nextLocalIndex = 0;
+
+        public void CreateFunctionVariable(string name)
+        {
+            if (this.ContainsKey(name))
+            {
+                throw new InvalidOperationException($"Variable '{name}' already exists.");
+            }
+
+            var variable = new Variable { Name = name, Type = JavascriptType.Function };
+            this[name] = variable;
+        }
 
         public Variable CreateLocal(string name)
         {

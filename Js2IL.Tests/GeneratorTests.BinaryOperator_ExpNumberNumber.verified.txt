@@ -8,7 +8,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 41 (0x29)
+		// Code size: 53 (0x35)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -20,10 +20,18 @@
 		IL_0012: call float64 [System.Runtime]System.Math::Pow(float64, float64)
 		IL_0017: box [System.Runtime]System.Double
 		IL_001c: stloc.0
-		IL_001d: ldstr "x is {0}"
-		IL_0022: ldloc.0
-		IL_0023: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(string, object)
-		IL_0028: ret
+		IL_001d: ldc.i4.2
+		IL_001e: newarr [System.Runtime]System.Object
+		IL_0023: dup
+		IL_0024: ldc.i4.0
+		IL_0025: ldstr "x is"
+		IL_002a: stelem.ref
+		IL_002b: dup
+		IL_002c: ldc.i4.1
+		IL_002d: ldloc.0
+		IL_002e: stelem.ref
+		IL_002f: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0034: ret
 	} // end of method Program::Main
 
 } // end of class Program

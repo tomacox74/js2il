@@ -8,7 +8,7 @@
 	{
 		// Method begins at RVA 0x2050
 		// Header size: 12
-		// Code size: 82 (0x52)
+		// Code size: 106 (0x6a)
 		.maxstack 8
 		.entrypoint
 
@@ -16,20 +16,36 @@
 		IL_0009: ldc.r8 2
 		IL_0012: blt IL_001c
 
-		IL_0017: br IL_0039
+		IL_0017: br IL_0045
 
-		IL_001c: ldstr "if branch {0}"
-		IL_0021: ldc.r8 42
-		IL_002a: box [System.Runtime]System.Double
-		IL_002f: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(string, object)
-		IL_0034: br IL_0051
+		IL_001c: ldc.i4.2
+		IL_001d: newarr [System.Runtime]System.Object
+		IL_0022: dup
+		IL_0023: ldc.i4.0
+		IL_0024: ldstr "if branch"
+		IL_0029: stelem.ref
+		IL_002a: dup
+		IL_002b: ldc.i4.1
+		IL_002c: ldc.r8 42
+		IL_0035: box [System.Runtime]System.Double
+		IL_003a: stelem.ref
+		IL_003b: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0040: br IL_0069
 
-		IL_0039: ldstr "else branch {0}"
-		IL_003e: ldc.r8 99
-		IL_0047: box [System.Runtime]System.Double
-		IL_004c: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(string, object)
+		IL_0045: ldc.i4.2
+		IL_0046: newarr [System.Runtime]System.Object
+		IL_004b: dup
+		IL_004c: ldc.i4.0
+		IL_004d: ldstr "else branch"
+		IL_0052: stelem.ref
+		IL_0053: dup
+		IL_0054: ldc.i4.1
+		IL_0055: ldc.r8 99
+		IL_005e: box [System.Runtime]System.Double
+		IL_0063: stelem.ref
+		IL_0064: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 
-		IL_0051: ret
+		IL_0069: ret
 	} // end of method Program::Main
 
 } // end of class Program

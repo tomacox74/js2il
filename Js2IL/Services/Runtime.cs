@@ -60,15 +60,14 @@ namespace Js2IL.Services
                 metadataBuilder.GetOrAddString("ToString"),
                 toStringSig);
 
-            // create the method body for Console.Log(string, object)
+            // create the method body for Console.Log(params object[] args)
             var consoleLogSigBuilder = new BlobBuilder();
             new BlobEncoder(consoleLogSigBuilder)
                 .MethodSignature(isInstanceMethod: false)
-                .Parameters(2,
+                .Parameters(1,
                     returnType => returnType.Void(),
                     parameters => {
-                        parameters.AddParameter().Type().String();
-                        parameters.AddParameter().Type().Object();
+                        parameters.AddParameter().Type().SZArray().Object();
                     });
             var consoleLogSig = metadataBuilder.GetOrAddBlob(consoleLogSigBuilder);
 
