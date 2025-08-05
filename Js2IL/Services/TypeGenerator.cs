@@ -3,6 +3,8 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection;
 using Js2IL.Scoping;
+using Js2IL.Services.VariableBindings;
+using System.Linq;
 
 namespace Js2IL.Services
 {
@@ -19,6 +21,7 @@ namespace Js2IL.Services
         private readonly Dictionary<string, TypeDefinitionHandle> _scopeTypes;
         private readonly Dictionary<string, List<FieldDefinitionHandle>> _scopeFields;
         private readonly Dictionary<string, MethodDefinitionHandle> _scopeConstructors;
+        private readonly VariableRegistry _variableRegistry = new();
 
         public TypeGenerator(MetadataBuilder metadataBuilder, BaseClassLibraryReferences bclReferences, MethodBodyStreamEncoder methodBodyStream)
         {
@@ -41,7 +44,18 @@ namespace Js2IL.Services
             
             // Nesting relationships are established during type creation
             
+            // Populate variable registry with all discovered variables
+            PopulateVariableRegistry(scopeTree.Root);
+            
             return rootType;
+        }
+
+        /// <summary>
+        /// Gets the variable registry populated during type generation.
+        /// </summary>
+        public VariableRegistry GetVariableRegistry()
+        {
+            return _variableRegistry;
         }
 
 
@@ -325,6 +339,55 @@ namespace Js2IL.Services
         public IReadOnlyDictionary<string, TypeDefinitionHandle> GetAllScopeTypes()
         {
             return _scopeTypes;
+        }
+
+        /// <summary>
+        /// Populates the variable registry with all variables found in the scope tree.
+        /// This method must be called after all types and fields have been created.
+        /// </summary>
+        private void PopulateVariableRegistry(ScopeNode scope)
+        {
+            var scopeTypeHandle = _scopeTypes[scope.Name];
+            var scopeFields = _scopeFields[scope.Name];
+
+            // Add each binding as a variable in the registry
+            int fieldIndex = 0;
+            foreach (var binding in scope.Bindings)
+            {
+                var variableName = binding.Key;
+                var bindingInfo = binding.Value;
+                
+                // Convert BindingKind to VariableType
+                var variableType = bindingInfo.Kind switch
+                {
+                    BindingKind.Var => VariableType.Variable,
+                    BindingKind.Let => VariableType.Variable,
+                    BindingKind.Const => VariableType.Variable,
+                    _ => VariableType.Variable
+                };
+
+                // Get the field handle for this variable (fields are created in order)
+                if (fieldIndex < scopeFields.Count)
+                {
+                    var fieldHandle = scopeFields[fieldIndex];
+
+                    _variableRegistry.AddVariable(
+                        scope.Name, 
+                        variableName, 
+                        variableType, 
+                        fieldHandle, 
+                        scopeTypeHandle
+                    );
+                }
+
+                fieldIndex++;
+            }
+
+            // Recursively process child scopes
+            foreach (var childScope in scope.Children)
+            {
+                PopulateVariableRegistry(childScope);
+            }
         }
     }
 }
