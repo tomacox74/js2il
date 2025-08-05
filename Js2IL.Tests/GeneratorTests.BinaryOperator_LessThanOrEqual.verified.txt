@@ -37,70 +37,76 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 157 (0x9d)
+		// Code size: 193 (0xc1)
 		.maxstack 8
 		.entrypoint
 		.locals init (
-			[0] object,
-			[1] object,
-			[2] object
+			[0] object
 		)
 
-		IL_0000: ldc.r8 1
-		IL_0009: ldc.r8 2
-		IL_0012: cgt
-		IL_0014: ldc.i4.0
-		IL_0015: ceq
-		IL_0017: box [System.Runtime]System.Boolean
-		IL_001c: stloc.0
-		IL_001d: ldc.r8 2
-		IL_0026: ldc.r8 1
-		IL_002f: cgt
-		IL_0031: ldc.i4.0
-		IL_0032: ceq
-		IL_0034: box [System.Runtime]System.Boolean
-		IL_0039: stloc.1
-		IL_003a: ldc.r8 2
-		IL_0043: ldc.r8 2
-		IL_004c: cgt
-		IL_004e: ldc.i4.0
-		IL_004f: ceq
-		IL_0051: box [System.Runtime]System.Boolean
-		IL_0056: stloc.2
-		IL_0057: ldc.i4.2
-		IL_0058: newarr [System.Runtime]System.Object
-		IL_005d: dup
-		IL_005e: ldc.i4.0
-		IL_005f: ldstr "x is"
-		IL_0064: stelem.ref
-		IL_0065: dup
-		IL_0066: ldc.i4.1
-		IL_0067: ldloc.0
-		IL_0068: stelem.ref
-		IL_0069: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_006e: ldc.i4.2
-		IL_006f: newarr [System.Runtime]System.Object
-		IL_0074: dup
-		IL_0075: ldc.i4.0
-		IL_0076: ldstr "y is"
-		IL_007b: stelem.ref
-		IL_007c: dup
-		IL_007d: ldc.i4.1
-		IL_007e: ldloc.1
-		IL_007f: stelem.ref
-		IL_0080: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0085: ldc.i4.2
-		IL_0086: newarr [System.Runtime]System.Object
-		IL_008b: dup
-		IL_008c: ldc.i4.0
-		IL_008d: ldstr "z is"
-		IL_0092: stelem.ref
-		IL_0093: dup
-		IL_0094: ldc.i4.1
-		IL_0095: ldloc.2
-		IL_0096: stelem.ref
-		IL_0097: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_009c: ret
+		IL_0000: newobj instance void Scopes.BinaryOperator_LessThanOrEqual::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldc.r8 1
+		IL_0010: ldc.r8 2
+		IL_0019: cgt
+		IL_001b: ldc.i4.0
+		IL_001c: ceq
+		IL_001e: box [System.Runtime]System.Boolean
+		IL_0023: stfld object Scopes.BinaryOperator_LessThanOrEqual::x
+		IL_0028: ldloc.0
+		IL_0029: ldc.r8 2
+		IL_0032: ldc.r8 1
+		IL_003b: cgt
+		IL_003d: ldc.i4.0
+		IL_003e: ceq
+		IL_0040: box [System.Runtime]System.Boolean
+		IL_0045: stfld object Scopes.BinaryOperator_LessThanOrEqual::y
+		IL_004a: ldloc.0
+		IL_004b: ldc.r8 2
+		IL_0054: ldc.r8 2
+		IL_005d: cgt
+		IL_005f: ldc.i4.0
+		IL_0060: ceq
+		IL_0062: box [System.Runtime]System.Boolean
+		IL_0067: stfld object Scopes.BinaryOperator_LessThanOrEqual::z
+		IL_006c: ldc.i4.2
+		IL_006d: newarr [System.Runtime]System.Object
+		IL_0072: dup
+		IL_0073: ldc.i4.0
+		IL_0074: ldstr "x is"
+		IL_0079: stelem.ref
+		IL_007a: dup
+		IL_007b: ldc.i4.1
+		IL_007c: ldloc.0
+		IL_007d: ldfld object Scopes.BinaryOperator_LessThanOrEqual::x
+		IL_0082: stelem.ref
+		IL_0083: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0088: ldc.i4.2
+		IL_0089: newarr [System.Runtime]System.Object
+		IL_008e: dup
+		IL_008f: ldc.i4.0
+		IL_0090: ldstr "y is"
+		IL_0095: stelem.ref
+		IL_0096: dup
+		IL_0097: ldc.i4.1
+		IL_0098: ldloc.0
+		IL_0099: ldfld object Scopes.BinaryOperator_LessThanOrEqual::y
+		IL_009e: stelem.ref
+		IL_009f: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00a4: ldc.i4.2
+		IL_00a5: newarr [System.Runtime]System.Object
+		IL_00aa: dup
+		IL_00ab: ldc.i4.0
+		IL_00ac: ldstr "z is"
+		IL_00b1: stelem.ref
+		IL_00b2: dup
+		IL_00b3: ldc.i4.1
+		IL_00b4: ldloc.0
+		IL_00b5: ldfld object Scopes.BinaryOperator_LessThanOrEqual::z
+		IL_00ba: stelem.ref
+		IL_00bb: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00c0: ret
 	} // end of method Program::Main
 
 } // end of class Program

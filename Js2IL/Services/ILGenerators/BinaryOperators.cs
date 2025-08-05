@@ -32,6 +32,40 @@ namespace Js2IL.Services.ILGenerators
             _runtime = runtime;
         }
 
+        /// <summary>
+        /// Loads a variable value using scope field access.
+        /// </summary>
+        private void LoadVariable(Variable variable)
+        {
+            // Load from scope field
+            // Step 1: Load the scope instance (stored in local variable)
+            var scopeLocalIndex = _variables.GetScopeLocalSlot(variable.ScopeName);
+            if (scopeLocalIndex == -1)
+            {
+                throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
+            }
+            _il.LoadLocal(scopeLocalIndex);
+
+            // Step 2: Load the field from the scope instance
+            _il.OpCode(ILOpCode.Ldfld);
+            _il.Token(variable.FieldHandle);
+        }
+
+
+        /// <summary>
+        /// Loads the scope instance for a variable onto the stack.
+        /// Used when the caller needs to do scope.field = value operations.
+        /// </summary>
+        private void LoadScopeInstance(Variable variable)
+        {
+            var scopeLocalIndex = _variables.GetScopeLocalSlot(variable.ScopeName);
+            if (scopeLocalIndex == -1)
+            {
+                throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
+            }
+            _il.LoadLocal(scopeLocalIndex);
+        }
+
         public void Generate(BinaryExpression binaryExpression, ConditionalBranching? branching = null)
         {
             if (binaryExpression.Left == null || binaryExpression.Right == null)
@@ -311,7 +345,7 @@ namespace Js2IL.Services.ILGenerators
                 case Acornima.Ast.Identifier identifier:
                     var name = identifier.Name;
                     var variable = _variables[name];
-                    _il.LoadLocal(variable.LocalIndex!.Value); // Load variable
+                    LoadVariable(variable); // Load variable using scope field or local fallback
 
                     // this is fragile at the moment.. need to handle all types
                     // need a runtime type check for unknown types

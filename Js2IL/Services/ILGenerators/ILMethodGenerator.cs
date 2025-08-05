@@ -66,17 +66,29 @@ namespace Js2IL.Services.ILGenerators
             var variable = _variables.CreateLocal(variableName);
 
             // now we need to generate the expession portion
-            if (variableAST.Init != null && variable.LocalIndex != null)
+            if (variableAST.Init != null)
             {
-                // otherwise we need to generate the expression
+                // New approach: Store to scope field
+                var scopeLocalIndex = _variables.GetScopeLocalSlot(variable.ScopeName);
+                if (scopeLocalIndex == -1)
+                {
+                    throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
+                }
+                
+                // Load scope instance first for stfld
+                _il.LoadLocal(scopeLocalIndex);
+                
+                // Generate the expression - this puts the value on the stack
                 variable.Type = this._expressionEmitter.Emit(variableAST.Init, new TypeCoercion());
                 if (variable.Type == JavascriptType.Number)
                 {
                     _il.OpCode(ILOpCode.Box);
                     _il.Token(_bclReferences.DoubleType);
                 }
-
-                _il.StoreLocal(variable.LocalIndex.Value);
+                
+                // Now stack: [scope_instance] [value] - perfect for stfld
+                _il.OpCode(ILOpCode.Stfld);
+                _il.Token(variable.FieldHandle);
             }
         }
 
@@ -116,9 +128,20 @@ namespace Js2IL.Services.ILGenerators
 
             // now we assign a local variable to the function delegate
             // in the general case the local feels wasteful but there is scenarons where it could be assigned a different value
+            
+            // Store using scope field
+            var scopeLocalIndex = _variables.GetScopeLocalSlot(functionVariable.ScopeName);
+            if (scopeLocalIndex == -1)
+            {
+                throw new InvalidOperationException($"Scope '{functionVariable.ScopeName}' not found in local slots");
+            }
+            
+            // Load scope instance, then load delegate value, then store to field
+            _il.LoadLocal(scopeLocalIndex);
             _il.OpCode(ILOpCode.Ldsfld);
             _il.Token(dispatchDelegateField);
-            _il.StoreLocal(functionVariable.LocalIndex!.Value);
+            _il.OpCode(ILOpCode.Stfld);
+            _il.Token(functionVariable.FieldHandle);
         }
 
 
@@ -374,12 +397,26 @@ namespace Js2IL.Services.ILGenerators
             // Handle postfix increment (x++) and decrement (x--)
             var variableName = (updateExpression.Argument as Acornima.Ast.Identifier)!.Name;
             var variable = _variables[variableName];
-            // Load the variable
-            _il.LoadLocal(variable.LocalIndex!.Value);
+            
+            // Handle scope field variables
+            var scopeLocalIndex = _variables.GetScopeLocalSlot(variable.ScopeName);
+            if (scopeLocalIndex == -1)
+            {
+                throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
+            }
+            
+            // Load scope instance for the store operation later
+            _il.LoadLocal(scopeLocalIndex);
+            
+            // Load the current value from scope field  
+            _il.LoadLocal(scopeLocalIndex);
+            _il.OpCode(ILOpCode.Ldfld);
+            _il.Token(variable.FieldHandle);
+            
             // unbox the variable
             _il.OpCode(ILOpCode.Unbox_any);
-            // Assuming the variable is a double because it is the only option that has parity with javascript numbers
             _il.Token(_bclReferences.DoubleType);
+            
             // increment or decrement by 1
             _il.LoadConstantR8(1.0);
             if (updateExpression.Operator == Acornima.Operator.Increment)
@@ -390,11 +427,14 @@ namespace Js2IL.Services.ILGenerators
             {
                 _il.OpCode(ILOpCode.Sub);
             }
+            
             // box the result back to an object
             _il.OpCode(ILOpCode.Box);
             _il.Token(_bclReferences.DoubleType);
-            // Store the result back to the variable because it is a update expression
-            _il.StoreLocal(variable.LocalIndex.Value);
+            
+            // Now stack is: [scope_instance] [boxed_result] - perfect for stfld
+            _il.OpCode(ILOpCode.Stfld);
+            _il.Token(variable.FieldHandle);
         }
 
         private void GenerateCallExpression(Acornima.Ast.CallExpression callExpression)
@@ -415,8 +455,15 @@ namespace Js2IL.Services.ILGenerators
                     {
                         throw new ArgumentException($"Function {identifier.Name} is not defined.");
                     }
-                    // Load the function delegate
-                    _il.LoadLocal(functionVariable.LocalIndex!.Value);
+                    // Load the function delegate from scope field
+                    var scopeLocalIndex = _variables.GetScopeLocalSlot(functionVariable.ScopeName);
+                    if (scopeLocalIndex == -1)
+                    {
+                        throw new InvalidOperationException($"Scope '{functionVariable.ScopeName}' not found in local slots");
+                    }
+                    _il.LoadLocal(scopeLocalIndex);
+                    _il.OpCode(ILOpCode.Ldfld);
+                    _il.Token(functionVariable.FieldHandle);
 
                     // Call the function delegate
                     _il.OpCode(ILOpCode.Callvirt);

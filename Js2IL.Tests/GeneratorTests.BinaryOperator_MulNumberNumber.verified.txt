@@ -35,30 +35,34 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 49 (0x31)
+		// Code size: 65 (0x41)
 		.maxstack 8
 		.entrypoint
 		.locals init (
 			[0] object
 		)
 
-		IL_0000: ldc.r8 3
-		IL_0009: ldc.r8 4
-		IL_0012: mul
-		IL_0013: box [System.Runtime]System.Double
-		IL_0018: stloc.0
-		IL_0019: ldc.i4.2
-		IL_001a: newarr [System.Runtime]System.Object
-		IL_001f: dup
-		IL_0020: ldc.i4.0
-		IL_0021: ldstr "x is"
-		IL_0026: stelem.ref
-		IL_0027: dup
-		IL_0028: ldc.i4.1
-		IL_0029: ldloc.0
-		IL_002a: stelem.ref
-		IL_002b: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0030: ret
+		IL_0000: newobj instance void Scopes.BinaryOperator_MulNumberNumber::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldc.r8 3
+		IL_0010: ldc.r8 4
+		IL_0019: mul
+		IL_001a: box [System.Runtime]System.Double
+		IL_001f: stfld object Scopes.BinaryOperator_MulNumberNumber::x
+		IL_0024: ldc.i4.2
+		IL_0025: newarr [System.Runtime]System.Object
+		IL_002a: dup
+		IL_002b: ldc.i4.0
+		IL_002c: ldstr "x is"
+		IL_0031: stelem.ref
+		IL_0032: dup
+		IL_0033: ldc.i4.1
+		IL_0034: ldloc.0
+		IL_0035: ldfld object Scopes.BinaryOperator_MulNumberNumber::x
+		IL_003a: stelem.ref
+		IL_003b: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0040: ret
 	} // end of method Program::Main
 
 } // end of class Program

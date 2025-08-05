@@ -35,33 +35,37 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 52 (0x34)
+		// Code size: 68 (0x44)
 		.maxstack 8
 		.entrypoint
 		.locals init (
 			[0] object
 		)
 
-		IL_0000: ldc.r8 5
-		IL_0009: conv.i4
-		IL_000a: ldc.r8 3
-		IL_0013: conv.i4
-		IL_0014: or
-		IL_0015: conv.r8
-		IL_0016: box [System.Runtime]System.Double
-		IL_001b: stloc.0
-		IL_001c: ldc.i4.2
-		IL_001d: newarr [System.Runtime]System.Object
-		IL_0022: dup
-		IL_0023: ldc.i4.0
-		IL_0024: ldstr "x is"
-		IL_0029: stelem.ref
-		IL_002a: dup
-		IL_002b: ldc.i4.1
-		IL_002c: ldloc.0
-		IL_002d: stelem.ref
-		IL_002e: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0033: ret
+		IL_0000: newobj instance void Scopes.BinaryOperator_BitwiseOrNumberNumber::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldc.r8 5
+		IL_0010: conv.i4
+		IL_0011: ldc.r8 3
+		IL_001a: conv.i4
+		IL_001b: or
+		IL_001c: conv.r8
+		IL_001d: box [System.Runtime]System.Double
+		IL_0022: stfld object Scopes.BinaryOperator_BitwiseOrNumberNumber::x
+		IL_0027: ldc.i4.2
+		IL_0028: newarr [System.Runtime]System.Object
+		IL_002d: dup
+		IL_002e: ldc.i4.0
+		IL_002f: ldstr "x is"
+		IL_0034: stelem.ref
+		IL_0035: dup
+		IL_0036: ldc.i4.1
+		IL_0037: ldloc.0
+		IL_0038: ldfld object Scopes.BinaryOperator_BitwiseOrNumberNumber::x
+		IL_003d: stelem.ref
+		IL_003e: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0043: ret
 	} // end of method Program::Main
 
 } // end of class Program

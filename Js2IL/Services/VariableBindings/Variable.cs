@@ -20,13 +20,6 @@ namespace Js2IL.Services
         public TypeDefinitionHandle ScopeTypeHandle { get; set; }               // Handle for the scope type
         
         public JavascriptType Type = JavascriptType.Unknown;
-
-        // Temporary backward compatibility property - will be removed when IL generation is updated
-        [Obsolete("Use scope field access instead of local variables")]
-        public int? LocalIndex { get; set; } = null;
-        
-        [Obsolete("Use scope field access instead of local variables")]
-        public bool IsLocal => LocalIndex.HasValue;
     }
 
 
@@ -80,17 +73,14 @@ namespace Js2IL.Services
                 var variableInfo = _registry.FindVariable(name);
                 if (variableInfo != null)
                 {
-#pragma warning disable CS0618 // Type or member is obsolete
                     var variable = new Variable 
                     { 
                         Name = name,
                         ScopeName = variableInfo.ScopeName,
                         FieldHandle = variableInfo.FieldHandle,
                         ScopeTypeHandle = variableInfo.ScopeTypeHandle,
-                        Type = JavascriptType.Unknown, // Map from VariableType to JavascriptType if needed
-                        LocalIndex = null // Scope variables don't use local indices
+                        Type = JavascriptType.Unknown // Map from VariableType to JavascriptType if needed
                     };
-#pragma warning restore CS0618 // Type or member is obsolete
                     
                     if (this.ContainsKey(name))
                     {
@@ -101,20 +91,8 @@ namespace Js2IL.Services
                 }
             }
 
-            // Fallback for cases where registry is not available - use old local variable approach
-#pragma warning disable CS0618 // Type or member is obsolete
-            var fallbackVariable = new Variable 
-            { 
-                Name = name,
-                LocalIndex = _nextScopeSlot++ // Temporary: use scope slot counter for backward compatibility
-            };
-#pragma warning restore CS0618 // Type or member is obsolete
-            if (this.ContainsKey(name))
-            {
-                throw new InvalidOperationException($"Variable '{name}' already exists.");
-            }
-            this[name] = fallbackVariable;
-            return fallbackVariable;
+            // If we reach here, the variable is not in the registry
+            throw new InvalidOperationException($"Variable '{name}' not found in registry. All variables should be pre-registered.");
         }
 
         public Variable Get(string name)
@@ -129,6 +107,26 @@ namespace Js2IL.Services
         public int GetScopeLocalSlot(string scopeName)
         {
             return _scopeLocalSlots.GetValueOrDefault(scopeName, -1);
+        }
+
+        /// <summary>
+        /// Gets the variable registry if available.
+        /// </summary>
+        public VariableBindings.VariableRegistry? GetVariableRegistry()
+        {
+            return _registry;
+        }
+
+        /// <summary>
+        /// Creates a scope instance and returns the local variable index for it.
+        /// </summary>
+        public int CreateScopeInstance(string scopeName)
+        {
+            if (!_scopeLocalSlots.ContainsKey(scopeName))
+            {
+                _scopeLocalSlots[scopeName] = _nextScopeSlot++;
+            }
+            return _scopeLocalSlots[scopeName];
         }
 
         public IEnumerable<string> GetAllScopeNames()

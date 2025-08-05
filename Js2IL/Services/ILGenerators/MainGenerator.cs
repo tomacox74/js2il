@@ -29,11 +29,57 @@ namespace Js2IL.Services.ILGenerators
             this._methodBodyStreamEncoder = methodBodyStreamEncoder;
         }
 
+        /// <summary>
+        /// Creates scope instances for all scopes that contain variables.
+        /// Each scope instance is stored in a local variable that can be accessed by variable operations.
+        /// </summary>
+        private void CreateScopeInstances(Variables variables)
+        {
+            var registry = variables.GetVariableRegistry();
+            if (registry == null)
+                return; // No registry means we're using the old local variable system
+
+            foreach (var scopeName in registry.GetAllScopeNames())
+            {
+                var scopeTypeHandle = registry.GetScopeTypeHandle(scopeName);
+                
+                // Create constructor reference for the scope type
+                var ctorRef = _ilGenerator.MetadataBuilder.AddMemberReference(
+                    scopeTypeHandle,
+                    _ilGenerator.MetadataBuilder.GetOrAddString(".ctor"),
+                    CreateConstructorSignature()
+                );
+
+                // Generate IL: new ScopeType()
+                _ilGenerator.IL.OpCode(ILOpCode.Newobj);
+                _ilGenerator.IL.Token(ctorRef);
+
+                // Store the scope instance in a local variable for this scope
+                var scopeLocalIndex = variables.CreateScopeInstance(scopeName);
+                _ilGenerator.IL.StoreLocal(scopeLocalIndex);
+            }
+        }
+
+        /// <summary>
+        /// Creates a constructor signature blob for parameterless constructors.
+        /// </summary>
+        private BlobHandle CreateConstructorSignature()
+        {
+            var sigBuilder = new BlobBuilder();
+            new BlobEncoder(sigBuilder)
+                .MethodSignature(isInstanceMethod: true)
+                .Parameters(0, returnType => returnType.Void(), parameters => { });
+            return _ilGenerator.MetadataBuilder.GetOrAddBlob(sigBuilder);
+        }
+
 
         public int GenerateMethod(Acornima.Ast.Program ast)
         {
             var metadataBuilder = _ilGenerator.MetadataBuilder;
             var variables = _ilGenerator.Variables;
+
+            // Step 1: Create scope instances for all scopes that have variables
+            CreateScopeInstances(variables);
 
             // create the dispatch
             // functions are hosted so we need to declare them first

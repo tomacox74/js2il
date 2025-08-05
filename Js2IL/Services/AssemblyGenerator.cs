@@ -79,6 +79,10 @@ namespace Js2IL.Services
             var typeGenerator = new TypeGenerator(_metadataBuilder, _bclReferences, methodBodyStream);
             var rootTypeHandle = typeGenerator.GenerateTypes(scopeTree);
 
+            // Step 2: Get the variable registry from the type generator and update Variables
+            var variableRegistry = typeGenerator.GetVariableRegistry();
+            _variables = new Variables(variableRegistry);
+
             // Create the dispatch table.
             // The dispatch table exists for two reasons:
             // 1. It is necessary because JavaScript allows for circular references.
