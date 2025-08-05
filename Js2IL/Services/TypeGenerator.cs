@@ -36,11 +36,10 @@ namespace Js2IL.Services
         /// </summary>
         public TypeDefinitionHandle GenerateTypes(ScopeTree scopeTree)
         {            
-            // Create all types (depth-first: children first, then parents)
+            // Create all types with proper nesting (depth-first: children first, then parents)
             var rootType = CreateAllTypes(scopeTree.Root, scopeTree.Root.Name);
             
-            // Phase 3: Skip nesting relationships for now to avoid metadata sorting issues
-            // All types will be top-level types in the "Scopes" namespace
+            // Nesting relationships are established during type creation
             
             return rootType;
         }
@@ -80,18 +79,38 @@ namespace Js2IL.Services
         /// <summary>
         /// Phase 2: Recursively creates type definitions depth-first (children first).
         /// All fields must already be created before this is called.
-        /// All types are created as top-level types in the "Scopes" namespace.
+        /// Root types go in the "Scopes" namespace, nested types are properly nested.
         /// </summary>
         private TypeDefinitionHandle CreateAllTypes(ScopeNode scope, string typeName)
         {
             // First, recursively create all child types (depth-first)
+            // We'll create the parent type first, then update children to be nested
+            var parentType = CreateScopeType(scope, null, typeName, "Scopes");
+            
+            // Now create child types as nested types
             foreach (var childScope in scope.Children)
             {
-                CreateAllTypes(childScope, childScope.Name);
+                CreateAllTypesNested(childScope, childScope.Name, parentType);
             }
 
-            // All scope types go in the "Scopes" namespace as top-level types
-            return CreateScopeType(scope, null, typeName, "Scopes");
+            return parentType;
+        }
+
+        /// <summary>
+        /// Creates nested types recursively.
+        /// </summary>
+        private TypeDefinitionHandle CreateAllTypesNested(ScopeNode scope, string typeName, TypeDefinitionHandle parentType)
+        {
+            // First, recursively create all child types (depth-first)
+            var currentType = CreateScopeType(scope, parentType, typeName, "");
+            
+            // Now create child types as nested types of this type
+            foreach (var childScope in scope.Children)
+            {
+                CreateAllTypesNested(childScope, childScope.Name, currentType);
+            }
+
+            return currentType;
         }
 
         /// <summary>
@@ -159,9 +178,10 @@ namespace Js2IL.Services
         {
             CreateTypeFields(scope);
 
-            // All scope types are created as top-level public types in the "Scopes" namespace
-            // This avoids metadata nesting issues
-            var typeAttributes = TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
+            // Set appropriate visibility: Public for root types, NestedPublic for nested types
+            var typeAttributes = parentType.HasValue 
+                ? TypeAttributes.NestedPublic | TypeAttributes.Class | TypeAttributes.BeforeFieldInit
+                : TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
 
             // Calculate the correct field handle for this type
             var scopeFields = _scopeFields[scope.Name];
@@ -172,15 +192,24 @@ namespace Js2IL.Services
             // Create the constructor for this type
             var ctorHandle = CreateScopeConstructor();
 
-            // Create the type definition - always use "Scopes" namespace for all scope types
+            // For nested types, use empty namespace; for root types, use the provided namespace
+            var actualNamespace = parentType.HasValue ? "" : namespaceString;
+
+            // Create the type definition
             var typeHandle = _metadataBuilder.AddTypeDefinition(
                 typeAttributes,
-                _metadataBuilder.GetOrAddString("Scopes"), // All scope types go in Scopes namespace
+                _metadataBuilder.GetOrAddString(actualNamespace),
                 _metadataBuilder.GetOrAddString(typeName),
                 _bclReferences.ObjectType, // base type
                 firstField, // first field for this type
                 ctorHandle // first method for this type (the constructor)
             );
+
+            // If this is a nested type, establish the nesting relationship
+            if (parentType.HasValue)
+            {
+                _metadataBuilder.AddNestedType(typeHandle, parentType.Value);
+            }
 
             // Store the type handle and constructor for later reference
             _scopeTypes[scope.Name] = typeHandle;
