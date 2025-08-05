@@ -133,6 +133,8 @@ namespace Js2IL.Services
 
         public MemberReferenceHandle Expando_Ctor_Ref { get; private set; }
 
+        public MemberReferenceHandle Object_Ctor_Ref { get; private set; }
+
         public MemberReferenceHandle IDictionary_SetItem_Ref { get; private set; }
 
         public MemberReferenceHandle Array_Add_Ref { get; private set; }
@@ -164,6 +166,17 @@ namespace Js2IL.Services
                 systemCoreExpandoType,
                 metadataBuilder.GetOrAddString(".ctor"),
                 expandoCtorSig);
+
+            // Object constructor reference
+            var objectCtorSigBuilder = new BlobBuilder();
+            new BlobEncoder(objectCtorSigBuilder)
+                .MethodSignature(isInstanceMethod: true)
+                .Parameters(0, returnType => returnType.Void(), parameters => { });
+            var objectCtorSig = metadataBuilder.GetOrAddBlob(objectCtorSigBuilder);
+            Object_Ctor_Ref = metadataBuilder.AddMemberReference(
+                this.ObjectType,
+                metadataBuilder.GetOrAddString(".ctor"),
+                objectCtorSig);
 
             // IDictionary Bound Type Reference <System.String, System.Object>
             var unboundIDictionaryType = metadataBuilder.AddTypeReference(

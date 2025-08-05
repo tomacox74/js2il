@@ -15,15 +15,19 @@ namespace Js2IL.Services
     {
         private readonly MetadataBuilder _metadataBuilder;
         private readonly BaseClassLibraryReferences _bclReferences;
+        private readonly MethodBodyStreamEncoder _methodBodyStream;
         private readonly Dictionary<string, TypeDefinitionHandle> _scopeTypes;
         private readonly Dictionary<string, List<FieldDefinitionHandle>> _scopeFields;
+        private readonly Dictionary<string, MethodDefinitionHandle> _scopeConstructors;
 
-        public TypeGenerator(MetadataBuilder metadataBuilder, BaseClassLibraryReferences bclReferences)
+        public TypeGenerator(MetadataBuilder metadataBuilder, BaseClassLibraryReferences bclReferences, MethodBodyStreamEncoder methodBodyStream)
         {
             _metadataBuilder = metadataBuilder;
             _bclReferences = bclReferences;
+            _methodBodyStream = methodBodyStream;
             _scopeTypes = new Dictionary<string, TypeDefinitionHandle>();
             _scopeFields = new Dictionary<string, List<FieldDefinitionHandle>>();
+            _scopeConstructors = new Dictionary<string, MethodDefinitionHandle>();
         }
 
         /// <summary>
@@ -31,32 +35,20 @@ namespace Js2IL.Services
         /// Returns the root type definition handle.
         /// </summary>
         public TypeDefinitionHandle GenerateTypes(ScopeTree scopeTree)
-        {
-            // Phase 1: Create all fields first (depth-first traversal)
-            CreateAllFields(scopeTree.Root);
+        {            
+            // Create all types (depth-first: children first, then parents)
+            var rootType = CreateAllTypes(scopeTree.Root, scopeTree.Root.Name);
             
-            // Phase 2: Create all types (depth-first: children first, then parents)
-            var rootType = CreateAllTypes(scopeTree.Root, null, scopeTree.Root.Name);
-            
-            // Phase 3: Establish nesting relationships
-            CreateNestingRelationships(scopeTree.Root);
+            // Phase 3: Skip nesting relationships for now to avoid metadata sorting issues
+            // All types will be top-level types in the "Scopes" namespace
             
             return rootType;
         }
 
-        /// <summary>
-        /// Phase 1: Recursively creates all field definitions depth-first.
-        /// This must be done before creating any type definitions.
-        /// </summary>
-        private void CreateAllFields(ScopeNode scope)
-        {
-            // First, recursively create fields for all children (depth-first)
-            foreach (var childScope in scope.Children)
-            {
-                CreateAllFields(childScope);
-            }
 
-            // Then create fields for this scope
+        private void CreateTypeFields(ScopeNode scope)
+        {
+            // Create fields for this scope
             _scopeFields[scope.Name] = new List<FieldDefinitionHandle>();
             var scopeFields = _scopeFields[scope.Name];
 
@@ -88,18 +80,56 @@ namespace Js2IL.Services
         /// <summary>
         /// Phase 2: Recursively creates type definitions depth-first (children first).
         /// All fields must already be created before this is called.
-        /// All types are created as top-level types initially.
+        /// All types are created as top-level types in the "Scopes" namespace.
         /// </summary>
-        private TypeDefinitionHandle CreateAllTypes(ScopeNode scope, TypeDefinitionHandle? parentType, string typeName)
+        private TypeDefinitionHandle CreateAllTypes(ScopeNode scope, string typeName)
         {
             // First, recursively create all child types (depth-first)
             foreach (var childScope in scope.Children)
             {
-                CreateAllTypes(childScope, null, childScope.Name); // All types are top-level initially
+                CreateAllTypes(childScope, childScope.Name);
             }
 
-            // Now create this type (always as top-level initially)
-            return CreateScopeType(scope, null, typeName);
+            // All scope types go in the "Scopes" namespace as top-level types
+            return CreateScopeType(scope, null, typeName, "Scopes");
+        }
+
+        /// <summary>
+        /// Phase 3: Establishes nesting relationships in sorted order by nested type handle.
+        /// The .NET metadata specification requires NestedClass table to be sorted.
+        /// </summary>
+        private void CreateNestingRelationshipsSorted(ScopeNode rootScope)
+        {
+            // Collect all nesting relationships first
+            var nestingRelationships = new List<(TypeDefinitionHandle nestedType, TypeDefinitionHandle enclosingType)>();
+            CollectNestingRelationships(rootScope, nestingRelationships);
+            
+            // Sort by nested type handle (required by .NET metadata specification)
+            nestingRelationships.Sort((a, b) => MetadataTokens.GetRowNumber(a.nestedType).CompareTo(MetadataTokens.GetRowNumber(b.nestedType)));
+            
+            // Add the nesting relationships in sorted order
+            foreach (var (nestedType, enclosingType) in nestingRelationships)
+            {
+                _metadataBuilder.AddNestedType(nestedType, enclosingType);
+            }
+        }
+
+        /// <summary>
+        /// Recursively collects all nesting relationships from the scope tree.
+        /// </summary>
+        private void CollectNestingRelationships(ScopeNode scope, List<(TypeDefinitionHandle, TypeDefinitionHandle)> relationships)
+        {
+            // For each child scope, collect the nesting relationship
+            foreach (var childScope in scope.Children)
+            {
+                var parentTypeHandle = _scopeTypes[scope.Name];
+                var nestedTypeHandle = _scopeTypes[childScope.Name];
+                
+                relationships.Add((nestedTypeHandle, parentTypeHandle));
+                
+                // Recursively collect child relationships
+                CollectNestingRelationships(childScope, relationships);
+            }
         }
 
         /// <summary>
@@ -123,12 +153,15 @@ namespace Js2IL.Services
 
         /// <summary>
         /// Creates a single type definition for a scope.
-        /// All fields must already exist. Types are created as top-level initially.
+        /// All fields must already exist. All types are created as top-level types.
         /// </summary>
-        private TypeDefinitionHandle CreateScopeType(ScopeNode scope, TypeDefinitionHandle? parentType, string typeName)
+        private TypeDefinitionHandle CreateScopeType(ScopeNode scope, TypeDefinitionHandle? parentType, string typeName, string namespaceString)
         {
-            // Create regular classes that can be instantiated for scope instances
-            var typeAttributes = TypeAttributes.Public | TypeAttributes.Class;
+            CreateTypeFields(scope);
+
+            // All scope types are created as top-level public types in the "Scopes" namespace
+            // This avoids metadata nesting issues
+            var typeAttributes = TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
 
             // Calculate the correct field handle for this type
             var scopeFields = _scopeFields[scope.Name];
@@ -136,27 +169,76 @@ namespace Js2IL.Services
                 ? scopeFields[0] 
                 : MetadataTokens.FieldDefinitionHandle(_metadataBuilder.GetRowCount(TableIndex.Field) + 1);
 
-            // For methods, we'll use the next available method handle (no methods for now)
-            var nextMethod = MetadataTokens.MethodDefinitionHandle(_metadataBuilder.GetRowCount(TableIndex.MethodDef) + 1);
+            // Create the constructor for this type
+            var ctorHandle = CreateScopeConstructor();
 
-            // Create the type definition
+            // Create the type definition - always use "Scopes" namespace for all scope types
             var typeHandle = _metadataBuilder.AddTypeDefinition(
                 typeAttributes,
-                _metadataBuilder.GetOrAddString(""), // namespace (empty for nested types)
+                _metadataBuilder.GetOrAddString("Scopes"), // All scope types go in Scopes namespace
                 _metadataBuilder.GetOrAddString(typeName),
                 _bclReferences.ObjectType, // base type
                 firstField, // first field for this type
-                nextMethod // first method for this type
+                ctorHandle // first method for this type (the constructor)
             );
 
-            // Store the type handle for later reference
+            // Store the type handle and constructor for later reference
             _scopeTypes[scope.Name] = typeHandle;
+            _scopeConstructors[scope.Name] = ctorHandle;
 
             return typeHandle;
         }
 
         /// <summary>
+        /// Creates a constructor method definition for a scope type.
+        /// </summary>
+        private MethodDefinitionHandle CreateScopeConstructor()
+        {
+            // Create constructor method signature
+            var ctorSig = new BlobBuilder();
+            new BlobEncoder(ctorSig)
+                .MethodSignature(SignatureCallingConvention.Default, 0, isInstanceMethod: true)
+                .Parameters(0, returnType => returnType.Void(), parameters => { });
+            var ctorSigHandle = _metadataBuilder.GetOrAddBlob(ctorSig);
+
+            // Generate IL body for constructor: ldarg.0, call Object::.ctor(), nop, ret
+            var ilBuilder = new BlobBuilder();
+            var encoder = new InstructionEncoder(ilBuilder);
+            
+            // ldarg.0 - load 'this' onto the stack
+            encoder.OpCode(ILOpCode.Ldarg_0);
+            
+            // call Object::.ctor() - call base constructor
+            encoder.Call(_bclReferences.Object_Ctor_Ref);
+            
+            // nop - no operation (matches C# compiler output)
+            encoder.OpCode(ILOpCode.Nop);
+            
+            // ret - return from constructor
+            encoder.OpCode(ILOpCode.Ret);
+
+            // Add the method body to the stream - pass the encoder, not the builder
+            var bodyOffset = _methodBodyStream.AddMethodBody(
+                encoder,
+                localVariablesSignature: default,
+                attributes: MethodBodyAttributes.None);
+
+            // Create the constructor method definition with IL body
+            var ctorHandle = _metadataBuilder.AddMethodDefinition(
+                MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
+                MethodImplAttributes.IL,
+                _metadataBuilder.GetOrAddString(".ctor"),
+                ctorSigHandle,
+                bodyOffset, // IL body offset in the stream
+                parameterList: default
+            );
+
+            return ctorHandle;
+        }
+
+        /// <summary>
         /// Determines field attributes based on the JavaScript binding kind.
+        /// All fields are instance fields.
         /// </summary>
         private FieldAttributes GetFieldAttributes(BindingKind bindingKind)
         {
@@ -196,6 +278,16 @@ namespace Js2IL.Services
             return _scopeFields.TryGetValue(scopeName, out var fields) 
                 ? fields 
                 : new List<FieldDefinitionHandle>();
+        }
+
+        /// <summary>
+        /// Gets the constructor method handle for a scope by name.
+        /// </summary>
+        public MethodDefinitionHandle GetScopeConstructor(string scopeName)
+        {
+            return _scopeConstructors.TryGetValue(scopeName, out var ctorHandle) 
+                ? ctorHandle 
+                : default;
         }
 
         /// <summary>

@@ -42,11 +42,42 @@ namespace Js2IL.Services
         /// <param name="outputPath">The directory to output the generated assembly and related files to.</param>
         public void Generate(Acornima.Ast.Program ast, string name, string outputPath)
         {
+            // Build scope tree first
+            var scopeTreeBuilder = new Js2IL.Scoping.ScopeTreeBuilder();
+            var scopeTree = scopeTreeBuilder.Build(ast, $"{name}.js");
+            
+            // Call the new overload
+            Generate(ast, scopeTree, name, outputPath);
+        }
+
+        /// <summary>
+        /// Generates a new assembly from the provided AST and scope tree.
+        /// </summary>
+        /// <param name="ast">The JavaScript AST.</param>
+        /// <param name="scopeTree">The pre-built scope tree.</param>
+        /// <param name="name">The assembly name.</param>
+        /// <param name="outputPath">The directory to output the generated assembly and related files to.</param>
+        public void Generate(Acornima.Ast.Program ast, Js2IL.Scoping.ScopeTree scopeTree, string name, string outputPath)
+        {
             createAssemblyMetadata(name);
+
+            // Add the <Module> type first (as required by .NET metadata)
+            _metadataBuilder.AddTypeDefinition(
+                TypeAttributes.NotPublic,                          // Access flags
+                default(StringHandle),                             // No namespace
+                _metadataBuilder.GetOrAddString("<Module>"),       // Name
+                baseType: default(EntityHandle),                   // No base type
+                fieldList: MetadataTokens.FieldDefinitionHandle(1), // First field
+                methodList: MetadataTokens.MethodDefinitionHandle(1) // First method
+            );
 
             // the API for generating IL is a little confusing
             // there is 1 MethodBodyStreamEncoder for all methods in the assembly
             var methodBodyStream = new MethodBodyStreamEncoder(this._ilBuilder);
+
+            // Step 1: Generate .NET types from the scope tree
+            var typeGenerator = new TypeGenerator(_metadataBuilder, _bclReferences, methodBodyStream);
+            var rootTypeHandle = typeGenerator.GenerateTypes(scopeTree);
 
             // Create the dispatch table.
             // The dispatch table exists for two reasons:
@@ -78,12 +109,12 @@ namespace Js2IL.Services
             var nextField = MetadataTokens.FieldDefinitionHandle(_metadataBuilder.GetRowCount(TableIndex.Field) + 1);
 
             // I smell a refactor is needed how we track method lists
-            var firstMethod = mainGenerator.FirstMethod.IsNil ? MetadataTokens.MethodDefinitionHandle(1) : mainGenerator.FirstMethod;
+            var firstMethod = mainGenerator.FirstMethod.IsNil ? this._entryPoint : mainGenerator.FirstMethod;
         
             // Define the Program type.
             // var appNamespace = assemblyName;
             var programTypeDef = _metadataBuilder.AddTypeDefinition(
-                TypeAttributes.Public,
+                TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
                 _metadataBuilder.GetOrAddString(""),
                 _metadataBuilder.GetOrAddString("Program"),
                 _bclReferences.ObjectType,

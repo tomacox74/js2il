@@ -40,10 +40,14 @@ namespace Js2IL.Scoping
                     }
                     if (funcDecl.Body is BlockStatement block)
                     {
-                        // For function bodies, process statements directly in function scope (for var hoisting)
-                        // but create nested block scopes for explicit blocks
+                        // For function bodies, process statements directly in function scope without creating a block scope
                         foreach (var statement in block.Body)
                             BuildScopeRecursive(statement, funcScope);
+                    }
+                    else
+                    {
+                        // Non-block body (shouldn't happen for function declarations, but handle it)
+                        BuildScopeRecursive(funcDecl.Body, funcScope);
                     }
                     break;
                 case FunctionExpression funcExpr:
@@ -59,9 +63,14 @@ namespace Js2IL.Scoping
                     }
                     if (funcExpr.Body is BlockStatement funcExprBlock)
                     {
-                        // For function bodies, process statements directly in function scope
+                        // For function bodies, process statements directly in function scope without creating a block scope
                         foreach (var statement in funcExprBlock.Body)
                             BuildScopeRecursive(statement, funcExprScope);
+                    }
+                    else
+                    {
+                        // Non-block body (expression body)
+                        BuildScopeRecursive(funcExpr.Body, funcExprScope);
                     }
                     break;
                 case VariableDeclaration varDecl:
@@ -89,7 +98,7 @@ namespace Js2IL.Scoping
                     }
                     break;
                 case BlockStatement blockStmt:
-                    var blockScope = new ScopeNode($"Block_{Guid.NewGuid().ToString("N").Substring(0, 8)}", ScopeKind.Block, currentScope, blockStmt);
+                    var blockScope = new ScopeNode($"Block_L{blockStmt.Location.Start.Line}C{blockStmt.Location.Start.Column}", ScopeKind.Block, currentScope, blockStmt);
                     foreach (var statement in blockStmt.Body)
                         BuildScopeRecursive(statement, blockScope);
                     break;
@@ -112,7 +121,7 @@ namespace Js2IL.Scoping
                     }
                     if (arrowFunc.Body is BlockStatement arrowBlock)
                     {
-                        // For function bodies, process statements directly in function scope
+                        // For function bodies, process statements directly in function scope without creating a block scope
                         foreach (var statement in arrowBlock.Body)
                             BuildScopeRecursive(statement, arrowScope);
                     }
@@ -145,6 +154,19 @@ namespace Js2IL.Scoping
                             BuildScopeRecursive(element, currentScope);
                         }
                     }
+                    break;
+                case ForStatement forStmt:
+                    // Process init, test, and update expressions
+                    if (forStmt.Init != null)
+                        BuildScopeRecursive(forStmt.Init, currentScope);
+                    if (forStmt.Test != null)
+                        BuildScopeRecursive(forStmt.Test, currentScope);
+                    if (forStmt.Update != null)
+                        BuildScopeRecursive(forStmt.Update, currentScope);
+                    
+                    // Process the body statement (which may be a block or a single statement)
+                    if (forStmt.Body != null)
+                        BuildScopeRecursive(forStmt.Body, currentScope);
                     break;
                 default:
                     // For other node types, recursively process their children

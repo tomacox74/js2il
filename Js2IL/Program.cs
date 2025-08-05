@@ -1,5 +1,6 @@
 ﻿using PowerArgs;
 using Js2IL.Services;
+using Js2IL.Scoping;
 using Acornima.Ast;
 using System.IO;
 
@@ -130,7 +131,18 @@ class Program
                 }
             }
 
-            // Step 4: Generate IL
+            // Step 4: Build scope tree
+            Console.WriteLine("\nBuilding scope tree...");
+            var scopeTreeBuilder = new ScopeTreeBuilder();
+            var scopeTree = scopeTreeBuilder.Build(ast, parsed.InputFile);
+
+            if (parsed.Verbose)
+            {
+                Console.WriteLine("\nScope Tree Structure:");
+                PrintScopeTree(scopeTree.Root, 0);
+            }
+
+            // Step 5: Generate IL
             // NOTE: some checkes such as the existance of the the file parsed.InputFile are done by powerargs for us
             Console.WriteLine("\nGenerating dotnet assembly...");
             var assemblyGenerator = new AssemblyGenerator();
@@ -142,7 +154,7 @@ class Program
 
             var assemblyName = Path.GetFileNameWithoutExtension(parsed.InputFile);
 
-            assemblyGenerator.Generate(ast, assemblyName, outputPath!);
+            assemblyGenerator.Generate(ast, scopeTree, assemblyName, outputPath!);
 
             Console.WriteLine($"\nConversion complete. Output written to {outputPath}");
         }
@@ -158,6 +170,29 @@ class Program
             {
                 Console.WriteLine($"Inner error: {ex.InnerException.Message}");
             }
+        }
+    }
+
+    /// <summary>
+    /// Helper method to print the scope tree structure for verbose output.
+    /// </summary>
+    private static void PrintScopeTree(ScopeNode scope, int indentLevel)
+    {
+        var indent = new string(' ', indentLevel * 2);
+        Console.WriteLine($"{indent}{scope.Name} ({scope.Kind})");
+        
+        if (scope.Bindings.Any())
+        {
+            Console.WriteLine($"{indent}  Variables:");
+            foreach (var binding in scope.Bindings.Values)
+            {
+                Console.WriteLine($"{indent}    - {binding.Name} ({binding.Kind})");
+            }
+        }
+
+        foreach (var child in scope.Children)
+        {
+            PrintScopeTree(child, indentLevel + 1);
         }
     }
 }

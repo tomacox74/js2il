@@ -236,5 +236,39 @@ namespace Js2IL.Tests
             Assert.StartsWith("ArrowFunction", arrowScope.Name);
             Assert.True(arrowScope.Bindings.ContainsKey("arrowVar"));
         }
+
+        [Fact]
+        public void Build_ForLoopWithArray_CreatesCorrectScopes()
+        {
+            // Arrange - Similar to ArrayLiteral.js
+            var code = @"
+                var x = [ 'cat', 'dog', 'dotnet bot' ];
+                for (var index = 0; index < x.length; index++) {
+                    console.log('', x[index]);
+                }
+            ";
+            var ast = _parser.ParseJavaScript(code);
+
+            // Act
+            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+
+            // Assert
+            // Global scope should have x
+            Assert.True(scopeTree.Root.Bindings.ContainsKey("x"));
+            Assert.Equal(BindingKind.Var, scopeTree.Root.Bindings["x"].Kind);
+
+            // Global scope should also have index (var declarations in for loop hoist to global)
+            Assert.True(scopeTree.Root.Bindings.ContainsKey("index"));
+            Assert.Equal(BindingKind.Var, scopeTree.Root.Bindings["index"].Kind);
+
+            // Should have one child scope (the for loop block)
+            Assert.Single(scopeTree.Root.Children);
+            var forBlockScope = scopeTree.Root.Children[0];
+            Assert.Equal(ScopeKind.Block, forBlockScope.Kind);
+            Assert.StartsWith("Block_", forBlockScope.Name);
+
+            // The for loop block should not have any bindings (console.log is just an expression)
+            Assert.Empty(forBlockScope.Bindings);
+        }
     }
 }
