@@ -273,7 +273,7 @@ namespace Js2IL.Services
                 _metadataBuilder.GetOrAddString(".ctor"),
                 ctorSigHandle,
                 bodyOffset, // IL body offset in the stream
-                parameterList: default
+                parameterList: MetadataTokens.ParameterHandle(_metadataBuilder.GetRowCount(TableIndex.Param) + 1)
             );
 
             return ctorHandle;

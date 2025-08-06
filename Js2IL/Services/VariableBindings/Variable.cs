@@ -32,17 +32,12 @@ namespace Js2IL.Services
         private readonly Dictionary<string, int> _scopeLocalSlots = new();
         private int _nextScopeSlot = 0;
 
-        public Variables()
-        {
-            // Default constructor for backward compatibility
-        }
-
         public Variables(VariableBindings.VariableRegistry registry)
         {
             _registry = registry;
             InitializeScopeSlots();
         }
-
+         
         private void InitializeScopeSlots()
         {
             if (_registry == null) return;
@@ -115,6 +110,18 @@ namespace Js2IL.Services
         public VariableBindings.VariableRegistry? GetVariableRegistry()
         {
             return _registry;
+        }
+
+        /// <summary>
+        /// Gets the type handle for a scope by name.
+        /// </summary>
+        public TypeDefinitionHandle GetScopeTypeHandle(string scopeName)
+        {
+            if (_registry != null)
+            {
+                return _registry.GetScopeTypeHandle(scopeName);
+            }
+            return default;
         }
 
         /// <summary>

@@ -37,7 +37,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public static class [System.Runtime]System.Action helloWorld
+	.field public static class [System.Runtime]System.Action`1<class [System.Runtime]System.Object> helloWorld
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -75,7 +75,9 @@
 {
 	// Methods
 	.method public static 
-		void helloWorld () cil managed 
+		void helloWorld (
+			object Function_HelloWorld
+		) cil managed 
 	{
 		// Method begins at RVA 0x2062
 		// Header size: 1
@@ -106,9 +108,9 @@
 		.maxstack 8
 
 		IL_0000: ldnull
-		IL_0001: ldftn void Program::helloWorld()
-		IL_0007: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
-		IL_000c: stsfld class [System.Runtime]System.Action DispatchTable::helloWorld
+		IL_0001: ldftn void Program::helloWorld(object)
+		IL_0007: newobj instance void class [System.Runtime]System.Action`1<class [System.Runtime]System.Object>::.ctor(object, native int)
+		IL_000c: stsfld class [System.Runtime]System.Action`1<class [System.Runtime]System.Object> DispatchTable::helloWorld
 		IL_0011: ret
 	} // end of method Program::_LoadDispatchTable
 
@@ -117,7 +119,7 @@
 	{
 		// Method begins at RVA 0x209c
 		// Header size: 12
-		// Code size: 34 (0x22)
+		// Code size: 29 (0x1d)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -128,12 +130,11 @@
 		IL_0005: stloc.0
 		IL_0006: call void Program::_LoadDispatchTable()
 		IL_000b: ldloc.0
-		IL_000c: ldsfld class [System.Runtime]System.Action DispatchTable::helloWorld
+		IL_000c: ldsfld class [System.Runtime]System.Action`1<class [System.Runtime]System.Object> DispatchTable::helloWorld
 		IL_0011: stfld object Scopes.Function_HelloWorld::helloWorld
 		IL_0016: ldloc.0
-		IL_0017: ldfld object Scopes.Function_HelloWorld::helloWorld
-		IL_001c: callvirt instance void [System.Runtime]System.Action::Invoke()
-		IL_0021: ret
+		IL_0017: call void Program::helloWorld(object)
+		IL_001c: ret
 	} // end of method Program::Main
 
 } // end of class Program

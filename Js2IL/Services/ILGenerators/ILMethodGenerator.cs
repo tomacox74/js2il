@@ -166,8 +166,23 @@ namespace Js2IL.Services.ILGenerators
                 var sigBuilder = new BlobBuilder();
                 new BlobEncoder(sigBuilder)
                     .MethodSignature()
-                    .Parameters(0, returnType => returnType.Void(), parameters => { });
+                    .Parameters(1, returnType => returnType.Void(), parameters =>
+                    {
+                        // Add scope parameter as Object for now (will refine type later)
+                        parameters.AddParameter().Type().Object();
+                    });
                 var methodSig = this._metadataBuilder.GetOrAddBlob(sigBuilder);
+
+                // Create parameter definition for the scope parameter after method definition
+                // Use the first scope name as the parameter name
+                var scopeNames = _variables.GetAllScopeNames().ToList();
+                var parameterName = scopeNames.FirstOrDefault() ?? functionName;
+                var scopeParameterHandle = _metadataBuilder.AddParameter(
+                    ParameterAttributes.None,
+                    _metadataBuilder.GetOrAddString(parameterName), // Parameter name is the scope name
+                    sequenceNumber: 1 // Parameter index (1-based, 0 is return value)
+                );
+
 
                 var methodDefinition = this._firstMethod = _metadataBuilder.AddMethodDefinition(
                     MethodAttributes.Static | MethodAttributes.Public,
@@ -175,7 +190,7 @@ namespace Js2IL.Services.ILGenerators
                     _metadataBuilder.GetOrAddString(functionName),
                     methodSig,
                     bodyoffset,
-                    parameterList: default);
+                    parameterList: scopeParameterHandle); 
 
                 _dispatchTableGenerator.SetMethodDefinitionHandle(functionName, methodDefinition);
 
@@ -205,6 +220,9 @@ namespace Js2IL.Services.ILGenerators
                 case BlockStatement blockStatement:
                     // Handle BlockStatement
                     GenerateStatements(blockStatement.Body);
+                    break;
+                case EmptyStatement:
+                    // Empty statements (like standalone semicolons) do nothing
                     break;
                 default:
                     throw new NotSupportedException($"Unsupported statement type: {statement.Type}");
@@ -455,19 +473,19 @@ namespace Js2IL.Services.ILGenerators
                     {
                         throw new ArgumentException($"Function {identifier.Name} is not defined.");
                     }
-                    // Load the function delegate from scope field
+                    
+                    // Load the scope instance as the first parameter
                     var scopeLocalIndex = _variables.GetScopeLocalSlot(functionVariable.ScopeName);
                     if (scopeLocalIndex == -1)
                     {
                         throw new InvalidOperationException($"Scope '{functionVariable.ScopeName}' not found in local slots");
                     }
                     _il.LoadLocal(scopeLocalIndex);
-                    _il.OpCode(ILOpCode.Ldfld);
-                    _il.Token(functionVariable.FieldHandle);
 
-                    // Call the function delegate
-                    _il.OpCode(ILOpCode.Callvirt);
-                    _il.Token(_bclReferences.Action_Invoke_Ref);
+                    // Call the static function method directly, passing the scope as parameter
+                    var methodHandle = _dispatchTableGenerator.GetMethodDefinitionHandle(identifier.Name);
+                    _il.OpCode(ILOpCode.Call);
+                    _il.Token(methodHandle);
                     return;
                 }
                 else

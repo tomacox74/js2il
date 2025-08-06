@@ -27,7 +27,7 @@ namespace Js2IL.Tests
                 Directory.CreateDirectory(_outputPath);
             }
 
-            _outputPath = Path.Combine(_outputPath, $"{testCategory}.ExecutionTests_{Guid.NewGuid():N}");
+            _outputPath = Path.Combine(_outputPath, $"{testCategory}.ExecutionTests");
             if (!Directory.Exists(_outputPath))
             {
                 Directory.CreateDirectory(_outputPath);

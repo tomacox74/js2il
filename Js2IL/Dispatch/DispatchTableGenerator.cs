@@ -80,6 +80,17 @@ namespace Js2IL.Dispatch
             return default; // Return default if not found
         }
 
+        public MethodDefinitionHandle GetMethodDefinitionHandle(string methodName)
+        {
+            var function = _functions.FirstOrDefault(f => f.Name == methodName);
+            if (function != null)
+            {
+                return function.MethodDefinitionHandle;
+            }
+
+            return default; // Return default if not found
+        }
+
         /// <summary>
         /// Generates the C# code for the DispatchTable class with Action fields for each function.
         /// </summary>
@@ -96,10 +107,17 @@ namespace Js2IL.Dispatch
             // Add a field for each function
             foreach (var function in _functions)
             {
-                // Create a field for the function
+                // Create field signature manually for Action<Object>
                 var blobBuilder = new BlobBuilder();
-                new BlobEncoder(blobBuilder)
-                    .FieldSignature().Type(_bclReferences.Action_TypeRef, false);
+                var fieldSigEncoder = new BlobEncoder(blobBuilder).FieldSignature();
+                
+                // Manually encode generic instantiation in field signature
+                var genericInst = fieldSigEncoder.GenericInstantiation(
+                    _bclReferences.ActionGeneric_TypeRef, 
+                    1, 
+                    false);
+                genericInst.AddArgument().Type(_bclReferences.ObjectType, false);
+                
                 var fieldSignature = _metadataBuilder.GetOrAddBlob(blobBuilder);
 
                 var field = _metadataBuilder.AddFieldDefinition(
@@ -169,9 +187,9 @@ namespace Js2IL.Dispatch
                 il.OpCode(ILOpCode.Ldftn);
                 il.Token(function.MethodDefinitionHandle); // The handle of the static method
 
-                // 3. Create the Action delegate
+                // 3. Create the Action<Object> delegate
                 il.OpCode(ILOpCode.Newobj);
-                il.Token(_bclReferences.Action_Ctor_Ref); // Constructor reference for Action(object, IntPtr)
+                il.Token(_bclReferences.ActionObject_Ctor_Ref); // Constructor reference for Action<Object>(object, IntPtr)
 
                 // 4. Store the delegate in the static field
                 il.OpCode(ILOpCode.Stsfld);
@@ -192,7 +210,7 @@ namespace Js2IL.Dispatch
                 _metadataBuilder.GetOrAddString(LoadDispatchTableMethod),
                 methodSig,
                 bodyOffset,
-                parameterList: default
+                parameterList: MetadataTokens.ParameterHandle(_metadataBuilder.GetRowCount(TableIndex.Param) + 1)
             );
         }
     }

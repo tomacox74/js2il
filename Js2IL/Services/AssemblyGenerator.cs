@@ -20,7 +20,7 @@ namespace Js2IL.Services
         private MethodDefinitionHandle _entryPoint;
         private BaseClassLibraryReferences _bclReferences;
 
-        private Variables _variables = new Variables();
+        private Variables? _variables;
 
         public AssemblyGenerator()
         {
@@ -99,16 +99,16 @@ namespace Js2IL.Services
 
 
             // Emit IL: return.
-            var mainGenerator = new MainGenerator(_variables, _bclReferences, _metadataBuilder, methodBodyStream, dispatchTableGenerator);
+            var mainGenerator = new MainGenerator(_variables!, _bclReferences, _metadataBuilder, methodBodyStream, dispatchTableGenerator);
             var bodyOffset = mainGenerator.GenerateMethod(ast);
-
+            var parameterList = MetadataTokens.ParameterHandle(_metadataBuilder.GetRowCount(TableIndex.Param) + 1);
             this._entryPoint = _metadataBuilder.AddMethodDefinition(
                 MethodAttributes.Static | MethodAttributes.Public,
                 MethodImplAttributes.IL,
                 _metadataBuilder.GetOrAddString("Main"),
                 methodSig,
                 bodyOffset,
-                parameterList: default);
+                parameterList: parameterList);
 
             var nextField = MetadataTokens.FieldDefinitionHandle(_metadataBuilder.GetRowCount(TableIndex.Field) + 1);
 
