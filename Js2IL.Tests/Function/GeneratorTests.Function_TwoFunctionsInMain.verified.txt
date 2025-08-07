@@ -1,0 +1,199 @@
+﻿// IL code: Function_TwoFunctionsInMain
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Function_TwoFunctionsInMain
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit helloWorldProxy
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method helloWorldProxy::.ctor
+
+	} // end of class helloWorldProxy
+
+	.class nested public auto ansi beforefieldinit helloWorld
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2062
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method helloWorld::.ctor
+
+	} // end of class helloWorld
+
+
+	// Fields
+	.field public object helloWorldProxy
+	.field public object helloWorld
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Function_TwoFunctionsInMain::.ctor
+
+} // end of class Scopes.Function_TwoFunctionsInMain
+
+.class public auto ansi abstract sealed beforefieldinit DispatchTable
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field public static class [System.Runtime]System.Action`1<class [System.Runtime]System.Object> helloWorldProxy
+	.field public static class [System.Runtime]System.Action`1<class [System.Runtime]System.Object> helloWorld
+
+} // end of class DispatchTable
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void helloWorldProxy (
+			object Function_TwoFunctionsInMain
+		) cil managed 
+	{
+		// Method begins at RVA 0x206b
+		// Header size: 1
+		// Code size: 49 (0x31)
+		.maxstack 8
+
+		IL_0000: ldc.i4.2
+		IL_0001: newarr [System.Runtime]System.Object
+		IL_0006: dup
+		IL_0007: ldc.i4.0
+		IL_0008: ldstr "This is a proxy function."
+		IL_000d: stelem.ref
+		IL_000e: dup
+		IL_000f: ldc.i4.1
+		IL_0010: ldc.r8 1
+		IL_0019: box [System.Runtime]System.Double
+		IL_001e: stelem.ref
+		IL_001f: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0024: ldarg.0
+		IL_0025: ldfld object Scopes.Function_TwoFunctionsInMain::helloWorld
+		IL_002a: ldarg.0
+		IL_002b: callvirt instance void class [System.Runtime]System.Action`1<class [System.Runtime]System.Object>::Invoke(!0)
+		IL_0030: ret
+	} // end of method Program::helloWorldProxy
+
+	.method public static 
+		void helloWorld (
+			object Function_TwoFunctionsInMain
+		) cil managed 
+	{
+		// Method begins at RVA 0x209d
+		// Header size: 1
+		// Code size: 37 (0x25)
+		.maxstack 8
+
+		IL_0000: ldc.i4.2
+		IL_0001: newarr [System.Runtime]System.Object
+		IL_0006: dup
+		IL_0007: ldc.i4.0
+		IL_0008: ldstr "Hello, World!"
+		IL_000d: stelem.ref
+		IL_000e: dup
+		IL_000f: ldc.i4.1
+		IL_0010: ldc.r8 2
+		IL_0019: box [System.Runtime]System.Double
+		IL_001e: stelem.ref
+		IL_001f: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0024: ret
+	} // end of method Program::helloWorld
+
+	.method public static 
+		void _LoadDispatchTable () cil managed 
+	{
+		// Method begins at RVA 0x20c3
+		// Header size: 1
+		// Code size: 35 (0x23)
+		.maxstack 8
+
+		IL_0000: ldnull
+		IL_0001: ldftn void Program::helloWorldProxy(object)
+		IL_0007: newobj instance void class [System.Runtime]System.Action`1<class [System.Runtime]System.Object>::.ctor(object, native int)
+		IL_000c: stsfld class [System.Runtime]System.Action`1<class [System.Runtime]System.Object> DispatchTable::helloWorldProxy
+		IL_0011: ldnull
+		IL_0012: ldftn void Program::helloWorld(object)
+		IL_0018: newobj instance void class [System.Runtime]System.Action`1<class [System.Runtime]System.Object>::.ctor(object, native int)
+		IL_001d: stsfld class [System.Runtime]System.Action`1<class [System.Runtime]System.Object> DispatchTable::helloWorld
+		IL_0022: ret
+	} // end of method Program::_LoadDispatchTable
+
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20e8
+		// Header size: 12
+		// Code size: 82 (0x52)
+		.maxstack 8
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Function_TwoFunctionsInMain::.ctor()
+		IL_0005: stloc.0
+		IL_0006: call void Program::_LoadDispatchTable()
+		IL_000b: ldloc.0
+		IL_000c: ldsfld class [System.Runtime]System.Action`1<class [System.Runtime]System.Object> DispatchTable::helloWorldProxy
+		IL_0011: stfld object Scopes.Function_TwoFunctionsInMain::helloWorldProxy
+		IL_0016: ldloc.0
+		IL_0017: ldsfld class [System.Runtime]System.Action`1<class [System.Runtime]System.Object> DispatchTable::helloWorld
+		IL_001c: stfld object Scopes.Function_TwoFunctionsInMain::helloWorld
+		IL_0021: ldloc.0
+		IL_0022: ldfld object Scopes.Function_TwoFunctionsInMain::helloWorldProxy
+		IL_0027: ldloc.0
+		IL_0028: callvirt instance void class [System.Runtime]System.Action`1<class [System.Runtime]System.Object>::Invoke(!0)
+		IL_002d: ldc.i4.2
+		IL_002e: newarr [System.Runtime]System.Object
+		IL_0033: dup
+		IL_0034: ldc.i4.0
+		IL_0035: ldstr "finally is now"
+		IL_003a: stelem.ref
+		IL_003b: dup
+		IL_003c: ldc.i4.1
+		IL_003d: ldc.r8 3
+		IL_0046: box [System.Runtime]System.Double
+		IL_004b: stelem.ref
+		IL_004c: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0051: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

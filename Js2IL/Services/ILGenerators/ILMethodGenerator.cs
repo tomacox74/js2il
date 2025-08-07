@@ -47,7 +47,7 @@ namespace Js2IL.Services.ILGenerators
             _metadataBuilder = metadataBuilder;
             var methodIl = new BlobBuilder();
             _il = new InstructionEncoder(methodIl, new ControlFlowBuilder());
-            this._runtime = new Runtime(metadataBuilder, _il, _bclReferences);
+            this._runtime = new Runtime(metadataBuilder, _il);
             _binaryOperators = new BinaryOperators(metadataBuilder, _il, variables, bclReferences, _runtime);
 
             // temporary as we set the table for further refactoring
@@ -70,13 +70,13 @@ namespace Js2IL.Services.ILGenerators
             {
                 // New approach: Store to scope field
                 var scopeLocalIndex = _variables.GetScopeLocalSlot(variable.ScopeName);
-                if (scopeLocalIndex == -1)
+                if (scopeLocalIndex.Address == -1)
                 {
                     throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
                 }
                 
                 // Load scope instance first for stfld
-                _il.LoadLocal(scopeLocalIndex);
+                _il.LoadLocal(scopeLocalIndex.Address);
                 
                 // Generate the expression - this puts the value on the stack
                 variable.Type = this._expressionEmitter.Emit(variableAST.Init, new TypeCoercion());
@@ -131,13 +131,13 @@ namespace Js2IL.Services.ILGenerators
             
             // Store using scope field
             var scopeLocalIndex = _variables.GetScopeLocalSlot(functionVariable.ScopeName);
-            if (scopeLocalIndex == -1)
+            if (scopeLocalIndex.Address == -1)
             {
                 throw new InvalidOperationException($"Scope '{functionVariable.ScopeName}' not found in local slots");
             }
             
             // Load scope instance, then load delegate value, then store to field
-            _il.LoadLocal(scopeLocalIndex);
+            _il.LoadLocal(scopeLocalIndex.Address);
             _il.OpCode(ILOpCode.Ldsfld);
             _il.Token(dispatchDelegateField);
             _il.OpCode(ILOpCode.Stfld);
@@ -148,9 +148,10 @@ namespace Js2IL.Services.ILGenerators
         public void DeclareFunction(FunctionDeclaration functionDeclaration)
         {
             var functionName = (functionDeclaration.Id as Acornima.Ast.Identifier)!.Name;
+            var functionVariables = new Variables(_variables);
 
             // create a new method generator to have the correct context for the function
-            var methodGenerator = new ILMethodGenerator(_variables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator);
+            var methodGenerator = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator);
 
             if (functionDeclaration.Body is BlockStatement blockStatement)
             {
@@ -175,7 +176,7 @@ namespace Js2IL.Services.ILGenerators
 
                 // Create parameter definition for the scope parameter after method definition
                 // Use the first scope name as the parameter name
-                var scopeNames = _variables.GetAllScopeNames().ToList();
+                var scopeNames = functionVariables.GetAllScopeNames().ToList();
                 var parameterName = scopeNames.FirstOrDefault() ?? functionName;
                 var scopeParameterHandle = _metadataBuilder.AddParameter(
                     ParameterAttributes.None,
@@ -183,14 +184,18 @@ namespace Js2IL.Services.ILGenerators
                     sequenceNumber: 1 // Parameter index (1-based, 0 is return value)
                 );
 
-
-                var methodDefinition = this._firstMethod = _metadataBuilder.AddMethodDefinition(
+                var methodDefinition = _metadataBuilder.AddMethodDefinition(
                     MethodAttributes.Static | MethodAttributes.Public,
                     MethodImplAttributes.IL,
                     _metadataBuilder.GetOrAddString(functionName),
                     methodSig,
                     bodyoffset,
-                    parameterList: scopeParameterHandle); 
+                    parameterList: scopeParameterHandle);
+
+                if (this._firstMethod.IsNil)
+                {
+                    this._firstMethod = methodDefinition;
+                }
 
                 _dispatchTableGenerator.SetMethodDefinitionHandle(functionName, methodDefinition);
 
@@ -418,16 +423,16 @@ namespace Js2IL.Services.ILGenerators
             
             // Handle scope field variables
             var scopeLocalIndex = _variables.GetScopeLocalSlot(variable.ScopeName);
-            if (scopeLocalIndex == -1)
+            if (scopeLocalIndex.Address == -1)
             {
                 throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
             }
             
             // Load scope instance for the store operation later
-            _il.LoadLocal(scopeLocalIndex);
+            _il.LoadLocal(scopeLocalIndex.Address);
             
             // Load the current value from scope field  
-            _il.LoadLocal(scopeLocalIndex);
+            _il.LoadLocal(scopeLocalIndex.Address);
             _il.OpCode(ILOpCode.Ldfld);
             _il.Token(variable.FieldHandle);
             
@@ -468,24 +473,45 @@ namespace Js2IL.Services.ILGenerators
                 if (callExpression.Callee is Acornima.Ast.Identifier identifier)
                 {
 
-                    var functionVariable = _variables[identifier.Name];
+                    var functionVariable = _variables.FindVariable(identifier.Name);
                     if (functionVariable == null)
                     {
                         throw new ArgumentException($"Function {identifier.Name} is not defined.");
                     }
-                    
+
                     // Load the scope instance as the first parameter
-                    var scopeLocalIndex = _variables.GetScopeLocalSlot(functionVariable.ScopeName);
-                    if (scopeLocalIndex == -1)
+                    Action loadScopeInstance;
+                    var scopeObjectReference = _variables.GetScopeLocalSlot(functionVariable.ScopeName);
+                    if (scopeObjectReference.Address == -1)
                     {
                         throw new InvalidOperationException($"Scope '{functionVariable.ScopeName}' not found in local slots");
                     }
-                    _il.LoadLocal(scopeLocalIndex);
+                    if (scopeObjectReference.Location == ObjectReferenceLocation.Local)
+                    {
+                        loadScopeInstance = () => _il.LoadLocal(scopeObjectReference.Address);
+                    }
+                    else if (scopeObjectReference.Location == ObjectReferenceLocation.Parameter)
+                    {
+                        // Load the scope instance from the field
+                        loadScopeInstance = () =>  _il.LoadArgument(scopeObjectReference.Address);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"Unsupported scope object reference location: {scopeObjectReference.Location}");
+                    }
 
-                    // Call the static function method directly, passing the scope as parameter
-                    var methodHandle = _dispatchTableGenerator.GetMethodDefinitionHandle(identifier.Name);
-                    _il.OpCode(ILOpCode.Call);
-                    _il.Token(methodHandle);
+                    // load the delegate to to be invoked
+                    loadScopeInstance();
+                    _il.OpCode(ILOpCode.Ldfld);
+                    _il.Token(functionVariable.FieldHandle);
+
+
+                    // pass the scope instance to the function being called
+                    loadScopeInstance();
+
+                    // Call delegate
+                    _il.OpCode(ILOpCode.Callvirt);
+                    _il.Token(_bclReferences.ActionObject_Invoke_Ref);
                     return;
                 }
                 else

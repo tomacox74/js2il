@@ -40,11 +40,11 @@ namespace Js2IL.Services.ILGenerators
             // Load from scope field
             // Step 1: Load the scope instance (stored in local variable)
             var scopeLocalIndex = _variables.GetScopeLocalSlot(variable.ScopeName);
-            if (scopeLocalIndex == -1)
+            if (scopeLocalIndex.Address == -1)
             {
                 throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
             }
-            _il.LoadLocal(scopeLocalIndex);
+            _il.LoadLocal(scopeLocalIndex.Address);
 
             // Step 2: Load the field from the scope instance
             _il.OpCode(ILOpCode.Ldfld);
@@ -59,11 +59,11 @@ namespace Js2IL.Services.ILGenerators
         private void LoadScopeInstance(Variable variable)
         {
             var scopeLocalIndex = _variables.GetScopeLocalSlot(variable.ScopeName);
-            if (scopeLocalIndex == -1)
+            if (scopeLocalIndex.Address == -1)
             {
                 throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
             }
-            _il.LoadLocal(scopeLocalIndex);
+            _il.LoadLocal(scopeLocalIndex.Address);
         }
 
         public void Generate(BinaryExpression binaryExpression, ConditionalBranching? branching = null)

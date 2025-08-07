@@ -56,7 +56,7 @@ namespace Js2IL.Services.ILGenerators
 
                 // Store the scope instance in a local variable for this scope
                 var scopeLocalIndex = variables.CreateScopeInstance(scopeName);
-                _ilGenerator.IL.StoreLocal(scopeLocalIndex);
+                _ilGenerator.IL.StoreLocal(scopeLocalIndex.Address);
             }
         }
 

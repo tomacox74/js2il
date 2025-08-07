@@ -396,7 +396,7 @@ namespace Js2IL.Services
             new BlobEncoder(actionObjectInvokeSigBuilder)
                 .MethodSignature(isInstanceMethod: true)
                 .Parameters(1, returnType => returnType.Void(), parameters => {
-                    parameters.AddParameter().Type().Object();
+                    parameters.AddParameter().Type().GenericTypeParameter(0);
                 });
             var actionObjectInvokeSig = metadataBuilder.GetOrAddBlob(actionObjectInvokeSigBuilder);
             ActionObject_Invoke_Ref = metadataBuilder.AddMemberReference(

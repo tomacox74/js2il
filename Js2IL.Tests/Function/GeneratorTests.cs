@@ -17,5 +17,8 @@ namespace Js2IL.Tests.Function
             // If GenerateTest is implemented in GeneratorTestsBase, verify its logic and the source files it uses.
             return GenerateTest(testName);
         }
+
+        [Fact]
+        public Task Function_TwoFunctionsInMain() { var testName = nameof(Function_TwoFunctionsInMain); return GenerateTest(testName); }
     }
 }

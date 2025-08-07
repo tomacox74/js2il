@@ -10,6 +10,21 @@
 	.class nested public auto ansi beforefieldinit helloWorld
 		extends [System.Runtime]System.Object
 	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method helloWorld::.ctor
+
 	} // end of class helloWorld
 
 
@@ -38,35 +53,6 @@
 {
 	// Fields
 	.field public static class [System.Runtime]System.Action`1<class [System.Runtime]System.Object> helloWorld
-
-	// Methods
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2050
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method Function_HelloWorld::.ctor
-
-	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
-	{
-		// Method begins at RVA 0x2059
-		// Header size: 1
-		// Code size: 8 (0x8)
-		.maxstack 8
-
-		IL_0000: ldarg.0
-		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: nop
-		IL_0007: ret
-	} // end of method helloWorld::.ctor
 
 } // end of class DispatchTable
 
@@ -119,7 +105,7 @@
 	{
 		// Method begins at RVA 0x209c
 		// Header size: 12
-		// Code size: 29 (0x1d)
+		// Code size: 35 (0x23)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -133,8 +119,10 @@
 		IL_000c: ldsfld class [System.Runtime]System.Action`1<class [System.Runtime]System.Object> DispatchTable::helloWorld
 		IL_0011: stfld object Scopes.Function_HelloWorld::helloWorld
 		IL_0016: ldloc.0
-		IL_0017: call void Program::helloWorld(object)
-		IL_001c: ret
+		IL_0017: ldfld object Scopes.Function_HelloWorld::helloWorld
+		IL_001c: ldloc.0
+		IL_001d: callvirt instance void class [System.Runtime]System.Action`1<class [System.Runtime]System.Object>::Invoke(!0)
+		IL_0022: ret
 	} // end of method Program::Main
 
 } // end of class Program

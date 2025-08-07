@@ -81,7 +81,7 @@ namespace Js2IL.Services
 
             // Step 2: Get the variable registry from the type generator and update Variables
             var variableRegistry = typeGenerator.GetVariableRegistry();
-            _variables = new Variables(variableRegistry);
+            _variables = new Variables(variableRegistry, scopeTree.Root.Name);
 
             // Create the dispatch table.
             // The dispatch table exists for two reasons:

@@ -12,7 +12,7 @@ namespace Js2IL.Tests.Function
         [Fact]
         public Task Function_HelloWorld() { var testName = nameof(Function_HelloWorld); return ExecutionTest(testName); }
 
-        [Fact(Skip = "Skipping due to known function hoisting bug")]
+        [Fact]
         public Task Function_TwoFunctionsInMain() { var testName = nameof(Function_TwoFunctionsInMain); return ExecutionTest(testName); }
     }
 }

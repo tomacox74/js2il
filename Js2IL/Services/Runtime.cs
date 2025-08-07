@@ -16,12 +16,10 @@ namespace Js2IL.Services
         private MemberReferenceHandle _arrayCtorRef;
         private MemberReferenceHandle _arrayLengthRef;
         private InstructionEncoder _il;
-        private BaseClassLibraryReferences _baseClassLibraryReferences;
 
-        public Runtime(MetadataBuilder metadataBuilder, InstructionEncoder il, BaseClassLibraryReferences baseClassLibraryReferences) 
+        public Runtime(MetadataBuilder metadataBuilder, InstructionEncoder il) 
         { 
             _il = il;
-            _baseClassLibraryReferences = baseClassLibraryReferences;
 
             var runtimeAssembly = typeof(JavaScriptRuntime.Console).Assembly;
             var runtimeAssemblyName = runtimeAssembly.GetName();

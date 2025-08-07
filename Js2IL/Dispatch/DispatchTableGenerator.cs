@@ -135,14 +135,14 @@ namespace Js2IL.Dispatch
             }
 
             // create the DispatchTable class
-            MethodDefinitionHandle firstMethod = MetadataTokens.MethodDefinitionHandle(1);
+            MethodDefinitionHandle noMethods = MetadataTokens.MethodDefinitionHandle(_metadataBuilder.GetRowCount(TableIndex.MethodDef) + 1);
             _metadataBuilder.AddTypeDefinition(
                 TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.Abstract | TypeAttributes.BeforeFieldInit,
                 _metadataBuilder.GetOrAddString(""),
                 _metadataBuilder.GetOrAddString("DispatchTable"),
                 _bclReferences.ObjectType,
                 firstField,
-                firstMethod
+                noMethods
             );
         }
 

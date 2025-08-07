@@ -22,31 +22,60 @@ namespace Js2IL.Services
         public JavascriptType Type = JavascriptType.Unknown;
     }
 
+    internal enum ObjectReferenceLocation
+    {
+        Local,
+        Parameter
+    }
+
+    internal record ScopeObjectReference
+    {
+        public required ObjectReferenceLocation Location;
+        public required int Address; // Name of the variable in the scope
+    }
 
     /// <summary>
-    /// Registry of variables that uses scope instances instead of local variables.
+    /// Variables is a map from a variable name in the AST to where the variable is stored.
+    /// There is 1 instance of Variables per dotnet method that is being being generated.
     /// </summary>
     internal class Variables : Dictionary<string, Variable>
     {
-        private readonly VariableBindings.VariableRegistry? _registry;
-        private readonly Dictionary<string, int> _scopeLocalSlots = new();
+        private readonly VariableBindings.VariableRegistry _registry;
+        private readonly Dictionary<string, ScopeObjectReference> _scopeLocalSlots = new();
         private int _nextScopeSlot = 0;
 
-        public Variables(VariableBindings.VariableRegistry registry)
+        private readonly string _leafScopeName;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Variables"/> class for a global scope of the given name.
+        /// </summary>
+        /// <param name="scopeName">The name of the scope.</param>
+        public Variables(VariableBindings.VariableRegistry registry, string scopeName)
         {
+            _leafScopeName = scopeName;
             _registry = registry;
-            InitializeScopeSlots();
-        }
-         
-        private void InitializeScopeSlots()
-        {
-            if (_registry == null) return;
-            
-            // Assign local variable slots for each scope type
-            foreach (var scopeName in _registry.GetAllScopeNames())
+
+            // Initialize with a specific scope name
+            _scopeLocalSlots[scopeName] = new ScopeObjectReference
             {
-                _scopeLocalSlots[scopeName] = _nextScopeSlot++;
-            }
+                Location = ObjectReferenceLocation.Local,
+                Address = _nextScopeSlot++
+            };
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Variables"/> class for a function or array function declared in the gloval scope.
+        /// </summary>
+        public Variables(Variables globalVariables)
+        {
+            _registry = globalVariables._registry;
+            _leafScopeName = globalVariables._leafScopeName;
+
+            _scopeLocalSlots[globalVariables._leafScopeName] = new ScopeObjectReference
+            {
+                Location = ObjectReferenceLocation.Parameter,
+                Address = 0
+            };
         }
 
         public void CreateFunctionVariable(string name)
@@ -60,6 +89,26 @@ namespace Js2IL.Services
             this[name] = variable;
         }
 
+        public Variable? FindVariable(string name)
+        {
+            if (!this.TryGetValue(name, out var variable))
+            {
+                var variableInfo = _registry?.FindVariable(name);
+                if (variableInfo != null)
+                {
+                    variable = new Variable
+                    {
+                        Name = name,
+                        ScopeName = variableInfo.ScopeName,
+                        FieldHandle = variableInfo.FieldHandle,
+                        ScopeTypeHandle = variableInfo.ScopeTypeHandle,
+                        Type = JavascriptType.Unknown // Map from VariableType to JavascriptType if needed
+                    };
+                }
+            }
+            return variable;
+        }
+
         public Variable CreateLocal(string name)
         {
             // If we have a registry, try to get the variable from it
@@ -68,15 +117,15 @@ namespace Js2IL.Services
                 var variableInfo = _registry.FindVariable(name);
                 if (variableInfo != null)
                 {
-                    var variable = new Variable 
-                    { 
+                    var variable = new Variable
+                    {
                         Name = name,
                         ScopeName = variableInfo.ScopeName,
                         FieldHandle = variableInfo.FieldHandle,
                         ScopeTypeHandle = variableInfo.ScopeTypeHandle,
                         Type = JavascriptType.Unknown // Map from VariableType to JavascriptType if needed
                     };
-                    
+
                     if (this.ContainsKey(name))
                     {
                         throw new InvalidOperationException($"Variable '{name}' already exists.");
@@ -90,48 +139,28 @@ namespace Js2IL.Services
             throw new InvalidOperationException($"Variable '{name}' not found in registry. All variables should be pre-registered.");
         }
 
-        public Variable Get(string name)
+
+        public ScopeObjectReference GetScopeLocalSlot(string scopeName)
         {
-            if (this.TryGetValue(name, out var variable))
+            return _scopeLocalSlots.GetValueOrDefault(scopeName, new ScopeObjectReference
             {
-                return variable;
-            }
-            throw new KeyNotFoundException($"Variable '{name}' not found.");
-        }
-
-        public int GetScopeLocalSlot(string scopeName)
-        {
-            return _scopeLocalSlots.GetValueOrDefault(scopeName, -1);
-        }
-
-        /// <summary>
-        /// Gets the variable registry if available.
-        /// </summary>
-        public VariableBindings.VariableRegistry? GetVariableRegistry()
-        {
-            return _registry;
-        }
-
-        /// <summary>
-        /// Gets the type handle for a scope by name.
-        /// </summary>
-        public TypeDefinitionHandle GetScopeTypeHandle(string scopeName)
-        {
-            if (_registry != null)
-            {
-                return _registry.GetScopeTypeHandle(scopeName);
-            }
-            return default;
+                Location = ObjectReferenceLocation.Local,
+                Address = -1
+            });
         }
 
         /// <summary>
         /// Creates a scope instance and returns the local variable index for it.
         /// </summary>
-        public int CreateScopeInstance(string scopeName)
+        public ScopeObjectReference CreateScopeInstance(string scopeName)
         {
             if (!_scopeLocalSlots.ContainsKey(scopeName))
             {
-                _scopeLocalSlots[scopeName] = _nextScopeSlot++;
+                _scopeLocalSlots[scopeName] = new ScopeObjectReference
+                {
+                    Location = ObjectReferenceLocation.Local,
+                    Address = _nextScopeSlot++
+                };
             }
             return _scopeLocalSlots[scopeName];
         }
@@ -145,6 +174,11 @@ namespace Js2IL.Services
         {
             // Return number of scope instances (not individual variables)
             return _nextScopeSlot;
+        }
+
+        public VariableBindings.VariableRegistry GetVariableRegistry()
+        {
+            return _registry;
         }
     }
 }
