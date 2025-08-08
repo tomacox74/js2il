@@ -197,10 +197,14 @@ namespace Js2IL.Services.ILGenerators
             }
 
             // Emit body statements
+            var hasExplicitReturn = blockStatement.Body.Any(s => s is ReturnStatement);
             GenerateStatements(blockStatement.Body);
-            // Implicit return undefined => null
-            _il.OpCode(ILOpCode.Ldnull);
-            _il.OpCode(ILOpCode.Ret);
+            if (!hasExplicitReturn)
+            {
+                // Implicit return undefined => null
+                _il.OpCode(ILOpCode.Ldnull);
+                _il.OpCode(ILOpCode.Ret);
+            }
 
             // Add method body (no locals for functions yet)
             var bodyoffset = _methodBodyStreamEncoder.AddMethodBody(
@@ -279,12 +283,33 @@ namespace Js2IL.Services.ILGenerators
                     // Handle BlockStatement
                     GenerateStatements(blockStatement.Body);
                     break;
+                case ReturnStatement returnStatement:
+                    GenerateReturnStatement(returnStatement);
+                    break;
                 case EmptyStatement:
                     // Empty statements (like standalone semicolons) do nothing
                     break;
                 default:
                     throw new NotSupportedException($"Unsupported statement type: {statement.Type}");
             }
+        }
+
+        private void GenerateReturnStatement(ReturnStatement returnStatement)
+        {
+            if (returnStatement.Argument != null)
+            {
+                var type = _expressionEmitter.Emit(returnStatement.Argument, new TypeCoercion());
+                if (type == JavascriptType.Number)
+                {
+                    _il.OpCode(ILOpCode.Box);
+                    _il.Token(_bclReferences.DoubleType);
+                }
+            }
+            else
+            {
+                _il.OpCode(ILOpCode.Ldnull);
+            }
+            _il.OpCode(ILOpCode.Ret);
         }
 
         public void GenerateExpressionStatement(Acornima.Ast.ExpressionStatement expressionStatement)
@@ -656,6 +681,69 @@ namespace Js2IL.Services.ILGenerators
 
             switch (expression)
             {
+                case CallExpression callExpression:
+                    // Reuse existing statement-level call generation but keep return value if needed
+                    // Currently GenerateCallExpression handles console.log (void) and variable/member/identifier calls
+                    // For expression context we need the result of the call on stack; existing GenerateCallExpression
+                    // emits or discards values via Pop depending on usage. We'll implement minimal direct handling here.
+                    if (callExpression.Callee is Identifier id)
+                    {
+                        // Load target function delegate from scope variable field
+                        var variable = _variables.FindVariable(id.Name)!;
+                        if (variable == null)
+                        {
+                            throw new InvalidOperationException($"Function '{id.Name}' not found in current scope.");
+                        }
+                        var scopeSlot = _variables.GetScopeLocalSlot(variable.ScopeName);
+                        if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
+                        {
+                            _il.LoadArgument(scopeSlot.Address);
+                        }
+                        else
+                        {
+                            _il.LoadLocal(scopeSlot.Address);
+                        }
+                        _il.OpCode(ILOpCode.Ldfld);
+                        _il.Token(variable.FieldHandle);
+
+                        // load scope as first arg
+                        if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
+                        {
+                            _il.LoadArgument(scopeSlot.Address);
+                        }
+                        else
+                        {
+                            _il.LoadLocal(scopeSlot.Address);
+                        }
+
+                        // load each argument
+                        foreach (var arg in callExpression.Arguments)
+                        {
+                            _expressionEmitter.Emit(arg, new TypeCoercion() { boxed = true });
+                        }
+
+                        // call Invoke on appropriate Func
+                        if (callExpression.Arguments.Count == 0)
+                        {
+                            _il.OpCode(ILOpCode.Callvirt);
+                            _il.Token(_bclReferences.FuncObjectObject_Invoke_Ref);
+                        }
+                        else if (callExpression.Arguments.Count == 1)
+                        {
+                            _il.OpCode(ILOpCode.Callvirt);
+                            _il.Token(_bclReferences.FuncObjectObjectObject_Invoke_Ref);
+                        }
+                        else
+                        {
+                            throw new NotSupportedException("Only up to one argument supported in function calls currently");
+                        }
+                        javascriptType = JavascriptType.Object;
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"Unsupported call expression callee type in expression context: {callExpression.Callee.Type}");
+                    }
+                    break;
                 case ArrayExpression arrayExpression:
                     // Generate code for ArrayExpression
                     GenerateArrayExpression(arrayExpression);

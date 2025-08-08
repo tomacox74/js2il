@@ -1,0 +1,134 @@
+﻿// IL code: Function_ReturnsStaticValueAndLogs
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Function_ReturnsStaticValueAndLogs
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit getStaticValue
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method getStaticValue::.ctor
+
+	} // end of class getStaticValue
+
+
+	// Fields
+	.field public object getStaticValue
+	.field public object 'value'
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Function_ReturnsStaticValueAndLogs::.ctor
+
+} // end of class Scopes.Function_ReturnsStaticValueAndLogs
+
+.class public auto ansi abstract sealed beforefieldinit DispatchTable
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> getStaticValue
+
+} // end of class DispatchTable
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		object getStaticValue (
+			object Function_ReturnsStaticValueAndLogs
+		) cil managed 
+	{
+		// Method begins at RVA 0x2062
+		// Header size: 1
+		// Code size: 15 (0xf)
+		.maxstack 8
+
+		IL_0000: ldc.r8 1234
+		IL_0009: box [System.Runtime]System.Double
+		IL_000e: ret
+	} // end of method Program::getStaticValue
+
+	.method public static 
+		void _LoadDispatchTable () cil managed 
+	{
+		// Method begins at RVA 0x2072
+		// Header size: 1
+		// Code size: 18 (0x12)
+		.maxstack 8
+
+		IL_0000: ldnull
+		IL_0001: ldftn object Program::getStaticValue(object)
+		IL_0007: newobj instance void class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object>::.ctor(object, native int)
+		IL_000c: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::getStaticValue
+		IL_0011: ret
+	} // end of method Program::_LoadDispatchTable
+
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2088
+		// Header size: 12
+		// Code size: 69 (0x45)
+		.maxstack 8
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Function_ReturnsStaticValueAndLogs::.ctor()
+		IL_0005: stloc.0
+		IL_0006: call void Program::_LoadDispatchTable()
+		IL_000b: ldloc.0
+		IL_000c: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::getStaticValue
+		IL_0011: stfld object Scopes.Function_ReturnsStaticValueAndLogs::getStaticValue
+		IL_0016: ldloc.0
+		IL_0017: ldloc.0
+		IL_0018: ldfld object Scopes.Function_ReturnsStaticValueAndLogs::getStaticValue
+		IL_001d: ldloc.0
+		IL_001e: callvirt instance !1 class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object>::Invoke(!0)
+		IL_0023: stfld object Scopes.Function_ReturnsStaticValueAndLogs::'value'
+		IL_0028: ldc.i4.2
+		IL_0029: newarr [System.Runtime]System.Object
+		IL_002e: dup
+		IL_002f: ldc.i4.0
+		IL_0030: ldstr "returned value is"
+		IL_0035: stelem.ref
+		IL_0036: dup
+		IL_0037: ldc.i4.1
+		IL_0038: ldloc.0
+		IL_0039: ldfld object Scopes.Function_ReturnsStaticValueAndLogs::'value'
+		IL_003e: stelem.ref
+		IL_003f: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0044: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
