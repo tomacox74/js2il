@@ -114,15 +114,6 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-        public void DeclareFunctions(IEnumerable<FunctionDeclaration> functionDeclarations)
-        {
-            // Iterate through each function declaration in the block
-            foreach (var functionDeclaration in functionDeclarations)
-            {
-                DeclareFunction(functionDeclaration);
-            }
-        }
-
         public void InitializeLocalFunctionVariables(IEnumerable<FunctionDeclaration> functionDeclarations)
         {
             // Iterate through each function declaration in the block
@@ -170,18 +161,6 @@ namespace Js2IL.Services.ILGenerators
             _il.Token(functionVariable.FieldHandle);
         }
 
-
-        public void DeclareFunction(FunctionDeclaration functionDeclaration)
-        {
-            var functionVariables = new Variables(_variables);
-            var methodGenerator = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator);
-
-            var methodDefinition = methodGenerator.GenerateMethodForFunction(functionDeclaration);
-            if (this._firstMethod.IsNil)
-            {
-                this._firstMethod = methodDefinition;
-            }
-        }
 
         /// <summary>
         /// Generates the method (IL + metadata) for a function declaration using the current generator's context.

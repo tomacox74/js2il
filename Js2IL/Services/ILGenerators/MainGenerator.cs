@@ -11,6 +11,7 @@ namespace Js2IL.Services.ILGenerators
     internal class MainGenerator
     {
         private ILMethodGenerator _ilGenerator;
+        private FunctionGenerator _functionGenerator;
         private MethodBodyStreamEncoder _methodBodyStreamEncoder;
 
         private Dispatch.DispatchTableGenerator _dispatchTableGenerator;
@@ -26,6 +27,7 @@ namespace Js2IL.Services.ILGenerators
             if (metadataBuilder == null) throw new ArgumentNullException(nameof(metadataBuilder));
 
             _ilGenerator = new ILMethodGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator);
+            _functionGenerator = new FunctionGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator);
             this._methodBodyStreamEncoder = methodBodyStreamEncoder;
         }
 
@@ -83,7 +85,7 @@ namespace Js2IL.Services.ILGenerators
 
             // create the dispatch
             // functions are hosted so we need to declare them first
-            _ilGenerator.DeclareFunctions(ast.Body.OfType<Acornima.Ast.FunctionDeclaration>());
+            _functionGenerator.DeclareFunctions(ast.Body.OfType<Acornima.Ast.FunctionDeclaration>());
 
             var loadDispatchTableMethod = _dispatchTableGenerator.GenerateLoadDispatchTableMethod();
             if (!loadDispatchTableMethod.IsNil)
@@ -114,7 +116,7 @@ namespace Js2IL.Services.ILGenerators
                 methodBodyAttributes = MethodBodyAttributes.InitLocals;
             }
 
-            FirstMethod = _ilGenerator.FirstMethod;
+            FirstMethod = !_functionGenerator.FirstMethod.IsNil ? _functionGenerator.FirstMethod : _ilGenerator.FirstMethod;
 
             return _methodBodyStreamEncoder.AddMethodBody(
                 _ilGenerator.IL,
