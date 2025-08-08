@@ -73,8 +73,8 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public static class [System.Runtime]System.Action`1<class [System.Runtime]System.Object> helloWorldProxy
-	.field public static class [System.Runtime]System.Action`1<class [System.Runtime]System.Object> helloWorld
+	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> helloWorldProxy
+	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> helloWorld
 
 } // end of class DispatchTable
 
@@ -83,13 +83,13 @@
 {
 	// Methods
 	.method public static 
-		void helloWorldProxy (
+		object helloWorldProxy (
 			object Function_GlobalFunctionCallsGlobalFunction
 		) cil managed 
 	{
 		// Method begins at RVA 0x206b
 		// Header size: 1
-		// Code size: 49 (0x31)
+		// Code size: 51 (0x33)
 		.maxstack 8
 
 		IL_0000: ldc.i4.2
@@ -107,18 +107,20 @@
 		IL_0024: ldarg.0
 		IL_0025: ldfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorld
 		IL_002a: ldarg.0
-		IL_002b: callvirt instance void class [System.Runtime]System.Action`1<class [System.Runtime]System.Object>::Invoke(!0)
-		IL_0030: ret
+		IL_002b: callvirt instance !1 class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object>::Invoke(!0)
+		IL_0030: pop
+		IL_0031: ldnull
+		IL_0032: ret
 	} // end of method Program::helloWorldProxy
 
 	.method public static 
-		void helloWorld (
+		object helloWorld (
 			object Function_GlobalFunctionCallsGlobalFunction
 		) cil managed 
 	{
-		// Method begins at RVA 0x209d
+		// Method begins at RVA 0x209f
 		// Header size: 1
-		// Code size: 37 (0x25)
+		// Code size: 38 (0x26)
 		.maxstack 8
 
 		IL_0000: ldc.i4.2
@@ -133,34 +135,35 @@
 		IL_0019: box [System.Runtime]System.Double
 		IL_001e: stelem.ref
 		IL_001f: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0024: ret
+		IL_0024: ldnull
+		IL_0025: ret
 	} // end of method Program::helloWorld
 
 	.method public static 
 		void _LoadDispatchTable () cil managed 
 	{
-		// Method begins at RVA 0x20c3
+		// Method begins at RVA 0x20c6
 		// Header size: 1
 		// Code size: 35 (0x23)
 		.maxstack 8
 
 		IL_0000: ldnull
-		IL_0001: ldftn void Program::helloWorldProxy(object)
-		IL_0007: newobj instance void class [System.Runtime]System.Action`1<class [System.Runtime]System.Object>::.ctor(object, native int)
-		IL_000c: stsfld class [System.Runtime]System.Action`1<class [System.Runtime]System.Object> DispatchTable::helloWorldProxy
+		IL_0001: ldftn object Program::helloWorldProxy(object)
+		IL_0007: newobj instance void class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object>::.ctor(object, native int)
+		IL_000c: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::helloWorldProxy
 		IL_0011: ldnull
-		IL_0012: ldftn void Program::helloWorld(object)
-		IL_0018: newobj instance void class [System.Runtime]System.Action`1<class [System.Runtime]System.Object>::.ctor(object, native int)
-		IL_001d: stsfld class [System.Runtime]System.Action`1<class [System.Runtime]System.Object> DispatchTable::helloWorld
+		IL_0012: ldftn object Program::helloWorld(object)
+		IL_0018: newobj instance void class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object>::.ctor(object, native int)
+		IL_001d: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::helloWorld
 		IL_0022: ret
 	} // end of method Program::_LoadDispatchTable
 
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e8
+		// Method begins at RVA 0x20ec
 		// Header size: 12
-		// Code size: 82 (0x52)
+		// Code size: 83 (0x53)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -171,28 +174,29 @@
 		IL_0005: stloc.0
 		IL_0006: call void Program::_LoadDispatchTable()
 		IL_000b: ldloc.0
-		IL_000c: ldsfld class [System.Runtime]System.Action`1<class [System.Runtime]System.Object> DispatchTable::helloWorldProxy
+		IL_000c: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::helloWorldProxy
 		IL_0011: stfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
 		IL_0016: ldloc.0
-		IL_0017: ldsfld class [System.Runtime]System.Action`1<class [System.Runtime]System.Object> DispatchTable::helloWorld
+		IL_0017: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::helloWorld
 		IL_001c: stfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorld
 		IL_0021: ldloc.0
 		IL_0022: ldfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
 		IL_0027: ldloc.0
-		IL_0028: callvirt instance void class [System.Runtime]System.Action`1<class [System.Runtime]System.Object>::Invoke(!0)
-		IL_002d: ldc.i4.2
-		IL_002e: newarr [System.Runtime]System.Object
-		IL_0033: dup
-		IL_0034: ldc.i4.0
-		IL_0035: ldstr "finally is now"
-		IL_003a: stelem.ref
-		IL_003b: dup
-		IL_003c: ldc.i4.1
-		IL_003d: ldc.r8 3
-		IL_0046: box [System.Runtime]System.Double
-		IL_004b: stelem.ref
-		IL_004c: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0051: ret
+		IL_0028: callvirt instance !1 class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object>::Invoke(!0)
+		IL_002d: pop
+		IL_002e: ldc.i4.2
+		IL_002f: newarr [System.Runtime]System.Object
+		IL_0034: dup
+		IL_0035: ldc.i4.0
+		IL_0036: ldstr "finally is now"
+		IL_003b: stelem.ref
+		IL_003c: dup
+		IL_003d: ldc.i4.1
+		IL_003e: ldc.r8 3
+		IL_0047: box [System.Runtime]System.Double
+		IL_004c: stelem.ref
+		IL_004d: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0052: ret
 	} // end of method Program::Main
 
 } // end of class Program

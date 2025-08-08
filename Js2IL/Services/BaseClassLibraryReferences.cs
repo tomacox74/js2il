@@ -115,7 +115,7 @@ namespace Js2IL.Services
 
             LoadArrayTypes(metadataBuilder);
 
-            LoadActionTypes(metadataBuilder);
+            LoadFuncTypes(metadataBuilder);
         }
 
         public AssemblyReferenceHandle SystemRuntimeAssembly { get; private init; }
@@ -126,11 +126,7 @@ namespace Js2IL.Services
         public TypeReferenceHandle StringType { get; private init; }
         public TypeReferenceHandle SystemMathType { get; private init; }
 
-        public TypeReferenceHandle Action_TypeRef { get; private set; }
-        
-        public TypeReferenceHandle ActionGeneric_TypeRef { get; private set; }
-        
-        public TypeSpecificationHandle ActionObject_TypeSpec { get; private set; }
+    // Removed legacy Action<> delegate references (now using Func returning object)
 
         public TypeSpecificationHandle IDictionary_StringObject_Type { get; private set; }
         public MemberReferenceHandle ConsoleWriteLine_StringObject_Ref { get; private init; }
@@ -147,17 +143,15 @@ namespace Js2IL.Services
 
         public MemberReferenceHandle Array_GetCount_Ref { get; private set; }
 
-        public MemberReferenceHandle Action_Ctor_Ref { get; private set; }
-
-        public MemberReferenceHandle Action_Invoke_Ref { get; private set; }
-        
-        public MemberReferenceHandle ActionObject_Ctor_Ref { get; private set; }
-
-        public MemberReferenceHandle ActionObject_Invoke_Ref { get; private set; }
-    public TypeReferenceHandle Action2Generic_TypeRef { get; private set; }
-    public TypeSpecificationHandle ActionObjectObject_TypeSpec { get; private set; }
-    public MemberReferenceHandle ActionObjectObject_Ctor_Ref { get; private set; }
-    public MemberReferenceHandle ActionObjectObject_Invoke_Ref { get; private set; }
+        // Func delegates returning object
+        public TypeReferenceHandle Func2Generic_TypeRef { get; private set; }
+        public TypeReferenceHandle Func3Generic_TypeRef { get; private set; }
+        public TypeSpecificationHandle FuncObjectObject_TypeSpec { get; private set; }
+        public MemberReferenceHandle FuncObjectObject_Ctor_Ref { get; private set; }
+        public MemberReferenceHandle FuncObjectObject_Invoke_Ref { get; private set; }
+        public TypeSpecificationHandle FuncObjectObjectObject_TypeSpec { get; private set; }
+        public MemberReferenceHandle FuncObjectObjectObject_Ctor_Ref { get; private set; }
+        public MemberReferenceHandle FuncObjectObjectObject_Invoke_Ref { get; private set; }
 
         private void LoadObjectTypes(MetadataBuilder metadataBuilder)
         {
@@ -334,123 +328,90 @@ namespace Js2IL.Services
                 addItemSig);
         }
 
-        private void LoadActionTypes(MetadataBuilder metadataBuilder)
+    // Removed LoadActionTypes (legacy Action support)
+
+        private void LoadFuncTypes(MetadataBuilder metadataBuilder)
         {
-            Action_TypeRef = metadataBuilder.AddTypeReference(
+            // Func<T1, TResult>
+            Func2Generic_TypeRef = metadataBuilder.AddTypeReference(
                 this.SystemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Action"));
+                metadataBuilder.GetOrAddString("Func`2"));
 
-            var actionCtorSigBuilder = new BlobBuilder();
-            new BlobEncoder(actionCtorSigBuilder)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(2, returnType => returnType.Void(), parameters => { 
-                    parameters.AddParameter().Type().Object();
-                    parameters.AddParameter().Type().IntPtr();
-                });
-            var expandoCtorSig = metadataBuilder.GetOrAddBlob(actionCtorSigBuilder);
-            Action_Ctor_Ref = metadataBuilder.AddMemberReference(
-                Action_TypeRef,
-                metadataBuilder.GetOrAddString(".ctor"),
-                expandoCtorSig);
-
-            var actionInvokeSigBuilder = new BlobBuilder();
-            new BlobEncoder(actionInvokeSigBuilder)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(0, returnType => returnType.Void(), parameters => {});
-            var actionInvokeSig = metadataBuilder.GetOrAddBlob(actionInvokeSigBuilder);
-            Action_Invoke_Ref = metadataBuilder.AddMemberReference(
-                Action_TypeRef,
-                metadataBuilder.GetOrAddString("Invoke"),
-                actionInvokeSig);
-
-            // Load Action<Object> type reference (Action`1)
-            var actionGenericTypeRef = metadataBuilder.AddTypeReference(
+            // Func<T1, T2, TResult>
+            Func3Generic_TypeRef = metadataBuilder.AddTypeReference(
                 this.SystemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Action`1"));
-            
-            ActionGeneric_TypeRef = actionGenericTypeRef;
+                metadataBuilder.GetOrAddString("Func`3"));
 
-            // Create Action<Object> type specification
-            var actionObjectSigBuilder = new BlobBuilder();
-            new BlobEncoder(actionObjectSigBuilder)
+            // Close over object types for parameters and return
+            // Func<object, object>
+            var func2SpecBlob = new BlobBuilder();
+            var func2Inst = new BlobEncoder(func2SpecBlob)
                 .TypeSpecificationSignature()
-                .GenericInstantiation(actionGenericTypeRef, 1, isValueType: false)
-                .AddArgument().Type(ObjectType, isValueType: false);
-            var actionObjectSig = metadataBuilder.GetOrAddBlob(actionObjectSigBuilder);
-            ActionObject_TypeSpec = metadataBuilder.AddTypeSpecification(actionObjectSig);
+                .GenericInstantiation(Func2Generic_TypeRef, 2, isValueType: false);
+            func2Inst.AddArgument().Type(ObjectType, isValueType: false); // T1
+            func2Inst.AddArgument().Type(ObjectType, isValueType: false); // TResult
+            var func2Spec = metadataBuilder.GetOrAddBlob(func2SpecBlob);
+            FuncObjectObject_TypeSpec = metadataBuilder.AddTypeSpecification(func2Spec);
 
-            // Create Action<Object> constructor reference
-            var actionObjectCtorSigBuilder = new BlobBuilder();
-            new BlobEncoder(actionObjectCtorSigBuilder)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(2, returnType => returnType.Void(), parameters => { 
-                    parameters.AddParameter().Type().Object();
-                    parameters.AddParameter().Type().IntPtr();
-                });
-            var actionObjectCtorSig = metadataBuilder.GetOrAddBlob(actionObjectCtorSigBuilder);
-            ActionObject_Ctor_Ref = metadataBuilder.AddMemberReference(
-                ActionObject_TypeSpec,
-                metadataBuilder.GetOrAddString(".ctor"),
-                actionObjectCtorSig);
-
-            // Create Action<Object> Invoke reference
-            var actionObjectInvokeSigBuilder = new BlobBuilder();
-            new BlobEncoder(actionObjectInvokeSigBuilder)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(1, returnType => returnType.Void(), parameters => {
-                    parameters.AddParameter().Type().GenericTypeParameter(0);
-                });
-            var actionObjectInvokeSig = metadataBuilder.GetOrAddBlob(actionObjectInvokeSigBuilder);
-            ActionObject_Invoke_Ref = metadataBuilder.AddMemberReference(
-                ActionObject_TypeSpec,
-                metadataBuilder.GetOrAddString("Invoke"),
-                actionObjectInvokeSig);
-
-            // Action<object,object>
-            var action2GenericTypeRef = metadataBuilder.AddTypeReference(
-                this.SystemRuntimeAssembly,
-                metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Action`2"));
-            Action2Generic_TypeRef = action2GenericTypeRef;
-
-            var actionObjObjSigBuilder = new BlobBuilder();
-            var action2Inst = new BlobEncoder(actionObjObjSigBuilder)
+            // Func<object, object, object>
+            var func3SpecBlob = new BlobBuilder();
+            var func3Inst = new BlobEncoder(func3SpecBlob)
                 .TypeSpecificationSignature()
-                .GenericInstantiation(action2GenericTypeRef, 2, isValueType: false);
-            action2Inst.AddArgument().Type(ObjectType, isValueType: false);
-            action2Inst.AddArgument().Type(ObjectType, isValueType: false);
-            var actionObjObjSig = metadataBuilder.GetOrAddBlob(actionObjObjSigBuilder);
-            ActionObjectObject_TypeSpec = metadataBuilder.AddTypeSpecification(actionObjObjSig);
+                .GenericInstantiation(Func3Generic_TypeRef, 3, isValueType: false);
+            func3Inst.AddArgument().Type(ObjectType, isValueType: false); // T1
+            func3Inst.AddArgument().Type(ObjectType, isValueType: false); // T2
+            func3Inst.AddArgument().Type(ObjectType, isValueType: false); // TResult
+            var func3Spec = metadataBuilder.GetOrAddBlob(func3SpecBlob);
+            FuncObjectObjectObject_TypeSpec = metadataBuilder.AddTypeSpecification(func3Spec);
 
-            // ctor (object, IntPtr)
-            var actionObjObjCtorSigBuilder = new BlobBuilder();
-            new BlobEncoder(actionObjObjCtorSigBuilder)
+            // Delegate .ctor signature (object, IntPtr)
+            var funcCtorSig = new BlobBuilder();
+            new BlobEncoder(funcCtorSig)
                 .MethodSignature(isInstanceMethod: true)
                 .Parameters(2, returnType => returnType.Void(), parameters => {
                     parameters.AddParameter().Type().Object();
                     parameters.AddParameter().Type().IntPtr();
                 });
-            var actionObjObjCtorSig = metadataBuilder.GetOrAddBlob(actionObjObjCtorSigBuilder);
-            ActionObjectObject_Ctor_Ref = metadataBuilder.AddMemberReference(
-                ActionObjectObject_TypeSpec,
-                metadataBuilder.GetOrAddString(".ctor"),
-                actionObjObjCtorSig);
+            var funcCtorSigHandle = metadataBuilder.GetOrAddBlob(funcCtorSig);
 
-            // Invoke(object,object)
-            var actionObjObjInvokeSigBuilder = new BlobBuilder();
-            new BlobEncoder(actionObjObjInvokeSigBuilder)
+            FuncObjectObject_Ctor_Ref = metadataBuilder.AddMemberReference(
+                FuncObjectObject_TypeSpec,
+                metadataBuilder.GetOrAddString(".ctor"),
+                funcCtorSigHandle);
+            FuncObjectObjectObject_Ctor_Ref = metadataBuilder.AddMemberReference(
+                FuncObjectObjectObject_TypeSpec,
+                metadataBuilder.GetOrAddString(".ctor"),
+                funcCtorSigHandle);
+
+            // Invoke signatures
+            var func2InvokeBlob = new BlobBuilder();
+            new BlobEncoder(func2InvokeBlob)
                 .MethodSignature(isInstanceMethod: true)
-                .Parameters(2, returnType => returnType.Void(), parameters => {
-                    parameters.AddParameter().Type().GenericTypeParameter(0);
-                    parameters.AddParameter().Type().GenericTypeParameter(1);
-                });
-            var actionObjObjInvokeSig = metadataBuilder.GetOrAddBlob(actionObjObjInvokeSigBuilder);
-            ActionObjectObject_Invoke_Ref = metadataBuilder.AddMemberReference(
-                ActionObjectObject_TypeSpec,
+                .Parameters(1,
+                    returnType => returnType.Type().GenericTypeParameter(1), // TResult
+                    parameters => { parameters.AddParameter().Type().GenericTypeParameter(0); });
+            var func2InvokeSig = metadataBuilder.GetOrAddBlob(func2InvokeBlob);
+            FuncObjectObject_Invoke_Ref = metadataBuilder.AddMemberReference(
+                FuncObjectObject_TypeSpec,
                 metadataBuilder.GetOrAddString("Invoke"),
-                actionObjObjInvokeSig);
+                func2InvokeSig);
+
+            var func3InvokeBlob = new BlobBuilder();
+            new BlobEncoder(func3InvokeBlob)
+                .MethodSignature(isInstanceMethod: true)
+                .Parameters(2,
+                    returnType => returnType.Type().GenericTypeParameter(2), // TResult
+                    parameters => {
+                        parameters.AddParameter().Type().GenericTypeParameter(0); // T1
+                        parameters.AddParameter().Type().GenericTypeParameter(1); // T2
+                    });
+            var func3InvokeSig = metadataBuilder.GetOrAddBlob(func3InvokeBlob);
+            FuncObjectObjectObject_Invoke_Ref = metadataBuilder.AddMemberReference(
+                FuncObjectObjectObject_TypeSpec,
+                metadataBuilder.GetOrAddString("Invoke"),
+                func3InvokeSig);
         }
     }
 }

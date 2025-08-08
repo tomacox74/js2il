@@ -198,6 +198,8 @@ namespace Js2IL.Services.ILGenerators
 
             // Emit body statements
             GenerateStatements(blockStatement.Body);
+            // Implicit return undefined => null
+            _il.OpCode(ILOpCode.Ldnull);
             _il.OpCode(ILOpCode.Ret);
 
             // Add method body (no locals for functions yet)
@@ -205,12 +207,12 @@ namespace Js2IL.Services.ILGenerators
                 _il,
                 localVariablesSignature: default,
                 attributes: MethodBodyAttributes.None);
-            // Build method signature: static void (object scope, object param1, ...)
+            // Build method signature: static object (object scope, object param1, ...)
             var sigBuilder = new BlobBuilder();
             var paramCount = 1 + functionDeclaration.Params.Count; // scope + declared params
             new BlobEncoder(sigBuilder)
                 .MethodSignature()
-                .Parameters(paramCount, returnType => returnType.Void(), parameters =>
+                .Parameters(paramCount, returnType => returnType.Type().Object(), parameters =>
                 {
                     // scope parameter
                     parameters.AddParameter().Type().Object();
@@ -593,17 +595,19 @@ namespace Js2IL.Services.ILGenerators
                     if (callExpression.Arguments.Count == 0)
                     {
                         _il.OpCode(ILOpCode.Callvirt);
-                        _il.Token(_bclReferences.ActionObject_Invoke_Ref);
+                        _il.Token(_bclReferences.FuncObjectObject_Invoke_Ref);
                     }
                     else if (callExpression.Arguments.Count == 1)
                     {
                         _il.OpCode(ILOpCode.Callvirt);
-                        _il.Token(_bclReferences.ActionObjectObject_Invoke_Ref);
+                        _il.Token(_bclReferences.FuncObjectObjectObject_Invoke_Ref);
                     }
                     else
                     {
                         throw new NotSupportedException("Only up to 1 parameter supported currently");
                     }
+                    // For expression statements, discard return value
+                    _il.OpCode(ILOpCode.Pop);
                     return;
                 }
                 else

@@ -52,7 +52,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public static class [System.Runtime]System.Action`1<class [System.Runtime]System.Object> helloWorld
+	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> helloWorld
 
 } // end of class DispatchTable
 
@@ -61,13 +61,13 @@
 {
 	// Methods
 	.method public static 
-		void helloWorld (
+		object helloWorld (
 			object Function_HelloWorld
 		) cil managed 
 	{
 		// Method begins at RVA 0x2062
 		// Header size: 1
-		// Code size: 37 (0x25)
+		// Code size: 38 (0x26)
 		.maxstack 8
 
 		IL_0000: ldc.i4.2
@@ -82,21 +82,22 @@
 		IL_0019: box [System.Runtime]System.Double
 		IL_001e: stelem.ref
 		IL_001f: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0024: ret
+		IL_0024: ldnull
+		IL_0025: ret
 	} // end of method Program::helloWorld
 
 	.method public static 
 		void _LoadDispatchTable () cil managed 
 	{
-		// Method begins at RVA 0x2088
+		// Method begins at RVA 0x2089
 		// Header size: 1
 		// Code size: 18 (0x12)
 		.maxstack 8
 
 		IL_0000: ldnull
-		IL_0001: ldftn void Program::helloWorld(object)
-		IL_0007: newobj instance void class [System.Runtime]System.Action`1<class [System.Runtime]System.Object>::.ctor(object, native int)
-		IL_000c: stsfld class [System.Runtime]System.Action`1<class [System.Runtime]System.Object> DispatchTable::helloWorld
+		IL_0001: ldftn object Program::helloWorld(object)
+		IL_0007: newobj instance void class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object>::.ctor(object, native int)
+		IL_000c: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::helloWorld
 		IL_0011: ret
 	} // end of method Program::_LoadDispatchTable
 
@@ -105,7 +106,7 @@
 	{
 		// Method begins at RVA 0x209c
 		// Header size: 12
-		// Code size: 35 (0x23)
+		// Code size: 36 (0x24)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -116,13 +117,14 @@
 		IL_0005: stloc.0
 		IL_0006: call void Program::_LoadDispatchTable()
 		IL_000b: ldloc.0
-		IL_000c: ldsfld class [System.Runtime]System.Action`1<class [System.Runtime]System.Object> DispatchTable::helloWorld
+		IL_000c: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::helloWorld
 		IL_0011: stfld object Scopes.Function_HelloWorld::helloWorld
 		IL_0016: ldloc.0
 		IL_0017: ldfld object Scopes.Function_HelloWorld::helloWorld
 		IL_001c: ldloc.0
-		IL_001d: callvirt instance void class [System.Runtime]System.Action`1<class [System.Runtime]System.Object>::Invoke(!0)
-		IL_0022: ret
+		IL_001d: callvirt instance !1 class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object>::Invoke(!0)
+		IL_0022: pop
+		IL_0023: ret
 	} // end of method Program::Main
 
 } // end of class Program

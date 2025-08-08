@@ -118,20 +118,24 @@ namespace Js2IL.Dispatch
                 var fieldSigEncoder = new BlobEncoder(blobBuilder).FieldSignature();
                 if (paramCount == 0)
                 {
+                    // Func<object, object>
                     var genericInst = fieldSigEncoder.GenericInstantiation(
-                        _bclReferences.ActionGeneric_TypeRef,
-                        1,
+                        _bclReferences.Func2Generic_TypeRef,
+                        2,
                         false);
-                    genericInst.AddArgument().Type(_bclReferences.ObjectType, false); // scope
+                    genericInst.AddArgument().Type(_bclReferences.ObjectType, false); // scope param
+                    genericInst.AddArgument().Type(_bclReferences.ObjectType, false); // return object
                 }
                 else if (paramCount == 1)
                 {
+                    // Func<object, object, object>
                     var genericInst = fieldSigEncoder.GenericInstantiation(
-                        _bclReferences.Action2Generic_TypeRef,
-                        2,
+                        _bclReferences.Func3Generic_TypeRef,
+                        3,
                         false);
-                    genericInst.AddArgument().Type(_bclReferences.ObjectType, false); // scope
-                    genericInst.AddArgument().Type(_bclReferences.ObjectType, false); // param1
+                    genericInst.AddArgument().Type(_bclReferences.ObjectType, false); // scope param
+                    genericInst.AddArgument().Type(_bclReferences.ObjectType, false); // js param1
+                    genericInst.AddArgument().Type(_bclReferences.ObjectType, false); // return object
                 }
                 else
                 {
@@ -204,15 +208,15 @@ namespace Js2IL.Dispatch
                 il.OpCode(ILOpCode.Ldftn);
                 il.Token(function.MethodDefinitionHandle); // The handle of the static method
 
-                // 3. Create the delegate (Action<object> or Action<object,object>)
+                // 3. Create the delegate (Func<object,object> or Func<object,object,object>)
                 il.OpCode(ILOpCode.Newobj);
                 if (function.Declaration.Params.Count == 0)
                 {
-                    il.Token(_bclReferences.ActionObject_Ctor_Ref);
+                    il.Token(_bclReferences.FuncObjectObject_Ctor_Ref);
                 }
                 else if (function.Declaration.Params.Count == 1)
                 {
-                    il.Token(_bclReferences.ActionObjectObject_Ctor_Ref);
+                    il.Token(_bclReferences.FuncObjectObjectObject_Ctor_Ref);
                 }
                 else
                 {
