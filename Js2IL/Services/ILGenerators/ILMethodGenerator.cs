@@ -467,25 +467,24 @@ namespace Js2IL.Services.ILGenerators
 
         private void GenerateArrayExpression(ArrayExpression arrayExpression)
         {
-            // create a new array of type object
-            // push the array size onto the stack
+            // Allocate object[] with the number of elements
             _il.LoadConstantI4(arrayExpression.Elements.Count);
-            _runtime.InvokeArrayCtor();
+            _il.OpCode(ILOpCode.Newarr);
+            _il.Token(_bclReferences.ObjectType);
 
-            // enumerate over the array elements loading each one and setting it in the array
+            // Populate each element: dup, index, value, stelem.ref
             for (int i = 0; i < arrayExpression.Elements.Count; i++)
             {
                 var element = arrayExpression.Elements[i];
-
-                // Duplicate the array reference on the stack
-                _il.OpCode(ILOpCode.Dup);
-
-                // Emit the element expression to get its value
-                _expressionEmitter.Emit(element!, new TypeCoercion());
-
-                // Store the value in the array at the specified index
-                _il.OpCode(ILOpCode.Callvirt);
-                _il.Token(_bclReferences.Array_Add_Ref);
+                _il.OpCode(ILOpCode.Dup);              // array
+                _il.LoadConstantI4(i);                 // index
+                var elemType = _expressionEmitter.Emit(element!, new TypeCoercion());
+                if (elemType == JavascriptType.Number)
+                {
+                    _il.OpCode(ILOpCode.Box);
+                    _il.Token(_bclReferences.DoubleType);
+                }
+                _il.OpCode(ILOpCode.Stelem_ref);
             }
         }
 
@@ -766,6 +765,59 @@ namespace Js2IL.Services.ILGenerators
                     GenerateObjectExpresion(objectExpression);
 
                     javascriptType = JavascriptType.Object;
+                    break;
+                case MemberExpression memberExpression:
+                    // Support arr.length and arr[computedIndex]
+                    // Evaluate the object (base) expression first
+                    if (memberExpression.Object is Identifier arrIdent)
+                    {
+                        var variable = _variables.FindVariable(arrIdent.Name);
+                        if (variable == null)
+                        {
+                            throw new InvalidOperationException($"Variable '{arrIdent.Name}' not found for member expression.");
+                        }
+                        var scopeSlot = _variables.GetScopeLocalSlot(variable.ScopeName);
+                        if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
+                        {
+                            _il.LoadArgument(scopeSlot.Address);
+                        }
+                        else
+                        {
+                            _il.LoadLocal(scopeSlot.Address);
+                        }
+                        _il.OpCode(ILOpCode.Ldfld);
+                        _il.Token(variable.FieldHandle); // stack: object (expected object[])
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"Unsupported member base expression: {memberExpression.Object.Type}");
+                    }
+
+                    if (!memberExpression.Computed && memberExpression.Property is Identifier propId && propId.Name == "length")
+                    {
+                        // arr.length -> ldlen (returns native unsigned int), convert to int32 then to double (JS number)
+                        _il.OpCode(ILOpCode.Ldlen);
+                        _il.OpCode(ILOpCode.Conv_i4);
+                        _il.OpCode(ILOpCode.Conv_r8);
+                        javascriptType = JavascriptType.Number;
+                    }
+                    else if (memberExpression.Computed)
+                    {
+                        // arr[expr]
+                        // stack currently: array
+                        var indexType = _expressionEmitter.Emit(memberExpression.Property, new TypeCoercion());
+                        // Index must be an int32 for ldelem.ref. If it's a number (double) convert.
+                        if (indexType == JavascriptType.Number)
+                        {
+                            _il.OpCode(ILOpCode.Conv_i4);
+                        }
+                        _il.OpCode(ILOpCode.Ldelem_ref);
+                        javascriptType = JavascriptType.Object; // element is boxed object
+                    }
+                    else
+                    {
+                        throw new NotSupportedException("Only 'length' property or computed indexing supported on arrays.");
+                    }
                     break;
                 default:
                     javascriptType = _binaryOperators.LoadValue(expression, typeCoercion);
