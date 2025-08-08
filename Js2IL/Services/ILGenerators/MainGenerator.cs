@@ -11,7 +11,7 @@ namespace Js2IL.Services.ILGenerators
     internal class MainGenerator
     {
         private ILMethodGenerator _ilGenerator;
-        private FunctionGenerator _functionGenerator;
+        private JavaScriptFunctionGenerator _functionGenerator;
         private MethodBodyStreamEncoder _methodBodyStreamEncoder;
 
         private Dispatch.DispatchTableGenerator _dispatchTableGenerator;
@@ -27,7 +27,7 @@ namespace Js2IL.Services.ILGenerators
             if (metadataBuilder == null) throw new ArgumentNullException(nameof(metadataBuilder));
 
             _ilGenerator = new ILMethodGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator);
-            _functionGenerator = new FunctionGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator);
+            _functionGenerator = new JavaScriptFunctionGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator);
             this._methodBodyStreamEncoder = methodBodyStreamEncoder;
         }
 
