@@ -36,6 +36,13 @@ namespace Js2IL.Services.ILGenerators
             foreach (var functionDeclaration in functionDeclarations)
             {
                 DeclareFunction(functionDeclaration);
+                
+                // Recursively find and declare nested functions within this function's body
+                if (functionDeclaration.Body is BlockStatement blockStatement)
+                {
+                    var nestedFunctions = ExtractFunctionDeclarations(blockStatement.Body);
+                    DeclareFunctions(nestedFunctions);
+                }
             }
         }
 
@@ -110,6 +117,11 @@ namespace Js2IL.Services.ILGenerators
 
             // Emit body statements
             var hasExplicitReturn = blockStatement.Body.Any(s => s is ReturnStatement);
+            
+            // Initialize nested function variables before generating other statements
+            var nestedFunctions = ExtractFunctionDeclarations(blockStatement.Body);
+            methodGenerator.InitializeLocalFunctionVariables(nestedFunctions);
+            
             methodGenerator.GenerateStatements(blockStatement.Body);
             if (!hasExplicitReturn)
             {
@@ -187,6 +199,56 @@ namespace Js2IL.Services.ILGenerators
             _dispatchTableGenerator.SetMethodDefinitionHandle(functionName, methodDefinition);
 
             return methodDefinition;
+        }
+
+        private IEnumerable<FunctionDeclaration> ExtractFunctionDeclarations(IEnumerable<Statement> statements)
+        {
+            var functions = new List<FunctionDeclaration>();
+            
+            foreach (var statement in statements)
+            {
+                ExtractFunctionDeclarationsFromStatement(statement, functions);
+            }
+            
+            return functions;
+        }
+
+        private void ExtractFunctionDeclarationsFromStatement(Statement statement, List<FunctionDeclaration> functions)
+        {
+            switch (statement)
+            {
+                case FunctionDeclaration functionDeclaration:
+                    functions.Add(functionDeclaration);
+                    break;
+                    
+                case BlockStatement blockStatement:
+                    foreach (var nestedStatement in blockStatement.Body)
+                    {
+                        ExtractFunctionDeclarationsFromStatement(nestedStatement, functions);
+                    }
+                    break;
+                    
+                case IfStatement ifStatement:
+                    ExtractFunctionDeclarationsFromStatement(ifStatement.Consequent, functions);
+                    if (ifStatement.Alternate != null)
+                    {
+                        ExtractFunctionDeclarationsFromStatement(ifStatement.Alternate, functions);
+                    }
+                    break;
+                    
+                case ForStatement forStatement:
+                    ExtractFunctionDeclarationsFromStatement(forStatement.Body, functions);
+                    break;
+                    
+                case WhileStatement whileStatement:
+                    ExtractFunctionDeclarationsFromStatement(whileStatement.Body, functions);
+                    break;
+                    
+                // Add more statement types as needed for comprehensive function discovery
+                default:
+                    // For other statement types, we don't expect function declarations
+                    break;
+            }
         }
     }
 }

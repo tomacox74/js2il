@@ -51,21 +51,65 @@ namespace Js2IL.Dispatch
 
         public void GenerateDispatchTable(NodeList<Statement> statements)
         {
-            GetTopLevelFunctions(statements);
+            GetAllFunctions(statements);
             GenerateDispatchTableClass();
         }
 
         /// <summary>
-        /// Enumerates top-level function declarations in the AST.
+        /// Recursively enumerates all function declarations in the AST, including nested functions.
         /// </summary>
-        public void GetTopLevelFunctions(NodeList<Statement> statements)
+        public void GetAllFunctions(NodeList<Statement> statements)
         {
             foreach (var stmt in statements)
             {
-                if (stmt is FunctionDeclaration funcDecl && funcDecl.Id is Identifier id)
-                {
-                    _functions.Add(new FunctionInfo(id.Name, funcDecl));
-                }
+                ExtractFunctionDeclarationsFromStatement(stmt, _functions);
+            }
+        }
+
+        private void ExtractFunctionDeclarationsFromStatement(Statement statement, List<FunctionInfo> functions)
+        {
+            switch (statement)
+            {
+                case FunctionDeclaration functionDeclaration when functionDeclaration.Id is Identifier id:
+                    functions.Add(new FunctionInfo(id.Name, functionDeclaration));
+                    
+                    // Recursively look for nested functions within this function's body
+                    if (functionDeclaration.Body is BlockStatement funcBodyBlock)
+                    {
+                        foreach (var nestedStatement in funcBodyBlock.Body)
+                        {
+                            ExtractFunctionDeclarationsFromStatement(nestedStatement, functions);
+                        }
+                    }
+                    break;
+                    
+                case BlockStatement block:
+                    foreach (var nestedStatement in block.Body)
+                    {
+                        ExtractFunctionDeclarationsFromStatement(nestedStatement, functions);
+                    }
+                    break;
+                    
+                case IfStatement ifStatement:
+                    ExtractFunctionDeclarationsFromStatement(ifStatement.Consequent, functions);
+                    if (ifStatement.Alternate != null)
+                    {
+                        ExtractFunctionDeclarationsFromStatement(ifStatement.Alternate, functions);
+                    }
+                    break;
+                    
+                case ForStatement forStatement:
+                    ExtractFunctionDeclarationsFromStatement(forStatement.Body, functions);
+                    break;
+                    
+                case WhileStatement whileStatement:
+                    ExtractFunctionDeclarationsFromStatement(whileStatement.Body, functions);
+                    break;
+                    
+                // Add more statement types as needed for comprehensive function discovery
+                default:
+                    // For other statement types, we don't expect function declarations
+                    break;
             }
         }
 
