@@ -80,6 +80,12 @@ namespace Js2IL.Services.ILGenerators
                 {
                     _il.LoadArgument(scopeLocalIndex.Address);
                 }
+                else if (scopeLocalIndex.Location == ObjectReferenceLocation.ScopeArray)
+                {
+                    _il.LoadArgument(0); // Load scope array parameter
+                    _il.LoadConstantI4(scopeLocalIndex.Address); // Load array index
+                    _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
+                }
                 else
                 {
                     _il.LoadLocal(scopeLocalIndex.Address);
@@ -147,6 +153,12 @@ namespace Js2IL.Services.ILGenerators
             if (scopeLocalIndex.Location == ObjectReferenceLocation.Parameter)
             {
                 _il.LoadArgument(scopeLocalIndex.Address);
+            }
+            else if (scopeLocalIndex.Location == ObjectReferenceLocation.ScopeArray)
+            {
+                _il.LoadArgument(0); // Load scope array parameter
+                _il.LoadConstantI4(scopeLocalIndex.Address); // Load array index
+                _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
             }
             else
             {
@@ -261,15 +273,15 @@ namespace Js2IL.Services.ILGenerators
                 _il,
                 localVariablesSignature: localSignature,
                 attributes: bodyAttributes);
-            // Build method signature: static object (object scope, object param1, ...)
+            // Build method signature: static object (object[] scopes, object param1, ...)
             var sigBuilder = new BlobBuilder();
-            var paramCount = 1 + functionDeclaration.Params.Count; // scope + declared params
+            var paramCount = 1 + functionDeclaration.Params.Count; // scope array + declared params
             new BlobEncoder(sigBuilder)
                 .MethodSignature()
                 .Parameters(paramCount, returnType => returnType.Type().Object(), parameters =>
                 {
-                    // scope parameter
-                    parameters.AddParameter().Type().Object();
+                    // scope array parameter
+                    parameters.AddParameter().Type().SZArray().Object();
                     // each JS parameter as System.Object for now
                     foreach (var p in functionDeclaration.Params)
                     {
@@ -279,8 +291,7 @@ namespace Js2IL.Services.ILGenerators
             var methodSig = _metadataBuilder.GetOrAddBlob(sigBuilder);
 
             // Add parameters with names
-            var scopeNames = _variables.GetAllScopeNames().ToList();
-            var scopeParamName = scopeNames.FirstOrDefault() ?? functionName;
+            var scopeParamName = "scopes";
             ParameterHandle firstParamHandle = _metadataBuilder.AddParameter(
                 ParameterAttributes.None,
                 _metadataBuilder.GetOrAddString(scopeParamName),
@@ -630,6 +641,16 @@ namespace Js2IL.Services.ILGenerators
                         // Load the scope instance from the field
                         loadScopeInstance = () =>  _il.LoadArgument(scopeObjectReference.Address);
                     }
+                    else if (scopeObjectReference.Location == ObjectReferenceLocation.ScopeArray)
+                    {
+                        // Load from scope array at index 0
+                        loadScopeInstance = () => 
+                        {
+                            _il.LoadArgument(0); // Load scope array parameter
+                            _il.LoadConstantI4(0); // Index 0 for global scope
+                            _il.OpCode(ILOpCode.Ldelem_ref);
+                        };
+                    }
                     else
                     {
                         throw new InvalidOperationException($"Unsupported scope object reference location: {scopeObjectReference.Location}");
@@ -640,8 +661,14 @@ namespace Js2IL.Services.ILGenerators
                     _il.OpCode(ILOpCode.Ldfld);
                     _il.Token(functionVariable.FieldHandle);
 
-                    // First argument: scope instance
+                    // First argument: create scope array with current scope
+                    _il.LoadConstantI4(1); // Array size
+                    _il.OpCode(ILOpCode.Newarr);
+                    _il.Token(_bclReferences.ObjectType);
+                    _il.OpCode(ILOpCode.Dup);
+                    _il.LoadConstantI4(0);
                     loadScopeInstance();
+                    _il.OpCode(ILOpCode.Stelem_ref);
 
                     // Additional arguments: directly emit each call argument (boxed as needed)
                     var funcDecl = _dispatchTableGenerator.GetFunctionDeclaration(identifier.Name);
@@ -670,12 +697,12 @@ namespace Js2IL.Services.ILGenerators
                     if (callExpression.Arguments.Count == 0)
                     {
                         _il.OpCode(ILOpCode.Callvirt);
-                        _il.Token(_bclReferences.FuncObjectObject_Invoke_Ref);
+                        _il.Token(_bclReferences.FuncObjectArrayObject_Invoke_Ref);
                     }
                     else if (callExpression.Arguments.Count == 1)
                     {
                         _il.OpCode(ILOpCode.Callvirt);
-                        _il.Token(_bclReferences.FuncObjectObjectObject_Invoke_Ref);
+                        _il.Token(_bclReferences.FuncObjectArrayObjectObject_Invoke_Ref);
                     }
                     else
                     {
@@ -745,6 +772,12 @@ namespace Js2IL.Services.ILGenerators
                             {
                                 _il.LoadArgument(scopeSlot.Address);
                             }
+                            else if (scopeSlot.Location == ObjectReferenceLocation.ScopeArray)
+                            {
+                                _il.LoadArgument(0); // Load scope array parameter
+                                _il.LoadConstantI4(scopeSlot.Address); // Load array index
+                                _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
+                            }
                             else
                             {
                                 _il.LoadLocal(scopeSlot.Address);
@@ -783,6 +816,12 @@ namespace Js2IL.Services.ILGenerators
                         {
                             _il.LoadArgument(scopeSlot.Address);
                         }
+                        else if (scopeSlot.Location == ObjectReferenceLocation.ScopeArray)
+                        {
+                            _il.LoadArgument(0); // Load scope array parameter
+                            _il.LoadConstantI4(scopeSlot.Address); // Load array index
+                            _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
+                        }
                         else
                         {
                             _il.LoadLocal(scopeSlot.Address);
@@ -790,15 +829,27 @@ namespace Js2IL.Services.ILGenerators
                         _il.OpCode(ILOpCode.Ldfld);
                         _il.Token(variable.FieldHandle);
 
-                        // load scope as first arg
+                        // Create scope array with single element for now (TODO: proper scope chain)
+                        _il.LoadConstantI4(1); // Array size
+                        _il.OpCode(ILOpCode.Newarr);
+                        _il.Token(_bclReferences.ObjectType);
+                        _il.OpCode(ILOpCode.Dup); // Duplicate array reference
+                        _il.LoadConstantI4(0); // Index 0
                         if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
                         {
                             _il.LoadArgument(scopeSlot.Address);
+                        }
+                        else if (scopeSlot.Location == ObjectReferenceLocation.ScopeArray)
+                        {
+                            _il.LoadArgument(0); // Load scope array parameter
+                            _il.LoadConstantI4(scopeSlot.Address); // Load array index
+                            _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
                         }
                         else
                         {
                             _il.LoadLocal(scopeSlot.Address);
                         }
+                        _il.OpCode(ILOpCode.Stelem_ref); // Store scope in array
 
                         // load each argument
                         foreach (var arg in callExpression.Arguments)
@@ -865,6 +916,12 @@ namespace Js2IL.Services.ILGenerators
                         if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
                         {
                             _il.LoadArgument(scopeSlot.Address);
+                        }
+                        else if (scopeSlot.Location == ObjectReferenceLocation.ScopeArray)
+                        {
+                            _il.LoadArgument(0); // Load scope array parameter
+                            _il.LoadConstantI4(scopeSlot.Address); // Load array index
+                            _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
                         }
                         else
                         {

@@ -29,7 +29,8 @@ namespace Js2IL.Services
     internal enum ObjectReferenceLocation
     {
         Local,
-        Parameter
+        Parameter,
+        ScopeArray
     }
 
     internal record ScopeObjectReference
@@ -77,8 +78,8 @@ namespace Js2IL.Services
 
             _scopeLocalSlots[globalVariables._leafScopeName] = new ScopeObjectReference
             {
-                Location = ObjectReferenceLocation.Parameter,
-                Address = 0
+                Location = ObjectReferenceLocation.ScopeArray,
+                Address = 0 // Index 0 in scope array for global scope
             };
         }
 

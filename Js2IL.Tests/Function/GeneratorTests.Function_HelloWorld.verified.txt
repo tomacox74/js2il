@@ -52,7 +52,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> helloWorld
+	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> helloWorld
 
 } // end of class DispatchTable
 
@@ -62,7 +62,7 @@
 	// Methods
 	.method public static 
 		object helloWorld (
-			object Function_HelloWorld
+			object[] scopes
 		) cil managed 
 	{
 		// Method begins at RVA 0x2062
@@ -95,9 +95,9 @@
 		.maxstack 8
 
 		IL_0000: ldnull
-		IL_0001: ldftn object Program::helloWorld(object)
-		IL_0007: newobj instance void class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object>::.ctor(object, native int)
-		IL_000c: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::helloWorld
+		IL_0001: ldftn object Program::helloWorld(object[])
+		IL_0007: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_000c: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::helloWorld
 		IL_0011: ret
 	} // end of method Program::_LoadDispatchTable
 
@@ -106,7 +106,7 @@
 	{
 		// Method begins at RVA 0x209c
 		// Header size: 12
-		// Code size: 36 (0x24)
+		// Code size: 45 (0x2d)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -117,14 +117,19 @@
 		IL_0005: stloc.0
 		IL_0006: call void Program::_LoadDispatchTable()
 		IL_000b: ldloc.0
-		IL_000c: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::helloWorld
+		IL_000c: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::helloWorld
 		IL_0011: stfld object Scopes.Function_HelloWorld::helloWorld
 		IL_0016: ldloc.0
 		IL_0017: ldfld object Scopes.Function_HelloWorld::helloWorld
-		IL_001c: ldloc.0
-		IL_001d: callvirt instance !1 class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object>::Invoke(!0)
-		IL_0022: pop
-		IL_0023: ret
+		IL_001c: ldc.i4.1
+		IL_001d: newarr [System.Runtime]System.Object
+		IL_0022: dup
+		IL_0023: ldc.i4.0
+		IL_0024: ldloc.0
+		IL_0025: stelem.ref
+		IL_0026: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_002b: pop
+		IL_002c: ret
 	} // end of method Program::Main
 
 } // end of class Program
