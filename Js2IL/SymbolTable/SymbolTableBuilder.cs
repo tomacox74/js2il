@@ -3,25 +3,25 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Js2IL.Scoping
+namespace Js2IL.SymbolTables
 {
     /// <summary>
-    /// Builds a ScopeTree from a JavaScript AST.
+    /// Builds a SymbolTable from a JavaScript AST.
     /// </summary>
-    public class ScopeTreeBuilder
+    public class SymbolTableBuilder
     {
         private int _closureCounter = 0;
         private string? _currentAssignmentTarget = null;
 
-        public ScopeTree Build(Node astRoot, string filePath)
+        public SymbolTable Build(Node astRoot, string filePath)
         {
             var fileName = Path.GetFileNameWithoutExtension(filePath);
-            var globalScope = new ScopeNode(fileName, ScopeKind.Global, null, astRoot);
+            var globalScope = new Scope(fileName, ScopeKind.Global, null, astRoot);
             BuildScopeRecursive(astRoot, globalScope);
-            return new ScopeTree(globalScope);
+            return new SymbolTable(globalScope);
         }
 
-        private void BuildScopeRecursive(Node node, ScopeNode currentScope)
+        private void BuildScopeRecursive(Node node, Scope currentScope)
         {
             switch (node)
             {
@@ -31,7 +31,7 @@ namespace Js2IL.Scoping
                     break;
                 case FunctionDeclaration funcDecl:
                     var funcName = (funcDecl.Id as Identifier)?.Name ?? $"Closure{++_closureCounter}";
-                    var funcScope = new ScopeNode(funcName, ScopeKind.Function, currentScope, funcDecl);
+                    var funcScope = new Scope(funcName, ScopeKind.Function, currentScope, funcDecl);
                     currentScope.Bindings[funcName] = new BindingInfo(funcName, BindingKind.Function, funcDecl);
                         // Register parameters in the function's own scope
                         foreach (var p in funcDecl.Params)
@@ -57,7 +57,7 @@ namespace Js2IL.Scoping
                         (!string.IsNullOrEmpty(_currentAssignmentTarget) 
                             ? $"Function_{_currentAssignmentTarget}"
                             : $"Closure{++_closureCounter}_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}");
-                    var funcExprScope = new ScopeNode(funcExprName, ScopeKind.Function, currentScope, funcExpr);
+                    var funcExprScope = new Scope(funcExprName, ScopeKind.Function, currentScope, funcExpr);
                     foreach (var param in funcExpr.Params)
                     {
                         if (param is Identifier id)
@@ -103,7 +103,7 @@ namespace Js2IL.Scoping
                     }
                     break;
                 case BlockStatement blockStmt:
-                    var blockScope = new ScopeNode($"Block_L{blockStmt.Location.Start.Line}C{blockStmt.Location.Start.Column}", ScopeKind.Block, currentScope, blockStmt);
+                    var blockScope = new Scope($"Block_L{blockStmt.Location.Start.Line}C{blockStmt.Location.Start.Column}", ScopeKind.Block, currentScope, blockStmt);
                     foreach (var statement in blockStmt.Body)
                         BuildScopeRecursive(statement, blockScope);
                     break;
@@ -118,7 +118,7 @@ namespace Js2IL.Scoping
                     var arrowName = !string.IsNullOrEmpty(_currentAssignmentTarget) 
                         ? $"ArrowFunction_{_currentAssignmentTarget}"
                         : $"ArrowFunction{++_closureCounter}_L{arrowFunc.Location.Start.Line}C{arrowFunc.Location.Start.Column}";
-                    var arrowScope = new ScopeNode(arrowName, ScopeKind.Function, currentScope, arrowFunc);
+                    var arrowScope = new Scope(arrowName, ScopeKind.Function, currentScope, arrowFunc);
                     foreach (var param in arrowFunc.Params)
                     {
                         if (param is Identifier id)
@@ -184,7 +184,7 @@ namespace Js2IL.Scoping
             }
         }
 
-        private void ProcessChildNodes(Node node, ScopeNode currentScope)
+        private void ProcessChildNodes(Node node, Scope currentScope)
         {
             // Use reflection to get all node properties and recursively process them
             var properties = node.GetType().GetProperties();

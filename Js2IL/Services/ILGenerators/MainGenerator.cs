@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
+using Js2IL.SymbolTables;
 
 namespace Js2IL.Services.ILGenerators
 {
@@ -13,14 +14,16 @@ namespace Js2IL.Services.ILGenerators
         private ILMethodGenerator _ilGenerator;
         private JavaScriptFunctionGenerator _functionGenerator;
         private MethodBodyStreamEncoder _methodBodyStreamEncoder;
+        private SymbolTable _symbolTable;
 
         private Dispatch.DispatchTableGenerator _dispatchTableGenerator;
 
         public MethodDefinitionHandle FirstMethod { get; private set; }
 
-        public MainGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator)
+        public MainGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator, SymbolTable symbolTable)
         {
             _dispatchTableGenerator = dispatchTableGenerator ?? throw new ArgumentNullException(nameof(dispatchTableGenerator));
+            _symbolTable = symbolTable ?? throw new ArgumentNullException(nameof(symbolTable));
 
             if (variables == null) throw new ArgumentNullException(nameof(variables));
             if (bclReferences == null) throw new ArgumentNullException(nameof(bclReferences));
@@ -85,7 +88,7 @@ namespace Js2IL.Services.ILGenerators
 
             // create the dispatch
             // functions are hosted so we need to declare them first
-            _functionGenerator.DeclareFunctions(ast.Body.OfType<Acornima.Ast.FunctionDeclaration>());
+            _functionGenerator.DeclareFunctions(_symbolTable);
 
             var loadDispatchTableMethod = _dispatchTableGenerator.GenerateLoadDispatchTableMethod();
             if (!loadDispatchTableMethod.IsNil)

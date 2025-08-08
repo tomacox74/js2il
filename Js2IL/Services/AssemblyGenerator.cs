@@ -3,6 +3,7 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
 using Js2IL.Services.ILGenerators;
+using Js2IL.SymbolTables;
 
 namespace Js2IL.Services
 {
@@ -43,11 +44,11 @@ namespace Js2IL.Services
         public void Generate(Acornima.Ast.Program ast, string name, string outputPath)
         {
             // Build scope tree first
-            var scopeTreeBuilder = new Js2IL.Scoping.ScopeTreeBuilder();
-            var scopeTree = scopeTreeBuilder.Build(ast, $"{name}.js");
+            var symbolTableBuilder = new SymbolTableBuilder();
+            var symbolTable = symbolTableBuilder.Build(ast, $"{name}.js");
             
             // Call the new overload
-            Generate(ast, scopeTree, name, outputPath);
+            Generate(ast, symbolTable, name, outputPath);
         }
 
         /// <summary>
@@ -57,7 +58,7 @@ namespace Js2IL.Services
         /// <param name="scopeTree">The pre-built scope tree.</param>
         /// <param name="name">The assembly name.</param>
         /// <param name="outputPath">The directory to output the generated assembly and related files to.</param>
-        public void Generate(Acornima.Ast.Program ast, Js2IL.Scoping.ScopeTree scopeTree, string name, string outputPath)
+        public void Generate(Acornima.Ast.Program ast, SymbolTable symbolTable, string name, string outputPath)
         {
             createAssemblyMetadata(name);
 
@@ -77,18 +78,18 @@ namespace Js2IL.Services
 
             // Step 1: Generate .NET types from the scope tree
             var typeGenerator = new TypeGenerator(_metadataBuilder, _bclReferences, methodBodyStream);
-            var rootTypeHandle = typeGenerator.GenerateTypes(scopeTree);
+            var rootTypeHandle = typeGenerator.GenerateTypes(symbolTable);
 
             // Step 2: Get the variable registry from the type generator and update Variables
             var variableRegistry = typeGenerator.GetVariableRegistry();
-            _variables = new Variables(variableRegistry, scopeTree.Root.Name);
+            _variables = new Variables(variableRegistry, symbolTable.Root.Name);
 
             // Create the dispatch table.
             // The dispatch table exists for two reasons:
             // 1. It is necessary because JavaScript allows for circular references.
             // 2. It allows you to dynamically change function implementations at runtime.
             var dispatchTableGenerator = new Dispatch.DispatchTableGenerator(_metadataBuilder, _bclReferences, methodBodyStream);
-            dispatchTableGenerator.GenerateDispatchTable(ast.Body);
+            dispatchTableGenerator.GenerateDispatchTable(symbolTable);
 
             // Create the method signature for the Main method.
             var sigBuilder = new BlobBuilder();
@@ -99,7 +100,7 @@ namespace Js2IL.Services
 
 
             // Emit IL: return.
-            var mainGenerator = new MainGenerator(_variables!, _bclReferences, _metadataBuilder, methodBodyStream, dispatchTableGenerator);
+            var mainGenerator = new MainGenerator(_variables!, _bclReferences, _metadataBuilder, methodBodyStream, dispatchTableGenerator, symbolTable);
             var bodyOffset = mainGenerator.GenerateMethod(ast);
             var parameterList = MetadataTokens.ParameterHandle(_metadataBuilder.GetRowCount(TableIndex.Param) + 1);
             this._entryPoint = _metadataBuilder.AddMethodDefinition(

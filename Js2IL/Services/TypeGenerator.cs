@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection;
-using Js2IL.Scoping;
+using Js2IL.SymbolTables;
 using Js2IL.Services.VariableBindings;
 using System.Linq;
 
@@ -34,18 +34,18 @@ namespace Js2IL.Services
         }
 
         /// <summary>
-        /// Generates .NET types from the scope tree.
+        /// Generates .NET types from the symbol table.
         /// Returns the root type definition handle.
         /// </summary>
-        public TypeDefinitionHandle GenerateTypes(ScopeTree scopeTree)
+        public TypeDefinitionHandle GenerateTypes(SymbolTable symbolTable)
         {            
             // Create all types with proper nesting (depth-first: children first, then parents)
-            var rootType = CreateAllTypes(scopeTree.Root, scopeTree.Root.Name);
+            var rootType = CreateAllTypes(symbolTable.Root, symbolTable.Root.Name);
             
             // Nesting relationships are established during type creation
             
             // Populate variable registry with all discovered variables
-            PopulateVariableRegistry(scopeTree.Root);
+            PopulateVariableRegistry(symbolTable.Root);
             
             return rootType;
         }
@@ -59,7 +59,7 @@ namespace Js2IL.Services
         }
 
 
-        private void CreateTypeFields(ScopeNode scope)
+        private void CreateTypeFields(Scope scope)
         {
             // Create fields for this scope
             _scopeFields[scope.Name] = new List<FieldDefinitionHandle>();
@@ -100,7 +100,7 @@ namespace Js2IL.Services
         /// All fields must already be created before this is called.
         /// Root types go in the "Scopes" namespace, nested types are properly nested.
         /// </summary>
-        private TypeDefinitionHandle CreateAllTypes(ScopeNode scope, string typeName)
+        private TypeDefinitionHandle CreateAllTypes(Scope scope, string typeName)
         {
             // First, recursively create all child types (depth-first)
             // We'll create the parent type first, then update children to be nested
@@ -118,7 +118,7 @@ namespace Js2IL.Services
         /// <summary>
         /// Creates nested types recursively.
         /// </summary>
-        private TypeDefinitionHandle CreateAllTypesNested(ScopeNode scope, string typeName, TypeDefinitionHandle parentType)
+        private TypeDefinitionHandle CreateAllTypesNested(Scope scope, string typeName, TypeDefinitionHandle parentType)
         {
             // First, recursively create all child types (depth-first)
             var currentType = CreateScopeType(scope, parentType, typeName, "");
@@ -136,7 +136,7 @@ namespace Js2IL.Services
         /// Phase 3: Establishes nesting relationships in sorted order by nested type handle.
         /// The .NET metadata specification requires NestedClass table to be sorted.
         /// </summary>
-        private void CreateNestingRelationshipsSorted(ScopeNode rootScope)
+        private void CreateNestingRelationshipsSorted(Scope rootScope)
         {
             // Collect all nesting relationships first
             var nestingRelationships = new List<(TypeDefinitionHandle nestedType, TypeDefinitionHandle enclosingType)>();
@@ -155,7 +155,7 @@ namespace Js2IL.Services
         /// <summary>
         /// Recursively collects all nesting relationships from the scope tree.
         /// </summary>
-        private void CollectNestingRelationships(ScopeNode scope, List<(TypeDefinitionHandle, TypeDefinitionHandle)> relationships)
+        private void CollectNestingRelationships(Scope scope, List<(TypeDefinitionHandle, TypeDefinitionHandle)> relationships)
         {
             // For each child scope, collect the nesting relationship
             foreach (var childScope in scope.Children)
@@ -173,7 +173,7 @@ namespace Js2IL.Services
         /// <summary>
         /// Phase 3: Establishes nesting relationships after all types are created.
         /// </summary>
-        private void CreateNestingRelationships(ScopeNode scope)
+        private void CreateNestingRelationships(Scope scope)
         {
             // For each child scope, establish the nesting relationship
             foreach (var childScope in scope.Children)
@@ -193,7 +193,7 @@ namespace Js2IL.Services
         /// Creates a single type definition for a scope.
         /// All fields must already exist. All types are created as top-level types.
         /// </summary>
-        private TypeDefinitionHandle CreateScopeType(ScopeNode scope, TypeDefinitionHandle? parentType, string typeName, string namespaceString)
+        private TypeDefinitionHandle CreateScopeType(Scope scope, TypeDefinitionHandle? parentType, string typeName, string namespaceString)
         {
             CreateTypeFields(scope);
 
@@ -350,7 +350,7 @@ namespace Js2IL.Services
         /// Populates the variable registry with all variables found in the scope tree.
         /// This method must be called after all types and fields have been created.
         /// </summary>
-        private void PopulateVariableRegistry(ScopeNode scope)
+        private void PopulateVariableRegistry(Scope scope)
         {
             var scopeTypeHandle = _scopeTypes[scope.Name];
             var scopeFields = _scopeFields[scope.Name];

@@ -7,6 +7,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Js2IL.SymbolTables;
 
 namespace Js2IL.Services.ILGenerators
 {
@@ -30,35 +31,28 @@ namespace Js2IL.Services.ILGenerators
             _dispatchTableGenerator = dispatchTableGenerator;
         }
 
-        public void DeclareFunctions(IEnumerable<FunctionDeclaration> functionDeclarations)
+        public void DeclareFunctions(SymbolTable symbolTable)
         {
-            // Iterate through each function declaration in the block
-            foreach (var functionDeclaration in functionDeclarations)
+            // Get all functions from the symbol table and declare them
+            foreach (var (functionScope, functionDeclaration) in symbolTable.GetAllFunctions())
             {
-                DeclareFunction(functionDeclaration);
-                
-                // Recursively find and declare nested functions within this function's body
-                if (functionDeclaration.Body is BlockStatement blockStatement)
-                {
-                    var nestedFunctions = ExtractFunctionDeclarations(blockStatement.Body);
-                    DeclareFunctions(nestedFunctions);
-                }
+                DeclareFunction(functionDeclaration, functionScope, symbolTable);
             }
         }
 
-        public void DeclareFunction(FunctionDeclaration functionDeclaration)
+        public void DeclareFunction(FunctionDeclaration functionDeclaration, Scope? functionScope, SymbolTable? symbolTable)
         {
             var functionVariables = new Variables(_variables);
             var methodGenerator = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator);
 
-            var methodDefinition = GenerateMethodForFunction(functionDeclaration, functionVariables, methodGenerator);
+            var methodDefinition = GenerateMethodForFunction(functionDeclaration, functionVariables, methodGenerator, functionScope, symbolTable);
             if (this._firstMethod.IsNil)
             {
                 this._firstMethod = methodDefinition;
             }
         }
 
-        public MethodDefinitionHandle GenerateMethodForFunction(FunctionDeclaration functionDeclaration, Variables functionVariables, ILMethodGenerator methodGenerator)
+        public MethodDefinitionHandle GenerateMethodForFunction(FunctionDeclaration functionDeclaration, Variables functionVariables, ILMethodGenerator methodGenerator, Scope? functionScope = null, SymbolTable? symbolTable = null)
         {
             var functionName = (functionDeclaration.Id as Acornima.Ast.Identifier)!.Name;
 
@@ -119,8 +113,15 @@ namespace Js2IL.Services.ILGenerators
             var hasExplicitReturn = blockStatement.Body.Any(s => s is ReturnStatement);
             
             // Initialize nested function variables before generating other statements
-            var nestedFunctions = ExtractFunctionDeclarations(blockStatement.Body);
-            methodGenerator.InitializeLocalFunctionVariables(nestedFunctions);
+            if (functionScope != null)
+            {
+                // Get nested functions from the function's child scopes
+                var nestedFunctions = functionScope.Children
+                    .Where(scope => scope.Kind == ScopeKind.Function && scope.AstNode is FunctionDeclaration)
+                    .Select(scope => (FunctionDeclaration)scope.AstNode!)
+                    .ToList();
+                methodGenerator.InitializeLocalFunctionVariables(nestedFunctions);
+            }
             
             methodGenerator.GenerateStatements(blockStatement.Body);
             if (!hasExplicitReturn)
@@ -199,56 +200,6 @@ namespace Js2IL.Services.ILGenerators
             _dispatchTableGenerator.SetMethodDefinitionHandle(functionName, methodDefinition);
 
             return methodDefinition;
-        }
-
-        private IEnumerable<FunctionDeclaration> ExtractFunctionDeclarations(IEnumerable<Statement> statements)
-        {
-            var functions = new List<FunctionDeclaration>();
-            
-            foreach (var statement in statements)
-            {
-                ExtractFunctionDeclarationsFromStatement(statement, functions);
-            }
-            
-            return functions;
-        }
-
-        private void ExtractFunctionDeclarationsFromStatement(Statement statement, List<FunctionDeclaration> functions)
-        {
-            switch (statement)
-            {
-                case FunctionDeclaration functionDeclaration:
-                    functions.Add(functionDeclaration);
-                    break;
-                    
-                case BlockStatement blockStatement:
-                    foreach (var nestedStatement in blockStatement.Body)
-                    {
-                        ExtractFunctionDeclarationsFromStatement(nestedStatement, functions);
-                    }
-                    break;
-                    
-                case IfStatement ifStatement:
-                    ExtractFunctionDeclarationsFromStatement(ifStatement.Consequent, functions);
-                    if (ifStatement.Alternate != null)
-                    {
-                        ExtractFunctionDeclarationsFromStatement(ifStatement.Alternate, functions);
-                    }
-                    break;
-                    
-                case ForStatement forStatement:
-                    ExtractFunctionDeclarationsFromStatement(forStatement.Body, functions);
-                    break;
-                    
-                case WhileStatement whileStatement:
-                    ExtractFunctionDeclarationsFromStatement(whileStatement.Body, functions);
-                    break;
-                    
-                // Add more statement types as needed for comprehensive function discovery
-                default:
-                    // For other statement types, we don't expect function declarations
-                    break;
-            }
         }
     }
 }
