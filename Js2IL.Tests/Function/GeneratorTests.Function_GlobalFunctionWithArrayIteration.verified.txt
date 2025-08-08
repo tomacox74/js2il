@@ -1,0 +1,211 @@
+// IL code: Function_GlobalFunctionWithArrayIteration
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Function_GlobalFunctionWithArrayIteration
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit printArray
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Block_L3C47
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2062
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L3C47::.ctor
+
+		} // end of class Block_L3C47
+
+
+		// Fields
+		.field public object arr
+		.field public object i
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method printArray::.ctor
+
+	} // end of class printArray
+
+
+	// Fields
+	.field public object printArray
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Function_GlobalFunctionWithArrayIteration::.ctor
+
+} // end of class Scopes.Function_GlobalFunctionWithArrayIteration
+
+.class public auto ansi abstract sealed beforefieldinit DispatchTable
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> printArray
+
+} // end of class DispatchTable
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		object printArray (
+			object Function_GlobalFunctionWithArrayIteration
+		) cil managed 
+	{
+		// Method begins at RVA 0x206c
+		// Header size: 12
+		// Code size: 213 (0xd5)
+		.maxstack 8
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Function_GlobalFunctionWithArrayIteration/printArray::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldc.i4.3
+		IL_0008: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_000d: dup
+		IL_000e: ldc.r8 1
+		IL_0017: box [System.Runtime]System.Double
+		IL_001c: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0021: dup
+		IL_0022: ldc.r8 2
+		IL_002b: box [System.Runtime]System.Double
+		IL_0030: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0035: dup
+		IL_0036: ldc.r8 3
+		IL_003f: box [System.Runtime]System.Double
+		IL_0044: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0049: stfld object Scopes.Function_GlobalFunctionWithArrayIteration/printArray::arr
+		IL_004e: ldloc.0
+		IL_004f: ldc.r8 0.0
+		IL_0058: box [System.Runtime]System.Double
+		IL_005d: stfld object Scopes.Function_GlobalFunctionWithArrayIteration/printArray::i
+		// loop start (head: IL_0062)
+			IL_0062: ldloc.0
+			IL_0063: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration/printArray::i
+			IL_0068: unbox.any [System.Runtime]System.Double
+			IL_006d: ldloc.0
+			IL_006e: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration/printArray::arr
+			IL_0073: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+			IL_0078: blt IL_0082
+
+			IL_007d: br IL_00d3
+
+			IL_0082: ldc.i4.2
+			IL_0083: newarr [System.Runtime]System.Object
+			IL_0088: dup
+			IL_0089: ldc.i4.0
+			IL_008a: ldstr ""
+			IL_008f: stelem.ref
+			IL_0090: dup
+			IL_0091: ldc.i4.1
+			IL_0092: ldloc.0
+			IL_0093: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration/printArray::arr
+			IL_0098: ldloc.0
+			IL_0099: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration/printArray::i
+			IL_009e: unbox.any [System.Runtime]System.Double
+			IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_00a8: stelem.ref
+			IL_00a9: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_00ae: ldloc.0
+			IL_00af: ldloc.0
+			IL_00b0: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration/printArray::i
+			IL_00b5: unbox.any [System.Runtime]System.Double
+			IL_00ba: ldc.r8 1
+			IL_00c3: add
+			IL_00c4: box [System.Runtime]System.Double
+			IL_00c9: stfld object Scopes.Function_GlobalFunctionWithArrayIteration/printArray::i
+			IL_00ce: br IL_0062
+		// end loop
+
+		IL_00d3: ldnull
+		IL_00d4: ret
+	} // end of method Program::printArray
+
+	.method public static 
+		void _LoadDispatchTable () cil managed 
+	{
+		// Method begins at RVA 0x214d
+		// Header size: 1
+		// Code size: 18 (0x12)
+		.maxstack 8
+
+		IL_0000: ldnull
+		IL_0001: ldftn object Program::printArray(object)
+		IL_0007: newobj instance void class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object>::.ctor(object, native int)
+		IL_000c: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::printArray
+		IL_0011: ret
+	} // end of method Program::_LoadDispatchTable
+
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2160
+		// Header size: 12
+		// Code size: 42 (0x2a)
+		.maxstack 8
+		.entrypoint
+		.locals init (
+			[0] object,
+			[1] object
+		)
+
+		IL_0000: newobj instance void Scopes.Function_GlobalFunctionWithArrayIteration::.ctor()
+		IL_0005: stloc.0
+		IL_0006: newobj instance void Scopes.Function_GlobalFunctionWithArrayIteration/printArray::.ctor()
+		IL_000b: stloc.1
+		IL_000c: call void Program::_LoadDispatchTable()
+		IL_0011: ldloc.0
+		IL_0012: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::printArray
+		IL_0017: stfld object Scopes.Function_GlobalFunctionWithArrayIteration::printArray
+		IL_001c: ldloc.0
+		IL_001d: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration::printArray
+		IL_0022: ldloc.0
+		IL_0023: callvirt instance !1 class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object>::Invoke(!0)
+		IL_0028: pop
+		IL_0029: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
