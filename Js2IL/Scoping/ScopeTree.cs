@@ -26,6 +26,8 @@ namespace Js2IL.Scoping
         public ScopeNode? Parent { get; }
         public List<ScopeNode> Children { get; } = new();
         public Dictionary<string, BindingInfo> Bindings { get; } = new();
+    // Names of parameters (for function scopes) so we can avoid generating backing fields for them.
+    public HashSet<string> Parameters { get; } = new();
         public ScopeKind Kind { get; }
         public Node? AstNode { get; }
 

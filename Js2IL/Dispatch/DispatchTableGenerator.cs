@@ -91,6 +91,12 @@ namespace Js2IL.Dispatch
             return default; // Return default if not found
         }
 
+        public FunctionDeclaration? GetFunctionDeclaration(string methodName)
+        {
+            var function = _functions.FirstOrDefault(f => f.Name == methodName);
+            return function?.Declaration;
+        }
+
         /// <summary>
         /// Generates the C# code for the DispatchTable class with Action fields for each function.
         /// </summary>
@@ -107,24 +113,35 @@ namespace Js2IL.Dispatch
             // Add a field for each function
             foreach (var function in _functions)
             {
-                // Create field signature manually for Action<Object>
+                var paramCount = function.Declaration.Params.Count; // js params only
                 var blobBuilder = new BlobBuilder();
                 var fieldSigEncoder = new BlobEncoder(blobBuilder).FieldSignature();
-                
-                // Manually encode generic instantiation in field signature
-                var genericInst = fieldSigEncoder.GenericInstantiation(
-                    _bclReferences.ActionGeneric_TypeRef, 
-                    1, 
-                    false);
-                genericInst.AddArgument().Type(_bclReferences.ObjectType, false);
-                
+                if (paramCount == 0)
+                {
+                    var genericInst = fieldSigEncoder.GenericInstantiation(
+                        _bclReferences.ActionGeneric_TypeRef,
+                        1,
+                        false);
+                    genericInst.AddArgument().Type(_bclReferences.ObjectType, false); // scope
+                }
+                else if (paramCount == 1)
+                {
+                    var genericInst = fieldSigEncoder.GenericInstantiation(
+                        _bclReferences.Action2Generic_TypeRef,
+                        2,
+                        false);
+                    genericInst.AddArgument().Type(_bclReferences.ObjectType, false); // scope
+                    genericInst.AddArgument().Type(_bclReferences.ObjectType, false); // param1
+                }
+                else
+                {
+                    throw new NotSupportedException("Only up to 1 parameter supported currently");
+                }
                 var fieldSignature = _metadataBuilder.GetOrAddBlob(blobBuilder);
-
                 var field = _metadataBuilder.AddFieldDefinition(
                     FieldAttributes.Public | FieldAttributes.Static,
                     _metadataBuilder.GetOrAddString(function.Name),
-                    fieldSignature
-                );
+                    fieldSignature);
 
                 if (firstField.IsNil)
                 {
@@ -187,9 +204,20 @@ namespace Js2IL.Dispatch
                 il.OpCode(ILOpCode.Ldftn);
                 il.Token(function.MethodDefinitionHandle); // The handle of the static method
 
-                // 3. Create the Action<Object> delegate
+                // 3. Create the delegate (Action<object> or Action<object,object>)
                 il.OpCode(ILOpCode.Newobj);
-                il.Token(_bclReferences.ActionObject_Ctor_Ref); // Constructor reference for Action<Object>(object, IntPtr)
+                if (function.Declaration.Params.Count == 0)
+                {
+                    il.Token(_bclReferences.ActionObject_Ctor_Ref);
+                }
+                else if (function.Declaration.Params.Count == 1)
+                {
+                    il.Token(_bclReferences.ActionObjectObject_Ctor_Ref);
+                }
+                else
+                {
+                    throw new NotSupportedException("Only up to 1 parameter supported currently");
+                }
 
                 // 4. Store the delegate in the static field
                 il.OpCode(ILOpCode.Stsfld);

@@ -32,8 +32,41 @@ namespace Js2IL.Tests
             ";
             var ast = _parser.ParseJavaScript(code);
 
+            if (ast is Acornima.Ast.Program p2 && p2.Body[0] is Acornima.Ast.FunctionDeclaration fd2)
+            {
+                _output.WriteLine($"Pre-Build param count: {fd2.Params.Count}");
+            }
+            else if (ast is Acornima.Ast.Program p3)
+            {
+                var first = p3.Body[0];
+                _output.WriteLine($"First body node type: {first.GetType().FullName}");
+                var props = first.GetType().GetProperties();
+                foreach (var pr in props)
+                {
+                    try
+                    {
+                        var val = pr.GetValue(first);
+                        string valDesc = val == null ? "null" : (val is System.Collections.IEnumerable e && val is not string ? $"Enumerable({string.Join(';', System.Linq.Enumerable.Cast<object>(e).Select(o=>o.GetType().Name))})" : val.GetType().Name);
+                        _output.WriteLine($"Prop {pr.Name}: {valDesc}");
+                    }
+                    catch (Exception ex)
+                    {
+                        _output.WriteLine($"Prop {pr.Name}: <error {ex.Message}>");
+                    }
+                }
+            }
+
             // Act
             var scopeTree = _scopeBuilder.Build(ast, "test.js");
+
+            // Inspect raw AST parameter node types
+            if (ast is Acornima.Ast.Program prog && prog.Body[0] is Acornima.Ast.FunctionDeclaration fd)
+            {
+                foreach (var p in fd.Params)
+                {
+                    _output.WriteLine($"Param node type: {p.GetType().FullName}");
+                }
+            }
 
             // Debug output
             _output.WriteLine($"Root scope: {scopeTree.Root.Name}");

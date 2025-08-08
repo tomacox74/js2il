@@ -1,0 +1,131 @@
+﻿// IL code: Function_GlobalFunctionWithParameter
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Function_GlobalFunctionWithParameter
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit printValue
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method printValue::.ctor
+
+	} // end of class printValue
+
+
+	// Fields
+	.field public object printValue
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Function_GlobalFunctionWithParameter::.ctor
+
+} // end of class Scopes.Function_GlobalFunctionWithParameter
+
+.class public auto ansi abstract sealed beforefieldinit DispatchTable
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field public static class [System.Runtime]System.Action`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> printValue
+
+} // end of class DispatchTable
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void printValue (
+			object Function_GlobalFunctionWithParameter,
+			object 'value'
+		) cil managed 
+	{
+		// Method begins at RVA 0x2062
+		// Header size: 1
+		// Code size: 24 (0x18)
+		.maxstack 8
+
+		IL_0000: ldc.i4.2
+		IL_0001: newarr [System.Runtime]System.Object
+		IL_0006: dup
+		IL_0007: ldc.i4.0
+		IL_0008: ldstr "value is"
+		IL_000d: stelem.ref
+		IL_000e: dup
+		IL_000f: ldc.i4.1
+		IL_0010: ldarg.1
+		IL_0011: stelem.ref
+		IL_0012: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0017: ret
+	} // end of method Program::printValue
+
+	.method public static 
+		void _LoadDispatchTable () cil managed 
+	{
+		// Method begins at RVA 0x207b
+		// Header size: 1
+		// Code size: 18 (0x12)
+		.maxstack 8
+
+		IL_0000: ldnull
+		IL_0001: ldftn void Program::printValue(object, object)
+		IL_0007: newobj instance void class [System.Runtime]System.Action`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object>::.ctor(object, native int)
+		IL_000c: stsfld class [System.Runtime]System.Action`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::printValue
+		IL_0011: ret
+	} // end of method Program::_LoadDispatchTable
+
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2090
+		// Header size: 12
+		// Code size: 49 (0x31)
+		.maxstack 8
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Function_GlobalFunctionWithParameter::.ctor()
+		IL_0005: stloc.0
+		IL_0006: call void Program::_LoadDispatchTable()
+		IL_000b: ldloc.0
+		IL_000c: ldsfld class [System.Runtime]System.Action`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::printValue
+		IL_0011: stfld object Scopes.Function_GlobalFunctionWithParameter::printValue
+		IL_0016: ldloc.0
+		IL_0017: ldfld object Scopes.Function_GlobalFunctionWithParameter::printValue
+		IL_001c: ldloc.0
+		IL_001d: ldc.r8 42
+		IL_0026: box [System.Runtime]System.Double
+		IL_002b: callvirt instance void class [System.Runtime]System.Action`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object>::Invoke(!0, !1)
+		IL_0030: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

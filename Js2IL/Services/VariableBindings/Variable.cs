@@ -20,6 +20,10 @@ namespace Js2IL.Services
         public TypeDefinitionHandle ScopeTypeHandle { get; set; }               // Handle for the scope type
         
         public JavascriptType Type = JavascriptType.Unknown;
+
+    // Parameter support (not backed by scope field)
+    public bool IsParameter { get; set; } = false;            // True if this variable represents a method parameter
+    public int ParameterIndex { get; set; } = -1;              // 0-based parameter index in method signature
     }
 
     internal enum ObjectReferenceLocation
@@ -137,6 +141,25 @@ namespace Js2IL.Services
 
             // If we reach here, the variable is not in the registry
             throw new InvalidOperationException($"Variable '{name}' not found in registry. All variables should be pre-registered.");
+        }
+
+        public Variable AddParameter(string name, int parameterIndex)
+        {
+            if (this.ContainsKey(name))
+            {
+                // if existing variable is a scope field that's shadowed by parameter, favor parameter
+                // but for now throw to catch unexpected duplicates
+                throw new InvalidOperationException($"Variable '{name}' already exists when adding parameter.");
+            }
+            var variable = new Variable
+            {
+                Name = name,
+                IsParameter = true,
+                ParameterIndex = parameterIndex,
+                Type = JavascriptType.Object
+            };
+            this[name] = variable;
+            return variable;
         }
 
 

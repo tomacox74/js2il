@@ -67,6 +67,11 @@ namespace Js2IL.Services
 
             foreach (var binding in scope.Bindings.Values)
             {
+                if (scope.Parameters.Contains(binding.Name))
+                {
+                    // Parameters are method parameters, not fields.
+                    continue;
+                }
                 // Create field signature (all variables are object type for now)
                 var fieldSignature = new BlobBuilder();
                 new BlobEncoder(fieldSignature)
@@ -356,6 +361,10 @@ namespace Js2IL.Services
             {
                 var variableName = binding.Key;
                 var bindingInfo = binding.Value;
+                if (scope.Parameters.Contains(variableName))
+                {
+                    continue; // no field generated
+                }
                 
                 // Convert BindingKind to VariableType
                 var variableType = bindingInfo.Kind switch

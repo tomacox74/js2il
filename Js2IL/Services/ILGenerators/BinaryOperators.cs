@@ -37,34 +37,30 @@ namespace Js2IL.Services.ILGenerators
         /// </summary>
         private void LoadVariable(Variable variable)
         {
-            // Load from scope field
-            // Step 1: Load the scope instance (stored in local variable)
+            if (variable.IsParameter)
+            {
+                // Directly load argument (already object)
+                _il.LoadArgument(variable.ParameterIndex);
+                return;
+            }
+            // Scope field variable path
             var scopeLocalIndex = _variables.GetScopeLocalSlot(variable.ScopeName);
             if (scopeLocalIndex.Address == -1)
             {
                 throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
             }
-            _il.LoadLocal(scopeLocalIndex.Address);
-
-            // Step 2: Load the field from the scope instance
+            if (scopeLocalIndex.Location == ObjectReferenceLocation.Parameter)
+            {
+                _il.LoadArgument(scopeLocalIndex.Address);
+            }
+            else
+            {
+                _il.LoadLocal(scopeLocalIndex.Address);
+            }
             _il.OpCode(ILOpCode.Ldfld);
             _il.Token(variable.FieldHandle);
         }
 
-
-        /// <summary>
-        /// Loads the scope instance for a variable onto the stack.
-        /// Used when the caller needs to do scope.field = value operations.
-        /// </summary>
-        private void LoadScopeInstance(Variable variable)
-        {
-            var scopeLocalIndex = _variables.GetScopeLocalSlot(variable.ScopeName);
-            if (scopeLocalIndex.Address == -1)
-            {
-                throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
-            }
-            _il.LoadLocal(scopeLocalIndex.Address);
-        }
 
         public void Generate(BinaryExpression binaryExpression, ConditionalBranching? branching = null)
         {
@@ -344,7 +340,7 @@ namespace Js2IL.Services.ILGenerators
                     break;
                 case Acornima.Ast.Identifier identifier:
                     var name = identifier.Name;
-                    var variable = _variables[name];
+                    var variable = _variables.FindVariable(name) ?? _variables[name];
                     LoadVariable(variable); // Load variable using scope field or local fallback
 
                     // this is fragile at the moment.. need to handle all types

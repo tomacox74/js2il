@@ -154,6 +154,10 @@ namespace Js2IL.Services
         public MemberReferenceHandle ActionObject_Ctor_Ref { get; private set; }
 
         public MemberReferenceHandle ActionObject_Invoke_Ref { get; private set; }
+    public TypeReferenceHandle Action2Generic_TypeRef { get; private set; }
+    public TypeSpecificationHandle ActionObjectObject_TypeSpec { get; private set; }
+    public MemberReferenceHandle ActionObjectObject_Ctor_Ref { get; private set; }
+    public MemberReferenceHandle ActionObjectObject_Invoke_Ref { get; private set; }
 
         private void LoadObjectTypes(MetadataBuilder metadataBuilder)
         {
@@ -403,6 +407,50 @@ namespace Js2IL.Services
                 ActionObject_TypeSpec,
                 metadataBuilder.GetOrAddString("Invoke"),
                 actionObjectInvokeSig);
+
+            // Action<object,object>
+            var action2GenericTypeRef = metadataBuilder.AddTypeReference(
+                this.SystemRuntimeAssembly,
+                metadataBuilder.GetOrAddString("System"),
+                metadataBuilder.GetOrAddString("Action`2"));
+            Action2Generic_TypeRef = action2GenericTypeRef;
+
+            var actionObjObjSigBuilder = new BlobBuilder();
+            var action2Inst = new BlobEncoder(actionObjObjSigBuilder)
+                .TypeSpecificationSignature()
+                .GenericInstantiation(action2GenericTypeRef, 2, isValueType: false);
+            action2Inst.AddArgument().Type(ObjectType, isValueType: false);
+            action2Inst.AddArgument().Type(ObjectType, isValueType: false);
+            var actionObjObjSig = metadataBuilder.GetOrAddBlob(actionObjObjSigBuilder);
+            ActionObjectObject_TypeSpec = metadataBuilder.AddTypeSpecification(actionObjObjSig);
+
+            // ctor (object, IntPtr)
+            var actionObjObjCtorSigBuilder = new BlobBuilder();
+            new BlobEncoder(actionObjObjCtorSigBuilder)
+                .MethodSignature(isInstanceMethod: true)
+                .Parameters(2, returnType => returnType.Void(), parameters => {
+                    parameters.AddParameter().Type().Object();
+                    parameters.AddParameter().Type().IntPtr();
+                });
+            var actionObjObjCtorSig = metadataBuilder.GetOrAddBlob(actionObjObjCtorSigBuilder);
+            ActionObjectObject_Ctor_Ref = metadataBuilder.AddMemberReference(
+                ActionObjectObject_TypeSpec,
+                metadataBuilder.GetOrAddString(".ctor"),
+                actionObjObjCtorSig);
+
+            // Invoke(object,object)
+            var actionObjObjInvokeSigBuilder = new BlobBuilder();
+            new BlobEncoder(actionObjObjInvokeSigBuilder)
+                .MethodSignature(isInstanceMethod: true)
+                .Parameters(2, returnType => returnType.Void(), parameters => {
+                    parameters.AddParameter().Type().GenericTypeParameter(0);
+                    parameters.AddParameter().Type().GenericTypeParameter(1);
+                });
+            var actionObjObjInvokeSig = metadataBuilder.GetOrAddBlob(actionObjObjInvokeSigBuilder);
+            ActionObjectObject_Invoke_Ref = metadataBuilder.AddMemberReference(
+                ActionObjectObject_TypeSpec,
+                metadataBuilder.GetOrAddString("Invoke"),
+                actionObjObjInvokeSig);
         }
     }
 }

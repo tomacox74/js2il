@@ -33,23 +33,25 @@ namespace Js2IL.Scoping
                     var funcName = (funcDecl.Id as Identifier)?.Name ?? $"Closure{++_closureCounter}";
                     var funcScope = new ScopeNode(funcName, ScopeKind.Function, currentScope, funcDecl);
                     currentScope.Bindings[funcName] = new BindingInfo(funcName, BindingKind.Function, funcDecl);
-                    foreach (var param in funcDecl.Params)
-                    {
-                        if (param is Identifier id)
-                            funcScope.Bindings[id.Name] = new BindingInfo(id.Name, BindingKind.Var, id);
-                    }
-                    if (funcDecl.Body is BlockStatement block)
-                    {
-                        // For function bodies, process statements directly in function scope without creating a block scope
-                        foreach (var statement in block.Body)
-                            BuildScopeRecursive(statement, funcScope);
-                    }
-                    else
-                    {
-                        // Non-block body (shouldn't happen for function declarations, but handle it)
-                        BuildScopeRecursive(funcDecl.Body, funcScope);
-                    }
-                    break;
+                        // Register parameters in the function's own scope
+                        foreach (var p in funcDecl.Params)
+                        {
+                            if (p is Identifier pid)
+                            {
+                                funcScope.Bindings[pid.Name] = new BindingInfo(pid.Name, BindingKind.Var, pid);
+                                funcScope.Parameters.Add(pid.Name);
+                            }
+                        }
+                        if (funcDecl.Body is BlockStatement fblock)
+                        {
+                            foreach (var statement in fblock.Body)
+                                BuildScopeRecursive(statement, funcScope);
+                        }
+                        else
+                        {
+                            BuildScopeRecursive(funcDecl.Body, funcScope);
+                        }
+                        break;
                 case FunctionExpression funcExpr:
                     var funcExprName = (funcExpr.Id as Identifier)?.Name ?? 
                         (!string.IsNullOrEmpty(_currentAssignmentTarget) 
@@ -59,7 +61,10 @@ namespace Js2IL.Scoping
                     foreach (var param in funcExpr.Params)
                     {
                         if (param is Identifier id)
+                        {
                             funcExprScope.Bindings[id.Name] = new BindingInfo(id.Name, BindingKind.Var, id);
+                            funcExprScope.Parameters.Add(id.Name);
+                        }
                     }
                     if (funcExpr.Body is BlockStatement funcExprBlock)
                     {
@@ -117,7 +122,10 @@ namespace Js2IL.Scoping
                     foreach (var param in arrowFunc.Params)
                     {
                         if (param is Identifier id)
+                        {
                             arrowScope.Bindings[id.Name] = new BindingInfo(id.Name, BindingKind.Var, id);
+                            arrowScope.Parameters.Add(id.Name);
+                        }
                     }
                     if (arrowFunc.Body is BlockStatement arrowBlock)
                     {

@@ -76,7 +76,14 @@ namespace Js2IL.Services.ILGenerators
                 }
                 
                 // Load scope instance first for stfld
-                _il.LoadLocal(scopeLocalIndex.Address);
+                if (scopeLocalIndex.Location == ObjectReferenceLocation.Parameter)
+                {
+                    _il.LoadArgument(scopeLocalIndex.Address);
+                }
+                else
+                {
+                    _il.LoadLocal(scopeLocalIndex.Address);
+                }
                 
                 // Generate the expression - this puts the value on the stack
                 variable.Type = this._expressionEmitter.Emit(variableAST.Init, new TypeCoercion());
@@ -137,7 +144,14 @@ namespace Js2IL.Services.ILGenerators
             }
             
             // Load scope instance, then load delegate value, then store to field
-            _il.LoadLocal(scopeLocalIndex.Address);
+            if (scopeLocalIndex.Location == ObjectReferenceLocation.Parameter)
+            {
+                _il.LoadArgument(scopeLocalIndex.Address);
+            }
+            else
+            {
+                _il.LoadLocal(scopeLocalIndex.Address);
+            }
             _il.OpCode(ILOpCode.Ldsfld);
             _il.Token(dispatchDelegateField);
             _il.OpCode(ILOpCode.Stfld);
@@ -172,6 +186,16 @@ namespace Js2IL.Services.ILGenerators
                 throw new NotSupportedException($"Unsupported function body type: {functionDeclaration.Body.Type}");
             }
 
+            // Register parameters in Variables before emitting body so identifiers resolve
+            int paramBaseIndex = 1; // 0 = scope
+            for (int i = 0; i < functionDeclaration.Params.Count; i++)
+            {
+                if (functionDeclaration.Params[i] is Acornima.Ast.Identifier pidPre)
+                {
+                    _variables.AddParameter(pidPre.Name, paramBaseIndex + i);
+                }
+            }
+
             // Emit body statements
             GenerateStatements(blockStatement.Body);
             _il.OpCode(ILOpCode.Ret);
@@ -181,24 +205,43 @@ namespace Js2IL.Services.ILGenerators
                 _il,
                 localVariablesSignature: default,
                 attributes: MethodBodyAttributes.None);
-
-            // Build method signature: static void (object scope)
+            // Build method signature: static void (object scope, object param1, ...)
             var sigBuilder = new BlobBuilder();
+            var paramCount = 1 + functionDeclaration.Params.Count; // scope + declared params
             new BlobEncoder(sigBuilder)
                 .MethodSignature()
-                .Parameters(1, returnType => returnType.Void(), parameters =>
+                .Parameters(paramCount, returnType => returnType.Void(), parameters =>
                 {
+                    // scope parameter
                     parameters.AddParameter().Type().Object();
+                    // each JS parameter as System.Object for now
+                    foreach (var p in functionDeclaration.Params)
+                    {
+                        parameters.AddParameter().Type().Object();
+                    }
                 });
             var methodSig = _metadataBuilder.GetOrAddBlob(sigBuilder);
 
-            // Parameter name: first scope name (if any) else function name
+            // Add parameters with names
             var scopeNames = _variables.GetAllScopeNames().ToList();
-            var parameterName = scopeNames.FirstOrDefault() ?? functionName;
-            var scopeParameterHandle = _metadataBuilder.AddParameter(
+            var scopeParamName = scopeNames.FirstOrDefault() ?? functionName;
+            ParameterHandle firstParamHandle = _metadataBuilder.AddParameter(
                 ParameterAttributes.None,
-                _metadataBuilder.GetOrAddString(parameterName),
+                _metadataBuilder.GetOrAddString(scopeParamName),
                 sequenceNumber: 1);
+            // subsequent params
+            ushort seq = 2;
+            foreach (var p in functionDeclaration.Params)
+            {
+                if (p is Acornima.Ast.Identifier pid)
+                {
+                    _metadataBuilder.AddParameter(ParameterAttributes.None, _metadataBuilder.GetOrAddString(pid.Name), sequenceNumber: seq++);
+                }
+                else
+                {
+                    _metadataBuilder.AddParameter(ParameterAttributes.None, _metadataBuilder.GetOrAddString($"param{seq-1}"), sequenceNumber: seq++);
+                }
+            }
 
             var methodDefinition = _metadataBuilder.AddMethodDefinition(
                 MethodAttributes.Static | MethodAttributes.Public,
@@ -206,7 +249,7 @@ namespace Js2IL.Services.ILGenerators
                 _metadataBuilder.GetOrAddString(functionName),
                 methodSig,
                 bodyoffset,
-                parameterList: scopeParameterHandle);
+                parameterList: firstParamHandle);
 
             // Register with dispatch table
             _dispatchTableGenerator.SetMethodDefinitionHandle(functionName, methodDefinition);
@@ -437,7 +480,14 @@ namespace Js2IL.Services.ILGenerators
             }
             
             // Load scope instance for the store operation later
-            _il.LoadLocal(scopeLocalIndex.Address);
+            if (scopeLocalIndex.Location == ObjectReferenceLocation.Parameter)
+            {
+                _il.LoadArgument(scopeLocalIndex.Address);
+            }
+            else
+            {
+                _il.LoadLocal(scopeLocalIndex.Address);
+            }
             
             // Load the current value from scope field  
             _il.LoadLocal(scopeLocalIndex.Address);
@@ -508,18 +558,52 @@ namespace Js2IL.Services.ILGenerators
                         throw new InvalidOperationException($"Unsupported scope object reference location: {scopeObjectReference.Location}");
                     }
 
-                    // load the delegate to to be invoked
+                    // load the delegate to be invoked (from scope field)
                     loadScopeInstance();
                     _il.OpCode(ILOpCode.Ldfld);
                     _il.Token(functionVariable.FieldHandle);
 
-
-                    // pass the scope instance to the function being called
+                    // First argument: scope instance
                     loadScopeInstance();
 
-                    // Call delegate
-                    _il.OpCode(ILOpCode.Callvirt);
-                    _il.Token(_bclReferences.ActionObject_Invoke_Ref);
+                    // Additional arguments: directly emit each call argument (boxed as needed)
+                    var funcDecl = _dispatchTableGenerator.GetFunctionDeclaration(identifier.Name);
+                    if (funcDecl != null)
+                    {
+                        if (callExpression.Arguments.Count != funcDecl.Params.Count)
+                        {
+                            throw new InvalidOperationException("Argument count mismatch");
+                        }
+                        for (int i = 0; i < callExpression.Arguments.Count; i++)
+                        {
+                            var argType = _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion());
+                            if (argType == JavascriptType.Number)
+                            {
+                                _il.OpCode(ILOpCode.Box);
+                                _il.Token(_bclReferences.DoubleType);
+                            }
+                        }
+                    }
+                    else if (callExpression.Arguments.Count > 0)
+                    {
+                        throw new InvalidOperationException("Function declaration not found for arguments");
+                    }
+
+                    // Invoke correct delegate based on parameter count
+                    if (callExpression.Arguments.Count == 0)
+                    {
+                        _il.OpCode(ILOpCode.Callvirt);
+                        _il.Token(_bclReferences.ActionObject_Invoke_Ref);
+                    }
+                    else if (callExpression.Arguments.Count == 1)
+                    {
+                        _il.OpCode(ILOpCode.Callvirt);
+                        _il.Token(_bclReferences.ActionObjectObject_Invoke_Ref);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException("Only up to 1 parameter supported currently");
+                    }
                     return;
                 }
                 else
