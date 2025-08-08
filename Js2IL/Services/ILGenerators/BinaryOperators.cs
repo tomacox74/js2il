@@ -53,6 +53,12 @@ namespace Js2IL.Services.ILGenerators
             {
                 _il.LoadArgument(scopeLocalIndex.Address);
             }
+            else if (scopeLocalIndex.Location == ObjectReferenceLocation.ScopeArray)
+            {
+                _il.LoadArgument(0); // Load scope array parameter
+                _il.LoadConstantI4(scopeLocalIndex.Address); // Load array index
+                _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
+            }
             else
             {
                 _il.LoadLocal(scopeLocalIndex.Address);

@@ -381,6 +381,10 @@ namespace Js2IL.Services.ILGenerators
                     // Handle CallExpression
                     GenerateCallExpression(callExpression);
                     break;
+                case Acornima.Ast.AssignmentExpression assignmentExpression:
+                    // Handle AssignmentExpression  
+                    _expressionEmitter.Emit(assignmentExpression, new TypeCoercion());
+                    break;
                 case Acornima.Ast.BinaryExpression binaryExpression:
                     // Handle BinaryExpression
                     _binaryOperators.Generate(binaryExpression);
