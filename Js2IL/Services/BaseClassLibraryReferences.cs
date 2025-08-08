@@ -152,6 +152,14 @@ namespace Js2IL.Services
         public TypeSpecificationHandle FuncObjectObjectObject_TypeSpec { get; private set; }
         public MemberReferenceHandle FuncObjectObjectObject_Ctor_Ref { get; private set; }
         public MemberReferenceHandle FuncObjectObjectObject_Invoke_Ref { get; private set; }
+        
+        // Func delegates with scope array parameter (object[])
+        public TypeSpecificationHandle FuncObjectArrayObject_TypeSpec { get; private set; }
+        public MemberReferenceHandle FuncObjectArrayObject_Ctor_Ref { get; private set; }
+        public MemberReferenceHandle FuncObjectArrayObject_Invoke_Ref { get; private set; }
+        public TypeSpecificationHandle FuncObjectArrayObjectObject_TypeSpec { get; private set; }
+        public MemberReferenceHandle FuncObjectArrayObjectObject_Ctor_Ref { get; private set; }
+        public MemberReferenceHandle FuncObjectArrayObjectObject_Invoke_Ref { get; private set; }
 
         private void LoadObjectTypes(MetadataBuilder metadataBuilder)
         {
@@ -412,6 +420,84 @@ namespace Js2IL.Services
                 FuncObjectObjectObject_TypeSpec,
                 metadataBuilder.GetOrAddString("Invoke"),
                 func3InvokeSig);
+
+            // Func<object[], object> type (scope array, no additional params)
+            var funcArrayObjectBlob = new BlobBuilder();
+            var funcArrayObjectEncoder = new BlobEncoder(funcArrayObjectBlob)
+                .TypeSpecificationSignature()
+                .GenericInstantiation(Func2Generic_TypeRef, 2, isValueType: false);
+            funcArrayObjectEncoder.AddArgument().SZArray().Object();
+            funcArrayObjectEncoder.AddArgument().Object();
+            FuncObjectArrayObject_TypeSpec = metadataBuilder.AddTypeSpecification(
+                metadataBuilder.GetOrAddBlob(funcArrayObjectBlob));
+
+            var funcArrayCtorBlob = new BlobBuilder();
+            new BlobEncoder(funcArrayCtorBlob)
+                .MethodSignature(isInstanceMethod: true)
+                .Parameters(2,
+                    returnType => returnType.Void(),
+                    parameters => {
+                        parameters.AddParameter().Type().Object(); // object target
+                        parameters.AddParameter().Type().IntPtr(); // native int method
+                    });
+            var funcArrayCtorSig = metadataBuilder.GetOrAddBlob(funcArrayCtorBlob);
+            FuncObjectArrayObject_Ctor_Ref = metadataBuilder.AddMemberReference(
+                FuncObjectArrayObject_TypeSpec,
+                metadataBuilder.GetOrAddString(".ctor"),
+                funcArrayCtorSig);
+
+            var funcArrayInvokeBlob = new BlobBuilder();
+            new BlobEncoder(funcArrayInvokeBlob)
+                .MethodSignature(isInstanceMethod: true)
+                .Parameters(1,
+                    returnType => returnType.Type().GenericTypeParameter(1), // TResult (object)
+                    parameters => { parameters.AddParameter().Type().GenericTypeParameter(0); }); // object[] parameter
+            var funcArrayInvokeSig = metadataBuilder.GetOrAddBlob(funcArrayInvokeBlob);
+            FuncObjectArrayObject_Invoke_Ref = metadataBuilder.AddMemberReference(
+                FuncObjectArrayObject_TypeSpec,
+                metadataBuilder.GetOrAddString("Invoke"),
+                funcArrayInvokeSig);
+
+            // Func<object[], object, object> type (scope array, one additional param)
+            var funcArrayObjectObjectBlob = new BlobBuilder();
+            var funcArrayObjectObjectEncoder = new BlobEncoder(funcArrayObjectObjectBlob)
+                .TypeSpecificationSignature()
+                .GenericInstantiation(Func3Generic_TypeRef, 3, isValueType: false);
+            funcArrayObjectObjectEncoder.AddArgument().SZArray().Object();
+            funcArrayObjectObjectEncoder.AddArgument().Object();
+            funcArrayObjectObjectEncoder.AddArgument().Object();
+            FuncObjectArrayObjectObject_TypeSpec = metadataBuilder.AddTypeSpecification(
+                metadataBuilder.GetOrAddBlob(funcArrayObjectObjectBlob));
+
+            var funcArrayObjectCtorBlob = new BlobBuilder();
+            new BlobEncoder(funcArrayObjectCtorBlob)
+                .MethodSignature(isInstanceMethod: true)
+                .Parameters(2,
+                    returnType => returnType.Void(),
+                    parameters => {
+                        parameters.AddParameter().Type().Object(); // object target
+                        parameters.AddParameter().Type().IntPtr(); // native int method
+                    });
+            var funcArrayObjectCtorSig = metadataBuilder.GetOrAddBlob(funcArrayObjectCtorBlob);
+            FuncObjectArrayObjectObject_Ctor_Ref = metadataBuilder.AddMemberReference(
+                FuncObjectArrayObjectObject_TypeSpec,
+                metadataBuilder.GetOrAddString(".ctor"),
+                funcArrayObjectCtorSig);
+
+            var funcArrayObjectInvokeBlob = new BlobBuilder();
+            new BlobEncoder(funcArrayObjectInvokeBlob)
+                .MethodSignature(isInstanceMethod: true)
+                .Parameters(2,
+                    returnType => returnType.Type().GenericTypeParameter(2), // TResult (object)
+                    parameters => {
+                        parameters.AddParameter().Type().GenericTypeParameter(0); // object[] parameter
+                        parameters.AddParameter().Type().GenericTypeParameter(1); // T2 (object)
+                    });
+            var funcArrayObjectInvokeSig = metadataBuilder.GetOrAddBlob(funcArrayObjectInvokeBlob);
+            FuncObjectArrayObjectObject_Invoke_Ref = metadataBuilder.AddMemberReference(
+                FuncObjectArrayObjectObject_TypeSpec,
+                metadataBuilder.GetOrAddString("Invoke"),
+                funcArrayObjectInvokeSig);
         }
     }
 }

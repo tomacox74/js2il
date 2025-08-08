@@ -53,7 +53,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> getStaticValue
+	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> getStaticValue
 
 } // end of class DispatchTable
 
@@ -63,7 +63,7 @@
 	// Methods
 	.method public static 
 		object getStaticValue (
-			object Function_ReturnsStaticValueAndLogs
+			object[] scopes
 		) cil managed 
 	{
 		// Method begins at RVA 0x2062
@@ -85,9 +85,9 @@
 		.maxstack 8
 
 		IL_0000: ldnull
-		IL_0001: ldftn object Program::getStaticValue(object)
-		IL_0007: newobj instance void class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object>::.ctor(object, native int)
-		IL_000c: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::getStaticValue
+		IL_0001: ldftn object Program::getStaticValue(object[])
+		IL_0007: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_000c: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::getStaticValue
 		IL_0011: ret
 	} // end of method Program::_LoadDispatchTable
 
@@ -96,7 +96,7 @@
 	{
 		// Method begins at RVA 0x2088
 		// Header size: 12
-		// Code size: 69 (0x45)
+		// Code size: 78 (0x4e)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -107,27 +107,32 @@
 		IL_0005: stloc.0
 		IL_0006: call void Program::_LoadDispatchTable()
 		IL_000b: ldloc.0
-		IL_000c: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::getStaticValue
+		IL_000c: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::getStaticValue
 		IL_0011: stfld object Scopes.Function_ReturnsStaticValueAndLogs::getStaticValue
 		IL_0016: ldloc.0
 		IL_0017: ldloc.0
 		IL_0018: ldfld object Scopes.Function_ReturnsStaticValueAndLogs::getStaticValue
-		IL_001d: ldloc.0
-		IL_001e: callvirt instance !1 class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object>::Invoke(!0)
-		IL_0023: stfld object Scopes.Function_ReturnsStaticValueAndLogs::'value'
-		IL_0028: ldc.i4.2
-		IL_0029: newarr [System.Runtime]System.Object
-		IL_002e: dup
-		IL_002f: ldc.i4.0
-		IL_0030: ldstr "returned value is"
-		IL_0035: stelem.ref
-		IL_0036: dup
-		IL_0037: ldc.i4.1
-		IL_0038: ldloc.0
-		IL_0039: ldfld object Scopes.Function_ReturnsStaticValueAndLogs::'value'
+		IL_001d: ldc.i4.1
+		IL_001e: newarr [System.Runtime]System.Object
+		IL_0023: dup
+		IL_0024: ldc.i4.0
+		IL_0025: ldloc.0
+		IL_0026: stelem.ref
+		IL_0027: callvirt instance !1 class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object>::Invoke(!0)
+		IL_002c: stfld object Scopes.Function_ReturnsStaticValueAndLogs::'value'
+		IL_0031: ldc.i4.2
+		IL_0032: newarr [System.Runtime]System.Object
+		IL_0037: dup
+		IL_0038: ldc.i4.0
+		IL_0039: ldstr "returned value is"
 		IL_003e: stelem.ref
-		IL_003f: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0044: ret
+		IL_003f: dup
+		IL_0040: ldc.i4.1
+		IL_0041: ldloc.0
+		IL_0042: ldfld object Scopes.Function_ReturnsStaticValueAndLogs::'value'
+		IL_0047: stelem.ref
+		IL_0048: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_004d: ret
 	} // end of method Program::Main
 
 } // end of class Program

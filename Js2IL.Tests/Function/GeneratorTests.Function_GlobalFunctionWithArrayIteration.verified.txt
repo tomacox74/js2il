@@ -1,4 +1,4 @@
-// IL code: Function_GlobalFunctionWithArrayIteration
+﻿// IL code: Function_GlobalFunctionWithArrayIteration
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -78,7 +78,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> printArray
+	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> printArray
 
 } // end of class DispatchTable
 
@@ -88,7 +88,7 @@
 	// Methods
 	.method public static 
 		object printArray (
-			object Function_GlobalFunctionWithArrayIteration
+			object[] scopes
 		) cil managed 
 	{
 		// Method begins at RVA 0x206c
@@ -172,9 +172,9 @@
 		.maxstack 8
 
 		IL_0000: ldnull
-		IL_0001: ldftn object Program::printArray(object)
-		IL_0007: newobj instance void class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object>::.ctor(object, native int)
-		IL_000c: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::printArray
+		IL_0001: ldftn object Program::printArray(object[])
+		IL_0007: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_000c: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::printArray
 		IL_0011: ret
 	} // end of method Program::_LoadDispatchTable
 
@@ -183,7 +183,7 @@
 	{
 		// Method begins at RVA 0x2160
 		// Header size: 12
-		// Code size: 42 (0x2a)
+		// Code size: 51 (0x33)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -197,14 +197,19 @@
 		IL_000b: stloc.1
 		IL_000c: call void Program::_LoadDispatchTable()
 		IL_0011: ldloc.0
-		IL_0012: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::printArray
+		IL_0012: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::printArray
 		IL_0017: stfld object Scopes.Function_GlobalFunctionWithArrayIteration::printArray
 		IL_001c: ldloc.0
 		IL_001d: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration::printArray
-		IL_0022: ldloc.0
-		IL_0023: callvirt instance !1 class [System.Runtime]System.Func`2<class [System.Runtime]System.Object, class [System.Runtime]System.Object>::Invoke(!0)
-		IL_0028: pop
-		IL_0029: ret
+		IL_0022: ldc.i4.1
+		IL_0023: newarr [System.Runtime]System.Object
+		IL_0028: dup
+		IL_0029: ldc.i4.0
+		IL_002a: ldloc.0
+		IL_002b: stelem.ref
+		IL_002c: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0031: pop
+		IL_0032: ret
 	} // end of method Program::Main
 
 } // end of class Program
