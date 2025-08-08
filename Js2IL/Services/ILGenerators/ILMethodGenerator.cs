@@ -196,6 +196,41 @@ namespace Js2IL.Services.ILGenerators
                 }
             }
 
+            // Create a scope instance for the function itself so that local vars (declared within the function)
+            // have a backing scope object to store their fields. The Variables instance for the function only
+            // carries the parent (global) scope as parameter 0, so we must allocate a local slot + instantiate.
+            var registry = _variables.GetVariableRegistry();
+            if (registry != null)
+            {
+                try
+                {
+                    var functionScopeTypeHandle = registry.GetScopeTypeHandle(functionName);
+                    if (!functionScopeTypeHandle.IsNil)
+                    {
+                        // Build constructor member reference (parameterless instance .ctor)
+                        var ctorSigBuilder = new BlobBuilder();
+                        new BlobEncoder(ctorSigBuilder)
+                            .MethodSignature(isInstanceMethod: true)
+                            .Parameters(0, rt => rt.Void(), p => { });
+                        var ctorRef = _metadataBuilder.AddMemberReference(
+                            functionScopeTypeHandle,
+                            _metadataBuilder.GetOrAddString(".ctor"),
+                            _metadataBuilder.GetOrAddBlob(ctorSigBuilder));
+
+                        // newobj scope
+                        _il.OpCode(ILOpCode.Newobj);
+                        _il.Token(ctorRef);
+                        // store into a new local slot associated with this function scope name
+                        var scopeLocal = _variables.CreateScopeInstance(functionName);
+                        _il.StoreLocal(scopeLocal.Address);
+                    }
+                }
+                catch
+                {
+                    // If scope type not found we silently continue (no locals used)
+                }
+            }
+
             // Emit body statements
             var hasExplicitReturn = blockStatement.Body.Any(s => s is ReturnStatement);
             GenerateStatements(blockStatement.Body);
@@ -206,11 +241,26 @@ namespace Js2IL.Services.ILGenerators
                 _il.OpCode(ILOpCode.Ret);
             }
 
-            // Add method body (no locals for functions yet)
+            // Add method body including any scope locals we created (function scope instance)
+            StandaloneSignatureHandle localSignature = default;
+            MethodBodyAttributes bodyAttributes = MethodBodyAttributes.None;
+            var localCount = _variables.GetNumberOfLocals();
+            if (localCount > 0)
+            {
+                var localSig = new BlobBuilder();
+                var localEncoder = new BlobEncoder(localSig).LocalVariableSignature(localCount);
+                for (int i = 0; i < localCount; i++)
+                {
+                    localEncoder.AddVariable().Type().Object();
+                }
+                localSignature = _metadataBuilder.AddStandaloneSignature(_metadataBuilder.GetOrAddBlob(localSig));
+                bodyAttributes = MethodBodyAttributes.InitLocals;
+            }
+
             var bodyoffset = _methodBodyStreamEncoder.AddMethodBody(
                 _il,
-                localVariablesSignature: default,
-                attributes: MethodBodyAttributes.None);
+                localVariablesSignature: localSignature,
+                attributes: bodyAttributes);
             // Build method signature: static object (object scope, object param1, ...)
             var sigBuilder = new BlobBuilder();
             var paramCount = 1 + functionDeclaration.Params.Count; // scope + declared params
@@ -467,24 +517,25 @@ namespace Js2IL.Services.ILGenerators
 
         private void GenerateArrayExpression(ArrayExpression arrayExpression)
         {
-            // Allocate object[] with the number of elements
+            // Use JavaScriptRuntime.Array (List<object>-backed) to preserve JS semantics
+            // 1) push capacity
             _il.LoadConstantI4(arrayExpression.Elements.Count);
-            _il.OpCode(ILOpCode.Newarr);
-            _il.Token(_bclReferences.ObjectType);
+            // 2) invoke runtime array ctor (produces JavaScriptRuntime.Array instance boxed as object)
+            _runtime.InvokeArrayCtor();
 
-            // Populate each element: dup, index, value, stelem.ref
+            // For each element: duplicate array ref, load element (boxed), call Add
             for (int i = 0; i < arrayExpression.Elements.Count; i++)
             {
                 var element = arrayExpression.Elements[i];
-                _il.OpCode(ILOpCode.Dup);              // array
-                _il.LoadConstantI4(i);                 // index
+                _il.OpCode(ILOpCode.Dup); // array instance
                 var elemType = _expressionEmitter.Emit(element!, new TypeCoercion());
                 if (elemType == JavascriptType.Number)
                 {
                     _il.OpCode(ILOpCode.Box);
                     _il.Token(_bclReferences.DoubleType);
                 }
-                _il.OpCode(ILOpCode.Stelem_ref);
+                _il.OpCode(ILOpCode.Callvirt);
+                _il.Token(_bclReferences.Array_Add_Ref);
             }
         }
 
@@ -680,6 +731,40 @@ namespace Js2IL.Services.ILGenerators
 
             switch (expression)
             {
+                    case AssignmentExpression assignmentExpression:
+                        if (assignmentExpression.Left is Identifier aid)
+                        {
+                            var variable = _variables.FindVariable(aid.Name) ?? throw new InvalidOperationException($"Variable '{aid.Name}' not found");
+                            var scopeSlot = _variables.GetScopeLocalSlot(variable.ScopeName);
+                            if (scopeSlot.Address == -1)
+                            {
+                                throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
+                            }
+                            // Load scope instance
+                            if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
+                            {
+                                _il.LoadArgument(scopeSlot.Address);
+                            }
+                            else
+                            {
+                                _il.LoadLocal(scopeSlot.Address);
+                            }
+                            var rhsType = _expressionEmitter.Emit(assignmentExpression.Right, typeCoercion);
+                            variable.Type = rhsType;
+                            if (rhsType == JavascriptType.Number)
+                            {
+                                _il.OpCode(ILOpCode.Box);
+                                _il.Token(_bclReferences.DoubleType);
+                            }
+                            _il.OpCode(ILOpCode.Stfld);
+                            _il.Token(variable.FieldHandle);
+                            javascriptType = rhsType;
+                        }
+                        else
+                        {
+                            throw new NotSupportedException($"Unsupported assignment target type: {assignmentExpression.Left.Type}");
+                        }
+                        break;
                 case CallExpression callExpression:
                     // Reuse existing statement-level call generation but keep return value if needed
                     // Currently GenerateCallExpression handles console.log (void) and variable/member/identifier calls
@@ -795,24 +880,25 @@ namespace Js2IL.Services.ILGenerators
 
                     if (!memberExpression.Computed && memberExpression.Property is Identifier propId && propId.Name == "length")
                     {
-                        // arr.length -> ldlen (returns native unsigned int), convert to int32 then to double (JS number)
-                        _il.OpCode(ILOpCode.Ldlen);
-                        _il.OpCode(ILOpCode.Conv_i4);
+                        // JavaScriptRuntime.Array exposes length via get_length() returning double
+                        _il.OpCode(ILOpCode.Callvirt);
+                        _il.Token(_bclReferences.Array_GetCount_Ref); // returns int32 count
+                        // convert int -> double for JS number semantics
                         _il.OpCode(ILOpCode.Conv_r8);
                         javascriptType = JavascriptType.Number;
                     }
                     else if (memberExpression.Computed)
                     {
-                        // arr[expr]
-                        // stack currently: array
+                        // arr[expr] -> runtime Object.GetItem(array, doubleIndex)
                         var indexType = _expressionEmitter.Emit(memberExpression.Property, new TypeCoercion());
-                        // Index must be an int32 for ldelem.ref. If it's a number (double) convert.
-                        if (indexType == JavascriptType.Number)
+                        if (indexType != JavascriptType.Number)
                         {
-                            _il.OpCode(ILOpCode.Conv_i4);
+                            // ensure numeric (primitive coercion would go here; minimal support)
+                            throw new NotSupportedException("Array index must be numeric expression");
                         }
-                        _il.OpCode(ILOpCode.Ldelem_ref);
-                        javascriptType = JavascriptType.Object; // element is boxed object
+                        // stack: array, double
+                        _runtime.InvokeGetItemFromObject();
+                        javascriptType = JavascriptType.Object;
                     }
                     else
                     {
