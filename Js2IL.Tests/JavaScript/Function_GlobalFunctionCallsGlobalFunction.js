@@ -3,7 +3,6 @@
 // this also tests that the function has access to the global closure
 helloWorldProxy();
 
-
 function helloWorldProxy() {
     console.log("This is a proxy function.", 1); 
     helloWorld();

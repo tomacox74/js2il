@@ -18,7 +18,7 @@ namespace Js2IL.Tests.Function
             return GenerateTest(testName);
         }
 
-        [Fact]
-        public Task Function_TwoFunctionsInMain() { var testName = nameof(Function_TwoFunctionsInMain); return GenerateTest(testName); }
+    [Fact]
+    public Task Function_GlobalFunctionCallsGlobalFunction() { var testName = nameof(Function_GlobalFunctionCallsGlobalFunction); return GenerateTest(testName); }
     }
 }

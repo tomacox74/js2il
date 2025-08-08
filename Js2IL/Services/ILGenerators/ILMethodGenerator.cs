@@ -147,63 +147,71 @@ namespace Js2IL.Services.ILGenerators
 
         public void DeclareFunction(FunctionDeclaration functionDeclaration)
         {
-            var functionName = (functionDeclaration.Id as Acornima.Ast.Identifier)!.Name;
             var functionVariables = new Variables(_variables);
-
-            // create a new method generator to have the correct context for the function
             var methodGenerator = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator);
 
-            if (functionDeclaration.Body is BlockStatement blockStatement)
+            var methodDefinition = methodGenerator.GenerateMethodForFunction(functionDeclaration);
+            if (this._firstMethod.IsNil)
             {
-                methodGenerator.GenerateStatements(blockStatement.Body);
-
-                methodGenerator.IL.OpCode(ILOpCode.Ret);
-
-                var bodyoffset = _methodBodyStreamEncoder.AddMethodBody(
-                    methodGenerator.IL,
-                    localVariablesSignature: default,
-                    attributes: MethodBodyAttributes.None);
-
-                var sigBuilder = new BlobBuilder();
-                new BlobEncoder(sigBuilder)
-                    .MethodSignature()
-                    .Parameters(1, returnType => returnType.Void(), parameters =>
-                    {
-                        // Add scope parameter as Object for now (will refine type later)
-                        parameters.AddParameter().Type().Object();
-                    });
-                var methodSig = this._metadataBuilder.GetOrAddBlob(sigBuilder);
-
-                // Create parameter definition for the scope parameter after method definition
-                // Use the first scope name as the parameter name
-                var scopeNames = functionVariables.GetAllScopeNames().ToList();
-                var parameterName = scopeNames.FirstOrDefault() ?? functionName;
-                var scopeParameterHandle = _metadataBuilder.AddParameter(
-                    ParameterAttributes.None,
-                    _metadataBuilder.GetOrAddString(parameterName), // Parameter name is the scope name
-                    sequenceNumber: 1 // Parameter index (1-based, 0 is return value)
-                );
-
-                var methodDefinition = _metadataBuilder.AddMethodDefinition(
-                    MethodAttributes.Static | MethodAttributes.Public,
-                    MethodImplAttributes.IL,
-                    _metadataBuilder.GetOrAddString(functionName),
-                    methodSig,
-                    bodyoffset,
-                    parameterList: scopeParameterHandle);
-
-                if (this._firstMethod.IsNil)
-                {
-                    this._firstMethod = methodDefinition;
-                }
-
-                _dispatchTableGenerator.SetMethodDefinitionHandle(functionName, methodDefinition);
-
+                this._firstMethod = methodDefinition;
             }
-            else
+        }
+
+        /// <summary>
+        /// Generates the method (IL + metadata) for a function declaration using the current generator's context.
+        /// Intended to be called on a dedicated ILMethodGenerator instance whose Variables represent the function scope.
+        /// </summary>
+        /// <param name="functionDeclaration">The function AST node.</param>
+        /// <returns>The MethodDefinitionHandle created for the function.</returns>
+        public MethodDefinitionHandle GenerateMethodForFunction(FunctionDeclaration functionDeclaration)
+        {
+            var functionName = (functionDeclaration.Id as Acornima.Ast.Identifier)!.Name;
+
+            if (functionDeclaration.Body is not BlockStatement blockStatement)
             {
                 throw new NotSupportedException($"Unsupported function body type: {functionDeclaration.Body.Type}");
             }
+
+            // Emit body statements
+            GenerateStatements(blockStatement.Body);
+            _il.OpCode(ILOpCode.Ret);
+
+            // Add method body (no locals for functions yet)
+            var bodyoffset = _methodBodyStreamEncoder.AddMethodBody(
+                _il,
+                localVariablesSignature: default,
+                attributes: MethodBodyAttributes.None);
+
+            // Build method signature: static void (object scope)
+            var sigBuilder = new BlobBuilder();
+            new BlobEncoder(sigBuilder)
+                .MethodSignature()
+                .Parameters(1, returnType => returnType.Void(), parameters =>
+                {
+                    parameters.AddParameter().Type().Object();
+                });
+            var methodSig = _metadataBuilder.GetOrAddBlob(sigBuilder);
+
+            // Parameter name: first scope name (if any) else function name
+            var scopeNames = _variables.GetAllScopeNames().ToList();
+            var parameterName = scopeNames.FirstOrDefault() ?? functionName;
+            var scopeParameterHandle = _metadataBuilder.AddParameter(
+                ParameterAttributes.None,
+                _metadataBuilder.GetOrAddString(parameterName),
+                sequenceNumber: 1);
+
+            var methodDefinition = _metadataBuilder.AddMethodDefinition(
+                MethodAttributes.Static | MethodAttributes.Public,
+                MethodImplAttributes.IL,
+                _metadataBuilder.GetOrAddString(functionName),
+                methodSig,
+                bodyoffset,
+                parameterList: scopeParameterHandle);
+
+            // Register with dispatch table
+            _dispatchTableGenerator.SetMethodDefinitionHandle(functionName, methodDefinition);
+
+            return methodDefinition;
         }
 
         public void GenerateStatement(Statement statement)
