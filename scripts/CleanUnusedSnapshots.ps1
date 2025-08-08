@@ -1,4 +1,4 @@
-<#!
+<#
 .SYNOPSIS
   Finds and optionally deletes unused *.verified.txt snapshot files.
 
@@ -30,7 +30,7 @@
 .NOTES
   Designed for local maintenance; does not modify tracked (already committed) files automatically.
   Exit code 0 always (safe for CI listing). Add custom logic if you want failing builds when unused found.
-!>
+#>
 
 [CmdletBinding()] param(
     [string]$Root = "Js2IL.Tests",
@@ -58,32 +58,48 @@ $testSources = Get-ChildItem -Path $Root -Recurse -Filter *.cs
 $unused = @()
 
 foreach($snap in $snapshotFiles){
-    $base = $snap.BaseName
-    # Derive test name (strip known class prefixes ExecutionTests./GeneratorTests.)
-    $testName = $base
-    if($base -match '^(ExecutionTests|GeneratorTests)\.(.+)$'){
-        $testName = $matches[2]
-    }
+  $base = $snap.BaseName
+  # Derive test name: remove trailing .verified, then leading ExecutionTests./GeneratorTests. prefix
+  $core = $base
+  if($core.EndsWith('.verified')){ $core = $core.Substring(0, $core.Length - '.verified'.Length) }
+  $testName = $core
+  foreach($prefix in 'ExecutionTests.','GeneratorTests.'){
+    if($core.StartsWith($prefix)) { $testName = $core.Substring($prefix.Length); break }
+  }
 
-    # Build regex pattern for word boundary or nameof usage
-    $pattern = "\b$([Regex]::Escape($testName))\b"  # plain word boundary
-    $found = $false
-    foreach($src in $testSources){
-        if(Select-String -Path $src.FullName -Pattern $pattern -Quiet){
-            $found = $true
-            break
-        }
-        # Secondary check for nameof(TestName)
-        if(Select-String -Path $src.FullName -SimpleMatch "nameof($testName)" -Quiet){
-            $found = $true
-            break
-        }
+  # Scan sources collecting directories that reference this testName
+  $pattern = "\b$([Regex]::Escape($testName))\b"
+  $matchDirs = [System.Collections.Generic.HashSet[string]]::new()
+  foreach($src in $testSources){
+    $dir = $src.DirectoryName
+    if(Select-String -Path $src.FullName -Pattern $pattern -Quiet){
+      $null = $matchDirs.Add($dir)
+      continue
     }
+    if(Select-String -Path $src.FullName -SimpleMatch "nameof($testName)" -Quiet){
+      $null = $matchDirs.Add($dir)
+      continue
+    }
+  }
 
-    if(-not $found){
-        $unused += $snap
-        Write-Info "UNUSED: $($snap.FullName) (derived test name: $testName)"
-    }
+  $isReferenced = $matchDirs.Count -gt 0
+  $dirMatches = $matchDirs.Contains($snap.DirectoryName)
+  $isEmpty = ($snap.Length -eq 0)
+
+  if(-not $isReferenced){
+    $unused += $snap
+    Write-Info "UNUSED: $($snap.FullName) (no test referencing '$testName')"
+    continue
+  }
+  if(-not $dirMatches){
+    # Snapshot lives in a directory that doesn't host a referencing test source.
+    $unused += $snap
+    $reason = if($isEmpty){"misplaced duplicate (empty)"} else {"misplaced duplicate"}
+    $dirs = ($matchDirs | Sort-Object) -join '; '
+    Write-Info "UNUSED: $($snap.FullName) (derived test name: $testName, $reason; expected dir(s): $dirs)"
+    continue
+  }
+  # Otherwise it's a valid snapshot; keep it.
 }
 
 if($unused.Count -eq 0){
