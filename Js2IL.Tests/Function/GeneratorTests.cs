@@ -35,5 +35,8 @@ namespace Js2IL.Tests.Function
 
     [Fact]
     public Task Function_GlobalFunctionChangesGlobalVariableValue() { var testName = nameof(Function_GlobalFunctionChangesGlobalVariableValue); return GenerateTest(testName); }
+
+    [Fact]
+    public Task Function_GlobalFunctionDeclaresAndCallsNestedFunction() { var testName = nameof(Function_GlobalFunctionDeclaresAndCallsNestedFunction); return GenerateTest(testName); }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using PowerArgs;
 using Js2IL.Services;
-using Js2IL.Scoping;
+using Js2IL.SymbolTables;
 using Acornima.Ast;
 using System.IO;
 
@@ -133,13 +133,13 @@ class Program
 
             // Step 4: Build scope tree
             Console.WriteLine("\nBuilding scope tree...");
-            var scopeTreeBuilder = new ScopeTreeBuilder();
-            var scopeTree = scopeTreeBuilder.Build(ast, parsed.InputFile);
+            var symbolTableBuilder = new SymbolTableBuilder();
+            var symbolTable = symbolTableBuilder.Build(ast, parsed.InputFile);
 
             if (parsed.Verbose)
             {
                 Console.WriteLine("\nScope Tree Structure:");
-                PrintScopeTree(scopeTree.Root, 0);
+                PrintScopeTree(symbolTable.Root, 0);
             }
 
             // Step 5: Generate IL
@@ -154,7 +154,7 @@ class Program
 
             var assemblyName = Path.GetFileNameWithoutExtension(parsed.InputFile);
 
-            assemblyGenerator.Generate(ast, scopeTree, assemblyName, outputPath!);
+            assemblyGenerator.Generate(ast, symbolTable, assemblyName, outputPath!);
 
             Console.WriteLine($"\nConversion complete. Output written to {outputPath}");
         }
@@ -176,7 +176,7 @@ class Program
     /// <summary>
     /// Helper method to print the scope tree structure for verbose output.
     /// </summary>
-    private static void PrintScopeTree(ScopeNode scope, int indentLevel)
+    private static void PrintScopeTree(Scope scope, int indentLevel)
     {
         var indent = new string(' ', indentLevel * 2);
         Console.WriteLine($"{indent}{scope.Name} ({scope.Kind})");

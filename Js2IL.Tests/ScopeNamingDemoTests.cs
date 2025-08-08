@@ -1,5 +1,5 @@
 using Acornima;
-using Js2IL.Scoping;
+using Js2IL.SymbolTables;
 using Js2IL.Services;
 using Xunit;
 using Xunit.Abstractions;
@@ -9,13 +9,13 @@ namespace Js2IL.Tests
     public class ScopeNamingDemoTests
     {
         private readonly JavaScriptParser _parser;
-        private readonly ScopeTreeBuilder _scopeBuilder;
+        private readonly SymbolTableBuilder _scopeBuilder;
         private readonly ITestOutputHelper _output;
 
         public ScopeNamingDemoTests(ITestOutputHelper output)
         {
             _parser = new JavaScriptParser();
-            _scopeBuilder = new ScopeTreeBuilder();
+            _scopeBuilder = new SymbolTableBuilder();
             _output = output;
         }
 

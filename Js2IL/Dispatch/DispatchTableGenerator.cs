@@ -8,6 +8,7 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection;
 using Js2IL.Services;
+using Js2IL.SymbolTables;
 
 namespace Js2IL.Dispatch
 {
@@ -49,22 +50,22 @@ namespace Js2IL.Dispatch
         }
 
 
-        public void GenerateDispatchTable(NodeList<Statement> statements)
+        public void GenerateDispatchTable(SymbolTable symbolTable)
         {
-            GetTopLevelFunctions(statements);
+            GetAllFunctions(symbolTable);
             GenerateDispatchTableClass();
         }
 
         /// <summary>
-        /// Enumerates top-level function declarations in the AST.
+        /// Gets all function declarations from the symbol table, including nested functions.
         /// </summary>
-        public void GetTopLevelFunctions(NodeList<Statement> statements)
+        public void GetAllFunctions(SymbolTable symbolTable)
         {
-            foreach (var stmt in statements)
+            foreach (var (functionScope, functionDeclaration) in symbolTable.GetAllFunctions())
             {
-                if (stmt is FunctionDeclaration funcDecl && funcDecl.Id is Identifier id)
+                if (functionDeclaration.Id is Identifier id)
                 {
-                    _functions.Add(new FunctionInfo(id.Name, funcDecl));
+                    _functions.Add(new FunctionInfo(id.Name, functionDeclaration));
                 }
             }
         }
