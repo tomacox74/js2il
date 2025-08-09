@@ -28,5 +28,8 @@ namespace Js2IL.Tests
 
         [Fact]
         public Task UnaryOperator_PlusPlusPostfix() { var testName = nameof(UnaryOperator_PlusPlusPostfix); return ExecutionTest(testName); }
+        
+        [Fact]
+        public Task Function_NestedFunctionAccessesMultipleScopes() { var testName = nameof(Function_NestedFunctionAccessesMultipleScopes); return ExecutionTest(testName); }
     }
 }

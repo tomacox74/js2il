@@ -22,5 +22,8 @@ namespace Js2IL.Tests
 
         [Fact(Skip = "process/argv not yet supported")]
         public Task Environment_EnumerateProcessArgV() { var testName = nameof(Environment_EnumerateProcessArgV); return GenerateTest(testName); }
+        
+        [Fact]
+        public Task Function_NestedFunctionAccessesMultipleScopes() { var testName = nameof(Function_NestedFunctionAccessesMultipleScopes); return GenerateTest(testName); }
     }
 }
