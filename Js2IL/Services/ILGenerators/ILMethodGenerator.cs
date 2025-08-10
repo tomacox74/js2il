@@ -503,14 +503,42 @@ namespace Js2IL.Services.ILGenerators
                     _il.OpCode(ILOpCode.Ldfld);
                     _il.Token(functionVariable.FieldHandle);
 
-                    // First argument: create scope array with current scope
-                    _il.LoadConstantI4(1); // Array size
+                    // First argument: create scope array with appropriate scopes for the function
+                    // Only include scopes that are actually needed for this function call
+                    var neededScopeNames = GetNeededScopesForFunction(functionVariable).ToList();
+                    var arraySize = neededScopeNames.Count;
+                    
+                    _il.LoadConstantI4(arraySize); // Array size
                     _il.OpCode(ILOpCode.Newarr);
                     _il.Token(_bclReferences.ObjectType);
-                    _il.OpCode(ILOpCode.Dup);
-                    _il.LoadConstantI4(0);
-                    loadScopeInstance();
-                    _il.OpCode(ILOpCode.Stelem_ref);
+                    
+                    // Fill the scope array with needed scopes only
+                    for (int i = 0; i < neededScopeNames.Count; i++)
+                    {
+                        var scopeName = neededScopeNames[i];
+                        var scopeRef = _variables.GetScopeLocalSlot(scopeName);
+                        
+                        _il.OpCode(ILOpCode.Dup); // Duplicate array reference
+                        _il.LoadConstantI4(i);    // Load array index
+                        
+                        // Load the scope instance based on its location
+                        if (scopeRef.Location == ObjectReferenceLocation.Local)
+                        {
+                            _il.LoadLocal(scopeRef.Address);
+                        }
+                        else if (scopeRef.Location == ObjectReferenceLocation.Parameter)
+                        {
+                            _il.LoadArgument(scopeRef.Address);
+                        }
+                        else if (scopeRef.Location == ObjectReferenceLocation.ScopeArray)
+                        {
+                            _il.LoadArgument(0); // Load scope array parameter
+                            _il.LoadConstantI4(scopeRef.Address); // Load array index
+                            _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
+                        }
+                        
+                        _il.OpCode(ILOpCode.Stelem_ref); // Store scope in array
+                    }
 
                     // Additional arguments: directly emit each call argument (boxed as needed)
                     var funcDecl = _dispatchTableGenerator.GetFunctionDeclaration(identifier.Name);
@@ -604,6 +632,8 @@ namespace Js2IL.Services.ILGenerators
                         if (assignmentExpression.Left is Identifier aid)
                         {
                             var variable = _variables.FindVariable(aid.Name) ?? throw new InvalidOperationException($"Variable '{aid.Name}' not found");
+
+                            // Load the appropriate scope instance that holds this field
                             var scopeSlot = _variables.GetScopeLocalSlot(variable.ScopeName);
                             if (scopeSlot.Address == -1)
                             {
@@ -671,27 +701,27 @@ namespace Js2IL.Services.ILGenerators
                         _il.OpCode(ILOpCode.Ldfld);
                         _il.Token(variable.FieldHandle);
 
-                        // Create scope array with single element for now (TODO: proper scope chain)
-                        _il.LoadConstantI4(1); // Array size
+                        // Build a one-element object[] holding the caller scope (matches verified IL)
+                        _il.LoadConstantI4(1);
                         _il.OpCode(ILOpCode.Newarr);
                         _il.Token(_bclReferences.ObjectType);
-                        _il.OpCode(ILOpCode.Dup); // Duplicate array reference
-                        _il.LoadConstantI4(0); // Index 0
+                        _il.OpCode(ILOpCode.Dup);
+                        _il.LoadConstantI4(0);
                         if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
                         {
                             _il.LoadArgument(scopeSlot.Address);
                         }
                         else if (scopeSlot.Location == ObjectReferenceLocation.ScopeArray)
                         {
-                            _il.LoadArgument(0); // Load scope array parameter
-                            _il.LoadConstantI4(scopeSlot.Address); // Load array index
-                            _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
+                            _il.LoadArgument(0); // scopes array
+                            _il.LoadConstantI4(scopeSlot.Address);
+                            _il.OpCode(ILOpCode.Ldelem_ref);
                         }
                         else
                         {
                             _il.LoadLocal(scopeSlot.Address);
                         }
-                        _il.OpCode(ILOpCode.Stelem_ref); // Store scope in array
+                        _il.OpCode(ILOpCode.Stelem_ref);
 
                         // load each argument
                         foreach (var arg in callExpression.Arguments)
@@ -699,7 +729,7 @@ namespace Js2IL.Services.ILGenerators
                             _expressionEmitter.Emit(arg, new TypeCoercion() { boxed = true });
                         }
 
-                        // call Invoke on appropriate Func
+                        // call Invoke on appropriate Func (single object receiver)
                         if (callExpression.Arguments.Count == 0)
                         {
                             _il.OpCode(ILOpCode.Callvirt);
@@ -810,6 +840,92 @@ namespace Js2IL.Services.ILGenerators
             }
 
             return javascriptType;
+        }
+
+        /// <summary>
+        /// Determines which scopes are needed for a specific function call.
+        /// Rules:
+        /// - In Main (no scope-array parameter): pass all known scopes (in insertion order).
+        /// - In a function context (scope-array present): pass [global(from scopes[0]), current function local scope].
+        /// This matches how nested functions capture and access their parents.
+        /// </summary>
+        private IEnumerable<string> GetNeededScopesForFunction(Variable functionVariable)
+        {
+            var names = _variables.GetAllScopeNames().ToList();
+            var slots = names.Select(n => new { Name = n, Slot = _variables.GetScopeLocalSlot(n) }).ToList();
+
+            bool inFunctionContext = slots.Any(e => e.Slot.Location == ObjectReferenceLocation.ScopeArray);
+            if (!inFunctionContext)
+            {
+                // Main: if the callee declares nested functions, pass all scopes; otherwise only global
+                var fn = functionVariable.Name;
+                bool hasNested = FunctionHasNestedFunctions(fn);
+                if (hasNested)
+                {
+                    foreach (var n in names) yield return n;
+                }
+                else
+                {
+                    var globalName = _variables.GetLeafScopeName();
+                    yield return globalName;
+                }
+                yield break;
+            }
+
+            // Inside a function: always pass global (scopes[0]) if present
+            var global = slots.FirstOrDefault(e => e.Slot.Location == ObjectReferenceLocation.ScopeArray && e.Slot.Address == 0);
+            if (global != null)
+            {
+                yield return global.Name;
+            }
+
+            // And pass the caller's local scope that holds the callee delegate
+            // Example: calling nestedFunction (stored in testFunction scope) -> include testFunction local
+            if (!string.IsNullOrEmpty(functionVariable.ScopeName))
+            {
+                var parentLocal = slots.FirstOrDefault(e => e.Name == functionVariable.ScopeName && e.Slot.Location == ObjectReferenceLocation.Local);
+                if (parentLocal != null)
+                {
+                    yield return parentLocal.Name;
+                }
+            }
+        }
+
+        private bool FunctionHasNestedFunctions(string functionName)
+        {
+            var decl = _dispatchTableGenerator.GetFunctionDeclaration(functionName);
+            if (decl == null) return false;
+            return ContainsNestedFunction(decl.Body);
+        }
+
+        private static bool ContainsNestedFunction(Acornima.Ast.Node node)
+        {
+            // Walk child nodes; if any FunctionDeclaration is found, return true
+            if (node is Acornima.Ast.FunctionDeclaration)
+            {
+                return true;
+            }
+
+            var props = node.GetType().GetProperties();
+            foreach (var prop in props)
+            {
+                var value = prop.GetValue(node);
+                if (value is Acornima.Ast.Node child)
+                {
+                    if (ContainsNestedFunction(child)) return true;
+                }
+                else if (value is System.Collections.IEnumerable enumerable && value is not string)
+                {
+                    foreach (var item in enumerable)
+                    {
+                        if (item is Acornima.Ast.Node childNode)
+                        {
+                            if (ContainsNestedFunction(childNode)) return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
     }
 }
