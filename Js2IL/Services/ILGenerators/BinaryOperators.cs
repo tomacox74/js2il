@@ -39,7 +39,7 @@ namespace Js2IL.Services.ILGenerators
         {
             if (variable.IsParameter)
             {
-                // Directly load argument (already object)
+                // Directly load argument (already object). ParameterIndex already accounts for scopes[] at arg0
                 _il.LoadArgument(variable.ParameterIndex);
                 return;
             }

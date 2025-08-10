@@ -122,6 +122,7 @@ namespace Js2IL.Services
                     _parameterIndices[p] = i;
                 i++;
             }
+            // Do not force a local for parameters; a local scope will be created only if fields exist
 
             // Parent scopes passed to this function
             // Top-level function: only [global]
@@ -142,12 +143,28 @@ namespace Js2IL.Services
             if (string.IsNullOrEmpty(name)) return null;
             if (_variables.TryGetValue(name, out var cached)) return cached;
 
-            // Parameter shadowing wins
+            // Parameter resolution: prefer field-backed local if present; otherwise treat as direct argument
             if (_parameterIndices.TryGetValue(name, out var pindex))
             {
-        var p = new ParameterVariable { Name = name, ParameterIndex = pindex, IsParameter = true, Type = JavascriptType.Object };
-                _variables[name] = p;
-                return p;
+                try
+                {
+                    var fh = _registry.GetFieldHandle(_scopeName, name);
+                    var lvParamField = new LocalVariable
+                    {
+                        Name = name,
+                        FieldHandle = fh,
+                        ScopeName = _scopeName,
+                        Type = JavascriptType.Unknown
+                    };
+                    _variables[name] = lvParamField;
+                    return lvParamField;
+                }
+                catch (KeyNotFoundException)
+                {
+                    var p = new ParameterVariable { Name = name, ParameterIndex = pindex, IsParameter = true, Type = JavascriptType.Object };
+                    _variables[name] = p;
+                    return p;
+                }
             }
 
             // Look up field-backed variables in the registry

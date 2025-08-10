@@ -36,7 +36,7 @@ namespace Js2IL.Tests.Function
         [Fact]
         public Task Function_NestedFunctionAccessesMultipleScopes() { var testName = nameof(Function_NestedFunctionAccessesMultipleScopes); return ExecutionTest(testName); }
 
-    [Fact(Skip = "Pending: nested functions capture outer parameters")]
-    public Task Function_NestedFunctionLogsOuterParameter() { var testName = nameof(Function_NestedFunctionLogsOuterParameter); return ExecutionTest(testName); }
+        [Fact]
+        public Task Function_NestedFunctionLogsOuterParameter() { var testName = nameof(Function_NestedFunctionLogsOuterParameter); return ExecutionTest(testName); }
     }
 }

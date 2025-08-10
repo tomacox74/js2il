@@ -41,5 +41,8 @@ namespace Js2IL.Tests.Function
 
     [Fact]
     public Task Function_NestedFunctionAccessesMultipleScopes() { var testName = nameof(Function_NestedFunctionAccessesMultipleScopes); return GenerateTest(testName); }
+
+    [Fact]
+    public Task Function_NestedFunctionLogsOuterParameter() { var testName = nameof(Function_NestedFunctionLogsOuterParameter); return GenerateTest(testName); }
     }
 }

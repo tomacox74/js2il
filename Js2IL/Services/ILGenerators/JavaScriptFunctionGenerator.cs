@@ -108,6 +108,22 @@ namespace Js2IL.Services.ILGenerators
                             // store into a new local slot associated with this function scope name
                             var scopeLocal = variables.CreateScopeInstance(functionName);
                             il.StoreLocal(scopeLocal.Address);
+
+                            // Initialize parameter fields on the scope from CLR arguments
+                            // JS parameters start at arg1 (arg0 is scopes[])
+                            ushort jsParamSeq = 1;
+                            foreach (var param in functionDeclaration.Params.OfType<Acornima.Ast.Identifier>())
+                            {
+                                // Load scope instance (target for stfld)
+                                il.LoadLocal(scopeLocal.Address);
+                                // Load CLR arg for this parameter (object already)
+                                il.LoadArgument(jsParamSeq);
+                                // Store to the corresponding field on the scope
+                                var fieldHandle = registry.GetFieldHandle(functionName, param.Name);
+                                il.OpCode(ILOpCode.Stfld);
+                                il.Token(fieldHandle);
+                                jsParamSeq++;
+                            }
                         }
                     }
                 }
