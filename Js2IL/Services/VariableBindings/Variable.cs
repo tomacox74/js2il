@@ -265,30 +265,7 @@ namespace Js2IL.Services
             return list.Distinct();
         }
 
-        // Back-compat helper used by some emitters
-        public Variable CreateLocal(string name)
-        {
-            var variableInfo = _registry?.FindVariable(name) ?? throw new InvalidOperationException($"Variable '{name}' not found in registry.");
-            if (variableInfo.ScopeName == _scopeName)
-            {
-                var v = new LocalVariable { Name = name, FieldHandle = variableInfo.FieldHandle, ScopeName = variableInfo.ScopeName, Type = JavascriptType.Unknown };
-                _variables[name] = v;
-                return v;
-            }
-            else if (_parentScopeIndices.TryGetValue(variableInfo.ScopeName, out var idx))
-            {
-                var v = new ScopeVariable { Name = name, FieldHandle = variableInfo.FieldHandle, ScopeName = variableInfo.ScopeName, ParentScopeIndex = idx, Type = JavascriptType.Unknown };
-                _variables[name] = v;
-                return v;
-            }
-            else
-            {
-                // Default to scope variable even if index unknown (emitter may guard)
-                var v = new ScopeVariable { Name = name, FieldHandle = variableInfo.FieldHandle, ScopeName = variableInfo.ScopeName, ParentScopeIndex = -1, Type = JavascriptType.Unknown };
-                _variables[name] = v;
-                return v;
-            }
-        }
+    // CreateLocal removed: callers should use FindVariable(name) for resolution.
 
 
 

@@ -62,8 +62,8 @@ namespace Js2IL.Services.ILGenerators
             var variableAST = variableDeclaraion.Declarations.FirstOrDefault()!;
             var variableName = (variableAST.Id as Acornima.Ast.Identifier)!.Name;
 
-            // add the variable to the collection
-            var variable = _variables.CreateLocal(variableName);
+            // resolve the variable via Variables
+            var variable = _variables.FindVariable(variableName) ?? throw new InvalidOperationException($"Variable '{variableName}' not found.");
 
             // now we need to generate the expession portion
             if (variableAST.Init != null)
@@ -126,7 +126,7 @@ namespace Js2IL.Services.ILGenerators
         public void InitializeLocalFunctionVariable(FunctionDeclaration functionDeclaration)
         {
             var functionName = (functionDeclaration.Id as Acornima.Ast.Identifier)!.Name;
-            var functionVariable = _variables.CreateLocal(functionName);
+            var functionVariable = _variables.FindVariable(functionName) ?? throw new InvalidOperationException($"Variable '{functionName}' not found.");
 
             var dispatchDelegateField = _dispatchTableGenerator.GetFieldDefinitionHandle(functionName);
 
