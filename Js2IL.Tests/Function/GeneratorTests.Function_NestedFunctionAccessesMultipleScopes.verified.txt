@@ -58,6 +58,7 @@
 
 
 	// Fields
+	.field public object globalVar
 	.field public object testFunction
 
 	// Methods
@@ -138,7 +139,7 @@
 	{
 		// Method begins at RVA 0x20b4
 		// Header size: 12
-		// Code size: 77 (0x4d)
+		// Code size: 107 (0x6b)
 		.maxstack 8
 		.locals init (
 			[0] object
@@ -153,36 +154,50 @@
 		IL_0012: newarr [System.Runtime]System.Object
 		IL_0017: dup
 		IL_0018: ldc.i4.0
-		IL_0019: ldstr "Outer:"
+		IL_0019: ldstr "Global:"
 		IL_001e: stelem.ref
 		IL_001f: dup
 		IL_0020: ldc.i4.1
 		IL_0021: ldarg.0
-		IL_0022: ldc.i4.1
+		IL_0022: ldc.i4.0
 		IL_0023: ldelem.ref
-		IL_0024: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::outerVar
+		IL_0024: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::globalVar
 		IL_0029: stelem.ref
 		IL_002a: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_002f: ldc.i4.2
 		IL_0030: newarr [System.Runtime]System.Object
 		IL_0035: dup
 		IL_0036: ldc.i4.0
-		IL_0037: ldstr "Inner:"
+		IL_0037: ldstr "Outer:"
 		IL_003c: stelem.ref
 		IL_003d: dup
 		IL_003e: ldc.i4.1
-		IL_003f: ldloc.0
-		IL_0040: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction/nestedFunction::innerVar
-		IL_0045: stelem.ref
-		IL_0046: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_004b: ldnull
-		IL_004c: ret
+		IL_003f: ldarg.0
+		IL_0040: ldc.i4.1
+		IL_0041: ldelem.ref
+		IL_0042: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::outerVar
+		IL_0047: stelem.ref
+		IL_0048: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_004d: ldc.i4.2
+		IL_004e: newarr [System.Runtime]System.Object
+		IL_0053: dup
+		IL_0054: ldc.i4.0
+		IL_0055: ldstr "Inner:"
+		IL_005a: stelem.ref
+		IL_005b: dup
+		IL_005c: ldc.i4.1
+		IL_005d: ldloc.0
+		IL_005e: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction/nestedFunction::innerVar
+		IL_0063: stelem.ref
+		IL_0064: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0069: ldnull
+		IL_006a: ret
 	} // end of method Program::nestedFunction
 
 	.method public static 
 		void _LoadDispatchTable () cil managed 
 	{
-		// Method begins at RVA 0x210d
+		// Method begins at RVA 0x212b
 		// Header size: 1
 		// Code size: 35 (0x23)
 		.maxstack 8
@@ -201,9 +216,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2134
+		// Method begins at RVA 0x2150
 		// Header size: 12
-		// Code size: 65 (0x41)
+		// Code size: 76 (0x4c)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -223,24 +238,27 @@
 		IL_0018: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::testFunction
 		IL_001d: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::testFunction
 		IL_0022: ldloc.0
-		IL_0023: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::testFunction
-		IL_0028: ldc.i4.3
-		IL_0029: newarr [System.Runtime]System.Object
-		IL_002e: dup
-		IL_002f: ldc.i4.0
-		IL_0030: ldloc.0
-		IL_0031: stelem.ref
-		IL_0032: dup
-		IL_0033: ldc.i4.1
-		IL_0034: ldloc.1
-		IL_0035: stelem.ref
-		IL_0036: dup
-		IL_0037: ldc.i4.2
-		IL_0038: ldloc.2
-		IL_0039: stelem.ref
-		IL_003a: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_003f: pop
-		IL_0040: ret
+		IL_0023: ldstr "global"
+		IL_0028: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::globalVar
+		IL_002d: ldloc.0
+		IL_002e: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::testFunction
+		IL_0033: ldc.i4.3
+		IL_0034: newarr [System.Runtime]System.Object
+		IL_0039: dup
+		IL_003a: ldc.i4.0
+		IL_003b: ldloc.0
+		IL_003c: stelem.ref
+		IL_003d: dup
+		IL_003e: ldc.i4.1
+		IL_003f: ldloc.1
+		IL_0040: stelem.ref
+		IL_0041: dup
+		IL_0042: ldc.i4.2
+		IL_0043: ldloc.2
+		IL_0044: stelem.ref
+		IL_0045: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_004a: pop
+		IL_004b: ret
 	} // end of method Program::Main
 
 } // end of class Program
