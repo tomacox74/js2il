@@ -38,5 +38,8 @@ namespace Js2IL.Tests.Function
 
         [Fact]
         public Task Function_NestedFunctionLogsOuterParameter() { var testName = nameof(Function_NestedFunctionLogsOuterParameter); return ExecutionTest(testName); }
+
+    [Fact(Skip = "Closure binding for returned nested functions not yet implemented")]
+    public Task Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal() { var testName = nameof(Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal); return ExecutionTest(testName); }
     }
 }
