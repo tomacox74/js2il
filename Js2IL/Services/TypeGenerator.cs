@@ -65,11 +65,15 @@ namespace Js2IL.Services
             _scopeFields[scope.Name] = new List<FieldDefinitionHandle>();
             var scopeFields = _scopeFields[scope.Name];
 
+            // Determine if this function scope contains nested functions
+            bool hasNestedFunctions = scope.Children.Any(c => c.Kind == ScopeKind.Function);
+
             foreach (var binding in scope.Bindings.Values)
             {
-                if (scope.Parameters.Contains(binding.Name))
+                // Parameters are treated as fields on the scope only when nested functions exist (closure access)
+                if (scope.Parameters.Contains(binding.Name) && !hasNestedFunctions)
                 {
-                    // Parameters are method parameters, not fields.
+                    // Skip creating a field for parameters when no nested functions need closure capture
                     continue;
                 }
                 // Create field signature (all variables are object type for now)
@@ -361,19 +365,18 @@ namespace Js2IL.Services
             {
                 var variableName = binding.Key;
                 var bindingInfo = binding.Value;
-                if (scope.Parameters.Contains(variableName))
-                {
-                    continue; // no field generated
-                }
                 
                 // Convert BindingKind to VariableType
-                var variableType = bindingInfo.Kind switch
-                {
-                    BindingKind.Var => VariableType.Variable,
-                    BindingKind.Let => VariableType.Variable,
-                    BindingKind.Const => VariableType.Variable,
-                    _ => VariableType.Variable
-                };
+                var variableType = scope.Parameters.Contains(variableName)
+                    ? VariableType.Parameter
+                    : bindingInfo.Kind switch
+                    {
+                        BindingKind.Var => VariableType.Variable,
+                        BindingKind.Let => VariableType.Variable,
+                        BindingKind.Const => VariableType.Variable,
+                        BindingKind.Function => VariableType.Function,
+                        _ => VariableType.Variable
+                    };
 
                 // Get the field handle for this variable (fields are created in order)
                 if (fieldIndex < scopeFields.Count)
@@ -389,7 +392,11 @@ namespace Js2IL.Services
                     );
                 }
 
-                fieldIndex++;
+                // Only advance fieldIndex if a field was actually created for this binding
+                if (!scope.Parameters.Contains(variableName) || scope.Children.Any(c => c.Kind == ScopeKind.Function))
+                {
+                    fieldIndex++;
+                }
             }
 
             // Recursively process child scopes

@@ -32,5 +32,14 @@ namespace Js2IL.Tests.Function
 
         [Fact]
         public Task Function_GlobalFunctionDeclaresAndCallsNestedFunction() { var testName = nameof(Function_GlobalFunctionDeclaresAndCallsNestedFunction); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_NestedFunctionAccessesMultipleScopes() { var testName = nameof(Function_NestedFunctionAccessesMultipleScopes); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_NestedFunctionLogsOuterParameter() { var testName = nameof(Function_NestedFunctionLogsOuterParameter); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal() { var testName = nameof(Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal); return ExecutionTest(testName); }
     }
 }

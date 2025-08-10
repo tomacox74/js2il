@@ -33,22 +33,33 @@ namespace Js2IL.Services.ILGenerators
 
         public void DeclareFunctions(SymbolTable symbolTable)
         {
-            // Get all functions from the symbol table and declare them
-            foreach (var (functionScope, functionDeclaration) in symbolTable.GetAllFunctions())
-            {
-                DeclareFunction(functionDeclaration, functionScope, symbolTable);
-            }
+            // Walk the scope tree so we can pass the correct parent Variables to nested functions
+            DeclareFunctionsRecursive(symbolTable.Root, _variables, symbolTable);
         }
 
-        public void DeclareFunction(FunctionDeclaration functionDeclaration, Scope? functionScope, SymbolTable? symbolTable)
+        private void DeclareFunctionsRecursive(Scope scope, Variables parentVars, SymbolTable symbolTable)
         {
-            var functionVariables = new Variables(_variables);
-            var methodGenerator = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator);
-
-            var methodDefinition = GenerateMethodForFunction(functionDeclaration, functionVariables, methodGenerator, functionScope, symbolTable);
-            if (this._firstMethod.IsNil)
+            // Generate methods for each function declared directly in this scope
+            foreach (var funcScope in scope.Children.Where(c => c.Kind == ScopeKind.Function && c.AstNode is FunctionDeclaration))
             {
-                this._firstMethod = methodDefinition;
+                var functionDeclaration = (FunctionDeclaration)funcScope.AstNode!;
+                var functionName = (functionDeclaration.Id as Identifier)!.Name;
+                var paramNames = functionDeclaration.Params
+                    .OfType<Identifier>()
+                    .Select(p => p.Name)
+                    .ToArray();
+
+                bool isNested = scope.Kind == ScopeKind.Function; // nested if parent is a function
+                var functionVariables = new Variables(parentVars, functionName, paramNames, isNestedFunction: isNested);
+                var methodGenerator = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator);
+                var methodDefinition = GenerateMethodForFunction(functionDeclaration, functionVariables, methodGenerator, funcScope, symbolTable);
+                if (this._firstMethod.IsNil)
+                {
+                    this._firstMethod = methodDefinition;
+                }
+
+                // Recurse into nested functions with this function's Variables as the new parent
+                DeclareFunctionsRecursive(funcScope, functionVariables, symbolTable);
             }
         }
 
@@ -64,15 +75,7 @@ namespace Js2IL.Services.ILGenerators
             var variables = functionVariables;
             var il = methodGenerator.IL;
 
-            // Register parameters in Variables before emitting body so identifiers resolve
-            int paramBaseIndex = 1; // 0 = scope
-            for (int i = 0; i < functionDeclaration.Params.Count; i++)
-            {
-                if (functionDeclaration.Params[i] is Acornima.Ast.Identifier pidPre)
-                {
-                    variables.AddParameter(pidPre.Name, paramBaseIndex + i);
-                }
-            }
+            // Parameters are already registered in Variables constructor
 
             // Create a scope instance for the function itself so that local vars (declared within the function)
             // have a backing scope object to store their fields. The Variables instance for the function only
@@ -82,25 +85,46 @@ namespace Js2IL.Services.ILGenerators
             {
                 try
                 {
-                    var functionScopeTypeHandle = registry.GetScopeTypeHandle(functionName);
-                    if (!functionScopeTypeHandle.IsNil)
+                    // Only create a local scope if there are fields in this function scope
+                    var fields = registry.GetVariablesForScope(functionName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
+                    if (fields.Any())
                     {
-                        // Build constructor member reference (parameterless instance .ctor)
-                        var ctorSigBuilder = new BlobBuilder();
-                        new BlobEncoder(ctorSigBuilder)
-                            .MethodSignature(isInstanceMethod: true)
-                            .Parameters(0, rt => rt.Void(), p => { });
-                        var ctorRef = _metadataBuilder.AddMemberReference(
-                            functionScopeTypeHandle,
-                            _metadataBuilder.GetOrAddString(".ctor"),
-                            _metadataBuilder.GetOrAddBlob(ctorSigBuilder));
+                        var functionScopeTypeHandle = registry.GetScopeTypeHandle(functionName);
+                        if (!functionScopeTypeHandle.IsNil)
+                        {
+                            // Build constructor member reference (parameterless instance .ctor)
+                            var ctorSigBuilder = new BlobBuilder();
+                            new BlobEncoder(ctorSigBuilder)
+                                .MethodSignature(isInstanceMethod: true)
+                                .Parameters(0, rt => rt.Void(), p => { });
+                            var ctorRef = _metadataBuilder.AddMemberReference(
+                                functionScopeTypeHandle,
+                                _metadataBuilder.GetOrAddString(".ctor"),
+                                _metadataBuilder.GetOrAddBlob(ctorSigBuilder));
 
-                        // newobj scope
-                        il.OpCode(ILOpCode.Newobj);
-                        il.Token(ctorRef);
-                        // store into a new local slot associated with this function scope name
-                        var scopeLocal = variables.CreateScopeInstance(functionName);
-                        il.StoreLocal(scopeLocal.Address);
+                            // newobj scope
+                            il.OpCode(ILOpCode.Newobj);
+                            il.Token(ctorRef);
+                            // store into a new local slot associated with this function scope name
+                            var scopeLocal = variables.CreateScopeInstance(functionName);
+                            il.StoreLocal(scopeLocal.Address);
+
+                            // Initialize parameter fields on the scope from CLR arguments
+                            // JS parameters start at arg1 (arg0 is scopes[])
+                            ushort jsParamSeq = 1;
+                            foreach (var param in functionDeclaration.Params.OfType<Acornima.Ast.Identifier>())
+                            {
+                                // Load scope instance (target for stfld)
+                                il.LoadLocal(scopeLocal.Address);
+                                // Load CLR arg for this parameter (object already)
+                                il.LoadArgument(jsParamSeq);
+                                // Store to the corresponding field on the scope
+                                var fieldHandle = registry.GetFieldHandle(functionName, param.Name);
+                                il.OpCode(ILOpCode.Stfld);
+                                il.Token(fieldHandle);
+                                jsParamSeq++;
+                            }
+                        }
                     }
                 }
                 catch

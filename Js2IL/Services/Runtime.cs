@@ -15,6 +15,7 @@ namespace Js2IL.Services
         private MemberReferenceHandle _objectGetItem;
         private MemberReferenceHandle _arrayCtorRef;
         private MemberReferenceHandle _arrayLengthRef;
+        private MemberReferenceHandle _closureBindObjectRef;
         private InstructionEncoder _il;
 
         public Runtime(MetadataBuilder metadataBuilder, InstructionEncoder il) 
@@ -130,6 +131,36 @@ namespace Js2IL.Services
                 objectType,
                 metadataBuilder.GetOrAddString("GetItem"),
                 objectGetItemSig);
+
+            // JavaScriptRuntime.Closure.Bind(object, object[])
+            var runtimeAsmName = typeof(JavaScriptRuntime.Closure).Assembly.GetName();
+            var rtAssembly = metadataBuilder.AddAssemblyReference(
+                name: metadataBuilder.GetOrAddString(runtimeAsmName.Name!),
+                version: runtimeAsmName.Version!,
+                culture: default,
+                publicKeyOrToken: default,
+                flags: 0,
+                hashValue: default
+            );
+            var closureType = metadataBuilder.AddTypeReference(
+                rtAssembly,
+                metadataBuilder.GetOrAddString("JavaScriptRuntime"),
+                metadataBuilder.GetOrAddString("Closure")
+            );
+            var bindSig = new BlobBuilder();
+            new BlobEncoder(bindSig)
+                .MethodSignature(isInstanceMethod: false)
+                .Parameters(2,
+                    returnType => returnType.Type().Object(),
+                    parameters => {
+                        parameters.AddParameter().Type().Object();
+                        parameters.AddParameter().Type().SZArray().Object();
+                    });
+            var bindSigHandle = metadataBuilder.GetOrAddBlob(bindSig);
+            _closureBindObjectRef = metadataBuilder.AddMemberReference(
+                closureType,
+                metadataBuilder.GetOrAddString("Bind"),
+                bindSigHandle);
         }
 
         /// <summary>
@@ -177,6 +208,13 @@ namespace Js2IL.Services
             // we assume the object and index are already on the stack
             _il.OpCode(ILOpCode.Call);
             _il.Token(_objectGetItem);
+        }
+
+        public void InvokeClosureBindObject()
+        {
+            // assumes [delegateAsObject] [scopesArray] are on the stack
+            _il.OpCode(ILOpCode.Call);
+            _il.Token(_closureBindObjectRef);
         }
     }
 }

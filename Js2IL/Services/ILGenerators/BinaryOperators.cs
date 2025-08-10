@@ -39,7 +39,7 @@ namespace Js2IL.Services.ILGenerators
         {
             if (variable.IsParameter)
             {
-                // Directly load argument (already object)
+                // Directly load argument (already object). ParameterIndex already accounts for scopes[] at arg0
                 _il.LoadArgument(variable.ParameterIndex);
                 return;
             }
@@ -85,8 +85,20 @@ namespace Js2IL.Services.ILGenerators
                 LoadValue(binaryExpression.Right, new TypeCoercion());
                 _il.OpCode(ILOpCode.Conv_i4);
             } else {
-                LoadValue(binaryExpression.Left, new TypeCoercion());
-                LoadValue(binaryExpression.Right, new TypeCoercion() { toString = binaryExpression.Left is StringLiteral });
+                // For + we allow string concat path when left is string literal; otherwise numeric math
+                bool plus = operatorType == Operator.Addition;
+                var leftType = LoadValue(binaryExpression.Left, new TypeCoercion());
+                if (!(plus && binaryExpression.Left is StringLiteral) && leftType != JavascriptType.Number)
+                {
+                    _il.OpCode(ILOpCode.Unbox_any);
+                    _il.Token(_bclReferences.DoubleType);
+                }
+                var rightType = LoadValue(binaryExpression.Right, new TypeCoercion() { toString = binaryExpression.Left is StringLiteral });
+                if (!(plus && binaryExpression.Left is StringLiteral) && rightType != JavascriptType.Number)
+                {
+                    _il.OpCode(ILOpCode.Unbox_any);
+                    _il.Token(_bclReferences.DoubleType);
+                }
             }
 
             switch (operatorType)
@@ -352,7 +364,8 @@ namespace Js2IL.Services.ILGenerators
                     // this is fragile at the moment.. need to handle all types
                     // need a runtime type check for unknown types
                     // and unboxing for boolean
-                    if (variable.Type != JavascriptType.Object && !typeCoercion.boxed)
+                    // Only unbox when we explicitly know it's a Number and caller didn't request boxing.
+                    if (variable.Type == JavascriptType.Number && !typeCoercion.boxed)
                     {
                         _il.OpCode(ILOpCode.Unbox_any);
                         _il.Token(_bclReferences.DoubleType); // unbox the variable as a double

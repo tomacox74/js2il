@@ -1,0 +1,244 @@
+﻿// IL code: Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit outer
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit inner
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2062
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method inner::.ctor
+
+		} // end of class inner
+
+
+		// Fields
+		.field public object p
+		.field public object inner
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method outer::.ctor
+
+	} // end of class outer
+
+
+	// Fields
+	.field public object g
+	.field public object outer
+	.field public object f
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::.ctor
+
+} // end of class Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
+
+.class public auto ansi abstract sealed beforefieldinit DispatchTable
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field public static class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> outer
+	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> inner
+
+} // end of class DispatchTable
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		object outer (
+			object[] scopes,
+			object p
+		) cil managed 
+	{
+		// Method begins at RVA 0x206c
+		// Header size: 12
+		// Code size: 52 (0x34)
+		.maxstack 8
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/outer::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/outer::p
+		IL_000d: ldloc.0
+		IL_000e: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::inner
+		IL_0013: stfld object Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/outer::inner
+		IL_0018: ldloc.0
+		IL_0019: ldfld object Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/outer::inner
+		IL_001e: ldc.i4.2
+		IL_001f: newarr [System.Runtime]System.Object
+		IL_0024: dup
+		IL_0025: ldc.i4.0
+		IL_0026: ldarg.0
+		IL_0027: ldc.i4.0
+		IL_0028: ldelem.ref
+		IL_0029: stelem.ref
+		IL_002a: dup
+		IL_002b: ldc.i4.1
+		IL_002c: ldloc.0
+		IL_002d: stelem.ref
+		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0033: ret
+	} // end of method Program::outer
+
+	.method public static 
+		object inner (
+			object[] scopes
+		) cil managed 
+	{
+		// Method begins at RVA 0x20ac
+		// Header size: 1
+		// Code size: 62 (0x3e)
+		.maxstack 8
+
+		IL_0000: ldc.i4.2
+		IL_0001: newarr [System.Runtime]System.Object
+		IL_0006: dup
+		IL_0007: ldc.i4.0
+		IL_0008: ldstr "param:"
+		IL_000d: stelem.ref
+		IL_000e: dup
+		IL_000f: ldc.i4.1
+		IL_0010: ldarg.0
+		IL_0011: ldc.i4.1
+		IL_0012: ldelem.ref
+		IL_0013: ldfld object Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/outer::p
+		IL_0018: stelem.ref
+		IL_0019: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_001e: ldc.i4.2
+		IL_001f: newarr [System.Runtime]System.Object
+		IL_0024: dup
+		IL_0025: ldc.i4.0
+		IL_0026: ldstr "global:"
+		IL_002b: stelem.ref
+		IL_002c: dup
+		IL_002d: ldc.i4.1
+		IL_002e: ldarg.0
+		IL_002f: ldc.i4.0
+		IL_0030: ldelem.ref
+		IL_0031: ldfld object Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::g
+		IL_0036: stelem.ref
+		IL_0037: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_003c: ldnull
+		IL_003d: ret
+	} // end of method Program::inner
+
+	.method public static 
+		void _LoadDispatchTable () cil managed 
+	{
+		// Method begins at RVA 0x20eb
+		// Header size: 1
+		// Code size: 35 (0x23)
+		.maxstack 8
+
+		IL_0000: ldnull
+		IL_0001: ldftn object Program::outer(object[], object)
+		IL_0007: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_000c: stsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::outer
+		IL_0011: ldnull
+		IL_0012: ldftn object Program::inner(object[])
+		IL_0018: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_001d: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::inner
+		IL_0022: ret
+	} // end of method Program::_LoadDispatchTable
+
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2110
+		// Header size: 12
+		// Code size: 103 (0x67)
+		.maxstack 8
+		.entrypoint
+		.locals init (
+			[0] object,
+			[1] object
+		)
+
+		IL_0000: newobj instance void Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::.ctor()
+		IL_0005: stloc.0
+		IL_0006: newobj instance void Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/outer::.ctor()
+		IL_000b: stloc.1
+		IL_000c: call void Program::_LoadDispatchTable()
+		IL_0011: ldloc.0
+		IL_0012: ldsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::outer
+		IL_0017: stfld object Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::outer
+		IL_001c: ldloc.0
+		IL_001d: ldstr "Hello"
+		IL_0022: stfld object Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::g
+		IL_0027: ldloc.0
+		IL_0028: ldloc.0
+		IL_0029: ldfld object Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::outer
+		IL_002e: ldc.i4.1
+		IL_002f: newarr [System.Runtime]System.Object
+		IL_0034: dup
+		IL_0035: ldc.i4.0
+		IL_0036: ldloc.0
+		IL_0037: stelem.ref
+		IL_0038: ldc.r8 123
+		IL_0041: box [System.Runtime]System.Double
+		IL_0046: callvirt instance !2 class [System.Runtime]System.Func`3<class [System.Runtime]System.Object, class [System.Runtime]System.Object, class [System.Runtime]System.Object>::Invoke(!0, !1)
+		IL_004b: stfld object Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::f
+		IL_0050: ldloc.0
+		IL_0051: ldfld object Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::f
+		IL_0056: ldc.i4.1
+		IL_0057: newarr [System.Runtime]System.Object
+		IL_005c: dup
+		IL_005d: ldc.i4.0
+		IL_005e: ldloc.0
+		IL_005f: stelem.ref
+		IL_0060: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0065: pop
+		IL_0066: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

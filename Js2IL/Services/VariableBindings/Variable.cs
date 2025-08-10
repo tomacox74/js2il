@@ -10,20 +10,30 @@ namespace Js2IL.Services
     /// <summary>
     /// Represents a JavaScript variable that maps to a field in a scope type.
     /// </summary>
-    internal record Variable
+    internal abstract record Variable
     {
         public required string Name;
         
-        // Scope field properties
-        public string ScopeName { get; set; } = string.Empty;                    // Which scope contains this field
-        public FieldDefinitionHandle FieldHandle { get; set; }                   // Metadata handle for the field
-        public TypeDefinitionHandle ScopeTypeHandle { get; set; }               // Handle for the scope type
-        
         public JavascriptType Type = JavascriptType.Unknown;
 
-    // Parameter support (not backed by scope field)
-    public bool IsParameter { get; set; } = false;            // True if this variable represents a method parameter
-    public int ParameterIndex { get; set; } = -1;              // 0-based parameter index in method signature
+    // Unified optional metadata for compatibility with existing emitters
+    public bool IsParameter { get; init; } = false;
+    // For parameters: IL argument index (including any leading non-JS params already accounted for by caller)
+    public int ParameterIndex { get; init; } = -1;
+    // Declaring scope name for field-backed variables
+    public string ScopeName { get; init; } = string.Empty;
+    // Field handle for ldfld/stfld (for field-backed variables)
+    public FieldDefinitionHandle FieldHandle { get; init; }
+    }
+
+    internal record LocalVariable : Variable;
+
+    internal record ParameterVariable : Variable;
+
+    internal record ScopeVariable : Variable
+    {
+        // Index into the scopes[] array for parent scope access
+        public int ParentScopeIndex { get; init; } = -1;
     }
 
     internal enum ObjectReferenceLocation
@@ -43,166 +53,272 @@ namespace Js2IL.Services
     /// Variables is a map from a variable name in the AST to where the variable is stored.
     /// There is 1 instance of Variables per dotnet method that is being being generated.
     /// </summary>
-    internal class Variables : Dictionary<string, Variable>
+    internal class Variables 
     {
-        private readonly VariableBindings.VariableRegistry _registry;
-        private readonly Dictionary<string, ScopeObjectReference> _scopeLocalSlots = new();
-        private int _nextScopeSlot = 0;
+    // Cache of resolved variables by identifier name
+        private readonly Dictionary<string, Variable> _variables = new();
 
-        private readonly string _leafScopeName;
+        // Backing registry (kept internal; callers shouldn't need it)
+        private readonly VariableBindings.VariableRegistry _registry;
+
+        // Parent scope name -> index in object[] scopes passed to this function
+        private readonly Dictionary<string, int> _parentScopeIndices = new();
+
+        // Parameter name -> 0-based parameter index
+        private readonly Dictionary<string, int> _parameterIndices = new();
+
+        // Current function (or global) scope name and global root scope name
+        private readonly string _scopeName;
+    private readonly string _globalScopeName;
+
+        // Whether this function has a local scope instance (ldloc.0)
+    private bool _hasLocalScope;
+
+    // Back-compat support for creating locals for arbitrary scope names when requested
+    private readonly Dictionary<string, int> _createdLocalScopes = new();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Variables"/> class for a global scope of the given name.
+        /// Initializes a new instance of the <see cref="Variables"/> class for the global scope
         /// </summary>
-        /// <param name="scopeName">The name of the scope.</param>
+        /// <param name="scopeName">The name of the global scope.</param>
         public Variables(VariableBindings.VariableRegistry registry, string scopeName)
         {
-            _leafScopeName = scopeName;
-            _registry = registry;
-
-            // Initialize with a specific scope name
-            _scopeLocalSlots[scopeName] = new ScopeObjectReference
-            {
-                Location = ObjectReferenceLocation.Local,
-                Address = _nextScopeSlot++
-            };
+            _registry = registry ?? throw new ArgumentNullException(nameof(registry));
+            _scopeName = scopeName ?? throw new ArgumentNullException(nameof(scopeName));
+            _globalScopeName = scopeName;
+            // Main/global should allocate one local slot for its scope instance (ldloc.0)
+            _hasLocalScope = true;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Variables"/> class for a function or array function declared in the gloval scope.
+        /// Initializes a new instance of the <see cref="Variables"/> to pass to a function or arrow function or a block with nested scope
         /// </summary>
-        public Variables(Variables globalVariables)
+        /// <param name="parentVariables">The parent variables context to inherit from.</param>
+        /// <param name="scopeName">The name of the scope for this instance</param>
+        /// <param name="parameterNames">The names of the parameters if these variables are for a function or arrow function</param>
+        public Variables(Variables parentVariables, string scopeName, IEnumerable<string> parameterNames)
+            : this(parentVariables, scopeName, parameterNames, isNestedFunction: true)
         {
-            _registry = globalVariables._registry;
-            _leafScopeName = globalVariables._leafScopeName;
-
-            _scopeLocalSlots[globalVariables._leafScopeName] = new ScopeObjectReference
-            {
-                Location = ObjectReferenceLocation.ScopeArray,
-                Address = 0 // Index 0 in scope array for global scope
-            };
         }
 
-        public void CreateFunctionVariable(string name)
+    public Variables(Variables parentVariables, string scopeName, IEnumerable<string> parameterNames, bool isNestedFunction)
         {
-            if (this.ContainsKey(name))
+            if (parentVariables == null) throw new ArgumentNullException(nameof(parentVariables));
+            if (scopeName == null) throw new ArgumentNullException(nameof(scopeName));
+            if (parameterNames == null) throw new ArgumentNullException(nameof(parameterNames));
+
+            _registry = parentVariables._registry;
+            _scopeName = scopeName;
+            _globalScopeName = parentVariables._globalScopeName;
+            // Do not assume a local scope exists; only create when needed in emitter
+            _hasLocalScope = false;
+
+            // Build parameter map using IL argument indexes for JS params.
+            // Arg0 is the scopes array; JS params start at 1.
+            int i = 1;
+            foreach (var p in parameterNames)
             {
-                throw new InvalidOperationException($"Variable '{name}' already exists.");
+                if (!_parameterIndices.ContainsKey(p))
+                    _parameterIndices[p] = i;
+                i++;
             }
+            // Do not force a local for parameters; a local scope will be created only if fields exist
 
-            var variable = new Variable { Name = name, Type = JavascriptType.Function };
-            this[name] = variable;
+            // Parent scopes passed to this function
+            // Top-level function: only [global]
+            // Nested function: [global, parent function]
+            _parentScopeIndices[_globalScopeName] = 0;
+            if (isNestedFunction && parentVariables._scopeName != _globalScopeName)
+            {
+                _parentScopeIndices[parentVariables._scopeName] = 1;
+            }
         }
 
-        public Variable? FindVariable(string name)
+
+    // Indexer for backward compatibility: get-only resolves via FindVariable
+    public Variable this[string name] => FindVariable(name)!;
+
+    public Variable? FindVariable(string name)
         {
-            if (!this.TryGetValue(name, out var variable))
+            if (string.IsNullOrEmpty(name)) return null;
+            if (_variables.TryGetValue(name, out var cached)) return cached;
+
+            // Parameter resolution: prefer field-backed local if present; otherwise treat as direct argument
+            if (_parameterIndices.TryGetValue(name, out var pindex))
             {
-                var variableInfo = _registry?.FindVariable(name);
-                if (variableInfo != null)
+                try
                 {
-                    variable = new Variable
+                    var fh = _registry.GetFieldHandle(_scopeName, name);
+                    var lvParamField = new LocalVariable
                     {
                         Name = name,
-                        ScopeName = variableInfo.ScopeName,
-                        FieldHandle = variableInfo.FieldHandle,
-                        ScopeTypeHandle = variableInfo.ScopeTypeHandle,
-                        Type = JavascriptType.Unknown // Map from VariableType to JavascriptType if needed
+                        FieldHandle = fh,
+                        ScopeName = _scopeName,
+                        Type = JavascriptType.Unknown
                     };
+                    _variables[name] = lvParamField;
+                    return lvParamField;
                 }
-            }
-            return variable;
-        }
-
-        public Variable CreateLocal(string name)
-        {
-            // If we have a registry, try to get the variable from it
-            if (_registry != null)
-            {
-                var variableInfo = _registry.FindVariable(name);
-                if (variableInfo != null)
+                catch (KeyNotFoundException)
                 {
-                    var variable = new Variable
-                    {
-                        Name = name,
-                        ScopeName = variableInfo.ScopeName,
-                        FieldHandle = variableInfo.FieldHandle,
-                        ScopeTypeHandle = variableInfo.ScopeTypeHandle,
-                        Type = JavascriptType.Unknown // Map from VariableType to JavascriptType if needed
-                    };
-
-                    if (this.ContainsKey(name))
-                    {
-                        throw new InvalidOperationException($"Variable '{name}' already exists.");
-                    }
-                    this[name] = variable;
-                    return variable;
+                    var p = new ParameterVariable { Name = name, ParameterIndex = pindex, IsParameter = true, Type = JavascriptType.Object };
+                    _variables[name] = p;
+                    return p;
                 }
             }
 
-            // If we reach here, the variable is not in the registry
-            throw new InvalidOperationException($"Variable '{name}' not found in registry. All variables should be pre-registered.");
-        }
-
-        public Variable AddParameter(string name, int parameterIndex)
-        {
-            if (this.ContainsKey(name))
+            // Look up field-backed variables in the registry
+            var variableInfo = _registry?.FindVariable(name);
+            if (variableInfo == null)
             {
-                // if existing variable is a scope field that's shadowed by parameter, favor parameter
-                // but for now throw to catch unexpected duplicates
-                throw new InvalidOperationException($"Variable '{name}' already exists when adding parameter.");
+                return null;
             }
-            var variable = new Variable
+
+        if (variableInfo.ScopeName == _scopeName)
             {
-                Name = name,
-                IsParameter = true,
-                ParameterIndex = parameterIndex,
-                Type = JavascriptType.Object
-            };
-            this[name] = variable;
-            return variable;
+                var lv = new LocalVariable
+                {
+                    Name = name,
+            FieldHandle = variableInfo.FieldHandle,
+            ScopeName = variableInfo.ScopeName,
+                    Type = JavascriptType.Unknown
+                };
+                _variables[name] = lv;
+                return lv;
+            }
+
+            // Parent scope field
+        if (_parentScopeIndices.TryGetValue(variableInfo.ScopeName, out var idx))
+            {
+                var sv = new ScopeVariable
+                {
+                    Name = name,
+            ScopeName = variableInfo.ScopeName,
+                    ParentScopeIndex = idx,
+            FieldHandle = variableInfo.FieldHandle,
+                    Type = JavascriptType.Unknown
+                };
+                _variables[name] = sv;
+                return sv;
+            }
+
+            // Unknown scope in current context
+            return null;
         }
 
 
+        // Back-compat helper: maps a scope name to where it can be loaded (ldloc.0 or scopes[])
         public ScopeObjectReference GetScopeLocalSlot(string scopeName)
         {
-            return _scopeLocalSlots.GetValueOrDefault(scopeName, new ScopeObjectReference
+            if (string.IsNullOrEmpty(scopeName))
             {
-                Location = ObjectReferenceLocation.Local,
-                Address = -1
-            });
+                return new ScopeObjectReference { Location = ObjectReferenceLocation.Local, Address = -1 };
+            }
+
+            if (scopeName == _scopeName)
+            {
+                return new ScopeObjectReference
+                {
+                    Location = ObjectReferenceLocation.Local,
+                    Address = _hasLocalScope ? 0 : -1
+                };
+            }
+
+            // Additional locals explicitly registered (e.g., Main's extra function scope locals)
+            if (_createdLocalScopes.TryGetValue(scopeName, out var localIndex))
+            {
+                return new ScopeObjectReference
+                {
+                    Location = ObjectReferenceLocation.Local,
+                    Address = localIndex
+                };
+            }
+
+            if (_parentScopeIndices.TryGetValue(scopeName, out var idx))
+            {
+                return new ScopeObjectReference { Location = ObjectReferenceLocation.ScopeArray, Address = idx };
+            }
+
+            return new ScopeObjectReference { Location = ObjectReferenceLocation.Local, Address = -1 };
+        }
+
+        // Back-compat: create a local scope instance for the current function only.
+        public ScopeObjectReference CreateScopeInstance(string scopeName)
+        {
+            if (scopeName == _scopeName)
+            {
+                _hasLocalScope = true;
+                _createdLocalScopes[scopeName] = 0;
+                return new ScopeObjectReference { Location = ObjectReferenceLocation.Local, Address = 0 };
+            }
+            // Non-current scopes are not created as locals in the new model; indicate not available
+            return new ScopeObjectReference { Location = ObjectReferenceLocation.Local, Address = -1 };
+        }
+
+        // Back-compat: used by some emit logic to enumerate known scopes; include current + parents + global
+        public IEnumerable<string> GetAllScopeNames()
+        {
+            var list = new List<string> { _globalScopeName, _scopeName };
+            list.AddRange(_parentScopeIndices.Keys);
+            // Include any additional locals registered (for Main)
+            list.AddRange(_createdLocalScopes.Keys);
+            return list.Distinct();
+        }
+
+    // CreateLocal removed: callers should use FindVariable(name) for resolution.
+
+
+
+
+        /// <summary>
+        /// Checks if the given scope name is the current function's scope.
+        /// </summary>
+        public bool IsCurrentFunctionScope(string scopeName)
+        {
+            return scopeName == _scopeName;
         }
 
         /// <summary>
-        /// Creates a scope instance and returns the local variable index for it.
+        /// Gets the local scope slot for the current function.
         /// </summary>
-        public ScopeObjectReference CreateScopeInstance(string scopeName)
+        public ScopeObjectReference GetLocalScopeSlot()
         {
-            if (!_scopeLocalSlots.ContainsKey(scopeName))
+            return new ScopeObjectReference
             {
-                _scopeLocalSlots[scopeName] = new ScopeObjectReference
-                {
-                    Location = ObjectReferenceLocation.Local,
-                    Address = _nextScopeSlot++
-                };
-            }
-            return _scopeLocalSlots[scopeName];
+                Location = ObjectReferenceLocation.Local,
+                Address = _hasLocalScope ? 0 : -1
+            };
         }
 
-        public IEnumerable<string> GetAllScopeNames()
+        /// <summary>
+        /// Gets the current function's scope name.
+        /// </summary>
+        public string GetLeafScopeName()
         {
-            return _scopeLocalSlots.Keys;
+            return _scopeName;
         }
 
-        public int GetNumberOfLocals()
+        /// <summary>
+        /// Gets the number of local variables in the current function's scope.
+        /// </summary>
+    public int GetNumberOfLocals()
         {
-            // Return number of scope instances (not individual variables)
-            return _nextScopeSlot;
+            // Only the function-local scope uses a local slot (ldloc.0) in this model
+            return _hasLocalScope ? 1 : 0;
         }
 
         public VariableBindings.VariableRegistry GetVariableRegistry()
         {
             return _registry;
+        }
+
+        /// <summary>
+        /// Register an additional local slot for a named scope (used by Main to model top-level and nested function scopes).
+        /// </summary>
+        public void RegisterAdditionalLocalScope(string scopeName, int localIndex)
+        {
+            if (string.IsNullOrEmpty(scopeName)) return;
+            _createdLocalScopes[scopeName] = localIndex;
         }
     }
 }
