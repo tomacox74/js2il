@@ -197,11 +197,85 @@ namespace Js2IL.Services.ILGenerators
         {
             if (returnStatement.Argument != null)
             {
-                var type = _expressionEmitter.Emit(returnStatement.Argument, new TypeCoercion());
-                if (type == JavascriptType.Number)
+                // Special-case: returning a function identifier -> bind closure scopes
+                if (returnStatement.Argument is Identifier fid)
                 {
-                    _il.OpCode(ILOpCode.Box);
-                    _il.Token(_bclReferences.DoubleType);
+                    var fnVar = _variables.FindVariable(fid.Name);
+                    if (fnVar != null)
+                    {
+                        // Load the function delegate from its scope field
+                        var scopeSlot = _variables.GetScopeLocalSlot(fnVar.ScopeName);
+                        if (scopeSlot.Address == -1)
+                            throw new InvalidOperationException($"Scope '{fnVar.ScopeName}' not found in local slots");
+                        if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
+                        {
+                            _il.LoadArgument(scopeSlot.Address);
+                        }
+                        else if (scopeSlot.Location == ObjectReferenceLocation.ScopeArray)
+                        {
+                            _il.LoadArgument(0);
+                            _il.LoadConstantI4(scopeSlot.Address);
+                            _il.OpCode(ILOpCode.Ldelem_ref);
+                        }
+                        else
+                        {
+                            _il.LoadLocal(scopeSlot.Address);
+                        }
+                        _il.OpCode(ILOpCode.Ldfld);
+                        _il.Token(fnVar.FieldHandle); // stack: target delegate (object)
+
+                        // Build scopes[] to bind: pass known scopes needed for callee
+                        var neededScopeNames = GetNeededScopesForFunction(fnVar).ToList();
+                        _il.LoadConstantI4(neededScopeNames.Count);
+                        _il.OpCode(ILOpCode.Newarr);
+                        _il.Token(_bclReferences.ObjectType);
+                        for (int i = 0; i < neededScopeNames.Count; i++)
+                        {
+                            var sn = neededScopeNames[i];
+                            var refSlot = _variables.GetScopeLocalSlot(sn);
+                            _il.OpCode(ILOpCode.Dup);
+                            _il.LoadConstantI4(i);
+                            if (refSlot.Location == ObjectReferenceLocation.Local)
+                            {
+                                _il.LoadLocal(refSlot.Address);
+                            }
+                            else if (refSlot.Location == ObjectReferenceLocation.Parameter)
+                            {
+                                _il.LoadArgument(refSlot.Address);
+                            }
+                            else if (refSlot.Location == ObjectReferenceLocation.ScopeArray)
+                            {
+                                _il.LoadArgument(0);
+                                _il.LoadConstantI4(refSlot.Address);
+                                _il.OpCode(ILOpCode.Ldelem_ref);
+                            }
+                            _il.OpCode(ILOpCode.Stelem_ref);
+                        }
+
+                        // Closure.Bind(object, object[])
+                        // Ensure delegate is treated as object for the bind call
+                        // (ldfld already leaves it as the specific Func<...>; call will accept object)
+                        _runtime.InvokeClosureBindObject();
+                    }
+                    else
+                    {
+                        // Fallback to normal emit
+                        var type = _expressionEmitter.Emit(returnStatement.Argument, new TypeCoercion());
+                        if (type == JavascriptType.Number)
+                        {
+                            _il.OpCode(ILOpCode.Box);
+                            _il.Token(_bclReferences.DoubleType);
+                        }
+                    }
+                }
+                else
+                {
+                    var type = _expressionEmitter.Emit(returnStatement.Argument, new TypeCoercion());
+                    if (type == JavascriptType.Number)
+                    {
+                        _il.OpCode(ILOpCode.Box);
+                        _il.Token(_bclReferences.DoubleType);
+                    }
                 }
             }
             else
