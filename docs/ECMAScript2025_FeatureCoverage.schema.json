@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ECMAScript2025FeatureCoverage",
+  "type": "object",
+  "properties": {
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "section": { "type": "string", "description": "Top-level section number, e.g. '13'" },
+          "title": { "type": "string", "description": "Section title" },
+          "url": { "type": "string", "format": "uri", "description": "Section URL" },
+          "subsections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "subsection": { "type": "string", "description": "Subsection number, e.g. '13.2'" },
+                "title": { "type": "string", "description": "Subsection title" },
+                "url": { "type": "string", "format": "uri", "description": "Subsection URL" },
+                "paragraphs": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "paragraph": { "type": "string", "description": "Paragraph number, e.g. '13.2.1'" },
+                      "title": { "type": "string", "description": "Paragraph title" },
+                      "url": { "type": "string", "format": "uri", "description": "Paragraph URL" },
+                      "features": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "feature": { "type": "string", "description": "Feature name/description" },
+                            "status": { "type": "string", "enum": ["Supported", "Partially Supported", "Not Supported"] },
+                            "testScripts": {
+                              "type": "array",
+                              "items": { "type": "string", "description": "Relative path to test script" }
+                            },
+                            "notes": { "type": "string", "description": "Additional notes or details", "default": "" }
+                          },
+                          "required": ["feature", "status"]
+                        }
+                      }
+                    },
+                    "required": ["paragraph", "title", "url", "features"]
+                  }
+                }
+              },
+              "required": ["subsection", "title", "url", "paragraphs"]
+            }
+          }
+        },
+        "required": ["section", "title", "url", "subsections"]
+      }
+    }
+  },
+  "required": ["sections"]
+}
