@@ -62,6 +62,23 @@ function processSections(sections) {
   let out = '';
   for (const sec of sorted) {
     const sectionRef = sec.section || '';
+    // Basic validation: subsections and paragraphs should start with their parent numbering
+    if (sec.subsections) {
+      for (const sub of sec.subsections) {
+        if (sub.subsection && sectionRef && !String(sub.subsection).startsWith(sectionRef + '.')) {
+          console.error(`Subsection ${sub.subsection} does not belong under section ${sectionRef}`);
+          process.exitCode = 1;
+        }
+        if (sub.paragraphs) {
+          for (const para of sub.paragraphs) {
+            if (para.paragraph && sectionRef && !String(para.paragraph).startsWith(sectionRef + '.')) {
+              console.error(`Paragraph ${para.paragraph} does not belong under section ${sectionRef}`);
+              process.exitCode = 1;
+            }
+          }
+        }
+      }
+    }
     out += `\n## ${link(sec.title || sec.section, sec.url)}\n`;
     out += processSubsections(sec.subsections, sectionRef);
   }
@@ -73,6 +90,7 @@ function main() {
   let md = '# ECMAScript 2025 Feature Coverage\n\n';
   md += '[ECMAScript® 2025 Language Specification](https://tc39.es/ecma262/)\n\n';
   md += 'This file is auto-generated from ECMAScript2025_FeatureCoverage.json.\n';
+  md += '\n> Note: Test scripts under `Js2IL.Tests/JavaScript/Prime/` are currently excluded (not supported).\n';
   md += processSections(data.sections);
   // Replace placeholder for script links
   md = md.replace(/\u001A/g, '`');

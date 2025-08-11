@@ -4,24 +4,65 @@
 
 This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
-## [ECMAScript Function Objects](https://tc39.es/ecma262/#sec-ecmascript-function-objects)
+> Note: Test scripts under `Js2IL.Tests/JavaScript/Prime/` are currently excluded (not supported).
 
-### [Function Objects](https://tc39.es/ecma262/#sec-ecmascript-function-objects)
+## [ECMAScript Language: Expressions](https://tc39.es/ecma262/#sec-ecmascript-language-expressions)
 
-#### [Function closures](https://tc39.es/ecma262/#sec-ecmascript-function-objects)
+### [Declarations](https://tc39.es/ecma262/#sec-declarations)
+
+#### [let/const](https://tc39.es/ecma262/#sec-let-and-const-declarations)
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Function closures | Supported | `Js2IL.Tests/JavaScript/Function_NestedFunctionLogsOuterParameter.js`<br>`Js2IL.Tests/JavaScript/Function_NestedFunctionAccessesMultipleScopes.js` |  | 8.1.2 |
-| Global function calls global function | Supported | `Js2IL.Tests/JavaScript/Function_GlobalFunctionCallsGlobalFunction.js` |  | 8.1.2 |
-| Global function with parameter | Supported | `Js2IL.Tests/JavaScript/Function_GlobalFunctionWithParameter.js` |  | 8.1.2 |
-| Global function with array iteration | Supported | `Js2IL.Tests/JavaScript/Function_GlobalFunctionWithArrayIteration.js` |  | 8.1.2 |
-| Global function returns nested function, logs param and global | Supported | `Js2IL.Tests/JavaScript/Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.js` |  | 8.1.2 |
-| Global function logs global variable | Supported | `Js2IL.Tests/JavaScript/Function_GlobalFunctionLogsGlobalVariable.js` |  | 8.1.2 |
-| Global function declares and calls nested function | Supported | `Js2IL.Tests/JavaScript/Function_GlobalFunctionDeclaresAndCallsNestedFunction.js` |  | 8.1.2 |
-| Global function changes global variable value | Supported | `Js2IL.Tests/JavaScript/Function_GlobalFunctionChangesGlobalVariableValue.js` |  | 8.1.2 |
-| Returns static value and logs | Supported | `Js2IL.Tests/JavaScript/Function_ReturnsStaticValueAndLogs.js` |  | 8.1.2 |
-| Hello World function | Supported | `Js2IL.Tests/JavaScript/Function_HelloWorld.js` |  | 8.1.2 |
+| let/const | Not Supported |  |  | 13.2.1 |
+
+
+#### [var](https://tc39.es/ecma262/#sec-variable-statement)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| var | Supported | `Js2IL.Tests/JavaScript/Function_GlobalFunctionChangesGlobalVariableValue.js`<br>`Js2IL.Tests/JavaScript/Function_GlobalFunctionDeclaresAndCallsNestedFunction.js`<br>`Js2IL.Tests/JavaScript/Function_GlobalFunctionLogsGlobalVariable.js` |  | 13.2.1 |
+
+
+#### [Function declarations](https://tc39.es/ecma262/#sec-function-definitions)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Function declarations | Supported | `Js2IL.Tests/JavaScript/Function_HelloWorld.js` |  | 13.2.3 |
+| Arrow functions | Not Supported |  |  | 13.2.3 |
+
+
+#### [Default parameters, Rest parameters](https://tc39.es/ecma262/#sec-function-definitions-runtime-semantics-evaluation)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Default parameters | Not Supported |  |  | 13.2.3.1 |
+| Rest parameters | Not Supported |  |  | 13.2.3.1 |
+
+
+#### [Spread syntax](https://tc39.es/ecma262/#sec-argument-lists-runtime-semantics-argumentlistevaluation)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Spread syntax | Not Supported |  |  | 13.2.5 |
+
+
+### [Array Initializer (ArrayLiteral)](https://tc39.es/ecma262/#sec-array-initializer)
+
+#### [ArrayLiteral](https://tc39.es/ecma262/#sec-array-initializer)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Array literal basic construction | Supported | `Js2IL.Tests/JavaScript/ArrayLiteral.js` | Covers creation, element access, and length property. See also verified output in GeneratorTests.ArrayLiteral.verified.txt. | 13.2.4.1 |
+
+
+### [Object Initializer (ObjectLiteral)](https://tc39.es/ecma262/#sec-object-initializer)
+
+#### [ObjectLiteral](https://tc39.es/ecma262/#sec-object-initializer)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Object literal basic construction | Supported | `Js2IL.Tests/JavaScript/ObjectLiteral.js` | Covers creation and property access. See also verified output in GeneratorTests.ObjectLiteral.verified.txt. | 13.2.5.1 |
 
 
 ### [Unary Operators](https://tc39.es/ecma262/#sec-ecmascript-language-expressions)
@@ -107,82 +148,25 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Binary == (Equality) | Supported | `Js2IL.Tests/JavaScript/BinaryOperator_Equal.js` |  | 13.5.9 |
 
 
-### [Control Flow Statements](https://tc39.es/ecma262/#sec-ecmascript-language-statements-and-declarations)
+## [ECMAScript Language: Statements and Declarations](https://tc39.es/ecma262/#sec-ecmascript-language-statements-and-declarations)
 
-#### [if statement](https://tc39.es/ecma262/#sec-if-statement)
+### [The if Statement](https://tc39.es/ecma262/#sec-if-statement)
 
-| Feature | Status | Test Scripts | Notes | Section |
-|---|---|---|---|---|
-| if statement (LessThan) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_If_LessThan.js` |  | 13.6.7 |
-
-
-#### [for statement](https://tc39.es/ecma262/#sec-for-statement)
+#### [Runtime Semantics: Evaluation](https://tc39.es/ecma262/#sec-if-statement)
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| for loop (CountToFive) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_ForLoop_CountToFive.js` |  | 14.7.4 |
-| for loop (CountDownFromFive) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_ForLoop_CountDownFromFive.js` |  | 14.7.4 |
-| for loop (LessThanOrEqual) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_ForLoop_LessThanOrEqual.js` |  | 14.7.4 |
-| for loop (GreaterThanOrEqual) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_ForLoop_GreaterThanOrEqual.js` |  | 14.7.4 |
+| if statement (LessThan) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_If_LessThan.js` |  | 14.6.2 |
 
 
-## [Statements and Declarations](https://tc39.es/ecma262/#sec-ecmascript-language-statements-and-declarations)
+### [The for Statement](https://tc39.es/ecma262/#sec-for-statement)
 
-### [Declarations](https://tc39.es/ecma262/#sec-declarations)
-
-#### [let/const](https://tc39.es/ecma262/#sec-let-and-const-declarations)
+#### [Runtime Semantics: ForLoopEvaluation](https://tc39.es/ecma262/#sec-runtime-semantics-forloopevaluation)
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| let/const | Not Supported |  |  | 13.2.1 |
-
-
-#### [var](https://tc39.es/ecma262/#sec-variable-statement)
-
-| Feature | Status | Test Scripts | Notes | Section |
-|---|---|---|---|---|
-| var | Supported | `Js2IL.Tests/JavaScript/Function_GlobalFunctionChangesGlobalVariableValue.js`<br>`Js2IL.Tests/JavaScript/Function_GlobalFunctionDeclaresAndCallsNestedFunction.js`<br>`Js2IL.Tests/JavaScript/Function_GlobalFunctionLogsGlobalVariable.js` |  | 13.2.1 |
-
-
-#### [Function declarations](https://tc39.es/ecma262/#sec-function-definitions)
-
-| Feature | Status | Test Scripts | Notes | Section |
-|---|---|---|---|---|
-| Function declarations | Supported | `Js2IL.Tests/JavaScript/Function_HelloWorld.js` |  | 13.2.3 |
-| Arrow functions | Not Supported |  |  | 13.2.3 |
-
-
-#### [Default parameters, Rest parameters](https://tc39.es/ecma262/#sec-function-definitions-runtime-semantics-evaluation)
-
-| Feature | Status | Test Scripts | Notes | Section |
-|---|---|---|---|---|
-| Default parameters | Not Supported |  |  | 13.2.3.1 |
-| Rest parameters | Not Supported |  |  | 13.2.3.1 |
-
-
-#### [Spread syntax](https://tc39.es/ecma262/#sec-argument-lists-runtime-semantics-argumentlistevaluation)
-
-| Feature | Status | Test Scripts | Notes | Section |
-|---|---|---|---|---|
-| Spread syntax | Not Supported |  |  | 13.2.5 |
-
-
-## [Statements and Declarations](https://tc39.es/ecma262/#sec-ecmascript-language-statements-and-declarations)
-
-### [Array Initializer (ArrayLiteral)](https://tc39.es/ecma262/#sec-array-initializer)
-
-#### [ArrayLiteral](https://tc39.es/ecma262/#sec-array-initializer)
-
-| Feature | Status | Test Scripts | Notes | Section |
-|---|---|---|---|---|
-| Array literal basic construction | Supported | `Js2IL.Tests/JavaScript/ArrayLiteral.js` | Covers creation, element access, and length property. See also verified output in GeneratorTests.ArrayLiteral.verified.txt. | 13.2.4.1 |
-
-
-### [Object Initializer (ObjectLiteral)](https://tc39.es/ecma262/#sec-object-initializer)
-
-#### [ObjectLiteral](https://tc39.es/ecma262/#sec-object-initializer)
-
-| Feature | Status | Test Scripts | Notes | Section |
-|---|---|---|---|---|
-| Object literal basic construction | Supported | `Js2IL.Tests/JavaScript/ObjectLiteral.js` | Covers creation and property access. See also verified output in GeneratorTests.ObjectLiteral.verified.txt. | 13.2.5.1 |
+| for loop (CountToFive) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_ForLoop_CountToFive.js` |  | 14.7.4.2 |
+| for loop (CountDownFromFive) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_ForLoop_CountDownFromFive.js` |  | 14.7.4.2 |
+| for loop (LessThanOrEqual) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_ForLoop_LessThanOrEqual.js` |  | 14.7.4.2 |
+| for loop (GreaterThanOrEqual) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_ForLoop_GreaterThanOrEqual.js` |  | 14.7.4.2 |
 
