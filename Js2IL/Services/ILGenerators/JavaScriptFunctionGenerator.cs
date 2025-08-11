@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Js2IL.SymbolTables;
+using Js2IL.Utilities.Ecma335;
 
 namespace Js2IL.Services.ILGenerators
 {
@@ -45,54 +46,55 @@ namespace Js2IL.Services.ILGenerators
             var root = symbolTable.Root;
             var moduleName = root.Name;
 
-            // 1) Emit all top-level function methods first
+            // 1) Plan and emit top-level methods via a TypeBuilder per hosting strategy
             var topLevelFunctions = root.Children.Where(c => c.Kind == ScopeKind.Function && c.AstNode is FunctionDeclaration).ToList();
             var globalMethods = new List<(string Name, MethodDefinitionHandle Handle, Scope Scope, Variables Vars)>();
 
-            foreach (var funcScope in topLevelFunctions)
+            if (topLevelFunctions.Count > 1)
             {
+                // Module owner type under Functions namespace
+                var moduleTb = new TypeBuilder(_metadataBuilder, "Functions", moduleName);
+
+                foreach (var funcScope in topLevelFunctions)
+                {
+                    var functionDeclaration = (FunctionDeclaration)funcScope.AstNode!;
+                    var functionName = (functionDeclaration.Id as Identifier)!.Name;
+
+                    var paramNames = functionDeclaration.Params.OfType<Identifier>().Select(p => p.Name).ToArray();
+                    var functionVariables = new Variables(_variables, functionName, paramNames, isNestedFunction: false);
+                    var methodGenerator = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator);
+                    var methodDefinition = GenerateMethodForFunction(functionDeclaration, functionVariables, methodGenerator, funcScope, symbolTable, moduleTb);
+                    if (this._firstMethod.IsNil) _firstMethod = methodDefinition;
+
+                    globalMethods.Add((functionName, methodDefinition, funcScope, functionVariables));
+                }
+
+                // Define the module owner type after adding its methods
+                _moduleOwnerType = moduleTb.AddTypeDefinition(
+                    TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
+                    _bclReferences.ObjectType);
+            }
+            else if (topLevelFunctions.Count == 1)
+            {
+                // Single top-level function: per-function owner type for compatibility
+                var funcScope = topLevelFunctions[0];
                 var functionDeclaration = (FunctionDeclaration)funcScope.AstNode!;
                 var functionName = (functionDeclaration.Id as Identifier)!.Name;
+
+                var tb = new TypeBuilder(_metadataBuilder, "Functions", functionName);
 
                 var paramNames = functionDeclaration.Params.OfType<Identifier>().Select(p => p.Name).ToArray();
                 var functionVariables = new Variables(_variables, functionName, paramNames, isNestedFunction: false);
                 var methodGenerator = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator);
-                var methodDefinition = GenerateMethodForFunction(functionDeclaration, functionVariables, methodGenerator, funcScope, symbolTable);
+                var methodDefinition = GenerateMethodForFunction(functionDeclaration, functionVariables, methodGenerator, funcScope, symbolTable, tb);
                 if (this._firstMethod.IsNil) _firstMethod = methodDefinition;
 
                 globalMethods.Add((functionName, methodDefinition, funcScope, functionVariables));
-            }
 
-            // 2) Decide hosting strategy
-            if (globalMethods.Count > 1)
-            {
-                // Multiple top-level functions: create a module owner type to host all as methods
-                if (_moduleOwnerType.IsNil)
-                {
-                    var firstFieldForModule = MetadataTokens.FieldDefinitionHandle(_metadataBuilder.GetRowCount(TableIndex.Field) + 1);
-                    var firstMethodForModule = globalMethods[0].Handle;
-                    _moduleOwnerType = _metadataBuilder.AddTypeDefinition(
-                        TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
-                        _metadataBuilder.GetOrAddString("Functions"),
-                        _metadataBuilder.GetOrAddString(moduleName),
-                        _bclReferences.ObjectType,
-                        firstFieldForModule,
-                        firstMethodForModule);
-                }
-            }
-            else if (globalMethods.Count == 1)
-            {
-                // Single top-level function: keep per-function owner type for backward compatibility
-                var only = globalMethods[0];
-                var firstFieldForGlobal = MetadataTokens.FieldDefinitionHandle(_metadataBuilder.GetRowCount(TableIndex.Field) + 1);
-                var globalOwnerType = _metadataBuilder.AddTypeDefinition(
+                var globalOwnerType = tb.AddTypeDefinition(
                     TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
-                    _metadataBuilder.GetOrAddString("Functions"),
-                    _metadataBuilder.GetOrAddString(only.Name),
-                    _bclReferences.ObjectType,
-                    firstFieldForGlobal,
-                    only.Handle);
-                _globalFunctionOwnerTypes[only.Name] = globalOwnerType;
+                    _bclReferences.ObjectType);
+                _globalFunctionOwnerTypes[functionName] = globalOwnerType;
                 _moduleOwnerType = default; // not used in this mode
             }
 
@@ -105,6 +107,8 @@ namespace Js2IL.Services.ILGenerators
                 var nestedFunctions = funcScope.Children.Where(c => c.Kind == ScopeKind.Function && c.AstNode is FunctionDeclaration).ToList();
                 if (nestedFunctions.Count == 0) continue;
 
+                // Build a nested owner TypeBuilder for this outer function's nested methods
+                var nestedTb = new TypeBuilder(_metadataBuilder, "", outerName);
                 MethodDefinitionHandle firstNestedMethod = default;
                 foreach (var nestedScope in nestedFunctions)
                 {
@@ -113,21 +117,16 @@ namespace Js2IL.Services.ILGenerators
                     var nestedParamNames = nestedDecl.Params.OfType<Identifier>().Select(p => p.Name).ToArray();
                     var nestedVars = new Variables(functionVariables, nestedName, nestedParamNames, isNestedFunction: true);
                     var nestedGen = new ILMethodGenerator(nestedVars, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator);
-                    var nestedMethod = GenerateMethodForFunction(nestedDecl, nestedVars, nestedGen, nestedScope, symbolTable);
+                    var nestedMethod = GenerateMethodForFunction(nestedDecl, nestedVars, nestedGen, nestedScope, symbolTable, nestedTb);
                     if (firstNestedMethod.IsNil) firstNestedMethod = nestedMethod;
                     if (this._firstMethod.IsNil) _firstMethod = nestedMethod;
                 }
 
                 if (!firstNestedMethod.IsNil)
                 {
-                    var firstFieldForNested = MetadataTokens.FieldDefinitionHandle(_metadataBuilder.GetRowCount(TableIndex.Field) + 1);
-                    var nestedHandle = _metadataBuilder.AddTypeDefinition(
+                    var nestedHandle = nestedTb.AddTypeDefinition(
                         TypeAttributes.NestedPublic | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
-                        _metadataBuilder.GetOrAddString(""),
-                        _metadataBuilder.GetOrAddString(outerName),
-                        _bclReferences.ObjectType,
-                        firstFieldForNested,
-                        firstNestedMethod);
+                        _bclReferences.ObjectType);
                     var parent = !_moduleOwnerType.IsNil ? _moduleOwnerType : (_globalFunctionOwnerTypes.TryGetValue(outerName, out var t) ? t : default);
                     if (!parent.IsNil)
                     {
@@ -175,7 +174,7 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-        public MethodDefinitionHandle GenerateMethodForFunction(FunctionDeclaration functionDeclaration, Variables functionVariables, ILMethodGenerator methodGenerator, Scope? functionScope = null, SymbolTable? symbolTable = null)
+    public MethodDefinitionHandle GenerateMethodForFunction(FunctionDeclaration functionDeclaration, Variables functionVariables, ILMethodGenerator methodGenerator, Scope? functionScope = null, SymbolTable? symbolTable = null, TypeBuilder? typeBuilder = null)
         {
             var functionName = (functionDeclaration.Id as Acornima.Ast.Identifier)!.Name;
 
@@ -324,10 +323,14 @@ namespace Js2IL.Services.ILGenerators
                 }
             }
 
-            var methodDefinition = _metadataBuilder.AddMethodDefinition(
+            if (typeBuilder is null)
+            {
+                throw new InvalidOperationException("TypeBuilder is required for method emission.");
+            }
+
+            var methodDefinition = typeBuilder.AddMethodDefinition(
                 MethodAttributes.Static | MethodAttributes.Public,
-                MethodImplAttributes.IL,
-                _metadataBuilder.GetOrAddString(functionName),
+                functionName,
                 methodSig,
                 bodyoffset,
                 parameterList: firstParamHandle);

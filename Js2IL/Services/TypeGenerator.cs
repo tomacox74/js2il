@@ -5,6 +5,7 @@ using System.Reflection;
 using Js2IL.SymbolTables;
 using Js2IL.Services.VariableBindings;
 using System.Linq;
+using Js2IL.Utilities.Ecma335;
 
 namespace Js2IL.Services
 {
@@ -59,7 +60,7 @@ namespace Js2IL.Services
         }
 
 
-        private void CreateTypeFields(Scope scope)
+    private void CreateTypeFields(Scope scope, TypeBuilder typeBuilder)
         {
             // Create fields for this scope
             _scopeFields[scope.Name] = new List<FieldDefinitionHandle>();
@@ -89,9 +90,9 @@ namespace Js2IL.Services
                 var fieldAttributes = GetFieldAttributes(binding.Kind);
 
                 // Create the field definition
-                var fieldHandle = _metadataBuilder.AddFieldDefinition(
+                var fieldHandle = typeBuilder.AddFieldDefinition(
                     fieldAttributes,
-                    _metadataBuilder.GetOrAddString(binding.Name),
+                    binding.Name,
                     fieldSignatureHandle
                 );
 
@@ -199,33 +200,27 @@ namespace Js2IL.Services
         /// </summary>
         private TypeDefinitionHandle CreateScopeType(Scope scope, TypeDefinitionHandle? parentType, string typeName, string namespaceString)
         {
-            CreateTypeFields(scope);
-
             // Set appropriate visibility: Public for root types, NestedPublic for nested types
             var typeAttributes = parentType.HasValue 
                 ? TypeAttributes.NestedPublic | TypeAttributes.Class | TypeAttributes.BeforeFieldInit
                 : TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
 
-            // Calculate the correct field handle for this type
-            var scopeFields = _scopeFields[scope.Name];
-            var firstField = scopeFields.Count > 0 
-                ? scopeFields[0] 
-                : MetadataTokens.FieldDefinitionHandle(_metadataBuilder.GetRowCount(TableIndex.Field) + 1);
-
-            // Create the constructor for this type
-            var ctorHandle = CreateScopeConstructor();
-
             // For nested types, use empty namespace; for root types, use the provided namespace
             var actualNamespace = parentType.HasValue ? "" : namespaceString;
 
+            // Initialize TypeBuilder for this type (handles field/method tracking and first-method/field invariants)
+            var tb = new TypeBuilder(_metadataBuilder, actualNamespace, typeName);
+
+            // Create fields via TypeBuilder so it can track the first field
+            CreateTypeFields(scope, tb);
+
+            // Create the constructor for this type via TypeBuilder so it can track the first method
+            var ctorHandle = CreateScopeConstructor(tb);
+
             // Create the type definition
-            var typeHandle = _metadataBuilder.AddTypeDefinition(
+            var typeHandle = tb.AddTypeDefinition(
                 typeAttributes,
-                _metadataBuilder.GetOrAddString(actualNamespace),
-                _metadataBuilder.GetOrAddString(typeName),
-                _bclReferences.ObjectType, // base type
-                firstField, // first field for this type
-                ctorHandle // first method for this type (the constructor)
+                _bclReferences.ObjectType // base type
             );
 
             // If this is a nested type, establish the nesting relationship
@@ -244,7 +239,7 @@ namespace Js2IL.Services
         /// <summary>
         /// Creates a constructor method definition for a scope type.
         /// </summary>
-        private MethodDefinitionHandle CreateScopeConstructor()
+    private MethodDefinitionHandle CreateScopeConstructor(TypeBuilder tb)
         {
             // Create constructor method signature
             var ctorSig = new BlobBuilder();
@@ -276,13 +271,11 @@ namespace Js2IL.Services
                 attributes: MethodBodyAttributes.None);
 
             // Create the constructor method definition with IL body
-            var ctorHandle = _metadataBuilder.AddMethodDefinition(
+            var ctorHandle = tb.AddMethodDefinition(
                 MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
-                MethodImplAttributes.IL,
-                _metadataBuilder.GetOrAddString(".ctor"),
+                ".ctor",
                 ctorSigHandle,
-                bodyOffset, // IL body offset in the stream
-                parameterList: MetadataTokens.ParameterHandle(_metadataBuilder.GetRowCount(TableIndex.Param) + 1)
+                bodyOffset // IL body offset in the stream
             );
 
             return ctorHandle;
@@ -317,19 +310,9 @@ namespace Js2IL.Services
         /// </summary>
         public TypeDefinitionHandle GetScopeType(string scopeName)
         {
-            return _scopeTypes.TryGetValue(scopeName, out var typeHandle) 
-                ? typeHandle 
+            return _scopeTypes.TryGetValue(scopeName, out var typeHandle)
+                ? typeHandle
                 : default;
-        }
-
-        /// <summary>
-        /// Gets the field handles for a scope by name.
-        /// </summary>
-        public IReadOnlyList<FieldDefinitionHandle> GetScopeFields(string scopeName)
-        {
-            return _scopeFields.TryGetValue(scopeName, out var fields) 
-                ? fields 
-                : new List<FieldDefinitionHandle>();
         }
 
         /// <summary>

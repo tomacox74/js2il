@@ -9,6 +9,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Reflection;
 using Js2IL.Services;
 using Js2IL.SymbolTables;
+using Js2IL.Utilities.Ecma335;
 
 namespace Js2IL.Dispatch
 {
@@ -109,7 +110,8 @@ namespace Js2IL.Dispatch
                 return; // No functions to generate
             }
 
-            FieldDefinitionHandle firstField = default;
+            // Use TypeBuilder to create DispatchTable type and its fields
+            var tb = new TypeBuilder(_metadataBuilder, "", "DispatchTable");
 
             // Add a field for each function
             foreach (var function in _functions)
@@ -143,29 +145,18 @@ namespace Js2IL.Dispatch
                     throw new NotSupportedException("Only up to 1 parameter supported currently");
                 }
                 var fieldSignature = _metadataBuilder.GetOrAddBlob(blobBuilder);
-                var field = _metadataBuilder.AddFieldDefinition(
+                var fieldHandle = tb.AddFieldDefinition(
                     FieldAttributes.Public | FieldAttributes.Static,
-                    _metadataBuilder.GetOrAddString(function.Name),
+                    function.Name,
                     fieldSignature);
 
-                if (firstField.IsNil)
-                {
-                    firstField = field;
-                }
-
-                function.FieldDefinitionHandle = field;
+                function.FieldDefinitionHandle = fieldHandle;
             }
 
             // create the DispatchTable class
-            MethodDefinitionHandle noMethods = MetadataTokens.MethodDefinitionHandle(_metadataBuilder.GetRowCount(TableIndex.MethodDef) + 1);
-            _metadataBuilder.AddTypeDefinition(
+            tb.AddTypeDefinition(
                 TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.Abstract | TypeAttributes.BeforeFieldInit,
-                _metadataBuilder.GetOrAddString(""),
-                _metadataBuilder.GetOrAddString("DispatchTable"),
-                _bclReferences.ObjectType,
-                firstField,
-                noMethods
-            );
+                _bclReferences.ObjectType);
         }
 
         public FieldDefinitionHandle SetMethodDefinitionHandle(string methodName, MethodDefinitionHandle methodHandle)
@@ -237,25 +228,19 @@ namespace Js2IL.Dispatch
                 localVariablesSignature: default,
                 attributes: MethodBodyAttributes.None);
 
-            var loaderMethod = _metadataBuilder.AddMethodDefinition(
+            // Use TypeBuilder to define the _Loader type and attach the loader method as first method
+            var tbLoader = new TypeBuilder(_metadataBuilder, "Functions", "_Loader");
+
+            var loaderMethod = tbLoader.AddMethodDefinition(
                 MethodAttributes.Static | MethodAttributes.Public,
-                MethodImplAttributes.IL,
-                _metadataBuilder.GetOrAddString(LoadDispatchTableMethod),
+                LoadDispatchTableMethod,
                 methodSig,
-                bodyOffset,
-                parameterList: MetadataTokens.ParameterHandle(_metadataBuilder.GetRowCount(TableIndex.Param) + 1)
+                bodyOffset
             );
 
-            // Now create the Functions._Loader owner type and set its first method to the loader method
-            var firstField = MetadataTokens.FieldDefinitionHandle(_metadataBuilder.GetRowCount(TableIndex.Field) + 1);
-            _metadataBuilder.AddTypeDefinition(
+            tbLoader.AddTypeDefinition(
                 TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.Abstract | TypeAttributes.BeforeFieldInit,
-                _metadataBuilder.GetOrAddString("Functions"),
-                _metadataBuilder.GetOrAddString("_Loader"),
-                _bclReferences.ObjectType,
-                firstField,
-                loaderMethod
-            );
+                _bclReferences.ObjectType);
 
             return loaderMethod;
         }

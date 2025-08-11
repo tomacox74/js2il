@@ -4,6 +4,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
 using Js2IL.Services.ILGenerators;
 using Js2IL.SymbolTables;
+using Js2IL.Utilities.Ecma335;
 
 namespace Js2IL.Services
 {
@@ -62,15 +63,11 @@ namespace Js2IL.Services
         {
             createAssemblyMetadata(name);
 
-            // Add the <Module> type first (as required by .NET metadata)
-            _metadataBuilder.AddTypeDefinition(
-                TypeAttributes.NotPublic,                          // Access flags
-                default(StringHandle),                             // No namespace
-                _metadataBuilder.GetOrAddString("<Module>"),       // Name
-                baseType: default(EntityHandle),                   // No base type
-                fieldList: MetadataTokens.FieldDefinitionHandle(1), // First field
-                methodList: MetadataTokens.MethodDefinitionHandle(1) // First method
-            );
+            // Add the <Module> type first (as required by .NET metadata) using TypeBuilder
+            var moduleTypeBuilder = new TypeBuilder(_metadataBuilder, "", "<Module>");
+            moduleTypeBuilder.AddTypeDefinition(
+                TypeAttributes.NotPublic,
+                baseType: default(EntityHandle));
 
             // the API for generating IL is a little confusing
             // there is 1 MethodBodyStreamEncoder for all methods in the assembly
@@ -100,32 +97,20 @@ namespace Js2IL.Services
 
 
             // Emit IL: return.
-            var mainGenerator = new MainGenerator(_variables!, _bclReferences, _metadataBuilder, methodBodyStream, dispatchTableGenerator, symbolTable);
+            // Prepare a TypeBuilder for the Program type and pass it to MainGenerator
+            var programTypeBuilder = new TypeBuilder(_metadataBuilder, "", "Program");
+            var mainGenerator = new MainGenerator(_variables!, _bclReferences, _metadataBuilder, methodBodyStream, dispatchTableGenerator, symbolTable, programTypeBuilder);
             var bodyOffset = mainGenerator.GenerateMethod(ast);
-            var parameterList = MetadataTokens.ParameterHandle(_metadataBuilder.GetRowCount(TableIndex.Param) + 1);
-            this._entryPoint = _metadataBuilder.AddMethodDefinition(
+            this._entryPoint = programTypeBuilder.AddMethodDefinition(
                 MethodAttributes.Static | MethodAttributes.Public,
-                MethodImplAttributes.IL,
-                _metadataBuilder.GetOrAddString("Main"),
+                "Main",
                 methodSig,
-                bodyOffset,
-                parameterList: parameterList);
+                bodyOffset);
 
-            var nextField = MetadataTokens.FieldDefinitionHandle(_metadataBuilder.GetRowCount(TableIndex.Field) + 1);
-
-            // Program type should own only Main; other methods belong to their respective owner types
-            var firstMethod = this._entryPoint;
-        
-            // Define the Program type.
-            // var appNamespace = assemblyName;
-            var programTypeDef = _metadataBuilder.AddTypeDefinition(
+            // Define the Program type via TypeBuilder
+            var programTypeDef = programTypeBuilder.AddTypeDefinition(
                 TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
-                _metadataBuilder.GetOrAddString(""),
-                _metadataBuilder.GetOrAddString("Program"),
-                _bclReferences.ObjectType,
-                nextField,
-                firstMethod
-            );
+                _bclReferences.ObjectType);
 
             this.CreateAssembly(name, outputPath);
         }
