@@ -190,7 +190,7 @@ namespace Js2IL.Dispatch
                 return default; // No functions to generate
             }
 
-            // Create the method signature for the LoadDispatchTable method.
+            // Create the method signature for the LoadDispatchTable method first.
             var sigBuilder = new BlobBuilder();
             new BlobEncoder(sigBuilder)
                 .MethodSignature()
@@ -237,7 +237,7 @@ namespace Js2IL.Dispatch
                 localVariablesSignature: default,
                 attributes: MethodBodyAttributes.None);
 
-            return _metadataBuilder.AddMethodDefinition(
+            var loaderMethod = _metadataBuilder.AddMethodDefinition(
                 MethodAttributes.Static | MethodAttributes.Public,
                 MethodImplAttributes.IL,
                 _metadataBuilder.GetOrAddString(LoadDispatchTableMethod),
@@ -245,6 +245,19 @@ namespace Js2IL.Dispatch
                 bodyOffset,
                 parameterList: MetadataTokens.ParameterHandle(_metadataBuilder.GetRowCount(TableIndex.Param) + 1)
             );
+
+            // Now create the Functions._Loader owner type and set its first method to the loader method
+            var firstField = MetadataTokens.FieldDefinitionHandle(_metadataBuilder.GetRowCount(TableIndex.Field) + 1);
+            _metadataBuilder.AddTypeDefinition(
+                TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.Abstract | TypeAttributes.BeforeFieldInit,
+                _metadataBuilder.GetOrAddString("Functions"),
+                _metadataBuilder.GetOrAddString("_Loader"),
+                _bclReferences.ObjectType,
+                firstField,
+                loaderMethod
+            );
+
+            return loaderMethod;
         }
     }
 }

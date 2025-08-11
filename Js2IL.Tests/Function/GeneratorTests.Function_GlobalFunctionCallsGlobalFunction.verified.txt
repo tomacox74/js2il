@@ -78,7 +78,7 @@
 
 } // end of class DispatchTable
 
-.class public auto ansi beforefieldinit Program
+.class public auto ansi abstract sealed beforefieldinit Functions.Function_GlobalFunctionCallsGlobalFunction
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -120,7 +120,7 @@
 		IL_003d: pop
 		IL_003e: ldnull
 		IL_003f: ret
-	} // end of method Program::helloWorldProxy
+	} // end of method Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
 
 	.method public static 
 		object helloWorld (
@@ -146,8 +146,14 @@
 		IL_001f: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_0024: ldnull
 		IL_0025: ret
-	} // end of method Program::helloWorld
+	} // end of method Function_GlobalFunctionCallsGlobalFunction::helloWorld
 
+} // end of class Functions.Function_GlobalFunctionCallsGlobalFunction
+
+.class public auto ansi abstract sealed beforefieldinit Functions._Loader
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public static 
 		void _LoadDispatchTable () cil managed 
 	{
@@ -157,16 +163,22 @@
 		.maxstack 8
 
 		IL_0000: ldnull
-		IL_0001: ldftn object Program::helloWorldProxy(object[])
+		IL_0001: ldftn object Functions.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy(object[])
 		IL_0007: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_000c: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::helloWorldProxy
 		IL_0011: ldnull
-		IL_0012: ldftn object Program::helloWorld(object[])
+		IL_0012: ldftn object Functions.Function_GlobalFunctionCallsGlobalFunction::helloWorld(object[])
 		IL_0018: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_001d: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::helloWorld
 		IL_0022: ret
-	} // end of method Program::_LoadDispatchTable
+	} // end of method _Loader::_LoadDispatchTable
 
+} // end of class Functions._Loader
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public static 
 		void Main () cil managed 
 	{
@@ -181,7 +193,7 @@
 
 		IL_0000: newobj instance void Scopes.Function_GlobalFunctionCallsGlobalFunction::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call void Program::_LoadDispatchTable()
+		IL_0006: call void Functions._Loader::_LoadDispatchTable()
 		IL_000b: ldloc.0
 		IL_000c: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::helloWorldProxy
 		IL_0011: stfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy

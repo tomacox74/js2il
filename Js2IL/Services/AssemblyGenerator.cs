@@ -113,8 +113,8 @@ namespace Js2IL.Services
 
             var nextField = MetadataTokens.FieldDefinitionHandle(_metadataBuilder.GetRowCount(TableIndex.Field) + 1);
 
-            // I smell a refactor is needed how we track method lists
-            var firstMethod = mainGenerator.FirstMethod.IsNil ? this._entryPoint : mainGenerator.FirstMethod;
+            // Program type should own only Main; other methods belong to their respective owner types
+            var firstMethod = this._entryPoint;
         
             // Define the Program type.
             // var appNamespace = assemblyName;

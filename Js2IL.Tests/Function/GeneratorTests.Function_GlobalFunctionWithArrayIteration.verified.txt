@@ -82,7 +82,7 @@
 
 } // end of class DispatchTable
 
-.class public auto ansi beforefieldinit Program
+.class public auto ansi abstract sealed beforefieldinit Functions.printArray
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -161,8 +161,14 @@
 
 		IL_00d3: ldnull
 		IL_00d4: ret
-	} // end of method Program::printArray
+	} // end of method printArray::printArray
 
+} // end of class Functions.printArray
+
+.class public auto ansi abstract sealed beforefieldinit Functions._Loader
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public static 
 		void _LoadDispatchTable () cil managed 
 	{
@@ -172,12 +178,18 @@
 		.maxstack 8
 
 		IL_0000: ldnull
-		IL_0001: ldftn object Program::printArray(object[])
+		IL_0001: ldftn object Functions.printArray::printArray(object[])
 		IL_0007: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_000c: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::printArray
 		IL_0011: ret
-	} // end of method Program::_LoadDispatchTable
+	} // end of method _Loader::_LoadDispatchTable
 
+} // end of class Functions._Loader
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public static 
 		void Main () cil managed 
 	{
@@ -195,7 +207,7 @@
 		IL_0005: stloc.0
 		IL_0006: newobj instance void Scopes.Function_GlobalFunctionWithArrayIteration/printArray::.ctor()
 		IL_000b: stloc.1
-		IL_000c: call void Program::_LoadDispatchTable()
+		IL_000c: call void Functions._Loader::_LoadDispatchTable()
 		IL_0011: ldloc.0
 		IL_0012: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::printArray
 		IL_0017: stfld object Scopes.Function_GlobalFunctionWithArrayIteration::printArray
