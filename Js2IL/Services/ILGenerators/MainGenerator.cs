@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using Js2IL.SymbolTables;
+using Js2IL.Utilities.Ecma335;
 
 namespace Js2IL.Services.ILGenerators
 {
@@ -17,8 +18,8 @@ namespace Js2IL.Services.ILGenerators
         private SymbolTable _symbolTable;
 
         private Dispatch.DispatchTableGenerator _dispatchTableGenerator;
+    private readonly TypeBuilder? _programTypeBuilder;
 
-        public MethodDefinitionHandle FirstMethod { get; private set; }
 
         public MainGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator, SymbolTable symbolTable)
         {
@@ -32,6 +33,12 @@ namespace Js2IL.Services.ILGenerators
             _ilGenerator = new ILMethodGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator);
             _functionGenerator = new JavaScriptFunctionGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator);
             this._methodBodyStreamEncoder = methodBodyStreamEncoder;
+        }
+
+        public MainGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator, SymbolTable symbolTable, TypeBuilder programTypeBuilder)
+            : this(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, dispatchTableGenerator, symbolTable)
+        {
+            _programTypeBuilder = programTypeBuilder ?? throw new ArgumentNullException(nameof(programTypeBuilder));
         }
 
         /// <summary>
@@ -170,7 +177,7 @@ namespace Js2IL.Services.ILGenerators
                 methodBodyAttributes = MethodBodyAttributes.InitLocals;
             }
 
-            FirstMethod = !_functionGenerator.FirstMethod.IsNil ? _functionGenerator.FirstMethod : _ilGenerator.FirstMethod;
+            // First method tracking is now handled by the specific generators that own method emission.
 
             return _methodBodyStreamEncoder.AddMethodBody(
                 _ilGenerator.IL,
