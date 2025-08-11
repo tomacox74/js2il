@@ -56,7 +56,7 @@
 
 } // end of class DispatchTable
 
-.class public auto ansi beforefieldinit Program
+.class public auto ansi abstract sealed beforefieldinit Functions.printValue
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -84,8 +84,14 @@
 		IL_0012: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_0017: ldnull
 		IL_0018: ret
-	} // end of method Program::printValue
+	} // end of method printValue::printValue
 
+} // end of class Functions.printValue
+
+.class public auto ansi abstract sealed beforefieldinit Functions._Loader
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public static 
 		void _LoadDispatchTable () cil managed 
 	{
@@ -95,12 +101,18 @@
 		.maxstack 8
 
 		IL_0000: ldnull
-		IL_0001: ldftn object Program::printValue(object[], object)
+		IL_0001: ldftn object Functions.printValue::printValue(object[], object)
 		IL_0007: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_000c: stsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::printValue
 		IL_0011: ret
-	} // end of method Program::_LoadDispatchTable
+	} // end of method _Loader::_LoadDispatchTable
 
+} // end of class Functions._Loader
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public static 
 		void Main () cil managed 
 	{
@@ -115,7 +127,7 @@
 
 		IL_0000: newobj instance void Scopes.Function_GlobalFunctionWithParameter::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call void Program::_LoadDispatchTable()
+		IL_0006: call void Functions._Loader::_LoadDispatchTable()
 		IL_000b: ldloc.0
 		IL_000c: ldsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::printValue
 		IL_0011: stfld object Scopes.Function_GlobalFunctionWithParameter::printValue

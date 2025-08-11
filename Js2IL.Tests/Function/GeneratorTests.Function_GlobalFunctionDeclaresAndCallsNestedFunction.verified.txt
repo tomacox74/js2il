@@ -84,9 +84,38 @@
 
 } // end of class DispatchTable
 
-.class public auto ansi beforefieldinit Program
+.class public auto ansi abstract sealed beforefieldinit Functions.outerFunction
 	extends [System.Runtime]System.Object
 {
+	// Nested Types
+	.class nested public auto ansi abstract sealed beforefieldinit outerFunction
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public static 
+			object innerFunction (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x20ec
+			// Header size: 1
+			// Code size: 25 (0x19)
+			.maxstack 8
+
+			IL_0000: ldc.i4.1
+			IL_0001: newarr [System.Runtime]System.Object
+			IL_0006: dup
+			IL_0007: ldc.i4.0
+			IL_0008: ldstr "Inside nested function"
+			IL_000d: stelem.ref
+			IL_000e: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_0013: ldstr "nested result"
+			IL_0018: ret
+		} // end of method outerFunction::innerFunction
+
+	} // end of class outerFunction
+
+
 	// Methods
 	.method public static 
 		object outerFunction (
@@ -145,29 +174,14 @@
 		IL_0069: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_006e: ldstr "outer result"
 		IL_0073: ret
-	} // end of method Program::outerFunction
+	} // end of method outerFunction::outerFunction
 
-	.method public static 
-		object innerFunction (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x20ec
-		// Header size: 1
-		// Code size: 25 (0x19)
-		.maxstack 8
+} // end of class Functions.outerFunction
 
-		IL_0000: ldc.i4.1
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldstr "Inside nested function"
-		IL_000d: stelem.ref
-		IL_000e: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0013: ldstr "nested result"
-		IL_0018: ret
-	} // end of method Program::innerFunction
-
+.class public auto ansi abstract sealed beforefieldinit Functions._Loader
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public static 
 		void _LoadDispatchTable () cil managed 
 	{
@@ -177,16 +191,22 @@
 		.maxstack 8
 
 		IL_0000: ldnull
-		IL_0001: ldftn object Program::outerFunction(object[])
+		IL_0001: ldftn object Functions.outerFunction::outerFunction(object[])
 		IL_0007: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_000c: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::outerFunction
 		IL_0011: ldnull
-		IL_0012: ldftn object Program::innerFunction(object[])
+		IL_0012: ldftn object Functions.outerFunction/outerFunction::innerFunction(object[])
 		IL_0018: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_001d: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::innerFunction
 		IL_0022: ret
-	} // end of method Program::_LoadDispatchTable
+	} // end of method _Loader::_LoadDispatchTable
 
+} // end of class Functions._Loader
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public static 
 		void Main () cil managed 
 	{
@@ -204,7 +224,7 @@
 		IL_0005: stloc.0
 		IL_0006: newobj instance void Scopes.Function_GlobalFunctionDeclaresAndCallsNestedFunction/outerFunction::.ctor()
 		IL_000b: stloc.1
-		IL_000c: call void Program::_LoadDispatchTable()
+		IL_000c: call void Functions._Loader::_LoadDispatchTable()
 		IL_0011: ldloc.0
 		IL_0012: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::outerFunction
 		IL_0017: stfld object Scopes.Function_GlobalFunctionDeclaresAndCallsNestedFunction::outerFunction
