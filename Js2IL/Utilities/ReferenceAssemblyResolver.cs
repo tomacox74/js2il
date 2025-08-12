@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.InteropServices;
 
 public static class ReferenceAssemblyResolver
 {
@@ -18,12 +19,27 @@ public static class ReferenceAssemblyResolver
             return false;
         }
 
-        // Look through each version folder, e.g., 6.0.0, 7.0.2
+        // Determine the current runtime major.minor (e.g., 8.0)
+        var current = Environment.Version; // e.g., 8.0.x
+        var currentMajorMinor = new Version(current.Major, current.Minor);
+
+        // Look through each version folder, e.g., 6.0.0, 7.0.2, sorted descending
         var versionDirs = Directory.GetDirectories(refPackBase)
             .Where(dir => Version.TryParse(Path.GetFileName(dir), out _))
             .OrderByDescending(dir => Version.Parse(Path.GetFileName(dir)!));
 
-        foreach (var versionDir in versionDirs)
+        // Try to find a pack version with the same major.minor as current runtime first
+        var preferredVersionDir = versionDirs.FirstOrDefault(dir =>
+        {
+            var v = Version.Parse(Path.GetFileName(dir)!);
+            return v.Major == currentMajorMinor.Major && v.Minor == currentMajorMinor.Minor;
+        });
+
+        IEnumerable<string> searchDirs = preferredVersionDir != null
+            ? new[] { preferredVersionDir }
+            : versionDirs;
+
+        foreach (var versionDir in searchDirs)
         {
             string refDir = Path.Combine(versionDir, "ref");
 
@@ -35,7 +51,12 @@ public static class ReferenceAssemblyResolver
                 .Where(name => name != null && name.StartsWith("net") && Version.TryParse(name.Substring(3), out _))
                 .OrderByDescending(name => Version.Parse(name!.Substring(3)));
 
-            foreach (var tfm in tfmDirs)
+            // Prefer TFM that matches current runtime major.minor (e.g., net8.0)
+            string preferredTfm = $"net{currentMajorMinor.Major}.{currentMajorMinor.Minor}";
+            var orderedTfms = tfmDirs
+                .OrderByDescending(name => string.Equals(name, preferredTfm, StringComparison.OrdinalIgnoreCase))
+                .ThenByDescending(name => Version.Parse(name!.Substring(3)));
+            foreach (var tfm in orderedTfms)
             {
                 string candidate = Path.Combine(refDir, tfm!, "System.Runtime.dll");
                 if (File.Exists(candidate))

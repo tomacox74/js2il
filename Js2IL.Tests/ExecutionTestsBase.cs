@@ -4,6 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.IO;
+using System.Text;
+using System.Runtime.Loader;
 
 namespace Js2IL.Tests
 {
@@ -46,8 +49,8 @@ namespace Js2IL.Tests
 
             var expectedPath = Path.Combine(_outputPath, $"{testName}.dll");
 
-            var il = ExecuteGeneratedAssembly(expectedPath);
-            //ExecuteGeneratedAssemblyInProc(expectedPath);
+            // Run in-proc to avoid process startup overhead and capture output.
+            var il = ExecuteGeneratedAssemblyInProc(expectedPath);
             
             var settings = new VerifySettings(_verifySettings);
             var directory = Path.GetDirectoryName(sourceFilePath);
@@ -87,17 +90,60 @@ namespace Js2IL.Tests
 
         private string ExecuteGeneratedAssemblyInProc(string assemblyPath)
         {
-            var assembly = Assembly.LoadFrom(assemblyPath);
-            var entryPoint = assembly.EntryPoint;
-            if (entryPoint == null)
+            // Capture System.Console output written by the generated program.
+            var originalOut = System.Console.Out;
+            var originalErr = System.Console.Error;
+            var sb = new StringBuilder();
+            using var writer = new StringWriter(sb);
+            try
             {
-                throw new InvalidOperationException("No entry point found in the generated assembly.");
-            }
-            var parameters = entryPoint.GetParameters().Select(p => p.ParameterType).ToArray();
-            var instance = Activator.CreateInstance(assembly.GetType(entryPoint.DeclaringType!.FullName!)!);
-            entryPoint.Invoke(instance, parameters.Length == 0 ? null : new object[] { });
+                System.Console.SetOut(writer);
+                System.Console.SetError(writer);
 
-            return "Execution completed successfully.";
+                // Use isolated ALC so dependencies (JavaScriptRuntime, System.Runtime ref) resolve from output folder
+                var alc = new IsolatedLoadContext(Path.GetDirectoryName(assemblyPath)!);
+                var assembly = alc.LoadFromAssemblyPath(assemblyPath);
+                var entryPoint = assembly.EntryPoint;
+                if (entryPoint == null)
+                {
+                    throw new InvalidOperationException("No entry point found in the generated assembly.");
+                }
+
+                // Generated Program.Main has no parameters and is static.
+                var paramInfos = entryPoint.GetParameters();
+                object?[]? args = paramInfos.Length == 0 ? null : new object?[] { Array.Empty<string>() };
+                entryPoint.Invoke(null, args);
+
+                writer.Flush();
+                var output = sb.ToString();
+                alc.Unload();
+                return output;
+            }
+            finally
+            {
+                System.Console.SetOut(originalOut);
+                System.Console.SetError(originalErr);
+            }
+        }
+
+        private sealed class IsolatedLoadContext : AssemblyLoadContext
+        {
+            private readonly AssemblyDependencyResolver _resolver;
+
+            public IsolatedLoadContext(string mainAssemblyDir) : base(isCollectible: true)
+            {
+                _resolver = new AssemblyDependencyResolver(mainAssemblyDir);
+            }
+
+            protected override Assembly? Load(AssemblyName assemblyName)
+            {
+                string? path = _resolver.ResolveAssemblyToPath(assemblyName);
+                if (path != null && File.Exists(path))
+                {
+                    return LoadFromAssemblyPath(path);
+                }
+                return null;
+            }
         }
 
         private string GetJavaScript(string testName)
