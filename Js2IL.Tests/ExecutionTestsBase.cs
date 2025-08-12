@@ -50,7 +50,21 @@ namespace Js2IL.Tests
             var expectedPath = Path.Combine(_outputPath, $"{testName}.dll");
 
             // Run in-proc to avoid process startup overhead and capture output.
-            var il = ExecuteGeneratedAssemblyInProc(expectedPath);
+            string il;
+            try
+            {
+                il = ExecuteGeneratedAssemblyInProc(expectedPath);
+                if (string.IsNullOrWhiteSpace(il))
+                {
+                    // Fallback for environments where in-proc capture may miss output
+                    il = ExecuteGeneratedAssembly(expectedPath);
+                }
+            }
+            catch
+            {
+                // Fallback to out-of-proc execution on error (e.g., assembly binding issues)
+                il = ExecuteGeneratedAssembly(expectedPath);
+            }
             
             var settings = new VerifySettings(_verifySettings);
             var directory = Path.GetDirectoryName(sourceFilePath);
@@ -100,9 +114,15 @@ namespace Js2IL.Tests
                 System.Console.SetOut(writer);
                 System.Console.SetError(writer);
 
-                // Use isolated ALC so dependencies (JavaScriptRuntime, System.Runtime ref) resolve from output folder
-                var alc = new IsolatedLoadContext(Path.GetDirectoryName(assemblyPath)!);
-                var assembly = alc.LoadFromAssemblyPath(assemblyPath);
+                // Preload JavaScriptRuntime dependency and load test assembly in Default ALC so framework resolves on the agent
+                var dir = Path.GetDirectoryName(assemblyPath)!;
+                var jsRuntimePath = Path.Combine(dir, "JavaScriptRuntime.dll");
+                if (File.Exists(jsRuntimePath))
+                {
+                    // Ignore if already loaded
+                    try { AssemblyLoadContext.Default.LoadFromAssemblyPath(jsRuntimePath); } catch { }
+                }
+                var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
                 var entryPoint = assembly.EntryPoint;
                 if (entryPoint == null)
                 {
@@ -116,7 +136,6 @@ namespace Js2IL.Tests
 
                 writer.Flush();
                 var output = sb.ToString();
-                alc.Unload();
                 return output;
             }
             finally
@@ -126,25 +145,6 @@ namespace Js2IL.Tests
             }
         }
 
-        private sealed class IsolatedLoadContext : AssemblyLoadContext
-        {
-            private readonly AssemblyDependencyResolver _resolver;
-
-            public IsolatedLoadContext(string mainAssemblyDir) : base(isCollectible: true)
-            {
-                _resolver = new AssemblyDependencyResolver(mainAssemblyDir);
-            }
-
-            protected override Assembly? Load(AssemblyName assemblyName)
-            {
-                string? path = _resolver.ResolveAssemblyToPath(assemblyName);
-                if (path != null && File.Exists(path))
-                {
-                    return LoadFromAssemblyPath(path);
-                }
-                return null;
-            }
-        }
 
         private string GetJavaScript(string testName)
         {
