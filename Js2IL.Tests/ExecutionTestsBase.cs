@@ -51,19 +51,32 @@ namespace Js2IL.Tests
 
             // Run in-proc to avoid process startup overhead and capture output.
             string il;
+            bool usedFallback = false;
+            string? fallbackReason = null;
             try
             {
                 il = ExecuteGeneratedAssemblyInProc(expectedPath);
                 if (string.IsNullOrWhiteSpace(il))
                 {
                     // Fallback for environments where in-proc capture may miss output
+                    usedFallback = true;
+                    fallbackReason = "in-proc produced empty output";
                     il = ExecuteGeneratedAssembly(expectedPath);
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 // Fallback to out-of-proc execution on error (e.g., assembly binding issues)
+                usedFallback = true;
+                fallbackReason = $"in-proc error: {ex.GetType().Name}";
                 il = ExecuteGeneratedAssembly(expectedPath);
+            }
+            
+            if (usedFallback)
+            {
+                // Write a diagnostic to the test output log instead of altering verified content.
+                var reason = string.IsNullOrWhiteSpace(fallbackReason) ? "unknown reason" : fallbackReason;
+                System.Console.WriteLine($"[ExecutionTestsBase] Fallback to out-of-proc execution; reason: {reason}");
             }
             
             var settings = new VerifySettings(_verifySettings);
