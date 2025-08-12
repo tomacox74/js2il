@@ -4,6 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.IO;
+using System.Text;
+using System.Runtime.Loader;
 
 namespace Js2IL.Tests
 {
@@ -46,8 +49,22 @@ namespace Js2IL.Tests
 
             var expectedPath = Path.Combine(_outputPath, $"{testName}.dll");
 
-            var il = ExecuteGeneratedAssembly(expectedPath);
-            //ExecuteGeneratedAssemblyInProc(expectedPath);
+            // Run in-proc to avoid process startup overhead and capture output.
+            string il;
+            try
+            {
+                il = ExecuteGeneratedAssemblyInProc(expectedPath);
+                if (string.IsNullOrWhiteSpace(il))
+                {
+                    // Fallback for environments where in-proc capture may miss output
+                    il = ExecuteGeneratedAssembly(expectedPath);
+                }
+            }
+            catch
+            {
+                // Fallback to out-of-proc execution on error (e.g., assembly binding issues)
+                il = ExecuteGeneratedAssembly(expectedPath);
+            }
             
             var settings = new VerifySettings(_verifySettings);
             var directory = Path.GetDirectoryName(sourceFilePath);
@@ -87,18 +104,47 @@ namespace Js2IL.Tests
 
         private string ExecuteGeneratedAssemblyInProc(string assemblyPath)
         {
-            var assembly = Assembly.LoadFrom(assemblyPath);
-            var entryPoint = assembly.EntryPoint;
-            if (entryPoint == null)
+            // Capture System.Console output written by the generated program.
+            var originalOut = System.Console.Out;
+            var originalErr = System.Console.Error;
+            var sb = new StringBuilder();
+            using var writer = new StringWriter(sb);
+            try
             {
-                throw new InvalidOperationException("No entry point found in the generated assembly.");
-            }
-            var parameters = entryPoint.GetParameters().Select(p => p.ParameterType).ToArray();
-            var instance = Activator.CreateInstance(assembly.GetType(entryPoint.DeclaringType!.FullName!)!);
-            entryPoint.Invoke(instance, parameters.Length == 0 ? null : new object[] { });
+                System.Console.SetOut(writer);
+                System.Console.SetError(writer);
 
-            return "Execution completed successfully.";
+                // Preload JavaScriptRuntime dependency and load test assembly in Default ALC so framework resolves on the agent
+                var dir = Path.GetDirectoryName(assemblyPath)!;
+                var jsRuntimePath = Path.Combine(dir, "JavaScriptRuntime.dll");
+                if (File.Exists(jsRuntimePath))
+                {
+                    // Ignore if already loaded
+                    try { AssemblyLoadContext.Default.LoadFromAssemblyPath(jsRuntimePath); } catch { }
+                }
+                var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
+                var entryPoint = assembly.EntryPoint;
+                if (entryPoint == null)
+                {
+                    throw new InvalidOperationException("No entry point found in the generated assembly.");
+                }
+
+                // Generated Program.Main has no parameters and is static.
+                var paramInfos = entryPoint.GetParameters();
+                object?[]? args = paramInfos.Length == 0 ? null : new object?[] { Array.Empty<string>() };
+                entryPoint.Invoke(null, args);
+
+                writer.Flush();
+                var output = sb.ToString();
+                return output;
+            }
+            finally
+            {
+                System.Console.SetOut(originalOut);
+                System.Console.SetError(originalErr);
+            }
         }
+
 
         private string GetJavaScript(string testName)
         {
