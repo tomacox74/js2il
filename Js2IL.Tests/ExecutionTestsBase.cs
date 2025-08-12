@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Text;
 using System.Runtime.Loader;
+using JavaScriptRuntime;
 
 namespace Js2IL.Tests
 {
@@ -117,45 +118,45 @@ namespace Js2IL.Tests
 
         private string ExecuteGeneratedAssemblyInProc(string assemblyPath)
         {
-            // Capture System.Console output written by the generated program.
-            var originalOut = System.Console.Out;
-            var originalErr = System.Console.Error;
-            var sb = new StringBuilder();
-            using var writer = new StringWriter(sb);
+            // Capture JavaScriptRuntime.Console output by swapping its IConsoleOutput implementation.
+            var captured = new CapturingConsoleOutput();
+            var consoleType = typeof(JavaScriptRuntime.Console);
+            var outputField = consoleType.GetField("_output", BindingFlags.NonPublic | BindingFlags.Static);
+            var previous = outputField?.GetValue(null) as IConsoleOutput;
+            JavaScriptRuntime.Console.SetOutput(captured);
             try
             {
-                System.Console.SetOut(writer);
-                System.Console.SetError(writer);
-
                 // Preload JavaScriptRuntime dependency and load test assembly in Default ALC so framework resolves on the agent
                 var dir = Path.GetDirectoryName(assemblyPath)!;
                 var jsRuntimePath = Path.Combine(dir, "JavaScriptRuntime.dll");
                 if (File.Exists(jsRuntimePath))
                 {
-                    // Ignore if already loaded
                     try { AssemblyLoadContext.Default.LoadFromAssemblyPath(jsRuntimePath); } catch { }
                 }
                 var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
-                var entryPoint = assembly.EntryPoint;
-                if (entryPoint == null)
-                {
-                    throw new InvalidOperationException("No entry point found in the generated assembly.");
-                }
+                var entryPoint = assembly.EntryPoint ?? throw new InvalidOperationException("No entry point found in the generated assembly.");
 
-                // Generated Program.Main has no parameters and is static.
                 var paramInfos = entryPoint.GetParameters();
-                object?[]? args = paramInfos.Length == 0 ? null : new object?[] { Array.Empty<string>() };
+                object?[]? args = paramInfos.Length == 0 ? null : new object?[] { System.Array.Empty<string>() };
                 entryPoint.Invoke(null, args);
 
-                writer.Flush();
-                var output = sb.ToString();
-                return output;
+                return captured.GetOutput();
             }
             finally
             {
-                System.Console.SetOut(originalOut);
-                System.Console.SetError(originalErr);
+                // Restore previous console output implementation (or default if missing)
+                JavaScriptRuntime.Console.SetOutput(previous ?? new DefaultConsoleOutput());
             }
+        }
+
+        private sealed class CapturingConsoleOutput : IConsoleOutput
+        {
+            private readonly StringBuilder _sb = new();
+            public void WriteLine(string line)
+            {
+                _sb.AppendLine(line);
+            }
+            public string GetOutput() => _sb.ToString();
         }
 
 
