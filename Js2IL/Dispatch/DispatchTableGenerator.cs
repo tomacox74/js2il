@@ -119,30 +119,31 @@ namespace Js2IL.Dispatch
                 var paramCount = function.Declaration.Params.Count; // js params only
                 var blobBuilder = new BlobBuilder();
                 var fieldSigEncoder = new BlobEncoder(blobBuilder).FieldSignature();
-                if (paramCount == 0)
+                if (paramCount <= 6)
                 {
-                    // Func<object[], object>
-                    var genericInst = fieldSigEncoder.GenericInstantiation(
-                        _bclReferences.Func2Generic_TypeRef,
-                        2,
-                        false);
-                    genericInst.AddArgument().SZArray().Type(_bclReferences.ObjectType, false);
-                    genericInst.AddArgument().Type(_bclReferences.ObjectType, false); // return object
-                }
-                else if (paramCount == 1)
-                {
-                    // Func<object[], object, object>
-                    var genericInst = fieldSigEncoder.GenericInstantiation(
-                        _bclReferences.Func3Generic_TypeRef,
-                        3,
-                        false);
-                    genericInst.AddArgument().SZArray().Type(_bclReferences.ObjectType, false); // js params    
-                    genericInst.AddArgument().Type(_bclReferences.ObjectType, false); // js param1
+                    int genericArity = paramCount + 2; // scopes + params + return
+                    var genericTypeRef = genericArity switch
+                    {
+                        2 => _bclReferences.Func2Generic_TypeRef,
+                        3 => _bclReferences.Func3Generic_TypeRef,
+                        4 => _bclReferences.Func4Generic_TypeRef,
+                        5 => _bclReferences.Func5Generic_TypeRef,
+                        6 => _bclReferences.Func6Generic_TypeRef,
+                        7 => _bclReferences.Func7Generic_TypeRef,
+                        8 => _bclReferences.Func8Generic_TypeRef,
+                        _ => throw new NotSupportedException($"Unsupported generic arity {genericArity}")
+                    };
+                    var genericInst = fieldSigEncoder.GenericInstantiation(genericTypeRef, genericArity, false);
+                    genericInst.AddArgument().SZArray().Type(_bclReferences.ObjectType, false); // scopes array
+                    for (int i = 0; i < paramCount; i++)
+                    {
+                        genericInst.AddArgument().Type(_bclReferences.ObjectType, false);
+                    }
                     genericInst.AddArgument().Type(_bclReferences.ObjectType, false); // return object
                 }
                 else
                 {
-                    throw new NotSupportedException("Only up to 1 parameter supported currently");
+                    throw new NotSupportedException($"Only up to 6 parameters supported currently (got {paramCount})");
                 }
                 var fieldSignature = _metadataBuilder.GetOrAddBlob(blobBuilder);
                 var fieldHandle = tb.AddFieldDefinition(
@@ -202,17 +203,14 @@ namespace Js2IL.Dispatch
 
                 // 3. Create the delegate (Func<object[],object> or Func<object[],object,object>)
                 il.OpCode(ILOpCode.Newobj);
-                if (function.Declaration.Params.Count == 0)
+                if (function.Declaration.Params.Count <= 6)
                 {
-                    il.Token(_bclReferences.FuncObjectArrayObject_Ctor_Ref);
-                }
-                else if (function.Declaration.Params.Count == 1)
-                {
-                    il.Token(_bclReferences.FuncObjectArrayObjectObject_Ctor_Ref);
+                    var (_, ctorRef) = _bclReferences.GetFuncObjectArrayWithParams(function.Declaration.Params.Count);
+                    il.Token(ctorRef);
                 }
                 else
                 {
-                    throw new NotSupportedException("Only up to 1 parameter supported currently");
+                    throw new NotSupportedException($"Only up to 6 parameters supported currently (got {function.Declaration.Params.Count})");
                 }
 
                 // 4. Store the delegate in the static field

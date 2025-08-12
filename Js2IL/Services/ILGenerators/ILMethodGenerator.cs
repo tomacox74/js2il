@@ -638,19 +638,16 @@ namespace Js2IL.Services.ILGenerators
                     }
 
                     // Invoke correct delegate based on parameter count
-                    if (callExpression.Arguments.Count == 0)
+                    var argCount = callExpression.Arguments.Count;
+                    if (argCount <= 6)
                     {
                         _il.OpCode(ILOpCode.Callvirt);
-                        _il.Token(_bclReferences.FuncObjectArrayObject_Invoke_Ref);
-                    }
-                    else if (callExpression.Arguments.Count == 1)
-                    {
-                        _il.OpCode(ILOpCode.Callvirt);
-                        _il.Token(_bclReferences.FuncObjectArrayObjectObject_Invoke_Ref);
+                        var invokeRef = _bclReferences.GetFuncArrayParamInvokeRef(argCount);
+                        _il.Token(invokeRef);
                     }
                     else
                     {
-                        throw new NotSupportedException("Only up to 1 parameter supported currently");
+                        throw new NotSupportedException($"Only up to 6 parameters supported currently (got {argCount})");
                     }
                     // For expression statements, discard return value
                     _il.OpCode(ILOpCode.Pop);
