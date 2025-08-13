@@ -1,12 +1,70 @@
 
-This is an experimental project that compiles JavaScript to .NET IL and creates a .NET assembly that can be executed.
+# JS2IL — JavaScript to .NET IL compiler
 
+JS2IL compiles JavaScript source code to .NET Intermediate Language (IL), producing managed assemblies that run on the .NET runtime. It enables execution of JavaScript code and libraries as native .NET assemblies.
 
-This project is an experiment to see if the performance of .NET execution can come close to the many years of optimizations done in Node. There could be some usefulness in making JavaScript libraries available as native .NET assemblies for other .NET codebases to consume. But that is not the goal of this particular project, only a possible alternate use.
+## Usage
 
-This project has 2 planned phases. The first phase is to implement enough functionality that most JavaScript libraries could be compiled to .NET without optimizations. One glaring exception is that eval support probably will not be implemented for a very long time. In this implementation, eval would mean "compile on the fly" to a .NET module basically.
+Prerequisite: .NET 8 SDK
 
-The second phase would be to apply as many optimizations as possible to see how close the performance can come to Node or if it can exceed Node in any cases. These optimizations would come from both static compile-time analysis (i.e., a value that is always an integer or never a decimal does not need to be boxed nor stored as a float, closures not needed for simple functions, etc.) and runtime (things like shadow classes, etc.).
+- Compile a JavaScript file (outputs next to the input file by default):
+
+```powershell
+dotnet run --project .\Js2IL -- .\tests\simple.js
+```
+
+- Specify an output directory and optional flags:
+
+```powershell
+dotnet run --project .\Js2IL -- .\tests\simple.js .\out -Verbose -AnalyzeUnused
+```
+
+Arguments
+- InputFile (positional, required): path to the .js file to convert
+- OutputPath (positional, optional): directory for the generated files; defaults to the input file’s directory
+- -Verbose: print AST and scope details during compilation
+- -AnalyzeUnused: analyze and report unused functions, properties, and variables
+
+Generated files
+- <name>.dll: compiled .NET assembly (name is based on the input .js filename)
+- <name>.runtimeconfig.json: runtime configuration file
+- JavaScriptRuntime.dll (+ .pdb if available): runtime dependency copied alongside the output
+
+Run the generated assembly
+
+```powershell
+dotnet .\out\simple.dll
+```
+
+### Try it
+
+Use the sample script at `tests/simple.js`:
+
+```javascript
+var x = 1 + 2;
+console.log('x is ', x);
+```
+
+Compile and run it:
+
+```powershell
+dotnet run --project .\Js2IL -- .\tests\simple.js .\out
+dotnet .\out\simple.dll
+```
+
+Expected output:
+
+```
+x is  3
+```
+
+## Status and scope
+- Experimental.
+- Not all JavaScript features are supported; `eval` is not supported.
+
+## Roadmap
+- Phase 1: Implement sufficient JavaScript semantics to compile most libraries without optimizations (excluding `eval`).
+- Phase 2: Apply static and runtime optimizations (e.g., unboxed integers, selective closure fields, direct call paths, shape-based optimizations) to approach or exceed typical Node.js performance.
 
 .NET provides a rich type system, cross-platform support, and an out-of-the-box GC implementation that has benefited from many years of optimizations.
 
