@@ -116,6 +116,16 @@ namespace Js2IL.Services.ILGenerators
                     var functionName = (fn.Decl.Id as Acornima.Ast.Identifier)!.Name;
                     try
                     {
+                        // Determine if the function itself will allocate its own scope instance
+                        var declaredFields = registry.GetVariablesForScope(functionName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
+                        bool functionAllocatesOwnScope = declaredFields.Any();
+
+                        // Only pre-instantiate here if the function will NOT allocate a scope (i.e., no fields/params)
+                        if (functionAllocatesOwnScope)
+                        {
+                            continue; // avoid duplicate scope object creation
+                        }
+
                         var scopeTypeHandle = registry.GetScopeTypeHandle(functionName);
                         if (scopeTypeHandle.IsNil) continue;
 
@@ -128,13 +138,11 @@ namespace Js2IL.Services.ILGenerators
                         _ilGenerator.IL.OpCode(ILOpCode.Newobj);
                         _ilGenerator.IL.Token(ctorRef);
                         _ilGenerator.IL.StoreLocal(nextLocalIndex);
-                        // Inform Variables about this additional local so other generators can reference it
                         variables.RegisterAdditionalLocalScope(functionName, nextLocalIndex);
                         nextLocalIndex++;
                     }
                     catch (System.Collections.Generic.KeyNotFoundException)
                     {
-                        // This function scope has no fields (no scope type); do not create a local for it.
                         continue;
                     }
                 }
