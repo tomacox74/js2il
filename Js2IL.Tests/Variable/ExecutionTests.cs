@@ -13,5 +13,6 @@ namespace Js2IL.Tests.Variable
         [Fact] public Task Variable_LetShadowing() { var testName = nameof(Variable_LetShadowing); return ExecutionTest(testName); }
     [Fact(Skip = "try/catch + TDZ runtime check not implemented yet")] public Task Variable_TemporalDeadZoneAccess() { var testName = nameof(Variable_TemporalDeadZoneAccess); return ExecutionTest(testName); }
         [Fact] public Task Variable_LetNestedShadowingChain() { var testName = nameof(Variable_LetNestedShadowingChain); return ExecutionTest(testName); }
+        [Fact] public Task Variable_LetFunctionNestedShadowing() { var testName = nameof(Variable_LetFunctionNestedShadowing); return ExecutionTest(testName); }
     }
 }

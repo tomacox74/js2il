@@ -283,7 +283,10 @@ namespace Js2IL.Services
             if (scopeName == _scopeName)
             {
                 _hasLocalScope = true;
-                _createdLocalScopes[scopeName] = 0;
+                // Do NOT register the current scope in _createdLocalScopes; it is already
+                // accounted for by _hasLocalScope. Registering it caused double-counting
+                // in GetNumberOfLocals producing an extra (unused) local slot and widespread
+                // snapshot diffs (.locals init ([0] object, [1] object) instead of a single local).
                 return new ScopeObjectReference { Location = ObjectReferenceLocation.Local, Address = 0 };
             }
             // Non-current scopes are not created as locals in the new model; indicate not available
@@ -340,7 +343,13 @@ namespace Js2IL.Services
         {
             // Base local is function/global scope if present plus any additional registered scopes (functions, blocks)
             int count = _hasLocalScope ? 1 : 0;
-            count += _createdLocalScopes.Count; // includes function + block scopes added
+            // _createdLocalScopes should no longer contain the current scope (see CreateScopeInstance).
+            // Guard against legacy state where it might have been added previously (defensive cleanup semantics).
+            if (_createdLocalScopes.ContainsKey(_scopeName))
+            {
+                _createdLocalScopes.Remove(_scopeName);
+            }
+            count += _createdLocalScopes.Count; // function + block scopes added
             return count;
         }
 

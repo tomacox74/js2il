@@ -108,7 +108,6 @@ namespace Js2IL.Services.ILGenerators
             var allFunctions = _symbolTable.GetAllFunctions()
                 .Select(f => (Scope: f.FunctionScope, Decl: f.Declaration))
                 .ToList();
-            int createdTopLevelLocals = 0;
             if (registry != null && allFunctions.Count > 0)
             {
                 int nextLocalIndex = variables.GetNumberOfLocals(); // 0 if no global, 1 if global created
@@ -132,7 +131,6 @@ namespace Js2IL.Services.ILGenerators
                         // Inform Variables about this additional local so other generators can reference it
                         variables.RegisterAdditionalLocalScope(functionName, nextLocalIndex);
                         nextLocalIndex++;
-                        createdTopLevelLocals++;
                     }
                     catch (System.Collections.Generic.KeyNotFoundException)
                     {
@@ -162,8 +160,6 @@ namespace Js2IL.Services.ILGenerators
             MethodBodyAttributes methodBodyAttributes = MethodBodyAttributes.None;
             StandaloneSignatureHandle localSignature = default;
             int numberOfLocals = variables.GetNumberOfLocals();
-            // Add additional locals for each top-level function scope instance we actually created above
-            numberOfLocals += createdTopLevelLocals;
             if (numberOfLocals > 0)
             {
                 var localSig = new BlobBuilder();
