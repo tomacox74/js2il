@@ -179,39 +179,62 @@ namespace Js2IL.Services
                 }
             }
 
-            // Look up field-backed variables in the registry
+            // Prefer a field in the current function scope (if any) before falling back to registry-wide search
+            if (_registry != null)
+            {
+                try
+                {
+                    var currentScopeField = _registry.GetFieldHandle(_scopeName, name);
+                    var lvDirect = new LocalVariable
+                    {
+                        Name = name,
+                        FieldHandle = currentScopeField,
+                        ScopeName = _scopeName,
+                        Type = JavascriptType.Unknown
+                    };
+                    _variables[name] = lvDirect; // cache since it's stable for duration of method
+                    return lvDirect;
+                }
+                catch (KeyNotFoundException)
+                {
+                    // Not in current scope; continue
+                }
+            }
+
+            // Look up field-backed variables anywhere (may return parent/global first depending on insertion order)
             var variableInfo = _registry?.FindVariable(name);
             if (variableInfo == null)
             {
                 return null;
             }
 
-        if (variableInfo.ScopeName == _scopeName)
-            {
-                var lv = new LocalVariable
-                {
-                    Name = name,
-            FieldHandle = variableInfo.FieldHandle,
-            ScopeName = variableInfo.ScopeName,
-                    Type = JavascriptType.Unknown
-                };
-                _variables[name] = lv;
-                return lv;
-            }
-
-            // Parent scope field
-        if (_parentScopeIndices.TryGetValue(variableInfo.ScopeName, out var idx))
+            // Parent or other ancestor scope field
+            if (_parentScopeIndices.TryGetValue(variableInfo.ScopeName, out var idx))
             {
                 var sv = new ScopeVariable
                 {
                     Name = name,
-            ScopeName = variableInfo.ScopeName,
+                    ScopeName = variableInfo.ScopeName,
                     ParentScopeIndex = idx,
-            FieldHandle = variableInfo.FieldHandle,
+                    FieldHandle = variableInfo.FieldHandle,
                     Type = JavascriptType.Unknown
                 };
                 _variables[name] = sv;
                 return sv;
+            }
+
+            // If the variable actually belongs to current scope but was not found earlier (edge case), treat as local
+            if (variableInfo.ScopeName == _scopeName)
+            {
+                var lv = new LocalVariable
+                {
+                    Name = name,
+                    FieldHandle = variableInfo.FieldHandle,
+                    ScopeName = variableInfo.ScopeName,
+                    Type = JavascriptType.Unknown
+                };
+                _variables[name] = lv;
+                return lv;
             }
 
             // Unknown scope in current context
