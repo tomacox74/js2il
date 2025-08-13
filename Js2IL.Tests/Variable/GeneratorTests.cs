@@ -12,5 +12,6 @@ namespace Js2IL.Tests.Variable
     [Fact(Skip = "try/catch + const reassignment runtime error not implemented yet")] public Task Variable_ConstReassignmentError() { var testName = nameof(Variable_ConstReassignmentError); return GenerateTest(testName); }
         [Fact] public Task Variable_LetShadowing() { var testName = nameof(Variable_LetShadowing); return GenerateTest(testName); }
     [Fact(Skip = "try/catch + TDZ runtime check not implemented yet")] public Task Variable_TemporalDeadZoneAccess() { var testName = nameof(Variable_TemporalDeadZoneAccess); return GenerateTest(testName); }
+        [Fact] public Task Variable_LetNestedShadowingChain() { var testName = nameof(Variable_LetNestedShadowingChain); return GenerateTest(testName); }
     }
 }
