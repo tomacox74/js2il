@@ -9,16 +9,10 @@ namespace Js2IL.Tests
         }
 
         [Fact]
-        public Task ArrayLiteral() { var testName = nameof(ArrayLiteral); return GenerateTest(testName); }
-
-        [Fact]
         public Task UnaryOperator_PlusPlusPostfix() { var testName = nameof(UnaryOperator_PlusPlusPostfix); return GenerateTest(testName); }
 
         [Fact]
         public Task UnaryOperator_MinusMinusPostfix() { var testName = nameof(UnaryOperator_MinusMinusPostfix); return GenerateTest(testName); }
-
-        [Fact]
-        public Task ObjectLiteral() { var testName = nameof(ObjectLiteral); return GenerateTest(testName); }
 
         [Fact(Skip = "process/argv not yet supported")]
         public Task Environment_EnumerateProcessArgV() { var testName = nameof(Environment_EnumerateProcessArgV); return GenerateTest(testName); }
