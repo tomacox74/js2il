@@ -53,7 +53,7 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Array literal basic construction | Supported | `Js2IL.Tests/JavaScript/ArrayLiteral.js` | Covers creation, element access, and length property. See also verified output in GeneratorTests.ArrayLiteral.verified.txt. | 13.2.4.1 |
+| Array literal basic construction | Supported | `Js2IL.Tests/JavaScript/ArrayLiteral.js` | Covers creation, element access, and length property. See also verified output in Literals/GeneratorTests.ArrayLiteral.verified.txt. | 13.2.4.1 |
 
 
 ### [Object Initializer (ObjectLiteral)](https://tc39.es/ecma262/#sec-object-initializer)
@@ -62,7 +62,7 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Object literal basic construction | Supported | `Js2IL.Tests/JavaScript/ObjectLiteral.js` | Covers creation and property access. See also verified output in GeneratorTests.ObjectLiteral.verified.txt. | 13.2.5.1 |
+| Object literal basic construction | Supported | `Js2IL.Tests/JavaScript/ObjectLiteral.js` | Covers creation and property access. See also verified output in Literals/GeneratorTests.ObjectLiteral.verified.txt. | 13.2.5.1 |
 
 
 ### [Unary Operators](https://tc39.es/ecma262/#sec-ecmascript-language-expressions)
