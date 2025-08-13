@@ -17,7 +17,21 @@ if (-not $receivedFiles) {
 }
 
 foreach ($file in $receivedFiles) {
-    $verifiedFile = $file.FullName -replace '\\.received(\.\w+)$', '.verified$1'
+    # Typical pattern: Foo.received.txt -> Foo.verified.txt
+    # Use a simpler, reliable replacement: replace the first '.received.' occurrence.
+    if ($file.FullName -match '\.received\.') {
+        $verifiedFile = $file.FullName -replace '\.received\.', '.verified.'
+    }
+    else {
+        # Fallback: if name ends with .received.<ext>
+        $verifiedFile = $file.FullName -replace '\.received(\.[A-Za-z0-9]+)$', '.verified$1'
+    }
+
+    if ($verifiedFile -eq $file.FullName) {
+        Write-Host "Skipping (no transform): $($file.Name)" -ForegroundColor DarkYellow
+        continue
+    }
+
     $targetDir = Split-Path $verifiedFile
     if (-not (Test-Path $targetDir)) {
         New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
