@@ -238,47 +238,33 @@
 	{
 		// Method begins at RVA 0x2150
 		// Header size: 12
-		// Code size: 76 (0x4c)
+		// Code size: 56 (0x38)
 		.maxstack 8
 		.entrypoint
 		.locals init (
-			[0] object,
-			[1] object,
-			[2] object
+			[0] object
 		)
 
 		IL_0000: newobj instance void Scopes.Function_NestedFunctionAccessesMultipleScopes::.ctor()
 		IL_0005: stloc.0
-		IL_0006: newobj instance void Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::.ctor()
-		IL_000b: stloc.1
-		IL_000c: newobj instance void Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction/nestedFunction::.ctor()
-		IL_0011: stloc.2
-		IL_0012: call void Functions._Loader::_LoadDispatchTable()
-		IL_0017: ldloc.0
-		IL_0018: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::testFunction
-		IL_001d: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::testFunction
-		IL_0022: ldloc.0
-		IL_0023: ldstr "global"
-		IL_0028: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::globalVar
-		IL_002d: ldloc.0
-		IL_002e: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::testFunction
-		IL_0033: ldc.i4.3
-		IL_0034: newarr [System.Runtime]System.Object
-		IL_0039: dup
-		IL_003a: ldc.i4.0
-		IL_003b: ldloc.0
-		IL_003c: stelem.ref
-		IL_003d: dup
-		IL_003e: ldc.i4.1
-		IL_003f: ldloc.1
-		IL_0040: stelem.ref
-		IL_0041: dup
-		IL_0042: ldc.i4.2
-		IL_0043: ldloc.2
-		IL_0044: stelem.ref
-		IL_0045: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_004a: pop
-		IL_004b: ret
+		IL_0006: call void Functions._Loader::_LoadDispatchTable()
+		IL_000b: ldloc.0
+		IL_000c: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::testFunction
+		IL_0011: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::testFunction
+		IL_0016: ldloc.0
+		IL_0017: ldstr "global"
+		IL_001c: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::globalVar
+		IL_0021: ldloc.0
+		IL_0022: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::testFunction
+		IL_0027: ldc.i4.1
+		IL_0028: newarr [System.Runtime]System.Object
+		IL_002d: dup
+		IL_002e: ldc.i4.0
+		IL_002f: ldloc.0
+		IL_0030: stelem.ref
+		IL_0031: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0036: pop
+		IL_0037: ret
 	} // end of method Program::Main
 
 } // end of class Program

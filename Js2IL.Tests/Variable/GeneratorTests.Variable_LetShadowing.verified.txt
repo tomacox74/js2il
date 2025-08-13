@@ -1,0 +1,169 @@
+﻿// IL code: Variable_LetShadowing
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Variable_LetShadowing
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit f
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object a
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method f::.ctor
+
+	} // end of class f
+
+
+	// Fields
+	.field public object a
+	.field public object f
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Variable_LetShadowing::.ctor
+
+} // end of class Scopes.Variable_LetShadowing
+
+.class public auto ansi abstract sealed beforefieldinit DispatchTable
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> f
+
+} // end of class DispatchTable
+
+.class public auto ansi abstract sealed beforefieldinit Functions.f
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		object f (
+			object[] scopes
+		) cil managed 
+	{
+		// Method begins at RVA 0x2064
+		// Header size: 12
+		// Code size: 48 (0x30)
+		.maxstack 8
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Variable_LetShadowing/f::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldc.r8 2
+		IL_0010: box [System.Runtime]System.Double
+		IL_0015: stfld object Scopes.Variable_LetShadowing/f::a
+		IL_001a: ldc.i4.1
+		IL_001b: newarr [System.Runtime]System.Object
+		IL_0020: dup
+		IL_0021: ldc.i4.0
+		IL_0022: ldloc.0
+		IL_0023: ldfld object Scopes.Variable_LetShadowing/f::a
+		IL_0028: stelem.ref
+		IL_0029: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_002e: ldnull
+		IL_002f: ret
+	} // end of method f::f
+
+} // end of class Functions.f
+
+.class public auto ansi abstract sealed beforefieldinit Functions._Loader
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void _LoadDispatchTable () cil managed 
+	{
+		// Method begins at RVA 0x20a0
+		// Header size: 1
+		// Code size: 18 (0x12)
+		.maxstack 8
+
+		IL_0000: ldnull
+		IL_0001: ldftn object Functions.f::f(object[])
+		IL_0007: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_000c: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::f
+		IL_0011: ret
+	} // end of method _Loader::_LoadDispatchTable
+
+} // end of class Functions._Loader
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20b4
+		// Header size: 12
+		// Code size: 85 (0x55)
+		.maxstack 8
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Variable_LetShadowing::.ctor()
+		IL_0005: stloc.0
+		IL_0006: call void Functions._Loader::_LoadDispatchTable()
+		IL_000b: ldloc.0
+		IL_000c: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::f
+		IL_0011: stfld object Scopes.Variable_LetShadowing::f
+		IL_0016: ldloc.0
+		IL_0017: ldc.r8 1
+		IL_0020: box [System.Runtime]System.Double
+		IL_0025: stfld object Scopes.Variable_LetShadowing::a
+		IL_002a: ldloc.0
+		IL_002b: ldfld object Scopes.Variable_LetShadowing::f
+		IL_0030: ldc.i4.1
+		IL_0031: newarr [System.Runtime]System.Object
+		IL_0036: dup
+		IL_0037: ldc.i4.0
+		IL_0038: ldloc.0
+		IL_0039: stelem.ref
+		IL_003a: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_003f: pop
+		IL_0040: ldc.i4.1
+		IL_0041: newarr [System.Runtime]System.Object
+		IL_0046: dup
+		IL_0047: ldc.i4.0
+		IL_0048: ldloc.0
+		IL_0049: ldfld object Scopes.Variable_LetShadowing::a
+		IL_004e: stelem.ref
+		IL_004f: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0054: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

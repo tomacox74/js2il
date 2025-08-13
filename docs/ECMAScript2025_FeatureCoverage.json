@@ -18,9 +18,15 @@
               "features": [
                 {
                   "feature": "let/const",
-                  "status": "Not Supported",
-                  "testScripts": [],
-                  "notes": ""
+                  "status": "Partially Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/Variable_LetBlockScope.js",
+                    "Js2IL.Tests/JavaScript/Variable_LetShadowing.js",
+                    "Js2IL.Tests/JavaScript/Variable_LetNestedShadowingChain.js",
+                    "Js2IL.Tests/JavaScript/Variable_LetFunctionNestedShadowing.js",
+                    "Js2IL.Tests/JavaScript/Variable_ConstSimple.js"
+                  ],
+                  "notes": "Block scoping, shadowing chain, nested function capture, and simple const initialization implemented. Pending: const reassignment runtime error (Variable_ConstReassignmentError.js), temporal dead zone access error (Variable_TemporalDeadZoneAccess.js), and dead zone reads before initialization."
                 }
               ]
             },

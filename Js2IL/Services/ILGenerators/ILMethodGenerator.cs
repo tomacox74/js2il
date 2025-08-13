@@ -65,6 +65,10 @@ namespace Js2IL.Services.ILGenerators
             // resolve the variable via Variables
             var variable = _variables.FindVariable(variableName) ?? throw new InvalidOperationException($"Variable '{variableName}' not found.");
 
+            // If this is a lexical (block) scoped variable (let/const) inside a block shadowing an outer declaration,
+            // the variable.ScopeName will be the block scope (Block_LxCy). We must load that scope instance local.
+            bool isBlockScope = variable.ScopeName.StartsWith("Block_L", StringComparison.Ordinal);
+
             // now we need to generate the expession portion
             if (variableAST.Init != null)
             {
@@ -179,8 +183,8 @@ namespace Js2IL.Services.ILGenerators
                     GenerateIfStatement(ifStatement);
                     break;
                 case BlockStatement blockStatement:
-                    // Handle BlockStatement
-                    GenerateStatements(blockStatement.Body);
+                    // Handle BlockStatement with its own lexical scope if it declared let/const
+                    GenerateBlock(blockStatement);
                     break;
                 case ReturnStatement returnStatement:
                     GenerateReturnStatement(returnStatement);
@@ -190,6 +194,74 @@ namespace Js2IL.Services.ILGenerators
                     break;
                 default:
                     throw new NotSupportedException($"Unsupported statement type: {statement.Type}");
+            }
+        }
+
+        /// <summary>
+        /// Generates code for a BlockStatement, creating a new scope object if the block declares any let/const bindings.
+        /// This enables correct shadowing behavior for block scoped variables.
+        /// </summary>
+        private void GenerateBlock(BlockStatement blockStatement)
+        {
+            // Heuristic: if the symbol table created a block scope we would have a distinct Scope in the registry.
+            // Since we don't have direct Scope reference here, we re-scan the statements for VariableDeclarations
+            // containing 'let' or 'const'. The parser represented them already; BindingKind stored in registry determines field attributes.
+            bool hasLexical = blockStatement.Body.Any(s =>
+                s is VariableDeclaration vd && vd.Kind is VariableDeclarationKind.Let or VariableDeclarationKind.Const);
+
+            // If no lexical declarations, just emit statements directly.
+            if (!hasLexical)
+            {
+                GenerateStatements(blockStatement.Body);
+                return;
+            }
+
+            // Create a synthetic scope name matching SymbolTableBuilder convention so registry lookups succeed.
+            // We rely on the same naming pattern used during symbol table build.
+            var scopeName = $"Block_L{blockStatement.Location.Start.Line}C{blockStatement.Location.Start.Column}";
+
+            var registry = _variables.GetVariableRegistry();
+            int? blockLocalIndex = null;
+            if (registry != null)
+            {
+                try
+                {
+                    var scopeTypeHandle = registry.GetScopeTypeHandle(scopeName);
+                    if (!scopeTypeHandle.IsNil)
+                    {
+                        // Create constructor reference
+                        var ctorSigBuilder = new BlobBuilder();
+                        new BlobEncoder(ctorSigBuilder)
+                            .MethodSignature(isInstanceMethod: true)
+                            .Parameters(0, rt => rt.Void(), p => { });
+                        var ctorRef = _metadataBuilder.AddMemberReference(
+                            scopeTypeHandle,
+                            _metadataBuilder.GetOrAddString(".ctor"),
+                            _metadataBuilder.GetOrAddBlob(ctorSigBuilder));
+
+                        // newobj + store to a temp local (extend locals if necessary)
+                        // Allocate a new logical local slot index at end: existing locals count + created ones
+                        // Allocate a new local slot dedicated to this block scope
+                        blockLocalIndex = _variables.AllocateBlockScopeLocal(scopeName);
+                        _il.OpCode(ILOpCode.Newobj);
+                        _il.Token(ctorRef);
+                        _il.StoreLocal(blockLocalIndex.Value);
+                        // Track lexical scope so variable resolution prefers it
+                        _variables.PushLexicalScope(scopeName);
+                    }
+                }
+                catch (KeyNotFoundException)
+                {
+                    // Scope type not found; proceed without lexical isolation.
+                }
+            }
+
+            // Emit inner statements (variables inside will resolve to the block scope fields via registry name match)
+            GenerateStatements(blockStatement.Body);
+
+            if (blockLocalIndex.HasValue)
+            {
+                _variables.PopLexicalScope(scopeName);
             }
         }
 

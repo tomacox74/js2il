@@ -108,7 +108,6 @@ namespace Js2IL.Services.ILGenerators
             var allFunctions = _symbolTable.GetAllFunctions()
                 .Select(f => (Scope: f.FunctionScope, Decl: f.Declaration))
                 .ToList();
-            int createdTopLevelLocals = 0;
             if (registry != null && allFunctions.Count > 0)
             {
                 int nextLocalIndex = variables.GetNumberOfLocals(); // 0 if no global, 1 if global created
@@ -117,6 +116,16 @@ namespace Js2IL.Services.ILGenerators
                     var functionName = (fn.Decl.Id as Acornima.Ast.Identifier)!.Name;
                     try
                     {
+                        // Determine if the function itself will allocate its own scope instance
+                        var declaredFields = registry.GetVariablesForScope(functionName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
+                        bool functionAllocatesOwnScope = declaredFields.Any();
+
+                        // Only pre-instantiate here if the function will NOT allocate a scope (i.e., no fields/params)
+                        if (functionAllocatesOwnScope)
+                        {
+                            continue; // avoid duplicate scope object creation
+                        }
+
                         var scopeTypeHandle = registry.GetScopeTypeHandle(functionName);
                         if (scopeTypeHandle.IsNil) continue;
 
@@ -129,14 +138,11 @@ namespace Js2IL.Services.ILGenerators
                         _ilGenerator.IL.OpCode(ILOpCode.Newobj);
                         _ilGenerator.IL.Token(ctorRef);
                         _ilGenerator.IL.StoreLocal(nextLocalIndex);
-                        // Inform Variables about this additional local so other generators can reference it
                         variables.RegisterAdditionalLocalScope(functionName, nextLocalIndex);
                         nextLocalIndex++;
-                        createdTopLevelLocals++;
                     }
                     catch (System.Collections.Generic.KeyNotFoundException)
                     {
-                        // This function scope has no fields (no scope type); do not create a local for it.
                         continue;
                     }
                 }
@@ -162,8 +168,6 @@ namespace Js2IL.Services.ILGenerators
             MethodBodyAttributes methodBodyAttributes = MethodBodyAttributes.None;
             StandaloneSignatureHandle localSignature = default;
             int numberOfLocals = variables.GetNumberOfLocals();
-            // Add additional locals for each top-level function scope instance we actually created above
-            numberOfLocals += createdTopLevelLocals;
             if (numberOfLocals > 0)
             {
                 var localSig = new BlobBuilder();

@@ -76,6 +76,8 @@ namespace Js2IL.Services
 
     // Back-compat support for creating locals for arbitrary scope names when requested
     private readonly Dictionary<string, int> _createdLocalScopes = new();
+    // Stack of active lexical (block) scope names (innermost on top)
+    private readonly Stack<string> _lexicalScopeStack = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Variables"/> class for the global scope
@@ -141,6 +143,16 @@ namespace Js2IL.Services
     public Variable? FindVariable(string name)
         {
             if (string.IsNullOrEmpty(name)) return null;
+            // 1. Check innermost active lexical (block) scopes first for shadowing (do NOT cache)
+            foreach (var scopeName in _lexicalScopeStack)
+            {
+                if (TryResolveFieldBackedVariable(scopeName, name, out var v))
+                {
+                    return v; // no caching so pop restores outer binding automatically
+                }
+            }
+
+            // 2. Existing cached (non-lexical) variable
             if (_variables.TryGetValue(name, out var cached)) return cached;
 
             // Parameter resolution: prefer field-backed local if present; otherwise treat as direct argument
@@ -167,39 +179,62 @@ namespace Js2IL.Services
                 }
             }
 
-            // Look up field-backed variables in the registry
+            // Prefer a field in the current function scope (if any) before falling back to registry-wide search
+            if (_registry != null)
+            {
+                try
+                {
+                    var currentScopeField = _registry.GetFieldHandle(_scopeName, name);
+                    var lvDirect = new LocalVariable
+                    {
+                        Name = name,
+                        FieldHandle = currentScopeField,
+                        ScopeName = _scopeName,
+                        Type = JavascriptType.Unknown
+                    };
+                    _variables[name] = lvDirect; // cache since it's stable for duration of method
+                    return lvDirect;
+                }
+                catch (KeyNotFoundException)
+                {
+                    // Not in current scope; continue
+                }
+            }
+
+            // Look up field-backed variables anywhere (may return parent/global first depending on insertion order)
             var variableInfo = _registry?.FindVariable(name);
             if (variableInfo == null)
             {
                 return null;
             }
 
-        if (variableInfo.ScopeName == _scopeName)
-            {
-                var lv = new LocalVariable
-                {
-                    Name = name,
-            FieldHandle = variableInfo.FieldHandle,
-            ScopeName = variableInfo.ScopeName,
-                    Type = JavascriptType.Unknown
-                };
-                _variables[name] = lv;
-                return lv;
-            }
-
-            // Parent scope field
-        if (_parentScopeIndices.TryGetValue(variableInfo.ScopeName, out var idx))
+            // Parent or other ancestor scope field
+            if (_parentScopeIndices.TryGetValue(variableInfo.ScopeName, out var idx))
             {
                 var sv = new ScopeVariable
                 {
                     Name = name,
-            ScopeName = variableInfo.ScopeName,
+                    ScopeName = variableInfo.ScopeName,
                     ParentScopeIndex = idx,
-            FieldHandle = variableInfo.FieldHandle,
+                    FieldHandle = variableInfo.FieldHandle,
                     Type = JavascriptType.Unknown
                 };
                 _variables[name] = sv;
                 return sv;
+            }
+
+            // If the variable actually belongs to current scope but was not found earlier (edge case), treat as local
+            if (variableInfo.ScopeName == _scopeName)
+            {
+                var lv = new LocalVariable
+                {
+                    Name = name,
+                    FieldHandle = variableInfo.FieldHandle,
+                    ScopeName = variableInfo.ScopeName,
+                    Type = JavascriptType.Unknown
+                };
+                _variables[name] = lv;
+                return lv;
             }
 
             // Unknown scope in current context
@@ -248,7 +283,10 @@ namespace Js2IL.Services
             if (scopeName == _scopeName)
             {
                 _hasLocalScope = true;
-                _createdLocalScopes[scopeName] = 0;
+                // Do NOT register the current scope in _createdLocalScopes; it is already
+                // accounted for by _hasLocalScope. Registering it caused double-counting
+                // in GetNumberOfLocals producing an extra (unused) local slot and widespread
+                // snapshot diffs (.locals init ([0] object, [1] object) instead of a single local).
                 return new ScopeObjectReference { Location = ObjectReferenceLocation.Local, Address = 0 };
             }
             // Non-current scopes are not created as locals in the new model; indicate not available
@@ -303,8 +341,16 @@ namespace Js2IL.Services
         /// </summary>
     public int GetNumberOfLocals()
         {
-            // Only the function-local scope uses a local slot (ldloc.0) in this model
-            return _hasLocalScope ? 1 : 0;
+            // Base local is function/global scope if present plus any additional registered scopes (functions, blocks)
+            int count = _hasLocalScope ? 1 : 0;
+            // _createdLocalScopes should no longer contain the current scope (see CreateScopeInstance).
+            // Guard against legacy state where it might have been added previously (defensive cleanup semantics).
+            if (_createdLocalScopes.ContainsKey(_scopeName))
+            {
+                _createdLocalScopes.Remove(_scopeName);
+            }
+            count += _createdLocalScopes.Count; // function + block scopes added
+            return count;
         }
 
         public VariableBindings.VariableRegistry GetVariableRegistry()
@@ -319,6 +365,57 @@ namespace Js2IL.Services
         {
             if (string.IsNullOrEmpty(scopeName)) return;
             _createdLocalScopes[scopeName] = localIndex;
+        }
+
+        private bool TryResolveFieldBackedVariable(string scopeName, string name, out Variable variable)
+        {
+            variable = null!;
+            try
+            {
+                var fh = _registry.GetFieldHandle(scopeName, name);
+                variable = new LocalVariable
+                {
+                    Name = name,
+                    FieldHandle = fh,
+                    ScopeName = scopeName,
+                    Type = JavascriptType.Unknown
+                };
+                return true;
+            }
+            catch (KeyNotFoundException)
+            {
+                return false;
+            }
+        }
+
+        // Lexical scope management for blocks
+        public void PushLexicalScope(string scopeName) {
+            if (!string.IsNullOrEmpty(scopeName)) _lexicalScopeStack.Push(scopeName);
+        }
+        public void PopLexicalScope(string scopeName) {
+            if (_lexicalScopeStack.Count == 0) return;
+            if (_lexicalScopeStack.Peek() == scopeName) _lexicalScopeStack.Pop();
+            else
+            {
+                // Remove first occurrence if mis-nested (defensive)
+                var temp = new Stack<string>();
+                bool removed = false;
+                while (_lexicalScopeStack.Count > 0)
+                {
+                    var s = _lexicalScopeStack.Pop();
+                    if (!removed && s == scopeName) { removed = true; continue; }
+                    temp.Push(s);
+                }
+                while (temp.Count > 0) _lexicalScopeStack.Push(temp.Pop());
+            }
+        }
+
+        // Allocate a new local slot for a block scope and register it; returns local index.
+        public int AllocateBlockScopeLocal(string scopeName)
+        {
+            int index = GetNumberOfLocals();
+            RegisterAdditionalLocalScope(scopeName, index);
+            return index;
         }
     }
 }
