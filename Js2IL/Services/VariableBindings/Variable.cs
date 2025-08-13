@@ -76,6 +76,8 @@ namespace Js2IL.Services
 
     // Back-compat support for creating locals for arbitrary scope names when requested
     private readonly Dictionary<string, int> _createdLocalScopes = new();
+    // Stack of active lexical (block) scope names (innermost on top)
+    private readonly Stack<string> _lexicalScopeStack = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Variables"/> class for the global scope
@@ -141,6 +143,16 @@ namespace Js2IL.Services
     public Variable? FindVariable(string name)
         {
             if (string.IsNullOrEmpty(name)) return null;
+            // 1. Check innermost active lexical (block) scopes first for shadowing (do NOT cache)
+            foreach (var scopeName in _lexicalScopeStack)
+            {
+                if (TryResolveFieldBackedVariable(scopeName, name, out var v))
+                {
+                    return v; // no caching so pop restores outer binding automatically
+                }
+            }
+
+            // 2. Existing cached (non-lexical) variable
             if (_variables.TryGetValue(name, out var cached)) return cached;
 
             // Parameter resolution: prefer field-backed local if present; otherwise treat as direct argument
@@ -303,8 +315,10 @@ namespace Js2IL.Services
         /// </summary>
     public int GetNumberOfLocals()
         {
-            // Only the function-local scope uses a local slot (ldloc.0) in this model
-            return _hasLocalScope ? 1 : 0;
+            // Base local is function/global scope if present plus any additional registered scopes (functions, blocks)
+            int count = _hasLocalScope ? 1 : 0;
+            count += _createdLocalScopes.Count; // includes function + block scopes added
+            return count;
         }
 
         public VariableBindings.VariableRegistry GetVariableRegistry()
@@ -319,6 +333,57 @@ namespace Js2IL.Services
         {
             if (string.IsNullOrEmpty(scopeName)) return;
             _createdLocalScopes[scopeName] = localIndex;
+        }
+
+        private bool TryResolveFieldBackedVariable(string scopeName, string name, out Variable variable)
+        {
+            variable = null!;
+            try
+            {
+                var fh = _registry.GetFieldHandle(scopeName, name);
+                variable = new LocalVariable
+                {
+                    Name = name,
+                    FieldHandle = fh,
+                    ScopeName = scopeName,
+                    Type = JavascriptType.Unknown
+                };
+                return true;
+            }
+            catch (KeyNotFoundException)
+            {
+                return false;
+            }
+        }
+
+        // Lexical scope management for blocks
+        public void PushLexicalScope(string scopeName) {
+            if (!string.IsNullOrEmpty(scopeName)) _lexicalScopeStack.Push(scopeName);
+        }
+        public void PopLexicalScope(string scopeName) {
+            if (_lexicalScopeStack.Count == 0) return;
+            if (_lexicalScopeStack.Peek() == scopeName) _lexicalScopeStack.Pop();
+            else
+            {
+                // Remove first occurrence if mis-nested (defensive)
+                var temp = new Stack<string>();
+                bool removed = false;
+                while (_lexicalScopeStack.Count > 0)
+                {
+                    var s = _lexicalScopeStack.Pop();
+                    if (!removed && s == scopeName) { removed = true; continue; }
+                    temp.Push(s);
+                }
+                while (temp.Count > 0) _lexicalScopeStack.Push(temp.Pop());
+            }
+        }
+
+        // Allocate a new local slot for a block scope and register it; returns local index.
+        public int AllocateBlockScopeLocal(string scopeName)
+        {
+            int index = GetNumberOfLocals();
+            RegisterAdditionalLocalScope(scopeName, index);
+            return index;
         }
     }
 }
