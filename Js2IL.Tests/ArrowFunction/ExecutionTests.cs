@@ -18,5 +18,8 @@ namespace Js2IL.Tests.ArrowFunction
 
         [Fact]
         public Task ArrowFunction_GlobalFunctionWithMultipleParameters() { var testName = nameof(ArrowFunction_GlobalFunctionWithMultipleParameters); return ExecutionTest(testName); }
+
+    [Fact]
+    public Task ArrowFunction_GlobalFunctionCallsGlobalFunction() { var testName = nameof(ArrowFunction_GlobalFunctionCallsGlobalFunction); return ExecutionTest(testName); }
     }
 }
