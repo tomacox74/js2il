@@ -1,6 +1,7 @@
 using System;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
+using Js2IL.Services;
 
 namespace Js2IL.Services.ILGenerators
 {
@@ -15,11 +16,10 @@ namespace Js2IL.Services.ILGenerators
         /// storing it into the local slot managed by Variables. If the scope type is not
         /// available (e.g., registry lacks it), this method no-ops.
         /// </summary>
-        public static void EmitCreateLeafScopeInstance(ILMethodGenerator ilGen)
+        public static void EmitCreateLeafScopeInstance(Variables variables, InstructionEncoder il, MetadataBuilder metadataBuilder)
         {
-            if (ilGen == null) throw new ArgumentNullException(nameof(ilGen));
-
-            var variables = ilGen.Variables;
+            if (variables == null) throw new ArgumentNullException(nameof(variables));
+            if (metadataBuilder == null) throw new ArgumentNullException(nameof(metadataBuilder));
             var registry = variables.GetVariableRegistry();
             if (registry == null)
                 return; // Old local variable system; nothing to do
@@ -37,20 +37,20 @@ namespace Js2IL.Services.ILGenerators
                     .MethodSignature(isInstanceMethod: true)
                     .Parameters(0, r => r.Void(), _ => { });
 
-                var ctorRef = ilGen.MetadataBuilder.AddMemberReference(
+                var ctorRef = metadataBuilder.AddMemberReference(
                     scopeTypeHandle,
-                    ilGen.MetadataBuilder.GetOrAddString(".ctor"),
-                    ilGen.MetadataBuilder.GetOrAddBlob(ctorSig));
+                    metadataBuilder.GetOrAddString(".ctor"),
+                    metadataBuilder.GetOrAddBlob(ctorSig));
 
                 // newobj ScopeType::.ctor
-                ilGen.IL.OpCode(ILOpCode.Newobj);
-                ilGen.IL.Token(ctorRef);
+                il.OpCode(ILOpCode.Newobj);
+                il.Token(ctorRef);
 
                 // stloc (current scope local)
                 var scopeLocal = variables.CreateScopeInstance(currentScopeName);
                 if (scopeLocal.Address >= 0)
                 {
-                    ilGen.IL.StoreLocal(scopeLocal.Address);
+                    il.StoreLocal(scopeLocal.Address);
                 }
             }
             catch (System.Collections.Generic.KeyNotFoundException)
