@@ -13,7 +13,7 @@ namespace Js2IL.Tests.ArrowFunction
     [Fact]
     public Task ArrowFunction_BlockBody_Return() { var testName = nameof(ArrowFunction_BlockBody_Return); return ExecutionTest(testName); }
 
-        [Fact(Skip = "Arrow functions not fully supported yet on this branch")]
-        public Task ArrowFunction_CapturesOuterVariable() { var testName = nameof(ArrowFunction_CapturesOuterVariable); return ExecutionTest(testName); }
+    [Fact]
+    public Task ArrowFunction_CapturesOuterVariable() { var testName = nameof(ArrowFunction_CapturesOuterVariable); return ExecutionTest(testName); }
     }
 }
