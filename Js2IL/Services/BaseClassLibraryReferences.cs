@@ -133,6 +133,8 @@ namespace Js2IL.Services
 
         public MemberReferenceHandle Expando_Ctor_Ref { get; private set; }
 
+    public TypeReferenceHandle ExpandoObjectType { get; private set; }
+
         public MemberReferenceHandle Object_Ctor_Ref { get; private set; }
 
         public MemberReferenceHandle IDictionary_SetItem_Ref { get; private set; }
@@ -182,6 +184,8 @@ namespace Js2IL.Services
                 _systemLinqExpressions,
                 dynamicNamespace,
                 metadataBuilder.GetOrAddString("ExpandoObject"));
+            // store the ExpandoObject type reference for use as a base class
+            ExpandoObjectType = systemCoreExpandoType;
             var expandoSigBuilder = new BlobBuilder();
             new BlobEncoder(expandoSigBuilder)
                 .MethodSignature(isInstanceMethod: true)

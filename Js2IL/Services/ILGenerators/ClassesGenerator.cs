@@ -46,18 +46,18 @@ namespace Js2IL.Services.ILGenerators
             var name = classScope.Name;
             var tb = new TypeBuilder(_metadata, "Classes", name);
 
-            // For now inherit from System.Object
+            // Inherit from System.Dynamic.ExpandoObject so instances can have dynamic properties
             var typeAttrs = parentType.IsNil
                 ? TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit
                 : TypeAttributes.NestedPublic | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
-            var typeHandle = tb.AddTypeDefinition(typeAttrs, _bcl.ObjectType);
+            var typeHandle = tb.AddTypeDefinition(typeAttrs, _bcl.ExpandoObjectType);
 
             if (!parentType.IsNil)
             {
                 _metadata.AddNestedType(typeHandle, parentType);
             }
 
-            // Emit a parameterless .ctor that calls System.Object::.ctor
+            // Emit a parameterless .ctor that calls ExpandoObject::.ctor
             var sigBuilder = new BlobBuilder();
             new BlobEncoder(sigBuilder)
                 .MethodSignature(isInstanceMethod: true)
@@ -66,7 +66,7 @@ namespace Js2IL.Services.ILGenerators
 
             var encoder = new InstructionEncoder(new BlobBuilder());
             encoder.OpCode(ILOpCode.Ldarg_0);
-            encoder.Call(_bcl.Object_Ctor_Ref);
+            encoder.Call(_bcl.Expando_Ctor_Ref);
             encoder.OpCode(ILOpCode.Ret);
 
             var methodBody = _methodBodies.AddMethodBody(encoder);
