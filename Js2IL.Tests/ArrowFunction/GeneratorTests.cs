@@ -24,5 +24,8 @@ namespace Js2IL.Tests.ArrowFunction
 
     [Fact]
     public Task ArrowFunction_NestedFunctionAccessesMultipleScopes() { var testName = nameof(ArrowFunction_NestedFunctionAccessesMultipleScopes); return GenerateTest(testName); }
+
+    [Fact]
+    public Task ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal() { var testName = nameof(ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal); return GenerateTest(testName); }
     }
 }
