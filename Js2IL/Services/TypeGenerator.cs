@@ -344,6 +344,8 @@ namespace Js2IL.Services
 
             // Add each binding as a variable in the registry
             int fieldIndex = 0;
+            // Determine if this scope contains nested functions (controls whether parameters get fields)
+            bool hasNestedFunctions = scope.Children.Any(c => c.Kind == ScopeKind.Function);
             foreach (var binding in scope.Bindings)
             {
                 var variableName = binding.Key;
@@ -361,24 +363,30 @@ namespace Js2IL.Services
                         _ => VariableType.Variable
                     };
 
-                // Get the field handle for this variable (fields are created in order)
-                if (fieldIndex < scopeFields.Count)
-                {
-                    var fieldHandle = scopeFields[fieldIndex];
+                // Determine if a field was actually created for this binding
+                bool fieldCreatedForThisBinding = !(scope.Parameters.Contains(variableName) && !hasNestedFunctions);
 
-                    _variableRegistry.AddVariable(
-                        scope.Name, 
-                        variableName, 
-                        variableType, 
-                        fieldHandle, 
-                        scopeTypeHandle
-                    );
-                }
-
-                // Only advance fieldIndex if a field was actually created for this binding
-                if (!scope.Parameters.Contains(variableName) || scope.Children.Any(c => c.Kind == ScopeKind.Function))
+                if (fieldCreatedForThisBinding)
                 {
+                    // Map this binding to the next created field (order matches CreateTypeFields enumeration)
+                    if (fieldIndex < scopeFields.Count)
+                    {
+                        var fieldHandle = scopeFields[fieldIndex];
+                        _variableRegistry.AddVariable(
+                            scope.Name,
+                            variableName,
+                            variableType,
+                            fieldHandle,
+                            scopeTypeHandle
+                        );
+                    }
+                    // Only advance when a field exists for this binding
                     fieldIndex++;
+                }
+                else
+                {
+                    // No field created for this parameter; do not register a field-backed variable
+                    // (Variables will treat it as a direct parameter at emit time.)
                 }
             }
 

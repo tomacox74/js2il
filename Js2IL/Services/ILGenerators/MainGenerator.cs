@@ -47,37 +47,8 @@ namespace Js2IL.Services.ILGenerators
         /// </summary>
         private void CreateScopeInstances(Variables variables)
         {
-            var registry = variables.GetVariableRegistry();
-            if (registry == null)
-                return; // No registry means we're using the old local variable system
-
-            // Only create an instance for the current (leaf) scope; parents are accessed via fields
-            var currentScopeName = variables.GetLeafScopeName();
-            try
-            {
-                var scopeTypeHandle = registry.GetScopeTypeHandle(currentScopeName);
-                if (!scopeTypeHandle.IsNil)
-                {
-                    // Create constructor reference for the scope type
-                    var ctorRef = _ilGenerator.MetadataBuilder.AddMemberReference(
-                        scopeTypeHandle,
-                        _ilGenerator.MetadataBuilder.GetOrAddString(".ctor"),
-                        CreateConstructorSignature()
-                    );
-
-                    // Generate IL: new ScopeType()
-                    _ilGenerator.IL.OpCode(ILOpCode.Newobj);
-                    _ilGenerator.IL.Token(ctorRef);
-
-                    // Store the scope instance in a local variable slot 0
-                    var scopeLocalIndex = variables.CreateScopeInstance(currentScopeName);
-                    _ilGenerator.IL.StoreLocal(scopeLocalIndex.Address);
-                }
-            }
-            catch (System.Collections.Generic.KeyNotFoundException)
-            {
-                // No scope type for this program; skip creating a local for the global scope.
-            }
+            // Delegate to shared helper; safe no-op if no registry or scope type is available
+            ScopeInstanceEmitter.EmitCreateLeafScopeInstance(variables, _ilGenerator.IL, _ilGenerator.MetadataBuilder);
         }
 
         /// <summary>

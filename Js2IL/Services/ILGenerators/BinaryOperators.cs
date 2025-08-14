@@ -37,6 +37,18 @@ namespace Js2IL.Services.ILGenerators
         /// </summary>
         private void LoadVariable(Variable variable)
         {
+            // If this variable belongs to a parent/ancestor scope (captured), always load from scopes[]
+            // to respect closure binding, regardless of any local scope instances that might exist.
+            if (variable is ScopeVariable sv)
+            {
+                // scopes[sv.ParentScopeIndex].<field>
+                _il.LoadArgument(0); // scopes array
+                _il.LoadConstantI4(sv.ParentScopeIndex);
+                _il.OpCode(ILOpCode.Ldelem_ref);
+                _il.OpCode(ILOpCode.Ldfld);
+                _il.Token(sv.FieldHandle);
+                return;
+            }
             if (variable.IsParameter)
             {
                 // Directly load argument (already object). ParameterIndex already accounts for scopes[] at arg0

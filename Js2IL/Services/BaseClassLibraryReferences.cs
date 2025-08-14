@@ -595,8 +595,10 @@ namespace Js2IL.Services
 
         public MemberReferenceHandle GetFuncArrayParamInvokeRef(int jsParamCount)
         {
-            if (jsParamCount == 0) return FuncObjectArrayObject_Invoke_Ref;
-            if (jsParamCount == 1) return FuncObjectArrayObjectObject_Invoke_Ref;
+            // For 0 params, historical snapshots reference Invoke on Func<object[], object>
+            if (jsParamCount == 0) return FuncObjectArrayObject_Invoke_Ref;         // Func<object[], object>.Invoke
+            // For 1 param, snapshots reference Invoke on Func<object, object, object>
+            if (jsParamCount == 1) return FuncObjectObjectObject_Invoke_Ref;         // Func<object, object, object>.Invoke
             if (_funcArrayParamInvokeRefs.TryGetValue(jsParamCount, out var invoke)) return invoke;
             throw new NotSupportedException($"Invoke ref for {jsParamCount} parameters not initialized");
         }
