@@ -1,15 +1,37 @@
-﻿// IL code: Classes_DeclareEmptyClass
+// IL code: Classes_ClassWithMethod_NoInstantiation
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Classes_DeclareEmptyClass
+.class public auto ansi beforefieldinit Scopes.Classes_ClassWithMethod_NoInstantiation
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Foo
+	.class nested public auto ansi beforefieldinit Greeter
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit hello
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2062
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method hello::.ctor
+
+		} // end of class hello
+
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -23,13 +45,13 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Foo::.ctor
+		} // end of method Greeter::.ctor
 
-	} // end of class Foo
+	} // end of class Greeter
 
 
 	// Fields
-	.field public object Foo
+	.field public object Greeter
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -44,18 +66,18 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Classes_DeclareEmptyClass::.ctor
+	} // end of method Classes_ClassWithMethod_NoInstantiation::.ctor
 
-} // end of class Scopes.Classes_DeclareEmptyClass
+} // end of class Scopes.Classes_ClassWithMethod_NoInstantiation
 
-.class public auto ansi beforefieldinit Classes.Foo
+.class public auto ansi beforefieldinit Classes.Greeter
 	extends [System.Linq.Expressions]System.Dynamic.ExpandoObject
 {
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x2062
+		// Method begins at RVA 0x206b
 		// Header size: 1
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -63,9 +85,21 @@
 		IL_0000: ldarg.0
 		IL_0001: call instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
 		IL_0006: ret
-	} // end of method Foo::.ctor
+	} // end of method Greeter::.ctor
 
-} // end of class Classes.Foo
+	.method public hidebysig 
+		instance object hello () cil managed 
+	{
+		// Method begins at RVA 0x2073
+		// Header size: 1
+		// Code size: 2 (0x2)
+		.maxstack 8
+
+		IL_0000: ldnull
+		IL_0001: ret
+	} // end of method Greeter::hello
+
+} // end of class Classes.Greeter
 
 .class public auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -74,7 +108,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x206c
+		// Method begins at RVA 0x2078
 		// Header size: 12
 		// Code size: 7 (0x7)
 		.maxstack 8
@@ -83,7 +117,7 @@
 			[0] object
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_DeclareEmptyClass::.ctor()
+		IL_0000: newobj instance void Scopes.Classes_ClassWithMethod_NoInstantiation::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ret
 	} // end of method Program::Main
