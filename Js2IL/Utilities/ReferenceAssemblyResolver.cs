@@ -22,26 +22,22 @@ public static class ReferenceAssemblyResolver
 
         // Determine preferred major.minor from the executing assembly's TargetFramework (e.g., v8.0)
         Version? preferred = null;
-        try
+        var asm = Assembly.GetExecutingAssembly();
+        var tfmAttr = asm.GetCustomAttribute<TargetFrameworkAttribute>();
+        if (tfmAttr != null)
         {
-            var asm = Assembly.GetExecutingAssembly();
-            var tfmAttr = asm.GetCustomAttribute<TargetFrameworkAttribute>();
-            if (tfmAttr != null)
+            // Example: ".NETCoreApp,Version=v8.0"
+            var name = tfmAttr.FrameworkName;
+            var verIdx = name.IndexOf("Version=v", StringComparison.OrdinalIgnoreCase);
+            if (verIdx >= 0)
             {
-                // Example: ".NETCoreApp,Version=v8.0"
-                var name = tfmAttr.FrameworkName;
-                var verIdx = name.IndexOf("Version=v", StringComparison.OrdinalIgnoreCase);
-                if (verIdx >= 0)
+                var verStr = name.Substring(verIdx + "Version=v".Length);
+                if (Version.TryParse(verStr, out var v))
                 {
-                    var verStr = name.Substring(verIdx + "Version=v".Length);
-                    if (Version.TryParse(verStr, out var v))
-                    {
-                        preferred = new Version(v.Major, v.Minor);
-                    }
+                    preferred = new Version(v.Major, v.Minor);
                 }
             }
         }
-        catch { }
 
         // Fall back to current host runtime if we couldn't detect from TFM
         var current = Environment.Version; // e.g., 8.0.x

@@ -236,35 +236,28 @@ namespace Js2IL.Services.ILGenerators
             int? blockLocalIndex = null;
             if (registry != null)
             {
-                try
+                var scopeTypeHandle = registry.GetScopeTypeHandle(scopeName);
+                if (!scopeTypeHandle.IsNil)
                 {
-                    var scopeTypeHandle = registry.GetScopeTypeHandle(scopeName);
-                    if (!scopeTypeHandle.IsNil)
-                    {
-                        // Create constructor reference
-                        var ctorSigBuilder = new BlobBuilder();
-                        new BlobEncoder(ctorSigBuilder)
-                            .MethodSignature(isInstanceMethod: true)
-                            .Parameters(0, rt => rt.Void(), p => { });
-                        var ctorRef = _metadataBuilder.AddMemberReference(
-                            scopeTypeHandle,
-                            _metadataBuilder.GetOrAddString(".ctor"),
-                            _metadataBuilder.GetOrAddBlob(ctorSigBuilder));
+                    // Create constructor reference
+                    var ctorSigBuilder = new BlobBuilder();
+                    new BlobEncoder(ctorSigBuilder)
+                        .MethodSignature(isInstanceMethod: true)
+                        .Parameters(0, rt => rt.Void(), p => { });
+                    var ctorRef = _metadataBuilder.AddMemberReference(
+                        scopeTypeHandle,
+                        _metadataBuilder.GetOrAddString(".ctor"),
+                        _metadataBuilder.GetOrAddBlob(ctorSigBuilder));
 
-                        // newobj + store to a temp local (extend locals if necessary)
-                        // Allocate a new logical local slot index at end: existing locals count + created ones
-                        // Allocate a new local slot dedicated to this block scope
-                        blockLocalIndex = _variables.AllocateBlockScopeLocal(scopeName);
-                        _il.OpCode(ILOpCode.Newobj);
-                        _il.Token(ctorRef);
-                        _il.StoreLocal(blockLocalIndex.Value);
-                        // Track lexical scope so variable resolution prefers it
-                        _variables.PushLexicalScope(scopeName);
-                    }
-                }
-                catch (KeyNotFoundException)
-                {
-                    // Scope type not found; proceed without lexical isolation.
+                    // newobj + store to a temp local (extend locals if necessary)
+                    // Allocate a new logical local slot index at end: existing locals count + created ones
+                    // Allocate a new local slot dedicated to this block scope
+                    blockLocalIndex = _variables.AllocateBlockScopeLocal(scopeName);
+                    _il.OpCode(ILOpCode.Newobj);
+                    _il.Token(ctorRef);
+                    _il.StoreLocal(blockLocalIndex.Value);
+                    // Track lexical scope so variable resolution prefers it
+                    _variables.PushLexicalScope(scopeName);
                 }
             }
 
@@ -1044,35 +1037,31 @@ namespace Js2IL.Services.ILGenerators
                         var registry = functionVariables.GetVariableRegistry();
                         if (registry != null)
                         {
-                            try
+                            var fields = registry.GetVariablesForScope(registryScopeName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
+                            var hasAnyFields = fields.Any();
+                            if (hasAnyFields)
                             {
-                                var fields = registry.GetVariablesForScope(registryScopeName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
-                                var hasAnyFields = fields.Any();
-                                if (hasAnyFields)
+                                ScopeInstanceEmitter.EmitCreateLeafScopeInstance(functionVariables, il, _metadataBuilder);
+                                // Initialize parameter fields if backing fields exist
+                                var localScope = functionVariables.GetLocalScopeSlot();
+                                if (localScope.Address >= 0 && pnames.Length > 0)
                                 {
-                                    ScopeInstanceEmitter.EmitCreateLeafScopeInstance(functionVariables, il, _metadataBuilder);
-                                    // Initialize parameter fields if backing fields exist
-                                    var localScope = functionVariables.GetLocalScopeSlot();
-                                    if (localScope.Address >= 0 && pnames.Length > 0)
+                                    var fieldNames = new HashSet<string>(fields.Select(f => f.Name));
+                                    ushort jsParamSeq = 1; // arg0 is scopes[]
+                                    foreach (var pn in pnames)
                                     {
-                                        var fieldNames = new HashSet<string>(fields.Select(f => f.Name));
-                                        ushort jsParamSeq = 1; // arg0 is scopes[]
-                                        foreach (var pn in pnames)
+                                        if (fieldNames.Contains(pn))
                                         {
-                                            if (fieldNames.Contains(pn))
-                                            {
-                                                il.LoadLocal(localScope.Address);
-                                                il.LoadArgument(jsParamSeq);
-                                                var fh = registry.GetFieldHandle(registryScopeName, pn);
-                                                il.OpCode(ILOpCode.Stfld);
-                                                il.Token(fh);
-                                            }
-                                            jsParamSeq++;
+                                            il.LoadLocal(localScope.Address);
+                                            il.LoadArgument(jsParamSeq);
+                                            var fh = registry.GetFieldHandle(registryScopeName, pn);
+                                            il.OpCode(ILOpCode.Stfld);
+                                            il.Token(fh);
                                         }
+                                        jsParamSeq++;
                                     }
                                 }
                             }
-                            catch { }
                         }
 
                         // Emit the initializer expression to produce the delegate on the stack
@@ -1147,37 +1136,33 @@ namespace Js2IL.Services.ILGenerators
                     var registry = functionVariables.GetVariableRegistry();
                     if (registry != null)
                     {
-                        try
+                        var fields = registry.GetVariablesForScope(registryScopeName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
+                        var hasAnyFields = fields.Any();
+                        if (hasAnyFields)
                         {
-                            var fields = registry.GetVariablesForScope(registryScopeName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
-                            var hasAnyFields = fields.Any();
-                            if (hasAnyFields)
-                            {
-                                // Create the current arrow function scope instance
-                                ScopeInstanceEmitter.EmitCreateLeafScopeInstance(functionVariables, il, _metadataBuilder);
+                            // Create the current arrow function scope instance
+                            ScopeInstanceEmitter.EmitCreateLeafScopeInstance(functionVariables, il, _metadataBuilder);
 
-                                // Initialize parameter fields from CLR args when a backing field exists
-                                var localScope = functionVariables.GetLocalScopeSlot();
-                                    if (localScope.Address >= 0 && pnames.Length > 0)
+                            // Initialize parameter fields from CLR args when a backing field exists
+                            var localScope = functionVariables.GetLocalScopeSlot();
+                                if (localScope.Address >= 0 && pnames.Length > 0)
+                            {
+                                    var fieldNames = new HashSet<string>(fields.Select(f => f.Name));
+                                    ushort jsParamSeq = 1; // arg0 is scopes[]; JS params start at 1
+                                    foreach (var pn in pnames)
                                 {
-                                        var fieldNames = new HashSet<string>(fields.Select(f => f.Name));
-                                        ushort jsParamSeq = 1; // arg0 is scopes[]; JS params start at 1
-                                        foreach (var pn in pnames)
+                                    if (fieldNames.Contains(pn))
                                     {
-                                        if (fieldNames.Contains(pn))
-                                        {
-                                            il.LoadLocal(localScope.Address);
-                                            il.LoadArgument(jsParamSeq);
-                                            var fh = registry.GetFieldHandle(registryScopeName, pn);
-                                            il.OpCode(ILOpCode.Stfld);
-                                            il.Token(fh);
-                                        }
-                                        jsParamSeq++;
+                                        il.LoadLocal(localScope.Address);
+                                        il.LoadArgument(jsParamSeq);
+                                        var fh = registry.GetFieldHandle(registryScopeName, pn);
+                                        il.OpCode(ILOpCode.Stfld);
+                                        il.Token(fh);
                                     }
+                                    jsParamSeq++;
                                 }
                             }
                         }
-                        catch { }
                     }
 
                     // Emit statements using the child generator

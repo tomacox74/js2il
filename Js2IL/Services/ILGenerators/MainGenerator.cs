@@ -85,37 +85,30 @@ namespace Js2IL.Services.ILGenerators
                 foreach (var fn in allFunctions)
                 {
                     var functionName = (fn.Decl.Id as Acornima.Ast.Identifier)!.Name;
-                    try
+                    // Determine if the function itself will allocate its own scope instance
+                    var declaredFields = registry.GetVariablesForScope(functionName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
+                    bool functionAllocatesOwnScope = declaredFields.Any();
+
+                    // Only pre-instantiate here if the function will NOT allocate a scope (i.e., no fields/params)
+                    if (functionAllocatesOwnScope)
                     {
-                        // Determine if the function itself will allocate its own scope instance
-                        var declaredFields = registry.GetVariablesForScope(functionName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
-                        bool functionAllocatesOwnScope = declaredFields.Any();
-
-                        // Only pre-instantiate here if the function will NOT allocate a scope (i.e., no fields/params)
-                        if (functionAllocatesOwnScope)
-                        {
-                            continue; // avoid duplicate scope object creation
-                        }
-
-                        var scopeTypeHandle = registry.GetScopeTypeHandle(functionName);
-                        if (scopeTypeHandle.IsNil) continue;
-
-                        var ctorRef = _ilGenerator.MetadataBuilder.AddMemberReference(
-                            scopeTypeHandle,
-                            _ilGenerator.MetadataBuilder.GetOrAddString(".ctor"),
-                            CreateConstructorSignature()
-                        );
-
-                        _ilGenerator.IL.OpCode(ILOpCode.Newobj);
-                        _ilGenerator.IL.Token(ctorRef);
-                        _ilGenerator.IL.StoreLocal(nextLocalIndex);
-                        variables.RegisterAdditionalLocalScope(functionName, nextLocalIndex);
-                        nextLocalIndex++;
+                        continue; // avoid duplicate scope object creation
                     }
-                    catch (System.Collections.Generic.KeyNotFoundException)
-                    {
-                        continue;
-                    }
+
+                    var scopeTypeHandle = registry.GetScopeTypeHandle(functionName);
+                    if (scopeTypeHandle.IsNil) continue;
+
+                    var ctorRef = _ilGenerator.MetadataBuilder.AddMemberReference(
+                        scopeTypeHandle,
+                        _ilGenerator.MetadataBuilder.GetOrAddString(".ctor"),
+                        CreateConstructorSignature()
+                    );
+
+                    _ilGenerator.IL.OpCode(ILOpCode.Newobj);
+                    _ilGenerator.IL.Token(ctorRef);
+                    _ilGenerator.IL.StoreLocal(nextLocalIndex);
+                    variables.RegisterAdditionalLocalScope(functionName, nextLocalIndex);
+                    nextLocalIndex++;
                 }
             }
 
