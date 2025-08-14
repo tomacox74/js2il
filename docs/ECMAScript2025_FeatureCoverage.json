@@ -62,9 +62,17 @@
                 },
                 {
                   "feature": "Arrow functions",
-                  "status": "Not Supported",
-                  "testScripts": [],
-                  "notes": ""
+                  "status": "Partially Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/ArrowFunction_SimpleExpression.js",
+                    "Js2IL.Tests/JavaScript/ArrowFunction_BlockBody_Return.js",
+                    "Js2IL.Tests/JavaScript/ArrowFunction_GlobalFunctionCallsGlobalFunction.js",
+                    "Js2IL.Tests/JavaScript/ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.js",
+                    "Js2IL.Tests/JavaScript/ArrowFunction_GlobalFunctionWithMultipleParameters.js",
+                    "Js2IL.Tests/JavaScript/ArrowFunction_NestedFunctionAccessesMultipleScopes.js",
+                    "Js2IL.Tests/JavaScript/ArrowFunction_CapturesOuterVariable.js"
+                  ],
+                  "notes": "Covers expression- and block-bodied arrows, multiple parameters, nested functions, and closure capture across scopes (including returning functions that capture globals/locals). Not yet supported: default/rest parameters, parameter destructuring, lexical this/arguments semantics, and spread at call sites."
                 }
               ]
             },
