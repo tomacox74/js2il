@@ -17,17 +17,17 @@ namespace Js2IL.Services.ILGenerators
     /// </summary>
     internal class ILMethodGenerator : IMethodExpressionEmitter
     {
-        private Variables _variables;
-        private BaseClassLibraryReferences _bclReferences;
-        private MetadataBuilder _metadataBuilder;
-        private InstructionEncoder _il;
-        private BinaryOperators _binaryOperators;
-        private IMethodExpressionEmitter _expressionEmitter;
-        private Runtime _runtime;
-        private MethodBodyStreamEncoder _methodBodyStreamEncoder;
+        private readonly Variables _variables;
+        private readonly BaseClassLibraryReferences _bclReferences;
+        private readonly MetadataBuilder _metadataBuilder;
+        private readonly InstructionEncoder _il;
+        private readonly BinaryOperators _binaryOperators;
+        private readonly IMethodExpressionEmitter _expressionEmitter;
+        private readonly Runtime _runtime;
+        private readonly MethodBodyStreamEncoder _methodBodyStreamEncoder;
         private MethodDefinitionHandle _firstMethod = default;
 
-        private Dispatch.DispatchTableGenerator _dispatchTableGenerator;
+        private readonly Dispatch.DispatchTableGenerator _dispatchTableGenerator;
     // Tracks the name of the variable currently being initialized, to name arrow-function scopes consistently
     // with SymbolTableBuilder (e.g., ArrowFunction_<targetName>) when emitting an ArrowFunctionExpression on the RHS.
     private string? _currentAssignmentTarget;
@@ -1012,14 +1012,11 @@ namespace Js2IL.Services.ILGenerators
 
         private MethodDefinitionHandle GenerateArrowFunctionMethod(ArrowFunctionExpression arrowFunction, string registryScopeName, string ilMethodName, string[] paramNames)
         {
-            // Build method body using a dedicated ILMethodGenerator with its own Variables context
+            // Build method body using a fresh ILMethodGenerator so we never mutate the parent generator's state
             var functionVariables = new Variables(_variables, registryScopeName, paramNames, isNestedFunction: true);
-            var methodIl = new BlobBuilder();
-            var il = new InstructionEncoder(methodIl, new ControlFlowBuilder());
-
-            // Create a small helper runtime/binary for this method body
-            var runtime = new Runtime(_metadataBuilder, il);
-            var binops = new BinaryOperators(_metadataBuilder, il, functionVariables, _bclReferences, runtime);
+            var pnames = paramNames ?? Array.Empty<string>();
+            var childGen = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator);
+            var il = childGen.IL;
 
             // For arrow functions, we do NOT pre-instantiate a local scope nor initialize parameter fields
             // unless the body actually requires a local scope (e.g., block with declarations). This keeps
@@ -1039,146 +1036,11 @@ namespace Js2IL.Services.ILGenerators
                 {
                     // Optimized pattern: { const x = <expr>; return x; }
                     // If <expr> is a function (arrow/function expression), we must bind closure scopes before returning.
-                    var prevIl = _il;
-                    var prevVars = _variables;
-                    var prevRuntime = _runtime;
-                    var prevBinops = _binaryOperators;
-                    try
+                    bool returnsFunctionInitializer = initExpr is ArrowFunctionExpression || initExpr is FunctionExpression;
+
+                    if (returnsFunctionInitializer)
                     {
-                        _il = il;
-                        _variables = functionVariables;
-                        _runtime = runtime;
-                        _binaryOperators = binops;
-
-                        // Only treat as a closure-return if the initializer is a function expression
-                        bool returnsFunctionInitializer = initExpr is ArrowFunctionExpression || initExpr is FunctionExpression;
-
-                        if (returnsFunctionInitializer)
-                        {
-                            // If returning a function, ensure this arrow's local scope exists and parameter fields are initialized
-                            var registry = functionVariables.GetVariableRegistry();
-                            if (registry != null)
-                            {
-                                try
-                                {
-                                    var fields = registry.GetVariablesForScope(registryScopeName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
-                                    var hasAnyFields = fields.Any();
-                                    if (hasAnyFields)
-                                    {
-                                        ScopeInstanceEmitter.EmitCreateLeafScopeInstance(functionVariables, il, _metadataBuilder);
-                                        // Initialize parameter fields if backing fields exist
-                                        var localScope = functionVariables.GetLocalScopeSlot();
-                                        if (localScope.Address >= 0 && paramNames != null && paramNames.Length > 0)
-                                        {
-                                            var fieldNames = new HashSet<string>(fields.Select(f => f.Name));
-                                            ushort jsParamSeq = 1; // arg0 is scopes[]
-                                            foreach (var pn in paramNames)
-                                            {
-                                                if (fieldNames.Contains(pn))
-                                                {
-                                                    il.LoadLocal(localScope.Address);
-                                                    il.LoadArgument(jsParamSeq);
-                                                    var fh = registry.GetFieldHandle(registryScopeName, pn);
-                                                    il.OpCode(ILOpCode.Stfld);
-                                                    il.Token(fh);
-                                                }
-                                                jsParamSeq++;
-                                            }
-                                        }
-                                    }
-                                }
-                                catch { }
-                            }
-
-                            // Emit the initializer expression to produce the delegate on the stack
-                            // Make sure inner arrow uses assignment-target-based registry naming (e.g., ArrowFunction_inner)
-                            var prevAssignment = _currentAssignmentTarget;
-                            _currentAssignmentTarget = vid.Name;
-                            try
-                            {
-                                var t = _expressionEmitter.Emit(initExpr, new TypeCoercion());
-                                if (t == JavascriptType.Number)
-                                {
-                                    il.OpCode(ILOpCode.Box);
-                                    il.Token(_bclReferences.DoubleType);
-                                }
-                            }
-                            finally
-                            {
-                                _currentAssignmentTarget = prevAssignment;
-                            }
-
-                            // Build scopes[] to bind for closure: prefer [global(if any), this local]
-                            var innerVar = functionVariables.FindVariable(vid.Name);
-                            if (innerVar != null)
-                            {
-                                var neededScopeNames = GetScopesForClosureBinding(innerVar).ToList();
-                                il.LoadConstantI4(neededScopeNames.Count);
-                                il.OpCode(ILOpCode.Newarr);
-                                il.Token(_bclReferences.ObjectType);
-                                for (int i = 0; i < neededScopeNames.Count; i++)
-                                {
-                                    var sn = neededScopeNames[i];
-                                    var refSlot = functionVariables.GetScopeLocalSlot(sn);
-                                    il.OpCode(ILOpCode.Dup);
-                                    il.LoadConstantI4(i);
-                                    if (refSlot.Location == ObjectReferenceLocation.Local)
-                                    {
-                                        il.LoadLocal(refSlot.Address);
-                                    }
-                                    else if (refSlot.Location == ObjectReferenceLocation.Parameter)
-                                    {
-                                        il.LoadArgument(refSlot.Address);
-                                    }
-                                    else if (refSlot.Location == ObjectReferenceLocation.ScopeArray)
-                                    {
-                                        il.LoadArgument(0);
-                                        il.LoadConstantI4(refSlot.Address);
-                                        il.OpCode(ILOpCode.Ldelem_ref);
-                                    }
-                                    il.OpCode(ILOpCode.Stelem_ref);
-                                }
-                                // Bind the delegate on stack to the scopes[] we just built
-                                _runtime.InvokeClosureBindObject();
-                            }
-                            il.OpCode(ILOpCode.Ret);
-                        }
-                        else
-                        {
-                            // Not returning a function; just evaluate the expression and return it (no binding, no scope instantiation)
-                            var t = _expressionEmitter.Emit(initExpr, new TypeCoercion());
-                            if (t == JavascriptType.Number)
-                            {
-                                il.OpCode(ILOpCode.Box);
-                                il.Token(_bclReferences.DoubleType);
-                            }
-                            il.OpCode(ILOpCode.Ret);
-                        }
-                    }
-                    finally
-                    {
-                        _il = prevIl;
-                        _variables = prevVars;
-                        _runtime = prevRuntime;
-                        _binaryOperators = prevBinops;
-                    }
-                }
-                else
-                {
-                    // General fallback: emit statements; ensure a return at end if missing
-                    // Emit into this arrow method's IL encoder by temporarily switching context.
-                    var prevIl = _il;
-                    var prevVars = _variables;
-                    var prevRuntime = _runtime;
-                    var prevBinops = _binaryOperators;
-                    try
-                    {
-                        _il = il;
-                        _variables = functionVariables;
-                        _runtime = runtime;
-                        _binaryOperators = binops;
-
-                        // If the block declares any let/const or uses fields, create a local scope instance now
+                        // If returning a function, ensure this arrow's local scope exists and parameter fields are initialized
                         var registry = functionVariables.GetVariableRegistry();
                         if (registry != null)
                         {
@@ -1188,16 +1050,14 @@ namespace Js2IL.Services.ILGenerators
                                 var hasAnyFields = fields.Any();
                                 if (hasAnyFields)
                                 {
-                                    // Create the current arrow function scope instance
                                     ScopeInstanceEmitter.EmitCreateLeafScopeInstance(functionVariables, il, _metadataBuilder);
-
-                                    // Initialize parameter fields from CLR args when a backing field exists
+                                    // Initialize parameter fields if backing fields exist
                                     var localScope = functionVariables.GetLocalScopeSlot();
-                                    if (localScope.Address >= 0 && paramNames != null && paramNames.Length > 0)
+                                    if (localScope.Address >= 0 && pnames.Length > 0)
                                     {
                                         var fieldNames = new HashSet<string>(fields.Select(f => f.Name));
-                                        ushort jsParamSeq = 1; // arg0 is scopes[]; JS params start at 1
-                                        foreach (var pn in paramNames)
+                                        ushort jsParamSeq = 1; // arg0 is scopes[]
+                                        foreach (var pn in pnames)
                                         {
                                             if (fieldNames.Contains(pn))
                                             {
@@ -1215,15 +1075,113 @@ namespace Js2IL.Services.ILGenerators
                             catch { }
                         }
 
-                        GenerateStatements(block.Body);
+                        // Emit the initializer expression to produce the delegate on the stack
+                        // Make sure inner arrow uses assignment-target-based registry naming (e.g., ArrowFunction_inner)
+                        var prevAssignment = childGen._currentAssignmentTarget;
+                        childGen._currentAssignmentTarget = vid.Name;
+                        try
+                        {
+                            var t = ((IMethodExpressionEmitter)childGen).Emit(initExpr, new TypeCoercion());
+                            if (t == JavascriptType.Number)
+                            {
+                                il.OpCode(ILOpCode.Box);
+                                il.Token(_bclReferences.DoubleType);
+                            }
+                        }
+                        finally
+                        {
+                            childGen._currentAssignmentTarget = prevAssignment;
+                        }
+
+                        // Build scopes[] to bind for closure: prefer [global(if any), this local]
+                        var innerVar = functionVariables.FindVariable(vid.Name);
+                        if (innerVar != null)
+                        {
+                            var neededScopeNames = childGen.GetScopesForClosureBinding(innerVar).ToList();
+                            il.LoadConstantI4(neededScopeNames.Count);
+                            il.OpCode(ILOpCode.Newarr);
+                            il.Token(_bclReferences.ObjectType);
+                            for (int i = 0; i < neededScopeNames.Count; i++)
+                            {
+                                var sn = neededScopeNames[i];
+                                var refSlot = functionVariables.GetScopeLocalSlot(sn);
+                                il.OpCode(ILOpCode.Dup);
+                                il.LoadConstantI4(i);
+                                if (refSlot.Location == ObjectReferenceLocation.Local)
+                                {
+                                    il.LoadLocal(refSlot.Address);
+                                }
+                                else if (refSlot.Location == ObjectReferenceLocation.Parameter)
+                                {
+                                    il.LoadArgument(refSlot.Address);
+                                }
+                                else if (refSlot.Location == ObjectReferenceLocation.ScopeArray)
+                                {
+                                    il.LoadArgument(0);
+                                    il.LoadConstantI4(refSlot.Address);
+                                    il.OpCode(ILOpCode.Ldelem_ref);
+                                }
+                                il.OpCode(ILOpCode.Stelem_ref);
+                            }
+                            // Bind the delegate on stack to the scopes[] we just built
+                            childGen._runtime.InvokeClosureBindObject();
+                        }
+                        il.OpCode(ILOpCode.Ret);
                     }
-                    finally
+                    else
                     {
-                        _il = prevIl;
-                        _variables = prevVars;
-                        _runtime = prevRuntime;
-                        _binaryOperators = prevBinops;
+                        // Not returning a function; just evaluate the expression and return it (no binding, no scope instantiation)
+                        var t = ((IMethodExpressionEmitter)childGen).Emit(initExpr, new TypeCoercion());
+                        if (t == JavascriptType.Number)
+                        {
+                            il.OpCode(ILOpCode.Box);
+                            il.Token(_bclReferences.DoubleType);
+                        }
+                        il.OpCode(ILOpCode.Ret);
                     }
+                }
+                else
+                {
+                    // General fallback: emit statements; ensure a return at end if missing
+                    // If the block declares any let/const or uses fields, create a local scope instance now
+                    var registry = functionVariables.GetVariableRegistry();
+                    if (registry != null)
+                    {
+                        try
+                        {
+                            var fields = registry.GetVariablesForScope(registryScopeName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
+                            var hasAnyFields = fields.Any();
+                            if (hasAnyFields)
+                            {
+                                // Create the current arrow function scope instance
+                                ScopeInstanceEmitter.EmitCreateLeafScopeInstance(functionVariables, il, _metadataBuilder);
+
+                                // Initialize parameter fields from CLR args when a backing field exists
+                                var localScope = functionVariables.GetLocalScopeSlot();
+                                    if (localScope.Address >= 0 && pnames.Length > 0)
+                                {
+                                        var fieldNames = new HashSet<string>(fields.Select(f => f.Name));
+                                        ushort jsParamSeq = 1; // arg0 is scopes[]; JS params start at 1
+                                        foreach (var pn in pnames)
+                                    {
+                                        if (fieldNames.Contains(pn))
+                                        {
+                                            il.LoadLocal(localScope.Address);
+                                            il.LoadArgument(jsParamSeq);
+                                            var fh = registry.GetFieldHandle(registryScopeName, pn);
+                                            il.OpCode(ILOpCode.Stfld);
+                                            il.Token(fh);
+                                        }
+                                        jsParamSeq++;
+                                    }
+                                }
+                            }
+                        }
+                        catch { }
+                    }
+
+                    // Emit statements using the child generator
+                    childGen.GenerateStatements(block.Body);
                     // If no explicit return executed, fall through and return null
                     il.OpCode(ILOpCode.Ldnull);
                     il.OpCode(ILOpCode.Ret);
@@ -1231,38 +1189,14 @@ namespace Js2IL.Services.ILGenerators
             }
             else
             {
-                // Expression-bodied arrow: evaluate via the standard expression emitter to keep logic consistent
+                // Expression-bodied arrow: evaluate via the child generator's expression emitter to keep logic isolated
                 var bodyExpr = arrowFunction.Body as Expression ?? throw new NotSupportedException("Arrow function body is not an expression");
-
-                // Temporarily switch this generator's context to point at the arrow method IL and variables,
-                // so that _expressionEmitter.Emit writes into the correct InstructionEncoder.
-                var prevIl = _il;
-                var prevVars = _variables;
-                var prevRuntime = _runtime;
-                var prevBinops = _binaryOperators;
-                try
+                var t = ((IMethodExpressionEmitter)childGen).Emit(bodyExpr, new TypeCoercion());
+                if (t == JavascriptType.Number)
                 {
-                    _il = il;
-                    _variables = functionVariables;
-                    _runtime = runtime;
-                    _binaryOperators = binops;
-
-                    var t = _expressionEmitter.Emit(bodyExpr, new TypeCoercion());
-                    if (t == JavascriptType.Number)
-                    {
-                        il.OpCode(ILOpCode.Box);
-                        il.Token(_bclReferences.DoubleType);
-                    }
+                    il.OpCode(ILOpCode.Box);
+                    il.Token(_bclReferences.DoubleType);
                 }
-                finally
-                {
-                    // Restore the original generator context
-                    _il = prevIl;
-                    _variables = prevVars;
-                    _runtime = prevRuntime;
-                    _binaryOperators = prevBinops;
-                }
-
                 il.OpCode(ILOpCode.Ret);
             }
 
@@ -1289,20 +1223,20 @@ namespace Js2IL.Services.ILGenerators
 
             // Build method signature: static object (object[] scopes, object p1, ...)
             var sigBuilder = new BlobBuilder();
-            var paramCount = 1 + paramNames.Length;
+            var paramCount = 1 + pnames.Length;
             new BlobEncoder(sigBuilder)
                 .MethodSignature()
                 .Parameters(paramCount, returnType => returnType.Type().Object(), parameters =>
                 {
                     parameters.AddParameter().Type().SZArray().Object();
-                    for (int i = 0; i < paramNames.Length; i++) parameters.AddParameter().Type().Object();
+                    for (int i = 0; i < pnames.Length; i++) parameters.AddParameter().Type().Object();
                 });
             var methodSig = _metadataBuilder.GetOrAddBlob(sigBuilder);
 
             // Add parameter metadata
             var firstParam = _metadataBuilder.AddParameter(ParameterAttributes.None, _metadataBuilder.GetOrAddString("scopes"), sequenceNumber: 1);
             ushort seq = 2;
-            foreach (var p in paramNames)
+            foreach (var p in pnames)
             {
                 _metadataBuilder.AddParameter(ParameterAttributes.None, _metadataBuilder.GetOrAddString(p), sequenceNumber: seq++);
             }
