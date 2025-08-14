@@ -1096,9 +1096,28 @@ namespace Js2IL.Services.ILGenerators
                 else
                 {
                     // General fallback: emit statements; ensure a return at end if missing
-                    var bodyGen = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator);
-                    bodyGen.GenerateStatements(block.Body);
-                    // If no explicit return, return null
+                    // Emit into this arrow method's IL encoder by temporarily switching context.
+                    var prevIl = _il;
+                    var prevVars = _variables;
+                    var prevRuntime = _runtime;
+                    var prevBinops = _binaryOperators;
+                    try
+                    {
+                        _il = il;
+                        _variables = functionVariables;
+                        _runtime = runtime;
+                        _binaryOperators = binops;
+
+                        GenerateStatements(block.Body);
+                    }
+                    finally
+                    {
+                        _il = prevIl;
+                        _variables = prevVars;
+                        _runtime = prevRuntime;
+                        _binaryOperators = prevBinops;
+                    }
+                    // If no explicit return executed, fall through and return null
                     il.OpCode(ILOpCode.Ldnull);
                     il.OpCode(ILOpCode.Ret);
                 }

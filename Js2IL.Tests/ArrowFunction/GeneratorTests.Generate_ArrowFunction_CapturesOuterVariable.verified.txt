@@ -1,0 +1,133 @@
+﻿// IL code: ArrowFunction_CapturesOuterVariable
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.ArrowFunction_CapturesOuterVariable
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit ArrowFunction_mul
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method ArrowFunction_mul::.ctor
+
+	} // end of class ArrowFunction_mul
+
+
+	// Fields
+	.field public initonly object n
+	.field public initonly object 'mul'
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method ArrowFunction_CapturesOuterVariable::.ctor
+
+} // end of class Scopes.ArrowFunction_CapturesOuterVariable
+
+.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L2C12
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		object ArrowFunction_L2C12 (
+			object[] scopes,
+			object x
+		) cil managed 
+	{
+		// Method begins at RVA 0x2062
+		// Header size: 1
+		// Code size: 26 (0x1a)
+		.maxstack 8
+
+		IL_0000: ldarg.1
+		IL_0001: unbox.any [System.Runtime]System.Double
+		IL_0006: ldarg.0
+		IL_0007: ldc.i4.0
+		IL_0008: ldelem.ref
+		IL_0009: ldfld object Scopes.ArrowFunction_CapturesOuterVariable::n
+		IL_000e: unbox.any [System.Runtime]System.Double
+		IL_0013: mul
+		IL_0014: box [System.Runtime]System.Double
+		IL_0019: ret
+	} // end of method ArrowFunction_L2C12::ArrowFunction_L2C12
+
+} // end of class Functions.ArrowFunction_L2C12
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2080
+		// Header size: 12
+		// Code size: 102 (0x66)
+		.maxstack 8
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.ArrowFunction_CapturesOuterVariable::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldc.r8 5
+		IL_0010: box [System.Runtime]System.Double
+		IL_0015: stfld object Scopes.ArrowFunction_CapturesOuterVariable::n
+		IL_001a: ldloc.0
+		IL_001b: ldnull
+		IL_001c: ldftn object Functions.ArrowFunction_L2C12::ArrowFunction_L2C12(object[], object)
+		IL_0022: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0027: stfld object Scopes.ArrowFunction_CapturesOuterVariable::'mul'
+		IL_002c: ldc.i4.2
+		IL_002d: newarr [System.Runtime]System.Object
+		IL_0032: dup
+		IL_0033: ldc.i4.0
+		IL_0034: ldstr "product is "
+		IL_0039: stelem.ref
+		IL_003a: dup
+		IL_003b: ldc.i4.1
+		IL_003c: ldloc.0
+		IL_003d: ldfld object Scopes.ArrowFunction_CapturesOuterVariable::'mul'
+		IL_0042: ldc.i4.1
+		IL_0043: newarr [System.Runtime]System.Object
+		IL_0048: dup
+		IL_0049: ldc.i4.0
+		IL_004a: ldloc.0
+		IL_004b: stelem.ref
+		IL_004c: ldc.r8 3
+		IL_0055: box [System.Runtime]System.Double
+		IL_005a: callvirt instance !2 class [System.Runtime]System.Func`3<class [System.Runtime]System.Object, class [System.Runtime]System.Object, class [System.Runtime]System.Object>::Invoke(!0, !1)
+		IL_005f: stelem.ref
+		IL_0060: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0065: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
