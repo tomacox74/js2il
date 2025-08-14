@@ -27,10 +27,13 @@ namespace Js2IL.Services.ILGenerators
         private readonly MethodBodyStreamEncoder _methodBodyStreamEncoder;
         private MethodDefinitionHandle _firstMethod = default;
 
-        private readonly Dispatch.DispatchTableGenerator _dispatchTableGenerator;
+    private readonly Dispatch.DispatchTableGenerator _dispatchTableGenerator;
+    private readonly ClassRegistry _classRegistry;
     // Tracks the name of the variable currently being initialized, to name arrow-function scopes consistently
     // with SymbolTableBuilder (e.g., ArrowFunction_<targetName>) when emitting an ArrowFunctionExpression on the RHS.
     private string? _currentAssignmentTarget;
+    // Tracks simple associations from variable name to class name when initialized via `const x = new ClassName()`
+    private readonly Dictionary<string, string> _variableToClass = new(StringComparer.Ordinal);
 
         /*
          * Temporary exposure of private members until refactoring gets cleaner
@@ -43,7 +46,7 @@ namespace Js2IL.Services.ILGenerators
 
         public MethodDefinitionHandle FirstMethod => _firstMethod;
 
-        public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator)
+    public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator, ClassRegistry? classRegistry = null)
         {
             _variables = variables;
             _bclReferences = bclReferences;
@@ -57,6 +60,7 @@ namespace Js2IL.Services.ILGenerators
             this._expressionEmitter = this;
             _methodBodyStreamEncoder = methodBodyStreamEncoder;
             _dispatchTableGenerator = dispatchTableGenerator ?? throw new ArgumentNullException(nameof(dispatchTableGenerator));
+            _classRegistry = classRegistry ?? new ClassRegistry();
         }
 
         public void DeclareVariable(VariableDeclaration variableDeclaraion)
@@ -648,6 +652,60 @@ namespace Js2IL.Services.ILGenerators
                 memberExpression.Property is not Acornima.Ast.Identifier propertyIdentifier ||
                 propertyIdentifier.Name != "log")
             {
+                // Instance method call: obj.method(...)
+                if (callExpression.Callee is Acornima.Ast.MemberExpression mem && !mem.Computed && mem.Object is Acornima.Ast.Identifier baseId && mem.Property is Acornima.Ast.Identifier mname)
+                {
+                    // Load instance from variable field
+                    var baseVar = _variables.FindVariable(baseId.Name) ?? throw new InvalidOperationException($"Variable '{baseId.Name}' not found.");
+                    var scopeRef = _variables.GetScopeLocalSlot(baseVar.ScopeName);
+                    if (scopeRef.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(scopeRef.Address);
+                    else if (scopeRef.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(scopeRef.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
+                    else _il.LoadLocal(scopeRef.Address);
+                    _il.OpCode(ILOpCode.Ldfld);
+                    _il.Token(baseVar.FieldHandle); // stack: instance (object)
+
+                    // We need the class type to make a MemberRef for the method, but since Classes inherit ExpandoObject,
+                    // we can attempt a virtual call by searching all known classes for a method name. For now, assume the
+                    // type is the declared class when the variable was initialized via `new Identifier()`.
+                    // As a minimal approach, generate a MemberRef on System.Object with given name and object params/return.
+                    // Better: rely on runtime Emit to callvirt by name using dynamic - not available; so build a conservative ref.
+
+                    // Build method signature: instance object method(object, ...)
+                    var argCount = callExpression.Arguments.Count;
+                    var sig = new BlobBuilder();
+                    new BlobEncoder(sig)
+                        .MethodSignature(isInstanceMethod: true)
+                        .Parameters(argCount, r => r.Type().Object(), p => { for (int i=0;i<argCount;i++) p.AddParameter().Type().Object(); });
+                    var msig = _metadataBuilder.GetOrAddBlob(sig);
+
+                    // Resolve the concrete class type if known (based on prior `new` assignment)
+                    TypeDefinitionHandle targetType = default;
+                    if (_variableToClass.TryGetValue(baseId.Name, out var cname))
+                    {
+                        if (_classRegistry.TryGet(cname, out var th)) targetType = th;
+                    }
+                    if (targetType.IsNil)
+                    {
+                        throw new NotSupportedException($"Cannot resolve class type for variable '{baseId.Name}' to call method '{mname.Name}'.");
+                    }
+                    var mref = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(mname.Name), msig);
+
+                    // Push arguments
+                    for (int i = 0; i < callExpression.Arguments.Count; i++)
+                    {
+                        var at = _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion());
+                        if (at == JavascriptType.Number)
+                        {
+                            _il.OpCode(ILOpCode.Box);
+                            _il.Token(_bclReferences.DoubleType);
+                        }
+                    }
+
+                    _il.OpCode(ILOpCode.Callvirt);
+                    _il.Token(mref);
+                    if (discardResult) _il.OpCode(ILOpCode.Pop);
+                    return;
+                }
                 // try to invoke local function
                 if (callExpression.Callee is Acornima.Ast.Identifier identifier)
                 {
@@ -920,6 +978,42 @@ namespace Js2IL.Services.ILGenerators
                     // Generate code for ArrayExpression
                     GenerateArrayExpression(arrayExpression);
                     javascriptType = JavascriptType.Object; // Arrays are treated as objects in JavaScript
+                    break;
+                case NewExpression newExpression:
+                    // Support `new Identifier(...)` for classes emitted under Classes namespace
+                    if (newExpression.Callee is Identifier cid)
+                    {
+                        if (!_classRegistry.TryGet(cid.Name, out var typeHandle) || typeHandle.IsNil)
+                        {
+                            throw new NotSupportedException($"Unknown class '{cid.Name}' for new expression");
+                        }
+                        // Build .ctor signature matching argument count (all object)
+                        var argc = newExpression.Arguments.Count;
+                        var sig = new BlobBuilder();
+                        new BlobEncoder(sig)
+                            .MethodSignature(isInstanceMethod: true)
+                            .Parameters(argc, r => r.Void(), p => { for (int i=0;i<argc;i++) p.AddParameter().Type().Object(); });
+                        var ctorSig = _metadataBuilder.GetOrAddBlob(sig);
+                        var ctorRef = _metadataBuilder.AddMemberReference(typeHandle, _metadataBuilder.GetOrAddString(".ctor"), ctorSig);
+                        // Push args
+                        for (int i = 0; i < argc; i++)
+                        {
+                            var at = _expressionEmitter.Emit(newExpression.Arguments[i], new TypeCoercion());
+                            if (at == JavascriptType.Number) { _il.OpCode(ILOpCode.Box); _il.Token(_bclReferences.DoubleType); }
+                        }
+                        _il.OpCode(ILOpCode.Newobj);
+                        _il.Token(ctorRef);
+                        // Record variable -> class mapping when in a variable initializer or assignment
+                        if (!string.IsNullOrEmpty(_currentAssignmentTarget))
+                        {
+                            _variableToClass[_currentAssignmentTarget] = cid.Name;
+                        }
+                        javascriptType = JavascriptType.Object;
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"Unsupported new-expression callee: {newExpression.Callee.Type}");
+                    }
                     break;
                 case BinaryExpression binaryExpression:
                     _binaryOperators.Generate(binaryExpression, branching);

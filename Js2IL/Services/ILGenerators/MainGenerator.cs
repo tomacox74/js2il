@@ -20,6 +20,7 @@ namespace Js2IL.Services.ILGenerators
 
         private Dispatch.DispatchTableGenerator _dispatchTableGenerator;
     private readonly TypeBuilder? _programTypeBuilder;
+    private readonly ClassRegistry _classRegistry = new();
 
 
         public MainGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator, SymbolTable symbolTable)
@@ -31,9 +32,9 @@ namespace Js2IL.Services.ILGenerators
             if (bclReferences == null) throw new ArgumentNullException(nameof(bclReferences));
             if (metadataBuilder == null) throw new ArgumentNullException(nameof(metadataBuilder));
 
-            _ilGenerator = new ILMethodGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator);
-            _functionGenerator = new JavaScriptFunctionGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator);
-            _classesGenerator = new ClassesGenerator(metadataBuilder, bclReferences, methodBodyStreamEncoder);
+            _ilGenerator = new ILMethodGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator, _classRegistry);
+            _functionGenerator = new JavaScriptFunctionGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator, _classRegistry);
+            _classesGenerator = new ClassesGenerator(metadataBuilder, bclReferences, methodBodyStreamEncoder, _classRegistry);
             this._methodBodyStreamEncoder = methodBodyStreamEncoder;
         }
 
