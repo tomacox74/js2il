@@ -18,6 +18,26 @@ namespace JavaScriptRuntime
             {
                 return (Func<object[], object, object>)((_, a1) => f1(boundScopes, a1));
             }
+            if (target is Func<object[], object, object, object> f2)
+            {
+                return (Func<object[], object, object, object>)((_, a1, a2) => f2(boundScopes, a1, a2));
+            }
+            if (target is Func<object[], object, object, object, object> f3)
+            {
+                return (Func<object[], object, object, object, object>)((_, a1, a2, a3) => f3(boundScopes, a1, a2, a3));
+            }
+            if (target is Func<object[], object, object, object, object, object> f4)
+            {
+                return (Func<object[], object, object, object, object, object>)((_, a1, a2, a3, a4) => f4(boundScopes, a1, a2, a3, a4));
+            }
+            if (target is Func<object[], object, object, object, object, object, object> f5)
+            {
+                return (Func<object[], object, object, object, object, object, object>)((_, a1, a2, a3, a4, a5) => f5(boundScopes, a1, a2, a3, a4, a5));
+            }
+            if (target is Func<object[], object, object, object, object, object, object, object> f6)
+            {
+                return (Func<object[], object, object, object, object, object, object, object>)((_, a1, a2, a3, a4, a5, a6) => f6(boundScopes, a1, a2, a3, a4, a5, a6));
+            }
             throw new ArgumentException("Unsupported delegate type for closure binding", nameof(target));
         }
 
