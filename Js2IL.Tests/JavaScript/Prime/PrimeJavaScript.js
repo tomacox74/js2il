@@ -27,19 +27,10 @@ let config = {
 	runtime: ''
 };
 
-try
-{
-	!!Deno;
-	config.runtime = "deno";
-	config.verbose = Deno.args.includes("verbose");
-}
-catch
-{
-	const { performance } = require('perf_hooks');
-	const runtimeParts = process.argv[0].split("/");
-	config.runtime = runtimeParts[runtimeParts.length - 1];
-	config.verbose = process.argv.includes("verbose");
-}
+const { performance } = require('perf_hooks');
+const runtimeParts = process.argv[0].split(/[\\/]/);
+config.runtime = runtimeParts[runtimeParts.length - 1];
+config.verbose = process.argv.includes("verbose");
 
 // 32-bit bitarray for javascript, with only needed functions
 // int32, not uint and not 64bit because: javascript uses 32int
