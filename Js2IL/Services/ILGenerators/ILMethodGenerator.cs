@@ -1056,12 +1056,52 @@ namespace Js2IL.Services.ILGenerators
             // Emit body
             if (arrowFunction.Body is BlockStatement block)
             {
-                // Minimal support: emit statements; ensure a return at end if missing
-                var bodyGen = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator);
-                bodyGen.GenerateStatements(block.Body);
-                // If no explicit return, return null
-                il.OpCode(ILOpCode.Ldnull);
-                il.OpCode(ILOpCode.Ret);
+                // Fast-path: handle common pattern `{ const x = <expr>; return x; }`
+                if (block.Body.Count == 2 &&
+                    block.Body[0] is VariableDeclaration vdecl &&
+                    (vdecl.Kind == VariableDeclarationKind.Const || vdecl.Kind == VariableDeclarationKind.Let) &&
+                    vdecl.Declarations.Count == 1 &&
+                    vdecl.Declarations[0].Id is Identifier vid &&
+                    vdecl.Declarations[0].Init is Expression initExpr &&
+                    block.Body[1] is ReturnStatement rstmt && rstmt.Argument is Identifier rid && rid.Name == vid.Name)
+                {
+                    // Evaluate initExpr and return it directly, avoiding a local field for the temp.
+                    var prevIl = _il;
+                    var prevVars = _variables;
+                    var prevRuntime = _runtime;
+                    var prevBinops = _binaryOperators;
+                    try
+                    {
+                        _il = il;
+                        _variables = functionVariables;
+                        _runtime = runtime;
+                        _binaryOperators = binops;
+
+                        var t = _expressionEmitter.Emit(initExpr, new TypeCoercion());
+                        if (t == JavascriptType.Number)
+                        {
+                            il.OpCode(ILOpCode.Box);
+                            il.Token(_bclReferences.DoubleType);
+                        }
+                    }
+                    finally
+                    {
+                        _il = prevIl;
+                        _variables = prevVars;
+                        _runtime = prevRuntime;
+                        _binaryOperators = prevBinops;
+                    }
+                    il.OpCode(ILOpCode.Ret);
+                }
+                else
+                {
+                    // General fallback: emit statements; ensure a return at end if missing
+                    var bodyGen = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator);
+                    bodyGen.GenerateStatements(block.Body);
+                    // If no explicit return, return null
+                    il.OpCode(ILOpCode.Ldnull);
+                    il.OpCode(ILOpCode.Ret);
+                }
             }
             else
             {
