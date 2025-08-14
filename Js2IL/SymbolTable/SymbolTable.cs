@@ -69,8 +69,9 @@ namespace Js2IL.SymbolTables
     public enum ScopeKind
     {
         Global,
-        Function,
-        Block
+    Function,
+    Block,
+    Class
     }
 
     public class BindingInfo

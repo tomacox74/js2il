@@ -12,8 +12,9 @@ namespace Js2IL.Services.ILGenerators
     /// </summary>
     internal class MainGenerator
     {
-        private ILMethodGenerator _ilGenerator;
+    private ILMethodGenerator _ilGenerator;
         private JavaScriptFunctionGenerator _functionGenerator;
+    private ClassesGenerator _classesGenerator;
         private MethodBodyStreamEncoder _methodBodyStreamEncoder;
         private SymbolTable _symbolTable;
 
@@ -32,6 +33,7 @@ namespace Js2IL.Services.ILGenerators
 
             _ilGenerator = new ILMethodGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator);
             _functionGenerator = new JavaScriptFunctionGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator);
+            _classesGenerator = new ClassesGenerator(metadataBuilder, bclReferences, methodBodyStreamEncoder);
             this._methodBodyStreamEncoder = methodBodyStreamEncoder;
         }
 
@@ -111,6 +113,9 @@ namespace Js2IL.Services.ILGenerators
                     nextLocalIndex++;
                 }
             }
+
+            // First, declare classes so their types exist under the Classes namespace
+            _classesGenerator.DeclareClasses(_symbolTable);
 
             // create the dispatch
             // functions are hosted so we need to declare them first

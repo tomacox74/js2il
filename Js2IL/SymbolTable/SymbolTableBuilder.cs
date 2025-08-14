@@ -29,6 +29,34 @@ namespace Js2IL.SymbolTables
                     foreach (var statement in program.Body)
                         BuildScopeRecursive(statement, currentScope);
                     break;
+                case ClassDeclaration classDecl:
+                    var className = (classDecl.Id as Identifier)?.Name ?? $"Class{++_closureCounter}";
+                    var classScope = new Scope(className, ScopeKind.Class, currentScope, classDecl);
+                    currentScope.Bindings[className] = new BindingInfo(className, BindingKind.Let, classDecl);
+                    // Process class body members for nested functions or fields later if needed
+                    foreach (var element in classDecl.Body.Body)
+                    {
+                        // Methods are represented as MethodDefinition (not to be confused with IL). We can capture their keys if needed later.
+                        if (element is MethodDefinition mdef && mdef.Value is FunctionExpression mfunc)
+                        {
+                            // Create a pseudo-scope for the method if we compile methods as functions later
+                            var mname = (mdef.Key as Identifier)?.Name ?? $"Method_L{mdef.Location.Start.Line}C{mdef.Location.Start.Column}";
+                            var methodScope = new Scope(mname, ScopeKind.Function, classScope, mfunc);
+                            foreach (var p in mfunc.Params)
+                            {
+                                if (p is Identifier pid)
+                                {
+                                    methodScope.Bindings[pid.Name] = new BindingInfo(pid.Name, BindingKind.Var, pid);
+                                    methodScope.Parameters.Add(pid.Name);
+                                }
+                            }
+                            if (mfunc.Body is BlockStatement mblock)
+                            {
+                                foreach (var st in mblock.Body) BuildScopeRecursive(st, methodScope);
+                            }
+                        }
+                    }
+                    break;
                 case FunctionDeclaration funcDecl:
                     var funcName = (funcDecl.Id as Identifier)?.Name ?? $"Closure{++_closureCounter}";
                     var funcScope = new Scope(funcName, ScopeKind.Function, currentScope, funcDecl);
