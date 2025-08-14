@@ -1016,28 +1016,17 @@ namespace Js2IL.Services.ILGenerators
                     var fields = registry.GetVariablesForScope(arrowScopeName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
                     if (fields.Any())
                     {
-                        var scopeTypeHandle = registry.GetScopeTypeHandle(arrowScopeName);
-                        if (!scopeTypeHandle.IsNil)
+                        // Create the arrow's leaf scope instance using the shared helper
+                        ScopeInstanceEmitter.EmitCreateLeafScopeInstance(functionVariables, il, _metadataBuilder);
+
+                        // Initialize parameter fields on the scope from CLR arguments
+                        var localScope = functionVariables.GetLocalScopeSlot();
+                        if (localScope.Address >= 0)
                         {
-                            var ctorSigBuilder = new BlobBuilder();
-                            new BlobEncoder(ctorSigBuilder)
-                                .MethodSignature(isInstanceMethod: true)
-                                .Parameters(0, rt => rt.Void(), p => { });
-                            var ctorRef = _metadataBuilder.AddMemberReference(
-                                scopeTypeHandle,
-                                _metadataBuilder.GetOrAddString(".ctor"),
-                                _metadataBuilder.GetOrAddBlob(ctorSigBuilder));
-
-                            il.OpCode(ILOpCode.Newobj);
-                            il.Token(ctorRef);
-                            var scopeLocal = functionVariables.CreateScopeInstance(arrowScopeName);
-                            il.StoreLocal(scopeLocal.Address);
-
-                            // Initialize parameter fields on the scope from CLR arguments
                             ushort jsParamSeq = 1; // arg0 is scopes[]
                             foreach (var p in paramNames)
                             {
-                                il.LoadLocal(scopeLocal.Address);
+                                il.LoadLocal(localScope.Address);
                                 il.LoadArgument(jsParamSeq);
                                 var fh = registry.GetFieldHandle(arrowScopeName, p);
                                 il.OpCode(ILOpCode.Stfld);
