@@ -8,12 +8,12 @@ namespace Js2IL.Tests.ArrowFunction
         public GeneratorTests() : base("ArrowFunction") { }
 
         [Fact]
-    public Task Generate_ArrowFunction_SimpleExpression() { var testName = "ArrowFunction_SimpleExpression"; return GenerateTest(testName); }
+        public Task ArrowFunction_SimpleExpression() { var testName = nameof(ArrowFunction_SimpleExpression); return GenerateTest(testName); }
 
         [Fact]
-    public Task Generate_ArrowFunction_BlockBody_Return() { var testName = "ArrowFunction_BlockBody_Return"; return GenerateTest(testName); }
+        public Task ArrowFunction_BlockBody_Return() { var testName = nameof(ArrowFunction_BlockBody_Return); return GenerateTest(testName); }
 
         [Fact]
-    public Task Generate_ArrowFunction_CapturesOuterVariable() { var testName = "ArrowFunction_CapturesOuterVariable"; return GenerateTest(testName); }
+        public Task ArrowFunction_CapturesOuterVariable() { var testName = nameof(ArrowFunction_CapturesOuterVariable); return GenerateTest(testName); }
     }
 }
