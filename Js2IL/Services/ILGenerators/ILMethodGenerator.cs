@@ -28,6 +28,9 @@ namespace Js2IL.Services.ILGenerators
         private MethodDefinitionHandle _firstMethod = default;
 
         private Dispatch.DispatchTableGenerator _dispatchTableGenerator;
+    // Tracks the name of the variable currently being initialized, to name arrow-function scopes consistently
+    // with SymbolTableBuilder (e.g., ArrowFunction_<targetName>) when emitting an ArrowFunctionExpression on the RHS.
+    private string? _currentAssignmentTarget;
 
         /*
          * Temporary exposure of private members until refactoring gets cleaner
@@ -96,7 +99,16 @@ namespace Js2IL.Services.ILGenerators
                 }
                 
                 // Generate the expression - this puts the value on the stack
-                variable.Type = this._expressionEmitter.Emit(variableAST.Init, new TypeCoercion());
+                var prevAssignmentTarget = _currentAssignmentTarget;
+                _currentAssignmentTarget = variableName;
+                try
+                {
+                    variable.Type = this._expressionEmitter.Emit(variableAST.Init, new TypeCoercion());
+                }
+                finally
+                {
+                    _currentAssignmentTarget = prevAssignmentTarget;
+                }
                 if (variable.Type == JavascriptType.Number)
                 {
                     _il.OpCode(ILOpCode.Box);
@@ -890,10 +902,12 @@ namespace Js2IL.Services.ILGenerators
                         // Generate a static method for the arrow function and create a delegate instance.
                         // Use a deterministic but local owner type for simplicity.
                         var paramNames = arrowFunction.Params.OfType<Identifier>().Select(p => p.Name).ToArray();
-                        // Prefer assignment-target-based name when available; otherwise location-based
-                        // We don't have assignment target here; fall back to location
-                        var arrowScopeName = $"ArrowFunction_L{arrowFunction.Location.Start.Line}C{arrowFunction.Location.Start.Column}";
-                        var methodHandle = GenerateArrowFunctionMethod(arrowFunction, arrowScopeName, paramNames);
+                        // Use assignment-target name for registry scope, but keep IL method/type naming location-based to preserve snapshots
+                        var registryScopeName = !string.IsNullOrEmpty(_currentAssignmentTarget)
+                            ? $"ArrowFunction_{_currentAssignmentTarget}"
+                            : $"ArrowFunction_L{arrowFunction.Location.Start.Line}C{arrowFunction.Location.Start.Column}";
+                        var ilMethodName = $"ArrowFunction_L{arrowFunction.Location.Start.Line}C{arrowFunction.Location.Start.Column}";
+                        var methodHandle = GenerateArrowFunctionMethod(arrowFunction, registryScopeName, ilMethodName, paramNames);
 
                         // ldnull ; ldftn method ; newobj Func<object[], object, ...>
                         _il.OpCode(ILOpCode.Ldnull);
@@ -996,10 +1010,10 @@ namespace Js2IL.Services.ILGenerators
             return javascriptType;
         }
 
-        private MethodDefinitionHandle GenerateArrowFunctionMethod(ArrowFunctionExpression arrowFunction, string arrowScopeName, string[] paramNames)
+        private MethodDefinitionHandle GenerateArrowFunctionMethod(ArrowFunctionExpression arrowFunction, string registryScopeName, string ilMethodName, string[] paramNames)
         {
             // Build method body using a dedicated ILMethodGenerator with its own Variables context
-            var functionVariables = new Variables(_variables, arrowScopeName, paramNames, isNestedFunction: true);
+            var functionVariables = new Variables(_variables, registryScopeName, paramNames, isNestedFunction: true);
             var methodIl = new BlobBuilder();
             var il = new InstructionEncoder(methodIl, new ControlFlowBuilder());
 
@@ -1007,40 +1021,9 @@ namespace Js2IL.Services.ILGenerators
             var runtime = new Runtime(_metadataBuilder, il);
             var binops = new BinaryOperators(_metadataBuilder, il, functionVariables, _bclReferences, runtime);
 
-            // If this function scope has declared fields (e.g., parameters), create a local scope object and initialize parameter fields
-            var registry = functionVariables.GetVariableRegistry();
-            if (registry != null)
-            {
-                try
-                {
-                    var fields = registry.GetVariablesForScope(arrowScopeName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
-                    if (fields.Any())
-                    {
-                        // Create the arrow's leaf scope instance using the shared helper
-                        ScopeInstanceEmitter.EmitCreateLeafScopeInstance(functionVariables, il, _metadataBuilder);
-
-                        // Initialize parameter fields on the scope from CLR arguments
-                        var localScope = functionVariables.GetLocalScopeSlot();
-                        if (localScope.Address >= 0)
-                        {
-                            ushort jsParamSeq = 1; // arg0 is scopes[]
-                            foreach (var p in paramNames)
-                            {
-                                il.LoadLocal(localScope.Address);
-                                il.LoadArgument(jsParamSeq);
-                                var fh = registry.GetFieldHandle(arrowScopeName, p);
-                                il.OpCode(ILOpCode.Stfld);
-                                il.Token(fh);
-                                jsParamSeq++;
-                            }
-                        }
-                    }
-                }
-                catch
-                {
-                    // If scope type or fields are not present in registry, continue without local scope
-                }
-            }
+            // For arrow functions, we do NOT pre-instantiate a local scope nor initialize parameter fields
+            // unless the body actually requires a local scope (e.g., block with declarations). This keeps
+            // expression-bodied arrows and simple block-return arrows minimal and matches snapshot baselines.
 
             // Emit body
             if (arrowFunction.Body is BlockStatement block)
@@ -1096,6 +1079,21 @@ namespace Js2IL.Services.ILGenerators
                         _variables = functionVariables;
                         _runtime = runtime;
                         _binaryOperators = binops;
+
+                        // If the block declares any let/const or uses fields, create a local scope instance now
+                        var registry = functionVariables.GetVariableRegistry();
+                        if (registry != null)
+                        {
+                            try
+                            {
+                                var fields = registry.GetVariablesForScope(registryScopeName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
+                                if (fields.Any())
+                                {
+                                    ScopeInstanceEmitter.EmitCreateLeafScopeInstance(functionVariables, il, _metadataBuilder);
+                                }
+                            }
+                            catch { }
+                        }
 
                         GenerateStatements(block.Body);
                     }
@@ -1190,8 +1188,8 @@ namespace Js2IL.Services.ILGenerators
             }
 
             // Host the arrow method on its own type under Functions namespace
-            var tb = new Js2IL.Utilities.Ecma335.TypeBuilder(_metadataBuilder, "Functions", arrowScopeName);
-            var mdh = tb.AddMethodDefinition(MethodAttributes.Static | MethodAttributes.Public, arrowScopeName, methodSig, bodyOffset, firstParam);
+            var tb = new Js2IL.Utilities.Ecma335.TypeBuilder(_metadataBuilder, "Functions", ilMethodName);
+            var mdh = tb.AddMethodDefinition(MethodAttributes.Static | MethodAttributes.Public, ilMethodName, methodSig, bodyOffset, firstParam);
             tb.AddTypeDefinition(TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, _bclReferences.ObjectType);
             return mdh;
         }

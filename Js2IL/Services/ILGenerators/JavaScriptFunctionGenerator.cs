@@ -193,38 +193,42 @@ namespace Js2IL.Services.ILGenerators
             var registry = variables.GetVariableRegistry();
             if (registry != null)
             {
-                try
+                var fields = registry.GetVariablesForScope(functionName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
+                var hasAnyFields = fields.Any();
+                if (hasAnyFields)
                 {
-                    var fields = registry.GetVariablesForScope(functionName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
-                    if (fields.Any())
-                    {
-                        // Create the leaf scope instance using the shared helper
-                        ScopeInstanceEmitter.EmitCreateLeafScopeInstance(variables, il, _metadataBuilder);
+                    // Create the leaf scope instance using the shared helper
+                    ScopeInstanceEmitter.EmitCreateLeafScopeInstance(variables, il, _metadataBuilder);
 
-                        // Initialize parameter fields on the scope from CLR arguments
-                        var localScope = variables.GetLocalScopeSlot();
-                        if (localScope.Address >= 0)
+                    // Initialize parameter fields on the scope from CLR arguments only when a backing field exists for the parameter.
+                    var localScope = variables.GetLocalScopeSlot();
+                    if (localScope.Address >= 0)
+                    {
+                        // Build a fast lookup of field-backed names in this scope
+                        var fieldNames = new HashSet<string>(fields.Select(f => f.Name));
+
+                        // JS parameters start at arg1 (arg0 is scopes[])
+                        ushort jsParamSeq = 1;
+                        foreach (var param in functionDeclaration.Params.OfType<Acornima.Ast.Identifier>())
                         {
-                            // JS parameters start at arg1 (arg0 is scopes[])
-                            ushort jsParamSeq = 1;
-                            foreach (var param in functionDeclaration.Params.OfType<Acornima.Ast.Identifier>())
+                            if (!fieldNames.Contains(param.Name))
                             {
-                                // Load scope instance (target for stfld)
-                                il.LoadLocal(localScope.Address);
-                                // Load CLR arg for this parameter (object already)
-                                il.LoadArgument(jsParamSeq);
-                                // Store to the corresponding field on the scope
-                                var fieldHandle = registry.GetFieldHandle(functionName, param.Name);
-                                il.OpCode(ILOpCode.Stfld);
-                                il.Token(fieldHandle);
+                                // No field backing for this parameter (e.g., no nested functions). Skip.
                                 jsParamSeq++;
+                                continue;
                             }
+
+                            // Load scope instance (target for stfld)
+                            il.LoadLocal(localScope.Address);
+                            // Load CLR arg for this parameter (object already)
+                            il.LoadArgument(jsParamSeq);
+                            // Store to the corresponding field on the scope
+                            var fieldHandle = registry.GetFieldHandle(functionName, param.Name);
+                            il.OpCode(ILOpCode.Stfld);
+                            il.Token(fieldHandle);
+                            jsParamSeq++;
                         }
                     }
-                }
-                catch
-                {
-                    // If scope type not found we silently continue (no locals used)
                 }
             }
 
