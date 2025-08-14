@@ -182,6 +182,10 @@ namespace Js2IL.Services.ILGenerators
         {
             switch (statement)
             {
+                case ClassDeclaration:
+                    // Class declarations are emitted as .NET types by ClassesGenerator;
+                    // no IL is required in the method body for the declaration itself.
+                    break;
                 case VariableDeclaration variableDeclaration:
                     DeclareVariable(variableDeclaration);
                     break;
