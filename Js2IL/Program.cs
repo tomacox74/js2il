@@ -17,7 +17,6 @@ public class Js2ILArgs
 
     [ArgPosition(1)]
     [ArgDescription("The output path for the generated IL")]
-    [ArgExistingDirectory]
     public string? OutputPath { get; set; }
 
     [ArgDescription("Enable verbose output")]
@@ -150,15 +149,31 @@ class Program
             // NOTE: some checkes such as the existance of the the file parsed.InputFile are done by powerargs for us
             Console.WriteLine("\nGenerating dotnet assembly...");
             var assemblyGenerator = new AssemblyGenerator();
-            var outputPath = parsed.OutputPath;
-            if (parsed.OutputPath == null)
+
+            // Resolve and validate output directory; create if missing
+            string outputPath;
+            if (string.IsNullOrWhiteSpace(parsed.OutputPath))
             {
-                outputPath = Path.GetDirectoryName(Path.GetFullPath(parsed.InputFile));
+                outputPath = Path.GetDirectoryName(Path.GetFullPath(parsed.InputFile))!;
             }
+            else
+            {
+                outputPath = Path.GetFullPath(parsed.OutputPath);
+            }
+
+            // If a file exists at the output path, fail with a clear message
+            if (File.Exists(outputPath))
+            {
+                Console.WriteLine($"Error: Output path '{outputPath}' is a file. Provide a directory path.");
+                return;
+            }
+
+            // Ensure the directory exists
+            Directory.CreateDirectory(outputPath);
 
             var assemblyName = Path.GetFileNameWithoutExtension(parsed.InputFile);
 
-            assemblyGenerator.Generate(ast, symbolTable, assemblyName, outputPath!);
+            assemblyGenerator.Generate(ast, symbolTable, assemblyName, outputPath);
 
             Console.WriteLine($"\nConversion complete. Output written to {outputPath}");
         }
@@ -207,7 +222,7 @@ class Program
         Console.WriteLine();
         Console.WriteLine("GlobalOption         Description");
         Console.WriteLine("InputFile* (-I)      The JavaScript file to convert");
-        Console.WriteLine("OutputPath (-O)      The output path for the generated IL");
+    Console.WriteLine("OutputPath (-O)      The output path for the generated IL (created if missing)");
         Console.WriteLine("Verbose (-V)         Enable verbose output");
         Console.WriteLine("AnalyzeUnused (-A)   Analyze and report unused properties and methods");
     }
