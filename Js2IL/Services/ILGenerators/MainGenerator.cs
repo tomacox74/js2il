@@ -12,16 +12,13 @@ namespace Js2IL.Services.ILGenerators
     /// </summary>
     internal class MainGenerator
     {
-    private ILMethodGenerator _ilGenerator;
+        private ILMethodGenerator _ilGenerator;
         private JavaScriptFunctionGenerator _functionGenerator;
-    private ClassesGenerator _classesGenerator;
+        private ClassesGenerator _classesGenerator;
         private MethodBodyStreamEncoder _methodBodyStreamEncoder;
         private SymbolTable _symbolTable;
-
         private Dispatch.DispatchTableGenerator _dispatchTableGenerator;
-    private readonly TypeBuilder? _programTypeBuilder;
-    private readonly ClassRegistry _classRegistry = new();
-
+        private readonly ClassRegistry _classRegistry = new();
 
         public MainGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator, SymbolTable symbolTable)
         {
@@ -41,7 +38,6 @@ namespace Js2IL.Services.ILGenerators
         public MainGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator, SymbolTable symbolTable, TypeBuilder programTypeBuilder)
             : this(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, dispatchTableGenerator, symbolTable)
         {
-            _programTypeBuilder = programTypeBuilder ?? throw new ArgumentNullException(nameof(programTypeBuilder));
         }
 
         /// <summary>
@@ -53,20 +49,6 @@ namespace Js2IL.Services.ILGenerators
             // Delegate to shared helper; safe no-op if no registry or scope type is available
             ScopeInstanceEmitter.EmitCreateLeafScopeInstance(variables, _ilGenerator.IL, _ilGenerator.MetadataBuilder);
         }
-
-        /// <summary>
-    /// Creates a constructor signature blob for parameterless constructors.
-        /// </summary>
-    // NOTE: No longer needed in Main; function scope objects are not pre-instantiated here.
-    // private BlobHandle CreateConstructorSignature()
-    // {
-    //     var sigBuilder = new BlobBuilder();
-    //     new BlobEncoder(sigBuilder)
-    //         .MethodSignature(isInstanceMethod: true)
-    //         .Parameters(0, returnType => returnType.Void(), parameters => { });
-    //     return _ilGenerator.MetadataBuilder.GetOrAddBlob(sigBuilder);
-    // }
-
 
         public int GenerateMethod(Acornima.Ast.Program ast)
         {
