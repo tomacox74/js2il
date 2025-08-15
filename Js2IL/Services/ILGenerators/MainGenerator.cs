@@ -34,7 +34,7 @@ namespace Js2IL.Services.ILGenerators
 
             _ilGenerator = new ILMethodGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator, _classRegistry);
             _functionGenerator = new JavaScriptFunctionGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator, _classRegistry);
-            _classesGenerator = new ClassesGenerator(metadataBuilder, bclReferences, methodBodyStreamEncoder, _classRegistry);
+            _classesGenerator = new ClassesGenerator(metadataBuilder, bclReferences, methodBodyStreamEncoder, _classRegistry, variables, _dispatchTableGenerator);
             this._methodBodyStreamEncoder = methodBodyStreamEncoder;
         }
 

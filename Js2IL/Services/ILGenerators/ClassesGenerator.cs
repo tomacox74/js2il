@@ -15,13 +15,17 @@ namespace Js2IL.Services.ILGenerators
         private readonly BaseClassLibraryReferences _bcl;
         private readonly MethodBodyStreamEncoder _methodBodies;
         private readonly ClassRegistry _classRegistry;
+        private readonly Variables _variables;
+        private readonly Dispatch.DispatchTableGenerator _dispatchTableGenerator;
 
-        public ClassesGenerator(MetadataBuilder metadata, BaseClassLibraryReferences bcl, MethodBodyStreamEncoder methodBodies, ClassRegistry classRegistry)
+        public ClassesGenerator(MetadataBuilder metadata, BaseClassLibraryReferences bcl, MethodBodyStreamEncoder methodBodies, ClassRegistry classRegistry, Variables variables, Dispatch.DispatchTableGenerator dispatchTableGenerator)
         {
             _metadata = metadata ?? throw new ArgumentNullException(nameof(metadata));
             _bcl = bcl ?? throw new ArgumentNullException(nameof(bcl));
             _methodBodies = methodBodies;
             _classRegistry = classRegistry ?? throw new ArgumentNullException(nameof(classRegistry));
+            _variables = variables ?? throw new ArgumentNullException(nameof(variables));
+            _dispatchTableGenerator = dispatchTableGenerator ?? throw new ArgumentNullException(nameof(dispatchTableGenerator));
         }
 
         public void DeclareClasses(SymbolTable table)
@@ -158,43 +162,48 @@ namespace Js2IL.Services.ILGenerators
             var mname = (element.Key as Identifier)?.Name ?? "method";
             var msig = BuildMethodSignature(element.Value as FunctionExpression);
 
-            // Minimal body: support console.log("...") inside method; else return null
-            var il = new InstructionEncoder(new BlobBuilder());
+            // Use ILMethodGenerator for body emission to reuse existing statement/expression logic
+            // Build method variables context (no JS parameters yet for class methods)
+            var paramNames = element.Value is FunctionExpression fe
+                ? fe.Params.OfType<Identifier>().Select(p => p.Name)
+                : Enumerable.Empty<string>();
+            var methodVariables = new Variables(_variables, mname, paramNames, isNestedFunction: false);
+            var ilGen = new ILMethodGenerator(methodVariables, _bcl, _metadata, _methodBodies, _dispatchTableGenerator, _classRegistry);
+
+            bool hasExplicitReturn = false;
             if (element.Value is FunctionExpression fexpr && fexpr.Body is BlockStatement bstmt)
             {
-                // Look for a single statement: console.log("...");
-                if (bstmt.Body.Count == 1 && bstmt.Body[0] is ExpressionStatement estmt && estmt.Expression is CallExpression call &&
-                    call.Callee is MemberExpression mex && mex.Object is Identifier oid && oid.Name == "console" &&
-                    mex.Property is Identifier pid && pid.Name == "log" && call.Arguments.Count == 1 && call.Arguments[0] is StringLiteral sarg)
-                {
-                    // Build object[] with 1 element (string literal)
-                    il.LoadConstantI4(1);
-                    il.OpCode(ILOpCode.Newarr);
-                    il.Token(_bcl.ObjectType);
-                    il.OpCode(ILOpCode.Dup);
-                    il.LoadConstantI4(0);
-                    il.LoadString(_metadata.GetOrAddUserString(sarg.Value));
-                    il.OpCode(ILOpCode.Stelem_ref);
-                    // Call runtime Console.Log
-                    var rt = new Runtime(_metadata, il);
-                    rt.InvokeConsoleLog();
-                    // Return null (undefined)
-                    il.OpCode(ILOpCode.Ldnull);
-                    il.OpCode(ILOpCode.Ret);
-                }
-                else
-                {
-                    il.OpCode(ILOpCode.Ldnull);
-                    il.OpCode(ILOpCode.Ret);
-                }
+                hasExplicitReturn = bstmt.Body.Any(s => s is ReturnStatement);
+                ilGen.GenerateStatements(bstmt.Body);
             }
             else
             {
-                il.OpCode(ILOpCode.Ldnull);
-                il.OpCode(ILOpCode.Ret);
+                // No body or unsupported shape: default to returning undefined (null)
             }
 
-            var mbody = _methodBodies.AddMethodBody(il);
+            if (!hasExplicitReturn)
+            {
+                ilGen.IL.OpCode(ILOpCode.Ldnull);
+                ilGen.IL.OpCode(ILOpCode.Ret);
+            }
+
+            // Include locals created by ILMethodGenerator (e.g., scopes)
+            StandaloneSignatureHandle localSignature = default;
+            MethodBodyAttributes bodyAttributes = MethodBodyAttributes.None;
+            var localCount = methodVariables.GetNumberOfLocals();
+            if (localCount > 0)
+            {
+                var localSig = new BlobBuilder();
+                var localEncoder = new BlobEncoder(localSig).LocalVariableSignature(localCount);
+                for (int i = 0; i < localCount; i++)
+                {
+                    localEncoder.AddVariable().Type().Object();
+                }
+                localSignature = _metadata.AddStandaloneSignature(_metadata.GetOrAddBlob(localSig));
+                bodyAttributes = MethodBodyAttributes.InitLocals;
+            }
+
+            var mbody = _methodBodies.AddMethodBody(ilGen.IL, localVariablesSignature: localSignature, attributes: bodyAttributes);
             return tb.AddMethodDefinition(MethodAttributes.Public | MethodAttributes.HideBySig, mname, msig, mbody);
         }
 
