@@ -116,6 +116,20 @@ namespace Js2IL.Services.ILGenerators
             ilCtor.Call(_bcl.Object_Ctor_Ref);
 
             // Initialize fields with default values if provided
+            EmitFieldInitializers(ilCtor, fieldsWithInits);
+
+            ilCtor.OpCode(ILOpCode.Ret);
+
+            var ctorBody = _methodBodies.AddMethodBody(ilCtor);
+            return tb.AddMethodDefinition(
+                MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
+                ".ctor",
+                ctorSig,
+                ctorBody);
+        }
+
+        private void EmitFieldInitializers(InstructionEncoder ilCtor, System.Collections.Generic.List<(FieldDefinitionHandle Field, Expression? Init)> fieldsWithInits)
+        {
             foreach (var (field, initExpr) in fieldsWithInits)
             {
                 ilCtor.OpCode(ILOpCode.Ldarg_0);
@@ -146,15 +160,6 @@ namespace Js2IL.Services.ILGenerators
                     ilCtor.Token(field);
                 }
             }
-
-            ilCtor.OpCode(ILOpCode.Ret);
-
-            var ctorBody = _methodBodies.AddMethodBody(ilCtor);
-            return tb.AddMethodDefinition(
-                MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
-                ".ctor",
-                ctorSig,
-                ctorBody);
         }
 
         private MethodDefinitionHandle EmitMethod(TypeBuilder tb, Acornima.Ast.MethodDefinition element)
