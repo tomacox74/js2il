@@ -5,10 +5,24 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <!-- Enable self-contained publishing -->
-    <SelfContained>true</SelfContained>
-    <PublishSingleFile>true</PublishSingleFile>
-    <PublishTrimmed>true</PublishTrimmed>
+  <!-- Tool packages cannot be self-contained/single-file/trimmed -->
+  <SelfContained>false</SelfContained>
+  <PublishSingleFile>false</PublishSingleFile>
+  <PublishTrimmed>false</PublishTrimmed>
+  <!-- NuGet tool packaging -->
+  <PackAsTool>true</PackAsTool>
+  <ToolCommandName>js2il</ToolCommandName>
+  <PackageId>js2il</PackageId>
+  <Version>0.1.0-preview.2</Version>
+  <Authors>tomacox74</Authors>
+  <Company></Company>
+  <Description>JavaScript to .NET IL prototype: parse ES into AST and emit ECMA-335 IL to run on .NET.</Description>
+  <RepositoryUrl>https://github.com/tomacox74/js2il</RepositoryUrl>
+  <RepositoryType>git</RepositoryType>
+  <PackageReadmeFile>README.md</PackageReadmeFile>
+  <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+  <PackageTags>javascript;js;il;ecma-335;dotnet;compiler;transpiler;tool</PackageTags>
+  <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,5 +32,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\JavaScriptRuntime\JavaScriptRuntime.csproj" />
+  </ItemGroup>
+
+  <!-- Include consumer README from docs as package root README.md -->
+  <ItemGroup>
+    <None Include="..\docs\NuGet.README.md" Pack="true" PackagePath="README.md" />
+  <None Include="..\docs\ECMAScript2025_FeatureCoverage.md" Pack="true" PackagePath="docs/ECMAScript2025_FeatureCoverage.md" />
   </ItemGroup>
 </Project>

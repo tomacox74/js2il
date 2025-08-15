@@ -35,8 +35,12 @@ class Program
 {
     static void Main(string[] args)
     {
-        JavaScriptRuntime.Console.Log("1", "2");
-
+        // Quick help/usage path
+        if (args.Length == 0 || args.Contains("--help") || args.Contains("-h") || args.Contains("/?"))
+        {
+            PrintUsage();
+            return;
+        }
 
         try
         {
@@ -161,7 +165,8 @@ class Program
         catch (ArgException ex)
         {
             Console.WriteLine(ex.Message);
-            Console.WriteLine(ArgUsage.GenerateUsageFromTemplate<Js2ILArgs>());
+            // Avoid potential template generation issues by printing a simple usage message
+            PrintUsage();
         }
         catch (Exception ex)
         {
@@ -194,5 +199,16 @@ class Program
         {
             PrintScopeTree(child, indentLevel + 1);
         }
+    }
+
+    private static void PrintUsage()
+    {
+        Console.WriteLine("Usage - Js2IL <InputFile> [<OutputPath>] -options");
+        Console.WriteLine();
+        Console.WriteLine("GlobalOption         Description");
+        Console.WriteLine("InputFile* (-I)      The JavaScript file to convert");
+        Console.WriteLine("OutputPath (-O)      The output path for the generated IL");
+        Console.WriteLine("Verbose (-V)         Enable verbose output");
+        Console.WriteLine("AnalyzeUnused (-A)   Analyze and report unused properties and methods");
     }
 }
