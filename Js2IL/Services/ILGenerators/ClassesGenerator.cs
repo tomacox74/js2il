@@ -134,7 +134,8 @@ namespace Js2IL.Services.ILGenerators
                 ilGen.IL.OpCode(ILOpCode.Ldarg_0);
                 if (initExpr is null)
                 {
-                    // no initializer → leave default null; skip write
+                        // no initializer -> leave default null; skip write
+                        // TODO: Refactor this logic for better clarity and maintainability
                     ilGen.IL.OpCode(ILOpCode.Pop);
                 }
                 else
