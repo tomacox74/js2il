@@ -35,7 +35,7 @@ Options
 - -o, --output          Output folder for the generated IL/assembly (created if missing; defaults to the input file directory)
 - -v, --verbose         Print AST and scope details
 - -a, --analyzeunused   Report unused functions/properties/variables
--     --version         Show version information and exit
+	--version         Show version information and exit
 
 Help: `-h`, `--help`, `-?`
 
