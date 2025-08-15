@@ -50,35 +50,75 @@ namespace Js2IL.Services.ILGenerators
             var name = classScope.DotNetTypeName ?? classScope.Name;
             var tb = new TypeBuilder(_metadata, ns, name);
 
-            // Use System.Object as base type for now (ExpandoObject is sealed and cannot be inherited)
+            // Determine attributes for when we add the type at the end
             var typeAttrs = parentType.IsNil
                 ? TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit
                 : TypeAttributes.NestedPublic | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
-            var typeHandle = tb.AddTypeDefinition(typeAttrs, _bcl.ObjectType);
 
-            if (!parentType.IsNil)
+            // Handle class fields with default initializers (ECMAScript class field syntax)
+            // Example: class C { foo = 42; }
+            // We emit them as instance fields of type object and initialize in .ctor.
+            var fieldsWithInits = new System.Collections.Generic.List<(FieldDefinitionHandle Field, Expression? Init)>();
+            foreach (var element in cdecl.Body.Body)
             {
-                _metadata.AddNestedType(typeHandle, parentType);
+                if (element is Acornima.Ast.PropertyDefinition pdef && pdef.Key is Identifier pid)
+                {
+                    // Create field signature: object
+                    var fSig = new BlobBuilder();
+                    new BlobEncoder(fSig).Field().Type().Object();
+                    var fSigHandle = _metadata.GetOrAddBlob(fSig);
+                    var fh = tb.AddFieldDefinition(FieldAttributes.Public, pid.Name, fSigHandle);
+                    _classRegistry.RegisterField(classScope.Name, pid.Name, fh);
+                    fieldsWithInits.Add((fh, pdef.Value as Expression));
+                }
             }
 
-            // Register the class type for later lookup using the JS-visible identifier (scope name)
-            _classRegistry.Register(classScope.Name, typeHandle);
-
-            // Emit a parameterless .ctor that calls ExpandoObject::.ctor
+            // Emit a parameterless .ctor that calls System.Object::.ctor and initializes fields
             var sigBuilder = new BlobBuilder();
             new BlobEncoder(sigBuilder)
                 .MethodSignature(isInstanceMethod: true)
                 .Parameters(0, r => r.Void(), p => { });
             var ctorSig = _metadata.GetOrAddBlob(sigBuilder);
 
-            var encoder = new InstructionEncoder(new BlobBuilder());
-            encoder.OpCode(ILOpCode.Ldarg_0);
-            encoder.Call(_bcl.Object_Ctor_Ref);
-            encoder.OpCode(ILOpCode.Ret);
+            var ilbbCtor = new BlobBuilder();
+            var ilCtor = new InstructionEncoder(ilbbCtor);
+            ilCtor.OpCode(ILOpCode.Ldarg_0);
+            ilCtor.Call(_bcl.Object_Ctor_Ref);
+            // Initialize fields with default values if provided
+            foreach (var (field, initExpr) in fieldsWithInits)
+            {
+                ilCtor.OpCode(ILOpCode.Ldarg_0);
+                if (initExpr is StringLiteral s)
+                {
+                    ilCtor.LoadString(_metadata.GetOrAddUserString(s.Value));
+                }
+                else if (initExpr is NumericLiteral n)
+                {
+                    ilCtor.LoadConstantR8(n.Value);
+                    ilCtor.OpCode(ILOpCode.Box);
+                    ilCtor.Token(_bcl.DoubleType);
+                }
+                else if (initExpr is null)
+                {
+                    // no initializer → leave default null; skip write
+                    ilCtor.OpCode(ILOpCode.Pop); // remove this? Actually we loaded this only; adjust: do not emit when null
+                }
+                else
+                {
+                    ilCtor.OpCode(ILOpCode.Ldnull);
+                }
+                // If we emitted a value, store it
+                if (initExpr is not null)
+                {
+                    ilCtor.OpCode(ILOpCode.Stfld);
+                    ilCtor.Token(field);
+                }
+            }
+            ilCtor.OpCode(ILOpCode.Ret);
 
-            var methodBody = _methodBodies.AddMethodBody(encoder);
-            tb.AddMethodDefinition(MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
-                ".ctor", ctorSig, methodBody);
+            var ctorBody = _methodBodies.AddMethodBody(ilCtor);
+            var ctorHandle = tb.AddMethodDefinition(MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
+                ".ctor", ctorSig, ctorBody);
 
             // Methods: create stubs for now; real method codegen will come later
             foreach (var element in cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>())
@@ -123,6 +163,15 @@ namespace Js2IL.Services.ILGenerators
                 var mbody = _methodBodies.AddMethodBody(il);
                 tb.AddMethodDefinition(MethodAttributes.Public | MethodAttributes.HideBySig, mname, msig, mbody);
             }
+
+            // Finally, create the type definition (after fields and methods were added)
+            var typeHandle = tb.AddTypeDefinition(typeAttrs, _bcl.ObjectType);
+            if (!parentType.IsNil)
+            {
+                _metadata.AddNestedType(typeHandle, parentType);
+            }
+            // Register the class type for later lookup using the JS-visible identifier (scope name)
+            _classRegistry.Register(classScope.Name, typeHandle);
 
             return typeHandle;
         }

@@ -1,0 +1,111 @@
+﻿// IL code: Classes_ClassProperty_DefaultAndLog
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Classes_ClassProperty_DefaultAndLog
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Greeter
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Greeter::.ctor
+
+	} // end of class Greeter
+
+
+	// Fields
+	.field public object Greeter
+	.field public initonly object g
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Classes_ClassProperty_DefaultAndLog::.ctor
+
+} // end of class Scopes.Classes_ClassProperty_DefaultAndLog
+
+.class public auto ansi beforefieldinit Classes.Greeter
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field public object message
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2062
+		// Header size: 1
+		// Code size: 18 (0x12)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: ldarg.0
+		IL_0007: ldstr "Hi"
+		IL_000c: stfld object Classes.Greeter::message
+		IL_0011: ret
+	} // end of method Greeter::.ctor
+
+} // end of class Classes.Greeter
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2078
+		// Header size: 12
+		// Code size: 43 (0x2b)
+		.maxstack 8
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Classes_ClassProperty_DefaultAndLog::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: newobj instance void Classes.Greeter::.ctor()
+		IL_000c: stfld object Scopes.Classes_ClassProperty_DefaultAndLog::g
+		IL_0011: ldc.i4.1
+		IL_0012: newarr [System.Runtime]System.Object
+		IL_0017: dup
+		IL_0018: ldc.i4.0
+		IL_0019: ldloc.0
+		IL_001a: ldfld object Scopes.Classes_ClassProperty_DefaultAndLog::g
+		IL_001f: ldfld object Classes.Greeter::message
+		IL_0024: stelem.ref
+		IL_0025: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_002a: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
