@@ -39,4 +39,11 @@ jobs:
         run: dotnet pack Js2IL/Js2IL.csproj -c Release -o out -p:ContinuousIntegrationBuild=true -p:Version=${{ env.VERSION }}
 
       - name: Publish to NuGet
-        run: dotnet nuget push out/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source ${{ env.NUGET_SERVER }} --skip-duplicate
+        shell: pwsh
+        run: |
+          $pkg = Get-ChildItem -Path out -Filter *.nupkg | Select-Object -First 1
+          if (-not $pkg) {
+            Write-Error "No package found in 'out'"
+            exit 1
+          }
+          dotnet nuget push $pkg.FullName --api-key $env:NUGET_API_KEY --source $env:NUGET_SERVER --skip-duplicate
