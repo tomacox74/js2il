@@ -79,45 +79,7 @@ namespace Js2IL.Services.ILGenerators
             // Methods: create stubs for now; real method codegen will come later
             foreach (var element in cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>())
             {
-                var mname = (element.Key as Identifier)?.Name ?? "method";
-                var msig = BuildMethodSignature(element.Value as FunctionExpression);
-                // Minimal body: support console.log("...") inside method; else return null
-                var il = new InstructionEncoder(new BlobBuilder());
-                if (element.Value is FunctionExpression fexpr && fexpr.Body is BlockStatement bstmt)
-                {
-                    // Look for a single statement: console.log("...");
-                    if (bstmt.Body.Count == 1 && bstmt.Body[0] is ExpressionStatement estmt && estmt.Expression is CallExpression call &&
-                        call.Callee is MemberExpression mex && mex.Object is Identifier oid && oid.Name == "console" &&
-                        mex.Property is Identifier pid && pid.Name == "log" && call.Arguments.Count == 1 && call.Arguments[0] is StringLiteral sarg)
-                    {
-                        // Build object[] with 1 element (string literal)
-                        il.LoadConstantI4(1);
-                        il.OpCode(ILOpCode.Newarr);
-                        il.Token(_bcl.ObjectType);
-                        il.OpCode(ILOpCode.Dup);
-                        il.LoadConstantI4(0);
-                        il.LoadString(_metadata.GetOrAddUserString(sarg.Value));
-                        il.OpCode(ILOpCode.Stelem_ref);
-                        // Call runtime Console.Log
-                        var rt = new Runtime(_metadata, il);
-                        rt.InvokeConsoleLog();
-                        // Return null (undefined)
-                        il.OpCode(ILOpCode.Ldnull);
-                        il.OpCode(ILOpCode.Ret);
-                    }
-                    else
-                    {
-                        il.OpCode(ILOpCode.Ldnull);
-                        il.OpCode(ILOpCode.Ret);
-                    }
-                }
-                else
-                {
-                    il.OpCode(ILOpCode.Ldnull);
-                    il.OpCode(ILOpCode.Ret);
-                }
-                var mbody = _methodBodies.AddMethodBody(il);
-                tb.AddMethodDefinition(MethodAttributes.Public | MethodAttributes.HideBySig, mname, msig, mbody);
+                EmitMethod(tb, element);
             }
 
             // Finally, create the type definition (after fields and methods were added)
@@ -189,6 +151,51 @@ namespace Js2IL.Services.ILGenerators
                 ".ctor",
                 ctorSig,
                 ctorBody);
+        }
+
+        private MethodDefinitionHandle EmitMethod(TypeBuilder tb, Acornima.Ast.MethodDefinition element)
+        {
+            var mname = (element.Key as Identifier)?.Name ?? "method";
+            var msig = BuildMethodSignature(element.Value as FunctionExpression);
+
+            // Minimal body: support console.log("...") inside method; else return null
+            var il = new InstructionEncoder(new BlobBuilder());
+            if (element.Value is FunctionExpression fexpr && fexpr.Body is BlockStatement bstmt)
+            {
+                // Look for a single statement: console.log("...");
+                if (bstmt.Body.Count == 1 && bstmt.Body[0] is ExpressionStatement estmt && estmt.Expression is CallExpression call &&
+                    call.Callee is MemberExpression mex && mex.Object is Identifier oid && oid.Name == "console" &&
+                    mex.Property is Identifier pid && pid.Name == "log" && call.Arguments.Count == 1 && call.Arguments[0] is StringLiteral sarg)
+                {
+                    // Build object[] with 1 element (string literal)
+                    il.LoadConstantI4(1);
+                    il.OpCode(ILOpCode.Newarr);
+                    il.Token(_bcl.ObjectType);
+                    il.OpCode(ILOpCode.Dup);
+                    il.LoadConstantI4(0);
+                    il.LoadString(_metadata.GetOrAddUserString(sarg.Value));
+                    il.OpCode(ILOpCode.Stelem_ref);
+                    // Call runtime Console.Log
+                    var rt = new Runtime(_metadata, il);
+                    rt.InvokeConsoleLog();
+                    // Return null (undefined)
+                    il.OpCode(ILOpCode.Ldnull);
+                    il.OpCode(ILOpCode.Ret);
+                }
+                else
+                {
+                    il.OpCode(ILOpCode.Ldnull);
+                    il.OpCode(ILOpCode.Ret);
+                }
+            }
+            else
+            {
+                il.OpCode(ILOpCode.Ldnull);
+                il.OpCode(ILOpCode.Ret);
+            }
+
+            var mbody = _methodBodies.AddMethodBody(il);
+            return tb.AddMethodDefinition(MethodAttributes.Public | MethodAttributes.HideBySig, mname, msig, mbody);
         }
 
         private BlobHandle BuildMethodSignature(FunctionExpression? f)
