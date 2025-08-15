@@ -26,13 +26,18 @@ dotnet tool uninstall --global js2il
 ## Usage
 
 ```powershell
-js2il <InputFile> [<OutputPath>] [-V] [-A]
+js2il <InputFile> [<OutputPath>] [options]
 ```
 
-- InputFile (-I)       The JavaScript file to convert (required)
-- OutputPath (-O)      Output folder for the generated IL/assembly (defaults to the input file directory)
-- Verbose (-V)         Prints AST and scope info
-- AnalyzeUnused (-A)   Reports unused functions/properties/variables
+Options
+
+- -i, --input           The JavaScript file to convert (positional supported)
+- -o, --output          Output folder for the generated IL/assembly (created if missing; defaults to the input file directory)
+- -v, --verbose         Print AST and scope details
+- -a, --analyzeunused   Report unused functions/properties/variables
+-     --version         Show version information and exit
+
+Help: `-h`, `--help`, `-?`
 
 Example:
 
@@ -41,7 +46,7 @@ Example:
 js2il .\tests\simple.js
 
 # Convert to a specific directory with verbose output
-js2il .\tests\simple.js .\out -V
+js2il .\tests\simple.js -o .\out -v
 ```
 
 ## What gets generated?
@@ -68,6 +73,7 @@ Notes:
 
 - Console output (e.g., `console.log`) is implemented via the bundled `JavaScriptRuntime.dll`.
 - This is a prototype and doesn’t yet support all JavaScript features. See the repo docs for supported syntax and feature coverage.
+ - Errors are written to stderr and known failures return a non-zero exit code.
 
 ## Limitations
 

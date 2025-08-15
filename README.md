@@ -7,23 +7,27 @@ JS2IL compiles JavaScript source code to .NET Intermediate Language (IL), produc
 
 Prerequisite: .NET 8 SDK
 
-- Compile a JavaScript file (outputs next to the input file by default):
+- Convert a JavaScript file (writes output next to the input file by default):
 
 ```powershell
-dotnet run --project .\Js2IL -- .\tests\simple.js
+js2il .\tests\simple.js
 ```
 
 - Specify an output directory and optional flags:
 
 ```powershell
-dotnet run --project .\Js2IL -- .\tests\simple.js .\out -Verbose -AnalyzeUnused
+js2il -i .\tests\simple.js -o .\out -v -a
 ```
 
-Arguments
-- InputFile (positional, required): path to the .js file to convert
-- OutputPath (positional, optional): directory for the generated files; defaults to the input file’s directory
-- -Verbose: print AST and scope details during compilation
-- -AnalyzeUnused: analyze and report unused functions, properties, and variables
+Options
+
+- -i, --input           The JavaScript file to convert (positional supported)
+- -o, --output          Output directory for generated files (created if missing)
+- -v, --verbose         Print AST and scope details
+- -a, --analyzeunused   Analyze and report unused functions/properties/variables
+-     --version         Show version information and exit
+
+Help: `-h`, `--help`, `-?`
 
 Generated files
 - <name>.dll: compiled .NET assembly (name is based on the input .js filename)
@@ -48,7 +52,7 @@ console.log('x is ', x);
 Compile and run it:
 
 ```powershell
-dotnet run --project .\Js2IL -- .\tests\simple.js .\out
+js2il .\tests\simple.js .\out
 dotnet .\out\simple.dll
 ```
 
@@ -61,6 +65,10 @@ x is  3
 ## Status and scope
 - Experimental.
 - Not all JavaScript features are supported; `eval` is not supported.
+
+Errors and exit codes
+- Known failures (validation, invalid output path, etc.) print to stderr and exit with a non-zero code.
+- Unexpected exceptions propagate and crash normally (standard .NET behavior).
 
 ## Roadmap
 - Phase 1: Implement sufficient JavaScript semantics to compile most libraries without optimizations (excluding `eval`).
@@ -95,3 +103,10 @@ dotnet publish -c Release
 
 
 When a tag beginning with `v` is pushed, GitHub Actions runs `.github/workflows/release.yml` to build the solution in Release mode and upload the published files as an artifact.
+
+Local development note
+- You can still run from source during development:
+
+```powershell
+dotnet run --project .\Js2IL -- .\tests\simple.js .\out
+```
