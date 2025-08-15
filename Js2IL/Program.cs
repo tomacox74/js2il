@@ -3,6 +3,7 @@ using Js2IL.Services;
 using Js2IL.SymbolTables;
 using Acornima.Ast;
 using System.IO;
+using System.Reflection;
 
 namespace Js2IL;
 
@@ -13,17 +14,25 @@ public class Js2ILArgs
     [ArgPosition(0)]
     [ArgDescription("The JavaScript file to convert")]
     [ArgExistingFile]
+    [ArgShortcut("i")]
     public required string InputFile { get; set; }
 
     [ArgPosition(1)]
     [ArgDescription("The output path for the generated IL")]
+    [ArgShortcut("o")]
     public string? OutputPath { get; set; }
 
     [ArgDescription("Enable verbose output")]
+    [ArgShortcut("v")]
     public bool Verbose { get; set; }
 
     [ArgDescription("Analyze and report unused properties and methods")]
+    [ArgShortcut("a")]
     public bool AnalyzeUnused { get; set; }
+
+    [ArgDescription("Show version information and exit")]
+    // Long-form only to avoid -v conflict with Verbose
+    public bool Version { get; set; }
 }
 
 public static class TestClass
@@ -35,7 +44,7 @@ class Program
     static void Main(string[] args)
     {
         // Quick help/usage path
-        if (args.Length == 0 || args.Contains("--help") || args.Contains("-h") || args.Contains("/?"))
+    if (args.Length == 0 || args.Contains("--help") || args.Contains("-h") || args.Contains("/?") || args.Contains("-?"))
         {
             PrintUsage();
             return;
@@ -44,6 +53,16 @@ class Program
         try
         {
             var parsed = Args.Parse<Js2ILArgs>(args);
+
+            // --version handling
+            if (parsed.Version || args.Contains("--version"))
+            {
+                var asm = Assembly.GetExecutingAssembly();
+                var name = asm.GetName();
+                var version = name.Version?.ToString() ?? "unknown";
+                Console.WriteLine($"js2il {version}");
+                return;
+            }
             Console.WriteLine($"Converting {parsed.InputFile} to IL...");
 
             // Step 1: Parse JavaScript to AST
@@ -73,11 +92,12 @@ class Program
 
             if (!validationResult.IsValid)
             {
-                Console.WriteLine("\nValidation Errors:");
+                WriteLineError("\nValidation Errors:");
                 foreach (var error in validationResult.Errors)
                 {
-                    Console.WriteLine($"Error: {error}");
+                    WriteLineError($"Error: {error}");
                 }
+                Environment.ExitCode = 1;
                 return;
             }
 
@@ -86,7 +106,7 @@ class Program
                 Console.WriteLine("\nValidation Warnings:");
                 foreach (var warning in validationResult.Warnings)
                 {
-                    Console.WriteLine($"Warning: {warning}");
+                    WriteLineWarning($"Warning: {warning}");
                 }
             }
 
@@ -129,7 +149,7 @@ class Program
                     Console.WriteLine("\nUnused Code Analysis Warnings:");
                     foreach (var warning in unusedCodeResult.Warnings)
                     {
-                        Console.WriteLine($"Warning: {warning}");
+                        WriteLineWarning($"Warning: {warning}");
                     }
                 }
             }
@@ -164,12 +184,31 @@ class Program
             // If a file exists at the output path, fail with a clear message
             if (File.Exists(outputPath))
             {
-                Console.WriteLine($"Error: Output path '{outputPath}' is a file. Provide a directory path.");
+                WriteLineError($"Error: Output path '{outputPath}' is a file. Provide a directory path.");
+                Environment.ExitCode = 1;
                 return;
             }
 
-            // Ensure the directory exists
-            Directory.CreateDirectory(outputPath);
+            // Ensure the directory exists (treat common IO issues as known failures)
+            try
+            {
+                Directory.CreateDirectory(outputPath);
+                if (parsed.Verbose)
+                {
+                    Console.WriteLine($"Ensured output directory exists: {outputPath}");
+                }
+            }
+            catch (Exception ex) when (ex is UnauthorizedAccessException
+                                     || ex is ArgumentException
+                                     || ex is PathTooLongException
+                                     || ex is NotSupportedException
+                                     || ex is DriveNotFoundException
+                                     || ex is IOException)
+            {
+                WriteLineError($"Error creating output directory '{outputPath}': {ex.Message}");
+                Environment.ExitCode = 1;
+                return;
+            }
 
             var assemblyName = Path.GetFileNameWithoutExtension(parsed.InputFile);
 
@@ -179,17 +218,11 @@ class Program
         }
         catch (ArgException ex)
         {
-            Console.WriteLine(ex.Message);
+            WriteLineError(ex.Message);
             // Avoid potential template generation issues by printing a simple usage message
-            PrintUsage();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error: {ex.Message}");
-            if (ex.InnerException != null)
-            {
-                Console.WriteLine($"Inner error: {ex.InnerException.Message}");
-            }
+            PrintUsage(Console.Error);
+            Environment.ExitCode = 1;
+            return;
         }
     }
 
@@ -218,12 +251,54 @@ class Program
 
     private static void PrintUsage()
     {
-        Console.WriteLine("Usage - Js2IL <InputFile> [<OutputPath>] -options");
+        Console.WriteLine("Usage: js2il <InputFile> [<OutputPath>] [options]");
         Console.WriteLine();
-        Console.WriteLine("GlobalOption         Description");
-        Console.WriteLine("InputFile* (-I)      The JavaScript file to convert");
-    Console.WriteLine("OutputPath (-O)      The output path for the generated IL (created if missing)");
-        Console.WriteLine("Verbose (-V)         Enable verbose output");
-        Console.WriteLine("AnalyzeUnused (-A)   Analyze and report unused properties and methods");
+        Console.WriteLine("Option               Description");
+        Console.WriteLine("-i, --input          The JavaScript file to convert (positional supported)");
+        Console.WriteLine("-o, --output         The output path for the generated IL (created if missing)");
+        Console.WriteLine("-v, --verbose        Enable verbose output");
+        Console.WriteLine("-a, --analyzeunused  Analyze and report unused properties and methods");
+        Console.WriteLine("    --version        Show version information and exit");
+    }
+
+    // Overload to print usage to a chosen writer (used for error cases to stderr)
+    private static void PrintUsage(TextWriter writer)
+    {
+        writer.WriteLine("Usage: js2il <InputFile> [<OutputPath>] [options]");
+        writer.WriteLine();
+        writer.WriteLine("Option               Description");
+        writer.WriteLine("-i, --input          The JavaScript file to convert (positional supported)");
+        writer.WriteLine("-o, --output         The output path for the generated IL (created if missing)");
+        writer.WriteLine("-v, --verbose        Enable verbose output");
+        writer.WriteLine("-a, --analyzeunused  Analyze and report unused properties and methods");
+        writer.WriteLine("    --version        Show version information and exit");
+    }
+
+    private static void WriteLineWarning(string message)
+    {
+        var prev = Console.ForegroundColor;
+        try
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(message);
+        }
+        finally
+        {
+            Console.ForegroundColor = prev;
+        }
+    }
+
+    private static void WriteLineError(string message)
+    {
+        var prev = Console.ForegroundColor;
+        try
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Error.WriteLine(message);
+        }
+        finally
+        {
+            Console.ForegroundColor = prev;
+        }
     }
 }
