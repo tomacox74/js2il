@@ -33,29 +33,37 @@ public class Js2ILArgs
     [ArgDescription("Show version information and exit")]
     // Long-form only to avoid -v conflict with Verbose
     public bool Version { get; set; }
-}
 
-public static class TestClass
-{
+    [ArgDescription("Show help and exit")]
+    [HelpHook]
+    [ArgShortcut("?")]
+    [ArgShortcut("h")]
+    public bool Help { get; set; }
 }
 
 class Program
 {
     static void Main(string[] args)
     {
-        // Quick help/usage path
-    if (args.Length == 0 || args.Contains("--help") || args.Contains("-h") || args.Contains("/?") || args.Contains("-?"))
-        {
-            PrintUsage();
-            return;
-        }
-
         try
         {
             var parsed = Args.Parse<Js2ILArgs>(args);
+            if (parsed == null)
+            {
+                // PowerArgs already printed an error/usage; treat as failure
+                Environment.ExitCode = 1;
+                return;
+            }
+
+            // --help handling
+            if (parsed.Help)
+            {
+                PrintUsage(Console.Out);
+                return;
+            }
 
             // --version handling
-            if (parsed.Version || args.Contains("--version"))
+            if (parsed.Version)
             {
                 var asm = Assembly.GetExecutingAssembly();
                 var name = asm.GetName();
@@ -249,18 +257,6 @@ class Program
         }
     }
 
-    private static void PrintUsage()
-    {
-        Console.WriteLine("Usage: js2il <InputFile> [<OutputPath>] [options]");
-        Console.WriteLine();
-        Console.WriteLine("Option               Description");
-        Console.WriteLine("-i, --input          The JavaScript file to convert (positional supported)");
-        Console.WriteLine("-o, --output         The output path for the generated IL (created if missing)");
-        Console.WriteLine("-v, --verbose        Enable verbose output");
-        Console.WriteLine("-a, --analyzeunused  Analyze and report unused properties and methods");
-        Console.WriteLine("    --version        Show version information and exit");
-    }
-
     // Overload to print usage to a chosen writer (used for error cases to stderr)
     private static void PrintUsage(TextWriter writer)
     {
@@ -272,6 +268,7 @@ class Program
         writer.WriteLine("-v, --verbose        Enable verbose output");
         writer.WriteLine("-a, --analyzeunused  Analyze and report unused properties and methods");
         writer.WriteLine("    --version        Show version information and exit");
+    writer.WriteLine("-h, -?, --help       Show help and exit");
     }
 
     private static void WriteLineWarning(string message)
