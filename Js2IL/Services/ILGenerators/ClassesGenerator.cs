@@ -74,51 +74,7 @@ namespace Js2IL.Services.ILGenerators
             }
 
             // Emit a parameterless .ctor that calls System.Object::.ctor and initializes fields
-            var sigBuilder = new BlobBuilder();
-            new BlobEncoder(sigBuilder)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(0, r => r.Void(), p => { });
-            var ctorSig = _metadata.GetOrAddBlob(sigBuilder);
-
-            var ilbbCtor = new BlobBuilder();
-            var ilCtor = new InstructionEncoder(ilbbCtor);
-            ilCtor.OpCode(ILOpCode.Ldarg_0);
-            ilCtor.Call(_bcl.Object_Ctor_Ref);
-            // Initialize fields with default values if provided
-            foreach (var (field, initExpr) in fieldsWithInits)
-            {
-                ilCtor.OpCode(ILOpCode.Ldarg_0);
-                if (initExpr is StringLiteral s)
-                {
-                    ilCtor.LoadString(_metadata.GetOrAddUserString(s.Value));
-                }
-                else if (initExpr is NumericLiteral n)
-                {
-                    ilCtor.LoadConstantR8(n.Value);
-                    ilCtor.OpCode(ILOpCode.Box);
-                    ilCtor.Token(_bcl.DoubleType);
-                }
-                else if (initExpr is null)
-                {
-                    // no initializer → leave default null; skip write
-                    ilCtor.OpCode(ILOpCode.Pop); // remove this? Actually we loaded this only; adjust: do not emit when null
-                }
-                else
-                {
-                    ilCtor.OpCode(ILOpCode.Ldnull);
-                }
-                // If we emitted a value, store it
-                if (initExpr is not null)
-                {
-                    ilCtor.OpCode(ILOpCode.Stfld);
-                    ilCtor.Token(field);
-                }
-            }
-            ilCtor.OpCode(ILOpCode.Ret);
-
-            var ctorBody = _methodBodies.AddMethodBody(ilCtor);
-            var ctorHandle = tb.AddMethodDefinition(MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
-                ".ctor", ctorSig, ctorBody);
+            var ctorHandle = EmitParameterlessConstructor(tb, fieldsWithInits);
 
             // Methods: create stubs for now; real method codegen will come later
             foreach (var element in cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>())
@@ -174,6 +130,65 @@ namespace Js2IL.Services.ILGenerators
             _classRegistry.Register(classScope.Name, typeHandle);
 
             return typeHandle;
+        }
+
+        private MethodDefinitionHandle EmitParameterlessConstructor(
+            TypeBuilder tb,
+            System.Collections.Generic.List<(FieldDefinitionHandle Field, Expression? Init)> fieldsWithInits)
+        {
+            // Signature: instance void .ctor()
+            var sigBuilder = new BlobBuilder();
+            new BlobEncoder(sigBuilder)
+                .MethodSignature(isInstanceMethod: true)
+                .Parameters(0, r => r.Void(), p => { });
+            var ctorSig = _metadata.GetOrAddBlob(sigBuilder);
+
+            // Body
+            var ilbbCtor = new BlobBuilder();
+            var ilCtor = new InstructionEncoder(ilbbCtor);
+            ilCtor.OpCode(ILOpCode.Ldarg_0);
+            ilCtor.Call(_bcl.Object_Ctor_Ref);
+
+            // Initialize fields with default values if provided
+            foreach (var (field, initExpr) in fieldsWithInits)
+            {
+                ilCtor.OpCode(ILOpCode.Ldarg_0);
+                if (initExpr is StringLiteral s)
+                {
+                    ilCtor.LoadString(_metadata.GetOrAddUserString(s.Value));
+                }
+                else if (initExpr is NumericLiteral n)
+                {
+                    ilCtor.LoadConstantR8(n.Value);
+                    ilCtor.OpCode(ILOpCode.Box);
+                    ilCtor.Token(_bcl.DoubleType);
+                }
+                else if (initExpr is null)
+                {
+                    // no initializer → leave default null; skip write
+                    ilCtor.OpCode(ILOpCode.Pop); // keep behavior consistent with current implementation
+                }
+                else
+                {
+                    ilCtor.OpCode(ILOpCode.Ldnull);
+                }
+
+                // If we emitted a value, store it
+                if (initExpr is not null)
+                {
+                    ilCtor.OpCode(ILOpCode.Stfld);
+                    ilCtor.Token(field);
+                }
+            }
+
+            ilCtor.OpCode(ILOpCode.Ret);
+
+            var ctorBody = _methodBodies.AddMethodBody(ilCtor);
+            return tb.AddMethodDefinition(
+                MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
+                ".ctor",
+                ctorSig,
+                ctorBody);
         }
 
         private BlobHandle BuildMethodSignature(FunctionExpression? f)
