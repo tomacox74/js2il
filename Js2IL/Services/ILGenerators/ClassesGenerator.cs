@@ -109,18 +109,17 @@ namespace Js2IL.Services.ILGenerators
                 .Parameters(0, r => r.Void(), p => { });
             var ctorSig = _metadata.GetOrAddBlob(sigBuilder);
 
-            // Body
-            var ilbbCtor = new BlobBuilder();
-            var ilCtor = new InstructionEncoder(ilbbCtor);
-            ilCtor.OpCode(ILOpCode.Ldarg_0);
-            ilCtor.Call(_bcl.Object_Ctor_Ref);
+            // Body - use ILMethodGenerator for consistent expression emission
+            var ilGen = new ILMethodGenerator(_variables, _bcl, _metadata, _methodBodies, _dispatchTableGenerator, _classRegistry);
+            ilGen.IL.OpCode(ILOpCode.Ldarg_0);
+            ilGen.IL.Call(_bcl.Object_Ctor_Ref);
 
-            // Initialize fields with default values if provided
-            EmitFieldInitializers(ilCtor, fieldsWithInits);
+            // Initialize fields with default values if provided using ILMethodGenerator.Emit
+            EmitFieldInitializers(ilGen, fieldsWithInits);
 
-            ilCtor.OpCode(ILOpCode.Ret);
+            ilGen.IL.OpCode(ILOpCode.Ret);
 
-            var ctorBody = _methodBodies.AddMethodBody(ilCtor);
+            var ctorBody = _methodBodies.AddMethodBody(ilGen.IL);
             return tb.AddMethodDefinition(
                 MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
                 ".ctor",
@@ -128,36 +127,27 @@ namespace Js2IL.Services.ILGenerators
                 ctorBody);
         }
 
-        private void EmitFieldInitializers(InstructionEncoder ilCtor, System.Collections.Generic.List<(FieldDefinitionHandle Field, Expression? Init)> fieldsWithInits)
+        private void EmitFieldInitializers(ILMethodGenerator ilGen, System.Collections.Generic.List<(FieldDefinitionHandle Field, Expression? Init)> fieldsWithInits)
         {
             foreach (var (field, initExpr) in fieldsWithInits)
             {
-                ilCtor.OpCode(ILOpCode.Ldarg_0);
-                if (initExpr is StringLiteral s)
-                {
-                    ilCtor.LoadString(_metadata.GetOrAddUserString(s.Value));
-                }
-                else if (initExpr is NumericLiteral n)
-                {
-                    ilCtor.LoadConstantR8(n.Value);
-                    ilCtor.OpCode(ILOpCode.Box);
-                    ilCtor.Token(_bcl.DoubleType);
-                }
-                else if (initExpr is null)
+                ilGen.IL.OpCode(ILOpCode.Ldarg_0);
+                if (initExpr is null)
                 {
                     // no initializer → leave default null; skip write
-                    ilCtor.OpCode(ILOpCode.Pop); // keep behavior consistent with current implementation
+                    ilGen.IL.OpCode(ILOpCode.Pop);
                 }
                 else
                 {
-                    ilCtor.OpCode(ILOpCode.Ldnull);
-                }
-
-                // If we emitted a value, store it
-                if (initExpr is not null)
-                {
-                    ilCtor.OpCode(ILOpCode.Stfld);
-                    ilCtor.Token(field);
+                    // Use ILMethodGenerator to emit the initializer expression, then box numbers if needed
+                    var t = ((IMethodExpressionEmitter)ilGen).Emit(initExpr, new TypeCoercion());
+                    if (t == JavascriptType.Number)
+                    {
+                        ilGen.IL.OpCode(ILOpCode.Box);
+                        ilGen.IL.Token(_bcl.DoubleType);
+                    }
+                    ilGen.IL.OpCode(ILOpCode.Stfld);
+                    ilGen.IL.Token(field);
                 }
             }
         }
