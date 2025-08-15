@@ -41,7 +41,7 @@ namespace Js2IL.Tests
         protected Task ExecutionTest(string testName, [CallerFilePath] string sourceFilePath = "")
         {
             var js = GetJavaScript(testName);
-            var ast = _parser.ParseJavaScript(js);
+            var ast = _parser.ParseJavaScript(js, "test.js");
             _validator.Validate(ast);
 
             var generator = new AssemblyGenerator();

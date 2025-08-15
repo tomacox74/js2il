@@ -12,13 +12,15 @@ namespace Js2IL.Services.ILGenerators
     /// </summary>
     internal class MainGenerator
     {
-        private ILMethodGenerator _ilGenerator;
+    private ILMethodGenerator _ilGenerator;
         private JavaScriptFunctionGenerator _functionGenerator;
+    private ClassesGenerator _classesGenerator;
         private MethodBodyStreamEncoder _methodBodyStreamEncoder;
         private SymbolTable _symbolTable;
 
         private Dispatch.DispatchTableGenerator _dispatchTableGenerator;
     private readonly TypeBuilder? _programTypeBuilder;
+    private readonly ClassRegistry _classRegistry = new();
 
 
         public MainGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator, SymbolTable symbolTable)
@@ -30,8 +32,9 @@ namespace Js2IL.Services.ILGenerators
             if (bclReferences == null) throw new ArgumentNullException(nameof(bclReferences));
             if (metadataBuilder == null) throw new ArgumentNullException(nameof(metadataBuilder));
 
-            _ilGenerator = new ILMethodGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator);
-            _functionGenerator = new JavaScriptFunctionGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator);
+            _ilGenerator = new ILMethodGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator, _classRegistry);
+            _functionGenerator = new JavaScriptFunctionGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator, _classRegistry);
+            _classesGenerator = new ClassesGenerator(metadataBuilder, bclReferences, methodBodyStreamEncoder, _classRegistry, variables, _dispatchTableGenerator);
             this._methodBodyStreamEncoder = methodBodyStreamEncoder;
         }
 
@@ -42,26 +45,27 @@ namespace Js2IL.Services.ILGenerators
         }
 
         /// <summary>
-        /// Creates scope instances for all scopes that contain variables.
-        /// Each scope instance is stored in a local variable that can be accessed by variable operations.
+        /// Creates the global scope instance.
+        /// The instance is stored in a local variable that can be accessed by variable operations.
         /// </summary>
-        private void CreateScopeInstances(Variables variables)
+        private void CreateGlobalScopeInstance(Variables variables)
         {
             // Delegate to shared helper; safe no-op if no registry or scope type is available
             ScopeInstanceEmitter.EmitCreateLeafScopeInstance(variables, _ilGenerator.IL, _ilGenerator.MetadataBuilder);
         }
 
         /// <summary>
-        /// Creates a constructor signature blob for parameterless constructors.
+    /// Creates a constructor signature blob for parameterless constructors.
         /// </summary>
-        private BlobHandle CreateConstructorSignature()
-        {
-            var sigBuilder = new BlobBuilder();
-            new BlobEncoder(sigBuilder)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(0, returnType => returnType.Void(), parameters => { });
-            return _ilGenerator.MetadataBuilder.GetOrAddBlob(sigBuilder);
-        }
+    // NOTE: No longer needed in Main; function scope objects are not pre-instantiated here.
+    // private BlobHandle CreateConstructorSignature()
+    // {
+    //     var sigBuilder = new BlobBuilder();
+    //     new BlobEncoder(sigBuilder)
+    //         .MethodSignature(isInstanceMethod: true)
+    //         .Parameters(0, returnType => returnType.Void(), parameters => { });
+    //     return _ilGenerator.MetadataBuilder.GetOrAddBlob(sigBuilder);
+    // }
 
 
         public int GenerateMethod(Acornima.Ast.Program ast)
@@ -69,55 +73,14 @@ namespace Js2IL.Services.ILGenerators
             var metadataBuilder = _ilGenerator.MetadataBuilder;
             var variables = _ilGenerator.Variables;
 
-            // Step 1: Create scope instances for all scopes that have variables
-            CreateScopeInstances(variables);
+            // Step 1: Create the global scope instance
+            CreateGlobalScopeInstance(variables);
 
-            // Step 1.1: In Main, some baselines expect locals for function scope objects (including nested ones).
-            // Instantiate each function scope type into consecutive local slots starting after the global scope local (if any).
-            // These are not used by codegen directly but are part of the expected IL shape in tests.
-            var registry = variables.GetVariableRegistry();
-            var allFunctions = _symbolTable.GetAllFunctions()
-                .Select(f => (Scope: f.FunctionScope, Decl: f.Declaration))
-                .ToList();
-            if (registry != null && allFunctions.Count > 0)
-            {
-                int nextLocalIndex = variables.GetNumberOfLocals(); // 0 if no global, 1 if global created
-                foreach (var fn in allFunctions)
-                {
-                    var functionName = (fn.Decl.Id as Acornima.Ast.Identifier)!.Name;
-                    try
-                    {
-                        // Determine if the function itself will allocate its own scope instance
-                        var declaredFields = registry.GetVariablesForScope(functionName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
-                        bool functionAllocatesOwnScope = declaredFields.Any();
+            // Note: Do not pre-instantiate function or nested scopes in Main.
+            // Function scopes are created at call-time by the function generator.
 
-                        // Only pre-instantiate here if the function will NOT allocate a scope (i.e., no fields/params)
-                        if (functionAllocatesOwnScope)
-                        {
-                            continue; // avoid duplicate scope object creation
-                        }
-
-                        var scopeTypeHandle = registry.GetScopeTypeHandle(functionName);
-                        if (scopeTypeHandle.IsNil) continue;
-
-                        var ctorRef = _ilGenerator.MetadataBuilder.AddMemberReference(
-                            scopeTypeHandle,
-                            _ilGenerator.MetadataBuilder.GetOrAddString(".ctor"),
-                            CreateConstructorSignature()
-                        );
-
-                        _ilGenerator.IL.OpCode(ILOpCode.Newobj);
-                        _ilGenerator.IL.Token(ctorRef);
-                        _ilGenerator.IL.StoreLocal(nextLocalIndex);
-                        variables.RegisterAdditionalLocalScope(functionName, nextLocalIndex);
-                        nextLocalIndex++;
-                    }
-                    catch (System.Collections.Generic.KeyNotFoundException)
-                    {
-                        continue;
-                    }
-                }
-            }
+            // First, declare classes so their types exist under the Classes namespace
+            _classesGenerator.DeclareClasses(_symbolTable);
 
             // create the dispatch
             // functions are hosted so we need to declare them first

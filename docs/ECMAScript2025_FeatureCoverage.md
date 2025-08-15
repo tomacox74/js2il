@@ -4,8 +4,6 @@
 
 This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
-> Note: Test scripts under `Js2IL.Tests/JavaScript/Prime/` are currently excluded (not supported).
-
 ## [ECMAScript Language: Expressions](https://tc39.es/ecma262/#sec-ecmascript-language-expressions)
 
 ### [Declarations](https://tc39.es/ecma262/#sec-declarations)

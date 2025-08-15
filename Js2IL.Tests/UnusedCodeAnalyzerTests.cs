@@ -24,7 +24,7 @@ public class UnusedCodeAnalyzerTests
             usedFunction();
         ";
         
-        var ast = _parser.ParseJavaScript(jsCode);
+        var ast = _parser.ParseJavaScript(jsCode, "test.js");
 
         // Act
         var result = _analyzer.Analyze(ast);
@@ -45,7 +45,7 @@ public class UnusedCodeAnalyzerTests
             console.log(usedVariable);
         ";
         
-        var ast = _parser.ParseJavaScript(jsCode);
+        var ast = _parser.ParseJavaScript(jsCode, "test.js");
 
         // Act
         var result = _analyzer.Analyze(ast);
@@ -68,7 +68,7 @@ public class UnusedCodeAnalyzerTests
             console.log(obj.usedProperty);
         ";
         
-        var ast = _parser.ParseJavaScript(jsCode);
+        var ast = _parser.ParseJavaScript(jsCode, "test.js");
 
         // Act
         var result = _analyzer.Analyze(ast);
@@ -91,7 +91,7 @@ public class UnusedCodeAnalyzerTests
             obj.usedMethod();
         ";
         
-        var ast = _parser.ParseJavaScript(jsCode);
+        var ast = _parser.ParseJavaScript(jsCode, "test.js");
 
         // Act
         var result = _analyzer.Analyze(ast);
@@ -118,7 +118,7 @@ public class UnusedCodeAnalyzerTests
             callback();
         ";
         
-        var ast = _parser.ParseJavaScript(jsCode);
+        var ast = _parser.ParseJavaScript(jsCode, "test.js");
 
         // Act
         var result = _analyzer.Analyze(ast);
@@ -133,7 +133,7 @@ public class UnusedCodeAnalyzerTests
     {
         // Arrange
         var jsCode = "";
-        var ast = _parser.ParseJavaScript(jsCode);
+        var ast = _parser.ParseJavaScript(jsCode, "test.js");
 
         // Act
         var result = _analyzer.Analyze(ast);

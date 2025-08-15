@@ -90,7 +90,7 @@ function main() {
   let md = '# ECMAScript 2025 Feature Coverage\n\n';
   md += '[ECMAScript® 2025 Language Specification](https://tc39.es/ecma262/)\n\n';
   md += 'This file is auto-generated from ECMAScript2025_FeatureCoverage.json.\n';
-  md += '\n> Note: Test scripts under `Js2IL.Tests/JavaScript/Prime/` are currently excluded (not supported).\n';
+  // Note removed: previously mentioned exclusion of Js2IL.Tests/JavaScript/Prime; file moved to tests/performance.
   md += processSections(data.sections);
   // Replace placeholder for script links
   md = md.replace(/\u001A/g, '`');

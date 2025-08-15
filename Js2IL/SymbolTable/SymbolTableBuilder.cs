@@ -12,6 +12,16 @@ namespace Js2IL.SymbolTables
     {
         private int _closureCounter = 0;
         private string? _currentAssignmentTarget = null;
+        private const string DefaultClassesNamespace = "Classes";
+
+        private static string SanitizeForMetadata(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return "_";
+            var chars = name.Select(ch => char.IsLetterOrDigit(ch) || ch == '_' ? ch : '_').ToArray();
+            var result = new string(chars);
+            if (char.IsDigit(result[0])) result = "_" + result;
+            return result;
+        }
 
         public SymbolTable Build(Node astRoot, string filePath)
         {
@@ -28,6 +38,38 @@ namespace Js2IL.SymbolTables
                 case Acornima.Ast.Program program:
                     foreach (var statement in program.Body)
                         BuildScopeRecursive(statement, currentScope);
+                    break;
+                case ClassDeclaration classDecl:
+                    var className = (classDecl.Id as Identifier)?.Name ?? $"Class{++_closureCounter}";
+                    var classScope = new Scope(className, ScopeKind.Class, currentScope, classDecl);
+                    // Author authoritative .NET naming for classes here
+                    classScope.DotNetNamespace = DefaultClassesNamespace; // policy: all JS classes under "Classes"
+                    // Per user guidance, keep type name same as scope name for now
+                    classScope.DotNetTypeName = SanitizeForMetadata(className);
+                    currentScope.Bindings[className] = new BindingInfo(className, BindingKind.Let, classDecl);
+                    // Process class body members for nested functions or fields later if needed
+                    foreach (var element in classDecl.Body.Body)
+                    {
+                        // Methods are represented as MethodDefinition (not to be confused with IL). We can capture their keys if needed later.
+                        if (element is MethodDefinition mdef && mdef.Value is FunctionExpression mfunc)
+                        {
+                            // Create a pseudo-scope for the method if we compile methods as functions later
+                            var mname = (mdef.Key as Identifier)?.Name ?? $"Method_L{mdef.Location.Start.Line}C{mdef.Location.Start.Column}";
+                            var methodScope = new Scope(mname, ScopeKind.Function, classScope, mfunc);
+                            foreach (var p in mfunc.Params)
+                            {
+                                if (p is Identifier pid)
+                                {
+                                    methodScope.Bindings[pid.Name] = new BindingInfo(pid.Name, BindingKind.Var, pid);
+                                    methodScope.Parameters.Add(pid.Name);
+                                }
+                            }
+                            if (mfunc.Body is BlockStatement mblock)
+                            {
+                                foreach (var st in mblock.Body) BuildScopeRecursive(st, methodScope);
+                            }
+                        }
+                    }
                     break;
                 case FunctionDeclaration funcDecl:
                     var funcName = (funcDecl.Id as Identifier)?.Name ?? $"Closure{++_closureCounter}";

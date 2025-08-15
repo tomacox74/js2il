@@ -27,7 +27,7 @@ namespace Js2IL.Tests
                 Directory.CreateDirectory(_outputPath);
             }
 
-            _outputPath = Path.Combine(_outputPath, $"{testCategory}.GeneratorTests_{Guid.NewGuid():N}");
+            _outputPath = Path.Combine(_outputPath, $"{testCategory}.GeneratorTests");
             if (!Directory.Exists(_outputPath))
             {
                 Directory.CreateDirectory(_outputPath);
@@ -37,7 +37,7 @@ namespace Js2IL.Tests
         protected Task GenerateTest(string testName, [CallerFilePath] string sourceFilePath = "")
         {
             var js = GetJavaScript(testName);
-            var ast = _parser.ParseJavaScript(js);
+            var ast = _parser.ParseJavaScript(js, testName);
             _validator.Validate(ast);
 
             var generator = new AssemblyGenerator();

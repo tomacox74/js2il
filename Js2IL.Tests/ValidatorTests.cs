@@ -22,7 +22,7 @@ public class ValidatorTests
         var js = @"var x = 1 + 2;
             console.log('X is',x);
         ";
-        var ast = _parser.ParseJavaScript(js);
+        var ast = _parser.ParseJavaScript(js, "test.js");
         // Act
         var result = _validator.Validate(ast);
         // Assert
@@ -36,7 +36,7 @@ public class ValidatorTests
     {
         // Arrange
         var js = "function add(a, b) { return a + b; }";
-        var ast = _parser.ParseJavaScript(js);
+        var ast = _parser.ParseJavaScript(js, "test.js");
 
         // Act
         var result = _validator.Validate(ast);
@@ -52,7 +52,7 @@ public class ValidatorTests
     {
         // Arrange
         var js = "class Test { constructor() { } }";
-        var ast = _parser.ParseJavaScript(js);
+        var ast = _parser.ParseJavaScript(js, "test.js");
 
         // Act
         var result = _validator.Validate(ast);
@@ -67,7 +67,7 @@ public class ValidatorTests
     {
         // Arrange
         var js = "const add = (a, b) => a + b;";
-        var ast = _parser.ParseJavaScript(js);
+        var ast = _parser.ParseJavaScript(js, "test.js");
 
         // Act
         var result = _validator.Validate(ast);
@@ -87,7 +87,7 @@ public class ValidatorTests
             const add = (a, b) => a + b;
             /* import { something } from 'module'; */
         ";
-        var ast = _parser.ParseJavaScript(js);
+        var ast = _parser.ParseJavaScript(js, "test.js");
 
         // Act
         var result = _validator.Validate(ast);

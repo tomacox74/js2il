@@ -22,7 +22,7 @@ namespace Js2IL.Tests
         {
             // Arrange
             var code = "var x = 5;";
-            var ast = _parser.ParseJavaScript(code);
+            var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
             var scopeTree = _scopeBuilder.Build(ast, "test.js");
@@ -43,7 +43,7 @@ namespace Js2IL.Tests
                 const z = 20;
                 var x = 5;
             ";
-            var ast = _parser.ParseJavaScript(code);
+            var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
             var scopeTree = _scopeBuilder.Build(ast, "test.js");
@@ -63,7 +63,7 @@ namespace Js2IL.Tests
                     var localVar = 10;
                 }
             ";
-            var ast = _parser.ParseJavaScript(code);
+            var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
             var scopeTree = _scopeBuilder.Build(ast, "test.js");
@@ -99,7 +99,7 @@ namespace Js2IL.Tests
                     var outerVar = x;
                 }
             ";
-            var ast = _parser.ParseJavaScript(code);
+            var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
             var scopeTree = _scopeBuilder.Build(ast, "test.js");
@@ -125,7 +125,7 @@ namespace Js2IL.Tests
                     let blockVar = 2;
                 }
             ";
-            var ast = _parser.ParseJavaScript(code);
+            var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
             var scopeTree = _scopeBuilder.Build(ast, "test.js");
@@ -153,7 +153,7 @@ namespace Js2IL.Tests
                     return result;
                 };
             ";
-            var ast = _parser.ParseJavaScript(code);
+            var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
             var scopeTree = _scopeBuilder.Build(ast, "test.js");
@@ -183,7 +183,7 @@ namespace Js2IL.Tests
                     return x * 2;
                 };
             ";
-            var ast = _parser.ParseJavaScript(code);
+            var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
             var scopeTree = _scopeBuilder.Build(ast, "test.js");
@@ -212,7 +212,7 @@ namespace Js2IL.Tests
                     }
                 }
             ";
-            var ast = _parser.ParseJavaScript(code);
+            var ast = _parser.ParseJavaScript(code, "complex.js");
 
             // Act
             var scopeTree = _scopeBuilder.Build(ast, "complex.js");
@@ -247,7 +247,7 @@ namespace Js2IL.Tests
                     console.log('', x[index]);
                 }
             ";
-            var ast = _parser.ParseJavaScript(code);
+            var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
             var scopeTree = _scopeBuilder.Build(ast, "test.js");

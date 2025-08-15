@@ -27,10 +27,13 @@ namespace Js2IL.Services.ILGenerators
         private readonly MethodBodyStreamEncoder _methodBodyStreamEncoder;
         private MethodDefinitionHandle _firstMethod = default;
 
-        private readonly Dispatch.DispatchTableGenerator _dispatchTableGenerator;
+    private readonly Dispatch.DispatchTableGenerator _dispatchTableGenerator;
+    private readonly ClassRegistry _classRegistry;
     // Tracks the name of the variable currently being initialized, to name arrow-function scopes consistently
     // with SymbolTableBuilder (e.g., ArrowFunction_<targetName>) when emitting an ArrowFunctionExpression on the RHS.
     private string? _currentAssignmentTarget;
+    // Tracks simple associations from variable name to class name when initialized via `const x = new ClassName()`
+    private readonly Dictionary<string, string> _variableToClass = new(StringComparer.Ordinal);
 
         /*
          * Temporary exposure of private members until refactoring gets cleaner
@@ -43,7 +46,7 @@ namespace Js2IL.Services.ILGenerators
 
         public MethodDefinitionHandle FirstMethod => _firstMethod;
 
-        public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator)
+    public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator, ClassRegistry? classRegistry = null)
         {
             _variables = variables;
             _bclReferences = bclReferences;
@@ -57,6 +60,7 @@ namespace Js2IL.Services.ILGenerators
             this._expressionEmitter = this;
             _methodBodyStreamEncoder = methodBodyStreamEncoder;
             _dispatchTableGenerator = dispatchTableGenerator ?? throw new ArgumentNullException(nameof(dispatchTableGenerator));
+            _classRegistry = classRegistry ?? new ClassRegistry();
         }
 
         public void DeclareVariable(VariableDeclaration variableDeclaraion)
@@ -182,6 +186,10 @@ namespace Js2IL.Services.ILGenerators
         {
             switch (statement)
             {
+                case ClassDeclaration:
+                    // Class declarations are emitted as .NET types by ClassesGenerator;
+                    // no IL is required in the method body for the declaration itself.
+                    break;
                 case VariableDeclaration variableDeclaration:
                     DeclareVariable(variableDeclaration);
                     break;
@@ -236,35 +244,28 @@ namespace Js2IL.Services.ILGenerators
             int? blockLocalIndex = null;
             if (registry != null)
             {
-                try
+                var scopeTypeHandle = registry.GetScopeTypeHandle(scopeName);
+                if (!scopeTypeHandle.IsNil)
                 {
-                    var scopeTypeHandle = registry.GetScopeTypeHandle(scopeName);
-                    if (!scopeTypeHandle.IsNil)
-                    {
-                        // Create constructor reference
-                        var ctorSigBuilder = new BlobBuilder();
-                        new BlobEncoder(ctorSigBuilder)
-                            .MethodSignature(isInstanceMethod: true)
-                            .Parameters(0, rt => rt.Void(), p => { });
-                        var ctorRef = _metadataBuilder.AddMemberReference(
-                            scopeTypeHandle,
-                            _metadataBuilder.GetOrAddString(".ctor"),
-                            _metadataBuilder.GetOrAddBlob(ctorSigBuilder));
+                    // Create constructor reference
+                    var ctorSigBuilder = new BlobBuilder();
+                    new BlobEncoder(ctorSigBuilder)
+                        .MethodSignature(isInstanceMethod: true)
+                        .Parameters(0, rt => rt.Void(), p => { });
+                    var ctorRef = _metadataBuilder.AddMemberReference(
+                        scopeTypeHandle,
+                        _metadataBuilder.GetOrAddString(".ctor"),
+                        _metadataBuilder.GetOrAddBlob(ctorSigBuilder));
 
-                        // newobj + store to a temp local (extend locals if necessary)
-                        // Allocate a new logical local slot index at end: existing locals count + created ones
-                        // Allocate a new local slot dedicated to this block scope
-                        blockLocalIndex = _variables.AllocateBlockScopeLocal(scopeName);
-                        _il.OpCode(ILOpCode.Newobj);
-                        _il.Token(ctorRef);
-                        _il.StoreLocal(blockLocalIndex.Value);
-                        // Track lexical scope so variable resolution prefers it
-                        _variables.PushLexicalScope(scopeName);
-                    }
-                }
-                catch (KeyNotFoundException)
-                {
-                    // Scope type not found; proceed without lexical isolation.
+                    // newobj + store to a temp local (extend locals if necessary)
+                    // Allocate a new logical local slot index at end: existing locals count + created ones
+                    // Allocate a new local slot dedicated to this block scope
+                    blockLocalIndex = _variables.AllocateBlockScopeLocal(scopeName);
+                    _il.OpCode(ILOpCode.Newobj);
+                    _il.Token(ctorRef);
+                    _il.StoreLocal(blockLocalIndex.Value);
+                    // Track lexical scope so variable resolution prefers it
+                    _variables.PushLexicalScope(scopeName);
                 }
             }
 
@@ -651,6 +652,60 @@ namespace Js2IL.Services.ILGenerators
                 memberExpression.Property is not Acornima.Ast.Identifier propertyIdentifier ||
                 propertyIdentifier.Name != "log")
             {
+                // Instance method call: obj.method(...)
+                if (callExpression.Callee is Acornima.Ast.MemberExpression mem && !mem.Computed && mem.Object is Acornima.Ast.Identifier baseId && mem.Property is Acornima.Ast.Identifier mname)
+                {
+                    // Load instance from variable field
+                    var baseVar = _variables.FindVariable(baseId.Name) ?? throw new InvalidOperationException($"Variable '{baseId.Name}' not found.");
+                    var scopeRef = _variables.GetScopeLocalSlot(baseVar.ScopeName);
+                    if (scopeRef.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(scopeRef.Address);
+                    else if (scopeRef.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(scopeRef.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
+                    else _il.LoadLocal(scopeRef.Address);
+                    _il.OpCode(ILOpCode.Ldfld);
+                    _il.Token(baseVar.FieldHandle); // stack: instance (object)
+
+                    // We need the class type to make a MemberRef for the method, but since Classes inherit ExpandoObject,
+                    // we can attempt a virtual call by searching all known classes for a method name. For now, assume the
+                    // type is the declared class when the variable was initialized via `new Identifier()`.
+                    // As a minimal approach, generate a MemberRef on System.Object with given name and object params/return.
+                    // Better: rely on runtime Emit to callvirt by name using dynamic - not available; so build a conservative ref.
+
+                    // Build method signature: instance object method(object, ...)
+                    var argCount = callExpression.Arguments.Count;
+                    var sig = new BlobBuilder();
+                    new BlobEncoder(sig)
+                        .MethodSignature(isInstanceMethod: true)
+                        .Parameters(argCount, r => r.Type().Object(), p => { for (int i=0;i<argCount;i++) p.AddParameter().Type().Object(); });
+                    var msig = _metadataBuilder.GetOrAddBlob(sig);
+
+                    // Resolve the concrete class type if known (based on prior `new` assignment)
+                    TypeDefinitionHandle targetType = default;
+                    if (_variableToClass.TryGetValue(baseId.Name, out var cname))
+                    {
+                        if (_classRegistry.TryGet(cname, out var th)) targetType = th;
+                    }
+                    if (targetType.IsNil)
+                    {
+                        throw new NotSupportedException($"Cannot resolve class type for variable '{baseId.Name}' to call method '{mname.Name}'.");
+                    }
+                    var mref = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(mname.Name), msig);
+
+                    // Push arguments
+                    for (int i = 0; i < callExpression.Arguments.Count; i++)
+                    {
+                        var at = _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion());
+                        if (at == JavascriptType.Number)
+                        {
+                            _il.OpCode(ILOpCode.Box);
+                            _il.Token(_bclReferences.DoubleType);
+                        }
+                    }
+
+                    _il.OpCode(ILOpCode.Callvirt);
+                    _il.Token(mref);
+                    if (discardResult) _il.OpCode(ILOpCode.Pop);
+                    return;
+                }
                 // try to invoke local function
                 if (callExpression.Callee is Acornima.Ast.Identifier identifier)
                 {
@@ -924,6 +979,42 @@ namespace Js2IL.Services.ILGenerators
                     GenerateArrayExpression(arrayExpression);
                     javascriptType = JavascriptType.Object; // Arrays are treated as objects in JavaScript
                     break;
+                case NewExpression newExpression:
+                    // Support `new Identifier(...)` for classes emitted under Classes namespace
+                    if (newExpression.Callee is Identifier cid)
+                    {
+                        if (!_classRegistry.TryGet(cid.Name, out var typeHandle) || typeHandle.IsNil)
+                        {
+                            throw new NotSupportedException($"Unknown class '{cid.Name}' for new expression");
+                        }
+                        // Build .ctor signature matching argument count (all object)
+                        var argc = newExpression.Arguments.Count;
+                        var sig = new BlobBuilder();
+                        new BlobEncoder(sig)
+                            .MethodSignature(isInstanceMethod: true)
+                            .Parameters(argc, r => r.Void(), p => { for (int i=0;i<argc;i++) p.AddParameter().Type().Object(); });
+                        var ctorSig = _metadataBuilder.GetOrAddBlob(sig);
+                        var ctorRef = _metadataBuilder.AddMemberReference(typeHandle, _metadataBuilder.GetOrAddString(".ctor"), ctorSig);
+                        // Push args
+                        for (int i = 0; i < argc; i++)
+                        {
+                            var at = _expressionEmitter.Emit(newExpression.Arguments[i], new TypeCoercion());
+                            if (at == JavascriptType.Number) { _il.OpCode(ILOpCode.Box); _il.Token(_bclReferences.DoubleType); }
+                        }
+                        _il.OpCode(ILOpCode.Newobj);
+                        _il.Token(ctorRef);
+                        // Record variable -> class mapping when in a variable initializer or assignment
+                        if (!string.IsNullOrEmpty(_currentAssignmentTarget))
+                        {
+                            _variableToClass[_currentAssignmentTarget] = cid.Name;
+                        }
+                        javascriptType = JavascriptType.Object;
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"Unsupported new-expression callee: {newExpression.Callee.Type}");
+                    }
+                    break;
                 case BinaryExpression binaryExpression:
                     _binaryOperators.Generate(binaryExpression, branching);
                     break;
@@ -943,65 +1034,50 @@ namespace Js2IL.Services.ILGenerators
                     javascriptType = JavascriptType.Object;
                     break;
                 case MemberExpression memberExpression:
-                    // Support arr.length and arr[computedIndex]
-                    // Evaluate the object (base) expression first
-                    if (memberExpression.Object is Identifier arrIdent)
-                    {
-                        var variable = _variables.FindVariable(arrIdent.Name);
-                        if (variable == null)
-                        {
-                            throw new InvalidOperationException($"Variable '{arrIdent.Name}' not found for member expression.");
-                        }
-                        var scopeSlot = _variables.GetScopeLocalSlot(variable.ScopeName);
-                        if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
-                        {
-                            _il.LoadArgument(scopeSlot.Address);
-                        }
-                        else if (scopeSlot.Location == ObjectReferenceLocation.ScopeArray)
-                        {
-                            _il.LoadArgument(0); // Load scope array parameter
-                            _il.LoadConstantI4(scopeSlot.Address); // Load array index
-                            _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
-                        }
-                        else
-                        {
-                            _il.LoadLocal(scopeSlot.Address);
-                        }
-                        _il.OpCode(ILOpCode.Ldfld);
-                        _il.Token(variable.FieldHandle); // stack: object (expected object[])
-                    }
-                    else
-                    {
+                    // Evaluate base object into stack: object reference
+                    if (memberExpression.Object is not Identifier baseIdent)
                         throw new NotSupportedException($"Unsupported member base expression: {memberExpression.Object.Type}");
-                    }
+                    var baseVar = _variables.FindVariable(baseIdent.Name) ?? throw new InvalidOperationException($"Variable '{baseIdent.Name}' not found for member expression.");
+                    var baseScopeSlot = _variables.GetScopeLocalSlot(baseVar.ScopeName);
+                    if (baseScopeSlot.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(baseScopeSlot.Address);
+                    else if (baseScopeSlot.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(baseScopeSlot.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
+                    else _il.LoadLocal(baseScopeSlot.Address);
+                    _il.OpCode(ILOpCode.Ldfld);
+                    _il.Token(baseVar.FieldHandle); // stack: object
 
-                    if (!memberExpression.Computed && memberExpression.Property is Identifier propId && propId.Name == "length")
+                    if (!memberExpression.Computed && memberExpression.Property is Identifier propId)
                     {
-                        // JavaScriptRuntime.Array exposes length via get_length() returning double
-                        _il.OpCode(ILOpCode.Callvirt);
-                        _il.Token(_bclReferences.Array_GetCount_Ref); // returns int32 count
-                        // convert int -> double for JS number semantics
-                        _il.OpCode(ILOpCode.Conv_r8);
-                        javascriptType = JavascriptType.Number;
+                        // First, support array.length
+                        if (propId.Name == "length")
+                        {
+                            _il.OpCode(ILOpCode.Callvirt);
+                            _il.Token(_bclReferences.Array_GetCount_Ref);
+                            _il.OpCode(ILOpCode.Conv_r8);
+                            javascriptType = JavascriptType.Number;
+                            break;
+                        }
+                        // Next, support instance field access for known class instances
+                        if (_variableToClass.TryGetValue(baseIdent.Name, out var cname) && _classRegistry.TryGetField(cname, propId.Name, out var fieldHandle))
+                        {
+                            // At this point, stack has the instance already. Load its field value.
+                            _il.OpCode(ILOpCode.Ldfld);
+                            _il.Token(fieldHandle);
+                            javascriptType = JavascriptType.Object;
+                            break;
+                        }
+                        throw new NotSupportedException($"Property '{propId.Name}' not supported on this object.");
                     }
-                    else if (memberExpression.Computed)
+                    if (memberExpression.Computed)
                     {
                         // arr[expr] -> runtime Object.GetItem(array, doubleIndex)
                         var indexType = _expressionEmitter.Emit(memberExpression.Property, new TypeCoercion());
                         if (indexType != JavascriptType.Number)
-                        {
-                            // ensure numeric (primitive coercion would go here; minimal support)
                             throw new NotSupportedException("Array index must be numeric expression");
-                        }
-                        // stack: array, double
                         _runtime.InvokeGetItemFromObject();
                         javascriptType = JavascriptType.Object;
+                        break;
                     }
-                    else
-                    {
-                        throw new NotSupportedException("Only 'length' property or computed indexing supported on arrays.");
-                    }
-                    break;
+                    throw new NotSupportedException("Only 'length', instance fields on known classes, or computed indexing supported.");
                 default:
                     javascriptType = _binaryOperators.LoadValue(expression, typeCoercion);
                     break;
@@ -1044,35 +1120,31 @@ namespace Js2IL.Services.ILGenerators
                         var registry = functionVariables.GetVariableRegistry();
                         if (registry != null)
                         {
-                            try
+                            var fields = registry.GetVariablesForScope(registryScopeName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
+                            var hasAnyFields = fields.Any();
+                            if (hasAnyFields)
                             {
-                                var fields = registry.GetVariablesForScope(registryScopeName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
-                                var hasAnyFields = fields.Any();
-                                if (hasAnyFields)
+                                ScopeInstanceEmitter.EmitCreateLeafScopeInstance(functionVariables, il, _metadataBuilder);
+                                // Initialize parameter fields if backing fields exist
+                                var localScope = functionVariables.GetLocalScopeSlot();
+                                if (localScope.Address >= 0 && pnames.Length > 0)
                                 {
-                                    ScopeInstanceEmitter.EmitCreateLeafScopeInstance(functionVariables, il, _metadataBuilder);
-                                    // Initialize parameter fields if backing fields exist
-                                    var localScope = functionVariables.GetLocalScopeSlot();
-                                    if (localScope.Address >= 0 && pnames.Length > 0)
+                                    var fieldNames = new HashSet<string>(fields.Select(f => f.Name));
+                                    ushort jsParamSeq = 1; // arg0 is scopes[]
+                                    foreach (var pn in pnames)
                                     {
-                                        var fieldNames = new HashSet<string>(fields.Select(f => f.Name));
-                                        ushort jsParamSeq = 1; // arg0 is scopes[]
-                                        foreach (var pn in pnames)
+                                        if (fieldNames.Contains(pn))
                                         {
-                                            if (fieldNames.Contains(pn))
-                                            {
-                                                il.LoadLocal(localScope.Address);
-                                                il.LoadArgument(jsParamSeq);
-                                                var fh = registry.GetFieldHandle(registryScopeName, pn);
-                                                il.OpCode(ILOpCode.Stfld);
-                                                il.Token(fh);
-                                            }
-                                            jsParamSeq++;
+                                            il.LoadLocal(localScope.Address);
+                                            il.LoadArgument(jsParamSeq);
+                                            var fh = registry.GetFieldHandle(registryScopeName, pn);
+                                            il.OpCode(ILOpCode.Stfld);
+                                            il.Token(fh);
                                         }
+                                        jsParamSeq++;
                                     }
                                 }
                             }
-                            catch { }
                         }
 
                         // Emit the initializer expression to produce the delegate on the stack
@@ -1147,37 +1219,33 @@ namespace Js2IL.Services.ILGenerators
                     var registry = functionVariables.GetVariableRegistry();
                     if (registry != null)
                     {
-                        try
+                        var fields = registry.GetVariablesForScope(registryScopeName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
+                        var hasAnyFields = fields.Any();
+                        if (hasAnyFields)
                         {
-                            var fields = registry.GetVariablesForScope(registryScopeName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
-                            var hasAnyFields = fields.Any();
-                            if (hasAnyFields)
-                            {
-                                // Create the current arrow function scope instance
-                                ScopeInstanceEmitter.EmitCreateLeafScopeInstance(functionVariables, il, _metadataBuilder);
+                            // Create the current arrow function scope instance
+                            ScopeInstanceEmitter.EmitCreateLeafScopeInstance(functionVariables, il, _metadataBuilder);
 
-                                // Initialize parameter fields from CLR args when a backing field exists
-                                var localScope = functionVariables.GetLocalScopeSlot();
-                                    if (localScope.Address >= 0 && pnames.Length > 0)
+                            // Initialize parameter fields from CLR args when a backing field exists
+                            var localScope = functionVariables.GetLocalScopeSlot();
+                                if (localScope.Address >= 0 && pnames.Length > 0)
+                            {
+                                    var fieldNames = new HashSet<string>(fields.Select(f => f.Name));
+                                    ushort jsParamSeq = 1; // arg0 is scopes[]; JS params start at 1
+                                    foreach (var pn in pnames)
                                 {
-                                        var fieldNames = new HashSet<string>(fields.Select(f => f.Name));
-                                        ushort jsParamSeq = 1; // arg0 is scopes[]; JS params start at 1
-                                        foreach (var pn in pnames)
+                                    if (fieldNames.Contains(pn))
                                     {
-                                        if (fieldNames.Contains(pn))
-                                        {
-                                            il.LoadLocal(localScope.Address);
-                                            il.LoadArgument(jsParamSeq);
-                                            var fh = registry.GetFieldHandle(registryScopeName, pn);
-                                            il.OpCode(ILOpCode.Stfld);
-                                            il.Token(fh);
-                                        }
-                                        jsParamSeq++;
+                                        il.LoadLocal(localScope.Address);
+                                        il.LoadArgument(jsParamSeq);
+                                        var fh = registry.GetFieldHandle(registryScopeName, pn);
+                                        il.OpCode(ILOpCode.Stfld);
+                                        il.Token(fh);
                                     }
+                                    jsParamSeq++;
                                 }
                             }
                         }
-                        catch { }
                     }
 
                     // Emit statements using the child generator

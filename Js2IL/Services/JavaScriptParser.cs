@@ -17,11 +17,11 @@ public class JavaScriptParser : IParser
         _parser = new Parser(parserOptions);
     }
 
-    public Acornima.Ast.Program ParseJavaScript(string source)
+    public Acornima.Ast.Program ParseJavaScript(string source, string sourceFile)
     {
         try
         {
-            return _parser.ParseScript(source);
+            return _parser.ParseScript(source, sourceFile);
         }
         catch (ParseErrorException ex)
         {

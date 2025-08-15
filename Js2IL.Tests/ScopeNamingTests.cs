@@ -25,7 +25,7 @@ namespace Js2IL.Tests
                     console.log('test');
                 };
             ";
-            var ast = _parser.ParseJavaScript(code);
+            var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
             var scopeTree = _scopeBuilder.Build(ast, "test.js");
@@ -44,7 +44,7 @@ namespace Js2IL.Tests
                     return 42;
                 };
             ";
-            var ast = _parser.ParseJavaScript(code);
+            var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
             var scopeTree = _scopeBuilder.Build(ast, "test.js");
@@ -63,7 +63,7 @@ namespace Js2IL.Tests
                     console.log('test');
                 }, 1000);
             ";
-            var ast = _parser.ParseJavaScript(code);
+            var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
             var scopeTree = _scopeBuilder.Build(ast, "test.js");
