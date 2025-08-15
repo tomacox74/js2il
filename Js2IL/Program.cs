@@ -47,7 +47,7 @@ class Program
             Console.WriteLine("Parsing JavaScript...");
             var jsSource = File.ReadAllText(parsed.InputFile);
             var parser = new JavaScriptParser();
-            var ast = parser.ParseJavaScript(jsSource);
+            var ast = parser.ParseJavaScript(jsSource, parsed.InputFile);
 
             if (parsed.Verbose)
             {

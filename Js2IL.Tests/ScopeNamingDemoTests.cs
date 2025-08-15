@@ -38,7 +38,7 @@ namespace Js2IL.Tests
                     return item * 2;
                 });
             ";
-            var ast = _parser.ParseJavaScript(code);
+            var ast = _parser.ParseJavaScript(code, "demo.js");
 
             // Act
             var scopeTree = _scopeBuilder.Build(ast, "demo.js");

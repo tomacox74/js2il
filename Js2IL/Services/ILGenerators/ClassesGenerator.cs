@@ -45,8 +45,10 @@ namespace Js2IL.Services.ILGenerators
 
         private TypeDefinitionHandle EmitClass(Scope classScope, ClassDeclaration cdecl, TypeDefinitionHandle parentType)
         {
-            var name = classScope.Name;
-            var tb = new TypeBuilder(_metadata, "Classes", name);
+            // Resolve authoritative .NET names from symbol table; fall back if absent
+            var ns = classScope.DotNetNamespace ?? "Classes";
+            var name = classScope.DotNetTypeName ?? classScope.Name;
+            var tb = new TypeBuilder(_metadata, ns, name);
 
             // Use System.Object as base type for now (ExpandoObject is sealed and cannot be inherited)
             var typeAttrs = parentType.IsNil
@@ -59,8 +61,8 @@ namespace Js2IL.Services.ILGenerators
                 _metadata.AddNestedType(typeHandle, parentType);
             }
 
-            // Register the class type for later lookup
-            _classRegistry.Register(name, typeHandle);
+            // Register the class type for later lookup using the JS-visible identifier (scope name)
+            _classRegistry.Register(classScope.Name, typeHandle);
 
             // Emit a parameterless .ctor that calls ExpandoObject::.ctor
             var sigBuilder = new BlobBuilder();

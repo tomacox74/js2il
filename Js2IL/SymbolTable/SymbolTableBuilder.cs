@@ -12,6 +12,16 @@ namespace Js2IL.SymbolTables
     {
         private int _closureCounter = 0;
         private string? _currentAssignmentTarget = null;
+        private const string DefaultClassesNamespace = "Classes";
+
+        private static string SanitizeForMetadata(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return "_";
+            var chars = name.Select(ch => char.IsLetterOrDigit(ch) || ch == '_' ? ch : '_').ToArray();
+            var result = new string(chars);
+            if (char.IsDigit(result[0])) result = "_" + result;
+            return result;
+        }
 
         public SymbolTable Build(Node astRoot, string filePath)
         {
@@ -32,6 +42,10 @@ namespace Js2IL.SymbolTables
                 case ClassDeclaration classDecl:
                     var className = (classDecl.Id as Identifier)?.Name ?? $"Class{++_closureCounter}";
                     var classScope = new Scope(className, ScopeKind.Class, currentScope, classDecl);
+                    // Author authoritative .NET naming for classes here
+                    classScope.DotNetNamespace = DefaultClassesNamespace; // policy: all JS classes under "Classes"
+                    // Per user guidance, keep type name same as scope name for now
+                    classScope.DotNetTypeName = SanitizeForMetadata(className);
                     currentScope.Bindings[className] = new BindingInfo(className, BindingKind.Let, classDecl);
                     // Process class body members for nested functions or fields later if needed
                     foreach (var element in classDecl.Body.Body)

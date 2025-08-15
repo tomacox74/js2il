@@ -56,6 +56,18 @@ namespace Js2IL.SymbolTables
         public ScopeKind Kind { get; }
         public Node? AstNode { get; }
 
+    /// <summary>
+    /// Authoritative .NET namespace for this scope's generated type (if any).
+    /// When null, generators may apply a default.
+    /// </summary>
+    public string? DotNetNamespace { get; set; }
+
+    /// <summary>
+    /// Authoritative .NET simple type name for this scope's generated type (if any).
+    /// When null, generators may use <see cref="Name"/>.
+    /// </summary>
+    public string? DotNetTypeName { get; set; }
+
         public Scope(string name, ScopeKind kind, Scope? parent, Node? astNode = null)
         {
             Name = name;

@@ -20,7 +20,7 @@ public class ParserTests
         var js = "function add(a, b) { return a + b; }";
 
         // Act
-        var ast = _parser.ParseJavaScript(js);
+        var ast = _parser.ParseJavaScript(js, "test.js");
 
         // Assert
         Assert.NotNull(ast);
@@ -34,7 +34,7 @@ public class ParserTests
         var js = "function add(a, b) { return a + b; // missing closing brace";
 
         // Act & Assert
-        Assert.Throws<Exception>(() => _parser.ParseJavaScript(js));
+        Assert.Throws<Exception>(() => _parser.ParseJavaScript(js, "test.js"));
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class ParserTests
     {
         // Arrange
         var js = "function add(a, b) { return a + b; }";
-        var ast = _parser.ParseJavaScript(js);
+        var ast = _parser.ParseJavaScript(js, "test.js");
         var visitedNodes = new List<NodeType>();
 
         // Act

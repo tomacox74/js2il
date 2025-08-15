@@ -30,7 +30,7 @@ namespace Js2IL.Tests
                     var localVar = 10;
                 }
             ";
-            var ast = _parser.ParseJavaScript(code);
+            var ast = _parser.ParseJavaScript(code, "test.js");
 
             if (ast is Acornima.Ast.Program p2 && p2.Body[0] is Acornima.Ast.FunctionDeclaration fd2)
             {
@@ -100,7 +100,7 @@ namespace Js2IL.Tests
                     return result;
                 };
             ";
-            var ast = _parser.ParseJavaScript(code);
+            var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
             var scopeTree = _scopeBuilder.Build(ast, "test.js");
