@@ -1,0 +1,42 @@
+name: Publish js2il tool
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build-and-publish:
+    runs-on: windows-latest
+    env:
+      NUGET_SERVER: https://api.nuget.org/v3/index.json
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Compute version from tag
+        shell: pwsh
+        run: |
+          $tag = "$env:GITHUB_REF_NAME"
+          if ($tag.StartsWith('v')) { $version = $tag.Substring(1) } else { $version = $tag }
+          echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Restore
+        run: dotnet restore js2il.sln
+
+      - name: Build
+        run: dotnet build js2il.sln -c Release --no-restore
+
+      - name: Test
+        run: dotnet test js2il.sln -c Release --no-build --verbosity normal
+
+      - name: Pack tool
+        run: dotnet pack Js2IL/Js2IL.csproj -c Release -o out -p:ContinuousIntegrationBuild=true -p:Version=${{ env.VERSION }}
+
+      - name: Publish to NuGet
+        run: dotnet nuget push out/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source ${{ env.NUGET_SERVER }} --skip-duplicate
