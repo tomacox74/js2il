@@ -39,6 +39,8 @@ jobs:
         run: dotnet pack Js2IL/Js2IL.csproj -c Release -o out -p:ContinuousIntegrationBuild=true -p:Version=${{ env.VERSION }}
 
       - name: Publish to NuGet
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         shell: pwsh
         run: |
           $pkg = Get-ChildItem -Path out -Filter *.nupkg | Select-Object -First 1
@@ -46,4 +48,5 @@ jobs:
             Write-Error "No package found in 'out'"
             exit 1
           }
-          dotnet nuget push $pkg.FullName --api-key $env:NUGET_API_KEY --source $env:NUGET_SERVER --skip-duplicate
+          Write-Host "Pushing $($pkg.Name) to $env:NUGET_SERVER"
+          dotnet nuget push --source "$env:NUGET_SERVER" --api-key "$env:NUGET_API_KEY" "$($pkg.FullName)" --skip-duplicate
