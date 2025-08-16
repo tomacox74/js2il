@@ -38,7 +38,7 @@ namespace JavaScriptRuntime
             }
 
             // Add more conversions as needed
-            return value!.ToString();
+            return value!.ToString()!;
         }
     }
 }

@@ -22,7 +22,7 @@ namespace JavaScriptRuntime.Tests
             var testOutput = new TestConsoleOutput();
             Console.SetOutput(testOutput);
 
-            Console.Log("Hello", "World", 42, (object?)null);
+            Console.Log("Hello", "World", 42, null);
 
             Assert.Single(testOutput.Output);
             Assert.Equal("Hello World 42 null", testOutput.Output[0]);
