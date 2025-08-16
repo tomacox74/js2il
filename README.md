@@ -21,12 +21,7 @@ js2il -i .\tests\simple.js -o .\out -v -a
 
 Options
 
-- -i, --input           The JavaScript file to convert (positional supported)
-- -o, --output          Output directory for generated files (created if missing)
-- -v, --verbose         Print AST and scope details
-- -a, --analyzeunused   Analyze and report unused functions/properties/variables
--     --version         Show version information and exit
-
+  --version         Show version information and exit
 Help: `-h`, `--help`, `-?`
 
 Generated files

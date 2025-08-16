@@ -15,7 +15,7 @@ namespace JavaScriptRuntime
             _output = output ?? new DefaultConsoleOutput();
         }
 
-        public static void Log(params object[] args)
+    public static void Log(params object?[] args)
         {
             var parts = args.Select(arg => DotNet2JSConversions.ToString(arg));
             var line = string.Join(" ", parts);
