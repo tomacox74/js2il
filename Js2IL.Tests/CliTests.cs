@@ -1,131 +1,114 @@
 using System;
-using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Text;
+using System.Linq;
+using System.Reflection;
 using Xunit;
 
 namespace Js2IL.Tests
 {
-    public class CliTests : IClassFixture<CliRunFixture>
+    public class CliTests
     {
-        private readonly CliRunFixture _fx;
-        public CliTests(CliRunFixture fx) => _fx = fx;
+        private static (int ExitCode, string StdOut, string StdErr) RunInProc(params string[] args)
+        {
+            // Capture console output
+            var prevOut = Console.Out;
+            var prevErr = Console.Error;
+            var prevExit = Environment.ExitCode;
+
+            using var outWriter = new StringWriter();
+            using var errWriter = new StringWriter();
+            try
+            {
+                Console.SetOut(outWriter);
+                Console.SetError(errWriter);
+                Environment.ExitCode = 0;
+
+                // Reflectively invoke Js2IL.Program.Main (non-public)
+                var asm = typeof(Js2IL.Services.AssemblyGenerator).Assembly;
+                var progType = asm.GetType("Js2IL.Program", throwOnError: true)!;
+                var main = progType.GetMethod("Main", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+                Assert.NotNull(main);
+                main!.Invoke(null, new object[] { args });
+            }
+            finally
+            {
+                Console.SetOut(prevOut);
+                Console.SetError(prevErr);
+            }
+
+            return (Environment.ExitCode, outWriter.ToString(), errWriter.ToString());
+        }
 
         [Fact]
         public void Version_Prints_and_ExitCode0()
         {
-            var r = _fx.RunCli("--version");
-            Assert.Equal(0, r.ExitCode);
-            Assert.Contains("js2il ", r.Stdout + r.Stderr);
+            var (code, stdout, stderr) = RunInProc("--version");
+            Assert.Equal(0, code);
+            Assert.Contains("js2il ", (stdout + stderr), StringComparison.OrdinalIgnoreCase);
+            Assert.True(string.IsNullOrWhiteSpace(stderr));
         }
 
         [Fact]
         public void Help_PrintsUsage_And_ExitCode0()
         {
-            var r = _fx.RunCli("-h");
-            Assert.Equal(0, r.ExitCode);
-            // Accept either our custom usage or PowerArgs default usage
-            Assert.True(r.Stdout.Contains("Usage: js2il <InputFile>") || r.Stdout.Contains("Usage - Js2IL"), r.Stdout);
-            Assert.Equal(string.Empty, r.Stderr.Trim());
+            var (code, stdout, stderr) = RunInProc("-h");
+            Assert.Equal(0, code);
+            // Accept either our custom usage or PowerArgs default (which uses the host process name)
+            Assert.True(stdout.Contains("Usage: js2il <InputFile>") || stdout.Contains("Usage - "), stdout);
+            Assert.True(string.IsNullOrWhiteSpace(stderr));
         }
 
         [Fact]
         public void NoArgs_ShowsError_And_NonZeroExit()
         {
-            var r = _fx.RunCli("");
-            Assert.NotEqual(0, r.ExitCode);
-            Assert.Contains("InputFile is required", r.Stderr);
+            var (code, stdout, stderr) = RunInProc();
+            Assert.NotEqual(0, code);
+            Assert.Contains("InputFile is required", stderr, StringComparison.OrdinalIgnoreCase);
+            Assert.Contains("Usage:", stderr, StringComparison.OrdinalIgnoreCase);
         }
 
         [Fact]
         public void NonexistentInput_ShowsError_And_NonZeroExit()
         {
-            var r = _fx.RunCli("-i does-not-exist-12345.js");
-            Assert.NotEqual(0, r.ExitCode);
-            Assert.Contains("does not exist", r.Stderr);
+            var missing = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("n") + ".js");
+            var (code, stdout, stderr) = RunInProc(missing);
+            Assert.NotEqual(0, code);
+            Assert.Contains("does not exist", stderr, StringComparison.OrdinalIgnoreCase);
+            Assert.True(string.IsNullOrWhiteSpace(stdout));
         }
 
         [Fact]
         public void Convert_SimpleJs_ProducesOutputs()
         {
-            var root = _fx.RepoRoot;
-            var input = Path.Combine(root, "tests", "simple.js");
-            var outDir = Path.Combine(Path.GetTempPath(), "js2il_cli_test_" + Guid.NewGuid().ToString("N"));
-            Directory.CreateDirectory(outDir);
+            // Arrange: create simple JS file and output directory
+            var tempRoot = Path.Combine(Path.GetTempPath(), "js2il_cli_test_" + Guid.NewGuid().ToString("n"));
+            Directory.CreateDirectory(tempRoot);
+            var jsFile = Path.Combine(tempRoot, "simple.js");
+            File.WriteAllText(jsFile, "console.log('x is ', 3);");
+            var outDir = Path.Combine(tempRoot, "out");
 
-            var r = _fx.RunCli($"\"{input}\" -o \"{outDir}\"");
             try
             {
-                Assert.True(r.ExitCode == 0, r.Stdout + r.Stderr);
-                var asm = Path.Combine(outDir, "simple.dll");
-                var rconfig = Path.Combine(outDir, "simple.runtimeconfig.json");
-                var rt = Path.Combine(outDir, "JavaScriptRuntime.dll");
-                Assert.True(File.Exists(asm), "Expected output assembly not found");
-                Assert.True(File.Exists(rconfig), "Expected runtimeconfig not found");
-                Assert.True(File.Exists(rt), "Expected runtime DLL not found");
+                // Act
+                var (code, stdout, stderr) = RunInProc(jsFile, "-o", outDir);
+
+                // Assert
+                Assert.Equal(0, code);
+                Assert.True(string.IsNullOrWhiteSpace(stderr), $"Unexpected stderr: {stderr}");
+
+                var baseName = Path.GetFileNameWithoutExtension(jsFile);
+                var dllPath = Path.Combine(outDir, baseName + ".dll");
+                var runtimeConfig = Path.Combine(outDir, baseName + ".runtimeconfig.json");
+                var jsRuntime = Path.Combine(outDir, "JavaScriptRuntime.dll");
+
+                Assert.True(File.Exists(dllPath), $"Missing output: {dllPath}");
+                Assert.True(File.Exists(runtimeConfig), $"Missing output: {runtimeConfig}");
+                Assert.True(File.Exists(jsRuntime), $"Missing runtime: {jsRuntime}");
             }
             finally
             {
-                try { Directory.Delete(outDir, recursive: true); } catch { /* ignore */ }
+                try { Directory.Delete(tempRoot, recursive: true); } catch { /* ignore */ }
             }
         }
-    }
-
-    public class CliRunFixture : IDisposable
-    {
-        public string RepoRoot { get; }
-        public string Js2IlDllPath { get; }
-
-        public CliRunFixture()
-        {
-            RepoRoot = FindRepoRoot() ?? throw new InvalidOperationException("Could not find repo root");
-            Js2IlDllPath = GetCliDllPath();
-        }
-
-        private static string? FindRepoRoot()
-        {
-            var dir = new DirectoryInfo(AppContext.BaseDirectory);
-            while (dir != null)
-            {
-                if (File.Exists(Path.Combine(dir.FullName, "js2il.sln"))) return dir.FullName;
-                dir = dir.Parent;
-            }
-            return null;
-        }
-
-        private string GetCliDllPath()
-        {
-            // Use a public type from the Js2IL assembly to locate the built DLL
-            var asm = typeof(Js2IL.Services.AssemblyGenerator).Assembly;
-            var path = asm.Location;
-            if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
-            {
-                throw new InvalidOperationException("Could not locate Js2IL assembly path from referenced type.");
-            }
-            return path;
-        }
-
-        public (int ExitCode, string Stdout, string Stderr) RunCli(string args)
-        {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "dotnet",
-                Arguments = ($"\"{Js2IlDllPath}\"") + (string.IsNullOrWhiteSpace(args) ? string.Empty : " " + args),
-                WorkingDirectory = RepoRoot,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                StandardOutputEncoding = Encoding.UTF8,
-                StandardErrorEncoding = Encoding.UTF8,
-            };
-            using var p = Process.Start(psi)!;
-            var stdout = p.StandardOutput.ReadToEnd();
-            var stderr = p.StandardError.ReadToEnd();
-            p.WaitForExit();
-            return (p.ExitCode, stdout, stderr);
-        }
-
-        public void Dispose() { }
     }
 }
