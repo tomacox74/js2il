@@ -12,14 +12,14 @@ public class Js2ILArgs
 {
     [ArgPosition(0)]
     [ArgDescription("The JavaScript file to convert")]
+    [ArgShortcut("--input")]
     [ArgShortcut("i")]
-    [ArgShortcut("input")]
     public required string InputFile { get; set; }
 
     [ArgPosition(1)]
     [ArgDescription("The output directory for the generated IL")]
+    [ArgShortcut("--output")]
     [ArgShortcut("o")]
-    [ArgShortcut("output")]
     public string? OutputPath { get; set; }
 
     [ArgDescription("Enable verbose output")]
@@ -276,15 +276,15 @@ class Program
     // Overload to print usage to a chosen writer (used for error cases to stderr)
     private static void PrintUsage(TextWriter writer)
     {
-    writer.WriteLine("Usage: js2il <InputFile> [<OutputPath>] [options]");
+        writer.WriteLine("Usage: js2il <InputFile> [<OutputPath>] [options]");
         writer.WriteLine();
-    writer.WriteLine("Option                 Description");
-    writer.WriteLine("-i, --input            The JavaScript file to convert (positional supported)");
-    writer.WriteLine("-o, --output           The output directory for the generated IL (created if missing)");
-    writer.WriteLine("-v, --verbose          Enable verbose output");
-    writer.WriteLine("-a, --analyzeunused    Analyze and report unused properties and methods");
-    writer.WriteLine("    --version          Show version information and exit");
-    writer.WriteLine("-h, -?, --help         Show help and exit");
+        writer.WriteLine("Option                 Description");
+        writer.WriteLine("-i, --input            The JavaScript file to convert (positional supported)");
+        writer.WriteLine("-o, --output           The output directory for the generated IL (created if missing)");
+        writer.WriteLine("-v, --verbose          Enable verbose output");
+        writer.WriteLine("-a, --analyzeunused    Analyze and report unused properties and methods");
+        writer.WriteLine("--version              Show version information and exit");
+        writer.WriteLine("-h, -?, --help         Show help and exit");
     }
 
     private static void WriteLineWarning(string message)
