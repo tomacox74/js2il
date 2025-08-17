@@ -23,13 +23,16 @@ namespace Js2IL.Services.ILGenerators
         private Variables _variables;
         private Runtime _runtime;
 
-        public BinaryOperators(MetadataBuilder metadataBuilder, InstructionEncoder il, Variables variables, BaseClassLibraryReferences bclReferences, Runtime runtime)
+        private IMethodExpressionEmitter _methodExpressionEmitter;
+
+        public BinaryOperators(MetadataBuilder metadataBuilder, InstructionEncoder il, Variables variables, IMethodExpressionEmitter methodExpressionEmitter, BaseClassLibraryReferences bclReferences, Runtime runtime)
         {
             _metadataBuilder = metadataBuilder;
             _il = il;
             _variables = variables;
             _bclReferences = bclReferences;
             _runtime = runtime;
+            _methodExpressionEmitter = methodExpressionEmitter;
         }
 
         /// <summary>
@@ -92,16 +95,16 @@ namespace Js2IL.Services.ILGenerators
             bool isBitwiseOrShift = operatorType == Operator.BitwiseAnd || operatorType == Operator.BitwiseOr || operatorType == Operator.BitwiseXor ||
                                     operatorType == Operator.LeftShift || operatorType == Operator.RightShift || operatorType == Operator.UnsignedRightShift;
             if (isBitwiseOrShift) {
-                LoadValue(binaryExpression.Left, new TypeCoercion());
+                _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion());
                 _il.OpCode(ILOpCode.Conv_i4);
-                LoadValue(binaryExpression.Right, new TypeCoercion());
+                _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion());
                 _il.OpCode(ILOpCode.Conv_i4);
             } else {
                 // For + we allow string concat path when left is string literal; otherwise numeric math
                 bool plus = operatorType == Operator.Addition;
                 bool equality = operatorType == Operator.Equality;
 
-                var leftType = LoadValue(binaryExpression.Left, new TypeCoercion());
+                var leftType = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion());
                 if (equality)
                 {
                     if (leftType == JavascriptType.Number)
@@ -146,7 +149,7 @@ namespace Js2IL.Services.ILGenerators
                     }
                 }
 
-                var rightType = LoadValue(binaryExpression.Right, new TypeCoercion() { toString = binaryExpression.Left is StringLiteral });
+                var rightType = _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion() { toString = binaryExpression.Left is StringLiteral });
                 if (equality)
                 {
                     if (rightType == JavascriptType.Number)
@@ -403,172 +406,6 @@ namespace Js2IL.Services.ILGenerators
                     _il.OpCode(ILOpCode.Pop); // pop the result of the comparison
                 }
             }
-        }
-
-        /// <summary>
-        /// for loading literal expresions onto the IL stack.
-        /// i.e. 
-        /// x = 5;
-        /// x = "hello world";
-        /// x = true;
-        /// </summary>
-        /// <remarks>
-        /// This does not belong here.. need to refactor
-        /// </remarks>
-        public JavascriptType LoadValue(Expression expression, TypeCoercion typeCoercion)
-        {
-            JavascriptType type = JavascriptType.Unknown;
-
-            switch (expression)
-            {
-                case Acornima.Ast.BinaryExpression nestedBinary:
-                    // Allow nested binary expressions as value operands, e.g., (n % 2) in (n % 2 == 0)
-                    // Emit the inner binary expression now; its generator handles boxing of results.
-                    Generate(nestedBinary);
-                    // Determine the resulting JS type based on operator kind
-                    switch (nestedBinary.Operator)
-                    {
-                        case Operator.LessThan:
-                        case Operator.GreaterThan:
-                        case Operator.LessThanOrEqual:
-                        case Operator.GreaterThanOrEqual:
-                        case Operator.Equality:
-                            type = JavascriptType.Boolean;
-                            break;
-                        case Operator.Addition:
-                        case Operator.Subtraction:
-                        case Operator.Multiplication:
-                        case Operator.Division:
-                        case Operator.Remainder:
-                        case Operator.Exponentiation:
-                        case Operator.BitwiseAnd:
-                        case Operator.BitwiseOr:
-                        case Operator.BitwiseXor:
-                        case Operator.LeftShift:
-                        case Operator.RightShift:
-                        case Operator.UnsignedRightShift:
-                            type = JavascriptType.Number;
-                            break;
-                        default:
-                            throw new NotSupportedException($"Unsupported nested binary operator: {nestedBinary.Operator}");
-                    }
-                    break;
-                case Acornima.Ast.BooleanLiteral booleanLiteral:
-                    if (typeCoercion.toString)
-                    {
-                        _il.LoadString(_metadataBuilder.GetOrAddUserString(booleanLiteral.Value ? "true" : "false"));
-                        // treat as object/string in this coercion path
-                        type = JavascriptType.Object;
-                    }
-                    else
-                    {
-                        _il.LoadConstantI4(booleanLiteral.Value ? 1 : 0); // Load boolean literal
-                        type = JavascriptType.Boolean;
-                    }
-                    break;
-                case Acornima.Ast.NumericLiteral numericLiteral:
-                    if (typeCoercion.toString)
-                    {
-                        //does dotnet ToString behave the same as JavaScript?
-                        var numberAsString = numericLiteral.Value.ToString();
-                        _il.LoadString(_metadataBuilder.GetOrAddUserString(numberAsString)); // Load numeric literal as string
-                    }
-                    else
-                    {
-                        _il.LoadConstantR8(numericLiteral.Value); // Load numeric literal
-                    }
-
-                    type = JavascriptType.Number;
-
-                    break;
-                case Acornima.Ast.StringLiteral stringLiteral:
-                    _il.LoadString(_metadataBuilder.GetOrAddUserString(stringLiteral.Value)); // Load string literal
-                    break;
-                case Acornima.Ast.Literal genericLiteral:
-                    // Some literals (especially booleans/null) may come through the generic Literal node
-                    if (genericLiteral.Value is bool b)
-                    {
-                        if (typeCoercion.toString)
-                        {
-                            _il.LoadString(_metadataBuilder.GetOrAddUserString(b ? "true" : "false"));
-                            type = JavascriptType.Object;
-                        }
-                        else
-                        {
-                            _il.LoadConstantI4(b ? 1 : 0);
-                            type = JavascriptType.Boolean;
-                        }
-                        break;
-                    }
-                    throw new NotSupportedException($"Unsupported literal value type: {genericLiteral.Value?.GetType().Name ?? "null"}");
-                case Acornima.Ast.Identifier identifier:
-                    var name = identifier.Name;
-                    var variable = _variables.FindVariable(name) ?? _variables[name];
-                    LoadVariable(variable); // Load variable using scope field or local fallback
-
-                    // Only unbox when we explicitly know it's a Number
-                    if (variable.Type == JavascriptType.Number)
-                    {
-                        _il.OpCode(ILOpCode.Unbox_any);
-                        _il.Token(_bclReferences.DoubleType); // unbox the variable as a double
-                    }
-
-                    type = variable.Type;
-
-                    break;
-                case Acornima.Ast.UnaryExpression unaryExpression:
-                    // Handle unary expressions like -16
-                    if (unaryExpression.Operator.ToString() == "UnaryNegation" && unaryExpression.Argument is Acornima.Ast.NumericLiteral numericArg)
-                    {
-                        if (typeCoercion.toString)
-                        {
-                            var numberAsString = (-numericArg.Value).ToString();
-                            _il.LoadString(_metadataBuilder.GetOrAddUserString(numberAsString));
-                        }
-                        else
-                        {
-                            _il.LoadConstantR8(-numericArg.Value);
-                        }
-                    }
-                    else
-                    {
-                        throw new NotSupportedException($"Unsupported unary expression: {unaryExpression.Operator}");
-                    }
-                    break;
-                case MemberExpression memberExpression:
-                    LoadValue(memberExpression.Object, new TypeCoercion()); // Load the object part of the member expression
-
-                    // temporary.. need make generic for any object
-                    if (memberExpression.Property is Identifier propertyIdentifier)
-                    {
-                        if (propertyIdentifier.Name == "length")
-                        {
-                            _runtime.InvokeArrayGetCount();
-                            type = JavascriptType.Number;
-                        }
-                        else if (memberExpression.Computed)
-                        {
-                            // computed means someObject["propertyName"] or someObject[someIndex]
-                            LoadValue(propertyIdentifier, new TypeCoercion());
-                            _runtime.InvokeGetItemFromObject();
-                            type = JavascriptType.Object;
-                        }
-                        else
-                        {
-                            throw new NotSupportedException($"Unsupported member property expression: {memberExpression.Property}");
-                        }
-
-                    }
-                    else
-                    {
-                        throw new NotSupportedException($"Unsupported member expression: {memberExpression.Property}");
-                    }
-                    break;
-                default:
-                    throw new NotSupportedException($"Unsupported expression type: {expression.Type}");
-            }
-
-            return type;
         }
     }
 }

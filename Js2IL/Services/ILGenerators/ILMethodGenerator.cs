@@ -25,7 +25,6 @@ namespace Js2IL.Services.ILGenerators
         private readonly IMethodExpressionEmitter _expressionEmitter;
         private readonly Runtime _runtime;
         private readonly MethodBodyStreamEncoder _methodBodyStreamEncoder;
-        private MethodDefinitionHandle _firstMethod = default;
         private readonly Dispatch.DispatchTableGenerator _dispatchTableGenerator;
         private readonly ClassRegistry _classRegistry;
         // When emitting inside a class instance method (.ctor or method), enable 'this' handling
@@ -41,11 +40,8 @@ namespace Js2IL.Services.ILGenerators
          * need to determine what the difference is between generating the main method and generating any generic method
          */
         public Variables Variables => _variables;
-        public BaseClassLibraryReferences BclReferences => _bclReferences;
         public MetadataBuilder MetadataBuilder => _metadataBuilder;
         public InstructionEncoder IL => _il;
-
-        public MethodDefinitionHandle FirstMethod => _firstMethod;
 
         public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator, ClassRegistry? classRegistry = null, bool inClassMethod = false, string? currentClassName = null)
         {
@@ -55,7 +51,7 @@ namespace Js2IL.Services.ILGenerators
             var methodIl = new BlobBuilder();
             _il = new InstructionEncoder(methodIl, new ControlFlowBuilder());
             this._runtime = new Runtime(metadataBuilder, _il);
-            _binaryOperators = new BinaryOperators(metadataBuilder, _il, variables, bclReferences, _runtime);
+            _binaryOperators = new BinaryOperators(metadataBuilder, _il, variables, this, bclReferences, _runtime);
 
             // temporary as we set the table for further refactoring
             this._expressionEmitter = this;
@@ -88,7 +84,7 @@ namespace Js2IL.Services.ILGenerators
                 {
                     throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
                 }
-                
+
                 // Load scope instance first for stfld
                 if (scopeLocalIndex.Location == ObjectReferenceLocation.Parameter)
                 {
@@ -104,7 +100,7 @@ namespace Js2IL.Services.ILGenerators
                 {
                     _il.LoadLocal(scopeLocalIndex.Address);
                 }
-                
+
                 // Generate the expression - this puts the value on the stack
                 var prevAssignmentTarget = _currentAssignmentTarget;
                 _currentAssignmentTarget = variableName;
@@ -116,7 +112,7 @@ namespace Js2IL.Services.ILGenerators
                 {
                     _currentAssignmentTarget = prevAssignmentTarget;
                 }
-                
+
                 // Now stack: [scope_instance] [value] - perfect for stfld
                 _il.OpCode(ILOpCode.Stfld);
                 _il.Token(variable.FieldHandle);
@@ -150,14 +146,14 @@ namespace Js2IL.Services.ILGenerators
 
             // now we assign a local variable to the function delegate
             // in the general case the local feels wasteful but there is scenarons where it could be assigned a different value
-            
+
             // Store using scope field
             var scopeLocalIndex = _variables.GetScopeLocalSlot(functionVariable.ScopeName);
             if (scopeLocalIndex.Address == -1)
             {
                 throw new InvalidOperationException($"Scope '{functionVariable.ScopeName}' not found in local slots");
             }
-            
+
             // Load scope instance, then load delegate value, then store to field
             if (scopeLocalIndex.Location == ObjectReferenceLocation.Parameter)
             {
@@ -178,7 +174,6 @@ namespace Js2IL.Services.ILGenerators
             _il.OpCode(ILOpCode.Stfld);
             _il.Token(functionVariable.FieldHandle);
         }
-
 
         public void GenerateStatement(Statement statement)
         {
@@ -278,15 +273,15 @@ namespace Js2IL.Services.ILGenerators
 
         private void GenerateReturnStatement(ReturnStatement returnStatement)
         {
-        if (returnStatement.Argument != null)
+            if (returnStatement.Argument != null)
             {
                 // Special-case: returning a function identifier -> bind closure scopes
                 if (returnStatement.Argument is Identifier fid)
                 {
-            // Only treat as function if it corresponds to a known function declaration
-            var funcDecl = _dispatchTableGenerator.GetFunctionDeclaration(fid.Name);
-            var fnVar = funcDecl != null ? _variables.FindVariable(fid.Name) : null;
-            if (fnVar != null && funcDecl != null)
+                    // Only treat as function if it corresponds to a known function declaration
+                    var funcDecl = _dispatchTableGenerator.GetFunctionDeclaration(fid.Name);
+                    var fnVar = funcDecl != null ? _variables.FindVariable(fid.Name) : null;
+                    if (fnVar != null && funcDecl != null)
                     {
                         // Load the function delegate from its scope field
                         var scopeSlot = _variables.GetScopeLocalSlot(fnVar.ScopeName);
@@ -394,13 +389,13 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-    public void GenerateExpressionStatement(Acornima.Ast.ExpressionStatement expressionStatement)
-        { 
+        public void GenerateExpressionStatement(Acornima.Ast.ExpressionStatement expressionStatement)
+        {
             switch (expressionStatement.Expression)
             {
                 case Acornima.Ast.CallExpression callExpression:
                     // Handle CallExpression
-            GenerateCallExpression(callExpression, CallSiteContext.Statement, discardResult: true);
+                    GenerateCallExpression(callExpression, CallSiteContext.Statement, discardResult: true);
                     break;
                 case Acornima.Ast.AssignmentExpression assignmentExpression:
                     // Handle AssignmentExpression  
@@ -421,7 +416,6 @@ namespace Js2IL.Services.ILGenerators
 
         public void GenerateForStatement(Acornima.Ast.ForStatement forStatement)
         {
-
             // first lets encode the initalizer
             if (forStatement.Init is Acornima.Ast.VariableDeclaration variableDeclaration)
             {
@@ -432,7 +426,6 @@ namespace Js2IL.Services.ILGenerators
                 throw new NotSupportedException($"Unsupported for statement initializer type: {forStatement.Init?.Type}");
             }
 
-            
             // the labels used in the loop flow control
             var loopStartLabel = _il.DefineLabel();
             var loopEndLabel = _il.DefineLabel();
@@ -477,7 +470,6 @@ namespace Js2IL.Services.ILGenerators
             // Actually, we want: if (test) { consequent } else { alternate }
             // So: if test is false, jump to elseLabel, otherwise fall through to consequent
             // Fix: BranchOnTrue = consequentLabel, BranchOnFalse = elseLabel            
-            
             _expressionEmitter.Emit(ifStatement.Test, new TypeCoercion(), new ConditionalBranching
             {
                 BranchOnTrue = consequentLabel,
@@ -526,7 +518,7 @@ namespace Js2IL.Services.ILGenerators
                 }
 
                 // Duplicate the ExpandoObject reference on the stack
-                _il.OpCode(ILOpCode.Dup); 
+                _il.OpCode(ILOpCode.Dup);
 
                 // in a perfect world we could support any expression for the property name
                 // but not feature rich enough to support that yet
@@ -558,7 +550,7 @@ namespace Js2IL.Services.ILGenerators
             {
                 var element = arrayExpression.Elements[i];
                 _il.OpCode(ILOpCode.Dup); // array instance
-                _ = _expressionEmitter.Emit(element!, new TypeCoercion() { boxResult = true } );
+                _ = _expressionEmitter.Emit(element!, new TypeCoercion() { boxResult = true });
                 _il.OpCode(ILOpCode.Callvirt);
                 _il.Token(_bclReferences.Array_Add_Ref);
             }
@@ -573,14 +565,14 @@ namespace Js2IL.Services.ILGenerators
             // Handle postfix increment (x++) and decrement (x--)
             var variableName = (updateExpression.Argument as Acornima.Ast.Identifier)!.Name;
             var variable = _variables[variableName];
-            
+
             // Handle scope field variables
             var scopeLocalIndex = _variables.GetScopeLocalSlot(variable.ScopeName);
             if (scopeLocalIndex.Address == -1)
             {
                 throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
             }
-            
+
             // Load scope instance for the store operation later
             if (scopeLocalIndex.Location == ObjectReferenceLocation.Parameter)
             {
@@ -590,16 +582,16 @@ namespace Js2IL.Services.ILGenerators
             {
                 _il.LoadLocal(scopeLocalIndex.Address);
             }
-            
+
             // Load the current value from scope field  
             _il.LoadLocal(scopeLocalIndex.Address);
             _il.OpCode(ILOpCode.Ldfld);
             _il.Token(variable.FieldHandle);
-            
+
             // unbox the variable
             _il.OpCode(ILOpCode.Unbox_any);
             _il.Token(_bclReferences.DoubleType);
-            
+
             // increment or decrement by 1
             _il.LoadConstantR8(1.0);
             if (updateExpression.Operator == Acornima.Operator.Increment)
@@ -610,17 +602,17 @@ namespace Js2IL.Services.ILGenerators
             {
                 _il.OpCode(ILOpCode.Sub);
             }
-            
+
             // box the result back to an object
             _il.OpCode(ILOpCode.Box);
             _il.Token(_bclReferences.DoubleType);
-            
+
             // Now stack is: [scope_instance] [boxed_result] - perfect for stfld
             _il.OpCode(ILOpCode.Stfld);
             _il.Token(variable.FieldHandle);
         }
 
-    private void GenerateCallExpression(Acornima.Ast.CallExpression callExpression, CallSiteContext context, bool discardResult)
+        private void GenerateCallExpression(Acornima.Ast.CallExpression callExpression, CallSiteContext context, bool discardResult)
         {
             // For simplicity, we assume the call expression is a console write line
             if (callExpression.Callee is not Acornima.Ast.MemberExpression memberExpression ||
@@ -640,7 +632,7 @@ namespace Js2IL.Services.ILGenerators
                         var sSig = new BlobBuilder();
                         new BlobEncoder(sSig)
                             .MethodSignature(isInstanceMethod: false)
-                            .Parameters(sArgCount, r => r.Type().Object(), p => { for (int i=0;i<sArgCount;i++) p.AddParameter().Type().Object(); });
+                            .Parameters(sArgCount, r => r.Type().Object(), p => { for (int i = 0; i < sArgCount; i++) p.AddParameter().Type().Object(); });
                         var sMsig = _metadataBuilder.GetOrAddBlob(sSig);
                         var sMref = _metadataBuilder.AddMemberReference(classType, _metadataBuilder.GetOrAddString(mname.Name), sMsig);
                         // Push arguments
@@ -675,7 +667,7 @@ namespace Js2IL.Services.ILGenerators
                     var sig = new BlobBuilder();
                     new BlobEncoder(sig)
                         .MethodSignature(isInstanceMethod: true)
-                        .Parameters(argCount, r => r.Type().Object(), p => { for (int i=0;i<argCount;i++) p.AddParameter().Type().Object(); });
+                        .Parameters(argCount, r => r.Type().Object(), p => { for (int i = 0; i < argCount; i++) p.AddParameter().Type().Object(); });
                     var msig = _metadataBuilder.GetOrAddBlob(sig);
 
                     // Resolve the concrete class type if known (based on prior `new` assignment)
@@ -693,7 +685,7 @@ namespace Js2IL.Services.ILGenerators
                     // Push arguments
                     for (int i = 0; i < callExpression.Arguments.Count; i++)
                     {
-                        _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true  });
+                        _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
                     }
 
                     _il.OpCode(ILOpCode.Callvirt);
@@ -725,12 +717,12 @@ namespace Js2IL.Services.ILGenerators
                     else if (scopeObjectReference.Location == ObjectReferenceLocation.Parameter)
                     {
                         // Load the scope instance from the field
-                        loadScopeInstance = () =>  _il.LoadArgument(scopeObjectReference.Address);
+                        loadScopeInstance = () => _il.LoadArgument(scopeObjectReference.Address);
                     }
                     else if (scopeObjectReference.Location == ObjectReferenceLocation.ScopeArray)
                     {
                         // Load from scope array at index 0
-                        loadScopeInstance = () => 
+                        loadScopeInstance = () =>
                         {
                             _il.LoadArgument(0); // Load scope array parameter
                             _il.LoadConstantI4(0); // Index 0 for global scope
@@ -751,20 +743,20 @@ namespace Js2IL.Services.ILGenerators
                     // Only include scopes that are actually needed for this function call
                     var neededScopeNames = GetNeededScopesForFunction(functionVariable, context).ToList();
                     var arraySize = neededScopeNames.Count;
-                    
+
                     _il.LoadConstantI4(arraySize); // Array size
                     _il.OpCode(ILOpCode.Newarr);
                     _il.Token(_bclReferences.ObjectType);
-                    
+
                     // Fill the scope array with needed scopes only
                     for (int i = 0; i < neededScopeNames.Count; i++)
                     {
                         var scopeName = neededScopeNames[i];
                         var scopeRef = _variables.GetScopeLocalSlot(scopeName);
-                        
+
                         _il.OpCode(ILOpCode.Dup); // Duplicate array reference
                         _il.LoadConstantI4(i);    // Load array index
-                        
+
                         // Load the scope instance based on its location
                         if (scopeRef.Location == ObjectReferenceLocation.Local)
                         {
@@ -780,7 +772,7 @@ namespace Js2IL.Services.ILGenerators
                             _il.LoadConstantI4(scopeRef.Address); // Load array index
                             _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
                         }
-                        
+
                         _il.OpCode(ILOpCode.Stelem_ref); // Store scope in array
                     }
 
@@ -876,10 +868,10 @@ namespace Js2IL.Services.ILGenerators
                 _il.OpCode(ILOpCode.Dup);
                 _il.LoadConstantI4(i); // Load the index for the parameter
                 var argument = callConsoleLog.Arguments[i];
-                
+
                 // Emit the argument expression (ensure boxing)
                 this._expressionEmitter.Emit(argument, new TypeCoercion() { boxResult = true });
-                
+
                 // Store the argument in the array at the specified index
                 _il.OpCode(ILOpCode.Stelem_ref);
             }
@@ -889,15 +881,128 @@ namespace Js2IL.Services.ILGenerators
             _runtime.InvokeConsoleLog();
         }
 
+        // Helper to emit a UnaryExpression and return its JavaScript type (or Unknown when control-flow handled)
+        private JavascriptType EmitUnaryExpression(UnaryExpression unaryExpression, TypeCoercion typeCoercion, ConditionalBranching? branching)
+        {
+            // Support logical not: !expr and simple unary negation for numeric literals
+            var op = unaryExpression.Operator;
+            if (op == Operator.LogicalNot)
+            {
+                // If we're in a conditional context, invert the branch directly: if (!x) ... => branch on x == false
+                if (branching != null)
+                {
+                    var argType = ((IMethodExpressionEmitter)this).Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = false }, null);
+
+                    if (argType == JavascriptType.Boolean)
+                    {
+                        // If the argument was not a literal, it's boxed; unbox first
+                        if (unaryExpression.Argument is not BooleanLiteral && !(unaryExpression.Argument is Literal lit && lit.Value is bool))
+                        {
+                            _il.OpCode(ILOpCode.Unbox_any);
+                            _il.Token(_bclReferences.BooleanType);
+                        }
+                        // Brfalse => when arg is false, jump to BranchOnTrue (since !arg is true)
+                        _il.Branch(ILOpCode.Brfalse, branching.BranchOnTrue);
+                    }
+                    else if (argType == JavascriptType.Number)
+                    {
+                        // ToBoolean(number): 0 => false; so Brfalse when number == 0. Convert to i4 zero-check.
+                        // number on stack is double; compare to 0 and branch on equality
+                        _il.LoadConstantR8(0);
+                        _il.OpCode(ILOpCode.Ceq);
+                        _il.Branch(ILOpCode.Brtrue, branching.BranchOnTrue);
+                    }
+                    else
+                    {
+                        // Assume boxed boolean; unbox then brfalse
+                        _il.OpCode(ILOpCode.Unbox_any);
+                        _il.Token(_bclReferences.BooleanType);
+                        _il.Branch(ILOpCode.Brfalse, branching.BranchOnTrue);
+                    }
+
+                    if (branching.BranchOnFalse.HasValue)
+                    {
+                        _il.Branch(ILOpCode.Br, branching.BranchOnFalse.Value);
+                    }
+                    else
+                    {
+                        // No else block: nothing to pop; branch consumes the tested value.
+                    }
+
+                    return JavascriptType.Unknown;
+                }
+                else
+                {
+                    // Non-branching context: compute the boolean value and invert it on the stack.
+                    var argType = ((IMethodExpressionEmitter)this).Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = false }, null);
+
+                    if (argType == JavascriptType.Boolean)
+                    {
+                        if (unaryExpression.Argument is not BooleanLiteral && !(unaryExpression.Argument is Literal lit2 && lit2.Value is bool))
+                        {
+                            _il.OpCode(ILOpCode.Unbox_any);
+                            _il.Token(_bclReferences.BooleanType);
+                        }
+                        _il.OpCode(ILOpCode.Ldc_i4_0);
+                        _il.OpCode(ILOpCode.Ceq);
+                    }
+                    else if (argType == JavascriptType.Number)
+                    {
+                        _il.LoadConstantR8(0);
+                        _il.OpCode(ILOpCode.Ceq);
+                    }
+                    else
+                    {
+                        _il.OpCode(ILOpCode.Unbox_any);
+                        _il.Token(_bclReferences.BooleanType);
+                        _il.OpCode(ILOpCode.Ldc_i4_0);
+                        _il.OpCode(ILOpCode.Ceq);
+                    }
+
+                    return JavascriptType.Boolean;
+                }
+            }
+            else if (op == Operator.UnaryNegation && unaryExpression.Argument is Acornima.Ast.NumericLiteral numericArg)
+            {
+                if (typeCoercion.toString)
+                {
+                    var numberAsString = (-numericArg.Value).ToString();
+                    _il.LoadString(_metadataBuilder.GetOrAddUserString(numberAsString));
+                }
+                else
+                {
+                    _il.LoadConstantR8(-numericArg.Value);
+                }
+                // Preserve prior behavior: no explicit type assignment beyond emitted value
+                return JavascriptType.Unknown;
+            }
+            else
+            {
+                throw new NotSupportedException($"Unsupported unary operator: {op}");
+            }
+        }
+
         JavascriptType IMethodExpressionEmitter.Emit(Expression expression, TypeCoercion typeCoercion, ConditionalBranching? branching)
         {
             JavascriptType javascriptType = JavascriptType.Unknown;
 
             switch (expression)
             {
-                    case AssignmentExpression assignmentExpression:
-                        javascriptType = EmitAssignment(assignmentExpression, typeCoercion);
-                        break;
+                case ThisExpression thisExpression:
+                    if (_inClassMethod)
+                    {
+                        _il.OpCode(ILOpCode.Ldarg_0);
+                        javascriptType = JavascriptType.Object; // 'this' is the instance of the class
+                    }
+                    else
+                    {
+                        // TODO - expand support for this to functions
+                        throw new NotSupportedException("Unsupported 'this' expression outside of class context");
+                    }
+                    break;
+                case AssignmentExpression assignmentExpression:
+                    javascriptType = EmitAssignment(assignmentExpression, typeCoercion);
+                    break;
                 case CallExpression callExpression:
                     // Use the unified call generator in expression context, preserving the result
                     GenerateCallExpression(callExpression, CallSiteContext.Expression, discardResult: false);
@@ -938,104 +1043,20 @@ namespace Js2IL.Services.ILGenerators
                     break;
                 case NumericLiteral numericLiteral:
                     // Load numeric literal
-                    _binaryOperators.LoadValue(expression, typeCoercion);
+                    LoadValue(expression, typeCoercion);
 
                     javascriptType = JavascriptType.Number;
 
                     break;
                 case BooleanLiteral booleanLiteral:
-                    _binaryOperators.LoadValue(expression, typeCoercion);
+                    LoadValue(expression, typeCoercion);
                     javascriptType = JavascriptType.Boolean;
                     break;
                 case UpdateExpression updateExpression:
                     GenerateUpdateExpression(updateExpression);
                     break;
                 case UnaryExpression unaryExpression:
-                    {
-                        // Support logical not: !expr
-                        var op = unaryExpression.Operator.ToString();
-                        if (op == "LogicalNot")
-                        {
-                            // If we're in a conditional context, invert the branch directly: if (!x) ... => branch on x == false
-                            if (branching != null)
-                            {
-                                var argType = ((IMethodExpressionEmitter)this).Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = false }, null);
-
-                                if (argType == JavascriptType.Boolean)
-                                {
-                                    // If the argument was not a literal, it's boxed; unbox first
-                                    if (unaryExpression.Argument is not BooleanLiteral && !(unaryExpression.Argument is Literal lit && lit.Value is bool))
-                                    {
-                                        _il.OpCode(ILOpCode.Unbox_any);
-                                        _il.Token(_bclReferences.BooleanType);
-                                    }
-                                    // Brfalse => when arg is false, jump to BranchOnTrue (since !arg is true)
-                                    _il.Branch(ILOpCode.Brfalse, branching.BranchOnTrue);
-                                }
-                                else if (argType == JavascriptType.Number)
-                                {
-                                    // ToBoolean(number): 0 => false; so Brfalse when number == 0. Convert to i4 zero-check.
-                                    // number on stack is double; compare to 0 and branch on equality
-                                    _il.LoadConstantR8(0);
-                                    _il.OpCode(ILOpCode.Ceq);
-                                    _il.Branch(ILOpCode.Brtrue, branching.BranchOnTrue);
-                                }
-                                else
-                                {
-                                    // Assume boxed boolean; unbox then brfalse
-                                    _il.OpCode(ILOpCode.Unbox_any);
-                                    _il.Token(_bclReferences.BooleanType);
-                                    _il.Branch(ILOpCode.Brfalse, branching.BranchOnTrue);
-                                }
-
-                                if (branching.BranchOnFalse.HasValue)
-                                {
-                                    _il.Branch(ILOpCode.Br, branching.BranchOnFalse.Value);
-                                }
-                                else
-                                {
-                                    // No else block: pop any leftover value (shouldn't be any after branch), but be safe.
-                                    // Note: Branch instructions consume the tested value; nothing to pop here.
-                                }
-
-                                return JavascriptType.Unknown;
-                            }
-                            else
-                            {
-                                // Non-branching context: compute the boolean value and invert it on the stack.
-                                var argType = ((IMethodExpressionEmitter)this).Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = false }, null);
-
-                                if (argType == JavascriptType.Boolean)
-                                {
-                                    if (unaryExpression.Argument is not BooleanLiteral && !(unaryExpression.Argument is Literal lit2 && lit2.Value is bool))
-                                    {
-                                        _il.OpCode(ILOpCode.Unbox_any);
-                                        _il.Token(_bclReferences.BooleanType);
-                                    }
-                                    _il.OpCode(ILOpCode.Ldc_i4_0);
-                                    _il.OpCode(ILOpCode.Ceq);
-                                }
-                                else if (argType == JavascriptType.Number)
-                                {
-                                    _il.LoadConstantR8(0);
-                                    _il.OpCode(ILOpCode.Ceq);
-                                }
-                                else
-                                {
-                                    _il.OpCode(ILOpCode.Unbox_any);
-                                    _il.Token(_bclReferences.BooleanType);
-                                    _il.OpCode(ILOpCode.Ldc_i4_0);
-                                    _il.OpCode(ILOpCode.Ceq);
-                                }
-
-                                javascriptType = JavascriptType.Boolean;
-                            }
-                        }
-                        else
-                        {
-                            throw new NotSupportedException($"Unsupported unary operator: {op}");
-                        }
-                    }
+                    javascriptType = EmitUnaryExpression(unaryExpression, typeCoercion, branching);
                     break;
                 case ObjectExpression objectExpression:
                     GenerateObjectExpresion(objectExpression);
@@ -1068,7 +1089,7 @@ namespace Js2IL.Services.ILGenerators
 
                     break;
                 default:
-                    javascriptType = _binaryOperators.LoadValue(expression, typeCoercion);
+                    javascriptType = LoadValue(expression, typeCoercion);
                     break;
             }
 
@@ -1088,6 +1109,11 @@ namespace Js2IL.Services.ILGenerators
                         _il.OpCode(ILOpCode.Pop);
                     }
                     // We've emitted control flow, no result remains
+                    return JavascriptType.Unknown;
+                }
+                else if (javascriptType == JavascriptType.Unknown)
+                {
+                    // The expression emitter handled branching itself (e.g., unary logical not)
                     return JavascriptType.Unknown;
                 }
                 else
@@ -1209,55 +1235,49 @@ namespace Js2IL.Services.ILGenerators
             throw new NotSupportedException($"Unsupported new-expression callee: {newExpression.Callee.Type}");
         }
 
-        // Helper to emit a MemberExpression and return its JavaScript type
+        /// <summary>
+        /// Emits the IL for a member access expression.
+        /// </summary>
+        /// <remarks>
+        /// A member expression is Object.Property.  Object itself is a expression.
+        /// We load the object reference onto the evaluation stack. Then use that as context for property expression.
+        /// The harcoded "length" is temporary until we get a proper structure in place for intrinsic objects like the Array.
+        /// </remarks>
         private JavascriptType EmitMemberExpression(MemberExpression memberExpression)
         {
-            // Evaluate base object into stack: object reference
-            if (memberExpression.Object is ThisExpression && _inClassMethod)
-            {
-                _il.OpCode(ILOpCode.Ldarg_0);
-            }
-            else if (memberExpression.Object is Identifier baseIdent)
-            {
-                var baseVar = _variables.FindVariable(baseIdent.Name) ?? throw new InvalidOperationException($"Variable '{baseIdent.Name}' not found for member expression.");
-                var baseScopeSlot = _variables.GetScopeLocalSlot(baseVar.ScopeName);
-                if (baseScopeSlot.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(baseScopeSlot.Address);
-                else if (baseScopeSlot.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(baseScopeSlot.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
-                else _il.LoadLocal(baseScopeSlot.Address);
-                _il.OpCode(ILOpCode.Ldfld);
-                _il.Token(baseVar.FieldHandle); // stack: object
-            }
-            else
-            {
-                throw new NotSupportedException($"Unsupported member base expression: {memberExpression.Object.Type}");
-            }
+            _expressionEmitter.Emit(memberExpression.Object, new TypeCoercion());
 
             if (!memberExpression.Computed && memberExpression.Property is Identifier propId)
             {
                 // First, support array.length
                 if (propId.Name == "length")
                 {
-                    _il.OpCode(ILOpCode.Callvirt);
-                    _il.Token(_bclReferences.Array_GetCount_Ref);
-                    _il.OpCode(ILOpCode.Conv_r8);
+                    _runtime.InvokeArrayGetCount();
                     return JavascriptType.Number;
                 }
-                        // Next, support instance field access for known class instances or this.field within class
-                        if ((memberExpression.Object is ThisExpression && _inClassMethod && _currentClassName != null && _classRegistry.TryGetField(_currentClassName, propId.Name, out var fieldHandle))
-                            || (memberExpression.Object is Identifier baseIdent2 && _variableToClass.TryGetValue(baseIdent2.Name, out var cname) && _classRegistry.TryGetField(cname, propId.Name, out fieldHandle)))
+
+                // we currently only support compile time identification of class members
+                // this needs to be expanded to support runtime accessing of dynamically added properties
+                // this ugly if statement is for 2 cases -
+                // this.property and someVar.propery where someVar is a known class type.
+                if ((memberExpression.Object is ThisExpression && _inClassMethod && _currentClassName != null && _classRegistry.TryGetField(_currentClassName, propId.Name, out var fieldHandle))
+                    || (memberExpression.Object is Identifier baseIdent2 && _variableToClass.TryGetValue(baseIdent2.Name, out var cname) && _classRegistry.TryGetField(cname, propId.Name, out fieldHandle)))
                 {
                     // At this point, stack has the instance already. Load its field value.
                     _il.OpCode(ILOpCode.Ldfld);
                     _il.Token(fieldHandle);
                     return JavascriptType.Object;
                 }
+
                 throw new NotSupportedException($"Property '{propId.Name}' not supported on this object.");
             }
             if (memberExpression.Computed)
             {
+                // computed means someObject["propertyName"] or someObject[someIndex]
                 // arr[expr] -> runtime Object.GetItem(array, doubleIndex)
                 var indexType = _expressionEmitter.Emit(memberExpression.Property, new TypeCoercion());
                 if (indexType != JavascriptType.Number)
+                    // TODO - support strings - object["propertyName"]
                     throw new NotSupportedException("Array index must be numeric expression");
                 _runtime.InvokeGetItemFromObject();
                 return JavascriptType.Object;
@@ -1397,11 +1417,11 @@ namespace Js2IL.Services.ILGenerators
 
                             // Initialize parameter fields from CLR args when a backing field exists
                             var localScope = functionVariables.GetLocalScopeSlot();
-                                if (localScope.Address >= 0 && pnames.Length > 0)
+                            if (localScope.Address >= 0 && pnames.Length > 0)
                             {
-                                    var fieldNames = new HashSet<string>(fields.Select(f => f.Name));
-                                    ushort jsParamSeq = 1; // arg0 is scopes[]; JS params start at 1
-                                    foreach (var pn in pnames)
+                                var fieldNames = new HashSet<string>(fields.Select(f => f.Name));
+                                ushort jsParamSeq = 1; // arg0 is scopes[]; JS params start at 1
+                                foreach (var pn in pnames)
                                 {
                                     if (fieldNames.Contains(pn))
                                     {
@@ -1481,15 +1501,15 @@ namespace Js2IL.Services.ILGenerators
         }
 
         /// <summary>
-    /// Determines which scopes are needed for a specific function call.
-    /// Rules:
-    /// - In Main (no scope-array parameter): pass the current (leaf) scope instance.
-    /// - In a function context (scope-array present): pass only the caller's local scope that holds the callee delegate.
-    ///   Historical snapshots do not include the global scope alongside the caller local for nested calls.
+        /// Determines which scopes are needed for a specific function call.
+        /// Rules:
+        /// - In Main (no scope-array parameter): pass the current (leaf) scope instance.
+        /// - In a function context (scope-array present): pass only the caller's local scope that holds the callee delegate.
+        ///   Historical snapshots do not include the global scope alongside the caller local for nested calls.
         /// </summary>
-    private enum CallSiteContext { Statement, Expression }
+        private enum CallSiteContext { Statement, Expression }
 
-    private IEnumerable<string> GetNeededScopesForFunction(Variable functionVariable, CallSiteContext context)
+        private IEnumerable<string> GetNeededScopesForFunction(Variable functionVariable, CallSiteContext context)
         {
             var names = _variables.GetAllScopeNames().ToList();
             var slots = names.Select(n => new { Name = n, Slot = _variables.GetScopeLocalSlot(n) }).ToList();
@@ -1497,9 +1517,9 @@ namespace Js2IL.Services.ILGenerators
             bool inFunctionContext = slots.Any(e => e.Slot.Location == ObjectReferenceLocation.ScopeArray);
             if (!inFunctionContext)
             {
-        // Main: pass only the current (leaf) scope
-        var globalName = _variables.GetLeafScopeName();
-        yield return globalName;
+                // Main: pass only the current (leaf) scope
+                var globalName = _variables.GetLeafScopeName();
+                yield return globalName;
                 yield break;
             }
 
@@ -1530,20 +1550,6 @@ namespace Js2IL.Services.ILGenerators
                     yield return functionVariable.ScopeName;
                 }
             }
-        }
-
-        // Returns true if callee function body references any identifiers that are top-level globals
-        // (names present in globalVarNames), excluding its own parameters/locals and skipping nested function bodies.
-        private static bool CalleeReferencesAnyGlobals(FunctionDeclaration decl, HashSet<string> globalVarNames)
-        {
-            if (globalVarNames == null || globalVarNames.Count == 0) return false;
-
-            var declared = new HashSet<string>(decl.Params.OfType<Identifier>().Select(p => p.Name));
-
-            // Prime declared set with function-scoped declarations (var/let/const and function declarations) inside body
-            CollectDeclaredNames(decl.Body, declared);
-
-            return ContainsGlobalRef(decl.Body, globalVarNames, declared);
         }
 
         private static void CollectDeclaredNames(Node node, HashSet<string> declared)
@@ -1635,13 +1641,6 @@ namespace Js2IL.Services.ILGenerators
             return false;
         }
 
-        private bool FunctionHasNestedFunctions(string functionName)
-        {
-            var decl = _dispatchTableGenerator.GetFunctionDeclaration(functionName);
-            if (decl == null) return false;
-            return ContainsNestedFunction(decl.Body);
-        }
-
         private static bool ContainsNestedFunction(Acornima.Ast.Node node)
         {
             // Walk child nodes; if any FunctionDeclaration is found, return true
@@ -1671,5 +1670,74 @@ namespace Js2IL.Services.ILGenerators
             }
             return false;
         }
+        
+        /// <summary>
+        /// for loading literal expresions onto the IL stack.
+        /// i.e. 
+        /// x = 5;
+        /// x = "hello world";
+        /// x = true;
+        /// </summary>
+        private JavascriptType LoadValue(Expression expression, TypeCoercion typeCoercion)
+        {
+            JavascriptType type = JavascriptType.Unknown;
+
+            switch (expression)
+            {
+                case Acornima.Ast.BooleanLiteral booleanLiteral:
+                    if (typeCoercion.toString)
+                    {
+                        _il.LoadString(_metadataBuilder.GetOrAddUserString(booleanLiteral.Value ? "true" : "false"));
+                        // treat as object/string in this coercion path
+                        type = JavascriptType.Object;
+                    }
+                    else
+                    {
+                        _il.LoadConstantI4(booleanLiteral.Value ? 1 : 0); // Load boolean literal
+                        type = JavascriptType.Boolean;
+                    }
+                    break;
+                case Acornima.Ast.NumericLiteral numericLiteral:
+                    if (typeCoercion.toString)
+                    {
+                        //does dotnet ToString behave the same as JavaScript?
+                        var numberAsString = numericLiteral.Value.ToString();
+                        _il.LoadString(_metadataBuilder.GetOrAddUserString(numberAsString)); // Load numeric literal as string
+                    }
+                    else
+                    {
+                        _il.LoadConstantR8(numericLiteral.Value); // Load numeric literal
+                    }
+
+                    type = JavascriptType.Number;
+
+                    break;
+                case Acornima.Ast.StringLiteral stringLiteral:
+                    _il.LoadString(_metadataBuilder.GetOrAddUserString(stringLiteral.Value)); // Load string literal
+                    break;
+                case Acornima.Ast.Literal genericLiteral:
+                    // Some literals (especially booleans/null) may come through the generic Literal node
+                    if (genericLiteral.Value is bool b)
+                    {
+                        if (typeCoercion.toString)
+                        {
+                            _il.LoadString(_metadataBuilder.GetOrAddUserString(b ? "true" : "false"));
+                            type = JavascriptType.Object;
+                        }
+                        else
+                        {
+                            _il.LoadConstantI4(b ? 1 : 0);
+                            type = JavascriptType.Boolean;
+                        }
+                        break;
+                    }
+                    throw new NotSupportedException($"Unsupported literal value type: {genericLiteral.Value?.GetType().Name ?? "null"}");
+                default:
+                    throw new NotSupportedException($"Unsupported expression type: {expression.Type}");
+            }
+
+            return type;
+        }
+
     }
 }
