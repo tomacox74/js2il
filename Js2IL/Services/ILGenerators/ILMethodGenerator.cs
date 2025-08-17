@@ -881,6 +881,107 @@ namespace Js2IL.Services.ILGenerators
             _runtime.InvokeConsoleLog();
         }
 
+        // Helper to emit a UnaryExpression and return its JavaScript type (or Unknown when control-flow handled)
+        private JavascriptType EmitUnaryExpression(UnaryExpression unaryExpression, TypeCoercion typeCoercion, ConditionalBranching? branching)
+        {
+            // Support logical not: !expr and simple unary negation for numeric literals
+            var op = unaryExpression.Operator;
+            if (op == Operator.LogicalNot)
+            {
+                // If we're in a conditional context, invert the branch directly: if (!x) ... => branch on x == false
+                if (branching != null)
+                {
+                    var argType = ((IMethodExpressionEmitter)this).Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = false }, null);
+
+                    if (argType == JavascriptType.Boolean)
+                    {
+                        // If the argument was not a literal, it's boxed; unbox first
+                        if (unaryExpression.Argument is not BooleanLiteral && !(unaryExpression.Argument is Literal lit && lit.Value is bool))
+                        {
+                            _il.OpCode(ILOpCode.Unbox_any);
+                            _il.Token(_bclReferences.BooleanType);
+                        }
+                        // Brfalse => when arg is false, jump to BranchOnTrue (since !arg is true)
+                        _il.Branch(ILOpCode.Brfalse, branching.BranchOnTrue);
+                    }
+                    else if (argType == JavascriptType.Number)
+                    {
+                        // ToBoolean(number): 0 => false; so Brfalse when number == 0. Convert to i4 zero-check.
+                        // number on stack is double; compare to 0 and branch on equality
+                        _il.LoadConstantR8(0);
+                        _il.OpCode(ILOpCode.Ceq);
+                        _il.Branch(ILOpCode.Brtrue, branching.BranchOnTrue);
+                    }
+                    else
+                    {
+                        // Assume boxed boolean; unbox then brfalse
+                        _il.OpCode(ILOpCode.Unbox_any);
+                        _il.Token(_bclReferences.BooleanType);
+                        _il.Branch(ILOpCode.Brfalse, branching.BranchOnTrue);
+                    }
+
+                    if (branching.BranchOnFalse.HasValue)
+                    {
+                        _il.Branch(ILOpCode.Br, branching.BranchOnFalse.Value);
+                    }
+                    else
+                    {
+                        // No else block: nothing to pop; branch consumes the tested value.
+                    }
+
+                    return JavascriptType.Unknown;
+                }
+                else
+                {
+                    // Non-branching context: compute the boolean value and invert it on the stack.
+                    var argType = ((IMethodExpressionEmitter)this).Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = false }, null);
+
+                    if (argType == JavascriptType.Boolean)
+                    {
+                        if (unaryExpression.Argument is not BooleanLiteral && !(unaryExpression.Argument is Literal lit2 && lit2.Value is bool))
+                        {
+                            _il.OpCode(ILOpCode.Unbox_any);
+                            _il.Token(_bclReferences.BooleanType);
+                        }
+                        _il.OpCode(ILOpCode.Ldc_i4_0);
+                        _il.OpCode(ILOpCode.Ceq);
+                    }
+                    else if (argType == JavascriptType.Number)
+                    {
+                        _il.LoadConstantR8(0);
+                        _il.OpCode(ILOpCode.Ceq);
+                    }
+                    else
+                    {
+                        _il.OpCode(ILOpCode.Unbox_any);
+                        _il.Token(_bclReferences.BooleanType);
+                        _il.OpCode(ILOpCode.Ldc_i4_0);
+                        _il.OpCode(ILOpCode.Ceq);
+                    }
+
+                    return JavascriptType.Boolean;
+                }
+            }
+            else if (op == Operator.UnaryNegation && unaryExpression.Argument is Acornima.Ast.NumericLiteral numericArg)
+            {
+                if (typeCoercion.toString)
+                {
+                    var numberAsString = (-numericArg.Value).ToString();
+                    _il.LoadString(_metadataBuilder.GetOrAddUserString(numberAsString));
+                }
+                else
+                {
+                    _il.LoadConstantR8(-numericArg.Value);
+                }
+                // Preserve prior behavior: no explicit type assignment beyond emitted value
+                return JavascriptType.Unknown;
+            }
+            else
+            {
+                throw new NotSupportedException($"Unsupported unary operator: {op}");
+            }
+        }
+
         JavascriptType IMethodExpressionEmitter.Emit(Expression expression, TypeCoercion typeCoercion, ConditionalBranching? branching)
         {
             JavascriptType javascriptType = JavascriptType.Unknown;
@@ -955,103 +1056,7 @@ namespace Js2IL.Services.ILGenerators
                     GenerateUpdateExpression(updateExpression);
                     break;
                 case UnaryExpression unaryExpression:
-                    {
-                        // Support logical not: !expr
-                        var op = unaryExpression.Operator;
-                        if (op == Operator.LogicalNot)
-                        {
-                            // If we're in a conditional context, invert the branch directly: if (!x) ... => branch on x == false
-                            if (branching != null)
-                            {
-                                var argType = ((IMethodExpressionEmitter)this).Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = false }, null);
-
-                                if (argType == JavascriptType.Boolean)
-                                {
-                                    // If the argument was not a literal, it's boxed; unbox first
-                                    if (unaryExpression.Argument is not BooleanLiteral && !(unaryExpression.Argument is Literal lit && lit.Value is bool))
-                                    {
-                                        _il.OpCode(ILOpCode.Unbox_any);
-                                        _il.Token(_bclReferences.BooleanType);
-                                    }
-                                    // Brfalse => when arg is false, jump to BranchOnTrue (since !arg is true)
-                                    _il.Branch(ILOpCode.Brfalse, branching.BranchOnTrue);
-                                }
-                                else if (argType == JavascriptType.Number)
-                                {
-                                    // ToBoolean(number): 0 => false; so Brfalse when number == 0. Convert to i4 zero-check.
-                                    // number on stack is double; compare to 0 and branch on equality
-                                    _il.LoadConstantR8(0);
-                                    _il.OpCode(ILOpCode.Ceq);
-                                    _il.Branch(ILOpCode.Brtrue, branching.BranchOnTrue);
-                                }
-                                else
-                                {
-                                    // Assume boxed boolean; unbox then brfalse
-                                    _il.OpCode(ILOpCode.Unbox_any);
-                                    _il.Token(_bclReferences.BooleanType);
-                                    _il.Branch(ILOpCode.Brfalse, branching.BranchOnTrue);
-                                }
-
-                                if (branching.BranchOnFalse.HasValue)
-                                {
-                                    _il.Branch(ILOpCode.Br, branching.BranchOnFalse.Value);
-                                }
-                                else
-                                {
-                                    // No else block: pop any leftover value (shouldn't be any after branch), but be safe.
-                                    // Note: Branch instructions consume the tested value; nothing to pop here.
-                                }
-
-                                return JavascriptType.Unknown;
-                            }
-                            else
-                            {
-                                // Non-branching context: compute the boolean value and invert it on the stack.
-                                var argType = ((IMethodExpressionEmitter)this).Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = false }, null);
-
-                                if (argType == JavascriptType.Boolean)
-                                {
-                                    if (unaryExpression.Argument is not BooleanLiteral && !(unaryExpression.Argument is Literal lit2 && lit2.Value is bool))
-                                    {
-                                        _il.OpCode(ILOpCode.Unbox_any);
-                                        _il.Token(_bclReferences.BooleanType);
-                                    }
-                                    _il.OpCode(ILOpCode.Ldc_i4_0);
-                                    _il.OpCode(ILOpCode.Ceq);
-                                }
-                                else if (argType == JavascriptType.Number)
-                                {
-                                    _il.LoadConstantR8(0);
-                                    _il.OpCode(ILOpCode.Ceq);
-                                }
-                                else
-                                {
-                                    _il.OpCode(ILOpCode.Unbox_any);
-                                    _il.Token(_bclReferences.BooleanType);
-                                    _il.OpCode(ILOpCode.Ldc_i4_0);
-                                    _il.OpCode(ILOpCode.Ceq);
-                                }
-
-                                javascriptType = JavascriptType.Boolean;
-                            }
-                        }
-                        else if (op == Operator.UnaryNegation && unaryExpression.Argument is Acornima.Ast.NumericLiteral numericArg)
-                        {
-                            if (typeCoercion.toString)
-                            {
-                                var numberAsString = (-numericArg.Value).ToString();
-                                _il.LoadString(_metadataBuilder.GetOrAddUserString(numberAsString));
-                            }
-                            else
-                            {
-                                _il.LoadConstantR8(-numericArg.Value);
-                            }
-                        }
-                            else
-                            {
-                                throw new NotSupportedException($"Unsupported unary operator: {op}");
-                            }
-                        }
+                    javascriptType = EmitUnaryExpression(unaryExpression, typeCoercion, branching);
                     break;
                 case ObjectExpression objectExpression:
                     GenerateObjectExpresion(objectExpression);
@@ -1104,6 +1109,11 @@ namespace Js2IL.Services.ILGenerators
                         _il.OpCode(ILOpCode.Pop);
                     }
                     // We've emitted control flow, no result remains
+                    return JavascriptType.Unknown;
+                }
+                else if (javascriptType == JavascriptType.Unknown)
+                {
+                    // The expression emitter handled branching itself (e.g., unary logical not)
                     return JavascriptType.Unknown;
                 }
                 else
