@@ -928,39 +928,7 @@ namespace Js2IL.Services.ILGenerators
                     javascriptType = JavascriptType.Object; // Arrays are treated as objects in JavaScript
                     break;
                 case NewExpression newExpression:
-                    // Support `new Identifier(...)` for classes emitted under Classes namespace
-                    if (newExpression.Callee is Identifier cid)
-                    {
-                        if (!_classRegistry.TryGet(cid.Name, out var typeHandle) || typeHandle.IsNil)
-                        {
-                            throw new NotSupportedException($"Unknown class '{cid.Name}' for new expression");
-                        }
-                        // Build .ctor signature matching argument count (all object)
-                        var argc = newExpression.Arguments.Count;
-                        var sig = new BlobBuilder();
-                        new BlobEncoder(sig)
-                            .MethodSignature(isInstanceMethod: true)
-                            .Parameters(argc, r => r.Void(), p => { for (int i=0;i<argc;i++) p.AddParameter().Type().Object(); });
-                        var ctorSig = _metadataBuilder.GetOrAddBlob(sig);
-                        var ctorRef = _metadataBuilder.AddMemberReference(typeHandle, _metadataBuilder.GetOrAddString(".ctor"), ctorSig);
-                        // Push args
-                        for (int i = 0; i < argc; i++)
-                        {
-                            _expressionEmitter.Emit(newExpression.Arguments[i], new TypeCoercion() { boxResult = true });
-                        }
-                        _il.OpCode(ILOpCode.Newobj);
-                        _il.Token(ctorRef);
-                        // Record variable -> class mapping when in a variable initializer or assignment
-                        if (!string.IsNullOrEmpty(_currentAssignmentTarget))
-                        {
-                            _variableToClass[_currentAssignmentTarget] = cid.Name;
-                        }
-                        javascriptType = JavascriptType.Object;
-                    }
-                    else
-                    {
-                        throw new NotSupportedException($"Unsupported new-expression callee: {newExpression.Callee.Type}");
-                    }
+                    javascriptType = EmitNewExpression(newExpression);
                     break;
                 case BinaryExpression binaryExpression:
                     _binaryOperators.Generate(binaryExpression, branching);
@@ -1107,6 +1075,45 @@ namespace Js2IL.Services.ILGenerators
             _il.OpCode(ILOpCode.Stfld);
             _il.Token(variable.FieldHandle);
             return rhsType;
+        }
+
+        // Helper to emit a NewExpression and return its JavaScript type
+        private JavascriptType EmitNewExpression(NewExpression newExpression)
+        {
+            // Support `new Identifier(...)` for classes emitted under Classes namespace
+            if (newExpression.Callee is Identifier cid)
+            {
+                if (!_classRegistry.TryGet(cid.Name, out var typeHandle) || typeHandle.IsNil)
+                {
+                    throw new NotSupportedException($"Unknown class '{cid.Name}' for new expression");
+                }
+
+                // Build .ctor signature matching argument count (all object)
+                var argc = newExpression.Arguments.Count;
+                var sig = new BlobBuilder();
+                new BlobEncoder(sig)
+                    .MethodSignature(isInstanceMethod: true)
+                    .Parameters(argc, r => r.Void(), p => { for (int i = 0; i < argc; i++) p.AddParameter().Type().Object(); });
+                var ctorSig = _metadataBuilder.GetOrAddBlob(sig);
+                var ctorRef = _metadataBuilder.AddMemberReference(typeHandle, _metadataBuilder.GetOrAddString(".ctor"), ctorSig);
+
+                // Push args
+                for (int i = 0; i < argc; i++)
+                {
+                    _expressionEmitter.Emit(newExpression.Arguments[i], new TypeCoercion() { boxResult = true });
+                }
+                _il.OpCode(ILOpCode.Newobj);
+                _il.Token(ctorRef);
+
+                // Record variable -> class mapping when in a variable initializer or assignment
+                if (!string.IsNullOrEmpty(_currentAssignmentTarget))
+                {
+                    _variableToClass[_currentAssignmentTarget] = cid.Name;
+                }
+                return JavascriptType.Object;
+            }
+
+            throw new NotSupportedException($"Unsupported new-expression callee: {newExpression.Callee.Type}");
         }
 
         private MethodDefinitionHandle GenerateArrowFunctionMethod(ArrowFunctionExpression arrowFunction, string registryScopeName, string ilMethodName, string[] paramNames)
