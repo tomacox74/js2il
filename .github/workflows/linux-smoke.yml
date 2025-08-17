@@ -15,19 +15,45 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Need full history to read tags for determining the latest release version
+          fetch-depth: 0
 
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
-      - name: Install js2il tool from NuGet (latest)
+      - name: Determine js2il tool version
         run: |
-          dotnet tool install --global js2il
+          set -euo pipefail
+          # Use the highest semver-like tag (vX.Y.Z[-suffix]) available
+          tag=$(git tag --sort=-v:refname | head -n1)
+          version="${tag#v}"
+          echo "Using tool version: $version"
+          echo "TOOL_VERSION=$version" >> "$GITHUB_ENV"
+
+      - name: Install js2il tool from NuGet (specific version with retry)
+        run: |
+          set -euo pipefail
           echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+          tries=20
+          delay=30
+          for i in $(seq 1 $tries); do
+            if dotnet tool install --global js2il --version "$TOOL_VERSION"; then
+              echo "Installed js2il $TOOL_VERSION"
+              exit 0
+            fi
+            echo "Attempt $i/$tries: js2il $TOOL_VERSION not available yet on NuGet; waiting ${delay}s..."
+            sleep $delay
+          done
+          echo "Failed to install js2il $TOOL_VERSION from NuGet after $tries attempts" >&2
+          exit 1
 
       - name: Show js2il version
-        run: js2il --version
+        run: |
+          # Older previews may not support --version; fall back to help
+          js2il --version || js2il -h || true
 
       - name: Convert tests/simple.js to IL
         run: js2il tests/simple.js -o out
