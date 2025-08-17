@@ -344,6 +344,19 @@ namespace Js2IL.Services.ILGenerators
 
             switch (expression)
             {
+                case Acornima.Ast.BooleanLiteral booleanLiteral:
+                    if (typeCoercion.toString)
+                    {
+                        _il.LoadString(_metadataBuilder.GetOrAddUserString(booleanLiteral.Value ? "true" : "false"));
+                        // treat as object/string in this coercion path
+                        type = JavascriptType.Object;
+                    }
+                    else
+                    {
+                        _il.LoadConstantI4(booleanLiteral.Value ? 1 : 0); // Load boolean literal
+                        type = JavascriptType.Boolean;
+                    }
+                    break;
                 case Acornima.Ast.NumericLiteral numericLiteral:
                     if (typeCoercion.toString)
                     {
@@ -362,6 +375,23 @@ namespace Js2IL.Services.ILGenerators
                 case Acornima.Ast.StringLiteral stringLiteral:
                     _il.LoadString(_metadataBuilder.GetOrAddUserString(stringLiteral.Value)); // Load string literal
                     break;
+                case Acornima.Ast.Literal genericLiteral:
+                    // Some literals (especially booleans/null) may come through the generic Literal node
+                    if (genericLiteral.Value is bool b)
+                    {
+                        if (typeCoercion.toString)
+                        {
+                            _il.LoadString(_metadataBuilder.GetOrAddUserString(b ? "true" : "false"));
+                            type = JavascriptType.Object;
+                        }
+                        else
+                        {
+                            _il.LoadConstantI4(b ? 1 : 0);
+                            type = JavascriptType.Boolean;
+                        }
+                        break;
+                    }
+                    throw new NotSupportedException($"Unsupported literal value type: {genericLiteral.Value?.GetType().Name ?? "null"}");
                 case Acornima.Ast.Identifier identifier:
                     var name = identifier.Name;
                     var variable = _variables.FindVariable(name) ?? _variables[name];
