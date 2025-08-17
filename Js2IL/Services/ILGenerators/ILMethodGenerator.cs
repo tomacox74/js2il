@@ -26,15 +26,16 @@ namespace Js2IL.Services.ILGenerators
         private readonly Runtime _runtime;
         private readonly MethodBodyStreamEncoder _methodBodyStreamEncoder;
         private MethodDefinitionHandle _firstMethod = default;
-
-    private readonly Dispatch.DispatchTableGenerator _dispatchTableGenerator;
-    private readonly ClassRegistry _classRegistry;
-    // Tracks the name of the variable currently being initialized, to name arrow-function scopes consistently
-    // with SymbolTableBuilder (e.g., ArrowFunction_<targetName>) when emitting an ArrowFunctionExpression on the RHS.
-    private string? _currentAssignmentTarget;
-    // Tracks simple associations from variable name to class name when initialized via `const x = new ClassName()`
-    private readonly Dictionary<string, string> _variableToClass = new(StringComparer.Ordinal);
-
+        private readonly Dispatch.DispatchTableGenerator _dispatchTableGenerator;
+        private readonly ClassRegistry _classRegistry;
+        // When emitting inside a class instance method (.ctor or method), enable 'this' handling
+        private readonly bool _inClassMethod;
+        private readonly string? _currentClassName;
+        // Tracks the name of the variable currently being initialized, to name arrow-function scopes consistently
+        // with SymbolTableBuilder (e.g., ArrowFunction_<targetName>) when emitting an ArrowFunctionExpression on the RHS.
+        private string? _currentAssignmentTarget;
+        // Tracks simple associations from variable name to class name when initialized via `const x = new ClassName()`
+        private readonly Dictionary<string, string> _variableToClass = new(StringComparer.Ordinal);
         /*
          * Temporary exposure of private members until refactoring gets cleaner
          * need to determine what the difference is between generating the main method and generating any generic method
@@ -46,7 +47,7 @@ namespace Js2IL.Services.ILGenerators
 
         public MethodDefinitionHandle FirstMethod => _firstMethod;
 
-    public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator, ClassRegistry? classRegistry = null)
+        public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator, ClassRegistry? classRegistry = null, bool inClassMethod = false, string? currentClassName = null)
         {
             _variables = variables;
             _bclReferences = bclReferences;
@@ -61,6 +62,8 @@ namespace Js2IL.Services.ILGenerators
             _methodBodyStreamEncoder = methodBodyStreamEncoder;
             _dispatchTableGenerator = dispatchTableGenerator ?? throw new ArgumentNullException(nameof(dispatchTableGenerator));
             _classRegistry = classRegistry ?? new ClassRegistry();
+            _inClassMethod = inClassMethod;
+            _currentClassName = currentClassName;
         }
 
         public void DeclareVariable(VariableDeclaration variableDeclaraion)
@@ -626,9 +629,32 @@ namespace Js2IL.Services.ILGenerators
                 memberExpression.Property is not Acornima.Ast.Identifier propertyIdentifier ||
                 propertyIdentifier.Name != "log")
             {
-                // Instance method call: obj.method(...)
+                // Static class method: ClassName.method(...)
                 if (callExpression.Callee is Acornima.Ast.MemberExpression mem && !mem.Computed && mem.Object is Acornima.Ast.Identifier baseId && mem.Property is Acornima.Ast.Identifier mname)
                 {
+                    // If the base identifier resolves to a known class, emit a static call without loading an instance.
+                    if (_classRegistry.TryGet(baseId.Name, out var classType) && !classType.IsNil)
+                    {
+                        // Build static method signature: object method(object, ...)
+                        var sArgCount = callExpression.Arguments.Count;
+                        var sSig = new BlobBuilder();
+                        new BlobEncoder(sSig)
+                            .MethodSignature(isInstanceMethod: false)
+                            .Parameters(sArgCount, r => r.Type().Object(), p => { for (int i=0;i<sArgCount;i++) p.AddParameter().Type().Object(); });
+                        var sMsig = _metadataBuilder.GetOrAddBlob(sSig);
+                        var sMref = _metadataBuilder.AddMemberReference(classType, _metadataBuilder.GetOrAddString(mname.Name), sMsig);
+                        // Push arguments
+                        for (int i = 0; i < callExpression.Arguments.Count; i++)
+                        {
+                            _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
+                        }
+                        _il.OpCode(ILOpCode.Call);
+                        _il.Token(sMref);
+                        if (discardResult) _il.OpCode(ILOpCode.Pop);
+                        return;
+                    }
+
+                    // Instance method call: obj.method(...)
                     // Load instance from variable field
                     var baseVar = _variables.FindVariable(baseId.Name) ?? throw new InvalidOperationException($"Variable '{baseId.Name}' not found.");
                     var scopeRef = _variables.GetScopeLocalSlot(baseVar.ScopeName);
@@ -870,41 +896,7 @@ namespace Js2IL.Services.ILGenerators
             switch (expression)
             {
                     case AssignmentExpression assignmentExpression:
-                        if (assignmentExpression.Left is Identifier aid)
-                        {
-                            var variable = _variables.FindVariable(aid.Name) ?? throw new InvalidOperationException($"Variable '{aid.Name}' not found");
-
-                            // Load the appropriate scope instance that holds this field
-                            var scopeSlot = _variables.GetScopeLocalSlot(variable.ScopeName);
-                            if (scopeSlot.Address == -1)
-                            {
-                                throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
-                            }
-                            // Load scope instance
-                            if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
-                            {
-                                _il.LoadArgument(scopeSlot.Address);
-                            }
-                            else if (scopeSlot.Location == ObjectReferenceLocation.ScopeArray)
-                            {
-                                _il.LoadArgument(0); // Load scope array parameter
-                                _il.LoadConstantI4(scopeSlot.Address); // Load array index
-                                _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
-                            }
-                            else
-                            {
-                                _il.LoadLocal(scopeSlot.Address);
-                            }
-                            var rhsType = _expressionEmitter.Emit(assignmentExpression.Right, typeCoercion);
-                            variable.Type = rhsType;
-                            _il.OpCode(ILOpCode.Stfld);
-                            _il.Token(variable.FieldHandle);
-                            javascriptType = rhsType;
-                        }
-                        else
-                        {
-                            throw new NotSupportedException($"Unsupported assignment target type: {assignmentExpression.Left.Type}");
-                        }
+                        javascriptType = EmitAssignment(assignmentExpression, typeCoercion);
                         break;
                 case CallExpression callExpression:
                     // Use the unified call generator in expression context, preserving the result
@@ -939,39 +931,7 @@ namespace Js2IL.Services.ILGenerators
                     javascriptType = JavascriptType.Object; // Arrays are treated as objects in JavaScript
                     break;
                 case NewExpression newExpression:
-                    // Support `new Identifier(...)` for classes emitted under Classes namespace
-                    if (newExpression.Callee is Identifier cid)
-                    {
-                        if (!_classRegistry.TryGet(cid.Name, out var typeHandle) || typeHandle.IsNil)
-                        {
-                            throw new NotSupportedException($"Unknown class '{cid.Name}' for new expression");
-                        }
-                        // Build .ctor signature matching argument count (all object)
-                        var argc = newExpression.Arguments.Count;
-                        var sig = new BlobBuilder();
-                        new BlobEncoder(sig)
-                            .MethodSignature(isInstanceMethod: true)
-                            .Parameters(argc, r => r.Void(), p => { for (int i=0;i<argc;i++) p.AddParameter().Type().Object(); });
-                        var ctorSig = _metadataBuilder.GetOrAddBlob(sig);
-                        var ctorRef = _metadataBuilder.AddMemberReference(typeHandle, _metadataBuilder.GetOrAddString(".ctor"), ctorSig);
-                        // Push args
-                        for (int i = 0; i < argc; i++)
-                        {
-                            _expressionEmitter.Emit(newExpression.Arguments[i], new TypeCoercion() { boxResult = true });
-                        }
-                        _il.OpCode(ILOpCode.Newobj);
-                        _il.Token(ctorRef);
-                        // Record variable -> class mapping when in a variable initializer or assignment
-                        if (!string.IsNullOrEmpty(_currentAssignmentTarget))
-                        {
-                            _variableToClass[_currentAssignmentTarget] = cid.Name;
-                        }
-                        javascriptType = JavascriptType.Object;
-                    }
-                    else
-                    {
-                        throw new NotSupportedException($"Unsupported new-expression callee: {newExpression.Callee.Type}");
-                    }
+                    javascriptType = EmitNewExpression(newExpression);
                     break;
                 case BinaryExpression binaryExpression:
                     _binaryOperators.Generate(binaryExpression, branching);
@@ -992,50 +952,8 @@ namespace Js2IL.Services.ILGenerators
                     javascriptType = JavascriptType.Object;
                     break;
                 case MemberExpression memberExpression:
-                    // Evaluate base object into stack: object reference
-                    if (memberExpression.Object is not Identifier baseIdent)
-                        throw new NotSupportedException($"Unsupported member base expression: {memberExpression.Object.Type}");
-                    var baseVar = _variables.FindVariable(baseIdent.Name) ?? throw new InvalidOperationException($"Variable '{baseIdent.Name}' not found for member expression.");
-                    var baseScopeSlot = _variables.GetScopeLocalSlot(baseVar.ScopeName);
-                    if (baseScopeSlot.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(baseScopeSlot.Address);
-                    else if (baseScopeSlot.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(baseScopeSlot.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
-                    else _il.LoadLocal(baseScopeSlot.Address);
-                    _il.OpCode(ILOpCode.Ldfld);
-                    _il.Token(baseVar.FieldHandle); // stack: object
-
-                    if (!memberExpression.Computed && memberExpression.Property is Identifier propId)
-                    {
-                        // First, support array.length
-                        if (propId.Name == "length")
-                        {
-                            _il.OpCode(ILOpCode.Callvirt);
-                            _il.Token(_bclReferences.Array_GetCount_Ref);
-                            _il.OpCode(ILOpCode.Conv_r8);
-                            javascriptType = JavascriptType.Number;
-                            break;
-                        }
-                        // Next, support instance field access for known class instances
-                        if (_variableToClass.TryGetValue(baseIdent.Name, out var cname) && _classRegistry.TryGetField(cname, propId.Name, out var fieldHandle))
-                        {
-                            // At this point, stack has the instance already. Load its field value.
-                            _il.OpCode(ILOpCode.Ldfld);
-                            _il.Token(fieldHandle);
-                            javascriptType = JavascriptType.Object;
-                            break;
-                        }
-                        throw new NotSupportedException($"Property '{propId.Name}' not supported on this object.");
-                    }
-                    if (memberExpression.Computed)
-                    {
-                        // arr[expr] -> runtime Object.GetItem(array, doubleIndex)
-                        var indexType = _expressionEmitter.Emit(memberExpression.Property, new TypeCoercion());
-                        if (indexType != JavascriptType.Number)
-                            throw new NotSupportedException("Array index must be numeric expression");
-                        _runtime.InvokeGetItemFromObject();
-                        javascriptType = JavascriptType.Object;
-                        break;
-                    }
-                    throw new NotSupportedException("Only 'length', instance fields on known classes, or computed indexing supported.");
+                    javascriptType = EmitMemberExpression(memberExpression);
+                    break;
                 case Acornima.Ast.Identifier identifier:
                     {
                         var name = identifier.Name;
@@ -1079,6 +997,157 @@ namespace Js2IL.Services.ILGenerators
             }
 
             return javascriptType;
+        }
+
+        // Helper to emit an assignment expression and return its JavaScript type
+        private JavascriptType EmitAssignment(AssignmentExpression assignmentExpression, TypeCoercion typeCoercion)
+        {
+            // Support assignments to identifiers and to this.property within class instance methods
+            if (assignmentExpression.Left is Identifier aid)
+            {
+                var variable = _variables.FindVariable(aid.Name) ?? throw new InvalidOperationException($"Variable '{aid.Name}' not found");
+
+                // Load the appropriate scope instance that holds this field
+                var scopeSlot = _variables.GetScopeLocalSlot(variable.ScopeName);
+                if (scopeSlot.Address == -1)
+                {
+                    throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
+                }
+                // Load scope instance
+                if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
+                {
+                    _il.LoadArgument(scopeSlot.Address);
+                }
+                else if (scopeSlot.Location == ObjectReferenceLocation.ScopeArray)
+                {
+                    _il.LoadArgument(0); // Load scope array parameter
+                    _il.LoadConstantI4(scopeSlot.Address); // Load array index
+                    _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
+                }
+                else
+                {
+                    _il.LoadLocal(scopeSlot.Address);
+                }
+
+                var rhsType = _expressionEmitter.Emit(assignmentExpression.Right, typeCoercion);
+                variable.Type = rhsType;
+                _il.OpCode(ILOpCode.Stfld);
+                _il.Token(variable.FieldHandle);
+                return rhsType;
+            }
+            else if (_inClassMethod && assignmentExpression.Left is MemberExpression me && me.Object is ThisExpression && !me.Computed && me.Property is Identifier pid)
+            {
+                // this.prop = <expr>
+                _il.OpCode(ILOpCode.Ldarg_0); // load 'this'
+                var rhsType = _expressionEmitter.Emit(assignmentExpression.Right, new TypeCoercion() { boxResult = true });
+                // Lookup field by current class name
+                if (string.IsNullOrEmpty(_currentClassName) || !_classRegistry.TryGetField(_currentClassName, pid.Name, out var fieldHandle))
+                {
+                    throw new NotSupportedException($"Unknown field '{pid.Name}' on class '{_currentClassName}'");
+                }
+                _il.OpCode(ILOpCode.Stfld);
+                _il.Token(fieldHandle);
+                return JavascriptType.Object;
+            }
+            else
+            {
+                throw new NotSupportedException($"Unsupported assignment target type: {assignmentExpression.Left.Type}");
+            }
+        }
+
+        // Helper to emit a NewExpression and return its JavaScript type
+        private JavascriptType EmitNewExpression(NewExpression newExpression)
+        {
+            // Support `new Identifier(...)` for classes emitted under Classes namespace
+            if (newExpression.Callee is Identifier cid)
+            {
+                if (!_classRegistry.TryGet(cid.Name, out var typeHandle) || typeHandle.IsNil)
+                {
+                    throw new NotSupportedException($"Unknown class '{cid.Name}' for new expression");
+                }
+
+                // Build .ctor signature matching argument count (all object)
+                var argc = newExpression.Arguments.Count;
+                var sig = new BlobBuilder();
+                new BlobEncoder(sig)
+                    .MethodSignature(isInstanceMethod: true)
+                    .Parameters(argc, r => r.Void(), p => { for (int i = 0; i < argc; i++) p.AddParameter().Type().Object(); });
+                var ctorSig = _metadataBuilder.GetOrAddBlob(sig);
+                var ctorRef = _metadataBuilder.AddMemberReference(typeHandle, _metadataBuilder.GetOrAddString(".ctor"), ctorSig);
+
+                // Push args
+                for (int i = 0; i < argc; i++)
+                {
+                    _expressionEmitter.Emit(newExpression.Arguments[i], new TypeCoercion() { boxResult = true });
+                }
+                _il.OpCode(ILOpCode.Newobj);
+                _il.Token(ctorRef);
+
+                // Record variable -> class mapping when in a variable initializer or assignment
+                if (!string.IsNullOrEmpty(_currentAssignmentTarget))
+                {
+                    _variableToClass[_currentAssignmentTarget] = cid.Name;
+                }
+                return JavascriptType.Object;
+            }
+
+            throw new NotSupportedException($"Unsupported new-expression callee: {newExpression.Callee.Type}");
+        }
+
+        // Helper to emit a MemberExpression and return its JavaScript type
+        private JavascriptType EmitMemberExpression(MemberExpression memberExpression)
+        {
+            // Evaluate base object into stack: object reference
+            if (memberExpression.Object is ThisExpression && _inClassMethod)
+            {
+                _il.OpCode(ILOpCode.Ldarg_0);
+            }
+            else if (memberExpression.Object is Identifier baseIdent)
+            {
+                var baseVar = _variables.FindVariable(baseIdent.Name) ?? throw new InvalidOperationException($"Variable '{baseIdent.Name}' not found for member expression.");
+                var baseScopeSlot = _variables.GetScopeLocalSlot(baseVar.ScopeName);
+                if (baseScopeSlot.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(baseScopeSlot.Address);
+                else if (baseScopeSlot.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(baseScopeSlot.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
+                else _il.LoadLocal(baseScopeSlot.Address);
+                _il.OpCode(ILOpCode.Ldfld);
+                _il.Token(baseVar.FieldHandle); // stack: object
+            }
+            else
+            {
+                throw new NotSupportedException($"Unsupported member base expression: {memberExpression.Object.Type}");
+            }
+
+            if (!memberExpression.Computed && memberExpression.Property is Identifier propId)
+            {
+                // First, support array.length
+                if (propId.Name == "length")
+                {
+                    _il.OpCode(ILOpCode.Callvirt);
+                    _il.Token(_bclReferences.Array_GetCount_Ref);
+                    _il.OpCode(ILOpCode.Conv_r8);
+                    return JavascriptType.Number;
+                }
+                        // Next, support instance field access for known class instances or this.field within class
+                        if ((memberExpression.Object is ThisExpression && _inClassMethod && _currentClassName != null && _classRegistry.TryGetField(_currentClassName, propId.Name, out var fieldHandle))
+                            || (memberExpression.Object is Identifier baseIdent2 && _variableToClass.TryGetValue(baseIdent2.Name, out var cname) && _classRegistry.TryGetField(cname, propId.Name, out fieldHandle)))
+                {
+                    // At this point, stack has the instance already. Load its field value.
+                    _il.OpCode(ILOpCode.Ldfld);
+                    _il.Token(fieldHandle);
+                    return JavascriptType.Object;
+                }
+                throw new NotSupportedException($"Property '{propId.Name}' not supported on this object.");
+            }
+            if (memberExpression.Computed)
+            {
+                // arr[expr] -> runtime Object.GetItem(array, doubleIndex)
+                var indexType = _expressionEmitter.Emit(memberExpression.Property, new TypeCoercion());
+                if (indexType != JavascriptType.Number)
+                    throw new NotSupportedException("Array index must be numeric expression");
+                _runtime.InvokeGetItemFromObject();
+                return JavascriptType.Object;
+            }
+            throw new NotSupportedException("Only 'length', instance fields on known classes, or computed indexing supported.");
         }
 
         private MethodDefinitionHandle GenerateArrowFunctionMethod(ArrowFunctionExpression arrowFunction, string registryScopeName, string ilMethodName, string[] paramNames)
