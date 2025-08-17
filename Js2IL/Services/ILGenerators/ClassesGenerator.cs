@@ -141,12 +141,7 @@ namespace Js2IL.Services.ILGenerators
                 else
                 {
                     // Use ILMethodGenerator to emit the initializer expression, then box numbers if needed
-                    var t = ((IMethodExpressionEmitter)ilGen).Emit(initExpr, new TypeCoercion());
-                    if (t == JavascriptType.Number)
-                    {
-                        ilGen.IL.OpCode(ILOpCode.Box);
-                        ilGen.IL.Token(_bcl.DoubleType);
-                    }
+                    ((IMethodExpressionEmitter)ilGen).Emit(initExpr, new TypeCoercion() { boxResult = true });
                     ilGen.IL.OpCode(ILOpCode.Stfld);
                     ilGen.IL.Token(field);
                 }

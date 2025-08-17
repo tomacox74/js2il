@@ -107,16 +107,11 @@ namespace Js2IL.Services.ILGenerators
                 _currentAssignmentTarget = variableName;
                 try
                 {
-                    variable.Type = this._expressionEmitter.Emit(variableAST.Init, new TypeCoercion());
+                    variable.Type = this._expressionEmitter.Emit(variableAST.Init, new TypeCoercion() { boxResult = true });
                 }
                 finally
                 {
                     _currentAssignmentTarget = prevAssignmentTarget;
-                }
-                if (variable.Type == JavascriptType.Number)
-                {
-                    _il.OpCode(ILOpCode.Box);
-                    _il.Token(_bclReferences.DoubleType);
                 }
                 
                 // Now stack: [scope_instance] [value] - perfect for stfld
@@ -346,23 +341,13 @@ namespace Js2IL.Services.ILGenerators
                     }
                     else
                     {
-                        // Fallback to normal emit
-                        var type = _expressionEmitter.Emit(returnStatement.Argument, new TypeCoercion());
-                        if (type == JavascriptType.Number)
-                        {
-                            _il.OpCode(ILOpCode.Box);
-                            _il.Token(_bclReferences.DoubleType);
-                        }
+                        // Fallback to normal emit; boxing handled centrally via TypeCoercion.boxResult
+                        _ = _expressionEmitter.Emit(returnStatement.Argument, new TypeCoercion() { boxResult = true });
                     }
                 }
                 else
                 {
-                    var type = _expressionEmitter.Emit(returnStatement.Argument, new TypeCoercion());
-                    if (type == JavascriptType.Number)
-                    {
-                        _il.OpCode(ILOpCode.Box);
-                        _il.Token(_bclReferences.DoubleType);
-                    }
+                    _ = _expressionEmitter.Emit(returnStatement.Argument, new TypeCoercion() { boxResult = true });
                 }
             }
             else
@@ -545,14 +530,8 @@ namespace Js2IL.Services.ILGenerators
                 //_expressionEmitter.Emit(objectProperty.Key);
                 _il.LoadString(_metadataBuilder.GetOrAddUserString(propertyKey.Name));
 
-                // Load the value of the property
-                var valueType = _expressionEmitter.Emit(propertyValue, new TypeCoercion());
-                if (valueType == JavascriptType.Number)
-                {
-                    // If the value is a number, we need to box it to an object
-                    _il.OpCode(ILOpCode.Box);
-                    _il.Token(_bclReferences.DoubleType);
-                }
+                // Load the value of the property (Emit handles boxing by default)
+                _ = _expressionEmitter.Emit(propertyValue, new TypeCoercion() { boxResult = true });
 
                 // call set_Item on the ExpandoObject to set the property value
                 _il.OpCode(ILOpCode.Callvirt);
@@ -576,12 +555,7 @@ namespace Js2IL.Services.ILGenerators
             {
                 var element = arrayExpression.Elements[i];
                 _il.OpCode(ILOpCode.Dup); // array instance
-                var elemType = _expressionEmitter.Emit(element!, new TypeCoercion());
-                if (elemType == JavascriptType.Number)
-                {
-                    _il.OpCode(ILOpCode.Box);
-                    _il.Token(_bclReferences.DoubleType);
-                }
+                _ = _expressionEmitter.Emit(element!, new TypeCoercion() { boxResult = true } );
                 _il.OpCode(ILOpCode.Callvirt);
                 _il.Token(_bclReferences.Array_Add_Ref);
             }
@@ -693,12 +667,7 @@ namespace Js2IL.Services.ILGenerators
                     // Push arguments
                     for (int i = 0; i < callExpression.Arguments.Count; i++)
                     {
-                        var at = _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion());
-                        if (at == JavascriptType.Number)
-                        {
-                            _il.OpCode(ILOpCode.Box);
-                            _il.Token(_bclReferences.DoubleType);
-                        }
+                        _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true  });
                     }
 
                     _il.OpCode(ILOpCode.Callvirt);
@@ -794,12 +763,7 @@ namespace Js2IL.Services.ILGenerators
                     // we simply pass through the provided arguments.
                     for (int i = 0; i < callExpression.Arguments.Count; i++)
                     {
-                        var argType = _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion());
-                        if (argType == JavascriptType.Number)
-                        {
-                            _il.OpCode(ILOpCode.Box);
-                            _il.Token(_bclReferences.DoubleType);
-                        }
+                        _ = _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
                     }
 
                     // Invoke correct delegate based on parameter count.
@@ -887,8 +851,8 @@ namespace Js2IL.Services.ILGenerators
                 _il.LoadConstantI4(i); // Load the index for the parameter
                 var argument = callConsoleLog.Arguments[i];
                 
-                // Emit the argument expression
-                this._expressionEmitter.Emit(argument, new TypeCoercion() { boxed = true });
+                // Emit the argument expression (ensure boxing)
+                this._expressionEmitter.Emit(argument, new TypeCoercion() { boxResult = true });
                 
                 // Store the argument in the array at the specified index
                 _il.OpCode(ILOpCode.Stelem_ref);
@@ -933,11 +897,6 @@ namespace Js2IL.Services.ILGenerators
                             }
                             var rhsType = _expressionEmitter.Emit(assignmentExpression.Right, typeCoercion);
                             variable.Type = rhsType;
-                            if (rhsType == JavascriptType.Number)
-                            {
-                                _il.OpCode(ILOpCode.Box);
-                                _il.Token(_bclReferences.DoubleType);
-                            }
                             _il.OpCode(ILOpCode.Stfld);
                             _il.Token(variable.FieldHandle);
                             javascriptType = rhsType;
@@ -998,8 +957,7 @@ namespace Js2IL.Services.ILGenerators
                         // Push args
                         for (int i = 0; i < argc; i++)
                         {
-                            var at = _expressionEmitter.Emit(newExpression.Arguments[i], new TypeCoercion());
-                            if (at == JavascriptType.Number) { _il.OpCode(ILOpCode.Box); _il.Token(_bclReferences.DoubleType); }
+                            _expressionEmitter.Emit(newExpression.Arguments[i], new TypeCoercion() { boxResult = true });
                         }
                         _il.OpCode(ILOpCode.Newobj);
                         _il.Token(ctorRef);
@@ -1078,9 +1036,46 @@ namespace Js2IL.Services.ILGenerators
                         break;
                     }
                     throw new NotSupportedException("Only 'length', instance fields on known classes, or computed indexing supported.");
+                case Acornima.Ast.Identifier identifier:
+                    {
+                        var name = identifier.Name;
+                        var variable = _variables.FindVariable(name) ?? _variables[name];
+                        _binaryOperators.LoadVariable(variable); // Load variable using scope field or local fallback
+
+                        // Only unbox when we explicitly know it's a Number && caller didn't request boxing.
+                        if (variable.Type == JavascriptType.Number && !typeCoercion.boxResult)
+                        {
+                            _il.OpCode(ILOpCode.Unbox_any);
+                            _il.Token(_bclReferences.DoubleType); // unbox the variable as a double
+                        }
+                        else
+                        {
+                            // currently variables are already boxed, so no need to double box (if boxResult is true)
+                            typeCoercion.boxResult = false;
+                        }
+
+                        javascriptType = variable.Type;
+                    }
+
+                    break;
                 default:
                     javascriptType = _binaryOperators.LoadValue(expression, typeCoercion);
                     break;
+            }
+
+            // Centralized boxing: if requested, box primitive results
+            if (typeCoercion.boxResult)
+            {
+                if (javascriptType == JavascriptType.Number)
+                {
+                    _il.OpCode(ILOpCode.Box);
+                    _il.Token(_bclReferences.DoubleType);
+                }
+                else if (javascriptType == JavascriptType.Boolean)
+                {
+                    _il.OpCode(ILOpCode.Box);
+                    _il.Token(_bclReferences.BooleanType);
+                }
             }
 
             return javascriptType;
@@ -1153,12 +1148,7 @@ namespace Js2IL.Services.ILGenerators
                         childGen._currentAssignmentTarget = vid.Name;
                         try
                         {
-                            var t = ((IMethodExpressionEmitter)childGen).Emit(initExpr, new TypeCoercion());
-                            if (t == JavascriptType.Number)
-                            {
-                                il.OpCode(ILOpCode.Box);
-                                il.Token(_bclReferences.DoubleType);
-                            }
+                            _ = ((IMethodExpressionEmitter)childGen).Emit(initExpr, new TypeCoercion());
                         }
                         finally
                         {
@@ -1203,12 +1193,7 @@ namespace Js2IL.Services.ILGenerators
                     else
                     {
                         // Not returning a function; just evaluate the expression and return it (no binding, no scope instantiation)
-                        var t = ((IMethodExpressionEmitter)childGen).Emit(initExpr, new TypeCoercion());
-                        if (t == JavascriptType.Number)
-                        {
-                            il.OpCode(ILOpCode.Box);
-                            il.Token(_bclReferences.DoubleType);
-                        }
+                        _ = ((IMethodExpressionEmitter)childGen).Emit(initExpr, new TypeCoercion());
                         il.OpCode(ILOpCode.Ret);
                     }
                 }
@@ -1259,12 +1244,7 @@ namespace Js2IL.Services.ILGenerators
             {
                 // Expression-bodied arrow: evaluate via the child generator's expression emitter to keep logic isolated
                 var bodyExpr = arrowFunction.Body as Expression ?? throw new NotSupportedException("Arrow function body is not an expression");
-                var t = ((IMethodExpressionEmitter)childGen).Emit(bodyExpr, new TypeCoercion());
-                if (t == JavascriptType.Number)
-                {
-                    il.OpCode(ILOpCode.Box);
-                    il.Token(_bclReferences.DoubleType);
-                }
+                _ = ((IMethodExpressionEmitter)childGen).Emit(bodyExpr, new TypeCoercion());
                 il.OpCode(ILOpCode.Ret);
             }
 

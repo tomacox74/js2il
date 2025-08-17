@@ -35,7 +35,7 @@ namespace Js2IL.Services.ILGenerators
         /// <summary>
         /// Loads a variable value using scope field access.
         /// </summary>
-        private void LoadVariable(Variable variable)
+        public void LoadVariable(Variable variable)
         {
             // If this variable belongs to a parent/ancestor scope (captured), always load from scopes[]
             // to respect closure binding, regardless of any local scope instances that might exist.
@@ -356,12 +356,6 @@ namespace Js2IL.Services.ILGenerators
                         _il.LoadConstantR8(numericLiteral.Value); // Load numeric literal
                     }
 
-                    if (typeCoercion.boxed)
-                    {
-                        _il.OpCode(ILOpCode.Box);
-                        _il.Token(_bclReferences.DoubleType); // box the numeric literal as a double
-                    }
-
                     type = JavascriptType.Number;
 
                     break;
@@ -373,11 +367,8 @@ namespace Js2IL.Services.ILGenerators
                     var variable = _variables.FindVariable(name) ?? _variables[name];
                     LoadVariable(variable); // Load variable using scope field or local fallback
 
-                    // this is fragile at the moment.. need to handle all types
-                    // need a runtime type check for unknown types
-                    // and unboxing for boolean
-                    // Only unbox when we explicitly know it's a Number and caller didn't request boxing.
-                    if (variable.Type == JavascriptType.Number && !typeCoercion.boxed)
+                    // Only unbox when we explicitly know it's a Number
+                    if (variable.Type == JavascriptType.Number)
                     {
                         _il.OpCode(ILOpCode.Unbox_any);
                         _il.Token(_bclReferences.DoubleType); // unbox the variable as a double
