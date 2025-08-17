@@ -342,7 +342,7 @@ namespace Js2IL.Services.ILGenerators
                     else
                     {
                         // Fallback to normal emit; boxing handled centrally via TypeCoercion.boxResult
-                        _ = _expressionEmitter.Emit(returnStatement.Argument, new TypeCoercion());
+                        _ = _expressionEmitter.Emit(returnStatement.Argument, new TypeCoercion() { boxResult = true });
                     }
                 }
                 else
@@ -667,7 +667,7 @@ namespace Js2IL.Services.ILGenerators
                     // Push arguments
                     for (int i = 0; i < callExpression.Arguments.Count; i++)
                     {
-                        _ = _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion());
+                        _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true  });
                     }
 
                     _il.OpCode(ILOpCode.Callvirt);
@@ -957,7 +957,7 @@ namespace Js2IL.Services.ILGenerators
                         // Push args
                         for (int i = 0; i < argc; i++)
                         {
-                            _ = _expressionEmitter.Emit(newExpression.Arguments[i], new TypeCoercion());
+                            _expressionEmitter.Emit(newExpression.Arguments[i], new TypeCoercion() { boxResult = true });
                         }
                         _il.OpCode(ILOpCode.Newobj);
                         _il.Token(ctorRef);

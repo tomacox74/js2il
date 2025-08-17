@@ -141,7 +141,7 @@ namespace Js2IL.Services.ILGenerators
                 else
                 {
                     // Use ILMethodGenerator to emit the initializer expression, then box numbers if needed
-                    _ = ((IMethodExpressionEmitter)ilGen).Emit(initExpr, new TypeCoercion());
+                    ((IMethodExpressionEmitter)ilGen).Emit(initExpr, new TypeCoercion() { boxResult = true });
                     ilGen.IL.OpCode(ILOpCode.Stfld);
                     ilGen.IL.Token(field);
                 }

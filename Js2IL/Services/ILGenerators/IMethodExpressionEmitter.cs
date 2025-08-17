@@ -17,9 +17,20 @@ namespace Js2IL.Services.ILGenerators
 
     record TypeCoercion
     {
+        /// <summary>
+        /// When true, the expression emitter will convert the result to a string.
+        /// Default is false.
+        /// </summary>
+        /// <remarks>
+        /// A example would be the expression "hello " + 5.   This parameter drops a hint that we need "5", not the number 5.
+        /// Converting a number to a string at compile time instead of runtime is preferred.
+        /// </remarks>
         public bool toString = false;
-        // When true, the expression emitter will box primitive results (e.g., numbers) before returning.
-        // Default is true to match common call sites that expect object-typed values on the stack.
+
+        /// <summary>
+        /// When true, the expression emitter will box primitive results (e.g., numbers) before returning.
+        /// Default is false
+        /// </summary>
         public bool boxResult = false;
     }
 
