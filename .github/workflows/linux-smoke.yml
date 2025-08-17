@@ -1,0 +1,44 @@
+name: linux-smoke
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install js2il tool from NuGet (latest)
+        run: |
+          dotnet tool install --global js2il
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+      - name: Show js2il version
+        run: js2il --version
+
+      - name: Convert tests/simple.js to IL
+        run: js2il tests/simple.js -o out
+
+      - name: Run generated assembly and verify output
+        run: |
+          set -e
+          output=$(dotnet out/simple.dll)
+          echo "Program output:" 
+          echo "$output"
+          if ! echo "$output" | grep -i "x is"; then
+            echo "Smoke test failed: expected output containing 'x is'"
+            exit 1
+          fi
