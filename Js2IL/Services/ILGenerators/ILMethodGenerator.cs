@@ -893,41 +893,7 @@ namespace Js2IL.Services.ILGenerators
             switch (expression)
             {
                     case AssignmentExpression assignmentExpression:
-                        if (assignmentExpression.Left is Identifier aid)
-                        {
-                            var variable = _variables.FindVariable(aid.Name) ?? throw new InvalidOperationException($"Variable '{aid.Name}' not found");
-
-                            // Load the appropriate scope instance that holds this field
-                            var scopeSlot = _variables.GetScopeLocalSlot(variable.ScopeName);
-                            if (scopeSlot.Address == -1)
-                            {
-                                throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
-                            }
-                            // Load scope instance
-                            if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
-                            {
-                                _il.LoadArgument(scopeSlot.Address);
-                            }
-                            else if (scopeSlot.Location == ObjectReferenceLocation.ScopeArray)
-                            {
-                                _il.LoadArgument(0); // Load scope array parameter
-                                _il.LoadConstantI4(scopeSlot.Address); // Load array index
-                                _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
-                            }
-                            else
-                            {
-                                _il.LoadLocal(scopeSlot.Address);
-                            }
-                            var rhsType = _expressionEmitter.Emit(assignmentExpression.Right, typeCoercion);
-                            variable.Type = rhsType;
-                            _il.OpCode(ILOpCode.Stfld);
-                            _il.Token(variable.FieldHandle);
-                            javascriptType = rhsType;
-                        }
-                        else
-                        {
-                            throw new NotSupportedException($"Unsupported assignment target type: {assignmentExpression.Left.Type}");
-                        }
+                        javascriptType = EmitAssignment(assignmentExpression, typeCoercion);
                         break;
                 case CallExpression callExpression:
                     // Use the unified call generator in expression context, preserving the result
@@ -1102,6 +1068,45 @@ namespace Js2IL.Services.ILGenerators
             }
 
             return javascriptType;
+        }
+
+        // Helper to emit an assignment expression and return its JavaScript type
+        private JavascriptType EmitAssignment(AssignmentExpression assignmentExpression, TypeCoercion typeCoercion)
+        {
+            if (assignmentExpression.Left is not Identifier aid)
+            {
+                throw new NotSupportedException($"Unsupported assignment target type: {assignmentExpression.Left.Type}");
+            }
+
+            var variable = _variables.FindVariable(aid.Name) ?? throw new InvalidOperationException($"Variable '{aid.Name}' not found");
+
+            // Load the appropriate scope instance that holds this field
+            var scopeSlot = _variables.GetScopeLocalSlot(variable.ScopeName);
+            if (scopeSlot.Address == -1)
+            {
+                throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
+            }
+            // Load scope instance
+            if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
+            {
+                _il.LoadArgument(scopeSlot.Address);
+            }
+            else if (scopeSlot.Location == ObjectReferenceLocation.ScopeArray)
+            {
+                _il.LoadArgument(0); // Load scope array parameter
+                _il.LoadConstantI4(scopeSlot.Address); // Load array index
+                _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
+            }
+            else
+            {
+                _il.LoadLocal(scopeSlot.Address);
+            }
+
+            var rhsType = _expressionEmitter.Emit(assignmentExpression.Right, typeCoercion);
+            variable.Type = rhsType;
+            _il.OpCode(ILOpCode.Stfld);
+            _il.Token(variable.FieldHandle);
+            return rhsType;
         }
 
         private MethodDefinitionHandle GenerateArrowFunctionMethod(ArrowFunctionExpression arrowFunction, string registryScopeName, string ilMethodName, string[] paramNames)
