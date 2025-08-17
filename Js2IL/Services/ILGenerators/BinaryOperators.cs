@@ -99,17 +99,94 @@ namespace Js2IL.Services.ILGenerators
             } else {
                 // For + we allow string concat path when left is string literal; otherwise numeric math
                 bool plus = operatorType == Operator.Addition;
+                bool equality = operatorType == Operator.Equality;
+
                 var leftType = LoadValue(binaryExpression.Left, new TypeCoercion());
-                if (!(plus && binaryExpression.Left is StringLiteral) && leftType != JavascriptType.Number)
+                if (equality)
                 {
-                    _il.OpCode(ILOpCode.Unbox_any);
-                    _il.Token(_bclReferences.DoubleType);
+                    if (leftType == JavascriptType.Number)
+                    {
+                        // Only unbox when the left operand value is boxed (variables/expressions),
+                        // not when it's a raw numeric literal or simple unary numeric.
+                        bool leftIsRawNumeric = binaryExpression.Left is Acornima.Ast.NumericLiteral
+                            || (binaryExpression.Left is Acornima.Ast.UnaryExpression ul && ul.Operator.ToString() == "UnaryNegation" && ul.Argument is Acornima.Ast.NumericLiteral);
+                        if (!leftIsRawNumeric)
+                        {
+                            _il.OpCode(ILOpCode.Unbox_any);
+                            _il.Token(_bclReferences.DoubleType);
+                        }
+                    }
+                    else if (leftType == JavascriptType.Boolean)
+                    {
+                        // If this is not a literal boolean, unbox (variables/expressions are boxed)
+                        if (!(binaryExpression.Left is Acornima.Ast.BooleanLiteral) && !(binaryExpression.Left is Acornima.Ast.Literal bl && bl.Value is bool))
+                        {
+                            _il.OpCode(ILOpCode.Unbox_any);
+                            _il.Token(_bclReferences.BooleanType);
+                        }
+                    }
+                    else
+                    {
+                        // If right is a boolean literal/value, coerce left to boolean as well (handles cases like: result == true)
+                        if (binaryExpression.Right is Acornima.Ast.BooleanLiteral || (binaryExpression.Right is Acornima.Ast.Literal brl && brl.Value is bool))
+                        {
+                            _il.OpCode(ILOpCode.Unbox_any);
+                            _il.Token(_bclReferences.BooleanType);
+                            leftType = JavascriptType.Boolean;
+                        }
+                    }
+                    // otherwise leave as loaded (e.g., string/object) and Ceq will perform ref equality (acceptable for now)
                 }
-                var rightType = LoadValue(binaryExpression.Right, new TypeCoercion() { toString = binaryExpression.Left is StringLiteral });
-                if (!(plus && binaryExpression.Left is StringLiteral) && rightType != JavascriptType.Number)
+                else
                 {
-                    _il.OpCode(ILOpCode.Unbox_any);
-                    _il.Token(_bclReferences.DoubleType);
+                    if (!(plus && binaryExpression.Left is StringLiteral) && leftType != JavascriptType.Number)
+                    {
+                        _il.OpCode(ILOpCode.Unbox_any);
+                        _il.Token(_bclReferences.DoubleType);
+                    }
+                }
+
+                var rightType = LoadValue(binaryExpression.Right, new TypeCoercion() { toString = binaryExpression.Left is StringLiteral });
+                if (equality)
+                {
+                    if (rightType == JavascriptType.Number)
+                    {
+                        // Only unbox when the right operand value is boxed (variables/expressions),
+                        // not when it's a raw numeric literal or simple unary numeric.
+                        bool rightIsRawNumeric = binaryExpression.Right is Acornima.Ast.NumericLiteral
+                            || (binaryExpression.Right is Acornima.Ast.UnaryExpression ur && ur.Operator.ToString() == "UnaryNegation" && ur.Argument is Acornima.Ast.NumericLiteral);
+                        if (!rightIsRawNumeric)
+                        {
+                            _il.OpCode(ILOpCode.Unbox_any);
+                            _il.Token(_bclReferences.DoubleType);
+                        }
+                    }
+                    else if (rightType == JavascriptType.Boolean)
+                    {
+                        if (!(binaryExpression.Right is Acornima.Ast.BooleanLiteral) && !(binaryExpression.Right is Acornima.Ast.Literal br && br.Value is bool))
+                        {
+                            _il.OpCode(ILOpCode.Unbox_any);
+                            _il.Token(_bclReferences.BooleanType);
+                        }
+                    }
+                    else
+                    {
+                        // If left evaluated as boolean (or is a boolean literal), coerce right to boolean
+                        if (leftType == JavascriptType.Boolean || binaryExpression.Left is Acornima.Ast.BooleanLiteral || (binaryExpression.Left is Acornima.Ast.Literal lbl && lbl.Value is bool))
+                        {
+                            _il.OpCode(ILOpCode.Unbox_any);
+                            _il.Token(_bclReferences.BooleanType);
+                            rightType = JavascriptType.Boolean;
+                        }
+                    }
+                }
+                else
+                {
+                    if (!(plus && binaryExpression.Left is StringLiteral) && rightType != JavascriptType.Number)
+                    {
+                        _il.OpCode(ILOpCode.Unbox_any);
+                        _il.Token(_bclReferences.DoubleType);
+                    }
                 }
             }
 
@@ -344,6 +421,38 @@ namespace Js2IL.Services.ILGenerators
 
             switch (expression)
             {
+                case Acornima.Ast.BinaryExpression nestedBinary:
+                    // Allow nested binary expressions as value operands, e.g., (n % 2) in (n % 2 == 0)
+                    // Emit the inner binary expression now; its generator handles boxing of results.
+                    Generate(nestedBinary);
+                    // Determine the resulting JS type based on operator kind
+                    switch (nestedBinary.Operator)
+                    {
+                        case Operator.LessThan:
+                        case Operator.GreaterThan:
+                        case Operator.LessThanOrEqual:
+                        case Operator.GreaterThanOrEqual:
+                        case Operator.Equality:
+                            type = JavascriptType.Boolean;
+                            break;
+                        case Operator.Addition:
+                        case Operator.Subtraction:
+                        case Operator.Multiplication:
+                        case Operator.Division:
+                        case Operator.Remainder:
+                        case Operator.Exponentiation:
+                        case Operator.BitwiseAnd:
+                        case Operator.BitwiseOr:
+                        case Operator.BitwiseXor:
+                        case Operator.LeftShift:
+                        case Operator.RightShift:
+                        case Operator.UnsignedRightShift:
+                            type = JavascriptType.Number;
+                            break;
+                        default:
+                            throw new NotSupportedException($"Unsupported nested binary operator: {nestedBinary.Operator}");
+                    }
+                    break;
                 case Acornima.Ast.BooleanLiteral booleanLiteral:
                     if (typeCoercion.toString)
                     {

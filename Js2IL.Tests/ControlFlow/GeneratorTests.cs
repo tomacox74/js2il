@@ -26,5 +26,8 @@ namespace Js2IL.Tests.ControlFlow
 
     [Fact(Skip = "Snapshot pending for ControlFlow_If_BooleanLiteral generator")]
     public Task ControlFlow_If_BooleanLiteral() { var testName = nameof(ControlFlow_If_BooleanLiteral); return GenerateTest(testName); }
+
+    [Fact]
+    public Task ControlFlow_If_NotFlag() { var testName = nameof(ControlFlow_If_NotFlag); return GenerateTest(testName); }
     }
 }
