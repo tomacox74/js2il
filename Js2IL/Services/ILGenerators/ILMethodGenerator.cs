@@ -949,50 +949,8 @@ namespace Js2IL.Services.ILGenerators
                     javascriptType = JavascriptType.Object;
                     break;
                 case MemberExpression memberExpression:
-                    // Evaluate base object into stack: object reference
-                    if (memberExpression.Object is not Identifier baseIdent)
-                        throw new NotSupportedException($"Unsupported member base expression: {memberExpression.Object.Type}");
-                    var baseVar = _variables.FindVariable(baseIdent.Name) ?? throw new InvalidOperationException($"Variable '{baseIdent.Name}' not found for member expression.");
-                    var baseScopeSlot = _variables.GetScopeLocalSlot(baseVar.ScopeName);
-                    if (baseScopeSlot.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(baseScopeSlot.Address);
-                    else if (baseScopeSlot.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(baseScopeSlot.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
-                    else _il.LoadLocal(baseScopeSlot.Address);
-                    _il.OpCode(ILOpCode.Ldfld);
-                    _il.Token(baseVar.FieldHandle); // stack: object
-
-                    if (!memberExpression.Computed && memberExpression.Property is Identifier propId)
-                    {
-                        // First, support array.length
-                        if (propId.Name == "length")
-                        {
-                            _il.OpCode(ILOpCode.Callvirt);
-                            _il.Token(_bclReferences.Array_GetCount_Ref);
-                            _il.OpCode(ILOpCode.Conv_r8);
-                            javascriptType = JavascriptType.Number;
-                            break;
-                        }
-                        // Next, support instance field access for known class instances
-                        if (_variableToClass.TryGetValue(baseIdent.Name, out var cname) && _classRegistry.TryGetField(cname, propId.Name, out var fieldHandle))
-                        {
-                            // At this point, stack has the instance already. Load its field value.
-                            _il.OpCode(ILOpCode.Ldfld);
-                            _il.Token(fieldHandle);
-                            javascriptType = JavascriptType.Object;
-                            break;
-                        }
-                        throw new NotSupportedException($"Property '{propId.Name}' not supported on this object.");
-                    }
-                    if (memberExpression.Computed)
-                    {
-                        // arr[expr] -> runtime Object.GetItem(array, doubleIndex)
-                        var indexType = _expressionEmitter.Emit(memberExpression.Property, new TypeCoercion());
-                        if (indexType != JavascriptType.Number)
-                            throw new NotSupportedException("Array index must be numeric expression");
-                        _runtime.InvokeGetItemFromObject();
-                        javascriptType = JavascriptType.Object;
-                        break;
-                    }
-                    throw new NotSupportedException("Only 'length', instance fields on known classes, or computed indexing supported.");
+                    javascriptType = EmitMemberExpression(memberExpression);
+                    break;
                 case Acornima.Ast.Identifier identifier:
                     {
                         var name = identifier.Name;
@@ -1114,6 +1072,53 @@ namespace Js2IL.Services.ILGenerators
             }
 
             throw new NotSupportedException($"Unsupported new-expression callee: {newExpression.Callee.Type}");
+        }
+
+        // Helper to emit a MemberExpression and return its JavaScript type
+        private JavascriptType EmitMemberExpression(MemberExpression memberExpression)
+        {
+            // Evaluate base object into stack: object reference
+            if (memberExpression.Object is not Identifier baseIdent)
+                throw new NotSupportedException($"Unsupported member base expression: {memberExpression.Object.Type}");
+
+            var baseVar = _variables.FindVariable(baseIdent.Name) ?? throw new InvalidOperationException($"Variable '{baseIdent.Name}' not found for member expression.");
+            var baseScopeSlot = _variables.GetScopeLocalSlot(baseVar.ScopeName);
+            if (baseScopeSlot.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(baseScopeSlot.Address);
+            else if (baseScopeSlot.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(baseScopeSlot.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
+            else _il.LoadLocal(baseScopeSlot.Address);
+            _il.OpCode(ILOpCode.Ldfld);
+            _il.Token(baseVar.FieldHandle); // stack: object
+
+            if (!memberExpression.Computed && memberExpression.Property is Identifier propId)
+            {
+                // First, support array.length
+                if (propId.Name == "length")
+                {
+                    _il.OpCode(ILOpCode.Callvirt);
+                    _il.Token(_bclReferences.Array_GetCount_Ref);
+                    _il.OpCode(ILOpCode.Conv_r8);
+                    return JavascriptType.Number;
+                }
+                // Next, support instance field access for known class instances
+                if (_variableToClass.TryGetValue(baseIdent.Name, out var cname) && _classRegistry.TryGetField(cname, propId.Name, out var fieldHandle))
+                {
+                    // At this point, stack has the instance already. Load its field value.
+                    _il.OpCode(ILOpCode.Ldfld);
+                    _il.Token(fieldHandle);
+                    return JavascriptType.Object;
+                }
+                throw new NotSupportedException($"Property '{propId.Name}' not supported on this object.");
+            }
+            if (memberExpression.Computed)
+            {
+                // arr[expr] -> runtime Object.GetItem(array, doubleIndex)
+                var indexType = _expressionEmitter.Emit(memberExpression.Property, new TypeCoercion());
+                if (indexType != JavascriptType.Number)
+                    throw new NotSupportedException("Array index must be numeric expression");
+                _runtime.InvokeGetItemFromObject();
+                return JavascriptType.Object;
+            }
+            throw new NotSupportedException("Only 'length', instance fields on known classes, or computed indexing supported.");
         }
 
         private MethodDefinitionHandle GenerateArrowFunctionMethod(ArrowFunctionExpression arrowFunction, string registryScopeName, string ilMethodName, string[] paramNames)
