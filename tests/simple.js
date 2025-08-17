@@ -1,5 +1,5 @@
 var x = 1 + 2;
-console.log('x is ', x);
+console.log('x is', x);
 
 function addNumbers(a, b) {
     var sum = a + b;
@@ -7,3 +7,4 @@ function addNumbers(a, b) {
 }
 
 var result = addNumbers(5, 3);
+console.log('addNumbers(5, 3) returned', result);
