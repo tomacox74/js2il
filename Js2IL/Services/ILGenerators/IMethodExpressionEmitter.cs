@@ -18,7 +18,9 @@ namespace Js2IL.Services.ILGenerators
     record TypeCoercion
     {
         public bool toString = false;
-        public bool boxed = false;
+        // When true, the expression emitter will box primitive results (e.g., numbers) before returning.
+        // Default is true to match common call sites that expect object-typed values on the stack.
+        public bool boxResult = false;
     }
 
     /// <summary>
