@@ -26,18 +26,16 @@ namespace Js2IL.Services.ILGenerators
         private readonly Runtime _runtime;
         private readonly MethodBodyStreamEncoder _methodBodyStreamEncoder;
         private MethodDefinitionHandle _firstMethod = default;
-
-    private readonly Dispatch.DispatchTableGenerator _dispatchTableGenerator;
-    private readonly ClassRegistry _classRegistry;
-    // When emitting inside a class instance method (.ctor or method), enable 'this' handling
-    private readonly bool _inClassMethod;
-    private readonly string? _currentClassName;
-    // Tracks the name of the variable currently being initialized, to name arrow-function scopes consistently
-    // with SymbolTableBuilder (e.g., ArrowFunction_<targetName>) when emitting an ArrowFunctionExpression on the RHS.
-    private string? _currentAssignmentTarget;
-    // Tracks simple associations from variable name to class name when initialized via `const x = new ClassName()`
-    private readonly Dictionary<string, string> _variableToClass = new(StringComparer.Ordinal);
-
+        private readonly Dispatch.DispatchTableGenerator _dispatchTableGenerator;
+        private readonly ClassRegistry _classRegistry;
+        // When emitting inside a class instance method (.ctor or method), enable 'this' handling
+        private readonly bool _inClassMethod;
+        private readonly string? _currentClassName;
+        // Tracks the name of the variable currently being initialized, to name arrow-function scopes consistently
+        // with SymbolTableBuilder (e.g., ArrowFunction_<targetName>) when emitting an ArrowFunctionExpression on the RHS.
+        private string? _currentAssignmentTarget;
+        // Tracks simple associations from variable name to class name when initialized via `const x = new ClassName()`
+        private readonly Dictionary<string, string> _variableToClass = new(StringComparer.Ordinal);
         /*
          * Temporary exposure of private members until refactoring gets cleaner
          * need to determine what the difference is between generating the main method and generating any generic method
@@ -49,7 +47,7 @@ namespace Js2IL.Services.ILGenerators
 
         public MethodDefinitionHandle FirstMethod => _firstMethod;
 
-    public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator, ClassRegistry? classRegistry = null, bool inClassMethod = false, string? currentClassName = null)
+        public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator, ClassRegistry? classRegistry = null, bool inClassMethod = false, string? currentClassName = null)
         {
             _variables = variables;
             _bclReferences = bclReferences;

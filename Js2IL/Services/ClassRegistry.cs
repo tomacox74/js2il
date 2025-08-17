@@ -10,9 +10,9 @@ namespace Js2IL.Services
     /// </summary>
     internal sealed class ClassRegistry
     {
-    private readonly Dictionary<string, TypeDefinitionHandle> _classes = new(StringComparer.Ordinal);
-    private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _classFields = new(StringComparer.Ordinal);
-    private readonly Dictionary<string, Dictionary<string, MemberReferenceHandle>> _classStaticMethods = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, TypeDefinitionHandle> _classes = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _classFields = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, Dictionary<string, MemberReferenceHandle>> _classStaticMethods = new(StringComparer.Ordinal);
 
         public void Register(string className, TypeDefinitionHandle typeHandle)
         {

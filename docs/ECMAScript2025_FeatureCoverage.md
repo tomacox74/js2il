@@ -168,3 +168,18 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | for loop (LessThanOrEqual) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_ForLoop_LessThanOrEqual.js` |  | 14.7.4.2 |
 | for loop (GreaterThanOrEqual) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_ForLoop_GreaterThanOrEqual.js` |  | 14.7.4.2 |
 
+
+## [ECMAScript Language: Classes](https://tc39.es/ecma262/#sec-ecmascript-language-classes)
+
+### [Class Definitions](https://tc39.es/ecma262/#sec-class-definitions)
+
+#### [Basic class features](https://tc39.es/ecma262/#sec-class-definitions)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Class declaration (empty) | Supported | `Js2IL.Tests/JavaScript/Classes_DeclareEmptyClass.js` |  | 15.1.1 |
+| Instance method (declare and call) | Supported | `Js2IL.Tests/JavaScript/Classes_ClassWithMethod_HelloWorld.js` |  | 15.1.1 |
+| Static method (declare and call) | Supported | `Js2IL.Tests/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js` |  | 15.1.1 |
+| Instance field initializer (public property default) | Supported | `Js2IL.Tests/JavaScript/Classes_ClassProperty_DefaultAndLog.js` | Emitted by assigning defaults in the generated .ctor. | 15.1.1 |
+| Constructor with parameter and this.field assignment; method reads field | Supported | `Js2IL.Tests/JavaScript/Classes_ClassConstructor_Param_Field_Log.js` |  | 15.1.1 |
+
