@@ -945,7 +945,7 @@ namespace Js2IL.Services.ILGenerators
                     break;
                 case BooleanLiteral booleanLiteral:
                     _binaryOperators.LoadValue(expression, typeCoercion);
-                    javascriptType = booleanLiteral.Value ? JavascriptType.Boolean : JavascriptType.Boolean;
+                    javascriptType = JavascriptType.Boolean;
                     break;
                 case UpdateExpression updateExpression:
                     GenerateUpdateExpression(updateExpression);
