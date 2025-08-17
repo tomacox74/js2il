@@ -63,6 +63,7 @@ namespace Js2IL.Services.ILGenerators
             // Example: class C { foo = 42; }
             // We emit them as instance fields of type object and initialize in .ctor.
             var fieldsWithInits = new System.Collections.Generic.List<(FieldDefinitionHandle Field, Expression? Init)>();
+            var declaredFieldNames = new System.Collections.Generic.HashSet<string>(StringComparer.Ordinal);
             foreach (var element in cdecl.Body.Body)
             {
                 if (element is Acornima.Ast.PropertyDefinition pdef && pdef.Key is Identifier pid)
@@ -74,16 +75,92 @@ namespace Js2IL.Services.ILGenerators
                     var fh = tb.AddFieldDefinition(FieldAttributes.Public, pid.Name, fSigHandle);
                     _classRegistry.RegisterField(classScope.Name, pid.Name, fh);
                     fieldsWithInits.Add((fh, pdef.Value as Expression));
+                    declaredFieldNames.Add(pid.Name);
                 }
             }
 
-            // Emit a parameterless .ctor that calls System.Object::.ctor and initializes fields
-            var ctorHandle = EmitParameterlessConstructor(tb, fieldsWithInits);
+            // Pre-scan methods (including constructor) for assignments to this.<prop> and declare fields for them
+            System.Collections.Generic.IEnumerable<string> FindThisAssignedProps(Acornima.Ast.Node node)
+            {
+                if (node is null) yield break;
+                switch (node)
+                {
+                    case Acornima.Ast.AssignmentExpression a when a.Left is Acornima.Ast.MemberExpression me && me.Object is Acornima.Ast.ThisExpression && !me.Computed && me.Property is Identifier pid:
+                        yield return pid.Name;
+                        break;
+                    case Acornima.Ast.BlockStatement b:
+                        foreach (var s in b.Body)
+                            foreach (var n in FindThisAssignedProps(s)) yield return n;
+                        break;
+                    case Acornima.Ast.ExpressionStatement es:
+                        foreach (var n in FindThisAssignedProps(es.Expression)) yield return n;
+                        break;
+                    case Acornima.Ast.IfStatement ifs:
+                        foreach (var n in FindThisAssignedProps(ifs.Consequent)) yield return n;
+                        if (ifs.Alternate != null) foreach (var n in FindThisAssignedProps(ifs.Alternate)) yield return n;
+                        break;
+                    case Acornima.Ast.ForStatement fs:
+                        if (fs.Init is Acornima.Ast.Node init) foreach (var n in FindThisAssignedProps(init)) yield return n;
+                        if (fs.Test is Acornima.Ast.Node test) foreach (var n in FindThisAssignedProps(test)) yield return n;
+                        if (fs.Update is Acornima.Ast.Node upd) foreach (var n in FindThisAssignedProps(upd)) yield return n;
+                        foreach (var n in FindThisAssignedProps(fs.Body)) yield return n;
+                        break;
+                    case Acornima.Ast.CallExpression ce:
+                        foreach (var arg in ce.Arguments)
+                            foreach (var n in FindThisAssignedProps(arg)) yield return n;
+                        break;
+                    case Acornima.Ast.MemberExpression mem:
+                        if (mem.Object is Acornima.Ast.Node on) foreach (var n in FindThisAssignedProps(on)) yield return n;
+                        if (mem.Property is Acornima.Ast.Node pn) foreach (var n in FindThisAssignedProps(pn)) yield return n;
+                        break;
+                    case Acornima.Ast.AssignmentExpression a2:
+                        if (a2.Right is Acornima.Ast.Node rn) foreach (var n in FindThisAssignedProps(rn)) yield return n;
+                        break;
+                }
+            }
+
+            foreach (var m in cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>())
+            {
+                if (m.Value is FunctionExpression fe && fe.Body is BlockStatement body)
+                {
+                    foreach (var prop in FindThisAssignedProps(body).Distinct(StringComparer.Ordinal))
+                    {
+                        if (!declaredFieldNames.Contains(prop))
+                        {
+                            var fSig = new BlobBuilder();
+                            new BlobEncoder(fSig).Field().Type().Object();
+                            var fSigHandle = _metadata.GetOrAddBlob(fSig);
+                            var fh = tb.AddFieldDefinition(FieldAttributes.Public, prop, fSigHandle);
+                            _classRegistry.RegisterField(classScope.Name, prop, fh);
+                            declaredFieldNames.Add(prop);
+                        }
+                    }
+                }
+            }
+
+            // Detect explicit constructor method (name 'constructor')
+            var ctorMethod = cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>()
+                .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+            if (ctorMethod != null && ctorMethod.Value is FunctionExpression ctorFunc)
+            {
+                EmitExplicitConstructor(tb, ctorFunc, fieldsWithInits, classScope.Name);
+            }
+            else
+            {
+                // Emit a parameterless .ctor that calls System.Object::.ctor and initializes fields
+                _ = EmitParameterlessConstructor(tb, fieldsWithInits, classScope.Name);
+            }
 
             // Methods: create stubs for now; real method codegen will come later
             foreach (var element in cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>())
             {
-                EmitMethod(tb, element);
+                var mname = (element.Key as Identifier)?.Name;
+                if (string.Equals(mname, "constructor", StringComparison.Ordinal))
+                {
+                    // already emitted as .ctor above
+                    continue;
+                }
+                EmitMethod(tb, element, classScope.Name);
             }
 
             // Finally, create the type definition (after fields and methods were added)
@@ -100,7 +177,8 @@ namespace Js2IL.Services.ILGenerators
 
         private MethodDefinitionHandle EmitParameterlessConstructor(
             TypeBuilder tb,
-            System.Collections.Generic.List<(FieldDefinitionHandle Field, Expression? Init)> fieldsWithInits)
+            System.Collections.Generic.List<(FieldDefinitionHandle Field, Expression? Init)> fieldsWithInits,
+            string className)
         {
             // Signature: instance void .ctor()
             var sigBuilder = new BlobBuilder();
@@ -110,13 +188,56 @@ namespace Js2IL.Services.ILGenerators
             var ctorSig = _metadata.GetOrAddBlob(sigBuilder);
 
             // Body - use ILMethodGenerator for consistent expression emission
-            var ilGen = new ILMethodGenerator(_variables, _bcl, _metadata, _methodBodies, _dispatchTableGenerator, _classRegistry);
+            var ilGen = new ILMethodGenerator(_variables, _bcl, _metadata, _methodBodies, _dispatchTableGenerator, _classRegistry, inClassMethod: true, currentClassName: className);
             ilGen.IL.OpCode(ILOpCode.Ldarg_0);
             ilGen.IL.Call(_bcl.Object_Ctor_Ref);
 
             // Initialize fields with default values if provided using ILMethodGenerator.Emit
             EmitFieldInitializers(ilGen, fieldsWithInits);
 
+            ilGen.IL.OpCode(ILOpCode.Ret);
+
+            var ctorBody = _methodBodies.AddMethodBody(ilGen.IL);
+            return tb.AddMethodDefinition(
+                MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
+                ".ctor",
+                ctorSig,
+                ctorBody);
+        }
+
+        private MethodDefinitionHandle EmitExplicitConstructor(
+            TypeBuilder tb,
+            FunctionExpression ctorFunc,
+            System.Collections.Generic.List<(FieldDefinitionHandle Field, Expression? Init)> fieldsWithInits,
+            string className)
+        {
+            // Signature: instance void .ctor(object, ...)
+            var paramCount = ctorFunc.Params.Count;
+            var sigBuilder = new BlobBuilder();
+            new BlobEncoder(sigBuilder)
+                .MethodSignature(isInstanceMethod: true)
+                .Parameters(paramCount, r => r.Void(), p => { for (int i = 0; i < paramCount; i++) p.AddParameter().Type().Object(); });
+            var ctorSig = _metadata.GetOrAddBlob(sigBuilder);
+
+            // Create a generator with parameter variables so identifiers resolve
+            var paramNames = ctorFunc.Params.OfType<Identifier>().Select(p => p.Name);
+            var methodVariables = new Variables(_variables, "constructor", paramNames, isNestedFunction: false);
+            var ilGen = new ILMethodGenerator(methodVariables, _bcl, _metadata, _methodBodies, _dispatchTableGenerator, _classRegistry, inClassMethod: true, currentClassName: className);
+
+            // base .ctor
+            ilGen.IL.OpCode(ILOpCode.Ldarg_0);
+            ilGen.IL.Call(_bcl.Object_Ctor_Ref);
+
+            // Initialize fields with default values
+            EmitFieldInitializers(ilGen, fieldsWithInits);
+
+            // Emit constructor body statements (no default return value emission)
+            if (ctorFunc.Body is BlockStatement bstmt)
+            {
+                ilGen.GenerateStatements(bstmt.Body);
+            }
+
+            // Return from constructor (void)
             ilGen.IL.OpCode(ILOpCode.Ret);
 
             var ctorBody = _methodBodies.AddMethodBody(ilGen.IL);
@@ -148,7 +269,7 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-        private MethodDefinitionHandle EmitMethod(TypeBuilder tb, Acornima.Ast.MethodDefinition element)
+    private MethodDefinitionHandle EmitMethod(TypeBuilder tb, Acornima.Ast.MethodDefinition element, string className)
         {
             var mname = (element.Key as Identifier)?.Name ?? "method";
             var msig = BuildMethodSignature(element.Value as FunctionExpression, isStatic: element.Static);
@@ -159,7 +280,7 @@ namespace Js2IL.Services.ILGenerators
                 ? fe.Params.OfType<Identifier>().Select(p => p.Name)
                 : Enumerable.Empty<string>();
             var methodVariables = new Variables(_variables, mname, paramNames, isNestedFunction: false);
-            var ilGen = new ILMethodGenerator(methodVariables, _bcl, _metadata, _methodBodies, _dispatchTableGenerator, _classRegistry);
+            var ilGen = new ILMethodGenerator(methodVariables, _bcl, _metadata, _methodBodies, _dispatchTableGenerator, _classRegistry, inClassMethod: !element.Static, currentClassName: className);
 
             bool hasExplicitReturn = false;
             if (element.Value is FunctionExpression fexpr && fexpr.Body is BlockStatement bstmt)
