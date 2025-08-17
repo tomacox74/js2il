@@ -12,6 +12,7 @@ namespace Js2IL.Services
     {
     private readonly Dictionary<string, TypeDefinitionHandle> _classes = new(StringComparer.Ordinal);
     private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _classFields = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, Dictionary<string, MemberReferenceHandle>> _classStaticMethods = new(StringComparer.Ordinal);
 
         public void Register(string className, TypeDefinitionHandle typeHandle)
         {
@@ -41,6 +42,27 @@ namespace Js2IL.Services
             if (_classFields.TryGetValue(className, out var fields))
             {
                 return fields.TryGetValue(fieldName, out fieldHandle);
+            }
+            return false;
+        }
+
+        public void RegisterStaticMethod(string className, string methodName, MemberReferenceHandle memberRef)
+        {
+            if (string.IsNullOrEmpty(className) || string.IsNullOrEmpty(methodName)) return;
+            if (!_classStaticMethods.TryGetValue(className, out var methods))
+            {
+                methods = new Dictionary<string, MemberReferenceHandle>(StringComparer.Ordinal);
+                _classStaticMethods[className] = methods;
+            }
+            methods[methodName] = memberRef;
+        }
+
+        public bool TryGetStaticMethod(string className, string methodName, out MemberReferenceHandle memberRef)
+        {
+            memberRef = default;
+            if (_classStaticMethods.TryGetValue(className, out var methods))
+            {
+                return methods.TryGetValue(methodName, out memberRef);
             }
             return false;
         }

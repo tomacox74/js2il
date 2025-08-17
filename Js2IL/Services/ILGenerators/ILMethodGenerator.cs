@@ -626,9 +626,32 @@ namespace Js2IL.Services.ILGenerators
                 memberExpression.Property is not Acornima.Ast.Identifier propertyIdentifier ||
                 propertyIdentifier.Name != "log")
             {
-                // Instance method call: obj.method(...)
+                // Static class method: ClassName.method(...)
                 if (callExpression.Callee is Acornima.Ast.MemberExpression mem && !mem.Computed && mem.Object is Acornima.Ast.Identifier baseId && mem.Property is Acornima.Ast.Identifier mname)
                 {
+                    // If the base identifier resolves to a known class, emit a static call without loading an instance.
+                    if (_classRegistry.TryGet(baseId.Name, out var classType) && !classType.IsNil)
+                    {
+                        // Build static method signature: object method(object, ...)
+                        var sArgCount = callExpression.Arguments.Count;
+                        var sSig = new BlobBuilder();
+                        new BlobEncoder(sSig)
+                            .MethodSignature(isInstanceMethod: false)
+                            .Parameters(sArgCount, r => r.Type().Object(), p => { for (int i=0;i<sArgCount;i++) p.AddParameter().Type().Object(); });
+                        var sMsig = _metadataBuilder.GetOrAddBlob(sSig);
+                        var sMref = _metadataBuilder.AddMemberReference(classType, _metadataBuilder.GetOrAddString(mname.Name), sMsig);
+                        // Push arguments
+                        for (int i = 0; i < callExpression.Arguments.Count; i++)
+                        {
+                            _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
+                        }
+                        _il.OpCode(ILOpCode.Call);
+                        _il.Token(sMref);
+                        if (discardResult) _il.OpCode(ILOpCode.Pop);
+                        return;
+                    }
+
+                    // Instance method call: obj.method(...)
                     // Load instance from variable field
                     var baseVar = _variables.FindVariable(baseId.Name) ?? throw new InvalidOperationException($"Variable '{baseId.Name}' not found.");
                     var scopeRef = _variables.GetScopeLocalSlot(baseVar.ScopeName);

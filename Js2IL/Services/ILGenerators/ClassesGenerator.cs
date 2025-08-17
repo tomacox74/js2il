@@ -151,7 +151,7 @@ namespace Js2IL.Services.ILGenerators
         private MethodDefinitionHandle EmitMethod(TypeBuilder tb, Acornima.Ast.MethodDefinition element)
         {
             var mname = (element.Key as Identifier)?.Name ?? "method";
-            var msig = BuildMethodSignature(element.Value as FunctionExpression);
+            var msig = BuildMethodSignature(element.Value as FunctionExpression, isStatic: element.Static);
 
             // Use ILMethodGenerator for body emission to reuse existing statement/expression logic
             // Build method variables context (no JS parameters yet for class methods)
@@ -195,15 +195,24 @@ namespace Js2IL.Services.ILGenerators
             }
 
             var mbody = _methodBodies.AddMethodBody(ilGen.IL, localVariablesSignature: localSignature, attributes: bodyAttributes);
-            return tb.AddMethodDefinition(MethodAttributes.Public | MethodAttributes.HideBySig, mname, msig, mbody);
+            var attrs = MethodAttributes.Public | MethodAttributes.HideBySig;
+            if (element.Static)
+            {
+                attrs |= MethodAttributes.Static;
+            }
+            var methodDef = tb.AddMethodDefinition(attrs, mname, msig, mbody);
+
+            // Note: Static methods will be invoked via MemberReference built at call site. Registration not required here.
+
+            return methodDef;
         }
 
-        private BlobHandle BuildMethodSignature(FunctionExpression? f)
+        private BlobHandle BuildMethodSignature(FunctionExpression? f, bool isStatic)
         {
             var paramCount = f != null ? f.Params.Count : 0;
             var sig = new BlobBuilder();
             new BlobEncoder(sig)
-                .MethodSignature(isInstanceMethod: true)
+                .MethodSignature(isInstanceMethod: !isStatic)
                 .Parameters(paramCount, r => r.Type().Object(), p => {
                     for (int i = 0; i < paramCount; i++) p.AddParameter().Type().Object();
                 });
