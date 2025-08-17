@@ -1,0 +1,88 @@
+﻿// IL code: BinaryOperator_EqualBoolean
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.BinaryOperator_EqualBoolean
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field public object x
+	.field public object y
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method BinaryOperator_EqualBoolean::.ctor
+
+} // end of class Scopes.BinaryOperator_EqualBoolean
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x205c
+		// Header size: 12
+		// Code size: 93 (0x5d)
+		.maxstack 8
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.BinaryOperator_EqualBoolean::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldc.i4.1
+		IL_0008: ldc.i4.1
+		IL_0009: ceq
+		IL_000b: box [System.Runtime]System.Boolean
+		IL_0010: stfld object Scopes.BinaryOperator_EqualBoolean::x
+		IL_0015: ldloc.0
+		IL_0016: ldc.i4.1
+		IL_0017: ldc.i4.0
+		IL_0018: ceq
+		IL_001a: box [System.Runtime]System.Boolean
+		IL_001f: stfld object Scopes.BinaryOperator_EqualBoolean::y
+		IL_0024: ldc.i4.2
+		IL_0025: newarr [System.Runtime]System.Object
+		IL_002a: dup
+		IL_002b: ldc.i4.0
+		IL_002c: ldstr "x is"
+		IL_0031: stelem.ref
+		IL_0032: dup
+		IL_0033: ldc.i4.1
+		IL_0034: ldloc.0
+		IL_0035: ldfld object Scopes.BinaryOperator_EqualBoolean::x
+		IL_003a: stelem.ref
+		IL_003b: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0040: ldc.i4.2
+		IL_0041: newarr [System.Runtime]System.Object
+		IL_0046: dup
+		IL_0047: ldc.i4.0
+		IL_0048: ldstr "y is"
+		IL_004d: stelem.ref
+		IL_004e: dup
+		IL_004f: ldc.i4.1
+		IL_0050: ldloc.0
+		IL_0051: ldfld object Scopes.BinaryOperator_EqualBoolean::y
+		IL_0056: stelem.ref
+		IL_0057: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_005c: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

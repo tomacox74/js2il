@@ -9,5 +9,6 @@ namespace Js2IL.Tests.Literals
         // Literal evaluation tests
         [Fact] public Task ArrayLiteral() { var testName = nameof(ArrayLiteral); return ExecutionTest(testName); }
         [Fact] public Task ObjectLiteral() { var testName = nameof(ObjectLiteral); return ExecutionTest(testName); }
+    [Fact] public Task BooleanLiteral() { var testName = nameof(BooleanLiteral); return ExecutionTest(testName); }
     }
 }

@@ -943,8 +943,99 @@ namespace Js2IL.Services.ILGenerators
                     javascriptType = JavascriptType.Number;
 
                     break;
+                case BooleanLiteral booleanLiteral:
+                    _binaryOperators.LoadValue(expression, typeCoercion);
+                    javascriptType = JavascriptType.Boolean;
+                    break;
                 case UpdateExpression updateExpression:
                     GenerateUpdateExpression(updateExpression);
+                    break;
+                case UnaryExpression unaryExpression:
+                    {
+                        // Support logical not: !expr
+                        var op = unaryExpression.Operator.ToString();
+                        if (op == "LogicalNot")
+                        {
+                            // If we're in a conditional context, invert the branch directly: if (!x) ... => branch on x == false
+                            if (branching != null)
+                            {
+                                var argType = ((IMethodExpressionEmitter)this).Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = false }, null);
+
+                                if (argType == JavascriptType.Boolean)
+                                {
+                                    // If the argument was not a literal, it's boxed; unbox first
+                                    if (unaryExpression.Argument is not BooleanLiteral && !(unaryExpression.Argument is Literal lit && lit.Value is bool))
+                                    {
+                                        _il.OpCode(ILOpCode.Unbox_any);
+                                        _il.Token(_bclReferences.BooleanType);
+                                    }
+                                    // Brfalse => when arg is false, jump to BranchOnTrue (since !arg is true)
+                                    _il.Branch(ILOpCode.Brfalse, branching.BranchOnTrue);
+                                }
+                                else if (argType == JavascriptType.Number)
+                                {
+                                    // ToBoolean(number): 0 => false; so Brfalse when number == 0. Convert to i4 zero-check.
+                                    // number on stack is double; compare to 0 and branch on equality
+                                    _il.LoadConstantR8(0);
+                                    _il.OpCode(ILOpCode.Ceq);
+                                    _il.Branch(ILOpCode.Brtrue, branching.BranchOnTrue);
+                                }
+                                else
+                                {
+                                    // Assume boxed boolean; unbox then brfalse
+                                    _il.OpCode(ILOpCode.Unbox_any);
+                                    _il.Token(_bclReferences.BooleanType);
+                                    _il.Branch(ILOpCode.Brfalse, branching.BranchOnTrue);
+                                }
+
+                                if (branching.BranchOnFalse.HasValue)
+                                {
+                                    _il.Branch(ILOpCode.Br, branching.BranchOnFalse.Value);
+                                }
+                                else
+                                {
+                                    // No else block: pop any leftover value (shouldn't be any after branch), but be safe.
+                                    // Note: Branch instructions consume the tested value; nothing to pop here.
+                                }
+
+                                return JavascriptType.Unknown;
+                            }
+                            else
+                            {
+                                // Non-branching context: compute the boolean value and invert it on the stack.
+                                var argType = ((IMethodExpressionEmitter)this).Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = false }, null);
+
+                                if (argType == JavascriptType.Boolean)
+                                {
+                                    if (unaryExpression.Argument is not BooleanLiteral && !(unaryExpression.Argument is Literal lit2 && lit2.Value is bool))
+                                    {
+                                        _il.OpCode(ILOpCode.Unbox_any);
+                                        _il.Token(_bclReferences.BooleanType);
+                                    }
+                                    _il.OpCode(ILOpCode.Ldc_i4_0);
+                                    _il.OpCode(ILOpCode.Ceq);
+                                }
+                                else if (argType == JavascriptType.Number)
+                                {
+                                    _il.LoadConstantR8(0);
+                                    _il.OpCode(ILOpCode.Ceq);
+                                }
+                                else
+                                {
+                                    _il.OpCode(ILOpCode.Unbox_any);
+                                    _il.Token(_bclReferences.BooleanType);
+                                    _il.OpCode(ILOpCode.Ldc_i4_0);
+                                    _il.OpCode(ILOpCode.Ceq);
+                                }
+
+                                javascriptType = JavascriptType.Boolean;
+                            }
+                        }
+                        else
+                        {
+                            throw new NotSupportedException($"Unsupported unary operator: {op}");
+                        }
+                    }
                     break;
                 case ObjectExpression objectExpression:
                     GenerateObjectExpresion(objectExpression);
@@ -979,6 +1070,30 @@ namespace Js2IL.Services.ILGenerators
                 default:
                     javascriptType = _binaryOperators.LoadValue(expression, typeCoercion);
                     break;
+            }
+
+            // If this emit is for a conditional test (if/for) and wasn't handled by BinaryOperators,
+            // branch based on a boolean value now. This consumes the value from the stack.
+            if (branching != null && expression is not BinaryExpression)
+            {
+                if (javascriptType == JavascriptType.Boolean)
+                {
+                    _il.Branch(ILOpCode.Brtrue, branching.BranchOnTrue);
+                    if (branching.BranchOnFalse.HasValue)
+                    {
+                        _il.Branch(ILOpCode.Br, branching.BranchOnFalse.Value);
+                    }
+                    else
+                    {
+                        _il.OpCode(ILOpCode.Pop);
+                    }
+                    // We've emitted control flow, no result remains
+                    return JavascriptType.Unknown;
+                }
+                else
+                {
+                    throw new NotSupportedException($"Unsupported conditional test expression type: {javascriptType} for node {expression.Type}");
+                }
             }
 
             // Centralized boxing: if requested, box primitive results

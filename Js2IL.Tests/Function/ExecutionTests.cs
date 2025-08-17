@@ -44,5 +44,8 @@ namespace Js2IL.Tests.Function
 
         [Fact]
         public Task Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal() { var testName = nameof(Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal); return ExecutionTest(testName); }
+
+    [Fact]
+    public Task Function_IsEven_CompareResultToTrue() { var testName = nameof(Function_IsEven_CompareResultToTrue); return ExecutionTest(testName); }
     }
 }

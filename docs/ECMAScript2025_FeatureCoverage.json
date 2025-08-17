@@ -5,7 +5,26 @@
       "title": "ECMAScript Language: Expressions",
       "url": "https://tc39.es/ecma262/#sec-ecmascript-language-expressions",
       "subsections": [
-        
+        {
+          "subsection": "13.1",
+          "title": "Primary Expressions",
+          "url": "https://tc39.es/ecma262/#sec-primary-expression",
+          "paragraphs": [
+            {
+              "paragraph": "13.1.3",
+              "title": "BooleanLiteral",
+              "url": "https://tc39.es/ecma262/#sec-boolean-literals",
+              "features": [
+                {
+                  "feature": "Boolean literals (true/false)",
+                  "status": "Supported",
+                  "testScripts": [],
+                  "notes": "Emits proper IL for true/false and boxes when needed in arrays/log calls. See generator snapshot: Js2IL.Tests/Literals/GeneratorTests.BooleanLiteral.verified.txt."
+                }
+              ]
+            }
+          ]
+        },
         {
           "subsection": "13.2",
           "title": "Declarations",
@@ -160,6 +179,14 @@
           "url": "https://tc39.es/ecma262/#sec-ecmascript-language-expressions",
           "paragraphs": [
             {
+              "paragraph": "13.4.7",
+              "title": "Logical not operator (!)",
+              "url": "https://tc39.es/ecma262/#sec-logical-not-operator",
+              "features": [
+                { "feature": "Unary ! (Logical not)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_If_NotFlag.js"], "notes": "Branch inversion supported in conditionals (e.g., if (!x) ...), and value negation in non-branching contexts." }
+              ]
+            },
+            {
               "paragraph": "13.4.9",
               "title": "Postfix increment operator (++)",
               "url": "https://tc39.es/ecma262/#sec-postfix-increment-operator",
@@ -258,11 +285,14 @@
               "title": "Equality operators (==)",
               "url": "https://tc39.es/ecma262/#sec-equality-operators",
               "features": [
-                { "feature": "Binary == (Equality)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/BinaryOperator_Equal.js"], "notes": "" }
+                { "feature": "Binary == (Equality)", "status": "Supported", "testScripts": [
+                  "Js2IL.Tests/JavaScript/BinaryOperator_Equal.js",
+                  "Js2IL.Tests/JavaScript/Function_IsEven_CompareResultToTrue.js"
+                ], "notes": "Covers numeric and boolean equality, including comparisons against literals and function-returned booleans with selective boxing/unboxing. See also generator snapshot: Js2IL.Tests/BinaryOperator/GeneratorTests.BinaryOperator_EqualBoolean.verified.txt." }
               ]
             }
           ]
-  }
+        }
       ]
     },
     {
@@ -280,7 +310,9 @@
               "title": "Runtime Semantics: Evaluation",
               "url": "https://tc39.es/ecma262/#sec-if-statement",
               "features": [
-                { "feature": "if statement (LessThan)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_If_LessThan.js"], "notes": "" }
+                { "feature": "if statement (LessThan)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_If_LessThan.js"], "notes": "" },
+                { "feature": "if statement (!flag)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_If_NotFlag.js"], "notes": "Logical not in conditional test supported." },
+                { "feature": "if statement (result == true)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/Function_IsEven_CompareResultToTrue.js"], "notes": "Compares function-returned boolean to true and branches accordingly." }
               ]
             }
           ]
