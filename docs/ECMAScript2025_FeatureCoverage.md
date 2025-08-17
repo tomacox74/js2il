@@ -6,6 +6,15 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 ## [ECMAScript Language: Expressions](https://tc39.es/ecma262/#sec-ecmascript-language-expressions)
 
+### [Primary Expressions](https://tc39.es/ecma262/#sec-primary-expression)
+
+#### [BooleanLiteral](https://tc39.es/ecma262/#sec-boolean-literals)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Boolean literals (true/false) | Supported |  | Emits proper IL for true/false and boxes when needed in arrays/log calls. See generator snapshot: Js2IL.Tests/Literals/GeneratorTests.BooleanLiteral.verified.txt. | 13.1.3 |
+
+
 ### [Declarations](https://tc39.es/ecma262/#sec-declarations)
 
 #### [let/const](https://tc39.es/ecma262/#sec-let-and-const-declarations)
@@ -64,6 +73,13 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 
 ### [Unary Operators](https://tc39.es/ecma262/#sec-ecmascript-language-expressions)
+
+#### [Logical not operator (!)](https://tc39.es/ecma262/#sec-logical-not-operator)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Unary ! (Logical not) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_If_NotFlag.js` | Branch inversion supported in conditionals (e.g., if (!x) ...), and value negation in non-branching contexts. | 13.4.7 |
+
 
 #### [Postfix increment operator (++)](https://tc39.es/ecma262/#sec-postfix-increment-operator)
 
@@ -143,7 +159,7 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Binary == (Equality) | Supported | `Js2IL.Tests/JavaScript/BinaryOperator_Equal.js` |  | 13.5.9 |
+| Binary == (Equality) | Supported | `Js2IL.Tests/JavaScript/BinaryOperator_Equal.js`<br>`Js2IL.Tests/JavaScript/Function_IsEven_CompareResultToTrue.js` | Covers numeric and boolean equality, including comparisons against literals and function-returned booleans with selective boxing/unboxing. See also generator snapshot: Js2IL.Tests/BinaryOperator/GeneratorTests.BinaryOperator_EqualBoolean.verified.txt. | 13.5.9 |
 
 
 ## [ECMAScript Language: Statements and Declarations](https://tc39.es/ecma262/#sec-ecmascript-language-statements-and-declarations)
@@ -155,6 +171,8 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
 | if statement (LessThan) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_If_LessThan.js` |  | 14.6.2 |
+| if statement (!flag) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_If_NotFlag.js` | Logical not in conditional test supported. | 14.6.2 |
+| if statement (result == true) | Supported | `Js2IL.Tests/JavaScript/Function_IsEven_CompareResultToTrue.js` | Compares function-returned boolean to true and branches accordingly. | 14.6.2 |
 
 
 ### [The for Statement](https://tc39.es/ecma262/#sec-for-statement)
