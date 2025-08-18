@@ -175,6 +175,28 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | if statement (result == true) | Supported | `Js2IL.Tests/JavaScript/Function_IsEven_CompareResultToTrue.js` | Compares function-returned boolean to true and branches accordingly. | 14.6.2 |
 
 
+### [The do-while Statement](https://tc39.es/ecma262/#sec-do-while-statement)
+
+#### [Runtime Semantics: DoWhileStatement Evaluation](https://tc39.es/ecma262/#sec-do-while-statement)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| do-while loop (CountDownFromFive) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_DoWhile_CountDownFromFive.js` |  | 14.7.1.1 |
+| do-while loop: continue (skip even) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_DoWhile_Continue_SkipEven.js` | continue branches to the post-body test point (LoopContext). | 14.7.1.1 |
+| do-while loop: break | Supported | `Js2IL.Tests/JavaScript/ControlFlow_DoWhile_Break_AtThree.js` | break branches to loop end (LoopContext). | 14.7.1.1 |
+
+
+### [The while Statement](https://tc39.es/ecma262/#sec-while-statement)
+
+#### [Runtime Semantics: WhileStatement Evaluation](https://tc39.es/ecma262/#sec-while-statement)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| while loop (CountDownFromFive) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_While_CountDownFromFive.js` |  | 14.7.2.1 |
+| while loop: continue (skip even) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_While_Continue_SkipEven.js` | continue branches to loop head (LoopContext). | 14.7.2.1 |
+| while loop: break | Supported | `Js2IL.Tests/JavaScript/ControlFlow_While_Break_AtThree.js` | break branches to loop end (LoopContext). | 14.7.2.1 |
+
+
 ### [The for Statement](https://tc39.es/ecma262/#sec-for-statement)
 
 #### [Runtime Semantics: ForLoopEvaluation](https://tc39.es/ecma262/#sec-runtime-semantics-forloopevaluation)
@@ -185,6 +207,8 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | for loop (CountDownFromFive) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_ForLoop_CountDownFromFive.js` |  | 14.7.4.2 |
 | for loop (LessThanOrEqual) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_ForLoop_LessThanOrEqual.js` |  | 14.7.4.2 |
 | for loop (GreaterThanOrEqual) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_ForLoop_GreaterThanOrEqual.js` |  | 14.7.4.2 |
+| for loop: continue | Supported | `Js2IL.Tests/JavaScript/ControlFlow_ForLoop_Continue_SkipEven.js` | Implements continue by branching to the update expression (LoopContext). | 14.7.4.2 |
+| for loop: break | Supported | `Js2IL.Tests/JavaScript/ControlFlow_ForLoop_Break_AtThree.js` | Implements break by branching to loop end label (LoopContext). | 14.7.4.2 |
 
 
 ## [ECMAScript Language: Classes](https://tc39.es/ecma262/#sec-ecmascript-language-classes)

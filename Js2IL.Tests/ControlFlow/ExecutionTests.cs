@@ -28,10 +28,35 @@ namespace Js2IL.Tests.ControlFlow
         [Fact]
         public Task ControlFlow_If_LessThan() { var testName = nameof(ControlFlow_If_LessThan); return ExecutionTest(testName); }
 
-    [Fact]
-    public Task ControlFlow_If_BooleanLiteral() { var testName = nameof(ControlFlow_If_BooleanLiteral); return ExecutionTest(testName); }
+        [Fact]
+        public Task ControlFlow_If_BooleanLiteral() { var testName = nameof(ControlFlow_If_BooleanLiteral); return ExecutionTest(testName); }
 
-    [Fact]
-    public Task ControlFlow_If_NotFlag() { var testName = nameof(ControlFlow_If_NotFlag); return ExecutionTest(testName); }
-    }
+        [Fact]
+        public Task ControlFlow_If_NotFlag() { var testName = nameof(ControlFlow_If_NotFlag); return ExecutionTest(testName); }
+            
+        [Fact]
+        public Task ControlFlow_While_CountDownFromFive() { var testName = nameof(ControlFlow_While_CountDownFromFive); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_DoWhile_CountDownFromFive() { var testName = nameof(ControlFlow_DoWhile_CountDownFromFive); return ExecutionTest(testName); }
+
+        // Pending feature: continue statement support
+        [Fact]
+        public Task ControlFlow_ForLoop_Continue_SkipEven() { var testName = nameof(ControlFlow_ForLoop_Continue_SkipEven); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_While_Continue_SkipEven() { var testName = nameof(ControlFlow_While_Continue_SkipEven); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_DoWhile_Continue_SkipEven() { var testName = nameof(ControlFlow_DoWhile_Continue_SkipEven); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForLoop_Break_AtThree() { var testName = nameof(ControlFlow_ForLoop_Break_AtThree); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_While_Break_AtThree() { var testName = nameof(ControlFlow_While_Break_AtThree); return ExecutionTest(testName); }
+        
+        [Fact]
+        public Task ControlFlow_DoWhile_Break_AtThree() { var testName = nameof(ControlFlow_DoWhile_Break_AtThree); return ExecutionTest(testName); }
+     }
 }

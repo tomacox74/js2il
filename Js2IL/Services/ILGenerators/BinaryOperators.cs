@@ -107,6 +107,18 @@ namespace Js2IL.Services.ILGenerators
                 bool staticString = plus && binaryExpression.Left is StringLiteral && (binaryExpression.Right is StringLiteral || binaryExpression.Right is NumericLiteral);
 
                 var leftType = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion());
+                // If we're doing an equality comparison and the left is an arithmetic expression,
+                // proactively unbox it to a double so subsequent branch compare works on numerics.
+                bool leftIsArithmeticExpr = binaryExpression.Left is BinaryExpression lbe &&
+                    (lbe.Operator == Operator.Addition || lbe.Operator == Operator.Subtraction ||
+                     lbe.Operator == Operator.Multiplication || lbe.Operator == Operator.Division ||
+                     lbe.Operator == Operator.Remainder || lbe.Operator == Operator.Exponentiation);
+                if (equality && leftIsArithmeticExpr && leftType != JavascriptType.Number)
+                {
+                    _il.OpCode(ILOpCode.Unbox_any);
+                    _il.Token(_bclReferences.DoubleType);
+                    leftType = JavascriptType.Number;
+                }
                 bool leftIsNumericSyntax = binaryExpression.Left is NumericLiteral || (binaryExpression.Left is UnaryExpression ulSyn && ulSyn.Operator.ToString() == "UnaryNegation" && ulSyn.Argument is NumericLiteral) || binaryExpression.Left is Identifier;
                 bool rightIsNumericSyntax = binaryExpression.Right is NumericLiteral || (binaryExpression.Right is UnaryExpression urSyn && urSyn.Operator.ToString() == "UnaryNegation" && urSyn.Argument is NumericLiteral) || binaryExpression.Right is Identifier;
                 bool likelyNumericSyntax = plus && leftIsNumericSyntax && rightIsNumericSyntax;
@@ -118,7 +130,9 @@ namespace Js2IL.Services.ILGenerators
                         // not when it's a raw numeric literal or simple unary numeric.
                         bool leftIsRawNumeric = binaryExpression.Left is Acornima.Ast.NumericLiteral
                             || (binaryExpression.Left is Acornima.Ast.UnaryExpression ul && ul.Operator.ToString() == "UnaryNegation" && ul.Argument is Acornima.Ast.NumericLiteral);
-                        if (!leftIsRawNumeric)
+                        // If left is a BinaryExpression (arithmetic), we've already ensured numeric; avoid double unbox
+                        bool leftIsArithmeticNode = binaryExpression.Left is Acornima.Ast.BinaryExpression;
+                        if (!leftIsRawNumeric && !leftIsArithmeticNode)
                         {
                             _il.OpCode(ILOpCode.Unbox_any);
                             _il.Token(_bclReferences.DoubleType);
@@ -170,6 +184,18 @@ namespace Js2IL.Services.ILGenerators
                 }
 
                 var rightType = _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion() { toString = binaryExpression.Left is StringLiteral });
+                // If equality compare and left resolved to number, make right numeric too when reasonable
+                if (equality && leftType == JavascriptType.Number && rightType != JavascriptType.Number)
+                {
+                    bool rightIsRawNumeric = binaryExpression.Right is Acornima.Ast.NumericLiteral
+                        || (binaryExpression.Right is Acornima.Ast.UnaryExpression ur && ur.Operator.ToString() == "UnaryNegation" && ur.Argument is Acornima.Ast.NumericLiteral);
+                    if (!rightIsRawNumeric)
+                    {
+                        _il.OpCode(ILOpCode.Unbox_any);
+                        _il.Token(_bclReferences.DoubleType);
+                        rightType = JavascriptType.Number;
+                    }
+                }
                 bool identifiersPair = binaryExpression.Left is Identifier && binaryExpression.Right is Identifier;
                 bool preferNumeric = plus && (leftType == JavascriptType.Number && rightType == JavascriptType.Number || identifiersPair || likelyNumericSyntax);
                 if (equality)
