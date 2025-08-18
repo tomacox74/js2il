@@ -406,21 +406,15 @@ namespace Js2IL.Services.ILGenerators
             {
                 switch (op)
                 {
-                    case Operator.Addition:
                     case Operator.Subtraction:
+                        // Route subtraction to runtime to honor JS ToNumber coercion (e.g., "a"-"b" => NaN)
+                        _runtime.InvokeOperatorsSubtract();
+                        break;
                     case Operator.Multiplication:
                     case Operator.Division:
                     case Operator.Remainder:
-                            if (op == Operator.Subtraction)
-                            {
-                                // Route subtraction to runtime to honor JS ToNumber coercion (e.g., "a"-"b" => NaN)
-                                _runtime.InvokeOperatorsSubtract();
-                                break;
-                            }
-                            var opCode = op switch
+                        var opCode = op switch
                         {
-                            Operator.Addition => ILOpCode.Add,
-                            Operator.Subtraction => ILOpCode.Sub,
                             Operator.Multiplication => ILOpCode.Mul,
                             Operator.Division => ILOpCode.Div,
                             Operator.Remainder => ILOpCode.Rem,

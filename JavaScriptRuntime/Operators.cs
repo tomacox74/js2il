@@ -26,7 +26,17 @@ namespace JavaScriptRuntime
                 case bool bo:
                     return bo ? 1d : 0d;
                 case string str:
-                    return double.TryParse(str, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var parsed)
+                    // JS ToNumber on strings: trim; empty -> 0; 0x.. hex allowed; otherwise parse as float
+                    var trimmed = str.Trim();
+                    if (trimmed.Length == 0)
+                        return 0d;
+                    if (trimmed.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (long.TryParse(trimmed.Substring(2), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out var hex))
+                            return (double)hex;
+                        return double.NaN;
+                    }
+                    return double.TryParse(trimmed, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed)
                         ? parsed
                         : double.NaN;
             }
