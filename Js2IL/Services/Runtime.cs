@@ -16,9 +16,9 @@ namespace Js2IL.Services
         private MemberReferenceHandle _arrayCtorRef;
         private MemberReferenceHandle _arrayLengthRef;
         private MemberReferenceHandle _closureBindObjectRef;
-    private InstructionEncoder _il;
-    private MemberReferenceHandle _operatorsAddRef;
-    private MemberReferenceHandle _operatorsSubtractRef;
+        private InstructionEncoder _il;
+        private MemberReferenceHandle _operatorsAddRef;
+        private MemberReferenceHandle _operatorsSubtractRef;
 
         public Runtime(MetadataBuilder metadataBuilder, InstructionEncoder il) 
         { 
