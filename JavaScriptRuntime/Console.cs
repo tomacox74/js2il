@@ -10,7 +10,7 @@ namespace JavaScriptRuntime
     {
         private static IConsoleOutput _output = new DefaultConsoleOutput();
 
-        public static void SetOutput(IConsoleOutput output)
+    public static void SetOutput(IConsoleOutput output)
         {
             _output = output ?? new DefaultConsoleOutput();
         }
