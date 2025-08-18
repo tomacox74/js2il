@@ -219,6 +219,14 @@ namespace Js2IL.Services.ILGenerators
                         _il.Branch(ILOpCode.Br, ctx.ContinueLabel);
                     }
                     break;
+                case BreakStatement:
+                    if (_loopStack.Count == 0)
+                        throw new InvalidOperationException("'break' used outside of a loop");
+                    {
+                        var ctx = _loopStack.Peek();
+                        _il.Branch(ILOpCode.Br, ctx.BreakLabel);
+                    }
+                    break;
                 case IfStatement ifStatement:
                     GenerateIfStatement(ifStatement);
                     break;
