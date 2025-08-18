@@ -35,6 +35,19 @@ namespace Js2IL.Services.ILGenerators
         private string? _currentAssignmentTarget;
         // Tracks simple associations from variable name to class name when initialized via `const x = new ClassName()`
         private readonly Dictionary<string, string> _variableToClass = new(StringComparer.Ordinal);
+        // Loop control stack for handling continue/break targets
+        private readonly Stack<LoopContext> _loopStack = new();
+
+        private readonly struct LoopContext
+        {
+            public readonly LabelHandle ContinueLabel;
+            public readonly LabelHandle BreakLabel;
+            public LoopContext(LabelHandle @continue, LabelHandle @break)
+            {
+                ContinueLabel = @continue;
+                BreakLabel = @break;
+            }
+        }
         /*
          * Temporary exposure of private members until refactoring gets cleaner
          * need to determine what the difference is between generating the main method and generating any generic method
@@ -197,6 +210,14 @@ namespace Js2IL.Services.ILGenerators
                     break;
                 case DoWhileStatement doWhileStatement:
                     GenerateDoWhileStatement(doWhileStatement);
+                    break;
+                case ContinueStatement:
+                    if (_loopStack.Count == 0)
+                        throw new InvalidOperationException("'continue' used outside of a loop");
+                    {
+                        var ctx = _loopStack.Peek();
+                        _il.Branch(ILOpCode.Br, ctx.ContinueLabel);
+                    }
                     break;
                 case IfStatement ifStatement:
                     GenerateIfStatement(ifStatement);
@@ -427,6 +448,15 @@ namespace Js2IL.Services.ILGenerators
             {
                 DeclareVariable(variableDeclaration);
             }
+            else if (forStatement.Init is Acornima.Ast.Expression exprInit)
+            {
+                // Handle assignment/sequence/etc. as an expression statement
+                _ = _expressionEmitter.Emit(exprInit, new TypeCoercion());
+            }
+            else if (forStatement.Init is null)
+            {
+                // no-op
+            }
             else
             {
                 throw new NotSupportedException($"Unsupported for statement initializer type: {forStatement.Init?.Type}");
@@ -436,6 +466,7 @@ namespace Js2IL.Services.ILGenerators
             var loopStartLabel = _il.DefineLabel();
             var loopEndLabel = _il.DefineLabel();
             var loopBodyLabel = _il.DefineLabel();
+            var loopUpdateLabel = _il.DefineLabel();
 
             _il.MarkLabel(loopStartLabel);
 
@@ -449,6 +480,9 @@ namespace Js2IL.Services.ILGenerators
                 });
             }
 
+            // Push loop context: continue -> update, break -> end
+            _loopStack.Push(new LoopContext(loopUpdateLabel, loopEndLabel));
+
             // now the body
             _il.MarkLabel(loopBodyLabel);
 
@@ -456,6 +490,8 @@ namespace Js2IL.Services.ILGenerators
 
             if (forStatement.Update != null)
             {
+                // Mark update section (continue targets jump here)
+                _il.MarkLabel(loopUpdateLabel);
                 _expressionEmitter.Emit(forStatement.Update, new TypeCoercion());
             }
 
@@ -464,9 +500,12 @@ namespace Js2IL.Services.ILGenerators
 
             // here is the end
             _il.MarkLabel(loopEndLabel);
+
+            // Pop loop context
+            _loopStack.Pop();
         }
 
-        public void GenerateWhileStatement(WhileStatement whileStatement)
+    public void GenerateWhileStatement(WhileStatement whileStatement)
         {
             // Labels for loop control
             var loopStartLabel = _il.DefineLabel();
@@ -481,6 +520,9 @@ namespace Js2IL.Services.ILGenerators
                 BranchOnFalse = loopEndLabel
             });
 
+            // Push loop context: continue -> start (re-test), break -> end
+            _loopStack.Push(new LoopContext(loopStartLabel, loopEndLabel));
+
             // Body
             _il.MarkLabel(loopBodyLabel);
             GenerateStatement(whileStatement.Body);
@@ -490,6 +532,9 @@ namespace Js2IL.Services.ILGenerators
 
             // End label
             _il.MarkLabel(loopEndLabel);
+
+            // Pop context
+            _loopStack.Pop();
         }
 
         public void GenerateDoWhileStatement(DoWhileStatement doWhileStatement)
@@ -497,12 +542,16 @@ namespace Js2IL.Services.ILGenerators
             // Labels for loop control
             var loopBodyLabel = _il.DefineLabel();
             var loopEndLabel = _il.DefineLabel();
+            var loopContinueLabel = _il.DefineLabel();
 
             // Body executes at least once
             _il.MarkLabel(loopBodyLabel);
+            // Push context: continue -> test (after body), break -> end
+            _loopStack.Push(new LoopContext(loopContinueLabel, loopEndLabel));
             GenerateStatement(doWhileStatement.Body);
 
             // Evaluate test; if true, loop again; else, end
+            _il.MarkLabel(loopContinueLabel);
             _expressionEmitter.Emit(doWhileStatement.Test, new TypeCoercion(), new ConditionalBranching
             {
                 BranchOnTrue = loopBodyLabel,
@@ -510,6 +559,7 @@ namespace Js2IL.Services.ILGenerators
             });
 
             _il.MarkLabel(loopEndLabel);
+            _loopStack.Pop();
         }
 
         private void GenerateIfStatement(IfStatement ifStatement)
