@@ -18,6 +18,7 @@ namespace Js2IL.Services
         private MemberReferenceHandle _closureBindObjectRef;
     private InstructionEncoder _il;
     private MemberReferenceHandle _operatorsAddRef;
+    private MemberReferenceHandle _operatorsSubtractRef;
 
         public Runtime(MetadataBuilder metadataBuilder, InstructionEncoder il) 
         { 
@@ -81,6 +82,22 @@ namespace Js2IL.Services
                 operatorsType,
                 metadataBuilder.GetOrAddString("Add"),
                 addSig);
+
+            // JavaScriptRuntime.Operators.Subtract(object, object) -> object
+            var subSigBuilder = new BlobBuilder();
+            new BlobEncoder(subSigBuilder)
+                .MethodSignature(isInstanceMethod: false)
+                .Parameters(2,
+                    returnType => returnType.Type().Object(),
+                    parameters => {
+                        parameters.AddParameter().Type().Object();
+                        parameters.AddParameter().Type().Object();
+                    });
+            var subSig = metadataBuilder.GetOrAddBlob(subSigBuilder);
+            _operatorsSubtractRef = metadataBuilder.AddMemberReference(
+                operatorsType,
+                metadataBuilder.GetOrAddString("Subtract"),
+                subSig);
 
             // create the method body for Console.Log(params object[] args)
             var consoleLogSigBuilder = new BlobBuilder();
@@ -238,6 +255,13 @@ namespace Js2IL.Services
             // assumes two object operands are on the stack
             _il.OpCode(ILOpCode.Call);
             _il.Token(_operatorsAddRef);
+        }
+
+        public void InvokeOperatorsSubtract()
+        {
+            // assumes two object operands are on the stack
+            _il.OpCode(ILOpCode.Call);
+            _il.Token(_operatorsSubtractRef);
         }
 
         public void InvokeClosureBindObject()

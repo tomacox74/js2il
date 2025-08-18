@@ -1,9 +1,44 @@
 using System;
+using System.Globalization;
 
 namespace JavaScriptRuntime
 {
     public static class Operators
     {
+        private static double ToNumber(object? value)
+        {
+            if (value == null)
+                return 0d;
+            switch (value)
+            {
+                case double d:
+                    return d;
+                case float f:
+                    return (double)f;
+                case int i:
+                    return i;
+                case long l:
+                    return l;
+                case short s:
+                    return s;
+                case byte b:
+                    return b;
+                case bool bo:
+                    return bo ? 1d : 0d;
+                case string str:
+                    return double.TryParse(str, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var parsed)
+                        ? parsed
+                        : double.NaN;
+            }
+            try
+            {
+                return Convert.ToDouble(value, CultureInfo.InvariantCulture);
+            }
+            catch
+            {
+                return double.NaN;
+            }
+        }
         /// <summary>
         /// Implements JavaScript '+' semantics for two operands boxed as objects.
         /// - If either operand is a string, both are coerced to string and concatenated.
@@ -24,10 +59,8 @@ namespace JavaScriptRuntime
             // Accept common numeric types and convert to double
             try
             {
-                // Handle null as NaN-like; for our limited tests, treat null as 0
-                // but realistically JS would coerce null to 0. We'll follow that.
-                double da = a == null ? 0 : Convert.ToDouble(a);
-                double db = b == null ? 0 : Convert.ToDouble(b);
+                double da = ToNumber(a);
+                double db = ToNumber(b);
                 return da + db; // boxed double
             }
             catch
@@ -37,6 +70,16 @@ namespace JavaScriptRuntime
                 var sb = DotNet2JSConversions.ToString(b);
                 return string.Concat(sa, sb);
             }
+        }
+
+        /// <summary>
+        /// Implements JavaScript '-' semantics. Both operands are coerced to numbers; result is a double (may be NaN).
+        /// </summary>
+        public static object Subtract(object? a, object? b)
+        {
+            var da = ToNumber(a);
+            var db = ToNumber(b);
+            return da - db;
         }
     }
 }

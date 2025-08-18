@@ -102,6 +102,7 @@ namespace Js2IL.Services.ILGenerators
             } else {
                 // For + choose between string concat, numeric math, or runtime helper for dynamic types
                 bool plus = operatorType == Operator.Addition;
+                bool minus = operatorType == Operator.Subtraction;
                 bool equality = operatorType == Operator.Equality;
                 bool staticString = plus && binaryExpression.Left is StringLiteral && (binaryExpression.Right is StringLiteral || binaryExpression.Right is NumericLiteral);
 
@@ -159,6 +160,21 @@ namespace Js2IL.Services.ILGenerators
                                 _il.Token(_bclReferences.BooleanType);
                             }
                         }
+                    }
+                    else if (minus)
+                    {
+                        // For subtraction, route through runtime: ensure left is boxed object
+                        if (leftType == JavascriptType.Number)
+                        {
+                            _il.OpCode(ILOpCode.Box);
+                            _il.Token(_bclReferences.DoubleType);
+                        }
+                        else if (leftType == JavascriptType.Boolean)
+                        {
+                            _il.OpCode(ILOpCode.Box);
+                            _il.Token(_bclReferences.BooleanType);
+                        }
+                        // strings/objects already objects
                     }
                     else if (leftType != JavascriptType.Number)
                     {
@@ -218,6 +234,20 @@ namespace Js2IL.Services.ILGenerators
                                 _il.OpCode(ILOpCode.Box);
                                 _il.Token(_bclReferences.BooleanType);
                             }
+                        }
+                    }
+                    else if (minus)
+                    {
+                        // For subtraction, route through runtime: ensure right is boxed object
+                        if (rightType == JavascriptType.Number)
+                        {
+                            _il.OpCode(ILOpCode.Box);
+                            _il.Token(_bclReferences.DoubleType);
+                        }
+                        else if (rightType == JavascriptType.Boolean)
+                        {
+                            _il.OpCode(ILOpCode.Box);
+                            _il.Token(_bclReferences.BooleanType);
                         }
                     }
                     else if (rightType != JavascriptType.Number)
@@ -299,7 +329,13 @@ namespace Js2IL.Services.ILGenerators
                     case Operator.Multiplication:
                     case Operator.Division:
                     case Operator.Remainder:
-                        var opCode = op switch
+                            if (op == Operator.Subtraction)
+                            {
+                                // Route subtraction to runtime to honor JS ToNumber coercion (e.g., "a"-"b" => NaN)
+                                _runtime.InvokeOperatorsSubtract();
+                                break;
+                            }
+                            var opCode = op switch
                         {
                             Operator.Addition => ILOpCode.Add,
                             Operator.Subtraction => ILOpCode.Sub,
