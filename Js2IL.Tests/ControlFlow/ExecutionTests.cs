@@ -55,5 +55,8 @@ namespace Js2IL.Tests.ControlFlow
 
     [Fact]
     public Task ControlFlow_While_Break_AtThree() { var testName = nameof(ControlFlow_While_Break_AtThree); return ExecutionTest(testName); }
+    
+    [Fact]
+    public Task ControlFlow_DoWhile_Break_AtThree() { var testName = nameof(ControlFlow_DoWhile_Break_AtThree); return ExecutionTest(testName); }
      }
 }
