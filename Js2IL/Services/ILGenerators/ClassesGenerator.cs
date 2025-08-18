@@ -68,24 +68,48 @@ namespace Js2IL.Services.ILGenerators
             var declaredFieldNames = new System.Collections.Generic.HashSet<string>(StringComparer.Ordinal);
             foreach (var element in cdecl.Body.Body)
             {
-                if (element is Acornima.Ast.PropertyDefinition pdef && pdef.Key is Identifier pid)
+                if (element is Acornima.Ast.PropertyDefinition pdef)
                 {
                     // Create field signature: object
                     var fSig = new BlobBuilder();
                     new BlobEncoder(fSig).Field().Type().Object();
                     var fSigHandle = _metadata.GetOrAddBlob(fSig);
-                    if (pdef.Static)
+
+                    // Private field (#name)
+                    if (pdef.Key is Acornima.Ast.PrivateIdentifier priv)
                     {
-                        var fh = tb.AddFieldDefinition(FieldAttributes.Public | FieldAttributes.Static, pid.Name, fSigHandle);
-                        _classRegistry.RegisterStaticField(classScope.Name, pid.Name, fh);
-                        staticFieldsWithInits.Add((fh, pdef.Value as Expression));
-                        declaredFieldNames.Add(pid.Name);
+                        var pname = priv.Name; // JS-visible name without '#'
+                        var emittedName = ManglePrivateFieldName(pname);
+                        if (pdef.Static)
+                        {
+                            var fh = tb.AddFieldDefinition(FieldAttributes.Private | FieldAttributes.Static, emittedName, fSigHandle);
+                            // Track static private separately if needed later; for now reuse RegisterStaticField
+                            _classRegistry.RegisterStaticField(classScope.Name, pname, fh);
+                            staticFieldsWithInits.Add((fh, pdef.Value as Expression));
+                        }
+                        else
+                        {
+                            var fh = tb.AddFieldDefinition(FieldAttributes.Private, emittedName, fSigHandle);
+                            _classRegistry.RegisterPrivateField(classScope.Name, pname, fh);
+                            fieldsWithInits.Add((fh, pdef.Value as Expression));
+                        }
+                        declaredFieldNames.Add(pname);
                     }
-                    else
+                    // Public field (identifier)
+                    else if (pdef.Key is Identifier pid)
                     {
-                        var fh = tb.AddFieldDefinition(FieldAttributes.Public, pid.Name, fSigHandle);
-                        _classRegistry.RegisterField(classScope.Name, pid.Name, fh);
-                        fieldsWithInits.Add((fh, pdef.Value as Expression));
+                        if (pdef.Static)
+                        {
+                            var fh = tb.AddFieldDefinition(FieldAttributes.Public | FieldAttributes.Static, pid.Name, fSigHandle);
+                            _classRegistry.RegisterStaticField(classScope.Name, pid.Name, fh);
+                            staticFieldsWithInits.Add((fh, pdef.Value as Expression));
+                        }
+                        else
+                        {
+                            var fh = tb.AddFieldDefinition(FieldAttributes.Public, pid.Name, fSigHandle);
+                            _classRegistry.RegisterField(classScope.Name, pid.Name, fh);
+                            fieldsWithInits.Add((fh, pdef.Value as Expression));
+                        }
                         declaredFieldNames.Add(pid.Name);
                     }
                 }
@@ -220,6 +244,12 @@ namespace Js2IL.Services.ILGenerators
             }
 
             return typeHandle;
+        }
+
+        private static string ManglePrivateFieldName(string name)
+        {
+            // Ensure private fields don't collide with public fields/methods and are clearly internal
+            return "__js2il_priv_" + name;
         }
 
         private MethodDefinitionHandle EmitParameterlessConstructor(

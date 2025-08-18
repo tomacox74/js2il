@@ -12,6 +12,7 @@ namespace Js2IL.Services
     {
         private readonly Dictionary<string, TypeDefinitionHandle> _classes = new(StringComparer.Ordinal);
         private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _classFields = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _classPrivateFields = new(StringComparer.Ordinal);
     private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _classStaticFields = new(StringComparer.Ordinal);
         private readonly Dictionary<string, Dictionary<string, MemberReferenceHandle>> _classStaticMethods = new(StringComparer.Ordinal);
 
@@ -41,6 +42,27 @@ namespace Js2IL.Services
         {
             fieldHandle = default;
             if (_classFields.TryGetValue(className, out var fields))
+            {
+                return fields.TryGetValue(fieldName, out fieldHandle);
+            }
+            return false;
+        }
+
+        public void RegisterPrivateField(string className, string fieldName, FieldDefinitionHandle fieldHandle)
+        {
+            if (string.IsNullOrEmpty(className) || string.IsNullOrEmpty(fieldName)) return;
+            if (!_classPrivateFields.TryGetValue(className, out var fields))
+            {
+                fields = new Dictionary<string, FieldDefinitionHandle>(StringComparer.Ordinal);
+                _classPrivateFields[className] = fields;
+            }
+            fields[fieldName] = fieldHandle;
+        }
+
+        public bool TryGetPrivateField(string className, string fieldName, out FieldDefinitionHandle fieldHandle)
+        {
+            fieldHandle = default;
+            if (_classPrivateFields.TryGetValue(className, out var fields))
             {
                 return fields.TryGetValue(fieldName, out fieldHandle);
             }
