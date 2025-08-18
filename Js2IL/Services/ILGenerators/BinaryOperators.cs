@@ -100,9 +100,10 @@ namespace Js2IL.Services.ILGenerators
                 _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion());
                 _il.OpCode(ILOpCode.Conv_i4);
             } else {
-                // For + we allow string concat path when left is string literal; otherwise numeric math
+                // For + choose between string concat, numeric math, or runtime helper for dynamic types
                 bool plus = operatorType == Operator.Addition;
                 bool equality = operatorType == Operator.Equality;
+                bool staticString = plus && binaryExpression.Left is StringLiteral && (binaryExpression.Right is StringLiteral || binaryExpression.Right is NumericLiteral);
 
                 var leftType = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion());
                 if (equality)
@@ -142,7 +143,24 @@ namespace Js2IL.Services.ILGenerators
                 }
                 else
                 {
-                    if (!(plus && binaryExpression.Left is StringLiteral) && leftType != JavascriptType.Number)
+                    if (plus)
+                    {
+                        if (!staticString)
+                        {
+                            // Ensure left is boxed as object for runtime Add
+                            if (leftType == JavascriptType.Number)
+                            {
+                                _il.OpCode(ILOpCode.Box);
+                                _il.Token(_bclReferences.DoubleType);
+                            }
+                            else if (leftType == JavascriptType.Boolean)
+                            {
+                                _il.OpCode(ILOpCode.Box);
+                                _il.Token(_bclReferences.BooleanType);
+                            }
+                        }
+                    }
+                    else if (leftType != JavascriptType.Number)
                     {
                         _il.OpCode(ILOpCode.Unbox_any);
                         _il.Token(_bclReferences.DoubleType);
@@ -185,7 +203,24 @@ namespace Js2IL.Services.ILGenerators
                 }
                 else
                 {
-                    if (!(plus && binaryExpression.Left is StringLiteral) && rightType != JavascriptType.Number)
+                    if (plus)
+                    {
+                        if (!staticString)
+                        {
+                            // Ensure right is boxed as object for runtime Add
+                            if (rightType == JavascriptType.Number)
+                            {
+                                _il.OpCode(ILOpCode.Box);
+                                _il.Token(_bclReferences.DoubleType);
+                            }
+                            else if (rightType == JavascriptType.Boolean)
+                            {
+                                _il.OpCode(ILOpCode.Box);
+                                _il.Token(_bclReferences.BooleanType);
+                            }
+                        }
+                    }
+                    else if (rightType != JavascriptType.Number)
                     {
                         _il.OpCode(ILOpCode.Unbox_any);
                         _il.Token(_bclReferences.DoubleType);
@@ -249,6 +284,11 @@ namespace Js2IL.Services.ILGenerators
                 // If either is a string literal, we need to concatenate them
                 _il.OpCode(ILOpCode.Call);
                 _il.Token(stringConcatMethodRef);
+            }
+            else if (op == Operator.Addition)
+            {
+                // General '+' path: call runtime Operators.Add(object, object) which implements JS semantics
+                _runtime.InvokeOperatorsAdd();
             }
             else
             {
