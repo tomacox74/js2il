@@ -248,7 +248,7 @@ namespace Js2IL.Services.ILGenerators
                 methodGenerator.InitializeLocalFunctionVariables(nestedFunctions);
             }
             
-            methodGenerator.GenerateStatements(blockStatement.Body);
+            methodGenerator.GenerateStatementsForBody(blockStatement.Body);
             if (!hasExplicitReturn)
             {
                 // Implicit return undefined => null

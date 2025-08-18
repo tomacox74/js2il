@@ -134,7 +134,7 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-        public void GenerateStatements(NodeList<Statement> statements)
+    public void GenerateStatementsForBody(NodeList<Statement> statements)
         {
             // Iterate through each statement in the block
             foreach (var statement in statements.Where(s => s is not FunctionDeclaration))
@@ -270,7 +270,7 @@ namespace Js2IL.Services.ILGenerators
             // If no lexical declarations, just emit statements directly.
             if (!hasLexical)
             {
-                GenerateStatements(blockStatement.Body);
+                GenerateStatementsForBody(blockStatement.Body);
                 return;
             }
 
@@ -308,7 +308,7 @@ namespace Js2IL.Services.ILGenerators
             }
 
             // Emit inner statements (variables inside will resolve to the block scope fields via registry name match)
-            GenerateStatements(blockStatement.Body);
+            GenerateStatementsForBody(blockStatement.Body);
 
             if (blockLocalIndex.HasValue)
             {
@@ -1714,7 +1714,7 @@ namespace Js2IL.Services.ILGenerators
                     }
 
                     // Emit statements using the child generator
-                    childGen.GenerateStatements(block.Body);
+                    childGen.GenerateStatementsForBody(block.Body);
                     // If no explicit return executed, fall through and return null
                     il.OpCode(ILOpCode.Ldnull);
                     il.OpCode(ILOpCode.Ret);
