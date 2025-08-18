@@ -1,0 +1,115 @@
+﻿// IL code: Classes_ClassWithStaticProperty_DefaultAndLog
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Classes_ClassWithStaticProperty_DefaultAndLog
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Greeter
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Greeter::.ctor
+
+	} // end of class Greeter
+
+
+	// Fields
+	.field public object Greeter
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Classes_ClassWithStaticProperty_DefaultAndLog::.ctor
+
+} // end of class Scopes.Classes_ClassWithStaticProperty_DefaultAndLog
+
+.class public auto ansi beforefieldinit Classes.Greeter
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field public static object message
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2062
+		// Header size: 1
+		// Code size: 7 (0x7)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: ret
+	} // end of method Greeter::.ctor
+
+	.method private hidebysig specialname rtspecialname static 
+		void .cctor () cil managed 
+	{
+		// Method begins at RVA 0x206a
+		// Header size: 1
+		// Code size: 11 (0xb)
+		.maxstack 8
+
+		IL_0000: ldstr "Hi from static"
+		IL_0005: stsfld object Classes.Greeter::message
+		IL_000a: ret
+	} // end of method Greeter::.cctor
+
+} // end of class Classes.Greeter
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2078
+		// Header size: 12
+		// Code size: 26 (0x1a)
+		.maxstack 8
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Classes_ClassWithStaticProperty_DefaultAndLog::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldsfld object Classes.Greeter::message
+		IL_0013: stelem.ref
+		IL_0014: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0019: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

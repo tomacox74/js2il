@@ -1245,6 +1245,36 @@ namespace Js2IL.Services.ILGenerators
         /// </remarks>
         private JavascriptType EmitMemberExpression(MemberExpression memberExpression)
         {
+            // Handle private instance fields: this.#name inside class methods
+            if (!memberExpression.Computed && memberExpression.Object is ThisExpression && memberExpression.Property is Acornima.Ast.PrivateIdentifier ppid)
+            {
+                if (_inClassMethod && _currentClassName != null && _classRegistry.TryGetPrivateField(_currentClassName, ppid.Name, out var privField))
+                {
+                    _il.OpCode(ILOpCode.Ldarg_0);
+                    _il.OpCode(ILOpCode.Ldfld);
+                    _il.Token(privField);
+                    return JavascriptType.Object;
+                }
+            }
+
+            // Special handling: if the object is a known class identifier and property is an identifier,
+            // allow static field/method access without evaluating an instance first.
+            if (!memberExpression.Computed && memberExpression.Object is Identifier staticBase && memberExpression.Property is Identifier staticProp)
+            {
+                if (_classRegistry.TryGet(staticBase.Name, out var typeHandle))
+                {
+                    // Support static field access: ClassName.prop
+                    if (_classRegistry.TryGetStaticField(staticBase.Name, staticProp.Name, out var sfield))
+                    {
+                        _il.OpCode(ILOpCode.Ldsfld);
+                        _il.Token(sfield);
+                        return JavascriptType.Object;
+                    }
+
+                    // Static method invocations are handled in GenerateCallExpression; here we only support fields
+                }
+            }
+
             _expressionEmitter.Emit(memberExpression.Object, new TypeCoercion());
 
             if (!memberExpression.Computed && memberExpression.Property is Identifier propId)

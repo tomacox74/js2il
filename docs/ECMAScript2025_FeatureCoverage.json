@@ -217,8 +217,9 @@
                 { "feature": "Binary + (Addition)", "status": "Supported", "testScripts": [
                   "Js2IL.Tests/JavaScript/BinaryOperator_AddNumberNumber.js",
                   "Js2IL.Tests/JavaScript/BinaryOperator_AddStringNumber.js",
-                  "Js2IL.Tests/JavaScript/BinaryOperator_AddStringString.js"
-                ], "notes": "" }
+                  "Js2IL.Tests/JavaScript/BinaryOperator_AddStringString.js",
+                  "Js2IL.Tests/JavaScript/Classes_ClassConstructor_TwoParams_AddMethod.js"
+                ], "notes": "Fast-path string concat; general '+' follows JS coercion via runtime helper." }
               ]
             },
             {
@@ -227,8 +228,9 @@
               "url": "https://tc39.es/ecma262/#sec-subtraction-operator",
               "features": [
                 { "feature": "Binary - (Subtraction)", "status": "Supported", "testScripts": [
-                  "Js2IL.Tests/JavaScript/BinaryOperator_SubNumberNumber.js"
-                ], "notes": "" }
+                  "Js2IL.Tests/JavaScript/BinaryOperator_SubNumberNumber.js",
+                  "Js2IL.Tests/JavaScript/Classes_ClassConstructor_TwoParams_SubtractMethod.js"
+                ], "notes": "Numeric subtraction; matches JS semantics for non-numeric via coercion helpers where applicable." }
               ]
             },
             {
@@ -385,12 +387,38 @@
                   "notes": "Emitted by assigning defaults in the generated .ctor."
                 },
                 {
+                  "feature": "Static field initializer (static property default)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js"
+                  ],
+                  "notes": "Emitted as a static field initialized in a synthesized .cctor; accessed via ldsfld."
+                },
+                {
                   "feature": "Constructor with parameter and this.field assignment; method reads field",
                   "status": "Supported",
                   "testScripts": [
                     "Js2IL.Tests/JavaScript/Classes_ClassConstructor_Param_Field_Log.js"
                   ],
                   "notes": ""
+                },
+                {
+                  "feature": "Constructor with multiple parameters; method uses fields",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/Classes_ClassConstructor_WithMultipleParameters.js",
+                    "Js2IL.Tests/JavaScript/Classes_ClassConstructor_TwoParams_AddMethod.js",
+                    "Js2IL.Tests/JavaScript/Classes_ClassConstructor_TwoParams_SubtractMethod.js"
+                  ],
+                  "notes": "Covers multi-parameter constructors and arithmetic in instance methods."
+                },
+                {
+                  "feature": "Private instance field (#) with helper method access",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js"
+                  ],
+                  "notes": "Generated as a private .NET field with a mangled name; accessible only within the class."
                 }
               ]
             }

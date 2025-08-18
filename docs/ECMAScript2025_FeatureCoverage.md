@@ -101,14 +101,14 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Binary + (Addition) | Supported | `Js2IL.Tests/JavaScript/BinaryOperator_AddNumberNumber.js`<br>`Js2IL.Tests/JavaScript/BinaryOperator_AddStringNumber.js`<br>`Js2IL.Tests/JavaScript/BinaryOperator_AddStringString.js` |  | 13.5.1 |
+| Binary + (Addition) | Supported | `Js2IL.Tests/JavaScript/BinaryOperator_AddNumberNumber.js`<br>`Js2IL.Tests/JavaScript/BinaryOperator_AddStringNumber.js`<br>`Js2IL.Tests/JavaScript/BinaryOperator_AddStringString.js`<br>`Js2IL.Tests/JavaScript/Classes_ClassConstructor_TwoParams_AddMethod.js` | Fast-path string concat; general '+' follows JS coercion via runtime helper. | 13.5.1 |
 
 
 #### [Subtraction operator (-)](https://tc39.es/ecma262/#sec-subtraction-operator)
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Binary - (Subtraction) | Supported | `Js2IL.Tests/JavaScript/BinaryOperator_SubNumberNumber.js` |  | 13.5.2 |
+| Binary - (Subtraction) | Supported | `Js2IL.Tests/JavaScript/BinaryOperator_SubNumberNumber.js`<br>`Js2IL.Tests/JavaScript/Classes_ClassConstructor_TwoParams_SubtractMethod.js` | Numeric subtraction; matches JS semantics for non-numeric via coercion helpers where applicable. | 13.5.2 |
 
 
 #### [Multiplicative operators (*, /, %)](https://tc39.es/ecma262/#sec-multiplicative-operators)
@@ -199,5 +199,8 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Instance method (declare and call) | Supported | `Js2IL.Tests/JavaScript/Classes_ClassWithMethod_HelloWorld.js` |  | 15.1.1 |
 | Static method (declare and call) | Supported | `Js2IL.Tests/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js` |  | 15.1.1 |
 | Instance field initializer (public property default) | Supported | `Js2IL.Tests/JavaScript/Classes_ClassProperty_DefaultAndLog.js` | Emitted by assigning defaults in the generated .ctor. | 15.1.1 |
+| Static field initializer (static property default) | Supported | `Js2IL.Tests/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js` | Emitted as a static field initialized in a synthesized .cctor; accessed via ldsfld. | 15.1.1 |
 | Constructor with parameter and this.field assignment; method reads field | Supported | `Js2IL.Tests/JavaScript/Classes_ClassConstructor_Param_Field_Log.js` |  | 15.1.1 |
+| Constructor with multiple parameters; method uses fields | Supported | `Js2IL.Tests/JavaScript/Classes_ClassConstructor_WithMultipleParameters.js`<br>`Js2IL.Tests/JavaScript/Classes_ClassConstructor_TwoParams_AddMethod.js`<br>`Js2IL.Tests/JavaScript/Classes_ClassConstructor_TwoParams_SubtractMethod.js` | Covers multi-parameter constructors and arithmetic in instance methods. | 15.1.1 |
+| Private instance field (#) with helper method access | Supported | `Js2IL.Tests/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js` | Generated as a private .NET field with a mangled name; accessible only within the class. | 15.1.1 |
 

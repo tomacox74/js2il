@@ -60,22 +60,58 @@ namespace Js2IL.Services.ILGenerators
                 : TypeAttributes.NestedPublic | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
 
             // Handle class fields with default initializers (ECMAScript class field syntax)
-            // Example: class C { foo = 42; }
-            // We emit them as instance fields of type object and initialize in .ctor.
+            // Example: class C { foo = 42; static bar = 1; }
+            // We emit instance fields as object and initialize in .ctor.
+            // Static fields are emitted as static object fields and initialized in a type initializer (.cctor).
             var fieldsWithInits = new System.Collections.Generic.List<(FieldDefinitionHandle Field, Expression? Init)>();
+            var staticFieldsWithInits = new System.Collections.Generic.List<(FieldDefinitionHandle Field, Expression? Init)>();
             var declaredFieldNames = new System.Collections.Generic.HashSet<string>(StringComparer.Ordinal);
             foreach (var element in cdecl.Body.Body)
             {
-                if (element is Acornima.Ast.PropertyDefinition pdef && pdef.Key is Identifier pid)
+                if (element is Acornima.Ast.PropertyDefinition pdef)
                 {
                     // Create field signature: object
                     var fSig = new BlobBuilder();
                     new BlobEncoder(fSig).Field().Type().Object();
                     var fSigHandle = _metadata.GetOrAddBlob(fSig);
-                    var fh = tb.AddFieldDefinition(FieldAttributes.Public, pid.Name, fSigHandle);
-                    _classRegistry.RegisterField(classScope.Name, pid.Name, fh);
-                    fieldsWithInits.Add((fh, pdef.Value as Expression));
-                    declaredFieldNames.Add(pid.Name);
+
+                    // Private field (#name)
+                    if (pdef.Key is Acornima.Ast.PrivateIdentifier priv)
+                    {
+                        var pname = priv.Name; // JS-visible name without '#'
+                        var emittedName = ManglePrivateFieldName(pname);
+                        if (pdef.Static)
+                        {
+                            var fh = tb.AddFieldDefinition(FieldAttributes.Private | FieldAttributes.Static, emittedName, fSigHandle);
+                            // Track static private separately if needed later; for now reuse RegisterStaticField
+                            _classRegistry.RegisterStaticField(classScope.Name, pname, fh);
+                            staticFieldsWithInits.Add((fh, pdef.Value as Expression));
+                        }
+                        else
+                        {
+                            var fh = tb.AddFieldDefinition(FieldAttributes.Private, emittedName, fSigHandle);
+                            _classRegistry.RegisterPrivateField(classScope.Name, pname, fh);
+                            fieldsWithInits.Add((fh, pdef.Value as Expression));
+                        }
+                        declaredFieldNames.Add(pname);
+                    }
+                    // Public field (identifier)
+                    else if (pdef.Key is Identifier pid)
+                    {
+                        if (pdef.Static)
+                        {
+                            var fh = tb.AddFieldDefinition(FieldAttributes.Public | FieldAttributes.Static, pid.Name, fSigHandle);
+                            _classRegistry.RegisterStaticField(classScope.Name, pid.Name, fh);
+                            staticFieldsWithInits.Add((fh, pdef.Value as Expression));
+                        }
+                        else
+                        {
+                            var fh = tb.AddFieldDefinition(FieldAttributes.Public, pid.Name, fSigHandle);
+                            _classRegistry.RegisterField(classScope.Name, pid.Name, fh);
+                            fieldsWithInits.Add((fh, pdef.Value as Expression));
+                        }
+                        declaredFieldNames.Add(pid.Name);
+                    }
                 }
             }
 
@@ -172,7 +208,48 @@ namespace Js2IL.Services.ILGenerators
             // Register the class type for later lookup using the JS-visible identifier (scope name)
             _classRegistry.Register(classScope.Name, typeHandle);
 
+            // If there are static field initializers, synthesize a type initializer (.cctor) to assign them.
+            if (staticFieldsWithInits.Count > 0)
+            {
+                // Signature: static void .cctor()
+                var sigBuilder = new BlobBuilder();
+                new BlobEncoder(sigBuilder)
+                    .MethodSignature(isInstanceMethod: false)
+                    .Parameters(0, r => r.Void(), p => { });
+                var cctorSig = _metadata.GetOrAddBlob(sigBuilder);
+
+                var ilGen = new ILMethodGenerator(_variables, _bcl, _metadata, _methodBodies, _dispatchTableGenerator, _classRegistry, inClassMethod: false, currentClassName: classScope.Name);
+
+                // For each static field with an initializer: evaluate and stsfld
+                foreach (var (field, initExpr) in staticFieldsWithInits)
+                {
+                    if (initExpr is null)
+                    {
+                        // default null; no store needed
+                        continue;
+                    }
+                    ((IMethodExpressionEmitter)ilGen).Emit(initExpr, new TypeCoercion() { boxResult = true });
+                    ilGen.IL.OpCode(ILOpCode.Stsfld);
+                    ilGen.IL.Token(field);
+                }
+
+                ilGen.IL.OpCode(ILOpCode.Ret);
+
+                var cctorBody = _methodBodies.AddMethodBody(ilGen.IL);
+                tb.AddMethodDefinition(
+                    MethodAttributes.Private | MethodAttributes.Static | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
+                    ".cctor",
+                    cctorSig,
+                    cctorBody);
+            }
+
             return typeHandle;
+        }
+
+        private static string ManglePrivateFieldName(string name)
+        {
+            // Ensure private fields don't collide with public fields/methods and are clearly internal
+            return "__js2il_priv_" + name;
         }
 
         private MethodDefinitionHandle EmitParameterlessConstructor(

@@ -100,11 +100,16 @@ namespace Js2IL.Services.ILGenerators
                 _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion());
                 _il.OpCode(ILOpCode.Conv_i4);
             } else {
-                // For + we allow string concat path when left is string literal; otherwise numeric math
+                // For + choose between string concat, numeric math, or runtime helper for dynamic types
                 bool plus = operatorType == Operator.Addition;
+                bool minus = operatorType == Operator.Subtraction;
                 bool equality = operatorType == Operator.Equality;
+                bool staticString = plus && binaryExpression.Left is StringLiteral && (binaryExpression.Right is StringLiteral || binaryExpression.Right is NumericLiteral);
 
                 var leftType = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion());
+                bool leftIsNumericSyntax = binaryExpression.Left is NumericLiteral || (binaryExpression.Left is UnaryExpression ulSyn && ulSyn.Operator.ToString() == "UnaryNegation" && ulSyn.Argument is NumericLiteral) || binaryExpression.Left is Identifier;
+                bool rightIsNumericSyntax = binaryExpression.Right is NumericLiteral || (binaryExpression.Right is UnaryExpression urSyn && urSyn.Operator.ToString() == "UnaryNegation" && urSyn.Argument is NumericLiteral) || binaryExpression.Right is Identifier;
+                bool likelyNumericSyntax = plus && leftIsNumericSyntax && rightIsNumericSyntax;
                 if (equality)
                 {
                     if (leftType == JavascriptType.Number)
@@ -142,7 +147,22 @@ namespace Js2IL.Services.ILGenerators
                 }
                 else
                 {
-                    if (!(plus && binaryExpression.Left is StringLiteral) && leftType != JavascriptType.Number)
+                    if (plus)
+                    {
+                        if (likelyNumericSyntax && leftType != JavascriptType.Number)
+                        {
+                            // For numeric-looking 'a + b', unbox left now to keep operand order
+                            _il.OpCode(ILOpCode.Unbox_any);
+                            _il.Token(_bclReferences.DoubleType);
+                            leftType = JavascriptType.Number;
+                        }
+                        // otherwise, defer until after right emit
+                    }
+                    else if (minus)
+                    {
+                        // Defer decision until we know rightType; if both numeric, keep as doubles; otherwise box for runtime
+                    }
+                    else if (leftType != JavascriptType.Number)
                     {
                         _il.OpCode(ILOpCode.Unbox_any);
                         _il.Token(_bclReferences.DoubleType);
@@ -150,6 +170,8 @@ namespace Js2IL.Services.ILGenerators
                 }
 
                 var rightType = _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion() { toString = binaryExpression.Left is StringLiteral });
+                bool identifiersPair = binaryExpression.Left is Identifier && binaryExpression.Right is Identifier;
+                bool preferNumeric = plus && (leftType == JavascriptType.Number && rightType == JavascriptType.Number || identifiersPair || likelyNumericSyntax);
                 if (equality)
                 {
                     if (rightType == JavascriptType.Number)
@@ -185,11 +207,136 @@ namespace Js2IL.Services.ILGenerators
                 }
                 else
                 {
-                    if (!(plus && binaryExpression.Left is StringLiteral) && rightType != JavascriptType.Number)
+                    if (plus)
+                    {
+                        if (likelyNumericSyntax)
+                        {
+                            // Ensure both sides are numeric (unbox when needed)
+                            if (leftType != JavascriptType.Number)
+                            {
+                                _il.OpCode(ILOpCode.Unbox_any);
+                                _il.Token(_bclReferences.DoubleType);
+                                leftType = JavascriptType.Number;
+                            }
+                            if (rightType != JavascriptType.Number)
+                            {
+                                _il.OpCode(ILOpCode.Unbox_any);
+                                _il.Token(_bclReferences.DoubleType);
+                                rightType = JavascriptType.Number;
+                            }
+                        }
+                        else if (!staticString)
+                        {
+                            // Ensure both operands are objects for runtime Add
+                            if (leftType == JavascriptType.Number)
+                            {
+                                _il.OpCode(ILOpCode.Box);
+                                _il.Token(_bclReferences.DoubleType);
+                            }
+                            else if (leftType == JavascriptType.Boolean)
+                            {
+                                _il.OpCode(ILOpCode.Box);
+                                _il.Token(_bclReferences.BooleanType);
+                            }
+                            if (rightType == JavascriptType.Number)
+                            {
+                                _il.OpCode(ILOpCode.Box);
+                                _il.Token(_bclReferences.DoubleType);
+                            }
+                            else if (rightType == JavascriptType.Boolean)
+                            {
+                                _il.OpCode(ILOpCode.Box);
+                                _il.Token(_bclReferences.BooleanType);
+                            }
+                        }
+                    }
+                    else if (minus)
+                    {
+                        if (leftType == JavascriptType.Number && rightType == JavascriptType.Number)
+                        {
+                            // numeric fast-path; leave as doubles
+                        }
+                        else
+                        {
+                            // ensure both operands are objects for runtime subtract
+                            if (leftType == JavascriptType.Number)
+                            {
+                                _il.OpCode(ILOpCode.Box);
+                                _il.Token(_bclReferences.DoubleType);
+                            }
+                            else if (leftType == JavascriptType.Boolean)
+                            {
+                                _il.OpCode(ILOpCode.Box);
+                                _il.Token(_bclReferences.BooleanType);
+                            }
+                            if (rightType == JavascriptType.Number)
+                            {
+                                _il.OpCode(ILOpCode.Box);
+                                _il.Token(_bclReferences.DoubleType);
+                            }
+                            else if (rightType == JavascriptType.Boolean)
+                            {
+                                _il.OpCode(ILOpCode.Box);
+                                _il.Token(_bclReferences.BooleanType);
+                            }
+                        }
+                    }
+                    else if (rightType != JavascriptType.Number)
                     {
                         _il.OpCode(ILOpCode.Unbox_any);
                         _il.Token(_bclReferences.DoubleType);
                     }
+                }
+
+                // Emit '+' or '-' now based on analysis; others handled below
+                if (plus)
+                {
+                    if (staticString)
+                    {
+                        // string.Concat(string, string)
+                        var stringSig = new BlobBuilder();
+                        new BlobEncoder(stringSig)
+                            .MethodSignature(isInstanceMethod: false)
+                            .Parameters(2,
+                                returnType => returnType.Type().String(),
+                                parameters =>
+                                {
+                                    parameters.AddParameter().Type().String();
+                                    parameters.AddParameter().Type().String();
+                                });
+                        var concatSig = _metadataBuilder.GetOrAddBlob(stringSig);
+                        var stringConcatMethodRef = _metadataBuilder.AddMemberReference(
+                            _bclReferences.StringType,
+                            _metadataBuilder.GetOrAddString("Concat"),
+                            concatSig);
+                        _il.OpCode(ILOpCode.Call);
+                        _il.Token(stringConcatMethodRef);
+                    }
+                    else if (preferNumeric)
+                    {
+                        _il.OpCode(ILOpCode.Add);
+                        _il.OpCode(ILOpCode.Box);
+                        _il.Token(_bclReferences.DoubleType);
+                    }
+                    else
+                    {
+                        _runtime.InvokeOperatorsAdd();
+                    }
+                    return;
+                }
+                if (minus)
+                {
+                    if (leftType == JavascriptType.Number && rightType == JavascriptType.Number)
+                    {
+                        _il.OpCode(ILOpCode.Sub);
+                        _il.OpCode(ILOpCode.Box);
+                        _il.Token(_bclReferences.DoubleType);
+                    }
+                    else
+                    {
+                        _runtime.InvokeOperatorsSubtract();
+                    }
+                    return;
                 }
             }
 
@@ -250,19 +397,24 @@ namespace Js2IL.Services.ILGenerators
                 _il.OpCode(ILOpCode.Call);
                 _il.Token(stringConcatMethodRef);
             }
+            else if (op == Operator.Addition)
+            {
+                // General '+' path: call runtime Operators.Add(object, object) which implements JS semantics
+                _runtime.InvokeOperatorsAdd();
+            }
             else
             {
                 switch (op)
                 {
-                    case Operator.Addition:
                     case Operator.Subtraction:
+                        // Route subtraction to runtime to honor JS ToNumber coercion (e.g., "a"-"b" => NaN)
+                        _runtime.InvokeOperatorsSubtract();
+                        break;
                     case Operator.Multiplication:
                     case Operator.Division:
                     case Operator.Remainder:
                         var opCode = op switch
                         {
-                            Operator.Addition => ILOpCode.Add,
-                            Operator.Subtraction => ILOpCode.Sub,
                             Operator.Multiplication => ILOpCode.Mul,
                             Operator.Division => ILOpCode.Div,
                             Operator.Remainder => ILOpCode.Rem,
