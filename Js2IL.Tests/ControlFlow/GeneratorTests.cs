@@ -39,5 +39,8 @@ namespace Js2IL.Tests.ControlFlow
         // Pending feature: continue statement support
         [Fact]
         public Task ControlFlow_ForLoop_Continue_SkipEven() { var testName = nameof(ControlFlow_ForLoop_Continue_SkipEven); return GenerateTest(testName); }
+
+    [Fact(Skip = "Snapshot pending for While_Continue; enable after verifying IL output")]
+    public Task ControlFlow_While_Continue_SkipEven() { var testName = nameof(ControlFlow_While_Continue_SkipEven); return GenerateTest(testName); }
     }
 }
