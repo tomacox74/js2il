@@ -39,5 +39,9 @@ namespace Js2IL.Tests.ControlFlow
 
     [Fact]
     public Task ControlFlow_DoWhile_CountDownFromFive() { var testName = nameof(ControlFlow_DoWhile_CountDownFromFive); return ExecutionTest(testName); }
+
+    // Pending feature: continue statement support
+    [Fact(Skip = "Pending continue statement support")]
+    public Task ControlFlow_ForLoop_Continue_SkipEven() { var testName = nameof(ControlFlow_ForLoop_Continue_SkipEven); return ExecutionTest(testName); }
     }
 }
