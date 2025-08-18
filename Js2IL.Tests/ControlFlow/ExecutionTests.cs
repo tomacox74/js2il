@@ -33,5 +33,8 @@ namespace Js2IL.Tests.ControlFlow
 
     [Fact]
     public Task ControlFlow_If_NotFlag() { var testName = nameof(ControlFlow_If_NotFlag); return ExecutionTest(testName); }
+        
+    [Fact]
+    public Task ControlFlow_While_CountDownFromFive() { var testName = nameof(ControlFlow_While_CountDownFromFive); return ExecutionTest(testName); }
     }
 }

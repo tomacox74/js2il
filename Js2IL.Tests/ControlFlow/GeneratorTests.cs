@@ -14,6 +14,9 @@ namespace Js2IL.Tests.ControlFlow
 
         [Fact]
         public Task ControlFlow_ForLoop_CountDownFromFive() { var testName = "ControlFlow_ForLoop_CountDownFromFive"; return GenerateTest(testName); }
+        
+    [Fact(Skip = "Snapshot pending for ControlFlow_While_CountDownFromFive generator")]
+    public Task ControlFlow_While_CountDownFromFive() { var testName = "ControlFlow_While_CountDownFromFive"; return GenerateTest(testName); }
 
         [Fact]
         public Task ControlFlow_ForLoop_GreaterThanOrEqual() { var testName = "ControlFlow_ForLoop_GreaterThanOrEqual"; return GenerateTest(testName); }

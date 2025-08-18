@@ -192,6 +192,9 @@ namespace Js2IL.Services.ILGenerators
                 case ForStatement forStatement:
                     GenerateForStatement(forStatement);
                     break;
+                case WhileStatement whileStatement:
+                    GenerateWhileStatement(whileStatement);
+                    break;
                 case IfStatement ifStatement:
                     GenerateIfStatement(ifStatement);
                     break;
@@ -457,6 +460,32 @@ namespace Js2IL.Services.ILGenerators
             _il.Branch(ILOpCode.Br, loopStartLabel);
 
             // here is the end
+            _il.MarkLabel(loopEndLabel);
+        }
+
+        public void GenerateWhileStatement(WhileStatement whileStatement)
+        {
+            // Labels for loop control
+            var loopStartLabel = _il.DefineLabel();
+            var loopBodyLabel = _il.DefineLabel();
+            var loopEndLabel = _il.DefineLabel();
+
+            // Start of loop: evaluate test
+            _il.MarkLabel(loopStartLabel);
+            _expressionEmitter.Emit(whileStatement.Test, new TypeCoercion(), new ConditionalBranching
+            {
+                BranchOnTrue = loopBodyLabel,
+                BranchOnFalse = loopEndLabel
+            });
+
+            // Body
+            _il.MarkLabel(loopBodyLabel);
+            GenerateStatement(whileStatement.Body);
+
+            // Jump back to test
+            _il.Branch(ILOpCode.Br, loopStartLabel);
+
+            // End label
             _il.MarkLabel(loopEndLabel);
         }
 
