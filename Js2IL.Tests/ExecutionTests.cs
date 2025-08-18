@@ -22,5 +22,9 @@ namespace Js2IL.Tests
 
         [Fact(Skip = "process/argv not yet supported")]
         public Task Environment_EnumerateProcessArgV() { var testName = nameof(Environment_EnumerateProcessArgV); return ExecutionTest(testName); }
+
+    // Try/Catch
+    [Fact(Skip = "try/catch not yet implemented")]
+    public Task TryCatch_NoBinding() { var testName = nameof(TryCatch_NoBinding); return ExecutionTest(testName); }
     }
 }
