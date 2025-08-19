@@ -211,6 +211,17 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | for loop: break | Supported | `Js2IL.Tests/JavaScript/ControlFlow_ForLoop_Break_AtThree.js` | Implements break by branching to loop end label (LoopContext). | 14.7.4.2 |
 
 
+### [The try Statement](https://tc39.es/ecma262/#sec-try-statement)
+
+#### [Runtime Semantics: TryStatement Evaluation](https://tc39.es/ecma262/#sec-try-statement)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| throw statement | Supported | `Js2IL.Tests/JavaScript/TryCatch_NoBinding.js` | Emits throw of JavaScriptRuntime.Error; used in try/catch tests. | 14.16.1 |
+| try/catch (no binding) | Supported | `Js2IL.Tests/JavaScript/TryCatch_NoBinding.js`<br>`Js2IL.Tests/JavaScript/TryCatch_NoBinding_NoThrow.js` | Catch blocks currently handle only JavaScriptRuntime.Error thrown within the try; exceptions thrown later (after returning a closure) are not caught by the earlier catch. | 14.16.1 |
+| try/finally (no catch) | Partially Supported | `Js2IL.Tests/JavaScript/TryFinally_NoCatch.js`<br>`Js2IL.Tests/JavaScript/TryFinally_NoCatch_Throw.js` | Finally emission is in place. Execution test for throw is skipped pending unhandled Error semantics at top-level; generator snapshot verifies structure. | 14.16.1 |
+
+
 ## [ECMAScript Language: Classes](https://tc39.es/ecma262/#sec-ecmascript-language-classes)
 
 ### [Class Definitions](https://tc39.es/ecma262/#sec-class-definitions)

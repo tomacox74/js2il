@@ -375,6 +375,47 @@
             }
           ]
         }
+        ,
+        {
+          "subsection": "14.16",
+          "title": "The try Statement",
+          "url": "https://tc39.es/ecma262/#sec-try-statement",
+          "paragraphs": [
+            {
+              "paragraph": "14.16.1",
+              "title": "Runtime Semantics: TryStatement Evaluation",
+              "url": "https://tc39.es/ecma262/#sec-try-statement",
+              "features": [
+                {
+                  "feature": "throw statement",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/TryCatch_NoBinding.js"
+                  ],
+                  "notes": "Emits throw of JavaScriptRuntime.Error; used in try/catch tests."
+                },
+                {
+                  "feature": "try/catch (no binding)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/TryCatch_NoBinding.js",
+                    "Js2IL.Tests/JavaScript/TryCatch_NoBinding_NoThrow.js"
+                  ],
+                  "notes": "Catch blocks currently handle only JavaScriptRuntime.Error thrown within the try; exceptions thrown later (after returning a closure) are not caught by the earlier catch."
+                },
+                {
+                  "feature": "try/finally (no catch)",
+                  "status": "Partially Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/TryFinally_NoCatch.js",
+                    "Js2IL.Tests/JavaScript/TryFinally_NoCatch_Throw.js"
+                  ],
+                  "notes": "Finally emission is in place. Execution test for throw is skipped pending unhandled Error semantics at top-level; generator snapshot verifies structure."
+                }
+              ]
+            }
+          ]
+        }
       ]
     },
     {
