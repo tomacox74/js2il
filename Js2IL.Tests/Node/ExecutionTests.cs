@@ -8,6 +8,6 @@ namespace Js2IL.Tests.Node
 
         [Fact]
         public Task Require_Path_Join_Basic()
-            => ExecutionTest(nameof(Require_Path_Join_Basic));
+            => ExecutionTest(nameof(Require_Path_Join_Basic), configureSettings: s => s.AddScrubber(sb => sb.Replace('\\', '/')));
     }
 }

@@ -642,8 +642,8 @@ namespace Js2IL.Services.ILGenerators
             _ = _expressionEmitter.Emit(throwStatement.Argument, new TypeCoercion() { boxResult = true });
             // If it's a boxed object that is not an Exception, .NET requires an Exception. We attempt to unbox/cast.
             // Since we cannot know statically, perform 'throw' which expects an Exception reference on stack.
-            // Use 'unbox.any object' pattern is invalid; instead rely on the runtime creating Error : Exception.
-            _il.OpCode(ILOpCode.Throw);
+                // Use 'unbox.any object' pattern is invalid; instead rely on the runtime creating Error : Exception.
+                _il.OpCode(ILOpCode.Throw);
         }
 
         private void GenerateTryStatement(TryStatement tryStatement)
@@ -954,15 +954,10 @@ namespace Js2IL.Services.ILGenerators
 
         private void GenerateCallExpression(Acornima.Ast.CallExpression callExpression, CallSiteContext context, bool discardResult)
         {
-            // For simplicity, we assume the call expression is a console write line
-            if (callExpression.Callee is not Acornima.Ast.MemberExpression memberExpression ||
-                memberExpression.Object is not Acornima.Ast.Identifier objectIdentifier ||
-                objectIdentifier.Name != "console" ||
-                memberExpression.Property is not Acornima.Ast.Identifier propertyIdentifier ||
-                propertyIdentifier.Name != "log")
+            // General member call: obj.method(...)
+            if (callExpression.Callee is Acornima.Ast.MemberExpression mem && !mem.Computed && mem.Property is Acornima.Ast.Identifier mname)
             {
-                // Runtime intrinsic object: x.method(...)
-                if (callExpression.Callee is Acornima.Ast.MemberExpression mem && !mem.Computed && mem.Object is Acornima.Ast.Identifier baseId && mem.Property is Acornima.Ast.Identifier mname)
+                if (mem.Object is Acornima.Ast.Identifier baseId)
                 {
                     // If the base identifier resolves to a known class, emit a static call without loading an instance.
                     if (_classRegistry.TryGet(baseId.Name, out var classType) && !classType.IsNil)
@@ -985,239 +980,280 @@ namespace Js2IL.Services.ILGenerators
                         if (discardResult) _il.OpCode(ILOpCode.Pop);
                         return;
                     }
-                    // Try intrinsic runtime-backed instance call first for readability
-                    var baseVar = _variables.FindVariable(baseId.Name) ?? throw new InvalidOperationException($"Variable '{baseId.Name}' not found.");
-                    if (TryEmitIntrinsicInstanceCall(baseVar, mname.Name, callExpression, discardResult))
+                    // Step 1: Is it a variable?
+                    var baseVar = _variables.FindVariable(baseId.Name);
+                    if (baseVar != null)
                     {
+                        // Step 2: Is it an object/class instance? Try intrinsic first, then class instance fallback
+                        if (TryEmitIntrinsicInstanceCall(baseVar, mname.Name, callExpression, discardResult))
+                        {
+                            return;
+                        }
+
+                        // Non-intrinsic instance method call fallback (class instance created via `new`)
+                        // Load instance from variable field
+                        var scopeRef = _variables.GetScopeLocalSlot(baseVar.ScopeName);
+                        if (scopeRef.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(scopeRef.Address);
+                        else if (scopeRef.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(scopeRef.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
+                        else _il.LoadLocal(scopeRef.Address);
+                        _il.OpCode(ILOpCode.Ldfld);
+                        _il.Token(baseVar.FieldHandle); // stack: instance (object)
+
+                        // Resolve the concrete class type if known (based on prior `new` assignment)
+                        var argCount = callExpression.Arguments.Count;
+                        var sig = new BlobBuilder();
+                        new BlobEncoder(sig)
+                            .MethodSignature(isInstanceMethod: true)
+                            .Parameters(argCount, r => r.Type().Object(), p => { for (int i = 0; i < argCount; i++) p.AddParameter().Type().Object(); });
+                        var msig = _metadataBuilder.GetOrAddBlob(sig);
+
+                        TypeDefinitionHandle targetType = default;
+                        if (_variableToClass.TryGetValue(baseId.Name, out var cname))
+                        {
+                            if (_classRegistry.TryGet(cname, out var th)) targetType = th;
+                        }
+                        if (targetType.IsNil)
+                        {
+                            throw new NotSupportedException($"Cannot resolve class type for variable '{baseId.Name}' to call method '{mname.Name}'.");
+                        }
+                        var mrefHandle = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(mname.Name), msig);
+
+                        // Push arguments
+                        for (int i = 0; i < callExpression.Arguments.Count; i++)
+                        {
+                            _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
+                            // Optional: castclass for specific ref types; keep simple for now as literals are already typed
+                        }
+
+                        _il.OpCode(ILOpCode.Callvirt);
+                        _il.Token(mrefHandle);
+                        if (discardResult) _il.OpCode(ILOpCode.Pop);
                         return;
                     }
-
-                    // Non-intrinsic instance method call fallback (class instance created via `new`)
-                    // Load instance from variable field
-                    var scopeRef = _variables.GetScopeLocalSlot(baseVar.ScopeName);
-                    if (scopeRef.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(scopeRef.Address);
-                    else if (scopeRef.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(scopeRef.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
-                    else _il.LoadLocal(scopeRef.Address);
-                    _il.OpCode(ILOpCode.Ldfld);
-                    _il.Token(baseVar.FieldHandle); // stack: instance (object)
-
-                    // Resolve the concrete class type if known (based on prior `new` assignment)
-                    var argCount = callExpression.Arguments.Count;
-                    var sig = new BlobBuilder();
-                    new BlobEncoder(sig)
-                        .MethodSignature(isInstanceMethod: true)
-                        .Parameters(argCount, r => r.Type().Object(), p => { for (int i = 0; i < argCount; i++) p.AddParameter().Type().Object(); });
-                    var msig = _metadataBuilder.GetOrAddBlob(sig);
-
-                    TypeDefinitionHandle targetType = default;
-                    if (_variableToClass.TryGetValue(baseId.Name, out var cname))
-                    {
-                        if (_classRegistry.TryGet(cname, out var th)) targetType = th;
-                    }
-                    if (targetType.IsNil)
-                    {
-                        throw new NotSupportedException($"Cannot resolve class type for variable '{baseId.Name}' to call method '{mname.Name}'.");
-                    }
-                    var mrefHandle = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(mname.Name), msig);
-
-                    // Push arguments
-                    for (int i = 0; i < callExpression.Arguments.Count; i++)
-                    {
-                        _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
-                        // Optional: castclass for specific ref types; keep simple for now as literals are already typed
-                    }
-
-                    _il.OpCode(ILOpCode.Callvirt);
-                    _il.Token(mrefHandle);
-                    if (discardResult) _il.OpCode(ILOpCode.Pop);
-                    return;
-                }
-                // try to invoke local function
-                if (callExpression.Callee is Acornima.Ast.Identifier identifier)
-                {
-
-                    var functionVariable = _variables.FindVariable(identifier.Name);
-                    if (functionVariable == null)
-                    {
-                        throw new ArgumentException($"Function {identifier.Name} is not defined.");
-                    }
-
-                    // Load the scope instance as the first parameter
-                    Action loadScopeInstance;
-                    var scopeObjectReference = _variables.GetScopeLocalSlot(functionVariable.ScopeName);
-                    if (scopeObjectReference.Address == -1)
-                    {
-                        throw new InvalidOperationException($"Scope '{functionVariable.ScopeName}' not found in local slots");
-                    }
-                    if (scopeObjectReference.Location == ObjectReferenceLocation.Local)
-                    {
-                        loadScopeInstance = () => _il.LoadLocal(scopeObjectReference.Address);
-                    }
-                    else if (scopeObjectReference.Location == ObjectReferenceLocation.Parameter)
-                    {
-                        // Load the scope instance from the field
-                        loadScopeInstance = () => _il.LoadArgument(scopeObjectReference.Address);
-                    }
-                    else if (scopeObjectReference.Location == ObjectReferenceLocation.ScopeArray)
-                    {
-                        // Load from scope array at index 0
-                        loadScopeInstance = () =>
-                        {
-                            _il.LoadArgument(0); // Load scope array parameter
-                            _il.LoadConstantI4(0); // Index 0 for global scope
-                            _il.OpCode(ILOpCode.Ldelem_ref);
-                        };
-                    }
                     else
                     {
-                        throw new InvalidOperationException($"Unsupported scope object reference location: {scopeObjectReference.Location}");
+                        // Step 4: Not a variable - try host intrinsic (e.g., console.log)
+                        if (TryEmitHostIntrinsicStaticCall(baseId.Name, mname.Name, callExpression, discardResult))
+                        {
+                            return;
+                        }
+                        throw new NotSupportedException($"Unsupported member call base identifier: '{baseId.Name}'");
                     }
-
-                    // load the delegate to be invoked (from scope field)
-                    loadScopeInstance();
-                    _il.OpCode(ILOpCode.Ldfld);
-                    _il.Token(functionVariable.FieldHandle);
-
-                    // First argument: create scope array with appropriate scopes for the function
-                    // Only include scopes that are actually needed for this function call
-                    var neededScopeNames = GetNeededScopesForFunction(functionVariable, context).ToList();
-                    var arraySize = neededScopeNames.Count;
-
-                    _il.LoadConstantI4(arraySize); // Array size
-                    _il.OpCode(ILOpCode.Newarr);
-                    _il.Token(_bclReferences.ObjectType);
-
-                    // Fill the scope array with needed scopes only
-                    for (int i = 0; i < neededScopeNames.Count; i++)
-                    {
-                        var scopeName = neededScopeNames[i];
-                        var scopeRef = _variables.GetScopeLocalSlot(scopeName);
-
-                        _il.OpCode(ILOpCode.Dup); // Duplicate array reference
-                        _il.LoadConstantI4(i);    // Load array index
-
-                        // Load the scope instance based on its location
-                        if (scopeRef.Location == ObjectReferenceLocation.Local)
-                        {
-                            _il.LoadLocal(scopeRef.Address);
-                        }
-                        else if (scopeRef.Location == ObjectReferenceLocation.Parameter)
-                        {
-                            _il.LoadArgument(scopeRef.Address);
-                        }
-                        else if (scopeRef.Location == ObjectReferenceLocation.ScopeArray)
-                        {
-                            _il.LoadArgument(0); // Load scope array parameter
-                            _il.LoadConstantI4(scopeRef.Address); // Load array index
-                            _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
-                        }
-
-                        _il.OpCode(ILOpCode.Stelem_ref); // Store scope in array
-                    }
-
-                    // Additional arguments: directly emit each call argument (boxed as needed)
-                    // If this is a declared function we could validate arity, but for arrow functions or runtime values,
-                    // we simply pass through the provided arguments.
-                    for (int i = 0; i < callExpression.Arguments.Count; i++)
-                    {
-                        _ = _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
-                    }
-
-                    // Invoke correct delegate based on parameter count.
-                    // Select overloads based on call-site context to match historical snapshots.
-                    var argCount = callExpression.Arguments.Count;
-                    _il.OpCode(ILOpCode.Callvirt);
-                    if (context == CallSiteContext.Statement)
-                    {
-                        // Statement: array-based Invoke for 0/1 parameters
-                        if (argCount == 0)
-                        {
-                            _il.Token(_bclReferences.FuncObjectArrayObject_Invoke_Ref);
-                        }
-                        else if (argCount == 1)
-                        {
-                            _il.Token(_bclReferences.FuncObjectArrayObjectObject_Invoke_Ref);
-                        }
-                        else if (argCount <= 6)
-                        {
-                            _il.Token(_bclReferences.GetFuncArrayParamInvokeRef(argCount));
-                        }
-                        else
-                        {
-                            throw new NotSupportedException($"Only up to 6 parameters supported currently (got {argCount})");
-                        }
-                    }
-                    else
-                    {
-                        // Expression: non-array-based Invoke for 0/1 parameters; array-based for >=2
-                        if (argCount == 0)
-                        {
-                            _il.Token(_bclReferences.FuncObjectObject_Invoke_Ref);
-                        }
-                        else if (argCount == 1)
-                        {
-                            _il.Token(_bclReferences.FuncObjectObjectObject_Invoke_Ref);
-                        }
-                        else if (argCount <= 6)
-                        {
-                            _il.Token(_bclReferences.GetFuncArrayParamInvokeRef(argCount));
-                        }
-                        else
-                        {
-                            throw new NotSupportedException($"Only up to 6 parameters supported currently (got {argCount})");
-                        }
-                    }
-                    // Discard result if requested (statement context)
-                    if (discardResult)
-                    {
-                        _il.OpCode(ILOpCode.Pop);
-                    }
-                    return;
                 }
-                else
-                {
-                    throw new NotSupportedException($"Unsupported call expression callee type: {callExpression.Callee.Type}");
-                }
-
+                // Non-identifier callee under MemberExpression is unsupported beyond the above cases
+                throw new NotSupportedException($"Unsupported call expression callee type: {callExpression.Callee.Type}");
             }
-
-            // console.log special-case
-            CallConsoleWriteLine(callExpression);
-            if (!discardResult)
+            else if (callExpression.Callee is Acornima.Ast.Identifier identifier)
             {
-                // console.log returns undefined in JS; model as null on the stack when value is needed
-                _il.OpCode(ILOpCode.Ldnull);
+                // Simple function call: f(...)
+                EmitFunctionCall(identifier, callExpression, context, discardResult);
+                return;
+            }
+            else
+            {
+                throw new NotSupportedException($"Unsupported call expression callee type: {callExpression.Callee.Type}");
             }
         }
 
-        private void CallConsoleWriteLine(Acornima.Ast.CallExpression callConsoleLog)
+        // Emits a call to a function identified by an Identifier in the current scope, including scope array construction and delegate dispatch.
+        private void EmitFunctionCall(Acornima.Ast.Identifier identifier, Acornima.Ast.CallExpression callExpression, CallSiteContext context, bool discardResult)
         {
-            var arguments = callConsoleLog.Arguments;
-            var argumentCount = arguments.Count;
+            var functionVariable = _variables.FindVariable(identifier.Name);
+            if (functionVariable == null)
+            {
+                throw new ArgumentException($"Function {identifier.Name} is not defined.");
+            }
 
-            _il.LoadConstantI4(argumentCount);
+            // Load the scope instance as the first parameter
+            Action loadScopeInstance;
+            var scopeObjectReference = _variables.GetScopeLocalSlot(functionVariable.ScopeName);
+            if (scopeObjectReference.Address == -1)
+            {
+                throw new InvalidOperationException($"Scope '{functionVariable.ScopeName}' not found in local slots");
+            }
+            if (scopeObjectReference.Location == ObjectReferenceLocation.Local)
+            {
+                loadScopeInstance = () => _il.LoadLocal(scopeObjectReference.Address);
+            }
+            else if (scopeObjectReference.Location == ObjectReferenceLocation.Parameter)
+            {
+                // Load the scope instance from the field
+                loadScopeInstance = () => _il.LoadArgument(scopeObjectReference.Address);
+            }
+            else if (scopeObjectReference.Location == ObjectReferenceLocation.ScopeArray)
+            {
+                // Load from scope array at index 0
+                loadScopeInstance = () =>
+                {
+                    _il.LoadArgument(0); // Load scope array parameter
+                    _il.LoadConstantI4(0); // Index 0 for global scope
+                    _il.OpCode(ILOpCode.Ldelem_ref);
+                };
+            }
+            else
+            {
+                throw new InvalidOperationException($"Unsupported scope object reference location: {scopeObjectReference.Location}");
+            }
 
-            // create a array of parameters to pass to log
+            // load the delegate to be invoked (from scope field)
+            loadScopeInstance();
+            _il.OpCode(ILOpCode.Ldfld);
+            _il.Token(functionVariable.FieldHandle);
+
+            // First argument: create scope array with appropriate scopes for the function
+            // Only include scopes that are actually needed for this function call
+            var neededScopeNames = GetNeededScopesForFunction(functionVariable, context).ToList();
+            var arraySize = neededScopeNames.Count;
+
+            _il.LoadConstantI4(arraySize); // Array size
             _il.OpCode(ILOpCode.Newarr);
             _il.Token(_bclReferences.ObjectType);
 
-            for (int i = 0; i < argumentCount; i++)
+            // Fill the scope array with needed scopes only
+            for (int i = 0; i < neededScopeNames.Count; i++)
             {
-                // Duplicate the array reference on the stack
-                _il.OpCode(ILOpCode.Dup);
-                _il.LoadConstantI4(i); // Load the index for the parameter
-                var argument = callConsoleLog.Arguments[i];
+                var scopeName = neededScopeNames[i];
+                var scopeRef = _variables.GetScopeLocalSlot(scopeName);
 
-                // Emit the argument expression (ensure boxing)
-                this._expressionEmitter.Emit(argument, new TypeCoercion() { boxResult = true });
+                _il.OpCode(ILOpCode.Dup); // Duplicate array reference
+                _il.LoadConstantI4(i);    // Load array index
 
-                // Store the argument in the array at the specified index
-                _il.OpCode(ILOpCode.Stelem_ref);
+                // Load the scope instance based on its location
+                if (scopeRef.Location == ObjectReferenceLocation.Local)
+                {
+                    _il.LoadLocal(scopeRef.Address);
+                }
+                else if (scopeRef.Location == ObjectReferenceLocation.Parameter)
+                {
+                    _il.LoadArgument(scopeRef.Address);
+                }
+                else if (scopeRef.Location == ObjectReferenceLocation.ScopeArray)
+                {
+                    _il.LoadArgument(0); // Load scope array parameter
+                    _il.LoadConstantI4(scopeRef.Address); // Load array index
+                    _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
+                }
+
+                _il.OpCode(ILOpCode.Stelem_ref); // Store scope in array
             }
 
+            // Additional arguments: directly emit each call argument (boxed as needed)
+            // If this is a declared function we could validate arity, but for arrow functions or runtime values,
+            // we simply pass through the provided arguments.
+            for (int i = 0; i < callExpression.Arguments.Count; i++)
+            {
+                _ = _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
+            }
 
-            // call the runtime helper Console.Log
-            _runtime.InvokeConsoleLog();
+            // Invoke correct delegate based on parameter count.
+            // Select overloads based on call-site context to match historical snapshots.
+            var argCount = callExpression.Arguments.Count;
+            _il.OpCode(ILOpCode.Callvirt);
+            if (context == CallSiteContext.Statement)
+            {
+                // Statement: array-based Invoke for 0/1 parameters
+                if (argCount == 0)
+                {
+                    _il.Token(_bclReferences.FuncObjectArrayObject_Invoke_Ref);
+                }
+                else if (argCount == 1)
+                {
+                    _il.Token(_bclReferences.FuncObjectArrayObjectObject_Invoke_Ref);
+                }
+                else if (argCount <= 6)
+                {
+                    _il.Token(_bclReferences.GetFuncArrayParamInvokeRef(argCount));
+                }
+                else
+                {
+                    throw new NotSupportedException($"Only up to 6 parameters supported currently (got {argCount})");
+                }
+            }
+            else
+            {
+                // Expression: non-array-based Invoke for 0/1 parameters; array-based for >=2
+                if (argCount == 0)
+                {
+                    _il.Token(_bclReferences.FuncObjectObject_Invoke_Ref);
+                }
+                else if (argCount == 1)
+                {
+                    _il.Token(_bclReferences.FuncObjectObjectObject_Invoke_Ref);
+                }
+                else if (argCount <= 6)
+                {
+                    _il.Token(_bclReferences.GetFuncArrayParamInvokeRef(argCount));
+                }
+                else
+                {
+                    throw new NotSupportedException($"Only up to 6 parameters supported currently (got {argCount})");
+                }
+            }
+            // Discard result if requested (statement context)
+            if (discardResult)
+            {
+                _il.OpCode(ILOpCode.Pop);
+            }
+        }
+
+        // Emits a static call on a host intrinsic object (e.g., console.log), discovered via JavaScriptRuntime.IntrinsicObjectAttribute
+        private bool TryEmitHostIntrinsicStaticCall(string objectName, string methodName, Acornima.Ast.CallExpression callExpression, bool discardResult)
+        {
+            var type = JavaScriptRuntime.IntrinsicObjectRegistry.Get(objectName);
+            if (type == null)
+            {
+                return false;
+            }
+
+            // Reflect static method; prefer params object[]
+            var methods = type.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+                .Where(mi => string.Equals(mi.Name, methodName, StringComparison.OrdinalIgnoreCase));
+            var chosen = methods.FirstOrDefault(mi =>
+            {
+                var ps = mi.GetParameters();
+                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+            }) ?? methods.FirstOrDefault(mi => mi.GetParameters().Length == callExpression.Arguments.Count);
+            if (chosen == null)
+            {
+                throw new NotSupportedException($"Host intrinsic method not found: {type.FullName}.{methodName} with {callExpression.Arguments.Count} arg(s)");
+            }
+
+            var ps = chosen.GetParameters();
+            var expectsParamsArray = ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+            var paramTypes = ps.Select(p => p.ParameterType).ToArray();
+            var retType = chosen.ReturnType;
+
+            var mref = _runtime.GetStaticMethodRef(type, chosen.Name, retType, paramTypes);
+
+            if (expectsParamsArray)
+            {
+                _il.LoadConstantI4(callExpression.Arguments.Count);
+                _il.OpCode(ILOpCode.Newarr);
+                _il.Token(_bclReferences.ObjectType);
+                for (int i = 0; i < callExpression.Arguments.Count; i++)
+                {
+                    _il.OpCode(ILOpCode.Dup);
+                    _il.LoadConstantI4(i);
+                    _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
+                    _il.OpCode(ILOpCode.Stelem_ref);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < callExpression.Arguments.Count; i++)
+                {
+                    _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
+                }
+            }
+
+                _il.OpCode(ILOpCode.Call);
+                _il.Token(mref);
+                // Pop only if caller wants to discard and method returns a value
+                if (discardResult && retType != typeof(void))
+                {
+                    _il.OpCode(ILOpCode.Pop);
+                }
+            return true;
         }
 
         // Helper to emit a UnaryExpression and return its JavaScript type (or Unknown when control-flow handled)
