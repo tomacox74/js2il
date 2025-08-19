@@ -76,7 +76,7 @@ namespace Js2IL.Services.ILGenerators
                 _ilGenerator.InitializeLocalFunctionVariables(ast.Body.OfType<Acornima.Ast.FunctionDeclaration>());
             }
 
-            _ilGenerator.GenerateStatementsForBody(ast.Body);
+            _ilGenerator.GenerateStatementsForBody(variables.GetLeafScopeName(), false, ast.Body);
 
             _ilGenerator.IL.OpCode(ILOpCode.Ret);
 

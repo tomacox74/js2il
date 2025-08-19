@@ -134,12 +134,51 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-    public void GenerateStatementsForBody(NodeList<Statement> statements)
+    public void GenerateStatementsForBody(string scopeName, bool createScopeInstance, NodeList<Statement> statements)
         {
+            int? createdLocalIndex = null;
+            if (createScopeInstance)
+            {
+                var registry = _variables.GetVariableRegistry();
+                if (registry != null)
+                {
+                    var scopeTypeHandle = registry.GetScopeTypeHandle(scopeName);
+                    if (!scopeTypeHandle.IsNil)
+                    {
+                        // Build .ctor member ref for the scope type
+                        var ctorSigBuilder = new BlobBuilder();
+                        new BlobEncoder(ctorSigBuilder)
+                            .MethodSignature(isInstanceMethod: true)
+                            .Parameters(0, rt => rt.Void(), p => { });
+                        var ctorRef = _metadataBuilder.AddMemberReference(
+                            scopeTypeHandle,
+                            _metadataBuilder.GetOrAddString(".ctor"),
+                            _metadataBuilder.GetOrAddBlob(ctorSigBuilder));
+
+                        // Allocate a local slot to hold the new scope instance and construct it
+                        createdLocalIndex = _variables.AllocateBlockScopeLocal(scopeName);
+                        _il.OpCode(ILOpCode.Newobj);
+                        _il.Token(ctorRef);
+                        _il.StoreLocal(createdLocalIndex.Value);
+
+                        // Track lexical scope so variable resolution prefers it
+                        _variables.PushLexicalScope(scopeName);
+                    }
+                }
+            }
+
             // Iterate through each statement in the block
             foreach (var statement in statements.Where(s => s is not FunctionDeclaration))
             {
                 GenerateStatement(statement);
+            }
+
+            if (createdLocalIndex.HasValue)
+            {
+                _variables.PopLexicalScope(scopeName);
+                // Clear the local to release the scope instance for GC
+                _il.OpCode(ILOpCode.Ldnull);
+                _il.StoreLocal(createdLocalIndex.Value);
             }
         }
 
@@ -270,7 +309,8 @@ namespace Js2IL.Services.ILGenerators
             // If no lexical declarations, just emit statements directly.
             if (!hasLexical)
             {
-                GenerateStatementsForBody(blockStatement.Body);
+                // No new lexical scope: use current leaf scope name
+                GenerateStatementsForBody(_variables.GetLeafScopeName(), false, blockStatement.Body);
                 return;
             }
 
@@ -278,42 +318,8 @@ namespace Js2IL.Services.ILGenerators
             // We rely on the same naming pattern used during symbol table build.
             var scopeName = $"Block_L{blockStatement.Location.Start.Line}C{blockStatement.Location.Start.Column}";
 
-            var registry = _variables.GetVariableRegistry();
-            int? blockLocalIndex = null;
-            if (registry != null)
-            {
-                var scopeTypeHandle = registry.GetScopeTypeHandle(scopeName);
-                if (!scopeTypeHandle.IsNil)
-                {
-                    // Create constructor reference
-                    var ctorSigBuilder = new BlobBuilder();
-                    new BlobEncoder(ctorSigBuilder)
-                        .MethodSignature(isInstanceMethod: true)
-                        .Parameters(0, rt => rt.Void(), p => { });
-                    var ctorRef = _metadataBuilder.AddMemberReference(
-                        scopeTypeHandle,
-                        _metadataBuilder.GetOrAddString(".ctor"),
-                        _metadataBuilder.GetOrAddBlob(ctorSigBuilder));
-
-                    // newobj + store to a temp local (extend locals if necessary)
-                    // Allocate a new logical local slot index at end: existing locals count + created ones
-                    // Allocate a new local slot dedicated to this block scope
-                    blockLocalIndex = _variables.AllocateBlockScopeLocal(scopeName);
-                    _il.OpCode(ILOpCode.Newobj);
-                    _il.Token(ctorRef);
-                    _il.StoreLocal(blockLocalIndex.Value);
-                    // Track lexical scope so variable resolution prefers it
-                    _variables.PushLexicalScope(scopeName);
-                }
-            }
-
-            // Emit inner statements (variables inside will resolve to the block scope fields via registry name match)
-            GenerateStatementsForBody(blockStatement.Body);
-
-            if (blockLocalIndex.HasValue)
-            {
-                _variables.PopLexicalScope(scopeName);
-            }
+            // Emit inner statements and create the scope instance here if needed
+            GenerateStatementsForBody(scopeName, true, blockStatement.Body);
         }
 
         private void GenerateReturnStatement(ReturnStatement returnStatement)
@@ -1714,7 +1720,7 @@ namespace Js2IL.Services.ILGenerators
                     }
 
                     // Emit statements using the child generator
-                    childGen.GenerateStatementsForBody(block.Body);
+                    childGen.GenerateStatementsForBody(functionVariables.GetLeafScopeName(), false, block.Body);
                     // If no explicit return executed, fall through and return null
                     il.OpCode(ILOpCode.Ldnull);
                     il.OpCode(ILOpCode.Ret);

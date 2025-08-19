@@ -11,6 +11,8 @@ namespace Js2IL.Tests.TryCatch
         // Try/Catch execution tests
         [Fact]
         public Task TryCatch_NoBinding() { var testName = nameof(TryCatch_NoBinding); return ExecutionTest(testName); }
+    [Fact]
+    public Task TryCatch_NoBinding_NoThrow() { var testName = nameof(TryCatch_NoBinding_NoThrow); return ExecutionTest(testName); }
         // Try/Finally (no catch)
         [Fact]
         public Task TryFinally_NoCatch() { var testName = nameof(TryFinally_NoCatch); return ExecutionTest(testName); }
