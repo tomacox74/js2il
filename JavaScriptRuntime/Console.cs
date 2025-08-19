@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace JavaScriptRuntime
 {
+    [IntrinsicObject("console")]
     public class Console
     {
         private static IConsoleOutput _output = new DefaultConsoleOutput();
