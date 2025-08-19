@@ -741,6 +741,92 @@ namespace Js2IL.Services.ILGenerators
             _il.MarkLabel(endLabel);
         }
 
+        /// <summary>
+        /// Attempts to emit an instance method call on a runtime intrinsic object (e.g., require('path') -> Path). Returns true if emitted.
+        /// </summary>
+        private bool TryEmitIntrinsicInstanceCall(Variable baseVar, string methodName, Acornima.Ast.CallExpression callExpression, bool discardResult)
+        {
+            // Only applies to runtime intrinsic objects backed by a known CLR type
+            if (baseVar.RuntimeIntrinsicType == null)
+            {
+                return false;
+            }
+
+            // Load instance from the variable's scope field
+            var scopeRef = _variables.GetScopeLocalSlot(baseVar.ScopeName);
+            if (scopeRef.Location == ObjectReferenceLocation.Parameter)
+            {
+                _il.LoadArgument(scopeRef.Address);
+            }
+            else if (scopeRef.Location == ObjectReferenceLocation.ScopeArray)
+            {
+                _il.LoadArgument(0);
+                _il.LoadConstantI4(scopeRef.Address);
+                _il.OpCode(ILOpCode.Ldelem_ref);
+            }
+            else
+            {
+                _il.LoadLocal(scopeRef.Address);
+            }
+            _il.OpCode(ILOpCode.Ldfld);
+            _il.Token(baseVar.FieldHandle); // stack: instance (object)
+
+            // Reflect and select the target method, preferring params object[]
+            var rt = baseVar.RuntimeIntrinsicType;
+            var methods = rt
+                .GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                .Where(mi => string.Equals(mi.Name, methodName, StringComparison.Ordinal));
+
+            var chosen = methods.FirstOrDefault(mi =>
+            {
+                var ps = mi.GetParameters();
+                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+            }) ?? methods.FirstOrDefault(mi => mi.GetParameters().Length == callExpression.Arguments.Count);
+
+            if (chosen == null)
+            {
+                throw new NotSupportedException($"Intrinsic method not found: {rt.FullName}.{methodName} with {callExpression.Arguments.Count} arg(s)");
+            }
+
+            var psChosen = chosen.GetParameters();
+            var expectsParamsArray = psChosen.Length == 1 && psChosen[0].ParameterType == typeof(object[]);
+            var reflectedParamTypes = psChosen.Select(p => p.ParameterType).ToArray();
+            var reflectedReturnType = chosen.ReturnType;
+
+            var mrefHandle = _runtime.GetInstanceMethodRef(rt, chosen.Name, reflectedReturnType, reflectedParamTypes);
+
+            // Push arguments as either a packed object[] or individual boxed args
+            if (expectsParamsArray)
+            {
+                _il.LoadConstantI4(callExpression.Arguments.Count);
+                _il.OpCode(ILOpCode.Newarr);
+                _il.Token(_bclReferences.ObjectType);
+                for (int i = 0; i < callExpression.Arguments.Count; i++)
+                {
+                    _il.OpCode(ILOpCode.Dup);
+                    _il.LoadConstantI4(i);
+                    _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
+                    _il.OpCode(ILOpCode.Stelem_ref);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < callExpression.Arguments.Count; i++)
+                {
+                    _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
+                }
+            }
+
+            _il.OpCode(ILOpCode.Callvirt);
+            _il.Token(mrefHandle);
+            if (discardResult)
+            {
+                _il.OpCode(ILOpCode.Pop);
+            }
+
+            return true;
+        }
+
         private void GenerateObjectExpresion(ObjectExpression objectExpression)
         {
             // first we need to creat a new instance of the expando object
@@ -817,6 +903,10 @@ namespace Js2IL.Services.ILGenerators
             var variable = _variables.FindVariable(variableName);
 
             // Handle scope field variables
+            if (variable == null)
+            {
+                throw new InvalidOperationException("Variable reference is null.");
+            }
             var scopeLocalIndex = _variables.GetScopeLocalSlot(variable.ScopeName);
             if (scopeLocalIndex.Address == -1)
             {
@@ -895,82 +985,46 @@ namespace Js2IL.Services.ILGenerators
                         if (discardResult) _il.OpCode(ILOpCode.Pop);
                         return;
                     }
-
-                    // Instance method call: obj.method(...)
-                    // Check if base variable is a runtime intrinsic object with a known CLR type
-                    // Load instance from variable field
+                    // Try intrinsic runtime-backed instance call first for readability
                     var baseVar = _variables.FindVariable(baseId.Name) ?? throw new InvalidOperationException($"Variable '{baseId.Name}' not found.");
+                    if (TryEmitIntrinsicInstanceCall(baseVar, mname.Name, callExpression, discardResult))
+                    {
+                        return;
+                    }
+
+                    // Non-intrinsic instance method call fallback (class instance created via `new`)
+                    // Load instance from variable field
                     var scopeRef = _variables.GetScopeLocalSlot(baseVar.ScopeName);
                     if (scopeRef.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(scopeRef.Address);
                     else if (scopeRef.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(scopeRef.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
                     else _il.LoadLocal(scopeRef.Address);
                     _il.OpCode(ILOpCode.Ldfld);
                     _il.Token(baseVar.FieldHandle); // stack: instance (object)
-                    MemberReferenceHandle mrefHandle = default;
-                    var expectsParamsArray = false;
-                    Type[] reflectedParamTypes = Array.Empty<Type>();
-                    Type reflectedReturnType = typeof(object);
-                    if (baseVar.RuntimeIntrinsicType != null)
-                    {
-                        // Reflect method with preference for params object[] signature
-                        var rt = baseVar.RuntimeIntrinsicType;
-                        var methods = rt.GetMethods(BindingFlags.Instance | BindingFlags.Public).Where(mi => string.Equals(mi.Name, mname.Name, StringComparison.Ordinal));
-                        var chosen = methods.FirstOrDefault(mi => { var ps = mi.GetParameters(); return ps.Length == 1 && ps[0].ParameterType == typeof(object[]); })
-                                     ?? methods.FirstOrDefault(mi => mi.GetParameters().Length == callExpression.Arguments.Count);
-                        if (chosen == null)
-                        {
-                            throw new NotSupportedException($"Intrinsic method not found: {rt.FullName}.{mname.Name} with {callExpression.Arguments.Count} arg(s)");
-                        }
-                        var psChosen = chosen.GetParameters();
-                        expectsParamsArray = psChosen.Length == 1 && psChosen[0].ParameterType == typeof(object[]);
-                        reflectedParamTypes = psChosen.Select(p => p.ParameterType).ToArray();
-                        reflectedReturnType = chosen.ReturnType;
-                        mrefHandle = _runtime.GetInstanceMethodRef(rt, chosen.Name, reflectedReturnType, reflectedParamTypes);
-                    }
-                    else
-                    {
-                        // Resolve the concrete class type if known (based on prior `new` assignment)
-                        var argCount = callExpression.Arguments.Count;
-                        var sig = new BlobBuilder();
-                        new BlobEncoder(sig)
-                            .MethodSignature(isInstanceMethod: true)
-                            .Parameters(argCount, r => r.Type().Object(), p => { for (int i = 0; i < argCount; i++) p.AddParameter().Type().Object(); });
-                        var msig = _metadataBuilder.GetOrAddBlob(sig);
 
-                        TypeDefinitionHandle targetType = default;
-                        if (_variableToClass.TryGetValue(baseId.Name, out var cname))
-                        {
-                            if (_classRegistry.TryGet(cname, out var th)) targetType = th;
-                        }
-                        if (targetType.IsNil)
-                        {
-                            throw new NotSupportedException($"Cannot resolve class type for variable '{baseId.Name}' to call method '{mname.Name}'.");
-                        }
-                        mrefHandle = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(mname.Name), msig);
+                    // Resolve the concrete class type if known (based on prior `new` assignment)
+                    var argCount = callExpression.Arguments.Count;
+                    var sig = new BlobBuilder();
+                    new BlobEncoder(sig)
+                        .MethodSignature(isInstanceMethod: true)
+                        .Parameters(argCount, r => r.Type().Object(), p => { for (int i = 0; i < argCount; i++) p.AddParameter().Type().Object(); });
+                    var msig = _metadataBuilder.GetOrAddBlob(sig);
+
+                    TypeDefinitionHandle targetType = default;
+                    if (_variableToClass.TryGetValue(baseId.Name, out var cname))
+                    {
+                        if (_classRegistry.TryGet(cname, out var th)) targetType = th;
                     }
+                    if (targetType.IsNil)
+                    {
+                        throw new NotSupportedException($"Cannot resolve class type for variable '{baseId.Name}' to call method '{mname.Name}'.");
+                    }
+                    var mrefHandle = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(mname.Name), msig);
 
                     // Push arguments
-                    if (expectsParamsArray)
+                    for (int i = 0; i < callExpression.Arguments.Count; i++)
                     {
-                        // Build object[] of arguments
-                        _il.LoadConstantI4(callExpression.Arguments.Count);
-                        _il.OpCode(ILOpCode.Newarr);
-                        _il.Token(_bclReferences.ObjectType);
-                        for (int i = 0; i < callExpression.Arguments.Count; i++)
-                        {
-                            _il.OpCode(ILOpCode.Dup);
-                            _il.LoadConstantI4(i);
-                            _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
-                            _il.OpCode(ILOpCode.Stelem_ref);
-                        }
-                    }
-                    else
-                    {
-                        for (int i = 0; i < callExpression.Arguments.Count; i++)
-                        {
-                            _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
-                            // Optional: castclass for specific ref types; keep simple for now as literals are already typed
-                        }
+                        _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
+                        // Optional: castclass for specific ref types; keep simple for now as literals are already typed
                     }
 
                     _il.OpCode(ILOpCode.Callvirt);
@@ -1354,7 +1408,7 @@ namespace Js2IL.Services.ILGenerators
                 case Acornima.Ast.Identifier identifier:
                     {
                         var name = identifier.Name;
-                        var variable = _variables.FindVariable(name);
+                        var variable = _variables.FindVariable(name) ?? throw new InvalidOperationException($"Variable '{name}' not found.");
                         _binaryOperators.LoadVariable(variable); // Load variable using scope field or local fallback
 
                         // Only unbox when we explicitly know it's a Number && caller didn't request boxing.
