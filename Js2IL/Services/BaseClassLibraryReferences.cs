@@ -81,6 +81,13 @@ namespace Js2IL.Services
                 metadataBuilder.GetOrAddString("String")
             );            
 
+            // System.Exception Reference (for catch handlers)
+            this.ExceptionType = metadataBuilder.AddTypeReference(
+                this.SystemRuntimeAssembly,
+                metadataBuilder.GetOrAddString("System"),
+                metadataBuilder.GetOrAddString("Exception")
+            );
+
             // System.Math References
             this.SystemMathType = metadataBuilder.AddTypeReference(
                 this.SystemRuntimeAssembly,
@@ -124,6 +131,7 @@ namespace Js2IL.Services
         public TypeReferenceHandle DoubleType { get; private init; }
         public TypeReferenceHandle ObjectType { get; private init; }
         public TypeReferenceHandle StringType { get; private init; }
+    public TypeReferenceHandle ExceptionType { get; private init; }
         public TypeReferenceHandle SystemMathType { get; private init; }
 
     // Removed legacy Action<> delegate references (now using Func returning object)

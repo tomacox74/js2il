@@ -311,7 +311,7 @@ namespace Js2IL.Services.ILGenerators
             // Emit constructor body statements (no default return value emission)
             if (ctorFunc.Body is BlockStatement bstmt)
             {
-                ilGen.GenerateStatements(bstmt.Body);
+                ilGen.GenerateStatementsForBody(methodVariables.GetLeafScopeName(), false, bstmt.Body);
             }
 
             // Return from constructor (void)
@@ -363,7 +363,7 @@ namespace Js2IL.Services.ILGenerators
             if (element.Value is FunctionExpression fexpr && fexpr.Body is BlockStatement bstmt)
             {
                 hasExplicitReturn = bstmt.Body.Any(s => s is ReturnStatement);
-                ilGen.GenerateStatements(bstmt.Body);
+                ilGen.GenerateStatementsForBody(methodVariables.GetLeafScopeName(), false, bstmt.Body);
             }
             else
             {

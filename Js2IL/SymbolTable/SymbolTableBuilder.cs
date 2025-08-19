@@ -145,7 +145,18 @@ namespace Js2IL.SymbolTables
                     }
                     break;
                 case BlockStatement blockStmt:
-                    var blockScope = new Scope($"Block_L{blockStmt.Location.Start.Line}C{blockStmt.Location.Start.Column}", ScopeKind.Block, currentScope, blockStmt);
+                    // Compute deterministic block scope name (must match codegen expectations)
+                    var blockName = $"Block_L{blockStmt.Location.Start.Line}C{blockStmt.Location.Start.Column}";
+                    // Guard: reflection-based traversal may encounter the same BlockStatement twice (e.g., via multiple properties).
+                    // Avoid creating duplicate scopes by checking for an existing child with the same name under the current scope.
+                    var existingBlock = currentScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Block && s.Name == blockName);
+                    if (existingBlock != null)
+                    {
+                        // Already processed this block; skip to avoid duplicate nested types
+                        break;
+                    }
+
+                    var blockScope = new Scope(blockName, ScopeKind.Block, currentScope, blockStmt);
                     foreach (var statement in blockStmt.Body)
                         BuildScopeRecursive(statement, blockScope);
                     break;

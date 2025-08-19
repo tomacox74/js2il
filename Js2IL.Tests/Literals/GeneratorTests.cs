@@ -9,6 +9,6 @@ namespace Js2IL.Tests.Literals
         // Literal code generation tests
         [Fact] public Task ArrayLiteral() { var testName = nameof(ArrayLiteral); return GenerateTest(testName); }
         [Fact] public Task ObjectLiteral() { var testName = nameof(ObjectLiteral); return GenerateTest(testName); }
-    [Fact(Skip = "Snapshot pending for BooleanLiteral generator")] public Task BooleanLiteral() { var testName = nameof(BooleanLiteral); return GenerateTest(testName); }
+        [Fact] public Task BooleanLiteral() { var testName = nameof(BooleanLiteral); return GenerateTest(testName); }
     }
 }

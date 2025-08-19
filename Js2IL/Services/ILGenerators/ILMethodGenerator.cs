@@ -20,7 +20,8 @@ namespace Js2IL.Services.ILGenerators
         private readonly Variables _variables;
         private readonly BaseClassLibraryReferences _bclReferences;
         private readonly MetadataBuilder _metadataBuilder;
-        private readonly InstructionEncoder _il;
+    private readonly InstructionEncoder _il;
+    private readonly ControlFlowBuilder _cfb;
         private readonly BinaryOperators _binaryOperators;
         private readonly IMethodExpressionEmitter _expressionEmitter;
         private readonly Runtime _runtime;
@@ -62,7 +63,8 @@ namespace Js2IL.Services.ILGenerators
             _bclReferences = bclReferences;
             _metadataBuilder = metadataBuilder;
             var methodIl = new BlobBuilder();
-            _il = new InstructionEncoder(methodIl, new ControlFlowBuilder());
+            _cfb = new ControlFlowBuilder();
+            _il = new InstructionEncoder(methodIl, _cfb);
             this._runtime = new Runtime(metadataBuilder, _il);
             _binaryOperators = new BinaryOperators(metadataBuilder, _il, variables, this, bclReferences, _runtime);
 
@@ -132,12 +134,51 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-        public void GenerateStatements(NodeList<Statement> statements)
+    public void GenerateStatementsForBody(string scopeName, bool createScopeInstance, NodeList<Statement> statements)
         {
+            int? createdLocalIndex = null;
+            if (createScopeInstance)
+            {
+                var registry = _variables.GetVariableRegistry();
+                if (registry != null)
+                {
+                    var scopeTypeHandle = registry.GetScopeTypeHandle(scopeName);
+                    if (!scopeTypeHandle.IsNil)
+                    {
+                        // Build .ctor member ref for the scope type
+                        var ctorSigBuilder = new BlobBuilder();
+                        new BlobEncoder(ctorSigBuilder)
+                            .MethodSignature(isInstanceMethod: true)
+                            .Parameters(0, rt => rt.Void(), p => { });
+                        var ctorRef = _metadataBuilder.AddMemberReference(
+                            scopeTypeHandle,
+                            _metadataBuilder.GetOrAddString(".ctor"),
+                            _metadataBuilder.GetOrAddBlob(ctorSigBuilder));
+
+                        // Allocate a local slot to hold the new scope instance and construct it
+                        createdLocalIndex = _variables.AllocateBlockScopeLocal(scopeName);
+                        _il.OpCode(ILOpCode.Newobj);
+                        _il.Token(ctorRef);
+                        _il.StoreLocal(createdLocalIndex.Value);
+
+                        // Track lexical scope so variable resolution prefers it
+                        _variables.PushLexicalScope(scopeName);
+                    }
+                }
+            }
+
             // Iterate through each statement in the block
             foreach (var statement in statements.Where(s => s is not FunctionDeclaration))
             {
                 GenerateStatement(statement);
+            }
+
+            if (createdLocalIndex.HasValue)
+            {
+                _variables.PopLexicalScope(scopeName);
+                // Clear the local to release the scope instance for GC
+                _il.OpCode(ILOpCode.Ldnull);
+                _il.StoreLocal(createdLocalIndex.Value);
             }
         }
 
@@ -192,6 +233,12 @@ namespace Js2IL.Services.ILGenerators
         {
             switch (statement)
             {
+                case ThrowStatement throwStatement:
+                    GenerateThrowStatement(throwStatement);
+                    break;
+                case TryStatement tryStatement:
+                    GenerateTryStatement(tryStatement);
+                    break;
                 case ClassDeclaration:
                     // Class declarations are emitted as .NET types by ClassesGenerator;
                     // no IL is required in the method body for the declaration itself.
@@ -245,6 +292,8 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
+        
+
         /// <summary>
         /// Generates code for a BlockStatement, creating a new scope object if the block declares any let/const bindings.
         /// This enables correct shadowing behavior for block scoped variables.
@@ -260,7 +309,8 @@ namespace Js2IL.Services.ILGenerators
             // If no lexical declarations, just emit statements directly.
             if (!hasLexical)
             {
-                GenerateStatements(blockStatement.Body);
+                // No new lexical scope: use current leaf scope name
+                GenerateStatementsForBody(_variables.GetLeafScopeName(), false, blockStatement.Body);
                 return;
             }
 
@@ -268,42 +318,8 @@ namespace Js2IL.Services.ILGenerators
             // We rely on the same naming pattern used during symbol table build.
             var scopeName = $"Block_L{blockStatement.Location.Start.Line}C{blockStatement.Location.Start.Column}";
 
-            var registry = _variables.GetVariableRegistry();
-            int? blockLocalIndex = null;
-            if (registry != null)
-            {
-                var scopeTypeHandle = registry.GetScopeTypeHandle(scopeName);
-                if (!scopeTypeHandle.IsNil)
-                {
-                    // Create constructor reference
-                    var ctorSigBuilder = new BlobBuilder();
-                    new BlobEncoder(ctorSigBuilder)
-                        .MethodSignature(isInstanceMethod: true)
-                        .Parameters(0, rt => rt.Void(), p => { });
-                    var ctorRef = _metadataBuilder.AddMemberReference(
-                        scopeTypeHandle,
-                        _metadataBuilder.GetOrAddString(".ctor"),
-                        _metadataBuilder.GetOrAddBlob(ctorSigBuilder));
-
-                    // newobj + store to a temp local (extend locals if necessary)
-                    // Allocate a new logical local slot index at end: existing locals count + created ones
-                    // Allocate a new local slot dedicated to this block scope
-                    blockLocalIndex = _variables.AllocateBlockScopeLocal(scopeName);
-                    _il.OpCode(ILOpCode.Newobj);
-                    _il.Token(ctorRef);
-                    _il.StoreLocal(blockLocalIndex.Value);
-                    // Track lexical scope so variable resolution prefers it
-                    _variables.PushLexicalScope(scopeName);
-                }
-            }
-
-            // Emit inner statements (variables inside will resolve to the block scope fields via registry name match)
-            GenerateStatements(blockStatement.Body);
-
-            if (blockLocalIndex.HasValue)
-            {
-                _variables.PopLexicalScope(scopeName);
-            }
+            // Emit inner statements and create the scope instance here if needed
+            GenerateStatementsForBody(scopeName, true, blockStatement.Body);
         }
 
         private void GenerateReturnStatement(ReturnStatement returnStatement)
@@ -596,6 +612,115 @@ namespace Js2IL.Services.ILGenerators
             if (ifStatement.Alternate != null)
             {
                 GenerateStatement(ifStatement.Alternate);
+            }
+
+            _il.MarkLabel(endLabel);
+        }
+
+        private void GenerateThrowStatement(ThrowStatement throwStatement)
+        {
+            if (throwStatement.Argument == null)
+            {
+                throw new NotSupportedException("'throw' without an expression is not supported");
+            }
+            // Evaluate the expression; should yield an object (preferably JavaScriptRuntime.Error or System.Exception)
+            _ = _expressionEmitter.Emit(throwStatement.Argument, new TypeCoercion() { boxResult = true });
+            // If it's a boxed object that is not an Exception, .NET requires an Exception. We attempt to unbox/cast.
+            // Since we cannot know statically, perform 'throw' which expects an Exception reference on stack.
+            // Use 'unbox.any object' pattern is invalid; instead rely on the runtime creating Error : Exception.
+            _il.OpCode(ILOpCode.Throw);
+        }
+
+        private void GenerateTryStatement(TryStatement tryStatement)
+        {
+            // We only support a single catch (optional) and no finally for this first pass
+            var hasCatch = tryStatement.Handler != null;
+            var hasFinally = tryStatement.Finalizer != null;
+
+            if (!hasCatch && !hasFinally)
+            {
+                // Just emit the try block normally
+                if (tryStatement.Block is BlockStatement bs)
+                {
+                    GenerateBlock(bs);
+                }
+                else
+                {
+                    GenerateStatement(tryStatement.Block);
+                }
+                return;
+            }
+
+            // Labels
+            var tryStart = _il.DefineLabel();
+            var tryEnd = _il.DefineLabel();
+            var handlerStart = _il.DefineLabel();
+            var handlerEnd = _il.DefineLabel();
+            var finallyStart = hasFinally ? _il.DefineLabel() : default(LabelHandle);
+            var finallyEnd = hasFinally ? _il.DefineLabel() : default(LabelHandle);
+            var endLabel = _il.DefineLabel();
+
+            // Begin try
+            _il.MarkLabel(tryStart);
+            if (tryStatement.Block is BlockStatement tblock)
+                GenerateBlock(tblock);
+            else
+                GenerateStatement(tryStatement.Block);
+            // Normal flow leaves try: jump to end beyond handlers
+            _il.Branch(ILOpCode.Leave, endLabel);
+            _il.MarkLabel(tryEnd);
+
+            if (hasCatch)
+            {
+                // Catch handler
+                _il.MarkLabel(handlerStart);
+                // When there's no binding (catch {}), we must consume the exception object on the stack
+                var cc = tryStatement.Handler!;
+                // Emit body
+                if (cc.Param == null)
+                {
+                    // No binding: ex is on stack; pop it
+                    _il.OpCode(ILOpCode.Pop);
+                }
+                else if (cc.Param is Identifier cid)
+                {
+                    // Basic binding support: store exception into a temp scope variable if declared; otherwise pop
+                    // For now, we don't wire to scopes; minimal viable: pop
+                    _il.OpCode(ILOpCode.Pop);
+                }
+
+                if (cc.Body is BlockStatement cblock)
+                    GenerateBlock(cblock);
+                else
+                    GenerateStatement(cc.Body);
+
+                _il.Branch(ILOpCode.Leave, endLabel);
+                _il.MarkLabel(handlerEnd);
+            }
+
+            if (hasFinally)
+            {
+                // Finally block
+                _il.MarkLabel(finallyStart);
+                if (tryStatement.Finalizer is BlockStatement fblock)
+                    GenerateBlock(fblock);
+                else if (tryStatement.Finalizer != null)
+                    GenerateStatement(tryStatement.Finalizer);
+                // finally handler must terminate with endfinally
+                _il.OpCode(ILOpCode.Endfinally);
+                _il.MarkLabel(finallyEnd);
+            }
+
+            // Register exception regions
+            if (hasCatch)
+            {
+                // Only catch JavaScriptRuntime.Error; other exceptions should crash as js2il bugs
+                var errorTypeRef = _runtime.GetErrorTypeRef();
+                _cfb.AddCatchRegion(tryStart, tryEnd, handlerStart, handlerEnd, errorTypeRef);
+            }
+            if (hasFinally)
+            {
+                _cfb.AddFinallyRegion(tryStart, tryEnd, finallyStart, finallyEnd);
             }
 
             _il.MarkLabel(endLabel);
@@ -1307,38 +1432,55 @@ namespace Js2IL.Services.ILGenerators
         }
 
         // Helper to emit a NewExpression and return its JavaScript type
-        private JavascriptType EmitNewExpression(NewExpression newExpression)
+    private JavascriptType EmitNewExpression(NewExpression newExpression)
         {
             // Support `new Identifier(...)` for classes emitted under Classes namespace
             if (newExpression.Callee is Identifier cid)
             {
-                if (!_classRegistry.TryGet(cid.Name, out var typeHandle) || typeHandle.IsNil)
+                // Try Classes registry first
+                if (_classRegistry.TryGet(cid.Name, out var typeHandle) && !typeHandle.IsNil)
                 {
-                    throw new NotSupportedException($"Unknown class '{cid.Name}' for new expression");
+                    // Build .ctor signature matching argument count (all object)
+                    var argc = newExpression.Arguments.Count;
+                    var sig = new BlobBuilder();
+                    new BlobEncoder(sig)
+                        .MethodSignature(isInstanceMethod: true)
+                        .Parameters(argc, r => r.Void(), p => { for (int i = 0; i < argc; i++) p.AddParameter().Type().Object(); });
+                    var ctorSig = _metadataBuilder.GetOrAddBlob(sig);
+                    var ctorRef = _metadataBuilder.AddMemberReference(typeHandle, _metadataBuilder.GetOrAddString(".ctor"), ctorSig);
+
+                    // Push args
+                    for (int i = 0; i < argc; i++)
+                    {
+                        _expressionEmitter.Emit(newExpression.Arguments[i], new TypeCoercion() { boxResult = true });
+                    }
+                    _il.OpCode(ILOpCode.Newobj);
+                    _il.Token(ctorRef);
+
+                    // Record variable -> class mapping when in a variable initializer or assignment
+                    if (!string.IsNullOrEmpty(_currentAssignmentTarget))
+                    {
+                        _variableToClass[_currentAssignmentTarget] = cid.Name;
+                    }
+                    return JavascriptType.Object;
                 }
 
-                // Build .ctor signature matching argument count (all object)
-                var argc = newExpression.Arguments.Count;
-                var sig = new BlobBuilder();
-                new BlobEncoder(sig)
-                    .MethodSignature(isInstanceMethod: true)
-                    .Parameters(argc, r => r.Void(), p => { for (int i = 0; i < argc; i++) p.AddParameter().Type().Object(); });
-                var ctorSig = _metadataBuilder.GetOrAddBlob(sig);
-                var ctorRef = _metadataBuilder.AddMemberReference(typeHandle, _metadataBuilder.GetOrAddString(".ctor"), ctorSig);
+                // Built-in Error types from JavaScriptRuntime (Error, TypeError, etc.)
+                // Build ctor: choose overload by arg count (we support 0 or 1(param: string) for now)
+                var argc2 = newExpression.Arguments.Count;
+                if (argc2 > 1)
+                {
+                    throw new NotSupportedException($"Only up to 1 constructor argument supported for built-in Error types (got {argc2})");
+                }
+                var ctorRef2 = _runtime.GetErrorCtorRef(cid.Name, argc2);
 
                 // Push args
-                for (int i = 0; i < argc; i++)
+                for (int i = 0; i < argc2; i++)
                 {
                     _expressionEmitter.Emit(newExpression.Arguments[i], new TypeCoercion() { boxResult = true });
                 }
                 _il.OpCode(ILOpCode.Newobj);
-                _il.Token(ctorRef);
-
-                // Record variable -> class mapping when in a variable initializer or assignment
-                if (!string.IsNullOrEmpty(_currentAssignmentTarget))
-                {
-                    _variableToClass[_currentAssignmentTarget] = cid.Name;
-                }
+                _il.Token(ctorRef2);
                 return JavascriptType.Object;
             }
 
@@ -1578,7 +1720,7 @@ namespace Js2IL.Services.ILGenerators
                     }
 
                     // Emit statements using the child generator
-                    childGen.GenerateStatements(block.Body);
+                    childGen.GenerateStatementsForBody(functionVariables.GetLeafScopeName(), false, block.Body);
                     // If no explicit return executed, fall through and return null
                     il.OpCode(ILOpCode.Ldnull);
                     il.OpCode(ILOpCode.Ret);

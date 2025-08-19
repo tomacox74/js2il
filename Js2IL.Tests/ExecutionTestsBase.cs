@@ -38,7 +38,7 @@ namespace Js2IL.Tests
             }
         }
 
-        protected Task ExecutionTest(string testName, [CallerFilePath] string sourceFilePath = "")
+    protected Task ExecutionTest(string testName, bool allowUnhandledException = false, [CallerFilePath] string sourceFilePath = "")
         {
             var js = GetJavaScript(testName);
             var ast = _parser.ParseJavaScript(js, "test.js");
@@ -62,7 +62,7 @@ namespace Js2IL.Tests
                     // Fallback for environments where in-proc capture may miss output
                     usedFallback = true;
                     fallbackReason = "in-proc produced empty output";
-                    il = ExecuteGeneratedAssembly(expectedPath);
+                    il = ExecuteGeneratedAssembly(expectedPath, allowUnhandledException);
                 }
             }
             catch (Exception ex)
@@ -70,7 +70,7 @@ namespace Js2IL.Tests
                 // Fallback to out-of-proc execution on error (e.g., assembly binding issues)
                 usedFallback = true;
                 fallbackReason = $"in-proc error: {ex.GetType().Name}";
-                il = ExecuteGeneratedAssembly(expectedPath);
+                il = ExecuteGeneratedAssembly(expectedPath, allowUnhandledException);
             }
             
             if (usedFallback)
@@ -89,7 +89,7 @@ namespace Js2IL.Tests
             return Verify(il, settings);
         }
 
-        private string ExecuteGeneratedAssembly(string assemblyPath)
+    private string ExecuteGeneratedAssembly(string assemblyPath, bool allowUnhandledException)
         {
             var processInfo = new ProcessStartInfo
             {
@@ -110,7 +110,12 @@ namespace Js2IL.Tests
 
             if (process.ExitCode != 0)
             {
-                throw new Exception($"dotnet execution failed:\n{stdErr}");
+                if (!allowUnhandledException)
+                {
+                    throw new Exception($"dotnet execution failed:\n{stdErr}");
+                }
+                // When allowed, still verify what made it to stdout
+                return stdOut;
             }
 
             return stdOut;
