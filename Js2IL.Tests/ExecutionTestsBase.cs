@@ -38,7 +38,7 @@ namespace Js2IL.Tests
             }
         }
 
-    protected Task ExecutionTest(string testName, bool allowUnhandledException = false, [CallerFilePath] string sourceFilePath = "")
+    protected Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, [CallerFilePath] string sourceFilePath = "")
         {
             var js = GetJavaScript(testName);
             var ast = _parser.ParseJavaScript(js, "test.js");
@@ -79,13 +79,14 @@ namespace Js2IL.Tests
                 var reason = string.IsNullOrWhiteSpace(fallbackReason) ? "unknown reason" : fallbackReason;
                 System.Console.WriteLine($"[ExecutionTestsBase] Fallback to out-of-proc execution; reason: {reason}");
             }
-            
             var settings = new VerifySettings(_verifySettings);
             var directory = Path.GetDirectoryName(sourceFilePath);
             if (!string.IsNullOrEmpty(directory))
             {
                 settings.UseDirectory(directory);
             }
+            // Allow caller to configure Verify settings (e.g., scrubbers)
+            configureSettings?.Invoke(settings);
             return Verify(il, settings);
         }
 
