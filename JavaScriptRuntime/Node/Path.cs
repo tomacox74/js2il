@@ -1,17 +1,16 @@
 using System;
-using System.Dynamic;
 using System.IO;
 
 namespace JavaScriptRuntime.Node
 {
-    // Minimal path module: only join for now.
-    public static class Path
+    // Minimal path module as a stable class: join(...)
+    [NodeModule("path")]
+    public sealed class Path
     {
-        public static object CreateModule()
+        public string join(params object[] parts)
         {
-            dynamic exp = new ExpandoObject();
-            exp.join = (Func<object[], string>)(parts => System.IO.Path.Combine(Array.ConvertAll(parts, p => p?.ToString() ?? string.Empty)));
-            return exp;
+            var strings = System.Array.ConvertAll(parts ?? System.Array.Empty<object>(), p => p?.ToString() ?? string.Empty);
+            return System.IO.Path.Combine(strings);
         }
     }
 }

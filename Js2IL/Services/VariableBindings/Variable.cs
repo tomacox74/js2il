@@ -16,6 +16,10 @@ namespace Js2IL.Services
         
         public JavascriptType Type = JavascriptType.Unknown;
 
+    // If this variable holds a known intrinsic runtime object (e.g., Node module instance),
+    // capture its CLR type so emitters can bind directly to its methods.
+    public Type? RuntimeIntrinsicType { get; set; }
+
     // Unified optional metadata for compatibility with existing emitters
     public bool IsParameter { get; init; } = false;
     // For parameters: IL argument index (including any leading non-JS params already accounted for by caller)
@@ -69,15 +73,15 @@ namespace Js2IL.Services
 
         // Current function (or global) scope name and global root scope name
         private readonly string _scopeName;
-    private readonly string _globalScopeName;
+        private readonly string _globalScopeName;
 
-        // Whether this function has a local scope instance (ldloc.0)
-    private bool _hasLocalScope;
+            // Whether this function has a local scope instance (ldloc.0)
+        private bool _hasLocalScope;
 
-    // Back-compat support for creating locals for arbitrary scope names when requested
-    private readonly Dictionary<string, int> _createdLocalScopes = new();
-    // Stack of active lexical (block) scope names (innermost on top)
-    private readonly Stack<string> _lexicalScopeStack = new();
+        // Back-compat support for creating locals for arbitrary scope names when requested
+        private readonly Dictionary<string, int> _createdLocalScopes = new();
+        // Stack of active lexical (block) scope names (innermost on top)
+        private readonly Stack<string> _lexicalScopeStack = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Variables"/> class for the global scope
@@ -92,18 +96,7 @@ namespace Js2IL.Services
             _hasLocalScope = true;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Variables"/> to pass to a function or arrow function or a block with nested scope
-        /// </summary>
-        /// <param name="parentVariables">The parent variables context to inherit from.</param>
-        /// <param name="scopeName">The name of the scope for this instance</param>
-        /// <param name="parameterNames">The names of the parameters if these variables are for a function or arrow function</param>
-        public Variables(Variables parentVariables, string scopeName, IEnumerable<string> parameterNames)
-            : this(parentVariables, scopeName, parameterNames, isNestedFunction: true)
-        {
-        }
-
-    public Variables(Variables parentVariables, string scopeName, IEnumerable<string> parameterNames, bool isNestedFunction)
+        public Variables(Variables parentVariables, string scopeName, IEnumerable<string> parameterNames, bool isNestedFunction)
         {
             if (parentVariables == null) throw new ArgumentNullException(nameof(parentVariables));
             if (scopeName == null) throw new ArgumentNullException(nameof(scopeName));
@@ -136,11 +129,7 @@ namespace Js2IL.Services
             }
         }
 
-
-    // Indexer for backward compatibility: get-only resolves via FindVariable
-    public Variable this[string name] => FindVariable(name)!;
-
-    public Variable? FindVariable(string name)
+        public Variable? FindVariable(string name)
         {
             if (string.IsNullOrEmpty(name)) return null;
             // 1. Check innermost active lexical (block) scopes first for shadowing (do NOT cache)
@@ -303,11 +292,6 @@ namespace Js2IL.Services
             return list.Distinct();
         }
 
-    // CreateLocal removed: callers should use FindVariable(name) for resolution.
-
-
-
-
         /// <summary>
         /// Checks if the given scope name is the current function's scope.
         /// </summary>
@@ -339,7 +323,7 @@ namespace Js2IL.Services
         /// <summary>
         /// Gets the number of local variables in the current function's scope.
         /// </summary>
-    public int GetNumberOfLocals()
+        public int GetNumberOfLocals()
         {
             // Base local is function/global scope if present plus any additional registered scopes (functions, blocks)
             int count = _hasLocalScope ? 1 : 0;

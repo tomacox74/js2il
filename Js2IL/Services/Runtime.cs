@@ -12,7 +12,9 @@ namespace Js2IL.Services
     {
         private readonly MetadataBuilder _metadataBuilder;
         private AssemblyReferenceHandle _runtimeAssemblyReference;
-        private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCache = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCache = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCacheByNs = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, MemberReferenceHandle> _runtimeMethodCache = new(StringComparer.Ordinal);
         private MemberReferenceHandle _consoleLogMethodRef;
         private MemberReferenceHandle _objectGetItem;
         private MemberReferenceHandle _arrayCtorRef;
@@ -335,6 +337,105 @@ namespace Js2IL.Services
         public TypeReferenceHandle GetErrorTypeRef()
         {
             return GetJavaScriptRuntimeType("Error");
+        }
+
+    private void EncodeSignatureType(SignatureTypeEncoder enc, Type type)
+        {
+            if (type == typeof(object)) enc.Object();
+            else if (type == typeof(string)) enc.String();
+            else if (type == typeof(double)) enc.Double();
+            else if (type == typeof(object[])) enc.SZArray().Object();
+            else throw new NotSupportedException($"Unsupported runtime signature type mapping: {type.FullName}");
+        }
+
+        private void EncodeReturnType(ReturnTypeEncoder enc, Type type)
+        {
+            if (type == typeof(void)) enc.Void();
+            else EncodeSignatureType(enc.Type(), type);
+        }
+
+        private string MakeMethodKey(string fullTypeName, string methodName, bool isInstance, Type ret, IReadOnlyList<Type> parms)
+        {
+            var ps = string.Join(",", parms.Select(p => p.FullName));
+            return $"{fullTypeName}::{methodName}|{(isInstance ? "inst" : "static")}|ret={ret.FullName}|params=[{ps}]";
+        }
+
+        private TypeReferenceHandle GetRuntimeTypeRef(string @namespace, string typeName)
+        {
+            var key = @namespace + "." + typeName;
+            if (_runtimeTypeCacheByNs.TryGetValue(key, out var h)) return h;
+            var tref = _metadataBuilder.AddTypeReference(
+                _runtimeAssemblyReference,
+                _metadataBuilder.GetOrAddString(@namespace),
+                _metadataBuilder.GetOrAddString(typeName));
+            _runtimeTypeCacheByNs[key] = tref;
+            return tref;
+        }
+
+    public MemberReferenceHandle GetInstanceMethodRef(Type runtimeType, string methodName, Type returnType, params Type[] parameterTypes)
+        {
+            var ns = runtimeType.Namespace ?? "JavaScriptRuntime";
+            var tn = runtimeType.Name;
+            var full = ns + "." + tn;
+            var key = MakeMethodKey(full, methodName, isInstance: true, ret: returnType, parms: parameterTypes);
+            if (_runtimeMethodCache.TryGetValue(key, out var cached)) return cached;
+
+            var typeRef = GetRuntimeTypeRef(ns, tn);
+            var sigBuilder = new BlobBuilder();
+            new BlobEncoder(sigBuilder)
+                .MethodSignature(isInstanceMethod: true)
+                .Parameters(parameterTypes.Length, rt => EncodeReturnType(rt, returnType), p =>
+                {
+                    foreach (var pt in parameterTypes)
+                    {
+                        EncodeSignatureType(p.AddParameter().Type(), pt);
+                    }
+                });
+            var sigHandle = _metadataBuilder.GetOrAddBlob(sigBuilder);
+            var mref = _metadataBuilder.AddMemberReference(typeRef, _metadataBuilder.GetOrAddString(methodName), sigHandle);
+            _runtimeMethodCache[key] = mref;
+            return mref;
+        }
+
+        public MemberReferenceHandle GetStaticMethodRef(Type runtimeType, string methodName, Type returnType, params Type[] parameterTypes)
+        {
+            var ns = runtimeType.Namespace ?? "JavaScriptRuntime";
+            var tn = runtimeType.Name;
+            var full = ns + "." + tn;
+            var key = MakeMethodKey(full, methodName, isInstance: false, ret: returnType, parms: parameterTypes);
+            if (_runtimeMethodCache.TryGetValue(key, out var cached)) return cached;
+
+            var typeRef = GetRuntimeTypeRef(ns, tn);
+            var sigBuilder = new BlobBuilder();
+            new BlobEncoder(sigBuilder)
+                .MethodSignature(isInstanceMethod: false)
+                .Parameters(parameterTypes.Length, rt => EncodeReturnType(rt, returnType), p =>
+                {
+                    foreach (var pt in parameterTypes)
+                    {
+                        EncodeSignatureType(p.AddParameter().Type(), pt);
+                    }
+                });
+            var sigHandle = _metadataBuilder.GetOrAddBlob(sigBuilder);
+            var mref = _metadataBuilder.AddMemberReference(typeRef, _metadataBuilder.GetOrAddString(methodName), sigHandle);
+            _runtimeMethodCache[key] = mref;
+            return mref;
+        }
+
+        public MemberReferenceHandle GetInstanceMethodRef(System.Reflection.MethodInfo method)
+        {
+            var dt = method.DeclaringType ?? throw new ArgumentException("Method has no declaring type", nameof(method));
+            var ret = method.ReturnType;
+            var pars = method.GetParameters().Select(p => p.ParameterType).ToArray();
+            return GetInstanceMethodRef(dt, method.Name, ret, pars);
+        }
+
+        // Convenience: Emit a call to JavaScriptRuntime.Require.require(string) with string already on stack
+        public void InvokeRequire()
+        {
+            var mref = GetStaticMethodRef(typeof(JavaScriptRuntime.Require), "require", typeof(object), typeof(string));
+            _il.OpCode(ILOpCode.Call);
+            _il.Token(mref);
         }
     }
 }
