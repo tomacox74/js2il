@@ -45,7 +45,15 @@
                     "Js2IL.Tests/JavaScript/Variable_LetFunctionNestedShadowing.js",
                     "Js2IL.Tests/JavaScript/Variable_ConstSimple.js"
                   ],
-                  "notes": "Block scoping, shadowing chain, nested function capture, and simple const initialization implemented. Pending: const reassignment runtime error (Variable_ConstReassignmentError.js), temporal dead zone access error (Variable_TemporalDeadZoneAccess.js), and dead zone reads before initialization."
+                  "notes": "Block scoping, shadowing chain, nested function capture, and simple const initialization implemented. Temporal dead zone access error (Variable_TemporalDeadZoneAccess.js) and reads before initialization are still pending."
+                },
+                {
+                  "feature": "Const reassignment throws TypeError",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/Variable_ConstReassignmentError.js"
+                  ],
+                  "notes": "Assignment to a const Identifier and ++/-- on const emit a runtime TypeError; error is catchable via try/catch."
                 }
               ]
             },
