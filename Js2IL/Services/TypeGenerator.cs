@@ -377,7 +377,8 @@ namespace Js2IL.Services
                             variableName,
                             variableType,
                             fieldHandle,
-                            scopeTypeHandle
+                            scopeTypeHandle,
+                            bindingInfo.Kind
                         );
                     }
                     // Only advance when a field exists for this binding

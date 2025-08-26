@@ -464,7 +464,7 @@ namespace Js2IL.Services.ILGenerators
                     GenerateCallExpression(callExpression, CallSiteContext.Statement, discardResult: true);
                     break;
                 case Acornima.Ast.AssignmentExpression assignmentExpression:
-                    // Handle AssignmentExpression  
+                    // Handle AssignmentExpression with const reassignment guard
                     _expressionEmitter.Emit(assignmentExpression, new TypeCoercion());
                     break;
                 case Acornima.Ast.BinaryExpression binaryExpression:
@@ -902,6 +902,13 @@ namespace Js2IL.Services.ILGenerators
             var variableName = (updateExpression.Argument as Acornima.Ast.Identifier)!.Name;
             var variable = _variables.FindVariable(variableName);
 
+            // If bound variable is const, emit a TypeError and throw
+            if (IsConstBinding(variableName))
+            {
+                EmitConstReassignmentTypeError();
+                return;
+            }
+
             // Handle scope field variables
             if (variable == null)
             {
@@ -950,6 +957,25 @@ namespace Js2IL.Services.ILGenerators
             // Now stack is: [scope_instance] [boxed_result] - perfect for stfld
             _il.OpCode(ILOpCode.Stfld);
             _il.Token(variable.FieldHandle);
+        }
+
+        // Emits: throw new TypeError("Assignment to constant variable.")
+        private void EmitConstReassignmentTypeError()
+        {
+            _il.LoadString(_metadataBuilder.GetOrAddUserString("Assignment to constant variable."));
+            var ctor = _runtime.GetErrorCtorRef("TypeError", 1);
+            _il.OpCode(ILOpCode.Newobj);
+            _il.Token(ctor);
+            _il.OpCode(ILOpCode.Throw);
+        }
+
+        // Consult the registry to see if the current scope has a const binding for this name
+        private bool IsConstBinding(string variableName)
+        {
+            var registry = _variables.GetVariableRegistry();
+            var scopeName = _variables.GetLeafScopeName();
+            var info = registry?.GetVariableInfo(scopeName, variableName) ?? registry?.FindVariable(variableName);
+            return info != null && info.BindingKind == SymbolTables.BindingKind.Const;
         }
 
         private void GenerateCallExpression(Acornima.Ast.CallExpression callExpression, CallSiteContext context, bool discardResult)
@@ -1521,6 +1547,12 @@ namespace Js2IL.Services.ILGenerators
             // Support assignments to identifiers and to this.property within class instance methods
             if (assignmentExpression.Left is Identifier aid)
             {
+                // Guard: const reassignment attempts throw at runtime
+                if (IsConstBinding(aid.Name))
+                {
+                    EmitConstReassignmentTypeError();
+                    return JavascriptType.Unknown; // unreachable
+                }
                 var variable = _variables.FindVariable(aid.Name) ?? throw new InvalidOperationException($"Variable '{aid.Name}' not found");
 
                 // Load the appropriate scope instance that holds this field
