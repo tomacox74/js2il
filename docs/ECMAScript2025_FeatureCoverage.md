@@ -75,6 +75,13 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 ### [Unary Operators](https://tc39.es/ecma262/#sec-ecmascript-language-expressions)
 
+#### [typeof operator](https://tc39.es/ecma262/#sec-typeof-operator)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| typeof | Supported | `Js2IL.Tests/JavaScript/UnaryOperator_Typeof.js` | Implemented via JavaScriptRuntime.TypeUtilities::Typeof and IL emission for UnaryExpression(typeof). typeof null returns 'object'; functions report 'function'; objects report 'object'. | 13.4.3 |
+
+
 #### [Logical not operator (!)](https://tc39.es/ecma262/#sec-logical-not-operator)
 
 | Feature | Status | Test Scripts | Notes | Section |
