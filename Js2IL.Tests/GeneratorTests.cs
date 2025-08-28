@@ -8,11 +8,9 @@ namespace Js2IL.Tests
         {
         }
 
-        [Fact]
-        public Task UnaryOperator_PlusPlusPostfix() { var testName = nameof(UnaryOperator_PlusPlusPostfix); return GenerateTest(testName); }
+    // moved to UnaryOperator.GeneratorTests
 
-        [Fact]
-        public Task UnaryOperator_MinusMinusPostfix() { var testName = nameof(UnaryOperator_MinusMinusPostfix); return GenerateTest(testName); }
+    // moved to UnaryOperator.GeneratorTests
 
         [Fact(Skip = "process/argv not yet supported")]
         public Task Environment_EnumerateProcessArgV() { var testName = nameof(Environment_EnumerateProcessArgV); return GenerateTest(testName); }

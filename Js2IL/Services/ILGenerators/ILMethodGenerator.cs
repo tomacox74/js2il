@@ -1363,6 +1363,15 @@ namespace Js2IL.Services.ILGenerators
                     return JavascriptType.Boolean;
                 }
             }
+            else if (op == Operator.TypeOf)
+            {
+                // Emit typeof: evaluate argument (boxed), then call JavaScriptRuntime.TypeUtilities.Typeof(object)
+                var _ = ((IMethodExpressionEmitter)this).Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = true }, null);
+                var mref = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.Typeof), typeof(string), typeof(object));
+                _il.OpCode(ILOpCode.Call);
+                _il.Token(mref);
+                return JavascriptType.Object; // string
+            }
             else if (op == Operator.UnaryNegation && unaryExpression.Argument is Acornima.Ast.NumericLiteral numericArg)
             {
                 if (typeCoercion.toString)
@@ -1723,7 +1732,12 @@ namespace Js2IL.Services.ILGenerators
                     return JavascriptType.Object;
                 }
 
-                throw new NotSupportedException($"Property '{propId.Name}' not supported on this object.");
+                // Fallback: dynamic property lookup on runtime object graphs (e.g., ExpandoObject from JSON.parse)
+                var getProp = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), typeof(object), typeof(object), typeof(string));
+                _il.LoadString(_metadataBuilder.GetOrAddUserString(propId.Name));
+                _il.OpCode(ILOpCode.Call);
+                _il.Token(getProp);
+                return JavascriptType.Object;
             }
             if (memberExpression.Computed)
             {
@@ -2183,6 +2197,13 @@ namespace Js2IL.Services.ILGenerators
                             _il.LoadConstantI4(b ? 1 : 0);
                             type = JavascriptType.Boolean;
                         }
+                        break;
+                    }
+                    if (genericLiteral.Value is null)
+                    {
+                        // JavaScript 'null'
+                        _il.OpCode(ILOpCode.Ldnull);
+                        type = JavascriptType.Null;
                         break;
                     }
                     throw new NotSupportedException($"Unsupported literal value type: {genericLiteral.Value?.GetType().Name ?? "null"}");

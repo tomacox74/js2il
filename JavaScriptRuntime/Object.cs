@@ -22,5 +22,29 @@ namespace JavaScriptRuntime
                 throw new Exception("Object does not support index access. Only arrays are supported for index access.");
             }
         }
+
+        public static object? GetProperty(object obj, string name)
+        {
+            // ExpandoObject properties
+            if (obj is System.Dynamic.ExpandoObject exp)
+            {
+                var dict = (IDictionary<string, object?>)exp;
+                if (dict.TryGetValue(name, out var value))
+                {
+                    return value;
+                }
+                return null; // closest to JS undefined for now
+            }
+
+            // JavaScriptRuntime.Array: expose known properties via dot (length handled elsewhere)
+            if (obj is Array)
+            {
+                // No custom properties yet; return null as missing
+                return null;
+            }
+
+            // Fallback: no dynamic properties supported
+            return null;
+        }
     }
 }

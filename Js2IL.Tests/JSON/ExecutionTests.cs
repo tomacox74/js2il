@@ -6,7 +6,7 @@ namespace Js2IL.Tests.JSON
 	{
 		public ExecutionTests() : base("JSON") { }
 
-		[Fact(Skip = "Pending JSON implementation")]
+	[Fact]
 		public Task JSON_Parse_SimpleObject()
 			=> ExecutionTest(nameof(JSON_Parse_SimpleObject));
 	}

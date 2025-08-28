@@ -14,11 +14,9 @@ namespace Js2IL.Tests
 
 
         // Sorted test methods
-        [Fact]
-        public Task UnaryOperator_MinusMinusPostfix() { var testName = nameof(UnaryOperator_MinusMinusPostfix); return ExecutionTest(testName); }
+    // moved to UnaryOperator.ExecutionTests
 
-        [Fact]
-        public Task UnaryOperator_PlusPlusPostfix() { var testName = nameof(UnaryOperator_PlusPlusPostfix); return ExecutionTest(testName); }        
+    // moved to UnaryOperator.ExecutionTests
 
         [Fact(Skip = "process/argv not yet supported")]
         public Task Environment_EnumerateProcessArgV() { var testName = nameof(Environment_EnumerateProcessArgV); return ExecutionTest(testName); }
