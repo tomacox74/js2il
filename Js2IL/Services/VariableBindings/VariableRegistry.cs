@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
+using Js2IL.SymbolTables;
 
 namespace Js2IL.Services.VariableBindings
 {
@@ -25,10 +26,20 @@ namespace Js2IL.Services.VariableBindings
         private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _scopeFields = new();
 
         /// <summary>
+        /// Adds a variable to the registry with its scope and field information (legacy overload; assumes Var binding).
+        /// </summary>
+        public void AddVariable(string scopeName, string variableName, VariableType type,
+                               FieldDefinitionHandle fieldHandle, TypeDefinitionHandle scopeTypeHandle)
+        {
+            AddVariable(scopeName, variableName, type, fieldHandle, scopeTypeHandle, BindingKind.Var);
+        }
+
+        /// <summary>
         /// Adds a variable to the registry with its scope and field information.
         /// </summary>
-        public void AddVariable(string scopeName, string variableName, VariableType type, 
-                               FieldDefinitionHandle fieldHandle, TypeDefinitionHandle scopeTypeHandle)
+    public void AddVariable(string scopeName, string variableName, VariableType type,
+                   FieldDefinitionHandle fieldHandle, TypeDefinitionHandle scopeTypeHandle,
+                   BindingKind bindingKind)
         {
             if (!_scopeVariables.ContainsKey(scopeName))
                 _scopeVariables[scopeName] = new List<VariableInfo>();
@@ -38,8 +49,9 @@ namespace Js2IL.Services.VariableBindings
                 Name = variableName,
                 ScopeName = scopeName,
                 VariableType = type,
-                FieldHandle = fieldHandle,
-                ScopeTypeHandle = scopeTypeHandle
+        FieldHandle = fieldHandle,
+        ScopeTypeHandle = scopeTypeHandle,
+        BindingKind = bindingKind
             });
 
             if (!_scopeFields.ContainsKey(scopeName))
@@ -94,6 +106,18 @@ namespace Js2IL.Services.VariableBindings
             }
             return null;
         }
+
+        /// <summary>
+        /// Gets variable info for a specific variable name within a specific scope, or null if not found.
+        /// </summary>
+        public VariableInfo? GetVariableInfo(string scopeName, string variableName)
+        {
+            if (_scopeVariables.TryGetValue(scopeName, out var list))
+            {
+                return list.FirstOrDefault(v => v.Name == variableName);
+            }
+            return null;
+        }
     }
 
     /// <summary>
@@ -106,5 +130,6 @@ namespace Js2IL.Services.VariableBindings
         public VariableType VariableType { get; set; }
         public FieldDefinitionHandle FieldHandle { get; set; }
         public TypeDefinitionHandle ScopeTypeHandle { get; set; }
+    public BindingKind BindingKind { get; set; }
     }
 }

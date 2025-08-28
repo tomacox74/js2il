@@ -21,7 +21,8 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| let/const | Partially Supported | `Js2IL.Tests/JavaScript/Variable_LetBlockScope.js`<br>`Js2IL.Tests/JavaScript/Variable_LetShadowing.js`<br>`Js2IL.Tests/JavaScript/Variable_LetNestedShadowingChain.js`<br>`Js2IL.Tests/JavaScript/Variable_LetFunctionNestedShadowing.js`<br>`Js2IL.Tests/JavaScript/Variable_ConstSimple.js` | Block scoping, shadowing chain, nested function capture, and simple const initialization implemented. Pending: const reassignment runtime error (Variable_ConstReassignmentError.js), temporal dead zone access error (Variable_TemporalDeadZoneAccess.js), and dead zone reads before initialization. | 13.2.1 |
+| let/const | Partially Supported | `Js2IL.Tests/JavaScript/Variable_LetBlockScope.js`<br>`Js2IL.Tests/JavaScript/Variable_LetShadowing.js`<br>`Js2IL.Tests/JavaScript/Variable_LetNestedShadowingChain.js`<br>`Js2IL.Tests/JavaScript/Variable_LetFunctionNestedShadowing.js`<br>`Js2IL.Tests/JavaScript/Variable_ConstSimple.js` | Block scoping, shadowing chain, nested function capture, and simple const initialization implemented. Temporal dead zone access error (Variable_TemporalDeadZoneAccess.js) and reads before initialization are still pending. | 13.2.1 |
+| Const reassignment throws TypeError | Supported | `Js2IL.Tests/JavaScript/Variable_ConstReassignmentError.js` | Assignment to a const Identifier and ++/-- on const emit a runtime TypeError; error is catchable via try/catch. | 13.2.1 |
 
 
 #### [var](https://tc39.es/ecma262/#sec-variable-statement)
