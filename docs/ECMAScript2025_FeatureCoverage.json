@@ -527,6 +527,35 @@
           ]
         }
       ]
+    },
+    {
+      "section": "24",
+      "title": "Text Processing",
+      "url": "https://tc39.es/ecma262/#sec-text-processing",
+      "subsections": [
+        {
+          "subsection": "24.5",
+          "title": "JSON Object",
+          "url": "https://tc39.es/ecma262/#sec-json-object",
+          "paragraphs": [
+            {
+              "paragraph": "24.5.1",
+              "title": "JSON.parse",
+              "url": "https://tc39.es/ecma262/#sec-json.parse",
+              "features": [
+                {
+                  "feature": "JSON.parse",
+                  "status": "Partially Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JSONRuntimeTests.cs"
+                  ],
+                  "notes": "Implemented via host intrinsic JavaScriptRuntime.JSON.Parse(string). Maps invalid input to SyntaxError and non-string input to TypeError. Reviver parameter is not supported. Objects become ExpandoObject, arrays use JavaScriptRuntime.Array, numbers use double."
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

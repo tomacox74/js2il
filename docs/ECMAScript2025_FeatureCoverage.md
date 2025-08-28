@@ -247,3 +247,14 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Constructor with multiple parameters; method uses fields | Supported | `Js2IL.Tests/JavaScript/Classes_ClassConstructor_WithMultipleParameters.js`<br>`Js2IL.Tests/JavaScript/Classes_ClassConstructor_TwoParams_AddMethod.js`<br>`Js2IL.Tests/JavaScript/Classes_ClassConstructor_TwoParams_SubtractMethod.js` | Covers multi-parameter constructors and arithmetic in instance methods. | 15.1.1 |
 | Private instance field (#) with helper method access | Supported | `Js2IL.Tests/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js` | Generated as a private .NET field with a mangled name; accessible only within the class. | 15.1.1 |
 
+
+## [Text Processing](https://tc39.es/ecma262/#sec-text-processing)
+
+### [JSON Object](https://tc39.es/ecma262/#sec-json-object)
+
+#### [JSON.parse](https://tc39.es/ecma262/#sec-json.parse)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| JSON.parse | Partially Supported | `Js2IL.Tests/JSONRuntimeTests.cs` | Implemented via host intrinsic JavaScriptRuntime.JSON.Parse(string). Maps invalid input to SyntaxError and non-string input to TypeError. Reviver parameter is not supported. Objects become ExpandoObject, arrays use JavaScriptRuntime.Array, numbers use double. | 24.5.1 |
+
