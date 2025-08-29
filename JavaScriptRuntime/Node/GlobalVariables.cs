@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Reflection;
 
 namespace JavaScriptRuntime.Node
 {
@@ -8,6 +10,25 @@ namespace JavaScriptRuntime.Node
     /// </summary>
     public static class GlobalVariables
     {
+        static GlobalVariables()
+        {
+            // Provide sensible defaults when running out-of-proc: resolve to the entry assembly path.
+            try
+            {
+                var entry = Assembly.GetEntryAssembly();
+                var file = entry?.Location;
+                if (!string.IsNullOrEmpty(file))
+                {
+                    __filename = file!;
+                    __dirname = System.IO.Path.GetDirectoryName(file!) ?? string.Empty;
+                }
+            }
+            catch
+            {
+                // Best-effort; leave defaults if anything goes wrong.
+            }
+        }
+
         /// <summary>Directory name of the current module (script).</summary>
         public static string __dirname { get; private set; } = string.Empty;
 
