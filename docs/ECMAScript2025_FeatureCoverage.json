@@ -534,6 +534,28 @@
       "url": "https://tc39.es/ecma262/#sec-text-processing",
       "subsections": [
         {
+          "subsection": "24.1",
+          "title": "String Objects",
+          "url": "https://tc39.es/ecma262/#sec-string-objects",
+          "paragraphs": [
+            {
+              "paragraph": "24.1.3",
+              "title": "String.prototype.replace",
+              "url": "https://tc39.es/ecma262/#sec-string.prototype.replace",
+              "features": [
+                {
+                  "feature": "String.prototype.replace (regex literal, string replacement)",
+                  "status": "Partially Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/String_Replace_Regex_Global.js"
+                  ],
+                  "notes": "Supported when the receiver is String(x), the pattern is a regular expression literal, and the replacement is a string. Global (g) and ignoreCase (i) flags are honored. Function replacement, non-regex patterns, and other flags are not yet implemented. Implemented via host intrinsic JavaScriptRuntime.String.Replace and dynamic resolution in IL generator."
+                }
+              ]
+            }
+          ]
+        },
+        {
           "subsection": "24.5",
           "title": "JSON Object",
           "url": "https://tc39.es/ecma262/#sec-json-object",
