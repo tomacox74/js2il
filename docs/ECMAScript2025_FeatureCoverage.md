@@ -250,6 +250,15 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 ## [Text Processing](https://tc39.es/ecma262/#sec-text-processing)
 
+### [String Objects](https://tc39.es/ecma262/#sec-string-objects)
+
+#### [String.prototype.replace](https://tc39.es/ecma262/#sec-string.prototype.replace)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| String.prototype.replace (regex literal, string replacement) | Partially Supported | `Js2IL.Tests/JavaScript/String_Replace_Regex_Global.js` | Supported when the receiver is String(x), the pattern is a regular expression literal, and the replacement is a string. Global (g) and ignoreCase (i) flags are honored. Function replacement, non-regex patterns, and other flags are not yet implemented. Implemented via host intrinsic JavaScriptRuntime.String.Replace and dynamic resolution in IL generator. | 24.1.3 |
+
+
 ### [JSON Object](https://tc39.es/ecma262/#sec-json-object)
 
 #### [JSON.parse](https://tc39.es/ecma262/#sec-json.parse)
