@@ -59,8 +59,8 @@ namespace Js2IL.Tests.ControlFlow
         [Fact]
         public Task ControlFlow_DoWhile_Break_AtThree() { var testName = nameof(ControlFlow_DoWhile_Break_AtThree); return ExecutionTest(testName); }
 
-    // Conditional operator (?:) – pending implementation
-    [Fact(Skip = "Conditional (ternary) operator codegen not implemented yet")]
+    // Conditional operator (?:)
+    [Fact]
     public Task ControlFlow_Conditional_Ternary() { var testName = nameof(ControlFlow_Conditional_Ternary); return ExecutionTest(testName); }
      }
 }

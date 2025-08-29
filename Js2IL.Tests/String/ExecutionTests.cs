@@ -13,5 +13,11 @@ namespace Js2IL.Tests.String
             // Uses embedded resource JavaScript/String_Replace_Regex_Global.js
             return ExecutionTest(nameof(String_Replace_Regex_Global));
         }
+
+        [Fact]
+        public Task String_TemplateLiteral_Basic()
+        {
+            return ExecutionTest(nameof(String_TemplateLiteral_Basic));
+        }
     }
 }

@@ -12,5 +12,12 @@ namespace Js2IL.Tests.String
             var testName = nameof(String_Replace_Regex_Global);
             return GenerateTest(testName);
         }
+
+        [Fact]
+        public Task String_TemplateLiteral_Basic()
+        {
+            var testName = nameof(String_TemplateLiteral_Basic);
+            return GenerateTest(testName);
+        }
     }
 }

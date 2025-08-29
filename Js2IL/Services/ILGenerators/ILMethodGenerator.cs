@@ -1594,6 +1594,80 @@ namespace Js2IL.Services.ILGenerators
                 case MemberExpression memberExpression:
                     javascriptType = EmitMemberExpression(memberExpression);
                     break;
+                case TemplateLiteral template:
+                    {
+                        // Emit JS template literal: concatenate cooked quasis and expressions via Operators.Add
+                        // Start with first quasi text (may be empty)
+                        string GetQuasiText(TemplateElement te)
+                        {
+                            // Try te.Value.Cooked, then te.Value.Raw, else empty
+                            var valProp = te.GetType().GetProperty("Value", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                            if (valProp != null)
+                            {
+                                var val = valProp.GetValue(te);
+                                if (val != null)
+                                {
+                                    var cooked = val.GetType().GetProperty("Cooked", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase)?.GetValue(val) as string;
+                                    if (!string.IsNullOrEmpty(cooked)) return cooked!;
+                                    var raw = val.GetType().GetProperty("Raw", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase)?.GetValue(val) as string;
+                                    if (raw != null) return raw;
+                                }
+                            }
+                            return string.Empty;
+                        }
+
+                        var quasis = template.Quasis;
+                        var exprs = template.Expressions;
+
+                        // Ensure there's at least one quasi
+                        string firstText = quasis.Count > 0 ? GetQuasiText(quasis[0]) : string.Empty;
+                        _il.LoadString(_metadataBuilder.GetOrAddUserString(firstText ?? string.Empty));
+
+                        // For each expression, append value and following quasi
+                        for (int i = 0; i < exprs.Count; i++)
+                        {
+                            // current + expr
+                            _ = _expressionEmitter.Emit(exprs[i], new TypeCoercion { boxResult = true }, null);
+                            _runtime.InvokeOperatorsAdd();
+
+                            // then + next quasi text (quasis are one longer than expressions)
+                            string tail = (i + 1) < quasis.Count ? GetQuasiText(quasis[i + 1]) : string.Empty;
+                            _il.LoadString(_metadataBuilder.GetOrAddUserString(tail ?? string.Empty));
+                            _runtime.InvokeOperatorsAdd();
+                        }
+
+                        javascriptType = JavascriptType.Object; // result is a string (object)
+                    }
+                    break;
+                case ConditionalExpression cond:
+                    {
+                        // Emit expression-level ternary: test ? consequent : alternate
+                        var trueLabel = _il.DefineLabel();
+                        var falseLabel = _il.DefineLabel();
+                        var endLabel = _il.DefineLabel();
+
+                        // Evaluate test with branching (let BinaryOperators or fallback boolean branching handle it)
+                        _expressionEmitter.Emit(cond.Test, new TypeCoercion(), new ConditionalBranching
+                        {
+                            BranchOnTrue = trueLabel,
+                            BranchOnFalse = falseLabel
+                        });
+
+                        // True arm
+                        _il.MarkLabel(trueLabel);
+                        // Force result as object to unify stack type across arms; propagate toString if requested
+                        var armCoercion = new TypeCoercion { boxResult = true, toString = typeCoercion.toString };
+                        _ = _expressionEmitter.Emit(cond.Consequent, armCoercion);
+                        _il.Branch(ILOpCode.Br, endLabel);
+
+                        // False arm
+                        _il.MarkLabel(falseLabel);
+                        _ = _expressionEmitter.Emit(cond.Alternate, armCoercion);
+
+                        _il.MarkLabel(endLabel);
+                        javascriptType = JavascriptType.Object;
+                    }
+                    break;
                 case Acornima.Ast.Identifier identifier:
                     {
                         var name = identifier.Name;

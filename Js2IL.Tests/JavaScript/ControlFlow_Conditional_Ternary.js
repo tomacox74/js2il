@@ -1,5 +1,5 @@
 // Ternary operator demo
-// Expected: prints "lte" then "gt"
+// Expected: prints "lte" then "lte"
 const a = 3;
 const b = 5;
 const s1 = (a < b) ? "lte" : "gt";
