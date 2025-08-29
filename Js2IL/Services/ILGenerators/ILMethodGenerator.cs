@@ -1045,7 +1045,7 @@ namespace Js2IL.Services.ILGenerators
                     _il.LoadConstantI4(global ? 1 : 0);
                     _il.LoadConstantI4(ignoreCase ? 1 : 0);
 
-                    var mref = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.StringHelpers), nameof(JavaScriptRuntime.StringHelpers.ReplaceRegex), typeof(string), typeof(string), typeof(string), typeof(bool), typeof(bool));
+                    var mref = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.String), nameof(JavaScriptRuntime.String.Replace), typeof(string), typeof(string), typeof(string), typeof(bool), typeof(bool));
                     _il.Call(mref);
                     if (discardResult)
                     {
