@@ -2,6 +2,27 @@
 
 All notable changes to this project are documented here.
 
+## v0.1.1 - 2025-08-29
+
+Added
+- Strings: String.replace(...) with RegExp literal support (flags), via JavaScriptRuntime.String.Replace and codegen pattern detection.
+- Control flow: conditional operator (?:) emission and execution.
+- Strings: template literals with correct concatenation semantics via runtime Operators.Add.
+- Node interop: __dirname intrinsic global. Added JavaScriptRuntime.Node.GlobalVariables and wired execution harness to set module context.
+
+Changed
+- Expression statements: directly emit expressions in statement context and explicitly discard results for call/new/ternary to keep stack balanced.
+- Generator output: stabilized snapshots with narrow, per-test scrubbers (path and trailing whitespace), avoiding global formatting changes.
+
+Fixed
+- Resolved generator snapshot whitespace/line-ending diffs; trimmed trailing spaces and ensured consistent EOF newline.
+
+Docs
+- Updated ECMAScript 2025 feature coverage to include String.replace, template literals, and the conditional operator.
+
+Tests
+- Added execution and generator tests for template literals, conditional operator, and Node __dirname. Normalized snapshots for reliability.
+
 ## v0.1.0 - 2025-08-28
 
 Added
