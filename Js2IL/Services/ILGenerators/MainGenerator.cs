@@ -71,8 +71,7 @@ namespace Js2IL.Services.ILGenerators
             var loadDispatchTableMethod = _dispatchTableGenerator.GenerateLoadDispatchTableMethod();
             if (!loadDispatchTableMethod.IsNil)
             {
-                _ilGenerator.IL.OpCode(ILOpCode.Call);
-                _ilGenerator.IL.Token(loadDispatchTableMethod);
+                _ilGenerator.IL.Call(loadDispatchTableMethod);
                 _ilGenerator.InitializeLocalFunctionVariables(ast.Body.OfType<Acornima.Ast.FunctionDeclaration>());
             }
 

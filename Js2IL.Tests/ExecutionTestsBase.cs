@@ -142,6 +142,11 @@ namespace Js2IL.Tests
                 var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
                 var entryPoint = assembly.EntryPoint ?? throw new InvalidOperationException("No entry point found in the generated assembly.");
 
+                // Set Node-like globals for module context
+                var modDir = Path.GetDirectoryName(assemblyPath) ?? string.Empty;
+                var file = assemblyPath;
+                JavaScriptRuntime.Node.GlobalVariables.SetModuleContext(modDir, file);
+
                 var paramInfos = entryPoint.GetParameters();
                 object?[]? args = paramInfos.Length == 0 ? null : new object?[] { System.Array.Empty<string>() };
                 entryPoint.Invoke(null, args);

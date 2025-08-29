@@ -103,7 +103,7 @@ namespace Js2IL.Services.ILGenerators
                 // For + choose between string concat, numeric math, or runtime helper for dynamic types
                 bool plus = operatorType == Operator.Addition;
                 bool minus = operatorType == Operator.Subtraction;
-                bool equality = operatorType == Operator.Equality;
+                bool equality = operatorType == Operator.Equality || operatorType == Operator.StrictEquality;
                 bool staticString = plus && binaryExpression.Left is StringLiteral && (binaryExpression.Right is StringLiteral || binaryExpression.Right is NumericLiteral);
 
                 var leftType = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion());
@@ -187,9 +187,10 @@ namespace Js2IL.Services.ILGenerators
                 // If equality compare and left resolved to number, make right numeric too when reasonable
                 if (equality && leftType == JavascriptType.Number && rightType != JavascriptType.Number)
                 {
+                    bool rightIsNullLiteral = binaryExpression.Right is Acornima.Ast.Literal rl && rl.Value is null;
                     bool rightIsRawNumeric = binaryExpression.Right is Acornima.Ast.NumericLiteral
                         || (binaryExpression.Right is Acornima.Ast.UnaryExpression ur && ur.Operator.ToString() == "UnaryNegation" && ur.Argument is Acornima.Ast.NumericLiteral);
-                    if (!rightIsRawNumeric)
+                    if (!rightIsRawNumeric && !rightIsNullLiteral)
                     {
                         _il.OpCode(ILOpCode.Unbox_any);
                         _il.Token(_bclReferences.DoubleType);
@@ -222,6 +223,17 @@ namespace Js2IL.Services.ILGenerators
                     }
                     else
                     {
+                        // If comparing to null literal, ensure left is an object ref (avoid unbox) and then Ceq will compare ref to null.
+                        if (binaryExpression.Right is Acornima.Ast.Literal litNull && litNull.Value is null)
+                        {
+                            // If left is currently unboxed number, box it back to object for a ref compare that will be false, which is JS-like for strict equality to null.
+                            if (leftType == JavascriptType.Number)
+                            {
+                                _il.OpCode(ILOpCode.Box);
+                                _il.Token(_bclReferences.DoubleType);
+                            }
+                            // No further coercion for null compare
+                        }
                         // If left evaluated as boolean (or is a boolean literal), coerce right to boolean
                         if (leftType == JavascriptType.Boolean || binaryExpression.Left is Acornima.Ast.BooleanLiteral || (binaryExpression.Left is Acornima.Ast.Literal lbl && lbl.Value is bool))
                         {
@@ -335,8 +347,7 @@ namespace Js2IL.Services.ILGenerators
                             _bclReferences.StringType,
                             _metadataBuilder.GetOrAddString("Concat"),
                             concatSig);
-                        _il.OpCode(ILOpCode.Call);
-                        _il.Token(stringConcatMethodRef);
+                        _il.Call(stringConcatMethodRef);
                     }
                     else if (preferNumeric)
                     {
@@ -387,6 +398,7 @@ namespace Js2IL.Services.ILGenerators
                 case Operator.LessThanOrEqual:
                 case Operator.GreaterThanOrEqual:
                 case Operator.Equality:
+                case Operator.StrictEquality:
                     ApplyComparisonOperator(operatorType, branching);
                     break;
                 default:
@@ -507,8 +519,7 @@ namespace Js2IL.Services.ILGenerators
                 powMethodSig);
 
             // Call Math.Pow
-            _il.OpCode(ILOpCode.Call);
-            _il.Token(mathPowMethodRef);
+            _il.Call(mathPowMethodRef);
 
             // box the result as a double
             _il.OpCode(ILOpCode.Box);
@@ -538,6 +549,7 @@ namespace Js2IL.Services.ILGenerators
                     branchOpCode = ILOpCode.Bge;
                     break;
                 case Operator.Equality:
+                case Operator.StrictEquality:
                     compareOpCode = ILOpCode.Ceq;
                     branchOpCode = ILOpCode.Beq;
                     break;
