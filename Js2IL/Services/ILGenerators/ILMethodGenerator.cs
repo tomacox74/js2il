@@ -20,8 +20,8 @@ namespace Js2IL.Services.ILGenerators
         private readonly Variables _variables;
         private readonly BaseClassLibraryReferences _bclReferences;
         private readonly MetadataBuilder _metadataBuilder;
-    private readonly InstructionEncoder _il;
-    private readonly ControlFlowBuilder _cfb;
+        private readonly InstructionEncoder _il;
+        private readonly ControlFlowBuilder _cfb;
         private readonly BinaryOperators _binaryOperators;
         private readonly IMethodExpressionEmitter _expressionEmitter;
         private readonly Runtime _runtime;
@@ -209,7 +209,7 @@ namespace Js2IL.Services.ILGenerators
             return null;
         }
 
-    public void GenerateStatementsForBody(string scopeName, bool createScopeInstance, NodeList<Statement> statements)
+        public void GenerateStatementsForBody(string scopeName, bool createScopeInstance, NodeList<Statement> statements)
         {
             int? createdLocalIndex = null;
             if (createScopeInstance)
@@ -511,27 +511,24 @@ namespace Js2IL.Services.ILGenerators
 
         public void GenerateExpressionStatement(Acornima.Ast.ExpressionStatement expressionStatement)
         {
-            switch (expressionStatement.Expression)
+            // Statement context: evaluate side-effects and discard any produced value.
+            // - Calls: route through generator with discardResult=true so callee-specific logic can pop when needed.
+            // - New/Conditional: emit then pop the resulting value.
+            // - Assignments/updates handle their own stack balance and do not leave a value.
+            if (expressionStatement.Expression is CallExpression callExpr)
             {
-                case Acornima.Ast.CallExpression callExpression:
-                    // Handle CallExpression
-                    GenerateCallExpression(callExpression, CallSiteContext.Statement, discardResult: true);
-                    break;
-                case Acornima.Ast.AssignmentExpression assignmentExpression:
-                    // Handle AssignmentExpression with const reassignment guard
-                    _expressionEmitter.Emit(assignmentExpression, new TypeCoercion());
-                    break;
-                case Acornima.Ast.BinaryExpression binaryExpression:
-                    // Handle BinaryExpression
-                    _binaryOperators.Generate(binaryExpression);
-                    break;
-                case Acornima.Ast.UpdateExpression updateExpression:
-                    // Handle UpdateExpression
-                    GenerateUpdateExpression(updateExpression);
-                    break;
-                default:
-                    throw new NotSupportedException($"Unsupported expression type in statement: {expressionStatement.Expression.Type}");
+                GenerateCallExpression(callExpr, CallSiteContext.Statement, discardResult: true);
+                return;
             }
+
+            if (expressionStatement.Expression is NewExpression || expressionStatement.Expression is ConditionalExpression)
+            {
+                _ = _expressionEmitter.Emit(expressionStatement.Expression, new TypeCoercion());
+                _il.OpCode(ILOpCode.Pop);
+                return;
+            }
+
+            _ = _expressionEmitter.Emit(expressionStatement.Expression, new TypeCoercion());
         }
 
         public void GenerateForStatement(Acornima.Ast.ForStatement forStatement)
@@ -1671,22 +1668,36 @@ namespace Js2IL.Services.ILGenerators
                 case Acornima.Ast.Identifier identifier:
                     {
                         var name = identifier.Name;
-                        var variable = _variables.FindVariable(name) ?? throw new InvalidOperationException($"Variable '{name}' not found.");
-                        _binaryOperators.LoadVariable(variable); // Load variable using scope field or local fallback
-
-                        // Only unbox when we explicitly know it's a Number && caller didn't request boxing.
-                        if (variable.Type == JavascriptType.Number && !typeCoercion.boxResult)
+                        // Node-like intrinsic globals support: __dirname and __filename
+                        if (string.Equals(name, "__dirname", StringComparison.Ordinal) || string.Equals(name, "__filename", StringComparison.Ordinal))
                         {
-                            _il.OpCode(ILOpCode.Unbox_any);
-                            _il.Token(_bclReferences.DoubleType); // unbox the variable as a double
+                            // Emit call to JavaScriptRuntime.Node.GlobalVariables.get___dirname / get___filename
+                            var getterName = "get_" + name; // property getter method name
+                            var getterRef = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Node.GlobalVariables), getterName, typeof(string));
+                            _il.Call(getterRef);
+                            // Treat as object; strings are reference types so no boxing required
+                            typeCoercion.boxResult = false;
+                            javascriptType = JavascriptType.Object;
                         }
                         else
                         {
-                            // currently variables are already boxed, so no need to double box (if boxResult is true)
-                            typeCoercion.boxResult = false;
-                        }
+                            var variable = _variables.FindVariable(name) ?? throw new InvalidOperationException($"Variable '{name}' not found.");
+                            _binaryOperators.LoadVariable(variable); // Load variable using scope field or local fallback
 
-                        javascriptType = variable.Type;
+                            // Only unbox when we explicitly know it's a Number && caller didn't request boxing.
+                            if (variable.Type == JavascriptType.Number && !typeCoercion.boxResult)
+                            {
+                                _il.OpCode(ILOpCode.Unbox_any);
+                                _il.Token(_bclReferences.DoubleType); // unbox the variable as a double
+                            }
+                            else
+                            {
+                                // currently variables are already boxed, so no need to double box (if boxResult is true)
+                                typeCoercion.boxResult = false;
+                            }
+
+                            javascriptType = variable.Type;
+                        }
                     }
 
                     break;

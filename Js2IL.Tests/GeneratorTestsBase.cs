@@ -35,6 +35,9 @@ namespace Js2IL.Tests
         }
 
         protected Task GenerateTest(string testName, [CallerFilePath] string sourceFilePath = "")
+            => GenerateTest(testName, configureSettings: null, sourceFilePath);
+
+        protected Task GenerateTest(string testName, Action<VerifySettings>? configureSettings, [CallerFilePath] string sourceFilePath = "")
         {
             var js = GetJavaScript(testName);
             var ast = _parser.ParseJavaScript(js, testName);
@@ -54,6 +57,7 @@ namespace Js2IL.Tests
             {
                 settings.UseDirectory(directory);
             }
+            configureSettings?.Invoke(settings);
             return Verify(il, settings);
         }
 
