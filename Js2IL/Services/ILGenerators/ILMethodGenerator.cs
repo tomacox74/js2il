@@ -995,6 +995,64 @@ namespace Js2IL.Services.ILGenerators
             // General member call: obj.method(...)
             if (callExpression.Callee is Acornima.Ast.MemberExpression mem && !mem.Computed && mem.Property is Acornima.Ast.Identifier mname)
             {
+                // Pattern support: String(x).replace(/pattern/flags, replacement)
+                if (string.Equals(mname.Name, "replace", StringComparison.Ordinal) && mem.Object is Acornima.Ast.CallExpression strCall && strCall.Callee is Acornima.Ast.Identifier sid && string.Equals(sid.Name, "String", StringComparison.Ordinal))
+                {
+                    // Expect exactly: String(arg0).replace(regex, replacement)
+                    if (strCall.Arguments.Count != 1 || callExpression.Arguments.Count != 2)
+                    {
+                        throw new NotSupportedException("Only replace(regex, string) with a single String(arg) receiver is supported");
+                    }
+                    // Extract regex pattern and flags from AST via reflection to avoid taking a hard dependency on node types
+                    string? pattern = null;
+                    string? flags = null;
+                    var rxNode = callExpression.Arguments[0];
+                    var rxType = rxNode?.GetType();
+                    if (rxType != null)
+                    {
+                        // Try nested Regex property (Literal.regex.{pattern,flags})
+                        var regexProp = rxType.GetProperty("Regex");
+                        object? regexObj = null;
+                        if (regexProp != null)
+                        {
+                            regexObj = regexProp.GetValue(rxNode);
+                            if (regexObj != null)
+                            {
+                                var rtype = regexObj.GetType();
+                                pattern = rtype.GetProperty("Pattern")?.GetValue(regexObj) as string;
+                                flags = rtype.GetProperty("Flags")?.GetValue(regexObj) as string;
+                            }
+                        }
+                        // Fallback: direct properties on the node
+                        pattern ??= rxType.GetProperty("Pattern")?.GetValue(rxNode) as string;
+                        flags ??= rxType.GetProperty("Flags")?.GetValue(rxNode) as string;
+                    }
+                    if (string.IsNullOrEmpty(pattern))
+                    {
+                        throw new NotSupportedException("Regex literal pattern not found for String(x).replace");
+                    }
+                    var global = !string.IsNullOrEmpty(flags) && flags!.IndexOf('g') >= 0;
+                    var ignoreCase = !string.IsNullOrEmpty(flags) && flags!.IndexOf('i') >= 0;
+
+                    // Stack: [input, pattern, replacement, global, ignoreCase]
+                    // input = ToString(arg0)
+                    _ = _expressionEmitter.Emit(strCall.Arguments[0], new TypeCoercion() { toString = true });
+                    // pattern
+                    _il.Ldstr(_metadataBuilder, pattern!);
+                    // replacement as string
+                    _ = _expressionEmitter.Emit(callExpression.Arguments[1], new TypeCoercion() { toString = true });
+                    // booleans
+                    _il.LoadConstantI4(global ? 1 : 0);
+                    _il.LoadConstantI4(ignoreCase ? 1 : 0);
+
+                    var mref = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.StringHelpers), nameof(JavaScriptRuntime.StringHelpers.ReplaceRegex), typeof(string), typeof(string), typeof(string), typeof(bool), typeof(bool));
+                    _il.Call(mref);
+                    if (discardResult)
+                    {
+                        _il.OpCode(ILOpCode.Pop);
+                    }
+                    return;
+                }
                 if (mem.Object is Acornima.Ast.Identifier baseId)
                 {
                     // If the base identifier resolves to a known class, emit a static call without loading an instance.

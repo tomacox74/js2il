@@ -296,6 +296,7 @@ namespace Js2IL.Services
             if (type == typeof(object)) enc.Object();
             else if (type == typeof(string)) enc.String();
             else if (type == typeof(double)) enc.Double();
+            else if (type == typeof(bool)) enc.Boolean();
             else if (type == typeof(object[])) enc.SZArray().Object();
             else throw new NotSupportedException($"Unsupported runtime signature type mapping: {type.FullName}");
         }
