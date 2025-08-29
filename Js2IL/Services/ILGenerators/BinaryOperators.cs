@@ -347,8 +347,7 @@ namespace Js2IL.Services.ILGenerators
                             _bclReferences.StringType,
                             _metadataBuilder.GetOrAddString("Concat"),
                             concatSig);
-                        _il.OpCode(ILOpCode.Call);
-                        _il.Token(stringConcatMethodRef);
+                        _il.Call(stringConcatMethodRef);
                     }
                     else if (preferNumeric)
                     {
@@ -520,8 +519,7 @@ namespace Js2IL.Services.ILGenerators
                 powMethodSig);
 
             // Call Math.Pow
-            _il.OpCode(ILOpCode.Call);
-            _il.Token(mathPowMethodRef);
+            _il.Call(mathPowMethodRef);
 
             // box the result as a double
             _il.OpCode(ILOpCode.Box);

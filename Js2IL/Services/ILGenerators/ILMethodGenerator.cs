@@ -116,26 +116,35 @@ namespace Js2IL.Services.ILGenerators
                     _il.LoadLocal(scopeLocalIndex.Address);
                 }
 
-                // Generate the expression - this puts the value on the stack
+                // Evaluate initializer and store to scope field
                 var prevAssignmentTarget = _currentAssignmentTarget;
-                _currentAssignmentTarget = variableName;
                 try
                 {
-                    // Special-case: const x = require("path")
-                    if (variableAST.Init is CallExpression reqCall && reqCall.Callee is Identifier rid && string.Equals(rid.Name, "require", StringComparison.Ordinal) && reqCall.Arguments.Count == 1 && reqCall.Arguments[0] is Literal l && l.Value is string s)
+                    // Let emitted RHS know which identifier is being initialized (for variable->class mapping)
+                    _currentAssignmentTarget = variableName;
+                    variable.Type = this._expressionEmitter.Emit(variableAST.Init, new TypeCoercion() { boxResult = true });
+
+                    // If initializer is require('module'), tag the variable with its runtime intrinsic CLR type
+                    if (variableAST.Init is CallExpression reqCall
+                        && reqCall.Callee is Identifier rid
+                        && string.Equals(rid.Name, "require", StringComparison.Ordinal)
+                        && reqCall.Arguments.Count == 1)
                     {
-                        // Emit: load string; call JavaScriptRuntime.Require.require -> object
-                        _il.LoadString(_metadataBuilder.GetOrAddUserString(s));
-                        _runtime.InvokeRequire();
-                        // Track intrinsic CLR type if known by module name
-                        var mod = s.StartsWith("node:", StringComparison.OrdinalIgnoreCase) ? s.Substring(5) : s;
-                        if (string.Equals(mod, "path", StringComparison.OrdinalIgnoreCase)) variable.RuntimeIntrinsicType = typeof(JavaScriptRuntime.Node.Path);
-                        else if (string.Equals(mod, "fs", StringComparison.OrdinalIgnoreCase)) variable.RuntimeIntrinsicType = typeof(JavaScriptRuntime.Node.FS);
-                        variable.Type = JavascriptType.Object;
-                    }
-                    else
-                    {
-                        variable.Type = this._expressionEmitter.Emit(variableAST.Init, new TypeCoercion() { boxResult = true });
+                        string? mod = null;
+                        if (reqCall.Arguments[0] is StringLiteral s) mod = s.Value;
+                        else if (reqCall.Arguments[0] is Literal glit && glit.Value is string gs) mod = gs;
+                        if (!string.IsNullOrEmpty(mod))
+                        {
+                            var rt = ResolveNodeModuleType(mod!);
+                            if (rt != null)
+                            {
+                                var vrec = _variables.FindVariable(variableName);
+                                if (vrec != null)
+                                {
+                                    vrec.RuntimeIntrinsicType = rt;
+                                }
+                            }
+                        }
                     }
                 }
                 finally
@@ -147,6 +156,24 @@ namespace Js2IL.Services.ILGenerators
                 _il.OpCode(ILOpCode.Stfld);
                 _il.Token(variable.FieldHandle);
             }
+        }
+
+        private static Type? ResolveNodeModuleType(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name)) return null;
+            // Accept optional node: prefix
+            if (name.StartsWith("node:", StringComparison.OrdinalIgnoreCase))
+                name = name.Substring("node:".Length);
+            var asm = typeof(JavaScriptRuntime.Object).Assembly;
+            foreach (var t in asm.GetTypes())
+            {
+                if (!string.Equals(t.Namespace, "JavaScriptRuntime.Node", StringComparison.Ordinal)) continue;
+                var attribs = t.GetCustomAttributes(typeof(JavaScriptRuntime.Node.NodeModuleAttribute), inherit: false);
+                if (attribs.Length == 0) continue;
+                var attr = (JavaScriptRuntime.Node.NodeModuleAttribute)attribs[0]!;
+                if (string.Equals(attr.Name, name, StringComparison.OrdinalIgnoreCase)) return t;
+            }
+            return null;
         }
 
     public void GenerateStatementsForBody(string scopeName, bool createScopeInstance, NodeList<Statement> statements)
@@ -372,31 +399,25 @@ namespace Js2IL.Services.ILGenerators
 
                         // Build scopes[] to bind: for closures we include global (if any) and the parent local
                         var neededScopeNames = GetScopesForClosureBinding(fnVar).ToList();
-                        _il.LoadConstantI4(neededScopeNames.Count);
-                        _il.OpCode(ILOpCode.Newarr);
-                        _il.Token(_bclReferences.ObjectType);
-                        for (int i = 0; i < neededScopeNames.Count; i++)
+                        _il.EmitNewArray(neededScopeNames.Count, _bclReferences.ObjectType, (il, i) =>
                         {
                             var sn = neededScopeNames[i];
                             var refSlot = _variables.GetScopeLocalSlot(sn);
-                            _il.OpCode(ILOpCode.Dup);
-                            _il.LoadConstantI4(i);
                             if (refSlot.Location == ObjectReferenceLocation.Local)
                             {
-                                _il.LoadLocal(refSlot.Address);
+                                il.LoadLocal(refSlot.Address);
                             }
                             else if (refSlot.Location == ObjectReferenceLocation.Parameter)
                             {
-                                _il.LoadArgument(refSlot.Address);
+                                il.LoadArgument(refSlot.Address);
                             }
                             else if (refSlot.Location == ObjectReferenceLocation.ScopeArray)
                             {
-                                _il.LoadArgument(0);
-                                _il.LoadConstantI4(refSlot.Address);
-                                _il.OpCode(ILOpCode.Ldelem_ref);
+                                il.LoadArgument(0);
+                                il.LoadConstantI4(refSlot.Address);
+                                il.OpCode(ILOpCode.Ldelem_ref);
                             }
-                            _il.OpCode(ILOpCode.Stelem_ref);
-                        }
+                        });
 
                         // Closure.Bind(object, object[])
                         // Ensure delegate is treated as object for the bind call
@@ -798,16 +819,10 @@ namespace Js2IL.Services.ILGenerators
             // Push arguments as either a packed object[] or individual boxed args
             if (expectsParamsArray)
             {
-                _il.LoadConstantI4(callExpression.Arguments.Count);
-                _il.OpCode(ILOpCode.Newarr);
-                _il.Token(_bclReferences.ObjectType);
-                for (int i = 0; i < callExpression.Arguments.Count; i++)
+                _il.EmitNewArray(callExpression.Arguments.Count, _bclReferences.ObjectType, (il, i) =>
                 {
-                    _il.OpCode(ILOpCode.Dup);
-                    _il.LoadConstantI4(i);
                     _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
-                    _il.OpCode(ILOpCode.Stelem_ref);
-                }
+                });
             }
             else
             {
@@ -859,7 +874,7 @@ namespace Js2IL.Services.ILGenerators
                 // in a perfect world we could support any expression for the property name
                 // but not feature rich enough to support that yet
                 //_expressionEmitter.Emit(objectProperty.Key);
-                _il.LoadString(_metadataBuilder.GetOrAddUserString(propertyKey.Name));
+                _il.Ldstr(_metadataBuilder, propertyKey.Name);
 
                 // Load the value of the property (Emit handles boxing by default)
                 _ = _expressionEmitter.Emit(propertyValue, new TypeCoercion() { boxResult = true });
@@ -962,11 +977,8 @@ namespace Js2IL.Services.ILGenerators
         // Emits: throw new TypeError("Assignment to constant variable.")
         private void EmitConstReassignmentTypeError()
         {
-            _il.LoadString(_metadataBuilder.GetOrAddUserString("Assignment to constant variable."));
             var ctor = _runtime.GetErrorCtorRef("TypeError", 1);
-            _il.OpCode(ILOpCode.Newobj);
-            _il.Token(ctor);
-            _il.OpCode(ILOpCode.Throw);
+            _il.EmitThrowError(_metadataBuilder, ctor, "Assignment to constant variable.");
         }
 
         // Consult the registry to see if the current scope has a const binding for this name
@@ -1001,8 +1013,7 @@ namespace Js2IL.Services.ILGenerators
                         {
                             _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
                         }
-                        _il.OpCode(ILOpCode.Call);
-                        _il.Token(sMref);
+                        _il.Call(sMref);
                         if (discardResult) _il.OpCode(ILOpCode.Pop);
                         return;
                     }
@@ -1084,6 +1095,23 @@ namespace Js2IL.Services.ILGenerators
         // Emits a call to a function identified by an Identifier in the current scope, including scope array construction and delegate dispatch.
         private void EmitFunctionCall(Acornima.Ast.Identifier identifier, Acornima.Ast.CallExpression callExpression, CallSiteContext context, bool discardResult)
         {
+            // Node-style require("module") support as a built-in
+            if (string.Equals(identifier.Name, "require", StringComparison.Ordinal))
+            {
+                if (callExpression.Arguments.Count != 1)
+                {
+                    throw new ArgumentException("require expects exactly one argument");
+                }
+                // Coerce argument to string (for literals this emits ldstr directly)
+                _ = _expressionEmitter.Emit(callExpression.Arguments[0], new TypeCoercion() { toString = true });
+                _runtime.InvokeRequire();
+                if (discardResult)
+                {
+                    _il.OpCode(ILOpCode.Pop);
+                }
+                return;
+            }
+
             var functionVariable = _variables.FindVariable(identifier.Name);
             if (functionVariable == null)
             {
@@ -1131,37 +1159,25 @@ namespace Js2IL.Services.ILGenerators
             var neededScopeNames = GetNeededScopesForFunction(functionVariable, context).ToList();
             var arraySize = neededScopeNames.Count;
 
-            _il.LoadConstantI4(arraySize); // Array size
-            _il.OpCode(ILOpCode.Newarr);
-            _il.Token(_bclReferences.ObjectType);
-
-            // Fill the scope array with needed scopes only
-            for (int i = 0; i < neededScopeNames.Count; i++)
+            _il.EmitNewArray(arraySize, _bclReferences.ObjectType, (il, i) =>
             {
                 var scopeName = neededScopeNames[i];
                 var scopeRef = _variables.GetScopeLocalSlot(scopeName);
-
-                _il.OpCode(ILOpCode.Dup); // Duplicate array reference
-                _il.LoadConstantI4(i);    // Load array index
-
-                // Load the scope instance based on its location
                 if (scopeRef.Location == ObjectReferenceLocation.Local)
                 {
-                    _il.LoadLocal(scopeRef.Address);
+                    il.LoadLocal(scopeRef.Address);
                 }
                 else if (scopeRef.Location == ObjectReferenceLocation.Parameter)
                 {
-                    _il.LoadArgument(scopeRef.Address);
+                    il.LoadArgument(scopeRef.Address);
                 }
                 else if (scopeRef.Location == ObjectReferenceLocation.ScopeArray)
                 {
-                    _il.LoadArgument(0); // Load scope array parameter
-                    _il.LoadConstantI4(scopeRef.Address); // Load array index
-                    _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
+                    il.LoadArgument(0); // Load scope array parameter
+                    il.LoadConstantI4(scopeRef.Address); // Load array index
+                    il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
                 }
-
-                _il.OpCode(ILOpCode.Stelem_ref); // Store scope in array
-            }
+            });
 
             // Additional arguments: directly emit each call argument (boxed as needed)
             // If this is a declared function we could validate arity, but for arrow functions or runtime values,
@@ -1253,16 +1269,10 @@ namespace Js2IL.Services.ILGenerators
 
             if (expectsParamsArray)
             {
-                _il.LoadConstantI4(callExpression.Arguments.Count);
-                _il.OpCode(ILOpCode.Newarr);
-                _il.Token(_bclReferences.ObjectType);
-                for (int i = 0; i < callExpression.Arguments.Count; i++)
+                _il.EmitNewArray(callExpression.Arguments.Count, _bclReferences.ObjectType, (il, i) =>
                 {
-                    _il.OpCode(ILOpCode.Dup);
-                    _il.LoadConstantI4(i);
                     _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
-                    _il.OpCode(ILOpCode.Stelem_ref);
-                }
+                });
             }
             else
             {
@@ -1272,8 +1282,7 @@ namespace Js2IL.Services.ILGenerators
                 }
             }
 
-                _il.OpCode(ILOpCode.Call);
-                _il.Token(mref);
+                _il.Call(mref);
                 // Pop only if caller wants to discard and method returns a value
                 if (discardResult && retType != typeof(void))
                 {
@@ -1377,7 +1386,7 @@ namespace Js2IL.Services.ILGenerators
                 if (typeCoercion.toString)
                 {
                     var numberAsString = (-numericArg.Value).ToString();
-                    _il.LoadString(_metadataBuilder.GetOrAddUserString(numberAsString));
+                    _il.Ldstr(_metadataBuilder, numberAsString);
                 }
                 else
                 {
@@ -1586,7 +1595,10 @@ namespace Js2IL.Services.ILGenerators
                     _il.LoadLocal(scopeSlot.Address);
                 }
 
+                var prevAssignment = _currentAssignmentTarget;
+                _currentAssignmentTarget = aid.Name;
                 var rhsType = _expressionEmitter.Emit(assignmentExpression.Right, typeCoercion);
+                _currentAssignmentTarget = prevAssignment;
                 variable.Type = rhsType;
                 _il.OpCode(ILOpCode.Stfld);
                 _il.Token(variable.FieldHandle);
@@ -1734,7 +1746,7 @@ namespace Js2IL.Services.ILGenerators
 
                 // Fallback: dynamic property lookup on runtime object graphs (e.g., ExpandoObject from JSON.parse)
                 var getProp = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), typeof(object), typeof(object), typeof(string));
-                _il.LoadString(_metadataBuilder.GetOrAddUserString(propId.Name));
+                _il.Ldstr(_metadataBuilder, propId.Name);
                 _il.OpCode(ILOpCode.Call);
                 _il.Token(getProp);
                 return JavascriptType.Object;
@@ -1832,31 +1844,25 @@ namespace Js2IL.Services.ILGenerators
                         if (innerVar != null)
                         {
                             var neededScopeNames = childGen.GetScopesForClosureBinding(innerVar).ToList();
-                            il.LoadConstantI4(neededScopeNames.Count);
-                            il.OpCode(ILOpCode.Newarr);
-                            il.Token(_bclReferences.ObjectType);
-                            for (int i = 0; i < neededScopeNames.Count; i++)
+                            il.EmitNewArray(neededScopeNames.Count, _bclReferences.ObjectType, (eil, idx) =>
                             {
-                                var sn = neededScopeNames[i];
+                                var sn = neededScopeNames[idx];
                                 var refSlot = functionVariables.GetScopeLocalSlot(sn);
-                                il.OpCode(ILOpCode.Dup);
-                                il.LoadConstantI4(i);
                                 if (refSlot.Location == ObjectReferenceLocation.Local)
                                 {
-                                    il.LoadLocal(refSlot.Address);
+                                    eil.LoadLocal(refSlot.Address);
                                 }
                                 else if (refSlot.Location == ObjectReferenceLocation.Parameter)
                                 {
-                                    il.LoadArgument(refSlot.Address);
+                                    eil.LoadArgument(refSlot.Address);
                                 }
                                 else if (refSlot.Location == ObjectReferenceLocation.ScopeArray)
                                 {
-                                    il.LoadArgument(0);
-                                    il.LoadConstantI4(refSlot.Address);
-                                    il.OpCode(ILOpCode.Ldelem_ref);
+                                    eil.LoadArgument(0);
+                                    eil.LoadConstantI4(refSlot.Address);
+                                    eil.OpCode(ILOpCode.Ldelem_ref);
                                 }
-                                il.OpCode(ILOpCode.Stelem_ref);
-                            }
+                            });
                             // Bind the delegate on stack to the scopes[] we just built
                             childGen._runtime.InvokeClosureBindObject();
                         }
@@ -2155,7 +2161,7 @@ namespace Js2IL.Services.ILGenerators
                 case Acornima.Ast.BooleanLiteral booleanLiteral:
                     if (typeCoercion.toString)
                     {
-                        _il.LoadString(_metadataBuilder.GetOrAddUserString(booleanLiteral.Value ? "true" : "false"));
+                        _il.Ldstr(_metadataBuilder, booleanLiteral.Value ? "true" : "false");
                         // treat as object/string in this coercion path
                         type = JavascriptType.Object;
                     }
@@ -2170,7 +2176,7 @@ namespace Js2IL.Services.ILGenerators
                     {
                         //does dotnet ToString behave the same as JavaScript?
                         var numberAsString = numericLiteral.Value.ToString();
-                        _il.LoadString(_metadataBuilder.GetOrAddUserString(numberAsString)); // Load numeric literal as string
+                        _il.Ldstr(_metadataBuilder, numberAsString); // Load numeric literal as string
                     }
                     else
                     {
@@ -2181,7 +2187,7 @@ namespace Js2IL.Services.ILGenerators
 
                     break;
                 case Acornima.Ast.StringLiteral stringLiteral:
-                    _il.LoadString(_metadataBuilder.GetOrAddUserString(stringLiteral.Value)); // Load string literal
+                    _il.Ldstr(_metadataBuilder, stringLiteral.Value); // Load string literal
                     break;
                 case Acornima.Ast.Literal genericLiteral:
                     // Some literals (especially booleans/null) may come through the generic Literal node
@@ -2189,7 +2195,7 @@ namespace Js2IL.Services.ILGenerators
                     {
                         if (typeCoercion.toString)
                         {
-                            _il.LoadString(_metadataBuilder.GetOrAddUserString(b ? "true" : "false"));
+                            _il.Ldstr(_metadataBuilder, b ? "true" : "false");
                             type = JavascriptType.Object;
                         }
                         else

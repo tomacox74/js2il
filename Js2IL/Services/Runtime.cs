@@ -12,10 +12,9 @@ namespace Js2IL.Services
     {
         private readonly MetadataBuilder _metadataBuilder;
         private AssemblyReferenceHandle _runtimeAssemblyReference;
-    private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCache = new(StringComparer.Ordinal);
-    private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCacheByNs = new(StringComparer.Ordinal);
-    private readonly Dictionary<string, MemberReferenceHandle> _runtimeMethodCache = new(StringComparer.Ordinal);
-        private MemberReferenceHandle _consoleLogMethodRef;
+        private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCache = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCacheByNs = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, MemberReferenceHandle> _runtimeMethodCache = new(StringComparer.Ordinal);
         private MemberReferenceHandle _objectGetItem;
         private MemberReferenceHandle _arrayCtorRef;
         private MemberReferenceHandle _arrayLengthRef;
@@ -51,9 +50,6 @@ namespace Js2IL.Services
             // Initialize references to JavaScriptRuntime.Operators methods
             InitializeOperators();
 
-            // Initialize JavaScriptRuntime.Console.Log
-            InitializeConsole();
-
             // Initialize JavaScriptRuntime.Array method references
             InitializeArray();
 
@@ -63,18 +59,6 @@ namespace Js2IL.Services
 
             // Initialize JavaScriptRuntime.Closure.Bind
             InitializeClosure();
-        }
-
-        /// <summary>
-        /// Inserts IL to call Console.Log(string, object) with the string representation of the object on the stack.
-        /// </summary>
-        /// <remarks>
-        /// Assumes the parameters for Console.Log are already on the stack
-        /// </remarks>
-        public void InvokeConsoleLog()
-        {
-            _il.OpCode(ILOpCode.Call);
-            _il.Token(_consoleLogMethodRef);
         }
 
         public void InvokeArrayCtor()
@@ -95,29 +79,25 @@ namespace Js2IL.Services
         public void InvokeGetItemFromObject()
         {
             // we assume the object and index are already on the stack
-            _il.OpCode(ILOpCode.Call);
-            _il.Token(_objectGetItem);
+            _il.Call(_objectGetItem);
         }
 
         public void InvokeOperatorsAdd()
         {
             // assumes two object operands are on the stack
-            _il.OpCode(ILOpCode.Call);
-            _il.Token(_operatorsAddRef);
+            _il.Call(_operatorsAddRef);
         }
 
         public void InvokeOperatorsSubtract()
         {
             // assumes two object operands are on the stack
-            _il.OpCode(ILOpCode.Call);
-            _il.Token(_operatorsSubtractRef);
+            _il.Call(_operatorsSubtractRef);
         }
 
         public void InvokeClosureBindObject()
         {
             // assumes [delegateAsObject] [scopesArray] are on the stack
-            _il.OpCode(ILOpCode.Call);
-            _il.Token(_closureBindObjectRef);
+            _il.Call(_closureBindObjectRef);
         }
 
         /// <summary>
@@ -164,34 +144,6 @@ namespace Js2IL.Services
                 operatorsType,
                 _metadataBuilder.GetOrAddString("Subtract"),
                 subSig);
-        }
-
-        /// <summary>
-        /// Initializes reference for JavaScriptRuntime.Console.Log(object[]).
-        /// </summary>
-        private void InitializeConsole()
-        {
-            var consoleLogSigBuilder = new BlobBuilder();
-            new BlobEncoder(consoleLogSigBuilder)
-                .MethodSignature(isInstanceMethod: false)
-                .Parameters(1,
-                    returnType => returnType.Void(),
-                    parameters =>
-                    {
-                        parameters.AddParameter().Type().SZArray().Object();
-                    });
-            var consoleLogSig = _metadataBuilder.GetOrAddBlob(consoleLogSigBuilder);
-
-            var consoleType = _metadataBuilder.AddTypeReference(
-                _runtimeAssemblyReference,
-                _metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime)),
-                _metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime.Console))
-            );
-
-            _consoleLogMethodRef = _metadataBuilder.AddMemberReference(
-                consoleType,
-                _metadataBuilder.GetOrAddString("Log"),
-                consoleLogSig);
         }
 
         /// <summary>
