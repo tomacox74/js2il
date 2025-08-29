@@ -77,6 +77,39 @@ namespace Js2IL.Services.ILGenerators
             _currentClassName = currentClassName;
         }
 
+        // Case-insensitive property getter helper for AST reflection
+        private static System.Reflection.PropertyInfo? GetPropertyIgnoreCase(object target, string propertyName)
+        {
+            if (target == null || string.IsNullOrEmpty(propertyName)) return null;
+            var t = target.GetType();
+            return t.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase);
+        }
+
+        // Parse a Raw regex literal string like "/pattern/flags" into (pattern, flags)
+        private static (string? pattern, string? flags) ParseRegexRaw(string raw)
+        {
+            if (string.IsNullOrEmpty(raw) || raw[0] != '/') return (null, null);
+            int lastSlash = -1;
+            bool escaped = false;
+            for (int i = 1; i < raw.Length; i++)
+            {
+                char c = raw[i];
+                if (!escaped)
+                {
+                    if (c == '\\') { escaped = true; continue; }
+                    if (c == '/') { lastSlash = i; break; }
+                }
+                else
+                {
+                    escaped = false;
+                }
+            }
+            if (lastSlash <= 0) return (null, null);
+            var pattern = raw.Substring(1, lastSlash - 1);
+            var flags = lastSlash + 1 < raw.Length ? raw.Substring(lastSlash + 1) : string.Empty;
+            return (pattern, flags);
+        }
+
         public void DeclareVariable(VariableDeclaration variableDeclaraion)
         {
             // TODO need to handle multiple
@@ -1007,25 +1040,32 @@ namespace Js2IL.Services.ILGenerators
                     string? pattern = null;
                     string? flags = null;
                     var rxNode = callExpression.Arguments[0];
-                    var rxType = rxNode?.GetType();
-                    if (rxType != null)
                     {
-                        // Try nested Regex property (Literal.regex.{pattern,flags})
-                        var regexProp = rxType.GetProperty("Regex");
-                        object? regexObj = null;
-                        if (regexProp != null)
+                        var rxType = rxNode?.GetType();
+                        if (rxType != null)
                         {
-                            regexObj = regexProp.GetValue(rxNode);
+                            // Try nested Regex property (Literal.regex.{pattern,flags}) – case-insensitive
+                            object? regexObj = GetPropertyIgnoreCase(rxNode!, "Regex")?.GetValue(rxNode!);
                             if (regexObj != null)
                             {
-                                var rtype = regexObj.GetType();
-                                pattern = rtype.GetProperty("Pattern")?.GetValue(regexObj) as string;
-                                flags = rtype.GetProperty("Flags")?.GetValue(regexObj) as string;
+                                pattern = GetPropertyIgnoreCase(regexObj, "Pattern")?.GetValue(regexObj) as string;
+                                flags = GetPropertyIgnoreCase(regexObj, "Flags")?.GetValue(regexObj) as string;
+                            }
+
+                            // Fallback: direct properties on the node (Pattern/Flags) – case-insensitive
+                            pattern ??= GetPropertyIgnoreCase(rxNode!, "Pattern")?.GetValue(rxNode) as string;
+                            flags ??= GetPropertyIgnoreCase(rxNode!, "Flags")?.GetValue(rxNode) as string;
+
+                            // Final fallback: parse Raw string like '/pattern/flags'
+                            if (string.IsNullOrEmpty(pattern))
+                            {
+                                var raw = GetPropertyIgnoreCase(rxNode!, "Raw")?.GetValue(rxNode) as string;
+                                if (!string.IsNullOrEmpty(raw))
+                                {
+                                    (pattern, flags) = ParseRegexRaw(raw!);
+                                }
                             }
                         }
-                        // Fallback: direct properties on the node
-                        pattern ??= rxType.GetProperty("Pattern")?.GetValue(rxNode) as string;
-                        flags ??= rxType.GetProperty("Flags")?.GetValue(rxNode) as string;
                     }
                     if (string.IsNullOrEmpty(pattern))
                     {
@@ -1045,7 +1085,18 @@ namespace Js2IL.Services.ILGenerators
                     _il.LoadConstantI4(global ? 1 : 0);
                     _il.LoadConstantI4(ignoreCase ? 1 : 0);
 
-                    var mref = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.String), nameof(JavaScriptRuntime.String.Replace), typeof(string), typeof(string), typeof(string), typeof(bool), typeof(bool));
+                    // Resolve JavaScriptRuntime.String.Replace dynamically like console.log
+                    var stringType = JavaScriptRuntime.IntrinsicObjectRegistry.Get("String")
+                        ?? throw new NotSupportedException("Host intrinsic 'String' not found");
+                    var replaceMethod = stringType
+                        .GetMethods(BindingFlags.Public | BindingFlags.Static)
+                        .FirstOrDefault(mi => string.Equals(mi.Name, "Replace", StringComparison.Ordinal)
+                                              && mi.GetParameters().Length == 5);
+                    if (replaceMethod == null)
+                    {
+                        throw new NotSupportedException("Host intrinsic method not found: String.Replace(input, pattern, replacement, global, ignoreCase)");
+                    }
+                    var mref = _runtime.GetStaticMethodRef(stringType, replaceMethod.Name, replaceMethod.ReturnType, replaceMethod.GetParameters().Select(p => p.ParameterType).ToArray());
                     _il.Call(mref);
                     if (discardResult)
                     {
