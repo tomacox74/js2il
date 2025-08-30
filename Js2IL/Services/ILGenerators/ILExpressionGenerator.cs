@@ -32,14 +32,15 @@ namespace Js2IL.Services.ILGenerators
             _binaryOperators = new BinaryOperators(owner.MetadataBuilder, _il, _variables, this, owner.BclReferences, owner.Runtime);
         }
 
-        /// <inheritdoc />
-        public JavascriptType Emit(Expression expression, TypeCoercion typeCoercion, CallSiteContext context = CallSiteContext.Expression,  ConditionalBranching? branching = null)
+    /// <inheritdoc />
+    public ExpressionResult Emit(Expression expression, TypeCoercion typeCoercion, CallSiteContext context = CallSiteContext.Expression,  ConditionalBranching? branching = null)
         {
             var _metadataBuilder = _owner.MetadataBuilder;
             var _bclReferences = _owner.BclReferences;
             var _runtime = _owner.Runtime;
 
             JavascriptType javascriptType = JavascriptType.Unknown;
+            Type? clrType = null;
 
             switch (expression)
             {
@@ -59,7 +60,7 @@ namespace Js2IL.Services.ILGenerators
                     break;
                 case CallExpression callExpression:
                     // Delegate call emission to local helper (migrated from ILMethodGenerator)
-                    GenerateCallExpression(callExpression, context);
+                    clrType = GenerateCallExpression(callExpression, context);
                     javascriptType = JavascriptType.Object;
                     break;
                 case ArrowFunctionExpression arrowFunction:
@@ -83,6 +84,7 @@ namespace Js2IL.Services.ILGenerators
                 case ArrayExpression arrayExpression:
                     GenerateArrayExpression(arrayExpression);
                     javascriptType = JavascriptType.Object;
+                    clrType = typeof(JavaScriptRuntime.Array);
                     break;
                 case NewExpression newExpression:
                     javascriptType = EmitNewExpression(newExpression);
@@ -189,7 +191,7 @@ namespace Js2IL.Services.ILGenerators
                     break;
             }
 
-            if (branching != null && expression is not BinaryExpression)
+        if (branching != null && expression is not BinaryExpression)
             {
                 if (javascriptType == JavascriptType.Boolean)
                 {
@@ -202,11 +204,11 @@ namespace Js2IL.Services.ILGenerators
                     {
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Pop);
                     }
-                    return JavascriptType.Unknown;
+                    return new ExpressionResult { JsType = JavascriptType.Unknown, ClrType = null };
                 }
                 else if (javascriptType == JavascriptType.Unknown)
                 {
-                    return JavascriptType.Unknown;
+                    return new ExpressionResult { JsType = JavascriptType.Unknown, ClrType = null };
                 }
                 else
                 {
@@ -228,12 +230,12 @@ namespace Js2IL.Services.ILGenerators
                 }
             }
 
-            return javascriptType;
+            return new ExpressionResult { JsType = javascriptType, ClrType = clrType };
         }
 
         // Emits a call expression (function or member call) with context and optional result discard.
         // Migrated from ILMethodGenerator to centralize expression emission.
-        public void GenerateCallExpression(Acornima.Ast.CallExpression callExpression, global::Js2IL.Services.ILGenerators.CallSiteContext context)
+    public Type? GenerateCallExpression(Acornima.Ast.CallExpression callExpression, global::Js2IL.Services.ILGenerators.CallSiteContext context)
         {
             var _metadataBuilder = _owner.MetadataBuilder;
             var _runtime = _owner.Runtime;
@@ -313,7 +315,7 @@ namespace Js2IL.Services.ILGenerators
                     }
                     var mref = _owner.Runtime.GetStaticMethodRef(stringType, replaceMethod.Name, replaceMethod.ReturnType, replaceMethod.GetParameters().Select(p => p.ParameterType).ToArray());
                     _il.Call(mref);
-                    return;
+                    return null;
                 }
                 if (mem.Object is Acornima.Ast.Identifier baseId)
                 {
@@ -334,7 +336,7 @@ namespace Js2IL.Services.ILGenerators
                             Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
                         }
                         _il.Call(sMref);
-                        return;
+                        return null;
                     }
                     // Step 1: Is it a variable?
                     var baseVar = _variables.FindVariable(baseId.Name);
@@ -343,7 +345,7 @@ namespace Js2IL.Services.ILGenerators
                         // Step 2: Is it an object/class instance? Try intrinsic first, then class instance fallback
                         if (TryEmitIntrinsicInstanceCall(baseVar, mname.Name, callExpression))
                         {
-                            return;
+                            return null;
                         }
 
                         // Non-intrinsic instance method call fallback (class instance created via `new`)
@@ -383,14 +385,14 @@ namespace Js2IL.Services.ILGenerators
 
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
                         _il.Token(mrefHandle);
-                        return;
+                        return null;
                     }
                     else
                     {
                         // Step 4: Not a variable - try host intrinsic (e.g., console.log)
                         if (TryEmitHostIntrinsicStaticCall(baseId.Name, mname.Name, callExpression))
                         {
-                            return;
+                            return null;
                         }
                         throw new NotSupportedException($"Unsupported member call base identifier: '{baseId.Name}'");
                     }
@@ -401,8 +403,7 @@ namespace Js2IL.Services.ILGenerators
             else if (callExpression.Callee is Acornima.Ast.Identifier identifier)
             {
                 // Simple function call: f(...)
-                EmitFunctionCall(identifier, callExpression, context);
-                return;
+                return EmitFunctionCall(identifier, callExpression, context);
             }
             else
             {
@@ -547,7 +548,7 @@ namespace Js2IL.Services.ILGenerators
         }
 
         // Emits a call to a function identified by an Identifier in the current scope, including scope array construction and delegate dispatch.
-        private void EmitFunctionCall(Acornima.Ast.Identifier identifier, Acornima.Ast.CallExpression callExpression, global::Js2IL.Services.ILGenerators.CallSiteContext context)
+    private Type? EmitFunctionCall(Acornima.Ast.Identifier identifier, Acornima.Ast.CallExpression callExpression, global::Js2IL.Services.ILGenerators.CallSiteContext context)
         {
             var _runtime = _owner.Runtime;
             var _bclReferences = _owner.BclReferences;
@@ -562,7 +563,12 @@ namespace Js2IL.Services.ILGenerators
                 // Coerce argument to string (for literals this emits ldstr directly)
                 _ = Emit(callExpression.Arguments[0], new TypeCoercion() { toString = true });
                 _runtime.InvokeRequire();
-                return;
+                // Identify module type for ClrType surface
+                string? mod = null;
+                var arg0 = callExpression.Arguments[0];
+                if (arg0 is StringLiteral s) mod = s.Value;
+                else if (arg0 is Literal glit && glit.Value is string gs) mod = gs;
+                return ResolveNodeModuleType(mod ?? string.Empty);
             }
 
             var functionVariable = _variables.FindVariable(identifier.Name);
@@ -682,6 +688,24 @@ namespace Js2IL.Services.ILGenerators
                     throw new NotSupportedException($"Only up to 6 parameters supported currently (got {argCount})");
                 }
             }
+            return null;
+        }
+
+        private static Type? ResolveNodeModuleType(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name)) return null;
+            if (name.StartsWith("node:", StringComparison.OrdinalIgnoreCase))
+                name = name.Substring("node:".Length);
+            var asm = typeof(JavaScriptRuntime.Object).Assembly;
+            foreach (var t in asm.GetTypes())
+            {
+                if (!string.Equals(t.Namespace, "JavaScriptRuntime.Node", StringComparison.Ordinal)) continue;
+                var attribs = t.GetCustomAttributes(typeof(JavaScriptRuntime.Node.NodeModuleAttribute), inherit: false);
+                if (attribs.Length == 0) continue;
+                var attr = (JavaScriptRuntime.Node.NodeModuleAttribute)attribs[0]!;
+                if (string.Equals(attr.Name, name, StringComparison.OrdinalIgnoreCase)) return t;
+            }
+            return null;
         }
 
         /// <summary>
@@ -852,18 +876,19 @@ namespace Js2IL.Services.ILGenerators
 
                 var prevAssignment = _owner.CurrentAssignmentTarget;
                 _owner.CurrentAssignmentTarget = aid.Name;
-                var rhsType = Emit(assignmentExpression.Right, typeCoercion);
+                var rhsResult = Emit(assignmentExpression.Right, typeCoercion);
                 _owner.CurrentAssignmentTarget = prevAssignment;
-                variable.Type = rhsType;
+                variable.Type = rhsResult.JsType;
+                variable.RuntimeIntrinsicType = rhsResult.ClrType;
                 _il.OpCode(ILOpCode.Stfld);
                 _il.Token(variable.FieldHandle);
-                return rhsType;
+                return rhsResult.JsType;
             }
             else if (_owner.InClassMethod && assignmentExpression.Left is MemberExpression me && me.Object is ThisExpression && !me.Computed && me.Property is Identifier pid)
             {
                 // this.prop = <expr>
                 _il.OpCode(ILOpCode.Ldarg_0); // load 'this'
-                var rhsType = Emit(assignmentExpression.Right, new TypeCoercion() { boxResult = true });
+                var rhsType = Emit(assignmentExpression.Right, new TypeCoercion() { boxResult = true }).JsType;
                 // Lookup field by current class name
                 if (string.IsNullOrEmpty(_owner.CurrentClassName) || !_classRegistry.TryGetField(_owner.CurrentClassName!, pid.Name, out var fieldHandle))
                 {
@@ -892,7 +917,7 @@ namespace Js2IL.Services.ILGenerators
                 // If we're in a conditional context, invert the branch directly: if (!x) ... => branch on x == false
                 if (branching != null)
                 {
-                    var argType = Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = false });
+                    var argType = Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = false }).JsType;
 
                     if (argType == JavascriptType.Boolean)
                     {
@@ -930,7 +955,7 @@ namespace Js2IL.Services.ILGenerators
                 else
                 {
                     // Non-branching context: compute the boolean value and invert it on the stack.
-                    var argType = Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = false });
+                    var argType = Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = false }).JsType;
 
                     if (argType == JavascriptType.Boolean)
                     {
@@ -1114,7 +1139,7 @@ namespace Js2IL.Services.ILGenerators
 
             if (memberExpression.Computed)
             {
-                var indexType = Emit(memberExpression.Property, new TypeCoercion());
+                var indexType = Emit(memberExpression.Property, new TypeCoercion()).JsType;
                 if (indexType != JavascriptType.Number)
                 {
                     throw new NotSupportedException("Array index must be numeric expression");

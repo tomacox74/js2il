@@ -106,7 +106,7 @@ namespace Js2IL.Services.ILGenerators
                 bool equality = operatorType == Operator.Equality || operatorType == Operator.StrictEquality;
                 bool staticString = plus && binaryExpression.Left is StringLiteral && (binaryExpression.Right is StringLiteral || binaryExpression.Right is NumericLiteral);
 
-                var leftType = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion());
+                var leftType = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion()).JsType;
                 // If we're doing an equality comparison and the left is an arithmetic expression,
                 // proactively unbox it to a double so subsequent branch compare works on numerics.
                 bool leftIsArithmeticExpr = binaryExpression.Left is BinaryExpression lbe &&
@@ -183,7 +183,7 @@ namespace Js2IL.Services.ILGenerators
                     }
                 }
 
-                var rightType = _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion() { toString = binaryExpression.Left is StringLiteral });
+                var rightType = _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion() { toString = binaryExpression.Left is StringLiteral }).JsType;
                 // If equality compare and left resolved to number, make right numeric too when reasonable
                 if (equality && leftType == JavascriptType.Number && rightType != JavascriptType.Number)
                 {

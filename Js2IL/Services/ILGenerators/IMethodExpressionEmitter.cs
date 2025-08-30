@@ -38,7 +38,7 @@ namespace Js2IL.Services.ILGenerators
 
     record ExpressionResult
     {
-        public JavascriptType JavascriptType { get; init; }
+        public JavascriptType JsType { get; init; }
         public Type? ClrType { get; init; }
     }
 
@@ -58,6 +58,6 @@ namespace Js2IL.Services.ILGenerators
         /// <param name="typeCoercion">In some cases we have a expected type we want from the expression.. for example we need to force to a string or we want to keep it boxed</param>
         /// <param name="branching">If the expression is part of a conditional branching (such as for or if), this parameter will contain the branching information.</param>
         /// <remarks>Branching operators in IL are mutually exclusive wth normal comparison operators.  Is in the case of conditional branching we need to emit the br opcodes instead of the comparison opcodes.</remarks>
-        JavascriptType Emit(Expression expression, TypeCoercion typeCoercion, CallSiteContext context = CallSiteContext.Expression, ConditionalBranching? branching = null);
+        ExpressionResult Emit(Expression expression, TypeCoercion typeCoercion, CallSiteContext context = CallSiteContext.Expression, ConditionalBranching? branching = null);
     }
 }

@@ -137,30 +137,9 @@ namespace Js2IL.Services.ILGenerators
                 {
                     // Let emitted RHS know which identifier is being initialized (for variable->class mapping)
                     _currentAssignmentTarget = variableName;
-                    variable.Type = this._expressionEmitter.Emit(variableAST.Init, new TypeCoercion() { boxResult = true });
-
-                    // If initializer is require('module'), tag the variable with its runtime intrinsic CLR type
-                    if (variableAST.Init is CallExpression reqCall
-                        && reqCall.Callee is Identifier rid
-                        && string.Equals(rid.Name, "require", StringComparison.Ordinal)
-                        && reqCall.Arguments.Count == 1)
-                    {
-                        string? mod = null;
-                        if (reqCall.Arguments[0] is StringLiteral s) mod = s.Value;
-                        else if (reqCall.Arguments[0] is Literal glit && glit.Value is string gs) mod = gs;
-                        if (!string.IsNullOrEmpty(mod))
-                        {
-                            var rt = ResolveNodeModuleType(mod!);
-                            if (rt != null)
-                            {
-                                var vrec = _variables.FindVariable(variableName);
-                                if (vrec != null)
-                                {
-                                    vrec.RuntimeIntrinsicType = rt;
-                                }
-                            }
-                        }
-                    }
+                    var initResult = this._expressionEmitter.Emit(variableAST.Init, new TypeCoercion() { boxResult = true });
+                    variable.Type = initResult.JsType;
+                    variable.RuntimeIntrinsicType = initResult.ClrType;
                 }
                 finally
                 {
@@ -171,24 +150,6 @@ namespace Js2IL.Services.ILGenerators
                 _il.OpCode(ILOpCode.Stfld);
                 _il.Token(variable.FieldHandle);
             }
-        }
-
-        private static Type? ResolveNodeModuleType(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name)) return null;
-            // Accept optional node: prefix
-            if (name.StartsWith("node:", StringComparison.OrdinalIgnoreCase))
-                name = name.Substring("node:".Length);
-            var asm = typeof(JavaScriptRuntime.Object).Assembly;
-            foreach (var t in asm.GetTypes())
-            {
-                if (!string.Equals(t.Namespace, "JavaScriptRuntime.Node", StringComparison.Ordinal)) continue;
-                var attribs = t.GetCustomAttributes(typeof(JavaScriptRuntime.Node.NodeModuleAttribute), inherit: false);
-                if (attribs.Length == 0) continue;
-                var attr = (JavaScriptRuntime.Node.NodeModuleAttribute)attribs[0]!;
-                if (string.Equals(attr.Name, name, StringComparison.OrdinalIgnoreCase)) return t;
-            }
-            return null;
         }
 
         public void GenerateStatementsForBody(string scopeName, bool createScopeInstance, NodeList<Statement> statements)
