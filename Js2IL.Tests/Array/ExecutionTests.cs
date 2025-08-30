@@ -12,5 +12,8 @@ namespace Js2IL.Tests.Array
 
         [Fact]
         public Task Array_EmptyLength_IsZero() { var testName = nameof(Array_EmptyLength_IsZero); return ExecutionTest(testName); }
+
+    [Fact]
+    public Task Array_Sort_Basic() { var testName = nameof(Array_Sort_Basic); return ExecutionTest(testName); }
     }
 }

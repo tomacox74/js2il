@@ -1,0 +1,132 @@
+﻿// IL code: Array_Sort_Basic
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Array_Sort_Basic
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Block_L3C37
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Block_L3C37::.ctor
+
+	} // end of class Block_L3C37
+
+
+	// Fields
+	.field public object arr
+	.field public object i
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Array_Sort_Basic::.ctor
+
+} // end of class Scopes.Array_Sort_Basic
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2064
+		// Header size: 12
+		// Code size: 196 (0xc4)
+		.maxstack 8
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Array_Sort_Basic::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldc.i4.3
+		IL_0008: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_000d: dup
+		IL_000e: ldstr "b"
+		IL_0013: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0018: dup
+		IL_0019: ldstr "a"
+		IL_001e: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0023: dup
+		IL_0024: ldstr "c"
+		IL_0029: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_002e: stfld object Scopes.Array_Sort_Basic::arr
+		IL_0033: ldloc.0
+		IL_0034: ldfld object Scopes.Array_Sort_Basic::arr
+		IL_0039: ldc.i4.0
+		IL_003a: newarr [System.Runtime]System.Object
+		IL_003f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::sort(object[])
+		IL_0044: pop
+		IL_0045: ldloc.0
+		IL_0046: ldc.r8 0.0
+		IL_004f: box [System.Runtime]System.Double
+		IL_0054: stfld object Scopes.Array_Sort_Basic::i
+		// loop start (head: IL_0059)
+			IL_0059: ldloc.0
+			IL_005a: ldfld object Scopes.Array_Sort_Basic::i
+			IL_005f: unbox.any [System.Runtime]System.Double
+			IL_0064: ldloc.0
+			IL_0065: ldfld object Scopes.Array_Sort_Basic::arr
+			IL_006a: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+			IL_006f: blt IL_0079
+
+			IL_0074: br IL_00c3
+
+			IL_0079: ldc.i4.1
+			IL_007a: newarr [System.Runtime]System.Object
+			IL_007f: dup
+			IL_0080: ldc.i4.0
+			IL_0081: ldloc.0
+			IL_0082: ldfld object Scopes.Array_Sort_Basic::arr
+			IL_0087: ldloc.0
+			IL_0088: ldfld object Scopes.Array_Sort_Basic::i
+			IL_008d: unbox.any [System.Runtime]System.Double
+			IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_0097: stelem.ref
+			IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_009d: pop
+			IL_009e: ldloc.0
+			IL_009f: ldloc.0
+			IL_00a0: ldfld object Scopes.Array_Sort_Basic::i
+			IL_00a5: unbox.any [System.Runtime]System.Double
+			IL_00aa: ldc.r8 1
+			IL_00b3: add
+			IL_00b4: box [System.Runtime]System.Double
+			IL_00b9: stfld object Scopes.Array_Sort_Basic::i
+			IL_00be: br IL_0059
+		// end loop
+
+		IL_00c3: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
