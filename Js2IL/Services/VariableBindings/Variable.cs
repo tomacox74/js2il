@@ -16,18 +16,18 @@ namespace Js2IL.Services
         
         public JavascriptType Type = JavascriptType.Unknown;
 
-    // If this variable holds a known intrinsic runtime object (e.g., Node module instance),
-    // capture its CLR type so emitters can bind directly to its methods.
-    public Type? RuntimeIntrinsicType { get; set; }
+        // If this variable holds a known intrinsic runtime object (e.g., Node module instance),
+        // capture its CLR type so emitters can bind directly to its methods.
+        public Type? RuntimeIntrinsicType { get; set; }
 
-    // Unified optional metadata for compatibility with existing emitters
-    public bool IsParameter { get; init; } = false;
-    // For parameters: IL argument index (including any leading non-JS params already accounted for by caller)
-    public int ParameterIndex { get; init; } = -1;
-    // Declaring scope name for field-backed variables
-    public string ScopeName { get; init; } = string.Empty;
-    // Field handle for ldfld/stfld (for field-backed variables)
-    public FieldDefinitionHandle FieldHandle { get; init; }
+        // Unified optional metadata for compatibility with existing emitters
+        public bool IsParameter { get; init; } = false;
+        // For parameters: IL argument index (including any leading non-JS params already accounted for by caller)
+        public int ParameterIndex { get; init; } = -1;
+        // Declaring scope name for field-backed variables
+        public string ScopeName { get; init; } = string.Empty;
+        // Field handle for ldfld/stfld (for field-backed variables)
+        public FieldDefinitionHandle FieldHandle { get; init; }
     }
 
     internal record LocalVariable : Variable;

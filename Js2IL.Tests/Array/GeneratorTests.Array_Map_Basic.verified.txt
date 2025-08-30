@@ -1,0 +1,186 @@
+﻿// IL code: Array_Map_Basic
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Array_Map_Basic
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Function_lengths
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Function_lengths::.ctor
+
+	} // end of class Function_lengths
+
+	.class nested public auto ansi beforefieldinit Block_L3C41
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2062
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Block_L3C41::.ctor
+
+	} // end of class Block_L3C41
+
+
+	// Fields
+	.field public object arr
+	.field public object lengths
+	.field public object i
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Array_Map_Basic::.ctor
+
+} // end of class Scopes.Array_Map_Basic
+
+.class public auto ansi abstract sealed beforefieldinit Functions.FunctionExpression_L2C22
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		object FunctionExpression_L2C22 (
+			object[] scopes,
+			object x
+		) cil managed 
+	{
+		// Method begins at RVA 0x206b
+		// Header size: 1
+		// Code size: 14 (0xe)
+		.maxstack 8
+
+		IL_0000: ldarg.1
+		IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_0006: box [System.Runtime]System.Double
+		IL_000b: ret
+
+		IL_000c: ldnull
+		IL_000d: ret
+	} // end of method FunctionExpression_L2C22::FunctionExpression_L2C22
+
+} // end of class Functions.FunctionExpression_L2C22
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x207c
+		// Header size: 12
+		// Code size: 216 (0xd8)
+		.maxstack 8
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Array_Map_Basic::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldc.i4.3
+		IL_0008: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_000d: dup
+		IL_000e: ldstr "a"
+		IL_0013: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0018: dup
+		IL_0019: ldstr "bb"
+		IL_001e: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0023: dup
+		IL_0024: ldstr "ccc"
+		IL_0029: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_002e: stfld object Scopes.Array_Map_Basic::arr
+		IL_0033: ldloc.0
+		IL_0034: ldloc.0
+		IL_0035: ldfld object Scopes.Array_Map_Basic::arr
+		IL_003a: ldc.i4.1
+		IL_003b: newarr [System.Runtime]System.Object
+		IL_0040: dup
+		IL_0041: ldc.i4.0
+		IL_0042: ldnull
+		IL_0043: ldftn object Functions.FunctionExpression_L2C22::FunctionExpression_L2C22(object[], object)
+		IL_0049: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_004e: stelem.ref
+		IL_004f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
+		IL_0054: stfld object Scopes.Array_Map_Basic::lengths
+		IL_0059: ldloc.0
+		IL_005a: ldc.r8 0.0
+		IL_0063: box [System.Runtime]System.Double
+		IL_0068: stfld object Scopes.Array_Map_Basic::i
+		// loop start (head: IL_006d)
+			IL_006d: ldloc.0
+			IL_006e: ldfld object Scopes.Array_Map_Basic::i
+			IL_0073: unbox.any [System.Runtime]System.Double
+			IL_0078: ldloc.0
+			IL_0079: ldfld object Scopes.Array_Map_Basic::lengths
+			IL_007e: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_0083: blt IL_008d
+
+			IL_0088: br IL_00d7
+
+			IL_008d: ldc.i4.1
+			IL_008e: newarr [System.Runtime]System.Object
+			IL_0093: dup
+			IL_0094: ldc.i4.0
+			IL_0095: ldloc.0
+			IL_0096: ldfld object Scopes.Array_Map_Basic::lengths
+			IL_009b: ldloc.0
+			IL_009c: ldfld object Scopes.Array_Map_Basic::i
+			IL_00a1: unbox.any [System.Runtime]System.Double
+			IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_00ab: stelem.ref
+			IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_00b1: pop
+			IL_00b2: ldloc.0
+			IL_00b3: ldloc.0
+			IL_00b4: ldfld object Scopes.Array_Map_Basic::i
+			IL_00b9: unbox.any [System.Runtime]System.Double
+			IL_00be: ldc.r8 1
+			IL_00c7: add
+			IL_00c8: box [System.Runtime]System.Double
+			IL_00cd: stfld object Scopes.Array_Map_Basic::i
+			IL_00d2: br IL_006d
+		// end loop
+
+		IL_00d7: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

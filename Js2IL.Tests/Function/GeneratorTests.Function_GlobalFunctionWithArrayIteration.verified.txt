@@ -93,7 +93,7 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 213 (0xd5)
+		// Code size: 214 (0xd6)
 		.maxstack 8
 		.locals init (
 			[0] object
@@ -127,10 +127,10 @@
 			IL_0068: unbox.any [System.Runtime]System.Double
 			IL_006d: ldloc.0
 			IL_006e: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration/printArray::arr
-			IL_0073: callvirt instance float64 [JavaScriptRuntime]JavaScriptRuntime.Array::get_length()
+			IL_0073: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
 			IL_0078: blt IL_0082
 
-			IL_007d: br IL_00d3
+			IL_007d: br IL_00d4
 
 			IL_0082: ldc.i4.2
 			IL_0083: newarr [System.Runtime]System.Object
@@ -147,20 +147,21 @@
 			IL_009e: unbox.any [System.Runtime]System.Double
 			IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
 			IL_00a8: stelem.ref
-			IL_00a9: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_00ae: ldloc.0
+			IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_00ae: pop
 			IL_00af: ldloc.0
-			IL_00b0: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration/printArray::i
-			IL_00b5: unbox.any [System.Runtime]System.Double
-			IL_00ba: ldc.r8 1
-			IL_00c3: add
-			IL_00c4: box [System.Runtime]System.Double
-			IL_00c9: stfld object Scopes.Function_GlobalFunctionWithArrayIteration/printArray::i
-			IL_00ce: br IL_0062
+			IL_00b0: ldloc.0
+			IL_00b1: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration/printArray::i
+			IL_00b6: unbox.any [System.Runtime]System.Double
+			IL_00bb: ldc.r8 1
+			IL_00c4: add
+			IL_00c5: box [System.Runtime]System.Double
+			IL_00ca: stfld object Scopes.Function_GlobalFunctionWithArrayIteration/printArray::i
+			IL_00cf: br IL_0062
 		// end loop
 
-		IL_00d3: ldnull
-		IL_00d4: ret
+		IL_00d4: ldnull
+		IL_00d5: ret
 	} // end of method printArray::printArray
 
 } // end of class Functions.printArray
@@ -172,7 +173,7 @@
 	.method public static 
 		void _LoadDispatchTable () cil managed 
 	{
-		// Method begins at RVA 0x214d
+		// Method begins at RVA 0x214e
 		// Header size: 1
 		// Code size: 18 (0x12)
 		.maxstack 8
@@ -193,7 +194,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2160
+		// Method begins at RVA 0x2164
 		// Header size: 12
 		// Code size: 45 (0x2d)
 		.maxstack 8

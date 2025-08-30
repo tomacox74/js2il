@@ -2,6 +2,28 @@
 
 All notable changes to this project are documented here.
 
+## [Unreleased]
+
+Added
+- Arrays: Array.prototype.map (basic value-callback) returning a new array; execution and generator tests.
+- Arrays: Array.prototype.sort default comparator (lexicographic) returning the array; execution and generator tests.
+- Emitter: FunctionExpression support to enable function-literal callbacks (e.g., in map).
+
+Changed
+- Codegen: centralized call emission in ILExpressionGenerator; it now dispatches member/host/intrinsic calls.
+- Types: ExpressionResult now carries both JsType and ClrType; removed bespoke require() clrtype tagging.
+- Property access: .length emission goes through JavaScriptRuntime.Object.GetLength(object) for arrays/strings/collections.
+- Tests: stabilized generator snapshots after GetLength change across Array/Function/Literals suites.
+
+Fixed
+- Resolved generator snapshot mismatches (including BOM/encoding) by updating verified files from received outputs.
+
+Docs
+- Updated ECMAScript 2025 feature coverage: added Array.prototype.map, clarified Array.length emission; regenerated markdown.
+
+Tests
+- New Array subgroup with execution and generator tests: length, empty length, sort basic, map basic. Targeted isEven test remains green.
+
 ## v0.1.1 - 2025-08-29
 
 Added

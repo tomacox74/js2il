@@ -23,6 +23,22 @@ namespace JavaScriptRuntime
             }
         }
 
+        public static double GetLength(object obj)
+        {
+            switch (obj)
+            {
+                case Array arr:
+                    return arr.length;
+                case string s:
+                    return s.Length;
+                default:
+                    // Fallback: try ICollection Count
+                    if (obj is System.Collections.ICollection coll)
+                        return coll.Count;
+                    return 0.0;
+            }
+        }
+
         public static object? GetProperty(object obj, string name)
         {
             // ExpandoObject properties

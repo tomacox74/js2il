@@ -262,6 +262,31 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Private instance field (#) with helper method access | Supported | `Js2IL.Tests/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js` | Generated as a private .NET field with a mangled name; accessible only within the class. | 15.1.1 |
 
 
+## [Array Objects](https://tc39.es/ecma262/#sec-array-objects)
+
+### [Properties of Array Instances](https://tc39.es/ecma262/#sec-properties-of-array-instances)
+
+#### [length](https://tc39.es/ecma262/#sec-properties-of-array-instances)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Array.length property (read) | Supported | `Js2IL.Tests/JavaScript/Array_LengthProperty_ReturnsCount.js`<br>`Js2IL.Tests/JavaScript/Array_EmptyLength_IsZero.js` | length getter returns number of elements; emitted via JavaScriptRuntime.Object.GetLength(object). | 23.1.2.1 |
+
+
+#### [Array.prototype.map](https://tc39.es/ecma262/#sec-array.prototype.map)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Array.prototype.map | Partially Supported | `Js2IL.Tests/JavaScript/Array_Map_Basic.js` | Supports basic value-callback mapping and returns a new array. thisArg and additional callback parameters (index, array) are not yet supported. | 23.1.3.25 |
+
+
+#### [Array.prototype.sort](https://tc39.es/ecma262/#sec-array.prototype.sort)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Array.prototype.sort (default comparator) | Partially Supported | `Js2IL.Tests/JavaScript/Array_Sort_Basic.js` | Default lexicographic sort implemented in JavaScriptRuntime.Array.sort(); comparator function parameter is not yet supported. Returns the array instance. | 23.1.3.27 |
+
+
 ## [Text Processing](https://tc39.es/ecma262/#sec-text-processing)
 
 ### [String Objects](https://tc39.es/ecma262/#sec-string-objects)

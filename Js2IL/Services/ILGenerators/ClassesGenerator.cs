@@ -228,7 +228,7 @@ namespace Js2IL.Services.ILGenerators
                         // default null; no store needed
                         continue;
                     }
-                    ((IMethodExpressionEmitter)ilGen).Emit(initExpr, new TypeCoercion() { boxResult = true });
+                    ilGen.ExpressionEmitter.Emit(initExpr, new TypeCoercion() { boxResult = true });
                     ilGen.IL.OpCode(ILOpCode.Stsfld);
                     ilGen.IL.Token(field);
                 }
@@ -339,7 +339,7 @@ namespace Js2IL.Services.ILGenerators
                 else
                 {
                     // Use ILMethodGenerator to emit the initializer expression, then box numbers if needed
-                    ((IMethodExpressionEmitter)ilGen).Emit(initExpr, new TypeCoercion() { boxResult = true });
+                    ilGen.ExpressionEmitter.Emit(initExpr, new TypeCoercion() { boxResult = true });
                     ilGen.IL.OpCode(ILOpCode.Stfld);
                     ilGen.IL.Token(field);
                 }

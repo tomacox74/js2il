@@ -57,7 +57,7 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 64 (0x40)
+		// Code size: 65 (0x41)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -75,7 +75,7 @@
 		IL_0018: unbox.any [System.Runtime]System.Boolean
 		IL_001d: brfalse IL_0027
 
-		IL_0022: br IL_003f
+		IL_0022: br IL_0040
 
 		IL_0027: ldc.i4.1
 		IL_0028: newarr [System.Runtime]System.Object
@@ -83,10 +83,11 @@
 		IL_002e: ldc.i4.0
 		IL_002f: ldstr "flag is disabled"
 		IL_0034: stelem.ref
-		IL_0035: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_003a: br IL_003f
+		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_003a: pop
+		IL_003b: br IL_0040
 
-		IL_003f: ret
+		IL_0040: ret
 	} // end of method Program::Main
 
 } // end of class Program
