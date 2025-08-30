@@ -53,5 +53,50 @@ namespace JavaScriptRuntime
             // TODO: support comparator: if args.Length == 1 and args[0] is a callable, use it to compare
             return sort();
         }
+
+        /// <summary>
+        /// JavaScript Array.map(callback[, thisArg])
+        /// Minimal implementation: invokes the callback with (value, index, array) when supported and returns a new Array.
+        /// Supports delegates produced by Closure.Bind: Func<object[], object, ...> signatures.
+        /// </summary>
+        public object map(object[] args)
+        {
+            var result = new Array(this.Count);
+            var cb = (args != null && args.Length > 0) ? args[0] : null;
+
+            for (int i = 0; i < this.Count; i++)
+            {
+                var value = this[i];
+                object mapped;
+
+                if (cb is Func<object[], object, object, object, object> f3)
+                {
+                    // (scopes, value, index, array)
+                    mapped = f3(System.Array.Empty<object>(), value, (double)i, this);
+                }
+                else if (cb is Func<object[], object, object, object> f2)
+                {
+                    // (scopes, value, index)
+                    mapped = f2(System.Array.Empty<object>(), value, (double)i);
+                }
+                else if (cb is Func<object[], object, object> f1)
+                {
+                    // (scopes, value)
+                    mapped = f1(System.Array.Empty<object>(), value);
+                }
+                else if (cb is Func<object[], object> f0)
+                {
+                    mapped = f0(System.Array.Empty<object>());
+                }
+                else
+                {
+                    throw new InvalidOperationException("map callback is not a supported function type");
+                }
+
+                result.Add(mapped);
+            }
+
+            return result;
+        }
     }
 }

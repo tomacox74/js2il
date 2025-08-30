@@ -944,6 +944,104 @@ namespace Js2IL.Services.ILGenerators
             return mdh;
         }
 
+        internal MethodDefinitionHandle GenerateFunctionExpressionMethod(FunctionExpression funcExpr, string registryScopeName, string ilMethodName, string[] paramNames)
+        {
+            var functionVariables = new Variables(_variables, registryScopeName, paramNames, isNestedFunction: true);
+            var pnames = paramNames ?? Array.Empty<string>();
+            var childGen = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator);
+            var il = childGen.IL;
+
+            // Function expressions use block bodies; create local scope if fields exist and init parameter fields
+            var registry = functionVariables.GetVariableRegistry();
+            if (registry != null)
+            {
+                var fields = registry.GetVariablesForScope(registryScopeName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
+                if (fields.Any())
+                {
+                    ScopeInstanceEmitter.EmitCreateLeafScopeInstance(functionVariables, il, _metadataBuilder);
+                    var localScope = functionVariables.GetLocalScopeSlot();
+                    if (localScope.Address >= 0 && pnames.Length > 0)
+                    {
+                        var fieldNames = new HashSet<string>(fields.Select(f => f.Name));
+                        ushort jsParamSeq = 1; // arg0 is scopes[]
+                        foreach (var pn in pnames)
+                        {
+                            if (fieldNames.Contains(pn))
+                            {
+                                il.LoadLocal(localScope.Address);
+                                il.LoadArgument(jsParamSeq);
+                                var fh = registry.GetFieldHandle(registryScopeName, pn);
+                                il.OpCode(ILOpCode.Stfld);
+                                il.Token(fh);
+                            }
+                            jsParamSeq++;
+                        }
+                    }
+                }
+            }
+
+            if (funcExpr.Body is BlockStatement block)
+            {
+                childGen.GenerateStatementsForBody(functionVariables.GetLeafScopeName(), false, block.Body);
+                // If control reaches here with no explicit return, return null
+                il.OpCode(ILOpCode.Ldnull);
+                il.OpCode(ILOpCode.Ret);
+            }
+            else
+            {
+                // Function expressions are expected to have block bodies in our parser; return undefined
+                il.OpCode(ILOpCode.Ldnull);
+                il.OpCode(ILOpCode.Ret);
+            }
+
+            // Locals signature
+            StandaloneSignatureHandle localSignature = default;
+            MethodBodyAttributes bodyAttributes = MethodBodyAttributes.None;
+            var localCount = functionVariables.GetNumberOfLocals();
+            if (localCount > 0)
+            {
+                var localSig = new BlobBuilder();
+                var localEncoder = new BlobEncoder(localSig).LocalVariableSignature(localCount);
+                for (int i = 0; i < localCount; i++)
+                {
+                    localEncoder.AddVariable().Type().Object();
+                }
+                localSignature = _metadataBuilder.AddStandaloneSignature(_metadataBuilder.GetOrAddBlob(localSig));
+                bodyAttributes = MethodBodyAttributes.InitLocals;
+            }
+
+            var bodyOffset = _methodBodyStreamEncoder.AddMethodBody(
+                il,
+                localVariablesSignature: localSignature,
+                attributes: bodyAttributes);
+
+            // Build method signature: static object (object[] scopes, object p1, ...)
+            var sigBuilder = new BlobBuilder();
+            var paramCount = 1 + pnames.Length;
+            new BlobEncoder(sigBuilder)
+                .MethodSignature()
+                .Parameters(paramCount, returnType => returnType.Type().Object(), parameters =>
+                {
+                    parameters.AddParameter().Type().SZArray().Object();
+                    for (int i = 0; i < pnames.Length; i++) parameters.AddParameter().Type().Object();
+                });
+            var methodSig = _metadataBuilder.GetOrAddBlob(sigBuilder);
+
+            // Add parameter metadata
+            var firstParam = _metadataBuilder.AddParameter(ParameterAttributes.None, _metadataBuilder.GetOrAddString("scopes"), sequenceNumber: 1);
+            ushort seq = 2;
+            foreach (var p in pnames)
+            {
+                _metadataBuilder.AddParameter(ParameterAttributes.None, _metadataBuilder.GetOrAddString(p), sequenceNumber: seq++);
+            }
+
+            // Host the function expression method on its own type under Functions namespace
+            var tb = new Js2IL.Utilities.Ecma335.TypeBuilder(_metadataBuilder, "Functions", ilMethodName);
+            var mdh = tb.AddMethodDefinition(MethodAttributes.Static | MethodAttributes.Public, ilMethodName, methodSig, bodyOffset, firstParam);
+            tb.AddTypeDefinition(TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, _bclReferences.ObjectType);
+            return mdh;
+        }
+
     // GetNeededScopesForFunction moved to ILExpressionGenerator
 
     internal static void CollectDeclaredNames(Node node, HashSet<string> declared)

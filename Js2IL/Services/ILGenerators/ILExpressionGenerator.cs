@@ -81,6 +81,24 @@ namespace Js2IL.Services.ILGenerators
                         javascriptType = JavascriptType.Object;
                     }
                     break;
+                case FunctionExpression funcExpr:
+                    {
+                        var paramNames = funcExpr.Params.OfType<Identifier>().Select(p => p.Name).ToArray();
+                        var registryScopeName = !string.IsNullOrEmpty(_owner.CurrentAssignmentTarget)
+                            ? $"FunctionExpression_{_owner.CurrentAssignmentTarget}"
+                            : $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
+                        var ilMethodName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
+                        var methodHandle = _owner.GenerateFunctionExpressionMethod(funcExpr, registryScopeName, ilMethodName, paramNames);
+
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldftn);
+                        _il.Token(methodHandle);
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
+                        var (_, ctorRef) = _bclReferences.GetFuncObjectArrayWithParams(paramNames.Length);
+                        _il.Token(ctorRef);
+                        javascriptType = JavascriptType.Object;
+                    }
+                    break;
                 case ArrayExpression arrayExpression:
                     GenerateArrayExpression(arrayExpression);
                     javascriptType = JavascriptType.Object;
@@ -1115,7 +1133,10 @@ namespace Js2IL.Services.ILGenerators
                 // First, support array.length
                 if (propId.Name == "length")
                 {
-                    _runtime.InvokeArrayGetCount();
+                    // Generic length: arrays, strings, and collections
+                    var getLen = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetLength), typeof(double), typeof(object));
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
+                    _il.Token(getLen);
                     return JavascriptType.Number;
                 }
 
