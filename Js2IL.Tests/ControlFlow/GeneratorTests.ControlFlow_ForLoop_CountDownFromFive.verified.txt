@@ -57,7 +57,7 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 122 (0x7a)
+		// Code size: 123 (0x7b)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -77,7 +77,7 @@
 			IL_0025: ldc.r8 0.0
 			IL_002e: bgt IL_0038
 
-			IL_0033: br IL_0079
+			IL_0033: br IL_007a
 
 			IL_0038: ldc.i4.2
 			IL_0039: newarr [System.Runtime]System.Object
@@ -90,19 +90,20 @@
 			IL_0048: ldloc.0
 			IL_0049: ldfld object Scopes.ControlFlow_ForLoop_CountDownFromFive::index
 			IL_004e: stelem.ref
-			IL_004f: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_0054: ldloc.0
+			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_0054: pop
 			IL_0055: ldloc.0
-			IL_0056: ldfld object Scopes.ControlFlow_ForLoop_CountDownFromFive::index
-			IL_005b: unbox.any [System.Runtime]System.Double
-			IL_0060: ldc.r8 1
-			IL_0069: sub
-			IL_006a: box [System.Runtime]System.Double
-			IL_006f: stfld object Scopes.ControlFlow_ForLoop_CountDownFromFive::index
-			IL_0074: br IL_001a
+			IL_0056: ldloc.0
+			IL_0057: ldfld object Scopes.ControlFlow_ForLoop_CountDownFromFive::index
+			IL_005c: unbox.any [System.Runtime]System.Double
+			IL_0061: ldc.r8 1
+			IL_006a: sub
+			IL_006b: box [System.Runtime]System.Double
+			IL_0070: stfld object Scopes.ControlFlow_ForLoop_CountDownFromFive::index
+			IL_0075: br IL_001a
 		// end loop
 
-		IL_0079: ret
+		IL_007a: ret
 	} // end of method Program::Main
 
 } // end of class Program

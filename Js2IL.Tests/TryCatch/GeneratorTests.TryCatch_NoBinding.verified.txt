@@ -74,7 +74,7 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 80 (0x50)
+		// Code size: 83 (0x53)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -89,34 +89,37 @@
 			IL_0007: ldc.i4.0
 			IL_0008: ldstr "before throw"
 			IL_000d: stelem.ref
-			IL_000e: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_0013: ldstr "test error message"
-			IL_0018: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-			IL_001d: throw
+			IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_0013: pop
+			IL_0014: ldstr "test error message"
+			IL_0019: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
+			IL_001e: throw
 
-			IL_001e: leave IL_003c
+			IL_001f: leave IL_003e
 		} // end .try
 		catch [JavaScriptRuntime]JavaScriptRuntime.Error
 		{
-			IL_0023: pop
-			IL_0024: ldc.i4.1
-			IL_0025: newarr [System.Runtime]System.Object
-			IL_002a: dup
-			IL_002b: ldc.i4.0
-			IL_002c: ldstr "in catch"
-			IL_0031: stelem.ref
-			IL_0032: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_0037: leave IL_003c
+			IL_0024: pop
+			IL_0025: ldc.i4.1
+			IL_0026: newarr [System.Runtime]System.Object
+			IL_002b: dup
+			IL_002c: ldc.i4.0
+			IL_002d: ldstr "in catch"
+			IL_0032: stelem.ref
+			IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_0038: pop
+			IL_0039: leave IL_003e
 		} // end handler
 
-		IL_003c: ldc.i4.1
-		IL_003d: newarr [System.Runtime]System.Object
-		IL_0042: dup
-		IL_0043: ldc.i4.0
-		IL_0044: ldstr "after catch"
-		IL_0049: stelem.ref
-		IL_004a: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_004f: ret
+		IL_003e: ldc.i4.1
+		IL_003f: newarr [System.Runtime]System.Object
+		IL_0044: dup
+		IL_0045: ldc.i4.0
+		IL_0046: ldstr "after catch"
+		IL_004b: stelem.ref
+		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0051: pop
+		IL_0052: ret
 	} // end of method Program::Main
 
 } // end of class Program

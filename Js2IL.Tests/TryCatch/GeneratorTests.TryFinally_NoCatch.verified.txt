@@ -74,7 +74,7 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 64 (0x40)
+		// Code size: 67 (0x43)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -89,29 +89,32 @@
 			IL_0007: ldc.i4.0
 			IL_0008: ldstr "in try"
 			IL_000d: stelem.ref
-			IL_000e: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_0013: leave IL_002c
+			IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_0013: pop
+			IL_0014: leave IL_002e
 		} // end .try
 		finally
 		{
-			IL_0018: ldc.i4.1
-			IL_0019: newarr [System.Runtime]System.Object
-			IL_001e: dup
-			IL_001f: ldc.i4.0
-			IL_0020: ldstr "in finally"
-			IL_0025: stelem.ref
-			IL_0026: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_002b: endfinally
+			IL_0019: ldc.i4.1
+			IL_001a: newarr [System.Runtime]System.Object
+			IL_001f: dup
+			IL_0020: ldc.i4.0
+			IL_0021: ldstr "in finally"
+			IL_0026: stelem.ref
+			IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_002c: pop
+			IL_002d: endfinally
 		} // end handler
 
-		IL_002c: ldc.i4.1
-		IL_002d: newarr [System.Runtime]System.Object
-		IL_0032: dup
-		IL_0033: ldc.i4.0
-		IL_0034: ldstr "after finally"
-		IL_0039: stelem.ref
-		IL_003a: call void [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_003f: ret
+		IL_002e: ldc.i4.1
+		IL_002f: newarr [System.Runtime]System.Object
+		IL_0034: dup
+		IL_0035: ldc.i4.0
+		IL_0036: ldstr "after finally"
+		IL_003b: stelem.ref
+		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0041: pop
+		IL_0042: ret
 	} // end of method Program::Main
 
 } // end of class Program
