@@ -1,63 +1,61 @@
-﻿using Acornima;
-using Acornima.Ast;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
+using Acornima;
+using Acornima.Ast;
 
 namespace Js2IL.Services.ILGenerators
 {
-    /// <summary>
-    /// Generates Intermediate Language (IL) code from a JavaScript Abstract Syntax Tree (AST) for a method
-    /// </summary>
-    internal class ILMethodGenerator : IMethodExpressionEmitter
+    internal class ILMethodGenerator
     {
-        private readonly Variables _variables;
-        private readonly BaseClassLibraryReferences _bclReferences;
-        private readonly MetadataBuilder _metadataBuilder;
-        private readonly InstructionEncoder _il;
-        private readonly ControlFlowBuilder _cfb;
-        private readonly BinaryOperators _binaryOperators;
-        private readonly IMethodExpressionEmitter _expressionEmitter;
-        private readonly Runtime _runtime;
-        private readonly MethodBodyStreamEncoder _methodBodyStreamEncoder;
-        private readonly Dispatch.DispatchTableGenerator _dispatchTableGenerator;
-        private readonly ClassRegistry _classRegistry;
-        // When emitting inside a class instance method (.ctor or method), enable 'this' handling
-        private readonly bool _inClassMethod;
-        private readonly string? _currentClassName;
-        // Tracks the name of the variable currently being initialized, to name arrow-function scopes consistently
-        // with SymbolTableBuilder (e.g., ArrowFunction_<targetName>) when emitting an ArrowFunctionExpression on the RHS.
+        private Variables _variables;
+        private BaseClassLibraryReferences _bclReferences;
+        private MetadataBuilder _metadataBuilder;
+        private InstructionEncoder _il;
+        private ControlFlowBuilder _cfb;
+        private Runtime _runtime;
+        private Dispatch.DispatchTableGenerator _dispatchTableGenerator;
+        private MethodBodyStreamEncoder _methodBodyStreamEncoder;
+        private IMethodExpressionEmitter _expressionEmitter;
+        private ClassRegistry _classRegistry;
+        private bool _inClassMethod;
+        private string? _currentClassName;
         private string? _currentAssignmentTarget;
-        // Tracks simple associations from variable name to class name when initialized via `const x = new ClassName()`
-        private readonly Dictionary<string, string> _variableToClass = new(StringComparer.Ordinal);
-        // Loop control stack for handling continue/break targets
-        private readonly Stack<LoopContext> _loopStack = new();
+        private readonly Dictionary<string, string> _variableToClass = new();
 
         private readonly struct LoopContext
         {
             public readonly LabelHandle ContinueLabel;
             public readonly LabelHandle BreakLabel;
-            public LoopContext(LabelHandle @continue, LabelHandle @break)
+            public LoopContext(LabelHandle continueLabel, LabelHandle breakLabel)
             {
-                ContinueLabel = @continue;
-                BreakLabel = @break;
+                ContinueLabel = continueLabel;
+                BreakLabel = breakLabel;
             }
         }
+
+        private readonly Stack<LoopContext> _loopStack = new();
+
         /*
-         * Temporary exposure of private members until refactoring gets cleaner
-         * need to determine what the difference is between generating the main method and generating any generic method
-         */
+        * Temporary exposure of private members until refactoring gets cleaner
+        * need to determine what the difference is between generating the main method and generating any generic method
+        */
         public Variables Variables => _variables;
         public MetadataBuilder MetadataBuilder => _metadataBuilder;
         public InstructionEncoder IL => _il;
+        // Expose limited internals to the expression generator
+        internal BaseClassLibraryReferences BclReferences => _bclReferences;
+        internal Runtime Runtime => _runtime;
+        internal bool InClassMethod => _inClassMethod;
+        internal string? CurrentClassName => _currentClassName;
+        internal string? CurrentAssignmentTarget { get => _currentAssignmentTarget; set => _currentAssignmentTarget = value; }
+        internal ClassRegistry ClassRegistry => _classRegistry;
+        internal IMethodExpressionEmitter ExpressionEmitter => _expressionEmitter;
 
-        public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator, ClassRegistry? classRegistry = null, bool inClassMethod = false, string? currentClassName = null)
+    public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator, ClassRegistry? classRegistry = null, bool inClassMethod = false, string? currentClassName = null)
         {
             _variables = variables;
             _bclReferences = bclReferences;
@@ -66,10 +64,9 @@ namespace Js2IL.Services.ILGenerators
             _cfb = new ControlFlowBuilder();
             _il = new InstructionEncoder(methodIl, _cfb);
             this._runtime = new Runtime(metadataBuilder, _il);
-            _binaryOperators = new BinaryOperators(metadataBuilder, _il, variables, this, bclReferences, _runtime);
+            // Use a dedicated expression generator to avoid circular logic and enable incremental refactors
+            this._expressionEmitter = new ILExpressionGenerator(this);
 
-            // temporary as we set the table for further refactoring
-            this._expressionEmitter = this;
             _methodBodyStreamEncoder = methodBodyStreamEncoder;
             _dispatchTableGenerator = dispatchTableGenerator ?? throw new ArgumentNullException(nameof(dispatchTableGenerator));
             _classRegistry = classRegistry ?? new ClassRegistry();
@@ -77,38 +74,23 @@ namespace Js2IL.Services.ILGenerators
             _currentClassName = currentClassName;
         }
 
-        // Case-insensitive property getter helper for AST reflection
-        private static System.Reflection.PropertyInfo? GetPropertyIgnoreCase(object target, string propertyName)
+    // Allow expression generator to record variable->class mapping when emitting `new ClassName()` in assignments/initializers
+        internal void RecordVariableToClass(string variableName, string className)
         {
-            if (target == null || string.IsNullOrEmpty(propertyName)) return null;
-            var t = target.GetType();
-            return t.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.IgnoreCase);
+            if (!string.IsNullOrEmpty(variableName) && !string.IsNullOrEmpty(className))
+            {
+                _variableToClass[variableName] = className;
+            }
         }
 
-        // Parse a Raw regex literal string like "/pattern/flags" into (pattern, flags)
-        private static (string? pattern, string? flags) ParseRegexRaw(string raw)
+        // Allow expression generator to query variable->class association for instance member access
+        internal bool TryGetVariableClass(string variableName, out string className)
         {
-            if (string.IsNullOrEmpty(raw) || raw[0] != '/') return (null, null);
-            int lastSlash = -1;
-            bool escaped = false;
-            for (int i = 1; i < raw.Length; i++)
-            {
-                char c = raw[i];
-                if (!escaped)
-                {
-                    if (c == '\\') { escaped = true; continue; }
-                    if (c == '/') { lastSlash = i; break; }
-                }
-                else
-                {
-                    escaped = false;
-                }
-            }
-            if (lastSlash <= 0) return (null, null);
-            var pattern = raw.Substring(1, lastSlash - 1);
-            var flags = lastSlash + 1 < raw.Length ? raw.Substring(lastSlash + 1) : string.Empty;
-            return (pattern, flags);
+            return _variableToClass.TryGetValue(variableName, out className!);
         }
+
+    // GetPropertyIgnoreCase moved to ILExpressionGenerator
+    // ParseRegexRaw moved to ILExpressionGenerator
 
         public void DeclareVariable(VariableDeclaration variableDeclaraion)
         {
@@ -511,24 +493,12 @@ namespace Js2IL.Services.ILGenerators
 
         public void GenerateExpressionStatement(Acornima.Ast.ExpressionStatement expressionStatement)
         {
-            // Statement context: evaluate side-effects and discard any produced value.
-            // - Calls: route through generator with discardResult=true so callee-specific logic can pop when needed.
-            // - New/Conditional: emit then pop the resulting value.
-            // - Assignments/updates handle their own stack balance and do not leave a value.
-            if (expressionStatement.Expression is CallExpression callExpr)
+            _ = _expressionEmitter.Emit(expressionStatement.Expression, new TypeCoercion(), CallSiteContext.Statement);
+            if (expressionStatement.Expression is NewExpression || expressionStatement.Expression is ConditionalExpression || expressionStatement.Expression is CallExpression)
             {
-                GenerateCallExpression(callExpr, CallSiteContext.Statement, discardResult: true);
-                return;
-            }
-
-            if (expressionStatement.Expression is NewExpression || expressionStatement.Expression is ConditionalExpression)
-            {
-                _ = _expressionEmitter.Emit(expressionStatement.Expression, new TypeCoercion());
                 _il.OpCode(ILOpCode.Pop);
-                return;
             }
 
-            _ = _expressionEmitter.Emit(expressionStatement.Expression, new TypeCoercion());
         }
 
         public void GenerateForStatement(Acornima.Ast.ForStatement forStatement)
@@ -604,7 +574,7 @@ namespace Js2IL.Services.ILGenerators
 
             // Start of loop: evaluate test
             _il.MarkLabel(loopStartLabel);
-            _expressionEmitter.Emit(whileStatement.Test, new TypeCoercion(), new ConditionalBranching
+            _expressionEmitter.Emit(whileStatement.Test, new TypeCoercion(), CallSiteContext.Expression, new ConditionalBranching
             {
                 BranchOnTrue = loopBodyLabel,
                 BranchOnFalse = loopEndLabel
@@ -642,7 +612,7 @@ namespace Js2IL.Services.ILGenerators
 
             // Evaluate test; if true, loop again; else, end
             _il.MarkLabel(loopContinueLabel);
-            _expressionEmitter.Emit(doWhileStatement.Test, new TypeCoercion(), new ConditionalBranching
+            _expressionEmitter.Emit(doWhileStatement.Test, new TypeCoercion(), CallSiteContext.Expression, new ConditionalBranching
             {
                 BranchOnTrue = loopBodyLabel,
                 BranchOnFalse = loopEndLabel
@@ -661,8 +631,8 @@ namespace Js2IL.Services.ILGenerators
 
             // Actually, we want: if (test) { consequent } else { alternate }
             // So: if test is false, jump to elseLabel, otherwise fall through to consequent
-            // Fix: BranchOnTrue = consequentLabel, BranchOnFalse = elseLabel            
-            _expressionEmitter.Emit(ifStatement.Test, new TypeCoercion(), new ConditionalBranching
+            // Fix: BranchOnTrue = consequentLabel, BranchOnFalse = elseLabel
+            _expressionEmitter.Emit(ifStatement.Test, new TypeCoercion(), CallSiteContext.Expression, new ConditionalBranching
             {
                 BranchOnTrue = consequentLabel,
                 BranchOnFalse = elseLabel
@@ -792,1174 +762,19 @@ namespace Js2IL.Services.ILGenerators
             _il.MarkLabel(endLabel);
         }
 
-        /// <summary>
-        /// Attempts to emit an instance method call on a runtime intrinsic object (e.g., require('path') -> Path). Returns true if emitted.
-        /// </summary>
-        private bool TryEmitIntrinsicInstanceCall(Variable baseVar, string methodName, Acornima.Ast.CallExpression callExpression, bool discardResult)
-        {
-            // Only applies to runtime intrinsic objects backed by a known CLR type
-            if (baseVar.RuntimeIntrinsicType == null)
-            {
-                return false;
-            }
+    // TryEmitIntrinsicInstanceCall moved to ILExpressionGenerator
 
-            // Load instance from the variable's scope field
-            var scopeRef = _variables.GetScopeLocalSlot(baseVar.ScopeName);
-            if (scopeRef.Location == ObjectReferenceLocation.Parameter)
-            {
-                _il.LoadArgument(scopeRef.Address);
-            }
-            else if (scopeRef.Location == ObjectReferenceLocation.ScopeArray)
-            {
-                _il.LoadArgument(0);
-                _il.LoadConstantI4(scopeRef.Address);
-                _il.OpCode(ILOpCode.Ldelem_ref);
-            }
-            else
-            {
-                _il.LoadLocal(scopeRef.Address);
-            }
-            _il.OpCode(ILOpCode.Ldfld);
-            _il.Token(baseVar.FieldHandle); // stack: instance (object)
-
-            // Reflect and select the target method, preferring params object[]
-            var rt = baseVar.RuntimeIntrinsicType;
-            var methods = rt
-                .GetMethods(BindingFlags.Instance | BindingFlags.Public)
-                .Where(mi => string.Equals(mi.Name, methodName, StringComparison.Ordinal));
-
-            var chosen = methods.FirstOrDefault(mi =>
-            {
-                var ps = mi.GetParameters();
-                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
-            }) ?? methods.FirstOrDefault(mi => mi.GetParameters().Length == callExpression.Arguments.Count);
-
-            if (chosen == null)
-            {
-                throw new NotSupportedException($"Intrinsic method not found: {rt.FullName}.{methodName} with {callExpression.Arguments.Count} arg(s)");
-            }
-
-            var psChosen = chosen.GetParameters();
-            var expectsParamsArray = psChosen.Length == 1 && psChosen[0].ParameterType == typeof(object[]);
-            var reflectedParamTypes = psChosen.Select(p => p.ParameterType).ToArray();
-            var reflectedReturnType = chosen.ReturnType;
-
-            var mrefHandle = _runtime.GetInstanceMethodRef(rt, chosen.Name, reflectedReturnType, reflectedParamTypes);
-
-            // Push arguments as either a packed object[] or individual boxed args
-            if (expectsParamsArray)
-            {
-                _il.EmitNewArray(callExpression.Arguments.Count, _bclReferences.ObjectType, (il, i) =>
-                {
-                    _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
-                });
-            }
-            else
-            {
-                for (int i = 0; i < callExpression.Arguments.Count; i++)
-                {
-                    _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
-                }
-            }
-
-            _il.OpCode(ILOpCode.Callvirt);
-            _il.Token(mrefHandle);
-            if (discardResult)
-            {
-                _il.OpCode(ILOpCode.Pop);
-            }
-
-            return true;
-        }
-
-        private void GenerateObjectExpresion(ObjectExpression objectExpression)
-        {
-            // first we need to creat a new instance of the expando object
-            _il.OpCode(ILOpCode.Newobj);
-            _il.Token(_bclReferences.Expando_Ctor_Ref);
-
-            // we create a new object instance for the object expression
-            // the generic solution is to use the ExpandoObject
-            // will apply optimizations in the future when we can calculate the object schema
-            foreach (var property in objectExpression.Properties)
-            {
-                if (property is not ObjectProperty objectProperty)
-                {
-                    throw new NotSupportedException($"Unsupported object property type: {property.Type}");
-                }
-
-                if (objectProperty.Key is not Identifier propertyKey)
-                {
-                    throw new NotSupportedException($"Unsupported object property key type: {objectProperty.Key.Type}");
-                }
-
-                if (objectProperty.Value is not Expression propertyValue)
-                {
-                    throw new NotSupportedException($"Unsupported object property value type: {objectProperty.Value.Type}");
-                }
-
-                // Duplicate the ExpandoObject reference on the stack
-                _il.OpCode(ILOpCode.Dup);
-
-                // in a perfect world we could support any expression for the property name
-                // but not feature rich enough to support that yet
-                //_expressionEmitter.Emit(objectProperty.Key);
-                _il.Ldstr(_metadataBuilder, propertyKey.Name);
-
-                // Load the value of the property (Emit handles boxing by default)
-                _ = _expressionEmitter.Emit(propertyValue, new TypeCoercion() { boxResult = true });
-
-                // call set_Item on the ExpandoObject to set the property value
-                _il.OpCode(ILOpCode.Callvirt);
-                _il.Token(_bclReferences.IDictionary_SetItem_Ref);
-            }
-
-            // After all properties are set, the ExpandoObject is on the stack
-            // this is the expected behavior.  The consumer for this expression output chooses what to do with it.
-        }
-
-        private void GenerateArrayExpression(ArrayExpression arrayExpression)
-        {
-            // Use JavaScriptRuntime.Array (List<object>-backed) to preserve JS semantics
-            // 1) push capacity
-            _il.LoadConstantI4(arrayExpression.Elements.Count);
-            // 2) invoke runtime array ctor (produces JavaScriptRuntime.Array instance boxed as object)
-            _runtime.InvokeArrayCtor();
-
-            // For each element: duplicate array ref, load element (boxed), call Add
-            for (int i = 0; i < arrayExpression.Elements.Count; i++)
-            {
-                var element = arrayExpression.Elements[i];
-                _il.OpCode(ILOpCode.Dup); // array instance
-                _ = _expressionEmitter.Emit(element!, new TypeCoercion() { boxResult = true });
-                _il.OpCode(ILOpCode.Callvirt);
-                _il.Token(_bclReferences.Array_Add_Ref);
-            }
-        }
-
-        private void GenerateUpdateExpression(Acornima.Ast.UpdateExpression updateExpression)
-        {
-            if ((updateExpression.Operator != Acornima.Operator.Increment && updateExpression.Operator != Acornima.Operator.Decrement) || updateExpression.Prefix)
-            {
-                throw new NotSupportedException($"Unsupported update expression operator: {updateExpression.Operator} or prefix: {updateExpression.Prefix}");
-            }
-            // Handle postfix increment (x++) and decrement (x--)
-            var variableName = (updateExpression.Argument as Acornima.Ast.Identifier)!.Name;
-            var variable = _variables.FindVariable(variableName);
-
-            // If bound variable is const, emit a TypeError and throw
-            if (IsConstBinding(variableName))
-            {
-                EmitConstReassignmentTypeError();
-                return;
-            }
-
-            // Handle scope field variables
-            if (variable == null)
-            {
-                throw new InvalidOperationException("Variable reference is null.");
-            }
-            var scopeLocalIndex = _variables.GetScopeLocalSlot(variable.ScopeName);
-            if (scopeLocalIndex.Address == -1)
-            {
-                throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
-            }
-
-            // Load scope instance for the store operation later
-            if (scopeLocalIndex.Location == ObjectReferenceLocation.Parameter)
-            {
-                _il.LoadArgument(scopeLocalIndex.Address);
-            }
-            else
-            {
-                _il.LoadLocal(scopeLocalIndex.Address);
-            }
-
-            // Load the current value from scope field  
-            _il.LoadLocal(scopeLocalIndex.Address);
-            _il.OpCode(ILOpCode.Ldfld);
-            _il.Token(variable.FieldHandle);
-
-            // unbox the variable
-            _il.OpCode(ILOpCode.Unbox_any);
-            _il.Token(_bclReferences.DoubleType);
-
-            // increment or decrement by 1
-            _il.LoadConstantR8(1.0);
-            if (updateExpression.Operator == Acornima.Operator.Increment)
-            {
-                _il.OpCode(ILOpCode.Add);
-            }
-            else // Decrement
-            {
-                _il.OpCode(ILOpCode.Sub);
-            }
-
-            // box the result back to an object
-            _il.OpCode(ILOpCode.Box);
-            _il.Token(_bclReferences.DoubleType);
-
-            // Now stack is: [scope_instance] [boxed_result] - perfect for stfld
-            _il.OpCode(ILOpCode.Stfld);
-            _il.Token(variable.FieldHandle);
-        }
 
         // Emits: throw new TypeError("Assignment to constant variable.")
-        private void EmitConstReassignmentTypeError()
+        internal void EmitConstReassignmentTypeError()
         {
             var ctor = _runtime.GetErrorCtorRef("TypeError", 1);
             _il.EmitThrowError(_metadataBuilder, ctor, "Assignment to constant variable.");
         }
 
-        // Consult the registry to see if the current scope has a const binding for this name
-        private bool IsConstBinding(string variableName)
-        {
-            var registry = _variables.GetVariableRegistry();
-            var scopeName = _variables.GetLeafScopeName();
-            var info = registry?.GetVariableInfo(scopeName, variableName) ?? registry?.FindVariable(variableName);
-            return info != null && info.BindingKind == SymbolTables.BindingKind.Const;
-        }
+    // TryEmitHostIntrinsicStaticCall moved to ILExpressionGenerator
 
-        private void GenerateCallExpression(Acornima.Ast.CallExpression callExpression, CallSiteContext context, bool discardResult)
-        {
-            // General member call: obj.method(...)
-            if (callExpression.Callee is Acornima.Ast.MemberExpression mem && !mem.Computed && mem.Property is Acornima.Ast.Identifier mname)
-            {
-                // Pattern support: String(x).replace(/pattern/flags, replacement)
-                if (string.Equals(mname.Name, "replace", StringComparison.Ordinal) && mem.Object is Acornima.Ast.CallExpression strCall && strCall.Callee is Acornima.Ast.Identifier sid && string.Equals(sid.Name, "String", StringComparison.Ordinal))
-                {
-                    // Expect exactly: String(arg0).replace(regex, replacement)
-                    if (strCall.Arguments.Count != 1 || callExpression.Arguments.Count != 2)
-                    {
-                        throw new NotSupportedException("Only replace(regex, string) with a single String(arg) receiver is supported");
-                    }
-                    // Extract regex pattern and flags from AST via reflection to avoid taking a hard dependency on node types
-                    string? pattern = null;
-                    string? flags = null;
-                    var rxNode = callExpression.Arguments[0];
-                    {
-                        var rxType = rxNode?.GetType();
-                        if (rxType != null)
-                        {
-                            // Try nested Regex property (Literal.regex.{pattern,flags}) – case-insensitive
-                            object? regexObj = GetPropertyIgnoreCase(rxNode!, "Regex")?.GetValue(rxNode!);
-                            if (regexObj != null)
-                            {
-                                pattern = GetPropertyIgnoreCase(regexObj, "Pattern")?.GetValue(regexObj) as string;
-                                flags = GetPropertyIgnoreCase(regexObj, "Flags")?.GetValue(regexObj) as string;
-                            }
-
-                            // Fallback: direct properties on the node (Pattern/Flags) – case-insensitive
-                            pattern ??= GetPropertyIgnoreCase(rxNode!, "Pattern")?.GetValue(rxNode) as string;
-                            flags ??= GetPropertyIgnoreCase(rxNode!, "Flags")?.GetValue(rxNode) as string;
-
-                            // Final fallback: parse Raw string like '/pattern/flags'
-                            if (string.IsNullOrEmpty(pattern))
-                            {
-                                var raw = GetPropertyIgnoreCase(rxNode!, "Raw")?.GetValue(rxNode) as string;
-                                if (!string.IsNullOrEmpty(raw))
-                                {
-                                    (pattern, flags) = ParseRegexRaw(raw!);
-                                }
-                            }
-                        }
-                    }
-                    if (string.IsNullOrEmpty(pattern))
-                    {
-                        throw new NotSupportedException("Regex literal pattern not found for String(x).replace");
-                    }
-                    var global = !string.IsNullOrEmpty(flags) && flags!.IndexOf('g') >= 0;
-                    var ignoreCase = !string.IsNullOrEmpty(flags) && flags!.IndexOf('i') >= 0;
-
-                    // Stack: [input, pattern, replacement, global, ignoreCase]
-                    // input = ToString(arg0)
-                    _ = _expressionEmitter.Emit(strCall.Arguments[0], new TypeCoercion() { toString = true });
-                    // pattern
-                    _il.Ldstr(_metadataBuilder, pattern!);
-                    // replacement as string
-                    _ = _expressionEmitter.Emit(callExpression.Arguments[1], new TypeCoercion() { toString = true });
-                    // booleans
-                    _il.LoadConstantI4(global ? 1 : 0);
-                    _il.LoadConstantI4(ignoreCase ? 1 : 0);
-
-                    // Resolve JavaScriptRuntime.String.Replace dynamically like console.log
-                    var stringType = JavaScriptRuntime.IntrinsicObjectRegistry.Get("String")
-                        ?? throw new NotSupportedException("Host intrinsic 'String' not found");
-                    var replaceMethod = stringType
-                        .GetMethods(BindingFlags.Public | BindingFlags.Static)
-                        .FirstOrDefault(mi => string.Equals(mi.Name, "Replace", StringComparison.Ordinal)
-                                              && mi.GetParameters().Length == 5);
-                    if (replaceMethod == null)
-                    {
-                        throw new NotSupportedException("Host intrinsic method not found: String.Replace(input, pattern, replacement, global, ignoreCase)");
-                    }
-                    var mref = _runtime.GetStaticMethodRef(stringType, replaceMethod.Name, replaceMethod.ReturnType, replaceMethod.GetParameters().Select(p => p.ParameterType).ToArray());
-                    _il.Call(mref);
-                    if (discardResult)
-                    {
-                        _il.OpCode(ILOpCode.Pop);
-                    }
-                    return;
-                }
-                if (mem.Object is Acornima.Ast.Identifier baseId)
-                {
-                    // If the base identifier resolves to a known class, emit a static call without loading an instance.
-                    if (_classRegistry.TryGet(baseId.Name, out var classType) && !classType.IsNil)
-                    {
-                        // Build static method signature: object method(object, ...)
-                        var sArgCount = callExpression.Arguments.Count;
-                        var sSig = new BlobBuilder();
-                        new BlobEncoder(sSig)
-                            .MethodSignature(isInstanceMethod: false)
-                            .Parameters(sArgCount, r => r.Type().Object(), p => { for (int i = 0; i < sArgCount; i++) p.AddParameter().Type().Object(); });
-                        var sMsig = _metadataBuilder.GetOrAddBlob(sSig);
-                        var sMref = _metadataBuilder.AddMemberReference(classType, _metadataBuilder.GetOrAddString(mname.Name), sMsig);
-                        // Push arguments
-                        for (int i = 0; i < callExpression.Arguments.Count; i++)
-                        {
-                            _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
-                        }
-                        _il.Call(sMref);
-                        if (discardResult) _il.OpCode(ILOpCode.Pop);
-                        return;
-                    }
-                    // Step 1: Is it a variable?
-                    var baseVar = _variables.FindVariable(baseId.Name);
-                    if (baseVar != null)
-                    {
-                        // Step 2: Is it an object/class instance? Try intrinsic first, then class instance fallback
-                        if (TryEmitIntrinsicInstanceCall(baseVar, mname.Name, callExpression, discardResult))
-                        {
-                            return;
-                        }
-
-                        // Non-intrinsic instance method call fallback (class instance created via `new`)
-                        // Load instance from variable field
-                        var scopeRef = _variables.GetScopeLocalSlot(baseVar.ScopeName);
-                        if (scopeRef.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(scopeRef.Address);
-                        else if (scopeRef.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(scopeRef.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
-                        else _il.LoadLocal(scopeRef.Address);
-                        _il.OpCode(ILOpCode.Ldfld);
-                        _il.Token(baseVar.FieldHandle); // stack: instance (object)
-
-                        // Resolve the concrete class type if known (based on prior `new` assignment)
-                        var argCount = callExpression.Arguments.Count;
-                        var sig = new BlobBuilder();
-                        new BlobEncoder(sig)
-                            .MethodSignature(isInstanceMethod: true)
-                            .Parameters(argCount, r => r.Type().Object(), p => { for (int i = 0; i < argCount; i++) p.AddParameter().Type().Object(); });
-                        var msig = _metadataBuilder.GetOrAddBlob(sig);
-
-                        TypeDefinitionHandle targetType = default;
-                        if (_variableToClass.TryGetValue(baseId.Name, out var cname))
-                        {
-                            if (_classRegistry.TryGet(cname, out var th)) targetType = th;
-                        }
-                        if (targetType.IsNil)
-                        {
-                            throw new NotSupportedException($"Cannot resolve class type for variable '{baseId.Name}' to call method '{mname.Name}'.");
-                        }
-                        var mrefHandle = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(mname.Name), msig);
-
-                        // Push arguments
-                        for (int i = 0; i < callExpression.Arguments.Count; i++)
-                        {
-                            _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
-                            // Optional: castclass for specific ref types; keep simple for now as literals are already typed
-                        }
-
-                        _il.OpCode(ILOpCode.Callvirt);
-                        _il.Token(mrefHandle);
-                        if (discardResult) _il.OpCode(ILOpCode.Pop);
-                        return;
-                    }
-                    else
-                    {
-                        // Step 4: Not a variable - try host intrinsic (e.g., console.log)
-                        if (TryEmitHostIntrinsicStaticCall(baseId.Name, mname.Name, callExpression, discardResult))
-                        {
-                            return;
-                        }
-                        throw new NotSupportedException($"Unsupported member call base identifier: '{baseId.Name}'");
-                    }
-                }
-                // Non-identifier callee under MemberExpression is unsupported beyond the above cases
-                throw new NotSupportedException($"Unsupported call expression callee type: {callExpression.Callee.Type}");
-            }
-            else if (callExpression.Callee is Acornima.Ast.Identifier identifier)
-            {
-                // Simple function call: f(...)
-                EmitFunctionCall(identifier, callExpression, context, discardResult);
-                return;
-            }
-            else
-            {
-                throw new NotSupportedException($"Unsupported call expression callee type: {callExpression.Callee.Type}");
-            }
-        }
-
-        // Emits a call to a function identified by an Identifier in the current scope, including scope array construction and delegate dispatch.
-        private void EmitFunctionCall(Acornima.Ast.Identifier identifier, Acornima.Ast.CallExpression callExpression, CallSiteContext context, bool discardResult)
-        {
-            // Node-style require("module") support as a built-in
-            if (string.Equals(identifier.Name, "require", StringComparison.Ordinal))
-            {
-                if (callExpression.Arguments.Count != 1)
-                {
-                    throw new ArgumentException("require expects exactly one argument");
-                }
-                // Coerce argument to string (for literals this emits ldstr directly)
-                _ = _expressionEmitter.Emit(callExpression.Arguments[0], new TypeCoercion() { toString = true });
-                _runtime.InvokeRequire();
-                if (discardResult)
-                {
-                    _il.OpCode(ILOpCode.Pop);
-                }
-                return;
-            }
-
-            var functionVariable = _variables.FindVariable(identifier.Name);
-            if (functionVariable == null)
-            {
-                throw new ArgumentException($"Function {identifier.Name} is not defined.");
-            }
-
-            // Load the scope instance as the first parameter
-            Action loadScopeInstance;
-            var scopeObjectReference = _variables.GetScopeLocalSlot(functionVariable.ScopeName);
-            if (scopeObjectReference.Address == -1)
-            {
-                throw new InvalidOperationException($"Scope '{functionVariable.ScopeName}' not found in local slots");
-            }
-            if (scopeObjectReference.Location == ObjectReferenceLocation.Local)
-            {
-                loadScopeInstance = () => _il.LoadLocal(scopeObjectReference.Address);
-            }
-            else if (scopeObjectReference.Location == ObjectReferenceLocation.Parameter)
-            {
-                // Load the scope instance from the field
-                loadScopeInstance = () => _il.LoadArgument(scopeObjectReference.Address);
-            }
-            else if (scopeObjectReference.Location == ObjectReferenceLocation.ScopeArray)
-            {
-                // Load from scope array at index 0
-                loadScopeInstance = () =>
-                {
-                    _il.LoadArgument(0); // Load scope array parameter
-                    _il.LoadConstantI4(0); // Index 0 for global scope
-                    _il.OpCode(ILOpCode.Ldelem_ref);
-                };
-            }
-            else
-            {
-                throw new InvalidOperationException($"Unsupported scope object reference location: {scopeObjectReference.Location}");
-            }
-
-            // load the delegate to be invoked (from scope field)
-            loadScopeInstance();
-            _il.OpCode(ILOpCode.Ldfld);
-            _il.Token(functionVariable.FieldHandle);
-
-            // First argument: create scope array with appropriate scopes for the function
-            // Only include scopes that are actually needed for this function call
-            var neededScopeNames = GetNeededScopesForFunction(functionVariable, context).ToList();
-            var arraySize = neededScopeNames.Count;
-
-            _il.EmitNewArray(arraySize, _bclReferences.ObjectType, (il, i) =>
-            {
-                var scopeName = neededScopeNames[i];
-                var scopeRef = _variables.GetScopeLocalSlot(scopeName);
-                if (scopeRef.Location == ObjectReferenceLocation.Local)
-                {
-                    il.LoadLocal(scopeRef.Address);
-                }
-                else if (scopeRef.Location == ObjectReferenceLocation.Parameter)
-                {
-                    il.LoadArgument(scopeRef.Address);
-                }
-                else if (scopeRef.Location == ObjectReferenceLocation.ScopeArray)
-                {
-                    il.LoadArgument(0); // Load scope array parameter
-                    il.LoadConstantI4(scopeRef.Address); // Load array index
-                    il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
-                }
-            });
-
-            // Additional arguments: directly emit each call argument (boxed as needed)
-            // If this is a declared function we could validate arity, but for arrow functions or runtime values,
-            // we simply pass through the provided arguments.
-            for (int i = 0; i < callExpression.Arguments.Count; i++)
-            {
-                _ = _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
-            }
-
-            // Invoke correct delegate based on parameter count.
-            // Select overloads based on call-site context to match historical snapshots.
-            var argCount = callExpression.Arguments.Count;
-            _il.OpCode(ILOpCode.Callvirt);
-            if (context == CallSiteContext.Statement)
-            {
-                // Statement: array-based Invoke for 0/1 parameters
-                if (argCount == 0)
-                {
-                    _il.Token(_bclReferences.FuncObjectArrayObject_Invoke_Ref);
-                }
-                else if (argCount == 1)
-                {
-                    _il.Token(_bclReferences.FuncObjectArrayObjectObject_Invoke_Ref);
-                }
-                else if (argCount <= 6)
-                {
-                    _il.Token(_bclReferences.GetFuncArrayParamInvokeRef(argCount));
-                }
-                else
-                {
-                    throw new NotSupportedException($"Only up to 6 parameters supported currently (got {argCount})");
-                }
-            }
-            else
-            {
-                // Expression: non-array-based Invoke for 0/1 parameters; array-based for >=2
-                if (argCount == 0)
-                {
-                    _il.Token(_bclReferences.FuncObjectObject_Invoke_Ref);
-                }
-                else if (argCount == 1)
-                {
-                    _il.Token(_bclReferences.FuncObjectObjectObject_Invoke_Ref);
-                }
-                else if (argCount <= 6)
-                {
-                    _il.Token(_bclReferences.GetFuncArrayParamInvokeRef(argCount));
-                }
-                else
-                {
-                    throw new NotSupportedException($"Only up to 6 parameters supported currently (got {argCount})");
-                }
-            }
-            // Discard result if requested (statement context)
-            if (discardResult)
-            {
-                _il.OpCode(ILOpCode.Pop);
-            }
-        }
-
-        // Emits a static call on a host intrinsic object (e.g., console.log), discovered via JavaScriptRuntime.IntrinsicObjectAttribute
-        private bool TryEmitHostIntrinsicStaticCall(string objectName, string methodName, Acornima.Ast.CallExpression callExpression, bool discardResult)
-        {
-            var type = JavaScriptRuntime.IntrinsicObjectRegistry.Get(objectName);
-            if (type == null)
-            {
-                return false;
-            }
-
-            // Reflect static method; prefer params object[]
-            var methods = type.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
-                .Where(mi => string.Equals(mi.Name, methodName, StringComparison.OrdinalIgnoreCase));
-            var chosen = methods.FirstOrDefault(mi =>
-            {
-                var ps = mi.GetParameters();
-                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
-            }) ?? methods.FirstOrDefault(mi => mi.GetParameters().Length == callExpression.Arguments.Count);
-            if (chosen == null)
-            {
-                throw new NotSupportedException($"Host intrinsic method not found: {type.FullName}.{methodName} with {callExpression.Arguments.Count} arg(s)");
-            }
-
-            var ps = chosen.GetParameters();
-            var expectsParamsArray = ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
-            var paramTypes = ps.Select(p => p.ParameterType).ToArray();
-            var retType = chosen.ReturnType;
-
-            var mref = _runtime.GetStaticMethodRef(type, chosen.Name, retType, paramTypes);
-
-            if (expectsParamsArray)
-            {
-                _il.EmitNewArray(callExpression.Arguments.Count, _bclReferences.ObjectType, (il, i) =>
-                {
-                    _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
-                });
-            }
-            else
-            {
-                for (int i = 0; i < callExpression.Arguments.Count; i++)
-                {
-                    _expressionEmitter.Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
-                }
-            }
-
-                _il.Call(mref);
-                // Pop only if caller wants to discard and method returns a value
-                if (discardResult && retType != typeof(void))
-                {
-                    _il.OpCode(ILOpCode.Pop);
-                }
-            return true;
-        }
-
-        // Helper to emit a UnaryExpression and return its JavaScript type (or Unknown when control-flow handled)
-        private JavascriptType EmitUnaryExpression(UnaryExpression unaryExpression, TypeCoercion typeCoercion, ConditionalBranching? branching)
-        {
-            // Support logical not: !expr and simple unary negation for numeric literals
-            var op = unaryExpression.Operator;
-            if (op == Operator.LogicalNot)
-            {
-                // If we're in a conditional context, invert the branch directly: if (!x) ... => branch on x == false
-                if (branching != null)
-                {
-                    var argType = ((IMethodExpressionEmitter)this).Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = false }, null);
-
-                    if (argType == JavascriptType.Boolean)
-                    {
-                        // If the argument was not a literal, it's boxed; unbox first
-                        if (unaryExpression.Argument is not BooleanLiteral && !(unaryExpression.Argument is Literal lit && lit.Value is bool))
-                        {
-                            _il.OpCode(ILOpCode.Unbox_any);
-                            _il.Token(_bclReferences.BooleanType);
-                        }
-                        // Brfalse => when arg is false, jump to BranchOnTrue (since !arg is true)
-                        _il.Branch(ILOpCode.Brfalse, branching.BranchOnTrue);
-                    }
-                    else if (argType == JavascriptType.Number)
-                    {
-                        // ToBoolean(number): 0 => false; so Brfalse when number == 0. Convert to i4 zero-check.
-                        // number on stack is double; compare to 0 and branch on equality
-                        _il.LoadConstantR8(0);
-                        _il.OpCode(ILOpCode.Ceq);
-                        _il.Branch(ILOpCode.Brtrue, branching.BranchOnTrue);
-                    }
-                    else
-                    {
-                        // Assume boxed boolean; unbox then brfalse
-                        _il.OpCode(ILOpCode.Unbox_any);
-                        _il.Token(_bclReferences.BooleanType);
-                        _il.Branch(ILOpCode.Brfalse, branching.BranchOnTrue);
-                    }
-
-                    if (branching.BranchOnFalse.HasValue)
-                    {
-                        _il.Branch(ILOpCode.Br, branching.BranchOnFalse.Value);
-                    }
-                    else
-                    {
-                        // No else block: nothing to pop; branch consumes the tested value.
-                    }
-
-                    return JavascriptType.Unknown;
-                }
-                else
-                {
-                    // Non-branching context: compute the boolean value and invert it on the stack.
-                    var argType = ((IMethodExpressionEmitter)this).Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = false }, null);
-
-                    if (argType == JavascriptType.Boolean)
-                    {
-                        if (unaryExpression.Argument is not BooleanLiteral && !(unaryExpression.Argument is Literal lit2 && lit2.Value is bool))
-                        {
-                            _il.OpCode(ILOpCode.Unbox_any);
-                            _il.Token(_bclReferences.BooleanType);
-                        }
-                        _il.OpCode(ILOpCode.Ldc_i4_0);
-                        _il.OpCode(ILOpCode.Ceq);
-                    }
-                    else if (argType == JavascriptType.Number)
-                    {
-                        _il.LoadConstantR8(0);
-                        _il.OpCode(ILOpCode.Ceq);
-                    }
-                    else
-                    {
-                        _il.OpCode(ILOpCode.Unbox_any);
-                        _il.Token(_bclReferences.BooleanType);
-                        _il.OpCode(ILOpCode.Ldc_i4_0);
-                        _il.OpCode(ILOpCode.Ceq);
-                    }
-
-                    return JavascriptType.Boolean;
-                }
-            }
-            else if (op == Operator.TypeOf)
-            {
-                // Emit typeof: evaluate argument (boxed), then call JavaScriptRuntime.TypeUtilities.Typeof(object)
-                var _ = ((IMethodExpressionEmitter)this).Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = true }, null);
-                var mref = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.Typeof), typeof(string), typeof(object));
-                _il.OpCode(ILOpCode.Call);
-                _il.Token(mref);
-                return JavascriptType.Object; // string
-            }
-            else if (op == Operator.UnaryNegation && unaryExpression.Argument is Acornima.Ast.NumericLiteral numericArg)
-            {
-                if (typeCoercion.toString)
-                {
-                    var numberAsString = (-numericArg.Value).ToString();
-                    _il.Ldstr(_metadataBuilder, numberAsString);
-                }
-                else
-                {
-                    _il.LoadConstantR8(-numericArg.Value);
-                }
-                // Preserve prior behavior: no explicit type assignment beyond emitted value
-                return JavascriptType.Unknown;
-            }
-            else
-            {
-                throw new NotSupportedException($"Unsupported unary operator: {op}");
-            }
-        }
-
-        JavascriptType IMethodExpressionEmitter.Emit(Expression expression, TypeCoercion typeCoercion, ConditionalBranching? branching)
-        {
-            JavascriptType javascriptType = JavascriptType.Unknown;
-
-            switch (expression)
-            {
-                case ThisExpression thisExpression:
-                    if (_inClassMethod)
-                    {
-                        _il.OpCode(ILOpCode.Ldarg_0);
-                        javascriptType = JavascriptType.Object; // 'this' is the instance of the class
-                    }
-                    else
-                    {
-                        // TODO - expand support for this to functions
-                        throw new NotSupportedException("Unsupported 'this' expression outside of class context");
-                    }
-                    break;
-                case AssignmentExpression assignmentExpression:
-                    javascriptType = EmitAssignment(assignmentExpression, typeCoercion);
-                    break;
-                case CallExpression callExpression:
-                    // Use the unified call generator in expression context, preserving the result
-                    GenerateCallExpression(callExpression, CallSiteContext.Expression, discardResult: false);
-                    javascriptType = JavascriptType.Object;
-                    break;
-                case ArrowFunctionExpression arrowFunction:
-                    {
-                        // Generate a static method for the arrow function and create a delegate instance.
-                        // Use a deterministic but local owner type for simplicity.
-                        var paramNames = arrowFunction.Params.OfType<Identifier>().Select(p => p.Name).ToArray();
-                        // Use assignment-target name for registry scope, but keep IL method/type naming location-based to preserve snapshots
-                        var registryScopeName = !string.IsNullOrEmpty(_currentAssignmentTarget)
-                            ? $"ArrowFunction_{_currentAssignmentTarget}"
-                            : $"ArrowFunction_L{arrowFunction.Location.Start.Line}C{arrowFunction.Location.Start.Column}";
-                        var ilMethodName = $"ArrowFunction_L{arrowFunction.Location.Start.Line}C{arrowFunction.Location.Start.Column}";
-                        var methodHandle = GenerateArrowFunctionMethod(arrowFunction, registryScopeName, ilMethodName, paramNames);
-
-                        // ldnull ; ldftn method ; newobj Func<object[], object, ...>
-                        _il.OpCode(ILOpCode.Ldnull);
-                        _il.OpCode(ILOpCode.Ldftn);
-                        _il.Token(methodHandle);
-                        _il.OpCode(ILOpCode.Newobj);
-                        var (_, ctorRef) = _bclReferences.GetFuncObjectArrayWithParams(paramNames.Length);
-                        _il.Token(ctorRef);
-                        javascriptType = JavascriptType.Object;
-                    }
-                    break;
-                case ArrayExpression arrayExpression:
-                    // Generate code for ArrayExpression
-                    GenerateArrayExpression(arrayExpression);
-                    javascriptType = JavascriptType.Object; // Arrays are treated as objects in JavaScript
-                    break;
-                case NewExpression newExpression:
-                    javascriptType = EmitNewExpression(newExpression);
-                    break;
-                case BinaryExpression binaryExpression:
-                    _binaryOperators.Generate(binaryExpression, branching);
-                    break;
-                case NumericLiteral numericLiteral:
-                    // Load numeric literal
-                    LoadValue(expression, typeCoercion);
-
-                    javascriptType = JavascriptType.Number;
-
-                    break;
-                case BooleanLiteral booleanLiteral:
-                    LoadValue(expression, typeCoercion);
-                    javascriptType = JavascriptType.Boolean;
-                    break;
-                case UpdateExpression updateExpression:
-                    GenerateUpdateExpression(updateExpression);
-                    break;
-                case UnaryExpression unaryExpression:
-                    javascriptType = EmitUnaryExpression(unaryExpression, typeCoercion, branching);
-                    break;
-                case ObjectExpression objectExpression:
-                    GenerateObjectExpresion(objectExpression);
-
-                    javascriptType = JavascriptType.Object;
-                    break;
-                case MemberExpression memberExpression:
-                    javascriptType = EmitMemberExpression(memberExpression);
-                    break;
-                case TemplateLiteral template:
-                    {
-                        // Emit JS template literal: concatenate cooked quasis and expressions via Operators.Add
-                        // Start with first quasi text (may be empty)
-                        string GetQuasiText(TemplateElement te)
-                        {
-                            // Try te.Value.Cooked, then te.Value.Raw, else empty
-                            var valProp = te.GetType().GetProperty("Value", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-                            if (valProp != null)
-                            {
-                                var val = valProp.GetValue(te);
-                                if (val != null)
-                                {
-                                    var cooked = val.GetType().GetProperty("Cooked", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase)?.GetValue(val) as string;
-                                    if (!string.IsNullOrEmpty(cooked)) return cooked!;
-                                    var raw = val.GetType().GetProperty("Raw", BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase)?.GetValue(val) as string;
-                                    if (raw != null) return raw;
-                                }
-                            }
-                            return string.Empty;
-                        }
-
-                        var quasis = template.Quasis;
-                        var exprs = template.Expressions;
-
-                        // Ensure there's at least one quasi
-                        string firstText = quasis.Count > 0 ? GetQuasiText(quasis[0]) : string.Empty;
-                        _il.LoadString(_metadataBuilder.GetOrAddUserString(firstText ?? string.Empty));
-
-                        // For each expression, append value and following quasi
-                        for (int i = 0; i < exprs.Count; i++)
-                        {
-                            // current + expr
-                            _ = _expressionEmitter.Emit(exprs[i], new TypeCoercion { boxResult = true }, null);
-                            _runtime.InvokeOperatorsAdd();
-
-                            // then + next quasi text (quasis are one longer than expressions)
-                            string tail = (i + 1) < quasis.Count ? GetQuasiText(quasis[i + 1]) : string.Empty;
-                            _il.LoadString(_metadataBuilder.GetOrAddUserString(tail ?? string.Empty));
-                            _runtime.InvokeOperatorsAdd();
-                        }
-
-                        javascriptType = JavascriptType.Object; // result is a string (object)
-                    }
-                    break;
-                case ConditionalExpression cond:
-                    {
-                        // Emit expression-level ternary: test ? consequent : alternate
-                        var trueLabel = _il.DefineLabel();
-                        var falseLabel = _il.DefineLabel();
-                        var endLabel = _il.DefineLabel();
-
-                        // Evaluate test with branching (let BinaryOperators or fallback boolean branching handle it)
-                        _expressionEmitter.Emit(cond.Test, new TypeCoercion(), new ConditionalBranching
-                        {
-                            BranchOnTrue = trueLabel,
-                            BranchOnFalse = falseLabel
-                        });
-
-                        // True arm
-                        _il.MarkLabel(trueLabel);
-                        // Force result as object to unify stack type across arms; propagate toString if requested
-                        var armCoercion = new TypeCoercion { boxResult = true, toString = typeCoercion.toString };
-                        _ = _expressionEmitter.Emit(cond.Consequent, armCoercion);
-                        _il.Branch(ILOpCode.Br, endLabel);
-
-                        // False arm
-                        _il.MarkLabel(falseLabel);
-                        _ = _expressionEmitter.Emit(cond.Alternate, armCoercion);
-
-                        _il.MarkLabel(endLabel);
-                        javascriptType = JavascriptType.Object;
-                    }
-                    break;
-                case Acornima.Ast.Identifier identifier:
-                    {
-                        var name = identifier.Name;
-                        // Node-like intrinsic globals support: __dirname and __filename
-                        if (string.Equals(name, "__dirname", StringComparison.Ordinal) || string.Equals(name, "__filename", StringComparison.Ordinal))
-                        {
-                            // Emit call to JavaScriptRuntime.Node.GlobalVariables.get___dirname / get___filename
-                            var getterName = "get_" + name; // property getter method name
-                            var getterRef = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Node.GlobalVariables), getterName, typeof(string));
-                            _il.Call(getterRef);
-                            // Treat as object; strings are reference types so no boxing required
-                            typeCoercion.boxResult = false;
-                            javascriptType = JavascriptType.Object;
-                        }
-                        else
-                        {
-                            var variable = _variables.FindVariable(name) ?? throw new InvalidOperationException($"Variable '{name}' not found.");
-                            _binaryOperators.LoadVariable(variable); // Load variable using scope field or local fallback
-
-                            // Only unbox when we explicitly know it's a Number && caller didn't request boxing.
-                            if (variable.Type == JavascriptType.Number && !typeCoercion.boxResult)
-                            {
-                                _il.OpCode(ILOpCode.Unbox_any);
-                                _il.Token(_bclReferences.DoubleType); // unbox the variable as a double
-                            }
-                            else
-                            {
-                                // currently variables are already boxed, so no need to double box (if boxResult is true)
-                                typeCoercion.boxResult = false;
-                            }
-
-                            javascriptType = variable.Type;
-                        }
-                    }
-
-                    break;
-                default:
-                    javascriptType = LoadValue(expression, typeCoercion);
-                    break;
-            }
-
-            // If this emit is for a conditional test (if/for) and wasn't handled by BinaryOperators,
-            // branch based on a boolean value now. This consumes the value from the stack.
-            if (branching != null && expression is not BinaryExpression)
-            {
-                if (javascriptType == JavascriptType.Boolean)
-                {
-                    _il.Branch(ILOpCode.Brtrue, branching.BranchOnTrue);
-                    if (branching.BranchOnFalse.HasValue)
-                    {
-                        _il.Branch(ILOpCode.Br, branching.BranchOnFalse.Value);
-                    }
-                    else
-                    {
-                        _il.OpCode(ILOpCode.Pop);
-                    }
-                    // We've emitted control flow, no result remains
-                    return JavascriptType.Unknown;
-                }
-                else if (javascriptType == JavascriptType.Unknown)
-                {
-                    // The expression emitter handled branching itself (e.g., unary logical not)
-                    return JavascriptType.Unknown;
-                }
-                else
-                {
-                    throw new NotSupportedException($"Unsupported conditional test expression type: {javascriptType} for node {expression.Type}");
-                }
-            }
-
-            // Centralized boxing: if requested, box primitive results
-            if (typeCoercion.boxResult)
-            {
-                if (javascriptType == JavascriptType.Number)
-                {
-                    _il.OpCode(ILOpCode.Box);
-                    _il.Token(_bclReferences.DoubleType);
-                }
-                else if (javascriptType == JavascriptType.Boolean)
-                {
-                    _il.OpCode(ILOpCode.Box);
-                    _il.Token(_bclReferences.BooleanType);
-                }
-            }
-
-            return javascriptType;
-        }
-
-        // Helper to emit an assignment expression and return its JavaScript type
-        private JavascriptType EmitAssignment(AssignmentExpression assignmentExpression, TypeCoercion typeCoercion)
-        {
-            // Support assignments to identifiers and to this.property within class instance methods
-            if (assignmentExpression.Left is Identifier aid)
-            {
-                // Guard: const reassignment attempts throw at runtime
-                if (IsConstBinding(aid.Name))
-                {
-                    EmitConstReassignmentTypeError();
-                    return JavascriptType.Unknown; // unreachable
-                }
-                var variable = _variables.FindVariable(aid.Name) ?? throw new InvalidOperationException($"Variable '{aid.Name}' not found");
-
-                // Load the appropriate scope instance that holds this field
-                var scopeSlot = _variables.GetScopeLocalSlot(variable.ScopeName);
-                if (scopeSlot.Address == -1)
-                {
-                    throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
-                }
-                // Load scope instance
-                if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
-                {
-                    _il.LoadArgument(scopeSlot.Address);
-                }
-                else if (scopeSlot.Location == ObjectReferenceLocation.ScopeArray)
-                {
-                    _il.LoadArgument(0); // Load scope array parameter
-                    _il.LoadConstantI4(scopeSlot.Address); // Load array index
-                    _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
-                }
-                else
-                {
-                    _il.LoadLocal(scopeSlot.Address);
-                }
-
-                var prevAssignment = _currentAssignmentTarget;
-                _currentAssignmentTarget = aid.Name;
-                var rhsType = _expressionEmitter.Emit(assignmentExpression.Right, typeCoercion);
-                _currentAssignmentTarget = prevAssignment;
-                variable.Type = rhsType;
-                _il.OpCode(ILOpCode.Stfld);
-                _il.Token(variable.FieldHandle);
-                return rhsType;
-            }
-            else if (_inClassMethod && assignmentExpression.Left is MemberExpression me && me.Object is ThisExpression && !me.Computed && me.Property is Identifier pid)
-            {
-                // this.prop = <expr>
-                _il.OpCode(ILOpCode.Ldarg_0); // load 'this'
-                var rhsType = _expressionEmitter.Emit(assignmentExpression.Right, new TypeCoercion() { boxResult = true });
-                // Lookup field by current class name
-                if (string.IsNullOrEmpty(_currentClassName) || !_classRegistry.TryGetField(_currentClassName, pid.Name, out var fieldHandle))
-                {
-                    throw new NotSupportedException($"Unknown field '{pid.Name}' on class '{_currentClassName}'");
-                }
-                _il.OpCode(ILOpCode.Stfld);
-                _il.Token(fieldHandle);
-                return JavascriptType.Object;
-            }
-            else
-            {
-                throw new NotSupportedException($"Unsupported assignment target type: {assignmentExpression.Left.Type}");
-            }
-        }
-
-        // Helper to emit a NewExpression and return its JavaScript type
-    private JavascriptType EmitNewExpression(NewExpression newExpression)
-        {
-            // Support `new Identifier(...)` for classes emitted under Classes namespace
-            if (newExpression.Callee is Identifier cid)
-            {
-                // Try Classes registry first
-                if (_classRegistry.TryGet(cid.Name, out var typeHandle) && !typeHandle.IsNil)
-                {
-                    // Build .ctor signature matching argument count (all object)
-                    var argc = newExpression.Arguments.Count;
-                    var sig = new BlobBuilder();
-                    new BlobEncoder(sig)
-                        .MethodSignature(isInstanceMethod: true)
-                        .Parameters(argc, r => r.Void(), p => { for (int i = 0; i < argc; i++) p.AddParameter().Type().Object(); });
-                    var ctorSig = _metadataBuilder.GetOrAddBlob(sig);
-                    var ctorRef = _metadataBuilder.AddMemberReference(typeHandle, _metadataBuilder.GetOrAddString(".ctor"), ctorSig);
-
-                    // Push args
-                    for (int i = 0; i < argc; i++)
-                    {
-                        _expressionEmitter.Emit(newExpression.Arguments[i], new TypeCoercion() { boxResult = true });
-                    }
-                    _il.OpCode(ILOpCode.Newobj);
-                    _il.Token(ctorRef);
-
-                    // Record variable -> class mapping when in a variable initializer or assignment
-                    if (!string.IsNullOrEmpty(_currentAssignmentTarget))
-                    {
-                        _variableToClass[_currentAssignmentTarget] = cid.Name;
-                    }
-                    return JavascriptType.Object;
-                }
-
-                // Built-in Error types from JavaScriptRuntime (Error, TypeError, etc.)
-                // Build ctor: choose overload by arg count (we support 0 or 1(param: string) for now)
-                var argc2 = newExpression.Arguments.Count;
-                if (argc2 > 1)
-                {
-                    throw new NotSupportedException($"Only up to 1 constructor argument supported for built-in Error types (got {argc2})");
-                }
-                var ctorRef2 = _runtime.GetErrorCtorRef(cid.Name, argc2);
-
-                // Push args
-                for (int i = 0; i < argc2; i++)
-                {
-                    _expressionEmitter.Emit(newExpression.Arguments[i], new TypeCoercion() { boxResult = true });
-                }
-                _il.OpCode(ILOpCode.Newobj);
-                _il.Token(ctorRef2);
-                return JavascriptType.Object;
-            }
-
-            throw new NotSupportedException($"Unsupported new-expression callee: {newExpression.Callee.Type}");
-        }
-
-        /// <summary>
-        /// Emits the IL for a member access expression.
-        /// </summary>
-        /// <remarks>
-        /// A member expression is Object.Property.  Object itself is a expression.
-        /// We load the object reference onto the evaluation stack. Then use that as context for property expression.
-        /// The harcoded "length" is temporary until we get a proper structure in place for intrinsic objects like the Array.
-        /// </remarks>
-        private JavascriptType EmitMemberExpression(MemberExpression memberExpression)
-        {
-            // Handle private instance fields: this.#name inside class methods
-            if (!memberExpression.Computed && memberExpression.Object is ThisExpression && memberExpression.Property is Acornima.Ast.PrivateIdentifier ppid)
-            {
-                if (_inClassMethod && _currentClassName != null && _classRegistry.TryGetPrivateField(_currentClassName, ppid.Name, out var privField))
-                {
-                    _il.OpCode(ILOpCode.Ldarg_0);
-                    _il.OpCode(ILOpCode.Ldfld);
-                    _il.Token(privField);
-                    return JavascriptType.Object;
-                }
-            }
-
-            // Special handling: if the object is a known class identifier and property is an identifier,
-            // allow static field/method access without evaluating an instance first.
-            if (!memberExpression.Computed && memberExpression.Object is Identifier staticBase && memberExpression.Property is Identifier staticProp)
-            {
-                if (_classRegistry.TryGet(staticBase.Name, out var typeHandle))
-                {
-                    // Support static field access: ClassName.prop
-                    if (_classRegistry.TryGetStaticField(staticBase.Name, staticProp.Name, out var sfield))
-                    {
-                        _il.OpCode(ILOpCode.Ldsfld);
-                        _il.Token(sfield);
-                        return JavascriptType.Object;
-                    }
-
-                    // Static method invocations are handled in GenerateCallExpression; here we only support fields
-                }
-            }
-
-            _expressionEmitter.Emit(memberExpression.Object, new TypeCoercion());
-
-            if (!memberExpression.Computed && memberExpression.Property is Identifier propId)
-            {
-                // First, support array.length
-                if (propId.Name == "length")
-                {
-                    _runtime.InvokeArrayGetCount();
-                    return JavascriptType.Number;
-                }
-
-                // we currently only support compile time identification of class members
-                // this needs to be expanded to support runtime accessing of dynamically added properties
-                // this ugly if statement is for 2 cases -
-                // this.property and someVar.propery where someVar is a known class type.
-                if ((memberExpression.Object is ThisExpression && _inClassMethod && _currentClassName != null && _classRegistry.TryGetField(_currentClassName, propId.Name, out var fieldHandle))
-                    || (memberExpression.Object is Identifier baseIdent2 && _variableToClass.TryGetValue(baseIdent2.Name, out var cname) && _classRegistry.TryGetField(cname, propId.Name, out fieldHandle)))
-                {
-                    // At this point, stack has the instance already. Load its field value.
-                    _il.OpCode(ILOpCode.Ldfld);
-                    _il.Token(fieldHandle);
-                    return JavascriptType.Object;
-                }
-
-                // Fallback: dynamic property lookup on runtime object graphs (e.g., ExpandoObject from JSON.parse)
-                var getProp = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), typeof(object), typeof(object), typeof(string));
-                _il.Ldstr(_metadataBuilder, propId.Name);
-                _il.OpCode(ILOpCode.Call);
-                _il.Token(getProp);
-                return JavascriptType.Object;
-            }
-            if (memberExpression.Computed)
-            {
-                // computed means someObject["propertyName"] or someObject[someIndex]
-                // arr[expr] -> runtime Object.GetItem(array, doubleIndex)
-                var indexType = _expressionEmitter.Emit(memberExpression.Property, new TypeCoercion());
-                if (indexType != JavascriptType.Number)
-                    // TODO - support strings - object["propertyName"]
-                    throw new NotSupportedException("Array index must be numeric expression");
-                _runtime.InvokeGetItemFromObject();
-                return JavascriptType.Object;
-            }
-            throw new NotSupportedException("Only 'length', instance fields on known classes, or computed indexing supported.");
-        }
-
-        private MethodDefinitionHandle GenerateArrowFunctionMethod(ArrowFunctionExpression arrowFunction, string registryScopeName, string ilMethodName, string[] paramNames)
+        internal MethodDefinitionHandle GenerateArrowFunctionMethod(ArrowFunctionExpression arrowFunction, string registryScopeName, string ilMethodName, string[] paramNames)
         {
             // Build method body using a fresh ILMethodGenerator so we never mutate the parent generator's state
             var functionVariables = new Variables(_variables, registryScopeName, paramNames, isNestedFunction: true);
@@ -2026,7 +841,7 @@ namespace Js2IL.Services.ILGenerators
                         childGen._currentAssignmentTarget = vid.Name;
                         try
                         {
-                            _ = ((IMethodExpressionEmitter)childGen).Emit(initExpr, new TypeCoercion());
+                            _ = childGen.ExpressionEmitter.Emit(initExpr, new TypeCoercion());
                         }
                         finally
                         {
@@ -2065,7 +880,7 @@ namespace Js2IL.Services.ILGenerators
                     else
                     {
                         // Not returning a function; just evaluate the expression and return it (no binding, no scope instantiation)
-                        _ = ((IMethodExpressionEmitter)childGen).Emit(initExpr, new TypeCoercion());
+                        _ = childGen.ExpressionEmitter.Emit(initExpr, new TypeCoercion());
                         il.OpCode(ILOpCode.Ret);
                     }
                 }
@@ -2116,7 +931,7 @@ namespace Js2IL.Services.ILGenerators
             {
                 // Expression-bodied arrow: evaluate via the child generator's expression emitter to keep logic isolated
                 var bodyExpr = arrowFunction.Body as Expression ?? throw new NotSupportedException("Arrow function body is not an expression");
-                _ = ((IMethodExpressionEmitter)childGen).Emit(bodyExpr, new TypeCoercion());
+                _ = childGen.ExpressionEmitter.Emit(bodyExpr, new TypeCoercion());
                 il.OpCode(ILOpCode.Ret);
             }
 
@@ -2168,59 +983,9 @@ namespace Js2IL.Services.ILGenerators
             return mdh;
         }
 
-        /// <summary>
-        /// Determines which scopes are needed for a specific function call.
-        /// Rules:
-        /// - In Main (no scope-array parameter): pass the current (leaf) scope instance.
-        /// - In a function context (scope-array present): pass only the caller's local scope that holds the callee delegate.
-        ///   Historical snapshots do not include the global scope alongside the caller local for nested calls.
-        /// </summary>
-        private enum CallSiteContext { Statement, Expression }
+    // GetNeededScopesForFunction moved to ILExpressionGenerator
 
-        private IEnumerable<string> GetNeededScopesForFunction(Variable functionVariable, CallSiteContext context)
-        {
-            var names = _variables.GetAllScopeNames().ToList();
-            var slots = names.Select(n => new { Name = n, Slot = _variables.GetScopeLocalSlot(n) }).ToList();
-
-            bool inFunctionContext = slots.Any(e => e.Slot.Location == ObjectReferenceLocation.ScopeArray);
-            if (!inFunctionContext)
-            {
-                // Main: pass only the current (leaf) scope
-                var globalName = _variables.GetLeafScopeName();
-                yield return globalName;
-                yield break;
-            }
-
-            // Inside a function: include exactly the scope that owns the callee variable
-            // - If the callee is stored on the current local scope: include that local scope only.
-            // - If the callee lives on a parent/global scope: include that parent/global scope only.
-            if (!string.IsNullOrEmpty(functionVariable.ScopeName))
-            {
-                var targetSlot = _variables.GetScopeLocalSlot(functionVariable.ScopeName);
-                if (targetSlot.Location == ObjectReferenceLocation.Local)
-                {
-                    // Nested function declared in the current local scope
-                    // Statement context snapshots include [global, local]; expression context snapshots include only [local]
-                    if (context == CallSiteContext.Statement)
-                    {
-                        var globalEntry = slots.FirstOrDefault(e => e.Slot.Location == ObjectReferenceLocation.ScopeArray && e.Slot.Address == 0);
-                        if (globalEntry != null)
-                        {
-                            yield return globalEntry.Name; // global first
-                        }
-                    }
-                    yield return functionVariable.ScopeName; // local (caller) scope
-                }
-                else if (targetSlot.Location == ObjectReferenceLocation.ScopeArray ||
-                         targetSlot.Location == ObjectReferenceLocation.Parameter)
-                {
-                    // Callee lives on a parent/global scope: include only that owning scope
-                    yield return functionVariable.ScopeName;
-                }
-            }
-        }
-
-        private static void CollectDeclaredNames(Node node, HashSet<string> declared)
+    internal static void CollectDeclaredNames(Node node, HashSet<string> declared)
         {
             if (node is VariableDeclaration vardecl)
             {
@@ -2264,7 +1029,7 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-        private static bool ContainsGlobalRef(Node node, HashSet<string> globals, HashSet<string> declared)
+    internal static bool ContainsGlobalRef(Node node, HashSet<string> globals, HashSet<string> declared)
         {
             // If Identifier and not declared locally/params, treat as potential reference
             if (node is Identifier id)
@@ -2309,7 +1074,7 @@ namespace Js2IL.Services.ILGenerators
             return false;
         }
 
-        private static bool ContainsNestedFunction(Acornima.Ast.Node node)
+    internal static bool ContainsNestedFunction(Acornima.Ast.Node node)
         {
             // Walk child nodes; if any FunctionDeclaration is found, return true
             if (node is Acornima.Ast.FunctionDeclaration)
@@ -2339,80 +1104,7 @@ namespace Js2IL.Services.ILGenerators
             return false;
         }
         
-        /// <summary>
-        /// for loading literal expresions onto the IL stack.
-        /// i.e. 
-        /// x = 5;
-        /// x = "hello world";
-        /// x = true;
-        /// </summary>
-        private JavascriptType LoadValue(Expression expression, TypeCoercion typeCoercion)
-        {
-            JavascriptType type = JavascriptType.Unknown;
-
-            switch (expression)
-            {
-                case Acornima.Ast.BooleanLiteral booleanLiteral:
-                    if (typeCoercion.toString)
-                    {
-                        _il.Ldstr(_metadataBuilder, booleanLiteral.Value ? "true" : "false");
-                        // treat as object/string in this coercion path
-                        type = JavascriptType.Object;
-                    }
-                    else
-                    {
-                        _il.LoadConstantI4(booleanLiteral.Value ? 1 : 0); // Load boolean literal
-                        type = JavascriptType.Boolean;
-                    }
-                    break;
-                case Acornima.Ast.NumericLiteral numericLiteral:
-                    if (typeCoercion.toString)
-                    {
-                        //does dotnet ToString behave the same as JavaScript?
-                        var numberAsString = numericLiteral.Value.ToString();
-                        _il.Ldstr(_metadataBuilder, numberAsString); // Load numeric literal as string
-                    }
-                    else
-                    {
-                        _il.LoadConstantR8(numericLiteral.Value); // Load numeric literal
-                    }
-
-                    type = JavascriptType.Number;
-
-                    break;
-                case Acornima.Ast.StringLiteral stringLiteral:
-                    _il.Ldstr(_metadataBuilder, stringLiteral.Value); // Load string literal
-                    break;
-                case Acornima.Ast.Literal genericLiteral:
-                    // Some literals (especially booleans/null) may come through the generic Literal node
-                    if (genericLiteral.Value is bool b)
-                    {
-                        if (typeCoercion.toString)
-                        {
-                            _il.Ldstr(_metadataBuilder, b ? "true" : "false");
-                            type = JavascriptType.Object;
-                        }
-                        else
-                        {
-                            _il.LoadConstantI4(b ? 1 : 0);
-                            type = JavascriptType.Boolean;
-                        }
-                        break;
-                    }
-                    if (genericLiteral.Value is null)
-                    {
-                        // JavaScript 'null'
-                        _il.OpCode(ILOpCode.Ldnull);
-                        type = JavascriptType.Null;
-                        break;
-                    }
-                    throw new NotSupportedException($"Unsupported literal value type: {genericLiteral.Value?.GetType().Name ?? "null"}");
-                default:
-                    throw new NotSupportedException($"Unsupported expression type: {expression.Type}");
-            }
-
-            return type;
-        }
+    // LoadValue moved to ILExpressionGenerator
 
     }
 }
