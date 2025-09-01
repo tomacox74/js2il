@@ -53,5 +53,9 @@ namespace Js2IL.Tests.Node
                     sb.Append(text);
                 });
             });
+
+        [Fact(Skip = "process/argv not yet supported")]
+        public Task Environment_EnumerateProcessArgV()
+            => GenerateTest(nameof(Environment_EnumerateProcessArgV));
     }
 }

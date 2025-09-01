@@ -35,8 +35,8 @@ namespace JavaScriptRuntime.Node
         /// <summary>Absolute filename of the current module (script).</summary>
         public static string __filename { get; private set; } = string.Empty;
 
-        /// <summary>Minimal process global with writable exitCode.</summary>
-        public static ProcessInfo process { get; } = new ProcessInfo();
+    /// <summary>Minimal process global with writable exitCode.</summary>
+    public static Process process { get; } = new Process();
 
         /// <summary>
         /// Sets the active module path context. Call before executing a translated script.
@@ -57,10 +57,6 @@ namespace JavaScriptRuntime.Node
             process.exitCode = 0;
         }
 
-        public sealed class ProcessInfo
-        {
-            /// <summary>Matches Node's writable process.exitCode.</summary>
-            public int exitCode { get; set; }
-        }
+    // Process class is now in its own file (Process.cs)
     }
 }
