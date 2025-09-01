@@ -54,8 +54,27 @@ namespace Js2IL.Tests.Node
                 });
             });
 
-        [Fact(Skip = "process/argv not yet supported")]
-        public Task Environment_EnumerateProcessArgV()
-            => GenerateTest(nameof(Environment_EnumerateProcessArgV));
+        [Fact]
+        public Task Environment_EnumerateProcessArgV() => GenerateTest(
+            nameof(Environment_EnumerateProcessArgV),
+            configureSettings: s =>
+            {
+                // Trim trailing spaces/tabs before line breaks without changing line-ending style
+                s.AddScrubber(sb =>
+                {
+                    var text = sb.ToString();
+                    text = Regex.Replace(text, @"[ \t]+(\r?\n)", "$1");
+                    sb.Clear();
+                    sb.Append(text);
+                });
+                // Ensure a single newline at EOF to reduce flakiness
+                s.AddScrubber(sb =>
+                {
+                    var text = sb.ToString();
+                    text = text.TrimEnd('\r', '\n') + "\r\n";
+                    sb.Clear();
+                    sb.Append(text);
+                });
+            });
     }
 }

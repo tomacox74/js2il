@@ -39,12 +39,41 @@ namespace JavaScriptRuntime.Node
     public static Process process { get; } = new Process();
 
         /// <summary>
+        /// Dynamic lookup for well-known globals by name.
+        /// Returns null when the name is unknown.
+        /// </summary>
+        public static object? Get(string name)
+        {
+            switch (name)
+            {
+                case "__dirname":
+                    return __dirname;
+                case "__filename":
+                    return __filename;
+                case "process":
+                    return process;
+                default:
+                    return null;
+            }
+        }
+
+        /// <summary>
         /// Sets the active module path context. Call before executing a translated script.
         /// </summary>
         public static void SetModuleContext(string? dirname, string? filename)
         {
             __dirname = dirname ?? string.Empty;
             __filename = filename ?? string.Empty;
+            // Initialize minimal argv: [programPath]. Can be extended later with script and user args.
+            var program = filename ?? string.Empty;
+            try
+            {
+                process.SetArgv(program);
+            }
+            catch
+            {
+                // best-effort
+            }
         }
 
         /// <summary>

@@ -297,7 +297,14 @@ namespace Js2IL.Services
             else if (type == typeof(string)) enc.String();
             else if (type == typeof(double)) enc.Double();
             else if (type == typeof(bool)) enc.Boolean();
+            else if (type == typeof(int)) enc.Int32();
             else if (type == typeof(object[])) enc.SZArray().Object();
+            else if (!string.IsNullOrEmpty(type.Namespace) && type.Namespace!.StartsWith("JavaScriptRuntime", StringComparison.Ordinal))
+            {
+                // Map JavaScriptRuntime reference types (e.g., JavaScriptRuntime.Array, JavaScriptRuntime.Node.Process)
+                var tref = GetRuntimeTypeRef(type.Namespace!, type.Name);
+                enc.Type(tref, isValueType: false);
+            }
             else throw new NotSupportedException($"Unsupported runtime signature type mapping: {type.FullName}");
         }
 

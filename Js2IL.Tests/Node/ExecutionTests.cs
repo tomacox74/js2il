@@ -22,8 +22,15 @@ namespace Js2IL.Tests.Node
                     s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
                 });
 
-        [Fact(Skip = "process/argv not yet supported")]
+        [Fact]
         public Task Environment_EnumerateProcessArgV()
-            => ExecutionTest(nameof(Environment_EnumerateProcessArgV));
+            => ExecutionTest(
+                nameof(Environment_EnumerateProcessArgV),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
     }
 }

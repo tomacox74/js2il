@@ -179,28 +179,50 @@ namespace Js2IL.Services.ILGenerators
                 case Identifier identifier:
                     {
                         var name = identifier.Name;
-                        if (string.Equals(name, "__dirname", StringComparison.Ordinal) || string.Equals(name, "__filename", StringComparison.Ordinal))
+                        var localVar = _variables.FindVariable(name);
+                        if (localVar != null)
                         {
-                            var getterName = "get_" + name;
-                            var getterRef = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Node.GlobalVariables), getterName, typeof(string));
-                            _il.Call(getterRef);
-                            typeCoercion.boxResult = false;
-                            javascriptType = JavascriptType.Object;
-                        }
-                        else
-                        {
-                            var variable = _variables.FindVariable(name) ?? throw new InvalidOperationException($"Variable '{name}' not found.");
-                            _binaryOperators.LoadVariable(variable);
-                            if (variable.Type == JavascriptType.Number && !typeCoercion.boxResult)
+                            _binaryOperators.LoadVariable(localVar);
+                            if (localVar.Type == JavascriptType.Number && !typeCoercion.boxResult)
                             {
                                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
-                                _il.Token(_bclReferences.DoubleType);
+                                _il.Token(_owner.BclReferences.DoubleType);
                             }
                             else
                             {
                                 typeCoercion.boxResult = false;
                             }
-                            javascriptType = variable.Type;
+                            javascriptType = localVar.Type;
+                        }
+                        else
+                        {
+                            // If not a local variable, attempt to resolve a public static property on GlobalVariables at compile-time
+                            var gvType = typeof(JavaScriptRuntime.Node.GlobalVariables);
+                            var prop = gvType.GetProperty(name, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
+                            if (prop != null && prop.GetMethod != null)
+                            {
+                                var getter = prop.GetMethod;
+                                var mref = _runtime.GetStaticMethodRef(gvType, getter.Name, getter.ReturnType);
+                                _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
+                                _il.Token(mref);
+                                typeCoercion.boxResult = false;
+                                javascriptType = JavascriptType.Object;
+                                clrType = prop.PropertyType;
+                            }
+                            else
+                            {
+                                // Fallback: dynamic lookup (legacy). This should be avoided for known globals.
+                                var getGlobal = _runtime.GetStaticMethodRef(
+                                    typeof(JavaScriptRuntime.Node.GlobalVariables),
+                                    nameof(JavaScriptRuntime.Node.GlobalVariables.Get),
+                                    typeof(object),
+                                    typeof(string));
+                                _il.Ldstr(_metadataBuilder, name);
+                                _il.Call(getGlobal);
+                                typeCoercion.boxResult = false;
+                                javascriptType = JavascriptType.Object;
+                                clrType = null;
+                            }
                         }
                     }
                     break;
@@ -916,6 +938,23 @@ namespace Js2IL.Services.ILGenerators
                 _il.Token(fieldHandle);
                 return JavascriptType.Object;
             }
+        else if (assignmentExpression.Left is MemberExpression mex && !mex.Computed && mex.Property is Identifier propId2 && propId2.Name == "exitCode")
+            {
+                // <base>.exitCode = <expr> ; if base is Process
+                var baseRes = Emit(mex.Object, new TypeCoercion());
+                if (baseRes.ClrType == typeof(JavaScriptRuntime.Node.Process))
+                {
+            // Compute RHS as a JavaScript number (double)
+            var rhsType = Emit(assignmentExpression.Right, new TypeCoercion() { boxResult = false }).JsType;
+            // Ensure numeric argument is a double (Conv_r8 handles ints/booleans to number)
+            _il.OpCode(System.Reflection.Metadata.ILOpCode.Conv_r8);
+            var setExit = _runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Node.Process), "set_exitCode", typeof(void), typeof(double));
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                    _il.Token(setExit);
+                    return JavascriptType.Number;
+                }
+                throw new NotSupportedException("Assignment to property 'exitCode' is only supported on process object");
+            }
             else
             {
                 throw new NotSupportedException($"Unsupported assignment target type: {assignmentExpression.Left.Type}");
@@ -1125,8 +1164,8 @@ namespace Js2IL.Services.ILGenerators
                 }
             }
 
-            // Evaluate the base object
-            Emit(memberExpression.Object, new TypeCoercion());
+            // Evaluate the base object and capture its resolved CLR type (if any)
+            var baseResult = Emit(memberExpression.Object, new TypeCoercion());
 
             if (!memberExpression.Computed && memberExpression.Property is Identifier propId)
             {
@@ -1138,6 +1177,25 @@ namespace Js2IL.Services.ILGenerators
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
                     _il.Token(getLen);
                     return JavascriptType.Number;
+                }
+
+                // If the base resolved to a known runtime type, allow direct instance member access
+                if (baseResult.ClrType == typeof(JavaScriptRuntime.Node.Process))
+                {
+                    if (propId.Name == "argv")
+                    {
+                        var getArgv = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Node.Process), "get_argv", typeof(JavaScriptRuntime.Array));
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                        _il.Token(getArgv);
+                        return JavascriptType.Object;
+                    }
+                    if (propId.Name == "exitCode")
+                    {
+                        var getExit = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Node.Process), "get_exitCode", typeof(double));
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                        _il.Token(getExit);
+                        return JavascriptType.Number;
+                    }
                 }
 
                 // Handle instance field access for known classes: this.field or var field on known class instance
