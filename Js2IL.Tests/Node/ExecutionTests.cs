@@ -32,5 +32,16 @@ namespace Js2IL.Tests.Node
                     var temp = Path.GetTempPath().Replace('\\', '/');
                     s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
                 });
+
+        [Fact]
+        public Task FS_ReadWrite_Utf8()
+            => ExecutionTest(
+                nameof(FS_ReadWrite_Utf8),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
     }
 }
