@@ -463,101 +463,175 @@ namespace Js2IL.Services.ILGenerators
             return false;
         }
 
-        // Centralized emitter for string instance methods
+        // Centralized emitter for string instance methods using reflection-based dispatch.
         private Type? EmitStringInstanceMethodCall(Expression receiver, string methodName, CallExpression callExpression)
         {
             var _runtime = _owner.Runtime;
             var _bclReferences = _owner.BclReferences;
 
-            // Push receiver coerced to string
+            // Push receiver coerced to string (first param in all runtime String methods)
             _ = Emit(receiver, new TypeCoercion { toString = true });
 
             var stringType = JavaScriptRuntime.IntrinsicObjectRegistry.Get("String")
                 ?? throw new NotSupportedException("Host intrinsic 'String' not found");
 
-            // Normalize method name exact match (JS is case-sensitive)
-            if (string.Equals(methodName, "replace", StringComparison.Ordinal))
+            // Gather candidate methods by name (case-insensitive to map JS camelCase to CLR PascalCase like LocaleCompare)
+            var candidates = stringType
+                .GetMethods(BindingFlags.Public | BindingFlags.Static)
+                .Where(m => string.Equals(m.Name, methodName, StringComparison.OrdinalIgnoreCase))
+                .Where(m => m.GetParameters().Length >= 1 && m.GetParameters()[0].ParameterType == typeof(string))
+                .ToList();
+
+            if (candidates.Count == 0)
             {
-                // Support 2-arg replace where args are (patternOrStringOrRegex, replacement)
-                if (callExpression.Arguments.Count != 2)
-                    throw new NotSupportedException("String.replace expects 2 arguments");
+                throw new NotSupportedException($"Host intrinsic method not found: String.{methodName}");
+            }
 
-                // If arg0 is a regex literal, prefer the 5-arg regex overload for flags handling
-                var arg0 = callExpression.Arguments[0];
-                if (arg0 is Literal lit)
+            // Pre-detect regex literal in arg0 to optionally enable an expanded signature binding
+            bool hasRegex = false; string? regexPattern = null; bool regexGlobal = false; bool regexIgnoreCase = false;
+            if (callExpression.Arguments.Count >= 1 && callExpression.Arguments[0] is Literal lit)
+            {
+                var rawProp = GetPropertyIgnoreCase(lit, "Raw");
+                if (rawProp != null)
                 {
-                    var rawProp = GetPropertyIgnoreCase(lit, "Raw");
-                    if (rawProp != null)
+                    var rawObj = rawProp.GetValue(lit);
+                    var raw = rawObj as string ?? rawObj?.ToString() ?? string.Empty;
+                    var (pattern, flags) = ParseRegexRaw(raw);
+                    if (pattern != null)
                     {
-                        var rawObj = rawProp.GetValue(lit);
-                        var raw = rawObj as string ?? rawObj?.ToString() ?? string.Empty;
-                        var (pattern, flags) = ParseRegexRaw(raw);
-                        if (pattern != null)
+                        hasRegex = true;
+                        regexPattern = pattern;
+                        regexGlobal = flags != null && flags.Contains('g');
+                        regexIgnoreCase = flags != null && flags.Contains('i');
+                    }
+                }
+            }
+
+            int argCount = callExpression.Arguments.Count;
+
+            MethodInfo? chosen = null;
+            bool useRegexExpansion = false;
+
+            // 1) Prefer regex expansion when a regex literal is present and a 5-arg pattern exists
+            if (hasRegex)
+            {
+                var regexMatches = candidates.Where(m =>
+                {
+                    var ps = m.GetParameters();
+                    if (ps.Length != 5) return false;
+                    // (string receiver, string pattern, string replacement, bool global, bool ignoreCase)
+                    return ps[0].ParameterType == typeof(string)
+                        && ps[1].ParameterType == typeof(string)
+                        && ps[2].ParameterType == typeof(string)
+                        && ps[3].ParameterType == typeof(bool)
+                        && ps[4].ParameterType == typeof(bool);
+                }).ToList();
+                if (regexMatches.Count > 0 && argCount == 2)
+                {
+                    chosen = regexMatches.First();
+                    useRegexExpansion = true;
+                }
+            }
+
+            // 2) If not using regex expansion, find a method we can call with provided args and pad missing optionals
+            if (chosen == null)
+            {
+                // Prefer the smallest parameter count that can accept the provided args (>= 1 + argCount)
+                var viable = candidates
+                    .Where(m => m.GetParameters().Length >= 1 + argCount)
+                    .OrderBy(m => m.GetParameters().Length)
+                    .ToList();
+
+                if (viable.Count == 0)
+                {
+                    // Fallback to exact arity if none accept padding
+                    viable = candidates.Where(m => m.GetParameters().Length == 1 + argCount).ToList();
+                }
+
+                if (viable.Count > 0)
+                {
+                    // Among viable, prefer more specific parameter types over object
+                    chosen = viable
+                        .OrderByDescending(m => m.GetParameters().Skip(1).Take(argCount).Count(p => p.ParameterType != typeof(object)))
+                        .First();
+                }
+            }
+
+            if (chosen == null)
+            {
+                throw new NotSupportedException($"No compatible overload found for String.{methodName} with {argCount} argument(s)");
+            }
+
+            // Emit arguments based on the chosen parameters
+            var chosenParams = chosen.GetParameters();
+            if (useRegexExpansion)
+            {
+                // Expect 2 JS args: pattern (regex literal), replacement; expand to (pattern string, replacement string, bool g, bool i)
+                if (!hasRegex || regexPattern is null || argCount != 2)
+                {
+                    throw new NotSupportedException("Regex expansion requires a regex literal as first argument and exactly 2 JS arguments.");
+                }
+                // pattern
+                _il.Ldstr(_owner.MetadataBuilder, regexPattern);
+                // replacement coerced to string
+                _ = Emit(callExpression.Arguments[1], new TypeCoercion { toString = true });
+                // flags
+                _il.LoadConstantI4(regexGlobal ? 1 : 0);
+                _il.LoadConstantI4(regexIgnoreCase ? 1 : 0);
+            }
+            else
+            {
+                // For each JS argument, coerce based on parameter type
+                for (int i = 0; i < argCount; i++)
+                {
+                    var targetParamType = chosenParams[i + 1].ParameterType;
+                    if (targetParamType == typeof(string))
+                    {
+                        _ = Emit(callExpression.Arguments[i], new TypeCoercion { toString = true });
+                    }
+                    else if (targetParamType == typeof(bool))
+                    {
+                        var arg = callExpression.Arguments[i];
+                        if (arg is BooleanLiteral bl)
                         {
-                            bool global = flags != null && flags.Contains('g');
-                            bool ignoreCase = flags != null && flags.Contains('i');
-
-                            // stack: receiver already loaded; now push pattern, replacement, global, ignoreCase
-                            _il.Ldstr(_owner.MetadataBuilder, pattern);
-                            _ = Emit(callExpression.Arguments[1], new TypeCoercion { toString = true });
-                            _il.LoadConstantI4(global ? 1 : 0);
-                            _il.LoadConstantI4(ignoreCase ? 1 : 0);
-
-                            // Call String.Replace(string, string, string, bool, bool)
-                            var mi = stringType.GetMethod("Replace", BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(string), typeof(string), typeof(bool), typeof(bool) });
-                            if (mi == null)
-                            {
-                                // Fallback to reflection search if exact GetMethod overload not available
-                                mi = stringType.GetMethods(BindingFlags.Public | BindingFlags.Static)
-                                    .FirstOrDefault(m => string.Equals(m.Name, "Replace", StringComparison.Ordinal)
-                                        && m.GetParameters().Length == 5);
-                            }
-                            if (mi == null)
-                                throw new NotSupportedException("Host intrinsic method not found: String.Replace(string, string, string, bool, bool)");
-                            var mref = _runtime.GetStaticMethodRef(stringType, mi.Name, mi.ReturnType, mi.GetParameters().Select(p => p.ParameterType).ToArray());
-                            _il.Call(mref);
-                            return typeof(string);
+                            _il.LoadConstantI4(bl.Value ? 1 : 0);
                         }
+                        else if (arg is Literal glit && glit.Value is bool bv)
+                        {
+                            _il.LoadConstantI4(bv ? 1 : 0);
+                        }
+                        else
+                        {
+                            _il.LoadConstantI4(0);
+                        }
+                    }
+                    else
+                    {
+                        _ = Emit(callExpression.Arguments[i], new TypeCoercion { boxResult = true });
                     }
                 }
 
-                // Otherwise, use the 3-arg overload for string pattern
-                _ = Emit(callExpression.Arguments[0], new TypeCoercion { boxResult = true });
-                _ = Emit(callExpression.Arguments[1], new TypeCoercion { boxResult = true });
-                var mi3 = stringType
-                    .GetMethods(BindingFlags.Public | BindingFlags.Static)
-                    .FirstOrDefault(m => string.Equals(m.Name, "Replace", StringComparison.Ordinal)
-                                         && m.GetParameters().Length == 3
-                                         && m.GetParameters()[0].ParameterType == typeof(string));
-                if (mi3 == null)
-                    throw new NotSupportedException("Host intrinsic method not found: String.Replace(string, object, object)");
-                var mref3 = _runtime.GetStaticMethodRef(stringType, mi3.Name, mi3.ReturnType, mi3.GetParameters().Select(p => p.ParameterType).ToArray());
-                _il.Call(mref3);
-                return typeof(string);
+                // Pad any remaining parameters with defaults: null for ref types; false for bool
+                for (int pi = 1 + argCount; pi < chosenParams.Length; pi++)
+                {
+                    var pt = chosenParams[pi].ParameterType;
+                    if (pt == typeof(bool))
+                    {
+                        _il.LoadConstantI4(0);
+                    }
+                    else
+                    {
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
+                    }
+                }
             }
 
-            if (string.Equals(methodName, "localeCompare", StringComparison.Ordinal))
-            {
-                if (callExpression.Arguments.Count < 1 || callExpression.Arguments.Count > 3)
-                    throw new NotSupportedException("String.localeCompare expects 1..3 arguments");
+            // Emit the call
+            var mref = _runtime.GetStaticMethodRef(stringType, chosen.Name, chosen.ReturnType, chosenParams.Select(p => p.ParameterType).ToArray());
+            _il.Call(mref);
 
-                // that
-                _ = Emit(callExpression.Arguments[0], new TypeCoercion { toString = true });
-                // locales
-                if (callExpression.Arguments.Count >= 2) _ = Emit(callExpression.Arguments[1], new TypeCoercion { boxResult = true });
-                else _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
-                // options
-                if (callExpression.Arguments.Count >= 3) _ = Emit(callExpression.Arguments[2], new TypeCoercion { boxResult = true });
-                else _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
-
-                var mi = stringType.GetMethod("LocaleCompare", BindingFlags.Public | BindingFlags.Static)
-                         ?? throw new NotSupportedException("Host intrinsic method not found: String.LocaleCompare");
-                var mref = _runtime.GetStaticMethodRef(stringType, mi.Name, mi.ReturnType, mi.GetParameters().Select(p => p.ParameterType).ToArray());
-                _il.Call(mref);
-                return typeof(double);
-            }
-
-            throw new NotSupportedException($"Unsupported string method: {methodName}");
+            // Return CLR type for downstream typing
+            return chosen.ReturnType;
         }
 
         /// <summary>
