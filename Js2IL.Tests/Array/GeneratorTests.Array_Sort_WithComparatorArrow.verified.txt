@@ -1,0 +1,193 @@
+﻿// IL code: Array_Sort_WithComparatorArrow
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Array_Sort_WithComparatorArrow
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit ArrowFunction1_L2C9
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method ArrowFunction1_L2C9::.ctor
+
+	} // end of class ArrowFunction1_L2C9
+
+	.class nested public auto ansi beforefieldinit Block_L3C37
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2062
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Block_L3C37::.ctor
+
+	} // end of class Block_L3C37
+
+
+	// Fields
+	.field public object arr
+	.field public object i
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Array_Sort_WithComparatorArrow::.ctor
+
+} // end of class Scopes.Array_Sort_WithComparatorArrow
+
+.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L2C9
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		object ArrowFunction_L2C9 (
+			object[] scopes,
+			object a,
+			object b
+		) cil managed 
+	{
+		// Method begins at RVA 0x206b
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.1
+		IL_0001: ldarg.2
+		IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Subtract(object, object)
+		IL_0007: ret
+	} // end of method ArrowFunction_L2C9::ArrowFunction_L2C9
+
+} // end of class Functions.ArrowFunction_L2C9
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2074
+		// Header size: 12
+		// Code size: 278 (0x116)
+		.maxstack 8
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Array_Sort_WithComparatorArrow::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldc.i4.5
+		IL_0008: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_000d: dup
+		IL_000e: ldc.r8 3
+		IL_0017: box [System.Runtime]System.Double
+		IL_001c: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0021: dup
+		IL_0022: ldc.r8 10
+		IL_002b: box [System.Runtime]System.Double
+		IL_0030: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0035: dup
+		IL_0036: ldc.r8 2
+		IL_003f: box [System.Runtime]System.Double
+		IL_0044: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0049: dup
+		IL_004a: ldc.r8 21
+		IL_0053: box [System.Runtime]System.Double
+		IL_0058: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_005d: dup
+		IL_005e: ldc.r8 1
+		IL_0067: box [System.Runtime]System.Double
+		IL_006c: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0071: stfld object Scopes.Array_Sort_WithComparatorArrow::arr
+		IL_0076: ldloc.0
+		IL_0077: ldfld object Scopes.Array_Sort_WithComparatorArrow::arr
+		IL_007c: ldc.i4.1
+		IL_007d: newarr [System.Runtime]System.Object
+		IL_0082: dup
+		IL_0083: ldc.i4.0
+		IL_0084: ldnull
+		IL_0085: ldftn object Functions.ArrowFunction_L2C9::ArrowFunction_L2C9(object[], object, object)
+		IL_008b: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_0090: stelem.ref
+		IL_0091: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::sort(object[])
+		IL_0096: pop
+		IL_0097: ldloc.0
+		IL_0098: ldc.r8 0.0
+		IL_00a1: box [System.Runtime]System.Double
+		IL_00a6: stfld object Scopes.Array_Sort_WithComparatorArrow::i
+		// loop start (head: IL_00ab)
+			IL_00ab: ldloc.0
+			IL_00ac: ldfld object Scopes.Array_Sort_WithComparatorArrow::i
+			IL_00b1: unbox.any [System.Runtime]System.Double
+			IL_00b6: ldloc.0
+			IL_00b7: ldfld object Scopes.Array_Sort_WithComparatorArrow::arr
+			IL_00bc: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_00c1: blt IL_00cb
+
+			IL_00c6: br IL_0115
+
+			IL_00cb: ldc.i4.1
+			IL_00cc: newarr [System.Runtime]System.Object
+			IL_00d1: dup
+			IL_00d2: ldc.i4.0
+			IL_00d3: ldloc.0
+			IL_00d4: ldfld object Scopes.Array_Sort_WithComparatorArrow::arr
+			IL_00d9: ldloc.0
+			IL_00da: ldfld object Scopes.Array_Sort_WithComparatorArrow::i
+			IL_00df: unbox.any [System.Runtime]System.Double
+			IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_00e9: stelem.ref
+			IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_00ef: pop
+			IL_00f0: ldloc.0
+			IL_00f1: ldloc.0
+			IL_00f2: ldfld object Scopes.Array_Sort_WithComparatorArrow::i
+			IL_00f7: unbox.any [System.Runtime]System.Double
+			IL_00fc: ldc.r8 1
+			IL_0105: add
+			IL_0106: box [System.Runtime]System.Double
+			IL_010b: stfld object Scopes.Array_Sort_WithComparatorArrow::i
+			IL_0110: br IL_00ab
+		// end loop
+
+		IL_0115: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
