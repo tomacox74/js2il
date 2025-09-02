@@ -1277,14 +1277,26 @@ namespace Js2IL.Services.ILGenerators
             // 2) invoke runtime array ctor (produces JavaScriptRuntime.Array instance boxed as object)
             _runtime.InvokeArrayCtor();
 
-            // For each element: duplicate array ref, load element (boxed), call Add
+            // For each element: handle SpreadElement by pushing range; otherwise Add single item
             for (int i = 0; i < arrayExpression.Elements.Count; i++)
             {
                 var element = arrayExpression.Elements[i];
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup); // array instance
-                _ = Emit(element!, new TypeCoercion() { boxResult = true });
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
-                _il.Token(_bclReferences.Array_Add_Ref);
+                if (element is SpreadElement spread)
+                {
+                    // Duplicate array ref, evaluate argument (boxed), call PushRange
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup);
+                    _ = Emit(spread.Argument!, new TypeCoercion() { boxResult = true });
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                    var pushRange = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Array), nameof(JavaScriptRuntime.Array.PushRange), typeof(void), typeof(object));
+                    _il.Token(pushRange);
+                }
+                else
+                {
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup); // array instance
+                    _ = Emit(element!, new TypeCoercion() { boxResult = true });
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                    _il.Token(_bclReferences.Array_Add_Ref);
+                }
             }
 
             // If this array literal is initializing/assigning a variable, tag it as a runtime JavaScriptRuntime.Array

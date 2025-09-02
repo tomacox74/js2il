@@ -169,5 +169,30 @@ namespace JavaScriptRuntime
 
             return result;
         }
+
+        /// <summary>
+        /// Pushes all items from the given source enumerable into this array.
+        /// Used by codegen to implement spread syntax in array literals.
+        /// </summary>
+        public void PushRange(object source)
+        {
+            if (source == null) return;
+            if (source is Array jsArray)
+            {
+                // Copy elements directly
+                for (int i = 0; i < jsArray.Count; i++) this.Add(jsArray[i]);
+                return;
+            }
+            if (source is System.Collections.IEnumerable en)
+            {
+                foreach (var item in en)
+                {
+                    this.Add(item!);
+                }
+                return;
+            }
+            // Fallback: single item
+            this.Add(source);
+        }
     }
 }
