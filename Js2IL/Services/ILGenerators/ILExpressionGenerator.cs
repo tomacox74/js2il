@@ -1043,31 +1043,93 @@ namespace Js2IL.Services.ILGenerators
                 {
                     throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
                 }
-                // Load scope instance
-                if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
+                // Determine if this is a compound assignment (e.g., +=)
+                var opName = assignmentExpression.Operator.ToString();
+
+                if (string.Equals(opName, "AdditionAssignment", StringComparison.Ordinal))
                 {
-                    _il.LoadArgument(scopeSlot.Address);
-                }
-                else if (scopeSlot.Location == ObjectReferenceLocation.ScopeArray)
-                {
-                    _il.LoadArgument(0); // Load scope array parameter
-                    _il.LoadConstantI4(scopeSlot.Address); // Load array index
-                    _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
+                    // Pattern: target = target + <rhs> using JS semantics via Operators.Add
+                    // Load scope instance for store
+                    if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
+                    {
+                        _il.LoadArgument(scopeSlot.Address);
+                    }
+                    else if (scopeSlot.Location == ObjectReferenceLocation.ScopeArray)
+                    {
+                        _il.LoadArgument(0);
+                        _il.LoadConstantI4(scopeSlot.Address);
+                        _il.OpCode(ILOpCode.Ldelem_ref);
+                    }
+                    else
+                    {
+                        _il.LoadLocal(scopeSlot.Address);
+                    }
+                    // Duplicate for Ldfld (to get current value) while preserving instance for Stfld
+                    _il.OpCode(ILOpCode.Dup);
+                    _il.OpCode(ILOpCode.Ldfld);
+                    _il.Token(variable.FieldHandle);
+
+                    // Compute RHS as boxed object
+                    var prevAssignment = _owner.CurrentAssignmentTarget;
+                    _owner.CurrentAssignmentTarget = aid.Name;
+                    _ = Emit(assignmentExpression.Right, new TypeCoercion { boxResult = true });
+                    _owner.CurrentAssignmentTarget = prevAssignment;
+
+                    // Apply JS '+' semantics
+                    _owner.Runtime.InvokeOperatorsAdd();
+
+                    // Store back
+                    _il.OpCode(ILOpCode.Stfld);
+                    _il.Token(variable.FieldHandle);
+
+                    // Resulting type after '+=' is dynamic; assume object, but hint CLR string for string appends
+                    variable.Type = JavascriptType.Object;
+                    if (variable.RuntimeIntrinsicType == typeof(string))
+                    {
+                        // keep as string
+                    }
+                    else
+                    {
+                        // If RHS is a string literal or known CLR string, mark as string
+                        // (lightweight heuristic to aid subsequent string dispatch)
+                        try
+                        {
+                            if (assignmentExpression.Right is Acornima.Ast.StringLiteral)
+                                variable.RuntimeIntrinsicType = typeof(string);
+                        }
+                        catch { /* best-effort */ }
+                    }
+                    return JavascriptType.Object;
                 }
                 else
                 {
-                    _il.LoadLocal(scopeSlot.Address);
-                }
+                    // Simple assignment '='
+                    // Load scope instance
+                    if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
+                    {
+                        _il.LoadArgument(scopeSlot.Address);
+                    }
+                    else if (scopeSlot.Location == ObjectReferenceLocation.ScopeArray)
+                    {
+                        _il.LoadArgument(0); // Load scope array parameter
+                        _il.LoadConstantI4(scopeSlot.Address); // Load array index
+                        _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
+                    }
+                    else
+                    {
+                        _il.LoadLocal(scopeSlot.Address);
+                    }
 
-                var prevAssignment = _owner.CurrentAssignmentTarget;
-                _owner.CurrentAssignmentTarget = aid.Name;
-                var rhsResult = Emit(assignmentExpression.Right, typeCoercion);
-                _owner.CurrentAssignmentTarget = prevAssignment;
-                variable.Type = rhsResult.JsType;
-                variable.RuntimeIntrinsicType = rhsResult.ClrType;
-                _il.OpCode(ILOpCode.Stfld);
-                _il.Token(variable.FieldHandle);
-                return rhsResult.JsType;
+                    var prevAssignment = _owner.CurrentAssignmentTarget;
+                    _owner.CurrentAssignmentTarget = aid.Name;
+                    var rhsResult = Emit(assignmentExpression.Right, typeCoercion);
+                    _owner.CurrentAssignmentTarget = prevAssignment;
+                    variable.Type = rhsResult.JsType;
+                    variable.RuntimeIntrinsicType = rhsResult.ClrType;
+                    _il.OpCode(ILOpCode.Stfld);
+                    _il.Token(variable.FieldHandle);
+                    return rhsResult.JsType;
+                }
             }
             else if (_owner.InClassMethod && assignmentExpression.Left is MemberExpression me && me.Object is ThisExpression && !me.Computed && me.Property is Identifier pid)
             {

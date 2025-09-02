@@ -1,0 +1,69 @@
+// IL code: String_PlusEquals_Append
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.String_PlusEquals_Append
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field public object s
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method String_PlusEquals_Append::.ctor
+
+} // end of class Scopes.String_PlusEquals_Append
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x205c
+		// Header size: 12
+		// Code size: 61 (0x3d)
+		.maxstack 8
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.String_PlusEquals_Append::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldstr "foo"
+		IL_000c: stfld object Scopes.String_PlusEquals_Append::s
+		IL_0011: ldloc.0
+		IL_0012: dup
+		IL_0013: ldfld object Scopes.String_PlusEquals_Append::s
+		IL_0018: ldstr "bar"
+		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0022: stfld object Scopes.String_PlusEquals_Append::s
+		IL_0027: ldc.i4.1
+		IL_0028: newarr [System.Runtime]System.Object
+		IL_002d: dup
+		IL_002e: ldc.i4.0
+		IL_002f: ldloc.0
+		IL_0030: ldfld object Scopes.String_PlusEquals_Append::s
+		IL_0035: stelem.ref
+		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_003b: pop
+		IL_003c: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

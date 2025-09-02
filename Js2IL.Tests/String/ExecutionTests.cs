@@ -31,5 +31,11 @@ namespace Js2IL.Tests.String
         {
             return ExecutionTest(nameof(String_StartsWith_Basic));
         }
+
+        [Fact]
+        public Task String_PlusEquals_Append()
+        {
+            return ExecutionTest(nameof(String_PlusEquals_Append));
+        }
     }
 }
