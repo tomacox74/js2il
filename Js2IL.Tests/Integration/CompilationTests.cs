@@ -6,10 +6,26 @@ namespace Js2IL.Tests.Integration
 {
     public class CompilationTests
     {
-        [Fact(Skip = "Manual integration test: compiles scripts/generateFeatureCoverage.js; do not run in CI")]
+        [Fact(Skip = "Long-running integration test")]
         public void Compile_Scripts_GenerateFeatureCoverage()
         {
-            var repoRoot = Directory.GetCurrentDirectory();
+            // Resolve repo root by walking up from the test assembly directory
+            static string FindRepoRoot()
+            {
+                var dir = new DirectoryInfo(AppContext.BaseDirectory);
+                while (dir != null)
+                {
+                    if (File.Exists(Path.Combine(dir.FullName, "js2il.sln")) ||
+                        Directory.Exists(Path.Combine(dir.FullName, "scripts")))
+                    {
+                        return dir.FullName;
+                    }
+                    dir = dir.Parent;
+                }
+                throw new InvalidOperationException("Repository root not found from test base directory.");
+            }
+
+            var repoRoot = FindRepoRoot();
             var scriptPath = Path.Combine(repoRoot, "scripts", "generateFeatureCoverage.js");
             Assert.True(File.Exists(scriptPath), $"Script file not found: {scriptPath}");
 
