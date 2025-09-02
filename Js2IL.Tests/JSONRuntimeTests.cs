@@ -19,7 +19,7 @@ namespace Js2IL.Tests
             var dict = (IDictionary<string, object?>)obj;
             Assert.Equal(1d, dict["a"]);
             Assert.Equal(true, dict["b"]);
-            Assert.Null(dict["c"]);
+            Assert.Equal(JavaScriptRuntime.JsNull.Null, dict["c"]);
         }
 
         [Fact]
@@ -33,7 +33,7 @@ namespace Js2IL.Tests
             Assert.Equal(1d, arr[0]);
             Assert.Equal(true, arr[1]);
             Assert.Equal("x", arr[2]);
-            Assert.Null(arr[3]);
+            Assert.Equal(JavaScriptRuntime.JsNull.Null, arr[3]);
         }
 
         [Fact]

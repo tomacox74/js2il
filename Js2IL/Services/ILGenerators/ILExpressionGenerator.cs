@@ -860,8 +860,10 @@ namespace Js2IL.Services.ILGenerators
                     }
                     if (genericLiteral.Value is null)
                     {
-                        // JavaScript 'null'
-                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
+                        // JavaScript 'null' literal → box JavaScriptRuntime.JsNull.Null
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldc_i4_0);
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
+                        _il.Token(_owner.Runtime.GetRuntimeTypeHandle(typeof(JavaScriptRuntime.JsNull)));
                         type = JavascriptType.Null;
                         break;
                     }

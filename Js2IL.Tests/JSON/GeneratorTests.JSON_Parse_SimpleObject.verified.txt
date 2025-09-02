@@ -35,7 +35,7 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 114 (0x72)
+		// Code size: 158 (0x9e)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -76,10 +76,32 @@
 		IL_0053: ldfld object Scopes.JSON_Parse_SimpleObject::obj
 		IL_0058: ldstr "c"
 		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_0062: ldnull
-		IL_0063: ceq
-		IL_0065: box [System.Runtime]System.Boolean
-		IL_006a: stelem.ref
+		IL_0062: ldc.i4.0
+		IL_0063: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0068: pop
+		IL_0069: dup
+		IL_006a: ldnull
+		IL_006b: ceq
+		IL_006d: brtrue IL_008f
+
+		IL_0072: dup
+		IL_0073: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0078: ldnull
+		IL_0079: ceq
+		IL_007b: ldc.i4.0
+		IL_007c: ceq
+		IL_007e: brtrue IL_008f
+
+		IL_0083: pop
+		IL_0084: ldc.i4.0
+		IL_0085: box [System.Runtime]System.Boolean
+		IL_008a: br IL_0096
+
+		IL_008f: pop
+		IL_0090: ldc.i4.1
+		IL_0091: box [System.Runtime]System.Boolean
+
+		IL_0096: stelem.ref
 		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_0070: pop
 		IL_0071: ret

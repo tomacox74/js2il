@@ -303,7 +303,7 @@ namespace Js2IL.Services
             {
                 // Map JavaScriptRuntime reference types (e.g., JavaScriptRuntime.Array, JavaScriptRuntime.Node.Process)
                 var tref = GetRuntimeTypeRef(type.Namespace!, type.Name);
-                enc.Type(tref, isValueType: false);
+                enc.Type(tref, isValueType: type.IsValueType);
             }
             else throw new NotSupportedException($"Unsupported runtime signature type mapping: {type.FullName}");
         }
@@ -330,6 +330,14 @@ namespace Js2IL.Services
                 _metadataBuilder.GetOrAddString(typeName));
             _runtimeTypeCacheByNs[key] = tref;
             return tref;
+        }
+
+        // Public helper to get a type reference handle for a JavaScriptRuntime type
+        public TypeReferenceHandle GetRuntimeTypeHandle(Type runtimeType)
+        {
+            var ns = runtimeType.Namespace ?? "JavaScriptRuntime";
+            var tn = runtimeType.Name;
+            return GetRuntimeTypeRef(ns, tn);
         }
 
     public MemberReferenceHandle GetInstanceMethodRef(Type runtimeType, string methodName, Type returnType, params Type[] parameterTypes)
