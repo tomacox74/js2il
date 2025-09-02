@@ -8,7 +8,8 @@ namespace JavaScriptRuntime
         // Minimal typeof implementation for our runtime object shapes
         public static string Typeof(object? value)
         {
-            if (value is null) return "object"; // JS: typeof null === 'object'
+            // JS: typeof null === 'object'; in our model CLR null is 'undefined' and JsNull represents JS null.
+            if (value is null) return "undefined";
             switch (value)
             {
                 case string: return "string";
@@ -19,6 +20,7 @@ namespace JavaScriptRuntime
                 case long: return "number";
                 case short: return "number";
                 case byte: return "number";
+                case JsNull: return "object"; // JS null reports as 'object'
             }
             if (value is ExpandoObject) return "object";
             if (value is Array) return "object";

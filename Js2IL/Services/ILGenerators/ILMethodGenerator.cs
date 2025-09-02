@@ -270,6 +270,9 @@ namespace Js2IL.Services.ILGenerators
                 case ForStatement forStatement:
                     GenerateForStatement(forStatement);
                     break;
+                case ForOfStatement forOfStatement:
+                    GenerateForOfStatement(forOfStatement);
+                    break;
                 case WhileStatement whileStatement:
                     GenerateWhileStatement(whileStatement);
                     break;
@@ -523,6 +526,138 @@ namespace Js2IL.Services.ILGenerators
             _il.MarkLabel(loopEndLabel);
 
             // Pop loop context
+            _loopStack.Pop();
+        }
+
+    public void GenerateForOfStatement(Acornima.Ast.ForOfStatement forOf)
+        {
+            // Desugar: for (x of iterable) { body }
+            //   -> let iter = <Right>;
+            //      let len = Object.GetLength(iter);
+            //      let i = 0;
+            //      while (i < len) { let x = Object.GetItem(iter, i); body; i++; }
+
+            // Allocate labels
+            var loopStartLabel = _il.DefineLabel();
+            var loopBodyLabel = _il.DefineLabel();
+            var loopEndLabel = _il.DefineLabel();
+            var loopContinueLabel = _il.DefineLabel();
+
+            // Determine binding target name (const/let/identifier)
+            string? iterVarName = null;
+            bool bindTargetIsConst = false;
+            if (forOf.Left is VariableDeclaration vdecl && vdecl.Declarations.Count == 1 && vdecl.Declarations[0].Id is Identifier vid)
+            {
+                iterVarName = vid.Name;
+                bindTargetIsConst = (vdecl.Kind == VariableDeclarationKind.Const);
+            }
+            else if (forOf.Left is Identifier id)
+            {
+                iterVarName = id.Name;
+            }
+
+            // Allocate three temp locals: iter (object), len (boxed double), i (boxed double)
+            // Reuse block-scope local allocator to reserve object-typed local slots
+            int iterLocal = _variables.AllocateBlockScopeLocal($"ForOfTemp_Iter_L{forOf.Location.Start.Line}C{forOf.Location.Start.Column}");
+            int lenLocal = _variables.AllocateBlockScopeLocal($"ForOfTemp_Len_L{forOf.Location.Start.Line}C{forOf.Location.Start.Column}");
+            int idxLocal = _variables.AllocateBlockScopeLocal($"ForOfTemp_Idx_L{forOf.Location.Start.Line}C{forOf.Location.Start.Column}");
+
+            // Store iterable into iterLocal
+            _ = _expressionEmitter.Emit(forOf.Right, new TypeCoercion() { boxResult = true });
+            _il.StoreLocal(iterLocal);
+
+            // Compute length and store in lenLocal (boxed)
+            _il.LoadLocal(iterLocal);
+            _runtime.InvokeGetLengthFromObject();
+            _il.OpCode(ILOpCode.Box);
+            _il.Token(_bclReferences.DoubleType);
+            _il.StoreLocal(lenLocal);
+
+            // Initialize index = 0 (boxed)
+            _il.LoadConstantR8(0);
+            _il.OpCode(ILOpCode.Box);
+            _il.Token(_bclReferences.DoubleType);
+            _il.StoreLocal(idxLocal);
+
+            // Labels
+            _il.MarkLabel(loopStartLabel);
+            // Test: idx < len
+            _il.LoadLocal(idxLocal);
+            _il.OpCode(ILOpCode.Unbox_any);
+            _il.Token(_bclReferences.DoubleType);
+            _il.LoadLocal(lenLocal);
+            _il.OpCode(ILOpCode.Unbox_any);
+            _il.Token(_bclReferences.DoubleType);
+            _il.Branch(ILOpCode.Blt, loopBodyLabel);
+            _il.Branch(ILOpCode.Br, loopEndLabel);
+
+            // Push loop context: continue -> continueLabel, break -> end
+            _loopStack.Push(new LoopContext(loopContinueLabel, loopEndLabel));
+
+            // Body
+            _il.MarkLabel(loopBodyLabel);
+
+            // Bind current element to target variable
+            if (!string.IsNullOrEmpty(iterVarName))
+            {
+                // Load scope to store into
+                var targetVar = _variables.FindVariable(iterVarName);
+                if (targetVar == null)
+                {
+                    if (forOf.Left is VariableDeclaration vdecl2)
+                    {
+                        DeclareVariable(vdecl2);
+                        targetVar = _variables.FindVariable(iterVarName!);
+                    }
+                }
+                if (targetVar == null)
+                {
+                    throw new NotSupportedException($"for-of target '{iterVarName}' could not be resolved.");
+                }
+
+                // Guard const reassignment
+                if (bindTargetIsConst)
+                {
+                    // If already assigned earlier in loop iteration, we'll still allow first assignment; for simplicity, always allow
+                }
+
+                // Load target scope instance for stfld
+                var tslot = _variables.GetScopeLocalSlot(targetVar.ScopeName);
+                if (tslot.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(tslot.Address);
+                else if (tslot.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(tslot.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
+                else _il.LoadLocal(tslot.Address);
+
+                // Load iterable and index to get item
+                _il.LoadLocal(iterLocal);
+                // index
+                _il.LoadLocal(idxLocal);
+                _il.OpCode(ILOpCode.Unbox_any);
+                _il.Token(_bclReferences.DoubleType);
+                _runtime.InvokeGetItemFromObject();
+
+                // Store into target field
+                _il.OpCode(ILOpCode.Stfld);
+                _il.Token(targetVar.FieldHandle);
+            }
+
+            // Emit loop body
+            GenerateStatement(forOf.Body);
+
+            // continue label: increment index
+            _il.MarkLabel(loopContinueLabel);
+            // idx = (double)idx + 1
+            _il.LoadLocal(idxLocal);
+            _il.OpCode(ILOpCode.Unbox_any);
+            _il.Token(_bclReferences.DoubleType);
+            _il.LoadConstantR8(1);
+            _il.OpCode(ILOpCode.Add);
+            _il.OpCode(ILOpCode.Box);
+            _il.Token(_bclReferences.DoubleType);
+            _il.StoreLocal(idxLocal);
+
+            _il.Branch(ILOpCode.Br, loopStartLabel);
+
+            _il.MarkLabel(loopEndLabel);
             _loopStack.Pop();
         }
 
@@ -840,8 +975,8 @@ namespace Js2IL.Services.ILGenerators
                     }
                     else
                     {
-                        // Not returning a function; just evaluate the expression and return it (no binding, no scope instantiation)
-                        _ = childGen.ExpressionEmitter.Emit(initExpr, new TypeCoercion());
+                        // Not returning a function; evaluate and box primitives so the object return type is satisfied
+                        _ = childGen.ExpressionEmitter.Emit(initExpr, new TypeCoercion() { boxResult = true });
                         il.OpCode(ILOpCode.Ret);
                     }
                 }
@@ -892,7 +1027,7 @@ namespace Js2IL.Services.ILGenerators
             {
                 // Expression-bodied arrow: evaluate via the child generator's expression emitter to keep logic isolated
                 var bodyExpr = arrowFunction.Body as Expression ?? throw new NotSupportedException("Arrow function body is not an expression");
-                _ = childGen.ExpressionEmitter.Emit(bodyExpr, new TypeCoercion());
+                _ = childGen.ExpressionEmitter.Emit(bodyExpr, new TypeCoercion() { boxResult = true });
                 il.OpCode(ILOpCode.Ret);
             }
 

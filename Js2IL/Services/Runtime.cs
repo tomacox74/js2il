@@ -16,6 +16,7 @@ namespace Js2IL.Services
         private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCacheByNs = new(StringComparer.Ordinal);
         private readonly Dictionary<string, MemberReferenceHandle> _runtimeMethodCache = new(StringComparer.Ordinal);
         private MemberReferenceHandle _objectGetItem;
+    private MemberReferenceHandle _objectGetLength;
         private MemberReferenceHandle _arrayCtorRef;
         private MemberReferenceHandle _arrayLengthRef;
         private MemberReferenceHandle _closureBindObjectRef;
@@ -80,6 +81,12 @@ namespace Js2IL.Services
         {
             // we assume the object and index are already on the stack
             _il.Call(_objectGetItem);
+        }
+
+        public void InvokeGetLengthFromObject()
+        {
+            // we assume the object is already on the stack
+            _il.Call(_objectGetLength);
         }
 
         public void InvokeOperatorsAdd()
@@ -169,6 +176,20 @@ namespace Js2IL.Services
                 objectType,
                 _metadataBuilder.GetOrAddString("GetItem"),
                 objectGetItemSig);
+
+            // JavaScriptRuntime.Object.GetLength(object) -> double
+            var objectGetLengthSigBuilder = new BlobBuilder();
+            new BlobEncoder(objectGetLengthSigBuilder)
+                .MethodSignature(isInstanceMethod: false)
+                .Parameters(1, rt => rt.Type().Double(), p =>
+                {
+                    p.AddParameter().Type().Object();
+                });
+            var objectGetLengthSig = _metadataBuilder.GetOrAddBlob(objectGetLengthSigBuilder);
+            _objectGetLength = _metadataBuilder.AddMemberReference(
+                objectType,
+                _metadataBuilder.GetOrAddString("GetLength"),
+                objectGetLengthSig);
         }
 
         /// <summary>
@@ -297,7 +318,14 @@ namespace Js2IL.Services
             else if (type == typeof(string)) enc.String();
             else if (type == typeof(double)) enc.Double();
             else if (type == typeof(bool)) enc.Boolean();
+            else if (type == typeof(int)) enc.Int32();
             else if (type == typeof(object[])) enc.SZArray().Object();
+            else if (!string.IsNullOrEmpty(type.Namespace) && type.Namespace!.StartsWith("JavaScriptRuntime", StringComparison.Ordinal))
+            {
+                // Map JavaScriptRuntime reference types (e.g., JavaScriptRuntime.Array, JavaScriptRuntime.Node.Process)
+                var tref = GetRuntimeTypeRef(type.Namespace!, type.Name);
+                enc.Type(tref, isValueType: type.IsValueType);
+            }
             else throw new NotSupportedException($"Unsupported runtime signature type mapping: {type.FullName}");
         }
 
@@ -323,6 +351,14 @@ namespace Js2IL.Services
                 _metadataBuilder.GetOrAddString(typeName));
             _runtimeTypeCacheByNs[key] = tref;
             return tref;
+        }
+
+        // Public helper to get a type reference handle for a JavaScriptRuntime type
+        public TypeReferenceHandle GetRuntimeTypeHandle(Type runtimeType)
+        {
+            var ns = runtimeType.Namespace ?? "JavaScriptRuntime";
+            var tn = runtimeType.Name;
+            return GetRuntimeTypeRef(ns, tn);
         }
 
     public MemberReferenceHandle GetInstanceMethodRef(Type runtimeType, string methodName, Type returnType, params Type[] parameterTypes)

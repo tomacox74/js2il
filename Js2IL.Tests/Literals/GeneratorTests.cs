@@ -10,5 +10,6 @@ namespace Js2IL.Tests.Literals
         [Fact] public Task ArrayLiteral() { var testName = nameof(ArrayLiteral); return GenerateTest(testName); }
         [Fact] public Task ObjectLiteral() { var testName = nameof(ObjectLiteral); return GenerateTest(testName); }
         [Fact] public Task BooleanLiteral() { var testName = nameof(BooleanLiteral); return GenerateTest(testName); }
+        [Fact] public Task Array_Spread_Copy() { var testName = nameof(Array_Spread_Copy); return GenerateTest(testName); }
     }
 }

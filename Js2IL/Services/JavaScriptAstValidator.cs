@@ -39,8 +39,7 @@ public class JavaScriptAstValidator : IAstValidator
                     break;
 
                 case NodeType.SpreadElement:
-                    result.Errors.Add($"Spread operator is not yet supported (line {node.Location.Start.Line})");
-                    result.IsValid = false;
+                    // Allow spread; codegen handles it for array/object literals and calls.
                     break;
 
                 case NodeType.ArrowFunctionExpression:

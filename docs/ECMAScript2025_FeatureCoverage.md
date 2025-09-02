@@ -69,6 +69,7 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
 | Array literal basic construction | Supported | `Js2IL.Tests/JavaScript/ArrayLiteral.js` | Covers creation, element access, and length property. See also verified output in Literals/GeneratorTests.ArrayLiteral.verified.txt. | 13.2.4.1 |
+| Array literal spread (copy elements) | Supported | `Js2IL.Tests/JavaScript/Array_Spread_Copy.js` | Spread elements in array literals are emitted via JavaScriptRuntime.Array.PushRange; supports copying from another array. | 13.2.4.1 |
 
 
 ### [Object Initializer (ObjectLiteral)](https://tc39.es/ecma262/#sec-object-initializer)
@@ -184,6 +185,15 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Conditional operator (?:) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_Conditional_Ternary.js` | Expression-level branching with both arms coerced to object where needed. Verified via generator and execution tests in ControlFlow subgroup. | 13.5.16 |
 
 
+### [Assignment Operators](https://tc39.es/ecma262/#sec-assignment-operators)
+
+#### [Assignment Operators (+=, -=, ...)](https://tc39.es/ecma262/#sec-assignment-operators)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Compound assignment += with strings | Supported | `Js2IL.Tests/JavaScript/String_PlusEquals_Append.js` | += on identifiers uses JavaScriptRuntime.Operators.Add for JS coercion and stores back to the same binding; validated by generator snapshot. | 13.15.2 |
+
+
 ## [ECMAScript Language: Statements and Declarations](https://tc39.es/ecma262/#sec-ecmascript-language-statements-and-declarations)
 
 ### [The if Statement](https://tc39.es/ecma262/#sec-if-statement)
@@ -233,6 +243,15 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | for loop: break | Supported | `Js2IL.Tests/JavaScript/ControlFlow_ForLoop_Break_AtThree.js` | Implements break by branching to loop end label (LoopContext). | 14.7.4.2 |
 
 
+### [The for-of Statement](https://tc39.es/ecma262/#sec-for-in-and-for-of-statements)
+
+#### [Runtime Semantics: ForInOfBodyEvaluation (for-of)](https://tc39.es/ecma262/#sec-runtime-semantics-forinofbodyevaluation)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| for-of over arrays (enumerate values) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_ForOf_Array_Basic.js` | Emitted by indexing iterable via JavaScriptRuntime.Object.GetLength(object) and GetItem(object, double); uses object locals for iterator state. | 14.7.5.1 |
+
+
 ### [The try Statement](https://tc39.es/ecma262/#sec-try-statement)
 
 #### [Runtime Semantics: TryStatement Evaluation](https://tc39.es/ecma262/#sec-try-statement)
@@ -270,7 +289,7 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Array.length property (read) | Supported | `Js2IL.Tests/JavaScript/Array_LengthProperty_ReturnsCount.js`<br>`Js2IL.Tests/JavaScript/Array_EmptyLength_IsZero.js` | length getter returns number of elements; emitted via JavaScriptRuntime.Object.GetLength(object). | 23.1.2.1 |
+| Array.length property (read) | Supported | `Js2IL.Tests/JavaScript/Array_LengthProperty_ReturnsCount.js`<br>`Js2IL.Tests/JavaScript/Array_EmptyLength_IsZero.js` | length getter returns number of elements; emitted via JavaScriptRuntime.Object.GetLength(object). Used by for-of implementation. | 23.1.2.1 |
 
 
 #### [Array.prototype.map](https://tc39.es/ecma262/#sec-array.prototype.map)
@@ -291,11 +310,25 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 ### [String Objects](https://tc39.es/ecma262/#sec-string-objects)
 
+#### [String.prototype.startsWith](https://tc39.es/ecma262/#sec-string.prototype.startswith)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| String.prototype.startsWith | Supported | `Js2IL.Tests/JavaScript/String_StartsWith_Basic.js` | Reflection-based string dispatch routes CLR string receivers to JavaScriptRuntime.String.StartsWith with optional position argument. | 24.1.3 |
+
+
 #### [String.prototype.replace](https://tc39.es/ecma262/#sec-string.prototype.replace)
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
 | String.prototype.replace (regex literal, string replacement) | Partially Supported | `Js2IL.Tests/JavaScript/String_Replace_Regex_Global.js` | Supported when the receiver is String(x), the pattern is a regular expression literal, and the replacement is a string. Global (g) and ignoreCase (i) flags are honored. Function replacement, non-regex patterns, and other flags are not yet implemented. Implemented via host intrinsic JavaScriptRuntime.String.Replace and dynamic resolution in IL generator. | 24.1.3 |
+
+
+#### [String.prototype.localeCompare](https://tc39.es/ecma262/#sec-string.prototype.localecompare)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| String.prototype.localeCompare (numeric compare) | Supported | `Js2IL.Tests/JavaScript/String_LocaleCompare_Numeric.js` | Returns a number (double) for comparator functions; used by Array.sort comparator tests. | 24.1.4 |
 
 
 ### [JSON Object](https://tc39.es/ecma262/#sec-json-object)

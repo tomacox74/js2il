@@ -21,5 +21,36 @@ namespace Js2IL.Tests.Node
                     var temp = Path.GetTempPath().Replace('\\', '/');
                     s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
                 });
+
+        [Fact]
+        public Task Environment_EnumerateProcessArgV()
+            => ExecutionTest(
+                nameof(Environment_EnumerateProcessArgV),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                    // CI adds dynamic args (e.g., --port, --endpoint). Keep only argv[0] for stable snapshot.
+                    s.AddScrubber(sb =>
+                    {
+                        var text = sb.ToString();
+                        var nl = text.IndexOf('\n');
+                        var firstLine = nl >= 0 ? text.Substring(0, nl + 1) : text;
+                        sb.Clear();
+                        sb.Append(firstLine);
+                    });
+                });
+
+        [Fact]
+        public Task FS_ReadWrite_Utf8()
+            => ExecutionTest(
+                nameof(FS_ReadWrite_Utf8),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
     }
 }

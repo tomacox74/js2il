@@ -63,7 +63,8 @@ namespace JavaScriptRuntime
                     return false;
 
                 case JsonValueKind.Null:
-                    return null;
+                    // Represent JavaScript null distinctly from CLR null (undefined)
+                    return JsNull.Null;
 
                 default:
                     // JSON doesn't produce Undefined; treat anything else as null

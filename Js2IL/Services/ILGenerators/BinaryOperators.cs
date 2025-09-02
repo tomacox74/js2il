@@ -199,6 +199,89 @@ namespace Js2IL.Services.ILGenerators
                 }
                 bool identifiersPair = binaryExpression.Left is Identifier && binaryExpression.Right is Identifier;
                 bool preferNumeric = plus && (leftType == JavascriptType.Number && rightType == JavascriptType.Number || identifiersPair || likelyNumericSyntax);
+                // Special-case: comparing to JS null literal. Our emitter pushes a boxed JavaScriptRuntime.JsNull for null literals.
+                // We want (left == nullLiteral) to be true when left is either CLR null (undefined in our model) OR boxed JsNull.
+                if (equality && binaryExpression.Right is Acornima.Ast.Literal rNull && rNull.Value is null)
+                {
+                    // Stack currently: [left][right(Boxed JsNull)]
+                    // Discard the literal and check left
+                    _il.OpCode(ILOpCode.Pop); // pop right
+                    if (branching == null)
+                    {
+                        var trueLbl = new LabelHandle();
+                        var endLbl = new LabelHandle();
+                        trueLbl = _il.DefineLabel();
+                        endLbl = _il.DefineLabel();
+
+                        // if (left == null) goto true
+                        _il.OpCode(ILOpCode.Dup);
+                        _il.OpCode(ILOpCode.Ldnull);
+                        _il.OpCode(ILOpCode.Ceq);
+                        _il.Branch(ILOpCode.Brtrue, trueLbl);
+
+                        // else if (left is JsNull) goto true
+                        var jsNullTypeRef = _runtime.GetRuntimeTypeHandle(typeof(JavaScriptRuntime.JsNull));
+                        _il.OpCode(ILOpCode.Dup);
+                        _il.OpCode(ILOpCode.Isinst);
+                        _il.Token(jsNullTypeRef);
+                        _il.OpCode(ILOpCode.Ldnull);
+                        _il.OpCode(ILOpCode.Ceq);
+                        _il.OpCode(ILOpCode.Ldc_i4_0);
+                        _il.OpCode(ILOpCode.Ceq);
+                        _il.Branch(ILOpCode.Brtrue, trueLbl);
+
+                        // else: false
+                        _il.OpCode(ILOpCode.Pop); // pop left
+                        _il.OpCode(ILOpCode.Ldc_i4_0);
+                        _il.OpCode(ILOpCode.Box);
+                        _il.Token(_bclReferences.BooleanType);
+                        _il.Branch(ILOpCode.Br, endLbl);
+
+                        // true path
+                        _il.MarkLabel(trueLbl);
+                        _il.OpCode(ILOpCode.Pop); // pop left
+                        _il.OpCode(ILOpCode.Ldc_i4_1);
+                        _il.OpCode(ILOpCode.Box);
+                        _il.Token(_bclReferences.BooleanType);
+
+                        _il.MarkLabel(endLbl);
+                    }
+                    else
+                    {
+                        // Branching form: branch to true if left == null or left is JsNull; else branch to false or pop
+                        var trueLbl = branching.BranchOnTrue;
+                        var falseLbl = branching.BranchOnFalse;
+
+                        // if (left == null) goto true
+                        _il.OpCode(ILOpCode.Dup);
+                        _il.OpCode(ILOpCode.Ldnull);
+                        _il.OpCode(ILOpCode.Ceq);
+                        _il.Branch(ILOpCode.Brtrue, trueLbl);
+
+                        // else if (left is JsNull) goto true
+                        var jsNullTypeRef = _runtime.GetRuntimeTypeHandle(typeof(JavaScriptRuntime.JsNull));
+                        _il.OpCode(ILOpCode.Dup);
+                        _il.OpCode(ILOpCode.Isinst);
+                        _il.Token(jsNullTypeRef);
+                        _il.OpCode(ILOpCode.Ldnull);
+                        _il.OpCode(ILOpCode.Ceq);
+                        _il.OpCode(ILOpCode.Ldc_i4_0);
+                        _il.OpCode(ILOpCode.Ceq);
+                        _il.Branch(ILOpCode.Brtrue, trueLbl);
+
+                        // else: not equal
+                        _il.OpCode(ILOpCode.Pop); // pop left
+                        if (falseLbl.HasValue)
+                        {
+                            _il.Branch(ILOpCode.Br, falseLbl.Value);
+                        }
+                        else
+                        {
+                            // No false target: discard and continue
+                        }
+                    }
+                    return;
+                }
                 if (equality)
                 {
                     if (rightType == JavascriptType.Number)
@@ -231,6 +314,12 @@ namespace Js2IL.Services.ILGenerators
                             {
                                 _il.OpCode(ILOpCode.Box);
                                 _il.Token(_bclReferences.DoubleType);
+                            }
+                            // If left is boolean, also box to keep object ref compare consistent
+                            else if (leftType == JavascriptType.Boolean)
+                            {
+                                _il.OpCode(ILOpCode.Box);
+                                _il.Token(_bclReferences.BooleanType);
                             }
                             // No further coercion for null compare
                         }

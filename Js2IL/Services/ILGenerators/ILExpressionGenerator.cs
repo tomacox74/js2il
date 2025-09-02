@@ -61,7 +61,19 @@ namespace Js2IL.Services.ILGenerators
                 case CallExpression callExpression:
                     // Delegate call emission to local helper (migrated from ILMethodGenerator)
                     clrType = GenerateCallExpression(callExpression, context);
-                    javascriptType = JavascriptType.Object;
+                    // Infer JS type from known CLR return when available to allow boxing and conditional branching
+                    if (clrType == typeof(double))
+                    {
+                        javascriptType = JavascriptType.Number;
+                    }
+                    else if (clrType == typeof(bool))
+                    {
+                        javascriptType = JavascriptType.Boolean;
+                    }
+                    else
+                    {
+                        javascriptType = JavascriptType.Object;
+                    }
                     break;
                 case ArrowFunctionExpression arrowFunction:
                     {
@@ -154,6 +166,7 @@ namespace Js2IL.Services.ILGenerators
                             _runtime.InvokeOperatorsAdd();
                         }
                         javascriptType = JavascriptType.Object;
+                        clrType = typeof(string);
                     }
                     break;
                 case ConditionalExpression cond:
@@ -179,28 +192,50 @@ namespace Js2IL.Services.ILGenerators
                 case Identifier identifier:
                     {
                         var name = identifier.Name;
-                        if (string.Equals(name, "__dirname", StringComparison.Ordinal) || string.Equals(name, "__filename", StringComparison.Ordinal))
+                        var localVar = _variables.FindVariable(name);
+                        if (localVar != null)
                         {
-                            var getterName = "get_" + name;
-                            var getterRef = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Node.GlobalVariables), getterName, typeof(string));
-                            _il.Call(getterRef);
-                            typeCoercion.boxResult = false;
-                            javascriptType = JavascriptType.Object;
-                        }
-                        else
-                        {
-                            var variable = _variables.FindVariable(name) ?? throw new InvalidOperationException($"Variable '{name}' not found.");
-                            _binaryOperators.LoadVariable(variable);
-                            if (variable.Type == JavascriptType.Number && !typeCoercion.boxResult)
+                            _binaryOperators.LoadVariable(localVar);
+                            if (localVar.Type == JavascriptType.Number && !typeCoercion.boxResult)
                             {
                                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
-                                _il.Token(_bclReferences.DoubleType);
+                                _il.Token(_owner.BclReferences.DoubleType);
                             }
                             else
                             {
                                 typeCoercion.boxResult = false;
                             }
-                            javascriptType = variable.Type;
+                            javascriptType = localVar.Type;
+                        }
+                        else
+                        {
+                            // If not a local variable, attempt to resolve a public static property on GlobalVariables at compile-time
+                            var gvType = typeof(JavaScriptRuntime.Node.GlobalVariables);
+                            var prop = gvType.GetProperty(name, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
+                            if (prop != null && prop.GetMethod != null)
+                            {
+                                var getter = prop.GetMethod;
+                                var mref = _runtime.GetStaticMethodRef(gvType, getter.Name, getter.ReturnType);
+                                _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
+                                _il.Token(mref);
+                                typeCoercion.boxResult = false;
+                                javascriptType = JavascriptType.Object;
+                                clrType = prop.PropertyType;
+                            }
+                            else
+                            {
+                                // Fallback: dynamic lookup (legacy). This should be avoided for known globals.
+                                var getGlobal = _runtime.GetStaticMethodRef(
+                                    typeof(JavaScriptRuntime.Node.GlobalVariables),
+                                    nameof(JavaScriptRuntime.Node.GlobalVariables.Get),
+                                    typeof(object),
+                                    typeof(string));
+                                _il.Ldstr(_metadataBuilder, name);
+                                _il.Call(getGlobal);
+                                typeCoercion.boxResult = false;
+                                javascriptType = JavascriptType.Object;
+                                clrType = null;
+                            }
                         }
                     }
                     break;
@@ -263,77 +298,10 @@ namespace Js2IL.Services.ILGenerators
             // General member call: obj.method(...)
             if (callExpression.Callee is Acornima.Ast.MemberExpression mem && !mem.Computed && mem.Property is Acornima.Ast.Identifier mname)
             {
-                // Pattern support: String(x).replace(/pattern/flags, replacement)
-                if (string.Equals(mname.Name, "replace", StringComparison.Ordinal) && mem.Object is Acornima.Ast.CallExpression strCall && strCall.Callee is Acornima.Ast.Identifier sid && string.Equals(sid.Name, "String", StringComparison.Ordinal))
+                // If the receiver is definitely a string, route to a dedicated string-method emitter
+                if (IsDefinitelyString(mem.Object))
                 {
-                    // Expect exactly: String(arg0).replace(regex, replacement)
-                    if (strCall.Arguments.Count != 1 || callExpression.Arguments.Count != 2)
-                    {
-                        throw new NotSupportedException("Only replace(regex, string) with a single String(arg) receiver is supported");
-                    }
-                    // Extract regex pattern and flags from AST via reflection to avoid taking a hard dependency on node types
-                    string? pattern = null;
-                    string? flags = null;
-                    var rxNode = callExpression.Arguments[0];
-                    {
-                        var rxType = rxNode?.GetType();
-                        if (rxType != null)
-                        {
-                            // Try nested Regex property (Literal.regex.{pattern,flags}) – case-insensitive
-                            object? regexObj = ILExpressionGenerator.GetPropertyIgnoreCase(rxNode!, "Regex")?.GetValue(rxNode!);
-                            if (regexObj != null)
-                            {
-                                pattern = ILExpressionGenerator.GetPropertyIgnoreCase(regexObj, "Pattern")?.GetValue(regexObj) as string;
-                                flags = ILExpressionGenerator.GetPropertyIgnoreCase(regexObj, "Flags")?.GetValue(regexObj) as string;
-                            }
-
-                            // Fallback: direct properties on the node (Pattern/Flags) – case-insensitive
-                            pattern ??= ILExpressionGenerator.GetPropertyIgnoreCase(rxNode!, "Pattern")?.GetValue(rxNode) as string;
-                            flags ??= ILExpressionGenerator.GetPropertyIgnoreCase(rxNode!, "Flags")?.GetValue(rxNode) as string;
-
-                            // Final fallback: parse Raw string like '/pattern/flags'
-                            if (string.IsNullOrEmpty(pattern))
-                            {
-                                var raw = ILExpressionGenerator.GetPropertyIgnoreCase(rxNode!, "Raw")?.GetValue(rxNode) as string;
-                                if (!string.IsNullOrEmpty(raw))
-                                {
-                                    (pattern, flags) = ILExpressionGenerator.ParseRegexRaw(raw!);
-                                }
-                            }
-                        }
-                    }
-                    if (string.IsNullOrEmpty(pattern))
-                    {
-                        throw new NotSupportedException("Regex literal pattern not found for String(x).replace");
-                    }
-                    var global = !string.IsNullOrEmpty(flags) && flags!.IndexOf('g') >= 0;
-                    var ignoreCase = !string.IsNullOrEmpty(flags) && flags!.IndexOf('i') >= 0;
-
-                    // Stack: [input, pattern, replacement, global, ignoreCase]
-                    // input = ToString(arg0)
-                    _ = Emit(strCall.Arguments[0], new TypeCoercion() { toString = true });
-                    // pattern
-                    _il.Ldstr(_metadataBuilder, pattern!);
-                    // replacement as string
-                    _ = Emit(callExpression.Arguments[1], new TypeCoercion() { toString = true });
-                    // booleans
-                    _il.LoadConstantI4(global ? 1 : 0);
-                    _il.LoadConstantI4(ignoreCase ? 1 : 0);
-
-                    // Resolve JavaScriptRuntime.String.Replace dynamically like console.log
-                    var stringType = JavaScriptRuntime.IntrinsicObjectRegistry.Get("String")
-                        ?? throw new NotSupportedException("Host intrinsic 'String' not found");
-                    var replaceMethod = stringType
-                        .GetMethods(BindingFlags.Public | BindingFlags.Static)
-                        .FirstOrDefault(mi => string.Equals(mi.Name, "Replace", StringComparison.Ordinal)
-                                              && mi.GetParameters().Length == 5);
-                    if (replaceMethod == null)
-                    {
-                        throw new NotSupportedException("Host intrinsic method not found: String.Replace(input, pattern, replacement, global, ignoreCase)");
-                    }
-                    var mref = _owner.Runtime.GetStaticMethodRef(stringType, replaceMethod.Name, replaceMethod.ReturnType, replaceMethod.GetParameters().Select(p => p.ParameterType).ToArray());
-                    _il.Call(mref);
-                    return null;
+                    return EmitStringInstanceMethodCall(mem.Object, mname.Name, callExpression);
                 }
                 if (mem.Object is Acornima.Ast.Identifier baseId)
                 {
@@ -360,6 +328,11 @@ namespace Js2IL.Services.ILGenerators
                     var baseVar = _variables.FindVariable(baseId.Name);
                     if (baseVar != null)
                     {
+                        // If the variable is known to be a CLR string, route to the string instance helper
+                        if (baseVar.RuntimeIntrinsicType == typeof(string))
+                        {
+                            return EmitStringInstanceMethodCall(mem.Object, mname.Name, callExpression);
+                        }
                         // Step 2: Is it an object/class instance? Try intrinsic first, then class instance fallback
                         if (TryEmitIntrinsicInstanceCall(baseVar, mname.Name, callExpression))
                         {
@@ -485,6 +458,187 @@ namespace Js2IL.Services.ILGenerators
             return true;
         }
 
+        // Lightweight compile-time analyzer: return true only when the expression is unambiguously a string
+        private static bool IsDefinitelyString(Expression expr)
+        {
+            if (expr is StringLiteral) return true;
+            if (expr is TemplateLiteral) return true;
+            if (expr is CallExpression ce && ce.Callee is Identifier id && string.Equals(id.Name, "String", StringComparison.Ordinal) && ce.Arguments.Count == 1)
+                return true;
+            return false;
+        }
+
+        // Centralized emitter for string instance methods using reflection-based dispatch.
+        private Type? EmitStringInstanceMethodCall(Expression receiver, string methodName, CallExpression callExpression)
+        {
+            var _runtime = _owner.Runtime;
+            var _bclReferences = _owner.BclReferences;
+
+            // Push receiver coerced to string (first param in all runtime String methods)
+            _ = Emit(receiver, new TypeCoercion { toString = true });
+
+            var stringType = JavaScriptRuntime.IntrinsicObjectRegistry.Get("String")
+                ?? throw new NotSupportedException("Host intrinsic 'String' not found");
+
+            // Gather candidate methods by name (case-insensitive to map JS camelCase to CLR PascalCase like LocaleCompare)
+            var candidates = stringType
+                .GetMethods(BindingFlags.Public | BindingFlags.Static)
+                .Where(m => string.Equals(m.Name, methodName, StringComparison.OrdinalIgnoreCase))
+                .Where(m => m.GetParameters().Length >= 1 && m.GetParameters()[0].ParameterType == typeof(string))
+                .ToList();
+
+            if (candidates.Count == 0)
+            {
+                throw new NotSupportedException($"Host intrinsic method not found: String.{methodName}");
+            }
+
+            // Pre-detect regex literal in arg0 to optionally enable an expanded signature binding
+            bool hasRegex = false; string? regexPattern = null; bool regexGlobal = false; bool regexIgnoreCase = false;
+            if (callExpression.Arguments.Count >= 1 && callExpression.Arguments[0] is Literal lit)
+            {
+                var rawProp = GetPropertyIgnoreCase(lit, "Raw");
+                if (rawProp != null)
+                {
+                    var rawObj = rawProp.GetValue(lit);
+                    var raw = rawObj as string ?? rawObj?.ToString() ?? string.Empty;
+                    var (pattern, flags) = ParseRegexRaw(raw);
+                    if (pattern != null)
+                    {
+                        hasRegex = true;
+                        regexPattern = pattern;
+                        regexGlobal = flags != null && flags.Contains('g');
+                        regexIgnoreCase = flags != null && flags.Contains('i');
+                    }
+                }
+            }
+
+            int argCount = callExpression.Arguments.Count;
+
+            MethodInfo? chosen = null;
+            bool useRegexExpansion = false;
+
+            // 1) Prefer regex expansion when a regex literal is present and a 5-arg pattern exists
+            if (hasRegex)
+            {
+                var regexMatches = candidates.Where(m =>
+                {
+                    var ps = m.GetParameters();
+                    if (ps.Length != 5) return false;
+                    // (string receiver, string pattern, string replacement, bool global, bool ignoreCase)
+                    return ps[0].ParameterType == typeof(string)
+                        && ps[1].ParameterType == typeof(string)
+                        && ps[2].ParameterType == typeof(string)
+                        && ps[3].ParameterType == typeof(bool)
+                        && ps[4].ParameterType == typeof(bool);
+                }).ToList();
+                if (regexMatches.Count > 0 && argCount == 2)
+                {
+                    chosen = regexMatches.First();
+                    useRegexExpansion = true;
+                }
+            }
+
+            // 2) If not using regex expansion, find a method we can call with provided args and pad missing optionals
+            if (chosen == null)
+            {
+                // Prefer the smallest parameter count that can accept the provided args (>= 1 + argCount)
+                var viable = candidates
+                    .Where(m => m.GetParameters().Length >= 1 + argCount)
+                    .OrderBy(m => m.GetParameters().Length)
+                    .ToList();
+
+                if (viable.Count == 0)
+                {
+                    // Fallback to exact arity if none accept padding
+                    viable = candidates.Where(m => m.GetParameters().Length == 1 + argCount).ToList();
+                }
+
+                if (viable.Count > 0)
+                {
+                    // Among viable, prefer more specific parameter types over object
+                    chosen = viable
+                        .OrderByDescending(m => m.GetParameters().Skip(1).Take(argCount).Count(p => p.ParameterType != typeof(object)))
+                        .First();
+                }
+            }
+
+            if (chosen == null)
+            {
+                throw new NotSupportedException($"No compatible overload found for String.{methodName} with {argCount} argument(s)");
+            }
+
+            // Emit arguments based on the chosen parameters
+            var chosenParams = chosen.GetParameters();
+            if (useRegexExpansion)
+            {
+                // Expect 2 JS args: pattern (regex literal), replacement; expand to (pattern string, replacement string, bool g, bool i)
+                if (!hasRegex || regexPattern is null || argCount != 2)
+                {
+                    throw new NotSupportedException("Regex expansion requires a regex literal as first argument and exactly 2 JS arguments.");
+                }
+                // pattern
+                _il.Ldstr(_owner.MetadataBuilder, regexPattern);
+                // replacement coerced to string
+                _ = Emit(callExpression.Arguments[1], new TypeCoercion { toString = true });
+                // flags
+                _il.LoadConstantI4(regexGlobal ? 1 : 0);
+                _il.LoadConstantI4(regexIgnoreCase ? 1 : 0);
+            }
+            else
+            {
+                // For each JS argument, coerce based on parameter type
+                for (int i = 0; i < argCount; i++)
+                {
+                    var targetParamType = chosenParams[i + 1].ParameterType;
+                    if (targetParamType == typeof(string))
+                    {
+                        _ = Emit(callExpression.Arguments[i], new TypeCoercion { toString = true });
+                    }
+                    else if (targetParamType == typeof(bool))
+                    {
+                        var arg = callExpression.Arguments[i];
+                        if (arg is BooleanLiteral bl)
+                        {
+                            _il.LoadConstantI4(bl.Value ? 1 : 0);
+                        }
+                        else if (arg is Literal glit && glit.Value is bool bv)
+                        {
+                            _il.LoadConstantI4(bv ? 1 : 0);
+                        }
+                        else
+                        {
+                            _il.LoadConstantI4(0);
+                        }
+                    }
+                    else
+                    {
+                        _ = Emit(callExpression.Arguments[i], new TypeCoercion { boxResult = true });
+                    }
+                }
+
+                // Pad any remaining parameters with defaults: null for ref types; false for bool
+                for (int pi = 1 + argCount; pi < chosenParams.Length; pi++)
+                {
+                    var pt = chosenParams[pi].ParameterType;
+                    if (pt == typeof(bool))
+                    {
+                        _il.LoadConstantI4(0);
+                    }
+                    else
+                    {
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
+                    }
+                }
+            }
+
+            // Emit the call
+            var mref = _runtime.GetStaticMethodRef(stringType, chosen.Name, chosen.ReturnType, chosenParams.Select(p => p.ParameterType).ToArray());
+            _il.Call(mref);
+
+            // Return CLR type for downstream typing
+            return chosen.ReturnType;
+        }
+
         /// <summary>
         /// Attempts to emit an instance method call on a runtime intrinsic object (e.g., require('path') -> Path).
         /// Returns true if the call was emitted; otherwise false.
@@ -587,6 +741,17 @@ namespace Js2IL.Services.ILGenerators
                 if (arg0 is StringLiteral s) mod = s.Value;
                 else if (arg0 is Literal glit && glit.Value is string gs) mod = gs;
                 return ResolveNodeModuleType(mod ?? string.Empty);
+            }
+
+            // Global String(x) conversion support
+            if (string.Equals(identifier.Name, "String", StringComparison.Ordinal))
+            {
+                if (callExpression.Arguments.Count != 1)
+                {
+                    throw new ArgumentException("String() expects exactly one argument");
+                }
+                _ = Emit(callExpression.Arguments[0], new TypeCoercion() { toString = true });
+                return typeof(string);
             }
 
             var functionVariable = _variables.FindVariable(identifier.Name);
@@ -838,8 +1003,10 @@ namespace Js2IL.Services.ILGenerators
                     }
                     if (genericLiteral.Value is null)
                     {
-                        // JavaScript 'null'
-                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
+                        // JavaScript 'null' literal → box JavaScriptRuntime.JsNull.Null
+                        _il.LoadConstantI4((int)JavaScriptRuntime.JsNull.Null);
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
+                        _il.Token(_owner.Runtime.GetRuntimeTypeHandle(typeof(JavaScriptRuntime.JsNull)));
                         type = JavascriptType.Null;
                         break;
                     }
@@ -876,31 +1043,93 @@ namespace Js2IL.Services.ILGenerators
                 {
                     throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
                 }
-                // Load scope instance
-                if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
+                // Determine if this is a compound assignment (e.g., +=)
+                var opName = assignmentExpression.Operator.ToString();
+
+                if (string.Equals(opName, "AdditionAssignment", StringComparison.Ordinal))
                 {
-                    _il.LoadArgument(scopeSlot.Address);
-                }
-                else if (scopeSlot.Location == ObjectReferenceLocation.ScopeArray)
-                {
-                    _il.LoadArgument(0); // Load scope array parameter
-                    _il.LoadConstantI4(scopeSlot.Address); // Load array index
-                    _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
+                    // Pattern: target = target + <rhs> using JS semantics via Operators.Add
+                    // Load scope instance for store
+                    if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
+                    {
+                        _il.LoadArgument(scopeSlot.Address);
+                    }
+                    else if (scopeSlot.Location == ObjectReferenceLocation.ScopeArray)
+                    {
+                        _il.LoadArgument(0);
+                        _il.LoadConstantI4(scopeSlot.Address);
+                        _il.OpCode(ILOpCode.Ldelem_ref);
+                    }
+                    else
+                    {
+                        _il.LoadLocal(scopeSlot.Address);
+                    }
+                    // Duplicate for Ldfld (to get current value) while preserving instance for Stfld
+                    _il.OpCode(ILOpCode.Dup);
+                    _il.OpCode(ILOpCode.Ldfld);
+                    _il.Token(variable.FieldHandle);
+
+                    // Compute RHS as boxed object
+                    var prevAssignment = _owner.CurrentAssignmentTarget;
+                    _owner.CurrentAssignmentTarget = aid.Name;
+                    _ = Emit(assignmentExpression.Right, new TypeCoercion { boxResult = true });
+                    _owner.CurrentAssignmentTarget = prevAssignment;
+
+                    // Apply JS '+' semantics
+                    _owner.Runtime.InvokeOperatorsAdd();
+
+                    // Store back
+                    _il.OpCode(ILOpCode.Stfld);
+                    _il.Token(variable.FieldHandle);
+
+                    // Resulting type after '+=' is dynamic; assume object, but hint CLR string for string appends
+                    variable.Type = JavascriptType.Object;
+                    if (variable.RuntimeIntrinsicType == typeof(string))
+                    {
+                        // keep as string
+                    }
+                    else
+                    {
+                        // If RHS is a string literal or known CLR string, mark as string
+                        // (lightweight heuristic to aid subsequent string dispatch)
+                        try
+                        {
+                            if (assignmentExpression.Right is Acornima.Ast.StringLiteral)
+                                variable.RuntimeIntrinsicType = typeof(string);
+                        }
+                        catch { /* best-effort */ }
+                    }
+                    return JavascriptType.Object;
                 }
                 else
                 {
-                    _il.LoadLocal(scopeSlot.Address);
-                }
+                    // Simple assignment '='
+                    // Load scope instance
+                    if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
+                    {
+                        _il.LoadArgument(scopeSlot.Address);
+                    }
+                    else if (scopeSlot.Location == ObjectReferenceLocation.ScopeArray)
+                    {
+                        _il.LoadArgument(0); // Load scope array parameter
+                        _il.LoadConstantI4(scopeSlot.Address); // Load array index
+                        _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
+                    }
+                    else
+                    {
+                        _il.LoadLocal(scopeSlot.Address);
+                    }
 
-                var prevAssignment = _owner.CurrentAssignmentTarget;
-                _owner.CurrentAssignmentTarget = aid.Name;
-                var rhsResult = Emit(assignmentExpression.Right, typeCoercion);
-                _owner.CurrentAssignmentTarget = prevAssignment;
-                variable.Type = rhsResult.JsType;
-                variable.RuntimeIntrinsicType = rhsResult.ClrType;
-                _il.OpCode(ILOpCode.Stfld);
-                _il.Token(variable.FieldHandle);
-                return rhsResult.JsType;
+                    var prevAssignment = _owner.CurrentAssignmentTarget;
+                    _owner.CurrentAssignmentTarget = aid.Name;
+                    var rhsResult = Emit(assignmentExpression.Right, typeCoercion);
+                    _owner.CurrentAssignmentTarget = prevAssignment;
+                    variable.Type = rhsResult.JsType;
+                    variable.RuntimeIntrinsicType = rhsResult.ClrType;
+                    _il.OpCode(ILOpCode.Stfld);
+                    _il.Token(variable.FieldHandle);
+                    return rhsResult.JsType;
+                }
             }
             else if (_owner.InClassMethod && assignmentExpression.Left is MemberExpression me && me.Object is ThisExpression && !me.Computed && me.Property is Identifier pid)
             {
@@ -915,6 +1144,23 @@ namespace Js2IL.Services.ILGenerators
                 _il.OpCode(ILOpCode.Stfld);
                 _il.Token(fieldHandle);
                 return JavascriptType.Object;
+            }
+        else if (assignmentExpression.Left is MemberExpression mex && !mex.Computed && mex.Property is Identifier propId2 && propId2.Name == "exitCode")
+            {
+                // <base>.exitCode = <expr> ; if base is Process
+                var baseRes = Emit(mex.Object, new TypeCoercion());
+                if (baseRes.ClrType == typeof(JavaScriptRuntime.Node.Process))
+                {
+            // Compute RHS as a JavaScript number (double)
+            var rhsType = Emit(assignmentExpression.Right, new TypeCoercion() { boxResult = false }).JsType;
+            // Ensure numeric argument is a double (Conv_r8 handles ints/booleans to number)
+            _il.OpCode(System.Reflection.Metadata.ILOpCode.Conv_r8);
+            var setExit = _runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Node.Process), "set_exitCode", typeof(void), typeof(double));
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                    _il.Token(setExit);
+                    return JavascriptType.Number;
+                }
+                throw new NotSupportedException("Assignment to property 'exitCode' is only supported on process object");
             }
             else
             {
@@ -1125,8 +1371,8 @@ namespace Js2IL.Services.ILGenerators
                 }
             }
 
-            // Evaluate the base object
-            Emit(memberExpression.Object, new TypeCoercion());
+            // Evaluate the base object and capture its resolved CLR type (if any)
+            var baseResult = Emit(memberExpression.Object, new TypeCoercion());
 
             if (!memberExpression.Computed && memberExpression.Property is Identifier propId)
             {
@@ -1138,6 +1384,25 @@ namespace Js2IL.Services.ILGenerators
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
                     _il.Token(getLen);
                     return JavascriptType.Number;
+                }
+
+                // If the base resolved to a known runtime type, allow direct instance member access
+                if (baseResult.ClrType == typeof(JavaScriptRuntime.Node.Process))
+                {
+                    if (propId.Name == "argv")
+                    {
+                        var getArgv = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Node.Process), "get_argv", typeof(JavaScriptRuntime.Array));
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                        _il.Token(getArgv);
+                        return JavascriptType.Object;
+                    }
+                    if (propId.Name == "exitCode")
+                    {
+                        var getExit = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Node.Process), "get_exitCode", typeof(double));
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                        _il.Token(getExit);
+                        return JavascriptType.Number;
+                    }
                 }
 
                 // Handle instance field access for known classes: this.field or var field on known class instance
@@ -1217,14 +1482,26 @@ namespace Js2IL.Services.ILGenerators
             // 2) invoke runtime array ctor (produces JavaScriptRuntime.Array instance boxed as object)
             _runtime.InvokeArrayCtor();
 
-            // For each element: duplicate array ref, load element (boxed), call Add
+            // For each element: handle SpreadElement by pushing range; otherwise Add single item
             for (int i = 0; i < arrayExpression.Elements.Count; i++)
             {
                 var element = arrayExpression.Elements[i];
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup); // array instance
-                _ = Emit(element!, new TypeCoercion() { boxResult = true });
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
-                _il.Token(_bclReferences.Array_Add_Ref);
+                if (element is SpreadElement spread)
+                {
+                    // Duplicate array ref, evaluate argument (boxed), call PushRange
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup);
+                    _ = Emit(spread.Argument!, new TypeCoercion() { boxResult = true });
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                    var pushRange = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Array), nameof(JavaScriptRuntime.Array.PushRange), typeof(void), typeof(object));
+                    _il.Token(pushRange);
+                }
+                else
+                {
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup); // array instance
+                    _ = Emit(element!, new TypeCoercion() { boxResult = true });
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                    _il.Token(_bclReferences.Array_Add_Ref);
+                }
             }
 
             // If this array literal is initializing/assigning a variable, tag it as a runtime JavaScriptRuntime.Array

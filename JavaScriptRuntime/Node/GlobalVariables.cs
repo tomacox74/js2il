@@ -21,6 +21,7 @@ namespace JavaScriptRuntime.Node
                 {
                     __filename = file!;
                     __dirname = System.IO.Path.GetDirectoryName(file!) ?? string.Empty;
+                    // argv is resolved on-demand by Process.argv from the environment provider.
                 }
             }
             catch
@@ -35,8 +36,27 @@ namespace JavaScriptRuntime.Node
         /// <summary>Absolute filename of the current module (script).</summary>
         public static string __filename { get; private set; } = string.Empty;
 
-        /// <summary>Minimal process global with writable exitCode.</summary>
-        public static ProcessInfo process { get; } = new ProcessInfo();
+    /// <summary>Minimal process global with writable exitCode.</summary>
+    public static Process process { get; } = new Process();
+
+        /// <summary>
+        /// Dynamic lookup for well-known globals by name.
+        /// Returns null when the name is unknown.
+        /// </summary>
+        public static object? Get(string name)
+        {
+            switch (name)
+            {
+                case "__dirname":
+                    return __dirname;
+                case "__filename":
+                    return __filename;
+                case "process":
+                    return process;
+                default:
+                    return null;
+            }
+        }
 
         /// <summary>
         /// Sets the active module path context. Call before executing a translated script.
@@ -45,6 +65,7 @@ namespace JavaScriptRuntime.Node
         {
             __dirname = dirname ?? string.Empty;
             __filename = filename ?? string.Empty;
+            // argv is resolved on-demand by Process.argv from the environment provider.
         }
 
         /// <summary>
@@ -57,10 +78,6 @@ namespace JavaScriptRuntime.Node
             process.exitCode = 0;
         }
 
-        public sealed class ProcessInfo
-        {
-            /// <summary>Matches Node's writable process.exitCode.</summary>
-            public int exitCode { get; set; }
-        }
+    // Process class is now in its own file (Process.cs)
     }
 }

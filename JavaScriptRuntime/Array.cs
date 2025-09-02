@@ -46,11 +46,82 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
-        /// Overload matching intrinsic dispatch that may pass arguments; currently ignores comparator and falls back to default sort.
+        /// Overload matching intrinsic dispatch that may pass arguments; supports optional comparator callback.
         /// </summary>
         public object sort(object[] args)
         {
-            // TODO: support comparator: if args.Length == 1 and args[0] is a callable, use it to compare
+            // If a comparator function is provided, use it; otherwise fallback to default string sort
+            if (args != null && args.Length > 0 && args[0] != null)
+            {
+                var cb = args[0];
+
+                int CompareUsingCallback(object a, object b)
+                {
+                    object? result;
+
+                    // Support common delegate shapes produced by our compiler/Closure binder
+                    if (cb is Func<object[], object, object, object> f2)
+                    {
+                        result = f2(System.Array.Empty<object>(), a, b);
+                    }
+                    else if (cb is Func<object[], object, object, object, object> f3)
+                    {
+                        // Some callsites may pass (a, b, array)
+                        result = f3(System.Array.Empty<object>(), a, b, this);
+                    }
+                    else if (cb is Func<object[], object, object> f1)
+                    {
+                        // Degenerate: comparator with single arg — treat as default
+                        return string.Compare(DotNet2JSConversions.ToString(a), DotNet2JSConversions.ToString(b), StringComparison.Ordinal);
+                    }
+                    else if (cb is Func<object[], object> f0)
+                    {
+                        // No-arg function — ignore and use default
+                        return string.Compare(DotNet2JSConversions.ToString(a), DotNet2JSConversions.ToString(b), StringComparison.Ordinal);
+                    }
+                    else
+                    {
+                        // Unknown type — default
+                        return string.Compare(DotNet2JSConversions.ToString(a), DotNet2JSConversions.ToString(b), StringComparison.Ordinal);
+                    }
+
+                    // Coerce result to a JS number (double) and map to -1/0/1
+                    double d;
+                    switch (result)
+                    {
+                        case null:
+                            d = 0d; break;
+                        case double dd:
+                            d = dd; break;
+                        case float ff:
+                            d = ff; break;
+                        case int ii:
+                            d = ii; break;
+                        case long ll:
+                            d = ll; break;
+                        case short ss:
+                            d = ss; break;
+                        case byte bb:
+                            d = bb; break;
+                        case bool bo:
+                            d = bo ? 1d : 0d; break;
+                        case string str:
+                            if (!double.TryParse(str, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out d)) d = double.NaN;
+                            break;
+                        default:
+                            try { d = Convert.ToDouble(result, System.Globalization.CultureInfo.InvariantCulture); }
+                            catch { d = double.NaN; }
+                            break;
+                    }
+
+                    if (double.IsNaN(d) || d == 0d) return 0;
+                    return d < 0d ? -1 : 1;
+                }
+
+                this.Sort((a, b) => CompareUsingCallback(a, b));
+                return this;
+            }
+
             return sort();
         }
 
@@ -97,6 +168,31 @@ namespace JavaScriptRuntime
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Pushes all items from the given source enumerable into this array.
+        /// Used by codegen to implement spread syntax in array literals.
+        /// </summary>
+        public void PushRange(object source)
+        {
+            if (source == null) return;
+            if (source is Array jsArray)
+            {
+                // Copy elements directly
+                for (int i = 0; i < jsArray.Count; i++) this.Add(jsArray[i]);
+                return;
+            }
+            if (source is System.Collections.IEnumerable en)
+            {
+                foreach (var item in en)
+                {
+                    this.Add(item!);
+                }
+                return;
+            }
+            // Fallback: single item
+            this.Add(source);
         }
     }
 }

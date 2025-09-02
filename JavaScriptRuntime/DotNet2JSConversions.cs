@@ -11,7 +11,13 @@ namespace JavaScriptRuntime
     {
         public static string ToString(object? value)
         {
+            // In our runtime: CLR null represents JavaScript 'undefined'
             if (value == null)
+            {
+                return "undefined";
+            }
+            // JavaScript 'null' is represented by the JsNull enum
+            if (value is JsNull)
             {
                 return "null";
             }
