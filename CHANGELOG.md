@@ -8,21 +8,32 @@ Added
 - Arrays: Array.prototype.map (basic value-callback) returning a new array; execution and generator tests.
 - Arrays: Array.prototype.sort default comparator (lexicographic) returning the array; execution and generator tests.
 - Emitter: FunctionExpression support to enable function-literal callbacks (e.g., in map).
+- Literals: array spread copy [...arr] with support for SpreadElement in array literals; backed by JavaScriptRuntime.Array.PushRange; execution and generator tests.
+- Strings: String.localeCompare returning a number; execution and generator tests.
+- Strings: String.startsWith(searchString[, position]); execution and generator tests.
+- Control flow: for-of over arrays and strings using JavaScriptRuntime.Object.GetLength and GetItem; execution and generator tests.
+- Operators: compound assignment "+=" for identifiers via runtime Operators.Add (full JS coercion); execution and generator tests.
 
 Changed
 - Codegen: centralized call emission in ILExpressionGenerator; it now dispatches member/host/intrinsic calls.
 - Types: ExpressionResult now carries both JsType and ClrType; removed bespoke require() clrtype tagging.
 - Property access: .length emission goes through JavaScriptRuntime.Object.GetLength(object) for arrays/strings/collections.
 - Tests: stabilized generator snapshots after GetLength change across Array/Function/Literals suites.
+- Strings: routed instance method calls through a single reflection-based path (EmitStringInstanceMethodCall) and added an IsDefinitelyString analyzer to prefer CLR string receivers when safe. TemplateLiteral emission now produces a CLR System.String directly.
+- Calls: corrected routing so general call expression generation recognizes CLR string receivers for method dispatch.
+- Control flow: for-of codegen uses object locals to maintain loop state (iterable, length, index) for clearer IL and reliable continue/break behavior.
 
 Fixed
 - Resolved generator snapshot mismatches (including BOM/encoding) by updating verified files from received outputs.
+- Snapshot stability for new for-of and string tests; aligned exact-match expectations to emitted IL.
 
 Docs
 - Updated ECMAScript 2025 feature coverage: added Array.prototype.map, clarified Array.length emission; regenerated markdown.
+- Updated ECMAScript 2025 feature coverage with array spread in literals, String.startsWith, String.localeCompare, compound "+=" for strings, and for-of over arrays/strings; regenerated markdown from JSON.
 
 Tests
 - New Array subgroup with execution and generator tests: length, empty length, sort basic, map basic. Targeted isEven test remains green.
+- Added execution and generator tests for: array spread literal copy, String.startsWith, String.localeCompare, string "+=" append, and ControlFlow for-of over arrays/strings. Updated verified snapshots accordingly.
 
 ## v0.1.1 - 2025-08-29
 
