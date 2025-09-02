@@ -21,6 +21,8 @@ namespace JavaScriptRuntime.Node
                 {
                     __filename = file!;
                     __dirname = System.IO.Path.GetDirectoryName(file!) ?? string.Empty;
+                    // Initialize argv with the entry module path for out-of-proc runs
+                    try { process.SetArgv(__filename); } catch { /* best-effort */ }
                 }
             }
             catch
