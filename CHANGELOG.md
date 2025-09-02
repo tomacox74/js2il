@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 
-## [Unreleased]
+## v0.1.2 - 2025-09-03
 
 Added
 - Arrays: Array.prototype.map (basic value-callback) returning a new array; execution and generator tests.
