@@ -57,7 +57,7 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 65 (0x41)
+		// Code size: 80 (0x50)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -73,21 +73,26 @@
 		IL_0012: ldloc.0
 		IL_0013: ldfld object Scopes.ControlFlow_If_NotFlag::flag
 		IL_0018: unbox.any [System.Runtime]System.Boolean
-		IL_001d: brfalse IL_0027
+		IL_001d: brfalse IL_0036
 
-		IL_0022: br IL_0040
+		IL_0022: br IL_004f
 
-		IL_0027: ldc.i4.1
-		IL_0028: newarr [System.Runtime]System.Object
-		IL_002d: dup
-		IL_002e: ldc.i4.0
-		IL_002f: ldstr "flag is disabled"
-		IL_0034: stelem.ref
-		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_003a: pop
-		IL_003b: br IL_0040
+		IL_0027: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+		IL_002c: brtrue IL_0036
 
-		IL_0040: ret
+		IL_0031: br IL_004f
+
+		IL_0036: ldc.i4.1
+		IL_0037: newarr [System.Runtime]System.Object
+		IL_003c: dup
+		IL_003d: ldc.i4.0
+		IL_003e: ldstr "flag is disabled"
+		IL_0043: stelem.ref
+		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0049: pop
+		IL_004a: br IL_004f
+
+		IL_004f: ret
 	} // end of method Program::Main
 
 } // end of class Program

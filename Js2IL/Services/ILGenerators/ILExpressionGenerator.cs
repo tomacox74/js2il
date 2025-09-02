@@ -259,13 +259,34 @@ namespace Js2IL.Services.ILGenerators
                     }
                     return new ExpressionResult { JsType = JavascriptType.Unknown, ClrType = null };
                 }
-                else if (javascriptType == JavascriptType.Unknown)
-                {
-                    return new ExpressionResult { JsType = JavascriptType.Unknown, ClrType = null };
-                }
                 else
                 {
-                    throw new NotSupportedException($"Unsupported conditional test expression type: {javascriptType} for node {expression.Type}");
+                    // Coerce any non-boolean value using JS truthiness via TypeUtilities.ToBoolean(object)
+                    var toBool = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), typeof(bool), typeof(object));
+                    // Current value is on stack in its native representation; ensure it's boxed for ToBoolean(object)
+                    if (javascriptType == JavascriptType.Number)
+                    {
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
+                        _il.Token(_bclReferences.DoubleType);
+                    }
+                    else if (javascriptType == JavascriptType.Boolean)
+                    {
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
+                        _il.Token(_bclReferences.BooleanType);
+                    }
+                    // else: objects/strings already boxed/reference types in our model
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
+                    _il.Token(toBool);
+                    _il.Branch(System.Reflection.Metadata.ILOpCode.Brtrue, branching.BranchOnTrue);
+                    if (branching.BranchOnFalse.HasValue)
+                    {
+                        _il.Branch(System.Reflection.Metadata.ILOpCode.Br, branching.BranchOnFalse.Value);
+                    }
+                    else
+                    {
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Pop);
+                    }
+                    return new ExpressionResult { JsType = JavascriptType.Unknown, ClrType = null };
                 }
             }
 

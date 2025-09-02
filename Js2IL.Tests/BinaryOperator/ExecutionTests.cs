@@ -72,5 +72,11 @@ namespace Js2IL.Tests.BinaryOperator
 
         [Fact]
         public Task BinaryOperator_UnsignedRightShiftNumberNumber() { var testName = nameof(BinaryOperator_UnsignedRightShiftNumberNumber); return ExecutionTest(testName); }
+
+    [Fact]
+    public Task BinaryOperator_LogicalOr_Value() { var testName = nameof(BinaryOperator_LogicalOr_Value); return ExecutionTest(testName); }
+
+    [Fact]
+    public Task BinaryOperator_LogicalAnd_Value() { var testName = nameof(BinaryOperator_LogicalAnd_Value); return ExecutionTest(testName); }
     }
 }

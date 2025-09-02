@@ -1,31 +1,27 @@
-Title: Feature: array spread, String APIs, for-of, process.argv, and compound += (docs/tests updated)
+Title: Feature: Truthiness in conditionals, logical OR/AND with short-circuit, and disabled integration compile test
 
 Summary
-- Implements array literal spread copy, new string APIs (startsWith, localeCompare), for-of over arrays/strings, process.argv exposure, and compound "+=" for identifiers. Refactors string method dispatch and updates docs/tests.
+- Adds JS truthiness coercion for conditionals and implements logical operators (||, &&) with full short-circuit semantics. Includes a long-running integration test (skipped) that compiles scripts/generateFeatureCoverage.js. Updates coverage docs and changelog.
 
 Changes
 - Added
-	- Literals: array spread copy [...arr] via JavaScriptRuntime.Array.PushRange.
-	- Strings: String.startsWith(searchString[, position]) and String.localeCompare.
-	- Control flow: for-of over arrays and strings via Object.GetLength/GetItem.
-	- Operators: compound assignment "+=" for identifiers using runtime Operators.Add.
-	- Node: process.argv exposure and enumeration support in execution environment.
+	- Control flow: truthiness in if/ternary conditions via JavaScriptRuntime.TypeUtilities.ToBoolean; generator and execution tests (e.g., ControlFlow_If_Truthiness).
+	- Operators: logical OR (||) and logical AND (&&) supporting both value and branching contexts with short-circuit; tests under BinaryOperator Execution/Generator.
+	- Integration: Js2IL.Tests.Integration.CompilationTests.Compile_Scripts_GenerateFeatureCoverage (marked [Skip]) to compile scripts/generateFeatureCoverage.js.
 - Changed
-	- Codegen: centralized string instance method dispatch (reflection) with IsDefinitelyString analyzer; template literals now emit CLR string.
-	- Call routing: recognizes CLR string receivers for method dispatch.
-	- For-of: uses object locals for iterable/length/index to stabilize IL and loop control.
-- Docs/Tests
-	- Updated ECMAScript2025_FeatureCoverage.json and regenerated markdown.
-	- Added execution and generator tests for all new features; snapshots updated.
-	- Added Node execution test for argv enumeration (Environment_EnumerateProcessArgV).
+	- IL generation: conditional branching now coerces non-boolean test expressions using ToBoolean; centralized boxing rules in ILExpressionGenerator.
+	- Binary operator emitter updated to correctly handle boxing in short-circuit paths (no double-boxing), fixing incorrect outputs.
+- Docs/Changelog
+	- Updated ECMAScript2025_FeatureCoverage.json (+ regenerated .md) to include truthiness and logical ||/&&.
+	- CHANGELOG: documented truthiness, logical operators, and the disabled integration test.
 
 Notes
-- for-of support currently targets arrays and strings.
-- process.argv wiring is available in the execution harness and surfaced to JS code.
-- All targeted tests passing on feature branch.
+- The integration test is intentionally skipped to keep CI time reasonable; it validates end-to-end parsing and IL generation for the docs generator script.
+- Snapshot updates for new generator tests may be handled in a follow-up if necessary.
 
 Checklist
 - [x] Tests added/updated
 - [x] Docs updated (coverage JSON/MD)
+- [x] Integration test added and skipped
 - [x] No breaking public API changes noted
 
