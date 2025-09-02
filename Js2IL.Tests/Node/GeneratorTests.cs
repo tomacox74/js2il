@@ -9,95 +9,18 @@ namespace Js2IL.Tests.Node
 
         [Fact]
         public Task Require_Path_Join_Basic() => GenerateTest(
-            nameof(Require_Path_Join_Basic),
-            configureSettings: s =>
-            {
-                // Trim trailing spaces/tabs before line breaks without changing line-ending style
-                s.AddScrubber(sb =>
-                {
-                    var text = sb.ToString();
-                    text = Regex.Replace(text, @"[ \t]+(\r?\n)", "$1");
-                    sb.Clear();
-                    sb.Append(text);
-                });
-                // Ensure a single newline at EOF to reduce flakiness
-                s.AddScrubber(sb =>
-                {
-                    var text = sb.ToString();
-                    text = text.TrimEnd('\r', '\n') + "\r\n";
-                    sb.Clear();
-                    sb.Append(text);
-                });
-            });
+            nameof(Require_Path_Join_Basic));
 
     [Fact]
         public Task Global___dirname_PrintsDirectory() => GenerateTest(
-            nameof(Global___dirname_PrintsDirectory),
-            configureSettings: s =>
-            {
-                s.AddScrubber(sb => sb.Replace('\\', '/'));
-                // Trim trailing spaces/tabs before line breaks without changing line-ending style
-                s.AddScrubber(sb =>
-                {
-                    var text = sb.ToString();
-                    text = Regex.Replace(text, @"[ \t]+(\r?\n)", "$1");
-                    sb.Clear();
-                    sb.Append(text);
-                });
-                // Ensure a single newline at EOF to reduce flakiness
-                s.AddScrubber(sb =>
-                {
-                    var text = sb.ToString();
-                    text = text.TrimEnd('\r', '\n') + "\r\n";
-                    sb.Clear();
-                    sb.Append(text);
-                });
-            });
+            nameof(Global___dirname_PrintsDirectory));
 
         [Fact]
         public Task Environment_EnumerateProcessArgV() => GenerateTest(
-            nameof(Environment_EnumerateProcessArgV),
-            configureSettings: s =>
-            {
-                // Trim trailing spaces/tabs before line breaks without changing line-ending style
-                s.AddScrubber(sb =>
-                {
-                    var text = sb.ToString();
-                    text = Regex.Replace(text, @"[ \t]+(\r?\n)", "$1");
-                    sb.Clear();
-                    sb.Append(text);
-                });
-                // Ensure a single newline at EOF to reduce flakiness
-                s.AddScrubber(sb =>
-                {
-                    var text = sb.ToString();
-                    text = text.TrimEnd('\r', '\n') + "\r\n";
-                    sb.Clear();
-                    sb.Append(text);
-                });
-            });
+            nameof(Environment_EnumerateProcessArgV));
 
         [Fact]
         public Task FS_ReadWrite_Utf8() => GenerateTest(
-            nameof(FS_ReadWrite_Utf8),
-            configureSettings: s =>
-            {
-                // Trim trailing spaces/tabs before line breaks without changing line-ending style
-                s.AddScrubber(sb =>
-                {
-                    var text = sb.ToString();
-                    text = Regex.Replace(text, @"[ \t]+(\r?\n)", "$1");
-                    sb.Clear();
-                    sb.Append(text);
-                });
-                // Ensure a single newline at EOF to reduce flakiness
-                s.AddScrubber(sb =>
-                {
-                    var text = sb.ToString();
-                    text = text.TrimEnd('\r', '\n') + "\r\n";
-                    sb.Clear();
-                    sb.Append(text);
-                });
-            });
+            nameof(FS_ReadWrite_Utf8));
     }
 }
