@@ -92,6 +92,89 @@ namespace Js2IL.Services.ILGenerators
 
             var operatorType = binaryExpression.Operator;
 
+            // Handle short-circuit logical operators first
+            if (operatorType == Operator.LogicalOr || operatorType == Operator.LogicalAnd)
+            {
+                // Branching form: we can short-circuit without materializing a value
+                if (branching != null)
+                {
+                    // Emit left truthiness check
+                    // Load left (boxed) and call ToBoolean(object)
+                    // Ensure the left operand is boxed as object so ToBoolean(object) can consume it
+                    _ = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion() { boxResult = true });
+                    var toBoolRef = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), typeof(bool), typeof(object));
+                    _il.OpCode(ILOpCode.Call);
+                    _il.Token(toBoolRef);
+
+                    if (operatorType == Operator.LogicalOr)
+                    {
+                        // If left is truthy, branch to true
+                        _il.Branch(ILOpCode.Brtrue, branching.BranchOnTrue);
+                        // Else evaluate right with the same branching
+                        _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion(), CallSiteContext.Expression, branching);
+                    }
+                    else // LogicalAnd
+                    {
+                        // If left is falsy, branch to false (if available) or fall-through
+                        if (branching.BranchOnFalse.HasValue)
+                        {
+                            _il.Branch(ILOpCode.Brfalse, branching.BranchOnFalse.Value);
+                        }
+                        else
+                        {
+                            // No explicit false target; create a local end label to skip right when false
+                            var skipRight = _il.DefineLabel();
+                            _il.Branch(ILOpCode.Brfalse, skipRight);
+                            _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion(), CallSiteContext.Expression, branching);
+                            _il.MarkLabel(skipRight);
+                            return;
+                        }
+                        // Left is true: evaluate right with same branching
+                        _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion(), CallSiteContext.Expression, branching);
+                    }
+                    return;
+                }
+
+                // Value form: result is one of the operands (not coerced to boolean)
+                // We'll box operands as object and choose with short-circuiting.
+                var useLeftLabel = _il.DefineLabel();
+                var endLabel = _il.DefineLabel();
+
+                // Push left (boxed object)
+                _ = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion() { boxResult = true });
+
+                // Duplicate left, test truthiness on the copy
+                _il.OpCode(ILOpCode.Dup);
+                var toBool = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), typeof(bool), typeof(object));
+                _il.OpCode(ILOpCode.Call);
+                _il.Token(toBool);
+
+                if (operatorType == Operator.LogicalOr)
+                {
+                    // If truthy, jump to useLeft (brtrue pops the bool, leaving left on stack)
+                    _il.Branch(ILOpCode.Brtrue, useLeftLabel);
+                }
+                else // LogicalAnd
+                {
+                    // If falsy, jump to useLeft (brfalse pops the bool, leaving left on stack)
+                    _il.Branch(ILOpCode.Brfalse, useLeftLabel);
+                }
+
+                // Else: branch not taken; condition has been popped by the branch instruction. Pop left and evaluate right
+                _il.OpCode(ILOpCode.Pop); // pop left
+
+                // Push right (boxed object) and finish
+                _ = _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion() { boxResult = true });
+                _il.Branch(ILOpCode.Br, endLabel);
+
+                // Use left as result
+                _il.MarkLabel(useLeftLabel);
+                // Stack already has the chosen left object (bool was consumed by branch)
+
+                _il.MarkLabel(endLabel);
+                return;
+            }
+
             bool isBitwiseOrShift = operatorType == Operator.BitwiseAnd || operatorType == Operator.BitwiseOr || operatorType == Operator.BitwiseXor ||
                                     operatorType == Operator.LeftShift || operatorType == Operator.RightShift || operatorType == Operator.UnsignedRightShift;
             if (isBitwiseOrShift) {

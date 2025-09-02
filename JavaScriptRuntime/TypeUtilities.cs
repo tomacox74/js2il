@@ -28,5 +28,35 @@ namespace JavaScriptRuntime
             if (value is Delegate) return "function";
             return "object";
         }
+
+        // JS ToBoolean coercion used in conditional tests and logical contexts
+        public static bool ToBoolean(object? value)
+        {
+            // undefined (CLR null) and null => false
+            if (value is null) return false;
+            switch (value)
+            {
+                case bool b:
+                    return b;
+                case JsNull:
+                    return false;
+                case string s:
+                    return s.Length != 0;
+                case double d:
+                    return d != 0.0 && !double.IsNaN(d);
+                case float f:
+                    return f != 0.0f && !float.IsNaN(f);
+                case int i:
+                    return i != 0;
+                case long l:
+                    return l != 0;
+                case short sh:
+                    return sh != 0;
+                case byte by:
+                    return by != 0;
+            }
+            // Objects (including arrays, functions, expando) are truthy
+            return true;
+        }
     }
 }

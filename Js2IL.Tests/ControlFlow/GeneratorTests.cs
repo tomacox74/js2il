@@ -36,6 +36,9 @@ namespace Js2IL.Tests.ControlFlow
         [Fact]
         public Task ControlFlow_If_NotFlag() { var testName = nameof(ControlFlow_If_NotFlag); return GenerateTest(testName); }
 
+    [Fact]
+    public Task ControlFlow_If_Truthiness() { var testName = nameof(ControlFlow_If_Truthiness); return GenerateTest(testName); }
+
         // Pending feature: continue statement support
         [Fact]
         public Task ControlFlow_ForLoop_Continue_SkipEven() { var testName = nameof(ControlFlow_ForLoop_Continue_SkipEven); return GenerateTest(testName); }

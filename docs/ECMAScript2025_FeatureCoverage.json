@@ -353,6 +353,29 @@
                   "Js2IL.Tests/JavaScript/Function_IsEven_CompareResultToTrue.js"
                 ], "notes": "Covers numeric and boolean equality, including comparisons against literals and function-returned booleans with selective boxing/unboxing. See also generator snapshot: Js2IL.Tests/BinaryOperator/GeneratorTests.BinaryOperator_EqualBoolean.verified.txt." }
               ]
+            },
+            {
+              "paragraph": "13.5.10",
+              "title": "Logical operators (||, &&)",
+              "url": "https://tc39.es/ecma262/#sec-binary-logical-operators",
+              "features": [
+                {
+                  "feature": "Binary || (Logical OR) with short-circuit",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/BinaryOperator_LogicalOr_Value.js"
+                  ],
+                  "notes": "Value form returns left if truthy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited."
+                },
+                {
+                  "feature": "Binary && (Logical AND) with short-circuit",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/BinaryOperator_LogicalAnd_Value.js"
+                  ],
+                  "notes": "Value form returns left if falsy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited."
+                }
+              ]
             }
           ]
         },
@@ -397,7 +420,8 @@
               "features": [
                 { "feature": "if statement (LessThan)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_If_LessThan.js"], "notes": "" },
                 { "feature": "if statement (!flag)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_If_NotFlag.js"], "notes": "Logical not in conditional test supported." },
-                { "feature": "if statement (result == true)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/Function_IsEven_CompareResultToTrue.js"], "notes": "Compares function-returned boolean to true and branches accordingly." }
+                { "feature": "if statement (result == true)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/Function_IsEven_CompareResultToTrue.js"], "notes": "Compares function-returned boolean to true and branches accordingly." },
+                { "feature": "if condition truthiness (non-boolean)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_If_Truthiness.js"], "notes": "Conditions like if (url) are coerced via JS ToBoolean semantics (empty string/0/NaN/undefined/null => false; others => true)." }
               ]
             }
           ]

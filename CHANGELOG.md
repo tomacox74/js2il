@@ -32,6 +32,9 @@ Added
 - Control flow: for-of over arrays and strings using JavaScriptRuntime.Object.GetLength and GetItem; execution and generator tests.
 - Operators: compound assignment "+=" for identifiers via runtime Operators.Add (full JS coercion); execution and generator tests.
 - Node interop: process.argv exposure and enumeration in execution environment; added Environment_EnumerateProcessArgV test.
+- Control flow: truthiness in conditionals (if/while/ternary) using JavaScript ToBoolean semantics; execution and generator tests.
+- Operators: logical OR (||) and logical AND (&&) with correct short-circuit semantics in both value and branching contexts; execution and generator tests.
+- Integration: long-running compile test that parses and emits scripts/generateFeatureCoverage.js (skipped in CI by default).
 
 Changed
 - Codegen: centralized call emission in ILExpressionGenerator; it now dispatches member/host/intrinsic calls.
@@ -50,11 +53,14 @@ Docs
 - Updated ECMAScript 2025 feature coverage: added Array.prototype.map, clarified Array.length emission; regenerated markdown.
 - Updated ECMAScript 2025 feature coverage with array spread in literals, String.startsWith, String.localeCompare, compound "+=" for strings, and for-of over arrays/strings; regenerated markdown from JSON.
 	Also documented Node process.argv support.
+ - Updated coverage to include conditional truthiness coercion and logical operators (||, &&); regenerated markdown.
 
 Tests
 - New Array subgroup with execution and generator tests: length, empty length, sort basic, map basic. Targeted isEven test remains green.
 - Added execution and generator tests for: array spread literal copy, String.startsWith, String.localeCompare, string "+=" append, and ControlFlow for-of over arrays/strings. Updated verified snapshots accordingly.
 - Added Node execution test for process argv enumeration (Environment_EnumerateProcessArgV).
+ - Added ControlFlow tests for truthiness in if conditions and BinaryOperator tests for logical OR/AND value results; added generator tests for logical operators.
+ - Added Integration test (Compile_Scripts_GenerateFeatureCoverage) that compiles scripts/generateFeatureCoverage.js; marked [Skip] to avoid CI runtime cost.
 
 ## v0.1.1 - 2025-08-29
 
