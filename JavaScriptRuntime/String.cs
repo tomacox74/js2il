@@ -11,6 +11,58 @@ namespace JavaScriptRuntime
     public static class String
     {
         /// <summary>
+        /// Implements a subset of String.prototype.startsWith(searchString[, position]).
+        /// Uses ordinal comparison and basic ToIntegerOrInfinity coercion for position.
+        /// </summary>
+        public static bool StartsWith(string input, string searchString)
+        {
+            return StartsWith(input, searchString, null);
+        }
+
+        /// <summary>
+        /// Implements a subset of String.prototype.startsWith with optional position argument.
+        /// </summary>
+        public static bool StartsWith(string input, string searchString, object? position)
+        {
+            input ??= string.Empty;
+            searchString ??= string.Empty;
+
+            int pos = 0;
+            if (position != null)
+            {
+                try
+                {
+                    double d;
+                    if (position is double dd) d = dd;
+                    else if (position is float ff) d = ff;
+                    else if (position is int ii) d = ii;
+                    else if (position is long ll) d = ll;
+                    else if (position is string s && double.TryParse(s, out var parsed)) d = parsed;
+                    else if (position is IConvertible conv) d = conv.ToDouble(System.Globalization.CultureInfo.InvariantCulture);
+                    else d = 0d;
+
+                    if (double.IsNaN(d)) d = 0d;
+                    if (double.IsPositiveInfinity(d)) d = input.Length;
+                    if (double.IsNegativeInfinity(d)) d = 0d;
+                    // Truncate toward zero
+                    d = d >= 0 ? Math.Floor(d) : Math.Ceiling(d);
+                    if (d < 0) d = 0;
+                    if (d > input.Length) d = input.Length;
+                    pos = (int)d;
+                }
+                catch { pos = 0; }
+            }
+
+            if (searchString.Length == 0)
+            {
+                return true; // empty string starts at any position (pos is clamped to length)
+            }
+            if (pos < 0 || pos > input.Length) return false;
+            if (pos + searchString.Length > input.Length) return false;
+            return input.AsSpan(pos).StartsWith(searchString.AsSpan(), StringComparison.Ordinal);
+        }
+
+        /// <summary>
         /// Implements a subset of String.prototype.replace when the pattern is a plain string.
         /// Only replaces the first occurrence, matching JS behavior for string patterns.
         /// Replacement is coerced to string via ToString.

@@ -26,5 +26,7 @@ namespace Js2IL.Tests.String
             var testName = nameof(String_LocaleCompare_Numeric);
             return GenerateTest(testName);
         }
+
+    // No generator snapshot for startsWith yet; execution test covers behavior
     }
 }

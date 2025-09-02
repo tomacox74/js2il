@@ -328,6 +328,11 @@ namespace Js2IL.Services.ILGenerators
                     var baseVar = _variables.FindVariable(baseId.Name);
                     if (baseVar != null)
                     {
+                        // If the variable is known to be a CLR string, route to the string instance helper
+                        if (baseVar.RuntimeIntrinsicType == typeof(string))
+                        {
+                            return EmitStringInstanceMethodCall(mem.Object, mname.Name, callExpression);
+                        }
                         // Step 2: Is it an object/class instance? Try intrinsic first, then class instance fallback
                         if (TryEmitIntrinsicInstanceCall(baseVar, mname.Name, callExpression))
                         {
