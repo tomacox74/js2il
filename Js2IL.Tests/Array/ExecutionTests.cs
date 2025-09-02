@@ -18,5 +18,8 @@ namespace Js2IL.Tests.Array
 
         [Fact]
         public Task Array_Map_Basic() { var testName = nameof(Array_Map_Basic); return ExecutionTest(testName); }
+
+    [Fact]
+    public Task Array_Sort_WithComparatorArrow() { var testName = nameof(Array_Sort_WithComparatorArrow); return ExecutionTest(testName); }
     }
 }
