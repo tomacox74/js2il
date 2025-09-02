@@ -31,6 +31,15 @@ namespace Js2IL.Tests.Node
                     s.AddScrubber(sb => sb.Replace('\\', '/'));
                     var temp = Path.GetTempPath().Replace('\\', '/');
                     s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                    // CI adds dynamic args (e.g., --port, --endpoint). Keep only argv[0] for stable snapshot.
+                    s.AddScrubber(sb =>
+                    {
+                        var text = sb.ToString();
+                        var nl = text.IndexOf('\n');
+                        var firstLine = nl >= 0 ? text.Substring(0, nl + 1) : text;
+                        sb.Clear();
+                        sb.Append(firstLine);
+                    });
                 });
 
         [Fact]

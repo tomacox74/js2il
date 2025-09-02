@@ -21,8 +21,21 @@ namespace JavaScriptRuntime.Node
                 {
                     __filename = file!;
                     __dirname = System.IO.Path.GetDirectoryName(file!) ?? string.Empty;
-                    // Initialize argv with the entry module path for out-of-proc runs
-                    try { process.SetArgv(__filename); } catch { /* best-effort */ }
+                    // Initialize argv from environment provider but ensure argv[0] is the script filename for stability.
+                    try
+                    {
+                        var args = JavaScriptRuntime.EnvironmentProvider.GetCommandLineArgs();
+                        if (args != null && args.Length > 0)
+                        {
+                            args[0] = __filename;
+                            process.SetArgv(args);
+                        }
+                        else
+                        {
+                            process.SetArgv(__filename);
+                        }
+                    }
+                    catch { try { process.SetArgv(__filename); } catch { } }
                 }
             }
             catch
@@ -66,9 +79,25 @@ namespace JavaScriptRuntime.Node
         {
             __dirname = dirname ?? string.Empty;
             __filename = filename ?? string.Empty;
-            // Initialize minimal argv deterministically for tests/execution: [programPath]
-            // Note: We intentionally avoid using actual process command line to keep snapshots stable.
-            try { process.SetArgv(__filename); } catch { /* best-effort */ }
+            // Initialize argv from the active environment but normalize argv[0] to the current script filename.
+            try
+            {
+                var args = JavaScriptRuntime.EnvironmentProvider.GetCommandLineArgs();
+                if (args != null && args.Length > 0)
+                {
+                    args[0] = __filename;
+                    process.SetArgv(args);
+                }
+                else
+                {
+                    process.SetArgv(__filename);
+                }
+            }
+            catch
+            {
+                // best-effort fallback
+                try { process.SetArgv(__filename); } catch { }
+            }
         }
 
         /// <summary>
