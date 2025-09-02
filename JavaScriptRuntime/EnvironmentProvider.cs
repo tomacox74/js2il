@@ -11,5 +11,13 @@ namespace JavaScriptRuntime
         {
             _current = env ?? new DefaultEnvironment();
         }
+
+        /// <summary>
+        /// Returns the command-line arguments for the current process via the active environment.
+        /// </summary>
+        public static string[] GetCommandLineArgs()
+        {
+            return _current.GetCommandLineArgs();
+        }
     }
 }

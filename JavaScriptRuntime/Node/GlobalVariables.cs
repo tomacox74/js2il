@@ -66,16 +66,9 @@ namespace JavaScriptRuntime.Node
         {
             __dirname = dirname ?? string.Empty;
             __filename = filename ?? string.Empty;
-            // Initialize minimal argv: [programPath]. Can be extended later with script and user args.
-            var program = filename ?? string.Empty;
-            try
-            {
-                process.SetArgv(program);
-            }
-            catch
-            {
-                // best-effort
-            }
+            // Initialize minimal argv deterministically for tests/execution: [programPath]
+            // Note: We intentionally avoid using actual process command line to keep snapshots stable.
+            try { process.SetArgv(__filename); } catch { /* best-effort */ }
         }
 
         /// <summary>
