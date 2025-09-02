@@ -6,20 +6,24 @@ namespace Js2IL.Tests.Integration
 {
     public class CompilationTests
     {
-        [Fact(Skip = "Long-running integration test")]
+        [Fact]
         public void Compile_Scripts_GenerateFeatureCoverage()
         {
+            if (!string.Equals(Environment.GetEnvironmentVariable("RUN_INTEGRATION"), "1", StringComparison.Ordinal))
+                return; // treat as no-op unless explicitly enabled
+
             // Resolve repo root by walking up from the test assembly directory
             static string FindRepoRoot()
             {
                 var dir = new DirectoryInfo(AppContext.BaseDirectory);
                 while (dir != null)
                 {
-                    if (File.Exists(Path.Combine(dir.FullName, "js2il.sln")) ||
-                        Directory.Exists(Path.Combine(dir.FullName, "scripts")))
-                    {
+                    if (File.Exists(Path.Combine(dir.FullName, "js2il.sln")))
                         return dir.FullName;
-                    }
+
+                    var scriptsDir = Path.Combine(dir.FullName, "scripts");
+                    if (Directory.Exists(scriptsDir) && File.Exists(Path.Combine(scriptsDir, "generateFeatureCoverage.js")))
+                        return dir.FullName;
                     dir = dir.Parent;
                 }
                 throw new InvalidOperationException("Repository root not found from test base directory.");
