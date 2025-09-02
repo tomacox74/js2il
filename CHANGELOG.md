@@ -2,6 +2,23 @@
 
 All notable changes to this project are documented here.
 
+## [Unreleased]
+
+Added
+- (none)
+
+Changed
+- (none)
+
+Fixed
+- (none)
+
+Docs
+- (none)
+
+Tests
+- (none)
+
 ## v0.1.2 - 2025-09-03
 
 Added
