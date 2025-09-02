@@ -76,5 +76,28 @@ namespace Js2IL.Tests.Node
                     sb.Append(text);
                 });
             });
+
+        [Fact]
+        public Task FS_ReadWrite_Utf8() => GenerateTest(
+            nameof(FS_ReadWrite_Utf8),
+            configureSettings: s =>
+            {
+                // Trim trailing spaces/tabs before line breaks without changing line-ending style
+                s.AddScrubber(sb =>
+                {
+                    var text = sb.ToString();
+                    text = Regex.Replace(text, @"[ \t]+(\r?\n)", "$1");
+                    sb.Clear();
+                    sb.Append(text);
+                });
+                // Ensure a single newline at EOF to reduce flakiness
+                s.AddScrubber(sb =>
+                {
+                    var text = sb.ToString();
+                    text = text.TrimEnd('\r', '\n') + "\r\n";
+                    sb.Clear();
+                    sb.Append(text);
+                });
+            });
     }
 }
