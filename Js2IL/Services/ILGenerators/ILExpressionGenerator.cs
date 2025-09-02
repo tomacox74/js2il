@@ -409,8 +409,21 @@ namespace Js2IL.Services.ILGenerators
                         throw new NotSupportedException($"Unsupported member call base identifier: '{baseId.Name}'");
                     }
                 }
-                // Non-identifier callee under MemberExpression is unsupported beyond the above cases
-                throw new NotSupportedException($"Unsupported call expression callee type: {callExpression.Callee.Type}");
+                // Receiver is an arbitrary expression (e.g., String(x).replace(...), (foo()).bar(...))
+                // Strategy:
+                // 1) Try string instance path when receiver is not definitively string but can be coerced (JS semantics apply).
+                // 2) Otherwise, evaluate receiver and attempt dynamic intrinsic instance dispatch via runtime helpers (object methods).
+                // For now, we support common string patterns by coercing to string for known String methods.
+
+                // Known String instance methods we handle via runtime: Replace, StartsWith, LocaleCompare
+                var lowerName = mname.Name.ToLowerInvariant();
+                if (lowerName is "replace" or "startswith" or "localecompare")
+                {
+                    return EmitStringInstanceMethodCall(mem.Object, mname.Name, callExpression);
+                }
+
+                // Future: add generic object instance dispatch if needed.
+                throw new NotSupportedException($"Unsupported member call on non-identifier receiver for method '{mname.Name}'.");
             }
             else if (callExpression.Callee is Acornima.Ast.Identifier identifier)
             {
