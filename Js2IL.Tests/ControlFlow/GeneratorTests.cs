@@ -58,5 +58,8 @@ namespace Js2IL.Tests.ControlFlow
     // Conditional operator (?:)
     [Fact]
     public Task ControlFlow_Conditional_Ternary() { var testName = nameof(ControlFlow_Conditional_Ternary); return GenerateTest(testName); }
+
+    [Fact]
+    public Task ControlFlow_ForOf_Array_Basic() { var testName = nameof(ControlFlow_ForOf_Array_Basic); return GenerateTest(testName); }
     }
 }

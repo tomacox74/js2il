@@ -16,6 +16,7 @@ namespace Js2IL.Services
         private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCacheByNs = new(StringComparer.Ordinal);
         private readonly Dictionary<string, MemberReferenceHandle> _runtimeMethodCache = new(StringComparer.Ordinal);
         private MemberReferenceHandle _objectGetItem;
+    private MemberReferenceHandle _objectGetLength;
         private MemberReferenceHandle _arrayCtorRef;
         private MemberReferenceHandle _arrayLengthRef;
         private MemberReferenceHandle _closureBindObjectRef;
@@ -80,6 +81,12 @@ namespace Js2IL.Services
         {
             // we assume the object and index are already on the stack
             _il.Call(_objectGetItem);
+        }
+
+        public void InvokeGetLengthFromObject()
+        {
+            // we assume the object is already on the stack
+            _il.Call(_objectGetLength);
         }
 
         public void InvokeOperatorsAdd()
@@ -169,6 +176,20 @@ namespace Js2IL.Services
                 objectType,
                 _metadataBuilder.GetOrAddString("GetItem"),
                 objectGetItemSig);
+
+            // JavaScriptRuntime.Object.GetLength(object) -> double
+            var objectGetLengthSigBuilder = new BlobBuilder();
+            new BlobEncoder(objectGetLengthSigBuilder)
+                .MethodSignature(isInstanceMethod: false)
+                .Parameters(1, rt => rt.Type().Double(), p =>
+                {
+                    p.AddParameter().Type().Object();
+                });
+            var objectGetLengthSig = _metadataBuilder.GetOrAddBlob(objectGetLengthSigBuilder);
+            _objectGetLength = _metadataBuilder.AddMemberReference(
+                objectType,
+                _metadataBuilder.GetOrAddString("GetLength"),
+                objectGetLengthSig);
         }
 
         /// <summary>
