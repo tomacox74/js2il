@@ -27,6 +27,11 @@ namespace Js2IL.Tests.String
             return GenerateTest(testName);
         }
 
-    // No generator snapshot for startsWith yet; execution test covers behavior
+        [Fact]
+        public Task String_StartsWith_Basic()
+        {
+            var testName = nameof(String_StartsWith_Basic);
+            return GenerateTest(testName);
+        }
     }
 }
