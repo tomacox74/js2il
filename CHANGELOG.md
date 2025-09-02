@@ -5,6 +5,24 @@ All notable changes to this project are documented here.
 ## [Unreleased]
 
 Added
+- Control flow: truthiness in conditionals (if/while/ternary) using JavaScript ToBoolean semantics; execution and generator tests.
+- Operators: logical OR (||) and logical AND (&&) with correct short-circuit semantics in both value and branching contexts; execution and generator tests.
+
+Changed
+- (none)
+
+Fixed
+- (none)
+
+Docs
+- (none)
+
+Tests
+- (none)
+
+## v0.1.2 - 2025-09-03
+
+Added
 - Arrays: Array.prototype.map (basic value-callback) returning a new array; execution and generator tests.
 - Arrays: Array.prototype.sort default comparator (lexicographic) returning the array; execution and generator tests.
 - Emitter: FunctionExpression support to enable function-literal callbacks (e.g., in map).
