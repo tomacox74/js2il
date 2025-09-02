@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace JavaScriptRuntime.Node
 {
@@ -9,8 +10,6 @@ namespace JavaScriptRuntime.Node
     [NodeModule("process")]
     public sealed class Process
     {
-        private JavaScriptRuntime.Array _argv = new JavaScriptRuntime.Array();
-
         /// <summary>
         /// Matches Node's writable process.exitCode (JavaScript number). Internally mirrors host Environment.ExitCode.
         /// Getter returns the current exit code as a double; setter accepts a double and truncates to int.
@@ -22,17 +21,27 @@ namespace JavaScriptRuntime.Node
         }
 
         /// <summary>
-        /// Minimal process.argv. Initialized by the runtime when a module context is set.
+        /// Minimal process.argv derived from the active environment. argv[0] is normalized to the current script filename.
         /// </summary>
-        public JavaScriptRuntime.Array argv => _argv;
-
-        /// <summary>
-        /// Initialize argv values.
-        /// </summary>
-        public void SetArgv(params string[] items)
+        public JavaScriptRuntime.Array argv
         {
-            var arr = new JavaScriptRuntime.Array(items?.Select(s => (object)s) ?? System.Array.Empty<object>());
-            _argv = arr;
+            get
+            {
+                try
+                {
+                    var args = JavaScriptRuntime.EnvironmentProvider.GetProcessArgs();
+                    if (args != null && args.Length > 0)
+                    {
+                        var normalized = (string[])args.Clone();
+                        normalized[0] = JavaScriptRuntime.Node.GlobalVariables.__filename;
+                        return new JavaScriptRuntime.Array(normalized.Select(s => (object)s));
+                    }
+                }
+                catch { }
+
+                // Fallback to single entry with script filename
+                return new JavaScriptRuntime.Array(new object[] { JavaScriptRuntime.Node.GlobalVariables.__filename });
+            }
         }
     }
 }

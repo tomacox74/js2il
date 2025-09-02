@@ -19,5 +19,10 @@ namespace JavaScriptRuntime
         {
             return _current.GetCommandLineArgs();
         }
+
+    /// <summary>
+    /// Alias for semantic clarity in Node interop.
+    /// </summary>
+    public static string[] GetProcessArgs() => GetCommandLineArgs();
     }
 }
