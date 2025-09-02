@@ -135,9 +135,10 @@ namespace Js2IL.Tests
                 // Preload JavaScriptRuntime dependency and load test assembly in Default ALC so framework resolves on the agent
                 var dir = Path.GetDirectoryName(assemblyPath)!;
                 var jsRuntimePath = Path.Combine(dir, "JavaScriptRuntime.dll");
+                Assembly? jsRuntimeAsm = null;
                 if (File.Exists(jsRuntimePath))
                 {
-                    try { AssemblyLoadContext.Default.LoadFromAssemblyPath(jsRuntimePath); } catch { }
+                    try { jsRuntimeAsm = AssemblyLoadContext.Default.LoadFromAssemblyPath(jsRuntimePath); } catch { }
                 }
                 var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
                 var entryPoint = assembly.EntryPoint ?? throw new InvalidOperationException("No entry point found in the generated assembly.");
@@ -145,7 +146,20 @@ namespace Js2IL.Tests
                 // Set Node-like globals for module context
                 var modDir = Path.GetDirectoryName(assemblyPath) ?? string.Empty;
                 var file = assemblyPath;
-                JavaScriptRuntime.Node.GlobalVariables.SetModuleContext(modDir, file);
+                // Important: Set module context on the JavaScriptRuntime loaded into the Default ALC
+                // so the generated assembly observes the same GlobalVariables instance.
+                var gvType = jsRuntimeAsm?.GetType("JavaScriptRuntime.Node.GlobalVariables");
+                var setCtx = gvType?.GetMethod("SetModuleContext", BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(string) });
+                if (gvType != null && setCtx != null)
+                {
+                    try { setCtx.Invoke(null, new object?[] { modDir, file }); }
+                    catch { /* best-effort */ }
+                }
+                else
+                {
+                    // Fallback: call through the test assembly reference (may not affect the loaded copy)
+                    JavaScriptRuntime.Node.GlobalVariables.SetModuleContext(modDir, file);
+                }
 
                 var paramInfos = entryPoint.GetParameters();
                 object?[]? args = paramInfos.Length == 0 ? null : new object?[] { System.Array.Empty<string>() };
