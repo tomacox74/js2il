@@ -61,7 +61,19 @@ namespace Js2IL.Services.ILGenerators
                 case CallExpression callExpression:
                     // Delegate call emission to local helper (migrated from ILMethodGenerator)
                     clrType = GenerateCallExpression(callExpression, context);
-                    javascriptType = JavascriptType.Object;
+                    // Infer JS type from known CLR return when available to allow boxing and conditional branching
+                    if (clrType == typeof(double))
+                    {
+                        javascriptType = JavascriptType.Number;
+                    }
+                    else if (clrType == typeof(bool))
+                    {
+                        javascriptType = JavascriptType.Boolean;
+                    }
+                    else
+                    {
+                        javascriptType = JavascriptType.Object;
+                    }
                     break;
                 case ArrowFunctionExpression arrowFunction:
                     {
@@ -357,6 +369,39 @@ namespace Js2IL.Services.ILGenerators
                     _il.Call(mref);
                     return null;
                 }
+
+                // Pattern support: String(x).localeCompare(y, locales?, options?)
+                if (string.Equals(mname.Name, "localeCompare", StringComparison.Ordinal) && mem.Object is Acornima.Ast.CallExpression strCall2 && strCall2.Callee is Acornima.Ast.Identifier sid2 && string.Equals(sid2.Name, "String", StringComparison.Ordinal))
+                {
+                    // Accept 1..3 args; fill missing with undefined (null)
+                    if (callExpression.Arguments.Count < 1 || callExpression.Arguments.Count > 3)
+                    {
+                        throw new NotSupportedException("localeCompare expects 1 to 3 arguments");
+                    }
+                    // input = ToString(arg0)
+                    _ = Emit(strCall2.Arguments[0], new TypeCoercion() { toString = true });
+                    // other = ToString(arg1)
+                    _ = Emit(callExpression.Arguments[0], new TypeCoercion() { toString = true });
+                    // locales (boxed)
+                    if (callExpression.Arguments.Count >= 2) _ = Emit(callExpression.Arguments[1], new TypeCoercion() { boxResult = true });
+                    else { _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull); }
+                    // options (boxed)
+                    if (callExpression.Arguments.Count >= 3) _ = Emit(callExpression.Arguments[2], new TypeCoercion() { boxResult = true });
+                    else { _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull); }
+
+                    // Resolve JavaScriptRuntime.String.LocaleCompare(string,string,object,object) -> int
+                    var stringType = JavaScriptRuntime.IntrinsicObjectRegistry.Get("String")
+                        ?? throw new NotSupportedException("Host intrinsic 'String' not found");
+                    var method = stringType
+                        .GetMethod("LocaleCompare", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                    if (method == null)
+                    {
+                        throw new NotSupportedException("Host intrinsic method not found: String.LocaleCompare(input, other, locales, options)");
+                    }
+                    var mref = _owner.Runtime.GetStaticMethodRef(stringType, method.Name, method.ReturnType, method.GetParameters().Select(p => p.ParameterType).ToArray());
+                    _il.Call(mref);
+                    return typeof(double); // JS number
+                }
                 if (mem.Object is Acornima.Ast.Identifier baseId)
                 {
                     // If the base identifier resolves to a known class, emit a static call without loading an instance.
@@ -609,6 +654,17 @@ namespace Js2IL.Services.ILGenerators
                 if (arg0 is StringLiteral s) mod = s.Value;
                 else if (arg0 is Literal glit && glit.Value is string gs) mod = gs;
                 return ResolveNodeModuleType(mod ?? string.Empty);
+            }
+
+            // Global String(x) conversion support
+            if (string.Equals(identifier.Name, "String", StringComparison.Ordinal))
+            {
+                if (callExpression.Arguments.Count != 1)
+                {
+                    throw new ArgumentException("String() expects exactly one argument");
+                }
+                _ = Emit(callExpression.Arguments[0], new TypeCoercion() { toString = true });
+                return typeof(string);
             }
 
             var functionVariable = _variables.FindVariable(identifier.Name);

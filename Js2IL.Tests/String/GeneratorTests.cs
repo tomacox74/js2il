@@ -19,5 +19,12 @@ namespace Js2IL.Tests.String
             var testName = nameof(String_TemplateLiteral_Basic);
             return GenerateTest(testName);
         }
+
+        [Fact]
+        public Task String_LocaleCompare_Numeric()
+        {
+            var testName = nameof(String_LocaleCompare_Numeric);
+            return GenerateTest(testName);
+        }
     }
 }

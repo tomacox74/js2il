@@ -840,8 +840,8 @@ namespace Js2IL.Services.ILGenerators
                     }
                     else
                     {
-                        // Not returning a function; just evaluate the expression and return it (no binding, no scope instantiation)
-                        _ = childGen.ExpressionEmitter.Emit(initExpr, new TypeCoercion());
+                        // Not returning a function; evaluate and box primitives so the object return type is satisfied
+                        _ = childGen.ExpressionEmitter.Emit(initExpr, new TypeCoercion() { boxResult = true });
                         il.OpCode(ILOpCode.Ret);
                     }
                 }
@@ -892,7 +892,7 @@ namespace Js2IL.Services.ILGenerators
             {
                 // Expression-bodied arrow: evaluate via the child generator's expression emitter to keep logic isolated
                 var bodyExpr = arrowFunction.Body as Expression ?? throw new NotSupportedException("Arrow function body is not an expression");
-                _ = childGen.ExpressionEmitter.Emit(bodyExpr, new TypeCoercion());
+                _ = childGen.ExpressionEmitter.Emit(bodyExpr, new TypeCoercion() { boxResult = true });
                 il.OpCode(ILOpCode.Ret);
             }
 
