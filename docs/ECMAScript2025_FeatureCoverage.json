@@ -169,6 +169,14 @@
                     "Js2IL.Tests/JavaScript/ArrayLiteral.js"
                   ],
                   "notes": "Covers creation, element access, and length property. See also verified output in Literals/GeneratorTests.ArrayLiteral.verified.txt."
+                },
+                {
+                  "feature": "Array literal spread (copy elements)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/Array_Spread_Copy.js"
+                  ],
+                  "notes": "Spread elements in array literals are emitted via JavaScriptRuntime.Array.PushRange; supports copying from another array."
                 }
               ]
             }
@@ -347,6 +355,28 @@
               ]
             }
           ]
+        },
+        {
+          "subsection": "13.15",
+          "title": "Assignment Operators",
+          "url": "https://tc39.es/ecma262/#sec-assignment-operators",
+          "paragraphs": [
+            {
+              "paragraph": "13.15.2",
+              "title": "Assignment Operators (+=, -=, ...)",
+              "url": "https://tc39.es/ecma262/#sec-assignment-operators",
+              "features": [
+                {
+                  "feature": "Compound assignment += with strings",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/String_PlusEquals_Append.js"
+                  ],
+                  "notes": "+= on identifiers uses JavaScriptRuntime.Operators.Add for JS coercion and stores back to the same binding; validated by generator snapshot."
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -424,6 +454,29 @@
                 { "feature": "do-while loop (CountDownFromFive)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_DoWhile_CountDownFromFive.js"], "notes": "" },
                 { "feature": "do-while loop: continue (skip even)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_DoWhile_Continue_SkipEven.js"], "notes": "continue branches to the post-body test point (LoopContext)." },
                 { "feature": "do-while loop: break", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_DoWhile_Break_AtThree.js"], "notes": "break branches to loop end (LoopContext)." }
+              ]
+            }
+          ]
+        }
+        ,
+        {
+          "subsection": "14.7.5",
+          "title": "The for-of Statement",
+          "url": "https://tc39.es/ecma262/#sec-for-in-and-for-of-statements",
+          "paragraphs": [
+            {
+              "paragraph": "14.7.5.1",
+              "title": "Runtime Semantics: ForInOfBodyEvaluation (for-of)",
+              "url": "https://tc39.es/ecma262/#sec-runtime-semantics-forinofbodyevaluation",
+              "features": [
+                {
+                  "feature": "for-of over arrays (enumerate values)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/ControlFlow_ForOf_Array_Basic.js"
+                  ],
+                  "notes": "Emitted by indexing iterable via JavaScriptRuntime.Object.GetLength(object) and GetItem(object, double); uses object locals for iterator state."
+                }
               ]
             }
           ]
@@ -580,7 +633,7 @@
                     "Js2IL.Tests/JavaScript/Array_LengthProperty_ReturnsCount.js",
                     "Js2IL.Tests/JavaScript/Array_EmptyLength_IsZero.js"
                   ],
-                  "notes": "length getter returns number of elements; emitted via JavaScriptRuntime.Object.GetLength(object)."
+                  "notes": "length getter returns number of elements; emitted via JavaScriptRuntime.Object.GetLength(object). Used by for-of implementation."
                 }
               ]
             },
@@ -628,6 +681,36 @@
           "title": "String Objects",
           "url": "https://tc39.es/ecma262/#sec-string-objects",
           "paragraphs": [
+            {
+              "paragraph": "24.1.3",
+              "title": "String.prototype.startsWith",
+              "url": "https://tc39.es/ecma262/#sec-string.prototype.startswith",
+              "features": [
+                {
+                  "feature": "String.prototype.startsWith",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/String_StartsWith_Basic.js"
+                  ],
+                  "notes": "Reflection-based string dispatch routes CLR string receivers to JavaScriptRuntime.String.StartsWith with optional position argument."
+                }
+              ]
+            },
+            {
+              "paragraph": "24.1.4",
+              "title": "String.prototype.localeCompare",
+              "url": "https://tc39.es/ecma262/#sec-string.prototype.localecompare",
+              "features": [
+                {
+                  "feature": "String.prototype.localeCompare (numeric compare)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/String_LocaleCompare_Numeric.js"
+                  ],
+                  "notes": "Returns a number (double) for comparator functions; used by Array.sort comparator tests."
+                }
+              ]
+            },
             {
               "paragraph": "24.1.3",
               "title": "String.prototype.replace",
