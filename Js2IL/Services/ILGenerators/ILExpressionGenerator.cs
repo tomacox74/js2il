@@ -166,6 +166,7 @@ namespace Js2IL.Services.ILGenerators
                             _runtime.InvokeOperatorsAdd();
                         }
                         javascriptType = JavascriptType.Object;
+                        clrType = typeof(string);
                     }
                     break;
                 case ConditionalExpression cond:
@@ -297,110 +298,10 @@ namespace Js2IL.Services.ILGenerators
             // General member call: obj.method(...)
             if (callExpression.Callee is Acornima.Ast.MemberExpression mem && !mem.Computed && mem.Property is Acornima.Ast.Identifier mname)
             {
-                // Pattern support: String(x).replace(/pattern/flags, replacement)
-                if (string.Equals(mname.Name, "replace", StringComparison.Ordinal) && mem.Object is Acornima.Ast.CallExpression strCall && strCall.Callee is Acornima.Ast.Identifier sid && string.Equals(sid.Name, "String", StringComparison.Ordinal))
+                // If the receiver is definitely a string, route to a dedicated string-method emitter
+                if (IsDefinitelyString(mem.Object))
                 {
-                    // Expect exactly: String(arg0).replace(regex, replacement)
-                    if (strCall.Arguments.Count != 1 || callExpression.Arguments.Count != 2)
-                    {
-                        throw new NotSupportedException("Only replace(regex, string) with a single String(arg) receiver is supported");
-                    }
-                    // Extract regex pattern and flags from AST via reflection to avoid taking a hard dependency on node types
-                    string? pattern = null;
-                    string? flags = null;
-                    var rxNode = callExpression.Arguments[0];
-                    {
-                        var rxType = rxNode?.GetType();
-                        if (rxType != null)
-                        {
-                            // Try nested Regex property (Literal.regex.{pattern,flags}) – case-insensitive
-                            object? regexObj = ILExpressionGenerator.GetPropertyIgnoreCase(rxNode!, "Regex")?.GetValue(rxNode!);
-                            if (regexObj != null)
-                            {
-                                pattern = ILExpressionGenerator.GetPropertyIgnoreCase(regexObj, "Pattern")?.GetValue(regexObj) as string;
-                                flags = ILExpressionGenerator.GetPropertyIgnoreCase(regexObj, "Flags")?.GetValue(regexObj) as string;
-                            }
-
-                            // Fallback: direct properties on the node (Pattern/Flags) – case-insensitive
-                            pattern ??= ILExpressionGenerator.GetPropertyIgnoreCase(rxNode!, "Pattern")?.GetValue(rxNode) as string;
-                            flags ??= ILExpressionGenerator.GetPropertyIgnoreCase(rxNode!, "Flags")?.GetValue(rxNode) as string;
-
-                            // Final fallback: parse Raw string like '/pattern/flags'
-                            if (string.IsNullOrEmpty(pattern))
-                            {
-                                var raw = ILExpressionGenerator.GetPropertyIgnoreCase(rxNode!, "Raw")?.GetValue(rxNode) as string;
-                                if (!string.IsNullOrEmpty(raw))
-                                {
-                                    (pattern, flags) = ILExpressionGenerator.ParseRegexRaw(raw!);
-                                }
-                            }
-                        }
-                    }
-                    if (string.IsNullOrEmpty(pattern))
-                    {
-                        throw new NotSupportedException("Regex literal pattern not found for String(x).replace");
-                    }
-                    var global = !string.IsNullOrEmpty(flags) && flags!.IndexOf('g') >= 0;
-                    var ignoreCase = !string.IsNullOrEmpty(flags) && flags!.IndexOf('i') >= 0;
-
-                    // Stack: [input, pattern, replacement, global, ignoreCase]
-                    // input = ToString(arg0)
-                    _ = Emit(strCall.Arguments[0], new TypeCoercion() { toString = true });
-                    // pattern
-                    _il.Ldstr(_metadataBuilder, pattern!);
-                    // replacement as string
-                    _ = Emit(callExpression.Arguments[1], new TypeCoercion() { toString = true });
-                    // booleans
-                    _il.LoadConstantI4(global ? 1 : 0);
-                    _il.LoadConstantI4(ignoreCase ? 1 : 0);
-
-                    // Resolve JavaScriptRuntime.String.Replace dynamically like console.log
-                    var stringType = JavaScriptRuntime.IntrinsicObjectRegistry.Get("String")
-                        ?? throw new NotSupportedException("Host intrinsic 'String' not found");
-                    var replaceMethod = stringType
-                        .GetMethods(BindingFlags.Public | BindingFlags.Static)
-                        .FirstOrDefault(mi => string.Equals(mi.Name, "Replace", StringComparison.Ordinal)
-                                              && mi.GetParameters().Length == 5);
-                    if (replaceMethod == null)
-                    {
-                        throw new NotSupportedException("Host intrinsic method not found: String.Replace(input, pattern, replacement, global, ignoreCase)");
-                    }
-                    var mref = _owner.Runtime.GetStaticMethodRef(stringType, replaceMethod.Name, replaceMethod.ReturnType, replaceMethod.GetParameters().Select(p => p.ParameterType).ToArray());
-                    _il.Call(mref);
-                    return null;
-                }
-
-                // Pattern support: String(x).localeCompare(y, locales?, options?)
-                if (string.Equals(mname.Name, "localeCompare", StringComparison.Ordinal) && mem.Object is Acornima.Ast.CallExpression strCall2 && strCall2.Callee is Acornima.Ast.Identifier sid2 && string.Equals(sid2.Name, "String", StringComparison.Ordinal))
-                {
-                    // Accept 1..3 args; fill missing with undefined (null)
-                    if (callExpression.Arguments.Count < 1 || callExpression.Arguments.Count > 3)
-                    {
-                        throw new NotSupportedException("localeCompare expects 1 to 3 arguments");
-                    }
-                    // input = ToString(arg0)
-                    _ = Emit(strCall2.Arguments[0], new TypeCoercion() { toString = true });
-                    // other = ToString(arg1)
-                    _ = Emit(callExpression.Arguments[0], new TypeCoercion() { toString = true });
-                    // locales (boxed)
-                    if (callExpression.Arguments.Count >= 2) _ = Emit(callExpression.Arguments[1], new TypeCoercion() { boxResult = true });
-                    else { _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull); }
-                    // options (boxed)
-                    if (callExpression.Arguments.Count >= 3) _ = Emit(callExpression.Arguments[2], new TypeCoercion() { boxResult = true });
-                    else { _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull); }
-
-                    // Resolve JavaScriptRuntime.String.LocaleCompare(string,string,object,object) -> int
-                    var stringType = JavaScriptRuntime.IntrinsicObjectRegistry.Get("String")
-                        ?? throw new NotSupportedException("Host intrinsic 'String' not found");
-                    var method = stringType
-                        .GetMethod("LocaleCompare", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-                    if (method == null)
-                    {
-                        throw new NotSupportedException("Host intrinsic method not found: String.LocaleCompare(input, other, locales, options)");
-                    }
-                    var mref = _owner.Runtime.GetStaticMethodRef(stringType, method.Name, method.ReturnType, method.GetParameters().Select(p => p.ParameterType).ToArray());
-                    _il.Call(mref);
-                    return typeof(double); // JS number
+                    return EmitStringInstanceMethodCall(mem.Object, mname.Name, callExpression);
                 }
                 if (mem.Object is Acornima.Ast.Identifier baseId)
                 {
@@ -550,6 +451,113 @@ namespace Js2IL.Services.ILGenerators
 
             _il.Call(mref);
             return true;
+        }
+
+        // Lightweight compile-time analyzer: return true only when the expression is unambiguously a string
+        private static bool IsDefinitelyString(Expression expr)
+        {
+            if (expr is StringLiteral) return true;
+            if (expr is TemplateLiteral) return true;
+            if (expr is CallExpression ce && ce.Callee is Identifier id && string.Equals(id.Name, "String", StringComparison.Ordinal) && ce.Arguments.Count == 1)
+                return true;
+            return false;
+        }
+
+        // Centralized emitter for string instance methods
+        private Type? EmitStringInstanceMethodCall(Expression receiver, string methodName, CallExpression callExpression)
+        {
+            var _runtime = _owner.Runtime;
+            var _bclReferences = _owner.BclReferences;
+
+            // Push receiver coerced to string
+            _ = Emit(receiver, new TypeCoercion { toString = true });
+
+            var stringType = JavaScriptRuntime.IntrinsicObjectRegistry.Get("String")
+                ?? throw new NotSupportedException("Host intrinsic 'String' not found");
+
+            // Normalize method name exact match (JS is case-sensitive)
+            if (string.Equals(methodName, "replace", StringComparison.Ordinal))
+            {
+                // Support 2-arg replace where args are (patternOrStringOrRegex, replacement)
+                if (callExpression.Arguments.Count != 2)
+                    throw new NotSupportedException("String.replace expects 2 arguments");
+
+                // If arg0 is a regex literal, prefer the 5-arg regex overload for flags handling
+                var arg0 = callExpression.Arguments[0];
+                if (arg0 is Literal lit)
+                {
+                    var rawProp = GetPropertyIgnoreCase(lit, "Raw");
+                    if (rawProp != null)
+                    {
+                        var rawObj = rawProp.GetValue(lit);
+                        var raw = rawObj as string ?? rawObj?.ToString() ?? string.Empty;
+                        var (pattern, flags) = ParseRegexRaw(raw);
+                        if (pattern != null)
+                        {
+                            bool global = flags != null && flags.Contains('g');
+                            bool ignoreCase = flags != null && flags.Contains('i');
+
+                            // stack: receiver already loaded; now push pattern, replacement, global, ignoreCase
+                            _il.Ldstr(_owner.MetadataBuilder, pattern);
+                            _ = Emit(callExpression.Arguments[1], new TypeCoercion { toString = true });
+                            _il.LoadConstantI4(global ? 1 : 0);
+                            _il.LoadConstantI4(ignoreCase ? 1 : 0);
+
+                            // Call String.Replace(string, string, string, bool, bool)
+                            var mi = stringType.GetMethod("Replace", BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(string), typeof(string), typeof(bool), typeof(bool) });
+                            if (mi == null)
+                            {
+                                // Fallback to reflection search if exact GetMethod overload not available
+                                mi = stringType.GetMethods(BindingFlags.Public | BindingFlags.Static)
+                                    .FirstOrDefault(m => string.Equals(m.Name, "Replace", StringComparison.Ordinal)
+                                        && m.GetParameters().Length == 5);
+                            }
+                            if (mi == null)
+                                throw new NotSupportedException("Host intrinsic method not found: String.Replace(string, string, string, bool, bool)");
+                            var mref = _runtime.GetStaticMethodRef(stringType, mi.Name, mi.ReturnType, mi.GetParameters().Select(p => p.ParameterType).ToArray());
+                            _il.Call(mref);
+                            return typeof(string);
+                        }
+                    }
+                }
+
+                // Otherwise, use the 3-arg overload for string pattern
+                _ = Emit(callExpression.Arguments[0], new TypeCoercion { boxResult = true });
+                _ = Emit(callExpression.Arguments[1], new TypeCoercion { boxResult = true });
+                var mi3 = stringType
+                    .GetMethods(BindingFlags.Public | BindingFlags.Static)
+                    .FirstOrDefault(m => string.Equals(m.Name, "Replace", StringComparison.Ordinal)
+                                         && m.GetParameters().Length == 3
+                                         && m.GetParameters()[0].ParameterType == typeof(string));
+                if (mi3 == null)
+                    throw new NotSupportedException("Host intrinsic method not found: String.Replace(string, object, object)");
+                var mref3 = _runtime.GetStaticMethodRef(stringType, mi3.Name, mi3.ReturnType, mi3.GetParameters().Select(p => p.ParameterType).ToArray());
+                _il.Call(mref3);
+                return typeof(string);
+            }
+
+            if (string.Equals(methodName, "localeCompare", StringComparison.Ordinal))
+            {
+                if (callExpression.Arguments.Count < 1 || callExpression.Arguments.Count > 3)
+                    throw new NotSupportedException("String.localeCompare expects 1..3 arguments");
+
+                // that
+                _ = Emit(callExpression.Arguments[0], new TypeCoercion { toString = true });
+                // locales
+                if (callExpression.Arguments.Count >= 2) _ = Emit(callExpression.Arguments[1], new TypeCoercion { boxResult = true });
+                else _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
+                // options
+                if (callExpression.Arguments.Count >= 3) _ = Emit(callExpression.Arguments[2], new TypeCoercion { boxResult = true });
+                else _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
+
+                var mi = stringType.GetMethod("LocaleCompare", BindingFlags.Public | BindingFlags.Static)
+                         ?? throw new NotSupportedException("Host intrinsic method not found: String.LocaleCompare");
+                var mref = _runtime.GetStaticMethodRef(stringType, mi.Name, mi.ReturnType, mi.GetParameters().Select(p => p.ParameterType).ToArray());
+                _il.Call(mref);
+                return typeof(double);
+            }
+
+            throw new NotSupportedException($"Unsupported string method: {methodName}");
         }
 
         /// <summary>
