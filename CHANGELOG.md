@@ -5,7 +5,8 @@ All notable changes to this project are documented here.
 ## [Unreleased]
 
 Added
-- (none)
+- Control flow: truthiness in conditionals (if/while/ternary) using JavaScript ToBoolean semantics; execution and generator tests.
+- Operators: logical OR (||) and logical AND (&&) with correct short-circuit semantics in both value and branching contexts; execution and generator tests.
 
 Changed
 - (none)
