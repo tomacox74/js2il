@@ -44,5 +44,12 @@ namespace Js2IL.Tests.String
             // Repro for calling a member on a non-identifier receiver: (String('...')).replace(...)
             return ExecutionTest(nameof(String_Replace_CallOnExpression));
         }
+
+        [Fact]
+        public Task String_StartsWith_NestedParam()
+        {
+            // Nested function calls startsWith on a string parameter (slow path via Object.CallMember)
+            return ExecutionTest(nameof(String_StartsWith_NestedParam));
+        }
     }
 }
