@@ -7,7 +7,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public object arr
+	.field public initonly object arr
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -33,9 +33,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2064
+		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 127 (0x7f)
+		// Code size: 124 (0x7c)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -69,25 +69,23 @@
 		IL_004c: stelem.ref
 		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_0052: pop
-		IL_0053: ldloc.0
-		IL_004e: ldfld object Scopes.Array_Join_Basic::arr
 		IL_0053: ldc.i4.1
 		IL_0054: newarr [System.Runtime]System.Object
 		IL_0059: dup
 		IL_005a: ldc.i4.0
-		IL_005b: ldstr "-"
-		IL_0060: stelem.ref
-		IL_0061: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_0066: stloc.0
-		IL_0067: ldc.i4.1
-		IL_0068: newarr [System.Runtime]System.Object
-		IL_006d: dup
-		IL_006e: ldc.i4.0
-		IL_006f: ldloc.0
-		IL_0070: stelem.ref
-		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0076: pop
-		IL_0077: ret
+		IL_005b: ldloc.0
+		IL_005c: ldfld object Scopes.Array_Join_Basic::arr
+		IL_0061: ldc.i4.1
+		IL_0062: newarr [System.Runtime]System.Object
+		IL_0067: dup
+		IL_0068: ldc.i4.0
+		IL_0069: ldstr "-"
+		IL_006e: stelem.ref
+		IL_006f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_0074: stelem.ref
+		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_007a: pop
+		IL_007b: ret
 	} // end of method Program::Main
 
 } // end of class Program
