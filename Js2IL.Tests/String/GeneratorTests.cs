@@ -47,5 +47,12 @@ namespace Js2IL.Tests.String
             var testName = nameof(String_Replace_CallOnExpression);
             return GenerateTest(testName);
         }
+
+        [Fact]
+        public Task String_StartsWith_NestedParam()
+        {
+            var testName = nameof(String_StartsWith_NestedParam);
+            return GenerateTest(testName);
+        }
     }
 }

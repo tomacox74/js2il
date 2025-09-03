@@ -1,29 +1,25 @@
-Title: Emit member calls on expression receivers; add Array.join; align snapshots
+Title: Generic runtime member dispatch + nested scopes fix; remove hardcoded member names; update snapshots
 
 Summary
-- Fix IL emission for CallExpressions where the callee is a MemberExpression and the receiver is not an Identifier (e.g., String(expr).replace(...)).
-- Route string instance methods replace/startsWith/localeCompare via a centralized emitter even when the receiver is an expression.
-- Add array instance dispatch (map/join/sort) for expression receivers and implement JavaScriptRuntime.Array.join.
-- Align generator snapshots for String_Replace_CallOnExpression and logical operator value tests.
+- Add a generic dispatcher JavaScriptRuntime.Object.CallMember(receiver, methodName, object[]? args) and remove hardcoded member-name checks from IL generation.
+- Route slow-path member calls at runtime based on actual receiver type (System.String vs JavaScriptRuntime.Array), falling back to reflection for others.
+- Fix nested function scopes array construction (always pass [global, local] when invoking a callee stored on the current local scope) to prevent IndexOutOfRange in inner functions.
+- Add a nested String.startsWith test that exercises the slow path and update Node Path.join nested generator snapshot accordingly.
 
 Details
 - ILExpressionGenerator:
-  - Resolve member names from identifier or computed string-literals.
-  - Handle non-identifier receivers: string and array instance methods now supported; improved error messages.
-  - Use Runtime.GetRuntimeTypeHandle for castclass token when emitting array instance calls.
-- JavaScriptRuntime.Array:
-  - Implement join() and join(object[]? args) using JS-like ToString semantics.
-- Tests:
-  - String.String_Replace_CallOnExpression execution and generator tests now pass consistently.
-  - BinaryOperator LogicalAnd/LogicalOr value generator snapshots updated to current IL printer style.
-  - Node Path.join execution test remains green.
+  - For MemberExpression calls with non-identifier receivers and for dynamic fallbacks, emit a call to Object.CallMember instead of hardcoding names (replace/map/join/startsWith/etc.).
+  - Adjust nested callsite scopes array: include global scope at slot 0 and the caller’s local scope at slot 1 to match inner function expectations.
+- JavaScriptRuntime.Object:
+  - Implement CallMember routing: strings → JavaScriptRuntime.String helpers; runtime arrays → instance methods (params object[] handled); otherwise → existing reflective fallback.
+- Tests/Snapshots:
+  - Add String_StartsWith_NestedParam (execution + generator). Execution now returns true; generator shows Object.CallMember usage and correct scopes wiring.
+  - Align Node/GeneratorTests.Require_Path_Join_NestedFunction.verified.txt to current emitter behavior.
+  - Minor snapshot churn in a nested function generator due to scopes fix.
 
 Validation
-- Suites run locally:
-  - String: all tests passed.
-  - BinaryOperator logical execution: green.
-  - Node Require_Path_Join_Basic: green.
+- Full test suite: 283 total, 0 failed, 9 skipped on local run.
+- Node and String suites pass; new nested string test validated both runtime and IL.
 
 Notes
-- Integration compile test remains unchanged (long-running, opt-in).
-- Follow-ups: broaden member-call coverage to additional intrinsics if encountered in integration.
+- Follow-ups: expand dispatcher coverage if new intrinsics appear (Number, RegExp, Date, etc.); consider propagating intrinsic module types deeper to enable more static binding in nested contexts.

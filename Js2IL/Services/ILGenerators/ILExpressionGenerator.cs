@@ -406,7 +406,7 @@ namespace Js2IL.Services.ILGenerators
                         }
                         if (targetType.IsNil)
                         {
-                            // As a last resort, emit a dynamic instance call via JavaScriptRuntime.Object.CallInstanceMethod(instance, name, object[])
+                            // As a last resort, emit a dynamic member call via JavaScriptRuntime.Object.CallMember(receiver, name, object[])
                             // Build args array
                             _il.EmitNewArray(callExpression.Arguments.Count, _bclReferences.ObjectType, (il, i) =>
                             {
@@ -414,7 +414,7 @@ namespace Js2IL.Services.ILGenerators
                             });
                             var dynCall = _owner.Runtime.GetStaticMethodRef(
                                 typeof(JavaScriptRuntime.Object),
-                                nameof(JavaScriptRuntime.Object.CallInstanceMethod),
+                                nameof(JavaScriptRuntime.Object.CallMember),
                                 typeof(object),
                                 typeof(object), typeof(string), typeof(object[]));
                             // Stack is currently: [instance, args]
@@ -450,27 +450,33 @@ namespace Js2IL.Services.ILGenerators
                         throw new NotSupportedException($"Unsupported member call base identifier: '{baseId.Name}'");
                     }
                 }
-                // Receiver is an arbitrary expression (e.g., String(x).replace(...), (foo()).bar(...))
-                // Strategy:
-                // 1) Try string instance path when receiver is not definitively string but can be coerced (JS semantics apply).
-                // 2) Otherwise, evaluate receiver and attempt dynamic intrinsic instance dispatch via runtime helpers (object methods).
-                // For now, we support common string patterns by coercing to string for known String methods.
-
-                // Known String instance methods we handle via runtime: Replace, StartsWith, LocaleCompare
-                var lowerName = methodName.ToLowerInvariant();
-                if (lowerName is "replace" or "startswith" or "localecompare")
+                // Receiver is an arbitrary expression (e.g., (expr).method(...))
+                // Use a generic runtime dispatcher to resolve based on runtime type: string, Array, or fallback.
+                // Stack: [receiver]
+                _ = Emit(mem.Object, new TypeCoercion());
+                // Build args array on stack
+                _il.EmitNewArray(callExpression.Arguments.Count, _bclReferences.ObjectType, (il, i) =>
                 {
-                    return EmitStringInstanceMethodCall(mem.Object, methodName, callExpression);
-                }
-
-                // Common Array instance methods when receiver is an expression: map, join, sort
-                if (lowerName is "map" or "join" or "sort")
-                {
-                    return EmitArrayInstanceMethodCall(mem.Object, methodName, callExpression);
-                }
-
-                // Future: add generic object instance dispatch if needed.
-                throw new NotSupportedException($"Unsupported member call on non-identifier receiver for method '{methodName}'.");
+                    Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
+                });
+                // Load method name
+                _il.Ldstr(_metadataBuilder, methodName);
+                // Reorder to (receiver, methodName, args): currently [receiver, args, name] -> store name, swap
+                var nameTemp = _variables.AllocateBlockScopeLocal($"MethodName_L{callExpression.Location.Start.Line}C{callExpression.Location.Start.Column}");
+                _il.StoreLocal(nameTemp); // [receiver, args]
+                // swap args to temp as well to push name
+                var argsTemp = _variables.AllocateBlockScopeLocal($"Args_L{callExpression.Location.Start.Line}C{callExpression.Location.Start.Column}");
+                _il.StoreLocal(argsTemp); // [receiver]
+                _il.LoadLocal(nameTemp);  // [receiver, name]
+                _il.LoadLocal(argsTemp);  // [receiver, name, args]
+                var callMember = _owner.Runtime.GetStaticMethodRef(
+                    typeof(JavaScriptRuntime.Object),
+                    nameof(JavaScriptRuntime.Object.CallMember),
+                    typeof(object),
+                    typeof(object), typeof(string), typeof(object[]));
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
+                _il.Token(callMember);
+                return null;
             }
             else if (callExpression.Callee is Acornima.Ast.Identifier identifier)
             {
@@ -1036,7 +1042,8 @@ namespace Js2IL.Services.ILGenerators
             }
 
             // Inside a function: include exactly the scope that owns the callee variable
-            // - If the callee is stored on the current local scope: include that local scope only.
+            // - If the callee is stored on the current local scope: include the global first (index 0), then the local (index 1).
+            //   This matches how nested function bodies index into their scopes array (global at [0], caller local at [1]).
             // - If the callee lives on a parent/global scope: include only that owning scope.
             if (!string.IsNullOrEmpty(functionVariable.ScopeName))
             {
@@ -1044,14 +1051,11 @@ namespace Js2IL.Services.ILGenerators
                 if (targetSlot.Location == ObjectReferenceLocation.Local)
                 {
                     // Nested function declared in the current local scope
-                    // Statement context snapshots may include [global, local]; expression context snapshots include only [local]
-                    if (context == CallSiteContext.Statement)
+                    // Always include [global, local] so callee can reliably index [0] = global, [1] = local
+                    var globalEntry = slots.FirstOrDefault(e => e.Slot.Location == ObjectReferenceLocation.ScopeArray && e.Slot.Address == 0);
+                    if (globalEntry != null)
                     {
-                        var globalEntry = slots.FirstOrDefault(e => e.Slot.Location == ObjectReferenceLocation.ScopeArray && e.Slot.Address == 0);
-                        if (globalEntry != null)
-                        {
-                            yield return globalEntry.Name; // global first
-                        }
+                        yield return globalEntry.Name; // global first
                     }
                     yield return functionVariable.ScopeName; // local (caller) scope
                 }
