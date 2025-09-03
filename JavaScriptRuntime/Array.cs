@@ -171,6 +171,36 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// JavaScript Array.join([separator]) implementation.
+        /// Joins elements by the given separator (default ',') and returns a string.
+        /// Each element is converted using DotNet2JSConversions.ToString to approximate JS semantics.
+        /// </summary>
+        public object join(object[]? args)
+        {
+            string separator = ",";
+            if (args != null && args.Length > 0)
+            {
+                separator = DotNet2JSConversions.ToString(args[0]);
+            }
+            if (this.Count == 0) return string.Empty;
+            var parts = new System.Collections.Generic.List<string>(this.Count);
+            for (int i = 0; i < this.Count; i++)
+            {
+                var v = this[i];
+                parts.Add(DotNet2JSConversions.ToString(v));
+            }
+            return string.Join(separator, parts);
+        }
+
+        /// <summary>
+        /// Overload without parameters to match potential direct dispatch.
+        /// </summary>
+        public object join()
+        {
+            return join(System.Array.Empty<object>());
+        }
+
+        /// <summary>
         /// Pushes all items from the given source enumerable into this array.
         /// Used by codegen to implement spread syntax in array literals.
         /// </summary>

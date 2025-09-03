@@ -317,12 +317,34 @@ namespace Js2IL.Services.ILGenerators
             var _bclReferences = _owner.BclReferences;
 
             // General member call: obj.method(...)
-            if (callExpression.Callee is Acornima.Ast.MemberExpression mem && !mem.Computed && mem.Property is Acornima.Ast.Identifier mname)
+            if (callExpression.Callee is Acornima.Ast.MemberExpression mem)
             {
+                // Resolve the method name from the property (supports identifier and computed string literal)
+                string? methodName = null;
+                if (!mem.Computed && mem.Property is Acornima.Ast.Identifier idProp)
+                {
+                    methodName = idProp.Name;
+                }
+                else if (mem.Computed && mem.Property is Acornima.Ast.Literal litProp)
+                {
+                    if (litProp.Value is string sname) methodName = sname;
+                    else if (litProp.Raw is string r && r.Length >= 2 && (r.StartsWith("\"") || r.StartsWith("'")))
+                    {
+                        // Strip quotes from raw if provided like ['replace']
+                        methodName = r.Substring(1, r.Length - 2);
+                    }
+                }
+
+                if (methodName == null)
+                {
+                    // Fallback when property cannot be resolved to a name we support
+                    throw new NotSupportedException($"Unsupported member call property kind: {mem.Property.Type}");
+                }
+
                 // If the receiver is definitely a string, route to a dedicated string-method emitter
                 if (IsDefinitelyString(mem.Object))
                 {
-                    return EmitStringInstanceMethodCall(mem.Object, mname.Name, callExpression);
+                    return EmitStringInstanceMethodCall(mem.Object, methodName, callExpression);
                 }
                 if (mem.Object is Acornima.Ast.Identifier baseId)
                 {
@@ -336,7 +358,7 @@ namespace Js2IL.Services.ILGenerators
                             .MethodSignature(isInstanceMethod: false)
                             .Parameters(sArgCount, r => r.Type().Object(), p => { for (int i = 0; i < sArgCount; i++) p.AddParameter().Type().Object(); });
                         var sMsig = _metadataBuilder.GetOrAddBlob(sSig);
-                        var sMref = _metadataBuilder.AddMemberReference(classType, _metadataBuilder.GetOrAddString(mname.Name), sMsig);
+                        var sMref = _metadataBuilder.AddMemberReference(classType, _metadataBuilder.GetOrAddString(methodName), sMsig);
                         // Push arguments
                         for (int i = 0; i < callExpression.Arguments.Count; i++)
                         {
@@ -352,10 +374,10 @@ namespace Js2IL.Services.ILGenerators
                         // If the variable is known to be a CLR string, route to the string instance helper
                         if (baseVar.RuntimeIntrinsicType == typeof(string))
                         {
-                            return EmitStringInstanceMethodCall(mem.Object, mname.Name, callExpression);
+                            return EmitStringInstanceMethodCall(mem.Object, methodName, callExpression);
                         }
                         // Step 2: Is it an object/class instance? Try intrinsic first, then class instance fallback
-                        if (TryEmitIntrinsicInstanceCall(baseVar, mname.Name, callExpression))
+                        if (TryEmitIntrinsicInstanceCall(baseVar, methodName, callExpression))
                         {
                             return null;
                         }
@@ -384,9 +406,9 @@ namespace Js2IL.Services.ILGenerators
                         }
                         if (targetType.IsNil)
                         {
-                            throw new NotSupportedException($"Cannot resolve class type for variable '{baseId.Name}' to call method '{mname.Name}'.");
+                            throw new NotSupportedException($"Cannot resolve class type for variable '{baseId.Name}' to call method '{methodName}'.");
                         }
-                        var mrefHandle = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(mname.Name), msig);
+                        var mrefHandle = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(methodName), msig);
 
                         // Push arguments
                         for (int i = 0; i < callExpression.Arguments.Count; i++)
@@ -402,7 +424,7 @@ namespace Js2IL.Services.ILGenerators
                     else
                     {
                         // Step 4: Not a variable - try host intrinsic (e.g., console.log)
-                        if (TryEmitHostIntrinsicStaticCall(baseId.Name, mname.Name, callExpression))
+                        if (TryEmitHostIntrinsicStaticCall(baseId.Name, methodName, callExpression))
                         {
                             return null;
                         }
@@ -416,14 +438,20 @@ namespace Js2IL.Services.ILGenerators
                 // For now, we support common string patterns by coercing to string for known String methods.
 
                 // Known String instance methods we handle via runtime: Replace, StartsWith, LocaleCompare
-                var lowerName = mname.Name.ToLowerInvariant();
+                var lowerName = methodName.ToLowerInvariant();
                 if (lowerName is "replace" or "startswith" or "localecompare")
                 {
-                    return EmitStringInstanceMethodCall(mem.Object, mname.Name, callExpression);
+                    return EmitStringInstanceMethodCall(mem.Object, methodName, callExpression);
+                }
+
+                // Common Array instance methods when receiver is an expression: map, join, sort
+                if (lowerName is "map" or "join" or "sort")
+                {
+                    return EmitArrayInstanceMethodCall(mem.Object, methodName, callExpression);
                 }
 
                 // Future: add generic object instance dispatch if needed.
-                throw new NotSupportedException($"Unsupported member call on non-identifier receiver for method '{mname.Name}'.");
+                throw new NotSupportedException($"Unsupported member call on non-identifier receiver for method '{methodName}'.");
             }
             else if (callExpression.Callee is Acornima.Ast.Identifier identifier)
             {
@@ -1679,6 +1707,80 @@ namespace Js2IL.Services.ILGenerators
             var pattern = raw.Substring(1, lastSlash - 1);
             var flags = lastSlash + 1 < raw.Length ? raw.Substring(lastSlash + 1) : string.Empty;
             return (pattern, flags);
+        }
+
+        private Type? EmitArrayInstanceMethodCall(Expression receiver, string methodName, CallExpression callExpression)
+        {
+            var _runtime = _owner.Runtime;
+            var _bclReferences = _owner.BclReferences;
+
+            // Evaluate receiver expression; if it's already a JavaScriptRuntime.Array, good. Otherwise, attempt to coerce arrays only for simple literals later.
+            // For now, we assume upstream code constructs arrays via ArrayExpression which produces JavaScriptRuntime.Array.
+            _ = Emit(receiver, new TypeCoercion { boxResult = false });
+
+            var arrayType = typeof(JavaScriptRuntime.Array);
+            // Best-effort castclass to JavaScriptRuntime.Array; emit type reference via runtime helper
+            try
+            {
+                var arrayTypeRef = _runtime.GetRuntimeTypeHandle(arrayType);
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
+                _il.Token(arrayTypeRef);
+            }
+            catch
+            {
+                // If type ref cannot be obtained, skip cast; downstream callvirt may still work for correct instances
+            }
+
+            // Reflect instance method (map/join/sort)
+            var methods = arrayType
+                .GetMethods(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)
+                .Where(mi => string.Equals(mi.Name, methodName, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            if (methods.Count == 0)
+            {
+                throw new NotSupportedException($"Array method not found: {arrayType.FullName}.{methodName}");
+            }
+
+            // Prefer overload matching params object[] or no args
+            var chosen = methods.FirstOrDefault(mi =>
+            {
+                var ps = mi.GetParameters();
+                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+            }) ?? methods.FirstOrDefault(mi => mi.GetParameters().Length == callExpression.Arguments.Count);
+
+            if (chosen == null)
+            {
+                // Fallback to first available (e.g., parameterless join())
+                chosen = methods.OrderBy(mi => mi.GetParameters().Length).First();
+            }
+
+            var psChosen = chosen.GetParameters();
+            var expectsParamsArray = psChosen.Length == 1 && psChosen[0].ParameterType == typeof(object[]);
+            var reflectedParamTypes = psChosen.Select(p => p.ParameterType).ToArray();
+            var reflectedReturnType = chosen.ReturnType;
+
+            var mrefHandle = _runtime.GetInstanceMethodRef(arrayType, chosen.Name, reflectedReturnType, reflectedParamTypes);
+
+            if (expectsParamsArray)
+            {
+                _il.EmitNewArray(callExpression.Arguments.Count, _bclReferences.ObjectType, (il, i) =>
+                {
+                    Emit(callExpression.Arguments[i], new TypeCoercion { boxResult = true });
+                });
+            }
+            else
+            {
+                for (int i = 0; i < callExpression.Arguments.Count; i++)
+                {
+                    Emit(callExpression.Arguments[i], new TypeCoercion { boxResult = true });
+                }
+            }
+
+            _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+            _il.Token(mrefHandle);
+
+            return reflectedReturnType;
         }
     }
 }
