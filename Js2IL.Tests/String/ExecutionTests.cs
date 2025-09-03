@@ -37,5 +37,12 @@ namespace Js2IL.Tests.String
         {
             return ExecutionTest(nameof(String_PlusEquals_Append));
         }
+
+        [Fact]
+        public Task String_Replace_CallOnExpression()
+        {
+            // Repro for calling a member on a non-identifier receiver: (String('...')).replace(...)
+            return ExecutionTest(nameof(String_Replace_CallOnExpression));
+        }
     }
 }

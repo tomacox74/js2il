@@ -1,0 +1,92 @@
+﻿// IL code: Array_Join_Basic
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Array_Join_Basic
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field public initonly object arr
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Array_Join_Basic::.ctor
+
+} // end of class Scopes.Array_Join_Basic
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x205c
+		// Header size: 12
+		// Code size: 124 (0x7c)
+		.maxstack 8
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Array_Join_Basic::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldc.i4.3
+		IL_0008: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_000d: dup
+		IL_000e: ldstr "a"
+		IL_0013: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0018: dup
+		IL_0019: ldstr "b"
+		IL_001e: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0023: dup
+		IL_0024: ldstr "c"
+		IL_0029: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_002e: stfld object Scopes.Array_Join_Basic::arr
+		IL_0033: ldc.i4.1
+		IL_0034: newarr [System.Runtime]System.Object
+		IL_0039: dup
+		IL_003a: ldc.i4.0
+		IL_003b: ldloc.0
+		IL_003c: ldfld object Scopes.Array_Join_Basic::arr
+		IL_0041: ldc.i4.0
+		IL_0042: newarr [System.Runtime]System.Object
+		IL_0047: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_004c: stelem.ref
+		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0052: pop
+		IL_0053: ldc.i4.1
+		IL_0054: newarr [System.Runtime]System.Object
+		IL_0059: dup
+		IL_005a: ldc.i4.0
+		IL_005b: ldloc.0
+		IL_005c: ldfld object Scopes.Array_Join_Basic::arr
+		IL_0061: ldc.i4.1
+		IL_0062: newarr [System.Runtime]System.Object
+		IL_0067: dup
+		IL_0068: ldc.i4.0
+		IL_0069: ldstr "-"
+		IL_006e: stelem.ref
+		IL_006f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_0074: stelem.ref
+		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_007a: pop
+		IL_007b: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

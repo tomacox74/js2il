@@ -40,5 +40,12 @@ namespace Js2IL.Tests.String
             var testName = nameof(String_PlusEquals_Append);
             return GenerateTest(testName);
         }
+
+        [Fact]
+        public Task String_Replace_CallOnExpression()
+        {
+            var testName = nameof(String_Replace_CallOnExpression);
+            return GenerateTest(testName);
+        }
     }
 }

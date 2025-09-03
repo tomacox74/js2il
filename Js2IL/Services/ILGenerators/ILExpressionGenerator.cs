@@ -317,12 +317,34 @@ namespace Js2IL.Services.ILGenerators
             var _bclReferences = _owner.BclReferences;
 
             // General member call: obj.method(...)
-            if (callExpression.Callee is Acornima.Ast.MemberExpression mem && !mem.Computed && mem.Property is Acornima.Ast.Identifier mname)
+            if (callExpression.Callee is Acornima.Ast.MemberExpression mem)
             {
+                // Resolve the method name from the property (supports identifier and computed string literal)
+                string? methodName = null;
+                if (!mem.Computed && mem.Property is Acornima.Ast.Identifier idProp)
+                {
+                    methodName = idProp.Name;
+                }
+                else if (mem.Computed && mem.Property is Acornima.Ast.Literal litProp)
+                {
+                    if (litProp.Value is string sname) methodName = sname;
+                    else if (litProp.Raw is string r && r.Length >= 2 && (r.StartsWith("\"") || r.StartsWith("'")))
+                    {
+                        // Strip quotes from raw if provided like ['replace']
+                        methodName = r.Substring(1, r.Length - 2);
+                    }
+                }
+
+                if (methodName == null)
+                {
+                    // Fallback when property cannot be resolved to a name we support
+                    throw new NotSupportedException($"Unsupported member call property kind: {mem.Property.Type}");
+                }
+
                 // If the receiver is definitely a string, route to a dedicated string-method emitter
                 if (IsDefinitelyString(mem.Object))
                 {
-                    return EmitStringInstanceMethodCall(mem.Object, mname.Name, callExpression);
+                    return EmitStringInstanceMethodCall(mem.Object, methodName, callExpression);
                 }
                 if (mem.Object is Acornima.Ast.Identifier baseId)
                 {
@@ -336,7 +358,7 @@ namespace Js2IL.Services.ILGenerators
                             .MethodSignature(isInstanceMethod: false)
                             .Parameters(sArgCount, r => r.Type().Object(), p => { for (int i = 0; i < sArgCount; i++) p.AddParameter().Type().Object(); });
                         var sMsig = _metadataBuilder.GetOrAddBlob(sSig);
-                        var sMref = _metadataBuilder.AddMemberReference(classType, _metadataBuilder.GetOrAddString(mname.Name), sMsig);
+                        var sMref = _metadataBuilder.AddMemberReference(classType, _metadataBuilder.GetOrAddString(methodName), sMsig);
                         // Push arguments
                         for (int i = 0; i < callExpression.Arguments.Count; i++)
                         {
@@ -352,10 +374,10 @@ namespace Js2IL.Services.ILGenerators
                         // If the variable is known to be a CLR string, route to the string instance helper
                         if (baseVar.RuntimeIntrinsicType == typeof(string))
                         {
-                            return EmitStringInstanceMethodCall(mem.Object, mname.Name, callExpression);
+                            return EmitStringInstanceMethodCall(mem.Object, methodName, callExpression);
                         }
                         // Step 2: Is it an object/class instance? Try intrinsic first, then class instance fallback
-                        if (TryEmitIntrinsicInstanceCall(baseVar, mname.Name, callExpression))
+                        if (TryEmitIntrinsicInstanceCall(baseVar, methodName, callExpression))
                         {
                             return null;
                         }
@@ -384,9 +406,28 @@ namespace Js2IL.Services.ILGenerators
                         }
                         if (targetType.IsNil)
                         {
-                            throw new NotSupportedException($"Cannot resolve class type for variable '{baseId.Name}' to call method '{mname.Name}'.");
+                            // As a last resort, emit a dynamic instance call via JavaScriptRuntime.Object.CallInstanceMethod(instance, name, object[])
+                            // Build args array
+                            _il.EmitNewArray(callExpression.Arguments.Count, _bclReferences.ObjectType, (il, i) =>
+                            {
+                                Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
+                            });
+                            var dynCall = _owner.Runtime.GetStaticMethodRef(
+                                typeof(JavaScriptRuntime.Object),
+                                nameof(JavaScriptRuntime.Object.CallInstanceMethod),
+                                typeof(object),
+                                typeof(object), typeof(string), typeof(object[]));
+                            // Stack is currently: [instance, args]
+                            // Store args to a temp local, then push method name and reload args to call with (instance, methodName, args)
+                            var tempIdx = _variables.AllocateBlockScopeLocal($"CallArgs_L{callExpression.Location.Start.Line}C{callExpression.Location.Start.Column}");
+                            _il.StoreLocal(tempIdx); // stack: [instance]
+                            _il.Ldstr(_metadataBuilder, methodName); // stack: [instance, methodName]
+                            _il.LoadLocal(tempIdx);                 // stack: [instance, methodName, args]
+                            _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
+                            _il.Token(dynCall);
+                            return null;
                         }
-                        var mrefHandle = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(mname.Name), msig);
+                        var mrefHandle = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(methodName), msig);
 
                         // Push arguments
                         for (int i = 0; i < callExpression.Arguments.Count; i++)
@@ -402,15 +443,34 @@ namespace Js2IL.Services.ILGenerators
                     else
                     {
                         // Step 4: Not a variable - try host intrinsic (e.g., console.log)
-                        if (TryEmitHostIntrinsicStaticCall(baseId.Name, mname.Name, callExpression))
+                        if (TryEmitHostIntrinsicStaticCall(baseId.Name, methodName, callExpression))
                         {
                             return null;
                         }
                         throw new NotSupportedException($"Unsupported member call base identifier: '{baseId.Name}'");
                     }
                 }
-                // Non-identifier callee under MemberExpression is unsupported beyond the above cases
-                throw new NotSupportedException($"Unsupported call expression callee type: {callExpression.Callee.Type}");
+                // Receiver is an arbitrary expression (e.g., String(x).replace(...), (foo()).bar(...))
+                // Strategy:
+                // 1) Try string instance path when receiver is not definitively string but can be coerced (JS semantics apply).
+                // 2) Otherwise, evaluate receiver and attempt dynamic intrinsic instance dispatch via runtime helpers (object methods).
+                // For now, we support common string patterns by coercing to string for known String methods.
+
+                // Known String instance methods we handle via runtime: Replace, StartsWith, LocaleCompare
+                var lowerName = methodName.ToLowerInvariant();
+                if (lowerName is "replace" or "startswith" or "localecompare")
+                {
+                    return EmitStringInstanceMethodCall(mem.Object, methodName, callExpression);
+                }
+
+                // Common Array instance methods when receiver is an expression: map, join, sort
+                if (lowerName is "map" or "join" or "sort")
+                {
+                    return EmitArrayInstanceMethodCall(mem.Object, methodName, callExpression);
+                }
+
+                // Future: add generic object instance dispatch if needed.
+                throw new NotSupportedException($"Unsupported member call on non-identifier receiver for method '{methodName}'.");
             }
             else if (callExpression.Callee is Acornima.Ast.Identifier identifier)
             {
@@ -438,16 +498,48 @@ namespace Js2IL.Services.ILGenerators
                 return false;
             }
 
-            // Reflect static method; prefer params object[] when available
-            var methods = type.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
-                .Where(mi => string.Equals(mi.Name, methodName, StringComparison.OrdinalIgnoreCase));
+            // Reflect static method candidates
+            var allMethods = type.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+            var methods = allMethods.Where(mi => string.Equals(mi.Name, methodName, StringComparison.OrdinalIgnoreCase));
 
-            var chosen = methods.FirstOrDefault(mi =>
+            // Prefer exact arity match first, then zero-parameter when no args, then params object[]
+            var chosen = methods.FirstOrDefault(mi => mi.GetParameters().Length == callExpression.Arguments.Count);
+            if (chosen == null && callExpression.Arguments.Count == 0)
             {
-                var ps = mi.GetParameters();
-                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
-            }) ?? methods.FirstOrDefault(mi => mi.GetParameters().Length == callExpression.Arguments.Count);
+                chosen = methods.FirstOrDefault(mi => mi.GetParameters().Length == 0);
+            }
+            if (chosen == null)
+            {
+                chosen = methods.FirstOrDefault(mi =>
+                {
+                    var ps = mi.GetParameters();
+                    return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+                });
+            }
 
+            if (chosen == null)
+            {
+                // Fallback: map console.error/warn -> console.log when specific overloads are not present
+                if (string.Equals(objectName, "console", StringComparison.OrdinalIgnoreCase)
+                    && !string.Equals(methodName, "log", StringComparison.OrdinalIgnoreCase))
+                {
+                    var alt = allMethods
+                        .Where(mi => string.Equals(mi.Name, "log", StringComparison.OrdinalIgnoreCase))
+                        .OrderByDescending(mi =>
+                        {
+                            var ps = mi.GetParameters();
+                            // Prefer exact arity, then params object[]
+                            if (ps.Length == callExpression.Arguments.Count) return 2;
+                            if (ps.Length == 1 && ps[0].ParameterType == typeof(object[])) return 1;
+                            return 0;
+                        })
+                        .FirstOrDefault();
+                    if (alt != null)
+                    {
+                        chosen = alt;
+                    }
+                }
+            }
             if (chosen == null)
             {
                 throw new NotSupportedException($"Host intrinsic method not found: {type.FullName}.{methodName} with {callExpression.Arguments.Count} arg(s)");
@@ -669,8 +761,17 @@ namespace Js2IL.Services.ILGenerators
             var _bclReferences = _owner.BclReferences;
             var _runtime = _owner.Runtime;
 
-            // Only applies to runtime intrinsic objects backed by a known CLR type
-            if (baseVar.RuntimeIntrinsicType == null)
+            // Only applies to runtime intrinsic objects backed by a known CLR type.
+            // If the Variable cache lacks the type (e.g., resolved from registry in nested function),
+            // consult the shared registry for a recorded RuntimeIntrinsicType.
+            var runtimeType = baseVar.RuntimeIntrinsicType;
+            if (runtimeType == null)
+            {
+                var reg = _owner.Variables.GetVariableRegistry();
+                var vi = reg?.GetVariableInfo(baseVar.ScopeName, baseVar.Name) ?? reg?.FindVariable(baseVar.Name);
+                runtimeType = vi?.RuntimeIntrinsicType;
+            }
+            if (runtimeType == null)
             {
                 return false;
             }
@@ -695,7 +796,7 @@ namespace Js2IL.Services.ILGenerators
             _il.Token(baseVar.FieldHandle); // stack: instance (object)
 
             // Reflect and select the target method, preferring params object[]
-            var rt = baseVar.RuntimeIntrinsicType;
+            var rt = runtimeType;
             var methods = rt
                 .GetMethods(BindingFlags.Instance | BindingFlags.Public)
                 .Where(mi => string.Equals(mi.Name, methodName, StringComparison.Ordinal));
@@ -1666,6 +1767,92 @@ namespace Js2IL.Services.ILGenerators
             var pattern = raw.Substring(1, lastSlash - 1);
             var flags = lastSlash + 1 < raw.Length ? raw.Substring(lastSlash + 1) : string.Empty;
             return (pattern, flags);
+        }
+
+        private Type? EmitArrayInstanceMethodCall(Expression receiver, string methodName, CallExpression callExpression)
+        {
+            var _runtime = _owner.Runtime;
+            var _bclReferences = _owner.BclReferences;
+
+            // Evaluate receiver expression; if it's already a JavaScriptRuntime.Array, good. Otherwise, attempt to coerce arrays only for simple literals later.
+            // For now, we assume upstream code constructs arrays via ArrayExpression which produces JavaScriptRuntime.Array.
+            _ = Emit(receiver, new TypeCoercion { boxResult = false });
+
+            var arrayType = typeof(JavaScriptRuntime.Array);
+            // Best-effort castclass to JavaScriptRuntime.Array; emit type reference via runtime helper
+            try
+            {
+                var arrayTypeRef = _runtime.GetRuntimeTypeHandle(arrayType);
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
+                _il.Token(arrayTypeRef);
+            }
+            catch
+            {
+                // If type ref cannot be obtained, skip cast; downstream callvirt may still work for correct instances
+            }
+
+            // Reflect instance method (map/join/sort)
+            var methods = arrayType
+                .GetMethods(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)
+                .Where(mi => string.Equals(mi.Name, methodName, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            if (methods.Count == 0)
+            {
+                throw new NotSupportedException($"Array method not found: {arrayType.FullName}.{methodName}");
+            }
+
+            // Prefer exact arity match first (e.g., parameterless join())
+            var chosen = methods.FirstOrDefault(mi => mi.GetParameters().Length == callExpression.Arguments.Count);
+
+            // If no args at callsite, strongly prefer a true zero-parameter overload when available
+            if (chosen == null && callExpression.Arguments.Count == 0)
+            {
+                chosen = methods.FirstOrDefault(mi => mi.GetParameters().Length == 0);
+            }
+
+            // Fall back to params object[] overload when available
+            if (chosen == null)
+            {
+                chosen = methods.FirstOrDefault(mi =>
+                {
+                    var ps = mi.GetParameters();
+                    return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+                });
+            }
+
+            if (chosen == null)
+            {
+                // Fallback to first available (e.g., parameterless join())
+                chosen = methods.OrderBy(mi => mi.GetParameters().Length).First();
+            }
+
+            var psChosen = chosen.GetParameters();
+            var expectsParamsArray = psChosen.Length == 1 && psChosen[0].ParameterType == typeof(object[]);
+            var reflectedParamTypes = psChosen.Select(p => p.ParameterType).ToArray();
+            var reflectedReturnType = chosen.ReturnType;
+
+            var mrefHandle = _runtime.GetInstanceMethodRef(arrayType, chosen.Name, reflectedReturnType, reflectedParamTypes);
+
+            if (expectsParamsArray)
+            {
+                _il.EmitNewArray(callExpression.Arguments.Count, _bclReferences.ObjectType, (il, i) =>
+                {
+                    Emit(callExpression.Arguments[i], new TypeCoercion { boxResult = true });
+                });
+            }
+            else
+            {
+                for (int i = 0; i < callExpression.Arguments.Count; i++)
+                {
+                    Emit(callExpression.Arguments[i], new TypeCoercion { boxResult = true });
+                }
+            }
+
+            _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+            _il.Token(mrefHandle);
+
+            return reflectedReturnType;
         }
     }
 }

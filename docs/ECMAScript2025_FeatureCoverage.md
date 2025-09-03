@@ -178,6 +178,14 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Binary == (Equality) | Supported | `Js2IL.Tests/JavaScript/BinaryOperator_Equal.js`<br>`Js2IL.Tests/JavaScript/Function_IsEven_CompareResultToTrue.js` | Covers numeric and boolean equality, including comparisons against literals and function-returned booleans with selective boxing/unboxing. See also generator snapshot: Js2IL.Tests/BinaryOperator/GeneratorTests.BinaryOperator_EqualBoolean.verified.txt. | 13.5.9 |
 
 
+#### [Logical operators (||, &&)](https://tc39.es/ecma262/#sec-binary-logical-operators)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Binary \|\| (Logical OR) with short-circuit | Supported | `Js2IL.Tests/JavaScript/BinaryOperator_LogicalOr_Value.js` | Value form returns left if truthy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited. | 13.5.10 |
+| Binary && (Logical AND) with short-circuit | Supported | `Js2IL.Tests/JavaScript/BinaryOperator_LogicalAnd_Value.js` | Value form returns left if falsy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited. | 13.5.10 |
+
+
 #### [Conditional (ternary) operator (?:)](https://tc39.es/ecma262/#sec-conditional-operator)
 
 | Feature | Status | Test Scripts | Notes | Section |
@@ -205,6 +213,7 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | if statement (LessThan) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_If_LessThan.js` |  | 14.6.2 |
 | if statement (!flag) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_If_NotFlag.js` | Logical not in conditional test supported. | 14.6.2 |
 | if statement (result == true) | Supported | `Js2IL.Tests/JavaScript/Function_IsEven_CompareResultToTrue.js` | Compares function-returned boolean to true and branches accordingly. | 14.6.2 |
+| if condition truthiness (non-boolean) | Supported | `Js2IL.Tests/JavaScript/ControlFlow_If_Truthiness.js` | Conditions like if (url) are coerced via JS ToBoolean semantics (empty string/0/NaN/undefined/null => false; others => true). | 14.6.2 |
 
 
 ### [The do-while Statement](https://tc39.es/ecma262/#sec-do-while-statement)
@@ -290,6 +299,13 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
 | Array.length property (read) | Supported | `Js2IL.Tests/JavaScript/Array_LengthProperty_ReturnsCount.js`<br>`Js2IL.Tests/JavaScript/Array_EmptyLength_IsZero.js` | length getter returns number of elements; emitted via JavaScriptRuntime.Object.GetLength(object). Used by for-of implementation. | 23.1.2.1 |
+
+
+#### [Array.prototype.join](https://tc39.es/ecma262/#sec-array.prototype.join)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Array.prototype.join | Supported | `Js2IL.Tests/JavaScript/Array_Join_Basic.js` | Elements are stringified via DotNet2JSConversions.ToString and joined with a separator (default ','). Codegen dispatches to JavaScriptRuntime.Array.join(object[]). | 23.1.3.13 |
 
 
 #### [Array.prototype.map](https://tc39.es/ecma262/#sec-array.prototype.map)

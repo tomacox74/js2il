@@ -140,6 +140,12 @@ namespace Js2IL.Services.ILGenerators
                     var initResult = this._expressionEmitter.Emit(variableAST.Init, new TypeCoercion() { boxResult = true });
                     variable.Type = initResult.JsType;
                     variable.RuntimeIntrinsicType = initResult.ClrType;
+                    // Persist intrinsic CLR type to the shared registry so nested contexts can see it
+                    try
+                    {
+                        _variables.GetVariableRegistry()?.SetRuntimeIntrinsicType(variable.ScopeName, variableName, initResult.ClrType);
+                    }
+                    catch { /* best-effort; registry may not support this yet */ }
                 }
                 finally
                 {
@@ -325,7 +331,9 @@ namespace Js2IL.Services.ILGenerators
             // Since we don't have direct Scope reference here, we re-scan the statements for VariableDeclarations
             // containing 'let' or 'const'. The parser represented them already; BindingKind stored in registry determines field attributes.
             bool hasLexical = blockStatement.Body.Any(s =>
-                s is VariableDeclaration vd && vd.Kind is VariableDeclarationKind.Let or VariableDeclarationKind.Const);
+                (s is VariableDeclaration vd && vd.Kind is VariableDeclarationKind.Let or VariableDeclarationKind.Const)
+                || (s is ForOfStatement fof && fof.Left is VariableDeclaration fovd && (fovd.Kind is VariableDeclarationKind.Let or VariableDeclarationKind.Const))
+            );
 
             // If no lexical declarations, just emit statements directly.
             if (!hasLexical)
@@ -600,29 +608,52 @@ namespace Js2IL.Services.ILGenerators
             // Bind current element to target variable
             if (!string.IsNullOrEmpty(iterVarName))
             {
-                // Load scope to store into
-                var targetVar = _variables.FindVariable(iterVarName);
-                if (targetVar == null)
+                // Try resolve via Variables; if unavailable (e.g., for-of header const not pre-registered), fall back to registry
+                var targetVar = _variables.FindVariable(iterVarName!);
+                string targetScopeName;
+                FieldDefinitionHandle targetFieldHandle;
+                if (targetVar != null)
                 {
-                    if (forOf.Left is VariableDeclaration vdecl2)
+                    targetScopeName = targetVar.ScopeName;
+                    targetFieldHandle = targetVar.FieldHandle;
+                }
+                else
+                {
+                    var registry = _variables.GetVariableRegistry();
+                    var leafScope = _variables.GetLeafScopeName();
+                    var vinfo = registry?.GetVariableInfo(leafScope, iterVarName!);
+                    if (vinfo == null)
                     {
-                        DeclareVariable(vdecl2);
-                        targetVar = _variables.FindVariable(iterVarName!);
+                        // As a last resort, attempt to declare (will throw if truly unknown)
+                        if (forOf.Left is VariableDeclaration vdecl2)
+                        {
+                            DeclareVariable(vdecl2);
+                            targetVar = _variables.FindVariable(iterVarName!);
+                            if (targetVar == null)
+                                throw new InvalidOperationException($"Variable '{iterVarName}' not found.");
+                            targetScopeName = targetVar.ScopeName;
+                            targetFieldHandle = targetVar.FieldHandle;
+                        }
+                        else
+                        {
+                            throw new NotSupportedException($"for-of target '{iterVarName}' could not be resolved.");
+                        }
+                    }
+                    else
+                    {
+                        targetScopeName = vinfo.ScopeName;
+                        targetFieldHandle = vinfo.FieldHandle;
                     }
                 }
-                if (targetVar == null)
-                {
-                    throw new NotSupportedException($"for-of target '{iterVarName}' could not be resolved.");
-                }
 
-                // Guard const reassignment
+                // Guard const reassignment: first assignment only; per-iteration freshness is modeled by loop body semantics
                 if (bindTargetIsConst)
                 {
-                    // If already assigned earlier in loop iteration, we'll still allow first assignment; for simplicity, always allow
+                    // No-op: we only assign once per iteration
                 }
 
                 // Load target scope instance for stfld
-                var tslot = _variables.GetScopeLocalSlot(targetVar.ScopeName);
+                var tslot = _variables.GetScopeLocalSlot(targetScopeName);
                 if (tslot.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(tslot.Address);
                 else if (tslot.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(tslot.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
                 else _il.LoadLocal(tslot.Address);
@@ -637,7 +668,7 @@ namespace Js2IL.Services.ILGenerators
 
                 // Store into target field
                 _il.OpCode(ILOpCode.Stfld);
-                _il.Token(targetVar.FieldHandle);
+                _il.Token(targetFieldHandle);
             }
 
             // Emit loop body

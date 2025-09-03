@@ -16,7 +16,23 @@ namespace JavaScriptRuntime
             _output = output ?? new DefaultConsoleOutput();
         }
 
-        public static object Log(params object?[] args)
+        public static object? Log(params object?[] args)
+        {
+            var parts = args.Select(arg => DotNet2JSConversions.ToString(arg));
+            var line = string.Join(" ", parts);
+            _output.WriteLine(line);
+            return null;
+        }
+
+        public static object? Error(params object?[] args)
+        {
+            var parts = args.Select(arg => DotNet2JSConversions.ToString(arg));
+            var line = string.Join(" ", parts);
+            _output.WriteLine(line);
+            return null;
+        }
+
+        public static object? Warn(params object?[] args)
         {
             var parts = args.Select(arg => DotNet2JSConversions.ToString(arg));
             var line = string.Join(" ", parts);
