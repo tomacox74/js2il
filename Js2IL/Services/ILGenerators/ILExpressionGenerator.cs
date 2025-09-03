@@ -483,11 +483,20 @@ namespace Js2IL.Services.ILGenerators
             var methods = type.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
                 .Where(mi => string.Equals(mi.Name, methodName, StringComparison.OrdinalIgnoreCase));
 
-            var chosen = methods.FirstOrDefault(mi =>
+            // Prefer exact arity match first, then zero-parameter when no args, then params object[]
+            var chosen = methods.FirstOrDefault(mi => mi.GetParameters().Length == callExpression.Arguments.Count);
+            if (chosen == null && callExpression.Arguments.Count == 0)
             {
-                var ps = mi.GetParameters();
-                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
-            }) ?? methods.FirstOrDefault(mi => mi.GetParameters().Length == callExpression.Arguments.Count);
+                chosen = methods.FirstOrDefault(mi => mi.GetParameters().Length == 0);
+            }
+            if (chosen == null)
+            {
+                chosen = methods.FirstOrDefault(mi =>
+                {
+                    var ps = mi.GetParameters();
+                    return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+                });
+            }
 
             if (chosen == null)
             {
@@ -1742,12 +1751,24 @@ namespace Js2IL.Services.ILGenerators
                 throw new NotSupportedException($"Array method not found: {arrayType.FullName}.{methodName}");
             }
 
-            // Prefer overload matching params object[] or no args
-            var chosen = methods.FirstOrDefault(mi =>
+            // Prefer exact arity match first (e.g., parameterless join())
+            var chosen = methods.FirstOrDefault(mi => mi.GetParameters().Length == callExpression.Arguments.Count);
+
+            // If no args at callsite, strongly prefer a true zero-parameter overload when available
+            if (chosen == null && callExpression.Arguments.Count == 0)
             {
-                var ps = mi.GetParameters();
-                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
-            }) ?? methods.FirstOrDefault(mi => mi.GetParameters().Length == callExpression.Arguments.Count);
+                chosen = methods.FirstOrDefault(mi => mi.GetParameters().Length == 0);
+            }
+
+            // Fall back to params object[] overload when available
+            if (chosen == null)
+            {
+                chosen = methods.FirstOrDefault(mi =>
+                {
+                    var ps = mi.GetParameters();
+                    return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+                });
+            }
 
             if (chosen == null)
             {
