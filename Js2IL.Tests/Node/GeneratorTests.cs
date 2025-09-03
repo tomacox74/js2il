@@ -11,6 +11,10 @@ namespace Js2IL.Tests.Node
         public Task Require_Path_Join_Basic() => GenerateTest(
             nameof(Require_Path_Join_Basic));
 
+        [Fact]
+        public Task Require_Path_Join_NestedFunction() => GenerateTest(
+            nameof(Require_Path_Join_NestedFunction));
+
     [Fact]
         public Task Global___dirname_PrintsDirectory() => GenerateTest(
             nameof(Global___dirname_PrintsDirectory));
