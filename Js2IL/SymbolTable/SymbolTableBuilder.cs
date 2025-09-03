@@ -2,6 +2,8 @@ using Acornima.Ast;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace Js2IL.SymbolTables
 {
@@ -132,7 +134,10 @@ namespace Js2IL.SymbolTables
                                 VariableDeclarationKind.Const => BindingKind.Const,
                                 _ => BindingKind.Var
                             };
-                            currentScope.Bindings[id.Name] = new BindingInfo(id.Name, kind, decl);
+                            var binding = new BindingInfo(id.Name, kind, decl);
+                            // Attempt early CLR type resolution for: const x = require('<module>')
+                            TryAssignClrTypeForRequireInit(decl, binding);
+                            currentScope.Bindings[id.Name] = binding;
                         }
                         // Track assignment target for naming nested functions
                         if (decl.Init != null && decl.Id is Identifier targetId)
@@ -259,6 +264,48 @@ namespace Js2IL.SymbolTables
                     break;
                 // Add more cases as needed for other node types
             }
+        }
+
+        private static void TryAssignClrTypeForRequireInit(VariableDeclarator decl, BindingInfo binding)
+        {
+            // Pattern: const name = require('path') or require("path")
+            var init = decl.Init;
+            if (init is CallExpression call && call.Callee is Identifier calleeId && calleeId.Name == "require")
+            {
+                if (call.Arguments.Count == 1 && call.Arguments[0] is Literal lit && lit.Value is string s)
+                {
+                    var moduleKey = NormalizeModuleName(s);
+                    var t = ResolveNodeModuleType(moduleKey);
+                    binding.RuntimeIntrinsicType = t;
+                }
+            }
+        }
+
+        private static string NormalizeModuleName(string s)
+        {
+            var trimmed = (s ?? string.Empty).Trim();
+            if (trimmed.StartsWith("node:", StringComparison.OrdinalIgnoreCase))
+                trimmed = trimmed.Substring("node:".Length);
+            return trimmed;
+        }
+
+        private static Type? ResolveNodeModuleType(string key)
+        {
+            if (string.IsNullOrWhiteSpace(key)) return null;
+            var asm = typeof(JavaScriptRuntime.Require).Assembly;
+            // Scan JavaScriptRuntime.Node namespace for [NodeModule(Name=key)]
+            foreach (var t in asm.GetTypes())
+            {
+                if (!t.IsClass || t.IsAbstract) continue;
+                if (!string.Equals(t.Namespace, "JavaScriptRuntime.Node", StringComparison.Ordinal)) continue;
+                var attr = t.GetCustomAttributes(false).FirstOrDefault(a => a.GetType().FullName == "JavaScriptRuntime.Node.NodeModuleAttribute");
+                if (attr == null) continue;
+                var nameProp = attr.GetType().GetProperty("Name");
+                var nameVal = nameProp?.GetValue(attr) as string;
+                if (string.Equals(nameVal, key, StringComparison.OrdinalIgnoreCase))
+                    return t;
+            }
+            return null;
         }
 
         private void ProcessChildNodes(Node node, Scope currentScope)

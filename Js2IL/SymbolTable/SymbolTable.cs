@@ -1,4 +1,5 @@
 using Acornima.Ast;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -91,6 +92,8 @@ namespace Js2IL.SymbolTables
         public string Name { get; }
         public BindingKind Kind { get; }
         public Node DeclarationNode { get; }
+    // Optional: CLR runtime type known via static analysis (e.g., const fs = require('fs'))
+    public Type? RuntimeIntrinsicType { get; set; }
 
         public BindingInfo(string name, BindingKind kind, Node declarationNode)
         {

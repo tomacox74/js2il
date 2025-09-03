@@ -150,19 +150,22 @@ namespace Js2IL.Services
                 try
                 {
                     var fh = _registry.GetFieldHandle(_scopeName, name);
+                    var viParamField = _registry.GetVariableInfo(_scopeName, name) ?? _registry.FindVariable(name);
                     var lvParamField = new LocalVariable
                     {
                         Name = name,
                         FieldHandle = fh,
                         ScopeName = _scopeName,
-                        Type = JavascriptType.Unknown
+                        Type = JavascriptType.Unknown,
+                        RuntimeIntrinsicType = viParamField?.RuntimeIntrinsicType
                     };
                     _variables[name] = lvParamField;
                     return lvParamField;
                 }
                 catch (KeyNotFoundException)
                 {
-                    var p = new ParameterVariable { Name = name, ParameterIndex = pindex, IsParameter = true, Type = JavascriptType.Object };
+                    var viParam = _registry.GetVariableInfo(_scopeName, name) ?? _registry.FindVariable(name);
+                    var p = new ParameterVariable { Name = name, ParameterIndex = pindex, IsParameter = true, Type = JavascriptType.Object, RuntimeIntrinsicType = viParam?.RuntimeIntrinsicType };
                     _variables[name] = p;
                     return p;
                 }
@@ -174,12 +177,14 @@ namespace Js2IL.Services
                 try
                 {
                     var currentScopeField = _registry.GetFieldHandle(_scopeName, name);
+                    var viDirect = _registry.GetVariableInfo(_scopeName, name) ?? _registry.FindVariable(name);
                     var lvDirect = new LocalVariable
                     {
                         Name = name,
                         FieldHandle = currentScopeField,
                         ScopeName = _scopeName,
-                        Type = JavascriptType.Unknown
+                        Type = JavascriptType.Unknown,
+                        RuntimeIntrinsicType = viDirect?.RuntimeIntrinsicType
                     };
                     _variables[name] = lvDirect; // cache since it's stable for duration of method
                     return lvDirect;

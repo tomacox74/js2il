@@ -380,6 +380,11 @@ namespace Js2IL.Services
                             scopeTypeHandle,
                             bindingInfo.Kind
                         );
+                        // If SymbolTable discovered a CLR runtime type (e.g., const x = require('path')) assign it now
+                        if (bindingInfo.RuntimeIntrinsicType != null)
+                        {
+                            _variableRegistry.SetRuntimeIntrinsicType(scope.Name, variableName, bindingInfo.RuntimeIntrinsicType);
+                        }
                     }
                     // Only advance when a field exists for this binding
                     fieldIndex++;

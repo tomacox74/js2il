@@ -12,6 +12,10 @@ namespace Js2IL.Tests.Node
             => ExecutionTest(nameof(Require_Path_Join_Basic), configureSettings: s => s.AddScrubber(sb => sb.Replace('\\', '/')));
 
         [Fact]
+        public Task Require_Path_Join_NestedFunction()
+            => ExecutionTest(nameof(Require_Path_Join_NestedFunction), configureSettings: s => s.AddScrubber(sb => sb.Replace('\\', '/')));
+
+        [Fact]
         public Task Global___dirname_PrintsDirectory()
             => ExecutionTest(
                 nameof(Global___dirname_PrintsDirectory),
