@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
@@ -118,6 +119,23 @@ namespace Js2IL.Services.VariableBindings
             }
             return null;
         }
+
+        /// <summary>
+        /// Records the runtime intrinsic CLR type for a variable (e.g., result of require('fs')).
+        /// This enables other generator contexts (nested functions) to recognize intrinsic instances.
+        /// </summary>
+        public void SetRuntimeIntrinsicType(string scopeName, string variableName, Type? runtimeType)
+        {
+            if (runtimeType == null) return;
+            if (_scopeVariables.TryGetValue(scopeName, out var list))
+            {
+                var vi = list.FirstOrDefault(v => v.Name == variableName);
+                if (vi != null)
+                {
+                    vi.RuntimeIntrinsicType = runtimeType;
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -131,5 +149,7 @@ namespace Js2IL.Services.VariableBindings
         public FieldDefinitionHandle FieldHandle { get; set; }
         public TypeDefinitionHandle ScopeTypeHandle { get; set; }
     public BindingKind BindingKind { get; set; }
+    // Optional: CLR runtime type when known (e.g., Node module instance or intrinsic)
+    public Type? RuntimeIntrinsicType { get; set; }
     }
 }

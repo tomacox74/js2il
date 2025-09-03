@@ -198,7 +198,7 @@ namespace Js2IL.Services
             }
 
             // Parent or other ancestor scope field
-            if (_parentScopeIndices.TryGetValue(variableInfo.ScopeName, out var idx))
+        if (_parentScopeIndices.TryGetValue(variableInfo.ScopeName, out var idx))
             {
                 var sv = new ScopeVariable
                 {
@@ -206,21 +206,23 @@ namespace Js2IL.Services
                     ScopeName = variableInfo.ScopeName,
                     ParentScopeIndex = idx,
                     FieldHandle = variableInfo.FieldHandle,
-                    Type = JavascriptType.Unknown
+            Type = JavascriptType.Unknown,
+            RuntimeIntrinsicType = variableInfo.RuntimeIntrinsicType
                 };
                 _variables[name] = sv;
                 return sv;
             }
 
             // If the variable actually belongs to current scope but was not found earlier (edge case), treat as local
-            if (variableInfo.ScopeName == _scopeName)
+        if (variableInfo.ScopeName == _scopeName)
             {
                 var lv = new LocalVariable
                 {
                     Name = name,
                     FieldHandle = variableInfo.FieldHandle,
                     ScopeName = variableInfo.ScopeName,
-                    Type = JavascriptType.Unknown
+            Type = JavascriptType.Unknown,
+            RuntimeIntrinsicType = variableInfo.RuntimeIntrinsicType
                 };
                 _variables[name] = lv;
                 return lv;
