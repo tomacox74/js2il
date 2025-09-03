@@ -14,7 +14,7 @@ namespace JavaScriptRuntime
         /// Implements a subset of String.prototype.startsWith(searchString[, position]).
         /// Uses ordinal comparison and basic ToIntegerOrInfinity coercion for position.
         /// </summary>
-        public static bool StartsWith(string input, string searchString)
+    public static object StartsWith(string input, string searchString)
         {
             return StartsWith(input, searchString, null);
         }
@@ -22,7 +22,7 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Implements a subset of String.prototype.startsWith with optional position argument.
         /// </summary>
-        public static bool StartsWith(string input, string searchString, object? position)
+    public static object StartsWith(string input, string searchString, object? position)
         {
             input ??= string.Empty;
             searchString ??= string.Empty;
@@ -109,7 +109,7 @@ namespace JavaScriptRuntime
         /// Supports locales (ignored) and options; recognizes options.numeric === true to enable numeric-aware comparison.
     /// Returns -1, 0, or 1 as a JavaScript number (double).
     /// </summary>
-    public static double LocaleCompare(string input, string other, object? locales, object? options)
+    public static object LocaleCompare(string input, string other, object? locales, object? options)
         {
             input ??= string.Empty;
             other ??= string.Empty;
