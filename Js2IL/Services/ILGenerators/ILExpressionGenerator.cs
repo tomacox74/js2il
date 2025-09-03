@@ -1042,7 +1042,8 @@ namespace Js2IL.Services.ILGenerators
             }
 
             // Inside a function: include exactly the scope that owns the callee variable
-            // - If the callee is stored on the current local scope: include that local scope only.
+            // - If the callee is stored on the current local scope: include the global first (index 0), then the local (index 1).
+            //   This matches how nested function bodies index into their scopes array (global at [0], caller local at [1]).
             // - If the callee lives on a parent/global scope: include only that owning scope.
             if (!string.IsNullOrEmpty(functionVariable.ScopeName))
             {
@@ -1050,14 +1051,11 @@ namespace Js2IL.Services.ILGenerators
                 if (targetSlot.Location == ObjectReferenceLocation.Local)
                 {
                     // Nested function declared in the current local scope
-                    // Statement context snapshots may include [global, local]; expression context snapshots include only [local]
-                    if (context == CallSiteContext.Statement)
+                    // Always include [global, local] so callee can reliably index [0] = global, [1] = local
+                    var globalEntry = slots.FirstOrDefault(e => e.Slot.Location == ObjectReferenceLocation.ScopeArray && e.Slot.Address == 0);
+                    if (globalEntry != null)
                     {
-                        var globalEntry = slots.FirstOrDefault(e => e.Slot.Location == ObjectReferenceLocation.ScopeArray && e.Slot.Address == 0);
-                        if (globalEntry != null)
-                        {
-                            yield return globalEntry.Name; // global first
-                        }
+                        yield return globalEntry.Name; // global first
                     }
                     yield return functionVariable.ScopeName; // local (caller) scope
                 }
