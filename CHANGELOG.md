@@ -2,23 +2,31 @@
 
 All notable changes to this project are documented here.
 
-## [Unreleased]
+## v0.1.3 - 2025-09-03
 
 Added
 - Control flow: truthiness in conditionals (if/while/ternary) using JavaScript ToBoolean semantics; execution and generator tests.
 - Operators: logical OR (||) and logical AND (&&) with correct short-circuit semantics in both value and branching contexts; execution and generator tests.
+- Runtime: generic JavaScriptRuntime.Object.CallMember(receiver, methodName, object[]? args) to dispatch member calls at runtime (routes System.String and runtime Array; reflection fallback for others).
+- Arrays: Array.prototype.join(sep?) implemented with JS semantics; execution and generator tests.
+- String/Array nested slow-path tests that exercise dynamic member dispatch in nested functions.
 
 Changed
-- (none)
+- Codegen: remove hardcoded member-name checks in ILExpressionGenerator (e.g., replace/map/join/startsWith) and route dynamic/unknown receivers through Object.CallMember.
+- Generator: minor IL snapshot churn due to scopes array construction and dispatcher usage.
 
 Fixed
-- (none)
+- Nested function scopes: always pass [global, local] when invoking a callee stored on the current local scope to prevent IndexOutOfRangeException in inner functions.
 
 Docs
 - Updated ECMAScript 2025 feature coverage to include conditional truthiness coercion and logical operators (||, &&); regenerated markdown.
+- Updated coverage to include Array.join and notes on dynamic member dispatch.
 
 Tests
 - Added ControlFlow tests for truthiness in if conditions and BinaryOperator tests for logical OR/AND value results; added generator tests for logical operators.
+- Added String_StartsWith_NestedParam (execution + generator) to validate slow-path member dispatch in nested function.
+- Added Array_Map_NestedParam (execution + generator) to validate dynamic dispatch on Array and callback delegate wiring.
+- Aligned Node generator snapshot for nested Require('path').join to current emitter.
 
 ## v0.1.2 - 2025-09-03
 
