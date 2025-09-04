@@ -90,6 +90,45 @@ namespace Js2IL.Services.ILGenerators
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
                         var (_, ctorRef) = _bclReferences.GetFuncObjectArrayWithParams(paramNames.Length);
                         _il.Token(ctorRef);
+                        // Immediately bind the new delegate to the appropriate closure scopes so that
+                        // callbacks invoked later (e.g., Array.map) have a valid scopes array.
+                        // Stack currently: [delegate]
+                        var allNames = _variables.GetAllScopeNames().ToList();
+                        var slots = allNames.Select(n => new { Name = n, Slot = _variables.GetScopeLocalSlot(n) }).ToList();
+                        bool inFunctionContext = slots.Any(e => e.Slot.Location == ObjectReferenceLocation.ScopeArray);
+                        // Determine scopes to capture: in function context include [global(if present), current local]; else include leaf only
+                        var capture = new System.Collections.Generic.List<string>();
+                        if (inFunctionContext)
+                        {
+                            var globalEntry = slots.FirstOrDefault(e => e.Slot.Location == ObjectReferenceLocation.ScopeArray && e.Slot.Address == 0);
+                            if (globalEntry != null) capture.Add(globalEntry.Name);
+                            capture.Add(_variables.GetLeafScopeName());
+                        }
+                        else
+                        {
+                            capture.Add(_variables.GetLeafScopeName());
+                        }
+                        // Build scopes array and call Closure.Bind(object, object[])
+                        _il.EmitNewArray(capture.Count, _bclReferences.ObjectType, (il, i) =>
+                        {
+                            var scopeName = capture[i];
+                            var slot = _variables.GetScopeLocalSlot(scopeName);
+                            if (slot.Location == ObjectReferenceLocation.Local)
+                            {
+                                il.LoadLocal(slot.Address);
+                            }
+                            else if (slot.Location == ObjectReferenceLocation.Parameter)
+                            {
+                                il.LoadArgument(slot.Address);
+                            }
+                            else if (slot.Location == ObjectReferenceLocation.ScopeArray)
+                            {
+                                il.LoadArgument(0);
+                                il.LoadConstantI4(slot.Address);
+                                il.OpCode(System.Reflection.Metadata.ILOpCode.Ldelem_ref);
+                            }
+                        });
+                        _owner.Runtime.InvokeClosureBindObject();
                         javascriptType = JavascriptType.Object;
                     }
                     break;
@@ -407,7 +446,10 @@ namespace Js2IL.Services.ILGenerators
                         if (targetType.IsNil)
                         {
                             // As a last resort, emit a dynamic member call via JavaScriptRuntime.Object.CallMember(receiver, name, object[])
-                            // Build args array
+                            // At this point the stack has: [instance]
+                            // Push method name first to maintain order, then build args array.
+                            _il.Ldstr(_metadataBuilder, methodName); // [instance, name]
+                            // Build args array on stack -> [instance, name, args]
                             _il.EmitNewArray(callExpression.Arguments.Count, _bclReferences.ObjectType, (il, i) =>
                             {
                                 Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
@@ -417,12 +459,6 @@ namespace Js2IL.Services.ILGenerators
                                 nameof(JavaScriptRuntime.Object.CallMember),
                                 typeof(object),
                                 typeof(object), typeof(string), typeof(object[]));
-                            // Stack is currently: [instance, args]
-                            // Store args to a temp local, then push method name and reload args to call with (instance, methodName, args)
-                            var tempIdx = _variables.AllocateBlockScopeLocal($"CallArgs_L{callExpression.Location.Start.Line}C{callExpression.Location.Start.Column}");
-                            _il.StoreLocal(tempIdx); // stack: [instance]
-                            _il.Ldstr(_metadataBuilder, methodName); // stack: [instance, methodName]
-                            _il.LoadLocal(tempIdx);                 // stack: [instance, methodName, args]
                             _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
                             _il.Token(dynCall);
                             return null;
@@ -452,23 +488,16 @@ namespace Js2IL.Services.ILGenerators
                 }
                 // Receiver is an arbitrary expression (e.g., (expr).method(...))
                 // Use a generic runtime dispatcher to resolve based on runtime type: string, Array, or fallback.
-                // Stack: [receiver]
+                // Goal: leave stack as (receiver, methodName, args) without fragile local juggling.
+                // Stack after emit: [receiver]
                 _ = Emit(mem.Object, new TypeCoercion());
-                // Build args array on stack
+                // Push method name next so building args won't disturb the required order
+                _il.Ldstr(_metadataBuilder, methodName); // [receiver, name]
+                // Build args array (appended after name): result order [receiver, name, args]
                 _il.EmitNewArray(callExpression.Arguments.Count, _bclReferences.ObjectType, (il, i) =>
                 {
                     Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
                 });
-                // Load method name
-                _il.Ldstr(_metadataBuilder, methodName);
-                // Reorder to (receiver, methodName, args): currently [receiver, args, name] -> store name, swap
-                var nameTemp = _variables.AllocateBlockScopeLocal($"MethodName_L{callExpression.Location.Start.Line}C{callExpression.Location.Start.Column}");
-                _il.StoreLocal(nameTemp); // [receiver, args]
-                // swap args to temp as well to push name
-                var argsTemp = _variables.AllocateBlockScopeLocal($"Args_L{callExpression.Location.Start.Line}C{callExpression.Location.Start.Column}");
-                _il.StoreLocal(argsTemp); // [receiver]
-                _il.LoadLocal(nameTemp);  // [receiver, name]
-                _il.LoadLocal(argsTemp);  // [receiver, name, args]
                 var callMember = _owner.Runtime.GetStaticMethodRef(
                     typeof(JavaScriptRuntime.Object),
                     nameof(JavaScriptRuntime.Object.CallMember),
@@ -924,6 +953,8 @@ namespace Js2IL.Services.ILGenerators
             _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld);
             _il.Token(functionVariable.FieldHandle);
 
+            var argCount = callExpression.Arguments.Count;
+
             // First argument: create scope array with appropriate scopes for the function
             // Only include scopes that are actually needed for this function call
             var neededScopeNames = GetNeededScopesForFunction(functionVariable, context).ToList();
@@ -955,49 +986,25 @@ namespace Js2IL.Services.ILGenerators
                 _ = Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
             }
 
-            // Invoke correct delegate based on parameter count.
-            // Select overloads based on call-site context to match historical snapshots.
-            var argCount = callExpression.Arguments.Count;
+            // Invoke correct delegate based on parameter count using the array-based signature.
+            // All generated functions are constructed with a delegate that accepts the scope array
+            // as the first parameter, so calls must always use the array-based Invoke overloads.
             _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
-            if (context == global::Js2IL.Services.ILGenerators.CallSiteContext.Statement)
+            if (argCount == 0)
             {
-                // Statement: array-based Invoke for 0/1 parameters
-                if (argCount == 0)
-                {
-                    _il.Token(_bclReferences.FuncObjectArrayObject_Invoke_Ref);
-                }
-                else if (argCount == 1)
-                {
-                    _il.Token(_bclReferences.FuncObjectArrayObjectObject_Invoke_Ref);
-                }
-                else if (argCount <= 6)
-                {
-                    _il.Token(_bclReferences.GetFuncArrayParamInvokeRef(argCount));
-                }
-                else
-                {
-                    throw new NotSupportedException($"Only up to 6 parameters supported currently (got {argCount})");
-                }
+                _il.Token(_bclReferences.FuncObjectArrayObject_Invoke_Ref);
+            }
+            else if (argCount == 1)
+            {
+                _il.Token(_bclReferences.FuncObjectArrayObjectObject_Invoke_Ref);
+            }
+            else if (argCount <= 6)
+            {
+                _il.Token(_bclReferences.GetFuncArrayParamInvokeRef(argCount));
             }
             else
             {
-                // Expression: non-array-based Invoke for 0/1 parameters; array-based for >=2
-                if (argCount == 0)
-                {
-                    _il.Token(_bclReferences.FuncObjectObject_Invoke_Ref);
-                }
-                else if (argCount == 1)
-                {
-                    _il.Token(_bclReferences.FuncObjectObjectObject_Invoke_Ref);
-                }
-                else if (argCount <= 6)
-                {
-                    _il.Token(_bclReferences.GetFuncArrayParamInvokeRef(argCount));
-                }
-                else
-                {
-                    throw new NotSupportedException($"Only up to 6 parameters supported currently (got {argCount})");
-                }
+                throw new NotSupportedException($"Only up to 6 parameters supported currently (got {argCount})");
             }
             return null;
         }
@@ -1311,8 +1318,12 @@ namespace Js2IL.Services.ILGenerators
 
                     if (argType == JavascriptType.Boolean)
                     {
-                        // If the argument was not a literal, it's boxed; unbox first
-                        if (unaryExpression.Argument is not BooleanLiteral && !(unaryExpression.Argument is Literal lit && lit.Value is bool))
+                        // Only unbox when the argument is a variable/field access (boxed at load time).
+                        // Calls and comparisons typically yield a raw bool already on the stack.
+                        bool argIsBoxedSource = unaryExpression.Argument is Identifier
+                            || unaryExpression.Argument is MemberExpression
+                            || unaryExpression.Argument is ThisExpression;
+                        if (argIsBoxedSource)
                         {
                             _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
                             _il.Token(_bclReferences.BooleanType);
@@ -1329,9 +1340,21 @@ namespace Js2IL.Services.ILGenerators
                     }
                     else
                     {
-                        // Assume boxed boolean; unbox then brfalse
-                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
-                        _il.Token(_bclReferences.BooleanType);
+                        // General truthiness for objects: ToBoolean(object) then branch
+                        var toBoolRef = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), typeof(bool), typeof(object));
+                        // Ensure object on stack
+                        if (argType == JavascriptType.Number)
+                        {
+                            _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
+                            _il.Token(_bclReferences.DoubleType);
+                        }
+                        else if (argType == JavascriptType.Boolean)
+                        {
+                            _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
+                            _il.Token(_bclReferences.BooleanType);
+                        }
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
+                        _il.Token(toBoolRef);
                         _il.Branch(System.Reflection.Metadata.ILOpCode.Brfalse, branching.BranchOnTrue);
                     }
 
@@ -1349,7 +1372,11 @@ namespace Js2IL.Services.ILGenerators
 
                     if (argType == JavascriptType.Boolean)
                     {
-                        if (unaryExpression.Argument is not BooleanLiteral && !(unaryExpression.Argument is Literal lit2 && lit2.Value is bool))
+                        // Avoid unboxing raw bool results (e.g., from calls). Only unbox when loaded from variables/fields.
+                        bool argIsBoxedSource = unaryExpression.Argument is Identifier
+                            || unaryExpression.Argument is MemberExpression
+                            || unaryExpression.Argument is ThisExpression;
+                        if (argIsBoxedSource)
                         {
                             _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
                             _il.Token(_bclReferences.BooleanType);
@@ -1364,8 +1391,20 @@ namespace Js2IL.Services.ILGenerators
                     }
                     else
                     {
-                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
-                        _il.Token(_bclReferences.BooleanType);
+                        // General truthiness via ToBoolean(object), then invert
+                        var toBoolRef = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), typeof(bool), typeof(object));
+                        if (argType == JavascriptType.Number)
+                        {
+                            _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
+                            _il.Token(_bclReferences.DoubleType);
+                        }
+                        else if (argType == JavascriptType.Boolean)
+                        {
+                            _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
+                            _il.Token(_bclReferences.BooleanType);
+                        }
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
+                        _il.Token(toBoolRef);
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldc_i4_0);
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Ceq);
                     }
@@ -1784,6 +1823,7 @@ namespace Js2IL.Services.ILGenerators
 
             var arrayType = typeof(JavaScriptRuntime.Array);
             // Best-effort castclass to JavaScriptRuntime.Array; emit type reference via runtime helper
+            /*
             try
             {
                 var arrayTypeRef = _runtime.GetRuntimeTypeHandle(arrayType);
@@ -1793,7 +1833,7 @@ namespace Js2IL.Services.ILGenerators
             catch
             {
                 // If type ref cannot be obtained, skip cast; downstream callvirt may still work for correct instances
-            }
+            }*/
 
             // Reflect instance method (map/join/sort)
             var methods = arrayType
