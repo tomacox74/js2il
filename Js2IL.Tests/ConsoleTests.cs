@@ -16,6 +16,18 @@ namespace JavaScriptRuntime.Tests
             }
         }
 
+        private class DualTestConsoleOutput : IConsoleOutput
+        {
+            public List<string> StdOut = new();
+            public List<string> StdErr = new();
+            private readonly bool _isErr;
+            public DualTestConsoleOutput(bool isErr) { _isErr = isErr; }
+            public void WriteLine(string line)
+            {
+                if (_isErr) StdErr.Add(line); else StdOut.Add(line);
+            }
+        }
+
         [Fact]
         public void Log_PrintsAllArgumentsWithSpaces()
         {
@@ -66,27 +78,33 @@ namespace JavaScriptRuntime.Tests
         }
 
         [Fact]
-        public void Error_PrintsAllArgumentsWithSpaces()
+        public void Error_PrintsAllArgumentsWithSpaces_ToStdErr()
         {
-            var testOutput = new TestConsoleOutput();
-            Console.SetOutput(testOutput);
+            var stdout = new DualTestConsoleOutput(false);
+            var stderr = new DualTestConsoleOutput(true);
+            Console.SetOutput(stdout);
+            Console.SetErrorOutput(stderr);
 
             Console.Error("Hello", "World", 42d, JavaScriptRuntime.JsNull.Null);
 
-            Assert.Single(testOutput.Output);
-            Assert.Equal("Hello World 42 null", testOutput.Output[0]);
+            Assert.Empty(stdout.StdOut);
+            Assert.Single(stderr.StdErr);
+            Assert.Equal("Hello World 42 null", stderr.StdErr[0]);
         }
 
         [Fact]
-        public void Warn_PrintsAllArgumentsWithSpaces()
+        public void Warn_PrintsAllArgumentsWithSpaces_ToStdErr()
         {
-            var testOutput = new TestConsoleOutput();
-            Console.SetOutput(testOutput);
+            var stdout = new DualTestConsoleOutput(false);
+            var stderr = new DualTestConsoleOutput(true);
+            Console.SetOutput(stdout);
+            Console.SetErrorOutput(stderr);
 
             Console.Warn("Be", "careful", 7d);
 
-            Assert.Single(testOutput.Output);
-            Assert.Equal("Be careful 7", testOutput.Output[0]);
+            Assert.Empty(stdout.StdOut);
+            Assert.Single(stderr.StdErr);
+            Assert.Equal("Be careful 7", stderr.StdErr[0]);
         }
 
         [Fact]

@@ -14,4 +14,12 @@ namespace JavaScriptRuntime
             System.Console.WriteLine(line);
         }
     }
+
+    public class DefaultErrorConsoleOutput : IConsoleOutput
+    {
+        public void WriteLine(string line)
+        {
+            System.Console.Error.WriteLine(line);
+        }
+    }
 }
