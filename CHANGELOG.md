@@ -2,6 +2,27 @@
 
 All notable changes to this project are documented here.
 
+## v0.1.4 - 2025-09-06
+
+Added
+- Node interop: perf_hooks module with Performance.now() based on Stopwatch (monotonic). now() returns a boxed double (object) to match JS number semantics.
+- IL generation: general typed member access for known receivers. When a receiver’s CLR type is known (e.g., from require()), emit direct callvirt to property getters and instance methods instead of reflection.
+
+Changed
+- Type propagation: carry CLR runtime types from require() bindings into identifiers, enabling direct calls like perf.performance and performance.now without dynamic dispatch.
+- Member access emitter: return both JavaScript type and CLR type (ExpressionResult) so downstream code can choose typed vs dynamic emission.
+- Node Process: removed special-cased getters for argv/exitCode in the emitter; the generic typed getter path is used instead.
+- Runtime metadata: nested-type aware type references and method reference caching keyed by FullName to support nested types like JavaScriptRuntime.Node.PerfHooks+Performance.
+- Runtime Object: GetProperty now exposes host public instance properties/fields via reflection as a fallback for non-dynamic objects.
+
+Fixed
+- Subtract on Performance.now values by returning an object (boxed double), avoiding null/unboxing issues in Operators.Subtract.
+- Generator snapshot drift for new perf_hooks tests; aligned verified output to direct typed calls.
+
+Tests
+- Added Node generator and execution tests: PerfHooks_PerformanceNow_Basic (validates direct callvirt to get_performance/now and non-negative elapsed time).
+- Node suite remains green after moving Process property access to the generic typed path.
+
 ## v0.1.3 - 2025-09-03
 
 Added
