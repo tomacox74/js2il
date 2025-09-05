@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace JavaScriptRuntime
 {
+    [IntrinsicObject("Array")]
     public class Array : List<object>
     {
         public Array() : base()
@@ -22,6 +23,15 @@ namespace JavaScriptRuntime
         public static implicit operator Array(object[] array)
         {
             return new Array(array);
+        }
+
+        /// <summary>
+        /// JavaScript Array.isArray(value) static method.
+        /// Returns true if the provided value is a JavaScriptRuntime.Array instance; false otherwise.
+        /// </summary>
+        public static object isArray(object? value)
+        {
+            return value is Array;
         }
 
         /// <summary>
