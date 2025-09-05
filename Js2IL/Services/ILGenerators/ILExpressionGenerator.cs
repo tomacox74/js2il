@@ -1546,8 +1546,8 @@ namespace Js2IL.Services.ILGenerators
             throw new NotSupportedException($"Unsupported new-expression callee: {newExpression.Callee.Type}");
         }
 
-    // Emits the IL for a member access expression and returns both JS and CLR type when known.
-    private ExpressionResult EmitMemberExpression(MemberExpression memberExpression)
+        // Emits the IL for a member access expression and returns both JS and CLR type when known.
+        private ExpressionResult EmitMemberExpression(MemberExpression memberExpression)
         {
             var _runtime = _owner.Runtime;
             var _classRegistry = _owner.ClassRegistry;
