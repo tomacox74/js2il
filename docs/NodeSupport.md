@@ -1,7 +1,7 @@
 # Node Support Coverage
 
 Target: `22.x LTS`
-Generated: `2025-09-05T17:10:31Z`
+Generated: `2025-09-05T17:15:11Z`
 
 
 ## Modules
@@ -88,6 +88,8 @@ Tests:
 Docs: [https://nodejs.org/api/console.html#consoleerrordata-args](https://nodejs.org/api/console.html#consoleerrordata-args)
 Implementation:
 - `JavaScriptRuntime/Console.cs`
+Notes:
+Writes to stderr.
 Tests:
 - `JavaScriptRuntime.Tests.ConsoleTests.Error_PrintsAllArgumentsWithSpaces` (`Js2IL.Tests/ConsoleTests.cs`)
 
@@ -95,6 +97,8 @@ Tests:
 Docs: [https://nodejs.org/api/console.html#consolewarndata-args](https://nodejs.org/api/console.html#consolewarndata-args)
 Implementation:
 - `JavaScriptRuntime/Console.cs`
+Notes:
+Writes to stderr.
 Tests:
 - `JavaScriptRuntime.Tests.ConsoleTests.Warn_PrintsAllArgumentsWithSpaces` (`Js2IL.Tests/ConsoleTests.cs`)
 
