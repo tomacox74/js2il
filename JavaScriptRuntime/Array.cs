@@ -213,6 +213,104 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// JavaScript Array.includes(searchElement[, fromIndex]) implementation.
+        /// Uses SameValueZero comparison (NaN equals NaN; +0 and -0 are equal).
+        /// </summary>
+        public object includes(object[]? args)
+        {
+            int len = this.Count;
+            if (len == 0) return false;
+
+            object? searchElement = (args != null && args.Length > 0) ? args[0] : null;
+
+            // Determine starting index per spec
+            int k = 0;
+            if (args != null && args.Length > 1 && args[1] != null)
+            {
+                int fromIndex = 0;
+                var idx = args[1];
+                if (idx is double dd) fromIndex = (int)dd;
+                else if (idx is float ff) fromIndex = (int)ff;
+                else if (idx is int ii) fromIndex = ii;
+                else if (idx is long ll) fromIndex = (int)ll;
+                else if (idx is short ss) fromIndex = ss;
+                else if (idx is byte bb) fromIndex = bb;
+                else if (idx is string s && double.TryParse(s, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var pd)) fromIndex = (int)pd;
+
+                if (fromIndex >= 0) k = fromIndex;
+                else { k = len + fromIndex; if (k < 0) k = 0; }
+                if (k >= len) return false;
+            }
+
+            for (int i = k; i < len; i++)
+            {
+                if (SameValueZero(this[i], searchElement)) return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Overload without parameters; returns false if no search element provided.
+        /// </summary>
+        public object includes()
+        {
+            return false;
+        }
+
+        private static bool SameValueZero(object? x, object? y)
+        {
+            if (ReferenceEquals(x, y)) return true;
+
+            // null/undefined handling: undefined is represented by null; null is JsNull
+            if (x is null || y is null)
+            {
+                // both null: handled by ReferenceEquals above; here only one is null
+                return false;
+            }
+
+            if (x is JsNull && y is JsNull) return true;
+
+            // Numbers: compare as double, with NaN equal to NaN
+            if (TryToDouble(x, out var dx) && TryToDouble(y, out var dy))
+            {
+                if (double.IsNaN(dx) && double.IsNaN(dy)) return true;
+                return dx.Equals(dy);
+            }
+
+            // Strings
+            if (x is string sx && y is string sy) return string.Equals(sx, sy, StringComparison.Ordinal);
+
+            // Booleans
+            if (x is bool bx && y is bool by) return bx == by;
+
+            // Fallback: reference equality only (objects/arrays/functions)
+            return false;
+        }
+
+        private static bool TryToDouble(object o, out double d)
+        {
+            switch (o)
+            {
+                case double dd:
+                    d = dd; return true;
+                case float ff:
+                    d = ff; return true;
+                case int ii:
+                    d = ii; return true;
+                case long ll:
+                    d = ll; return true;
+                case short ss:
+                    d = ss; return true;
+                case byte bb:
+                    d = bb; return true;
+                case string s when double.TryParse(s, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var pd):
+                    d = pd; return true;
+                default:
+                    d = 0; return false;
+            }
+        }
+
+        /// <summary>
         /// JavaScript Array.push(...items): appends items to the end and returns the new length.
         /// </summary>
         public object push(object[]? args)
