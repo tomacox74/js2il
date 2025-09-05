@@ -8,11 +8,25 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 ### [Primary Expressions](https://tc39.es/ecma262/#sec-primary-expression)
 
+#### [NumericLiteral](https://tc39.es/ecma262/#sec-numeric-literals)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Numeric literals (integer and decimal) | Supported | `Js2IL.Tests/JavaScript/BinaryOperator_AddNumberNumber.js`<br>`Js2IL.Tests/JavaScript/BinaryOperator_MulNumberNumber.js` | Numbers are represented as double and used pervasively across arithmetic, comparison, and control-flow tests. | 13.1.1 |
+
+
+#### [StringLiteral](https://tc39.es/ecma262/#sec-string-literals)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| String literals (single/double quotes; escapes) | Supported | `Js2IL.Tests/JavaScript/String_StartsWith_Basic.js`<br>`Js2IL.Tests/JavaScript/String_Replace_Regex_Global.js` | Backed by .NET System.String; values are boxed/unboxed where needed in member calls and concatenation. | 13.1.2 |
+
+
 #### [BooleanLiteral](https://tc39.es/ecma262/#sec-boolean-literals)
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Boolean literals (true/false) | Supported |  | Emits proper IL for true/false and boxes when needed in arrays/log calls. See generator snapshot: Js2IL.Tests/Literals/GeneratorTests.BooleanLiteral.verified.txt. | 13.1.3 |
+| Boolean literals (true/false) | Supported | `Js2IL.Tests/JavaScript/UnaryOperator_Typeof.js`<br>`Js2IL.Tests/JavaScript/JSON_Parse_SimpleObject.js` | Emits proper IL for true/false and boxes when needed in arrays/log calls. See generator snapshot: Js2IL.Tests/Literals/GeneratorTests.BooleanLiteral.verified.txt. | 13.1.3 |
 
 
 #### [Template Literals](https://tc39.es/ecma262/#sec-template-literals)
@@ -20,6 +34,20 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
 | Template literals (basic interpolation) | Supported | `Js2IL.Tests/JavaScript/String_TemplateLiteral_Basic.js` | Concatenates quasis and expressions via runtime Operators.Add with JS string/number coercion. Tagged templates are not yet supported. | 13.1.4 |
+
+
+#### [NullLiteral](https://tc39.es/ecma262/#sec-null-literals)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| null literal | Supported | `Js2IL.Tests/JavaScript/Literals_NullAndUndefined.js`<br>`Js2IL.Tests/JavaScript/JSON_Parse_SimpleObject.js` | null emission validated in literals and variable tests; see execution snapshot Js2IL.Tests/Literals/ExecutionTests.Literals_NullAndUndefined.verified.txt. | 13.1.5 |
+
+
+#### [undefined (Identifier)](https://tc39.es/ecma262/#sec-undefined)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| undefined identifier usage | Supported | `Js2IL.Tests/JavaScript/Literals_NullAndUndefined.js` | Handled as the ECMAScript undefined value and participates in JS truthiness; see execution snapshot Js2IL.Tests/Literals/ExecutionTests.Literals_NullAndUndefined.verified.txt. | 13.1.6 |
 
 
 ### [Declarations](https://tc39.es/ecma262/#sec-declarations)
@@ -204,6 +232,15 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 ## [ECMAScript Language: Statements and Declarations](https://tc39.es/ecma262/#sec-ecmascript-language-statements-and-declarations)
 
+### [Return Statement](https://tc39.es/ecma262/#sec-return-statement)
+
+#### [Runtime Semantics: ReturnStatement Evaluation](https://tc39.es/ecma262/#sec-return-statement)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| return statement (basic) | Supported | `Js2IL.Tests/JavaScript/Function_ReturnsStaticValueAndLogs.js` | Function returns propagate values (boxed) to callers; validated by execution snapshot showing returned value. | 14.1.1 |
+
+
 ### [The if Statement](https://tc39.es/ecma262/#sec-if-statement)
 
 #### [Runtime Semantics: Evaluation](https://tc39.es/ecma262/#sec-if-statement)
@@ -330,7 +367,7 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| String.prototype.startsWith | Supported | `Js2IL.Tests/JavaScript/String_StartsWith_Basic.js` | Reflection-based string dispatch routes CLR string receivers to JavaScriptRuntime.String.StartsWith with optional position argument. | 24.1.3 |
+| String.prototype.startsWith | Supported | `Js2IL.Tests/JavaScript/String_StartsWith_Basic.js` | Reflection-based string dispatch routes CLR string receivers to JavaScriptRuntime.String.StartsWith with optional position argument. Returns a boolean value (boxed). | 24.1.3 |
 
 
 #### [String.prototype.replace](https://tc39.es/ecma262/#sec-string.prototype.replace)
@@ -344,7 +381,7 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| String.prototype.localeCompare (numeric compare) | Supported | `Js2IL.Tests/JavaScript/String_LocaleCompare_Numeric.js` | Returns a number (double) for comparator functions; used by Array.sort comparator tests. | 24.1.4 |
+| String.prototype.localeCompare (numeric compare) | Supported | `Js2IL.Tests/JavaScript/String_LocaleCompare_Numeric.js` | Returns a number (boxed double) consistent with ECMAScript compare semantics; numeric option supported. | 24.1.4 |
 
 
 ### [JSON Object](https://tc39.es/ecma262/#sec-json-object)

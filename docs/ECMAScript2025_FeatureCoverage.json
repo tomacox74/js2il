@@ -18,7 +18,10 @@
                 {
                   "feature": "Boolean literals (true/false)",
                   "status": "Supported",
-                  "testScripts": [],
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/UnaryOperator_Typeof.js",
+                    "Js2IL.Tests/JavaScript/JSON_Parse_SimpleObject.js"
+                  ],
                   "notes": "Emits proper IL for true/false and boxes when needed in arrays/log calls. See generator snapshot: Js2IL.Tests/Literals/GeneratorTests.BooleanLiteral.verified.txt."
                 }
               ]
@@ -35,6 +38,69 @@
                     "Js2IL.Tests/JavaScript/String_TemplateLiteral_Basic.js"
                   ],
                   "notes": "Concatenates quasis and expressions via runtime Operators.Add with JS string/number coercion. Tagged templates are not yet supported."
+                }
+              ]
+            },
+            {
+              "paragraph": "13.1.1",
+              "title": "NumericLiteral",
+              "url": "https://tc39.es/ecma262/#sec-numeric-literals",
+              "features": [
+                {
+                  "feature": "Numeric literals (integer and decimal)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/BinaryOperator_AddNumberNumber.js",
+                    "Js2IL.Tests/JavaScript/BinaryOperator_MulNumberNumber.js"
+                  ],
+                  "notes": "Numbers are represented as double and used pervasively across arithmetic, comparison, and control-flow tests."
+                }
+              ]
+            },
+            {
+              "paragraph": "13.1.2",
+              "title": "StringLiteral",
+              "url": "https://tc39.es/ecma262/#sec-string-literals",
+              "features": [
+                {
+                  "feature": "String literals (single/double quotes; escapes)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/String_StartsWith_Basic.js",
+                    "Js2IL.Tests/JavaScript/String_Replace_Regex_Global.js"
+                  ],
+                  "notes": "Backed by .NET System.String; values are boxed/unboxed where needed in member calls and concatenation."
+                }
+              ]
+            },
+            {
+              "paragraph": "13.1.5",
+              "title": "NullLiteral",
+              "url": "https://tc39.es/ecma262/#sec-null-literals",
+              "features": [
+                {
+                  "feature": "null literal",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/Literals_NullAndUndefined.js",
+                    "Js2IL.Tests/JavaScript/JSON_Parse_SimpleObject.js"
+                  ],
+                  "notes": "null emission validated in literals and variable tests; see execution snapshot Js2IL.Tests/Literals/ExecutionTests.Literals_NullAndUndefined.verified.txt."
+                }
+              ]
+            },
+            {
+              "paragraph": "13.1.6",
+              "title": "undefined (Identifier)",
+              "url": "https://tc39.es/ecma262/#sec-undefined",
+              "features": [
+                {
+                  "feature": "undefined identifier usage",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/Literals_NullAndUndefined.js"
+                  ],
+                  "notes": "Handled as the ECMAScript undefined value and participates in JS truthiness; see execution snapshot Js2IL.Tests/Literals/ExecutionTests.Literals_NullAndUndefined.verified.txt."
                 }
               ]
             }
@@ -409,6 +475,28 @@
       "url": "https://tc39.es/ecma262/#sec-ecmascript-language-statements-and-declarations",
       "subsections": [
         {
+          "subsection": "14.1",
+          "title": "Return Statement",
+          "url": "https://tc39.es/ecma262/#sec-return-statement",
+          "paragraphs": [
+            {
+              "paragraph": "14.1.1",
+              "title": "Runtime Semantics: ReturnStatement Evaluation",
+              "url": "https://tc39.es/ecma262/#sec-return-statement",
+              "features": [
+                {
+                  "feature": "return statement (basic)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/Function_ReturnsStaticValueAndLogs.js"
+                  ],
+                  "notes": "Function returns propagate values (boxed) to callers; validated by execution snapshot showing returned value."
+                }
+              ]
+            }
+          ]
+        },
+        {
           "subsection": "14.6",
           "title": "The if Statement",
           "url": "https://tc39.es/ecma262/#sec-if-statement",
@@ -731,7 +819,7 @@
                   "testScripts": [
                     "Js2IL.Tests/JavaScript/String_StartsWith_Basic.js"
                   ],
-                  "notes": "Reflection-based string dispatch routes CLR string receivers to JavaScriptRuntime.String.StartsWith with optional position argument."
+                  "notes": "Reflection-based string dispatch routes CLR string receivers to JavaScriptRuntime.String.StartsWith with optional position argument. Returns a boolean value (boxed)."
                 }
               ]
             },
@@ -746,7 +834,7 @@
                   "testScripts": [
                     "Js2IL.Tests/JavaScript/String_LocaleCompare_Numeric.js"
                   ],
-                  "notes": "Returns a number (double) for comparator functions; used by Array.sort comparator tests."
+                  "notes": "Returns a number (boxed double) consistent with ECMAScript compare semantics; numeric option supported."
                 }
               ]
             },

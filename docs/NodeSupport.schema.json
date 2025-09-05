@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NodeSupport",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "nodeVersionTarget": {
+      "type": "string",
+      "description": "Target Node.js version range (e.g. '22.x LTS')."
+    },
+    "generatedAtUtc": {
+      "type": "string",
+      "description": "UTC timestamp string or placeholder (e.g. ${UTC_NOW})."
+    },
+    "modules": {
+      "type": "array",
+      "description": "Supported Node.js modules and their APIs.",
+      "uniqueItemProperties": ["name"],
+      "items": { "$ref": "#/definitions/moduleEntry" }
+    },
+    "globals": {
+      "type": "array",
+      "description": "Supported Node.js-like globals (e.g., __dirname).",
+      "uniqueItemProperties": ["name"],
+      "items": { "$ref": "#/definitions/globalEntry" }
+    },
+    "limitations": {
+      "type": "array",
+      "description": "Known limitations and caveats.",
+      "items": { "type": "string" }
+    }
+  },
+  "required": ["nodeVersionTarget", "modules", "globals"],
+  "definitions": {
+    "status": {
+      "type": "string",
+      "enum": ["supported", "partial", "not-supported"],
+      "description": "Support level."
+    },
+    "apiKind": {
+      "type": "string",
+      "enum": ["function", "property"],
+      "description": "API kind."
+    },
+    "testRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "description": "Fully qualified test name." },
+        "file": { "type": "string", "description": "Path to test file (optionally with line)." }
+      },
+      "required": ["name", "file"]
+    },
+    "implementationPath": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ],
+      "description": "Relative source path(s) implementing the feature."
+    },
+    "api": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "description": "API signature or name." },
+        "kind": { "$ref": "#/definitions/apiKind" },
+        "status": { "$ref": "#/definitions/status" },
+        "docs": { "type": "string", "format": "uri", "description": "Link to Node.js docs." },
+        "notes": { "type": "string", "description": "Additional notes." },
+        "tests": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/testRef" },
+          "default": []
+        }
+      },
+      "required": ["name", "kind", "status"]
+    },
+    "moduleEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "description": "Module name (e.g., 'path')." },
+        "status": { "$ref": "#/definitions/status" },
+        "implementation": { "$ref": "#/definitions/implementationPath" },
+        "docs": { "type": "string", "format": "uri" },
+        "apis": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/api" },
+          "default": []
+        }
+      },
+      "required": ["name", "status", "apis"]
+    },
+    "globalEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "description": "Global name (e.g., '__dirname')." },
+        "status": { "$ref": "#/definitions/status" },
+        "implementation": { "$ref": "#/definitions/implementationPath" },
+        "docs": { "type": "string", "format": "uri" },
+        "tests": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/testRef" },
+          "default": []
+        },
+        "notes": { "type": "string" }
+      },
+      "required": ["name", "status", "implementation", "docs"]
+    }
+  }
+}
