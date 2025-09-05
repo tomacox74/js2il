@@ -14,6 +14,8 @@ namespace Js2IL.Services
         private AssemblyReferenceHandle _runtimeAssemblyReference;
         private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCache = new(StringComparer.Ordinal);
         private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCacheByNs = new(StringComparer.Ordinal);
+        // Cache by full type name (supports nested types with '+')
+        private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCacheByFullName = new(StringComparer.Ordinal);
         private readonly Dictionary<string, MemberReferenceHandle> _runtimeMethodCache = new(StringComparer.Ordinal);
         private MemberReferenceHandle _objectGetItem;
     private MemberReferenceHandle _objectGetLength;
@@ -323,7 +325,7 @@ namespace Js2IL.Services
             else if (!string.IsNullOrEmpty(type.Namespace) && type.Namespace!.StartsWith("JavaScriptRuntime", StringComparison.Ordinal))
             {
                 // Map JavaScriptRuntime reference types (e.g., JavaScriptRuntime.Array, JavaScriptRuntime.Node.Process)
-                var tref = GetRuntimeTypeRef(type.Namespace!, type.Name);
+                var tref = GetRuntimeTypeRef(type);
                 enc.Type(tref, isValueType: type.IsValueType);
             }
             else throw new NotSupportedException($"Unsupported runtime signature type mapping: {type.FullName}");
@@ -353,23 +355,51 @@ namespace Js2IL.Services
             return tref;
         }
 
+        // Nested-type aware resolver for JavaScriptRuntime types (e.g., JavaScriptRuntime.Node.PerfHooks+Performance)
+        private TypeReferenceHandle GetRuntimeTypeRef(Type runtimeType)
+        {
+            var fullName = runtimeType.FullName ?? ((runtimeType.Namespace ?? "") + "." + runtimeType.Name);
+            if (_runtimeTypeCacheByFullName.TryGetValue(fullName, out var existing)) return existing;
+
+            TypeReferenceHandle tref;
+            if (runtimeType.DeclaringType == null)
+            {
+                // Top-level type under JavaScriptRuntime assembly
+                tref = _metadataBuilder.AddTypeReference(
+                    _runtimeAssemblyReference,
+                    _metadataBuilder.GetOrAddString(runtimeType.Namespace ?? "JavaScriptRuntime"),
+                    _metadataBuilder.GetOrAddString(runtimeType.Name));
+            }
+            else
+            {
+                // Nested type: resolution scope is the declaring type TypeReference
+                var parentRef = GetRuntimeTypeRef(runtimeType.DeclaringType);
+                tref = _metadataBuilder.AddTypeReference(
+                    parentRef,
+                    // Nested types in metadata do not carry a namespace; use empty here and set only the nested name
+                    _metadataBuilder.GetOrAddString(string.Empty),
+                    _metadataBuilder.GetOrAddString(runtimeType.Name));
+            }
+
+            _runtimeTypeCacheByFullName[fullName] = tref;
+            return tref;
+        }
+
         // Public helper to get a type reference handle for a JavaScriptRuntime type
         public TypeReferenceHandle GetRuntimeTypeHandle(Type runtimeType)
         {
-            var ns = runtimeType.Namespace ?? "JavaScriptRuntime";
-            var tn = runtimeType.Name;
-            return GetRuntimeTypeRef(ns, tn);
+            return GetRuntimeTypeRef(runtimeType);
         }
 
-    public MemberReferenceHandle GetInstanceMethodRef(Type runtimeType, string methodName, Type returnType, params Type[] parameterTypes)
+        public MemberReferenceHandle GetInstanceMethodRef(Type runtimeType, string methodName, Type returnType, params Type[] parameterTypes)
         {
-            var ns = runtimeType.Namespace ?? "JavaScriptRuntime";
-            var tn = runtimeType.Name;
-            var full = ns + "." + tn;
+            // Use FullName so nested types (which use '+') are uniquely identified
+            var full = runtimeType.FullName ?? ((runtimeType.Namespace ?? "JavaScriptRuntime") + "." + runtimeType.Name);
             var key = MakeMethodKey(full, methodName, isInstance: true, ret: returnType, parms: parameterTypes);
             if (_runtimeMethodCache.TryGetValue(key, out var cached)) return cached;
 
-            var typeRef = GetRuntimeTypeRef(ns, tn);
+            // Resolve type reference with nested-type awareness
+            var typeRef = GetRuntimeTypeRef(runtimeType);
             var sigBuilder = new BlobBuilder();
             new BlobEncoder(sigBuilder)
                 .MethodSignature(isInstanceMethod: true)
@@ -388,13 +418,13 @@ namespace Js2IL.Services
 
         public MemberReferenceHandle GetStaticMethodRef(Type runtimeType, string methodName, Type returnType, params Type[] parameterTypes)
         {
-            var ns = runtimeType.Namespace ?? "JavaScriptRuntime";
-            var tn = runtimeType.Name;
-            var full = ns + "." + tn;
+            // Use FullName so nested types (which use '+') are uniquely identified
+            var full = runtimeType.FullName ?? ((runtimeType.Namespace ?? "JavaScriptRuntime") + "." + runtimeType.Name);
             var key = MakeMethodKey(full, methodName, isInstance: false, ret: returnType, parms: parameterTypes);
             if (_runtimeMethodCache.TryGetValue(key, out var cached)) return cached;
 
-            var typeRef = GetRuntimeTypeRef(ns, tn);
+            // Resolve type reference with nested-type awareness
+            var typeRef = GetRuntimeTypeRef(runtimeType);
             var sigBuilder = new BlobBuilder();
             new BlobEncoder(sigBuilder)
                 .MethodSignature(isInstanceMethod: false)

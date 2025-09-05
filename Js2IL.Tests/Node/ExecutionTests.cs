@@ -56,5 +56,14 @@ namespace Js2IL.Tests.Node
                     var temp = Path.GetTempPath().Replace('\\', '/');
                     s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
                 });
+
+        [Fact]
+        public Task PerfHooks_PerformanceNow_Basic()
+            => ExecutionTest(
+                nameof(PerfHooks_PerformanceNow_Basic),
+                configureSettings: s =>
+                {
+                    // Keep as-is; output is integer ms values which should be stable enough.
+                });
     }
 }
