@@ -84,7 +84,7 @@
 	{
 		// Method begins at RVA 0x2078
 		// Header size: 12
-		// Code size: 97 (0x61)
+		// Code size: 112 (0x70)
 		.maxstack 8
 		.entrypoint
 		.locals init (
@@ -97,32 +97,39 @@
 		IL_0007: ldnull
 		IL_0008: ldftn object Functions.ArrowFunction_L1C12::ArrowFunction_L1C12(object[], object, object)
 		IL_000e: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-		IL_0013: stfld object Scopes.ArrowFunction_SimpleExpression::'add'
-		IL_0018: ldc.i4.2
-		IL_0019: newarr [System.Runtime]System.Object
-		IL_001e: dup
-		IL_001f: ldc.i4.0
-		IL_0020: ldstr "x is "
-		IL_0025: stelem.ref
-		IL_0026: dup
-		IL_0027: ldc.i4.1
-		IL_0028: ldloc.0
-		IL_0029: ldfld object Scopes.ArrowFunction_SimpleExpression::'add'
-		IL_002e: ldc.i4.1
-		IL_002f: newarr [System.Runtime]System.Object
-		IL_0034: dup
-		IL_0035: ldc.i4.0
-		IL_0036: ldloc.0
-		IL_0037: stelem.ref
-		IL_0038: ldc.r8 1
-		IL_0041: box [System.Runtime]System.Double
-		IL_0046: ldc.r8 2
-		IL_004f: box [System.Runtime]System.Double
-		IL_0054: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
-		IL_0059: stelem.ref
-		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_005f: pop
-		IL_0060: ret
+		IL_0013: ldc.i4.1
+		IL_0014: newarr [System.Runtime]System.Object
+		IL_0019: dup
+		IL_001a: ldc.i4.0
+		IL_001b: ldloc.0
+		IL_001c: stelem.ref
+		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0022: stfld object Scopes.ArrowFunction_SimpleExpression::'add'
+		IL_0027: ldc.i4.2
+		IL_0028: newarr [System.Runtime]System.Object
+		IL_002d: dup
+		IL_002e: ldc.i4.0
+		IL_002f: ldstr "x is "
+		IL_0034: stelem.ref
+		IL_0035: dup
+		IL_0036: ldc.i4.1
+		IL_0037: ldloc.0
+		IL_0038: ldfld object Scopes.ArrowFunction_SimpleExpression::'add'
+		IL_003d: ldc.i4.1
+		IL_003e: newarr [System.Runtime]System.Object
+		IL_0043: dup
+		IL_0044: ldc.i4.0
+		IL_0045: ldloc.0
+		IL_0046: stelem.ref
+		IL_0047: ldc.r8 1
+		IL_0050: box [System.Runtime]System.Double
+		IL_0055: ldc.r8 2
+		IL_005e: box [System.Runtime]System.Double
+		IL_0063: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
+		IL_0068: stelem.ref
+		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_006e: pop
+		IL_006f: ret
 	} // end of method Program::Main
 
 } // end of class Program
