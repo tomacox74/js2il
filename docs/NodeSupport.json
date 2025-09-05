@@ -1,0 +1,171 @@
+{
+  "nodeVersionTarget": "22.x LTS",
+  "generatedAtUtc": "${UTC_NOW}",
+  "modules": [
+    {
+      "name": "path",
+      "status": "partial",
+      "implementation": "JavaScriptRuntime/Node/Path.cs",
+      "docs": "https://nodejs.org/api/path.html",
+      "apis": [
+        {
+          "name": "join(...parts)",
+          "kind": "function",
+          "status": "supported",
+          "docs": "https://nodejs.org/api/path.html#pathjoinpaths",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.ExecutionTests.Require_Path_Join_Basic",
+              "file": "Js2IL.Tests/Node/ExecutionTests.cs#L9"
+            },
+            {
+              "name": "Js2IL.Tests.Node.ExecutionTests.Require_Path_Join_NestedFunction",
+              "file": "Js2IL.Tests/Node/ExecutionTests.cs#L13"
+            },
+            {
+              "name": "Js2IL.Tests.Node.GeneratorTests.Require_Path_Join_Basic",
+              "file": "Js2IL.Tests/Node/GeneratorTests.cs"
+            },
+            {
+              "name": "Js2IL.Tests.Node.GeneratorTests.Require_Path_Join_NestedFunction",
+              "file": "Js2IL.Tests/Node/GeneratorTests.cs"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "fs",
+      "status": "partial",
+      "implementation": "JavaScriptRuntime/Node/FS.cs",
+      "docs": "https://nodejs.org/api/fs.html",
+      "apis": [
+        {
+          "name": "readFileSync(path[, options])",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Text-only, returns UTF-8 string. Buffer is not implemented.",
+          "docs": "https://nodejs.org/api/fs.html#fsreadfilesyncpath-options",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.ExecutionTests.FS_ReadWrite_Utf8",
+              "file": "Js2IL.Tests/Node/ExecutionTests.cs#L36"
+            },
+            {
+              "name": "Js2IL.Tests.Node.GeneratorTests.FS_ReadWrite_Utf8",
+              "file": "Js2IL.Tests/Node/GeneratorTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "writeFileSync(path, data[, options])",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Text-only, accepts stringifiable data. Writes UTF-8.",
+          "docs": "https://nodejs.org/api/fs.html#fswritefilesyncfile-data-options",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.ExecutionTests.FS_ReadWrite_Utf8",
+              "file": "Js2IL.Tests/Node/ExecutionTests.cs#L36"
+            },
+            {
+              "name": "Js2IL.Tests.Node.GeneratorTests.FS_ReadWrite_Utf8",
+              "file": "Js2IL.Tests/Node/GeneratorTests.cs"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "process",
+      "status": "partial",
+      "implementation": [
+        "JavaScriptRuntime/Node/Process.cs",
+        "JavaScriptRuntime/Node/GlobalVariables.cs"
+      ],
+      "docs": "https://nodejs.org/api/process.html",
+      "apis": [
+        {
+          "name": "exitCode",
+          "kind": "property",
+          "status": "supported",
+          "docs": "https://nodejs.org/api/process.html#processexitcode",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.ProcessExitCodeTests.Process_exitCode_getter_setter_mirrors_Environment",
+              "file": "Js2IL.Tests/Node/ProcessExitCodeTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "argv",
+          "kind": "property",
+          "status": "supported",
+          "notes": "argv[0] normalized to current script filename; extra host args trimmed in tests.",
+          "docs": "https://nodejs.org/api/process.html#processargv",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.ExecutionTests.Environment_EnumerateProcessArgV",
+              "file": "Js2IL.Tests/Node/ExecutionTests.cs#L21"
+            },
+            {
+              "name": "Js2IL.Tests.Node.GeneratorTests.Environment_EnumerateProcessArgV",
+              "file": "Js2IL.Tests/Node/GeneratorTests.cs"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "globals": [
+    {
+      "name": "__dirname",
+      "status": "supported",
+      "implementation": "JavaScriptRuntime/Node/GlobalVariables.cs",
+      "docs": "https://nodejs.org/api/modules.html#dirname",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.ExecutionTests.Global___dirname_PrintsDirectory",
+          "file": "Js2IL.Tests/Node/ExecutionTests.cs#L15"
+        },
+        {
+          "name": "Js2IL.Tests.Node.GeneratorTests.Global___dirname_PrintsDirectory",
+          "file": "Js2IL.Tests/Node/GeneratorTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "__filename",
+      "status": "supported",
+      "implementation": "JavaScriptRuntime/Node/GlobalVariables.cs",
+      "docs": "https://nodejs.org/api/modules.html#filename",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.ExecutionTests.Environment_EnumerateProcessArgV",
+          "file": "Js2IL.Tests/Node/ExecutionTests.cs#L21"
+        },
+        {
+          "name": "Js2IL.Tests.Node.GeneratorTests.Environment_EnumerateProcessArgV",
+          "file": "Js2IL.Tests/Node/GeneratorTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "console.log",
+      "status": "supported",
+      "implementation": "JavaScriptRuntime/Console.cs",
+      "docs": "https://nodejs.org/api/console.html#consolelogdata-args",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.ConsoleTests",
+          "file": "Js2IL.Tests/ConsoleTests.cs"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "No Buffer support yet; fs APIs operate on UTF-8 text only.",
+    "CommonJS globals (__dirname/__filename) are supported; ESM import.meta.url is not.",
+    "Only a small subset of Node is implemented to support tests; many APIs are unimplemented."
+  ]
+}
