@@ -1,7 +1,7 @@
 # Node Support Coverage
 
 Target: `22.x LTS`
-Generated: `2025-09-05T17:27:47Z`
+Generated: `2025-09-05T21:17:41Z`
 
 
 ## Modules
@@ -21,6 +21,21 @@ Tests:
   - `Js2IL.Tests.Node.ExecutionTests.Require_Path_Join_NestedFunction` (`Js2IL.Tests/Node/ExecutionTests.cs#L13`)
   - `Js2IL.Tests.Node.GeneratorTests.Require_Path_Join_Basic` (`Js2IL.Tests/Node/GeneratorTests.cs`)
   - `Js2IL.Tests.Node.GeneratorTests.Require_Path_Join_NestedFunction` (`Js2IL.Tests/Node/GeneratorTests.cs`)
+
+### perf_hooks (status: partial)
+Docs: [https://nodejs.org/api/perf_hooks.html](https://nodejs.org/api/perf_hooks.html)
+Implementation:
+- `JavaScriptRuntime/Node/PerfHooks.cs`
+
+| API | Kind | Status | Docs |
+| --- | ---- | ------ | ---- |
+| performance | property | supported | [docs](https://nodejs.org/api/perf_hooks.html#performance) |
+| performance.now() | function | supported | [docs](https://nodejs.org/api/perf_hooks.html#performancenow) |
+
+Tests:
+- `performance.now()`
+  - `Js2IL.Tests.Node.ExecutionTests.PerfHooks_PerformanceNow_Basic` (`Js2IL.Tests/Node/ExecutionTests.cs`)
+  - `Js2IL.Tests.Node.GeneratorTests.PerfHooks_PerformanceNow_Basic` (`Js2IL.Tests/Node/GeneratorTests.cs`)
 
 ### fs (status: partial)
 Docs: [https://nodejs.org/api/fs.html](https://nodejs.org/api/fs.html)

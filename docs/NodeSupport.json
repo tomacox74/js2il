@@ -35,6 +35,36 @@
       ]
     },
     {
+      "name": "perf_hooks",
+      "status": "partial",
+      "implementation": "JavaScriptRuntime/Node/PerfHooks.cs",
+      "docs": "https://nodejs.org/api/perf_hooks.html",
+      "apis": [
+        {
+          "name": "performance",
+          "kind": "property",
+          "status": "supported",
+          "docs": "https://nodejs.org/api/perf_hooks.html#performance"
+        },
+        {
+          "name": "performance.now()",
+          "kind": "function",
+          "status": "supported",
+          "docs": "https://nodejs.org/api/perf_hooks.html#performancenow",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.ExecutionTests.PerfHooks_PerformanceNow_Basic",
+              "file": "Js2IL.Tests/Node/ExecutionTests.cs"
+            },
+            {
+              "name": "Js2IL.Tests.Node.GeneratorTests.PerfHooks_PerformanceNow_Basic",
+              "file": "Js2IL.Tests/Node/GeneratorTests.cs"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "fs",
       "status": "partial",
       "implementation": "JavaScriptRuntime/Node/FS.cs",
