@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace JavaScriptRuntime
 {
@@ -208,6 +210,54 @@ namespace JavaScriptRuntime
         public object join()
         {
             return join(System.Array.Empty<object>());
+        }
+
+        /// <summary>
+        /// JavaScript Array.push(...items): appends items to the end and returns the new length.
+        /// </summary>
+        public object push(object[]? args)
+        {
+            if (args != null)
+            {
+                for (int i = 0; i < args.Length; i++)
+                {
+                    this.Add(args[i]);
+                }
+            }
+            // return new length as a JS number (double)
+            return (double)this.Count;
+        }
+
+        /// <summary>
+        /// Overload without parameters to match potential direct dispatch; returns current length.
+        /// </summary>
+        public object push()
+        {
+            return (double)this.Count;
+        }
+
+        /// <summary>
+        /// JavaScript Array.pop(): removes the last element from the array and returns it.
+        /// If the array is empty, returns undefined (represented as null in this runtime).
+        /// </summary>
+        public object? pop(object[]? args)
+        {
+            if (this.Count == 0)
+            {
+                return null; // JS undefined
+            }
+            int lastIndex = this.Count - 1;
+            var value = this[lastIndex];
+            this.RemoveAt(lastIndex);
+            return value;
+        }
+
+        /// <summary>
+        /// Overload without parameters to match potential direct dispatch.
+        /// </summary>
+        public object? pop()
+        {
+            return pop(null);
         }
 
         /// <summary>
