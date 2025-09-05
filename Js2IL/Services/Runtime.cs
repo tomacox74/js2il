@@ -5,6 +5,7 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 namespace Js2IL.Services
 {
@@ -26,6 +27,10 @@ namespace Js2IL.Services
         private MemberReferenceHandle _operatorsAddRef;
         private MemberReferenceHandle _operatorsSubtractRef;
 
+        // Cache a single JavaScriptRuntime AssemblyReference per MetadataBuilder to avoid duplicate AssemblyRef rows
+        private static readonly ConditionalWeakTable<MetadataBuilder, AssemblyRefBox> s_runtimeAsmRefCache = new();
+        private sealed class AssemblyRefBox { public AssemblyReferenceHandle Handle; public AssemblyRefBox(AssemblyReferenceHandle h){ Handle = h; } }
+
         public Runtime(MetadataBuilder metadataBuilder, InstructionEncoder il) 
         { 
             _il = il;
@@ -35,18 +40,24 @@ namespace Js2IL.Services
             var runtimeAssemblyName = runtimeAssembly.GetName();
             var runtimeAssemblyVersion = runtimeAssemblyName.Version;
 
-            var runtimeAssemblyReference = metadataBuilder.AddAssemblyReference(
-                metadataBuilder.GetOrAddString(runtimeAssemblyName.Name!),
-                version: runtimeAssemblyVersion!,
-                culture: default,
-                publicKeyOrToken: default,
-                flags: 0,
-                hashValue: default
-            );
-            _runtimeAssemblyReference = runtimeAssemblyReference;
+            // Reuse existing AssemblyReference for JavaScriptRuntime if one was already created for this MetadataBuilder
+            if (!s_runtimeAsmRefCache.TryGetValue(metadataBuilder, out var box))
+            {
+                var runtimeAssemblyReference = metadataBuilder.AddAssemblyReference(
+                    metadataBuilder.GetOrAddString(runtimeAssemblyName.Name!),
+                    version: runtimeAssemblyVersion!,
+                    culture: default,
+                    publicKeyOrToken: default,
+                    flags: 0,
+                    hashValue: default
+                );
+                box = new AssemblyRefBox(runtimeAssemblyReference);
+                s_runtimeAsmRefCache.Add(metadataBuilder, box);
+            }
+            _runtimeAssemblyReference = box.Handle;
 
             var dotNet2JsType = metadataBuilder.AddTypeReference(
-                runtimeAssemblyReference,
+                _runtimeAssemblyReference,
                 metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime)),
                 metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime.DotNet2JSConversions))
             );
