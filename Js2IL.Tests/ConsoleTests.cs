@@ -66,6 +66,30 @@ namespace JavaScriptRuntime.Tests
         }
 
         [Fact]
+        public void Error_PrintsAllArgumentsWithSpaces()
+        {
+            var testOutput = new TestConsoleOutput();
+            Console.SetOutput(testOutput);
+
+            Console.Error("Hello", "World", 42d, JavaScriptRuntime.JsNull.Null);
+
+            Assert.Single(testOutput.Output);
+            Assert.Equal("Hello World 42 null", testOutput.Output[0]);
+        }
+
+        [Fact]
+        public void Warn_PrintsAllArgumentsWithSpaces()
+        {
+            var testOutput = new TestConsoleOutput();
+            Console.SetOutput(testOutput);
+
+            Console.Warn("Be", "careful", 7d);
+
+            Assert.Single(testOutput.Output);
+            Assert.Equal("Be careful 7", testOutput.Output[0]);
+        }
+
+        [Fact]
         public void Log_PrintsExpandoObjectProperties()
         {
             var testOutput = new TestConsoleOutput();
