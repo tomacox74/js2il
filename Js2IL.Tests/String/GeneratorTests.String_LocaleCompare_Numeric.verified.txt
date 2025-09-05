@@ -1,4 +1,4 @@
-// IL code: String_LocaleCompare_Numeric
+﻿// IL code: String_LocaleCompare_Numeric
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x206b
 		// Header size: 1
-		// Code size: 45 (0x2d)
+		// Code size: 40 (0x28)
 		.maxstack 8
 
 		IL_0000: ldarg.1
@@ -95,9 +95,8 @@
 		IL_0017: ldc.i4.1
 		IL_0018: box [System.Runtime]System.Boolean
 		IL_001d: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0022: call float64 [JavaScriptRuntime]JavaScriptRuntime.String::LocaleCompare(string, string, object, object)
-		IL_0027: box [System.Runtime]System.Double
-		IL_002c: ret
+		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.String::LocaleCompare(string, string, object, object)
+		IL_0027: ret
 	} // end of method ArrowFunction_L2C11::ArrowFunction_L2C11
 
 } // end of class Functions.ArrowFunction_L2C11
@@ -109,10 +108,10 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x209c
+		// Method begins at RVA 0x2094
 		// Header size: 12
-		// Code size: 211 (0xd3)
-		.maxstack 8
+		// Code size: 226 (0xe2)
+		.maxstack 32
 		.entrypoint
 		.locals init (
 			[0] object
@@ -142,49 +141,56 @@
 		IL_0041: ldnull
 		IL_0042: ldftn object Functions.ArrowFunction_L2C11::ArrowFunction_L2C11(object[], object, object)
 		IL_0048: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-		IL_004d: stelem.ref
-		IL_004e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::sort(object[])
-		IL_0053: pop
-		IL_0054: ldloc.0
-		IL_0055: ldc.r8 0.0
-		IL_005e: box [System.Runtime]System.Double
-		IL_0063: stfld object Scopes.String_LocaleCompare_Numeric::i
-		// loop start (head: IL_0068)
-			IL_0068: ldloc.0
-			IL_0069: ldfld object Scopes.String_LocaleCompare_Numeric::i
-			IL_006e: unbox.any [System.Runtime]System.Double
-			IL_0073: ldloc.0
-			IL_0074: ldfld object Scopes.String_LocaleCompare_Numeric::items
-			IL_0079: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_007e: blt IL_0088
+		IL_004d: ldc.i4.1
+		IL_004e: newarr [System.Runtime]System.Object
+		IL_0053: dup
+		IL_0054: ldc.i4.0
+		IL_0055: ldloc.0
+		IL_0056: stelem.ref
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_005c: stelem.ref
+		IL_005d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::sort(object[])
+		IL_0062: pop
+		IL_0063: ldloc.0
+		IL_0064: ldc.r8 0.0
+		IL_006d: box [System.Runtime]System.Double
+		IL_0072: stfld object Scopes.String_LocaleCompare_Numeric::i
+		// loop start (head: IL_0077)
+			IL_0077: ldloc.0
+			IL_0078: ldfld object Scopes.String_LocaleCompare_Numeric::i
+			IL_007d: unbox.any [System.Runtime]System.Double
+			IL_0082: ldloc.0
+			IL_0083: ldfld object Scopes.String_LocaleCompare_Numeric::items
+			IL_0088: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_008d: blt IL_0097
 
-			IL_0083: br IL_00d2
+			IL_0092: br IL_00e1
 
-			IL_0088: ldc.i4.1
-			IL_0089: newarr [System.Runtime]System.Object
-			IL_008e: dup
-			IL_008f: ldc.i4.0
-			IL_0090: ldloc.0
-			IL_0091: ldfld object Scopes.String_LocaleCompare_Numeric::items
-			IL_0096: ldloc.0
-			IL_0097: ldfld object Scopes.String_LocaleCompare_Numeric::i
-			IL_009c: unbox.any [System.Runtime]System.Double
-			IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-			IL_00a6: stelem.ref
-			IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_00ac: pop
-			IL_00ad: ldloc.0
-			IL_00ae: ldloc.0
-			IL_00af: ldfld object Scopes.String_LocaleCompare_Numeric::i
-			IL_00b4: unbox.any [System.Runtime]System.Double
-			IL_00b9: ldc.r8 1
-			IL_00c2: add
-			IL_00c3: box [System.Runtime]System.Double
-			IL_00c8: stfld object Scopes.String_LocaleCompare_Numeric::i
-			IL_00cd: br IL_0068
+			IL_0097: ldc.i4.1
+			IL_0098: newarr [System.Runtime]System.Object
+			IL_009d: dup
+			IL_009e: ldc.i4.0
+			IL_009f: ldloc.0
+			IL_00a0: ldfld object Scopes.String_LocaleCompare_Numeric::items
+			IL_00a5: ldloc.0
+			IL_00a6: ldfld object Scopes.String_LocaleCompare_Numeric::i
+			IL_00ab: unbox.any [System.Runtime]System.Double
+			IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_00b5: stelem.ref
+			IL_00b6: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_00bb: pop
+			IL_00bc: ldloc.0
+			IL_00bd: ldloc.0
+			IL_00be: ldfld object Scopes.String_LocaleCompare_Numeric::i
+			IL_00c3: unbox.any [System.Runtime]System.Double
+			IL_00c8: ldc.r8 1
+			IL_00d1: add
+			IL_00d2: box [System.Runtime]System.Double
+			IL_00d7: stfld object Scopes.String_LocaleCompare_Numeric::i
+			IL_00dc: br IL_0077
 		// end loop
 
-		IL_00d2: ret
+		IL_00e1: ret
 	} // end of method Program::Main
 
 } // end of class Program

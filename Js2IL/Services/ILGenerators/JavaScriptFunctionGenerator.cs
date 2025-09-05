@@ -18,14 +18,14 @@ namespace Js2IL.Services.ILGenerators
         private BaseClassLibraryReferences _bclReferences;
         private MetadataBuilder _metadataBuilder;
         private MethodBodyStreamEncoder _methodBodyStreamEncoder;
-    private Dispatch.DispatchTableGenerator _dispatchTableGenerator;
-    private readonly ClassRegistry _classRegistry;
+        private Dispatch.DispatchTableGenerator _dispatchTableGenerator;
+        private readonly ClassRegistry _classRegistry;
         private MethodDefinitionHandle _firstMethod = default;
 
-    // Tracks owner types in the Functions namespace
-    private readonly Dictionary<string, TypeDefinitionHandle> _globalFunctionOwnerTypes = new();
-    private readonly Dictionary<string, TypeDefinitionHandle> _nestedOwnerTypes = new();
-    private TypeDefinitionHandle _moduleOwnerType = default;
+        // Tracks owner types in the Functions namespace
+        private readonly Dictionary<string, TypeDefinitionHandle> _globalFunctionOwnerTypes = new();
+        private readonly Dictionary<string, TypeDefinitionHandle> _nestedOwnerTypes = new();
+        private TypeDefinitionHandle _moduleOwnerType = default;
 
         public MethodDefinitionHandle FirstMethod => _firstMethod;
 
@@ -274,8 +274,10 @@ namespace Js2IL.Services.ILGenerators
 
             var bodyoffset = _methodBodyStreamEncoder.AddMethodBody(
                 il,
+                maxStack: 32, // todo - keep track of the pops and pushes so as to provide a accurate value for maxStack
                 localVariablesSignature: localSignature,
                 attributes: bodyAttributes);
+                
             // Build method signature: static object (object[] scopes, object param1, ...)
             var sigBuilder = new BlobBuilder();
             var paramCount = 1 + functionDeclaration.Params.Count; // scope array + declared params

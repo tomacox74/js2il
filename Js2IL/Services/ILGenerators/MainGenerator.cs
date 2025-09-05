@@ -100,6 +100,7 @@ namespace Js2IL.Services.ILGenerators
 
             return _methodBodyStreamEncoder.AddMethodBody(
                 _ilGenerator.IL,
+                maxStack: 32,
                 localVariablesSignature: localSignature,
                 attributes: methodBodyAttributes);
         }
