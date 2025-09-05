@@ -26,7 +26,7 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Boolean literals (true/false) | Supported |  | Emits proper IL for true/false and boxes when needed in arrays/log calls. See generator snapshot: Js2IL.Tests/Literals/GeneratorTests.BooleanLiteral.verified.txt. | 13.1.3 |
+| Boolean literals (true/false) | Supported | `Js2IL.Tests/JavaScript/UnaryOperator_Typeof.js`<br>`Js2IL.Tests/JavaScript/JSON_Parse_SimpleObject.js` | Emits proper IL for true/false and boxes when needed in arrays/log calls. See generator snapshot: Js2IL.Tests/Literals/GeneratorTests.BooleanLiteral.verified.txt. | 13.1.3 |
 
 
 #### [Template Literals](https://tc39.es/ecma262/#sec-template-literals)
@@ -40,14 +40,14 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| null literal | Supported |  | null emission validated in literals and variable tests; see execution snapshot Js2IL.Tests/Literals/ExecutionTests.Literals_NullAndUndefined.verified.txt. | 13.1.5 |
+| null literal | Supported | `Js2IL.Tests/JavaScript/Literals_NullAndUndefined.js`<br>`Js2IL.Tests/JavaScript/JSON_Parse_SimpleObject.js` | null emission validated in literals and variable tests; see execution snapshot Js2IL.Tests/Literals/ExecutionTests.Literals_NullAndUndefined.verified.txt. | 13.1.5 |
 
 
 #### [undefined (Identifier)](https://tc39.es/ecma262/#sec-undefined)
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| undefined identifier usage | Supported |  | Handled as the ECMAScript undefined value and participates in JS truthiness; see execution snapshot Js2IL.Tests/Literals/ExecutionTests.Literals_NullAndUndefined.verified.txt. | 13.1.6 |
+| undefined identifier usage | Supported | `Js2IL.Tests/JavaScript/Literals_NullAndUndefined.js` | Handled as the ECMAScript undefined value and participates in JS truthiness; see execution snapshot Js2IL.Tests/Literals/ExecutionTests.Literals_NullAndUndefined.verified.txt. | 13.1.6 |
 
 
 ### [Declarations](https://tc39.es/ecma262/#sec-declarations)

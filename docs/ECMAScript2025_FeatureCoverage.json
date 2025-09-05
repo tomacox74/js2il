@@ -18,7 +18,10 @@
                 {
                   "feature": "Boolean literals (true/false)",
                   "status": "Supported",
-                  "testScripts": [],
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/UnaryOperator_Typeof.js",
+                    "Js2IL.Tests/JavaScript/JSON_Parse_SimpleObject.js"
+                  ],
                   "notes": "Emits proper IL for true/false and boxes when needed in arrays/log calls. See generator snapshot: Js2IL.Tests/Literals/GeneratorTests.BooleanLiteral.verified.txt."
                 }
               ]
@@ -78,7 +81,10 @@
                 {
                   "feature": "null literal",
                   "status": "Supported",
-                  "testScripts": [],
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/Literals_NullAndUndefined.js",
+                    "Js2IL.Tests/JavaScript/JSON_Parse_SimpleObject.js"
+                  ],
                   "notes": "null emission validated in literals and variable tests; see execution snapshot Js2IL.Tests/Literals/ExecutionTests.Literals_NullAndUndefined.verified.txt."
                 }
               ]
@@ -91,7 +97,9 @@
                 {
                   "feature": "undefined identifier usage",
                   "status": "Supported",
-                  "testScripts": [],
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/Literals_NullAndUndefined.js"
+                  ],
                   "notes": "Handled as the ECMAScript undefined value and participates in JS truthiness; see execution snapshot Js2IL.Tests/Literals/ExecutionTests.Literals_NullAndUndefined.verified.txt."
                 }
               ]
