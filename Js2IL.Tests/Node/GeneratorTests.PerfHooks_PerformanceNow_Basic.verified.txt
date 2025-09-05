@@ -1,0 +1,234 @@
+﻿// IL code: PerfHooks_PerformanceNow_Basic
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.PerfHooks_PerformanceNow_Basic
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Block_L6C43
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Block_L6C43::.ctor
+
+	} // end of class Block_L6C43
+
+	.class nested public auto ansi beforefieldinit Block_L10C4
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2062
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Block_L10C4::.ctor
+
+	} // end of class Block_L10C4
+
+	.class nested public auto ansi beforefieldinit Block_L10C37
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x206b
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Block_L10C37::.ctor
+
+	} // end of class Block_L10C37
+
+
+	// Fields
+	.field public initonly object perf
+	.field public initonly object performance
+	.field public initonly object t1
+	.field public object s
+	.field public object i
+	.field public initonly object t2
+	.field public object hasNow
+	.field public initonly object dt
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method PerfHooks_PerformanceNow_Basic::.ctor
+
+} // end of class Scopes.PerfHooks_PerformanceNow_Basic
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2074
+		// Header size: 12
+		// Code size: 351 (0x15f)
+		.maxstack 32
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.PerfHooks_PerformanceNow_Basic::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldstr "perf_hooks"
+		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Require::require(string)
+		IL_0011: stfld object Scopes.PerfHooks_PerformanceNow_Basic::perf
+		IL_0016: ldloc.0
+		IL_0017: ldloc.0
+		IL_0018: ldfld object Scopes.PerfHooks_PerformanceNow_Basic::perf
+		IL_001d: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Node.PerfHooks/Performance [JavaScriptRuntime]JavaScriptRuntime.Node.PerfHooks::get_performance()
+		IL_0022: stfld object Scopes.PerfHooks_PerformanceNow_Basic::performance
+		IL_0027: ldloc.0
+		IL_0028: ldloc.0
+		IL_0029: ldfld object Scopes.PerfHooks_PerformanceNow_Basic::performance
+		IL_002e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Node.PerfHooks/Performance::now()
+		IL_0033: stfld object Scopes.PerfHooks_PerformanceNow_Basic::t1
+		IL_0038: ldloc.0
+		IL_0039: ldc.r8 0.0
+		IL_0042: box [System.Runtime]System.Double
+		IL_0047: stfld object Scopes.PerfHooks_PerformanceNow_Basic::s
+		IL_004c: ldloc.0
+		IL_004d: ldc.r8 0.0
+		IL_0056: box [System.Runtime]System.Double
+		IL_005b: stfld object Scopes.PerfHooks_PerformanceNow_Basic::i
+		// loop start (head: IL_0060)
+			IL_0060: ldloc.0
+			IL_0061: ldfld object Scopes.PerfHooks_PerformanceNow_Basic::i
+			IL_0066: unbox.any [System.Runtime]System.Double
+			IL_006b: ldc.r8 10000
+			IL_0074: blt IL_007e
+
+			IL_0079: br IL_00ba
+
+			IL_007e: ldloc.0
+			IL_007f: dup
+			IL_0080: ldfld object Scopes.PerfHooks_PerformanceNow_Basic::s
+			IL_0085: ldloc.0
+			IL_0086: ldfld object Scopes.PerfHooks_PerformanceNow_Basic::i
+			IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0090: stfld object Scopes.PerfHooks_PerformanceNow_Basic::s
+			IL_0095: ldloc.0
+			IL_0096: ldloc.0
+			IL_0097: ldfld object Scopes.PerfHooks_PerformanceNow_Basic::i
+			IL_009c: unbox.any [System.Runtime]System.Double
+			IL_00a1: ldc.r8 1
+			IL_00aa: add
+			IL_00ab: box [System.Runtime]System.Double
+			IL_00b0: stfld object Scopes.PerfHooks_PerformanceNow_Basic::i
+			IL_00b5: br IL_0060
+		// end loop
+
+		IL_00ba: ldloc.0
+		IL_00bb: ldloc.0
+		IL_00bc: ldfld object Scopes.PerfHooks_PerformanceNow_Basic::performance
+		IL_00c1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Node.PerfHooks/Performance::now()
+		IL_00c6: stfld object Scopes.PerfHooks_PerformanceNow_Basic::t2
+		IL_00cb: ldloc.0
+		IL_00cc: ldc.i4.1
+		IL_00cd: box [System.Runtime]System.Boolean
+		IL_00d2: stfld object Scopes.PerfHooks_PerformanceNow_Basic::hasNow
+		.try
+		{
+			IL_00d7: ldloc.0
+			IL_00d8: ldfld object Scopes.PerfHooks_PerformanceNow_Basic::performance
+			IL_00dd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Node.PerfHooks/Performance::now()
+			IL_00e2: pop
+			IL_00e3: leave IL_00f5
+		} // end .try
+		catch [JavaScriptRuntime]JavaScriptRuntime.Error
+		{
+			IL_00e8: pop
+			IL_00e9: ldloc.0
+			IL_00ea: ldc.i4.0
+			IL_00eb: stfld object Scopes.PerfHooks_PerformanceNow_Basic::hasNow
+			IL_00f0: leave IL_00f5
+		} // end handler
+
+		IL_00f5: ldloc.0
+		IL_00f6: ldloc.0
+		IL_00f7: ldfld object Scopes.PerfHooks_PerformanceNow_Basic::t2
+		IL_00fc: ldloc.0
+		IL_00fd: ldfld object Scopes.PerfHooks_PerformanceNow_Basic::t1
+		IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Subtract(object, object)
+		IL_0107: stfld object Scopes.PerfHooks_PerformanceNow_Basic::dt
+		IL_010c: ldc.i4.2
+		IL_010d: newarr [System.Runtime]System.Object
+		IL_0112: dup
+		IL_0113: ldc.i4.0
+		IL_0114: ldstr "hasNow="
+		IL_0119: stelem.ref
+		IL_011a: dup
+		IL_011b: ldc.i4.1
+		IL_011c: ldloc.0
+		IL_011d: ldfld object Scopes.PerfHooks_PerformanceNow_Basic::hasNow
+		IL_0122: stelem.ref
+		IL_0123: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0128: pop
+		IL_0129: ldc.i4.2
+		IL_012a: newarr [System.Runtime]System.Object
+		IL_012f: dup
+		IL_0130: ldc.i4.0
+		IL_0131: ldstr "elapsedMsNonNegative="
+		IL_0136: stelem.ref
+		IL_0137: dup
+		IL_0138: ldc.i4.1
+		IL_0139: ldloc.0
+		IL_013a: ldfld object Scopes.PerfHooks_PerformanceNow_Basic::dt
+		IL_013f: unbox.any [System.Runtime]System.Double
+		IL_0144: ldc.r8 0.0
+		IL_014d: clt
+		IL_014f: ldc.i4.0
+		IL_0150: ceq
+		IL_0152: box [System.Runtime]System.Boolean
+		IL_0157: stelem.ref
+		IL_0158: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_015d: pop
+		IL_015e: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

@@ -178,7 +178,11 @@ namespace Js2IL.Services.ILGenerators
                     javascriptType = JavascriptType.Object;
                     break;
                 case MemberExpression memberExpression:
-                    javascriptType = EmitMemberExpression(memberExpression);
+                    {
+                        var res = EmitMemberExpression(memberExpression);
+                        javascriptType = res.JsType;
+                        clrType = res.ClrType;
+                    }
                     break;
                 case TemplateLiteral template:
                     {
@@ -245,6 +249,9 @@ namespace Js2IL.Services.ILGenerators
                                 typeCoercion.boxResult = false;
                             }
                             javascriptType = localVar.Type;
+                            // Propagate known CLR runtime type (e.g., const perf = require('perf_hooks')) so downstream
+                            // member/property emission can bind typed getters and direct instance calls.
+                            clrType = localVar.RuntimeIntrinsicType;
                         }
                         else
                         {
@@ -487,13 +494,52 @@ namespace Js2IL.Services.ILGenerators
                     }
                 }
                 // Receiver is an arbitrary expression (e.g., (expr).method(...))
-                // Use a generic runtime dispatcher to resolve based on runtime type: string, Array, or fallback.
-                // Goal: leave stack as (receiver, methodName, args) without fragile local juggling.
-                // Stack after emit: [receiver]
-                _ = Emit(mem.Object, new TypeCoercion());
-                // Push method name next so building args won't disturb the required order
+                // If the receiver's CLR type is known and method is resolvable, emit a direct callvirt.
+                // Otherwise fall back to the generic runtime dispatcher.
+                var recv = Emit(mem.Object, new TypeCoercion());
+                if (recv.ClrType != null)
+                {
+                    var rt = recv.ClrType;
+                    var methods = rt
+                        .GetMethods(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)
+                        .Where(mi => string.Equals(mi.Name, methodName, StringComparison.Ordinal));
+
+                    var chosen = methods.FirstOrDefault(mi => mi.GetParameters().Length == callExpression.Arguments.Count)
+                                 ?? methods.FirstOrDefault(mi =>
+                                     mi.GetParameters().Length == 1 && mi.GetParameters()[0].ParameterType == typeof(object[]));
+
+                    if (chosen != null)
+                    {
+                        var ps = chosen.GetParameters();
+                        var expectsParamsArray = ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+                        var reflectedParamTypes = expectsParamsArray ? new[] { typeof(object[]) } : ps.Select(p => p.ParameterType).ToArray();
+                        var reflectedReturnType = chosen.ReturnType;
+                        var mrefHandle = _owner.Runtime.GetInstanceMethodRef(rt, chosen.Name, reflectedReturnType, reflectedParamTypes);
+
+                        if (expectsParamsArray)
+                        {
+                            _il.EmitNewArray(callExpression.Arguments.Count, _bclReferences.ObjectType, (il, i) =>
+                            {
+                                Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
+                            });
+                        }
+                        else
+                        {
+                            for (int i = 0; i < callExpression.Arguments.Count; i++)
+                            {
+                                Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
+                            }
+                        }
+
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                        _il.Token(mrefHandle);
+                        return reflectedReturnType;
+                    }
+                }
+
+                // Fallback: dynamic dispatcher
+                // Stack currently has [receiver]
                 _il.Ldstr(_metadataBuilder, methodName); // [receiver, name]
-                // Build args array (appended after name): result order [receiver, name, args]
                 _il.EmitNewArray(callExpression.Arguments.Count, _bclReferences.ObjectType, (il, i) =>
                 {
                     Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
@@ -1500,8 +1546,8 @@ namespace Js2IL.Services.ILGenerators
             throw new NotSupportedException($"Unsupported new-expression callee: {newExpression.Callee.Type}");
         }
 
-        // Emits the IL for a member access expression.
-        private JavascriptType EmitMemberExpression(MemberExpression memberExpression)
+    // Emits the IL for a member access expression and returns both JS and CLR type when known.
+    private ExpressionResult EmitMemberExpression(MemberExpression memberExpression)
         {
             var _runtime = _owner.Runtime;
             var _classRegistry = _owner.ClassRegistry;
@@ -1515,7 +1561,7 @@ namespace Js2IL.Services.ILGenerators
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldarg_0);
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld);
                     _il.Token(privField);
-                    return JavascriptType.Object;
+                    return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
                 }
             }
 
@@ -1530,7 +1576,7 @@ namespace Js2IL.Services.ILGenerators
                     {
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldsfld);
                         _il.Token(sfield);
-                        return JavascriptType.Object;
+                        return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
                     }
                     // Static method invocations are handled in GenerateCallExpression; here we only support fields
                 }
@@ -1548,25 +1594,22 @@ namespace Js2IL.Services.ILGenerators
                     var getLen = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetLength), typeof(double), typeof(object));
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
                     _il.Token(getLen);
-                    return JavascriptType.Number;
+                    return new ExpressionResult { JsType = JavascriptType.Number, ClrType = typeof(double) };
                 }
 
                 // If the base resolved to a known runtime type, allow direct instance member access
-                if (baseResult.ClrType == typeof(JavaScriptRuntime.Node.Process))
+
+                // New: If base CLR type is known and has a public instance property with this name, emit typed getter
+                if (baseResult.ClrType != null)
                 {
-                    if (propId.Name == "argv")
+                    var baseClr = baseResult.ClrType;
+                    var pi = baseClr.GetProperty(propId.Name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.IgnoreCase);
+                    if (pi?.GetMethod != null)
                     {
-                        var getArgv = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Node.Process), "get_argv", typeof(JavaScriptRuntime.Array));
+                        var getterRef = _owner.Runtime.GetInstanceMethodRef(baseClr, pi.GetMethod.Name, pi.PropertyType);
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
-                        _il.Token(getArgv);
-                        return JavascriptType.Object;
-                    }
-                    if (propId.Name == "exitCode")
-                    {
-                        var getExit = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Node.Process), "get_exitCode", typeof(double));
-                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
-                        _il.Token(getExit);
-                        return JavascriptType.Number;
+                        _il.Token(getterRef);
+                        return new ExpressionResult { JsType = JavascriptType.Object, ClrType = pi.PropertyType };
                     }
                 }
 
@@ -1577,7 +1620,7 @@ namespace Js2IL.Services.ILGenerators
                 {
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld);
                     _il.Token(fieldHandle);
-                    return JavascriptType.Object;
+                    return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
                 }
 
                 // Fallback: dynamic property lookup on runtime object graphs (e.g., ExpandoObject from JSON.parse)
@@ -1585,7 +1628,7 @@ namespace Js2IL.Services.ILGenerators
                 _il.Ldstr(_metadataBuilder, propId.Name);
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
                 _il.Token(getProp);
-                return JavascriptType.Object;
+                return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
             }
 
             if (memberExpression.Computed)
@@ -1596,7 +1639,7 @@ namespace Js2IL.Services.ILGenerators
                     throw new NotSupportedException("Array index must be numeric expression");
                 }
                 _runtime.InvokeGetItemFromObject();
-                return JavascriptType.Object;
+                return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
             }
 
             throw new NotSupportedException("Only 'length', instance fields on known classes, or computed indexing supported.");

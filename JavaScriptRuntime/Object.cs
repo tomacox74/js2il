@@ -177,7 +177,19 @@ namespace JavaScriptRuntime
                 return null;
             }
 
-            // Fallback: no dynamic properties supported
+            // Reflection fallback: expose public instance properties/fields of host objects
+            var type = obj.GetType();
+            var prop = type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+            if (prop != null && prop.CanRead)
+            {
+                return prop.GetValue(obj);
+            }
+            var field = type.GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+            if (field != null)
+            {
+                return field.GetValue(obj);
+            }
+            // Unknown -> undefined/null
             return null;
         }
 

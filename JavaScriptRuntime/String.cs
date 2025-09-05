@@ -107,24 +107,24 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Implements a subset of String.prototype.localeCompare.
         /// Supports locales (ignored) and options; recognizes options.numeric === true to enable numeric-aware comparison.
-    /// Returns -1, 0, or 1 as a JavaScript number (double).
-    /// </summary>
-    public static object LocaleCompare(string input, string other, object? locales, object? options)
+        /// Returns -1, 0, or 1 as a JavaScript number (double).
+        /// </summary>
+        public static object LocaleCompare(string input, string other, object? locales, object? options)
         {
             input ??= string.Empty;
             other ??= string.Empty;
             var numeric = OptionsHasNumericTrue(options);
             if (!numeric)
             {
-        return string.Compare(input, other, StringComparison.Ordinal) switch
+                return string.Compare(input, other, StringComparison.Ordinal) switch
                 {
-            < 0 => -1d,
-            0 => 0d,
-            _ => 1d
+                    < 0 => -1d,
+                    0 => 0d,
+                    _ => 1d
                 };
             }
-        var cmp = NumericAwareCompare(input, other);
-        return cmp < 0 ? -1d : (cmp > 0 ? 1d : 0d);
+            var cmp = NumericAwareCompare(input, other);
+            return cmp < 0 ? -1d : (cmp > 0 ? 1d : 0d);
         }
 
         private static bool OptionsHasNumericTrue(object? options)
