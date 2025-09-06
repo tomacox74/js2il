@@ -30,5 +30,20 @@ namespace Js2IL.Tests.Array
 
         [Fact]
         public Task Array_IsArray_Basic() { var testName = nameof(Array_IsArray_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_Push_Basic() { var testName = nameof(Array_Push_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_Pop_Basic() { var testName = nameof(Array_Pop_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_Slice_Basic() { var testName = nameof(Array_Slice_Basic); return ExecutionTest(testName); }
+    
+        [Fact]
+        public Task Array_Splice_Basic() { var testName = nameof(Array_Splice_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_Splice_InsertAndDelete() { var testName = nameof(Array_Splice_InsertAndDelete); return ExecutionTest(testName); }
     }
 }

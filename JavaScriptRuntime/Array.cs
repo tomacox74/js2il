@@ -310,6 +310,287 @@ namespace JavaScriptRuntime
             }
         }
 
+        // Shared index coercion: converts start-like argument to a clamped index in [0, len]
+        private static int CoerceStartIndex(object? arg, int len, int defaultValue)
+        {
+            int idx = defaultValue;
+            if (arg == null)
+            {
+                idx = defaultValue;
+            }
+            else
+            {
+                try { idx = ToInt(arg, defaultValue); } catch { idx = defaultValue; }
+            }
+            if (idx < 0)
+            {
+                idx = len + idx;
+                if (idx < 0) idx = 0;
+            }
+            else if (idx > len)
+            {
+                idx = len;
+            }
+            return idx;
+        }
+
+        /// <summary>
+        /// JavaScript Array.slice([start[, end]]) implementation.
+        /// Returns a shallow copy of a portion of the array into a new Array object.
+        /// Handles negative indices and defaults per JS spec.
+        /// </summary>
+        public object slice(object[]? args)
+        {
+            int len = this.Count;
+
+            // Defaults
+            int start = 0;
+            int end = len;
+
+            // Optional debug: print incoming argument shapes to stderr when enabled
+            try
+            {
+                if (System.Environment.GetEnvironmentVariable("JS2IL_DEBUG_SLICE") == "1")
+                {
+                    var alen = args?.Length ?? 0;
+                    string a0t = alen > 0 ? (args![0]?.GetType().FullName ?? "<null>") : "<none>";
+                    string a1t = alen > 1 ? (args![1]?.GetType().FullName ?? "<null>") : "<none>";
+                    string a0v = alen > 0 ? JavaScriptRuntime.DotNet2JSConversions.ToString(args![0]) : "<none>";
+                    string a1v = alen > 1 ? JavaScriptRuntime.DotNet2JSConversions.ToString(args![1]) : "<none>";
+                    System.Console.Error.WriteLine($"[slice dbg] len={len} argsLen={alen} a0Type={a0t} a0Val={a0v} a1Type={a1t} a1Val={a1v}");
+                }
+            }
+            catch { /* best-effort debug only */ }
+
+            // start argument
+            if (args != null && args.Length > 0)
+            {
+                start = CoerceStartIndex(args[0], len, 0);
+            }
+
+        // end argument
+            if (args != null && args.Length > 1)
+            {
+                var endArg = args[1];
+                if (endArg == null)
+                {
+                    // undefined => keep default end = len
+                }
+                else if (endArg is JsNull)
+                {
+                    end = 0; // null => +0
+                }
+                else
+                {
+            // Per spec, only undefined should keep len; other non-numeric => +0
+            try { end = ToInt(endArg, 0); }
+            catch { end = 0; }
+                }
+
+                if (end < 0)
+                {
+                    end = len + end;
+                    if (end < 0) end = 0;
+                }
+                else if (end > len)
+                {
+                    end = len;
+                }
+            }
+
+            int count = end - start;
+            if (count <= 0) return new Array();
+
+            var result = new Array(count);
+            for (int k = start; k < end; k++)
+            {
+                result.Add(this[k]);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Overload without parameters to match potential direct dispatch.
+        /// </summary>
+        public object slice()
+        {
+            return slice(null);
+        }
+
+        /// <summary>
+        /// Overload for one argument to align with dispatcher arity matching.
+        /// </summary>
+        public object slice(object start)
+        {
+            return slice(new object[] { start });
+        }
+
+        /// <summary>
+        /// Overload for two arguments to align with dispatcher arity matching.
+        /// </summary>
+        public object slice(object start, object end)
+        {
+            return slice(new object[] { start, end });
+        }
+
+        /// <summary>
+        /// JavaScript Array.splice(start[, deleteCount[, item1[, item2[, ...]]]])
+        /// Mutates the array by removing and/or inserting elements. Returns a new Array of removed elements.
+        /// </summary>
+        public object splice(object[]? args)
+        {
+            int len = this.Count;
+
+            // No arguments => no-op; return empty array
+            if (args == null || args.Length == 0)
+            {
+                return new Array();
+            }
+
+            // Compute start index (clamped)
+            int start = CoerceStartIndex(args[0], len, 0);
+
+            // Determine deleteCount per spec
+            int deleteCount;
+            if (args.Length == 1)
+            {
+                // Omitted deleteCount => remove to end
+                deleteCount = len - start;
+            }
+            else
+            {
+                var delArg = args[1];
+                // When provided, undefined/null => 0; otherwise ToInt then clamp to [0, len-start]
+                int raw = 0;
+                try { raw = delArg == null ? 0 : ToInt(delArg, 0); } catch { raw = 0; }
+                if (raw < 0) raw = 0;
+                int max = len - start;
+                deleteCount = raw > max ? max : raw;
+            }
+
+            // Gather removed elements
+            var removed = new Array(deleteCount);
+            for (int i = 0; i < deleteCount; i++)
+            {
+                removed.Add(this[start + i]);
+            }
+
+            // Remove them from this array
+            for (int i = 0; i < deleteCount; i++)
+            {
+                this.RemoveAt(start);
+            }
+
+            // Insert any additional items starting at index 2
+            int insertCount = Math.Max(args.Length - 2, 0);
+            if (insertCount > 0)
+            {
+                var toInsert = new System.Collections.Generic.List<object>(insertCount);
+                for (int i = 0; i < insertCount; i++)
+                {
+                    toInsert.Add(args[2 + i]);
+                }
+                this.InsertRange(start, toInsert);
+            }
+
+            return removed;
+        }
+
+        /// <summary>
+        /// Overload without parameters
+        /// </summary>
+        public object splice()
+        {
+            return splice(null);
+        }
+
+        /// <summary>
+        /// Overload with start only
+        /// </summary>
+        public object splice(object start)
+        {
+            return splice(new object[] { start });
+        }
+
+        /// <summary>
+        /// Overload with start and deleteCount
+        /// </summary>
+        public object splice(object start, object deleteCount)
+        {
+            return splice(new object[] { start, deleteCount });
+        }
+
+        private static int ToInt(object value, int defaultValue)
+        {
+            try
+            {
+                if (value == null) return defaultValue;
+                switch (value)
+                {
+                    case double dd:
+                        if (double.IsNaN(dd)) return defaultValue;
+                        if (double.IsPositiveInfinity(dd)) return int.MaxValue;
+                        if (double.IsNegativeInfinity(dd)) return int.MinValue;
+                        return (int)dd;
+                    case float ff:
+                        if (float.IsNaN(ff)) return defaultValue;
+                        if (float.IsPositiveInfinity(ff)) return int.MaxValue;
+                        if (float.IsNegativeInfinity(ff)) return int.MinValue;
+                        return (int)ff;
+                    case JsNull:
+                        return defaultValue;
+                    case decimal dec:
+                        return (int)dec;
+                    case int ii:
+                        return ii;
+                    case long ll:
+                        return (int)ll;
+                    case uint u32:
+                        return (int)u32;
+                    case ulong u64:
+                        return u64 > (ulong)int.MaxValue ? int.MaxValue : (int)u64;
+                    case short ss:
+                        return ss;
+                    case byte bb:
+                        return bb;
+                    case sbyte sb:
+                        return sb;
+                    case ushort us:
+                        return us;
+                    case bool b:
+                        return b ? 1 : 0;
+                    case string s:
+                        if (double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out var pd))
+                        {
+                            if (double.IsNaN(pd)) return defaultValue;
+                            if (double.IsPositiveInfinity(pd)) return int.MaxValue;
+                            if (double.IsNegativeInfinity(pd)) return int.MinValue;
+                            return (int)pd;
+                        }
+                        return defaultValue;
+                    case System.Array:
+                        // Arrays/tuples are non-numeric in JS when coerced to number => NaN => default
+                        return defaultValue;
+                    default:
+                        // As a last resort, try parsing the object's string representation
+                        try
+                        {
+                            var str = DotNet2JSConversions.ToString(value);
+                            if (double.TryParse(str, NumberStyles.Float, CultureInfo.InvariantCulture, out var d2))
+                            {
+                                if (double.IsNaN(d2)) return defaultValue;
+                                if (double.IsPositiveInfinity(d2)) return int.MaxValue;
+                                if (double.IsNegativeInfinity(d2)) return int.MinValue;
+                                return (int)d2;
+                            }
+                        }
+                        catch { /* ignore */ }
+                        return defaultValue;
+                }
+            }
+            catch { return defaultValue; }
+        }
+
         /// <summary>
         /// JavaScript Array.push(...items): appends items to the end and returns the new length.
         /// </summary>
