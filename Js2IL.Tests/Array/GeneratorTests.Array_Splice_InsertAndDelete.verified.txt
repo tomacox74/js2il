@@ -1,0 +1,130 @@
+// IL code: Array_Splice_InsertAndDelete
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Array_Splice_InsertAndDelete
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field public initonly object arr
+	.field public initonly object removed
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Array_Splice_InsertAndDelete::.ctor
+
+} // end of class Scopes.Array_Splice_InsertAndDelete
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x205c
+		// Header size: 12
+		// Code size: 257 (0x101)
+		.maxstack 32
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Array_Splice_InsertAndDelete::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldc.i4.4
+		IL_0008: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_000d: dup
+		IL_000e: ldc.r8 0.0
+		IL_0017: box [System.Runtime]System.Double
+		IL_001c: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0021: dup
+		IL_0022: ldc.r8 1
+		IL_002b: box [System.Runtime]System.Double
+		IL_0030: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0035: dup
+		IL_0036: ldc.r8 2
+		IL_003f: box [System.Runtime]System.Double
+		IL_0044: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0049: dup
+		IL_004a: ldc.r8 3
+		IL_0053: box [System.Runtime]System.Double
+		IL_0058: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_005d: stfld object Scopes.Array_Splice_InsertAndDelete::arr
+		IL_0062: ldloc.0
+		IL_0063: ldloc.0
+		IL_0064: ldfld object Scopes.Array_Splice_InsertAndDelete::arr
+		IL_0069: ldc.i4.4
+		IL_006a: newarr [System.Runtime]System.Object
+		IL_006f: dup
+		IL_0070: ldc.i4.0
+		IL_0071: ldc.r8 1
+		IL_007a: box [System.Runtime]System.Double
+		IL_007f: stelem.ref
+		IL_0080: dup
+		IL_0081: ldc.i4.1
+		IL_0082: ldc.r8 1
+		IL_008b: box [System.Runtime]System.Double
+		IL_0090: stelem.ref
+		IL_0091: dup
+		IL_0092: ldc.i4.2
+		IL_0093: ldstr "a"
+		IL_0098: stelem.ref
+		IL_0099: dup
+		IL_009a: ldc.i4.3
+		IL_009b: ldstr "b"
+		IL_00a0: stelem.ref
+		IL_00a1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::splice(object[])
+		IL_00a6: stfld object Scopes.Array_Splice_InsertAndDelete::removed
+		IL_00ab: ldc.i4.1
+		IL_00ac: newarr [System.Runtime]System.Object
+		IL_00b1: dup
+		IL_00b2: ldc.i4.0
+		IL_00b3: ldloc.0
+		IL_00b4: ldfld object Scopes.Array_Splice_InsertAndDelete::removed
+		IL_00b9: ldstr "join"
+		IL_00be: ldc.i4.1
+		IL_00bf: newarr [System.Runtime]System.Object
+		IL_00c4: dup
+		IL_00c5: ldc.i4.0
+		IL_00c6: ldstr ","
+		IL_00cb: stelem.ref
+		IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_00d1: stelem.ref
+		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00d7: pop
+		IL_00d8: ldc.i4.1
+		IL_00d9: newarr [System.Runtime]System.Object
+		IL_00de: dup
+		IL_00df: ldc.i4.0
+		IL_00e0: ldloc.0
+		IL_00e1: ldfld object Scopes.Array_Splice_InsertAndDelete::arr
+		IL_00e6: ldc.i4.1
+		IL_00e7: newarr [System.Runtime]System.Object
+		IL_00ec: dup
+		IL_00ed: ldc.i4.0
+		IL_00ee: ldstr ","
+		IL_00f3: stelem.ref
+		IL_00f4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_00f9: stelem.ref
+		IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00ff: pop
+		IL_0100: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

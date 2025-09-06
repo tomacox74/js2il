@@ -345,6 +345,20 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Array.prototype.join | Supported | `Js2IL.Tests/JavaScript/Array_Join_Basic.js` | Elements are stringified via DotNet2JSConversions.ToString and joined with a separator (default ','). Codegen dispatches to JavaScriptRuntime.Array.join(object[]). | 23.1.3.13 |
 
 
+#### [Array.prototype.pop](https://tc39.es/ecma262/#sec-array.prototype.pop)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Array.prototype.pop | Supported | `Js2IL.Tests/JavaScript/Array_Pop_Basic.js` | Removes and returns the last element; when empty returns undefined (represented as null in this runtime). | 23.1.3.20 |
+
+
+#### [Array.prototype.push](https://tc39.es/ecma262/#sec-array.prototype.push)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Array.prototype.push | Supported | `Js2IL.Tests/JavaScript/Array_Push_Basic.js` | Appends items to the end of the array and returns the new length (as a JS number). | 23.1.3.22 |
+
+
 #### [Array.prototype.map](https://tc39.es/ecma262/#sec-array.prototype.map)
 
 | Feature | Status | Test Scripts | Notes | Section |
@@ -357,6 +371,29 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
 | Array.prototype.sort (default comparator) | Partially Supported | `Js2IL.Tests/JavaScript/Array_Sort_Basic.js` | Default lexicographic sort implemented in JavaScriptRuntime.Array.sort(); comparator function parameter is not yet supported. Returns the array instance. | 23.1.3.27 |
+
+
+#### [Array.prototype.slice](https://tc39.es/ecma262/#sec-array.prototype.slice)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Array.prototype.slice | Supported | `Js2IL.Tests/JavaScript/Array_Slice_Basic.js` | Returns a shallow copy; handles negative indices and undefined end per spec. | 23.1.3.28 |
+
+
+#### [Array.prototype.splice](https://tc39.es/ecma262/#sec-array.prototype.splice)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Array.prototype.splice | Supported | `Js2IL.Tests/JavaScript/Array_Splice_Basic.js`<br>`Js2IL.Tests/JavaScript/Array_Splice_InsertAndDelete.js` | Mutates the array by removing and/or inserting elements; returns an array of removed elements. | 23.1.3.31 |
+
+
+### [Properties of the Array Constructor](https://tc39.es/ecma262/#sec-properties-of-the-array-constructor)
+
+#### [Array.isArray](https://tc39.es/ecma262/#sec-array.isarray)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Array.isArray | Supported | `Js2IL.Tests/JavaScript/Array_IsArray_Basic.js` | Returns true for JavaScriptRuntime.Array instances; false otherwise. | 23.1.2 |
 
 
 ## [Text Processing](https://tc39.es/ecma262/#sec-text-processing)

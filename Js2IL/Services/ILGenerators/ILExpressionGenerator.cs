@@ -533,16 +533,19 @@ namespace Js2IL.Services.ILGenerators
                 // If the receiver's CLR type is known and method is resolvable, emit a direct callvirt.
                 // Otherwise fall back to the generic runtime dispatcher.
                 var recv = Emit(mem.Object, new TypeCoercion());
-                if (recv.ClrType != null)
+                // Avoid direct callvirt for JavaScriptRuntime.Array to ensure consistent params object[] dispatch
+                if (recv.ClrType != null && recv.ClrType != typeof(JavaScriptRuntime.Array))
                 {
                     var rt = recv.ClrType;
                     var methods = rt
                         .GetMethods(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)
                         .Where(mi => string.Equals(mi.Name, methodName, StringComparison.Ordinal));
 
-                    var chosen = methods.FirstOrDefault(mi => mi.GetParameters().Length == callExpression.Arguments.Count)
-                                 ?? methods.FirstOrDefault(mi =>
-                                     mi.GetParameters().Length == 1 && mi.GetParameters()[0].ParameterType == typeof(object[]));
+                    // Prefer a single-parameter params object[] overload when available to unify semantics
+                    // (e.g., Array methods like slice, includes, join). Fallback to exact arity match.
+                    var chosen = methods.FirstOrDefault(mi =>
+                                        mi.GetParameters().Length == 1 && mi.GetParameters()[0].ParameterType == typeof(object[]))
+                                 ?? methods.FirstOrDefault(mi => mi.GetParameters().Length == callExpression.Arguments.Count);
 
                     if (chosen != null)
                     {
@@ -1389,12 +1392,19 @@ namespace Js2IL.Services.ILGenerators
                 {
                     var numberAsString = (-numericArg.Value).ToString();
                     _il.Ldstr(_owner.MetadataBuilder, numberAsString);
+                    return JavascriptType.Object; // string
                 }
                 else
                 {
                     _il.LoadConstantR8(-numericArg.Value);
+                    if (typeCoercion.boxResult)
+                    {
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
+                        _il.Token(_owner.BclReferences.DoubleType);
+                        return JavascriptType.Object;
+                    }
+                    return JavascriptType.Number;
                 }
-                return JavascriptType.Unknown;
             }
             else
             {
