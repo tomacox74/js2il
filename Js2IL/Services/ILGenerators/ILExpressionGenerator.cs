@@ -66,7 +66,8 @@ namespace Js2IL.Services.ILGenerators
         {
             _il.EmitNewArray(args.Count, _owner.BclReferences.ObjectType, (il, i) =>
             {
-                Emit(args[i], new TypeCoercion { boxResult = true });
+                // Emit each argument with boxResult=true so primitives are boxed exactly once
+                _ = Emit(args[i], new TypeCoercion { boxResult = true });
             });
         }
 
@@ -74,7 +75,8 @@ namespace Js2IL.Services.ILGenerators
         {
             for (int i = 0; i < args.Count; i++)
             {
-                Emit(args[i], new TypeCoercion { boxResult = true });
+                // Emit each argument boxed to an object once
+                _ = Emit(args[i], new TypeCoercion { boxResult = true });
             }
         }
 
@@ -657,8 +659,28 @@ namespace Js2IL.Services.ILGenerators
 
             var mref = _runtime.GetStaticMethodRef(type, chosen.Name, retType, paramTypes);
 
-            if (expectsParamsArray) EmitBoxedArgsArray(callExpression.Arguments);
-            else EmitBoxedArgsInline(callExpression.Arguments);
+            if (expectsParamsArray)
+            {
+                EmitBoxedArgsArray(callExpression.Arguments);
+            }
+            else
+            {
+                // Emit each argument matching the chosen method's parameter types when possible.
+                var psChosen = chosen.GetParameters();
+                for (int i = 0; i < callExpression.Arguments.Count; i++)
+                {
+                    var targetType = (i < psChosen.Length) ? psChosen[i].ParameterType : typeof(object);
+                    if (targetType == typeof(string))
+                    {
+                        _ = Emit(callExpression.Arguments[i], new TypeCoercion { toString = true, boxResult = false });
+                    }
+                    else
+                    {
+                        // Default to boxed object for non-string parameters (simple, keeps behavior consistent with dynamic paths)
+                        _ = Emit(callExpression.Arguments[i], new TypeCoercion { boxResult = true });
+                    }
+                }
+            }
 
             _il.Call(mref);
             return true;
@@ -1422,6 +1444,31 @@ namespace Js2IL.Services.ILGenerators
             // Support `new Identifier(...)` for classes emitted under Classes namespace
             if (newExpression.Callee is Identifier cid)
             {
+                // Special-case: new Date(...) => JavaScriptRuntime.Date intrinsic
+                if (string.Equals(cid.Name, "Date", StringComparison.Ordinal))
+                {
+                    var argc = newExpression.Arguments.Count;
+                    if (argc > 1)
+                    {
+                        throw new NotSupportedException($"Only up to 1 constructor argument supported for Date (got {argc})");
+                    }
+
+                    // Resolve ctor: Date() or Date(object)
+                    var dateType = typeof(JavaScriptRuntime.Date);
+                    var paramTypes = argc == 0 ? System.Array.Empty<Type>() : new[] { typeof(object) };
+                    // Build a member ref for .ctor with selected params
+                    var ctorRef = _owner.Runtime.GetInstanceMethodRef(dateType, ".ctor", typeof(void), paramTypes);
+
+                    // Push args boxed
+                    for (int i = 0; i < argc; i++)
+                    {
+                        Emit(newExpression.Arguments[i], new TypeCoercion() { boxResult = true });
+                    }
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
+                    _il.Token(ctorRef);
+                    return JavascriptType.Object;
+                }
+
                 // Try Classes registry first
                 if (_classRegistry.TryGet(cid.Name, out var typeHandle) && !typeHandle.IsNil)
                 {

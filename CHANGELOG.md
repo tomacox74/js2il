@@ -4,11 +4,26 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+Added
+- Runtime: minimal JavaScript Date intrinsic with constructor overloads and core APIs:
+	- Constructors: new Date(), new Date(milliseconds)
+	- Static: Date.now(), Date.parse(string)
+	- Prototype: getTime(), toISOString()
+
+Changed
+- IL generation: special-case emission for new Date(...); improved host intrinsic static call handling (argument coercion and boxing aligned to CLR signatures). Date.now/Date.parse return boxed numbers (object) to match JS semantics.
+
 Fixed
 - Metadata: deduplicate JavaScriptRuntime AssemblyReference entries by caching a single AssemblyReferenceHandle per emitted assembly (per MetadataBuilder). This eliminates multiple runtime AssemblyRef rows in generated DLLs and reduces metadata bloat. Verified on a compiled sample (scripts/generateFeatureCoverage.js) via a small Reflection.Metadata checker.
+- Generator: avoid AccessViolation at CastHelpers.StelemRef by fixing once-only boxing before Stelem_ref when constructing object[] for call sites.
+- Tests: resolved Verify newline mismatch in Date execution snapshots.
 
 Docs
 - Updated ECMAScript 2025 feature coverage to include Array.prototype.slice, Array.prototype.splice, Array.prototype.push, Array.prototype.pop, and Array.isArray with exact ECMA-262 spec anchors and linked test references; regenerated docs/ECMAScript2025_FeatureCoverage.md from JSON.
+- Updated ECMAScript 2025 feature coverage to include Date constructor, Date.now, Date.parse, Date.prototype.getTime, and Date.prototype.toISOString; regenerated docs/ECMAScript2025_FeatureCoverage.md.
+
+Tests
+- Added Date execution tests (construct from ms → getTime/toISOString; parse ISO string). Removed the obsolete Date generator test and neutralized its snapshot.
 
 ## v0.1.4 - 2025-09-06
 
