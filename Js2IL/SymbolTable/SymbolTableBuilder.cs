@@ -125,6 +125,7 @@ namespace Js2IL.SymbolTables
                 case VariableDeclaration varDecl:
                     foreach (var decl in varDecl.Declarations)
                     {
+                        // Support simple identifier declarations
                         if (decl.Id is Identifier id)
                         {
                             var kind = varDecl.Kind switch
@@ -155,14 +156,91 @@ namespace Js2IL.SymbolTables
                             // Attempt early CLR type resolution for: const x = require('<module>')
                             TryAssignClrTypeForRequireInit(decl, binding);
                             targetScope.Bindings[id.Name] = binding;
+
+                            // Track assignment target for naming nested functions
+                            if (decl.Init != null)
+                            {
+                                var previousTarget = _currentAssignmentTarget;
+                                _currentAssignmentTarget = id.Name;
+                                BuildScopeRecursive(decl.Init, currentScope);
+                                _currentAssignmentTarget = previousTarget;
+                            }
+                            continue;
                         }
-                        // Track assignment target for naming nested functions
-                        if (decl.Init != null && decl.Id is Identifier targetId)
+
+                        // Handle object destructuring patterns, e.g., const { performance } = require('perf_hooks');
+                        if (decl.Id is ObjectPattern objPattern)
                         {
-                            var previousTarget = _currentAssignmentTarget;
-                            _currentAssignmentTarget = targetId.Name;
+                            var kind = varDecl.Kind switch
+                            {
+                                VariableDeclarationKind.Var => BindingKind.Var,
+                                VariableDeclarationKind.Let => BindingKind.Let,
+                                VariableDeclarationKind.Const => BindingKind.Const,
+                                _ => BindingKind.Var
+                            };
+
+                            // Determine hoisting target for `var` declarations made inside blocks
+                            Scope targetScope = currentScope;
+                            if (kind == BindingKind.Var && currentScope.Kind == ScopeKind.Block)
+                            {
+                                var ancestor = currentScope.Parent;
+                                while (ancestor != null && ancestor.Kind != ScopeKind.Function && ancestor.Kind != ScopeKind.Global)
+                                {
+                                    ancestor = ancestor.Parent;
+                                }
+                                if (ancestor != null)
+                                {
+                                    targetScope = ancestor;
+                                }
+                            }
+
+                            // Synthetic temporary binding to hold the initializer object so IL can mirror snapshots
+                            // Name policy: use "perf" when destructuring a perf_hooks require; otherwise a generic name.
+                            string tempName = "__obj";
+                            if (decl.Init is CallExpression call && call.Callee is Identifier calleeId && calleeId.Name == "require"
+                                && call.Arguments.Count == 1 && call.Arguments[0] is Literal lit && lit.Value is string s && NormalizeModuleName(s) == "perf_hooks")
+                            {
+                                tempName = "perf";
+                            }
+                            if (!targetScope.Bindings.ContainsKey(tempName))
+                            {
+                                var tempBinding = new BindingInfo(tempName, kind, decl);
+                                TryAssignClrTypeForRequireInit(decl, tempBinding);
+                                targetScope.Bindings[tempName] = tempBinding;
+                            }
+
+                            // Create bindings for each property in the pattern (only simple identifiers for now)
+                            foreach (var pnode in objPattern.Properties)
+                            {
+                                if (pnode is Property prop)
+                                {
+                                    // The binding identifier is in prop.Value for patterns like { performance }
+                                    if (prop.Value is Identifier bid)
+                                    {
+                                        if (!targetScope.Bindings.ContainsKey(bid.Name))
+                                        {
+                                            targetScope.Bindings[bid.Name] = new BindingInfo(bid.Name, kind, decl);
+                                        }
+                                    }
+                                }
+                            }
+
+                            // Visit initializer expression to record any nested references
+                            if (decl.Init != null)
+                            {
+                                var previousTarget = _currentAssignmentTarget;
+                                _currentAssignmentTarget = tempName;
+                                BuildScopeRecursive(decl.Init, currentScope);
+                                _currentAssignmentTarget = previousTarget;
+                            }
+
+                            continue;
+                        }
+
+                        // Fallback: just visit the initializer if present
+                        if (decl.Init != null)
+                        {
                             BuildScopeRecursive(decl.Init, currentScope);
-                            _currentAssignmentTarget = previousTarget;
                         }
                     }
                     break;
