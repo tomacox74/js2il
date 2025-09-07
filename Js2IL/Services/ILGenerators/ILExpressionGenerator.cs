@@ -225,7 +225,11 @@ namespace Js2IL.Services.ILGenerators
                     clrType = typeof(JavaScriptRuntime.Array);
                     break;
                 case NewExpression newExpression:
-                    javascriptType = EmitNewExpression(newExpression);
+                    {
+                        var res = EmitNewExpression(newExpression);
+                        javascriptType = res.JsType;
+                        clrType = res.ClrType;
+                    }
                     break;
                 case BinaryExpression binaryExpression:
                     _binaryOperators.Generate(binaryExpression, branching);
@@ -325,12 +329,13 @@ namespace Js2IL.Services.ILGenerators
                         else
                         {
                             // If not a local variable, attempt to resolve a public static property on GlobalVariables at compile-time
-                            var gvType = typeof(JavaScriptRuntime.Node.GlobalVariables);
+                            var gvType = typeof(JavaScriptRuntime.GlobalVariables);
                             var prop = gvType.GetProperty(name, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
                             if (prop != null && prop.GetMethod != null)
                             {
                                 var getter = prop.GetMethod;
-                                var mref = _runtime.GetStaticMethodRef(gvType, getter.Name, getter.ReturnType);
+                                var declType = getter.DeclaringType!;
+                                var mref = _runtime.GetStaticMethodRef(declType, getter.Name, getter.ReturnType);
                                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
                                 _il.Token(mref);
                                 typeCoercion.boxResult = false;
@@ -341,8 +346,8 @@ namespace Js2IL.Services.ILGenerators
                             {
                                 // Fallback: dynamic lookup (legacy). This should be avoided for known globals.
                                 var getGlobal = _runtime.GetStaticMethodRef(
-                                    typeof(JavaScriptRuntime.Node.GlobalVariables),
-                                    nameof(JavaScriptRuntime.Node.GlobalVariables.Get),
+                                    typeof(JavaScriptRuntime.GlobalVariables),
+                                    nameof(JavaScriptRuntime.GlobalVariables.Get),
                                     typeof(object),
                                     typeof(string));
                                 _il.Ldstr(_metadataBuilder, name);
@@ -523,11 +528,56 @@ namespace Js2IL.Services.ILGenerators
                     }
                     else
                     {
-                        // Step 4: Not a variable - try host intrinsic (e.g., console.log)
+                        // First, try host intrinsic static call (e.g., console.log)
                         if (TryEmitHostIntrinsicStaticCall(baseId.Name, methodName, callExpression))
                         {
                             return null;
                         }
+
+                        // Otherwise, if the identifier refers to a public static property on GlobalVariables (e.g., process),
+                        // load that instance and perform a normal instance call on it.
+                        var gvType = typeof(JavaScriptRuntime.GlobalVariables);
+                        var gvProp = gvType.GetProperty(baseId.Name, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.IgnoreCase);
+                        if (gvProp?.GetMethod != null)
+                        {
+                            // Load the global instance (stack: instance)
+                            var getterDecl = gvProp.GetMethod.DeclaringType!;
+                            var getterRef = _runtime.GetStaticMethodRef(getterDecl, gvProp.GetMethod.Name, gvProp.PropertyType);
+                            _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
+                            _il.Token(getterRef);
+
+                            // Reflect instance method on the returned type
+                            var rt = gvProp.PropertyType;
+                            var methods = rt
+                                .GetMethods(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)
+                                .Where(mi => string.Equals(mi.Name, methodName, StringComparison.Ordinal));
+
+                            var chosen = methods.FirstOrDefault(mi =>
+                            {
+                                var ps = mi.GetParameters();
+                                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+                            }) ?? methods.FirstOrDefault(mi => mi.GetParameters().Length == callExpression.Arguments.Count);
+
+                            if (chosen == null)
+                            {
+                                throw new NotSupportedException($"Method not found: {rt.FullName}.{methodName} with {callExpression.Arguments.Count} arg(s)");
+                            }
+
+                            var ps = chosen.GetParameters();
+                            var expectsParamsArray = ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+                            var reflectedParamTypes = ps.Select(p => p.ParameterType).ToArray();
+                            var reflectedReturnType = chosen.ReturnType;
+
+                            var mrefHandle = _runtime.GetInstanceMethodRef(rt, chosen.Name, reflectedReturnType, reflectedParamTypes);
+
+                            if (expectsParamsArray) EmitBoxedArgsArray(callExpression.Arguments);
+                            else EmitBoxedArgsInline(callExpression.Arguments);
+
+                            _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                            _il.Token(mrefHandle);
+                            return null;
+                        }
+                        // Step 4 fallback (legacy): no intrinsic mapping and not a GlobalVariables property
                         throw new NotSupportedException($"Unsupported member call base identifier: '{baseId.Name}'");
                     }
                 }
@@ -599,7 +649,11 @@ namespace Js2IL.Services.ILGenerators
             var _bclReferences = _owner.BclReferences;
             var _runtime = _owner.Runtime;
 
-            var type = JavaScriptRuntime.IntrinsicObjectRegistry.Get(objectName);
+            // Special-case: console is a global variable, not a constructible intrinsic, but we emit its calls
+            // as static method calls on JavaScriptRuntime.Console to preserve historical IL snapshots.
+            var type = string.Equals(objectName, "console", StringComparison.Ordinal)
+                ? typeof(JavaScriptRuntime.Console)
+                : JavaScriptRuntime.IntrinsicObjectRegistry.Get(objectName);
             if (type == null)
             {
                 return false;
@@ -1434,8 +1488,8 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-        // Helper to emit a NewExpression and return its JavaScript type (moved from ILMethodGenerator)
-        private JavascriptType EmitNewExpression(NewExpression newExpression)
+    // Helper to emit a NewExpression and return both JavaScript and CLR types (moved from ILMethodGenerator)
+    private ExpressionResult EmitNewExpression(NewExpression newExpression)
         {
             var _classRegistry = _owner.ClassRegistry;
             var _metadataBuilder = _owner.MetadataBuilder;
@@ -1444,29 +1498,43 @@ namespace Js2IL.Services.ILGenerators
             // Support `new Identifier(...)` for classes emitted under Classes namespace
             if (newExpression.Callee is Identifier cid)
             {
-                // Special-case: new Date(...) => JavaScriptRuntime.Date intrinsic
-                if (string.Equals(cid.Name, "Date", StringComparison.Ordinal))
+                // General path: if Identifier maps to a JavaScriptRuntime intrinsic via IntrinsicObjectRegistry
+                // and it has a compatible constructor, emit that instead of hardcoding specific names.
+                var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(cid.Name);
+                if (intrinsicType != null)
                 {
-                    var argc = newExpression.Arguments.Count;
-                    if (argc > 1)
+                    // Ignore static classes or non-constructible types
+                    bool isStaticClass = intrinsicType.IsAbstract && intrinsicType.IsSealed;
+                    if (!isStaticClass)
                     {
-                        throw new NotSupportedException($"Only up to 1 constructor argument supported for Date (got {argc})");
+                        var argc = newExpression.Arguments.Count;
+                        // Support common ctor shapes: .ctor() and .ctor(object)
+                        if (argc == 0)
+                        {
+                            var hasDefault = intrinsicType.GetConstructor(Type.EmptyTypes) != null;
+                            if (hasDefault)
+                            {
+                                var ctorRef = _owner.Runtime.GetInstanceMethodRef(intrinsicType, ".ctor", typeof(void), System.Array.Empty<Type>());
+                                _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
+                                _il.Token(ctorRef);
+                                return new ExpressionResult { JsType = JavascriptType.Object, ClrType = intrinsicType };
+                            }
+                        }
+                        else if (argc == 1)
+                        {
+                            var hasObjectCtor = intrinsicType.GetConstructor(new[] { typeof(object) }) != null;
+                            if (hasObjectCtor)
+                            {
+                                // Push the single argument boxed
+                                Emit(newExpression.Arguments[0], new TypeCoercion() { boxResult = true });
+                                var ctorRef = _owner.Runtime.GetInstanceMethodRef(intrinsicType, ".ctor", typeof(void), typeof(object));
+                                _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
+                                _il.Token(ctorRef);
+                                return new ExpressionResult { JsType = JavascriptType.Object, ClrType = intrinsicType };
+                            }
+                        }
+                        // If no compatible ctor found, fall through to class registry / Error handling
                     }
-
-                    // Resolve ctor: Date() or Date(object)
-                    var dateType = typeof(JavaScriptRuntime.Date);
-                    var paramTypes = argc == 0 ? System.Array.Empty<Type>() : new[] { typeof(object) };
-                    // Build a member ref for .ctor with selected params
-                    var ctorRef = _owner.Runtime.GetInstanceMethodRef(dateType, ".ctor", typeof(void), paramTypes);
-
-                    // Push args boxed
-                    for (int i = 0; i < argc; i++)
-                    {
-                        Emit(newExpression.Arguments[i], new TypeCoercion() { boxResult = true });
-                    }
-                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
-                    _il.Token(ctorRef);
-                    return JavascriptType.Object;
                 }
 
                 // Try Classes registry first
@@ -1494,7 +1562,7 @@ namespace Js2IL.Services.ILGenerators
                     {
                         _owner.RecordVariableToClass(_owner.CurrentAssignmentTarget!, cid.Name);
                     }
-                    return JavascriptType.Object;
+                    return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
                 }
 
                 // Built-in Error types from JavaScriptRuntime (Error, TypeError, etc.)
@@ -1513,7 +1581,9 @@ namespace Js2IL.Services.ILGenerators
                 }
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
                 _il.Token(ctorRef2);
-                return JavascriptType.Object;
+                // Best-effort map CLR type for known JavaScript error classes
+                Type? errorClrType = typeof(JavaScriptRuntime.Object).Assembly.GetType($"JavaScriptRuntime.{cid.Name}");
+                return new ExpressionResult { JsType = JavascriptType.Object, ClrType = errorClrType };
             }
 
             throw new NotSupportedException($"Unsupported new-expression callee: {newExpression.Callee.Type}");
