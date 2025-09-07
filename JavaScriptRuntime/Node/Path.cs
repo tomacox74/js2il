@@ -33,5 +33,17 @@ namespace JavaScriptRuntime.Node
             // GetFullPath will produce an absolute, normalized path.
             return System.IO.Path.GetFullPath(combined);
         }
+
+        public string relative(object from, object to)
+        {
+            var fromStr = from?.ToString();
+            var toStr = to?.ToString();
+
+            if (string.IsNullOrWhiteSpace(fromStr)) fromStr = ".";
+            if (string.IsNullOrWhiteSpace(toStr)) toStr = ".";
+
+            // Use .NET's relative path util; platform-specific separators match Node's behavior.
+            return System.IO.Path.GetRelativePath(fromStr, toStr);
+        }
     }
 }
