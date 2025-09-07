@@ -7,9 +7,51 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Block_L2C9
+	.class nested public auto ansi beforefieldinit Block_L2C40
 		extends [System.Runtime]System.Object
 	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Block_L3C17
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2062
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L3C17::.ctor
+
+		} // end of class Block_L3C17
+
+		.class nested public auto ansi beforefieldinit Block_L5C9
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x206b
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L5C9::.ctor
+
+		} // end of class Block_L5C9
+
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -23,73 +65,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Block_L2C9::.ctor
+		} // end of method Block_L2C40::.ctor
 
-	} // end of class Block_L2C9
-
-	.class nested public auto ansi beforefieldinit Block_L4C7
-		extends [System.Runtime]System.Object
-	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x2062
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method Block_L4C7::.ctor
-
-	} // end of class Block_L4C7
-
-	.class nested public auto ansi beforefieldinit Block_L9C9
-		extends [System.Runtime]System.Object
-	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x206b
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method Block_L9C9::.ctor
-
-	} // end of class Block_L9C9
-
-	.class nested public auto ansi beforefieldinit Block_L11C7
-		extends [System.Runtime]System.Object
-	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x2074
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method Block_L11C7::.ctor
-
-	} // end of class Block_L11C7
+	} // end of class Block_L2C40
 
 
 	// Fields
-	.field public object url
+	.field public initonly object values
+	.field public object i
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -115,9 +98,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2080
+		// Method begins at RVA 0x2074
 		// Header size: 12
-		// Code size: 161 (0xa1)
+		// Code size: 372 (0x174)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -127,64 +110,111 @@
 		IL_0000: newobj instance void Scopes.ControlFlow_If_Truthiness::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldstr ""
-		IL_000c: stfld object Scopes.ControlFlow_If_Truthiness::url
-		IL_0011: ldloc.0
-		IL_0012: ldfld object Scopes.ControlFlow_If_Truthiness::url
-		IL_0017: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-		IL_001c: brtrue IL_0026
+		IL_0007: ldc.i4.s 10
+		IL_0009: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_000e: dup
+		IL_000f: ldc.r8 0.0
+		IL_0018: box [System.Runtime]System.Double
+		IL_001d: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0022: dup
+		IL_0023: ldc.r8 1
+		IL_002c: box [System.Runtime]System.Double
+		IL_0031: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0036: dup
+		IL_0037: ldstr ""
+		IL_003c: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0041: dup
+		IL_0042: ldstr "hi"
+		IL_0047: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_004c: dup
+		IL_004d: ldc.i4.0
+		IL_004e: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0053: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0058: dup
+		IL_0059: ldstr "undefined"
+		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalVariables::Get(string)
+		IL_0063: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0068: dup
+		IL_0069: ldc.i4.0
+		IL_006a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_006f: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0074: dup
+		IL_0075: ldc.i4.1
+		IL_0076: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_007b: dup
+		IL_007c: ldc.r8 1
+		IL_0085: box [System.Runtime]System.Double
+		IL_008a: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_008f: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0094: dup
+		IL_0095: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_009a: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_009f: dup
+		IL_00a0: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_00a5: dup
+		IL_00a6: ldstr "a"
+		IL_00ab: ldc.r8 1
+		IL_00b4: box [System.Runtime]System.Double
+		IL_00b9: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_00be: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_00c3: stfld object Scopes.ControlFlow_If_Truthiness::values
+		IL_00c8: ldloc.0
+		IL_00c9: ldc.r8 0.0
+		IL_00d2: box [System.Runtime]System.Double
+		IL_00d7: stfld object Scopes.ControlFlow_If_Truthiness::i
+		// loop start (head: IL_00dc)
+			IL_00dc: ldloc.0
+			IL_00dd: ldfld object Scopes.ControlFlow_If_Truthiness::i
+			IL_00e2: unbox.any [System.Runtime]System.Double
+			IL_00e7: ldloc.0
+			IL_00e8: ldfld object Scopes.ControlFlow_If_Truthiness::values
+			IL_00ed: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_00f2: blt IL_00fc
 
-		IL_0021: br IL_003f
+			IL_00f7: br IL_0173
 
-		IL_0026: ldc.i4.1
-		IL_0027: newarr [System.Runtime]System.Object
-		IL_002c: dup
-		IL_002d: ldc.i4.0
-		IL_002e: ldstr "truthy"
-		IL_0033: stelem.ref
-		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0039: pop
-		IL_003a: br IL_0053
+			IL_00fc: ldloc.0
+			IL_00fd: ldfld object Scopes.ControlFlow_If_Truthiness::values
+			IL_0102: ldloc.0
+			IL_0103: ldfld object Scopes.ControlFlow_If_Truthiness::i
+			IL_0108: unbox.any [System.Runtime]System.Double
+			IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_0112: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0117: brtrue IL_0121
 
-		IL_003f: ldc.i4.1
-		IL_0040: newarr [System.Runtime]System.Object
-		IL_0045: dup
-		IL_0046: ldc.i4.0
-		IL_0047: ldstr "falsy"
-		IL_004c: stelem.ref
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0052: pop
+			IL_011c: br IL_013a
 
-		IL_0053: ldloc.0
-		IL_0054: ldstr "http://example.com"
-		IL_0059: stfld object Scopes.ControlFlow_If_Truthiness::url
-		IL_005e: ldloc.0
-		IL_005f: ldfld object Scopes.ControlFlow_If_Truthiness::url
-		IL_0064: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-		IL_0069: brtrue IL_0073
+			IL_0121: ldc.i4.1
+			IL_0122: newarr [System.Runtime]System.Object
+			IL_0127: dup
+			IL_0128: ldc.i4.0
+			IL_0129: ldstr "T"
+			IL_012e: stelem.ref
+			IL_012f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_0134: pop
+			IL_0135: br IL_014e
 
-		IL_006e: br IL_008c
+			IL_013a: ldc.i4.1
+			IL_013b: newarr [System.Runtime]System.Object
+			IL_0140: dup
+			IL_0141: ldc.i4.0
+			IL_0142: ldstr "F"
+			IL_0147: stelem.ref
+			IL_0148: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_014d: pop
 
-		IL_0073: ldc.i4.1
-		IL_0074: newarr [System.Runtime]System.Object
-		IL_0079: dup
-		IL_007a: ldc.i4.0
-		IL_007b: ldstr "truthy"
-		IL_0080: stelem.ref
-		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0086: pop
-		IL_0087: br IL_00a0
+			IL_014e: ldloc.0
+			IL_014f: ldloc.0
+			IL_0150: ldfld object Scopes.ControlFlow_If_Truthiness::i
+			IL_0155: unbox.any [System.Runtime]System.Double
+			IL_015a: ldc.r8 1
+			IL_0163: add
+			IL_0164: box [System.Runtime]System.Double
+			IL_0169: stfld object Scopes.ControlFlow_If_Truthiness::i
+			IL_016e: br IL_00dc
+		// end loop
 
-		IL_008c: ldc.i4.1
-		IL_008d: newarr [System.Runtime]System.Object
-		IL_0092: dup
-		IL_0093: ldc.i4.0
-		IL_0094: ldstr "falsy"
-		IL_0099: stelem.ref
-		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_009f: pop
-
-		IL_00a0: ret
+		IL_0173: ret
 	} // end of method Program::Main
 
 } // end of class Program

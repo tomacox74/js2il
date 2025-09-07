@@ -524,7 +524,8 @@ namespace Js2IL.Services.ILGenerators
             {
                 // Mark update section (continue targets jump here)
                 _il.MarkLabel(loopUpdateLabel);
-                _expressionEmitter.Emit(forStatement.Update, new TypeCoercion());
+                // Emit update in statement context so any value is ignored by the emitter
+                _ = _expressionEmitter.Emit(forStatement.Update, new TypeCoercion(), CallSiteContext.Statement);
             }
 
             // branch back to the start of the loop
@@ -1080,6 +1081,7 @@ namespace Js2IL.Services.ILGenerators
 
             var bodyOffset = _methodBodyStreamEncoder.AddMethodBody(
                 il,
+                maxStack: 32, // ensure sufficient stack for nested dup/newarr/callvirt patterns
                 localVariablesSignature: localSignature,
                 attributes: bodyAttributes);
 

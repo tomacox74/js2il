@@ -1,1 +1,69 @@
-// Removed with generator test cleanup.
+﻿// IL code: Generator_NewDate_FromMs
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Generator_NewDate_FromMs
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field public initonly object d
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Generator_NewDate_FromMs::.ctor
+
+} // end of class Scopes.Generator_NewDate_FromMs
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x205c
+		// Header size: 12
+		// Code size: 69 (0x45)
+		.maxstack 32
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Generator_NewDate_FromMs::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldc.r8 123
+		IL_0010: box [System.Runtime]System.Double
+		IL_0015: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Date::.ctor(object)
+		IL_001a: stfld object Scopes.Generator_NewDate_FromMs::d
+		IL_001f: ldc.i4.1
+		IL_0020: newarr [System.Runtime]System.Object
+		IL_0025: dup
+		IL_0026: ldc.i4.0
+		IL_0027: ldloc.0
+		IL_0028: ldfld object Scopes.Generator_NewDate_FromMs::d
+		IL_002d: ldstr "getTime"
+		IL_0032: ldc.i4.0
+		IL_0033: newarr [System.Runtime]System.Object
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_003d: stelem.ref
+		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0043: pop
+		IL_0044: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

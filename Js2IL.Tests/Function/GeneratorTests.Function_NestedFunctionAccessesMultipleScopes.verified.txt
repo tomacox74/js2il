@@ -11,7 +11,7 @@
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit nestedFunction
+		.class nested public auto ansi beforefieldinit innerFunction
 			extends [System.Runtime]System.Object
 		{
 			// Fields
@@ -30,14 +30,14 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method nestedFunction::.ctor
+			} // end of method innerFunction::.ctor
 
-		} // end of class nestedFunction
+		} // end of class innerFunction
 
 
 		// Fields
 		.field public object outerVar
-		.field public object nestedFunction
+		.field public object innerFunction
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
@@ -83,7 +83,7 @@
 {
 	// Fields
 	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> testFunction
-	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> nestedFunction
+	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> innerFunction
 
 } // end of class DispatchTable
 
@@ -96,7 +96,7 @@
 	{
 		// Methods
 		.method public static 
-			object nestedFunction (
+			object innerFunction (
 				object[] scopes
 			) cil managed 
 		{
@@ -108,11 +108,11 @@
 				[0] object
 			)
 
-			IL_0000: newobj instance void Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction/nestedFunction::.ctor()
+			IL_0000: newobj instance void Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction/innerFunction::.ctor()
 			IL_0005: stloc.0
 			IL_0006: ldloc.0
-			IL_0007: ldstr "inner"
-			IL_000c: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction/nestedFunction::innerVar
+			IL_0007: ldstr "I am inner"
+			IL_000c: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction/innerFunction::innerVar
 			IL_0011: ldc.i4.2
 			IL_0012: newarr [System.Runtime]System.Object
 			IL_0017: dup
@@ -152,13 +152,13 @@
 			IL_005d: dup
 			IL_005e: ldc.i4.1
 			IL_005f: ldloc.0
-			IL_0060: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction/nestedFunction::innerVar
+			IL_0060: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction/innerFunction::innerVar
 			IL_0065: stelem.ref
 			IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 			IL_006b: pop
 			IL_006c: ldnull
 			IL_006d: ret
-		} // end of method testFunction::nestedFunction
+		} // end of method testFunction::innerFunction
 
 	} // end of class testFunction
 
@@ -180,13 +180,13 @@
 		IL_0000: newobj instance void Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::nestedFunction
-		IL_000c: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::nestedFunction
+		IL_0007: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::innerFunction
+		IL_000c: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::innerFunction
 		IL_0011: ldloc.0
-		IL_0012: ldstr "outer"
+		IL_0012: ldstr "I am outer"
 		IL_0017: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::outerVar
 		IL_001c: ldloc.0
-		IL_001d: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::nestedFunction
+		IL_001d: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::innerFunction
 		IL_0022: ldc.i4.2
 		IL_0023: newarr [System.Runtime]System.Object
 		IL_0028: dup
@@ -224,9 +224,9 @@
 		IL_0007: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_000c: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::testFunction
 		IL_0011: ldnull
-		IL_0012: ldftn object Functions.testFunction/testFunction::nestedFunction(object[])
+		IL_0012: ldftn object Functions.testFunction/testFunction::innerFunction(object[])
 		IL_0018: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_001d: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::nestedFunction
+		IL_001d: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::innerFunction
 		IL_0022: ret
 	} // end of method _Loader::_LoadDispatchTable
 
@@ -255,7 +255,7 @@
 		IL_000c: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::testFunction
 		IL_0011: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::testFunction
 		IL_0016: ldloc.0
-		IL_0017: ldstr "global"
+		IL_0017: ldstr "I am global"
 		IL_001c: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::globalVar
 		IL_0021: ldloc.0
 		IL_0022: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::testFunction

@@ -134,10 +134,27 @@ namespace Js2IL.SymbolTables
                                 VariableDeclarationKind.Const => BindingKind.Const,
                                 _ => BindingKind.Var
                             };
+
+                            // Hoist `var` declared inside block statements to the nearest function/global scope
+                            // per JavaScript semantics. `let`/`const` remain block-scoped.
+                            Scope targetScope = currentScope;
+                            if (kind == BindingKind.Var && currentScope.Kind == ScopeKind.Block)
+                            {
+                                var ancestor = currentScope.Parent;
+                                while (ancestor != null && ancestor.Kind != ScopeKind.Function && ancestor.Kind != ScopeKind.Global)
+                                {
+                                    ancestor = ancestor.Parent;
+                                }
+                                if (ancestor != null)
+                                {
+                                    targetScope = ancestor;
+                                }
+                            }
+
                             var binding = new BindingInfo(id.Name, kind, decl);
                             // Attempt early CLR type resolution for: const x = require('<module>')
                             TryAssignClrTypeForRequireInit(decl, binding);
-                            currentScope.Bindings[id.Name] = binding;
+                            targetScope.Bindings[id.Name] = binding;
                         }
                         // Track assignment target for naming nested functions
                         if (decl.Init != null && decl.Id is Identifier targetId)

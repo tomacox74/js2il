@@ -6,9 +6,6 @@
 .class public auto ansi beforefieldinit Scopes.String_Replace_CallOnExpression
 	extends [System.Runtime]System.Object
 {
-	// Fields
-	.field public initonly object s
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -35,33 +32,40 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 56 (0x38)
+		// Code size: 75 (0x4b)
 		.maxstack 32
 		.entrypoint
 		.locals init (
 			[0] object
 		)
 
-		IL_0000: newobj instance void Scopes.String_Replace_CallOnExpression::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldstr "a|b|c"
-		IL_000c: ldstr "\\|"
-		IL_0011: ldstr "\\|"
-		IL_0016: ldc.i4.1
+		IL_0000: ldc.i4.1
+		IL_0001: newarr [System.Runtime]System.Object
+		IL_0006: dup
+		IL_0007: ldc.i4.0
+		IL_0008: ldstr "abc"
+		IL_000d: ldstr "b"
+		IL_0012: ldstr "x"
 		IL_0017: ldc.i4.0
-		IL_0018: call string [JavaScriptRuntime]JavaScriptRuntime.String::Replace(string, string, string, bool, bool)
-		IL_001d: stfld object Scopes.String_Replace_CallOnExpression::s
-		IL_0022: ldc.i4.1
-		IL_0023: newarr [System.Runtime]System.Object
-		IL_0028: dup
-		IL_0029: ldc.i4.0
-		IL_002a: ldloc.0
-		IL_002b: ldfld object Scopes.String_Replace_CallOnExpression::s
-		IL_0030: stelem.ref
-		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0036: pop
-		IL_0037: ret
+		IL_0018: ldc.i4.0
+		IL_0019: call string [JavaScriptRuntime]JavaScriptRuntime.String::Replace(string, string, string, bool, bool)
+		IL_001e: stelem.ref
+		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0024: pop
+		IL_0025: ldc.i4.1
+		IL_0026: newarr [System.Runtime]System.Object
+		IL_002b: dup
+		IL_002c: ldc.i4.0
+		IL_002d: ldstr "abc"
+		IL_0032: ldstr "b"
+		IL_0037: ldstr "x"
+		IL_003c: ldc.i4.1
+		IL_003d: ldc.i4.0
+		IL_003e: call string [JavaScriptRuntime]JavaScriptRuntime.String::Replace(string, string, string, bool, bool)
+		IL_0043: stelem.ref
+		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0049: pop
+		IL_004a: ret
 	} // end of method Program::Main
 
 } // end of class Program

@@ -7,11 +7,11 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit outer
+	.class nested public auto ansi beforefieldinit outerFunction
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit inner
+		.class nested public auto ansi beforefieldinit innerFunction
 			extends [System.Runtime]System.Object
 		{
 			// Methods
@@ -27,14 +27,14 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method inner::.ctor
+			} // end of method innerFunction::.ctor
 
-		} // end of class inner
+		} // end of class innerFunction
 
 
 		// Fields
-		.field public object p
-		.field public object inner
+		.field public object outerParam
+		.field public object innerFunction
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
@@ -49,13 +49,14 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method outer::.ctor
+		} // end of method outerFunction::.ctor
 
-	} // end of class outer
+	} // end of class outerFunction
 
 
 	// Fields
-	.field public object outer
+	.field public object outerFunction
+	.field public object inner
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -78,76 +79,89 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public static class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> outer
-	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> inner
+	.field public static class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> outerFunction
+	.field public static class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> innerFunction
 
 } // end of class DispatchTable
 
-.class public auto ansi abstract sealed beforefieldinit Functions.outer
+.class public auto ansi abstract sealed beforefieldinit Functions.outerFunction
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi abstract sealed beforefieldinit outer
+	.class nested public auto ansi abstract sealed beforefieldinit outerFunction
 		extends [System.Runtime]System.Object
 	{
 		// Methods
 		.method public static 
-			object inner (
-				object[] scopes
+			object innerFunction (
+				object[] scopes,
+				object innerParam
 			) cil managed 
 		{
-			// Method begins at RVA 0x20b0
+			// Method begins at RVA 0x20ac
 			// Header size: 12
-			// Code size: 33 (0x21)
+			// Code size: 57 (0x39)
 			.maxstack 32
 
 			IL_0000: ldc.i4.2
 			IL_0001: newarr [System.Runtime]System.Object
 			IL_0006: dup
 			IL_0007: ldc.i4.0
-			IL_0008: ldstr "param:"
+			IL_0008: ldstr "Outer Param:"
 			IL_000d: stelem.ref
 			IL_000e: dup
 			IL_000f: ldc.i4.1
 			IL_0010: ldarg.0
 			IL_0011: ldc.i4.1
 			IL_0012: ldelem.ref
-			IL_0013: ldfld object Scopes.Function_NestedFunctionLogsOuterParameter/outer::p
+			IL_0013: ldfld object Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction::outerParam
 			IL_0018: stelem.ref
 			IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 			IL_001e: pop
-			IL_001f: ldnull
-			IL_0020: ret
-		} // end of method outer::inner
+			IL_001f: ldc.i4.2
+			IL_0020: newarr [System.Runtime]System.Object
+			IL_0025: dup
+			IL_0026: ldc.i4.0
+			IL_0027: ldstr "Inner Param:"
+			IL_002c: stelem.ref
+			IL_002d: dup
+			IL_002e: ldc.i4.1
+			IL_002f: ldarg.1
+			IL_0030: stelem.ref
+			IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_0036: pop
+			IL_0037: ldnull
+			IL_0038: ret
+		} // end of method outerFunction::innerFunction
 
-	} // end of class outer
+	} // end of class outerFunction
 
 
 	// Methods
 	.method public static 
-		object outer (
+		object outerFunction (
 			object[] scopes,
-			object p
+			object outerParam
 		) cil managed 
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 54 (0x36)
+		// Code size: 52 (0x34)
 		.maxstack 32
 		.locals init (
 			[0] object
 		)
 
-		IL_0000: newobj instance void Scopes.Function_NestedFunctionLogsOuterParameter/outer::.ctor()
+		IL_0000: newobj instance void Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldarg.1
-		IL_0008: stfld object Scopes.Function_NestedFunctionLogsOuterParameter/outer::p
+		IL_0008: stfld object Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction::outerParam
 		IL_000d: ldloc.0
-		IL_000e: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::inner
-		IL_0013: stfld object Scopes.Function_NestedFunctionLogsOuterParameter/outer::inner
+		IL_000e: ldsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::innerFunction
+		IL_0013: stfld object Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction::innerFunction
 		IL_0018: ldloc.0
-		IL_0019: ldfld object Scopes.Function_NestedFunctionLogsOuterParameter/outer::inner
+		IL_0019: ldfld object Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction::innerFunction
 		IL_001e: ldc.i4.2
 		IL_001f: newarr [System.Runtime]System.Object
 		IL_0024: dup
@@ -160,13 +174,11 @@
 		IL_002b: ldc.i4.1
 		IL_002c: ldloc.0
 		IL_002d: stelem.ref
-		IL_002e: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0033: pop
-		IL_0034: ldnull
-		IL_0035: ret
-	} // end of method outer::outer
+		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0033: ret
+	} // end of method outerFunction::outerFunction
 
-} // end of class Functions.outer
+} // end of class Functions.outerFunction
 
 .class public auto ansi abstract sealed beforefieldinit Functions._Loader
 	extends [System.Runtime]System.Object
@@ -175,19 +187,19 @@
 	.method public static 
 		void _LoadDispatchTable () cil managed 
 	{
-		// Method begins at RVA 0x20dd
+		// Method begins at RVA 0x20f1
 		// Header size: 1
 		// Code size: 35 (0x23)
 		.maxstack 8
 
 		IL_0000: ldnull
-		IL_0001: ldftn object Functions.outer::outer(object[], object)
+		IL_0001: ldftn object Functions.outerFunction::outerFunction(object[], object)
 		IL_0007: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_000c: stsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::outer
+		IL_000c: stsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::outerFunction
 		IL_0011: ldnull
-		IL_0012: ldftn object Functions.outer/outer::inner(object[])
-		IL_0018: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_001d: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::inner
+		IL_0012: ldftn object Functions.outerFunction/outerFunction::innerFunction(object[], object)
+		IL_0018: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_001d: stsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::innerFunction
 		IL_0022: ret
 	} // end of method _Loader::_LoadDispatchTable
 
@@ -200,9 +212,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2104
+		// Method begins at RVA 0x2118
 		// Header size: 12
-		// Code size: 59 (0x3b)
+		// Code size: 82 (0x52)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -213,21 +225,32 @@
 		IL_0005: stloc.0
 		IL_0006: call void Functions._Loader::_LoadDispatchTable()
 		IL_000b: ldloc.0
-		IL_000c: ldsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::outer
-		IL_0011: stfld object Scopes.Function_NestedFunctionLogsOuterParameter::outer
+		IL_000c: ldsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::outerFunction
+		IL_0011: stfld object Scopes.Function_NestedFunctionLogsOuterParameter::outerFunction
 		IL_0016: ldloc.0
-		IL_0017: ldfld object Scopes.Function_NestedFunctionLogsOuterParameter::outer
-		IL_001c: ldc.i4.1
-		IL_001d: newarr [System.Runtime]System.Object
-		IL_0022: dup
-		IL_0023: ldc.i4.0
-		IL_0024: ldloc.0
-		IL_0025: stelem.ref
-		IL_0026: ldc.r8 123
-		IL_002f: box [System.Runtime]System.Double
-		IL_0034: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0039: pop
-		IL_003a: ret
+		IL_0017: ldloc.0
+		IL_0018: ldfld object Scopes.Function_NestedFunctionLogsOuterParameter::outerFunction
+		IL_001d: ldc.i4.1
+		IL_001e: newarr [System.Runtime]System.Object
+		IL_0023: dup
+		IL_0024: ldc.i4.0
+		IL_0025: ldloc.0
+		IL_0026: stelem.ref
+		IL_0027: ldstr "Value from outer"
+		IL_002c: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_0031: stfld object Scopes.Function_NestedFunctionLogsOuterParameter::inner
+		IL_0036: ldloc.0
+		IL_0037: ldfld object Scopes.Function_NestedFunctionLogsOuterParameter::inner
+		IL_003c: ldc.i4.1
+		IL_003d: newarr [System.Runtime]System.Object
+		IL_0042: dup
+		IL_0043: ldc.i4.0
+		IL_0044: ldloc.0
+		IL_0045: stelem.ref
+		IL_0046: ldstr "Value from inner"
+		IL_004b: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_0050: pop
+		IL_0051: ret
 	} // end of method Program::Main
 
 } // end of class Program

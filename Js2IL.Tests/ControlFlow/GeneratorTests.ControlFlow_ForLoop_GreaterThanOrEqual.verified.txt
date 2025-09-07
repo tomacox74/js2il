@@ -7,7 +7,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Block_L1C41
+	.class nested public auto ansi beforefieldinit Block_L1C29
 		extends [System.Runtime]System.Object
 	{
 		// Methods
@@ -23,13 +23,13 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Block_L1C41::.ctor
+		} // end of method Block_L1C29::.ctor
 
-	} // end of class Block_L1C41
+	} // end of class Block_L1C29
 
 
 	// Fields
-	.field public object index
+	.field public object i
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -57,7 +57,7 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 123 (0x7b)
+		// Code size: 115 (0x73)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -67,43 +67,39 @@
 		IL_0000: newobj instance void Scopes.ControlFlow_ForLoop_GreaterThanOrEqual::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldc.r8 5
+		IL_0007: ldc.r8 0.0
 		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Scopes.ControlFlow_ForLoop_GreaterThanOrEqual::index
+		IL_0015: stfld object Scopes.ControlFlow_ForLoop_GreaterThanOrEqual::i
 		// loop start (head: IL_001a)
 			IL_001a: ldloc.0
-			IL_001b: ldfld object Scopes.ControlFlow_ForLoop_GreaterThanOrEqual::index
+			IL_001b: ldfld object Scopes.ControlFlow_ForLoop_GreaterThanOrEqual::i
 			IL_0020: unbox.any [System.Runtime]System.Double
-			IL_0025: ldc.r8 1
-			IL_002e: bge IL_0038
+			IL_0025: ldc.r8 5
+			IL_002e: ble IL_0038
 
-			IL_0033: br IL_007a
+			IL_0033: br IL_0072
 
-			IL_0038: ldc.i4.2
+			IL_0038: ldc.i4.1
 			IL_0039: newarr [System.Runtime]System.Object
 			IL_003e: dup
 			IL_003f: ldc.i4.0
-			IL_0040: ldstr "index is"
-			IL_0045: stelem.ref
-			IL_0046: dup
-			IL_0047: ldc.i4.1
-			IL_0048: ldloc.0
-			IL_0049: ldfld object Scopes.ControlFlow_ForLoop_GreaterThanOrEqual::index
-			IL_004e: stelem.ref
-			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_0054: pop
-			IL_0055: ldloc.0
-			IL_0056: ldloc.0
-			IL_0057: ldfld object Scopes.ControlFlow_ForLoop_GreaterThanOrEqual::index
-			IL_005c: unbox.any [System.Runtime]System.Double
-			IL_0061: ldc.r8 1
-			IL_006a: sub
-			IL_006b: box [System.Runtime]System.Double
-			IL_0070: stfld object Scopes.ControlFlow_ForLoop_GreaterThanOrEqual::index
-			IL_0075: br IL_001a
+			IL_0040: ldloc.0
+			IL_0041: ldfld object Scopes.ControlFlow_ForLoop_GreaterThanOrEqual::i
+			IL_0046: stelem.ref
+			IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_004c: pop
+			IL_004d: ldloc.0
+			IL_004e: ldloc.0
+			IL_004f: ldfld object Scopes.ControlFlow_ForLoop_GreaterThanOrEqual::i
+			IL_0054: unbox.any [System.Runtime]System.Double
+			IL_0059: ldc.r8 1
+			IL_0062: add
+			IL_0063: box [System.Runtime]System.Double
+			IL_0068: stfld object Scopes.ControlFlow_ForLoop_GreaterThanOrEqual::i
+			IL_006d: br IL_001a
 		// end loop
 
-		IL_007a: ret
+		IL_0072: ret
 	} // end of method Program::Main
 
 } // end of class Program

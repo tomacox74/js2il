@@ -7,11 +7,11 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Block_L2C3
+	.class nested public auto ansi beforefieldinit Block_L2C15
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit Block_L3C18
+		.class nested public auto ansi beforefieldinit Block_L4C19
 			extends [System.Runtime]System.Object
 		{
 			// Methods
@@ -27,9 +27,9 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method Block_L3C18::.ctor
+			} // end of method Block_L4C19::.ctor
 
-		} // end of class Block_L3C18
+		} // end of class Block_L4C19
 
 
 		// Methods
@@ -45,9 +45,9 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Block_L2C3::.ctor
+		} // end of method Block_L2C15::.ctor
 
-	} // end of class Block_L2C3
+	} // end of class Block_L2C15
 
 
 	// Fields
@@ -79,7 +79,7 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 210 (0xd2)
+		// Code size: 175 (0xaf)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -89,65 +89,55 @@
 		IL_0000: newobj instance void Scopes.ControlFlow_DoWhile_Continue_SkipEven::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldc.r8 1
+		IL_0007: ldc.r8 0.0
 		IL_0010: box [System.Runtime]System.Double
 		IL_0015: stfld object Scopes.ControlFlow_DoWhile_Continue_SkipEven::i
 		// loop start (head: IL_001a)
 			IL_001a: ldloc.0
 			IL_001b: ldfld object Scopes.ControlFlow_DoWhile_Continue_SkipEven::i
 			IL_0020: unbox.any [System.Runtime]System.Double
-			IL_0025: ldc.r8 2
-			IL_002e: rem
-			IL_002f: box [System.Runtime]System.Double
-			IL_0034: unbox.any [System.Runtime]System.Double
-			IL_0039: ldc.r8 0.0
-			IL_0042: beq IL_004c
+			IL_0025: ldc.r8 10
+			IL_002e: blt IL_0038
 
-			IL_0047: br IL_0076
+			IL_0033: br IL_00ae
 
-			IL_004c: ldloc.0
-			IL_004d: ldloc.0
-			IL_004e: ldfld object Scopes.ControlFlow_DoWhile_Continue_SkipEven::i
-			IL_0053: unbox.any [System.Runtime]System.Double
-			IL_0058: ldc.r8 1
-			IL_0061: add
-			IL_0062: box [System.Runtime]System.Double
-			IL_0067: stfld object Scopes.ControlFlow_DoWhile_Continue_SkipEven::i
-			IL_006c: br IL_00b3
+			IL_0038: ldloc.0
+			IL_0039: ldloc.0
+			IL_003a: ldfld object Scopes.ControlFlow_DoWhile_Continue_SkipEven::i
+			IL_003f: unbox.any [System.Runtime]System.Double
+			IL_0044: ldc.r8 1
+			IL_004d: add
+			IL_004e: box [System.Runtime]System.Double
+			IL_0053: stfld object Scopes.ControlFlow_DoWhile_Continue_SkipEven::i
+			IL_0058: ldloc.0
+			IL_0059: ldfld object Scopes.ControlFlow_DoWhile_Continue_SkipEven::i
+			IL_005e: unbox.any [System.Runtime]System.Double
+			IL_0063: ldc.r8 2
+			IL_006c: rem
+			IL_006d: box [System.Runtime]System.Double
+			IL_0072: unbox.any [System.Runtime]System.Double
+			IL_0077: ldc.r8 0.0
+			IL_0080: beq IL_008a
 
-			IL_0071: br IL_0076
+			IL_0085: br IL_0094
 
-			IL_0076: ldc.i4.2
-			IL_0077: newarr [System.Runtime]System.Object
-			IL_007c: dup
-			IL_007d: ldc.i4.0
-			IL_007e: ldstr "index is"
-			IL_0083: stelem.ref
-			IL_0084: dup
-			IL_0085: ldc.i4.1
-			IL_0086: ldloc.0
-			IL_0087: ldfld object Scopes.ControlFlow_DoWhile_Continue_SkipEven::i
-			IL_008c: stelem.ref
-			IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_0092: pop
-			IL_0093: ldloc.0
-			IL_0094: ldloc.0
-			IL_0095: ldfld object Scopes.ControlFlow_DoWhile_Continue_SkipEven::i
-			IL_009a: unbox.any [System.Runtime]System.Double
-			IL_009f: ldc.r8 1
-			IL_00a8: add
-			IL_00a9: box [System.Runtime]System.Double
-			IL_00ae: stfld object Scopes.ControlFlow_DoWhile_Continue_SkipEven::i
+			IL_008a: br IL_001a
 
-			IL_00b3: ldloc.0
-			IL_00b4: ldfld object Scopes.ControlFlow_DoWhile_Continue_SkipEven::i
-			IL_00b9: unbox.any [System.Runtime]System.Double
-			IL_00be: ldc.r8 5
-			IL_00c7: ble IL_001a
+			IL_008f: br IL_0094
+
+			IL_0094: ldc.i4.1
+			IL_0095: newarr [System.Runtime]System.Object
+			IL_009a: dup
+			IL_009b: ldc.i4.0
+			IL_009c: ldloc.0
+			IL_009d: ldfld object Scopes.ControlFlow_DoWhile_Continue_SkipEven::i
+			IL_00a2: stelem.ref
+			IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_00a8: pop
+			IL_00a9: br IL_001a
 		// end loop
-		IL_00cc: br IL_00d1
 
-		IL_00d1: ret
+		IL_00ae: ret
 	} // end of method Program::Main
 
 } // end of class Program

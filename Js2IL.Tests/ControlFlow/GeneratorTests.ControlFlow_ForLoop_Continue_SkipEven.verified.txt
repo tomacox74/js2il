@@ -7,31 +7,9 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Block_L3C31
+	.class nested public auto ansi beforefieldinit Block_L1C29
 		extends [System.Runtime]System.Object
 	{
-		// Nested Types
-		.class nested public auto ansi beforefieldinit Block_L4C20
-			extends [System.Runtime]System.Object
-		{
-			// Methods
-			.method public hidebysig specialname rtspecialname 
-				instance void .ctor () cil managed 
-			{
-				// Method begins at RVA 0x2062
-				// Header size: 1
-				// Code size: 8 (0x8)
-				.maxstack 8
-
-				IL_0000: ldarg.0
-				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-				IL_0006: nop
-				IL_0007: ret
-			} // end of method Block_L4C20::.ctor
-
-		} // end of class Block_L4C20
-
-
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -45,9 +23,9 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Block_L3C31::.ctor
+		} // end of method Block_L1C29::.ctor
 
-	} // end of class Block_L3C31
+	} // end of class Block_L1C29
 
 
 	// Fields
@@ -77,9 +55,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x206c
+		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 198 (0xc6)
+		// Code size: 175 (0xaf)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -92,60 +70,53 @@
 		IL_0007: ldc.r8 0.0
 		IL_0010: box [System.Runtime]System.Double
 		IL_0015: stfld object Scopes.ControlFlow_ForLoop_Continue_SkipEven::i
-		IL_001a: ldloc.0
-		IL_001b: ldc.r8 1
-		IL_0024: stfld object Scopes.ControlFlow_ForLoop_Continue_SkipEven::i
-		// loop start (head: IL_0029)
-			IL_0029: ldloc.0
-			IL_002a: ldfld object Scopes.ControlFlow_ForLoop_Continue_SkipEven::i
-			IL_002f: unbox.any [System.Runtime]System.Double
-			IL_0034: ldc.r8 5
-			IL_003d: ble IL_0047
+		// loop start (head: IL_001a)
+			IL_001a: ldloc.0
+			IL_001b: ldfld object Scopes.ControlFlow_ForLoop_Continue_SkipEven::i
+			IL_0020: unbox.any [System.Runtime]System.Double
+			IL_0025: ldc.r8 10
+			IL_002e: blt IL_0038
 
-			IL_0042: br IL_00c5
+			IL_0033: br IL_00ae
 
-			IL_0047: ldloc.0
-			IL_0048: ldfld object Scopes.ControlFlow_ForLoop_Continue_SkipEven::i
-			IL_004d: unbox.any [System.Runtime]System.Double
-			IL_0052: ldc.r8 2
-			IL_005b: rem
-			IL_005c: box [System.Runtime]System.Double
-			IL_0061: unbox.any [System.Runtime]System.Double
-			IL_0066: ldc.r8 0.0
-			IL_006f: beq IL_0079
+			IL_0038: ldloc.0
+			IL_0039: ldfld object Scopes.ControlFlow_ForLoop_Continue_SkipEven::i
+			IL_003e: unbox.any [System.Runtime]System.Double
+			IL_0043: ldc.r8 2
+			IL_004c: rem
+			IL_004d: box [System.Runtime]System.Double
+			IL_0052: unbox.any [System.Runtime]System.Double
+			IL_0057: ldc.r8 0.0
+			IL_0060: beq IL_006a
 
-			IL_0074: br IL_0083
+			IL_0065: br IL_0074
 
-			IL_0079: br IL_00a0
+			IL_006a: br IL_0089
 
-			IL_007e: br IL_0083
+			IL_006f: br IL_0074
 
-			IL_0083: ldc.i4.2
-			IL_0084: newarr [System.Runtime]System.Object
-			IL_0089: dup
-			IL_008a: ldc.i4.0
-			IL_008b: ldstr "index is"
-			IL_0090: stelem.ref
-			IL_0091: dup
-			IL_0092: ldc.i4.1
-			IL_0093: ldloc.0
-			IL_0094: ldfld object Scopes.ControlFlow_ForLoop_Continue_SkipEven::i
-			IL_0099: stelem.ref
-			IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_009f: pop
+			IL_0074: ldc.i4.1
+			IL_0075: newarr [System.Runtime]System.Object
+			IL_007a: dup
+			IL_007b: ldc.i4.0
+			IL_007c: ldloc.0
+			IL_007d: ldfld object Scopes.ControlFlow_ForLoop_Continue_SkipEven::i
+			IL_0082: stelem.ref
+			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_0088: pop
 
-			IL_00a0: ldloc.0
-			IL_00a1: ldloc.0
-			IL_00a2: ldfld object Scopes.ControlFlow_ForLoop_Continue_SkipEven::i
-			IL_00a7: unbox.any [System.Runtime]System.Double
-			IL_00ac: ldc.r8 1
-			IL_00b5: add
-			IL_00b6: box [System.Runtime]System.Double
-			IL_00bb: stfld object Scopes.ControlFlow_ForLoop_Continue_SkipEven::i
-			IL_00c0: br IL_0029
+			IL_0089: ldloc.0
+			IL_008a: ldloc.0
+			IL_008b: ldfld object Scopes.ControlFlow_ForLoop_Continue_SkipEven::i
+			IL_0090: unbox.any [System.Runtime]System.Double
+			IL_0095: ldc.r8 1
+			IL_009e: add
+			IL_009f: box [System.Runtime]System.Double
+			IL_00a4: stfld object Scopes.ControlFlow_ForLoop_Continue_SkipEven::i
+			IL_00a9: br IL_001a
 		// end loop
 
-		IL_00c5: ret
+		IL_00ae: ret
 	} // end of method Program::Main
 
 } // end of class Program
