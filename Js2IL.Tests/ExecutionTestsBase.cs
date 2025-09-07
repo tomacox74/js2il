@@ -185,15 +185,17 @@ namespace Js2IL.Tests
         }
 
 
-        private string GetJavaScript(string testName)
+    private string GetJavaScript(string testName)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = $"Js2IL.Tests.JavaScript.{testName}.js";
-            using (var stream = assembly.GetManifestResourceStream(resourceName))
+        // Prefer category-specific resource: Js2IL.Tests.<Category>.JavaScript.<testName>.js
+        var categorySpecific = $"Js2IL.Tests.{GetType().Namespace?.Split('.').Last()}.JavaScript.{testName}.js";
+        var legacy = $"Js2IL.Tests.JavaScript.{testName}.js";
+        using (var stream = assembly.GetManifestResourceStream(categorySpecific) ?? assembly.GetManifestResourceStream(legacy))
             {
                 if (stream == null)
                 {
-                    throw new InvalidOperationException($"Resource '{resourceName}' not found in assembly '{assembly.FullName}'.");
+            throw new InvalidOperationException($"Resource '{categorySpecific}' or '{legacy}' not found in assembly '{assembly.FullName}'.");
                 }
                 using (var reader = new StreamReader(stream))
                 {
