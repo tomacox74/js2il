@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using JavaScriptRuntime.Node;
+using JavaScriptRuntime;
 using Xunit;
 
 namespace Js2IL.Tests.Node

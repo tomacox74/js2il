@@ -148,7 +148,7 @@ namespace Js2IL.Tests
                 var file = assemblyPath;
                 // Important: Set module context on the JavaScriptRuntime loaded into the Default ALC
                 // so the generated assembly observes the same GlobalVariables instance.
-                var gvType = jsRuntimeAsm?.GetType("JavaScriptRuntime.Node.GlobalVariables");
+                var gvType = jsRuntimeAsm?.GetType("JavaScriptRuntime.GlobalVariables");
                 var setCtx = gvType?.GetMethod("SetModuleContext", BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(string) });
                 if (gvType != null && setCtx != null)
                 {
@@ -158,7 +158,7 @@ namespace Js2IL.Tests
                 else
                 {
                     // Fallback: call through the test assembly reference (may not affect the loaded copy)
-                    JavaScriptRuntime.Node.GlobalVariables.SetModuleContext(modDir, file);
+                    JavaScriptRuntime.GlobalVariables.SetModuleContext(modDir, file);
                 }
 
                 var paramInfos = entryPoint.GetParameters();

@@ -2,10 +2,10 @@ using System;
 using System.IO;
 using System.Reflection;
 
-namespace JavaScriptRuntime.Node
+namespace JavaScriptRuntime
 {
     /// <summary>
-    /// Holds Node-like global intrinsic variables for the current program.
+    /// Holds global intrinsic variables for the current program (Node-like today, extensible later).
     /// Minimal surface for js2il codegen: __dirname, __filename, and process.exitCode.
     /// </summary>
     public static class GlobalVariables
@@ -36,8 +36,15 @@ namespace JavaScriptRuntime.Node
         /// <summary>Absolute filename of the current module (script).</summary>
         public static string __filename { get; private set; } = string.Empty;
 
-    /// <summary>Minimal process global with writable exitCode.</summary>
-    public static Process process { get; } = new Process();
+        /// <summary>Minimal process global with writable exitCode.</summary>
+        public static JavaScriptRuntime.Node.Process process { get; } = new JavaScriptRuntime.Node.Process();
+
+        /// <summary>
+        /// Global console object (lowercase) to mirror JS global. Provides access to log/error/warn via the Console intrinsic.
+        /// Backed by a single shared instance.
+        /// </summary>
+        private static readonly JavaScriptRuntime.Console _console = new JavaScriptRuntime.Console();
+        public static JavaScriptRuntime.Console console => _console;
 
         /// <summary>
         /// Dynamic lookup for well-known globals by name.
@@ -53,6 +60,8 @@ namespace JavaScriptRuntime.Node
                     return __filename;
                 case "process":
                     return process;
+                case "console":
+                    return console;
                 default:
                     return null;
             }
@@ -77,7 +86,5 @@ namespace JavaScriptRuntime.Node
             __filename = string.Empty;
             process.exitCode = 0;
         }
-
-    // Process class is now in its own file (Process.cs)
     }
 }
