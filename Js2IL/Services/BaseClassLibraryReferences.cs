@@ -69,6 +69,12 @@ namespace Js2IL.Services
                 metadataBuilder.GetOrAddString("Double")
             );
 
+            this.Int32Type = metadataBuilder.AddTypeReference(
+                this.SystemRuntimeAssembly,
+                metadataBuilder.GetOrAddString("System"),
+                metadataBuilder.GetOrAddString("Int32")
+            );
+
             this.ObjectType = metadataBuilder.AddTypeReference(
                 this.SystemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
@@ -129,6 +135,7 @@ namespace Js2IL.Services
         public AssemblyReferenceHandle SystemConsoleAssembly { get; private init; }
         public TypeReferenceHandle BooleanType { get; private init; }
         public TypeReferenceHandle DoubleType { get; private init; }
+    public TypeReferenceHandle Int32Type { get; private init; }
         public TypeReferenceHandle ObjectType { get; private init; }
         public TypeReferenceHandle StringType { get; private init; }
     public TypeReferenceHandle ExceptionType { get; private init; }
