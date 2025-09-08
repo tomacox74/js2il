@@ -456,6 +456,15 @@
                   ],
                   "notes": "Value form returns left if falsy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited."
                 }
+                ,
+                {
+                  "feature": "Binary in (property existence on object)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js"
+                  ],
+                  "notes": "Implements key in obj via JavaScriptRuntime.Object.HasPropertyIn. Supports own properties on ExpandoObject/object literals and numeric/string keys; does not yet traverse prototype chain or throw TypeError for non-object RHS beyond null/undefined."
+                }
               ]
             }
           ]

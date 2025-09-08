@@ -175,6 +175,32 @@ namespace Js2IL.Services.ILGenerators
                 return;
             }
 
+            // Handle 'in' operator early to avoid generic arithmetic/comparison pipeline
+            if (operatorType == Operator.In)
+            {
+                // Evaluate left (property key) boxed
+                _ = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion() { boxResult = true });
+                // Evaluate right (object) boxed
+                _ = _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion() { boxResult = true });
+                var hasPropRef = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.HasPropertyIn), typeof(bool), typeof(object), typeof(object));
+                _il.OpCode(ILOpCode.Call);
+                _il.Token(hasPropRef);
+                if (branching == null)
+                {
+                    _il.OpCode(ILOpCode.Box);
+                    _il.Token(_bclReferences.BooleanType);
+                }
+                else
+                {
+                    _il.Branch(ILOpCode.Brtrue, branching.BranchOnTrue);
+                    if (branching.BranchOnFalse.HasValue)
+                    {
+                        _il.Branch(ILOpCode.Br, branching.BranchOnFalse.Value);
+                    }
+                }
+                return;
+            }
+
             bool isBitwiseOrShift = operatorType == Operator.BitwiseAnd || operatorType == Operator.BitwiseOr || operatorType == Operator.BitwiseXor ||
                                     operatorType == Operator.LeftShift || operatorType == Operator.RightShift || operatorType == Operator.UnsignedRightShift;
             if (isBitwiseOrShift) {

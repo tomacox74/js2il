@@ -81,5 +81,9 @@ namespace Js2IL.Tests.BinaryOperator
 
     [Fact]
     public Task BinaryOperator_LogicalOr_ArrayHasData() { var testName = nameof(BinaryOperator_LogicalOr_ArrayHasData); return ExecutionTest(testName); }
+
+    // 'in' operator tests
+    [Fact]
+    public Task BinaryOperator_In_Object_OwnAndMissing() { var testName = nameof(BinaryOperator_In_Object_OwnAndMissing); return ExecutionTest(testName); }
     }
 }
