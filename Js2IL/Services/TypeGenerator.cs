@@ -232,6 +232,8 @@ namespace Js2IL.Services
             // Store the type handle and constructor for later reference
             _scopeTypes[scope.Name] = typeHandle;
             _scopeConstructors[scope.Name] = ctorHandle;
+            // Register the scope type immediately so even scopes without variables can be instantiated later.
+            _variableRegistry.EnsureScopeType(scope.Name, typeHandle);
 
             return typeHandle;
         }
@@ -325,9 +327,9 @@ namespace Js2IL.Services
                 : default;
         }
 
-        /// <summary>
-        /// Gets all generated scope types.
-        /// </summary>
+    /// <summary>
+    /// Gets all generated scope types.
+    /// </summary>
         public IReadOnlyDictionary<string, TypeDefinitionHandle> GetAllScopeTypes()
         {
             return _scopeTypes;
@@ -341,6 +343,8 @@ namespace Js2IL.Services
         {
             var scopeTypeHandle = _scopeTypes[scope.Name];
             var scopeFields = _scopeFields[scope.Name];
+            // Ensure scope type is known even if no variables (important for class method scopes)
+            _variableRegistry.EnsureScopeType(scope.Name, scopeTypeHandle);
 
             // Add each binding as a variable in the registry
             int fieldIndex = 0;
