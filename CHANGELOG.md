@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+—
+
+## v0.1.5 - 2025-09-08
+
 Added
 - Compiler: object destructuring (binding patterns) for object patterns in variable declarations (basic). Single-evaluation of initializer with per-property extraction; when the receiver is a known CLR-backed type, use typed getters; otherwise fall back to runtime Object.GetProperty.
 - Runtime: minimal JavaScript Date intrinsic with constructor overloads and core APIs:
