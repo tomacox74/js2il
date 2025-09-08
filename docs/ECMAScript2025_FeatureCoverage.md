@@ -447,6 +447,19 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Array.isArray | Supported | `Js2IL.Tests/JavaScript/Array_IsArray_Basic.js` | Returns true for JavaScriptRuntime.Array instances; false otherwise. | 23.1.2 |
 
 
+## [TypedArray Objects](https://tc39.es/ecma262/#sec-typedarray-objects)
+
+### [Int32Array](https://tc39.es/ecma262/#sec-typedarray-objects)
+
+#### [Constructor and basic semantics](https://tc39.es/ecma262/#sec-typedarray-objects)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Int32Array: new Int32Array(length), length, index get/set (basic) | Supported | `Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js`<br>`Js2IL.Tests/TypedArray/ExecutionTests.Int32Array_Construct_Length.verified.txt` | Minimal typed array: exposes numeric length, supports indexing; out-of-bounds reads return 0 and out-of-bounds writes are ignored. | 23.2.1.1 |
+| Int32Array from array-like (copy and ToInt32 coercion) | Supported | `Js2IL.Tests/TypedArray/JavaScript/Int32Array_FromArray_CopyAndCoerce.js`<br>`Js2IL.Tests/TypedArray/ExecutionTests.Int32Array_FromArray_CopyAndCoerce.verified.txt` | Copies from array-like and coerces values using ToInt32-style truncation; NaN/Infinity/±0 become 0. | 23.2.1.1 |
+| Int32Array.prototype.set(source[, offset]) | Supported | `Js2IL.Tests/TypedArray/JavaScript/Int32Array_Set_FromArray_WithOffset.js`<br>`Js2IL.Tests/TypedArray/ExecutionTests.Int32Array_Set_FromArray_WithOffset.verified.txt` | Copies elements from array-like or another Int32Array with optional offset; elements are coerced via ToInt32; offset < 0 treated as 0; copies stop at destination length. | 23.2.1.1 |
+
+
 ## [Text Processing](https://tc39.es/ecma262/#sec-text-processing)
 
 ### [String Objects](https://tc39.es/ecma262/#sec-string-objects)
