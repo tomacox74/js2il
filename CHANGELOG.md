@@ -17,6 +17,7 @@ Added
 - Runtime Object: integrated Int32Array support in JavaScriptRuntime.Object helpers:
 	- GetItem(object, double index): indexer for Int32Array
 	- GetLength(object): length for Int32Array
+- Compiler: dynamic indexed element assignment (target[index] = value) for Int32Array inside class methods using JavaScriptRuntime.Object.AssignItem fallback; leaves assigned value available for expression contexts while statement contexts discard it.
 - Operators: binary "in" operator (property existence) with runtime helper Object.HasPropertyIn covering: ExpandoObject/anonymous objects, arrays (numeric index bounds check), Int32Array, strings (character index), and reflection fallback for host objects. Emits early in BinaryOperators to avoid duplicate side-effects. Limitations: no prototype chain traversal yet; non-object RHS throws TypeError only for null/undefined (remaining primitives TODO); numeric LHS coerced via ToString for object keys.
 - Compiler: heuristic class method scope instantiation (ShouldCreateMethodScopeInstance) plus unconditional method scope type registration; enables correct closure binding and removes prior experimental gaps.
 - Validation: reflection-based require() module discovery via [NodeModule] attribute scanning; fail fast if an unknown module name is required.
@@ -56,6 +57,7 @@ Fixed
 - Member dispatch: resolved dynamic instance call regression for certain chained member expressions after dispatcher generalization.
 - Class method scope: ensured variable registry/lookup consistency preventing "Scope '<method>' not found in local slots" during generation of method bodies in performance scripts.
 - Integration test gating: Prime performance compilation test now optional (requires RUN_INTEGRATION=1) so it no longer blocks CI/PR when reproducing historical class scope issues.
+- IL generation: corrected dynamic Int32Array indexed assignment stack handling (previously left AssignItem result plus ldnull causing potential stack imbalance); now explicitly discards the AssignItem return in statement contexts.
 
 Tests (maintenance)
 - Gated PrimePerformanceCompilationTests behind RUN_INTEGRATION.
