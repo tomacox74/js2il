@@ -19,6 +19,10 @@ public class PrimePerformanceCompilationTests
     [Fact]
     public void Compile_PrimeJavaScript_PerformanceScript_Reproduces_ClassMethodScopeBug()
     {
+        // Optional integration: skip unless explicitly enabled (mirrors CompilationTests)
+        if (!string.Equals(Environment.GetEnvironmentVariable("RUN_INTEGRATION"), "1", StringComparison.Ordinal))
+            return; // no-op when integration tests disabled
+
         var repoRoot = FindRepoRoot();
         var scriptPath = Path.Combine(repoRoot, "tests", "performance", "PrimeJavaScript.js");
         Assert.True(File.Exists(scriptPath), $"Script file not found: {scriptPath}");
