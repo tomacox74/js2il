@@ -6,36 +6,6 @@
 .class public auto ansi beforefieldinit Scopes.UnaryOperator_Typeof
 	extends [System.Runtime]System.Object
 {
-	// Nested Types
-	.class nested public auto ansi beforefieldinit f
-		extends [System.Runtime]System.Object
-	{
-		// Methods
-		.method public hidebysig specialname rtspecialname 
-			instance void .ctor () cil managed 
-		{
-			// Method begins at RVA 0x2059
-			// Header size: 1
-			// Code size: 8 (0x8)
-			.maxstack 8
-
-			IL_0000: ldarg.0
-			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-			IL_0006: nop
-			IL_0007: ret
-		} // end of method f::.ctor
-
-	} // end of class f
-
-
-	// Fields
-	.field public initonly object x
-	.field public initonly object y
-	.field public initonly object z
-	.field public initonly object n
-	.field public object f
-	.field public initonly object o
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -53,55 +23,6 @@
 
 } // end of class Scopes.UnaryOperator_Typeof
 
-.class public auto ansi abstract sealed beforefieldinit DispatchTable
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> f
-
-} // end of class DispatchTable
-
-.class public auto ansi abstract sealed beforefieldinit Functions.f
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public static 
-		object f (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x2064
-		// Header size: 12
-		// Code size: 2 (0x2)
-		.maxstack 32
-
-		IL_0000: ldnull
-		IL_0001: ret
-	} // end of method f::f
-
-} // end of class Functions.f
-
-.class public auto ansi abstract sealed beforefieldinit Functions._Loader
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public static 
-		void _LoadDispatchTable () cil managed 
-	{
-		// Method begins at RVA 0x2072
-		// Header size: 1
-		// Code size: 18 (0x12)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldftn object Functions.f::f(object[])
-		IL_0007: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_000c: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::f
-		IL_0011: ret
-	} // end of method _Loader::_LoadDispatchTable
-
-} // end of class Functions._Loader
-
 .class public auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -109,85 +30,45 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2088
+		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 210 (0xd2)
+		// Code size: 90 (0x5a)
 		.maxstack 32
 		.entrypoint
 		.locals init (
 			[0] object
 		)
 
-		IL_0000: newobj instance void Scopes.UnaryOperator_Typeof::.ctor()
-		IL_0005: stloc.0
-		IL_0006: call void Functions._Loader::_LoadDispatchTable()
-		IL_000b: ldloc.0
-		IL_000c: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::f
-		IL_0011: stfld object Scopes.UnaryOperator_Typeof::f
-		IL_0016: ldloc.0
-		IL_0017: ldc.r8 1
-		IL_0020: box [System.Runtime]System.Double
-		IL_0025: stfld object Scopes.UnaryOperator_Typeof::x
-		IL_002a: ldloc.0
-		IL_002b: ldstr "s"
-		IL_0030: stfld object Scopes.UnaryOperator_Typeof::y
-		IL_0035: ldloc.0
-		IL_0036: ldc.i4.1
-		IL_0037: box [System.Runtime]System.Boolean
-		IL_003c: stfld object Scopes.UnaryOperator_Typeof::z
-		IL_0041: ldloc.0
+		IL_0000: ldc.i4.1
+		IL_0001: newarr [System.Runtime]System.Object
+		IL_0006: dup
+		IL_0007: ldc.i4.0
+		IL_0008: ldc.r8 123
+		IL_0011: box [System.Runtime]System.Double
+		IL_0016: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0021: pop
+		IL_0022: ldc.i4.1
+		IL_0023: newarr [System.Runtime]System.Object
+		IL_0028: dup
+		IL_0029: ldc.i4.0
+		IL_002a: ldstr "abc"
+		IL_002f: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0034: stelem.ref
+		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_003a: pop
+		IL_003b: ldc.i4.1
+		IL_003c: newarr [System.Runtime]System.Object
+		IL_0041: dup
 		IL_0042: ldc.i4.0
-		IL_0043: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0048: stfld object Scopes.UnaryOperator_Typeof::n
-		IL_004d: ldloc.0
-		IL_004e: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0053: dup
-		IL_0054: ldstr "a"
-		IL_0059: ldc.r8 1
-		IL_0062: box [System.Runtime]System.Double
-		IL_0067: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_006c: stfld object Scopes.UnaryOperator_Typeof::o
-		IL_0071: ldc.i4.6
-		IL_0072: newarr [System.Runtime]System.Object
-		IL_0077: dup
-		IL_0078: ldc.i4.0
-		IL_0079: ldloc.0
-		IL_007a: ldfld object Scopes.UnaryOperator_Typeof::x
-		IL_007f: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_0084: stelem.ref
-		IL_0085: dup
-		IL_0086: ldc.i4.1
-		IL_0087: ldloc.0
-		IL_0088: ldfld object Scopes.UnaryOperator_Typeof::y
-		IL_008d: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_0092: stelem.ref
-		IL_0093: dup
-		IL_0094: ldc.i4.2
-		IL_0095: ldloc.0
-		IL_0096: ldfld object Scopes.UnaryOperator_Typeof::z
-		IL_009b: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_00a0: stelem.ref
-		IL_00a1: dup
-		IL_00a2: ldc.i4.3
-		IL_00a3: ldloc.0
-		IL_00a4: ldfld object Scopes.UnaryOperator_Typeof::n
-		IL_00a9: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_00ae: stelem.ref
-		IL_00af: dup
-		IL_00b0: ldc.i4.4
-		IL_00b1: ldloc.0
-		IL_00b2: ldfld object Scopes.UnaryOperator_Typeof::f
-		IL_00b7: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_00bc: stelem.ref
-		IL_00bd: dup
-		IL_00be: ldc.i4.5
-		IL_00bf: ldloc.0
-		IL_00c0: ldfld object Scopes.UnaryOperator_Typeof::o
-		IL_00c5: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_00ca: stelem.ref
-		IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_00d0: pop
-		IL_00d1: ret
+		IL_0043: ldstr "undefined"
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalVariables::Get(string)
+		IL_004d: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0052: stelem.ref
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0058: pop
+		IL_0059: ret
 	} // end of method Program::Main
 
 } // end of class Program

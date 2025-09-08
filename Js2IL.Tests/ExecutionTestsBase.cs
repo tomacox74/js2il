@@ -148,7 +148,7 @@ namespace Js2IL.Tests
                 var file = assemblyPath;
                 // Important: Set module context on the JavaScriptRuntime loaded into the Default ALC
                 // so the generated assembly observes the same GlobalVariables instance.
-                var gvType = jsRuntimeAsm?.GetType("JavaScriptRuntime.Node.GlobalVariables");
+                var gvType = jsRuntimeAsm?.GetType("JavaScriptRuntime.GlobalVariables");
                 var setCtx = gvType?.GetMethod("SetModuleContext", BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(string) });
                 if (gvType != null && setCtx != null)
                 {
@@ -158,7 +158,7 @@ namespace Js2IL.Tests
                 else
                 {
                     // Fallback: call through the test assembly reference (may not affect the loaded copy)
-                    JavaScriptRuntime.Node.GlobalVariables.SetModuleContext(modDir, file);
+                    JavaScriptRuntime.GlobalVariables.SetModuleContext(modDir, file);
                 }
 
                 var paramInfos = entryPoint.GetParameters();
@@ -185,15 +185,17 @@ namespace Js2IL.Tests
         }
 
 
-        private string GetJavaScript(string testName)
+    private string GetJavaScript(string testName)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = $"Js2IL.Tests.JavaScript.{testName}.js";
-            using (var stream = assembly.GetManifestResourceStream(resourceName))
+        // Prefer category-specific resource: Js2IL.Tests.<Category>.JavaScript.<testName>.js
+        var categorySpecific = $"Js2IL.Tests.{GetType().Namespace?.Split('.').Last()}.JavaScript.{testName}.js";
+        var legacy = $"Js2IL.Tests.JavaScript.{testName}.js";
+        using (var stream = assembly.GetManifestResourceStream(categorySpecific) ?? assembly.GetManifestResourceStream(legacy))
             {
                 if (stream == null)
                 {
-                    throw new InvalidOperationException($"Resource '{resourceName}' not found in assembly '{assembly.FullName}'.");
+            throw new InvalidOperationException($"Resource '{categorySpecific}' or '{legacy}' not found in assembly '{assembly.FullName}'.");
                 }
                 using (var reader = new StreamReader(stream))
                 {

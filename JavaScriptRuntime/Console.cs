@@ -6,11 +6,16 @@ using System.Threading.Tasks;
 
 namespace JavaScriptRuntime
 {
-    [IntrinsicObject("console")]
     public class Console
     {
-    private static IConsoleOutput _output = new DefaultConsoleOutput();
-    private static IConsoleOutput _errorOutput = new DefaultErrorConsoleOutput();
+        private static IConsoleOutput _output = new DefaultConsoleOutput();
+        private static IConsoleOutput _errorOutput = new DefaultErrorConsoleOutput();
+
+        // Instance methods to support a global console object (e.g., console.log)
+        // These delegate to the static implementations so both patterns work.
+        public object? log(params object?[] args) => Log(args);
+        public object? error(params object?[] args) => Error(args);
+        public object? warn(params object?[] args) => Warn(args);
 
         public static void SetOutput(IConsoleOutput output)
         {

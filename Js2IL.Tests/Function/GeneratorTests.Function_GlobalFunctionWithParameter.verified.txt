@@ -7,7 +7,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit printValue
+	.class nested public auto ansi beforefieldinit printMessage
 		extends [System.Runtime]System.Object
 	{
 		// Methods
@@ -23,13 +23,13 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method printValue::.ctor
+		} // end of method printMessage::.ctor
 
-	} // end of class printValue
+	} // end of class printMessage
 
 
 	// Fields
-	.field public object printValue
+	.field public object printMessage
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -52,18 +52,18 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public static class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> printValue
+	.field public static class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> printMessage
 
 } // end of class DispatchTable
 
-.class public auto ansi abstract sealed beforefieldinit Functions.printValue
+.class public auto ansi abstract sealed beforefieldinit Functions.printMessage
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public static 
-		object printValue (
+		object printMessage (
 			object[] scopes,
-			object 'value'
+			object message
 		) cil managed 
 	{
 		// Method begins at RVA 0x2064
@@ -75,7 +75,7 @@
 		IL_0001: newarr [System.Runtime]System.Object
 		IL_0006: dup
 		IL_0007: ldc.i4.0
-		IL_0008: ldstr "value is"
+		IL_0008: ldstr "Message:"
 		IL_000d: stelem.ref
 		IL_000e: dup
 		IL_000f: ldc.i4.1
@@ -85,9 +85,9 @@
 		IL_0017: pop
 		IL_0018: ldnull
 		IL_0019: ret
-	} // end of method printValue::printValue
+	} // end of method printMessage::printMessage
 
-} // end of class Functions.printValue
+} // end of class Functions.printMessage
 
 .class public auto ansi abstract sealed beforefieldinit Functions._Loader
 	extends [System.Runtime]System.Object
@@ -102,9 +102,9 @@
 		.maxstack 8
 
 		IL_0000: ldnull
-		IL_0001: ldftn object Functions.printValue::printValue(object[], object)
+		IL_0001: ldftn object Functions.printMessage::printMessage(object[], object)
 		IL_0007: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_000c: stsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::printValue
+		IL_000c: stsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::printMessage
 		IL_0011: ret
 	} // end of method _Loader::_LoadDispatchTable
 
@@ -119,7 +119,7 @@
 	{
 		// Method begins at RVA 0x20a0
 		// Header size: 12
-		// Code size: 59 (0x3b)
+		// Code size: 50 (0x32)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -130,21 +130,20 @@
 		IL_0005: stloc.0
 		IL_0006: call void Functions._Loader::_LoadDispatchTable()
 		IL_000b: ldloc.0
-		IL_000c: ldsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::printValue
-		IL_0011: stfld object Scopes.Function_GlobalFunctionWithParameter::printValue
+		IL_000c: ldsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::printMessage
+		IL_0011: stfld object Scopes.Function_GlobalFunctionWithParameter::printMessage
 		IL_0016: ldloc.0
-		IL_0017: ldfld object Scopes.Function_GlobalFunctionWithParameter::printValue
+		IL_0017: ldfld object Scopes.Function_GlobalFunctionWithParameter::printMessage
 		IL_001c: ldc.i4.1
 		IL_001d: newarr [System.Runtime]System.Object
 		IL_0022: dup
 		IL_0023: ldc.i4.0
 		IL_0024: ldloc.0
 		IL_0025: stelem.ref
-		IL_0026: ldc.r8 42
-		IL_002f: box [System.Runtime]System.Double
-		IL_0034: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0039: pop
-		IL_003a: ret
+		IL_0026: ldstr "Hello, Js2IL!"
+		IL_002b: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_0030: pop
+		IL_0031: ret
 	} // end of method Program::Main
 
 } // end of class Program

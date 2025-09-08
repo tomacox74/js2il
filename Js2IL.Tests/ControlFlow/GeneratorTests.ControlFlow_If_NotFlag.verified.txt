@@ -27,9 +27,29 @@
 
 	} // end of class Block_L2C11
 
+	.class nested public auto ansi beforefieldinit Block_L4C7
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2062
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Block_L4C7::.ctor
+
+	} // end of class Block_L4C7
+
 
 	// Fields
-	.field public object flag
+	.field public initonly object flag
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -55,9 +75,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2064
+		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 80 (0x50)
+		// Code size: 100 (0x64)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -86,13 +106,22 @@
 		IL_0037: newarr [System.Runtime]System.Object
 		IL_003c: dup
 		IL_003d: ldc.i4.0
-		IL_003e: ldstr "flag is disabled"
+		IL_003e: ldstr "F"
 		IL_0043: stelem.ref
 		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_0049: pop
-		IL_004a: br IL_004f
+		IL_004a: br IL_0063
 
-		IL_004f: ret
+		IL_004f: ldc.i4.1
+		IL_0050: newarr [System.Runtime]System.Object
+		IL_0055: dup
+		IL_0056: ldc.i4.0
+		IL_0057: ldstr "T"
+		IL_005c: stelem.ref
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0062: pop
+
+		IL_0063: ret
 	} // end of method Program::Main
 
 } // end of class Program

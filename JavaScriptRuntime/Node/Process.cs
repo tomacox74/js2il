@@ -33,14 +33,14 @@ namespace JavaScriptRuntime.Node
                     if (args != null && args.Length > 0)
                     {
                         var normalized = (string[])args.Clone();
-                        normalized[0] = JavaScriptRuntime.Node.GlobalVariables.__filename;
+                        normalized[0] = JavaScriptRuntime.GlobalVariables.__filename;
                         return new JavaScriptRuntime.Array(normalized.Select(s => (object)s));
                     }
                 }
                 catch { }
 
                 // Fallback to single entry with script filename
-                return new JavaScriptRuntime.Array(new object[] { JavaScriptRuntime.Node.GlobalVariables.__filename });
+                return new JavaScriptRuntime.Array(new object[] { JavaScriptRuntime.GlobalVariables.__filename });
             }
         }
     }

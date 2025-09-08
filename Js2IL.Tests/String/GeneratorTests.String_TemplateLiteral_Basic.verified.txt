@@ -8,9 +8,7 @@
 {
 	// Fields
 	.field public initonly object name
-	.field public initonly object a
-	.field public initonly object b
-	.field public initonly object msg
+	.field public initonly object age
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -38,7 +36,7 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 196 (0xc4)
+		// Code size: 100 (0x64)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -51,52 +49,28 @@
 		IL_0007: ldstr "Alice"
 		IL_000c: stfld object Scopes.String_TemplateLiteral_Basic::name
 		IL_0011: ldloc.0
-		IL_0012: ldc.r8 3
+		IL_0012: ldc.r8 31
 		IL_001b: box [System.Runtime]System.Double
-		IL_0020: stfld object Scopes.String_TemplateLiteral_Basic::a
-		IL_0025: ldloc.0
-		IL_0026: ldc.r8 4
-		IL_002f: box [System.Runtime]System.Double
-		IL_0034: stfld object Scopes.String_TemplateLiteral_Basic::b
-		IL_0039: ldloc.0
-		IL_003a: ldstr "Hello, "
-		IL_003f: ldloc.0
-		IL_0040: ldfld object Scopes.String_TemplateLiteral_Basic::name
-		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_004a: ldstr "! "
-		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0054: ldloc.0
-		IL_0055: ldfld object Scopes.String_TemplateLiteral_Basic::a
-		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_005f: ldstr " + "
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0069: ldloc.0
-		IL_006a: ldfld object Scopes.String_TemplateLiteral_Basic::b
-		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0074: ldstr " = "
-		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_007e: ldloc.0
-		IL_007f: ldfld object Scopes.String_TemplateLiteral_Basic::a
-		IL_0084: unbox.any [System.Runtime]System.Double
-		IL_0089: ldloc.0
-		IL_008a: ldfld object Scopes.String_TemplateLiteral_Basic::b
-		IL_008f: unbox.any [System.Runtime]System.Double
-		IL_0094: add
-		IL_0095: box [System.Runtime]System.Double
-		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_009f: ldstr ""
-		IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00a9: stfld object Scopes.String_TemplateLiteral_Basic::msg
-		IL_00ae: ldc.i4.1
-		IL_00af: newarr [System.Runtime]System.Object
-		IL_00b4: dup
-		IL_00b5: ldc.i4.0
-		IL_00b6: ldloc.0
-		IL_00b7: ldfld object Scopes.String_TemplateLiteral_Basic::msg
-		IL_00bc: stelem.ref
-		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_00c2: pop
-		IL_00c3: ret
+		IL_0020: stfld object Scopes.String_TemplateLiteral_Basic::age
+		IL_0025: ldc.i4.1
+		IL_0026: newarr [System.Runtime]System.Object
+		IL_002b: dup
+		IL_002c: ldc.i4.0
+		IL_002d: ldstr "Name: "
+		IL_0032: ldloc.0
+		IL_0033: ldfld object Scopes.String_TemplateLiteral_Basic::name
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_003d: ldstr ", Age: "
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0047: ldloc.0
+		IL_0048: ldfld object Scopes.String_TemplateLiteral_Basic::age
+		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0052: ldstr ""
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_005c: stelem.ref
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0062: pop
+		IL_0063: ret
 	} // end of method Program::Main
 
 } // end of class Program

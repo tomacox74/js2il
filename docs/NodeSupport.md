@@ -37,6 +37,9 @@ Tests:
   - `Js2IL.Tests.Node.ExecutionTests.PerfHooks_PerformanceNow_Basic` (`Js2IL.Tests/Node/ExecutionTests.cs`)
   - `Js2IL.Tests.Node.GeneratorTests.PerfHooks_PerformanceNow_Basic` (`Js2IL.Tests/Node/GeneratorTests.cs`)
 
+Notes:
+- Object destructuring for `const { performance } = require('perf_hooks');` is supported in declarations and enables direct typed calls to `performance.now()`.
+
 ### fs (status: partial)
 Docs: [https://nodejs.org/api/fs.html](https://nodejs.org/api/fs.html)
 Implementation:

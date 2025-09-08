@@ -225,7 +225,11 @@ namespace Js2IL.Services.ILGenerators
                     clrType = typeof(JavaScriptRuntime.Array);
                     break;
                 case NewExpression newExpression:
-                    javascriptType = EmitNewExpression(newExpression);
+                    {
+                        var res = EmitNewExpression(newExpression);
+                        javascriptType = res.JsType;
+                        clrType = res.ClrType;
+                    }
                     break;
                 case BinaryExpression binaryExpression:
                     _binaryOperators.Generate(binaryExpression, branching);
@@ -237,7 +241,7 @@ namespace Js2IL.Services.ILGenerators
                     javascriptType = LoadValue(expression, typeCoercion);
                     break;
                 case UpdateExpression updateExpression:
-                    GenerateUpdateExpression(updateExpression);
+                    javascriptType = GenerateUpdateExpression(updateExpression, context);
                     break;
                 case UnaryExpression unaryExpression:
                     javascriptType = EmitUnaryExpression(unaryExpression, typeCoercion, branching);
@@ -325,12 +329,13 @@ namespace Js2IL.Services.ILGenerators
                         else
                         {
                             // If not a local variable, attempt to resolve a public static property on GlobalVariables at compile-time
-                            var gvType = typeof(JavaScriptRuntime.Node.GlobalVariables);
+                            var gvType = typeof(JavaScriptRuntime.GlobalVariables);
                             var prop = gvType.GetProperty(name, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
                             if (prop != null && prop.GetMethod != null)
                             {
                                 var getter = prop.GetMethod;
-                                var mref = _runtime.GetStaticMethodRef(gvType, getter.Name, getter.ReturnType);
+                                var declType = getter.DeclaringType!;
+                                var mref = _runtime.GetStaticMethodRef(declType, getter.Name, getter.ReturnType);
                                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
                                 _il.Token(mref);
                                 typeCoercion.boxResult = false;
@@ -341,8 +346,8 @@ namespace Js2IL.Services.ILGenerators
                             {
                                 // Fallback: dynamic lookup (legacy). This should be avoided for known globals.
                                 var getGlobal = _runtime.GetStaticMethodRef(
-                                    typeof(JavaScriptRuntime.Node.GlobalVariables),
-                                    nameof(JavaScriptRuntime.Node.GlobalVariables.Get),
+                                    typeof(JavaScriptRuntime.GlobalVariables),
+                                    nameof(JavaScriptRuntime.GlobalVariables.Get),
                                     typeof(object),
                                     typeof(string));
                                 _il.Ldstr(_metadataBuilder, name);
@@ -439,6 +444,7 @@ namespace Js2IL.Services.ILGenerators
                 }
 
                 // If the receiver is definitely a string, route to a dedicated string-method emitter
+                // (only when unambiguously a string literal/template or String(x) conversion)
                 if (IsDefinitelyString(mem.Object))
                 {
                     return EmitStringInstanceMethodCall(mem.Object, methodName, callExpression);
@@ -473,17 +479,21 @@ namespace Js2IL.Services.ILGenerators
                         {
                             return EmitStringInstanceMethodCall(mem.Object, methodName, callExpression);
                         }
-                        // Step 2: Is it an object/class instance? Try intrinsic first, then class instance fallback
-                        if (TryEmitIntrinsicInstanceCall(baseVar, methodName, callExpression))
+
+                        // Evaluate receiver once; subsequent paths assume instance is already on stack
+                        var recvRes = Emit(mem.Object, new TypeCoercion()); // stack: [receiver]
+
+                        // If this variable is a known runtime intrinsic type, emit a direct instance call using the on-stack instance
+                        var runtimeType = baseVar.RuntimeIntrinsicType;
+                        if (runtimeType != null)
                         {
-                            return null;
+                            if (TryEmitIntrinsicInstanceCallOnStack(runtimeType, methodName, callExpression))
+                            {
+                                return null;
+                            }
                         }
 
-                        // Non-intrinsic instance method call fallback (class instance created via `new`)
-                        // Load instance from variable field
-                        EmitLoadVariableField(baseVar); // stack: instance (object)
-
-                        // Resolve the concrete class type if known (based on prior `new` assignment)
+                        // Non-intrinsic instance method: check if the variable was previously bound to a known class via `new`
                         var argCount = callExpression.Arguments.Count;
                         var sig = new BlobBuilder();
                         new BlobEncoder(sig)
@@ -496,44 +506,86 @@ namespace Js2IL.Services.ILGenerators
                         {
                             if (_classRegistry.TryGet(cname, out var th)) targetType = th;
                         }
-                        if (targetType.IsNil)
+                        if (!targetType.IsNil)
                         {
-                            // As a last resort, emit a dynamic member call via JavaScriptRuntime.Object.CallMember(receiver, name, object[])
-                            // At this point the stack has: [instance]
-                            // Push method name first to maintain order, then build args array.
-                            _il.Ldstr(_metadataBuilder, methodName); // [instance, name]
-                            EmitBoxedArgsArray(callExpression.Arguments);
-                            var dynCall = _owner.Runtime.GetStaticMethodRef(
-                                typeof(JavaScriptRuntime.Object),
-                                nameof(JavaScriptRuntime.Object.CallMember),
-                                typeof(object),
-                                typeof(object), typeof(string), typeof(object[]));
-                            _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
-                            _il.Token(dynCall);
+                            var mrefHandle = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(methodName), msig);
+                            // Push arguments
+                            EmitBoxedArgsInline(callExpression.Arguments);
+                            _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                            _il.Token(mrefHandle);
                             return null;
                         }
-                        var mrefHandle = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(methodName), msig);
 
-                        // Push arguments
-                        EmitBoxedArgsInline(callExpression.Arguments);
-
-                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
-                        _il.Token(mrefHandle);
+                        // Dynamic dispatch through runtime: Object.CallMember(receiver, name, object[])
+                        _il.Ldstr(_metadataBuilder, methodName);
+                        EmitBoxedArgsArray(callExpression.Arguments);
+                        var dynCall = _owner.Runtime.GetStaticMethodRef(
+                            typeof(JavaScriptRuntime.Object),
+                            nameof(JavaScriptRuntime.Object.CallMember),
+                            typeof(object),
+                            typeof(object), typeof(string), typeof(object[]));
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
+                        _il.Token(dynCall);
                         return null;
                     }
                     else
                     {
-                        // Step 4: Not a variable - try host intrinsic (e.g., console.log)
+                        // First, try host intrinsic static call (e.g., console.log)
                         if (TryEmitHostIntrinsicStaticCall(baseId.Name, methodName, callExpression))
                         {
                             return null;
                         }
+
+                        // Otherwise, if the identifier refers to a public static property on GlobalVariables (e.g., process),
+                        // load that instance and perform a normal instance call on it.
+                        var gvType = typeof(JavaScriptRuntime.GlobalVariables);
+                        var gvProp = gvType.GetProperty(baseId.Name, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.IgnoreCase);
+                        if (gvProp?.GetMethod != null)
+                        {
+                            // Load the global instance (stack: instance)
+                            var getterDecl = gvProp.GetMethod.DeclaringType!;
+                            var getterRef = _runtime.GetStaticMethodRef(getterDecl, gvProp.GetMethod.Name, gvProp.PropertyType);
+                            _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
+                            _il.Token(getterRef);
+
+                            // Reflect instance method on the returned type
+                            var rt = gvProp.PropertyType;
+                            var methods = rt
+                                .GetMethods(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)
+                                .Where(mi => string.Equals(mi.Name, methodName, StringComparison.Ordinal));
+
+                            var chosen = methods.FirstOrDefault(mi =>
+                            {
+                                var ps = mi.GetParameters();
+                                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+                            }) ?? methods.FirstOrDefault(mi => mi.GetParameters().Length == callExpression.Arguments.Count);
+
+                            if (chosen == null)
+                            {
+                                throw new NotSupportedException($"Method not found: {rt.FullName}.{methodName} with {callExpression.Arguments.Count} arg(s)");
+                            }
+
+                            var ps = chosen.GetParameters();
+                            var expectsParamsArray = ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+                            var reflectedParamTypes = ps.Select(p => p.ParameterType).ToArray();
+                            var reflectedReturnType = chosen.ReturnType;
+
+                            var mrefHandle = _runtime.GetInstanceMethodRef(rt, chosen.Name, reflectedReturnType, reflectedParamTypes);
+
+                            if (expectsParamsArray) EmitBoxedArgsArray(callExpression.Arguments);
+                            else EmitBoxedArgsInline(callExpression.Arguments);
+
+                            _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                            _il.Token(mrefHandle);
+                            return null;
+                        }
+                        // Step 4 fallback (legacy): no intrinsic mapping and not a GlobalVariables property
                         throw new NotSupportedException($"Unsupported member call base identifier: '{baseId.Name}'");
                     }
                 }
                 // Receiver is an arbitrary expression (e.g., (expr).method(...))
                 // If the receiver's CLR type is known and method is resolvable, emit a direct callvirt.
-                // Otherwise fall back to the generic runtime dispatcher.
+                // Otherwise fall back to the generic runtime dispatcher via Object.CallMember.
                 var recv = Emit(mem.Object, new TypeCoercion());
                 // Avoid direct callvirt for JavaScriptRuntime.Array to ensure consistent params object[] dispatch
                 if (recv.ClrType != null && recv.ClrType != typeof(JavaScriptRuntime.Array))
@@ -566,7 +618,7 @@ namespace Js2IL.Services.ILGenerators
                     }
                 }
 
-                // Fallback: dynamic dispatcher
+                // Fallback: dynamic dispatcher using Object.CallMember
                 // Stack currently has [receiver]
                 _il.Ldstr(_metadataBuilder, methodName); // [receiver, name]
                 EmitBoxedArgsArray(callExpression.Arguments);
@@ -599,7 +651,11 @@ namespace Js2IL.Services.ILGenerators
             var _bclReferences = _owner.BclReferences;
             var _runtime = _owner.Runtime;
 
-            var type = JavaScriptRuntime.IntrinsicObjectRegistry.Get(objectName);
+            // Special-case: console is a global variable, not a constructible intrinsic, but we emit its calls
+            // as static method calls on JavaScriptRuntime.Console to preserve historical IL snapshots.
+            var type = string.Equals(objectName, "console", StringComparison.Ordinal)
+                ? typeof(JavaScriptRuntime.Console)
+                : JavaScriptRuntime.IntrinsicObjectRegistry.Get(objectName);
             if (type == null)
             {
                 return false;
@@ -891,8 +947,17 @@ namespace Js2IL.Services.ILGenerators
                 return false;
             }
 
-            // Load instance from the variable's scope field
-            EmitLoadVariableField(baseVar); // stack: instance (object)
+            // Load instance from the variable's scope field safely
+            var slot = _variables.GetScopeLocalSlot(baseVar.ScopeName);
+            if (slot.Address == -1)
+            {
+                // In contexts like arrow-function parameters, the variable may not be addressable as a local field.
+                // Signal to caller that intrinsic emission isn't possible so it can fallback to dynamic dispatch.
+                return false;
+            }
+            EmitLoadScopeObject(slot);
+            _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld);
+            _il.Token(baseVar.FieldHandle);
 
             // Reflect and select the target method, preferring params object[]
             var rt = runtimeType;
@@ -925,6 +990,45 @@ namespace Js2IL.Services.ILGenerators
             _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
             _il.Token(mrefHandle);
 
+            return true;
+        }
+
+        /// <summary>
+        /// Emits an intrinsic instance method call using the receiver already on the evaluation stack.
+        /// Returns true if a matching method was found and emitted; otherwise false.
+        /// </summary>
+        private bool TryEmitIntrinsicInstanceCallOnStack(Type runtimeType, string methodName, Acornima.Ast.CallExpression callExpression)
+        {
+            var _runtime = _owner.Runtime;
+
+            var rt = runtimeType;
+            var methods = rt
+                .GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                .Where(mi => string.Equals(mi.Name, methodName, StringComparison.Ordinal));
+
+            var chosen = methods.FirstOrDefault(mi =>
+            {
+                var ps = mi.GetParameters();
+                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+            }) ?? methods.FirstOrDefault(mi => mi.GetParameters().Length == callExpression.Arguments.Count);
+
+            if (chosen == null)
+            {
+                return false;
+            }
+
+            var psChosen = chosen.GetParameters();
+            var expectsParamsArray = psChosen.Length == 1 && psChosen[0].ParameterType == typeof(object[]);
+            var reflectedParamTypes = psChosen.Select(p => p.ParameterType).ToArray();
+            var reflectedReturnType = chosen.ReturnType;
+
+            var mrefHandle = _runtime.GetInstanceMethodRef(rt, chosen.Name, reflectedReturnType, reflectedParamTypes);
+
+            if (expectsParamsArray) EmitBoxedArgsArray(callExpression.Arguments);
+            else EmitBoxedArgsInline(callExpression.Arguments);
+
+            _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+            _il.Token(mrefHandle);
             return true;
         }
 
@@ -1434,8 +1538,8 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-        // Helper to emit a NewExpression and return its JavaScript type (moved from ILMethodGenerator)
-        private JavascriptType EmitNewExpression(NewExpression newExpression)
+    // Helper to emit a NewExpression and return both JavaScript and CLR types (moved from ILMethodGenerator)
+    private ExpressionResult EmitNewExpression(NewExpression newExpression)
         {
             var _classRegistry = _owner.ClassRegistry;
             var _metadataBuilder = _owner.MetadataBuilder;
@@ -1444,29 +1548,43 @@ namespace Js2IL.Services.ILGenerators
             // Support `new Identifier(...)` for classes emitted under Classes namespace
             if (newExpression.Callee is Identifier cid)
             {
-                // Special-case: new Date(...) => JavaScriptRuntime.Date intrinsic
-                if (string.Equals(cid.Name, "Date", StringComparison.Ordinal))
+                // General path: if Identifier maps to a JavaScriptRuntime intrinsic via IntrinsicObjectRegistry
+                // and it has a compatible constructor, emit that instead of hardcoding specific names.
+                var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(cid.Name);
+                if (intrinsicType != null)
                 {
-                    var argc = newExpression.Arguments.Count;
-                    if (argc > 1)
+                    // Ignore static classes or non-constructible types
+                    bool isStaticClass = intrinsicType.IsAbstract && intrinsicType.IsSealed;
+                    if (!isStaticClass)
                     {
-                        throw new NotSupportedException($"Only up to 1 constructor argument supported for Date (got {argc})");
+                        var argc = newExpression.Arguments.Count;
+                        // Support common ctor shapes: .ctor() and .ctor(object)
+                        if (argc == 0)
+                        {
+                            var hasDefault = intrinsicType.GetConstructor(Type.EmptyTypes) != null;
+                            if (hasDefault)
+                            {
+                                var ctorRef = _owner.Runtime.GetInstanceMethodRef(intrinsicType, ".ctor", typeof(void), System.Array.Empty<Type>());
+                                _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
+                                _il.Token(ctorRef);
+                                return new ExpressionResult { JsType = JavascriptType.Object, ClrType = intrinsicType };
+                            }
+                        }
+                        else if (argc == 1)
+                        {
+                            var hasObjectCtor = intrinsicType.GetConstructor(new[] { typeof(object) }) != null;
+                            if (hasObjectCtor)
+                            {
+                                // Push the single argument boxed
+                                Emit(newExpression.Arguments[0], new TypeCoercion() { boxResult = true });
+                                var ctorRef = _owner.Runtime.GetInstanceMethodRef(intrinsicType, ".ctor", typeof(void), typeof(object));
+                                _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
+                                _il.Token(ctorRef);
+                                return new ExpressionResult { JsType = JavascriptType.Object, ClrType = intrinsicType };
+                            }
+                        }
+                        // If no compatible ctor found, fall through to class registry / Error handling
                     }
-
-                    // Resolve ctor: Date() or Date(object)
-                    var dateType = typeof(JavaScriptRuntime.Date);
-                    var paramTypes = argc == 0 ? System.Array.Empty<Type>() : new[] { typeof(object) };
-                    // Build a member ref for .ctor with selected params
-                    var ctorRef = _owner.Runtime.GetInstanceMethodRef(dateType, ".ctor", typeof(void), paramTypes);
-
-                    // Push args boxed
-                    for (int i = 0; i < argc; i++)
-                    {
-                        Emit(newExpression.Arguments[i], new TypeCoercion() { boxResult = true });
-                    }
-                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
-                    _il.Token(ctorRef);
-                    return JavascriptType.Object;
                 }
 
                 // Try Classes registry first
@@ -1494,7 +1612,7 @@ namespace Js2IL.Services.ILGenerators
                     {
                         _owner.RecordVariableToClass(_owner.CurrentAssignmentTarget!, cid.Name);
                     }
-                    return JavascriptType.Object;
+                    return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
                 }
 
                 // Built-in Error types from JavaScriptRuntime (Error, TypeError, etc.)
@@ -1513,7 +1631,9 @@ namespace Js2IL.Services.ILGenerators
                 }
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
                 _il.Token(ctorRef2);
-                return JavascriptType.Object;
+                // Best-effort map CLR type for known JavaScript error classes
+                Type? errorClrType = typeof(JavaScriptRuntime.Object).Assembly.GetType($"JavaScriptRuntime.{cid.Name}");
+                return new ExpressionResult { JsType = JavascriptType.Object, ClrType = errorClrType };
             }
 
             throw new NotSupportedException($"Unsupported new-expression callee: {newExpression.Callee.Type}");
@@ -1696,8 +1816,9 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-        // Handle postfix increment (x++) and decrement (x--) on numeric variables
-        private void GenerateUpdateExpression(UpdateExpression updateExpression)
+    // Handle postfix increment (x++) and decrement (x--) on numeric variables.
+    // Leaves the ORIGINAL value on the evaluation stack (per JS semantics) and updates the variable.
+    private JavascriptType GenerateUpdateExpression(UpdateExpression updateExpression, CallSiteContext context = CallSiteContext.Expression)
         {
             var _bclReferences = _owner.BclReferences;
 
@@ -1715,7 +1836,8 @@ namespace Js2IL.Services.ILGenerators
             {
                 var ctor = _owner.Runtime.GetErrorCtorRef("TypeError", 1);
                 _il.EmitThrowError(_owner.MetadataBuilder, ctor, "Assignment to constant variable.");
-                return;
+                // Throws; unreachable, but return a value to satisfy signature
+                return JavascriptType.Number;
             }
 
             if (variable == null)
@@ -1728,34 +1850,88 @@ namespace Js2IL.Services.ILGenerators
                 throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
             }
 
-            // Load scope instance for the store operation later
-            EmitLoadScopeObject(scopeLocalIndex);
+            // Algorithm:
+            //   1) Load scope and current value
+            //   2) Compute UPDATED = value (+/-) 1 and store back (stfld)
+            //   3) Reload UPDATED and reverse (+/-) 1 to produce ORIGINAL on the stack
 
-            // Load the current value from scope field
-            EmitLoadVariableField(variable);
-
-            // unbox the variable
-            _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
-            _il.Token(_bclReferences.DoubleType);
-
-            // increment or decrement by 1
-            _il.LoadConstantR8(1.0);
-            if (updateExpression.Operator == Acornima.Operator.Increment)
+            if (context == CallSiteContext.Statement)
             {
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Add);
+                // Statement-context form to match snapshots (no Dup; load scope twice)
+                // Stack flow: [A] [A,B] -> [A,value] -> [A,updatedObj] -> []
+                EmitLoadScopeObject(scopeLocalIndex);                 // [A]
+                EmitLoadScopeObject(scopeLocalIndex);                 // [A, B]
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld); // [A, valueObj]
+                _il.Token(variable.FieldHandle);
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
+                _il.Token(_bclReferences.DoubleType);                  // [A, value]
+                _il.LoadConstantR8(1.0);
+                if (updateExpression.Operator == Acornima.Operator.Increment)
+                {
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Add);
+                }
+                else // Decrement
+                {
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Sub);
+                }
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
+                _il.Token(_bclReferences.DoubleType);                  // [A, boxedUpdated]
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld);
+                _il.Token(variable.FieldHandle);                        // []
             }
-            else // Decrement
+            else
             {
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Sub);
+                // Expression-context: use Dup pattern and compute original value after store
+                // 1) Load scope and current value
+                EmitLoadScopeObject(scopeLocalIndex);                 // [scope]
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup);   // [scope, scope]
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld); // [scope, valueObj]
+                _il.Token(variable.FieldHandle);
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
+                _il.Token(_bclReferences.DoubleType);                  // [scope, value]
+
+                // 2) Compute updated value and store back
+                _il.LoadConstantR8(1.0);
+                if (updateExpression.Operator == Acornima.Operator.Increment)
+                {
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Add);
+                }
+                else // Decrement
+                {
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Sub);
+                }
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
+                _il.Token(_bclReferences.DoubleType);                  // [scope, boxedUpdated]
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld);
+                _il.Token(variable.FieldHandle);                        // []
             }
 
-            // box the result back to an object
-            _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
-            _il.Token(_bclReferences.DoubleType);
-
-            // Now stack is: [scope_instance] [boxed_result] - perfect for stfld
-            _il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld);
-            _il.Token(variable.FieldHandle);
+            // 3) Reload UPDATED and reverse +/- 1 to get ORIGINAL (expression result) unless in statement context
+            if (context == CallSiteContext.Expression)
+            {
+                EmitLoadScopeObject(scopeLocalIndex);                   // [scope]
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld);  // [valueObj]
+                _il.Token(variable.FieldHandle);
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
+                _il.Token(_bclReferences.DoubleType);                   // [updated]
+                _il.LoadConstantR8(1.0);
+                if (updateExpression.Operator == Acornima.Operator.Increment)
+                {
+                    // original = updated - 1
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Sub);
+                }
+                else // Decrement
+                {
+                    // original = updated + 1
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Add);
+                }
+                return JavascriptType.Number;
+            }
+            else
+            {
+                // Statement context: no value expected on stack
+                return JavascriptType.Unknown;
+            }
         }
 
         // Consult the registry to see if the current scope has a const binding for this name

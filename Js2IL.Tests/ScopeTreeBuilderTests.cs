@@ -230,7 +230,9 @@ namespace Js2IL.Tests
             var blockScope = outerFuncScope.Children[0];
             Assert.Equal(ScopeKind.Block, blockScope.Kind);
             Assert.True(blockScope.Bindings.ContainsKey("blockConst"));
-            Assert.True(blockScope.Bindings.ContainsKey("innerFunc"));
+            // var-declared identifiers inside a block hoist to the nearest function scope
+            Assert.True(outerFuncScope.Bindings.ContainsKey("innerFunc"));
+            Assert.DoesNotContain("innerFunc", blockScope.Bindings.Keys);
 
             var arrowScope = blockScope.Children[0];
             Assert.StartsWith("ArrowFunction", arrowScope.Name);

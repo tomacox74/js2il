@@ -7,11 +7,11 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit Block_L3C3
+	.class nested public auto ansi beforefieldinit Block_L2C13
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit Block_L4C14
+		.class nested public auto ansi beforefieldinit Block_L4C15
 			extends [System.Runtime]System.Object
 		{
 			// Methods
@@ -27,9 +27,9 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method Block_L4C14::.ctor
+			} // end of method Block_L4C15::.ctor
 
-		} // end of class Block_L4C14
+		} // end of class Block_L4C15
 
 
 		// Methods
@@ -45,9 +45,9 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method Block_L3C3::.ctor
+		} // end of method Block_L2C13::.ctor
 
-	} // end of class Block_L3C3
+	} // end of class Block_L2C13
 
 
 	// Fields
@@ -79,7 +79,7 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 163 (0xa3)
+		// Code size: 141 (0x8d)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -89,53 +89,49 @@
 		IL_0000: newobj instance void Scopes.ControlFlow_DoWhile_Break_AtThree::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldc.r8 1
+		IL_0007: ldc.r8 0.0
 		IL_0010: box [System.Runtime]System.Double
 		IL_0015: stfld object Scopes.ControlFlow_DoWhile_Break_AtThree::i
 		// loop start (head: IL_001a)
-			IL_001a: ldloc.0
-			IL_001b: ldfld object Scopes.ControlFlow_DoWhile_Break_AtThree::i
-			IL_0020: unbox.any [System.Runtime]System.Double
-			IL_0025: unbox.any [System.Runtime]System.Double
-			IL_002a: ldc.r8 3
-			IL_0033: beq IL_003d
+			IL_001a: ldc.i4.1
+			IL_001b: brtrue IL_0025
 
-			IL_0038: br IL_0047
+			IL_0020: br IL_008c
 
-			IL_003d: br IL_00a2
+			IL_0025: ldc.i4.1
+			IL_0026: newarr [System.Runtime]System.Object
+			IL_002b: dup
+			IL_002c: ldc.i4.0
+			IL_002d: ldloc.0
+			IL_002e: ldfld object Scopes.ControlFlow_DoWhile_Break_AtThree::i
+			IL_0033: stelem.ref
+			IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_0039: pop
+			IL_003a: ldloc.0
+			IL_003b: ldfld object Scopes.ControlFlow_DoWhile_Break_AtThree::i
+			IL_0040: unbox.any [System.Runtime]System.Double
+			IL_0045: unbox.any [System.Runtime]System.Double
+			IL_004a: ldc.r8 3
+			IL_0053: beq IL_005d
 
-			IL_0042: br IL_0047
+			IL_0058: br IL_0067
 
-			IL_0047: ldc.i4.2
-			IL_0048: newarr [System.Runtime]System.Object
-			IL_004d: dup
-			IL_004e: ldc.i4.0
-			IL_004f: ldstr "index is"
-			IL_0054: stelem.ref
-			IL_0055: dup
-			IL_0056: ldc.i4.1
-			IL_0057: ldloc.0
-			IL_0058: ldfld object Scopes.ControlFlow_DoWhile_Break_AtThree::i
-			IL_005d: stelem.ref
-			IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_0063: pop
-			IL_0064: ldloc.0
-			IL_0065: ldloc.0
-			IL_0066: ldfld object Scopes.ControlFlow_DoWhile_Break_AtThree::i
-			IL_006b: unbox.any [System.Runtime]System.Double
-			IL_0070: ldc.r8 1
-			IL_0079: add
-			IL_007a: box [System.Runtime]System.Double
-			IL_007f: stfld object Scopes.ControlFlow_DoWhile_Break_AtThree::i
-			IL_0084: ldloc.0
-			IL_0085: ldfld object Scopes.ControlFlow_DoWhile_Break_AtThree::i
-			IL_008a: unbox.any [System.Runtime]System.Double
-			IL_008f: ldc.r8 5
-			IL_0098: ble IL_001a
+			IL_005d: br IL_008c
+
+			IL_0062: br IL_0067
+
+			IL_0067: ldloc.0
+			IL_0068: ldloc.0
+			IL_0069: ldfld object Scopes.ControlFlow_DoWhile_Break_AtThree::i
+			IL_006e: unbox.any [System.Runtime]System.Double
+			IL_0073: ldc.r8 1
+			IL_007c: add
+			IL_007d: box [System.Runtime]System.Double
+			IL_0082: stfld object Scopes.ControlFlow_DoWhile_Break_AtThree::i
+			IL_0087: br IL_001a
 		// end loop
-		IL_009d: br IL_00a2
 
-		IL_00a2: ret
+		IL_008c: ret
 	} // end of method Program::Main
 
 } // end of class Program

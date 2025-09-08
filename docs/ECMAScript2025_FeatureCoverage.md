@@ -67,6 +67,13 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | var | Supported | `Js2IL.Tests/JavaScript/Function_GlobalFunctionChangesGlobalVariableValue.js`<br>`Js2IL.Tests/JavaScript/Function_GlobalFunctionDeclaresAndCallsNestedFunction.js`<br>`Js2IL.Tests/JavaScript/Function_GlobalFunctionLogsGlobalVariable.js` |  | 13.2.1 |
 
 
+#### [Binding patterns (destructuring)](https://tc39.es/ecma262/#sec-destructuring-binding-patterns)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Object destructuring in variable declarations (const/let) — basic | Partially Supported | `Js2IL.Tests/Node/JavaScript/PerfHooks_PerformanceNow_Basic.js` | Supports simple object patterns in variable declarations, e.g., const { performance } = require('perf_hooks'); The initializer is evaluated once and properties are bound via direct typed getters when available (for known intrinsics) or via JavaScriptRuntime.Object.GetProperty. Not yet supported: nested patterns, default values, renaming (alias), rest properties, array destructuring, and parameter/assignment destructuring. | 13.2.2 |
+
+
 #### [Function declarations](https://tc39.es/ecma262/#sec-function-definitions)
 
 | Feature | Status | Test Scripts | Notes | Section |

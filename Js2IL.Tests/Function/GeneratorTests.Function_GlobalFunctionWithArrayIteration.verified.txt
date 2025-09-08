@@ -7,11 +7,11 @@
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi beforefieldinit printArray
+	.class nested public auto ansi beforefieldinit processArray
 		extends [System.Runtime]System.Object
 	{
 		// Nested Types
-		.class nested public auto ansi beforefieldinit Block_L3C47
+		.class nested public auto ansi beforefieldinit Block_L3C41
 			extends [System.Runtime]System.Object
 		{
 			// Methods
@@ -27,14 +27,15 @@
 				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 				IL_0006: nop
 				IL_0007: ret
-			} // end of method Block_L3C47::.ctor
+			} // end of method Block_L3C41::.ctor
 
-		} // end of class Block_L3C47
+		} // end of class Block_L3C41
 
 
 		// Fields
-		.field public object arr
+		.field public object result
 		.field public object i
+		.field public object item
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
@@ -49,13 +50,15 @@
 			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 			IL_0006: nop
 			IL_0007: ret
-		} // end of method printArray::.ctor
+		} // end of method processArray::.ctor
 
-	} // end of class printArray
+	} // end of class processArray
 
 
 	// Fields
-	.field public object printArray
+	.field public object processArray
+	.field public object input
+	.field public object output
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -78,93 +81,87 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> printArray
+	.field public static class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> processArray
 
 } // end of class DispatchTable
 
-.class public auto ansi abstract sealed beforefieldinit Functions.printArray
+.class public auto ansi abstract sealed beforefieldinit Functions.processArray
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public static 
-		object printArray (
-			object[] scopes
+		object processArray (
+			object[] scopes,
+			object arr
 		) cil managed 
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 214 (0xd6)
+		// Code size: 179 (0xb3)
 		.maxstack 32
 		.locals init (
 			[0] object
 		)
 
-		IL_0000: newobj instance void Scopes.Function_GlobalFunctionWithArrayIteration/printArray::.ctor()
+		IL_0000: newobj instance void Scopes.Function_GlobalFunctionWithArrayIteration/processArray::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldc.i4.3
+		IL_0007: ldc.i4.0
 		IL_0008: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_000d: dup
-		IL_000e: ldc.r8 1
-		IL_0017: box [System.Runtime]System.Double
-		IL_001c: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0021: dup
-		IL_0022: ldc.r8 2
-		IL_002b: box [System.Runtime]System.Double
-		IL_0030: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0035: dup
-		IL_0036: ldc.r8 3
-		IL_003f: box [System.Runtime]System.Double
-		IL_0044: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0049: stfld object Scopes.Function_GlobalFunctionWithArrayIteration/printArray::arr
-		IL_004e: ldloc.0
-		IL_004f: ldc.r8 0.0
-		IL_0058: box [System.Runtime]System.Double
-		IL_005d: stfld object Scopes.Function_GlobalFunctionWithArrayIteration/printArray::i
-		// loop start (head: IL_0062)
-			IL_0062: ldloc.0
-			IL_0063: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration/printArray::i
-			IL_0068: unbox.any [System.Runtime]System.Double
-			IL_006d: ldloc.0
-			IL_006e: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration/printArray::arr
-			IL_0073: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_0078: blt IL_0082
+		IL_000d: stfld object Scopes.Function_GlobalFunctionWithArrayIteration/processArray::result
+		IL_0012: ldloc.0
+		IL_0013: ldc.r8 0.0
+		IL_001c: box [System.Runtime]System.Double
+		IL_0021: stfld object Scopes.Function_GlobalFunctionWithArrayIteration/processArray::i
+		// loop start (head: IL_0026)
+			IL_0026: ldloc.0
+			IL_0027: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration/processArray::i
+			IL_002c: unbox.any [System.Runtime]System.Double
+			IL_0031: ldarg.1
+			IL_0032: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_0037: blt IL_0041
 
-			IL_007d: br IL_00d4
+			IL_003c: br IL_00ac
 
-			IL_0082: ldc.i4.2
-			IL_0083: newarr [System.Runtime]System.Object
-			IL_0088: dup
-			IL_0089: ldc.i4.0
-			IL_008a: ldstr ""
-			IL_008f: stelem.ref
-			IL_0090: dup
-			IL_0091: ldc.i4.1
-			IL_0092: ldloc.0
-			IL_0093: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration/printArray::arr
-			IL_0098: ldloc.0
-			IL_0099: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration/printArray::i
-			IL_009e: unbox.any [System.Runtime]System.Double
-			IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-			IL_00a8: stelem.ref
-			IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_00ae: pop
-			IL_00af: ldloc.0
-			IL_00b0: ldloc.0
-			IL_00b1: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration/printArray::i
-			IL_00b6: unbox.any [System.Runtime]System.Double
-			IL_00bb: ldc.r8 1
-			IL_00c4: add
-			IL_00c5: box [System.Runtime]System.Double
-			IL_00ca: stfld object Scopes.Function_GlobalFunctionWithArrayIteration/printArray::i
-			IL_00cf: br IL_0062
+			IL_0041: ldloc.0
+			IL_0042: ldarg.1
+			IL_0043: ldloc.0
+			IL_0044: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration/processArray::i
+			IL_0049: unbox.any [System.Runtime]System.Double
+			IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_0053: unbox.any [System.Runtime]System.Double
+			IL_0058: ldc.r8 2
+			IL_0061: mul
+			IL_0062: box [System.Runtime]System.Double
+			IL_0067: stfld object Scopes.Function_GlobalFunctionWithArrayIteration/processArray::item
+			IL_006c: ldloc.0
+			IL_006d: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration/processArray::result
+			IL_0072: ldc.i4.1
+			IL_0073: newarr [System.Runtime]System.Object
+			IL_0078: dup
+			IL_0079: ldc.i4.0
+			IL_007a: ldloc.0
+			IL_007b: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration/processArray::item
+			IL_0080: stelem.ref
+			IL_0081: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_0086: pop
+			IL_0087: ldloc.0
+			IL_0088: ldloc.0
+			IL_0089: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration/processArray::i
+			IL_008e: unbox.any [System.Runtime]System.Double
+			IL_0093: ldc.r8 1
+			IL_009c: add
+			IL_009d: box [System.Runtime]System.Double
+			IL_00a2: stfld object Scopes.Function_GlobalFunctionWithArrayIteration/processArray::i
+			IL_00a7: br IL_0026
 		// end loop
 
-		IL_00d4: ldnull
-		IL_00d5: ret
-	} // end of method printArray::printArray
+		IL_00ac: ldloc.0
+		IL_00ad: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration/processArray::result
+		IL_00b2: ret
+	} // end of method processArray::processArray
 
-} // end of class Functions.printArray
+} // end of class Functions.processArray
 
 .class public auto ansi abstract sealed beforefieldinit Functions._Loader
 	extends [System.Runtime]System.Object
@@ -173,15 +170,15 @@
 	.method public static 
 		void _LoadDispatchTable () cil managed 
 	{
-		// Method begins at RVA 0x214e
+		// Method begins at RVA 0x212b
 		// Header size: 1
 		// Code size: 18 (0x12)
 		.maxstack 8
 
 		IL_0000: ldnull
-		IL_0001: ldftn object Functions.printArray::printArray(object[])
-		IL_0007: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_000c: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::printArray
+		IL_0001: ldftn object Functions.processArray::processArray(object[], object)
+		IL_0007: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_000c: stsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::processArray
 		IL_0011: ret
 	} // end of method _Loader::_LoadDispatchTable
 
@@ -194,9 +191,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2164
+		// Method begins at RVA 0x2140
 		// Header size: 12
-		// Code size: 45 (0x2d)
+		// Code size: 193 (0xc1)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -207,19 +204,59 @@
 		IL_0005: stloc.0
 		IL_0006: call void Functions._Loader::_LoadDispatchTable()
 		IL_000b: ldloc.0
-		IL_000c: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::printArray
-		IL_0011: stfld object Scopes.Function_GlobalFunctionWithArrayIteration::printArray
+		IL_000c: ldsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::processArray
+		IL_0011: stfld object Scopes.Function_GlobalFunctionWithArrayIteration::processArray
 		IL_0016: ldloc.0
-		IL_0017: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration::printArray
-		IL_001c: ldc.i4.1
-		IL_001d: newarr [System.Runtime]System.Object
-		IL_0022: dup
-		IL_0023: ldc.i4.0
-		IL_0024: ldloc.0
-		IL_0025: stelem.ref
-		IL_0026: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_002b: pop
-		IL_002c: ret
+		IL_0017: ldc.i4.4
+		IL_0018: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_001d: dup
+		IL_001e: ldc.r8 1
+		IL_0027: box [System.Runtime]System.Double
+		IL_002c: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0031: dup
+		IL_0032: ldc.r8 2
+		IL_003b: box [System.Runtime]System.Double
+		IL_0040: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0045: dup
+		IL_0046: ldc.r8 3
+		IL_004f: box [System.Runtime]System.Double
+		IL_0054: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0059: dup
+		IL_005a: ldc.r8 4
+		IL_0063: box [System.Runtime]System.Double
+		IL_0068: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_006d: stfld object Scopes.Function_GlobalFunctionWithArrayIteration::input
+		IL_0072: ldloc.0
+		IL_0073: ldloc.0
+		IL_0074: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration::processArray
+		IL_0079: ldc.i4.1
+		IL_007a: newarr [System.Runtime]System.Object
+		IL_007f: dup
+		IL_0080: ldc.i4.0
+		IL_0081: ldloc.0
+		IL_0082: stelem.ref
+		IL_0083: ldloc.0
+		IL_0084: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration::input
+		IL_0089: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_008e: stfld object Scopes.Function_GlobalFunctionWithArrayIteration::output
+		IL_0093: ldc.i4.1
+		IL_0094: newarr [System.Runtime]System.Object
+		IL_0099: dup
+		IL_009a: ldc.i4.0
+		IL_009b: ldloc.0
+		IL_009c: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration::output
+		IL_00a1: ldstr "join"
+		IL_00a6: ldc.i4.1
+		IL_00a7: newarr [System.Runtime]System.Object
+		IL_00ac: dup
+		IL_00ad: ldc.i4.0
+		IL_00ae: ldstr ","
+		IL_00b3: stelem.ref
+		IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_00b9: stelem.ref
+		IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00bf: pop
+		IL_00c0: ret
 	} // end of method Program::Main
 
 } // end of class Program
