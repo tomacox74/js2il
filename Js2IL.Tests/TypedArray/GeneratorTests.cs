@@ -8,5 +8,8 @@ namespace Js2IL.Tests.TypedArray
 
         [Fact]
         public Task BeanCounter_Class_Index_Assign() { var testName = nameof(BeanCounter_Class_Index_Assign); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Int32Array_Index_Assign() { var testName = nameof(Int32Array_Index_Assign); return GenerateTest(testName); }
     }
 }
