@@ -1,4 +1,4 @@
-﻿# ECMAScript 2025 Feature Coverage
+# ECMAScript 2025 Feature Coverage
 
 [ECMAScript® 2025 Language Specification](https://tc39.es/ecma262/)
 
@@ -332,6 +332,26 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Constructor with parameter and this.field assignment; method reads field | Supported | `Js2IL.Tests/JavaScript/Classes_ClassConstructor_Param_Field_Log.js` |  | 15.1.1 |
 | Constructor with multiple parameters; method uses fields | Supported | `Js2IL.Tests/JavaScript/Classes_ClassConstructor_WithMultipleParameters.js`<br>`Js2IL.Tests/JavaScript/Classes_ClassConstructor_TwoParams_AddMethod.js`<br>`Js2IL.Tests/JavaScript/Classes_ClassConstructor_TwoParams_SubtractMethod.js` | Covers multi-parameter constructors and arithmetic in instance methods. | 15.1.1 |
 | Private instance field (#) with helper method access | Supported | `Js2IL.Tests/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js` | Generated as a private .NET field with a mangled name; accessible only within the class. | 15.1.1 |
+
+
+## [The Math Object](https://tc39.es/ecma262/#sec-math-object)
+
+### [Value Properties of the Math Object](https://tc39.es/ecma262/#sec-value-properties-of-the-math-object)
+
+### [Function Properties of the Math Object](https://tc39.es/ecma262/#sec-function-properties-of-the-math-object)
+
+#### [Math.ceil](https://tc39.es/ecma262/#sec-math.ceil)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.ceil(x) | Supported | `Js2IL.Tests/Math/JavaScript/Math_Ceil_Sqrt_Basic.js` | Implements ceiling for numbers represented as double; arguments coerced via minimal ToNumber semantics. Returns NaN for NaN/undefined or negative zero preserved via .NET semantics. | 20.2.2.9 |
+
+
+#### [Math.sqrt](https://tc39.es/ecma262/#sec-math.sqrt)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.sqrt(x) | Supported | `Js2IL.Tests/Math/JavaScript/Math_Ceil_Sqrt_Basic.js` | Returns the square root for non-negative inputs; negative or NaN yields NaN; Infinity maps to Infinity. | 20.2.2.24 |
 
 
 ## [Date Objects](https://tc39.es/ecma262/#sec-date-objects)

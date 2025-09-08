@@ -482,7 +482,7 @@ namespace JavaScriptRuntime
             }
 
             // Insert any additional items starting at index 2
-            int insertCount = Math.Max(args.Length - 2, 0);
+            int insertCount = global::System.Math.Max(args.Length - 2, 0);
             if (insertCount > 0)
             {
                 var toInsert = new System.Collections.Generic.List<object>(insertCount);
