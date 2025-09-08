@@ -311,6 +311,8 @@ namespace Js2IL.Services.ILGenerators
             // Emit constructor body statements (no default return value emission)
             if (ctorFunc.Body is BlockStatement bstmt)
             {
+                // For now, emit constructor body without allocating a separate scope object; parameters/locals
+                // are not captured by nested functions inside constructors yet.
                 ilGen.GenerateStatementsForBody(methodVariables.GetLeafScopeName(), false, bstmt.Body);
             }
 
@@ -363,7 +365,8 @@ namespace Js2IL.Services.ILGenerators
             if (element.Value is FunctionExpression fexpr && fexpr.Body is BlockStatement bstmt)
             {
                 hasExplicitReturn = bstmt.Body.Any(s => s is ReturnStatement);
-                ilGen.GenerateStatementsForBody(methodVariables.GetLeafScopeName(), false, bstmt.Body);
+                bool needScopeInstance = ShouldCreateMethodScopeInstance(fexpr);
+                ilGen.GenerateStatementsForBody(methodVariables.GetLeafScopeName(), needScopeInstance, bstmt.Body);
             }
             else
             {
@@ -403,6 +406,59 @@ namespace Js2IL.Services.ILGenerators
             // Note: Static methods will be invoked via MemberReference built at call site. Registration not required here.
 
             return methodDef;
+        }
+
+        private static bool ShouldCreateMethodScopeInstance(FunctionExpression fexpr)
+        {
+            if (fexpr.Body is not BlockStatement body) return false;
+            bool found = false;
+            void Walk(Acornima.Ast.Node? n)
+            {
+                if (n == null || found) return;
+                switch (n)
+                {
+                    case BlockStatement b:
+                        foreach (var s in b.Body) Walk(s);
+                        break;
+                    case VariableDeclaration vd:
+                        // Any let/const (not var) triggers lexical scope needs
+                        if (vd.Kind != VariableDeclarationKind.Var) { found = true; return; }
+                        break;
+                    case ForStatement fs:
+                        if (fs.Init is VariableDeclaration fsv && fsv.Kind != VariableDeclarationKind.Var) { found = true; return; }
+                        Walk(fs.Init as Acornima.Ast.Node);
+                        Walk(fs.Test as Acornima.Ast.Node);
+                        Walk(fs.Update as Acornima.Ast.Node);
+                        Walk(fs.Body);
+                        break;
+                    case ForOfStatement fof:
+                        if (fof.Left is VariableDeclaration leftDecl && leftDecl.Kind != VariableDeclarationKind.Var) { found = true; return; }
+                        Walk(fof.Left as Acornima.Ast.Node);
+                        Walk(fof.Right as Acornima.Ast.Node);
+                        Walk(fof.Body);
+                        break;
+                    case WhileStatement ws:
+                        Walk(ws.Test); Walk(ws.Body); break;
+                    case DoWhileStatement dws:
+                        Walk(dws.Body); Walk(dws.Test); break;
+                    case IfStatement ifs:
+                        Walk(ifs.Test); Walk(ifs.Consequent); Walk(ifs.Alternate); break;
+                    case ReturnStatement:
+                        break; // ignore
+                    case FunctionDeclaration:
+                    case FunctionExpression:
+                        // Nested functions require capturing outer scope variables
+                        found = true; return;
+                    default:
+                        // Recurse into common expression containers
+                        if (n is ExpressionStatement es) Walk(es.Expression);
+                        else if (n is AssignmentExpression ae) { Walk(ae.Left); Walk(ae.Right); }
+                        else if (n is CallExpression ce) { Walk(ce.Callee); foreach (var a in ce.Arguments) Walk(a as Acornima.Ast.Node); }
+                        break;
+                }
+            }
+            Walk(body);
+            return found;
         }
 
         private BlobHandle BuildMethodSignature(FunctionExpression? f, bool isStatic)

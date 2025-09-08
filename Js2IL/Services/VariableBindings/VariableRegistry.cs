@@ -25,6 +25,8 @@ namespace Js2IL.Services.VariableBindings
         private readonly Dictionary<string, List<VariableInfo>> _scopeVariables = new();
         private readonly Dictionary<string, TypeDefinitionHandle> _scopeTypes = new();
         private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _scopeFields = new();
+    // Track scope type handles even when no variables (so empty method scopes can still be instantiated)
+    private readonly Dictionary<string, TypeDefinitionHandle> _allScopeTypes = new();
 
         /// <summary>
         /// Adds a variable to the registry with its scope and field information (legacy overload; assumes Var binding).
@@ -83,7 +85,21 @@ namespace Js2IL.Services.VariableBindings
         /// </summary>
         public TypeDefinitionHandle GetScopeTypeHandle(string scopeName)
         {
-            return _scopeTypes[scopeName];
+            if (_scopeTypes.TryGetValue(scopeName, out var h)) return h;
+            if (_allScopeTypes.TryGetValue(scopeName, out var any)) return any;
+            throw new KeyNotFoundException($"Scope type handle not found for scope '{scopeName}'");
+        }
+
+        /// <summary>
+        /// Ensures a scope type handle is registered even if there are no variables/fields.
+        /// (Used for empty class methods so a scope instance can still be created when needed.)
+        /// </summary>
+        public void EnsureScopeType(string scopeName, TypeDefinitionHandle typeHandle)
+        {
+            if (scopeName == null) return;
+            if (typeHandle.IsNil) return;
+            if (!_allScopeTypes.ContainsKey(scopeName))
+                _allScopeTypes[scopeName] = typeHandle;
         }
 
         /// <summary>

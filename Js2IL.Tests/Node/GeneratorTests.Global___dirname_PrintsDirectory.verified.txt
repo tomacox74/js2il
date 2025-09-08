@@ -32,22 +32,24 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 21 (0x15)
+		// Code size: 27 (0x1b)
 		.maxstack 32
 		.entrypoint
 		.locals init (
 			[0] object
 		)
 
-		IL_0000: ldc.i4.1
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: call string [JavaScriptRuntime]JavaScriptRuntime.GlobalVariables::get___dirname()
-		IL_000d: stelem.ref
-		IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0013: pop
-		IL_0014: ret
+		IL_0000: newobj instance void Scopes.Global___dirname_PrintsDirectory::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: call string [JavaScriptRuntime]JavaScriptRuntime.GlobalVariables::get___dirname()
+		IL_0013: stelem.ref
+		IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0019: pop
+		IL_001a: ret
 	} // end of method Program::Main
 
 } // end of class Program

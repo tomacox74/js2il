@@ -251,11 +251,15 @@ namespace Js2IL.Services.ILGenerators
                             _metadataBuilder.GetOrAddString(".ctor"),
                             _metadataBuilder.GetOrAddBlob(ctorSigBuilder));
 
-                        // Allocate a local slot to hold the new scope instance and construct it
-                        createdLocalIndex = _variables.AllocateBlockScopeLocal(scopeName);
-                        _il.OpCode(ILOpCode.Newobj);
-                        _il.Token(ctorRef);
-                        _il.StoreLocal(createdLocalIndex.Value);
+                        // For the function's own scope, use CreateScopeInstance so it maps to local 0
+                        var scopeRef = _variables.CreateScopeInstance(scopeName);
+                        createdLocalIndex = scopeRef.Address >= 0 ? scopeRef.Address : (int?)null;
+                        if (createdLocalIndex.HasValue)
+                        {
+                            _il.OpCode(ILOpCode.Newobj);
+                            _il.Token(ctorRef);
+                            _il.StoreLocal(createdLocalIndex.Value);
+                        }
 
                         // Track lexical scope so variable resolution prefers it
                         _variables.PushLexicalScope(scopeName);

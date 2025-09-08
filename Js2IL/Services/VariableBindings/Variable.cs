@@ -285,7 +285,16 @@ namespace Js2IL.Services
                 // snapshot diffs (.locals init ([0] object, [1] object) instead of a single local).
                 return new ScopeObjectReference { Location = ObjectReferenceLocation.Local, Address = 0 };
             }
-            // Non-current scopes are not created as locals in the new model; indicate not available
+            // Support block lexical scopes: allocate a new local slot on demand.
+            if (scopeName.StartsWith("Block_L", StringComparison.Ordinal))
+            {
+                // Avoid double allocation if already present
+                var existing = GetScopeLocalSlot(scopeName);
+                if (existing.Address >= 0) return existing;
+                int newIndex = AllocateBlockScopeLocal(scopeName);
+                return new ScopeObjectReference { Location = ObjectReferenceLocation.Local, Address = newIndex };
+            }
+            // Other non-current scopes (e.g., parent function scopes) are accessed via scope array, not locals.
             return new ScopeObjectReference { Location = ObjectReferenceLocation.Local, Address = -1 };
         }
 
