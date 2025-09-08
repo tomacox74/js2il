@@ -4,7 +4,26 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-—
+Added
+- Runtime: Int32Array intrinsic (minimal typed array) with constructor from number or array-like, numeric length, index get/set, and set(source[, offset]) coercing values via ToInt32-style truncation (NaN/±∞/±0 → 0). Registered as [IntrinsicObject("Int32Array")].
+- Runtime Object: integrated Int32Array support in JavaScriptRuntime.Object helpers:
+	- GetItem(object, double index): indexer for Int32Array
+	- GetLength(object): length for Int32Array
+
+Tests
+- New TypedArray execution tests validating Int32Array basics and semantics:
+	- TypedArray: Int32Array_Construct_Length
+	- TypedArray: Int32Array_FromArray_CopyAndCoerce
+	- TypedArray: Int32Array_Set_FromArray_WithOffset
+
+Docs
+- ECMAScript 2025 Feature Coverage: added a new "TypedArray Objects" section and documented Int32Array (constructor/length/indexing/set). Regenerated docs/ECMAScript2025_FeatureCoverage.md from JSON.
+
+Changed
+- Tooling/docs: compiled scripts/generateFeatureCoverage.js with js2il and used the generated DLL to update docs.
+
+Reverted
+- Removed experimental BitArray intrinsic and its smoke test pending a fix for intrinsic instance-call IL emission.
 
 ## v0.1.5 - 2025-09-08
 
