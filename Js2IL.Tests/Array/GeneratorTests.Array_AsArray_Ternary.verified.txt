@@ -1,0 +1,220 @@
+﻿// IL code: Array_AsArray_Ternary
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Array_AsArray_Ternary
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit asArray
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method asArray::.ctor
+
+	} // end of class asArray
+
+
+	// Fields
+	.field public object asArray
+	.field public initonly object a
+	.field public initonly object b
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Array_AsArray_Ternary::.ctor
+
+} // end of class Scopes.Array_AsArray_Ternary
+
+.class public auto ansi abstract sealed beforefieldinit DispatchTable
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field public static class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> asArray
+
+} // end of class DispatchTable
+
+.class public auto ansi abstract sealed beforefieldinit Functions.asArray
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		object asArray (
+			object[] scopes,
+			object v
+		) cil managed 
+	{
+		// Method begins at RVA 0x2064
+		// Header size: 12
+		// Code size: 92 (0x5c)
+		.maxstack 32
+
+		IL_0000: ldarg.1
+		IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
+		IL_0006: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+		IL_000b: brtrue IL_0015
+
+		IL_0010: br IL_001b
+
+		IL_0015: ldarg.1
+		IL_0016: br IL_005b
+
+		IL_001b: ldarg.1
+		IL_001c: ldc.i4.0
+		IL_001d: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0022: pop
+		IL_0023: dup
+		IL_0024: ldnull
+		IL_0025: ceq
+		IL_0027: brtrue IL_0043
+
+		IL_002c: dup
+		IL_002d: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0032: ldnull
+		IL_0033: ceq
+		IL_0035: ldc.i4.0
+		IL_0036: ceq
+		IL_0038: brtrue IL_0043
+
+		IL_003d: pop
+		IL_003e: br IL_004e
+
+		IL_0043: ldc.i4.0
+		IL_0044: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0049: br IL_005b
+
+		IL_004e: ldc.i4.1
+		IL_004f: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0054: dup
+		IL_0055: ldarg.1
+		IL_0056: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+
+		IL_005b: ret
+	} // end of method asArray::asArray
+
+} // end of class Functions.asArray
+
+.class public auto ansi abstract sealed beforefieldinit Functions._Loader
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void _LoadDispatchTable () cil managed 
+	{
+		// Method begins at RVA 0x20cc
+		// Header size: 1
+		// Code size: 18 (0x12)
+		.maxstack 8
+
+		IL_0000: ldnull
+		IL_0001: ldftn object Functions.asArray::asArray(object[], object)
+		IL_0007: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_000c: stsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::asArray
+		IL_0011: ret
+	} // end of method _Loader::_LoadDispatchTable
+
+} // end of class Functions._Loader
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20e0
+		// Header size: 12
+		// Code size: 179 (0xb3)
+		.maxstack 32
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Array_AsArray_Ternary::.ctor()
+		IL_0005: stloc.0
+		IL_0006: call void Functions._Loader::_LoadDispatchTable()
+		IL_000b: ldloc.0
+		IL_000c: ldsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::asArray
+		IL_0011: stfld object Scopes.Array_AsArray_Ternary::asArray
+		IL_0016: ldloc.0
+		IL_0017: ldloc.0
+		IL_0018: ldfld object Scopes.Array_AsArray_Ternary::asArray
+		IL_001d: ldc.i4.1
+		IL_001e: newarr [System.Runtime]System.Object
+		IL_0023: dup
+		IL_0024: ldc.i4.0
+		IL_0025: ldloc.0
+		IL_0026: stelem.ref
+		IL_0027: ldc.i4.1
+		IL_0028: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_002d: dup
+		IL_002e: ldc.r8 1
+		IL_0037: box [System.Runtime]System.Double
+		IL_003c: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0041: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_0046: stfld object Scopes.Array_AsArray_Ternary::a
+		IL_004b: ldloc.0
+		IL_004c: ldloc.0
+		IL_004d: ldfld object Scopes.Array_AsArray_Ternary::asArray
+		IL_0052: ldc.i4.1
+		IL_0053: newarr [System.Runtime]System.Object
+		IL_0058: dup
+		IL_0059: ldc.i4.0
+		IL_005a: ldloc.0
+		IL_005b: stelem.ref
+		IL_005c: ldc.r8 0.0
+		IL_0065: box [System.Runtime]System.Double
+		IL_006a: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_006f: stfld object Scopes.Array_AsArray_Ternary::b
+		IL_0074: ldc.i4.1
+		IL_0075: newarr [System.Runtime]System.Object
+		IL_007a: dup
+		IL_007b: ldc.i4.0
+		IL_007c: ldloc.0
+		IL_007d: ldfld object Scopes.Array_AsArray_Ternary::a
+		IL_0082: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_0087: box [System.Runtime]System.Double
+		IL_008c: stelem.ref
+		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0092: pop
+		IL_0093: ldc.i4.1
+		IL_0094: newarr [System.Runtime]System.Object
+		IL_0099: dup
+		IL_009a: ldc.i4.0
+		IL_009b: ldloc.0
+		IL_009c: ldfld object Scopes.Array_AsArray_Ternary::b
+		IL_00a1: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_00a6: box [System.Runtime]System.Double
+		IL_00ab: stelem.ref
+		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00b1: pop
+		IL_00b2: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
