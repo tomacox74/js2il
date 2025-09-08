@@ -35,14 +35,22 @@ namespace Js2IL.Tests.Node
                     s.AddScrubber(sb => sb.Replace('\\', '/'));
                     var temp = Path.GetTempPath().Replace('\\', '/');
                     s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
-                    // CI adds dynamic args (e.g., --port, --endpoint). Keep only argv[0] for stable snapshot.
+                    // CI adds dynamic args (e.g., --port, --endpoint). Keep only the first line and normalize the count.
                     s.AddScrubber(sb =>
                     {
                         var text = sb.ToString();
                         var nl = text.IndexOf('\n');
                         var firstLine = nl >= 0 ? text.Substring(0, nl + 1) : text;
+                        const string prefix = "argv length is ";
                         sb.Clear();
-                        sb.Append(firstLine);
+                        if (firstLine.StartsWith(prefix))
+                        {
+                            sb.Append(prefix).Append("{N}").Append('\n');
+                        }
+                        else
+                        {
+                            sb.Append(firstLine);
+                        }
                     });
                 });
 
