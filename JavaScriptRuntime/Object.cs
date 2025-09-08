@@ -134,6 +134,11 @@ namespace JavaScriptRuntime
             {
                 return array[intIndex];
             }
+            else if (obj is Int32Array i32)
+            {
+                // Reads outside bounds return 0 per typed array semantics
+                return i32[intIndex];
+            }
             else
             {
                 // todo: add generic object index access support
@@ -147,6 +152,8 @@ namespace JavaScriptRuntime
             {
                 case Array arr:
                     return arr.length;
+                case Int32Array i32:
+                    return i32.length;
                 case string s:
                     return s.Length;
                 default:
@@ -171,7 +178,7 @@ namespace JavaScriptRuntime
             }
 
             // JavaScriptRuntime.Array: expose known properties via dot (length handled elsewhere)
-            if (obj is Array)
+            if (obj is Array || obj is Int32Array)
             {
                 // No custom properties yet; return null as missing
                 return null;
