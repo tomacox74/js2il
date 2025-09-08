@@ -17,6 +17,7 @@ Added
 - Runtime Object: integrated Int32Array support in JavaScriptRuntime.Object helpers:
 	- GetItem(object, double index): indexer for Int32Array
 	- GetLength(object): length for Int32Array
+- Operators: binary "in" operator (property existence) with runtime helper Object.HasPropertyIn covering: ExpandoObject/anonymous objects, arrays (numeric index bounds check), Int32Array, strings (character index), and reflection fallback for host objects. Emits early in BinaryOperators to avoid duplicate side-effects. Limitations: no prototype chain traversal yet; non-object RHS throws TypeError only for null/undefined (remaining primitives TODO); numeric LHS coerced via ToString for object keys.
 
 Tests
 - New Math execution test validating Math.sqrt and Math.ceil:
@@ -34,6 +35,7 @@ Docs
 - ECMAScript 2025 Feature Coverage: updated "The Math Object" to document the full set of Math function properties listed above. Regenerated docs/ECMAScript2025_FeatureCoverage.md from JSON.
 - ECMAScript 2025 Feature Coverage: marked Math value properties (E, LN10, LN2, LOG10E, LOG2E, PI, SQRT1_2, SQRT2) as Supported. Regenerated docs/ECMAScript2025_FeatureCoverage.md from JSON.
 - ECMAScript 2025 Feature Coverage: added a new "TypedArray Objects" section and documented Int32Array (constructor/length/indexing/set). Regenerated docs/ECMAScript2025_FeatureCoverage.md from JSON.
+- ECMAScript 2025 Feature Coverage: marked binary "in" operator as Supported (own property / array index / string index / typed array index only; prototype chain and full RHS TypeError semantics pending) and regenerated markdown.
 
 Changed
 - Runtime: qualify BCL Math usages to global::System.Math in String/Array to avoid name collision with JavaScriptRuntime.Math.

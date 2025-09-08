@@ -1,4 +1,4 @@
-# ECMAScript 2025 Feature Coverage
+﻿# ECMAScript 2025 Feature Coverage
 
 [ECMAScript® 2025 Language Specification](https://tc39.es/ecma262/)
 
@@ -219,6 +219,7 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 |---|---|---|---|---|
 | Binary \|\| (Logical OR) with short-circuit | Supported | `Js2IL.Tests/JavaScript/BinaryOperator_LogicalOr_Value.js` | Value form returns left if truthy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited. | 13.5.10 |
 | Binary && (Logical AND) with short-circuit | Supported | `Js2IL.Tests/JavaScript/BinaryOperator_LogicalAnd_Value.js` | Value form returns left if falsy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited. | 13.5.10 |
+| Binary in (property existence on object) | Supported | `Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js` | Implements key in obj via JavaScriptRuntime.Object.HasPropertyIn. Supports own properties on ExpandoObject/object literals and numeric/string keys; does not yet traverse prototype chain or throw TypeError for non-object RHS beyond null/undefined. | 13.5.10 |
 
 
 #### [Conditional (ternary) operator (?:)](https://tc39.es/ecma262/#sec-conditional-operator)

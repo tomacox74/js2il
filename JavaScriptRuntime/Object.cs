@@ -238,5 +238,77 @@ namespace JavaScriptRuntime
             var invokeArgs = expectsParamsArray ? new object?[] { args ?? empty } : (object[])(args ?? empty);
             return chosen.Invoke(instance, invokeArgs);
         }
+
+        // Support for the JavaScript 'in' operator (minimal implementation)
+        // Parameter order matches evaluation order in emitter: left (key) then right (object)
+        public static bool HasPropertyIn(object? key, object? obj)
+        {
+            if (obj is null)
+            {
+                throw new JavaScriptRuntime.TypeError("Right-hand side of 'in' should be an object");
+            }
+
+            // Coerce key to property name (symbols not supported yet)
+            string propName = key switch
+            {
+                null => "null",
+                string s => s,
+                double d => d.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                float f => f.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                int i => i.ToString(),
+                long l => l.ToString(),
+                short sh => sh.ToString(),
+                byte by => by.ToString(),
+                _ => DotNet2JSConversions.ToString(key)
+            } ?? string.Empty;
+
+            // ExpandoObject (object literal)
+            if (obj is System.Dynamic.ExpandoObject exp)
+            {
+                var dict = (IDictionary<string, object?>)exp;
+                return dict.ContainsKey(propName);
+            }
+
+            // JS Array (numeric indexes + length)
+            if (obj is Array jsArr)
+            {
+                if (propName == "length") return true;
+                if (int.TryParse(propName, out var ai))
+                {
+                    return ai >= 0 && ai < jsArr.length;
+                }
+                return false;
+            }
+
+            // Int32Array (typed array minimal support)
+            if (obj is Int32Array i32)
+            {
+                if (propName == "length") return true;
+                if (int.TryParse(propName, out var ti))
+                {
+                    return ti >= 0 && ti < i32.length;
+                }
+                return false;
+            }
+
+            // string (indices + length)
+            if (obj is string str)
+            {
+                if (propName == "length") return true;
+                if (int.TryParse(propName, out var si))
+                {
+                    return si >= 0 && si < str.Length;
+                }
+                return false;
+            }
+
+            // Fallback: reflection public instance property/field presence
+            var type = obj.GetType();
+            var pi = type.GetProperty(propName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+            if (pi != null) return true;
+            var fi = type.GetField(propName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+            if (fi != null) return true;
+            return false;
+        }
     }
 }
