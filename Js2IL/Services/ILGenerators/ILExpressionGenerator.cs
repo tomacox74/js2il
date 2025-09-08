@@ -182,19 +182,21 @@ namespace Js2IL.Services.ILGenerators
                         // Stack currently: [delegate]
                         var allNames = _variables.GetAllScopeNames().ToList();
                         var slots = allNames.Select(n => new { Name = n, Slot = _variables.GetScopeLocalSlot(n) }).ToList();
-                        bool inFunctionContext = slots.Any(e => e.Slot.Location == ObjectReferenceLocation.ScopeArray);
-                        // Determine scopes to capture: in function context include [global(if present), current local]; else include leaf only
+                        // Determine which scopes are actually loadable in this context and capture only those.
                         var capture = new System.Collections.Generic.List<string>();
-                        if (inFunctionContext)
+                        // If a global scope is available via the scopes[] parameter, include it.
+                        var globalEntry = slots.FirstOrDefault(e => e.Slot.Location == ObjectReferenceLocation.ScopeArray && e.Slot.Address == 0);
+                        if (globalEntry != null)
                         {
-                            var globalEntry = slots.FirstOrDefault(e => e.Slot.Location == ObjectReferenceLocation.ScopeArray && e.Slot.Address == 0);
-                            if (globalEntry != null) capture.Add(globalEntry.Name);
+                            capture.Add(globalEntry.Name);
+                        }
+                        // Include the current function/global scope only if its local slot exists (created earlier).
+                        var leafSlot = _variables.GetLocalScopeSlot();
+                        if (leafSlot.Address >= 0)
+                        {
                             capture.Add(_variables.GetLeafScopeName());
                         }
-                        else
-                        {
-                            capture.Add(_variables.GetLeafScopeName());
-                        }
+                        // Note: If neither is available, capture will be empty and Bind will receive an empty scopes array.
                         // Build scopes array and call Closure.Bind(object, object[])
                         EmitScopeArray(capture);
                         _owner.Runtime.InvokeClosureBindObject();

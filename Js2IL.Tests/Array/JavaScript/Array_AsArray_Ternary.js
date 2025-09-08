@@ -1,6 +1,6 @@
 // Confirms ternary using Array.isArray result
-function asArray(x) {
-  return Array.isArray(x) ? x : [];
+function asArray(v) { 
+    return Array.isArray(v) ? v : (v == null ? [] : [v]); 
 }
 
 const a = asArray([1]);

@@ -42,7 +42,10 @@ namespace Js2IL.Tests.Array
         [Fact]
         public Task Array_Splice_InsertAndDelete() { var testName = nameof(Array_Splice_InsertAndDelete); return GenerateTest(testName); }
 
-    [Fact]
-    public Task Array_New_Empty() { var testName = nameof(Array_New_Empty); return GenerateTest(testName); }
+        [Fact]
+        public Task Array_New_Empty() { var testName = nameof(Array_New_Empty); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Array_AsArray_Ternary() { var testName = nameof(Array_AsArray_Ternary); return GenerateTest(testName); }
     }
 }
