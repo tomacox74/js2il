@@ -5,24 +5,34 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 Added
+- Compiler: object destructuring (binding patterns) for object patterns in variable declarations (basic). Single-evaluation of initializer with per-property extraction; when the receiver is a known CLR-backed type, use typed getters; otherwise fall back to runtime Object.GetProperty.
 - Runtime: minimal JavaScript Date intrinsic with constructor overloads and core APIs:
 	- Constructors: new Date(), new Date(milliseconds)
 	- Static: Date.now(), Date.parse(string)
 	- Prototype: getTime(), toISOString()
 
 Changed
+- Type propagation: propagate CLR runtime types through object destructuring targets (e.g., const { performance } = require('perf_hooks')) to enable direct callvirt to property getters and instance methods.
+- IL generation: lower object patterns in variable declarations via a synthesized temp and scope field writes; prefer typed property access when possible with reflection fallback.
 - IL generation: special-case emission for new Date(...); improved host intrinsic static call handling (argument coercion and boxing aligned to CLR signatures). Date.now/Date.parse return boxed numbers (object) to match JS semantics.
 
 Fixed
+- Node perf_hooks: stabilized PerfHooks_PerformanceNow_Basic (generator + execution). Direct typed calls to PerfHooks.get_performance() and Performance.now(); elapsed time check matches runtime semantics. Updated generator snapshot to align with current IL.
 - Metadata: deduplicate JavaScriptRuntime AssemblyReference entries by caching a single AssemblyReferenceHandle per emitted assembly (per MetadataBuilder). This eliminates multiple runtime AssemblyRef rows in generated DLLs and reduces metadata bloat. Verified on a compiled sample (scripts/generateFeatureCoverage.js) via a small Reflection.Metadata checker.
 - Generator: avoid AccessViolation at CastHelpers.StelemRef by fixing once-only boxing before Stelem_ref when constructing object[] for call sites.
 - Tests: resolved Verify newline mismatch in Date execution snapshots.
 
 Docs
+- Updated NodeSupport to note that destructuring perf_hooks (const { performance } = require('perf_hooks')) is supported and enables typed calls.
+- Updated ECMAScript 2025 feature coverage to include partial support for object destructuring in variable declarations (with scope and limitations called out); regenerated markdown.
 - Updated ECMAScript 2025 feature coverage to include Array.prototype.slice, Array.prototype.splice, Array.prototype.push, Array.prototype.pop, and Array.isArray with exact ECMA-262 spec anchors and linked test references; regenerated docs/ECMAScript2025_FeatureCoverage.md from JSON.
 - Updated ECMAScript 2025 feature coverage to include Date constructor, Date.now, Date.parse, Date.prototype.getTime, and Date.prototype.toISOString; regenerated docs/ECMAScript2025_FeatureCoverage.md.
 
+Tooling
+- Compiled scripts/generateFeatureCoverage.js with js2il; emitted generateFeatureCoverage.dll and runtimeconfig.json next to the script for faster local runs.
+
 Tests
+- Added/updated Node generator and execution tests around perf_hooks performance.now; snapshots aligned with typed-call IL.
 - Added Date execution tests (construct from ms → getTime/toISOString; parse ISO string). Removed the obsolete Date generator test and neutralized its snapshot.
 
 ## v0.1.4 - 2025-09-06
