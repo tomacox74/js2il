@@ -340,8 +340,21 @@ namespace Js2IL.Services.ILGenerators
                                 var mref = _runtime.GetStaticMethodRef(declType, getter.Name, getter.ReturnType);
                                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
                                 _il.Token(mref);
-                                typeCoercion.boxResult = false;
-                                javascriptType = JavascriptType.Object;
+                                // Determine JS type from the CLR property type so downstream coercion/boxing behaves correctly
+                                if (prop.PropertyType == typeof(double))
+                                {
+                                    javascriptType = JavascriptType.Number;
+                                }
+                                else if (prop.PropertyType == typeof(bool))
+                                {
+                                    javascriptType = JavascriptType.Boolean;
+                                }
+                                // Strings are treated as Object in our JS type lattice
+                                else
+                                {
+                                    javascriptType = JavascriptType.Object;
+                                }
+                                // Respect requested boxing; do not forcibly disable it here.
                                 clrType = prop.PropertyType;
                             }
                             else

@@ -485,6 +485,328 @@
       ]
     },
     {
+      "section": "20",
+      "title": "The Math Object",
+      "url": "https://tc39.es/ecma262/#sec-math-object",
+      "subsections": [
+        {
+          "subsection": "20.2.1",
+          "title": "Value Properties of the Math Object",
+          "url": "https://tc39.es/ecma262/#sec-value-properties-of-the-math-object",
+          "paragraphs": [
+            {
+              "paragraph": "20.2.1",
+              "title": "Math constants",
+              "url": "https://tc39.es/ecma262/#sec-value-properties-of-the-math-object",
+              "features": [
+                { "feature": "Math.E", "status": "Supported", "notes": "Euler’s number e." },
+                { "feature": "Math.LN10", "status": "Supported", "notes": "Natural logarithm of 10." },
+                { "feature": "Math.LN2", "status": "Supported", "notes": "Natural logarithm of 2." },
+                { "feature": "Math.LOG10E", "status": "Supported", "notes": "Base-10 logarithm of e." },
+                { "feature": "Math.LOG2E", "status": "Supported", "notes": "Base-2 logarithm of e." },
+                { "feature": "Math.PI", "status": "Supported", "notes": "Ratio of a circle’s circumference to its diameter." },
+                { "feature": "Math.SQRT1_2", "status": "Supported", "notes": "Square root of 1/2." },
+                { "feature": "Math.SQRT2", "status": "Supported", "notes": "Square root of 2." }
+              ]
+            }
+          ]
+        },
+        {
+          "subsection": "20.2.2",
+          "title": "Function Properties of the Math Object",
+          "url": "https://tc39.es/ecma262/#sec-function-properties-of-the-math-object",
+          "paragraphs": [
+            {
+              "paragraph": "20.2.2.1",
+              "title": "Math.abs",
+              "url": "https://tc39.es/ecma262/#sec-math.abs",
+              "features": [
+                { "feature": "Math.abs(x)", "status": "Supported", "notes": "Returns the absolute value; NaN propagates; ±Infinity preserved." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.2",
+              "title": "Math.acos",
+              "url": "https://tc39.es/ecma262/#sec-math.acos",
+              "features": [
+                { "feature": "Math.acos(x)", "status": "Supported", "notes": "Returns arc cosine in radians; out-of-domain yields NaN." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.3",
+              "title": "Math.acosh",
+              "url": "https://tc39.es/ecma262/#sec-math.acosh",
+              "features": [
+                { "feature": "Math.acosh(x)", "status": "Supported", "notes": "Inverse hyperbolic cosine; x < 1 yields NaN; Infinity preserved." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.4",
+              "title": "Math.asin",
+              "url": "https://tc39.es/ecma262/#sec-math.asin",
+              "features": [
+                { "feature": "Math.asin(x)", "status": "Supported", "notes": "Returns arc sine in radians; out-of-domain yields NaN." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.5",
+              "title": "Math.asinh",
+              "url": "https://tc39.es/ecma262/#sec-math.asinh",
+              "features": [
+                { "feature": "Math.asinh(x)", "status": "Supported", "notes": "Inverse hyperbolic sine; handles ±0, NaN, ±Infinity per spec." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.6",
+              "title": "Math.atan",
+              "url": "https://tc39.es/ecma262/#sec-math.atan",
+              "features": [
+                { "feature": "Math.atan(x)", "status": "Supported", "notes": "Returns arc tangent in radians; NaN propagates; ±Infinity maps to ±π/2." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.7",
+              "title": "Math.atan2",
+              "url": "https://tc39.es/ecma262/#sec-math.atan2",
+              "features": [
+                { "feature": "Math.atan2(y, x)", "status": "Supported", "notes": "Quadrant-aware arc tangent; handles zeros, NaN, and infinities per spec." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.9",
+              "title": "Math.ceil",
+              "url": "https://tc39.es/ecma262/#sec-math.ceil",
+              "features": [
+                {
+                  "feature": "Math.ceil(x)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Math/JavaScript/Math_Ceil_Sqrt_Basic.js"
+                  ],
+                  "notes": "Implements ceiling for numbers represented as double; arguments coerced via minimal ToNumber semantics. Returns NaN for NaN/undefined or negative zero preserved via .NET semantics."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.10",
+              "title": "Math.clz32",
+              "url": "https://tc39.es/ecma262/#sec-math.clz32",
+              "features": [
+                { "feature": "Math.clz32(x)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Imul_Clz32_Basics.js"], "notes": "Counts leading zero bits in the 32-bit unsigned integer representation." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.11",
+              "title": "Math.cos",
+              "url": "https://tc39.es/ecma262/#sec-math.cos",
+              "features": [
+                { "feature": "Math.cos(x)", "status": "Supported", "notes": "Cosine of x (radians); NaN propagates; Infinity yields NaN." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.12",
+              "title": "Math.cosh",
+              "url": "https://tc39.es/ecma262/#sec-math.cosh",
+              "features": [
+                { "feature": "Math.cosh(x)", "status": "Supported", "notes": "Hyperbolic cosine; handles ±0, NaN, ±Infinity per spec." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.13",
+              "title": "Math.exp",
+              "url": "https://tc39.es/ecma262/#sec-math.exp",
+              "features": [
+                { "feature": "Math.exp(x)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Log_Exp_Identity.js"], "notes": "e^x; consistent with JS semantics for NaN and infinities." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.14",
+              "title": "Math.expm1",
+              "url": "https://tc39.es/ecma262/#sec-math.expm1",
+              "features": [
+                { "feature": "Math.expm1(x)", "status": "Supported", "notes": "Returns e^x - 1 with improved precision for small x." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.15",
+              "title": "Math.floor",
+              "url": "https://tc39.es/ecma262/#sec-math.floor",
+              "features": [
+                { "feature": "Math.floor(x)", "status": "Supported", "notes": "Largest integer less than or equal to x; preserves -0 when appropriate." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.16",
+              "title": "Math.fround",
+              "url": "https://tc39.es/ecma262/#sec-math.fround",
+              "features": [
+                { "feature": "Math.fround(x)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Fround_SignedZero.js"], "notes": "Rounds to nearest 32-bit float; preserves signed zero." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.17",
+              "title": "Math.hypot",
+              "url": "https://tc39.es/ecma262/#sec-math.hypot",
+              "features": [
+                { "feature": "Math.hypot(...values)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Hypot_Infinity_NaN.js"], "notes": "Computes sqrt(sum(x_i^2)); returns Infinity if any arg is ±Infinity; NaN if any arg is NaN and none are Infinity." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.18",
+              "title": "Math.imul",
+              "url": "https://tc39.es/ecma262/#sec-math.imul",
+              "features": [
+                { "feature": "Math.imul(a, b)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Imul_Clz32_Basics.js"], "notes": "C-style 32-bit integer multiplication with wrapping." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.19",
+              "title": "Math.log",
+              "url": "https://tc39.es/ecma262/#sec-math.log",
+              "features": [
+                { "feature": "Math.log(x)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Log_Exp_Identity.js"], "notes": "Natural logarithm; log(1) = 0; negative x yields NaN; log(0) = -Infinity." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.20",
+              "title": "Math.log10",
+              "url": "https://tc39.es/ecma262/#sec-math.log10",
+              "features": [
+                { "feature": "Math.log10(x)", "status": "Supported", "notes": "Base-10 logarithm; JS semantics for 0, negatives, NaN, and infinities." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.21",
+              "title": "Math.log1p",
+              "url": "https://tc39.es/ecma262/#sec-math.log1p",
+              "features": [
+                { "feature": "Math.log1p(x)", "status": "Supported", "notes": "log(1 + x) with improved precision for small x." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.22",
+              "title": "Math.log2",
+              "url": "https://tc39.es/ecma262/#sec-math.log2",
+              "features": [
+                { "feature": "Math.log2(x)", "status": "Supported", "notes": "Base-2 logarithm; JS semantics for 0, negatives, NaN, and infinities." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.23",
+              "title": "Math.max",
+              "url": "https://tc39.es/ecma262/#sec-math.max",
+              "features": [
+                { "feature": "Math.max(...values)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Min_Max_NaN_EmptyArgs.js"], "notes": "Returns the largest of the given numbers; with no arguments returns -Infinity; if any argument is NaN returns NaN." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.24",
+              "title": "Math.sqrt",
+              "url": "https://tc39.es/ecma262/#sec-math.sqrt",
+              "features": [
+                {
+                  "feature": "Math.sqrt(x)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Math/JavaScript/Math_Ceil_Sqrt_Basic.js"
+                  ],
+                  "notes": "Returns the square root for non-negative inputs; negative or NaN yields NaN; Infinity maps to Infinity."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.25",
+              "title": "Math.pow",
+              "url": "https://tc39.es/ecma262/#sec-math.pow",
+              "features": [
+                { "feature": "Math.pow(x, y)", "status": "Supported", "notes": "Exponentiation; consistent with JS semantics including NaN and Infinity cases." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.26",
+              "title": "Math.random",
+              "url": "https://tc39.es/ecma262/#sec-math.random",
+              "features": [
+                { "feature": "Math.random()", "status": "Supported", "notes": "Returns a pseudo-random number in the range [0, 1)." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.27",
+              "title": "Math.round",
+              "url": "https://tc39.es/ecma262/#sec-math.round",
+              "features": [
+                { "feature": "Math.round(x)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Round_Trunc_NegativeHalves.js"], "notes": "Rounds to the nearest integer; ties at .5 round up toward +∞; exact -0.5 returns -0." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.28",
+              "title": "Math.sign",
+              "url": "https://tc39.es/ecma262/#sec-math.sign",
+              "features": [
+                { "feature": "Math.sign(x)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Sign_ZeroVariants.js"], "notes": "Returns 1, -1, 0, -0, or NaN depending on the sign of x; ±Infinity map to ±1." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.29",
+              "title": "Math.sin",
+              "url": "https://tc39.es/ecma262/#sec-math.sin",
+              "features": [
+                { "feature": "Math.sin(x)", "status": "Supported", "notes": "Sine of x (radians); NaN propagates; Infinity yields NaN." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.30",
+              "title": "Math.sinh",
+              "url": "https://tc39.es/ecma262/#sec-math.sinh",
+              "features": [
+                { "feature": "Math.sinh(x)", "status": "Supported", "notes": "Hyperbolic sine; handles ±0, NaN, ±Infinity per spec." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.31",
+              "title": "Math.tan",
+              "url": "https://tc39.es/ecma262/#sec-math.tan",
+              "features": [
+                { "feature": "Math.tan(x)", "status": "Supported", "notes": "Tangent of x (radians); NaN propagates; Infinity yields NaN." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.32",
+              "title": "Math.tanh",
+              "url": "https://tc39.es/ecma262/#sec-math.tanh",
+              "features": [
+                { "feature": "Math.tanh(x)", "status": "Supported", "notes": "Hyperbolic tangent; handles ±0, NaN, ±Infinity per spec." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.33",
+              "title": "Math.trunc",
+              "url": "https://tc39.es/ecma262/#sec-math.trunc",
+              "features": [
+                { "feature": "Math.trunc(x)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Round_Trunc_NegativeHalves.js"], "notes": "Removes fractional part; preserves sign for zero (can return -0)." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.34",
+              "title": "Math.min",
+              "url": "https://tc39.es/ecma262/#sec-math.min",
+              "features": [
+                { "feature": "Math.min(...values)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Min_Max_NaN_EmptyArgs.js"], "notes": "Returns the smallest of the given numbers; with no arguments returns Infinity; if any argument is NaN returns NaN." }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.35",
+              "title": "Math.cbrt",
+              "url": "https://tc39.es/ecma262/#sec-math.cbrt",
+              "features": [
+                { "feature": "Math.cbrt(x)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Cbrt_Negative.js"], "notes": "Cube root; handles negative values returning negative result; NaN propagates; Infinity preserved." }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "section": "21",
       "title": "Date Objects",
       "url": "https://tc39.es/ecma262/#sec-date-objects",

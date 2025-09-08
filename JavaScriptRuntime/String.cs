@@ -45,7 +45,7 @@ namespace JavaScriptRuntime
                     if (double.IsPositiveInfinity(d)) d = input.Length;
                     if (double.IsNegativeInfinity(d)) d = 0d;
                     // Truncate toward zero
-                    d = d >= 0 ? Math.Floor(d) : Math.Ceiling(d);
+                    d = d >= 0 ? global::System.Math.Floor(d) : global::System.Math.Ceiling(d);
                     if (d < 0) d = 0;
                     if (d > input.Length) d = input.Length;
                     pos = (int)d;
