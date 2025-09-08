@@ -332,16 +332,18 @@ namespace Js2IL.Services.ILGenerators
                     else
                     {
                         // Branching form: branch to true if left == null or left is JsNull; else branch to false or pop
-                        var trueLbl = branching.BranchOnTrue;
+                        var userTrueLbl = branching.BranchOnTrue;
                         var falseLbl = branching.BranchOnFalse;
+                        // Ensure we don't leave the duplicated 'left' on the stack when branching to true
+                        var cleanupTrue = _il.DefineLabel();
 
-                        // if (left == null) goto true
+                        // if (left == null) goto cleanupTrue
                         _il.OpCode(ILOpCode.Dup);
                         _il.OpCode(ILOpCode.Ldnull);
                         _il.OpCode(ILOpCode.Ceq);
-                        _il.Branch(ILOpCode.Brtrue, trueLbl);
+                        _il.Branch(ILOpCode.Brtrue, cleanupTrue);
 
-                        // else if (left is JsNull) goto true
+                        // else if (left is JsNull) goto cleanupTrue
                         var jsNullTypeRef = _runtime.GetRuntimeTypeHandle(typeof(JavaScriptRuntime.JsNull));
                         _il.OpCode(ILOpCode.Dup);
                         _il.OpCode(ILOpCode.Isinst);
@@ -350,7 +352,7 @@ namespace Js2IL.Services.ILGenerators
                         _il.OpCode(ILOpCode.Ceq);
                         _il.OpCode(ILOpCode.Ldc_i4_0);
                         _il.OpCode(ILOpCode.Ceq);
-                        _il.Branch(ILOpCode.Brtrue, trueLbl);
+                        _il.Branch(ILOpCode.Brtrue, cleanupTrue);
 
                         // else: not equal
                         _il.OpCode(ILOpCode.Pop); // pop left
@@ -362,6 +364,11 @@ namespace Js2IL.Services.ILGenerators
                         {
                             // No false target: discard and continue
                         }
+
+                        // Cleanup for true branch: pop 'left' then branch to user label
+                        _il.MarkLabel(cleanupTrue);
+                        _il.OpCode(ILOpCode.Pop);
+                        _il.Branch(ILOpCode.Br, userTrueLbl);
                     }
                     return;
                 }
