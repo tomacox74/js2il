@@ -185,7 +185,17 @@ namespace JavaScriptRuntime
         public static object cbrt(object? x)
         {
             double d = ToNumber(x);
-            return global::System.Math.Cbrt(d);
+            double r = global::System.Math.Cbrt(d);
+            // Snap very-close-to-integer results to the integer to avoid -3.0000000000000004 style outputs
+            if (!double.IsNaN(r) && !double.IsInfinity(r))
+            {
+                double n = global::System.Math.Round(r);
+                if (global::System.Math.Abs(r - n) <= 1e-12)
+                {
+                    return n;
+                }
+            }
+            return r;
         }
 
         public static object hypot(params object?[] args)
