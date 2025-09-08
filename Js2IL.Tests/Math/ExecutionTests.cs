@@ -12,5 +12,53 @@ namespace Js2IL.Tests.Math
         {
             return ExecutionTest(nameof(Math_Ceil_Sqrt_Basic));
         }
+
+        [Fact]
+        public Task Math_Sign_ZeroVariants()
+        {
+            return ExecutionTest(nameof(Math_Sign_ZeroVariants));
+        }
+
+        [Fact]
+        public Task Math_Round_Trunc_NegativeHalves()
+        {
+            return ExecutionTest(nameof(Math_Round_Trunc_NegativeHalves));
+        }
+
+        [Fact]
+        public Task Math_Min_Max_NaN_EmptyArgs()
+        {
+            return ExecutionTest(nameof(Math_Min_Max_NaN_EmptyArgs));
+        }
+
+        [Fact]
+        public Task Math_Hypot_Infinity_NaN()
+        {
+            return ExecutionTest(nameof(Math_Hypot_Infinity_NaN));
+        }
+
+        [Fact]
+        public Task Math_Imul_Clz32_Basics()
+        {
+            return ExecutionTest(nameof(Math_Imul_Clz32_Basics));
+        }
+
+        [Fact]
+        public Task Math_Fround_SignedZero()
+        {
+            return ExecutionTest(nameof(Math_Fround_SignedZero));
+        }
+
+        [Fact]
+        public Task Math_Log_Exp_Identity()
+        {
+            return ExecutionTest(nameof(Math_Log_Exp_Identity));
+        }
+
+        [Fact]
+        public Task Math_Cbrt_Negative()
+        {
+            return ExecutionTest(nameof(Math_Cbrt_Negative));
+        }
     }
 }

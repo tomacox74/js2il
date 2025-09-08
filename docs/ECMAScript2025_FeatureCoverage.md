@@ -338,7 +338,70 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 ### [Value Properties of the Math Object](https://tc39.es/ecma262/#sec-value-properties-of-the-math-object)
 
+#### [Math constants](https://tc39.es/ecma262/#sec-value-properties-of-the-math-object)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.E | Supported |  | Euler’s number e. | 20.2.1 |
+| Math.LN10 | Supported |  | Natural logarithm of 10. | 20.2.1 |
+| Math.LN2 | Supported |  | Natural logarithm of 2. | 20.2.1 |
+| Math.LOG10E | Supported |  | Base-10 logarithm of e. | 20.2.1 |
+| Math.LOG2E | Supported |  | Base-2 logarithm of e. | 20.2.1 |
+| Math.PI | Supported |  | Ratio of a circle’s circumference to its diameter. | 20.2.1 |
+| Math.SQRT1_2 | Supported |  | Square root of 1/2. | 20.2.1 |
+| Math.SQRT2 | Supported |  | Square root of 2. | 20.2.1 |
+
+
 ### [Function Properties of the Math Object](https://tc39.es/ecma262/#sec-function-properties-of-the-math-object)
+
+#### [Math.abs](https://tc39.es/ecma262/#sec-math.abs)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.abs(x) | Supported |  | Returns the absolute value; NaN propagates; ±Infinity preserved. | 20.2.2.1 |
+
+
+#### [Math.acos](https://tc39.es/ecma262/#sec-math.acos)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.acos(x) | Supported |  | Returns arc cosine in radians; out-of-domain yields NaN. | 20.2.2.2 |
+
+
+#### [Math.acosh](https://tc39.es/ecma262/#sec-math.acosh)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.acosh(x) | Supported |  | Inverse hyperbolic cosine; x < 1 yields NaN; Infinity preserved. | 20.2.2.3 |
+
+
+#### [Math.asin](https://tc39.es/ecma262/#sec-math.asin)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.asin(x) | Supported |  | Returns arc sine in radians; out-of-domain yields NaN. | 20.2.2.4 |
+
+
+#### [Math.asinh](https://tc39.es/ecma262/#sec-math.asinh)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.asinh(x) | Supported |  | Inverse hyperbolic sine; handles ±0, NaN, ±Infinity per spec. | 20.2.2.5 |
+
+
+#### [Math.atan](https://tc39.es/ecma262/#sec-math.atan)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.atan(x) | Supported |  | Returns arc tangent in radians; NaN propagates; ±Infinity maps to ±π/2. | 20.2.2.6 |
+
+
+#### [Math.atan2](https://tc39.es/ecma262/#sec-math.atan2)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.atan2(y, x) | Supported |  | Quadrant-aware arc tangent; handles zeros, NaN, and infinities per spec. | 20.2.2.7 |
+
 
 #### [Math.ceil](https://tc39.es/ecma262/#sec-math.ceil)
 
@@ -347,11 +410,186 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Math.ceil(x) | Supported | `Js2IL.Tests/Math/JavaScript/Math_Ceil_Sqrt_Basic.js` | Implements ceiling for numbers represented as double; arguments coerced via minimal ToNumber semantics. Returns NaN for NaN/undefined or negative zero preserved via .NET semantics. | 20.2.2.9 |
 
 
+#### [Math.clz32](https://tc39.es/ecma262/#sec-math.clz32)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.clz32(x) | Supported | `Js2IL.Tests/Math/JavaScript/Math_Imul_Clz32_Basics.js` | Counts leading zero bits in the 32-bit unsigned integer representation. | 20.2.2.10 |
+
+
+#### [Math.cos](https://tc39.es/ecma262/#sec-math.cos)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.cos(x) | Supported |  | Cosine of x (radians); NaN propagates; Infinity yields NaN. | 20.2.2.11 |
+
+
+#### [Math.cosh](https://tc39.es/ecma262/#sec-math.cosh)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.cosh(x) | Supported |  | Hyperbolic cosine; handles ±0, NaN, ±Infinity per spec. | 20.2.2.12 |
+
+
+#### [Math.exp](https://tc39.es/ecma262/#sec-math.exp)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.exp(x) | Supported | `Js2IL.Tests/Math/JavaScript/Math_Log_Exp_Identity.js` | e^x; consistent with JS semantics for NaN and infinities. | 20.2.2.13 |
+
+
+#### [Math.expm1](https://tc39.es/ecma262/#sec-math.expm1)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.expm1(x) | Supported |  | Returns e^x - 1 with improved precision for small x. | 20.2.2.14 |
+
+
+#### [Math.floor](https://tc39.es/ecma262/#sec-math.floor)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.floor(x) | Supported |  | Largest integer less than or equal to x; preserves -0 when appropriate. | 20.2.2.15 |
+
+
+#### [Math.fround](https://tc39.es/ecma262/#sec-math.fround)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.fround(x) | Supported | `Js2IL.Tests/Math/JavaScript/Math_Fround_SignedZero.js` | Rounds to nearest 32-bit float; preserves signed zero. | 20.2.2.16 |
+
+
+#### [Math.hypot](https://tc39.es/ecma262/#sec-math.hypot)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.hypot(...values) | Supported | `Js2IL.Tests/Math/JavaScript/Math_Hypot_Infinity_NaN.js` | Computes sqrt(sum(x_i^2)); returns Infinity if any arg is ±Infinity; NaN if any arg is NaN and none are Infinity. | 20.2.2.17 |
+
+
+#### [Math.imul](https://tc39.es/ecma262/#sec-math.imul)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.imul(a, b) | Supported | `Js2IL.Tests/Math/JavaScript/Math_Imul_Clz32_Basics.js` | C-style 32-bit integer multiplication with wrapping. | 20.2.2.18 |
+
+
+#### [Math.log](https://tc39.es/ecma262/#sec-math.log)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.log(x) | Supported | `Js2IL.Tests/Math/JavaScript/Math_Log_Exp_Identity.js` | Natural logarithm; log(1) = 0; negative x yields NaN; log(0) = -Infinity. | 20.2.2.19 |
+
+
+#### [Math.log10](https://tc39.es/ecma262/#sec-math.log10)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.log10(x) | Supported |  | Base-10 logarithm; JS semantics for 0, negatives, NaN, and infinities. | 20.2.2.20 |
+
+
+#### [Math.log1p](https://tc39.es/ecma262/#sec-math.log1p)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.log1p(x) | Supported |  | log(1 + x) with improved precision for small x. | 20.2.2.21 |
+
+
+#### [Math.log2](https://tc39.es/ecma262/#sec-math.log2)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.log2(x) | Supported |  | Base-2 logarithm; JS semantics for 0, negatives, NaN, and infinities. | 20.2.2.22 |
+
+
+#### [Math.max](https://tc39.es/ecma262/#sec-math.max)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.max(...values) | Supported | `Js2IL.Tests/Math/JavaScript/Math_Min_Max_NaN_EmptyArgs.js` | Returns the largest of the given numbers; with no arguments returns -Infinity; if any argument is NaN returns NaN. | 20.2.2.23 |
+
+
 #### [Math.sqrt](https://tc39.es/ecma262/#sec-math.sqrt)
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
 | Math.sqrt(x) | Supported | `Js2IL.Tests/Math/JavaScript/Math_Ceil_Sqrt_Basic.js` | Returns the square root for non-negative inputs; negative or NaN yields NaN; Infinity maps to Infinity. | 20.2.2.24 |
+
+
+#### [Math.pow](https://tc39.es/ecma262/#sec-math.pow)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.pow(x, y) | Supported |  | Exponentiation; consistent with JS semantics including NaN and Infinity cases. | 20.2.2.25 |
+
+
+#### [Math.random](https://tc39.es/ecma262/#sec-math.random)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.random() | Supported |  | Returns a pseudo-random number in the range [0, 1). | 20.2.2.26 |
+
+
+#### [Math.round](https://tc39.es/ecma262/#sec-math.round)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.round(x) | Supported | `Js2IL.Tests/Math/JavaScript/Math_Round_Trunc_NegativeHalves.js` | Rounds to the nearest integer; ties at .5 round up toward +∞; exact -0.5 returns -0. | 20.2.2.27 |
+
+
+#### [Math.sign](https://tc39.es/ecma262/#sec-math.sign)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.sign(x) | Supported | `Js2IL.Tests/Math/JavaScript/Math_Sign_ZeroVariants.js` | Returns 1, -1, 0, -0, or NaN depending on the sign of x; ±Infinity map to ±1. | 20.2.2.28 |
+
+
+#### [Math.sin](https://tc39.es/ecma262/#sec-math.sin)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.sin(x) | Supported |  | Sine of x (radians); NaN propagates; Infinity yields NaN. | 20.2.2.29 |
+
+
+#### [Math.sinh](https://tc39.es/ecma262/#sec-math.sinh)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.sinh(x) | Supported |  | Hyperbolic sine; handles ±0, NaN, ±Infinity per spec. | 20.2.2.30 |
+
+
+#### [Math.tan](https://tc39.es/ecma262/#sec-math.tan)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.tan(x) | Supported |  | Tangent of x (radians); NaN propagates; Infinity yields NaN. | 20.2.2.31 |
+
+
+#### [Math.tanh](https://tc39.es/ecma262/#sec-math.tanh)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.tanh(x) | Supported |  | Hyperbolic tangent; handles ±0, NaN, ±Infinity per spec. | 20.2.2.32 |
+
+
+#### [Math.trunc](https://tc39.es/ecma262/#sec-math.trunc)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.trunc(x) | Supported | `Js2IL.Tests/Math/JavaScript/Math_Round_Trunc_NegativeHalves.js` | Removes fractional part; preserves sign for zero (can return -0). | 20.2.2.33 |
+
+
+#### [Math.min](https://tc39.es/ecma262/#sec-math.min)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.min(...values) | Supported | `Js2IL.Tests/Math/JavaScript/Math_Min_Max_NaN_EmptyArgs.js` | Returns the smallest of the given numbers; with no arguments returns Infinity; if any argument is NaN returns NaN. | 20.2.2.34 |
+
+
+#### [Math.cbrt](https://tc39.es/ecma262/#sec-math.cbrt)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Math.cbrt(x) | Supported | `Js2IL.Tests/Math/JavaScript/Math_Cbrt_Negative.js` | Cube root; handles negative values returning negative result; NaN propagates; Infinity preserved. | 20.2.2.35 |
 
 
 ## [Date Objects](https://tc39.es/ecma262/#sec-date-objects)

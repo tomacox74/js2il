@@ -5,7 +5,14 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 Added
-- Runtime: Math intrinsic ([IntrinsicObject("Math")]) with Math.ceil(x) and Math.sqrt(x). Implements JS ToNumber coercion (undefined → NaN, null → +0, strings parsed invariant) and correct NaN/±Infinity handling; sqrt of negative returns NaN.
+- Runtime: Math intrinsic ([IntrinsicObject("Math")]) — implemented the full function set:
+	- ceil, sqrt, abs, floor, round, trunc, sign
+	- sin, cos, tan, asin, acos, atan, atan2
+	- sinh, cosh, tanh, asinh, acosh, atanh
+	- exp, expm1, log, log10, log1p, log2, pow
+	- min, max, random, cbrt, hypot, fround, imul, clz32
+	Notes: JS ToNumber coercion, correct NaN/±Infinity propagation, and signed zero (-0) preservation where applicable.
+- Runtime: Math value properties (constants): E, LN10, LN2, LOG10E, LOG2E, PI, SQRT1_2, SQRT2.
 - Runtime: Int32Array intrinsic (minimal typed array) with constructor from number or array-like, numeric length, index get/set, and set(source[, offset]) coercing values via ToInt32-style truncation (NaN/±∞/±0 → 0). Registered as [IntrinsicObject("Int32Array")].
 - Runtime Object: integrated Int32Array support in JavaScriptRuntime.Object helpers:
 	- GetItem(object, double index): indexer for Int32Array
@@ -14,13 +21,18 @@ Added
 Tests
 - New Math execution test validating Math.sqrt and Math.ceil:
 	- Math_Ceil_Sqrt_Basic
+- New Math execution tests covering additional methods and semantics:
+	- Math_Round_Trunc_NegativeHalves, Math_Sign_ZeroVariants, Math_Min_Max_NaN_EmptyArgs,
+	  Math_Hypot_Infinity_NaN, Math_Fround_SignedZero, Math_Imul_Clz32_Basics,
+	  Math_Log_Exp_Identity, Math_Cbrt_Negative
 - New TypedArray execution tests validating Int32Array basics and semantics:
 	- TypedArray: Int32Array_Construct_Length
 	- TypedArray: Int32Array_FromArray_CopyAndCoerce
 	- TypedArray: Int32Array_Set_FromArray_WithOffset
 
 Docs
-- ECMAScript 2025 Feature Coverage: added a new "The Math Object" section and documented Math.ceil and Math.sqrt. Regenerated docs/ECMAScript2025_FeatureCoverage.md from JSON.
+- ECMAScript 2025 Feature Coverage: updated "The Math Object" to document the full set of Math function properties listed above. Regenerated docs/ECMAScript2025_FeatureCoverage.md from JSON.
+- ECMAScript 2025 Feature Coverage: marked Math value properties (E, LN10, LN2, LOG10E, LOG2E, PI, SQRT1_2, SQRT2) as Supported. Regenerated docs/ECMAScript2025_FeatureCoverage.md from JSON.
 - ECMAScript 2025 Feature Coverage: added a new "TypedArray Objects" section and documented Int32Array (constructor/length/indexing/set). Regenerated docs/ECMAScript2025_FeatureCoverage.md from JSON.
 
 Changed
