@@ -1431,12 +1431,6 @@ namespace Js2IL.Services.ILGenerators
 
                     // Call instance.set_Item(index,value)
                     _il.LoadLocal(instLocal);                           // instance
-                    if (baseRes.ClrType != typeof(JavaScriptRuntime.Int32Array))
-                    {
-                        // Dynamic runtime type, cast so callvirt binds correctly
-                        _il.OpCode(ILOpCode.Castclass);
-                        _il.Token(_owner.Runtime.GetRuntimeTypeHandle(typeof(JavaScriptRuntime.Int32Array)));
-                    }
                     _il.LoadLocal(idxLocal); _il.OpCode(ILOpCode.Unbox_any); _il.Token(_owner.BclReferences.Int32Type); // index int32
                     _il.LoadLocal(valLocal); _il.OpCode(ILOpCode.Unbox_any); _il.Token(_owner.BclReferences.Int32Type); // value int32
                     var setItemRef = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Int32Array), "set_Item", typeof(void), typeof(int), typeof(int));
