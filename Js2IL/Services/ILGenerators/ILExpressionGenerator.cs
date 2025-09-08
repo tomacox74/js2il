@@ -1441,8 +1441,12 @@ namespace Js2IL.Services.ILGenerators
                     _il.LoadLocal(valLocal); _il.OpCode(ILOpCode.Unbox_any); _il.Token(_owner.BclReferences.Int32Type); // value int32
                     var setItemRef = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Int32Array), "set_Item", typeof(void), typeof(int), typeof(int));
                     _il.OpCode(ILOpCode.Callvirt); _il.Token(setItemRef);
-                    _il.LoadLocal(valLocal); // leave boxed value
-                    return JavascriptType.Number;
+                    // Do not leave the assigned value on the stack here; expression statement
+                    // cleanup did not recognize this specialized fast-path and caused a residual
+                    // stack value (leading to InvalidProgramException). For now we drop it; when
+                    // assignment expression values are consumed (e.g. chained or returned) we can
+                    // re-introduce a conditional emission that preserves the value.
+                    return JavascriptType.Number; // semantic placeholder (value not actually on stack)
                 }
                 // Dynamic fallback: call JavaScriptRuntime.Object.AssignItem(receiver, index, value)
                 // We already evaluated the receiver once (value currently on stack). If its emission had side-effects we can't re-run blindly.
