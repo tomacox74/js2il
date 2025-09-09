@@ -43,6 +43,7 @@ Docs
 
 Changed
 - Runtime: qualify BCL Math usages to global::System.Math in String/Array to avoid name collision with JavaScriptRuntime.Math.
+- IL generation diagnostics: centralized all NotSupportedException throwing through ILEmitHelpers (BinaryOperators, ILMethodGenerator, ILExpressionGenerator, JavaScriptFunctionGenerator) to enrich messages with source file:line:column when AST node info is available.
 - Tooling/docs: compiled scripts/generateFeatureCoverage.js with js2il and used the generated DLL to update docs.
 - Class scope architecture: all class method scope types are now generated; instantiation controlled by a lightweight heuristic to avoid unnecessary objects while enabling closures.
 - IL generation: removed experimental class / method scope warnings; snapshots updated accordingly.
@@ -61,6 +62,7 @@ Fixed
 
 Tests (maintenance)
 - Gated PrimePerformanceCompilationTests behind RUN_INTEGRATION.
+- Removed stale PrimePerformanceCompilationTests.cs (now gated workflow covers scenario) and deleted obsolete empty FunctionGenerator.cs placeholder.
 - Stabilized TryCatch_NoBinding_NoThrow after block scope fix (both generator & execution variants green).
 
 ## v0.1.5 - 2025-09-08
