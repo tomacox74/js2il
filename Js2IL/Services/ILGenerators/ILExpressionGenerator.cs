@@ -1404,6 +1404,68 @@ namespace Js2IL.Services.ILGenerators
                 _il.Token(fieldHandle);
                 return JavascriptType.Object;
             }
+            else if (assignmentExpression.Left is MemberExpression aindex && aindex.Computed)
+            {
+                // Support simple indexed element assignment: target[index] = value for Int32Array.
+                // (Compound assignments like |= will be added later.)
+                // Evaluate receiver once and capture result/type info
+                var baseRes = Emit(aindex.Object, new TypeCoercion() { boxResult = false });
+                bool isKnownInt32 = baseRes.ClrType == typeof(JavaScriptRuntime.Int32Array);
+                if (isKnownInt32)
+                {
+                    // Store base (instance) so we don't double-evaluate side effects
+                    int instLocal = _owner.Variables.AllocateBlockScopeLocal($"IdxAssign_Instance_L{assignmentExpression.Location.Start.Line}C{assignmentExpression.Location.Start.Column}");
+                    _il.StoreLocal(instLocal);
+
+                    // Evaluate index -> int32 then store boxed copy
+                    _ = Emit(aindex.Property, new TypeCoercion() { boxResult = false });
+                    _il.OpCode(ILOpCode.Conv_i4);
+                    int idxLocal = _owner.Variables.AllocateBlockScopeLocal($"IdxAssign_Index_L{assignmentExpression.Location.Start.Line}C{assignmentExpression.Location.Start.Column}");
+                    _il.OpCode(ILOpCode.Box); _il.Token(_owner.BclReferences.Int32Type); _il.StoreLocal(idxLocal);
+
+                    // Evaluate RHS -> int32 then store boxed value (for result)
+                    _ = Emit(assignmentExpression.Right, new TypeCoercion() { boxResult = false });
+                    _il.OpCode(ILOpCode.Conv_i4);
+                    int valLocal = _owner.Variables.AllocateBlockScopeLocal($"IdxAssign_Value_L{assignmentExpression.Location.Start.Line}C{assignmentExpression.Location.Start.Column}");
+                    _il.OpCode(ILOpCode.Box); _il.Token(_owner.BclReferences.Int32Type); _il.StoreLocal(valLocal);
+
+                    // Call instance.set_Item(index,value)
+                    _il.LoadLocal(instLocal);                           // instance
+                    _il.LoadLocal(idxLocal); _il.OpCode(ILOpCode.Unbox_any); _il.Token(_owner.BclReferences.Int32Type); // index int32
+                    _il.LoadLocal(valLocal); _il.OpCode(ILOpCode.Unbox_any); _il.Token(_owner.BclReferences.Int32Type); // value int32
+                    var setItemRef = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Int32Array), "set_Item", typeof(void), typeof(int), typeof(int));
+                    _il.OpCode(ILOpCode.Callvirt); _il.Token(setItemRef);
+                    // Do not leave the assigned value on the stack here; expression statement
+                    // cleanup did not recognize this specialized fast-path and caused a residual
+                    // stack value (leading to InvalidProgramException). For now we drop it; when
+                    // assignment expression values are consumed (e.g. chained or returned) we can
+                    // re-introduce a conditional emission that preserves the value.
+                    return JavascriptType.Number; // semantic placeholder (value not actually on stack)
+                }
+                // Dynamic fallback: call JavaScriptRuntime.Object.AssignItem(receiver, index, value)
+                // We already evaluated the receiver once (value currently on stack). If its emission had side-effects we can't re-run blindly.
+                // Strategy: store first evaluation into a temp local, then reuse.
+                // Receiver value currently on stack: store into temp local for reuse
+                int recvLocal = _owner.Variables.AllocateBlockScopeLocal($"IdxAssign_DynRecv_L{assignmentExpression.Location.Start.Line}C{assignmentExpression.Location.Start.Column}");
+                _il.StoreLocal(recvLocal);
+                _il.LoadLocal(recvLocal); // receiver
+                var idxType = Emit(aindex.Property, new TypeCoercion() { boxResult = true }); // index (boxed)
+                var rhsType = Emit(assignmentExpression.Right, new TypeCoercion() { boxResult = true }); // value (boxed)
+                // Correct method has signature object? AssignItem(object receiver, object index, object value)
+                // Ensure we request method with 3 parameters (object receiver, object index, object value)
+                var assignItemRef = _owner.Runtime.GetStaticMethodRef(
+                    typeof(JavaScriptRuntime.Object),
+                    nameof(JavaScriptRuntime.Object.AssignItem),
+                    typeof(object), // return type
+                    typeof(object), // receiver
+                    typeof(object), // index
+                    typeof(object)); // value
+                _il.OpCode(ILOpCode.Call);
+                _il.Token(assignItemRef);
+                // Ignore returned assigned value for statement contexts
+                _il.OpCode(ILOpCode.Pop);
+                return JavascriptType.Object;
+            }
         else if (assignmentExpression.Left is MemberExpression mex && !mex.Computed && mex.Property is Identifier propId2 && propId2.Name == "exitCode")
             {
                 // <base>.exitCode = <expr> ; if base is Process

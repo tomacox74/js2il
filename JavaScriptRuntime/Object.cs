@@ -146,6 +146,75 @@ namespace JavaScriptRuntime
             }
         }
 
+        /// <summary>
+        /// Dynamic indexed / computed property assignment used when the compiler
+        /// cannot statically bind an Int32Array or Array element store. Returns the
+        /// assigned value (boxed) to match JavaScript assignment expression result.
+        /// Supports:
+        ///  - JavaScriptRuntime.Array (List<object>) with numeric index (expands with nulls)
+        ///  - JavaScriptRuntime.Int32Array (ignored if OOB)
+        ///  - Fallback: throws for unsupported receiver types.
+        /// </summary>
+        public static object? AssignItem(object receiver, object index, object value)
+        {
+            if (receiver == null) throw new ArgumentNullException(nameof(receiver));
+
+            // Coerce index to int (JS ToInt32-ish truncation)
+            int i;
+            switch (index)
+            {
+                case int ii: i = ii; break;
+                case double dd: i = (int)dd; break;
+                case float ff: i = (int)ff; break;
+                case long ll: i = (int)ll; break;
+                case short ss: i = ss; break;
+                case byte bb: i = bb; break;
+                case string s when int.TryParse(s, out var pi): i = pi; break;
+                case bool b: i = b ? 1 : 0; break;
+                default:
+                    try { i = Convert.ToInt32(index); }
+                    catch { i = 0; }
+                    break;
+            }
+            if (i < 0) return value; // negative indexes ignored for now
+
+            if (receiver is Array jsArray)
+            {
+                // Expand with nulls if index >= Count (approximate JS dense array semantics for numeric indexes)
+                while (i >= jsArray.Count) jsArray.Add(null!);
+                jsArray[i] = value;
+                return value;
+            }
+            if (receiver is Int32Array i32)
+            {
+                if (i < i32.length)
+                {
+                    // Coerce value to int32 similar to runtime semantics
+                    int iv;
+                    switch (value)
+                    {
+                        case int vi: iv = vi; break;
+                        case double vd: iv = (int)vd; break;
+                        case float vf: iv = (int)vf; break;
+                        case long vl: iv = (int)vl; break;
+                        case short vs: iv = vs; break;
+                        case byte vb: iv = vb; break;
+                        case bool vb2: iv = vb2 ? 1 : 0; break;
+                        case string s when int.TryParse(s, out var ps): iv = ps; break;
+                        default:
+                            try { iv = Convert.ToInt32(value); }
+                            catch { iv = 0; }
+                            break;
+                    }
+                    i32[i] = iv;
+                }
+                return value;
+            }
+
+            // Future: object / expando numeric property assignment
+            throw new NotSupportedException($"AssignItem not supported for receiver type '{receiver.GetType().FullName}'");
+        }
+
         public static double GetLength(object obj)
         {
             switch (obj)
