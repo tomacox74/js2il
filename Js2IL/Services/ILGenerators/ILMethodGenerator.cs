@@ -102,7 +102,7 @@ namespace Js2IL.Services.ILGenerators
             {
                 if (variableAST.Init == null)
                 {
-                    throw new NotSupportedException("Object destructuring without initializer is not supported");
+                    ILEmitHelpers.ThrowNotSupported("Object destructuring without initializer is not supported", variableAST);
                 }
 
                 // Choose a synthetic temp field name that SymbolTable added. Prefer 'perf' for perf_hooks pattern when available.
@@ -391,7 +391,8 @@ namespace Js2IL.Services.ILGenerators
                     // Empty statements (like standalone semicolons) do nothing
                     break;
                 default:
-                    throw new NotSupportedException($"Unsupported statement type: {statement.Type}");
+                    ILEmitHelpers.ThrowNotSupported($"Unsupported statement type: {statement.Type}", statement);
+                    break; // unreachable
             }
         }
 
@@ -567,7 +568,7 @@ namespace Js2IL.Services.ILGenerators
             }
             else
             {
-                throw new NotSupportedException($"Unsupported for statement initializer type: {forStatement.Init?.Type}");
+                ILEmitHelpers.ThrowNotSupported($"Unsupported for statement initializer type: {forStatement.Init?.Type}", forStatement.Init);
             }
 
             // the labels used in the loop flow control
@@ -687,8 +688,8 @@ namespace Js2IL.Services.ILGenerators
             {
                 // Try resolve via Variables; if unavailable (e.g., for-of header const not pre-registered), fall back to registry
                 var targetVar = _variables.FindVariable(iterVarName!);
-                string targetScopeName;
-                FieldDefinitionHandle targetFieldHandle;
+                string targetScopeName = string.Empty;
+                FieldDefinitionHandle targetFieldHandle = default;
                 if (targetVar != null)
                 {
                     targetScopeName = targetVar.ScopeName;
@@ -713,7 +714,7 @@ namespace Js2IL.Services.ILGenerators
                         }
                         else
                         {
-                            throw new NotSupportedException($"for-of target '{iterVarName}' could not be resolved.");
+                            ILEmitHelpers.ThrowNotSupported($"for-of target '{iterVarName}' could not be resolved.", forOf.Left);
                         }
                     }
                     else
@@ -861,7 +862,7 @@ namespace Js2IL.Services.ILGenerators
         {
             if (throwStatement.Argument == null)
             {
-                throw new NotSupportedException("'throw' without an expression is not supported");
+                ILEmitHelpers.ThrowNotSupported("'throw' without an expression is not supported", throwStatement);
             }
             // Evaluate the expression; should yield an object (preferably JavaScriptRuntime.Error or System.Exception)
             _ = _expressionEmitter.Emit(throwStatement.Argument, new TypeCoercion() { boxResult = true });
@@ -1134,7 +1135,7 @@ namespace Js2IL.Services.ILGenerators
             else
             {
                 // Expression-bodied arrow: evaluate via the child generator's expression emitter to keep logic isolated
-                var bodyExpr = arrowFunction.Body as Expression ?? throw new NotSupportedException("Arrow function body is not an expression");
+                var bodyExpr = arrowFunction.Body as Expression ?? throw ILEmitHelpers.NotSupported("Arrow function body is not an expression", arrowFunction.Body);
                 _ = childGen.ExpressionEmitter.Emit(bodyExpr, new TypeCoercion() { boxResult = true });
                 il.OpCode(ILOpCode.Ret);
             }

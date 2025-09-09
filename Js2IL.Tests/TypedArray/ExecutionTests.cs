@@ -20,5 +20,8 @@ namespace Js2IL.Tests.TypedArray
 
         [Fact]
         public Task BeanCounter_Class_Index_Assign() { var testName = nameof(BeanCounter_Class_Index_Assign); return ExecutionTest(testName); }
+
+        [Fact(Skip = "Temporarily disabled: investigate Int32Array derived shift index access semantics in follow-up PR")]
+        public Task Int32Array_ShiftDerived_Index_Access() { var testName = nameof(Int32Array_ShiftDerived_Index_Access); return ExecutionTest(testName); }
     }
 }

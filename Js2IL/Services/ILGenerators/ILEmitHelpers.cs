@@ -1,6 +1,7 @@
 using System;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Js2IL.Services.ILGenerators
 {
@@ -53,6 +54,38 @@ namespace Js2IL.Services.ILGenerators
         public static void EmitNewObjectArray(this InstructionEncoder il, int length, EntityHandle objectType, Action<InstructionEncoder,int> emitElementAt)
         {
             il.EmitNewArray(length, objectType, emitElementAt);
+        }
+
+        /// <summary>
+        /// Throws a NotSupportedException enriched with source file and start position if an AST node is supplied.
+        /// </summary>
+        /// <param name="message">Human-friendly message describing the unsupported feature.</param>
+        /// <param name="node">Optional AST node for location context.</param>
+    [DoesNotReturn]
+    public static void ThrowNotSupported(string message, Acornima.Ast.Node? node = null)
+        {
+            if (node == null)
+            {
+                throw new NotSupportedException(message);
+            }
+            var loc = node.Location.Start; // Start is sufficient
+            var src = string.IsNullOrEmpty(node.Location.SourceFile) ? "<unknown>" : node.Location.SourceFile;
+            // New format: file:line:column: message
+            throw new NotSupportedException($"{src}:{loc.Line}:{loc.Column}: {message}");
+        }
+
+        /// <summary>
+        /// Returns (does not throw) a NotSupportedException enriched with location so it can be used in expressions like '?? throw'.
+        /// </summary>
+        public static NotSupportedException NotSupported(string message, Acornima.Ast.Node? node = null)
+        {
+            if (node == null)
+            {
+                return new NotSupportedException(message);
+            }
+            var loc = node.Location.Start;
+            var src = string.IsNullOrEmpty(node.Location.SourceFile) ? "<unknown>" : node.Location.SourceFile;
+            return new NotSupportedException($"{src}:{loc.Line}:{loc.Column}: {message}");
         }
     }
 }
