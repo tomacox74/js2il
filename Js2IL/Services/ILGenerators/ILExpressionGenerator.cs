@@ -139,7 +139,7 @@ namespace Js2IL.Services.ILGenerators
                     }
                     else
                     {
-                        throw new NotSupportedException("Unsupported 'this' expression outside of class context");
+                        throw ILEmitHelpers.NotSupported("Unsupported 'this' expression outside of class context", expression);
                     }
                     break;
                 case AssignmentExpression assignmentExpression:
@@ -455,7 +455,7 @@ namespace Js2IL.Services.ILGenerators
                 if (methodName == null)
                 {
                     // Fallback when property cannot be resolved to a name we support
-                    throw new NotSupportedException($"Unsupported member call property kind: {mem.Property.Type}");
+                    throw ILEmitHelpers.NotSupported($"Unsupported member call property kind: {mem.Property.Type}", mem.Property);
                 }
 
                 // If the receiver is definitely a string, route to a dedicated string-method emitter
@@ -577,7 +577,7 @@ namespace Js2IL.Services.ILGenerators
 
                             if (chosen == null)
                             {
-                                throw new NotSupportedException($"Method not found: {rt.FullName}.{methodName} with {callExpression.Arguments.Count} arg(s)");
+                                throw ILEmitHelpers.NotSupported($"Method not found: {rt.FullName}.{methodName} with {callExpression.Arguments.Count} arg(s)", callExpression);
                             }
 
                             var ps = chosen.GetParameters();
@@ -595,7 +595,7 @@ namespace Js2IL.Services.ILGenerators
                             return null;
                         }
                         // Step 4 fallback (legacy): no intrinsic mapping and not a GlobalVariables property
-                        throw new NotSupportedException($"Unsupported member call base identifier: '{baseId.Name}'");
+                        throw ILEmitHelpers.NotSupported($"Unsupported member call base identifier: '{baseId.Name}'", baseId);
                     }
                 }
                 // Receiver is an arbitrary expression (e.g., (expr).method(...))
@@ -653,7 +653,7 @@ namespace Js2IL.Services.ILGenerators
             }
             else
             {
-                throw new NotSupportedException($"Unsupported call expression callee type: {callExpression.Callee.Type}");
+                throw ILEmitHelpers.NotSupported($"Unsupported call expression callee type: {callExpression.Callee.Type}", callExpression.Callee);
             }
         }
 
@@ -720,7 +720,7 @@ namespace Js2IL.Services.ILGenerators
             }
             if (chosen == null)
             {
-                throw new NotSupportedException($"Host intrinsic method not found: {type.FullName}.{methodName} with {callExpression.Arguments.Count} arg(s)");
+                throw ILEmitHelpers.NotSupported($"Host intrinsic method not found: {type.FullName}.{methodName} with {callExpression.Arguments.Count} arg(s)", callExpression);
             }
 
             var ps = chosen.GetParameters();
@@ -777,7 +777,7 @@ namespace Js2IL.Services.ILGenerators
             _ = Emit(receiver, new TypeCoercion { toString = true });
 
             var stringType = JavaScriptRuntime.IntrinsicObjectRegistry.Get("String")
-                ?? throw new NotSupportedException("Host intrinsic 'String' not found");
+                ?? throw ILEmitHelpers.NotSupported("Host intrinsic 'String' not found", callExpression);
 
             // Gather candidate methods by name (case-insensitive to map JS camelCase to CLR PascalCase like LocaleCompare)
             var candidates = stringType
@@ -788,7 +788,7 @@ namespace Js2IL.Services.ILGenerators
 
             if (candidates.Count == 0)
             {
-                throw new NotSupportedException($"Host intrinsic method not found: String.{methodName}");
+                throw ILEmitHelpers.NotSupported($"Host intrinsic method not found: String.{methodName}", callExpression);
             }
 
             // Pre-detect regex literal in arg0 to optionally enable an expanded signature binding
@@ -863,7 +863,7 @@ namespace Js2IL.Services.ILGenerators
 
             if (chosen == null)
             {
-                throw new NotSupportedException($"No compatible overload found for String.{methodName} with {argCount} argument(s)");
+                throw ILEmitHelpers.NotSupported($"No compatible overload found for String.{methodName} with {argCount} argument(s)", callExpression);
             }
 
             // Emit arguments based on the chosen parameters
@@ -873,7 +873,7 @@ namespace Js2IL.Services.ILGenerators
                 // Expect 2 JS args: pattern (regex literal), replacement; expand to (pattern string, replacement string, bool g, bool i)
                 if (!hasRegex || regexPattern is null || argCount != 2)
                 {
-                    throw new NotSupportedException("Regex expansion requires a regex literal as first argument and exactly 2 JS arguments.");
+                    throw ILEmitHelpers.NotSupported("Regex expansion requires a regex literal as first argument and exactly 2 JS arguments.", callExpression);
                 }
                 // pattern
                 _il.Ldstr(_owner.MetadataBuilder, regexPattern);
@@ -988,7 +988,7 @@ namespace Js2IL.Services.ILGenerators
 
             if (chosen == null)
             {
-                throw new NotSupportedException($"Intrinsic method not found: {rt.FullName}.{methodName} with {callExpression.Arguments.Count} arg(s)");
+                throw ILEmitHelpers.NotSupported($"Intrinsic method not found: {rt.FullName}.{methodName} with {callExpression.Arguments.Count} arg(s)", callExpression);
             }
 
             var psChosen = chosen.GetParameters();
@@ -1130,7 +1130,7 @@ namespace Js2IL.Services.ILGenerators
             }
             else
             {
-                throw new NotSupportedException($"Only up to 6 parameters supported currently (got {argCount})");
+                throw ILEmitHelpers.NotSupported($"Only up to 6 parameters supported currently (got {argCount})", callExpression);
             }
             return null;
         }
@@ -1269,9 +1269,9 @@ namespace Js2IL.Services.ILGenerators
                         type = JavascriptType.Null;
                         break;
                     }
-                    throw new NotSupportedException($"Unsupported literal value type: {genericLiteral.Value?.GetType().Name ?? "null"}");
+                    throw ILEmitHelpers.NotSupported($"Unsupported literal value type: {genericLiteral.Value?.GetType().Name ?? "null"}", genericLiteral);
                 default:
-                    throw new NotSupportedException($"Unsupported expression type: {expression.Type}");
+                    throw ILEmitHelpers.NotSupported($"Unsupported expression type: {expression.Type}", expression);
             }
 
             return type;
@@ -1398,7 +1398,7 @@ namespace Js2IL.Services.ILGenerators
                 // Lookup field by current class name
                 if (string.IsNullOrEmpty(_owner.CurrentClassName) || !_classRegistry.TryGetField(_owner.CurrentClassName!, pid.Name, out var fieldHandle))
                 {
-                    throw new NotSupportedException($"Unknown field '{pid.Name}' on class '{_owner.CurrentClassName}'");
+                    throw ILEmitHelpers.NotSupported($"Unknown field '{pid.Name}' on class '{_owner.CurrentClassName}'", pid);
                 }
                 _il.OpCode(ILOpCode.Stfld);
                 _il.Token(fieldHandle);
@@ -1481,11 +1481,11 @@ namespace Js2IL.Services.ILGenerators
                     _il.Token(setExit);
                     return JavascriptType.Number;
                 }
-                throw new NotSupportedException("Assignment to property 'exitCode' is only supported on process object");
+                throw ILEmitHelpers.NotSupported("Assignment to property 'exitCode' is only supported on process object", assignmentExpression.Left);
             }
             else
             {
-                throw new NotSupportedException($"Unsupported assignment target type: {assignmentExpression.Left.Type}");
+                throw ILEmitHelpers.NotSupported($"Unsupported assignment target type: {assignmentExpression.Left.Type}", assignmentExpression.Left);
             }
         }
 
@@ -1611,7 +1611,7 @@ namespace Js2IL.Services.ILGenerators
             }
             else
             {
-                throw new NotSupportedException($"Unsupported unary operator: {op}");
+                throw ILEmitHelpers.NotSupported($"Unsupported unary operator: {op}", unaryExpression);
             }
         }
 
@@ -1697,7 +1697,7 @@ namespace Js2IL.Services.ILGenerators
                 var argc2 = newExpression.Arguments.Count;
                 if (argc2 > 1)
                 {
-                    throw new NotSupportedException($"Only up to 1 constructor argument supported for built-in Error types (got {argc2})");
+                    throw ILEmitHelpers.NotSupported($"Only up to 1 constructor argument supported for built-in Error types (got {argc2})", newExpression);
                 }
                 var ctorRef2 = _runtime.GetErrorCtorRef(cid.Name, argc2);
 
@@ -1713,7 +1713,7 @@ namespace Js2IL.Services.ILGenerators
                 return new ExpressionResult { JsType = JavascriptType.Object, ClrType = errorClrType };
             }
 
-            throw new NotSupportedException($"Unsupported new-expression callee: {newExpression.Callee.Type}");
+            throw ILEmitHelpers.NotSupported($"Unsupported new-expression callee: {newExpression.Callee.Type}", newExpression.Callee);
         }
 
         // Emits the IL for a member access expression and returns both JS and CLR type when known.
@@ -1806,13 +1806,13 @@ namespace Js2IL.Services.ILGenerators
                 var indexType = Emit(memberExpression.Property, new TypeCoercion()).JsType;
                 if (indexType != JavascriptType.Number)
                 {
-                    throw new NotSupportedException("Array index must be numeric expression");
+                    throw ILEmitHelpers.NotSupported("Array index must be numeric expression", memberExpression.Property);
                 }
                 _runtime.InvokeGetItemFromObject();
                 return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
             }
 
-            throw new NotSupportedException("Only 'length', instance fields on known classes, or computed indexing supported.");
+            throw ILEmitHelpers.NotSupported("Only 'length', instance fields on known classes, or computed indexing supported.", memberExpression);
         }
 
         // Generate an object literal using ExpandoObject semantics
@@ -1827,24 +1827,32 @@ namespace Js2IL.Services.ILGenerators
 
             foreach (var property in objectExpression.Properties)
             {
-                if (property is not ObjectProperty objectProperty)
-                    throw new NotSupportedException($"Unsupported object property type: {property.Type}");
-
-                if (objectProperty.Key is not Identifier propertyKey)
-                    throw new NotSupportedException($"Unsupported object property key type: {objectProperty.Key.Type}");
-
-                if (objectProperty.Value is not Expression propertyValue)
-                    throw new NotSupportedException($"Unsupported object property value type: {objectProperty.Value.Type}");
-
-                // Duplicate target object
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup);
-                // Property name
-                _il.Ldstr(_metadataBuilder, propertyKey.Name);
-                // Property value (boxed)
-                _ = Emit(propertyValue, new TypeCoercion() { boxResult = true });
-                // IDictionary[string] set_Item
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
-                _il.Token(_bclReferences.IDictionary_SetItem_Ref);
+                if (property is not ObjectProperty op)
+                {
+                    ILEmitHelpers.ThrowNotSupported($"Unsupported object property type: {property.Type}", property);
+                }
+                else
+                {
+                    if (op.Key is not Identifier keyId)
+                    {
+                        ILEmitHelpers.ThrowNotSupported($"Unsupported object property key type: {op.Key.Type}", op.Key);
+                    }
+                    else
+                    {
+                        if (op.Value is not Expression valueExpr)
+                        {
+                            ILEmitHelpers.ThrowNotSupported($"Unsupported object property value type: {op.Value.Type}", op.Value);
+                        }
+                        else
+                        {
+                            _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup);
+                            _il.Ldstr(_metadataBuilder, keyId.Name);
+                            _ = Emit(valueExpr, new TypeCoercion() { boxResult = true });
+                            _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                            _il.Token(_bclReferences.IDictionary_SetItem_Ref);
+                        }
+                    }
+                }
             }
             // Object remains on stack
         }
@@ -1901,7 +1909,7 @@ namespace Js2IL.Services.ILGenerators
 
             if ((updateExpression.Operator != Acornima.Operator.Increment && updateExpression.Operator != Acornima.Operator.Decrement) || updateExpression.Prefix)
             {
-                throw new NotSupportedException($"Unsupported update expression operator: {updateExpression.Operator} or prefix: {updateExpression.Prefix}");
+                ILEmitHelpers.ThrowNotSupported($"Unsupported update expression operator: {updateExpression.Operator} or prefix: {updateExpression.Prefix}", updateExpression);
             }
 
             // Handle postfix increment (x++) and decrement (x--)
@@ -2084,7 +2092,7 @@ namespace Js2IL.Services.ILGenerators
 
             if (methods.Count == 0)
             {
-                throw new NotSupportedException($"Array method not found: {arrayType.FullName}.{methodName}");
+                ILEmitHelpers.ThrowNotSupported($"Array method not found: {arrayType.FullName}.{methodName}", callExpression);
             }
 
             // Prefer exact arity match first (e.g., parameterless join())

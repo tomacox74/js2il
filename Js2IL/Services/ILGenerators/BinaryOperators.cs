@@ -604,10 +604,11 @@ namespace Js2IL.Services.ILGenerators
                 case Operator.GreaterThanOrEqual:
                 case Operator.Equality:
                 case Operator.StrictEquality:
-                    ApplyComparisonOperator(operatorType, branching);
+                    ApplyComparisonOperator(operatorType, binaryExpression, branching);
                     break;
                 default:
-                    throw new NotSupportedException($"Unsupported binary operator: {operatorType}");
+                    ILEmitHelpers.ThrowNotSupported($"Unsupported binary operator: {operatorType}", binaryExpression);
+                    return; // unreachable
             }
         }
 
@@ -661,7 +662,7 @@ namespace Js2IL.Services.ILGenerators
                             Operator.Multiplication => ILOpCode.Mul,
                             Operator.Division => ILOpCode.Div,
                             Operator.Remainder => ILOpCode.Rem,
-                            _ => throw new NotSupportedException($"Unsupported arithmetic operator: {op}")
+                            _ => throw ILEmitHelpers.NotSupported($"Unsupported arithmetic operator: {op}", binaryExpression)
                         };
                         _il.OpCode(opCode);
                         _il.OpCode(ILOpCode.Box);
@@ -681,7 +682,7 @@ namespace Js2IL.Services.ILGenerators
                             Operator.LeftShift => ILOpCode.Shl,
                             Operator.RightShift => ILOpCode.Shr,
                             Operator.UnsignedRightShift => ILOpCode.Shr_un,
-                            _ => throw new NotSupportedException($"Unsupported bitwise operator: {op}")
+                            _ => throw ILEmitHelpers.NotSupported($"Unsupported bitwise operator: {op}", binaryExpression)
                         };
                         _il.OpCode(bitwiseOpCode);
                         if (op == Operator.UnsignedRightShift) {
@@ -697,7 +698,8 @@ namespace Js2IL.Services.ILGenerators
                         ApplyExponentiationOperator();
                         break;
                     default:
-                        throw new NotSupportedException($"Unsupported arithmetic operator: {op}");
+                        ILEmitHelpers.ThrowNotSupported($"Unsupported arithmetic operator: {op}", binaryExpression);
+                        return; // unreachable
                 }
             }
         }
@@ -731,7 +733,7 @@ namespace Js2IL.Services.ILGenerators
             _il.Token(_bclReferences.DoubleType);
         }
 
-        private void ApplyComparisonOperator(Operator op, ConditionalBranching? branching = null)
+    private void ApplyComparisonOperator(Operator op, BinaryExpression binaryExpression, ConditionalBranching? branching = null)
         {
             ILOpCode compareOpCode;
             ILOpCode branchOpCode;
@@ -759,7 +761,8 @@ namespace Js2IL.Services.ILGenerators
                     branchOpCode = ILOpCode.Beq;
                     break;
                 default:
-                    throw new NotSupportedException($"Unsupported comparison operator: {op}");
+                    ILEmitHelpers.ThrowNotSupported($"Unsupported comparison operator: {op}", binaryExpression);
+                    return; // unreachable
             }
 
             if (branching == null)

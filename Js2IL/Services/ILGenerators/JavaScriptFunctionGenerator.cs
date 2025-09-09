@@ -180,10 +180,12 @@ namespace Js2IL.Services.ILGenerators
         {
             var functionName = (functionDeclaration.Id as Acornima.Ast.Identifier)!.Name;
 
-            if (functionDeclaration.Body is not BlockStatement blockStatement)
+            if (functionDeclaration.Body is not BlockStatement)
             {
-                throw new NotSupportedException($"Unsupported function body type: {functionDeclaration.Body.Type}");
+                ILEmitHelpers.ThrowNotSupported($"Unsupported function body type: {functionDeclaration.Body.Type}", functionDeclaration.Body);
+                throw new InvalidOperationException(); // unreachable, satisfies definite assignment
             }
+            var blockStatement = (BlockStatement)functionDeclaration.Body;
 
             var variables = functionVariables;
             var il = methodGenerator.IL;
