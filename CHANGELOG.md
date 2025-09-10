@@ -19,6 +19,7 @@ Added
 	- GetLength(object): length for Int32Array
 - Compiler: dynamic indexed element assignment (target[index] = value) for Int32Array inside class methods using JavaScriptRuntime.Object.AssignItem fallback; leaves assigned value available for expression contexts while statement contexts discard it.
 - Operators: binary "in" operator (property existence) with runtime helper Object.HasPropertyIn covering: ExpandoObject/anonymous objects, arrays (numeric index bounds check), Int32Array, strings (character index), and reflection fallback for host objects. Emits early in BinaryOperators to avoid duplicate side-effects. Limitations: no prototype chain traversal yet; non-object RHS throws TypeError only for null/undefined (remaining primitives TODO); numeric LHS coerced via ToString for object keys.
+- Operators: inequality (!=) and strict inequality (!==) in both value and branching contexts. Uses Ceq inversion for value results and bne.un for conditional branches; unboxing/coercion aligned with existing equality semantics.
 - Compiler: heuristic class method scope instantiation (ShouldCreateMethodScopeInstance) plus unconditional method scope type registration; enables correct closure binding and removes prior experimental gaps.
 - Validation: reflection-based require() module discovery via [NodeModule] attribute scanning; fail fast if an unknown module name is required.
 
@@ -33,6 +34,8 @@ Tests
 	- TypedArray: Int32Array_Construct_Length
 	- TypedArray: Int32Array_FromArray_CopyAndCoerce
 	- TypedArray: Int32Array_Set_FromArray_WithOffset
+- New BinaryOperator tests for inequality (!=): execution and generator variants (BinaryOperator_NotEqual).
+- New ControlFlow test validating if with != condition: execution and generator variants (ControlFlow_If_NotEqual).
 
 Docs
 - ECMAScript 2025 Feature Coverage: updated "The Math Object" to document the full set of Math function properties listed above. Regenerated docs/ECMAScript2025_FeatureCoverage.md from JSON.

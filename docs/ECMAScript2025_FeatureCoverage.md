@@ -1,4 +1,4 @@
-﻿# ECMAScript 2025 Feature Coverage
+# ECMAScript 2025 Feature Coverage
 
 [ECMAScript® 2025 Language Specification](https://tc39.es/ecma262/)
 
@@ -211,6 +211,8 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
 | Binary == (Equality) | Supported | `Js2IL.Tests/JavaScript/BinaryOperator_Equal.js`<br>`Js2IL.Tests/JavaScript/Function_IsEven_CompareResultToTrue.js` | Covers numeric and boolean equality, including comparisons against literals and function-returned booleans with selective boxing/unboxing. See also generator snapshot: Js2IL.Tests/BinaryOperator/GeneratorTests.BinaryOperator_EqualBoolean.verified.txt. | 13.5.9 |
+| Binary != (Inequality) | Supported | `Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_NotEqual.js`<br>`Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_NotEqual.js` | Value result emitted via Ceq inversion; conditional form branches with bne.un. Unboxing/coercion rules mirror equality operator handling for numbers/booleans. | 13.5.9 |
+| Binary !== (Strict inequality) | Supported |  | Implemented alongside != in the IL generator (value + branching). Dedicated tests to be added; semantics match JavaScript strict inequality (no type coercion). | 13.5.9 |
 
 
 #### [Logical operators (||, &&)](https://tc39.es/ecma262/#sec-binary-logical-operators)
