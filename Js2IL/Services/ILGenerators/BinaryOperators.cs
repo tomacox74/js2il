@@ -135,6 +135,11 @@ namespace Js2IL.Services.ILGenerators
                         }
                         // not fully handled: operands prepared → fall through to ApplyComparisonOperator
                         break;
+                    case Operator.Inequality:
+                    case Operator.StrictInequality:
+                        // For now, prepare operands generically (numeric) to unblock inequality for numeric scenarios
+                        EmitGenericOperands(binaryExpression);
+                        break;
                     default:
                         // Relational operators and other arithmetic (mul/div/rem/exp) operand prep
                         EmitGenericOperands(binaryExpression);
@@ -165,6 +170,8 @@ namespace Js2IL.Services.ILGenerators
                 case Operator.GreaterThanOrEqual:
                 case Operator.Equality:
                 case Operator.StrictEquality:
+                case Operator.Inequality:
+                case Operator.StrictInequality:
                     ApplyComparisonOperator(operatorType, binaryExpression, branching);
                     // For comparisons, value form leaves a boxed boolean; branching leaves stack neutral.
                     return branching == null
@@ -870,6 +877,11 @@ namespace Js2IL.Services.ILGenerators
                     compareOpCode = ILOpCode.Ceq;
                     branchOpCode = ILOpCode.Beq;
                     break;
+                case Operator.Inequality:
+                case Operator.StrictInequality:
+                    compareOpCode = ILOpCode.Ceq; // we'll invert the result for value form
+                    branchOpCode = ILOpCode.Bne_un;
+                    break;
                 default:
                     ILEmitHelpers.ThrowNotSupported($"Unsupported comparison operator: {op}", binaryExpression);
                     return; // unreachable
@@ -894,6 +906,12 @@ namespace Js2IL.Services.ILGenerators
                 else
                 {
                     _il.OpCode(compareOpCode); // compare
+                    if (op == Operator.Inequality || op == Operator.StrictInequality)
+                    {
+                        // invert equality result: result = (a == b) == false
+                        _il.OpCode(ILOpCode.Ldc_i4_0);
+                        _il.OpCode(ILOpCode.Ceq);
+                    }
                     // box it as a boolean result
                     _il.OpCode(ILOpCode.Box);
                     _il.Token(_bclReferences.BooleanType);
