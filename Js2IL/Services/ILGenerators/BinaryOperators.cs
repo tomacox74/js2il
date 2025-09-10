@@ -699,9 +699,31 @@ namespace Js2IL.Services.ILGenerators
 
         private void EmitRelationalOrOtherOperands(BinaryExpression binaryExpression)
         {
-            // Reuse the same preparation logic by routing through the general helper with a non-handled operator
-            // We choose GreaterThan as a representative to trigger the non-plus/minus/equality path.
-            _ = EmitNonBitwiseOperandsAndShortCircuits(binaryExpression, Operator.GreaterThan, branching: null);
+            // Prepare operands for relational or other operators using a dedicated method for clarity.
+            EmitGenericOperands(binaryExpression);
+        }
+
+        /// <summary>
+        /// Prepares operands for binary expressions that are not handled by addition, subtraction, or equality logic.
+        /// Extracts the common numeric operand preparation for relational and other arithmetic operators.
+        /// </summary>
+        private void EmitGenericOperands(BinaryExpression binaryExpression)
+        {
+            // Prepare left operand
+            var leftType = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion()).JsType;
+            if (leftType != JavascriptType.Number)
+            {
+                _il.OpCode(ILOpCode.Unbox_any);
+                _il.Token(_bclReferences.DoubleType);
+            }
+
+            // Prepare right operand
+            var rightType = _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion()).JsType;
+            if (rightType != JavascriptType.Number)
+            {
+                _il.OpCode(ILOpCode.Unbox_any);
+                _il.Token(_bclReferences.DoubleType);
+            }
         }
 
         private void ApplyArithmeticOperator(Operator op, BinaryExpression binaryExpression, bool isBitwiseOrShift = false)
