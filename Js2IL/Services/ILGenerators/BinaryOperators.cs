@@ -137,7 +137,7 @@ namespace Js2IL.Services.ILGenerators
                         break;
                     default:
                         // Relational operators and other arithmetic (mul/div/rem/exp) operand prep
-                        EmitRelationalOrOtherOperands(binaryExpression);
+                        EmitGenericOperands(binaryExpression);
                         break;
                 }
             }
@@ -697,11 +697,7 @@ namespace Js2IL.Services.ILGenerators
         private ExpressionResult? EmitEqualityOperandsAndShortCircuits(BinaryExpression binaryExpression, ConditionalBranching? branching)
             => EmitNonBitwiseOperandsAndShortCircuits(binaryExpression, Operator.Equality, branching);
 
-        private void EmitRelationalOrOtherOperands(BinaryExpression binaryExpression)
-        {
-            // Prepare operands for relational or other operators using a dedicated method for clarity.
-            EmitGenericOperands(binaryExpression);
-        }
+        
 
         /// <summary>
         /// Prepares operands for binary expressions that are not handled by addition, subtraction, or equality logic.
