@@ -234,7 +234,11 @@ namespace Js2IL.Services.ILGenerators
                     }
                     break;
                 case BinaryExpression binaryExpression:
-                    _binaryOperators.Generate(binaryExpression, branching);
+                    {
+                        var res = _binaryOperators.Generate(binaryExpression, typeCoercion, branching);
+                        javascriptType = res.JsType;
+                        clrType = res.ClrType;
+                    }
                     break;
                 case NumericLiteral:
                     javascriptType = LoadValue(expression, typeCoercion);

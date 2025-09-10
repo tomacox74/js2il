@@ -83,7 +83,7 @@ namespace Js2IL.Services.ILGenerators
         }
 
 
-        public void Generate(BinaryExpression binaryExpression, ConditionalBranching? branching = null)
+        public ExpressionResult Generate(BinaryExpression binaryExpression, TypeCoercion typeCoercion, ConditionalBranching? branching = null)
         {
             if (binaryExpression.Left == null || binaryExpression.Right == null)
             {
@@ -95,490 +95,50 @@ namespace Js2IL.Services.ILGenerators
             // Handle short-circuit logical operators first
             if (operatorType == Operator.LogicalOr || operatorType == Operator.LogicalAnd)
             {
-                // Branching form: we can short-circuit without materializing a value
-                if (branching != null)
-                {
-                    // Emit left truthiness check
-                    // Load left (boxed) and call ToBoolean(object)
-                    // Ensure the left operand is boxed as object so ToBoolean(object) can consume it
-                    _ = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion() { boxResult = true });
-                    var toBoolRef = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), typeof(bool), typeof(object));
-                    _il.OpCode(ILOpCode.Call);
-                    _il.Token(toBoolRef);
-
-                    if (operatorType == Operator.LogicalOr)
-                    {
-                        // If left is truthy, branch to true
-                        _il.Branch(ILOpCode.Brtrue, branching.BranchOnTrue);
-                        // Else evaluate right with the same branching
-                        _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion(), CallSiteContext.Expression, branching);
-                    }
-                    else // LogicalAnd
-                    {
-                        // If left is falsy, branch to false (if available) or fall-through
-                        if (branching.BranchOnFalse.HasValue)
-                        {
-                            _il.Branch(ILOpCode.Brfalse, branching.BranchOnFalse.Value);
-                        }
-                        else
-                        {
-                            // No explicit false target; create a local end label to skip right when false
-                            var skipRight = _il.DefineLabel();
-                            _il.Branch(ILOpCode.Brfalse, skipRight);
-                            _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion(), CallSiteContext.Expression, branching);
-                            _il.MarkLabel(skipRight);
-                            return;
-                        }
-                        // Left is true: evaluate right with same branching
-                        _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion(), CallSiteContext.Expression, branching);
-                    }
-                    return;
-                }
-
-                // Value form: result is one of the operands (not coerced to boolean)
-                // We'll box operands as object and choose with short-circuiting.
-                var useLeftLabel = _il.DefineLabel();
-                var endLabel = _il.DefineLabel();
-
-                // Push left (boxed object)
-                _ = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion() { boxResult = true });
-
-                // Duplicate left, test truthiness on the copy
-                _il.OpCode(ILOpCode.Dup);
-                var toBool = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), typeof(bool), typeof(object));
-                _il.OpCode(ILOpCode.Call);
-                _il.Token(toBool);
-
-                if (operatorType == Operator.LogicalOr)
-                {
-                    // If truthy, jump to useLeft (brtrue pops the bool, leaving left on stack)
-                    _il.Branch(ILOpCode.Brtrue, useLeftLabel);
-                }
-                else // LogicalAnd
-                {
-                    // If falsy, jump to useLeft (brfalse pops the bool, leaving left on stack)
-                    _il.Branch(ILOpCode.Brfalse, useLeftLabel);
-                }
-
-                // Else: branch not taken; condition has been popped by the branch instruction. Pop left and evaluate right
-                _il.OpCode(ILOpCode.Pop); // pop left
-
-                // Push right (boxed object) and finish
-                _ = _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion() { boxResult = true });
-                _il.Branch(ILOpCode.Br, endLabel);
-
-                // Use left as result
-                _il.MarkLabel(useLeftLabel);
-                // Stack already has the chosen left object (bool was consumed by branch)
-
-                _il.MarkLabel(endLabel);
-                return;
+                return EmitLogicalOperator(binaryExpression, branching);
             }
 
             // Handle 'in' operator early to avoid generic arithmetic/comparison pipeline
             if (operatorType == Operator.In)
             {
-                // Evaluate left (property key) boxed
-                _ = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion() { boxResult = true });
-                // Evaluate right (object) boxed
-                _ = _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion() { boxResult = true });
-                var hasPropRef = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.HasPropertyIn), typeof(bool), typeof(object), typeof(object));
-                _il.OpCode(ILOpCode.Call);
-                _il.Token(hasPropRef);
-                if (branching == null)
-                {
-                    _il.OpCode(ILOpCode.Box);
-                    _il.Token(_bclReferences.BooleanType);
-                }
-                else
-                {
-                    _il.Branch(ILOpCode.Brtrue, branching.BranchOnTrue);
-                    if (branching.BranchOnFalse.HasValue)
-                    {
-                        _il.Branch(ILOpCode.Br, branching.BranchOnFalse.Value);
-                    }
-                }
-                return;
+                return EmitInOperator(binaryExpression, branching);
             }
 
             bool isBitwiseOrShift = operatorType == Operator.BitwiseAnd || operatorType == Operator.BitwiseOr || operatorType == Operator.BitwiseXor ||
                                     operatorType == Operator.LeftShift || operatorType == Operator.RightShift || operatorType == Operator.UnsignedRightShift;
-            if (isBitwiseOrShift) {
-                _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion());
-                _il.OpCode(ILOpCode.Conv_i4);
-                _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion());
-                _il.OpCode(ILOpCode.Conv_i4);
-            } else {
-                // For + choose between string concat, numeric math, or runtime helper for dynamic types
-                bool plus = operatorType == Operator.Addition;
-                bool minus = operatorType == Operator.Subtraction;
-                bool equality = operatorType == Operator.Equality || operatorType == Operator.StrictEquality;
-                bool staticString = plus && binaryExpression.Left is StringLiteral && (binaryExpression.Right is StringLiteral || binaryExpression.Right is NumericLiteral);
-
-                var leftType = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion()).JsType;
-                // If we're doing an equality comparison and the left is an arithmetic expression,
-                // proactively unbox it to a double so subsequent branch compare works on numerics.
-                bool leftIsArithmeticExpr = binaryExpression.Left is BinaryExpression lbe &&
-                    (lbe.Operator == Operator.Addition || lbe.Operator == Operator.Subtraction ||
-                     lbe.Operator == Operator.Multiplication || lbe.Operator == Operator.Division ||
-                     lbe.Operator == Operator.Remainder || lbe.Operator == Operator.Exponentiation);
-                if (equality && leftIsArithmeticExpr && leftType != JavascriptType.Number)
+            if (isBitwiseOrShift)
+            {
+                EmitBitwiseOrShiftOperands(binaryExpression);
+            }
+            else
+            {
+                // Delegate non-bitwise handling to focused helpers for clarity
+                switch (operatorType)
                 {
-                    _il.OpCode(ILOpCode.Unbox_any);
-                    _il.Token(_bclReferences.DoubleType);
-                    leftType = JavascriptType.Number;
-                }
-                bool leftIsNumericSyntax = binaryExpression.Left is NumericLiteral || (binaryExpression.Left is UnaryExpression ulSyn && ulSyn.Operator.ToString() == "UnaryNegation" && ulSyn.Argument is NumericLiteral) || binaryExpression.Left is Identifier;
-                bool rightIsNumericSyntax = binaryExpression.Right is NumericLiteral || (binaryExpression.Right is UnaryExpression urSyn && urSyn.Operator.ToString() == "UnaryNegation" && urSyn.Argument is NumericLiteral) || binaryExpression.Right is Identifier;
-                bool likelyNumericSyntax = plus && leftIsNumericSyntax && rightIsNumericSyntax;
-                if (equality)
-                {
-                    if (leftType == JavascriptType.Number)
-                    {
-                        // Only unbox when the left operand value is boxed (variables/expressions),
-                        // not when it's a raw numeric literal or simple unary numeric.
-                        bool leftIsRawNumeric = binaryExpression.Left is Acornima.Ast.NumericLiteral
-                            || (binaryExpression.Left is Acornima.Ast.UnaryExpression ul && ul.Operator.ToString() == "UnaryNegation" && ul.Argument is Acornima.Ast.NumericLiteral);
-                        // If left is a BinaryExpression (arithmetic), we've already ensured numeric; avoid double unbox
-                        bool leftIsArithmeticNode = binaryExpression.Left is Acornima.Ast.BinaryExpression;
-                        if (!leftIsRawNumeric && !leftIsArithmeticNode)
+                    case Operator.Addition:
                         {
-                            _il.OpCode(ILOpCode.Unbox_any);
-                            _il.Token(_bclReferences.DoubleType);
+                            var early = EmitAdditionOperandsAndShortCircuits(binaryExpression, branching);
+                            if (early != null) return early;
                         }
-                    }
-                    else if (leftType == JavascriptType.Boolean)
-                    {
-                        // If this is not a literal boolean, unbox (variables/expressions are boxed)
-                        if (!(binaryExpression.Left is Acornima.Ast.BooleanLiteral) && !(binaryExpression.Left is Acornima.Ast.Literal bl && bl.Value is bool))
+                        break;
+                    case Operator.Subtraction:
                         {
-                            _il.OpCode(ILOpCode.Unbox_any);
-                            _il.Token(_bclReferences.BooleanType);
+                            var early = EmitSubtractionOperandsAndShortCircuits(binaryExpression, branching);
+                            if (early != null) return early;
                         }
-                    }
-                    else
-                    {
-                        // If right is a boolean literal/value, coerce left to boolean as well (handles cases like: result == true)
-                        if (binaryExpression.Right is Acornima.Ast.BooleanLiteral || (binaryExpression.Right is Acornima.Ast.Literal brl && brl.Value is bool))
+                        break;
+                    case Operator.Equality:
+                    case Operator.StrictEquality:
                         {
-                            _il.OpCode(ILOpCode.Unbox_any);
-                            _il.Token(_bclReferences.BooleanType);
-                            leftType = JavascriptType.Boolean;
+                            var early = EmitEqualityOperandsAndShortCircuits(binaryExpression, branching);
+                            if (early != null) return early;
                         }
-                    }
-                    // otherwise leave as loaded (e.g., string/object) and Ceq will perform ref equality (acceptable for now)
-                }
-                else
-                {
-                    if (plus)
-                    {
-                        if (likelyNumericSyntax && leftType != JavascriptType.Number)
-                        {
-                            // For numeric-looking 'a + b', unbox left now to keep operand order
-                            _il.OpCode(ILOpCode.Unbox_any);
-                            _il.Token(_bclReferences.DoubleType);
-                            leftType = JavascriptType.Number;
-                        }
-                        // otherwise, defer until after right emit
-                    }
-                    else if (minus)
-                    {
-                        // Defer decision until we know rightType; if both numeric, keep as doubles; otherwise box for runtime
-                    }
-                    else if (leftType != JavascriptType.Number)
-                    {
-                        _il.OpCode(ILOpCode.Unbox_any);
-                        _il.Token(_bclReferences.DoubleType);
-                    }
-                }
-
-                var rightType = _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion() { toString = binaryExpression.Left is StringLiteral }).JsType;
-                // If equality compare and left resolved to number, make right numeric too when reasonable
-                if (equality && leftType == JavascriptType.Number && rightType != JavascriptType.Number)
-                {
-                    bool rightIsNullLiteral = binaryExpression.Right is Acornima.Ast.Literal rl && rl.Value is null;
-                    bool rightIsRawNumeric = binaryExpression.Right is Acornima.Ast.NumericLiteral
-                        || (binaryExpression.Right is Acornima.Ast.UnaryExpression ur && ur.Operator.ToString() == "UnaryNegation" && ur.Argument is Acornima.Ast.NumericLiteral);
-                    if (!rightIsRawNumeric && !rightIsNullLiteral)
-                    {
-                        _il.OpCode(ILOpCode.Unbox_any);
-                        _il.Token(_bclReferences.DoubleType);
-                        rightType = JavascriptType.Number;
-                    }
-                }
-                bool identifiersPair = binaryExpression.Left is Identifier && binaryExpression.Right is Identifier;
-                bool preferNumeric = plus && (leftType == JavascriptType.Number && rightType == JavascriptType.Number || identifiersPair || likelyNumericSyntax);
-                // Special-case: comparing to JS null literal. Our emitter pushes a boxed JavaScriptRuntime.JsNull for null literals.
-                // We want (left == nullLiteral) to be true when left is either CLR null (undefined in our model) OR boxed JsNull.
-                if (equality && binaryExpression.Right is Acornima.Ast.Literal rNull && rNull.Value is null)
-                {
-                    // Stack currently: [left][right(Boxed JsNull)]
-                    // Discard the literal and check left
-                    _il.OpCode(ILOpCode.Pop); // pop right
-                    if (branching == null)
-                    {
-                        var trueLbl = new LabelHandle();
-                        var endLbl = new LabelHandle();
-                        trueLbl = _il.DefineLabel();
-                        endLbl = _il.DefineLabel();
-
-                        // if (left == null) goto true
-                        _il.OpCode(ILOpCode.Dup);
-                        _il.OpCode(ILOpCode.Ldnull);
-                        _il.OpCode(ILOpCode.Ceq);
-                        _il.Branch(ILOpCode.Brtrue, trueLbl);
-
-                        // else if (left is JsNull) goto true
-                        var jsNullTypeRef = _runtime.GetRuntimeTypeHandle(typeof(JavaScriptRuntime.JsNull));
-                        _il.OpCode(ILOpCode.Dup);
-                        _il.OpCode(ILOpCode.Isinst);
-                        _il.Token(jsNullTypeRef);
-                        _il.OpCode(ILOpCode.Ldnull);
-                        _il.OpCode(ILOpCode.Ceq);
-                        _il.OpCode(ILOpCode.Ldc_i4_0);
-                        _il.OpCode(ILOpCode.Ceq);
-                        _il.Branch(ILOpCode.Brtrue, trueLbl);
-
-                        // else: false
-                        _il.OpCode(ILOpCode.Pop); // pop left
-                        _il.OpCode(ILOpCode.Ldc_i4_0);
-                        _il.OpCode(ILOpCode.Box);
-                        _il.Token(_bclReferences.BooleanType);
-                        _il.Branch(ILOpCode.Br, endLbl);
-
-                        // true path
-                        _il.MarkLabel(trueLbl);
-                        _il.OpCode(ILOpCode.Pop); // pop left
-                        _il.OpCode(ILOpCode.Ldc_i4_1);
-                        _il.OpCode(ILOpCode.Box);
-                        _il.Token(_bclReferences.BooleanType);
-
-                        _il.MarkLabel(endLbl);
-                    }
-                    else
-                    {
-                        // Branching form: branch to true if left == null or left is JsNull; else branch to false or pop
-                        var userTrueLbl = branching.BranchOnTrue;
-                        var falseLbl = branching.BranchOnFalse;
-                        // Ensure we don't leave the duplicated 'left' on the stack when branching to true
-                        var cleanupTrue = _il.DefineLabel();
-
-                        // if (left == null) goto cleanupTrue
-                        _il.OpCode(ILOpCode.Dup);
-                        _il.OpCode(ILOpCode.Ldnull);
-                        _il.OpCode(ILOpCode.Ceq);
-                        _il.Branch(ILOpCode.Brtrue, cleanupTrue);
-
-                        // else if (left is JsNull) goto cleanupTrue
-                        var jsNullTypeRef = _runtime.GetRuntimeTypeHandle(typeof(JavaScriptRuntime.JsNull));
-                        _il.OpCode(ILOpCode.Dup);
-                        _il.OpCode(ILOpCode.Isinst);
-                        _il.Token(jsNullTypeRef);
-                        _il.OpCode(ILOpCode.Ldnull);
-                        _il.OpCode(ILOpCode.Ceq);
-                        _il.OpCode(ILOpCode.Ldc_i4_0);
-                        _il.OpCode(ILOpCode.Ceq);
-                        _il.Branch(ILOpCode.Brtrue, cleanupTrue);
-
-                        // else: not equal
-                        _il.OpCode(ILOpCode.Pop); // pop left
-                        if (falseLbl.HasValue)
-                        {
-                            _il.Branch(ILOpCode.Br, falseLbl.Value);
-                        }
-                        else
-                        {
-                            // No false target: discard and continue
-                        }
-
-                        // Cleanup for true branch: pop 'left' then branch to user label
-                        _il.MarkLabel(cleanupTrue);
-                        _il.OpCode(ILOpCode.Pop);
-                        _il.Branch(ILOpCode.Br, userTrueLbl);
-                    }
-                    return;
-                }
-                if (equality)
-                {
-                    if (rightType == JavascriptType.Number)
-                    {
-                        // Only unbox when the right operand value is boxed (variables/expressions),
-                        // not when it's a raw numeric literal or simple unary numeric.
-                        bool rightIsRawNumeric = binaryExpression.Right is Acornima.Ast.NumericLiteral
-                            || (binaryExpression.Right is Acornima.Ast.UnaryExpression ur && ur.Operator.ToString() == "UnaryNegation" && ur.Argument is Acornima.Ast.NumericLiteral);
-                        if (!rightIsRawNumeric)
-                        {
-                            _il.OpCode(ILOpCode.Unbox_any);
-                            _il.Token(_bclReferences.DoubleType);
-                        }
-                    }
-                    else if (rightType == JavascriptType.Boolean)
-                    {
-                        if (!(binaryExpression.Right is Acornima.Ast.BooleanLiteral) && !(binaryExpression.Right is Acornima.Ast.Literal br && br.Value is bool))
-                        {
-                            _il.OpCode(ILOpCode.Unbox_any);
-                            _il.Token(_bclReferences.BooleanType);
-                        }
-                    }
-                    else
-                    {
-                        // If comparing to null literal, ensure left is an object ref (avoid unbox) and then Ceq will compare ref to null.
-                        if (binaryExpression.Right is Acornima.Ast.Literal litNull && litNull.Value is null)
-                        {
-                            // If left is currently unboxed number, box it back to object for a ref compare that will be false, which is JS-like for strict equality to null.
-                            if (leftType == JavascriptType.Number)
-                            {
-                                _il.OpCode(ILOpCode.Box);
-                                _il.Token(_bclReferences.DoubleType);
-                            }
-                            // If left is boolean, also box to keep object ref compare consistent
-                            else if (leftType == JavascriptType.Boolean)
-                            {
-                                _il.OpCode(ILOpCode.Box);
-                                _il.Token(_bclReferences.BooleanType);
-                            }
-                            // No further coercion for null compare
-                        }
-                        // If left evaluated as boolean (or is a boolean literal), coerce right to boolean
-                        if (leftType == JavascriptType.Boolean || binaryExpression.Left is Acornima.Ast.BooleanLiteral || (binaryExpression.Left is Acornima.Ast.Literal lbl && lbl.Value is bool))
-                        {
-                            _il.OpCode(ILOpCode.Unbox_any);
-                            _il.Token(_bclReferences.BooleanType);
-                            rightType = JavascriptType.Boolean;
-                        }
-                    }
-                }
-                else
-                {
-                    if (plus)
-                    {
-                        if (likelyNumericSyntax)
-                        {
-                            // Ensure both sides are numeric (unbox when needed)
-                            if (leftType != JavascriptType.Number)
-                            {
-                                _il.OpCode(ILOpCode.Unbox_any);
-                                _il.Token(_bclReferences.DoubleType);
-                                leftType = JavascriptType.Number;
-                            }
-                            if (rightType != JavascriptType.Number)
-                            {
-                                _il.OpCode(ILOpCode.Unbox_any);
-                                _il.Token(_bclReferences.DoubleType);
-                                rightType = JavascriptType.Number;
-                            }
-                        }
-                        else if (!staticString)
-                        {
-                            // Ensure both operands are objects for runtime Add
-                            if (leftType == JavascriptType.Number)
-                            {
-                                _il.OpCode(ILOpCode.Box);
-                                _il.Token(_bclReferences.DoubleType);
-                            }
-                            else if (leftType == JavascriptType.Boolean)
-                            {
-                                _il.OpCode(ILOpCode.Box);
-                                _il.Token(_bclReferences.BooleanType);
-                            }
-                            if (rightType == JavascriptType.Number)
-                            {
-                                _il.OpCode(ILOpCode.Box);
-                                _il.Token(_bclReferences.DoubleType);
-                            }
-                            else if (rightType == JavascriptType.Boolean)
-                            {
-                                _il.OpCode(ILOpCode.Box);
-                                _il.Token(_bclReferences.BooleanType);
-                            }
-                        }
-                    }
-                    else if (minus)
-                    {
-                        if (leftType == JavascriptType.Number && rightType == JavascriptType.Number)
-                        {
-                            // numeric fast-path; leave as doubles
-                        }
-                        else
-                        {
-                            // ensure both operands are objects for runtime subtract
-                            if (leftType == JavascriptType.Number)
-                            {
-                                _il.OpCode(ILOpCode.Box);
-                                _il.Token(_bclReferences.DoubleType);
-                            }
-                            else if (leftType == JavascriptType.Boolean)
-                            {
-                                _il.OpCode(ILOpCode.Box);
-                                _il.Token(_bclReferences.BooleanType);
-                            }
-                            if (rightType == JavascriptType.Number)
-                            {
-                                _il.OpCode(ILOpCode.Box);
-                                _il.Token(_bclReferences.DoubleType);
-                            }
-                            else if (rightType == JavascriptType.Boolean)
-                            {
-                                _il.OpCode(ILOpCode.Box);
-                                _il.Token(_bclReferences.BooleanType);
-                            }
-                        }
-                    }
-                    else if (rightType != JavascriptType.Number)
-                    {
-                        _il.OpCode(ILOpCode.Unbox_any);
-                        _il.Token(_bclReferences.DoubleType);
-                    }
-                }
-
-                // Emit '+' or '-' now based on analysis; others handled below
-                if (plus)
-                {
-                    if (staticString)
-                    {
-                        // string.Concat(string, string)
-                        var stringSig = new BlobBuilder();
-                        new BlobEncoder(stringSig)
-                            .MethodSignature(isInstanceMethod: false)
-                            .Parameters(2,
-                                returnType => returnType.Type().String(),
-                                parameters =>
-                                {
-                                    parameters.AddParameter().Type().String();
-                                    parameters.AddParameter().Type().String();
-                                });
-                        var concatSig = _metadataBuilder.GetOrAddBlob(stringSig);
-                        var stringConcatMethodRef = _metadataBuilder.AddMemberReference(
-                            _bclReferences.StringType,
-                            _metadataBuilder.GetOrAddString("Concat"),
-                            concatSig);
-                        _il.Call(stringConcatMethodRef);
-                    }
-                    else if (preferNumeric)
-                    {
-                        _il.OpCode(ILOpCode.Add);
-                        _il.OpCode(ILOpCode.Box);
-                        _il.Token(_bclReferences.DoubleType);
-                    }
-                    else
-                    {
-                        _runtime.InvokeOperatorsAdd();
-                    }
-                    return;
-                }
-                if (minus)
-                {
-                    if (leftType == JavascriptType.Number && rightType == JavascriptType.Number)
-                    {
-                        _il.OpCode(ILOpCode.Sub);
-                        _il.OpCode(ILOpCode.Box);
-                        _il.Token(_bclReferences.DoubleType);
-                    }
-                    else
-                    {
-                        _runtime.InvokeOperatorsSubtract();
-                    }
-                    return;
+                        // not fully handled: operands prepared → fall through to ApplyComparisonOperator
+                        break;
+                    default:
+                        // Relational operators and other arithmetic (mul/div/rem/exp) operand prep
+                        EmitRelationalOrOtherOperands(binaryExpression);
+                        break;
                 }
             }
 
@@ -597,7 +157,8 @@ namespace Js2IL.Services.ILGenerators
                 case Operator.RightShift:
                 case Operator.UnsignedRightShift:
                     ApplyArithmeticOperator(operatorType, binaryExpression, isBitwiseOrShift);
-                    break;
+                    // All arithmetic paths box their results to object
+                    return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
                 case Operator.LessThan:
                 case Operator.GreaterThan:
                 case Operator.LessThanOrEqual:
@@ -605,11 +166,542 @@ namespace Js2IL.Services.ILGenerators
                 case Operator.Equality:
                 case Operator.StrictEquality:
                     ApplyComparisonOperator(operatorType, binaryExpression, branching);
-                    break;
+                    // For comparisons, value form leaves a boxed boolean; branching leaves stack neutral.
+                    return branching == null
+                        ? new ExpressionResult { JsType = JavascriptType.Object, ClrType = null }
+                        : new ExpressionResult { JsType = JavascriptType.Unknown, ClrType = null };
                 default:
                     ILEmitHelpers.ThrowNotSupported($"Unsupported binary operator: {operatorType}", binaryExpression);
-                    return; // unreachable
+                    return new ExpressionResult { JsType = JavascriptType.Unknown, ClrType = null }; // unreachable
             }
+        }
+
+        /// <summary>
+        /// Emits IL for short-circuit logical operators (|| and &&), supporting both value and branching forms.
+        /// </summary>
+        private ExpressionResult EmitLogicalOperator(BinaryExpression binaryExpression, ConditionalBranching? branching)
+        {
+            var operatorType = binaryExpression.Operator;
+
+            // Branching form: we can short-circuit without materializing a value
+            if (branching != null)
+            {
+                // Emit left truthiness check
+                // Load left (boxed) and call ToBoolean(object)
+                // Ensure the left operand is boxed as object so ToBoolean(object) can consume it
+                _ = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion() { boxResult = true });
+                var toBoolRef = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), typeof(bool), typeof(object));
+                _il.OpCode(ILOpCode.Call);
+                _il.Token(toBoolRef);
+
+                if (operatorType == Operator.LogicalOr)
+                {
+                    // If left is truthy, branch to true
+                    _il.Branch(ILOpCode.Brtrue, branching.BranchOnTrue);
+                    // Else evaluate right with the same branching
+                    _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion(), CallSiteContext.Expression, branching);
+                }
+                else // LogicalAnd
+                {
+                    // If left is falsy, branch to false (if available) or fall-through
+                    if (branching.BranchOnFalse.HasValue)
+                    {
+                        _il.Branch(ILOpCode.Brfalse, branching.BranchOnFalse.Value);
+                    }
+                    else
+                    {
+                        // No explicit false target; create a local end label to skip right when false
+                        var skipRight = _il.DefineLabel();
+                        _il.Branch(ILOpCode.Brfalse, skipRight);
+                        _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion(), CallSiteContext.Expression, branching);
+                        _il.MarkLabel(skipRight);
+                        return new ExpressionResult { JsType = JavascriptType.Unknown, ClrType = null };
+                    }
+                    // Left is true: evaluate right with same branching
+                    _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion(), CallSiteContext.Expression, branching);
+                }
+                return new ExpressionResult { JsType = JavascriptType.Unknown, ClrType = null };
+            }
+
+            // Value form: result is one of the operands (not coerced to boolean)
+            // We'll box operands as object and choose with short-circuiting.
+            var useLeftLabel = _il.DefineLabel();
+            var endLabel = _il.DefineLabel();
+
+            // Push left (boxed object)
+            _ = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion() { boxResult = true });
+
+            // Duplicate left, test truthiness on the copy
+            _il.OpCode(ILOpCode.Dup);
+            var toBool = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), typeof(bool), typeof(object));
+            _il.OpCode(ILOpCode.Call);
+            _il.Token(toBool);
+
+            if (operatorType == Operator.LogicalOr)
+            {
+                // If truthy, jump to useLeft (brtrue pops the bool, leaving left on stack)
+                _il.Branch(ILOpCode.Brtrue, useLeftLabel);
+            }
+            else // LogicalAnd
+            {
+                // If falsy, jump to useLeft (brfalse pops the bool, leaving left on stack)
+                _il.Branch(ILOpCode.Brfalse, useLeftLabel);
+            }
+
+            // Else: branch not taken; condition has been popped by the branch instruction. Pop left and evaluate right
+            _il.OpCode(ILOpCode.Pop); // pop left
+
+            // Push right (boxed object) and finish
+            _ = _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion() { boxResult = true });
+            _il.Branch(ILOpCode.Br, endLabel);
+
+            // Use left as result
+            _il.MarkLabel(useLeftLabel);
+            // Stack already has the chosen left object (bool was consumed by branch)
+
+            _il.MarkLabel(endLabel);
+            return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
+        }
+
+        /// <summary>
+        /// Emits IL for the JavaScript 'in' operator.
+        /// </summary>
+        private ExpressionResult EmitInOperator(BinaryExpression binaryExpression, ConditionalBranching? branching)
+        {
+            // Evaluate left (property key) boxed
+            _ = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion() { boxResult = true });
+            // Evaluate right (object) boxed
+            _ = _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion() { boxResult = true });
+            var hasPropRef = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.HasPropertyIn), typeof(bool), typeof(object), typeof(object));
+            _il.OpCode(ILOpCode.Call);
+            _il.Token(hasPropRef);
+            if (branching == null)
+            {
+                _il.OpCode(ILOpCode.Box);
+                _il.Token(_bclReferences.BooleanType);
+                return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
+            }
+            else
+            {
+                _il.Branch(ILOpCode.Brtrue, branching.BranchOnTrue);
+                if (branching.BranchOnFalse.HasValue)
+                {
+                    _il.Branch(ILOpCode.Br, branching.BranchOnFalse.Value);
+                }
+                return new ExpressionResult { JsType = JavascriptType.Unknown, ClrType = null };
+            }
+        }
+
+        /// <summary>
+        /// Prepares operands for bitwise and shift operators by coercing both sides to int32.
+        /// </summary>
+        private void EmitBitwiseOrShiftOperands(BinaryExpression binaryExpression)
+        {
+            _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion());
+            _il.OpCode(ILOpCode.Conv_i4);
+            _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion());
+            _il.OpCode(ILOpCode.Conv_i4);
+        }
+
+        /// <summary>
+        /// Emits operands and short-circuits for non-bitwise operators.
+        /// Returns true if the operator was fully handled (e.g., '+', '-', special equality cases), false to continue.
+        /// </summary>
+        private ExpressionResult? EmitNonBitwiseOperandsAndShortCircuits(BinaryExpression binaryExpression, Operator operatorType, ConditionalBranching? branching)
+        {
+            // For + choose between string concat, numeric math, or runtime helper for dynamic types
+            bool plus = operatorType == Operator.Addition;
+            bool minus = operatorType == Operator.Subtraction;
+            bool equality = operatorType == Operator.Equality || operatorType == Operator.StrictEquality;
+            bool staticString = plus && binaryExpression.Left is StringLiteral && (binaryExpression.Right is StringLiteral || binaryExpression.Right is NumericLiteral);
+
+            var leftType = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion()).JsType;
+            // If we're doing an equality comparison and the left is an arithmetic expression,
+            // proactively unbox it to a double so subsequent branch compare works on numerics.
+            bool leftIsArithmeticExpr = binaryExpression.Left is BinaryExpression lbe &&
+                (lbe.Operator == Operator.Addition || lbe.Operator == Operator.Subtraction ||
+                 lbe.Operator == Operator.Multiplication || lbe.Operator == Operator.Division ||
+                 lbe.Operator == Operator.Remainder || lbe.Operator == Operator.Exponentiation);
+            if (equality && leftIsArithmeticExpr && leftType != JavascriptType.Number)
+            {
+                _il.OpCode(ILOpCode.Unbox_any);
+                _il.Token(_bclReferences.DoubleType);
+                leftType = JavascriptType.Number;
+            }
+            bool leftIsNumericSyntax = binaryExpression.Left is NumericLiteral || (binaryExpression.Left is UnaryExpression ulSyn && ulSyn.Operator.ToString() == "UnaryNegation" && ulSyn.Argument is NumericLiteral) || binaryExpression.Left is Identifier;
+            bool rightIsNumericSyntax = binaryExpression.Right is NumericLiteral || (binaryExpression.Right is UnaryExpression urSyn && urSyn.Operator.ToString() == "UnaryNegation" && urSyn.Argument is NumericLiteral) || binaryExpression.Right is Identifier;
+            bool likelyNumericSyntax = plus && leftIsNumericSyntax && rightIsNumericSyntax;
+            if (equality)
+            {
+                if (leftType == JavascriptType.Number)
+                {
+                    // Only unbox when the left operand value is boxed (variables/expressions),
+                    // not when it's a raw numeric literal or simple unary numeric.
+                    bool leftIsRawNumeric = binaryExpression.Left is Acornima.Ast.NumericLiteral
+                        || (binaryExpression.Left is Acornima.Ast.UnaryExpression ul && ul.Operator.ToString() == "UnaryNegation" && ul.Argument is Acornima.Ast.NumericLiteral);
+                    // If left is a BinaryExpression (arithmetic), we've already ensured numeric; avoid double unbox
+                    bool leftIsArithmeticNode = binaryExpression.Left is Acornima.Ast.BinaryExpression;
+                    if (!leftIsRawNumeric && !leftIsArithmeticNode)
+                    {
+                        _il.OpCode(ILOpCode.Unbox_any);
+                        _il.Token(_bclReferences.DoubleType);
+                    }
+                }
+                else if (leftType == JavascriptType.Boolean)
+                {
+                    // If this is not a literal boolean, unbox (variables/expressions are boxed)
+                    if (!(binaryExpression.Left is Acornima.Ast.BooleanLiteral) && !(binaryExpression.Left is Acornima.Ast.Literal bl && bl.Value is bool))
+                    {
+                        _il.OpCode(ILOpCode.Unbox_any);
+                        _il.Token(_bclReferences.BooleanType);
+                    }
+                }
+                else
+                {
+                    // If right is a boolean literal/value, coerce left to boolean as well (handles cases like: result == true)
+                    if (binaryExpression.Right is Acornima.Ast.BooleanLiteral || (binaryExpression.Right is Acornima.Ast.Literal brl && brl.Value is bool))
+                    {
+                        _il.OpCode(ILOpCode.Unbox_any);
+                        _il.Token(_bclReferences.BooleanType);
+                        leftType = JavascriptType.Boolean;
+                    }
+                }
+                // otherwise leave as loaded (e.g., string/object) and Ceq will perform ref equality (acceptable for now)
+            }
+            else
+            {
+                if (plus)
+                {
+                    if (likelyNumericSyntax && leftType != JavascriptType.Number)
+                    {
+                        // For numeric-looking 'a + b', unbox left now to keep operand order
+                        _il.OpCode(ILOpCode.Unbox_any);
+                        _il.Token(_bclReferences.DoubleType);
+                        leftType = JavascriptType.Number;
+                    }
+                    // otherwise, defer until after right emit
+                }
+                else if (minus)
+                {
+                    // Defer decision until we know rightType; if both numeric, keep as doubles; otherwise box for runtime
+                }
+                else if (leftType != JavascriptType.Number)
+                {
+                    _il.OpCode(ILOpCode.Unbox_any);
+                    _il.Token(_bclReferences.DoubleType);
+                }
+            }
+
+            var rightType = _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion() { toString = binaryExpression.Left is StringLiteral }).JsType;
+            // If equality compare and left resolved to number, make right numeric too when reasonable
+            if (equality && leftType == JavascriptType.Number && rightType != JavascriptType.Number)
+            {
+                bool rightIsNullLiteral = binaryExpression.Right is Acornima.Ast.Literal rl && rl.Value is null;
+                bool rightIsRawNumeric = binaryExpression.Right is Acornima.Ast.NumericLiteral
+                    || (binaryExpression.Right is Acornima.Ast.UnaryExpression ur && ur.Operator.ToString() == "UnaryNegation" && ur.Argument is Acornima.Ast.NumericLiteral);
+                if (!rightIsRawNumeric && !rightIsNullLiteral)
+                {
+                    _il.OpCode(ILOpCode.Unbox_any);
+                    _il.Token(_bclReferences.DoubleType);
+                    rightType = JavascriptType.Number;
+                }
+            }
+            bool identifiersPair = binaryExpression.Left is Identifier && binaryExpression.Right is Identifier;
+            bool preferNumeric = plus && (leftType == JavascriptType.Number && rightType == JavascriptType.Number || identifiersPair || likelyNumericSyntax);
+            // Special-case: comparing to JS null literal. Our emitter pushes a boxed JavaScriptRuntime.JsNull for null literals.
+            // We want (left == nullLiteral) to be true when left is either CLR null (undefined in our model) OR boxed JsNull.
+            if (equality && binaryExpression.Right is Acornima.Ast.Literal rNull && rNull.Value is null)
+            {
+                // Stack currently: [left][right(Boxed JsNull)]
+                // Discard the literal and check left
+                _il.OpCode(ILOpCode.Pop); // pop right
+                if (branching == null)
+                {
+                    var trueLbl = new LabelHandle();
+                    var endLbl = new LabelHandle();
+                    trueLbl = _il.DefineLabel();
+                    endLbl = _il.DefineLabel();
+
+                    // if (left == null) goto true
+                    _il.OpCode(ILOpCode.Dup);
+                    _il.OpCode(ILOpCode.Ldnull);
+                    _il.OpCode(ILOpCode.Ceq);
+                    _il.Branch(ILOpCode.Brtrue, trueLbl);
+
+                    // else if (left is JsNull) goto true
+                    var jsNullTypeRef = _runtime.GetRuntimeTypeHandle(typeof(JavaScriptRuntime.JsNull));
+                    _il.OpCode(ILOpCode.Dup);
+                    _il.OpCode(ILOpCode.Isinst);
+                    _il.Token(jsNullTypeRef);
+                    _il.OpCode(ILOpCode.Ldnull);
+                    _il.OpCode(ILOpCode.Ceq);
+                    _il.OpCode(ILOpCode.Ldc_i4_0);
+                    _il.OpCode(ILOpCode.Ceq);
+                    _il.Branch(ILOpCode.Brtrue, trueLbl);
+
+                    // else: false
+                    _il.OpCode(ILOpCode.Pop); // pop left
+                    _il.OpCode(ILOpCode.Ldc_i4_0);
+                    _il.OpCode(ILOpCode.Box);
+                    _il.Token(_bclReferences.BooleanType);
+                    _il.Branch(ILOpCode.Br, endLbl);
+
+                    // true path
+                    _il.MarkLabel(trueLbl);
+                    _il.OpCode(ILOpCode.Pop); // pop left
+                    _il.OpCode(ILOpCode.Ldc_i4_1);
+                    _il.OpCode(ILOpCode.Box);
+                    _il.Token(_bclReferences.BooleanType);
+
+                    _il.MarkLabel(endLbl);
+                }
+                else
+                {
+                    // Branching form: branch to true if left == null or left is JsNull; else branch to false or pop
+                    var userTrueLbl = branching.BranchOnTrue;
+                    var falseLbl = branching.BranchOnFalse;
+                    // Ensure we don't leave the duplicated 'left' on the stack when branching to true
+                    var cleanupTrue = _il.DefineLabel();
+
+                    // if (left == null) goto cleanupTrue
+                    _il.OpCode(ILOpCode.Dup);
+                    _il.OpCode(ILOpCode.Ldnull);
+                    _il.OpCode(ILOpCode.Ceq);
+                    _il.Branch(ILOpCode.Brtrue, cleanupTrue);
+
+                    // else if (left is JsNull) goto cleanupTrue
+                    var jsNullTypeRef = _runtime.GetRuntimeTypeHandle(typeof(JavaScriptRuntime.JsNull));
+                    _il.OpCode(ILOpCode.Dup);
+                    _il.OpCode(ILOpCode.Isinst);
+                    _il.Token(jsNullTypeRef);
+                    _il.OpCode(ILOpCode.Ldnull);
+                    _il.OpCode(ILOpCode.Ceq);
+                    _il.OpCode(ILOpCode.Ldc_i4_0);
+                    _il.OpCode(ILOpCode.Ceq);
+                    _il.Branch(ILOpCode.Brtrue, cleanupTrue);
+
+                    // else: not equal
+                    _il.OpCode(ILOpCode.Pop); // pop left
+                    if (falseLbl.HasValue)
+                    {
+                        _il.Branch(ILOpCode.Br, falseLbl.Value);
+                    }
+                    else
+                    {
+                        // No false target: discard and continue
+                    }
+
+                    // Cleanup for true branch: pop 'left' then branch to user label
+                    _il.MarkLabel(cleanupTrue);
+                    _il.OpCode(ILOpCode.Pop);
+                    _il.Branch(ILOpCode.Br, userTrueLbl);
+                }
+                return branching == null
+                    ? new ExpressionResult { JsType = JavascriptType.Object, ClrType = null }
+                    : new ExpressionResult { JsType = JavascriptType.Unknown, ClrType = null };
+            }
+            if (equality)
+            {
+                if (rightType == JavascriptType.Number)
+                {
+                    // Only unbox when the right operand value is boxed (variables/expressions),
+                    // not when it's a raw numeric literal or simple unary numeric.
+                    bool rightIsRawNumeric = binaryExpression.Right is Acornima.Ast.NumericLiteral
+                        || (binaryExpression.Right is Acornima.Ast.UnaryExpression ur && ur.Operator.ToString() == "UnaryNegation" && ur.Argument is Acornima.Ast.NumericLiteral);
+                    if (!rightIsRawNumeric)
+                    {
+                        _il.OpCode(ILOpCode.Unbox_any);
+                        _il.Token(_bclReferences.DoubleType);
+                    }
+                }
+                else if (rightType == JavascriptType.Boolean)
+                {
+                    if (!(binaryExpression.Right is Acornima.Ast.BooleanLiteral) && !(binaryExpression.Right is Acornima.Ast.Literal br && br.Value is bool))
+                    {
+                        _il.OpCode(ILOpCode.Unbox_any);
+                        _il.Token(_bclReferences.BooleanType);
+                    }
+                }
+                else
+                {
+                    // If comparing to null literal, ensure left is an object ref (avoid unbox) and then Ceq will compare ref to null.
+                    if (binaryExpression.Right is Acornima.Ast.Literal litNull && litNull.Value is null)
+                    {
+                        // If left is currently unboxed number, box it back to object for a ref compare that will be false, which is JS-like for strict equality to null.
+                        if (leftType == JavascriptType.Number)
+                        {
+                            _il.OpCode(ILOpCode.Box);
+                            _il.Token(_bclReferences.DoubleType);
+                        }
+                        // If left is boolean, also box to keep object ref compare consistent
+                        else if (leftType == JavascriptType.Boolean)
+                        {
+                            _il.OpCode(ILOpCode.Box);
+                            _il.Token(_bclReferences.BooleanType);
+                        }
+                        // No further coercion for null compare
+                    }
+                    // If left evaluated as boolean (or is a boolean literal), coerce right to boolean
+                    if (leftType == JavascriptType.Boolean || binaryExpression.Left is Acornima.Ast.BooleanLiteral || (binaryExpression.Left is Acornima.Ast.Literal lbl && lbl.Value is bool))
+                    {
+                        _il.OpCode(ILOpCode.Unbox_any);
+                        _il.Token(_bclReferences.BooleanType);
+                        rightType = JavascriptType.Boolean;
+                    }
+                }
+            }
+            else
+            {
+                if (plus)
+                {
+                    if (likelyNumericSyntax)
+                    {
+                        // Ensure both sides are numeric (unbox when needed)
+                        if (leftType != JavascriptType.Number)
+                        {
+                            _il.OpCode(ILOpCode.Unbox_any);
+                            _il.Token(_bclReferences.DoubleType);
+                            leftType = JavascriptType.Number;
+                        }
+                        if (rightType != JavascriptType.Number)
+                        {
+                            _il.OpCode(ILOpCode.Unbox_any);
+                            _il.Token(_bclReferences.DoubleType);
+                            rightType = JavascriptType.Number;
+                        }
+                    }
+                    else if (!staticString)
+                    {
+                        // Ensure both operands are objects for runtime Add
+                        if (leftType == JavascriptType.Number)
+                        {
+                            _il.OpCode(ILOpCode.Box);
+                            _il.Token(_bclReferences.DoubleType);
+                        }
+                        else if (leftType == JavascriptType.Boolean)
+                        {
+                            _il.OpCode(ILOpCode.Box);
+                            _il.Token(_bclReferences.BooleanType);
+                        }
+                        if (rightType == JavascriptType.Number)
+                        {
+                            _il.OpCode(ILOpCode.Box);
+                            _il.Token(_bclReferences.DoubleType);
+                        }
+                        else if (rightType == JavascriptType.Boolean)
+                        {
+                            _il.OpCode(ILOpCode.Box);
+                            _il.Token(_bclReferences.BooleanType);
+                        }
+                    }
+                }
+                else if (minus)
+                {
+                    if (leftType == JavascriptType.Number && rightType == JavascriptType.Number)
+                    {
+                        // numeric fast-path; leave as doubles
+                    }
+                    else
+                    {
+                        // ensure both operands are objects for runtime subtract
+                        if (leftType == JavascriptType.Number)
+                        {
+                            _il.OpCode(ILOpCode.Box);
+                            _il.Token(_bclReferences.DoubleType);
+                        }
+                        else if (leftType == JavascriptType.Boolean)
+                        {
+                            _il.OpCode(ILOpCode.Box);
+                            _il.Token(_bclReferences.BooleanType);
+                        }
+                        if (rightType == JavascriptType.Number)
+                        {
+                            _il.OpCode(ILOpCode.Box);
+                            _il.Token(_bclReferences.DoubleType);
+                        }
+                        else if (rightType == JavascriptType.Boolean)
+                        {
+                            _il.OpCode(ILOpCode.Box);
+                            _il.Token(_bclReferences.BooleanType);
+                        }
+                    }
+                }
+                else if (rightType != JavascriptType.Number)
+                {
+                    _il.OpCode(ILOpCode.Unbox_any);
+                    _il.Token(_bclReferences.DoubleType);
+                }
+            }
+
+            // Emit '+' or '-' now based on analysis; others handled by the dispatcher
+            if (plus)
+            {
+                if (staticString)
+                {
+                    // string.Concat(string, string)
+                    var stringSig = new BlobBuilder();
+                    new BlobEncoder(stringSig)
+                        .MethodSignature(isInstanceMethod: false)
+                        .Parameters(2,
+                            returnType => returnType.Type().String(),
+                            parameters =>
+                            {
+                                parameters.AddParameter().Type().String();
+                                parameters.AddParameter().Type().String();
+                            });
+                    var concatSig = _metadataBuilder.GetOrAddBlob(stringSig);
+                    var stringConcatMethodRef = _metadataBuilder.AddMemberReference(
+                        _bclReferences.StringType,
+                        _metadataBuilder.GetOrAddString("Concat"),
+                        concatSig);
+                    _il.Call(stringConcatMethodRef);
+                }
+                else if (preferNumeric)
+                {
+                    _il.OpCode(ILOpCode.Add);
+                    _il.OpCode(ILOpCode.Box);
+                    _il.Token(_bclReferences.DoubleType);
+                }
+                else
+                {
+                    _runtime.InvokeOperatorsAdd();
+                }
+                return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
+            }
+            if (minus)
+            {
+                if (leftType == JavascriptType.Number && rightType == JavascriptType.Number)
+                {
+                    _il.OpCode(ILOpCode.Sub);
+                    _il.OpCode(ILOpCode.Box);
+                    _il.Token(_bclReferences.DoubleType);
+                }
+                else
+                {
+                    _runtime.InvokeOperatorsSubtract();
+                }
+                return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
+            }
+
+            // Not fully handled; let the caller dispatch to arithmetic/comparison emitters.
+            return null;
+        }
+
+        // Focused wrappers for readability: delegate to the comprehensive helper above
+        private ExpressionResult? EmitAdditionOperandsAndShortCircuits(BinaryExpression binaryExpression, ConditionalBranching? branching)
+            => EmitNonBitwiseOperandsAndShortCircuits(binaryExpression, Operator.Addition, branching);
+
+        private ExpressionResult? EmitSubtractionOperandsAndShortCircuits(BinaryExpression binaryExpression, ConditionalBranching? branching)
+            => EmitNonBitwiseOperandsAndShortCircuits(binaryExpression, Operator.Subtraction, branching);
+
+        private ExpressionResult? EmitEqualityOperandsAndShortCircuits(BinaryExpression binaryExpression, ConditionalBranching? branching)
+            => EmitNonBitwiseOperandsAndShortCircuits(binaryExpression, Operator.Equality, branching);
+
+        private void EmitRelationalOrOtherOperands(BinaryExpression binaryExpression)
+        {
+            // Reuse the same preparation logic by routing through the general helper with a non-handled operator
+            // We choose GreaterThan as a representative to trigger the non-plus/minus/equality path.
+            _ = EmitNonBitwiseOperandsAndShortCircuits(binaryExpression, Operator.GreaterThan, branching: null);
         }
 
         private void ApplyArithmeticOperator(Operator op, BinaryExpression binaryExpression, bool isBitwiseOrShift = false)
@@ -801,7 +893,7 @@ namespace Js2IL.Services.ILGenerators
                 }
                 else
                 {
-                    _il.OpCode(ILOpCode.Pop); // pop the result of the comparison
+                    // No false target provided; fall through. No stack cleanup required.
                 }
             }
         }
