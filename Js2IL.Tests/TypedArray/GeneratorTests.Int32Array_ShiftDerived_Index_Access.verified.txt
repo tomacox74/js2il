@@ -1,0 +1,102 @@
+// IL code: Int32Array_ShiftDerived_Index_Access
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Int32Array_ShiftDerived_Index_Access
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field public initonly object 'array'
+	.field public initonly object wordOffset
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Int32Array_ShiftDerived_Index_Access::.ctor
+
+} // end of class Scopes.Int32Array_ShiftDerived_Index_Access
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x205c
+		// Header size: 12
+		// Code size: 162 (0xa2)
+		.maxstack 32
+		.entrypoint
+		.locals init (
+			[0] object,
+			[1] object,
+			[2] object,
+			[3] object
+		)
+
+		IL_0000: newobj instance void Scopes.Int32Array_ShiftDerived_Index_Access::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldc.r8 3
+		IL_0010: box [System.Runtime]System.Double
+		IL_0015: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
+		IL_001a: stfld object Scopes.Int32Array_ShiftDerived_Index_Access::'array'
+		IL_001f: ldloc.0
+		IL_0020: ldc.r8 64
+		IL_0029: conv.i4
+		IL_002a: ldc.r8 5
+		IL_0033: conv.i4
+		IL_0034: shr.un
+		IL_0035: conv.u4
+		IL_0036: conv.r8
+		IL_0037: box [System.Runtime]System.Double
+		IL_003c: stfld object Scopes.Int32Array_ShiftDerived_Index_Access::wordOffset
+		IL_0041: ldloc.0
+		IL_0042: ldfld object Scopes.Int32Array_ShiftDerived_Index_Access::'array'
+		IL_0047: stloc.1
+		IL_0048: ldloc.0
+		IL_0049: ldfld object Scopes.Int32Array_ShiftDerived_Index_Access::wordOffset
+		IL_004e: unbox.any [System.Runtime]System.Double
+		IL_0053: conv.i4
+		IL_0054: box [System.Runtime]System.Int32
+		IL_0059: stloc.2
+		IL_005a: ldc.r8 42
+		IL_0063: conv.i4
+		IL_0064: box [System.Runtime]System.Int32
+		IL_0069: stloc.3
+		IL_006a: ldloc.1
+		IL_006b: ldloc.2
+		IL_006c: unbox.any [System.Runtime]System.Int32
+		IL_0071: ldloc.3
+		IL_0072: unbox.any [System.Runtime]System.Int32
+		IL_0077: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(int32, int32)
+		IL_007c: ldc.i4.1
+		IL_007d: newarr [System.Runtime]System.Object
+		IL_0082: dup
+		IL_0083: ldc.i4.0
+		IL_0084: ldloc.0
+		IL_0085: ldfld object Scopes.Int32Array_ShiftDerived_Index_Access::'array'
+		IL_008a: ldloc.0
+		IL_008b: ldfld object Scopes.Int32Array_ShiftDerived_Index_Access::wordOffset
+		IL_0090: unbox.any [System.Runtime]System.Double
+		IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+		IL_009a: stelem.ref
+		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00a0: pop
+		IL_00a1: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

@@ -1421,8 +1421,18 @@ namespace Js2IL.Services.ILGenerators
                     int instLocal = _owner.Variables.AllocateBlockScopeLocal($"IdxAssign_Instance_L{assignmentExpression.Location.Start.Line}C{assignmentExpression.Location.Start.Column}");
                     _il.StoreLocal(instLocal);
 
-                    // Evaluate index -> int32 then store boxed copy
-                    _ = Emit(aindex.Property, new TypeCoercion() { boxResult = false });
+                    // Evaluate index; if not already a JS number, unbox to double (boxed numeric) then convert to int32
+                    var idxExpr = aindex.Property;
+                    var idxJsType = Emit(idxExpr, new TypeCoercion() { boxResult = false }).JsType;
+                    if (idxJsType != JavascriptType.Number)
+                    {
+                        bool likelyBoxedNumeric = idxExpr is Identifier || idxExpr is MemberExpression || idxExpr is ThisExpression;
+                        if (likelyBoxedNumeric)
+                        {
+                            _il.OpCode(ILOpCode.Unbox_any);
+                            _il.Token(_owner.BclReferences.DoubleType);
+                        }
+                    }
                     _il.OpCode(ILOpCode.Conv_i4);
                     int idxLocal = _owner.Variables.AllocateBlockScopeLocal($"IdxAssign_Index_L{assignmentExpression.Location.Start.Line}C{assignmentExpression.Location.Start.Column}");
                     _il.OpCode(ILOpCode.Box); _il.Token(_owner.BclReferences.Int32Type); _il.StoreLocal(idxLocal);
@@ -1807,10 +1817,22 @@ namespace Js2IL.Services.ILGenerators
 
             if (memberExpression.Computed)
             {
-                var indexType = Emit(memberExpression.Property, new TypeCoercion()).JsType;
+                var idxExpr = memberExpression.Property;
+                var indexType = Emit(idxExpr, new TypeCoercion()).JsType;
                 if (indexType != JavascriptType.Number)
                 {
-                    throw ILEmitHelpers.NotSupported("Array index must be numeric expression", memberExpression.Property);
+                    // Heuristic: many indices flow through variables/fields as boxed doubles; unbox to double for runtime GetItem(object, double)
+                    bool likelyBoxedNumeric = idxExpr is Identifier || idxExpr is MemberExpression || idxExpr is ThisExpression;
+                    if (likelyBoxedNumeric)
+                    {
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
+                        _il.Token(_owner.BclReferences.DoubleType);
+                        // Treat as numeric from here
+                    }
+                    else
+                    {
+                        throw ILEmitHelpers.NotSupported("Array index must be numeric expression", memberExpression.Property);
+                    }
                 }
                 _runtime.InvokeGetItemFromObject();
                 return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
