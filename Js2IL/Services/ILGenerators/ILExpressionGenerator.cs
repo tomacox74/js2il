@@ -1927,15 +1927,15 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-    // Handle postfix increment (x++) and decrement (x--) on numeric variables.
-    // Leaves the ORIGINAL value on the evaluation stack (per JS semantics) and updates the variable.
-    private JavascriptType GenerateUpdateExpression(UpdateExpression updateExpression, CallSiteContext context = CallSiteContext.Expression)
+    // Handle increment/decrement (x++, ++x, x--, --x) on identifiers.
+    // Postfix leaves the ORIGINAL value on the stack; prefix leaves UPDATED value.
+        private JavascriptType GenerateUpdateExpression(UpdateExpression updateExpression, CallSiteContext context = CallSiteContext.Expression)
         {
             var _bclReferences = _owner.BclReferences;
 
-            if ((updateExpression.Operator != Acornima.Operator.Increment && updateExpression.Operator != Acornima.Operator.Decrement) || updateExpression.Prefix)
+            if (updateExpression.Operator != Acornima.Operator.Increment && updateExpression.Operator != Acornima.Operator.Decrement)
             {
-                ILEmitHelpers.ThrowNotSupported($"Unsupported update expression operator: {updateExpression.Operator} or prefix: {updateExpression.Prefix}", updateExpression);
+                ILEmitHelpers.ThrowNotSupported($"Unsupported update expression operator: {updateExpression.Operator}", updateExpression);
             }
 
             // Handle postfix increment (x++) and decrement (x--)
@@ -1955,21 +1955,74 @@ namespace Js2IL.Services.ILGenerators
             {
                 throw new InvalidOperationException("Variable reference is null.");
             }
-            var scopeLocalIndex = _variables.GetScopeLocalSlot(variable.ScopeName);
-            if (scopeLocalIndex.Address == -1)
+            // For parameters, we don't need a scope slot; handled in the parameter branch below.
+            // Only resolve scopeLocalIndex for field-backed variables.
+            ScopeObjectReference scopeLocalIndex = new ScopeObjectReference { Location = ObjectReferenceLocation.Local, Address = -1 };
+            if (!variable.IsParameter)
             {
-                throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
+                scopeLocalIndex = _variables.GetScopeLocalSlot(variable.ScopeName);
+                if (scopeLocalIndex.Address == -1)
+                {
+                    throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
+                }
             }
 
+            // Special-case: parameter variables (no backing field when no nested functions). Update via starg.
+            if (variable.IsParameter)
+            {
+                var pindex = variable.ParameterIndex;
+                // Load current numeric value (double)
+                _il.LoadArgument(pindex);
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
+                _il.Token(_bclReferences.DoubleType); // [cur]
+
+                bool isInc = updateExpression.Operator == Acornima.Operator.Increment;
+                if (context == CallSiteContext.Statement)
+                {
+                    // cur (+/-) 1 -> box -> starg
+                    _il.LoadConstantR8(1.0);
+                    _il.OpCode(isInc ? System.Reflection.Metadata.ILOpCode.Add : System.Reflection.Metadata.ILOpCode.Sub);
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
+                    _il.Token(_bclReferences.DoubleType);
+                    _il.StoreArgument(pindex);
+                    return JavascriptType.Unknown;
+                }
+                else
+                {
+                    if (updateExpression.Prefix)
+                    {
+                        // (++x or --x): updated value is the result
+                        _il.LoadConstantR8(1.0);
+                        _il.OpCode(isInc ? System.Reflection.Metadata.ILOpCode.Add : System.Reflection.Metadata.ILOpCode.Sub); // [updated]
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup); // [updated, updated]
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
+                        _il.Token(_bclReferences.DoubleType); // [updated, boxedUpdated]
+                        _il.StoreArgument(pindex); // leaves [updated]
+                        return JavascriptType.Number;
+                    }
+                    else
+                    {
+                        // (x++ or x--): result is original; store updated
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup); // [cur, cur]
+                        _il.LoadConstantR8(1.0);
+                        _il.OpCode(isInc ? System.Reflection.Metadata.ILOpCode.Add : System.Reflection.Metadata.ILOpCode.Sub); // [cur, updated]
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
+                        _il.Token(_bclReferences.DoubleType); // [cur, boxedUpdated]
+                        _il.StoreArgument(pindex); // leaves [cur]
+                        return JavascriptType.Number;
+                    }
+                }
+            }
+
+            // Field-backed (local or parent scope) variable path
             // Algorithm:
             //   1) Load scope and current value
             //   2) Compute UPDATED = value (+/-) 1 and store back (stfld)
-            //   3) Reload UPDATED and reverse (+/-) 1 to produce ORIGINAL on the stack
+            //   3) Produce result: UPDATED for prefix; ORIGINAL for postfix (by reloading updated and reversing +/- 1)
 
             if (context == CallSiteContext.Statement)
             {
                 // Statement-context form to match snapshots (no Dup; load scope twice)
-                // Stack flow: [A] [A,B] -> [A,value] -> [A,updatedObj] -> []
                 EmitLoadScopeObject(scopeLocalIndex);                 // [A]
                 EmitLoadScopeObject(scopeLocalIndex);                 // [A, B]
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld); // [A, valueObj]
@@ -1989,10 +2042,11 @@ namespace Js2IL.Services.ILGenerators
                 _il.Token(_bclReferences.DoubleType);                  // [A, boxedUpdated]
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld);
                 _il.Token(variable.FieldHandle);                        // []
+                return JavascriptType.Unknown;
             }
             else
             {
-                // Expression-context: use Dup pattern and compute original value after store
+                // Expression-context
                 // 1) Load scope and current value
                 EmitLoadScopeObject(scopeLocalIndex);                 // [scope]
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup);   // [scope, scope]
@@ -2015,33 +2069,29 @@ namespace Js2IL.Services.ILGenerators
                 _il.Token(_bclReferences.DoubleType);                  // [scope, boxedUpdated]
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld);
                 _il.Token(variable.FieldHandle);                        // []
-            }
 
-            // 3) Reload UPDATED and reverse +/- 1 to get ORIGINAL (expression result) unless in statement context
-            if (context == CallSiteContext.Expression)
-            {
+                // 3) Reload UPDATED and optionally reverse to get ORIGINAL
                 EmitLoadScopeObject(scopeLocalIndex);                   // [scope]
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld);  // [valueObj]
                 _il.Token(variable.FieldHandle);
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
                 _il.Token(_bclReferences.DoubleType);                   // [updated]
-                _il.LoadConstantR8(1.0);
-                if (updateExpression.Operator == Acornima.Operator.Increment)
+
+                if (!updateExpression.Prefix)
                 {
-                    // original = updated - 1
-                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Sub);
-                }
-                else // Decrement
-                {
-                    // original = updated + 1
-                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Add);
+                    _il.LoadConstantR8(1.0);
+                    if (updateExpression.Operator == Acornima.Operator.Increment)
+                    {
+                        // original = updated - 1
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Sub);
+                    }
+                    else // Decrement
+                    {
+                        // original = updated + 1
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Add);
+                    }
                 }
                 return JavascriptType.Number;
-            }
-            else
-            {
-                // Statement context: no value expected on stack
-                return JavascriptType.Unknown;
             }
         }
 
