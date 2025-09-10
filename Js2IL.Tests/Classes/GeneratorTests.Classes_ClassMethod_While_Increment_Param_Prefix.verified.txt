@@ -1,0 +1,177 @@
+﻿// IL code: Classes_ClassMethod_While_Increment_Param_Prefix
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Classes_ClassMethod_While_Increment_Param_Prefix
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Counter
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit run
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Block_L3C18
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x206b
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Block_L3C18::.ctor
+
+			} // end of class Block_L3C18
+
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2062
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method run::.ctor
+
+		} // end of class run
+
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Counter::.ctor
+
+	} // end of class Counter
+
+
+	// Fields
+	.field public object Counter
+	.field public initonly object c
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Classes_ClassMethod_While_Increment_Param_Prefix::.ctor
+
+} // end of class Scopes.Classes_ClassMethod_While_Increment_Param_Prefix
+
+.class public auto ansi beforefieldinit Classes.Counter
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2074
+		// Header size: 1
+		// Code size: 7 (0x7)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: ret
+	} // end of method Counter::.ctor
+
+	.method public hidebysig 
+		instance object run (
+			object ''
+		) cil managed 
+	{
+		// Method begins at RVA 0x207c
+		// Header size: 1
+		// Code size: 55 (0x37)
+		.maxstack 8
+
+		// loop start
+			IL_0000: ldarg.1
+			IL_0001: unbox.any [System.Runtime]System.Double
+			IL_0006: ldc.r8 3
+			IL_000f: blt IL_0019
+
+			IL_0014: br IL_0035
+
+			IL_0019: ldarg.1
+			IL_001a: unbox.any [System.Runtime]System.Double
+			IL_001f: ldc.r8 1
+			IL_0028: add
+			IL_0029: box [System.Runtime]System.Double
+			IL_002e: starg.s 1
+			IL_0030: br IL_0000
+		// end loop
+
+		IL_0035: ldnull
+		IL_0036: ret
+	} // end of method Counter::run
+
+} // end of class Classes.Counter
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20b4
+		// Header size: 12
+		// Code size: 44 (0x2c)
+		.maxstack 32
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Classes_ClassMethod_While_Increment_Param_Prefix::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: newobj instance void Classes.Counter::.ctor()
+		IL_000c: stfld object Scopes.Classes_ClassMethod_While_Increment_Param_Prefix::c
+		IL_0011: ldloc.0
+		IL_0012: ldfld object Scopes.Classes_ClassMethod_While_Increment_Param_Prefix::c
+		IL_0017: ldc.r8 0.0
+		IL_0020: box [System.Runtime]System.Double
+		IL_0025: callvirt instance object Classes.Counter::run(object)
+		IL_002a: pop
+		IL_002b: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
