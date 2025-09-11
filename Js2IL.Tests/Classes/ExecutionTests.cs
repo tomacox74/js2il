@@ -28,7 +28,7 @@ namespace Js2IL.Tests.Classes
         public Task Classes_ClassConstructor_New_In_ArrowFunction()
         {
             var testName = nameof(Classes_ClassConstructor_New_In_ArrowFunction);
-            // Allow unhandled exception so we can snapshot stdout if any; but skipped for now
+            // Allow unhandled exception so we can snapshot stdout if any; test now passes
             return ExecutionTest(testName, allowUnhandledException: true);
         }
 
