@@ -51,5 +51,11 @@ namespace Js2IL.Tests.String
             // Nested function calls startsWith on a string parameter (slow path via Object.CallMember)
             return ExecutionTest(nameof(String_StartsWith_NestedParam));
         }
+
+        [Fact]
+        public Task String_Split_Basic()
+        {
+            return ExecutionTest(nameof(String_Split_Basic));
+        }
     }
 }

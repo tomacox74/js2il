@@ -193,5 +193,142 @@ namespace JavaScriptRuntime
             if (ia == a.Length && ib == b.Length) return 0;
             return ia == a.Length ? -1 : 1;
         }
+
+        /// <summary>
+        /// Implements a subset of String.prototype.split(separator[, limit]).
+        /// Supports string or regular expression separators and optional limit.
+        /// Returns a JavaScriptRuntime.Array of strings.
+        /// </summary>
+        public static object Split(string input, object? separatorOrPattern)
+        {
+            return Split(input, separatorOrPattern, null);
+        }
+
+        /// <summary>
+        /// Split with optional limit. Separator can be string, Regex, or null/undefined.
+        /// </summary>
+        public static object Split(string input, object? separatorOrPattern, object? limit)
+        {
+            input ??= string.Empty;
+            int maxCount = ToSplitLimit(limit);
+            if (maxCount == 0)
+            {
+                return new JavaScriptRuntime.Array();
+            }
+
+            // Undefined/null separator => return [input]
+            if (separatorOrPattern == null)
+            {
+                var one = new JavaScriptRuntime.Array(1) { input };
+                return one;
+            }
+
+            // Regex separator path
+            if (separatorOrPattern is Regex rx)
+            {
+                return SplitWithRegex(input, rx, maxCount);
+            }
+
+            // String (or coercible) separator
+            var sep = DotNet2JSConversions.ToString(separatorOrPattern);
+            if (sep.Length == 0)
+            {
+                // Empty string => split into UTF-16 code units
+                int take = global::System.Math.Min(input.Length, maxCount);
+                var arr = new JavaScriptRuntime.Array(take);
+                for (int i = 0; i < take; i++) arr.Add(input[i].ToString());
+                return arr;
+            }
+
+            // Manual split to enforce Ordinal comparison and JS-like limit behavior
+            var result = new JavaScriptRuntime.Array();
+            int start = 0;
+            while (true)
+            {
+                if (result.Count >= maxCount) break;
+                int idx = input.IndexOf(sep, start, StringComparison.Ordinal);
+                if (idx < 0)
+                {
+                    // Remainder (including empty string when separator at end)
+                    result.Add(idx == -1 ? input.Substring(start) : string.Empty);
+                    break;
+                }
+
+                result.Add(input.Substring(start, idx - start));
+                start = idx + sep.Length;
+
+                // If start == input.Length and we split at the end, append empty string (JS behavior)
+                if (start == input.Length && result.Count < maxCount)
+                {
+                    result.Add(string.Empty);
+                    break;
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Split using a regex pattern with flags provided by the generator.
+        /// Currently only ignoreCase is observed for split behavior.
+        /// </summary>
+        public static object Split(string input, string pattern, bool ignoreCase)
+        {
+            return Split(input, pattern, ignoreCase, null);
+        }
+
+        /// <summary>
+        /// Split using a regex pattern with optional ignoreCase and limit.
+        /// </summary>
+        public static object Split(string input, string pattern, bool ignoreCase, object? limit)
+        {
+            input ??= string.Empty;
+            int maxCount = ToSplitLimit(limit);
+            if (maxCount == 0) return new JavaScriptRuntime.Array();
+            var options = RegexOptions.CultureInvariant;
+            if (ignoreCase) options |= RegexOptions.IgnoreCase;
+            var rx = new Regex(pattern, options);
+            return SplitWithRegex(input, rx, maxCount);
+        }
+
+        private static object SplitWithRegex(string input, Regex rx, int maxCount)
+        {
+            var parts = rx.Split(input);
+            var arr = new JavaScriptRuntime.Array(parts.Length);
+            for (int i = 0; i < parts.Length && i < maxCount; i++)
+            {
+                arr.Add(parts[i] ?? string.Empty);
+            }
+            return arr;
+        }
+
+        private static int ToSplitLimit(object? limit)
+        {
+            if (limit == null) return int.MaxValue; // Omitted => effectively unlimited
+            try
+            {
+                double d;
+                switch (limit)
+                {
+                    case double dd: d = dd; break;
+                    case float ff: d = ff; break;
+                    case int ii: d = ii; break;
+                    case long ll: d = ll; break;
+                    case short ss: d = ss; break;
+                    case byte bb: d = bb; break;
+                    case string s when double.TryParse(s, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var pd):
+                        d = pd; break;
+                    case IConvertible conv:
+                        d = conv.ToDouble(System.Globalization.CultureInfo.InvariantCulture); break;
+                    default:
+                        return int.MaxValue;
+                }
+                if (double.IsNaN(d) || d <= 0) return 0;
+                if (d > int.MaxValue) return int.MaxValue;
+                // Truncate toward zero
+                d = d >= 0 ? global::System.Math.Floor(d) : global::System.Math.Ceiling(d);
+                return (int)d;
+            }
+            catch { return int.MaxValue; }
+        }
     }
 }
