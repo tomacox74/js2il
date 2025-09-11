@@ -130,6 +130,18 @@ namespace JavaScriptRuntime
         {
             var intIndex = Convert.ToInt32(index);
 
+            // ExpandoObject (object literal): numeric index coerces to property name string per JS ToPropertyKey
+            if (obj is System.Dynamic.ExpandoObject exp)
+            {
+                var dict = (IDictionary<string, object?>)exp;
+                var propName = index.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                if (dict.TryGetValue(propName, out var value))
+                {
+                    return value!;
+                }
+                return null!; // closest to JS 'undefined' (we model as null)
+            }
+
             if (obj is Array array)
             {
                 return array[intIndex];
