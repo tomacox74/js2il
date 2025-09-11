@@ -990,7 +990,8 @@ namespace Js2IL.Services.ILGenerators
             // Build method body using a fresh ILMethodGenerator so we never mutate the parent generator's state
             var functionVariables = new Variables(_variables, registryScopeName, paramNames, isNestedFunction: true);
             var pnames = paramNames ?? Array.Empty<string>();
-            var childGen = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator);
+            // Share the parent ClassRegistry so nested functions can resolve declared classes
+            var childGen = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator, _classRegistry);
             var il = childGen.IL;
 
             // For arrow functions, we do NOT pre-instantiate a local scope nor initialize parameter fields
@@ -1199,7 +1200,8 @@ namespace Js2IL.Services.ILGenerators
         {
             var functionVariables = new Variables(_variables, registryScopeName, paramNames, isNestedFunction: true);
             var pnames = paramNames ?? Array.Empty<string>();
-            var childGen = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator);
+            // Share the parent ClassRegistry so nested functions can resolve declared classes
+            var childGen = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator, _classRegistry);
             var il = childGen.IL;
 
             // Function expressions use block bodies; create local scope if fields exist and init parameter fields
