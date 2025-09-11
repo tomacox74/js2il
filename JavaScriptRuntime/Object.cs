@@ -281,6 +281,58 @@ namespace JavaScriptRuntime
             return null;
         }
 
+        /// <summary>
+        /// Dynamic property assignment used when the compiler cannot bind a static setter.
+        /// Supports:
+        ///  - ExpandoObject (object literal): sets/overwrites the named property
+        ///  - Reflection fallback: sets public instance property/field when writable
+        ///  - Arrays/typed arrays: currently no custom properties; silently ignore and return value
+        /// Returns the assigned value to match JavaScript assignment expression semantics.
+        /// </summary>
+        public static object? SetProperty(object obj, string name, object? value)
+        {
+            if (obj == null) throw new ArgumentNullException(nameof(obj));
+            if (string.IsNullOrEmpty(name)) return value;
+
+            // ExpandoObject support
+            if (obj is System.Dynamic.ExpandoObject exp)
+            {
+                var dict = (IDictionary<string, object?>)exp;
+                dict[name] = value;
+                return value;
+            }
+
+            // Arrays / typed arrays: ignore arbitrary properties for now
+            if (obj is Array || obj is Int32Array)
+            {
+                return value;
+            }
+
+            // Reflection fallback: settable property or public field
+            try
+            {
+                var type = obj.GetType();
+                var prop = type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+                if (prop != null && prop.CanWrite)
+                {
+                    prop.SetValue(obj, value);
+                    return value;
+                }
+                var field = type.GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+                if (field != null)
+                {
+                    field.SetValue(obj, value);
+                    return value;
+                }
+            }
+            catch
+            {
+                // Swallow and fall through to return value to mimic JS permissiveness
+            }
+
+            return value;
+        }
+
         // Dynamic instance method invocation fallback for host/intrinsic objects when the CLR type
         // is not known at compile-time (e.g., fs.readFileSync within a nested function).
         // Attempts a minimal overload resolution:

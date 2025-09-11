@@ -5,6 +5,7 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 Added
+- Compiler/Runtime: dynamic object property assignment (obj.prop = value) for non-computed MemberExpressions. Emitter now lowers to JavaScriptRuntime.Object.SetProperty for dynamic objects; typed property setters/fields are used when available. Supports ExpandoObject (object literal) and reflection-backed host objects; arrays/typed arrays ignore arbitrary dot properties. New Literals tests cover generator and execution for property assignment.
 - Compiler: object literals now support Identifier, StringLiteral, and NumericLiteral property keys. Numeric keys are coerced to strings using invariant culture (JS ToPropertyKey semantics) during IL emission.
 - Runtime Object: GetItem(object, double index) supports ExpandoObject (object literal) by coercing the numeric index to a string property name and returning its value (null to model undefined when absent).
 - Runtime: Math intrinsic ([IntrinsicObject("Math")]) — implemented the full function set:
@@ -26,6 +27,8 @@ Added
 - Validation: reflection-based require() module discovery via [NodeModule] attribute scanning; fail fast if an unknown module name is required.
 
 Tests
+- Literals: added generator and execution tests for property assignment on object literal:
+	- ObjectLiteral_PropertyAssign (prints { a: 1, b: 2 })
 - Literals: added generator and execution tests for numeric-key object literal access:
 	- ObjectLiteral_NumericKey (prints 1)
 - Tests cleanup: removed obsolete Prime subgroup used for earlier reproduction of the numeric key bug.
@@ -43,6 +46,7 @@ Tests
 - New ControlFlow test validating if with != condition: execution and generator variants (ControlFlow_If_NotEqual).
 
 Docs
+- ECMAScript 2025 Feature Coverage: marked simple assignment for property targets (obj.prop = value) as Supported under Assignment Operators; regenerated markdown pending.
 - ECMAScript 2025 Feature Coverage: updated "The Math Object" to document the full set of Math function properties listed above. Regenerated docs/ECMAScript2025_FeatureCoverage.md from JSON.
 - ECMAScript 2025 Feature Coverage: marked Math value properties (E, LN10, LN2, LOG10E, LOG2E, PI, SQRT1_2, SQRT2) as Supported. Regenerated docs/ECMAScript2025_FeatureCoverage.md from JSON.
 - ECMAScript 2025 Feature Coverage: added a new "TypedArray Objects" section and documented Int32Array (constructor/length/indexing/set). Regenerated docs/ECMAScript2025_FeatureCoverage.md from JSON.
