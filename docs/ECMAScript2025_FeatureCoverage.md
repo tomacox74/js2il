@@ -741,6 +741,13 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | String.prototype.startsWith | Supported | `Js2IL.Tests/JavaScript/String_StartsWith_Basic.js` | Reflection-based string dispatch routes CLR string receivers to JavaScriptRuntime.String.StartsWith with optional position argument. Returns a boolean value (boxed). | 24.1.3 |
 
 
+#### [String.prototype.split](https://tc39.es/ecma262/#sec-string.prototype.split)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| String.prototype.split | Supported | `Js2IL.Tests/JavaScript/String_Split_Basic.js` | Supports string and regular-expression separators and optional limit. Implemented via JavaScriptRuntime.String.Split and returned as JavaScriptRuntime.Array. Separator omitted or undefined returns [input]. Empty string separator splits into individual UTF-16 code units. | 24.1.3 |
+
+
 #### [String.prototype.replace](https://tc39.es/ecma262/#sec-string.prototype.replace)
 
 | Feature | Status | Test Scripts | Notes | Section |

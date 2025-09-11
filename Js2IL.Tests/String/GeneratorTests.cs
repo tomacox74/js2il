@@ -54,5 +54,12 @@ namespace Js2IL.Tests.String
             var testName = nameof(String_StartsWith_NestedParam);
             return GenerateTest(testName);
         }
+
+        [Fact]
+        public Task String_Split_Basic()
+        {
+            var testName = nameof(String_Split_Basic);
+            return GenerateTest(testName);
+        }
     }
 }

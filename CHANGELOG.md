@@ -53,6 +53,11 @@ Docs
 - ECMAScript 2025 Feature Coverage: marked binary "in" operator as Supported (own property / array index / string index / typed array index only; prototype chain and full RHS TypeError semantics pending) and regenerated markdown.
 - Updated docs (implicit): removed obsolete experimental warnings for classes/arrow functions after stabilizing method scope strategy.
 
+- Strings: String.prototype.split with string/regex separator and optional limit. Implemented in JavaScriptRuntime.String.Split and routed via JavaScriptRuntime.Object.CallMember for CLR string receivers. Returns JavaScriptRuntime.Array. Basic generator and execution tests added (String_Split_Basic).
+
+Docs
+- ECMAScript 2025 Feature Coverage: added String.prototype.split and regenerated docs/ECMAScript2025_FeatureCoverage.md from JSON.
+
 Changed
 - Runtime: qualify BCL Math usages to global::System.Math in String/Array to avoid name collision with JavaScriptRuntime.Math.
 - IL generation diagnostics: centralized all NotSupportedException throwing through ILEmitHelpers (BinaryOperators, ILMethodGenerator, ILExpressionGenerator, JavaScriptFunctionGenerator) to enrich messages with source file:line:column when AST node info is available.
