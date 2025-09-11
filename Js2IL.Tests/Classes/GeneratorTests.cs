@@ -21,9 +21,9 @@ namespace Js2IL.Tests.Classes
         [Fact] public Task Classes_ClassMethod_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_CallsAnotherMethod); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassMethod_ForLoop_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_ForLoop_CallsAnotherMethod); return GenerateTest(testName); }
 
-        // Repro: new ClassName() inside an arrow function fails to resolve the declared class in nested generator context
-        // Current behavior (bug): codegen in arrow function cannot see ClassRegistry entry and may reference a non-existent runtime type,
-        // leading to a TypeLoadException at execution time. Keep skipped until the bug is fixed.
+    // Repro: new ClassName() inside an arrow function failed to resolve the declared class in nested generator context.
+    // Bug has been fixed: codegen in arrow/function now shares the parent ClassRegistry and targets the declared class.
+    // Test is now active.
         [Fact]
         public Task Classes_ClassConstructor_New_In_ArrowFunction()
         {

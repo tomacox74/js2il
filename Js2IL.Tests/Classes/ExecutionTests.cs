@@ -22,7 +22,8 @@ namespace Js2IL.Tests.Classes
         [Fact] public Task Classes_ClassMethod_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_CallsAnotherMethod); return ExecutionTest(testName); }
         [Fact] public Task Classes_ClassMethod_ForLoop_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_ForLoop_CallsAnotherMethod); return ExecutionTest(testName); }
 
-        // Repro (skipped): execution surfaces TypeLoadException when new-ing a class inside an arrow function
+    // Repro (fixed): previously surfaced a TypeLoadException when new-ing a class inside an arrow function.
+    // Bug fixed by sharing ClassRegistry with nested generators; test is active.
         [Fact]
         public Task Classes_ClassConstructor_New_In_ArrowFunction()
         {
