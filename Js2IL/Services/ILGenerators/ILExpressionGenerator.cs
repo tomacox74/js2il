@@ -1497,6 +1497,21 @@ namespace Js2IL.Services.ILGenerators
                 }
                 throw ILEmitHelpers.NotSupported("Assignment to property 'exitCode' is only supported on process object", assignmentExpression.Left);
             }
+            else if (assignmentExpression.Left is MemberExpression mprop && !mprop.Computed && mprop.Property is Identifier pid2)
+            {
+                // Dynamic property assignment: <base>.prop = <expr>
+                // Evaluate base; leave receiver on stack
+                _ = Emit(mprop.Object, new TypeCoercion() { boxResult = false });
+                // Push property name and RHS (boxed) and call setter helper
+                _il.Ldstr(_owner.MetadataBuilder, pid2.Name);
+                _ = Emit(assignmentExpression.Right, new TypeCoercion() { boxResult = true });
+                var setPropRef = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.SetProperty), typeof(object), typeof(object), typeof(string), typeof(object));
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
+                _il.Token(setPropRef);
+                // Drop the returned assigned value in statement contexts
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Pop);
+                return JavascriptType.Object;
+            }
             else
             {
                 throw ILEmitHelpers.NotSupported($"Unsupported assignment target type: {assignmentExpression.Left.Type}", assignmentExpression.Left);

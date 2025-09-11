@@ -14,5 +14,7 @@ namespace Js2IL.Tests.Literals
         [Fact] public Task BooleanLiteral() { var testName = nameof(BooleanLiteral); return ExecutionTest(testName); }
         [Fact] public Task Literals_NullAndUndefined() { var testName = nameof(Literals_NullAndUndefined); return ExecutionTest(testName); }
         [Fact] public Task Array_Spread_Copy() { var testName = nameof(Array_Spread_Copy); return ExecutionTest(testName); }
+    // Repro for property assignment on object literal (expected to fail until supported)
+    [Fact] public Task ObjectLiteral_PropertyAssign() { var testName = nameof(ObjectLiteral_PropertyAssign); return ExecutionTest(testName); }
     }
 }
