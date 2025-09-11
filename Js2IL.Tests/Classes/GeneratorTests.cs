@@ -17,8 +17,19 @@ namespace Js2IL.Tests.Classes
         [Fact] public Task Classes_ClassConstructor_TwoParams_AddMethod() { var testName = nameof(Classes_ClassConstructor_TwoParams_AddMethod); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassConstructor_TwoParams_SubtractMethod() { var testName = nameof(Classes_ClassConstructor_TwoParams_SubtractMethod); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassPrivateField_HelperMethod_Log() { var testName = nameof(Classes_ClassPrivateField_HelperMethod_Log); return GenerateTest(testName); }
+    [Fact] public Task Classes_ClassPrivateProperty_HelperMethod_Log() { var testName = nameof(Classes_ClassPrivateProperty_HelperMethod_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassMethod_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_CallsAnotherMethod); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassMethod_ForLoop_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_ForLoop_CallsAnotherMethod); return GenerateTest(testName); }
+
+        // Repro: new ClassName() inside an arrow function fails to resolve the declared class in nested generator context
+        // Current behavior (bug): codegen in arrow function cannot see ClassRegistry entry and may reference a non-existent runtime type,
+        // leading to a TypeLoadException at execution time. Keep skipped until the bug is fixed.
+        [Fact]
+        public Task Classes_ClassConstructor_New_In_ArrowFunction()
+        {
+            var testName = nameof(Classes_ClassConstructor_New_In_ArrowFunction);
+            return GenerateTest(testName);
+        }
 
         // Repro for UpdateExpression inside a class method while-loop (postfix and prefix)
         [Fact] public Task Classes_ClassMethod_While_Increment_Postfix() { var testName = nameof(Classes_ClassMethod_While_Increment_Postfix); return GenerateTest(testName); }
