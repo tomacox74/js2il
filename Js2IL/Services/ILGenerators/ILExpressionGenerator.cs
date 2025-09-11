@@ -1859,24 +1859,43 @@ namespace Js2IL.Services.ILGenerators
                 }
                 else
                 {
-                    if (op.Key is not Identifier keyId)
+                    // Determine property name string per JS semantics: Identifier, StringLiteral, or NumericLiteral
+                    string? propName = null;
+                    if (op.Key is Identifier keyId)
                     {
-                        ILEmitHelpers.ThrowNotSupported($"Unsupported object property key type: {op.Key.Type}", op.Key);
+                        propName = keyId.Name;
+                    }
+                    else if (op.Key is Literal lit)
+                    {
+                        switch (lit)
+                        {
+                            case StringLiteral s:
+                                propName = s.Value;
+                                break;
+                            case NumericLiteral n:
+                                propName = n.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                                break;
+                            default:
+                                ILEmitHelpers.ThrowNotSupported($"Unsupported object property key literal type: {op.Key.Type}", op.Key);
+                                break;
+                        }
                     }
                     else
                     {
-                        if (op.Value is not Expression valueExpr)
-                        {
-                            ILEmitHelpers.ThrowNotSupported($"Unsupported object property value type: {op.Value.Type}", op.Value);
-                        }
-                        else
-                        {
-                            _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup);
-                            _il.Ldstr(_metadataBuilder, keyId.Name);
-                            _ = Emit(valueExpr, new TypeCoercion() { boxResult = true });
-                            _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
-                            _il.Token(_bclReferences.IDictionary_SetItem_Ref);
-                        }
+                        ILEmitHelpers.ThrowNotSupported($"Unsupported object property key type: {op.Key.Type}", op.Key);
+                    }
+
+                    if (op.Value is not Expression valueExpr)
+                    {
+                        ILEmitHelpers.ThrowNotSupported($"Unsupported object property value type: {op.Value.Type}", op.Value);
+                    }
+                    else
+                    {
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup);
+                        _il.Ldstr(_metadataBuilder, propName ?? string.Empty);
+                        _ = Emit(valueExpr, new TypeCoercion() { boxResult = true });
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                        _il.Token(_bclReferences.IDictionary_SetItem_Ref);
                     }
                 }
             }
