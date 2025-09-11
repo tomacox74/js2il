@@ -542,6 +542,14 @@ namespace Js2IL.Services.ILGenerators
 
         public void GenerateExpressionStatement(Acornima.Ast.ExpressionStatement expressionStatement)
         {
+            // Ignore directive prologue string literals like "use strict".
+            // A standalone string literal as an expression statement in JS is a directive, not a value-producing expression.
+            // Emitting it would leave an unconsumed value on the stack and cause InvalidProgramException at method return.
+            if (expressionStatement.Expression is Acornima.Ast.Literal lit && lit.Value is string)
+            {
+                return;
+            }
+
             _ = _expressionEmitter.Emit(expressionStatement.Expression, new TypeCoercion(), CallSiteContext.Statement);
             if (expressionStatement.Expression is NewExpression || expressionStatement.Expression is ConditionalExpression || expressionStatement.Expression is CallExpression)
             {
