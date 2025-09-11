@@ -738,10 +738,8 @@ namespace Js2IL.Services.ILGenerators
 
                 // Load iterable and index to get item
                 _il.LoadLocal(iterLocal);
-                // index
+                // index (boxed object expected by GetItem)
                 _il.LoadLocal(idxLocal);
-                _il.OpCode(ILOpCode.Unbox_any);
-                _il.Token(_bclReferences.DoubleType);
                 _runtime.InvokeGetItemFromObject();
 
                 // Store into target field

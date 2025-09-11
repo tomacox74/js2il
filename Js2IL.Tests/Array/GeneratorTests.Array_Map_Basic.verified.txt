@@ -105,7 +105,7 @@
 	{
 		// Method begins at RVA 0x207c
 		// Header size: 12
-		// Code size: 216 (0xd8)
+		// Code size: 211 (0xd3)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -153,7 +153,7 @@
 			IL_007e: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
 			IL_0083: blt IL_008d
 
-			IL_0088: br IL_00d7
+			IL_0088: br IL_00d2
 
 			IL_008d: ldc.i4.1
 			IL_008e: newarr [System.Runtime]System.Object
@@ -163,23 +163,22 @@
 			IL_0096: ldfld object Scopes.Array_Map_Basic::lengths
 			IL_009b: ldloc.0
 			IL_009c: ldfld object Scopes.Array_Map_Basic::i
-			IL_00a1: unbox.any [System.Runtime]System.Double
-			IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-			IL_00ab: stelem.ref
-			IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_00b1: pop
-			IL_00b2: ldloc.0
-			IL_00b3: ldloc.0
-			IL_00b4: ldfld object Scopes.Array_Map_Basic::i
-			IL_00b9: unbox.any [System.Runtime]System.Double
-			IL_00be: ldc.r8 1
-			IL_00c7: add
-			IL_00c8: box [System.Runtime]System.Double
-			IL_00cd: stfld object Scopes.Array_Map_Basic::i
-			IL_00d2: br IL_006d
+			IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_00a6: stelem.ref
+			IL_00a7: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_00ac: pop
+			IL_00ad: ldloc.0
+			IL_00ae: ldloc.0
+			IL_00af: ldfld object Scopes.Array_Map_Basic::i
+			IL_00b4: unbox.any [System.Runtime]System.Double
+			IL_00b9: ldc.r8 1
+			IL_00c2: add
+			IL_00c3: box [System.Runtime]System.Double
+			IL_00c8: stfld object Scopes.Array_Map_Basic::i
+			IL_00cd: br IL_006d
 		// end loop
 
-		IL_00d7: ret
+		IL_00d2: ret
 	} // end of method Program::Main
 
 } // end of class Program

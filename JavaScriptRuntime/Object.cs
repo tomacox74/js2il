@@ -126,15 +126,31 @@ namespace JavaScriptRuntime
             // 3) Fallback to reflection on receiver type
             return CallInstanceMethod(receiver, methodName, callArgs);
         }
-        public static object GetItem(object obj, double index)
+        public static object GetItem(object obj, object index)
         {
-            var intIndex = Convert.ToInt32(index);
+            // Coerce index to int (JS ToInt32-ish truncation)
+            int intIndex;
+            switch (index)
+            {
+                case int ii: intIndex = ii; break;
+                case double dd: intIndex = (int)dd; break;
+                case float ff: intIndex = (int)ff; break;
+                case long ll: intIndex = (int)ll; break;
+                case short ss: intIndex = ss; break;
+                case byte bb: intIndex = bb; break;
+                case string s when int.TryParse(s, out var pi): intIndex = pi; break;
+                case bool b: intIndex = b ? 1 : 0; break;
+                default:
+                    try { intIndex = Convert.ToInt32(index); }
+                    catch { intIndex = 0; }
+                    break;
+            }
 
             // ExpandoObject (object literal): numeric index coerces to property name string per JS ToPropertyKey
             if (obj is System.Dynamic.ExpandoObject exp)
             {
                 var dict = (IDictionary<string, object?>)exp;
-                var propName = index.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                var propName = DotNet2JSConversions.ToString(index);
                 if (dict.TryGetValue(propName, out var value))
                 {
                     return value!;

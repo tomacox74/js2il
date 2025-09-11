@@ -35,7 +35,7 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 124 (0x7c)
+		// Code size: 129 (0x81)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -76,11 +76,12 @@
 		IL_0060: ldloc.0
 		IL_0061: ldfld object Scopes.Int32Array_Index_Assign::'array'
 		IL_0066: ldc.r8 1
-		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-		IL_0074: stelem.ref
-		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_007a: pop
-		IL_007b: ret
+		IL_006f: box [System.Runtime]System.Double
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0079: stelem.ref
+		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_007f: pop
+		IL_0080: ret
 	} // end of method Program::Main
 
 } // end of class Program

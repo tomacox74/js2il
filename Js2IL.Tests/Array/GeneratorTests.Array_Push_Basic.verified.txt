@@ -1,4 +1,4 @@
-// IL code: Array_Push_Basic
+﻿// IL code: Array_Push_Basic
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -58,7 +58,7 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 331 (0x14b)
+		// Code size: 326 (0x146)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -142,7 +142,7 @@
 			IL_00f1: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
 			IL_00f6: blt IL_0100
 
-			IL_00fb: br IL_014a
+			IL_00fb: br IL_0145
 
 			IL_0100: ldc.i4.1
 			IL_0101: newarr [System.Runtime]System.Object
@@ -152,23 +152,22 @@
 			IL_0109: ldfld object Scopes.Array_Push_Basic::arr
 			IL_010e: ldloc.0
 			IL_010f: ldfld object Scopes.Array_Push_Basic::i
-			IL_0114: unbox.any [System.Runtime]System.Double
-			IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-			IL_011e: stelem.ref
-			IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_0124: pop
-			IL_0125: ldloc.0
-			IL_0126: ldloc.0
-			IL_0127: ldfld object Scopes.Array_Push_Basic::i
-			IL_012c: unbox.any [System.Runtime]System.Double
-			IL_0131: ldc.r8 1
-			IL_013a: add
-			IL_013b: box [System.Runtime]System.Double
-			IL_0140: stfld object Scopes.Array_Push_Basic::i
-			IL_0145: br IL_00e0
+			IL_0114: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0119: stelem.ref
+			IL_011a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_011f: pop
+			IL_0120: ldloc.0
+			IL_0121: ldloc.0
+			IL_0122: ldfld object Scopes.Array_Push_Basic::i
+			IL_0127: unbox.any [System.Runtime]System.Double
+			IL_012c: ldc.r8 1
+			IL_0135: add
+			IL_0136: box [System.Runtime]System.Double
+			IL_013b: stfld object Scopes.Array_Push_Basic::i
+			IL_0140: br IL_00e0
 		// end loop
 
-		IL_014a: ret
+		IL_0145: ret
 	} // end of method Program::Main
 
 } // end of class Program

@@ -147,7 +147,7 @@ namespace Js2IL.Services.ILGenerators
                 }
             }
 
-            switch (operatorType)
+        switch (operatorType)
             {
                 case Operator.Addition:
                 case Operator.Subtraction:
@@ -162,8 +162,9 @@ namespace Js2IL.Services.ILGenerators
                 case Operator.RightShift:
                 case Operator.UnsignedRightShift:
                     ApplyArithmeticOperator(operatorType, binaryExpression, isBitwiseOrShift);
-                    // All arithmetic paths box their results to object
-                    return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
+            // Arithmetic and bitwise operators yield a numeric value in JS (Number in our model)
+            // '+' is handled above (may be string or number) and returned early.
+            return new ExpressionResult { JsType = JavascriptType.Number, ClrType = null };
                 case Operator.LessThan:
                 case Operator.GreaterThan:
                 case Operator.LessThanOrEqual:
@@ -665,9 +666,9 @@ namespace Js2IL.Services.ILGenerators
                 }
                 else if (preferNumeric)
                 {
+                    // Numeric fast-path: leave unboxed double on stack
                     _il.OpCode(ILOpCode.Add);
-                    _il.OpCode(ILOpCode.Box);
-                    _il.Token(_bclReferences.DoubleType);
+                    return new ExpressionResult { JsType = JavascriptType.Number, ClrType = null };
                 }
                 else
                 {
@@ -679,15 +680,16 @@ namespace Js2IL.Services.ILGenerators
             {
                 if (leftType == JavascriptType.Number && rightType == JavascriptType.Number)
                 {
+                    // Numeric fast-path: leave unboxed double on stack
                     _il.OpCode(ILOpCode.Sub);
-                    _il.OpCode(ILOpCode.Box);
-                    _il.Token(_bclReferences.DoubleType);
+                    return new ExpressionResult { JsType = JavascriptType.Number, ClrType = null };
                 }
                 else
                 {
+                    // Runtime path returns object
                     _runtime.InvokeOperatorsSubtract();
+                    return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
                 }
-                return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
             }
 
             // Not fully handled; let the caller dispatch to arithmetic/comparison emitters.
@@ -781,9 +783,8 @@ namespace Js2IL.Services.ILGenerators
                             Operator.Remainder => ILOpCode.Rem,
                             _ => throw ILEmitHelpers.NotSupported($"Unsupported arithmetic operator: {op}", binaryExpression)
                         };
+                        // Leave unboxed double on stack; callers that need an object will box explicitly
                         _il.OpCode(opCode);
-                        _il.OpCode(ILOpCode.Box);
-                        _il.Token(_bclReferences.DoubleType);
                         break;
                     case Operator.BitwiseAnd:
                     case Operator.BitwiseOr:
@@ -806,9 +807,8 @@ namespace Js2IL.Services.ILGenerators
                             // Convert result to uint32 then to double for JS >>>
                             _il.OpCode(ILOpCode.Conv_u4);
                         }
+                        // Normalize to double but leave unboxed
                         _il.OpCode(ILOpCode.Conv_r8);
-                        _il.OpCode(ILOpCode.Box);
-                        _il.Token(_bclReferences.DoubleType);
                         break;
                     case Operator.Exponentiation:
                         // Exponentiation requires calling Math.Pow()
@@ -844,10 +844,7 @@ namespace Js2IL.Services.ILGenerators
 
             // Call Math.Pow
             _il.Call(mathPowMethodRef);
-
-            // box the result as a double
-            _il.OpCode(ILOpCode.Box);
-            _il.Token(_bclReferences.DoubleType);
+            // Leave unboxed double on stack; callers can box if needed
         }
 
     private void ApplyComparisonOperator(Operator op, BinaryExpression binaryExpression, ConditionalBranching? branching = null)

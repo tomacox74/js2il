@@ -1385,7 +1385,8 @@ namespace Js2IL.Services.ILGenerators
 
                     var prevAssignment = _owner.CurrentAssignmentTarget;
                     _owner.CurrentAssignmentTarget = aid.Name;
-                    var rhsResult = Emit(assignmentExpression.Right, typeCoercion);
+                    // Always box the RHS so storing into an object-typed field is verifiable and consistent
+                    var rhsResult = Emit(assignmentExpression.Right, new TypeCoercion { boxResult = true });
                     _owner.CurrentAssignmentTarget = prevAssignment;
                     variable.Type = rhsResult.JsType;
                     variable.RuntimeIntrinsicType = rhsResult.ClrType;
@@ -1833,22 +1834,7 @@ namespace Js2IL.Services.ILGenerators
             if (memberExpression.Computed)
             {
                 var idxExpr = memberExpression.Property;
-                var indexType = Emit(idxExpr, new TypeCoercion()).JsType;
-                if (indexType != JavascriptType.Number)
-                {
-                    // Heuristic: many indices flow through variables/fields as boxed doubles; unbox to double for runtime GetItem(object, double)
-                    bool likelyBoxedNumeric = idxExpr is Identifier || idxExpr is MemberExpression || idxExpr is ThisExpression;
-                    if (likelyBoxedNumeric)
-                    {
-                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
-                        _il.Token(_owner.BclReferences.DoubleType);
-                        // Treat as numeric from here
-                    }
-                    else
-                    {
-                        throw ILEmitHelpers.NotSupported("Array index must be numeric expression", memberExpression.Property);
-                    }
-                }
+                Emit(idxExpr, new TypeCoercion() { boxResult = true });
                 _runtime.InvokeGetItemFromObject();
                 return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
             }
