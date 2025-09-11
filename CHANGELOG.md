@@ -66,6 +66,8 @@ Reverted
 - Removed experimental BitArray intrinsic and its smoke test pending a fix for intrinsic instance-call IL emission.
 
 Fixed
+- Computed member indexing: emitter now always boxes the index and routes to Runtime Object.GetItem(object, object), fixing failures like arr[arr.length - 1] and stabilizing array/string/typed array indexing across dynamic receivers.
+- Simple identifier assignment: always box the RHS for '=' so storing into object-typed fields is verifiable and correct (fixes counter mutation in Function_GlobalFunctionChangesGlobalVariableValue).
 - IL generation: eliminated "Unsupported object property key type: Literal" for object literals with numeric keys by handling literal key kinds and emitting IDictionary<string, object> set_Item calls with the coerced key.
 - Try/Catch: restored block (lexical) scope local allocation for const/let inside try blocks (e.g., TryCatch_NoBinding_NoThrow) by allocating locals for Block_L* scopes. Removed temporary lazy fallback.
 - Member dispatch: resolved dynamic instance call regression for certain chained member expressions after dispatcher generalization.

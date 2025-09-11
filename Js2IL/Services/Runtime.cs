@@ -166,9 +166,9 @@ namespace Js2IL.Services
                 subSig);
         }
 
-        /// <summary>
-        /// Initializes reference for JavaScriptRuntime.Object.GetItem(object, double) -> object.
-        /// </summary>
+    /// <summary>
+    /// Initializes reference for JavaScriptRuntime.Object.GetItem(object, object) -> object.
+    /// </summary>
         private void InitializeObject()
         {
             var objectType = _metadataBuilder.AddTypeReference(
@@ -182,7 +182,7 @@ namespace Js2IL.Services
                 .Parameters(2, rt => rt.Type().Object(), p =>
                 {
                     p.AddParameter().Type().Object();
-                    p.AddParameter().Type().Double();
+                    p.AddParameter().Type().Object();
                 });
             var objectGetItemSig = _metadataBuilder.GetOrAddBlob(objectGetItemSigBuilder);
             _objectGetItem = _metadataBuilder.AddMemberReference(

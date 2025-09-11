@@ -57,7 +57,7 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 209 (0xd1)
+		// Code size: 204 (0xcc)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -94,7 +94,7 @@
 			IL_005a: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
 			IL_005f: blt IL_0069
 
-			IL_0064: br IL_00d0
+			IL_0064: br IL_00cb
 
 			IL_0069: ldc.i4.4
 			IL_006a: newarr [System.Runtime]System.Object
@@ -117,23 +117,22 @@
 			IL_008f: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Node.Process::get_argv()
 			IL_0094: ldloc.0
 			IL_0095: ldfld object Scopes.Environment_EnumerateProcessArgV::i
-			IL_009a: unbox.any [System.Runtime]System.Double
-			IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-			IL_00a4: stelem.ref
-			IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_00aa: pop
-			IL_00ab: ldloc.0
-			IL_00ac: ldloc.0
-			IL_00ad: ldfld object Scopes.Environment_EnumerateProcessArgV::i
-			IL_00b2: unbox.any [System.Runtime]System.Double
-			IL_00b7: ldc.r8 1
-			IL_00c0: add
-			IL_00c1: box [System.Runtime]System.Double
-			IL_00c6: stfld object Scopes.Environment_EnumerateProcessArgV::i
-			IL_00cb: br IL_0045
+			IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_009f: stelem.ref
+			IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_00a5: pop
+			IL_00a6: ldloc.0
+			IL_00a7: ldloc.0
+			IL_00a8: ldfld object Scopes.Environment_EnumerateProcessArgV::i
+			IL_00ad: unbox.any [System.Runtime]System.Double
+			IL_00b2: ldc.r8 1
+			IL_00bb: add
+			IL_00bc: box [System.Runtime]System.Double
+			IL_00c1: stfld object Scopes.Environment_EnumerateProcessArgV::i
+			IL_00c6: br IL_0045
 		// end loop
 
-		IL_00d0: ret
+		IL_00cb: ret
 	} // end of method Program::Main
 
 } // end of class Program

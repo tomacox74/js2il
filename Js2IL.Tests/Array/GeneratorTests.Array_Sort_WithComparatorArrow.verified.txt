@@ -102,7 +102,7 @@
 	{
 		// Method begins at RVA 0x2080
 		// Header size: 12
-		// Code size: 293 (0x125)
+		// Code size: 288 (0x120)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -167,7 +167,7 @@
 			IL_00cb: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
 			IL_00d0: blt IL_00da
 
-			IL_00d5: br IL_0124
+			IL_00d5: br IL_011f
 
 			IL_00da: ldc.i4.1
 			IL_00db: newarr [System.Runtime]System.Object
@@ -177,23 +177,22 @@
 			IL_00e3: ldfld object Scopes.Array_Sort_WithComparatorArrow::arr
 			IL_00e8: ldloc.0
 			IL_00e9: ldfld object Scopes.Array_Sort_WithComparatorArrow::i
-			IL_00ee: unbox.any [System.Runtime]System.Double
-			IL_00f3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-			IL_00f8: stelem.ref
-			IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_00fe: pop
-			IL_00ff: ldloc.0
-			IL_0100: ldloc.0
-			IL_0101: ldfld object Scopes.Array_Sort_WithComparatorArrow::i
-			IL_0106: unbox.any [System.Runtime]System.Double
-			IL_010b: ldc.r8 1
-			IL_0114: add
-			IL_0115: box [System.Runtime]System.Double
-			IL_011a: stfld object Scopes.Array_Sort_WithComparatorArrow::i
-			IL_011f: br IL_00ba
+			IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_00f3: stelem.ref
+			IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_00f9: pop
+			IL_00fa: ldloc.0
+			IL_00fb: ldloc.0
+			IL_00fc: ldfld object Scopes.Array_Sort_WithComparatorArrow::i
+			IL_0101: unbox.any [System.Runtime]System.Double
+			IL_0106: ldc.r8 1
+			IL_010f: add
+			IL_0110: box [System.Runtime]System.Double
+			IL_0115: stfld object Scopes.Array_Sort_WithComparatorArrow::i
+			IL_011a: br IL_00ba
 		// end loop
 
-		IL_0124: ret
+		IL_011f: ret
 	} // end of method Program::Main
 
 } // end of class Program

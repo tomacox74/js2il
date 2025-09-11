@@ -47,5 +47,9 @@ namespace Js2IL.Tests.Array
 
         [Fact]
         public Task Array_AsArray_Ternary() { var testName = nameof(Array_AsArray_Ternary); return GenerateTest(testName); }
+
+    // Repro: computed index using (arr.length - 1)
+    [Fact]
+    public Task Array_Index_UsingLengthMinusOne_Read() { var testName = nameof(Array_Index_UsingLengthMinusOne_Read); return GenerateTest(testName); }
     }
 }

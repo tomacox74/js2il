@@ -153,7 +153,7 @@
 	{
 		// Method begins at RVA 0x20b8
 		// Header size: 12
-		// Code size: 98 (0x62)
+		// Code size: 103 (0x67)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -181,11 +181,12 @@
 		IL_0042: ldfld object Scopes.BeanCounter_Class_Index_Assign::bc
 		IL_0047: ldfld object Classes.BeanCounter::beanCounts
 		IL_004c: ldc.r8 1
-		IL_0055: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-		IL_005a: stelem.ref
-		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0060: pop
-		IL_0061: ret
+		IL_0055: box [System.Runtime]System.Double
+		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_005f: stelem.ref
+		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0065: pop
+		IL_0066: ret
 	} // end of method Program::Main
 
 } // end of class Program

@@ -1,4 +1,4 @@
-// IL code: ObjectLiteral_NumericKey
+﻿// IL code: ObjectLiteral_NumericKey
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -35,7 +35,7 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 103 (0x67)
+		// Code size: 108 (0x6c)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -64,11 +64,12 @@
 		IL_004b: ldloc.0
 		IL_004c: ldfld object Scopes.ObjectLiteral_NumericKey::o
 		IL_0051: ldc.r8 10
-		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-		IL_005f: stelem.ref
-		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0065: pop
-		IL_0066: ret
+		IL_005a: box [System.Runtime]System.Double
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0064: stelem.ref
+		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_006a: pop
+		IL_006b: ret
 	} // end of method Program::Main
 
 } // end of class Program

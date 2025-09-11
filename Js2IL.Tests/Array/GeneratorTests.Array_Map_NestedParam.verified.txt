@@ -298,7 +298,7 @@
 	{
 		// Method begins at RVA 0x2154
 		// Header size: 12
-		// Code size: 215 (0xd7)
+		// Code size: 210 (0xd2)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -346,7 +346,7 @@
 			IL_007d: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
 			IL_0082: blt IL_008c
 
-			IL_0087: br IL_00d6
+			IL_0087: br IL_00d1
 
 			IL_008c: ldc.i4.1
 			IL_008d: newarr [System.Runtime]System.Object
@@ -356,23 +356,22 @@
 			IL_0095: ldfld object Scopes.Array_Map_NestedParam::result
 			IL_009a: ldloc.0
 			IL_009b: ldfld object Scopes.Array_Map_NestedParam::i
-			IL_00a0: unbox.any [System.Runtime]System.Double
-			IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-			IL_00aa: stelem.ref
-			IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_00b0: pop
-			IL_00b1: ldloc.0
-			IL_00b2: ldloc.0
-			IL_00b3: ldfld object Scopes.Array_Map_NestedParam::i
-			IL_00b8: unbox.any [System.Runtime]System.Double
-			IL_00bd: ldc.r8 1
-			IL_00c6: add
-			IL_00c7: box [System.Runtime]System.Double
-			IL_00cc: stfld object Scopes.Array_Map_NestedParam::i
-			IL_00d1: br IL_006c
+			IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_00a5: stelem.ref
+			IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_00ab: pop
+			IL_00ac: ldloc.0
+			IL_00ad: ldloc.0
+			IL_00ae: ldfld object Scopes.Array_Map_NestedParam::i
+			IL_00b3: unbox.any [System.Runtime]System.Double
+			IL_00b8: ldc.r8 1
+			IL_00c1: add
+			IL_00c2: box [System.Runtime]System.Double
+			IL_00c7: stfld object Scopes.Array_Map_NestedParam::i
+			IL_00cc: br IL_006c
 		// end loop
 
-		IL_00d6: ret
+		IL_00d1: ret
 	} // end of method Program::Main
 
 } // end of class Program

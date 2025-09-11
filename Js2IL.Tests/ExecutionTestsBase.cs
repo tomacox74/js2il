@@ -122,7 +122,7 @@ namespace Js2IL.Tests
             return stdOut;
         }
 
-        private string ExecuteGeneratedAssemblyInProc(string assemblyPath)
+    private string ExecuteGeneratedAssemblyInProc(string assemblyPath)
         {
             // Capture JavaScriptRuntime.Console output by swapping its IConsoleOutput implementation.
             var captured = new CapturingConsoleOutput();
@@ -140,7 +140,10 @@ namespace Js2IL.Tests
                 {
                     try { jsRuntimeAsm = AssemblyLoadContext.Default.LoadFromAssemblyPath(jsRuntimePath); } catch { }
                 }
-                var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
+                // Load from a unique copy to avoid locking the original file between runs
+                var uniquePath = Path.Combine(dir, Path.GetFileNameWithoutExtension(assemblyPath) + $".run-{Guid.NewGuid():N}.dll");
+                File.Copy(assemblyPath, uniquePath, overwrite: true);
+                var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(uniquePath);
                 var entryPoint = assembly.EntryPoint ?? throw new InvalidOperationException("No entry point found in the generated assembly.");
 
                 // Set Node-like globals for module context
