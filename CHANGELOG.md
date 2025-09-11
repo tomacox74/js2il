@@ -5,6 +5,8 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 Added
+- Compiler: object literals now support Identifier, StringLiteral, and NumericLiteral property keys. Numeric keys are coerced to strings using invariant culture (JS ToPropertyKey semantics) during IL emission.
+- Runtime Object: GetItem(object, double index) supports ExpandoObject (object literal) by coercing the numeric index to a string property name and returning its value (null to model undefined when absent).
 - Runtime: Math intrinsic ([IntrinsicObject("Math")]) — implemented the full function set:
 	- ceil, sqrt, abs, floor, round, trunc, sign
 	- sin, cos, tan, asin, acos, atan, atan2
@@ -24,6 +26,9 @@ Added
 - Validation: reflection-based require() module discovery via [NodeModule] attribute scanning; fail fast if an unknown module name is required.
 
 Tests
+- Literals: added generator and execution tests for numeric-key object literal access:
+	- ObjectLiteral_NumericKey (prints 1)
+- Tests cleanup: removed obsolete Prime subgroup used for earlier reproduction of the numeric key bug.
 - New Math execution test validating Math.sqrt and Math.ceil:
 	- Math_Ceil_Sqrt_Basic
 - New Math execution tests covering additional methods and semantics:
@@ -57,6 +62,7 @@ Reverted
 - Removed experimental BitArray intrinsic and its smoke test pending a fix for intrinsic instance-call IL emission.
 
 Fixed
+- IL generation: eliminated "Unsupported object property key type: Literal" for object literals with numeric keys by handling literal key kinds and emitting IDictionary<string, object> set_Item calls with the coerced key.
 - Try/Catch: restored block (lexical) scope local allocation for const/let inside try blocks (e.g., TryCatch_NoBinding_NoThrow) by allocating locals for Block_L* scopes. Removed temporary lazy fallback.
 - Member dispatch: resolved dynamic instance call regression for certain chained member expressions after dispatcher generalization.
 - Class method scope: ensured variable registry/lookup consistency preventing "Scope '<method>' not found in local slots" during generation of method bodies in performance scripts.
