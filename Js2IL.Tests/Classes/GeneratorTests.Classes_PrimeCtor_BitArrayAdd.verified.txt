@@ -1,0 +1,213 @@
+﻿// IL code: Classes_PrimeCtor_BitArrayAdd
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Classes_PrimeCtor_BitArrayAdd
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit BitArray
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit constructor
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2062
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method constructor::.ctor
+
+		} // end of class constructor
+
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method BitArray::.ctor
+
+	} // end of class BitArray
+
+	.class nested public auto ansi beforefieldinit PrimeSieve
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit constructor
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2074
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method constructor::.ctor
+
+		} // end of class constructor
+
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x206b
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method PrimeSieve::.ctor
+
+	} // end of class PrimeSieve
+
+
+	// Fields
+	.field public object BitArray
+	.field public object PrimeSieve
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Classes_PrimeCtor_BitArrayAdd::.ctor
+
+} // end of class Scopes.Classes_PrimeCtor_BitArrayAdd
+
+.class public auto ansi beforefieldinit Classes.BitArray
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field public object n
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor (
+			object ''
+		) cil managed 
+	{
+		// Method begins at RVA 0x207d
+		// Header size: 1
+		// Code size: 14 (0xe)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: ldarg.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object Classes.BitArray::n
+		IL_000d: ret
+	} // end of method BitArray::.ctor
+
+} // end of class Classes.BitArray
+
+.class public auto ansi beforefieldinit Classes.PrimeSieve
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field public object sieveSizeInBits
+	.field public object bitArray
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor (
+			object ''
+		) cil managed 
+	{
+		// Method begins at RVA 0x208c
+		// Header size: 12
+		// Code size: 74 (0x4a)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: ldarg.0
+		IL_0007: ldarg.1
+		IL_0008: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_000d: conv.i4
+		IL_000e: ldc.r8 1
+		IL_0017: conv.i4
+		IL_0018: shr.un
+		IL_0019: conv.u4
+		IL_001a: conv.r8
+		IL_001b: box [System.Runtime]System.Double
+		IL_0020: stfld object Classes.PrimeSieve::sieveSizeInBits
+		IL_0025: ldarg.0
+		IL_0026: ldc.r8 1
+		IL_002f: box [System.Runtime]System.Double
+		IL_0034: ldarg.0
+		IL_0035: ldfld object Classes.PrimeSieve::sieveSizeInBits
+		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_003f: newobj instance void Classes.BitArray::.ctor(object)
+		IL_0044: stfld object Classes.PrimeSieve::bitArray
+		IL_0049: ret
+	} // end of method PrimeSieve::.ctor
+
+} // end of class Classes.PrimeSieve
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20e4
+		// Header size: 12
+		// Code size: 27 (0x1b)
+		.maxstack 32
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Classes_PrimeCtor_BitArrayAdd::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.r8 100
+		IL_000f: box [System.Runtime]System.Double
+		IL_0014: newobj instance void Classes.PrimeSieve::.ctor(object)
+		IL_0019: pop
+		IL_001a: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

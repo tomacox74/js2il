@@ -38,8 +38,26 @@ namespace Js2IL.Services.ILGenerators
         /// <summary>
         /// Loads a variable value using scope field access.
         /// </summary>
-        public void LoadVariable(Variable variable)
+        /// <param name="variable">The variable symbol to load.</param>
+        /// <param name="typeCoercion">Required coercion hints for the load. Currently informational; load behavior is unchanged.</param>
+        public void LoadVariable(Variable variable, TypeCoercion typeCoercion)
         {
+            // Local helper to reduce duplicate unboxing code
+            Action<JavascriptType> unboxIfNeeded = (jsType) =>
+            {
+                if (typeCoercion.boxResult) return;
+                if (jsType == JavascriptType.Number)
+                {
+                    _il.OpCode(ILOpCode.Unbox_any);
+                    _il.Token(_bclReferences.DoubleType);
+                }
+                else if (jsType == JavascriptType.Boolean)
+                {
+                    _il.OpCode(ILOpCode.Unbox_any);
+                    _il.Token(_bclReferences.BooleanType);
+                }
+            };
+
             // If this variable belongs to a parent/ancestor scope (captured), always load from scopes[]
             // to respect closure binding, regardless of any local scope instances that might exist.
             if (variable is ScopeVariable sv)
@@ -50,12 +68,16 @@ namespace Js2IL.Services.ILGenerators
                 _il.OpCode(ILOpCode.Ldelem_ref);
                 _il.OpCode(ILOpCode.Ldfld);
                 _il.Token(sv.FieldHandle);
+                // Optional auto-unbox when caller does not want a boxed result
+                unboxIfNeeded(sv.Type);
                 return;
             }
             if (variable.IsParameter)
             {
                 // Directly load argument (already object). ParameterIndex already accounts for scopes[] at arg0
                 _il.LoadArgument(variable.ParameterIndex);
+                // Optional auto-unbox when caller does not want a boxed result
+                unboxIfNeeded(variable.Type);
                 return;
             }
             // Scope field variable path
@@ -80,6 +102,8 @@ namespace Js2IL.Services.ILGenerators
             }
             _il.OpCode(ILOpCode.Ldfld);
             _il.Token(variable.FieldHandle);
+            // Optional auto-unbox when caller does not want a boxed result
+            unboxIfNeeded(variable.Type);
         }
 
 
@@ -413,7 +437,21 @@ namespace Js2IL.Services.ILGenerators
                         _il.Token(_bclReferences.DoubleType);
                         leftType = JavascriptType.Number;
                     }
-                    // otherwise, defer until after right emit
+                    else if (!likelyNumericSyntax)
+                    {
+                        // Not a numeric fast-path candidate: pre-box the left primitive (if any)
+                        // while it is on top of the stack, so we won't accidentally box the right later.
+                        if (leftType == JavascriptType.Number)
+                        {
+                            _il.OpCode(ILOpCode.Box);
+                            _il.Token(_bclReferences.DoubleType);
+                        }
+                        else if (leftType == JavascriptType.Boolean)
+                        {
+                            _il.OpCode(ILOpCode.Box);
+                            _il.Token(_bclReferences.BooleanType);
+                        }
+                    }
                 }
                 else if (minus)
                 {
@@ -607,16 +645,7 @@ namespace Js2IL.Services.ILGenerators
                     else if (!staticString && !(leftType == JavascriptType.Number && rightType == JavascriptType.Number))
                     {
                         // Only box when we are not in a numeric fast-path.
-                        if (leftType == JavascriptType.Number)
-                        {
-                            _il.OpCode(ILOpCode.Box);
-                            _il.Token(_bclReferences.DoubleType);
-                        }
-                        else if (leftType == JavascriptType.Boolean)
-                        {
-                            _il.OpCode(ILOpCode.Box);
-                            _il.Token(_bclReferences.BooleanType);
-                        }
+                        // Left operand (if primitive) was pre-boxed above when not likelyNumericSyntax.
                         if (rightType == JavascriptType.Number)
                         {
                             _il.OpCode(ILOpCode.Box);
