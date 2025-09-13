@@ -5,6 +5,44 @@ namespace JavaScriptRuntime
 {
     public static class TypeUtilities
     {
+        // JS ToNumber coercion used by codegen slow paths when operand type is uncertain
+        public static double ToNumber(object? value)
+        {
+            if (value == null) return 0d; // undefined => +0
+            switch (value)
+            {
+                case double d: return d;
+                case float f: return (double)f;
+                case int i: return i;
+                case long l: return l;
+                case short s: return s;
+                case byte b: return b;
+                case bool bo: return bo ? 1d : 0d;
+                case string str:
+                    {
+                        var trimmed = str.Trim();
+                        if (trimmed.Length == 0) return 0d;
+                        if (trimmed.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (long.TryParse(trimmed.Substring(2), System.Globalization.NumberStyles.AllowHexSpecifier, System.Globalization.CultureInfo.InvariantCulture, out var hex))
+                                return (double)hex;
+                            return double.NaN;
+                        }
+                        return double.TryParse(trimmed, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var parsed)
+                            ? parsed
+                            : double.NaN;
+                    }
+                case JsNull: return 0d; // JS ToNumber(null) => +0 (JsNull represents JS null)
+            }
+            try
+            {
+                return Convert.ToDouble(value, System.Globalization.CultureInfo.InvariantCulture);
+            }
+            catch
+            {
+                return double.NaN;
+            }
+        }
         // Minimal typeof implementation for our runtime object shapes
         public static string Typeof(object? value)
         {

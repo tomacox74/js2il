@@ -305,10 +305,36 @@ namespace Js2IL.Services.ILGenerators
         /// </summary>
         private void EmitBitwiseOrShiftOperands(BinaryExpression binaryExpression)
         {
-            _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion());
-            _il.OpCode(ILOpCode.Conv_i4);
-            _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion());
-            _il.OpCode(ILOpCode.Conv_i4);
+            // Fast/slow path per JS semantics: ToInt32(ToNumber(x)) for bitwise/shift.
+            // Use a tiny helper to avoid duplicating the coercion logic for each side.
+            Action<Acornima.Ast.Expression> emitInt32 = expr =>
+            {
+                var jsType = _methodExpressionEmitter.Emit(expr, new TypeCoercion()).JsType;
+                if (jsType == JavascriptType.Number)
+                {
+                    _il.OpCode(ILOpCode.Conv_i4);
+                }
+                else if (jsType == JavascriptType.Boolean)
+                {
+                    _il.OpCode(ILOpCode.Unbox_any);
+                    _il.Token(_bclReferences.BooleanType);
+                    _il.OpCode(ILOpCode.Conv_i4);
+                }
+                else
+                {
+                    // Slow path: call TypeUtilities.ToNumber(object) then convert to int32
+                    var toNum = _runtime.GetStaticMethodRef(
+                        typeof(JavaScriptRuntime.TypeUtilities),
+                        nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                        typeof(double), typeof(object));
+                    _il.OpCode(ILOpCode.Call);
+                    _il.Token(toNum);
+                    _il.OpCode(ILOpCode.Conv_i4);
+                }
+            };
+
+            emitInt32(binaryExpression.Left);
+            emitInt32(binaryExpression.Right);
         }
 
         /// <summary>
@@ -578,9 +604,9 @@ namespace Js2IL.Services.ILGenerators
                             rightType = JavascriptType.Number;
                         }
                     }
-                    else if (!staticString)
+                    else if (!staticString && !(leftType == JavascriptType.Number && rightType == JavascriptType.Number))
                     {
-                        // Ensure both operands are objects for runtime Add
+                        // Only box when we are not in a numeric fast-path.
                         if (leftType == JavascriptType.Number)
                         {
                             _il.OpCode(ILOpCode.Box);
