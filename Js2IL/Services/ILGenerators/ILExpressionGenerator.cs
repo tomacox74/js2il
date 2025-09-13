@@ -112,7 +112,9 @@ namespace Js2IL.Services.ILGenerators
 
         private void EmitUnboxBoolIfLoadedFromBoxedSource(Expression expr)
         {
-            if (expr is Identifier || expr is MemberExpression || expr is ThisExpression)
+            // Identifiers are loaded via LoadVariable, which now auto-unboxes when requested.
+            // Only unbox for member/this sources that still yield a boxed boolean.
+            if (expr is MemberExpression || expr is ThisExpression)
             {
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
                 _il.Token(_owner.BclReferences.BooleanType);
@@ -317,16 +319,10 @@ namespace Js2IL.Services.ILGenerators
                         var localVar = _variables.FindVariable(name);
                         if (localVar != null)
                         {
-                            _binaryOperators.LoadVariable(localVar);
-                            if (localVar.Type == JavascriptType.Number && !typeCoercion.boxResult)
-                            {
-                                _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
-                                _il.Token(_owner.BclReferences.DoubleType);
-                            }
-                            else
-                            {
-                                typeCoercion.boxResult = false;
-                            }
+                            // Load variable; LoadVariable will auto-unbox number/boolean when boxResult == false
+                            _binaryOperators.LoadVariable(localVar, typeCoercion);
+                            // Prevent downstream Emit() from boxing again; variables are already boxed when needed
+                            typeCoercion.boxResult = false;
                             javascriptType = localVar.Type;
                             // Propagate known CLR runtime type (e.g., const perf = require('perf_hooks')) so downstream
                             // member/property emission can bind typed getters and direct instance calls.

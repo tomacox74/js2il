@@ -46,5 +46,14 @@ namespace Js2IL.Tests.Classes
         var testName = nameof(Classes_BitShiftInCtor_Int32Array);
         return ExecutionTest(testName, allowUnhandledException: true);
     }
+
+    // Minimal repro for InvalidProgramException in ctor due to '1 + this.sieveSizeInBits'
+    // Test enabled to validate current behavior.
+    [Fact]
+    public Task Classes_PrimeCtor_BitArrayAdd()
+    {
+        var testName = nameof(Classes_PrimeCtor_BitArrayAdd);
+        return ExecutionTest(testName, allowUnhandledException: true);
+    }
     }
 }
