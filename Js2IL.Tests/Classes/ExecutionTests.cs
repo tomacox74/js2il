@@ -37,5 +37,14 @@ namespace Js2IL.Tests.Classes
     [Fact] public Task Classes_ClassMethod_While_Increment_Prefix() { var testName = nameof(Classes_ClassMethod_While_Increment_Prefix); return ExecutionTest(testName); }
     [Fact] public Task Classes_ClassMethod_While_Increment_Param_Postfix() { var testName = nameof(Classes_ClassMethod_While_Increment_Param_Postfix); return ExecutionTest(testName); }
     [Fact] public Task Classes_ClassMethod_While_Increment_Param_Prefix() { var testName = nameof(Classes_ClassMethod_While_Increment_Param_Prefix); return ExecutionTest(testName); }
+
+    // Minimal repro: bit-shift and Int32Array length in a class constructor
+    // Allow unhandled exception so we capture stdout even if the runtime faults
+    [Fact]
+    public Task Classes_BitShiftInCtor_Int32Array()
+    {
+        var testName = nameof(Classes_BitShiftInCtor_Int32Array);
+        return ExecutionTest(testName, allowUnhandledException: true);
+    }
     }
 }

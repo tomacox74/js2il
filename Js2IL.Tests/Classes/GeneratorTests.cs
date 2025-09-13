@@ -38,5 +38,14 @@ namespace Js2IL.Tests.Classes
         // Repro for UpdateExpression applied to a method parameter inside while-loop
         [Fact] public Task Classes_ClassMethod_While_Increment_Param_Postfix() { var testName = nameof(Classes_ClassMethod_While_Increment_Param_Postfix); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassMethod_While_Increment_Param_Prefix() { var testName = nameof(Classes_ClassMethod_While_Increment_Param_Prefix); return GenerateTest(testName); }
+
+        // Minimal repro: bit-shift and Int32Array length in a class constructor
+        // This triggers invalid IL patterns (conv/add on boxed objects) in current codegen
+        [Fact]
+        public Task Classes_BitShiftInCtor_Int32Array()
+        {
+            var testName = nameof(Classes_BitShiftInCtor_Int32Array);
+            return GenerateTest(testName);
+        }
     }
 }
