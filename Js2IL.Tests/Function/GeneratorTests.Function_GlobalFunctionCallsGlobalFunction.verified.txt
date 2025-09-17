@@ -89,7 +89,7 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 65 (0x41)
+		// Code size: 70 (0x46)
 		.maxstack 32
 
 		IL_0000: ldc.i4.2
@@ -116,11 +116,12 @@
 		IL_0035: ldarg.0
 		IL_0036: ldc.i4.0
 		IL_0037: ldelem.ref
-		IL_0038: stelem.ref
-		IL_0039: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_003e: pop
-		IL_003f: ldnull
-		IL_0040: ret
+		IL_0038: castclass Scopes.Function_GlobalFunctionCallsGlobalFunction
+		IL_003d: stelem.ref
+		IL_003e: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0043: pop
+		IL_0044: ldnull
+		IL_0045: ret
 	} // end of method Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
 
 	.method public static 
@@ -128,7 +129,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x20bc
+		// Method begins at RVA 0x20c0
 		// Header size: 12
 		// Code size: 39 (0x27)
 		.maxstack 32
@@ -159,7 +160,7 @@
 	.method public static 
 		void _LoadDispatchTable () cil managed 
 	{
-		// Method begins at RVA 0x20ef
+		// Method begins at RVA 0x20f3
 		// Header size: 1
 		// Code size: 35 (0x23)
 		.maxstack 8
@@ -184,9 +185,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2114
+		// Method begins at RVA 0x2118
 		// Header size: 12
-		// Code size: 93 (0x5d)
+		// Code size: 108 (0x6c)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -197,35 +198,38 @@
 		IL_0005: stloc.0
 		IL_0006: call void Functions._Loader::_LoadDispatchTable()
 		IL_000b: ldloc.0
-		IL_000c: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::helloWorldProxy
-		IL_0011: stfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
-		IL_0016: ldloc.0
-		IL_0017: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::helloWorld
-		IL_001c: stfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorld
-		IL_0021: ldloc.0
-		IL_0022: ldfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
-		IL_0027: ldc.i4.1
-		IL_0028: newarr [System.Runtime]System.Object
-		IL_002d: dup
-		IL_002e: ldc.i4.0
-		IL_002f: ldloc.0
-		IL_0030: stelem.ref
-		IL_0031: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0036: pop
-		IL_0037: ldc.i4.2
-		IL_0038: newarr [System.Runtime]System.Object
-		IL_003d: dup
-		IL_003e: ldc.i4.0
-		IL_003f: ldstr "finally is now"
-		IL_0044: stelem.ref
-		IL_0045: dup
-		IL_0046: ldc.i4.1
-		IL_0047: ldc.r8 3
-		IL_0050: box [System.Runtime]System.Double
-		IL_0055: stelem.ref
-		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_005b: pop
-		IL_005c: ret
+		IL_000c: castclass Scopes.Function_GlobalFunctionCallsGlobalFunction
+		IL_0011: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::helloWorldProxy
+		IL_0016: stfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
+		IL_001b: ldloc.0
+		IL_001c: castclass Scopes.Function_GlobalFunctionCallsGlobalFunction
+		IL_0021: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::helloWorld
+		IL_0026: stfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorld
+		IL_002b: ldloc.0
+		IL_002c: ldfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
+		IL_0031: ldc.i4.1
+		IL_0032: newarr [System.Runtime]System.Object
+		IL_0037: dup
+		IL_0038: ldc.i4.0
+		IL_0039: ldloc.0
+		IL_003a: castclass Scopes.Function_GlobalFunctionCallsGlobalFunction
+		IL_003f: stelem.ref
+		IL_0040: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0045: pop
+		IL_0046: ldc.i4.2
+		IL_0047: newarr [System.Runtime]System.Object
+		IL_004c: dup
+		IL_004d: ldc.i4.0
+		IL_004e: ldstr "finally is now"
+		IL_0053: stelem.ref
+		IL_0054: dup
+		IL_0055: ldc.i4.1
+		IL_0056: ldc.r8 3
+		IL_005f: box [System.Runtime]System.Double
+		IL_0064: stelem.ref
+		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_006a: pop
+		IL_006b: ret
 	} // end of method Program::Main
 
 } // end of class Program

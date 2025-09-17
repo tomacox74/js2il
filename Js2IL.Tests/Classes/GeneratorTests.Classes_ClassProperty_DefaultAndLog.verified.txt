@@ -30,7 +30,7 @@
 
 	// Fields
 	.field public object Greeter
-	.field public initonly object g
+	.field public object g
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -59,10 +59,10 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x2062
-		// Header size: 1
+		// Method begins at RVA 0x2064
+		// Header size: 12
 		// Code size: 18 (0x12)
-		.maxstack 8
+		.maxstack 32
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
@@ -81,9 +81,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2078
+		// Method begins at RVA 0x2084
 		// Header size: 12
-		// Code size: 44 (0x2c)
+		// Code size: 59 (0x3b)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -93,19 +93,22 @@
 		IL_0000: newobj instance void Scopes.Classes_ClassProperty_DefaultAndLog::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: newobj instance void Classes.Greeter::.ctor()
-		IL_000c: stfld object Scopes.Classes_ClassProperty_DefaultAndLog::g
-		IL_0011: ldc.i4.1
-		IL_0012: newarr [System.Runtime]System.Object
-		IL_0017: dup
-		IL_0018: ldc.i4.0
-		IL_0019: ldloc.0
-		IL_001a: ldfld object Scopes.Classes_ClassProperty_DefaultAndLog::g
-		IL_001f: ldfld object Classes.Greeter::message
-		IL_0024: stelem.ref
-		IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_002a: pop
-		IL_002b: ret
+		IL_0007: castclass Scopes.Classes_ClassProperty_DefaultAndLog
+		IL_000c: newobj instance void Classes.Greeter::.ctor()
+		IL_0011: stfld object Scopes.Classes_ClassProperty_DefaultAndLog::g
+		IL_0016: ldc.i4.1
+		IL_0017: newarr [System.Runtime]System.Object
+		IL_001c: dup
+		IL_001d: ldc.i4.0
+		IL_001e: ldloc.0
+		IL_001f: castclass Scopes.Classes_ClassProperty_DefaultAndLog
+		IL_0024: ldfld object Scopes.Classes_ClassProperty_DefaultAndLog::g
+		IL_0029: castclass Classes.Greeter
+		IL_002e: ldfld object Classes.Greeter::message
+		IL_0033: stelem.ref
+		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0039: pop
+		IL_003a: ret
 	} // end of method Program::Main
 
 } // end of class Program

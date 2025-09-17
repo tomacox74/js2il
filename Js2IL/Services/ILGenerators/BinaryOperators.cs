@@ -66,6 +66,14 @@ namespace Js2IL.Services.ILGenerators
                 _il.LoadArgument(0); // scopes array
                 _il.LoadConstantI4(sv.ParentScopeIndex);
                 _il.OpCode(ILOpCode.Ldelem_ref);
+                // Cast to the concrete scope type for verifiable field access
+                var reg0 = _variables.GetVariableRegistry();
+                var tdef0 = reg0?.GetScopeTypeHandle(variable.ScopeName) ?? default;
+                if (!tdef0.IsNil)
+                {
+                    _il.OpCode(ILOpCode.Castclass);
+                    _il.Token(tdef0);
+                }
                 _il.OpCode(ILOpCode.Ldfld);
                 _il.Token(sv.FieldHandle);
                 // Optional auto-unbox when caller does not want a boxed result
@@ -99,6 +107,14 @@ namespace Js2IL.Services.ILGenerators
             else
             {
                 _il.LoadLocal(scopeLocalIndex.Address);
+            }
+            // Cast to the concrete scope type for verifiable field access
+            var reg = _variables.GetVariableRegistry();
+            var tdef = reg?.GetScopeTypeHandle(variable.ScopeName) ?? default;
+            if (!tdef.IsNil)
+            {
+                _il.OpCode(ILOpCode.Castclass);
+                _il.Token(tdef);
             }
             _il.OpCode(ILOpCode.Ldfld);
             _il.Token(variable.FieldHandle);
@@ -437,21 +453,11 @@ namespace Js2IL.Services.ILGenerators
                         _il.Token(_bclReferences.DoubleType);
                         leftType = JavascriptType.Number;
                     }
-                    else if (!likelyNumericSyntax)
-                    {
-                        // Not a numeric fast-path candidate: pre-box the left primitive (if any)
-                        // while it is on top of the stack, so we won't accidentally box the right later.
-                        if (leftType == JavascriptType.Number)
-                        {
-                            _il.OpCode(ILOpCode.Box);
-                            _il.Token(_bclReferences.DoubleType);
-                        }
-                        else if (leftType == JavascriptType.Boolean)
-                        {
-                            _il.OpCode(ILOpCode.Box);
-                            _il.Token(_bclReferences.BooleanType);
-                        }
-                    }
+                    // Note: do NOT pre-box the left operand here when not likelyNumericSyntax.
+                    // Boxing too early can leave a boxed left-hand value on the stack and later
+                    // choose the numeric fast-path after evaluating the right operand, causing
+                    // IL 'add' to operate on mismatched types. Defer boxing to the non-numeric
+                    // path after both operands are analyzed.
                 }
                 else if (minus)
                 {
@@ -644,17 +650,41 @@ namespace Js2IL.Services.ILGenerators
                     }
                     else if (!staticString && !(leftType == JavascriptType.Number && rightType == JavascriptType.Number))
                     {
-                        // Only box when we are not in a numeric fast-path.
-                        // Left operand (if primitive) was pre-boxed above when not likelyNumericSyntax.
-                        if (rightType == JavascriptType.Number)
+                        // We are going to call runtime Operators.Add(object, object).
+                        // Ensure BOTH operands are boxed objects. Since the right operand is on top of the stack,
+                        // if the left needs boxing we must first stash the right into a temp local, box left, then reload right.
+                        bool leftNeedsBox = leftType == JavascriptType.Number || leftType == JavascriptType.Boolean;
+                        bool rightNeedsBox = rightType == JavascriptType.Number || rightType == JavascriptType.Boolean;
+
+                        if (leftNeedsBox)
                         {
+                            // If right also needs boxing, box it before storing into object local
+                            if (rightNeedsBox)
+                            {
+                                var rt = rightType == JavascriptType.Number ? _bclReferences.DoubleType : _bclReferences.BooleanType;
+                                _il.OpCode(ILOpCode.Box);
+                                _il.Token(rt);
+                            }
+                            int rhsTemp = _variables.AllocateBlockScopeLocal($"PlusTmp_RHS_L{binaryExpression.Location.Start.Line}C{binaryExpression.Location.Start.Column}");
+                            _il.StoreLocal(rhsTemp);
+
+                            // Box left primitive now (it is on top after storing RHS)
+                            var lt = leftType == JavascriptType.Number ? _bclReferences.DoubleType : _bclReferences.BooleanType;
                             _il.OpCode(ILOpCode.Box);
-                            _il.Token(_bclReferences.DoubleType);
+                            _il.Token(lt);
+
+                            // Reload RHS (already boxed if it needed to be)
+                            _il.LoadLocal(rhsTemp);
                         }
-                        else if (rightType == JavascriptType.Boolean)
+                        else
                         {
-                            _il.OpCode(ILOpCode.Box);
-                            _il.Token(_bclReferences.BooleanType);
+                            // Left is already an object; only ensure right is boxed if needed
+                            if (rightNeedsBox)
+                            {
+                                var rt = rightType == JavascriptType.Number ? _bclReferences.DoubleType : _bclReferences.BooleanType;
+                                _il.OpCode(ILOpCode.Box);
+                                _il.Token(rt);
+                            }
                         }
                     }
                 }

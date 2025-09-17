@@ -29,8 +29,8 @@
 
 
 	// Fields
-	.field public initonly object a
-	.field public initonly object b
+	.field public object a
+	.field public object b
 	.field public object i
 
 	// Methods
@@ -59,7 +59,7 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 224 (0xe0)
+		// Code size: 274 (0x112)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -69,68 +69,78 @@
 		IL_0000: newobj instance void Scopes.Array_Spread_Copy::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldc.i4.3
-		IL_0008: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_000d: dup
-		IL_000e: ldc.r8 1
-		IL_0017: box [System.Runtime]System.Double
-		IL_001c: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0021: dup
-		IL_0022: ldc.r8 2
-		IL_002b: box [System.Runtime]System.Double
-		IL_0030: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0035: dup
-		IL_0036: ldc.r8 3
-		IL_003f: box [System.Runtime]System.Double
-		IL_0044: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0049: stfld object Scopes.Array_Spread_Copy::a
-		IL_004e: ldloc.0
-		IL_004f: ldc.i4.1
-		IL_0050: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0055: dup
-		IL_0056: ldloc.0
-		IL_0057: ldfld object Scopes.Array_Spread_Copy::a
-		IL_005c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
-		IL_0061: stfld object Scopes.Array_Spread_Copy::b
-		IL_0066: ldloc.0
-		IL_0067: ldc.r8 0.0
-		IL_0070: box [System.Runtime]System.Double
-		IL_0075: stfld object Scopes.Array_Spread_Copy::i
-		// loop start (head: IL_007a)
-			IL_007a: ldloc.0
-			IL_007b: ldfld object Scopes.Array_Spread_Copy::i
-			IL_0080: unbox.any [System.Runtime]System.Double
-			IL_0085: ldloc.0
-			IL_0086: ldfld object Scopes.Array_Spread_Copy::b
-			IL_008b: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_0090: blt IL_009a
+		IL_0007: castclass Scopes.Array_Spread_Copy
+		IL_000c: ldc.i4.3
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0012: dup
+		IL_0013: ldc.r8 1
+		IL_001c: box [System.Runtime]System.Double
+		IL_0021: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0026: dup
+		IL_0027: ldc.r8 2
+		IL_0030: box [System.Runtime]System.Double
+		IL_0035: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_003a: dup
+		IL_003b: ldc.r8 3
+		IL_0044: box [System.Runtime]System.Double
+		IL_0049: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_004e: stfld object Scopes.Array_Spread_Copy::a
+		IL_0053: ldloc.0
+		IL_0054: castclass Scopes.Array_Spread_Copy
+		IL_0059: ldc.i4.1
+		IL_005a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_005f: dup
+		IL_0060: ldloc.0
+		IL_0061: castclass Scopes.Array_Spread_Copy
+		IL_0066: ldfld object Scopes.Array_Spread_Copy::a
+		IL_006b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
+		IL_0070: stfld object Scopes.Array_Spread_Copy::b
+		IL_0075: ldloc.0
+		IL_0076: castclass Scopes.Array_Spread_Copy
+		IL_007b: ldc.r8 0.0
+		IL_0084: box [System.Runtime]System.Double
+		IL_0089: stfld object Scopes.Array_Spread_Copy::i
+		// loop start (head: IL_008e)
+			IL_008e: ldloc.0
+			IL_008f: castclass Scopes.Array_Spread_Copy
+			IL_0094: ldfld object Scopes.Array_Spread_Copy::i
+			IL_0099: unbox.any [System.Runtime]System.Double
+			IL_009e: ldloc.0
+			IL_009f: castclass Scopes.Array_Spread_Copy
+			IL_00a4: ldfld object Scopes.Array_Spread_Copy::b
+			IL_00a9: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_00ae: blt IL_00b8
 
-			IL_0095: br IL_00df
+			IL_00b3: br IL_0111
 
-			IL_009a: ldc.i4.1
-			IL_009b: newarr [System.Runtime]System.Object
-			IL_00a0: dup
-			IL_00a1: ldc.i4.0
-			IL_00a2: ldloc.0
-			IL_00a3: ldfld object Scopes.Array_Spread_Copy::b
-			IL_00a8: ldloc.0
-			IL_00a9: ldfld object Scopes.Array_Spread_Copy::i
-			IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_00b3: stelem.ref
-			IL_00b4: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_00b9: pop
-			IL_00ba: ldloc.0
-			IL_00bb: ldloc.0
-			IL_00bc: ldfld object Scopes.Array_Spread_Copy::i
-			IL_00c1: unbox.any [System.Runtime]System.Double
-			IL_00c6: ldc.r8 1
-			IL_00cf: add
-			IL_00d0: box [System.Runtime]System.Double
-			IL_00d5: stfld object Scopes.Array_Spread_Copy::i
-			IL_00da: br IL_007a
+			IL_00b8: ldc.i4.1
+			IL_00b9: newarr [System.Runtime]System.Object
+			IL_00be: dup
+			IL_00bf: ldc.i4.0
+			IL_00c0: ldloc.0
+			IL_00c1: castclass Scopes.Array_Spread_Copy
+			IL_00c6: ldfld object Scopes.Array_Spread_Copy::b
+			IL_00cb: ldloc.0
+			IL_00cc: castclass Scopes.Array_Spread_Copy
+			IL_00d1: ldfld object Scopes.Array_Spread_Copy::i
+			IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_00db: stelem.ref
+			IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_00e1: pop
+			IL_00e2: ldloc.0
+			IL_00e3: castclass Scopes.Array_Spread_Copy
+			IL_00e8: ldloc.0
+			IL_00e9: castclass Scopes.Array_Spread_Copy
+			IL_00ee: ldfld object Scopes.Array_Spread_Copy::i
+			IL_00f3: unbox.any [System.Runtime]System.Double
+			IL_00f8: ldc.r8 1
+			IL_0101: add
+			IL_0102: box [System.Runtime]System.Double
+			IL_0107: stfld object Scopes.Array_Spread_Copy::i
+			IL_010c: br IL_008e
 		// end loop
 
-		IL_00df: ret
+		IL_0111: ret
 	} // end of method Program::Main
 
 } // end of class Program

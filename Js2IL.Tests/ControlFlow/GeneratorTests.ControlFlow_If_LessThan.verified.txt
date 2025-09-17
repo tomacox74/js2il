@@ -49,8 +49,8 @@
 
 
 	// Fields
-	.field public initonly object a
-	.field public initonly object b
+	.field public object a
+	.field public object b
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -78,7 +78,7 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 124 (0x7c)
+		// Code size: 144 (0x90)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -88,43 +88,47 @@
 		IL_0000: newobj instance void Scopes.ControlFlow_If_LessThan::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldc.r8 3
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Scopes.ControlFlow_If_LessThan::a
-		IL_001a: ldloc.0
-		IL_001b: ldc.r8 5
-		IL_0024: box [System.Runtime]System.Double
-		IL_0029: stfld object Scopes.ControlFlow_If_LessThan::b
-		IL_002e: ldloc.0
-		IL_002f: ldfld object Scopes.ControlFlow_If_LessThan::a
-		IL_0034: unbox.any [System.Runtime]System.Double
-		IL_0039: ldloc.0
-		IL_003a: ldfld object Scopes.ControlFlow_If_LessThan::b
-		IL_003f: unbox.any [System.Runtime]System.Double
-		IL_0044: blt IL_004e
+		IL_0007: castclass Scopes.ControlFlow_If_LessThan
+		IL_000c: ldc.r8 3
+		IL_0015: box [System.Runtime]System.Double
+		IL_001a: stfld object Scopes.ControlFlow_If_LessThan::a
+		IL_001f: ldloc.0
+		IL_0020: castclass Scopes.ControlFlow_If_LessThan
+		IL_0025: ldc.r8 5
+		IL_002e: box [System.Runtime]System.Double
+		IL_0033: stfld object Scopes.ControlFlow_If_LessThan::b
+		IL_0038: ldloc.0
+		IL_0039: castclass Scopes.ControlFlow_If_LessThan
+		IL_003e: ldfld object Scopes.ControlFlow_If_LessThan::a
+		IL_0043: unbox.any [System.Runtime]System.Double
+		IL_0048: ldloc.0
+		IL_0049: castclass Scopes.ControlFlow_If_LessThan
+		IL_004e: ldfld object Scopes.ControlFlow_If_LessThan::b
+		IL_0053: unbox.any [System.Runtime]System.Double
+		IL_0058: blt IL_0062
 
-		IL_0049: br IL_0067
+		IL_005d: br IL_007b
 
-		IL_004e: ldc.i4.1
-		IL_004f: newarr [System.Runtime]System.Object
-		IL_0054: dup
-		IL_0055: ldc.i4.0
-		IL_0056: ldstr "lte"
-		IL_005b: stelem.ref
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0061: pop
-		IL_0062: br IL_007b
+		IL_0062: ldc.i4.1
+		IL_0063: newarr [System.Runtime]System.Object
+		IL_0068: dup
+		IL_0069: ldc.i4.0
+		IL_006a: ldstr "lte"
+		IL_006f: stelem.ref
+		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0075: pop
+		IL_0076: br IL_008f
 
-		IL_0067: ldc.i4.1
-		IL_0068: newarr [System.Runtime]System.Object
-		IL_006d: dup
-		IL_006e: ldc.i4.0
-		IL_006f: ldstr "gt"
-		IL_0074: stelem.ref
-		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_007a: pop
+		IL_007b: ldc.i4.1
+		IL_007c: newarr [System.Runtime]System.Object
+		IL_0081: dup
+		IL_0082: ldc.i4.0
+		IL_0083: ldstr "gt"
+		IL_0088: stelem.ref
+		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_008e: pop
 
-		IL_007b: ret
+		IL_008f: ret
 	} // end of method Program::Main
 
 } // end of class Program

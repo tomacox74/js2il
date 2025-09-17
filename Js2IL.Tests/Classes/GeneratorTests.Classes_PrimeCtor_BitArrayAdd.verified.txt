@@ -125,10 +125,10 @@
 			object ''
 		) cil managed 
 	{
-		// Method begins at RVA 0x207d
-		// Header size: 1
+		// Method begins at RVA 0x2080
+		// Header size: 12
 		// Code size: 14 (0xe)
-		.maxstack 8
+		.maxstack 32
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
@@ -153,10 +153,13 @@
 			object ''
 		) cil managed 
 	{
-		// Method begins at RVA 0x208c
+		// Method begins at RVA 0x209c
 		// Header size: 12
-		// Code size: 74 (0x4a)
-		.maxstack 8
+		// Code size: 76 (0x4c)
+		.maxstack 32
+		.locals init (
+			[0] object
+		)
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
@@ -173,13 +176,15 @@
 		IL_0020: stfld object Classes.PrimeSieve::sieveSizeInBits
 		IL_0025: ldarg.0
 		IL_0026: ldc.r8 1
-		IL_002f: box [System.Runtime]System.Double
-		IL_0034: ldarg.0
-		IL_0035: ldfld object Classes.PrimeSieve::sieveSizeInBits
-		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_003f: newobj instance void Classes.BitArray::.ctor(object)
-		IL_0044: stfld object Classes.PrimeSieve::bitArray
-		IL_0049: ret
+		IL_002f: ldarg.0
+		IL_0030: ldfld object Classes.PrimeSieve::sieveSizeInBits
+		IL_0035: stloc.0
+		IL_0036: box [System.Runtime]System.Double
+		IL_003b: ldloc.0
+		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0041: newobj instance void Classes.BitArray::.ctor(object)
+		IL_0046: stfld object Classes.PrimeSieve::bitArray
+		IL_004b: ret
 	} // end of method PrimeSieve::.ctor
 
 } // end of class Classes.PrimeSieve
@@ -191,7 +196,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e4
+		// Method begins at RVA 0x20f4
 		// Header size: 12
 		// Code size: 27 (0x1b)
 		.maxstack 32

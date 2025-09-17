@@ -7,7 +7,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public initonly object x
+	.field public object x
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -35,7 +35,7 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 48 (0x30)
+		// Code size: 58 (0x3a)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -45,19 +45,21 @@
 		IL_0000: newobj instance void Scopes.Variable_ConstSimple::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldc.r8 42
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Scopes.Variable_ConstSimple::x
-		IL_001a: ldc.i4.1
-		IL_001b: newarr [System.Runtime]System.Object
-		IL_0020: dup
-		IL_0021: ldc.i4.0
-		IL_0022: ldloc.0
-		IL_0023: ldfld object Scopes.Variable_ConstSimple::x
-		IL_0028: stelem.ref
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_002e: pop
-		IL_002f: ret
+		IL_0007: castclass Scopes.Variable_ConstSimple
+		IL_000c: ldc.r8 42
+		IL_0015: box [System.Runtime]System.Double
+		IL_001a: stfld object Scopes.Variable_ConstSimple::x
+		IL_001f: ldc.i4.1
+		IL_0020: newarr [System.Runtime]System.Object
+		IL_0025: dup
+		IL_0026: ldc.i4.0
+		IL_0027: ldloc.0
+		IL_0028: castclass Scopes.Variable_ConstSimple
+		IL_002d: ldfld object Scopes.Variable_ConstSimple::x
+		IL_0032: stelem.ref
+		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0038: pop
+		IL_0039: ret
 	} // end of method Program::Main
 
 } // end of class Program

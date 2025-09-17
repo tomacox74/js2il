@@ -52,7 +52,7 @@
 
 	// Fields
 	.field public object Greeter
-	.field public initonly object g
+	.field public object g
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -81,10 +81,10 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x206b
-		// Header size: 1
+		// Method begins at RVA 0x206c
+		// Header size: 12
 		// Code size: 18 (0x12)
-		.maxstack 8
+		.maxstack 32
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
@@ -97,10 +97,10 @@
 	.method public hidebysig 
 		instance object logSecret () cil managed 
 	{
-		// Method begins at RVA 0x207e
-		// Header size: 1
+		// Method begins at RVA 0x208c
+		// Header size: 12
 		// Code size: 23 (0x17)
-		.maxstack 8
+		.maxstack 32
 
 		IL_0000: ldc.i4.1
 		IL_0001: newarr [System.Runtime]System.Object
@@ -111,7 +111,7 @@
 		IL_000e: stelem.ref
 		IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_0014: pop
-		IL_0015: ldnull
+		IL_0015: ldarg.0
 		IL_0016: ret
 	} // end of method Greeter::logSecret
 
@@ -124,9 +124,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2098
+		// Method begins at RVA 0x20b0
 		// Header size: 12
-		// Code size: 30 (0x1e)
+		// Code size: 40 (0x28)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -136,13 +136,15 @@
 		IL_0000: newobj instance void Scopes.Classes_ClassPrivateProperty_HelperMethod_Log::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: newobj instance void Classes.Greeter::.ctor()
-		IL_000c: stfld object Scopes.Classes_ClassPrivateProperty_HelperMethod_Log::g
-		IL_0011: ldloc.0
-		IL_0012: ldfld object Scopes.Classes_ClassPrivateProperty_HelperMethod_Log::g
-		IL_0017: callvirt instance object Classes.Greeter::logSecret()
-		IL_001c: pop
-		IL_001d: ret
+		IL_0007: castclass Scopes.Classes_ClassPrivateProperty_HelperMethod_Log
+		IL_000c: newobj instance void Classes.Greeter::.ctor()
+		IL_0011: stfld object Scopes.Classes_ClassPrivateProperty_HelperMethod_Log::g
+		IL_0016: ldloc.0
+		IL_0017: castclass Scopes.Classes_ClassPrivateProperty_HelperMethod_Log
+		IL_001c: ldfld object Scopes.Classes_ClassPrivateProperty_HelperMethod_Log::g
+		IL_0021: callvirt instance object Classes.Greeter::logSecret()
+		IL_0026: pop
+		IL_0027: ret
 	} // end of method Program::Main
 
 } // end of class Program

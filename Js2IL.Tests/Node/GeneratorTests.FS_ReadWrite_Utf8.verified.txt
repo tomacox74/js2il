@@ -7,10 +7,10 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public initonly object fs
-	.field public initonly object path
-	.field public initonly object file
-	.field public initonly object content
+	.field public object fs
+	.field public object path
+	.field public object file
+	.field public object content
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -38,7 +38,7 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 155 (0x9b)
+		// Code size: 220 (0xdc)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -48,54 +48,67 @@
 		IL_0000: newobj instance void Scopes.FS_ReadWrite_Utf8::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldstr "fs"
-		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Require::require(string)
-		IL_0011: stfld object Scopes.FS_ReadWrite_Utf8::fs
-		IL_0016: ldloc.0
-		IL_0017: ldstr "path"
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Require::require(string)
-		IL_0021: stfld object Scopes.FS_ReadWrite_Utf8::path
-		IL_0026: ldloc.0
-		IL_0027: ldloc.0
-		IL_0028: ldfld object Scopes.FS_ReadWrite_Utf8::path
-		IL_002d: ldc.i4.2
-		IL_002e: newarr [System.Runtime]System.Object
-		IL_0033: dup
-		IL_0034: ldc.i4.0
-		IL_0035: call string [JavaScriptRuntime]JavaScriptRuntime.GlobalVariables::get___dirname()
-		IL_003a: stelem.ref
-		IL_003b: dup
-		IL_003c: ldc.i4.1
-		IL_003d: ldstr "tmp.txt"
-		IL_0042: stelem.ref
-		IL_0043: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Node.Path::join(object[])
-		IL_0048: stfld object Scopes.FS_ReadWrite_Utf8::file
-		IL_004d: ldloc.0
-		IL_004e: ldfld object Scopes.FS_ReadWrite_Utf8::fs
-		IL_0053: ldloc.0
-		IL_0054: ldfld object Scopes.FS_ReadWrite_Utf8::file
-		IL_0059: ldstr "hello"
-		IL_005e: ldstr "utf8"
-		IL_0063: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Node.FS::writeFileSync(object, object, object)
-		IL_0068: pop
-		IL_0069: ldloc.0
-		IL_006a: ldloc.0
-		IL_006b: ldfld object Scopes.FS_ReadWrite_Utf8::fs
-		IL_0070: ldloc.0
-		IL_0071: ldfld object Scopes.FS_ReadWrite_Utf8::file
-		IL_0076: ldstr "utf8"
-		IL_007b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Node.FS::readFileSync(object, object)
-		IL_0080: stfld object Scopes.FS_ReadWrite_Utf8::content
-		IL_0085: ldc.i4.1
-		IL_0086: newarr [System.Runtime]System.Object
-		IL_008b: dup
-		IL_008c: ldc.i4.0
-		IL_008d: ldloc.0
-		IL_008e: ldfld object Scopes.FS_ReadWrite_Utf8::content
-		IL_0093: stelem.ref
-		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0099: pop
-		IL_009a: ret
+		IL_0007: castclass Scopes.FS_ReadWrite_Utf8
+		IL_000c: ldstr "fs"
+		IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.Require::require(string)
+		IL_0016: stfld object Scopes.FS_ReadWrite_Utf8::fs
+		IL_001b: ldloc.0
+		IL_001c: castclass Scopes.FS_ReadWrite_Utf8
+		IL_0021: ldstr "path"
+		IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Require::require(string)
+		IL_002b: stfld object Scopes.FS_ReadWrite_Utf8::path
+		IL_0030: ldloc.0
+		IL_0031: castclass Scopes.FS_ReadWrite_Utf8
+		IL_0036: ldloc.0
+		IL_0037: castclass Scopes.FS_ReadWrite_Utf8
+		IL_003c: ldfld object Scopes.FS_ReadWrite_Utf8::path
+		IL_0041: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.Path
+		IL_0046: ldc.i4.2
+		IL_0047: newarr [System.Runtime]System.Object
+		IL_004c: dup
+		IL_004d: ldc.i4.0
+		IL_004e: call string [JavaScriptRuntime]JavaScriptRuntime.GlobalVariables::get___dirname()
+		IL_0053: stelem.ref
+		IL_0054: dup
+		IL_0055: ldc.i4.1
+		IL_0056: ldstr "tmp.txt"
+		IL_005b: stelem.ref
+		IL_005c: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Node.Path::join(object[])
+		IL_0061: stfld object Scopes.FS_ReadWrite_Utf8::file
+		IL_0066: ldloc.0
+		IL_0067: castclass Scopes.FS_ReadWrite_Utf8
+		IL_006c: ldfld object Scopes.FS_ReadWrite_Utf8::fs
+		IL_0071: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.FS
+		IL_0076: ldloc.0
+		IL_0077: castclass Scopes.FS_ReadWrite_Utf8
+		IL_007c: ldfld object Scopes.FS_ReadWrite_Utf8::file
+		IL_0081: ldstr "hello"
+		IL_0086: ldstr "utf8"
+		IL_008b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Node.FS::writeFileSync(object, object, object)
+		IL_0090: pop
+		IL_0091: ldloc.0
+		IL_0092: castclass Scopes.FS_ReadWrite_Utf8
+		IL_0097: ldloc.0
+		IL_0098: castclass Scopes.FS_ReadWrite_Utf8
+		IL_009d: ldfld object Scopes.FS_ReadWrite_Utf8::fs
+		IL_00a2: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.FS
+		IL_00a7: ldloc.0
+		IL_00a8: castclass Scopes.FS_ReadWrite_Utf8
+		IL_00ad: ldfld object Scopes.FS_ReadWrite_Utf8::file
+		IL_00b2: ldstr "utf8"
+		IL_00b7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Node.FS::readFileSync(object, object)
+		IL_00bc: stfld object Scopes.FS_ReadWrite_Utf8::content
+		IL_00c1: ldc.i4.1
+		IL_00c2: newarr [System.Runtime]System.Object
+		IL_00c7: dup
+		IL_00c8: ldc.i4.0
+		IL_00c9: ldloc.0
+		IL_00ca: castclass Scopes.FS_ReadWrite_Utf8
+		IL_00cf: ldfld object Scopes.FS_ReadWrite_Utf8::content
+		IL_00d4: stelem.ref
+		IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00da: pop
+		IL_00db: ret
 	} // end of method Program::Main
 
 } // end of class Program

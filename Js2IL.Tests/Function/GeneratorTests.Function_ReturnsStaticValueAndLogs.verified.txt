@@ -116,7 +116,7 @@
 	{
 		// Method begins at RVA 0x20a8
 		// Header size: 12
-		// Code size: 79 (0x4f)
+		// Code size: 99 (0x63)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -127,33 +127,37 @@
 		IL_0005: stloc.0
 		IL_0006: call void Functions._Loader::_LoadDispatchTable()
 		IL_000b: ldloc.0
-		IL_000c: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::returnsFive
-		IL_0011: stfld object Scopes.Function_ReturnsStaticValueAndLogs::returnsFive
-		IL_0016: ldloc.0
-		IL_0017: ldloc.0
-		IL_0018: ldfld object Scopes.Function_ReturnsStaticValueAndLogs::returnsFive
-		IL_001d: ldc.i4.1
-		IL_001e: newarr [System.Runtime]System.Object
-		IL_0023: dup
-		IL_0024: ldc.i4.0
-		IL_0025: ldloc.0
-		IL_0026: stelem.ref
-		IL_0027: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_002c: stfld object Scopes.Function_ReturnsStaticValueAndLogs::output
-		IL_0031: ldc.i4.2
-		IL_0032: newarr [System.Runtime]System.Object
-		IL_0037: dup
-		IL_0038: ldc.i4.0
-		IL_0039: ldstr "Output:"
-		IL_003e: stelem.ref
-		IL_003f: dup
-		IL_0040: ldc.i4.1
-		IL_0041: ldloc.0
-		IL_0042: ldfld object Scopes.Function_ReturnsStaticValueAndLogs::output
-		IL_0047: stelem.ref
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_004d: pop
-		IL_004e: ret
+		IL_000c: castclass Scopes.Function_ReturnsStaticValueAndLogs
+		IL_0011: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::returnsFive
+		IL_0016: stfld object Scopes.Function_ReturnsStaticValueAndLogs::returnsFive
+		IL_001b: ldloc.0
+		IL_001c: castclass Scopes.Function_ReturnsStaticValueAndLogs
+		IL_0021: ldloc.0
+		IL_0022: ldfld object Scopes.Function_ReturnsStaticValueAndLogs::returnsFive
+		IL_0027: ldc.i4.1
+		IL_0028: newarr [System.Runtime]System.Object
+		IL_002d: dup
+		IL_002e: ldc.i4.0
+		IL_002f: ldloc.0
+		IL_0030: castclass Scopes.Function_ReturnsStaticValueAndLogs
+		IL_0035: stelem.ref
+		IL_0036: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_003b: stfld object Scopes.Function_ReturnsStaticValueAndLogs::output
+		IL_0040: ldc.i4.2
+		IL_0041: newarr [System.Runtime]System.Object
+		IL_0046: dup
+		IL_0047: ldc.i4.0
+		IL_0048: ldstr "Output:"
+		IL_004d: stelem.ref
+		IL_004e: dup
+		IL_004f: ldc.i4.1
+		IL_0050: ldloc.0
+		IL_0051: castclass Scopes.Function_ReturnsStaticValueAndLogs
+		IL_0056: ldfld object Scopes.Function_ReturnsStaticValueAndLogs::output
+		IL_005b: stelem.ref
+		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0061: pop
+		IL_0062: ret
 	} // end of method Program::Main
 
 } // end of class Program
