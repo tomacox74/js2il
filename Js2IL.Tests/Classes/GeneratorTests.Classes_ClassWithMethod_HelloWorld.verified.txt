@@ -52,7 +52,7 @@
 
 	// Fields
 	.field public object Greeter
-	.field public initonly object g
+	.field public object g
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -78,10 +78,10 @@
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x206b
-		// Header size: 1
+		// Method begins at RVA 0x206c
+		// Header size: 12
 		// Code size: 7 (0x7)
-		.maxstack 8
+		.maxstack 32
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
@@ -91,10 +91,10 @@
 	.method public hidebysig 
 		instance object helloWorld () cil managed 
 	{
-		// Method begins at RVA 0x2073
-		// Header size: 1
+		// Method begins at RVA 0x2080
+		// Header size: 12
 		// Code size: 22 (0x16)
-		.maxstack 8
+		.maxstack 32
 
 		IL_0000: ldc.i4.1
 		IL_0001: newarr [System.Runtime]System.Object
@@ -104,7 +104,7 @@
 		IL_000d: stelem.ref
 		IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_0013: pop
-		IL_0014: ldnull
+		IL_0014: ldarg.0
 		IL_0015: ret
 	} // end of method Greeter::helloWorld
 
@@ -117,9 +117,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x208c
+		// Method begins at RVA 0x20a4
 		// Header size: 12
-		// Code size: 30 (0x1e)
+		// Code size: 40 (0x28)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -129,13 +129,15 @@
 		IL_0000: newobj instance void Scopes.Classes_ClassWithMethod_HelloWorld::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: newobj instance void Classes.Greeter::.ctor()
-		IL_000c: stfld object Scopes.Classes_ClassWithMethod_HelloWorld::g
-		IL_0011: ldloc.0
-		IL_0012: ldfld object Scopes.Classes_ClassWithMethod_HelloWorld::g
-		IL_0017: callvirt instance object Classes.Greeter::helloWorld()
-		IL_001c: pop
-		IL_001d: ret
+		IL_0007: castclass Scopes.Classes_ClassWithMethod_HelloWorld
+		IL_000c: newobj instance void Classes.Greeter::.ctor()
+		IL_0011: stfld object Scopes.Classes_ClassWithMethod_HelloWorld::g
+		IL_0016: ldloc.0
+		IL_0017: castclass Scopes.Classes_ClassWithMethod_HelloWorld
+		IL_001c: ldfld object Scopes.Classes_ClassWithMethod_HelloWorld::g
+		IL_0021: callvirt instance object Classes.Greeter::helloWorld()
+		IL_0026: pop
+		IL_0027: ret
 	} // end of method Program::Main
 
 } // end of class Program

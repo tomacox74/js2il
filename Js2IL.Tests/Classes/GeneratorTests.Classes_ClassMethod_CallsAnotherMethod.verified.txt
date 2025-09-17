@@ -1,4 +1,4 @@
-// IL code: Classes_ClassMethod_CallsAnotherMethod
+﻿// IL code: Classes_ClassMethod_CallsAnotherMethod
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -112,7 +112,7 @@
 
 	// Fields
 	.field public object Greeter
-	.field public initonly object g
+	.field public object g
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -143,10 +143,10 @@
 			object ''
 		) cil managed 
 	{
-		// Method begins at RVA 0x2086
-		// Header size: 1
+		// Method begins at RVA 0x2088
+		// Header size: 12
 		// Code size: 14 (0xe)
-		.maxstack 8
+		.maxstack 32
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
@@ -159,10 +159,10 @@
 	.method public hidebysig 
 		instance object hello () cil managed 
 	{
-		// Method begins at RVA 0x2095
-		// Header size: 1
+		// Method begins at RVA 0x20a4
+		// Header size: 12
 		// Code size: 29 (0x1d)
-		.maxstack 8
+		.maxstack 32
 
 		IL_0000: ldarg.0
 		IL_0001: ldstr "prefix"
@@ -178,10 +178,10 @@
 	.method public hidebysig 
 		instance object prefix () cil managed 
 	{
-		// Method begins at RVA 0x20b3
-		// Header size: 1
+		// Method begins at RVA 0x20d0
+		// Header size: 12
 		// Code size: 6 (0x6)
-		.maxstack 8
+		.maxstack 32
 
 		IL_0000: ldstr "Hello, "
 		IL_0005: ret
@@ -190,10 +190,10 @@
 	.method public hidebysig 
 		instance object logHello () cil managed 
 	{
-		// Method begins at RVA 0x20ba
-		// Header size: 1
+		// Method begins at RVA 0x20e4
+		// Header size: 12
 		// Code size: 34 (0x22)
-		.maxstack 8
+		.maxstack 32
 
 		IL_0000: ldc.i4.1
 		IL_0001: newarr [System.Runtime]System.Object
@@ -207,7 +207,7 @@
 		IL_0019: stelem.ref
 		IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_001f: pop
-		IL_0020: ldnull
+		IL_0020: ldarg.0
 		IL_0021: ret
 	} // end of method Greeter::logHello
 
@@ -220,9 +220,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e0
+		// Method begins at RVA 0x2114
 		// Header size: 12
-		// Code size: 35 (0x23)
+		// Code size: 45 (0x2d)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -232,14 +232,16 @@
 		IL_0000: newobj instance void Scopes.Classes_ClassMethod_CallsAnotherMethod::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldstr "World"
-		IL_000c: newobj instance void Classes.Greeter::.ctor(object)
-		IL_0011: stfld object Scopes.Classes_ClassMethod_CallsAnotherMethod::g
-		IL_0016: ldloc.0
-		IL_0017: ldfld object Scopes.Classes_ClassMethod_CallsAnotherMethod::g
-		IL_001c: callvirt instance object Classes.Greeter::logHello()
-		IL_0021: pop
-		IL_0022: ret
+		IL_0007: castclass Scopes.Classes_ClassMethod_CallsAnotherMethod
+		IL_000c: ldstr "World"
+		IL_0011: newobj instance void Classes.Greeter::.ctor(object)
+		IL_0016: stfld object Scopes.Classes_ClassMethod_CallsAnotherMethod::g
+		IL_001b: ldloc.0
+		IL_001c: castclass Scopes.Classes_ClassMethod_CallsAnotherMethod
+		IL_0021: ldfld object Scopes.Classes_ClassMethod_CallsAnotherMethod::g
+		IL_0026: callvirt instance object Classes.Greeter::logHello()
+		IL_002b: pop
+		IL_002c: ret
 	} // end of method Program::Main
 
 } // end of class Program

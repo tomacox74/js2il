@@ -1,4 +1,4 @@
-// IL code: ControlFlow_If_NotEqual
+﻿// IL code: ControlFlow_If_NotEqual
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -78,7 +78,7 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 142 (0x8e)
+		// Code size: 162 (0xa2)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -88,55 +88,58 @@
 		IL_0000: newobj instance void Scopes.ControlFlow_If_NotEqual::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldc.r8 1
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Scopes.ControlFlow_If_NotEqual::a
-		IL_001a: ldloc.0
-		IL_001b: ldc.r8 2
-		IL_0024: box [System.Runtime]System.Double
-		IL_0029: stfld object Scopes.ControlFlow_If_NotEqual::b
-		IL_002e: ldloc.0
-		IL_002f: ldfld object Scopes.ControlFlow_If_NotEqual::a
-		IL_0034: unbox.any [System.Runtime]System.Double
-		IL_0039: ldloc.0
-		IL_003a: ldfld object Scopes.ControlFlow_If_NotEqual::b
-		IL_003f: unbox.any [System.Runtime]System.Double
-		IL_0044: bne.un IL_004e
+		IL_0007: castclass Scopes.ControlFlow_If_NotEqual
+		IL_000c: ldc.r8 1
+		IL_0015: box [System.Runtime]System.Double
+		IL_001a: stfld object Scopes.ControlFlow_If_NotEqual::a
+		IL_001f: ldloc.0
+		IL_0020: castclass Scopes.ControlFlow_If_NotEqual
+		IL_0025: ldc.r8 2
+		IL_002e: box [System.Runtime]System.Double
+		IL_0033: stfld object Scopes.ControlFlow_If_NotEqual::b
+		IL_0038: ldloc.0
+		IL_0039: castclass Scopes.ControlFlow_If_NotEqual
+		IL_003e: ldfld object Scopes.ControlFlow_If_NotEqual::a
+		IL_0043: unbox.any [System.Runtime]System.Double
+		IL_0048: ldloc.0
+		IL_0049: castclass Scopes.ControlFlow_If_NotEqual
+		IL_004e: ldfld object Scopes.ControlFlow_If_NotEqual::b
+		IL_0053: unbox.any [System.Runtime]System.Double
+		IL_0058: bne.un IL_0062
 
-		IL_0049: br IL_0070
+		IL_005d: br IL_0084
 
-		IL_004e: ldc.i4.2
-		IL_004f: newarr [System.Runtime]System.Object
-		IL_0054: dup
-		IL_0055: ldc.i4.0
-		IL_0056: ldstr "branch"
-		IL_005b: stelem.ref
-		IL_005c: dup
-		IL_005d: ldc.i4.1
-		IL_005e: ldc.i4.1
-		IL_005f: box [System.Runtime]System.Boolean
-		IL_0064: stelem.ref
-		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_006a: pop
-		IL_006b: br IL_008d
+		IL_0062: ldc.i4.2
+		IL_0063: newarr [System.Runtime]System.Object
+		IL_0068: dup
+		IL_0069: ldc.i4.0
+		IL_006a: ldstr "branch"
+		IL_006f: stelem.ref
+		IL_0070: dup
+		IL_0071: ldc.i4.1
+		IL_0072: ldc.i4.1
+		IL_0073: box [System.Runtime]System.Boolean
+		IL_0078: stelem.ref
+		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_007e: pop
+		IL_007f: br IL_00a1
 
-		IL_0070: ldc.i4.2
-		IL_0071: newarr [System.Runtime]System.Object
-		IL_0076: dup
-		IL_0077: ldc.i4.0
-		IL_0078: ldstr "branch"
-		IL_007d: stelem.ref
-		IL_007e: dup
-		IL_007f: ldc.i4.1
-		IL_0080: ldc.i4.0
-		IL_0081: box [System.Runtime]System.Boolean
-		IL_0086: stelem.ref
-		IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_008c: pop
+		IL_0084: ldc.i4.2
+		IL_0085: newarr [System.Runtime]System.Object
+		IL_008a: dup
+		IL_008b: ldc.i4.0
+		IL_008c: ldstr "branch"
+		IL_0091: stelem.ref
+		IL_0092: dup
+		IL_0093: ldc.i4.1
+		IL_0094: ldc.i4.0
+		IL_0095: box [System.Runtime]System.Boolean
+		IL_009a: stelem.ref
+		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00a0: pop
 
-		IL_008d: ret
+		IL_00a1: ret
 	} // end of method Program::Main
 
 } // end of class Program
-
 

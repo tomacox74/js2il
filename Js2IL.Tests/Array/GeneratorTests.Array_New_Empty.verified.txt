@@ -35,7 +35,7 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 49 (0x31)
+		// Code size: 59 (0x3b)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -45,20 +45,22 @@
 		IL_0000: newobj instance void Scopes.Array_New_Empty::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor()
-		IL_000c: stfld object Scopes.Array_New_Empty::a
-		IL_0011: ldc.i4.1
-		IL_0012: newarr [System.Runtime]System.Object
-		IL_0017: dup
-		IL_0018: ldc.i4.0
-		IL_0019: ldloc.0
-		IL_001a: ldfld object Scopes.Array_New_Empty::a
-		IL_001f: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_0024: box [System.Runtime]System.Double
-		IL_0029: stelem.ref
-		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_002f: pop
-		IL_0030: ret
+		IL_0007: castclass Scopes.Array_New_Empty
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor()
+		IL_0011: stfld object Scopes.Array_New_Empty::a
+		IL_0016: ldc.i4.1
+		IL_0017: newarr [System.Runtime]System.Object
+		IL_001c: dup
+		IL_001d: ldc.i4.0
+		IL_001e: ldloc.0
+		IL_001f: castclass Scopes.Array_New_Empty
+		IL_0024: ldfld object Scopes.Array_New_Empty::a
+		IL_0029: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_002e: box [System.Runtime]System.Double
+		IL_0033: stelem.ref
+		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0039: pop
+		IL_003a: ret
 	} // end of method Program::Main
 
 } // end of class Program

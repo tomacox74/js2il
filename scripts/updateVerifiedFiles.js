@@ -9,6 +9,10 @@
     using first occurrence replacement of ".received." -> ".verified."
     with a fallback for names ending with .received.<ext>
   - Creates target directories as needed
+
+  Defaults:
+  - By default, only GeneratorTests.* received files are updated (GeneratorTests-only mode).
+  - Use --all to update all received files across the tree.
 */
 
 const fs = require('fs');
@@ -16,13 +20,19 @@ const fsp = require('fs/promises');
 const path = require('path');
 
 function parseArgs(argv) {
-  const args = { root: process.cwd(), quiet: false, help: false };
+  const args = { root: process.cwd(), quiet: false, help: false, generatorOnly: true };
   for (let i = 2; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--root' || a === '--verifyRoot' || a === '-r') {
       args.root = argv[++i] || args.root;
     } else if (a === '--quiet' || a === '-q') {
       args.quiet = true;
+    } else if (a === '--all' || a === '-a') {
+      // Override default behavior: include all received files, not just GeneratorTests
+      args.generatorOnly = false;
+    } else if (a === '--generator-only' || a === '--gen') {
+      // Explicitly restrict to GeneratorTests.* (default)
+      args.generatorOnly = true;
     } else if (a === '--help' || a === '-h') {
       args.help = true;
     } else {
@@ -42,6 +52,8 @@ function printHelp() {
 Options:
   --root, -r <dir>         Root directory to search (default: CWD)
   --verifyRoot <dir>       Alias for --root
+  --all, -a                Update all received files (override default GeneratorTests-only)
+  --generator-only, --gen  Update only GeneratorTests.* (default behavior)
   --quiet, -q              Minimal output
   --help, -h               Show help
 `;
@@ -112,12 +124,25 @@ async function main() {
     }
   }
 
-  if (receivedFiles.length === 0) {
-    if (!args.quiet) console.log(`No received files found in ${root}`);
+  // Default filter: only GeneratorTests.* snapshots unless --all specified
+  let filtered = receivedFiles;
+  if (args.generatorOnly) {
+    filtered = receivedFiles.filter((f) => {
+      const bn = path.basename(f).toLowerCase();
+      // Example: GeneratorTests.PerfHooks_PerformanceNow_Basic.received.txt
+      return bn.startsWith('generatortests.');
+    });
+    if (!args.quiet) {
+      console.log(`GeneratorTests-only mode: ${filtered.length} of ${receivedFiles.length} received files will be updated.`);
+    }
+  }
+
+  if (filtered.length === 0) {
+    if (!args.quiet) console.log(`No received files found in ${root}${args.generatorOnly ? ' (GeneratorTests-only mode)' : ''}`);
     return 0;
   }
 
-  for (const src of receivedFiles) {
+  for (const src of filtered) {
     const verified = toVerifiedPath(src);
     if (!verified || verified === src) {
       if (!args.quiet) console.log(`Skipping (no transform): ${path.basename(src)}`);

@@ -57,7 +57,7 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 160 (0xa0)
+		// Code size: 190 (0xbe)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -67,52 +67,58 @@
 		IL_0000: newobj instance void Scopes.ControlFlow_ForLoop_Break_AtThree::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldc.r8 0.0
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Scopes.ControlFlow_ForLoop_Break_AtThree::i
-		// loop start (head: IL_001a)
-			IL_001a: ldloc.0
-			IL_001b: ldfld object Scopes.ControlFlow_ForLoop_Break_AtThree::i
-			IL_0020: unbox.any [System.Runtime]System.Double
-			IL_0025: ldc.r8 10
-			IL_002e: blt IL_0038
+		IL_0007: castclass Scopes.ControlFlow_ForLoop_Break_AtThree
+		IL_000c: ldc.r8 0.0
+		IL_0015: box [System.Runtime]System.Double
+		IL_001a: stfld object Scopes.ControlFlow_ForLoop_Break_AtThree::i
+		// loop start (head: IL_001f)
+			IL_001f: ldloc.0
+			IL_0020: castclass Scopes.ControlFlow_ForLoop_Break_AtThree
+			IL_0025: ldfld object Scopes.ControlFlow_ForLoop_Break_AtThree::i
+			IL_002a: unbox.any [System.Runtime]System.Double
+			IL_002f: ldc.r8 10
+			IL_0038: blt IL_0042
 
-			IL_0033: br IL_009f
+			IL_003d: br IL_00bd
 
-			IL_0038: ldloc.0
-			IL_0039: ldfld object Scopes.ControlFlow_ForLoop_Break_AtThree::i
-			IL_003e: unbox.any [System.Runtime]System.Double
-			IL_0043: unbox.any [System.Runtime]System.Double
-			IL_0048: ldc.r8 3
-			IL_0051: beq IL_005b
+			IL_0042: ldloc.0
+			IL_0043: castclass Scopes.ControlFlow_ForLoop_Break_AtThree
+			IL_0048: ldfld object Scopes.ControlFlow_ForLoop_Break_AtThree::i
+			IL_004d: unbox.any [System.Runtime]System.Double
+			IL_0052: unbox.any [System.Runtime]System.Double
+			IL_0057: ldc.r8 3
+			IL_0060: beq IL_006a
 
-			IL_0056: br IL_0065
+			IL_0065: br IL_0074
 
-			IL_005b: br IL_009f
+			IL_006a: br IL_00bd
 
-			IL_0060: br IL_0065
+			IL_006f: br IL_0074
 
-			IL_0065: ldc.i4.1
-			IL_0066: newarr [System.Runtime]System.Object
-			IL_006b: dup
-			IL_006c: ldc.i4.0
-			IL_006d: ldloc.0
-			IL_006e: ldfld object Scopes.ControlFlow_ForLoop_Break_AtThree::i
-			IL_0073: stelem.ref
-			IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_0079: pop
-			IL_007a: ldloc.0
-			IL_007b: ldloc.0
-			IL_007c: ldfld object Scopes.ControlFlow_ForLoop_Break_AtThree::i
-			IL_0081: unbox.any [System.Runtime]System.Double
-			IL_0086: ldc.r8 1
-			IL_008f: add
-			IL_0090: box [System.Runtime]System.Double
-			IL_0095: stfld object Scopes.ControlFlow_ForLoop_Break_AtThree::i
-			IL_009a: br IL_001a
+			IL_0074: ldc.i4.1
+			IL_0075: newarr [System.Runtime]System.Object
+			IL_007a: dup
+			IL_007b: ldc.i4.0
+			IL_007c: ldloc.0
+			IL_007d: castclass Scopes.ControlFlow_ForLoop_Break_AtThree
+			IL_0082: ldfld object Scopes.ControlFlow_ForLoop_Break_AtThree::i
+			IL_0087: stelem.ref
+			IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_008d: pop
+			IL_008e: ldloc.0
+			IL_008f: castclass Scopes.ControlFlow_ForLoop_Break_AtThree
+			IL_0094: ldloc.0
+			IL_0095: castclass Scopes.ControlFlow_ForLoop_Break_AtThree
+			IL_009a: ldfld object Scopes.ControlFlow_ForLoop_Break_AtThree::i
+			IL_009f: unbox.any [System.Runtime]System.Double
+			IL_00a4: ldc.r8 1
+			IL_00ad: add
+			IL_00ae: box [System.Runtime]System.Double
+			IL_00b3: stfld object Scopes.ControlFlow_ForLoop_Break_AtThree::i
+			IL_00b8: br IL_001f
 		// end loop
 
-		IL_009f: ret
+		IL_00bd: ret
 	} // end of method Program::Main
 
 } // end of class Program

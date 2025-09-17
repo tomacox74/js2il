@@ -295,7 +295,12 @@ namespace Js2IL.Services
             switch (bindingKind)
             {
                 case BindingKind.Const:
-                    attributes |= FieldAttributes.InitOnly; // readonly field for const
+                    // Do NOT mark const bindings as InitOnly (readonly) on scope types.
+                    // We assign initial values after constructing the scope instance, not inside its .ctor,
+                    // and CLR verification forbids stfld to initonly fields outside the declaring .ctor.
+                    // Const semantics (no reassignment) are enforced at runtime by ILExpressionGenerator
+                    // via a TypeError on any assignment attempts. Keeping these fields mutable here ensures
+                    // verifiable IL while preserving JS semantics.
                     break;
                 case BindingKind.Let:
                 case BindingKind.Var:

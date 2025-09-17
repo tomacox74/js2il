@@ -35,7 +35,7 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 83 (0x53)
+		// Code size: 93 (0x5d)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -45,30 +45,32 @@
 		IL_0000: newobj instance void Scopes.Array_LengthProperty_ReturnsCount::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldc.i4.3
-		IL_0008: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_000d: dup
-		IL_000e: ldstr "a"
-		IL_0013: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0018: dup
-		IL_0019: ldstr "b"
-		IL_001e: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0023: dup
-		IL_0024: ldstr "c"
-		IL_0029: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_002e: stfld object Scopes.Array_LengthProperty_ReturnsCount::arr
-		IL_0033: ldc.i4.1
-		IL_0034: newarr [System.Runtime]System.Object
-		IL_0039: dup
-		IL_003a: ldc.i4.0
-		IL_003b: ldloc.0
-		IL_003c: ldfld object Scopes.Array_LengthProperty_ReturnsCount::arr
-		IL_0041: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_0046: box [System.Runtime]System.Double
-		IL_004b: stelem.ref
-		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0051: pop
-		IL_0052: ret
+		IL_0007: castclass Scopes.Array_LengthProperty_ReturnsCount
+		IL_000c: ldc.i4.3
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0012: dup
+		IL_0013: ldstr "a"
+		IL_0018: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_001d: dup
+		IL_001e: ldstr "b"
+		IL_0023: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0028: dup
+		IL_0029: ldstr "c"
+		IL_002e: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0033: stfld object Scopes.Array_LengthProperty_ReturnsCount::arr
+		IL_0038: ldc.i4.1
+		IL_0039: newarr [System.Runtime]System.Object
+		IL_003e: dup
+		IL_003f: ldc.i4.0
+		IL_0040: ldloc.0
+		IL_0041: castclass Scopes.Array_LengthProperty_ReturnsCount
+		IL_0046: ldfld object Scopes.Array_LengthProperty_ReturnsCount::arr
+		IL_004b: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_0050: box [System.Runtime]System.Double
+		IL_0055: stelem.ref
+		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_005b: pop
+		IL_005c: ret
 	} // end of method Program::Main
 
 } // end of class Program

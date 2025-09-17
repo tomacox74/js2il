@@ -1,4 +1,4 @@
-// IL code: Classes_ClassConstructor_TwoParams_AddMethod
+﻿// IL code: Classes_ClassConstructor_TwoParams_AddMethod
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
@@ -72,8 +72,8 @@
 
 	// Fields
 	.field public object Adder
-	.field public initonly object s
-	.field public initonly object n
+	.field public object s
+	.field public object n
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -107,9 +107,9 @@
 		) cil managed 
 	{
 		// Method begins at RVA 0x2074
-		// Header size: 1
+		// Header size: 12
 		// Code size: 21 (0x15)
-		.maxstack 8
+		.maxstack 32
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
@@ -125,10 +125,10 @@
 	.method public hidebysig 
 		instance object 'add' () cil managed 
 	{
-		// Method begins at RVA 0x208a
-		// Header size: 1
+		// Method begins at RVA 0x2098
+		// Header size: 12
 		// Code size: 18 (0x12)
-		.maxstack 8
+		.maxstack 32
 
 		IL_0000: ldarg.0
 		IL_0001: ldfld object Classes.Adder::a
@@ -147,9 +147,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20a0
+		// Method begins at RVA 0x20b8
 		// Header size: 12
-		// Code size: 119 (0x77)
+		// Code size: 139 (0x8b)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -159,38 +159,42 @@
 		IL_0000: newobj instance void Scopes.Classes_ClassConstructor_TwoParams_AddMethod::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldstr "Hello"
-		IL_000c: ldstr "World"
-		IL_0011: newobj instance void Classes.Adder::.ctor(object, object)
-		IL_0016: stfld object Scopes.Classes_ClassConstructor_TwoParams_AddMethod::s
-		IL_001b: ldloc.0
-		IL_001c: ldc.r8 5
-		IL_0025: box [System.Runtime]System.Double
-		IL_002a: ldc.r8 7
-		IL_0033: box [System.Runtime]System.Double
-		IL_0038: newobj instance void Classes.Adder::.ctor(object, object)
-		IL_003d: stfld object Scopes.Classes_ClassConstructor_TwoParams_AddMethod::n
-		IL_0042: ldc.i4.1
-		IL_0043: newarr [System.Runtime]System.Object
-		IL_0048: dup
-		IL_0049: ldc.i4.0
-		IL_004a: ldloc.0
-		IL_004b: ldfld object Scopes.Classes_ClassConstructor_TwoParams_AddMethod::s
-		IL_0050: callvirt instance object Classes.Adder::'add'()
-		IL_0055: stelem.ref
-		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_005b: pop
-		IL_005c: ldc.i4.1
-		IL_005d: newarr [System.Runtime]System.Object
-		IL_0062: dup
-		IL_0063: ldc.i4.0
-		IL_0064: ldloc.0
-		IL_0065: ldfld object Scopes.Classes_ClassConstructor_TwoParams_AddMethod::n
-		IL_006a: callvirt instance object Classes.Adder::'add'()
-		IL_006f: stelem.ref
-		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0075: pop
-		IL_0076: ret
+		IL_0007: castclass Scopes.Classes_ClassConstructor_TwoParams_AddMethod
+		IL_000c: ldstr "Hello"
+		IL_0011: ldstr "World"
+		IL_0016: newobj instance void Classes.Adder::.ctor(object, object)
+		IL_001b: stfld object Scopes.Classes_ClassConstructor_TwoParams_AddMethod::s
+		IL_0020: ldloc.0
+		IL_0021: castclass Scopes.Classes_ClassConstructor_TwoParams_AddMethod
+		IL_0026: ldc.r8 5
+		IL_002f: box [System.Runtime]System.Double
+		IL_0034: ldc.r8 7
+		IL_003d: box [System.Runtime]System.Double
+		IL_0042: newobj instance void Classes.Adder::.ctor(object, object)
+		IL_0047: stfld object Scopes.Classes_ClassConstructor_TwoParams_AddMethod::n
+		IL_004c: ldc.i4.1
+		IL_004d: newarr [System.Runtime]System.Object
+		IL_0052: dup
+		IL_0053: ldc.i4.0
+		IL_0054: ldloc.0
+		IL_0055: castclass Scopes.Classes_ClassConstructor_TwoParams_AddMethod
+		IL_005a: ldfld object Scopes.Classes_ClassConstructor_TwoParams_AddMethod::s
+		IL_005f: callvirt instance object Classes.Adder::'add'()
+		IL_0064: stelem.ref
+		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_006a: pop
+		IL_006b: ldc.i4.1
+		IL_006c: newarr [System.Runtime]System.Object
+		IL_0071: dup
+		IL_0072: ldc.i4.0
+		IL_0073: ldloc.0
+		IL_0074: castclass Scopes.Classes_ClassConstructor_TwoParams_AddMethod
+		IL_0079: ldfld object Scopes.Classes_ClassConstructor_TwoParams_AddMethod::n
+		IL_007e: callvirt instance object Classes.Adder::'add'()
+		IL_0083: stelem.ref
+		IL_0084: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0089: pop
+		IL_008a: ret
 	} // end of method Program::Main
 
 } // end of class Program

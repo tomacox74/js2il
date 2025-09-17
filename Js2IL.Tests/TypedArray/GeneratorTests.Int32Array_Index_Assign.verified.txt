@@ -7,7 +7,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public initonly object 'array'
+	.field public object 'array'
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -35,7 +35,7 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 129 (0x81)
+		// Code size: 144 (0x90)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -48,40 +48,43 @@
 		IL_0000: newobj instance void Scopes.Int32Array_Index_Assign::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldc.r8 2
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
-		IL_001a: stfld object Scopes.Int32Array_Index_Assign::'array'
-		IL_001f: ldloc.0
-		IL_0020: ldfld object Scopes.Int32Array_Index_Assign::'array'
-		IL_0025: stloc.1
-		IL_0026: ldc.r8 1
-		IL_002f: conv.i4
-		IL_0030: box [System.Runtime]System.Int32
-		IL_0035: stloc.2
-		IL_0036: ldc.r8 3
-		IL_003f: conv.i4
-		IL_0040: box [System.Runtime]System.Int32
-		IL_0045: stloc.3
-		IL_0046: ldloc.1
-		IL_0047: ldloc.2
-		IL_0048: unbox.any [System.Runtime]System.Int32
-		IL_004d: ldloc.3
-		IL_004e: unbox.any [System.Runtime]System.Int32
-		IL_0053: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(int32, int32)
-		IL_0058: ldc.i4.1
-		IL_0059: newarr [System.Runtime]System.Object
-		IL_005e: dup
-		IL_005f: ldc.i4.0
-		IL_0060: ldloc.0
-		IL_0061: ldfld object Scopes.Int32Array_Index_Assign::'array'
-		IL_0066: ldc.r8 1
-		IL_006f: box [System.Runtime]System.Double
-		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0079: stelem.ref
-		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_007f: pop
-		IL_0080: ret
+		IL_0007: castclass Scopes.Int32Array_Index_Assign
+		IL_000c: ldc.r8 2
+		IL_0015: box [System.Runtime]System.Double
+		IL_001a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
+		IL_001f: stfld object Scopes.Int32Array_Index_Assign::'array'
+		IL_0024: ldloc.0
+		IL_0025: castclass Scopes.Int32Array_Index_Assign
+		IL_002a: ldfld object Scopes.Int32Array_Index_Assign::'array'
+		IL_002f: stloc.1
+		IL_0030: ldc.r8 1
+		IL_0039: conv.i4
+		IL_003a: box [System.Runtime]System.Int32
+		IL_003f: stloc.2
+		IL_0040: ldc.r8 3
+		IL_0049: conv.i4
+		IL_004a: box [System.Runtime]System.Int32
+		IL_004f: stloc.3
+		IL_0050: ldloc.1
+		IL_0051: ldloc.2
+		IL_0052: unbox.any [System.Runtime]System.Int32
+		IL_0057: ldloc.3
+		IL_0058: unbox.any [System.Runtime]System.Int32
+		IL_005d: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(int32, int32)
+		IL_0062: ldc.i4.1
+		IL_0063: newarr [System.Runtime]System.Object
+		IL_0068: dup
+		IL_0069: ldc.i4.0
+		IL_006a: ldloc.0
+		IL_006b: castclass Scopes.Int32Array_Index_Assign
+		IL_0070: ldfld object Scopes.Int32Array_Index_Assign::'array'
+		IL_0075: ldc.r8 1
+		IL_007e: box [System.Runtime]System.Double
+		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0088: stelem.ref
+		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_008e: pop
+		IL_008f: ret
 	} // end of method Program::Main
 
 } // end of class Program

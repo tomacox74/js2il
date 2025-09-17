@@ -56,10 +56,23 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
+        // Load a scope object and cast it to its concrete scope type for verifiable ldfld/stfld
+        private void EmitLoadScopeObjectTyped(ScopeObjectReference slot, string scopeName)
+        {
+            EmitLoadScopeObject(slot);
+            var reg = _variables.GetVariableRegistry();
+            var tdef = reg?.GetScopeTypeHandle(scopeName) ?? default;
+            if (!tdef.IsNil)
+            {
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
+                _il.Token(tdef);
+            }
+        }
+
         private void EmitLoadScopeObjectByName(string scopeName)
         {
             var slot = _variables.GetScopeLocalSlot(scopeName);
-            EmitLoadScopeObject(slot);
+            EmitLoadScopeObjectTyped(slot, scopeName);
         }
 
         private void EmitBoxedArgsArray(IReadOnlyList<Expression> args)
@@ -83,7 +96,7 @@ namespace Js2IL.Services.ILGenerators
         private void EmitLoadVariableField(Variable v)
         {
             var slot = _variables.GetScopeLocalSlot(v.ScopeName);
-            EmitLoadScopeObject(slot);
+            EmitLoadScopeObjectTyped(slot, v.ScopeName);
             _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld);
             _il.Token(v.FieldHandle);
         }
@@ -587,6 +600,10 @@ namespace Js2IL.Services.ILGenerators
 
                             var mrefHandle = _runtime.GetInstanceMethodRef(rt, chosen.Name, reflectedReturnType, reflectedParamTypes);
 
+                            // Cast the global instance receiver to its concrete return type before callvirt
+                            _il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
+                            _il.Token(_owner.Runtime.GetRuntimeTypeHandle(rt));
+
                             if (expectsParamsArray) EmitBoxedArgsArray(callExpression.Arguments);
                             else EmitBoxedArgsInline(callExpression.Arguments);
 
@@ -623,6 +640,10 @@ namespace Js2IL.Services.ILGenerators
                         var reflectedParamTypes = expectsParamsArray ? new[] { typeof(object[]) } : ps.Select(p => p.ParameterType).ToArray();
                         var reflectedReturnType = chosen.ReturnType;
                         var mrefHandle = _owner.Runtime.GetInstanceMethodRef(rt, chosen.Name, reflectedReturnType, reflectedParamTypes);
+
+                        // Ensure the receiver is the declaring CLR type before callvirt (verifier safety)
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
+                        _il.Token(_owner.Runtime.GetRuntimeTypeHandle(rt));
 
                         if (expectsParamsArray) EmitBoxedArgsArray(callExpression.Arguments);
                         else EmitBoxedArgsInline(callExpression.Arguments);
@@ -971,6 +992,14 @@ namespace Js2IL.Services.ILGenerators
                 return false;
             }
             EmitLoadScopeObject(slot);
+            // Cast the scope instance before field access for verifier safety
+            var regScope = _variables.GetVariableRegistry();
+            var tdef = regScope?.GetScopeTypeHandle(baseVar.ScopeName) ?? default;
+            if (!tdef.IsNil)
+            {
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
+                _il.Token(tdef);
+            }
             _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld);
             _il.Token(baseVar.FieldHandle);
 
@@ -997,6 +1026,10 @@ namespace Js2IL.Services.ILGenerators
             var reflectedReturnType = chosen.ReturnType;
 
             var mrefHandle = _runtime.GetInstanceMethodRef(rt, chosen.Name, reflectedReturnType, reflectedParamTypes);
+
+            // Cast receiver (currently object from ldfld) to the declaring CLR type for verifier safety
+            _il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
+            _il.Token(_owner.Runtime.GetRuntimeTypeHandle(rt));
 
             // Push arguments as either a packed object[] or individual boxed args
             if (expectsParamsArray) EmitBoxedArgsArray(callExpression.Arguments);
@@ -1038,6 +1071,10 @@ namespace Js2IL.Services.ILGenerators
             var reflectedReturnType = chosen.ReturnType;
 
             var mrefHandle = _runtime.GetInstanceMethodRef(rt, chosen.Name, reflectedReturnType, reflectedParamTypes);
+
+            // Cast receiver on stack to concrete CLR type before callvirt
+            _il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
+            _il.Token(_owner.Runtime.GetRuntimeTypeHandle(rt));
 
             if (expectsParamsArray) EmitBoxedArgsArray(callExpression.Arguments);
             else EmitBoxedArgsInline(callExpression.Arguments);
@@ -1309,20 +1346,7 @@ namespace Js2IL.Services.ILGenerators
                 {
                     // Pattern: target = target + <rhs> using JS semantics via Operators.Add
                     // Load scope instance for store
-                    if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
-                    {
-                        _il.LoadArgument(scopeSlot.Address);
-                    }
-                    else if (scopeSlot.Location == ObjectReferenceLocation.ScopeArray)
-                    {
-                        _il.LoadArgument(0);
-                        _il.LoadConstantI4(scopeSlot.Address);
-                        _il.OpCode(ILOpCode.Ldelem_ref);
-                    }
-                    else
-                    {
-                        _il.LoadLocal(scopeSlot.Address);
-                    }
+                    EmitLoadScopeObjectTyped(scopeSlot, variable.ScopeName);
                     // Duplicate for Ldfld (to get current value) while preserving instance for Stfld
                     _il.OpCode(ILOpCode.Dup);
                     _il.OpCode(ILOpCode.Ldfld);
@@ -1364,20 +1388,7 @@ namespace Js2IL.Services.ILGenerators
                 {
                     // Simple assignment '='
                     // Load scope instance
-                    if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
-                    {
-                        _il.LoadArgument(scopeSlot.Address);
-                    }
-                    else if (scopeSlot.Location == ObjectReferenceLocation.ScopeArray)
-                    {
-                        _il.LoadArgument(0); // Load scope array parameter
-                        _il.LoadConstantI4(scopeSlot.Address); // Load array index
-                        _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
-                    }
-                    else
-                    {
-                        _il.LoadLocal(scopeSlot.Address);
-                    }
+                    EmitLoadScopeObjectTyped(scopeSlot, variable.ScopeName);
 
                     var prevAssignment = _owner.CurrentAssignmentTarget;
                     _owner.CurrentAssignmentTarget = aid.Name;
@@ -1802,6 +1813,9 @@ namespace Js2IL.Services.ILGenerators
                     var pi = baseClr.GetProperty(propId.Name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.IgnoreCase);
                     if (pi?.GetMethod != null)
                     {
+                        // Cast receiver to the declaring CLR type before invoking the getter
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
+                        _il.Token(_owner.Runtime.GetRuntimeTypeHandle(baseClr));
                         var getterRef = _owner.Runtime.GetInstanceMethodRef(baseClr, pi.GetMethod.Name, pi.PropertyType);
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
                         _il.Token(getterRef);
@@ -1814,6 +1828,12 @@ namespace Js2IL.Services.ILGenerators
                 if ((memberExpression.Object is ThisExpression && _owner.InClassMethod && _owner.CurrentClassName != null && _classRegistry.TryGetField(_owner.CurrentClassName, propId.Name, out fieldHandle))
                     || (memberExpression.Object is Identifier baseIdent2 && _owner.TryGetVariableClass(baseIdent2.Name, out var cname) && _classRegistry.TryGetField(cname, propId.Name, out fieldHandle)))
                 {
+                    // If the base was a variable bound to a known class but loaded as object, cast to class type first
+                    if (memberExpression.Object is Identifier idObj && _owner.TryGetVariableClass(idObj.Name, out var className) && _classRegistry.TryGet(className, out var tdef) && !tdef.IsNil)
+                    {
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
+                        _il.Token(tdef);
+                    }
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld);
                     _il.Token(fieldHandle);
                     return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
@@ -2039,8 +2059,8 @@ namespace Js2IL.Services.ILGenerators
             if (context == CallSiteContext.Statement)
             {
                 // Statement-context form to match snapshots (no Dup; load scope twice)
-                EmitLoadScopeObject(scopeLocalIndex);                 // [A]
-                EmitLoadScopeObject(scopeLocalIndex);                 // [A, B]
+                EmitLoadScopeObjectTyped(scopeLocalIndex, variable.ScopeName);                 // [A]
+                EmitLoadScopeObjectTyped(scopeLocalIndex, variable.ScopeName);                 // [A, B]
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld); // [A, valueObj]
                 _il.Token(variable.FieldHandle);
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
@@ -2064,7 +2084,7 @@ namespace Js2IL.Services.ILGenerators
             {
                 // Expression-context
                 // 1) Load scope and current value
-                EmitLoadScopeObject(scopeLocalIndex);                 // [scope]
+                EmitLoadScopeObjectTyped(scopeLocalIndex, variable.ScopeName);                 // [scope]
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup);   // [scope, scope]
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld); // [scope, valueObj]
                 _il.Token(variable.FieldHandle);
@@ -2087,7 +2107,7 @@ namespace Js2IL.Services.ILGenerators
                 _il.Token(variable.FieldHandle);                        // []
 
                 // 3) Reload UPDATED and optionally reverse to get ORIGINAL
-                EmitLoadScopeObject(scopeLocalIndex);                   // [scope]
+                EmitLoadScopeObjectTyped(scopeLocalIndex, variable.ScopeName);                   // [scope]
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld);  // [valueObj]
                 _il.Token(variable.FieldHandle);
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);

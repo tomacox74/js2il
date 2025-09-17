@@ -7,7 +7,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public initonly object arr
+	.field public object arr
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -35,7 +35,7 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 124 (0x7c)
+		// Code size: 149 (0x95)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -45,47 +45,52 @@
 		IL_0000: newobj instance void Scopes.Array_Join_Basic::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldc.i4.3
-		IL_0008: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_000d: dup
-		IL_000e: ldstr "a"
-		IL_0013: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0018: dup
-		IL_0019: ldstr "b"
-		IL_001e: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0023: dup
-		IL_0024: ldstr "c"
-		IL_0029: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_002e: stfld object Scopes.Array_Join_Basic::arr
-		IL_0033: ldc.i4.1
-		IL_0034: newarr [System.Runtime]System.Object
-		IL_0039: dup
-		IL_003a: ldc.i4.0
-		IL_003b: ldloc.0
-		IL_003c: ldfld object Scopes.Array_Join_Basic::arr
-		IL_0041: ldc.i4.0
-		IL_0042: newarr [System.Runtime]System.Object
-		IL_0047: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_004c: stelem.ref
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0052: pop
-		IL_0053: ldc.i4.1
-		IL_0054: newarr [System.Runtime]System.Object
-		IL_0059: dup
-		IL_005a: ldc.i4.0
-		IL_005b: ldloc.0
-		IL_005c: ldfld object Scopes.Array_Join_Basic::arr
-		IL_0061: ldc.i4.1
-		IL_0062: newarr [System.Runtime]System.Object
-		IL_0067: dup
-		IL_0068: ldc.i4.0
-		IL_0069: ldstr "-"
-		IL_006e: stelem.ref
-		IL_006f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_0074: stelem.ref
-		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_007a: pop
-		IL_007b: ret
+		IL_0007: castclass Scopes.Array_Join_Basic
+		IL_000c: ldc.i4.3
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0012: dup
+		IL_0013: ldstr "a"
+		IL_0018: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_001d: dup
+		IL_001e: ldstr "b"
+		IL_0023: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0028: dup
+		IL_0029: ldstr "c"
+		IL_002e: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0033: stfld object Scopes.Array_Join_Basic::arr
+		IL_0038: ldc.i4.1
+		IL_0039: newarr [System.Runtime]System.Object
+		IL_003e: dup
+		IL_003f: ldc.i4.0
+		IL_0040: ldloc.0
+		IL_0041: castclass Scopes.Array_Join_Basic
+		IL_0046: ldfld object Scopes.Array_Join_Basic::arr
+		IL_004b: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_0050: ldc.i4.0
+		IL_0051: newarr [System.Runtime]System.Object
+		IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_005b: stelem.ref
+		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0061: pop
+		IL_0062: ldc.i4.1
+		IL_0063: newarr [System.Runtime]System.Object
+		IL_0068: dup
+		IL_0069: ldc.i4.0
+		IL_006a: ldloc.0
+		IL_006b: castclass Scopes.Array_Join_Basic
+		IL_0070: ldfld object Scopes.Array_Join_Basic::arr
+		IL_0075: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_007a: ldc.i4.1
+		IL_007b: newarr [System.Runtime]System.Object
+		IL_0080: dup
+		IL_0081: ldc.i4.0
+		IL_0082: ldstr "-"
+		IL_0087: stelem.ref
+		IL_0088: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_008d: stelem.ref
+		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0093: pop
+		IL_0094: ret
 	} // end of method Program::Main
 
 } // end of class Program

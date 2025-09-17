@@ -100,9 +100,9 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x20b4
+			// Method begins at RVA 0x20c8
 			// Header size: 12
-			// Code size: 110 (0x6e)
+			// Code size: 130 (0x82)
 			.maxstack 32
 			.locals init (
 				[0] object
@@ -111,53 +111,57 @@
 			IL_0000: newobj instance void Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction/innerFunction::.ctor()
 			IL_0005: stloc.0
 			IL_0006: ldloc.0
-			IL_0007: ldstr "I am inner"
-			IL_000c: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction/innerFunction::innerVar
-			IL_0011: ldc.i4.2
-			IL_0012: newarr [System.Runtime]System.Object
-			IL_0017: dup
-			IL_0018: ldc.i4.0
-			IL_0019: ldstr "Global:"
-			IL_001e: stelem.ref
-			IL_001f: dup
-			IL_0020: ldc.i4.1
-			IL_0021: ldarg.0
-			IL_0022: ldc.i4.0
-			IL_0023: ldelem.ref
-			IL_0024: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::globalVar
-			IL_0029: stelem.ref
-			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_002f: pop
-			IL_0030: ldc.i4.2
-			IL_0031: newarr [System.Runtime]System.Object
-			IL_0036: dup
-			IL_0037: ldc.i4.0
-			IL_0038: ldstr "Outer:"
-			IL_003d: stelem.ref
-			IL_003e: dup
-			IL_003f: ldc.i4.1
-			IL_0040: ldarg.0
-			IL_0041: ldc.i4.1
-			IL_0042: ldelem.ref
-			IL_0043: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::outerVar
-			IL_0048: stelem.ref
-			IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_004e: pop
-			IL_004f: ldc.i4.2
-			IL_0050: newarr [System.Runtime]System.Object
-			IL_0055: dup
-			IL_0056: ldc.i4.0
-			IL_0057: ldstr "Inner:"
-			IL_005c: stelem.ref
-			IL_005d: dup
-			IL_005e: ldc.i4.1
-			IL_005f: ldloc.0
-			IL_0060: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction/innerFunction::innerVar
-			IL_0065: stelem.ref
-			IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_006b: pop
-			IL_006c: ldnull
-			IL_006d: ret
+			IL_0007: castclass Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction/innerFunction
+			IL_000c: ldstr "I am inner"
+			IL_0011: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction/innerFunction::innerVar
+			IL_0016: ldc.i4.2
+			IL_0017: newarr [System.Runtime]System.Object
+			IL_001c: dup
+			IL_001d: ldc.i4.0
+			IL_001e: ldstr "Global:"
+			IL_0023: stelem.ref
+			IL_0024: dup
+			IL_0025: ldc.i4.1
+			IL_0026: ldarg.0
+			IL_0027: ldc.i4.0
+			IL_0028: ldelem.ref
+			IL_0029: castclass Scopes.Function_NestedFunctionAccessesMultipleScopes
+			IL_002e: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::globalVar
+			IL_0033: stelem.ref
+			IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_0039: pop
+			IL_003a: ldc.i4.2
+			IL_003b: newarr [System.Runtime]System.Object
+			IL_0040: dup
+			IL_0041: ldc.i4.0
+			IL_0042: ldstr "Outer:"
+			IL_0047: stelem.ref
+			IL_0048: dup
+			IL_0049: ldc.i4.1
+			IL_004a: ldarg.0
+			IL_004b: ldc.i4.1
+			IL_004c: ldelem.ref
+			IL_004d: castclass Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction
+			IL_0052: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::outerVar
+			IL_0057: stelem.ref
+			IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_005d: pop
+			IL_005e: ldc.i4.2
+			IL_005f: newarr [System.Runtime]System.Object
+			IL_0064: dup
+			IL_0065: ldc.i4.0
+			IL_0066: ldstr "Inner:"
+			IL_006b: stelem.ref
+			IL_006c: dup
+			IL_006d: ldc.i4.1
+			IL_006e: ldloc.0
+			IL_006f: castclass Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction/innerFunction
+			IL_0074: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction/innerFunction::innerVar
+			IL_0079: stelem.ref
+			IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_007f: pop
+			IL_0080: ldnull
+			IL_0081: ret
 		} // end of method testFunction::innerFunction
 
 	} // end of class testFunction
@@ -171,7 +175,7 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 58 (0x3a)
+		// Code size: 78 (0x4e)
 		.maxstack 32
 		.locals init (
 			[0] object
@@ -180,29 +184,33 @@
 		IL_0000: newobj instance void Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::innerFunction
-		IL_000c: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::innerFunction
-		IL_0011: ldloc.0
-		IL_0012: ldstr "I am outer"
-		IL_0017: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::outerVar
-		IL_001c: ldloc.0
-		IL_001d: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::innerFunction
-		IL_0022: ldc.i4.2
-		IL_0023: newarr [System.Runtime]System.Object
-		IL_0028: dup
-		IL_0029: ldc.i4.0
-		IL_002a: ldarg.0
-		IL_002b: ldc.i4.0
-		IL_002c: ldelem.ref
-		IL_002d: stelem.ref
-		IL_002e: dup
-		IL_002f: ldc.i4.1
-		IL_0030: ldloc.0
-		IL_0031: stelem.ref
-		IL_0032: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0037: pop
-		IL_0038: ldnull
-		IL_0039: ret
+		IL_0007: castclass Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction
+		IL_000c: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::innerFunction
+		IL_0011: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::innerFunction
+		IL_0016: ldloc.0
+		IL_0017: castclass Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction
+		IL_001c: ldstr "I am outer"
+		IL_0021: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::outerVar
+		IL_0026: ldloc.0
+		IL_0027: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::innerFunction
+		IL_002c: ldc.i4.2
+		IL_002d: newarr [System.Runtime]System.Object
+		IL_0032: dup
+		IL_0033: ldc.i4.0
+		IL_0034: ldarg.0
+		IL_0035: ldc.i4.0
+		IL_0036: ldelem.ref
+		IL_0037: castclass Scopes.Function_NestedFunctionAccessesMultipleScopes
+		IL_003c: stelem.ref
+		IL_003d: dup
+		IL_003e: ldc.i4.1
+		IL_003f: ldloc.0
+		IL_0040: castclass Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction
+		IL_0045: stelem.ref
+		IL_0046: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_004b: pop
+		IL_004c: ldnull
+		IL_004d: ret
 	} // end of method testFunction::testFunction
 
 } // end of class Functions.testFunction
@@ -214,7 +222,7 @@
 	.method public static 
 		void _LoadDispatchTable () cil managed 
 	{
-		// Method begins at RVA 0x212e
+		// Method begins at RVA 0x2156
 		// Header size: 1
 		// Code size: 35 (0x23)
 		.maxstack 8
@@ -239,9 +247,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2154
+		// Method begins at RVA 0x217c
 		// Header size: 12
-		// Code size: 56 (0x38)
+		// Code size: 71 (0x47)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -252,22 +260,25 @@
 		IL_0005: stloc.0
 		IL_0006: call void Functions._Loader::_LoadDispatchTable()
 		IL_000b: ldloc.0
-		IL_000c: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::testFunction
-		IL_0011: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::testFunction
-		IL_0016: ldloc.0
-		IL_0017: ldstr "I am global"
-		IL_001c: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::globalVar
-		IL_0021: ldloc.0
-		IL_0022: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::testFunction
-		IL_0027: ldc.i4.1
-		IL_0028: newarr [System.Runtime]System.Object
-		IL_002d: dup
-		IL_002e: ldc.i4.0
-		IL_002f: ldloc.0
-		IL_0030: stelem.ref
-		IL_0031: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0036: pop
-		IL_0037: ret
+		IL_000c: castclass Scopes.Function_NestedFunctionAccessesMultipleScopes
+		IL_0011: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::testFunction
+		IL_0016: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::testFunction
+		IL_001b: ldloc.0
+		IL_001c: castclass Scopes.Function_NestedFunctionAccessesMultipleScopes
+		IL_0021: ldstr "I am global"
+		IL_0026: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::globalVar
+		IL_002b: ldloc.0
+		IL_002c: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::testFunction
+		IL_0031: ldc.i4.1
+		IL_0032: newarr [System.Runtime]System.Object
+		IL_0037: dup
+		IL_0038: ldc.i4.0
+		IL_0039: ldloc.0
+		IL_003a: castclass Scopes.Function_NestedFunctionAccessesMultipleScopes
+		IL_003f: stelem.ref
+		IL_0040: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0045: pop
+		IL_0046: ret
 	} // end of method Program::Main
 
 } // end of class Program

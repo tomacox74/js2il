@@ -126,6 +126,9 @@ namespace Js2IL.Services.ILGenerators
                 if (tempScopeSlot.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(tempScopeSlot.Address);
                 else if (tempScopeSlot.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(tempScopeSlot.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
                 else _il.LoadLocal(tempScopeSlot.Address);
+                // Cast to scope type for verifiable field store
+                var tempScopeType = _variables.GetVariableRegistry()?.GetScopeTypeHandle(tempVar.ScopeName) ?? default;
+                if (!tempScopeType.IsNil) { _il.OpCode(ILOpCode.Castclass); _il.Token(tempScopeType); }
 
                 var prevAssignmentTarget = _currentAssignmentTarget;
                 try
@@ -151,11 +154,19 @@ namespace Js2IL.Services.ILGenerators
                         if (tslot.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(tslot.Address);
                         else if (tslot.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(tslot.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
                         else _il.LoadLocal(tslot.Address);
+                        var tScopeType = _variables.GetVariableRegistry()?.GetScopeTypeHandle(targetVar.ScopeName) ?? default;
+                        if (!tScopeType.IsNil) { _il.OpCode(ILOpCode.Castclass); _il.Token(tScopeType); }
 
                         // Load temp receiver
                         if (tempScopeSlot.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(tempScopeSlot.Address);
                         else if (tempScopeSlot.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(tempScopeSlot.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
                         else _il.LoadLocal(tempScopeSlot.Address);
+                        // Cast to concrete scope type for verifiable ldfld
+                        if (!tempScopeType.IsNil)
+                        {
+                            _il.OpCode(ILOpCode.Castclass);
+                            _il.Token(tempScopeType);
+                        }
                         _il.OpCode(ILOpCode.Ldfld);
                         _il.Token(tempVar.FieldHandle);
 
@@ -190,7 +201,7 @@ namespace Js2IL.Services.ILGenerators
                             _il.Token(getPropRef);
                         }
 
-                        // Store into field
+                        // Store into field (the target scope instance was already loaded and cast before value evaluation)
                         _il.OpCode(ILOpCode.Stfld);
                         _il.Token(targetVar.FieldHandle);
                     }
@@ -213,6 +224,14 @@ namespace Js2IL.Services.ILGenerators
                 if (scopeLocalIndex.Location == ObjectReferenceLocation.Parameter) { _il.LoadArgument(scopeLocalIndex.Address); }
                 else if (scopeLocalIndex.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(scopeLocalIndex.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
                 else { _il.LoadLocal(scopeLocalIndex.Address); }
+                // Cast to concrete scope type for verifiable stfld
+                var regVar = _variables.GetVariableRegistry();
+                var tdefVar = regVar?.GetScopeTypeHandle(variable.ScopeName) ?? default;
+                if (!tdefVar.IsNil)
+                {
+                    _il.OpCode(ILOpCode.Castclass);
+                    _il.Token(tdefVar);
+                }
 
                 var prevAssignmentTarget2 = _currentAssignmentTarget;
                 try
@@ -276,9 +295,7 @@ namespace Js2IL.Services.ILGenerators
             if (createdLocalIndex.HasValue)
             {
                 _variables.PopLexicalScope(scopeName);
-                // Clear the local to release the scope instance for GC
-                _il.OpCode(ILOpCode.Ldnull);
-                _il.StoreLocal(createdLocalIndex.Value);
+                // Do not emit any instructions after potential explicit returns; rely on GC to collect the scope instance.
             }
         }
 
@@ -322,6 +339,14 @@ namespace Js2IL.Services.ILGenerators
             else
             {
                 _il.LoadLocal(scopeLocalIndex.Address);
+            }
+            // Cast to concrete scope type before stfld
+            var regF = _variables.GetVariableRegistry();
+            var tdefF = regF?.GetScopeTypeHandle(functionVariable.ScopeName) ?? default;
+            if (!tdefF.IsNil)
+            {
+                _il.OpCode(ILOpCode.Castclass);
+                _il.Token(tdefF);
             }
             _il.OpCode(ILOpCode.Ldsfld);
             _il.Token(dispatchDelegateField);
@@ -458,6 +483,14 @@ namespace Js2IL.Services.ILGenerators
                         {
                             _il.LoadLocal(scopeSlot.Address);
                         }
+                        // Cast to concrete scope type before ldfld
+                        var regFn = _variables.GetVariableRegistry();
+                        var tdefFn = regFn?.GetScopeTypeHandle(fnVar.ScopeName) ?? default;
+                        if (!tdefFn.IsNil)
+                        {
+                            _il.OpCode(ILOpCode.Castclass);
+                            _il.Token(tdefFn);
+                        }
                         _il.OpCode(ILOpCode.Ldfld);
                         _il.Token(fnVar.FieldHandle); // stack: target delegate (object)
 
@@ -550,8 +583,13 @@ namespace Js2IL.Services.ILGenerators
                 return;
             }
 
+            // Emit the expression in statement context. Regardless of expression kind, discard the result
+            // to keep the IL evaluation stack balanced across control-flow joins (e.g., loop back-edges).
             _ = _expressionEmitter.Emit(expressionStatement.Expression, new TypeCoercion(), CallSiteContext.Statement);
-            if (expressionStatement.Expression is NewExpression || expressionStatement.Expression is ConditionalExpression || expressionStatement.Expression is CallExpression)
+            // Only pop if the expression actually produces a stack value in statement context.
+            // Assignments and updates store directly and leave the stack empty.
+            if (expressionStatement.Expression is not Acornima.Ast.AssignmentExpression
+                && expressionStatement.Expression is not Acornima.Ast.UpdateExpression)
             {
                 _il.OpCode(ILOpCode.Pop);
             }
@@ -568,7 +606,11 @@ namespace Js2IL.Services.ILGenerators
             else if (forStatement.Init is Acornima.Ast.Expression exprInit)
             {
                 // Handle assignment/sequence/etc. as an expression statement
-                _ = _expressionEmitter.Emit(exprInit, new TypeCoercion());
+                _ = _expressionEmitter.Emit(exprInit, new TypeCoercion(), CallSiteContext.Statement);
+                if (exprInit is not Acornima.Ast.AssignmentExpression && exprInit is not Acornima.Ast.UpdateExpression)
+                {
+                    _il.OpCode(ILOpCode.Pop);
+                }
             }
             else if (forStatement.Init is null)
             {
@@ -609,8 +651,12 @@ namespace Js2IL.Services.ILGenerators
             {
                 // Mark update section (continue targets jump here)
                 _il.MarkLabel(loopUpdateLabel);
-                // Emit update in statement context so any value is ignored by the emitter
+                // Emit update in statement context and discard result to avoid leaving values on the stack
                 _ = _expressionEmitter.Emit(forStatement.Update, new TypeCoercion(), CallSiteContext.Statement);
+                if (forStatement.Update is not Acornima.Ast.AssignmentExpression && forStatement.Update is not Acornima.Ast.UpdateExpression)
+                {
+                    _il.OpCode(ILOpCode.Pop);
+                }
             }
 
             // branch back to the start of the loop
@@ -743,6 +789,14 @@ namespace Js2IL.Services.ILGenerators
                 if (tslot.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(tslot.Address);
                 else if (tslot.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(tslot.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
                 else _il.LoadLocal(tslot.Address);
+                // Cast to concrete scope type for verifiable stfld
+                var regFO = _variables.GetVariableRegistry();
+                var tdefFO = regFO?.GetScopeTypeHandle(targetScopeName) ?? default;
+                if (!tdefFO.IsNil)
+                {
+                    _il.OpCode(ILOpCode.Castclass);
+                    _il.Token(tdefFO);
+                }
 
                 // Load iterable and index to get item
                 _il.LoadLocal(iterLocal);

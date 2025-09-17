@@ -74,7 +74,7 @@
 
 	// Fields
 	.field public object Counter
-	.field public initonly object c
+	.field public object c
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -101,9 +101,9 @@
 		instance void .ctor () cil managed 
 	{
 		// Method begins at RVA 0x2074
-		// Header size: 1
+		// Header size: 12
 		// Code size: 7 (0x7)
-		.maxstack 8
+		.maxstack 32
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
@@ -115,10 +115,10 @@
 			object ''
 		) cil managed 
 	{
-		// Method begins at RVA 0x207c
-		// Header size: 1
+		// Method begins at RVA 0x2088
+		// Header size: 12
 		// Code size: 55 (0x37)
-		.maxstack 8
+		.maxstack 32
 
 		// loop start
 			IL_0000: ldarg.1
@@ -137,7 +137,7 @@
 			IL_0030: br IL_0000
 		// end loop
 
-		IL_0035: ldnull
+		IL_0035: ldarg.0
 		IL_0036: ret
 	} // end of method Counter::run
 
@@ -150,9 +150,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20b4
+		// Method begins at RVA 0x20cc
 		// Header size: 12
-		// Code size: 44 (0x2c)
+		// Code size: 54 (0x36)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -162,15 +162,17 @@
 		IL_0000: newobj instance void Scopes.Classes_ClassMethod_While_Increment_Param_Postfix::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: newobj instance void Classes.Counter::.ctor()
-		IL_000c: stfld object Scopes.Classes_ClassMethod_While_Increment_Param_Postfix::c
-		IL_0011: ldloc.0
-		IL_0012: ldfld object Scopes.Classes_ClassMethod_While_Increment_Param_Postfix::c
-		IL_0017: ldc.r8 0.0
-		IL_0020: box [System.Runtime]System.Double
-		IL_0025: callvirt instance object Classes.Counter::run(object)
-		IL_002a: pop
-		IL_002b: ret
+		IL_0007: castclass Scopes.Classes_ClassMethod_While_Increment_Param_Postfix
+		IL_000c: newobj instance void Classes.Counter::.ctor()
+		IL_0011: stfld object Scopes.Classes_ClassMethod_While_Increment_Param_Postfix::c
+		IL_0016: ldloc.0
+		IL_0017: castclass Scopes.Classes_ClassMethod_While_Increment_Param_Postfix
+		IL_001c: ldfld object Scopes.Classes_ClassMethod_While_Increment_Param_Postfix::c
+		IL_0021: ldc.r8 0.0
+		IL_002a: box [System.Runtime]System.Double
+		IL_002f: callvirt instance object Classes.Counter::run(object)
+		IL_0034: pop
+		IL_0035: ret
 	} // end of method Program::Main
 
 } // end of class Program

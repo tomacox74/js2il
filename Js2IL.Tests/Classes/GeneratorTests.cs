@@ -20,6 +20,7 @@ namespace Js2IL.Tests.Classes
     [Fact] public Task Classes_ClassPrivateProperty_HelperMethod_Log() { var testName = nameof(Classes_ClassPrivateProperty_HelperMethod_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassMethod_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_CallsAnotherMethod); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassMethod_ForLoop_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_ForLoop_CallsAnotherMethod); return GenerateTest(testName); }
+    [Fact] public Task Classes_ForLoopMin() { var testName = nameof(Classes_ForLoopMin); return GenerateTest(testName); }
 
     // Repro: new ClassName() inside an arrow function failed to resolve the declared class in nested generator context.
     // Bug has been fixed: codegen in arrow/function now shares the parent ClassRegistry and targets the declared class.

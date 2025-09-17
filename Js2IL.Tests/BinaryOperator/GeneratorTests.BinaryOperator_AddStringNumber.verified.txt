@@ -35,7 +35,7 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 57 (0x39)
+		// Code size: 67 (0x43)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -45,24 +45,26 @@
 		IL_0000: newobj instance void Scopes.BinaryOperator_AddStringNumber::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldstr "7"
-		IL_000c: ldstr "5"
-		IL_0011: call string [System.Runtime]System.String::Concat(string, string)
-		IL_0016: stfld object Scopes.BinaryOperator_AddStringNumber::x
-		IL_001b: ldc.i4.2
-		IL_001c: newarr [System.Runtime]System.Object
-		IL_0021: dup
-		IL_0022: ldc.i4.0
-		IL_0023: ldstr "x is"
-		IL_0028: stelem.ref
-		IL_0029: dup
-		IL_002a: ldc.i4.1
-		IL_002b: ldloc.0
-		IL_002c: ldfld object Scopes.BinaryOperator_AddStringNumber::x
-		IL_0031: stelem.ref
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0037: pop
-		IL_0038: ret
+		IL_0007: castclass Scopes.BinaryOperator_AddStringNumber
+		IL_000c: ldstr "7"
+		IL_0011: ldstr "5"
+		IL_0016: call string [System.Runtime]System.String::Concat(string, string)
+		IL_001b: stfld object Scopes.BinaryOperator_AddStringNumber::x
+		IL_0020: ldc.i4.2
+		IL_0021: newarr [System.Runtime]System.Object
+		IL_0026: dup
+		IL_0027: ldc.i4.0
+		IL_0028: ldstr "x is"
+		IL_002d: stelem.ref
+		IL_002e: dup
+		IL_002f: ldc.i4.1
+		IL_0030: ldloc.0
+		IL_0031: castclass Scopes.BinaryOperator_AddStringNumber
+		IL_0036: ldfld object Scopes.BinaryOperator_AddStringNumber::x
+		IL_003b: stelem.ref
+		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0041: pop
+		IL_0042: ret
 	} // end of method Program::Main
 
 } // end of class Program

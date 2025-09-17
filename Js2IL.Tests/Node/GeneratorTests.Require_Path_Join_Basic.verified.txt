@@ -7,8 +7,8 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public initonly object path
-	.field public initonly object joined
+	.field public object path
+	.field public object joined
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -36,7 +36,7 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 83 (0x53)
+		// Code size: 108 (0x6c)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -46,34 +46,39 @@
 		IL_0000: newobj instance void Scopes.Require_Path_Join_Basic::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldstr "path"
-		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Require::require(string)
-		IL_0011: stfld object Scopes.Require_Path_Join_Basic::path
-		IL_0016: ldloc.0
-		IL_0017: ldloc.0
-		IL_0018: ldfld object Scopes.Require_Path_Join_Basic::path
-		IL_001d: ldc.i4.2
-		IL_001e: newarr [System.Runtime]System.Object
-		IL_0023: dup
-		IL_0024: ldc.i4.0
-		IL_0025: ldstr "a"
-		IL_002a: stelem.ref
-		IL_002b: dup
-		IL_002c: ldc.i4.1
-		IL_002d: ldstr "b"
-		IL_0032: stelem.ref
-		IL_0033: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Node.Path::join(object[])
-		IL_0038: stfld object Scopes.Require_Path_Join_Basic::joined
-		IL_003d: ldc.i4.1
-		IL_003e: newarr [System.Runtime]System.Object
-		IL_0043: dup
-		IL_0044: ldc.i4.0
-		IL_0045: ldloc.0
-		IL_0046: ldfld object Scopes.Require_Path_Join_Basic::joined
-		IL_004b: stelem.ref
-		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0051: pop
-		IL_0052: ret
+		IL_0007: castclass Scopes.Require_Path_Join_Basic
+		IL_000c: ldstr "path"
+		IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.Require::require(string)
+		IL_0016: stfld object Scopes.Require_Path_Join_Basic::path
+		IL_001b: ldloc.0
+		IL_001c: castclass Scopes.Require_Path_Join_Basic
+		IL_0021: ldloc.0
+		IL_0022: castclass Scopes.Require_Path_Join_Basic
+		IL_0027: ldfld object Scopes.Require_Path_Join_Basic::path
+		IL_002c: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.Path
+		IL_0031: ldc.i4.2
+		IL_0032: newarr [System.Runtime]System.Object
+		IL_0037: dup
+		IL_0038: ldc.i4.0
+		IL_0039: ldstr "a"
+		IL_003e: stelem.ref
+		IL_003f: dup
+		IL_0040: ldc.i4.1
+		IL_0041: ldstr "b"
+		IL_0046: stelem.ref
+		IL_0047: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Node.Path::join(object[])
+		IL_004c: stfld object Scopes.Require_Path_Join_Basic::joined
+		IL_0051: ldc.i4.1
+		IL_0052: newarr [System.Runtime]System.Object
+		IL_0057: dup
+		IL_0058: ldc.i4.0
+		IL_0059: ldloc.0
+		IL_005a: castclass Scopes.Require_Path_Join_Basic
+		IL_005f: ldfld object Scopes.Require_Path_Join_Basic::joined
+		IL_0064: stelem.ref
+		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_006a: pop
+		IL_006b: ret
 	} // end of method Program::Main
 
 } // end of class Program

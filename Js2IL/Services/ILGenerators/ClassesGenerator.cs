@@ -274,7 +274,7 @@ namespace Js2IL.Services.ILGenerators
 
             ilGen.IL.OpCode(ILOpCode.Ret);
 
-            var ctorBody = _methodBodies.AddMethodBody(ilGen.IL);
+            var ctorBody = _methodBodies.AddMethodBody(ilGen.IL, maxStack: 32);
             return tb.AddMethodDefinition(
                 MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
                 ".ctor",
@@ -311,15 +311,32 @@ namespace Js2IL.Services.ILGenerators
             // Emit constructor body statements (no default return value emission)
             if (ctorFunc.Body is BlockStatement bstmt)
             {
-                // For now, emit constructor body without allocating a separate scope object; parameters/locals
-                // are not captured by nested functions inside constructors yet.
-                ilGen.GenerateStatementsForBody(methodVariables.GetLeafScopeName(), false, bstmt.Body);
+                // Create a scope instance when the constructor declares block-scoped locals (let/const)
+                // or has nested functions, so locals have storage and can be referenced.
+                bool needScopeInstance = ShouldCreateMethodScopeInstance(ctorFunc);
+                ilGen.GenerateStatementsForBody(methodVariables.GetLeafScopeName(), needScopeInstance, bstmt.Body);
             }
 
             // Return from constructor (void)
             ilGen.IL.OpCode(ILOpCode.Ret);
 
-            var ctorBody = _methodBodies.AddMethodBody(ilGen.IL);
+            // Include locals created by ILMethodGenerator (e.g., scope instance for block-scoped vars)
+            StandaloneSignatureHandle localSignature = default;
+            MethodBodyAttributes bodyAttributes = MethodBodyAttributes.None;
+            var localCount = methodVariables.GetNumberOfLocals();
+            if (localCount > 0)
+            {
+                var localSig = new BlobBuilder();
+                var localEncoder = new BlobEncoder(localSig).LocalVariableSignature(localCount);
+                for (int i = 0; i < localCount; i++)
+                {
+                    localEncoder.AddVariable().Type().Object();
+                }
+                localSignature = _metadata.AddStandaloneSignature(_metadata.GetOrAddBlob(localSig));
+                bodyAttributes = MethodBodyAttributes.InitLocals;
+            }
+
+            var ctorBody = _methodBodies.AddMethodBody(ilGen.IL, maxStack: 32, localVariablesSignature: localSignature, attributes: bodyAttributes);
             return tb.AddMethodDefinition(
                 MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
                 ".ctor",
@@ -375,7 +392,16 @@ namespace Js2IL.Services.ILGenerators
 
             if (!hasExplicitReturn)
             {
-                ilGen.IL.OpCode(ILOpCode.Ldnull);
+                // JavaScript methods without an explicit return should return 'this' for fluent patterns
+                // and to avoid leaving an unexpected value on the stack causing invalid IL at runtime.
+                if (!element.Static)
+                {
+                    ilGen.IL.OpCode(ILOpCode.Ldarg_0); // load 'this'
+                }
+                else
+                {
+                    ilGen.IL.OpCode(ILOpCode.Ldnull);
+                }
                 ilGen.IL.OpCode(ILOpCode.Ret);
             }
 
@@ -395,7 +421,7 @@ namespace Js2IL.Services.ILGenerators
                 bodyAttributes = MethodBodyAttributes.InitLocals;
             }
 
-            var mbody = _methodBodies.AddMethodBody(ilGen.IL, localVariablesSignature: localSignature, attributes: bodyAttributes);
+            var mbody = _methodBodies.AddMethodBody(ilGen.IL, maxStack: 32, localVariablesSignature: localSignature, attributes: bodyAttributes);
             var attrs = MethodAttributes.Public | MethodAttributes.HideBySig;
             if (element.Static)
             {

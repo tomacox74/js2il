@@ -72,7 +72,7 @@
 
 	// Fields
 	.field public object Greeter
-	.field public initonly object g
+	.field public object g
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -104,9 +104,9 @@
 		) cil managed 
 	{
 		// Method begins at RVA 0x2074
-		// Header size: 1
+		// Header size: 12
 		// Code size: 14 (0xe)
-		.maxstack 8
+		.maxstack 32
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
@@ -119,10 +119,10 @@
 	.method public hidebysig 
 		instance object sayName () cil managed 
 	{
-		// Method begins at RVA 0x2083
-		// Header size: 1
+		// Method begins at RVA 0x2090
+		// Header size: 12
 		// Code size: 23 (0x17)
-		.maxstack 8
+		.maxstack 32
 
 		IL_0000: ldc.i4.1
 		IL_0001: newarr [System.Runtime]System.Object
@@ -133,7 +133,7 @@
 		IL_000e: stelem.ref
 		IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_0014: pop
-		IL_0015: ldnull
+		IL_0015: ldarg.0
 		IL_0016: ret
 	} // end of method Greeter::sayName
 
@@ -146,9 +146,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x209c
+		// Method begins at RVA 0x20b4
 		// Header size: 12
-		// Code size: 35 (0x23)
+		// Code size: 45 (0x2d)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -158,14 +158,16 @@
 		IL_0000: newobj instance void Scopes.Classes_ClassConstructor_Param_Field_Log::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldstr "Alice"
-		IL_000c: newobj instance void Classes.Greeter::.ctor(object)
-		IL_0011: stfld object Scopes.Classes_ClassConstructor_Param_Field_Log::g
-		IL_0016: ldloc.0
-		IL_0017: ldfld object Scopes.Classes_ClassConstructor_Param_Field_Log::g
-		IL_001c: callvirt instance object Classes.Greeter::sayName()
-		IL_0021: pop
-		IL_0022: ret
+		IL_0007: castclass Scopes.Classes_ClassConstructor_Param_Field_Log
+		IL_000c: ldstr "Alice"
+		IL_0011: newobj instance void Classes.Greeter::.ctor(object)
+		IL_0016: stfld object Scopes.Classes_ClassConstructor_Param_Field_Log::g
+		IL_001b: ldloc.0
+		IL_001c: castclass Scopes.Classes_ClassConstructor_Param_Field_Log
+		IL_0021: ldfld object Scopes.Classes_ClassConstructor_Param_Field_Log::g
+		IL_0026: callvirt instance object Classes.Greeter::sayName()
+		IL_002b: pop
+		IL_002c: ret
 	} // end of method Program::Main
 
 } // end of class Program

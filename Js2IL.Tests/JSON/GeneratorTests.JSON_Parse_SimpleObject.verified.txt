@@ -7,7 +7,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public initonly object obj
+	.field public object obj
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -35,7 +35,7 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 158 (0x9e)
+		// Code size: 183 (0xb7)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -45,66 +45,71 @@
 		IL_0000: newobj instance void Scopes.JSON_Parse_SimpleObject::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: ldstr "{\"a\":1,\"b\":true,\"c\":null}"
-		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.JSON::Parse(object)
-		IL_0011: stfld object Scopes.JSON_Parse_SimpleObject::obj
-		IL_0016: ldc.i4.4
-		IL_0017: newarr [System.Runtime]System.Object
-		IL_001c: dup
-		IL_001d: ldc.i4.0
-		IL_001e: ldloc.0
-		IL_001f: ldfld object Scopes.JSON_Parse_SimpleObject::obj
-		IL_0024: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_0029: stelem.ref
-		IL_002a: dup
-		IL_002b: ldc.i4.1
-		IL_002c: ldloc.0
-		IL_002d: ldfld object Scopes.JSON_Parse_SimpleObject::obj
-		IL_0032: ldstr "a"
-		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_003c: stelem.ref
-		IL_003d: dup
-		IL_003e: ldc.i4.2
-		IL_003f: ldloc.0
-		IL_0040: ldfld object Scopes.JSON_Parse_SimpleObject::obj
-		IL_0045: ldstr "b"
-		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_004f: stelem.ref
-		IL_0050: dup
-		IL_0051: ldc.i4.3
-		IL_0052: ldloc.0
-		IL_0053: ldfld object Scopes.JSON_Parse_SimpleObject::obj
-		IL_0058: ldstr "c"
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_0062: ldc.i4.0
-		IL_0063: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0068: pop
-		IL_0069: dup
-		IL_006a: ldnull
-		IL_006b: ceq
-		IL_006d: brtrue IL_008f
-
-		IL_0072: dup
-		IL_0073: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0078: ldnull
-		IL_0079: ceq
+		IL_0007: castclass Scopes.JSON_Parse_SimpleObject
+		IL_000c: ldstr "{\"a\":1,\"b\":true,\"c\":null}"
+		IL_0011: call object [JavaScriptRuntime]JavaScriptRuntime.JSON::Parse(object)
+		IL_0016: stfld object Scopes.JSON_Parse_SimpleObject::obj
+		IL_001b: ldc.i4.4
+		IL_001c: newarr [System.Runtime]System.Object
+		IL_0021: dup
+		IL_0022: ldc.i4.0
+		IL_0023: ldloc.0
+		IL_0024: castclass Scopes.JSON_Parse_SimpleObject
+		IL_0029: ldfld object Scopes.JSON_Parse_SimpleObject::obj
+		IL_002e: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0033: stelem.ref
+		IL_0034: dup
+		IL_0035: ldc.i4.1
+		IL_0036: ldloc.0
+		IL_0037: castclass Scopes.JSON_Parse_SimpleObject
+		IL_003c: ldfld object Scopes.JSON_Parse_SimpleObject::obj
+		IL_0041: ldstr "a"
+		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_004b: stelem.ref
+		IL_004c: dup
+		IL_004d: ldc.i4.2
+		IL_004e: ldloc.0
+		IL_004f: castclass Scopes.JSON_Parse_SimpleObject
+		IL_0054: ldfld object Scopes.JSON_Parse_SimpleObject::obj
+		IL_0059: ldstr "b"
+		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_0063: stelem.ref
+		IL_0064: dup
+		IL_0065: ldc.i4.3
+		IL_0066: ldloc.0
+		IL_0067: castclass Scopes.JSON_Parse_SimpleObject
+		IL_006c: ldfld object Scopes.JSON_Parse_SimpleObject::obj
+		IL_0071: ldstr "c"
+		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
 		IL_007b: ldc.i4.0
-		IL_007c: ceq
-		IL_007e: brtrue IL_008f
+		IL_007c: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0081: pop
+		IL_0082: dup
+		IL_0083: ldnull
+		IL_0084: ceq
+		IL_0086: brtrue IL_00a8
 
-		IL_0083: pop
-		IL_0084: ldc.i4.0
-		IL_0085: box [System.Runtime]System.Boolean
-		IL_008a: br IL_0096
+		IL_008b: dup
+		IL_008c: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0091: ldnull
+		IL_0092: ceq
+		IL_0094: ldc.i4.0
+		IL_0095: ceq
+		IL_0097: brtrue IL_00a8
 
-		IL_008f: pop
-		IL_0090: ldc.i4.1
-		IL_0091: box [System.Runtime]System.Boolean
-
-		IL_0096: stelem.ref
-		IL_0097: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_009c: pop
-		IL_009d: ret
+		IL_009d: ldc.i4.0
+		IL_009e: box [System.Runtime]System.Boolean
+		IL_00a3: br IL_00af
+
+		IL_00a8: pop
+		IL_00a9: ldc.i4.1
+		IL_00aa: box [System.Runtime]System.Boolean
+
+		IL_00af: stelem.ref
+		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00b5: pop
+		IL_00b6: ret
 	} // end of method Program::Main
 
 } // end of class Program
