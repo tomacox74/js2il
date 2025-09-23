@@ -17,26 +17,24 @@ namespace Js2IL.Services.ILGenerators
         private ClassesGenerator _classesGenerator;
         private MethodBodyStreamEncoder _methodBodyStreamEncoder;
         private SymbolTable _symbolTable;
-        private Dispatch.DispatchTableGenerator _dispatchTableGenerator;
         private readonly ClassRegistry _classRegistry = new();
 
-        public MainGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator, SymbolTable symbolTable)
+        public MainGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, SymbolTable symbolTable)
         {
-            _dispatchTableGenerator = dispatchTableGenerator ?? throw new ArgumentNullException(nameof(dispatchTableGenerator));
             _symbolTable = symbolTable ?? throw new ArgumentNullException(nameof(symbolTable));
 
             if (variables == null) throw new ArgumentNullException(nameof(variables));
             if (bclReferences == null) throw new ArgumentNullException(nameof(bclReferences));
             if (metadataBuilder == null) throw new ArgumentNullException(nameof(metadataBuilder));
 
-            _ilGenerator = new ILMethodGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator, _classRegistry);
-            _functionGenerator = new JavaScriptFunctionGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _dispatchTableGenerator, _classRegistry);
-            _classesGenerator = new ClassesGenerator(metadataBuilder, bclReferences, methodBodyStreamEncoder, _classRegistry, variables, _dispatchTableGenerator);
+            _functionGenerator = new JavaScriptFunctionGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry);
+            _ilGenerator = new ILMethodGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, _functionGenerator.FunctionRegistry);
+            _classesGenerator = new ClassesGenerator(metadataBuilder, bclReferences, methodBodyStreamEncoder, _classRegistry, variables);
             this._methodBodyStreamEncoder = methodBodyStreamEncoder;
         }
 
-        public MainGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator, SymbolTable symbolTable, TypeBuilder programTypeBuilder)
-            : this(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, dispatchTableGenerator, symbolTable)
+        public MainGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, SymbolTable symbolTable, TypeBuilder programTypeBuilder)
+            : this(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, symbolTable)
         {
         }
 
@@ -64,16 +62,10 @@ namespace Js2IL.Services.ILGenerators
             // First, declare classes so their types exist under the Classes namespace
             _classesGenerator.DeclareClasses(_symbolTable);
 
-            // create the dispatch
-            // functions are hosted so we need to declare them first
+            // Declare functions (emits static method definitions) and then bind them to scope fields.
             _functionGenerator.DeclareFunctions(_symbolTable);
-
-            var loadDispatchTableMethod = _dispatchTableGenerator.GenerateLoadDispatchTableMethod();
-            if (!loadDispatchTableMethod.IsNil)
-            {
-                _ilGenerator.IL.Call(loadDispatchTableMethod);
-                _ilGenerator.InitializeLocalFunctionVariables(ast.Body.OfType<Acornima.Ast.FunctionDeclaration>());
-            }
+            // Initialize top-level function variables directly (no dispatch table indirection)
+            _ilGenerator.InitializeLocalFunctionVariables(ast.Body.OfType<Acornima.Ast.FunctionDeclaration>());
 
             _ilGenerator.GenerateStatementsForBody(variables.GetLeafScopeName(), false, ast.Body);
 

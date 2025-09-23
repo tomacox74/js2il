@@ -49,14 +49,6 @@
 
 } // end of class Scopes.Require_Path_Join_NestedFunction
 
-.class public auto ansi abstract sealed beforefieldinit DispatchTable
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public static class [System.Runtime]System.Func`4<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object, class [System.Runtime]System.Object> joinWrapper
-
-} // end of class DispatchTable
-
 .class public auto ansi abstract sealed beforefieldinit Functions.joinWrapper
 	extends [System.Runtime]System.Object
 {
@@ -95,27 +87,6 @@
 
 } // end of class Functions.joinWrapper
 
-.class public auto ansi abstract sealed beforefieldinit Functions._Loader
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public static 
-		void _LoadDispatchTable () cil managed 
-	{
-		// Method begins at RVA 0x2096
-		// Header size: 1
-		// Code size: 18 (0x12)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldftn object Functions.joinWrapper::joinWrapper(object[], object, object)
-		IL_0007: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-		IL_000c: stsfld class [System.Runtime]System.Func`4<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::joinWrapper
-		IL_0011: ret
-	} // end of method _Loader::_LoadDispatchTable
-
-} // end of class Functions._Loader
-
 .class public auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -123,9 +94,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ac
+		// Method begins at RVA 0x2098
 		// Header size: 12
-		// Code size: 100 (0x64)
+		// Code size: 102 (0x66)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -134,36 +105,37 @@
 
 		IL_0000: newobj instance void Scopes.Require_Path_Join_NestedFunction::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call void Functions._Loader::_LoadDispatchTable()
-		IL_000b: ldloc.0
-		IL_000c: castclass Scopes.Require_Path_Join_NestedFunction
-		IL_0011: ldsfld class [System.Runtime]System.Func`4<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::joinWrapper
-		IL_0016: stfld object Scopes.Require_Path_Join_NestedFunction::joinWrapper
-		IL_001b: ldloc.0
-		IL_001c: castclass Scopes.Require_Path_Join_NestedFunction
-		IL_0021: ldstr "path"
-		IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Require::require(string)
-		IL_002b: stfld object Scopes.Require_Path_Join_NestedFunction::path
-		IL_0030: ldc.i4.1
-		IL_0031: newarr [System.Runtime]System.Object
-		IL_0036: dup
-		IL_0037: ldc.i4.0
-		IL_0038: ldloc.0
-		IL_0039: ldfld object Scopes.Require_Path_Join_NestedFunction::joinWrapper
-		IL_003e: ldc.i4.1
-		IL_003f: newarr [System.Runtime]System.Object
-		IL_0044: dup
-		IL_0045: ldc.i4.0
-		IL_0046: ldloc.0
-		IL_0047: castclass Scopes.Require_Path_Join_NestedFunction
-		IL_004c: stelem.ref
-		IL_004d: ldstr "a"
-		IL_0052: ldstr "b"
-		IL_0057: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
-		IL_005c: stelem.ref
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0062: pop
-		IL_0063: ret
+		IL_0006: ldloc.0
+		IL_0007: castclass Scopes.Require_Path_Join_NestedFunction
+		IL_000c: ldnull
+		IL_000d: ldftn object Functions.joinWrapper::joinWrapper(object[], object, object)
+		IL_0013: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_0018: stfld object Scopes.Require_Path_Join_NestedFunction::joinWrapper
+		IL_001d: ldloc.0
+		IL_001e: castclass Scopes.Require_Path_Join_NestedFunction
+		IL_0023: ldstr "path"
+		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Require::require(string)
+		IL_002d: stfld object Scopes.Require_Path_Join_NestedFunction::path
+		IL_0032: ldc.i4.1
+		IL_0033: newarr [System.Runtime]System.Object
+		IL_0038: dup
+		IL_0039: ldc.i4.0
+		IL_003a: ldloc.0
+		IL_003b: ldfld object Scopes.Require_Path_Join_NestedFunction::joinWrapper
+		IL_0040: ldc.i4.1
+		IL_0041: newarr [System.Runtime]System.Object
+		IL_0046: dup
+		IL_0047: ldc.i4.0
+		IL_0048: ldloc.0
+		IL_0049: castclass Scopes.Require_Path_Join_NestedFunction
+		IL_004e: stelem.ref
+		IL_004f: ldstr "a"
+		IL_0054: ldstr "b"
+		IL_0059: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
+		IL_005e: stelem.ref
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0064: pop
+		IL_0065: ret
 	} // end of method Program::Main
 
 } // end of class Program

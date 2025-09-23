@@ -78,20 +78,11 @@
 
 } // end of class Scopes.Variable_LetFunctionNestedShadowing
 
-.class public auto ansi abstract sealed beforefieldinit DispatchTable
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> outer
-	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> inner
-
-} // end of class DispatchTable
-
 .class public auto ansi abstract sealed beforefieldinit Functions.outer
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi abstract sealed beforefieldinit outer
+	.class nested public auto ansi abstract sealed beforefieldinit outer_Nested
 		extends [System.Runtime]System.Object
 	{
 		// Methods
@@ -100,7 +91,7 @@
 				object[] scopes
 			) cil managed 
 		{
-			// Method begins at RVA 0x20ec
+			// Method begins at RVA 0x206c
 			// Header size: 12
 			// Code size: 59 (0x3b)
 			.maxstack 32
@@ -127,94 +118,70 @@
 			IL_0038: pop
 			IL_0039: ldnull
 			IL_003a: ret
-		} // end of method outer::inner
+		} // end of method outer_Nested::inner
 
-	} // end of class outer
+		.method public static 
+			object outer (
+				object[] scopes
+			) cil managed 
+		{
+			// Method begins at RVA 0x20b4
+			// Header size: 12
+			// Code size: 120 (0x78)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
 
+			IL_0000: newobj instance void Scopes.Variable_LetFunctionNestedShadowing/outer::.ctor()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: castclass Scopes.Variable_LetFunctionNestedShadowing/outer
+			IL_000c: ldnull
+			IL_000d: ldftn object Functions.outer/outer_Nested::inner(object[])
+			IL_0013: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+			IL_0018: stfld object Scopes.Variable_LetFunctionNestedShadowing/outer::inner
+			IL_001d: ldloc.0
+			IL_001e: castclass Scopes.Variable_LetFunctionNestedShadowing/outer
+			IL_0023: ldc.r8 1
+			IL_002c: box [System.Runtime]System.Double
+			IL_0031: stfld object Scopes.Variable_LetFunctionNestedShadowing/outer::a
+			IL_0036: ldloc.0
+			IL_0037: ldfld object Scopes.Variable_LetFunctionNestedShadowing/outer::inner
+			IL_003c: ldc.i4.2
+			IL_003d: newarr [System.Runtime]System.Object
+			IL_0042: dup
+			IL_0043: ldc.i4.0
+			IL_0044: ldarg.0
+			IL_0045: ldc.i4.0
+			IL_0046: ldelem.ref
+			IL_0047: castclass Scopes.Variable_LetFunctionNestedShadowing
+			IL_004c: stelem.ref
+			IL_004d: dup
+			IL_004e: ldc.i4.1
+			IL_004f: ldloc.0
+			IL_0050: castclass Scopes.Variable_LetFunctionNestedShadowing/outer
+			IL_0055: stelem.ref
+			IL_0056: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+			IL_005b: pop
+			IL_005c: ldc.i4.1
+			IL_005d: newarr [System.Runtime]System.Object
+			IL_0062: dup
+			IL_0063: ldc.i4.0
+			IL_0064: ldloc.0
+			IL_0065: castclass Scopes.Variable_LetFunctionNestedShadowing/outer
+			IL_006a: ldfld object Scopes.Variable_LetFunctionNestedShadowing/outer::a
+			IL_006f: stelem.ref
+			IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_0075: pop
+			IL_0076: ldnull
+			IL_0077: ret
+		} // end of method outer_Nested::outer
 
-	// Methods
-	.method public static 
-		object outer (
-			object[] scopes
-		) cil managed 
-	{
-		// Method begins at RVA 0x206c
-		// Header size: 12
-		// Code size: 113 (0x71)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
+	} // end of class outer_Nested
 
-		IL_0000: newobj instance void Scopes.Variable_LetFunctionNestedShadowing/outer::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: castclass Scopes.Variable_LetFunctionNestedShadowing/outer
-		IL_000c: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::inner
-		IL_0011: stfld object Scopes.Variable_LetFunctionNestedShadowing/outer::inner
-		IL_0016: ldloc.0
-		IL_0017: castclass Scopes.Variable_LetFunctionNestedShadowing/outer
-		IL_001c: ldc.r8 1
-		IL_0025: box [System.Runtime]System.Double
-		IL_002a: stfld object Scopes.Variable_LetFunctionNestedShadowing/outer::a
-		IL_002f: ldloc.0
-		IL_0030: ldfld object Scopes.Variable_LetFunctionNestedShadowing/outer::inner
-		IL_0035: ldc.i4.2
-		IL_0036: newarr [System.Runtime]System.Object
-		IL_003b: dup
-		IL_003c: ldc.i4.0
-		IL_003d: ldarg.0
-		IL_003e: ldc.i4.0
-		IL_003f: ldelem.ref
-		IL_0040: castclass Scopes.Variable_LetFunctionNestedShadowing
-		IL_0045: stelem.ref
-		IL_0046: dup
-		IL_0047: ldc.i4.1
-		IL_0048: ldloc.0
-		IL_0049: castclass Scopes.Variable_LetFunctionNestedShadowing/outer
-		IL_004e: stelem.ref
-		IL_004f: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0054: pop
-		IL_0055: ldc.i4.1
-		IL_0056: newarr [System.Runtime]System.Object
-		IL_005b: dup
-		IL_005c: ldc.i4.0
-		IL_005d: ldloc.0
-		IL_005e: castclass Scopes.Variable_LetFunctionNestedShadowing/outer
-		IL_0063: ldfld object Scopes.Variable_LetFunctionNestedShadowing/outer::a
-		IL_0068: stelem.ref
-		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_006e: pop
-		IL_006f: ldnull
-		IL_0070: ret
-	} // end of method outer::outer
 
 } // end of class Functions.outer
-
-.class public auto ansi abstract sealed beforefieldinit Functions._Loader
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public static 
-		void _LoadDispatchTable () cil managed 
-	{
-		// Method begins at RVA 0x2133
-		// Header size: 1
-		// Code size: 35 (0x23)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldftn object Functions.outer::outer(object[])
-		IL_0007: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_000c: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::outer
-		IL_0011: ldnull
-		IL_0012: ldftn object Functions.outer/outer::inner(object[])
-		IL_0018: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_001d: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::inner
-		IL_0022: ret
-	} // end of method _Loader::_LoadDispatchTable
-
-} // end of class Functions._Loader
 
 .class public auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -223,9 +190,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2158
+		// Method begins at RVA 0x2138
 		// Header size: 12
-		// Code size: 106 (0x6a)
+		// Code size: 108 (0x6c)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -234,38 +201,39 @@
 
 		IL_0000: newobj instance void Scopes.Variable_LetFunctionNestedShadowing::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call void Functions._Loader::_LoadDispatchTable()
-		IL_000b: ldloc.0
-		IL_000c: castclass Scopes.Variable_LetFunctionNestedShadowing
-		IL_0011: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::outer
-		IL_0016: stfld object Scopes.Variable_LetFunctionNestedShadowing::outer
-		IL_001b: ldloc.0
-		IL_001c: castclass Scopes.Variable_LetFunctionNestedShadowing
-		IL_0021: ldc.r8 0.0
-		IL_002a: box [System.Runtime]System.Double
-		IL_002f: stfld object Scopes.Variable_LetFunctionNestedShadowing::a
-		IL_0034: ldloc.0
-		IL_0035: ldfld object Scopes.Variable_LetFunctionNestedShadowing::outer
-		IL_003a: ldc.i4.1
-		IL_003b: newarr [System.Runtime]System.Object
-		IL_0040: dup
-		IL_0041: ldc.i4.0
-		IL_0042: ldloc.0
-		IL_0043: castclass Scopes.Variable_LetFunctionNestedShadowing
-		IL_0048: stelem.ref
-		IL_0049: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_004e: pop
-		IL_004f: ldc.i4.1
-		IL_0050: newarr [System.Runtime]System.Object
-		IL_0055: dup
-		IL_0056: ldc.i4.0
-		IL_0057: ldloc.0
-		IL_0058: castclass Scopes.Variable_LetFunctionNestedShadowing
-		IL_005d: ldfld object Scopes.Variable_LetFunctionNestedShadowing::a
-		IL_0062: stelem.ref
-		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0068: pop
-		IL_0069: ret
+		IL_0006: ldloc.0
+		IL_0007: castclass Scopes.Variable_LetFunctionNestedShadowing
+		IL_000c: ldnull
+		IL_000d: ldftn object Functions.outer/outer_Nested::outer(object[])
+		IL_0013: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0018: stfld object Scopes.Variable_LetFunctionNestedShadowing::outer
+		IL_001d: ldloc.0
+		IL_001e: castclass Scopes.Variable_LetFunctionNestedShadowing
+		IL_0023: ldc.r8 0.0
+		IL_002c: box [System.Runtime]System.Double
+		IL_0031: stfld object Scopes.Variable_LetFunctionNestedShadowing::a
+		IL_0036: ldloc.0
+		IL_0037: ldfld object Scopes.Variable_LetFunctionNestedShadowing::outer
+		IL_003c: ldc.i4.1
+		IL_003d: newarr [System.Runtime]System.Object
+		IL_0042: dup
+		IL_0043: ldc.i4.0
+		IL_0044: ldloc.0
+		IL_0045: castclass Scopes.Variable_LetFunctionNestedShadowing
+		IL_004a: stelem.ref
+		IL_004b: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0050: pop
+		IL_0051: ldc.i4.1
+		IL_0052: newarr [System.Runtime]System.Object
+		IL_0057: dup
+		IL_0058: ldc.i4.0
+		IL_0059: ldloc.0
+		IL_005a: castclass Scopes.Variable_LetFunctionNestedShadowing
+		IL_005f: ldfld object Scopes.Variable_LetFunctionNestedShadowing::a
+		IL_0064: stelem.ref
+		IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_006a: pop
+		IL_006b: ret
 	} // end of method Program::Main
 
 } // end of class Program

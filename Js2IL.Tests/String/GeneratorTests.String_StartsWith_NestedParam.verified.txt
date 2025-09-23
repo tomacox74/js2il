@@ -74,20 +74,11 @@
 
 } // end of class Scopes.String_StartsWith_NestedParam
 
-.class public auto ansi abstract sealed beforefieldinit DispatchTable
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public static class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> outer
-	.field public static class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> inner
-
-} // end of class DispatchTable
-
 .class public auto ansi abstract sealed beforefieldinit Functions.outer
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
-	.class nested public auto ansi abstract sealed beforefieldinit outer
+	.class nested public auto ansi abstract sealed beforefieldinit outer_Nested
 		extends [System.Runtime]System.Object
 	{
 		// Methods
@@ -97,7 +88,7 @@
 				object p
 			) cil managed 
 		{
-			// Method begins at RVA 0x20c0
+			// Method begins at RVA 0x206c
 			// Header size: 12
 			// Code size: 34 (0x22)
 			.maxstack 32
@@ -116,82 +107,58 @@
 			IL_001b: stelem.ref
 			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
 			IL_0021: ret
-		} // end of method outer::inner
+		} // end of method outer_Nested::inner
 
-	} // end of class outer
+		.method public static 
+			object outer (
+				object[] scopes,
+				object s
+			) cil managed 
+		{
+			// Method begins at RVA 0x209c
+			// Header size: 12
+			// Code size: 79 (0x4f)
+			.maxstack 32
+			.locals init (
+				[0] object
+			)
 
+			IL_0000: newobj instance void Scopes.String_StartsWith_NestedParam/outer::.ctor()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: ldarg.1
+			IL_0008: stfld object Scopes.String_StartsWith_NestedParam/outer::s
+			IL_000d: ldloc.0
+			IL_000e: castclass Scopes.String_StartsWith_NestedParam/outer
+			IL_0013: ldnull
+			IL_0014: ldftn object Functions.outer/outer_Nested::inner(object[], object)
+			IL_001a: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+			IL_001f: stfld object Scopes.String_StartsWith_NestedParam/outer::inner
+			IL_0024: ldloc.0
+			IL_0025: ldfld object Scopes.String_StartsWith_NestedParam/outer::inner
+			IL_002a: ldc.i4.2
+			IL_002b: newarr [System.Runtime]System.Object
+			IL_0030: dup
+			IL_0031: ldc.i4.0
+			IL_0032: ldarg.0
+			IL_0033: ldc.i4.0
+			IL_0034: ldelem.ref
+			IL_0035: castclass Scopes.String_StartsWith_NestedParam
+			IL_003a: stelem.ref
+			IL_003b: dup
+			IL_003c: ldc.i4.1
+			IL_003d: ldloc.0
+			IL_003e: castclass Scopes.String_StartsWith_NestedParam/outer
+			IL_0043: stelem.ref
+			IL_0044: ldstr "a"
+			IL_0049: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+			IL_004e: ret
+		} // end of method outer_Nested::outer
 
-	// Methods
-	.method public static 
-		object outer (
-			object[] scopes,
-			object s
-		) cil managed 
-	{
-		// Method begins at RVA 0x206c
-		// Header size: 12
-		// Code size: 72 (0x48)
-		.maxstack 32
-		.locals init (
-			[0] object
-		)
+	} // end of class outer_Nested
 
-		IL_0000: newobj instance void Scopes.String_StartsWith_NestedParam/outer::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldarg.1
-		IL_0008: stfld object Scopes.String_StartsWith_NestedParam/outer::s
-		IL_000d: ldloc.0
-		IL_000e: castclass Scopes.String_StartsWith_NestedParam/outer
-		IL_0013: ldsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::inner
-		IL_0018: stfld object Scopes.String_StartsWith_NestedParam/outer::inner
-		IL_001d: ldloc.0
-		IL_001e: ldfld object Scopes.String_StartsWith_NestedParam/outer::inner
-		IL_0023: ldc.i4.2
-		IL_0024: newarr [System.Runtime]System.Object
-		IL_0029: dup
-		IL_002a: ldc.i4.0
-		IL_002b: ldarg.0
-		IL_002c: ldc.i4.0
-		IL_002d: ldelem.ref
-		IL_002e: castclass Scopes.String_StartsWith_NestedParam
-		IL_0033: stelem.ref
-		IL_0034: dup
-		IL_0035: ldc.i4.1
-		IL_0036: ldloc.0
-		IL_0037: castclass Scopes.String_StartsWith_NestedParam/outer
-		IL_003c: stelem.ref
-		IL_003d: ldstr "a"
-		IL_0042: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0047: ret
-	} // end of method outer::outer
 
 } // end of class Functions.outer
-
-.class public auto ansi abstract sealed beforefieldinit Functions._Loader
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public static 
-		void _LoadDispatchTable () cil managed 
-	{
-		// Method begins at RVA 0x20ee
-		// Header size: 1
-		// Code size: 35 (0x23)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldftn object Functions.outer::outer(object[], object)
-		IL_0007: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_000c: stsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::outer
-		IL_0011: ldnull
-		IL_0012: ldftn object Functions.outer/outer::inner(object[], object)
-		IL_0018: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_001d: stsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::inner
-		IL_0022: ret
-	} // end of method _Loader::_LoadDispatchTable
-
-} // end of class Functions._Loader
 
 .class public auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
@@ -200,9 +167,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2114
+		// Method begins at RVA 0x20f8
 		// Header size: 12
-		// Code size: 74 (0x4a)
+		// Code size: 76 (0x4c)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -211,30 +178,31 @@
 
 		IL_0000: newobj instance void Scopes.String_StartsWith_NestedParam::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call void Functions._Loader::_LoadDispatchTable()
-		IL_000b: ldloc.0
-		IL_000c: castclass Scopes.String_StartsWith_NestedParam
-		IL_0011: ldsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::outer
-		IL_0016: stfld object Scopes.String_StartsWith_NestedParam::outer
-		IL_001b: ldc.i4.1
-		IL_001c: newarr [System.Runtime]System.Object
-		IL_0021: dup
-		IL_0022: ldc.i4.0
-		IL_0023: ldloc.0
-		IL_0024: ldfld object Scopes.String_StartsWith_NestedParam::outer
-		IL_0029: ldc.i4.1
-		IL_002a: newarr [System.Runtime]System.Object
-		IL_002f: dup
-		IL_0030: ldc.i4.0
-		IL_0031: ldloc.0
-		IL_0032: castclass Scopes.String_StartsWith_NestedParam
-		IL_0037: stelem.ref
-		IL_0038: ldstr "abc"
-		IL_003d: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0042: stelem.ref
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0048: pop
-		IL_0049: ret
+		IL_0006: ldloc.0
+		IL_0007: castclass Scopes.String_StartsWith_NestedParam
+		IL_000c: ldnull
+		IL_000d: ldftn object Functions.outer/outer_Nested::outer(object[], object)
+		IL_0013: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0018: stfld object Scopes.String_StartsWith_NestedParam::outer
+		IL_001d: ldc.i4.1
+		IL_001e: newarr [System.Runtime]System.Object
+		IL_0023: dup
+		IL_0024: ldc.i4.0
+		IL_0025: ldloc.0
+		IL_0026: ldfld object Scopes.String_StartsWith_NestedParam::outer
+		IL_002b: ldc.i4.1
+		IL_002c: newarr [System.Runtime]System.Object
+		IL_0031: dup
+		IL_0032: ldc.i4.0
+		IL_0033: ldloc.0
+		IL_0034: castclass Scopes.String_StartsWith_NestedParam
+		IL_0039: stelem.ref
+		IL_003a: ldstr "abc"
+		IL_003f: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_0044: stelem.ref
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_004a: pop
+		IL_004b: ret
 	} // end of method Program::Main
 
 } // end of class Program

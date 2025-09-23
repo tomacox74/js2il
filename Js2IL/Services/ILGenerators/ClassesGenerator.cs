@@ -16,16 +16,14 @@ namespace Js2IL.Services.ILGenerators
         private readonly MethodBodyStreamEncoder _methodBodies;
         private readonly ClassRegistry _classRegistry;
         private readonly Variables _variables;
-        private readonly Dispatch.DispatchTableGenerator _dispatchTableGenerator;
 
-        public ClassesGenerator(MetadataBuilder metadata, BaseClassLibraryReferences bcl, MethodBodyStreamEncoder methodBodies, ClassRegistry classRegistry, Variables variables, Dispatch.DispatchTableGenerator dispatchTableGenerator)
+        public ClassesGenerator(MetadataBuilder metadata, BaseClassLibraryReferences bcl, MethodBodyStreamEncoder methodBodies, ClassRegistry classRegistry, Variables variables)
         {
             _metadata = metadata ?? throw new ArgumentNullException(nameof(metadata));
             _bcl = bcl ?? throw new ArgumentNullException(nameof(bcl));
             _methodBodies = methodBodies;
             _classRegistry = classRegistry ?? throw new ArgumentNullException(nameof(classRegistry));
             _variables = variables ?? throw new ArgumentNullException(nameof(variables));
-            _dispatchTableGenerator = dispatchTableGenerator ?? throw new ArgumentNullException(nameof(dispatchTableGenerator));
         }
 
         public void DeclareClasses(SymbolTable table)
@@ -218,7 +216,7 @@ namespace Js2IL.Services.ILGenerators
                     .Parameters(0, r => r.Void(), p => { });
                 var cctorSig = _metadata.GetOrAddBlob(sigBuilder);
 
-                var ilGen = new ILMethodGenerator(_variables, _bcl, _metadata, _methodBodies, _dispatchTableGenerator, _classRegistry, inClassMethod: false, currentClassName: classScope.Name);
+                var ilGen = new ILMethodGenerator(_variables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: false, currentClassName: classScope.Name);
 
                 // For each static field with an initializer: evaluate and stsfld
                 foreach (var (field, initExpr) in staticFieldsWithInits)
@@ -265,7 +263,7 @@ namespace Js2IL.Services.ILGenerators
             var ctorSig = _metadata.GetOrAddBlob(sigBuilder);
 
             // Body - use ILMethodGenerator for consistent expression emission
-            var ilGen = new ILMethodGenerator(_variables, _bcl, _metadata, _methodBodies, _dispatchTableGenerator, _classRegistry, inClassMethod: true, currentClassName: className);
+            var ilGen = new ILMethodGenerator(_variables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: true, currentClassName: className);
             ilGen.IL.OpCode(ILOpCode.Ldarg_0);
             ilGen.IL.Call(_bcl.Object_Ctor_Ref);
 
@@ -299,7 +297,7 @@ namespace Js2IL.Services.ILGenerators
             // Create a generator with parameter variables so identifiers resolve
             var paramNames = ctorFunc.Params.OfType<Identifier>().Select(p => p.Name);
             var methodVariables = new Variables(_variables, "constructor", paramNames, isNestedFunction: false);
-            var ilGen = new ILMethodGenerator(methodVariables, _bcl, _metadata, _methodBodies, _dispatchTableGenerator, _classRegistry, inClassMethod: true, currentClassName: className);
+            var ilGen = new ILMethodGenerator(methodVariables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: true, currentClassName: className);
 
             // base .ctor
             ilGen.IL.OpCode(ILOpCode.Ldarg_0);
@@ -376,7 +374,7 @@ namespace Js2IL.Services.ILGenerators
                 ? fe.Params.OfType<Identifier>().Select(p => p.Name)
                 : Enumerable.Empty<string>();
             var methodVariables = new Variables(_variables, mname, paramNames, isNestedFunction: false);
-            var ilGen = new ILMethodGenerator(methodVariables, _bcl, _metadata, _methodBodies, _dispatchTableGenerator, _classRegistry, inClassMethod: !element.Static, currentClassName: className);
+            var ilGen = new ILMethodGenerator(methodVariables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: !element.Static, currentClassName: className);
 
             bool hasExplicitReturn = false;
             if (element.Value is FunctionExpression fexpr && fexpr.Body is BlockStatement bstmt)

@@ -50,14 +50,6 @@
 
 } // end of class Scopes.Function_GlobalFunctionLogsGlobalVariable
 
-.class public auto ansi abstract sealed beforefieldinit DispatchTable
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public static class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> logGlobalValues
-
-} // end of class DispatchTable
-
 .class public auto ansi abstract sealed beforefieldinit Functions.logGlobalValues
 	extends [System.Runtime]System.Object
 {
@@ -110,27 +102,6 @@
 
 } // end of class Functions.logGlobalValues
 
-.class public auto ansi abstract sealed beforefieldinit Functions._Loader
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public static 
-		void _LoadDispatchTable () cil managed 
-	{
-		// Method begins at RVA 0x20ba
-		// Header size: 1
-		// Code size: 18 (0x12)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldftn object Functions.logGlobalValues::logGlobalValues(object[])
-		IL_0007: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_000c: stsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::logGlobalValues
-		IL_0011: ret
-	} // end of method _Loader::_LoadDispatchTable
-
-} // end of class Functions._Loader
-
 .class public auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -138,9 +109,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20d0
+		// Method begins at RVA 0x20bc
 		// Header size: 12
-		// Code size: 96 (0x60)
+		// Code size: 98 (0x62)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -149,32 +120,33 @@
 
 		IL_0000: newobj instance void Scopes.Function_GlobalFunctionLogsGlobalVariable::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call void Functions._Loader::_LoadDispatchTable()
-		IL_000b: ldloc.0
-		IL_000c: castclass Scopes.Function_GlobalFunctionLogsGlobalVariable
-		IL_0011: ldsfld class [System.Runtime]System.Func`2<class [System.Runtime]System.Object[], class [System.Runtime]System.Object> DispatchTable::logGlobalValues
-		IL_0016: stfld object Scopes.Function_GlobalFunctionLogsGlobalVariable::logGlobalValues
-		IL_001b: ldloc.0
-		IL_001c: castclass Scopes.Function_GlobalFunctionLogsGlobalVariable
-		IL_0021: ldstr "Hello from global scope!"
-		IL_0026: stfld object Scopes.Function_GlobalFunctionLogsGlobalVariable::globalMessage
-		IL_002b: ldloc.0
-		IL_002c: castclass Scopes.Function_GlobalFunctionLogsGlobalVariable
-		IL_0031: ldc.r8 42
-		IL_003a: box [System.Runtime]System.Double
-		IL_003f: stfld object Scopes.Function_GlobalFunctionLogsGlobalVariable::globalNumber
-		IL_0044: ldloc.0
-		IL_0045: ldfld object Scopes.Function_GlobalFunctionLogsGlobalVariable::logGlobalValues
-		IL_004a: ldc.i4.1
-		IL_004b: newarr [System.Runtime]System.Object
-		IL_0050: dup
-		IL_0051: ldc.i4.0
-		IL_0052: ldloc.0
-		IL_0053: castclass Scopes.Function_GlobalFunctionLogsGlobalVariable
-		IL_0058: stelem.ref
-		IL_0059: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_005e: pop
-		IL_005f: ret
+		IL_0006: ldloc.0
+		IL_0007: castclass Scopes.Function_GlobalFunctionLogsGlobalVariable
+		IL_000c: ldnull
+		IL_000d: ldftn object Functions.logGlobalValues::logGlobalValues(object[])
+		IL_0013: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0018: stfld object Scopes.Function_GlobalFunctionLogsGlobalVariable::logGlobalValues
+		IL_001d: ldloc.0
+		IL_001e: castclass Scopes.Function_GlobalFunctionLogsGlobalVariable
+		IL_0023: ldstr "Hello from global scope!"
+		IL_0028: stfld object Scopes.Function_GlobalFunctionLogsGlobalVariable::globalMessage
+		IL_002d: ldloc.0
+		IL_002e: castclass Scopes.Function_GlobalFunctionLogsGlobalVariable
+		IL_0033: ldc.r8 42
+		IL_003c: box [System.Runtime]System.Double
+		IL_0041: stfld object Scopes.Function_GlobalFunctionLogsGlobalVariable::globalNumber
+		IL_0046: ldloc.0
+		IL_0047: ldfld object Scopes.Function_GlobalFunctionLogsGlobalVariable::logGlobalValues
+		IL_004c: ldc.i4.1
+		IL_004d: newarr [System.Runtime]System.Object
+		IL_0052: dup
+		IL_0053: ldc.i4.0
+		IL_0054: ldloc.0
+		IL_0055: castclass Scopes.Function_GlobalFunctionLogsGlobalVariable
+		IL_005a: stelem.ref
+		IL_005b: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0060: pop
+		IL_0061: ret
 	} // end of method Program::Main
 
 } // end of class Program

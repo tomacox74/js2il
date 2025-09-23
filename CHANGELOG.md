@@ -5,59 +5,29 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 Added
-- Compiler/Runtime: dynamic object property assignment (obj.prop = value) for non-computed MemberExpressions. Emitter now lowers to JavaScriptRuntime.Object.SetProperty for dynamic objects; typed property setters/fields are used when available. Supports ExpandoObject (object literal) and reflection-backed host objects; arrays/typed arrays ignore arbitrary dot properties. New Literals tests cover generator and execution for property assignment.
-- Compiler: object literals now support Identifier, StringLiteral, and NumericLiteral property keys. Numeric keys are coerced to strings using invariant culture (JS ToPropertyKey semantics) during IL emission.
-- Runtime Object: GetItem(object, double index) supports ExpandoObject (object literal) by coercing the numeric index to a string property name and returning its value (null to model undefined when absent).
-- Runtime: Math intrinsic ([IntrinsicObject("Math")]) — implemented the full function set:
 	- ceil, sqrt, abs, floor, round, trunc, sign
 	- sin, cos, tan, asin, acos, atan, atan2
 	- sinh, cosh, tanh, asinh, acosh, atanh
 	- exp, expm1, log, log10, log1p, log2, pow
 	- min, max, random, cbrt, hypot, fround, imul, clz32
 	Notes: JS ToNumber coercion, correct NaN/±Infinity propagation, and signed zero (-0) preservation where applicable.
-- Runtime: Math value properties (constants): E, LN10, LN2, LOG10E, LOG2E, PI, SQRT1_2, SQRT2.
-- Runtime: Int32Array intrinsic (minimal typed array) with constructor from number or array-like, numeric length, index get/set, and set(source[, offset]) coercing values via ToInt32-style truncation (NaN/±∞/±0 → 0). Registered as [IntrinsicObject("Int32Array")].
-- Runtime Object: integrated Int32Array support in JavaScriptRuntime.Object helpers:
 	- GetItem(object, double index): indexer for Int32Array
 	- GetLength(object): length for Int32Array
-- Compiler: dynamic indexed element assignment (target[index] = value) for Int32Array inside class methods using JavaScriptRuntime.Object.AssignItem fallback; leaves assigned value available for expression contexts while statement contexts discard it.
-- Operators: binary "in" operator (property existence) with runtime helper Object.HasPropertyIn covering: ExpandoObject/anonymous objects, arrays (numeric index bounds check), Int32Array, strings (character index), and reflection fallback for host objects. Emits early in BinaryOperators to avoid duplicate side-effects. Limitations: no prototype chain traversal yet; non-object RHS throws TypeError only for null/undefined (remaining primitives TODO); numeric LHS coerced via ToString for object keys.
-- Operators: inequality (!=) and strict inequality (!==) in both value and branching contexts. Uses Ceq inversion for value results and bne.un for conditional branches; unboxing/coercion aligned with existing equality semantics.
-- Compiler: heuristic class method scope instantiation (ShouldCreateMethodScopeInstance) plus unconditional method scope type registration; enables correct closure binding and removes prior experimental gaps.
-- Validation: reflection-based require() module discovery via [NodeModule] attribute scanning; fail fast if an unknown module name is required.
 
 Tests
-- Literals: added generator and execution tests for property assignment on object literal:
 	- ObjectLiteral_PropertyAssign (prints { a: 1, b: 2 })
-- Literals: added generator and execution tests for numeric-key object literal access:
 	- ObjectLiteral_NumericKey (prints 1)
-- Tests cleanup: removed obsolete Prime subgroup used for earlier reproduction of the numeric key bug.
-- New Math execution test validating Math.sqrt and Math.ceil:
 	- Math_Ceil_Sqrt_Basic
-- New Math execution tests covering additional methods and semantics:
 	- Math_Round_Trunc_NegativeHalves, Math_Sign_ZeroVariants, Math_Min_Max_NaN_EmptyArgs,
 	  Math_Hypot_Infinity_NaN, Math_Fround_SignedZero, Math_Imul_Clz32_Basics,
 	  Math_Log_Exp_Identity, Math_Cbrt_Negative
-- New TypedArray execution tests validating Int32Array basics and semantics:
 	- TypedArray: Int32Array_Construct_Length
 	- TypedArray: Int32Array_FromArray_CopyAndCoerce
 	- TypedArray: Int32Array_Set_FromArray_WithOffset
-- New BinaryOperator tests for inequality (!=): execution and generator variants (BinaryOperator_NotEqual).
-- New ControlFlow test validating if with != condition: execution and generator variants (ControlFlow_If_NotEqual).
 
 Docs
-- ECMAScript 2025 Feature Coverage: marked simple assignment for property targets (obj.prop = value) as Supported under Assignment Operators; regenerated markdown pending.
-- ECMAScript 2025 Feature Coverage: updated "The Math Object" to document the full set of Math function properties listed above. Regenerated docs/ECMAScript2025_FeatureCoverage.md from JSON.
-- ECMAScript 2025 Feature Coverage: marked Math value properties (E, LN10, LN2, LOG10E, LOG2E, PI, SQRT1_2, SQRT2) as Supported. Regenerated docs/ECMAScript2025_FeatureCoverage.md from JSON.
-- ECMAScript 2025 Feature Coverage: added a new "TypedArray Objects" section and documented Int32Array (constructor/length/indexing/set). Regenerated docs/ECMAScript2025_FeatureCoverage.md from JSON.
-- ECMAScript 2025 Feature Coverage: marked binary "in" operator as Supported (own property / array index / string index / typed array index only; prototype chain and full RHS TypeError semantics pending) and regenerated markdown.
-- Updated docs (implicit): removed obsolete experimental warnings for classes/arrow functions after stabilizing method scope strategy.
 
 - Strings: String.prototype.split with string/regex separator and optional limit. Implemented in JavaScriptRuntime.String.Split and routed via JavaScriptRuntime.Object.CallMember for CLR string receivers. Returns JavaScriptRuntime.Array. Basic generator and execution tests added (String_Split_Basic).
-
-Docs
-- ECMAScript 2025 Feature Coverage: added String.prototype.split and regenerated docs/ECMAScript2025_FeatureCoverage.md from JSON.
-
 Changed
 - Runtime: qualify BCL Math usages to global::System.Math in String/Array to avoid name collision with JavaScriptRuntime.Math.
 - IL generation diagnostics: centralized all NotSupportedException throwing through ILEmitHelpers (BinaryOperators, ILMethodGenerator, ILExpressionGenerator, JavaScriptFunctionGenerator) to enrich messages with source file:line:column when AST node info is available.

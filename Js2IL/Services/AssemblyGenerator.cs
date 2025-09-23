@@ -81,12 +81,10 @@ namespace Js2IL.Services
             var variableRegistry = typeGenerator.GetVariableRegistry();
             _variables = new Variables(variableRegistry, symbolTable.Root.Name);
 
-            // Create the dispatch table.
-            // The dispatch table exists for two reasons:
-            // 1. It is necessary because JavaScript allows for circular references.
-            // 2. It allows you to dynamically change function implementations at runtime.
-            var dispatchTableGenerator = new Dispatch.DispatchTableGenerator(_metadataBuilder, _bclReferences, methodBodyStream);
-            dispatchTableGenerator.GenerateDispatchTable(symbolTable);
+            // Previous design created a dispatch table for indirection and circular refs.
+            // New design: functions are referenced directly by static method handles stored in scope fields.
+            // Circular references are handled naturally because we assign delegates after all top-level
+            // methods are defined (during Main method body) or within function bodies for nested cases.
 
             // Create the method signature for the Main method.
             var sigBuilder = new BlobBuilder();
@@ -99,7 +97,7 @@ namespace Js2IL.Services
             // Emit IL: return.
             // Prepare a TypeBuilder for the Program type and pass it to MainGenerator
             var programTypeBuilder = new TypeBuilder(_metadataBuilder, "", "Program");
-            var mainGenerator = new MainGenerator(_variables!, _bclReferences, _metadataBuilder, methodBodyStream, dispatchTableGenerator, symbolTable, programTypeBuilder);
+            var mainGenerator = new MainGenerator(_variables!, _bclReferences, _metadataBuilder, methodBodyStream, symbolTable, programTypeBuilder);
             var bodyOffset = mainGenerator.GenerateMethod(ast);
             this._entryPoint = programTypeBuilder.AddMethodDefinition(
                 MethodAttributes.Static | MethodAttributes.Public,
