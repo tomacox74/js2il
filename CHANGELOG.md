@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.1.6 - 2025-09-23
+
 Added
 	- ceil, sqrt, abs, floor, round, trunc, sign
 	- sin, cos, tan, asin, acos, atan, atan2
