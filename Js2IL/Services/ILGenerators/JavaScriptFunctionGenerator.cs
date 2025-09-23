@@ -18,9 +18,11 @@ namespace Js2IL.Services.ILGenerators
         private BaseClassLibraryReferences _bclReferences;
         private MetadataBuilder _metadataBuilder;
         private MethodBodyStreamEncoder _methodBodyStreamEncoder;
-        private Dispatch.DispatchTableGenerator _dispatchTableGenerator;
+        // private Dispatch.DispatchTableGenerator _dispatchTableGenerator;
         private readonly ClassRegistry _classRegistry;
         private MethodDefinitionHandle _firstMethod = default;
+        private readonly FunctionRegistry _functionRegistry = new();
+    public FunctionRegistry FunctionRegistry => _functionRegistry;
 
         // Tracks owner types in the Functions namespace
         private readonly Dictionary<string, TypeDefinitionHandle> _globalFunctionOwnerTypes = new();
@@ -29,13 +31,12 @@ namespace Js2IL.Services.ILGenerators
 
         public MethodDefinitionHandle FirstMethod => _firstMethod;
 
-        public JavaScriptFunctionGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator, ClassRegistry? classRegistry = null)
+        public JavaScriptFunctionGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, ClassRegistry? classRegistry = null)
         {
             _variables = variables;
             _bclReferences = bclReferences;
             _metadataBuilder = metadataBuilder;
             _methodBodyStreamEncoder = methodBodyStreamEncoder;
-            _dispatchTableGenerator = dispatchTableGenerator;
             _classRegistry = classRegistry ?? new ClassRegistry();
         }
 
@@ -50,93 +51,115 @@ namespace Js2IL.Services.ILGenerators
 
             // 1) Plan and emit top-level methods via a TypeBuilder per hosting strategy
             var topLevelFunctions = root.Children.Where(c => c.Kind == ScopeKind.Function && c.AstNode is FunctionDeclaration).ToList();
-            var globalMethods = new List<(string Name, MethodDefinitionHandle Handle, Scope Scope, Variables Vars)>();
+            var globalMethods = new List<(string Name, MethodDefinitionHandle Handle, Scope Scope, Variables Vars, TypeBuilder? NestedOwnerBuilder, MethodDefinitionHandle FirstNestedMethod)>();
+            var pendingNestedOwnerFinalization = new List<(string OuterName, TypeBuilder NestedBuilder, MethodDefinitionHandle FirstNestedMethod)>();
 
             if (topLevelFunctions.Count > 1)
             {
-                // Module owner type under Functions namespace
+                // Define module owner type first so method tokens reference an existing type row
                 var moduleTb = new TypeBuilder(_metadataBuilder, "Functions", moduleName);
+                _moduleOwnerType = moduleTb.AddTypeDefinition(
+                    TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
+                    _bclReferences.ObjectType);
 
                 foreach (var funcScope in topLevelFunctions)
                 {
                     var functionDeclaration = (FunctionDeclaration)funcScope.AstNode!;
                     var functionName = (functionDeclaration.Id as Identifier)!.Name;
 
+                    // Prepare variables for the outer function
                     var paramNames = functionDeclaration.Params.OfType<Identifier>().Select(p => p.Name).ToArray();
                     var functionVariables = new Variables(_variables, functionName, paramNames, isNestedFunction: false);
-                    var methodGenerator = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator, _classRegistry);
+
+                    // Pre-generate nested function methods (depth-first) so their handles exist before outer initialization.
+                    TypeBuilder? nestedTb = null;
+                    MethodDefinitionHandle firstNestedMethod = default;
+                    var nestedFunctionScopes = funcScope.Children.Where(c => c.Kind == ScopeKind.Function && c.AstNode is FunctionDeclaration).ToList();
+                    if (nestedFunctionScopes.Count > 0)
+                    {
+                        nestedTb = new TypeBuilder(_metadataBuilder, "Functions", functionName + "_Nested");
+                        // Define nested owner type early
+                        var nestedOwnerHandle = nestedTb.AddTypeDefinition(
+                            TypeAttributes.NestedPublic | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
+                            _bclReferences.ObjectType);
+                        _metadataBuilder.AddNestedType(nestedOwnerHandle, _moduleOwnerType);
+                        foreach (var nestedScope in nestedFunctionScopes)
+                        {
+                            var nestedDecl = (FunctionDeclaration)nestedScope.AstNode!;
+                            var nestedName = (nestedDecl.Id as Identifier)!.Name;
+                            var nestedParamNames = nestedDecl.Params.OfType<Identifier>().Select(p => p.Name).ToArray();
+                            var nestedVars = new Variables(functionVariables, nestedName, nestedParamNames, isNestedFunction: true);
+                            var nestedGen = new ILMethodGenerator(nestedVars, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
+                            var nestedMethod = GenerateMethodForFunction(nestedDecl, nestedVars, nestedGen, nestedScope, symbolTable, nestedTb);
+                            if (firstNestedMethod.IsNil) firstNestedMethod = nestedMethod;
+                            if (this._firstMethod.IsNil) _firstMethod = nestedMethod;
+                            _functionRegistry.Register(nestedName, nestedMethod);
+                        }
+                        // (No deferred finalization needed now)
+                    }
+
+                    // Now generate the outer function method (nested handles already registered)
+                    var methodGenerator = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
                     var methodDefinition = GenerateMethodForFunction(functionDeclaration, functionVariables, methodGenerator, funcScope, symbolTable, moduleTb);
                     if (this._firstMethod.IsNil) _firstMethod = methodDefinition;
+                    _functionRegistry.Register(functionName, methodDefinition);
 
-                    globalMethods.Add((functionName, methodDefinition, funcScope, functionVariables));
+                    globalMethods.Add((functionName, methodDefinition, funcScope, functionVariables, nestedTb, firstNestedMethod));
                 }
 
-                // Define the module owner type after adding its methods
-                _moduleOwnerType = moduleTb.AddTypeDefinition(
-                    TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
-                    _bclReferences.ObjectType);
+                // (Type already defined at top of branch)
             }
             else if (topLevelFunctions.Count == 1)
             {
-                // Single top-level function: per-function owner type for compatibility
+                // Single top-level function: create and define owner type before methods
                 var funcScope = topLevelFunctions[0];
                 var functionDeclaration = (FunctionDeclaration)funcScope.AstNode!;
                 var functionName = (functionDeclaration.Id as Identifier)!.Name;
 
                 var tb = new TypeBuilder(_metadataBuilder, "Functions", functionName);
-
-                var paramNames = functionDeclaration.Params.OfType<Identifier>().Select(p => p.Name).ToArray();
-                var functionVariables = new Variables(_variables, functionName, paramNames, isNestedFunction: false);
-                var methodGenerator = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator, _classRegistry);
-                var methodDefinition = GenerateMethodForFunction(functionDeclaration, functionVariables, methodGenerator, funcScope, symbolTable, tb);
-                if (this._firstMethod.IsNil) _firstMethod = methodDefinition;
-
-                globalMethods.Add((functionName, methodDefinition, funcScope, functionVariables));
-
                 var globalOwnerType = tb.AddTypeDefinition(
                     TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
                     _bclReferences.ObjectType);
-                _globalFunctionOwnerTypes[functionName] = globalOwnerType;
-                _moduleOwnerType = default; // not used in this mode
-            }
+                var paramNames = functionDeclaration.Params.OfType<Identifier>().Select(p => p.Name).ToArray();
+                var functionVariables = new Variables(_variables, functionName, paramNames, isNestedFunction: false);
 
-            // 3) Generate nested function methods and create nested owner types under the module owner
-            foreach (var gm in globalMethods)
-            {
-                var funcScope = gm.Scope;
-                var functionVariables = gm.Vars;
-                var outerName = gm.Name;
-                var nestedFunctions = funcScope.Children.Where(c => c.Kind == ScopeKind.Function && c.AstNode is FunctionDeclaration).ToList();
-                if (nestedFunctions.Count == 0) continue;
-
-                // Build a nested owner TypeBuilder for this outer function's nested methods
-                var nestedTb = new TypeBuilder(_metadataBuilder, "", outerName);
+                // Generate nested functions first (if any)
+                TypeBuilder? nestedTb = null;
                 MethodDefinitionHandle firstNestedMethod = default;
-                foreach (var nestedScope in nestedFunctions)
+                var nestedFunctionScopes = funcScope.Children.Where(c => c.Kind == ScopeKind.Function && c.AstNode is FunctionDeclaration).ToList();
+                if (nestedFunctionScopes.Count > 0)
                 {
-                    var nestedDecl = (FunctionDeclaration)nestedScope.AstNode!;
-                    var nestedName = (nestedDecl.Id as Identifier)!.Name;
-                    var nestedParamNames = nestedDecl.Params.OfType<Identifier>().Select(p => p.Name).ToArray();
-                    var nestedVars = new Variables(functionVariables, nestedName, nestedParamNames, isNestedFunction: true);
-                    var nestedGen = new ILMethodGenerator(nestedVars, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator, _classRegistry);
-                    var nestedMethod = GenerateMethodForFunction(nestedDecl, nestedVars, nestedGen, nestedScope, symbolTable, nestedTb);
-                    if (firstNestedMethod.IsNil) firstNestedMethod = nestedMethod;
-                    if (this._firstMethod.IsNil) _firstMethod = nestedMethod;
-                }
-
-                if (!firstNestedMethod.IsNil)
-                {
+                    nestedTb = new TypeBuilder(_metadataBuilder, "Functions", functionName + "_Nested");
                     var nestedHandle = nestedTb.AddTypeDefinition(
                         TypeAttributes.NestedPublic | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
                         _bclReferences.ObjectType);
-                    var parent = !_moduleOwnerType.IsNil ? _moduleOwnerType : (_globalFunctionOwnerTypes.TryGetValue(outerName, out var t) ? t : default);
-                    if (!parent.IsNil)
+                    _metadataBuilder.AddNestedType(nestedHandle, globalOwnerType);
+                    foreach (var nestedScope in nestedFunctionScopes)
                     {
-                        _metadataBuilder.AddNestedType(nestedHandle, parent);
-                        _nestedOwnerTypes[outerName] = nestedHandle;
+                        var nestedDecl = (FunctionDeclaration)nestedScope.AstNode!;
+                        var nestedName = (nestedDecl.Id as Identifier)!.Name;
+                        var nestedParamNames = nestedDecl.Params.OfType<Identifier>().Select(p => p.Name).ToArray();
+                        var nestedVars = new Variables(functionVariables, nestedName, nestedParamNames, isNestedFunction: true);
+                        var nestedGen = new ILMethodGenerator(nestedVars, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
+                        var nestedMethod = GenerateMethodForFunction(nestedDecl, nestedVars, nestedGen, nestedScope, symbolTable, nestedTb);
+                        if (firstNestedMethod.IsNil) firstNestedMethod = nestedMethod;
+                        if (this._firstMethod.IsNil) _firstMethod = nestedMethod;
+                        _functionRegistry.Register(nestedName, nestedMethod);
                     }
                 }
+
+                // Now generate outer method
+                var methodGenerator = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
+                var methodDefinition = GenerateMethodForFunction(functionDeclaration, functionVariables, methodGenerator, funcScope, symbolTable, tb);
+                if (this._firstMethod.IsNil) _firstMethod = methodDefinition;
+                _functionRegistry.Register(functionName, methodDefinition);
+
+                globalMethods.Add((functionName, methodDefinition, funcScope, functionVariables, nestedTb, firstNestedMethod));
+
+                _globalFunctionOwnerTypes[functionName] = globalOwnerType;
+                _moduleOwnerType = default; // not used in this mode
             }
+            // For multi-function module case finalize nested owners handled earlier.
         }
 
         // No longer pre-creates owner types; types are created after methods to ensure the first method handle is correct.
@@ -164,11 +187,15 @@ namespace Js2IL.Services.ILGenerators
 
                 bool isNested = scope.Kind == ScopeKind.Function; // nested if parent is a function
                 var functionVariables = new Variables(parentVars, functionName, paramNames, isNestedFunction: isNested);
-                var methodGenerator = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator, _classRegistry);
+                    var methodGenerator = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
                 var methodDefinition = GenerateMethodForFunction(functionDeclaration, functionVariables, methodGenerator, funcScope, symbolTable);
                 if (this._firstMethod.IsNil)
                 {
                     this._firstMethod = methodDefinition;
+                }
+                if (_functionRegistry.Get(functionName).IsNil)
+                {
+                    _functionRegistry.Register(functionName, methodDefinition);
                 }
 
                 // Recurse into nested functions with this function's Variables as the new parent
@@ -322,15 +349,12 @@ namespace Js2IL.Services.ILGenerators
                 throw new InvalidOperationException("TypeBuilder is required for method emission.");
             }
 
-            var methodDefinition = typeBuilder.AddMethodDefinition(
+                var methodDefinition = typeBuilder.AddMethodDefinition(
                 MethodAttributes.Static | MethodAttributes.Public,
                 functionName,
                 methodSig,
                 bodyoffset,
                 parameterList: firstParamHandle);
-
-            // Register with dispatch table
-            _dispatchTableGenerator.SetMethodDefinitionHandle(functionName, methodDefinition);
 
             return methodDefinition;
         }

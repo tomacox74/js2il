@@ -17,7 +17,7 @@ namespace Js2IL.Services.ILGenerators
         private InstructionEncoder _il;
         private ControlFlowBuilder _cfb;
         private Runtime _runtime;
-        private Dispatch.DispatchTableGenerator _dispatchTableGenerator;
+    // Dispatch table removed; functions bound directly to static method delegates.
         private MethodBodyStreamEncoder _methodBodyStreamEncoder;
         private IMethodExpressionEmitter _expressionEmitter;
         private ClassRegistry _classRegistry;
@@ -55,7 +55,9 @@ namespace Js2IL.Services.ILGenerators
         internal ClassRegistry ClassRegistry => _classRegistry;
         internal IMethodExpressionEmitter ExpressionEmitter => _expressionEmitter;
 
-    public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, Dispatch.DispatchTableGenerator dispatchTableGenerator, ClassRegistry? classRegistry = null, bool inClassMethod = false, string? currentClassName = null)
+        private readonly FunctionRegistry? _functionRegistry;
+
+    public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, ClassRegistry? classRegistry = null, FunctionRegistry? functionRegistry = null, bool inClassMethod = false, string? currentClassName = null)
         {
             _variables = variables;
             _bclReferences = bclReferences;
@@ -68,8 +70,8 @@ namespace Js2IL.Services.ILGenerators
             this._expressionEmitter = new ILExpressionGenerator(this);
 
             _methodBodyStreamEncoder = methodBodyStreamEncoder;
-            _dispatchTableGenerator = dispatchTableGenerator ?? throw new ArgumentNullException(nameof(dispatchTableGenerator));
             _classRegistry = classRegistry ?? new ClassRegistry();
+            _functionRegistry = functionRegistry;
             _inClassMethod = inClassMethod;
             _currentClassName = currentClassName;
         }
@@ -312,8 +314,12 @@ namespace Js2IL.Services.ILGenerators
         {
             var functionName = (functionDeclaration.Id as Acornima.Ast.Identifier)!.Name;
             var functionVariable = _variables.FindVariable(functionName) ?? throw new InvalidOperationException($"Variable '{functionName}' not found.");
-
-            var dispatchDelegateField = _dispatchTableGenerator.GetFieldDefinitionHandle(functionName);
+            // Resolve emitted method for this function via function registry
+            var methodHandle = _functionRegistry?.Get(functionName) ?? default;
+            if (methodHandle.IsNil)
+            {
+                // If not found, skip (leave null) – may be emitted later (nested ordering). TODO: revisit ordering guarantees.
+            }
 
             // now we assign a local variable to the function delegate
             // in the general case the local feels wasteful but there is scenarons where it could be assigned a different value
@@ -348,8 +354,22 @@ namespace Js2IL.Services.ILGenerators
                 _il.OpCode(ILOpCode.Castclass);
                 _il.Token(tdefF);
             }
-            _il.OpCode(ILOpCode.Ldsfld);
-            _il.Token(dispatchDelegateField);
+            if (!methodHandle.IsNil)
+            {
+                // Create delegate: ldnull, ldftn <method>, newobj Func<object[][, params], object>
+                _il.OpCode(ILOpCode.Ldnull);
+                _il.OpCode(ILOpCode.Ldftn);
+                _il.Token(methodHandle);
+                var paramCount = functionDeclaration.Params.Count; // js params
+                var (_, ctorRef) = _bclReferences.GetFuncObjectArrayWithParams(paramCount);
+                _il.OpCode(ILOpCode.Newobj);
+                _il.Token(ctorRef);
+            }
+            else
+            {
+                // Fallback: ldnull to preserve stack correctness
+                _il.OpCode(ILOpCode.Ldnull);
+            }
             _il.OpCode(ILOpCode.Stfld);
             _il.Token(functionVariable.FieldHandle);
         }
@@ -460,10 +480,30 @@ namespace Js2IL.Services.ILGenerators
                 // Special-case: returning a function identifier -> bind closure scopes
                 if (returnStatement.Argument is Identifier fid)
                 {
-                    // Only treat as function if it corresponds to a known function declaration
-                    var funcDecl = _dispatchTableGenerator.GetFunctionDeclaration(fid.Name);
-                    var fnVar = funcDecl != null ? _variables.FindVariable(fid.Name) : null;
-                    if (fnVar != null && funcDecl != null)
+                    // Only treat as function if it corresponds to a known function declaration.
+                    // Guard: some identifiers refer to arrays/objects/etc. Returning those must NOT invoke Closure.Bind.
+                    var fnVar = _variables.FindVariable(fid.Name);
+                    bool isFunctionVariable = false;
+                    if (fnVar != null)
+                    {
+                        // Consult registry for variable classification (Function vs Variable/Parameter)
+                        try
+                        {
+                            var regInfo = _variables.GetVariableRegistry()?.GetVariableInfo(fnVar.ScopeName, fnVar.Name)
+                                ?? _variables.GetVariableRegistry()?.FindVariable(fnVar.Name);
+                            if (regInfo != null && regInfo.VariableType == VariableBindings.VariableType.Function)
+                            {
+                                isFunctionVariable = true;
+                            }
+                        }
+                        catch
+                        {
+                            // Best-effort; if lookup fails, fall back to non-function behavior
+                            isFunctionVariable = false;
+                        }
+                    }
+
+                    if (fnVar != null && isFunctionVariable && !_inClassMethod) // skip closure binding logic inside class instance methods
                     {
                         // Load the function delegate from its scope field
                         var scopeSlot = _variables.GetScopeLocalSlot(fnVar.ScopeName);
@@ -1045,7 +1085,7 @@ namespace Js2IL.Services.ILGenerators
             var functionVariables = new Variables(_variables, registryScopeName, paramNames, isNestedFunction: true);
             var pnames = paramNames ?? Array.Empty<string>();
             // Share the parent ClassRegistry so nested functions can resolve declared classes
-            var childGen = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator, _classRegistry);
+            var childGen = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry);
             var il = childGen.IL;
 
             // For arrow functions, we do NOT pre-instantiate a local scope nor initialize parameter fields
@@ -1255,7 +1295,7 @@ namespace Js2IL.Services.ILGenerators
             var functionVariables = new Variables(_variables, registryScopeName, paramNames, isNestedFunction: true);
             var pnames = paramNames ?? Array.Empty<string>();
             // Share the parent ClassRegistry so nested functions can resolve declared classes
-            var childGen = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _dispatchTableGenerator, _classRegistry);
+            var childGen = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry);
             var il = childGen.IL;
 
             // Function expressions use block bodies; create local scope if fields exist and init parameter fields

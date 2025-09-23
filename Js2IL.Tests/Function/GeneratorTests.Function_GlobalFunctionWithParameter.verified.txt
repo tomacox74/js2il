@@ -48,14 +48,6 @@
 
 } // end of class Scopes.Function_GlobalFunctionWithParameter
 
-.class public auto ansi abstract sealed beforefieldinit DispatchTable
-	extends [System.Runtime]System.Object
-{
-	// Fields
-	.field public static class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> printMessage
-
-} // end of class DispatchTable
-
 .class public auto ansi abstract sealed beforefieldinit Functions.printMessage
 	extends [System.Runtime]System.Object
 {
@@ -89,27 +81,6 @@
 
 } // end of class Functions.printMessage
 
-.class public auto ansi abstract sealed beforefieldinit Functions._Loader
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public static 
-		void _LoadDispatchTable () cil managed 
-	{
-		// Method begins at RVA 0x208a
-		// Header size: 1
-		// Code size: 18 (0x12)
-		.maxstack 8
-
-		IL_0000: ldnull
-		IL_0001: ldftn object Functions.printMessage::printMessage(object[], object)
-		IL_0007: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_000c: stsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::printMessage
-		IL_0011: ret
-	} // end of method _Loader::_LoadDispatchTable
-
-} // end of class Functions._Loader
-
 .class public auto ansi beforefieldinit Program
 	extends [System.Runtime]System.Object
 {
@@ -117,9 +88,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20a0
+		// Method begins at RVA 0x208c
 		// Header size: 12
-		// Code size: 60 (0x3c)
+		// Code size: 62 (0x3e)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -128,24 +99,25 @@
 
 		IL_0000: newobj instance void Scopes.Function_GlobalFunctionWithParameter::.ctor()
 		IL_0005: stloc.0
-		IL_0006: call void Functions._Loader::_LoadDispatchTable()
-		IL_000b: ldloc.0
-		IL_000c: castclass Scopes.Function_GlobalFunctionWithParameter
-		IL_0011: ldsfld class [System.Runtime]System.Func`3<class [System.Runtime]System.Object[], class [System.Runtime]System.Object, class [System.Runtime]System.Object> DispatchTable::printMessage
-		IL_0016: stfld object Scopes.Function_GlobalFunctionWithParameter::printMessage
-		IL_001b: ldloc.0
-		IL_001c: ldfld object Scopes.Function_GlobalFunctionWithParameter::printMessage
-		IL_0021: ldc.i4.1
-		IL_0022: newarr [System.Runtime]System.Object
-		IL_0027: dup
-		IL_0028: ldc.i4.0
-		IL_0029: ldloc.0
-		IL_002a: castclass Scopes.Function_GlobalFunctionWithParameter
-		IL_002f: stelem.ref
-		IL_0030: ldstr "Hello, Js2IL!"
-		IL_0035: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_003a: pop
-		IL_003b: ret
+		IL_0006: ldloc.0
+		IL_0007: castclass Scopes.Function_GlobalFunctionWithParameter
+		IL_000c: ldnull
+		IL_000d: ldftn object Functions.printMessage::printMessage(object[], object)
+		IL_0013: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0018: stfld object Scopes.Function_GlobalFunctionWithParameter::printMessage
+		IL_001d: ldloc.0
+		IL_001e: ldfld object Scopes.Function_GlobalFunctionWithParameter::printMessage
+		IL_0023: ldc.i4.1
+		IL_0024: newarr [System.Runtime]System.Object
+		IL_0029: dup
+		IL_002a: ldc.i4.0
+		IL_002b: ldloc.0
+		IL_002c: castclass Scopes.Function_GlobalFunctionWithParameter
+		IL_0031: stelem.ref
+		IL_0032: ldstr "Hello, Js2IL!"
+		IL_0037: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_003c: pop
+		IL_003d: ret
 	} // end of method Program::Main
 
 } // end of class Program
