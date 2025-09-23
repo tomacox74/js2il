@@ -13,6 +13,30 @@ Added
 	Notes: JS ToNumber coercion, correct NaN/±Infinity propagation, and signed zero (-0) preservation where applicable.
 	- GetItem(object, double index): indexer for Int32Array
 	- GetLength(object): length for Int32Array
+	- Compiler/Runtime: dynamic object property assignment (obj.prop = value) for non-computed MemberExpressions. Emitter now lowers to JavaScriptRuntime.Object.SetProperty for dynamic objects; typed property setters/fields are used when available. Supports ExpandoObject (object literal) and reflection-backed host objects; arrays/typed arrays ignore arbitrary dot properties. New Literals tests cover generator and execution for property assignment.
+	- Compiler: object literals now support Identifier, StringLiteral, and NumericLiteral property keys. Numeric keys are coerced to strings using invariant culture (JS ToPropertyKey semantics) during IL emission.
+	- Runtime Object: GetItem(object, double index) supports ExpandoObject (object literal) by coercing the numeric index to a string property name and returning its value (null to model undefined when absent).
+	- Runtime: Math intrinsic ([IntrinsicObject("Math")]) — implemented the full function set:
+	  - ceil, sqrt, abs, floor, round, trunc, sign
+	  - sin, cos, tan, asin, acos, atan, atan2
+	  - sinh, cosh, tanh, asinh, acosh, atanh
+	  - exp, expm1, log, log10, log1p, log2, pow
+	  - min, max, random, cbrt, hypot, fround, imul, clz32
+	  Notes: JS ToNumber coercion, correct NaN/±Infinity propagation, and signed zero (-0) preservation where applicable.
+	- Runtime: Math value properties (constants): E, LN10, LN2, LOG10E, LOG2E, PI, SQRT1_2, SQRT2.
+	- Runtime: Int32Array intrinsic (minimal typed array) with constructor from number or array-like, numeric length, index get/set, and set(source[, offset]) coercing values via ToInt32-style truncation (NaN/±∞/±0 → 0). Registered as [IntrinsicObject("Int32Array")].
+	- Runtime Object: integrated Int32Array support in JavaScriptRuntime.Object helpers:
+	  - GetItem(object, double index): indexer for Int32Array
+	  - GetLength(object): length for Int32Array
+	- Compiler: dynamic indexed element assignment (target[index] = value) for Int32Array inside class methods using JavaScriptRuntime.Object.AssignItem fallback; leaves assigned value available for expression contexts while statement contexts discard it.
+	- Operators: binary "in" operator (property existence) with runtime helper Object.HasPropertyIn covering: ExpandoObject/anonymous objects, arrays (numeric index bounds check), Int32Array, strings (character index), and reflection fallback for host objects. Emits early in BinaryOperators to avoid duplicate side-effects. Limitations: no prototype chain traversal yet; non-object RHS throws TypeError only for null/undefined (remaining primitives TODO); numeric LHS coerced via ToString for object keys.
+	- Operators: inequality (!=) and strict inequality (!==) in both value and branching contexts. Uses Ceq inversion for value results and bne.un for conditional branches; unboxing/coercion aligned with existing equality semantics.
+	- Compiler: heuristic class method scope instantiation (ShouldCreateMethodScopeInstance) plus unconditional method scope type registration; enables correct closure binding and removes prior experimental gaps.
+	- Validation: reflection-based require() module discovery via [NodeModule] attribute scanning; fail fast if an unknown module name is required.
+	- Dispatch Refactor: Removed indirect dispatcher table; functions now emitted as static methods with direct ldftn/newobj delegate creation. Introduced FunctionRegistry for name→MethodDefinitionHandle lookup (improves nested function resolution) and reduced IL indirection.
+	- Closures: Guarded closure binding on returns—only bind identifiers classified as functions; prevents erroneous delegate construction when returning non-function expressions.
+	- Nested Functions: Predeclare synthetic *_Nested container types and register nested functions first to eliminate TypeLoadException ordering issues.
+	- Class Methods & Closures: Skip closure binding for class instance methods to avoid capturing method delegates incorrectly.
 
 Tests
 	- ObjectLiteral_PropertyAssign (prints { a: 1, b: 2 })
