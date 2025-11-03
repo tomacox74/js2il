@@ -181,7 +181,7 @@
                   "testScripts": [
                     "Js2IL.Tests/JavaScript/Function_HelloWorld.js"
                   ],
-                  "notes": ""
+                  "notes": "Hoisted and initialized before top-level statement evaluation so functions can call each other by name prior to IIFE invocation."
                 },
                 {
                   "feature": "Arrow functions",
@@ -196,6 +196,29 @@
                     "Js2IL.Tests/JavaScript/ArrowFunction_CapturesOuterVariable.js"
                   ],
                   "notes": "Covers expression- and block-bodied arrows, multiple parameters, nested functions, and closure capture across scopes (including returning functions that capture globals/locals). Not yet supported: default/rest parameters, parameter destructuring, lexical this/arguments semantics, and spread at call sites."
+                }
+              ]
+            },
+            {
+              "paragraph": "13.2.3 (Function expressions)",
+              "title": "Function expressions (anonymous and named)",
+              "url": "https://tc39.es/ecma262/#sec-function-definitions",
+              "features": [
+                {
+                  "feature": "Function expressions (anonymous)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Function/JavaScript/Function_IIFE_Classic.js"
+                  ],
+                  "notes": "Emitted as static methods with delegate creation and closure binding as needed; supports immediate invocation patterns (IIFE)."
+                },
+                {
+                  "feature": "Named function expressions (internal self-binding for recursion)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Function/JavaScript/Function_IIFE_Recursive.js"
+                  ],
+                  "notes": "On first entry, the internal name is eagerly bound to a self-delegate via JavaScriptRuntime.Closure.CreateSelfDelegate(MethodBase, int), enabling recursion from within the function body." 
                 }
               ]
             },
