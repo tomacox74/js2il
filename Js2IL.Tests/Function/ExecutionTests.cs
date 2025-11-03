@@ -47,5 +47,13 @@ namespace Js2IL.Tests.Function
 
     [Fact]
     public Task Function_IsEven_CompareResultToTrue() { var testName = nameof(Function_IsEven_CompareResultToTrue); return ExecutionTest(testName); }
+
+        // New IIFE test
+        [Fact]
+        public Task Function_IIFE_Classic() { var testName = nameof(Function_IIFE_Classic); return ExecutionTest(testName); }
+
+        // New recursive IIFE test
+        [Fact]
+        public Task Function_IIFE_Recursive() { var testName = nameof(Function_IIFE_Recursive); return ExecutionTest(testName); }
     }
 }

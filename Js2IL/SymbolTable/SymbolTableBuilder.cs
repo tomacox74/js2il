@@ -15,6 +15,10 @@ namespace Js2IL.SymbolTables
         private int _closureCounter = 0;
         private string? _currentAssignmentTarget = null;
         private const string DefaultClassesNamespace = "Classes";
+        // Track visited function expression nodes to avoid duplicating scopes when traversal
+        // reaches the same AST node via multiple paths (explicit handling + reflective walk).
+        private readonly HashSet<Node> _visitedFunctionExpressions = new();
+        private readonly HashSet<Node> _visitedArrowFunctions = new();
 
         private static string SanitizeForMetadata(string name)
         {
@@ -97,11 +101,27 @@ namespace Js2IL.SymbolTables
                         }
                         break;
                 case FunctionExpression funcExpr:
-                    var funcExprName = (funcExpr.Id as Identifier)?.Name ?? 
-                        (!string.IsNullOrEmpty(_currentAssignmentTarget) 
-                            ? $"Function_{_currentAssignmentTarget}"
-                            : $"Closure{++_closureCounter}_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}");
+                    // Global de-duplication: if we've already processed this exact FunctionExpression node,
+                    // skip creating another scope for it.
+                    if (_visitedFunctionExpressions.Contains(funcExpr))
+                    {
+                        break;
+                    }
+                    _visitedFunctionExpressions.Add(funcExpr);
+                    // Naming must align with ILExpressionGenerator: FunctionExpression_<assignmentTarget> OR FunctionExpression_L{line}C{col}
+                    var funcExprName = (funcExpr.Id as Identifier)?.Name ??
+                        (!string.IsNullOrEmpty(_currentAssignmentTarget)
+                            ? $"FunctionExpression_{_currentAssignmentTarget}"
+                            : $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}");
+                    // Create the scope (constructor links it to the parent); no manual add to avoid duplicates
                     var funcExprScope = new Scope(funcExprName, ScopeKind.Function, currentScope, funcExpr);
+                    // Named function expressions create an internal binding for the function name that is
+                    // only visible inside the function body (used for recursion). It must not leak to the
+                    // outer scope. Authoritative binding here so downstream codegen can allocate a field.
+                    if (funcExpr.Id is Identifier internalId && !funcExprScope.Bindings.ContainsKey(internalId.Name))
+                    {
+                        funcExprScope.Bindings[internalId.Name] = new BindingInfo(internalId.Name, BindingKind.Function, funcExpr);
+                    }
                     foreach (var param in funcExpr.Params)
                     {
                         if (param is Identifier id)
@@ -268,9 +288,16 @@ namespace Js2IL.SymbolTables
                     BuildScopeRecursive(assignExpr.Left, currentScope);
                     break;
                 case ArrowFunctionExpression arrowFunc:
-                    var arrowName = !string.IsNullOrEmpty(_currentAssignmentTarget) 
+                    // Avoid duplicate scopes for the same ArrowFunctionExpression node
+                    if (_visitedArrowFunctions.Contains(arrowFunc))
+                    {
+                        break;
+                    }
+                    _visitedArrowFunctions.Add(arrowFunc);
+                    // Match ILExpressionGenerator naming: ArrowFunction_<assignmentTarget> OR ArrowFunction_L{line}C{col}
+                    var arrowName = !string.IsNullOrEmpty(_currentAssignmentTarget)
                         ? $"ArrowFunction_{_currentAssignmentTarget}"
-                        : $"ArrowFunction{++_closureCounter}_L{arrowFunc.Location.Start.Line}C{arrowFunc.Location.Start.Column}";
+                        : $"ArrowFunction_L{arrowFunc.Location.Start.Line}C{arrowFunc.Location.Start.Column}";
                     var arrowScope = new Scope(arrowName, ScopeKind.Function, currentScope, arrowFunc);
                     foreach (var param in arrowFunc.Params)
                     {

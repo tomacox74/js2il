@@ -111,7 +111,7 @@
 	{
 		// Method begins at RVA 0x20bc
 		// Header size: 12
-		// Code size: 98 (0x62)
+		// Code size: 131 (0x83)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -137,16 +137,29 @@
 		IL_0041: stfld object Scopes.Function_GlobalFunctionLogsGlobalVariable::globalNumber
 		IL_0046: ldloc.0
 		IL_0047: ldfld object Scopes.Function_GlobalFunctionLogsGlobalVariable::logGlobalValues
-		IL_004c: ldc.i4.1
-		IL_004d: newarr [System.Runtime]System.Object
-		IL_0052: dup
-		IL_0053: ldc.i4.0
-		IL_0054: ldloc.0
-		IL_0055: castclass Scopes.Function_GlobalFunctionLogsGlobalVariable
-		IL_005a: stelem.ref
-		IL_005b: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0060: pop
-		IL_0061: ret
+		IL_004c: dup
+		IL_004d: brtrue.s IL_006d
+
+		IL_004f: pop
+		IL_0050: ldloc.0
+		IL_0051: ldnull
+		IL_0052: ldftn object Functions.logGlobalValues::logGlobalValues(object[])
+		IL_0058: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_005d: stfld object Scopes.Function_GlobalFunctionLogsGlobalVariable::logGlobalValues
+		IL_0062: ldloc.0
+		IL_0063: ldfld object Scopes.Function_GlobalFunctionLogsGlobalVariable::logGlobalValues
+		IL_0068: br IL_006d
+
+		IL_006d: ldc.i4.1
+		IL_006e: newarr [System.Runtime]System.Object
+		IL_0073: dup
+		IL_0074: ldc.i4.0
+		IL_0075: ldloc.0
+		IL_0076: castclass Scopes.Function_GlobalFunctionLogsGlobalVariable
+		IL_007b: stelem.ref
+		IL_007c: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0081: pop
+		IL_0082: ret
 	} // end of method Program::Main
 
 } // end of class Program

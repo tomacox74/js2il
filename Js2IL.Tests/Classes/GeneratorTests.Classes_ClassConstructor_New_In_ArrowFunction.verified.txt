@@ -150,7 +150,7 @@
 	{
 		// Method begins at RVA 0x20b0
 		// Header size: 12
-		// Code size: 123 (0x7b)
+		// Code size: 133 (0x85)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -177,28 +177,35 @@
 		IL_0032: castclass Scopes.Classes_ClassConstructor_New_In_ArrowFunction
 		IL_0037: ldloc.0
 		IL_0038: ldfld object Scopes.Classes_ClassConstructor_New_In_ArrowFunction::make
-		IL_003d: ldc.i4.1
-		IL_003e: newarr [System.Runtime]System.Object
-		IL_0043: dup
-		IL_0044: ldc.i4.0
-		IL_0045: ldloc.0
-		IL_0046: castclass Scopes.Classes_ClassConstructor_New_In_ArrowFunction
-		IL_004b: stelem.ref
-		IL_004c: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0051: stfld object Scopes.Classes_ClassConstructor_New_In_ArrowFunction::s
-		IL_0056: ldc.i4.1
-		IL_0057: newarr [System.Runtime]System.Object
-		IL_005c: dup
-		IL_005d: ldc.i4.0
-		IL_005e: ldloc.0
-		IL_005f: castclass Scopes.Classes_ClassConstructor_New_In_ArrowFunction
-		IL_0064: ldfld object Scopes.Classes_ClassConstructor_New_In_ArrowFunction::s
-		IL_0069: ldstr "n"
-		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_0073: stelem.ref
-		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0079: pop
-		IL_007a: ret
+		IL_003d: dup
+		IL_003e: brtrue.s IL_0047
+
+		IL_0040: pop
+		IL_0041: ldnull
+		IL_0042: br IL_0047
+
+		IL_0047: ldc.i4.1
+		IL_0048: newarr [System.Runtime]System.Object
+		IL_004d: dup
+		IL_004e: ldc.i4.0
+		IL_004f: ldloc.0
+		IL_0050: castclass Scopes.Classes_ClassConstructor_New_In_ArrowFunction
+		IL_0055: stelem.ref
+		IL_0056: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_005b: stfld object Scopes.Classes_ClassConstructor_New_In_ArrowFunction::s
+		IL_0060: ldc.i4.1
+		IL_0061: newarr [System.Runtime]System.Object
+		IL_0066: dup
+		IL_0067: ldc.i4.0
+		IL_0068: ldloc.0
+		IL_0069: castclass Scopes.Classes_ClassConstructor_New_In_ArrowFunction
+		IL_006e: ldfld object Scopes.Classes_ClassConstructor_New_In_ArrowFunction::s
+		IL_0073: ldstr "n"
+		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_007d: stelem.ref
+		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0083: pop
+		IL_0084: ret
 	} // end of method Program::Main
 
 } // end of class Program

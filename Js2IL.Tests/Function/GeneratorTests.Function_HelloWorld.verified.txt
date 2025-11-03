@@ -85,7 +85,7 @@
 	{
 		// Method begins at RVA 0x2088
 		// Header size: 12
-		// Code size: 57 (0x39)
+		// Code size: 90 (0x5a)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -102,16 +102,29 @@
 		IL_0018: stfld object Scopes.Function_HelloWorld::helloWorld
 		IL_001d: ldloc.0
 		IL_001e: ldfld object Scopes.Function_HelloWorld::helloWorld
-		IL_0023: ldc.i4.1
-		IL_0024: newarr [System.Runtime]System.Object
-		IL_0029: dup
-		IL_002a: ldc.i4.0
-		IL_002b: ldloc.0
-		IL_002c: castclass Scopes.Function_HelloWorld
-		IL_0031: stelem.ref
-		IL_0032: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0037: pop
-		IL_0038: ret
+		IL_0023: dup
+		IL_0024: brtrue.s IL_0044
+
+		IL_0026: pop
+		IL_0027: ldloc.0
+		IL_0028: ldnull
+		IL_0029: ldftn object Functions.helloWorld::helloWorld(object[])
+		IL_002f: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0034: stfld object Scopes.Function_HelloWorld::helloWorld
+		IL_0039: ldloc.0
+		IL_003a: ldfld object Scopes.Function_HelloWorld::helloWorld
+		IL_003f: br IL_0044
+
+		IL_0044: ldc.i4.1
+		IL_0045: newarr [System.Runtime]System.Object
+		IL_004a: dup
+		IL_004b: ldc.i4.0
+		IL_004c: ldloc.0
+		IL_004d: castclass Scopes.Function_HelloWorld
+		IL_0052: stelem.ref
+		IL_0053: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0058: pop
+		IL_0059: ret
 	} // end of method Program::Main
 
 } // end of class Program

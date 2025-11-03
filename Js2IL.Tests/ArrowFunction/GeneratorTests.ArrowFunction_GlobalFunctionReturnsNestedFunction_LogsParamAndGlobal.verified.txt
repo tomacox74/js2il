@@ -196,7 +196,7 @@
 	{
 		// Method begins at RVA 0x2120
 		// Header size: 12
-		// Code size: 144 (0x90)
+		// Code size: 164 (0xa4)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -227,29 +227,43 @@
 		IL_0042: castclass Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
 		IL_0047: ldloc.0
 		IL_0048: ldfld object Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::outer
-		IL_004d: ldc.i4.1
-		IL_004e: newarr [System.Runtime]System.Object
-		IL_0053: dup
-		IL_0054: ldc.i4.0
-		IL_0055: ldloc.0
-		IL_0056: castclass Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
-		IL_005b: stelem.ref
-		IL_005c: ldc.r8 123
-		IL_0065: box [System.Runtime]System.Double
-		IL_006a: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_006f: stfld object Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::f
-		IL_0074: ldloc.0
-		IL_0075: ldfld object Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::f
-		IL_007a: ldc.i4.1
-		IL_007b: newarr [System.Runtime]System.Object
-		IL_0080: dup
-		IL_0081: ldc.i4.0
-		IL_0082: ldloc.0
-		IL_0083: castclass Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
-		IL_0088: stelem.ref
-		IL_0089: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_008e: pop
-		IL_008f: ret
+		IL_004d: dup
+		IL_004e: brtrue.s IL_0057
+
+		IL_0050: pop
+		IL_0051: ldnull
+		IL_0052: br IL_0057
+
+		IL_0057: ldc.i4.1
+		IL_0058: newarr [System.Runtime]System.Object
+		IL_005d: dup
+		IL_005e: ldc.i4.0
+		IL_005f: ldloc.0
+		IL_0060: castclass Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
+		IL_0065: stelem.ref
+		IL_0066: ldc.r8 123
+		IL_006f: box [System.Runtime]System.Double
+		IL_0074: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_0079: stfld object Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::f
+		IL_007e: ldloc.0
+		IL_007f: ldfld object Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::f
+		IL_0084: dup
+		IL_0085: brtrue.s IL_008e
+
+		IL_0087: pop
+		IL_0088: ldnull
+		IL_0089: br IL_008e
+
+		IL_008e: ldc.i4.1
+		IL_008f: newarr [System.Runtime]System.Object
+		IL_0094: dup
+		IL_0095: ldc.i4.0
+		IL_0096: ldloc.0
+		IL_0097: castclass Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
+		IL_009c: stelem.ref
+		IL_009d: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_00a2: pop
+		IL_00a3: ret
 	} // end of method Program::Main
 
 } // end of class Program

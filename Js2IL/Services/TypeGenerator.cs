@@ -40,14 +40,14 @@ namespace Js2IL.Services
         /// </summary>
         public TypeDefinitionHandle GenerateTypes(SymbolTable symbolTable)
         {            
-            // Create all types with proper nesting (depth-first: children first, then parents)
+            // Phase 1: Create all scope types (depth-first) for every scope discovered by the SymbolTable.
+            // SymbolTable already contains scopes for function declarations, function expressions, arrow functions,
+            // class methods, block scopes, etc. We rely on that being exhaustive and treat all of them uniformly.
             var rootType = CreateAllTypes(symbolTable.Root, symbolTable.Root.Name);
-            
-            // Nesting relationships are established during type creation
-            
-            // Populate variable registry with all discovered variables
+
+            // Phase 2: Populate the variable registry (fields + metadata for every binding).
             PopulateVariableRegistry(symbolTable.Root);
-            
+
             return rootType;
         }
 
@@ -111,9 +111,15 @@ namespace Js2IL.Services
             // We'll create the parent type first, then update children to be nested
             var parentType = CreateScopeType(scope, null, typeName, "Scopes");
             
-            // Now create child types as nested types
+            // Now create child types as nested types (skip duplicates by name under the same parent)
+            var seenChildNames = new HashSet<string>();
             foreach (var childScope in scope.Children)
             {
+                if (!seenChildNames.Add(childScope.Name))
+                {
+                    // Duplicate child scope name under the same parent (e.g., repeated traversal). Skip.
+                    continue;
+                }
                 CreateAllTypesNested(childScope, childScope.Name, parentType);
             }
 
@@ -128,9 +134,14 @@ namespace Js2IL.Services
             // First, recursively create all child types (depth-first)
             var currentType = CreateScopeType(scope, parentType, typeName, "");
             
-            // Now create child types as nested types of this type
+            // Now create child types as nested types of this type (dedupe by name under this parent)
+            var seenChildNames = new HashSet<string>();
             foreach (var childScope in scope.Children)
             {
+                if (!seenChildNames.Add(childScope.Name))
+                {
+                    continue;
+                }
                 CreateAllTypesNested(childScope, childScope.Name, currentType);
             }
 
@@ -346,9 +357,15 @@ namespace Js2IL.Services
         /// </summary>
         private void PopulateVariableRegistry(Scope scope)
         {
-            var scopeTypeHandle = _scopeTypes[scope.Name];
-            var scopeFields = _scopeFields[scope.Name];
-            // Ensure scope type is known even if no variables (important for class method scopes)
+            // Guard: some scopes (e.g., block scopes) may legitimately have zero bindings; ensure a type was created.
+            if (!_scopeTypes.TryGetValue(scope.Name, out var scopeTypeHandle))
+            {
+                // If a scope type was not created (should not normally happen), skip but recurse to children.
+                foreach (var child in scope.Children) PopulateVariableRegistry(child);
+                return;
+            }
+            var scopeFields = _scopeFields.GetValueOrDefault(scope.Name, new List<FieldDefinitionHandle>());
+            // Ensure scope type is registered even if no variables.
             _variableRegistry.EnsureScopeType(scope.Name, scopeTypeHandle);
 
             // Add each binding as a variable in the registry

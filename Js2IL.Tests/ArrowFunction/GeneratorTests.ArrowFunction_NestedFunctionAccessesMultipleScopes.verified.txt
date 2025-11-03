@@ -164,7 +164,7 @@
 	{
 		// Method begins at RVA 0x20fc
 		// Header size: 12
-		// Code size: 116 (0x74)
+		// Code size: 126 (0x7e)
 		.maxstack 32
 		.locals init (
 			[0] object
@@ -199,24 +199,31 @@
 		IL_0047: stfld object Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction::nestedFunction
 		IL_004c: ldloc.0
 		IL_004d: ldfld object Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction::nestedFunction
-		IL_0052: ldc.i4.2
-		IL_0053: newarr [System.Runtime]System.Object
-		IL_0058: dup
-		IL_0059: ldc.i4.0
-		IL_005a: ldarg.0
-		IL_005b: ldc.i4.0
-		IL_005c: ldelem.ref
-		IL_005d: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes
-		IL_0062: stelem.ref
-		IL_0063: dup
-		IL_0064: ldc.i4.1
-		IL_0065: ldloc.0
-		IL_0066: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction
-		IL_006b: stelem.ref
-		IL_006c: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0071: pop
-		IL_0072: ldnull
-		IL_0073: ret
+		IL_0052: dup
+		IL_0053: brtrue.s IL_005c
+
+		IL_0055: pop
+		IL_0056: ldnull
+		IL_0057: br IL_005c
+
+		IL_005c: ldc.i4.2
+		IL_005d: newarr [System.Runtime]System.Object
+		IL_0062: dup
+		IL_0063: ldc.i4.0
+		IL_0064: ldarg.0
+		IL_0065: ldc.i4.0
+		IL_0066: ldelem.ref
+		IL_0067: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes
+		IL_006c: stelem.ref
+		IL_006d: dup
+		IL_006e: ldc.i4.1
+		IL_006f: ldloc.0
+		IL_0070: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction
+		IL_0075: stelem.ref
+		IL_0076: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_007b: pop
+		IL_007c: ldnull
+		IL_007d: ret
 	} // end of method ArrowFunction_L3C21::ArrowFunction_L3C21
 
 } // end of class Functions.ArrowFunction_L3C21
@@ -228,9 +235,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x217c
+		// Method begins at RVA 0x2188
 		// Header size: 12
-		// Code size: 93 (0x5d)
+		// Code size: 103 (0x67)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -259,16 +266,23 @@
 		IL_003c: stfld object Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes::testFunction
 		IL_0041: ldloc.0
 		IL_0042: ldfld object Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes::testFunction
-		IL_0047: ldc.i4.1
-		IL_0048: newarr [System.Runtime]System.Object
-		IL_004d: dup
-		IL_004e: ldc.i4.0
-		IL_004f: ldloc.0
-		IL_0050: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes
-		IL_0055: stelem.ref
-		IL_0056: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_005b: pop
-		IL_005c: ret
+		IL_0047: dup
+		IL_0048: brtrue.s IL_0051
+
+		IL_004a: pop
+		IL_004b: ldnull
+		IL_004c: br IL_0051
+
+		IL_0051: ldc.i4.1
+		IL_0052: newarr [System.Runtime]System.Object
+		IL_0057: dup
+		IL_0058: ldc.i4.0
+		IL_0059: ldloc.0
+		IL_005a: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes
+		IL_005f: stelem.ref
+		IL_0060: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0065: pop
+		IL_0066: ret
 	} // end of method Program::Main
 
 } // end of class Program

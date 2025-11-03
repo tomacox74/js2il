@@ -1,12 +1,7 @@
 using Acornima.Ast;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
 
@@ -18,7 +13,6 @@ namespace Js2IL.Services.ILGenerators
         private BaseClassLibraryReferences _bclReferences;
         private MetadataBuilder _metadataBuilder;
         private MethodBodyStreamEncoder _methodBodyStreamEncoder;
-        // private Dispatch.DispatchTableGenerator _dispatchTableGenerator;
         private readonly ClassRegistry _classRegistry;
         private MethodDefinitionHandle _firstMethod = default;
         private readonly FunctionRegistry _functionRegistry = new();
@@ -26,11 +20,7 @@ namespace Js2IL.Services.ILGenerators
 
         // Tracks owner types in the Functions namespace
         private readonly Dictionary<string, TypeDefinitionHandle> _globalFunctionOwnerTypes = new();
-        private readonly Dictionary<string, TypeDefinitionHandle> _nestedOwnerTypes = new();
         private TypeDefinitionHandle _moduleOwnerType = default;
-
-        public MethodDefinitionHandle FirstMethod => _firstMethod;
-
         public JavaScriptFunctionGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, ClassRegistry? classRegistry = null)
         {
             _variables = variables;
@@ -160,17 +150,6 @@ namespace Js2IL.Services.ILGenerators
                 _moduleOwnerType = default; // not used in this mode
             }
             // For multi-function module case finalize nested owners handled earlier.
-        }
-
-        // No longer pre-creates owner types; types are created after methods to ensure the first method handle is correct.
-        private TypeDefinitionHandle EnsureGlobalFunctionOwnerType(string functionName)
-        {
-            return _globalFunctionOwnerTypes.TryGetValue(functionName, out var existing) ? existing : default;
-        }
-
-        private TypeDefinitionHandle EnsureNestedOwnerForGlobal(string globalFunctionName, TypeDefinitionHandle parentHandle)
-        {
-            return _nestedOwnerTypes.TryGetValue(globalFunctionName, out var existing) ? existing : default;
         }
 
         private void DeclareFunctionsRecursive(Scope scope, Variables parentVars, SymbolTable symbolTable)

@@ -227,7 +227,7 @@
 	{
 		// Method begins at RVA 0x2180
 		// Header size: 12
-		// Code size: 177 (0xb1)
+		// Code size: 220 (0xdc)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -251,45 +251,65 @@
 		IL_0037: castclass Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
 		IL_003c: ldloc.0
 		IL_003d: ldfld object Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::createFunction
-		IL_0042: ldc.i4.1
-		IL_0043: newarr [System.Runtime]System.Object
-		IL_0048: dup
-		IL_0049: ldc.i4.0
-		IL_004a: ldloc.0
-		IL_004b: castclass Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
-		IL_0050: stelem.ref
-		IL_0051: ldc.r8 7
-		IL_005a: box [System.Runtime]System.Double
-		IL_005f: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0064: stfld object Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::resultFunc
-		IL_0069: ldloc.0
-		IL_006a: castclass Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
-		IL_006f: ldloc.0
-		IL_0070: ldfld object Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::resultFunc
-		IL_0075: ldc.i4.1
-		IL_0076: newarr [System.Runtime]System.Object
-		IL_007b: dup
-		IL_007c: ldc.i4.0
-		IL_007d: ldloc.0
-		IL_007e: castclass Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
-		IL_0083: stelem.ref
-		IL_0084: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0089: stfld object Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::result
-		IL_008e: ldc.i4.2
-		IL_008f: newarr [System.Runtime]System.Object
-		IL_0094: dup
-		IL_0095: ldc.i4.0
-		IL_0096: ldstr "Result:"
-		IL_009b: stelem.ref
-		IL_009c: dup
-		IL_009d: ldc.i4.1
-		IL_009e: ldloc.0
-		IL_009f: castclass Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
-		IL_00a4: ldfld object Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::result
-		IL_00a9: stelem.ref
-		IL_00aa: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_00af: pop
-		IL_00b0: ret
+		IL_0042: dup
+		IL_0043: brtrue.s IL_0063
+
+		IL_0045: pop
+		IL_0046: ldloc.0
+		IL_0047: ldnull
+		IL_0048: ldftn object Functions.createFunction/createFunction_Nested::createFunction(object[], object)
+		IL_004e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0053: stfld object Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::createFunction
+		IL_0058: ldloc.0
+		IL_0059: ldfld object Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::createFunction
+		IL_005e: br IL_0063
+
+		IL_0063: ldc.i4.1
+		IL_0064: newarr [System.Runtime]System.Object
+		IL_0069: dup
+		IL_006a: ldc.i4.0
+		IL_006b: ldloc.0
+		IL_006c: castclass Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
+		IL_0071: stelem.ref
+		IL_0072: ldc.r8 7
+		IL_007b: box [System.Runtime]System.Double
+		IL_0080: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_0085: stfld object Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::resultFunc
+		IL_008a: ldloc.0
+		IL_008b: castclass Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
+		IL_0090: ldloc.0
+		IL_0091: ldfld object Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::resultFunc
+		IL_0096: dup
+		IL_0097: brtrue.s IL_00a0
+
+		IL_0099: pop
+		IL_009a: ldnull
+		IL_009b: br IL_00a0
+
+		IL_00a0: ldc.i4.1
+		IL_00a1: newarr [System.Runtime]System.Object
+		IL_00a6: dup
+		IL_00a7: ldc.i4.0
+		IL_00a8: ldloc.0
+		IL_00a9: castclass Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
+		IL_00ae: stelem.ref
+		IL_00af: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_00b4: stfld object Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::result
+		IL_00b9: ldc.i4.2
+		IL_00ba: newarr [System.Runtime]System.Object
+		IL_00bf: dup
+		IL_00c0: ldc.i4.0
+		IL_00c1: ldstr "Result:"
+		IL_00c6: stelem.ref
+		IL_00c7: dup
+		IL_00c8: ldc.i4.1
+		IL_00c9: ldloc.0
+		IL_00ca: castclass Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
+		IL_00cf: ldfld object Scopes.Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::result
+		IL_00d4: stelem.ref
+		IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00da: pop
+		IL_00db: ret
 	} // end of method Program::Main
 
 } // end of class Program

@@ -87,7 +87,7 @@
 	{
 		// Method begins at RVA 0x2084
 		// Header size: 12
-		// Code size: 127 (0x7f)
+		// Code size: 137 (0x89)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -120,22 +120,29 @@
 		IL_0040: ldc.i4.1
 		IL_0041: ldloc.0
 		IL_0042: ldfld object Scopes.ArrowFunction_BlockBody_Return::'add'
-		IL_0047: ldc.i4.1
-		IL_0048: newarr [System.Runtime]System.Object
-		IL_004d: dup
-		IL_004e: ldc.i4.0
-		IL_004f: ldloc.0
-		IL_0050: castclass Scopes.ArrowFunction_BlockBody_Return
-		IL_0055: stelem.ref
-		IL_0056: ldc.r8 4
-		IL_005f: box [System.Runtime]System.Double
-		IL_0064: ldc.r8 3
-		IL_006d: box [System.Runtime]System.Double
-		IL_0072: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
-		IL_0077: stelem.ref
-		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_007d: pop
-		IL_007e: ret
+		IL_0047: dup
+		IL_0048: brtrue.s IL_0051
+
+		IL_004a: pop
+		IL_004b: ldnull
+		IL_004c: br IL_0051
+
+		IL_0051: ldc.i4.1
+		IL_0052: newarr [System.Runtime]System.Object
+		IL_0057: dup
+		IL_0058: ldc.i4.0
+		IL_0059: ldloc.0
+		IL_005a: castclass Scopes.ArrowFunction_BlockBody_Return
+		IL_005f: stelem.ref
+		IL_0060: ldc.r8 4
+		IL_0069: box [System.Runtime]System.Double
+		IL_006e: ldc.r8 3
+		IL_0077: box [System.Runtime]System.Double
+		IL_007c: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
+		IL_0081: stelem.ref
+		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0087: pop
+		IL_0088: ret
 	} // end of method Program::Main
 
 } // end of class Program
