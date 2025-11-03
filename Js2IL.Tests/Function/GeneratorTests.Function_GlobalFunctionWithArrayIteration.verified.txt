@@ -174,7 +174,7 @@
 	{
 		// Method begins at RVA 0x2160
 		// Header size: 12
-		// Code size: 225 (0xe1)
+		// Code size: 258 (0x102)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -214,37 +214,50 @@
 		IL_007f: castclass Scopes.Function_GlobalFunctionWithArrayIteration
 		IL_0084: ldloc.0
 		IL_0085: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration::processArray
-		IL_008a: ldc.i4.1
-		IL_008b: newarr [System.Runtime]System.Object
-		IL_0090: dup
-		IL_0091: ldc.i4.0
-		IL_0092: ldloc.0
-		IL_0093: castclass Scopes.Function_GlobalFunctionWithArrayIteration
-		IL_0098: stelem.ref
-		IL_0099: ldloc.0
-		IL_009a: castclass Scopes.Function_GlobalFunctionWithArrayIteration
-		IL_009f: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration::input
-		IL_00a4: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_00a9: stfld object Scopes.Function_GlobalFunctionWithArrayIteration::output
-		IL_00ae: ldc.i4.1
-		IL_00af: newarr [System.Runtime]System.Object
-		IL_00b4: dup
-		IL_00b5: ldc.i4.0
-		IL_00b6: ldloc.0
-		IL_00b7: castclass Scopes.Function_GlobalFunctionWithArrayIteration
-		IL_00bc: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration::output
-		IL_00c1: ldstr "join"
-		IL_00c6: ldc.i4.1
-		IL_00c7: newarr [System.Runtime]System.Object
-		IL_00cc: dup
-		IL_00cd: ldc.i4.0
-		IL_00ce: ldstr ","
-		IL_00d3: stelem.ref
-		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_00d9: stelem.ref
-		IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_00df: pop
-		IL_00e0: ret
+		IL_008a: dup
+		IL_008b: brtrue.s IL_00ab
+
+		IL_008d: pop
+		IL_008e: ldloc.0
+		IL_008f: ldnull
+		IL_0090: ldftn object Functions.processArray::processArray(object[], object)
+		IL_0096: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_009b: stfld object Scopes.Function_GlobalFunctionWithArrayIteration::processArray
+		IL_00a0: ldloc.0
+		IL_00a1: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration::processArray
+		IL_00a6: br IL_00ab
+
+		IL_00ab: ldc.i4.1
+		IL_00ac: newarr [System.Runtime]System.Object
+		IL_00b1: dup
+		IL_00b2: ldc.i4.0
+		IL_00b3: ldloc.0
+		IL_00b4: castclass Scopes.Function_GlobalFunctionWithArrayIteration
+		IL_00b9: stelem.ref
+		IL_00ba: ldloc.0
+		IL_00bb: castclass Scopes.Function_GlobalFunctionWithArrayIteration
+		IL_00c0: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration::input
+		IL_00c5: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_00ca: stfld object Scopes.Function_GlobalFunctionWithArrayIteration::output
+		IL_00cf: ldc.i4.1
+		IL_00d0: newarr [System.Runtime]System.Object
+		IL_00d5: dup
+		IL_00d6: ldc.i4.0
+		IL_00d7: ldloc.0
+		IL_00d8: castclass Scopes.Function_GlobalFunctionWithArrayIteration
+		IL_00dd: ldfld object Scopes.Function_GlobalFunctionWithArrayIteration::output
+		IL_00e2: ldstr "join"
+		IL_00e7: ldc.i4.1
+		IL_00e8: newarr [System.Runtime]System.Object
+		IL_00ed: dup
+		IL_00ee: ldc.i4.0
+		IL_00ef: ldstr ","
+		IL_00f4: stelem.ref
+		IL_00f5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_00fa: stelem.ref
+		IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0100: pop
+		IL_0101: ret
 	} // end of method Program::Main
 
 } // end of class Program

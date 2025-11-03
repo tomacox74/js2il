@@ -129,6 +129,23 @@ namespace Js2IL.Services
             LoadArrayTypes(metadataBuilder);
 
             LoadFuncTypes(metadataBuilder);
+
+            // System.Reflection.MethodBase and GetCurrentMethod()
+            MethodBaseType = metadataBuilder.AddTypeReference(
+                this.SystemRuntimeAssembly,
+                metadataBuilder.GetOrAddString("System.Reflection"),
+                metadataBuilder.GetOrAddString("MethodBase"));
+
+            var getCurrentMethodSig = new BlobBuilder();
+            new BlobEncoder(getCurrentMethodSig)
+                .MethodSignature(isInstanceMethod: false)
+                .Parameters(0,
+                    returnType => returnType.Type().Type(MethodBaseType, isValueType: false),
+                    parameters => { });
+            MethodBase_GetCurrentMethod_Ref = metadataBuilder.AddMemberReference(
+                MethodBaseType,
+                metadataBuilder.GetOrAddString("GetCurrentMethod"),
+                metadataBuilder.GetOrAddBlob(getCurrentMethodSig));
         }
 
         public AssemblyReferenceHandle SystemRuntimeAssembly { get; private init; }
@@ -140,6 +157,8 @@ namespace Js2IL.Services
         public TypeReferenceHandle StringType { get; private init; }
     public TypeReferenceHandle ExceptionType { get; private init; }
         public TypeReferenceHandle SystemMathType { get; private init; }
+        public TypeReferenceHandle MethodBaseType { get; private set; }
+        public MemberReferenceHandle MethodBase_GetCurrentMethod_Ref { get; private set; }
 
     // Removed legacy Action<> delegate references (now using Func returning object)
 

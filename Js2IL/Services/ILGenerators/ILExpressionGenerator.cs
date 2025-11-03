@@ -221,9 +221,21 @@ namespace Js2IL.Services.ILGenerators
                 case FunctionExpression funcExpr:
                     {
                         var paramNames = funcExpr.Params.OfType<Identifier>().Select(p => p.Name).ToArray();
-                        var registryScopeName = !string.IsNullOrEmpty(_owner.CurrentAssignmentTarget)
-                            ? $"FunctionExpression_{_owner.CurrentAssignmentTarget}"
-                            : $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
+                        // If the function expression is named (named function expression), prefer its declared name
+                        // so that the symbol table scope name and variable registry line up (important for IIFE recursion scenarios).
+                        string registryScopeName;
+                        if (funcExpr.Id is Identifier fid && !string.IsNullOrEmpty(fid.Name))
+                        {
+                            registryScopeName = fid.Name;
+                        }
+                        else if (!string.IsNullOrEmpty(_owner.CurrentAssignmentTarget))
+                        {
+                            registryScopeName = $"FunctionExpression_{_owner.CurrentAssignmentTarget}";
+                        }
+                        else
+                        {
+                            registryScopeName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
+                        }
                         var ilMethodName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
                         var methodHandle = _owner.GenerateFunctionExpressionMethod(funcExpr, registryScopeName, ilMethodName, paramNames);
 
@@ -671,6 +683,72 @@ namespace Js2IL.Services.ILGenerators
             {
                 // Simple function call: f(...)
                 return EmitFunctionCall(identifier, callExpression, context);
+            }
+            else if (callExpression.Callee is Acornima.Ast.FunctionExpression || callExpression.Callee is Acornima.Ast.ArrowFunctionExpression)
+            {
+                // Immediately Invoked Function Expression (IIFE) support.
+                // Strategy:
+                // 1. Emit the inline function/arrow expression to obtain its delegate on the stack.
+                // 2. Construct a scopes array similar to nested function invocation semantics.
+                // 3. Push call arguments boxed.
+                // 4. Invoke appropriate delegate Invoke overload (object Invoke(object[] scopes, ...args)).
+
+                var calleeExpr = callExpression.Callee;
+                // Re-use normal Emit path to build the delegate (handles both function & arrow expressions).
+                _ = Emit(calleeExpr, new TypeCoercion { boxResult = false }); // stack: [delegate]
+
+                // Determine scopes to pass. If inside a function (global scope array present) and we have a local leaf scope,
+                // pass [global, leaf]; otherwise pass just the leaf/global scope like top-level Main semantics.
+                var scopeNames = new List<string>();
+                try
+                {
+                    var allNames = _variables.GetAllScopeNames().ToList();
+                    var slots = allNames.Select(n => new { Name = n, Slot = _variables.GetScopeLocalSlot(n) }).ToList();
+                    var globalEntry = slots.FirstOrDefault(e => e.Slot.Location == ObjectReferenceLocation.ScopeArray && e.Slot.Address == 0);
+                    var leafSlot = _variables.GetLocalScopeSlot();
+                    if (globalEntry != null && leafSlot.Address >= 0)
+                    {
+                        scopeNames.Add(globalEntry.Name);
+                        scopeNames.Add(_variables.GetLeafScopeName());
+                    }
+                    else
+                    {
+                        // Fallback: include leaf scope (or global if leaf == global)
+                        scopeNames.Add(_variables.GetLeafScopeName());
+                    }
+                }
+                catch
+                {
+                    // Conservative fallback: single leaf scope name if discovery fails
+                    scopeNames.Clear();
+                    scopeNames.Add(_variables.GetLeafScopeName());
+                }
+
+                EmitScopeArray(scopeNames); // stack: [delegate, scopes[]]
+
+                // Emit arguments
+                EmitBoxedArgsInline(callExpression.Arguments); // stack: [delegate, scopes[], arg0, ...]
+
+                var argCount = callExpression.Arguments.Count;
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                if (argCount == 0)
+                {
+                    _il.Token(_bclReferences.FuncObjectArrayObject_Invoke_Ref);
+                }
+                else if (argCount == 1)
+                {
+                    _il.Token(_bclReferences.FuncObjectArrayObjectObject_Invoke_Ref);
+                }
+                else if (argCount <= 6)
+                {
+                    _il.Token(_bclReferences.GetFuncArrayParamInvokeRef(argCount));
+                }
+                else
+                {
+                    throw ILEmitHelpers.NotSupported($"IIFE with more than 6 arguments not supported (got {argCount})", callExpression);
+                }
+
+                return null; // dynamic return type
             }
             else
             {
@@ -1132,10 +1210,54 @@ namespace Js2IL.Services.ILGenerators
                 throw new InvalidOperationException($"Scope '{functionVariable.ScopeName}' not found in local slots");
             }
 
-            // load the delegate to be invoked (from scope field)
+            // load the delegate to be invoked (from scope field). If this is a named function expression's
+            // internal binding and delegate is still null (first recursive call), lazily self-bind by creating
+            // a delegate to the generated method. We detect named function expression by functionVariable.VariableType == Function
+            // and registry scope name starting with "FunctionExpression_" or the original name being the same as scope name when
+            // that scope originated from a named function expression (SymbolTable added internal binding).
+            //
+            // Correct stack discipline:
+            // - Load delegate value only (no need to keep a copy of the scope on the stack for the common case).
+            // - If null, create and store the delegate, then reload the field to obtain the receiver for Invoke.
             EmitLoadScopeObject(scopeObjectReference);
-            _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld);
+            _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld); // stack: [delegate]
             _il.Token(functionVariable.FieldHandle);
+            // Duplicate delegate for null check
+            _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup);
+            var nonNullLabel = _il.DefineLabel();
+            var afterBindLabel = _il.DefineLabel();
+            _il.Branch(System.Reflection.Metadata.ILOpCode.Brtrue_s, nonNullLabel);
+            // Null path: pop the duplicate null
+            _il.OpCode(System.Reflection.Metadata.ILOpCode.Pop);
+            // Attempt to resolve method handle from function registry via owner generator
+            var fnReg = _owner.FunctionRegistry;
+            var methodHandle = fnReg?.Get(identifier.Name) ?? default;
+            if (!methodHandle.IsNil)
+            {
+                // Create delegate and store into the field: [scope, newDelegate] -> stfld
+                EmitLoadScopeObject(scopeObjectReference);
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldftn);
+                _il.Token(methodHandle);
+                var (_, ctorRefLazy) = _bclReferences.GetFuncObjectArrayWithParams(callExpression.Arguments.Count);
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
+                _il.Token(ctorRefLazy);
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld);
+                _il.Token(functionVariable.FieldHandle);
+                // Reload the stored delegate to use as the call receiver
+                EmitLoadScopeObject(scopeObjectReference);
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld);
+                _il.Token(functionVariable.FieldHandle);
+            }
+            else
+            {
+                // Leave null delegate on stack to preserve behavior (will throw)
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
+            }
+            _il.Branch(ILOpCode.Br, afterBindLabel);
+            _il.MarkLabel(nonNullLabel);
+            // Non-null path: delegate already on stack; do nothing
+            _il.MarkLabel(afterBindLabel);
 
             var argCount = callExpression.Arguments.Count;
 

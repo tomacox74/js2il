@@ -80,7 +80,7 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 70 (0x46)
+		// Code size: 80 (0x50)
 		.maxstack 32
 
 		IL_0000: ldc.i4.2
@@ -100,19 +100,26 @@
 		IL_0026: ldc.i4.0
 		IL_0027: ldelem.ref
 		IL_0028: ldfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorld
-		IL_002d: ldc.i4.1
-		IL_002e: newarr [System.Runtime]System.Object
-		IL_0033: dup
-		IL_0034: ldc.i4.0
-		IL_0035: ldarg.0
-		IL_0036: ldc.i4.0
-		IL_0037: ldelem.ref
-		IL_0038: castclass Scopes.Function_GlobalFunctionCallsGlobalFunction
-		IL_003d: stelem.ref
-		IL_003e: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0043: pop
-		IL_0044: ldnull
-		IL_0045: ret
+		IL_002d: dup
+		IL_002e: brtrue.s IL_0037
+
+		IL_0030: pop
+		IL_0031: ldnull
+		IL_0032: br IL_0037
+
+		IL_0037: ldc.i4.1
+		IL_0038: newarr [System.Runtime]System.Object
+		IL_003d: dup
+		IL_003e: ldc.i4.0
+		IL_003f: ldarg.0
+		IL_0040: ldc.i4.0
+		IL_0041: ldelem.ref
+		IL_0042: castclass Scopes.Function_GlobalFunctionCallsGlobalFunction
+		IL_0047: stelem.ref
+		IL_0048: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_004d: pop
+		IL_004e: ldnull
+		IL_004f: ret
 	} // end of method Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
 
 	.method public static 
@@ -120,7 +127,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x20c0
+		// Method begins at RVA 0x20c8
 		// Header size: 12
 		// Code size: 39 (0x27)
 		.maxstack 32
@@ -151,9 +158,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20f4
+		// Method begins at RVA 0x20fc
 		// Header size: 12
-		// Code size: 117 (0x75)
+		// Code size: 150 (0x96)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -176,29 +183,42 @@
 		IL_002f: stfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorld
 		IL_0034: ldloc.0
 		IL_0035: ldfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
-		IL_003a: ldc.i4.1
-		IL_003b: newarr [System.Runtime]System.Object
-		IL_0040: dup
-		IL_0041: ldc.i4.0
-		IL_0042: ldloc.0
-		IL_0043: castclass Scopes.Function_GlobalFunctionCallsGlobalFunction
-		IL_0048: stelem.ref
-		IL_0049: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_004e: pop
-		IL_004f: ldc.i4.2
-		IL_0050: newarr [System.Runtime]System.Object
-		IL_0055: dup
-		IL_0056: ldc.i4.0
-		IL_0057: ldstr "finally is now"
-		IL_005c: stelem.ref
-		IL_005d: dup
-		IL_005e: ldc.i4.1
-		IL_005f: ldc.r8 3
-		IL_0068: box [System.Runtime]System.Double
-		IL_006d: stelem.ref
-		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0073: pop
-		IL_0074: ret
+		IL_003a: dup
+		IL_003b: brtrue.s IL_005b
+
+		IL_003d: pop
+		IL_003e: ldloc.0
+		IL_003f: ldnull
+		IL_0040: ldftn object Functions.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy(object[])
+		IL_0046: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_004b: stfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
+		IL_0050: ldloc.0
+		IL_0051: ldfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
+		IL_0056: br IL_005b
+
+		IL_005b: ldc.i4.1
+		IL_005c: newarr [System.Runtime]System.Object
+		IL_0061: dup
+		IL_0062: ldc.i4.0
+		IL_0063: ldloc.0
+		IL_0064: castclass Scopes.Function_GlobalFunctionCallsGlobalFunction
+		IL_0069: stelem.ref
+		IL_006a: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_006f: pop
+		IL_0070: ldc.i4.2
+		IL_0071: newarr [System.Runtime]System.Object
+		IL_0076: dup
+		IL_0077: ldc.i4.0
+		IL_0078: ldstr "finally is now"
+		IL_007d: stelem.ref
+		IL_007e: dup
+		IL_007f: ldc.i4.1
+		IL_0080: ldc.r8 3
+		IL_0089: box [System.Runtime]System.Double
+		IL_008e: stelem.ref
+		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0094: pop
+		IL_0095: ret
 	} // end of method Program::Main
 
 } // end of class Program

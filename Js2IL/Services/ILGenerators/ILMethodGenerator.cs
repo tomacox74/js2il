@@ -54,6 +54,7 @@ namespace Js2IL.Services.ILGenerators
         internal string? CurrentAssignmentTarget { get => _currentAssignmentTarget; set => _currentAssignmentTarget = value; }
         internal ClassRegistry ClassRegistry => _classRegistry;
         internal IMethodExpressionEmitter ExpressionEmitter => _expressionEmitter;
+    internal FunctionRegistry? FunctionRegistry => _functionRegistry;
 
         private readonly FunctionRegistry? _functionRegistry;
 
@@ -1084,8 +1085,9 @@ namespace Js2IL.Services.ILGenerators
             // Build method body using a fresh ILMethodGenerator so we never mutate the parent generator's state
             var functionVariables = new Variables(_variables, registryScopeName, paramNames, isNestedFunction: true);
             var pnames = paramNames ?? Array.Empty<string>();
-            // Share the parent ClassRegistry so nested functions can resolve declared classes
-            var childGen = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry);
+            // Share the parent ClassRegistry and FunctionRegistry so nested functions can resolve declared classes
+            // and register their methods for lazy self-binding (recursion) support.
+            var childGen = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
             var il = childGen.IL;
 
             // For arrow functions, we do NOT pre-instantiate a local scope nor initialize parameter fields
@@ -1294,11 +1296,30 @@ namespace Js2IL.Services.ILGenerators
         {
             var functionVariables = new Variables(_variables, registryScopeName, paramNames, isNestedFunction: true);
             var pnames = paramNames ?? Array.Empty<string>();
-            // Share the parent ClassRegistry so nested functions can resolve declared classes
-            var childGen = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry);
+            // Share the parent ClassRegistry and FunctionRegistry so nested functions can resolve declared classes
+            // and register their methods for lazy self-binding (recursion) support.
+            var childGen = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
             var il = childGen.IL;
 
-            // Function expressions use block bodies; create local scope if fields exist and init parameter fields
+            // If this is a named function expression (e.g., function walk(node) { ... }), JS specifies
+            // that the name is bound inside the function body to the function object itself (for recursion).
+            // Strategy: after (optionally) creating the scope instance and before emitting the body, store
+            // the delegate into the scope field matching the name (if one exists in the registry scope).
+            Identifier? internalNameId = funcExpr.Id as Identifier;
+
+            // Function expressions use block bodies; create local scope if fields exist and init parameter fields.
+            // We also eagerly emit self-binding for named function expressions (internal name) BEFORE body so
+            // recursive calls resolve. We need the eventual MethodDefinitionHandle for ldftn, so we build the
+            // method body in two phases: capture IL so far, but the handle (mdh) is only known after adding the
+            // method definition. Strategy: emit a placeholder sequence we can patch is complicated; instead we
+            // construct the delegate via reflection to our own method after mdh is known by re-opening the IL
+            // stream is not supported. Simpler: emit delegate creation AFTER adding method definition by
+            // building a tiny prologue first, then body referencing a local temp field. To keep changes minimal
+            // we resolve self-binding using a lazy pattern: during first recursive call if field is null, load
+            // ldftn of this method and store. (Cheap check, avoids complex two-pass.)
+            // Implementation: if named function expression and internal binding field exists, we pre-store null
+            // (already default), and inject at top of body: if(field==null){ field = new Func(..., thisMethod); }
+
             var registry = functionVariables.GetVariableRegistry();
             if (registry != null)
             {
@@ -1324,11 +1345,65 @@ namespace Js2IL.Services.ILGenerators
                             jsParamSeq++;
                         }
                     }
+                    // Eager self-binding prologue for named function expressions
+                    if (internalNameId != null)
+                    {
+                        // Only bind if the internal binding field exists in this scope
+                        FieldDefinitionHandle selfFieldHandle = default;
+                        try { selfFieldHandle = registry.GetFieldHandle(registryScopeName, internalNameId.Name); } catch { selfFieldHandle = default; }
+                        if (!selfFieldHandle.IsNil && localScope.Address >= 0)
+                        {
+                            // Load scope instance and cast to concrete scope type
+                            il.LoadLocal(localScope.Address);
+                            var scopeType = registry.GetScopeTypeHandle(registryScopeName);
+                            if (!scopeType.IsNil) { il.OpCode(ILOpCode.Castclass); il.Token(scopeType); }
+                            // Duplicate for ldfld test and potential stfld target
+                            il.OpCode(ILOpCode.Dup);
+                            il.OpCode(ILOpCode.Ldfld); il.Token(selfFieldHandle);
+                            var alreadyBound = il.DefineLabel();
+                            var endBind = il.DefineLabel();
+                            il.Branch(ILOpCode.Brtrue_s, alreadyBound);
+                            // Not bound yet: stack has the scope instance
+                            // Create delegate to current method using reflection: GetCurrentMethod(), paramCount
+                            // GetCurrentMethod returns MethodBase for this function method (we are in the function body)
+                            il.OpCode(ILOpCode.Call); il.Token(_bclReferences.MethodBase_GetCurrentMethod_Ref);
+                            // paramCount for delegate arity
+                            il.LoadConstantI4(pnames.Length);
+                            // Call runtime helper to create correct Func<object[],...,object>
+                            // Build a MemberReference to JavaScriptRuntime.Closure.CreateSelfDelegate(MethodBase, int)
+                            var closureTypeRef = _runtime.GetRuntimeTypeHandle(typeof(JavaScriptRuntime.Closure));
+                            var makeSelfSig = new BlobBuilder();
+                            new BlobEncoder(makeSelfSig)
+                                .MethodSignature(isInstanceMethod: false)
+                                .Parameters(2,
+                                    rt => rt.Type().Object(),
+                                    p => {
+                                        p.AddParameter().Type().Type(_bclReferences.MethodBaseType, isValueType: false);
+                                        p.AddParameter().Type().Int32();
+                                    });
+                            var makeSelfRef = _metadataBuilder.AddMemberReference(
+                                closureTypeRef,
+                                _metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime.Closure.CreateSelfDelegate)),
+                                _metadataBuilder.GetOrAddBlob(makeSelfSig));
+                            il.OpCode(ILOpCode.Call); il.Token(makeSelfRef);
+                            // Store into internal binding field
+                            il.OpCode(ILOpCode.Stfld); il.Token(selfFieldHandle);
+                            il.Branch(ILOpCode.Br, endBind);
+                            // Already bound: pop the duplicated scope instance to balance stack
+                            il.MarkLabel(alreadyBound); il.OpCode(ILOpCode.Pop);
+                            il.MarkLabel(endBind);
+                        }
+                    }
                 }
             }
 
             if (funcExpr.Body is BlockStatement block)
             {
+                // We'll emit body into childGen; but first, if named function expression, inject lazy self-binding check.
+                // We need the field handle; after mdh is created we'll patch? Instead, emit code that on first recursive
+                // call (when identifier resolved) will find null and bind. For simplicity, we rely on EmitFunctionCall
+                // having already loaded delegate field; if null we throw. To avoid modifying call logic now, implement
+                // eager binding AFTER mdh creation by buffering body IL then prepending prologue.
                 childGen.GenerateStatementsForBody(functionVariables.GetLeafScopeName(), false, block.Body);
                 // If control reaches here with no explicit return, return null
                 il.OpCode(ILOpCode.Ldnull);
@@ -1385,6 +1460,17 @@ namespace Js2IL.Services.ILGenerators
             // Host the function expression method on its own type under Functions namespace
             var tb = new Js2IL.Utilities.Ecma335.TypeBuilder(_metadataBuilder, "Functions", ilMethodName);
             var mdh = tb.AddMethodDefinition(MethodAttributes.Static | MethodAttributes.Public, ilMethodName, methodSig, bodyOffset, firstParam);
+            // Register named function expression in function registry so recursive calls can lazy-bind.
+            if (internalNameId != null && _functionRegistry != null)
+            {
+                try { if (_functionRegistry.Get(internalNameId.Name).IsNil) _functionRegistry.Register(internalNameId.Name, mdh); } catch { }
+            }
+            // NOTE: Self-binding eager insertion not implemented due to single-pass encoder limitations.
+            // For recursion support, EmitFunctionCall must locate the internal binding. Since we authored an
+            // internal binding field in SymbolTable for named function expressions, the delegate field remains
+            // null unless assigned externally. TODO: future enhancement - restructure to build body after mdh
+            // known so we can ldftn this method and store delegate before executing body. Current change ensures
+            // internal binding exists so outer recursion pattern can be updated next.
             tb.AddTypeDefinition(TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, _bclReferences.ObjectType);
             return mdh;
         }

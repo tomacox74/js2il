@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 
 namespace JavaScriptRuntime
 {
@@ -55,6 +56,29 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (boundScopes == null) throw new ArgumentNullException(nameof(boundScopes));
             return (ignoredScopes, a1) => target(boundScopes, a1);
+        }
+
+        // Creates a delegate instance pointing to the provided method with the standard js2il
+        // signature: Func<object[], [object x N], object>. The number of additional object
+        // parameters is specified by paramCount.
+        public static object CreateSelfDelegate(MethodBase method, int paramCount)
+        {
+            if (method is not MethodInfo mi)
+            {
+                throw new ArgumentException("Expected MethodInfo", nameof(method));
+            }
+
+            return paramCount switch
+            {
+                0 => (object)Delegate.CreateDelegate(typeof(Func<object[], object>), null, mi),
+                1 => (object)Delegate.CreateDelegate(typeof(Func<object[], object, object>), null, mi),
+                2 => (object)Delegate.CreateDelegate(typeof(Func<object[], object, object, object>), null, mi),
+                3 => (object)Delegate.CreateDelegate(typeof(Func<object[], object, object, object, object>), null, mi),
+                4 => (object)Delegate.CreateDelegate(typeof(Func<object[], object, object, object, object, object>), null, mi),
+                5 => (object)Delegate.CreateDelegate(typeof(Func<object[], object, object, object, object, object, object>), null, mi),
+                6 => (object)Delegate.CreateDelegate(typeof(Func<object[], object, object, object, object, object, object, object>), null, mi),
+                _ => throw new NotSupportedException($"Unsupported parameter count {paramCount} for self delegate")
+            };
         }
     }
 }

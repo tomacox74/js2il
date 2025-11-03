@@ -162,7 +162,7 @@
 		{
 			// Method begins at RVA 0x20fc
 			// Header size: 12
-			// Code size: 85 (0x55)
+			// Code size: 118 (0x76)
 			.maxstack 32
 			.locals init (
 				[0] object
@@ -182,24 +182,37 @@
 			IL_0028: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::outerVar
 			IL_002d: ldloc.0
 			IL_002e: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::innerFunction
-			IL_0033: ldc.i4.2
-			IL_0034: newarr [System.Runtime]System.Object
-			IL_0039: dup
-			IL_003a: ldc.i4.0
-			IL_003b: ldarg.0
-			IL_003c: ldc.i4.0
-			IL_003d: ldelem.ref
-			IL_003e: castclass Scopes.Function_NestedFunctionAccessesMultipleScopes
-			IL_0043: stelem.ref
-			IL_0044: dup
-			IL_0045: ldc.i4.1
-			IL_0046: ldloc.0
-			IL_0047: castclass Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction
-			IL_004c: stelem.ref
-			IL_004d: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-			IL_0052: pop
-			IL_0053: ldnull
-			IL_0054: ret
+			IL_0033: dup
+			IL_0034: brtrue.s IL_0054
+
+			IL_0036: pop
+			IL_0037: ldloc.0
+			IL_0038: ldnull
+			IL_0039: ldftn object Functions.testFunction/testFunction_Nested::innerFunction(object[])
+			IL_003f: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+			IL_0044: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::innerFunction
+			IL_0049: ldloc.0
+			IL_004a: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction::innerFunction
+			IL_004f: br IL_0054
+
+			IL_0054: ldc.i4.2
+			IL_0055: newarr [System.Runtime]System.Object
+			IL_005a: dup
+			IL_005b: ldc.i4.0
+			IL_005c: ldarg.0
+			IL_005d: ldc.i4.0
+			IL_005e: ldelem.ref
+			IL_005f: castclass Scopes.Function_NestedFunctionAccessesMultipleScopes
+			IL_0064: stelem.ref
+			IL_0065: dup
+			IL_0066: ldc.i4.1
+			IL_0067: ldloc.0
+			IL_0068: castclass Scopes.Function_NestedFunctionAccessesMultipleScopes/testFunction
+			IL_006d: stelem.ref
+			IL_006e: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+			IL_0073: pop
+			IL_0074: ldnull
+			IL_0075: ret
 		} // end of method testFunction_Nested::testFunction
 
 	} // end of class testFunction_Nested
@@ -214,9 +227,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2160
+		// Method begins at RVA 0x2180
 		// Header size: 12
-		// Code size: 73 (0x49)
+		// Code size: 106 (0x6a)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -237,16 +250,29 @@
 		IL_0028: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::globalVar
 		IL_002d: ldloc.0
 		IL_002e: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::testFunction
-		IL_0033: ldc.i4.1
-		IL_0034: newarr [System.Runtime]System.Object
-		IL_0039: dup
-		IL_003a: ldc.i4.0
-		IL_003b: ldloc.0
-		IL_003c: castclass Scopes.Function_NestedFunctionAccessesMultipleScopes
-		IL_0041: stelem.ref
-		IL_0042: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0047: pop
-		IL_0048: ret
+		IL_0033: dup
+		IL_0034: brtrue.s IL_0054
+
+		IL_0036: pop
+		IL_0037: ldloc.0
+		IL_0038: ldnull
+		IL_0039: ldftn object Functions.testFunction/testFunction_Nested::testFunction(object[])
+		IL_003f: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0044: stfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::testFunction
+		IL_0049: ldloc.0
+		IL_004a: ldfld object Scopes.Function_NestedFunctionAccessesMultipleScopes::testFunction
+		IL_004f: br IL_0054
+
+		IL_0054: ldc.i4.1
+		IL_0055: newarr [System.Runtime]System.Object
+		IL_005a: dup
+		IL_005b: ldc.i4.0
+		IL_005c: ldloc.0
+		IL_005d: castclass Scopes.Function_NestedFunctionAccessesMultipleScopes
+		IL_0062: stelem.ref
+		IL_0063: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0068: pop
+		IL_0069: ret
 	} // end of method Program::Main
 
 } // end of class Program

@@ -88,7 +88,7 @@
 	{
 		// Method begins at RVA 0x2090
 		// Header size: 12
-		// Code size: 138 (0x8a)
+		// Code size: 148 (0x94)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -126,20 +126,27 @@
 		IL_0059: ldc.i4.1
 		IL_005a: ldloc.0
 		IL_005b: ldfld object Scopes.ArrowFunction_CapturesOuterVariable::'mul'
-		IL_0060: ldc.i4.1
-		IL_0061: newarr [System.Runtime]System.Object
-		IL_0066: dup
-		IL_0067: ldc.i4.0
-		IL_0068: ldloc.0
-		IL_0069: castclass Scopes.ArrowFunction_CapturesOuterVariable
-		IL_006e: stelem.ref
-		IL_006f: ldc.r8 3
-		IL_0078: box [System.Runtime]System.Double
-		IL_007d: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0082: stelem.ref
-		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0088: pop
-		IL_0089: ret
+		IL_0060: dup
+		IL_0061: brtrue.s IL_006a
+
+		IL_0063: pop
+		IL_0064: ldnull
+		IL_0065: br IL_006a
+
+		IL_006a: ldc.i4.1
+		IL_006b: newarr [System.Runtime]System.Object
+		IL_0070: dup
+		IL_0071: ldc.i4.0
+		IL_0072: ldloc.0
+		IL_0073: castclass Scopes.ArrowFunction_CapturesOuterVariable
+		IL_0078: stelem.ref
+		IL_0079: ldc.r8 3
+		IL_0082: box [System.Runtime]System.Double
+		IL_0087: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_008c: stelem.ref
+		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0092: pop
+		IL_0093: ret
 	} // end of method Program::Main
 
 } // end of class Program

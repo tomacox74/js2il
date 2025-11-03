@@ -51,7 +51,7 @@ namespace Js2IL.Tests
 
             // Assert
             var funcScope = scopeTree.Root.Children[0];
-            Assert.Equal("Function_callback", funcScope.Name);
+            Assert.Equal("FunctionExpression_callback", funcScope.Name);
         }
 
         [Fact]

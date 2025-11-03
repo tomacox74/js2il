@@ -192,7 +192,7 @@ namespace Js2IL.Tests
             // Should have one child scope with descriptive name based on assignment
             Assert.Single(scopeTree.Root.Children);
             var funcScope = scopeTree.Root.Children[0];
-            Assert.Equal("Function_callback", funcScope.Name);
+            Assert.Equal("FunctionExpression_callback", funcScope.Name);
             Assert.True(funcScope.Bindings.ContainsKey("x"));
         }
 
@@ -271,6 +271,63 @@ namespace Js2IL.Tests
 
             // The for loop block should not have any bindings (console.log is just an expression)
             Assert.Empty(forBlockScope.Bindings);
+        }
+
+        [Fact]
+        public void Build_IIFE_CreatesFunctionExpressionScope_WithLocationBasedName()
+        {
+            // Arrange - anonymous function expression invoked immediately (IIFE)
+            var code = @"(function(x) { return x; })(42);";
+            var ast = _parser.ParseJavaScript(code, "test.js");
+
+            // Act
+            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+
+            // Assert
+            // Global scope should have no binding for the anonymous function (not assigned)
+            Assert.DoesNotContain(scopeTree.Root.Bindings, kvp => kvp.Value.Kind == BindingKind.Function);
+
+            // Should have one child scope for the function expression
+            Assert.Single(scopeTree.Root.Children);
+            var iifeScope = scopeTree.Root.Children[0];
+            Assert.Equal(ScopeKind.Function, iifeScope.Kind);
+            Assert.StartsWith("FunctionExpression_", iifeScope.Name);
+            Assert.Contains("_L", iifeScope.Name); // location-based naming
+            Assert.Contains("C", iifeScope.Name);
+
+            // Parameter 'x' should be a binding in the function scope
+            Assert.True(iifeScope.Bindings.ContainsKey("x"));
+            Assert.Equal(BindingKind.Var, iifeScope.Bindings["x"].Kind);
+        }
+
+        [Fact]
+        public void Build_NamedFunctionExpressionIIFE_InternalBindingOnlyInFunction()
+        {
+            // Arrange - named function expression invoked immediately
+            var code = @"(function walk(n) { return n; })(0);";
+            var ast = _parser.ParseJavaScript(code, "test.js");
+
+            // Act
+            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+
+            // Assert
+            // Global scope should not contain a binding for the internal name 'walk'
+            Assert.DoesNotContain(scopeTree.Root.Bindings, kvp => kvp.Key == "walk");
+
+            // There should be exactly one child scope (the function expression)
+            Assert.Single(scopeTree.Root.Children);
+            var funcScope = scopeTree.Root.Children[0];
+            Assert.Equal(ScopeKind.Function, funcScope.Kind);
+            // Named function expression uses its internal name for the scope name
+            Assert.Equal("walk", funcScope.Name);
+
+            // Internal binding 'walk' is available inside the function scope only
+            Assert.True(funcScope.Bindings.ContainsKey("walk"));
+            Assert.Equal(BindingKind.Function, funcScope.Bindings["walk"].Kind);
+
+            // Parameter 'n' should also be present in the function scope
+            Assert.True(funcScope.Bindings.ContainsKey("n"));
+            Assert.Equal(BindingKind.Var, funcScope.Bindings["n"].Kind);
         }
     }
 }

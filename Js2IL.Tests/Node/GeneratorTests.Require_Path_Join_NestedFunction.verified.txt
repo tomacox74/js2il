@@ -96,7 +96,7 @@
 	{
 		// Method begins at RVA 0x2098
 		// Header size: 12
-		// Code size: 102 (0x66)
+		// Code size: 135 (0x87)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -122,20 +122,33 @@
 		IL_0039: ldc.i4.0
 		IL_003a: ldloc.0
 		IL_003b: ldfld object Scopes.Require_Path_Join_NestedFunction::joinWrapper
-		IL_0040: ldc.i4.1
-		IL_0041: newarr [System.Runtime]System.Object
-		IL_0046: dup
-		IL_0047: ldc.i4.0
-		IL_0048: ldloc.0
-		IL_0049: castclass Scopes.Require_Path_Join_NestedFunction
-		IL_004e: stelem.ref
-		IL_004f: ldstr "a"
-		IL_0054: ldstr "b"
-		IL_0059: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
-		IL_005e: stelem.ref
-		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0064: pop
-		IL_0065: ret
+		IL_0040: dup
+		IL_0041: brtrue.s IL_0061
+
+		IL_0043: pop
+		IL_0044: ldloc.0
+		IL_0045: ldnull
+		IL_0046: ldftn object Functions.joinWrapper::joinWrapper(object[], object, object)
+		IL_004c: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_0051: stfld object Scopes.Require_Path_Join_NestedFunction::joinWrapper
+		IL_0056: ldloc.0
+		IL_0057: ldfld object Scopes.Require_Path_Join_NestedFunction::joinWrapper
+		IL_005c: br IL_0061
+
+		IL_0061: ldc.i4.1
+		IL_0062: newarr [System.Runtime]System.Object
+		IL_0067: dup
+		IL_0068: ldc.i4.0
+		IL_0069: ldloc.0
+		IL_006a: castclass Scopes.Require_Path_Join_NestedFunction
+		IL_006f: stelem.ref
+		IL_0070: ldstr "a"
+		IL_0075: ldstr "b"
+		IL_007a: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
+		IL_007f: stelem.ref
+		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0085: pop
+		IL_0086: ret
 	} // end of method Program::Main
 
 } // end of class Program

@@ -50,5 +50,13 @@ namespace Js2IL.Tests.Function
     
         [Fact]
         public Task Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal() { var testName = nameof(Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal); return GenerateTest(testName); }
+
+        // New IIFE test
+        [Fact]
+        public Task Function_IIFE_Classic() { var testName = nameof(Function_IIFE_Classic); return GenerateTest(testName); }
+
+        // New recursive IIFE test
+        [Fact]
+        public Task Function_IIFE_Recursive() { var testName = nameof(Function_IIFE_Recursive); return GenerateTest(testName); }
     }
 }
