@@ -78,8 +78,16 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Function declarations | Supported | `Js2IL.Tests/JavaScript/Function_HelloWorld.js` |  | 13.2.3 |
+| Function declarations | Supported | `Js2IL.Tests/JavaScript/Function_HelloWorld.js` | Hoisted and initialized before top-level statement evaluation so functions can call each other by name prior to IIFE invocation. | 13.2.3 |
 | Arrow functions | Partially Supported | `Js2IL.Tests/JavaScript/ArrowFunction_SimpleExpression.js`<br>`Js2IL.Tests/JavaScript/ArrowFunction_BlockBody_Return.js`<br>`Js2IL.Tests/JavaScript/ArrowFunction_GlobalFunctionCallsGlobalFunction.js`<br>`Js2IL.Tests/JavaScript/ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.js`<br>`Js2IL.Tests/JavaScript/ArrowFunction_GlobalFunctionWithMultipleParameters.js`<br>`Js2IL.Tests/JavaScript/ArrowFunction_NestedFunctionAccessesMultipleScopes.js`<br>`Js2IL.Tests/JavaScript/ArrowFunction_CapturesOuterVariable.js` | Covers expression- and block-bodied arrows, multiple parameters, nested functions, and closure capture across scopes (including returning functions that capture globals/locals). Not yet supported: default/rest parameters, parameter destructuring, lexical this/arguments semantics, and spread at call sites. | 13.2.3 |
+
+
+#### [Function expressions (anonymous and named)](https://tc39.es/ecma262/#sec-function-definitions)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Function expressions (anonymous) | Supported | `Js2IL.Tests/Function/JavaScript/Function_IIFE_Classic.js` | Emitted as static methods with delegate creation and closure binding as needed; supports immediate invocation patterns (IIFE). | 13.2.3 (Function expressions) |
+| Named function expressions (internal self-binding for recursion) | Supported | `Js2IL.Tests/Function/JavaScript/Function_IIFE_Recursive.js` | On first entry, the internal name is eagerly bound to a self-delegate via JavaScriptRuntime.Closure.CreateSelfDelegate(MethodBase, int), enabling recursion from within the function body. | 13.2.3 (Function expressions) |
 
 
 #### [Default parameters, Rest parameters](https://tc39.es/ecma262/#sec-function-definitions-runtime-semantics-evaluation)
