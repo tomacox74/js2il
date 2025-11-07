@@ -1,7 +1,7 @@
 ﻿# Node Support Coverage
 
 Target: `22.x LTS`
-Generated: `2025-11-07T00:32:36.047Z`
+Generated: `2025-11-07T03:32:08.435Z`
 
 
 ## Modules
