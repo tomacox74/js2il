@@ -43,5 +43,36 @@ namespace JavaScriptRuntime.Node
                 return new JavaScriptRuntime.Array(new object[] { JavaScriptRuntime.GlobalVariables.__filename });
             }
         }
+
+        /// <summary>
+        /// Immediately terminates the current process with the specified exit code.
+        /// Overload without arguments uses the current Environment.ExitCode.
+        /// </summary>
+        public void exit()
+        {
+            // Record the current exit code for deterministic testing when termination is suppressed
+            try { JavaScriptRuntime.EnvironmentProvider.LastExitCodeSet = JavaScriptRuntime.EnvironmentProvider.Current.ExitCode; } catch { }
+            JavaScriptRuntime.EnvironmentProvider.Current.Exit();
+        }
+
+        /// <summary>
+        /// Immediately terminates the current process with the provided code (coerced to int).
+        /// </summary>
+        public void exit(object? code)
+        {
+            int ec;
+            try
+            {
+                ec = (int)JavaScriptRuntime.TypeUtilities.ToNumber(code);
+            }
+            catch
+            {
+                ec = 0;
+            }
+            // Record explicitly provided exit code
+            try { JavaScriptRuntime.EnvironmentProvider.LastExitCodeSet = ec; } catch { }
+            JavaScriptRuntime.EnvironmentProvider.Current.ExitCode = ec;
+            JavaScriptRuntime.EnvironmentProvider.Current.Exit(ec);
+        }
     }
 }

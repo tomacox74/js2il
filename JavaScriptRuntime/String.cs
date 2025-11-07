@@ -83,6 +83,93 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// Implements a subset of String.prototype.endsWith(searchString[, length]).
+        /// If length is provided, the string is treated as if it were truncated to that length.
+        /// Uses ordinal comparison.
+        /// </summary>
+        public static object EndsWith(string input, string searchString)
+        {
+            return EndsWith(input, searchString, null);
+        }
+
+        public static object EndsWith(string input, string searchString, object? length)
+        {
+            input ??= string.Empty;
+            searchString ??= string.Empty;
+
+            int len = input.Length;
+            if (length != null)
+            {
+                try
+                {
+                    double d;
+                    if (length is double dd) d = dd;
+                    else if (length is float ff) d = ff;
+                    else if (length is int ii) d = ii;
+                    else if (length is long ll) d = ll;
+                    else if (length is string s && double.TryParse(s, out var parsed)) d = parsed;
+                    else if (length is IConvertible conv) d = conv.ToDouble(System.Globalization.CultureInfo.InvariantCulture);
+                    else d = input.Length;
+
+                    if (double.IsNaN(d)) d = input.Length;
+                    if (double.IsNegativeInfinity(d)) d = 0d;
+                    if (double.IsPositiveInfinity(d)) d = input.Length;
+                    d = d >= 0 ? global::System.Math.Floor(d) : global::System.Math.Ceiling(d);
+                    if (d < 0) d = 0;
+                    if (d > input.Length) d = input.Length;
+                    len = (int)d;
+                }
+                catch { len = input.Length; }
+            }
+
+            if (searchString.Length == 0) return true;
+            if (len < searchString.Length) return false;
+            return input.AsSpan(0, len).EndsWith(searchString.AsSpan(), StringComparison.Ordinal);
+        }
+
+        /// <summary>
+        /// Implements a subset of String.prototype.includes(searchString[, position]).
+        /// Uses ordinal comparison.
+        /// </summary>
+        public static object Includes(string input, string searchString)
+        {
+            return Includes(input, searchString, null);
+        }
+
+        public static object Includes(string input, string searchString, object? position)
+        {
+            input ??= string.Empty;
+            searchString ??= string.Empty;
+            int pos = 0;
+            if (position != null)
+            {
+                try
+                {
+                    double d;
+                    if (position is double dd) d = dd;
+                    else if (position is float ff) d = ff;
+                    else if (position is int ii) d = ii;
+                    else if (position is long ll) d = ll;
+                    else if (position is string s && double.TryParse(s, out var parsed)) d = parsed;
+                    else if (position is IConvertible conv) d = conv.ToDouble(System.Globalization.CultureInfo.InvariantCulture);
+                    else d = 0d;
+
+                    if (double.IsNaN(d)) d = 0d;
+                    if (double.IsNegativeInfinity(d)) d = 0d;
+                    if (double.IsPositiveInfinity(d)) d = input.Length;
+                    d = d >= 0 ? global::System.Math.Floor(d) : global::System.Math.Ceiling(d);
+                    if (d < 0) d = 0;
+                    if (d > input.Length) d = input.Length;
+                    pos = (int)d;
+                }
+                catch { pos = 0; }
+            }
+            if (searchString.Length == 0) return true;
+            if (pos < 0 || pos > input.Length) return false;
+            return input.IndexOf(searchString, pos, StringComparison.Ordinal) >= 0;
+        }
+
+        /// <summary>
         /// Implements a subset of String.prototype.replace when the pattern is a regular expression literal
         /// and the replacement is a string. Supports global and ignoreCase flags.
         /// </summary>
@@ -101,6 +188,51 @@ namespace JavaScriptRuntime
             {
                 // Replace only the first occurrence
                 return re.Replace(input, replacement, 1);
+            }
+        }
+
+        /// <summary>
+        /// Replace with a callback function: replacement can be a bound delegate. We support common delegate
+        /// shapes produced by the compiler (Func<object[], object> and Func<object[], object, object>). The callback
+        /// receives the matched substring; its return value is coerced to string.
+        /// </summary>
+        public static string Replace(string input, string pattern, object replacementCallback, bool global, bool ignoreCase)
+        {
+            if (input == null) return string.Empty;
+            var options = RegexOptions.CultureInvariant;
+            if (ignoreCase) options |= RegexOptions.IgnoreCase;
+            var re = new Regex(pattern, options);
+
+            string Invoke(object? cb, string match)
+            {
+                if (cb is Func<object[], object, object> f1)
+                {
+                    var r = f1(System.Array.Empty<object>(), match);
+                    return DotNet2JSConversions.ToString(r);
+                }
+                if (cb is Func<object[], object> f0)
+                {
+                    var r = f0(System.Array.Empty<object>());
+                    return DotNet2JSConversions.ToString(r);
+                }
+                // Fallback: ToString on callback object (unlikely useful)
+                return DotNet2JSConversions.ToString(cb);
+            }
+
+            var evaluator = new MatchEvaluator(m => Invoke(replacementCallback, m.Value));
+            if (global)
+            {
+                return re.Replace(input, evaluator);
+            }
+            else
+            {
+                // Replace the first match only
+                int count = 0;
+                return re.Replace(input, m =>
+                {
+                    if (count++ == 0) return Invoke(replacementCallback, m.Value);
+                    return m.Value;
+                });
             }
         }
 

@@ -28,6 +28,35 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// JavaScript Array.from(source) minimal implementation.
+        /// Supports JavaScriptRuntime.Array, IEnumerable, and Set.
+        /// </summary>
+        public static object from(object? source)
+        {
+            if (source == null) return new Array();
+
+            // If already a JS array, return a shallow copy
+            if (source is Array jsArr)
+            {
+                return new Array(jsArr);
+            }
+
+            // If source is IEnumerable, copy items
+            if (source is System.Collections.IEnumerable enumerable)
+            {
+                var result = new Array();
+                foreach (var item in enumerable)
+                {
+                    result.Add(item!);
+                }
+                return result;
+            }
+
+            // Fallback: wrap single element
+            return new Array(new object[] { source });
+        }
+
+        /// <summary>
         /// JavaScript Array.isArray(value) static method.
         /// Returns true if the provided value is a JavaScriptRuntime.Array instance; false otherwise.
         /// </summary>

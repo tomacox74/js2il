@@ -1,4 +1,4 @@
-# ECMAScript 2025 Feature Coverage
+﻿# ECMAScript 2025 Feature Coverage
 
 [ECMAScript® 2025 Language Specification](https://tc39.es/ecma262/)
 
@@ -692,7 +692,7 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Array.prototype.map | Partially Supported | `Js2IL.Tests/JavaScript/Array_Map_Basic.js` | Supports basic value-callback mapping and returns a new array. thisArg and additional callback parameters (index, array) are not yet supported. | 23.1.3.25 |
+| Array.prototype.map | Partially Supported | `Js2IL.Tests/JavaScript/Array_Map_Basic.js` | Supports value-callback mapping including nested callback closures (scope array construction fix in current branch). thisArg and standard callback parameter injections (index, array) are not yet supported; callback currently receives only the element value. Returns a new array. | 23.1.3.25 |
 
 
 #### [Array.prototype.sort](https://tc39.es/ecma262/#sec-array.prototype.sort)
@@ -740,6 +740,8 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 ## [Text Processing](https://tc39.es/ecma262/#sec-text-processing)
 
+### [Keyed Collections](https://tc39.es/ecma262/#sec-keyed-collections)
+
 ### [String Objects](https://tc39.es/ecma262/#sec-string-objects)
 
 #### [String.prototype.startsWith](https://tc39.es/ecma262/#sec-string.prototype.startswith)
@@ -747,6 +749,20 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
 | String.prototype.startsWith | Supported | `Js2IL.Tests/JavaScript/String_StartsWith_Basic.js` | Reflection-based string dispatch routes CLR string receivers to JavaScriptRuntime.String.StartsWith with optional position argument. Returns a boolean value (boxed). | 24.1.3 |
+
+
+#### [String.prototype.includes](https://tc39.es/ecma262/#sec-string.prototype.includes)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| String.prototype.includes | Supported | `Js2IL.Tests/String/GeneratorTests.String_Includes.verified.txt` | Reflection-based dispatch recognizes definite string receivers and routes to JavaScriptRuntime.String.Includes; supports optional position argument. Returns a boolean value. | 24.1.3 |
+
+
+#### [String.prototype.endsWith](https://tc39.es/ecma262/#sec-string.prototype.endswith)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| String.prototype.endsWith | Supported | `Js2IL.Tests/String/GeneratorTests.String_EndsWith.verified.txt` | Implemented in JavaScriptRuntime.String and wired via IL generator for definite string receivers. Supports optional end position. Returns a boolean value. | 24.1.3 |
 
 
 #### [String.prototype.split](https://tc39.es/ecma262/#sec-string.prototype.split)

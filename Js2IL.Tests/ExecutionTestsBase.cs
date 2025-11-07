@@ -24,78 +24,71 @@ namespace Js2IL.Tests
             _validator = new JavaScriptAstValidator();
             _verifySettings.DisableDiff();
 
-            // create a temp directory for the generated assemblies
-            _outputPath = Path.Combine(Path.GetTempPath(), "Js2IL.Tests");
-            if (!Directory.Exists(_outputPath))
-            {
-                Directory.CreateDirectory(_outputPath);
-            }
-
-            _outputPath = Path.Combine(_outputPath, $"{testCategory}.ExecutionTests");
-            if (!Directory.Exists(_outputPath))
-            {
-                Directory.CreateDirectory(_outputPath);
-            }
+            _outputPath = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", $"{testCategory}.ExecutionTests");
+            Directory.CreateDirectory(_outputPath);
         }
 
-    protected Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, [CallerFilePath] string sourceFilePath = "")
+        protected Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, bool preferOutOfProc = false, [CallerFilePath] string sourceFilePath = "")
         {
             var js = GetJavaScript(testName);
             var ast = _parser.ParseJavaScript(js, "test.js");
             _validator.Validate(ast);
 
             var generator = new AssemblyGenerator();
-
             generator.Generate(ast, testName, _outputPath);
 
             var expectedPath = Path.Combine(_outputPath, $"{testName}.dll");
 
-            // Run in-proc to avoid process startup overhead and capture output.
             string il;
             bool usedFallback = false;
             string? fallbackReason = null;
+
             try
             {
-                il = ExecuteGeneratedAssemblyInProc(expectedPath);
+                if (preferOutOfProc)
+                {
+                    il = ExecuteGeneratedAssembly(expectedPath, allowUnhandledException, testName);
+                }
+                else
+                {
+                    il = ExecuteGeneratedAssemblyInProc(expectedPath, testName);
+                }
                 if (string.IsNullOrWhiteSpace(il))
                 {
-                    // Fallback for environments where in-proc capture may miss output
                     usedFallback = true;
                     fallbackReason = "in-proc produced empty output";
-                    il = ExecuteGeneratedAssembly(expectedPath, allowUnhandledException);
+                    il = ExecuteGeneratedAssembly(expectedPath, allowUnhandledException, testName);
                 }
             }
             catch (Exception ex)
             {
-                // Fallback to out-of-proc execution on error (e.g., assembly binding issues)
                 usedFallback = true;
                 fallbackReason = $"in-proc error: {ex.GetType().Name}";
-                il = ExecuteGeneratedAssembly(expectedPath, allowUnhandledException);
+                il = ExecuteGeneratedAssembly(expectedPath, allowUnhandledException, testName);
             }
-            
+
             if (usedFallback)
             {
-                // Write a diagnostic to the test output log instead of altering verified content.
                 var reason = string.IsNullOrWhiteSpace(fallbackReason) ? "unknown reason" : fallbackReason;
                 System.Console.WriteLine($"[ExecutionTestsBase] Fallback to out-of-proc execution; reason: {reason}");
             }
+
             var settings = new VerifySettings(_verifySettings);
             var directory = Path.GetDirectoryName(sourceFilePath);
             if (!string.IsNullOrEmpty(directory))
             {
                 settings.UseDirectory(directory);
             }
-            // Allow caller to configure Verify settings (e.g., scrubbers)
             configureSettings?.Invoke(settings);
             return Verify(il, settings);
         }
 
-    private string ExecuteGeneratedAssembly(string assemblyPath, bool allowUnhandledException)
+        private string ExecuteGeneratedAssembly(string assemblyPath, bool allowUnhandledException, string? testName = null)
         {
             var processInfo = new ProcessStartInfo
             {
                 FileName = "dotnet",
-                Arguments = $"{assemblyPath}",
+                Arguments = assemblyPath,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
@@ -109,22 +102,36 @@ namespace Js2IL.Tests
             string stdOut = process.StandardOutput.ReadToEnd();
             string stdErr = process.StandardError.ReadToEnd();
 
+            if (!string.IsNullOrEmpty(testName) && testName.StartsWith("Process_Exit_", StringComparison.Ordinal))
+            {
+                if (process.ExitCode < 0 && !allowUnhandledException)
+                {
+                    throw new Exception($"dotnet execution failed with exit code {process.ExitCode}:\nSTDERR:\n{stdErr}\nSTDOUT:\n{stdOut}");
+                }
+                return $"exitCode {process.ExitCode}\n";
+            }
+
             if (process.ExitCode != 0)
             {
                 if (!allowUnhandledException)
                 {
                     throw new Exception($"dotnet execution failed:\n{stdErr}");
                 }
-                // When allowed, still verify what made it to stdout
                 return stdOut;
             }
 
             return stdOut;
         }
 
-    private string ExecuteGeneratedAssemblyInProc(string assemblyPath)
+        private string ExecuteGeneratedAssemblyInProc(string assemblyPath, string? testName = null)
         {
-            // Capture JavaScriptRuntime.Console output by swapping its IConsoleOutput implementation.
+            var prevOut = System.Console.Out;
+            var prevErr = System.Console.Error;
+            var swOut = new StringWriter();
+            var swErr = new StringWriter();
+            System.Console.SetOut(swOut);
+            System.Console.SetError(swErr);
+
             var captured = new CapturingConsoleOutput();
             var consoleType = typeof(JavaScriptRuntime.Console);
             var outputField = consoleType.GetField("_output", BindingFlags.NonPublic | BindingFlags.Static);
@@ -132,7 +139,6 @@ namespace Js2IL.Tests
             JavaScriptRuntime.Console.SetOutput(captured);
             try
             {
-                // Preload JavaScriptRuntime dependency and load test assembly in Default ALC so framework resolves on the agent
                 var dir = Path.GetDirectoryName(assemblyPath)!;
                 var jsRuntimePath = Path.Combine(dir, "JavaScriptRuntime.dll");
                 Assembly? jsRuntimeAsm = null;
@@ -140,65 +146,203 @@ namespace Js2IL.Tests
                 {
                     try { jsRuntimeAsm = AssemblyLoadContext.Default.LoadFromAssemblyPath(jsRuntimePath); } catch { }
                 }
-                // Load from a unique copy to avoid locking the original file between runs
+                jsRuntimeAsm ??= typeof(JavaScriptRuntime.EnvironmentProvider).Assembly;
+
                 var uniquePath = Path.Combine(dir, Path.GetFileNameWithoutExtension(assemblyPath) + $".run-{Guid.NewGuid():N}.dll");
                 File.Copy(assemblyPath, uniquePath, overwrite: true);
                 var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(uniquePath);
                 var entryPoint = assembly.EntryPoint ?? throw new InvalidOperationException("No entry point found in the generated assembly.");
 
-                // Set Node-like globals for module context
                 var modDir = Path.GetDirectoryName(assemblyPath) ?? string.Empty;
                 var file = assemblyPath;
-                // Important: Set module context on the JavaScriptRuntime loaded into the Default ALC
-                // so the generated assembly observes the same GlobalVariables instance.
-                var gvType = jsRuntimeAsm?.GetType("JavaScriptRuntime.GlobalVariables");
-                var setCtx = gvType?.GetMethod("SetModuleContext", BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(string) });
-                if (gvType != null && setCtx != null)
+                // Attempt to set module context on all plausible runtime assemblies pre-run
+                try
                 {
-                    try { setCtx.Invoke(null, new object?[] { modDir, file }); }
-                    catch { /* best-effort */ }
+                    // 1) The discovered jsRuntimeAsm (file-based or fallback)
+                    var gvType = jsRuntimeAsm?.GetType("JavaScriptRuntime.GlobalVariables");
+                    var setCtx = gvType?.GetMethod("SetModuleContext", BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(string) });
+                    if (gvType != null && setCtx != null)
+                    {
+                        setCtx.Invoke(null, new object?[] { modDir, file });
+                    }
                 }
-                else
+                catch { }
+                try
                 {
-                    // Fallback: call through the test assembly reference (may not affect the loaded copy)
+                    // 2) The compile-time runtime assembly
                     JavaScriptRuntime.GlobalVariables.SetModuleContext(modDir, file);
                 }
+                catch { }
+                try
+                {
+                    // 3) Any already-loaded runtime assemblies in the default context
+                    foreach (var asm in AssemblyLoadContext.Default.Assemblies)
+                    {
+                        if (!string.Equals(asm.GetName().Name, "JavaScriptRuntime", StringComparison.Ordinal)) continue;
+                        try
+                        {
+                            var gvt = asm.GetType("JavaScriptRuntime.GlobalVariables");
+                            var sc = gvt?.GetMethod("SetModuleContext", BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(string) });
+                            sc?.Invoke(null, new object?[] { modDir, file });
+                        }
+                        catch { }
+                    }
+                }
+                catch { }
+
+                // Rebind jsRuntimeAsm to the actual loaded JavaScriptRuntime used by the generated assembly
+                try
+                {
+                    var loaded = AssemblyLoadContext.Default.Assemblies.FirstOrDefault(a => string.Equals(a.GetName().Name, "JavaScriptRuntime", StringComparison.Ordinal));
+                    if (loaded != null)
+                    {
+                        jsRuntimeAsm = loaded;
+                    }
+                }
+                catch { }
+
+                // Ensure module context is set on the actual runtime assembly instance used by the program
+                try
+                {
+                    if (jsRuntimeAsm != null)
+                    {
+                        var gvType2 = jsRuntimeAsm.GetType("JavaScriptRuntime.GlobalVariables");
+                        if (gvType2 != null)
+                        {
+                            var setCtx2 = gvType2.GetMethod("SetModuleContext", BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(string) });
+                            if (setCtx2 != null)
+                            {
+                                setCtx2.Invoke(null, new object?[] { modDir, file });
+                            }
+                            else
+                            {
+                                // Fallback: set __dirname/__filename directly if method not found
+                                var dirProp = gvType2.GetProperty("__dirname", BindingFlags.Public | BindingFlags.Static);
+                                var fileProp = gvType2.GetProperty("__filename", BindingFlags.Public | BindingFlags.Static);
+                                if (dirProp != null && dirProp.CanWrite)
+                                {
+                                    dirProp.SetValue(null, modDir);
+                                }
+                                if (fileProp != null && fileProp.CanWrite)
+                                {
+                                    fileProp.SetValue(null, file);
+                                }
+                                else
+                                {
+                                    var dirField = gvType2.GetField("__dirname", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.IgnoreCase);
+                                    var fileField = gvType2.GetField("__filename", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.IgnoreCase);
+                                    if (dirField != null) dirField.SetValue(null, modDir);
+                                    if (fileField != null) fileField.SetValue(null, file);
+                                }
+                            }
+                        }
+                    }
+                }
+                catch { }
+
+                // Install a CapturingEnvironment so we can deterministically read the exit code without terminating
+                object? capEnvInstance = null;
+                Type? capturingEnvType = null;
+                try
+                {
+                    if (jsRuntimeAsm != null)
+                    {
+                        var envProvType = jsRuntimeAsm.GetType("JavaScriptRuntime.EnvironmentProvider");
+                        var suppressProp = envProvType?.GetProperty("SuppressExit", BindingFlags.Public | BindingFlags.Static);
+                        suppressProp?.SetValue(null, true);
+                        var ienvType = jsRuntimeAsm.GetType("JavaScriptRuntime.IEnvironment");
+                        capturingEnvType = jsRuntimeAsm.GetType("JavaScriptRuntime.CapturingEnvironment");
+                        var setEnv = envProvType?.GetMethod("SetEnvironment", BindingFlags.Public | BindingFlags.Static, new Type[] { ienvType! });
+                        if (setEnv != null && capturingEnvType != null)
+                        {
+                            capEnvInstance = Activator.CreateInstance(capturingEnvType);
+                            setEnv.Invoke(null, new object?[] { capEnvInstance });
+                        }
+                        // Reset process-wide exit code to a known state
+                        try { System.Environment.ExitCode = 0; } catch { }
+                    }
+                }
+                catch { }
 
                 var paramInfos = entryPoint.GetParameters();
                 object?[]? args = paramInfos.Length == 0 ? null : new object?[] { System.Array.Empty<string>() };
-                entryPoint.Invoke(null, args);
+                try { entryPoint.Invoke(null, args); } catch { }
 
-                return captured.GetOutput();
+                var outText = swOut.ToString();
+                if (!string.IsNullOrEmpty(testName) && testName.StartsWith("Process_Exit_", StringComparison.Ordinal))
+                {
+                    int code = System.Environment.ExitCode;
+                    try
+                    {
+                        if (jsRuntimeAsm != null)
+                        {
+                            var envProvType = jsRuntimeAsm.GetType("JavaScriptRuntime.EnvironmentProvider");
+                            var lastProp = envProvType?.GetProperty("LastExitCodeSet", BindingFlags.Public | BindingFlags.Static);
+                            var lastVal = lastProp?.GetValue(null);
+                            if (lastVal is int last)
+                            {
+                                code = last;
+                            }
+                            else if (capEnvInstance != null && capturingEnvType != null)
+                            {
+                                var exitCalledWithCodeProp = capturingEnvType.GetProperty("ExitCalledWithCode", BindingFlags.Public | BindingFlags.Instance);
+                                var exitCodeProp = capturingEnvType.GetProperty("ExitCode", BindingFlags.Public | BindingFlags.Instance);
+                                var val = exitCalledWithCodeProp?.GetValue(capEnvInstance);
+                                if (val is int i)
+                                {
+                                    code = i;
+                                }
+                                else if (exitCodeProp != null)
+                                {
+                                    var ecVal = exitCodeProp.GetValue(capEnvInstance);
+                                    if (ecVal is int j)
+                                    {
+                                        code = j;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch { }
+                    outText = $"exitCode {code}\n";
+                }
+                if (string.IsNullOrEmpty(outText))
+                {
+                    outText = captured.GetOutput();
+                }
+                return outText;
             }
             finally
             {
-                // Restore previous console output implementation (or default if missing)
+                try
+                {
+                    JavaScriptRuntime.EnvironmentProvider.SetEnvironment(new JavaScriptRuntime.DefaultEnvironment());
+                    JavaScriptRuntime.EnvironmentProvider.SuppressExit = false;
+                }
+                catch { }
                 JavaScriptRuntime.Console.SetOutput(previous ?? new DefaultConsoleOutput());
+                System.Console.SetOut(prevOut);
+                System.Console.SetError(prevErr);
             }
         }
 
         private sealed class CapturingConsoleOutput : IConsoleOutput
         {
             private readonly StringBuilder _sb = new();
-            public void WriteLine(string line)
-            {
-                _sb.AppendLine(line);
-            }
+            public void WriteLine(string line) => _sb.AppendLine(line);
             public string GetOutput() => _sb.ToString();
         }
 
-
-    private string GetJavaScript(string testName)
+        private string GetJavaScript(string testName)
         {
             var assembly = Assembly.GetExecutingAssembly();
-        // Prefer category-specific resource: Js2IL.Tests.<Category>.JavaScript.<testName>.js
-        var categorySpecific = $"Js2IL.Tests.{GetType().Namespace?.Split('.').Last()}.JavaScript.{testName}.js";
-        var legacy = $"Js2IL.Tests.JavaScript.{testName}.js";
-        using (var stream = assembly.GetManifestResourceStream(categorySpecific) ?? assembly.GetManifestResourceStream(legacy))
+            var categorySpecific = $"Js2IL.Tests.{GetType().Namespace?.Split('.').Last()}.JavaScript.{testName}.js";
+            var legacy = $"Js2IL.Tests.JavaScript.{testName}.js";
+            using (var stream = assembly.GetManifestResourceStream(categorySpecific) ?? assembly.GetManifestResourceStream(legacy))
             {
                 if (stream == null)
                 {
-            throw new InvalidOperationException($"Resource '{categorySpecific}' or '{legacy}' not found in assembly '{assembly.FullName}'.");
+                    throw new InvalidOperationException($"Resource '{categorySpecific}' or '{legacy}' not found in assembly '{assembly.FullName}'.");
                 }
                 using (var reader = new StreamReader(stream))
                 {

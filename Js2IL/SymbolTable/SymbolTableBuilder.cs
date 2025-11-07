@@ -299,12 +299,39 @@ namespace Js2IL.SymbolTables
                         ? $"ArrowFunction_{_currentAssignmentTarget}"
                         : $"ArrowFunction_L{arrowFunc.Location.Start.Line}C{arrowFunc.Location.Start.Column}";
                     var arrowScope = new Scope(arrowName, ScopeKind.Function, currentScope, arrowFunc);
+                    int syntheticIndex = 0;
                     foreach (var param in arrowFunc.Params)
                     {
                         if (param is Identifier id)
                         {
                             arrowScope.Bindings[id.Name] = new BindingInfo(id.Name, BindingKind.Var, id);
                             arrowScope.Parameters.Add(id.Name);
+                        }
+                        else
+                        {
+                            // Fallback: attempt to read a 'Name' property via reflection to support alternate AST shapes
+                            try
+                            {
+                                var prop = param.GetType().GetProperty("Name");
+                                var name = prop?.GetValue(param) as string;
+                                if (!string.IsNullOrEmpty(name))
+                                {
+                                    arrowScope.Bindings[name!] = new BindingInfo(name!, BindingKind.Var, param);
+                                    arrowScope.Parameters.Add(name!);
+                                }
+                                else
+                                {
+                                    var syn = $"p{syntheticIndex++}";
+                                    arrowScope.Bindings[syn] = new BindingInfo(syn, BindingKind.Var, param);
+                                    arrowScope.Parameters.Add(syn);
+                                }
+                            }
+                            catch
+                            {
+                                var syn = $"p{syntheticIndex++}";
+                                arrowScope.Bindings[syn] = new BindingInfo(syn, BindingKind.Var, param);
+                                arrowScope.Parameters.Add(syn);
+                            }
                         }
                     }
                     if (arrowFunc.Body is BlockStatement arrowBlock)

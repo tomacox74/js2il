@@ -12,8 +12,11 @@ namespace Js2IL.Tests.Node
         {
             // arrange
             var prev = Environment.ExitCode;
+            var prevEnv = EnvironmentProvider.Current;
             try
             {
+                // Ensure we're using the default environment that mirrors System.Environment.ExitCode
+                EnvironmentProvider.SetEnvironment(new DefaultEnvironment());
                 Environment.ExitCode = 0;
                 GlobalVariables.process.exitCode = 7;
                 Assert.Equal(7, Environment.ExitCode);
@@ -26,6 +29,7 @@ namespace Js2IL.Tests.Node
             finally
             {
                 Environment.ExitCode = prev;
+                EnvironmentProvider.SetEnvironment(prevEnv);
             }
         }
     }

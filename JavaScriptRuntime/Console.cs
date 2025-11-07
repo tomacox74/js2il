@@ -13,9 +13,9 @@ namespace JavaScriptRuntime
 
         // Instance methods to support a global console object (e.g., console.log)
         // These delegate to the static implementations so both patterns work.
-        public object? log(params object?[] args) => Log(args);
-        public object? error(params object?[] args) => Error(args);
-        public object? warn(params object?[] args) => Warn(args);
+    public object? log(params object?[] args) => Log(args);
+    public object? error(params object?[] args) => Error(args);
+    public object? warn(params object?[] args) => Warn(args);
 
         public static void SetOutput(IConsoleOutput output)
         {
@@ -29,25 +29,54 @@ namespace JavaScriptRuntime
 
         public static object? Log(params object?[] args)
         {
-            var parts = args.Select(arg => DotNet2JSConversions.ToString(arg));
-            var line = string.Join(" ", parts);
-            _output.WriteLine(line);
+            // Empty prints empty line
+            if (args == null || args.Length == 0)
+            {
+                _output.WriteLine(string.Empty);
+                return null;
+            }
+            // Build output without LINQ to avoid capturing implementation details in edge cases
+            var sb = new StringBuilder();
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (i > 0) sb.Append(' ');
+                sb.Append(DotNet2JSConversions.ToString(args[i]));
+            }
+            _output.WriteLine(sb.ToString());
             return null;
         }
 
         public static object? Error(params object?[] args)
         {
-            var parts = args.Select(arg => DotNet2JSConversions.ToString(arg));
-            var line = string.Join(" ", parts);
-            _errorOutput.WriteLine(line);
+            if (args == null || args.Length == 0)
+            {
+                _errorOutput.WriteLine(string.Empty);
+                return null;
+            }
+            var sb = new StringBuilder();
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (i > 0) sb.Append(' ');
+                sb.Append(DotNet2JSConversions.ToString(args[i]));
+            }
+            _errorOutput.WriteLine(sb.ToString());
             return null;
         }
 
         public static object? Warn(params object?[] args)
         {
-            var parts = args.Select(arg => DotNet2JSConversions.ToString(arg));
-            var line = string.Join(" ", parts);
-            _errorOutput.WriteLine(line);
+            if (args == null || args.Length == 0)
+            {
+                _errorOutput.WriteLine(string.Empty);
+                return null;
+            }
+            var sb = new StringBuilder();
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (i > 0) sb.Append(' ');
+                sb.Append(DotNet2JSConversions.ToString(args[i]));
+            }
+            _errorOutput.WriteLine(sb.ToString());
             return null;
         }
     }

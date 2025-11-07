@@ -179,7 +179,23 @@ namespace Js2IL.Services.ILGenerators
                     break;
                 case ArrowFunctionExpression arrowFunction:
                     {
-                        var paramNames = arrowFunction.Params.OfType<Identifier>().Select(p => p.Name).ToArray();
+                        var idParams = arrowFunction.Params.OfType<Identifier>().Select(p => p.Name).ToList();
+                        // Fallback: try to reflect a 'Name' property from param nodes when not Identifier (robust for different AST shapes)
+                        if (idParams.Count == 0 && arrowFunction.Params.Count > 0)
+                        {
+                            foreach (var p in arrowFunction.Params)
+                            {
+                                if (p is Identifier iid) { idParams.Add(iid.Name); continue; }
+                                var prop = p.GetType().GetProperty("Name");
+                                if (prop != null)
+                                {
+                                    var val = prop.GetValue(p) as string;
+                                    if (!string.IsNullOrEmpty(val)) { idParams.Add(val!); continue; }
+                                }
+                                idParams.Add($"p{idParams.Count}");
+                            }
+                        }
+                        var paramNames = idParams.ToArray();
                         var registryScopeName = !string.IsNullOrEmpty(_owner.CurrentAssignmentTarget)
                             ? $"ArrowFunction_{_owner.CurrentAssignmentTarget}"
                             : $"ArrowFunction_L{arrowFunction.Location.Start.Line}C{arrowFunction.Location.Start.Column}";
@@ -573,6 +589,7 @@ namespace Js2IL.Services.ILGenerators
                         // First, try host intrinsic static call (e.g., console.log)
                         if (TryEmitHostIntrinsicStaticCall(baseId.Name, methodName, callExpression))
                         {
+                            // Most host intrinsic statics (e.g., Console.Log) return object; treat as dynamic when unknown
                             return null;
                         }
 
@@ -621,7 +638,7 @@ namespace Js2IL.Services.ILGenerators
 
                             _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
                             _il.Token(mrefHandle);
-                            return null;
+                            return reflectedReturnType;
                         }
                         // Step 4 fallback (legacy): no intrinsic mapping and not a GlobalVariables property
                         throw ILEmitHelpers.NotSupported($"Unsupported member call base identifier: '{baseId.Name}'", baseId);
@@ -922,17 +939,39 @@ namespace Js2IL.Services.ILGenerators
                 {
                     var ps = m.GetParameters();
                     if (ps.Length != 5) return false;
-                    // (string receiver, string pattern, string replacement, bool global, bool ignoreCase)
+                    // (string receiver, string pattern, string replacement|object callback, bool global, bool ignoreCase)
                     return ps[0].ParameterType == typeof(string)
                         && ps[1].ParameterType == typeof(string)
-                        && ps[2].ParameterType == typeof(string)
+                        && (ps[2].ParameterType == typeof(string) || ps[2].ParameterType == typeof(object))
                         && ps[3].ParameterType == typeof(bool)
                         && ps[4].ParameterType == typeof(bool);
                 }).ToList();
                 if (regexMatches.Count > 0 && argCount == 2)
                 {
-                    chosen = regexMatches.First();
-                    useRegexExpansion = true;
+                    // Optimization: if replacement is an arrow function of the form r => `\\${r}` (escape match with backslash),
+                    // prefer string-based replacement using regex '$&' whole-match token to avoid callback delegate emission.
+                    bool patternIsEscape = false;
+                    if (callExpression.Arguments[1] is ArrowFunctionExpression afe && afe.Body is TemplateLiteral t)
+                    {
+                        if (t.Expressions.Count == 1 && t.Quasis.Count == 2 && t.Quasis[0].Value.Cooked == "\\")
+                        {
+                            patternIsEscape = true;
+                        }
+                    }
+
+                    if (patternIsEscape)
+                    {
+                        // Prefer the overload with string replacement
+                        chosen = regexMatches.First(m => m.GetParameters()[2].ParameterType == typeof(string));
+                        useRegexExpansion = true;
+                        // We'll handle emission below by loading replacement string "\\$&" instead of emitting the function
+                        // and setting flags as usual.
+                    }
+                    else
+                    {
+                        chosen = regexMatches.First();
+                        useRegexExpansion = true;
+                    }
                 }
             }
 
@@ -976,8 +1015,25 @@ namespace Js2IL.Services.ILGenerators
                 }
                 // pattern
                 _il.Ldstr(_owner.MetadataBuilder, regexPattern);
-                // replacement coerced to string
-                _ = Emit(callExpression.Arguments[1], new TypeCoercion { toString = true });
+                // replacement: if method expects string, coerce to string; if object, pass as-is (delegate/callback)
+                var chosenParamsLocal = chosen.GetParameters();
+                if (chosenParamsLocal[2].ParameterType == typeof(string))
+                {
+                    // Special-case escape pattern r => `\\${r}` -> replacement string "\\$&"
+                    if (callExpression.Arguments[1] is ArrowFunctionExpression afe2 && afe2.Body is TemplateLiteral t2
+                        && t2.Expressions.Count == 1 && t2.Quasis.Count == 2 && t2.Quasis[0].Value.Cooked == "\\")
+                    {
+                        _il.Ldstr(_owner.MetadataBuilder, "\\$&");
+                    }
+                    else
+                    {
+                        _ = Emit(callExpression.Arguments[1], new TypeCoercion { toString = true });
+                    }
+                }
+                else
+                {
+                    _ = Emit(callExpression.Arguments[1], new TypeCoercion { boxResult = true });
+                }
                 // flags
                 _il.LoadConstantI4(regexGlobal ? 1 : 0);
                 _il.LoadConstantI4(regexIgnoreCase ? 1 : 0);
@@ -1262,11 +1318,29 @@ namespace Js2IL.Services.ILGenerators
             var argCount = callExpression.Arguments.Count;
 
             // First argument: create scope array with appropriate scopes for the function
-            // Only include scopes that are actually needed for this function call
-            var neededScopeNames = GetNeededScopesForFunction(functionVariable, context).ToList();
-            var arraySize = neededScopeNames.Count;
-
-            EmitScopeArray(neededScopeNames);
+            // Strategy:
+            // - If inside a function context (this method has a scopes[] parameter), we may need to enrich the scopes[]
+            //   with the current local scope when invoking a locally declared nested function. Passing the raw scopes[]
+            //   (global-only) caused IndexOutOfRangeExceptions for patterns that expect [global, local] where local is
+            //   the scope owning the callee (e.g., Array_Map_NestedParam inner function expecting scopes[1]).
+            // - Build a scopes array via GetNeededScopesForFunction in both contexts. When the result set matches the
+            //   existing pass-through (single global) we reuse the existing scopes[] to avoid unnecessary allocations.
+            {
+                var allNames = _variables.GetAllScopeNames().ToList();
+                var slots = allNames.Select(n => _variables.GetScopeLocalSlot(n)).ToList();
+                bool inFunctionContext = slots.Any(s => s.Location == ObjectReferenceLocation.ScopeArray);
+                var neededScopeNames = GetNeededScopesForFunction(functionVariable, context).ToList();
+                // If we are in a function context and the needed scopes list is exactly one (the global) we can
+                // just forward the existing scopes[] parameter. Otherwise emit a new scopes array to match expected shape.
+                if (inFunctionContext && neededScopeNames.Count == 1)
+                {
+                    _il.LoadArgument(0); // pass-through existing scopes[]
+                }
+                else
+                {
+                    EmitScopeArray(neededScopeNames);
+                }
+            }
 
             // Additional arguments: directly emit each call argument (boxed as needed)
             EmitBoxedArgsInline(callExpression.Arguments);
@@ -1333,23 +1407,22 @@ namespace Js2IL.Services.ILGenerators
                 yield break;
             }
 
-            // Inside a function: include exactly the scope that owns the callee variable
-            // - If the callee is stored on the current local scope: include the global first (index 0), then the local (index 1).
-            //   This matches how nested function bodies index into their scopes array (global at [0], caller local at [1]).
-            // - If the callee lives on a parent/global scope: include only that owning scope.
+            // Inside a function: include the global scope first when present, then the local scope owning the callee
+            // when it's declared locally. Previous logic attempted to include the parent scope name (prefix) instead
+            // of the actual local scope, causing nested functions to receive a scopes[] without the expected local slot.
+            // If the callee lives on a parent/global scope already in the incoming scopes[], include only that owning scope.
             if (!string.IsNullOrEmpty(functionVariable.ScopeName))
             {
                 var targetSlot = _variables.GetScopeLocalSlot(functionVariable.ScopeName);
                 if (targetSlot.Location == ObjectReferenceLocation.Local)
                 {
-                    // Nested function declared in the current local scope
-                    // Always include [global, local] so callee can reliably index [0] = global, [1] = local
+                    // Local declaration: build [global, local] when global exists, else just local.
                     var globalEntry = slots.FirstOrDefault(e => e.Slot.Location == ObjectReferenceLocation.ScopeArray && e.Slot.Address == 0);
                     if (globalEntry != null)
                     {
                         yield return globalEntry.Name; // global first
                     }
-                    yield return functionVariable.ScopeName; // local (caller) scope
+                    yield return functionVariable.ScopeName; // include actual local scope owning the callee
                 }
                 else if (targetSlot.Location == ObjectReferenceLocation.ScopeArray ||
                          targetSlot.Location == ObjectReferenceLocation.Parameter)
@@ -1748,25 +1821,48 @@ namespace Js2IL.Services.ILGenerators
                 _il.Token(mref);
                 return JavascriptType.Object; // string
             }
-            else if (op == Acornima.Operator.UnaryNegation && unaryExpression.Argument is Acornima.Ast.NumericLiteral numericArg)
+            else if (op == Acornima.Operator.UnaryNegation)
             {
-                if (typeCoercion.toString)
+                // General unary negation: coerce argument to number and negate
+                if (unaryExpression.Argument is Acornima.Ast.NumericLiteral numericArg)
                 {
-                    var numberAsString = (-numericArg.Value).ToString();
-                    _il.Ldstr(_owner.MetadataBuilder, numberAsString);
-                    return JavascriptType.Object; // string
-                }
-                else
-                {
-                    _il.LoadConstantR8(-numericArg.Value);
-                    if (typeCoercion.boxResult)
+                    if (typeCoercion.toString)
                     {
-                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
-                        _il.Token(_owner.BclReferences.DoubleType);
-                        return JavascriptType.Object;
+                        var numberAsString = (-numericArg.Value).ToString();
+                        _il.Ldstr(_owner.MetadataBuilder, numberAsString);
+                        return JavascriptType.Object; // string
                     }
-                    return JavascriptType.Number;
+                    else
+                    {
+                        _il.LoadConstantR8(-numericArg.Value);
+                        if (typeCoercion.boxResult)
+                        {
+                            _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
+                            _il.Token(_owner.BclReferences.DoubleType);
+                            return JavascriptType.Object;
+                        }
+                        return JavascriptType.Number;
+                    }
                 }
+
+                // Evaluate argument; if not already a number, box and convert using TypeUtilities.ToNumber(object)
+                var argJsType = Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = false }).JsType;
+                if (argJsType != JavascriptType.Number)
+                {
+                    EmitBoxIfNeeded(argJsType);
+                    var toNumRef = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToNumber), typeof(double), typeof(object));
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
+                    _il.Token(toNumRef);
+                }
+                // Negate the double on the stack
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Neg);
+                if (typeCoercion.boxResult)
+                {
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
+                    _il.Token(_owner.BclReferences.DoubleType);
+                    return JavascriptType.Object;
+                }
+                return JavascriptType.Number;
             }
             else
             {
@@ -1814,6 +1910,20 @@ namespace Js2IL.Services.ILGenerators
                                 // Push the single argument boxed
                                 Emit(newExpression.Arguments[0], new TypeCoercion() { boxResult = true });
                                 var ctorRef = _owner.Runtime.GetInstanceMethodRef(intrinsicType, ".ctor", typeof(void), typeof(object));
+                                _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
+                                _il.Token(ctorRef);
+                                return new ExpressionResult { JsType = JavascriptType.Object, ClrType = intrinsicType };
+                            }
+                        }
+                        else if (argc == 2)
+                        {
+                            // Allow two-argument intrinsic constructors when available (e.g., RegExp(pattern, flags))
+                            var hasTwoObjectCtor = intrinsicType.GetConstructor(new[] { typeof(object), typeof(object) }) != null;
+                            if (hasTwoObjectCtor)
+                            {
+                                Emit(newExpression.Arguments[0], new TypeCoercion() { boxResult = true });
+                                Emit(newExpression.Arguments[1], new TypeCoercion() { boxResult = true });
+                                var ctorRef = _owner.Runtime.GetInstanceMethodRef(intrinsicType, ".ctor", typeof(void), typeof(object), typeof(object));
                                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
                                 _il.Token(ctorRef);
                                 return new ExpressionResult { JsType = JavascriptType.Object, ClrType = intrinsicType };
