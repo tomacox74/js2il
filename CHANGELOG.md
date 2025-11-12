@@ -4,20 +4,21 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.1.7 - 2025-11-12
+
 Added
 - Functions: internal self-binding for named function expressions to enable recursion (e.g., const f = function g(){ return g(); }). Implemented via a small prologue that binds the internal name on first entry using a new runtime helper `JavaScriptRuntime.Closure.CreateSelfDelegate`.
 - Runtime: `Closure.CreateSelfDelegate(MethodBase, int paramCount)` to construct the correct `Func<object[], ... , object>` delegate shape for self-calls across arities.
 - Tests: generator and execution coverage for classic IIFE and recursive IIFE; new SymbolTable tests for IIFE scopes (anonymous and named) and internal self-binding visibility.
-
 Changed
 - Hoisting: ensure local function variables are initialized before top-level statement emission so functions can reference each other by variable name prior to IIFE invocation.
 - Scope naming: unified to `FunctionExpression_*` for function expressions; class .NET namespace unified under `Classes`.
-
 Fixed
 - IL generation: corrected call-site emission to preserve the callee delegate across null-initialization branches and maintain stack balance.
 - Named function expression recursion: eliminated NullReferenceException by eagerly binding the internal name on method entry.
 - Symbol table: removed duplicate child scope registration and added visited sets for function/arrow expressions to prevent duplicate scopes and nested type emission; TypeGenerator defensively skips duplicate nested types.
-
 
 ## v0.1.6 - 2025-09-23
 
