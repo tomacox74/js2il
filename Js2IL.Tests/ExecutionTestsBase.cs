@@ -229,8 +229,8 @@ namespace Js2IL.Tests
                                 }
                                 else
                                 {
-                                    var dirField = gvType2.GetField("__dirname", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.IgnoreCase);
-                                    var fileField = gvType2.GetField("__filename", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.IgnoreCase);
+                                    var dirField = gvType2.GetField("__dirname", BindingFlags.NonPublic | BindingFlags.Static);
+                                    var fileField = gvType2.GetField("__filename", BindingFlags.NonPublic | BindingFlags.Static);
                                     if (dirField != null) dirField.SetValue(null, modDir);
                                     if (fileField != null) fileField.SetValue(null, file);
                                 }
