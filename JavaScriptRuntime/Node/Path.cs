@@ -45,5 +45,29 @@ namespace JavaScriptRuntime.Node
             // Use .NET's relative path util; platform-specific separators match Node's behavior.
             return System.IO.Path.GetRelativePath(fromStr, toStr);
         }
+
+        public string basename(object path, object? ext = null)
+        {
+            var p = path?.ToString() ?? string.Empty;
+            var name = System.IO.Path.GetFileName(p);
+            if (ext is string es && es.Length > 0 && name.EndsWith(es, StringComparison.Ordinal))
+            {
+                return name.Substring(0, name.Length - es.Length);
+            }
+            return name;
+        }
+
+        // Overload without extension argument to support dynamic invocation sites that provide only one argument.
+        public string basename(object path)
+        {
+            var p = path?.ToString() ?? string.Empty;
+            return System.IO.Path.GetFileName(p);
+        }
+
+        public string dirname(object path)
+        {
+            var p = path?.ToString() ?? string.Empty;
+            return System.IO.Path.GetDirectoryName(p) ?? string.Empty;
+        }
     }
 }

@@ -30,5 +30,13 @@ namespace Js2IL.Tests.Node
         [Fact]
         public Task PerfHooks_PerformanceNow_Basic() => GenerateTest(
             nameof(PerfHooks_PerformanceNow_Basic));
+
+        [Fact]
+        public Task Process_Exit_NoArg_GeneratesCall() => GenerateTest(
+            nameof(Process_Exit_NoArg_GeneratesCall));
+
+        [Fact]
+        public Task Process_Exit_WithCode_GeneratesCall() => GenerateTest(
+            nameof(Process_Exit_WithCode_GeneratesCall));
     }
 }

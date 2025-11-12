@@ -160,6 +160,11 @@ namespace JavaScriptRuntime
 
             if (obj is Array array)
             {
+                // Bounds check: return undefined (null) when OOB to mimic JS behavior
+                if (intIndex < 0 || intIndex >= array.Count)
+                {
+                    return null!; // undefined
+                }
                 return array[intIndex];
             }
             else if (obj is Int32Array i32)
@@ -263,6 +268,8 @@ namespace JavaScriptRuntime
 
         public static object? GetProperty(object obj, string name)
         {
+            // Null/undefined -> undefined (modeled as null)
+            if (obj is null) return null;
             // ExpandoObject properties
             if (obj is System.Dynamic.ExpandoObject exp)
             {
@@ -282,16 +289,23 @@ namespace JavaScriptRuntime
             }
 
             // Reflection fallback: expose public instance properties/fields of host objects
-            var type = obj.GetType();
-            var prop = type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-            if (prop != null && prop.CanRead)
+            try
             {
-                return prop.GetValue(obj);
+                var type = obj.GetType();
+                var prop = type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+                if (prop != null && prop.CanRead)
+                {
+                    return prop.GetValue(obj);
+                }
+                var field = type.GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+                if (field != null)
+                {
+                    return field.GetValue(obj);
+                }
             }
-            var field = type.GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-            if (field != null)
+            catch
             {
-                return field.GetValue(obj);
+                // Swallow and return undefined/null on reflection failures
             }
             // Unknown -> undefined/null
             return null;

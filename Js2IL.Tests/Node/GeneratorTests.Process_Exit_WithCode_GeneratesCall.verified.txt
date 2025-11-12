@@ -1,0 +1,53 @@
+// IL code: Process_Exit_WithCode_GeneratesCall
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Process_Exit_WithCode_GeneratesCall
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Process_Exit_WithCode_GeneratesCall::.ctor
+
+} // end of class Scopes.Process_Exit_WithCode_GeneratesCall
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x205c
+		// Header size: 12
+		// Code size: 36 (0x24)
+		.maxstack 32
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Process_Exit_WithCode_GeneratesCall::.ctor()
+		IL_0005: stloc.0
+		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalVariables::get_process()
+		IL_000b: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.Process
+		IL_0010: ldc.r8 3
+		IL_0019: box [System.Runtime]System.Double
+		IL_001e: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Node.Process::exit(object)
+		IL_0023: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

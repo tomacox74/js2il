@@ -475,12 +475,23 @@ namespace Js2IL.Services.ILGenerators
             if (equality && leftType == JavascriptType.Number && rightType != JavascriptType.Number)
             {
                 bool rightIsNullLiteral = binaryExpression.Right is Acornima.Ast.Literal rl && rl.Value is null;
-                bool rightIsRawNumeric = binaryExpression.Right is Acornima.Ast.NumericLiteral
-                    || (binaryExpression.Right is Acornima.Ast.UnaryExpression ur && ur.Operator.ToString() == "UnaryNegation" && ur.Argument is Acornima.Ast.NumericLiteral);
+                bool rightIsRawNumeric =
+                    // Numeric literal or -numeric literal
+                    (binaryExpression.Right is Acornima.Ast.NumericLiteral
+                        || (binaryExpression.Right is Acornima.Ast.UnaryExpression ur && ur.Operator.ToString() == "UnaryNegation" && ur.Argument is Acornima.Ast.NumericLiteral))
+                    // Identifiers with numeric runtime type are already unboxed by LoadVariable
+                    || (binaryExpression.Right is Acornima.Ast.Identifier)
+                    // Common numeric member: *.length yields an unboxed double
+                    || (binaryExpression.Right is Acornima.Ast.MemberExpression rme && !rme.Computed && rme.Property is Acornima.Ast.Identifier rid && string.Equals(rid.Name, "length", StringComparison.Ordinal));
                 if (!rightIsRawNumeric && !rightIsNullLiteral)
                 {
-                    _il.OpCode(ILOpCode.Unbox_any);
-                    _il.Token(_bclReferences.DoubleType);
+                    // Generic numeric coercion when operand isn't already a raw double
+                    var toNum = _runtime.GetStaticMethodRef(
+                        typeof(JavaScriptRuntime.TypeUtilities),
+                        nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                        typeof(double), typeof(object));
+                    _il.OpCode(ILOpCode.Call);
+                    _il.Token(toNum);
                     rightType = JavascriptType.Number;
                 }
             }
@@ -584,8 +595,13 @@ namespace Js2IL.Services.ILGenerators
                 {
                     // Only unbox when the right operand value is boxed (variables/expressions),
                     // not when it's a raw numeric literal or simple unary numeric.
-                    bool rightIsRawNumeric = binaryExpression.Right is Acornima.Ast.NumericLiteral
-                        || (binaryExpression.Right is Acornima.Ast.UnaryExpression ur && ur.Operator.ToString() == "UnaryNegation" && ur.Argument is Acornima.Ast.NumericLiteral);
+                    bool rightIsRawNumeric =
+                        (binaryExpression.Right is Acornima.Ast.NumericLiteral
+                         || (binaryExpression.Right is Acornima.Ast.UnaryExpression ur && ur.Operator.ToString() == "UnaryNegation" && ur.Argument is Acornima.Ast.NumericLiteral))
+                        // Identifiers with numeric runtime type are loaded unboxed
+                        || (binaryExpression.Right is Acornima.Ast.Identifier)
+                        // Member '.length' returns an unboxed double
+                        || (binaryExpression.Right is Acornima.Ast.MemberExpression rme2 && !rme2.Computed && rme2.Property is Acornima.Ast.Identifier rid2 && string.Equals(rid2.Name, "length", StringComparison.Ordinal));
                     if (!rightIsRawNumeric)
                     {
                         _il.OpCode(ILOpCode.Unbox_any);
@@ -637,14 +653,23 @@ namespace Js2IL.Services.ILGenerators
                         // Ensure both sides are numeric (unbox when needed)
                         if (leftType != JavascriptType.Number)
                         {
-                            _il.OpCode(ILOpCode.Unbox_any);
-                            _il.Token(_bclReferences.DoubleType);
+                            // Coerce to number via runtime to avoid invalid casts (e.g., arrays)
+                            var toNum = _runtime.GetStaticMethodRef(
+                                typeof(JavaScriptRuntime.TypeUtilities),
+                                nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                                typeof(double), typeof(object));
+                            _il.OpCode(ILOpCode.Call);
+                            _il.Token(toNum);
                             leftType = JavascriptType.Number;
                         }
                         if (rightType != JavascriptType.Number)
                         {
-                            _il.OpCode(ILOpCode.Unbox_any);
-                            _il.Token(_bclReferences.DoubleType);
+                            var toNum = _runtime.GetStaticMethodRef(
+                                typeof(JavaScriptRuntime.TypeUtilities),
+                                nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                                typeof(double), typeof(object));
+                            _il.OpCode(ILOpCode.Call);
+                            _il.Token(toNum);
                             rightType = JavascriptType.Number;
                         }
                     }
@@ -721,8 +746,12 @@ namespace Js2IL.Services.ILGenerators
                 }
                 else if (rightType != JavascriptType.Number)
                 {
-                    _il.OpCode(ILOpCode.Unbox_any);
-                    _il.Token(_bclReferences.DoubleType);
+                    var toNum = _runtime.GetStaticMethodRef(
+                        typeof(JavaScriptRuntime.TypeUtilities),
+                        nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                        typeof(double), typeof(object));
+                    _il.OpCode(ILOpCode.Call);
+                    _il.Token(toNum);
                 }
             }
 
@@ -803,16 +832,25 @@ namespace Js2IL.Services.ILGenerators
             var leftType = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion()).JsType;
             if (leftType != JavascriptType.Number)
             {
-                _il.OpCode(ILOpCode.Unbox_any);
-                _il.Token(_bclReferences.DoubleType);
+                // Use JS ToNumber to safely coerce any object (arrays, strings, etc.) to a number
+                var toNum = _runtime.GetStaticMethodRef(
+                    typeof(JavaScriptRuntime.TypeUtilities),
+                    nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                    typeof(double), typeof(object));
+                _il.OpCode(ILOpCode.Call);
+                _il.Token(toNum);
             }
 
             // Prepare right operand
             var rightType = _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion()).JsType;
             if (rightType != JavascriptType.Number)
             {
-                _il.OpCode(ILOpCode.Unbox_any);
-                _il.Token(_bclReferences.DoubleType);
+                var toNum = _runtime.GetStaticMethodRef(
+                    typeof(JavaScriptRuntime.TypeUtilities),
+                    nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                    typeof(double), typeof(object));
+                _il.OpCode(ILOpCode.Call);
+                _il.Token(toNum);
             }
         }
 

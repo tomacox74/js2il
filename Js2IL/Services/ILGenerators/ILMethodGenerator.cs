@@ -624,13 +624,13 @@ namespace Js2IL.Services.ILGenerators
                 return;
             }
 
-            // Emit the expression in statement context. Regardless of expression kind, discard the result
-            // to keep the IL evaluation stack balanced across control-flow joins (e.g., loop back-edges).
-            _ = _expressionEmitter.Emit(expressionStatement.Expression, new TypeCoercion(), CallSiteContext.Statement);
-            // Only pop if the expression actually produces a stack value in statement context.
+                // Emit the expression in statement context. Discard the result only if a value was produced.
+            var exprResult = _expressionEmitter.Emit(expressionStatement.Expression, new TypeCoercion(), CallSiteContext.Statement);
             // Assignments and updates store directly and leave the stack empty.
+            // Also skip Pop when the expression is a call that returned void (no value on the stack).
             if (expressionStatement.Expression is not Acornima.Ast.AssignmentExpression
-                && expressionStatement.Expression is not Acornima.Ast.UpdateExpression)
+                && expressionStatement.Expression is not Acornima.Ast.UpdateExpression
+                && exprResult.ClrType != typeof(void))
             {
                 _il.OpCode(ILOpCode.Pop);
             }
@@ -647,8 +647,10 @@ namespace Js2IL.Services.ILGenerators
             else if (forStatement.Init is Acornima.Ast.Expression exprInit)
             {
                 // Handle assignment/sequence/etc. as an expression statement
-                _ = _expressionEmitter.Emit(exprInit, new TypeCoercion(), CallSiteContext.Statement);
-                if (exprInit is not Acornima.Ast.AssignmentExpression && exprInit is not Acornima.Ast.UpdateExpression)
+                var initResult = _expressionEmitter.Emit(exprInit, new TypeCoercion(), CallSiteContext.Statement);
+                if (exprInit is not Acornima.Ast.AssignmentExpression
+                    && exprInit is not Acornima.Ast.UpdateExpression
+                    && initResult.ClrType != typeof(void))
                 {
                     _il.OpCode(ILOpCode.Pop);
                 }
@@ -693,8 +695,10 @@ namespace Js2IL.Services.ILGenerators
                 // Mark update section (continue targets jump here)
                 _il.MarkLabel(loopUpdateLabel);
                 // Emit update in statement context and discard result to avoid leaving values on the stack
-                _ = _expressionEmitter.Emit(forStatement.Update, new TypeCoercion(), CallSiteContext.Statement);
-                if (forStatement.Update is not Acornima.Ast.AssignmentExpression && forStatement.Update is not Acornima.Ast.UpdateExpression)
+                var updResult = _expressionEmitter.Emit(forStatement.Update, new TypeCoercion(), CallSiteContext.Statement);
+                if (forStatement.Update is not Acornima.Ast.AssignmentExpression
+                    && forStatement.Update is not Acornima.Ast.UpdateExpression
+                    && updResult.ClrType != typeof(void))
                 {
                     _il.OpCode(ILOpCode.Pop);
                 }

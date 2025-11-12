@@ -1315,7 +1315,7 @@
                   "testScripts": [
                     "Js2IL.Tests/JavaScript/Array_Map_Basic.js"
                   ],
-                  "notes": "Supports basic value-callback mapping and returns a new array. thisArg and additional callback parameters (index, array) are not yet supported."
+                  "notes": "Supports value-callback mapping including nested callback closures (scope array construction fix in current branch). thisArg and standard callback parameter injections (index, array) are not yet supported; callback currently receives only the element value. Returns a new array."
                 }
               ]
             },
@@ -1466,6 +1466,36 @@
             },
             {
               "paragraph": "24.1.3",
+              "title": "String.prototype.includes",
+              "url": "https://tc39.es/ecma262/#sec-string.prototype.includes",
+              "features": [
+                {
+                  "feature": "String.prototype.includes",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/String/GeneratorTests.String_Includes.verified.txt"
+                  ],
+                  "notes": "Reflection-based dispatch recognizes definite string receivers and routes to JavaScriptRuntime.String.Includes; supports optional position argument. Returns a boolean value."
+                }
+              ]
+            },
+            {
+              "paragraph": "24.1.3",
+              "title": "String.prototype.endsWith",
+              "url": "https://tc39.es/ecma262/#sec-string.prototype.endswith",
+              "features": [
+                {
+                  "feature": "String.prototype.endsWith",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/String/GeneratorTests.String_EndsWith.verified.txt"
+                  ],
+                  "notes": "Implemented in JavaScriptRuntime.String and wired via IL generator for definite string receivers. Supports optional end position. Returns a boolean value."
+                }
+              ]
+            },
+            {
+              "paragraph": "24.1.3",
               "title": "String.prototype.split",
               "url": "https://tc39.es/ecma262/#sec-string.prototype.split",
               "features": [
@@ -1506,6 +1536,51 @@
                     "Js2IL.Tests/JavaScript/String_Replace_Regex_Global.js"
                   ],
                   "notes": "Supported when the receiver is String(x), the pattern is a regular expression literal, and the replacement is a string. Global (g) and ignoreCase (i) flags are honored. Function replacement, non-regex patterns, and other flags are not yet implemented. Implemented via host intrinsic JavaScriptRuntime.String.Replace and dynamic resolution in IL generator."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "section": "25",
+          "title": "Keyed Collections",
+          "url": "https://tc39.es/ecma262/#sec-keyed-collections",
+          "subsections": [
+            {
+              "subsection": "25.4",
+              "title": "Set Objects",
+              "url": "https://tc39.es/ecma262/#sec-set-objects",
+              "paragraphs": [
+                {
+                  "paragraph": "25.4.5",
+                  "title": "Properties of Set Instances",
+                  "url": "https://tc39.es/ecma262/#sec-properties-of-set-instances",
+                  "features": [
+                    {
+                      "feature": "Set.prototype.add",
+                      "status": "Supported",
+                      "testScripts": [
+                        "Js2IL.Tests/Set/GeneratorTests.Set_Add_Has_Size.verified.txt"
+                      ],
+                      "notes": "Backed by JavaScriptRuntime.Set.add; returns the Set instance to allow chaining."
+                    },
+                    {
+                      "feature": "Set.prototype.has",
+                      "status": "Supported",
+                      "testScripts": [
+                        "Js2IL.Tests/Set/GeneratorTests.Set_Add_Has_Size.verified.txt"
+                      ],
+                      "notes": "Backed by JavaScriptRuntime.Set.has; strict equality for keys based on .NET object identity and string/double value semantics."
+                    },
+                    {
+                      "feature": "Set.prototype.size (getter)",
+                      "status": "Supported",
+                      "testScripts": [
+                        "Js2IL.Tests/Set/GeneratorTests.Set_Add_Has_Size.verified.txt"
+                      ],
+                      "notes": "Exposed via a 'size' property on JavaScriptRuntime.Set returning a JS number (double)."
+                    }
+                  ]
                 }
               ]
             }
