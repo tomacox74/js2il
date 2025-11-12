@@ -236,7 +236,23 @@ namespace Js2IL.Services.ILGenerators
                     break;
                 case FunctionExpression funcExpr:
                     {
-                        var paramNames = funcExpr.Params.OfType<Identifier>().Select(p => p.Name).ToArray();
+                        // Collect parameter names; include synthetic names for non-Identifier params (e.g., destructuring)
+                        var idList = funcExpr.Params.OfType<Identifier>().Select(p => p.Name).ToList();
+                        if (idList.Count == 0 && funcExpr.Params.Count > 0)
+                        {
+                            foreach (var p in funcExpr.Params)
+                            {
+                                if (p is Identifier iid) { idList.Add(iid.Name); continue; }
+                                var prop = p.GetType().GetProperty("Name");
+                                if (prop != null)
+                                {
+                                    var val = prop.GetValue(p) as string;
+                                    if (!string.IsNullOrEmpty(val)) { idList.Add(val!); continue; }
+                                }
+                                idList.Add($"p{idList.Count}");
+                            }
+                        }
+                        var paramNames = idList.ToArray();
                         // If the function expression is named (named function expression), prefer its declared name
                         // so that the symbol table scope name and variable registry line up (important for IIFE recursion scenarios).
                         string registryScopeName;

@@ -1089,16 +1089,53 @@ namespace Js2IL.Services.ILGenerators
             // Build method body using a fresh ILMethodGenerator so we never mutate the parent generator's state
             var functionVariables = new Variables(_variables, registryScopeName, paramNames, isNestedFunction: true);
             var pnames = paramNames ?? Array.Empty<string>();
-            // Share the parent ClassRegistry and FunctionRegistry so nested functions can resolve declared classes
-            // and register their methods for lazy self-binding (recursion) support.
             var childGen = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
             var il = childGen.IL;
 
-            // For arrow functions, we do NOT pre-instantiate a local scope nor initialize parameter fields
-            // unless the body actually requires a local scope (e.g., block with declarations). This keeps
-            // expression-bodied arrows and simple block-return arrows minimal and matches snapshot baselines.
+            // Helper to destructure object-pattern parameters into scope fields
+            void DestructureArrowParamsIfAny()
+            {
+                var registry = functionVariables.GetVariableRegistry();
+                if (registry == null) return;
+                var fields = registry.GetVariablesForScope(registryScopeName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
+                if (!fields.Any()) return;
+                var localScope = functionVariables.GetLocalScopeSlot();
+                if (localScope.Address < 0)
+                {
+                    ScopeInstanceEmitter.EmitCreateLeafScopeInstance(functionVariables, il, _metadataBuilder);
+                    localScope = functionVariables.GetLocalScopeSlot();
+                }
+                ushort jsParamSeq = 1; // arg0 = scopes[]
+                for (int i = 0; i < arrowFunction.Params.Count; i++)
+                {
+                    var pnode = arrowFunction.Params[i];
+                    if (pnode is ObjectPattern op)
+                    {
+                        foreach (var prop in op.Properties)
+                        {
+                            if (prop is Property p && p.Value is Identifier bid)
+                            {
+                                var targetVar = functionVariables.FindVariable(bid.Name);
+                                if (targetVar == null) continue;
+                                var tslot = functionVariables.GetScopeLocalSlot(targetVar.ScopeName);
+                                if (tslot.Location == ObjectReferenceLocation.Parameter) il.LoadArgument(tslot.Address);
+                                else if (tslot.Location == ObjectReferenceLocation.ScopeArray) { il.LoadArgument(0); il.LoadConstantI4(tslot.Address); il.OpCode(ILOpCode.Ldelem_ref); }
+                                else il.LoadLocal(tslot.Address);
+                                var tScopeType = functionVariables.GetVariableRegistry()?.GetScopeTypeHandle(targetVar.ScopeName) ?? default;
+                                if (!tScopeType.IsNil) { il.OpCode(ILOpCode.Castclass); il.Token(tScopeType); }
+                                il.LoadArgument(jsParamSeq);
+                                var propName = (p.Key as Identifier)?.Name ?? (p.Key as Literal)?.Value?.ToString() ?? string.Empty;
+                                il.Ldstr(_metadataBuilder, propName);
+                                var getPropRef = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), typeof(object), typeof(object), typeof(string));
+                                il.OpCode(ILOpCode.Call); il.Token(getPropRef);
+                                il.OpCode(ILOpCode.Stfld); il.Token(targetVar.FieldHandle);
+                            }
+                        }
+                    }
+                    jsParamSeq++;
+                }
+            }
 
-            // Emit body
             if (arrowFunction.Body is BlockStatement block)
             {
                 // Fast-path: handle common pattern `{ const x = <expr>; return x; }`
@@ -1198,24 +1235,18 @@ namespace Js2IL.Services.ILGenerators
                 }
                 else
                 {
-                    // General fallback: emit statements; ensure a return at end if missing
-                    // If the block declares any let/const or uses fields, create a local scope instance now
                     var registry = functionVariables.GetVariableRegistry();
                     if (registry != null)
                     {
                         var fields = registry.GetVariablesForScope(registryScopeName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
-                        var hasAnyFields = fields.Any();
-                        if (hasAnyFields)
+                        if (fields.Any())
                         {
-                            // Create the current arrow function scope instance
                             ScopeInstanceEmitter.EmitCreateLeafScopeInstance(functionVariables, il, _metadataBuilder);
-
-                            // Initialize parameter fields from CLR args when a backing field exists
                             var localScope = functionVariables.GetLocalScopeSlot();
                             if (localScope.Address >= 0 && pnames.Length > 0)
                             {
                                 var fieldNames = new HashSet<string>(fields.Select(f => f.Name));
-                                ushort jsParamSeq = 1; // arg0 is scopes[]; JS params start at 1
+                                ushort jsParamSeq = 1;
                                 foreach (var pn in pnames)
                                 {
                                     if (fieldNames.Contains(pn))
@@ -1223,25 +1254,50 @@ namespace Js2IL.Services.ILGenerators
                                         il.LoadLocal(localScope.Address);
                                         il.LoadArgument(jsParamSeq);
                                         var fh = registry.GetFieldHandle(registryScopeName, pn);
-                                        il.OpCode(ILOpCode.Stfld);
-                                        il.Token(fh);
+                                        il.OpCode(ILOpCode.Stfld); il.Token(fh);
                                     }
                                     jsParamSeq++;
                                 }
                             }
                         }
                     }
-
-                    // Emit statements using the child generator
+                    // Destructure object-pattern params into fields
+                    DestructureArrowParamsIfAny();
                     childGen.GenerateStatementsForBody(functionVariables.GetLeafScopeName(), false, block.Body);
-                    // If no explicit return executed, fall through and return null
                     il.OpCode(ILOpCode.Ldnull);
                     il.OpCode(ILOpCode.Ret);
                 }
             }
             else
             {
-                // Expression-bodied arrow: evaluate via the child generator's expression emitter to keep logic isolated
+                // Expression-bodied arrow: create scope if any fields then destructure
+                var registry = functionVariables.GetVariableRegistry();
+                if (registry != null)
+                {
+                    var fields = registry.GetVariablesForScope(registryScopeName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
+                    if (fields.Any())
+                    {
+                        ScopeInstanceEmitter.EmitCreateLeafScopeInstance(functionVariables, il, _metadataBuilder);
+                        var localScope = functionVariables.GetLocalScopeSlot();
+                        if (localScope.Address >= 0 && pnames.Length > 0)
+                        {
+                            var fieldNames = new HashSet<string>(fields.Select(f => f.Name));
+                            ushort jsParamSeq = 1;
+                            foreach (var pn in pnames)
+                            {
+                                if (fieldNames.Contains(pn))
+                                {
+                                    il.LoadLocal(localScope.Address);
+                                    il.LoadArgument(jsParamSeq);
+                                    var fh = registry.GetFieldHandle(registryScopeName, pn);
+                                    il.OpCode(ILOpCode.Stfld); il.Token(fh);
+                                }
+                                jsParamSeq++;
+                            }
+                        }
+                        DestructureArrowParamsIfAny();
+                    }
+                }
                 var bodyExpr = arrowFunction.Body as Expression ?? throw ILEmitHelpers.NotSupported("Arrow function body is not an expression", arrowFunction.Body);
                 _ = childGen.ExpressionEmitter.Emit(bodyExpr, new TypeCoercion() { boxResult = true });
                 il.OpCode(ILOpCode.Ret);
@@ -1296,7 +1352,7 @@ namespace Js2IL.Services.ILGenerators
             return mdh;
         }
 
-        internal MethodDefinitionHandle GenerateFunctionExpressionMethod(FunctionExpression funcExpr, string registryScopeName, string ilMethodName, string[] paramNames)
+    internal MethodDefinitionHandle GenerateFunctionExpressionMethod(FunctionExpression funcExpr, string registryScopeName, string ilMethodName, string[] paramNames)
         {
             var functionVariables = new Variables(_variables, registryScopeName, paramNames, isNestedFunction: true);
             var pnames = paramNames ?? Array.Empty<string>();
@@ -1345,6 +1401,36 @@ namespace Js2IL.Services.ILGenerators
                                 var fh = registry.GetFieldHandle(registryScopeName, pn);
                                 il.OpCode(ILOpCode.Stfld);
                                 il.Token(fh);
+                            }
+                            jsParamSeq++;
+                        }
+                        // Destructure object-pattern parameters
+                        jsParamSeq = 1;
+                        for (int i = 0; i < funcExpr.Params.Count; i++)
+                        {
+                            var pnode = funcExpr.Params[i];
+                            if (pnode is ObjectPattern op)
+                            {
+                                foreach (var prop in op.Properties)
+                                {
+                                    if (prop is Property p && p.Value is Identifier bid)
+                                    {
+                                        var targetVar = functionVariables.FindVariable(bid.Name);
+                                        if (targetVar == null) continue;
+                                        var tslot = functionVariables.GetScopeLocalSlot(targetVar.ScopeName);
+                                        if (tslot.Location == ObjectReferenceLocation.Parameter) il.LoadArgument(tslot.Address);
+                                        else if (tslot.Location == ObjectReferenceLocation.ScopeArray) { il.LoadArgument(0); il.LoadConstantI4(tslot.Address); il.OpCode(ILOpCode.Ldelem_ref); }
+                                        else il.LoadLocal(tslot.Address);
+                                        var tScopeType = functionVariables.GetVariableRegistry()?.GetScopeTypeHandle(targetVar.ScopeName) ?? default;
+                                        if (!tScopeType.IsNil) { il.OpCode(ILOpCode.Castclass); il.Token(tScopeType); }
+                                        il.LoadArgument(jsParamSeq);
+                                        var propName = (p.Key as Identifier)?.Name ?? (p.Key as Literal)?.Value?.ToString() ?? string.Empty;
+                                        il.Ldstr(_metadataBuilder, propName);
+                                        var getPropRef = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), typeof(object), typeof(object), typeof(string));
+                                        il.OpCode(ILOpCode.Call); il.Token(getPropRef);
+                                        il.OpCode(ILOpCode.Stfld); il.Token(targetVar.FieldHandle);
+                                    }
+                                }
                             }
                             jsParamSeq++;
                         }

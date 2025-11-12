@@ -129,6 +129,21 @@ namespace Js2IL.SymbolTables
                             funcExprScope.Bindings[id.Name] = new BindingInfo(id.Name, BindingKind.Var, id);
                             funcExprScope.Parameters.Add(id.Name);
                         }
+                        else if (param is ObjectPattern op)
+                        {
+                            // Destructured parameter: bind each property identifier as a local binding in function scope
+                            foreach (var pnode in op.Properties)
+                            {
+                                if (pnode is Property prop)
+                                {
+                                    if (prop.Value is Identifier bid && !funcExprScope.Bindings.ContainsKey(bid.Name))
+                                    {
+                                        funcExprScope.Bindings[bid.Name] = new BindingInfo(bid.Name, BindingKind.Var, bid);
+                                    }
+                                }
+                            }
+                            // Note: a synthetic CLR parameter will be added for this pattern during codegen (e.g., p0)
+                        }
                     }
                     if (funcExpr.Body is BlockStatement funcExprBlock)
                     {
@@ -306,6 +321,21 @@ namespace Js2IL.SymbolTables
                         {
                             arrowScope.Bindings[id.Name] = new BindingInfo(id.Name, BindingKind.Var, id);
                             arrowScope.Parameters.Add(id.Name);
+                        }
+                        else if (param is ObjectPattern op)
+                        {
+                            // Destructured parameter: bind each property identifier as a local binding in arrow function scope
+                            foreach (var pnode in op.Properties)
+                            {
+                                if (pnode is Property prop)
+                                {
+                                    if (prop.Value is Identifier bid && !arrowScope.Bindings.ContainsKey(bid.Name))
+                                    {
+                                        arrowScope.Bindings[bid.Name] = new BindingInfo(bid.Name, BindingKind.Var, bid);
+                                    }
+                                }
+                            }
+                            // Parameter list will still receive a synthetic name during codegen; no binding needed for it.
                         }
                         else
                         {
