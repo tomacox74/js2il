@@ -55,5 +55,9 @@ namespace Js2IL.Tests.Function
         // New recursive IIFE test
         [Fact]
         public Task Function_IIFE_Recursive() { var testName = nameof(Function_IIFE_Recursive); return ExecutionTest(testName); }
+
+        // New: parameter destructuring (object)
+        [Fact]
+        public Task Function_ParameterDestructuring_Object() { var testName = nameof(Function_ParameterDestructuring_Object); return ExecutionTest(testName); }
     }
 }

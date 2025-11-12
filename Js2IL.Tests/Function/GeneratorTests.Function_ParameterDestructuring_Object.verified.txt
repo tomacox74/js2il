@@ -1,0 +1,170 @@
+﻿// IL code: Function_ParameterDestructuring_Object
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Function_ParameterDestructuring_Object
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit show
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object a
+		.field public object b
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method show::.ctor
+
+	} // end of class show
+
+
+	// Fields
+	.field public object show
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Function_ParameterDestructuring_Object::.ctor
+
+} // end of class Scopes.Function_ParameterDestructuring_Object
+
+.class public auto ansi abstract sealed beforefieldinit Functions.show
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		object show (
+			object[] scopes,
+			object param1
+		) cil managed 
+	{
+		// Method begins at RVA 0x2064
+		// Header size: 12
+		// Code size: 82 (0x52)
+		.maxstack 32
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Function_ParameterDestructuring_Object/show::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldarg.1
+		IL_0008: ldstr "a"
+		IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_0012: stfld object Scopes.Function_ParameterDestructuring_Object/show::a
+		IL_0017: ldloc.0
+		IL_0018: ldarg.1
+		IL_0019: ldstr "b"
+		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_0023: stfld object Scopes.Function_ParameterDestructuring_Object/show::b
+		IL_0028: ldc.i4.2
+		IL_0029: newarr [System.Runtime]System.Object
+		IL_002e: dup
+		IL_002f: ldc.i4.0
+		IL_0030: ldloc.0
+		IL_0031: castclass Scopes.Function_ParameterDestructuring_Object/show
+		IL_0036: ldfld object Scopes.Function_ParameterDestructuring_Object/show::a
+		IL_003b: stelem.ref
+		IL_003c: dup
+		IL_003d: ldc.i4.1
+		IL_003e: ldloc.0
+		IL_003f: castclass Scopes.Function_ParameterDestructuring_Object/show
+		IL_0044: ldfld object Scopes.Function_ParameterDestructuring_Object/show::b
+		IL_0049: stelem.ref
+		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_004f: pop
+		IL_0050: ldnull
+		IL_0051: ret
+	} // end of method show::show
+
+} // end of class Functions.show
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20c4
+		// Header size: 12
+		// Code size: 145 (0x91)
+		.maxstack 32
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Function_ParameterDestructuring_Object::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: castclass Scopes.Function_ParameterDestructuring_Object
+		IL_000c: ldnull
+		IL_000d: ldftn object Functions.show::show(object[], object)
+		IL_0013: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0018: stfld object Scopes.Function_ParameterDestructuring_Object::show
+		IL_001d: ldloc.0
+		IL_001e: ldfld object Scopes.Function_ParameterDestructuring_Object::show
+		IL_0023: dup
+		IL_0024: brtrue.s IL_0044
+
+		IL_0026: pop
+		IL_0027: ldloc.0
+		IL_0028: ldnull
+		IL_0029: ldftn object Functions.show::show(object[], object)
+		IL_002f: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0034: stfld object Scopes.Function_ParameterDestructuring_Object::show
+		IL_0039: ldloc.0
+		IL_003a: ldfld object Scopes.Function_ParameterDestructuring_Object::show
+		IL_003f: br IL_0044
+
+		IL_0044: ldc.i4.1
+		IL_0045: newarr [System.Runtime]System.Object
+		IL_004a: dup
+		IL_004b: ldc.i4.0
+		IL_004c: ldloc.0
+		IL_004d: castclass Scopes.Function_ParameterDestructuring_Object
+		IL_0052: stelem.ref
+		IL_0053: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0058: dup
+		IL_0059: ldstr "a"
+		IL_005e: ldc.r8 10
+		IL_0067: box [System.Runtime]System.Double
+		IL_006c: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0071: dup
+		IL_0072: ldstr "b"
+		IL_0077: ldc.r8 20
+		IL_0080: box [System.Runtime]System.Double
+		IL_0085: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_008a: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_008f: pop
+		IL_0090: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

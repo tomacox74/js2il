@@ -1,0 +1,174 @@
+﻿// IL code: ArrowFunction_ParameterDestructuring_Object
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.ArrowFunction_ParameterDestructuring_Object
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit ArrowFunction_show
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object a
+		.field public object b
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method ArrowFunction_show::.ctor
+
+	} // end of class ArrowFunction_show
+
+
+	// Fields
+	.field public object show
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method ArrowFunction_ParameterDestructuring_Object::.ctor
+
+} // end of class Scopes.ArrowFunction_ParameterDestructuring_Object
+
+.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L1C13
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		object ArrowFunction_L1C13 (
+			object[] scopes,
+			object p0
+		) cil managed 
+	{
+		// Method begins at RVA 0x2064
+		// Header size: 12
+		// Code size: 92 (0x5c)
+		.maxstack 32
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.ArrowFunction_ParameterDestructuring_Object/ArrowFunction_show::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: castclass Scopes.ArrowFunction_ParameterDestructuring_Object/ArrowFunction_show
+		IL_000c: ldarg.1
+		IL_000d: ldstr "a"
+		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_0017: stfld object Scopes.ArrowFunction_ParameterDestructuring_Object/ArrowFunction_show::a
+		IL_001c: ldloc.0
+		IL_001d: castclass Scopes.ArrowFunction_ParameterDestructuring_Object/ArrowFunction_show
+		IL_0022: ldarg.1
+		IL_0023: ldstr "b"
+		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_002d: stfld object Scopes.ArrowFunction_ParameterDestructuring_Object/ArrowFunction_show::b
+		IL_0032: ldc.i4.2
+		IL_0033: newarr [System.Runtime]System.Object
+		IL_0038: dup
+		IL_0039: ldc.i4.0
+		IL_003a: ldloc.0
+		IL_003b: castclass Scopes.ArrowFunction_ParameterDestructuring_Object/ArrowFunction_show
+		IL_0040: ldfld object Scopes.ArrowFunction_ParameterDestructuring_Object/ArrowFunction_show::a
+		IL_0045: stelem.ref
+		IL_0046: dup
+		IL_0047: ldc.i4.1
+		IL_0048: ldloc.0
+		IL_0049: castclass Scopes.ArrowFunction_ParameterDestructuring_Object/ArrowFunction_show
+		IL_004e: ldfld object Scopes.ArrowFunction_ParameterDestructuring_Object/ArrowFunction_show::b
+		IL_0053: stelem.ref
+		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0059: pop
+		IL_005a: ldnull
+		IL_005b: ret
+	} // end of method ArrowFunction_L1C13::ArrowFunction_L1C13
+
+} // end of class Functions.ArrowFunction_L1C13
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20cc
+		// Header size: 12
+		// Code size: 142 (0x8e)
+		.maxstack 32
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.ArrowFunction_ParameterDestructuring_Object::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: castclass Scopes.ArrowFunction_ParameterDestructuring_Object
+		IL_000c: ldnull
+		IL_000d: ldftn object Functions.ArrowFunction_L1C13::ArrowFunction_L1C13(object[], object)
+		IL_0013: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0018: ldc.i4.1
+		IL_0019: newarr [System.Runtime]System.Object
+		IL_001e: dup
+		IL_001f: ldc.i4.0
+		IL_0020: ldloc.0
+		IL_0021: castclass Scopes.ArrowFunction_ParameterDestructuring_Object
+		IL_0026: stelem.ref
+		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_002c: stfld object Scopes.ArrowFunction_ParameterDestructuring_Object::show
+		IL_0031: ldloc.0
+		IL_0032: ldfld object Scopes.ArrowFunction_ParameterDestructuring_Object::show
+		IL_0037: dup
+		IL_0038: brtrue.s IL_0041
+
+		IL_003a: pop
+		IL_003b: ldnull
+		IL_003c: br IL_0041
+
+		IL_0041: ldc.i4.1
+		IL_0042: newarr [System.Runtime]System.Object
+		IL_0047: dup
+		IL_0048: ldc.i4.0
+		IL_0049: ldloc.0
+		IL_004a: castclass Scopes.ArrowFunction_ParameterDestructuring_Object
+		IL_004f: stelem.ref
+		IL_0050: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0055: dup
+		IL_0056: ldstr "a"
+		IL_005b: ldc.r8 1
+		IL_0064: box [System.Runtime]System.Double
+		IL_0069: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_006e: dup
+		IL_006f: ldstr "b"
+		IL_0074: ldc.r8 2
+		IL_007d: box [System.Runtime]System.Double
+		IL_0082: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0087: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_008c: pop
+		IL_008d: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
