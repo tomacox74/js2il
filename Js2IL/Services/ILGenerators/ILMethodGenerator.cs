@@ -9,7 +9,7 @@ using Acornima.Ast;
 
 namespace Js2IL.Services.ILGenerators
 {
-    internal class ILMethodGenerator
+    internal partial class ILMethodGenerator
     {
         private Variables _variables;
         private BaseClassLibraryReferences _bclReferences;
@@ -362,13 +362,7 @@ namespace Js2IL.Services.ILGenerators
                 _il.OpCode(ILOpCode.Ldftn);
                 _il.Token(methodHandle);
                 // Count parameters including any synthetically represented destructuring patterns.
-                int paramCount = 0;
-                foreach (var p in functionDeclaration.Params)
-                {
-                    if (p is Identifier) paramCount++;
-                    else if (p is ObjectPattern) paramCount++; // treat entire object pattern as one incoming argument
-                    else paramCount++; // fallback: unknown pattern counts as one
-                }
+                int paramCount = CountRuntimeParameters(functionDeclaration.Params);
                 var (_, ctorRef) = _bclReferences.GetFuncObjectArrayWithParams(paramCount);
                 _il.OpCode(ILOpCode.Newobj);
                 _il.Token(ctorRef);
@@ -1127,18 +1121,8 @@ namespace Js2IL.Services.ILGenerators
                                 if (bindId == null) continue;
                                 var targetVar = functionVariables.FindVariable(bindId.Name);
                                 if (targetVar == null) continue;
-                                var tslot = functionVariables.GetScopeLocalSlot(targetVar.ScopeName);
-                                if (tslot.Location == ObjectReferenceLocation.Parameter) il.LoadArgument(tslot.Address);
-                                else if (tslot.Location == ObjectReferenceLocation.ScopeArray) { il.LoadArgument(0); il.LoadConstantI4(tslot.Address); il.OpCode(ILOpCode.Ldelem_ref); }
-                                else il.LoadLocal(tslot.Address);
-                                var tScopeType = functionVariables.GetVariableRegistry()?.GetScopeTypeHandle(targetVar.ScopeName) ?? default;
-                                if (!tScopeType.IsNil) { il.OpCode(ILOpCode.Castclass); il.Token(tScopeType); }
-                                il.LoadArgument(jsParamSeq);
                                 var propName = (p.Key as Identifier)?.Name ?? (p.Key as Literal)?.Value?.ToString() ?? string.Empty;
-                                il.Ldstr(_metadataBuilder, propName);
-                                var getPropRef = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), typeof(object), typeof(object), typeof(string));
-                                il.OpCode(ILOpCode.Call); il.Token(getPropRef);
-                                il.OpCode(ILOpCode.Stfld); il.Token(targetVar.FieldHandle);
+                                ObjectPatternHelpers.EmitParamDestructuring(il, _metadataBuilder, _runtime, functionVariables, targetVar, jsParamSeq, propName);
                             }
                         }
                     }
@@ -1448,18 +1432,8 @@ namespace Js2IL.Services.ILGenerators
                                         if (bindId == null) continue;
                                         var targetVar = functionVariables.FindVariable(bindId.Name);
                                         if (targetVar == null) continue;
-                                        var tslot = functionVariables.GetScopeLocalSlot(targetVar.ScopeName);
-                                        if (tslot.Location == ObjectReferenceLocation.Parameter) il.LoadArgument(tslot.Address);
-                                        else if (tslot.Location == ObjectReferenceLocation.ScopeArray) { il.LoadArgument(0); il.LoadConstantI4(tslot.Address); il.OpCode(ILOpCode.Ldelem_ref); }
-                                        else il.LoadLocal(tslot.Address);
-                                        var tScopeType = functionVariables.GetVariableRegistry()?.GetScopeTypeHandle(targetVar.ScopeName) ?? default;
-                                        if (!tScopeType.IsNil) { il.OpCode(ILOpCode.Castclass); il.Token(tScopeType); }
-                                        il.LoadArgument(jsParamSeq);
                                         var propName = (p.Key as Identifier)?.Name ?? (p.Key as Literal)?.Value?.ToString() ?? string.Empty;
-                                        il.Ldstr(_metadataBuilder, propName);
-                                        var getPropRef = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), typeof(object), typeof(object), typeof(string));
-                                        il.OpCode(ILOpCode.Call); il.Token(getPropRef);
-                                        il.OpCode(ILOpCode.Stfld); il.Token(targetVar.FieldHandle);
+                                        ObjectPatternHelpers.EmitParamDestructuring(il, _metadataBuilder, _runtime, functionVariables, targetVar, jsParamSeq, propName);
                                     }
                                 }
                             }
@@ -1728,5 +1702,20 @@ namespace Js2IL.Services.ILGenerators
         
     // LoadValue moved to ILExpressionGenerator
 
+    }
+}
+
+namespace Js2IL.Services.ILGenerators
+{
+    internal partial class ILMethodGenerator
+    {
+        internal static int CountRuntimeParameters(IReadOnlyList<Node> parameters)
+        {
+            // Each declared parameter (identifier or pattern) is one runtime argument.
+            if (parameters == null) return 0;
+            int count = 0;
+            foreach (var _ in parameters) count++;
+            return count;
+        }
     }
 }

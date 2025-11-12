@@ -10,7 +10,7 @@ namespace Js2IL.SymbolTables
     /// <summary>
     /// Builds a SymbolTable from a JavaScript AST.
     /// </summary>
-    public class SymbolTableBuilder
+    public partial class SymbolTableBuilder
     {
         private int _closureCounter = 0;
         private string? _currentAssignmentTarget = null;
@@ -81,32 +81,8 @@ namespace Js2IL.SymbolTables
                     var funcName = (funcDecl.Id as Identifier)?.Name ?? $"Closure{++_closureCounter}";
                     var funcScope = new Scope(funcName, ScopeKind.Function, currentScope, funcDecl);
                     currentScope.Bindings[funcName] = new BindingInfo(funcName, BindingKind.Function, funcDecl);
-                        // Register parameters in the function's own scope
-                        foreach (var p in funcDecl.Params)
-                        {
-                            if (p is Identifier pid)
-                            {
-                                funcScope.Bindings[pid.Name] = new BindingInfo(pid.Name, BindingKind.Var, pid);
-                                funcScope.Parameters.Add(pid.Name);
-                            }
-                            else if (p is ObjectPattern op)
-                            {
-                                // Destructured parameter: bind each property identifier as a local binding in function scope
-                                foreach (var pnode in op.Properties)
-                                {
-                                    if (pnode is Property prop)
-                                    {
-                                        // Binding target name: prefer value identifier (alias), else shorthand key identifier
-                                        var bindId = prop.Value as Identifier ?? prop.Key as Identifier;
-                                        if (bindId != null && !funcScope.Bindings.ContainsKey(bindId.Name))
-                                        {
-                                            funcScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, bindId);
-                                        }
-                                    }
-                                }
-                                // Parameter list will still receive a synthetic name during codegen; no binding needed for it.
-                            }
-                        }
+                        // Register parameters (identifiers + object pattern properties) via helper
+                        BindObjectPatternParameters(funcDecl.Params, funcScope);
                         if (funcDecl.Body is BlockStatement fblock)
                         {
                             foreach (var statement in fblock.Body)
@@ -139,31 +115,7 @@ namespace Js2IL.SymbolTables
                     {
                         funcExprScope.Bindings[internalId.Name] = new BindingInfo(internalId.Name, BindingKind.Function, funcExpr);
                     }
-                    foreach (var param in funcExpr.Params)
-                    {
-                        if (param is Identifier id)
-                        {
-                            funcExprScope.Bindings[id.Name] = new BindingInfo(id.Name, BindingKind.Var, id);
-                            funcExprScope.Parameters.Add(id.Name);
-                        }
-                        else if (param is ObjectPattern op)
-                        {
-                            // Destructured parameter: bind each property identifier as a local binding in function scope
-                            foreach (var pnode in op.Properties)
-                            {
-                                if (pnode is Property prop)
-                                {
-                                    // Binding target name: prefer value identifier (alias), else shorthand key identifier
-                                    var bindId = prop.Value as Identifier ?? prop.Key as Identifier;
-                                    if (bindId != null && !funcExprScope.Bindings.ContainsKey(bindId.Name))
-                                    {
-                                        funcExprScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, bindId);
-                                    }
-                                }
-                            }
-                            // Note: a synthetic CLR parameter will be added for this pattern during codegen (e.g., p0)
-                        }
-                    }
+                    BindObjectPatternParameters(funcExpr.Params, funcExprScope);
                     if (funcExpr.Body is BlockStatement funcExprBlock)
                     {
                         // For function bodies, process statements directly in function scope without creating a block scope
@@ -529,6 +481,48 @@ namespace Js2IL.SymbolTables
                             BuildScopeRecursive(childNodeInList, currentScope);
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+namespace Js2IL.SymbolTables
+{
+    public partial class SymbolTableBuilder
+    {
+        /// <summary>
+        /// Helper to bind identifier parameters and object pattern property identifiers uniformly.
+        /// </summary>
+        private static void BindObjectPatternParameters(IEnumerable<Node> parameters, Scope scope)
+        {
+            foreach (var p in parameters)
+            {
+                if (p is Identifier id)
+                {
+                    if (!scope.Bindings.ContainsKey(id.Name))
+                    {
+                        scope.Bindings[id.Name] = new BindingInfo(id.Name, BindingKind.Var, id);
+                    }
+                    if (!scope.Parameters.Contains(id.Name))
+                    {
+                        scope.Parameters.Add(id.Name);
+                    }
+                }
+                else if (p is ObjectPattern op)
+                {
+                    foreach (var pnode in op.Properties)
+                    {
+                        if (pnode is Property prop)
+                        {
+                            var bindId = prop.Value as Identifier ?? prop.Key as Identifier;
+                            if (bindId != null && !scope.Bindings.ContainsKey(bindId.Name))
+                            {
+                                scope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, bindId);
+                            }
+                        }
+                    }
+                    // Note: pattern itself gets a synthetic CLR parameter during codegen; nothing added to scope.Parameters here.
                 }
             }
         }
