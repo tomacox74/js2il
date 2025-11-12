@@ -89,6 +89,23 @@ namespace Js2IL.SymbolTables
                                 funcScope.Bindings[pid.Name] = new BindingInfo(pid.Name, BindingKind.Var, pid);
                                 funcScope.Parameters.Add(pid.Name);
                             }
+                            else if (p is ObjectPattern op)
+                            {
+                                // Destructured parameter: bind each property identifier as a local binding in function scope
+                                foreach (var pnode in op.Properties)
+                                {
+                                    if (pnode is Property prop)
+                                    {
+                                        // Binding target name: prefer value identifier (alias), else shorthand key identifier
+                                        var bindId = prop.Value as Identifier ?? prop.Key as Identifier;
+                                        if (bindId != null && !funcScope.Bindings.ContainsKey(bindId.Name))
+                                        {
+                                            funcScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, bindId);
+                                        }
+                                    }
+                                }
+                                // Parameter list will still receive a synthetic name during codegen; no binding needed for it.
+                            }
                         }
                         if (funcDecl.Body is BlockStatement fblock)
                         {
@@ -136,9 +153,11 @@ namespace Js2IL.SymbolTables
                             {
                                 if (pnode is Property prop)
                                 {
-                                    if (prop.Value is Identifier bid && !funcExprScope.Bindings.ContainsKey(bid.Name))
+                                    // Binding target name: prefer value identifier (alias), else shorthand key identifier
+                                    var bindId = prop.Value as Identifier ?? prop.Key as Identifier;
+                                    if (bindId != null && !funcExprScope.Bindings.ContainsKey(bindId.Name))
                                     {
-                                        funcExprScope.Bindings[bid.Name] = new BindingInfo(bid.Name, BindingKind.Var, bid);
+                                        funcExprScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, bindId);
                                     }
                                 }
                             }
@@ -329,9 +348,11 @@ namespace Js2IL.SymbolTables
                             {
                                 if (pnode is Property prop)
                                 {
-                                    if (prop.Value is Identifier bid && !arrowScope.Bindings.ContainsKey(bid.Name))
+                                    // Binding target name: prefer value identifier (alias), else shorthand key identifier
+                                    var bindId = prop.Value as Identifier ?? prop.Key as Identifier;
+                                    if (bindId != null && !arrowScope.Bindings.ContainsKey(bindId.Name))
                                     {
-                                        arrowScope.Bindings[bid.Name] = new BindingInfo(bid.Name, BindingKind.Var, bid);
+                                        arrowScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, bindId);
                                     }
                                 }
                             }

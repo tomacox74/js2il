@@ -149,7 +149,16 @@
                   "testScripts": [
                     "Js2IL.Tests/Node/JavaScript/PerfHooks_PerformanceNow_Basic.js"
                   ],
-                  "notes": "Supports simple object patterns in variable declarations, e.g., const { performance } = require('perf_hooks'); The initializer is evaluated once and properties are bound via direct typed getters when available (for known intrinsics) or via JavaScriptRuntime.Object.GetProperty. Not yet supported: nested patterns, default values, renaming (alias), rest properties, array destructuring, and parameter/assignment destructuring."
+                  "notes": "Supports simple object patterns in variable declarations, e.g., const { performance } = require('perf_hooks'); The initializer is evaluated once and properties are bound via direct typed getters when available (for known intrinsics) or via JavaScriptRuntime.Object.GetProperty. Not yet supported: nested patterns, default values, renaming (alias), rest properties, array destructuring, and assignment destructuring."
+                },
+                {
+                  "feature": "Object destructuring in function/arrow parameters — basic",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Function/JavaScript/Function_ParameterDestructuring_Object.js",
+                    "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_ParameterDestructuring_Object.js"
+                  ],
+                  "notes": "Supports object binding patterns in formal parameters for function declarations and arrow functions, including shorthand (e.g., {a,b}) and aliasing (e.g., { a: x }). Limitations: no default values, no nested patterns, no rest properties, and no array patterns in parameters. Properties are retrieved via JavaScriptRuntime.Object.GetProperty and bound into the function scope before body execution."
                 }
               ]
             },
@@ -193,9 +202,10 @@
                     "Js2IL.Tests/JavaScript/ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.js",
                     "Js2IL.Tests/JavaScript/ArrowFunction_GlobalFunctionWithMultipleParameters.js",
                     "Js2IL.Tests/JavaScript/ArrowFunction_NestedFunctionAccessesMultipleScopes.js",
-                    "Js2IL.Tests/JavaScript/ArrowFunction_CapturesOuterVariable.js"
+                    "Js2IL.Tests/JavaScript/ArrowFunction_CapturesOuterVariable.js",
+                    "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_ParameterDestructuring_Object.js"
                   ],
-                  "notes": "Covers expression- and block-bodied arrows, multiple parameters, nested functions, and closure capture across scopes (including returning functions that capture globals/locals). Not yet supported: default/rest parameters, parameter destructuring, lexical this/arguments semantics, and spread at call sites."
+                  "notes": "Covers expression- and block-bodied arrows, multiple parameters, nested functions, and closure capture across scopes (including returning functions that capture globals/locals). Not yet supported: default/rest parameters, lexical this/arguments semantics, and spread at call sites."
                 }
               ]
             },

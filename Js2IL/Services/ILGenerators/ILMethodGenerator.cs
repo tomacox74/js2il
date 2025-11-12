@@ -361,7 +361,14 @@ namespace Js2IL.Services.ILGenerators
                 _il.OpCode(ILOpCode.Ldnull);
                 _il.OpCode(ILOpCode.Ldftn);
                 _il.Token(methodHandle);
-                var paramCount = functionDeclaration.Params.Count; // js params
+                // Count parameters including any synthetically represented destructuring patterns.
+                int paramCount = 0;
+                foreach (var p in functionDeclaration.Params)
+                {
+                    if (p is Identifier) paramCount++;
+                    else if (p is ObjectPattern) paramCount++; // treat entire object pattern as one incoming argument
+                    else paramCount++; // fallback: unknown pattern counts as one
+                }
                 var (_, ctorRef) = _bclReferences.GetFuncObjectArrayWithParams(paramCount);
                 _il.OpCode(ILOpCode.Newobj);
                 _il.Token(ctorRef);
@@ -1113,9 +1120,12 @@ namespace Js2IL.Services.ILGenerators
                     {
                         foreach (var prop in op.Properties)
                         {
-                            if (prop is Property p && p.Value is Identifier bid)
+                            if (prop is Property p)
                             {
-                                var targetVar = functionVariables.FindVariable(bid.Name);
+                                // Support alias ({x: y}) and shorthand ({a}) forms: binding identifier = value id or key id
+                                var bindId = p.Value as Identifier ?? p.Key as Identifier;
+                                if (bindId == null) continue;
+                                var targetVar = functionVariables.FindVariable(bindId.Name);
                                 if (targetVar == null) continue;
                                 var tslot = functionVariables.GetScopeLocalSlot(targetVar.ScopeName);
                                 if (tslot.Location == ObjectReferenceLocation.Parameter) il.LoadArgument(tslot.Address);
@@ -1261,9 +1271,18 @@ namespace Js2IL.Services.ILGenerators
                             }
                         }
                     }
-                    // Destructure object-pattern params into fields
+                        // Destructure object-pattern parameters
                     DestructureArrowParamsIfAny();
-                    childGen.GenerateStatementsForBody(functionVariables.GetLeafScopeName(), false, block.Body);
+                    // Ensure lexical resolution prefers this arrow's scope during body emission
+                    childGen._variables.PushLexicalScope(functionVariables.GetLeafScopeName());
+                    try
+                    {
+                        childGen.GenerateStatementsForBody(functionVariables.GetLeafScopeName(), false, block.Body);
+                    }
+                    finally
+                    {
+                        childGen._variables.PopLexicalScope(functionVariables.GetLeafScopeName());
+                    }
                     il.OpCode(ILOpCode.Ldnull);
                     il.OpCode(ILOpCode.Ret);
                 }
@@ -1299,7 +1318,16 @@ namespace Js2IL.Services.ILGenerators
                     }
                 }
                 var bodyExpr = arrowFunction.Body as Expression ?? throw ILEmitHelpers.NotSupported("Arrow function body is not an expression", arrowFunction.Body);
-                _ = childGen.ExpressionEmitter.Emit(bodyExpr, new TypeCoercion() { boxResult = true });
+                // Ensure lexical scope is active so identifiers resolve to this arrow's bindings
+                childGen._variables.PushLexicalScope(functionVariables.GetLeafScopeName());
+                try
+                {
+                    _ = childGen.ExpressionEmitter.Emit(bodyExpr, new TypeCoercion() { boxResult = true });
+                }
+                finally
+                {
+                    childGen._variables.PopLexicalScope(functionVariables.GetLeafScopeName());
+                }
                 il.OpCode(ILOpCode.Ret);
             }
 
@@ -1411,11 +1439,14 @@ namespace Js2IL.Services.ILGenerators
                             var pnode = funcExpr.Params[i];
                             if (pnode is ObjectPattern op)
                             {
-                                foreach (var prop in op.Properties)
+                                foreach (var propNode in op.Properties)
                                 {
-                                    if (prop is Property p && p.Value is Identifier bid)
+                                    if (propNode is Property p)
                                     {
-                                        var targetVar = functionVariables.FindVariable(bid.Name);
+                                        // Support alias ({x: y}) and shorthand ({a}) forms
+                                        var bindId = p.Value as Identifier ?? p.Key as Identifier;
+                                        if (bindId == null) continue;
+                                        var targetVar = functionVariables.FindVariable(bindId.Name);
                                         if (targetVar == null) continue;
                                         var tslot = functionVariables.GetScopeLocalSlot(targetVar.ScopeName);
                                         if (tslot.Location == ObjectReferenceLocation.Parameter) il.LoadArgument(tslot.Address);
@@ -1494,7 +1525,16 @@ namespace Js2IL.Services.ILGenerators
                 // call (when identifier resolved) will find null and bind. For simplicity, we rely on EmitFunctionCall
                 // having already loaded delegate field; if null we throw. To avoid modifying call logic now, implement
                 // eager binding AFTER mdh creation by buffering body IL then prepending prologue.
-                childGen.GenerateStatementsForBody(functionVariables.GetLeafScopeName(), false, block.Body);
+                // Ensure lexical scope is active for resolution of local bindings inside function expression
+                childGen._variables.PushLexicalScope(functionVariables.GetLeafScopeName());
+                try
+                {
+                    childGen.GenerateStatementsForBody(functionVariables.GetLeafScopeName(), false, block.Body);
+                }
+                finally
+                {
+                    childGen._variables.PopLexicalScope(functionVariables.GetLeafScopeName());
+                }
                 // If control reaches here with no explicit return, return null
                 il.OpCode(ILOpCode.Ldnull);
                 il.OpCode(ILOpCode.Ret);
