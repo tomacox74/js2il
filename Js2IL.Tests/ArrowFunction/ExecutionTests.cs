@@ -27,5 +27,9 @@ namespace Js2IL.Tests.ArrowFunction
 
     [Fact]
     public Task ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal() { var testName = nameof(ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal); return ExecutionTest(testName); }
+
+    // New: parameter destructuring (object)
+    [Fact]
+    public Task ArrowFunction_ParameterDestructuring_Object() { var testName = nameof(ArrowFunction_ParameterDestructuring_Object); return ExecutionTest(testName); }
     }
 }
