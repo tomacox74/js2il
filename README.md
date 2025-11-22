@@ -51,7 +51,7 @@ JS2IL compiles JavaScript source code to .NET Intermediate Language (IL), produc
 
 ## Usage
 
-Prerequisite: .NET 8 SDK
+Prerequisite: .NET 10 SDK (upgrade branch). Master currently targets .NET 8.
 
 - Convert a JavaScript file (writes output next to the input file by default):
 
@@ -126,7 +126,7 @@ Errors and exit codes
 ## Building
 
 
-To compile the project locally, run:
+To compile the project locally (after installing .NET 10 SDK), run:
 
 ```
 dotnet build
