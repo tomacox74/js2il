@@ -4,15 +4,17 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.2.0 - 2025-11-22
+
 Added
 - Functions: basic object parameter destructuring for function declarations, function expressions, and arrow functions. Supports shorthand properties (`{a,b}`) and simple aliasing (`{ a: x }`). Each destructured identifier is bound into the function's lexical scope prior to body execution.
 - Symbol/Table & IL Generation: parameter ObjectPattern binding and emission across all function kinds (declaration/expression/arrow) retrieving properties via `JavaScriptRuntime.Object.GetProperty` and storing into scope fields.
 - Docs: updated `ECMAScript2025_FeatureCoverage.json` and regenerated `ECMAScript2025_FeatureCoverage.md` to reflect support for object parameter destructuring.
-
 Changed
 - Docs: arrow function feature notes no longer list parameter destructuring as unsupported; new feature entry added under binding patterns.
 - Tests: adopted received generator snapshots for destructuring tests (Function/Arrow) to align verified output with current emitter formatting and reduce non-semantic churn.
-
 Fixed
 - Parameter destructuring: previously emitted undefined values due to missing binding/shorthand handling for `{a,b}` and alias patterns; now bindings populate scope fields correctly and execution snapshots log expected values.
 - Build: upgrade branch targets .NET 10 (net10.0) for early compatibility testing; CI workflow updated to use 10.0.x SDK. Master remains on net8.0 until upgrade validated.
