@@ -15,7 +15,7 @@ Changed
 
 Fixed
 - Parameter destructuring: previously emitted undefined values due to missing binding/shorthand handling for `{a,b}` and alias patterns; now bindings populate scope fields correctly and execution snapshots log expected values.
- - Build: upgrade branch targets .NET 10 (net10.0) for early compatibility testing; CI workflow updated to use 10.0.x SDK. Master remains on net8.0 until upgrade validated.
+- Build: upgrade branch targets .NET 10 (net10.0) for early compatibility testing; CI workflow updated to use 10.0.x SDK. Master remains on net8.0 until upgrade validated.
 
 ## v0.1.7 - 2025-11-12
 
