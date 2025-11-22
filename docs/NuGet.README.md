@@ -54,7 +54,7 @@ js2il .\tests\simple.js -o .\out -v
 Given an input like `C:\code\sample.js`, js2il will emit the following into the output directory (default: alongside the input file):
 
 - `sample.dll`
-	- A .NET assembly (targeting net8.0) containing IL corresponding to your JavaScript.
+	- A .NET assembly (targeting net10.0) containing IL corresponding to your JavaScript.
 	- The assembly name is the input file name without extension.
 	- Contains a `Program.Main` entry point that executes your script when run.
 - `sample.runtimeconfig.json`
@@ -77,7 +77,7 @@ Notes:
 
 ## Limitations
 
-- Target framework: net8.0
+- Target framework: net10.0
 - Not all JS features are supported; some constructs may be validated and rejected with explanations.
 - Emitted IL and runtime surface are subject to change between previews.
 
