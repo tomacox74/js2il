@@ -1890,7 +1890,6 @@ namespace Js2IL.Services.ILGenerators
     private ExpressionResult EmitNewExpression(NewExpression newExpression)
         {
             var _classRegistry = _owner.ClassRegistry;
-            var _metadataBuilder = _owner.MetadataBuilder;
             var _runtime = _owner.Runtime;
 
             // Support `new Identifier(...)` for classes emitted under Classes namespace
@@ -1950,7 +1949,7 @@ namespace Js2IL.Services.ILGenerators
                 }
 
                 // Try Classes registry first (cached ctor + signature + param count)
-                if (_classRegistry.TryGetConstructor(cid.Name, out var ctorDef, out var ctorSigCached, out var ctorParamCount))
+                if (_classRegistry.TryGetConstructor(cid.Name, out var ctorDef, out var ctorParamCount))
                 {
                     var argc = newExpression.Arguments.Count;
                     if (argc != ctorParamCount)

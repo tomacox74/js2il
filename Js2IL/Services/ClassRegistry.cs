@@ -120,15 +120,13 @@ namespace Js2IL.Services
             _constructors[className] = (ctorHandle, signature, paramCount);
         }
 
-        public bool TryGetConstructor(string className, out MethodDefinitionHandle ctorHandle, out BlobHandle signature, out int paramCount)
+        public bool TryGetConstructor(string className, out MethodDefinitionHandle ctorHandle, out int paramCount)
         {
             ctorHandle = default;
-            signature = default;
             paramCount = 0;
             if (_constructors.TryGetValue(className, out var info))
             {
                 ctorHandle = info.Ctor;
-                signature = info.Signature;
                 paramCount = info.ParamCount;
                 return true;
             }
