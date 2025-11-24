@@ -46,17 +46,17 @@ namespace JavaScriptRuntime
         private static readonly JavaScriptRuntime.Console _console = new JavaScriptRuntime.Console();
         public static JavaScriptRuntime.Console console => _console;
 
-    /// <summary>
-    /// ECMAScript global Infinity value (+∞).
-    /// Exposed as a static property so identifiers bind at compile-time.
-    /// </summary>
-    public static double Infinity => double.PositiveInfinity;
+        /// <summary>
+        /// ECMAScript global Infinity value (+∞).
+        /// Exposed as a static property so identifiers bind at compile-time.
+        /// </summary>
+        public static double Infinity => double.PositiveInfinity;
 
-    /// <summary>
-    /// ECMAScript global NaN value.
-    /// Exposed as a static property so identifiers bind at compile-time.
-    /// </summary>
-    public static double NaN => double.NaN;
+        /// <summary>
+        /// ECMAScript global NaN value.
+        /// Exposed as a static property so identifiers bind at compile-time.
+        /// </summary>
+        public static double NaN => double.NaN;
 
         /// <summary>
         /// Dynamic lookup for well-known globals by name.
