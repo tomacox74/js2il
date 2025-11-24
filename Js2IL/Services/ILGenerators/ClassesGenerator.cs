@@ -273,11 +273,14 @@ namespace Js2IL.Services.ILGenerators
             ilGen.IL.OpCode(ILOpCode.Ret);
 
             var ctorBody = _methodBodies.AddMethodBody(ilGen.IL, maxStack: 32);
-            return tb.AddMethodDefinition(
+            var ctorDef = tb.AddMethodDefinition(
                 MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
                 ".ctor",
                 ctorSig,
                 ctorBody);
+            // Cache ctor for reuse/validation at call sites
+            _classRegistry.RegisterConstructor(className, ctorDef, ctorSig, 0);
+            return ctorDef;
         }
 
         private MethodDefinitionHandle EmitExplicitConstructor(
@@ -335,11 +338,13 @@ namespace Js2IL.Services.ILGenerators
             }
 
             var ctorBody = _methodBodies.AddMethodBody(ilGen.IL, maxStack: 32, localVariablesSignature: localSignature, attributes: bodyAttributes);
-            return tb.AddMethodDefinition(
+            var ctorDef = tb.AddMethodDefinition(
                 MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
                 ".ctor",
                 ctorSig,
                 ctorBody);
+            _classRegistry.RegisterConstructor(className, ctorDef, ctorSig, paramCount);
+            return ctorDef;
         }
 
         private void EmitFieldInitializers(ILMethodGenerator ilGen, System.Collections.Generic.List<(FieldDefinitionHandle Field, Expression? Init)> fieldsWithInits)

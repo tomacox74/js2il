@@ -1949,27 +1949,43 @@ namespace Js2IL.Services.ILGenerators
                     }
                 }
 
-                // Try Classes registry first
-                if (_classRegistry.TryGet(cid.Name, out var typeHandle) && !typeHandle.IsNil)
+                // Try Classes registry first (cached ctor + signature + param count)
+                if (_classRegistry.TryGetConstructor(cid.Name, out var ctorDef, out var ctorSigCached, out var ctorParamCount))
                 {
-                    // Build .ctor signature matching argument count (all object)
                     var argc = newExpression.Arguments.Count;
-                    var sig = new BlobBuilder();
-                    new BlobEncoder(sig)
-                        .MethodSignature(isInstanceMethod: true)
-                        .Parameters(argc, r => r.Void(), p => { for (int i = 0; i < argc; i++) p.AddParameter().Type().Object(); });
-                    var ctorSig = _metadataBuilder.GetOrAddBlob(sig);
-                    var ctorRef = _metadataBuilder.AddMemberReference(typeHandle, _metadataBuilder.GetOrAddString(".ctor"), ctorSig);
-
-                    // Push args
+                    if (argc != ctorParamCount)
+                    {
+                        throw ILEmitHelpers.NotSupported($"Constructor for class '{cid.Name}' expects {ctorParamCount} argument(s) but call site has {argc}.", newExpression);
+                    }
+                    // Emit arguments (all object-typed in current design)
                     for (int i = 0; i < argc; i++)
                     {
                         Emit(newExpression.Arguments[i], new TypeCoercion() { boxResult = true });
                     }
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
-                    _il.Token(ctorRef);
-
-                    // Record variable -> class mapping when in a variable initializer or assignment
+                    _il.Token(ctorDef);
+                    if (!string.IsNullOrEmpty(_owner.CurrentAssignmentTarget))
+                    {
+                        _owner.RecordVariableToClass(_owner.CurrentAssignmentTarget!, cid.Name);
+                    }
+                    return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
+                }
+                // Fallback: legacy path for classes registered without constructor cache (older snapshots or edge cases)
+                if (_classRegistry.TryGet(cid.Name, out var typeHandleLegacy) && !typeHandleLegacy.IsNil)
+                {
+                    var argc = newExpression.Arguments.Count;
+                    var sigLegacy = new BlobBuilder();
+                    new BlobEncoder(sigLegacy)
+                        .MethodSignature(isInstanceMethod: true)
+                        .Parameters(argc, r => r.Void(), p => { for (int i = 0; i < argc; i++) p.AddParameter().Type().Object(); });
+                    var ctorSigLegacy = _metadataBuilder.GetOrAddBlob(sigLegacy);
+                    var ctorRefLegacy = _metadataBuilder.AddMemberReference(typeHandleLegacy, _metadataBuilder.GetOrAddString(".ctor"), ctorSigLegacy);
+                    for (int i = 0; i < argc; i++)
+                    {
+                        Emit(newExpression.Arguments[i], new TypeCoercion() { boxResult = true });
+                    }
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
+                    _il.Token(ctorRefLegacy);
                     if (!string.IsNullOrEmpty(_owner.CurrentAssignmentTarget))
                     {
                         _owner.RecordVariableToClass(_owner.CurrentAssignmentTarget!, cid.Name);
