@@ -1970,27 +1970,10 @@ namespace Js2IL.Services.ILGenerators
                     }
                     return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
                 }
-                // Fallback: legacy path for classes registered without constructor cache (older snapshots or edge cases)
-                if (_classRegistry.TryGet(cid.Name, out var typeHandleLegacy) && !typeHandleLegacy.IsNil)
+                // No cached constructor found: treat as unsupported (all emitted classes must register constructors).
+                if (_classRegistry.TryGet(cid.Name, out var registeredType) && !registeredType.IsNil)
                 {
-                    var argc = newExpression.Arguments.Count;
-                    var sigLegacy = new BlobBuilder();
-                    new BlobEncoder(sigLegacy)
-                        .MethodSignature(isInstanceMethod: true)
-                        .Parameters(argc, r => r.Void(), p => { for (int i = 0; i < argc; i++) p.AddParameter().Type().Object(); });
-                    var ctorSigLegacy = _metadataBuilder.GetOrAddBlob(sigLegacy);
-                    var ctorRefLegacy = _metadataBuilder.AddMemberReference(typeHandleLegacy, _metadataBuilder.GetOrAddString(".ctor"), ctorSigLegacy);
-                    for (int i = 0; i < argc; i++)
-                    {
-                        Emit(newExpression.Arguments[i], new TypeCoercion() { boxResult = true });
-                    }
-                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
-                    _il.Token(ctorRefLegacy);
-                    if (!string.IsNullOrEmpty(_owner.CurrentAssignmentTarget))
-                    {
-                        _owner.RecordVariableToClass(_owner.CurrentAssignmentTarget!, cid.Name);
-                    }
-                    return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
+                    throw ILEmitHelpers.NotSupported($"Constructor for class '{cid.Name}' was not cached. All classes must register their constructors.", newExpression);
                 }
 
                 // Built-in Error types from JavaScriptRuntime (Error, TypeError, etc.)
