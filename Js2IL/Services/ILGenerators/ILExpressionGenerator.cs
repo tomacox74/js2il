@@ -483,7 +483,7 @@ namespace Js2IL.Services.ILGenerators
 
         // Emits a call expression (function or member call) with context and optional result discard.
         // Migrated from ILMethodGenerator to centralize expression emission.
-        public Type? GenerateCallExpression(Acornima.Ast.CallExpression callExpression, global::Js2IL.Services.ILGenerators.CallSiteContext context)
+        private Type? GenerateCallExpression(Acornima.Ast.CallExpression callExpression, global::Js2IL.Services.ILGenerators.CallSiteContext context)
         {
             var _metadataBuilder = _owner.MetadataBuilder;
             var _runtime = _owner.Runtime;
@@ -2387,7 +2387,7 @@ namespace Js2IL.Services.ILGenerators
         }
 
         // Case-insensitive property getter helper for AST reflection
-        internal static System.Reflection.PropertyInfo? GetPropertyIgnoreCase(object target, string propertyName)
+        private static System.Reflection.PropertyInfo? GetPropertyIgnoreCase(object target, string propertyName)
         {
             if (target == null || string.IsNullOrEmpty(propertyName)) return null;
             var t = target.GetType();
@@ -2395,7 +2395,7 @@ namespace Js2IL.Services.ILGenerators
         }
 
         // Parse a Raw regex literal string like "/pattern/flags" into (pattern, flags)
-        internal static (string? pattern, string? flags) ParseRegexRaw(string raw)
+        private static (string? pattern, string? flags) ParseRegexRaw(string raw)
         {
             if (string.IsNullOrEmpty(raw) || raw[0] != '/') return (null, null);
             int lastSlash = -1;

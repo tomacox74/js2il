@@ -77,7 +77,9 @@ namespace Js2IL.Tests
             var directory = Path.GetDirectoryName(sourceFilePath);
             if (!string.IsNullOrEmpty(directory))
             {
-                settings.UseDirectory(directory);
+                var snapshotsDirectory = Path.Combine(directory, "Snapshots");
+                Directory.CreateDirectory(snapshotsDirectory);
+                settings.UseDirectory(snapshotsDirectory);
             }
             configureSettings?.Invoke(settings);
             return Verify(il, settings);

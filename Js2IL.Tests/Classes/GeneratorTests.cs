@@ -57,5 +57,7 @@ namespace Js2IL.Tests.Classes
             var testName = nameof(Classes_PrimeCtor_BitArrayAdd);
             return GenerateTest(testName);
         }
+
+        [Fact] public Task Classes_ClassMethod_AccessGlobal_Log() { var testName = nameof(Classes_ClassMethod_AccessGlobal_Log); return GenerateTest(testName); }
     }
 }
