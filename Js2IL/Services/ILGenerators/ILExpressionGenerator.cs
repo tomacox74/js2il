@@ -134,8 +134,8 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-    /// <inheritdoc />
-    public ExpressionResult Emit(Expression expression, TypeCoercion typeCoercion, CallSiteContext context = CallSiteContext.Expression,  ConditionalBranching? branching = null)
+        /// <inheritdoc />
+        public ExpressionResult Emit(Expression expression, TypeCoercion typeCoercion, CallSiteContext context = CallSiteContext.Expression,  ConditionalBranching? branching = null)
         {
             var _metadataBuilder = _owner.MetadataBuilder;
             var _bclReferences = _owner.BclReferences;
@@ -483,7 +483,7 @@ namespace Js2IL.Services.ILGenerators
 
         // Emits a call expression (function or member call) with context and optional result discard.
         // Migrated from ILMethodGenerator to centralize expression emission.
-    public Type? GenerateCallExpression(Acornima.Ast.CallExpression callExpression, global::Js2IL.Services.ILGenerators.CallSiteContext context)
+        public Type? GenerateCallExpression(Acornima.Ast.CallExpression callExpression, global::Js2IL.Services.ILGenerators.CallSiteContext context)
         {
             var _metadataBuilder = _owner.MetadataBuilder;
             var _runtime = _owner.Runtime;
@@ -1235,7 +1235,7 @@ namespace Js2IL.Services.ILGenerators
         }
 
         // Emits a call to a function identified by an Identifier in the current scope, including scope array construction and delegate dispatch.
-    private Type? EmitFunctionCall(Acornima.Ast.Identifier identifier, Acornima.Ast.CallExpression callExpression, global::Js2IL.Services.ILGenerators.CallSiteContext context)
+        private Type? EmitFunctionCall(Acornima.Ast.Identifier identifier, Acornima.Ast.CallExpression callExpression, global::Js2IL.Services.ILGenerators.CallSiteContext context)
         {
             var _runtime = _owner.Runtime;
             var _bclReferences = _owner.BclReferences;
@@ -1886,8 +1886,8 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-    // Helper to emit a NewExpression and return both JavaScript and CLR types (moved from ILMethodGenerator)
-    private ExpressionResult EmitNewExpression(NewExpression newExpression)
+        // Helper to emit a NewExpression and return both JavaScript and CLR types (moved from ILMethodGenerator)
+        private ExpressionResult EmitNewExpression(NewExpression newExpression)
         {
             var _classRegistry = _owner.ClassRegistry;
             var _runtime = _owner.Runtime;
