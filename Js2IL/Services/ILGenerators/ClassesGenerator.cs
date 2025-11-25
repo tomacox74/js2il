@@ -218,12 +218,12 @@ namespace Js2IL.Services.ILGenerators
                 .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
             if (ctorMethod != null && ctorMethod.Value is FunctionExpression ctorFunc)
             {
-                EmitExplicitConstructor(tb, ctorFunc, fieldsWithInits, classScope.Name, classNeedsParentScopes);
+                EmitExplicitConstructor(tb, ctorFunc, fieldsWithInits, classScope, classNeedsParentScopes);
             }
             else
             {
                 // Emit a parameterless .ctor that calls System.Object::.ctor and initializes fields
-                EmitParameterlessConstructor(tb, fieldsWithInits, classScope.Name, classNeedsParentScopes);
+                EmitParameterlessConstructor(tb, fieldsWithInits, classScope, classNeedsParentScopes);
             }
 
             // Methods: create stubs for now; real method codegen will come later
@@ -294,9 +294,11 @@ namespace Js2IL.Services.ILGenerators
         private MethodDefinitionHandle EmitParameterlessConstructor(
             TypeBuilder tb,
             System.Collections.Generic.List<(FieldDefinitionHandle Field, Expression? Init)> fieldsWithInits,
-            string className,
+            Scope classScope,
             bool needsScopes)
         {
+            var className = classScope.Name;
+            
             // Signature: instance void .ctor() or instance void .ctor(object[] scopes) depending on needsScopes
             var sigBuilder = new BlobBuilder();
             new BlobEncoder(sigBuilder)
@@ -364,9 +366,11 @@ namespace Js2IL.Services.ILGenerators
             TypeBuilder tb,
             FunctionExpression ctorFunc,
             System.Collections.Generic.List<(FieldDefinitionHandle Field, Expression? Init)> fieldsWithInits,
-            string className,
+            Scope classScope,
             bool needsScopes)
         {
+            var className = classScope.Name;
+            
             // Signature: instance void .ctor(object, ...) or .ctor(object[] scopes, object, ...) depending on needsScopes
             var userParamCount = ctorFunc.Params.Count;
             var totalParamCount = needsScopes ? userParamCount + 1 : userParamCount;
@@ -388,7 +392,16 @@ namespace Js2IL.Services.ILGenerators
 
             // Create a generator with parameter variables so identifiers resolve
             var paramNames = ctorFunc.Params.OfType<Identifier>().Select(p => p.Name);
-            var methodVariables = new Variables(_variables, "constructor", paramNames, isNestedFunction: false);
+            Variables methodVariables;
+            if (needsScopes)
+            {
+                var parentScopeNames = DetermineParentScopesForClassMethod(classScope);
+                methodVariables = new Variables(_variables, "constructor", paramNames, parentScopeNames);
+            }
+            else
+            {
+                methodVariables = new Variables(_variables, "constructor", paramNames, isNestedFunction: false);
+            }
             var ilGen = new ILMethodGenerator(methodVariables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: true, currentClassName: className);
 
             // base .ctor

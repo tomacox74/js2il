@@ -1,0 +1,239 @@
+﻿// IL code: Classes_ClassConstructor_AccessFunctionVariable_Log
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit testFunction
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit MyClass
+			extends [System.Runtime]System.Object
+		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit constructor
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x206b
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method constructor::.ctor
+
+			} // end of class constructor
+
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2062
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method MyClass::.ctor
+
+		} // end of class MyClass
+
+
+		// Fields
+		.field public object FUNCTION_VALUE
+		.field public object MyClass
+		.field public object 'instance'
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method testFunction::.ctor
+
+	} // end of class testFunction
+
+
+	// Fields
+	.field public object testFunction
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Classes_ClassConstructor_AccessFunctionVariable_Log::.ctor
+
+} // end of class Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log
+
+.class public auto ansi beforefieldinit Classes.MyClass
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field private object[] _scopes
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor (
+			object[] ''
+		) cil managed 
+	{
+		// Method begins at RVA 0x2074
+		// Header size: 12
+		// Code size: 47 (0x2f)
+		.maxstack 32
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: ldarg.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object[] Classes.MyClass::_scopes
+		IL_000d: ldc.i4.1
+		IL_000e: newarr [System.Runtime]System.Object
+		IL_0013: dup
+		IL_0014: ldc.i4.0
+		IL_0015: ldarg.0
+		IL_0016: ldfld object[] Classes.MyClass::_scopes
+		IL_001b: ldc.i4.1
+		IL_001c: ldelem.ref
+		IL_001d: castclass Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction
+		IL_0022: ldfld object Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction::FUNCTION_VALUE
+		IL_0027: stelem.ref
+		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_002d: pop
+		IL_002e: ret
+	} // end of method MyClass::.ctor
+
+} // end of class Classes.MyClass
+
+.class public auto ansi abstract sealed beforefieldinit Functions.testFunction
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		object testFunction (
+			object[] scopes
+		) cil managed 
+	{
+		// Method begins at RVA 0x20b0
+		// Header size: 12
+		// Code size: 66 (0x42)
+		.maxstack 32
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: castclass Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction
+		IL_000c: ldstr "Hello from function"
+		IL_0011: stfld object Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction::FUNCTION_VALUE
+		IL_0016: ldloc.0
+		IL_0017: castclass Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction
+		IL_001c: ldc.i4.2
+		IL_001d: newarr [System.Runtime]System.Object
+		IL_0022: dup
+		IL_0023: ldc.i4.0
+		IL_0024: ldarg.0
+		IL_0025: ldc.i4.0
+		IL_0026: ldelem.ref
+		IL_0027: castclass Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log
+		IL_002c: stelem.ref
+		IL_002d: dup
+		IL_002e: ldc.i4.1
+		IL_002f: ldloc.0
+		IL_0030: castclass Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction
+		IL_0035: stelem.ref
+		IL_0036: newobj instance void Classes.MyClass::.ctor(object[])
+		IL_003b: stfld object Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction::'instance'
+		IL_0040: ldnull
+		IL_0041: ret
+	} // end of method testFunction::testFunction
+
+} // end of class Functions.testFunction
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2100
+		// Header size: 12
+		// Code size: 90 (0x5a)
+		.maxstack 32
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: castclass Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log
+		IL_000c: ldnull
+		IL_000d: ldftn object Functions.testFunction::testFunction(object[])
+		IL_0013: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0018: stfld object Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log::testFunction
+		IL_001d: ldloc.0
+		IL_001e: ldfld object Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log::testFunction
+		IL_0023: dup
+		IL_0024: brtrue.s IL_0044
+
+		IL_0026: pop
+		IL_0027: ldloc.0
+		IL_0028: ldnull
+		IL_0029: ldftn object Functions.testFunction::testFunction(object[])
+		IL_002f: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0034: stfld object Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log::testFunction
+		IL_0039: ldloc.0
+		IL_003a: ldfld object Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log::testFunction
+		IL_003f: br IL_0044
+
+		IL_0044: ldc.i4.1
+		IL_0045: newarr [System.Runtime]System.Object
+		IL_004a: dup
+		IL_004b: ldc.i4.0
+		IL_004c: ldloc.0
+		IL_004d: castclass Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log
+		IL_0052: stelem.ref
+		IL_0053: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0058: pop
+		IL_0059: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
