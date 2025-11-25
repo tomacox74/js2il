@@ -84,7 +84,35 @@ namespace Js2IL.Services.ILGenerators
                 : TypeAttributes.NestedPublic | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
 
             // Check if this class needs to access parent scope variables (computed during symbol table build)
+            // Also check if any constructor or method needs parent scopes (e.g., instantiates classes needing scopes)
             bool classNeedsParentScopes = classScope.ReferencesParentScopeVariables;
+            if (!classNeedsParentScopes)
+            {
+                // Check constructor
+                var ctor = cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>()
+                    .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+                if (ctor?.Value is FunctionExpression ctorExpr)
+                {
+                    classNeedsParentScopes = ShouldCreateMethodScopeInstance(ctorExpr, classScope);
+                }
+                
+                // Check other methods
+                if (!classNeedsParentScopes)
+                {
+                    foreach (var method in cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>())
+                    {
+                        if (method.Value is FunctionExpression funcExpr && 
+                            (method.Key as Identifier)?.Name != "constructor")
+                        {
+                            if (ShouldCreateMethodScopeInstance(funcExpr, classScope))
+                            {
+                                classNeedsParentScopes = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
 
             // Handle class fields with default initializers (ECMAScript class field syntax)
             // Example: class C { foo = 42; static bar = 1; }
@@ -427,7 +455,7 @@ namespace Js2IL.Services.ILGenerators
             {
                 // Create a scope instance when the constructor declares block-scoped locals (let/const)
                 // or has nested functions, so locals have storage and can be referenced.
-                bool needScopeInstance = ShouldCreateMethodScopeInstance(ctorFunc);
+                bool needScopeInstance = ShouldCreateMethodScopeInstance(ctorFunc, classScope);
                 ilGen.GenerateStatementsForBody(methodVariables.GetLeafScopeName(), needScopeInstance, bstmt.Body);
             }
 
@@ -514,7 +542,7 @@ namespace Js2IL.Services.ILGenerators
             if (element.Value is FunctionExpression fexpr && fexpr.Body is BlockStatement bstmt)
             {
                 hasExplicitReturn = bstmt.Body.Any(s => s is ReturnStatement);
-                bool needScopeInstance = ShouldCreateMethodScopeInstance(fexpr);
+                bool needScopeInstance = ShouldCreateMethodScopeInstance(fexpr, classScope);
                 ilGen.GenerateStatementsForBody(methodVariables.GetLeafScopeName(), needScopeInstance, bstmt.Body);
             }
             else
@@ -566,7 +594,7 @@ namespace Js2IL.Services.ILGenerators
             return methodDef;
         }
 
-        private static bool ShouldCreateMethodScopeInstance(FunctionExpression fexpr)
+        private bool ShouldCreateMethodScopeInstance(FunctionExpression fexpr, Scope methodScope)
         {
             if (fexpr.Body is not BlockStatement body) return false;
             bool found = false;
@@ -607,6 +635,22 @@ namespace Js2IL.Services.ILGenerators
                     case FunctionExpression:
                         // Nested functions require capturing outer scope variables
                         found = true; return;
+                    case NewExpression ne:
+                        // Check if instantiating a class that needs parent scopes
+                        // If so, this method needs a scope instance to be passed in the scope array
+                        if (ne.Callee is Identifier classId)
+                        {
+                            var className = classId.Name;
+                            // Look up the class scope to check if it references parent scopes
+                            var classScope = FindClassScope(methodScope, className);
+                            if (classScope != null && classScope.ReferencesParentScopeVariables)
+                            {
+                                found = true; return;
+                            }
+                        }
+                        // Continue walking arguments
+                        foreach (var arg in ne.Arguments) Walk(arg as Acornima.Ast.Node);
+                        break;
                     default:
                         // Recurse into common expression containers
                         if (n is ExpressionStatement es) Walk(es.Expression);
@@ -617,6 +661,29 @@ namespace Js2IL.Services.ILGenerators
             }
             Walk(body);
             return found;
+        }
+
+        /// <summary>
+        /// Searches for a class scope by name starting from the given scope and walking up the tree.
+        /// </summary>
+        private Scope? FindClassScope(Scope startScope, string className)
+        {
+            // Search current scope and siblings
+            var current = startScope;
+            while (current != null)
+            {
+                // Check current scope's children for the class
+                foreach (var child in current.Children)
+                {
+                    if (child.Kind == ScopeKind.Class && child.Name == className)
+                    {
+                        return child;
+                    }
+                }
+                // Move up to parent scope
+                current = current.Parent;
+            }
+            return null;
         }
 
         private BlobHandle BuildMethodSignature(FunctionExpression? f, bool isStatic)

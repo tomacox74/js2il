@@ -100,24 +100,32 @@
 .class public auto ansi beforefieldinit Classes.C
 	extends [System.Runtime]System.Object
 {
+	// Fields
+	.field private object[] _scopes
+
 	// Methods
 	.method public hidebysig specialname rtspecialname 
-		instance void .ctor () cil managed 
+		instance void .ctor (
+			object[] scopes
+		) cil managed 
 	{
 		// Method begins at RVA 0x2074
 		// Header size: 12
-		// Code size: 7 (0x7)
+		// Code size: 14 (0xe)
 		.maxstack 32
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ret
+		IL_0006: ldarg.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object[] Classes.C::_scopes
+		IL_000d: ret
 	} // end of method C::.ctor
 
 	.method public hidebysig 
 		instance object run () cil managed 
 	{
-		// Method begins at RVA 0x2088
+		// Method begins at RVA 0x2090
 		// Header size: 12
 		// Code size: 157 (0x9d)
 		.maxstack 32
@@ -178,9 +186,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2134
+		// Method begins at RVA 0x213c
 		// Header size: 12
-		// Code size: 54 (0x36)
+		// Code size: 69 (0x45)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -191,20 +199,27 @@
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: castclass Scopes.Classes_ForLoopMin
-		IL_000c: newobj instance void Classes.C::.ctor()
-		IL_0011: stfld object Scopes.Classes_ForLoopMin::c
-		IL_0016: ldc.i4.1
-		IL_0017: newarr [System.Runtime]System.Object
-		IL_001c: dup
-		IL_001d: ldc.i4.0
-		IL_001e: ldloc.0
-		IL_001f: castclass Scopes.Classes_ForLoopMin
-		IL_0024: ldfld object Scopes.Classes_ForLoopMin::c
-		IL_0029: callvirt instance object Classes.C::run()
-		IL_002e: stelem.ref
-		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0034: pop
-		IL_0035: ret
+		IL_000c: ldc.i4.1
+		IL_000d: newarr [System.Runtime]System.Object
+		IL_0012: dup
+		IL_0013: ldc.i4.0
+		IL_0014: ldloc.0
+		IL_0015: castclass Scopes.Classes_ForLoopMin
+		IL_001a: stelem.ref
+		IL_001b: newobj instance void Classes.C::.ctor(object[])
+		IL_0020: stfld object Scopes.Classes_ForLoopMin::c
+		IL_0025: ldc.i4.1
+		IL_0026: newarr [System.Runtime]System.Object
+		IL_002b: dup
+		IL_002c: ldc.i4.0
+		IL_002d: ldloc.0
+		IL_002e: castclass Scopes.Classes_ForLoopMin
+		IL_0033: ldfld object Scopes.Classes_ForLoopMin::c
+		IL_0038: callvirt instance object Classes.C::run()
+		IL_003d: stelem.ref
+		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0043: pop
+		IL_0044: ret
 	} // end of method Program::Main
 
 } // end of class Program

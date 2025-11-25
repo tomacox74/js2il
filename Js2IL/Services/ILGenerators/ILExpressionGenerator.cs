@@ -36,7 +36,6 @@ namespace Js2IL.Services.ILGenerators
         // ---- Small helpers to reduce duplication ----
         private void EmitLoadScopeObject(ScopeObjectReference slot)
         {
-            Console.WriteLine($"[DEBUG] EmitLoadScopeObject: Location={slot.Location}, Address={slot.Address}, InClassMethod={_owner.InClassMethod}, CurrentClassName={_owner.CurrentClassName}");
             if (slot.Location == ObjectReferenceLocation.Local)
             {
                 _il.LoadLocal(slot.Address);
@@ -91,9 +90,7 @@ namespace Js2IL.Services.ILGenerators
 
         private void EmitLoadScopeObjectByName(string scopeName)
         {
-            Console.WriteLine($"[DEBUG] EmitLoadScopeObjectByName: Looking up scope '{scopeName}'");
             var slot = _variables.GetScopeLocalSlot(scopeName);
-            Console.WriteLine($"[DEBUG] EmitLoadScopeObjectByName: Got slot Location={slot.Location}, Address={slot.Address}");
             EmitLoadScopeObjectTyped(slot, scopeName);
         }
 
@@ -125,10 +122,8 @@ namespace Js2IL.Services.ILGenerators
 
         private void EmitScopeArray(IReadOnlyList<string> scopeNames)
         {
-            Console.WriteLine($"[DEBUG] EmitScopeArray: Creating array with {scopeNames.Count} scopes: [{string.Join(", ", scopeNames)}]");
             _il.EmitNewArray(scopeNames.Count, _owner.BclReferences.ObjectType, (il, i) =>
             {
-                Console.WriteLine($"[DEBUG] EmitScopeArray: Loading scope at index {i}: {scopeNames[i]}");
                 EmitLoadScopeObjectByName(scopeNames[i]);
             });
         }
