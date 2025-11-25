@@ -26,6 +26,32 @@ namespace Js2IL.Services.ILGenerators
             _variables = variables ?? throw new ArgumentNullException(nameof(variables));
         }
 
+        /// <summary>
+        /// Determines which parent scopes will be available to a class method at runtime.
+        /// Walks the scope tree from classScope up to global to build the ordered list.
+        /// </summary>
+        private System.Collections.Generic.List<string> DetermineParentScopesForClassMethod(Scope classScope)
+        {
+            var scopeNames = new System.Collections.Generic.List<string>();
+            
+            // Walk up from class's parent to root, collecting ancestor scope names
+            var current = classScope.Parent;
+            var ancestors = new System.Collections.Generic.Stack<string>();
+            while (current != null)
+            {
+                ancestors.Push(current.Name);
+                current = current.Parent;
+            }
+            
+            // Add ancestors in reverse order (global first, then intermediate scopes)
+            while (ancestors.Count > 0)
+            {
+                scopeNames.Add(ancestors.Pop());
+            }
+            
+            return scopeNames;
+        }
+
         public void DeclareClasses(SymbolTable table)
         {
             if (table == null) throw new ArgumentNullException(nameof(table));
@@ -209,7 +235,7 @@ namespace Js2IL.Services.ILGenerators
                     // already emitted as .ctor above
                     continue;
                 }
-                EmitMethod(tb, element, classScope.Name);
+                EmitMethod(tb, element, classScope);
             }
 
             // Finally, create the type definition (after fields and methods were added)
@@ -441,8 +467,9 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-    private MethodDefinitionHandle EmitMethod(TypeBuilder tb, Acornima.Ast.MethodDefinition element, string className)
+    private MethodDefinitionHandle EmitMethod(TypeBuilder tb, Acornima.Ast.MethodDefinition element, Scope classScope)
         {
+            var className = classScope.Name;
             var mname = (element.Key as Identifier)?.Name ?? "method";
             var msig = BuildMethodSignature(element.Value as FunctionExpression, isStatic: element.Static);
 
@@ -451,7 +478,22 @@ namespace Js2IL.Services.ILGenerators
             var paramNames = element.Value is FunctionExpression fe
                 ? fe.Params.OfType<Identifier>().Select(p => p.Name)
                 : Enumerable.Empty<string>();
-            var methodVariables = new Variables(_variables, mname, paramNames, isNestedFunction: false);
+            
+            // For class instance methods, determine which parent scopes will be available via this._scopes
+            // For static methods, use standard nested function semantics
+            Variables methodVariables;
+            if (!element.Static && _classRegistry.TryGetPrivateField(className, "_scopes", out var _))
+            {
+                // Instance method with _scopes field: use explicit parent scope list
+                var parentScopeNames = DetermineParentScopesForClassMethod(classScope);
+                methodVariables = new Variables(_variables, mname, paramNames, parentScopeNames);
+            }
+            else
+            {
+                // Static method or instance method without _scopes: standard semantics
+                methodVariables = new Variables(_variables, mname, paramNames, isNestedFunction: false);
+            }
+            
             var ilGen = new ILMethodGenerator(methodVariables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: !element.Static, currentClassName: className);
 
             bool hasExplicitReturn = false;

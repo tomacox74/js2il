@@ -129,6 +129,39 @@ namespace Js2IL.Services
             }
         }
 
+        /// <summary>
+        /// Constructor for class methods that receive explicit parent scopes via this._scopes field.
+        /// </summary>
+        public Variables(Variables parentVariables, string scopeName, IEnumerable<string> parameterNames, IReadOnlyList<string> parentScopeNames)
+        {
+            if (parentVariables == null) throw new ArgumentNullException(nameof(parentVariables));
+            if (scopeName == null) throw new ArgumentNullException(nameof(scopeName));
+            if (parameterNames == null) throw new ArgumentNullException(nameof(parameterNames));
+            if (parentScopeNames == null) throw new ArgumentNullException(nameof(parentScopeNames));
+
+            _registry = parentVariables._registry;
+            _scopeName = scopeName;
+            _globalScopeName = parentVariables._globalScopeName;
+            _hasLocalScope = false;
+
+            // Build parameter map using IL argument indexes for JS params.
+            // Arg0 is 'this' for instance methods; JS params start at 1.
+            int i = 1;
+            foreach (var p in parameterNames)
+            {
+                if (!_parameterIndices.ContainsKey(p))
+                    _parameterIndices[p] = i;
+                i++;
+            }
+
+            // Parent scopes are explicitly specified (from DetermineScopesForDelegateCall result)
+            // Map each scope name to its index in the runtime scopes array
+            for (int idx = 0; idx < parentScopeNames.Count; idx++)
+            {
+                _parentScopeIndices[parentScopeNames[idx]] = idx;
+            }
+        }
+
         public Variable? FindVariable(string name)
         {
             if (string.IsNullOrEmpty(name)) return null;
