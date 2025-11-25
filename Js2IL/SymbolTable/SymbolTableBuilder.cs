@@ -183,6 +183,38 @@ namespace Js2IL.SymbolTables
                     return ContainsFreeVariable(prop.Key as Node, localVariables) ||
                            ContainsFreeVariable(prop.Value as Node, localVariables);
 
+                // Classes: check method bodies for free variable references
+                case ClassDeclaration classDecl:
+                    // Iterate through class methods and check their bodies
+                    foreach (var element in classDecl.Body.Body)
+                    {
+                        if (element is MethodDefinition mdef && mdef.Value is FunctionExpression mfunc)
+                        {
+                            // Build local variables set for this method (includes parameters)
+                            var methodLocals = new HashSet<string>(localVariables);
+                            foreach (var param in mfunc.Params)
+                            {
+                                if (param is Identifier pid)
+                                {
+                                    methodLocals.Add(pid.Name);
+                                }
+                            }
+                            
+                            // Check method body for free variables
+                            if (mfunc.Body is BlockStatement mblock)
+                            {
+                                foreach (var stmt in mblock.Body)
+                                {
+                                    if (ContainsFreeVariable(stmt, methodLocals))
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return false;
+
                 // Stop at nested function boundaries - they have their own scope
                 case FunctionExpression:
                 case FunctionDeclaration:

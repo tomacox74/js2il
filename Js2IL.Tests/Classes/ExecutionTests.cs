@@ -23,6 +23,7 @@ namespace Js2IL.Tests.Classes
         [Fact] public Task Classes_ClassMethod_ForLoop_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_ForLoop_CallsAnotherMethod); return ExecutionTest(testName); }
         [Fact] public Task Classes_ForLoopMin() { var testName = nameof(Classes_ForLoopMin); return ExecutionTest(testName); }
         [Fact] public Task Classes_ClassMethod_AccessGlobal_Log() { var testName = nameof(Classes_ClassMethod_AccessGlobal_Log); return ExecutionTest(testName, allowUnhandledException: true); }
+        [Fact] public Task Classes_ClassMethod_AccessFunctionAndGlobal_Log() { var testName = nameof(Classes_ClassMethod_AccessFunctionAndGlobal_Log); return ExecutionTest(testName, allowUnhandledException: true); }
 
         // Repro (fixed): previously surfaced a TypeLoadException when new-ing a class inside an arrow function.
         // Bug fixed by sharing ClassRegistry with nested generators; test is active.

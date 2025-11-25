@@ -2514,17 +2514,34 @@ namespace Js2IL.Services.ILGenerators
             {
                 var allNames = _variables.GetAllScopeNames().ToList();
                 var slots = allNames.Select(n => new { Name = n, Slot = _variables.GetScopeLocalSlot(n) }).ToList();
-                var globalEntry = slots.FirstOrDefault(e => e.Slot.Location == ObjectReferenceLocation.ScopeArray && e.Slot.Address == 0);
-                var leafSlot = _variables.GetLocalScopeSlot();
-                if (globalEntry != null && leafSlot.Address >= 0)
+                
+                // Build the full scope chain from global (index 0) to current scope
+                // This ensures nested classes/functions have access to all ancestor scopes
+                var orderedSlots = slots
+                    .Where(e => e.Slot.Location == ObjectReferenceLocation.ScopeArray)
+                    .OrderBy(e => e.Slot.Address)
+                    .ToList();
+                
+                if (orderedSlots.Any())
                 {
-                    scopeNames.Add(globalEntry.Name);
-                    scopeNames.Add(_variables.GetLeafScopeName());
+                    // Include all scopes from the scope array (global through all ancestors)
+                    foreach (var entry in orderedSlots)
+                    {
+                        scopeNames.Add(entry.Name);
+                    }
                 }
-                else
+                
+                // Always include the current local scope (if it exists and is not already included)
+                var leafName = _variables.GetLeafScopeName();
+                if (!string.IsNullOrEmpty(leafName) && !scopeNames.Contains(leafName))
                 {
-                    // Fallback: include leaf scope (or global if leaf == global)
-                    scopeNames.Add(_variables.GetLeafScopeName());
+                    scopeNames.Add(leafName);
+                }
+                
+                // Fallback: if nothing was added, at least include the leaf
+                if (!scopeNames.Any())
+                {
+                    scopeNames.Add(leafName);
                 }
             }
             catch
