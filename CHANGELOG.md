@@ -4,7 +4,21 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+### Fixed
+- Classes: class methods and constructors can now access variables from all ancestor scopes (global, function, block), not just the global scope. The `DetermineParentScopesForClassMethod` now walks the scope tree to build the complete parent scope chain, enabling proper multi-level scope access for classes declared inside functions. Both `EmitMethod` and `EmitExplicitConstructor` use this mechanism to provide consistent scope access.
+- Classes: class methods now correctly access parent scope variables through `this._scopes` field instead of incorrectly casting `this` to array. Modified `BinaryOperators.LoadVariable` to check class method context and emit proper IL for scope field access.
+- IL Generation: conditional `_scopes` field generation for classes - only classes that reference parent scope variables now include the field and constructor parameter, avoiding unnecessary overhead for simple classes.
+- Code quality: fixed indentation in `BinaryOperators.cs` to conform to C# coding guidelines (4-space indentation).
+
+### Changed
+- Architecture: refactored free variable analysis from `ClassesGenerator` into `SymbolTable` infrastructure for better separation of concerns. Analysis now happens once during symbol table construction with results cached in `Scope.ReferencesParentScopeVariables` property.
+- Symbol Table: added `ReferencesParentScopeVariables` property to `Scope` class to track whether a scope references variables from parent scopes.
+- Symbol Table Builder: extended with comprehensive free variable analysis:
+  - `AnalyzeFreeVariables`: bottom-up recursive scope traversal
+  - `ContainsFreeVariable`: static AST walker handling 20+ node types (identifiers, declarations, control flow, expressions, etc.)
+  - `IsKnownGlobalIntrinsic`: centralized detection of 24 known global intrinsics (console, setTimeout, Math, etc.)
+- Code cleanup: removed ~174 lines of duplicated AST walking logic from `ClassesGenerator` (`ClassAccessesParentScopeVariables`, `MethodAccessesParentScopeVariables`, `IsGlobalIntrinsic` methods now obsolete).
+- Performance: scope analysis now single-pass during symbol table build instead of repeated AST walking during code generation.
 
 ## v0.2.0 - 2025-11-22
 

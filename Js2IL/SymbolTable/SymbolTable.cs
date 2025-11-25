@@ -69,6 +69,13 @@ namespace Js2IL.SymbolTables
     /// </summary>
     public string? DotNetTypeName { get; set; }
 
+        /// <summary>
+        /// Indicates whether this scope (or its child scopes) references variables declared in parent scopes.
+        /// Set during symbol table construction for classes and functions.
+        /// Used by code generators to determine if scope arrays need to be passed/stored.
+        /// </summary>
+        public bool ReferencesParentScopeVariables { get; set; }
+
         public Scope(string name, ScopeKind kind, Scope? parent, Node? astNode = null)
         {
             Name = name;

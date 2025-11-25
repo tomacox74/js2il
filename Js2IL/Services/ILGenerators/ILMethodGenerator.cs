@@ -17,7 +17,7 @@ namespace Js2IL.Services.ILGenerators
         private InstructionEncoder _il;
         private ControlFlowBuilder _cfb;
         private Runtime _runtime;
-    // Dispatch table removed; functions bound directly to static method delegates.
+        // Dispatch table removed; functions bound directly to static method delegates.
         private MethodBodyStreamEncoder _methodBodyStreamEncoder;
         private IMethodExpressionEmitter _expressionEmitter;
         private ClassRegistry _classRegistry;
@@ -54,11 +54,11 @@ namespace Js2IL.Services.ILGenerators
         internal string? CurrentAssignmentTarget { get => _currentAssignmentTarget; set => _currentAssignmentTarget = value; }
         internal ClassRegistry ClassRegistry => _classRegistry;
         internal IMethodExpressionEmitter ExpressionEmitter => _expressionEmitter;
-    internal FunctionRegistry? FunctionRegistry => _functionRegistry;
+        internal FunctionRegistry? FunctionRegistry => _functionRegistry;
 
         private readonly FunctionRegistry? _functionRegistry;
 
-    public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, ClassRegistry? classRegistry = null, FunctionRegistry? functionRegistry = null, bool inClassMethod = false, string? currentClassName = null)
+        public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, ClassRegistry? classRegistry = null, FunctionRegistry? functionRegistry = null, bool inClassMethod = false, string? currentClassName = null)
         {
             _variables = variables;
             _bclReferences = bclReferences;
@@ -77,7 +77,7 @@ namespace Js2IL.Services.ILGenerators
             _currentClassName = currentClassName;
         }
 
-    // Allow expression generator to record variable->class mapping when emitting `new ClassName()` in assignments/initializers
+        // Allow expression generator to record variable->class mapping when emitting `new ClassName()` in assignments/initializers
         internal void RecordVariableToClass(string variableName, string className)
         {
             if (!string.IsNullOrEmpty(variableName) && !string.IsNullOrEmpty(className))
@@ -92,8 +92,8 @@ namespace Js2IL.Services.ILGenerators
             return _variableToClass.TryGetValue(variableName, out className!);
         }
 
-    // GetPropertyIgnoreCase moved to ILExpressionGenerator
-    // ParseRegexRaw moved to ILExpressionGenerator
+        // GetPropertyIgnoreCase moved to ILExpressionGenerator
+        // ParseRegexRaw moved to ILExpressionGenerator
 
         public void DeclareVariable(VariableDeclaration variableDeclaraion)
         {
@@ -715,7 +715,7 @@ namespace Js2IL.Services.ILGenerators
             _loopStack.Pop();
         }
 
-    public void GenerateForOfStatement(Acornima.Ast.ForOfStatement forOf)
+        public void GenerateForOfStatement(Acornima.Ast.ForOfStatement forOf)
         {
             // Desugar: for (x of iterable) { body }
             //   -> let iter = <Right>;
@@ -876,7 +876,7 @@ namespace Js2IL.Services.ILGenerators
             _loopStack.Pop();
         }
 
-    public void GenerateWhileStatement(WhileStatement whileStatement)
+        public void GenerateWhileStatement(WhileStatement whileStatement)
         {
             // Labels for loop control
             var loopStartLabel = _il.DefineLabel();

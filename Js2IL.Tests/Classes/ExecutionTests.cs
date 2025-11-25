@@ -17,14 +17,25 @@ namespace Js2IL.Tests.Classes
         [Fact] public Task Classes_ClassConstructor_TwoParams_AddMethod() { var testName = nameof(Classes_ClassConstructor_TwoParams_AddMethod); return ExecutionTest(testName); }
         [Fact] public Task Classes_ClassConstructor_TwoParams_SubtractMethod() { var testName = nameof(Classes_ClassConstructor_TwoParams_SubtractMethod); return ExecutionTest(testName); }
         [Fact] public Task Classes_ClassWithStaticProperty_DefaultAndLog() { var testName = nameof(Classes_ClassWithStaticProperty_DefaultAndLog); return ExecutionTest(testName); }
-    [Fact] public Task Classes_ClassPrivateField_HelperMethod_Log() { var testName = nameof(Classes_ClassPrivateField_HelperMethod_Log); return ExecutionTest(testName); }
-    [Fact] public Task Classes_ClassPrivateProperty_HelperMethod_Log() { var testName = nameof(Classes_ClassPrivateProperty_HelperMethod_Log); return ExecutionTest(testName); }
+        [Fact] public Task Classes_ClassPrivateField_HelperMethod_Log() { var testName = nameof(Classes_ClassPrivateField_HelperMethod_Log); return ExecutionTest(testName); }
+        [Fact] public Task Classes_ClassPrivateProperty_HelperMethod_Log() { var testName = nameof(Classes_ClassPrivateProperty_HelperMethod_Log); return ExecutionTest(testName); }
         [Fact] public Task Classes_ClassMethod_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_CallsAnotherMethod); return ExecutionTest(testName); }
         [Fact] public Task Classes_ClassMethod_ForLoop_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_ForLoop_CallsAnotherMethod); return ExecutionTest(testName); }
-    [Fact] public Task Classes_ForLoopMin() { var testName = nameof(Classes_ForLoopMin); return ExecutionTest(testName); }
+        [Fact] public Task Classes_ForLoopMin() { var testName = nameof(Classes_ForLoopMin); return ExecutionTest(testName); }
+        [Fact] public Task Classes_ClassMethod_AccessGlobalVariable_Log() { var testName = nameof(Classes_ClassMethod_AccessGlobalVariable_Log); return ExecutionTest(testName, allowUnhandledException: true); }
+        [Fact] public Task Classes_ClassMethod_AccessFunctionVariable_Log() { var testName = nameof(Classes_ClassMethod_AccessFunctionVariable_Log); return ExecutionTest(testName, allowUnhandledException: true); }
+        [Fact] public Task Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log() { var testName = nameof(Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log); return ExecutionTest(testName, allowUnhandledException: true); }
+        [Fact] public Task Classes_ClassMethod_AccessArrowFunctionVariable_Log() { var testName = nameof(Classes_ClassMethod_AccessArrowFunctionVariable_Log); return ExecutionTest(testName, allowUnhandledException: true); }
+        [Fact] public Task Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log() { var testName = nameof(Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log); return ExecutionTest(testName, allowUnhandledException: true); }
+        [Fact] public Task Classes_ClassConstructor_AccessGlobalVariable_Log() { var testName = nameof(Classes_ClassConstructor_AccessGlobalVariable_Log); return ExecutionTest(testName, allowUnhandledException: true); }
+        [Fact] public Task Classes_ClassConstructor_AccessFunctionVariable_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariable_Log); return ExecutionTest(testName, allowUnhandledException: true); }
+        [Fact] public Task Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log); return ExecutionTest(testName, allowUnhandledException: true); }
+        [Fact] public Task Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log() { var testName = nameof(Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log); return ExecutionTest(testName, allowUnhandledException: true); }
+        [Fact] public Task Classes_ClassConstructor_AccessFunctionVariableAndParameterValue_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariableAndParameterValue_Log); return ExecutionTest(testName, allowUnhandledException: true); }
+        [Fact] public Task Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log); return ExecutionTest(testName, allowUnhandledException: true); }
 
-    // Repro (fixed): previously surfaced a TypeLoadException when new-ing a class inside an arrow function.
-    // Bug fixed by sharing ClassRegistry with nested generators; test is active.
+        // Repro (fixed): previously surfaced a TypeLoadException when new-ing a class inside an arrow function.
+        // Bug fixed by sharing ClassRegistry with nested generators; test is active.
         [Fact]
         public Task Classes_ClassConstructor_New_In_ArrowFunction()
         {
@@ -33,28 +44,28 @@ namespace Js2IL.Tests.Classes
             return ExecutionTest(testName, allowUnhandledException: true);
         }
 
-    // While increment variants to mirror generator tests
-    [Fact] public Task Classes_ClassMethod_While_Increment_Postfix() { var testName = nameof(Classes_ClassMethod_While_Increment_Postfix); return ExecutionTest(testName); }
-    [Fact] public Task Classes_ClassMethod_While_Increment_Prefix() { var testName = nameof(Classes_ClassMethod_While_Increment_Prefix); return ExecutionTest(testName); }
-    [Fact] public Task Classes_ClassMethod_While_Increment_Param_Postfix() { var testName = nameof(Classes_ClassMethod_While_Increment_Param_Postfix); return ExecutionTest(testName); }
-    [Fact] public Task Classes_ClassMethod_While_Increment_Param_Prefix() { var testName = nameof(Classes_ClassMethod_While_Increment_Param_Prefix); return ExecutionTest(testName); }
+        // While increment variants to mirror generator tests
+        [Fact] public Task Classes_ClassMethod_While_Increment_Postfix() { var testName = nameof(Classes_ClassMethod_While_Increment_Postfix); return ExecutionTest(testName); }
+        [Fact] public Task Classes_ClassMethod_While_Increment_Prefix() { var testName = nameof(Classes_ClassMethod_While_Increment_Prefix); return ExecutionTest(testName); }
+        [Fact] public Task Classes_ClassMethod_While_Increment_Param_Postfix() { var testName = nameof(Classes_ClassMethod_While_Increment_Param_Postfix); return ExecutionTest(testName); }
+        [Fact] public Task Classes_ClassMethod_While_Increment_Param_Prefix() { var testName = nameof(Classes_ClassMethod_While_Increment_Param_Prefix); return ExecutionTest(testName); }
 
-    // Minimal repro: bit-shift and Int32Array length in a class constructor
-    // Allow unhandled exception so we capture stdout even if the runtime faults
-    [Fact]
-    public Task Classes_BitShiftInCtor_Int32Array()
-    {
-        var testName = nameof(Classes_BitShiftInCtor_Int32Array);
-        return ExecutionTest(testName, allowUnhandledException: true);
-    }
+        // Minimal repro: bit-shift and Int32Array length in a class constructor
+        // Allow unhandled exception so we capture stdout even if the runtime faults
+        [Fact]
+        public Task Classes_BitShiftInCtor_Int32Array()
+        {
+            var testName = nameof(Classes_BitShiftInCtor_Int32Array);
+            return ExecutionTest(testName, allowUnhandledException: true);
+        }
 
-    // Minimal repro for InvalidProgramException in ctor due to '1 + this.sieveSizeInBits'
-    // Test enabled to validate current behavior.
-    [Fact]
-    public Task Classes_PrimeCtor_BitArrayAdd()
-    {
-        var testName = nameof(Classes_PrimeCtor_BitArrayAdd);
-        return ExecutionTest(testName, allowUnhandledException: true);
-    }
+        // Minimal repro for InvalidProgramException in ctor due to '1 + this.sieveSizeInBits'
+        // Test enabled to validate current behavior.
+        [Fact]
+        public Task Classes_PrimeCtor_BitArrayAdd()
+        {
+            var testName = nameof(Classes_PrimeCtor_BitArrayAdd);
+            return ExecutionTest(testName, allowUnhandledException: true);
+        }
     }
 }

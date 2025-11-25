@@ -15,6 +15,9 @@ namespace Js2IL.Services
     private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _classPrivateFields = new(StringComparer.Ordinal);
     private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _classStaticFields = new(StringComparer.Ordinal);
         private readonly Dictionary<string, Dictionary<string, MemberReferenceHandle>> _classStaticMethods = new(StringComparer.Ordinal);
+        // Cache per-class constructor definition + signature + parameter count so call sites can reuse
+        // and validate instead of rebuilding duplicate member references.
+        private readonly Dictionary<string, (MethodDefinitionHandle Ctor, BlobHandle Signature, int ParamCount)> _constructors = new(StringComparer.Ordinal);
 
         public void Register(string className, TypeDefinitionHandle typeHandle)
         {
@@ -107,6 +110,25 @@ namespace Js2IL.Services
             if (_classStaticMethods.TryGetValue(className, out var methods))
             {
                 return methods.TryGetValue(methodName, out memberRef);
+            }
+            return false;
+        }
+
+        public void RegisterConstructor(string className, MethodDefinitionHandle ctorHandle, BlobHandle signature, int paramCount)
+        {
+            if (string.IsNullOrEmpty(className)) return;
+            _constructors[className] = (ctorHandle, signature, paramCount);
+        }
+
+        public bool TryGetConstructor(string className, out MethodDefinitionHandle ctorHandle, out int paramCount)
+        {
+            ctorHandle = default;
+            paramCount = 0;
+            if (_constructors.TryGetValue(className, out var info))
+            {
+                ctorHandle = info.Ctor;
+                paramCount = info.ParamCount;
+                return true;
             }
             return false;
         }

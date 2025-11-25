@@ -129,6 +129,42 @@ namespace Js2IL.Services
             }
         }
 
+        /// <summary>
+        /// Constructor for class methods/constructors that receive explicit parent scopes via this._scopes field.
+        /// </summary>
+        /// <param name="parameterStartIndex">IL argument index where JS parameters begin (1 for methods, 2 for constructors with scopes parameter)</param>
+        public Variables(Variables parentVariables, string scopeName, IEnumerable<string> parameterNames, IReadOnlyList<string> parentScopeNames, int parameterStartIndex = 1)
+        {
+            if (parentVariables == null) throw new ArgumentNullException(nameof(parentVariables));
+            if (scopeName == null) throw new ArgumentNullException(nameof(scopeName));
+            if (parameterNames == null) throw new ArgumentNullException(nameof(parameterNames));
+            if (parentScopeNames == null) throw new ArgumentNullException(nameof(parentScopeNames));
+
+            _registry = parentVariables._registry;
+            _scopeName = scopeName;
+            _globalScopeName = parentVariables._globalScopeName;
+            _hasLocalScope = false;
+
+            // Build parameter map using IL argument indexes for JS params.
+            // Arg0 is 'this' for instance methods.
+            // For methods: JS params start at 1 (arg0=this).
+            // For constructors with scopes: JS params start at 2 (arg0=this, arg1=scopes[]).
+            int i = parameterStartIndex;
+            foreach (var p in parameterNames)
+            {
+                if (!_parameterIndices.ContainsKey(p))
+                    _parameterIndices[p] = i;
+                i++;
+            }
+
+            // Parent scopes are explicitly specified (from DetermineScopesForDelegateCall result)
+            // Map each scope name to its index in the runtime scopes array
+            for (int idx = 0; idx < parentScopeNames.Count; idx++)
+            {
+                _parentScopeIndices[parentScopeNames[idx]] = idx;
+            }
+        }
+
         public Variable? FindVariable(string name)
         {
             if (string.IsNullOrEmpty(name)) return null;

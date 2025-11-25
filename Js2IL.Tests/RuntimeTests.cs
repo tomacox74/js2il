@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Dynamic;
@@ -26,7 +28,17 @@ namespace Js2IL.Tests
             expandoObject["age"] = 31;
 
             var result = DotNet2JSConversions.ToString(expandoObject);
-            return Verify(result, _verifySettings);
+            return VerifyWithSnapshot(result);
+        }
+
+        private Task VerifyWithSnapshot(object value, [CallerFilePath] string sourceFilePath = "")
+        {
+            var settings = new VerifySettings(_verifySettings);
+            var directory = Path.GetDirectoryName(sourceFilePath)!;
+            var snapshotsDirectory = Path.Combine(directory, "Snapshots");
+            Directory.CreateDirectory(snapshotsDirectory);
+            settings.UseDirectory(snapshotsDirectory);
+            return Verify(value, settings);
         }
     }
 }

@@ -24,8 +24,9 @@ namespace Js2IL.Services.ILGenerators
         private Runtime _runtime;
 
         private IMethodExpressionEmitter _methodExpressionEmitter;
+        private ILMethodGenerator _methodGenerator;
 
-        public BinaryOperators(MetadataBuilder metadataBuilder, InstructionEncoder il, Variables variables, IMethodExpressionEmitter methodExpressionEmitter, BaseClassLibraryReferences bclReferences, Runtime runtime)
+        public BinaryOperators(MetadataBuilder metadataBuilder, InstructionEncoder il, Variables variables, IMethodExpressionEmitter methodExpressionEmitter, BaseClassLibraryReferences bclReferences, Runtime runtime, ILMethodGenerator methodGenerator)
         {
             _metadataBuilder = metadataBuilder;
             _il = il;
@@ -33,6 +34,7 @@ namespace Js2IL.Services.ILGenerators
             _bclReferences = bclReferences;
             _runtime = runtime;
             _methodExpressionEmitter = methodExpressionEmitter;
+            _methodGenerator = methodGenerator;
         }
 
         /// <summary>
@@ -62,8 +64,26 @@ namespace Js2IL.Services.ILGenerators
             // to respect closure binding, regardless of any local scope instances that might exist.
             if (variable is ScopeVariable sv)
             {
-                // scopes[sv.ParentScopeIndex].<field>
-                _il.LoadArgument(0); // scopes array
+                // In class instance methods, scopes are stored in this._scopes field, not in arg_0
+                if (_methodGenerator.InClassMethod && !string.IsNullOrEmpty(_methodGenerator.CurrentClassName))
+                {
+                    // Load this._scopes field
+                    _il.OpCode(ILOpCode.Ldarg_0); // load 'this'
+                    if (_methodGenerator.ClassRegistry.TryGetPrivateField(_methodGenerator.CurrentClassName, "_scopes", out var scopesField))
+                    {
+                        _il.OpCode(ILOpCode.Ldfld);
+                        _il.Token(scopesField);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"Class '{_methodGenerator.CurrentClassName}' missing _scopes field");
+                    }
+                }
+                else
+                {
+                    // Regular function: arg_0 is the scopes array
+                    _il.LoadArgument(0); // scopes array
+                }
                 _il.LoadConstantI4(sv.ParentScopeIndex);
                 _il.OpCode(ILOpCode.Ldelem_ref);
                 // Cast to the concrete scope type for verifiable field access
