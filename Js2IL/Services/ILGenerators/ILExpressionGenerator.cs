@@ -30,7 +30,7 @@ namespace Js2IL.Services.ILGenerators
         {
             _owner = owner ?? throw new ArgumentNullException(nameof(owner));
 
-            _binaryOperators = new BinaryOperators(owner.MetadataBuilder, _il, _variables, this, owner.BclReferences, owner.Runtime);
+            _binaryOperators = new BinaryOperators(owner.MetadataBuilder, _il, _variables, this, owner.BclReferences, owner.Runtime, owner);
         }
 
         // ---- Small helpers to reduce duplication ----
@@ -46,7 +46,26 @@ namespace Js2IL.Services.ILGenerators
             }
             else if (slot.Location == ObjectReferenceLocation.ScopeArray)
             {
-                _il.LoadArgument(0);
+                // In class instance methods, scopes are stored in this._scopes field, not in arg_0
+                if (_owner.InClassMethod && !string.IsNullOrEmpty(_owner.CurrentClassName))
+                {
+                    // Load this._scopes field
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldarg_0); // load 'this'
+                    if (_owner.ClassRegistry.TryGetPrivateField(_owner.CurrentClassName, "_scopes", out var scopesField))
+                    {
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld);
+                        _il.Token(scopesField);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"Class '{_owner.CurrentClassName}' missing _scopes field");
+                    }
+                }
+                else
+                {
+                    // Regular function: arg_0 is the scopes array
+                    _il.LoadArgument(0);
+                }
                 _il.LoadConstantI4(slot.Address);
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldelem_ref);
             }
@@ -730,32 +749,8 @@ namespace Js2IL.Services.ILGenerators
                 // Re-use normal Emit path to build the delegate (handles both function & arrow expressions).
                 _ = Emit(calleeExpr, new TypeCoercion { boxResult = false }); // stack: [delegate]
 
-                // Determine scopes to pass. If inside a function (global scope array present) and we have a local leaf scope,
-                // pass [global, leaf]; otherwise pass just the leaf/global scope like top-level Main semantics.
-                var scopeNames = new List<string>();
-                try
-                {
-                    var allNames = _variables.GetAllScopeNames().ToList();
-                    var slots = allNames.Select(n => new { Name = n, Slot = _variables.GetScopeLocalSlot(n) }).ToList();
-                    var globalEntry = slots.FirstOrDefault(e => e.Slot.Location == ObjectReferenceLocation.ScopeArray && e.Slot.Address == 0);
-                    var leafSlot = _variables.GetLocalScopeSlot();
-                    if (globalEntry != null && leafSlot.Address >= 0)
-                    {
-                        scopeNames.Add(globalEntry.Name);
-                        scopeNames.Add(_variables.GetLeafScopeName());
-                    }
-                    else
-                    {
-                        // Fallback: include leaf scope (or global if leaf == global)
-                        scopeNames.Add(_variables.GetLeafScopeName());
-                    }
-                }
-                catch
-                {
-                    // Conservative fallback: single leaf scope name if discovery fails
-                    scopeNames.Clear();
-                    scopeNames.Add(_variables.GetLeafScopeName());
-                }
+                // Determine scopes to pass
+                var scopeNames = DetermineScopesForDelegateCall();
 
                 EmitScopeArray(scopeNames); // stack: [delegate, scopes[]]
 
@@ -1952,10 +1947,23 @@ namespace Js2IL.Services.ILGenerators
                 if (_classRegistry.TryGetConstructor(cid.Name, out var ctorDef, out var ctorParamCount))
                 {
                     var argc = newExpression.Arguments.Count;
-                    if (argc != ctorParamCount)
+                    
+                    // Check if this class has a _scopes field (meaning it needs parent scope access)
+                    bool classNeedsScopes = _classRegistry.TryGetPrivateField(cid.Name, "_scopes", out var _);
+                    int expectedUserArgs = classNeedsScopes ? ctorParamCount - 1 : ctorParamCount;
+                    
+                    if (argc != expectedUserArgs)
                     {
-                        throw ILEmitHelpers.NotSupported($"Constructor for class '{cid.Name}' expects {ctorParamCount} argument(s) but call site has {argc}.", newExpression);
+                        throw ILEmitHelpers.NotSupported($"Constructor for class '{cid.Name}' expects {expectedUserArgs} user argument(s) but call site has {argc}.", newExpression);
                     }
+
+                    // Determine scopes to pass (only if class needs them)
+                    if (classNeedsScopes)
+                    {
+                        var scopeNames = DetermineScopesForDelegateCall();
+                        EmitScopeArray(scopeNames); // stack: [scopes[]]
+                    }
+
                     // Emit arguments (all object-typed in current design)
                     for (int i = 0; i < argc; i++)
                     {
@@ -2492,6 +2500,40 @@ namespace Js2IL.Services.ILGenerators
             _il.Token(mrefHandle);
 
             return reflectedReturnType;
+        }
+
+        /// <summary>
+        /// Determines which scopes to pass for delegate calls (arrow functions, function expressions).
+        /// If inside a function (global scope array present) and we have a local leaf scope,
+        /// pass [global, leaf]; otherwise pass just the leaf/global scope like top-level Main semantics.
+        /// </summary>
+        private List<string> DetermineScopesForDelegateCall()
+        {
+            var scopeNames = new List<string>();
+            try
+            {
+                var allNames = _variables.GetAllScopeNames().ToList();
+                var slots = allNames.Select(n => new { Name = n, Slot = _variables.GetScopeLocalSlot(n) }).ToList();
+                var globalEntry = slots.FirstOrDefault(e => e.Slot.Location == ObjectReferenceLocation.ScopeArray && e.Slot.Address == 0);
+                var leafSlot = _variables.GetLocalScopeSlot();
+                if (globalEntry != null && leafSlot.Address >= 0)
+                {
+                    scopeNames.Add(globalEntry.Name);
+                    scopeNames.Add(_variables.GetLeafScopeName());
+                }
+                else
+                {
+                    // Fallback: include leaf scope (or global if leaf == global)
+                    scopeNames.Add(_variables.GetLeafScopeName());
+                }
+            }
+            catch
+            {
+                // Conservative fallback: single leaf scope name if discovery fails
+                scopeNames.Clear();
+                scopeNames.Add(_variables.GetLeafScopeName());
+            }
+            return scopeNames;
         }
     }
 }

@@ -29,11 +29,191 @@ namespace Js2IL.SymbolTables
             return result;
         }
 
+        /// <summary>
+        /// Analyzes all scopes to determine which ones reference variables from parent scopes.
+        /// This is used to determine if classes need _scopes fields and if functions need scope arrays.
+        /// </summary>
+        private void AnalyzeFreeVariables(Scope scope)
+        {
+            // Process children first (bottom-up)
+            foreach (var child in scope.Children)
+            {
+                AnalyzeFreeVariables(child);
+            }
+
+            // For class scopes, check if any method child references parent variables
+            if (scope.Kind == ScopeKind.Class)
+            {
+                foreach (var methodScope in scope.Children.Where(c => c.Kind == ScopeKind.Function))
+                {
+                    if (methodScope.ReferencesParentScopeVariables)
+                    {
+                        scope.ReferencesParentScopeVariables = true;
+                        break;
+                    }
+                }
+            }
+            // For function scopes, check if the function body references any non-local variables
+            else if (scope.Kind == ScopeKind.Function && scope.AstNode is FunctionExpression funcExpr)
+            {
+                scope.ReferencesParentScopeVariables = CheckFunctionReferencesParentVariables(funcExpr, scope);
+            }
+            else if (scope.Kind == ScopeKind.Function && scope.AstNode is FunctionDeclaration funcDecl)
+            {
+                // Convert FunctionDeclaration to use its body like FunctionExpression
+                if (funcDecl.Body is BlockStatement body)
+                {
+                    scope.ReferencesParentScopeVariables = CheckBodyReferencesParentVariables(body, scope);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks if a function expression references variables not declared locally or in parameters.
+        /// </summary>
+        private bool CheckFunctionReferencesParentVariables(FunctionExpression funcExpr, Scope functionScope)
+        {
+            if (funcExpr.Body is not BlockStatement body) return false;
+            return CheckBodyReferencesParentVariables(body, functionScope);
+        }
+
+        /// <summary>
+        /// Checks if a block statement references variables not declared in the given scope or its parameters.
+        /// </summary>
+        private bool CheckBodyReferencesParentVariables(BlockStatement body, Scope scope)
+        {
+            var localVariables = new HashSet<string>(scope.Bindings.Keys);
+            localVariables.UnionWith(scope.Parameters);
+            return ContainsFreeVariable(body, localVariables);
+        }
+
+        /// <summary>
+        /// Recursively checks if an AST node contains any identifier that isn't in the local variables set.
+        /// Stops at nested function boundaries.
+        /// </summary>
+        private static bool ContainsFreeVariable(Node? node, HashSet<string> localVariables)
+        {
+            if (node == null) return false;
+
+            switch (node)
+            {
+                case Identifier id:
+                    // Check if this identifier is not local and not a known global intrinsic
+                    return !localVariables.Contains(id.Name) && !IsKnownGlobalIntrinsic(id.Name);
+
+                case VariableDeclaration vd:
+                    // Add declared variables to local set for subsequent analysis
+                    var newLocals = new HashSet<string>(localVariables);
+                    foreach (var decl in vd.Declarations)
+                    {
+                        if (decl.Id is Identifier vid)
+                        {
+                            newLocals.Add(vid.Name);
+                        }
+                    }
+                    // Check initializers with updated local set
+                    foreach (var decl in vd.Declarations)
+                    {
+                        if (ContainsFreeVariable(decl.Init, newLocals)) return true;
+                    }
+                    return false;
+
+                case BlockStatement bs:
+                    return bs.Body.Any(stmt => ContainsFreeVariable(stmt, localVariables));
+
+                case ExpressionStatement es:
+                    return ContainsFreeVariable(es.Expression, localVariables);
+
+                case ReturnStatement rs:
+                    return ContainsFreeVariable(rs.Argument, localVariables);
+
+                case IfStatement ifs:
+                    return ContainsFreeVariable(ifs.Test, localVariables) ||
+                           ContainsFreeVariable(ifs.Consequent, localVariables) ||
+                           ContainsFreeVariable(ifs.Alternate, localVariables);
+
+                case ForStatement fs:
+                    return ContainsFreeVariable(fs.Init as Node, localVariables) ||
+                           ContainsFreeVariable(fs.Test, localVariables) ||
+                           ContainsFreeVariable(fs.Update, localVariables) ||
+                           ContainsFreeVariable(fs.Body, localVariables);
+
+                case WhileStatement ws:
+                    return ContainsFreeVariable(ws.Test, localVariables) ||
+                           ContainsFreeVariable(ws.Body, localVariables);
+
+                case DoWhileStatement dws:
+                    return ContainsFreeVariable(dws.Body, localVariables) ||
+                           ContainsFreeVariable(dws.Test, localVariables);
+
+                case BinaryExpression be:
+                    return ContainsFreeVariable(be.Left, localVariables) ||
+                           ContainsFreeVariable(be.Right, localVariables);
+
+                case UpdateExpression upe:
+                    return ContainsFreeVariable(upe.Argument, localVariables);
+
+                case UnaryExpression ue:
+                    return ContainsFreeVariable(ue.Argument, localVariables);
+
+                case CallExpression ce:
+                    return ContainsFreeVariable(ce.Callee, localVariables) ||
+                           ce.Arguments.Any(arg => ContainsFreeVariable(arg as Node, localVariables));
+
+                case MemberExpression me:
+                    return ContainsFreeVariable(me.Object, localVariables) ||
+                           (me.Computed && ContainsFreeVariable(me.Property as Node, localVariables));
+
+                case AssignmentExpression ae:
+                    return ContainsFreeVariable(ae.Left, localVariables) ||
+                           ContainsFreeVariable(ae.Right, localVariables);
+
+                case ConditionalExpression ce:
+                    return ContainsFreeVariable(ce.Test, localVariables) ||
+                           ContainsFreeVariable(ce.Consequent, localVariables) ||
+                           ContainsFreeVariable(ce.Alternate, localVariables);
+
+                case ArrayExpression arr:
+                    return arr.Elements.Any(elem => ContainsFreeVariable(elem as Node, localVariables));
+
+                case ObjectExpression obj:
+                    return obj.Properties.Any(prop => ContainsFreeVariable(prop, localVariables));
+
+                case Property prop:
+                    return ContainsFreeVariable(prop.Key as Node, localVariables) ||
+                           ContainsFreeVariable(prop.Value as Node, localVariables);
+
+                // Stop at nested function boundaries - they have their own scope
+                case FunctionExpression:
+                case FunctionDeclaration:
+                case ArrowFunctionExpression:
+                    return false;
+
+                default:
+                    // For unknown node types, conservatively return false
+                    return false;
+            }
+        }
+
+        /// <summary>
+        /// Checks if an identifier is a known global intrinsic that doesn't require scope access.
+        /// </summary>
+        private static bool IsKnownGlobalIntrinsic(string name)
+        {
+            return name == "console" || name == "Math" || name == "Object" || name == "Array" ||
+                   name == "String" || name == "Number" || name == "Boolean" || name == "Date" ||
+                   name == "JSON" || name == "undefined" || name == "null" || name == "Infinity" || name == "NaN" ||
+                   name == "process" || name == "__dirname" || name == "__filename" || name == "require" ||
+                   name == "Buffer" || name == "Int32Array" || name == "Error" || name == "Promise" ||
+                   name == "setTimeout" || name == "setInterval" || name == "clearTimeout" || name == "clearInterval";
+        }
+
         public SymbolTable Build(Node astRoot, string filePath)
         {
             var fileName = Path.GetFileNameWithoutExtension(filePath);
             var globalScope = new Scope(fileName, ScopeKind.Global, null, astRoot);
             BuildScopeRecursive(astRoot, globalScope);
+            AnalyzeFreeVariables(globalScope);
             return new SymbolTable(globalScope);
         }
 

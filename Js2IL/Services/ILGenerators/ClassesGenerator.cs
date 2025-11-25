@@ -57,6 +57,9 @@ namespace Js2IL.Services.ILGenerators
                 ? TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit
                 : TypeAttributes.NestedPublic | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
 
+            // Check if this class needs to access parent scope variables (computed during symbol table build)
+            bool classNeedsParentScopes = classScope.ReferencesParentScopeVariables;
+
             // Handle class fields with default initializers (ECMAScript class field syntax)
             // Example: class C { foo = 42; static bar = 1; }
             // We emit instance fields as object and initialize in .ctor.
@@ -112,6 +115,18 @@ namespace Js2IL.Services.ILGenerators
                     }
                 }
             }
+
+            // Only add _scopes field if the class actually needs to access parent scope variables
+            FieldDefinitionHandle? scopesField = null;
+            if (classNeedsParentScopes)
+            {
+                var scopesSig = new BlobBuilder();
+                new BlobEncoder(scopesSig).Field().Type().SZArray().Object();
+                var scopesSigHandle = _metadata.GetOrAddBlob(scopesSig);
+                scopesField = tb.AddFieldDefinition(FieldAttributes.Private, "_scopes", scopesSigHandle);
+                _classRegistry.RegisterPrivateField(classScope.Name, "_scopes", scopesField.Value);
+            }
+
 
             // Pre-scan methods (including constructor) for assignments to this.<prop> and declare fields for them
             System.Collections.Generic.IEnumerable<string> FindThisAssignedProps(Acornima.Ast.Node node)
@@ -177,12 +192,12 @@ namespace Js2IL.Services.ILGenerators
                 .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
             if (ctorMethod != null && ctorMethod.Value is FunctionExpression ctorFunc)
             {
-                EmitExplicitConstructor(tb, ctorFunc, fieldsWithInits, classScope.Name);
+                EmitExplicitConstructor(tb, ctorFunc, fieldsWithInits, classScope.Name, classNeedsParentScopes);
             }
             else
             {
                 // Emit a parameterless .ctor that calls System.Object::.ctor and initializes fields
-                _ = EmitParameterlessConstructor(tb, fieldsWithInits, classScope.Name);
+                EmitParameterlessConstructor(tb, fieldsWithInits, classScope.Name, classNeedsParentScopes);
             }
 
             // Methods: create stubs for now; real method codegen will come later
@@ -253,19 +268,41 @@ namespace Js2IL.Services.ILGenerators
         private MethodDefinitionHandle EmitParameterlessConstructor(
             TypeBuilder tb,
             System.Collections.Generic.List<(FieldDefinitionHandle Field, Expression? Init)> fieldsWithInits,
-            string className)
+            string className,
+            bool needsScopes)
         {
-            // Signature: instance void .ctor()
+            // Signature: instance void .ctor() or instance void .ctor(object[] scopes) depending on needsScopes
             var sigBuilder = new BlobBuilder();
             new BlobEncoder(sigBuilder)
                 .MethodSignature(isInstanceMethod: true)
-                .Parameters(0, r => r.Void(), p => { });
+                .Parameters(needsScopes ? 1 : 0, r => r.Void(), p => 
+                { 
+                    if (needsScopes)
+                    {
+                        p.AddParameter().Type().SZArray().Object();
+                    }
+                });
             var ctorSig = _metadata.GetOrAddBlob(sigBuilder);
+
+            ParameterHandle? firstParam = null;
+            if (needsScopes)
+            {
+                firstParam = _metadata.AddParameter(ParameterAttributes.None, _metadata.GetOrAddString("scopes"), sequenceNumber: 1);
+            }
 
             // Body - use ILMethodGenerator for consistent expression emission
             var ilGen = new ILMethodGenerator(_variables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: true, currentClassName: className);
             ilGen.IL.OpCode(ILOpCode.Ldarg_0);
             ilGen.IL.Call(_bcl.Object_Ctor_Ref);
+
+            if (needsScopes)
+            {
+                ilGen.IL.OpCode(ILOpCode.Ldarg_0); // load this
+                ilGen.IL.OpCode(ILOpCode.Ldarg_1); // load scopes parameter
+                ilGen.IL.OpCode(ILOpCode.Stfld); // store to this._scopes
+                _classRegistry.TryGetPrivateField(className, "_scopes", out var _scopesFieldHandle);
+                ilGen.IL.Token(_scopesFieldHandle);
+            }
 
             // Initialize fields with default values if provided using ILMethodGenerator.Emit
             EmitFieldInitializers(ilGen, fieldsWithInits);
@@ -273,28 +310,54 @@ namespace Js2IL.Services.ILGenerators
             ilGen.IL.OpCode(ILOpCode.Ret);
 
             var ctorBody = _methodBodies.AddMethodBody(ilGen.IL, maxStack: 32);
-            var ctorDef = tb.AddMethodDefinition(
-                MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
-                ".ctor",
-                ctorSig,
-                ctorBody);
-            // Cache ctor for reuse/validation at call sites
-            _classRegistry.RegisterConstructor(className, ctorDef, ctorSig, 0);
-            return ctorDef;
+            
+            if (needsScopes && firstParam.HasValue)
+            {
+                var ctorDef = tb.AddMethodDefinition(
+                    MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
+                    ".ctor",
+                    ctorSig,
+                    ctorBody,
+                    firstParam.Value);
+                _classRegistry.RegisterConstructor(className, ctorDef, ctorSig, 1);
+                return ctorDef;
+            }
+            else
+            {
+                var ctorDef = tb.AddMethodDefinition(
+                    MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
+                    ".ctor",
+                    ctorSig,
+                    ctorBody);
+                _classRegistry.RegisterConstructor(className, ctorDef, ctorSig, 0);
+                return ctorDef;
+            }
         }
 
         private MethodDefinitionHandle EmitExplicitConstructor(
             TypeBuilder tb,
             FunctionExpression ctorFunc,
             System.Collections.Generic.List<(FieldDefinitionHandle Field, Expression? Init)> fieldsWithInits,
-            string className)
+            string className,
+            bool needsScopes)
         {
-            // Signature: instance void .ctor(object, ...)
-            var paramCount = ctorFunc.Params.Count;
+            // Signature: instance void .ctor(object, ...) or .ctor(object[] scopes, object, ...) depending on needsScopes
+            var userParamCount = ctorFunc.Params.Count;
+            var totalParamCount = needsScopes ? userParamCount + 1 : userParamCount;
             var sigBuilder = new BlobBuilder();
             new BlobEncoder(sigBuilder)
                 .MethodSignature(isInstanceMethod: true)
-                .Parameters(paramCount, r => r.Void(), p => { for (int i = 0; i < paramCount; i++) p.AddParameter().Type().Object(); });
+                .Parameters(totalParamCount, r => r.Void(), p => 
+                { 
+                    if (needsScopes)
+                    {
+                        p.AddParameter().Type().SZArray().Object(); // scopes parameter first
+                    }
+                    for (int i = 0; i < userParamCount; i++) 
+                    {
+                        p.AddParameter().Type().Object();
+                    }
+                });
             var ctorSig = _metadata.GetOrAddBlob(sigBuilder);
 
             // Create a generator with parameter variables so identifiers resolve
@@ -305,6 +368,16 @@ namespace Js2IL.Services.ILGenerators
             // base .ctor
             ilGen.IL.OpCode(ILOpCode.Ldarg_0);
             ilGen.IL.Call(_bcl.Object_Ctor_Ref);
+
+            if (needsScopes)
+            {
+                // Store scopes parameter to this._scopes field
+                ilGen.IL.OpCode(ILOpCode.Ldarg_0); // load this
+                ilGen.IL.OpCode(ILOpCode.Ldarg_1); // load scopes parameter (first parameter)
+                ilGen.IL.OpCode(ILOpCode.Stfld); // store to this._scopes
+                _classRegistry.TryGetPrivateField(className, "_scopes", out var _scopesFieldHandle);
+                ilGen.IL.Token(_scopesFieldHandle);
+            }
 
             // Initialize fields with default values
             EmitFieldInitializers(ilGen, fieldsWithInits);
@@ -343,7 +416,7 @@ namespace Js2IL.Services.ILGenerators
                 ".ctor",
                 ctorSig,
                 ctorBody);
-            _classRegistry.RegisterConstructor(className, ctorDef, ctorSig, paramCount);
+            _classRegistry.RegisterConstructor(className, ctorDef, ctorSig, totalParamCount);
             return ctorDef;
         }
 

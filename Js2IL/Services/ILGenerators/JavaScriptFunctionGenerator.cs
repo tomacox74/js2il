@@ -16,11 +16,13 @@ namespace Js2IL.Services.ILGenerators
         private readonly ClassRegistry _classRegistry;
         private MethodDefinitionHandle _firstMethod = default;
         private readonly FunctionRegistry _functionRegistry = new();
-    public FunctionRegistry FunctionRegistry => _functionRegistry;
+
+        public FunctionRegistry FunctionRegistry => _functionRegistry;
 
         // Tracks owner types in the Functions namespace
         private readonly Dictionary<string, TypeDefinitionHandle> _globalFunctionOwnerTypes = new();
         private TypeDefinitionHandle _moduleOwnerType = default;
+
         public JavaScriptFunctionGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, ClassRegistry? classRegistry = null)
         {
             _variables = variables;
@@ -166,7 +168,7 @@ namespace Js2IL.Services.ILGenerators
 
                 bool isNested = scope.Kind == ScopeKind.Function; // nested if parent is a function
                 var functionVariables = new Variables(parentVars, functionName, paramNames, isNestedFunction: isNested);
-                    var methodGenerator = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
+                var methodGenerator = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
                 var methodDefinition = GenerateMethodForFunction(functionDeclaration, functionVariables, methodGenerator, funcScope, symbolTable);
                 if (this._firstMethod.IsNil)
                 {
@@ -182,7 +184,7 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-    public MethodDefinitionHandle GenerateMethodForFunction(FunctionDeclaration functionDeclaration, Variables functionVariables, ILMethodGenerator methodGenerator, Scope? functionScope = null, SymbolTable? symbolTable = null, TypeBuilder? typeBuilder = null)
+        public MethodDefinitionHandle GenerateMethodForFunction(FunctionDeclaration functionDeclaration, Variables functionVariables, ILMethodGenerator methodGenerator, Scope? functionScope = null, SymbolTable? symbolTable = null, TypeBuilder? typeBuilder = null)
         {
             var functionName = (functionDeclaration.Id as Acornima.Ast.Identifier)!.Name;
 
@@ -281,7 +283,7 @@ namespace Js2IL.Services.ILGenerators
 
             // Emit body statements
             var hasExplicitReturn = blockStatement.Body.Any(s => s is ReturnStatement);
-            
+
             // Initialize nested function variables before generating other statements
             if (functionScope != null)
             {
@@ -292,7 +294,7 @@ namespace Js2IL.Services.ILGenerators
                     .ToList();
                 methodGenerator.InitializeLocalFunctionVariables(nestedFunctions);
             }
-            
+
             methodGenerator.GenerateStatementsForBody(functionVariables.GetLeafScopeName(), false, blockStatement.Body);
             if (!hasExplicitReturn)
             {
@@ -322,7 +324,7 @@ namespace Js2IL.Services.ILGenerators
                 maxStack: 32, // todo - keep track of the pops and pushes so as to provide a accurate value for maxStack
                 localVariablesSignature: localSignature,
                 attributes: bodyAttributes);
-                
+
             // Build method signature: static object (object[] scopes, object param1, ...)
             var sigBuilder = new BlobBuilder();
             var paramCount = 1 + functionDeclaration.Params.Count; // scope array + declared params
@@ -365,7 +367,7 @@ namespace Js2IL.Services.ILGenerators
                 throw new InvalidOperationException("TypeBuilder is required for method emission.");
             }
 
-                var methodDefinition = typeBuilder.AddMethodDefinition(
+            var methodDefinition = typeBuilder.AddMethodDefinition(
                 MethodAttributes.Static | MethodAttributes.Public,
                 functionName,
                 methodSig,
