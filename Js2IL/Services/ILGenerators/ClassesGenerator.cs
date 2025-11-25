@@ -396,7 +396,8 @@ namespace Js2IL.Services.ILGenerators
             if (needsScopes)
             {
                 var parentScopeNames = DetermineParentScopesForClassMethod(classScope);
-                methodVariables = new Variables(_variables, "constructor", paramNames, parentScopeNames);
+                // For constructors with scopes: arg0=this, arg1=scopes[], user params start at arg2
+                methodVariables = new Variables(_variables, "constructor", paramNames, parentScopeNames, parameterStartIndex: 2);
             }
             else
             {

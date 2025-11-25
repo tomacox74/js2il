@@ -28,6 +28,9 @@ namespace Js2IL.Tests.Classes
         [Fact] public Task Classes_ClassConstructor_AccessGlobalVariable_Log() { var testName = nameof(Classes_ClassConstructor_AccessGlobalVariable_Log); return ExecutionTest(testName, allowUnhandledException: true); }
         [Fact] public Task Classes_ClassConstructor_AccessFunctionVariable_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariable_Log); return ExecutionTest(testName, allowUnhandledException: true); }
         [Fact] public Task Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log); return ExecutionTest(testName, allowUnhandledException: true); }
+        [Fact] public Task Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log() { var testName = nameof(Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log); return ExecutionTest(testName, allowUnhandledException: true); }
+        [Fact] public Task Classes_ClassConstructor_AccessFunctionVariableAndParameterValue_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariableAndParameterValue_Log); return ExecutionTest(testName, allowUnhandledException: true); }
+        [Fact] public Task Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log); return ExecutionTest(testName, allowUnhandledException: true); }
 
         // Repro (fixed): previously surfaced a TypeLoadException when new-ing a class inside an arrow function.
         // Bug fixed by sharing ClassRegistry with nested generators; test is active.

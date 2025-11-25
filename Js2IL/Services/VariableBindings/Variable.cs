@@ -130,9 +130,10 @@ namespace Js2IL.Services
         }
 
         /// <summary>
-        /// Constructor for class methods that receive explicit parent scopes via this._scopes field.
+        /// Constructor for class methods/constructors that receive explicit parent scopes via this._scopes field.
         /// </summary>
-        public Variables(Variables parentVariables, string scopeName, IEnumerable<string> parameterNames, IReadOnlyList<string> parentScopeNames)
+        /// <param name="parameterStartIndex">IL argument index where JS parameters begin (1 for methods, 2 for constructors with scopes parameter)</param>
+        public Variables(Variables parentVariables, string scopeName, IEnumerable<string> parameterNames, IReadOnlyList<string> parentScopeNames, int parameterStartIndex = 1)
         {
             if (parentVariables == null) throw new ArgumentNullException(nameof(parentVariables));
             if (scopeName == null) throw new ArgumentNullException(nameof(scopeName));
@@ -145,8 +146,10 @@ namespace Js2IL.Services
             _hasLocalScope = false;
 
             // Build parameter map using IL argument indexes for JS params.
-            // Arg0 is 'this' for instance methods; JS params start at 1.
-            int i = 1;
+            // Arg0 is 'this' for instance methods.
+            // For methods: JS params start at 1 (arg0=this).
+            // For constructors with scopes: JS params start at 2 (arg0=this, arg1=scopes[]).
+            int i = parameterStartIndex;
             foreach (var p in parameterNames)
             {
                 if (!_parameterIndices.ContainsKey(p))
