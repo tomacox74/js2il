@@ -5,7 +5,7 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 ### Fixed
-- Classes: class methods can now access variables from all ancestor scopes (global, function, block), not just the global scope. The `DetermineParentScopesForClassMethod` now walks the scope tree to build the complete parent scope chain, enabling proper multi-level scope access for classes declared inside functions.
+- Classes: class methods and constructors can now access variables from all ancestor scopes (global, function, block), not just the global scope. The `DetermineParentScopesForClassMethod` now walks the scope tree to build the complete parent scope chain, enabling proper multi-level scope access for classes declared inside functions. Both `EmitMethod` and `EmitExplicitConstructor` use this mechanism to provide consistent scope access.
 - Classes: class methods now correctly access parent scope variables through `this._scopes` field instead of incorrectly casting `this` to array. Modified `BinaryOperators.LoadVariable` to check class method context and emit proper IL for scope field access.
 - IL Generation: conditional `_scopes` field generation for classes - only classes that reference parent scope variables now include the field and constructor parameter, avoiding unnecessary overhead for simple classes.
 - Code quality: fixed indentation in `BinaryOperators.cs` to conform to C# coding guidelines (4-space indentation).
