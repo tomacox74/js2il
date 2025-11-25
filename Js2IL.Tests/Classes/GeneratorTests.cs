@@ -58,7 +58,7 @@ namespace Js2IL.Tests.Classes
             return GenerateTest(testName);
         }
 
-        [Fact] public Task Classes_ClassMethod_AccessGlobal_Log() { var testName = nameof(Classes_ClassMethod_AccessGlobal_Log); return GenerateTest(testName); }
+        [Fact] public Task Classes_ClassMethod_AccessGlobalVariable_Log() { var testName = nameof(Classes_ClassMethod_AccessGlobalVariable_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassMethod_AccessFunctionAndGlobal_Log() { var testName = nameof(Classes_ClassMethod_AccessFunctionAndGlobal_Log); return GenerateTest(testName); }
     }
 }
