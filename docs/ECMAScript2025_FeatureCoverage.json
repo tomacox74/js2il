@@ -1236,6 +1236,24 @@
                     "Js2IL.Tests/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js"
                   ],
                   "notes": "Generated as a private .NET field with a mangled name; accessible only within the class."
+                },
+                {
+                  "feature": "Class methods and constructors accessing ancestor scope variables (global, function, block)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessGlobalVariable_Log.js",
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessFunctionVariable_Log.js",
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.js",
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessArrowFunctionVariable_Log.js",
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log.js",
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessGlobalVariable_Log.js",
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariable_Log.js",
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log.js",
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log.js",
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariableAndParameterValue_Log.js",
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log.js"
+                  ],
+                  "notes": "Class methods and constructors can now access variables from all ancestor scopes (global, function, block), not just the global scope. Implementation walks the scope tree from the class's parent scope to root, building a complete ancestor chain. The scope array is passed as an argument to methods/constructors, enabling proper multi-level scope access. Supports regular functions, arrow functions, and constructor parameters. Fixed parameter indexing for constructors: when scopes are present, arg0=this, arg1=scopes[], parameters start at arg2."
                 }
               ]
             }
@@ -1325,7 +1343,7 @@
                   "testScripts": [
                     "Js2IL.Tests/JavaScript/Array_Map_Basic.js"
                   ],
-                  "notes": "Supports value-callback mapping including nested callback closures (scope array construction fix in current branch). thisArg and standard callback parameter injections (index, array) are not yet supported; callback currently receives only the element value. Returns a new array."
+                  "notes": "Supports value-callback mapping including nested callback closures. thisArg and standard callback parameter injections (index, array) are not yet supported; callback currently receives only the element value. Returns a new array."
                 }
               ]
             },
