@@ -1776,16 +1776,8 @@ namespace Js2IL.Services.ILGenerators
         {
             if (parameters == null) return 0;
             
-            int required = 0;
-            foreach (var param in parameters)
-            {
-                // AssignmentPattern means the parameter has a default value, so it's optional
-                if (param is not AssignmentPattern)
-                {
-                    required++;
-                }
-            }
-            return required;
+            // Count parameters that are not AssignmentPattern (i.e., required parameters)
+            return parameters.Count(param => param is not AssignmentPattern);
         }
 
         /// <summary>
@@ -1844,16 +1836,7 @@ namespace Js2IL.Services.ILGenerators
         internal void EmitDefaultParameterInitializers(IReadOnlyList<Node> parameters, ushort parameterStartIndex)
         {
             // Early exit if there are no parameters with defaults
-            bool hasDefaults = false;
-            foreach (var param in parameters)
-            {
-                if (param is AssignmentPattern ap && ap.Left is not (ObjectPattern or ArrayPattern))
-                {
-                    hasDefaults = true;
-                    break;
-                }
-            }
-            if (!hasDefaults)
+            if (!parameters.Any(param => param is AssignmentPattern ap && ap.Left is not (ObjectPattern or ArrayPattern)))
             {
                 return;  // No default parameters to process
             }

@@ -70,28 +70,14 @@ namespace Js2IL.Services
             bool hasNestedFunctions = scope.Children.Any(c => c.Kind == ScopeKind.Function);
             
             // Check if this scope has parameters with default values
-            bool hasDefaultParameters = false;
-            if (scope.AstNode != null)
+            Acornima.Ast.NodeList<Acornima.Ast.Node>? paramList = scope.AstNode switch
             {
-                Acornima.Ast.NodeList<Acornima.Ast.Node>? paramList = scope.AstNode switch
-                {
-                    Acornima.Ast.FunctionDeclaration fd => fd.Params,
-                    Acornima.Ast.FunctionExpression fe => fe.Params,
-                    Acornima.Ast.ArrowFunctionExpression af => af.Params,
-                    _ => null
-                };
-                if (paramList.HasValue)
-                {
-                    foreach (var p in paramList.Value)
-                    {
-                        if (p is Acornima.Ast.AssignmentPattern)
-                        {
-                            hasDefaultParameters = true;
-                            break;
-                        }
-                    }
-                }
-            }
+                Acornima.Ast.FunctionDeclaration fd => fd.Params,
+                Acornima.Ast.FunctionExpression fe => fe.Params,
+                Acornima.Ast.ArrowFunctionExpression af => af.Params,
+                _ => null
+            };
+            bool hasDefaultParameters = paramList.HasValue && paramList.Value.Any(p => p is Acornima.Ast.AssignmentPattern);
 
             foreach (var binding in scope.Bindings.Values)
             {
