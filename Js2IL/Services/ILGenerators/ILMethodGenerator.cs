@@ -1818,16 +1818,17 @@ namespace Js2IL.Services.ILGenerators
         }
 
         /// <summary>
-        /// Emits IL to load a parameter value, applying default if the parameter is null/undefined.
-        /// For parameters with defaults (AssignmentPattern), emits: (param == null) ? defaultValue : param
-        /// For parameters without defaults (Identifier), simply loads the parameter.
+        /// Emits IL to load a parameter value.
+        /// Default parameters are handled by EmitDefaultParameterInitializers using starg,
+        /// so this method simply loads the argument (which already contains the correct value).
         /// </summary>
-        /// <param name="paramNode">The parameter AST node (Identifier or AssignmentPattern)</param>
+        /// <param name="paramNode">The parameter AST node (reserved for future use, currently unused)</param>
         /// <param name="argIndex">The argument index to load from</param>
         internal void EmitLoadParameterWithDefault(Node paramNode, ushort argIndex)
         {
             // Default parameters are handled by EmitDefaultParameterInitializers using starg
             // So we just load the parameter directly (it already has the default if it was null)
+            // Note: paramNode is currently unused but kept for potential future enhancements
             _il.LoadArgument(argIndex);
         }
 
