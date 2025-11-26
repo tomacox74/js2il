@@ -503,7 +503,7 @@ namespace Js2IL.Services.ILGenerators
                 EmitBoxIfNeeded(javascriptType);
             }
 
-            return new ExpressionResult { JsType = javascriptType, ClrType = clrType };
+            return new ExpressionResult { JsType = javascriptType, ClrType = clrType, IsBoxed = typeCoercion.boxResult };
         }
 
         // Emits a call expression (function or member call) with context and optional result discard.

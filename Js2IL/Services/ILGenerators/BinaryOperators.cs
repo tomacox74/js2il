@@ -224,7 +224,7 @@ namespace Js2IL.Services.ILGenerators
                     ApplyArithmeticOperator(operatorType, binaryExpression, isBitwiseOrShift);
             // Arithmetic and bitwise operators yield a numeric value in JS (Number in our model)
             // '+' is handled above (may be string or number) and returned early.
-            return new ExpressionResult { JsType = JavascriptType.Number, ClrType = null };
+            return new ExpressionResult { JsType = JavascriptType.Number, ClrType = null, IsBoxed = false };
                 case Operator.LessThan:
                 case Operator.GreaterThan:
                 case Operator.LessThanOrEqual:
@@ -236,11 +236,11 @@ namespace Js2IL.Services.ILGenerators
                     ApplyComparisonOperator(operatorType, binaryExpression, branching);
                     // For comparisons, value form leaves a boxed boolean; branching leaves stack neutral.
                     return branching == null
-                        ? new ExpressionResult { JsType = JavascriptType.Object, ClrType = null }
-                        : new ExpressionResult { JsType = JavascriptType.Unknown, ClrType = null };
+                        ? new ExpressionResult { JsType = JavascriptType.Object, ClrType = null, IsBoxed = true }
+                        : new ExpressionResult { JsType = JavascriptType.Unknown, ClrType = null, IsBoxed = false };
                 default:
                     ILEmitHelpers.ThrowNotSupported($"Unsupported binary operator: {operatorType}", binaryExpression);
-                    return new ExpressionResult { JsType = JavascriptType.Unknown, ClrType = null }; // unreachable
+                    return new ExpressionResult { JsType = JavascriptType.Unknown, ClrType = null, IsBoxed = false }; // unreachable
             }
         }
 
@@ -288,7 +288,7 @@ namespace Js2IL.Services.ILGenerators
                     // Left is true: evaluate right with same branching
                     _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion(), CallSiteContext.Expression, branching);
                 }
-                return new ExpressionResult { JsType = JavascriptType.Unknown, ClrType = null };
+                return new ExpressionResult { JsType = JavascriptType.Unknown, ClrType = null, IsBoxed = false };
             }
 
             // Value form: result is one of the operands (not coerced to boolean)
@@ -328,7 +328,7 @@ namespace Js2IL.Services.ILGenerators
             // Stack already has the chosen left object (bool was consumed by branch)
 
             _il.MarkLabel(endLabel);
-            return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
+            return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null, IsBoxed = true };
         }
 
         /// <summary>
@@ -347,7 +347,7 @@ namespace Js2IL.Services.ILGenerators
             {
                 _il.OpCode(ILOpCode.Box);
                 _il.Token(_bclReferences.BooleanType);
-                return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
+                return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null, IsBoxed = true };
             }
             else
             {
@@ -356,7 +356,7 @@ namespace Js2IL.Services.ILGenerators
                 {
                     _il.Branch(ILOpCode.Br, branching.BranchOnFalse.Value);
                 }
-                return new ExpressionResult { JsType = JavascriptType.Unknown, ClrType = null };
+                return new ExpressionResult { JsType = JavascriptType.Unknown, ClrType = null, IsBoxed = false };
             }
         }
 
@@ -409,7 +409,8 @@ namespace Js2IL.Services.ILGenerators
             bool equality = operatorType == Operator.Equality || operatorType == Operator.StrictEquality;
             bool staticString = plus && binaryExpression.Left is StringLiteral && (binaryExpression.Right is StringLiteral || binaryExpression.Right is NumericLiteral);
 
-            var leftType = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion()).JsType;
+            var leftResult = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion());
+            var leftType = leftResult.JsType;
             // If we're doing an equality comparison and the left is an arithmetic expression,
             // proactively unbox it to a double so subsequent branch compare works on numerics.
             bool leftIsArithmeticExpr = binaryExpression.Left is BinaryExpression lbe &&
@@ -427,40 +428,25 @@ namespace Js2IL.Services.ILGenerators
             bool likelyNumericSyntax = plus && leftIsNumericSyntax && rightIsNumericSyntax;
             if (equality)
             {
-                if (leftType == JavascriptType.Number)
+                if (leftType == JavascriptType.Number && leftResult.IsBoxed)
                 {
-                    // Only unbox when the left operand value is boxed (variables/expressions),
-                    // not when it's a raw numeric literal or simple unary numeric.
-                    bool leftIsRawNumeric = binaryExpression.Left is Acornima.Ast.NumericLiteral
-                        || (binaryExpression.Left is Acornima.Ast.UnaryExpression ul && ul.Operator.ToString() == "UnaryNegation" && ul.Argument is Acornima.Ast.NumericLiteral);
-                    // If left is a BinaryExpression (arithmetic), we've already ensured numeric; avoid double unbox
-                    bool leftIsArithmeticNode = binaryExpression.Left is Acornima.Ast.BinaryExpression;
-                    // If left is an Identifier, LoadVariable already unboxed it; avoid double unbox
-                    bool leftIsIdentifier = binaryExpression.Left is Acornima.Ast.Identifier;
-                    if (!leftIsRawNumeric && !leftIsArithmeticNode && !leftIsIdentifier)
-                    {
-                        _il.OpCode(ILOpCode.Unbox_any);
-                        _il.Token(_bclReferences.DoubleType);
-                    }
+                    // Unbox when the left operand value is boxed
+                    _il.OpCode(ILOpCode.Unbox_any);
+                    _il.Token(_bclReferences.DoubleType);
                 }
-                else if (leftType == JavascriptType.Boolean)
+                else if (leftType == JavascriptType.Boolean && leftResult.IsBoxed)
                 {
-                    // If this is not a literal boolean, unbox (variables/expressions are boxed)
-                    if (!(binaryExpression.Left is Acornima.Ast.BooleanLiteral) && !(binaryExpression.Left is Acornima.Ast.Literal bl && bl.Value is bool))
-                    {
-                        _il.OpCode(ILOpCode.Unbox_any);
-                        _il.Token(_bclReferences.BooleanType);
-                    }
+                    // Unbox when the left operand value is boxed
+                    _il.OpCode(ILOpCode.Unbox_any);
+                    _il.Token(_bclReferences.BooleanType);
                 }
-                else
+                else if (leftType == JavascriptType.Object && (binaryExpression.Right is Acornima.Ast.BooleanLiteral || (binaryExpression.Right is Acornima.Ast.Literal brl && brl.Value is bool)))
                 {
-                    // If right is a boolean literal/value, coerce left to boolean as well (handles cases like: result == true)
-                    if (binaryExpression.Right is Acornima.Ast.BooleanLiteral || (binaryExpression.Right is Acornima.Ast.Literal brl && brl.Value is bool))
-                    {
-                        _il.OpCode(ILOpCode.Unbox_any);
-                        _il.Token(_bclReferences.BooleanType);
-                        leftType = JavascriptType.Boolean;
-                    }
+                    // If right is a boolean literal and left is object (e.g., function return), convert left to boolean
+                    var toBool = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), typeof(bool), typeof(object));
+                    _il.OpCode(ILOpCode.Call);
+                    _il.Token(toBool);
+                    leftType = JavascriptType.Boolean;
                 }
                 // otherwise leave as loaded (e.g., string/object) and Ceq will perform ref equality (acceptable for now)
             }
@@ -492,7 +478,8 @@ namespace Js2IL.Services.ILGenerators
                 }
             }
 
-            var rightType = _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion() { toString = binaryExpression.Left is StringLiteral }).JsType;
+            var rightResult = _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion() { toString = binaryExpression.Left is StringLiteral });
+            var rightType = rightResult.JsType;
             // If equality compare and left resolved to number, make right numeric too when reasonable
             if (equality && leftType == JavascriptType.Number && rightType != JavascriptType.Number)
             {
@@ -501,10 +488,9 @@ namespace Js2IL.Services.ILGenerators
                     // Numeric literal or -numeric literal
                     (binaryExpression.Right is Acornima.Ast.NumericLiteral
                         || (binaryExpression.Right is Acornima.Ast.UnaryExpression ur && ur.Operator.ToString() == "UnaryNegation" && ur.Argument is Acornima.Ast.NumericLiteral))
-                    // Identifiers with numeric runtime type are already unboxed by LoadVariable
-                    || (binaryExpression.Right is Acornima.Ast.Identifier)
                     // Common numeric member: *.length yields an unboxed double
                     || (binaryExpression.Right is Acornima.Ast.MemberExpression rme && !rme.Computed && rme.Property is Acornima.Ast.Identifier rid && string.Equals(rid.Name, "length", StringComparison.Ordinal));
+                // NOTE: Removed Identifier check - Identifiers load boxed values from fields that need type conversion
                 if (!rightIsRawNumeric && !rightIsNullLiteral)
                 {
                     // Generic numeric coercion when operand isn't already a raw double
@@ -516,6 +502,13 @@ namespace Js2IL.Services.ILGenerators
                     _il.Token(toNum);
                     rightType = JavascriptType.Number;
                 }
+            }
+            // For equality comparisons, unbox right operand if needed
+            if (equality && rightType == JavascriptType.Number && rightResult.IsBoxed)
+            {
+                // Unbox when the right operand value is boxed
+                _il.OpCode(ILOpCode.Unbox_any);
+                _il.Token(_bclReferences.DoubleType);
             }
             bool identifiersPair = binaryExpression.Left is Identifier && binaryExpression.Right is Identifier;
             bool preferNumeric = plus && (leftType == JavascriptType.Number && rightType == JavascriptType.Number || identifiersPair || likelyNumericSyntax);
@@ -608,35 +601,30 @@ namespace Js2IL.Services.ILGenerators
                     _il.Branch(ILOpCode.Br, userTrueLbl);
                 }
                 return branching == null
-                    ? new ExpressionResult { JsType = JavascriptType.Object, ClrType = null }
-                    : new ExpressionResult { JsType = JavascriptType.Unknown, ClrType = null };
+                    ? new ExpressionResult { JsType = JavascriptType.Object, ClrType = null, IsBoxed = true }
+                    : new ExpressionResult { JsType = JavascriptType.Unknown, ClrType = null, IsBoxed = false };
             }
             if (equality)
             {
-                if (rightType == JavascriptType.Number)
+                if (rightType == JavascriptType.Number && rightResult.IsBoxed)
                 {
-                    // Only unbox when the right operand value is boxed (variables/expressions),
-                    // not when it's a raw numeric literal or simple unary numeric.
-                    bool rightIsRawNumeric =
-                        (binaryExpression.Right is Acornima.Ast.NumericLiteral
-                         || (binaryExpression.Right is Acornima.Ast.UnaryExpression ur && ur.Operator.ToString() == "UnaryNegation" && ur.Argument is Acornima.Ast.NumericLiteral))
-                        // Identifiers with numeric runtime type are loaded unboxed
-                        || (binaryExpression.Right is Acornima.Ast.Identifier)
-                        // Member '.length' returns an unboxed double
-                        || (binaryExpression.Right is Acornima.Ast.MemberExpression rme2 && !rme2.Computed && rme2.Property is Acornima.Ast.Identifier rid2 && string.Equals(rid2.Name, "length", StringComparison.Ordinal));
-                    if (!rightIsRawNumeric)
-                    {
-                        _il.OpCode(ILOpCode.Unbox_any);
-                        _il.Token(_bclReferences.DoubleType);
-                    }
+                    // Unbox when the right operand value is boxed
+                    _il.OpCode(ILOpCode.Unbox_any);
+                    _il.Token(_bclReferences.DoubleType);
                 }
-                else if (rightType == JavascriptType.Boolean)
+                else if (rightType == JavascriptType.Boolean && rightResult.IsBoxed)
                 {
-                    if (!(binaryExpression.Right is Acornima.Ast.BooleanLiteral) && !(binaryExpression.Right is Acornima.Ast.Literal br && br.Value is bool))
-                    {
-                        _il.OpCode(ILOpCode.Unbox_any);
-                        _il.Token(_bclReferences.BooleanType);
-                    }
+                    // Unbox when the right operand value is boxed
+                    _il.OpCode(ILOpCode.Unbox_any);
+                    _il.Token(_bclReferences.BooleanType);
+                }
+                else if (rightType == JavascriptType.Object && (binaryExpression.Left is Acornima.Ast.BooleanLiteral || (binaryExpression.Left is Acornima.Ast.Literal lbl && lbl.Value is bool)))
+                {
+                    // If left is a boolean literal and right is object (e.g., function return), convert right to boolean
+                    var toBool = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), typeof(bool), typeof(object));
+                    _il.OpCode(ILOpCode.Call);
+                    _il.Token(toBool);
+                    rightType = JavascriptType.Boolean;
                 }
                 else
                 {
@@ -657,13 +645,6 @@ namespace Js2IL.Services.ILGenerators
                         }
                         // No further coercion for null compare
                     }
-                    // If left evaluated as boolean (or is a boolean literal), coerce right to boolean
-                    if (leftType == JavascriptType.Boolean || binaryExpression.Left is Acornima.Ast.BooleanLiteral || (binaryExpression.Left is Acornima.Ast.Literal lbl && lbl.Value is bool))
-                    {
-                        _il.OpCode(ILOpCode.Unbox_any);
-                        _il.Token(_bclReferences.BooleanType);
-                        rightType = JavascriptType.Boolean;
-                    }
                 }
             }
             else
@@ -682,7 +663,6 @@ namespace Js2IL.Services.ILGenerators
                                 typeof(double), typeof(object));
                             _il.OpCode(ILOpCode.Call);
                             _il.Token(toNum);
-                            leftType = JavascriptType.Number;
                         }
                         if (rightType != JavascriptType.Number)
                         {
@@ -692,7 +672,6 @@ namespace Js2IL.Services.ILGenerators
                                 typeof(double), typeof(object));
                             _il.OpCode(ILOpCode.Call);
                             _il.Token(toNum);
-                            rightType = JavascriptType.Number;
                         }
                     }
                     else if (!staticString && !(leftType == JavascriptType.Number && rightType == JavascriptType.Number))
@@ -804,13 +783,13 @@ namespace Js2IL.Services.ILGenerators
                 {
                     // Numeric fast-path: leave unboxed double on stack
                     _il.OpCode(ILOpCode.Add);
-                    return new ExpressionResult { JsType = JavascriptType.Number, ClrType = null };
+                    return new ExpressionResult { JsType = JavascriptType.Number, ClrType = null, IsBoxed = false };
                 }
                 else
                 {
                     _runtime.InvokeOperatorsAdd();
                 }
-                return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
+                return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null, IsBoxed = true };
             }
             if (minus)
             {
@@ -818,13 +797,13 @@ namespace Js2IL.Services.ILGenerators
                 {
                     // Numeric fast-path: leave unboxed double on stack
                     _il.OpCode(ILOpCode.Sub);
-                    return new ExpressionResult { JsType = JavascriptType.Number, ClrType = null };
+                    return new ExpressionResult { JsType = JavascriptType.Number, ClrType = null, IsBoxed = false };
                 }
                 else
                 {
                     // Runtime path returns object
                     _runtime.InvokeOperatorsSubtract();
-                    return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
+                    return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null, IsBoxed = true };
                 }
             }
 

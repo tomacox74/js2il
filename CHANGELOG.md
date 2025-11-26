@@ -4,7 +4,12 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+### Fixed
+- Equality comparisons: fixed boxing issues in equality operators by introducing explicit `IsBoxed` property to `ExpressionResult`. Replaced brittle AST-based heuristics with explicit boxing state tracking. Fixes:
+  - Method return value comparisons (e.g., `methodResult == 4` and `4 == methodResult` now both work)
+  - Boolean literal over-unboxing (raw boolean values no longer incorrectly unboxed)
+  - Function return comparisons with boolean literals (e.g., `isEven(4) == true` now works correctly)
+- IL Generation: added proper type coercion for Object-to-Boolean comparisons when comparing function return values to boolean literals.
 
 ## v0.3.2 - 2025-11-26
 
