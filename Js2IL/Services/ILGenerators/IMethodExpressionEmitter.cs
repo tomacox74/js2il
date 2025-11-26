@@ -36,12 +36,6 @@ namespace Js2IL.Services.ILGenerators
         public bool boxResult = false;
     }
 
-    record ExpressionResult
-    {
-        public JavascriptType JsType { get; init; }
-        public Type? ClrType { get; init; }
-    }
-
     /// <summary>
     /// For any given javascript expression this component emits the IL code that represents the expression.
     /// At execution time the result of the expression will be available in the IL stack.

@@ -41,6 +41,9 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_EqualBoolean() { var testName = nameof(BinaryOperator_EqualBoolean); return ExecutionTest(testName); }
 
         [Fact]
+        public Task BinaryOperator_EqualMethodReturn() { var testName = nameof(BinaryOperator_EqualMethodReturn); return ExecutionTest(testName); }
+
+        [Fact]
         public Task BinaryOperator_ExpNumberNumber() { var testName = nameof(BinaryOperator_ExpNumberNumber); return ExecutionTest(testName); }
 
         [Fact]

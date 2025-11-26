@@ -1,0 +1,207 @@
+﻿// IL code: BinaryOperator_EqualMethodReturn
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.BinaryOperator_EqualMethodReturn
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit TestClass
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit getValue
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2062
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method getValue::.ctor
+
+		} // end of class getValue
+
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method TestClass::.ctor
+
+	} // end of class TestClass
+
+
+	// Fields
+	.field public object TestClass
+	.field public object obj
+	.field public object methodResult
+	.field public object literalValue
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method BinaryOperator_EqualMethodReturn::.ctor
+
+} // end of class Scopes.BinaryOperator_EqualMethodReturn
+
+.class public auto ansi beforefieldinit Classes.TestClass
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x206c
+		// Header size: 12
+		// Code size: 7 (0x7)
+		.maxstack 32
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: ret
+	} // end of method TestClass::.ctor
+
+	.method public hidebysig 
+		instance object getValue () cil managed 
+	{
+		// Method begins at RVA 0x2080
+		// Header size: 12
+		// Code size: 15 (0xf)
+		.maxstack 32
+
+		IL_0000: ldc.r8 4
+		IL_0009: box [System.Runtime]System.Double
+		IL_000e: ret
+	} // end of method TestClass::getValue
+
+} // end of class Classes.TestClass
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x209c
+		// Header size: 12
+		// Code size: 251 (0xfb)
+		.maxstack 32
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.BinaryOperator_EqualMethodReturn::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: castclass Scopes.BinaryOperator_EqualMethodReturn
+		IL_000c: newobj instance void Classes.TestClass::.ctor()
+		IL_0011: stfld object Scopes.BinaryOperator_EqualMethodReturn::obj
+		IL_0016: ldloc.0
+		IL_0017: castclass Scopes.BinaryOperator_EqualMethodReturn
+		IL_001c: ldloc.0
+		IL_001d: castclass Scopes.BinaryOperator_EqualMethodReturn
+		IL_0022: ldfld object Scopes.BinaryOperator_EqualMethodReturn::obj
+		IL_0027: callvirt instance object Classes.TestClass::getValue()
+		IL_002c: stfld object Scopes.BinaryOperator_EqualMethodReturn::methodResult
+		IL_0031: ldloc.0
+		IL_0032: castclass Scopes.BinaryOperator_EqualMethodReturn
+		IL_0037: ldc.r8 4
+		IL_0040: box [System.Runtime]System.Double
+		IL_0045: stfld object Scopes.BinaryOperator_EqualMethodReturn::literalValue
+		IL_004a: ldc.i4.2
+		IL_004b: newarr [System.Runtime]System.Object
+		IL_0050: dup
+		IL_0051: ldc.i4.0
+		IL_0052: ldstr "methodResult == literalValue:"
+		IL_0057: stelem.ref
+		IL_0058: dup
+		IL_0059: ldc.i4.1
+		IL_005a: ldloc.0
+		IL_005b: castclass Scopes.BinaryOperator_EqualMethodReturn
+		IL_0060: ldfld object Scopes.BinaryOperator_EqualMethodReturn::methodResult
+		IL_0065: ldloc.0
+		IL_0066: castclass Scopes.BinaryOperator_EqualMethodReturn
+		IL_006b: ldfld object Scopes.BinaryOperator_EqualMethodReturn::literalValue
+		IL_0070: unbox.any [System.Runtime]System.Double
+		IL_0075: ceq
+		IL_0077: box [System.Runtime]System.Boolean
+		IL_007c: stelem.ref
+		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0082: pop
+		IL_0083: ldc.i4.2
+		IL_0084: newarr [System.Runtime]System.Object
+		IL_0089: dup
+		IL_008a: ldc.i4.0
+		IL_008b: ldstr "literalValue == methodResult:"
+		IL_0090: stelem.ref
+		IL_0091: dup
+		IL_0092: ldc.i4.1
+		IL_0093: ldloc.0
+		IL_0094: castclass Scopes.BinaryOperator_EqualMethodReturn
+		IL_0099: ldfld object Scopes.BinaryOperator_EqualMethodReturn::literalValue
+		IL_009e: unbox.any [System.Runtime]System.Double
+		IL_00a3: ldloc.0
+		IL_00a4: castclass Scopes.BinaryOperator_EqualMethodReturn
+		IL_00a9: ldfld object Scopes.BinaryOperator_EqualMethodReturn::methodResult
+		IL_00ae: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_00b3: ceq
+		IL_00b5: box [System.Runtime]System.Boolean
+		IL_00ba: stelem.ref
+		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00c0: pop
+		IL_00c1: ldc.i4.2
+		IL_00c2: newarr [System.Runtime]System.Object
+		IL_00c7: dup
+		IL_00c8: ldc.i4.0
+		IL_00c9: ldstr "methodResult === literalValue:"
+		IL_00ce: stelem.ref
+		IL_00cf: dup
+		IL_00d0: ldc.i4.1
+		IL_00d1: ldloc.0
+		IL_00d2: castclass Scopes.BinaryOperator_EqualMethodReturn
+		IL_00d7: ldfld object Scopes.BinaryOperator_EqualMethodReturn::methodResult
+		IL_00dc: ldloc.0
+		IL_00dd: castclass Scopes.BinaryOperator_EqualMethodReturn
+		IL_00e2: ldfld object Scopes.BinaryOperator_EqualMethodReturn::literalValue
+		IL_00e7: unbox.any [System.Runtime]System.Double
+		IL_00ec: ceq
+		IL_00ee: box [System.Runtime]System.Boolean
+		IL_00f3: stelem.ref
+		IL_00f4: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00f9: pop
+		IL_00fa: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
