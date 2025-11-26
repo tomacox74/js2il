@@ -33,6 +33,15 @@ namespace Js2IL.Tests.Classes
         [Fact] public Task Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log() { var testName = nameof(Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log); return ExecutionTest(testName, allowUnhandledException: true); }
         [Fact] public Task Classes_ClassConstructor_AccessFunctionVariableAndParameterValue_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariableAndParameterValue_Log); return ExecutionTest(testName, allowUnhandledException: true); }
         [Fact] public Task Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log); return ExecutionTest(testName, allowUnhandledException: true); }
+        
+        // Repro: class constructor instantiates another class that references a global variable
+        // This should fail with ArgumentOutOfRangeException due to invalid scope array construction
+        [Fact]
+        public Task Classes_ClassConstructor_NewClassReferencingGlobal()
+        {
+            var testName = nameof(Classes_ClassConstructor_NewClassReferencingGlobal);
+            return ExecutionTest(testName, allowUnhandledException: true);
+        }
 
         // Repro (fixed): previously surfaced a TypeLoadException when new-ing a class inside an arrow function.
         // Bug fixed by sharing ClassRegistry with nested generators; test is active.

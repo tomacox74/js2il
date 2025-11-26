@@ -160,25 +160,30 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
+	.field private object[] _scopes
 	.field public object total
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor (
+			object[] '',
 			object ''
 		) cil managed 
 	{
 		// Method begins at RVA 0x2090
 		// Header size: 12
-		// Code size: 14 (0xe)
+		// Code size: 21 (0x15)
 		.maxstack 32
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: ldarg.0
 		IL_0007: ldarg.1
-		IL_0008: stfld object Classes.Accumulator::total
-		IL_000d: ret
+		IL_0008: stfld object[] Classes.Accumulator::_scopes
+		IL_000d: ldarg.0
+		IL_000e: ldarg.2
+		IL_000f: stfld object Classes.Accumulator::total
+		IL_0014: ret
 	} // end of method Accumulator::.ctor
 
 	.method public hidebysig 
@@ -186,7 +191,7 @@
 			object ''
 		) cil managed 
 	{
-		// Method begins at RVA 0x20ac
+		// Method begins at RVA 0x20b4
 		// Header size: 12
 		// Code size: 9 (0x9)
 		.maxstack 32
@@ -203,7 +208,7 @@
 			object ''
 		) cil managed 
 	{
-		// Method begins at RVA 0x20c4
+		// Method begins at RVA 0x20cc
 		// Header size: 12
 		// Code size: 144 (0x90)
 		.maxstack 32
@@ -261,7 +266,7 @@
 	.method public hidebysig 
 		instance object log () cil managed 
 	{
-		// Method begins at RVA 0x2160
+		// Method begins at RVA 0x2168
 		// Header size: 12
 		// Code size: 23 (0x17)
 		.maxstack 32
@@ -288,9 +293,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2184
+		// Method begins at RVA 0x218c
 		// Header size: 12
-		// Code size: 85 (0x55)
+		// Code size: 100 (0x64)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -301,23 +306,30 @@
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: castclass Scopes.Classes_ClassMethod_ForLoop_CallsAnotherMethod
-		IL_000c: ldc.r8 0.0
-		IL_0015: box [System.Runtime]System.Double
-		IL_001a: newobj instance void Classes.Accumulator::.ctor(object)
-		IL_001f: stfld object Scopes.Classes_ClassMethod_ForLoop_CallsAnotherMethod::acc
-		IL_0024: ldloc.0
-		IL_0025: castclass Scopes.Classes_ClassMethod_ForLoop_CallsAnotherMethod
-		IL_002a: ldfld object Scopes.Classes_ClassMethod_ForLoop_CallsAnotherMethod::acc
-		IL_002f: ldc.r8 5
-		IL_0038: box [System.Runtime]System.Double
-		IL_003d: callvirt instance object Classes.Accumulator::addRange(object)
-		IL_0042: pop
-		IL_0043: ldloc.0
-		IL_0044: castclass Scopes.Classes_ClassMethod_ForLoop_CallsAnotherMethod
-		IL_0049: ldfld object Scopes.Classes_ClassMethod_ForLoop_CallsAnotherMethod::acc
-		IL_004e: callvirt instance object Classes.Accumulator::log()
-		IL_0053: pop
-		IL_0054: ret
+		IL_000c: ldc.i4.1
+		IL_000d: newarr [System.Runtime]System.Object
+		IL_0012: dup
+		IL_0013: ldc.i4.0
+		IL_0014: ldloc.0
+		IL_0015: castclass Scopes.Classes_ClassMethod_ForLoop_CallsAnotherMethod
+		IL_001a: stelem.ref
+		IL_001b: ldc.r8 0.0
+		IL_0024: box [System.Runtime]System.Double
+		IL_0029: newobj instance void Classes.Accumulator::.ctor(object[], object)
+		IL_002e: stfld object Scopes.Classes_ClassMethod_ForLoop_CallsAnotherMethod::acc
+		IL_0033: ldloc.0
+		IL_0034: castclass Scopes.Classes_ClassMethod_ForLoop_CallsAnotherMethod
+		IL_0039: ldfld object Scopes.Classes_ClassMethod_ForLoop_CallsAnotherMethod::acc
+		IL_003e: ldc.r8 5
+		IL_0047: box [System.Runtime]System.Double
+		IL_004c: callvirt instance object Classes.Accumulator::addRange(object)
+		IL_0051: pop
+		IL_0052: ldloc.0
+		IL_0053: castclass Scopes.Classes_ClassMethod_ForLoop_CallsAnotherMethod
+		IL_0058: ldfld object Scopes.Classes_ClassMethod_ForLoop_CallsAnotherMethod::acc
+		IL_005d: callvirt instance object Classes.Accumulator::log()
+		IL_0062: pop
+		IL_0063: ret
 	} // end of method Program::Main
 
 } // end of class Program

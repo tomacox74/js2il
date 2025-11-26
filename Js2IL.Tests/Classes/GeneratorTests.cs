@@ -69,5 +69,14 @@ namespace Js2IL.Tests.Classes
         [Fact] public Task Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log() { var testName = nameof(Classes_ClassConstructor_AccessGlobalVariableAndParameterValue_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassConstructor_AccessFunctionVariableAndParameterValue_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariableAndParameterValue_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log); return GenerateTest(testName); }
+        
+        // Repro: class constructor instantiates another class that references a global variable
+        // This should fail with InvalidOperationException due to missing _scopes field
+        [Fact]
+        public Task Classes_ClassConstructor_NewClassReferencingGlobal()
+        {
+            var testName = nameof(Classes_ClassConstructor_NewClassReferencingGlobal);
+            return GenerateTest(testName);
+        }
     }
 }
