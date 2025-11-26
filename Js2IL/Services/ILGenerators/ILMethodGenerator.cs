@@ -1617,7 +1617,11 @@ namespace Js2IL.Services.ILGenerators
             if (internalNameId != null && _functionRegistry != null)
             {
                 var plen = paramNames?.Length ?? -1;
-                try { if (_functionRegistry.Get(internalNameId.Name).IsNil) _functionRegistry.Register(internalNameId.Name, mdh, plen); } catch { }
+                // Only register if not already registered (avoid duplicate registration exception)
+                if (_functionRegistry.Get(internalNameId.Name).IsNil)
+                {
+                    _functionRegistry.Register(internalNameId.Name, mdh, plen);
+                }
             }
             // NOTE: Self-binding eager insertion not implemented due to single-pass encoder limitations.
             // For recursion support, EmitFunctionCall must locate the internal binding. Since we authored an
