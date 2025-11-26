@@ -490,7 +490,6 @@ namespace Js2IL.Services.ILGenerators
             
             // Calculate min/max parameter counts for default parameter support
             int minUserParams = ILMethodGenerator.CountRequiredParameters(ctorFunc.Params);
-            int maxUserParams = ctorFunc.Params.Count;
             int minTotalParams = needsScopes ? minUserParams + 1 : minUserParams;
             int maxTotalParams = totalParamCount;
             
