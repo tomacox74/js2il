@@ -435,7 +435,9 @@ namespace Js2IL.Services.ILGenerators
                         || (binaryExpression.Left is Acornima.Ast.UnaryExpression ul && ul.Operator.ToString() == "UnaryNegation" && ul.Argument is Acornima.Ast.NumericLiteral);
                     // If left is a BinaryExpression (arithmetic), we've already ensured numeric; avoid double unbox
                     bool leftIsArithmeticNode = binaryExpression.Left is Acornima.Ast.BinaryExpression;
-                    if (!leftIsRawNumeric && !leftIsArithmeticNode)
+                    // If left is an Identifier, LoadVariable already unboxed it; avoid double unbox
+                    bool leftIsIdentifier = binaryExpression.Left is Acornima.Ast.Identifier;
+                    if (!leftIsRawNumeric && !leftIsArithmeticNode && !leftIsIdentifier)
                     {
                         _il.OpCode(ILOpCode.Unbox_any);
                         _il.Token(_bclReferences.DoubleType);
