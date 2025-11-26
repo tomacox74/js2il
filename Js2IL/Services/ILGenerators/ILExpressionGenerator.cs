@@ -1677,7 +1677,7 @@ namespace Js2IL.Services.ILGenerators
                 {
                     throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
                 }
-                // Determine if this is a compound assignment (e.g., +=)
+                // Determine if this is a compound assignment (e.g., +=, |=, &=)
                 var opName = assignmentExpression.Operator.ToString();
 
                 if (string.Equals(opName, "AdditionAssignment", StringComparison.Ordinal))
@@ -1721,6 +1721,20 @@ namespace Js2IL.Services.ILGenerators
                         catch { /* best-effort */ }
                     }
                     return JavascriptType.Object;
+                }
+                else if (TryEmitBitwiseCompoundAssignment(opName, assignmentExpression, variable, scopeSlot, aid.Name))
+                {
+                    // Bitwise compound assignments (|=, &=, ^=, <<=, >>=, >>>=) handled
+                    variable.Type = JavascriptType.Number;
+                    variable.RuntimeIntrinsicType = null;
+                    return JavascriptType.Number;
+                }
+                else if (TryEmitArithmeticCompoundAssignment(opName, assignmentExpression, variable, scopeSlot, aid.Name))
+                {
+                    // Arithmetic compound assignments (-=, *=, /=, %=, **=) handled
+                    variable.Type = JavascriptType.Number;
+                    variable.RuntimeIntrinsicType = null;
+                    return JavascriptType.Number;
                 }
                 else
                 {
@@ -1862,6 +1876,165 @@ namespace Js2IL.Services.ILGenerators
             {
                 throw ILEmitHelpers.NotSupported($"Unsupported assignment target type: {assignmentExpression.Left.Type}", assignmentExpression.Left);
             }
+        }
+
+        /// <summary>
+        /// Attempts to emit bitwise compound assignment operators (|=, &=, ^=, <<=, >>=, >>>=).
+        /// Returns true if the operator was handled, false otherwise.
+        /// </summary>
+        private bool TryEmitBitwiseCompoundAssignment(string opName, AssignmentExpression assignmentExpression, 
+            Variable variable, ScopeObjectReference scopeSlot, string variableName)
+        {
+            ILOpCode? bitwiseOp = opName switch
+            {
+                "BitwiseOrAssignment" => ILOpCode.Or,
+                "BitwiseAndAssignment" => ILOpCode.And,
+                "BitwiseXorAssignment" => ILOpCode.Xor,
+                "LeftShiftAssignment" => ILOpCode.Shl,
+                "RightShiftAssignment" => ILOpCode.Shr,
+                "UnsignedRightShiftAssignment" => ILOpCode.Shr_un,
+                _ => null
+            };
+
+            if (bitwiseOp == null)
+                return false;
+
+            // Pattern: target = target <op> rhs
+            // For bitwise operations, convert operands to int32, apply operation, convert back to double
+
+            // Load scope instance for store
+            EmitLoadScopeObjectTyped(scopeSlot, variable.ScopeName);
+            // Duplicate for Ldfld (to get current value) while preserving instance for Stfld
+            _il.OpCode(ILOpCode.Dup);
+            _il.OpCode(ILOpCode.Ldfld);
+            _il.Token(variable.FieldHandle);
+
+            // Convert LHS to int32 (unbox if needed, then convert to int32)
+            _il.OpCode(ILOpCode.Unbox_any);
+            _il.Token(_owner.BclReferences.DoubleType);
+            _il.OpCode(ILOpCode.Conv_i4);
+
+            // Compute RHS and convert to int32
+            var prevAssignment = _owner.CurrentAssignmentTarget;
+            _owner.CurrentAssignmentTarget = variableName;
+            _ = Emit(assignmentExpression.Right, new TypeCoercion { boxResult = false });
+            _owner.CurrentAssignmentTarget = prevAssignment;
+            _il.OpCode(ILOpCode.Conv_i4);
+
+            // Apply bitwise operation
+            _il.OpCode(bitwiseOp.Value);
+
+            // Convert result back to double and box
+            _il.OpCode(ILOpCode.Conv_r8);
+            _il.OpCode(ILOpCode.Box);
+            _il.Token(_owner.BclReferences.DoubleType);
+
+            // Store back
+            _il.OpCode(ILOpCode.Stfld);
+            _il.Token(variable.FieldHandle);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Attempts to emit arithmetic compound assignment operators (-=, *=, /=, %=, **=).
+        /// Returns true if the operator was handled, false otherwise.
+        /// </summary>
+        private bool TryEmitArithmeticCompoundAssignment(string opName, AssignmentExpression assignmentExpression,
+            Variable variable, ScopeObjectReference scopeSlot, string variableName)
+        {
+            ILOpCode? arithmeticOp = opName switch
+            {
+                "SubtractionAssignment" => ILOpCode.Sub,
+                "MultiplicationAssignment" => ILOpCode.Mul,
+                "DivisionAssignment" => ILOpCode.Div,
+                "RemainderAssignment" => ILOpCode.Rem,
+                _ => null
+            };
+
+            if (arithmeticOp == null)
+            {
+                // Check for exponentiation separately as it requires a method call
+                if (string.Equals(opName, "ExponentiationAssignment", StringComparison.Ordinal))
+                {
+                    // Pattern: target = Math.Pow(target, rhs)
+                    EmitLoadScopeObjectTyped(scopeSlot, variable.ScopeName);
+                    _il.OpCode(ILOpCode.Dup);
+                    _il.OpCode(ILOpCode.Ldfld);
+                    _il.Token(variable.FieldHandle);
+                    _il.OpCode(ILOpCode.Unbox_any);
+                    _il.Token(_owner.BclReferences.DoubleType);
+
+                    var prevAssignment = _owner.CurrentAssignmentTarget;
+                    _owner.CurrentAssignmentTarget = variableName;
+                    _ = Emit(assignmentExpression.Right, new TypeCoercion { boxResult = false });
+                    _owner.CurrentAssignmentTarget = prevAssignment;
+                    _il.OpCode(ILOpCode.Conv_r8);
+
+                    // Create method signature: double Pow(double, double)
+                    var powSig = new BlobBuilder();
+                    new BlobEncoder(powSig)
+                        .MethodSignature(isInstanceMethod: false)
+                        .Parameters(2,
+                            returnType => returnType.Type().Double(),
+                            parameters =>
+                            {
+                                parameters.AddParameter().Type().Double();
+                                parameters.AddParameter().Type().Double();
+                            });
+                    var powMethodSig = _owner.MetadataBuilder.GetOrAddBlob(powSig);
+
+                    // Add a MemberRef to Math.Pow(double, double)
+                    var mathPowMethodRef = _owner.MetadataBuilder.AddMemberReference(
+                        _owner.BclReferences.SystemMathType,
+                        _owner.MetadataBuilder.GetOrAddString("Pow"),
+                        powMethodSig);
+
+                    _il.OpCode(ILOpCode.Call);
+                    _il.Token(mathPowMethodRef);
+
+                    _il.OpCode(ILOpCode.Box);
+                    _il.Token(_owner.BclReferences.DoubleType);
+                    _il.OpCode(ILOpCode.Stfld);
+                    _il.Token(variable.FieldHandle);
+                    return true;
+                }
+                return false;
+            }
+
+            // Pattern: target = target <op> rhs
+            // Convert to double, apply operation, box result
+
+            // Load scope instance for store
+            EmitLoadScopeObjectTyped(scopeSlot, variable.ScopeName);
+            // Duplicate for Ldfld (to get current value) while preserving instance for Stfld
+            _il.OpCode(ILOpCode.Dup);
+            _il.OpCode(ILOpCode.Ldfld);
+            _il.Token(variable.FieldHandle);
+
+            // Convert LHS to double (unbox if needed)
+            _il.OpCode(ILOpCode.Unbox_any);
+            _il.Token(_owner.BclReferences.DoubleType);
+
+            // Compute RHS and convert to double
+            var prevAssignment2 = _owner.CurrentAssignmentTarget;
+            _owner.CurrentAssignmentTarget = variableName;
+            _ = Emit(assignmentExpression.Right, new TypeCoercion { boxResult = false });
+            _owner.CurrentAssignmentTarget = prevAssignment2;
+            _il.OpCode(ILOpCode.Conv_r8);
+
+            // Apply arithmetic operation
+            _il.OpCode(arithmeticOp.Value);
+
+            // Box result
+            _il.OpCode(ILOpCode.Box);
+            _il.Token(_owner.BclReferences.DoubleType);
+
+            // Store back
+            _il.OpCode(ILOpCode.Stfld);
+            _il.Token(variable.FieldHandle);
+
+            return true;
         }
 
         // Helper to emit a UnaryExpression and return its JavaScript type (or Unknown when control-flow handled)
