@@ -1,4 +1,4 @@
-# ECMAScript 2025 Feature Coverage
+﻿# ECMAScript 2025 Feature Coverage
 
 [ECMAScript® 2025 Language Specification](https://tc39.es/ecma262/)
 
