@@ -281,6 +281,12 @@ namespace Js2IL.SymbolTables
                                     methodScope.Bindings[pid.Name] = new BindingInfo(pid.Name, BindingKind.Var, pid);
                                     methodScope.Parameters.Add(pid.Name);
                                 }
+                                else if (p is AssignmentPattern ap && ap.Left is Identifier apId)
+                                {
+                                    // Parameter with default value (e.g., a = 10)
+                                    methodScope.Bindings[apId.Name] = new BindingInfo(apId.Name, BindingKind.Var, apId);
+                                    methodScope.Parameters.Add(apId.Name);
+                                }
                             }
                             if (mfunc.Body is BlockStatement mblock)
                             {
@@ -505,6 +511,12 @@ namespace Js2IL.SymbolTables
                             arrowScope.Bindings[id.Name] = new BindingInfo(id.Name, BindingKind.Var, id);
                             arrowScope.Parameters.Add(id.Name);
                         }
+                        else if (param is AssignmentPattern ap && ap.Left is Identifier apId)
+                        {
+                            // Parameter with default value (e.g., a = 10)
+                            arrowScope.Bindings[apId.Name] = new BindingInfo(apId.Name, BindingKind.Var, apId);
+                            arrowScope.Parameters.Add(apId.Name);
+                        }
                         else if (param is ObjectPattern op)
                         {
                             // Destructured parameter: bind each property identifier as a local binding in arrow function scope
@@ -719,6 +731,19 @@ namespace Js2IL.SymbolTables
                     if (!scope.Parameters.Contains(id.Name))
                     {
                         scope.Parameters.Add(id.Name);
+                    }
+                }
+                else if (p is AssignmentPattern ap && ap.Left is Identifier apId)
+                {
+                    // Parameter with default value (e.g., a = 10)
+                    // Extract the identifier from the left side and register it as a parameter
+                    if (!scope.Bindings.ContainsKey(apId.Name))
+                    {
+                        scope.Bindings[apId.Name] = new BindingInfo(apId.Name, BindingKind.Var, apId);
+                    }
+                    if (!scope.Parameters.Contains(apId.Name))
+                    {
+                        scope.Parameters.Add(apId.Name);
                     }
                 }
                 else if (p is ObjectPattern op)

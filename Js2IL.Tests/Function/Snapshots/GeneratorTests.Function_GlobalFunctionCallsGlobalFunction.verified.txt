@@ -73,14 +73,14 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		object helloWorldProxy (
 			object[] scopes
 		) cil managed 
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 64 (0x40)
+		// Code size: 70 (0x46)
 		.maxstack 32
 
 		IL_0000: ldc.i4.2
@@ -108,18 +108,20 @@
 		IL_0032: br IL_0037
 
 		IL_0037: ldarg.0
-		IL_0038: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_003d: pop
-		IL_003e: ldnull
-		IL_003f: ret
+		IL_0038: ldc.i4.0
+		IL_0039: newarr [System.Runtime]System.Object
+		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_0043: pop
+		IL_0044: ldnull
+		IL_0045: ret
 	} // end of method Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
 
-	.method public static 
+	.method public hidebysig static 
 		object helloWorld (
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x20b8
+		// Method begins at RVA 0x20c0
 		// Header size: 12
 		// Code size: 39 (0x27)
 		.maxstack 32
@@ -150,7 +152,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ec
+		// Method begins at RVA 0x20f4
 		// Header size: 12
 		// Code size: 150 (0x96)
 		.maxstack 32

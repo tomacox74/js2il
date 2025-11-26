@@ -56,10 +56,10 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		object ArrowFunction_L1C13 (
 			object[] scopes,
-			object p0
+			object param1
 		) cil managed 
 	{
 		// Method begins at RVA 0x2064
@@ -115,7 +115,7 @@
 	{
 		// Method begins at RVA 0x20cc
 		// Header size: 12
-		// Code size: 142 (0x8e)
+		// Code size: 165 (0xa5)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -141,33 +141,39 @@
 		IL_0031: ldloc.0
 		IL_0032: ldfld object Scopes.ArrowFunction_ParameterDestructuring_Object::show
 		IL_0037: dup
-		IL_0038: brtrue.s IL_0041
+		IL_0038: brtrue.s IL_0058
 
 		IL_003a: pop
-		IL_003b: ldnull
-		IL_003c: br IL_0041
+		IL_003b: ldloc.0
+		IL_003c: ldnull
+		IL_003d: ldftn object Functions.ArrowFunction_L1C13::ArrowFunction_L1C13(object[], object)
+		IL_0043: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0048: stfld object Scopes.ArrowFunction_ParameterDestructuring_Object::show
+		IL_004d: ldloc.0
+		IL_004e: ldfld object Scopes.ArrowFunction_ParameterDestructuring_Object::show
+		IL_0053: br IL_0058
 
-		IL_0041: ldc.i4.1
-		IL_0042: newarr [System.Runtime]System.Object
-		IL_0047: dup
-		IL_0048: ldc.i4.0
-		IL_0049: ldloc.0
-		IL_004a: castclass Scopes.ArrowFunction_ParameterDestructuring_Object
-		IL_004f: stelem.ref
-		IL_0050: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0055: dup
-		IL_0056: ldstr "a"
-		IL_005b: ldc.r8 1
-		IL_0064: box [System.Runtime]System.Double
-		IL_0069: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_006e: dup
-		IL_006f: ldstr "b"
-		IL_0074: ldc.r8 2
-		IL_007d: box [System.Runtime]System.Double
-		IL_0082: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0087: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_008c: pop
-		IL_008d: ret
+		IL_0058: ldc.i4.1
+		IL_0059: newarr [System.Runtime]System.Object
+		IL_005e: dup
+		IL_005f: ldc.i4.0
+		IL_0060: ldloc.0
+		IL_0061: castclass Scopes.ArrowFunction_ParameterDestructuring_Object
+		IL_0066: stelem.ref
+		IL_0067: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_006c: dup
+		IL_006d: ldstr "a"
+		IL_0072: ldc.r8 1
+		IL_007b: box [System.Runtime]System.Double
+		IL_0080: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0085: dup
+		IL_0086: ldstr "b"
+		IL_008b: ldc.r8 2
+		IL_0094: box [System.Runtime]System.Double
+		IL_0099: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_009e: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_00a3: pop
+		IL_00a4: ret
 	} // end of method Program::Main
 
 } // end of class Program

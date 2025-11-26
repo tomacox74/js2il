@@ -375,7 +375,7 @@ namespace Js2IL.Services.ILGenerators
                     ctorSig,
                     ctorBody,
                     firstParam.Value);
-                _classRegistry.RegisterConstructor(className, ctorDef, ctorSig, 1);
+                _classRegistry.RegisterConstructor(className, ctorDef, ctorSig, 1, 1);
                 return ctorDef;
             }
             else
@@ -385,7 +385,7 @@ namespace Js2IL.Services.ILGenerators
                     ".ctor",
                     ctorSig,
                     ctorBody);
-                _classRegistry.RegisterConstructor(className, ctorDef, ctorSig, 0);
+                _classRegistry.RegisterConstructor(className, ctorDef, ctorSig, 0, 0);
                 return ctorDef;
             }
         }
@@ -419,7 +419,7 @@ namespace Js2IL.Services.ILGenerators
             var ctorSig = _metadata.GetOrAddBlob(sigBuilder);
 
             // Create a generator with parameter variables so identifiers resolve
-            var paramNames = ctorFunc.Params.OfType<Identifier>().Select(p => p.Name);
+            var paramNames = ILMethodGenerator.ExtractParameterNames(ctorFunc.Params);
             Variables methodVariables;
             if (needsScopes)
             {
@@ -449,6 +449,9 @@ namespace Js2IL.Services.ILGenerators
 
             // Initialize fields with default values
             EmitFieldInitializers(ilGen, fieldsWithInits);
+
+            // Initialize default parameter values (constructors: arg0=this, arg1=scopes[] if needed, params start at arg2 or arg1)
+            ilGen.EmitDefaultParameterInitializers(ctorFunc.Params, parameterStartIndex: (ushort)(needsScopes ? 2 : 1));
 
             // Emit constructor body statements (no default return value emission)
             if (ctorFunc.Body is BlockStatement bstmt)
@@ -484,7 +487,13 @@ namespace Js2IL.Services.ILGenerators
                 ".ctor",
                 ctorSig,
                 ctorBody);
-            _classRegistry.RegisterConstructor(className, ctorDef, ctorSig, totalParamCount);
+            
+            // Calculate min/max parameter counts for default parameter support
+            int minUserParams = ILMethodGenerator.CountRequiredParameters(ctorFunc.Params);
+            int minTotalParams = needsScopes ? minUserParams + 1 : minUserParams;
+            int maxTotalParams = totalParamCount;
+            
+            _classRegistry.RegisterConstructor(className, ctorDef, ctorSig, minTotalParams, maxTotalParams);
             return ctorDef;
         }
 
@@ -518,7 +527,7 @@ namespace Js2IL.Services.ILGenerators
             // Use ILMethodGenerator for body emission to reuse existing statement/expression logic
             // Build method variables context (no JS parameters yet for class methods)
             var paramNames = element.Value is FunctionExpression fe
-                ? fe.Params.OfType<Identifier>().Select(p => p.Name)
+                ? ILMethodGenerator.ExtractParameterNames(fe.Params)
                 : Enumerable.Empty<string>();
             
             // For class instance methods, determine which parent scopes will be available via this._scopes
@@ -536,18 +545,25 @@ namespace Js2IL.Services.ILGenerators
                 methodVariables = new Variables(_variables, mname, paramNames, isNestedFunction: false);
             }
             
-            var ilGen = new ILMethodGenerator(methodVariables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: !element.Static, currentClassName: className);
+            var ilGen = new ILMethodGenerator(methodVariables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: true, currentClassName: className);
 
+            // Initialize default parameter values (instance methods: arg0=this, params start at arg1; static methods: params start at arg0)
+            // and check for explicit return
             bool hasExplicitReturn = false;
-            if (element.Value is FunctionExpression fexpr && fexpr.Body is BlockStatement bstmt)
+            if (element.Value is FunctionExpression fexpr)
             {
-                hasExplicitReturn = bstmt.Body.Any(s => s is ReturnStatement);
-                bool needScopeInstance = ShouldCreateMethodScopeInstance(fexpr, classScope);
-                ilGen.GenerateStatementsForBody(methodVariables.GetLeafScopeName(), needScopeInstance, bstmt.Body);
-            }
-            else
-            {
-                // No body or unsupported shape: default to returning undefined (null)
+                ilGen.EmitDefaultParameterInitializers(fexpr.Params, parameterStartIndex: (ushort)(element.Static ? 0 : 1));
+                
+                if (fexpr.Body is BlockStatement bstmt)
+                {
+                    hasExplicitReturn = bstmt.Body.Any(s => s is ReturnStatement);
+                    bool needScopeInstance = ShouldCreateMethodScopeInstance(fexpr, classScope);
+                    ilGen.GenerateStatementsForBody(methodVariables.GetLeafScopeName(), needScopeInstance, bstmt.Body);
+                }
+                else
+                {
+                    // No body or unsupported shape: default to returning undefined (null)
+                }
             }
 
             if (!hasExplicitReturn)
@@ -589,7 +605,13 @@ namespace Js2IL.Services.ILGenerators
             }
             var methodDef = tb.AddMethodDefinition(attrs, mname, msig, mbody);
 
-            // Note: Static methods will be invoked via MemberReference built at call site. Registration not required here.
+            // Register instance methods in ClassRegistry for call site validation (static methods use different invocation path)
+            if (!element.Static && element.Value is FunctionExpression methodFunc)
+            {
+                int minParams = ILMethodGenerator.CountRequiredParameters(methodFunc.Params);
+                int maxParams = methodFunc.Params.Count;
+                _classRegistry.RegisterMethod(className, mname, methodDef, msig, minParams, maxParams);
+            }
 
             return methodDef;
         }

@@ -53,7 +53,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		object ArrowFunction_L2C12 (
 			object[] scopes,
 			object x
@@ -88,7 +88,7 @@
 	{
 		// Method begins at RVA 0x2090
 		// Header size: 12
-		// Code size: 148 (0x94)
+		// Code size: 171 (0xab)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -127,26 +127,32 @@
 		IL_005a: ldloc.0
 		IL_005b: ldfld object Scopes.ArrowFunction_CapturesOuterVariable::'mul'
 		IL_0060: dup
-		IL_0061: brtrue.s IL_006a
+		IL_0061: brtrue.s IL_0081
 
 		IL_0063: pop
-		IL_0064: ldnull
-		IL_0065: br IL_006a
+		IL_0064: ldloc.0
+		IL_0065: ldnull
+		IL_0066: ldftn object Functions.ArrowFunction_L2C12::ArrowFunction_L2C12(object[], object)
+		IL_006c: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0071: stfld object Scopes.ArrowFunction_CapturesOuterVariable::'mul'
+		IL_0076: ldloc.0
+		IL_0077: ldfld object Scopes.ArrowFunction_CapturesOuterVariable::'mul'
+		IL_007c: br IL_0081
 
-		IL_006a: ldc.i4.1
-		IL_006b: newarr [System.Runtime]System.Object
-		IL_0070: dup
-		IL_0071: ldc.i4.0
-		IL_0072: ldloc.0
-		IL_0073: castclass Scopes.ArrowFunction_CapturesOuterVariable
-		IL_0078: stelem.ref
-		IL_0079: ldc.r8 3
-		IL_0082: box [System.Runtime]System.Double
-		IL_0087: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_008c: stelem.ref
-		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0092: pop
-		IL_0093: ret
+		IL_0081: ldc.i4.1
+		IL_0082: newarr [System.Runtime]System.Object
+		IL_0087: dup
+		IL_0088: ldc.i4.0
+		IL_0089: ldloc.0
+		IL_008a: castclass Scopes.ArrowFunction_CapturesOuterVariable
+		IL_008f: stelem.ref
+		IL_0090: ldc.r8 3
+		IL_0099: box [System.Runtime]System.Double
+		IL_009e: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_00a3: stelem.ref
+		IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00a9: pop
+		IL_00aa: ret
 	} // end of method Program::Main
 
 } // end of class Program

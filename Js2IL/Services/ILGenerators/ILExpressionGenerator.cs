@@ -198,7 +198,7 @@ namespace Js2IL.Services.ILGenerators
                     break;
                 case ArrowFunctionExpression arrowFunction:
                     {
-                        var idParams = arrowFunction.Params.OfType<Identifier>().Select(p => p.Name).ToList();
+                        var idParams = ILMethodGenerator.ExtractParameterNames(arrowFunction.Params).ToList();
                         // Fallback: try to reflect a 'Name' property from param nodes when not Identifier (robust for different AST shapes)
                         if (idParams.Count == 0 && arrowFunction.Params.Count > 0)
                         {
@@ -220,6 +220,12 @@ namespace Js2IL.Services.ILGenerators
                             : $"ArrowFunction_L{arrowFunction.Location.Start.Line}C{arrowFunction.Location.Start.Column}";
                         var ilMethodName = $"ArrowFunction_L{arrowFunction.Location.Start.Line}C{arrowFunction.Location.Start.Column}";
                         var methodHandle = _owner.GenerateArrowFunctionMethod(arrowFunction, registryScopeName, ilMethodName, paramNames);
+
+                        // Register arrow function with parameter count if it has a name (assigned to a variable)
+                        if (!string.IsNullOrEmpty(_owner.CurrentAssignmentTarget))
+                        {
+                            _owner.RegisterFunction(_owner.CurrentAssignmentTarget, methodHandle, paramNames.Length);
+                        }
 
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldftn);
@@ -256,7 +262,7 @@ namespace Js2IL.Services.ILGenerators
                 case FunctionExpression funcExpr:
                     {
                         // Collect parameter names; include synthetic names for non-Identifier params (e.g., destructuring)
-                        var idList = funcExpr.Params.OfType<Identifier>().Select(p => p.Name).ToList();
+                        var idList = ILMethodGenerator.ExtractParameterNames(funcExpr.Params).ToList();
                         if (idList.Count == 0 && funcExpr.Params.Count > 0)
                         {
                             foreach (var p in funcExpr.Params)
@@ -586,25 +592,62 @@ namespace Js2IL.Services.ILGenerators
 
                         // Non-intrinsic instance method: check if the variable was previously bound to a known class via `new`
                         var argCount = callExpression.Arguments.Count;
-                        var sig = new BlobBuilder();
-                        new BlobEncoder(sig)
-                            .MethodSignature(isInstanceMethod: true)
-                            .Parameters(argCount, r => r.Type().Object(), p => { for (int i = 0; i < argCount; i++) p.AddParameter().Type().Object(); });
-                        var msig = _metadataBuilder.GetOrAddBlob(sig);
-
+                        
                         TypeDefinitionHandle targetType = default;
+                        string? className = null;
                         if (_owner.TryGetVariableClass(baseId.Name, out var cname))
                         {
+                            className = cname;
                             if (_classRegistry.TryGet(cname, out var th)) targetType = th;
                         }
-                        if (!targetType.IsNil)
+                        
+                        if (!targetType.IsNil && className != null)
                         {
-                            var mrefHandle = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(methodName), msig);
-                            // Push arguments
-                            EmitBoxedArgsInline(callExpression.Arguments);
-                            _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
-                            _il.Token(mrefHandle);
-                            return null;
+                            // Check if this method is registered with parameter count metadata
+                            if (_classRegistry.TryGetMethod(className, methodName, out var methodDef, out var methodSig, out var minParams, out var maxParams))
+                            {
+                                // Method with tracked parameter counts - validate and pad arguments
+                                if (argCount < minParams || argCount > maxParams)
+                                {
+                                    throw ILEmitHelpers.NotSupported($"Method {className}.{methodName} expects {minParams}-{maxParams} arguments but got {argCount}", callExpression);
+                                }
+                                
+                                // Use registered member reference (creates it from the method definition)
+                                var mrefHandle = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(methodName), methodSig);
+                                
+                                // Push provided arguments
+                                for (int i = 0; i < argCount; i++)
+                                {
+                                    Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
+                                }
+                                
+                                // Pad missing optional arguments with ldnull
+                                int paddingNeeded = maxParams - argCount;
+                                for (int i = 0; i < paddingNeeded; i++)
+                                {
+                                    _il.OpCode(ILOpCode.Ldnull);
+                                }
+                                
+                                _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                                _il.Token(mrefHandle);
+                                return null;
+                            }
+                            else
+                            {
+                                // Method not registered (no default parameters) - use old logic
+                                var sig = new BlobBuilder();
+                                new BlobEncoder(sig)
+                                    .MethodSignature(isInstanceMethod: true)
+                                    .Parameters(argCount, r => r.Type().Object(), p => { for (int i = 0; i < argCount; i++) p.AddParameter().Type().Object(); });
+                                var msig = _metadataBuilder.GetOrAddBlob(sig);
+                                
+                                var mrefHandle = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(methodName), msig);
+                                // Push arguments
+                                EmitBoxedArgsInline(callExpression.Arguments);
+                                _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                                _il.Token(mrefHandle);
+                                return null;
+                            }
                         }
 
                         // Dynamic dispatch through runtime: Object.CallMember(receiver, name, object[])
@@ -1293,20 +1336,31 @@ namespace Js2IL.Services.ILGenerators
             _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup);
             var nonNullLabel = _il.DefineLabel();
             var afterBindLabel = _il.DefineLabel();
+            
+            // Attempt to resolve method handle from function registry via owner generator BEFORE branching
+            // so we know the parameter count in both null and non-null paths
+            var fnReg = _owner.FunctionRegistry;
+            var registryHandle = fnReg?.Get(identifier.Name) ?? default;
+            // Get the expected parameter count for the function
+            int expectedParamCount = fnReg?.GetParameterCount(identifier.Name) ?? callExpression.Arguments.Count;
+            
+            // Check if the function is registered (either pre-registered or fully registered).
+            // For recursive calls, the function is pre-registered but handle is nil.
+            bool isRegisteredFunction = fnReg?.IsRegistered(identifier.Name) ?? false;
+            
             _il.Branch(System.Reflection.Metadata.ILOpCode.Brtrue_s, nonNullLabel);
             // Null path: pop the duplicate null
             _il.OpCode(System.Reflection.Metadata.ILOpCode.Pop);
-            // Attempt to resolve method handle from function registry via owner generator
-            var fnReg = _owner.FunctionRegistry;
-            var methodHandle = fnReg?.Get(identifier.Name) ?? default;
-            if (!methodHandle.IsNil)
+            if (isRegisteredFunction && !registryHandle.IsNil)
             {
+                // Registered function with valid handle - create typed delegate at compile-time
                 // Create delegate and store into the field: [scope, newDelegate] -> stfld
+                // Use the function's actual parameter count, not the call site's argument count
                 EmitLoadScopeObject(scopeObjectReference);
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldftn);
-                _il.Token(methodHandle);
-                var (_, ctorRefLazy) = _bclReferences.GetFuncObjectArrayWithParams(callExpression.Arguments.Count);
+                _il.Token(registryHandle);
+                var (_, ctorRefLazy) = _bclReferences.GetFuncObjectArrayWithParams(expectedParamCount);
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
                 _il.Token(ctorRefLazy);
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld);
@@ -1316,9 +1370,46 @@ namespace Js2IL.Services.ILGenerators
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld);
                 _il.Token(functionVariable.FieldHandle);
             }
+            else if (isRegisteredFunction && registryHandle.IsNil)
+            {
+                // Pre-registered function (nil handle) - use runtime self-binding
+                // This happens during recursive function calls before the method is finalized
+                var _metadataBuilder = _owner.MetadataBuilder;
+                // Stack the scope for stfld
+                EmitLoadScopeObject(scopeObjectReference);
+                // Call System.Reflection.MethodBase.GetCurrentMethod() to get current function
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
+                _il.Token(_bclReferences.MethodBase_GetCurrentMethod_Ref);
+                // Load parameter count as Int32
+                _il.LoadConstantI4(expectedParamCount);
+                // Call Closure.CreateSelfDelegate(MethodBase, int) to create typed delegate
+                var closureTypeRef = _owner.Runtime.GetRuntimeTypeHandle(typeof(JavaScriptRuntime.Closure));
+                var makeSelfSig = new BlobBuilder();
+                new BlobEncoder(makeSelfSig)
+                    .MethodSignature(isInstanceMethod: false)
+                    .Parameters(2,
+                        rt => rt.Type().Object(),
+                        p => {
+                            p.AddParameter().Type().Type(_bclReferences.MethodBaseType, isValueType: false);
+                            p.AddParameter().Type().Int32();
+                        });
+                var makeSelfRef = _metadataBuilder.AddMemberReference(
+                    closureTypeRef,
+                    _metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime.Closure.CreateSelfDelegate)),
+                    _metadataBuilder.GetOrAddBlob(makeSelfSig));
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
+                _il.Token(makeSelfRef);
+                // Store delegate to field
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld);
+                _il.Token(functionVariable.FieldHandle);
+                // Reload to use as call receiver
+                EmitLoadScopeObject(scopeObjectReference);
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld);
+                _il.Token(functionVariable.FieldHandle);
+            }
             else
             {
-                // Leave null delegate on stack to preserve behavior (will throw)
+                // Not registered - leave null delegate on stack to preserve behavior (will throw)
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
             }
             _il.Branch(ILOpCode.Br, afterBindLabel);
@@ -1327,6 +1418,40 @@ namespace Js2IL.Services.ILGenerators
             _il.MarkLabel(afterBindLabel);
 
             var argCount = callExpression.Arguments.Count;
+
+            // If function is not in registry, use runtime type inspection via Closure.InvokeWithArgs
+            // This handles cases where a variable holds a function returned from another function
+            if (!isRegisteredFunction)
+            {
+                // Stack: [delegate]
+                // Build scopes array
+                {
+                    var allNames = _variables.GetAllScopeNames().ToList();
+                    var slots = allNames.Select(n => _variables.GetScopeLocalSlot(n)).ToList();
+                    bool inFunctionContext = slots.Any(s => s.Location == ObjectReferenceLocation.ScopeArray);
+                    var neededScopeNames = GetNeededScopesForFunction(functionVariable, context).ToList();
+                    if (inFunctionContext && neededScopeNames.Count == 1)
+                    {
+                        _il.LoadArgument(0); // pass-through existing scopes[]
+                    }
+                    else
+                    {
+                        EmitScopeArray(neededScopeNames);
+                    }
+                }
+                // Stack: [delegate, scopes]
+                
+                // Build args array
+                _il.EmitNewArray(argCount, _bclReferences.ObjectType, (il, i) =>
+                {
+                    _ = Emit(callExpression.Arguments[i], new TypeCoercion { boxResult = true });
+                });
+                // Stack: [delegate, scopes, args[]]
+                
+                // Call Closure.InvokeWithArgs(object target, object[] scopes, params object[] args)
+                _owner.Runtime.InvokeClosureInvokeWithArgs();
+                return null;
+            }
 
             // First argument: create scope array with appropriate scopes for the function
             // Strategy:
@@ -1355,26 +1480,33 @@ namespace Js2IL.Services.ILGenerators
 
             // Additional arguments: directly emit each call argument (boxed as needed)
             EmitBoxedArgsInline(callExpression.Arguments);
+            
+            // Pad with null for missing parameters (to support default parameters)
+            for (int i = argCount; i < expectedParamCount; i++)
+            {
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
+            }
 
-            // Invoke correct delegate based on parameter count using the array-based signature.
+            // Invoke correct delegate based on EXPECTED parameter count (not call-site argument count)
+            // This ensures we pass the right number of arguments, including nulls for default parameters
             // All generated functions are constructed with a delegate that accepts the scope array
             // as the first parameter, so calls must always use the array-based Invoke overloads.
             _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
-            if (argCount == 0)
+            if (expectedParamCount == 0)
             {
                 _il.Token(_bclReferences.FuncObjectArrayObject_Invoke_Ref);
             }
-            else if (argCount == 1)
+            else if (expectedParamCount == 1)
             {
                 _il.Token(_bclReferences.FuncObjectArrayObjectObject_Invoke_Ref);
             }
-            else if (argCount <= 6)
+            else if (expectedParamCount <= 6)
             {
-                _il.Token(_bclReferences.GetFuncArrayParamInvokeRef(argCount));
+                _il.Token(_bclReferences.GetFuncArrayParamInvokeRef(expectedParamCount));
             }
             else
             {
-                throw ILEmitHelpers.NotSupported($"Only up to 6 parameters supported currently (got {argCount})", callExpression);
+                throw ILEmitHelpers.NotSupported($"Only up to 6 parameters supported currently (expected {expectedParamCount}, got {argCount})", callExpression);
             }
             return null;
         }
@@ -1944,17 +2076,26 @@ namespace Js2IL.Services.ILGenerators
                 }
 
                 // Try Classes registry first (cached ctor + signature + param count)
-                if (_classRegistry.TryGetConstructor(cid.Name, out var ctorDef, out var ctorParamCount))
+                if (_classRegistry.TryGetConstructor(cid.Name, out var ctorDef, out var minParamCount, out var maxParamCount))
                 {
                     var argc = newExpression.Arguments.Count;
                     
                     // Check if this class has a _scopes field (meaning it needs parent scope access)
                     bool classNeedsScopes = _classRegistry.TryGetPrivateField(cid.Name, "_scopes", out var _);
-                    int expectedUserArgs = classNeedsScopes ? ctorParamCount - 1 : ctorParamCount;
+                    int expectedMinArgs = classNeedsScopes ? minParamCount - 1 : minParamCount;
+                    int expectedMaxArgs = classNeedsScopes ? maxParamCount - 1 : maxParamCount;
                     
-                    if (argc != expectedUserArgs)
+                    // With default parameters, call site can provide anywhere from min to max arguments
+                    if (argc < expectedMinArgs || argc > expectedMaxArgs)
                     {
-                        throw ILEmitHelpers.NotSupported($"Constructor for class '{cid.Name}' expects {expectedUserArgs} user argument(s) but call site has {argc}.", newExpression);
+                        if (expectedMinArgs == expectedMaxArgs)
+                        {
+                            throw ILEmitHelpers.NotSupported($"Constructor for class '{cid.Name}' expects {expectedMinArgs} argument(s) but call site has {argc}.", newExpression);
+                        }
+                        else
+                        {
+                            throw ILEmitHelpers.NotSupported($"Constructor for class '{cid.Name}' expects {expectedMinArgs}-{expectedMaxArgs} argument(s) but call site has {argc}.", newExpression);
+                        }
                     }
 
                     // Determine scopes to pass (only if class needs them)
@@ -1964,11 +2105,19 @@ namespace Js2IL.Services.ILGenerators
                         EmitScopeArray(scopeNames); // stack: [scopes[]]
                     }
 
-                    // Emit arguments (all object-typed in current design)
+                    // Emit arguments provided at call site
                     for (int i = 0; i < argc; i++)
                     {
                         Emit(newExpression.Arguments[i], new TypeCoercion() { boxResult = true });
                     }
+                    
+                    // Pad with null for missing optional parameters (those with defaults)
+                    int paddingNeeded = expectedMaxArgs - argc;
+                    for (int i = 0; i < paddingNeeded; i++)
+                    {
+                        _il.OpCode(ILOpCode.Ldnull);
+                    }
+                    
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
                     _il.Token(ctorDef);
                     if (!string.IsNullOrEmpty(_owner.CurrentAssignmentTarget))
