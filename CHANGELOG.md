@@ -6,6 +6,11 @@ All notable changes to this project are documented here.
 
 _Nothing yet._
 
+## v0.3.1 - 2025-11-26
+
+
+
+
 ## v0.3.0 - 2025-11-25
 
 ### Fixed
