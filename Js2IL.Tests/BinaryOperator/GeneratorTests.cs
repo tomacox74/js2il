@@ -33,11 +33,8 @@ namespace Js2IL.Tests.BinaryOperator
         [Fact]
         public Task BinaryOperator_Equal() { var testName = nameof(BinaryOperator_Equal); return GenerateTest(testName); }
 
-    [Fact]
-    public Task BinaryOperator_EqualBoolean() { var testName = nameof(BinaryOperator_EqualBoolean); return GenerateTest(testName); }
-
-    [Fact]
-    public Task BinaryOperator_NotEqual() { var testName = nameof(BinaryOperator_NotEqual); return GenerateTest(testName); }
+        [Fact]
+        public Task BinaryOperator_EqualBoolean() { var testName = nameof(BinaryOperator_EqualBoolean); return GenerateTest(testName); }
 
         [Fact]
         public Task BinaryOperator_ExpNumberNumber() { var testName = nameof(BinaryOperator_ExpNumberNumber); return GenerateTest(testName); }
@@ -57,11 +54,21 @@ namespace Js2IL.Tests.BinaryOperator
         [Fact]
         public Task BinaryOperator_LessThanOrEqual() { var testName = nameof(BinaryOperator_LessThanOrEqual); return GenerateTest(testName); }
 
+        // Logical operator generator tests
+        [Fact]
+        public Task BinaryOperator_LogicalAnd_Value() { var testName = nameof(BinaryOperator_LogicalAnd_Value); return GenerateTest(testName); }
+
+        [Fact]
+        public Task BinaryOperator_LogicalOr_Value() { var testName = nameof(BinaryOperator_LogicalOr_Value); return GenerateTest(testName); }
+
         [Fact]
         public Task BinaryOperator_ModNumberNumber() { var testName = nameof(BinaryOperator_ModNumberNumber); return GenerateTest(testName); }
 
         [Fact]
         public Task BinaryOperator_MulNumberNumber() { var testName = nameof(BinaryOperator_MulNumberNumber); return GenerateTest(testName); }
+
+        [Fact]
+        public Task BinaryOperator_NotEqual() { var testName = nameof(BinaryOperator_NotEqual); return GenerateTest(testName); }
 
         [Fact]
         public Task BinaryOperator_RightShiftNumberNumber() { var testName = nameof(BinaryOperator_RightShiftNumberNumber); return GenerateTest(testName); }
@@ -71,13 +78,6 @@ namespace Js2IL.Tests.BinaryOperator
 
         [Fact]
         public Task BinaryOperator_UnsignedRightShiftNumberNumber() { var testName = nameof(BinaryOperator_UnsignedRightShiftNumberNumber); return GenerateTest(testName); }
-
-    // Logical operator generator tests
-    [Fact]
-    public Task BinaryOperator_LogicalOr_Value() { var testName = nameof(BinaryOperator_LogicalOr_Value); return GenerateTest(testName); }
-
-    [Fact]
-    public Task BinaryOperator_LogicalAnd_Value() { var testName = nameof(BinaryOperator_LogicalAnd_Value); return GenerateTest(testName); }
 
     // 'in' operator generator snapshot
     [Fact]
