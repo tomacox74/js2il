@@ -4,7 +4,25 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+### Added
+- Functions: default parameter values for function declarations, function expressions, and arrow functions. Supports literal defaults (numbers, strings, booleans) and expression defaults that reference previous parameters (e.g., `function f(a, b = a * 2)`). Default values are applied via starg IL pattern when arguments are null.
+- Classes: default parameter values for class constructors and instance methods. Call sites validate argument count against min/max bounds and pad missing optional arguments with ldnull.
+- Symbol Table: `CountRequiredParameters()` helper to distinguish required parameters from optional ones with defaults.
+- ClassRegistry: method tracking with `RegisterMethod()` and `TryGetMethod()` to store min/max parameter counts for instance methods.
+
+### Changed
+- IL Generation: function parameter handling now uses starg pattern for defaults instead of requiring all arguments. Parameter signatures always include all params (required + optional).
+- ClassRegistry: constructor tracking extended from single parameter count to min/max range (MinParamCount, MaxParamCount) to support optional parameters.
+- Call sites: both new-expressions (constructors) and call-expressions (methods) now validate argument count ranges and pad with ldnull for missing optional parameters.
+
+### Fixed
+- Functions: recursive IIFE crash when function pre-registered in registry with nil handle. Implemented three-way branch logic:
+  1. Registered function with valid handle → compile-time ldftn + newobj Func
+  2. Pre-registered function with nil handle → runtime GetCurrentMethod() + CreateSelfDelegate()
+  3. Not registered → ldnull (uses InvokeWithArgs for dynamic calls)
+- Functions: eliminated TypeLoadException when emitting ldftn with nil method handles by adding runtime self-binding path for pre-registered functions.
+- Classes: constructor calls now support fewer arguments than parameters when defaults are present (e.g., `new Person("Alice")` for constructor with 2 params).
+- Classes: method calls now support fewer arguments than parameters when defaults are present (e.g., `calc.greet()` for method with 1 param).
 
 ## v0.3.0 - 2025-11-25
 
