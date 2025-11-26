@@ -96,7 +96,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		object FunctionExpression_L2C1 (
 			object[] scopes,
 			object node,
@@ -105,7 +105,7 @@
 	{
 		// Method begins at RVA 0x2074
 		// Header size: 12
-		// Code size: 346 (0x15a)
+		// Code size: 368 (0x170)
 		.maxstack 8
 		.locals init (
 			[0] object
@@ -173,7 +173,7 @@
 			IL_00a4: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
 			IL_00a9: blt IL_00b3
 
-			IL_00ae: br IL_0158
+			IL_00ae: br IL_016e
 
 			IL_00b3: ldloc.0
 			IL_00b4: castclass Scopes.Function_IIFE_Recursive/walk
@@ -188,51 +188,57 @@
 			IL_00d9: ldloc.0
 			IL_00da: ldfld object Scopes.Function_IIFE_Recursive/walk::walk
 			IL_00df: dup
-			IL_00e0: brtrue.s IL_00e9
+			IL_00e0: brtrue.s IL_00ff
 
 			IL_00e2: pop
-			IL_00e3: ldnull
-			IL_00e4: br IL_00e9
-
+			IL_00e3: ldloc.0
+			IL_00e4: call class [System.Runtime]System.Reflection.MethodBase [System.Runtime]System.Reflection.MethodBase::GetCurrentMethod()
 			IL_00e9: ldc.i4.2
-			IL_00ea: newarr [System.Runtime]System.Object
-			IL_00ef: dup
-			IL_00f0: ldc.i4.0
-			IL_00f1: ldarg.0
-			IL_00f2: ldc.i4.0
-			IL_00f3: ldelem.ref
-			IL_00f4: castclass Scopes.Function_IIFE_Recursive
-			IL_00f9: stelem.ref
-			IL_00fa: dup
-			IL_00fb: ldc.i4.1
-			IL_00fc: ldloc.0
-			IL_00fd: castclass Scopes.Function_IIFE_Recursive/walk
-			IL_0102: stelem.ref
-			IL_0103: ldloc.0
-			IL_0104: castclass Scopes.Function_IIFE_Recursive/walk
-			IL_0109: ldfld object Scopes.Function_IIFE_Recursive/walk::child
-			IL_010e: ldarg.2
-			IL_010f: unbox.any [System.Runtime]System.Double
-			IL_0114: ldc.r8 1
-			IL_011d: add
-			IL_011e: box [System.Runtime]System.Double
-			IL_0123: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
-			IL_0128: pop
-			IL_0129: ldloc.0
-			IL_012a: castclass Scopes.Function_IIFE_Recursive/walk
-			IL_012f: ldloc.0
-			IL_0130: castclass Scopes.Function_IIFE_Recursive/walk
-			IL_0135: ldfld object Scopes.Function_IIFE_Recursive/walk::i
-			IL_013a: unbox.any [System.Runtime]System.Double
-			IL_013f: ldc.r8 1
-			IL_0148: add
-			IL_0149: box [System.Runtime]System.Double
-			IL_014e: stfld object Scopes.Function_IIFE_Recursive/walk::i
-			IL_0153: br IL_0089
+			IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::CreateSelfDelegate(class [System.Runtime]System.Reflection.MethodBase, int32)
+			IL_00ef: stfld object Scopes.Function_IIFE_Recursive/walk::walk
+			IL_00f4: ldloc.0
+			IL_00f5: ldfld object Scopes.Function_IIFE_Recursive/walk::walk
+			IL_00fa: br IL_00ff
+
+			IL_00ff: ldc.i4.2
+			IL_0100: newarr [System.Runtime]System.Object
+			IL_0105: dup
+			IL_0106: ldc.i4.0
+			IL_0107: ldarg.0
+			IL_0108: ldc.i4.0
+			IL_0109: ldelem.ref
+			IL_010a: castclass Scopes.Function_IIFE_Recursive
+			IL_010f: stelem.ref
+			IL_0110: dup
+			IL_0111: ldc.i4.1
+			IL_0112: ldloc.0
+			IL_0113: castclass Scopes.Function_IIFE_Recursive/walk
+			IL_0118: stelem.ref
+			IL_0119: ldloc.0
+			IL_011a: castclass Scopes.Function_IIFE_Recursive/walk
+			IL_011f: ldfld object Scopes.Function_IIFE_Recursive/walk::child
+			IL_0124: ldarg.2
+			IL_0125: unbox.any [System.Runtime]System.Double
+			IL_012a: ldc.r8 1
+			IL_0133: add
+			IL_0134: box [System.Runtime]System.Double
+			IL_0139: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
+			IL_013e: pop
+			IL_013f: ldloc.0
+			IL_0140: castclass Scopes.Function_IIFE_Recursive/walk
+			IL_0145: ldloc.0
+			IL_0146: castclass Scopes.Function_IIFE_Recursive/walk
+			IL_014b: ldfld object Scopes.Function_IIFE_Recursive/walk::i
+			IL_0150: unbox.any [System.Runtime]System.Double
+			IL_0155: ldc.r8 1
+			IL_015e: add
+			IL_015f: box [System.Runtime]System.Double
+			IL_0164: stfld object Scopes.Function_IIFE_Recursive/walk::i
+			IL_0169: br IL_0089
 		// end loop
 
-		IL_0158: ldnull
-		IL_0159: ret
+		IL_016e: ldnull
+		IL_016f: ret
 	} // end of method FunctionExpression_L2C1::FunctionExpression_L2C1
 
 } // end of class Functions.FunctionExpression_L2C1
@@ -244,7 +250,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21dc
+		// Method begins at RVA 0x21f0
 		// Header size: 12
 		// Code size: 224 (0xe0)
 		.maxstack 32

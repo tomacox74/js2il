@@ -68,13 +68,40 @@ namespace Js2IL.Services
 
             // Determine if this function scope contains nested functions
             bool hasNestedFunctions = scope.Children.Any(c => c.Kind == ScopeKind.Function);
+            
+            // Check if this scope has parameters with default values
+            bool hasDefaultParameters = false;
+            if (scope.AstNode != null)
+            {
+                Acornima.Ast.NodeList<Acornima.Ast.Node>? paramList = scope.AstNode switch
+                {
+                    Acornima.Ast.FunctionDeclaration fd => fd.Params,
+                    Acornima.Ast.FunctionExpression fe => fe.Params,
+                    Acornima.Ast.ArrowFunctionExpression af => af.Params,
+                    _ => null
+                };
+                if (paramList.HasValue)
+                {
+                    foreach (var p in paramList.Value)
+                    {
+                        if (p is Acornima.Ast.AssignmentPattern)
+                        {
+                            hasDefaultParameters = true;
+                            break;
+                        }
+                    }
+                }
+            }
 
             foreach (var binding in scope.Bindings.Values)
             {
-                // Parameters are treated as fields on the scope only when nested functions exist (closure access)
-                if (scope.Parameters.Contains(binding.Name) && !hasNestedFunctions)
+                // Parameters are treated as fields on the scope when:
+                // 1. Nested functions exist (closure access), OR
+                // 2. The function has default parameters (need field storage for default value logic)
+                if (scope.Parameters.Contains(binding.Name) && !hasNestedFunctions && !hasDefaultParameters)
                 {
                     // Skip creating a field for parameters when no nested functions need closure capture
+                    // and there are no default parameters
                     continue;
                 }
                 // Create field signature (all variables are object type for now)

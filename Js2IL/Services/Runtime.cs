@@ -23,6 +23,7 @@ namespace Js2IL.Services
         private MemberReferenceHandle _arrayCtorRef;
         private MemberReferenceHandle _arrayLengthRef;
         private MemberReferenceHandle _closureBindObjectRef;
+        private MemberReferenceHandle _closureInvokeWithArgsRef;
         private InstructionEncoder _il;
         private MemberReferenceHandle _operatorsAddRef;
         private MemberReferenceHandle _operatorsSubtractRef;
@@ -118,6 +119,12 @@ namespace Js2IL.Services
         {
             // assumes [delegateAsObject] [scopesArray] are on the stack
             _il.Call(_closureBindObjectRef);
+        }
+
+        public void InvokeClosureInvokeWithArgs()
+        {
+            // assumes [delegateAsObject] [scopesArray] [argsArray] are on the stack
+            _il.Call(_closureInvokeWithArgsRef);
         }
 
         /// <summary>
@@ -232,6 +239,24 @@ namespace Js2IL.Services
                 closureType,
                 _metadataBuilder.GetOrAddString("Bind"),
                 bindSigHandle);
+
+            // Add reference for InvokeWithArgs(object, object[], params object[]) -> object
+            var invokeWithArgsSig = new BlobBuilder();
+            new BlobEncoder(invokeWithArgsSig)
+                .MethodSignature(isInstanceMethod: false)
+                .Parameters(3,
+                    rt => rt.Type().Object(),
+                    p =>
+                    {
+                        p.AddParameter().Type().Object(); // target
+                        p.AddParameter().Type().SZArray().Object(); // scopes
+                        p.AddParameter().Type().SZArray().Object(); // args (params)
+                    });
+            var invokeWithArgsSigHandle = _metadataBuilder.GetOrAddBlob(invokeWithArgsSig);
+            _closureInvokeWithArgsRef = _metadataBuilder.AddMemberReference(
+                closureType,
+                _metadataBuilder.GetOrAddString("InvokeWithArgs"),
+                invokeWithArgsSigHandle);
         }
 
         /// <summary>

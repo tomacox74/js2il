@@ -82,7 +82,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		object ArrowFunction_L6C27 (
 			object[] scopes
 		) cil managed 
@@ -157,14 +157,14 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		object ArrowFunction_L3C21 (
 			object[] scopes
 		) cil managed 
 	{
 		// Method begins at RVA 0x20fc
 		// Header size: 12
-		// Code size: 126 (0x7e)
+		// Code size: 149 (0x95)
 		.maxstack 32
 		.locals init (
 			[0] object
@@ -200,30 +200,36 @@
 		IL_004c: ldloc.0
 		IL_004d: ldfld object Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction::nestedFunction
 		IL_0052: dup
-		IL_0053: brtrue.s IL_005c
+		IL_0053: brtrue.s IL_0073
 
 		IL_0055: pop
-		IL_0056: ldnull
-		IL_0057: br IL_005c
+		IL_0056: ldloc.0
+		IL_0057: ldnull
+		IL_0058: ldftn object Functions.ArrowFunction_L6C27::ArrowFunction_L6C27(object[])
+		IL_005e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0063: stfld object Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction::nestedFunction
+		IL_0068: ldloc.0
+		IL_0069: ldfld object Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction::nestedFunction
+		IL_006e: br IL_0073
 
-		IL_005c: ldc.i4.2
-		IL_005d: newarr [System.Runtime]System.Object
-		IL_0062: dup
-		IL_0063: ldc.i4.0
-		IL_0064: ldarg.0
-		IL_0065: ldc.i4.0
-		IL_0066: ldelem.ref
-		IL_0067: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes
-		IL_006c: stelem.ref
-		IL_006d: dup
-		IL_006e: ldc.i4.1
-		IL_006f: ldloc.0
-		IL_0070: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction
-		IL_0075: stelem.ref
-		IL_0076: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_007b: pop
-		IL_007c: ldnull
-		IL_007d: ret
+		IL_0073: ldc.i4.2
+		IL_0074: newarr [System.Runtime]System.Object
+		IL_0079: dup
+		IL_007a: ldc.i4.0
+		IL_007b: ldarg.0
+		IL_007c: ldc.i4.0
+		IL_007d: ldelem.ref
+		IL_007e: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes
+		IL_0083: stelem.ref
+		IL_0084: dup
+		IL_0085: ldc.i4.1
+		IL_0086: ldloc.0
+		IL_0087: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction
+		IL_008c: stelem.ref
+		IL_008d: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0092: pop
+		IL_0093: ldnull
+		IL_0094: ret
 	} // end of method ArrowFunction_L3C21::ArrowFunction_L3C21
 
 } // end of class Functions.ArrowFunction_L3C21
@@ -235,9 +241,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2188
+		// Method begins at RVA 0x21a0
 		// Header size: 12
-		// Code size: 103 (0x67)
+		// Code size: 126 (0x7e)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -267,22 +273,28 @@
 		IL_0041: ldloc.0
 		IL_0042: ldfld object Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes::testFunction
 		IL_0047: dup
-		IL_0048: brtrue.s IL_0051
+		IL_0048: brtrue.s IL_0068
 
 		IL_004a: pop
-		IL_004b: ldnull
-		IL_004c: br IL_0051
+		IL_004b: ldloc.0
+		IL_004c: ldnull
+		IL_004d: ldftn object Functions.ArrowFunction_L3C21::ArrowFunction_L3C21(object[])
+		IL_0053: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0058: stfld object Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes::testFunction
+		IL_005d: ldloc.0
+		IL_005e: ldfld object Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes::testFunction
+		IL_0063: br IL_0068
 
-		IL_0051: ldc.i4.1
-		IL_0052: newarr [System.Runtime]System.Object
-		IL_0057: dup
-		IL_0058: ldc.i4.0
-		IL_0059: ldloc.0
-		IL_005a: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes
-		IL_005f: stelem.ref
-		IL_0060: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0065: pop
-		IL_0066: ret
+		IL_0068: ldc.i4.1
+		IL_0069: newarr [System.Runtime]System.Object
+		IL_006e: dup
+		IL_006f: ldc.i4.0
+		IL_0070: ldloc.0
+		IL_0071: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes
+		IL_0076: stelem.ref
+		IL_0077: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_007c: pop
+		IL_007d: ret
 	} // end of method Program::Main
 
 } // end of class Program

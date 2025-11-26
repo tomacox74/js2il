@@ -55,7 +55,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		object ArrowFunction_L1C12 (
 			object[] scopes,
 			object a,
@@ -87,7 +87,7 @@
 	{
 		// Method begins at RVA 0x2084
 		// Header size: 12
-		// Code size: 137 (0x89)
+		// Code size: 160 (0xa0)
 		.maxstack 32
 		.entrypoint
 		.locals init (
@@ -121,28 +121,34 @@
 		IL_0041: ldloc.0
 		IL_0042: ldfld object Scopes.ArrowFunction_BlockBody_Return::'add'
 		IL_0047: dup
-		IL_0048: brtrue.s IL_0051
+		IL_0048: brtrue.s IL_0068
 
 		IL_004a: pop
-		IL_004b: ldnull
-		IL_004c: br IL_0051
+		IL_004b: ldloc.0
+		IL_004c: ldnull
+		IL_004d: ldftn object Functions.ArrowFunction_L1C12::ArrowFunction_L1C12(object[], object, object)
+		IL_0053: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_0058: stfld object Scopes.ArrowFunction_BlockBody_Return::'add'
+		IL_005d: ldloc.0
+		IL_005e: ldfld object Scopes.ArrowFunction_BlockBody_Return::'add'
+		IL_0063: br IL_0068
 
-		IL_0051: ldc.i4.1
-		IL_0052: newarr [System.Runtime]System.Object
-		IL_0057: dup
-		IL_0058: ldc.i4.0
-		IL_0059: ldloc.0
-		IL_005a: castclass Scopes.ArrowFunction_BlockBody_Return
-		IL_005f: stelem.ref
-		IL_0060: ldc.r8 4
-		IL_0069: box [System.Runtime]System.Double
-		IL_006e: ldc.r8 3
-		IL_0077: box [System.Runtime]System.Double
-		IL_007c: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
-		IL_0081: stelem.ref
-		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0087: pop
-		IL_0088: ret
+		IL_0068: ldc.i4.1
+		IL_0069: newarr [System.Runtime]System.Object
+		IL_006e: dup
+		IL_006f: ldc.i4.0
+		IL_0070: ldloc.0
+		IL_0071: castclass Scopes.ArrowFunction_BlockBody_Return
+		IL_0076: stelem.ref
+		IL_0077: ldc.r8 4
+		IL_0080: box [System.Runtime]System.Double
+		IL_0085: ldc.r8 3
+		IL_008e: box [System.Runtime]System.Double
+		IL_0093: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
+		IL_0098: stelem.ref
+		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_009e: pop
+		IL_009f: ret
 	} // end of method Program::Main
 
 } // end of class Program

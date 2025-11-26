@@ -92,6 +92,12 @@ namespace Js2IL.Services.ILGenerators
             return _variableToClass.TryGetValue(variableName, out className!);
         }
 
+        // Allow expression generator to register arrow functions with parameter count
+        internal void RegisterFunction(string name, MethodDefinitionHandle handle, int paramCount)
+        {
+            _functionRegistry?.Register(name, handle, paramCount);
+        }
+
         // GetPropertyIgnoreCase moved to ILExpressionGenerator
         // ParseRegexRaw moved to ILExpressionGenerator
 
@@ -1235,24 +1241,43 @@ namespace Js2IL.Services.ILGenerators
                         var fields = registry.GetVariablesForScope(registryScopeName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
                         if (fields.Any())
                         {
+                            // Initialize default parameter values FIRST, before creating scope
+                            childGen.EmitDefaultParameterInitializers(arrowFunction.Params, parameterStartIndex: 1);
                             ScopeInstanceEmitter.EmitCreateLeafScopeInstance(functionVariables, il, _metadataBuilder);
                             var localScope = functionVariables.GetLocalScopeSlot();
-                            if (localScope.Address >= 0 && pnames.Length > 0)
+                            if (localScope.Address >= 0 && arrowFunction.Params.Count > 0)
                             {
                                 var fieldNames = new HashSet<string>(fields.Select(f => f.Name));
                                 ushort jsParamSeq = 1;
-                                foreach (var pn in pnames)
+                                for (int i = 0; i < arrowFunction.Params.Count; i++)
                                 {
-                                    if (fieldNames.Contains(pn))
+                                    var paramNode = arrowFunction.Params[i];
+                                    // Extract identifier from Identifier or AssignmentPattern
+                                    Identifier? pid = paramNode as Identifier;
+                                    if (pid == null && paramNode is AssignmentPattern ap)
+                                    {
+                                        pid = ap.Left as Identifier;
+                                    }
+                                    
+                                    if (pid != null && fieldNames.Contains(pid.Name))
                                     {
                                         il.LoadLocal(localScope.Address);
-                                        il.LoadArgument(jsParamSeq);
-                                        var fh = registry.GetFieldHandle(registryScopeName, pn);
+                                        // Cast to concrete scope type for verifiable stfld
+                                        var scopeTypeHandle = registry.GetScopeTypeHandle(registryScopeName);
+                                        il.OpCode(ILOpCode.Castclass);
+                                        il.Token(scopeTypeHandle);
+                                        childGen.EmitLoadParameterWithDefault(paramNode, jsParamSeq);
+                                        var fh = registry.GetFieldHandle(registryScopeName, pid.Name);
                                         il.OpCode(ILOpCode.Stfld); il.Token(fh);
                                     }
                                     jsParamSeq++;
                                 }
                             }
+                        }
+                        else
+                        {
+                            // No scope fields, but still need to initialize default parameters
+                            childGen.EmitDefaultParameterInitializers(arrowFunction.Params, parameterStartIndex: 1);
                         }
                     }
                         // Destructure object-pattern parameters
@@ -1274,6 +1299,9 @@ namespace Js2IL.Services.ILGenerators
             else
             {
                 // Expression-bodied arrow: create scope if any fields then destructure
+                // Initialize default parameter values FIRST, before creating scope
+                childGen.EmitDefaultParameterInitializers(arrowFunction.Params, parameterStartIndex: 1);
+                
                 var registry = functionVariables.GetVariableRegistry();
                 if (registry != null)
                 {
@@ -1359,7 +1387,7 @@ namespace Js2IL.Services.ILGenerators
 
             // Host the arrow method on its own type under Functions namespace
             var tb = new Js2IL.Utilities.Ecma335.TypeBuilder(_metadataBuilder, "Functions", ilMethodName);
-            var mdh = tb.AddMethodDefinition(MethodAttributes.Static | MethodAttributes.Public, ilMethodName, methodSig, bodyOffset, firstParam);
+            var mdh = tb.AddMethodDefinition(MethodAttributes.Static | MethodAttributes.Public | MethodAttributes.HideBySig, ilMethodName, methodSig, bodyOffset, firstParam);
             tb.AddTypeDefinition(TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, _bclReferences.ObjectType);
             return mdh;
         }
@@ -1378,6 +1406,13 @@ namespace Js2IL.Services.ILGenerators
             // Strategy: after (optionally) creating the scope instance and before emitting the body, store
             // the delegate into the scope field matching the name (if one exists in the registry scope).
             Identifier? internalNameId = funcExpr.Id as Identifier;
+
+            // Pre-register the function's parameter count BEFORE generating the body.
+            // This allows recursive calls within the function body to find the correct parameter count.
+            if (internalNameId != null && _functionRegistry != null)
+            {
+                _functionRegistry.PreRegisterParameterCount(internalNameId.Name, pnames.Length);
+            }
 
             // Function expressions use block bodies; create local scope if fields exist and init parameter fields.
             // We also eagerly emit self-binding for named function expressions (internal name) BEFORE body so
@@ -1399,18 +1434,32 @@ namespace Js2IL.Services.ILGenerators
                 if (fields.Any())
                 {
                     ScopeInstanceEmitter.EmitCreateLeafScopeInstance(functionVariables, il, _metadataBuilder);
+                    // Initialize default parameter values before field initialization
+                    childGen.EmitDefaultParameterInitializers(funcExpr.Params, parameterStartIndex: 1);
                     var localScope = functionVariables.GetLocalScopeSlot();
-                    if (localScope.Address >= 0 && pnames.Length > 0)
+                    if (localScope.Address >= 0 && funcExpr.Params.Count > 0)
                     {
                         var fieldNames = new HashSet<string>(fields.Select(f => f.Name));
                         ushort jsParamSeq = 1; // arg0 is scopes[]
-                        foreach (var pn in pnames)
+                        for (int i = 0; i < funcExpr.Params.Count; i++)
                         {
-                            if (fieldNames.Contains(pn))
+                            var paramNode = funcExpr.Params[i];
+                            // Extract identifier from Identifier or AssignmentPattern
+                            Identifier? pid = paramNode as Identifier;
+                            if (pid == null && paramNode is AssignmentPattern ap)
+                            {
+                                pid = ap.Left as Identifier;
+                            }
+                            
+                            if (pid != null && fieldNames.Contains(pid.Name))
                             {
                                 il.LoadLocal(localScope.Address);
-                                il.LoadArgument(jsParamSeq);
-                                var fh = registry.GetFieldHandle(registryScopeName, pn);
+                                // Cast to concrete scope type for verifiable stfld
+                                var scopeTypeHandle = registry.GetScopeTypeHandle(registryScopeName);
+                                il.OpCode(ILOpCode.Castclass);
+                                il.Token(scopeTypeHandle);
+                                childGen.EmitLoadParameterWithDefault(paramNode, jsParamSeq);
+                                var fh = registry.GetFieldHandle(registryScopeName, pid.Name);
                                 il.OpCode(ILOpCode.Stfld);
                                 il.Token(fh);
                             }
@@ -1563,11 +1612,12 @@ namespace Js2IL.Services.ILGenerators
 
             // Host the function expression method on its own type under Functions namespace
             var tb = new Js2IL.Utilities.Ecma335.TypeBuilder(_metadataBuilder, "Functions", ilMethodName);
-            var mdh = tb.AddMethodDefinition(MethodAttributes.Static | MethodAttributes.Public, ilMethodName, methodSig, bodyOffset, firstParam);
+            var mdh = tb.AddMethodDefinition(MethodAttributes.Static | MethodAttributes.Public | MethodAttributes.HideBySig, ilMethodName, methodSig, bodyOffset, firstParam);
             // Register named function expression in function registry so recursive calls can lazy-bind.
             if (internalNameId != null && _functionRegistry != null)
             {
-                try { if (_functionRegistry.Get(internalNameId.Name).IsNil) _functionRegistry.Register(internalNameId.Name, mdh); } catch { }
+                var plen = paramNames?.Length ?? -1;
+                try { if (_functionRegistry.Get(internalNameId.Name).IsNil) _functionRegistry.Register(internalNameId.Name, mdh, plen); } catch { }
             }
             // NOTE: Self-binding eager insertion not implemented due to single-pass encoder limitations.
             // For recursion support, EmitFunctionCall must locate the internal binding. Since we authored an
@@ -1716,6 +1766,112 @@ namespace Js2IL.Services.ILGenerators
             int count = 0;
             foreach (var _ in parameters) count++;
             return count;
+        }
+
+        /// <summary>
+        /// Extracts parameter names from a parameter list, handling both simple identifiers and assignment patterns (default parameters).
+        /// For AssignmentPattern nodes (e.g., a = 10), extracts the identifier from the left side.
+        /// </summary>
+        internal static IEnumerable<string> ExtractParameterNames(IReadOnlyList<Node> parameters)
+        {
+            if (parameters == null) yield break;
+            
+            int index = 0;
+            foreach (var param in parameters)
+            {
+                if (param is Identifier id)
+                {
+                    yield return id.Name;
+                }
+                else if (param is AssignmentPattern ap && ap.Left is Identifier apId)
+                {
+                    yield return apId.Name;
+                }
+                else if (param is ObjectPattern or ArrayPattern)
+                {
+                    // Destructuring parameters map to a single IL parameter (the object to destructure)
+                    // Use a generic placeholder name since the actual field names are extracted during destructuring
+                    yield return "param" + (index + 1);
+                }
+                index++;
+            }
+        }
+
+        /// <summary>
+        /// Emits IL to load a parameter value, applying default if the parameter is null/undefined.
+        /// For parameters with defaults (AssignmentPattern), emits: (param == null) ? defaultValue : param
+        /// For parameters without defaults (Identifier), simply loads the parameter.
+        /// </summary>
+        /// <param name="paramNode">The parameter AST node (Identifier or AssignmentPattern)</param>
+        /// <param name="argIndex">The argument index to load from</param>
+        internal void EmitLoadParameterWithDefault(Node paramNode, ushort argIndex)
+        {
+            // Default parameters are handled by EmitDefaultParameterInitializers using starg
+            // So we just load the parameter directly (it already has the default if it was null)
+            _il.LoadArgument(argIndex);
+        }
+
+        /// <summary>
+        /// Empty method for now - previously attempted to emit default parameter initialization.
+        /// Default parameter handling is now done inline when parameters are used.
+        /// </summary>
+        internal void EmitDefaultParameterInitializers(IReadOnlyList<Node> parameters, ushort parameterStartIndex)
+        {
+            // Early exit if there are no parameters with defaults
+            bool hasDefaults = false;
+            foreach (var param in parameters)
+            {
+                if (param is AssignmentPattern ap && ap.Left is not (ObjectPattern or ArrayPattern))
+                {
+                    hasDefaults = true;
+                    break;
+                }
+            }
+            if (!hasDefaults)
+            {
+                return;  // No default parameters to process
+            }
+            
+            // For parameters with defaults, use starg to update the parameter value if null
+            // This must happen BEFORE field initialization so captured parameters get the correct value
+            ushort argIndex = parameterStartIndex;
+            for (int i = 0; i < parameters.Count; i++)
+            {
+                var param = parameters[i];
+                
+                // Skip destructuring parameters - they don't support defaults yet
+                if (param is ObjectPattern or ArrayPattern)
+                {
+                    argIndex++;  // Still increment - destructuring params consume an IL argument slot
+                    continue;
+                }
+                
+                if (param is AssignmentPattern ap)
+                {
+                    // Check if the pattern itself is a destructuring pattern
+                    if (ap.Left is ObjectPattern or ArrayPattern)
+                    {
+                        // Destructuring with default - not yet supported
+                        argIndex++;  // Still increment - destructuring params consume an IL argument slot
+                        continue;
+                    }
+                    
+                    // Parameter has a default value
+                    var notNullLabel = _il.DefineLabel();
+                    
+                    // Load and check if parameter is null
+                    _il.LoadArgument(argIndex);
+                    _il.Branch(ILOpCode.Brtrue, notNullLabel);
+                    
+                    // Parameter is null - emit default value and store back to parameter using starg
+                    _ = _expressionEmitter.Emit(ap.Right, new TypeCoercion() { boxResult = true });
+                    _il.StoreArgument(argIndex);
+                    
+                    // Mark the not-null label
+                    _il.MarkLabel(notNullLabel);
+                }
+                argIndex++;
+            }
         }
     }
 }

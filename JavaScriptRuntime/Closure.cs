@@ -80,5 +80,26 @@ namespace JavaScriptRuntime
                 _ => throw new NotSupportedException($"Unsupported parameter count {paramCount} for self delegate")
             };
         }
+
+        // Invoke a function delegate with runtime type inspection to determine the correct arity.
+        // This is used when calling a function stored in a variable where the parameter count isn't known at compile time.
+        // args should NOT include the scopes array - this method will prepend it.
+        public static object InvokeWithArgs(object target, object[] scopes, params object[] args)
+        {
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (scopes == null) throw new ArgumentNullException(nameof(scopes));
+            
+            return args.Length switch
+            {
+                0 when target is Func<object[], object> f0 => f0(scopes),
+                1 when target is Func<object[], object, object> f1 => f1(scopes, args[0]),
+                2 when target is Func<object[], object, object, object> f2 => f2(scopes, args[0], args[1]),
+                3 when target is Func<object[], object, object, object, object> f3 => f3(scopes, args[0], args[1], args[2]),
+                4 when target is Func<object[], object, object, object, object, object> f4 => f4(scopes, args[0], args[1], args[2], args[3]),
+                5 when target is Func<object[], object, object, object, object, object, object> f5 => f5(scopes, args[0], args[1], args[2], args[3], args[4]),
+                6 when target is Func<object[], object, object, object, object, object, object, object> f6 => f6(scopes, args[0], args[1], args[2], args[3], args[4], args[5]),
+                _ => throw new ArgumentException($"Unsupported delegate type or argument count for function call: target type = {target.GetType()}, args length = {args.Length}", nameof(target))
+            };
+        }
     }
 }
