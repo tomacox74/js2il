@@ -1769,6 +1769,26 @@ namespace Js2IL.Services.ILGenerators
         }
 
         /// <summary>
+        /// Counts the number of required parameters (those without default values).
+        /// Parameters with defaults (AssignmentPattern) are optional.
+        /// </summary>
+        internal static int CountRequiredParameters(IReadOnlyList<Node> parameters)
+        {
+            if (parameters == null) return 0;
+            
+            int required = 0;
+            foreach (var param in parameters)
+            {
+                // AssignmentPattern means the parameter has a default value, so it's optional
+                if (param is not AssignmentPattern)
+                {
+                    required++;
+                }
+            }
+            return required;
+        }
+
+        /// <summary>
         /// Extracts parameter names from a parameter list, handling both simple identifiers and assignment patterns (default parameters).
         /// For AssignmentPattern nodes (e.g., a = 10), extracts the identifier from the left side.
         /// </summary>

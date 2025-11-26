@@ -375,7 +375,7 @@ namespace Js2IL.Services.ILGenerators
                     ctorSig,
                     ctorBody,
                     firstParam.Value);
-                _classRegistry.RegisterConstructor(className, ctorDef, ctorSig, 1);
+                _classRegistry.RegisterConstructor(className, ctorDef, ctorSig, 1, 1);
                 return ctorDef;
             }
             else
@@ -385,7 +385,7 @@ namespace Js2IL.Services.ILGenerators
                     ".ctor",
                     ctorSig,
                     ctorBody);
-                _classRegistry.RegisterConstructor(className, ctorDef, ctorSig, 0);
+                _classRegistry.RegisterConstructor(className, ctorDef, ctorSig, 0, 0);
                 return ctorDef;
             }
         }
@@ -487,7 +487,14 @@ namespace Js2IL.Services.ILGenerators
                 ".ctor",
                 ctorSig,
                 ctorBody);
-            _classRegistry.RegisterConstructor(className, ctorDef, ctorSig, totalParamCount);
+            
+            // Calculate min/max parameter counts for default parameter support
+            int minUserParams = ILMethodGenerator.CountRequiredParameters(ctorFunc.Params);
+            int maxUserParams = ctorFunc.Params.Count;
+            int minTotalParams = needsScopes ? minUserParams + 1 : minUserParams;
+            int maxTotalParams = totalParamCount;
+            
+            _classRegistry.RegisterConstructor(className, ctorDef, ctorSig, minTotalParams, maxTotalParams);
             return ctorDef;
         }
 
@@ -599,7 +606,13 @@ namespace Js2IL.Services.ILGenerators
             }
             var methodDef = tb.AddMethodDefinition(attrs, mname, msig, mbody);
 
-            // Note: Static methods will be invoked via MemberReference built at call site. Registration not required here.
+            // Register instance methods in ClassRegistry for call site validation (static methods use different invocation path)
+            if (!element.Static && element.Value is FunctionExpression methodFunc)
+            {
+                int minParams = ILMethodGenerator.CountRequiredParameters(methodFunc.Params);
+                int maxParams = methodFunc.Params.Count;
+                _classRegistry.RegisterMethod(className, mname, methodDef, msig, minParams, maxParams);
+            }
 
             return methodDef;
         }

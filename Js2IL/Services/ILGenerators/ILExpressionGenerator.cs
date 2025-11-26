@@ -592,25 +592,62 @@ namespace Js2IL.Services.ILGenerators
 
                         // Non-intrinsic instance method: check if the variable was previously bound to a known class via `new`
                         var argCount = callExpression.Arguments.Count;
-                        var sig = new BlobBuilder();
-                        new BlobEncoder(sig)
-                            .MethodSignature(isInstanceMethod: true)
-                            .Parameters(argCount, r => r.Type().Object(), p => { for (int i = 0; i < argCount; i++) p.AddParameter().Type().Object(); });
-                        var msig = _metadataBuilder.GetOrAddBlob(sig);
-
+                        
                         TypeDefinitionHandle targetType = default;
+                        string? className = null;
                         if (_owner.TryGetVariableClass(baseId.Name, out var cname))
                         {
+                            className = cname;
                             if (_classRegistry.TryGet(cname, out var th)) targetType = th;
                         }
-                        if (!targetType.IsNil)
+                        
+                        if (!targetType.IsNil && className != null)
                         {
-                            var mrefHandle = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(methodName), msig);
-                            // Push arguments
-                            EmitBoxedArgsInline(callExpression.Arguments);
-                            _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
-                            _il.Token(mrefHandle);
-                            return null;
+                            // Check if this method is registered with parameter count metadata
+                            if (_classRegistry.TryGetMethod(className, methodName, out var methodDef, out var methodSig, out var minParams, out var maxParams))
+                            {
+                                // Method with tracked parameter counts - validate and pad arguments
+                                if (argCount < minParams || argCount > maxParams)
+                                {
+                                    throw ILEmitHelpers.NotSupported($"Method {className}.{methodName} expects {minParams}-{maxParams} arguments but got {argCount}", callExpression);
+                                }
+                                
+                                // Use registered member reference (creates it from the method definition)
+                                var mrefHandle = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(methodName), methodSig);
+                                
+                                // Push provided arguments
+                                for (int i = 0; i < argCount; i++)
+                                {
+                                    Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
+                                }
+                                
+                                // Pad missing optional arguments with ldnull
+                                int paddingNeeded = maxParams - argCount;
+                                for (int i = 0; i < paddingNeeded; i++)
+                                {
+                                    _il.OpCode(ILOpCode.Ldnull);
+                                }
+                                
+                                _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                                _il.Token(mrefHandle);
+                                return null;
+                            }
+                            else
+                            {
+                                // Method not registered (no default parameters) - use old logic
+                                var sig = new BlobBuilder();
+                                new BlobEncoder(sig)
+                                    .MethodSignature(isInstanceMethod: true)
+                                    .Parameters(argCount, r => r.Type().Object(), p => { for (int i = 0; i < argCount; i++) p.AddParameter().Type().Object(); });
+                                var msig = _metadataBuilder.GetOrAddBlob(sig);
+                                
+                                var mrefHandle = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(methodName), msig);
+                                // Push arguments
+                                EmitBoxedArgsInline(callExpression.Arguments);
+                                _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                                _il.Token(mrefHandle);
+                                return null;
+                            }
                         }
 
                         // Dynamic dispatch through runtime: Object.CallMember(receiver, name, object[])
@@ -2039,17 +2076,26 @@ namespace Js2IL.Services.ILGenerators
                 }
 
                 // Try Classes registry first (cached ctor + signature + param count)
-                if (_classRegistry.TryGetConstructor(cid.Name, out var ctorDef, out var ctorParamCount))
+                if (_classRegistry.TryGetConstructor(cid.Name, out var ctorDef, out var minParamCount, out var maxParamCount))
                 {
                     var argc = newExpression.Arguments.Count;
                     
                     // Check if this class has a _scopes field (meaning it needs parent scope access)
                     bool classNeedsScopes = _classRegistry.TryGetPrivateField(cid.Name, "_scopes", out var _);
-                    int expectedUserArgs = classNeedsScopes ? ctorParamCount - 1 : ctorParamCount;
+                    int expectedMinArgs = classNeedsScopes ? minParamCount - 1 : minParamCount;
+                    int expectedMaxArgs = classNeedsScopes ? maxParamCount - 1 : maxParamCount;
                     
-                    if (argc != expectedUserArgs)
+                    // With default parameters, call site can provide anywhere from min to max arguments
+                    if (argc < expectedMinArgs || argc > expectedMaxArgs)
                     {
-                        throw ILEmitHelpers.NotSupported($"Constructor for class '{cid.Name}' expects {expectedUserArgs} user argument(s) but call site has {argc}.", newExpression);
+                        if (expectedMinArgs == expectedMaxArgs)
+                        {
+                            throw ILEmitHelpers.NotSupported($"Constructor for class '{cid.Name}' expects {expectedMinArgs} argument(s) but call site has {argc}.", newExpression);
+                        }
+                        else
+                        {
+                            throw ILEmitHelpers.NotSupported($"Constructor for class '{cid.Name}' expects {expectedMinArgs}-{expectedMaxArgs} argument(s) but call site has {argc}.", newExpression);
+                        }
                     }
 
                     // Determine scopes to pass (only if class needs them)
@@ -2059,11 +2105,19 @@ namespace Js2IL.Services.ILGenerators
                         EmitScopeArray(scopeNames); // stack: [scopes[]]
                     }
 
-                    // Emit arguments (all object-typed in current design)
+                    // Emit arguments provided at call site
                     for (int i = 0; i < argc; i++)
                     {
                         Emit(newExpression.Arguments[i], new TypeCoercion() { boxResult = true });
                     }
+                    
+                    // Pad with null for missing optional parameters (those with defaults)
+                    int paddingNeeded = expectedMaxArgs - argc;
+                    for (int i = 0; i < paddingNeeded; i++)
+                    {
+                        _il.OpCode(ILOpCode.Ldnull);
+                    }
+                    
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
                     _il.Token(ctorDef);
                     if (!string.IsNullOrEmpty(_owner.CurrentAssignmentTarget))
