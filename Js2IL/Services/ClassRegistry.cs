@@ -155,16 +155,14 @@ namespace Js2IL.Services
             signature = default;
             minParamCount = 0;
             maxParamCount = 0;
-            if (_methods.TryGetValue(className, out var methods))
+            if (_methods.TryGetValue(className, out var methods) && 
+                methods.TryGetValue(methodName, out var info))
             {
-                if (methods.TryGetValue(methodName, out var info))
-                {
-                    methodHandle = info.Method;
-                    signature = info.Signature;
-                    minParamCount = info.MinParamCount;
-                    maxParamCount = info.MaxParamCount;
-                    return true;
-                }
+                methodHandle = info.Method;
+                signature = info.Signature;
+                minParamCount = info.MinParamCount;
+                maxParamCount = info.MaxParamCount;
+                return true;
             }
             return false;
         }
