@@ -663,7 +663,6 @@ namespace Js2IL.Services.ILGenerators
                                 typeof(double), typeof(object));
                             _il.OpCode(ILOpCode.Call);
                             _il.Token(toNum);
-                            leftType = JavascriptType.Number;
                         }
                         if (rightType != JavascriptType.Number)
                         {
@@ -673,7 +672,6 @@ namespace Js2IL.Services.ILGenerators
                                 typeof(double), typeof(object));
                             _il.OpCode(ILOpCode.Call);
                             _il.Token(toNum);
-                            rightType = JavascriptType.Number;
                         }
                     }
                     else if (!staticString && !(leftType == JavascriptType.Number && rightType == JavascriptType.Number))
