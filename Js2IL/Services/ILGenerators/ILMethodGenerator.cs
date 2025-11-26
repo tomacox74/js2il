@@ -1832,9 +1832,14 @@ namespace Js2IL.Services.ILGenerators
         }
 
         /// <summary>
-        /// Empty method for now - previously attempted to emit default parameter initialization.
-        /// Default parameter handling is now done inline when parameters are used.
+        /// Emits IL to initialize default parameter values using the starg pattern.
+        /// For each parameter with a default value (AssignmentPattern), emits:
+        /// - Check if parameter is null (brtrue)
+        /// - If null, evaluate default expression and store back to parameter (starg)
+        /// This must execute before field initialization so captured parameters receive correct default values.
         /// </summary>
+        /// <param name="parameters">The parameter list to process</param>
+        /// <param name="parameterStartIndex">The starting argument index (accounts for 'this' in instance methods)</param>
         internal void EmitDefaultParameterInitializers(IReadOnlyList<Node> parameters, ushort parameterStartIndex)
         {
             // Early exit if there are no parameters with defaults
