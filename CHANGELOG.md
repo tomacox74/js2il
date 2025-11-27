@@ -20,6 +20,10 @@ All notable changes to this project are documented here.
   - Boolean literal over-unboxing (raw boolean values no longer incorrectly unboxed)
   - Function return comparisons with boolean literals (e.g., `isEven(4) == true` now works correctly)
 - IL Generation: added proper type coercion for Object-to-Boolean comparisons when comparing function return values to boolean literals.
+- Console: align `console.log` array formatting with Node. Arrays now print as `[ 1, 2, 3 ]` (brackets with comma+space separators and outer spacing) instead of `JavaScriptRuntime.Array` or `1,2,3`.
+
+### Tests
+- Array: add focused test `Array_ConsoleLog_PrintsArrayContent` (generator + execution) and commit verified snapshots to lock in Node-style output.
 
 ## v0.3.2 - 2025-11-26
 

@@ -40,7 +40,28 @@ namespace JavaScriptRuntime
             for (int i = 0; i < args.Length; i++)
             {
                 if (i > 0) sb.Append(' ');
-                sb.Append(DotNet2JSConversions.ToString(args[i]));
+                var arg = args[i];
+                if (arg is Array arr)
+                {
+                    // Node-like console formatting for arrays: [ 1, 2, 3 ]
+                    sb.Append('[');
+                    sb.Append(' ');
+                    for (int j = 0; j < arr.Count; j++)
+                    {
+                        if (j > 0)
+                        {
+                            sb.Append(',');
+                            sb.Append(' ');
+                        }
+                        sb.Append(DotNet2JSConversions.ToString(arr[j]));
+                    }
+                    sb.Append(' ');
+                    sb.Append(']');
+                }
+                else
+                {
+                    sb.Append(DotNet2JSConversions.ToString(arg));
+                }
             }
             _output.WriteLine(sb.ToString());
             return null;

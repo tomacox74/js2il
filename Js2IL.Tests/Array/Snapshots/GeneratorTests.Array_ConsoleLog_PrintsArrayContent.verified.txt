@@ -1,0 +1,104 @@
+﻿// IL code: Array_ConsoleLog_PrintsArrayContent
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Array_ConsoleLog_PrintsArrayContent
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field public object primes
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Array_ConsoleLog_PrintsArrayContent::.ctor
+
+} // end of class Scopes.Array_ConsoleLog_PrintsArrayContent
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x205c
+		// Header size: 12
+		// Code size: 204 (0xcc)
+		.maxstack 32
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.Array_ConsoleLog_PrintsArrayContent::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: castclass Scopes.Array_ConsoleLog_PrintsArrayContent
+		IL_000c: ldc.i4.6
+		IL_000d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0012: dup
+		IL_0013: ldc.r8 2
+		IL_001c: box [System.Runtime]System.Double
+		IL_0021: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0026: dup
+		IL_0027: ldc.r8 3
+		IL_0030: box [System.Runtime]System.Double
+		IL_0035: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_003a: dup
+		IL_003b: ldc.r8 5
+		IL_0044: box [System.Runtime]System.Double
+		IL_0049: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_004e: dup
+		IL_004f: ldc.r8 7
+		IL_0058: box [System.Runtime]System.Double
+		IL_005d: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0062: dup
+		IL_0063: ldc.r8 11
+		IL_006c: box [System.Runtime]System.Double
+		IL_0071: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0076: dup
+		IL_0077: ldc.r8 13
+		IL_0080: box [System.Runtime]System.Double
+		IL_0085: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_008a: stfld object Scopes.Array_ConsoleLog_PrintsArrayContent::primes
+		IL_008f: ldc.i4.2
+		IL_0090: newarr [System.Runtime]System.Object
+		IL_0095: dup
+		IL_0096: ldc.i4.0
+		IL_0097: ldstr "Array contents:"
+		IL_009c: stelem.ref
+		IL_009d: dup
+		IL_009e: ldc.i4.1
+		IL_009f: ldloc.0
+		IL_00a0: castclass Scopes.Array_ConsoleLog_PrintsArrayContent
+		IL_00a5: ldfld object Scopes.Array_ConsoleLog_PrintsArrayContent::primes
+		IL_00aa: stelem.ref
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00b0: pop
+		IL_00b1: ldc.i4.1
+		IL_00b2: newarr [System.Runtime]System.Object
+		IL_00b7: dup
+		IL_00b8: ldc.i4.0
+		IL_00b9: ldloc.0
+		IL_00ba: castclass Scopes.Array_ConsoleLog_PrintsArrayContent
+		IL_00bf: ldfld object Scopes.Array_ConsoleLog_PrintsArrayContent::primes
+		IL_00c4: stelem.ref
+		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00ca: pop
+		IL_00cb: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
