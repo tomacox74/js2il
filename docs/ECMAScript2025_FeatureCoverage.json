@@ -550,6 +550,31 @@
                     "Js2IL.Tests/JavaScript/String_PlusEquals_Append.js"
                   ],
                   "notes": "+= on identifiers uses JavaScriptRuntime.Operators.Add for JS coercion and stores back to the same binding; validated by generator snapshot."
+                },
+                {
+                  "feature": "Bitwise compound assignments (|=, &=, ^=, <<=, >>=, >>>=)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_BitwiseOrAssignment.js",
+                    "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_BitwiseAndAssignment.js",
+                    "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_BitwiseXorAssignment.js",
+                    "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_LeftShiftAssignment.js",
+                    "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_RightShiftAssignment.js",
+                    "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_UnsignedRightShiftAssignment.js"
+                  ],
+                  "notes": "Emits load-convert-operate-convert-store pattern with int32 operations. Operands are converted to int32, operation applied, result converted back to double for storage."
+                },
+                {
+                  "feature": "Arithmetic compound assignments (-=, *=, /=, %=, **=)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_SubtractionAssignment.js",
+                    "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_MultiplicationAssignment.js",
+                    "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_DivisionAssignment.js",
+                    "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_RemainderAssignment.js",
+                    "Js2IL.Tests/CompoundAssignment/JavaScript/CompoundAssignment_ExponentiationAssignment.js"
+                  ],
+                  "notes": "Arithmetic operations work on double values. Exponentiation (**=) uses System.Math.Pow. All operators properly preserve JavaScript numeric semantics."
                 }
               ]
             }

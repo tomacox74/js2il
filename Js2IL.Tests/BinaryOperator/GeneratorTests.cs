@@ -52,6 +52,9 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_LeftShiftNumberNumber() { var testName = nameof(BinaryOperator_LeftShiftNumberNumber); return GenerateTest(testName); }
 
         [Fact]
+        public Task BinaryOperator_LeftShiftBit31() { var testName = nameof(BinaryOperator_LeftShiftBit31); return GenerateTest(testName); }
+
+        [Fact]
         public Task BinaryOperator_LessThan() { var testName = nameof(BinaryOperator_LessThan); return GenerateTest(testName); }
 
         [Fact]

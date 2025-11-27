@@ -1,0 +1,188 @@
+﻿// IL code: CompoundAssignment_SubtractionAssignment
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.CompoundAssignment_SubtractionAssignment
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Block_L8C29
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Block_L8C29::.ctor
+
+	} // end of class Block_L8C29
+
+
+	// Fields
+	.field public object x
+	.field public object sum
+	.field public object i
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method CompoundAssignment_SubtractionAssignment::.ctor
+
+} // end of class Scopes.CompoundAssignment_SubtractionAssignment
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2064
+		// Header size: 12
+		// Code size: 371 (0x173)
+		.maxstack 32
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.CompoundAssignment_SubtractionAssignment::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: castclass Scopes.CompoundAssignment_SubtractionAssignment
+		IL_000c: ldc.r8 10
+		IL_0015: box [System.Runtime]System.Double
+		IL_001a: stfld object Scopes.CompoundAssignment_SubtractionAssignment::x
+		IL_001f: ldloc.0
+		IL_0020: castclass Scopes.CompoundAssignment_SubtractionAssignment
+		IL_0025: dup
+		IL_0026: ldfld object Scopes.CompoundAssignment_SubtractionAssignment::x
+		IL_002b: unbox.any [System.Runtime]System.Double
+		IL_0030: ldc.r8 3
+		IL_0039: conv.r8
+		IL_003a: sub
+		IL_003b: box [System.Runtime]System.Double
+		IL_0040: stfld object Scopes.CompoundAssignment_SubtractionAssignment::x
+		IL_0045: ldc.i4.2
+		IL_0046: newarr [System.Runtime]System.Object
+		IL_004b: dup
+		IL_004c: ldc.i4.0
+		IL_004d: ldstr "x after 10 -= 3:"
+		IL_0052: stelem.ref
+		IL_0053: dup
+		IL_0054: ldc.i4.1
+		IL_0055: ldloc.0
+		IL_0056: castclass Scopes.CompoundAssignment_SubtractionAssignment
+		IL_005b: ldfld object Scopes.CompoundAssignment_SubtractionAssignment::x
+		IL_0060: stelem.ref
+		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0066: pop
+		IL_0067: ldloc.0
+		IL_0068: castclass Scopes.CompoundAssignment_SubtractionAssignment
+		IL_006d: ldc.r8 100
+		IL_0076: box [System.Runtime]System.Double
+		IL_007b: stfld object Scopes.CompoundAssignment_SubtractionAssignment::sum
+		IL_0080: ldloc.0
+		IL_0081: castclass Scopes.CompoundAssignment_SubtractionAssignment
+		IL_0086: ldc.r8 1
+		IL_008f: box [System.Runtime]System.Double
+		IL_0094: stfld object Scopes.CompoundAssignment_SubtractionAssignment::i
+		// loop start (head: IL_0099)
+			IL_0099: ldloc.0
+			IL_009a: castclass Scopes.CompoundAssignment_SubtractionAssignment
+			IL_009f: ldfld object Scopes.CompoundAssignment_SubtractionAssignment::i
+			IL_00a4: unbox.any [System.Runtime]System.Double
+			IL_00a9: ldc.r8 5
+			IL_00b2: ble IL_00bc
+
+			IL_00b7: br IL_0150
+
+			IL_00bc: ldloc.0
+			IL_00bd: castclass Scopes.CompoundAssignment_SubtractionAssignment
+			IL_00c2: dup
+			IL_00c3: ldfld object Scopes.CompoundAssignment_SubtractionAssignment::sum
+			IL_00c8: unbox.any [System.Runtime]System.Double
+			IL_00cd: ldloc.0
+			IL_00ce: castclass Scopes.CompoundAssignment_SubtractionAssignment
+			IL_00d3: ldfld object Scopes.CompoundAssignment_SubtractionAssignment::i
+			IL_00d8: unbox.any [System.Runtime]System.Double
+			IL_00dd: conv.r8
+			IL_00de: sub
+			IL_00df: box [System.Runtime]System.Double
+			IL_00e4: stfld object Scopes.CompoundAssignment_SubtractionAssignment::sum
+			IL_00e9: ldc.i4.4
+			IL_00ea: newarr [System.Runtime]System.Object
+			IL_00ef: dup
+			IL_00f0: ldc.i4.0
+			IL_00f1: ldstr "sum after iteration"
+			IL_00f6: stelem.ref
+			IL_00f7: dup
+			IL_00f8: ldc.i4.1
+			IL_00f9: ldloc.0
+			IL_00fa: castclass Scopes.CompoundAssignment_SubtractionAssignment
+			IL_00ff: ldfld object Scopes.CompoundAssignment_SubtractionAssignment::i
+			IL_0104: stelem.ref
+			IL_0105: dup
+			IL_0106: ldc.i4.2
+			IL_0107: ldstr ":"
+			IL_010c: stelem.ref
+			IL_010d: dup
+			IL_010e: ldc.i4.3
+			IL_010f: ldloc.0
+			IL_0110: castclass Scopes.CompoundAssignment_SubtractionAssignment
+			IL_0115: ldfld object Scopes.CompoundAssignment_SubtractionAssignment::sum
+			IL_011a: stelem.ref
+			IL_011b: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_0120: pop
+			IL_0121: ldloc.0
+			IL_0122: castclass Scopes.CompoundAssignment_SubtractionAssignment
+			IL_0127: ldloc.0
+			IL_0128: castclass Scopes.CompoundAssignment_SubtractionAssignment
+			IL_012d: ldfld object Scopes.CompoundAssignment_SubtractionAssignment::i
+			IL_0132: unbox.any [System.Runtime]System.Double
+			IL_0137: ldc.r8 1
+			IL_0140: add
+			IL_0141: box [System.Runtime]System.Double
+			IL_0146: stfld object Scopes.CompoundAssignment_SubtractionAssignment::i
+			IL_014b: br IL_0099
+		// end loop
+
+		IL_0150: ldc.i4.2
+		IL_0151: newarr [System.Runtime]System.Object
+		IL_0156: dup
+		IL_0157: ldc.i4.0
+		IL_0158: ldstr "final sum:"
+		IL_015d: stelem.ref
+		IL_015e: dup
+		IL_015f: ldc.i4.1
+		IL_0160: ldloc.0
+		IL_0161: castclass Scopes.CompoundAssignment_SubtractionAssignment
+		IL_0166: ldfld object Scopes.CompoundAssignment_SubtractionAssignment::sum
+		IL_016b: stelem.ref
+		IL_016c: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0171: pop
+		IL_0172: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

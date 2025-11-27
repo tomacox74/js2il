@@ -1,0 +1,242 @@
+// IL code: BinaryOperator_LeftShiftBit31
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.BinaryOperator_LeftShiftBit31
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Block_L13C29
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Block_L13C29::.ctor
+
+	} // end of class Block_L13C29
+
+
+	// Fields
+	.field public object mask31
+	.field public object 'value'
+	.field public object allBits
+	.field public object i
+	.field public object testValue
+	.field public object result
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method BinaryOperator_LeftShiftBit31::.ctor
+
+} // end of class Scopes.BinaryOperator_LeftShiftBit31
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2064
+		// Header size: 12
+		// Code size: 534 (0x216)
+		.maxstack 32
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.BinaryOperator_LeftShiftBit31::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: castclass Scopes.BinaryOperator_LeftShiftBit31
+		IL_000c: ldc.r8 1
+		IL_0015: conv.i4
+		IL_0016: ldc.r8 31
+		IL_001f: conv.i4
+		IL_0020: shl
+		IL_0021: conv.r8
+		IL_0022: box [System.Runtime]System.Double
+		IL_0027: stfld object Scopes.BinaryOperator_LeftShiftBit31::mask31
+		IL_002c: ldc.i4.2
+		IL_002d: newarr [System.Runtime]System.Object
+		IL_0032: dup
+		IL_0033: ldc.i4.0
+		IL_0034: ldstr "mask31 is"
+		IL_0039: stelem.ref
+		IL_003a: dup
+		IL_003b: ldc.i4.1
+		IL_003c: ldloc.0
+		IL_003d: castclass Scopes.BinaryOperator_LeftShiftBit31
+		IL_0042: ldfld object Scopes.BinaryOperator_LeftShiftBit31::mask31
+		IL_0047: stelem.ref
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_004d: pop
+		IL_004e: ldloc.0
+		IL_004f: castclass Scopes.BinaryOperator_LeftShiftBit31
+		IL_0054: ldc.r8 0.0
+		IL_005d: box [System.Runtime]System.Double
+		IL_0062: stfld object Scopes.BinaryOperator_LeftShiftBit31::'value'
+		IL_0067: ldloc.0
+		IL_0068: castclass Scopes.BinaryOperator_LeftShiftBit31
+		IL_006d: dup
+		IL_006e: ldfld object Scopes.BinaryOperator_LeftShiftBit31::'value'
+		IL_0073: unbox.any [System.Runtime]System.Double
+		IL_0078: conv.i4
+		IL_0079: ldc.r8 1
+		IL_0082: conv.i4
+		IL_0083: ldc.r8 31
+		IL_008c: conv.i4
+		IL_008d: shl
+		IL_008e: conv.r8
+		IL_008f: conv.i4
+		IL_0090: or
+		IL_0091: conv.r8
+		IL_0092: box [System.Runtime]System.Double
+		IL_0097: stfld object Scopes.BinaryOperator_LeftShiftBit31::'value'
+		IL_009c: ldc.i4.2
+		IL_009d: newarr [System.Runtime]System.Object
+		IL_00a2: dup
+		IL_00a3: ldc.i4.0
+		IL_00a4: ldstr "value after OR with bit 31:"
+		IL_00a9: stelem.ref
+		IL_00aa: dup
+		IL_00ab: ldc.i4.1
+		IL_00ac: ldloc.0
+		IL_00ad: castclass Scopes.BinaryOperator_LeftShiftBit31
+		IL_00b2: ldfld object Scopes.BinaryOperator_LeftShiftBit31::'value'
+		IL_00b7: stelem.ref
+		IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00bd: pop
+		IL_00be: ldloc.0
+		IL_00bf: castclass Scopes.BinaryOperator_LeftShiftBit31
+		IL_00c4: ldc.r8 0.0
+		IL_00cd: box [System.Runtime]System.Double
+		IL_00d2: stfld object Scopes.BinaryOperator_LeftShiftBit31::allBits
+		IL_00d7: ldloc.0
+		IL_00d8: castclass Scopes.BinaryOperator_LeftShiftBit31
+		IL_00dd: ldc.r8 0.0
+		IL_00e6: box [System.Runtime]System.Double
+		IL_00eb: stfld object Scopes.BinaryOperator_LeftShiftBit31::i
+		// loop start (head: IL_00f0)
+			IL_00f0: ldloc.0
+			IL_00f1: castclass Scopes.BinaryOperator_LeftShiftBit31
+			IL_00f6: ldfld object Scopes.BinaryOperator_LeftShiftBit31::i
+			IL_00fb: unbox.any [System.Runtime]System.Double
+			IL_0100: ldc.r8 32
+			IL_0109: blt IL_0113
+
+			IL_010e: br IL_017e
+
+			IL_0113: ldloc.0
+			IL_0114: castclass Scopes.BinaryOperator_LeftShiftBit31
+			IL_0119: dup
+			IL_011a: ldfld object Scopes.BinaryOperator_LeftShiftBit31::allBits
+			IL_011f: unbox.any [System.Runtime]System.Double
+			IL_0124: conv.i4
+			IL_0125: ldc.r8 1
+			IL_012e: conv.i4
+			IL_012f: ldloc.0
+			IL_0130: castclass Scopes.BinaryOperator_LeftShiftBit31
+			IL_0135: ldfld object Scopes.BinaryOperator_LeftShiftBit31::i
+			IL_013a: unbox.any [System.Runtime]System.Double
+			IL_013f: conv.i4
+			IL_0140: shl
+			IL_0141: conv.r8
+			IL_0142: conv.i4
+			IL_0143: or
+			IL_0144: conv.r8
+			IL_0145: box [System.Runtime]System.Double
+			IL_014a: stfld object Scopes.BinaryOperator_LeftShiftBit31::allBits
+			IL_014f: ldloc.0
+			IL_0150: castclass Scopes.BinaryOperator_LeftShiftBit31
+			IL_0155: ldloc.0
+			IL_0156: castclass Scopes.BinaryOperator_LeftShiftBit31
+			IL_015b: ldfld object Scopes.BinaryOperator_LeftShiftBit31::i
+			IL_0160: unbox.any [System.Runtime]System.Double
+			IL_0165: ldc.r8 1
+			IL_016e: add
+			IL_016f: box [System.Runtime]System.Double
+			IL_0174: stfld object Scopes.BinaryOperator_LeftShiftBit31::i
+			IL_0179: br IL_00f0
+		// end loop
+
+		IL_017e: ldc.i4.2
+		IL_017f: newarr [System.Runtime]System.Object
+		IL_0184: dup
+		IL_0185: ldc.i4.0
+		IL_0186: ldstr "all 32 bits set:"
+		IL_018b: stelem.ref
+		IL_018c: dup
+		IL_018d: ldc.i4.1
+		IL_018e: ldloc.0
+		IL_018f: castclass Scopes.BinaryOperator_LeftShiftBit31
+		IL_0194: ldfld object Scopes.BinaryOperator_LeftShiftBit31::allBits
+		IL_0199: stelem.ref
+		IL_019a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_019f: pop
+		IL_01a0: ldloc.0
+		IL_01a1: castclass Scopes.BinaryOperator_LeftShiftBit31
+		IL_01a6: ldc.r8 -2147483648
+		IL_01af: box [System.Runtime]System.Double
+		IL_01b4: stfld object Scopes.BinaryOperator_LeftShiftBit31::testValue
+		IL_01b9: ldloc.0
+		IL_01ba: castclass Scopes.BinaryOperator_LeftShiftBit31
+		IL_01bf: ldloc.0
+		IL_01c0: castclass Scopes.BinaryOperator_LeftShiftBit31
+		IL_01c5: ldfld object Scopes.BinaryOperator_LeftShiftBit31::testValue
+		IL_01ca: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_01cf: conv.i4
+		IL_01d0: ldc.r8 1
+		IL_01d9: conv.i4
+		IL_01da: ldc.r8 31
+		IL_01e3: conv.i4
+		IL_01e4: shl
+		IL_01e5: conv.r8
+		IL_01e6: conv.i4
+		IL_01e7: and
+		IL_01e8: conv.r8
+		IL_01e9: box [System.Runtime]System.Double
+		IL_01ee: stfld object Scopes.BinaryOperator_LeftShiftBit31::result
+		IL_01f3: ldc.i4.2
+		IL_01f4: newarr [System.Runtime]System.Object
+		IL_01f9: dup
+		IL_01fa: ldc.i4.0
+		IL_01fb: ldstr "AND result with bit 31:"
+		IL_0200: stelem.ref
+		IL_0201: dup
+		IL_0202: ldc.i4.1
+		IL_0203: ldloc.0
+		IL_0204: castclass Scopes.BinaryOperator_LeftShiftBit31
+		IL_0209: ldfld object Scopes.BinaryOperator_LeftShiftBit31::result
+		IL_020e: stelem.ref
+		IL_020f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0214: pop
+		IL_0215: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

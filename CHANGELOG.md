@@ -4,6 +4,16 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+### Added
+- Compound Assignment Operators: implemented all 11 compound assignment operators with proper type conversions:
+  - Bitwise operators: `|=`, `&=`, `^=`, `<<=`, `>>=`, `>>>=` (convert to int32, apply operation, convert back to double)
+  - Arithmetic operators: `-=`, `*=`, `/=`, `%=`, `**=` (operate on double values, exponentiation uses System.Math.Pow)
+  - Extensible architecture with pattern matching for easy addition of future operators
+  - Works with scope variables (local and global)
+  - Comprehensive test coverage with 11 test cases verifying execution results and IL generation
+- Tests: added `CompoundAssignment` test group with JavaScript test files and snapshot verification for all compound operators
+- Tests: added `BinaryOperator_LeftShiftBit31` test to verify left shift of bit 31 produces correct signed result
+
 ### Fixed
 - Equality comparisons: fixed boxing issues in equality operators by introducing explicit `IsBoxed` property to `ExpressionResult`. Replaced brittle AST-based heuristics with explicit boxing state tracking. Fixes:
   - Method return value comparisons (e.g., `methodResult == 4` and `4 == methodResult` now both work)
