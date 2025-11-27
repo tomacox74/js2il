@@ -21,7 +21,7 @@ const NOW_UNITS_PER_SECOND = 1000;
 const WORD_SIZE = 32;
 
 let config = {
-	sieveSize: 100,
+	sieveSize: 1000000,
 	timeLimitSeconds: 5,
 	verbose: false,
 	runtime: ''
@@ -47,13 +47,10 @@ class BitArray
 	{
 		const wordOffset = index >>> 5;  // 1 word = 2ˆ5 = 32 bit, so shift 5, much faster than /32
 		const bitOffset = index & 31;  // use & (and) for remainder, faster than modulus of /32
-		console.log(`setBitTrue(${index}): wordOffset=${wordOffset}, bitOffset=${bitOffset}, before=${this.wordArray[wordOffset]}`);
 		this.wordArray[wordOffset] |= (1 << bitOffset);
-		console.log(`  after=${this.wordArray[wordOffset]}`);
 	}
 
 	setBitsTrue(range_start, step, range_stop) {
-		console.log(`setBitsTrue: start=${range_start}, step=${step}, stop=${range_stop}, WORD_SIZE/2=${WORD_SIZE/2}`);
 		if (step > WORD_SIZE/2) { 
 			// steps are large: check if the range is large enough to reuse the same mask
 			let range_stop_unique =  range_start + 32 * step;
@@ -79,15 +76,12 @@ class BitArray
 		}
 
 		// optimized for small sizes: set wordvalue multiple times before committing to memory
-		console.log("Taking optimized small size path");
 		let index = range_start;
 		let wordOffset = index >>> 5;  // 1 word = 2ˆ5 = 32 bit, so shift 5, much faster than /32
 		let wordValue = this.wordArray[wordOffset];
-		console.log(`Initial: index=${index}, wordOffset=${wordOffset}, wordValue=${wordValue}`);
 
 		while (index < range_stop) {
 			const bitOffset = index & 31;  // use & (and) for remainder, faster than modulus of /32
-			console.log(`  Setting bit: index=${index}, bitOffset=${bitOffset}, mask=${1 << bitOffset}`);
 			wordValue |= (1 << bitOffset);
 
 			index += step;
@@ -98,7 +92,6 @@ class BitArray
 				wordValue = this.wordArray[wordOffset];
 			}
 		}
-		console.log(`Final: storing wordValue=${wordValue} at wordOffset=${wordOffset}`);
 		this.wordArray[wordOffset] = wordValue; // make sure last value is stored
 	}
 
@@ -106,9 +99,7 @@ class BitArray
 	{
 		const wordOffset = index >>> 5;
 		const bitOffset = index & 31;
-		const result = this.wordArray[wordOffset] & (1 << bitOffset);
-		console.log(`testBitTrue(${index}): wordOffset=${wordOffset}, bitOffset=${bitOffset}, wordValue=${this.wordArray[wordOffset]}, mask=${1 << bitOffset}, result=${result}`);
-		return result; // use a mask to only get the bit at position bitOffset. >0=true, 0=false
+		return this.wordArray[wordOffset] & (1 << bitOffset); // use a mask to only get the bit at position bitOffset. >0=true, 0=false
 	}
 
 	searchBitFalse(index)
@@ -137,17 +128,14 @@ class PrimeSieve
 	{
 		const q = Math.ceil(Math.sqrt(this.sieveSizeInBits));  // convert to integer with ceil
 		let factor = 1;
-		console.log(`runSieve: sieveSizeInBits=${this.sieveSizeInBits}, q=${q}`);
 
 		while (factor < q)
 		{
 			const step = factor * 2 + 1;
 			const start = factor * factor * 2 + factor + factor;
-			console.log(`\nLoop: factor=${factor}, prime=${factor*2+1}, step=${step}, start=${start}`);
 
 			this.bitArray.setBitsTrue(start, step, this.sieveSizeInBits); // mark every multiple of this prime
 			factor = this.bitArray.searchBitFalse(factor + 1);
-			console.log(`  Next factor: ${factor}`);
 		}
 		return this;
 	}
