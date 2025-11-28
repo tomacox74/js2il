@@ -1894,9 +1894,13 @@ namespace Js2IL.Services.ILGenerators
                         typeof(object));
                     _il.OpCode(ILOpCode.Call);
                     _il.Token(getItemRef);
-                    // Current value is boxed object, unbox to double then convert to int32
-                    _il.OpCode(ILOpCode.Unbox_any); _il.Token(_owner.BclReferences.DoubleType);
-                    _il.OpCode(ILOpCode.Conv_i4);
+                    // Current value is boxed object, safely convert to int32 using CoerceToInt32
+                    var coerceToInt32Ref = _owner.Runtime.GetStaticMethodRef(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.CoerceToInt32),
+                        typeof(object));
+                    _il.OpCode(ILOpCode.Call);
+                    _il.Token(coerceToInt32Ref);
                     
                     // Evaluate RHS and convert to int32
                     _ = Emit(assignmentExpression.Right, new TypeCoercion() { boxResult = false });
