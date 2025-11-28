@@ -71,17 +71,20 @@ namespace JavaScriptRuntime
         // JS typed arrays expose a numeric length; keep as double for consistency with runtime helpers
         public double length => _buffer.Length;
 
-        public int this[int index]
+        // Indexer aligns with JS semantics: index is dynamic (object) and values are JS numbers (double boxed).
+        public object this[object index]
         {
             get
             {
-                if ((uint)index >= (uint)_buffer.Length) return 0; // out-of-bounds reads return 0
-                return _buffer[index];
+                int i = SafeToInt(index);
+                if ((uint)i >= (uint)_buffer.Length) return 0.0; // out-of-bounds reads return 0 as a JS number
+                return (double)_buffer[i];
             }
             set
             {
-                if ((uint)index >= (uint)_buffer.Length) return; // ignore out-of-bounds sets
-                _buffer[index] = value;
+                int i = SafeToInt(index);
+                if ((uint)i >= (uint)_buffer.Length) return; // ignore out-of-bounds sets
+                _buffer[i] = ToInt32(value!);
             }
         }
 

@@ -398,8 +398,65 @@ namespace JavaScriptRuntime
             var psChosen = chosen.GetParameters();
             var expectsParamsArray = psChosen.Length == 1 && psChosen[0].ParameterType == typeof(object[]);
             var empty = System.Array.Empty<object>();
-            var invokeArgs = expectsParamsArray ? new object?[] { args ?? empty } : (object[])(args ?? empty);
+
+            // Helper to coerce primitive numeric CLR types to JS number (double)
+            static object CoerceToJsNumber(object o)
+            {
+                switch (o)
+                {
+                    case double _: return o;
+                    case float f: return (double)f;
+                    case int i: return (double)i;
+                    case long l: return (double)l;
+                    case short s: return (double)s;
+                    case byte b: return (double)b;
+                    case sbyte sb: return (double)sb;
+                    case uint ui: return (double)ui;
+                    case ulong ul: return (double)ul;
+                    case ushort us: return (double)us;
+                    case decimal d: return (double)d;
+                    default: return o;
+                }
+            }
+
+            var src = args ?? empty;
+            var coerced = new object[src.Length];
+            for (int i = 0; i < src.Length; i++) coerced[i] = src[i] is null ? 0.0 : CoerceToJsNumber(src[i]);
+            
+            object?[] invokeArgs = expectsParamsArray ? new object?[] { coerced } : coerced;
             return chosen.Invoke(instance, invokeArgs);
+        }
+
+        /// <summary>
+        /// Safely coerces an object to int32, following JavaScript semantics.
+        /// Handles double, other numeric types, and null (coerces to 0).
+        /// </summary>
+        public static int CoerceToInt32(object? value)
+        {
+            if (value is null) return 0;
+            
+            switch (value)
+            {
+                case double d: return (int)d;
+                case float f: return (int)f;
+                case int i: return i;
+                case long l: return (int)l;
+                case short s: return s;
+                case byte b: return b;
+                case sbyte sb: return sb;
+                case uint ui: return (int)ui;
+                case ulong ul: return (int)ul;
+                case ushort us: return us;
+                case decimal dec: return (int)dec;
+                case bool bo: return bo ? 1 : 0;
+                case string str:
+                    if (double.TryParse(str, out double parsed))
+                        return (int)parsed;
+                    return 0;
+                default:
+                    // Non-numeric objects coerce to NaN in JS, which becomes 0 when converted to int
+                    return 0;
+            }
         }
 
         // Support for the JavaScript 'in' operator (minimal implementation)

@@ -23,6 +23,21 @@ namespace Js2IL.Services.ILGenerators
         private BinaryOperators _binaryOperators;
 
         /// <summary>
+        /// Maps compound assignment operator names to their corresponding IL bitwise opcodes.
+        /// Returns null if the operator is not a bitwise compound assignment.
+        /// </summary>
+        private static ILOpCode? GetCompoundBitwiseOpCode(string operatorName) => operatorName switch
+        {
+            "BitwiseOrAssignment" => ILOpCode.Or,
+            "BitwiseAndAssignment" => ILOpCode.And,
+            "BitwiseXorAssignment" => ILOpCode.Xor,
+            "LeftShiftAssignment" => ILOpCode.Shl,
+            "RightShiftAssignment" => ILOpCode.Shr,
+            "UnsignedRightShiftAssignment" => ILOpCode.Shr_un,
+            _ => null
+        };
+
+        /// <summary>
         /// Create an expression generator that delegates to another emitter.
         /// </summary>
         /// <param name="owner">Owning ILMethodGenerator providing shared state and helpers.</param>
@@ -1799,25 +1814,19 @@ namespace Js2IL.Services.ILGenerators
                     _il.OpCode(ILOpCode.Box); _il.Token(_owner.BclReferences.Int32Type); _il.StoreLocal(idxLocal);
 
                     // Check if this is a compound assignment
-                    ILOpCode? bitwiseOp = opName switch
-                    {
-                        "BitwiseOrAssignment" => ILOpCode.Or,
-                        "BitwiseAndAssignment" => ILOpCode.And,
-                        "BitwiseXorAssignment" => ILOpCode.Xor,
-                        "LeftShiftAssignment" => ILOpCode.Shl,
-                        "RightShiftAssignment" => ILOpCode.Shr,
-                        "UnsignedRightShiftAssignment" => ILOpCode.Shr_un,
-                        _ => null
-                    };
+                    ILOpCode? bitwiseOp = GetCompoundBitwiseOpCode(opName);
 
                     if (bitwiseOp != null)
                     {
                         // Compound bitwise assignment: array[index] op= value
                         // Get current value: instance.get_Item(index)
                         _il.LoadLocal(instLocal);
-                        _il.LoadLocal(idxLocal); _il.OpCode(ILOpCode.Unbox_any); _il.Token(_owner.BclReferences.Int32Type);
-                        var getItemRef = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Int32Array), "get_Item", typeof(int), typeof(int));
+                        _il.LoadLocal(idxLocal); // index as object (boxed)
+                        var getItemRef = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Int32Array), "get_Item", typeof(object), typeof(object));
                         _il.OpCode(ILOpCode.Callvirt); _il.Token(getItemRef);
+                        // Result is boxed double, convert to int32 for bitwise op
+                        _il.OpCode(ILOpCode.Unbox_any); _il.Token(_owner.BclReferences.DoubleType);
+                        _il.OpCode(ILOpCode.Conv_i4);
                         // Current value (int32) is on stack
 
                         // Evaluate RHS and convert to int32
@@ -1832,9 +1841,9 @@ namespace Js2IL.Services.ILGenerators
                         _il.OpCode(ILOpCode.Box); _il.Token(_owner.BclReferences.Int32Type); _il.StoreLocal(valLocal);
 
                         _il.LoadLocal(instLocal);
-                        _il.LoadLocal(idxLocal); _il.OpCode(ILOpCode.Unbox_any); _il.Token(_owner.BclReferences.Int32Type);
-                        _il.LoadLocal(valLocal); _il.OpCode(ILOpCode.Unbox_any); _il.Token(_owner.BclReferences.Int32Type);
-                        var setItemRef = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Int32Array), "set_Item", typeof(void), typeof(int), typeof(int));
+                        _il.LoadLocal(idxLocal); // index as object (boxed)
+                        _il.LoadLocal(valLocal); // value as object (boxed)
+                        var setItemRef = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Int32Array), "set_Item", typeof(void), typeof(object), typeof(object));
                         _il.OpCode(ILOpCode.Callvirt); _il.Token(setItemRef);
                         return JavascriptType.Number;
                     }
@@ -1847,9 +1856,9 @@ namespace Js2IL.Services.ILGenerators
 
                     // Call instance.set_Item(index,value)
                     _il.LoadLocal(instLocal);                           // instance
-                    _il.LoadLocal(idxLocal); _il.OpCode(ILOpCode.Unbox_any); _il.Token(_owner.BclReferences.Int32Type); // index int32
-                    _il.LoadLocal(valLocal2); _il.OpCode(ILOpCode.Unbox_any); _il.Token(_owner.BclReferences.Int32Type); // value int32
-                    var setItemRef2 = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Int32Array), "set_Item", typeof(void), typeof(int), typeof(int));
+                    _il.LoadLocal(idxLocal); // index as object (boxed)
+                    _il.LoadLocal(valLocal2); // value as object (boxed)
+                    var setItemRef2 = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Int32Array), "set_Item", typeof(void), typeof(object), typeof(object));
                     _il.OpCode(ILOpCode.Callvirt); _il.Token(setItemRef2);
                     // Do not leave the assigned value on the stack here; expression statement
                     // cleanup did not recognize this specialized fast-path and caused a residual
@@ -1858,18 +1867,77 @@ namespace Js2IL.Services.ILGenerators
                     // re-introduce a conditional emission that preserves the value.
                     return JavascriptType.Number; // semantic placeholder (value not actually on stack)
                 }
-                // Dynamic fallback: call JavaScriptRuntime.Object.AssignItem(receiver, index, value)
+                // Dynamic fallback for unknown receiver types: handle assignment (including compound operations)
                 // We already evaluated the receiver once (value currently on stack). If its emission had side-effects we can't re-run blindly.
                 // Strategy: store first evaluation into a temp local, then reuse.
                 // Receiver value currently on stack: store into temp local for reuse
                 int recvLocal = _owner.Variables.AllocateBlockScopeLocal($"IdxAssign_DynRecv_L{assignmentExpression.Location.Start.Line}C{assignmentExpression.Location.Start.Column}");
                 _il.StoreLocal(recvLocal);
+                
+                // Check if this is a compound bitwise assignment
+                ILOpCode? compoundOp = GetCompoundBitwiseOpCode(opName);
+                
+                if (compoundOp != null)
+                {
+                    // Compound bitwise operation: receiver[index] op= value
+                    // Get current value: Object.GetItem(receiver, index)
+                    _il.LoadLocal(recvLocal); // receiver
+                    Emit(aindex.Property, new TypeCoercion() { boxResult = true }); // index (boxed)
+                    int idxLocal = _owner.Variables.AllocateBlockScopeLocal($"CompoundIdx_L{assignmentExpression.Location.Start.Line}");
+                    _il.StoreLocal(idxLocal);
+                    _il.LoadLocal(idxLocal);
+                    var getItemRef = _owner.Runtime.GetStaticMethodRef(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.GetItem),
+                        typeof(object),
+                        typeof(object),
+                        typeof(object));
+                    _il.OpCode(ILOpCode.Call);
+                    _il.Token(getItemRef);
+                    // Current value is boxed object, safely convert to int32 using CoerceToInt32
+                    var coerceToInt32Ref = _owner.Runtime.GetStaticMethodRef(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.CoerceToInt32),
+                        typeof(object));
+                    _il.OpCode(ILOpCode.Call);
+                    _il.Token(coerceToInt32Ref);
+                    
+                    // Evaluate RHS and convert to int32
+                    _ = Emit(assignmentExpression.Right, new TypeCoercion() { boxResult = false });
+                    _il.OpCode(ILOpCode.Conv_i4);
+                    
+                    // Apply bitwise operation
+                    _il.OpCode(compoundOp.Value);
+                    
+                    // Box result as int32 for AssignItem
+                    _il.OpCode(ILOpCode.Box); _il.Token(_owner.BclReferences.Int32Type);
+                    int valLocal = _owner.Variables.AllocateBlockScopeLocal($"CompoundVal_L{assignmentExpression.Location.Start.Line}");
+                    _il.StoreLocal(valLocal);
+                    
+                    // Call AssignItem(receiver, index, value)
+                    _il.LoadLocal(recvLocal);
+                    _il.LoadLocal(idxLocal);
+                    _il.LoadLocal(valLocal);
+                    var assignItemRef = _owner.Runtime.GetStaticMethodRef(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.AssignItem),
+                        typeof(object),
+                        typeof(object),
+                        typeof(object),
+                        typeof(object));
+                    _il.OpCode(ILOpCode.Call);
+                    _il.Token(assignItemRef);
+                    _il.OpCode(ILOpCode.Pop);
+                    return JavascriptType.Number;
+                }
+                
+                // Simple assignment: call JavaScriptRuntime.Object.AssignItem(receiver, index, value)
                 _il.LoadLocal(recvLocal); // receiver
                 var idxType = Emit(aindex.Property, new TypeCoercion() { boxResult = true }); // index (boxed)
                 var rhsType = Emit(assignmentExpression.Right, new TypeCoercion() { boxResult = true }); // value (boxed)
                 // Correct method has signature object? AssignItem(object receiver, object index, object value)
                 // Ensure we request method with 3 parameters (object receiver, object index, object value)
-                var assignItemRef = _owner.Runtime.GetStaticMethodRef(
+                var assignItemRef2 = _owner.Runtime.GetStaticMethodRef(
                     typeof(JavaScriptRuntime.Object),
                     nameof(JavaScriptRuntime.Object.AssignItem),
                     typeof(object), // return type
@@ -1877,7 +1945,7 @@ namespace Js2IL.Services.ILGenerators
                     typeof(object), // index
                     typeof(object)); // value
                 _il.OpCode(ILOpCode.Call);
-                _il.Token(assignItemRef);
+                _il.Token(assignItemRef2);
                 // Ignore returned assigned value for statement contexts
                 _il.OpCode(ILOpCode.Pop);
                 return JavascriptType.Object;
