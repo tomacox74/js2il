@@ -15,6 +15,10 @@ All notable changes to this project are documented here.
 - Tests: added `BinaryOperator_LeftShiftBit31` test to verify left shift of bit 31 produces correct signed result
 
 ### Fixed
+- Int32Array: fixed `InvalidCastException` when calling Int32Array methods via reflection by changing indexer signature from `int this[int]` to `object this[object]`. Indexer now returns boxed double values to match JavaScript number semantics.
+- IL Generation: added `CoerceToJsNumber` helper in `Object.CallInstanceMethod` to convert all primitive numeric CLR types (int, float, long, short, byte, etc.) to double before reflection invoke, ensuring type compatibility.
+- IL Generation: updated Int32Array fast path to pass boxed values to get_Item/set_Item methods instead of unboxing parameters.
+- Compound Assignments: added support for compound bitwise operations (`|=`, `&=`, `^=`, `<<=`, `>>=`, `>>>=`) on dynamically-accessed array elements (e.g., `this.array[i] |= value`). Operations now correctly: 1) get current value, 2) apply operation, 3) store result, instead of replacing the value.
 - Equality comparisons: fixed boxing issues in equality operators by introducing explicit `IsBoxed` property to `ExpressionResult`. Replaced brittle AST-based heuristics with explicit boxing state tracking. Fixes:
   - Method return value comparisons (e.g., `methodResult == 4` and `4 == methodResult` now both work)
   - Boolean literal over-unboxing (raw boolean values no longer incorrectly unboxed)
@@ -24,6 +28,7 @@ All notable changes to this project are documented here.
 
 ### Tests
 - Array: add focused test `Array_ConsoleLog_PrintsArrayContent` (generator + execution) and commit verified snapshots to lock in Node-style output.
+- Int32Array: updated 2 generator test snapshots to reflect new method signatures (get_Item and set_Item now use object parameters).
 
 ## v0.3.2 - 2025-11-26
 
