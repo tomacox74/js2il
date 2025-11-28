@@ -398,7 +398,41 @@ namespace JavaScriptRuntime
             var psChosen = chosen.GetParameters();
             var expectsParamsArray = psChosen.Length == 1 && psChosen[0].ParameterType == typeof(object[]);
             var empty = System.Array.Empty<object>();
-            var invokeArgs = expectsParamsArray ? new object?[] { args ?? empty } : (object[])(args ?? empty);
+
+            // Helper to coerce primitive numeric CLR types to JS number (double)
+            static object CoerceToJsNumber(object o)
+            {
+                switch (o)
+                {
+                    case double _: return o;
+                    case float f: return (double)f;
+                    case int i: return (double)i;
+                    case long l: return (double)l;
+                    case short s: return (double)s;
+                    case byte b: return (double)b;
+                    case sbyte sb: return (double)sb;
+                    case uint ui: return (double)ui;
+                    case ulong ul: return (double)ul;
+                    case ushort us: return (double)us;
+                    default: return o;
+                }
+            }
+
+            object?[] invokeArgs;
+            if (expectsParamsArray)
+            {
+                var src = args ?? empty;
+                var coerced = new object[src.Length];
+                for (int i = 0; i < src.Length; i++) coerced[i] = src[i] is null ? null! : CoerceToJsNumber(src[i]);
+                invokeArgs = new object?[] { coerced };
+            }
+            else
+            {
+                var src = args ?? empty;
+                var coerced = new object[src.Length];
+                for (int i = 0; i < src.Length; i++) coerced[i] = src[i] is null ? null! : CoerceToJsNumber(src[i]);
+                invokeArgs = coerced;
+            }
             return chosen.Invoke(instance, invokeArgs);
         }
 
