@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+## v0.3.3 - 2025-11-28
+
 ### Added
 - Compound Assignment Operators: implemented all 11 compound assignment operators with proper type conversions:
   - Bitwise operators: `|=`, `&=`, `^=`, `<<=`, `>>=`, `>>>=` (convert to int32, apply operation, convert back to double)
@@ -13,12 +15,16 @@ All notable changes to this project are documented here.
   - Comprehensive test coverage with 11 test cases verifying execution results and IL generation
 - Tests: added `CompoundAssignment` test group with JavaScript test files and snapshot verification for all compound operators
 - Tests: added `BinaryOperator_LeftShiftBit31` test to verify left shift of bit 31 produces correct signed result
+- Runtime: added `Object.CoerceToInt32` public static method for safe type conversion following JavaScript semantics (handles null, numeric types, strings, booleans)
 
 ### Fixed
 - Int32Array: fixed `InvalidCastException` when calling Int32Array methods via reflection by changing indexer signature from `int this[int]` to `object this[object]`. Indexer now returns boxed double values to match JavaScript number semantics.
 - IL Generation: added `CoerceToJsNumber` helper in `Object.CallInstanceMethod` to convert all primitive numeric CLR types (int, float, long, short, byte, etc.) to double before reflection invoke, ensuring type compatibility.
 - IL Generation: updated Int32Array fast path to pass boxed values to get_Item/set_Item methods instead of unboxing parameters.
+- IL Generation: null values now coerce to 0.0 in numeric contexts instead of passing through as null, matching JavaScript semantics.
 - Compound Assignments: added support for compound bitwise operations (`|=`, `&=`, `^=`, `<<=`, `>>=`, `>>>=`) on dynamically-accessed array elements (e.g., `this.array[i] |= value`). Operations now correctly: 1) get current value, 2) apply operation, 3) store result, instead of replacing the value.
+- IL Generation: dynamic fallback path now uses `CoerceToInt32` instead of unsafe `Unbox_any` cast, preventing `InvalidCastException` for non-numeric objects.
+- IL Generation: extracted duplicate compound operator mapping into `GetCompoundBitwiseOpCode` helper method to eliminate code duplication.
 - Equality comparisons: fixed boxing issues in equality operators by introducing explicit `IsBoxed` property to `ExpressionResult`. Replaced brittle AST-based heuristics with explicit boxing state tracking. Fixes:
   - Method return value comparisons (e.g., `methodResult == 4` and `4 == methodResult` now both work)
   - Boolean literal over-unboxing (raw boolean values no longer incorrectly unboxed)
