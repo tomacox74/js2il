@@ -414,6 +414,7 @@ namespace JavaScriptRuntime
                     case uint ui: return (double)ui;
                     case ulong ul: return (double)ul;
                     case ushort us: return (double)us;
+                    case decimal d: return (double)d;
                     default: return o;
                 }
             }
