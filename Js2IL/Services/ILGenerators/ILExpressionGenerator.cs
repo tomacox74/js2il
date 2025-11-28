@@ -1861,7 +1861,7 @@ namespace Js2IL.Services.ILGenerators
                     // re-introduce a conditional emission that preserves the value.
                     return JavascriptType.Number; // semantic placeholder (value not actually on stack)
                 }
-                // Dynamic fallback: handle assignment (including compound operations)
+                // Dynamic fallback for unknown receiver types: handle assignment (including compound operations)
                 // We already evaluated the receiver once (value currently on stack). If its emission had side-effects we can't re-run blindly.
                 // Strategy: store first evaluation into a temp local, then reuse.
                 // Receiver value currently on stack: store into temp local for reuse
@@ -1885,7 +1885,7 @@ namespace Js2IL.Services.ILGenerators
                     // Compound bitwise operation: receiver[index] op= value
                     // Get current value: Object.GetItem(receiver, index)
                     _il.LoadLocal(recvLocal); // receiver
-                    var idxResult = Emit(aindex.Property, new TypeCoercion() { boxResult = true }); // index (boxed)
+                    Emit(aindex.Property, new TypeCoercion() { boxResult = true }); // index (boxed)
                     int idxLocal = _owner.Variables.AllocateBlockScopeLocal($"CompoundIdx_L{assignmentExpression.Location.Start.Line}");
                     _il.StoreLocal(idxLocal);
                     _il.LoadLocal(idxLocal);
@@ -1910,13 +1910,13 @@ namespace Js2IL.Services.ILGenerators
                     
                     // Box result as int32 for AssignItem
                     _il.OpCode(ILOpCode.Box); _il.Token(_owner.BclReferences.Int32Type);
-                    int valueLocal = _owner.Variables.AllocateBlockScopeLocal($"CompoundVal_L{assignmentExpression.Location.Start.Line}");
-                    _il.StoreLocal(valueLocal);
+                    int valLocal = _owner.Variables.AllocateBlockScopeLocal($"CompoundVal_L{assignmentExpression.Location.Start.Line}");
+                    _il.StoreLocal(valLocal);
                     
                     // Call AssignItem(receiver, index, value)
                     _il.LoadLocal(recvLocal);
                     _il.LoadLocal(idxLocal);
-                    _il.LoadLocal(valueLocal);
+                    _il.LoadLocal(valLocal);
                     var assignItemRef = _owner.Runtime.GetStaticMethodRef(
                         typeof(JavaScriptRuntime.Object),
                         nameof(JavaScriptRuntime.Object.AssignItem),
@@ -1927,7 +1927,7 @@ namespace Js2IL.Services.ILGenerators
                     _il.OpCode(ILOpCode.Call);
                     _il.Token(assignItemRef);
                     _il.OpCode(ILOpCode.Pop);
-                    return JavascriptType.Object;
+                    return JavascriptType.Number;
                 }
                 
                 // Simple assignment: call JavaScriptRuntime.Object.AssignItem(receiver, index, value)

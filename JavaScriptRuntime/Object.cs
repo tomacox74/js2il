@@ -419,21 +419,11 @@ namespace JavaScriptRuntime
                 }
             }
 
-            object?[] invokeArgs;
-            if (expectsParamsArray)
-            {
-                var src = args ?? empty;
-                var coerced = new object[src.Length];
-                for (int i = 0; i < src.Length; i++) coerced[i] = src[i] is null ? null! : CoerceToJsNumber(src[i]);
-                invokeArgs = new object?[] { coerced };
-            }
-            else
-            {
-                var src = args ?? empty;
-                var coerced = new object[src.Length];
-                for (int i = 0; i < src.Length; i++) coerced[i] = src[i] is null ? null! : CoerceToJsNumber(src[i]);
-                invokeArgs = coerced;
-            }
+            var src = args ?? empty;
+            var coerced = new object[src.Length];
+            for (int i = 0; i < src.Length; i++) coerced[i] = src[i] is null ? null! : CoerceToJsNumber(src[i]);
+            
+            object?[] invokeArgs = expectsParamsArray ? new object?[] { coerced } : coerced;
             return chosen.Invoke(instance, invokeArgs);
         }
 
