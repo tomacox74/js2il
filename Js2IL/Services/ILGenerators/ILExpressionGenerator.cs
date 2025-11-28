@@ -23,6 +23,21 @@ namespace Js2IL.Services.ILGenerators
         private BinaryOperators _binaryOperators;
 
         /// <summary>
+        /// Maps compound assignment operator names to their corresponding IL bitwise opcodes.
+        /// Returns null if the operator is not a bitwise compound assignment.
+        /// </summary>
+        private static ILOpCode? GetCompoundBitwiseOpCode(string operatorName) => operatorName switch
+        {
+            "BitwiseOrAssignment" => ILOpCode.Or,
+            "BitwiseAndAssignment" => ILOpCode.And,
+            "BitwiseXorAssignment" => ILOpCode.Xor,
+            "LeftShiftAssignment" => ILOpCode.Shl,
+            "RightShiftAssignment" => ILOpCode.Shr,
+            "UnsignedRightShiftAssignment" => ILOpCode.Shr_un,
+            _ => null
+        };
+
+        /// <summary>
         /// Create an expression generator that delegates to another emitter.
         /// </summary>
         /// <param name="owner">Owning ILMethodGenerator providing shared state and helpers.</param>
@@ -1799,16 +1814,7 @@ namespace Js2IL.Services.ILGenerators
                     _il.OpCode(ILOpCode.Box); _il.Token(_owner.BclReferences.Int32Type); _il.StoreLocal(idxLocal);
 
                     // Check if this is a compound assignment
-                    ILOpCode? bitwiseOp = opName switch
-                    {
-                        "BitwiseOrAssignment" => ILOpCode.Or,
-                        "BitwiseAndAssignment" => ILOpCode.And,
-                        "BitwiseXorAssignment" => ILOpCode.Xor,
-                        "LeftShiftAssignment" => ILOpCode.Shl,
-                        "RightShiftAssignment" => ILOpCode.Shr,
-                        "UnsignedRightShiftAssignment" => ILOpCode.Shr_un,
-                        _ => null
-                    };
+                    ILOpCode? bitwiseOp = GetCompoundBitwiseOpCode(opName);
 
                     if (bitwiseOp != null)
                     {
@@ -1869,16 +1875,7 @@ namespace Js2IL.Services.ILGenerators
                 _il.StoreLocal(recvLocal);
                 
                 // Check if this is a compound bitwise assignment
-                ILOpCode? compoundOp = opName switch
-                {
-                    "BitwiseOrAssignment" => ILOpCode.Or,
-                    "BitwiseAndAssignment" => ILOpCode.And,
-                    "BitwiseXorAssignment" => ILOpCode.Xor,
-                    "LeftShiftAssignment" => ILOpCode.Shl,
-                    "RightShiftAssignment" => ILOpCode.Shr,
-                    "UnsignedRightShiftAssignment" => ILOpCode.Shr_un,
-                    _ => null
-                };
+                ILOpCode? compoundOp = GetCompoundBitwiseOpCode(opName);
                 
                 if (compoundOp != null)
                 {
