@@ -653,6 +653,30 @@ namespace Js2IL.Services.ILGenerators
                         }
                         // No further coercion for null compare
                     }
+                    // When comparing two non-literal values (identifiers, call results, member expressions, etc.),
+                    // convert both to numbers to ensure value comparison instead of reference comparison.
+                    // Skip if either side is a literal (already handled above) or if we're comparing strings.
+                    else if (leftType == JavascriptType.Object && rightType == JavascriptType.Object &&
+                             !(binaryExpression.Left is Acornima.Ast.Literal) && 
+                             !(binaryExpression.Right is Acornima.Ast.Literal))
+                    {
+                        // Store right operand in temp since we need to convert both
+                        int rhsTemp = _variables.AllocateBlockScopeLocal($"EqTmp_RHS_L{binaryExpression.Location.Start.Line}C{binaryExpression.Location.Start.Column}");
+                        _il.StoreLocal(rhsTemp);
+                        
+                        // Convert left operand to number
+                        var toNum = _runtime.GetStaticMethodRef(
+                            typeof(JavaScriptRuntime.TypeUtilities),
+                            nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                            typeof(double), typeof(object));
+                        _il.OpCode(ILOpCode.Call);
+                        _il.Token(toNum);
+                        
+                        // Load and convert right operand to number
+                        _il.LoadLocal(rhsTemp);
+                        _il.OpCode(ILOpCode.Call);
+                        _il.Token(toNum);
+                    }
                 }
             }
             else
