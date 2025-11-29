@@ -568,11 +568,12 @@ namespace Js2IL.Services.ILGenerators
                     {
                         // Build static method signature: object method(object, ...)
                         var sArgCount = callExpression.Arguments.Count;
-                        var sSig = new BlobBuilder();
-                        new BlobEncoder(sSig)
-                            .MethodSignature(isInstanceMethod: false)
-                            .Parameters(sArgCount, r => r.Type().Object(), p => { for (int i = 0; i < sArgCount; i++) p.AddParameter().Type().Object(); });
-                        var sMsig = _metadataBuilder.GetOrAddBlob(sSig);
+                        var sMsig = MethodBuilder.BuildMethodSignature(
+                            _metadataBuilder,
+                            isInstance: false,
+                            paramCount: sArgCount,
+                            hasScopesParam: false,
+                            returnsVoid: false);
                         var sMref = _metadataBuilder.AddMemberReference(classType, _metadataBuilder.GetOrAddString(methodName), sMsig);
                         // Push arguments
                         for (int i = 0; i < callExpression.Arguments.Count; i++)
@@ -649,13 +650,14 @@ namespace Js2IL.Services.ILGenerators
                             }
                             else
                             {
-                                // Method not registered (no default parameters) - use old logic
-                                var sig = new BlobBuilder();
-                                new BlobEncoder(sig)
-                                    .MethodSignature(isInstanceMethod: true)
-                                    .Parameters(argCount, r => r.Type().Object(), p => { for (int i = 0; i < argCount; i++) p.AddParameter().Type().Object(); });
-                                var msig = _metadataBuilder.GetOrAddBlob(sig);
-                                
+                                // Method not registered (no default parameters) - use shared helper
+                                var msig = MethodBuilder.BuildMethodSignature(
+                                    _metadataBuilder,
+                                    isInstance: true,
+                                    paramCount: argCount,
+                                    hasScopesParam: false,
+                                    returnsVoid: false);
+
                                 var mrefHandle = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(methodName), msig);
                                 // Push arguments
                                 EmitBoxedArgsInline(callExpression.Arguments);

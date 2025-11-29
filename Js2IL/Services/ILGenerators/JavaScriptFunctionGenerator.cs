@@ -342,21 +342,14 @@ namespace Js2IL.Services.ILGenerators
                 attributes: bodyAttributes);
 
             // Build method signature: static object (object[] scopes, object param1, ...)
-            var sigBuilder = new BlobBuilder();
-            var paramCount = 1 + functionDeclaration.Params.Count; // scope array + declared params
-            new BlobEncoder(sigBuilder)
-                .MethodSignature()
-                .Parameters(paramCount, returnType => returnType.Type().Object(), parameters =>
-                {
-                    // scope array parameter
-                    parameters.AddParameter().Type().SZArray().Object();
-                    // each JS parameter as System.Object for now
-                    foreach (var p in functionDeclaration.Params)
-                    {
-                        parameters.AddParameter().Type().Object();
-                    }
-                });
-            var methodSig = _metadataBuilder.GetOrAddBlob(sigBuilder);
+            // paramCount: scope array + declared params
+            var paramCount = 1 + functionDeclaration.Params.Count;
+            var methodSig = MethodBuilder.BuildMethodSignature(
+                _metadataBuilder,
+                isInstance: false,
+                paramCount: paramCount,
+                hasScopesParam: true,
+                returnsVoid: false);
 
             // Add parameters with names
             var scopeParamName = "scopes";

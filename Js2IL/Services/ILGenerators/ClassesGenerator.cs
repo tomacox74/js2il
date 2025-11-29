@@ -244,15 +244,10 @@ namespace Js2IL.Services.ILGenerators
             // Detect explicit constructor method (name 'constructor')
             var ctorMethod = cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>()
                 .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
-            if (ctorMethod != null && ctorMethod.Value is FunctionExpression ctorFunc)
-            {
-                EmitExplicitConstructor(tb, ctorFunc, fieldsWithInits, classScope, classNeedsParentScopes);
-            }
-            else
-            {
-                // Emit a parameterless .ctor that calls System.Object::.ctor and initializes fields
-                EmitParameterlessConstructor(tb, fieldsWithInits, classScope, classNeedsParentScopes);
-            }
+            
+            // Emit constructor - handles both explicit and parameterless cases
+            var ctorFunc = ctorMethod?.Value as FunctionExpression;
+            EmitConstructor(tb, ctorFunc, fieldsWithInits, classScope, classNeedsParentScopes);
 
             // Methods: create stubs for now; real method codegen will come later
             foreach (var element in cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>())
@@ -319,107 +314,39 @@ namespace Js2IL.Services.ILGenerators
             return "__js2il_priv_" + name;
         }
 
-        private MethodDefinitionHandle EmitParameterlessConstructor(
+        /// <summary>
+        /// Emits a constructor for the class, handling both parameterless and explicit constructors.
+        /// </summary>
+        /// <param name="tb">Type builder for adding the constructor definition.</param>
+        /// <param name="ctorFunc">The constructor function expression, or null for a parameterless constructor.</param>
+        /// <param name="fieldsWithInits">List of instance fields with their initializer expressions.</param>
+        /// <param name="classScope">The scope representing this class.</param>
+        /// <param name="needsScopes">Whether the constructor needs a scopes parameter for accessing parent scope variables.</param>
+        /// <returns>The method definition handle for the emitted constructor.</returns>
+        private MethodDefinitionHandle EmitConstructor(
             TypeBuilder tb,
+            FunctionExpression? ctorFunc,
             System.Collections.Generic.List<(FieldDefinitionHandle Field, Expression? Init)> fieldsWithInits,
             Scope classScope,
             bool needsScopes)
         {
             var className = classScope.Name;
-            
-            // Signature: instance void .ctor() or instance void .ctor(object[] scopes) depending on needsScopes
-            var sigBuilder = new BlobBuilder();
-            new BlobEncoder(sigBuilder)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(needsScopes ? 1 : 0, r => r.Void(), p => 
-                { 
-                    if (needsScopes)
-                    {
-                        p.AddParameter().Type().SZArray().Object();
-                    }
-                });
-            var ctorSig = _metadata.GetOrAddBlob(sigBuilder);
-
-            ParameterHandle? firstParam = null;
-            if (needsScopes)
-            {
-                firstParam = _metadata.AddParameter(ParameterAttributes.None, _metadata.GetOrAddString("scopes"), sequenceNumber: 1);
-            }
-
-            // Body - use ILMethodGenerator for consistent expression emission
-            var ilGen = new ILMethodGenerator(_variables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: true, currentClassName: className);
-            ilGen.IL.OpCode(ILOpCode.Ldarg_0);
-            ilGen.IL.Call(_bcl.Object_Ctor_Ref);
-
-            if (needsScopes)
-            {
-                ilGen.IL.OpCode(ILOpCode.Ldarg_0); // load this
-                ilGen.IL.OpCode(ILOpCode.Ldarg_1); // load scopes parameter
-                ilGen.IL.OpCode(ILOpCode.Stfld); // store to this._scopes
-                _classRegistry.TryGetPrivateField(className, "_scopes", out var _scopesFieldHandle);
-                ilGen.IL.Token(_scopesFieldHandle);
-            }
-
-            // Initialize fields with default values if provided using ILMethodGenerator.Emit
-            EmitFieldInitializers(ilGen, fieldsWithInits);
-
-            ilGen.IL.OpCode(ILOpCode.Ret);
-
-            var ctorBody = _methodBodies.AddMethodBody(ilGen.IL, maxStack: 32);
-            
-            if (needsScopes && firstParam.HasValue)
-            {
-                var ctorDef = tb.AddMethodDefinition(
-                    MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
-                    ".ctor",
-                    ctorSig,
-                    ctorBody,
-                    firstParam.Value);
-                _classRegistry.RegisterConstructor(className, ctorDef, ctorSig, 1, 1);
-                return ctorDef;
-            }
-            else
-            {
-                var ctorDef = tb.AddMethodDefinition(
-                    MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
-                    ".ctor",
-                    ctorSig,
-                    ctorBody);
-                _classRegistry.RegisterConstructor(className, ctorDef, ctorSig, 0, 0);
-                return ctorDef;
-            }
-        }
-
-        private MethodDefinitionHandle EmitExplicitConstructor(
-            TypeBuilder tb,
-            FunctionExpression ctorFunc,
-            System.Collections.Generic.List<(FieldDefinitionHandle Field, Expression? Init)> fieldsWithInits,
-            Scope classScope,
-            bool needsScopes)
-        {
-            var className = classScope.Name;
-            
-            // Signature: instance void .ctor(object, ...) or .ctor(object[] scopes, object, ...) depending on needsScopes
-            var userParamCount = ctorFunc.Params.Count;
+            var userParamCount = ctorFunc?.Params.Count ?? 0;
             var totalParamCount = needsScopes ? userParamCount + 1 : userParamCount;
-            var sigBuilder = new BlobBuilder();
-            new BlobEncoder(sigBuilder)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(totalParamCount, r => r.Void(), p => 
-                { 
-                    if (needsScopes)
-                    {
-                        p.AddParameter().Type().SZArray().Object(); // scopes parameter first
-                    }
-                    for (int i = 0; i < userParamCount; i++) 
-                    {
-                        p.AddParameter().Type().Object();
-                    }
-                });
-            var ctorSig = _metadata.GetOrAddBlob(sigBuilder);
 
-            // Create a generator with parameter variables so identifiers resolve
-            var paramNames = ILMethodGenerator.ExtractParameterNames(ctorFunc.Params);
+            // Build constructor signature using shared helper
+            var ctorSig = MethodBuilder.BuildMethodSignature(
+                _metadata,
+                isInstance: true,
+                paramCount: totalParamCount,
+                hasScopesParam: needsScopes,
+                returnsVoid: true);
+
+            // Create Variables context with appropriate parameter tracking
+            var paramNames = ctorFunc != null 
+                ? ILMethodGenerator.ExtractParameterNames(ctorFunc.Params)
+                : Enumerable.Empty<string>();
+                
             Variables methodVariables;
             if (needsScopes)
             {
@@ -429,19 +356,21 @@ namespace Js2IL.Services.ILGenerators
             }
             else
             {
+                // No scopes: arg0=this, user params start at arg1
                 methodVariables = new Variables(_variables, "constructor", paramNames, isNestedFunction: false);
             }
+            
             var ilGen = new ILMethodGenerator(methodVariables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: true, currentClassName: className);
 
-            // base .ctor
+            // Call base System.Object constructor
             ilGen.IL.OpCode(ILOpCode.Ldarg_0);
             ilGen.IL.Call(_bcl.Object_Ctor_Ref);
 
+            // Store scopes parameter to this._scopes field if needed
             if (needsScopes)
             {
-                // Store scopes parameter to this._scopes field
                 ilGen.IL.OpCode(ILOpCode.Ldarg_0); // load this
-                ilGen.IL.OpCode(ILOpCode.Ldarg_1); // load scopes parameter (first parameter)
+                ilGen.IL.OpCode(ILOpCode.Ldarg_1); // load scopes parameter
                 ilGen.IL.OpCode(ILOpCode.Stfld); // store to this._scopes
                 _classRegistry.TryGetPrivateField(className, "_scopes", out var _scopesFieldHandle);
                 ilGen.IL.Token(_scopesFieldHandle);
@@ -450,16 +379,21 @@ namespace Js2IL.Services.ILGenerators
             // Initialize fields with default values
             EmitFieldInitializers(ilGen, fieldsWithInits);
 
-            // Initialize default parameter values (constructors: arg0=this, arg1=scopes[] if needed, params start at arg2 or arg1)
-            ilGen.EmitDefaultParameterInitializers(ctorFunc.Params, parameterStartIndex: (ushort)(needsScopes ? 2 : 1));
-
-            // Emit constructor body statements (no default return value emission)
-            if (ctorFunc.Body is BlockStatement bstmt)
+            // Only emit constructor body logic if there's an explicit constructor
+            if (ctorFunc != null)
             {
-                // Create a scope instance when the constructor declares block-scoped locals (let/const)
-                // or has nested functions, so locals have storage and can be referenced.
-                bool needScopeInstance = ShouldCreateMethodScopeInstance(ctorFunc, classScope);
-                ilGen.GenerateStatementsForBody(methodVariables.GetLeafScopeName(), needScopeInstance, bstmt.Body);
+                // Initialize default parameter values
+                // (constructors: arg0=this, arg1=scopes[] if needed, user params start at arg2 or arg1)
+                ilGen.EmitDefaultParameterInitializers(ctorFunc.Params, parameterStartIndex: (ushort)(needsScopes ? 2 : 1));
+
+                // Emit constructor body statements
+                if (ctorFunc.Body is BlockStatement bstmt)
+                {
+                    // Create a scope instance when the constructor declares block-scoped locals (let/const)
+                    // or has nested functions, so locals have storage and can be referenced.
+                    bool needScopeInstance = ShouldCreateMethodScopeInstance(ctorFunc, classScope);
+                    ilGen.GenerateStatementsForBody(methodVariables.GetLeafScopeName(), needScopeInstance, bstmt.Body);
+                }
             }
 
             // Return from constructor (void)
@@ -482,14 +416,39 @@ namespace Js2IL.Services.ILGenerators
             }
 
             var ctorBody = _methodBodies.AddMethodBody(ilGen.IL, maxStack: 32, localVariablesSignature: localSignature, attributes: bodyAttributes);
+            
+            // Add parameter metadata for all parameters (scopes + user parameters) for better IL readability
+            // Parameters must be added before AddMethodDefinition so they can be referenced by the method
+            ParameterHandle paramList = default;
+            int seqNum = 1;
+            
+            // Add scopes parameter metadata if needed
+            if (needsScopes)
+            {
+                paramList = _metadata.AddParameter(ParameterAttributes.None, _metadata.GetOrAddString("scopes"), sequenceNumber: seqNum++);
+            }
+            
+            // Add metadata for user-defined parameters
+            if (ctorFunc != null)
+            {
+                foreach (var param in paramNames)
+                {
+                    var paramHandle = _metadata.AddParameter(ParameterAttributes.None, _metadata.GetOrAddString(param), sequenceNumber: seqNum++);
+                    // Remember first parameter handle for method definition
+                    if (paramList.IsNil)
+                        paramList = paramHandle;
+                }
+            }
+            
             var ctorDef = tb.AddMethodDefinition(
                 MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
                 ".ctor",
                 ctorSig,
-                ctorBody);
+                ctorBody,
+                paramList);
             
             // Calculate min/max parameter counts for default parameter support
-            int minUserParams = ILMethodGenerator.CountRequiredParameters(ctorFunc.Params);
+            int minUserParams = ctorFunc != null ? ILMethodGenerator.CountRequiredParameters(ctorFunc.Params) : 0;
             int minTotalParams = needsScopes ? minUserParams + 1 : minUserParams;
             int maxTotalParams = totalParamCount;
             
@@ -522,7 +481,14 @@ namespace Js2IL.Services.ILGenerators
         {
             var className = classScope.Name;
             var mname = (element.Key as Identifier)?.Name ?? "method";
-            var msig = BuildMethodSignature(element.Value as FunctionExpression, isStatic: element.Static);
+            var funcExpr = element.Value as FunctionExpression;
+            var paramCount = funcExpr != null ? funcExpr.Params.Count : 0;
+            var msig = MethodBuilder.BuildMethodSignature(
+                _metadata,
+                isInstance: !element.Static,
+                paramCount: paramCount,
+                hasScopesParam: false,
+                returnsVoid: false);
 
             // Use ILMethodGenerator for body emission to reuse existing statement/expression logic
             // Build method variables context (no JS parameters yet for class methods)
@@ -708,16 +674,5 @@ namespace Js2IL.Services.ILGenerators
             return null;
         }
 
-        private BlobHandle BuildMethodSignature(FunctionExpression? f, bool isStatic)
-        {
-            var paramCount = f != null ? f.Params.Count : 0;
-            var sig = new BlobBuilder();
-            new BlobEncoder(sig)
-                .MethodSignature(isInstanceMethod: !isStatic)
-                .Parameters(paramCount, r => r.Type().Object(), p => {
-                    for (int i = 0; i < paramCount; i++) p.AddParameter().Type().Object();
-                });
-            return _metadata.GetOrAddBlob(sig);
-        }
     }
 }
