@@ -653,10 +653,11 @@ namespace Js2IL.Services.ILGenerators
                         }
                         // No further coercion for null compare
                     }
-                    // When comparing two non-literal values (identifiers, call results, member expressions, etc.),
+                    // When comparing two non-literal, non-numeric, non-boolean values (likely boxed objects),
                     // convert both to numbers to ensure value comparison instead of reference comparison.
-                    // Skip if either side is a literal (already handled above) or if we're comparing strings.
-                    else if (leftType == JavascriptType.Object && rightType == JavascriptType.Object &&
+                    // This handles cases where type tracking returns Unknown or Object.
+                    else if (leftType != JavascriptType.Number && leftType != JavascriptType.Boolean &&
+                             rightType != JavascriptType.Number && rightType != JavascriptType.Boolean &&
                              !(binaryExpression.Left is Acornima.Ast.Literal) && 
                              !(binaryExpression.Right is Acornima.Ast.Literal))
                     {
