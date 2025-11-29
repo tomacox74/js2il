@@ -4,6 +4,9 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+### Fixed
+- Equality comparisons: fixed parameter equality comparisons by adding type coercion when comparing function parameters (boxed as Object) with numeric literals. The IL generator now emits `TypeUtilities.ToNumber()` call to convert boxed parameters to double before comparison with numeric literals, ensuring `ceq` instruction operates on compatible types.
+
 ## v0.3.3 - 2025-11-28
 
 ### Added
