@@ -448,6 +448,14 @@ namespace Js2IL.Services.ILGenerators
                     _il.Token(toBool);
                     leftType = JavascriptType.Boolean;
                 }
+                else if (leftType == JavascriptType.Object && (binaryExpression.Right is Acornima.Ast.NumericLiteral || (binaryExpression.Right is Acornima.Ast.UnaryExpression rur && rur.Operator.ToString() == "UnaryNegation" && rur.Argument is Acornima.Ast.NumericLiteral)))
+                {
+                    // If right is a numeric literal and left is object (e.g., parameter), convert left to number
+                    var toNum = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToNumber), typeof(double), typeof(object));
+                    _il.OpCode(ILOpCode.Call);
+                    _il.Token(toNum);
+                    leftType = JavascriptType.Number;
+                }
                 // otherwise leave as loaded (e.g., string/object) and Ceq will perform ref equality (acceptable for now)
             }
             else
