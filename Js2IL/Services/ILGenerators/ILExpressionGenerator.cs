@@ -1898,6 +1898,7 @@ namespace Js2IL.Services.ILGenerators
                     var coerceToInt32Ref = _owner.Runtime.GetStaticMethodRef(
                         typeof(JavaScriptRuntime.Object),
                         nameof(JavaScriptRuntime.Object.CoerceToInt32),
+                        typeof(int),
                         typeof(object));
                     _il.OpCode(ILOpCode.Call);
                     _il.Token(coerceToInt32Ref);
