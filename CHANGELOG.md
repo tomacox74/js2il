@@ -5,6 +5,7 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 ### Fixed
+- Compound bitwise assignments: fixed RHS type coercion bug when the right-hand side is a scope variable (let/const in class methods). Scope variables are stored as boxed objects in scope fields, and the RHS was not being properly unboxed before bitwise operations (|=, &=, ^=, <<=, >>=, >>>=). The generated IL code was loading the RHS as a boxed object then directly converting to int32 with `conv.i4`, which treated the object reference itself as an integer producing garbage values. Fixed by using `CoerceToInt32` (same pattern as LHS) to safely unbox and convert the RHS value. Added test case `CompoundAssignment_LocalVarIndex` that reproduces the bug with scope variables in compound assignments.
 - Equality comparisons: fixed parameter equality comparisons by adding type coercion when comparing function parameters (boxed as Object) with numeric literals. The IL generator now emits `TypeUtilities.ToNumber()` call to convert boxed parameters to double before comparison with numeric literals, ensuring `ceq` instruction operates on compatible types.
 
 ## v0.3.3 - 2025-11-28
