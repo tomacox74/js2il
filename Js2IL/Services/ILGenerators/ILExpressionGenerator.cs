@@ -1904,8 +1904,15 @@ namespace Js2IL.Services.ILGenerators
                     _il.Token(coerceToInt32Ref);
                     
                     // Evaluate RHS and convert to int32
-                    _ = Emit(assignmentExpression.Right, new TypeCoercion() { boxResult = false });
-                    _il.OpCode(ILOpCode.Conv_i4);
+                    // Use CoerceToInt32 to safely handle boxed values from scope fields
+                    _ = Emit(assignmentExpression.Right, new TypeCoercion() { boxResult = true });
+                    var coerceRhsRef = _owner.Runtime.GetStaticMethodRef(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.CoerceToInt32),
+                        typeof(int),
+                        typeof(object));
+                    _il.OpCode(ILOpCode.Call);
+                    _il.Token(coerceRhsRef);
                     
                     // Apply bitwise operation
                     _il.OpCode(compoundOp.Value);

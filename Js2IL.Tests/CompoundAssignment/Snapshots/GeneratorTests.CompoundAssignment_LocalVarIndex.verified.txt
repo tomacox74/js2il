@@ -1,0 +1,244 @@
+﻿// IL code: CompoundAssignment_LocalVarIndex
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.CompoundAssignment_LocalVarIndex
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit TestClass
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit constructor
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2062
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method constructor::.ctor
+
+		} // end of class constructor
+
+		.class nested public auto ansi beforefieldinit test
+			extends [System.Runtime]System.Object
+		{
+			// Fields
+			.field public object wordOffset
+			.field public object mask
+
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x206b
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method test::.ctor
+
+		} // end of class test
+
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method TestClass::.ctor
+
+	} // end of class TestClass
+
+
+	// Fields
+	.field public object TestClass
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method CompoundAssignment_LocalVarIndex::.ctor
+
+} // end of class Scopes.CompoundAssignment_LocalVarIndex
+
+.class public auto ansi beforefieldinit Classes.TestClass
+	extends [System.Runtime]System.Object
+{
+	// Fields
+	.field private object[] _scopes
+	.field public object arr
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor (
+			object[] ''
+		) cil managed 
+	{
+		// Method begins at RVA 0x2074
+		// Header size: 12
+		// Code size: 39 (0x27)
+		.maxstack 32
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: ldarg.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object[] Classes.TestClass::_scopes
+		IL_000d: ldarg.0
+		IL_000e: ldc.r8 5
+		IL_0017: box [System.Runtime]System.Double
+		IL_001c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
+		IL_0021: stfld object Classes.TestClass::arr
+		IL_0026: ret
+	} // end of method TestClass::.ctor
+
+	.method public hidebysig 
+		instance object test () cil managed 
+	{
+		// Method begins at RVA 0x20a8
+		// Header size: 12
+		// Code size: 195 (0xc3)
+		.maxstack 32
+		.locals init (
+			[0] object,
+			[1] object,
+			[2] object,
+			[3] object
+		)
+
+		IL_0000: newobj instance void Scopes.CompoundAssignment_LocalVarIndex/TestClass/test::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: castclass Scopes.CompoundAssignment_LocalVarIndex/TestClass/test
+		IL_000c: ldc.r8 2
+		IL_0015: box [System.Runtime]System.Double
+		IL_001a: stfld object Scopes.CompoundAssignment_LocalVarIndex/TestClass/test::wordOffset
+		IL_001f: ldloc.0
+		IL_0020: castclass Scopes.CompoundAssignment_LocalVarIndex/TestClass/test
+		IL_0025: ldc.r8 8
+		IL_002e: box [System.Runtime]System.Double
+		IL_0033: stfld object Scopes.CompoundAssignment_LocalVarIndex/TestClass/test::mask
+		IL_0038: ldc.i4.1
+		IL_0039: newarr [System.Runtime]System.Object
+		IL_003e: dup
+		IL_003f: ldc.i4.0
+		IL_0040: ldarg.0
+		IL_0041: ldfld object Classes.TestClass::arr
+		IL_0046: ldloc.0
+		IL_0047: castclass Scopes.CompoundAssignment_LocalVarIndex/TestClass/test
+		IL_004c: ldfld object Scopes.CompoundAssignment_LocalVarIndex/TestClass/test::wordOffset
+		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0056: stelem.ref
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_005c: pop
+		IL_005d: ldarg.0
+		IL_005e: ldfld object Classes.TestClass::arr
+		IL_0063: stloc.1
+		IL_0064: ldloc.1
+		IL_0065: ldloc.0
+		IL_0066: castclass Scopes.CompoundAssignment_LocalVarIndex/TestClass/test
+		IL_006b: ldfld object Scopes.CompoundAssignment_LocalVarIndex/TestClass/test::wordOffset
+		IL_0070: stloc.2
+		IL_0071: ldloc.2
+		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0077: call int32 [JavaScriptRuntime]JavaScriptRuntime.Object::CoerceToInt32(object)
+		IL_007c: ldloc.0
+		IL_007d: castclass Scopes.CompoundAssignment_LocalVarIndex/TestClass/test
+		IL_0082: ldfld object Scopes.CompoundAssignment_LocalVarIndex/TestClass/test::mask
+		IL_0087: call int32 [JavaScriptRuntime]JavaScriptRuntime.Object::CoerceToInt32(object)
+		IL_008c: or
+		IL_008d: box [System.Runtime]System.Int32
+		IL_0092: stloc.3
+		IL_0093: ldloc.1
+		IL_0094: ldloc.2
+		IL_0095: ldloc.3
+		IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.Object::AssignItem(object, object, object)
+		IL_009b: pop
+		IL_009c: ldc.i4.1
+		IL_009d: newarr [System.Runtime]System.Object
+		IL_00a2: dup
+		IL_00a3: ldc.i4.0
+		IL_00a4: ldarg.0
+		IL_00a5: ldfld object Classes.TestClass::arr
+		IL_00aa: ldloc.0
+		IL_00ab: castclass Scopes.CompoundAssignment_LocalVarIndex/TestClass/test
+		IL_00b0: ldfld object Scopes.CompoundAssignment_LocalVarIndex/TestClass/test::wordOffset
+		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00ba: stelem.ref
+		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00c0: pop
+		IL_00c1: ldarg.0
+		IL_00c2: ret
+	} // end of method TestClass::test
+
+} // end of class Classes.TestClass
+
+.class public auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2178
+		// Header size: 12
+		// Code size: 44 (0x2c)
+		.maxstack 32
+		.entrypoint
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: newobj instance void Scopes.CompoundAssignment_LocalVarIndex::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldloc.0
+		IL_000f: castclass Scopes.CompoundAssignment_LocalVarIndex
+		IL_0014: stelem.ref
+		IL_0015: newobj instance void Classes.TestClass::.ctor(object[])
+		IL_001a: ldstr "test"
+		IL_001f: ldc.i4.0
+		IL_0020: newarr [System.Runtime]System.Object
+		IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_002a: pop
+		IL_002b: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

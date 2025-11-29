@@ -47,5 +47,8 @@ namespace Js2IL.Tests.CompoundAssignment
 
         [Fact]
         public Task CompoundAssignment_ExponentiationAssignment() { var testName = nameof(CompoundAssignment_ExponentiationAssignment); return GenerateTest(testName); }
+
+        [Fact]
+        public Task CompoundAssignment_LocalVarIndex() { var testName = nameof(CompoundAssignment_LocalVarIndex); return GenerateTest(testName); }
     }
 }
