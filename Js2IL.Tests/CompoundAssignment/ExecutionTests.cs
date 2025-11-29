@@ -17,6 +17,9 @@ namespace Js2IL.Tests.CompoundAssignment
         public Task CompoundAssignment_BitwiseAndAssignment() { var testName = nameof(CompoundAssignment_BitwiseAndAssignment); return ExecutionTest(testName); }
 
         [Fact]
+        public Task CompoundAssignment_ArrayIndexBitwiseOr() { var testName = nameof(CompoundAssignment_ArrayIndexBitwiseOr); return ExecutionTest(testName); }
+
+        [Fact]
         public Task CompoundAssignment_BitwiseXorAssignment() { var testName = nameof(CompoundAssignment_BitwiseXorAssignment); return ExecutionTest(testName); }
 
         // Shift compound assignments
