@@ -387,25 +387,76 @@ namespace Js2IL.Services.ILGenerators
                 ushort paramStartIndex = (ushort)(needsScopes ? 2 : 1);
                 ilGen.EmitDefaultParameterInitializers(ctorFunc.Params, parameterStartIndex: paramStartIndex);
 
-                // Emit object-pattern parameter destructuring if any parameters use destructuring syntax
-                var runtime = new Runtime(_metadata, ilGen.IL);
-                MethodBuilder.EmitObjectPatternParameterDestructuring(
-                    _metadata,
-                    ilGen.IL,
-                    runtime,
-                    methodVariables,
-                    "constructor",
-                    ctorFunc.Params,
-                    startingJsParamSeq: paramStartIndex,
-                    castScopeForStore: true);
+                // Check if constructor needs a scope instance for destructured parameters or block-scoped locals
+                bool hasDestructuredParams = ctorFunc.Params.Any(p => p is ObjectPattern);
+                bool needScopeInstance = hasDestructuredParams || ShouldCreateMethodScopeInstance(ctorFunc, classScope);
+                
+                // If we have destructured parameters, initialize them early before the body runs
+                // This requires creating the scope instance first if one is needed
+                if (hasDestructuredParams && needScopeInstance)
+                {
+                    var registry = methodVariables.GetVariableRegistry();
+                    if (registry != null)
+                    {
+                        var fields = registry.GetVariablesForScope("constructor");
+                        if (fields != null && fields.Any())
+                        {
+                            // Create the scope instance early so we can initialize destructured params
+                            ScopeInstanceEmitter.EmitCreateLeafScopeInstance(methodVariables, ilGen.IL, _metadata);
+                            
+                            // Initialize destructured parameters into scope fields
+                            var localScope = methodVariables.GetLocalScopeSlot();
+                            if (localScope.Address >= 0)
+                            {
+                                var fieldNames = new System.Collections.Generic.HashSet<string>(fields.Select(f => f.Name));
+                                ushort jsParamSeq = paramStartIndex;
+                                
+                                // Initialize simple identifier params first
+                                for (int i = 0; i < ctorFunc.Params.Count; i++)
+                                {
+                                    var paramNode = ctorFunc.Params[i];
+                                    Identifier? pid = paramNode as Identifier;
+                                    if (pid == null && paramNode is AssignmentPattern ap)
+                                    {
+                                        pid = ap.Left as Identifier;
+                                    }
+                                    
+                                    if (pid != null && fieldNames.Contains(pid.Name))
+                                    {
+                                        ilGen.IL.LoadLocal(localScope.Address);
+                                        var scopeTypeHandle = registry.GetScopeTypeHandle("constructor");
+                                        ilGen.IL.OpCode(ILOpCode.Castclass);
+                                        ilGen.IL.Token(scopeTypeHandle);
+                                        ilGen.EmitLoadParameterWithDefault(paramNode, jsParamSeq);
+                                        var fieldHandle = registry.GetFieldHandle("constructor", pid.Name);
+                                        ilGen.IL.OpCode(ILOpCode.Stfld);
+                                        ilGen.IL.Token(fieldHandle);
+                                    }
+                                    jsParamSeq++;
+                                }
+                                
+                                // Now handle object-pattern destructuring
+                                var runtime = new Runtime(_metadata, ilGen.IL);
+                                MethodBuilder.EmitObjectPatternParameterDestructuring(
+                                    _metadata,
+                                    ilGen.IL,
+                                    runtime,
+                                    methodVariables,
+                                    "constructor",
+                                    ctorFunc.Params,
+                                    startingJsParamSeq: paramStartIndex,
+                                    castScopeForStore: true);
+                            }
+                        }
+                    }
+                }
 
                 // Emit constructor body statements
                 if (ctorFunc.Body is BlockStatement bstmt)
                 {
-                    // Create a scope instance when the constructor declares block-scoped locals (let/const)
-                    // or has nested functions, so locals have storage and can be referenced.
-                    bool needScopeInstance = ShouldCreateMethodScopeInstance(ctorFunc, classScope);
-                    ilGen.GenerateStatementsForBody(methodVariables.GetLeafScopeName(), needScopeInstance, bstmt.Body);
+                    // Pass false if we already created the scope, true if GenerateStatementsForBody should create it
+                    bool shouldCreateScope = needScopeInstance && !hasDestructuredParams;
+                    ilGen.GenerateStatementsForBody(methodVariables.GetLeafScopeName(), shouldCreateScope, bstmt.Body);
                 }
             }
 

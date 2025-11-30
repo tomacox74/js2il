@@ -90,5 +90,14 @@ namespace Js2IL.Tests.Classes
             var testName = nameof(Classes_PrimeCtor_BitArrayAdd);
             return ExecutionTest(testName, allowUnhandledException: true);
         }
+
+        // Test parameter destructuring in class constructors
+        // Skip: Requires symbol table to analyze constructor parameters for ObjectPattern bindings
+        [Fact]
+        public Task Classes_ConstructorParameterDestructuring()
+        {
+            var testName = nameof(Classes_ConstructorParameterDestructuring);
+            return ExecutionTest(testName);
+        }
     }
 }

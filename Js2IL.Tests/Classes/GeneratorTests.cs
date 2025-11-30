@@ -94,5 +94,13 @@ namespace Js2IL.Tests.Classes
             var testName = nameof(Classes_PrimeCtor_BitArrayAdd);
             return GenerateTest(testName);
         }
+
+        // Test parameter destructuring in class constructors
+        [Fact]
+        public Task Classes_ConstructorParameterDestructuring()
+        {
+            var testName = nameof(Classes_ConstructorParameterDestructuring);
+            return GenerateTest(testName);
+        }
     }
 }

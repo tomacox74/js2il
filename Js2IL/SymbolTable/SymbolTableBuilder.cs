@@ -287,6 +287,21 @@ namespace Js2IL.SymbolTables
                                     methodScope.Bindings[apId.Name] = new BindingInfo(apId.Name, BindingKind.Var, apId);
                                     methodScope.Parameters.Add(apId.Name);
                                 }
+                                else if (p is ObjectPattern op)
+                                {
+                                    // Destructuring parameter - register bindings for each property
+                                    foreach (var pnode in op.Properties)
+                                    {
+                                        if (pnode is Property prop)
+                                        {
+                                            var bindId = prop.Value as Identifier ?? prop.Key as Identifier;
+                                            if (bindId != null && !methodScope.Bindings.ContainsKey(bindId.Name))
+                                            {
+                                                methodScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, bindId);
+                                            }
+                                        }
+                                    }
+                                }
                             }
                             if (mfunc.Body is BlockStatement mblock)
                             {
