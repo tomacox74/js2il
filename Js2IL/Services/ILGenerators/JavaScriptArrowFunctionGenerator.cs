@@ -58,27 +58,14 @@ namespace Js2IL.Services.ILGenerators
                     ScopeInstanceEmitter.EmitCreateLeafScopeInstance(functionVariables, il, _metadataBuilder);
                     localScope = functionVariables.GetLocalScopeSlot();
                 }
-                ushort jsParamSeq = 1;
-                for (int i = 0; i < arrowFunction.Params.Count; i++)
-                {
-                    var pnode = arrowFunction.Params[i];
-                    if (pnode is ObjectPattern op)
-                    {
-                        foreach (var prop in op.Properties)
-                        {
-                            if (prop is Property p)
-                            {
-                                var bindId = p.Value as Identifier ?? p.Key as Identifier;
-                                if (bindId == null) continue;
-                                var targetVar = functionVariables.FindVariable(bindId.Name);
-                                if (targetVar == null) continue;
-                                var propName = (p.Key as Identifier)?.Name ?? (p.Key as Literal)?.Value?.ToString() ?? string.Empty;
-                                ObjectPatternHelpers.EmitParamDestructuring(il, _metadataBuilder, childGen.Runtime, functionVariables, targetVar, jsParamSeq, propName);
-                            }
-                        }
-                    }
-                    jsParamSeq++;
-                }
+                MethodBuilder.EmitObjectPatternParameterDestructuring(
+                    _metadataBuilder,
+                    il,
+                    childGen.Runtime,
+                    functionVariables,
+                    registryScopeName,
+                    arrowFunction.Params,
+                    startingJsParamSeq: 1);
             }
 
             if (arrowFunction.Body is BlockStatement block)
