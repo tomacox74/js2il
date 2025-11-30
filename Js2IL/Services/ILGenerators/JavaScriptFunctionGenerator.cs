@@ -257,42 +257,17 @@ namespace Js2IL.Services.ILGenerators
                             jsParamSeq++;
                         }
                     
-                        // Destructure object-pattern parameters into their bound fields
-                        jsParamSeq = 1;
-                        for (int i = 0; i < functionDeclaration.Params.Count; i++)
-                        {
-                            var pnode = functionDeclaration.Params[i];
-                            if (pnode is Acornima.Ast.ObjectPattern op)
-                            {
-                                foreach (var propNode in op.Properties)
-                                {
-                                    if (propNode is Acornima.Ast.Property p)
-                                    {
-                                        // Binding identifier: value id for alias, else shorthand key id
-                                        var bindId = p.Value as Acornima.Ast.Identifier ?? p.Key as Acornima.Ast.Identifier;
-                                        if (bindId == null) continue;
-                                        // Ensure this binding has a field (created via TypeGenerator)
-                                        if (!fieldNames.Contains(bindId.Name)) continue;
-
-                                        // Load scope instance and cast
-                                        il.LoadLocal(localScope.Address);
-                                        // Load argument corresponding to this param
-                                        il.LoadArgument(jsParamSeq);
-                                        // Push property name to read from incoming object
-                                        var propName = (p.Key as Acornima.Ast.Identifier)?.Name
-                                            ?? (p.Key as Acornima.Ast.Literal)?.Value?.ToString()
-                                            ?? string.Empty;
-                                        il.Ldstr(_metadataBuilder, propName);
-                                        var getPropRef = runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), typeof(object), typeof(object), typeof(string));
-                                        il.OpCode(ILOpCode.Call); il.Token(getPropRef);
-                                        // Store into the corresponding field
-                                        var fieldHandle = registry.GetFieldHandle(functionName, bindId.Name);
-                                        il.OpCode(ILOpCode.Stfld); il.Token(fieldHandle);
-                                    }
-                                }
-                            }
-                            jsParamSeq++;
-                        }
+                        // Destructure object-pattern parameters into their bound fields (shared helper)
+                        MethodBuilder.EmitObjectPatternParameterDestructuring(
+                            _metadataBuilder,
+                            il,
+                            runtime,
+                            variables,
+                            functionName,
+                            functionDeclaration.Params,
+                            methodGenerator.ExpressionEmitter,
+                            startingJsParamSeq: 1,
+                            castScopeForStore: false);
                     }
                 }
             }
@@ -342,21 +317,14 @@ namespace Js2IL.Services.ILGenerators
                 attributes: bodyAttributes);
 
             // Build method signature: static object (object[] scopes, object param1, ...)
-            var sigBuilder = new BlobBuilder();
-            var paramCount = 1 + functionDeclaration.Params.Count; // scope array + declared params
-            new BlobEncoder(sigBuilder)
-                .MethodSignature()
-                .Parameters(paramCount, returnType => returnType.Type().Object(), parameters =>
-                {
-                    // scope array parameter
-                    parameters.AddParameter().Type().SZArray().Object();
-                    // each JS parameter as System.Object for now
-                    foreach (var p in functionDeclaration.Params)
-                    {
-                        parameters.AddParameter().Type().Object();
-                    }
-                });
-            var methodSig = _metadataBuilder.GetOrAddBlob(sigBuilder);
+            // paramCount: scope array + declared params
+            var paramCount = 1 + functionDeclaration.Params.Count;
+            var methodSig = MethodBuilder.BuildMethodSignature(
+                _metadataBuilder,
+                isInstance: false,
+                paramCount: paramCount,
+                hasScopesParam: true,
+                returnsVoid: false);
 
             // Add parameters with names
             var scopeParamName = "scopes";
