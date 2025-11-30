@@ -107,6 +107,11 @@ x is  3
 - Experimental.
 - Not all JavaScript features are supported; `eval` is not supported.
 
+### Recent improvements (refactor/method-signature-builder branch)
+- **Default values in destructuring patterns**: Object destructuring now fully supports default parameter values in function signatures, class constructors, and class methods (e.g., `function config({host = "localhost", port = 8080}) {...}`).
+- **Refactored method signature builder**: Consolidated parameter destructuring logic into shared `MethodBuilder` helpers with improved IL generation for conditional default value handling.
+- **Enhanced test coverage**: Comprehensive tests validate default values work correctly across all function types (regular functions, arrow functions, class constructors, and class methods).
+
 Errors and exit codes
 - Known failures (validation, invalid output path, etc.) print to stderr and exit with a non-zero code.
 - Unexpected exceptions propagate and crash normally (standard .NET behavior).

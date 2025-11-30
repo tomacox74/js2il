@@ -158,7 +158,16 @@
                     "Js2IL.Tests/Function/JavaScript/Function_ParameterDestructuring_Object.js",
                     "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_ParameterDestructuring_Object.js"
                   ],
-                  "notes": "Supports object binding patterns in formal parameters for function declarations and arrow functions, including shorthand (e.g., {a,b}) and aliasing (e.g., { a: x }). Limitations: no default values, no nested patterns, no rest properties, and no array patterns in parameters. Properties are retrieved via JavaScriptRuntime.Object.GetProperty and bound into the function scope before body execution."
+                  "notes": "Supports object binding patterns in formal parameters for function declarations and arrow functions, including shorthand (e.g., {a,b}), aliasing (e.g., { a: x }), and default values (e.g., {host=\"localhost\", port=8080}). Default values use conditional IL generation with brfalse branching: property is retrieved, if null the default expression is evaluated, otherwise the retrieved value is used. Limitations: no nested patterns, no rest properties, and no array patterns in parameters. Properties are retrieved via JavaScriptRuntime.Object.GetProperty and bound into the function scope before body execution."
+                },
+                {
+                  "feature": "Object destructuring in class constructor/method parameters",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_ParameterDestructuring.js",
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_ParameterDestructuring.js"
+                  ],
+                  "notes": "Class constructors and instance methods support object destructuring parameters with full default value support (e.g., constructor({host=\"localhost\", port=8080})). Uses the same conditional IL generation as functions/arrows. Shared implementation in MethodBuilder.EmitObjectPatternParameterDestructuring handles all function types uniformly. Supports shorthand, aliasing, and default values. Limitations: no nested patterns, no rest properties, no array patterns."
                 }
               ]
             },
@@ -1288,17 +1297,19 @@
                   "feature": "Constructor default parameters",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/Classes/JavaScript/Classes_DefaultParameterValue_Constructor.js"
+                    "Js2IL.Tests/Classes/JavaScript/Classes_DefaultParameterValue_Constructor.js",
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_ParameterDestructuring.js"
                   ],
-                  "notes": "Class constructors support default parameter values. Call sites validate argument count against min/max parameter bounds and pad missing optional arguments with ldnull. Default values are applied using starg IL pattern when arguments are null."
+                  "notes": "Class constructors support default parameter values and destructuring with defaults. Call sites validate argument count against min/max parameter bounds and pad missing optional arguments with ldnull. Default values are applied using starg IL pattern when arguments are null. Object destructuring parameters support default values (e.g., constructor({host=\"localhost\", port=8080})) with conditional IL generation."
                 },
                 {
                   "feature": "Instance method default parameters",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/Classes/JavaScript/Classes_DefaultParameterValue_Method.js"
+                    "Js2IL.Tests/Classes/JavaScript/Classes_DefaultParameterValue_Method.js",
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_ParameterDestructuring.js"
                   ],
-                  "notes": "Class instance methods support default parameter values. Methods are registered in ClassRegistry with min/max parameter counts. Call sites validate argument count ranges and pad missing optional parameters with ldnull before callvirt."
+                  "notes": "Class instance methods support default parameter values and destructuring with defaults. Methods are registered in ClassRegistry with min/max parameter counts. Call sites validate argument count ranges and pad missing optional parameters with ldnull before callvirt. Object destructuring parameters support default values with conditional IL generation."
                 }
               ]
             }
