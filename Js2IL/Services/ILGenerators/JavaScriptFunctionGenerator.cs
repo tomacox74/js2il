@@ -265,6 +265,7 @@ namespace Js2IL.Services.ILGenerators
                             variables,
                             functionName,
                             functionDeclaration.Params,
+                            methodGenerator.ExpressionEmitter,
                             startingJsParamSeq: 1,
                             castScopeForStore: false);
                     }

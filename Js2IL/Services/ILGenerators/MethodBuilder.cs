@@ -61,10 +61,8 @@ namespace Js2IL.Services.ILGenerators
         }
 
         /// <summary>
-        /// Emit object-pattern parameter destructuring stores for a function/arrow function.
-        /// Assumes default parameter initializers have already been applied and any needed scope instance
-        /// has been created by the caller when fields exist. This only emits destructuring stores for
-        /// bindings that have backing fields in the current scope.
+        /// Emit object-pattern parameter destructuring stores with support for default values.
+        /// Default values in patterns like { host = "localhost" } are properly handled.
         /// </summary>
         public static void EmitObjectPatternParameterDestructuring(
             MetadataBuilder metadataBuilder,
@@ -73,6 +71,7 @@ namespace Js2IL.Services.ILGenerators
             Variables variables,
             string scopeName,
             IReadOnlyList<Node> parameters,
+            IMethodExpressionEmitter expressionEmitter,
             ushort startingJsParamSeq = 1,
             bool castScopeForStore = true)
         {
@@ -93,29 +92,148 @@ namespace Js2IL.Services.ILGenerators
                     {
                         if (propNode is Property p)
                         {
-                            var bindId = p.Value as Identifier ?? p.Key as Identifier;
+                            // Extract identifier and check for default value
+                            // Property.Value can be:
+                            // - Identifier: simple binding like { host }
+                            // - AssignmentPattern: binding with default like { host = "localhost" }
+                            Identifier? bindId = null;
+                            Expression? defaultValue = null;
+                            
+                            if (p.Value is Identifier id)
+                            {
+                                bindId = id;
+                            }
+                            else if (p.Value is AssignmentPattern ap)
+                            {
+                                bindId = ap.Left as Identifier;
+                                defaultValue = ap.Right;
+                            }
+                            else if (p.Key is Identifier keyId)
+                            {
+                                // Fallback: shorthand property
+                                bindId = keyId;
+                            }
+                            
                             if (bindId == null) continue;
                             if (!fieldNames.Contains(bindId.Name)) continue;
+                            
                             var propName = (p.Key as Identifier)?.Name
                                 ?? (p.Key as Literal)?.Value?.ToString()
                                 ?? string.Empty;
+                                
                             if (castScopeForStore)
                             {
                                 var targetVar = variables.FindVariable(bindId.Name);
                                 if (targetVar == null || targetVar.FieldHandle.IsNil) continue;
-                                ObjectPatternHelpers.EmitParamDestructuring(il, metadataBuilder, runtime, variables, targetVar, jsParamSeq, propName);
+                                
+                                if (defaultValue != null)
+                                {
+                                    // With default value and castScopeForStore: check if property is null/undefined
+                                    // Pattern: temp = GetProperty(param, propName)
+                                    //          if (temp != null) scope.field = temp; else scope.field = defaultValue;
+                                    
+                                    int tempLocal = variables.AllocateBlockScopeLocal($"DestructTemp_{propName}_L{p.Location.Start.Line}");
+                                    
+                                    // Get property value into temp
+                                    il.LoadArgument(jsParamSeq);
+                                    il.Ldstr(metadataBuilder, propName);
+                                    var getPropRef = runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), typeof(object), typeof(object), typeof(string));
+                                    il.OpCode(System.Reflection.Metadata.ILOpCode.Call); il.Token(getPropRef);
+                                    il.StoreLocal(tempLocal);
+                                    
+                                    // Check if temp is null
+                                    il.LoadLocal(tempLocal);
+                                    var labelUseDefault = il.DefineLabel();
+                                    var labelEnd = il.DefineLabel();
+                                    il.Branch(System.Reflection.Metadata.ILOpCode.Brfalse, labelUseDefault);
+                                    
+                                    // Not null: load scope, cast if needed, load temp, store to field
+                                    var tslot = variables.GetScopeLocalSlot(targetVar.ScopeName);
+                                    if (tslot.Location == ObjectReferenceLocation.Parameter) il.LoadArgument(tslot.Address);
+                                    else if (tslot.Location == ObjectReferenceLocation.ScopeArray) { il.LoadArgument(0); il.LoadConstantI4(tslot.Address); il.OpCode(System.Reflection.Metadata.ILOpCode.Ldelem_ref); }
+                                    else il.LoadLocal(tslot.Address);
+                                    var tScopeType = variables.GetVariableRegistry()?.GetScopeTypeHandle(targetVar.ScopeName) ?? default;
+                                    if (!tScopeType.IsNil) { il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass); il.Token(tScopeType); }
+                                    il.LoadLocal(tempLocal);
+                                    il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld); il.Token(targetVar.FieldHandle);
+                                    il.Branch(System.Reflection.Metadata.ILOpCode.Br, labelEnd);
+                                    
+                                    // Null: load scope, cast if needed, emit default expression, store to field
+                                    il.MarkLabel(labelUseDefault);
+                                    if (tslot.Location == ObjectReferenceLocation.Parameter) il.LoadArgument(tslot.Address);
+                                    else if (tslot.Location == ObjectReferenceLocation.ScopeArray) { il.LoadArgument(0); il.LoadConstantI4(tslot.Address); il.OpCode(System.Reflection.Metadata.ILOpCode.Ldelem_ref); }
+                                    else il.LoadLocal(tslot.Address);
+                                    if (!tScopeType.IsNil) { il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass); il.Token(tScopeType); }
+                                    expressionEmitter.Emit(defaultValue, new TypeCoercion { boxResult = true });
+                                    il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld); il.Token(targetVar.FieldHandle);
+                                    
+                                    il.MarkLabel(labelEnd);
+                                }
+                                else
+                                {
+                                    // No default: use existing helper
+                                    ObjectPatternHelpers.EmitParamDestructuring(il, metadataBuilder, runtime, variables, targetVar, jsParamSeq, propName);
+                                }
                             }
                             else
                             {
                                 var localScope = variables.GetLocalScopeSlot();
                                 if (localScope.Address < 0) continue;
-                                il.LoadLocal(localScope.Address);
-                                il.LoadArgument(jsParamSeq);
-                                il.Ldstr(metadataBuilder, propName);
-                                var getPropRef = runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), typeof(object), typeof(object), typeof(string));
-                                il.OpCode(System.Reflection.Metadata.ILOpCode.Call); il.Token(getPropRef);
                                 var fieldHandle = registry.GetFieldHandle(scopeName, bindId.Name);
-                                il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld); il.Token(fieldHandle);
+                                var scopeTypeHandle = registry.GetScopeTypeHandle(scopeName);
+
+                                if (defaultValue != null)
+                                {
+                                    // With default value: check if property is null/undefined, use default if so
+                                    // Pattern: 
+                                    //   temp = Object.GetProperty(param, propName)
+                                    //   if (temp != null) scope.field = temp; else scope.field = defaultValue;
+                                    
+                                    // Get the property value into a temporary local
+                                    int tempLocal = variables.AllocateBlockScopeLocal($"DestructTemp_{propName}_L{p.Location.Start.Line}");
+                                    il.LoadArgument(jsParamSeq);
+                                    il.Ldstr(metadataBuilder, propName);
+                                    var getPropRef = runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), typeof(object), typeof(object), typeof(string));
+                                    il.OpCode(System.Reflection.Metadata.ILOpCode.Call); 
+                                    il.Token(getPropRef);
+                                    il.StoreLocal(tempLocal);
+                                    
+                                    // Check if temp is null
+                                    il.LoadLocal(tempLocal);
+                                    var labelUseDefault = il.DefineLabel();
+                                    var labelEnd = il.DefineLabel();
+                                    il.Branch(System.Reflection.Metadata.ILOpCode.Brfalse, labelUseDefault);
+                                    
+                                    // Not null: store the extracted value
+                                    il.LoadLocal(localScope.Address);
+                                    if (castScopeForStore && !scopeTypeHandle.IsNil) { il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass); il.Token(scopeTypeHandle); }
+                                    il.LoadLocal(tempLocal);
+                                    il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld); 
+                                    il.Token(fieldHandle);
+                                    il.Branch(System.Reflection.Metadata.ILOpCode.Br, labelEnd);
+                                    
+                                    // Null/undefined: use default value
+                                    il.MarkLabel(labelUseDefault);
+                                    il.LoadLocal(localScope.Address);
+                                    if (castScopeForStore && !scopeTypeHandle.IsNil) { il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass); il.Token(scopeTypeHandle); }
+                                    expressionEmitter.Emit(defaultValue, new TypeCoercion { boxResult = true });
+                                    il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld); 
+                                    il.Token(fieldHandle);
+                                    il.MarkLabel(labelEnd);
+                                }
+                                else
+                                {
+                                    // No default value: simple extraction
+                                    il.LoadLocal(localScope.Address);
+                                    if (castScopeForStore && !scopeTypeHandle.IsNil) { il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass); il.Token(scopeTypeHandle); }
+                                    il.LoadArgument(jsParamSeq);
+                                    il.Ldstr(metadataBuilder, propName);
+                                    var getPropRef = runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), typeof(object), typeof(object), typeof(string));
+                                    il.OpCode(System.Reflection.Metadata.ILOpCode.Call); 
+                                    il.Token(getPropRef);
+                                    il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld); 
+                                    il.Token(fieldHandle);
+                                }
                             }
                         }
                     }

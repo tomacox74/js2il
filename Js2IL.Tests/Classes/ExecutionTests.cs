@@ -15,7 +15,6 @@ namespace Js2IL.Tests.Classes
             return ExecutionTest(testName, allowUnhandledException: true);
         }
 
-        // Classes tests
         [Fact] public Task Classes_ClassConstructor_AccessFunctionVariable_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariable_Log); return ExecutionTest(testName, allowUnhandledException: true); }
         [Fact] public Task Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariable_Log); return ExecutionTest(testName, allowUnhandledException: true); }
         [Fact] public Task Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariableAndGlobalVariableAndParameterValue_Log); return ExecutionTest(testName, allowUnhandledException: true); }
@@ -42,6 +41,14 @@ namespace Js2IL.Tests.Classes
             return ExecutionTest(testName, allowUnhandledException: true);
         }
 
+        // Test parameter destructuring in class constructors
+        [Fact]
+        public Task Classes_ClassConstructor_ParameterDestructuring()
+        {
+            var testName = nameof(Classes_ClassConstructor_ParameterDestructuring);
+            return ExecutionTest(testName);
+        }
+
         [Fact] public Task Classes_ClassConstructor_Param_Field_Log() { var testName = nameof(Classes_ClassConstructor_Param_Field_Log); return ExecutionTest(testName); }
         [Fact] public Task Classes_ClassConstructor_TwoParams_AddMethod() { var testName = nameof(Classes_ClassConstructor_TwoParams_AddMethod); return ExecutionTest(testName); }
         [Fact] public Task Classes_ClassConstructor_TwoParams_SubtractMethod() { var testName = nameof(Classes_ClassConstructor_TwoParams_SubtractMethod); return ExecutionTest(testName); }
@@ -53,6 +60,15 @@ namespace Js2IL.Tests.Classes
         [Fact] public Task Classes_ClassMethod_AccessGlobalVariable_Log() { var testName = nameof(Classes_ClassMethod_AccessGlobalVariable_Log); return ExecutionTest(testName, allowUnhandledException: true); }
         [Fact] public Task Classes_ClassMethod_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_CallsAnotherMethod); return ExecutionTest(testName); }
         [Fact] public Task Classes_ClassMethod_ForLoop_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_ForLoop_CallsAnotherMethod); return ExecutionTest(testName); }
+
+        // Test parameter destructuring in class methods
+        [Fact]
+        public Task Classes_ClassMethod_ParameterDestructuring()
+        {
+            var testName = nameof(Classes_ClassMethod_ParameterDestructuring);
+            return ExecutionTest(testName);
+        }
+
         [Fact] public Task Classes_ClassMethod_While_Increment_Param_Postfix() { var testName = nameof(Classes_ClassMethod_While_Increment_Param_Postfix); return ExecutionTest(testName); }
         [Fact] public Task Classes_ClassMethod_While_Increment_Param_Prefix() { var testName = nameof(Classes_ClassMethod_While_Increment_Param_Prefix); return ExecutionTest(testName); }
         [Fact] public Task Classes_ClassMethod_While_Increment_Postfix() { var testName = nameof(Classes_ClassMethod_While_Increment_Postfix); return ExecutionTest(testName); }
@@ -64,6 +80,7 @@ namespace Js2IL.Tests.Classes
         [Fact] public Task Classes_ClassWithMethod_NoInstantiation() { var testName = nameof(Classes_ClassWithMethod_NoInstantiation); return ExecutionTest(testName); }
         [Fact] public Task Classes_ClassWithStaticMethod_HelloWorld() { var testName = nameof(Classes_ClassWithStaticMethod_HelloWorld); return ExecutionTest(testName); }
         [Fact] public Task Classes_ClassWithStaticProperty_DefaultAndLog() { var testName = nameof(Classes_ClassWithStaticProperty_DefaultAndLog); return ExecutionTest(testName); }
+        [Fact] public Task Classes_DeclareEmptyClass() { var testName = nameof(Classes_DeclareEmptyClass); return ExecutionTest(testName); }
 
         [Fact]
         public Task Classes_DefaultParameterValue_Constructor()
@@ -79,7 +96,6 @@ namespace Js2IL.Tests.Classes
             return ExecutionTest(testName);
         }
 
-        [Fact] public Task Classes_DeclareEmptyClass() { var testName = nameof(Classes_DeclareEmptyClass); return ExecutionTest(testName); }
         [Fact] public Task Classes_ForLoopMin() { var testName = nameof(Classes_ForLoopMin); return ExecutionTest(testName); }
 
         // Minimal repro for InvalidProgramException in ctor due to '1 + this.sieveSizeInBits'
@@ -89,15 +105,6 @@ namespace Js2IL.Tests.Classes
         {
             var testName = nameof(Classes_PrimeCtor_BitArrayAdd);
             return ExecutionTest(testName, allowUnhandledException: true);
-        }
-
-        // Test parameter destructuring in class constructors
-        // Skip: Requires symbol table to analyze constructor parameters for ObjectPattern bindings
-        [Fact]
-        public Task Classes_ConstructorParameterDestructuring()
-        {
-            var testName = nameof(Classes_ConstructorParameterDestructuring);
-            return ExecutionTest(testName);
         }
     }
 }

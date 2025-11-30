@@ -65,7 +65,9 @@ namespace Js2IL.Services.ILGenerators
                     functionVariables,
                     registryScopeName,
                     arrowFunction.Params,
-                    startingJsParamSeq: 1);
+                    childGen.ExpressionEmitter,
+                    startingJsParamSeq: 1,
+                    castScopeForStore: false);
             }
 
             if (arrowFunction.Body is BlockStatement block)
