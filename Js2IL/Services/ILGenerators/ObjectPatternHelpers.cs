@@ -22,11 +22,34 @@ namespace Js2IL.Services.ILGenerators
         {
             // Load scope instance holding the field
             var tslot = vars.GetScopeLocalSlot(targetVar.ScopeName);
-            if (tslot.Location == ObjectReferenceLocation.Parameter) il.LoadArgument(tslot.Address);
-            else if (tslot.Location == ObjectReferenceLocation.ScopeArray) { il.LoadArgument(0); il.LoadConstantI4(tslot.Address); il.OpCode(System.Reflection.Metadata.ILOpCode.Ldelem_ref); }
-            else il.LoadLocal(tslot.Address);
             var tScopeType = vars.GetVariableRegistry()?.GetScopeTypeHandle(targetVar.ScopeName) ?? default;
-            if (!tScopeType.IsNil) { il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass); il.Token(tScopeType); }
+            
+            if (tslot.Location == ObjectReferenceLocation.Parameter)
+            {
+                il.LoadArgument(tslot.Address);
+                // Cast needed: parameter is typed as object
+                if (!tScopeType.IsNil)
+                {
+                    il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
+                    il.Token(tScopeType);
+                }
+            }
+            else if (tslot.Location == ObjectReferenceLocation.ScopeArray)
+            {
+                il.LoadArgument(0);
+                il.LoadConstantI4(tslot.Address);
+                il.OpCode(System.Reflection.Metadata.ILOpCode.Ldelem_ref);
+                // Cast needed: array element is typed as object
+                if (!tScopeType.IsNil)
+                {
+                    il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
+                    il.Token(tScopeType);
+                }
+            }
+            else
+            {
+                il.LoadLocal(tslot.Address);
+            }
             // Load incoming argument (object being destructured)
             il.LoadArgument(jsParamSeq);
             il.Ldstr(metadataBuilder, propName);

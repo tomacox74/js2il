@@ -61,6 +61,47 @@ namespace Js2IL.Services.ILGenerators
         }
 
         /// <summary>
+        /// Creates a local variable signature for the specified variables context.
+        /// Scope locals are typed as their specific scope class; other locals are typed as System.Object.
+        /// Returns the signature handle and body attributes (InitLocals if locals > 0, None otherwise).
+        /// </summary>
+        public static (StandaloneSignatureHandle signature, MethodBodyAttributes attributes) CreateLocalVariableSignature(
+            MetadataBuilder metadata,
+            Variables variables)
+        {
+            int numberOfLocals = variables.GetNumberOfLocals();
+            if (numberOfLocals <= 0)
+            {
+                return (default, MethodBodyAttributes.None);
+            }
+
+            var localSig = new BlobBuilder();
+            var localEncoder = new BlobEncoder(localSig).LocalVariableSignature(numberOfLocals);
+            for (int i = 0; i < numberOfLocals; i++)
+            {
+                var typeHandle = variables.GetLocalVariableType(i);
+                
+                // Check if this is a TypeDefinitionHandle or TypeReferenceHandle
+                if (typeHandle.HasValue && typeHandle.Value.Kind == HandleKind.TypeDefinition)
+                {
+                    localEncoder.AddVariable().Type().Type((TypeDefinitionHandle)typeHandle.Value, isValueType: false);
+                }
+                else if (typeHandle.HasValue && typeHandle.Value.Kind == HandleKind.TypeReference)
+                {
+                    localEncoder.AddVariable().Type().Type((TypeReferenceHandle)typeHandle.Value, isValueType: false);
+                }
+                else
+                {
+                    // Fallback to Object type if the handle is null or neither type
+                    localEncoder.AddVariable().Type().Object();
+                }
+            }
+
+            var signature = metadata.AddStandaloneSignature(metadata.GetOrAddBlob(localSig));
+            return (signature, MethodBodyAttributes.InitLocals);
+        }
+
+        /// <summary>
         /// Emit object-pattern parameter destructuring stores with support for default values.
         /// Default values in patterns like { host = "localhost" } are properly handled.
         /// </summary>
@@ -147,23 +188,68 @@ namespace Js2IL.Services.ILGenerators
                                     var labelEnd = il.DefineLabel();
                                     il.Branch(System.Reflection.Metadata.ILOpCode.Brfalse, labelUseDefault);
                                     
-                                    // Not null: load scope, cast if needed, load temp, store to field
+                                    // Not null: load scope, load temp, store to field
                                     var tslot = variables.GetScopeLocalSlot(targetVar.ScopeName);
-                                    if (tslot.Location == ObjectReferenceLocation.Parameter) il.LoadArgument(tslot.Address);
-                                    else if (tslot.Location == ObjectReferenceLocation.ScopeArray) { il.LoadArgument(0); il.LoadConstantI4(tslot.Address); il.OpCode(System.Reflection.Metadata.ILOpCode.Ldelem_ref); }
-                                    else il.LoadLocal(tslot.Address);
                                     var tScopeType = variables.GetVariableRegistry()?.GetScopeTypeHandle(targetVar.ScopeName) ?? default;
-                                    if (!tScopeType.IsNil) { il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass); il.Token(tScopeType); }
+                                    
+                                    if (tslot.Location == ObjectReferenceLocation.Parameter)
+                                    {
+                                        il.LoadArgument(tslot.Address);
+                                        // Cast needed: parameter is typed as object
+                                        if (!tScopeType.IsNil)
+                                        {
+                                            il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
+                                            il.Token(tScopeType);
+                                        }
+                                    }
+                                    else if (tslot.Location == ObjectReferenceLocation.ScopeArray)
+                                    {
+                                        il.LoadArgument(0);
+                                        il.LoadConstantI4(tslot.Address);
+                                        il.OpCode(System.Reflection.Metadata.ILOpCode.Ldelem_ref);
+                                        // Cast needed: array element is typed as object
+                                        if (!tScopeType.IsNil)
+                                        {
+                                            il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
+                                            il.Token(tScopeType);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        il.LoadLocal(tslot.Address);
+                                    }
                                     il.LoadLocal(tempLocal);
                                     il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld); il.Token(targetVar.FieldHandle);
                                     il.Branch(System.Reflection.Metadata.ILOpCode.Br, labelEnd);
                                     
-                                    // Null: load scope, cast if needed, emit default expression, store to field
+                                    // Null: load scope, emit default expression, store to field
                                     il.MarkLabel(labelUseDefault);
-                                    if (tslot.Location == ObjectReferenceLocation.Parameter) il.LoadArgument(tslot.Address);
-                                    else if (tslot.Location == ObjectReferenceLocation.ScopeArray) { il.LoadArgument(0); il.LoadConstantI4(tslot.Address); il.OpCode(System.Reflection.Metadata.ILOpCode.Ldelem_ref); }
-                                    else il.LoadLocal(tslot.Address);
-                                    if (!tScopeType.IsNil) { il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass); il.Token(tScopeType); }
+                                    if (tslot.Location == ObjectReferenceLocation.Parameter)
+                                    {
+                                        il.LoadArgument(tslot.Address);
+                                        // Cast needed: parameter is typed as object
+                                        if (!tScopeType.IsNil)
+                                        {
+                                            il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
+                                            il.Token(tScopeType);
+                                        }
+                                    }
+                                    else if (tslot.Location == ObjectReferenceLocation.ScopeArray)
+                                    {
+                                        il.LoadArgument(0);
+                                        il.LoadConstantI4(tslot.Address);
+                                        il.OpCode(System.Reflection.Metadata.ILOpCode.Ldelem_ref);
+                                        // Cast needed: array element is typed as object
+                                        if (!tScopeType.IsNil)
+                                        {
+                                            il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
+                                            il.Token(tScopeType);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        il.LoadLocal(tslot.Address);
+                                    }
                                     expressionEmitter.Emit(defaultValue, new TypeCoercion { boxResult = true });
                                     il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld); il.Token(targetVar.FieldHandle);
                                     
@@ -180,7 +266,6 @@ namespace Js2IL.Services.ILGenerators
                                 var localScope = variables.GetLocalScopeSlot();
                                 if (localScope.Address < 0) continue;
                                 var fieldHandle = registry.GetFieldHandle(scopeName, bindId.Name);
-                                var scopeTypeHandle = registry.GetScopeTypeHandle(scopeName);
 
                                 if (defaultValue != null)
                                 {
@@ -206,7 +291,6 @@ namespace Js2IL.Services.ILGenerators
                                     
                                     // Not null: store the extracted value
                                     il.LoadLocal(localScope.Address);
-                                    if (castScopeForStore && !scopeTypeHandle.IsNil) { il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass); il.Token(scopeTypeHandle); }
                                     il.LoadLocal(tempLocal);
                                     il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld); 
                                     il.Token(fieldHandle);
@@ -215,7 +299,6 @@ namespace Js2IL.Services.ILGenerators
                                     // Null/undefined: use default value
                                     il.MarkLabel(labelUseDefault);
                                     il.LoadLocal(localScope.Address);
-                                    if (castScopeForStore && !scopeTypeHandle.IsNil) { il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass); il.Token(scopeTypeHandle); }
                                     expressionEmitter.Emit(defaultValue, new TypeCoercion { boxResult = true });
                                     il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld); 
                                     il.Token(fieldHandle);
@@ -225,7 +308,6 @@ namespace Js2IL.Services.ILGenerators
                                 {
                                     // No default value: simple extraction
                                     il.LoadLocal(localScope.Address);
-                                    if (castScopeForStore && !scopeTypeHandle.IsNil) { il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass); il.Token(scopeTypeHandle); }
                                     il.LoadArgument(jsParamSeq);
                                     il.Ldstr(metadataBuilder, propName);
                                     var getPropRef = runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), typeof(object), typeof(object), typeof(string));

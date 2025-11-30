@@ -184,9 +184,6 @@ namespace Js2IL.Services.ILGenerators
                                     if (pid != null && fieldNames.Contains(pid.Name))
                                     {
                                         il.LoadLocal(localScope.Address);
-                                        var scopeTypeHandle = registry.GetScopeTypeHandle(registryScopeName);
-                                        il.OpCode(ILOpCode.Castclass);
-                                        il.Token(scopeTypeHandle);
                                         childGen.EmitLoadParameterWithDefault(paramNode, jsParamSeq);
                                         var fh = registry.GetFieldHandle(registryScopeName, pid.Name);
                                         il.OpCode(ILOpCode.Stfld);
@@ -260,20 +257,7 @@ namespace Js2IL.Services.ILGenerators
                 il.OpCode(ILOpCode.Ret);
             }
 
-            StandaloneSignatureHandle localSignature = default;
-            MethodBodyAttributes bodyAttributes = MethodBodyAttributes.None;
-            var localCount = functionVariables.GetNumberOfLocals();
-            if (localCount > 0)
-            {
-                var localSig = new BlobBuilder();
-                var localEncoder = new BlobEncoder(localSig).LocalVariableSignature(localCount);
-                for (int i = 0; i < localCount; i++)
-                {
-                    localEncoder.AddVariable().Type().Object();
-                }
-                localSignature = _metadataBuilder.AddStandaloneSignature(_metadataBuilder.GetOrAddBlob(localSig));
-                bodyAttributes = MethodBodyAttributes.InitLocals;
-            }
+            var (localSignature, bodyAttributes) = MethodBuilder.CreateLocalVariableSignature(_metadataBuilder, functionVariables);
 
             var bodyOffset = _methodBodyStreamEncoder.AddMethodBody(
                 il,

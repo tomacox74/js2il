@@ -57,9 +57,9 @@ namespace Js2IL.Services
     /// Variables is a map from a variable name in the AST to where the variable is stored.
     /// There is 1 instance of Variables per dotnet method that is being being generated.
     /// </summary>
-    internal class Variables 
+    internal class Variables
     {
-    // Cache of resolved variables by identifier name
+        // Cache of resolved variables by identifier name
         private readonly Dictionary<string, Variable> _variables = new();
 
         // Backing registry (kept internal; callers shouldn't need it)
@@ -75,7 +75,7 @@ namespace Js2IL.Services
         private readonly string _scopeName;
         private readonly string _globalScopeName;
 
-            // Whether this function has a local scope instance (ldloc.0)
+        // Whether this function has a local scope instance (ldloc.0)
         private bool _hasLocalScope;
 
         // Back-compat support for creating locals for arbitrary scope names when requested
@@ -239,7 +239,7 @@ namespace Js2IL.Services
             }
 
             // Parent or other ancestor scope field
-        if (_parentScopeIndices.TryGetValue(variableInfo.ScopeName, out var idx))
+            if (_parentScopeIndices.TryGetValue(variableInfo.ScopeName, out var idx))
             {
                 var sv = new ScopeVariable
                 {
@@ -247,23 +247,23 @@ namespace Js2IL.Services
                     ScopeName = variableInfo.ScopeName,
                     ParentScopeIndex = idx,
                     FieldHandle = variableInfo.FieldHandle,
-            Type = JavascriptType.Unknown,
-            RuntimeIntrinsicType = variableInfo.RuntimeIntrinsicType
+                    Type = JavascriptType.Unknown,
+                    RuntimeIntrinsicType = variableInfo.RuntimeIntrinsicType
                 };
                 _variables[name] = sv;
                 return sv;
             }
 
             // If the variable actually belongs to current scope but was not found earlier (edge case), treat as local
-        if (variableInfo.ScopeName == _scopeName)
+            if (variableInfo.ScopeName == _scopeName)
             {
                 var lv = new LocalVariable
                 {
                     Name = name,
                     FieldHandle = variableInfo.FieldHandle,
                     ScopeName = variableInfo.ScopeName,
-            Type = JavascriptType.Unknown,
-            RuntimeIntrinsicType = variableInfo.RuntimeIntrinsicType
+                    Type = JavascriptType.Unknown,
+                    RuntimeIntrinsicType = variableInfo.RuntimeIntrinsicType
                 };
                 _variables[name] = lv;
                 return lv;
@@ -309,7 +309,11 @@ namespace Js2IL.Services
             return new ScopeObjectReference { Location = ObjectReferenceLocation.Local, Address = -1 };
         }
 
-        // Back-compat: create a local scope instance for the current function only.
+        /// <summary>
+        /// Creates a scope instance reference for the given scope name.
+        /// </summary>
+        /// <param name="scopeName">name of the scope</param>
+        /// <returns>a object reference</returns>
         public ScopeObjectReference CreateScopeInstance(string scopeName)
         {
             if (scopeName == _scopeName)
@@ -395,12 +399,110 @@ namespace Js2IL.Services
         }
 
         /// <summary>
+        /// Gets the type handle for a local variable at the specified index.
+        /// Returns the scope class type for scope instances, or null for non-scope locals.
+        /// </summary>
+        /// <param name="localIndex">The local variable index.</param>
+        /// <returns>The type handle for scope locals, or null for non-scope locals (which will default to Object type).</returns>
+        public EntityHandle? GetLocalVariableType(int localIndex)
+        {
+            // Local 0 is always the current function/global scope (if _hasLocalScope)
+            if (localIndex == 0 && _hasLocalScope)
+            {
+                try
+                {
+                    var scopeTypeHandle = _registry?.GetScopeTypeHandle(_scopeName);
+                    if (scopeTypeHandle.HasValue && !scopeTypeHandle.Value.IsNil)
+                    {
+                        return scopeTypeHandle.Value;
+                    }
+                }
+                catch (KeyNotFoundException)
+                {
+                    // Scope type not found, fall back to Object
+                }
+            }
+
+            // Check if this local is a registered scope (from _createdLocalScopes)
+            foreach (var kvp in _createdLocalScopes)
+            {
+                if (kvp.Value == localIndex)
+                {
+                    try
+                    {
+                        var scopeTypeHandle = _registry?.GetScopeTypeHandle(kvp.Key);
+                        if (scopeTypeHandle.HasValue && !scopeTypeHandle.Value.IsNil)
+                        {
+                            return scopeTypeHandle.Value;
+                        }
+                    }
+                    catch (KeyNotFoundException)
+                    {
+                        // Scope type not found (e.g., temporary locals like EqTmp_RHS_*), fall back to Object
+                    }
+                    break;
+                }
+            }
+
+            // Default to Object type for all other locals (including temps allocated via AllocateBlockScopeLocal)
+            return null;
+        }
+
+        /// <summary>
         /// Register an additional local slot for a named scope (used by Main to model top-level and nested function scopes).
         /// </summary>
         public void RegisterAdditionalLocalScope(string scopeName, int localIndex)
         {
             if (string.IsNullOrEmpty(scopeName)) return;
             _createdLocalScopes[scopeName] = localIndex;
+        }
+
+        public void PushLexicalScope(string scopeName)
+        {
+            if (!string.IsNullOrEmpty(scopeName))
+            {
+                _lexicalScopeStack.Push(scopeName);
+            }
+        }
+
+        public void PopLexicalScope(string scopeName)
+        {
+            if (_lexicalScopeStack.Count == 0)
+            {
+                return;
+            }
+
+            if (_lexicalScopeStack.Peek() == scopeName)
+            {
+                _lexicalScopeStack.Pop();
+            }
+            else
+            {
+                // Remove first occurrence if mis-nested (defensive)
+                var temp = new Stack<string>();
+                bool removed = false;
+                while (_lexicalScopeStack.Count > 0)
+                {
+                    var s = _lexicalScopeStack.Pop();
+                    if (!removed && s == scopeName)
+                    {
+                        removed = true;
+                        continue;
+                    }
+                    temp.Push(s);
+                }
+                while (temp.Count > 0)
+                {
+                    _lexicalScopeStack.Push(temp.Pop());
+                }
+            }
+        }
+
+        public int AllocateBlockScopeLocal(string scopeName)
+        {
+            int index = GetNumberOfLocals();
+            RegisterAdditionalLocalScope(scopeName, index);
+            return index;
         }
 
         private bool TryResolveFieldBackedVariable(string scopeName, string name, out Variable variable)
@@ -422,36 +524,6 @@ namespace Js2IL.Services
             {
                 return false;
             }
-        }
-
-        // Lexical scope management for blocks
-        public void PushLexicalScope(string scopeName) {
-            if (!string.IsNullOrEmpty(scopeName)) _lexicalScopeStack.Push(scopeName);
-        }
-        public void PopLexicalScope(string scopeName) {
-            if (_lexicalScopeStack.Count == 0) return;
-            if (_lexicalScopeStack.Peek() == scopeName) _lexicalScopeStack.Pop();
-            else
-            {
-                // Remove first occurrence if mis-nested (defensive)
-                var temp = new Stack<string>();
-                bool removed = false;
-                while (_lexicalScopeStack.Count > 0)
-                {
-                    var s = _lexicalScopeStack.Pop();
-                    if (!removed && s == scopeName) { removed = true; continue; }
-                    temp.Push(s);
-                }
-                while (temp.Count > 0) _lexicalScopeStack.Push(temp.Pop());
-            }
-        }
-
-        // Allocate a new local slot for a block scope and register it; returns local index.
-        public int AllocateBlockScopeLocal(string scopeName)
-        {
-            int index = GetNumberOfLocals();
-            RegisterAdditionalLocalScope(scopeName, index);
-            return index;
         }
     }
 }

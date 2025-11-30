@@ -416,20 +416,7 @@ namespace Js2IL.Services.ILGenerators
             ilGen.IL.OpCode(ILOpCode.Ret);
 
             // Include locals created by ILMethodGenerator (e.g., scope instance for block-scoped vars)
-            StandaloneSignatureHandle localSignature = default;
-            MethodBodyAttributes bodyAttributes = MethodBodyAttributes.None;
-            var localCount = methodVariables.GetNumberOfLocals();
-            if (localCount > 0)
-            {
-                var localSig = new BlobBuilder();
-                var localEncoder = new BlobEncoder(localSig).LocalVariableSignature(localCount);
-                for (int i = 0; i < localCount; i++)
-                {
-                    localEncoder.AddVariable().Type().Object();
-                }
-                localSignature = _metadata.AddStandaloneSignature(_metadata.GetOrAddBlob(localSig));
-                bodyAttributes = MethodBodyAttributes.InitLocals;
-            }
+            var (localSignature, bodyAttributes) = MethodBuilder.CreateLocalVariableSignature(_metadata, methodVariables);
 
             var ctorBody = _methodBodies.AddMethodBody(ilGen.IL, maxStack: 32, localVariablesSignature: localSignature, attributes: bodyAttributes);
             
@@ -583,20 +570,7 @@ namespace Js2IL.Services.ILGenerators
             }
 
             // Include locals created by ILMethodGenerator (e.g., scopes)
-            StandaloneSignatureHandle localSignature = default;
-            MethodBodyAttributes bodyAttributes = MethodBodyAttributes.None;
-            var localCount = methodVariables.GetNumberOfLocals();
-            if (localCount > 0)
-            {
-                var localSig = new BlobBuilder();
-                var localEncoder = new BlobEncoder(localSig).LocalVariableSignature(localCount);
-                for (int i = 0; i < localCount; i++)
-                {
-                    localEncoder.AddVariable().Type().Object();
-                }
-                localSignature = _metadata.AddStandaloneSignature(_metadata.GetOrAddBlob(localSig));
-                bodyAttributes = MethodBodyAttributes.InitLocals;
-            }
+            var (localSignature, bodyAttributes) = MethodBuilder.CreateLocalVariableSignature(_metadata, methodVariables);
 
             var mbody = _methodBodies.AddMethodBody(ilGen.IL, maxStack: 32, localVariablesSignature: localSignature, attributes: bodyAttributes);
             var attrs = MethodAttributes.Public | MethodAttributes.HideBySig;
@@ -758,9 +732,6 @@ namespace Js2IL.Services.ILGenerators
                 if (pid != null && fieldNames.Contains(pid.Name))
                 {
                     ilGen.IL.LoadLocal(localScope.Address);
-                    var scopeTypeHandle = registry.GetScopeTypeHandle(scopeName);
-                    ilGen.IL.OpCode(ILOpCode.Castclass);
-                    ilGen.IL.Token(scopeTypeHandle);
                     ilGen.EmitLoadParameterWithDefault(paramNode, jsParamSeq);
                     var fieldHandle = registry.GetFieldHandle(scopeName, pid.Name);
                     ilGen.IL.OpCode(ILOpCode.Stfld);

@@ -245,10 +245,6 @@ namespace Js2IL.Services.ILGenerators
                             if (pid != null && fieldNames.Contains(pid.Name))
                             {
                                 il.LoadLocal(localScope.Address);
-                                // Cast to concrete scope type for verifiable stfld
-                                var scopeTypeHandle = registry.GetScopeTypeHandle(functionName);
-                                il.OpCode(ILOpCode.Castclass);
-                                il.Token(scopeTypeHandle);
                                 methodGenerator.EmitLoadParameterWithDefault(paramNode, jsParamSeq);
                                 var fieldHandle = registry.GetFieldHandle(functionName, pid.Name);
                                 il.OpCode(ILOpCode.Stfld);
@@ -295,20 +291,7 @@ namespace Js2IL.Services.ILGenerators
             }
 
             // Add method body including any scope locals we created (function scope instance)
-            StandaloneSignatureHandle localSignature = default;
-            MethodBodyAttributes bodyAttributes = MethodBodyAttributes.None;
-            var localCount = variables.GetNumberOfLocals();
-            if (localCount > 0)
-            {
-                var localSig = new BlobBuilder();
-                var localEncoder = new BlobEncoder(localSig).LocalVariableSignature(localCount);
-                for (int i = 0; i < localCount; i++)
-                {
-                    localEncoder.AddVariable().Type().Object();
-                }
-                localSignature = _metadataBuilder.AddStandaloneSignature(_metadataBuilder.GetOrAddBlob(localSig));
-                bodyAttributes = MethodBodyAttributes.InitLocals;
-            }
+            var (localSignature, bodyAttributes) = MethodBuilder.CreateLocalVariableSignature(_metadataBuilder, variables);
 
             var bodyoffset = _methodBodyStreamEncoder.AddMethodBody(
                 il,

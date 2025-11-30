@@ -57,63 +57,60 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 161 (0xa1)
+		// Code size: 146 (0x92)
 		.maxstack 32
 		.entrypoint
 		.locals init (
-			[0] object
+			[0] class Scopes.ControlFlow_DoWhile_CountDownFromFive
 		)
 
 		IL_0000: newobj instance void Scopes.ControlFlow_DoWhile_CountDownFromFive::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: castclass Scopes.ControlFlow_DoWhile_CountDownFromFive
-		IL_000c: ldc.r8 5
-		IL_0015: box [System.Runtime]System.Double
-		IL_001a: stfld object Scopes.ControlFlow_DoWhile_CountDownFromFive::i
-		// loop start (head: IL_001f)
-			IL_001f: ldc.i4.1
-			IL_0020: brtrue IL_002a
+		IL_0007: ldc.r8 5
+		IL_0010: box [System.Runtime]System.Double
+		IL_0015: stfld object Scopes.ControlFlow_DoWhile_CountDownFromFive::i
+		// loop start (head: IL_001a)
+			IL_001a: ldc.i4.1
+			IL_001b: brtrue IL_0025
 
-			IL_0025: br IL_00a0
+			IL_0020: br IL_0091
 
-			IL_002a: ldc.i4.1
-			IL_002b: newarr [System.Runtime]System.Object
-			IL_0030: dup
-			IL_0031: ldc.i4.0
-			IL_0032: ldloc.0
-			IL_0033: castclass Scopes.ControlFlow_DoWhile_CountDownFromFive
-			IL_0038: ldfld object Scopes.ControlFlow_DoWhile_CountDownFromFive::i
-			IL_003d: stelem.ref
-			IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_0043: pop
-			IL_0044: ldloc.0
-			IL_0045: castclass Scopes.ControlFlow_DoWhile_CountDownFromFive
-			IL_004a: ldloc.0
-			IL_004b: castclass Scopes.ControlFlow_DoWhile_CountDownFromFive
-			IL_0050: ldfld object Scopes.ControlFlow_DoWhile_CountDownFromFive::i
-			IL_0055: unbox.any [System.Runtime]System.Double
-			IL_005a: ldc.r8 1
-			IL_0063: sub
-			IL_0064: box [System.Runtime]System.Double
-			IL_0069: stfld object Scopes.ControlFlow_DoWhile_CountDownFromFive::i
-			IL_006e: ldloc.0
-			IL_006f: castclass Scopes.ControlFlow_DoWhile_CountDownFromFive
-			IL_0074: ldfld object Scopes.ControlFlow_DoWhile_CountDownFromFive::i
-			IL_0079: unbox.any [System.Runtime]System.Double
-			IL_007e: ldc.r8 0.0
-			IL_0087: beq IL_0091
+			IL_0025: ldc.i4.1
+			IL_0026: newarr [System.Runtime]System.Object
+			IL_002b: dup
+			IL_002c: ldc.i4.0
+			IL_002d: ldloc.0
+			IL_002e: castclass Scopes.ControlFlow_DoWhile_CountDownFromFive
+			IL_0033: ldfld object Scopes.ControlFlow_DoWhile_CountDownFromFive::i
+			IL_0038: stelem.ref
+			IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_003e: pop
+			IL_003f: ldloc.0
+			IL_0040: ldloc.0
+			IL_0041: ldfld object Scopes.ControlFlow_DoWhile_CountDownFromFive::i
+			IL_0046: unbox.any [System.Runtime]System.Double
+			IL_004b: ldc.r8 1
+			IL_0054: sub
+			IL_0055: box [System.Runtime]System.Double
+			IL_005a: stfld object Scopes.ControlFlow_DoWhile_CountDownFromFive::i
+			IL_005f: ldloc.0
+			IL_0060: castclass Scopes.ControlFlow_DoWhile_CountDownFromFive
+			IL_0065: ldfld object Scopes.ControlFlow_DoWhile_CountDownFromFive::i
+			IL_006a: unbox.any [System.Runtime]System.Double
+			IL_006f: ldc.r8 0.0
+			IL_0078: beq IL_0082
 
-			IL_008c: br IL_009b
+			IL_007d: br IL_008c
 
-			IL_0091: br IL_00a0
+			IL_0082: br IL_0091
 
-			IL_0096: br IL_009b
+			IL_0087: br IL_008c
 
-			IL_009b: br IL_001f
+			IL_008c: br IL_001a
 		// end loop
 
-		IL_00a0: ret
+		IL_0091: ret
 	} // end of method Program::Main
 
 } // end of class Program
