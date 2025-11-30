@@ -384,7 +384,20 @@ namespace Js2IL.Services.ILGenerators
             {
                 // Initialize default parameter values
                 // (constructors: arg0=this, arg1=scopes[] if needed, user params start at arg2 or arg1)
-                ilGen.EmitDefaultParameterInitializers(ctorFunc.Params, parameterStartIndex: (ushort)(needsScopes ? 2 : 1));
+                ushort paramStartIndex = (ushort)(needsScopes ? 2 : 1);
+                ilGen.EmitDefaultParameterInitializers(ctorFunc.Params, parameterStartIndex: paramStartIndex);
+
+                // Emit object-pattern parameter destructuring if any parameters use destructuring syntax
+                var runtime = new Runtime(_metadata, ilGen.IL);
+                MethodBuilder.EmitObjectPatternParameterDestructuring(
+                    _metadata,
+                    ilGen.IL,
+                    runtime,
+                    methodVariables,
+                    "constructor",
+                    ctorFunc.Params,
+                    startingJsParamSeq: paramStartIndex,
+                    castScopeForStore: true);
 
                 // Emit constructor body statements
                 if (ctorFunc.Body is BlockStatement bstmt)
