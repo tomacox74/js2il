@@ -1,63 +1,6 @@
 # js2il
 Modern JS to IL prototype.
 
-## Release Workflow Automation
-
-To cut a new release while keeping `CHANGELOG.md` and `Js2IL/Js2IL.csproj` in sync you can use the version bump script added in `scripts/bumpVersion.js`.
-
-Usage (from repo root):
-
-```
-npm run release:patch     # bumps patch version (x.y.z -> x.y.(z+1))
-npm run release:minor     # bumps minor version (x.y.z -> x.(y+1).0)
-npm run release:major     # bumps major version ((x+1).0.0)
-node scripts/bumpVersion.js 0.2.0   # set an explicit version
-```
-
-What it does:
-1. Reads current version from `Js2IL/Js2IL.csproj`.
-2. Extracts the `## Unreleased` section from `CHANGELOG.md`.
-3. Creates a new section: `## vNEW_VERSION - YYYY-MM-DD` populated with that content (skipping the placeholder `_Nothing yet._`).
-4. Resets the `## Unreleased` section body to the placeholder.
-5. Updates the `<Version>` element in the csproj.
-6. Prints next git commands (add/commit/tag/push).
-
-Empty Unreleased:
-If there is no real content (only the placeholder) the script still creates an empty release section unless you pass `--skip-empty` (explicit invocation only).
-
-Example manual flow after bump:
-
-```powershell
-# Create release branch
-git checkout -b release/<new-version>
-
-# Bump version
-npm run release:patch
-
-# Review changes
-git add CHANGELOG.md Js2IL/Js2IL.csproj
-git commit -m "chore(release): cut <new-version>"
-
-# Create PR back to master
-gh pr create --base master --head release/<new-version> --title "chore(release): cut <new-version>"
-
-# After PR is merged:
-git checkout master
-git pull origin master
-
-# Create release (this creates the tag and triggers GitHub Actions)
-gh release create v<new-version> --title "v<new-version>" --notes "Release notes from CHANGELOG" --target master
-```
-
-CI / GitHub Actions:
-There is an existing workflow (`.github/workflows/release.yml`) for building & publishing artifacts when a release is created. The `gh release create` command automatically creates the tag and triggers the workflow.
-
-Limitations / TODO:
-- Does not preserve pre-release identifiers or generate them.
-- No automatic generation of release notes beyond what you curate in Unreleased.
-- Assumes a single `## Unreleased` sentinel header.
-
-
 # JS2IL — JavaScript to .NET IL compiler
 
 JS2IL compiles JavaScript source code to .NET Intermediate Language (IL), producing managed assemblies that run on the .NET runtime. It enables execution of JavaScript code and libraries as native .NET assemblies.
@@ -169,3 +112,59 @@ Local development note
 ```powershell
 dotnet run --project .\Js2IL -- .\tests\simple.js .\out
 ```
+
+## Release Workflow Automation
+
+To cut a new release while keeping `CHANGELOG.md` and `Js2IL/Js2IL.csproj` in sync you can use the version bump script added in `scripts/bumpVersion.js`.
+
+Usage (from repo root):
+
+```
+npm run release:patch     # bumps patch version (x.y.z -> x.y.(z+1))
+npm run release:minor     # bumps minor version (x.y.z -> x.(y+1).0)
+npm run release:major     # bumps major version ((x+1).0.0)
+node scripts/bumpVersion.js 0.2.0   # set an explicit version
+```
+
+What it does:
+1. Reads current version from `Js2IL/Js2IL.csproj`.
+2. Extracts the `## Unreleased` section from `CHANGELOG.md`.
+3. Creates a new section: `## vNEW_VERSION - YYYY-MM-DD` populated with that content (skipping the placeholder `_Nothing yet._`).
+4. Resets the `## Unreleased` section body to the placeholder.
+5. Updates the `<Version>` element in the csproj.
+6. Prints next git commands (add/commit/tag/push).
+
+Empty Unreleased:
+If there is no real content (only the placeholder) the script still creates an empty release section unless you pass `--skip-empty` (explicit invocation only).
+
+Example manual flow after bump:
+
+```powershell
+# Create release branch
+git checkout -b release/<new-version>
+
+# Bump version
+npm run release:patch
+
+# Review changes
+git add CHANGELOG.md Js2IL/Js2IL.csproj
+git commit -m "chore(release): cut <new-version>"
+
+# Create PR back to master
+gh pr create --base master --head release/<new-version> --title "chore(release): cut <new-version>"
+
+# After PR is merged:
+git checkout master
+git pull origin master
+
+# Create release (this creates the tag and triggers GitHub Actions)
+gh release create v<new-version> --title "v<new-version>" --notes "Release notes from CHANGELOG" --target master
+```
+
+CI / GitHub Actions:
+There is an existing workflow (`.github/workflows/release.yml`) for building & publishing artifacts when a release is created. The `gh release create` command automatically creates the tag and triggers the workflow.
+
+Limitations / TODO:
+- Does not preserve pre-release identifiers or generate them.
+- No automatic generation of release notes beyond what you curate in Unreleased.
+- Assumes a single `## Unreleased` sentinel header.
