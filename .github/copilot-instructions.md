@@ -80,7 +80,7 @@ js2il input.js output                           # Installed tool
  - create a release branch off of master.  The branch name should be release/0.x.y where x.y is the new version number.
 ```powershell
 npm run release:patch  # Bump version, update CHANGELOG
-git add CHANGELOG.md Js2IL/Js2IL.csproj
+git add CHANGELOG.md Js2IL/Js2IL.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
 git commit -m "chore(release): cut v0.x.y"
 ```
  - create a pr back to master using the github cli

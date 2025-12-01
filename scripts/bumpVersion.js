@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /*
  * bumpVersion.js
- * Automates version bumping across CHANGELOG.md and Js2IL/Js2IL.csproj.
+ * Automates version bumping across CHANGELOG.md, Js2IL/Js2IL.csproj, and JavaScriptRuntime/JavaScriptRuntime.csproj.
  * Usage examples:
  *   node scripts/bumpVersion.js patch
  *   node scripts/bumpVersion.js minor
@@ -15,7 +15,7 @@
  * - Moves content under '## Unreleased' (excluding placeholder lines like '_Nothing yet._')
  *   into a new section '## vX.Y.Z - YYYY-MM-DD' above the previous releases.
  * - If Unreleased is empty and you request a bump, it still creates an empty release section unless --skip-empty.
- * - Updates <Version> in Js2IL.csproj.
+ * - Updates <Version> in both Js2IL.csproj and JavaScriptRuntime.csproj (adds if not present).
  * - Writes files only if actual changes differ.
  * - Prints next steps (commit, tag).
  */
@@ -25,6 +25,7 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const CSPROJ_PATH = path.join(ROOT, 'Js2IL', 'Js2IL.csproj');
+const RUNTIME_CSPROJ_PATH = path.join(ROOT, 'JavaScriptRuntime', 'JavaScriptRuntime.csproj');
 const CHANGELOG_PATH = path.join(ROOT, 'CHANGELOG.md');
 
 function readFile(p) { return fs.readFileSync(p, 'utf8'); }
@@ -58,7 +59,16 @@ function resolveTargetVersion(argVersion, current) {
 }
 
 function updateCsprojVersion(text, newVersion) {
-  return text.replace(/<Version>[^<]+<\/Version>/, `<Version>${newVersion}<\/Version>`);
+  // If the file already has a <Version> tag, replace it
+  if (text.includes('<Version>')) {
+    return text.replace(/<Version>[^<]+<\/Version>/, `<Version>${newVersion}<\/Version>`);
+  }
+  
+  // Otherwise, add it to the PropertyGroup
+  return text.replace(
+    /(<PropertyGroup>\s*\n)/,
+    `$1    <Version>${newVersion}</Version>\n`
+  );
 }
 
 function extractUnreleased(changelog) {
@@ -91,6 +101,7 @@ function perform() {
   const arg = process.argv[2];
   const skipEmpty = process.argv.includes('--skip-empty');
   const csprojText = readFile(CSPROJ_PATH);
+  const runtimeCsprojText = readFile(RUNTIME_CSPROJ_PATH);
   const changelogText = readFile(CHANGELOG_PATH);
 
   const currentVersion = parseCurrentVersion(csprojText);
@@ -105,7 +116,9 @@ function perform() {
   if(!hasRealContent && skipEmpty) {
     console.log('Unreleased is empty and --skip-empty specified; only bumping csproj version.');
     const newCsproj = updateCsprojVersion(csprojText, newVersion);
+    const newRuntimeCsproj = updateCsprojVersion(runtimeCsprojText, newVersion);
     writeFile(CSPROJ_PATH, newCsproj);
+    writeFile(RUNTIME_CSPROJ_PATH, newRuntimeCsproj);
     return;
   }
 
@@ -116,14 +129,16 @@ function perform() {
   const newUnreleased = '\n_Nothing yet._\n\n';
   const updatedChangelog = before + newUnreleased + releaseSection + after;
   const updatedCsproj = updateCsprojVersion(csprojText, newVersion);
+  const updatedRuntimeCsproj = updateCsprojVersion(runtimeCsprojText, newVersion);
 
   writeFile(CHANGELOG_PATH, updatedChangelog);
   writeFile(CSPROJ_PATH, updatedCsproj);
+  writeFile(RUNTIME_CSPROJ_PATH, updatedRuntimeCsproj);
 
   console.log(`Bumped version: ${currentVersion} -> ${newVersion}`);
-  console.log('Updated CHANGELOG.md and Js2IL.csproj');
+  console.log('Updated CHANGELOG.md, Js2IL.csproj, and JavaScriptRuntime.csproj');
   console.log('\nNext steps:');
-  console.log(`  git add CHANGELOG.md Js2IL/Js2IL.csproj`);
+  console.log(`  git add CHANGELOG.md Js2IL/Js2IL.csproj JavaScriptRuntime/JavaScriptRuntime.csproj`);
   console.log(`  git commit -m "chore(release): cut ${newVersion}"`);
   console.log(`  git tag -a v${newVersion} -m "Release ${newVersion}"`);
   console.log('  git push && git push --tags');

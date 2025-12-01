@@ -131,7 +131,7 @@ What it does:
 2. Extracts the `## Unreleased` section from `CHANGELOG.md`.
 3. Creates a new section: `## vNEW_VERSION - YYYY-MM-DD` populated with that content (skipping the placeholder `_Nothing yet._`).
 4. Resets the `## Unreleased` section body to the placeholder.
-5. Updates the `<Version>` element in the csproj.
+5. Updates the `<Version>` element in both `Js2IL.csproj` and `JavaScriptRuntime.csproj` (adds if not present).
 6. Prints next git commands (add/commit/tag/push).
 
 Empty Unreleased:
@@ -147,7 +147,7 @@ git checkout -b release/<new-version>
 npm run release:patch
 
 # Review changes
-git add CHANGELOG.md Js2IL/Js2IL.csproj
+git add CHANGELOG.md Js2IL/Js2IL.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
 git commit -m "chore(release): cut <new-version>"
 
 # Create PR back to master
