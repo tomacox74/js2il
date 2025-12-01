@@ -27,17 +27,30 @@ If there is no real content (only the placeholder) the script still creates an e
 
 Example manual flow after bump:
 
-```
+```powershell
+# Create release branch
+git checkout -b release/<new-version>
+
+# Bump version
 npm run release:patch
-# review changes
+
+# Review changes
 git add CHANGELOG.md Js2IL/Js2IL.csproj
 git commit -m "chore(release): cut <new-version>"
-git tag -a v<new-version> -m "Release <new-version>"
-git push && git push --tags
+
+# Create PR back to master
+gh pr create --base master --head release/<new-version> --title "chore(release): cut <new-version>"
+
+# After PR is merged:
+git checkout master
+git pull origin master
+
+# Create release (this creates the tag and triggers GitHub Actions)
+gh release create v<new-version> --title "v<new-version>" --notes "Release notes from CHANGELOG" --target master
 ```
 
 CI / GitHub Actions:
-There is an existing workflow (`.github/workflows/release.yml`) for building & publishing artifacts on tag push. A future enhancement could add an action that invokes the bump script, commits, tags, and creates the GitHub Release in a single dispatch run.
+There is an existing workflow (`.github/workflows/release.yml`) for building & publishing artifacts when a release is created. The `gh release create` command automatically creates the tag and triggers the workflow.
 
 Limitations / TODO:
 - Does not preserve pre-release identifiers or generate them.
