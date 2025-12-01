@@ -4,9 +4,12 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.3.4 - 2025-12-01
+
 ### Changed
 - IL Generation: scope local variables are now strongly-typed as their scope class instead of System.Object. This eliminates unnecessary castclass instructions after ldloc operations, improving performance and reducing IL size. The type information is determined at signature creation time using metadata lookups, with non-scope locals defaulting to Object type.
-
 ### Fixed
 - Compound bitwise assignments: fixed RHS type coercion bug when the right-hand side is a scope variable (let/const in class methods). Scope variables are stored as boxed objects in scope fields, and the RHS was not being properly unboxed before bitwise operations (|=, &=, ^=, <<=, >>=, >>>=). The generated IL code was loading the RHS as a boxed object then directly converting to int32 with `conv.i4`, which treated the object reference itself as an integer producing garbage values. Fixed by using `CoerceToInt32` (same pattern as LHS) to safely unbox and convert the RHS value. Added test case `CompoundAssignment_LocalVarIndex` that reproduces the bug with scope variables in compound assignments.
 - Equality comparisons: fixed object-to-object equality comparisons by adding type coercion when comparing two non-literal, non-numeric, non-boolean values (likely boxed objects). When both operands are not numbers or booleans and neither is a literal, the IL generator now converts both to numbers using `TypeUtilities.ToNumber()` before comparison, ensuring value equality instead of reference equality. This handles cases where type tracking returns Unknown or Object, including dynamic property lookups (e.g., `obj[this.prop]`), method return values, and variable comparisons. Added test case `BinaryOperator_EqualObjectPropertyVsMethodReturn`.
