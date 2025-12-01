@@ -222,26 +222,25 @@
 	{
 		// Method begins at RVA 0x2114
 		// Header size: 12
-		// Code size: 45 (0x2d)
+		// Code size: 40 (0x28)
 		.maxstack 32
 		.entrypoint
 		.locals init (
-			[0] object
+			[0] class Scopes.Classes_ClassMethod_CallsAnotherMethod
 		)
 
 		IL_0000: newobj instance void Scopes.Classes_ClassMethod_CallsAnotherMethod::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: castclass Scopes.Classes_ClassMethod_CallsAnotherMethod
-		IL_000c: ldstr "World"
-		IL_0011: newobj instance void Classes.Greeter::.ctor(object)
-		IL_0016: stfld object Scopes.Classes_ClassMethod_CallsAnotherMethod::g
-		IL_001b: ldloc.0
-		IL_001c: castclass Scopes.Classes_ClassMethod_CallsAnotherMethod
-		IL_0021: ldfld object Scopes.Classes_ClassMethod_CallsAnotherMethod::g
-		IL_0026: callvirt instance object Classes.Greeter::logHello()
-		IL_002b: pop
-		IL_002c: ret
+		IL_0007: ldstr "World"
+		IL_000c: newobj instance void Classes.Greeter::.ctor(object)
+		IL_0011: stfld object Scopes.Classes_ClassMethod_CallsAnotherMethod::g
+		IL_0016: ldloc.0
+		IL_0017: castclass Scopes.Classes_ClassMethod_CallsAnotherMethod
+		IL_001c: ldfld object Scopes.Classes_ClassMethod_CallsAnotherMethod::g
+		IL_0021: callvirt instance object Classes.Greeter::logHello()
+		IL_0026: pop
+		IL_0027: ret
 	} // end of method Program::Main
 
 } // end of class Program

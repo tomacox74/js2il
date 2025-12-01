@@ -80,82 +80,80 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 185 (0xb9)
+		// Code size: 175 (0xaf)
 		.maxstack 32
 		.entrypoint
 		.locals init (
-			[0] object,
-			[1] object
+			[0] class Scopes.TryCatch_NoBinding_NoThrow,
+			[1] class Scopes.TryCatch_NoBinding_NoThrow/Block_L3C4
 		)
 
 		IL_0000: newobj instance void Scopes.TryCatch_NoBinding_NoThrow::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: castclass Scopes.TryCatch_NoBinding_NoThrow
-		IL_000c: ldc.r8 7
-		IL_0015: box [System.Runtime]System.Double
-		IL_001a: stfld object Scopes.TryCatch_NoBinding_NoThrow::global
-		IL_001f: ldc.i4.1
-		IL_0020: newarr [System.Runtime]System.Object
-		IL_0025: dup
-		IL_0026: ldc.i4.0
-		IL_0027: ldstr "before try"
-		IL_002c: stelem.ref
-		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0032: pop
+		IL_0007: ldc.r8 7
+		IL_0010: box [System.Runtime]System.Double
+		IL_0015: stfld object Scopes.TryCatch_NoBinding_NoThrow::global
+		IL_001a: ldc.i4.1
+		IL_001b: newarr [System.Runtime]System.Object
+		IL_0020: dup
+		IL_0021: ldc.i4.0
+		IL_0022: ldstr "before try"
+		IL_0027: stelem.ref
+		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_002d: pop
 		.try
 		{
-			IL_0033: newobj instance void Scopes.TryCatch_NoBinding_NoThrow/Block_L3C4::.ctor()
-			IL_0038: stloc.1
-			IL_0039: ldloc.1
-			IL_003a: castclass Scopes.TryCatch_NoBinding_NoThrow/Block_L3C4
-			IL_003f: ldloc.0
-			IL_0040: castclass Scopes.TryCatch_NoBinding_NoThrow
-			IL_0045: ldfld object Scopes.TryCatch_NoBinding_NoThrow::global
-			IL_004a: unbox.any [System.Runtime]System.Double
-			IL_004f: ldc.r8 4
-			IL_0058: add
-			IL_0059: box [System.Runtime]System.Double
-			IL_005e: stfld object Scopes.TryCatch_NoBinding_NoThrow/Block_L3C4::local
-			IL_0063: ldc.i4.2
-			IL_0064: newarr [System.Runtime]System.Object
-			IL_0069: dup
-			IL_006a: ldc.i4.0
-			IL_006b: ldstr "Inside catch.  Calculated value is"
-			IL_0070: stelem.ref
-			IL_0071: dup
-			IL_0072: ldc.i4.1
-			IL_0073: ldloc.1
-			IL_0074: castclass Scopes.TryCatch_NoBinding_NoThrow/Block_L3C4
-			IL_0079: ldfld object Scopes.TryCatch_NoBinding_NoThrow/Block_L3C4::local
-			IL_007e: stelem.ref
-			IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_0084: pop
-			IL_0085: leave IL_00a4
+			IL_002e: newobj instance void Scopes.TryCatch_NoBinding_NoThrow/Block_L3C4::.ctor()
+			IL_0033: stloc.1
+			IL_0034: ldloc.1
+			IL_0035: ldloc.0
+			IL_0036: castclass Scopes.TryCatch_NoBinding_NoThrow
+			IL_003b: ldfld object Scopes.TryCatch_NoBinding_NoThrow::global
+			IL_0040: unbox.any [System.Runtime]System.Double
+			IL_0045: ldc.r8 4
+			IL_004e: add
+			IL_004f: box [System.Runtime]System.Double
+			IL_0054: stfld object Scopes.TryCatch_NoBinding_NoThrow/Block_L3C4::local
+			IL_0059: ldc.i4.2
+			IL_005a: newarr [System.Runtime]System.Object
+			IL_005f: dup
+			IL_0060: ldc.i4.0
+			IL_0061: ldstr "Inside catch.  Calculated value is"
+			IL_0066: stelem.ref
+			IL_0067: dup
+			IL_0068: ldc.i4.1
+			IL_0069: ldloc.1
+			IL_006a: castclass Scopes.TryCatch_NoBinding_NoThrow/Block_L3C4
+			IL_006f: ldfld object Scopes.TryCatch_NoBinding_NoThrow/Block_L3C4::local
+			IL_0074: stelem.ref
+			IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_007a: pop
+			IL_007b: leave IL_009a
 		} // end .try
 		catch [JavaScriptRuntime]JavaScriptRuntime.Error
 		{
-			IL_008a: pop
-			IL_008b: ldc.i4.1
-			IL_008c: newarr [System.Runtime]System.Object
-			IL_0091: dup
-			IL_0092: ldc.i4.0
-			IL_0093: ldstr "inside catch.. we should not be here"
-			IL_0098: stelem.ref
-			IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_009e: pop
-			IL_009f: leave IL_00a4
+			IL_0080: pop
+			IL_0081: ldc.i4.1
+			IL_0082: newarr [System.Runtime]System.Object
+			IL_0087: dup
+			IL_0088: ldc.i4.0
+			IL_0089: ldstr "inside catch.. we should not be here"
+			IL_008e: stelem.ref
+			IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_0094: pop
+			IL_0095: leave IL_009a
 		} // end handler
 
-		IL_00a4: ldc.i4.1
-		IL_00a5: newarr [System.Runtime]System.Object
-		IL_00aa: dup
-		IL_00ab: ldc.i4.0
-		IL_00ac: ldstr "try/catch finished."
-		IL_00b1: stelem.ref
-		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_00b7: pop
-		IL_00b8: ret
+		IL_009a: ldc.i4.1
+		IL_009b: newarr [System.Runtime]System.Object
+		IL_00a0: dup
+		IL_00a1: ldc.i4.0
+		IL_00a2: ldstr "try/catch finished."
+		IL_00a7: stelem.ref
+		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00ad: pop
+		IL_00ae: ret
 	} // end of method Program::Main
 
 } // end of class Program

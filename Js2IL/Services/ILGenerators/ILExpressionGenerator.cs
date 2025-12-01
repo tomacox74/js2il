@@ -91,15 +91,22 @@ namespace Js2IL.Services.ILGenerators
         }
 
         // Load a scope object and cast it to its concrete scope type for verifiable ldfld/stfld
+        // Cast is only needed when loading from parameters or scope arrays (typed as object)
+        // Locals are now strongly-typed, so no cast is needed
         private void EmitLoadScopeObjectTyped(ScopeObjectReference slot, string scopeName)
         {
             EmitLoadScopeObject(slot);
-            var reg = _variables.GetVariableRegistry();
-            var tdef = reg?.GetScopeTypeHandle(scopeName) ?? default;
-            if (!tdef.IsNil)
+            
+            // Only cast if loading from parameter or scope array (not from local)
+            if (slot.Location != ObjectReferenceLocation.Local)
             {
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
-                _il.Token(tdef);
+                var reg = _variables.GetVariableRegistry();
+                var tdef = reg?.GetScopeTypeHandle(scopeName) ?? default;
+                if (!tdef.IsNil)
+                {
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
+                    _il.Token(tdef);
+                }
             }
         }
 

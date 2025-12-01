@@ -185,73 +185,69 @@
 	{
 		// Method begins at RVA 0x20c8
 		// Header size: 12
-		// Code size: 155 (0x9b)
+		// Code size: 135 (0x87)
 		.maxstack 32
 		.locals init (
-			[0] object
+			[0] class Scopes.Array_Map_NestedParam/outer
 		)
 
 		IL_0000: newobj instance void Scopes.Array_Map_NestedParam/outer::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: castclass Scopes.Array_Map_NestedParam/outer
-		IL_000c: ldarg.1
-		IL_000d: stfld object Scopes.Array_Map_NestedParam/outer::arr
-		IL_0012: ldloc.0
-		IL_0013: castclass Scopes.Array_Map_NestedParam/outer
-		IL_0018: ldnull
-		IL_0019: ldftn object Functions.outer/outer_Nested::inner(object[], object)
-		IL_001f: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0024: stfld object Scopes.Array_Map_NestedParam/outer::inner
+		IL_0007: ldarg.1
+		IL_0008: stfld object Scopes.Array_Map_NestedParam/outer::arr
+		IL_000d: ldloc.0
+		IL_000e: ldnull
+		IL_000f: ldftn object Functions.outer/outer_Nested::inner(object[], object)
+		IL_0015: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_001a: stfld object Scopes.Array_Map_NestedParam/outer::inner
+		IL_001f: ldloc.0
+		IL_0020: ldfld object Scopes.Array_Map_NestedParam/outer::inner
+		IL_0025: dup
+		IL_0026: brtrue.s IL_0046
+
+		IL_0028: pop
 		IL_0029: ldloc.0
-		IL_002a: ldfld object Scopes.Array_Map_NestedParam/outer::inner
-		IL_002f: dup
-		IL_0030: brtrue.s IL_0050
+		IL_002a: ldnull
+		IL_002b: ldftn object Functions.outer/outer_Nested::inner(object[], object)
+		IL_0031: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0036: stfld object Scopes.Array_Map_NestedParam/outer::inner
+		IL_003b: ldloc.0
+		IL_003c: ldfld object Scopes.Array_Map_NestedParam/outer::inner
+		IL_0041: br IL_0046
 
-		IL_0032: pop
-		IL_0033: ldloc.0
-		IL_0034: ldnull
-		IL_0035: ldftn object Functions.outer/outer_Nested::inner(object[], object)
-		IL_003b: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0040: stfld object Scopes.Array_Map_NestedParam/outer::inner
-		IL_0045: ldloc.0
-		IL_0046: ldfld object Scopes.Array_Map_NestedParam/outer::inner
-		IL_004b: br IL_0050
-
-		IL_0050: ldc.i4.2
-		IL_0051: newarr [System.Runtime]System.Object
-		IL_0056: dup
-		IL_0057: ldc.i4.0
-		IL_0058: ldarg.0
-		IL_0059: ldc.i4.0
-		IL_005a: ldelem.ref
-		IL_005b: castclass Scopes.Array_Map_NestedParam
-		IL_0060: stelem.ref
-		IL_0061: dup
-		IL_0062: ldc.i4.1
-		IL_0063: ldloc.0
-		IL_0064: castclass Scopes.Array_Map_NestedParam/outer
-		IL_0069: stelem.ref
-		IL_006a: ldnull
-		IL_006b: ldftn object Functions.ArrowFunction_L7C15::ArrowFunction_L7C15(object[], object)
-		IL_0071: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0076: ldc.i4.2
-		IL_0077: newarr [System.Runtime]System.Object
-		IL_007c: dup
-		IL_007d: ldc.i4.0
-		IL_007e: ldarg.0
-		IL_007f: ldc.i4.0
-		IL_0080: ldelem.ref
-		IL_0081: castclass Scopes.Array_Map_NestedParam
-		IL_0086: stelem.ref
-		IL_0087: dup
-		IL_0088: ldc.i4.1
-		IL_0089: ldloc.0
-		IL_008a: castclass Scopes.Array_Map_NestedParam/outer
-		IL_008f: stelem.ref
-		IL_0090: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0095: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_009a: ret
+		IL_0046: ldc.i4.2
+		IL_0047: newarr [System.Runtime]System.Object
+		IL_004c: dup
+		IL_004d: ldc.i4.0
+		IL_004e: ldarg.0
+		IL_004f: ldc.i4.0
+		IL_0050: ldelem.ref
+		IL_0051: castclass Scopes.Array_Map_NestedParam
+		IL_0056: stelem.ref
+		IL_0057: dup
+		IL_0058: ldc.i4.1
+		IL_0059: ldloc.0
+		IL_005a: stelem.ref
+		IL_005b: ldnull
+		IL_005c: ldftn object Functions.ArrowFunction_L7C15::ArrowFunction_L7C15(object[], object)
+		IL_0062: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0067: ldc.i4.2
+		IL_0068: newarr [System.Runtime]System.Object
+		IL_006d: dup
+		IL_006e: ldc.i4.0
+		IL_006f: ldarg.0
+		IL_0070: ldc.i4.0
+		IL_0071: ldelem.ref
+		IL_0072: castclass Scopes.Array_Map_NestedParam
+		IL_0077: stelem.ref
+		IL_0078: dup
+		IL_0079: ldc.i4.1
+		IL_007a: ldloc.0
+		IL_007b: stelem.ref
+		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0081: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_0086: ret
 	} // end of method ArrowFunction_L7C15::outer
 
 } // end of class Functions.ArrowFunction_L7C15
@@ -263,106 +259,100 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2170
+		// Method begins at RVA 0x215c
 		// Header size: 12
-		// Code size: 295 (0x127)
+		// Code size: 265 (0x109)
 		.maxstack 32
 		.entrypoint
 		.locals init (
-			[0] object
+			[0] class Scopes.Array_Map_NestedParam
 		)
 
 		IL_0000: newobj instance void Scopes.Array_Map_NestedParam::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: castclass Scopes.Array_Map_NestedParam
-		IL_000c: ldnull
-		IL_000d: ldftn object Functions.ArrowFunction_L7C15::outer(object[], object)
-		IL_0013: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0018: stfld object Scopes.Array_Map_NestedParam::outer
-		IL_001d: ldloc.0
-		IL_001e: castclass Scopes.Array_Map_NestedParam
+		IL_0007: ldnull
+		IL_0008: ldftn object Functions.ArrowFunction_L7C15::outer(object[], object)
+		IL_000e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0013: stfld object Scopes.Array_Map_NestedParam::outer
+		IL_0018: ldloc.0
+		IL_0019: ldloc.0
+		IL_001a: ldfld object Scopes.Array_Map_NestedParam::outer
+		IL_001f: dup
+		IL_0020: brtrue.s IL_0040
+
+		IL_0022: pop
 		IL_0023: ldloc.0
-		IL_0024: ldfld object Scopes.Array_Map_NestedParam::outer
-		IL_0029: dup
-		IL_002a: brtrue.s IL_004a
+		IL_0024: ldnull
+		IL_0025: ldftn object Functions.ArrowFunction_L7C15::outer(object[], object)
+		IL_002b: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0030: stfld object Scopes.Array_Map_NestedParam::outer
+		IL_0035: ldloc.0
+		IL_0036: ldfld object Scopes.Array_Map_NestedParam::outer
+		IL_003b: br IL_0040
 
-		IL_002c: pop
-		IL_002d: ldloc.0
-		IL_002e: ldnull
-		IL_002f: ldftn object Functions.ArrowFunction_L7C15::outer(object[], object)
-		IL_0035: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_003a: stfld object Scopes.Array_Map_NestedParam::outer
-		IL_003f: ldloc.0
-		IL_0040: ldfld object Scopes.Array_Map_NestedParam::outer
-		IL_0045: br IL_004a
-
-		IL_004a: ldc.i4.1
-		IL_004b: newarr [System.Runtime]System.Object
+		IL_0040: ldc.i4.1
+		IL_0041: newarr [System.Runtime]System.Object
+		IL_0046: dup
+		IL_0047: ldc.i4.0
+		IL_0048: ldloc.0
+		IL_0049: stelem.ref
+		IL_004a: ldc.i4.3
+		IL_004b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
 		IL_0050: dup
-		IL_0051: ldc.i4.0
-		IL_0052: ldloc.0
-		IL_0053: castclass Scopes.Array_Map_NestedParam
-		IL_0058: stelem.ref
-		IL_0059: ldc.i4.3
-		IL_005a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_005f: dup
-		IL_0060: ldstr "a"
-		IL_0065: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_006a: dup
-		IL_006b: ldstr "bb"
-		IL_0070: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0075: dup
-		IL_0076: ldstr "ccc"
-		IL_007b: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0080: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0085: stfld object Scopes.Array_Map_NestedParam::result
-		IL_008a: ldloc.0
-		IL_008b: castclass Scopes.Array_Map_NestedParam
-		IL_0090: ldc.r8 0.0
-		IL_0099: box [System.Runtime]System.Double
-		IL_009e: stfld object Scopes.Array_Map_NestedParam::i
-		// loop start (head: IL_00a3)
-			IL_00a3: ldloc.0
-			IL_00a4: castclass Scopes.Array_Map_NestedParam
-			IL_00a9: ldfld object Scopes.Array_Map_NestedParam::i
-			IL_00ae: unbox.any [System.Runtime]System.Double
-			IL_00b3: ldloc.0
-			IL_00b4: castclass Scopes.Array_Map_NestedParam
-			IL_00b9: ldfld object Scopes.Array_Map_NestedParam::result
-			IL_00be: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_00c3: blt IL_00cd
+		IL_0051: ldstr "a"
+		IL_0056: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_005b: dup
+		IL_005c: ldstr "bb"
+		IL_0061: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0066: dup
+		IL_0067: ldstr "ccc"
+		IL_006c: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0071: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_0076: stfld object Scopes.Array_Map_NestedParam::result
+		IL_007b: ldloc.0
+		IL_007c: ldc.r8 0.0
+		IL_0085: box [System.Runtime]System.Double
+		IL_008a: stfld object Scopes.Array_Map_NestedParam::i
+		// loop start (head: IL_008f)
+			IL_008f: ldloc.0
+			IL_0090: castclass Scopes.Array_Map_NestedParam
+			IL_0095: ldfld object Scopes.Array_Map_NestedParam::i
+			IL_009a: unbox.any [System.Runtime]System.Double
+			IL_009f: ldloc.0
+			IL_00a0: castclass Scopes.Array_Map_NestedParam
+			IL_00a5: ldfld object Scopes.Array_Map_NestedParam::result
+			IL_00aa: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_00af: blt IL_00b9
 
-			IL_00c8: br IL_0126
+			IL_00b4: br IL_0108
 
-			IL_00cd: ldc.i4.1
-			IL_00ce: newarr [System.Runtime]System.Object
-			IL_00d3: dup
-			IL_00d4: ldc.i4.0
-			IL_00d5: ldloc.0
-			IL_00d6: castclass Scopes.Array_Map_NestedParam
-			IL_00db: ldfld object Scopes.Array_Map_NestedParam::result
-			IL_00e0: ldloc.0
-			IL_00e1: castclass Scopes.Array_Map_NestedParam
-			IL_00e6: ldfld object Scopes.Array_Map_NestedParam::i
-			IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_00f0: stelem.ref
-			IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_00f6: pop
-			IL_00f7: ldloc.0
-			IL_00f8: castclass Scopes.Array_Map_NestedParam
-			IL_00fd: ldloc.0
-			IL_00fe: castclass Scopes.Array_Map_NestedParam
-			IL_0103: ldfld object Scopes.Array_Map_NestedParam::i
-			IL_0108: unbox.any [System.Runtime]System.Double
-			IL_010d: ldc.r8 1
-			IL_0116: add
-			IL_0117: box [System.Runtime]System.Double
-			IL_011c: stfld object Scopes.Array_Map_NestedParam::i
-			IL_0121: br IL_00a3
+			IL_00b9: ldc.i4.1
+			IL_00ba: newarr [System.Runtime]System.Object
+			IL_00bf: dup
+			IL_00c0: ldc.i4.0
+			IL_00c1: ldloc.0
+			IL_00c2: castclass Scopes.Array_Map_NestedParam
+			IL_00c7: ldfld object Scopes.Array_Map_NestedParam::result
+			IL_00cc: ldloc.0
+			IL_00cd: castclass Scopes.Array_Map_NestedParam
+			IL_00d2: ldfld object Scopes.Array_Map_NestedParam::i
+			IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_00dc: stelem.ref
+			IL_00dd: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_00e2: pop
+			IL_00e3: ldloc.0
+			IL_00e4: ldloc.0
+			IL_00e5: ldfld object Scopes.Array_Map_NestedParam::i
+			IL_00ea: unbox.any [System.Runtime]System.Double
+			IL_00ef: ldc.r8 1
+			IL_00f8: add
+			IL_00f9: box [System.Runtime]System.Double
+			IL_00fe: stfld object Scopes.Array_Map_NestedParam::i
+			IL_0103: br IL_008f
 		// end loop
 
-		IL_0126: ret
+		IL_0108: ret
 	} // end of method Program::Main
 
 } // end of class Program

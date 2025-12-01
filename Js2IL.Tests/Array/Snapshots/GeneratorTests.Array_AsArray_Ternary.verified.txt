@@ -122,106 +122,101 @@
 	{
 		// Method begins at RVA 0x20d4
 		// Header size: 12
-		// Code size: 282 (0x11a)
+		// Code size: 257 (0x101)
 		.maxstack 32
 		.entrypoint
 		.locals init (
-			[0] object
+			[0] class Scopes.Array_AsArray_Ternary
 		)
 
 		IL_0000: newobj instance void Scopes.Array_AsArray_Ternary::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: castclass Scopes.Array_AsArray_Ternary
-		IL_000c: ldnull
-		IL_000d: ldftn object Functions.asArray::asArray(object[], object)
-		IL_0013: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0018: stfld object Scopes.Array_AsArray_Ternary::asArray
-		IL_001d: ldloc.0
-		IL_001e: castclass Scopes.Array_AsArray_Ternary
+		IL_0007: ldnull
+		IL_0008: ldftn object Functions.asArray::asArray(object[], object)
+		IL_000e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0013: stfld object Scopes.Array_AsArray_Ternary::asArray
+		IL_0018: ldloc.0
+		IL_0019: ldloc.0
+		IL_001a: ldfld object Scopes.Array_AsArray_Ternary::asArray
+		IL_001f: dup
+		IL_0020: brtrue.s IL_0040
+
+		IL_0022: pop
 		IL_0023: ldloc.0
-		IL_0024: ldfld object Scopes.Array_AsArray_Ternary::asArray
-		IL_0029: dup
-		IL_002a: brtrue.s IL_004a
+		IL_0024: ldnull
+		IL_0025: ldftn object Functions.asArray::asArray(object[], object)
+		IL_002b: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0030: stfld object Scopes.Array_AsArray_Ternary::asArray
+		IL_0035: ldloc.0
+		IL_0036: ldfld object Scopes.Array_AsArray_Ternary::asArray
+		IL_003b: br IL_0040
 
-		IL_002c: pop
-		IL_002d: ldloc.0
-		IL_002e: ldnull
-		IL_002f: ldftn object Functions.asArray::asArray(object[], object)
-		IL_0035: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_003a: stfld object Scopes.Array_AsArray_Ternary::asArray
-		IL_003f: ldloc.0
-		IL_0040: ldfld object Scopes.Array_AsArray_Ternary::asArray
-		IL_0045: br IL_004a
-
+		IL_0040: ldc.i4.1
+		IL_0041: newarr [System.Runtime]System.Object
+		IL_0046: dup
+		IL_0047: ldc.i4.0
+		IL_0048: ldloc.0
+		IL_0049: stelem.ref
 		IL_004a: ldc.i4.1
-		IL_004b: newarr [System.Runtime]System.Object
+		IL_004b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
 		IL_0050: dup
-		IL_0051: ldc.i4.0
-		IL_0052: ldloc.0
-		IL_0053: castclass Scopes.Array_AsArray_Ternary
-		IL_0058: stelem.ref
-		IL_0059: ldc.i4.1
-		IL_005a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_005f: dup
-		IL_0060: ldc.r8 1
-		IL_0069: box [System.Runtime]System.Double
-		IL_006e: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0073: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0078: stfld object Scopes.Array_AsArray_Ternary::a
-		IL_007d: ldloc.0
-		IL_007e: castclass Scopes.Array_AsArray_Ternary
-		IL_0083: ldloc.0
-		IL_0084: ldfld object Scopes.Array_AsArray_Ternary::asArray
-		IL_0089: dup
-		IL_008a: brtrue.s IL_00aa
+		IL_0051: ldc.r8 1
+		IL_005a: box [System.Runtime]System.Double
+		IL_005f: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0064: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_0069: stfld object Scopes.Array_AsArray_Ternary::a
+		IL_006e: ldloc.0
+		IL_006f: ldloc.0
+		IL_0070: ldfld object Scopes.Array_AsArray_Ternary::asArray
+		IL_0075: dup
+		IL_0076: brtrue.s IL_0096
 
-		IL_008c: pop
-		IL_008d: ldloc.0
-		IL_008e: ldnull
-		IL_008f: ldftn object Functions.asArray::asArray(object[], object)
-		IL_0095: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_009a: stfld object Scopes.Array_AsArray_Ternary::asArray
-		IL_009f: ldloc.0
-		IL_00a0: ldfld object Scopes.Array_AsArray_Ternary::asArray
-		IL_00a5: br IL_00aa
+		IL_0078: pop
+		IL_0079: ldloc.0
+		IL_007a: ldnull
+		IL_007b: ldftn object Functions.asArray::asArray(object[], object)
+		IL_0081: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0086: stfld object Scopes.Array_AsArray_Ternary::asArray
+		IL_008b: ldloc.0
+		IL_008c: ldfld object Scopes.Array_AsArray_Ternary::asArray
+		IL_0091: br IL_0096
 
-		IL_00aa: ldc.i4.1
-		IL_00ab: newarr [System.Runtime]System.Object
-		IL_00b0: dup
-		IL_00b1: ldc.i4.0
-		IL_00b2: ldloc.0
-		IL_00b3: castclass Scopes.Array_AsArray_Ternary
-		IL_00b8: stelem.ref
-		IL_00b9: ldc.r8 0.0
-		IL_00c2: box [System.Runtime]System.Double
-		IL_00c7: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_00cc: stfld object Scopes.Array_AsArray_Ternary::b
-		IL_00d1: ldc.i4.1
-		IL_00d2: newarr [System.Runtime]System.Object
-		IL_00d7: dup
-		IL_00d8: ldc.i4.0
-		IL_00d9: ldloc.0
-		IL_00da: castclass Scopes.Array_AsArray_Ternary
-		IL_00df: ldfld object Scopes.Array_AsArray_Ternary::a
-		IL_00e4: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_00e9: box [System.Runtime]System.Double
-		IL_00ee: stelem.ref
-		IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_00f4: pop
-		IL_00f5: ldc.i4.1
-		IL_00f6: newarr [System.Runtime]System.Object
-		IL_00fb: dup
-		IL_00fc: ldc.i4.0
-		IL_00fd: ldloc.0
-		IL_00fe: castclass Scopes.Array_AsArray_Ternary
-		IL_0103: ldfld object Scopes.Array_AsArray_Ternary::b
-		IL_0108: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_010d: box [System.Runtime]System.Double
-		IL_0112: stelem.ref
-		IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0118: pop
-		IL_0119: ret
+		IL_0096: ldc.i4.1
+		IL_0097: newarr [System.Runtime]System.Object
+		IL_009c: dup
+		IL_009d: ldc.i4.0
+		IL_009e: ldloc.0
+		IL_009f: stelem.ref
+		IL_00a0: ldc.r8 0.0
+		IL_00a9: box [System.Runtime]System.Double
+		IL_00ae: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_00b3: stfld object Scopes.Array_AsArray_Ternary::b
+		IL_00b8: ldc.i4.1
+		IL_00b9: newarr [System.Runtime]System.Object
+		IL_00be: dup
+		IL_00bf: ldc.i4.0
+		IL_00c0: ldloc.0
+		IL_00c1: castclass Scopes.Array_AsArray_Ternary
+		IL_00c6: ldfld object Scopes.Array_AsArray_Ternary::a
+		IL_00cb: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_00d0: box [System.Runtime]System.Double
+		IL_00d5: stelem.ref
+		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00db: pop
+		IL_00dc: ldc.i4.1
+		IL_00dd: newarr [System.Runtime]System.Object
+		IL_00e2: dup
+		IL_00e3: ldc.i4.0
+		IL_00e4: ldloc.0
+		IL_00e5: castclass Scopes.Array_AsArray_Ternary
+		IL_00ea: ldfld object Scopes.Array_AsArray_Ternary::b
+		IL_00ef: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_00f4: box [System.Runtime]System.Double
+		IL_00f9: stelem.ref
+		IL_00fa: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00ff: pop
+		IL_0100: ret
 	} // end of method Program::Main
 
 } // end of class Program

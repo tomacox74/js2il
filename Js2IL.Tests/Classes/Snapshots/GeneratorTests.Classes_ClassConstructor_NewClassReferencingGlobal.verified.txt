@@ -166,10 +166,10 @@
 	{
 		// Method begins at RVA 0x20b4
 		// Header size: 12
-		// Code size: 62 (0x3e)
+		// Code size: 57 (0x39)
 		.maxstack 32
 		.locals init (
-			[0] object
+			[0] class Scopes.Classes_ClassConstructor_NewClassReferencingGlobal/Inner/constructor
 		)
 
 		IL_0000: ldarg.0
@@ -193,11 +193,10 @@
 		IL_002a: dup
 		IL_002b: ldc.i4.1
 		IL_002c: ldloc.0
-		IL_002d: castclass Scopes.Classes_ClassConstructor_NewClassReferencingGlobal/Inner/constructor
-		IL_0032: stelem.ref
-		IL_0033: newobj instance void Classes.Inner::.ctor(object[])
-		IL_0038: stfld object Classes.Outer::inner
-		IL_003d: ret
+		IL_002d: stelem.ref
+		IL_002e: newobj instance void Classes.Inner::.ctor(object[])
+		IL_0033: stfld object Classes.Outer::inner
+		IL_0038: ret
 	} // end of method Outer::.ctor
 
 } // end of class Classes.Outer
@@ -209,48 +208,45 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2100
+		// Method begins at RVA 0x20fc
 		// Header size: 12
-		// Code size: 109 (0x6d)
+		// Code size: 94 (0x5e)
 		.maxstack 32
 		.entrypoint
 		.locals init (
-			[0] object
+			[0] class Scopes.Classes_ClassConstructor_NewClassReferencingGlobal
 		)
 
 		IL_0000: newobj instance void Scopes.Classes_ClassConstructor_NewClassReferencingGlobal::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: castclass Scopes.Classes_ClassConstructor_NewClassReferencingGlobal
-		IL_000c: ldc.r8 42
-		IL_0015: box [System.Runtime]System.Double
-		IL_001a: stfld object Scopes.Classes_ClassConstructor_NewClassReferencingGlobal::GLOBAL_VALUE
-		IL_001f: ldloc.0
-		IL_0020: castclass Scopes.Classes_ClassConstructor_NewClassReferencingGlobal
-		IL_0025: ldc.i4.1
-		IL_0026: newarr [System.Runtime]System.Object
-		IL_002b: dup
-		IL_002c: ldc.i4.0
-		IL_002d: ldloc.0
-		IL_002e: castclass Scopes.Classes_ClassConstructor_NewClassReferencingGlobal
-		IL_0033: stelem.ref
-		IL_0034: newobj instance void Classes.Outer::.ctor(object[])
-		IL_0039: stfld object Scopes.Classes_ClassConstructor_NewClassReferencingGlobal::obj
-		IL_003e: ldc.i4.1
-		IL_003f: newarr [System.Runtime]System.Object
-		IL_0044: dup
-		IL_0045: ldc.i4.0
-		IL_0046: ldloc.0
-		IL_0047: castclass Scopes.Classes_ClassConstructor_NewClassReferencingGlobal
-		IL_004c: ldfld object Scopes.Classes_ClassConstructor_NewClassReferencingGlobal::obj
-		IL_0051: castclass Classes.Outer
-		IL_0056: ldfld object Classes.Outer::inner
-		IL_005b: ldstr "value"
-		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_0065: stelem.ref
-		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_006b: pop
-		IL_006c: ret
+		IL_0007: ldc.r8 42
+		IL_0010: box [System.Runtime]System.Double
+		IL_0015: stfld object Scopes.Classes_ClassConstructor_NewClassReferencingGlobal::GLOBAL_VALUE
+		IL_001a: ldloc.0
+		IL_001b: ldc.i4.1
+		IL_001c: newarr [System.Runtime]System.Object
+		IL_0021: dup
+		IL_0022: ldc.i4.0
+		IL_0023: ldloc.0
+		IL_0024: stelem.ref
+		IL_0025: newobj instance void Classes.Outer::.ctor(object[])
+		IL_002a: stfld object Scopes.Classes_ClassConstructor_NewClassReferencingGlobal::obj
+		IL_002f: ldc.i4.1
+		IL_0030: newarr [System.Runtime]System.Object
+		IL_0035: dup
+		IL_0036: ldc.i4.0
+		IL_0037: ldloc.0
+		IL_0038: castclass Scopes.Classes_ClassConstructor_NewClassReferencingGlobal
+		IL_003d: ldfld object Scopes.Classes_ClassConstructor_NewClassReferencingGlobal::obj
+		IL_0042: castclass Classes.Outer
+		IL_0047: ldfld object Classes.Outer::inner
+		IL_004c: ldstr "value"
+		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_0056: stelem.ref
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_005c: pop
+		IL_005d: ret
 	} // end of method Program::Main
 
 } // end of class Program

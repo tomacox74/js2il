@@ -72,21 +72,7 @@ namespace Js2IL.Services.ILGenerators
             _ilGenerator.IL.OpCode(ILOpCode.Ret);
 
             // local variables
-            MethodBodyAttributes methodBodyAttributes = MethodBodyAttributes.None;
-            StandaloneSignatureHandle localSignature = default;
-            int numberOfLocals = variables.GetNumberOfLocals();
-            if (numberOfLocals > 0)
-            {
-                var localSig = new BlobBuilder();
-                var localVariableEncoder = new BlobEncoder(localSig).LocalVariableSignature(numberOfLocals);
-                for (int i = 0; i < numberOfLocals; i++)
-                {
-                    localVariableEncoder.AddVariable().Type().Object();
-                }
-
-                localSignature = metadataBuilder.AddStandaloneSignature(metadataBuilder.GetOrAddBlob(localSig));
-                methodBodyAttributes = MethodBodyAttributes.InitLocals;
-            }
+            var (localSignature, methodBodyAttributes) = MethodBuilder.CreateLocalVariableSignature(metadataBuilder, variables);
 
             // First method tracking is now handled by the specific generators that own method emission.
 

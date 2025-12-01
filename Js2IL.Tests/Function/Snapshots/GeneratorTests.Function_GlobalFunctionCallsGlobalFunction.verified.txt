@@ -154,65 +154,62 @@
 	{
 		// Method begins at RVA 0x20f4
 		// Header size: 12
-		// Code size: 150 (0x96)
+		// Code size: 135 (0x87)
 		.maxstack 32
 		.entrypoint
 		.locals init (
-			[0] object
+			[0] class Scopes.Function_GlobalFunctionCallsGlobalFunction
 		)
 
 		IL_0000: newobj instance void Scopes.Function_GlobalFunctionCallsGlobalFunction::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: castclass Scopes.Function_GlobalFunctionCallsGlobalFunction
-		IL_000c: ldnull
-		IL_000d: ldftn object Functions.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy(object[])
-		IL_0013: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0018: stfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
-		IL_001d: ldloc.0
-		IL_001e: castclass Scopes.Function_GlobalFunctionCallsGlobalFunction
-		IL_0023: ldnull
-		IL_0024: ldftn object Functions.Function_GlobalFunctionCallsGlobalFunction::helloWorld(object[])
-		IL_002a: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_002f: stfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorld
+		IL_0007: ldnull
+		IL_0008: ldftn object Functions.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy(object[])
+		IL_000e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0013: stfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
+		IL_0018: ldloc.0
+		IL_0019: ldnull
+		IL_001a: ldftn object Functions.Function_GlobalFunctionCallsGlobalFunction::helloWorld(object[])
+		IL_0020: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0025: stfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorld
+		IL_002a: ldloc.0
+		IL_002b: ldfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
+		IL_0030: dup
+		IL_0031: brtrue.s IL_0051
+
+		IL_0033: pop
 		IL_0034: ldloc.0
-		IL_0035: ldfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
-		IL_003a: dup
-		IL_003b: brtrue.s IL_005b
+		IL_0035: ldnull
+		IL_0036: ldftn object Functions.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy(object[])
+		IL_003c: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0041: stfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
+		IL_0046: ldloc.0
+		IL_0047: ldfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
+		IL_004c: br IL_0051
 
-		IL_003d: pop
-		IL_003e: ldloc.0
-		IL_003f: ldnull
-		IL_0040: ldftn object Functions.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy(object[])
-		IL_0046: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_004b: stfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
-		IL_0050: ldloc.0
-		IL_0051: ldfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
-		IL_0056: br IL_005b
-
-		IL_005b: ldc.i4.1
-		IL_005c: newarr [System.Runtime]System.Object
-		IL_0061: dup
-		IL_0062: ldc.i4.0
-		IL_0063: ldloc.0
-		IL_0064: castclass Scopes.Function_GlobalFunctionCallsGlobalFunction
-		IL_0069: stelem.ref
-		IL_006a: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_006f: pop
-		IL_0070: ldc.i4.2
-		IL_0071: newarr [System.Runtime]System.Object
-		IL_0076: dup
-		IL_0077: ldc.i4.0
-		IL_0078: ldstr "finally is now"
-		IL_007d: stelem.ref
-		IL_007e: dup
-		IL_007f: ldc.i4.1
-		IL_0080: ldc.r8 3
-		IL_0089: box [System.Runtime]System.Double
-		IL_008e: stelem.ref
-		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0094: pop
-		IL_0095: ret
+		IL_0051: ldc.i4.1
+		IL_0052: newarr [System.Runtime]System.Object
+		IL_0057: dup
+		IL_0058: ldc.i4.0
+		IL_0059: ldloc.0
+		IL_005a: stelem.ref
+		IL_005b: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0060: pop
+		IL_0061: ldc.i4.2
+		IL_0062: newarr [System.Runtime]System.Object
+		IL_0067: dup
+		IL_0068: ldc.i4.0
+		IL_0069: ldstr "finally is now"
+		IL_006e: stelem.ref
+		IL_006f: dup
+		IL_0070: ldc.i4.1
+		IL_0071: ldc.r8 3
+		IL_007a: box [System.Runtime]System.Double
+		IL_007f: stelem.ref
+		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0085: pop
+		IL_0086: ret
 	} // end of method Program::Main
 
 } // end of class Program

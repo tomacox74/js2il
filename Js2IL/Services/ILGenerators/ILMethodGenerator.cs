@@ -230,16 +230,35 @@ namespace Js2IL.Services.ILGenerators
                     throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
                 }
 
-                if (scopeLocalIndex.Location == ObjectReferenceLocation.Parameter) { _il.LoadArgument(scopeLocalIndex.Address); }
-                else if (scopeLocalIndex.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(scopeLocalIndex.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
-                else { _il.LoadLocal(scopeLocalIndex.Address); }
-                // Cast to concrete scope type for verifiable stfld
-                var regVar = _variables.GetVariableRegistry();
-                var tdefVar = regVar?.GetScopeTypeHandle(variable.ScopeName) ?? default;
-                if (!tdefVar.IsNil)
+                if (scopeLocalIndex.Location == ObjectReferenceLocation.Parameter)
                 {
-                    _il.OpCode(ILOpCode.Castclass);
-                    _il.Token(tdefVar);
+                    _il.LoadArgument(scopeLocalIndex.Address);
+                    // Cast needed: parameter is typed as object
+                    var regVar = _variables.GetVariableRegistry();
+                    var tdefVar = regVar?.GetScopeTypeHandle(variable.ScopeName) ?? default;
+                    if (!tdefVar.IsNil)
+                    {
+                        _il.OpCode(ILOpCode.Castclass);
+                        _il.Token(tdefVar);
+                    }
+                }
+                else if (scopeLocalIndex.Location == ObjectReferenceLocation.ScopeArray)
+                {
+                    _il.LoadArgument(0);
+                    _il.LoadConstantI4(scopeLocalIndex.Address);
+                    _il.OpCode(ILOpCode.Ldelem_ref);
+                    // Cast needed: array element is typed as object
+                    var regVar = _variables.GetVariableRegistry();
+                    var tdefVar = regVar?.GetScopeTypeHandle(variable.ScopeName) ?? default;
+                    if (!tdefVar.IsNil)
+                    {
+                        _il.OpCode(ILOpCode.Castclass);
+                        _il.Token(tdefVar);
+                    }
+                }
+                else
+                {
+                    _il.LoadLocal(scopeLocalIndex.Address);
                 }
 
                 var prevAssignmentTarget2 = _currentAssignmentTarget;
@@ -342,24 +361,32 @@ namespace Js2IL.Services.ILGenerators
             if (scopeLocalIndex.Location == ObjectReferenceLocation.Parameter)
             {
                 _il.LoadArgument(scopeLocalIndex.Address);
+                // Cast needed: parameter is typed as object
+                var regF = _variables.GetVariableRegistry();
+                var tdefF = regF?.GetScopeTypeHandle(functionVariable.ScopeName) ?? default;
+                if (!tdefF.IsNil)
+                {
+                    _il.OpCode(ILOpCode.Castclass);
+                    _il.Token(tdefF);
+                }
             }
             else if (scopeLocalIndex.Location == ObjectReferenceLocation.ScopeArray)
             {
                 _il.LoadArgument(0); // Load scope array parameter
                 _il.LoadConstantI4(scopeLocalIndex.Address); // Load array index
                 _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
+                // Cast needed: array element is typed as object
+                var regF = _variables.GetVariableRegistry();
+                var tdefF = regF?.GetScopeTypeHandle(functionVariable.ScopeName) ?? default;
+                if (!tdefF.IsNil)
+                {
+                    _il.OpCode(ILOpCode.Castclass);
+                    _il.Token(tdefF);
+                }
             }
             else
             {
                 _il.LoadLocal(scopeLocalIndex.Address);
-            }
-            // Cast to concrete scope type before stfld
-            var regF = _variables.GetVariableRegistry();
-            var tdefF = regF?.GetScopeTypeHandle(functionVariable.ScopeName) ?? default;
-            if (!tdefF.IsNil)
-            {
-                _il.OpCode(ILOpCode.Castclass);
-                _il.Token(tdefF);
             }
             if (!methodHandle.IsNil)
             {
@@ -520,24 +547,32 @@ namespace Js2IL.Services.ILGenerators
                         if (scopeSlot.Location == ObjectReferenceLocation.Parameter)
                         {
                             _il.LoadArgument(scopeSlot.Address);
+                            // Cast needed: parameter is typed as object
+                            var regFn = _variables.GetVariableRegistry();
+                            var tdefFn = regFn?.GetScopeTypeHandle(fnVar.ScopeName) ?? default;
+                            if (!tdefFn.IsNil)
+                            {
+                                _il.OpCode(ILOpCode.Castclass);
+                                _il.Token(tdefFn);
+                            }
                         }
                         else if (scopeSlot.Location == ObjectReferenceLocation.ScopeArray)
                         {
                             _il.LoadArgument(0);
                             _il.LoadConstantI4(scopeSlot.Address);
                             _il.OpCode(ILOpCode.Ldelem_ref);
+                            // Cast needed: array element is typed as object
+                            var regFn = _variables.GetVariableRegistry();
+                            var tdefFn = regFn?.GetScopeTypeHandle(fnVar.ScopeName) ?? default;
+                            if (!tdefFn.IsNil)
+                            {
+                                _il.OpCode(ILOpCode.Castclass);
+                                _il.Token(tdefFn);
+                            }
                         }
                         else
                         {
                             _il.LoadLocal(scopeSlot.Address);
-                        }
-                        // Cast to concrete scope type before ldfld
-                        var regFn = _variables.GetVariableRegistry();
-                        var tdefFn = regFn?.GetScopeTypeHandle(fnVar.ScopeName) ?? default;
-                        if (!tdefFn.IsNil)
-                        {
-                            _il.OpCode(ILOpCode.Castclass);
-                            _il.Token(tdefFn);
                         }
                         _il.OpCode(ILOpCode.Ldfld);
                         _il.Token(fnVar.FieldHandle); // stack: target delegate (object)
@@ -838,16 +873,34 @@ namespace Js2IL.Services.ILGenerators
 
                 // Load target scope instance for stfld
                 var tslot = _variables.GetScopeLocalSlot(targetScopeName);
-                if (tslot.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(tslot.Address);
-                else if (tslot.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(tslot.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
-                else _il.LoadLocal(tslot.Address);
-                // Cast to concrete scope type for verifiable stfld
                 var regFO = _variables.GetVariableRegistry();
                 var tdefFO = regFO?.GetScopeTypeHandle(targetScopeName) ?? default;
-                if (!tdefFO.IsNil)
+                
+                if (tslot.Location == ObjectReferenceLocation.Parameter)
                 {
-                    _il.OpCode(ILOpCode.Castclass);
-                    _il.Token(tdefFO);
+                    _il.LoadArgument(tslot.Address);
+                    // Cast needed: parameter is typed as object
+                    if (!tdefFO.IsNil)
+                    {
+                        _il.OpCode(ILOpCode.Castclass);
+                        _il.Token(tdefFO);
+                    }
+                }
+                else if (tslot.Location == ObjectReferenceLocation.ScopeArray)
+                {
+                    _il.LoadArgument(0);
+                    _il.LoadConstantI4(tslot.Address);
+                    _il.OpCode(ILOpCode.Ldelem_ref);
+                    // Cast needed: array element is typed as object
+                    if (!tdefFO.IsNil)
+                    {
+                        _il.OpCode(ILOpCode.Castclass);
+                        _il.Token(tdefFO);
+                    }
+                }
+                else
+                {
+                    _il.LoadLocal(tslot.Address);
                 }
 
                 // Load iterable and index to get item
@@ -1157,10 +1210,6 @@ namespace Js2IL.Services.ILGenerators
                             if (pid != null && fieldNames.Contains(pid.Name))
                             {
                                 il.LoadLocal(localScope.Address);
-                                // Cast to concrete scope type for verifiable stfld
-                                var scopeTypeHandle = registry.GetScopeTypeHandle(registryScopeName);
-                                il.OpCode(ILOpCode.Castclass);
-                                il.Token(scopeTypeHandle);
                                 childGen.EmitLoadParameterWithDefault(paramNode, jsParamSeq);
                                 var fh = registry.GetFieldHandle(registryScopeName, pid.Name);
                                 il.OpCode(ILOpCode.Stfld);
@@ -1200,10 +1249,8 @@ namespace Js2IL.Services.ILGenerators
                         try { selfFieldHandle = registry.GetFieldHandle(registryScopeName, internalNameId.Name); } catch { selfFieldHandle = default; }
                         if (!selfFieldHandle.IsNil && localScope.Address >= 0)
                         {
-                            // Load scope instance and cast to concrete scope type
+                            // Load scope instance (no cast needed: local is strongly-typed)
                             il.LoadLocal(localScope.Address);
-                            var scopeType = registry.GetScopeTypeHandle(registryScopeName);
-                            if (!scopeType.IsNil) { il.OpCode(ILOpCode.Castclass); il.Token(scopeType); }
                             // Duplicate for ldfld test and potential stfld target
                             il.OpCode(ILOpCode.Dup);
                             il.OpCode(ILOpCode.Ldfld); il.Token(selfFieldHandle);
@@ -1273,20 +1320,7 @@ namespace Js2IL.Services.ILGenerators
             }
 
             // Locals signature
-            StandaloneSignatureHandle localSignature = default;
-            MethodBodyAttributes bodyAttributes = MethodBodyAttributes.None;
-            var localCount = functionVariables.GetNumberOfLocals();
-            if (localCount > 0)
-            {
-                var localSig = new BlobBuilder();
-                var localEncoder = new BlobEncoder(localSig).LocalVariableSignature(localCount);
-                for (int i = 0; i < localCount; i++)
-                {
-                    localEncoder.AddVariable().Type().Object();
-                }
-                localSignature = _metadataBuilder.AddStandaloneSignature(_metadataBuilder.GetOrAddBlob(localSig));
-                bodyAttributes = MethodBodyAttributes.InitLocals;
-            }
+            var (localSignature, bodyAttributes) = MethodBuilder.CreateLocalVariableSignature(_metadataBuilder, functionVariables);
 
             var bodyOffset = _methodBodyStreamEncoder.AddMethodBody(
                 il,

@@ -38,86 +38,82 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 245 (0xf5)
+		// Code size: 225 (0xe1)
 		.maxstack 32
 		.entrypoint
 		.locals init (
-			[0] object
+			[0] class Scopes.ControlFlow_Conditional_Ternary
 		)
 
 		IL_0000: newobj instance void Scopes.ControlFlow_Conditional_Ternary::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
-		IL_0007: castclass Scopes.ControlFlow_Conditional_Ternary
-		IL_000c: ldc.r8 3
-		IL_0015: box [System.Runtime]System.Double
-		IL_001a: stfld object Scopes.ControlFlow_Conditional_Ternary::a
-		IL_001f: ldloc.0
-		IL_0020: castclass Scopes.ControlFlow_Conditional_Ternary
-		IL_0025: ldc.r8 5
-		IL_002e: box [System.Runtime]System.Double
-		IL_0033: stfld object Scopes.ControlFlow_Conditional_Ternary::b
-		IL_0038: ldloc.0
-		IL_0039: castclass Scopes.ControlFlow_Conditional_Ternary
-		IL_003e: ldloc.0
-		IL_003f: castclass Scopes.ControlFlow_Conditional_Ternary
-		IL_0044: ldfld object Scopes.ControlFlow_Conditional_Ternary::a
-		IL_0049: unbox.any [System.Runtime]System.Double
-		IL_004e: ldloc.0
-		IL_004f: castclass Scopes.ControlFlow_Conditional_Ternary
-		IL_0054: ldfld object Scopes.ControlFlow_Conditional_Ternary::b
-		IL_0059: unbox.any [System.Runtime]System.Double
-		IL_005e: blt IL_0068
+		IL_0007: ldc.r8 3
+		IL_0010: box [System.Runtime]System.Double
+		IL_0015: stfld object Scopes.ControlFlow_Conditional_Ternary::a
+		IL_001a: ldloc.0
+		IL_001b: ldc.r8 5
+		IL_0024: box [System.Runtime]System.Double
+		IL_0029: stfld object Scopes.ControlFlow_Conditional_Ternary::b
+		IL_002e: ldloc.0
+		IL_002f: ldloc.0
+		IL_0030: castclass Scopes.ControlFlow_Conditional_Ternary
+		IL_0035: ldfld object Scopes.ControlFlow_Conditional_Ternary::a
+		IL_003a: unbox.any [System.Runtime]System.Double
+		IL_003f: ldloc.0
+		IL_0040: castclass Scopes.ControlFlow_Conditional_Ternary
+		IL_0045: ldfld object Scopes.ControlFlow_Conditional_Ternary::b
+		IL_004a: unbox.any [System.Runtime]System.Double
+		IL_004f: blt IL_0059
 
-		IL_0063: br IL_0072
+		IL_0054: br IL_0063
 
-		IL_0068: ldstr "lte"
-		IL_006d: br IL_0077
+		IL_0059: ldstr "lte"
+		IL_005e: br IL_0068
 
-		IL_0072: ldstr "gt"
+		IL_0063: ldstr "gt"
 
-		IL_0077: stfld object Scopes.ControlFlow_Conditional_Ternary::s1
-		IL_007c: ldloc.0
-		IL_007d: castclass Scopes.ControlFlow_Conditional_Ternary
-		IL_0082: ldloc.0
-		IL_0083: castclass Scopes.ControlFlow_Conditional_Ternary
-		IL_0088: ldfld object Scopes.ControlFlow_Conditional_Ternary::a
-		IL_008d: unbox.any [System.Runtime]System.Double
-		IL_0092: ldloc.0
-		IL_0093: castclass Scopes.ControlFlow_Conditional_Ternary
-		IL_0098: ldfld object Scopes.ControlFlow_Conditional_Ternary::b
-		IL_009d: unbox.any [System.Runtime]System.Double
-		IL_00a2: bgt IL_00ac
+		IL_0068: stfld object Scopes.ControlFlow_Conditional_Ternary::s1
+		IL_006d: ldloc.0
+		IL_006e: ldloc.0
+		IL_006f: castclass Scopes.ControlFlow_Conditional_Ternary
+		IL_0074: ldfld object Scopes.ControlFlow_Conditional_Ternary::a
+		IL_0079: unbox.any [System.Runtime]System.Double
+		IL_007e: ldloc.0
+		IL_007f: castclass Scopes.ControlFlow_Conditional_Ternary
+		IL_0084: ldfld object Scopes.ControlFlow_Conditional_Ternary::b
+		IL_0089: unbox.any [System.Runtime]System.Double
+		IL_008e: bgt IL_0098
 
-		IL_00a7: br IL_00b6
+		IL_0093: br IL_00a2
 
-		IL_00ac: ldstr "gt"
-		IL_00b1: br IL_00bb
+		IL_0098: ldstr "gt"
+		IL_009d: br IL_00a7
 
-		IL_00b6: ldstr "lte"
+		IL_00a2: ldstr "lte"
 
-		IL_00bb: stfld object Scopes.ControlFlow_Conditional_Ternary::s2
-		IL_00c0: ldc.i4.1
-		IL_00c1: newarr [System.Runtime]System.Object
-		IL_00c6: dup
-		IL_00c7: ldc.i4.0
-		IL_00c8: ldloc.0
-		IL_00c9: castclass Scopes.ControlFlow_Conditional_Ternary
-		IL_00ce: ldfld object Scopes.ControlFlow_Conditional_Ternary::s1
-		IL_00d3: stelem.ref
-		IL_00d4: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_00d9: pop
-		IL_00da: ldc.i4.1
-		IL_00db: newarr [System.Runtime]System.Object
-		IL_00e0: dup
-		IL_00e1: ldc.i4.0
-		IL_00e2: ldloc.0
-		IL_00e3: castclass Scopes.ControlFlow_Conditional_Ternary
-		IL_00e8: ldfld object Scopes.ControlFlow_Conditional_Ternary::s2
-		IL_00ed: stelem.ref
-		IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_00f3: pop
-		IL_00f4: ret
+		IL_00a7: stfld object Scopes.ControlFlow_Conditional_Ternary::s2
+		IL_00ac: ldc.i4.1
+		IL_00ad: newarr [System.Runtime]System.Object
+		IL_00b2: dup
+		IL_00b3: ldc.i4.0
+		IL_00b4: ldloc.0
+		IL_00b5: castclass Scopes.ControlFlow_Conditional_Ternary
+		IL_00ba: ldfld object Scopes.ControlFlow_Conditional_Ternary::s1
+		IL_00bf: stelem.ref
+		IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00c5: pop
+		IL_00c6: ldc.i4.1
+		IL_00c7: newarr [System.Runtime]System.Object
+		IL_00cc: dup
+		IL_00cd: ldc.i4.0
+		IL_00ce: ldloc.0
+		IL_00cf: castclass Scopes.ControlFlow_Conditional_Ternary
+		IL_00d4: ldfld object Scopes.ControlFlow_Conditional_Ternary::s2
+		IL_00d9: stelem.ref
+		IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00df: pop
+		IL_00e0: ret
 	} // end of method Program::Main
 
 } // end of class Program
