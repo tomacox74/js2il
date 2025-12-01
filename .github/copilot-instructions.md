@@ -75,19 +75,21 @@ js2il input.js output                           # Installed tool
 
 ### Debugging
 - Use ilspycmd to disassemble generated DLLs to IL for inspection
-```powershell
 
 ### Release Process
  - create a release branch off of master.  The branch name should be release/0.x.y where x.y is the new version number.
 ```powershell
 npm run release:patch  # Bump version, update CHANGELOG
-git add CHANGELOG.md Js2IL/Js2IL.csproj
+git add CHANGELOG.md Js2IL/Js2IL.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
 git commit -m "chore(release): cut v0.x.y"
-git tag -a v0.x.y -m "Release v0.x.y"
-git push && git push --tags
 ```
  - create a pr back to master using the github cli
-GitHub Actions (`.github/workflows/release.yml`) builds and publishes on tag push.
+ - after the PR is merged, checkout master and pull the latest changes
+ - create the release using the github cli (this creates the tag and triggers GitHub Actions):
+```powershell
+gh release create v0.x.y --title "v0.x.y" --notes "Release notes from CHANGELOG" --target master
+```
+GitHub Actions (`.github/workflows/release.yml`) builds and publishes when the release is created.
 
 ## Project Conventions
 
