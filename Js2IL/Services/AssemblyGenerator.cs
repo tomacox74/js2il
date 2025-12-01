@@ -20,6 +20,8 @@ namespace Js2IL.Services
         private AssemblyName _systemRuntimeAssembly;
         private BlobBuilder _ilBuilder = new BlobBuilder();
         private MethodDefinitionHandle _entryPoint;
+
+        private MethodDefinitionHandle _mainScriptMethod;
         private BaseClassLibraryReferences _bclReferences;
 
         private Variables? _variables;
@@ -95,11 +97,11 @@ namespace Js2IL.Services
 
 
             // Emit IL: return.
-            // Prepare a TypeBuilder for the Program type and pass it to MainGenerator
-            var programTypeBuilder = new TypeBuilder(_metadataBuilder, "", "Program");
+            // Prepare a TypeBuilder for the main script and pass it to MainGenerator
+            var programTypeBuilder = new TypeBuilder(_metadataBuilder, "Scripts", name);
             var mainGenerator = new MainGenerator(_variables!, _bclReferences, _metadataBuilder, methodBodyStream, symbolTable, programTypeBuilder);
             var bodyOffset = mainGenerator.GenerateMethod(ast);
-            this._entryPoint = programTypeBuilder.AddMethodDefinition(
+            this._mainScriptMethod = programTypeBuilder.AddMethodDefinition(
                 MethodAttributes.Static | MethodAttributes.Public,
                 "Main",
                 methodSig,
@@ -110,7 +112,15 @@ namespace Js2IL.Services
                 TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
                 _bclReferences.ObjectType);
 
+            // create the entry point for spining up the execution engine
+            createEntryPoint();
+
             this.CreateAssembly(name, outputPath);
+        }
+
+        private void createEntryPoint()
+        {
+            var entryPointTypeBuilder = new TypeBuilder(_metadataBuilder, "", "Program");
         }
 
         private void createAssemblyMetadata(string name)
