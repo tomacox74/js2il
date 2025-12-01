@@ -78,15 +78,15 @@ js2il input.js output                           # Installed tool
 ```powershell
 
 ### Release Process
+ - create a release branch off of master.  The branch name should be release/0.x.y where x.y is the new version number.
 ```powershell
-create a release breanch off of master
 npm run release:patch  # Bump version, update CHANGELOG
 git add CHANGELOG.md Js2IL/Js2IL.csproj
 git commit -m "chore(release): cut v0.x.y"
 git tag -a v0.x.y -m "Release v0.x.y"
 git push && git push --tags
-create a pr back to master using the github cli
 ```
+ - create a pr back to master using the github cli
 GitHub Actions (`.github/workflows/release.yml`) builds and publishes on tag push.
 
 ## Project Conventions
