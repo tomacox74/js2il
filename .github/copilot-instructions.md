@@ -53,6 +53,7 @@ JS2IL is a JavaScript-to-.NET IL compiler that compiles JavaScript source to nat
 - Update docs\NodeSupport.json if it is a new node feature supported.  Run `node scripts/generateNodeSupportMd.js` to regenerate the the markdown file wiht the same name as the JSON file.
 - Create and a coomit with the documentation updates.
 - Create a PR with all the changes back to master.
+- After the PR has been merged, confirm the changes are in master and delete the local and remote feature branches.
 
 
 
