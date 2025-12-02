@@ -13,6 +13,9 @@ namespace Js2IL.Services
     {
         private readonly AssemblyReferenceHandle _systemLinqExpressions;
         private readonly AssemblyReferenceHandle _systemCollections;
+        private readonly Dictionary<int, MemberReferenceHandle> _funcArrayParamInvokeRefs = new();
+        private readonly Dictionary<int, TypeSpecificationHandle> _funcArrayParamTypeSpecs = new();
+        private readonly Dictionary<int, MemberReferenceHandle> _funcArrayParamCtorRefs = new();
 
         public BaseClassLibraryReferences(MetadataBuilder metadataBuilder, Version bclVersion, byte[] publicKeyToken)
         {
@@ -130,6 +133,27 @@ namespace Js2IL.Services
 
             LoadFuncTypes(metadataBuilder);
 
+            // System.Action reference
+            var actionTypeRef = metadataBuilder.AddTypeReference(
+                this.SystemRuntimeAssembly,
+                metadataBuilder.GetOrAddString("System"),
+                metadataBuilder.GetOrAddString("Action"));
+
+            var actionCtorSig = new BlobBuilder();
+            new BlobEncoder(actionCtorSig)
+                .MethodSignature(isInstanceMethod: true)
+                .Parameters(2,
+                    returnType => returnType.Void(),
+                    parameters =>
+                    {
+                        parameters.AddParameter().Type().Object();
+                        parameters.AddParameter().Type().IntPtr();
+                    });
+            Action_Ctor_Ref = metadataBuilder.AddMemberReference(
+                actionTypeRef,
+                metadataBuilder.GetOrAddString(".ctor"),
+                metadataBuilder.GetOrAddBlob(actionCtorSig));
+
             // System.Reflection.MethodBase and GetCurrentMethod()
             MethodBaseType = metadataBuilder.AddTypeReference(
                 this.SystemRuntimeAssembly,
@@ -152,32 +176,26 @@ namespace Js2IL.Services
         public AssemblyReferenceHandle SystemConsoleAssembly { get; private init; }
         public TypeReferenceHandle BooleanType { get; private init; }
         public TypeReferenceHandle DoubleType { get; private init; }
-    public TypeReferenceHandle Int32Type { get; private init; }
+        public TypeReferenceHandle Int32Type { get; private init; }
         public TypeReferenceHandle ObjectType { get; private init; }
         public TypeReferenceHandle StringType { get; private init; }
-    public TypeReferenceHandle ExceptionType { get; private init; }
+        public TypeReferenceHandle ExceptionType { get; private init; }
         public TypeReferenceHandle SystemMathType { get; private init; }
         public TypeReferenceHandle MethodBaseType { get; private set; }
         public MemberReferenceHandle MethodBase_GetCurrentMethod_Ref { get; private set; }
 
-    // Removed legacy Action<> delegate references (now using Func returning object)
+        // Removed legacy Action<> delegate references (now using Func returning object)
 
         public TypeSpecificationHandle IDictionary_StringObject_Type { get; private set; }
         public MemberReferenceHandle ConsoleWriteLine_StringObject_Ref { get; private init; }
-
         public MemberReferenceHandle Expando_Ctor_Ref { get; private set; }
-
-    public TypeReferenceHandle ExpandoObjectType { get; private set; }
-
+        public TypeReferenceHandle ExpandoObjectType { get; private set; }
         public MemberReferenceHandle Object_Ctor_Ref { get; private set; }
-
         public MemberReferenceHandle IDictionary_SetItem_Ref { get; private set; }
-
         public MemberReferenceHandle Array_Add_Ref { get; private set; }
-
         public MemberReferenceHandle Array_SetItem_Ref { get; private set; }
-
         public MemberReferenceHandle Array_GetCount_Ref { get; private set; }
+        public MemberReferenceHandle Action_Ctor_Ref { get; private set; }
 
         // Func delegates returning object
         public TypeReferenceHandle Func2Generic_TypeRef { get; private set; }
@@ -196,17 +214,13 @@ namespace Js2IL.Services
         public TypeSpecificationHandle FuncObjectArrayObjectObject_TypeSpec { get; private set; }
         public MemberReferenceHandle FuncObjectArrayObjectObject_Ctor_Ref { get; private set; }
         public MemberReferenceHandle FuncObjectArrayObjectObject_Invoke_Ref { get; private set; }
-    // Dynamic invoke refs for multi-parameter (scopes + N params)
-    private readonly Dictionary<int, MemberReferenceHandle> _funcArrayParamInvokeRefs = new();
-    // Additional Func delegate generic type refs for multi-parameter support (scopes + up to 6 js params + return)
-    public TypeReferenceHandle Func4Generic_TypeRef { get; private set; } // scopes + 2 params + return
-    public TypeReferenceHandle Func5Generic_TypeRef { get; private set; } // scopes + 3 params + return
-    public TypeReferenceHandle Func6Generic_TypeRef { get; private set; } // scopes + 4 params + return
-    public TypeReferenceHandle Func7Generic_TypeRef { get; private set; } // scopes + 5 params + return
-    public TypeReferenceHandle Func8Generic_TypeRef { get; private set; } // scopes + 6 params + return
 
-    private readonly Dictionary<int, TypeSpecificationHandle> _funcArrayParamTypeSpecs = new();
-    private readonly Dictionary<int, MemberReferenceHandle> _funcArrayParamCtorRefs = new();
+        // Additional Func delegate generic type refs for multi-parameter support (scopes + up to 6 js params + return)
+        public TypeReferenceHandle Func4Generic_TypeRef { get; private set; } // scopes + 2 params + return
+        public TypeReferenceHandle Func5Generic_TypeRef { get; private set; } // scopes + 3 params + return
+        public TypeReferenceHandle Func6Generic_TypeRef { get; private set; } // scopes + 4 params + return
+        public TypeReferenceHandle Func7Generic_TypeRef { get; private set; } // scopes + 5 params + return
+        public TypeReferenceHandle Func8Generic_TypeRef { get; private set; } // scopes + 6 params + return
 
         private void LoadObjectTypes(MetadataBuilder metadataBuilder)
         {

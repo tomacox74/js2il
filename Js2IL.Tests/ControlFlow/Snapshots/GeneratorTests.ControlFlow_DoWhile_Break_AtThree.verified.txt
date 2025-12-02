@@ -70,7 +70,7 @@
 
 } // end of class Scopes.ControlFlow_DoWhile_Break_AtThree
 
-.class public auto ansi beforefieldinit Program
+.class public auto ansi beforefieldinit Scripts.ControlFlow_DoWhile_Break_AtThree
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -81,7 +81,6 @@
 		// Header size: 12
 		// Code size: 146 (0x92)
 		.maxstack 32
-		.entrypoint
 		.locals init (
 			[0] class Scopes.ControlFlow_DoWhile_Break_AtThree
 		)
@@ -133,7 +132,24 @@
 		// end loop
 
 		IL_0091: ret
-	} // end of method Program::Main
+	} // end of method ControlFlow_DoWhile_Break_AtThree::Main
 
-} // end of class Program
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x210a
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.ControlFlow_DoWhile_Break_AtThree::Main()
+		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0016: ret
+	} // end of method ControlFlow_DoWhile_Break_AtThree::Main
+
+} // end of class Scripts.ControlFlow_DoWhile_Break_AtThree
 

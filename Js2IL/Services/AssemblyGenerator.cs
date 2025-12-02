@@ -107,20 +107,69 @@ namespace Js2IL.Services
                 methodSig,
                 bodyOffset);
 
-            // Define the Program type via TypeBuilder
+            // Define the Script main type via TypeBuilder
             var programTypeDef = programTypeBuilder.AddTypeDefinition(
                 TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
                 _bclReferences.ObjectType);
 
             // create the entry point for spining up the execution engine
-            createEntryPoint();
+            createEntryPoint(methodBodyStream);
 
             this.CreateAssembly(name, outputPath);
         }
 
-        private void createEntryPoint()
+        private void createEntryPoint(MethodBodyStreamEncoder methodBodyStream)
         {
             var entryPointTypeBuilder = new TypeBuilder(_metadataBuilder, "", "Program");
+
+            // create the signature for the entry point method
+            var methodSig = MethodBuilder.BuildMethodSignature(
+                _metadataBuilder,
+                isInstance: false,
+                paramCount: 0, 
+                hasScopesParam: false, 
+                returnsVoid: true);
+
+            // create a method generator to emit IL
+            // method generator is specifically for translating JavaScript constructs to IL so its a little overkill for the entry point
+            var entryPointGenerator = new ILMethodGenerator(_variables!, _bclReferences, _metadataBuilder, methodBodyStream, new ClassRegistry(), new FunctionRegistry());
+            var ilEncoder = entryPointGenerator.IL;
+            var runtime = entryPointGenerator.Runtime;
+
+
+            // emit IL for the entry point method
+
+            // first create new instance of the engine
+            runtime.InvokeEngineCtor();
+
+            // first create a new action delegate, no return value, no parameters
+            ilEncoder.OpCode(ILOpCode.Ldnull);
+            ilEncoder.OpCode(ILOpCode.Ldftn);
+            ilEncoder.Token(this._mainScriptMethod);
+            ilEncoder.OpCode(ILOpCode.Newobj);
+            ilEncoder.Token(_bclReferences.Action_Ctor_Ref);
+
+            ilEncoder.OpCode(ILOpCode.Callvirt);
+            var engineExecuteRef = entryPointGenerator.Runtime.GetInstanceMethodRef(
+                typeof(JavaScriptRuntime.Engine),
+                "Execute",
+                typeof(void),
+                typeof(Action));
+            ilEncoder.Token(engineExecuteRef);
+
+            ilEncoder.OpCode(ILOpCode.Ret);
+
+            var entryPointOffset = methodBodyStream.AddMethodBody(
+                ilEncoder, 
+                maxStack: 3,
+                localVariablesSignature: default,
+                attributes: MethodBodyAttributes.None);
+
+            _entryPoint = entryPointTypeBuilder.AddMethodDefinition(
+                MethodAttributes.Static | MethodAttributes.Public,
+                "Main",
+                methodSig,
+                entryPointOffset);
         }
 
         private void createAssemblyMetadata(string name)

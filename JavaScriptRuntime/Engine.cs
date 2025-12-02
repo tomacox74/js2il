@@ -1,3 +1,5 @@
+namespace JavaScriptRuntime;
+
 /// <summary>
 /// Entry point for executiing JavaScript code that has been compiled to a dotnet assembly.
 /// </summary>

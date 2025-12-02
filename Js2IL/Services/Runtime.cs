@@ -3,34 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
 
 namespace Js2IL.Services
 {
     internal class Runtime
     {
+        private static readonly ConditionalWeakTable<MetadataBuilder, AssemblyRefBox> s_runtimeAsmRefCache = new();
+        private static readonly ConditionalWeakTable<MetadataBuilder, AssemblyRefBox> s_systemRuntimeAsmRefCache = new();
+
         private readonly MetadataBuilder _metadataBuilder;
-        private AssemblyReferenceHandle _runtimeAssemblyReference;
         private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCache = new(StringComparer.Ordinal);
-        private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCacheByNs = new(StringComparer.Ordinal);
-        // Cache by full type name (supports nested types with '+')
         private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCacheByFullName = new(StringComparer.Ordinal);
         private readonly Dictionary<string, MemberReferenceHandle> _runtimeMethodCache = new(StringComparer.Ordinal);
+        private readonly InstructionEncoder _il;
+
+        private AssemblyReferenceHandle _runtimeAssemblyReference;
+        private AssemblyReferenceHandle _systemRuntimeAssemblyReference;
         private MemberReferenceHandle _objectGetItem;
-    private MemberReferenceHandle _objectGetLength;
+        private MemberReferenceHandle _objectGetLength;
         private MemberReferenceHandle _arrayCtorRef;
         private MemberReferenceHandle _arrayLengthRef;
         private MemberReferenceHandle _closureBindObjectRef;
         private MemberReferenceHandle _closureInvokeWithArgsRef;
-        private InstructionEncoder _il;
         private MemberReferenceHandle _operatorsAddRef;
         private MemberReferenceHandle _operatorsSubtractRef;
-
-        // Cache a single JavaScriptRuntime AssemblyReference per MetadataBuilder to avoid duplicate AssemblyRef rows
-        private static readonly ConditionalWeakTable<MetadataBuilder, AssemblyRefBox> s_runtimeAsmRefCache = new();
-        private sealed class AssemblyRefBox { public AssemblyReferenceHandle Handle; public AssemblyRefBox(AssemblyReferenceHandle h){ Handle = h; } }
+        private MemberReferenceHandle _engineCtorRef;
 
         public Runtime(MetadataBuilder metadataBuilder, InstructionEncoder il) 
         { 
@@ -57,6 +55,24 @@ namespace Js2IL.Services
             }
             _runtimeAssemblyReference = box.Handle;
 
+            // Initialize System.Runtime assembly reference (for BCL types like Action)
+            var systemRuntimeAssembly = typeof(object).Assembly;
+            var systemRuntimeAssemblyName = systemRuntimeAssembly.GetName();
+            if (!s_systemRuntimeAsmRefCache.TryGetValue(metadataBuilder, out var sysBox))
+            {
+                var sysRuntimeRef = metadataBuilder.AddAssemblyReference(
+                    metadataBuilder.GetOrAddString("System.Runtime"),
+                    version: systemRuntimeAssemblyName.Version!,
+                    culture: default,
+                    publicKeyOrToken: metadataBuilder.GetOrAddBlob(systemRuntimeAssemblyName.GetPublicKeyToken()!),
+                    flags: 0,
+                    hashValue: default
+                );
+                sysBox = new AssemblyRefBox(sysRuntimeRef);
+                s_systemRuntimeAsmRefCache.Add(metadataBuilder, sysBox);
+            }
+            _systemRuntimeAssemblyReference = sysBox.Handle;
+
             var dotNet2JsType = metadataBuilder.AddTypeReference(
                 _runtimeAssemblyReference,
                 metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime)),
@@ -74,6 +90,19 @@ namespace Js2IL.Services
 
             // Initialize JavaScriptRuntime.Closure.Bind
             InitializeClosure();
+
+            // Initialize JavaScriptRuntime.Engine
+            InitializeEngine();
+        }
+
+        private sealed class AssemblyRefBox
+        {
+            public AssemblyReferenceHandle Handle;
+
+            public AssemblyRefBox(AssemblyReferenceHandle h)
+            {
+                Handle = h;
+            }
         }
 
         public void InvokeArrayCtor()
@@ -81,6 +110,13 @@ namespace Js2IL.Services
             // we assume the size of the array is already on the stack
             _il.OpCode(ILOpCode.Newobj);
             _il.Token(_arrayCtorRef);
+        }
+
+        public void InvokeEngineCtor()
+        {
+            // creates a new instance of JavaScriptRuntime.Engine
+            _il.OpCode(ILOpCode.Newobj);
+            _il.Token(_engineCtorRef);
         }
 
         public void InvokeArrayGetCount()
@@ -173,15 +209,12 @@ namespace Js2IL.Services
                 subSig);
         }
 
-    /// <summary>
-    /// Initializes reference for JavaScriptRuntime.Object.GetItem(object, object) -> object.
-    /// </summary>
+        /// <summary>
+        /// Initializes reference for JavaScriptRuntime.Object.GetItem(object, object) -> object.
+        /// </summary>
         private void InitializeObject()
         {
-            var objectType = _metadataBuilder.AddTypeReference(
-                _runtimeAssemblyReference,
-                _metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime)),
-                _metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime.Object)));
+            var objectType = this.GetRuntimeTypeHandle(typeof(JavaScriptRuntime.Object));
 
             var objectGetItemSigBuilder = new BlobBuilder();
             new BlobEncoder(objectGetItemSigBuilder)
@@ -296,6 +329,25 @@ namespace Js2IL.Services
         }
 
         /// <summary>
+        /// Initializes reference for JavaScriptRuntime.Engine (.ctor).
+        /// </summary>
+        private void InitializeEngine()
+        {
+            var engineType = GetRuntimeTypeHandle(typeof(JavaScriptRuntime.Engine));
+
+            // Constructor: .ctor()
+            var engineCtorSigBuilder = new BlobBuilder();
+            new BlobEncoder(engineCtorSigBuilder)
+                .MethodSignature(isInstanceMethod: true)
+                .Parameters(0, rt => rt.Void(), p => { });
+            var engineCtorSig = _metadataBuilder.GetOrAddBlob(engineCtorSigBuilder);
+            _engineCtorRef = _metadataBuilder.AddMemberReference(
+                engineType,
+                _metadataBuilder.GetOrAddString(".ctor"),
+                engineCtorSig);
+        }
+
+        /// <summary>
         /// Gets (and caches) a TypeReferenceHandle to a type in the JavaScriptRuntime assembly.
         /// </summary>
         private TypeReferenceHandle GetJavaScriptRuntimeType(string typeName)
@@ -350,7 +402,7 @@ namespace Js2IL.Services
             return GetJavaScriptRuntimeType("Error");
         }
 
-    private void EncodeSignatureType(SignatureTypeEncoder enc, Type type)
+        private void EncodeSignatureType(SignatureTypeEncoder enc, Type type)
         {
             if (type == typeof(object)) enc.Object();
             else if (type == typeof(string)) enc.String();
@@ -358,13 +410,25 @@ namespace Js2IL.Services
             else if (type == typeof(bool)) enc.Boolean();
             else if (type == typeof(int)) enc.Int32();
             else if (type == typeof(object[])) enc.SZArray().Object();
-            else if (!string.IsNullOrEmpty(type.Namespace) && type.Namespace!.StartsWith("JavaScriptRuntime", StringComparison.Ordinal))
+            else if (type == typeof(Action))
+            {
+                // System.Action is from System.Runtime, not JavaScriptRuntime
+                var actionTypeRef = _metadataBuilder.AddTypeReference(
+                    _systemRuntimeAssemblyReference,
+                    _metadataBuilder.GetOrAddString("System"),
+                    _metadataBuilder.GetOrAddString("Action"));
+                enc.Type(actionTypeRef, isValueType: false);
+            }
+            else if (type.Namespace?.StartsWith("JavaScriptRuntime", StringComparison.Ordinal) == true)
             {
                 // Map JavaScriptRuntime reference types (e.g., JavaScriptRuntime.Array, JavaScriptRuntime.Node.Process)
                 var tref = GetRuntimeTypeRef(type);
                 enc.Type(tref, isValueType: type.IsValueType);
             }
-            else throw new NotSupportedException($"Unsupported runtime signature type mapping: {type.FullName}");
+            else
+            {
+                throw new NotSupportedException($"Type '{type.FullName ?? type.Name}' from namespace '{type.Namespace}' is not supported in method signatures. Only JavaScriptRuntime types and primitive BCL types (object, string, double, bool, int, object[], Action) are supported.");
+            }
         }
 
         private void EncodeReturnType(ReturnTypeEncoder enc, Type type)
@@ -377,18 +441,6 @@ namespace Js2IL.Services
         {
             var ps = string.Join(",", parms.Select(p => p.FullName));
             return $"{fullTypeName}::{methodName}|{(isInstance ? "inst" : "static")}|ret={ret.FullName}|params=[{ps}]";
-        }
-
-        private TypeReferenceHandle GetRuntimeTypeRef(string @namespace, string typeName)
-        {
-            var key = @namespace + "." + typeName;
-            if (_runtimeTypeCacheByNs.TryGetValue(key, out var h)) return h;
-            var tref = _metadataBuilder.AddTypeReference(
-                _runtimeAssemblyReference,
-                _metadataBuilder.GetOrAddString(@namespace),
-                _metadataBuilder.GetOrAddString(typeName));
-            _runtimeTypeCacheByNs[key] = tref;
-            return tref;
         }
 
         // Nested-type aware resolver for JavaScriptRuntime types (e.g., JavaScriptRuntime.Node.PerfHooks+Performance)
