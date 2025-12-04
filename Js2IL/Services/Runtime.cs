@@ -10,9 +10,9 @@ namespace Js2IL.Services
 
         private readonly MetadataBuilder _metadataBuilder;
         private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCache = new(StringComparer.Ordinal);
-        private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCacheByFullName = new(StringComparer.Ordinal);
         private readonly Dictionary<string, MemberReferenceHandle> _runtimeMethodCache = new(StringComparer.Ordinal);
         private readonly InstructionEncoder _il;
+        private readonly TypeReferenceRegistry _typeRefRegistry;
         private MemberReferenceHandle _objectGetItem;
         private MemberReferenceHandle _objectGetLength;
         private MemberReferenceHandle _arrayCtorRef;
@@ -22,13 +22,12 @@ namespace Js2IL.Services
         private MemberReferenceHandle _operatorsAddRef;
         private MemberReferenceHandle _operatorsSubtractRef;
         private MemberReferenceHandle _engineCtorRef;
-        private readonly AssemblyReferenceRegistry _assemblyRefRegistry;
 
-        public Runtime(MetadataBuilder metadataBuilder, InstructionEncoder il, AssemblyReferenceRegistry assemblyRefRegistry) 
-        { 
+        public Runtime(MetadataBuilder metadataBuilder, InstructionEncoder il, TypeReferenceRegistry typeRefRegistry)
+        {
             _il = il;
             _metadataBuilder = metadataBuilder;
-            _assemblyRefRegistry = assemblyRefRegistry ?? throw new ArgumentNullException(nameof(assemblyRefRegistry));
+            _typeRefRegistry = typeRefRegistry;
             // Initialize references to JavaScriptRuntime.Operators methods
             InitializeOperators();
 
@@ -65,7 +64,7 @@ namespace Js2IL.Services
             // we assume the array is already on the stack
             _il.OpCode(ILOpCode.Callvirt);
             // this can be moved into the runtime as a length property in the future
-            _il.Token(_arrayLengthRef);            
+            _il.Token(_arrayLengthRef);
         }
 
         public void InvokeGetItemFromObject()
@@ -109,12 +108,7 @@ namespace Js2IL.Services
         /// </summary>
         private void InitializeOperators()
         {
-            var runtimeAsmRef = _assemblyRefRegistry.GetOrAdd(RuntimeAssemblyName);
-            var operatorsType = _metadataBuilder.AddTypeReference(
-                runtimeAsmRef,
-                _metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime)),
-                _metadataBuilder.GetOrAddString("Operators")
-            );
+            var operatorsType = _typeRefRegistry.GetOrAdd(typeof(JavaScriptRuntime.Operators));
 
             // JavaScriptRuntime.Operators.Add(object, object) -> object
             var addSigBuilder = new BlobBuilder();
@@ -192,12 +186,7 @@ namespace Js2IL.Services
         /// </summary>
         private void InitializeClosure()
         {
-            var runtimeAsmRef = _assemblyRefRegistry.GetOrAdd(RuntimeAssemblyName);
-            var closureType = _metadataBuilder.AddTypeReference(
-                runtimeAsmRef,
-                _metadataBuilder.GetOrAddString("JavaScriptRuntime"),
-                _metadataBuilder.GetOrAddString("Closure")
-            );
+            var closureType = _typeRefRegistry.GetOrAdd(typeof(JavaScriptRuntime.Closure));
 
             var bindSig = new BlobBuilder();
             new BlobEncoder(bindSig)
@@ -239,11 +228,7 @@ namespace Js2IL.Services
         /// </summary>
         private void InitializeArray()
         {
-            var runtimeAsmRef = _assemblyRefRegistry.GetOrAdd(RuntimeAssemblyName);
-            var arrayType = _metadataBuilder.AddTypeReference(
-                runtimeAsmRef,
-                _metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime)),
-                _metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime.Array)));
+            var arrayType = _typeRefRegistry.GetOrAdd(typeof(JavaScriptRuntime.Array));
 
             // Constructor: .ctor(int capacity)
             var arraySigBuilder = new BlobBuilder();
@@ -299,11 +284,10 @@ namespace Js2IL.Services
             {
                 return handle;
             }
-            var runtimeAsmRef = _assemblyRefRegistry.GetOrAdd(RuntimeAssemblyName);
-            var tref = _metadataBuilder.AddTypeReference(
-                runtimeAsmRef,
-                _metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime)),
-                _metadataBuilder.GetOrAddString(typeName));
+            // Build the full type name and use reflection to get the Type
+            var fullTypeName = $"JavaScriptRuntime.{typeName}, JavaScriptRuntime";
+            var type = Type.GetType(fullTypeName) ?? throw new InvalidOperationException($"Could not resolve type {fullTypeName}");
+            var tref = _typeRefRegistry.GetOrAdd(type);
             _runtimeTypeCache[typeName] = tref;
             return tref;
         }
@@ -311,6 +295,7 @@ namespace Js2IL.Services
         /// <summary>
         /// Returns a MemberReferenceHandle for the .ctor of a JavaScriptRuntime Error type (Error, TypeError, etc.).
         /// Supports 0 or 1 string parameter.
+        /// TODO: Needs to be changed to resolve in the same fashion as other intrinsic objects such as Array, Object, etc. 
         /// </summary>
         public MemberReferenceHandle GetErrorCtorRef(string errorTypeName, int argumentCount)
         {
@@ -357,11 +342,7 @@ namespace Js2IL.Services
             else if (type == typeof(Action))
             {
                 // System.Action is from System.Runtime, not JavaScriptRuntime
-                var systemRuntimeRef = _assemblyRefRegistry.GetOrAdd("System.Runtime");
-                var actionTypeRef = _metadataBuilder.AddTypeReference(
-                    systemRuntimeRef,
-                    _metadataBuilder.GetOrAddString("System"),
-                    _metadataBuilder.GetOrAddString("Action"));
+                var actionTypeRef = _typeRefRegistry.GetOrAdd(typeof(Action));
                 enc.Type(actionTypeRef, isValueType: false);
             }
             else if (type.Namespace?.StartsWith("JavaScriptRuntime", StringComparison.Ordinal) == true)
@@ -391,32 +372,8 @@ namespace Js2IL.Services
         // Nested-type aware resolver for JavaScriptRuntime types (e.g., JavaScriptRuntime.Node.PerfHooks+Performance)
         private TypeReferenceHandle GetRuntimeTypeRef(Type runtimeType)
         {
-            var fullName = runtimeType.FullName ?? ((runtimeType.Namespace ?? "") + "." + runtimeType.Name);
-            if (_runtimeTypeCacheByFullName.TryGetValue(fullName, out var existing)) return existing;
-
-            TypeReferenceHandle tref;
-            if (runtimeType.DeclaringType == null)
-            {
-                // Top-level type under JavaScriptRuntime assembly
-                var runtimeAsmRef = _assemblyRefRegistry.GetOrAdd(RuntimeAssemblyName);
-                tref = _metadataBuilder.AddTypeReference(
-                    runtimeAsmRef,
-                    _metadataBuilder.GetOrAddString(runtimeType.Namespace ?? "JavaScriptRuntime"),
-                    _metadataBuilder.GetOrAddString(runtimeType.Name));
-            }
-            else
-            {
-                // Nested type: resolution scope is the declaring type TypeReference
-                var parentRef = GetRuntimeTypeRef(runtimeType.DeclaringType);
-                tref = _metadataBuilder.AddTypeReference(
-                    parentRef,
-                    // Nested types in metadata do not carry a namespace; use empty here and set only the nested name
-                    _metadataBuilder.GetOrAddString(string.Empty),
-                    _metadataBuilder.GetOrAddString(runtimeType.Name));
-            }
-
-            _runtimeTypeCacheByFullName[fullName] = tref;
-            return tref;
+            // Use TypeReferenceRegistry which handles both top-level and nested types
+            return _typeRefRegistry.GetOrAdd(runtimeType);
         }
 
         // Public helper to get a type reference handle for a JavaScriptRuntime type

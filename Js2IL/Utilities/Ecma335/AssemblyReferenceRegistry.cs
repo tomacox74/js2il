@@ -34,6 +34,14 @@ namespace Js2IL.Utilities.Ecma335
                 throw new ArgumentException("Assembly name cannot be null or whitespace.", nameof(assemblyName));
             }
 
+            // Map System.Private.CoreLib to System.Runtime (reference assembly)
+            if (assemblyName == "System.Private.CoreLib")
+            {
+                // the mapping may have to be expanded to be per type, not per assembly
+                // and as such probably should be moved to TypeReferenceRegistry
+                assemblyName = "System.Runtime";
+            }
+
             if (_cache.TryGetValue(assemblyName, out var cached))
             {
                 return cached;

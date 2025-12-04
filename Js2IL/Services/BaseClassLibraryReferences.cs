@@ -6,74 +6,34 @@ namespace Js2IL.Services
 {
     internal class BaseClassLibraryReferences
     {
-        private readonly AssemblyReferenceRegistry _assemblyRefRegistry;
-        private readonly AssemblyReferenceHandle _systemRuntimeAssembly;
-        private readonly AssemblyReferenceHandle _systemConsoleAssembly;
-        private readonly AssemblyReferenceHandle _systemLinqExpressions;
-        private readonly AssemblyReferenceHandle _systemCollections;
+        private readonly TypeReferenceRegistry _typeRefRegistry;
         private readonly Dictionary<int, MemberReferenceHandle> _funcArrayParamInvokeRefs = new();
         private readonly Dictionary<int, TypeSpecificationHandle> _funcArrayParamTypeSpecs = new();
         private readonly Dictionary<int, MemberReferenceHandle> _funcArrayParamCtorRefs = new();
 
         public BaseClassLibraryReferences(MetadataBuilder metadataBuilder)
         {
-            _assemblyRefRegistry = new AssemblyReferenceRegistry(metadataBuilder);
-
-            // Assembly References
-            _systemConsoleAssembly = _assemblyRefRegistry.GetOrAdd("System.Console");
-            _systemRuntimeAssembly = _assemblyRefRegistry.GetOrAdd("System.Runtime");
-            _systemLinqExpressions = _assemblyRefRegistry.GetOrAdd("System.Linq.Expressions");
-            _systemCollections = _assemblyRefRegistry.GetOrAdd("System.Collections");
+            _typeRefRegistry = new TypeReferenceRegistry(metadataBuilder);
 
             // Common Runtime References
-            this.BooleanType = metadataBuilder.AddTypeReference(
-                _systemRuntimeAssembly,
-                metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Boolean")
-            );
+            this.BooleanType = _typeRefRegistry.GetOrAdd(typeof(bool));
 
-            this.DoubleType = metadataBuilder.AddTypeReference(
-                _systemRuntimeAssembly,
-                metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Double")
-            );
+            this.DoubleType = _typeRefRegistry.GetOrAdd(typeof(double));
 
-            this.Int32Type = metadataBuilder.AddTypeReference(
-                _systemRuntimeAssembly,
-                metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Int32")
-            );
+            this.Int32Type = _typeRefRegistry.GetOrAdd(typeof(int));
 
-            this.ObjectType = metadataBuilder.AddTypeReference(
-                _systemRuntimeAssembly,
-                metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Object")
-            );
+            this.ObjectType = _typeRefRegistry.GetOrAdd(typeof(object));
 
-            this.StringType = metadataBuilder.AddTypeReference(
-                _systemRuntimeAssembly,
-                metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("String")
-            );            
+            this.StringType = _typeRefRegistry.GetOrAdd(typeof(string));            
 
             // System.Exception Reference (for catch handlers)
-            this.ExceptionType = metadataBuilder.AddTypeReference(
-                _systemRuntimeAssembly,
-                metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Exception")
-            );
+            this.ExceptionType = _typeRefRegistry.GetOrAdd(typeof(System.Exception));
 
             // System.Math References
-            this.SystemMathType = metadataBuilder.AddTypeReference(
-                _systemRuntimeAssembly,
-                metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Math"));
+            this.SystemMathType = _typeRefRegistry.GetOrAdd(typeof(System.Math));
 
             // System.Console References
-            var systemConsoleTypeReference = metadataBuilder.AddTypeReference(
-                _systemConsoleAssembly,
-                metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Console"));
+            var systemConsoleTypeReference = _typeRefRegistry.GetOrAdd(typeof(System.Console));
 
             // Create method signature: void WriteLine(string)
             var consoleSig = new BlobBuilder();
@@ -100,10 +60,7 @@ namespace Js2IL.Services
             LoadFuncTypes(metadataBuilder);
 
             // System.Action reference
-            var actionTypeRef = metadataBuilder.AddTypeReference(
-                _systemRuntimeAssembly,
-                metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Action"));
+            var actionTypeRef = _typeRefRegistry.GetOrAdd(typeof(System.Action));
 
             var actionCtorSig = new BlobBuilder();
             new BlobEncoder(actionCtorSig)
@@ -121,10 +78,7 @@ namespace Js2IL.Services
                 metadataBuilder.GetOrAddBlob(actionCtorSig));
 
             // System.Reflection.MethodBase and GetCurrentMethod()
-            MethodBaseType = metadataBuilder.AddTypeReference(
-                _systemRuntimeAssembly,
-                metadataBuilder.GetOrAddString("System.Reflection"),
-                metadataBuilder.GetOrAddString("MethodBase"));
+            MethodBaseType = _typeRefRegistry.GetOrAdd(typeof(System.Reflection.MethodBase));
 
             var getCurrentMethodSig = new BlobBuilder();
             new BlobEncoder(getCurrentMethodSig)
@@ -138,7 +92,7 @@ namespace Js2IL.Services
                 metadataBuilder.GetOrAddBlob(getCurrentMethodSig));
         }
 
-        public AssemblyReferenceRegistry AssemblyRefRegistry => _assemblyRefRegistry;
+        public TypeReferenceRegistry TypeRefRegistry => _typeRefRegistry;
 
         public TypeReferenceHandle BooleanType { get; private init; }
         public TypeReferenceHandle DoubleType { get; private init; }
@@ -190,14 +144,9 @@ namespace Js2IL.Services
 
         private void LoadObjectTypes(MetadataBuilder metadataBuilder)
         {
-            var dynamicNamespace = metadataBuilder.GetOrAddString("System.Dynamic");
-
             // ExpandObject reference
             // important for the generic case in JavaScript where objects are just property bags
-            var systemCoreExpandoType = metadataBuilder.AddTypeReference(
-                _systemLinqExpressions,
-                dynamicNamespace,
-                metadataBuilder.GetOrAddString("ExpandoObject"));
+            var systemCoreExpandoType = _typeRefRegistry.GetOrAdd(typeof(System.Dynamic.ExpandoObject));
             // store the ExpandoObject type reference for use as a base class
             ExpandoObjectType = systemCoreExpandoType;
             var expandoSigBuilder = new BlobBuilder();
@@ -222,10 +171,7 @@ namespace Js2IL.Services
                 objectCtorSig);
 
             // IDictionary Bound Type Reference <System.String, System.Object>
-            var unboundIDictionaryType = metadataBuilder.AddTypeReference(
-                _systemRuntimeAssembly,
-                metadataBuilder.GetOrAddString("System.Collections.Generic"),
-                metadataBuilder.GetOrAddString("IDictionary`2"));
+            var unboundIDictionaryType = _typeRefRegistry.GetOrAdd(typeof(System.Collections.Generic.IDictionary<,>));
 
 
             // 3) Build a TypeSpec blob for IDictionary<string, object>
@@ -278,10 +224,7 @@ namespace Js2IL.Services
         private void LoadArrayTypes(MetadataBuilder metadataBuilder)
         {
             // List Bound Type Reference <System.Object>
-            var unboundListType = metadataBuilder.AddTypeReference(
-                _systemCollections,
-                metadataBuilder.GetOrAddString("System.Collections.Generic"),
-                metadataBuilder.GetOrAddString("List`1"));
+            var unboundListType = _typeRefRegistry.GetOrAdd(typeof(System.Collections.Generic.List<>));
 
             // 3) Build a TypeSpec blob for IDictionary<string, object>
             var tsBlob = new BlobBuilder();
@@ -370,37 +313,16 @@ namespace Js2IL.Services
         private void LoadFuncTypes(MetadataBuilder metadataBuilder)
         {
             // Func<T1, TResult>
-            Func2Generic_TypeRef = metadataBuilder.AddTypeReference(
-                _systemRuntimeAssembly,
-                metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Func`2"));
+            Func2Generic_TypeRef = _typeRefRegistry.GetOrAdd(typeof(System.Func<,>));
 
             // Func<T1, T2, TResult>
-            Func3Generic_TypeRef = metadataBuilder.AddTypeReference(
-                _systemRuntimeAssembly,
-                metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Func`3"));
+            Func3Generic_TypeRef = _typeRefRegistry.GetOrAdd(typeof(System.Func<,,>));
             // Additional generic Func references
-            Func4Generic_TypeRef = metadataBuilder.AddTypeReference(
-                _systemRuntimeAssembly,
-                metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Func`4"));
-            Func5Generic_TypeRef = metadataBuilder.AddTypeReference(
-                _systemRuntimeAssembly,
-                metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Func`5"));
-            Func6Generic_TypeRef = metadataBuilder.AddTypeReference(
-                _systemRuntimeAssembly,
-                metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Func`6"));
-            Func7Generic_TypeRef = metadataBuilder.AddTypeReference(
-                _systemRuntimeAssembly,
-                metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Func`7"));
-            Func8Generic_TypeRef = metadataBuilder.AddTypeReference(
-                _systemRuntimeAssembly,
-                metadataBuilder.GetOrAddString("System"),
-                metadataBuilder.GetOrAddString("Func`8"));
+            Func4Generic_TypeRef = _typeRefRegistry.GetOrAdd(typeof(System.Func<,,,>));
+            Func5Generic_TypeRef = _typeRefRegistry.GetOrAdd(typeof(System.Func<,,,,>));
+            Func6Generic_TypeRef = _typeRefRegistry.GetOrAdd(typeof(System.Func<,,,,,>));
+            Func7Generic_TypeRef = _typeRefRegistry.GetOrAdd(typeof(System.Func<,,,,,,>));
+            Func8Generic_TypeRef = _typeRefRegistry.GetOrAdd(typeof(System.Func<,,,,,,,>));
 
             // Close over object types for parameters and return
             // Func<object, object>
