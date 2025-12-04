@@ -1,25 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
+﻿using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
-using System.Runtime.CompilerServices;
+using Js2IL.Utilities.Ecma335;
 
 namespace Js2IL.Services
 {
     internal class Runtime
     {
-        private static readonly ConditionalWeakTable<MetadataBuilder, AssemblyRefBox> s_runtimeAsmRefCache = new();
-        private static readonly ConditionalWeakTable<MetadataBuilder, AssemblyRefBox> s_systemRuntimeAsmRefCache = new();
+        private static readonly string RuntimeAssemblyName = typeof(JavaScriptRuntime.Console).Assembly.GetName().Name!;
 
         private readonly MetadataBuilder _metadataBuilder;
         private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCache = new(StringComparer.Ordinal);
         private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCacheByFullName = new(StringComparer.Ordinal);
         private readonly Dictionary<string, MemberReferenceHandle> _runtimeMethodCache = new(StringComparer.Ordinal);
         private readonly InstructionEncoder _il;
-
-        private AssemblyReferenceHandle _runtimeAssemblyReference;
-        private AssemblyReferenceHandle _systemRuntimeAssemblyReference;
         private MemberReferenceHandle _objectGetItem;
         private MemberReferenceHandle _objectGetLength;
         private MemberReferenceHandle _arrayCtorRef;
@@ -29,55 +22,13 @@ namespace Js2IL.Services
         private MemberReferenceHandle _operatorsAddRef;
         private MemberReferenceHandle _operatorsSubtractRef;
         private MemberReferenceHandle _engineCtorRef;
+        private readonly AssemblyReferenceRegistry _assemblyRefRegistry;
 
-        public Runtime(MetadataBuilder metadataBuilder, InstructionEncoder il) 
+        public Runtime(MetadataBuilder metadataBuilder, InstructionEncoder il, AssemblyReferenceRegistry assemblyRefRegistry) 
         { 
             _il = il;
             _metadataBuilder = metadataBuilder;
-
-            var runtimeAssembly = typeof(JavaScriptRuntime.Console).Assembly;
-            var runtimeAssemblyName = runtimeAssembly.GetName();
-            var runtimeAssemblyVersion = runtimeAssemblyName.Version;
-
-            // Reuse existing AssemblyReference for JavaScriptRuntime if one was already created for this MetadataBuilder
-            if (!s_runtimeAsmRefCache.TryGetValue(metadataBuilder, out var box))
-            {
-                var runtimeAssemblyReference = metadataBuilder.AddAssemblyReference(
-                    metadataBuilder.GetOrAddString(runtimeAssemblyName.Name!),
-                    version: runtimeAssemblyVersion!,
-                    culture: default,
-                    publicKeyOrToken: default,
-                    flags: 0,
-                    hashValue: default
-                );
-                box = new AssemblyRefBox(runtimeAssemblyReference);
-                s_runtimeAsmRefCache.Add(metadataBuilder, box);
-            }
-            _runtimeAssemblyReference = box.Handle;
-
-            // Initialize System.Runtime assembly reference (for BCL types like Action)
-            var systemRuntimeAssembly = typeof(object).Assembly;
-            var systemRuntimeAssemblyName = systemRuntimeAssembly.GetName();
-            if (!s_systemRuntimeAsmRefCache.TryGetValue(metadataBuilder, out var sysBox))
-            {
-                var sysRuntimeRef = metadataBuilder.AddAssemblyReference(
-                    metadataBuilder.GetOrAddString("System.Runtime"),
-                    version: systemRuntimeAssemblyName.Version!,
-                    culture: default,
-                    publicKeyOrToken: metadataBuilder.GetOrAddBlob(systemRuntimeAssemblyName.GetPublicKeyToken()!),
-                    flags: 0,
-                    hashValue: default
-                );
-                sysBox = new AssemblyRefBox(sysRuntimeRef);
-                s_systemRuntimeAsmRefCache.Add(metadataBuilder, sysBox);
-            }
-            _systemRuntimeAssemblyReference = sysBox.Handle;
-
-            var dotNet2JsType = metadataBuilder.AddTypeReference(
-                _runtimeAssemblyReference,
-                metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime)),
-                metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime.DotNet2JSConversions))
-            );
+            _assemblyRefRegistry = assemblyRefRegistry ?? throw new ArgumentNullException(nameof(assemblyRefRegistry));
             // Initialize references to JavaScriptRuntime.Operators methods
             InitializeOperators();
 
@@ -93,16 +44,6 @@ namespace Js2IL.Services
 
             // Initialize JavaScriptRuntime.Engine
             InitializeEngine();
-        }
-
-        private sealed class AssemblyRefBox
-        {
-            public AssemblyReferenceHandle Handle;
-
-            public AssemblyRefBox(AssemblyReferenceHandle h)
-            {
-                Handle = h;
-            }
         }
 
         public void InvokeArrayCtor()
@@ -168,8 +109,9 @@ namespace Js2IL.Services
         /// </summary>
         private void InitializeOperators()
         {
+            var runtimeAsmRef = _assemblyRefRegistry.GetOrAdd(RuntimeAssemblyName);
             var operatorsType = _metadataBuilder.AddTypeReference(
-                _runtimeAssemblyReference,
+                runtimeAsmRef,
                 _metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime)),
                 _metadataBuilder.GetOrAddString("Operators")
             );
@@ -250,9 +192,9 @@ namespace Js2IL.Services
         /// </summary>
         private void InitializeClosure()
         {
-            // Use the same runtime assembly reference we already captured
+            var runtimeAsmRef = _assemblyRefRegistry.GetOrAdd(RuntimeAssemblyName);
             var closureType = _metadataBuilder.AddTypeReference(
-                _runtimeAssemblyReference,
+                runtimeAsmRef,
                 _metadataBuilder.GetOrAddString("JavaScriptRuntime"),
                 _metadataBuilder.GetOrAddString("Closure")
             );
@@ -297,8 +239,9 @@ namespace Js2IL.Services
         /// </summary>
         private void InitializeArray()
         {
+            var runtimeAsmRef = _assemblyRefRegistry.GetOrAdd(RuntimeAssemblyName);
             var arrayType = _metadataBuilder.AddTypeReference(
-                _runtimeAssemblyReference,
+                runtimeAsmRef,
                 _metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime)),
                 _metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime.Array)));
 
@@ -356,8 +299,9 @@ namespace Js2IL.Services
             {
                 return handle;
             }
+            var runtimeAsmRef = _assemblyRefRegistry.GetOrAdd(RuntimeAssemblyName);
             var tref = _metadataBuilder.AddTypeReference(
-                _runtimeAssemblyReference,
+                runtimeAsmRef,
                 _metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime)),
                 _metadataBuilder.GetOrAddString(typeName));
             _runtimeTypeCache[typeName] = tref;
@@ -413,8 +357,9 @@ namespace Js2IL.Services
             else if (type == typeof(Action))
             {
                 // System.Action is from System.Runtime, not JavaScriptRuntime
+                var systemRuntimeRef = _assemblyRefRegistry.GetOrAdd("System.Runtime");
                 var actionTypeRef = _metadataBuilder.AddTypeReference(
-                    _systemRuntimeAssemblyReference,
+                    systemRuntimeRef,
                     _metadataBuilder.GetOrAddString("System"),
                     _metadataBuilder.GetOrAddString("Action"));
                 enc.Type(actionTypeRef, isValueType: false);
@@ -453,8 +398,9 @@ namespace Js2IL.Services
             if (runtimeType.DeclaringType == null)
             {
                 // Top-level type under JavaScriptRuntime assembly
+                var runtimeAsmRef = _assemblyRefRegistry.GetOrAdd(RuntimeAssemblyName);
                 tref = _metadataBuilder.AddTypeReference(
-                    _runtimeAssemblyReference,
+                    runtimeAsmRef,
                     _metadataBuilder.GetOrAddString(runtimeType.Namespace ?? "JavaScriptRuntime"),
                     _metadataBuilder.GetOrAddString(runtimeType.Name));
             }

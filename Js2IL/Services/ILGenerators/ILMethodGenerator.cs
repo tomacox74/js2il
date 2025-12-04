@@ -66,7 +66,7 @@ namespace Js2IL.Services.ILGenerators
             var methodIl = new BlobBuilder();
             _cfb = new ControlFlowBuilder();
             _il = new InstructionEncoder(methodIl, _cfb);
-            this._runtime = new Runtime(metadataBuilder, _il);
+            this._runtime = new Runtime(metadataBuilder, _il, bclReferences.AssemblyRefRegistry);
             // Use a dedicated expression generator to avoid circular logic and enable incremental refactors
             this._expressionEmitter = new ILExpressionGenerator(this);
 

@@ -1,111 +1,77 @@
-﻿using PowerArgs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
+﻿using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
+using Js2IL.Utilities.Ecma335;
 
 namespace Js2IL.Services
 {
     internal class BaseClassLibraryReferences
     {
+        private readonly AssemblyReferenceRegistry _assemblyRefRegistry;
+        private readonly AssemblyReferenceHandle _systemRuntimeAssembly;
+        private readonly AssemblyReferenceHandle _systemConsoleAssembly;
         private readonly AssemblyReferenceHandle _systemLinqExpressions;
         private readonly AssemblyReferenceHandle _systemCollections;
         private readonly Dictionary<int, MemberReferenceHandle> _funcArrayParamInvokeRefs = new();
         private readonly Dictionary<int, TypeSpecificationHandle> _funcArrayParamTypeSpecs = new();
         private readonly Dictionary<int, MemberReferenceHandle> _funcArrayParamCtorRefs = new();
 
-        public BaseClassLibraryReferences(MetadataBuilder metadataBuilder, Version bclVersion, byte[] publicKeyToken)
+        public BaseClassLibraryReferences(MetadataBuilder metadataBuilder)
         {
-            // public key token
-            var publicKeyTokenHandle = metadataBuilder.GetOrAddBlob(publicKeyToken);
+            _assemblyRefRegistry = new AssemblyReferenceRegistry(metadataBuilder);
 
             // Assembly References
-            this.SystemConsoleAssembly = metadataBuilder.AddAssemblyReference(
-                name: metadataBuilder.GetOrAddString("System.Console"),
-                version: bclVersion,
-                culture: default,
-                publicKeyOrToken: publicKeyTokenHandle,
-                flags: 0,
-                hashValue: default
-            );
-
-            this.SystemRuntimeAssembly = metadataBuilder.AddAssemblyReference(
-                name: metadataBuilder.GetOrAddString("System.Runtime"),
-                version: bclVersion,
-                culture: default,
-                publicKeyOrToken: publicKeyTokenHandle,
-                flags: 0,
-                hashValue: default
-            );
-
-            _systemLinqExpressions = metadataBuilder.AddAssemblyReference(
-                name: metadataBuilder.GetOrAddString("System.Linq.Expressions"),
-                version: bclVersion,
-                culture: default,
-                publicKeyOrToken: publicKeyTokenHandle,
-                flags: 0,
-                hashValue: default
-            );
-
-            _systemCollections = metadataBuilder.AddAssemblyReference(
-                name: metadataBuilder.GetOrAddString("System.Collections"),
-                version: bclVersion,
-                culture: default,
-                publicKeyOrToken: publicKeyTokenHandle,
-                flags: 0,
-                hashValue: default
-            );
+            _systemConsoleAssembly = _assemblyRefRegistry.GetOrAdd("System.Console");
+            _systemRuntimeAssembly = _assemblyRefRegistry.GetOrAdd("System.Runtime");
+            _systemLinqExpressions = _assemblyRefRegistry.GetOrAdd("System.Linq.Expressions");
+            _systemCollections = _assemblyRefRegistry.GetOrAdd("System.Collections");
 
             // Common Runtime References
             this.BooleanType = metadataBuilder.AddTypeReference(
-                this.SystemRuntimeAssembly,
+                _systemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
                 metadataBuilder.GetOrAddString("Boolean")
             );
 
             this.DoubleType = metadataBuilder.AddTypeReference(
-                this.SystemRuntimeAssembly,
+                _systemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
                 metadataBuilder.GetOrAddString("Double")
             );
 
             this.Int32Type = metadataBuilder.AddTypeReference(
-                this.SystemRuntimeAssembly,
+                _systemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
                 metadataBuilder.GetOrAddString("Int32")
             );
 
             this.ObjectType = metadataBuilder.AddTypeReference(
-                this.SystemRuntimeAssembly,
+                _systemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
                 metadataBuilder.GetOrAddString("Object")
             );
 
             this.StringType = metadataBuilder.AddTypeReference(
-                this.SystemRuntimeAssembly,
+                _systemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
                 metadataBuilder.GetOrAddString("String")
             );            
 
             // System.Exception Reference (for catch handlers)
             this.ExceptionType = metadataBuilder.AddTypeReference(
-                this.SystemRuntimeAssembly,
+                _systemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
                 metadataBuilder.GetOrAddString("Exception")
             );
 
             // System.Math References
             this.SystemMathType = metadataBuilder.AddTypeReference(
-                this.SystemRuntimeAssembly,
+                _systemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
                 metadataBuilder.GetOrAddString("Math"));
 
             // System.Console References
             var systemConsoleTypeReference = metadataBuilder.AddTypeReference(
-                this.SystemConsoleAssembly,
+                _systemConsoleAssembly,
                 metadataBuilder.GetOrAddString("System"),
                 metadataBuilder.GetOrAddString("Console"));
 
@@ -135,7 +101,7 @@ namespace Js2IL.Services
 
             // System.Action reference
             var actionTypeRef = metadataBuilder.AddTypeReference(
-                this.SystemRuntimeAssembly,
+                _systemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
                 metadataBuilder.GetOrAddString("Action"));
 
@@ -156,7 +122,7 @@ namespace Js2IL.Services
 
             // System.Reflection.MethodBase and GetCurrentMethod()
             MethodBaseType = metadataBuilder.AddTypeReference(
-                this.SystemRuntimeAssembly,
+                _systemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System.Reflection"),
                 metadataBuilder.GetOrAddString("MethodBase"));
 
@@ -172,8 +138,8 @@ namespace Js2IL.Services
                 metadataBuilder.GetOrAddBlob(getCurrentMethodSig));
         }
 
-        public AssemblyReferenceHandle SystemRuntimeAssembly { get; private init; }
-        public AssemblyReferenceHandle SystemConsoleAssembly { get; private init; }
+        public AssemblyReferenceRegistry AssemblyRefRegistry => _assemblyRefRegistry;
+
         public TypeReferenceHandle BooleanType { get; private init; }
         public TypeReferenceHandle DoubleType { get; private init; }
         public TypeReferenceHandle Int32Type { get; private init; }
@@ -257,7 +223,7 @@ namespace Js2IL.Services
 
             // IDictionary Bound Type Reference <System.String, System.Object>
             var unboundIDictionaryType = metadataBuilder.AddTypeReference(
-                this.SystemRuntimeAssembly,
+                _systemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System.Collections.Generic"),
                 metadataBuilder.GetOrAddString("IDictionary`2"));
 
@@ -405,34 +371,34 @@ namespace Js2IL.Services
         {
             // Func<T1, TResult>
             Func2Generic_TypeRef = metadataBuilder.AddTypeReference(
-                this.SystemRuntimeAssembly,
+                _systemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
                 metadataBuilder.GetOrAddString("Func`2"));
 
             // Func<T1, T2, TResult>
             Func3Generic_TypeRef = metadataBuilder.AddTypeReference(
-                this.SystemRuntimeAssembly,
+                _systemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
                 metadataBuilder.GetOrAddString("Func`3"));
             // Additional generic Func references
             Func4Generic_TypeRef = metadataBuilder.AddTypeReference(
-                this.SystemRuntimeAssembly,
+                _systemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
                 metadataBuilder.GetOrAddString("Func`4"));
             Func5Generic_TypeRef = metadataBuilder.AddTypeReference(
-                this.SystemRuntimeAssembly,
+                _systemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
                 metadataBuilder.GetOrAddString("Func`5"));
             Func6Generic_TypeRef = metadataBuilder.AddTypeReference(
-                this.SystemRuntimeAssembly,
+                _systemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
                 metadataBuilder.GetOrAddString("Func`6"));
             Func7Generic_TypeRef = metadataBuilder.AddTypeReference(
-                this.SystemRuntimeAssembly,
+                _systemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
                 metadataBuilder.GetOrAddString("Func`7"));
             Func8Generic_TypeRef = metadataBuilder.AddTypeReference(
-                this.SystemRuntimeAssembly,
+                _systemRuntimeAssembly,
                 metadataBuilder.GetOrAddString("System"),
                 metadataBuilder.GetOrAddString("Func`8"));
 

@@ -200,7 +200,7 @@ namespace Js2IL.Services.ILGenerators
             var variables = functionVariables;
             var il = methodGenerator.IL;
             // Runtime helper to reference JavaScriptRuntime methods (e.g., Object.GetProperty)
-            var runtime = new Js2IL.Services.Runtime(_metadataBuilder, il);
+            var runtime = new Js2IL.Services.Runtime(_metadataBuilder, il, _bclReferences.AssemblyRefRegistry);
 
             // Parameters are already registered in Variables constructor
 

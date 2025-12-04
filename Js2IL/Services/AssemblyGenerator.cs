@@ -17,7 +17,6 @@ namespace Js2IL.Services
         };
 
         public MetadataBuilder _metadataBuilder = new MetadataBuilder();
-        private AssemblyName _systemRuntimeAssembly;
         private BlobBuilder _ilBuilder = new BlobBuilder();
         private MethodDefinitionHandle _entryPoint;
 
@@ -28,14 +27,7 @@ namespace Js2IL.Services
 
         public AssemblyGenerator()
         {
-            // Get the version and public key token for the System.Runtime assembly reference.
-            // We use the same one that this assembly is compiled against for consistency.
-            if (!ReferenceAssemblyResolver.TryFindSystemRuntime(out this._systemRuntimeAssembly))
-            {
-                throw new InvalidOperationException("Could not find System.Runtime assembly reference.");
-            }
-
-            this._bclReferences = new BaseClassLibraryReferences(_metadataBuilder, _systemRuntimeAssembly.Version!, _systemRuntimeAssembly.GetPublicKeyToken()!);
+            this._bclReferences = new BaseClassLibraryReferences(_metadataBuilder);
         }
 
         /// <summary>
@@ -206,7 +198,7 @@ namespace Js2IL.Services
             string assemblyDll = Path.Combine(outputPath, $"{name}.dll");
             File.WriteAllBytes(assemblyDll, peImage.ToArray());
 
-            RuntimeConfigWriter.WriteRuntimeConfigJson(assemblyDll, _systemRuntimeAssembly);
+            RuntimeConfigWriter.WriteRuntimeConfigJson(assemblyDll, typeof(object).Assembly.GetName());
 
             // Copy JavaScriptRuntime.dll instead of js2il.dll.
             var jsRuntimeDll = typeof(JavaScriptRuntime.Object).Assembly.Location!;
