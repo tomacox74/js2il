@@ -24,33 +24,16 @@ namespace Js2IL.Services
             _typeRefRegistry = new TypeReferenceRegistry(metadataBuilder);
             _memberRefRegistry = new MemberReferenceRegistry(metadataBuilder, _typeRefRegistry);
 
-            // Common Runtime References
-            this.BooleanType = _typeRefRegistry.GetOrAdd(typeof(bool));
-
-            this.DoubleType = _typeRefRegistry.GetOrAdd(typeof(double));
-
-            this.Int32Type = _typeRefRegistry.GetOrAdd(typeof(int));
-
-            this.ObjectType = _typeRefRegistry.GetOrAdd(typeof(object));
-
-            this.StringType = _typeRefRegistry.GetOrAdd(typeof(string));            
-
-            // System.Exception Reference (for catch handlers)
-            this.ExceptionType = _typeRefRegistry.GetOrAdd(typeof(System.Exception));
-
-            // System.Math References
-            this.SystemMathType = _typeRefRegistry.GetOrAdd(typeof(System.Math));
-
-            // System.Reflection.MethodBase reference
-            this.MethodBaseType = _typeRefRegistry.GetOrAdd(typeof(System.Reflection.MethodBase));
+            // System.Reflection.MethodBase.GetCurrentMethod() reference
+            var methodBaseType = _typeRefRegistry.GetOrAdd(typeof(System.Reflection.MethodBase));
             var getCurrentMethodSig = new BlobBuilder();
             new BlobEncoder(getCurrentMethodSig)
                 .MethodSignature(isInstanceMethod: false)
                 .Parameters(0,
-                    returnType => returnType.Type().Type(MethodBaseType, isValueType: false),
+                    returnType => returnType.Type().Type(methodBaseType, isValueType: false),
                     parameters => { });
             MethodBase_GetCurrentMethod_Ref = metadataBuilder.AddMemberReference(
-                MethodBaseType,
+                methodBaseType,
                 metadataBuilder.GetOrAddString("GetCurrentMethod"),
                 metadataBuilder.GetOrAddBlob(getCurrentMethodSig));
         }
@@ -58,14 +41,14 @@ namespace Js2IL.Services
         public TypeReferenceRegistry TypeRefRegistry => _typeRefRegistry;
         public MemberReferenceRegistry MemberRefRegistry => _memberRefRegistry;
 
-        public TypeReferenceHandle BooleanType { get; private init; }
-        public TypeReferenceHandle DoubleType { get; private init; }
-        public TypeReferenceHandle Int32Type { get; private init; }
-        public TypeReferenceHandle ObjectType { get; private init; }
-        public TypeReferenceHandle StringType { get; private init; }
-        public TypeReferenceHandle ExceptionType { get; private init; }
-        public TypeReferenceHandle SystemMathType { get; private init; }
-        public TypeReferenceHandle MethodBaseType { get; private init; }
+        public TypeReferenceHandle BooleanType => _typeRefRegistry.GetOrAdd(typeof(bool));
+        public TypeReferenceHandle DoubleType => _typeRefRegistry.GetOrAdd(typeof(double));
+        public TypeReferenceHandle Int32Type => _typeRefRegistry.GetOrAdd(typeof(int));
+        public TypeReferenceHandle ObjectType => _typeRefRegistry.GetOrAdd(typeof(object));
+        public TypeReferenceHandle StringType => _typeRefRegistry.GetOrAdd(typeof(string));
+        public TypeReferenceHandle ExceptionType => _typeRefRegistry.GetOrAdd(typeof(System.Exception));
+        public TypeReferenceHandle SystemMathType => _typeRefRegistry.GetOrAdd(typeof(System.Math));
+        public TypeReferenceHandle MethodBaseType => _typeRefRegistry.GetOrAdd(typeof(System.Reflection.MethodBase));
 
         public MemberReferenceHandle Expando_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(System.Dynamic.ExpandoObject), Type.EmptyTypes);
         public MemberReferenceHandle Object_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(object), Type.EmptyTypes);
