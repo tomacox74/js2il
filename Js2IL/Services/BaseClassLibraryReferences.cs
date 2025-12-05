@@ -43,8 +43,6 @@ namespace Js2IL.Services
 
             // System.Console References
             var systemConsoleTypeReference = _typeRefRegistry.GetOrAdd(typeof(System.Console));
-
-            // Create method signature: void WriteLine(string)
             var consoleSig = new BlobBuilder();
             new BlobEncoder(consoleSig)
                 .MethodSignature(isInstanceMethod: false)
@@ -55,38 +53,13 @@ namespace Js2IL.Services
                         parameters.AddParameter().Type().String();
                         parameters.AddParameter().Type().Object();
                     });
-            var writeLineSig = metadataBuilder.GetOrAddBlob(consoleSig);
-
             this.ConsoleWriteLine_StringObject_Ref = metadataBuilder.AddMemberReference(
                 systemConsoleTypeReference,
                 metadataBuilder.GetOrAddString("WriteLine"),
-                writeLineSig);
+                metadataBuilder.GetOrAddBlob(consoleSig));
 
-            LoadObjectTypes(metadataBuilder);
-
-            LoadArrayTypes(metadataBuilder);
-
-            // System.Action reference
-            var actionTypeRef = _typeRefRegistry.GetOrAdd(typeof(System.Action));
-
-            var actionCtorSig = new BlobBuilder();
-            new BlobEncoder(actionCtorSig)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(2,
-                    returnType => returnType.Void(),
-                    parameters =>
-                    {
-                        parameters.AddParameter().Type().Object();
-                        parameters.AddParameter().Type().IntPtr();
-                    });
-            Action_Ctor_Ref = metadataBuilder.AddMemberReference(
-                actionTypeRef,
-                metadataBuilder.GetOrAddString(".ctor"),
-                metadataBuilder.GetOrAddBlob(actionCtorSig));
-
-            // System.Reflection.MethodBase and GetCurrentMethod()
-            MethodBaseType = _typeRefRegistry.GetOrAdd(typeof(System.Reflection.MethodBase));
-
+            // System.Reflection.MethodBase reference
+            this.MethodBaseType = _typeRefRegistry.GetOrAdd(typeof(System.Reflection.MethodBase));
             var getCurrentMethodSig = new BlobBuilder();
             new BlobEncoder(getCurrentMethodSig)
                 .MethodSignature(isInstanceMethod: false)
@@ -97,6 +70,10 @@ namespace Js2IL.Services
                 MethodBaseType,
                 metadataBuilder.GetOrAddString("GetCurrentMethod"),
                 metadataBuilder.GetOrAddBlob(getCurrentMethodSig));
+
+            LoadObjectTypes(metadataBuilder);
+
+            LoadArrayTypes(metadataBuilder);
         }
 
         public TypeReferenceRegistry TypeRefRegistry => _typeRefRegistry;
@@ -109,21 +86,21 @@ namespace Js2IL.Services
         public TypeReferenceHandle StringType { get; private init; }
         public TypeReferenceHandle ExceptionType { get; private init; }
         public TypeReferenceHandle SystemMathType { get; private init; }
-        public TypeReferenceHandle MethodBaseType { get; private set; }
-        public MemberReferenceHandle MethodBase_GetCurrentMethod_Ref { get; private set; }
+        public TypeReferenceHandle MethodBaseType { get; private init; }
 
         // Removed legacy Action<> delegate references (now using Func returning object)
 
         public TypeSpecificationHandle IDictionary_StringObject_Type { get; private set; }
         public MemberReferenceHandle ConsoleWriteLine_StringObject_Ref { get; private init; }
-        public MemberReferenceHandle Expando_Ctor_Ref { get; private set; }
+        public MemberReferenceHandle Expando_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(System.Dynamic.ExpandoObject), Type.EmptyTypes);
         public TypeReferenceHandle ExpandoObjectType { get; private set; }
         public MemberReferenceHandle Object_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(object), Type.EmptyTypes);
         public MemberReferenceHandle IDictionary_SetItem_Ref { get; private set; }
         public MemberReferenceHandle Array_Add_Ref { get; private set; }
         public MemberReferenceHandle Array_SetItem_Ref { get; private set; }
         public MemberReferenceHandle Array_GetCount_Ref { get; private set; }
-        public MemberReferenceHandle Action_Ctor_Ref { get; private set; }
+        public MemberReferenceHandle Action_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(System.Action), new[] { typeof(object), typeof(IntPtr) });
+        public MemberReferenceHandle MethodBase_GetCurrentMethod_Ref { get; private set; }
 
         private void LoadObjectTypes(MetadataBuilder metadataBuilder)
         {
@@ -132,15 +109,6 @@ namespace Js2IL.Services
             var systemCoreExpandoType = _typeRefRegistry.GetOrAdd(typeof(System.Dynamic.ExpandoObject));
             // store the ExpandoObject type reference for use as a base class
             ExpandoObjectType = systemCoreExpandoType;
-            var expandoSigBuilder = new BlobBuilder();
-            new BlobEncoder(expandoSigBuilder)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(0, returnType => returnType.Void(), parameters => { });
-            var expandoCtorSig = metadataBuilder.GetOrAddBlob(expandoSigBuilder);
-            Expando_Ctor_Ref = metadataBuilder.AddMemberReference(
-                systemCoreExpandoType,
-                metadataBuilder.GetOrAddString(".ctor"),
-                expandoCtorSig);
 
             // IDictionary Bound Type Reference <System.String, System.Object>
             var unboundIDictionaryType = _typeRefRegistry.GetOrAdd(typeof(System.Collections.Generic.IDictionary<,>));
