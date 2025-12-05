@@ -8,7 +8,6 @@ namespace Js2IL.Services
     {
         private readonly TypeReferenceRegistry _typeRefRegistry;
         private readonly MemberReferenceRegistry _memberRefRegistry;
-        private readonly Dictionary<int, MemberReferenceHandle> _funcArrayParamInvokeRefs = new();
         private readonly Dictionary<int, Type> _funcTypesByParamCount = new()
         {
             { 0, typeof(System.Func<object[], object>) },
@@ -367,12 +366,6 @@ namespace Js2IL.Services
                 FuncObjectArrayObjectObject_TypeSpec,
                 metadataBuilder.GetOrAddString("Invoke"),
                 funcArrayObjectInvokeSig);
-
-            // Build invoke signatures for 2..6 js parameter delegates
-            for (int jsParamCount = 2; jsParamCount <= 6; jsParamCount++)
-            {
-                BuildFuncArrayParamInvoke(metadataBuilder, jsParamCount);
-            }
         }
 
         public MemberReferenceHandle GetFuncCtorRef(int jsParamCount)
@@ -387,29 +380,12 @@ namespace Js2IL.Services
 
         public MemberReferenceHandle GetFuncInvokeRef(int jsParamCount)
         {
-            // For 0 params, historical snapshots reference Invoke on Func<object[], object>
-            if (jsParamCount == 0) return FuncObjectArrayObject_Invoke_Ref;         // Func<object[], object>.Invoke
-            // For 1 param, use Func<object[], object, object>
-            if (jsParamCount == 1) return FuncObjectArrayObjectObject_Invoke_Ref;         // Func<object[], object, object>.Invoke
-            if (_funcArrayParamInvokeRefs.TryGetValue(jsParamCount, out var invoke)) return invoke;
-            throw new NotSupportedException($"Invoke ref for {jsParamCount} parameters not initialized");
-        }
-
-        private void BuildFuncArrayParamInvoke(MetadataBuilder metadataBuilder, int jsParamCount)
-        {
-            // Build the constructed generic type for GetOrAddMethod
-            Type funcType = (jsParamCount + 2) switch
+            if (!_funcTypesByParamCount.TryGetValue(jsParamCount, out var funcType))
             {
-                4 => typeof(System.Func<object[], object, object, object>),
-                5 => typeof(System.Func<object[], object, object, object, object>),
-                6 => typeof(System.Func<object[], object, object, object, object, object>),
-                7 => typeof(System.Func<object[], object, object, object, object, object, object>),
-                8 => typeof(System.Func<object[], object, object, object, object, object, object, object>),
-                _ => throw new NotSupportedException($"Unsupported generic arity {jsParamCount + 2} for invoke")
-            };
+                throw new NotSupportedException($"Delegate for {jsParamCount} parameters not supported");
+            }
 
-            var invokeRef = _memberRefRegistry.GetOrAddMethod(funcType, "Invoke");
-            _funcArrayParamInvokeRefs[jsParamCount] = invokeRef;
+            return _memberRefRegistry.GetOrAddMethod(funcType, "Invoke");
         }
     }
 }
