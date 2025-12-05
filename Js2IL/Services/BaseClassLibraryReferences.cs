@@ -131,12 +131,9 @@ namespace Js2IL.Services
         // Func delegates returning object
         public TypeReferenceHandle Func2Generic_TypeRef { get; private set; }
         public TypeReferenceHandle Func3Generic_TypeRef { get; private set; }
-        public TypeSpecificationHandle FuncObjectObject_TypeSpec { get; private set; }
-        public TypeSpecificationHandle FuncObjectObjectObject_TypeSpec { get; private set; }
         
         // Func delegates with scope array parameter (object[])
         public TypeSpecificationHandle FuncObjectArrayObject_TypeSpec { get; private set; }
-        public MemberReferenceHandle FuncObjectArrayObject_Ctor_Ref { get; private set; }
         public MemberReferenceHandle FuncObjectArrayObject_Invoke_Ref { get; private set; }
         public TypeSpecificationHandle FuncObjectArrayObjectObject_TypeSpec { get; private set; }
         public MemberReferenceHandle FuncObjectArrayObjectObject_Ctor_Ref { get; private set; }
@@ -320,28 +317,6 @@ namespace Js2IL.Services
             Func7Generic_TypeRef = _typeRefRegistry.GetOrAdd(typeof(System.Func<,,,,,,>));
             Func8Generic_TypeRef = _typeRefRegistry.GetOrAdd(typeof(System.Func<,,,,,,,>));
 
-            // Close over object types for parameters and return
-            // Func<object, object>
-            var func2SpecBlob = new BlobBuilder();
-            var func2Inst = new BlobEncoder(func2SpecBlob)
-                .TypeSpecificationSignature()
-                .GenericInstantiation(Func2Generic_TypeRef, 2, isValueType: false);
-            func2Inst.AddArgument().Type(ObjectType, isValueType: false); // T1
-            func2Inst.AddArgument().Type(ObjectType, isValueType: false); // TResult
-            var func2Spec = metadataBuilder.GetOrAddBlob(func2SpecBlob);
-            FuncObjectObject_TypeSpec = metadataBuilder.AddTypeSpecification(func2Spec);
-
-            // Func<object, object, object>
-            var func3SpecBlob = new BlobBuilder();
-            var func3Inst = new BlobEncoder(func3SpecBlob)
-                .TypeSpecificationSignature()
-                .GenericInstantiation(Func3Generic_TypeRef, 3, isValueType: false);
-            func3Inst.AddArgument().Type(ObjectType, isValueType: false); // T1
-            func3Inst.AddArgument().Type(ObjectType, isValueType: false); // T2
-            func3Inst.AddArgument().Type(ObjectType, isValueType: false); // TResult
-            var func3Spec = metadataBuilder.GetOrAddBlob(func3SpecBlob);
-            FuncObjectObjectObject_TypeSpec = metadataBuilder.AddTypeSpecification(func3Spec);
-
             // Func<object[], object> type (scope array, no additional params)
             var funcArrayObjectBlob = new BlobBuilder();
             var funcArrayObjectEncoder = new BlobEncoder(funcArrayObjectBlob)
@@ -351,9 +326,6 @@ namespace Js2IL.Services
             funcArrayObjectEncoder.AddArgument().Object();
             FuncObjectArrayObject_TypeSpec = metadataBuilder.AddTypeSpecification(
                 metadataBuilder.GetOrAddBlob(funcArrayObjectBlob));
-
-            FuncObjectArrayObject_Ctor_Ref = _memberRefRegistry.GetOrAddConstructor(
-                typeof(System.Func<object[], object>));
 
             var funcArrayInvokeBlob = new BlobBuilder();
             new BlobEncoder(funcArrayInvokeBlob)
@@ -425,43 +397,18 @@ namespace Js2IL.Services
 
         private void BuildFuncArrayParamInvoke(MetadataBuilder metadataBuilder, int jsParamCount)
         {
-            // generic arity = scopes + jsParamCount + return
-            int genericArity = jsParamCount + 2;
-            TypeReferenceHandle funcGeneric = genericArity switch
+            // Build the constructed generic type for GetOrAddMethod
+            Type funcType = (jsParamCount + 2) switch
             {
-                4 => Func4Generic_TypeRef,
-                5 => Func5Generic_TypeRef,
-                6 => Func6Generic_TypeRef,
-                7 => Func7Generic_TypeRef,
-                8 => Func8Generic_TypeRef,
-                _ => throw new NotSupportedException($"Unsupported generic arity {genericArity} for invoke")
+                4 => typeof(System.Func<object[], object, object, object>),
+                5 => typeof(System.Func<object[], object, object, object, object>),
+                6 => typeof(System.Func<object[], object, object, object, object, object>),
+                7 => typeof(System.Func<object[], object, object, object, object, object, object>),
+                8 => typeof(System.Func<object[], object, object, object, object, object, object, object>),
+                _ => throw new NotSupportedException($"Unsupported generic arity {jsParamCount + 2} for invoke")
             };
-            // Build method signature: instance invoke with (scopes, param1..N) returning object (last generic)
-            var invokeBlob = new BlobBuilder();
-            new BlobEncoder(invokeBlob)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(jsParamCount + 1, // scopes + N params
-                    returnType => returnType.Type().GenericTypeParameter(genericArity - 1), // TResult
-                    parameters =>
-                    {
-                        // scopes param
-                        parameters.AddParameter().Type().GenericTypeParameter(0);
-                        for (int i = 0; i < jsParamCount; i++)
-                        {
-                            parameters.AddParameter().Type().GenericTypeParameter(i + 1);
-                        }
-                    });
-            var invokeSigHandle = metadataBuilder.GetOrAddBlob(invokeBlob);
-            // Build closed type spec again to attach MemberReference (same as in delegate build)
-            var specBlob = new BlobBuilder();
-            var inst = new BlobEncoder(specBlob)
-                .TypeSpecificationSignature()
-                .GenericInstantiation(funcGeneric, genericArity, isValueType: false);
-            inst.AddArgument().SZArray().Object();
-            for (int i = 0; i < jsParamCount; i++) inst.AddArgument().Object();
-            inst.AddArgument().Object();
-            var specHandle = metadataBuilder.AddTypeSpecification(metadataBuilder.GetOrAddBlob(specBlob));
-            var invokeRef = metadataBuilder.AddMemberReference(specHandle, metadataBuilder.GetOrAddString("Invoke"), invokeSigHandle);
+
+            var invokeRef = _memberRefRegistry.GetOrAddMethod(funcType, "Invoke");
             _funcArrayParamInvokeRefs[jsParamCount] = invokeRef;
         }
     }

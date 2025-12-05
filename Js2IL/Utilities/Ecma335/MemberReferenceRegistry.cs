@@ -41,8 +41,16 @@ namespace Js2IL.Utilities.Ecma335
             if (_cache.TryGetValue(key, out var existing))
                 return existing;
 
-            // Use reflection to find the method
-            var methods = declaringType.GetMethods(
+            // For constructed generic types, we need to work with the open generic definition
+            // to get method signatures with generic type parameters (!0, !1, !2)
+            Type typeForReflection = declaringType;
+            if (declaringType.IsGenericType && !declaringType.IsGenericTypeDefinition)
+            {
+                typeForReflection = declaringType.GetGenericTypeDefinition();
+            }
+
+            // Use reflection to find the method on the open generic type
+            var methods = typeForReflection.GetMethods(
                     BindingFlags.Public | BindingFlags.NonPublic |
                     BindingFlags.Instance | BindingFlags.Static)
                 .Where(m => m.Name == methodName)
@@ -74,12 +82,13 @@ namespace Js2IL.Utilities.Ecma335
                 method = methods[0];
             }
 
-            // Build the member reference
-            var typeRef = _typeRefRegistry.GetOrAdd(declaringType);
+            // Build the member reference using the ORIGINAL declaringType (which may be constructed generic)
+            // This ensures we get the right TypeSpec, but the signature will use generic type parameters
+            var declaringTypeHandle = GetOrAddDeclaringTypeHandle(declaringType);
             var signature = BuildMethodSignature(method);
             var nameHandle = _metadataBuilder.GetOrAddString(methodName);
 
-            var handle = _metadataBuilder.AddMemberReference(typeRef, nameHandle, signature);
+            var handle = _metadataBuilder.AddMemberReference(declaringTypeHandle, nameHandle, signature);
             _cache[key] = handle;
             return handle;
         }
@@ -272,6 +281,13 @@ namespace Js2IL.Utilities.Ecma335
 
         private void EncodeSignatureType(SignatureTypeEncoder encoder, Type type)
         {
+            // Generic type parameters (e.g., T, TResult from Func<T, TResult>)
+            if (type.IsGenericParameter)
+            {
+                encoder.GenericTypeParameter(type.GenericParameterPosition);
+                return;
+            }
+            
             // Primitive types
             if (type == typeof(object)) encoder.Object();
             else if (type == typeof(string)) encoder.String();
