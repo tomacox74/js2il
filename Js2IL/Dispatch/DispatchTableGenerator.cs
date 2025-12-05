@@ -205,7 +205,7 @@ namespace Js2IL.Dispatch
                 il.OpCode(ILOpCode.Newobj);
                 if (function.Declaration.Params.Count <= 6)
                 {
-                    var (_, ctorRef) = _bclReferences.GetFuncObjectArrayWithParams(function.Declaration.Params.Count);
+                    var ctorRef = _bclReferences.GetFuncCtorRef(function.Declaration.Params.Count);
                     il.Token(ctorRef);
                 }
                 else

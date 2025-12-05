@@ -7,13 +7,23 @@ namespace Js2IL.Services
     internal class BaseClassLibraryReferences
     {
         private readonly TypeReferenceRegistry _typeRefRegistry;
+        private readonly MemberReferenceRegistry _memberRefRegistry;
         private readonly Dictionary<int, MemberReferenceHandle> _funcArrayParamInvokeRefs = new();
-        private readonly Dictionary<int, TypeSpecificationHandle> _funcArrayParamTypeSpecs = new();
-        private readonly Dictionary<int, MemberReferenceHandle> _funcArrayParamCtorRefs = new();
+        private readonly Dictionary<int, Type> _funcTypesByParamCount = new()
+        {
+            { 0, typeof(System.Func<object[], object>) },
+            { 1, typeof(System.Func<object[], object, object>) },
+            { 2, typeof(System.Func<object[], object, object, object>) },
+            { 3, typeof(System.Func<object[], object, object, object, object>) },
+            { 4, typeof(System.Func<object[], object, object, object, object, object>) },
+            { 5, typeof(System.Func<object[], object, object, object, object, object, object>) },
+            { 6, typeof(System.Func<object[], object, object, object, object, object, object, object>) }
+        };
 
         public BaseClassLibraryReferences(MetadataBuilder metadataBuilder)
         {
             _typeRefRegistry = new TypeReferenceRegistry(metadataBuilder);
+            _memberRefRegistry = new MemberReferenceRegistry(metadataBuilder, _typeRefRegistry);
 
             // Common Runtime References
             this.BooleanType = _typeRefRegistry.GetOrAdd(typeof(bool));
@@ -93,6 +103,7 @@ namespace Js2IL.Services
         }
 
         public TypeReferenceRegistry TypeRefRegistry => _typeRefRegistry;
+        public MemberReferenceRegistry MemberRefRegistry => _memberRefRegistry;
 
         public TypeReferenceHandle BooleanType { get; private init; }
         public TypeReferenceHandle DoubleType { get; private init; }
@@ -110,7 +121,7 @@ namespace Js2IL.Services
         public MemberReferenceHandle ConsoleWriteLine_StringObject_Ref { get; private init; }
         public MemberReferenceHandle Expando_Ctor_Ref { get; private set; }
         public TypeReferenceHandle ExpandoObjectType { get; private set; }
-        public MemberReferenceHandle Object_Ctor_Ref { get; private set; }
+        public MemberReferenceHandle Object_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(object), Type.EmptyTypes);
         public MemberReferenceHandle IDictionary_SetItem_Ref { get; private set; }
         public MemberReferenceHandle Array_Add_Ref { get; private set; }
         public MemberReferenceHandle Array_SetItem_Ref { get; private set; }
@@ -121,11 +132,7 @@ namespace Js2IL.Services
         public TypeReferenceHandle Func2Generic_TypeRef { get; private set; }
         public TypeReferenceHandle Func3Generic_TypeRef { get; private set; }
         public TypeSpecificationHandle FuncObjectObject_TypeSpec { get; private set; }
-        public MemberReferenceHandle FuncObjectObject_Ctor_Ref { get; private set; }
-        public MemberReferenceHandle FuncObjectObject_Invoke_Ref { get; private set; }
         public TypeSpecificationHandle FuncObjectObjectObject_TypeSpec { get; private set; }
-        public MemberReferenceHandle FuncObjectObjectObject_Ctor_Ref { get; private set; }
-        public MemberReferenceHandle FuncObjectObjectObject_Invoke_Ref { get; private set; }
         
         // Func delegates with scope array parameter (object[])
         public TypeSpecificationHandle FuncObjectArrayObject_TypeSpec { get; private set; }
@@ -158,17 +165,6 @@ namespace Js2IL.Services
                 systemCoreExpandoType,
                 metadataBuilder.GetOrAddString(".ctor"),
                 expandoCtorSig);
-
-            // Object constructor reference
-            var objectCtorSigBuilder = new BlobBuilder();
-            new BlobEncoder(objectCtorSigBuilder)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(0, returnType => returnType.Void(), parameters => { });
-            var objectCtorSig = metadataBuilder.GetOrAddBlob(objectCtorSigBuilder);
-            Object_Ctor_Ref = metadataBuilder.AddMemberReference(
-                this.ObjectType,
-                metadataBuilder.GetOrAddString(".ctor"),
-                objectCtorSig);
 
             // IDictionary Bound Type Reference <System.String, System.Object>
             var unboundIDictionaryType = _typeRefRegistry.GetOrAdd(typeof(System.Collections.Generic.IDictionary<,>));
@@ -346,53 +342,6 @@ namespace Js2IL.Services
             var func3Spec = metadataBuilder.GetOrAddBlob(func3SpecBlob);
             FuncObjectObjectObject_TypeSpec = metadataBuilder.AddTypeSpecification(func3Spec);
 
-            // Delegate .ctor signature (object, IntPtr)
-            var funcCtorSig = new BlobBuilder();
-            new BlobEncoder(funcCtorSig)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(2, returnType => returnType.Void(), parameters => {
-                    parameters.AddParameter().Type().Object();
-                    parameters.AddParameter().Type().IntPtr();
-                });
-            var funcCtorSigHandle = metadataBuilder.GetOrAddBlob(funcCtorSig);
-
-            FuncObjectObject_Ctor_Ref = metadataBuilder.AddMemberReference(
-                FuncObjectObject_TypeSpec,
-                metadataBuilder.GetOrAddString(".ctor"),
-                funcCtorSigHandle);
-            FuncObjectObjectObject_Ctor_Ref = metadataBuilder.AddMemberReference(
-                FuncObjectObjectObject_TypeSpec,
-                metadataBuilder.GetOrAddString(".ctor"),
-                funcCtorSigHandle);
-
-            // Invoke signatures
-            var func2InvokeBlob = new BlobBuilder();
-            new BlobEncoder(func2InvokeBlob)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(1,
-                    returnType => returnType.Type().GenericTypeParameter(1), // TResult
-                    parameters => { parameters.AddParameter().Type().GenericTypeParameter(0); });
-            var func2InvokeSig = metadataBuilder.GetOrAddBlob(func2InvokeBlob);
-            FuncObjectObject_Invoke_Ref = metadataBuilder.AddMemberReference(
-                FuncObjectObject_TypeSpec,
-                metadataBuilder.GetOrAddString("Invoke"),
-                func2InvokeSig);
-
-            var func3InvokeBlob = new BlobBuilder();
-            new BlobEncoder(func3InvokeBlob)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(2,
-                    returnType => returnType.Type().GenericTypeParameter(2), // TResult
-                    parameters => {
-                        parameters.AddParameter().Type().GenericTypeParameter(0); // T1
-                        parameters.AddParameter().Type().GenericTypeParameter(1); // T2
-                    });
-            var func3InvokeSig = metadataBuilder.GetOrAddBlob(func3InvokeBlob);
-            FuncObjectObjectObject_Invoke_Ref = metadataBuilder.AddMemberReference(
-                FuncObjectObjectObject_TypeSpec,
-                metadataBuilder.GetOrAddString("Invoke"),
-                func3InvokeSig);
-
             // Func<object[], object> type (scope array, no additional params)
             var funcArrayObjectBlob = new BlobBuilder();
             var funcArrayObjectEncoder = new BlobEncoder(funcArrayObjectBlob)
@@ -403,20 +352,8 @@ namespace Js2IL.Services
             FuncObjectArrayObject_TypeSpec = metadataBuilder.AddTypeSpecification(
                 metadataBuilder.GetOrAddBlob(funcArrayObjectBlob));
 
-            var funcArrayCtorBlob = new BlobBuilder();
-            new BlobEncoder(funcArrayCtorBlob)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(2,
-                    returnType => returnType.Void(),
-                    parameters => {
-                        parameters.AddParameter().Type().Object(); // object target
-                        parameters.AddParameter().Type().IntPtr(); // native int method
-                    });
-            var funcArrayCtorSig = metadataBuilder.GetOrAddBlob(funcArrayCtorBlob);
-            FuncObjectArrayObject_Ctor_Ref = metadataBuilder.AddMemberReference(
-                FuncObjectArrayObject_TypeSpec,
-                metadataBuilder.GetOrAddString(".ctor"),
-                funcArrayCtorSig);
+            FuncObjectArrayObject_Ctor_Ref = _memberRefRegistry.GetOrAddConstructor(
+                typeof(System.Func<object[], object>));
 
             var funcArrayInvokeBlob = new BlobBuilder();
             new BlobEncoder(funcArrayInvokeBlob)
@@ -441,20 +378,8 @@ namespace Js2IL.Services
             FuncObjectArrayObjectObject_TypeSpec = metadataBuilder.AddTypeSpecification(
                 metadataBuilder.GetOrAddBlob(funcArrayObjectObjectBlob));
 
-            var funcArrayObjectCtorBlob = new BlobBuilder();
-            new BlobEncoder(funcArrayObjectCtorBlob)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(2,
-                    returnType => returnType.Void(),
-                    parameters => {
-                        parameters.AddParameter().Type().Object(); // object target
-                        parameters.AddParameter().Type().IntPtr(); // native int method
-                    });
-            var funcArrayObjectCtorSig = metadataBuilder.GetOrAddBlob(funcArrayObjectCtorBlob);
-            FuncObjectArrayObjectObject_Ctor_Ref = metadataBuilder.AddMemberReference(
-                FuncObjectArrayObjectObject_TypeSpec,
-                metadataBuilder.GetOrAddString(".ctor"),
-                funcArrayObjectCtorSig);
+            FuncObjectArrayObjectObject_Ctor_Ref = _memberRefRegistry.GetOrAddConstructor(
+                typeof(System.Func<object[], object, object>));
 
             var funcArrayObjectInvokeBlob = new BlobBuilder();
             new BlobEncoder(funcArrayObjectInvokeBlob)
@@ -471,11 +396,6 @@ namespace Js2IL.Services
                 metadataBuilder.GetOrAddString("Invoke"),
                 funcArrayObjectInvokeSig);
 
-            // Pre-build delegate types for 2..6 js parameters (total generic arity = scopes + params + return)
-            for (int jsParamCount = 2; jsParamCount <= 6; jsParamCount++)
-            {
-                BuildFuncArrayParamDelegate(metadataBuilder, jsParamCount, funcCtorSigHandle);
-            }
             // Build invoke signatures for 2..6 js parameter delegates
             for (int jsParamCount = 2; jsParamCount <= 6; jsParamCount++)
             {
@@ -483,62 +403,22 @@ namespace Js2IL.Services
             }
         }
 
-        private void BuildFuncArrayParamDelegate(MetadataBuilder metadataBuilder, int jsParamCount, BlobHandle funcCtorSigHandle)
+        public MemberReferenceHandle GetFuncCtorRef(int jsParamCount)
         {
-            // generic arity = scopes + jsParamCount + return
-            int genericArity = jsParamCount + 2;
-            TypeReferenceHandle funcGeneric = genericArity switch
+            if (!_funcTypesByParamCount.TryGetValue(jsParamCount, out var funcType))
             {
-                4 => Func4Generic_TypeRef,
-                5 => Func5Generic_TypeRef,
-                6 => Func6Generic_TypeRef,
-                7 => Func7Generic_TypeRef,
-                8 => Func8Generic_TypeRef,
-                _ => throw new NotSupportedException($"Unsupported generic arity {genericArity} for jsParamCount={jsParamCount}")
-            };
-
-            // Build closed generic instantiation: Func<object[], object, ..., object>
-            var specBlob = new BlobBuilder();
-            var inst = new BlobEncoder(specBlob)
-                .TypeSpecificationSignature()
-                .GenericInstantiation(funcGeneric, genericArity, isValueType: false);
-            // scopes array
-            inst.AddArgument().SZArray().Object();
-            // js params
-            for (int i = 0; i < jsParamCount; i++)
-            {
-                inst.AddArgument().Object();
+                throw new NotSupportedException($"Delegate for {jsParamCount} parameters not supported");
             }
-            // return object
-            inst.AddArgument().Object();
-            var specHandle = metadataBuilder.AddTypeSpecification(metadataBuilder.GetOrAddBlob(specBlob));
-            _funcArrayParamTypeSpecs[jsParamCount] = specHandle;
 
-            // Add constructor member reference on closed generic type
-            var ctorRef = metadataBuilder.AddMemberReference(
-                specHandle,
-                metadataBuilder.GetOrAddString(".ctor"),
-                funcCtorSigHandle);
-            _funcArrayParamCtorRefs[jsParamCount] = ctorRef;
+            return _memberRefRegistry.GetOrAddConstructor(funcType);
         }
 
-        public (TypeSpecificationHandle typeSpec, MemberReferenceHandle ctorRef) GetFuncObjectArrayWithParams(int jsParamCount)
-        {
-            if (jsParamCount == 0) return (FuncObjectArrayObject_TypeSpec, FuncObjectArrayObject_Ctor_Ref);
-            if (jsParamCount == 1) return (FuncObjectArrayObjectObject_TypeSpec, FuncObjectArrayObjectObject_Ctor_Ref);
-            if (_funcArrayParamTypeSpecs.TryGetValue(jsParamCount, out var spec))
-            {
-                return (spec, _funcArrayParamCtorRefs[jsParamCount]);
-            }
-            throw new NotSupportedException($"Delegate for {jsParamCount} parameters not initialized");
-        }
-
-        public MemberReferenceHandle GetFuncArrayParamInvokeRef(int jsParamCount)
+        public MemberReferenceHandle GetFuncInvokeRef(int jsParamCount)
         {
             // For 0 params, historical snapshots reference Invoke on Func<object[], object>
             if (jsParamCount == 0) return FuncObjectArrayObject_Invoke_Ref;         // Func<object[], object>.Invoke
-            // For 1 param, snapshots reference Invoke on Func<object, object, object>
-            if (jsParamCount == 1) return FuncObjectObjectObject_Invoke_Ref;         // Func<object, object, object>.Invoke
+            // For 1 param, use Func<object[], object, object>
+            if (jsParamCount == 1) return FuncObjectArrayObjectObject_Invoke_Ref;         // Func<object[], object, object>.Invoke
             if (_funcArrayParamInvokeRefs.TryGetValue(jsParamCount, out var invoke)) return invoke;
             throw new NotSupportedException($"Invoke ref for {jsParamCount} parameters not initialized");
         }

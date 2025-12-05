@@ -13,6 +13,7 @@ namespace Js2IL.Utilities.Ecma335
         private readonly MetadataBuilder _metadataBuilder;
         private readonly TypeReferenceRegistry _typeRefRegistry;
         private readonly Dictionary<string, MemberReferenceHandle> _cache = new(StringComparer.Ordinal);
+        private readonly Dictionary<Type, TypeSpecificationHandle> _typeSpecCache = new();
 
         public MemberReferenceRegistry(
             MetadataBuilder metadataBuilder,
@@ -86,36 +87,47 @@ namespace Js2IL.Utilities.Ecma335
         /// <summary>
         /// Gets or creates a constructor member reference handle.
         /// Uses reflection to discover the constructor signature automatically.
+        /// Supports constructed generic types (e.g., Func&lt;object, object&gt;) by automatically creating TypeSpecifications.
         /// </summary>
         /// <param name="declaringType">The type that declares the constructor.</param>
         /// <param name="parameterTypes">The parameter types of the constructor. Use empty array for parameterless constructor.</param>
         /// <returns>A cached or newly created MemberReferenceHandle.</returns>
         public MemberReferenceHandle GetOrAddConstructor(Type declaringType, Type[]? parameterTypes = null)
         {
-            parameterTypes ??= Type.EmptyTypes;
             var fullTypeName = declaringType.FullName ?? $"{declaringType.Namespace}.{declaringType.Name}";
-            var paramKey = parameterTypes.Length == 0 ? "" : string.Join(",", parameterTypes.Select(p => p.FullName));
+            var paramKey = parameterTypes == null ? "auto" : (parameterTypes.Length == 0 ? "" : string.Join(",", parameterTypes.Select(p => p.FullName)));
             var key = $"{fullTypeName}::.ctor({paramKey})";
 
             if (_cache.TryGetValue(key, out var existing))
                 return existing;
 
             // Use reflection to find the constructor
-            var ctor = declaringType.GetConstructor(
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
-                null,
-                parameterTypes,
-                null);
+            ConstructorInfo ctor;
+            if (parameterTypes == null)
+            {
+                // Auto-discover: require exactly one constructor
+                var ctors = declaringType.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                if (ctors.Length == 0)
+                    throw new ArgumentException($"No constructors found on type '{fullTypeName}'");
+                if (ctors.Length > 1)
+                    throw new ArgumentException($"Multiple constructors found on type '{fullTypeName}'. Specify parameterTypes to resolve.");
+                ctor = ctors[0];
+            }
+            else
+            {
+                ctor = declaringType.GetConstructor(
+                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
+                    null,
+                    parameterTypes,
+                    null) ?? throw new ArgumentException($"Constructor with signature ({paramKey}) not found on type '{fullTypeName}'");
+            }
 
-            if (ctor == null)
-                throw new ArgumentException($"Constructor with signature ({paramKey}) not found on type '{fullTypeName}'");
-
-            // Build the member reference
-            var typeRef = _typeRefRegistry.GetOrAdd(declaringType);
+            // Build the member reference - use smart declaring type resolution for generics
+            var declaringTypeHandle = GetOrAddDeclaringTypeHandle(declaringType);
             var signature = BuildConstructorSignature(ctor);
             var nameHandle = _metadataBuilder.GetOrAddString(".ctor");
 
-            var handle = _metadataBuilder.AddMemberReference(typeRef, nameHandle, signature);
+            var handle = _metadataBuilder.AddMemberReference(declaringTypeHandle, nameHandle, signature);
             _cache[key] = handle;
             return handle;
         }
@@ -134,6 +146,78 @@ namespace Js2IL.Utilities.Ecma335
         public MemberReferenceHandle GetOrAddField(Type declaringType, string fieldName)
         {
             throw new NotImplementedException("GetOrAddField not yet implemented.");
+        }
+
+        /// <summary>
+        /// Gets or creates an appropriate declaring type handle for a given type.
+        /// For non-generic or generic definition types, returns a TypeReferenceHandle.
+        /// For constructed generic types (e.g., Func&lt;object, object&gt;), builds and caches a TypeSpecificationHandle.
+        /// </summary>
+        private EntityHandle GetOrAddDeclaringTypeHandle(Type type)
+        {
+            // Non-generic or generic definition: use simple type reference
+            if (!type.IsGenericType || type.IsGenericTypeDefinition)
+                return _typeRefRegistry.GetOrAdd(type);
+
+            // Constructed generic type: build TypeSpecification
+            if (_typeSpecCache.TryGetValue(type, out var cachedSpec))
+                return cachedSpec;
+
+            var openType = type.GetGenericTypeDefinition();
+            var openTypeRef = _typeRefRegistry.GetOrAdd(openType);
+            var genericArgs = type.GetGenericArguments();
+
+            var specBlob = new BlobBuilder();
+            var genInst = new BlobEncoder(specBlob)
+                .TypeSpecificationSignature()
+                .GenericInstantiation(openTypeRef, genericArgs.Length, isValueType: false);
+
+            // Encode each generic argument
+            foreach (var arg in genericArgs)
+            {
+                EncodeGenericArgument(genInst.AddArgument(), arg);
+            }
+
+            var specBlobHandle = _metadataBuilder.GetOrAddBlob(specBlob);
+            var specHandle = _metadataBuilder.AddTypeSpecification(specBlobHandle);
+            _typeSpecCache[type] = specHandle;
+            return specHandle;
+        }
+
+        /// <summary>
+        /// Encodes a generic type argument into a TypeSpecification.
+        /// Supports the common types used in js2il (object, object[], string, int, etc.).
+        /// </summary>
+        private void EncodeGenericArgument(SignatureTypeEncoder encoder, Type type)
+        {
+            // Primitive types
+            if (type == typeof(object)) encoder.Object();
+            else if (type == typeof(string)) encoder.String();
+            else if (type == typeof(int)) encoder.Int32();
+            else if (type == typeof(double)) encoder.Double();
+            else if (type == typeof(bool)) encoder.Boolean();
+            else if (type == typeof(long)) encoder.Int64();
+            else if (type == typeof(float)) encoder.Single();
+            else if (type == typeof(byte)) encoder.Byte();
+            else if (type == typeof(short)) encoder.Int16();
+            // Arrays
+            else if (type == typeof(object[])) encoder.SZArray().Object();
+            else if (type == typeof(string[])) encoder.SZArray().String();
+            else if (type == typeof(int[])) encoder.SZArray().Int32();
+            // IntPtr for delegate constructors
+            else if (type == typeof(IntPtr)) encoder.IntPtr();
+            // Other types via type reference
+            else if (type.Namespace?.StartsWith("JavaScriptRuntime", StringComparison.Ordinal) == true)
+            {
+                var typeRef = _typeRefRegistry.GetOrAdd(type);
+                encoder.Type(typeRef, isValueType: type.IsValueType);
+            }
+            else
+            {
+                throw new NotSupportedException(
+                    $"Generic argument type '{type.FullName ?? type.Name}' is not yet supported in TypeSpecifications. " +
+                    $"Supported types: object, string, int, double, bool, long, float, byte, short, object[], string[], int[], IntPtr, and JavaScriptRuntime types.");
+            }
         }
 
         private BlobHandle BuildMethodSignature(MethodInfo method)
@@ -198,6 +282,7 @@ namespace Js2IL.Utilities.Ecma335
             else if (type == typeof(float)) encoder.Single();
             else if (type == typeof(byte)) encoder.Byte();
             else if (type == typeof(short)) encoder.Int16();
+            else if (type == typeof(IntPtr)) encoder.IntPtr();
             // Arrays
             else if (type == typeof(object[])) encoder.SZArray().Object();
             else if (type == typeof(string[])) encoder.SZArray().String();
@@ -218,7 +303,7 @@ namespace Js2IL.Utilities.Ecma335
             {
                 throw new NotSupportedException(
                     $"Type '{type.FullName ?? type.Name}' from namespace '{type.Namespace}' is not supported in method signatures. " +
-                    $"Only JavaScriptRuntime types and primitive BCL types (object, string, double, bool, int, object[], Action) are supported.");
+                    $"Only JavaScriptRuntime types and primitive BCL types (object, string, double, bool, int, object[], Action, IntPtr) are supported.");
             }
         }
     }

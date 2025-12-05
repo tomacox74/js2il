@@ -253,7 +253,7 @@ namespace Js2IL.Services.ILGenerators
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldftn);
                         _il.Token(methodHandle);
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
-                        var (_, ctorRef) = _bclReferences.GetFuncObjectArrayWithParams(paramNames.Length);
+                        var ctorRef = _bclReferences.GetFuncCtorRef(paramNames.Length);
                         _il.Token(ctorRef);
                         // Immediately bind the new delegate to the appropriate closure scopes so that
                         // callbacks invoked later (e.g., Array.map) have a valid scopes array.
@@ -322,7 +322,7 @@ namespace Js2IL.Services.ILGenerators
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldftn);
                         _il.Token(methodHandle);
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
-                        var (_, ctorRef) = _bclReferences.GetFuncObjectArrayWithParams(paramNames.Length);
+                        var ctorRef = _bclReferences.GetFuncCtorRef(paramNames.Length);
                         _il.Token(ctorRef);
                         javascriptType = JavascriptType.Object;
                     }
@@ -836,7 +836,7 @@ namespace Js2IL.Services.ILGenerators
                 }
                 else if (argCount <= 6)
                 {
-                    _il.Token(_bclReferences.GetFuncArrayParamInvokeRef(argCount));
+                    _il.Token(_bclReferences.GetFuncInvokeRef(argCount));
                 }
                 else
                 {
@@ -1384,7 +1384,7 @@ namespace Js2IL.Services.ILGenerators
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldftn);
                 _il.Token(registryHandle);
-                var (_, ctorRefLazy) = _bclReferences.GetFuncObjectArrayWithParams(expectedParamCount);
+                var ctorRefLazy = _bclReferences.GetFuncCtorRef(expectedParamCount);
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
                 _il.Token(ctorRefLazy);
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld);
@@ -1526,7 +1526,7 @@ namespace Js2IL.Services.ILGenerators
             }
             else if (expectedParamCount <= 6)
             {
-                _il.Token(_bclReferences.GetFuncArrayParamInvokeRef(expectedParamCount));
+                _il.Token(_bclReferences.GetFuncInvokeRef(expectedParamCount));
             }
             else
             {

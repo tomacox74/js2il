@@ -11,11 +11,11 @@ namespace Js2IL.Services
         private readonly TypeReferenceRegistry _typeRefRegistry;
         private readonly MemberReferenceRegistry _memberRefRegistry;
 
-        public Runtime(MetadataBuilder metadataBuilder, InstructionEncoder il, TypeReferenceRegistry typeRefRegistry)
+        public Runtime(InstructionEncoder il, TypeReferenceRegistry typeRefRegistry, MemberReferenceRegistry memberRefRegistry)
         {
             _il = il;
             _typeRefRegistry = typeRefRegistry;
-            _memberRefRegistry = new MemberReferenceRegistry(metadataBuilder, typeRefRegistry);
+            _memberRefRegistry = memberRefRegistry;
         }
 
         public void InvokeArrayCtor()
