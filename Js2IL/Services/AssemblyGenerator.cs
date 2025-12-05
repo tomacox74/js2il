@@ -162,6 +162,11 @@ namespace Js2IL.Services
                 "Main",
                 methodSig,
                 entryPointOffset);
+
+            // Define the Program type that contains the entry point
+            entryPointTypeBuilder.AddTypeDefinition(
+                TypeAttributes.NotPublic | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
+                _bclReferences.ObjectType);
         }
 
         private void createAssemblyMetadata(string name)
