@@ -70,10 +70,6 @@ namespace Js2IL.Services
                 MethodBaseType,
                 metadataBuilder.GetOrAddString("GetCurrentMethod"),
                 metadataBuilder.GetOrAddBlob(getCurrentMethodSig));
-
-            LoadObjectTypes(metadataBuilder);
-
-            LoadArrayTypes(metadataBuilder);
         }
 
         public TypeReferenceRegistry TypeRefRegistry => _typeRefRegistry;
@@ -90,163 +86,15 @@ namespace Js2IL.Services
 
         // Removed legacy Action<> delegate references (now using Func returning object)
 
-        public TypeSpecificationHandle IDictionary_StringObject_Type { get; private set; }
         public MemberReferenceHandle ConsoleWriteLine_StringObject_Ref { get; private init; }
         public MemberReferenceHandle Expando_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(System.Dynamic.ExpandoObject), Type.EmptyTypes);
-        public TypeReferenceHandle ExpandoObjectType { get; private set; }
         public MemberReferenceHandle Object_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(object), Type.EmptyTypes);
-        public MemberReferenceHandle IDictionary_SetItem_Ref { get; private set; }
-        public MemberReferenceHandle Array_Add_Ref { get; private set; }
-        public MemberReferenceHandle Array_SetItem_Ref { get; private set; }
-        public MemberReferenceHandle Array_GetCount_Ref { get; private set; }
+        public MemberReferenceHandle IDictionary_SetItem_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Collections.Generic.IDictionary<string, object>), "set_Item");
+        public MemberReferenceHandle Array_Add_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Collections.Generic.List<object>), "Add");
+        public MemberReferenceHandle Array_SetItem_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Collections.Generic.List<object>), "set_Item");
+        public MemberReferenceHandle Array_GetCount_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Collections.Generic.List<object>), "get_Count");
         public MemberReferenceHandle Action_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(System.Action), new[] { typeof(object), typeof(IntPtr) });
         public MemberReferenceHandle MethodBase_GetCurrentMethod_Ref { get; private set; }
-
-        private void LoadObjectTypes(MetadataBuilder metadataBuilder)
-        {
-            // ExpandObject reference
-            // important for the generic case in JavaScript where objects are just property bags
-            var systemCoreExpandoType = _typeRefRegistry.GetOrAdd(typeof(System.Dynamic.ExpandoObject));
-            // store the ExpandoObject type reference for use as a base class
-            ExpandoObjectType = systemCoreExpandoType;
-
-            // IDictionary Bound Type Reference <System.String, System.Object>
-            var unboundIDictionaryType = _typeRefRegistry.GetOrAdd(typeof(System.Collections.Generic.IDictionary<,>));
-
-
-            // 3) Build a TypeSpec blob for IDictionary<string, object>
-            var tsBlob = new BlobBuilder();
-            var tsEncoder = new BlobEncoder(tsBlob);
-
-            // .TypeSpecificationSignature() kicks off a TypeSpec
-            var genInst = tsEncoder
-                .TypeSpecificationSignature()
-                .GenericInstantiation(
-                    unboundIDictionaryType,   // our open-generic TypeReferenceHandle
-                    genericArgumentCount: 2,
-                    isValueType: false);
-
-            // now emit the two type args in order:
-            genInst.AddArgument().PrimitiveType(PrimitiveTypeCode.String);  // System.String
-            genInst.AddArgument().PrimitiveType(PrimitiveTypeCode.Object);  // System.Object
-
-            // bake it into metadata
-            var tsBlobHandle = metadataBuilder.GetOrAddBlob(tsBlob);
-            var closedDictSpec = metadataBuilder.AddTypeSpecification(tsBlobHandle);
-
-            // 4) Create the signature for set_Item(string,object)
-            var msBlob = new BlobBuilder();
-            new BlobEncoder(msBlob)
-                .MethodSignature(
-                    genericParameterCount: 0,  // NOT a generic *method*
-                    isInstanceMethod: true)
-                .Parameters(
-                    parameterCount: 2,
-                    returnType => returnType.Void(),
-                    parameters =>
-                    {
-                        parameters.AddParameter().Type().GenericTypeParameter(0);
-                        parameters.AddParameter().Type().GenericTypeParameter(1);
-                    });
-
-            var setItemSig = metadataBuilder.GetOrAddBlob(msBlob);
-
-            IDictionary_StringObject_Type = closedDictSpec;
-
-            // 5) The MemberReference on the *closed* IDictionary<string,object>
-            IDictionary_SetItem_Ref = metadataBuilder.AddMemberReference(
-                closedDictSpec,                             // <string,object> TypeSpec
-                metadataBuilder.GetOrAddString("set_Item"),
-                setItemSig);
-
-        }
-
-        private void LoadArrayTypes(MetadataBuilder metadataBuilder)
-        {
-            // List Bound Type Reference <System.Object>
-            var unboundListType = _typeRefRegistry.GetOrAdd(typeof(System.Collections.Generic.List<>));
-
-            // 3) Build a TypeSpec blob for IDictionary<string, object>
-            var tsBlob = new BlobBuilder();
-            var tsEncoder = new BlobEncoder(tsBlob);
-
-            // .TypeSpecificationSignature() kicks off a TypeSpec
-            var genInst = tsEncoder
-                .TypeSpecificationSignature()
-                .GenericInstantiation(
-                    unboundListType,   // our open-generic TypeReferenceHandle
-                    genericArgumentCount: 1,
-                    isValueType: false);
-
-            // now emit the type arg
-            genInst.AddArgument().PrimitiveType(PrimitiveTypeCode.Object);  // System.Object
-
-            // bake it into metadata
-            var tsBlobHandle = metadataBuilder.GetOrAddBlob(tsBlob);
-            var closedListSpec = metadataBuilder.AddTypeSpecification(tsBlobHandle);
-
-            // 4) Create the signature for set_Item(int,object)
-            var setItemBuilder = new BlobBuilder();
-            new BlobEncoder(setItemBuilder)
-                .MethodSignature(
-                    genericParameterCount: 0,  // NOT a generic *method*
-                    isInstanceMethod: true)
-                .Parameters(
-                    parameterCount: 2,
-                    returnType => returnType.Void(),
-                    parameters =>
-                    {
-                        parameters.AddParameter().Type().Int32();
-                        parameters.AddParameter().Type().GenericTypeParameter(0);
-                    });
-
-            var setItemSig = metadataBuilder.GetOrAddBlob(setItemBuilder);
-
-            // 5) The MemberReference on the *closed* IDictionary<string,object>
-            Array_SetItem_Ref = metadataBuilder.AddMemberReference(
-                closedListSpec,                             // <string,object> TypeSpec
-                metadataBuilder.GetOrAddString("set_Item"),
-                setItemSig);
-
-            var getCountBuilder = new BlobBuilder();
-            new BlobEncoder(getCountBuilder)
-                .MethodSignature(
-                    genericParameterCount: 0,  // NOT a generic *method*
-                    isInstanceMethod: true)
-                .Parameters(
-                    parameterCount: 0,
-                    returnType => returnType.Type().Int32(),
-                    parameters => { });
-
-            var getCountSig = metadataBuilder.GetOrAddBlob(getCountBuilder);
-
-            Array_GetCount_Ref = metadataBuilder.AddMemberReference(
-                closedListSpec,
-                metadataBuilder.GetOrAddString("get_Count"),
-                getCountSig);
-
-            // 4) Create the signature for set_Item(int,object)
-            var addItemBuilder = new BlobBuilder();
-            new BlobEncoder(addItemBuilder)
-                .MethodSignature(
-                    genericParameterCount: 0,  // NOT a generic *method*
-                    isInstanceMethod: true)
-                .Parameters(
-                    parameterCount: 1,
-                    returnType => returnType.Void(),
-                    parameters =>
-                    {
-                        parameters.AddParameter().Type().GenericTypeParameter(0);
-                    });
-
-            var addItemSig = metadataBuilder.GetOrAddBlob(addItemBuilder);
-
-            // 5) The MemberReference on the *closed* IDictionary<string,object>
-            Array_Add_Ref = metadataBuilder.AddMemberReference(
-                closedListSpec,                             // <string,object> TypeSpec
-                metadataBuilder.GetOrAddString("Add"),
-                addItemSig);
-        }
 
         public MemberReferenceHandle GetFuncCtorRef(int jsParamCount)
         {
