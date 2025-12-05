@@ -66,8 +66,6 @@ namespace Js2IL.Services
 
             LoadArrayTypes(metadataBuilder);
 
-            LoadFuncTypes(metadataBuilder);
-
             // System.Action reference
             var actionTypeRef = _typeRefRegistry.GetOrAdd(typeof(System.Action));
 
@@ -126,23 +124,6 @@ namespace Js2IL.Services
         public MemberReferenceHandle Array_SetItem_Ref { get; private set; }
         public MemberReferenceHandle Array_GetCount_Ref { get; private set; }
         public MemberReferenceHandle Action_Ctor_Ref { get; private set; }
-
-        // Func delegates returning object
-        public TypeReferenceHandle Func2Generic_TypeRef { get; private set; }
-        public TypeReferenceHandle Func3Generic_TypeRef { get; private set; }
-        
-        // Func delegates with scope array parameter (object[])
-        public TypeSpecificationHandle FuncObjectArrayObject_TypeSpec { get; private set; }
-        public MemberReferenceHandle FuncObjectArrayObject_Invoke_Ref { get; private set; }
-        public TypeSpecificationHandle FuncObjectArrayObjectObject_TypeSpec { get; private set; }
-        public MemberReferenceHandle FuncObjectArrayObjectObject_Ctor_Ref { get; private set; }
-
-        // Additional Func delegate generic type refs for multi-parameter support (scopes + up to 6 js params + return)
-        public TypeReferenceHandle Func4Generic_TypeRef { get; private set; } // scopes + 2 params + return
-        public TypeReferenceHandle Func5Generic_TypeRef { get; private set; } // scopes + 3 params + return
-        public TypeReferenceHandle Func6Generic_TypeRef { get; private set; } // scopes + 4 params + return
-        public TypeReferenceHandle Func7Generic_TypeRef { get; private set; } // scopes + 5 params + return
-        public TypeReferenceHandle Func8Generic_TypeRef { get; private set; } // scopes + 6 params + return
 
         private void LoadObjectTypes(MetadataBuilder metadataBuilder)
         {
@@ -297,59 +278,6 @@ namespace Js2IL.Services
                 closedListSpec,                             // <string,object> TypeSpec
                 metadataBuilder.GetOrAddString("Add"),
                 addItemSig);
-        }
-
-    // Removed LoadActionTypes (legacy Action support)
-
-        private void LoadFuncTypes(MetadataBuilder metadataBuilder)
-        {
-            // Func<T1, TResult>
-            Func2Generic_TypeRef = _typeRefRegistry.GetOrAdd(typeof(System.Func<,>));
-
-            // Func<T1, T2, TResult>
-            Func3Generic_TypeRef = _typeRefRegistry.GetOrAdd(typeof(System.Func<,,>));
-            // Additional generic Func references
-            Func4Generic_TypeRef = _typeRefRegistry.GetOrAdd(typeof(System.Func<,,,>));
-            Func5Generic_TypeRef = _typeRefRegistry.GetOrAdd(typeof(System.Func<,,,,>));
-            Func6Generic_TypeRef = _typeRefRegistry.GetOrAdd(typeof(System.Func<,,,,,>));
-            Func7Generic_TypeRef = _typeRefRegistry.GetOrAdd(typeof(System.Func<,,,,,,>));
-            Func8Generic_TypeRef = _typeRefRegistry.GetOrAdd(typeof(System.Func<,,,,,,,>));
-
-            // Func<object[], object> type (scope array, no additional params)
-            var funcArrayObjectBlob = new BlobBuilder();
-            var funcArrayObjectEncoder = new BlobEncoder(funcArrayObjectBlob)
-                .TypeSpecificationSignature()
-                .GenericInstantiation(Func2Generic_TypeRef, 2, isValueType: false);
-            funcArrayObjectEncoder.AddArgument().SZArray().Object();
-            funcArrayObjectEncoder.AddArgument().Object();
-            FuncObjectArrayObject_TypeSpec = metadataBuilder.AddTypeSpecification(
-                metadataBuilder.GetOrAddBlob(funcArrayObjectBlob));
-
-            var funcArrayInvokeBlob = new BlobBuilder();
-            new BlobEncoder(funcArrayInvokeBlob)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(1,
-                    returnType => returnType.Type().GenericTypeParameter(1), // TResult (object)
-                    parameters => { parameters.AddParameter().Type().GenericTypeParameter(0); }); // object[] parameter
-            var funcArrayInvokeSig = metadataBuilder.GetOrAddBlob(funcArrayInvokeBlob);
-            FuncObjectArrayObject_Invoke_Ref = metadataBuilder.AddMemberReference(
-                FuncObjectArrayObject_TypeSpec,
-                metadataBuilder.GetOrAddString("Invoke"),
-                funcArrayInvokeSig);
-
-            // Func<object[], object, object> type (scope array, one additional param)
-            var funcArrayObjectObjectBlob = new BlobBuilder();
-            var funcArrayObjectObjectEncoder = new BlobEncoder(funcArrayObjectObjectBlob)
-                .TypeSpecificationSignature()
-                .GenericInstantiation(Func3Generic_TypeRef, 3, isValueType: false);
-            funcArrayObjectObjectEncoder.AddArgument().SZArray().Object();
-            funcArrayObjectObjectEncoder.AddArgument().Object();
-            funcArrayObjectObjectEncoder.AddArgument().Object();
-            FuncObjectArrayObjectObject_TypeSpec = metadataBuilder.AddTypeSpecification(
-                metadataBuilder.GetOrAddBlob(funcArrayObjectObjectBlob));
-
-            FuncObjectArrayObjectObject_Ctor_Ref = _memberRefRegistry.GetOrAddConstructor(
-                typeof(System.Func<object[], object, object>));
         }
 
         public MemberReferenceHandle GetFuncCtorRef(int jsParamCount)
