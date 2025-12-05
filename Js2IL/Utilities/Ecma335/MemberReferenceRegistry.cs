@@ -84,6 +84,43 @@ namespace Js2IL.Utilities.Ecma335
         }
 
         /// <summary>
+        /// Gets or creates a constructor member reference handle.
+        /// Uses reflection to discover the constructor signature automatically.
+        /// </summary>
+        /// <param name="declaringType">The type that declares the constructor.</param>
+        /// <param name="parameterTypes">The parameter types of the constructor. Use empty array for parameterless constructor.</param>
+        /// <returns>A cached or newly created MemberReferenceHandle.</returns>
+        public MemberReferenceHandle GetOrAddConstructor(Type declaringType, Type[]? parameterTypes = null)
+        {
+            parameterTypes ??= Type.EmptyTypes;
+            var fullTypeName = declaringType.FullName ?? $"{declaringType.Namespace}.{declaringType.Name}";
+            var paramKey = parameterTypes.Length == 0 ? "" : string.Join(",", parameterTypes.Select(p => p.FullName));
+            var key = $"{fullTypeName}::.ctor({paramKey})";
+
+            if (_cache.TryGetValue(key, out var existing))
+                return existing;
+
+            // Use reflection to find the constructor
+            var ctor = declaringType.GetConstructor(
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
+                null,
+                parameterTypes,
+                null);
+
+            if (ctor == null)
+                throw new ArgumentException($"Constructor with signature ({paramKey}) not found on type '{fullTypeName}'");
+
+            // Build the member reference
+            var typeRef = _typeRefRegistry.GetOrAdd(declaringType);
+            var signature = BuildConstructorSignature(ctor);
+            var nameHandle = _metadataBuilder.GetOrAddString(".ctor");
+
+            var handle = _metadataBuilder.AddMemberReference(typeRef, nameHandle, signature);
+            _cache[key] = handle;
+            return handle;
+        }
+
+        /// <summary>
         /// Gets or creates a property getter member reference handle.
         /// </summary>
         public MemberReferenceHandle GetOrAddPropertyGetter(Type declaringType, string propertyName)
@@ -110,6 +147,26 @@ namespace Js2IL.Utilities.Ecma335
                 .MethodSignature(isInstanceMethod: isInstance)
                 .Parameters(parameters.Length,
                     returnTypeEncoder => EncodeReturnType(returnTypeEncoder, returnType),
+                    parametersEncoder =>
+                    {
+                        foreach (var param in parameters)
+                        {
+                            EncodeSignatureType(parametersEncoder.AddParameter().Type(), param.ParameterType);
+                        }
+                    });
+
+            return _metadataBuilder.GetOrAddBlob(sigBuilder);
+        }
+
+        private BlobHandle BuildConstructorSignature(ConstructorInfo ctor)
+        {
+            var sigBuilder = new BlobBuilder();
+            var parameters = ctor.GetParameters();
+
+            new BlobEncoder(sigBuilder)
+                .MethodSignature(isInstanceMethod: true)
+                .Parameters(parameters.Length,
+                    returnTypeEncoder => returnTypeEncoder.Void(),
                     parametersEncoder =>
                     {
                         foreach (var param in parameters)

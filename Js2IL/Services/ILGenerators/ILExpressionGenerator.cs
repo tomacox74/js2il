@@ -2358,7 +2358,7 @@ namespace Js2IL.Services.ILGenerators
                             var hasDefault = intrinsicType.GetConstructor(Type.EmptyTypes) != null;
                             if (hasDefault)
                             {
-                                var ctorRef = _owner.Runtime.GetInstanceMethodRef(intrinsicType, ".ctor", typeof(void), System.Array.Empty<Type>());
+                                var ctorRef = _owner.Runtime.GetConstructorRef(intrinsicType, System.Array.Empty<Type>());
                                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
                                 _il.Token(ctorRef);
                                 return new ExpressionResult { JsType = JavascriptType.Object, ClrType = intrinsicType };
@@ -2371,7 +2371,7 @@ namespace Js2IL.Services.ILGenerators
                             {
                                 // Push the single argument boxed
                                 Emit(newExpression.Arguments[0], new TypeCoercion() { boxResult = true });
-                                var ctorRef = _owner.Runtime.GetInstanceMethodRef(intrinsicType, ".ctor", typeof(void), typeof(object));
+                                var ctorRef = _owner.Runtime.GetConstructorRef(intrinsicType, typeof(object));
                                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
                                 _il.Token(ctorRef);
                                 return new ExpressionResult { JsType = JavascriptType.Object, ClrType = intrinsicType };
@@ -2385,7 +2385,7 @@ namespace Js2IL.Services.ILGenerators
                             {
                                 Emit(newExpression.Arguments[0], new TypeCoercion() { boxResult = true });
                                 Emit(newExpression.Arguments[1], new TypeCoercion() { boxResult = true });
-                                var ctorRef = _owner.Runtime.GetInstanceMethodRef(intrinsicType, ".ctor", typeof(void), typeof(object), typeof(object));
+                                var ctorRef = _owner.Runtime.GetConstructorRef(intrinsicType, typeof(object), typeof(object));
                                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
                                 _il.Token(ctorRef);
                                 return new ExpressionResult { JsType = JavascriptType.Object, ClrType = intrinsicType };
