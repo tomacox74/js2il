@@ -136,7 +136,6 @@ namespace Js2IL.Services
         public MemberReferenceHandle FuncObjectArrayObject_Invoke_Ref { get; private set; }
         public TypeSpecificationHandle FuncObjectArrayObjectObject_TypeSpec { get; private set; }
         public MemberReferenceHandle FuncObjectArrayObjectObject_Ctor_Ref { get; private set; }
-        public MemberReferenceHandle FuncObjectArrayObjectObject_Invoke_Ref { get; private set; }
 
         // Additional Func delegate generic type refs for multi-parameter support (scopes + up to 6 js params + return)
         public TypeReferenceHandle Func4Generic_TypeRef { get; private set; } // scopes + 2 params + return
@@ -351,21 +350,6 @@ namespace Js2IL.Services
 
             FuncObjectArrayObjectObject_Ctor_Ref = _memberRefRegistry.GetOrAddConstructor(
                 typeof(System.Func<object[], object, object>));
-
-            var funcArrayObjectInvokeBlob = new BlobBuilder();
-            new BlobEncoder(funcArrayObjectInvokeBlob)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(2,
-                    returnType => returnType.Type().GenericTypeParameter(2), // TResult (object)
-                    parameters => {
-                        parameters.AddParameter().Type().GenericTypeParameter(0); // object[] parameter
-                        parameters.AddParameter().Type().GenericTypeParameter(1); // T2 (object)
-                    });
-            var funcArrayObjectInvokeSig = metadataBuilder.GetOrAddBlob(funcArrayObjectInvokeBlob);
-            FuncObjectArrayObjectObject_Invoke_Ref = metadataBuilder.AddMemberReference(
-                FuncObjectArrayObjectObject_TypeSpec,
-                metadataBuilder.GetOrAddString("Invoke"),
-                funcArrayObjectInvokeSig);
         }
 
         public MemberReferenceHandle GetFuncCtorRef(int jsParamCount)
