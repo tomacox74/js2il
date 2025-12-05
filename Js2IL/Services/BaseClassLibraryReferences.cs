@@ -23,19 +23,6 @@ namespace Js2IL.Services
         {
             _typeRefRegistry = new TypeReferenceRegistry(metadataBuilder);
             _memberRefRegistry = new MemberReferenceRegistry(metadataBuilder, _typeRefRegistry);
-
-            // System.Reflection.MethodBase.GetCurrentMethod() reference
-            var methodBaseType = _typeRefRegistry.GetOrAdd(typeof(System.Reflection.MethodBase));
-            var getCurrentMethodSig = new BlobBuilder();
-            new BlobEncoder(getCurrentMethodSig)
-                .MethodSignature(isInstanceMethod: false)
-                .Parameters(0,
-                    returnType => returnType.Type().Type(methodBaseType, isValueType: false),
-                    parameters => { });
-            MethodBase_GetCurrentMethod_Ref = metadataBuilder.AddMemberReference(
-                methodBaseType,
-                metadataBuilder.GetOrAddString("GetCurrentMethod"),
-                metadataBuilder.GetOrAddBlob(getCurrentMethodSig));
         }
 
         public TypeReferenceRegistry TypeRefRegistry => _typeRefRegistry;
@@ -57,7 +44,7 @@ namespace Js2IL.Services
         public MemberReferenceHandle Array_SetItem_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Collections.Generic.List<object>), "set_Item");
         public MemberReferenceHandle Array_GetCount_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Collections.Generic.List<object>), "get_Count");
         public MemberReferenceHandle Action_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(System.Action), new[] { typeof(object), typeof(IntPtr) });
-        public MemberReferenceHandle MethodBase_GetCurrentMethod_Ref { get; private set; }
+        public MemberReferenceHandle MethodBase_GetCurrentMethod_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Reflection.MethodBase), "GetCurrentMethod", Type.EmptyTypes);
 
         public MemberReferenceHandle GetFuncCtorRef(int jsParamCount)
         {

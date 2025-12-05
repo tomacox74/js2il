@@ -302,11 +302,11 @@ namespace Js2IL.Utilities.Ecma335
             // Arrays
             else if (type == typeof(object[])) encoder.SZArray().Object();
             else if (type == typeof(string[])) encoder.SZArray().String();
-            // Common BCL types
-            else if (type == typeof(Action))
+            // Common BCL types (should we just open it up for all types)
+            else if (type == typeof(Action) || type == typeof(System.Reflection.MethodBase))
             {
-                var actionTypeRef = _typeRefRegistry.GetOrAdd(typeof(Action));
-                encoder.Type(actionTypeRef, isValueType: false);
+                var bclTypeReference = _typeRefRegistry.GetOrAdd(type);
+                encoder.Type(bclTypeReference, isValueType: false);
             }
             // JavaScriptRuntime types (including nested types like Node.Process)
             else if (type.Namespace?.StartsWith("JavaScriptRuntime", StringComparison.Ordinal) == true)
