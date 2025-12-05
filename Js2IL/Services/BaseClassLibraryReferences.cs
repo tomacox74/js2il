@@ -41,23 +41,6 @@ namespace Js2IL.Services
             // System.Math References
             this.SystemMathType = _typeRefRegistry.GetOrAdd(typeof(System.Math));
 
-            // System.Console References
-            var systemConsoleTypeReference = _typeRefRegistry.GetOrAdd(typeof(System.Console));
-            var consoleSig = new BlobBuilder();
-            new BlobEncoder(consoleSig)
-                .MethodSignature(isInstanceMethod: false)
-                .Parameters(2,
-                    returnType => returnType.Void(),
-                    parameters =>
-                    {
-                        parameters.AddParameter().Type().String();
-                        parameters.AddParameter().Type().Object();
-                    });
-            this.ConsoleWriteLine_StringObject_Ref = metadataBuilder.AddMemberReference(
-                systemConsoleTypeReference,
-                metadataBuilder.GetOrAddString("WriteLine"),
-                metadataBuilder.GetOrAddBlob(consoleSig));
-
             // System.Reflection.MethodBase reference
             this.MethodBaseType = _typeRefRegistry.GetOrAdd(typeof(System.Reflection.MethodBase));
             var getCurrentMethodSig = new BlobBuilder();
@@ -84,9 +67,6 @@ namespace Js2IL.Services
         public TypeReferenceHandle SystemMathType { get; private init; }
         public TypeReferenceHandle MethodBaseType { get; private init; }
 
-        // Removed legacy Action<> delegate references (now using Func returning object)
-
-        public MemberReferenceHandle ConsoleWriteLine_StringObject_Ref { get; private init; }
         public MemberReferenceHandle Expando_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(System.Dynamic.ExpandoObject), Type.EmptyTypes);
         public MemberReferenceHandle Object_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(object), Type.EmptyTypes);
         public MemberReferenceHandle IDictionary_SetItem_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Collections.Generic.IDictionary<string, object>), "set_Item");
