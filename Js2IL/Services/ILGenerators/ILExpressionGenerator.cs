@@ -826,15 +826,7 @@ namespace Js2IL.Services.ILGenerators
 
                 var argCount = callExpression.Arguments.Count;
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
-                if (argCount == 0)
-                {
-                    _il.Token(_bclReferences.FuncObjectArrayObject_Invoke_Ref);
-                }
-                else if (argCount == 1)
-                {
-                    _il.Token(_bclReferences.FuncObjectArrayObjectObject_Invoke_Ref);
-                }
-                else if (argCount <= 6)
+                if (argCount <= 6)
                 {
                     _il.Token(_bclReferences.GetFuncInvokeRef(argCount));
                 }
@@ -1516,15 +1508,7 @@ namespace Js2IL.Services.ILGenerators
             // All generated functions are constructed with a delegate that accepts the scope array
             // as the first parameter, so calls must always use the array-based Invoke overloads.
             _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
-            if (expectedParamCount == 0)
-            {
-                _il.Token(_bclReferences.FuncObjectArrayObject_Invoke_Ref);
-            }
-            else if (expectedParamCount == 1)
-            {
-                _il.Token(_bclReferences.FuncObjectArrayObjectObject_Invoke_Ref);
-            }
-            else if (expectedParamCount <= 6)
+            if (expectedParamCount <= 6)
             {
                 _il.Token(_bclReferences.GetFuncInvokeRef(expectedParamCount));
             }
