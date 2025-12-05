@@ -161,7 +161,7 @@ namespace Js2IL.Tests
                 try
                 {
                     // 1) The discovered jsRuntimeAsm (file-based or fallback)
-                    var gvType = jsRuntimeAsm?.GetType("JavaScriptRuntime.GlobalVariables");
+                    var gvType = jsRuntimeAsm?.GetType("JavaScriptRuntime.GlobalThis");
                     var setCtx = gvType?.GetMethod("SetModuleContext", BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(string) });
                     if (gvType != null && setCtx != null)
                     {
@@ -172,7 +172,7 @@ namespace Js2IL.Tests
                 try
                 {
                     // 2) The compile-time runtime assembly
-                    JavaScriptRuntime.GlobalVariables.SetModuleContext(modDir, file);
+                    JavaScriptRuntime.GlobalThis.SetModuleContext(modDir, file);
                 }
                 catch { }
                 try
@@ -183,7 +183,7 @@ namespace Js2IL.Tests
                         if (!string.Equals(asm.GetName().Name, "JavaScriptRuntime", StringComparison.Ordinal)) continue;
                         try
                         {
-                            var gvt = asm.GetType("JavaScriptRuntime.GlobalVariables");
+                            var gvt = asm.GetType("JavaScriptRuntime.GlobalThis");
                             var sc = gvt?.GetMethod("SetModuleContext", BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(string) });
                             sc?.Invoke(null, new object?[] { modDir, file });
                         }
@@ -208,7 +208,7 @@ namespace Js2IL.Tests
                 {
                     if (jsRuntimeAsm != null)
                     {
-                        var gvType2 = jsRuntimeAsm.GetType("JavaScriptRuntime.GlobalVariables");
+                        var gvType2 = jsRuntimeAsm.GetType("JavaScriptRuntime.GlobalThis");
                         if (gvType2 != null)
                         {
                             var setCtx2 = gvType2.GetMethod("SetModuleContext", BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(string) });

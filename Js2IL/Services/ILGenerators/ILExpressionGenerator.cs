@@ -434,8 +434,8 @@ namespace Js2IL.Services.ILGenerators
                         }
                         else
                         {
-                            // If not a local variable, attempt to resolve a public static property on GlobalVariables at compile-time
-                            var gvType = typeof(JavaScriptRuntime.GlobalVariables);
+                            // If not a local variable, attempt to resolve a public static property on GlobalThis at compile-time
+                            var gvType = typeof(JavaScriptRuntime.GlobalThis);
                             var prop = gvType.GetProperty(name, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
                             if (prop != null && prop.GetMethod != null)
                             {
@@ -465,8 +465,8 @@ namespace Js2IL.Services.ILGenerators
                             {
                                 // Fallback: dynamic lookup (legacy). This should be avoided for known globals.
                                 var getGlobal = _runtime.GetStaticMethodRef(
-                                    typeof(JavaScriptRuntime.GlobalVariables),
-                                    nameof(JavaScriptRuntime.GlobalVariables.Get),
+                                    typeof(JavaScriptRuntime.GlobalThis),
+                                    nameof(JavaScriptRuntime.GlobalThis.Get),
                                     typeof(object),
                                     typeof(string));
                                 _il.Ldstr(_metadataBuilder, name);
@@ -695,9 +695,9 @@ namespace Js2IL.Services.ILGenerators
                             return null;
                         }
 
-                        // Otherwise, if the identifier refers to a public static property on GlobalVariables (e.g., process),
+                        // Otherwise, if the identifier refers to a public static property on GlobalThis (e.g., process),
                         // load that instance and perform a normal instance call on it.
-                        var gvType = typeof(JavaScriptRuntime.GlobalVariables);
+                        var gvType = typeof(JavaScriptRuntime.GlobalThis);
                         var gvProp = gvType.GetProperty(baseId.Name, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.IgnoreCase);
                         if (gvProp?.GetMethod != null)
                         {
@@ -742,7 +742,7 @@ namespace Js2IL.Services.ILGenerators
                             _il.Token(mrefHandle);
                             return reflectedReturnType;
                         }
-                        // Step 4 fallback (legacy): no intrinsic mapping and not a GlobalVariables property
+                        // Step 4 fallback (legacy): no intrinsic mapping and not a GlobalThis property
                         throw ILEmitHelpers.NotSupported($"Unsupported member call base identifier: '{baseId.Name}'", baseId);
                     }
                 }
