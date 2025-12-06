@@ -1,315 +1,79 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
+﻿using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.CompilerServices;
+using Js2IL.Utilities.Ecma335;
 
 namespace Js2IL.Services
 {
     internal class Runtime
     {
-        private readonly MetadataBuilder _metadataBuilder;
-        private AssemblyReferenceHandle _runtimeAssemblyReference;
-        private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCache = new(StringComparer.Ordinal);
-        private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCacheByNs = new(StringComparer.Ordinal);
-        // Cache by full type name (supports nested types with '+')
-        private readonly Dictionary<string, TypeReferenceHandle> _runtimeTypeCacheByFullName = new(StringComparer.Ordinal);
-        private readonly Dictionary<string, MemberReferenceHandle> _runtimeMethodCache = new(StringComparer.Ordinal);
-        private MemberReferenceHandle _objectGetItem;
-    private MemberReferenceHandle _objectGetLength;
-        private MemberReferenceHandle _arrayCtorRef;
-        private MemberReferenceHandle _arrayLengthRef;
-        private MemberReferenceHandle _closureBindObjectRef;
-        private MemberReferenceHandle _closureInvokeWithArgsRef;
-        private InstructionEncoder _il;
-        private MemberReferenceHandle _operatorsAddRef;
-        private MemberReferenceHandle _operatorsSubtractRef;
+        private readonly Dictionary<string, Type> _runtimeTypeNameCache = new(StringComparer.Ordinal);
+        private readonly InstructionEncoder _il;
+        private readonly TypeReferenceRegistry _typeRefRegistry;
+        private readonly MemberReferenceRegistry _memberRefRegistry;
 
-        // Cache a single JavaScriptRuntime AssemblyReference per MetadataBuilder to avoid duplicate AssemblyRef rows
-        private static readonly ConditionalWeakTable<MetadataBuilder, AssemblyRefBox> s_runtimeAsmRefCache = new();
-        private sealed class AssemblyRefBox { public AssemblyReferenceHandle Handle; public AssemblyRefBox(AssemblyReferenceHandle h){ Handle = h; } }
-
-        public Runtime(MetadataBuilder metadataBuilder, InstructionEncoder il) 
-        { 
+        public Runtime(InstructionEncoder il, TypeReferenceRegistry typeRefRegistry, MemberReferenceRegistry memberRefRegistry)
+        {
             _il = il;
-            _metadataBuilder = metadataBuilder;
-
-            var runtimeAssembly = typeof(JavaScriptRuntime.Console).Assembly;
-            var runtimeAssemblyName = runtimeAssembly.GetName();
-            var runtimeAssemblyVersion = runtimeAssemblyName.Version;
-
-            // Reuse existing AssemblyReference for JavaScriptRuntime if one was already created for this MetadataBuilder
-            if (!s_runtimeAsmRefCache.TryGetValue(metadataBuilder, out var box))
-            {
-                var runtimeAssemblyReference = metadataBuilder.AddAssemblyReference(
-                    metadataBuilder.GetOrAddString(runtimeAssemblyName.Name!),
-                    version: runtimeAssemblyVersion!,
-                    culture: default,
-                    publicKeyOrToken: default,
-                    flags: 0,
-                    hashValue: default
-                );
-                box = new AssemblyRefBox(runtimeAssemblyReference);
-                s_runtimeAsmRefCache.Add(metadataBuilder, box);
-            }
-            _runtimeAssemblyReference = box.Handle;
-
-            var dotNet2JsType = metadataBuilder.AddTypeReference(
-                _runtimeAssemblyReference,
-                metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime)),
-                metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime.DotNet2JSConversions))
-            );
-            // Initialize references to JavaScriptRuntime.Operators methods
-            InitializeOperators();
-
-            // Initialize JavaScriptRuntime.Array method references
-            InitializeArray();
-
-
-            // Initialize JavaScriptRuntime.Object.GetItem
-            InitializeObject();
-
-            // Initialize JavaScriptRuntime.Closure.Bind
-            InitializeClosure();
+            _typeRefRegistry = typeRefRegistry;
+            _memberRefRegistry = memberRefRegistry;
         }
 
         public void InvokeArrayCtor()
         {
             // we assume the size of the array is already on the stack
+            var ctorRef = _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.Array), new[] { typeof(int) });
             _il.OpCode(ILOpCode.Newobj);
-            _il.Token(_arrayCtorRef);
+            _il.Token(ctorRef);
         }
 
-        public void InvokeArrayGetCount()
+        public void InvokeEngineCtor()
         {
-            // we assume the array is already on the stack
-            _il.OpCode(ILOpCode.Callvirt);
-            // this can be moved into the runtime as a length property in the future
-            _il.Token(_arrayLengthRef);            
+            // creates a new instance of JavaScriptRuntime.Engine
+            var ctorRef = _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.Engine), Type.EmptyTypes);
+            _il.OpCode(ILOpCode.Newobj);
+            _il.Token(ctorRef);
         }
 
         public void InvokeGetItemFromObject()
         {
             // we assume the object and index are already on the stack
-            _il.Call(_objectGetItem);
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Object), "GetItem");
+            _il.Call(mref);
         }
 
         public void InvokeGetLengthFromObject()
         {
             // we assume the object is already on the stack
-            _il.Call(_objectGetLength);
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Object), "GetLength");
+            _il.Call(mref);
         }
 
         public void InvokeOperatorsAdd()
         {
             // assumes two object operands are on the stack
-            _il.Call(_operatorsAddRef);
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "Add");
+            _il.Call(mref);
         }
 
         public void InvokeOperatorsSubtract()
         {
             // assumes two object operands are on the stack
-            _il.Call(_operatorsSubtractRef);
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "Subtract");
+            _il.Call(mref);
         }
 
         public void InvokeClosureBindObject()
         {
             // assumes [delegateAsObject] [scopesArray] are on the stack
-            _il.Call(_closureBindObjectRef);
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), "Bind", new[] { typeof(object), typeof(object[]) });
+            _il.Call(mref);
         }
 
         public void InvokeClosureInvokeWithArgs()
         {
             // assumes [delegateAsObject] [scopesArray] [argsArray] are on the stack
-            _il.Call(_closureInvokeWithArgsRef);
-        }
-
-        /// <summary>
-        /// Initializes references for JavaScriptRuntime.Operators methods (Add/Subtract).
-        /// </summary>
-        private void InitializeOperators()
-        {
-            var operatorsType = _metadataBuilder.AddTypeReference(
-                _runtimeAssemblyReference,
-                _metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime)),
-                _metadataBuilder.GetOrAddString("Operators")
-            );
-
-            // JavaScriptRuntime.Operators.Add(object, object) -> object
-            var addSigBuilder = new BlobBuilder();
-            new BlobEncoder(addSigBuilder)
-                .MethodSignature(isInstanceMethod: false)
-                .Parameters(2,
-                    returnType => returnType.Type().Object(),
-                    parameters =>
-                    {
-                        parameters.AddParameter().Type().Object();
-                        parameters.AddParameter().Type().Object();
-                    });
-            var addSig = _metadataBuilder.GetOrAddBlob(addSigBuilder);
-            _operatorsAddRef = _metadataBuilder.AddMemberReference(
-                operatorsType,
-                _metadataBuilder.GetOrAddString("Add"),
-                addSig);
-
-            // JavaScriptRuntime.Operators.Subtract(object, object) -> object
-            var subSigBuilder = new BlobBuilder();
-            new BlobEncoder(subSigBuilder)
-                .MethodSignature(isInstanceMethod: false)
-                .Parameters(2,
-                    returnType => returnType.Type().Object(),
-                    parameters =>
-                    {
-                        parameters.AddParameter().Type().Object();
-                        parameters.AddParameter().Type().Object();
-                    });
-            var subSig = _metadataBuilder.GetOrAddBlob(subSigBuilder);
-            _operatorsSubtractRef = _metadataBuilder.AddMemberReference(
-                operatorsType,
-                _metadataBuilder.GetOrAddString("Subtract"),
-                subSig);
-        }
-
-    /// <summary>
-    /// Initializes reference for JavaScriptRuntime.Object.GetItem(object, object) -> object.
-    /// </summary>
-        private void InitializeObject()
-        {
-            var objectType = _metadataBuilder.AddTypeReference(
-                _runtimeAssemblyReference,
-                _metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime)),
-                _metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime.Object)));
-
-            var objectGetItemSigBuilder = new BlobBuilder();
-            new BlobEncoder(objectGetItemSigBuilder)
-                .MethodSignature(isInstanceMethod: false)
-                .Parameters(2, rt => rt.Type().Object(), p =>
-                {
-                    p.AddParameter().Type().Object();
-                    p.AddParameter().Type().Object();
-                });
-            var objectGetItemSig = _metadataBuilder.GetOrAddBlob(objectGetItemSigBuilder);
-            _objectGetItem = _metadataBuilder.AddMemberReference(
-                objectType,
-                _metadataBuilder.GetOrAddString("GetItem"),
-                objectGetItemSig);
-
-            // JavaScriptRuntime.Object.GetLength(object) -> double
-            var objectGetLengthSigBuilder = new BlobBuilder();
-            new BlobEncoder(objectGetLengthSigBuilder)
-                .MethodSignature(isInstanceMethod: false)
-                .Parameters(1, rt => rt.Type().Double(), p =>
-                {
-                    p.AddParameter().Type().Object();
-                });
-            var objectGetLengthSig = _metadataBuilder.GetOrAddBlob(objectGetLengthSigBuilder);
-            _objectGetLength = _metadataBuilder.AddMemberReference(
-                objectType,
-                _metadataBuilder.GetOrAddString("GetLength"),
-                objectGetLengthSig);
-        }
-
-        /// <summary>
-        /// Initializes reference for JavaScriptRuntime.Closure.Bind(object, object[]) -> object.
-        /// </summary>
-        private void InitializeClosure()
-        {
-            // Use the same runtime assembly reference we already captured
-            var closureType = _metadataBuilder.AddTypeReference(
-                _runtimeAssemblyReference,
-                _metadataBuilder.GetOrAddString("JavaScriptRuntime"),
-                _metadataBuilder.GetOrAddString("Closure")
-            );
-
-            var bindSig = new BlobBuilder();
-            new BlobEncoder(bindSig)
-                .MethodSignature(isInstanceMethod: false)
-                .Parameters(2,
-                    rt => rt.Type().Object(),
-                    p =>
-                    {
-                        p.AddParameter().Type().Object();
-                        p.AddParameter().Type().SZArray().Object();
-                    });
-            var bindSigHandle = _metadataBuilder.GetOrAddBlob(bindSig);
-            _closureBindObjectRef = _metadataBuilder.AddMemberReference(
-                closureType,
-                _metadataBuilder.GetOrAddString("Bind"),
-                bindSigHandle);
-
-            // Add reference for InvokeWithArgs(object, object[], params object[]) -> object
-            var invokeWithArgsSig = new BlobBuilder();
-            new BlobEncoder(invokeWithArgsSig)
-                .MethodSignature(isInstanceMethod: false)
-                .Parameters(3,
-                    rt => rt.Type().Object(),
-                    p =>
-                    {
-                        p.AddParameter().Type().Object(); // target
-                        p.AddParameter().Type().SZArray().Object(); // scopes
-                        p.AddParameter().Type().SZArray().Object(); // args (params)
-                    });
-            var invokeWithArgsSigHandle = _metadataBuilder.GetOrAddBlob(invokeWithArgsSig);
-            _closureInvokeWithArgsRef = _metadataBuilder.AddMemberReference(
-                closureType,
-                _metadataBuilder.GetOrAddString("InvokeWithArgs"),
-                invokeWithArgsSigHandle);
-        }
-
-        /// <summary>
-        /// Initializes references for JavaScriptRuntime.Array (.ctor and get_length).
-        /// </summary>
-        private void InitializeArray()
-        {
-            var arrayType = _metadataBuilder.AddTypeReference(
-                _runtimeAssemblyReference,
-                _metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime)),
-                _metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime.Array)));
-
-            // Constructor: .ctor(int capacity)
-            var arraySigBuilder = new BlobBuilder();
-            new BlobEncoder(arraySigBuilder)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(1, rt => rt.Void(), p =>
-                {
-                    p.AddParameter().Type().Int32();
-                });
-            var arrayCtorSig = _metadataBuilder.GetOrAddBlob(arraySigBuilder);
-            _arrayCtorRef = _metadataBuilder.AddMemberReference(
-                arrayType,
-                _metadataBuilder.GetOrAddString(".ctor"),
-                arrayCtorSig);
-
-            // Property getter: double get_length()
-            var arrayLengthSigBuilder = new BlobBuilder();
-            new BlobEncoder(arrayLengthSigBuilder)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(0, rt => rt.Type().Double(), p => { });
-            var arrayLengthSig = _metadataBuilder.GetOrAddBlob(arrayLengthSigBuilder);
-            _arrayLengthRef = _metadataBuilder.AddMemberReference(
-                arrayType,
-                _metadataBuilder.GetOrAddString("get_length"),
-                arrayLengthSig);
-        }
-
-        /// <summary>
-        /// Gets (and caches) a TypeReferenceHandle to a type in the JavaScriptRuntime assembly.
-        /// </summary>
-        private TypeReferenceHandle GetJavaScriptRuntimeType(string typeName)
-        {
-            if (_runtimeTypeCache.TryGetValue(typeName, out var handle))
-            {
-                return handle;
-            }
-            var tref = _metadataBuilder.AddTypeReference(
-                _runtimeAssemblyReference,
-                _metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime)),
-                _metadataBuilder.GetOrAddString(typeName));
-            _runtimeTypeCache[typeName] = tref;
-            return tref;
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), "InvokeWithArgs", new[] { typeof(object), typeof(object[]), typeof(object[]) });
+            _il.Call(mref);
         }
 
         /// <summary>
@@ -323,23 +87,27 @@ namespace Js2IL.Services
                 throw new NotSupportedException($"Only up to 1 constructor argument supported for built-in Error types (got {argumentCount})");
             }
 
-            var errorTypeRef = GetJavaScriptRuntimeType(errorTypeName);
+            // Get or cache the Type for this error type name
+            if (!_runtimeTypeNameCache.TryGetValue(errorTypeName, out var errorType))
+            {
+                // Use reflection to find the type in JavaScriptRuntime assembly
+                var runtimeAssembly = typeof(JavaScriptRuntime.Console).Assembly;
+                var fullTypeName = $"JavaScriptRuntime.{errorTypeName}";
+                errorType = runtimeAssembly.GetType(fullTypeName)
+                    ?? throw new InvalidOperationException($"Could not resolve error type '{fullTypeName}' in JavaScriptRuntime assembly");
+                _runtimeTypeNameCache[errorTypeName] = errorType;
+            }
 
-            var sig = new BlobBuilder();
-            new BlobEncoder(sig)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(argumentCount,
-                    r => r.Void(),
-                    p =>
-                    {
-                        for (int i = 0; i < argumentCount; i++)
-                        {
-                            // Error(string message)
-                            p.AddParameter().Type().String();
-                        }
-                    });
-            var ctorSig = _metadataBuilder.GetOrAddBlob(sig);
-            return _metadataBuilder.AddMemberReference(errorTypeRef, _metadataBuilder.GetOrAddString(".ctor"), ctorSig);
+            // Build parameter types array based on argumentCount
+            Type[] parameterTypes = argumentCount switch
+            {
+                0 => Type.EmptyTypes,
+                1 => new[] { typeof(string) },
+                _ => throw new NotSupportedException($"Unsupported argument count: {argumentCount}")
+            };
+
+            // Use MemberReferenceRegistry to get the constructor
+            return _memberRefRegistry.GetOrAddConstructor(errorType, parameterTypes);
         }
 
         /// <summary>
@@ -347,78 +115,14 @@ namespace Js2IL.Services
         /// </summary>
         public TypeReferenceHandle GetErrorTypeRef()
         {
-            return GetJavaScriptRuntimeType("Error");
-        }
-
-    private void EncodeSignatureType(SignatureTypeEncoder enc, Type type)
-        {
-            if (type == typeof(object)) enc.Object();
-            else if (type == typeof(string)) enc.String();
-            else if (type == typeof(double)) enc.Double();
-            else if (type == typeof(bool)) enc.Boolean();
-            else if (type == typeof(int)) enc.Int32();
-            else if (type == typeof(object[])) enc.SZArray().Object();
-            else if (!string.IsNullOrEmpty(type.Namespace) && type.Namespace!.StartsWith("JavaScriptRuntime", StringComparison.Ordinal))
-            {
-                // Map JavaScriptRuntime reference types (e.g., JavaScriptRuntime.Array, JavaScriptRuntime.Node.Process)
-                var tref = GetRuntimeTypeRef(type);
-                enc.Type(tref, isValueType: type.IsValueType);
-            }
-            else throw new NotSupportedException($"Unsupported runtime signature type mapping: {type.FullName}");
-        }
-
-        private void EncodeReturnType(ReturnTypeEncoder enc, Type type)
-        {
-            if (type == typeof(void)) enc.Void();
-            else EncodeSignatureType(enc.Type(), type);
-        }
-
-        private string MakeMethodKey(string fullTypeName, string methodName, bool isInstance, Type ret, IReadOnlyList<Type> parms)
-        {
-            var ps = string.Join(",", parms.Select(p => p.FullName));
-            return $"{fullTypeName}::{methodName}|{(isInstance ? "inst" : "static")}|ret={ret.FullName}|params=[{ps}]";
-        }
-
-        private TypeReferenceHandle GetRuntimeTypeRef(string @namespace, string typeName)
-        {
-            var key = @namespace + "." + typeName;
-            if (_runtimeTypeCacheByNs.TryGetValue(key, out var h)) return h;
-            var tref = _metadataBuilder.AddTypeReference(
-                _runtimeAssemblyReference,
-                _metadataBuilder.GetOrAddString(@namespace),
-                _metadataBuilder.GetOrAddString(typeName));
-            _runtimeTypeCacheByNs[key] = tref;
-            return tref;
+            return _typeRefRegistry.GetOrAdd(typeof(JavaScriptRuntime.Error));
         }
 
         // Nested-type aware resolver for JavaScriptRuntime types (e.g., JavaScriptRuntime.Node.PerfHooks+Performance)
         private TypeReferenceHandle GetRuntimeTypeRef(Type runtimeType)
         {
-            var fullName = runtimeType.FullName ?? ((runtimeType.Namespace ?? "") + "." + runtimeType.Name);
-            if (_runtimeTypeCacheByFullName.TryGetValue(fullName, out var existing)) return existing;
-
-            TypeReferenceHandle tref;
-            if (runtimeType.DeclaringType == null)
-            {
-                // Top-level type under JavaScriptRuntime assembly
-                tref = _metadataBuilder.AddTypeReference(
-                    _runtimeAssemblyReference,
-                    _metadataBuilder.GetOrAddString(runtimeType.Namespace ?? "JavaScriptRuntime"),
-                    _metadataBuilder.GetOrAddString(runtimeType.Name));
-            }
-            else
-            {
-                // Nested type: resolution scope is the declaring type TypeReference
-                var parentRef = GetRuntimeTypeRef(runtimeType.DeclaringType);
-                tref = _metadataBuilder.AddTypeReference(
-                    parentRef,
-                    // Nested types in metadata do not carry a namespace; use empty here and set only the nested name
-                    _metadataBuilder.GetOrAddString(string.Empty),
-                    _metadataBuilder.GetOrAddString(runtimeType.Name));
-            }
-
-            _runtimeTypeCacheByFullName[fullName] = tref;
-            return tref;
+            // Use TypeReferenceRegistry which handles both top-level and nested types
+            return _typeRefRegistry.GetOrAdd(runtimeType);
         }
 
         // Public helper to get a type reference handle for a JavaScriptRuntime type
@@ -427,68 +131,27 @@ namespace Js2IL.Services
             return GetRuntimeTypeRef(runtimeType);
         }
 
+        public MemberReferenceHandle GetConstructorRef(Type runtimeType, params Type[] parameterTypes)
+        {
+            return _memberRefRegistry.GetOrAddConstructor(runtimeType, parameterTypes);
+        }
+
         public MemberReferenceHandle GetInstanceMethodRef(Type runtimeType, string methodName, Type returnType, params Type[] parameterTypes)
         {
-            // Use FullName so nested types (which use '+') are uniquely identified
-            var full = runtimeType.FullName ?? ((runtimeType.Namespace ?? "JavaScriptRuntime") + "." + runtimeType.Name);
-            var key = MakeMethodKey(full, methodName, isInstance: true, ret: returnType, parms: parameterTypes);
-            if (_runtimeMethodCache.TryGetValue(key, out var cached)) return cached;
-
-            // Resolve type reference with nested-type awareness
-            var typeRef = GetRuntimeTypeRef(runtimeType);
-            var sigBuilder = new BlobBuilder();
-            new BlobEncoder(sigBuilder)
-                .MethodSignature(isInstanceMethod: true)
-                .Parameters(parameterTypes.Length, rt => EncodeReturnType(rt, returnType), p =>
-                {
-                    foreach (var pt in parameterTypes)
-                    {
-                        EncodeSignatureType(p.AddParameter().Type(), pt);
-                    }
-                });
-            var sigHandle = _metadataBuilder.GetOrAddBlob(sigBuilder);
-            var mref = _metadataBuilder.AddMemberReference(typeRef, _metadataBuilder.GetOrAddString(methodName), sigHandle);
-            _runtimeMethodCache[key] = mref;
-            return mref;
+            // Delegate to MemberReferenceRegistry which uses reflection to discover the signature automatically
+            return _memberRefRegistry.GetOrAddMethod(runtimeType, methodName, parameterTypes);
         }
 
         public MemberReferenceHandle GetStaticMethodRef(Type runtimeType, string methodName, Type returnType, params Type[] parameterTypes)
         {
-            // Use FullName so nested types (which use '+') are uniquely identified
-            var full = runtimeType.FullName ?? ((runtimeType.Namespace ?? "JavaScriptRuntime") + "." + runtimeType.Name);
-            var key = MakeMethodKey(full, methodName, isInstance: false, ret: returnType, parms: parameterTypes);
-            if (_runtimeMethodCache.TryGetValue(key, out var cached)) return cached;
-
-            // Resolve type reference with nested-type awareness
-            var typeRef = GetRuntimeTypeRef(runtimeType);
-            var sigBuilder = new BlobBuilder();
-            new BlobEncoder(sigBuilder)
-                .MethodSignature(isInstanceMethod: false)
-                .Parameters(parameterTypes.Length, rt => EncodeReturnType(rt, returnType), p =>
-                {
-                    foreach (var pt in parameterTypes)
-                    {
-                        EncodeSignatureType(p.AddParameter().Type(), pt);
-                    }
-                });
-            var sigHandle = _metadataBuilder.GetOrAddBlob(sigBuilder);
-            var mref = _metadataBuilder.AddMemberReference(typeRef, _metadataBuilder.GetOrAddString(methodName), sigHandle);
-            _runtimeMethodCache[key] = mref;
-            return mref;
-        }
-
-        public MemberReferenceHandle GetInstanceMethodRef(System.Reflection.MethodInfo method)
-        {
-            var dt = method.DeclaringType ?? throw new ArgumentException("Method has no declaring type", nameof(method));
-            var ret = method.ReturnType;
-            var pars = method.GetParameters().Select(p => p.ParameterType).ToArray();
-            return GetInstanceMethodRef(dt, method.Name, ret, pars);
+            // Delegate to MemberReferenceRegistry which uses reflection to discover the signature automatically
+            return _memberRefRegistry.GetOrAddMethod(runtimeType, methodName, parameterTypes);
         }
 
         // Convenience: Emit a call to JavaScriptRuntime.Require.require(string) with string already on stack
         public void InvokeRequire()
         {
-            var mref = GetStaticMethodRef(typeof(JavaScriptRuntime.Require), "require", typeof(object), typeof(string));
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Require), "require");
             _il.OpCode(ILOpCode.Call);
             _il.Token(mref);
         }

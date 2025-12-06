@@ -27,7 +27,7 @@
 
 } // end of class Scopes.BinaryOperator_EqualBoolean
 
-.class public auto ansi beforefieldinit Program
+.class public auto ansi beforefieldinit Scripts.BinaryOperator_EqualBoolean
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -38,7 +38,6 @@
 		// Header size: 12
 		// Code size: 105 (0x69)
 		.maxstack 32
-		.entrypoint
 		.locals init (
 			[0] class Scopes.BinaryOperator_EqualBoolean
 		)
@@ -86,6 +85,29 @@
 		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_0067: pop
 		IL_0068: ret
+	} // end of method BinaryOperator_EqualBoolean::Main
+
+} // end of class Scripts.BinaryOperator_EqualBoolean
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20d1
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.BinaryOperator_EqualBoolean::Main()
+		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0016: ret
 	} // end of method Program::Main
 
 } // end of class Program

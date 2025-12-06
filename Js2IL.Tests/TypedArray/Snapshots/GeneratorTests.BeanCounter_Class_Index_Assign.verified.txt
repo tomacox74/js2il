@@ -144,7 +144,7 @@
 
 } // end of class Classes.BeanCounter
 
-.class public auto ansi beforefieldinit Program
+.class public auto ansi beforefieldinit Scripts.BeanCounter_Class_Index_Assign
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -155,7 +155,6 @@
 		// Header size: 12
 		// Code size: 118 (0x76)
 		.maxstack 32
-		.entrypoint
 		.locals init (
 			[0] class Scopes.BeanCounter_Class_Index_Assign
 		)
@@ -190,6 +189,29 @@
 		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_0074: pop
 		IL_0075: ret
+	} // end of method BeanCounter_Class_Index_Assign::Main
+
+} // end of class Scripts.BeanCounter_Class_Index_Assign
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2142
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.BeanCounter_Class_Index_Assign::Main()
+		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0016: ret
 	} // end of method Program::Main
 
 } // end of class Program

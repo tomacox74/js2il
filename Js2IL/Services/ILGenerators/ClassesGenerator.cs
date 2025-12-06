@@ -741,7 +741,7 @@ namespace Js2IL.Services.ILGenerators
             }
             
             // Now handle object-pattern destructuring
-            var runtime = new Runtime(_metadata, ilGen.IL);
+            var runtime = new Runtime(ilGen.IL, _bcl.TypeRefRegistry, _bcl.MemberRefRegistry);
             MethodBuilder.EmitObjectPatternParameterDestructuring(
                 _metadata,
                 ilGen.IL,

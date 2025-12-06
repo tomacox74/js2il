@@ -253,7 +253,7 @@ namespace Js2IL.Services.ILGenerators
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldftn);
                         _il.Token(methodHandle);
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
-                        var (_, ctorRef) = _bclReferences.GetFuncObjectArrayWithParams(paramNames.Length);
+                        var ctorRef = _bclReferences.GetFuncCtorRef(paramNames.Length);
                         _il.Token(ctorRef);
                         // Immediately bind the new delegate to the appropriate closure scopes so that
                         // callbacks invoked later (e.g., Array.map) have a valid scopes array.
@@ -322,7 +322,7 @@ namespace Js2IL.Services.ILGenerators
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldftn);
                         _il.Token(methodHandle);
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
-                        var (_, ctorRef) = _bclReferences.GetFuncObjectArrayWithParams(paramNames.Length);
+                        var ctorRef = _bclReferences.GetFuncCtorRef(paramNames.Length);
                         _il.Token(ctorRef);
                         javascriptType = JavascriptType.Object;
                     }
@@ -434,8 +434,8 @@ namespace Js2IL.Services.ILGenerators
                         }
                         else
                         {
-                            // If not a local variable, attempt to resolve a public static property on GlobalVariables at compile-time
-                            var gvType = typeof(JavaScriptRuntime.GlobalVariables);
+                            // If not a local variable, attempt to resolve a public static property on GlobalThis at compile-time
+                            var gvType = typeof(JavaScriptRuntime.GlobalThis);
                             var prop = gvType.GetProperty(name, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
                             if (prop != null && prop.GetMethod != null)
                             {
@@ -465,8 +465,8 @@ namespace Js2IL.Services.ILGenerators
                             {
                                 // Fallback: dynamic lookup (legacy). This should be avoided for known globals.
                                 var getGlobal = _runtime.GetStaticMethodRef(
-                                    typeof(JavaScriptRuntime.GlobalVariables),
-                                    nameof(JavaScriptRuntime.GlobalVariables.Get),
+                                    typeof(JavaScriptRuntime.GlobalThis),
+                                    nameof(JavaScriptRuntime.GlobalThis.Get),
                                     typeof(object),
                                     typeof(string));
                                 _il.Ldstr(_metadataBuilder, name);
@@ -695,9 +695,9 @@ namespace Js2IL.Services.ILGenerators
                             return null;
                         }
 
-                        // Otherwise, if the identifier refers to a public static property on GlobalVariables (e.g., process),
+                        // Otherwise, if the identifier refers to a public static property on GlobalThis (e.g., process),
                         // load that instance and perform a normal instance call on it.
-                        var gvType = typeof(JavaScriptRuntime.GlobalVariables);
+                        var gvType = typeof(JavaScriptRuntime.GlobalThis);
                         var gvProp = gvType.GetProperty(baseId.Name, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.IgnoreCase);
                         if (gvProp?.GetMethod != null)
                         {
@@ -742,7 +742,7 @@ namespace Js2IL.Services.ILGenerators
                             _il.Token(mrefHandle);
                             return reflectedReturnType;
                         }
-                        // Step 4 fallback (legacy): no intrinsic mapping and not a GlobalVariables property
+                        // Step 4 fallback (legacy): no intrinsic mapping and not a GlobalThis property
                         throw ILEmitHelpers.NotSupported($"Unsupported member call base identifier: '{baseId.Name}'", baseId);
                     }
                 }
@@ -826,17 +826,9 @@ namespace Js2IL.Services.ILGenerators
 
                 var argCount = callExpression.Arguments.Count;
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
-                if (argCount == 0)
+                if (argCount <= 6)
                 {
-                    _il.Token(_bclReferences.FuncObjectArrayObject_Invoke_Ref);
-                }
-                else if (argCount == 1)
-                {
-                    _il.Token(_bclReferences.FuncObjectArrayObjectObject_Invoke_Ref);
-                }
-                else if (argCount <= 6)
-                {
-                    _il.Token(_bclReferences.GetFuncArrayParamInvokeRef(argCount));
+                    _il.Token(_bclReferences.GetFuncInvokeRef(argCount));
                 }
                 else
                 {
@@ -1384,7 +1376,7 @@ namespace Js2IL.Services.ILGenerators
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldftn);
                 _il.Token(registryHandle);
-                var (_, ctorRefLazy) = _bclReferences.GetFuncObjectArrayWithParams(expectedParamCount);
+                var ctorRefLazy = _bclReferences.GetFuncCtorRef(expectedParamCount);
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
                 _il.Token(ctorRefLazy);
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld);
@@ -1516,17 +1508,9 @@ namespace Js2IL.Services.ILGenerators
             // All generated functions are constructed with a delegate that accepts the scope array
             // as the first parameter, so calls must always use the array-based Invoke overloads.
             _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
-            if (expectedParamCount == 0)
+            if (expectedParamCount <= 6)
             {
-                _il.Token(_bclReferences.FuncObjectArrayObject_Invoke_Ref);
-            }
-            else if (expectedParamCount == 1)
-            {
-                _il.Token(_bclReferences.FuncObjectArrayObjectObject_Invoke_Ref);
-            }
-            else if (expectedParamCount <= 6)
-            {
-                _il.Token(_bclReferences.GetFuncArrayParamInvokeRef(expectedParamCount));
+                _il.Token(_bclReferences.GetFuncInvokeRef(expectedParamCount));
             }
             else
             {
@@ -2358,7 +2342,7 @@ namespace Js2IL.Services.ILGenerators
                             var hasDefault = intrinsicType.GetConstructor(Type.EmptyTypes) != null;
                             if (hasDefault)
                             {
-                                var ctorRef = _owner.Runtime.GetInstanceMethodRef(intrinsicType, ".ctor", typeof(void), System.Array.Empty<Type>());
+                                var ctorRef = _owner.Runtime.GetConstructorRef(intrinsicType, System.Array.Empty<Type>());
                                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
                                 _il.Token(ctorRef);
                                 return new ExpressionResult { JsType = JavascriptType.Object, ClrType = intrinsicType };
@@ -2371,7 +2355,7 @@ namespace Js2IL.Services.ILGenerators
                             {
                                 // Push the single argument boxed
                                 Emit(newExpression.Arguments[0], new TypeCoercion() { boxResult = true });
-                                var ctorRef = _owner.Runtime.GetInstanceMethodRef(intrinsicType, ".ctor", typeof(void), typeof(object));
+                                var ctorRef = _owner.Runtime.GetConstructorRef(intrinsicType, typeof(object));
                                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
                                 _il.Token(ctorRef);
                                 return new ExpressionResult { JsType = JavascriptType.Object, ClrType = intrinsicType };
@@ -2385,7 +2369,7 @@ namespace Js2IL.Services.ILGenerators
                             {
                                 Emit(newExpression.Arguments[0], new TypeCoercion() { boxResult = true });
                                 Emit(newExpression.Arguments[1], new TypeCoercion() { boxResult = true });
-                                var ctorRef = _owner.Runtime.GetInstanceMethodRef(intrinsicType, ".ctor", typeof(void), typeof(object), typeof(object));
+                                var ctorRef = _owner.Runtime.GetConstructorRef(intrinsicType, typeof(object), typeof(object));
                                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
                                 _il.Token(ctorRef);
                                 return new ExpressionResult { JsType = JavascriptType.Object, ClrType = intrinsicType };

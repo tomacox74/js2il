@@ -26,7 +26,7 @@
 
 } // end of class Scopes.Array_Pop_Basic
 
-.class public auto ansi beforefieldinit Program
+.class public auto ansi beforefieldinit Scripts.Array_Pop_Basic
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -37,7 +37,6 @@
 		// Header size: 12
 		// Code size: 319 (0x13f)
 		.maxstack 32
-		.entrypoint
 		.locals init (
 			[0] class Scopes.Array_Pop_Basic
 		)
@@ -141,6 +140,29 @@
 		IL_0138: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_013d: pop
 		IL_013e: ret
+	} // end of method Array_Pop_Basic::Main
+
+} // end of class Scripts.Array_Pop_Basic
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x21a7
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.Array_Pop_Basic::Main()
+		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0016: ret
 	} // end of method Program::Main
 
 } // end of class Program

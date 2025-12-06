@@ -18,13 +18,13 @@ namespace Js2IL.Tests.Node
                 // Ensure we're using the default environment that mirrors System.Environment.ExitCode
                 EnvironmentProvider.SetEnvironment(new DefaultEnvironment());
                 Environment.ExitCode = 0;
-                GlobalVariables.process.exitCode = 7;
+                GlobalThis.process.exitCode = 7;
                 Assert.Equal(7, Environment.ExitCode);
-                Assert.Equal(7, GlobalVariables.process.exitCode);
+                Assert.Equal(7, GlobalThis.process.exitCode);
 
-                GlobalVariables.process.exitCode = 0;
+                GlobalThis.process.exitCode = 0;
                 Assert.Equal(0, Environment.ExitCode);
-                Assert.Equal(0, GlobalVariables.process.exitCode);
+                Assert.Equal(0, GlobalThis.process.exitCode);
             }
             finally
             {

@@ -17,23 +17,17 @@ namespace Js2IL.Services
         };
 
         public MetadataBuilder _metadataBuilder = new MetadataBuilder();
-        private AssemblyName _systemRuntimeAssembly;
         private BlobBuilder _ilBuilder = new BlobBuilder();
         private MethodDefinitionHandle _entryPoint;
+
+        private MethodDefinitionHandle _mainScriptMethod;
         private BaseClassLibraryReferences _bclReferences;
 
         private Variables? _variables;
 
         public AssemblyGenerator()
         {
-            // Get the version and public key token for the System.Runtime assembly reference.
-            // We use the same one that this assembly is compiled against for consistency.
-            if (!ReferenceAssemblyResolver.TryFindSystemRuntime(out this._systemRuntimeAssembly))
-            {
-                throw new InvalidOperationException("Could not find System.Runtime assembly reference.");
-            }
-
-            this._bclReferences = new BaseClassLibraryReferences(_metadataBuilder, _systemRuntimeAssembly.Version!, _systemRuntimeAssembly.GetPublicKeyToken()!);
+            this._bclReferences = new BaseClassLibraryReferences(_metadataBuilder);
         }
 
         /// <summary>
@@ -95,22 +89,84 @@ namespace Js2IL.Services
 
 
             // Emit IL: return.
-            // Prepare a TypeBuilder for the Program type and pass it to MainGenerator
-            var programTypeBuilder = new TypeBuilder(_metadataBuilder, "", "Program");
+            // Prepare a TypeBuilder for the main script and pass it to MainGenerator
+            var programTypeBuilder = new TypeBuilder(_metadataBuilder, "Scripts", name);
             var mainGenerator = new MainGenerator(_variables!, _bclReferences, _metadataBuilder, methodBodyStream, symbolTable, programTypeBuilder);
             var bodyOffset = mainGenerator.GenerateMethod(ast);
-            this._entryPoint = programTypeBuilder.AddMethodDefinition(
+            this._mainScriptMethod = programTypeBuilder.AddMethodDefinition(
                 MethodAttributes.Static | MethodAttributes.Public,
                 "Main",
                 methodSig,
                 bodyOffset);
 
-            // Define the Program type via TypeBuilder
+            // Define the Script main type via TypeBuilder
             var programTypeDef = programTypeBuilder.AddTypeDefinition(
                 TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
                 _bclReferences.ObjectType);
 
+            // create the entry point for spining up the execution engine
+            createEntryPoint(methodBodyStream);
+
             this.CreateAssembly(name, outputPath);
+        }
+
+        private void createEntryPoint(MethodBodyStreamEncoder methodBodyStream)
+        {
+            var entryPointTypeBuilder = new TypeBuilder(_metadataBuilder, "", "Program");
+
+            // create the signature for the entry point method
+            var methodSig = MethodBuilder.BuildMethodSignature(
+                _metadataBuilder,
+                isInstance: false,
+                paramCount: 0, 
+                hasScopesParam: false, 
+                returnsVoid: true);
+
+            // create a method generator to emit IL
+            // method generator is specifically for translating JavaScript constructs to IL so its a little overkill for the entry point
+            var entryPointGenerator = new ILMethodGenerator(_variables!, _bclReferences, _metadataBuilder, methodBodyStream, new ClassRegistry(), new FunctionRegistry());
+            var ilEncoder = entryPointGenerator.IL;
+            var runtime = entryPointGenerator.Runtime;
+
+
+            // emit IL for the entry point method
+
+            // first create new instance of the engine
+            runtime.InvokeEngineCtor();
+
+            // first create a new action delegate, no return value, no parameters
+            ilEncoder.OpCode(ILOpCode.Ldnull);
+            ilEncoder.OpCode(ILOpCode.Ldftn);
+            ilEncoder.Token(this._mainScriptMethod);
+            ilEncoder.OpCode(ILOpCode.Newobj);
+            ilEncoder.Token(_bclReferences.Action_Ctor_Ref);
+
+            ilEncoder.OpCode(ILOpCode.Callvirt);
+            var engineExecuteRef = entryPointGenerator.Runtime.GetInstanceMethodRef(
+                typeof(JavaScriptRuntime.Engine),
+                "Execute",
+                typeof(void),
+                typeof(Action));
+            ilEncoder.Token(engineExecuteRef);
+
+            ilEncoder.OpCode(ILOpCode.Ret);
+
+            var entryPointOffset = methodBodyStream.AddMethodBody(
+                ilEncoder, 
+                maxStack: 3,
+                localVariablesSignature: default,
+                attributes: MethodBodyAttributes.None);
+
+            _entryPoint = entryPointTypeBuilder.AddMethodDefinition(
+                MethodAttributes.Static | MethodAttributes.Public,
+                "Main",
+                methodSig,
+                entryPointOffset);
+
+            // Define the Program type that contains the entry point
+            entryPointTypeBuilder.AddTypeDefinition(
+                TypeAttributes.NotPublic | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
+                _bclReferences.ObjectType);
         }
 
         private void createAssemblyMetadata(string name)
@@ -147,7 +203,7 @@ namespace Js2IL.Services
             string assemblyDll = Path.Combine(outputPath, $"{name}.dll");
             File.WriteAllBytes(assemblyDll, peImage.ToArray());
 
-            RuntimeConfigWriter.WriteRuntimeConfigJson(assemblyDll, _systemRuntimeAssembly);
+            RuntimeConfigWriter.WriteRuntimeConfigJson(assemblyDll, typeof(object).Assembly.GetName());
 
             // Copy JavaScriptRuntime.dll instead of js2il.dll.
             var jsRuntimeDll = typeof(JavaScriptRuntime.Object).Assembly.Location!;

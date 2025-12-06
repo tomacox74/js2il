@@ -4,7 +4,31 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+### Changed
+- **Architecture**: Comprehensive refactoring of IL metadata generation infrastructure for centralized registry pattern
+  - **AssemblyReferenceRegistry**: Introduced centralized assembly reference management to eliminate duplicate assembly references in emitted metadata. Single `AssemblyReferenceHandle` per referenced assembly per `MetadataBuilder` using `ConditionalWeakTable` for lifetime management.
+  - **TypeReferenceRegistry**: Extracted from `BaseClassLibraryReferences` into shared singleton pattern. Both `BaseClassLibraryReferences` and `Runtime` now share the same `TypeReferenceRegistry` instance to avoid duplicate type references.
+  - **MemberReferenceRegistry**: New centralized registry for `MemberReferenceHandle` creation with automatic signature building via reflection. Supports:
+    - Constructed generic types (e.g., `Func<object[], object, object>`) with automatic `TypeSpecification` creation
+    - Generic type parameter encoding (!0, !1, !2) for proper method signatures on open generic definitions
+    - Auto-discovery of method/constructor signatures from reflection
+    - Smart declaring type resolution (TypeReference for simple types, TypeSpecification for constructed generics)
+  - **On-Demand Pattern**: Converted all BCL member and type references to on-demand getters that invoke registry methods directly, eliminating manual initialization code:
+    - Type references: `BooleanType`, `DoubleType`, `Int32Type`, `ObjectType`, `StringType`, `ExceptionType`, `SystemMathType`, `MethodBaseType`
+    - Constructor references: `Expando_Ctor_Ref`, `Action_Ctor_Ref`, all Func delegate constructors
+    - Method references: `IDictionary_SetItem_Ref`, `Array_Add_Ref`, `Array_SetItem_Ref`, `Array_GetCount_Ref`, `MethodBase_GetCurrentMethod_Ref`, all Func `Invoke` methods
+  - **BaseClassLibraryReferences**: Reduced from ~90 lines of manual BlobBuilder initialization to 5-line constructor. Now serves as clean facade over registry classes.
+  - **Code Reduction**: Deleted ~250+ lines of initialization code, duplicate metadata handling, and manual signature building
+  - **Runtime**: Shared `MemberReferenceRegistry` instance across `BaseClassLibraryReferences` and `Runtime` for consistent metadata generation
+  - **Type Specifications Cache**: `_typeSpecCache` in `MemberReferenceRegistry` eliminates duplicate TypeSpec entries for constructed generic types
+- **Runtime Organization**: Renamed `GlobalVariables` to `GlobalThis` and introduced `ModuleIntrinsics` class for better separation of global scope vs module-level intrinsics
+- **Event Loop Foundation**: Added scaffolding for future async/event loop support:
+  - `Engine.Execute()` method as placeholder for event loop integration
+  - `SynchronizationContext` infrastructure for async execution coordination
+
+### Fixed
+- **Metadata Generation**: Generic method signatures now correctly use generic type parameters (!0, !1, !2) instead of concrete types, fixing `System.MissingMethodException` for `Func<...>.Invoke` methods
+- **IL Correctness**: Eliminated potential metadata corruption from duplicate assembly/type/member references
 
 ## v0.3.4 - 2025-12-01
 

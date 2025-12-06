@@ -27,7 +27,7 @@
 
 } // end of class Scopes.String_Split_Basic
 
-.class public auto ansi beforefieldinit Program
+.class public auto ansi beforefieldinit Scripts.String_Split_Basic
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -38,7 +38,6 @@
 		// Header size: 12
 		// Code size: 230 (0xe6)
 		.maxstack 32
-		.entrypoint
 		.locals init (
 			[0] class Scopes.String_Split_Basic
 		)
@@ -113,6 +112,29 @@
 		IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_00e4: pop
 		IL_00e5: ret
+	} // end of method String_Split_Basic::Main
+
+} // end of class Scripts.String_Split_Basic
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x214e
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.String_Split_Basic::Main()
+		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0016: ret
 	} // end of method Program::Main
 
 } // end of class Program

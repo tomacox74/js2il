@@ -301,7 +301,7 @@
 
 } // end of class Functions.Function_DefaultParameterValue
 
-.class public auto ansi beforefieldinit Program
+.class public auto ansi beforefieldinit Scripts.Function_DefaultParameterValue
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -312,7 +312,6 @@
 		// Header size: 12
 		// Code size: 910 (0x38e)
 		.maxstack 32
-		.entrypoint
 		.locals init (
 			[0] class Scopes.Function_DefaultParameterValue
 		)
@@ -635,6 +634,29 @@
 		IL_0387: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
 		IL_038c: pop
 		IL_038d: ret
+	} // end of method Function_DefaultParameterValue::Main
+
+} // end of class Scripts.Function_DefaultParameterValue
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x256a
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.Function_DefaultParameterValue::Main()
+		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0016: ret
 	} // end of method Program::Main
 
 } // end of class Program

@@ -91,7 +91,7 @@
 
 } // end of class Scopes.ControlFlow_If_Truthiness
 
-.class public auto ansi beforefieldinit Program
+.class public auto ansi beforefieldinit Scripts.ControlFlow_If_Truthiness
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -102,7 +102,6 @@
 		// Header size: 12
 		// Code size: 387 (0x183)
 		.maxstack 32
-		.entrypoint
 		.locals init (
 			[0] class Scopes.ControlFlow_If_Truthiness
 		)
@@ -132,7 +131,7 @@
 		IL_0053: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_0058: dup
 		IL_0059: ldstr "undefined"
-		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalVariables::Get(string)
+		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::Get(string)
 		IL_0063: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_0068: dup
 		IL_0069: ldc.i4.0
@@ -218,6 +217,29 @@
 		// end loop
 
 		IL_0182: ret
+	} // end of method ControlFlow_If_Truthiness::Main
+
+} // end of class Scripts.ControlFlow_If_Truthiness
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2203
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.ControlFlow_If_Truthiness::Main()
+		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0016: ret
 	} // end of method Program::Main
 
 } // end of class Program

@@ -8,9 +8,9 @@ namespace JavaScriptRuntime
     /// Holds global intrinsic variables for the current program (Node-like today, extensible later).
     /// Minimal surface for js2il codegen: __dirname, __filename, and process.exitCode.
     /// </summary>
-    public static class GlobalVariables
+    public static class GlobalThis
     {
-        static GlobalVariables()
+        static GlobalThis()
         {
             // Provide sensible defaults when running out-of-proc: resolve to the entry assembly path.
             try

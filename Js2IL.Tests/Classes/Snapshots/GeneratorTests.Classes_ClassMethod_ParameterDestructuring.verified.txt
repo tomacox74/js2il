@@ -554,7 +554,7 @@
 
 } // end of class Classes.Config
 
-.class public auto ansi beforefieldinit Program
+.class public auto ansi beforefieldinit Scripts.Classes_ClassMethod_ParameterDestructuring
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -565,7 +565,6 @@
 		// Header size: 12
 		// Code size: 598 (0x256)
 		.maxstack 32
-		.entrypoint
 		.locals init (
 			[0] class Scopes.Classes_ClassMethod_ParameterDestructuring
 		)
@@ -732,6 +731,29 @@
 		IL_024f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_0254: pop
 		IL_0255: ret
+	} // end of method Classes_ClassMethod_ParameterDestructuring::Main
+
+} // end of class Scripts.Classes_ClassMethod_ParameterDestructuring
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x260a
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.Classes_ClassMethod_ParameterDestructuring::Main()
+		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0016: ret
 	} // end of method Program::Main
 
 } // end of class Program

@@ -252,7 +252,7 @@
 
 } // end of class Functions.ArrowFunction_L7C15
 
-.class public auto ansi beforefieldinit Program
+.class public auto ansi beforefieldinit Scripts.Array_Map_NestedParam
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -263,7 +263,6 @@
 		// Header size: 12
 		// Code size: 265 (0x109)
 		.maxstack 32
-		.entrypoint
 		.locals init (
 			[0] class Scopes.Array_Map_NestedParam
 		)
@@ -353,6 +352,29 @@
 		// end loop
 
 		IL_0108: ret
+	} // end of method Array_Map_NestedParam::Main
+
+} // end of class Scripts.Array_Map_NestedParam
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2271
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.Array_Map_NestedParam::Main()
+		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0016: ret
 	} // end of method Program::Main
 
 } // end of class Program

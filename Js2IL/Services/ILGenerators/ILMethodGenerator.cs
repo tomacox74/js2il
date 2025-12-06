@@ -66,7 +66,7 @@ namespace Js2IL.Services.ILGenerators
             var methodIl = new BlobBuilder();
             _cfb = new ControlFlowBuilder();
             _il = new InstructionEncoder(methodIl, _cfb);
-            this._runtime = new Runtime(metadataBuilder, _il);
+            this._runtime = new Runtime(_il, bclReferences.TypeRefRegistry, bclReferences.MemberRefRegistry);
             // Use a dedicated expression generator to avoid circular logic and enable incremental refactors
             this._expressionEmitter = new ILExpressionGenerator(this);
 
@@ -396,7 +396,7 @@ namespace Js2IL.Services.ILGenerators
                 _il.Token(methodHandle);
                 // Count parameters including any synthetically represented destructuring patterns.
                 int paramCount = CountRuntimeParameters(functionDeclaration.Params);
-                var (_, ctorRef) = _bclReferences.GetFuncObjectArrayWithParams(paramCount);
+                var ctorRef = _bclReferences.GetFuncCtorRef(paramCount);
                 _il.OpCode(ILOpCode.Newobj);
                 _il.Token(ctorRef);
             }
