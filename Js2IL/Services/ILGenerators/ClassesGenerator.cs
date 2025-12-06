@@ -249,6 +249,16 @@ namespace Js2IL.Services.ILGenerators
             var ctorFunc = ctorMethod?.Value as FunctionExpression;
             EmitConstructor(tb, ctorFunc, fieldsWithInits, classScope, classNeedsParentScopes);
 
+            // Create the type definition now (after fields and constructor, but before other methods)
+            // This allows method bodies to reference the class type when emitting this.method() calls
+            var typeHandle = tb.AddTypeDefinition(typeAttrs, _bcl.ObjectType);
+            if (!parentType.IsNil)
+            {
+                _metadata.AddNestedType(typeHandle, parentType);
+            }
+            // Register the class type for later lookup using the JS-visible identifier (scope name)
+            _classRegistry.Register(classScope.Name, typeHandle);
+
             // Methods: create stubs for now; real method codegen will come later
             foreach (var element in cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>())
             {
@@ -260,15 +270,6 @@ namespace Js2IL.Services.ILGenerators
                 }
                 EmitMethod(tb, element, classScope);
             }
-
-            // Finally, create the type definition (after fields and methods were added)
-            var typeHandle = tb.AddTypeDefinition(typeAttrs, _bcl.ObjectType);
-            if (!parentType.IsNil)
-            {
-                _metadata.AddNestedType(typeHandle, parentType);
-            }
-            // Register the class type for later lookup using the JS-visible identifier (scope name)
-            _classRegistry.Register(classScope.Name, typeHandle);
 
             // If there are static field initializers, synthesize a type initializer (.cctor) to assign them.
             if (staticFieldsWithInits.Count > 0)

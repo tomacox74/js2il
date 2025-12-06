@@ -161,24 +161,21 @@
 	{
 		// Method begins at RVA 0x20a4
 		// Header size: 12
-		// Code size: 29 (0x1d)
+		// Code size: 18 (0x12)
 		.maxstack 32
 
 		IL_0000: ldarg.0
-		IL_0001: ldstr "prefix"
-		IL_0006: ldc.i4.0
-		IL_0007: newarr [System.Runtime]System.Object
-		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0011: ldarg.0
-		IL_0012: ldfld object Classes.Greeter::name
-		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_001c: ret
+		IL_0001: callvirt instance object Classes.Greeter::prefix()
+		IL_0006: ldarg.0
+		IL_0007: ldfld object Classes.Greeter::name
+		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0011: ret
 	} // end of method Greeter::hello
 
 	.method public hidebysig 
 		instance object prefix () cil managed 
 	{
-		// Method begins at RVA 0x20d0
+		// Method begins at RVA 0x20c4
 		// Header size: 12
 		// Code size: 6 (0x6)
 		.maxstack 32
@@ -190,9 +187,9 @@
 	.method public hidebysig 
 		instance object logHello () cil managed 
 	{
-		// Method begins at RVA 0x20e4
+		// Method begins at RVA 0x20d8
 		// Header size: 12
-		// Code size: 34 (0x22)
+		// Code size: 23 (0x17)
 		.maxstack 32
 
 		IL_0000: ldc.i4.1
@@ -200,15 +197,12 @@
 		IL_0006: dup
 		IL_0007: ldc.i4.0
 		IL_0008: ldarg.0
-		IL_0009: ldstr "hello"
-		IL_000e: ldc.i4.0
-		IL_000f: newarr [System.Runtime]System.Object
-		IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0019: stelem.ref
-		IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_001f: pop
-		IL_0020: ldarg.0
-		IL_0021: ret
+		IL_0009: callvirt instance object Classes.Greeter::hello()
+		IL_000e: stelem.ref
+		IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0014: pop
+		IL_0015: ldarg.0
+		IL_0016: ret
 	} // end of method Greeter::logHello
 
 } // end of class Classes.Greeter
@@ -220,7 +214,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2114
+		// Method begins at RVA 0x20fc
 		// Header size: 12
 		// Code size: 40 (0x28)
 		.maxstack 32
@@ -251,7 +245,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2148
+		// Method begins at RVA 0x2130
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

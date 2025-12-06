@@ -746,6 +746,66 @@ namespace Js2IL.Services.ILGenerators
                         throw ILEmitHelpers.NotSupported($"Unsupported member call base identifier: '{baseId.Name}'", baseId);
                     }
                 }
+                
+                // Special case: this.method() calls in class instance methods
+                // Optimize to direct callvirt instead of dynamic Object.CallMember dispatch
+                if (mem.Object is Acornima.Ast.ThisExpression && _owner.InClassMethod && _owner.CurrentClassName != null)
+                {
+                    var argCount = callExpression.Arguments.Count;
+                    if (_classRegistry.TryGet(_owner.CurrentClassName, out var targetType) && !targetType.IsNil)
+                    {
+                        // Load this (arg_0)
+                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldarg_0);
+                        
+                        // Check if this method is registered with parameter count metadata
+                        if (_classRegistry.TryGetMethod(_owner.CurrentClassName, methodName, out var methodDef, out var methodSig, out var minParams, out var maxParams))
+                        {
+                            // Method with tracked parameter counts - validate and pad arguments
+                            if (argCount < minParams || argCount > maxParams)
+                            {
+                                throw ILEmitHelpers.NotSupported($"Method {_owner.CurrentClassName}.{methodName} expects {minParams}-{maxParams} arguments but got {argCount}", callExpression);
+                            }
+                            
+                            // Use registered member reference
+                            var mrefHandle = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(methodName), methodSig);
+                            
+                            // Push provided arguments
+                            for (int i = 0; i < argCount; i++)
+                            {
+                                Emit(callExpression.Arguments[i], new TypeCoercion() { boxResult = true });
+                            }
+                            
+                            // Pad missing optional arguments with ldnull
+                            int paddingNeeded = maxParams - argCount;
+                            for (int i = 0; i < paddingNeeded; i++)
+                            {
+                                _il.OpCode(ILOpCode.Ldnull);
+                            }
+                            
+                            _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                            _il.Token(mrefHandle);
+                            return null;
+                        }
+                        else
+                        {
+                            // Method not registered (no default parameters) - use standard signature
+                            var msig = MethodBuilder.BuildMethodSignature(
+                                _metadataBuilder,
+                                isInstance: true,
+                                paramCount: argCount,
+                                hasScopesParam: false,
+                                returnsVoid: false);
+
+                            var mrefHandle = _metadataBuilder.AddMemberReference(targetType, _metadataBuilder.GetOrAddString(methodName), msig);
+                            // Push arguments
+                            EmitBoxedArgsInline(callExpression.Arguments);
+                            _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
+                            _il.Token(mrefHandle);
+                            return null;
+                        }
+                    }
+                }
+                
                 // Receiver is an arbitrary expression (e.g., (expr).method(...))
                 // If the receiver's CLR type is known and method is resolvable, emit a direct callvirt.
                 // Otherwise fall back to the generic runtime dispatcher via Object.CallMember.
