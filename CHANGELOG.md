@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.3.5 - 2025-12-06
+
 ### Changed
 - **Architecture**: Comprehensive refactoring of IL metadata generation infrastructure for centralized registry pattern
   - **AssemblyReferenceRegistry**: Introduced centralized assembly reference management to eliminate duplicate assembly references in emitted metadata. Single `AssemblyReferenceHandle` per referenced assembly per `MetadataBuilder` using `ConditionalWeakTable` for lifetime management.
@@ -25,7 +29,6 @@ All notable changes to this project are documented here.
 - **Event Loop Foundation**: Added scaffolding for future async/event loop support:
   - `Engine.Execute()` method as placeholder for event loop integration
   - `SynchronizationContext` infrastructure for async execution coordination
-
 ### Fixed
 - **Metadata Generation**: Generic method signatures now correctly use generic type parameters (!0, !1, !2) instead of concrete types, fixing `System.MissingMethodException` for `Func<...>.Invoke` methods
 - **IL Correctness**: Eliminated potential metadata corruption from duplicate assembly/type/member references
