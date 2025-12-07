@@ -127,10 +127,6 @@
 	} // end of class Calculator
 
 
-	// Fields
-	.field public object Calculator
-	.field public object calc
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -339,115 +335,93 @@
 	{
 		// Method begins at RVA 0x21ec
 		// Header size: 12
-		// Code size: 431 (0x1af)
+		// Code size: 316 (0x13c)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_DefaultParameterValue_Method
+			[0] class Scopes.Classes_DefaultParameterValue_Method,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Scopes.Classes_DefaultParameterValue_Method::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: newobj instance void Classes.Calculator::.ctor()
-		IL_000c: stfld object Scopes.Classes_DefaultParameterValue_Method::calc
-		IL_0011: ldloc.0
-		IL_0012: castclass Scopes.Classes_DefaultParameterValue_Method
-		IL_0017: ldfld object Scopes.Classes_DefaultParameterValue_Method::calc
-		IL_001c: ldnull
-		IL_001d: callvirt instance object Classes.Calculator::greet(object)
-		IL_0022: pop
-		IL_0023: ldloc.0
-		IL_0024: castclass Scopes.Classes_DefaultParameterValue_Method
-		IL_0029: ldfld object Scopes.Classes_DefaultParameterValue_Method::calc
-		IL_002e: ldstr "Alice"
-		IL_0033: callvirt instance object Classes.Calculator::greet(object)
-		IL_0038: pop
-		IL_0039: ldloc.0
-		IL_003a: castclass Scopes.Classes_DefaultParameterValue_Method
-		IL_003f: ldfld object Scopes.Classes_DefaultParameterValue_Method::calc
-		IL_0044: ldc.r8 5
-		IL_004d: box [System.Runtime]System.Double
-		IL_0052: ldnull
+		IL_0006: newobj instance void Classes.Calculator::.ctor()
+		IL_000b: stloc.1
+		IL_000c: ldloc.1
+		IL_000d: ldnull
+		IL_000e: callvirt instance object Classes.Calculator::greet(object)
+		IL_0013: pop
+		IL_0014: ldloc.1
+		IL_0015: ldstr "Alice"
+		IL_001a: callvirt instance object Classes.Calculator::greet(object)
+		IL_001f: pop
+		IL_0020: ldloc.1
+		IL_0021: ldc.r8 5
+		IL_002a: box [System.Runtime]System.Double
+		IL_002f: ldnull
+		IL_0030: callvirt instance object Classes.Calculator::'add'(object, object)
+		IL_0035: pop
+		IL_0036: ldloc.1
+		IL_0037: ldc.r8 5
+		IL_0040: box [System.Runtime]System.Double
+		IL_0045: ldc.r8 15
+		IL_004e: box [System.Runtime]System.Double
 		IL_0053: callvirt instance object Classes.Calculator::'add'(object, object)
 		IL_0058: pop
-		IL_0059: ldloc.0
-		IL_005a: castclass Scopes.Classes_DefaultParameterValue_Method
-		IL_005f: ldfld object Scopes.Classes_DefaultParameterValue_Method::calc
-		IL_0064: ldc.r8 5
+		IL_0059: ldloc.1
+		IL_005a: ldnull
+		IL_005b: ldnull
+		IL_005c: ldnull
+		IL_005d: callvirt instance object Classes.Calculator::multiply(object, object, object)
+		IL_0062: pop
+		IL_0063: ldloc.1
+		IL_0064: ldc.r8 2
 		IL_006d: box [System.Runtime]System.Double
-		IL_0072: ldc.r8 15
-		IL_007b: box [System.Runtime]System.Double
-		IL_0080: callvirt instance object Classes.Calculator::'add'(object, object)
-		IL_0085: pop
-		IL_0086: ldloc.0
-		IL_0087: castclass Scopes.Classes_DefaultParameterValue_Method
-		IL_008c: ldfld object Scopes.Classes_DefaultParameterValue_Method::calc
-		IL_0091: ldnull
-		IL_0092: ldnull
-		IL_0093: ldnull
-		IL_0094: callvirt instance object Classes.Calculator::multiply(object, object, object)
-		IL_0099: pop
-		IL_009a: ldloc.0
-		IL_009b: castclass Scopes.Classes_DefaultParameterValue_Method
-		IL_00a0: ldfld object Scopes.Classes_DefaultParameterValue_Method::calc
-		IL_00a5: ldc.r8 2
-		IL_00ae: box [System.Runtime]System.Double
-		IL_00b3: ldnull
-		IL_00b4: ldnull
-		IL_00b5: callvirt instance object Classes.Calculator::multiply(object, object, object)
-		IL_00ba: pop
-		IL_00bb: ldloc.0
-		IL_00bc: castclass Scopes.Classes_DefaultParameterValue_Method
-		IL_00c1: ldfld object Scopes.Classes_DefaultParameterValue_Method::calc
-		IL_00c6: ldc.r8 2
-		IL_00cf: box [System.Runtime]System.Double
-		IL_00d4: ldc.r8 4
-		IL_00dd: box [System.Runtime]System.Double
-		IL_00e2: ldnull
-		IL_00e3: callvirt instance object Classes.Calculator::multiply(object, object, object)
-		IL_00e8: pop
-		IL_00e9: ldloc.0
-		IL_00ea: castclass Scopes.Classes_DefaultParameterValue_Method
-		IL_00ef: ldfld object Scopes.Classes_DefaultParameterValue_Method::calc
-		IL_00f4: ldc.r8 2
-		IL_00fd: box [System.Runtime]System.Double
-		IL_0102: ldc.r8 4
-		IL_010b: box [System.Runtime]System.Double
-		IL_0110: ldc.r8 3
-		IL_0119: box [System.Runtime]System.Double
-		IL_011e: callvirt instance object Classes.Calculator::multiply(object, object, object)
-		IL_0123: pop
-		IL_0124: ldloc.0
-		IL_0125: castclass Scopes.Classes_DefaultParameterValue_Method
-		IL_012a: ldfld object Scopes.Classes_DefaultParameterValue_Method::calc
-		IL_012f: ldc.r8 5
-		IL_0138: box [System.Runtime]System.Double
-		IL_013d: ldnull
-		IL_013e: ldnull
-		IL_013f: callvirt instance object Classes.Calculator::calculate(object, object, object)
-		IL_0144: pop
-		IL_0145: ldloc.0
-		IL_0146: castclass Scopes.Classes_DefaultParameterValue_Method
-		IL_014b: ldfld object Scopes.Classes_DefaultParameterValue_Method::calc
-		IL_0150: ldc.r8 5
-		IL_0159: box [System.Runtime]System.Double
-		IL_015e: ldc.r8 8
-		IL_0167: box [System.Runtime]System.Double
-		IL_016c: ldnull
-		IL_016d: callvirt instance object Classes.Calculator::calculate(object, object, object)
-		IL_0172: pop
-		IL_0173: ldloc.0
-		IL_0174: castclass Scopes.Classes_DefaultParameterValue_Method
-		IL_0179: ldfld object Scopes.Classes_DefaultParameterValue_Method::calc
-		IL_017e: ldc.r8 5
-		IL_0187: box [System.Runtime]System.Double
-		IL_018c: ldc.r8 8
-		IL_0195: box [System.Runtime]System.Double
-		IL_019a: ldc.r8 20
-		IL_01a3: box [System.Runtime]System.Double
-		IL_01a8: callvirt instance object Classes.Calculator::calculate(object, object, object)
-		IL_01ad: pop
-		IL_01ae: ret
+		IL_0072: ldnull
+		IL_0073: ldnull
+		IL_0074: callvirt instance object Classes.Calculator::multiply(object, object, object)
+		IL_0079: pop
+		IL_007a: ldloc.1
+		IL_007b: ldc.r8 2
+		IL_0084: box [System.Runtime]System.Double
+		IL_0089: ldc.r8 4
+		IL_0092: box [System.Runtime]System.Double
+		IL_0097: ldnull
+		IL_0098: callvirt instance object Classes.Calculator::multiply(object, object, object)
+		IL_009d: pop
+		IL_009e: ldloc.1
+		IL_009f: ldc.r8 2
+		IL_00a8: box [System.Runtime]System.Double
+		IL_00ad: ldc.r8 4
+		IL_00b6: box [System.Runtime]System.Double
+		IL_00bb: ldc.r8 3
+		IL_00c4: box [System.Runtime]System.Double
+		IL_00c9: callvirt instance object Classes.Calculator::multiply(object, object, object)
+		IL_00ce: pop
+		IL_00cf: ldloc.1
+		IL_00d0: ldc.r8 5
+		IL_00d9: box [System.Runtime]System.Double
+		IL_00de: ldnull
+		IL_00df: ldnull
+		IL_00e0: callvirt instance object Classes.Calculator::calculate(object, object, object)
+		IL_00e5: pop
+		IL_00e6: ldloc.1
+		IL_00e7: ldc.r8 5
+		IL_00f0: box [System.Runtime]System.Double
+		IL_00f5: ldc.r8 8
+		IL_00fe: box [System.Runtime]System.Double
+		IL_0103: ldnull
+		IL_0104: callvirt instance object Classes.Calculator::calculate(object, object, object)
+		IL_0109: pop
+		IL_010a: ldloc.1
+		IL_010b: ldc.r8 5
+		IL_0114: box [System.Runtime]System.Double
+		IL_0119: ldc.r8 8
+		IL_0122: box [System.Runtime]System.Double
+		IL_0127: ldc.r8 20
+		IL_0130: box [System.Runtime]System.Double
+		IL_0135: callvirt instance object Classes.Calculator::calculate(object, object, object)
+		IL_013a: pop
+		IL_013b: ret
 	} // end of method Classes_DefaultParameterValue_Method::Main
 
 } // end of class Scripts.Classes_DefaultParameterValue_Method
@@ -459,7 +433,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23a7
+		// Method begins at RVA 0x2334
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

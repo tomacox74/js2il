@@ -423,8 +423,12 @@ namespace Js2IL.Services.ILGenerators
                         var localVar = _variables.FindVariable(name);
                         if (localVar != null)
                         {
-                            // Load variable; LoadVariable will auto-unbox number/boolean when boxResult == false
-                            _binaryOperators.LoadVariable(localVar, typeCoercion);
+                            // Load variable using centralized helper; auto-unboxes number/boolean when boxResult == false
+                            _il.EmitLoadVariable(localVar, _variables, _owner.BclReferences, 
+                                unbox: !typeCoercion.boxResult,
+                                inClassMethod: _owner.InClassMethod,
+                                currentClassName: _owner.CurrentClassName,
+                                classRegistry: _owner.ClassRegistry);
                             // Prevent downstream Emit() from boxing again; variables are already boxed when needed
                             typeCoercion.boxResult = false;
                             javascriptType = localVar.Type;
@@ -1389,14 +1393,21 @@ namespace Js2IL.Services.ILGenerators
                 throw new ArgumentException($"Function {identifier.Name} is not defined.");
             }
 
-            // Load the scope instance as the first parameter
-            var scopeObjectReference = _variables.GetScopeLocalSlot(functionVariable.ScopeName);
-            if (scopeObjectReference.Address == -1)
+            // Check if this function is stored as a local variable (uncaptured) or field (captured/function declaration)
+            bool isLocalVariable = functionVariable.LocalSlot >= 0;
+
+            // For field variables, we'll need scope reference for store operations
+            ScopeObjectReference scopeObjectReference = default;
+            if (!isLocalVariable)
             {
-                throw new InvalidOperationException($"Scope '{functionVariable.ScopeName}' not found in local slots");
+                scopeObjectReference = _variables.GetScopeLocalSlot(functionVariable.ScopeName);
+                if (scopeObjectReference.Address == -1)
+                {
+                    throw new InvalidOperationException($"Scope '{functionVariable.ScopeName}' not found in local slots");
+                }
             }
 
-            // load the delegate to be invoked (from scope field). If this is a named function expression's
+            // Load the delegate to be invoked (from local or scope field). If this is a named function expression's
             // internal binding and delegate is still null (first recursive call), lazily self-bind by creating
             // a delegate to the generated method. We detect named function expression by functionVariable.VariableType == Function
             // and registry scope name starting with "FunctionExpression_" or the original name being the same as scope name when
@@ -1405,9 +1416,7 @@ namespace Js2IL.Services.ILGenerators
             // Correct stack discipline:
             // - Load delegate value only (no need to keep a copy of the scope on the stack for the common case).
             // - If null, create and store the delegate, then reload the field to obtain the receiver for Invoke.
-            EmitLoadScopeObject(scopeObjectReference);
-            _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld); // stack: [delegate]
-            _il.Token(functionVariable.FieldHandle);
+            _il.EmitLoadVariable(functionVariable, _variables, _bclReferences, unbox: false, inClassMethod: false, currentClassName: null, classRegistry: null); // stack: [delegate]
             // Duplicate delegate for null check
             _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup);
             var nonNullLabel = _il.DefineLabel();
@@ -1430,29 +1439,40 @@ namespace Js2IL.Services.ILGenerators
             if (isRegisteredFunction && !registryHandle.IsNil)
             {
                 // Registered function with valid handle - create typed delegate at compile-time
-                // Create delegate and store into the field: [scope, newDelegate] -> stfld
+                // Create delegate and store into the variable (field or local)
                 // Use the function's actual parameter count, not the call site's argument count
-                EmitLoadScopeObject(scopeObjectReference);
+                if (!isLocalVariable)
+                {
+                    EmitLoadScopeObject(scopeObjectReference);
+                }
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldftn);
                 _il.Token(registryHandle);
                 var ctorRefLazy = _bclReferences.GetFuncCtorRef(expectedParamCount);
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
                 _il.Token(ctorRefLazy);
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld);
-                _il.Token(functionVariable.FieldHandle);
+                if (isLocalVariable)
+                {
+                    _il.StoreLocal(functionVariable.LocalSlot);
+                }
+                else
+                {
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld);
+                    _il.Token(functionVariable.FieldHandle);
+                }
                 // Reload the stored delegate to use as the call receiver
-                EmitLoadScopeObject(scopeObjectReference);
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld);
-                _il.Token(functionVariable.FieldHandle);
+                _il.EmitLoadVariable(functionVariable, _variables, _bclReferences, unbox: false, inClassMethod: false, currentClassName: null, classRegistry: null);
             }
             else if (isRegisteredFunction && registryHandle.IsNil)
             {
                 // Pre-registered function (nil handle) - use runtime self-binding
                 // This happens during recursive function calls before the method is finalized
                 var _metadataBuilder = _owner.MetadataBuilder;
-                // Stack the scope for stfld
-                EmitLoadScopeObject(scopeObjectReference);
+                // Stack the scope for stfld (only for field variables)
+                if (!isLocalVariable)
+                {
+                    EmitLoadScopeObject(scopeObjectReference);
+                }
                 // Call System.Reflection.MethodBase.GetCurrentMethod() to get current function
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
                 _il.Token(_bclReferences.MethodBase_GetCurrentMethod_Ref);
@@ -1475,13 +1495,18 @@ namespace Js2IL.Services.ILGenerators
                     _metadataBuilder.GetOrAddBlob(makeSelfSig));
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
                 _il.Token(makeSelfRef);
-                // Store delegate to field
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld);
-                _il.Token(functionVariable.FieldHandle);
+                // Store delegate to variable (local or field)
+                if (isLocalVariable)
+                {
+                    _il.StoreLocal(functionVariable.LocalSlot);
+                }
+                else
+                {
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld);
+                    _il.Token(functionVariable.FieldHandle);
+                }
                 // Reload to use as call receiver
-                EmitLoadScopeObject(scopeObjectReference);
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld);
-                _il.Token(functionVariable.FieldHandle);
+                _il.EmitLoadVariable(functionVariable, _variables, _bclReferences, unbox: false, inClassMethod: false, currentClassName: null, classRegistry: null);
             }
             else
             {
@@ -1729,34 +1754,39 @@ namespace Js2IL.Services.ILGenerators
             // Support assignments to identifiers and to this.property within class instance methods
             if (assignmentExpression.Left is Identifier aid)
             {
+                var variable = _variables.FindVariable(aid.Name) ?? throw new InvalidOperationException($"Variable '{aid.Name}' not found");
+                
                 // Guard: const reassignment attempts throw at runtime
-                if (IsConstBinding(aid.Name))
+                // Check the specific scope where the variable is defined
+                if (IsConstBinding(variable.ScopeName, aid.Name))
                 {
                     var ctor = _runtime.GetErrorCtorRef("TypeError", 1);
                     _il.EmitThrowError(_owner.MetadataBuilder, ctor, "Assignment to constant variable.");
                     return JavascriptType.Unknown; // unreachable
                 }
 
-                var variable = _variables.FindVariable(aid.Name) ?? throw new InvalidOperationException($"Variable '{aid.Name}' not found");
-
-                // Load the appropriate scope instance that holds this field
-                var scopeSlot = _variables.GetScopeLocalSlot(variable.ScopeName);
-                if (scopeSlot.Address == -1)
+                // Check if this is an uncaptured local variable (uses IL local, not scope field)
+                bool isLocalVariable = variable.LocalSlot >= 0;
+                
+                // Load the appropriate scope instance that holds this field (only for field variables)
+                ScopeObjectReference scopeSlot = default;
+                if (!isLocalVariable)
                 {
-                    throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
+                    scopeSlot = _variables.GetScopeLocalSlot(variable.ScopeName);
+                    if (scopeSlot.Address == -1)
+                    {
+                        throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
+                    }
                 }
+                
                 // Determine if this is a compound assignment (e.g., +=, |=, &=)
                 var opName = assignmentExpression.Operator.ToString();
 
                 if (string.Equals(opName, "AdditionAssignment", StringComparison.Ordinal))
                 {
                     // Pattern: target = target + <rhs> using JS semantics via Operators.Add
-                    // Load scope instance for store
-                    EmitLoadScopeObjectTyped(scopeSlot, variable.ScopeName);
-                    // Duplicate for Ldfld (to get current value) while preserving instance for Stfld
-                    _il.OpCode(ILOpCode.Dup);
-                    _il.OpCode(ILOpCode.Ldfld);
-                    _il.Token(variable.FieldHandle);
+                    // Load current value
+                    ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences);
 
                     // Compute RHS as boxed object
                     var prevAssignment = _owner.CurrentAssignmentTarget;
@@ -1768,8 +1798,7 @@ namespace Js2IL.Services.ILGenerators
                     _owner.Runtime.InvokeOperatorsAdd();
 
                     // Store back
-                    _il.OpCode(ILOpCode.Stfld);
-                    _il.Token(variable.FieldHandle);
+                    ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false);
 
                     // Resulting type after '+=' is dynamic; assume object, but hint CLR string for string appends
                     variable.Type = JavascriptType.Object;
@@ -1807,9 +1836,15 @@ namespace Js2IL.Services.ILGenerators
                 else
                 {
                     // Simple assignment '='
-                    // Load scope instance
-                    EmitLoadScopeObjectTyped(scopeSlot, variable.ScopeName);
-
+                    // Check if variable is a field (not uncaptured local)
+                    bool isFieldVariable = variable.LocalSlot < 0;
+                    
+                    // For field variables, load scope instance first (before evaluating RHS)
+                    if (isFieldVariable)
+                    {
+                        EmitLoadScopeObjectTyped(scopeSlot, variable.ScopeName);
+                    }
+                    
                     var prevAssignment = _owner.CurrentAssignmentTarget;
                     _owner.CurrentAssignmentTarget = aid.Name;
                     // Always box the RHS so storing into an object-typed field is verifiable and consistent
@@ -1817,8 +1852,10 @@ namespace Js2IL.Services.ILGenerators
                     _owner.CurrentAssignmentTarget = prevAssignment;
                     variable.Type = rhsResult.JsType;
                     variable.RuntimeIntrinsicType = rhsResult.ClrType;
-                    _il.OpCode(ILOpCode.Stfld);
-                    _il.Token(variable.FieldHandle);
+                    
+                    // Store to variable (scope already loaded for fields, not needed for locals)
+                    ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: isFieldVariable);
+                    
                     return rhsResult.JsType;
                 }
             }
@@ -2073,12 +2110,8 @@ namespace Js2IL.Services.ILGenerators
             // Pattern: target = target <op> rhs
             // For bitwise operations, convert operands to int32, apply operation, convert back to double
 
-            // Load scope instance for store
-            EmitLoadScopeObjectTyped(scopeSlot, variable.ScopeName);
-            // Duplicate for Ldfld (to get current value) while preserving instance for Stfld
-            _il.OpCode(ILOpCode.Dup);
-            _il.OpCode(ILOpCode.Ldfld);
-            _il.Token(variable.FieldHandle);
+            // Load current value
+            ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences);
 
             // Convert LHS to int32 (unbox if needed, then convert to int32)
             _il.OpCode(ILOpCode.Unbox_any);
@@ -2121,8 +2154,7 @@ namespace Js2IL.Services.ILGenerators
             _il.Token(_owner.BclReferences.DoubleType);
 
             // Store back
-            _il.OpCode(ILOpCode.Stfld);
-            _il.Token(variable.FieldHandle);
+            ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false);
 
             return true;
         }
@@ -2149,10 +2181,7 @@ namespace Js2IL.Services.ILGenerators
                 if (string.Equals(opName, "ExponentiationAssignment", StringComparison.Ordinal))
                 {
                     // Pattern: target = Math.Pow(target, rhs)
-                    EmitLoadScopeObjectTyped(scopeSlot, variable.ScopeName);
-                    _il.OpCode(ILOpCode.Dup);
-                    _il.OpCode(ILOpCode.Ldfld);
-                    _il.Token(variable.FieldHandle);
+                    ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences);
                     _il.OpCode(ILOpCode.Unbox_any);
                     _il.Token(_owner.BclReferences.DoubleType);
 
@@ -2186,8 +2215,7 @@ namespace Js2IL.Services.ILGenerators
 
                     _il.OpCode(ILOpCode.Box);
                     _il.Token(_owner.BclReferences.DoubleType);
-                    _il.OpCode(ILOpCode.Stfld);
-                    _il.Token(variable.FieldHandle);
+                    ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false);
                     return true;
                 }
                 return false;
@@ -2196,12 +2224,8 @@ namespace Js2IL.Services.ILGenerators
             // Pattern: target = target <op> rhs
             // Convert to double, apply operation, box result
 
-            // Load scope instance for store
-            EmitLoadScopeObjectTyped(scopeSlot, variable.ScopeName);
-            // Duplicate for Ldfld (to get current value) while preserving instance for Stfld
-            _il.OpCode(ILOpCode.Dup);
-            _il.OpCode(ILOpCode.Ldfld);
-            _il.Token(variable.FieldHandle);
+            // Load current value
+            ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences);
 
             // Convert LHS to double (unbox if needed)
             _il.OpCode(ILOpCode.Unbox_any);
@@ -2222,8 +2246,7 @@ namespace Js2IL.Services.ILGenerators
             _il.Token(_owner.BclReferences.DoubleType);
 
             // Store back
-            _il.OpCode(ILOpCode.Stfld);
-            _il.Token(variable.FieldHandle);
+            ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false);
 
             return true;
         }
@@ -2745,23 +2768,24 @@ namespace Js2IL.Services.ILGenerators
             var variableName = (updateExpression.Argument as Identifier)!.Name;
             var variable = _variables.FindVariable(variableName);
 
+            if (variable == null)
+            {
+                throw new InvalidOperationException("Variable reference is null.");
+            }
+
             // If bound variable is const, emit a TypeError and throw
-            if (IsConstBinding(variableName))
+            if (IsConstBinding(variable.ScopeName, variableName))
             {
                 var ctor = _owner.Runtime.GetErrorCtorRef("TypeError", 1);
                 _il.EmitThrowError(_owner.MetadataBuilder, ctor, "Assignment to constant variable.");
                 // Throws; unreachable, but return a value to satisfy signature
                 return JavascriptType.Number;
             }
-
-            if (variable == null)
-            {
-                throw new InvalidOperationException("Variable reference is null.");
-            }
             // For parameters, we don't need a scope slot; handled in the parameter branch below.
+            // For uncaptured local variables, we also don't need a scope slot.
             // Only resolve scopeLocalIndex for field-backed variables.
             ScopeObjectReference scopeLocalIndex = new ScopeObjectReference { Location = ObjectReferenceLocation.Local, Address = -1 };
-            if (!variable.IsParameter)
+            if (!variable.IsParameter && variable is not LocalVariable)
             {
                 scopeLocalIndex = _variables.GetScopeLocalSlot(variable.ScopeName);
                 if (scopeLocalIndex.Address == -1)
@@ -2825,13 +2849,10 @@ namespace Js2IL.Services.ILGenerators
 
             if (context == CallSiteContext.Statement)
             {
-                // Statement-context form to match snapshots (no Dup; load scope twice)
-                EmitLoadScopeObjectTyped(scopeLocalIndex, variable.ScopeName);                 // [A]
-                EmitLoadScopeObjectTyped(scopeLocalIndex, variable.ScopeName);                 // [A, B]
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld); // [A, valueObj]
-                _il.Token(variable.FieldHandle);
+                // Statement-context: load, update, store
+                ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences);
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
-                _il.Token(_bclReferences.DoubleType);                  // [A, value]
+                _il.Token(_bclReferences.DoubleType);                  // [value]
                 _il.LoadConstantR8(1.0);
                 if (updateExpression.Operator == Acornima.Operator.Increment)
                 {
@@ -2842,21 +2863,17 @@ namespace Js2IL.Services.ILGenerators
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Sub);
                 }
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
-                _il.Token(_bclReferences.DoubleType);                  // [A, boxedUpdated]
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld);
-                _il.Token(variable.FieldHandle);                        // []
+                _il.Token(_bclReferences.DoubleType);                  // [boxedUpdated]
+                ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false);
                 return JavascriptType.Unknown;
             }
             else
             {
                 // Expression-context
-                // 1) Load scope and current value
-                EmitLoadScopeObjectTyped(scopeLocalIndex, variable.ScopeName);                 // [scope]
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup);   // [scope, scope]
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld); // [scope, valueObj]
-                _il.Token(variable.FieldHandle);
+                // 1) Load current value
+                ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences);
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
-                _il.Token(_bclReferences.DoubleType);                  // [scope, value]
+                _il.Token(_bclReferences.DoubleType);                  // [value]
 
                 // 2) Compute updated value and store back
                 _il.LoadConstantR8(1.0);
@@ -2869,14 +2886,11 @@ namespace Js2IL.Services.ILGenerators
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Sub);
                 }
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
-                _il.Token(_bclReferences.DoubleType);                  // [scope, boxedUpdated]
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld);
-                _il.Token(variable.FieldHandle);                        // []
+                _il.Token(_bclReferences.DoubleType);                  // [boxedUpdated]
+                ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false);
 
                 // 3) Reload UPDATED and optionally reverse to get ORIGINAL
-                EmitLoadScopeObjectTyped(scopeLocalIndex, variable.ScopeName);                   // [scope]
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldfld);  // [valueObj]
-                _il.Token(variable.FieldHandle);
+                ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences);
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
                 _il.Token(_bclReferences.DoubleType);                   // [updated]
 
@@ -2899,10 +2913,9 @@ namespace Js2IL.Services.ILGenerators
         }
 
         // Consult the registry to see if the current scope has a const binding for this name
-        private bool IsConstBinding(string variableName)
+        private bool IsConstBinding(string scopeName, string variableName)
         {
             var registry = _variables.GetVariableRegistry();
-            var scopeName = _variables.GetLeafScopeName();
             var info = registry?.GetVariableInfo(scopeName, variableName) ?? registry?.FindVariable(variableName);
             return info != null && info.BindingKind == SymbolTables.BindingKind.Const;
         }

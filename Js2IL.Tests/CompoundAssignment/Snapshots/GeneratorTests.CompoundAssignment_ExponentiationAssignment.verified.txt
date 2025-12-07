@@ -28,11 +28,6 @@
 	} // end of class Block_L8C29
 
 
-	// Fields
-	.field public object x
-	.field public object 'value'
-	.field public object i
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -59,118 +54,102 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 337 (0x151)
+		// Code size: 242 (0xf2)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.CompoundAssignment_ExponentiationAssignment
+			[0] class Scopes.CompoundAssignment_ExponentiationAssignment,
+			[1] object,
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Scopes.CompoundAssignment_ExponentiationAssignment::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.r8 2
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Scopes.CompoundAssignment_ExponentiationAssignment::x
-		IL_001a: ldloc.0
-		IL_001b: dup
-		IL_001c: ldfld object Scopes.CompoundAssignment_ExponentiationAssignment::x
-		IL_0021: unbox.any [System.Runtime]System.Double
-		IL_0026: ldc.r8 3
-		IL_002f: conv.r8
-		IL_0030: call float64 [System.Runtime]System.Math::Pow(float64, float64)
-		IL_0035: box [System.Runtime]System.Double
-		IL_003a: stfld object Scopes.CompoundAssignment_ExponentiationAssignment::x
-		IL_003f: ldc.i4.2
-		IL_0040: newarr [System.Runtime]System.Object
-		IL_0045: dup
-		IL_0046: ldc.i4.0
-		IL_0047: ldstr "x after 2 **= 3:"
-		IL_004c: stelem.ref
-		IL_004d: dup
-		IL_004e: ldc.i4.1
-		IL_004f: ldloc.0
-		IL_0050: castclass Scopes.CompoundAssignment_ExponentiationAssignment
-		IL_0055: ldfld object Scopes.CompoundAssignment_ExponentiationAssignment::x
-		IL_005a: stelem.ref
-		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0060: pop
-		IL_0061: ldloc.0
-		IL_0062: ldc.r8 2
-		IL_006b: box [System.Runtime]System.Double
-		IL_0070: stfld object Scopes.CompoundAssignment_ExponentiationAssignment::'value'
-		IL_0075: ldloc.0
-		IL_0076: ldc.r8 1
-		IL_007f: box [System.Runtime]System.Double
-		IL_0084: stfld object Scopes.CompoundAssignment_ExponentiationAssignment::i
-		// loop start (head: IL_0089)
-			IL_0089: ldloc.0
-			IL_008a: castclass Scopes.CompoundAssignment_ExponentiationAssignment
-			IL_008f: ldfld object Scopes.CompoundAssignment_ExponentiationAssignment::i
-			IL_0094: unbox.any [System.Runtime]System.Double
-			IL_0099: ldc.r8 4
-			IL_00a2: ble IL_00ac
+		IL_0006: ldc.r8 2
+		IL_000f: box [System.Runtime]System.Double
+		IL_0014: stloc.1
+		IL_0015: ldloc.1
+		IL_0016: unbox.any [System.Runtime]System.Double
+		IL_001b: ldc.r8 3
+		IL_0024: conv.r8
+		IL_0025: call float64 [System.Runtime]System.Math::Pow(float64, float64)
+		IL_002a: box [System.Runtime]System.Double
+		IL_002f: stloc.1
+		IL_0030: ldc.i4.2
+		IL_0031: newarr [System.Runtime]System.Object
+		IL_0036: dup
+		IL_0037: ldc.i4.0
+		IL_0038: ldstr "x after 2 **= 3:"
+		IL_003d: stelem.ref
+		IL_003e: dup
+		IL_003f: ldc.i4.1
+		IL_0040: ldloc.1
+		IL_0041: stelem.ref
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0047: pop
+		IL_0048: ldc.r8 2
+		IL_0051: box [System.Runtime]System.Double
+		IL_0056: stloc.2
+		IL_0057: ldc.r8 1
+		IL_0060: box [System.Runtime]System.Double
+		IL_0065: stloc.3
+		// loop start (head: IL_0066)
+			IL_0066: ldloc.3
+			IL_0067: unbox.any [System.Runtime]System.Double
+			IL_006c: ldc.r8 4
+			IL_0075: ble IL_007f
 
-			IL_00a7: br IL_012e
+			IL_007a: br IL_00d9
 
-			IL_00ac: ldloc.0
-			IL_00ad: dup
-			IL_00ae: ldfld object Scopes.CompoundAssignment_ExponentiationAssignment::'value'
-			IL_00b3: unbox.any [System.Runtime]System.Double
-			IL_00b8: ldc.r8 2
-			IL_00c1: conv.r8
-			IL_00c2: call float64 [System.Runtime]System.Math::Pow(float64, float64)
-			IL_00c7: box [System.Runtime]System.Double
-			IL_00cc: stfld object Scopes.CompoundAssignment_ExponentiationAssignment::'value'
-			IL_00d1: ldc.i4.4
-			IL_00d2: newarr [System.Runtime]System.Object
-			IL_00d7: dup
-			IL_00d8: ldc.i4.0
-			IL_00d9: ldstr "value after iteration"
-			IL_00de: stelem.ref
-			IL_00df: dup
-			IL_00e0: ldc.i4.1
-			IL_00e1: ldloc.0
-			IL_00e2: castclass Scopes.CompoundAssignment_ExponentiationAssignment
-			IL_00e7: ldfld object Scopes.CompoundAssignment_ExponentiationAssignment::i
-			IL_00ec: stelem.ref
-			IL_00ed: dup
-			IL_00ee: ldc.i4.2
-			IL_00ef: ldstr ":"
-			IL_00f4: stelem.ref
-			IL_00f5: dup
-			IL_00f6: ldc.i4.3
-			IL_00f7: ldloc.0
-			IL_00f8: castclass Scopes.CompoundAssignment_ExponentiationAssignment
-			IL_00fd: ldfld object Scopes.CompoundAssignment_ExponentiationAssignment::'value'
-			IL_0102: stelem.ref
-			IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_0108: pop
-			IL_0109: ldloc.0
-			IL_010a: ldloc.0
-			IL_010b: ldfld object Scopes.CompoundAssignment_ExponentiationAssignment::i
-			IL_0110: unbox.any [System.Runtime]System.Double
-			IL_0115: ldc.r8 1
-			IL_011e: add
-			IL_011f: box [System.Runtime]System.Double
-			IL_0124: stfld object Scopes.CompoundAssignment_ExponentiationAssignment::i
-			IL_0129: br IL_0089
+			IL_007f: ldloc.2
+			IL_0080: unbox.any [System.Runtime]System.Double
+			IL_0085: ldc.r8 2
+			IL_008e: conv.r8
+			IL_008f: call float64 [System.Runtime]System.Math::Pow(float64, float64)
+			IL_0094: box [System.Runtime]System.Double
+			IL_0099: stloc.2
+			IL_009a: ldc.i4.4
+			IL_009b: newarr [System.Runtime]System.Object
+			IL_00a0: dup
+			IL_00a1: ldc.i4.0
+			IL_00a2: ldstr "value after iteration"
+			IL_00a7: stelem.ref
+			IL_00a8: dup
+			IL_00a9: ldc.i4.1
+			IL_00aa: ldloc.3
+			IL_00ab: stelem.ref
+			IL_00ac: dup
+			IL_00ad: ldc.i4.2
+			IL_00ae: ldstr ":"
+			IL_00b3: stelem.ref
+			IL_00b4: dup
+			IL_00b5: ldc.i4.3
+			IL_00b6: ldloc.2
+			IL_00b7: stelem.ref
+			IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_00bd: pop
+			IL_00be: ldloc.3
+			IL_00bf: unbox.any [System.Runtime]System.Double
+			IL_00c4: ldc.r8 1
+			IL_00cd: add
+			IL_00ce: box [System.Runtime]System.Double
+			IL_00d3: stloc.3
+			IL_00d4: br IL_0066
 		// end loop
 
-		IL_012e: ldc.i4.2
-		IL_012f: newarr [System.Runtime]System.Object
-		IL_0134: dup
-		IL_0135: ldc.i4.0
-		IL_0136: ldstr "final value:"
-		IL_013b: stelem.ref
-		IL_013c: dup
-		IL_013d: ldc.i4.1
-		IL_013e: ldloc.0
-		IL_013f: castclass Scopes.CompoundAssignment_ExponentiationAssignment
-		IL_0144: ldfld object Scopes.CompoundAssignment_ExponentiationAssignment::'value'
-		IL_0149: stelem.ref
-		IL_014a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_014f: pop
-		IL_0150: ret
+		IL_00d9: ldc.i4.2
+		IL_00da: newarr [System.Runtime]System.Object
+		IL_00df: dup
+		IL_00e0: ldc.i4.0
+		IL_00e1: ldstr "final value:"
+		IL_00e6: stelem.ref
+		IL_00e7: dup
+		IL_00e8: ldc.i4.1
+		IL_00e9: ldloc.2
+		IL_00ea: stelem.ref
+		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00f0: pop
+		IL_00f1: ret
 	} // end of method CompoundAssignment_ExponentiationAssignment::Main
 
 } // end of class Scripts.CompoundAssignment_ExponentiationAssignment
@@ -182,7 +161,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c1
+		// Method begins at RVA 0x2162
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

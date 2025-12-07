@@ -42,6 +42,7 @@ namespace Js2IL.Utilities.Ecma335
             if (name is null) throw new ArgumentNullException(nameof(name));
             var nameHandle = _metadataBuilder.GetOrAddString(name);
             var handle = _metadataBuilder.AddFieldDefinition(attributes, nameHandle, signature);
+
             if (_fieldCount == 0)
             {
                 _firstFieldDefinition = handle;

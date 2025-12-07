@@ -14,6 +14,9 @@
 		.class nested public auto ansi beforefieldinit inner
 			extends [System.Runtime]System.Object
 		{
+			// Fields
+			.field public object p
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -90,23 +93,31 @@
 		{
 			// Method begins at RVA 0x206c
 			// Header size: 12
-			// Code size: 34 (0x22)
+			// Code size: 47 (0x2f)
 			.maxstack 32
+			.locals init (
+				[0] class Scopes.String_StartsWith_NestedParam/outer/inner
+			)
 
-			IL_0000: ldarg.0
-			IL_0001: ldc.i4.1
-			IL_0002: ldelem.ref
-			IL_0003: castclass Scopes.String_StartsWith_NestedParam/outer
-			IL_0008: ldfld object Scopes.String_StartsWith_NestedParam/outer::s
-			IL_000d: ldstr "startsWith"
-			IL_0012: ldc.i4.1
-			IL_0013: newarr [System.Runtime]System.Object
-			IL_0018: dup
-			IL_0019: ldc.i4.0
-			IL_001a: ldarg.1
-			IL_001b: stelem.ref
-			IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-			IL_0021: ret
+			IL_0000: newobj instance void Scopes.String_StartsWith_NestedParam/outer/inner::.ctor()
+			IL_0005: stloc.0
+			IL_0006: ldloc.0
+			IL_0007: ldarg.1
+			IL_0008: stfld object Scopes.String_StartsWith_NestedParam/outer/inner::p
+			IL_000d: ldarg.0
+			IL_000e: ldc.i4.1
+			IL_000f: ldelem.ref
+			IL_0010: castclass Scopes.String_StartsWith_NestedParam/outer
+			IL_0015: ldfld object Scopes.String_StartsWith_NestedParam/outer::s
+			IL_001a: ldstr "startsWith"
+			IL_001f: ldc.i4.1
+			IL_0020: newarr [System.Runtime]System.Object
+			IL_0025: dup
+			IL_0026: ldc.i4.0
+			IL_0027: ldarg.1
+			IL_0028: stelem.ref
+			IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_002e: ret
 		} // end of method outer_Nested::inner
 
 		.method public hidebysig static 
@@ -115,9 +126,9 @@
 				object s
 			) cil managed 
 		{
-			// Method begins at RVA 0x209c
+			// Method begins at RVA 0x20a8
 			// Header size: 12
-			// Code size: 102 (0x66)
+			// Code size: 112 (0x70)
 			.maxstack 32
 			.locals init (
 				[0] class Scopes.String_StartsWith_NestedParam/outer
@@ -134,36 +145,38 @@
 			IL_0015: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 			IL_001a: stfld object Scopes.String_StartsWith_NestedParam/outer::inner
 			IL_001f: ldloc.0
-			IL_0020: ldfld object Scopes.String_StartsWith_NestedParam/outer::inner
-			IL_0025: dup
-			IL_0026: brtrue.s IL_0046
+			IL_0020: castclass Scopes.String_StartsWith_NestedParam/outer
+			IL_0025: ldfld object Scopes.String_StartsWith_NestedParam/outer::inner
+			IL_002a: dup
+			IL_002b: brtrue.s IL_0050
 
-			IL_0028: pop
-			IL_0029: ldloc.0
-			IL_002a: ldnull
-			IL_002b: ldftn object Functions.outer/outer_Nested::inner(object[], object)
-			IL_0031: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-			IL_0036: stfld object Scopes.String_StartsWith_NestedParam/outer::inner
-			IL_003b: ldloc.0
-			IL_003c: ldfld object Scopes.String_StartsWith_NestedParam/outer::inner
-			IL_0041: br IL_0046
+			IL_002d: pop
+			IL_002e: ldloc.0
+			IL_002f: ldnull
+			IL_0030: ldftn object Functions.outer/outer_Nested::inner(object[], object)
+			IL_0036: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+			IL_003b: stfld object Scopes.String_StartsWith_NestedParam/outer::inner
+			IL_0040: ldloc.0
+			IL_0041: castclass Scopes.String_StartsWith_NestedParam/outer
+			IL_0046: ldfld object Scopes.String_StartsWith_NestedParam/outer::inner
+			IL_004b: br IL_0050
 
-			IL_0046: ldc.i4.2
-			IL_0047: newarr [System.Runtime]System.Object
-			IL_004c: dup
-			IL_004d: ldc.i4.0
-			IL_004e: ldarg.0
-			IL_004f: ldc.i4.0
-			IL_0050: ldelem.ref
-			IL_0051: castclass Scopes.String_StartsWith_NestedParam
-			IL_0056: stelem.ref
-			IL_0057: dup
-			IL_0058: ldc.i4.1
-			IL_0059: ldloc.0
-			IL_005a: stelem.ref
-			IL_005b: ldstr "a"
-			IL_0060: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-			IL_0065: ret
+			IL_0050: ldc.i4.2
+			IL_0051: newarr [System.Runtime]System.Object
+			IL_0056: dup
+			IL_0057: ldc.i4.0
+			IL_0058: ldarg.0
+			IL_0059: ldc.i4.0
+			IL_005a: ldelem.ref
+			IL_005b: castclass Scopes.String_StartsWith_NestedParam
+			IL_0060: stelem.ref
+			IL_0061: dup
+			IL_0062: ldc.i4.1
+			IL_0063: ldloc.0
+			IL_0064: stelem.ref
+			IL_0065: ldstr "a"
+			IL_006a: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+			IL_006f: ret
 		} // end of method outer_Nested::outer
 
 	} // end of class outer_Nested
@@ -178,9 +191,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2110
+		// Method begins at RVA 0x2124
 		// Header size: 12
-		// Code size: 99 (0x63)
+		// Code size: 109 (0x6d)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.String_StartsWith_NestedParam
@@ -198,32 +211,34 @@
 		IL_001e: dup
 		IL_001f: ldc.i4.0
 		IL_0020: ldloc.0
-		IL_0021: ldfld object Scopes.String_StartsWith_NestedParam::outer
-		IL_0026: dup
-		IL_0027: brtrue.s IL_0047
+		IL_0021: castclass Scopes.String_StartsWith_NestedParam
+		IL_0026: ldfld object Scopes.String_StartsWith_NestedParam::outer
+		IL_002b: dup
+		IL_002c: brtrue.s IL_0051
 
-		IL_0029: pop
-		IL_002a: ldloc.0
-		IL_002b: ldnull
-		IL_002c: ldftn object Functions.outer/outer_Nested::outer(object[], object)
-		IL_0032: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0037: stfld object Scopes.String_StartsWith_NestedParam::outer
-		IL_003c: ldloc.0
-		IL_003d: ldfld object Scopes.String_StartsWith_NestedParam::outer
-		IL_0042: br IL_0047
+		IL_002e: pop
+		IL_002f: ldloc.0
+		IL_0030: ldnull
+		IL_0031: ldftn object Functions.outer/outer_Nested::outer(object[], object)
+		IL_0037: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_003c: stfld object Scopes.String_StartsWith_NestedParam::outer
+		IL_0041: ldloc.0
+		IL_0042: castclass Scopes.String_StartsWith_NestedParam
+		IL_0047: ldfld object Scopes.String_StartsWith_NestedParam::outer
+		IL_004c: br IL_0051
 
-		IL_0047: ldc.i4.1
-		IL_0048: newarr [System.Runtime]System.Object
-		IL_004d: dup
-		IL_004e: ldc.i4.0
-		IL_004f: ldloc.0
-		IL_0050: stelem.ref
-		IL_0051: ldstr "abc"
-		IL_0056: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_005b: stelem.ref
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0061: pop
-		IL_0062: ret
+		IL_0051: ldc.i4.1
+		IL_0052: newarr [System.Runtime]System.Object
+		IL_0057: dup
+		IL_0058: ldc.i4.0
+		IL_0059: ldloc.0
+		IL_005a: stelem.ref
+		IL_005b: ldstr "abc"
+		IL_0060: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_0065: stelem.ref
+		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_006b: pop
+		IL_006c: ret
 	} // end of method String_StartsWith_NestedParam::Main
 
 } // end of class Scripts.String_StartsWith_NestedParam
@@ -235,7 +250,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x217f
+		// Method begins at RVA 0x219d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -36,10 +36,6 @@
 			} // end of class Block_L2C57
 
 
-			// Fields
-			.field public object i
-			.field public object q
-
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -76,10 +72,6 @@
 	} // end of class C
 
 
-	// Fields
-	.field public object C
-	.field public object c
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -100,78 +92,58 @@
 .class public auto ansi beforefieldinit Classes.C
 	extends [System.Runtime]System.Object
 {
-	// Fields
-	.field private object[] _scopes
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			object[] scopes
-		) cil managed 
+		instance void .ctor () cil managed 
 	{
 		// Method begins at RVA 0x2074
 		// Header size: 12
-		// Code size: 14 (0xe)
+		// Code size: 7 (0x7)
 		.maxstack 32
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld object[] Classes.C::_scopes
-		IL_000d: ret
+		IL_0006: ret
 	} // end of method C::.ctor
 
 	.method public hidebysig 
 		instance object run () cil managed 
 	{
-		// Method begins at RVA 0x2090
+		// Method begins at RVA 0x2088
 		// Header size: 12
-		// Code size: 142 (0x8e)
+		// Code size: 81 (0x51)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ForLoopMin/C/run
+			[0] object,
+			[1] object
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_ForLoopMin/C/run::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.r8 0.0
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Scopes.Classes_ForLoopMin/C/run::i
-		IL_001a: ldloc.0
-		IL_001b: ldc.r8 10
-		IL_0024: box [System.Runtime]System.Double
-		IL_0029: stfld object Scopes.Classes_ForLoopMin/C/run::q
-		// loop start (head: IL_002e)
-			IL_002e: ldloc.0
-			IL_002f: castclass Scopes.Classes_ForLoopMin/C/run
-			IL_0034: ldfld object Scopes.Classes_ForLoopMin/C/run::i
-			IL_0039: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_003e: ldloc.0
-			IL_003f: castclass Scopes.Classes_ForLoopMin/C/run
-			IL_0044: ldfld object Scopes.Classes_ForLoopMin/C/run::q
-			IL_0049: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_004e: blt IL_0058
+		IL_0000: ldc.r8 0.0
+		IL_0009: box [System.Runtime]System.Double
+		IL_000e: stloc.0
+		IL_000f: ldc.r8 10
+		IL_0018: box [System.Runtime]System.Double
+		IL_001d: stloc.1
+		// loop start (head: IL_001e)
+			IL_001e: ldloc.0
+			IL_001f: unbox.any [System.Runtime]System.Double
+			IL_0024: ldloc.1
+			IL_0025: unbox.any [System.Runtime]System.Double
+			IL_002a: blt IL_0034
 
-			IL_0053: br IL_0082
+			IL_002f: br IL_004f
 
-			IL_0058: ldloc.0
-			IL_0059: ldloc.0
-			IL_005a: castclass Scopes.Classes_ForLoopMin/C/run
-			IL_005f: ldfld object Scopes.Classes_ForLoopMin/C/run::i
-			IL_0064: unbox.any [System.Runtime]System.Double
-			IL_0069: ldc.r8 1
-			IL_0072: add
-			IL_0073: box [System.Runtime]System.Double
-			IL_0078: stfld object Scopes.Classes_ForLoopMin/C/run::i
-			IL_007d: br IL_002e
+			IL_0034: ldloc.0
+			IL_0035: unbox.any [System.Runtime]System.Double
+			IL_003a: ldc.r8 1
+			IL_0043: add
+			IL_0044: box [System.Runtime]System.Double
+			IL_0049: stloc.0
+			IL_004a: br IL_001e
 		// end loop
 
-		IL_0082: ldloc.0
-		IL_0083: castclass Scopes.Classes_ForLoopMin/C/run
-		IL_0088: ldfld object Scopes.Classes_ForLoopMin/C/run::i
-		IL_008d: ret
+		IL_004f: ldloc.0
+		IL_0050: ret
 	} // end of method C::run
 
 } // end of class Classes.C
@@ -183,37 +155,29 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x212c
+		// Method begins at RVA 0x20e8
 		// Header size: 12
-		// Code size: 59 (0x3b)
+		// Code size: 34 (0x22)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ForLoopMin
+			[0] class Scopes.Classes_ForLoopMin,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Scopes.Classes_ForLoopMin::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.i4.1
-		IL_0008: newarr [System.Runtime]System.Object
-		IL_000d: dup
-		IL_000e: ldc.i4.0
-		IL_000f: ldloc.0
-		IL_0010: stelem.ref
-		IL_0011: newobj instance void Classes.C::.ctor(object[])
-		IL_0016: stfld object Scopes.Classes_ForLoopMin::c
-		IL_001b: ldc.i4.1
-		IL_001c: newarr [System.Runtime]System.Object
-		IL_0021: dup
-		IL_0022: ldc.i4.0
-		IL_0023: ldloc.0
-		IL_0024: castclass Scopes.Classes_ForLoopMin
-		IL_0029: ldfld object Scopes.Classes_ForLoopMin::c
-		IL_002e: callvirt instance object Classes.C::run()
-		IL_0033: stelem.ref
-		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0039: pop
-		IL_003a: ret
+		IL_0006: newobj instance void Classes.C::.ctor()
+		IL_000b: stloc.1
+		IL_000c: ldc.i4.1
+		IL_000d: newarr [System.Runtime]System.Object
+		IL_0012: dup
+		IL_0013: ldc.i4.0
+		IL_0014: ldloc.1
+		IL_0015: callvirt instance object Classes.C::run()
+		IL_001a: stelem.ref
+		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0020: pop
+		IL_0021: ret
 	} // end of method Classes_ForLoopMin::Main
 
 } // end of class Scripts.Classes_ForLoopMin
@@ -225,7 +189,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2173
+		// Method begins at RVA 0x2116
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

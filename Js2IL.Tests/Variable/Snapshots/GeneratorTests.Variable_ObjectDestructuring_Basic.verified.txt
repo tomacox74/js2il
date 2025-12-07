@@ -1,0 +1,161 @@
+﻿// IL code: Variable_ObjectDestructuring_Basic
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Variable_ObjectDestructuring_Basic
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Variable_ObjectDestructuring_Basic::.ctor
+
+} // end of class Scopes.Variable_ObjectDestructuring_Basic
+
+.class public auto ansi beforefieldinit Scripts.Variable_ObjectDestructuring_Basic
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x205c
+		// Header size: 12
+		// Code size: 239 (0xef)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.Variable_ObjectDestructuring_Basic,
+			[1] object,
+			[2] object,
+			[3] object,
+			[4] object,
+			[5] object,
+			[6] object
+		)
+
+		IL_0000: newobj instance void Scopes.Variable_ObjectDestructuring_Basic::.ctor()
+		IL_0005: stloc.0
+		IL_0006: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_000b: dup
+		IL_000c: ldstr "x"
+		IL_0011: ldc.r8 10
+		IL_001a: box [System.Runtime]System.Double
+		IL_001f: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0024: dup
+		IL_0025: ldstr "y"
+		IL_002a: ldc.r8 20
+		IL_0033: box [System.Runtime]System.Double
+		IL_0038: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_003d: dup
+		IL_003e: ldstr "name"
+		IL_0043: ldstr "test"
+		IL_0048: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_004d: stloc.1
+		IL_004e: ldloc.1
+		IL_004f: stloc.2
+		IL_0050: ldloc.2
+		IL_0051: ldstr "x"
+		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_005b: stloc.3
+		IL_005c: ldloc.2
+		IL_005d: ldstr "y"
+		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_0067: stloc.s 4
+		IL_0069: ldloc.2
+		IL_006a: ldstr "name"
+		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_0074: stloc.s 5
+		IL_0076: ldc.i4.2
+		IL_0077: newarr [System.Runtime]System.Object
+		IL_007c: dup
+		IL_007d: ldc.i4.0
+		IL_007e: ldstr "x="
+		IL_0083: stelem.ref
+		IL_0084: dup
+		IL_0085: ldc.i4.1
+		IL_0086: ldloc.3
+		IL_0087: stelem.ref
+		IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_008d: pop
+		IL_008e: ldc.i4.2
+		IL_008f: newarr [System.Runtime]System.Object
+		IL_0094: dup
+		IL_0095: ldc.i4.0
+		IL_0096: ldstr "y="
+		IL_009b: stelem.ref
+		IL_009c: dup
+		IL_009d: ldc.i4.1
+		IL_009e: ldloc.s 4
+		IL_00a0: stelem.ref
+		IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00a6: pop
+		IL_00a7: ldc.i4.2
+		IL_00a8: newarr [System.Runtime]System.Object
+		IL_00ad: dup
+		IL_00ae: ldc.i4.0
+		IL_00af: ldstr "name="
+		IL_00b4: stelem.ref
+		IL_00b5: dup
+		IL_00b6: ldc.i4.1
+		IL_00b7: ldloc.s 5
+		IL_00b9: stelem.ref
+		IL_00ba: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00bf: pop
+		IL_00c0: ldloc.3
+		IL_00c1: unbox.any [System.Runtime]System.Double
+		IL_00c6: ldloc.s 4
+		IL_00c8: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_00cd: add
+		IL_00ce: box [System.Runtime]System.Double
+		IL_00d3: stloc.s 6
+		IL_00d5: ldc.i4.2
+		IL_00d6: newarr [System.Runtime]System.Object
+		IL_00db: dup
+		IL_00dc: ldc.i4.0
+		IL_00dd: ldstr "sum="
+		IL_00e2: stelem.ref
+		IL_00e3: dup
+		IL_00e4: ldc.i4.1
+		IL_00e5: ldloc.s 6
+		IL_00e7: stelem.ref
+		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00ed: pop
+		IL_00ee: ret
+	} // end of method Variable_ObjectDestructuring_Basic::Main
+
+} // end of class Scripts.Variable_ObjectDestructuring_Basic
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2157
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.Variable_ObjectDestructuring_Basic::Main()
+		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

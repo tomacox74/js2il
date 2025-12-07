@@ -10,6 +10,9 @@
 	.class nested public auto ansi beforefieldinit printMessage
 		extends [System.Runtime]System.Object
 	{
+		// Fields
+		.field public object message
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -60,23 +63,31 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 26 (0x1a)
+		// Code size: 39 (0x27)
 		.maxstack 32
+		.locals init (
+			[0] class Scopes.Function_GlobalFunctionWithParameter/printMessage
+		)
 
-		IL_0000: ldc.i4.2
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldstr "Message:"
-		IL_000d: stelem.ref
-		IL_000e: dup
-		IL_000f: ldc.i4.1
-		IL_0010: ldarg.1
-		IL_0011: stelem.ref
-		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0017: pop
-		IL_0018: ldnull
-		IL_0019: ret
+		IL_0000: newobj instance void Scopes.Function_GlobalFunctionWithParameter/printMessage::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object Scopes.Function_GlobalFunctionWithParameter/printMessage::message
+		IL_000d: ldc.i4.2
+		IL_000e: newarr [System.Runtime]System.Object
+		IL_0013: dup
+		IL_0014: ldc.i4.0
+		IL_0015: ldstr "Message:"
+		IL_001a: stelem.ref
+		IL_001b: dup
+		IL_001c: ldc.i4.1
+		IL_001d: ldarg.1
+		IL_001e: stelem.ref
+		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0024: pop
+		IL_0025: ldnull
+		IL_0026: ret
 	} // end of method printMessage::printMessage
 
 } // end of class Functions.printMessage
@@ -88,9 +99,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x208c
+		// Method begins at RVA 0x2098
 		// Header size: 12
-		// Code size: 85 (0x55)
+		// Code size: 95 (0x5f)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Function_GlobalFunctionWithParameter
@@ -104,30 +115,32 @@
 		IL_000e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0013: stfld object Scopes.Function_GlobalFunctionWithParameter::printMessage
 		IL_0018: ldloc.0
-		IL_0019: ldfld object Scopes.Function_GlobalFunctionWithParameter::printMessage
-		IL_001e: dup
-		IL_001f: brtrue.s IL_003f
+		IL_0019: castclass Scopes.Function_GlobalFunctionWithParameter
+		IL_001e: ldfld object Scopes.Function_GlobalFunctionWithParameter::printMessage
+		IL_0023: dup
+		IL_0024: brtrue.s IL_0049
 
-		IL_0021: pop
-		IL_0022: ldloc.0
-		IL_0023: ldnull
-		IL_0024: ldftn object Functions.printMessage::printMessage(object[], object)
-		IL_002a: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_002f: stfld object Scopes.Function_GlobalFunctionWithParameter::printMessage
-		IL_0034: ldloc.0
-		IL_0035: ldfld object Scopes.Function_GlobalFunctionWithParameter::printMessage
-		IL_003a: br IL_003f
+		IL_0026: pop
+		IL_0027: ldloc.0
+		IL_0028: ldnull
+		IL_0029: ldftn object Functions.printMessage::printMessage(object[], object)
+		IL_002f: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0034: stfld object Scopes.Function_GlobalFunctionWithParameter::printMessage
+		IL_0039: ldloc.0
+		IL_003a: castclass Scopes.Function_GlobalFunctionWithParameter
+		IL_003f: ldfld object Scopes.Function_GlobalFunctionWithParameter::printMessage
+		IL_0044: br IL_0049
 
-		IL_003f: ldc.i4.1
-		IL_0040: newarr [System.Runtime]System.Object
-		IL_0045: dup
-		IL_0046: ldc.i4.0
-		IL_0047: ldloc.0
-		IL_0048: stelem.ref
-		IL_0049: ldstr "Hello, Js2IL!"
-		IL_004e: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0053: pop
-		IL_0054: ret
+		IL_0049: ldc.i4.1
+		IL_004a: newarr [System.Runtime]System.Object
+		IL_004f: dup
+		IL_0050: ldc.i4.0
+		IL_0051: ldloc.0
+		IL_0052: stelem.ref
+		IL_0053: ldstr "Hello, Js2IL!"
+		IL_0058: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_005d: pop
+		IL_005e: ret
 	} // end of method Function_GlobalFunctionWithParameter::Main
 
 } // end of class Scripts.Function_GlobalFunctionWithParameter
@@ -139,7 +152,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ed
+		// Method begins at RVA 0x2103
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

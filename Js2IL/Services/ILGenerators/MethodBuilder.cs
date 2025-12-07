@@ -165,7 +165,7 @@ namespace Js2IL.Services.ILGenerators
                             if (castScopeForStore)
                             {
                                 var targetVar = variables.FindVariable(bindId.Name);
-                                if (targetVar == null || targetVar.FieldHandle.IsNil) continue;
+                                if (targetVar == null || (targetVar.FieldHandle.IsNil && targetVar.LocalSlot < 0)) continue;
                                 
                                 if (defaultValue != null)
                                 {
@@ -188,70 +188,31 @@ namespace Js2IL.Services.ILGenerators
                                     var labelEnd = il.DefineLabel();
                                     il.Branch(System.Reflection.Metadata.ILOpCode.Brfalse, labelUseDefault);
                                     
-                                    // Not null: load scope, load temp, store to field
-                                    var tslot = variables.GetScopeLocalSlot(targetVar.ScopeName);
-                                    var tScopeType = variables.GetVariableRegistry()?.GetScopeTypeHandle(targetVar.ScopeName) ?? default;
-                                    
-                                    if (tslot.Location == ObjectReferenceLocation.Parameter)
+                                    // Not null: load scope (if needed), load temp value, then store to variable
+                                    if (!targetVar.FieldHandle.IsNil)
                                     {
-                                        il.LoadArgument(tslot.Address);
-                                        // Cast needed: parameter is typed as object
-                                        if (!tScopeType.IsNil)
+                                        var localScope = variables.GetLocalScopeSlot();
+                                        if (localScope.Address >= 0)
                                         {
-                                            il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
-                                            il.Token(tScopeType);
+                                            il.LoadLocal(localScope.Address);
                                         }
-                                    }
-                                    else if (tslot.Location == ObjectReferenceLocation.ScopeArray)
-                                    {
-                                        il.LoadArgument(0);
-                                        il.LoadConstantI4(tslot.Address);
-                                        il.OpCode(System.Reflection.Metadata.ILOpCode.Ldelem_ref);
-                                        // Cast needed: array element is typed as object
-                                        if (!tScopeType.IsNil)
-                                        {
-                                            il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
-                                            il.Token(tScopeType);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        il.LoadLocal(tslot.Address);
                                     }
                                     il.LoadLocal(tempLocal);
-                                    il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld); il.Token(targetVar.FieldHandle);
+                                    ILEmitHelpers.EmitStoreVariable(il, targetVar, variables, scopeAlreadyLoaded: true);
                                     il.Branch(System.Reflection.Metadata.ILOpCode.Br, labelEnd);
                                     
-                                    // Null: load scope, emit default expression, store to field
+                                    // Null: load scope (if needed), emit default expression, then store to variable
                                     il.MarkLabel(labelUseDefault);
-                                    if (tslot.Location == ObjectReferenceLocation.Parameter)
+                                    if (!targetVar.FieldHandle.IsNil)
                                     {
-                                        il.LoadArgument(tslot.Address);
-                                        // Cast needed: parameter is typed as object
-                                        if (!tScopeType.IsNil)
+                                        var localScope = variables.GetLocalScopeSlot();
+                                        if (localScope.Address >= 0)
                                         {
-                                            il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
-                                            il.Token(tScopeType);
+                                            il.LoadLocal(localScope.Address);
                                         }
-                                    }
-                                    else if (tslot.Location == ObjectReferenceLocation.ScopeArray)
-                                    {
-                                        il.LoadArgument(0);
-                                        il.LoadConstantI4(tslot.Address);
-                                        il.OpCode(System.Reflection.Metadata.ILOpCode.Ldelem_ref);
-                                        // Cast needed: array element is typed as object
-                                        if (!tScopeType.IsNil)
-                                        {
-                                            il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
-                                            il.Token(tScopeType);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        il.LoadLocal(tslot.Address);
                                     }
                                     expressionEmitter.Emit(defaultValue, new TypeCoercion { boxResult = true });
-                                    il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld); il.Token(targetVar.FieldHandle);
+                                    ILEmitHelpers.EmitStoreVariable(il, targetVar, variables, scopeAlreadyLoaded: true);
                                     
                                     il.MarkLabel(labelEnd);
                                 }

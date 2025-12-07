@@ -34,6 +34,10 @@
 		.class nested public auto ansi beforefieldinit setBeanCount
 			extends [System.Runtime]System.Object
 		{
+			// Fields
+			.field public object 'box'
+			.field public object count
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -69,10 +73,6 @@
 
 	} // end of class BeanCounter
 
-
-	// Fields
-	.field public object BeanCounter
-	.field public object bc
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -153,42 +153,38 @@
 	{
 		// Method begins at RVA 0x20c0
 		// Header size: 12
-		// Code size: 118 (0x76)
+		// Code size: 93 (0x5d)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.BeanCounter_Class_Index_Assign
+			[0] class Scopes.BeanCounter_Class_Index_Assign,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Scopes.BeanCounter_Class_Index_Assign::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: newobj instance void Classes.BeanCounter::.ctor()
-		IL_000c: stfld object Scopes.BeanCounter_Class_Index_Assign::bc
-		IL_0011: ldloc.0
-		IL_0012: castclass Scopes.BeanCounter_Class_Index_Assign
-		IL_0017: ldfld object Scopes.BeanCounter_Class_Index_Assign::bc
-		IL_001c: ldc.r8 1
-		IL_0025: box [System.Runtime]System.Double
-		IL_002a: ldc.r8 42
-		IL_0033: box [System.Runtime]System.Double
-		IL_0038: callvirt instance object Classes.BeanCounter::setBeanCount(object, object)
-		IL_003d: pop
-		IL_003e: ldc.i4.1
-		IL_003f: newarr [System.Runtime]System.Object
-		IL_0044: dup
-		IL_0045: ldc.i4.0
-		IL_0046: ldloc.0
-		IL_0047: castclass Scopes.BeanCounter_Class_Index_Assign
-		IL_004c: ldfld object Scopes.BeanCounter_Class_Index_Assign::bc
-		IL_0051: castclass Classes.BeanCounter
-		IL_0056: ldfld object Classes.BeanCounter::beanCounts
-		IL_005b: ldc.r8 1
-		IL_0064: box [System.Runtime]System.Double
-		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_006e: stelem.ref
-		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0074: pop
-		IL_0075: ret
+		IL_0006: newobj instance void Classes.BeanCounter::.ctor()
+		IL_000b: stloc.1
+		IL_000c: ldloc.1
+		IL_000d: ldc.r8 1
+		IL_0016: box [System.Runtime]System.Double
+		IL_001b: ldc.r8 42
+		IL_0024: box [System.Runtime]System.Double
+		IL_0029: callvirt instance object Classes.BeanCounter::setBeanCount(object, object)
+		IL_002e: pop
+		IL_002f: ldc.i4.1
+		IL_0030: newarr [System.Runtime]System.Object
+		IL_0035: dup
+		IL_0036: ldc.i4.0
+		IL_0037: ldloc.1
+		IL_0038: castclass Classes.BeanCounter
+		IL_003d: ldfld object Classes.BeanCounter::beanCounts
+		IL_0042: ldc.r8 1
+		IL_004b: box [System.Runtime]System.Double
+		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0055: stelem.ref
+		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_005b: pop
+		IL_005c: ret
 	} // end of method BeanCounter_Class_Index_Assign::Main
 
 } // end of class Scripts.BeanCounter_Class_Index_Assign
@@ -200,7 +196,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2142
+		// Method begins at RVA 0x2129
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -48,9 +48,6 @@
 	} // end of class Block_L4C7
 
 
-	// Fields
-	.field public object flag
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -77,51 +74,49 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 105 (0x69)
+		// Code size: 90 (0x5a)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ControlFlow_If_NotFlag
+			[0] class Scopes.ControlFlow_If_NotFlag,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Scopes.ControlFlow_If_NotFlag::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.i4.0
-		IL_0008: box [System.Runtime]System.Boolean
-		IL_000d: stfld object Scopes.ControlFlow_If_NotFlag::flag
-		IL_0012: ldloc.0
-		IL_0013: castclass Scopes.ControlFlow_If_NotFlag
-		IL_0018: ldfld object Scopes.ControlFlow_If_NotFlag::flag
-		IL_001d: unbox.any [System.Runtime]System.Boolean
-		IL_0022: brfalse IL_003b
+		IL_0006: ldc.i4.0
+		IL_0007: box [System.Runtime]System.Boolean
+		IL_000c: stloc.1
+		IL_000d: ldloc.1
+		IL_000e: unbox.any [System.Runtime]System.Boolean
+		IL_0013: brfalse IL_002c
 
-		IL_0027: br IL_0054
+		IL_0018: br IL_0045
 
-		IL_002c: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-		IL_0031: brtrue IL_003b
+		IL_001d: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+		IL_0022: brtrue IL_002c
 
-		IL_0036: br IL_0054
+		IL_0027: br IL_0045
 
-		IL_003b: ldc.i4.1
-		IL_003c: newarr [System.Runtime]System.Object
-		IL_0041: dup
-		IL_0042: ldc.i4.0
-		IL_0043: ldstr "F"
-		IL_0048: stelem.ref
-		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_004e: pop
-		IL_004f: br IL_0068
+		IL_002c: ldc.i4.1
+		IL_002d: newarr [System.Runtime]System.Object
+		IL_0032: dup
+		IL_0033: ldc.i4.0
+		IL_0034: ldstr "F"
+		IL_0039: stelem.ref
+		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_003f: pop
+		IL_0040: br IL_0059
 
-		IL_0054: ldc.i4.1
-		IL_0055: newarr [System.Runtime]System.Object
-		IL_005a: dup
-		IL_005b: ldc.i4.0
-		IL_005c: ldstr "T"
-		IL_0061: stelem.ref
-		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0067: pop
+		IL_0045: ldc.i4.1
+		IL_0046: newarr [System.Runtime]System.Object
+		IL_004b: dup
+		IL_004c: ldc.i4.0
+		IL_004d: ldstr "T"
+		IL_0052: stelem.ref
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0058: pop
 
-		IL_0068: ret
+		IL_0059: ret
 	} // end of method ControlFlow_If_NotFlag::Main
 
 } // end of class Scripts.ControlFlow_If_NotFlag
@@ -133,7 +128,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e1
+		// Method begins at RVA 0x20d2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

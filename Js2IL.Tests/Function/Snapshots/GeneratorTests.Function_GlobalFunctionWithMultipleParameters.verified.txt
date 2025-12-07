@@ -10,6 +10,9 @@
 	.class nested public auto ansi beforefieldinit f1
 		extends [System.Runtime]System.Object
 	{
+		// Fields
+		.field public object a
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -30,6 +33,10 @@
 	.class nested public auto ansi beforefieldinit f2
 		extends [System.Runtime]System.Object
 	{
+		// Fields
+		.field public object a
+		.field public object b
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -50,6 +57,11 @@
 	.class nested public auto ansi beforefieldinit f3
 		extends [System.Runtime]System.Object
 	{
+		// Fields
+		.field public object a
+		.field public object b
+		.field public object c
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -70,6 +82,12 @@
 	.class nested public auto ansi beforefieldinit f4
 		extends [System.Runtime]System.Object
 	{
+		// Fields
+		.field public object a
+		.field public object b
+		.field public object c
+		.field public object d
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -90,6 +108,13 @@
 	.class nested public auto ansi beforefieldinit f5
 		extends [System.Runtime]System.Object
 	{
+		// Fields
+		.field public object a
+		.field public object b
+		.field public object c
+		.field public object d
+		.field public object e
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -110,6 +135,14 @@
 	.class nested public auto ansi beforefieldinit f6
 		extends [System.Runtime]System.Object
 	{
+		// Fields
+		.field public object a
+		.field public object b
+		.field public object c
+		.field public object d
+		.field public object e
+		.field public object f
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -165,23 +198,31 @@
 	{
 		// Method begins at RVA 0x2090
 		// Header size: 12
-		// Code size: 26 (0x1a)
+		// Code size: 39 (0x27)
 		.maxstack 32
+		.locals init (
+			[0] class Scopes.Function_GlobalFunctionWithMultipleParameters/f1
+		)
 
-		IL_0000: ldc.i4.2
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldstr "f1"
-		IL_000d: stelem.ref
-		IL_000e: dup
-		IL_000f: ldc.i4.1
-		IL_0010: ldarg.1
-		IL_0011: stelem.ref
-		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0017: pop
-		IL_0018: ldnull
-		IL_0019: ret
+		IL_0000: newobj instance void Scopes.Function_GlobalFunctionWithMultipleParameters/f1::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters/f1::a
+		IL_000d: ldc.i4.2
+		IL_000e: newarr [System.Runtime]System.Object
+		IL_0013: dup
+		IL_0014: ldc.i4.0
+		IL_0015: ldstr "f1"
+		IL_001a: stelem.ref
+		IL_001b: dup
+		IL_001c: ldc.i4.1
+		IL_001d: ldarg.1
+		IL_001e: stelem.ref
+		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0024: pop
+		IL_0025: ldnull
+		IL_0026: ret
 	} // end of method Function_GlobalFunctionWithMultipleParameters::f1
 
 	.method public hidebysig static 
@@ -191,29 +232,40 @@
 			object b
 		) cil managed 
 	{
-		// Method begins at RVA 0x20b8
+		// Method begins at RVA 0x20c4
 		// Header size: 12
-		// Code size: 30 (0x1e)
+		// Code size: 50 (0x32)
 		.maxstack 32
+		.locals init (
+			[0] class Scopes.Function_GlobalFunctionWithMultipleParameters/f2
+		)
 
-		IL_0000: ldc.i4.3
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldstr "f2"
-		IL_000d: stelem.ref
-		IL_000e: dup
-		IL_000f: ldc.i4.1
-		IL_0010: ldarg.1
-		IL_0011: stelem.ref
-		IL_0012: dup
-		IL_0013: ldc.i4.2
-		IL_0014: ldarg.2
-		IL_0015: stelem.ref
-		IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_001b: pop
-		IL_001c: ldnull
-		IL_001d: ret
+		IL_0000: newobj instance void Scopes.Function_GlobalFunctionWithMultipleParameters/f2::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters/f2::a
+		IL_000d: ldloc.0
+		IL_000e: ldarg.2
+		IL_000f: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters/f2::b
+		IL_0014: ldc.i4.3
+		IL_0015: newarr [System.Runtime]System.Object
+		IL_001a: dup
+		IL_001b: ldc.i4.0
+		IL_001c: ldstr "f2"
+		IL_0021: stelem.ref
+		IL_0022: dup
+		IL_0023: ldc.i4.1
+		IL_0024: ldarg.1
+		IL_0025: stelem.ref
+		IL_0026: dup
+		IL_0027: ldc.i4.2
+		IL_0028: ldarg.2
+		IL_0029: stelem.ref
+		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_002f: pop
+		IL_0030: ldnull
+		IL_0031: ret
 	} // end of method Function_GlobalFunctionWithMultipleParameters::f2
 
 	.method public hidebysig static 
@@ -224,33 +276,47 @@
 			object c
 		) cil managed 
 	{
-		// Method begins at RVA 0x20e4
+		// Method begins at RVA 0x2104
 		// Header size: 12
-		// Code size: 34 (0x22)
+		// Code size: 61 (0x3d)
 		.maxstack 32
+		.locals init (
+			[0] class Scopes.Function_GlobalFunctionWithMultipleParameters/f3
+		)
 
-		IL_0000: ldc.i4.4
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldstr "f3"
-		IL_000d: stelem.ref
-		IL_000e: dup
-		IL_000f: ldc.i4.1
-		IL_0010: ldarg.1
-		IL_0011: stelem.ref
-		IL_0012: dup
-		IL_0013: ldc.i4.2
-		IL_0014: ldarg.2
-		IL_0015: stelem.ref
-		IL_0016: dup
-		IL_0017: ldc.i4.3
-		IL_0018: ldarg.3
-		IL_0019: stelem.ref
-		IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_001f: pop
-		IL_0020: ldnull
-		IL_0021: ret
+		IL_0000: newobj instance void Scopes.Function_GlobalFunctionWithMultipleParameters/f3::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters/f3::a
+		IL_000d: ldloc.0
+		IL_000e: ldarg.2
+		IL_000f: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters/f3::b
+		IL_0014: ldloc.0
+		IL_0015: ldarg.3
+		IL_0016: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters/f3::c
+		IL_001b: ldc.i4.4
+		IL_001c: newarr [System.Runtime]System.Object
+		IL_0021: dup
+		IL_0022: ldc.i4.0
+		IL_0023: ldstr "f3"
+		IL_0028: stelem.ref
+		IL_0029: dup
+		IL_002a: ldc.i4.1
+		IL_002b: ldarg.1
+		IL_002c: stelem.ref
+		IL_002d: dup
+		IL_002e: ldc.i4.2
+		IL_002f: ldarg.2
+		IL_0030: stelem.ref
+		IL_0031: dup
+		IL_0032: ldc.i4.3
+		IL_0033: ldarg.3
+		IL_0034: stelem.ref
+		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_003a: pop
+		IL_003b: ldnull
+		IL_003c: ret
 	} // end of method Function_GlobalFunctionWithMultipleParameters::f3
 
 	.method public hidebysig static 
@@ -262,37 +328,54 @@
 			object d
 		) cil managed 
 	{
-		// Method begins at RVA 0x2114
+		// Method begins at RVA 0x2150
 		// Header size: 12
-		// Code size: 39 (0x27)
+		// Code size: 74 (0x4a)
 		.maxstack 32
+		.locals init (
+			[0] class Scopes.Function_GlobalFunctionWithMultipleParameters/f4
+		)
 
-		IL_0000: ldc.i4.5
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldstr "f4"
-		IL_000d: stelem.ref
-		IL_000e: dup
-		IL_000f: ldc.i4.1
-		IL_0010: ldarg.1
-		IL_0011: stelem.ref
-		IL_0012: dup
-		IL_0013: ldc.i4.2
-		IL_0014: ldarg.2
-		IL_0015: stelem.ref
-		IL_0016: dup
-		IL_0017: ldc.i4.3
-		IL_0018: ldarg.3
-		IL_0019: stelem.ref
-		IL_001a: dup
-		IL_001b: ldc.i4.4
+		IL_0000: newobj instance void Scopes.Function_GlobalFunctionWithMultipleParameters/f4::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters/f4::a
+		IL_000d: ldloc.0
+		IL_000e: ldarg.2
+		IL_000f: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters/f4::b
+		IL_0014: ldloc.0
+		IL_0015: ldarg.3
+		IL_0016: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters/f4::c
+		IL_001b: ldloc.0
 		IL_001c: ldarg.s d
-		IL_001e: stelem.ref
-		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0024: pop
-		IL_0025: ldnull
-		IL_0026: ret
+		IL_001e: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters/f4::d
+		IL_0023: ldc.i4.5
+		IL_0024: newarr [System.Runtime]System.Object
+		IL_0029: dup
+		IL_002a: ldc.i4.0
+		IL_002b: ldstr "f4"
+		IL_0030: stelem.ref
+		IL_0031: dup
+		IL_0032: ldc.i4.1
+		IL_0033: ldarg.1
+		IL_0034: stelem.ref
+		IL_0035: dup
+		IL_0036: ldc.i4.2
+		IL_0037: ldarg.2
+		IL_0038: stelem.ref
+		IL_0039: dup
+		IL_003a: ldc.i4.3
+		IL_003b: ldarg.3
+		IL_003c: stelem.ref
+		IL_003d: dup
+		IL_003e: ldc.i4.4
+		IL_003f: ldarg.s d
+		IL_0041: stelem.ref
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0047: pop
+		IL_0048: ldnull
+		IL_0049: ret
 	} // end of method Function_GlobalFunctionWithMultipleParameters::f4
 
 	.method public hidebysig static 
@@ -305,41 +388,61 @@
 			object e
 		) cil managed 
 	{
-		// Method begins at RVA 0x2148
+		// Method begins at RVA 0x21a8
 		// Header size: 12
-		// Code size: 44 (0x2c)
+		// Code size: 87 (0x57)
 		.maxstack 32
+		.locals init (
+			[0] class Scopes.Function_GlobalFunctionWithMultipleParameters/f5
+		)
 
-		IL_0000: ldc.i4.6
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldstr "f5"
-		IL_000d: stelem.ref
-		IL_000e: dup
-		IL_000f: ldc.i4.1
-		IL_0010: ldarg.1
-		IL_0011: stelem.ref
-		IL_0012: dup
-		IL_0013: ldc.i4.2
-		IL_0014: ldarg.2
-		IL_0015: stelem.ref
-		IL_0016: dup
-		IL_0017: ldc.i4.3
-		IL_0018: ldarg.3
-		IL_0019: stelem.ref
-		IL_001a: dup
-		IL_001b: ldc.i4.4
+		IL_0000: newobj instance void Scopes.Function_GlobalFunctionWithMultipleParameters/f5::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters/f5::a
+		IL_000d: ldloc.0
+		IL_000e: ldarg.2
+		IL_000f: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters/f5::b
+		IL_0014: ldloc.0
+		IL_0015: ldarg.3
+		IL_0016: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters/f5::c
+		IL_001b: ldloc.0
 		IL_001c: ldarg.s d
-		IL_001e: stelem.ref
-		IL_001f: dup
-		IL_0020: ldc.i4.5
-		IL_0021: ldarg.s e
-		IL_0023: stelem.ref
-		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0029: pop
-		IL_002a: ldnull
-		IL_002b: ret
+		IL_001e: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters/f5::d
+		IL_0023: ldloc.0
+		IL_0024: ldarg.s e
+		IL_0026: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters/f5::e
+		IL_002b: ldc.i4.6
+		IL_002c: newarr [System.Runtime]System.Object
+		IL_0031: dup
+		IL_0032: ldc.i4.0
+		IL_0033: ldstr "f5"
+		IL_0038: stelem.ref
+		IL_0039: dup
+		IL_003a: ldc.i4.1
+		IL_003b: ldarg.1
+		IL_003c: stelem.ref
+		IL_003d: dup
+		IL_003e: ldc.i4.2
+		IL_003f: ldarg.2
+		IL_0040: stelem.ref
+		IL_0041: dup
+		IL_0042: ldc.i4.3
+		IL_0043: ldarg.3
+		IL_0044: stelem.ref
+		IL_0045: dup
+		IL_0046: ldc.i4.4
+		IL_0047: ldarg.s d
+		IL_0049: stelem.ref
+		IL_004a: dup
+		IL_004b: ldc.i4.5
+		IL_004c: ldarg.s e
+		IL_004e: stelem.ref
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0054: pop
+		IL_0055: ldnull
+		IL_0056: ret
 	} // end of method Function_GlobalFunctionWithMultipleParameters::f5
 
 	.method public hidebysig static 
@@ -353,45 +456,68 @@
 			object f
 		) cil managed 
 	{
-		// Method begins at RVA 0x2180
+		// Method begins at RVA 0x220c
 		// Header size: 12
-		// Code size: 49 (0x31)
+		// Code size: 100 (0x64)
 		.maxstack 32
+		.locals init (
+			[0] class Scopes.Function_GlobalFunctionWithMultipleParameters/f6
+		)
 
-		IL_0000: ldc.i4.7
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldstr "f6"
-		IL_000d: stelem.ref
-		IL_000e: dup
-		IL_000f: ldc.i4.1
-		IL_0010: ldarg.1
-		IL_0011: stelem.ref
-		IL_0012: dup
-		IL_0013: ldc.i4.2
-		IL_0014: ldarg.2
-		IL_0015: stelem.ref
-		IL_0016: dup
-		IL_0017: ldc.i4.3
-		IL_0018: ldarg.3
-		IL_0019: stelem.ref
-		IL_001a: dup
-		IL_001b: ldc.i4.4
+		IL_0000: newobj instance void Scopes.Function_GlobalFunctionWithMultipleParameters/f6::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters/f6::a
+		IL_000d: ldloc.0
+		IL_000e: ldarg.2
+		IL_000f: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters/f6::b
+		IL_0014: ldloc.0
+		IL_0015: ldarg.3
+		IL_0016: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters/f6::c
+		IL_001b: ldloc.0
 		IL_001c: ldarg.s d
-		IL_001e: stelem.ref
-		IL_001f: dup
-		IL_0020: ldc.i4.5
-		IL_0021: ldarg.s e
-		IL_0023: stelem.ref
-		IL_0024: dup
-		IL_0025: ldc.i4.6
-		IL_0026: ldarg.s f
-		IL_0028: stelem.ref
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_002e: pop
-		IL_002f: ldnull
-		IL_0030: ret
+		IL_001e: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters/f6::d
+		IL_0023: ldloc.0
+		IL_0024: ldarg.s e
+		IL_0026: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters/f6::e
+		IL_002b: ldloc.0
+		IL_002c: ldarg.s f
+		IL_002e: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters/f6::f
+		IL_0033: ldc.i4.7
+		IL_0034: newarr [System.Runtime]System.Object
+		IL_0039: dup
+		IL_003a: ldc.i4.0
+		IL_003b: ldstr "f6"
+		IL_0040: stelem.ref
+		IL_0041: dup
+		IL_0042: ldc.i4.1
+		IL_0043: ldarg.1
+		IL_0044: stelem.ref
+		IL_0045: dup
+		IL_0046: ldc.i4.2
+		IL_0047: ldarg.2
+		IL_0048: stelem.ref
+		IL_0049: dup
+		IL_004a: ldc.i4.3
+		IL_004b: ldarg.3
+		IL_004c: stelem.ref
+		IL_004d: dup
+		IL_004e: ldc.i4.4
+		IL_004f: ldarg.s d
+		IL_0051: stelem.ref
+		IL_0052: dup
+		IL_0053: ldc.i4.5
+		IL_0054: ldarg.s e
+		IL_0056: stelem.ref
+		IL_0057: dup
+		IL_0058: ldc.i4.6
+		IL_0059: ldarg.s f
+		IL_005b: stelem.ref
+		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0061: pop
+		IL_0062: ldnull
+		IL_0063: ret
 	} // end of method Function_GlobalFunctionWithMultipleParameters::f6
 
 } // end of class Functions.Function_GlobalFunctionWithMultipleParameters
@@ -403,9 +529,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c0
+		// Method begins at RVA 0x227c
 		// Header size: 12
-		// Code size: 739 (0x2e3)
+		// Code size: 799 (0x31f)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Function_GlobalFunctionWithMultipleParameters
@@ -444,186 +570,198 @@
 		IL_0068: newobj instance void class [System.Runtime]System.Func`8<object[], object, object, object, object, object, object, object>::.ctor(object, native int)
 		IL_006d: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f6
 		IL_0072: ldloc.0
-		IL_0073: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f1
-		IL_0078: dup
-		IL_0079: brtrue.s IL_0099
+		IL_0073: castclass Scopes.Function_GlobalFunctionWithMultipleParameters
+		IL_0078: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f1
+		IL_007d: dup
+		IL_007e: brtrue.s IL_00a3
 
-		IL_007b: pop
-		IL_007c: ldloc.0
-		IL_007d: ldnull
-		IL_007e: ldftn object Functions.Function_GlobalFunctionWithMultipleParameters::f1(object[], object)
-		IL_0084: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0089: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f1
-		IL_008e: ldloc.0
-		IL_008f: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f1
-		IL_0094: br IL_0099
+		IL_0080: pop
+		IL_0081: ldloc.0
+		IL_0082: ldnull
+		IL_0083: ldftn object Functions.Function_GlobalFunctionWithMultipleParameters::f1(object[], object)
+		IL_0089: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_008e: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f1
+		IL_0093: ldloc.0
+		IL_0094: castclass Scopes.Function_GlobalFunctionWithMultipleParameters
+		IL_0099: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f1
+		IL_009e: br IL_00a3
 
-		IL_0099: ldc.i4.1
-		IL_009a: newarr [System.Runtime]System.Object
-		IL_009f: dup
-		IL_00a0: ldc.i4.0
-		IL_00a1: ldloc.0
-		IL_00a2: stelem.ref
-		IL_00a3: ldc.r8 1
-		IL_00ac: box [System.Runtime]System.Double
-		IL_00b1: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_00b6: pop
-		IL_00b7: ldloc.0
-		IL_00b8: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f2
-		IL_00bd: dup
-		IL_00be: brtrue.s IL_00de
-
+		IL_00a3: ldc.i4.1
+		IL_00a4: newarr [System.Runtime]System.Object
+		IL_00a9: dup
+		IL_00aa: ldc.i4.0
+		IL_00ab: ldloc.0
+		IL_00ac: stelem.ref
+		IL_00ad: ldc.r8 1
+		IL_00b6: box [System.Runtime]System.Double
+		IL_00bb: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
 		IL_00c0: pop
 		IL_00c1: ldloc.0
-		IL_00c2: ldnull
-		IL_00c3: ldftn object Functions.Function_GlobalFunctionWithMultipleParameters::f2(object[], object, object)
-		IL_00c9: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-		IL_00ce: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f2
-		IL_00d3: ldloc.0
-		IL_00d4: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f2
-		IL_00d9: br IL_00de
+		IL_00c2: castclass Scopes.Function_GlobalFunctionWithMultipleParameters
+		IL_00c7: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f2
+		IL_00cc: dup
+		IL_00cd: brtrue.s IL_00f2
 
-		IL_00de: ldc.i4.1
-		IL_00df: newarr [System.Runtime]System.Object
-		IL_00e4: dup
-		IL_00e5: ldc.i4.0
-		IL_00e6: ldloc.0
-		IL_00e7: stelem.ref
-		IL_00e8: ldc.r8 1
-		IL_00f1: box [System.Runtime]System.Double
-		IL_00f6: ldc.r8 2
-		IL_00ff: box [System.Runtime]System.Double
-		IL_0104: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
-		IL_0109: pop
-		IL_010a: ldloc.0
-		IL_010b: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f3
-		IL_0110: dup
-		IL_0111: brtrue.s IL_0131
+		IL_00cf: pop
+		IL_00d0: ldloc.0
+		IL_00d1: ldnull
+		IL_00d2: ldftn object Functions.Function_GlobalFunctionWithMultipleParameters::f2(object[], object, object)
+		IL_00d8: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_00dd: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f2
+		IL_00e2: ldloc.0
+		IL_00e3: castclass Scopes.Function_GlobalFunctionWithMultipleParameters
+		IL_00e8: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f2
+		IL_00ed: br IL_00f2
 
-		IL_0113: pop
-		IL_0114: ldloc.0
-		IL_0115: ldnull
-		IL_0116: ldftn object Functions.Function_GlobalFunctionWithMultipleParameters::f3(object[], object, object, object)
-		IL_011c: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
-		IL_0121: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f3
-		IL_0126: ldloc.0
-		IL_0127: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f3
-		IL_012c: br IL_0131
+		IL_00f2: ldc.i4.1
+		IL_00f3: newarr [System.Runtime]System.Object
+		IL_00f8: dup
+		IL_00f9: ldc.i4.0
+		IL_00fa: ldloc.0
+		IL_00fb: stelem.ref
+		IL_00fc: ldc.r8 1
+		IL_0105: box [System.Runtime]System.Double
+		IL_010a: ldc.r8 2
+		IL_0113: box [System.Runtime]System.Double
+		IL_0118: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
+		IL_011d: pop
+		IL_011e: ldloc.0
+		IL_011f: castclass Scopes.Function_GlobalFunctionWithMultipleParameters
+		IL_0124: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f3
+		IL_0129: dup
+		IL_012a: brtrue.s IL_014f
 
-		IL_0131: ldc.i4.1
-		IL_0132: newarr [System.Runtime]System.Object
-		IL_0137: dup
-		IL_0138: ldc.i4.0
-		IL_0139: ldloc.0
-		IL_013a: stelem.ref
-		IL_013b: ldc.r8 1
-		IL_0144: box [System.Runtime]System.Double
-		IL_0149: ldc.r8 2
-		IL_0152: box [System.Runtime]System.Double
-		IL_0157: ldc.r8 3
-		IL_0160: box [System.Runtime]System.Double
-		IL_0165: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
-		IL_016a: pop
-		IL_016b: ldloc.0
-		IL_016c: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f4
-		IL_0171: dup
-		IL_0172: brtrue.s IL_0192
+		IL_012c: pop
+		IL_012d: ldloc.0
+		IL_012e: ldnull
+		IL_012f: ldftn object Functions.Function_GlobalFunctionWithMultipleParameters::f3(object[], object, object, object)
+		IL_0135: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
+		IL_013a: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f3
+		IL_013f: ldloc.0
+		IL_0140: castclass Scopes.Function_GlobalFunctionWithMultipleParameters
+		IL_0145: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f3
+		IL_014a: br IL_014f
 
-		IL_0174: pop
-		IL_0175: ldloc.0
-		IL_0176: ldnull
-		IL_0177: ldftn object Functions.Function_GlobalFunctionWithMultipleParameters::f4(object[], object, object, object, object)
-		IL_017d: newobj instance void class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::.ctor(object, native int)
-		IL_0182: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f4
-		IL_0187: ldloc.0
-		IL_0188: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f4
-		IL_018d: br IL_0192
+		IL_014f: ldc.i4.1
+		IL_0150: newarr [System.Runtime]System.Object
+		IL_0155: dup
+		IL_0156: ldc.i4.0
+		IL_0157: ldloc.0
+		IL_0158: stelem.ref
+		IL_0159: ldc.r8 1
+		IL_0162: box [System.Runtime]System.Double
+		IL_0167: ldc.r8 2
+		IL_0170: box [System.Runtime]System.Double
+		IL_0175: ldc.r8 3
+		IL_017e: box [System.Runtime]System.Double
+		IL_0183: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
+		IL_0188: pop
+		IL_0189: ldloc.0
+		IL_018a: castclass Scopes.Function_GlobalFunctionWithMultipleParameters
+		IL_018f: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f4
+		IL_0194: dup
+		IL_0195: brtrue.s IL_01ba
 
-		IL_0192: ldc.i4.1
-		IL_0193: newarr [System.Runtime]System.Object
-		IL_0198: dup
-		IL_0199: ldc.i4.0
-		IL_019a: ldloc.0
-		IL_019b: stelem.ref
-		IL_019c: ldc.r8 1
-		IL_01a5: box [System.Runtime]System.Double
-		IL_01aa: ldc.r8 2
-		IL_01b3: box [System.Runtime]System.Double
-		IL_01b8: ldc.r8 3
-		IL_01c1: box [System.Runtime]System.Double
-		IL_01c6: ldc.r8 4
-		IL_01cf: box [System.Runtime]System.Double
-		IL_01d4: callvirt instance !5 class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::Invoke(!0, !1, !2, !3, !4)
-		IL_01d9: pop
-		IL_01da: ldloc.0
-		IL_01db: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f5
-		IL_01e0: dup
-		IL_01e1: brtrue.s IL_0201
+		IL_0197: pop
+		IL_0198: ldloc.0
+		IL_0199: ldnull
+		IL_019a: ldftn object Functions.Function_GlobalFunctionWithMultipleParameters::f4(object[], object, object, object, object)
+		IL_01a0: newobj instance void class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::.ctor(object, native int)
+		IL_01a5: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f4
+		IL_01aa: ldloc.0
+		IL_01ab: castclass Scopes.Function_GlobalFunctionWithMultipleParameters
+		IL_01b0: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f4
+		IL_01b5: br IL_01ba
 
-		IL_01e3: pop
-		IL_01e4: ldloc.0
-		IL_01e5: ldnull
-		IL_01e6: ldftn object Functions.Function_GlobalFunctionWithMultipleParameters::f5(object[], object, object, object, object, object)
-		IL_01ec: newobj instance void class [System.Runtime]System.Func`7<object[], object, object, object, object, object, object>::.ctor(object, native int)
-		IL_01f1: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f5
-		IL_01f6: ldloc.0
-		IL_01f7: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f5
-		IL_01fc: br IL_0201
+		IL_01ba: ldc.i4.1
+		IL_01bb: newarr [System.Runtime]System.Object
+		IL_01c0: dup
+		IL_01c1: ldc.i4.0
+		IL_01c2: ldloc.0
+		IL_01c3: stelem.ref
+		IL_01c4: ldc.r8 1
+		IL_01cd: box [System.Runtime]System.Double
+		IL_01d2: ldc.r8 2
+		IL_01db: box [System.Runtime]System.Double
+		IL_01e0: ldc.r8 3
+		IL_01e9: box [System.Runtime]System.Double
+		IL_01ee: ldc.r8 4
+		IL_01f7: box [System.Runtime]System.Double
+		IL_01fc: callvirt instance !5 class [System.Runtime]System.Func`6<object[], object, object, object, object, object>::Invoke(!0, !1, !2, !3, !4)
+		IL_0201: pop
+		IL_0202: ldloc.0
+		IL_0203: castclass Scopes.Function_GlobalFunctionWithMultipleParameters
+		IL_0208: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f5
+		IL_020d: dup
+		IL_020e: brtrue.s IL_0233
 
-		IL_0201: ldc.i4.1
-		IL_0202: newarr [System.Runtime]System.Object
-		IL_0207: dup
-		IL_0208: ldc.i4.0
-		IL_0209: ldloc.0
-		IL_020a: stelem.ref
-		IL_020b: ldc.r8 1
-		IL_0214: box [System.Runtime]System.Double
-		IL_0219: ldc.r8 2
-		IL_0222: box [System.Runtime]System.Double
-		IL_0227: ldc.r8 3
-		IL_0230: box [System.Runtime]System.Double
-		IL_0235: ldc.r8 4
-		IL_023e: box [System.Runtime]System.Double
-		IL_0243: ldc.r8 5
-		IL_024c: box [System.Runtime]System.Double
-		IL_0251: callvirt instance !6 class [System.Runtime]System.Func`7<object[], object, object, object, object, object, object>::Invoke(!0, !1, !2, !3, !4, !5)
-		IL_0256: pop
-		IL_0257: ldloc.0
-		IL_0258: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f6
-		IL_025d: dup
-		IL_025e: brtrue.s IL_027e
+		IL_0210: pop
+		IL_0211: ldloc.0
+		IL_0212: ldnull
+		IL_0213: ldftn object Functions.Function_GlobalFunctionWithMultipleParameters::f5(object[], object, object, object, object, object)
+		IL_0219: newobj instance void class [System.Runtime]System.Func`7<object[], object, object, object, object, object, object>::.ctor(object, native int)
+		IL_021e: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f5
+		IL_0223: ldloc.0
+		IL_0224: castclass Scopes.Function_GlobalFunctionWithMultipleParameters
+		IL_0229: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f5
+		IL_022e: br IL_0233
 
-		IL_0260: pop
-		IL_0261: ldloc.0
-		IL_0262: ldnull
-		IL_0263: ldftn object Functions.Function_GlobalFunctionWithMultipleParameters::f6(object[], object, object, object, object, object, object)
-		IL_0269: newobj instance void class [System.Runtime]System.Func`8<object[], object, object, object, object, object, object, object>::.ctor(object, native int)
-		IL_026e: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f6
-		IL_0273: ldloc.0
-		IL_0274: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f6
-		IL_0279: br IL_027e
+		IL_0233: ldc.i4.1
+		IL_0234: newarr [System.Runtime]System.Object
+		IL_0239: dup
+		IL_023a: ldc.i4.0
+		IL_023b: ldloc.0
+		IL_023c: stelem.ref
+		IL_023d: ldc.r8 1
+		IL_0246: box [System.Runtime]System.Double
+		IL_024b: ldc.r8 2
+		IL_0254: box [System.Runtime]System.Double
+		IL_0259: ldc.r8 3
+		IL_0262: box [System.Runtime]System.Double
+		IL_0267: ldc.r8 4
+		IL_0270: box [System.Runtime]System.Double
+		IL_0275: ldc.r8 5
+		IL_027e: box [System.Runtime]System.Double
+		IL_0283: callvirt instance !6 class [System.Runtime]System.Func`7<object[], object, object, object, object, object, object>::Invoke(!0, !1, !2, !3, !4, !5)
+		IL_0288: pop
+		IL_0289: ldloc.0
+		IL_028a: castclass Scopes.Function_GlobalFunctionWithMultipleParameters
+		IL_028f: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f6
+		IL_0294: dup
+		IL_0295: brtrue.s IL_02ba
 
-		IL_027e: ldc.i4.1
-		IL_027f: newarr [System.Runtime]System.Object
-		IL_0284: dup
-		IL_0285: ldc.i4.0
-		IL_0286: ldloc.0
-		IL_0287: stelem.ref
-		IL_0288: ldc.r8 1
-		IL_0291: box [System.Runtime]System.Double
-		IL_0296: ldc.r8 2
-		IL_029f: box [System.Runtime]System.Double
-		IL_02a4: ldc.r8 3
-		IL_02ad: box [System.Runtime]System.Double
-		IL_02b2: ldc.r8 4
-		IL_02bb: box [System.Runtime]System.Double
-		IL_02c0: ldc.r8 5
-		IL_02c9: box [System.Runtime]System.Double
-		IL_02ce: ldc.r8 6
-		IL_02d7: box [System.Runtime]System.Double
-		IL_02dc: callvirt instance !7 class [System.Runtime]System.Func`8<object[], object, object, object, object, object, object, object>::Invoke(!0, !1, !2, !3, !4, !5, !6)
-		IL_02e1: pop
-		IL_02e2: ret
+		IL_0297: pop
+		IL_0298: ldloc.0
+		IL_0299: ldnull
+		IL_029a: ldftn object Functions.Function_GlobalFunctionWithMultipleParameters::f6(object[], object, object, object, object, object, object)
+		IL_02a0: newobj instance void class [System.Runtime]System.Func`8<object[], object, object, object, object, object, object, object>::.ctor(object, native int)
+		IL_02a5: stfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f6
+		IL_02aa: ldloc.0
+		IL_02ab: castclass Scopes.Function_GlobalFunctionWithMultipleParameters
+		IL_02b0: ldfld object Scopes.Function_GlobalFunctionWithMultipleParameters::f6
+		IL_02b5: br IL_02ba
+
+		IL_02ba: ldc.i4.1
+		IL_02bb: newarr [System.Runtime]System.Object
+		IL_02c0: dup
+		IL_02c1: ldc.i4.0
+		IL_02c2: ldloc.0
+		IL_02c3: stelem.ref
+		IL_02c4: ldc.r8 1
+		IL_02cd: box [System.Runtime]System.Double
+		IL_02d2: ldc.r8 2
+		IL_02db: box [System.Runtime]System.Double
+		IL_02e0: ldc.r8 3
+		IL_02e9: box [System.Runtime]System.Double
+		IL_02ee: ldc.r8 4
+		IL_02f7: box [System.Runtime]System.Double
+		IL_02fc: ldc.r8 5
+		IL_0305: box [System.Runtime]System.Double
+		IL_030a: ldc.r8 6
+		IL_0313: box [System.Runtime]System.Double
+		IL_0318: callvirt instance !7 class [System.Runtime]System.Func`8<object[], object, object, object, object, object, object, object>::Invoke(!0, !1, !2, !3, !4, !5, !6)
+		IL_031d: pop
+		IL_031e: ret
 	} // end of method Function_GlobalFunctionWithMultipleParameters::Main
 
 } // end of class Scripts.Function_GlobalFunctionWithMultipleParameters
@@ -635,7 +773,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x24af
+		// Method begins at RVA 0x25a7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

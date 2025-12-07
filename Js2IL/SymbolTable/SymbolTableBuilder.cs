@@ -52,6 +52,23 @@ namespace Js2IL.SymbolTables
                         break;
                     }
                 }
+                
+                // Also check class field initializers directly
+                if (!scope.ReferencesParentScopeVariables && scope.AstNode is ClassDeclaration classDecl)
+                {
+                    var localVariables = new HashSet<string>(scope.Bindings.Keys);
+                    foreach (var element in classDecl.Body.Body)
+                    {
+                        if (element is PropertyDefinition propDef && propDef.Value != null)
+                        {
+                            if (ContainsFreeVariable(propDef.Value, localVariables))
+                            {
+                                scope.ReferencesParentScopeVariables = true;
+                                break;
+                            }
+                        }
+                    }
+                }
             }
             // For function scopes, check if the function body references any non-local variables
             else if (scope.Kind == ScopeKind.Function && scope.AstNode is FunctionExpression funcExpr)
@@ -65,6 +82,28 @@ namespace Js2IL.SymbolTables
                 {
                     scope.ReferencesParentScopeVariables = CheckBodyReferencesParentVariables(body, scope);
                 }
+            }
+            else if (scope.Kind == ScopeKind.Function && scope.AstNode is ArrowFunctionExpression arrowExpr)
+            {
+                scope.ReferencesParentScopeVariables = CheckArrowFunctionReferencesParentVariables(arrowExpr, scope);
+            }
+        }
+
+        /// <summary>
+        /// Checks if an arrow function references variables not declared locally or in parameters.
+        /// </summary>
+        private bool CheckArrowFunctionReferencesParentVariables(ArrowFunctionExpression arrowExpr, Scope functionScope)
+        {
+            if (arrowExpr.Body is BlockStatement body)
+            {
+                return CheckBodyReferencesParentVariables(body, functionScope);
+            }
+            else
+            {
+                // Expression body - check the expression directly
+                var localVariables = new HashSet<string>(functionScope.Bindings.Keys);
+                localVariables.UnionWith(functionScope.Parameters);
+                return ContainsFreeVariable(arrowExpr.Body, localVariables);
             }
         }
 
@@ -212,6 +251,14 @@ namespace Js2IL.SymbolTables
                                 }
                             }
                         }
+                        else if (element is PropertyDefinition propDef)
+                        {
+                            // Check field initializer expressions (instance or static fields)
+                            if (propDef.Value != null && ContainsFreeVariable(propDef.Value, localVariables))
+                            {
+                                return true;
+                            }
+                        }
                     }
                     return false;
 
@@ -240,12 +287,279 @@ namespace Js2IL.SymbolTables
                    name == "setTimeout" || name == "setInterval" || name == "clearTimeout" || name == "clearInterval";
         }
 
+        /// <summary>
+        /// Marks variables as captured if they are referenced by any child scope.
+        /// This enables optimization: uncaptured variables can use local variables instead of fields.
+        /// </summary>
+        private void MarkCapturedVariables(Scope scope)
+        {
+            // For each child scope that references parent variables
+            foreach (var child in scope.Children)
+            {
+                if (child.ReferencesParentScopeVariables)
+                {
+                    // Find which specific variables from this scope (and ancestors) are referenced by the child
+                    var capturedVars = CollectReferencedParentVariables(child, scope);
+                    foreach (var varName in capturedVars)
+                    {
+                        // Mark the variable in whichever ancestor scope it's declared
+                        var searchScope = scope;
+                        while (searchScope != null)
+                        {
+                            if (searchScope.Bindings.TryGetValue(varName, out var binding))
+                            {
+                                binding.IsCaptured = true;
+                                break;
+                            }
+                            searchScope = searchScope.Parent;
+                        }
+                    }
+                }
+                
+                // Recurse into child scopes
+                MarkCapturedVariables(child);
+            }
+        }
+
+        /// <summary>
+        /// Collects the names of variables from targetScope (and its ancestors) that are referenced in childScope's AST node.
+        /// </summary>
+        private HashSet<string> CollectReferencedParentVariables(Scope childScope, Scope targetScope)
+        {
+            var result = new HashSet<string>();
+            var childLocals = new HashSet<string>(childScope.Bindings.Keys);
+            childLocals.UnionWith(childScope.Parameters);
+            
+            // Collect all ancestor variables, not just immediate parent
+            var ancestorVariables = new HashSet<string>();
+            var currentAncestor = targetScope;
+            while (currentAncestor != null)
+            {
+                foreach (var key in currentAncestor.Bindings.Keys)
+                {
+                    ancestorVariables.Add(key);
+                }
+                currentAncestor = currentAncestor.Parent;
+            }
+            
+            if (childScope.AstNode != null)
+            {
+                CollectFreeVariables(childScope.AstNode, childLocals, ancestorVariables, result);
+            }
+            
+            return result;
+        }
+
+        /// <summary>
+        /// Recursively collects identifiers that are not in localVariables but are in targetVariables.
+        /// </summary>
+        private void CollectFreeVariables(Node? node, HashSet<string> localVariables, HashSet<string> targetVariables, HashSet<string> result)
+        {
+            if (node == null) return;
+
+            switch (node)
+            {
+                case Identifier id:
+                    // If this identifier is not local, not a global intrinsic, and is in target scope
+                    if (!localVariables.Contains(id.Name) && 
+                        !IsKnownGlobalIntrinsic(id.Name) && 
+                        targetVariables.Contains(id.Name))
+                    {
+                        result.Add(id.Name);
+                    }
+                    break;
+
+                case VariableDeclaration vd:
+                    // Add declared variables to local set
+                    var newLocals = new HashSet<string>(localVariables);
+                    foreach (var decl in vd.Declarations)
+                    {
+                        if (decl.Id is Identifier vid)
+                        {
+                            newLocals.Add(vid.Name);
+                        }
+                    }
+                    // Check initializers with updated local set
+                    foreach (var decl in vd.Declarations)
+                    {
+                        CollectFreeVariables(decl.Init, newLocals, targetVariables, result);
+                    }
+                    break;
+
+                case BlockStatement bs:
+                    foreach (var stmt in bs.Body)
+                    {
+                        CollectFreeVariables(stmt, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case ExpressionStatement es:
+                    CollectFreeVariables(es.Expression, localVariables, targetVariables, result);
+                    break;
+
+                case ReturnStatement rs:
+                    CollectFreeVariables(rs.Argument, localVariables, targetVariables, result);
+                    break;
+
+                case IfStatement ifs:
+                    CollectFreeVariables(ifs.Test, localVariables, targetVariables, result);
+                    CollectFreeVariables(ifs.Consequent, localVariables, targetVariables, result);
+                    CollectFreeVariables(ifs.Alternate, localVariables, targetVariables, result);
+                    break;
+
+                case ForStatement fs:
+                    CollectFreeVariables(fs.Init as Node, localVariables, targetVariables, result);
+                    CollectFreeVariables(fs.Test, localVariables, targetVariables, result);
+                    CollectFreeVariables(fs.Update, localVariables, targetVariables, result);
+                    CollectFreeVariables(fs.Body, localVariables, targetVariables, result);
+                    break;
+
+                case WhileStatement ws:
+                    CollectFreeVariables(ws.Test, localVariables, targetVariables, result);
+                    CollectFreeVariables(ws.Body, localVariables, targetVariables, result);
+                    break;
+
+                case DoWhileStatement dws:
+                    CollectFreeVariables(dws.Body, localVariables, targetVariables, result);
+                    CollectFreeVariables(dws.Test, localVariables, targetVariables, result);
+                    break;
+
+                case BinaryExpression be:
+                    CollectFreeVariables(be.Left, localVariables, targetVariables, result);
+                    CollectFreeVariables(be.Right, localVariables, targetVariables, result);
+                    break;
+
+                case UpdateExpression upe:
+                    CollectFreeVariables(upe.Argument, localVariables, targetVariables, result);
+                    break;
+
+                case UnaryExpression ue:
+                    CollectFreeVariables(ue.Argument, localVariables, targetVariables, result);
+                    break;
+
+                case CallExpression ce:
+                    CollectFreeVariables(ce.Callee, localVariables, targetVariables, result);
+                    foreach (var arg in ce.Arguments)
+                    {
+                        CollectFreeVariables(arg as Node, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case MemberExpression me:
+                    CollectFreeVariables(me.Object, localVariables, targetVariables, result);
+                    if (me.Computed)
+                    {
+                        CollectFreeVariables(me.Property as Node, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case AssignmentExpression ae:
+                    CollectFreeVariables(ae.Left, localVariables, targetVariables, result);
+                    CollectFreeVariables(ae.Right, localVariables, targetVariables, result);
+                    break;
+
+                case ConditionalExpression ce:
+                    CollectFreeVariables(ce.Test, localVariables, targetVariables, result);
+                    CollectFreeVariables(ce.Consequent, localVariables, targetVariables, result);
+                    CollectFreeVariables(ce.Alternate, localVariables, targetVariables, result);
+                    break;
+
+                case ArrayExpression arr:
+                    foreach (var elem in arr.Elements)
+                    {
+                        CollectFreeVariables(elem as Node, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case ObjectExpression obj:
+                    foreach (var prop in obj.Properties)
+                    {
+                        CollectFreeVariables(prop, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case Property prop:
+                    CollectFreeVariables(prop.Key as Node, localVariables, targetVariables, result);
+                    CollectFreeVariables(prop.Value as Node, localVariables, targetVariables, result);
+                    break;
+
+                case FunctionDeclaration funcDecl:
+                    // Process the function body with the function's local variables
+                    if (funcDecl.Body is BlockStatement funcBody)
+                    {
+                        foreach (var stmt in funcBody.Body)
+                        {
+                            CollectFreeVariables(stmt, localVariables, targetVariables, result);
+                        }
+                    }
+                    break;
+
+                case FunctionExpression funcExpr:
+                    // Process the function body with the function's local variables
+                    if (funcExpr.Body is BlockStatement funcExprBody)
+                    {
+                        foreach (var stmt in funcExprBody.Body)
+                        {
+                            CollectFreeVariables(stmt, localVariables, targetVariables, result);
+                        }
+                    }
+                    break;
+
+                case ArrowFunctionExpression arrowExpr:
+                    // Process the arrow function body
+                    if (arrowExpr.Body is BlockStatement arrowBody)
+                    {
+                        foreach (var stmt in arrowBody.Body)
+                        {
+                            CollectFreeVariables(stmt, localVariables, targetVariables, result);
+                        }
+                    }
+                    else
+                    {
+                        // Expression body
+                        CollectFreeVariables(arrowExpr.Body, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case ClassDeclaration classDecl:
+                    // Process class methods and field initializers
+                    foreach (var element in classDecl.Body.Body)
+                    {
+                        if (element is MethodDefinition mdef && mdef.Value is FunctionExpression mfunc)
+                        {
+                            // Process method body
+                            if (mfunc.Body is BlockStatement mblock)
+                            {
+                                foreach (var stmt in mblock.Body)
+                                {
+                                    CollectFreeVariables(stmt, localVariables, targetVariables, result);
+                                }
+                            }
+                        }
+                        else if (element is PropertyDefinition propDef)
+                        {
+                            // Process field initializer expression
+                            if (propDef.Value != null)
+                            {
+                                CollectFreeVariables(propDef.Value, localVariables, targetVariables, result);
+                            }
+                        }
+                    }
+                    break;
+
+                default:
+                    // For unknown node types, do nothing
+                    break;
+            }
+        }
+
         public SymbolTable Build(Node astRoot, string filePath)
         {
             var fileName = Path.GetFileNameWithoutExtension(filePath);
             var globalScope = new Scope(fileName, ScopeKind.Global, null, astRoot);
             BuildScopeRecursive(astRoot, globalScope);
             AnalyzeFreeVariables(globalScope);
+            MarkCapturedVariables(globalScope);
             return new SymbolTable(globalScope);
         }
 
@@ -294,10 +608,22 @@ namespace Js2IL.SymbolTables
                                     {
                                         if (pnode is Property prop)
                                         {
-                                            var bindId = prop.Value as Identifier ?? prop.Key as Identifier;
+                                            // Handle default values: {a = 10} where Value is AssignmentPattern
+                                            Identifier? bindId = null;
+                                            if (prop.Value is AssignmentPattern apPattern && apPattern.Left is Identifier apLeftId)
+                                            {
+                                                bindId = apLeftId;
+                                            }
+                                            else
+                                            {
+                                                bindId = prop.Value as Identifier ?? prop.Key as Identifier;
+                                            }
+                                            
                                             if (bindId != null && !methodScope.Bindings.ContainsKey(bindId.Name))
                                             {
                                                 methodScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, bindId);
+                                                // Mark as parameter so TypeGenerator creates fields/locals for them
+                                                methodScope.Parameters.Add(bindId.Name);
                                             }
                                         }
                                     }
@@ -539,11 +865,24 @@ namespace Js2IL.SymbolTables
                             {
                                 if (pnode is Property prop)
                                 {
-                                    // Binding target name: prefer value identifier (alias), else shorthand key identifier
-                                    var bindId = prop.Value as Identifier ?? prop.Key as Identifier;
+                                    // Handle default values: {a = 10} where Value is AssignmentPattern
+                                    // Extract the binding identifier
+                                    Identifier? bindId = null;
+                                    if (prop.Value is AssignmentPattern apPattern && apPattern.Left is Identifier apLeftId)
+                                    {
+                                        bindId = apLeftId;
+                                    }
+                                    else
+                                    {
+                                        // Binding target name: prefer value identifier (alias), else shorthand key identifier
+                                        bindId = prop.Value as Identifier ?? prop.Key as Identifier;
+                                    }
+                                    
                                     if (bindId != null && !arrowScope.Bindings.ContainsKey(bindId.Name))
                                     {
                                         arrowScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, bindId);
+                                        // Mark as parameter so TypeGenerator creates fields for them
+                                        arrowScope.Parameters.Add(bindId.Name);
                                     }
                                 }
                             }
@@ -767,14 +1106,58 @@ namespace Js2IL.SymbolTables
                     {
                         if (pnode is Property prop)
                         {
-                            var bindId = prop.Value as Identifier ?? prop.Key as Identifier;
+                            // Handle default values: {a = 10} where Value is AssignmentPattern
+                            Identifier? bindId = null;
+                            if (prop.Value is AssignmentPattern apPattern && apPattern.Left is Identifier apLeftId)
+                            {
+                                bindId = apLeftId;
+                            }
+                            else
+                            {
+                                bindId = prop.Value as Identifier ?? prop.Key as Identifier;
+                            }
+                            
                             if (bindId != null && !scope.Bindings.ContainsKey(bindId.Name))
                             {
                                 scope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, bindId);
                             }
+                            // Add destructured properties to Parameters set so TypeGenerator creates fields/locals
+                            if (bindId != null && !scope.Parameters.Contains(bindId.Name))
+                            {
+                                scope.Parameters.Add(bindId.Name);
+                            }
                         }
                     }
-                    // Note: pattern itself gets a synthetic CLR parameter during codegen; nothing added to scope.Parameters here.
+                }
+                else if (p is AssignmentPattern ap2 && ap2.Left is ObjectPattern opWithDefault)
+                {
+                    // Handle destructured parameter with default value: { x, y } = { x: 0, y: 0 }
+                    foreach (var pnode in opWithDefault.Properties)
+                    {
+                        if (pnode is Property prop)
+                        {
+                            // Handle nested default values: {a = 10} = {...} where Value is AssignmentPattern
+                            Identifier? bindId = null;
+                            if (prop.Value is AssignmentPattern apPattern && apPattern.Left is Identifier apLeftId)
+                            {
+                                bindId = apLeftId;
+                            }
+                            else
+                            {
+                                bindId = prop.Value as Identifier ?? prop.Key as Identifier;
+                            }
+                            
+                            if (bindId != null && !scope.Bindings.ContainsKey(bindId.Name))
+                            {
+                                scope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, bindId);
+                            }
+                            // Add destructured properties to Parameters set
+                            if (bindId != null && !scope.Parameters.Contains(bindId.Name))
+                            {
+                                scope.Parameters.Add(bindId.Name);
+                            }
+                        }
+                    }
                 }
             }
         }

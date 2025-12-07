@@ -50,12 +50,6 @@
 	} // end of class TestClass
 
 
-	// Fields
-	.field public object TestClass
-	.field public object obj
-	.field public object methodResult
-	.field public object literalValue
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -114,89 +108,77 @@
 	{
 		// Method begins at RVA 0x209c
 		// Header size: 12
-		// Code size: 236 (0xec)
+		// Code size: 161 (0xa1)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.BinaryOperator_EqualMethodReturn
+			[0] class Scopes.BinaryOperator_EqualMethodReturn,
+			[1] object,
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Scopes.BinaryOperator_EqualMethodReturn::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: newobj instance void Classes.TestClass::.ctor()
-		IL_000c: stfld object Scopes.BinaryOperator_EqualMethodReturn::obj
-		IL_0011: ldloc.0
-		IL_0012: ldloc.0
-		IL_0013: castclass Scopes.BinaryOperator_EqualMethodReturn
-		IL_0018: ldfld object Scopes.BinaryOperator_EqualMethodReturn::obj
-		IL_001d: callvirt instance object Classes.TestClass::getValue()
-		IL_0022: stfld object Scopes.BinaryOperator_EqualMethodReturn::methodResult
-		IL_0027: ldloc.0
-		IL_0028: ldc.r8 4
-		IL_0031: box [System.Runtime]System.Double
-		IL_0036: stfld object Scopes.BinaryOperator_EqualMethodReturn::literalValue
-		IL_003b: ldc.i4.2
-		IL_003c: newarr [System.Runtime]System.Object
-		IL_0041: dup
-		IL_0042: ldc.i4.0
-		IL_0043: ldstr "methodResult == literalValue:"
-		IL_0048: stelem.ref
-		IL_0049: dup
-		IL_004a: ldc.i4.1
-		IL_004b: ldloc.0
-		IL_004c: castclass Scopes.BinaryOperator_EqualMethodReturn
-		IL_0051: ldfld object Scopes.BinaryOperator_EqualMethodReturn::methodResult
-		IL_0056: ldloc.0
-		IL_0057: castclass Scopes.BinaryOperator_EqualMethodReturn
-		IL_005c: ldfld object Scopes.BinaryOperator_EqualMethodReturn::literalValue
-		IL_0061: unbox.any [System.Runtime]System.Double
-		IL_0066: ceq
-		IL_0068: box [System.Runtime]System.Boolean
-		IL_006d: stelem.ref
-		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0073: pop
-		IL_0074: ldc.i4.2
-		IL_0075: newarr [System.Runtime]System.Object
-		IL_007a: dup
-		IL_007b: ldc.i4.0
-		IL_007c: ldstr "literalValue == methodResult:"
-		IL_0081: stelem.ref
-		IL_0082: dup
-		IL_0083: ldc.i4.1
-		IL_0084: ldloc.0
-		IL_0085: castclass Scopes.BinaryOperator_EqualMethodReturn
-		IL_008a: ldfld object Scopes.BinaryOperator_EqualMethodReturn::literalValue
-		IL_008f: unbox.any [System.Runtime]System.Double
-		IL_0094: ldloc.0
-		IL_0095: castclass Scopes.BinaryOperator_EqualMethodReturn
-		IL_009a: ldfld object Scopes.BinaryOperator_EqualMethodReturn::methodResult
-		IL_009f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_00a4: ceq
-		IL_00a6: box [System.Runtime]System.Boolean
-		IL_00ab: stelem.ref
-		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_00b1: pop
-		IL_00b2: ldc.i4.2
-		IL_00b3: newarr [System.Runtime]System.Object
-		IL_00b8: dup
-		IL_00b9: ldc.i4.0
-		IL_00ba: ldstr "methodResult === literalValue:"
-		IL_00bf: stelem.ref
-		IL_00c0: dup
-		IL_00c1: ldc.i4.1
-		IL_00c2: ldloc.0
-		IL_00c3: castclass Scopes.BinaryOperator_EqualMethodReturn
-		IL_00c8: ldfld object Scopes.BinaryOperator_EqualMethodReturn::methodResult
-		IL_00cd: ldloc.0
-		IL_00ce: castclass Scopes.BinaryOperator_EqualMethodReturn
-		IL_00d3: ldfld object Scopes.BinaryOperator_EqualMethodReturn::literalValue
-		IL_00d8: unbox.any [System.Runtime]System.Double
-		IL_00dd: ceq
-		IL_00df: box [System.Runtime]System.Boolean
-		IL_00e4: stelem.ref
-		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_00ea: pop
-		IL_00eb: ret
+		IL_0006: newobj instance void Classes.TestClass::.ctor()
+		IL_000b: stloc.1
+		IL_000c: ldloc.1
+		IL_000d: callvirt instance object Classes.TestClass::getValue()
+		IL_0012: stloc.2
+		IL_0013: ldc.r8 4
+		IL_001c: box [System.Runtime]System.Double
+		IL_0021: stloc.3
+		IL_0022: ldc.i4.2
+		IL_0023: newarr [System.Runtime]System.Object
+		IL_0028: dup
+		IL_0029: ldc.i4.0
+		IL_002a: ldstr "methodResult == literalValue:"
+		IL_002f: stelem.ref
+		IL_0030: dup
+		IL_0031: ldc.i4.1
+		IL_0032: ldloc.2
+		IL_0033: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0038: ldloc.3
+		IL_0039: unbox.any [System.Runtime]System.Double
+		IL_003e: ceq
+		IL_0040: box [System.Runtime]System.Boolean
+		IL_0045: stelem.ref
+		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_004b: pop
+		IL_004c: ldc.i4.2
+		IL_004d: newarr [System.Runtime]System.Object
+		IL_0052: dup
+		IL_0053: ldc.i4.0
+		IL_0054: ldstr "literalValue == methodResult:"
+		IL_0059: stelem.ref
+		IL_005a: dup
+		IL_005b: ldc.i4.1
+		IL_005c: ldloc.3
+		IL_005d: unbox.any [System.Runtime]System.Double
+		IL_0062: ldloc.2
+		IL_0063: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0068: ceq
+		IL_006a: box [System.Runtime]System.Boolean
+		IL_006f: stelem.ref
+		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0075: pop
+		IL_0076: ldc.i4.2
+		IL_0077: newarr [System.Runtime]System.Object
+		IL_007c: dup
+		IL_007d: ldc.i4.0
+		IL_007e: ldstr "methodResult === literalValue:"
+		IL_0083: stelem.ref
+		IL_0084: dup
+		IL_0085: ldc.i4.1
+		IL_0086: ldloc.2
+		IL_0087: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_008c: ldloc.3
+		IL_008d: unbox.any [System.Runtime]System.Double
+		IL_0092: ceq
+		IL_0094: box [System.Runtime]System.Boolean
+		IL_0099: stelem.ref
+		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_009f: pop
+		IL_00a0: ret
 	} // end of method BinaryOperator_EqualMethodReturn::Main
 
 } // end of class Scripts.BinaryOperator_EqualMethodReturn
@@ -208,7 +190,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2194
+		// Method begins at RVA 0x2149
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

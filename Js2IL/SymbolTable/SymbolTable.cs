@@ -57,17 +57,17 @@ namespace Js2IL.SymbolTables
         public ScopeKind Kind { get; }
         public Node? AstNode { get; }
 
-    /// <summary>
-    /// Authoritative .NET namespace for this scope's generated type (if any).
-    /// When null, generators may apply a default.
-    /// </summary>
-    public string? DotNetNamespace { get; set; }
+        /// <summary>
+        /// Authoritative .NET namespace for this scope's generated type (if any).
+        /// When null, generators may apply a default.
+        /// </summary>
+        public string? DotNetNamespace { get; set; }
 
-    /// <summary>
-    /// Authoritative .NET simple type name for this scope's generated type (if any).
-    /// When null, generators may use <see cref="Name"/>.
-    /// </summary>
-    public string? DotNetTypeName { get; set; }
+        /// <summary>
+        /// Authoritative .NET simple type name for this scope's generated type (if any).
+        /// When null, generators may use <see cref="Name"/>.
+        /// </summary>
+        public string? DotNetTypeName { get; set; }
 
         /// <summary>
         /// Indicates whether this scope (or its child scopes) references variables declared in parent scopes.
@@ -84,14 +84,42 @@ namespace Js2IL.SymbolTables
             AstNode = astNode;
             Parent?.Children.Add(this);
         }
+
+        /// <summary>
+        /// Gets the fully qualified scope name by walking up the parent chain.
+        /// E.g., "Point/constructor" for a constructor in the Point class.
+        /// For the global scope, returns its name directly.
+        /// </summary>
+        public string GetQualifiedName()
+        {
+            // Special case: global scope returns its name
+            if (Kind == ScopeKind.Global)
+            {
+                return Name;
+            }
+            
+            var parts = new System.Collections.Generic.List<string>();
+            var current = this;
+            while (current != null)
+            {
+                // Don't include the global scope in the qualified path
+                if (current.Kind != ScopeKind.Global)
+                {
+                    parts.Add(current.Name);
+                }
+                current = current.Parent;
+            }
+            parts.Reverse();
+            return string.Join("/", parts);
+        }
     }
 
     public enum ScopeKind
     {
         Global,
-    Function,
-    Block,
-    Class
+        Function,
+        Block,
+        Class
     }
 
     public class BindingInfo
@@ -99,8 +127,14 @@ namespace Js2IL.SymbolTables
         public string Name { get; }
         public BindingKind Kind { get; }
         public Node DeclarationNode { get; }
-    // Optional: CLR runtime type known via static analysis (e.g., const fs = require('fs'))
-    public Type? RuntimeIntrinsicType { get; set; }
+        // Optional: CLR runtime type known via static analysis (e.g., const fs = require('fs'))
+        public Type? RuntimeIntrinsicType { get; set; }
+        
+        /// <summary>
+        /// Indicates whether this variable is captured (referenced) by any child scope.
+        /// When false, the variable can be optimized to use local variables instead of fields.
+        /// </summary>
+        public bool IsCaptured { get; set; }
 
         public BindingInfo(string name, BindingKind kind, Node declarationNode)
         {

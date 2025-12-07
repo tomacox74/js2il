@@ -10,6 +10,10 @@
 	.class nested public auto ansi beforefieldinit ArrowFunction_L2C12
 		extends [System.Runtime]System.Object
 	{
+		// Fields
+		.field public object a
+		.field public object b
+
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -27,9 +31,6 @@
 
 	} // end of class ArrowFunction_L2C12
 
-
-	// Fields
-	.field public object values
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -61,32 +62,47 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 55 (0x37)
+		// Code size: 95 (0x5f)
 		.maxstack 32
+		.locals init (
+			[0] class Scopes.String_LocaleCompare_Numeric/ArrowFunction_L2C12
+		)
 
-		IL_0000: ldarg.1
-		IL_0001: ldstr "localeCompare"
-		IL_0006: ldc.i4.3
-		IL_0007: newarr [System.Runtime]System.Object
-		IL_000c: dup
-		IL_000d: ldc.i4.0
+		IL_0000: newobj instance void Scopes.String_LocaleCompare_Numeric/ArrowFunction_L2C12::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object Scopes.String_LocaleCompare_Numeric/ArrowFunction_L2C12::a
+		IL_000d: ldloc.0
 		IL_000e: ldarg.2
-		IL_000f: stelem.ref
-		IL_0010: dup
-		IL_0011: ldc.i4.1
-		IL_0012: ldstr "en"
-		IL_0017: stelem.ref
-		IL_0018: dup
-		IL_0019: ldc.i4.2
-		IL_001a: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_001f: dup
-		IL_0020: ldstr "numeric"
-		IL_0025: ldc.i4.1
-		IL_0026: box [System.Runtime]System.Boolean
-		IL_002b: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0030: stelem.ref
-		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0036: ret
+		IL_000f: stfld object Scopes.String_LocaleCompare_Numeric/ArrowFunction_L2C12::b
+		IL_0014: ldloc.0
+		IL_0015: castclass Scopes.String_LocaleCompare_Numeric/ArrowFunction_L2C12
+		IL_001a: ldfld object Scopes.String_LocaleCompare_Numeric/ArrowFunction_L2C12::a
+		IL_001f: ldstr "localeCompare"
+		IL_0024: ldc.i4.3
+		IL_0025: newarr [System.Runtime]System.Object
+		IL_002a: dup
+		IL_002b: ldc.i4.0
+		IL_002c: ldloc.0
+		IL_002d: castclass Scopes.String_LocaleCompare_Numeric/ArrowFunction_L2C12
+		IL_0032: ldfld object Scopes.String_LocaleCompare_Numeric/ArrowFunction_L2C12::b
+		IL_0037: stelem.ref
+		IL_0038: dup
+		IL_0039: ldc.i4.1
+		IL_003a: ldstr "en"
+		IL_003f: stelem.ref
+		IL_0040: dup
+		IL_0041: ldc.i4.2
+		IL_0042: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0047: dup
+		IL_0048: ldstr "numeric"
+		IL_004d: ldc.i4.1
+		IL_004e: box [System.Runtime]System.Boolean
+		IL_0053: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0058: stelem.ref
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_005e: ret
 	} // end of method ArrowFunction_L2C12::ArrowFunction_L2C12
 
 } // end of class Functions.ArrowFunction_L2C12
@@ -98,69 +114,65 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20a8
+		// Method begins at RVA 0x20d0
 		// Header size: 12
-		// Code size: 160 (0xa0)
+		// Code size: 135 (0x87)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.String_LocaleCompare_Numeric
+			[0] class Scopes.String_LocaleCompare_Numeric,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Scopes.String_LocaleCompare_Numeric::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.i4.3
-		IL_0008: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_000d: dup
-		IL_000e: ldstr "2"
-		IL_0013: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0018: dup
-		IL_0019: ldstr "10"
-		IL_001e: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0023: dup
-		IL_0024: ldstr "1"
-		IL_0029: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_002e: stfld object Scopes.String_LocaleCompare_Numeric::values
-		IL_0033: ldloc.0
-		IL_0034: castclass Scopes.String_LocaleCompare_Numeric
-		IL_0039: ldfld object Scopes.String_LocaleCompare_Numeric::values
-		IL_003e: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_0043: ldc.i4.1
-		IL_0044: newarr [System.Runtime]System.Object
-		IL_0049: dup
-		IL_004a: ldc.i4.0
-		IL_004b: ldnull
-		IL_004c: ldftn object Functions.ArrowFunction_L2C12::ArrowFunction_L2C12(object[], object, object)
-		IL_0052: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-		IL_0057: ldc.i4.1
-		IL_0058: newarr [System.Runtime]System.Object
-		IL_005d: dup
-		IL_005e: ldc.i4.0
-		IL_005f: ldloc.0
-		IL_0060: stelem.ref
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0066: stelem.ref
-		IL_0067: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::sort(object[])
-		IL_006c: pop
-		IL_006d: ldc.i4.1
-		IL_006e: newarr [System.Runtime]System.Object
-		IL_0073: dup
-		IL_0074: ldc.i4.0
-		IL_0075: ldloc.0
-		IL_0076: castclass Scopes.String_LocaleCompare_Numeric
-		IL_007b: ldfld object Scopes.String_LocaleCompare_Numeric::values
-		IL_0080: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_0085: ldc.i4.1
-		IL_0086: newarr [System.Runtime]System.Object
-		IL_008b: dup
-		IL_008c: ldc.i4.0
-		IL_008d: ldstr ","
-		IL_0092: stelem.ref
-		IL_0093: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_0098: stelem.ref
-		IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_009e: pop
-		IL_009f: ret
+		IL_0006: ldc.i4.3
+		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_000c: dup
+		IL_000d: ldstr "2"
+		IL_0012: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0017: dup
+		IL_0018: ldstr "10"
+		IL_001d: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0022: dup
+		IL_0023: ldstr "1"
+		IL_0028: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_002d: stloc.1
+		IL_002e: ldloc.1
+		IL_002f: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_0034: ldc.i4.1
+		IL_0035: newarr [System.Runtime]System.Object
+		IL_003a: dup
+		IL_003b: ldc.i4.0
+		IL_003c: ldnull
+		IL_003d: ldftn object Functions.ArrowFunction_L2C12::ArrowFunction_L2C12(object[], object, object)
+		IL_0043: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_0048: ldc.i4.1
+		IL_0049: newarr [System.Runtime]System.Object
+		IL_004e: dup
+		IL_004f: ldc.i4.0
+		IL_0050: ldloc.0
+		IL_0051: stelem.ref
+		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0057: stelem.ref
+		IL_0058: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::sort(object[])
+		IL_005d: pop
+		IL_005e: ldc.i4.1
+		IL_005f: newarr [System.Runtime]System.Object
+		IL_0064: dup
+		IL_0065: ldc.i4.0
+		IL_0066: ldloc.1
+		IL_0067: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_006c: ldc.i4.1
+		IL_006d: newarr [System.Runtime]System.Object
+		IL_0072: dup
+		IL_0073: ldc.i4.0
+		IL_0074: ldstr ","
+		IL_0079: stelem.ref
+		IL_007a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_007f: stelem.ref
+		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0085: pop
+		IL_0086: ret
 	} // end of method String_LocaleCompare_Numeric::Main
 
 } // end of class Scripts.String_LocaleCompare_Numeric
@@ -172,7 +184,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2154
+		// Method begins at RVA 0x2163
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

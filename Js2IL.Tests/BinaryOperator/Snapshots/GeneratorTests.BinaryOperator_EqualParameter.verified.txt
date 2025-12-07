@@ -11,9 +11,7 @@
 		extends [System.Runtime]System.Object
 	{
 		// Fields
-		.field public object eq3
-		.field public object eq5
-		.field public object eq7
+		.field public object 'value'
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
@@ -65,91 +63,88 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 218 (0xda)
+		// Code size: 180 (0xb4)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.BinaryOperator_EqualParameter/testParam
+			[0] class Scopes.BinaryOperator_EqualParameter/testParam,
+			[1] object,
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Scopes.BinaryOperator_EqualParameter/testParam::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldarg.1
-		IL_0008: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000d: ldc.r8 3
-		IL_0016: ceq
-		IL_0018: box [System.Runtime]System.Boolean
-		IL_001d: stfld object Scopes.BinaryOperator_EqualParameter/testParam::eq3
-		IL_0022: ldloc.0
-		IL_0023: ldarg.1
-		IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0029: ldc.r8 5
-		IL_0032: ceq
-		IL_0034: box [System.Runtime]System.Boolean
-		IL_0039: stfld object Scopes.BinaryOperator_EqualParameter/testParam::eq5
-		IL_003e: ldloc.0
-		IL_003f: ldarg.1
-		IL_0040: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0045: ldc.r8 7
-		IL_004e: ceq
-		IL_0050: box [System.Runtime]System.Boolean
-		IL_0055: stfld object Scopes.BinaryOperator_EqualParameter/testParam::eq7
-		IL_005a: ldc.i4.2
-		IL_005b: newarr [System.Runtime]System.Object
+		IL_0008: stfld object Scopes.BinaryOperator_EqualParameter/testParam::'value'
+		IL_000d: ldarg.1
+		IL_000e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0013: ldc.r8 3
+		IL_001c: ceq
+		IL_001e: box [System.Runtime]System.Boolean
+		IL_0023: stloc.1
+		IL_0024: ldarg.1
+		IL_0025: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_002a: ldc.r8 5
+		IL_0033: ceq
+		IL_0035: box [System.Runtime]System.Boolean
+		IL_003a: stloc.2
+		IL_003b: ldarg.1
+		IL_003c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0041: ldc.r8 7
+		IL_004a: ceq
+		IL_004c: box [System.Runtime]System.Boolean
+		IL_0051: stloc.3
+		IL_0052: ldc.i4.2
+		IL_0053: newarr [System.Runtime]System.Object
+		IL_0058: dup
+		IL_0059: ldc.i4.0
+		IL_005a: ldstr "value:"
+		IL_005f: stelem.ref
 		IL_0060: dup
-		IL_0061: ldc.i4.0
-		IL_0062: ldstr "value:"
-		IL_0067: stelem.ref
-		IL_0068: dup
-		IL_0069: ldc.i4.1
-		IL_006a: ldarg.1
-		IL_006b: stelem.ref
-		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0071: pop
-		IL_0072: ldc.i4.2
-		IL_0073: newarr [System.Runtime]System.Object
+		IL_0061: ldc.i4.1
+		IL_0062: ldarg.1
+		IL_0063: stelem.ref
+		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0069: pop
+		IL_006a: ldc.i4.2
+		IL_006b: newarr [System.Runtime]System.Object
+		IL_0070: dup
+		IL_0071: ldc.i4.0
+		IL_0072: ldstr "value == 3:"
+		IL_0077: stelem.ref
 		IL_0078: dup
-		IL_0079: ldc.i4.0
-		IL_007a: ldstr "value == 3:"
-		IL_007f: stelem.ref
-		IL_0080: dup
-		IL_0081: ldc.i4.1
-		IL_0082: ldloc.0
-		IL_0083: castclass Scopes.BinaryOperator_EqualParameter/testParam
-		IL_0088: ldfld object Scopes.BinaryOperator_EqualParameter/testParam::eq3
-		IL_008d: stelem.ref
-		IL_008e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0093: pop
-		IL_0094: ldc.i4.2
-		IL_0095: newarr [System.Runtime]System.Object
-		IL_009a: dup
-		IL_009b: ldc.i4.0
-		IL_009c: ldstr "value == 5:"
-		IL_00a1: stelem.ref
-		IL_00a2: dup
-		IL_00a3: ldc.i4.1
-		IL_00a4: ldloc.0
-		IL_00a5: castclass Scopes.BinaryOperator_EqualParameter/testParam
-		IL_00aa: ldfld object Scopes.BinaryOperator_EqualParameter/testParam::eq5
-		IL_00af: stelem.ref
-		IL_00b0: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_00b5: pop
-		IL_00b6: ldc.i4.2
-		IL_00b7: newarr [System.Runtime]System.Object
-		IL_00bc: dup
-		IL_00bd: ldc.i4.0
-		IL_00be: ldstr "value == 7:"
-		IL_00c3: stelem.ref
-		IL_00c4: dup
-		IL_00c5: ldc.i4.1
-		IL_00c6: ldloc.0
-		IL_00c7: castclass Scopes.BinaryOperator_EqualParameter/testParam
-		IL_00cc: ldfld object Scopes.BinaryOperator_EqualParameter/testParam::eq7
-		IL_00d1: stelem.ref
-		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_00d7: pop
-		IL_00d8: ldnull
-		IL_00d9: ret
+		IL_0079: ldc.i4.1
+		IL_007a: ldloc.1
+		IL_007b: stelem.ref
+		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0081: pop
+		IL_0082: ldc.i4.2
+		IL_0083: newarr [System.Runtime]System.Object
+		IL_0088: dup
+		IL_0089: ldc.i4.0
+		IL_008a: ldstr "value == 5:"
+		IL_008f: stelem.ref
+		IL_0090: dup
+		IL_0091: ldc.i4.1
+		IL_0092: ldloc.2
+		IL_0093: stelem.ref
+		IL_0094: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0099: pop
+		IL_009a: ldc.i4.2
+		IL_009b: newarr [System.Runtime]System.Object
+		IL_00a0: dup
+		IL_00a1: ldc.i4.0
+		IL_00a2: ldstr "value == 7:"
+		IL_00a7: stelem.ref
+		IL_00a8: dup
+		IL_00a9: ldc.i4.1
+		IL_00aa: ldloc.3
+		IL_00ab: stelem.ref
+		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00b1: pop
+		IL_00b2: ldnull
+		IL_00b3: ret
 	} // end of method testParam::testParam
 
 } // end of class Functions.testParam
@@ -161,9 +156,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x214c
+		// Method begins at RVA 0x2124
 		// Header size: 12
-		// Code size: 232 (0xe8)
+		// Code size: 262 (0x106)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.BinaryOperator_EqualParameter
@@ -177,81 +172,87 @@
 		IL_000e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0013: stfld object Scopes.BinaryOperator_EqualParameter::testParam
 		IL_0018: ldloc.0
-		IL_0019: ldfld object Scopes.BinaryOperator_EqualParameter::testParam
-		IL_001e: dup
-		IL_001f: brtrue.s IL_003f
+		IL_0019: castclass Scopes.BinaryOperator_EqualParameter
+		IL_001e: ldfld object Scopes.BinaryOperator_EqualParameter::testParam
+		IL_0023: dup
+		IL_0024: brtrue.s IL_0049
 
-		IL_0021: pop
-		IL_0022: ldloc.0
-		IL_0023: ldnull
-		IL_0024: ldftn object Functions.testParam::testParam(object[], object)
-		IL_002a: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_002f: stfld object Scopes.BinaryOperator_EqualParameter::testParam
-		IL_0034: ldloc.0
-		IL_0035: ldfld object Scopes.BinaryOperator_EqualParameter::testParam
-		IL_003a: br IL_003f
+		IL_0026: pop
+		IL_0027: ldloc.0
+		IL_0028: ldnull
+		IL_0029: ldftn object Functions.testParam::testParam(object[], object)
+		IL_002f: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0034: stfld object Scopes.BinaryOperator_EqualParameter::testParam
+		IL_0039: ldloc.0
+		IL_003a: castclass Scopes.BinaryOperator_EqualParameter
+		IL_003f: ldfld object Scopes.BinaryOperator_EqualParameter::testParam
+		IL_0044: br IL_0049
 
-		IL_003f: ldc.i4.1
-		IL_0040: newarr [System.Runtime]System.Object
-		IL_0045: dup
-		IL_0046: ldc.i4.0
-		IL_0047: ldloc.0
-		IL_0048: stelem.ref
-		IL_0049: ldc.r8 3
-		IL_0052: box [System.Runtime]System.Double
-		IL_0057: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_005c: pop
-		IL_005d: ldloc.0
-		IL_005e: ldfld object Scopes.BinaryOperator_EqualParameter::testParam
-		IL_0063: dup
-		IL_0064: brtrue.s IL_0084
-
+		IL_0049: ldc.i4.1
+		IL_004a: newarr [System.Runtime]System.Object
+		IL_004f: dup
+		IL_0050: ldc.i4.0
+		IL_0051: ldloc.0
+		IL_0052: stelem.ref
+		IL_0053: ldc.r8 3
+		IL_005c: box [System.Runtime]System.Double
+		IL_0061: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
 		IL_0066: pop
 		IL_0067: ldloc.0
-		IL_0068: ldnull
-		IL_0069: ldftn object Functions.testParam::testParam(object[], object)
-		IL_006f: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0074: stfld object Scopes.BinaryOperator_EqualParameter::testParam
-		IL_0079: ldloc.0
-		IL_007a: ldfld object Scopes.BinaryOperator_EqualParameter::testParam
-		IL_007f: br IL_0084
+		IL_0068: castclass Scopes.BinaryOperator_EqualParameter
+		IL_006d: ldfld object Scopes.BinaryOperator_EqualParameter::testParam
+		IL_0072: dup
+		IL_0073: brtrue.s IL_0098
 
-		IL_0084: ldc.i4.1
-		IL_0085: newarr [System.Runtime]System.Object
-		IL_008a: dup
-		IL_008b: ldc.i4.0
-		IL_008c: ldloc.0
-		IL_008d: stelem.ref
-		IL_008e: ldc.r8 5
-		IL_0097: box [System.Runtime]System.Double
-		IL_009c: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_00a1: pop
-		IL_00a2: ldloc.0
-		IL_00a3: ldfld object Scopes.BinaryOperator_EqualParameter::testParam
-		IL_00a8: dup
-		IL_00a9: brtrue.s IL_00c9
+		IL_0075: pop
+		IL_0076: ldloc.0
+		IL_0077: ldnull
+		IL_0078: ldftn object Functions.testParam::testParam(object[], object)
+		IL_007e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0083: stfld object Scopes.BinaryOperator_EqualParameter::testParam
+		IL_0088: ldloc.0
+		IL_0089: castclass Scopes.BinaryOperator_EqualParameter
+		IL_008e: ldfld object Scopes.BinaryOperator_EqualParameter::testParam
+		IL_0093: br IL_0098
 
-		IL_00ab: pop
-		IL_00ac: ldloc.0
-		IL_00ad: ldnull
-		IL_00ae: ldftn object Functions.testParam::testParam(object[], object)
-		IL_00b4: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_00b9: stfld object Scopes.BinaryOperator_EqualParameter::testParam
-		IL_00be: ldloc.0
-		IL_00bf: ldfld object Scopes.BinaryOperator_EqualParameter::testParam
-		IL_00c4: br IL_00c9
+		IL_0098: ldc.i4.1
+		IL_0099: newarr [System.Runtime]System.Object
+		IL_009e: dup
+		IL_009f: ldc.i4.0
+		IL_00a0: ldloc.0
+		IL_00a1: stelem.ref
+		IL_00a2: ldc.r8 5
+		IL_00ab: box [System.Runtime]System.Double
+		IL_00b0: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_00b5: pop
+		IL_00b6: ldloc.0
+		IL_00b7: castclass Scopes.BinaryOperator_EqualParameter
+		IL_00bc: ldfld object Scopes.BinaryOperator_EqualParameter::testParam
+		IL_00c1: dup
+		IL_00c2: brtrue.s IL_00e7
 
-		IL_00c9: ldc.i4.1
-		IL_00ca: newarr [System.Runtime]System.Object
-		IL_00cf: dup
-		IL_00d0: ldc.i4.0
-		IL_00d1: ldloc.0
-		IL_00d2: stelem.ref
-		IL_00d3: ldc.r8 7
-		IL_00dc: box [System.Runtime]System.Double
-		IL_00e1: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_00e6: pop
-		IL_00e7: ret
+		IL_00c4: pop
+		IL_00c5: ldloc.0
+		IL_00c6: ldnull
+		IL_00c7: ldftn object Functions.testParam::testParam(object[], object)
+		IL_00cd: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_00d2: stfld object Scopes.BinaryOperator_EqualParameter::testParam
+		IL_00d7: ldloc.0
+		IL_00d8: castclass Scopes.BinaryOperator_EqualParameter
+		IL_00dd: ldfld object Scopes.BinaryOperator_EqualParameter::testParam
+		IL_00e2: br IL_00e7
+
+		IL_00e7: ldc.i4.1
+		IL_00e8: newarr [System.Runtime]System.Object
+		IL_00ed: dup
+		IL_00ee: ldc.i4.0
+		IL_00ef: ldloc.0
+		IL_00f0: stelem.ref
+		IL_00f1: ldc.r8 7
+		IL_00fa: box [System.Runtime]System.Double
+		IL_00ff: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_0104: pop
+		IL_0105: ret
 	} // end of method BinaryOperator_EqualParameter::Main
 
 } // end of class Scripts.BinaryOperator_EqualParameter
@@ -263,7 +264,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2240
+		// Method begins at RVA 0x2236
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

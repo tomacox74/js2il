@@ -14,6 +14,9 @@
 		.class nested public auto ansi beforefieldinit constructor
 			extends [System.Runtime]System.Object
 		{
+			// Fields
+			.field public object name
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -69,10 +72,6 @@
 
 	} // end of class Greeter
 
-
-	// Fields
-	.field public object Greeter
-	.field public object g
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -148,24 +147,22 @@
 	{
 		// Method begins at RVA 0x20b4
 		// Header size: 12
-		// Code size: 40 (0x28)
+		// Code size: 25 (0x19)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ClassConstructor_Param_Field_Log
+			[0] class Scopes.Classes_ClassConstructor_Param_Field_Log,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Scopes.Classes_ClassConstructor_Param_Field_Log::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldstr "Alice"
-		IL_000c: newobj instance void Classes.Greeter::.ctor(object)
-		IL_0011: stfld object Scopes.Classes_ClassConstructor_Param_Field_Log::g
-		IL_0016: ldloc.0
-		IL_0017: castclass Scopes.Classes_ClassConstructor_Param_Field_Log
-		IL_001c: ldfld object Scopes.Classes_ClassConstructor_Param_Field_Log::g
-		IL_0021: callvirt instance object Classes.Greeter::sayName()
-		IL_0026: pop
-		IL_0027: ret
+		IL_0006: ldstr "Alice"
+		IL_000b: newobj instance void Classes.Greeter::.ctor(object)
+		IL_0010: stloc.1
+		IL_0011: ldloc.1
+		IL_0012: callvirt instance object Classes.Greeter::sayName()
+		IL_0017: pop
+		IL_0018: ret
 	} // end of method Classes_ClassConstructor_Param_Field_Log::Main
 
 } // end of class Scripts.Classes_ClassConstructor_Param_Field_Log
@@ -177,7 +174,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e8
+		// Method begins at RVA 0x20d9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

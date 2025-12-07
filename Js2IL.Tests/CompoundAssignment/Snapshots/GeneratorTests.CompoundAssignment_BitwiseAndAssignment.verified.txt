@@ -28,11 +28,6 @@
 	} // end of class Block_L8C28
 
 
-	// Fields
-	.field public object x
-	.field public object 'value'
-	.field public object i
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -59,127 +54,109 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 350 (0x15e)
+		// Code size: 245 (0xf5)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.CompoundAssignment_BitwiseAndAssignment
+			[0] class Scopes.CompoundAssignment_BitwiseAndAssignment,
+			[1] object,
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Scopes.CompoundAssignment_BitwiseAndAssignment::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.r8 7
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Scopes.CompoundAssignment_BitwiseAndAssignment::x
-		IL_001a: ldloc.0
-		IL_001b: dup
-		IL_001c: ldfld object Scopes.CompoundAssignment_BitwiseAndAssignment::x
-		IL_0021: unbox.any [System.Runtime]System.Double
-		IL_0026: conv.i4
-		IL_0027: ldc.r8 3
-		IL_0030: conv.i4
-		IL_0031: and
-		IL_0032: conv.r8
-		IL_0033: box [System.Runtime]System.Double
-		IL_0038: stfld object Scopes.CompoundAssignment_BitwiseAndAssignment::x
-		IL_003d: ldc.i4.2
-		IL_003e: newarr [System.Runtime]System.Object
-		IL_0043: dup
-		IL_0044: ldc.i4.0
-		IL_0045: ldstr "x after 7 &= 3:"
-		IL_004a: stelem.ref
-		IL_004b: dup
-		IL_004c: ldc.i4.1
-		IL_004d: ldloc.0
-		IL_004e: castclass Scopes.CompoundAssignment_BitwiseAndAssignment
-		IL_0053: ldfld object Scopes.CompoundAssignment_BitwiseAndAssignment::x
-		IL_0058: stelem.ref
-		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_005e: pop
-		IL_005f: ldloc.0
-		IL_0060: ldc.r8 15
-		IL_0069: box [System.Runtime]System.Double
-		IL_006e: stfld object Scopes.CompoundAssignment_BitwiseAndAssignment::'value'
-		IL_0073: ldloc.0
-		IL_0074: ldc.r8 0.0
-		IL_007d: box [System.Runtime]System.Double
-		IL_0082: stfld object Scopes.CompoundAssignment_BitwiseAndAssignment::i
-		// loop start (head: IL_0087)
-			IL_0087: ldloc.0
-			IL_0088: castclass Scopes.CompoundAssignment_BitwiseAndAssignment
-			IL_008d: ldfld object Scopes.CompoundAssignment_BitwiseAndAssignment::i
-			IL_0092: unbox.any [System.Runtime]System.Double
-			IL_0097: ldc.r8 4
-			IL_00a0: blt IL_00aa
+		IL_0006: ldc.r8 7
+		IL_000f: box [System.Runtime]System.Double
+		IL_0014: stloc.1
+		IL_0015: ldloc.1
+		IL_0016: unbox.any [System.Runtime]System.Double
+		IL_001b: conv.i4
+		IL_001c: ldc.r8 3
+		IL_0025: conv.i4
+		IL_0026: and
+		IL_0027: conv.r8
+		IL_0028: box [System.Runtime]System.Double
+		IL_002d: stloc.1
+		IL_002e: ldc.i4.2
+		IL_002f: newarr [System.Runtime]System.Object
+		IL_0034: dup
+		IL_0035: ldc.i4.0
+		IL_0036: ldstr "x after 7 &= 3:"
+		IL_003b: stelem.ref
+		IL_003c: dup
+		IL_003d: ldc.i4.1
+		IL_003e: ldloc.1
+		IL_003f: stelem.ref
+		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0045: pop
+		IL_0046: ldc.r8 15
+		IL_004f: box [System.Runtime]System.Double
+		IL_0054: stloc.2
+		IL_0055: ldc.r8 0.0
+		IL_005e: box [System.Runtime]System.Double
+		IL_0063: stloc.3
+		// loop start (head: IL_0064)
+			IL_0064: ldloc.3
+			IL_0065: unbox.any [System.Runtime]System.Double
+			IL_006a: ldc.r8 4
+			IL_0073: blt IL_007d
 
-			IL_00a5: br IL_013b
+			IL_0078: br IL_00dc
 
-			IL_00aa: ldloc.0
+			IL_007d: ldloc.2
+			IL_007e: unbox.any [System.Runtime]System.Double
+			IL_0083: conv.i4
+			IL_0084: ldc.r8 14
+			IL_008d: ldloc.3
+			IL_008e: unbox.any [System.Runtime]System.Double
+			IL_0093: sub
+			IL_0094: conv.i4
+			IL_0095: and
+			IL_0096: conv.r8
+			IL_0097: box [System.Runtime]System.Double
+			IL_009c: stloc.2
+			IL_009d: ldc.i4.4
+			IL_009e: newarr [System.Runtime]System.Object
+			IL_00a3: dup
+			IL_00a4: ldc.i4.0
+			IL_00a5: ldstr "value after iteration"
+			IL_00aa: stelem.ref
 			IL_00ab: dup
-			IL_00ac: ldfld object Scopes.CompoundAssignment_BitwiseAndAssignment::'value'
-			IL_00b1: unbox.any [System.Runtime]System.Double
-			IL_00b6: conv.i4
-			IL_00b7: ldc.r8 14
-			IL_00c0: ldloc.0
-			IL_00c1: castclass Scopes.CompoundAssignment_BitwiseAndAssignment
-			IL_00c6: ldfld object Scopes.CompoundAssignment_BitwiseAndAssignment::i
-			IL_00cb: unbox.any [System.Runtime]System.Double
-			IL_00d0: sub
-			IL_00d1: conv.i4
-			IL_00d2: and
-			IL_00d3: conv.r8
-			IL_00d4: box [System.Runtime]System.Double
-			IL_00d9: stfld object Scopes.CompoundAssignment_BitwiseAndAssignment::'value'
-			IL_00de: ldc.i4.4
-			IL_00df: newarr [System.Runtime]System.Object
-			IL_00e4: dup
-			IL_00e5: ldc.i4.0
-			IL_00e6: ldstr "value after iteration"
-			IL_00eb: stelem.ref
-			IL_00ec: dup
-			IL_00ed: ldc.i4.1
-			IL_00ee: ldloc.0
-			IL_00ef: castclass Scopes.CompoundAssignment_BitwiseAndAssignment
-			IL_00f4: ldfld object Scopes.CompoundAssignment_BitwiseAndAssignment::i
-			IL_00f9: stelem.ref
-			IL_00fa: dup
-			IL_00fb: ldc.i4.2
-			IL_00fc: ldstr ":"
-			IL_0101: stelem.ref
-			IL_0102: dup
-			IL_0103: ldc.i4.3
-			IL_0104: ldloc.0
-			IL_0105: castclass Scopes.CompoundAssignment_BitwiseAndAssignment
-			IL_010a: ldfld object Scopes.CompoundAssignment_BitwiseAndAssignment::'value'
-			IL_010f: stelem.ref
-			IL_0110: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_0115: pop
-			IL_0116: ldloc.0
-			IL_0117: ldloc.0
-			IL_0118: ldfld object Scopes.CompoundAssignment_BitwiseAndAssignment::i
-			IL_011d: unbox.any [System.Runtime]System.Double
-			IL_0122: ldc.r8 1
-			IL_012b: add
-			IL_012c: box [System.Runtime]System.Double
-			IL_0131: stfld object Scopes.CompoundAssignment_BitwiseAndAssignment::i
-			IL_0136: br IL_0087
+			IL_00ac: ldc.i4.1
+			IL_00ad: ldloc.3
+			IL_00ae: stelem.ref
+			IL_00af: dup
+			IL_00b0: ldc.i4.2
+			IL_00b1: ldstr ":"
+			IL_00b6: stelem.ref
+			IL_00b7: dup
+			IL_00b8: ldc.i4.3
+			IL_00b9: ldloc.2
+			IL_00ba: stelem.ref
+			IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_00c0: pop
+			IL_00c1: ldloc.3
+			IL_00c2: unbox.any [System.Runtime]System.Double
+			IL_00c7: ldc.r8 1
+			IL_00d0: add
+			IL_00d1: box [System.Runtime]System.Double
+			IL_00d6: stloc.3
+			IL_00d7: br IL_0064
 		// end loop
 
-		IL_013b: ldc.i4.2
-		IL_013c: newarr [System.Runtime]System.Object
-		IL_0141: dup
-		IL_0142: ldc.i4.0
-		IL_0143: ldstr "final value:"
-		IL_0148: stelem.ref
-		IL_0149: dup
-		IL_014a: ldc.i4.1
-		IL_014b: ldloc.0
-		IL_014c: castclass Scopes.CompoundAssignment_BitwiseAndAssignment
-		IL_0151: ldfld object Scopes.CompoundAssignment_BitwiseAndAssignment::'value'
-		IL_0156: stelem.ref
-		IL_0157: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_015c: pop
-		IL_015d: ret
+		IL_00dc: ldc.i4.2
+		IL_00dd: newarr [System.Runtime]System.Object
+		IL_00e2: dup
+		IL_00e3: ldc.i4.0
+		IL_00e4: ldstr "final value:"
+		IL_00e9: stelem.ref
+		IL_00ea: dup
+		IL_00eb: ldc.i4.1
+		IL_00ec: ldloc.2
+		IL_00ed: stelem.ref
+		IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00f3: pop
+		IL_00f4: ret
 	} // end of method CompoundAssignment_BitwiseAndAssignment::Main
 
 } // end of class Scripts.CompoundAssignment_BitwiseAndAssignment
@@ -191,7 +168,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21ce
+		// Method begins at RVA 0x2165
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

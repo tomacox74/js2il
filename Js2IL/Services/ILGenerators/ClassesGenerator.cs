@@ -349,16 +349,18 @@ namespace Js2IL.Services.ILGenerators
                 : Enumerable.Empty<string>();
                 
             Variables methodVariables;
+            // Build qualified scope name for constructor
+            var constructorScopeName = $"{className}/constructor";
             if (needsScopes)
             {
                 var parentScopeNames = DetermineParentScopesForClassMethod(classScope);
                 // For constructors with scopes: arg0=this, arg1=scopes[], user params start at arg2
-                methodVariables = new Variables(_variables, "constructor", paramNames, parentScopeNames, parameterStartIndex: 2);
+                methodVariables = new Variables(_variables, constructorScopeName, paramNames, parentScopeNames, parameterStartIndex: 2);
             }
             else
             {
                 // No scopes: arg0=this, user params start at arg1
-                methodVariables = new Variables(_variables, "constructor", paramNames, isNestedFunction: false);
+                methodVariables = new Variables(_variables, constructorScopeName, paramNames, isNestedFunction: false);
             }
             
             var ilGen = new ILMethodGenerator(methodVariables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: true, currentClassName: className);
@@ -390,16 +392,18 @@ namespace Js2IL.Services.ILGenerators
 
                 // Check if constructor needs a scope instance for destructured parameters or block-scoped locals
                 bool hasDestructuredParams = ctorFunc.Params.Any(p => p is ObjectPattern);
+                // Destructured parameters ALWAYS need a scope instance to store extracted values
                 bool needScopeInstance = hasDestructuredParams || ShouldCreateMethodScopeInstance(ctorFunc, classScope);
                 
-                // If we have destructured parameters, initialize them early before the body runs
+                // If we need a scope instance, initialize parameters (both simple and destructured)
                 bool scopeCreated = false;
-                if (hasDestructuredParams && needScopeInstance)
+                if (needScopeInstance && ctorFunc.Params.Count > 0)
                 {
+                    // Parameters are stored in the constructor scope (both simple identifiers and destructured)
                     scopeCreated = EmitDestructuredParameterInitialization(
                         ilGen,
                         methodVariables,
-                        "constructor",
+                        constructorScopeName,
                         ctorFunc.Params,
                         paramStartIndex);
                 }
@@ -502,17 +506,19 @@ namespace Js2IL.Services.ILGenerators
             
             // For class instance methods, determine which parent scopes will be available via this._scopes
             // For static methods, use standard nested function semantics
+            // Build qualified scope name for method
+            var methodScopeName = $"{className}/{mname}";
             Variables methodVariables;
             if (!element.Static && _classRegistry.TryGetPrivateField(className, "_scopes", out var _))
             {
                 // Instance method with _scopes field: use explicit parent scope list
                 var parentScopeNames = DetermineParentScopesForClassMethod(classScope);
-                methodVariables = new Variables(_variables, mname, paramNames, parentScopeNames);
+                methodVariables = new Variables(_variables, methodScopeName, paramNames, parentScopeNames);
             }
             else
             {
                 // Static method or instance method without _scopes: standard semantics
-                methodVariables = new Variables(_variables, mname, paramNames, isNestedFunction: false);
+                methodVariables = new Variables(_variables, methodScopeName, paramNames, isNestedFunction: false);
             }
             
             var ilGen = new ILMethodGenerator(methodVariables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: true, currentClassName: className);
@@ -531,16 +537,18 @@ namespace Js2IL.Services.ILGenerators
                     
                     // Check if method needs a scope instance for destructured parameters or block-scoped locals
                     bool hasDestructuredParams = fexpr.Params.Any(p => p is ObjectPattern);
+                    // Destructured parameters ALWAYS need a scope instance to store extracted values
                     bool needScopeInstance = hasDestructuredParams || ShouldCreateMethodScopeInstance(fexpr, classScope);
                     
-                    // If we have destructured parameters, initialize them early before the body runs
+                    // If we need a scope instance, initialize parameters (both simple and destructured)
                     bool scopeCreated = false;
-                    if (hasDestructuredParams && needScopeInstance)
+                    if (needScopeInstance && fexpr.Params.Count > 0)
                     {
+                        // Parameters are stored in the method scope (both simple identifiers and destructured)
                         scopeCreated = EmitDestructuredParameterInitialization(
                             ilGen,
                             methodVariables,
-                            mname,
+                            methodScopeName,
                             fexpr.Params,
                             paramStartIndex);
                     }
@@ -592,9 +600,37 @@ namespace Js2IL.Services.ILGenerators
             return methodDef;
         }
 
-        private bool ShouldCreateMethodScopeInstance(FunctionExpression fexpr, Scope methodScope)
+        private bool ShouldCreateMethodScopeInstance(FunctionExpression fexpr, Scope classScope)
         {
             if (fexpr.Body is not BlockStatement body) return false;
+            
+            // Find the method scope within the class scope's children
+            // The method scope name should match the FunctionExpression's parent MethodDefinition's key
+            Scope? methodScope = null;
+            foreach (var child in classScope.Children)
+            {
+                if (child.Kind == ScopeKind.Function && child.AstNode == fexpr)
+                {
+                    methodScope = child;
+                    break;
+                }
+            }
+            
+            // If we found the method scope, check if it has any captured bindings
+            if (methodScope != null)
+            {
+                // Check if ANY binding in this method scope is captured
+                foreach (var binding in methodScope.Bindings.Values)
+                {
+                    if (binding.IsCaptured)
+                    {
+                        return true; // Need scope instance for captured variables
+                    }
+                }
+            }
+            
+            // Also walk the AST to check for nested functions or class instantiations
+            // that would require a scope instance
             bool found = false;
             void Walk(Acornima.Ast.Node? n)
             {
@@ -605,18 +641,16 @@ namespace Js2IL.Services.ILGenerators
                         foreach (var s in b.Body) Walk(s);
                         break;
                     case VariableDeclaration vd:
-                        // Any let/const (not var) triggers lexical scope needs
-                        if (vd.Kind != VariableDeclarationKind.Var) { found = true; return; }
+                        // Don't trigger on let/const alone - only matters if captured
+                        // The binding.IsCaptured check above handles this
                         break;
                     case ForStatement fs:
-                        if (fs.Init is VariableDeclaration fsv && fsv.Kind != VariableDeclarationKind.Var) { found = true; return; }
                         Walk(fs.Init as Acornima.Ast.Node);
                         Walk(fs.Test as Acornima.Ast.Node);
                         Walk(fs.Update as Acornima.Ast.Node);
                         Walk(fs.Body);
                         break;
                     case ForOfStatement fof:
-                        if (fof.Left is VariableDeclaration leftDecl && leftDecl.Kind != VariableDeclarationKind.Var) { found = true; return; }
                         Walk(fof.Left as Acornima.Ast.Node);
                         Walk(fof.Right as Acornima.Ast.Node);
                         Walk(fof.Body);
@@ -631,6 +665,7 @@ namespace Js2IL.Services.ILGenerators
                         break; // ignore
                     case FunctionDeclaration:
                     case FunctionExpression:
+                    case ArrowFunctionExpression:
                         // Nested functions require capturing outer scope variables
                         found = true; return;
                     case NewExpression ne:
@@ -640,8 +675,8 @@ namespace Js2IL.Services.ILGenerators
                         {
                             var className = classId.Name;
                             // Look up the class scope to check if it references parent scopes
-                            var classScope = FindClassScope(methodScope, className);
-                            if (classScope != null && classScope.ReferencesParentScopeVariables)
+                            var foundClassScope = FindClassScope(classScope, className);
+                            if (foundClassScope != null && foundClassScope.ReferencesParentScopeVariables)
                             {
                                 found = true; return;
                             }
@@ -703,11 +738,15 @@ namespace Js2IL.Services.ILGenerators
         {
             var registry = methodVariables.GetVariableRegistry();
             if (registry == null)
+            {
                 return false;
+            }
 
             var fields = registry.GetVariablesForScope(scopeName);
             if (fields == null || !fields.Any())
+            {
                 return false;
+            }
 
             // Create the scope instance early so we can initialize destructured params
             ScopeInstanceEmitter.EmitCreateLeafScopeInstance(methodVariables, ilGen.IL, _metadata);

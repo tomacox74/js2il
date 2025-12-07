@@ -49,9 +49,7 @@ namespace Js2IL.Services.ILGenerators
                 // stloc (current scope local)
                 var scopeLocal = variables.CreateScopeInstance(currentScopeName);
                 if (scopeLocal.Address >= 0)
-                {
                     il.StoreLocal(scopeLocal.Address);
-                }
             }
             catch (System.Collections.Generic.KeyNotFoundException)
             {

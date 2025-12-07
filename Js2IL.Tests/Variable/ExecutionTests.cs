@@ -15,5 +15,9 @@ namespace Js2IL.Tests.Variable
         [Fact] public Task Variable_LetShadowing() { var testName = nameof(Variable_LetShadowing); return ExecutionTest(testName); }
         [Fact(Skip = "try/catch + TDZ runtime check not implemented yet")] public Task Variable_TemporalDeadZoneAccess() { var testName = nameof(Variable_TemporalDeadZoneAccess); return ExecutionTest(testName); }
 
+        // Object destructuring tests
+        [Fact] public Task Variable_ObjectDestructuring_Basic() { var testName = nameof(Variable_ObjectDestructuring_Basic); return ExecutionTest(testName); }
+        [Fact(Skip = "Defaults in variable destructuring not yet implemented")] public Task Variable_ObjectDestructuring_WithDefaults() { var testName = nameof(Variable_ObjectDestructuring_WithDefaults); return ExecutionTest(testName); }
+        [Fact] public Task Variable_ObjectDestructuring_Captured() { var testName = nameof(Variable_ObjectDestructuring_Captured); return ExecutionTest(testName); }
     }
 }

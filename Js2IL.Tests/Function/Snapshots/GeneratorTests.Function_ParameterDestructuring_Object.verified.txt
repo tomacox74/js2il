@@ -242,7 +242,7 @@
 	{
 		// Method begins at RVA 0x21c8
 		// Header size: 12
-		// Code size: 407 (0x197)
+		// Code size: 447 (0x1bf)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Function_ParameterDestructuring_Object
@@ -261,130 +261,138 @@
 		IL_0020: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0025: stfld object Scopes.Function_ParameterDestructuring_Object::config
 		IL_002a: ldloc.0
-		IL_002b: ldfld object Scopes.Function_ParameterDestructuring_Object::show
-		IL_0030: dup
-		IL_0031: brtrue.s IL_0051
+		IL_002b: castclass Scopes.Function_ParameterDestructuring_Object
+		IL_0030: ldfld object Scopes.Function_ParameterDestructuring_Object::show
+		IL_0035: dup
+		IL_0036: brtrue.s IL_005b
 
-		IL_0033: pop
-		IL_0034: ldloc.0
-		IL_0035: ldnull
-		IL_0036: ldftn object Functions.Function_ParameterDestructuring_Object::show(object[], object)
-		IL_003c: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0041: stfld object Scopes.Function_ParameterDestructuring_Object::show
-		IL_0046: ldloc.0
-		IL_0047: ldfld object Scopes.Function_ParameterDestructuring_Object::show
-		IL_004c: br IL_0051
+		IL_0038: pop
+		IL_0039: ldloc.0
+		IL_003a: ldnull
+		IL_003b: ldftn object Functions.Function_ParameterDestructuring_Object::show(object[], object)
+		IL_0041: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0046: stfld object Scopes.Function_ParameterDestructuring_Object::show
+		IL_004b: ldloc.0
+		IL_004c: castclass Scopes.Function_ParameterDestructuring_Object
+		IL_0051: ldfld object Scopes.Function_ParameterDestructuring_Object::show
+		IL_0056: br IL_005b
 
-		IL_0051: ldc.i4.1
-		IL_0052: newarr [System.Runtime]System.Object
-		IL_0057: dup
-		IL_0058: ldc.i4.0
-		IL_0059: ldloc.0
-		IL_005a: stelem.ref
-		IL_005b: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0060: dup
-		IL_0061: ldstr "a"
-		IL_0066: ldc.r8 10
-		IL_006f: box [System.Runtime]System.Double
-		IL_0074: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0079: dup
-		IL_007a: ldstr "b"
-		IL_007f: ldc.r8 20
-		IL_0088: box [System.Runtime]System.Double
-		IL_008d: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0092: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0097: pop
-		IL_0098: ldloc.0
-		IL_0099: ldfld object Scopes.Function_ParameterDestructuring_Object::config
-		IL_009e: dup
-		IL_009f: brtrue.s IL_00bf
-
+		IL_005b: ldc.i4.1
+		IL_005c: newarr [System.Runtime]System.Object
+		IL_0061: dup
+		IL_0062: ldc.i4.0
+		IL_0063: ldloc.0
+		IL_0064: stelem.ref
+		IL_0065: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_006a: dup
+		IL_006b: ldstr "a"
+		IL_0070: ldc.r8 10
+		IL_0079: box [System.Runtime]System.Double
+		IL_007e: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0083: dup
+		IL_0084: ldstr "b"
+		IL_0089: ldc.r8 20
+		IL_0092: box [System.Runtime]System.Double
+		IL_0097: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_009c: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
 		IL_00a1: pop
 		IL_00a2: ldloc.0
-		IL_00a3: ldnull
-		IL_00a4: ldftn object Functions.Function_ParameterDestructuring_Object::config(object[], object)
-		IL_00aa: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_00af: stfld object Scopes.Function_ParameterDestructuring_Object::config
-		IL_00b4: ldloc.0
-		IL_00b5: ldfld object Scopes.Function_ParameterDestructuring_Object::config
-		IL_00ba: br IL_00bf
+		IL_00a3: castclass Scopes.Function_ParameterDestructuring_Object
+		IL_00a8: ldfld object Scopes.Function_ParameterDestructuring_Object::config
+		IL_00ad: dup
+		IL_00ae: brtrue.s IL_00d3
 
-		IL_00bf: ldc.i4.1
-		IL_00c0: newarr [System.Runtime]System.Object
-		IL_00c5: dup
-		IL_00c6: ldc.i4.0
-		IL_00c7: ldloc.0
-		IL_00c8: stelem.ref
-		IL_00c9: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_00ce: dup
-		IL_00cf: ldstr "host"
-		IL_00d4: ldstr "example.com"
-		IL_00d9: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_00de: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_00e3: pop
-		IL_00e4: ldloc.0
-		IL_00e5: ldfld object Scopes.Function_ParameterDestructuring_Object::config
-		IL_00ea: dup
-		IL_00eb: brtrue.s IL_010b
+		IL_00b0: pop
+		IL_00b1: ldloc.0
+		IL_00b2: ldnull
+		IL_00b3: ldftn object Functions.Function_ParameterDestructuring_Object::config(object[], object)
+		IL_00b9: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_00be: stfld object Scopes.Function_ParameterDestructuring_Object::config
+		IL_00c3: ldloc.0
+		IL_00c4: castclass Scopes.Function_ParameterDestructuring_Object
+		IL_00c9: ldfld object Scopes.Function_ParameterDestructuring_Object::config
+		IL_00ce: br IL_00d3
 
-		IL_00ed: pop
-		IL_00ee: ldloc.0
-		IL_00ef: ldnull
-		IL_00f0: ldftn object Functions.Function_ParameterDestructuring_Object::config(object[], object)
-		IL_00f6: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_00fb: stfld object Scopes.Function_ParameterDestructuring_Object::config
-		IL_0100: ldloc.0
-		IL_0101: ldfld object Scopes.Function_ParameterDestructuring_Object::config
-		IL_0106: br IL_010b
+		IL_00d3: ldc.i4.1
+		IL_00d4: newarr [System.Runtime]System.Object
+		IL_00d9: dup
+		IL_00da: ldc.i4.0
+		IL_00db: ldloc.0
+		IL_00dc: stelem.ref
+		IL_00dd: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_00e2: dup
+		IL_00e3: ldstr "host"
+		IL_00e8: ldstr "example.com"
+		IL_00ed: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_00f2: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_00f7: pop
+		IL_00f8: ldloc.0
+		IL_00f9: castclass Scopes.Function_ParameterDestructuring_Object
+		IL_00fe: ldfld object Scopes.Function_ParameterDestructuring_Object::config
+		IL_0103: dup
+		IL_0104: brtrue.s IL_0129
 
-		IL_010b: ldc.i4.1
-		IL_010c: newarr [System.Runtime]System.Object
-		IL_0111: dup
-		IL_0112: ldc.i4.0
-		IL_0113: ldloc.0
-		IL_0114: stelem.ref
-		IL_0115: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_011a: dup
-		IL_011b: ldstr "host"
-		IL_0120: ldstr "api.test.com"
-		IL_0125: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_012a: dup
-		IL_012b: ldstr "port"
-		IL_0130: ldc.r8 3000
-		IL_0139: box [System.Runtime]System.Double
-		IL_013e: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0143: dup
-		IL_0144: ldstr "secure"
-		IL_0149: ldc.i4.1
-		IL_014a: box [System.Runtime]System.Boolean
-		IL_014f: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0154: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0159: pop
-		IL_015a: ldloc.0
-		IL_015b: ldfld object Scopes.Function_ParameterDestructuring_Object::config
-		IL_0160: dup
-		IL_0161: brtrue.s IL_0181
+		IL_0106: pop
+		IL_0107: ldloc.0
+		IL_0108: ldnull
+		IL_0109: ldftn object Functions.Function_ParameterDestructuring_Object::config(object[], object)
+		IL_010f: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0114: stfld object Scopes.Function_ParameterDestructuring_Object::config
+		IL_0119: ldloc.0
+		IL_011a: castclass Scopes.Function_ParameterDestructuring_Object
+		IL_011f: ldfld object Scopes.Function_ParameterDestructuring_Object::config
+		IL_0124: br IL_0129
 
-		IL_0163: pop
-		IL_0164: ldloc.0
-		IL_0165: ldnull
-		IL_0166: ldftn object Functions.Function_ParameterDestructuring_Object::config(object[], object)
-		IL_016c: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0171: stfld object Scopes.Function_ParameterDestructuring_Object::config
-		IL_0176: ldloc.0
-		IL_0177: ldfld object Scopes.Function_ParameterDestructuring_Object::config
-		IL_017c: br IL_0181
+		IL_0129: ldc.i4.1
+		IL_012a: newarr [System.Runtime]System.Object
+		IL_012f: dup
+		IL_0130: ldc.i4.0
+		IL_0131: ldloc.0
+		IL_0132: stelem.ref
+		IL_0133: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0138: dup
+		IL_0139: ldstr "host"
+		IL_013e: ldstr "api.test.com"
+		IL_0143: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0148: dup
+		IL_0149: ldstr "port"
+		IL_014e: ldc.r8 3000
+		IL_0157: box [System.Runtime]System.Double
+		IL_015c: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0161: dup
+		IL_0162: ldstr "secure"
+		IL_0167: ldc.i4.1
+		IL_0168: box [System.Runtime]System.Boolean
+		IL_016d: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0172: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_0177: pop
+		IL_0178: ldloc.0
+		IL_0179: castclass Scopes.Function_ParameterDestructuring_Object
+		IL_017e: ldfld object Scopes.Function_ParameterDestructuring_Object::config
+		IL_0183: dup
+		IL_0184: brtrue.s IL_01a9
 
-		IL_0181: ldc.i4.1
-		IL_0182: newarr [System.Runtime]System.Object
-		IL_0187: dup
-		IL_0188: ldc.i4.0
-		IL_0189: ldloc.0
-		IL_018a: stelem.ref
-		IL_018b: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0190: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0195: pop
-		IL_0196: ret
+		IL_0186: pop
+		IL_0187: ldloc.0
+		IL_0188: ldnull
+		IL_0189: ldftn object Functions.Function_ParameterDestructuring_Object::config(object[], object)
+		IL_018f: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0194: stfld object Scopes.Function_ParameterDestructuring_Object::config
+		IL_0199: ldloc.0
+		IL_019a: castclass Scopes.Function_ParameterDestructuring_Object
+		IL_019f: ldfld object Scopes.Function_ParameterDestructuring_Object::config
+		IL_01a4: br IL_01a9
+
+		IL_01a9: ldc.i4.1
+		IL_01aa: newarr [System.Runtime]System.Object
+		IL_01af: dup
+		IL_01b0: ldc.i4.0
+		IL_01b1: ldloc.0
+		IL_01b2: stelem.ref
+		IL_01b3: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_01b8: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_01bd: pop
+		IL_01be: ret
 	} // end of method Function_ParameterDestructuring_Object::Main
 
 } // end of class Scripts.Function_ParameterDestructuring_Object
@@ -396,7 +404,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x236b
+		// Method begins at RVA 0x2393
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

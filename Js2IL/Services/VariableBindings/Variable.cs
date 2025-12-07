@@ -28,6 +28,8 @@ namespace Js2IL.Services
         public string ScopeName { get; init; } = string.Empty;
         // Field handle for ldfld/stfld (for field-backed variables)
         public FieldDefinitionHandle FieldHandle { get; init; }
+        // Local variable slot index for uncaptured variables (or -1 if not a local)
+        public int LocalSlot { get; init; } = -1;
     }
 
     internal record LocalVariable : Variable;
@@ -82,6 +84,10 @@ namespace Js2IL.Services
         private readonly Dictionary<string, int> _createdLocalScopes = new();
         // Stack of active lexical (block) scope names (innermost on top)
         private readonly Stack<string> _lexicalScopeStack = new();
+        
+        // Local variable slot allocation for uncaptured variables
+        private readonly Dictionary<string, int> _localVariableSlots = new();
+        private int _nextLocalSlot = 0; // Start after scope instance local (if any)
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Variables"/> class for the global scope
@@ -94,6 +100,8 @@ namespace Js2IL.Services
             _globalScopeName = scopeName;
             // Main/global should allocate one local slot for its scope instance (ldloc.0)
             _hasLocalScope = true;
+            // Reserve slot 0 for scope instance
+            _nextLocalSlot = 1;
         }
 
         public Variables(Variables parentVariables, string scopeName, IEnumerable<string> parameterNames, bool isNestedFunction)
@@ -168,6 +176,7 @@ namespace Js2IL.Services
         public Variable? FindVariable(string name)
         {
             if (string.IsNullOrEmpty(name)) return null;
+
             // 1. Check innermost active lexical (block) scopes first for shadowing (do NOT cache)
             foreach (var scopeName in _lexicalScopeStack)
             {
@@ -180,33 +189,66 @@ namespace Js2IL.Services
             // 2. Existing cached (non-lexical) variable
             if (_variables.TryGetValue(name, out var cached)) return cached;
 
-            // Parameter resolution: prefer field-backed local if present; otherwise treat as direct argument
+            // Parameter resolution: parameters are always loaded via ldarg, even if they have a field
+            // The field is used for closure capture AFTER the parameter is copied to it
             if (_parameterIndices.TryGetValue(name, out var pindex))
             {
+                FieldDefinitionHandle paramFieldHandle = default;
+                Type? paramRuntimeType = null;
+                
                 try
                 {
-                    var fh = _registry.GetFieldHandle(_scopeName, name);
+                    paramFieldHandle = _registry.GetFieldHandle(_scopeName, name);
                     var viParamField = _registry.GetVariableInfo(_scopeName, name) ?? _registry.FindVariable(name);
-                    var lvParamField = new LocalVariable
-                    {
-                        Name = name,
-                        FieldHandle = fh,
-                        ScopeName = _scopeName,
-                        Type = JavascriptType.Unknown,
-                        RuntimeIntrinsicType = viParamField?.RuntimeIntrinsicType
-                    };
-                    _variables[name] = lvParamField;
-                    return lvParamField;
+                    paramRuntimeType = viParamField?.RuntimeIntrinsicType;
                 }
                 catch (KeyNotFoundException)
                 {
+                    // Parameter has no field backing, which is normal for simple parameters
                     var viParam = _registry.GetVariableInfo(_scopeName, name) ?? _registry.FindVariable(name);
-                    var p = new ParameterVariable { Name = name, ParameterIndex = pindex, IsParameter = true, Type = JavascriptType.Object, RuntimeIntrinsicType = viParam?.RuntimeIntrinsicType };
-                    _variables[name] = p;
-                    return p;
+                    paramRuntimeType = viParam?.RuntimeIntrinsicType;
                 }
+                
+                // Always return ParameterVariable with IsParameter = true so it loads via ldarg
+                var p = new ParameterVariable 
+                { 
+                    Name = name, 
+                    ParameterIndex = pindex, 
+                    IsParameter = true, 
+                    FieldHandle = paramFieldHandle,
+                    ScopeName = _scopeName,
+                    Type = JavascriptType.Object, 
+                    RuntimeIntrinsicType = paramRuntimeType 
+                };
+                _variables[name] = p;
+                return p;
             }
-
+            
+            // Check if variable is uncaptured in the current function scope first
+            if (_registry != null && _registry.IsUncaptured(_scopeName, name))
+            {
+                // Check if we've already resolved this scope-qualified variable
+                var cacheKey = $"{_scopeName}::{name}";
+                if (_variables.ContainsKey(cacheKey))
+                {
+                    return _variables[cacheKey];
+                }
+                
+                var viUncaptured = _registry.GetVariableInfo(_scopeName, name);
+                var localSlot = AllocateLocalSlot(_scopeName, name);
+                var lvUncaptured = new LocalVariable
+                {
+                    Name = name,
+                    LocalSlot = localSlot,
+                    ScopeName = _scopeName,
+                    Type = JavascriptType.Unknown,
+                    RuntimeIntrinsicType = viUncaptured?.RuntimeIntrinsicType
+                };
+                // Cache with scope-qualified key to allow proper shadowing in nested blocks
+                _variables[cacheKey] = lvUncaptured;
+                return lvUncaptured;
+            }
+            
             // Prefer a field in the current function scope (if any) before falling back to registry-wide search
             if (_registry != null)
             {
@@ -319,6 +361,13 @@ namespace Js2IL.Services
             if (scopeName == _scopeName)
             {
                 _hasLocalScope = true;
+                // Reserve slot 0 for the scope instance if not already reserved
+                // This happens for nested functions (arrow functions, regular functions) where
+                // _hasLocalScope starts as false and _nextLocalSlot starts at 0
+                if (_nextLocalSlot == 0)
+                {
+                    _nextLocalSlot = 1; // Reserve slot 0, next allocations start at 1
+                }
                 // Do NOT register the current scope in _createdLocalScopes; it is already
                 // accounted for by _hasLocalScope. Registering it caused double-counting
                 // in GetNumberOfLocals producing an extra (unused) local slot and widespread
@@ -378,24 +427,55 @@ namespace Js2IL.Services
 
         /// <summary>
         /// Gets the number of local variables in the current function's scope.
+        /// Includes scope instance (if present), additional scope locals, and uncaptured variables.
         /// </summary>
         public int GetNumberOfLocals()
         {
-            // Base local is function/global scope if present plus any additional registered scopes (functions, blocks)
-            int count = _hasLocalScope ? 1 : 0;
-            // _createdLocalScopes should no longer contain the current scope (see CreateScopeInstance).
-            // Guard against legacy state where it might have been added previously (defensive cleanup semantics).
-            if (_createdLocalScopes.ContainsKey(_scopeName))
-            {
-                _createdLocalScopes.Remove(_scopeName);
-            }
-            count += _createdLocalScopes.Count; // function + block scopes added
-            return count;
+            // Use the allocated slot count which includes everything
+            return _nextLocalSlot;
         }
 
         public VariableBindings.VariableRegistry GetVariableRegistry()
         {
             return _registry;
+        }
+
+        public string GetCurrentScopeName()
+        {
+            return _scopeName;
+        }
+        
+        /// <summary>
+        /// Allocates a local variable slot for an uncaptured variable.
+        /// Uses scope-qualified name (scopeName::variableName) to ensure variables
+        /// with the same name in different scopes get different slots.
+        /// Returns the slot index.
+        /// </summary>
+        public int AllocateLocalSlot(string scopeName, string variableName)
+        {
+            var key = $"{scopeName}::{variableName}";
+            if (!_localVariableSlots.ContainsKey(key))
+            {
+                _localVariableSlots[key] = _nextLocalSlot++;
+            }
+            return _localVariableSlots[key];
+        }
+        
+        /// <summary>
+        /// Gets the local variable slot index for a variable, or -1 if not allocated.
+        /// </summary>
+        public int GetLocalSlot(string variableName)
+        {
+            return _localVariableSlots.TryGetValue(variableName, out var slot) ? slot : -1;
+        }
+        
+        /// <summary>
+        /// Gets the total number of local variable slots allocated (including scope instance).
+        /// Used for creating the local variable signature.
+        /// </summary>
+        public int GetLocalSlotCount()
+        {
+            return _nextLocalSlot;
         }
 
         /// <summary>
@@ -500,7 +580,8 @@ namespace Js2IL.Services
 
         public int AllocateBlockScopeLocal(string scopeName)
         {
-            int index = GetNumberOfLocals();
+            int index = _nextLocalSlot;
+            _nextLocalSlot++; // Reserve the slot
             RegisterAdditionalLocalScope(scopeName, index);
             return index;
         }
@@ -508,8 +589,29 @@ namespace Js2IL.Services
         private bool TryResolveFieldBackedVariable(string scopeName, string name, out Variable variable)
         {
             variable = null!;
+            
+            // First check if this is an uncaptured variable in this specific scope
+            if (_registry != null && _registry.IsUncaptured(scopeName, name))
+            {
+                var viUncaptured = _registry.GetVariableInfo(scopeName, name);
+                // Allocate a unique local slot for this scope's variable
+                // Use scope name + variable name as key to ensure each block scope gets its own slot
+                var localSlot = AllocateLocalSlot(scopeName, name);
+                variable = new LocalVariable
+                {
+                    Name = name,
+                    LocalSlot = localSlot,
+                    ScopeName = scopeName,
+                    Type = JavascriptType.Unknown,
+                    RuntimeIntrinsicType = viUncaptured?.RuntimeIntrinsicType
+                };
+                return true;
+            }
+            
+            // Otherwise check for field-backed variable
             try
             {
+                if (_registry == null) return false;
                 var fh = _registry.GetFieldHandle(scopeName, name);
                 variable = new LocalVariable
                 {

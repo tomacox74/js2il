@@ -56,8 +56,6 @@
 
 		// Fields
 		.field public object FUNCTION_VALUE
-		.field public object MyClass
-		.field public object 'instance'
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
@@ -79,7 +77,6 @@
 
 	// Fields
 	.field public object GLOBAL_VALUE
-	.field public object testArrowFunction
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -174,10 +171,11 @@
 	{
 		// Method begins at RVA 0x20e0
 		// Header size: 12
-		// Code size: 68 (0x44)
+		// Code size: 53 (0x35)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_testArrowFunction
+			[0] class Scopes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_testArrowFunction,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Scopes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_testArrowFunction::.ctor()
@@ -185,29 +183,26 @@
 		IL_0006: ldloc.0
 		IL_0007: ldstr "Hello from function"
 		IL_000c: stfld object Scopes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_testArrowFunction::FUNCTION_VALUE
-		IL_0011: ldloc.0
-		IL_0012: ldc.i4.2
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: dup
-		IL_0019: ldc.i4.0
-		IL_001a: ldarg.0
-		IL_001b: ldc.i4.0
-		IL_001c: ldelem.ref
-		IL_001d: castclass Scopes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log
-		IL_0022: stelem.ref
-		IL_0023: dup
-		IL_0024: ldc.i4.1
-		IL_0025: ldloc.0
-		IL_0026: stelem.ref
-		IL_0027: newobj instance void Classes.MyClass::.ctor(object[])
-		IL_002c: stfld object Scopes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_testArrowFunction::'instance'
-		IL_0031: ldloc.0
-		IL_0032: castclass Scopes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_testArrowFunction
-		IL_0037: ldfld object Scopes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_testArrowFunction::'instance'
-		IL_003c: callvirt instance object Classes.MyClass::logValues()
-		IL_0041: pop
-		IL_0042: ldnull
-		IL_0043: ret
+		IL_0011: ldc.i4.2
+		IL_0012: newarr [System.Runtime]System.Object
+		IL_0017: dup
+		IL_0018: ldc.i4.0
+		IL_0019: ldarg.0
+		IL_001a: ldc.i4.0
+		IL_001b: ldelem.ref
+		IL_001c: castclass Scopes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log
+		IL_0021: stelem.ref
+		IL_0022: dup
+		IL_0023: ldc.i4.1
+		IL_0024: ldloc.0
+		IL_0025: stelem.ref
+		IL_0026: newobj instance void Classes.MyClass::.ctor(object[])
+		IL_002b: stloc.1
+		IL_002c: ldloc.1
+		IL_002d: callvirt instance object Classes.MyClass::logValues()
+		IL_0032: pop
+		IL_0033: ldnull
+		IL_0034: ret
 	} // end of method ArrowFunction_L3C26::ArrowFunction_L3C26
 
 } // end of class Functions.ArrowFunction_L3C26
@@ -219,12 +214,13 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2130
+		// Method begins at RVA 0x2124
 		// Header size: 12
-		// Code size: 106 (0x6a)
+		// Code size: 86 (0x56)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log
+			[0] class Scopes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Scopes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log::.ctor()
@@ -232,42 +228,38 @@
 		IL_0006: ldloc.0
 		IL_0007: ldstr "Hello from global"
 		IL_000c: stfld object Scopes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log::GLOBAL_VALUE
-		IL_0011: ldloc.0
-		IL_0012: ldnull
-		IL_0013: ldftn object Functions.ArrowFunction_L3C26::ArrowFunction_L3C26(object[])
-		IL_0019: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_001e: ldc.i4.1
-		IL_001f: newarr [System.Runtime]System.Object
-		IL_0024: dup
-		IL_0025: ldc.i4.0
-		IL_0026: ldloc.0
-		IL_0027: stelem.ref
-		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_002d: stfld object Scopes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log::testArrowFunction
-		IL_0032: ldloc.0
-		IL_0033: ldfld object Scopes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log::testArrowFunction
-		IL_0038: dup
-		IL_0039: brtrue.s IL_0059
+		IL_0011: ldnull
+		IL_0012: ldftn object Functions.ArrowFunction_L3C26::ArrowFunction_L3C26(object[])
+		IL_0018: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_001d: ldc.i4.1
+		IL_001e: newarr [System.Runtime]System.Object
+		IL_0023: dup
+		IL_0024: ldc.i4.0
+		IL_0025: ldloc.0
+		IL_0026: stelem.ref
+		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_002c: stloc.1
+		IL_002d: ldloc.1
+		IL_002e: dup
+		IL_002f: brtrue.s IL_0045
 
-		IL_003b: pop
-		IL_003c: ldloc.0
-		IL_003d: ldnull
-		IL_003e: ldftn object Functions.ArrowFunction_L3C26::ArrowFunction_L3C26(object[])
-		IL_0044: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0049: stfld object Scopes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log::testArrowFunction
-		IL_004e: ldloc.0
-		IL_004f: ldfld object Scopes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log::testArrowFunction
-		IL_0054: br IL_0059
+		IL_0031: pop
+		IL_0032: ldnull
+		IL_0033: ldftn object Functions.ArrowFunction_L3C26::ArrowFunction_L3C26(object[])
+		IL_0039: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_003e: stloc.1
+		IL_003f: ldloc.1
+		IL_0040: br IL_0045
 
-		IL_0059: ldc.i4.1
-		IL_005a: newarr [System.Runtime]System.Object
-		IL_005f: dup
-		IL_0060: ldc.i4.0
-		IL_0061: ldloc.0
-		IL_0062: stelem.ref
-		IL_0063: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0068: pop
-		IL_0069: ret
+		IL_0045: ldc.i4.1
+		IL_0046: newarr [System.Runtime]System.Object
+		IL_004b: dup
+		IL_004c: ldc.i4.0
+		IL_004d: ldloc.0
+		IL_004e: stelem.ref
+		IL_004f: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0054: pop
+		IL_0055: ret
 	} // end of method Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log::Main
 
 } // end of class Scripts.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log
@@ -279,7 +271,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21a6
+		// Method begins at RVA 0x2186
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

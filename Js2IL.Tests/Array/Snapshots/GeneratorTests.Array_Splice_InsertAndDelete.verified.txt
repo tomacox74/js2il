@@ -6,10 +6,6 @@
 .class public auto ansi beforefieldinit Scopes.Array_Splice_InsertAndDelete
 	extends [System.Runtime]System.Object
 {
-	// Fields
-	.field public object arr
-	.field public object removed
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -36,98 +32,92 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 282 (0x11a)
+		// Code size: 242 (0xf2)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Array_Splice_InsertAndDelete
+			[0] class Scopes.Array_Splice_InsertAndDelete,
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Scopes.Array_Splice_InsertAndDelete::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.i4.4
-		IL_0008: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_000d: dup
-		IL_000e: ldc.r8 0.0
-		IL_0017: box [System.Runtime]System.Double
-		IL_001c: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0021: dup
-		IL_0022: ldc.r8 1
-		IL_002b: box [System.Runtime]System.Double
-		IL_0030: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0035: dup
-		IL_0036: ldc.r8 2
-		IL_003f: box [System.Runtime]System.Double
-		IL_0044: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0049: dup
-		IL_004a: ldc.r8 3
-		IL_0053: box [System.Runtime]System.Double
-		IL_0058: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_005d: stfld object Scopes.Array_Splice_InsertAndDelete::arr
-		IL_0062: ldloc.0
-		IL_0063: ldloc.0
-		IL_0064: castclass Scopes.Array_Splice_InsertAndDelete
-		IL_0069: ldfld object Scopes.Array_Splice_InsertAndDelete::arr
-		IL_006e: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_0073: ldc.i4.4
-		IL_0074: newarr [System.Runtime]System.Object
-		IL_0079: dup
-		IL_007a: ldc.i4.0
-		IL_007b: ldc.r8 1
-		IL_0084: box [System.Runtime]System.Double
-		IL_0089: stelem.ref
-		IL_008a: dup
-		IL_008b: ldc.i4.1
-		IL_008c: ldc.r8 1
-		IL_0095: box [System.Runtime]System.Double
+		IL_0006: ldc.i4.4
+		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_000c: dup
+		IL_000d: ldc.r8 0.0
+		IL_0016: box [System.Runtime]System.Double
+		IL_001b: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0020: dup
+		IL_0021: ldc.r8 1
+		IL_002a: box [System.Runtime]System.Double
+		IL_002f: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0034: dup
+		IL_0035: ldc.r8 2
+		IL_003e: box [System.Runtime]System.Double
+		IL_0043: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0048: dup
+		IL_0049: ldc.r8 3
+		IL_0052: box [System.Runtime]System.Double
+		IL_0057: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_005c: stloc.1
+		IL_005d: ldloc.1
+		IL_005e: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_0063: ldc.i4.4
+		IL_0064: newarr [System.Runtime]System.Object
+		IL_0069: dup
+		IL_006a: ldc.i4.0
+		IL_006b: ldc.r8 1
+		IL_0074: box [System.Runtime]System.Double
+		IL_0079: stelem.ref
+		IL_007a: dup
+		IL_007b: ldc.i4.1
+		IL_007c: ldc.r8 1
+		IL_0085: box [System.Runtime]System.Double
+		IL_008a: stelem.ref
+		IL_008b: dup
+		IL_008c: ldc.i4.2
+		IL_008d: ldstr "a"
+		IL_0092: stelem.ref
+		IL_0093: dup
+		IL_0094: ldc.i4.3
+		IL_0095: ldstr "b"
 		IL_009a: stelem.ref
-		IL_009b: dup
-		IL_009c: ldc.i4.2
-		IL_009d: ldstr "a"
-		IL_00a2: stelem.ref
-		IL_00a3: dup
-		IL_00a4: ldc.i4.3
-		IL_00a5: ldstr "b"
-		IL_00aa: stelem.ref
-		IL_00ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::splice(object[])
-		IL_00b0: stfld object Scopes.Array_Splice_InsertAndDelete::removed
-		IL_00b5: ldc.i4.1
-		IL_00b6: newarr [System.Runtime]System.Object
-		IL_00bb: dup
-		IL_00bc: ldc.i4.0
-		IL_00bd: ldloc.0
-		IL_00be: castclass Scopes.Array_Splice_InsertAndDelete
-		IL_00c3: ldfld object Scopes.Array_Splice_InsertAndDelete::removed
-		IL_00c8: ldstr "join"
-		IL_00cd: ldc.i4.1
-		IL_00ce: newarr [System.Runtime]System.Object
-		IL_00d3: dup
-		IL_00d4: ldc.i4.0
-		IL_00d5: ldstr ","
-		IL_00da: stelem.ref
-		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_00e0: stelem.ref
-		IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_00e6: pop
-		IL_00e7: ldc.i4.1
-		IL_00e8: newarr [System.Runtime]System.Object
-		IL_00ed: dup
-		IL_00ee: ldc.i4.0
-		IL_00ef: ldloc.0
-		IL_00f0: castclass Scopes.Array_Splice_InsertAndDelete
-		IL_00f5: ldfld object Scopes.Array_Splice_InsertAndDelete::arr
-		IL_00fa: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_00ff: ldc.i4.1
-		IL_0100: newarr [System.Runtime]System.Object
-		IL_0105: dup
-		IL_0106: ldc.i4.0
-		IL_0107: ldstr ","
-		IL_010c: stelem.ref
-		IL_010d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_0112: stelem.ref
-		IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0118: pop
-		IL_0119: ret
+		IL_009b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::splice(object[])
+		IL_00a0: stloc.2
+		IL_00a1: ldc.i4.1
+		IL_00a2: newarr [System.Runtime]System.Object
+		IL_00a7: dup
+		IL_00a8: ldc.i4.0
+		IL_00a9: ldloc.2
+		IL_00aa: ldstr "join"
+		IL_00af: ldc.i4.1
+		IL_00b0: newarr [System.Runtime]System.Object
+		IL_00b5: dup
+		IL_00b6: ldc.i4.0
+		IL_00b7: ldstr ","
+		IL_00bc: stelem.ref
+		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_00c2: stelem.ref
+		IL_00c3: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00c8: pop
+		IL_00c9: ldc.i4.1
+		IL_00ca: newarr [System.Runtime]System.Object
+		IL_00cf: dup
+		IL_00d0: ldc.i4.0
+		IL_00d1: ldloc.1
+		IL_00d2: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_00d7: ldc.i4.1
+		IL_00d8: newarr [System.Runtime]System.Object
+		IL_00dd: dup
+		IL_00de: ldc.i4.0
+		IL_00df: ldstr ","
+		IL_00e4: stelem.ref
+		IL_00e5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_00ea: stelem.ref
+		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00f0: pop
+		IL_00f1: ret
 	} // end of method Array_Splice_InsertAndDelete::Main
 
 } // end of class Scripts.Array_Splice_InsertAndDelete
@@ -139,7 +129,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2182
+		// Method begins at RVA 0x215a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -28,11 +28,6 @@
 	} // end of class Block_L8C28
 
 
-	// Fields
-	.field public object x
-	.field public object 'value'
-	.field public object i
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -59,126 +54,110 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 353 (0x161)
+		// Code size: 258 (0x102)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.CompoundAssignment_LeftShiftAssignment
+			[0] class Scopes.CompoundAssignment_LeftShiftAssignment,
+			[1] object,
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Scopes.CompoundAssignment_LeftShiftAssignment::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.r8 1
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Scopes.CompoundAssignment_LeftShiftAssignment::x
-		IL_001a: ldloc.0
-		IL_001b: dup
-		IL_001c: ldfld object Scopes.CompoundAssignment_LeftShiftAssignment::x
-		IL_0021: unbox.any [System.Runtime]System.Double
-		IL_0026: conv.i4
-		IL_0027: ldc.r8 3
-		IL_0030: conv.i4
-		IL_0031: shl
-		IL_0032: conv.r8
-		IL_0033: box [System.Runtime]System.Double
-		IL_0038: stfld object Scopes.CompoundAssignment_LeftShiftAssignment::x
-		IL_003d: ldc.i4.2
-		IL_003e: newarr [System.Runtime]System.Object
-		IL_0043: dup
-		IL_0044: ldc.i4.0
-		IL_0045: ldstr "x after 1 <<= 3:"
-		IL_004a: stelem.ref
-		IL_004b: dup
-		IL_004c: ldc.i4.1
-		IL_004d: ldloc.0
-		IL_004e: castclass Scopes.CompoundAssignment_LeftShiftAssignment
-		IL_0053: ldfld object Scopes.CompoundAssignment_LeftShiftAssignment::x
-		IL_0058: stelem.ref
-		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_005e: pop
-		IL_005f: ldloc.0
-		IL_0060: ldc.r8 1
-		IL_0069: box [System.Runtime]System.Double
-		IL_006e: stfld object Scopes.CompoundAssignment_LeftShiftAssignment::'value'
-		IL_0073: ldloc.0
-		IL_0074: ldc.r8 0.0
-		IL_007d: box [System.Runtime]System.Double
-		IL_0082: stfld object Scopes.CompoundAssignment_LeftShiftAssignment::i
-		// loop start (head: IL_0087)
-			IL_0087: ldloc.0
-			IL_0088: castclass Scopes.CompoundAssignment_LeftShiftAssignment
-			IL_008d: ldfld object Scopes.CompoundAssignment_LeftShiftAssignment::i
-			IL_0092: unbox.any [System.Runtime]System.Double
-			IL_0097: ldc.r8 5
-			IL_00a0: blt IL_00aa
+		IL_0006: ldc.r8 1
+		IL_000f: box [System.Runtime]System.Double
+		IL_0014: stloc.1
+		IL_0015: ldloc.1
+		IL_0016: unbox.any [System.Runtime]System.Double
+		IL_001b: conv.i4
+		IL_001c: ldc.r8 3
+		IL_0025: conv.i4
+		IL_0026: shl
+		IL_0027: conv.r8
+		IL_0028: box [System.Runtime]System.Double
+		IL_002d: stloc.1
+		IL_002e: ldc.i4.2
+		IL_002f: newarr [System.Runtime]System.Object
+		IL_0034: dup
+		IL_0035: ldc.i4.0
+		IL_0036: ldstr "x after 1 <<= 3:"
+		IL_003b: stelem.ref
+		IL_003c: dup
+		IL_003d: ldc.i4.1
+		IL_003e: ldloc.1
+		IL_003f: stelem.ref
+		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0045: pop
+		IL_0046: ldc.r8 1
+		IL_004f: box [System.Runtime]System.Double
+		IL_0054: stloc.2
+		IL_0055: ldc.r8 0.0
+		IL_005e: box [System.Runtime]System.Double
+		IL_0063: stloc.3
+		// loop start (head: IL_0064)
+			IL_0064: ldloc.3
+			IL_0065: unbox.any [System.Runtime]System.Double
+			IL_006a: ldc.r8 5
+			IL_0073: blt IL_007d
 
-			IL_00a5: br IL_013e
+			IL_0078: br IL_00e9
 
-			IL_00aa: ldloc.0
-			IL_00ab: dup
-			IL_00ac: ldfld object Scopes.CompoundAssignment_LeftShiftAssignment::'value'
-			IL_00b1: unbox.any [System.Runtime]System.Double
-			IL_00b6: conv.i4
-			IL_00b7: ldc.r8 1
-			IL_00c0: conv.i4
-			IL_00c1: shl
-			IL_00c2: conv.r8
-			IL_00c3: box [System.Runtime]System.Double
-			IL_00c8: stfld object Scopes.CompoundAssignment_LeftShiftAssignment::'value'
-			IL_00cd: ldc.i4.4
-			IL_00ce: newarr [System.Runtime]System.Object
-			IL_00d3: dup
-			IL_00d4: ldc.i4.0
-			IL_00d5: ldstr "value after shift"
-			IL_00da: stelem.ref
-			IL_00db: dup
-			IL_00dc: ldc.i4.1
-			IL_00dd: ldloc.0
-			IL_00de: castclass Scopes.CompoundAssignment_LeftShiftAssignment
-			IL_00e3: ldfld object Scopes.CompoundAssignment_LeftShiftAssignment::i
-			IL_00e8: unbox.any [System.Runtime]System.Double
-			IL_00ed: ldc.r8 1
-			IL_00f6: add
-			IL_00f7: box [System.Runtime]System.Double
-			IL_00fc: stelem.ref
-			IL_00fd: dup
-			IL_00fe: ldc.i4.2
-			IL_00ff: ldstr ":"
-			IL_0104: stelem.ref
-			IL_0105: dup
-			IL_0106: ldc.i4.3
-			IL_0107: ldloc.0
-			IL_0108: castclass Scopes.CompoundAssignment_LeftShiftAssignment
-			IL_010d: ldfld object Scopes.CompoundAssignment_LeftShiftAssignment::'value'
-			IL_0112: stelem.ref
-			IL_0113: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_0118: pop
-			IL_0119: ldloc.0
-			IL_011a: ldloc.0
-			IL_011b: ldfld object Scopes.CompoundAssignment_LeftShiftAssignment::i
-			IL_0120: unbox.any [System.Runtime]System.Double
-			IL_0125: ldc.r8 1
-			IL_012e: add
-			IL_012f: box [System.Runtime]System.Double
-			IL_0134: stfld object Scopes.CompoundAssignment_LeftShiftAssignment::i
-			IL_0139: br IL_0087
+			IL_007d: ldloc.2
+			IL_007e: unbox.any [System.Runtime]System.Double
+			IL_0083: conv.i4
+			IL_0084: ldc.r8 1
+			IL_008d: conv.i4
+			IL_008e: shl
+			IL_008f: conv.r8
+			IL_0090: box [System.Runtime]System.Double
+			IL_0095: stloc.2
+			IL_0096: ldc.i4.4
+			IL_0097: newarr [System.Runtime]System.Object
+			IL_009c: dup
+			IL_009d: ldc.i4.0
+			IL_009e: ldstr "value after shift"
+			IL_00a3: stelem.ref
+			IL_00a4: dup
+			IL_00a5: ldc.i4.1
+			IL_00a6: ldloc.3
+			IL_00a7: unbox.any [System.Runtime]System.Double
+			IL_00ac: ldc.r8 1
+			IL_00b5: add
+			IL_00b6: box [System.Runtime]System.Double
+			IL_00bb: stelem.ref
+			IL_00bc: dup
+			IL_00bd: ldc.i4.2
+			IL_00be: ldstr ":"
+			IL_00c3: stelem.ref
+			IL_00c4: dup
+			IL_00c5: ldc.i4.3
+			IL_00c6: ldloc.2
+			IL_00c7: stelem.ref
+			IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_00cd: pop
+			IL_00ce: ldloc.3
+			IL_00cf: unbox.any [System.Runtime]System.Double
+			IL_00d4: ldc.r8 1
+			IL_00dd: add
+			IL_00de: box [System.Runtime]System.Double
+			IL_00e3: stloc.3
+			IL_00e4: br IL_0064
 		// end loop
 
-		IL_013e: ldc.i4.2
-		IL_013f: newarr [System.Runtime]System.Object
-		IL_0144: dup
-		IL_0145: ldc.i4.0
-		IL_0146: ldstr "final value:"
-		IL_014b: stelem.ref
-		IL_014c: dup
-		IL_014d: ldc.i4.1
-		IL_014e: ldloc.0
-		IL_014f: castclass Scopes.CompoundAssignment_LeftShiftAssignment
-		IL_0154: ldfld object Scopes.CompoundAssignment_LeftShiftAssignment::'value'
-		IL_0159: stelem.ref
-		IL_015a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_015f: pop
-		IL_0160: ret
+		IL_00e9: ldc.i4.2
+		IL_00ea: newarr [System.Runtime]System.Object
+		IL_00ef: dup
+		IL_00f0: ldc.i4.0
+		IL_00f1: ldstr "final value:"
+		IL_00f6: stelem.ref
+		IL_00f7: dup
+		IL_00f8: ldc.i4.1
+		IL_00f9: ldloc.2
+		IL_00fa: stelem.ref
+		IL_00fb: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0100: pop
+		IL_0101: ret
 	} // end of method CompoundAssignment_LeftShiftAssignment::Main
 
 } // end of class Scripts.CompoundAssignment_LeftShiftAssignment
@@ -190,7 +169,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21d1
+		// Method begins at RVA 0x2172
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

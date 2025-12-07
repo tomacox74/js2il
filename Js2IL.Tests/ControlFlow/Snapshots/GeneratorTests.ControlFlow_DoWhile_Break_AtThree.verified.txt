@@ -50,9 +50,6 @@
 	} // end of class Block_L2C13
 
 
-	// Fields
-	.field public object i
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -79,59 +76,53 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 146 (0x92)
+		// Code size: 111 (0x6f)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ControlFlow_DoWhile_Break_AtThree
+			[0] class Scopes.ControlFlow_DoWhile_Break_AtThree,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Scopes.ControlFlow_DoWhile_Break_AtThree::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.r8 0.0
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Scopes.ControlFlow_DoWhile_Break_AtThree::i
-		// loop start (head: IL_001a)
-			IL_001a: ldc.i4.1
-			IL_001b: brtrue IL_0025
+		IL_0006: ldc.r8 0.0
+		IL_000f: box [System.Runtime]System.Double
+		IL_0014: stloc.1
+		// loop start (head: IL_0015)
+			IL_0015: ldc.i4.1
+			IL_0016: brtrue IL_0020
 
-			IL_0020: br IL_0091
+			IL_001b: br IL_006e
 
-			IL_0025: ldc.i4.1
-			IL_0026: newarr [System.Runtime]System.Object
-			IL_002b: dup
-			IL_002c: ldc.i4.0
-			IL_002d: ldloc.0
-			IL_002e: castclass Scopes.ControlFlow_DoWhile_Break_AtThree
-			IL_0033: ldfld object Scopes.ControlFlow_DoWhile_Break_AtThree::i
-			IL_0038: stelem.ref
-			IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_003e: pop
-			IL_003f: ldloc.0
-			IL_0040: castclass Scopes.ControlFlow_DoWhile_Break_AtThree
-			IL_0045: ldfld object Scopes.ControlFlow_DoWhile_Break_AtThree::i
-			IL_004a: unbox.any [System.Runtime]System.Double
-			IL_004f: ldc.r8 3
-			IL_0058: beq IL_0062
+			IL_0020: ldc.i4.1
+			IL_0021: newarr [System.Runtime]System.Object
+			IL_0026: dup
+			IL_0027: ldc.i4.0
+			IL_0028: ldloc.1
+			IL_0029: stelem.ref
+			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_002f: pop
+			IL_0030: ldloc.1
+			IL_0031: unbox.any [System.Runtime]System.Double
+			IL_0036: ldc.r8 3
+			IL_003f: beq IL_0049
 
-			IL_005d: br IL_006c
+			IL_0044: br IL_0053
 
-			IL_0062: br IL_0091
+			IL_0049: br IL_006e
 
-			IL_0067: br IL_006c
+			IL_004e: br IL_0053
 
-			IL_006c: ldloc.0
-			IL_006d: ldloc.0
-			IL_006e: ldfld object Scopes.ControlFlow_DoWhile_Break_AtThree::i
-			IL_0073: unbox.any [System.Runtime]System.Double
-			IL_0078: ldc.r8 1
-			IL_0081: add
-			IL_0082: box [System.Runtime]System.Double
-			IL_0087: stfld object Scopes.ControlFlow_DoWhile_Break_AtThree::i
-			IL_008c: br IL_001a
+			IL_0053: ldloc.1
+			IL_0054: unbox.any [System.Runtime]System.Double
+			IL_0059: ldc.r8 1
+			IL_0062: add
+			IL_0063: box [System.Runtime]System.Double
+			IL_0068: stloc.1
+			IL_0069: br IL_0015
 		// end loop
 
-		IL_0091: ret
+		IL_006e: ret
 	} // end of method ControlFlow_DoWhile_Break_AtThree::Main
 
 } // end of class Scripts.ControlFlow_DoWhile_Break_AtThree
@@ -143,7 +134,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x210a
+		// Method begins at RVA 0x20e7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

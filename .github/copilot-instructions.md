@@ -160,3 +160,17 @@ Modules discovered via `[NodeModule]` attribute (e.g., `fs`, `path`, `perf_hooks
 ## Tools
 - use ilspycmd to inspect generated assemblies
 - use the github cli to create pull requests and releases
+
+## GitHub Issue Management
+
+When creating or editing GitHub issues with the GitHub CLI:
+- **Always use `issue-body.md` for the body content** instead of inline `--body` strings
+- Create issues: `gh issue create --title "Title" --body-file issue-body.md --label "enhancement"`
+- Edit issues: `gh issue edit <issue-number> --body-file issue-body.md`
+- Delete `issue-body.md` after use (it's in `.gitignore`)
+
+This approach:
+- Avoids command-line length limits
+- Supports complex markdown formatting
+- Prevents CLI hanging issues with long descriptions
+- Makes issue content easier to review before submission

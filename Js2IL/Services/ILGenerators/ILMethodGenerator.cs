@@ -129,15 +129,22 @@ namespace Js2IL.Services.ILGenerators
                     throw new InvalidOperationException("Destructuring temp binding not found (expected 'perf' or '__obj')");
                 }
 
-                // 1) temp = <init>;
+                // Check if temp is an uncaptured variable (uses local slot instead of field)
+                bool tempIsLocal = tempVar.LocalSlot >= 0;
                 var tempScopeSlot = _variables.GetScopeLocalSlot(tempVar.ScopeName);
-                if (tempScopeSlot.Address == -1) throw new InvalidOperationException($"Scope '{tempVar.ScopeName}' not found in local slots");
-                if (tempScopeSlot.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(tempScopeSlot.Address);
-                else if (tempScopeSlot.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(tempScopeSlot.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
-                else _il.LoadLocal(tempScopeSlot.Address);
-                // Cast to scope type for verifiable field store
                 var tempScopeType = _variables.GetVariableRegistry()?.GetScopeTypeHandle(tempVar.ScopeName) ?? default;
-                if (!tempScopeType.IsNil) { _il.OpCode(ILOpCode.Castclass); _il.Token(tempScopeType); }
+
+                // 1) temp = <init>;
+                if (!tempIsLocal)
+                {
+                    // Field-backed: load scope instance for stfld
+                    if (tempScopeSlot.Address == -1) throw new InvalidOperationException($"Scope '{tempVar.ScopeName}' not found in local slots");
+                    if (tempScopeSlot.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(tempScopeSlot.Address);
+                    else if (tempScopeSlot.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(tempScopeSlot.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
+                    else _il.LoadLocal(tempScopeSlot.Address);
+                    // Cast to scope type for verifiable field store
+                    if (!tempScopeType.IsNil) { _il.OpCode(ILOpCode.Castclass); _il.Token(tempScopeType); }
+                }
 
                 var prevAssignmentTarget = _currentAssignmentTarget;
                 try
@@ -149,8 +156,19 @@ namespace Js2IL.Services.ILGenerators
                     try { _variables.GetVariableRegistry()?.SetRuntimeIntrinsicType(tempVar.ScopeName, tempVar.Name, initRes.ClrType); } catch { }
                 }
                 finally { _currentAssignmentTarget = prevAssignmentTarget; }
-                _il.OpCode(ILOpCode.Stfld);
-                _il.Token(tempVar.FieldHandle);
+
+                // Store temp value
+                if (tempIsLocal)
+                {
+                    // Store to local variable slot
+                    _il.StoreLocal(tempVar.LocalSlot);
+                }
+                else
+                {
+                    // Store to field
+                    _il.OpCode(ILOpCode.Stfld);
+                    _il.Token(tempVar.FieldHandle);
+                }
 
                 // 2) For each property: name = temp.<prop> (via direct getter when known, else runtime Object.GetProperty)
                 foreach (var p in objPattern.Properties)
@@ -158,26 +176,39 @@ namespace Js2IL.Services.ILGenerators
                     if (p is Acornima.Ast.Property prop && prop.Value is Acornima.Ast.Identifier bid)
                     {
                         var targetVar = _variables.FindVariable(bid.Name) ?? throw new InvalidOperationException($"Variable '{bid.Name}' not found.");
-                        // Load target scope for stfld
-                        var tslot = _variables.GetScopeLocalSlot(targetVar.ScopeName);
-                        if (tslot.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(tslot.Address);
-                        else if (tslot.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(tslot.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
-                        else _il.LoadLocal(tslot.Address);
-                        var tScopeType = _variables.GetVariableRegistry()?.GetScopeTypeHandle(targetVar.ScopeName) ?? default;
-                        if (!tScopeType.IsNil) { _il.OpCode(ILOpCode.Castclass); _il.Token(tScopeType); }
+                        bool targetIsLocal = targetVar.LocalSlot >= 0;
 
-                        // Load temp receiver
-                        if (tempScopeSlot.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(tempScopeSlot.Address);
-                        else if (tempScopeSlot.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(tempScopeSlot.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
-                        else _il.LoadLocal(tempScopeSlot.Address);
-                        // Cast to concrete scope type for verifiable ldfld
-                        if (!tempScopeType.IsNil)
+                        if (!targetIsLocal)
                         {
-                            _il.OpCode(ILOpCode.Castclass);
-                            _il.Token(tempScopeType);
+                            // Load target scope for stfld
+                            var tslot = _variables.GetScopeLocalSlot(targetVar.ScopeName);
+                            if (tslot.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(tslot.Address);
+                            else if (tslot.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(tslot.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
+                            else _il.LoadLocal(tslot.Address);
+                            var tScopeType = _variables.GetVariableRegistry()?.GetScopeTypeHandle(targetVar.ScopeName) ?? default;
+                            if (!tScopeType.IsNil) { _il.OpCode(ILOpCode.Castclass); _il.Token(tScopeType); }
                         }
-                        _il.OpCode(ILOpCode.Ldfld);
-                        _il.Token(tempVar.FieldHandle);
+
+                        // Load temp value (either from local or field)
+                        if (tempIsLocal)
+                        {
+                            _il.LoadLocal(tempVar.LocalSlot);
+                        }
+                        else
+                        {
+                            // Load temp receiver from scope field
+                            if (tempScopeSlot.Location == ObjectReferenceLocation.Parameter) _il.LoadArgument(tempScopeSlot.Address);
+                            else if (tempScopeSlot.Location == ObjectReferenceLocation.ScopeArray) { _il.LoadArgument(0); _il.LoadConstantI4(tempScopeSlot.Address); _il.OpCode(ILOpCode.Ldelem_ref); }
+                            else _il.LoadLocal(tempScopeSlot.Address);
+                            // Cast to concrete scope type for verifiable ldfld
+                            if (!tempScopeType.IsNil)
+                            {
+                                _il.OpCode(ILOpCode.Castclass);
+                                _il.Token(tempScopeType);
+                            }
+                            _il.OpCode(ILOpCode.Ldfld);
+                            _il.Token(tempVar.FieldHandle);
+                        }
 
                         // If tempVar has a known runtime intrinsic type with a matching property getter, prefer that
                         var rtType = tempVar.RuntimeIntrinsicType;
@@ -210,9 +241,18 @@ namespace Js2IL.Services.ILGenerators
                             _il.Token(getPropRef);
                         }
 
-                        // Store into field (the target scope instance was already loaded and cast before value evaluation)
-                        _il.OpCode(ILOpCode.Stfld);
-                        _il.Token(targetVar.FieldHandle);
+                        // Store target value
+                        if (targetIsLocal)
+                        {
+                            // Store to local variable slot
+                            _il.StoreLocal(targetVar.LocalSlot);
+                        }
+                        else
+                        {
+                            // Store to field (the target scope instance was already loaded and cast before value evaluation)
+                            _il.OpCode(ILOpCode.Stfld);
+                            _il.Token(targetVar.FieldHandle);
+                        }
                     }
                 }
                 return;
@@ -224,43 +264,52 @@ namespace Js2IL.Services.ILGenerators
 
             if (variableAST.Init != null)
             {
-                var scopeLocalIndex = _variables.GetScopeLocalSlot(variable.ScopeName);
-                if (scopeLocalIndex.Address == -1)
-                {
-                    throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
-                }
+                // Check if this is an uncaptured variable (stored as local, not field)
+                bool isLocalVariable = variable.LocalSlot >= 0;
 
-                if (scopeLocalIndex.Location == ObjectReferenceLocation.Parameter)
+                // Only load scope if it's a field variable
+                if (!isLocalVariable)
                 {
-                    _il.LoadArgument(scopeLocalIndex.Address);
-                    // Cast needed: parameter is typed as object
-                    var regVar = _variables.GetVariableRegistry();
-                    var tdefVar = regVar?.GetScopeTypeHandle(variable.ScopeName) ?? default;
-                    if (!tdefVar.IsNil)
+                    var scopeLocalIndex = _variables.GetScopeLocalSlot(variable.ScopeName);
+                    if (scopeLocalIndex.Address == -1)
                     {
-                        _il.OpCode(ILOpCode.Castclass);
-                        _il.Token(tdefVar);
+                        throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
+                    }
+
+                    // Load scope instance onto stack
+                    if (scopeLocalIndex.Location == ObjectReferenceLocation.Parameter)
+                    {
+                        _il.LoadArgument(scopeLocalIndex.Address);
+                        // Cast needed: parameter is typed as object
+                        var regVar = _variables.GetVariableRegistry();
+                        var tdefVar = regVar?.GetScopeTypeHandle(variable.ScopeName) ?? default;
+                        if (!tdefVar.IsNil)
+                        {
+                            _il.OpCode(ILOpCode.Castclass);
+                            _il.Token(tdefVar);
+                        }
+                    }
+                    else if (scopeLocalIndex.Location == ObjectReferenceLocation.ScopeArray)
+                    {
+                        _il.LoadArgument(0);
+                        _il.LoadConstantI4(scopeLocalIndex.Address);
+                        _il.OpCode(ILOpCode.Ldelem_ref);
+                        // Cast needed: array element is typed as object
+                        var regVar = _variables.GetVariableRegistry();
+                        var tdefVar = regVar?.GetScopeTypeHandle(variable.ScopeName) ?? default;
+                        if (!tdefVar.IsNil)
+                        {
+                            _il.OpCode(ILOpCode.Castclass);
+                            _il.Token(tdefVar);
+                        }
+                    }
+                    else
+                    {
+                        _il.LoadLocal(scopeLocalIndex.Address);
                     }
                 }
-                else if (scopeLocalIndex.Location == ObjectReferenceLocation.ScopeArray)
-                {
-                    _il.LoadArgument(0);
-                    _il.LoadConstantI4(scopeLocalIndex.Address);
-                    _il.OpCode(ILOpCode.Ldelem_ref);
-                    // Cast needed: array element is typed as object
-                    var regVar = _variables.GetVariableRegistry();
-                    var tdefVar = regVar?.GetScopeTypeHandle(variable.ScopeName) ?? default;
-                    if (!tdefVar.IsNil)
-                    {
-                        _il.OpCode(ILOpCode.Castclass);
-                        _il.Token(tdefVar);
-                    }
-                }
-                else
-                {
-                    _il.LoadLocal(scopeLocalIndex.Address);
-                }
 
+                // Evaluate initializer and leave value on stack
                 var prevAssignmentTarget2 = _currentAssignmentTarget;
                 try
                 {
@@ -272,8 +321,10 @@ namespace Js2IL.Services.ILGenerators
                 }
                 finally { _currentAssignmentTarget = prevAssignmentTarget2; }
 
-                _il.OpCode(ILOpCode.Stfld);
-                _il.Token(variable.FieldHandle);
+                // Store value into variable using helper
+                // For local variables: Stack is [value]
+                // For field variables: Stack is [scope instance, value]
+                _il.EmitStoreVariable(variable, _variables, scopeAlreadyLoaded: !isLocalVariable);
             }
         }
 
@@ -829,14 +880,7 @@ namespace Js2IL.Services.ILGenerators
             {
                 // Try resolve via Variables; if unavailable (e.g., for-of header const not pre-registered), fall back to registry
                 var targetVar = _variables.FindVariable(iterVarName!);
-                string targetScopeName = string.Empty;
-                FieldDefinitionHandle targetFieldHandle = default;
-                if (targetVar != null)
-                {
-                    targetScopeName = targetVar.ScopeName;
-                    targetFieldHandle = targetVar.FieldHandle;
-                }
-                else
+                if (targetVar == null)
                 {
                     var registry = _variables.GetVariableRegistry();
                     var leafScope = _variables.GetLeafScopeName();
@@ -850,8 +894,6 @@ namespace Js2IL.Services.ILGenerators
                             targetVar = _variables.FindVariable(iterVarName!);
                             if (targetVar == null)
                                 throw new InvalidOperationException($"Variable '{iterVarName}' not found.");
-                            targetScopeName = targetVar.ScopeName;
-                            targetFieldHandle = targetVar.FieldHandle;
                         }
                         else
                         {
@@ -860,58 +902,59 @@ namespace Js2IL.Services.ILGenerators
                     }
                     else
                     {
-                        targetScopeName = vinfo.ScopeName;
-                        targetFieldHandle = vinfo.FieldHandle;
+                        // Create Variable from registry info for use with helpers
+                        targetVar = new LocalVariable 
+                        { 
+                            Name = vinfo.Name, 
+                            ScopeName = vinfo.ScopeName, 
+                            FieldHandle = vinfo.FieldHandle 
+                        };
                     }
                 }
 
-                // Guard const reassignment: first assignment only; per-iteration freshness is modeled by loop body semantics
-                if (bindTargetIsConst)
-                {
-                    // No-op: we only assign once per iteration
-                }
-
-                // Load target scope instance for stfld
-                var tslot = _variables.GetScopeLocalSlot(targetScopeName);
-                var regFO = _variables.GetVariableRegistry();
-                var tdefFO = regFO?.GetScopeTypeHandle(targetScopeName) ?? default;
+                // Check if it's a field variable and we need to load scope first
+                bool isFieldVariable = targetVar.LocalSlot < 0;
                 
-                if (tslot.Location == ObjectReferenceLocation.Parameter)
+                // Load scope instance if storing to field (must be before value on stack)
+                if (isFieldVariable)
                 {
-                    _il.LoadArgument(tslot.Address);
-                    // Cast needed: parameter is typed as object
-                    if (!tdefFO.IsNil)
+                    var tslot = _variables.GetScopeLocalSlot(targetVar.ScopeName);
+                    var regFO = _variables.GetVariableRegistry();
+                    var tdefFO = regFO?.GetScopeTypeHandle(targetVar.ScopeName) ?? default;
+                    
+                    if (tslot.Location == ObjectReferenceLocation.Parameter)
                     {
-                        _il.OpCode(ILOpCode.Castclass);
-                        _il.Token(tdefFO);
+                        _il.LoadArgument(tslot.Address);
+                        if (!tdefFO.IsNil)
+                        {
+                            _il.OpCode(ILOpCode.Castclass);
+                            _il.Token(tdefFO);
+                        }
                     }
-                }
-                else if (tslot.Location == ObjectReferenceLocation.ScopeArray)
-                {
-                    _il.LoadArgument(0);
-                    _il.LoadConstantI4(tslot.Address);
-                    _il.OpCode(ILOpCode.Ldelem_ref);
-                    // Cast needed: array element is typed as object
-                    if (!tdefFO.IsNil)
+                    else if (tslot.Location == ObjectReferenceLocation.ScopeArray)
                     {
-                        _il.OpCode(ILOpCode.Castclass);
-                        _il.Token(tdefFO);
+                        _il.LoadArgument(0);
+                        _il.LoadConstantI4(tslot.Address);
+                        _il.OpCode(ILOpCode.Ldelem_ref);
+                        if (!tdefFO.IsNil)
+                        {
+                            _il.OpCode(ILOpCode.Castclass);
+                            _il.Token(tdefFO);
+                        }
                     }
-                }
-                else
-                {
-                    _il.LoadLocal(tslot.Address);
+                    else
+                    {
+                        _il.LoadLocal(tslot.Address);
+                    }
                 }
 
-                // Load iterable and index to get item
+                // Load iterable and index to get item (leaves value on stack)
                 _il.LoadLocal(iterLocal);
-                // index (boxed object expected by GetItem)
                 _il.LoadLocal(idxLocal);
                 _runtime.InvokeGetItemFromObject();
 
-                // Store into target field
-                _il.OpCode(ILOpCode.Stfld);
-                _il.Token(targetFieldHandle);
+                // Store using helper (handles both local and field cases)
+                _il.EmitStoreVariable(targetVar, _variables, scopeAlreadyLoaded: isFieldVariable);
             }
 
             // Emit loop body

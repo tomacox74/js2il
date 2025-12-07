@@ -14,6 +14,9 @@
 		.class nested public auto ansi beforefieldinit constructor
 			extends [System.Runtime]System.Object
 		{
+			// Fields
+			.field public object n
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -69,11 +72,6 @@
 
 	} // end of class ArrowFunction_make
 
-
-	// Fields
-	.field public object PrimeSieve
-	.field public object make
-	.field public object s
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -150,63 +148,58 @@
 	{
 		// Method begins at RVA 0x20b0
 		// Header size: 12
-		// Code size: 136 (0x88)
+		// Code size: 101 (0x65)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ClassConstructor_New_In_ArrowFunction
+			[0] class Scopes.Classes_ClassConstructor_New_In_ArrowFunction,
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Scopes.Classes_ClassConstructor_New_In_ArrowFunction::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldnull
-		IL_0008: ldftn object Functions.ArrowFunction_L7C13::ArrowFunction_L7C13(object[])
-		IL_000e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0013: ldc.i4.1
-		IL_0014: newarr [System.Runtime]System.Object
-		IL_0019: dup
-		IL_001a: ldc.i4.0
-		IL_001b: ldloc.0
-		IL_001c: stelem.ref
-		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0022: stfld object Scopes.Classes_ClassConstructor_New_In_ArrowFunction::make
-		IL_0027: ldloc.0
-		IL_0028: ldloc.0
-		IL_0029: ldfld object Scopes.Classes_ClassConstructor_New_In_ArrowFunction::make
-		IL_002e: dup
-		IL_002f: brtrue.s IL_004f
+		IL_0006: ldnull
+		IL_0007: ldftn object Functions.ArrowFunction_L7C13::ArrowFunction_L7C13(object[])
+		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.1
+		IL_0022: ldloc.1
+		IL_0023: dup
+		IL_0024: brtrue.s IL_003a
 
-		IL_0031: pop
-		IL_0032: ldloc.0
-		IL_0033: ldnull
-		IL_0034: ldftn object Functions.ArrowFunction_L7C13::ArrowFunction_L7C13(object[])
-		IL_003a: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_003f: stfld object Scopes.Classes_ClassConstructor_New_In_ArrowFunction::make
-		IL_0044: ldloc.0
-		IL_0045: ldfld object Scopes.Classes_ClassConstructor_New_In_ArrowFunction::make
-		IL_004a: br IL_004f
+		IL_0026: pop
+		IL_0027: ldnull
+		IL_0028: ldftn object Functions.ArrowFunction_L7C13::ArrowFunction_L7C13(object[])
+		IL_002e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0033: stloc.1
+		IL_0034: ldloc.1
+		IL_0035: br IL_003a
 
-		IL_004f: ldc.i4.1
-		IL_0050: newarr [System.Runtime]System.Object
-		IL_0055: dup
-		IL_0056: ldc.i4.0
-		IL_0057: ldloc.0
-		IL_0058: stelem.ref
-		IL_0059: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_005e: stfld object Scopes.Classes_ClassConstructor_New_In_ArrowFunction::s
-		IL_0063: ldc.i4.1
-		IL_0064: newarr [System.Runtime]System.Object
-		IL_0069: dup
-		IL_006a: ldc.i4.0
-		IL_006b: ldloc.0
-		IL_006c: castclass Scopes.Classes_ClassConstructor_New_In_ArrowFunction
-		IL_0071: ldfld object Scopes.Classes_ClassConstructor_New_In_ArrowFunction::s
-		IL_0076: ldstr "n"
-		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_0080: stelem.ref
-		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0086: pop
-		IL_0087: ret
+		IL_003a: ldc.i4.1
+		IL_003b: newarr [System.Runtime]System.Object
+		IL_0040: dup
+		IL_0041: ldc.i4.0
+		IL_0042: ldloc.0
+		IL_0043: stelem.ref
+		IL_0044: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0049: stloc.2
+		IL_004a: ldc.i4.1
+		IL_004b: newarr [System.Runtime]System.Object
+		IL_0050: dup
+		IL_0051: ldc.i4.0
+		IL_0052: ldloc.2
+		IL_0053: ldstr "n"
+		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_005d: stelem.ref
+		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0063: pop
+		IL_0064: ret
 	} // end of method Classes_ClassConstructor_New_In_ArrowFunction::Main
 
 } // end of class Scripts.Classes_ClassConstructor_New_In_ArrowFunction
@@ -218,7 +211,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2144
+		// Method begins at RVA 0x2121
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

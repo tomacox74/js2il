@@ -6,10 +6,6 @@
 .class public auto ansi beforefieldinit Scopes.BinaryOperator_Equal
 	extends [System.Runtime]System.Object
 {
-	// Fields
-	.field public object x
-	.field public object y
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -36,55 +32,51 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 137 (0x89)
+		// Code size: 107 (0x6b)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.BinaryOperator_Equal
+			[0] class Scopes.BinaryOperator_Equal,
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Scopes.BinaryOperator_Equal::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.r8 1
-		IL_0010: ldc.r8 2
-		IL_0019: ceq
-		IL_001b: box [System.Runtime]System.Boolean
-		IL_0020: stfld object Scopes.BinaryOperator_Equal::x
-		IL_0025: ldloc.0
-		IL_0026: ldc.r8 2
-		IL_002f: ldc.r8 2
-		IL_0038: ceq
-		IL_003a: box [System.Runtime]System.Boolean
-		IL_003f: stfld object Scopes.BinaryOperator_Equal::y
-		IL_0044: ldc.i4.2
-		IL_0045: newarr [System.Runtime]System.Object
-		IL_004a: dup
-		IL_004b: ldc.i4.0
-		IL_004c: ldstr "x is"
-		IL_0051: stelem.ref
-		IL_0052: dup
-		IL_0053: ldc.i4.1
-		IL_0054: ldloc.0
-		IL_0055: castclass Scopes.BinaryOperator_Equal
-		IL_005a: ldfld object Scopes.BinaryOperator_Equal::x
+		IL_0006: ldc.r8 1
+		IL_000f: ldc.r8 2
+		IL_0018: ceq
+		IL_001a: box [System.Runtime]System.Boolean
+		IL_001f: stloc.1
+		IL_0020: ldc.r8 2
+		IL_0029: ldc.r8 2
+		IL_0032: ceq
+		IL_0034: box [System.Runtime]System.Boolean
+		IL_0039: stloc.2
+		IL_003a: ldc.i4.2
+		IL_003b: newarr [System.Runtime]System.Object
+		IL_0040: dup
+		IL_0041: ldc.i4.0
+		IL_0042: ldstr "x is"
+		IL_0047: stelem.ref
+		IL_0048: dup
+		IL_0049: ldc.i4.1
+		IL_004a: ldloc.1
+		IL_004b: stelem.ref
+		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0051: pop
+		IL_0052: ldc.i4.2
+		IL_0053: newarr [System.Runtime]System.Object
+		IL_0058: dup
+		IL_0059: ldc.i4.0
+		IL_005a: ldstr "y is"
 		IL_005f: stelem.ref
-		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0065: pop
-		IL_0066: ldc.i4.2
-		IL_0067: newarr [System.Runtime]System.Object
-		IL_006c: dup
-		IL_006d: ldc.i4.0
-		IL_006e: ldstr "y is"
-		IL_0073: stelem.ref
-		IL_0074: dup
-		IL_0075: ldc.i4.1
-		IL_0076: ldloc.0
-		IL_0077: castclass Scopes.BinaryOperator_Equal
-		IL_007c: ldfld object Scopes.BinaryOperator_Equal::y
-		IL_0081: stelem.ref
-		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0087: pop
-		IL_0088: ret
+		IL_0060: dup
+		IL_0061: ldc.i4.1
+		IL_0062: ldloc.2
+		IL_0063: stelem.ref
+		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0069: pop
+		IL_006a: ret
 	} // end of method BinaryOperator_Equal::Main
 
 } // end of class Scripts.BinaryOperator_Equal
@@ -96,7 +88,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20f1
+		// Method begins at RVA 0x20d3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

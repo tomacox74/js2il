@@ -50,9 +50,6 @@
 	} // end of class Block_L2C15
 
 
-	// Fields
-	.field public object i
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -79,65 +76,57 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 180 (0xb4)
+		// Code size: 135 (0x87)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ControlFlow_DoWhile_Continue_SkipEven
+			[0] class Scopes.ControlFlow_DoWhile_Continue_SkipEven,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Scopes.ControlFlow_DoWhile_Continue_SkipEven::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.r8 0.0
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Scopes.ControlFlow_DoWhile_Continue_SkipEven::i
-		// loop start (head: IL_001a)
-			IL_001a: ldloc.0
-			IL_001b: castclass Scopes.ControlFlow_DoWhile_Continue_SkipEven
-			IL_0020: ldfld object Scopes.ControlFlow_DoWhile_Continue_SkipEven::i
-			IL_0025: unbox.any [System.Runtime]System.Double
-			IL_002a: ldc.r8 10
-			IL_0033: blt IL_003d
+		IL_0006: ldc.r8 0.0
+		IL_000f: box [System.Runtime]System.Double
+		IL_0014: stloc.1
+		// loop start (head: IL_0015)
+			IL_0015: ldloc.1
+			IL_0016: unbox.any [System.Runtime]System.Double
+			IL_001b: ldc.r8 10
+			IL_0024: blt IL_002e
 
-			IL_0038: br IL_00b3
+			IL_0029: br IL_0086
 
-			IL_003d: ldloc.0
-			IL_003e: ldloc.0
-			IL_003f: ldfld object Scopes.ControlFlow_DoWhile_Continue_SkipEven::i
-			IL_0044: unbox.any [System.Runtime]System.Double
-			IL_0049: ldc.r8 1
-			IL_0052: add
-			IL_0053: box [System.Runtime]System.Double
-			IL_0058: stfld object Scopes.ControlFlow_DoWhile_Continue_SkipEven::i
-			IL_005d: ldloc.0
-			IL_005e: castclass Scopes.ControlFlow_DoWhile_Continue_SkipEven
-			IL_0063: ldfld object Scopes.ControlFlow_DoWhile_Continue_SkipEven::i
-			IL_0068: unbox.any [System.Runtime]System.Double
-			IL_006d: ldc.r8 2
-			IL_0076: rem
-			IL_0077: ldc.r8 0.0
-			IL_0080: beq IL_008a
+			IL_002e: ldloc.1
+			IL_002f: unbox.any [System.Runtime]System.Double
+			IL_0034: ldc.r8 1
+			IL_003d: add
+			IL_003e: box [System.Runtime]System.Double
+			IL_0043: stloc.1
+			IL_0044: ldloc.1
+			IL_0045: unbox.any [System.Runtime]System.Double
+			IL_004a: ldc.r8 2
+			IL_0053: rem
+			IL_0054: ldc.r8 0.0
+			IL_005d: beq IL_0067
 
-			IL_0085: br IL_0094
+			IL_0062: br IL_0071
 
-			IL_008a: br IL_001a
+			IL_0067: br IL_0015
 
-			IL_008f: br IL_0094
+			IL_006c: br IL_0071
 
-			IL_0094: ldc.i4.1
-			IL_0095: newarr [System.Runtime]System.Object
-			IL_009a: dup
-			IL_009b: ldc.i4.0
-			IL_009c: ldloc.0
-			IL_009d: castclass Scopes.ControlFlow_DoWhile_Continue_SkipEven
-			IL_00a2: ldfld object Scopes.ControlFlow_DoWhile_Continue_SkipEven::i
-			IL_00a7: stelem.ref
-			IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_00ad: pop
-			IL_00ae: br IL_001a
+			IL_0071: ldc.i4.1
+			IL_0072: newarr [System.Runtime]System.Object
+			IL_0077: dup
+			IL_0078: ldc.i4.0
+			IL_0079: ldloc.1
+			IL_007a: stelem.ref
+			IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_0080: pop
+			IL_0081: br IL_0015
 		// end loop
 
-		IL_00b3: ret
+		IL_0086: ret
 	} // end of method ControlFlow_DoWhile_Continue_SkipEven::Main
 
 } // end of class Scripts.ControlFlow_DoWhile_Continue_SkipEven
@@ -149,7 +138,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x212c
+		// Method begins at RVA 0x20ff
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
