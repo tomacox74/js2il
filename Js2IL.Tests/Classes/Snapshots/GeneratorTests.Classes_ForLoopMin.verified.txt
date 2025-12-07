@@ -92,69 +92,58 @@
 .class public auto ansi beforefieldinit Classes.C
 	extends [System.Runtime]System.Object
 {
-	// Fields
-	.field private object[] _scopes
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			object[] scopes
-		) cil managed 
+		instance void .ctor () cil managed 
 	{
 		// Method begins at RVA 0x2074
 		// Header size: 12
-		// Code size: 14 (0xe)
+		// Code size: 7 (0x7)
 		.maxstack 32
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld object[] Classes.C::_scopes
-		IL_000d: ret
+		IL_0006: ret
 	} // end of method C::.ctor
 
 	.method public hidebysig 
 		instance object run () cil managed 
 	{
-		// Method begins at RVA 0x2090
+		// Method begins at RVA 0x2088
 		// Header size: 12
-		// Code size: 87 (0x57)
+		// Code size: 81 (0x51)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ForLoopMin/C/run,
-			[1] object,
-			[2] object
+			[0] object,
+			[1] object
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_ForLoopMin/C/run::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldc.r8 0.0
-		IL_000f: box [System.Runtime]System.Double
-		IL_0014: stloc.1
-		IL_0015: ldc.r8 10
-		IL_001e: box [System.Runtime]System.Double
-		IL_0023: stloc.2
-		// loop start (head: IL_0024)
+		IL_0000: ldc.r8 0.0
+		IL_0009: box [System.Runtime]System.Double
+		IL_000e: stloc.0
+		IL_000f: ldc.r8 10
+		IL_0018: box [System.Runtime]System.Double
+		IL_001d: stloc.1
+		// loop start (head: IL_001e)
+			IL_001e: ldloc.0
+			IL_001f: unbox.any [System.Runtime]System.Double
 			IL_0024: ldloc.1
-			IL_0025: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_002a: ldloc.2
-			IL_002b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0030: blt IL_003a
+			IL_0025: unbox.any [System.Runtime]System.Double
+			IL_002a: blt IL_0034
 
-			IL_0035: br IL_0055
+			IL_002f: br IL_004f
 
-			IL_003a: ldloc.1
-			IL_003b: unbox.any [System.Runtime]System.Double
-			IL_0040: ldc.r8 1
-			IL_0049: add
-			IL_004a: box [System.Runtime]System.Double
-			IL_004f: stloc.1
-			IL_0050: br IL_0024
+			IL_0034: ldloc.0
+			IL_0035: unbox.any [System.Runtime]System.Double
+			IL_003a: ldc.r8 1
+			IL_0043: add
+			IL_0044: box [System.Runtime]System.Double
+			IL_0049: stloc.0
+			IL_004a: br IL_001e
 		// end loop
 
-		IL_0055: ldloc.1
-		IL_0056: ret
+		IL_004f: ldloc.0
+		IL_0050: ret
 	} // end of method C::run
 
 } // end of class Classes.C
@@ -166,9 +155,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20f4
+		// Method begins at RVA 0x20e8
 		// Header size: 12
-		// Code size: 44 (0x2c)
+		// Code size: 34 (0x22)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Classes_ForLoopMin,
@@ -177,24 +166,18 @@
 
 		IL_0000: newobj instance void Scopes.Classes_ForLoopMin::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldc.i4.1
-		IL_0007: newarr [System.Runtime]System.Object
-		IL_000c: dup
-		IL_000d: ldc.i4.0
-		IL_000e: ldloc.0
-		IL_000f: stelem.ref
-		IL_0010: newobj instance void Classes.C::.ctor(object[])
-		IL_0015: stloc.1
-		IL_0016: ldc.i4.1
-		IL_0017: newarr [System.Runtime]System.Object
-		IL_001c: dup
-		IL_001d: ldc.i4.0
-		IL_001e: ldloc.1
-		IL_001f: callvirt instance object Classes.C::run()
-		IL_0024: stelem.ref
-		IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_002a: pop
-		IL_002b: ret
+		IL_0006: newobj instance void Classes.C::.ctor()
+		IL_000b: stloc.1
+		IL_000c: ldc.i4.1
+		IL_000d: newarr [System.Runtime]System.Object
+		IL_0012: dup
+		IL_0013: ldc.i4.0
+		IL_0014: ldloc.1
+		IL_0015: callvirt instance object Classes.C::run()
+		IL_001a: stelem.ref
+		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0020: pop
+		IL_0021: ret
 	} // end of method Classes_ForLoopMin::Main
 
 } // end of class Scripts.Classes_ForLoopMin
@@ -206,7 +189,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x212c
+		// Method begins at RVA 0x2116
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

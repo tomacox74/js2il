@@ -600,9 +600,37 @@ namespace Js2IL.Services.ILGenerators
             return methodDef;
         }
 
-        private bool ShouldCreateMethodScopeInstance(FunctionExpression fexpr, Scope methodScope)
+        private bool ShouldCreateMethodScopeInstance(FunctionExpression fexpr, Scope classScope)
         {
             if (fexpr.Body is not BlockStatement body) return false;
+            
+            // Find the method scope within the class scope's children
+            // The method scope name should match the FunctionExpression's parent MethodDefinition's key
+            Scope? methodScope = null;
+            foreach (var child in classScope.Children)
+            {
+                if (child.Kind == ScopeKind.Function && child.AstNode == fexpr)
+                {
+                    methodScope = child;
+                    break;
+                }
+            }
+            
+            // If we found the method scope, check if it has any captured bindings
+            if (methodScope != null)
+            {
+                // Check if ANY binding in this method scope is captured
+                foreach (var binding in methodScope.Bindings.Values)
+                {
+                    if (binding.IsCaptured)
+                    {
+                        return true; // Need scope instance for captured variables
+                    }
+                }
+            }
+            
+            // Also walk the AST to check for nested functions or class instantiations
+            // that would require a scope instance
             bool found = false;
             void Walk(Acornima.Ast.Node? n)
             {
@@ -613,18 +641,16 @@ namespace Js2IL.Services.ILGenerators
                         foreach (var s in b.Body) Walk(s);
                         break;
                     case VariableDeclaration vd:
-                        // Any let/const (not var) triggers lexical scope needs
-                        if (vd.Kind != VariableDeclarationKind.Var) { found = true; return; }
+                        // Don't trigger on let/const alone - only matters if captured
+                        // The binding.IsCaptured check above handles this
                         break;
                     case ForStatement fs:
-                        if (fs.Init is VariableDeclaration fsv && fsv.Kind != VariableDeclarationKind.Var) { found = true; return; }
                         Walk(fs.Init as Acornima.Ast.Node);
                         Walk(fs.Test as Acornima.Ast.Node);
                         Walk(fs.Update as Acornima.Ast.Node);
                         Walk(fs.Body);
                         break;
                     case ForOfStatement fof:
-                        if (fof.Left is VariableDeclaration leftDecl && leftDecl.Kind != VariableDeclarationKind.Var) { found = true; return; }
                         Walk(fof.Left as Acornima.Ast.Node);
                         Walk(fof.Right as Acornima.Ast.Node);
                         Walk(fof.Body);
@@ -639,6 +665,7 @@ namespace Js2IL.Services.ILGenerators
                         break; // ignore
                     case FunctionDeclaration:
                     case FunctionExpression:
+                    case ArrowFunctionExpression:
                         // Nested functions require capturing outer scope variables
                         found = true; return;
                     case NewExpression ne:
@@ -648,8 +675,8 @@ namespace Js2IL.Services.ILGenerators
                         {
                             var className = classId.Name;
                             // Look up the class scope to check if it references parent scopes
-                            var classScope = FindClassScope(methodScope, className);
-                            if (classScope != null && classScope.ReferencesParentScopeVariables)
+                            var foundClassScope = FindClassScope(classScope, className);
+                            if (foundClassScope != null && foundClassScope.ReferencesParentScopeVariables)
                             {
                                 found = true; return;
                             }

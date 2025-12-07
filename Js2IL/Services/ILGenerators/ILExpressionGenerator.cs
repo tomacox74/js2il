@@ -1765,12 +1765,20 @@ namespace Js2IL.Services.ILGenerators
                     return JavascriptType.Unknown; // unreachable
                 }
 
-                // Load the appropriate scope instance that holds this field
-                var scopeSlot = _variables.GetScopeLocalSlot(variable.ScopeName);
-                if (scopeSlot.Address == -1)
+                // Check if this is an uncaptured local variable (uses IL local, not scope field)
+                bool isLocalVariable = variable.LocalSlot >= 0;
+                
+                // Load the appropriate scope instance that holds this field (only for field variables)
+                ScopeObjectReference scopeSlot = default;
+                if (!isLocalVariable)
                 {
-                    throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
+                    scopeSlot = _variables.GetScopeLocalSlot(variable.ScopeName);
+                    if (scopeSlot.Address == -1)
+                    {
+                        throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
+                    }
                 }
+                
                 // Determine if this is a compound assignment (e.g., +=, |=, &=)
                 var opName = assignmentExpression.Operator.ToString();
 

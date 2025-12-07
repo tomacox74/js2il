@@ -92,74 +92,63 @@
 .class public auto ansi beforefieldinit Classes.Counter
 	extends [System.Runtime]System.Object
 {
-	// Fields
-	.field private object[] _scopes
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
-		instance void .ctor (
-			object[] scopes
-		) cil managed 
+		instance void .ctor () cil managed 
 	{
 		// Method begins at RVA 0x2074
 		// Header size: 12
-		// Code size: 14 (0xe)
+		// Code size: 7 (0x7)
 		.maxstack 32
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: ldarg.0
-		IL_0007: ldarg.1
-		IL_0008: stfld object[] Classes.Counter::_scopes
-		IL_000d: ret
+		IL_0006: ret
 	} // end of method Counter::.ctor
 
 	.method public hidebysig 
 		instance object count () cil managed 
 	{
-		// Method begins at RVA 0x2090
+		// Method begins at RVA 0x2088
 		// Header size: 12
-		// Code size: 112 (0x70)
+		// Code size: 106 (0x6a)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter/count,
-			[1] object,
-			[2] object
+			[0] object,
+			[1] object
 		)
 
-		IL_0000: newobj instance void Scopes.BinaryOperator_EqualObjectPropertyVsMethodReturn/Counter/count::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldc.r8 0.0
-		IL_000f: box [System.Runtime]System.Double
-		IL_0014: stloc.1
-		IL_0015: ldc.r8 0.0
-		IL_001e: box [System.Runtime]System.Double
-		IL_0023: stloc.2
-		// loop start (head: IL_0024)
-			IL_0024: ldloc.2
-			IL_0025: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_002a: ldc.r8 10
-			IL_0033: blt IL_003d
+		IL_0000: ldc.r8 0.0
+		IL_0009: box [System.Runtime]System.Double
+		IL_000e: stloc.0
+		IL_000f: ldc.r8 0.0
+		IL_0018: box [System.Runtime]System.Double
+		IL_001d: stloc.1
+		// loop start (head: IL_001e)
+			IL_001e: ldloc.1
+			IL_001f: unbox.any [System.Runtime]System.Double
+			IL_0024: ldc.r8 10
+			IL_002d: blt IL_0037
 
-			IL_0038: br IL_006e
+			IL_0032: br IL_0068
 
-			IL_003d: ldloc.1
-			IL_003e: unbox.any [System.Runtime]System.Double
-			IL_0043: ldc.r8 1
-			IL_004c: add
-			IL_004d: box [System.Runtime]System.Double
-			IL_0052: stloc.1
-			IL_0053: ldloc.2
-			IL_0054: unbox.any [System.Runtime]System.Double
-			IL_0059: ldc.r8 1
-			IL_0062: add
-			IL_0063: box [System.Runtime]System.Double
-			IL_0068: stloc.2
-			IL_0069: br IL_0024
+			IL_0037: ldloc.0
+			IL_0038: unbox.any [System.Runtime]System.Double
+			IL_003d: ldc.r8 1
+			IL_0046: add
+			IL_0047: box [System.Runtime]System.Double
+			IL_004c: stloc.0
+			IL_004d: ldloc.1
+			IL_004e: unbox.any [System.Runtime]System.Double
+			IL_0053: ldc.r8 1
+			IL_005c: add
+			IL_005d: box [System.Runtime]System.Double
+			IL_0062: stloc.1
+			IL_0063: br IL_001e
 		// end loop
 
-		IL_006e: ldloc.1
-		IL_006f: ret
+		IL_0068: ldloc.0
+		IL_0069: ret
 	} // end of method Counter::count
 
 } // end of class Classes.Counter
@@ -171,9 +160,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x210c
+		// Method begins at RVA 0x2100
 		// Header size: 12
-		// Code size: 176 (0xb0)
+		// Code size: 166 (0xa6)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.BinaryOperator_EqualObjectPropertyVsMethodReturn,
@@ -197,52 +186,46 @@
 		IL_0033: box [System.Runtime]System.Double
 		IL_0038: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
 		IL_003d: stloc.1
-		IL_003e: ldc.i4.1
-		IL_003f: newarr [System.Runtime]System.Object
-		IL_0044: dup
-		IL_0045: ldc.i4.0
-		IL_0046: ldloc.0
-		IL_0047: stelem.ref
-		IL_0048: newobj instance void Classes.Counter::.ctor(object[])
-		IL_004d: stloc.2
-		IL_004e: ldloc.2
-		IL_004f: callvirt instance object Classes.Counter::count()
-		IL_0054: stloc.3
-		IL_0055: ldloc.1
-		IL_0056: ldc.r8 10
-		IL_005f: box [System.Runtime]System.Double
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0069: stloc.s 4
-		IL_006b: ldc.i4.1
-		IL_006c: newarr [System.Runtime]System.Object
-		IL_0071: dup
-		IL_0072: ldc.i4.0
-		IL_0073: ldloc.3
-		IL_0074: stelem.ref
-		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_007a: pop
-		IL_007b: ldc.i4.1
-		IL_007c: newarr [System.Runtime]System.Object
-		IL_0081: dup
-		IL_0082: ldc.i4.0
-		IL_0083: ldloc.s 4
-		IL_0085: stelem.ref
-		IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_008b: pop
-		IL_008c: ldc.i4.1
-		IL_008d: newarr [System.Runtime]System.Object
-		IL_0092: dup
-		IL_0093: ldc.i4.0
-		IL_0094: ldloc.3
-		IL_0095: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_009a: ldloc.s 4
-		IL_009c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_00a1: ceq
-		IL_00a3: box [System.Runtime]System.Boolean
-		IL_00a8: stelem.ref
-		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_00ae: pop
-		IL_00af: ret
+		IL_003e: newobj instance void Classes.Counter::.ctor()
+		IL_0043: stloc.2
+		IL_0044: ldloc.2
+		IL_0045: callvirt instance object Classes.Counter::count()
+		IL_004a: stloc.3
+		IL_004b: ldloc.1
+		IL_004c: ldc.r8 10
+		IL_0055: box [System.Runtime]System.Double
+		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_005f: stloc.s 4
+		IL_0061: ldc.i4.1
+		IL_0062: newarr [System.Runtime]System.Object
+		IL_0067: dup
+		IL_0068: ldc.i4.0
+		IL_0069: ldloc.3
+		IL_006a: stelem.ref
+		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0070: pop
+		IL_0071: ldc.i4.1
+		IL_0072: newarr [System.Runtime]System.Object
+		IL_0077: dup
+		IL_0078: ldc.i4.0
+		IL_0079: ldloc.s 4
+		IL_007b: stelem.ref
+		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0081: pop
+		IL_0082: ldc.i4.1
+		IL_0083: newarr [System.Runtime]System.Object
+		IL_0088: dup
+		IL_0089: ldc.i4.0
+		IL_008a: ldloc.3
+		IL_008b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0090: ldloc.s 4
+		IL_0092: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0097: ceq
+		IL_0099: box [System.Runtime]System.Boolean
+		IL_009e: stelem.ref
+		IL_009f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00a4: pop
+		IL_00a5: ret
 	} // end of method BinaryOperator_EqualObjectPropertyVsMethodReturn::Main
 
 } // end of class Scripts.BinaryOperator_EqualObjectPropertyVsMethodReturn
@@ -254,7 +237,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c8
+		// Method begins at RVA 0x21b2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
