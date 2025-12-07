@@ -259,7 +259,6 @@ namespace Js2IL.Services
             _scopeTypes[scope.Name] = typeHandle;
             _scopeConstructors[scope.Name] = ctorHandle;
             // Register the scope type immediately so even scopes without variables can be instantiated later.
-            Console.WriteLine($"[TypeGenerator.CreateTypeDefinition] Registering scope: {scope.Name}, TypeHandle IsNil: {typeHandle.IsNil}");
             _variableRegistry.EnsureScopeType(scope.Name, typeHandle);
 
             return typeHandle;

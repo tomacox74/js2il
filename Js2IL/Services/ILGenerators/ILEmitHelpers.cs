@@ -229,13 +229,14 @@ namespace Js2IL.Services.ILGenerators
 
         /// <summary>
         /// Emits IL to store a value into a variable.
-        /// Expects the value to be on the stack. For fields, expects [scope instance, value] on stack.
+        /// Expects the value to be on the stack.
         /// Handles local variables (uncaptured) and fields (captured).
+        /// For field variables when scopeAlreadyLoaded=false, uses a temp local to reorder stack.
         /// </summary>
         /// <param name="il">The instruction encoder.</param>
         /// <param name="variable">The variable to store into.</param>
         /// <param name="variables">Variables context for scope resolution.</param>
-        /// <param name="scopeAlreadyLoaded">Whether the scope instance is already on the stack (for field stores).</param>
+        /// <param name="scopeAlreadyLoaded">Whether the scope instance is already on the stack below the value (for field stores).</param>
         public static void EmitStoreVariable(
             this InstructionEncoder il,
             Variable variable,
@@ -261,26 +262,51 @@ namespace Js2IL.Services.ILGenerators
             }
 
             // For field variables, we need [scope instance, value] on stack
-            // If scope not already loaded, we need to load it first, then swap with value
             if (!scopeAlreadyLoaded)
             {
                 // Stack: [value]
                 // Need: [scope, value]
+                // Strategy: stloc temp, load scope, ldloc temp, stfld
                 var scopeLocalIndex = variables.GetScopeLocalSlot(variable.ScopeName);
                 if (scopeLocalIndex.Address == -1)
                 {
                     throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
                 }
 
-                // Load scope instance before the value
-                // This is tricky - we need to insert the scope below the value
-                // Pattern: value -> [dup value, load scope, swap] -> scope, value
-                // But IL doesn't have direct swap, so we'll require caller to manage stack order
-                throw new InvalidOperationException("EmitStoreVariable requires scopeAlreadyLoaded=true when scope instance not already on stack. Caller must load scope instance first.");
+                // Allocate a temp local for the value
+                var tempSlot = variables.AllocateBlockScopeLocal($"StoreTemp_{variable.Name}");
+                il.StoreLocal(tempSlot);  // Stack: [] (value saved to temp)
+
+                // Load scope instance
+                if (scopeLocalIndex.Location == ObjectReferenceLocation.Parameter)
+                {
+                    il.LoadArgument(scopeLocalIndex.Address);
+                }
+                else if (scopeLocalIndex.Location == ObjectReferenceLocation.ScopeArray)
+                {
+                    il.LoadArgument(0);
+                    il.LoadConstantI4(scopeLocalIndex.Address);
+                    il.OpCode(ILOpCode.Ldelem_ref);
+                }
+                else
+                {
+                    il.LoadLocal(scopeLocalIndex.Address);
+                }
+
+                // Cast to scope type if needed
+                var registry = variables.GetVariableRegistry();
+                var scopeType = registry?.GetScopeTypeHandle(variable.ScopeName) ?? default;
+                if (!scopeType.IsNil)
+                {
+                    il.OpCode(ILOpCode.Castclass);
+                    il.Token(scopeType);
+                }
+
+                // Load value from temp
+                il.LoadLocal(tempSlot);  // Stack: [scope, value]
             }
 
             // Stack: [scope instance, value]
-            // Note: When scopeAlreadyLoaded=true, caller is responsible for casting scope instance
             // Store to field
             il.OpCode(ILOpCode.Stfld);
             il.Token(variable.FieldHandle);
