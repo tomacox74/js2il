@@ -62,12 +62,16 @@ namespace Js2IL.Services
 
     private void CreateTypeFields(Scope scope, TypeBuilder typeBuilder)
         {
+            
             // Create fields for this scope
             _scopeFields[scope.Name] = new List<FieldDefinitionHandle>();
             var scopeFields = _scopeFields[scope.Name];
 
             // Determine if this function scope contains nested functions
             bool hasNestedFunctions = scope.Children.Any(c => c.Kind == ScopeKind.Function);
+            
+            // Check if this is an arrow function scope (arrow functions always need parameter fields for closure semantics)
+            bool isArrowFunction = scope.AstNode is Acornima.Ast.ArrowFunctionExpression;
             
             // Check if this scope has parameters with default values
             Acornima.Ast.NodeList<Acornima.Ast.Node>? paramList = scope.AstNode switch
@@ -83,13 +87,31 @@ namespace Js2IL.Services
             {
                 // Parameters are treated as fields on the scope when:
                 // 1. Nested functions exist (closure access), OR
-                // 2. The function has default parameters (need field storage for default value logic)
-                if (scope.Parameters.Contains(binding.Name) && !hasNestedFunctions && !hasDefaultParameters)
+                // 2. This is an arrow function (needs fields for proper this binding and closure)
+                // 3. The parameter comes from destructuring (needs storage to extract from object)
+                // Default parameters use starg to modify IL arguments directly, not fields (except for arrow functions)
+                bool isParameter = scope.Parameters.Contains(binding.Name);
+                bool isFunction = binding.Kind == BindingKind.Function;
+                
+                // Note: We CANNOT skip field/local creation for ALL parameters when no nested functions exist.
+                // Destructured parameters (from ObjectPattern) need storage because they're extracted from
+                // an incoming object parameter, not passed directly as IL arguments.
+                // For now, conservatively create fields for all parameters to ensure destructuring works.
+                // A future optimization could distinguish between direct parameters vs destructured properties.
+
+                // Skip field creation for uncaptured local variables (not parameters, not function declarations)
+                // Function declarations (BindingKind.Function) always need fields to store delegate references
+                // Parameters need fields if arrow functions or nested functions exist
+                // Uncaptured const/let/var variables can use local variables instead of fields
+                // EXCEPTION: If a variable shadows a parent scope variable with the same name, the INNER one
+                // must use a field to avoid local slot collision with the outer variable
+                bool shadowsParentVariable = DoesShadowParentVariable(scope, binding.Name);
+                if (!binding.IsCaptured && !isParameter && !isFunction && !shadowsParentVariable)
                 {
-                    // Skip creating a field for parameters when no nested functions need closure capture
-                    // and there are no default parameters
+                    // Skip creating a field for non-captured non-parameter non-function bindings in nested scopes
                     continue;
                 }
+
                 // Create field signature (all variables are object type for now)
                 var fieldSignature = new BlobBuilder();
                 new BlobEncoder(fieldSignature)
@@ -159,26 +181,6 @@ namespace Js2IL.Services
             }
 
             return currentType;
-        }
-
-        /// <summary>
-        /// Phase 3: Establishes nesting relationships in sorted order by nested type handle.
-        /// The .NET metadata specification requires NestedClass table to be sorted.
-        /// </summary>
-        private void CreateNestingRelationshipsSorted(Scope rootScope)
-        {
-            // Collect all nesting relationships first
-            var nestingRelationships = new List<(TypeDefinitionHandle nestedType, TypeDefinitionHandle enclosingType)>();
-            CollectNestingRelationships(rootScope, nestingRelationships);
-            
-            // Sort by nested type handle (required by .NET metadata specification)
-            nestingRelationships.Sort((a, b) => MetadataTokens.GetRowNumber(a.nestedType).CompareTo(MetadataTokens.GetRowNumber(b.nestedType)));
-            
-            // Add the nesting relationships in sorted order
-            foreach (var (nestedType, enclosingType) in nestingRelationships)
-            {
-                _metadataBuilder.AddNestedType(nestedType, enclosingType);
-            }
         }
 
         /// <summary>
@@ -257,6 +259,7 @@ namespace Js2IL.Services
             _scopeTypes[scope.Name] = typeHandle;
             _scopeConstructors[scope.Name] = ctorHandle;
             // Register the scope type immediately so even scopes without variables can be instantiated later.
+            Console.WriteLine($"[TypeGenerator.CreateTypeDefinition] Registering scope: {scope.Name}, TypeHandle IsNil: {typeHandle.IsNil}");
             _variableRegistry.EnsureScopeType(scope.Name, typeHandle);
 
             return typeHandle;
@@ -337,39 +340,16 @@ namespace Js2IL.Services
         }
 
         /// <summary>
-        /// Gets the type definition handle for a scope by name.
-        /// </summary>
-        public TypeDefinitionHandle GetScopeType(string scopeName)
-        {
-            return _scopeTypes.TryGetValue(scopeName, out var typeHandle)
-                ? typeHandle
-                : default;
-        }
-
-        /// <summary>
-        /// Gets the constructor method handle for a scope by name.
-        /// </summary>
-        public MethodDefinitionHandle GetScopeConstructor(string scopeName)
-        {
-            return _scopeConstructors.TryGetValue(scopeName, out var ctorHandle) 
-                ? ctorHandle 
-                : default;
-        }
-
-    /// <summary>
-    /// Gets all generated scope types.
-    /// </summary>
-        public IReadOnlyDictionary<string, TypeDefinitionHandle> GetAllScopeTypes()
-        {
-            return _scopeTypes;
-        }
-
-        /// <summary>
         /// Populates the variable registry with all variables found in the scope tree.
         /// This method must be called after all types and fields have been created.
         /// </summary>
         private void PopulateVariableRegistry(Scope scope)
         {
+            // Use qualified names only for class methods/constructors to avoid collisions (e.g., Point/constructor vs Person/constructor)
+            // Use simple names for functions/arrow functions as ILExpressionGenerator looks them up by simple name
+            bool isClassMember = scope.Parent?.Kind == ScopeKind.Class;
+            var registryName = isClassMember ? scope.GetQualifiedName() : scope.Name;
+            
             // Guard: some scopes (e.g., block scopes) may legitimately have zero bindings; ensure a type was created.
             if (!_scopeTypes.TryGetValue(scope.Name, out var scopeTypeHandle))
             {
@@ -378,13 +358,27 @@ namespace Js2IL.Services
                 return;
             }
             var scopeFields = _scopeFields.GetValueOrDefault(scope.Name, new List<FieldDefinitionHandle>());
-            // Ensure scope type is registered even if no variables.
-            _variableRegistry.EnsureScopeType(scope.Name, scopeTypeHandle);
+            // Ensure scope type is registered
+            _variableRegistry.EnsureScopeType(registryName, scopeTypeHandle);
 
             // Add each binding as a variable in the registry
             int fieldIndex = 0;
             // Determine if this scope contains nested functions (controls whether parameters get fields)
             bool hasNestedFunctions = scope.Children.Any(c => c.Kind == ScopeKind.Function);
+            
+            // Check if this is an arrow function scope (arrow functions always need parameter fields)
+            bool isArrowFunction = scope.AstNode is Acornima.Ast.ArrowFunctionExpression;
+            
+            // Check if this scope has parameters with default values (must match CreateTypeFields logic)
+            Acornima.Ast.NodeList<Acornima.Ast.Node>? paramList = scope.AstNode switch
+            {
+                Acornima.Ast.FunctionDeclaration fd => fd.Params,
+                Acornima.Ast.FunctionExpression fe => fe.Params,
+                Acornima.Ast.ArrowFunctionExpression af => af.Params,
+                _ => null
+            };
+            bool hasDefaultParameters = paramList.HasValue && paramList.Value.Any(p => p is Acornima.Ast.AssignmentPattern);
+            
             foreach (var binding in scope.Bindings)
             {
                 var variableName = binding.Key;
@@ -402,8 +396,16 @@ namespace Js2IL.Services
                         _ => VariableType.Variable
                     };
 
+                // Check if this is a parameter or function
+                bool isParameter = scope.Parameters.Contains(variableName);
+                bool isFunction = bindingInfo.Kind == BindingKind.Function;
+
                 // Determine if a field was actually created for this binding
-                bool fieldCreatedForThisBinding = !(scope.Parameters.Contains(variableName) && !hasNestedFunctions);
+                // Must match the skip logic in CreateTypeFields above:
+                // Fields are created for: parameters, functions, captured variables, or shadowing variables
+                // Fields are NOT created for: uncaptured non-parameter non-function non-shadowing variables
+                bool shadowsParentVariable = DoesShadowParentVariable(scope, variableName);
+                bool fieldCreatedForThisBinding = isParameter || isFunction || bindingInfo.IsCaptured || shadowsParentVariable;
 
                 if (fieldCreatedForThisBinding)
                 {
@@ -412,7 +414,7 @@ namespace Js2IL.Services
                     {
                         var fieldHandle = scopeFields[fieldIndex];
                         _variableRegistry.AddVariable(
-                            scope.Name,
+                            registryName,  // Use registry name (qualified for class members, simple for functions)
                             variableName,
                             variableType,
                             fieldHandle,
@@ -422,7 +424,7 @@ namespace Js2IL.Services
                         // If SymbolTable discovered a CLR runtime type (e.g., const x = require('path')) assign it now
                         if (bindingInfo.RuntimeIntrinsicType != null)
                         {
-                            _variableRegistry.SetRuntimeIntrinsicType(scope.Name, variableName, bindingInfo.RuntimeIntrinsicType);
+                            _variableRegistry.SetRuntimeIntrinsicType(registryName, variableName, bindingInfo.RuntimeIntrinsicType);
                         }
                     }
                     // Only advance when a field exists for this binding
@@ -430,8 +432,26 @@ namespace Js2IL.Services
                 }
                 else
                 {
-                    // No field created for this parameter; do not register a field-backed variable
-                    // (Variables will treat it as a direct parameter at emit time.)
+                    // No field created for this binding (uncaptured variable)
+                    // Parameters without fields are loaded via ldarg, not local variables
+                    // Only mark non-parameter variables as uncaptured
+                    if (!scope.Parameters.Contains(variableName))
+                    {
+                        _variableRegistry.MarkAsUncaptured(registryName, variableName);
+                        // Still add to registry so binding kind (const/let/var) is preserved
+                        _variableRegistry.AddVariable(
+                            registryName,
+                            variableName,
+                            variableType,
+                            default,  // No field handle for uncaptured
+                            default,  // No scope type handle
+                            bindingInfo.Kind
+                        );
+                        if (bindingInfo.RuntimeIntrinsicType != null)
+                        {
+                            _variableRegistry.SetRuntimeIntrinsicType(registryName, variableName, bindingInfo.RuntimeIntrinsicType);
+                        }
+                    }
                 }
             }
 
@@ -440,6 +460,21 @@ namespace Js2IL.Services
             {
                 PopulateVariableRegistry(childScope);
             }
+        }
+
+        private bool DoesShadowParentVariable(Scope scope, string variableName)
+        {
+            // Check if this variable exists in any parent scope
+            var currentScope = scope.Parent;
+            while (currentScope != null)
+            {
+                if (currentScope.Bindings.ContainsKey(variableName))
+                {
+                    return true;
+                }
+                currentScope = currentScope.Parent;
+            }
+            return false;
         }
     }
 }

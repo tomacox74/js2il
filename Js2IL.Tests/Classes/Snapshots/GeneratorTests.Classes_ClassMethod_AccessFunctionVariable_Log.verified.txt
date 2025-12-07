@@ -56,8 +56,6 @@
 
 		// Fields
 		.field public object FUNCTION_VALUE
-		.field public object MyClass
-		.field public object 'instance'
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
@@ -160,10 +158,11 @@
 	{
 		// Method begins at RVA 0x20c0
 		// Header size: 12
-		// Code size: 68 (0x44)
+		// Code size: 53 (0x35)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction
+			[0] class Scopes.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Scopes.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction::.ctor()
@@ -171,29 +170,26 @@
 		IL_0006: ldloc.0
 		IL_0007: ldstr "Hello from function"
 		IL_000c: stfld object Scopes.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction::FUNCTION_VALUE
-		IL_0011: ldloc.0
-		IL_0012: ldc.i4.2
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: dup
-		IL_0019: ldc.i4.0
-		IL_001a: ldarg.0
-		IL_001b: ldc.i4.0
-		IL_001c: ldelem.ref
-		IL_001d: castclass Scopes.Classes_ClassMethod_AccessFunctionVariable_Log
-		IL_0022: stelem.ref
-		IL_0023: dup
-		IL_0024: ldc.i4.1
-		IL_0025: ldloc.0
-		IL_0026: stelem.ref
-		IL_0027: newobj instance void Classes.MyClass::.ctor(object[])
-		IL_002c: stfld object Scopes.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction::'instance'
-		IL_0031: ldloc.0
-		IL_0032: castclass Scopes.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction
-		IL_0037: ldfld object Scopes.Classes_ClassMethod_AccessFunctionVariable_Log/testFunction::'instance'
-		IL_003c: callvirt instance object Classes.MyClass::logValue()
-		IL_0041: pop
-		IL_0042: ldnull
-		IL_0043: ret
+		IL_0011: ldc.i4.2
+		IL_0012: newarr [System.Runtime]System.Object
+		IL_0017: dup
+		IL_0018: ldc.i4.0
+		IL_0019: ldarg.0
+		IL_001a: ldc.i4.0
+		IL_001b: ldelem.ref
+		IL_001c: castclass Scopes.Classes_ClassMethod_AccessFunctionVariable_Log
+		IL_0021: stelem.ref
+		IL_0022: dup
+		IL_0023: ldc.i4.1
+		IL_0024: ldloc.0
+		IL_0025: stelem.ref
+		IL_0026: newobj instance void Classes.MyClass::.ctor(object[])
+		IL_002b: stloc.1
+		IL_002c: ldloc.1
+		IL_002d: callvirt instance object Classes.MyClass::logValue()
+		IL_0032: pop
+		IL_0033: ldnull
+		IL_0034: ret
 	} // end of method testFunction::testFunction
 
 } // end of class Functions.testFunction
@@ -205,9 +201,9 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2110
+		// Method begins at RVA 0x2104
 		// Header size: 12
-		// Code size: 80 (0x50)
+		// Code size: 90 (0x5a)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Classes_ClassMethod_AccessFunctionVariable_Log
@@ -221,29 +217,31 @@
 		IL_000e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0013: stfld object Scopes.Classes_ClassMethod_AccessFunctionVariable_Log::testFunction
 		IL_0018: ldloc.0
-		IL_0019: ldfld object Scopes.Classes_ClassMethod_AccessFunctionVariable_Log::testFunction
-		IL_001e: dup
-		IL_001f: brtrue.s IL_003f
+		IL_0019: castclass Scopes.Classes_ClassMethod_AccessFunctionVariable_Log
+		IL_001e: ldfld object Scopes.Classes_ClassMethod_AccessFunctionVariable_Log::testFunction
+		IL_0023: dup
+		IL_0024: brtrue.s IL_0049
 
-		IL_0021: pop
-		IL_0022: ldloc.0
-		IL_0023: ldnull
-		IL_0024: ldftn object Functions.testFunction::testFunction(object[])
-		IL_002a: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_002f: stfld object Scopes.Classes_ClassMethod_AccessFunctionVariable_Log::testFunction
-		IL_0034: ldloc.0
-		IL_0035: ldfld object Scopes.Classes_ClassMethod_AccessFunctionVariable_Log::testFunction
-		IL_003a: br IL_003f
+		IL_0026: pop
+		IL_0027: ldloc.0
+		IL_0028: ldnull
+		IL_0029: ldftn object Functions.testFunction::testFunction(object[])
+		IL_002f: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0034: stfld object Scopes.Classes_ClassMethod_AccessFunctionVariable_Log::testFunction
+		IL_0039: ldloc.0
+		IL_003a: castclass Scopes.Classes_ClassMethod_AccessFunctionVariable_Log
+		IL_003f: ldfld object Scopes.Classes_ClassMethod_AccessFunctionVariable_Log::testFunction
+		IL_0044: br IL_0049
 
-		IL_003f: ldc.i4.1
-		IL_0040: newarr [System.Runtime]System.Object
-		IL_0045: dup
-		IL_0046: ldc.i4.0
-		IL_0047: ldloc.0
-		IL_0048: stelem.ref
-		IL_0049: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_004e: pop
-		IL_004f: ret
+		IL_0049: ldc.i4.1
+		IL_004a: newarr [System.Runtime]System.Object
+		IL_004f: dup
+		IL_0050: ldc.i4.0
+		IL_0051: ldloc.0
+		IL_0052: stelem.ref
+		IL_0053: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0058: pop
+		IL_0059: ret
 	} // end of method Classes_ClassMethod_AccessFunctionVariable_Log::Main
 
 } // end of class Scripts.Classes_ClassMethod_AccessFunctionVariable_Log
@@ -255,7 +253,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x216c
+		// Method begins at RVA 0x216a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

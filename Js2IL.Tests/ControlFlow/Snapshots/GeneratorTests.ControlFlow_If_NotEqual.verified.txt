@@ -48,10 +48,6 @@
 	} // end of class Block_L5C7
 
 
-	// Fields
-	.field public object a
-	.field public object b
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -78,64 +74,60 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 152 (0x98)
+		// Code size: 122 (0x7a)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ControlFlow_If_NotEqual
+			[0] class Scopes.ControlFlow_If_NotEqual,
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Scopes.ControlFlow_If_NotEqual::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.r8 1
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Scopes.ControlFlow_If_NotEqual::a
-		IL_001a: ldloc.0
-		IL_001b: ldc.r8 2
-		IL_0024: box [System.Runtime]System.Double
-		IL_0029: stfld object Scopes.ControlFlow_If_NotEqual::b
-		IL_002e: ldloc.0
-		IL_002f: castclass Scopes.ControlFlow_If_NotEqual
-		IL_0034: ldfld object Scopes.ControlFlow_If_NotEqual::a
-		IL_0039: unbox.any [System.Runtime]System.Double
-		IL_003e: ldloc.0
-		IL_003f: castclass Scopes.ControlFlow_If_NotEqual
-		IL_0044: ldfld object Scopes.ControlFlow_If_NotEqual::b
-		IL_0049: unbox.any [System.Runtime]System.Double
-		IL_004e: bne.un IL_0058
+		IL_0006: ldc.r8 1
+		IL_000f: box [System.Runtime]System.Double
+		IL_0014: stloc.1
+		IL_0015: ldc.r8 2
+		IL_001e: box [System.Runtime]System.Double
+		IL_0023: stloc.2
+		IL_0024: ldloc.1
+		IL_0025: unbox.any [System.Runtime]System.Double
+		IL_002a: ldloc.2
+		IL_002b: unbox.any [System.Runtime]System.Double
+		IL_0030: bne.un IL_003a
 
-		IL_0053: br IL_007a
+		IL_0035: br IL_005c
 
-		IL_0058: ldc.i4.2
-		IL_0059: newarr [System.Runtime]System.Object
-		IL_005e: dup
-		IL_005f: ldc.i4.0
-		IL_0060: ldstr "branch"
-		IL_0065: stelem.ref
-		IL_0066: dup
-		IL_0067: ldc.i4.1
-		IL_0068: ldc.i4.1
-		IL_0069: box [System.Runtime]System.Boolean
-		IL_006e: stelem.ref
-		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0074: pop
-		IL_0075: br IL_0097
+		IL_003a: ldc.i4.2
+		IL_003b: newarr [System.Runtime]System.Object
+		IL_0040: dup
+		IL_0041: ldc.i4.0
+		IL_0042: ldstr "branch"
+		IL_0047: stelem.ref
+		IL_0048: dup
+		IL_0049: ldc.i4.1
+		IL_004a: ldc.i4.1
+		IL_004b: box [System.Runtime]System.Boolean
+		IL_0050: stelem.ref
+		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0056: pop
+		IL_0057: br IL_0079
 
-		IL_007a: ldc.i4.2
-		IL_007b: newarr [System.Runtime]System.Object
-		IL_0080: dup
-		IL_0081: ldc.i4.0
-		IL_0082: ldstr "branch"
-		IL_0087: stelem.ref
-		IL_0088: dup
-		IL_0089: ldc.i4.1
-		IL_008a: ldc.i4.0
-		IL_008b: box [System.Runtime]System.Boolean
-		IL_0090: stelem.ref
-		IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0096: pop
+		IL_005c: ldc.i4.2
+		IL_005d: newarr [System.Runtime]System.Object
+		IL_0062: dup
+		IL_0063: ldc.i4.0
+		IL_0064: ldstr "branch"
+		IL_0069: stelem.ref
+		IL_006a: dup
+		IL_006b: ldc.i4.1
+		IL_006c: ldc.i4.0
+		IL_006d: box [System.Runtime]System.Boolean
+		IL_0072: stelem.ref
+		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0078: pop
 
-		IL_0097: ret
+		IL_0079: ret
 	} // end of method ControlFlow_If_NotEqual::Main
 
 } // end of class Scripts.ControlFlow_If_NotEqual
@@ -147,7 +139,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2110
+		// Method begins at RVA 0x20f2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

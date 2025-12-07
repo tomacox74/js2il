@@ -30,7 +30,6 @@
 
 	// Fields
 	.field public object returnsFive
-	.field public object output
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -87,10 +86,11 @@
 	{
 		// Method begins at RVA 0x2094
 		// Header size: 12
-		// Code size: 119 (0x77)
+		// Code size: 114 (0x72)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Function_ReturnsStaticValueAndLogs
+			[0] class Scopes.Function_ReturnsStaticValueAndLogs,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Scopes.Function_ReturnsStaticValueAndLogs::.ctor()
@@ -101,44 +101,43 @@
 		IL_000e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0013: stfld object Scopes.Function_ReturnsStaticValueAndLogs::returnsFive
 		IL_0018: ldloc.0
-		IL_0019: ldloc.0
-		IL_001a: ldfld object Scopes.Function_ReturnsStaticValueAndLogs::returnsFive
-		IL_001f: dup
-		IL_0020: brtrue.s IL_0040
+		IL_0019: castclass Scopes.Function_ReturnsStaticValueAndLogs
+		IL_001e: ldfld object Scopes.Function_ReturnsStaticValueAndLogs::returnsFive
+		IL_0023: dup
+		IL_0024: brtrue.s IL_0049
 
-		IL_0022: pop
-		IL_0023: ldloc.0
-		IL_0024: ldnull
-		IL_0025: ldftn object Functions.returnsFive::returnsFive(object[])
-		IL_002b: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0030: stfld object Scopes.Function_ReturnsStaticValueAndLogs::returnsFive
-		IL_0035: ldloc.0
-		IL_0036: ldfld object Scopes.Function_ReturnsStaticValueAndLogs::returnsFive
-		IL_003b: br IL_0040
+		IL_0026: pop
+		IL_0027: ldloc.0
+		IL_0028: ldnull
+		IL_0029: ldftn object Functions.returnsFive::returnsFive(object[])
+		IL_002f: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0034: stfld object Scopes.Function_ReturnsStaticValueAndLogs::returnsFive
+		IL_0039: ldloc.0
+		IL_003a: castclass Scopes.Function_ReturnsStaticValueAndLogs
+		IL_003f: ldfld object Scopes.Function_ReturnsStaticValueAndLogs::returnsFive
+		IL_0044: br IL_0049
 
-		IL_0040: ldc.i4.1
-		IL_0041: newarr [System.Runtime]System.Object
-		IL_0046: dup
-		IL_0047: ldc.i4.0
-		IL_0048: ldloc.0
-		IL_0049: stelem.ref
-		IL_004a: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_004f: stfld object Scopes.Function_ReturnsStaticValueAndLogs::output
-		IL_0054: ldc.i4.2
-		IL_0055: newarr [System.Runtime]System.Object
-		IL_005a: dup
-		IL_005b: ldc.i4.0
-		IL_005c: ldstr "Output:"
-		IL_0061: stelem.ref
-		IL_0062: dup
-		IL_0063: ldc.i4.1
-		IL_0064: ldloc.0
-		IL_0065: castclass Scopes.Function_ReturnsStaticValueAndLogs
-		IL_006a: ldfld object Scopes.Function_ReturnsStaticValueAndLogs::output
-		IL_006f: stelem.ref
-		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0075: pop
-		IL_0076: ret
+		IL_0049: ldc.i4.1
+		IL_004a: newarr [System.Runtime]System.Object
+		IL_004f: dup
+		IL_0050: ldc.i4.0
+		IL_0051: ldloc.0
+		IL_0052: stelem.ref
+		IL_0053: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0058: stloc.1
+		IL_0059: ldc.i4.2
+		IL_005a: newarr [System.Runtime]System.Object
+		IL_005f: dup
+		IL_0060: ldc.i4.0
+		IL_0061: ldstr "Output:"
+		IL_0066: stelem.ref
+		IL_0067: dup
+		IL_0068: ldc.i4.1
+		IL_0069: ldloc.1
+		IL_006a: stelem.ref
+		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0070: pop
+		IL_0071: ret
 	} // end of method Function_ReturnsStaticValueAndLogs::Main
 
 } // end of class Scripts.Function_ReturnsStaticValueAndLogs
@@ -150,7 +149,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2117
+		// Method begins at RVA 0x2112
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

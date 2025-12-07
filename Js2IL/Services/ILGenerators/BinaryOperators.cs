@@ -37,112 +37,6 @@ namespace Js2IL.Services.ILGenerators
             _methodGenerator = methodGenerator;
         }
 
-        /// <summary>
-        /// Loads a variable value using scope field access.
-        /// </summary>
-        /// <param name="variable">The variable symbol to load.</param>
-        /// <param name="typeCoercion">Required coercion hints for the load. Currently informational; load behavior is unchanged.</param>
-        public void LoadVariable(Variable variable, TypeCoercion typeCoercion)
-        {
-            // Local helper to reduce duplicate unboxing code
-            Action<JavascriptType> unboxIfNeeded = (jsType) =>
-            {
-                if (typeCoercion.boxResult) return;
-                if (jsType == JavascriptType.Number)
-                {
-                    _il.OpCode(ILOpCode.Unbox_any);
-                    _il.Token(_bclReferences.DoubleType);
-                }
-                else if (jsType == JavascriptType.Boolean)
-                {
-                    _il.OpCode(ILOpCode.Unbox_any);
-                    _il.Token(_bclReferences.BooleanType);
-                }
-            };
-
-            // If this variable belongs to a parent/ancestor scope (captured), always load from scopes[]
-            // to respect closure binding, regardless of any local scope instances that might exist.
-            if (variable is ScopeVariable sv)
-            {
-                // In class instance methods, scopes are stored in this._scopes field, not in arg_0
-                if (_methodGenerator.InClassMethod && !string.IsNullOrEmpty(_methodGenerator.CurrentClassName))
-                {
-                    // Load this._scopes field
-                    _il.OpCode(ILOpCode.Ldarg_0); // load 'this'
-                    if (_methodGenerator.ClassRegistry.TryGetPrivateField(_methodGenerator.CurrentClassName, "_scopes", out var scopesField))
-                    {
-                        _il.OpCode(ILOpCode.Ldfld);
-                        _il.Token(scopesField);
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException($"Class '{_methodGenerator.CurrentClassName}' missing _scopes field");
-                    }
-                }
-                else
-                {
-                    // Regular function: arg_0 is the scopes array
-                    _il.LoadArgument(0); // scopes array
-                }
-                _il.LoadConstantI4(sv.ParentScopeIndex);
-                _il.OpCode(ILOpCode.Ldelem_ref);
-                // Cast to the concrete scope type for verifiable field access
-                var reg0 = _variables.GetVariableRegistry();
-                var tdef0 = reg0?.GetScopeTypeHandle(variable.ScopeName) ?? default;
-                if (!tdef0.IsNil)
-                {
-                    _il.OpCode(ILOpCode.Castclass);
-                    _il.Token(tdef0);
-                }
-                _il.OpCode(ILOpCode.Ldfld);
-                _il.Token(sv.FieldHandle);
-                // Optional auto-unbox when caller does not want a boxed result
-                unboxIfNeeded(sv.Type);
-                return;
-            }
-            if (variable.IsParameter)
-            {
-                // Directly load argument (already object). ParameterIndex already accounts for scopes[] at arg0
-                _il.LoadArgument(variable.ParameterIndex);
-                // Optional auto-unbox when caller does not want a boxed result
-                unboxIfNeeded(variable.Type);
-                return;
-            }
-            // Scope field variable path
-            var scopeLocalIndex = _variables.GetScopeLocalSlot(variable.ScopeName);
-            if (scopeLocalIndex.Address == -1)
-            {
-                throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
-            }
-            if (scopeLocalIndex.Location == ObjectReferenceLocation.Parameter)
-            {
-                _il.LoadArgument(scopeLocalIndex.Address);
-            }
-            else if (scopeLocalIndex.Location == ObjectReferenceLocation.ScopeArray)
-            {
-                _il.LoadArgument(0); // Load scope array parameter
-                _il.LoadConstantI4(scopeLocalIndex.Address); // Load array index
-                _il.OpCode(ILOpCode.Ldelem_ref); // Load scope from array
-            }
-            else
-            {
-                _il.LoadLocal(scopeLocalIndex.Address);
-            }
-            // Cast to the concrete scope type for verifiable field access
-            var reg = _variables.GetVariableRegistry();
-            var tdef = reg?.GetScopeTypeHandle(variable.ScopeName) ?? default;
-            if (!tdef.IsNil)
-            {
-                _il.OpCode(ILOpCode.Castclass);
-                _il.Token(tdef);
-            }
-            _il.OpCode(ILOpCode.Ldfld);
-            _il.Token(variable.FieldHandle);
-            // Optional auto-unbox when caller does not want a boxed result
-            unboxIfNeeded(variable.Type);
-        }
-
-
         public ExpressionResult Generate(BinaryExpression binaryExpression, TypeCoercion typeCoercion, ConditionalBranching? branching = null)
         {
             if (binaryExpression.Left == null || binaryExpression.Right == null)
@@ -451,6 +345,15 @@ namespace Js2IL.Services.ILGenerators
                 else if (leftType == JavascriptType.Object && (binaryExpression.Right is Acornima.Ast.NumericLiteral || (binaryExpression.Right is Acornima.Ast.UnaryExpression rur && rur.Operator.ToString() == "UnaryNegation" && rur.Argument is Acornima.Ast.NumericLiteral)))
                 {
                     // If right is a numeric literal and left is object (e.g., parameter), convert left to number
+                    var toNum = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToNumber), typeof(double), typeof(object));
+                    _il.OpCode(ILOpCode.Call);
+                    _il.Token(toNum);
+                    leftType = JavascriptType.Number;
+                }
+                else if (leftType == JavascriptType.Object && binaryExpression.Right is Acornima.Ast.Identifier)
+                {
+                    // If right is an identifier (which will load a boxed value) and left is object, convert left to number
+                    // This handles cases like: methodResult == variableName
                     var toNum = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToNumber), typeof(double), typeof(object));
                     _il.OpCode(ILOpCode.Call);
                     _il.Token(toNum);

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection.Metadata;
 using Js2IL.SymbolTables;
 
@@ -25,8 +22,10 @@ namespace Js2IL.Services.VariableBindings
         private readonly Dictionary<string, List<VariableInfo>> _scopeVariables = new();
         private readonly Dictionary<string, TypeDefinitionHandle> _scopeTypes = new();
         private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _scopeFields = new();
-    // Track scope type handles even when no variables (so empty method scopes can still be instantiated)
-    private readonly Dictionary<string, TypeDefinitionHandle> _allScopeTypes = new();
+        // Track scope type handles even when no variables (so empty method scopes can still be instantiated)
+        private readonly Dictionary<string, TypeDefinitionHandle> _allScopeTypes = new();
+        // Track uncaptured variables (no scope backing field, will use local variables)
+        private readonly Dictionary<string, HashSet<string>> _uncapturedVariables = new();
 
         /// <summary>
         /// Adds a variable to the registry with its scope and field information (legacy overload; assumes Var binding).
@@ -40,9 +39,9 @@ namespace Js2IL.Services.VariableBindings
         /// <summary>
         /// Adds a variable to the registry with its scope and field information.
         /// </summary>
-    public void AddVariable(string scopeName, string variableName, VariableType type,
-                   FieldDefinitionHandle fieldHandle, TypeDefinitionHandle scopeTypeHandle,
-                   BindingKind bindingKind)
+        public void AddVariable(string scopeName, string variableName, VariableType type,
+                               FieldDefinitionHandle fieldHandle, TypeDefinitionHandle scopeTypeHandle,
+                               BindingKind bindingKind)
         {
             if (!_scopeVariables.ContainsKey(scopeName))
                 _scopeVariables[scopeName] = new List<VariableInfo>();
@@ -52,16 +51,20 @@ namespace Js2IL.Services.VariableBindings
                 Name = variableName,
                 ScopeName = scopeName,
                 VariableType = type,
-        FieldHandle = fieldHandle,
-        ScopeTypeHandle = scopeTypeHandle,
-        BindingKind = bindingKind
+                FieldHandle = fieldHandle,
+                ScopeTypeHandle = scopeTypeHandle,
+                BindingKind = bindingKind
             });
 
             if (!_scopeFields.ContainsKey(scopeName))
                 _scopeFields[scopeName] = new Dictionary<string, FieldDefinitionHandle>();
             
             _scopeFields[scopeName][variableName] = fieldHandle;
-            _scopeTypes[scopeName] = scopeTypeHandle;
+            // Only set scope type if it's not NIL (avoid overwriting valid handle with default)
+            if (!scopeTypeHandle.IsNil)
+            {
+                _scopeTypes[scopeName] = scopeTypeHandle;
+            }
         }
 
         /// <summary>
@@ -85,8 +88,10 @@ namespace Js2IL.Services.VariableBindings
         /// </summary>
         public TypeDefinitionHandle GetScopeTypeHandle(string scopeName)
         {
-            if (_scopeTypes.TryGetValue(scopeName, out var h)) return h;
-            if (_allScopeTypes.TryGetValue(scopeName, out var any)) return any;
+            if (_scopeTypes.TryGetValue(scopeName, out var h))
+                return h;
+            if (_allScopeTypes.TryGetValue(scopeName, out var any))
+                return any;
             throw new KeyNotFoundException($"Scope type handle not found for scope '{scopeName}'");
         }
 
@@ -107,7 +112,8 @@ namespace Js2IL.Services.VariableBindings
         /// </summary>
         public IEnumerable<string> GetAllScopeNames()
         {
-            return _scopeVariables.Keys;
+            // Return all scopes that have either variables or just type definitions
+            return _scopeVariables.Keys.Union(_allScopeTypes.Keys);
         }
 
         /// <summary>
@@ -152,6 +158,33 @@ namespace Js2IL.Services.VariableBindings
                 }
             }
         }
+
+        /// <summary>
+        /// Marks a variable as uncaptured (no scope backing field needed, will use local variable).
+        /// </summary>
+        public void MarkAsUncaptured(string scopeName, string variableName)
+        {
+            if (!_uncapturedVariables.ContainsKey(scopeName))
+                _uncapturedVariables[scopeName] = new HashSet<string>();
+            
+            _uncapturedVariables[scopeName].Add(variableName);
+        }
+
+        /// <summary>
+        /// Checks if a variable is uncaptured (no scope backing field, uses local variable).
+        /// </summary>
+        public bool IsUncaptured(string scopeName, string variableName)
+        {
+            return _uncapturedVariables.TryGetValue(scopeName, out var vars) && vars.Contains(variableName);
+        }
+
+        /// <summary>
+        /// Gets all uncaptured variables for a specific scope.
+        /// </summary>
+        public IEnumerable<string> GetUncapturedVariables(string scopeName)
+        {
+            return _uncapturedVariables.GetValueOrDefault(scopeName, new HashSet<string>());
+        }
     }
 
     /// <summary>
@@ -164,8 +197,8 @@ namespace Js2IL.Services.VariableBindings
         public VariableType VariableType { get; set; }
         public FieldDefinitionHandle FieldHandle { get; set; }
         public TypeDefinitionHandle ScopeTypeHandle { get; set; }
-    public BindingKind BindingKind { get; set; }
-    // Optional: CLR runtime type when known (e.g., Node module instance or intrinsic)
-    public Type? RuntimeIntrinsicType { get; set; }
+        public BindingKind BindingKind { get; set; }
+        // Optional: CLR runtime type when known (e.g., Node module instance or intrinsic)
+        public Type? RuntimeIntrinsicType { get; set; }
     }
 }

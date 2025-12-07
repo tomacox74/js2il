@@ -70,10 +70,6 @@
 	} // end of class Block_L2C40
 
 
-	// Fields
-	.field public object values
-	.field public object i
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -100,123 +96,113 @@
 	{
 		// Method begins at RVA 0x2074
 		// Header size: 12
-		// Code size: 387 (0x183)
+		// Code size: 327 (0x147)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ControlFlow_If_Truthiness
+			[0] class Scopes.ControlFlow_If_Truthiness,
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Scopes.ControlFlow_If_Truthiness::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.i4.s 10
-		IL_0009: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_000e: dup
-		IL_000f: ldc.r8 0.0
-		IL_0018: box [System.Runtime]System.Double
-		IL_001d: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0022: dup
-		IL_0023: ldc.r8 1
-		IL_002c: box [System.Runtime]System.Double
-		IL_0031: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0036: dup
-		IL_0037: ldstr ""
-		IL_003c: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0041: dup
-		IL_0042: ldstr "hi"
-		IL_0047: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_004c: dup
-		IL_004d: ldc.i4.0
-		IL_004e: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0053: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0058: dup
-		IL_0059: ldstr "undefined"
-		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::Get(string)
-		IL_0063: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0068: dup
-		IL_0069: ldc.i4.0
-		IL_006a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_006f: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0074: dup
-		IL_0075: ldc.i4.1
-		IL_0076: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_007b: dup
-		IL_007c: ldc.r8 1
-		IL_0085: box [System.Runtime]System.Double
-		IL_008a: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_008f: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0094: dup
-		IL_0095: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_009a: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_009f: dup
-		IL_00a0: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_00a5: dup
-		IL_00a6: ldstr "a"
-		IL_00ab: ldc.r8 1
-		IL_00b4: box [System.Runtime]System.Double
-		IL_00b9: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_00be: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_00c3: stfld object Scopes.ControlFlow_If_Truthiness::values
-		IL_00c8: ldloc.0
-		IL_00c9: ldc.r8 0.0
-		IL_00d2: box [System.Runtime]System.Double
-		IL_00d7: stfld object Scopes.ControlFlow_If_Truthiness::i
-		// loop start (head: IL_00dc)
-			IL_00dc: ldloc.0
-			IL_00dd: castclass Scopes.ControlFlow_If_Truthiness
-			IL_00e2: ldfld object Scopes.ControlFlow_If_Truthiness::i
-			IL_00e7: unbox.any [System.Runtime]System.Double
-			IL_00ec: ldloc.0
-			IL_00ed: castclass Scopes.ControlFlow_If_Truthiness
-			IL_00f2: ldfld object Scopes.ControlFlow_If_Truthiness::values
-			IL_00f7: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_00fc: blt IL_0106
+		IL_0006: ldc.i4.s 10
+		IL_0008: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_000d: dup
+		IL_000e: ldc.r8 0.0
+		IL_0017: box [System.Runtime]System.Double
+		IL_001c: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0021: dup
+		IL_0022: ldc.r8 1
+		IL_002b: box [System.Runtime]System.Double
+		IL_0030: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0035: dup
+		IL_0036: ldstr ""
+		IL_003b: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0040: dup
+		IL_0041: ldstr "hi"
+		IL_0046: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_004b: dup
+		IL_004c: ldc.i4.0
+		IL_004d: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0052: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0057: dup
+		IL_0058: ldstr "undefined"
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::Get(string)
+		IL_0062: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0067: dup
+		IL_0068: ldc.i4.0
+		IL_0069: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_006e: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0073: dup
+		IL_0074: ldc.i4.1
+		IL_0075: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_007a: dup
+		IL_007b: ldc.r8 1
+		IL_0084: box [System.Runtime]System.Double
+		IL_0089: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_008e: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0093: dup
+		IL_0094: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0099: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_009e: dup
+		IL_009f: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_00a4: dup
+		IL_00a5: ldstr "a"
+		IL_00aa: ldc.r8 1
+		IL_00b3: box [System.Runtime]System.Double
+		IL_00b8: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_00bd: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_00c2: stloc.1
+		IL_00c3: ldc.r8 0.0
+		IL_00cc: box [System.Runtime]System.Double
+		IL_00d1: stloc.2
+		// loop start (head: IL_00d2)
+			IL_00d2: ldloc.2
+			IL_00d3: unbox.any [System.Runtime]System.Double
+			IL_00d8: ldloc.1
+			IL_00d9: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_00de: blt IL_00e8
 
-			IL_0101: br IL_0182
+			IL_00e3: br IL_0146
 
-			IL_0106: ldloc.0
-			IL_0107: castclass Scopes.ControlFlow_If_Truthiness
-			IL_010c: ldfld object Scopes.ControlFlow_If_Truthiness::values
-			IL_0111: ldloc.0
-			IL_0112: castclass Scopes.ControlFlow_If_Truthiness
-			IL_0117: ldfld object Scopes.ControlFlow_If_Truthiness::i
-			IL_011c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0121: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_0126: brtrue IL_0130
+			IL_00e8: ldloc.1
+			IL_00e9: ldloc.2
+			IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_00ef: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_00f4: brtrue IL_00fe
 
-			IL_012b: br IL_0149
+			IL_00f9: br IL_0117
 
-			IL_0130: ldc.i4.1
-			IL_0131: newarr [System.Runtime]System.Object
-			IL_0136: dup
-			IL_0137: ldc.i4.0
-			IL_0138: ldstr "T"
-			IL_013d: stelem.ref
-			IL_013e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_0143: pop
-			IL_0144: br IL_015d
+			IL_00fe: ldc.i4.1
+			IL_00ff: newarr [System.Runtime]System.Object
+			IL_0104: dup
+			IL_0105: ldc.i4.0
+			IL_0106: ldstr "T"
+			IL_010b: stelem.ref
+			IL_010c: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_0111: pop
+			IL_0112: br IL_012b
 
-			IL_0149: ldc.i4.1
-			IL_014a: newarr [System.Runtime]System.Object
-			IL_014f: dup
-			IL_0150: ldc.i4.0
-			IL_0151: ldstr "F"
-			IL_0156: stelem.ref
-			IL_0157: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_015c: pop
+			IL_0117: ldc.i4.1
+			IL_0118: newarr [System.Runtime]System.Object
+			IL_011d: dup
+			IL_011e: ldc.i4.0
+			IL_011f: ldstr "F"
+			IL_0124: stelem.ref
+			IL_0125: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_012a: pop
 
-			IL_015d: ldloc.0
-			IL_015e: ldloc.0
-			IL_015f: ldfld object Scopes.ControlFlow_If_Truthiness::i
-			IL_0164: unbox.any [System.Runtime]System.Double
-			IL_0169: ldc.r8 1
-			IL_0172: add
-			IL_0173: box [System.Runtime]System.Double
-			IL_0178: stfld object Scopes.ControlFlow_If_Truthiness::i
-			IL_017d: br IL_00dc
+			IL_012b: ldloc.2
+			IL_012c: unbox.any [System.Runtime]System.Double
+			IL_0131: ldc.r8 1
+			IL_013a: add
+			IL_013b: box [System.Runtime]System.Double
+			IL_0140: stloc.2
+			IL_0141: br IL_00d2
 		// end loop
 
-		IL_0182: ret
+		IL_0146: ret
 	} // end of method ControlFlow_If_Truthiness::Main
 
 } // end of class Scripts.ControlFlow_If_Truthiness
@@ -228,7 +214,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2203
+		// Method begins at RVA 0x21c7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

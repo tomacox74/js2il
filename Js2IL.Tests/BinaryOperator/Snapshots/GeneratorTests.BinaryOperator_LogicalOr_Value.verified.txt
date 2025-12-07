@@ -6,11 +6,6 @@
 .class public auto ansi beforefieldinit Scopes.BinaryOperator_LogicalOr_Value
 	extends [System.Runtime]System.Object
 {
-	// Fields
-	.field public object a
-	.field public object b
-	.field public object c
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -37,47 +32,41 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 109 (0x6d)
+		// Code size: 64 (0x40)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.BinaryOperator_LogicalOr_Value
+			[0] class Scopes.BinaryOperator_LogicalOr_Value,
+			[1] object,
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Scopes.BinaryOperator_LogicalOr_Value::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.r8 0.0
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Scopes.BinaryOperator_LogicalOr_Value::a
-		IL_001a: ldloc.0
-		IL_001b: ldstr "hello"
-		IL_0020: stfld object Scopes.BinaryOperator_LogicalOr_Value::b
-		IL_0025: ldloc.0
-		IL_0026: ldloc.0
-		IL_0027: castclass Scopes.BinaryOperator_LogicalOr_Value
-		IL_002c: ldfld object Scopes.BinaryOperator_LogicalOr_Value::a
-		IL_0031: dup
-		IL_0032: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-		IL_0037: brtrue IL_004d
+		IL_0006: ldc.r8 0.0
+		IL_000f: box [System.Runtime]System.Double
+		IL_0014: stloc.1
+		IL_0015: ldstr "hello"
+		IL_001a: stloc.2
+		IL_001b: ldloc.1
+		IL_001c: dup
+		IL_001d: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+		IL_0022: brtrue IL_002e
 
-		IL_003c: pop
-		IL_003d: ldloc.0
-		IL_003e: castclass Scopes.BinaryOperator_LogicalOr_Value
-		IL_0043: ldfld object Scopes.BinaryOperator_LogicalOr_Value::b
-		IL_0048: br IL_004d
+		IL_0027: pop
+		IL_0028: ldloc.2
+		IL_0029: br IL_002e
 
-		IL_004d: stfld object Scopes.BinaryOperator_LogicalOr_Value::c
-		IL_0052: ldc.i4.1
-		IL_0053: newarr [System.Runtime]System.Object
-		IL_0058: dup
-		IL_0059: ldc.i4.0
-		IL_005a: ldloc.0
-		IL_005b: castclass Scopes.BinaryOperator_LogicalOr_Value
-		IL_0060: ldfld object Scopes.BinaryOperator_LogicalOr_Value::c
-		IL_0065: stelem.ref
-		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_006b: pop
-		IL_006c: ret
+		IL_002e: stloc.3
+		IL_002f: ldc.i4.1
+		IL_0030: newarr [System.Runtime]System.Object
+		IL_0035: dup
+		IL_0036: ldc.i4.0
+		IL_0037: ldloc.3
+		IL_0038: stelem.ref
+		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_003e: pop
+		IL_003f: ret
 	} // end of method BinaryOperator_LogicalOr_Value::Main
 
 } // end of class Scripts.BinaryOperator_LogicalOr_Value
@@ -89,7 +78,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20d5
+		// Method begins at RVA 0x20a8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

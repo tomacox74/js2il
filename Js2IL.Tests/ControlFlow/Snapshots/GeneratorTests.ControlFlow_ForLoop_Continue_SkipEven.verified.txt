@@ -28,9 +28,6 @@
 	} // end of class Block_L1C29
 
 
-	// Fields
-	.field public object i
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -57,66 +54,58 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 180 (0xb4)
+		// Code size: 135 (0x87)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ControlFlow_ForLoop_Continue_SkipEven
+			[0] class Scopes.ControlFlow_ForLoop_Continue_SkipEven,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Scopes.ControlFlow_ForLoop_Continue_SkipEven::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.r8 0.0
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Scopes.ControlFlow_ForLoop_Continue_SkipEven::i
-		// loop start (head: IL_001a)
-			IL_001a: ldloc.0
-			IL_001b: castclass Scopes.ControlFlow_ForLoop_Continue_SkipEven
-			IL_0020: ldfld object Scopes.ControlFlow_ForLoop_Continue_SkipEven::i
-			IL_0025: unbox.any [System.Runtime]System.Double
-			IL_002a: ldc.r8 10
-			IL_0033: blt IL_003d
+		IL_0006: ldc.r8 0.0
+		IL_000f: box [System.Runtime]System.Double
+		IL_0014: stloc.1
+		// loop start (head: IL_0015)
+			IL_0015: ldloc.1
+			IL_0016: unbox.any [System.Runtime]System.Double
+			IL_001b: ldc.r8 10
+			IL_0024: blt IL_002e
 
-			IL_0038: br IL_00b3
+			IL_0029: br IL_0086
 
-			IL_003d: ldloc.0
-			IL_003e: castclass Scopes.ControlFlow_ForLoop_Continue_SkipEven
-			IL_0043: ldfld object Scopes.ControlFlow_ForLoop_Continue_SkipEven::i
-			IL_0048: unbox.any [System.Runtime]System.Double
-			IL_004d: ldc.r8 2
-			IL_0056: rem
-			IL_0057: ldc.r8 0.0
-			IL_0060: beq IL_006a
+			IL_002e: ldloc.1
+			IL_002f: unbox.any [System.Runtime]System.Double
+			IL_0034: ldc.r8 2
+			IL_003d: rem
+			IL_003e: ldc.r8 0.0
+			IL_0047: beq IL_0051
 
-			IL_0065: br IL_0074
+			IL_004c: br IL_005b
 
-			IL_006a: br IL_008e
+			IL_0051: br IL_006b
 
-			IL_006f: br IL_0074
+			IL_0056: br IL_005b
 
-			IL_0074: ldc.i4.1
-			IL_0075: newarr [System.Runtime]System.Object
-			IL_007a: dup
-			IL_007b: ldc.i4.0
-			IL_007c: ldloc.0
-			IL_007d: castclass Scopes.ControlFlow_ForLoop_Continue_SkipEven
-			IL_0082: ldfld object Scopes.ControlFlow_ForLoop_Continue_SkipEven::i
-			IL_0087: stelem.ref
-			IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_008d: pop
+			IL_005b: ldc.i4.1
+			IL_005c: newarr [System.Runtime]System.Object
+			IL_0061: dup
+			IL_0062: ldc.i4.0
+			IL_0063: ldloc.1
+			IL_0064: stelem.ref
+			IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_006a: pop
 
-			IL_008e: ldloc.0
-			IL_008f: ldloc.0
-			IL_0090: ldfld object Scopes.ControlFlow_ForLoop_Continue_SkipEven::i
-			IL_0095: unbox.any [System.Runtime]System.Double
-			IL_009a: ldc.r8 1
-			IL_00a3: add
-			IL_00a4: box [System.Runtime]System.Double
-			IL_00a9: stfld object Scopes.ControlFlow_ForLoop_Continue_SkipEven::i
-			IL_00ae: br IL_001a
+			IL_006b: ldloc.1
+			IL_006c: unbox.any [System.Runtime]System.Double
+			IL_0071: ldc.r8 1
+			IL_007a: add
+			IL_007b: box [System.Runtime]System.Double
+			IL_0080: stloc.1
+			IL_0081: br IL_0015
 		// end loop
 
-		IL_00b3: ret
+		IL_0086: ret
 	} // end of method ControlFlow_ForLoop_Continue_SkipEven::Main
 
 } // end of class Scripts.ControlFlow_ForLoop_Continue_SkipEven
@@ -128,7 +117,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2124
+		// Method begins at RVA 0x20f7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

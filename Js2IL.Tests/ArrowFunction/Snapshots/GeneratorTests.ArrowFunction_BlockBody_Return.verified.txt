@@ -11,7 +11,8 @@
 		extends [System.Runtime]System.Object
 	{
 		// Fields
-		.field public object s
+		.field public object a
+		.field public object b
 
 		// Methods
 		.method public hidebysig specialname rtspecialname 
@@ -30,9 +31,6 @@
 
 	} // end of class ArrowFunction_add
 
-
-	// Fields
-	.field public object 'add'
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -87,64 +85,61 @@
 	{
 		// Method begins at RVA 0x2084
 		// Header size: 12
-		// Code size: 145 (0x91)
+		// Code size: 125 (0x7d)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ArrowFunction_BlockBody_Return
+			[0] class Scopes.ArrowFunction_BlockBody_Return,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Scopes.ArrowFunction_BlockBody_Return::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldnull
-		IL_0008: ldftn object Functions.ArrowFunction_L1C12::ArrowFunction_L1C12(object[], object, object)
-		IL_000e: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-		IL_0013: ldc.i4.1
-		IL_0014: newarr [System.Runtime]System.Object
-		IL_0019: dup
-		IL_001a: ldc.i4.0
-		IL_001b: ldloc.0
-		IL_001c: stelem.ref
-		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0022: stfld object Scopes.ArrowFunction_BlockBody_Return::'add'
-		IL_0027: ldc.i4.2
-		IL_0028: newarr [System.Runtime]System.Object
-		IL_002d: dup
-		IL_002e: ldc.i4.0
-		IL_002f: ldstr "x is "
-		IL_0034: stelem.ref
-		IL_0035: dup
-		IL_0036: ldc.i4.1
-		IL_0037: ldloc.0
-		IL_0038: ldfld object Scopes.ArrowFunction_BlockBody_Return::'add'
-		IL_003d: dup
-		IL_003e: brtrue.s IL_005e
+		IL_0006: ldnull
+		IL_0007: ldftn object Functions.ArrowFunction_L1C12::ArrowFunction_L1C12(object[], object, object)
+		IL_000d: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.1
+		IL_0022: ldc.i4.2
+		IL_0023: newarr [System.Runtime]System.Object
+		IL_0028: dup
+		IL_0029: ldc.i4.0
+		IL_002a: ldstr "x is "
+		IL_002f: stelem.ref
+		IL_0030: dup
+		IL_0031: ldc.i4.1
+		IL_0032: ldloc.1
+		IL_0033: dup
+		IL_0034: brtrue.s IL_004a
 
-		IL_0040: pop
-		IL_0041: ldloc.0
-		IL_0042: ldnull
-		IL_0043: ldftn object Functions.ArrowFunction_L1C12::ArrowFunction_L1C12(object[], object, object)
-		IL_0049: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-		IL_004e: stfld object Scopes.ArrowFunction_BlockBody_Return::'add'
-		IL_0053: ldloc.0
-		IL_0054: ldfld object Scopes.ArrowFunction_BlockBody_Return::'add'
-		IL_0059: br IL_005e
+		IL_0036: pop
+		IL_0037: ldnull
+		IL_0038: ldftn object Functions.ArrowFunction_L1C12::ArrowFunction_L1C12(object[], object, object)
+		IL_003e: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_0043: stloc.1
+		IL_0044: ldloc.1
+		IL_0045: br IL_004a
 
-		IL_005e: ldc.i4.1
-		IL_005f: newarr [System.Runtime]System.Object
-		IL_0064: dup
-		IL_0065: ldc.i4.0
-		IL_0066: ldloc.0
-		IL_0067: stelem.ref
-		IL_0068: ldc.r8 4
-		IL_0071: box [System.Runtime]System.Double
-		IL_0076: ldc.r8 3
-		IL_007f: box [System.Runtime]System.Double
-		IL_0084: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
-		IL_0089: stelem.ref
-		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_008f: pop
-		IL_0090: ret
+		IL_004a: ldc.i4.1
+		IL_004b: newarr [System.Runtime]System.Object
+		IL_0050: dup
+		IL_0051: ldc.i4.0
+		IL_0052: ldloc.0
+		IL_0053: stelem.ref
+		IL_0054: ldc.r8 4
+		IL_005d: box [System.Runtime]System.Double
+		IL_0062: ldc.r8 3
+		IL_006b: box [System.Runtime]System.Double
+		IL_0070: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
+		IL_0075: stelem.ref
+		IL_0076: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_007b: pop
+		IL_007c: ret
 	} // end of method ArrowFunction_BlockBody_Return::Main
 
 } // end of class Scripts.ArrowFunction_BlockBody_Return
@@ -156,7 +151,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2121
+		// Method begins at RVA 0x210d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

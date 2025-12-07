@@ -48,10 +48,6 @@
 	} // end of class Block_L5C7
 
 
-	// Fields
-	.field public object a
-	.field public object b
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -78,54 +74,50 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 134 (0x86)
+		// Code size: 104 (0x68)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ControlFlow_If_LessThan
+			[0] class Scopes.ControlFlow_If_LessThan,
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Scopes.ControlFlow_If_LessThan::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.r8 3
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Scopes.ControlFlow_If_LessThan::a
-		IL_001a: ldloc.0
-		IL_001b: ldc.r8 5
-		IL_0024: box [System.Runtime]System.Double
-		IL_0029: stfld object Scopes.ControlFlow_If_LessThan::b
-		IL_002e: ldloc.0
-		IL_002f: castclass Scopes.ControlFlow_If_LessThan
-		IL_0034: ldfld object Scopes.ControlFlow_If_LessThan::a
-		IL_0039: unbox.any [System.Runtime]System.Double
-		IL_003e: ldloc.0
-		IL_003f: castclass Scopes.ControlFlow_If_LessThan
-		IL_0044: ldfld object Scopes.ControlFlow_If_LessThan::b
-		IL_0049: unbox.any [System.Runtime]System.Double
-		IL_004e: blt IL_0058
+		IL_0006: ldc.r8 3
+		IL_000f: box [System.Runtime]System.Double
+		IL_0014: stloc.1
+		IL_0015: ldc.r8 5
+		IL_001e: box [System.Runtime]System.Double
+		IL_0023: stloc.2
+		IL_0024: ldloc.1
+		IL_0025: unbox.any [System.Runtime]System.Double
+		IL_002a: ldloc.2
+		IL_002b: unbox.any [System.Runtime]System.Double
+		IL_0030: blt IL_003a
 
-		IL_0053: br IL_0071
+		IL_0035: br IL_0053
 
-		IL_0058: ldc.i4.1
-		IL_0059: newarr [System.Runtime]System.Object
-		IL_005e: dup
-		IL_005f: ldc.i4.0
-		IL_0060: ldstr "lte"
-		IL_0065: stelem.ref
-		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_006b: pop
-		IL_006c: br IL_0085
+		IL_003a: ldc.i4.1
+		IL_003b: newarr [System.Runtime]System.Object
+		IL_0040: dup
+		IL_0041: ldc.i4.0
+		IL_0042: ldstr "lte"
+		IL_0047: stelem.ref
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_004d: pop
+		IL_004e: br IL_0067
 
-		IL_0071: ldc.i4.1
-		IL_0072: newarr [System.Runtime]System.Object
-		IL_0077: dup
-		IL_0078: ldc.i4.0
-		IL_0079: ldstr "gt"
-		IL_007e: stelem.ref
-		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0084: pop
+		IL_0053: ldc.i4.1
+		IL_0054: newarr [System.Runtime]System.Object
+		IL_0059: dup
+		IL_005a: ldc.i4.0
+		IL_005b: ldstr "gt"
+		IL_0060: stelem.ref
+		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0066: pop
 
-		IL_0085: ret
+		IL_0067: ret
 	} // end of method ControlFlow_If_LessThan::Main
 
 } // end of class Scripts.ControlFlow_If_LessThan
@@ -137,7 +129,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20fe
+		// Method begins at RVA 0x20e0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

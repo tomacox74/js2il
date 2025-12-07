@@ -28,9 +28,6 @@
 	} // end of class Block_L2C13
 
 
-	// Fields
-	.field public object i
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -57,59 +54,53 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 146 (0x92)
+		// Code size: 111 (0x6f)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ControlFlow_DoWhile_CountDownFromFive
+			[0] class Scopes.ControlFlow_DoWhile_CountDownFromFive,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Scopes.ControlFlow_DoWhile_CountDownFromFive::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.r8 5
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Scopes.ControlFlow_DoWhile_CountDownFromFive::i
-		// loop start (head: IL_001a)
-			IL_001a: ldc.i4.1
-			IL_001b: brtrue IL_0025
+		IL_0006: ldc.r8 5
+		IL_000f: box [System.Runtime]System.Double
+		IL_0014: stloc.1
+		// loop start (head: IL_0015)
+			IL_0015: ldc.i4.1
+			IL_0016: brtrue IL_0020
 
-			IL_0020: br IL_0091
+			IL_001b: br IL_006e
 
-			IL_0025: ldc.i4.1
-			IL_0026: newarr [System.Runtime]System.Object
-			IL_002b: dup
-			IL_002c: ldc.i4.0
-			IL_002d: ldloc.0
-			IL_002e: castclass Scopes.ControlFlow_DoWhile_CountDownFromFive
-			IL_0033: ldfld object Scopes.ControlFlow_DoWhile_CountDownFromFive::i
-			IL_0038: stelem.ref
-			IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_003e: pop
-			IL_003f: ldloc.0
-			IL_0040: ldloc.0
-			IL_0041: ldfld object Scopes.ControlFlow_DoWhile_CountDownFromFive::i
-			IL_0046: unbox.any [System.Runtime]System.Double
-			IL_004b: ldc.r8 1
-			IL_0054: sub
-			IL_0055: box [System.Runtime]System.Double
-			IL_005a: stfld object Scopes.ControlFlow_DoWhile_CountDownFromFive::i
-			IL_005f: ldloc.0
-			IL_0060: castclass Scopes.ControlFlow_DoWhile_CountDownFromFive
-			IL_0065: ldfld object Scopes.ControlFlow_DoWhile_CountDownFromFive::i
-			IL_006a: unbox.any [System.Runtime]System.Double
-			IL_006f: ldc.r8 0.0
-			IL_0078: beq IL_0082
+			IL_0020: ldc.i4.1
+			IL_0021: newarr [System.Runtime]System.Object
+			IL_0026: dup
+			IL_0027: ldc.i4.0
+			IL_0028: ldloc.1
+			IL_0029: stelem.ref
+			IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_002f: pop
+			IL_0030: ldloc.1
+			IL_0031: unbox.any [System.Runtime]System.Double
+			IL_0036: ldc.r8 1
+			IL_003f: sub
+			IL_0040: box [System.Runtime]System.Double
+			IL_0045: stloc.1
+			IL_0046: ldloc.1
+			IL_0047: unbox.any [System.Runtime]System.Double
+			IL_004c: ldc.r8 0.0
+			IL_0055: beq IL_005f
 
-			IL_007d: br IL_008c
+			IL_005a: br IL_0069
 
-			IL_0082: br IL_0091
+			IL_005f: br IL_006e
 
-			IL_0087: br IL_008c
+			IL_0064: br IL_0069
 
-			IL_008c: br IL_001a
+			IL_0069: br IL_0015
 		// end loop
 
-		IL_0091: ret
+		IL_006e: ret
 	} // end of method ControlFlow_DoWhile_CountDownFromFive::Main
 
 } // end of class Scripts.ControlFlow_DoWhile_CountDownFromFive
@@ -121,7 +112,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2102
+		// Method begins at RVA 0x20df
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

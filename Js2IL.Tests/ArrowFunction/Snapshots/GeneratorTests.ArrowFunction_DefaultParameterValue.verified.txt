@@ -105,12 +105,6 @@
 	} // end of class ArrowFunction_calculate
 
 
-	// Fields
-	.field public object greet
-	.field public object 'add'
-	.field public object multi
-	.field public object calculate
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -140,8 +134,11 @@
 	{
 		// Method begins at RVA 0x2080
 		// Header size: 12
-		// Code size: 41 (0x29)
+		// Code size: 64 (0x40)
 		.maxstack 32
+		.locals init (
+			[0] class Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_greet
+		)
 
 		IL_0000: ldarg.1
 		IL_0001: brtrue IL_000d
@@ -149,18 +146,25 @@
 		IL_0006: ldstr "World"
 		IL_000b: starg.s name
 
-		IL_000d: ldc.i4.1
-		IL_000e: newarr [System.Runtime]System.Object
-		IL_0013: dup
-		IL_0014: ldc.i4.0
-		IL_0015: ldstr "Hello, "
-		IL_001a: ldarg.1
-		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0020: stelem.ref
-		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0026: pop
-		IL_0027: ldnull
-		IL_0028: ret
+		IL_000d: newobj instance void Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_greet::.ctor()
+		IL_0012: stloc.0
+		IL_0013: ldloc.0
+		IL_0014: ldarg.1
+		IL_0015: stfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_greet::name
+		IL_001a: ldc.i4.1
+		IL_001b: newarr [System.Runtime]System.Object
+		IL_0020: dup
+		IL_0021: ldc.i4.0
+		IL_0022: ldstr "Hello, "
+		IL_0027: ldloc.0
+		IL_0028: castclass Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_greet
+		IL_002d: ldfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_greet::name
+		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0037: stelem.ref
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_003d: pop
+		IL_003e: ldnull
+		IL_003f: ret
 	} // end of method ArrowFunction_L2C14::ArrowFunction_L2C14
 
 } // end of class Functions.ArrowFunction_L2C14
@@ -176,10 +180,13 @@
 			object b
 		) cil managed 
 	{
-		// Method begins at RVA 0x20b8
+		// Method begins at RVA 0x20cc
 		// Header size: 12
-		// Code size: 57 (0x39)
+		// Code size: 97 (0x61)
 		.maxstack 32
+		.locals init (
+			[0] class Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_add
+		)
 
 		IL_0000: ldarg.2
 		IL_0001: brtrue IL_0016
@@ -188,21 +195,33 @@
 		IL_000f: box [System.Runtime]System.Double
 		IL_0014: starg.s b
 
-		IL_0016: ldc.i4.1
-		IL_0017: newarr [System.Runtime]System.Object
-		IL_001c: dup
-		IL_001d: ldc.i4.0
-		IL_001e: ldarg.1
-		IL_001f: unbox.any [System.Runtime]System.Double
+		IL_0016: newobj instance void Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_add::.ctor()
+		IL_001b: stloc.0
+		IL_001c: ldloc.0
+		IL_001d: ldarg.1
+		IL_001e: stfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_add::a
+		IL_0023: ldloc.0
 		IL_0024: ldarg.2
-		IL_0025: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_002a: add
-		IL_002b: box [System.Runtime]System.Double
-		IL_0030: stelem.ref
-		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0036: pop
-		IL_0037: ldnull
-		IL_0038: ret
+		IL_0025: stfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_add::b
+		IL_002a: ldc.i4.1
+		IL_002b: newarr [System.Runtime]System.Object
+		IL_0030: dup
+		IL_0031: ldc.i4.0
+		IL_0032: ldloc.0
+		IL_0033: castclass Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_add
+		IL_0038: ldfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_add::a
+		IL_003d: unbox.any [System.Runtime]System.Double
+		IL_0042: ldloc.0
+		IL_0043: castclass Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_add
+		IL_0048: ldfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_add::b
+		IL_004d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0052: add
+		IL_0053: box [System.Runtime]System.Double
+		IL_0058: stelem.ref
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_005e: pop
+		IL_005f: ldnull
+		IL_0060: ret
 	} // end of method ArrowFunction_L6C12::ArrowFunction_L6C12
 
 } // end of class Functions.ArrowFunction_L6C12
@@ -219,10 +238,13 @@
 			object z
 		) cil managed 
 	{
-		// Method begins at RVA 0x2100
+		// Method begins at RVA 0x213c
 		// Header size: 12
-		// Code size: 108 (0x6c)
+		// Code size: 165 (0xa5)
 		.maxstack 32
+		.locals init (
+			[0] class Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi
+		)
 
 		IL_0000: ldarg.1
 		IL_0001: brtrue IL_0016
@@ -245,24 +267,41 @@
 		IL_003b: box [System.Runtime]System.Double
 		IL_0040: starg.s z
 
-		IL_0042: ldc.i4.1
-		IL_0043: newarr [System.Runtime]System.Object
-		IL_0048: dup
-		IL_0049: ldc.i4.0
-		IL_004a: ldarg.1
-		IL_004b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0042: newobj instance void Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi::.ctor()
+		IL_0047: stloc.0
+		IL_0048: ldloc.0
+		IL_0049: ldarg.1
+		IL_004a: stfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi::x
+		IL_004f: ldloc.0
 		IL_0050: ldarg.2
-		IL_0051: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0056: mul
+		IL_0051: stfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi::y
+		IL_0056: ldloc.0
 		IL_0057: ldarg.3
-		IL_0058: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_005d: mul
-		IL_005e: box [System.Runtime]System.Double
-		IL_0063: stelem.ref
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0069: pop
-		IL_006a: ldnull
-		IL_006b: ret
+		IL_0058: stfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi::z
+		IL_005d: ldc.i4.1
+		IL_005e: newarr [System.Runtime]System.Object
+		IL_0063: dup
+		IL_0064: ldc.i4.0
+		IL_0065: ldloc.0
+		IL_0066: castclass Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi
+		IL_006b: ldfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi::x
+		IL_0070: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0075: ldloc.0
+		IL_0076: castclass Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi
+		IL_007b: ldfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi::y
+		IL_0080: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0085: mul
+		IL_0086: ldloc.0
+		IL_0087: castclass Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi
+		IL_008c: ldfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi::z
+		IL_0091: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0096: mul
+		IL_0097: box [System.Runtime]System.Double
+		IL_009c: stelem.ref
+		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00a2: pop
+		IL_00a3: ldnull
+		IL_00a4: ret
 	} // end of method ArrowFunction_L10C14::ArrowFunction_L10C14
 
 } // end of class Functions.ArrowFunction_L10C14
@@ -279,10 +318,13 @@
 			object c
 		) cil managed 
 	{
-		// Method begins at RVA 0x2178
+		// Method begins at RVA 0x21f0
 		// Header size: 12
-		// Code size: 73 (0x49)
+		// Code size: 110 (0x6e)
 		.maxstack 32
+		.locals init (
+			[0] class Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_calculate
+		)
 
 		IL_0000: ldarg.2
 		IL_0001: brtrue IL_001d
@@ -305,16 +347,29 @@
 		IL_0030: box [System.Runtime]System.Double
 		IL_0035: starg.s c
 
-		IL_0037: ldc.i4.1
-		IL_0038: newarr [System.Runtime]System.Object
-		IL_003d: dup
-		IL_003e: ldc.i4.0
-		IL_003f: ldarg.3
-		IL_0040: stelem.ref
-		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0046: pop
-		IL_0047: ldnull
-		IL_0048: ret
+		IL_0037: newobj instance void Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_calculate::.ctor()
+		IL_003c: stloc.0
+		IL_003d: ldloc.0
+		IL_003e: ldarg.1
+		IL_003f: stfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_calculate::a
+		IL_0044: ldloc.0
+		IL_0045: ldarg.2
+		IL_0046: stfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_calculate::b
+		IL_004b: ldloc.0
+		IL_004c: ldarg.3
+		IL_004d: stfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_calculate::c
+		IL_0052: ldc.i4.1
+		IL_0053: newarr [System.Runtime]System.Object
+		IL_0058: dup
+		IL_0059: ldc.i4.0
+		IL_005a: ldloc.0
+		IL_005b: castclass Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_calculate
+		IL_0060: ldfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_calculate::c
+		IL_0065: stelem.ref
+		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_006b: pop
+		IL_006c: ldnull
+		IL_006d: ret
 	} // end of method ArrowFunction_L14C18::ArrowFunction_L14C18
 
 } // end of class Functions.ArrowFunction_L14C18
@@ -326,360 +381,327 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21d0
+		// Method begins at RVA 0x226c
 		// Header size: 12
-		// Code size: 970 (0x3ca)
+		// Code size: 795 (0x31b)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ArrowFunction_DefaultParameterValue
+			[0] class Scopes.ArrowFunction_DefaultParameterValue,
+			[1] object,
+			[2] object,
+			[3] object,
+			[4] object
 		)
 
 		IL_0000: newobj instance void Scopes.ArrowFunction_DefaultParameterValue::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldnull
-		IL_0008: ldftn object Functions.ArrowFunction_L2C14::ArrowFunction_L2C14(object[], object)
-		IL_000e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0013: ldc.i4.1
-		IL_0014: newarr [System.Runtime]System.Object
-		IL_0019: dup
-		IL_001a: ldc.i4.0
-		IL_001b: ldloc.0
-		IL_001c: stelem.ref
-		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0022: stfld object Scopes.ArrowFunction_DefaultParameterValue::greet
-		IL_0027: ldloc.0
-		IL_0028: ldnull
-		IL_0029: ldftn object Functions.ArrowFunction_L6C12::ArrowFunction_L6C12(object[], object, object)
-		IL_002f: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-		IL_0034: ldc.i4.1
-		IL_0035: newarr [System.Runtime]System.Object
-		IL_003a: dup
-		IL_003b: ldc.i4.0
-		IL_003c: ldloc.0
-		IL_003d: stelem.ref
-		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0043: stfld object Scopes.ArrowFunction_DefaultParameterValue::'add'
-		IL_0048: ldloc.0
-		IL_0049: ldnull
-		IL_004a: ldftn object Functions.ArrowFunction_L10C14::ArrowFunction_L10C14(object[], object, object, object)
-		IL_0050: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
-		IL_0055: ldc.i4.1
-		IL_0056: newarr [System.Runtime]System.Object
-		IL_005b: dup
-		IL_005c: ldc.i4.0
-		IL_005d: ldloc.0
-		IL_005e: stelem.ref
-		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0064: stfld object Scopes.ArrowFunction_DefaultParameterValue::multi
-		IL_0069: ldloc.0
-		IL_006a: ldnull
-		IL_006b: ldftn object Functions.ArrowFunction_L14C18::ArrowFunction_L14C18(object[], object, object, object)
-		IL_0071: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
-		IL_0076: ldc.i4.1
-		IL_0077: newarr [System.Runtime]System.Object
-		IL_007c: dup
-		IL_007d: ldc.i4.0
-		IL_007e: ldloc.0
-		IL_007f: stelem.ref
-		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0085: stfld object Scopes.ArrowFunction_DefaultParameterValue::calculate
-		IL_008a: ldloc.0
-		IL_008b: ldfld object Scopes.ArrowFunction_DefaultParameterValue::greet
-		IL_0090: dup
-		IL_0091: brtrue.s IL_00b1
+		IL_0006: ldnull
+		IL_0007: ldftn object Functions.ArrowFunction_L2C14::ArrowFunction_L2C14(object[], object)
+		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.1
+		IL_0022: ldnull
+		IL_0023: ldftn object Functions.ArrowFunction_L6C12::ArrowFunction_L6C12(object[], object, object)
+		IL_0029: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_002e: ldc.i4.1
+		IL_002f: newarr [System.Runtime]System.Object
+		IL_0034: dup
+		IL_0035: ldc.i4.0
+		IL_0036: ldloc.0
+		IL_0037: stelem.ref
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_003d: stloc.2
+		IL_003e: ldnull
+		IL_003f: ldftn object Functions.ArrowFunction_L10C14::ArrowFunction_L10C14(object[], object, object, object)
+		IL_0045: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
+		IL_004a: ldc.i4.1
+		IL_004b: newarr [System.Runtime]System.Object
+		IL_0050: dup
+		IL_0051: ldc.i4.0
+		IL_0052: ldloc.0
+		IL_0053: stelem.ref
+		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0059: stloc.3
+		IL_005a: ldnull
+		IL_005b: ldftn object Functions.ArrowFunction_L14C18::ArrowFunction_L14C18(object[], object, object, object)
+		IL_0061: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
+		IL_0066: ldc.i4.1
+		IL_0067: newarr [System.Runtime]System.Object
+		IL_006c: dup
+		IL_006d: ldc.i4.0
+		IL_006e: ldloc.0
+		IL_006f: stelem.ref
+		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0075: stloc.s 4
+		IL_0077: ldloc.1
+		IL_0078: dup
+		IL_0079: brtrue.s IL_008f
 
-		IL_0093: pop
-		IL_0094: ldloc.0
-		IL_0095: ldnull
-		IL_0096: ldftn object Functions.ArrowFunction_L2C14::ArrowFunction_L2C14(object[], object)
-		IL_009c: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_00a1: stfld object Scopes.ArrowFunction_DefaultParameterValue::greet
-		IL_00a6: ldloc.0
-		IL_00a7: ldfld object Scopes.ArrowFunction_DefaultParameterValue::greet
-		IL_00ac: br IL_00b1
+		IL_007b: pop
+		IL_007c: ldnull
+		IL_007d: ldftn object Functions.ArrowFunction_L2C14::ArrowFunction_L2C14(object[], object)
+		IL_0083: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0088: stloc.1
+		IL_0089: ldloc.1
+		IL_008a: br IL_008f
 
-		IL_00b1: ldc.i4.1
-		IL_00b2: newarr [System.Runtime]System.Object
-		IL_00b7: dup
-		IL_00b8: ldc.i4.0
-		IL_00b9: ldloc.0
-		IL_00ba: stelem.ref
-		IL_00bb: ldnull
-		IL_00bc: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_00c1: pop
-		IL_00c2: ldloc.0
-		IL_00c3: ldfld object Scopes.ArrowFunction_DefaultParameterValue::greet
-		IL_00c8: dup
-		IL_00c9: brtrue.s IL_00e9
+		IL_008f: ldc.i4.1
+		IL_0090: newarr [System.Runtime]System.Object
+		IL_0095: dup
+		IL_0096: ldc.i4.0
+		IL_0097: ldloc.0
+		IL_0098: stelem.ref
+		IL_0099: ldnull
+		IL_009a: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_009f: pop
+		IL_00a0: ldloc.1
+		IL_00a1: dup
+		IL_00a2: brtrue.s IL_00b8
 
-		IL_00cb: pop
-		IL_00cc: ldloc.0
-		IL_00cd: ldnull
-		IL_00ce: ldftn object Functions.ArrowFunction_L2C14::ArrowFunction_L2C14(object[], object)
-		IL_00d4: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_00d9: stfld object Scopes.ArrowFunction_DefaultParameterValue::greet
-		IL_00de: ldloc.0
-		IL_00df: ldfld object Scopes.ArrowFunction_DefaultParameterValue::greet
-		IL_00e4: br IL_00e9
+		IL_00a4: pop
+		IL_00a5: ldnull
+		IL_00a6: ldftn object Functions.ArrowFunction_L2C14::ArrowFunction_L2C14(object[], object)
+		IL_00ac: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_00b1: stloc.1
+		IL_00b2: ldloc.1
+		IL_00b3: br IL_00b8
 
-		IL_00e9: ldc.i4.1
-		IL_00ea: newarr [System.Runtime]System.Object
-		IL_00ef: dup
-		IL_00f0: ldc.i4.0
-		IL_00f1: ldloc.0
-		IL_00f2: stelem.ref
-		IL_00f3: ldstr "Alice"
-		IL_00f8: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_00fd: pop
-		IL_00fe: ldloc.0
-		IL_00ff: ldfld object Scopes.ArrowFunction_DefaultParameterValue::'add'
-		IL_0104: dup
-		IL_0105: brtrue.s IL_0125
+		IL_00b8: ldc.i4.1
+		IL_00b9: newarr [System.Runtime]System.Object
+		IL_00be: dup
+		IL_00bf: ldc.i4.0
+		IL_00c0: ldloc.0
+		IL_00c1: stelem.ref
+		IL_00c2: ldstr "Alice"
+		IL_00c7: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_00cc: pop
+		IL_00cd: ldloc.2
+		IL_00ce: dup
+		IL_00cf: brtrue.s IL_00e5
 
-		IL_0107: pop
-		IL_0108: ldloc.0
+		IL_00d1: pop
+		IL_00d2: ldnull
+		IL_00d3: ldftn object Functions.ArrowFunction_L6C12::ArrowFunction_L6C12(object[], object, object)
+		IL_00d9: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_00de: stloc.2
+		IL_00df: ldloc.2
+		IL_00e0: br IL_00e5
+
+		IL_00e5: ldc.i4.1
+		IL_00e6: newarr [System.Runtime]System.Object
+		IL_00eb: dup
+		IL_00ec: ldc.i4.0
+		IL_00ed: ldloc.0
+		IL_00ee: stelem.ref
+		IL_00ef: ldc.r8 5
+		IL_00f8: box [System.Runtime]System.Double
+		IL_00fd: ldnull
+		IL_00fe: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
+		IL_0103: pop
+		IL_0104: ldloc.2
+		IL_0105: dup
+		IL_0106: brtrue.s IL_011c
+
+		IL_0108: pop
 		IL_0109: ldnull
 		IL_010a: ldftn object Functions.ArrowFunction_L6C12::ArrowFunction_L6C12(object[], object, object)
 		IL_0110: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-		IL_0115: stfld object Scopes.ArrowFunction_DefaultParameterValue::'add'
-		IL_011a: ldloc.0
-		IL_011b: ldfld object Scopes.ArrowFunction_DefaultParameterValue::'add'
-		IL_0120: br IL_0125
+		IL_0115: stloc.2
+		IL_0116: ldloc.2
+		IL_0117: br IL_011c
 
-		IL_0125: ldc.i4.1
-		IL_0126: newarr [System.Runtime]System.Object
-		IL_012b: dup
-		IL_012c: ldc.i4.0
-		IL_012d: ldloc.0
-		IL_012e: stelem.ref
-		IL_012f: ldc.r8 5
-		IL_0138: box [System.Runtime]System.Double
-		IL_013d: ldnull
-		IL_013e: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
-		IL_0143: pop
-		IL_0144: ldloc.0
-		IL_0145: ldfld object Scopes.ArrowFunction_DefaultParameterValue::'add'
-		IL_014a: dup
-		IL_014b: brtrue.s IL_016b
+		IL_011c: ldc.i4.1
+		IL_011d: newarr [System.Runtime]System.Object
+		IL_0122: dup
+		IL_0123: ldc.i4.0
+		IL_0124: ldloc.0
+		IL_0125: stelem.ref
+		IL_0126: ldc.r8 5
+		IL_012f: box [System.Runtime]System.Double
+		IL_0134: ldc.r8 15
+		IL_013d: box [System.Runtime]System.Double
+		IL_0142: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
+		IL_0147: pop
+		IL_0148: ldloc.3
+		IL_0149: dup
+		IL_014a: brtrue.s IL_0160
 
-		IL_014d: pop
-		IL_014e: ldloc.0
-		IL_014f: ldnull
-		IL_0150: ldftn object Functions.ArrowFunction_L6C12::ArrowFunction_L6C12(object[], object, object)
-		IL_0156: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-		IL_015b: stfld object Scopes.ArrowFunction_DefaultParameterValue::'add'
-		IL_0160: ldloc.0
-		IL_0161: ldfld object Scopes.ArrowFunction_DefaultParameterValue::'add'
-		IL_0166: br IL_016b
+		IL_014c: pop
+		IL_014d: ldnull
+		IL_014e: ldftn object Functions.ArrowFunction_L10C14::ArrowFunction_L10C14(object[], object, object, object)
+		IL_0154: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
+		IL_0159: stloc.3
+		IL_015a: ldloc.3
+		IL_015b: br IL_0160
 
-		IL_016b: ldc.i4.1
-		IL_016c: newarr [System.Runtime]System.Object
-		IL_0171: dup
-		IL_0172: ldc.i4.0
-		IL_0173: ldloc.0
-		IL_0174: stelem.ref
-		IL_0175: ldc.r8 5
-		IL_017e: box [System.Runtime]System.Double
-		IL_0183: ldc.r8 15
-		IL_018c: box [System.Runtime]System.Double
-		IL_0191: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
-		IL_0196: pop
-		IL_0197: ldloc.0
-		IL_0198: ldfld object Scopes.ArrowFunction_DefaultParameterValue::multi
-		IL_019d: dup
-		IL_019e: brtrue.s IL_01be
+		IL_0160: ldc.i4.1
+		IL_0161: newarr [System.Runtime]System.Object
+		IL_0166: dup
+		IL_0167: ldc.i4.0
+		IL_0168: ldloc.0
+		IL_0169: stelem.ref
+		IL_016a: ldnull
+		IL_016b: ldnull
+		IL_016c: ldnull
+		IL_016d: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
+		IL_0172: pop
+		IL_0173: ldloc.3
+		IL_0174: dup
+		IL_0175: brtrue.s IL_018b
 
-		IL_01a0: pop
-		IL_01a1: ldloc.0
-		IL_01a2: ldnull
-		IL_01a3: ldftn object Functions.ArrowFunction_L10C14::ArrowFunction_L10C14(object[], object, object, object)
-		IL_01a9: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
-		IL_01ae: stfld object Scopes.ArrowFunction_DefaultParameterValue::multi
-		IL_01b3: ldloc.0
-		IL_01b4: ldfld object Scopes.ArrowFunction_DefaultParameterValue::multi
-		IL_01b9: br IL_01be
+		IL_0177: pop
+		IL_0178: ldnull
+		IL_0179: ldftn object Functions.ArrowFunction_L10C14::ArrowFunction_L10C14(object[], object, object, object)
+		IL_017f: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
+		IL_0184: stloc.3
+		IL_0185: ldloc.3
+		IL_0186: br IL_018b
 
-		IL_01be: ldc.i4.1
-		IL_01bf: newarr [System.Runtime]System.Object
-		IL_01c4: dup
-		IL_01c5: ldc.i4.0
-		IL_01c6: ldloc.0
-		IL_01c7: stelem.ref
-		IL_01c8: ldnull
-		IL_01c9: ldnull
-		IL_01ca: ldnull
-		IL_01cb: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
-		IL_01d0: pop
-		IL_01d1: ldloc.0
-		IL_01d2: ldfld object Scopes.ArrowFunction_DefaultParameterValue::multi
-		IL_01d7: dup
-		IL_01d8: brtrue.s IL_01f8
+		IL_018b: ldc.i4.1
+		IL_018c: newarr [System.Runtime]System.Object
+		IL_0191: dup
+		IL_0192: ldc.i4.0
+		IL_0193: ldloc.0
+		IL_0194: stelem.ref
+		IL_0195: ldc.r8 2
+		IL_019e: box [System.Runtime]System.Double
+		IL_01a3: ldnull
+		IL_01a4: ldnull
+		IL_01a5: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
+		IL_01aa: pop
+		IL_01ab: ldloc.3
+		IL_01ac: dup
+		IL_01ad: brtrue.s IL_01c3
 
-		IL_01da: pop
-		IL_01db: ldloc.0
-		IL_01dc: ldnull
-		IL_01dd: ldftn object Functions.ArrowFunction_L10C14::ArrowFunction_L10C14(object[], object, object, object)
-		IL_01e3: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
-		IL_01e8: stfld object Scopes.ArrowFunction_DefaultParameterValue::multi
-		IL_01ed: ldloc.0
-		IL_01ee: ldfld object Scopes.ArrowFunction_DefaultParameterValue::multi
-		IL_01f3: br IL_01f8
+		IL_01af: pop
+		IL_01b0: ldnull
+		IL_01b1: ldftn object Functions.ArrowFunction_L10C14::ArrowFunction_L10C14(object[], object, object, object)
+		IL_01b7: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
+		IL_01bc: stloc.3
+		IL_01bd: ldloc.3
+		IL_01be: br IL_01c3
 
-		IL_01f8: ldc.i4.1
-		IL_01f9: newarr [System.Runtime]System.Object
-		IL_01fe: dup
-		IL_01ff: ldc.i4.0
-		IL_0200: ldloc.0
-		IL_0201: stelem.ref
-		IL_0202: ldc.r8 2
-		IL_020b: box [System.Runtime]System.Double
-		IL_0210: ldnull
-		IL_0211: ldnull
-		IL_0212: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
-		IL_0217: pop
-		IL_0218: ldloc.0
-		IL_0219: ldfld object Scopes.ArrowFunction_DefaultParameterValue::multi
-		IL_021e: dup
-		IL_021f: brtrue.s IL_023f
+		IL_01c3: ldc.i4.1
+		IL_01c4: newarr [System.Runtime]System.Object
+		IL_01c9: dup
+		IL_01ca: ldc.i4.0
+		IL_01cb: ldloc.0
+		IL_01cc: stelem.ref
+		IL_01cd: ldc.r8 2
+		IL_01d6: box [System.Runtime]System.Double
+		IL_01db: ldc.r8 4
+		IL_01e4: box [System.Runtime]System.Double
+		IL_01e9: ldnull
+		IL_01ea: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
+		IL_01ef: pop
+		IL_01f0: ldloc.3
+		IL_01f1: dup
+		IL_01f2: brtrue.s IL_0208
 
-		IL_0221: pop
-		IL_0222: ldloc.0
-		IL_0223: ldnull
-		IL_0224: ldftn object Functions.ArrowFunction_L10C14::ArrowFunction_L10C14(object[], object, object, object)
-		IL_022a: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
-		IL_022f: stfld object Scopes.ArrowFunction_DefaultParameterValue::multi
-		IL_0234: ldloc.0
-		IL_0235: ldfld object Scopes.ArrowFunction_DefaultParameterValue::multi
-		IL_023a: br IL_023f
+		IL_01f4: pop
+		IL_01f5: ldnull
+		IL_01f6: ldftn object Functions.ArrowFunction_L10C14::ArrowFunction_L10C14(object[], object, object, object)
+		IL_01fc: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
+		IL_0201: stloc.3
+		IL_0202: ldloc.3
+		IL_0203: br IL_0208
 
-		IL_023f: ldc.i4.1
-		IL_0240: newarr [System.Runtime]System.Object
-		IL_0245: dup
-		IL_0246: ldc.i4.0
-		IL_0247: ldloc.0
-		IL_0248: stelem.ref
-		IL_0249: ldc.r8 2
-		IL_0252: box [System.Runtime]System.Double
-		IL_0257: ldc.r8 4
-		IL_0260: box [System.Runtime]System.Double
-		IL_0265: ldnull
-		IL_0266: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
-		IL_026b: pop
-		IL_026c: ldloc.0
-		IL_026d: ldfld object Scopes.ArrowFunction_DefaultParameterValue::multi
-		IL_0272: dup
-		IL_0273: brtrue.s IL_0293
+		IL_0208: ldc.i4.1
+		IL_0209: newarr [System.Runtime]System.Object
+		IL_020e: dup
+		IL_020f: ldc.i4.0
+		IL_0210: ldloc.0
+		IL_0211: stelem.ref
+		IL_0212: ldc.r8 2
+		IL_021b: box [System.Runtime]System.Double
+		IL_0220: ldc.r8 4
+		IL_0229: box [System.Runtime]System.Double
+		IL_022e: ldc.r8 3
+		IL_0237: box [System.Runtime]System.Double
+		IL_023c: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
+		IL_0241: pop
+		IL_0242: ldloc.s 4
+		IL_0244: dup
+		IL_0245: brtrue.s IL_025d
 
-		IL_0275: pop
-		IL_0276: ldloc.0
-		IL_0277: ldnull
-		IL_0278: ldftn object Functions.ArrowFunction_L10C14::ArrowFunction_L10C14(object[], object, object, object)
-		IL_027e: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
-		IL_0283: stfld object Scopes.ArrowFunction_DefaultParameterValue::multi
-		IL_0288: ldloc.0
-		IL_0289: ldfld object Scopes.ArrowFunction_DefaultParameterValue::multi
-		IL_028e: br IL_0293
+		IL_0247: pop
+		IL_0248: ldnull
+		IL_0249: ldftn object Functions.ArrowFunction_L14C18::ArrowFunction_L14C18(object[], object, object, object)
+		IL_024f: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
+		IL_0254: stloc.s 4
+		IL_0256: ldloc.s 4
+		IL_0258: br IL_025d
 
-		IL_0293: ldc.i4.1
-		IL_0294: newarr [System.Runtime]System.Object
-		IL_0299: dup
-		IL_029a: ldc.i4.0
-		IL_029b: ldloc.0
-		IL_029c: stelem.ref
-		IL_029d: ldc.r8 2
-		IL_02a6: box [System.Runtime]System.Double
-		IL_02ab: ldc.r8 4
-		IL_02b4: box [System.Runtime]System.Double
-		IL_02b9: ldc.r8 3
-		IL_02c2: box [System.Runtime]System.Double
-		IL_02c7: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
-		IL_02cc: pop
-		IL_02cd: ldloc.0
-		IL_02ce: ldfld object Scopes.ArrowFunction_DefaultParameterValue::calculate
-		IL_02d3: dup
-		IL_02d4: brtrue.s IL_02f4
+		IL_025d: ldc.i4.1
+		IL_025e: newarr [System.Runtime]System.Object
+		IL_0263: dup
+		IL_0264: ldc.i4.0
+		IL_0265: ldloc.0
+		IL_0266: stelem.ref
+		IL_0267: ldc.r8 5
+		IL_0270: box [System.Runtime]System.Double
+		IL_0275: ldnull
+		IL_0276: ldnull
+		IL_0277: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
+		IL_027c: pop
+		IL_027d: ldloc.s 4
+		IL_027f: dup
+		IL_0280: brtrue.s IL_0298
 
-		IL_02d6: pop
-		IL_02d7: ldloc.0
-		IL_02d8: ldnull
-		IL_02d9: ldftn object Functions.ArrowFunction_L14C18::ArrowFunction_L14C18(object[], object, object, object)
-		IL_02df: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
-		IL_02e4: stfld object Scopes.ArrowFunction_DefaultParameterValue::calculate
-		IL_02e9: ldloc.0
-		IL_02ea: ldfld object Scopes.ArrowFunction_DefaultParameterValue::calculate
-		IL_02ef: br IL_02f4
+		IL_0282: pop
+		IL_0283: ldnull
+		IL_0284: ldftn object Functions.ArrowFunction_L14C18::ArrowFunction_L14C18(object[], object, object, object)
+		IL_028a: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
+		IL_028f: stloc.s 4
+		IL_0291: ldloc.s 4
+		IL_0293: br IL_0298
 
-		IL_02f4: ldc.i4.1
-		IL_02f5: newarr [System.Runtime]System.Object
-		IL_02fa: dup
-		IL_02fb: ldc.i4.0
-		IL_02fc: ldloc.0
-		IL_02fd: stelem.ref
-		IL_02fe: ldc.r8 5
-		IL_0307: box [System.Runtime]System.Double
-		IL_030c: ldnull
-		IL_030d: ldnull
-		IL_030e: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
-		IL_0313: pop
-		IL_0314: ldloc.0
-		IL_0315: ldfld object Scopes.ArrowFunction_DefaultParameterValue::calculate
-		IL_031a: dup
-		IL_031b: brtrue.s IL_033b
+		IL_0298: ldc.i4.1
+		IL_0299: newarr [System.Runtime]System.Object
+		IL_029e: dup
+		IL_029f: ldc.i4.0
+		IL_02a0: ldloc.0
+		IL_02a1: stelem.ref
+		IL_02a2: ldc.r8 5
+		IL_02ab: box [System.Runtime]System.Double
+		IL_02b0: ldc.r8 8
+		IL_02b9: box [System.Runtime]System.Double
+		IL_02be: ldnull
+		IL_02bf: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
+		IL_02c4: pop
+		IL_02c5: ldloc.s 4
+		IL_02c7: dup
+		IL_02c8: brtrue.s IL_02e0
 
-		IL_031d: pop
-		IL_031e: ldloc.0
-		IL_031f: ldnull
-		IL_0320: ldftn object Functions.ArrowFunction_L14C18::ArrowFunction_L14C18(object[], object, object, object)
-		IL_0326: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
-		IL_032b: stfld object Scopes.ArrowFunction_DefaultParameterValue::calculate
-		IL_0330: ldloc.0
-		IL_0331: ldfld object Scopes.ArrowFunction_DefaultParameterValue::calculate
-		IL_0336: br IL_033b
+		IL_02ca: pop
+		IL_02cb: ldnull
+		IL_02cc: ldftn object Functions.ArrowFunction_L14C18::ArrowFunction_L14C18(object[], object, object, object)
+		IL_02d2: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
+		IL_02d7: stloc.s 4
+		IL_02d9: ldloc.s 4
+		IL_02db: br IL_02e0
 
-		IL_033b: ldc.i4.1
-		IL_033c: newarr [System.Runtime]System.Object
-		IL_0341: dup
-		IL_0342: ldc.i4.0
-		IL_0343: ldloc.0
-		IL_0344: stelem.ref
-		IL_0345: ldc.r8 5
-		IL_034e: box [System.Runtime]System.Double
-		IL_0353: ldc.r8 8
-		IL_035c: box [System.Runtime]System.Double
-		IL_0361: ldnull
-		IL_0362: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
-		IL_0367: pop
-		IL_0368: ldloc.0
-		IL_0369: ldfld object Scopes.ArrowFunction_DefaultParameterValue::calculate
-		IL_036e: dup
-		IL_036f: brtrue.s IL_038f
-
-		IL_0371: pop
-		IL_0372: ldloc.0
-		IL_0373: ldnull
-		IL_0374: ldftn object Functions.ArrowFunction_L14C18::ArrowFunction_L14C18(object[], object, object, object)
-		IL_037a: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
-		IL_037f: stfld object Scopes.ArrowFunction_DefaultParameterValue::calculate
-		IL_0384: ldloc.0
-		IL_0385: ldfld object Scopes.ArrowFunction_DefaultParameterValue::calculate
-		IL_038a: br IL_038f
-
-		IL_038f: ldc.i4.1
-		IL_0390: newarr [System.Runtime]System.Object
-		IL_0395: dup
-		IL_0396: ldc.i4.0
-		IL_0397: ldloc.0
-		IL_0398: stelem.ref
-		IL_0399: ldc.r8 5
-		IL_03a2: box [System.Runtime]System.Double
-		IL_03a7: ldc.r8 8
-		IL_03b0: box [System.Runtime]System.Double
-		IL_03b5: ldc.r8 20
-		IL_03be: box [System.Runtime]System.Double
-		IL_03c3: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
-		IL_03c8: pop
-		IL_03c9: ret
+		IL_02e0: ldc.i4.1
+		IL_02e1: newarr [System.Runtime]System.Object
+		IL_02e6: dup
+		IL_02e7: ldc.i4.0
+		IL_02e8: ldloc.0
+		IL_02e9: stelem.ref
+		IL_02ea: ldc.r8 5
+		IL_02f3: box [System.Runtime]System.Double
+		IL_02f8: ldc.r8 8
+		IL_0301: box [System.Runtime]System.Double
+		IL_0306: ldc.r8 20
+		IL_030f: box [System.Runtime]System.Double
+		IL_0314: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
+		IL_0319: pop
+		IL_031a: ret
 	} // end of method ArrowFunction_DefaultParameterValue::Main
 
 } // end of class Scripts.ArrowFunction_DefaultParameterValue
@@ -691,7 +713,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x25a6
+		// Method begins at RVA 0x2593
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -50,10 +50,6 @@
 	} // end of class Greeter
 
 
-	// Fields
-	.field public object Greeter
-	.field public object g
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -119,23 +115,21 @@
 	{
 		// Method begins at RVA 0x20a4
 		// Header size: 12
-		// Code size: 35 (0x23)
+		// Code size: 20 (0x14)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ClassWithMethod_HelloWorld
+			[0] class Scopes.Classes_ClassWithMethod_HelloWorld,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Scopes.Classes_ClassWithMethod_HelloWorld::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: newobj instance void Classes.Greeter::.ctor()
-		IL_000c: stfld object Scopes.Classes_ClassWithMethod_HelloWorld::g
-		IL_0011: ldloc.0
-		IL_0012: castclass Scopes.Classes_ClassWithMethod_HelloWorld
-		IL_0017: ldfld object Scopes.Classes_ClassWithMethod_HelloWorld::g
-		IL_001c: callvirt instance object Classes.Greeter::helloWorld()
-		IL_0021: pop
-		IL_0022: ret
+		IL_0006: newobj instance void Classes.Greeter::.ctor()
+		IL_000b: stloc.1
+		IL_000c: ldloc.1
+		IL_000d: callvirt instance object Classes.Greeter::helloWorld()
+		IL_0012: pop
+		IL_0013: ret
 	} // end of method Classes_ClassWithMethod_HelloWorld::Main
 
 } // end of class Scripts.Classes_ClassWithMethod_HelloWorld
@@ -147,7 +141,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20d3
+		// Method begins at RVA 0x20c4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

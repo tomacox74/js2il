@@ -208,18 +208,6 @@
 	} // end of class Config
 
 
-	// Fields
-	.field public object Point
-	.field public object Person
-	.field public object Config
-	.field public object p1
-	.field public object p2
-	.field public object person1
-	.field public object person2
-	.field public object cfg1
-	.field public object cfg2
-	.field public object cfg3
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -556,142 +544,128 @@
 	{
 		// Method begins at RVA 0x2360
 		// Header size: 12
-		// Code size: 526 (0x20e)
+		// Code size: 429 (0x1ad)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ClassConstructor_ParameterDestructuring
+			[0] class Scopes.Classes_ClassConstructor_ParameterDestructuring,
+			[1] object,
+			[2] object,
+			[3] object,
+			[4] object,
+			[5] object,
+			[6] object,
+			[7] object
 		)
 
 		IL_0000: newobj instance void Scopes.Classes_ClassConstructor_ParameterDestructuring::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_000c: dup
-		IL_000d: ldstr "x"
-		IL_0012: ldc.r8 10
-		IL_001b: box [System.Runtime]System.Double
-		IL_0020: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0025: dup
-		IL_0026: ldstr "y"
-		IL_002b: ldc.r8 20
-		IL_0034: box [System.Runtime]System.Double
-		IL_0039: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_003e: newobj instance void Classes.Point::.ctor(object)
-		IL_0043: stfld object Scopes.Classes_ClassConstructor_ParameterDestructuring::p1
-		IL_0048: ldloc.0
-		IL_0049: castclass Scopes.Classes_ClassConstructor_ParameterDestructuring
-		IL_004e: ldfld object Scopes.Classes_ClassConstructor_ParameterDestructuring::p1
-		IL_0053: callvirt instance object Classes.Point::display()
-		IL_0058: pop
-		IL_0059: ldloc.0
-		IL_005a: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_005f: dup
-		IL_0060: ldstr "x"
-		IL_0065: ldc.r8 -5
-		IL_006e: box [System.Runtime]System.Double
-		IL_0073: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0078: dup
-		IL_0079: ldstr "y"
-		IL_007e: ldc.r8 15
-		IL_0087: box [System.Runtime]System.Double
-		IL_008c: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0091: newobj instance void Classes.Point::.ctor(object)
-		IL_0096: stfld object Scopes.Classes_ClassConstructor_ParameterDestructuring::p2
-		IL_009b: ldloc.0
-		IL_009c: castclass Scopes.Classes_ClassConstructor_ParameterDestructuring
-		IL_00a1: ldfld object Scopes.Classes_ClassConstructor_ParameterDestructuring::p2
-		IL_00a6: callvirt instance object Classes.Point::display()
-		IL_00ab: pop
-		IL_00ac: ldloc.0
-		IL_00ad: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_00b2: dup
-		IL_00b3: ldstr "name"
-		IL_00b8: ldstr "Alice"
-		IL_00bd: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_00c2: dup
-		IL_00c3: ldstr "age"
-		IL_00c8: ldc.r8 30
-		IL_00d1: box [System.Runtime]System.Double
-		IL_00d6: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_00db: dup
-		IL_00dc: ldstr "city"
-		IL_00e1: ldstr "Seattle"
-		IL_00e6: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_00eb: newobj instance void Classes.Person::.ctor(object)
-		IL_00f0: stfld object Scopes.Classes_ClassConstructor_ParameterDestructuring::person1
-		IL_00f5: ldloc.0
-		IL_00f6: castclass Scopes.Classes_ClassConstructor_ParameterDestructuring
-		IL_00fb: ldfld object Scopes.Classes_ClassConstructor_ParameterDestructuring::person1
-		IL_0100: callvirt instance object Classes.Person::greet()
-		IL_0105: pop
-		IL_0106: ldloc.0
-		IL_0107: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_010c: dup
-		IL_010d: ldstr "name"
-		IL_0112: ldstr "Bob"
-		IL_0117: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_011c: dup
-		IL_011d: ldstr "age"
-		IL_0122: ldc.r8 25
-		IL_012b: box [System.Runtime]System.Double
-		IL_0130: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0135: dup
-		IL_0136: ldstr "city"
-		IL_013b: ldstr "Portland"
-		IL_0140: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0145: newobj instance void Classes.Person::.ctor(object)
-		IL_014a: stfld object Scopes.Classes_ClassConstructor_ParameterDestructuring::person2
-		IL_014f: ldloc.0
-		IL_0150: castclass Scopes.Classes_ClassConstructor_ParameterDestructuring
-		IL_0155: ldfld object Scopes.Classes_ClassConstructor_ParameterDestructuring::person2
-		IL_015a: callvirt instance object Classes.Person::greet()
-		IL_015f: pop
-		IL_0160: ldloc.0
-		IL_0161: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0166: dup
-		IL_0167: ldstr "host"
-		IL_016c: ldstr "example.com"
-		IL_0171: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0176: newobj instance void Classes.Config::.ctor(object)
-		IL_017b: stfld object Scopes.Classes_ClassConstructor_ParameterDestructuring::cfg1
-		IL_0180: ldloc.0
-		IL_0181: castclass Scopes.Classes_ClassConstructor_ParameterDestructuring
-		IL_0186: ldfld object Scopes.Classes_ClassConstructor_ParameterDestructuring::cfg1
-		IL_018b: callvirt instance object Classes.Config::display()
-		IL_0190: pop
-		IL_0191: ldloc.0
-		IL_0192: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0197: dup
-		IL_0198: ldstr "host"
-		IL_019d: ldstr "api.test.com"
-		IL_01a2: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_01a7: dup
-		IL_01a8: ldstr "port"
-		IL_01ad: ldc.r8 3000
-		IL_01b6: box [System.Runtime]System.Double
-		IL_01bb: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_01c0: dup
-		IL_01c1: ldstr "secure"
-		IL_01c6: ldc.i4.1
-		IL_01c7: box [System.Runtime]System.Boolean
-		IL_01cc: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_01d1: newobj instance void Classes.Config::.ctor(object)
-		IL_01d6: stfld object Scopes.Classes_ClassConstructor_ParameterDestructuring::cfg2
-		IL_01db: ldloc.0
-		IL_01dc: castclass Scopes.Classes_ClassConstructor_ParameterDestructuring
-		IL_01e1: ldfld object Scopes.Classes_ClassConstructor_ParameterDestructuring::cfg2
-		IL_01e6: callvirt instance object Classes.Config::display()
-		IL_01eb: pop
-		IL_01ec: ldloc.0
-		IL_01ed: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_01f2: newobj instance void Classes.Config::.ctor(object)
-		IL_01f7: stfld object Scopes.Classes_ClassConstructor_ParameterDestructuring::cfg3
-		IL_01fc: ldloc.0
-		IL_01fd: castclass Scopes.Classes_ClassConstructor_ParameterDestructuring
-		IL_0202: ldfld object Scopes.Classes_ClassConstructor_ParameterDestructuring::cfg3
-		IL_0207: callvirt instance object Classes.Config::display()
-		IL_020c: pop
-		IL_020d: ret
+		IL_0006: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_000b: dup
+		IL_000c: ldstr "x"
+		IL_0011: ldc.r8 10
+		IL_001a: box [System.Runtime]System.Double
+		IL_001f: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0024: dup
+		IL_0025: ldstr "y"
+		IL_002a: ldc.r8 20
+		IL_0033: box [System.Runtime]System.Double
+		IL_0038: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_003d: newobj instance void Classes.Point::.ctor(object)
+		IL_0042: stloc.1
+		IL_0043: ldloc.1
+		IL_0044: callvirt instance object Classes.Point::display()
+		IL_0049: pop
+		IL_004a: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_004f: dup
+		IL_0050: ldstr "x"
+		IL_0055: ldc.r8 -5
+		IL_005e: box [System.Runtime]System.Double
+		IL_0063: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0068: dup
+		IL_0069: ldstr "y"
+		IL_006e: ldc.r8 15
+		IL_0077: box [System.Runtime]System.Double
+		IL_007c: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0081: newobj instance void Classes.Point::.ctor(object)
+		IL_0086: stloc.2
+		IL_0087: ldloc.2
+		IL_0088: callvirt instance object Classes.Point::display()
+		IL_008d: pop
+		IL_008e: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0093: dup
+		IL_0094: ldstr "name"
+		IL_0099: ldstr "Alice"
+		IL_009e: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_00a3: dup
+		IL_00a4: ldstr "age"
+		IL_00a9: ldc.r8 30
+		IL_00b2: box [System.Runtime]System.Double
+		IL_00b7: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_00bc: dup
+		IL_00bd: ldstr "city"
+		IL_00c2: ldstr "Seattle"
+		IL_00c7: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_00cc: newobj instance void Classes.Person::.ctor(object)
+		IL_00d1: stloc.3
+		IL_00d2: ldloc.3
+		IL_00d3: callvirt instance object Classes.Person::greet()
+		IL_00d8: pop
+		IL_00d9: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_00de: dup
+		IL_00df: ldstr "name"
+		IL_00e4: ldstr "Bob"
+		IL_00e9: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_00ee: dup
+		IL_00ef: ldstr "age"
+		IL_00f4: ldc.r8 25
+		IL_00fd: box [System.Runtime]System.Double
+		IL_0102: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0107: dup
+		IL_0108: ldstr "city"
+		IL_010d: ldstr "Portland"
+		IL_0112: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0117: newobj instance void Classes.Person::.ctor(object)
+		IL_011c: stloc.s 4
+		IL_011e: ldloc.s 4
+		IL_0120: callvirt instance object Classes.Person::greet()
+		IL_0125: pop
+		IL_0126: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_012b: dup
+		IL_012c: ldstr "host"
+		IL_0131: ldstr "example.com"
+		IL_0136: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_013b: newobj instance void Classes.Config::.ctor(object)
+		IL_0140: stloc.s 5
+		IL_0142: ldloc.s 5
+		IL_0144: callvirt instance object Classes.Config::display()
+		IL_0149: pop
+		IL_014a: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_014f: dup
+		IL_0150: ldstr "host"
+		IL_0155: ldstr "api.test.com"
+		IL_015a: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_015f: dup
+		IL_0160: ldstr "port"
+		IL_0165: ldc.r8 3000
+		IL_016e: box [System.Runtime]System.Double
+		IL_0173: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0178: dup
+		IL_0179: ldstr "secure"
+		IL_017e: ldc.i4.1
+		IL_017f: box [System.Runtime]System.Boolean
+		IL_0184: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0189: newobj instance void Classes.Config::.ctor(object)
+		IL_018e: stloc.s 6
+		IL_0190: ldloc.s 6
+		IL_0192: callvirt instance object Classes.Config::display()
+		IL_0197: pop
+		IL_0198: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_019d: newobj instance void Classes.Config::.ctor(object)
+		IL_01a2: stloc.s 7
+		IL_01a4: ldloc.s 7
+		IL_01a6: callvirt instance object Classes.Config::display()
+		IL_01ab: pop
+		IL_01ac: ret
 	} // end of method Classes_ClassConstructor_ParameterDestructuring::Main
 
 } // end of class Scripts.Classes_ClassConstructor_ParameterDestructuring
@@ -703,7 +677,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x257a
+		// Method begins at RVA 0x2519
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -20,42 +20,24 @@ namespace Js2IL.Services.ILGenerators
             ushort jsParamSeq,
             string propName)
         {
-            // Load scope instance holding the field
-            var tslot = vars.GetScopeLocalSlot(targetVar.ScopeName);
-            var tScopeType = vars.GetVariableRegistry()?.GetScopeTypeHandle(targetVar.ScopeName) ?? default;
+            // Load the scope instance if this is a field variable
+            if (!targetVar.FieldHandle.IsNil)
+            {
+                var localScope = vars.GetLocalScopeSlot();
+                if (localScope.Address >= 0)
+                {
+                    il.LoadLocal(localScope.Address);
+                }
+            }
             
-            if (tslot.Location == ObjectReferenceLocation.Parameter)
-            {
-                il.LoadArgument(tslot.Address);
-                // Cast needed: parameter is typed as object
-                if (!tScopeType.IsNil)
-                {
-                    il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
-                    il.Token(tScopeType);
-                }
-            }
-            else if (tslot.Location == ObjectReferenceLocation.ScopeArray)
-            {
-                il.LoadArgument(0);
-                il.LoadConstantI4(tslot.Address);
-                il.OpCode(System.Reflection.Metadata.ILOpCode.Ldelem_ref);
-                // Cast needed: array element is typed as object
-                if (!tScopeType.IsNil)
-                {
-                    il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
-                    il.Token(tScopeType);
-                }
-            }
-            else
-            {
-                il.LoadLocal(tslot.Address);
-            }
-            // Load incoming argument (object being destructured)
+            // Load incoming argument (object being destructured) and extract property
             il.LoadArgument(jsParamSeq);
             il.Ldstr(metadataBuilder, propName);
             var getPropRef = runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), typeof(object), typeof(object), typeof(string));
             il.OpCode(System.Reflection.Metadata.ILOpCode.Call); il.Token(getPropRef);
-            il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld); il.Token(targetVar.FieldHandle);
+            
+            // Store the property value to the variable (field or local)
+            ILEmitHelpers.EmitStoreVariable(il, targetVar, vars, scopeAlreadyLoaded: true);
         }
     }
 }

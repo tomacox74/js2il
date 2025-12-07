@@ -28,10 +28,6 @@
 	} // end of class Block_L5C37
 
 
-	// Fields
-	.field public object arr
-	.field public object i
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -58,124 +54,108 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 371 (0x173)
+		// Code size: 281 (0x119)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Array_Push_Basic
+			[0] class Scopes.Array_Push_Basic,
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Scopes.Array_Push_Basic::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.i4.2
-		IL_0008: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_000d: dup
-		IL_000e: ldc.r8 1
-		IL_0017: box [System.Runtime]System.Double
-		IL_001c: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0021: dup
-		IL_0022: ldc.r8 2
-		IL_002b: box [System.Runtime]System.Double
-		IL_0030: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0035: stfld object Scopes.Array_Push_Basic::arr
-		IL_003a: ldc.i4.1
-		IL_003b: newarr [System.Runtime]System.Object
-		IL_0040: dup
-		IL_0041: ldc.i4.0
-		IL_0042: ldloc.0
-		IL_0043: castclass Scopes.Array_Push_Basic
-		IL_0048: ldfld object Scopes.Array_Push_Basic::arr
-		IL_004d: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_0052: ldc.i4.1
-		IL_0053: newarr [System.Runtime]System.Object
-		IL_0058: dup
-		IL_0059: ldc.i4.0
-		IL_005a: ldc.r8 3
-		IL_0063: box [System.Runtime]System.Double
-		IL_0068: stelem.ref
-		IL_0069: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
-		IL_006e: stelem.ref
-		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0074: pop
-		IL_0075: ldc.i4.1
-		IL_0076: newarr [System.Runtime]System.Object
-		IL_007b: dup
-		IL_007c: ldc.i4.0
-		IL_007d: ldloc.0
-		IL_007e: castclass Scopes.Array_Push_Basic
-		IL_0083: ldfld object Scopes.Array_Push_Basic::arr
-		IL_0088: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_008d: box [System.Runtime]System.Double
-		IL_0092: stelem.ref
-		IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0098: pop
-		IL_0099: ldc.i4.1
-		IL_009a: newarr [System.Runtime]System.Object
-		IL_009f: dup
-		IL_00a0: ldc.i4.0
-		IL_00a1: ldloc.0
-		IL_00a2: castclass Scopes.Array_Push_Basic
-		IL_00a7: ldfld object Scopes.Array_Push_Basic::arr
-		IL_00ac: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_00b1: ldc.i4.2
-		IL_00b2: newarr [System.Runtime]System.Object
-		IL_00b7: dup
-		IL_00b8: ldc.i4.0
-		IL_00b9: ldc.r8 4
-		IL_00c2: box [System.Runtime]System.Double
-		IL_00c7: stelem.ref
-		IL_00c8: dup
-		IL_00c9: ldc.i4.1
-		IL_00ca: ldc.r8 5
-		IL_00d3: box [System.Runtime]System.Double
-		IL_00d8: stelem.ref
-		IL_00d9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
-		IL_00de: stelem.ref
-		IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_00e4: pop
-		IL_00e5: ldloc.0
-		IL_00e6: ldc.r8 0.0
-		IL_00ef: box [System.Runtime]System.Double
-		IL_00f4: stfld object Scopes.Array_Push_Basic::i
-		// loop start (head: IL_00f9)
-			IL_00f9: ldloc.0
-			IL_00fa: castclass Scopes.Array_Push_Basic
-			IL_00ff: ldfld object Scopes.Array_Push_Basic::i
-			IL_0104: unbox.any [System.Runtime]System.Double
-			IL_0109: ldloc.0
-			IL_010a: castclass Scopes.Array_Push_Basic
-			IL_010f: ldfld object Scopes.Array_Push_Basic::arr
-			IL_0114: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_0119: blt IL_0123
+		IL_0006: ldc.i4.2
+		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_000c: dup
+		IL_000d: ldc.r8 1
+		IL_0016: box [System.Runtime]System.Double
+		IL_001b: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0020: dup
+		IL_0021: ldc.r8 2
+		IL_002a: box [System.Runtime]System.Double
+		IL_002f: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0034: stloc.1
+		IL_0035: ldc.i4.1
+		IL_0036: newarr [System.Runtime]System.Object
+		IL_003b: dup
+		IL_003c: ldc.i4.0
+		IL_003d: ldloc.1
+		IL_003e: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_0043: ldc.i4.1
+		IL_0044: newarr [System.Runtime]System.Object
+		IL_0049: dup
+		IL_004a: ldc.i4.0
+		IL_004b: ldc.r8 3
+		IL_0054: box [System.Runtime]System.Double
+		IL_0059: stelem.ref
+		IL_005a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+		IL_005f: stelem.ref
+		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0065: pop
+		IL_0066: ldc.i4.1
+		IL_0067: newarr [System.Runtime]System.Object
+		IL_006c: dup
+		IL_006d: ldc.i4.0
+		IL_006e: ldloc.1
+		IL_006f: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_0074: box [System.Runtime]System.Double
+		IL_0079: stelem.ref
+		IL_007a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_007f: pop
+		IL_0080: ldc.i4.1
+		IL_0081: newarr [System.Runtime]System.Object
+		IL_0086: dup
+		IL_0087: ldc.i4.0
+		IL_0088: ldloc.1
+		IL_0089: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_008e: ldc.i4.2
+		IL_008f: newarr [System.Runtime]System.Object
+		IL_0094: dup
+		IL_0095: ldc.i4.0
+		IL_0096: ldc.r8 4
+		IL_009f: box [System.Runtime]System.Double
+		IL_00a4: stelem.ref
+		IL_00a5: dup
+		IL_00a6: ldc.i4.1
+		IL_00a7: ldc.r8 5
+		IL_00b0: box [System.Runtime]System.Double
+		IL_00b5: stelem.ref
+		IL_00b6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+		IL_00bb: stelem.ref
+		IL_00bc: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00c1: pop
+		IL_00c2: ldc.r8 0.0
+		IL_00cb: box [System.Runtime]System.Double
+		IL_00d0: stloc.2
+		// loop start (head: IL_00d1)
+			IL_00d1: ldloc.2
+			IL_00d2: unbox.any [System.Runtime]System.Double
+			IL_00d7: ldloc.1
+			IL_00d8: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_00dd: blt IL_00e7
 
-			IL_011e: br IL_0172
+			IL_00e2: br IL_0118
 
-			IL_0123: ldc.i4.1
-			IL_0124: newarr [System.Runtime]System.Object
-			IL_0129: dup
-			IL_012a: ldc.i4.0
-			IL_012b: ldloc.0
-			IL_012c: castclass Scopes.Array_Push_Basic
-			IL_0131: ldfld object Scopes.Array_Push_Basic::arr
-			IL_0136: ldloc.0
-			IL_0137: castclass Scopes.Array_Push_Basic
-			IL_013c: ldfld object Scopes.Array_Push_Basic::i
-			IL_0141: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0146: stelem.ref
-			IL_0147: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_014c: pop
-			IL_014d: ldloc.0
-			IL_014e: ldloc.0
-			IL_014f: ldfld object Scopes.Array_Push_Basic::i
-			IL_0154: unbox.any [System.Runtime]System.Double
-			IL_0159: ldc.r8 1
-			IL_0162: add
-			IL_0163: box [System.Runtime]System.Double
-			IL_0168: stfld object Scopes.Array_Push_Basic::i
-			IL_016d: br IL_00f9
+			IL_00e7: ldc.i4.1
+			IL_00e8: newarr [System.Runtime]System.Object
+			IL_00ed: dup
+			IL_00ee: ldc.i4.0
+			IL_00ef: ldloc.1
+			IL_00f0: ldloc.2
+			IL_00f1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_00f6: stelem.ref
+			IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_00fc: pop
+			IL_00fd: ldloc.2
+			IL_00fe: unbox.any [System.Runtime]System.Double
+			IL_0103: ldc.r8 1
+			IL_010c: add
+			IL_010d: box [System.Runtime]System.Double
+			IL_0112: stloc.2
+			IL_0113: br IL_00d1
 		// end loop
 
-		IL_0172: ret
+		IL_0118: ret
 	} // end of method Array_Push_Basic::Main
 
 } // end of class Scripts.Array_Push_Basic
@@ -187,7 +167,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21e3
+		// Method begins at RVA 0x2189
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

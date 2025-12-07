@@ -6,10 +6,6 @@
 .class public auto ansi beforefieldinit Scopes.String_TemplateLiteral_Basic
 	extends [System.Runtime]System.Object
 {
-	// Fields
-	.field public object name
-	.field public object age
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -36,42 +32,38 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 110 (0x6e)
+		// Code size: 80 (0x50)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.String_TemplateLiteral_Basic
+			[0] class Scopes.String_TemplateLiteral_Basic,
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: newobj instance void Scopes.String_TemplateLiteral_Basic::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldstr "Alice"
-		IL_000c: stfld object Scopes.String_TemplateLiteral_Basic::name
-		IL_0011: ldloc.0
-		IL_0012: ldc.r8 31
-		IL_001b: box [System.Runtime]System.Double
-		IL_0020: stfld object Scopes.String_TemplateLiteral_Basic::age
-		IL_0025: ldc.i4.1
-		IL_0026: newarr [System.Runtime]System.Object
-		IL_002b: dup
-		IL_002c: ldc.i4.0
-		IL_002d: ldstr "Name: "
-		IL_0032: ldloc.0
-		IL_0033: castclass Scopes.String_TemplateLiteral_Basic
-		IL_0038: ldfld object Scopes.String_TemplateLiteral_Basic::name
-		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0042: ldstr ", Age: "
-		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_004c: ldloc.0
-		IL_004d: castclass Scopes.String_TemplateLiteral_Basic
-		IL_0052: ldfld object Scopes.String_TemplateLiteral_Basic::age
-		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_005c: ldstr ""
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0066: stelem.ref
-		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_006c: pop
-		IL_006d: ret
+		IL_0006: ldstr "Alice"
+		IL_000b: stloc.1
+		IL_000c: ldc.r8 31
+		IL_0015: box [System.Runtime]System.Double
+		IL_001a: stloc.2
+		IL_001b: ldc.i4.1
+		IL_001c: newarr [System.Runtime]System.Object
+		IL_0021: dup
+		IL_0022: ldc.i4.0
+		IL_0023: ldstr "Name: "
+		IL_0028: ldloc.1
+		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_002e: ldstr ", Age: "
+		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0038: ldloc.2
+		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_003e: ldstr ""
+		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0048: stelem.ref
+		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_004e: pop
+		IL_004f: ret
 	} // end of method String_TemplateLiteral_Basic::Main
 
 } // end of class Scripts.String_TemplateLiteral_Basic
@@ -83,7 +75,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20d6
+		// Method begins at RVA 0x20b8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

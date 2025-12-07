@@ -28,10 +28,6 @@
 	} // end of class Block_L2C21
 
 
-	// Fields
-	.field public object arr
-	.field public object v
-
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
@@ -58,75 +54,71 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 179 (0xb3)
+		// Code size: 156 (0x9c)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ControlFlow_ForOf_Array_Basic,
 			[1] object,
 			[2] object,
-			[3] object
+			[3] object,
+			[4] object,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Scopes.ControlFlow_ForOf_Array_Basic::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.i4.3
-		IL_0008: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_000d: dup
-		IL_000e: ldstr "a"
-		IL_0013: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0018: dup
-		IL_0019: ldstr "b"
-		IL_001e: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0023: dup
-		IL_0024: ldstr "c"
-		IL_0029: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_002e: stfld object Scopes.ControlFlow_ForOf_Array_Basic::arr
-		IL_0033: ldloc.0
-		IL_0034: castclass Scopes.ControlFlow_ForOf_Array_Basic
-		IL_0039: ldfld object Scopes.ControlFlow_ForOf_Array_Basic::arr
-		IL_003e: stloc.1
-		IL_003f: ldloc.1
-		IL_0040: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_0006: ldc.i4.3
+		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_000c: dup
+		IL_000d: ldstr "a"
+		IL_0012: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0017: dup
+		IL_0018: ldstr "b"
+		IL_001d: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0022: dup
+		IL_0023: ldstr "c"
+		IL_0028: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_002d: stloc.1
+		IL_002e: ldloc.1
+		IL_002f: stloc.2
+		IL_0030: ldloc.2
+		IL_0031: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_0036: box [System.Runtime]System.Double
+		IL_003b: stloc.3
+		IL_003c: ldc.r8 0.0
 		IL_0045: box [System.Runtime]System.Double
-		IL_004a: stloc.2
-		IL_004b: ldc.r8 0.0
-		IL_0054: box [System.Runtime]System.Double
-		IL_0059: stloc.3
-		// loop start (head: IL_005a)
-			IL_005a: ldloc.3
-			IL_005b: unbox.any [System.Runtime]System.Double
-			IL_0060: ldloc.2
-			IL_0061: unbox.any [System.Runtime]System.Double
-			IL_0066: blt IL_0070
+		IL_004a: stloc.s 4
+		// loop start (head: IL_004c)
+			IL_004c: ldloc.s 4
+			IL_004e: unbox.any [System.Runtime]System.Double
+			IL_0053: ldloc.3
+			IL_0054: unbox.any [System.Runtime]System.Double
+			IL_0059: blt IL_0063
 
-			IL_006b: br IL_00b2
+			IL_005e: br IL_009b
 
-			IL_0070: ldloc.0
-			IL_0071: ldloc.1
-			IL_0072: ldloc.3
-			IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0078: stfld object Scopes.ControlFlow_ForOf_Array_Basic::v
-			IL_007d: ldc.i4.1
-			IL_007e: newarr [System.Runtime]System.Object
-			IL_0083: dup
-			IL_0084: ldc.i4.0
-			IL_0085: ldloc.0
-			IL_0086: castclass Scopes.ControlFlow_ForOf_Array_Basic
-			IL_008b: ldfld object Scopes.ControlFlow_ForOf_Array_Basic::v
-			IL_0090: stelem.ref
-			IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_0096: pop
-			IL_0097: ldloc.3
-			IL_0098: unbox.any [System.Runtime]System.Double
-			IL_009d: ldc.r8 1
-			IL_00a6: add
-			IL_00a7: box [System.Runtime]System.Double
-			IL_00ac: stloc.3
-			IL_00ad: br IL_005a
+			IL_0063: ldloc.2
+			IL_0064: ldloc.s 4
+			IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_006b: stloc.s 5
+			IL_006d: ldc.i4.1
+			IL_006e: newarr [System.Runtime]System.Object
+			IL_0073: dup
+			IL_0074: ldc.i4.0
+			IL_0075: ldloc.s 5
+			IL_0077: stelem.ref
+			IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_007d: pop
+			IL_007e: ldloc.s 4
+			IL_0080: unbox.any [System.Runtime]System.Double
+			IL_0085: ldc.r8 1
+			IL_008e: add
+			IL_008f: box [System.Runtime]System.Double
+			IL_0094: stloc.s 4
+			IL_0096: br IL_004c
 		// end loop
 
-		IL_00b2: ret
+		IL_009b: ret
 	} // end of method ControlFlow_ForOf_Array_Basic::Main
 
 } // end of class Scripts.ControlFlow_ForOf_Array_Basic
@@ -138,7 +130,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2123
+		// Method begins at RVA 0x210c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
