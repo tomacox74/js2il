@@ -145,11 +145,13 @@
               "features": [
                 {
                   "feature": "Object destructuring in variable declarations (const/let) — basic",
-                  "status": "Partially Supported",
+                  "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/Node/JavaScript/PerfHooks_PerformanceNow_Basic.js"
+                    "Js2IL.Tests/Node/JavaScript/PerfHooks_PerformanceNow_Basic.js",
+                    "Js2IL.Tests/Variable/JavaScript/Variable_ObjectDestructuring_Basic.js",
+                    "Js2IL.Tests/Variable/JavaScript/Variable_ObjectDestructuring_Captured.js"
                   ],
-                  "notes": "Supports simple object patterns in variable declarations, e.g., const { performance } = require('perf_hooks'); The initializer is evaluated once and properties are bound via direct typed getters when available (for known intrinsics) or via JavaScriptRuntime.Object.GetProperty. Not yet supported: nested patterns, default values, renaming (alias), rest properties, array destructuring, and assignment destructuring."
+                  "notes": "Supports object patterns in variable declarations (const/let), e.g., const { x, y } = obj; The initializer is evaluated once and properties are bound via JavaScriptRuntime.Object.GetProperty. Handles both uncaptured variables (stored in IL locals) and captured variables (stored in scope fields). Works correctly when destructured variables are captured by nested functions. Not yet supported: default values, renaming (alias), rest properties, nested patterns, array destructuring, and assignment destructuring."
                 },
                 {
                   "feature": "Object destructuring in function/arrow parameters — basic",
