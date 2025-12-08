@@ -32,9 +32,6 @@
 		} // end of class Block_L3C41
 
 
-		// Fields
-		.field public object arr
-
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -85,7 +82,7 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 136 (0x88)
+		// Code size: 129 (0x81)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Function_GlobalFunctionWithArrayIteration/processArray,
@@ -96,53 +93,50 @@
 
 		IL_0000: newobj instance void Scopes.Function_GlobalFunctionWithArrayIteration/processArray::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldarg.1
-		IL_0008: stfld object Scopes.Function_GlobalFunctionWithArrayIteration/processArray::arr
-		IL_000d: ldc.i4.0
-		IL_000e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0013: stloc.1
-		IL_0014: ldc.r8 0.0
-		IL_001d: box [System.Runtime]System.Double
-		IL_0022: stloc.2
-		// loop start (head: IL_0023)
-			IL_0023: ldloc.2
-			IL_0024: unbox.any [System.Runtime]System.Double
-			IL_0029: ldarg.1
-			IL_002a: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_002f: blt IL_0039
+		IL_0006: ldc.i4.0
+		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_000c: stloc.1
+		IL_000d: ldc.r8 0.0
+		IL_0016: box [System.Runtime]System.Double
+		IL_001b: stloc.2
+		// loop start (head: IL_001c)
+			IL_001c: ldloc.2
+			IL_001d: unbox.any [System.Runtime]System.Double
+			IL_0022: ldarg.1
+			IL_0023: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_0028: blt IL_0032
 
-			IL_0034: br IL_0086
+			IL_002d: br IL_007f
 
-			IL_0039: ldarg.1
-			IL_003a: ldloc.2
-			IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0040: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0045: ldc.r8 2
-			IL_004e: mul
-			IL_004f: box [System.Runtime]System.Double
-			IL_0054: stloc.3
-			IL_0055: ldloc.1
-			IL_0056: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-			IL_005b: ldc.i4.1
-			IL_005c: newarr [System.Runtime]System.Object
-			IL_0061: dup
-			IL_0062: ldc.i4.0
-			IL_0063: ldloc.3
-			IL_0064: stelem.ref
-			IL_0065: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
-			IL_006a: pop
-			IL_006b: ldloc.2
-			IL_006c: unbox.any [System.Runtime]System.Double
-			IL_0071: ldc.r8 1
-			IL_007a: add
-			IL_007b: box [System.Runtime]System.Double
-			IL_0080: stloc.2
-			IL_0081: br IL_0023
+			IL_0032: ldarg.1
+			IL_0033: ldloc.2
+			IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0039: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_003e: ldc.r8 2
+			IL_0047: mul
+			IL_0048: box [System.Runtime]System.Double
+			IL_004d: stloc.3
+			IL_004e: ldloc.1
+			IL_004f: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+			IL_0054: ldc.i4.1
+			IL_0055: newarr [System.Runtime]System.Object
+			IL_005a: dup
+			IL_005b: ldc.i4.0
+			IL_005c: ldloc.3
+			IL_005d: stelem.ref
+			IL_005e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_0063: pop
+			IL_0064: ldloc.2
+			IL_0065: unbox.any [System.Runtime]System.Double
+			IL_006a: ldc.r8 1
+			IL_0073: add
+			IL_0074: box [System.Runtime]System.Double
+			IL_0079: stloc.2
+			IL_007a: br IL_001c
 		// end loop
 
-		IL_0086: ldloc.1
-		IL_0087: ret
+		IL_007f: ldloc.1
+		IL_0080: ret
 	} // end of method processArray::processArray
 
 } // end of class Functions.processArray
@@ -154,7 +148,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2100
+		// Method begins at RVA 0x20fc
 		// Header size: 12
 		// Code size: 218 (0xda)
 		.maxstack 32
@@ -244,7 +238,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21e6
+		// Method begins at RVA 0x21e2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

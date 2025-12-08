@@ -10,9 +10,6 @@
 	.class nested public auto ansi beforefieldinit asArray
 		extends [System.Runtime]System.Object
 	{
-		// Fields
-		.field public object v
-
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -63,61 +60,53 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 111 (0x6f)
+		// Code size: 98 (0x62)
 		.maxstack 32
-		.locals init (
-			[0] class Scopes.Array_AsArray_Ternary/asArray
-		)
 
-		IL_0000: newobj instance void Scopes.Array_AsArray_Ternary/asArray::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldarg.1
-		IL_0008: stfld object Scopes.Array_AsArray_Ternary/asArray::v
-		IL_000d: ldarg.1
-		IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
-		IL_0013: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-		IL_0018: brtrue IL_0022
+		IL_0000: ldarg.1
+		IL_0001: call object [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
+		IL_0006: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+		IL_000b: brtrue IL_0015
 
-		IL_001d: br IL_0028
+		IL_0010: br IL_001b
 
-		IL_0022: ldarg.1
-		IL_0023: br IL_006e
+		IL_0015: ldarg.1
+		IL_0016: br IL_0061
 
-		IL_0028: ldarg.1
-		IL_0029: ldc.i4.0
-		IL_002a: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_002f: pop
-		IL_0030: dup
-		IL_0031: ldnull
-		IL_0032: ceq
-		IL_0034: brtrue IL_0050
+		IL_001b: ldarg.1
+		IL_001c: ldc.i4.0
+		IL_001d: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0022: pop
+		IL_0023: dup
+		IL_0024: ldnull
+		IL_0025: ceq
+		IL_0027: brtrue IL_0043
 
-		IL_0039: dup
-		IL_003a: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_003f: ldnull
-		IL_0040: ceq
-		IL_0042: ldc.i4.0
-		IL_0043: ceq
-		IL_0045: brtrue IL_0050
+		IL_002c: dup
+		IL_002d: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0032: ldnull
+		IL_0033: ceq
+		IL_0035: ldc.i4.0
+		IL_0036: ceq
+		IL_0038: brtrue IL_0043
 
-		IL_004a: pop
-		IL_004b: br IL_0061
+		IL_003d: pop
+		IL_003e: br IL_0054
 
-		IL_0050: pop
-		IL_0051: br IL_0056
+		IL_0043: pop
+		IL_0044: br IL_0049
 
-		IL_0056: ldc.i4.0
-		IL_0057: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_005c: br IL_006e
+		IL_0049: ldc.i4.0
+		IL_004a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_004f: br IL_0061
 
-		IL_0061: ldc.i4.1
-		IL_0062: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0067: dup
-		IL_0068: ldarg.1
-		IL_0069: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0054: ldc.i4.1
+		IL_0055: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_005a: dup
+		IL_005b: ldarg.1
+		IL_005c: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 
-		IL_006e: ret
+		IL_0061: ret
 	} // end of method asArray::asArray
 
 } // end of class Functions.asArray
@@ -129,7 +118,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e0
+		// Method begins at RVA 0x20d4
 		// Header size: 12
 		// Code size: 247 (0xf7)
 		.maxstack 32
@@ -236,7 +225,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21e3
+		// Method begins at RVA 0x21d7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -10,9 +10,6 @@
 	.class nested public auto ansi beforefieldinit greet
 		extends [System.Runtime]System.Object
 	{
-		// Fields
-		.field public object name
-
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -33,10 +30,6 @@
 	.class nested public auto ansi beforefieldinit 'add'
 		extends [System.Runtime]System.Object
 	{
-		// Fields
-		.field public object a
-		.field public object b
-
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -57,11 +50,6 @@
 	.class nested public auto ansi beforefieldinit multi
 		extends [System.Runtime]System.Object
 	{
-		// Fields
-		.field public object x
-		.field public object y
-		.field public object z
-
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -82,11 +70,6 @@
 	.class nested public auto ansi beforefieldinit calculate
 		extends [System.Runtime]System.Object
 	{
-		// Fields
-		.field public object a
-		.field public object b
-		.field public object c
-
 		// Methods
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
@@ -140,11 +123,8 @@
 	{
 		// Method begins at RVA 0x2080
 		// Header size: 12
-		// Code size: 54 (0x36)
+		// Code size: 41 (0x29)
 		.maxstack 32
-		.locals init (
-			[0] class Scopes.Function_DefaultParameterValue/greet
-		)
 
 		IL_0000: ldarg.1
 		IL_0001: brtrue IL_000d
@@ -152,23 +132,18 @@
 		IL_0006: ldstr "World"
 		IL_000b: starg.s param1
 
-		IL_000d: newobj instance void Scopes.Function_DefaultParameterValue/greet::.ctor()
-		IL_0012: stloc.0
-		IL_0013: ldloc.0
-		IL_0014: ldarg.1
-		IL_0015: stfld object Scopes.Function_DefaultParameterValue/greet::name
-		IL_001a: ldc.i4.1
-		IL_001b: newarr [System.Runtime]System.Object
-		IL_0020: dup
-		IL_0021: ldc.i4.0
-		IL_0022: ldstr "Hello, "
-		IL_0027: ldarg.1
-		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_002d: stelem.ref
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0033: pop
-		IL_0034: ldnull
-		IL_0035: ret
+		IL_000d: ldc.i4.1
+		IL_000e: newarr [System.Runtime]System.Object
+		IL_0013: dup
+		IL_0014: ldc.i4.0
+		IL_0015: ldstr "Hello, "
+		IL_001a: ldarg.1
+		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0020: stelem.ref
+		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0026: pop
+		IL_0027: ldnull
+		IL_0028: ret
 	} // end of method Function_DefaultParameterValue::greet
 
 	.method public hidebysig static 
@@ -178,13 +153,10 @@
 			object param2
 		) cil managed 
 	{
-		// Method begins at RVA 0x20c4
+		// Method begins at RVA 0x20b8
 		// Header size: 12
-		// Code size: 77 (0x4d)
+		// Code size: 57 (0x39)
 		.maxstack 32
-		.locals init (
-			[0] class Scopes.Function_DefaultParameterValue/'add'
-		)
 
 		IL_0000: ldarg.2
 		IL_0001: brtrue IL_0016
@@ -193,29 +165,21 @@
 		IL_000f: box [System.Runtime]System.Double
 		IL_0014: starg.s param2
 
-		IL_0016: newobj instance void Scopes.Function_DefaultParameterValue/'add'::.ctor()
-		IL_001b: stloc.0
-		IL_001c: ldloc.0
-		IL_001d: ldarg.1
-		IL_001e: stfld object Scopes.Function_DefaultParameterValue/'add'::a
-		IL_0023: ldloc.0
+		IL_0016: ldc.i4.1
+		IL_0017: newarr [System.Runtime]System.Object
+		IL_001c: dup
+		IL_001d: ldc.i4.0
+		IL_001e: ldarg.1
+		IL_001f: unbox.any [System.Runtime]System.Double
 		IL_0024: ldarg.2
-		IL_0025: stfld object Scopes.Function_DefaultParameterValue/'add'::b
-		IL_002a: ldc.i4.1
-		IL_002b: newarr [System.Runtime]System.Object
-		IL_0030: dup
-		IL_0031: ldc.i4.0
-		IL_0032: ldarg.1
-		IL_0033: unbox.any [System.Runtime]System.Double
-		IL_0038: ldarg.2
-		IL_0039: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_003e: add
-		IL_003f: box [System.Runtime]System.Double
-		IL_0044: stelem.ref
-		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_004a: pop
-		IL_004b: ldnull
-		IL_004c: ret
+		IL_0025: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_002a: add
+		IL_002b: box [System.Runtime]System.Double
+		IL_0030: stelem.ref
+		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0036: pop
+		IL_0037: ldnull
+		IL_0038: ret
 	} // end of method Function_DefaultParameterValue::'add'
 
 	.method public hidebysig static 
@@ -226,13 +190,10 @@
 			object param3
 		) cil managed 
 	{
-		// Method begins at RVA 0x2120
+		// Method begins at RVA 0x2100
 		// Header size: 12
-		// Code size: 135 (0x87)
+		// Code size: 108 (0x6c)
 		.maxstack 32
-		.locals init (
-			[0] class Scopes.Function_DefaultParameterValue/multi
-		)
 
 		IL_0000: ldarg.1
 		IL_0001: brtrue IL_0016
@@ -255,35 +216,24 @@
 		IL_003b: box [System.Runtime]System.Double
 		IL_0040: starg.s param3
 
-		IL_0042: newobj instance void Scopes.Function_DefaultParameterValue/multi::.ctor()
-		IL_0047: stloc.0
-		IL_0048: ldloc.0
-		IL_0049: ldarg.1
-		IL_004a: stfld object Scopes.Function_DefaultParameterValue/multi::x
-		IL_004f: ldloc.0
+		IL_0042: ldc.i4.1
+		IL_0043: newarr [System.Runtime]System.Object
+		IL_0048: dup
+		IL_0049: ldc.i4.0
+		IL_004a: ldarg.1
+		IL_004b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 		IL_0050: ldarg.2
-		IL_0051: stfld object Scopes.Function_DefaultParameterValue/multi::y
-		IL_0056: ldloc.0
+		IL_0051: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0056: mul
 		IL_0057: ldarg.3
-		IL_0058: stfld object Scopes.Function_DefaultParameterValue/multi::z
-		IL_005d: ldc.i4.1
-		IL_005e: newarr [System.Runtime]System.Object
-		IL_0063: dup
-		IL_0064: ldc.i4.0
-		IL_0065: ldarg.1
-		IL_0066: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_006b: ldarg.2
-		IL_006c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0071: mul
-		IL_0072: ldarg.3
-		IL_0073: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0078: mul
-		IL_0079: box [System.Runtime]System.Double
-		IL_007e: stelem.ref
-		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0084: pop
-		IL_0085: ldnull
-		IL_0086: ret
+		IL_0058: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_005d: mul
+		IL_005e: box [System.Runtime]System.Double
+		IL_0063: stelem.ref
+		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0069: pop
+		IL_006a: ldnull
+		IL_006b: ret
 	} // end of method Function_DefaultParameterValue::multi
 
 	.method public hidebysig static 
@@ -294,13 +244,10 @@
 			object param3
 		) cil managed 
 	{
-		// Method begins at RVA 0x21b4
+		// Method begins at RVA 0x2178
 		// Header size: 12
-		// Code size: 100 (0x64)
+		// Code size: 73 (0x49)
 		.maxstack 32
-		.locals init (
-			[0] class Scopes.Function_DefaultParameterValue/calculate
-		)
 
 		IL_0000: ldarg.2
 		IL_0001: brtrue IL_001d
@@ -323,27 +270,16 @@
 		IL_0030: box [System.Runtime]System.Double
 		IL_0035: starg.s param3
 
-		IL_0037: newobj instance void Scopes.Function_DefaultParameterValue/calculate::.ctor()
-		IL_003c: stloc.0
-		IL_003d: ldloc.0
-		IL_003e: ldarg.1
-		IL_003f: stfld object Scopes.Function_DefaultParameterValue/calculate::a
-		IL_0044: ldloc.0
-		IL_0045: ldarg.2
-		IL_0046: stfld object Scopes.Function_DefaultParameterValue/calculate::b
-		IL_004b: ldloc.0
-		IL_004c: ldarg.3
-		IL_004d: stfld object Scopes.Function_DefaultParameterValue/calculate::c
-		IL_0052: ldc.i4.1
-		IL_0053: newarr [System.Runtime]System.Object
-		IL_0058: dup
-		IL_0059: ldc.i4.0
-		IL_005a: ldarg.3
-		IL_005b: stelem.ref
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0061: pop
-		IL_0062: ldnull
-		IL_0063: ret
+		IL_0037: ldc.i4.1
+		IL_0038: newarr [System.Runtime]System.Object
+		IL_003d: dup
+		IL_003e: ldc.i4.0
+		IL_003f: ldarg.3
+		IL_0040: stelem.ref
+		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0046: pop
+		IL_0047: ldnull
+		IL_0048: ret
 	} // end of method Function_DefaultParameterValue::calculate
 
 } // end of class Functions.Function_DefaultParameterValue
@@ -355,7 +291,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2224
+		// Method begins at RVA 0x21d0
 		// Header size: 12
 		// Code size: 1020 (0x3fc)
 		.maxstack 32
@@ -714,7 +650,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x262c
+		// Method begins at RVA 0x25d8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

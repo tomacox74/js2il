@@ -54,6 +54,11 @@ namespace Js2IL.SymbolTables
         public Dictionary<string, BindingInfo> Bindings { get; } = new();
         // Names of parameters (for function scopes) so we can avoid generating backing fields for them.
         public HashSet<string> Parameters { get; } = new();
+        /// <summary>
+        /// Names of parameters that come from destructuring patterns (e.g., {x, y} in function foo({x, y})).
+        /// These require fields because they're extracted from the incoming object, not passed directly as IL arguments.
+        /// </summary>
+        public HashSet<string> DestructuredParameters { get; } = new();
         public ScopeKind Kind { get; }
         public Node? AstNode { get; }
 
