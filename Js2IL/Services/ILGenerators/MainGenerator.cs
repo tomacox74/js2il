@@ -33,6 +33,44 @@ namespace Js2IL.Services.ILGenerators
             this._methodBodyStreamEncoder = methodBodyStreamEncoder;
         }
 
+        /// <summary>
+        /// Determines if the global scope instance needs to be created.
+        /// The instance is only needed when:
+        /// 1. Any global variable is captured (referenced from nested functions/classes), OR
+        /// 2. Any class or function needs parent scope access (ReferencesParentScopeVariables), OR
+        /// 3. There are function declarations at global scope (stored as scope fields)
+        /// </summary>
+        private bool ShouldCreateGlobalScopeInstance()
+        {
+            var globalScope = _symbolTable.Root;
+            
+            // Check if any global binding is captured (accessed from nested scope)
+            // OR if any binding is a function declaration (stored as scope field)
+            foreach (var binding in globalScope.Bindings.Values)
+            {
+                if (binding.IsCaptured)
+                {
+                    return true;
+                }
+                // Function declarations are stored as scope fields
+                if (binding.Kind == BindingKind.Function)
+                {
+                    return true;
+                }
+            }
+            
+            // Check if any child scope (function or class) references parent scope variables
+            foreach (var child in globalScope.Children)
+            {
+                if (child.ReferencesParentScopeVariables)
+                {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+
         public MainGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, SymbolTable symbolTable, TypeBuilder programTypeBuilder)
             : this(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, symbolTable)
         {
@@ -53,8 +91,12 @@ namespace Js2IL.Services.ILGenerators
             var metadataBuilder = _ilGenerator.MetadataBuilder;
             var variables = _ilGenerator.Variables;
 
-            // Step 1: Create the global scope instance
-            CreateGlobalScopeInstance(variables);
+            // Step 1: Only create the global scope instance if it's actually needed
+            // (i.e., variables are captured or classes/functions need parent scope access)
+            if (ShouldCreateGlobalScopeInstance())
+            {
+                CreateGlobalScopeInstance(variables);
+            }
 
             // Note: Do not pre-instantiate function or nested scopes in Main.
             // Function scopes are created at call-time by the function generator.
