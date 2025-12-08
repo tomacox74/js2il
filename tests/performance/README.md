@@ -46,36 +46,36 @@ Typical results on a modern CPU (more passes = better performance):
 
 | Runtime | Time (5s window) | Passes | Passes/Sec | Performance |
 |---------|------------------|--------|------------|-------------|
-| **Node.js** | ~6.5s total | ~115 | ~17.7 | ⚡ Fastest |
-| **JS2IL** | ~5.9s total | ~105 | ~21.0 | 1.09x slower |
-| **Jint** | ~6.8s total | ~10 | ~1.9 | 11.5x slower |
+| **Node.js** | ~5.1s total | ~3600 | ~720 | ⚡ Fastest |
+| **JS2IL** | ~6.0s total | ~92 | ~18 | 39x slower |
+| **Jint** | ~7.1s total | ~10 | ~2 | 360x slower |
 
 ### Key Findings
 
 **JS2IL vs Jint:**
-- JS2IL is **~10x faster** than Jint
+- JS2IL is **~9-10x faster** than Jint
 - Both run on .NET, but JS2IL compiles to native IL while Jint interprets
-- Demonstrates the advantage of ahead-of-time compilation over interpretation
+- Demonstrates the significant advantage of ahead-of-time compilation over interpretation
 
 **JS2IL vs Node.js:**
-- JS2IL is **competitive with Node.js** (within ~10%)
-- Node.js uses V8's highly optimized JIT compiler
-- JS2IL produces native IL code optimized by .NET's JIT
-- Performance parity shows JS2IL generates genuinely efficient code
+- Node.js is **~39x faster** than JS2IL on this compute-intensive benchmark
+- Node.js uses V8's highly optimized JIT compiler with decades of optimization work
+- JS2IL produces native IL code but lacks V8's advanced optimizations (inline caching, speculative optimization, etc.)
+- This gap is expected for a young compiler and represents significant room for future optimization
 
 **Node.js vs Jint:**
-- Node.js is **~11x faster** than Jint
+- Node.js is **~360x faster** than Jint
 - V8's JIT compilation provides massive performance advantage over interpretation
 
 ## Why This Matters
 
 This demonstrates that JS2IL:
-1. ✅ Produces **performant native code**, not just correct translations
-2. ✅ Achieves **parity with Node.js/V8** despite different optimization strategies
-3. ✅ Dramatically outperforms **interpreted .NET JavaScript** (Jint)
-4. ✅ Enables JavaScript code to run as **first-class .NET applications**
+1. ✅ Produces **functional native code** that runs as a .NET application
+2. ✅ Dramatically outperforms **interpreted .NET JavaScript** (Jint) by ~10x
+3. ✅ Provides a **solid foundation** for future performance optimizations
+4. ✅ Enables JavaScript code to run as **first-class .NET applications** with access to the full .NET ecosystem
 
-The compiled output is competitive with industry-standard JavaScript engines and orders of magnitude faster than interpreted alternatives.
+While Node.js/V8 remains significantly faster on compute-intensive workloads, JS2IL fills a unique niche: compiling JavaScript to standalone .NET assemblies with no runtime dependencies beyond the .NET runtime itself. This trade-off between raw performance and deployment simplicity makes JS2IL suitable for scenarios where native .NET integration and simple deployment are more important than maximum execution speed.
 
 ## Notes
 
