@@ -296,7 +296,11 @@ namespace Js2IL.SymbolTables
             // For each child scope that references parent variables
             foreach (var child in scope.Children)
             {
-                if (child.ReferencesParentScopeVariables)
+                // Only mark variables as captured if the child scope is a function or class scope
+                // Block scopes don't create closures, so variables referenced from block scopes
+                // don't need to be captured (they can use locals)
+                // Function scopes create closures, class scopes have field initializers that may reference outer variables
+                if ((child.Kind == ScopeKind.Function || child.Kind == ScopeKind.Class) && child.ReferencesParentScopeVariables)
                 {
                     // Find which specific variables from this scope (and ancestors) are referenced by the child
                     var capturedVars = CollectReferencedParentVariables(child, scope);
