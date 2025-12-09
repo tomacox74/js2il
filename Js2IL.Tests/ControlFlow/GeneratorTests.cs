@@ -8,20 +8,20 @@ namespace Js2IL.Tests.ControlFlow
         {
         }
 
-        // Control Flow Tests
-        // Conditional operator (?:)
         [Fact]
         public Task ControlFlow_Conditional_Ternary() { var testName = nameof(ControlFlow_Conditional_Ternary); return GenerateTest(testName); }
 
         [Fact]
         public Task ControlFlow_DoWhile_Break_AtThree() { var testName = nameof(ControlFlow_DoWhile_Break_AtThree); return GenerateTest(testName); }
 
-        // Pending feature: continue statement support
         [Fact]
         public Task ControlFlow_DoWhile_Continue_SkipEven() { var testName = nameof(ControlFlow_DoWhile_Continue_SkipEven); return GenerateTest(testName); }
 
         [Fact]
         public Task ControlFlow_DoWhile_CountDownFromFive() { var testName = "ControlFlow_DoWhile_CountDownFromFive"; return GenerateTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_DoWhile_NestedLet() { var testName = "ControlFlow_DoWhile_NestedLet"; return GenerateTest(testName); }
 
         [Fact]
         public Task ControlFlow_ForLoop_Break_AtThree() { var testName = nameof(ControlFlow_ForLoop_Break_AtThree); return GenerateTest(testName); }
