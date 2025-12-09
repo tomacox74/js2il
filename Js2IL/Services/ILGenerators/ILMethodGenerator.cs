@@ -331,37 +331,47 @@ namespace Js2IL.Services.ILGenerators
         public void GenerateStatementsForBody(string scopeName, bool createScopeInstance, NodeList<Statement> statements)
         {
             int? createdLocalIndex = null;
+            bool lexicalScopePushed = false;
+            
             if (createScopeInstance)
             {
                 var registry = _variables.GetVariableRegistry();
                 if (registry != null)
                 {
-                    var scopeTypeHandle = registry.GetScopeTypeHandle(scopeName);
-                    if (!scopeTypeHandle.IsNil)
+                    // Check if this scope actually has any field-backed variables
+                    // If all variables are uncaptured (use locals), we don't need a scope instance
+                    bool hasFieldBackedVariables = registry.ScopeHasFieldBackedVariables(scopeName);
+                    
+                    if (hasFieldBackedVariables)
                     {
-                        // Build .ctor member ref for the scope type
-                        var ctorSigBuilder = new BlobBuilder();
-                        new BlobEncoder(ctorSigBuilder)
-                            .MethodSignature(isInstanceMethod: true)
-                            .Parameters(0, rt => rt.Void(), p => { });
-                        var ctorRef = _metadataBuilder.AddMemberReference(
-                            scopeTypeHandle,
-                            _metadataBuilder.GetOrAddString(".ctor"),
-                            _metadataBuilder.GetOrAddBlob(ctorSigBuilder));
-
-                        // For the function's own scope, use CreateScopeInstance so it maps to local 0
-                        var scopeRef = _variables.CreateScopeInstance(scopeName);
-                        createdLocalIndex = scopeRef.Address >= 0 ? scopeRef.Address : (int?)null;
-                        if (createdLocalIndex.HasValue)
+                        var scopeTypeHandle = registry.GetScopeTypeHandle(scopeName);
+                        if (!scopeTypeHandle.IsNil)
                         {
-                            _il.OpCode(ILOpCode.Newobj);
-                            _il.Token(ctorRef);
-                            _il.StoreLocal(createdLocalIndex.Value);
-                        }
+                            // Build .ctor member ref for the scope type
+                            var ctorSigBuilder = new BlobBuilder();
+                            new BlobEncoder(ctorSigBuilder)
+                                .MethodSignature(isInstanceMethod: true)
+                                .Parameters(0, rt => rt.Void(), p => { });
+                            var ctorRef = _metadataBuilder.AddMemberReference(
+                                scopeTypeHandle,
+                                _metadataBuilder.GetOrAddString(".ctor"),
+                                _metadataBuilder.GetOrAddBlob(ctorSigBuilder));
 
-                        // Track lexical scope so variable resolution prefers it
-                        _variables.PushLexicalScope(scopeName);
+                            // For the function's own scope, use CreateScopeInstance so it maps to local 0
+                            var scopeRef = _variables.CreateScopeInstance(scopeName);
+                            createdLocalIndex = scopeRef.Address >= 0 ? scopeRef.Address : (int?)null;
+                            if (createdLocalIndex.HasValue)
+                            {
+                                _il.OpCode(ILOpCode.Newobj);
+                                _il.Token(ctorRef);
+                                _il.StoreLocal(createdLocalIndex.Value);
+                            }
+                        }
                     }
+                    
+                    // Always track lexical scope for variable resolution (shadowing), even if no instance created
+                    _variables.PushLexicalScope(scopeName);
+                    lexicalScopePushed = true;
                 }
             }
 
@@ -371,7 +381,7 @@ namespace Js2IL.Services.ILGenerators
                 GenerateStatement(statement);
             }
 
-            if (createdLocalIndex.HasValue)
+            if (lexicalScopePushed)
             {
                 _variables.PopLexicalScope(scopeName);
                 // Do not emit any instructions after potential explicit returns; rely on GC to collect the scope instance.

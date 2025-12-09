@@ -28,6 +28,9 @@ namespace Js2IL.Tests.ControlFlow
         public Task ControlFlow_DoWhile_CountDownFromFive() { var testName = nameof(ControlFlow_DoWhile_CountDownFromFive); return ExecutionTest(testName); }
 
         [Fact]
+        public Task ControlFlow_DoWhile_NestedLet() { var testName = nameof(ControlFlow_DoWhile_NestedLet); return ExecutionTest(testName); }
+
+        [Fact]
         public Task ControlFlow_ForLoop_Break_AtThree() { var testName = nameof(ControlFlow_ForLoop_Break_AtThree); return ExecutionTest(testName); }
 
         [Fact]

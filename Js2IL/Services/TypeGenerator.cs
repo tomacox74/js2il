@@ -107,12 +107,11 @@ namespace Js2IL.Services
                 // Skip field creation for uncaptured local variables (not parameters, not function declarations)
                 // Function declarations (BindingKind.Function) always need fields to store delegate references
                 // Uncaptured const/let/var variables can use local variables instead of fields
-                // EXCEPTION: If a variable shadows a parent scope variable with the same name, the INNER one
-                // must use a field to avoid local slot collision with the outer variable
-                bool shadowsParentVariable = DoesShadowParentVariable(scope, binding.Name);
-                if (!binding.IsCaptured && !isParameter && !isFunction && !shadowsParentVariable)
+                // Shadowed variables (same name in nested scopes) can also use locals - each scope gets
+                // its own unique local slot via AllocateLocalSlot(scopeName, variableName)
+                if (!binding.IsCaptured && !isParameter && !isFunction)
                 {
-                    // Skip creating a field for non-captured non-parameter non-function bindings in nested scopes
+                    // Skip creating a field for non-captured non-parameter non-function bindings
                     continue;
                 }
 
@@ -405,10 +404,20 @@ namespace Js2IL.Services
 
                 // Determine if a field was actually created for this binding
                 // Must match the skip logic in CreateTypeFields above:
-                // Fields are created for: parameters, functions, captured variables, or shadowing variables
-                // Fields are NOT created for: uncaptured non-parameter non-function non-shadowing variables
-                bool shadowsParentVariable = DoesShadowParentVariable(scope, variableName);
-                bool fieldCreatedForThisBinding = isParameter || isFunction || bindingInfo.IsCaptured || shadowsParentVariable;
+                // Fields are created for: parameters (with some exceptions), functions, captured variables
+                // Fields are NOT created for: uncaptured non-parameter non-function variables
+                // (shadowed variables no longer need fields - each scope gets its own local slot)
+                bool fieldCreatedForThisBinding = isParameter || isFunction || bindingInfo.IsCaptured;
+                
+                // Parameters without fields: simple uncaptured params that aren't destructured or in arrow functions
+                if (isParameter && !bindingInfo.IsCaptured)
+                {
+                    bool isDestructuredParameter = scope.DestructuredParameters.Contains(variableName);
+                    if (!isDestructuredParameter && !isArrowFunction)
+                    {
+                        fieldCreatedForThisBinding = false;
+                    }
+                }
 
                 if (fieldCreatedForThisBinding)
                 {

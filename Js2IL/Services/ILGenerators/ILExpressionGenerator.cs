@@ -3057,24 +3057,38 @@ namespace Js2IL.Services.ILGenerators
                     }
                 }
                 
-                // Always include the current local scope (if it exists and is not already included)
+                // Include the current local scope only if it was actually instantiated
+                // (has a valid local slot >= 0). Empty scopes are not instantiated.
                 var leafName = _variables.GetLeafScopeName();
                 if (!string.IsNullOrEmpty(leafName) && !scopeNames.Contains(leafName))
                 {
-                    scopeNames.Add(leafName);
+                    var leafSlot = _variables.GetScopeLocalSlot(leafName);
+                    if (leafSlot.Address >= 0)
+                    {
+                        scopeNames.Add(leafName);
+                    }
                 }
                 
-                // Fallback: if nothing was added, at least include the leaf
+                // Fallback: if nothing was added and leaf has valid slot, include it
                 if (!scopeNames.Any())
                 {
-                    scopeNames.Add(leafName);
+                    var leafSlot = _variables.GetScopeLocalSlot(leafName);
+                    if (leafSlot.Address >= 0)
+                    {
+                        scopeNames.Add(leafName);
+                    }
                 }
             }
             catch
             {
-                // Conservative fallback: single leaf scope name if discovery fails
+                // Conservative fallback: single leaf scope name if discovery fails and it has valid slot
                 scopeNames.Clear();
-                scopeNames.Add(_variables.GetLeafScopeName());
+                var leafName = _variables.GetLeafScopeName();
+                var leafSlot = _variables.GetScopeLocalSlot(leafName);
+                if (leafSlot.Address >= 0)
+                {
+                    scopeNames.Add(leafName);
+                }
             }
             return scopeNames;
         }
