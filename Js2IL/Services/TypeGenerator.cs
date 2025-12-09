@@ -86,22 +86,26 @@ namespace Js2IL.Services
             foreach (var binding in scope.Bindings.Values)
             {
                 // Parameters are treated as fields on the scope when:
-                // 1. Nested functions exist (closure access), OR
-                // 2. This is an arrow function (needs fields for proper this binding and closure)
+                // 1. The parameter is captured (referenced from nested functions), OR
+                // 2. This is an arrow function (needs fields for proper this binding and closure), OR
                 // 3. The parameter comes from destructuring (needs storage to extract from object)
-                // Default parameters use starg to modify IL arguments directly, not fields (except for arrow functions)
+                // Simple identifier parameters that aren't captured can use ldarg directly.
                 bool isParameter = scope.Parameters.Contains(binding.Name);
                 bool isFunction = binding.Kind == BindingKind.Function;
+                bool isDestructuredParameter = scope.DestructuredParameters.Contains(binding.Name);
                 
-                // Note: We CANNOT skip field/local creation for ALL parameters when no nested functions exist.
-                // Destructured parameters (from ObjectPattern) need storage because they're extracted from
-                // an incoming object parameter, not passed directly as IL arguments.
-                // For now, conservatively create fields for all parameters to ensure destructuring works.
-                // A future optimization could distinguish between direct parameters vs destructured properties.
+                // Skip field creation for parameters that:
+                // - Are NOT captured (not referenced by child scopes)
+                // - Are NOT from destructuring (simple identifier params use ldarg)
+                // - Are NOT in arrow functions (arrow functions always need parameter fields for closure semantics)
+                if (isParameter && !binding.IsCaptured && !isDestructuredParameter && !isArrowFunction)
+                {
+                    // Simple parameter that can be accessed via ldarg - no field needed
+                    continue;
+                }
 
                 // Skip field creation for uncaptured local variables (not parameters, not function declarations)
                 // Function declarations (BindingKind.Function) always need fields to store delegate references
-                // Parameters need fields if arrow functions or nested functions exist
                 // Uncaptured const/let/var variables can use local variables instead of fields
                 // EXCEPTION: If a variable shadows a parent scope variable with the same name, the INNER one
                 // must use a field to avoid local slot collision with the outer variable

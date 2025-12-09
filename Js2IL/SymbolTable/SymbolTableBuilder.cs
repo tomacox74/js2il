@@ -625,6 +625,11 @@ namespace Js2IL.SymbolTables
                                                 // Mark as parameter so TypeGenerator creates fields/locals for them
                                                 methodScope.Parameters.Add(bindId.Name);
                                             }
+                                            // Track that this is a destructured parameter (needs field for storage)
+                                            if (bindId != null && !methodScope.DestructuredParameters.Contains(bindId.Name))
+                                            {
+                                                methodScope.DestructuredParameters.Add(bindId.Name);
+                                            }
                                         }
                                     }
                                 }
@@ -1126,6 +1131,11 @@ namespace Js2IL.SymbolTables
                             {
                                 scope.Parameters.Add(bindId.Name);
                             }
+                            // Track that this is a destructured parameter (needs field for storage)
+                            if (bindId != null && !scope.DestructuredParameters.Contains(bindId.Name))
+                            {
+                                scope.DestructuredParameters.Add(bindId.Name);
+                            }
                         }
                     }
                 }
@@ -1155,6 +1165,11 @@ namespace Js2IL.SymbolTables
                             if (bindId != null && !scope.Parameters.Contains(bindId.Name))
                             {
                                 scope.Parameters.Add(bindId.Name);
+                            }
+                            // Track that this is a destructured parameter (needs field for storage)
+                            if (bindId != null && !scope.DestructuredParameters.Contains(bindId.Name))
+                            {
+                                scope.DestructuredParameters.Add(bindId.Name);
                             }
                         }
                     }
