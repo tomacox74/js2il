@@ -185,6 +185,18 @@ namespace Js2IL.Services.VariableBindings
         {
             return _uncapturedVariables.GetValueOrDefault(scopeName, new HashSet<string>());
         }
+
+        /// <summary>
+        /// Checks if a scope has any field-backed variables (non-nil FieldHandle).
+        /// Scopes with only uncaptured variables (using locals) return false.
+        /// </summary>
+        public bool ScopeHasFieldBackedVariables(string scopeName)
+        {
+            if (!_scopeVariables.TryGetValue(scopeName, out var variables))
+                return false;
+            
+            return variables.Any(v => !v.FieldHandle.IsNil);
+        }
     }
 
     /// <summary>
