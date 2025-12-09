@@ -4,7 +4,11 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+### Fixed
+- **Variable Capture Optimization**: Block scopes (while/for/if bodies) no longer cause parent function variables to be incorrectly marked as "captured". Previously, any variable referenced from a child scope—including block scopes—was marked as captured and stored in a scope class instance. Now only function and class scopes trigger variable capture, since block scopes don't create closures. This eliminates unnecessary scope class allocations in functions with loops or conditionals, significantly improving performance for hot paths like the `setBitTrue`/`testBitTrue` methods in the prime sieve benchmark.
+
+### Changed
+- **Install Script**: Updated `scripts/installLocalTool.js` to use `dotnet pack` instead of `dotnet publish` and clear the tool store cache before reinstalling, ensuring the newest version is always installed.
 
 ## v0.3.5 - 2025-12-06
 
