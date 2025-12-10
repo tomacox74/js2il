@@ -7,10 +7,15 @@ on:
         description: 'Branch to run performance tests on'
         required: false
         default: 'master'
+  pull_request:
+    branches: [ "master" ]
 
 jobs:
   performance-test:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     
     steps:
       - name: Checkout repository
@@ -26,7 +31,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '10.0.x'
       
       - name: Build JS2IL
         run: |
@@ -46,9 +51,8 @@ jobs:
         id: perf
         run: |
           cd tests/performance
-          node RunComparison.js | Tee-Object -FilePath results.txt
-          Get-Content results.txt
-        shell: pwsh
+          node RunComparison.js | tee results.txt
+          cat results.txt
       
       - name: Upload Results
         uses: actions/upload-artifact@v4
@@ -63,7 +67,10 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const results = fs.readFileSync('tests/performance/results.txt', 'utf8');
+            let results = fs.readFileSync('tests/performance/results.txt', 'utf8');
+            
+            // Strip ANSI color codes for clean markdown display
+            results = results.replace(/\x1b\[[0-9;]*m/g, '');
             
             const comment = `## 🚀 Performance Comparison Results
             
