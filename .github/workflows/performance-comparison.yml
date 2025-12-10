@@ -67,7 +67,10 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const results = fs.readFileSync('tests/performance/results.txt', 'utf8');
+            let results = fs.readFileSync('tests/performance/results.txt', 'utf8');
+            
+            // Strip ANSI color codes for clean markdown display
+            results = results.replace(/\x1b\[[0-9;]*m/g, '');
             
             const comment = `## 🚀 Performance Comparison Results
             
