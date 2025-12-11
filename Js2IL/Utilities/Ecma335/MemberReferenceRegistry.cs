@@ -14,6 +14,7 @@ namespace Js2IL.Utilities.Ecma335
         private readonly TypeReferenceRegistry _typeRefRegistry;
         private readonly Dictionary<string, MemberReferenceHandle> _cache = new(StringComparer.Ordinal);
         private readonly Dictionary<Type, TypeSpecificationHandle> _typeSpecCache = new();
+        private readonly Dictionary<string, MethodSpecificationHandle> _methodSpecCache = new();
 
         public MemberReferenceRegistry(
             MetadataBuilder metadataBuilder,
@@ -91,6 +92,46 @@ namespace Js2IL.Utilities.Ecma335
             var handle = _metadataBuilder.AddMemberReference(declaringTypeHandle, nameHandle, signature);
             _cache[key] = handle;
             return handle;
+        }
+
+        /// <summary>
+        /// Gets or creates a MethodSpecificationHandle for Array.Empty&lt;object&gt;().
+        /// This is a generic method instantiation that returns an empty object[] array.
+        /// </summary>
+        /// <returns>A cached or newly created MethodSpecificationHandle.</returns>
+        public MethodSpecificationHandle GetOrAddArrayEmptyObject()
+        {
+            var key = "System.Array::Empty<object>()";
+            if (_methodSpecCache.TryGetValue(key, out var cached))
+                return cached;
+
+            // Step 1: Create member reference for the generic method definition Array.Empty<T>()
+            // The signature needs to describe the generic method with return type !!0[] (array of generic method param 0)
+            var arrayTypeRef = _typeRefRegistry.GetOrAdd(typeof(Array));
+            var methodNameHandle = _metadataBuilder.GetOrAddString("Empty");
+
+            // Build signature for generic method: static !!0[] Empty<T>() with 1 generic parameter
+            var sigBuilder = new BlobBuilder();
+            new BlobEncoder(sigBuilder)
+                .MethodSignature(isInstanceMethod: false, genericParameterCount: 1)
+                .Parameters(0,
+                    returnTypeEncoder => returnTypeEncoder.Type().SZArray().GenericMethodTypeParameter(0),
+                    parametersEncoder => { });
+            var methodSig = _metadataBuilder.GetOrAddBlob(sigBuilder);
+
+            var methodRef = _metadataBuilder.AddMemberReference(arrayTypeRef, methodNameHandle, methodSig);
+
+            // Step 2: Create MethodSpecification that instantiates Array.Empty<T> with T = object
+            var specBlob = new BlobBuilder();
+            new BlobEncoder(specBlob)
+                .MethodSpecificationSignature(1)
+                .AddArgument()
+                .Object();
+            var specBlobHandle = _metadataBuilder.GetOrAddBlob(specBlob);
+
+            var methodSpec = _metadataBuilder.AddMethodSpecification(methodRef, specBlobHandle);
+            _methodSpecCache[key] = methodSpec;
+            return methodSpec;
         }
 
         /// <summary>
@@ -235,9 +276,10 @@ namespace Js2IL.Utilities.Ecma335
             var isInstance = !method.IsStatic;
             var returnType = method.ReturnType;
             var parameters = method.GetParameters();
+            var genericParamCount = method.GetGenericArguments().Length;
 
             new BlobEncoder(sigBuilder)
-                .MethodSignature(isInstanceMethod: isInstance)
+                .MethodSignature(isInstanceMethod: isInstance, genericParameterCount: genericParamCount)
                 .Parameters(parameters.Length,
                     returnTypeEncoder => EncodeReturnType(returnTypeEncoder, returnType),
                     parametersEncoder =>
@@ -248,7 +290,22 @@ namespace Js2IL.Utilities.Ecma335
                         }
                     });
 
-            return _metadataBuilder.GetOrAddBlob(sigBuilder);
+            var signature =  _metadataBuilder.GetOrAddBlob(sigBuilder);
+
+            if (genericParamCount > 0)
+            {
+                // For generic methods, we need to wrap the signature in a GenericMethodSignature
+                var genericSigBuilder = new BlobBuilder();
+                var genericTypeArgumentsEncoder = new BlobEncoder(genericSigBuilder).MethodSpecificationSignature(genericParamCount);
+                for (int genericTypeIndex = 0; genericTypeIndex < genericParamCount; genericTypeIndex++)
+                {
+                    genericTypeArgumentsEncoder.AddArgument().Object();
+                }
+
+                signature = _metadataBuilder.GetOrAddBlob(genericSigBuilder);
+            }
+
+            return signature;
         }
 
         private BlobHandle BuildConstructorSignature(ConstructorInfo ctor)
@@ -274,9 +331,13 @@ namespace Js2IL.Utilities.Ecma335
         private void EncodeReturnType(ReturnTypeEncoder encoder, Type type)
         {
             if (type == typeof(void))
+            {
                 encoder.Void();
+            }
             else
+            {
                 EncodeSignatureType(encoder.Type(), type);
+            }
         }
 
         private void EncodeSignatureType(SignatureTypeEncoder encoder, Type type)

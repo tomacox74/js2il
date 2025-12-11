@@ -1,5 +1,8 @@
-﻿using System.Reflection.Metadata;
+﻿using System.Reflection;
+using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
+using Acornima.Ast;
+using Js2IL.Services.ILGenerators;
 using Js2IL.Utilities.Ecma335;
 
 namespace Js2IL.Services
@@ -74,6 +77,53 @@ namespace Js2IL.Services
             // assumes [delegateAsObject] [scopesArray] [argsArray] are on the stack
             var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), "InvokeWithArgs", new[] { typeof(object), typeof(object[]), typeof(object[]) });
             _il.Call(mref);
+        }
+
+        public bool TryInvokeIntrinsicFunction(IMethodExpressionEmitter emitter, string functionName, IEnumerable<Expression> args)
+        {
+            // first use reflection to find a matching intrinsic method
+            var methodInfo = typeof(JavaScriptRuntime.GlobalThis).GetMethod(functionName, BindingFlags.Public | BindingFlags.Static);
+            if (methodInfo == null)
+            {
+                return false;
+            }
+
+            var hasParamsParameter = false;
+            // the setTimeout API accepts additional optional parameters
+            var parameters = methodInfo.GetParameters();
+            if (parameters.Length > 0)
+            {
+                var lastParameter = parameters[^1];
+                if (lastParameter.GetCustomAttribute<ParamArrayAttribute>() != null)
+                {
+                    hasParamsParameter = true;
+                }
+            }
+
+            var regularParamCount = hasParamsParameter ? parameters.Length - 1 : parameters.Length;
+            var paramsArrayArgCount = hasParamsParameter ? Math.Max(0, args.Count() - regularParamCount) : 0;
+
+            // emit code to push regular arguments onto the stack
+            var argsList = args.ToList();
+            for (int i = 0; i < regularParamCount && i < argsList.Count; i++)
+            {
+                emitter.Emit(argsList[i], new TypeCoercion { boxResult = true }, CallSiteContext.Expression);
+            }
+
+            // emit params array (required parameter, even if zero-length)
+            if (hasParamsParameter)
+            {
+                var objectType = _typeRefRegistry.GetOrAdd(typeof(object));
+                _il.EmitNewObjectArray(paramsArrayArgCount, objectType, _memberRefRegistry, (il, i) =>
+                {
+                    var argIndex = regularParamCount + i;
+                    emitter.Emit(argsList[argIndex], new TypeCoercion { boxResult = true }, CallSiteContext.Expression);
+                });
+            }
+
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.GlobalThis), functionName);
+            _il.Call(mref);
+            return true;
         }
 
         /// <summary>

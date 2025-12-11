@@ -1,13 +1,13 @@
-﻿# Node Support Coverage
+# Node Support Coverage
 
 Target: `22.x LTS`
-Generated: `2025-11-07T03:32:08.435Z`
+Generated: `2025-12-11T01:21:30Z`
 
 
 ## Modules
 
 ### path (status: partial)
-Docs: [docs](https://nodejs.org/api/path.html)
+Docs: [https://nodejs.org/api/path.html](https://nodejs.org/api/path.html)
 Implementation:
 - `JavaScriptRuntime/Node/Path.cs`
 
@@ -35,7 +35,7 @@ Tests:
   - `Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Basename_And_Dirname` (`Js2IL.Tests/Node/PathAdditionalTests.cs`)
 
 ### perf_hooks (status: partial)
-Docs: [docs](https://nodejs.org/api/perf_hooks.html)
+Docs: [https://nodejs.org/api/perf_hooks.html](https://nodejs.org/api/perf_hooks.html)
 Implementation:
 - `JavaScriptRuntime/Node/PerfHooks.cs`
 
@@ -50,7 +50,7 @@ Tests:
   - `Js2IL.Tests.Node.GeneratorTests.PerfHooks_PerformanceNow_Basic` (`Js2IL.Tests/Node/GeneratorTests.cs`)
 
 ### fs (status: partial)
-Docs: [docs](https://nodejs.org/api/fs.html)
+Docs: [https://nodejs.org/api/fs.html](https://nodejs.org/api/fs.html)
 Implementation:
 - `JavaScriptRuntime/Node/FS.cs`
 
@@ -87,7 +87,7 @@ Tests:
   - `Js2IL.Tests.Node.FSAdditionalTests.FS_RmSync_Removes_File_And_Directory` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
 
 ### process (status: partial)
-Docs: [docs](https://nodejs.org/api/process.html)
+Docs: [https://nodejs.org/api/process.html](https://nodejs.org/api/process.html)
 Implementation:
 - `JavaScriptRuntime/Node/Process.cs`
 - `JavaScriptRuntime/GlobalVariables.cs`
@@ -114,7 +114,7 @@ Tests:
 ## Globals
 
 ### __dirname (status: supported)
-Docs: [docs](https://nodejs.org/api/modules.html#dirname)
+Docs: [https://nodejs.org/api/modules.html#dirname](https://nodejs.org/api/modules.html#dirname)
 Implementation:
 - `JavaScriptRuntime/Node/GlobalVariables.cs`
 Tests:
@@ -122,7 +122,7 @@ Tests:
 - `Js2IL.Tests.Node.GeneratorTests.Global___dirname_PrintsDirectory` (`Js2IL.Tests/Node/GeneratorTests.cs`)
 
 ### __filename (status: supported)
-Docs: [docs](https://nodejs.org/api/modules.html#filename)
+Docs: [https://nodejs.org/api/modules.html#filename](https://nodejs.org/api/modules.html#filename)
 Implementation:
 - `JavaScriptRuntime/Node/GlobalVariables.cs`
 Tests:
@@ -130,14 +130,14 @@ Tests:
 - `Js2IL.Tests.Node.GeneratorTests.Environment_EnumerateProcessArgV` (`Js2IL.Tests/Node/GeneratorTests.cs`)
 
 ### console.log (status: supported)
-Docs: [docs](https://nodejs.org/api/console.html#consolelogdata-args)
+Docs: [https://nodejs.org/api/console.html#consolelogdata-args](https://nodejs.org/api/console.html#consolelogdata-args)
 Implementation:
 - `JavaScriptRuntime/Console.cs`
 Tests:
 - `Js2IL.Tests.ConsoleTests` (`Js2IL.Tests/ConsoleTests.cs`)
 
 ### console.error (status: supported)
-Docs: [docs](https://nodejs.org/api/console.html#consoleerrordata-args)
+Docs: [https://nodejs.org/api/console.html#consoleerrordata-args](https://nodejs.org/api/console.html#consoleerrordata-args)
 Implementation:
 - `JavaScriptRuntime/Console.cs`
 Notes:
@@ -146,13 +146,34 @@ Tests:
 - `JavaScriptRuntime.Tests.ConsoleTests.Error_PrintsAllArgumentsWithSpaces` (`Js2IL.Tests/ConsoleTests.cs`)
 
 ### console.warn (status: supported)
-Docs: [docs](https://nodejs.org/api/console.html#consolewarndata-args)
+Docs: [https://nodejs.org/api/console.html#consolewarndata-args](https://nodejs.org/api/console.html#consolewarndata-args)
 Implementation:
 - `JavaScriptRuntime/Console.cs`
 Notes:
 Writes to stderr.
 Tests:
 - `JavaScriptRuntime.Tests.ConsoleTests.Warn_PrintsAllArgumentsWithSpaces` (`Js2IL.Tests/ConsoleTests.cs`)
+
+### setTimeout (status: supported)
+Docs: [https://nodejs.org/api/timers.html#settimeoutcallback-delay-args](https://nodejs.org/api/timers.html#settimeoutcallback-delay-args)
+Implementation:
+- `JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs`
+Notes:
+Schedules a callback to be executed after a specified delay in milliseconds. Returns a timer handle that can be used with clearTimeout.
+Tests:
+- `Js2IL.Tests.Node.ExecutionTests.SetTimeout_ZeroDelay` (`Js2IL.Tests/Node/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ExecutionTests.SetTimeout_MultipleZeroDelay_ExecutedInOrder` (`Js2IL.Tests/Node/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ExecutionTests.SetTimeout_OneSecondDelay` (`Js2IL.Tests/Node/ExecutionTests.cs`)
+
+### clearTimeout (status: supported)
+Docs: [https://nodejs.org/api/timers.html#cleartimeouttimeout](https://nodejs.org/api/timers.html#cleartimeouttimeout)
+Implementation:
+- `JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs`
+Notes:
+Cancels a timer that was previously created with setTimeout. Returns undefined (null in .NET).
+Tests:
+- `Js2IL.Tests.Node.ExecutionTests.ClearTimeout_ZeroDelay` (`Js2IL.Tests/Node/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ExecutionTests.ClearTimeout_MultipleZeroDelay_ClearSecondTimer` (`Js2IL.Tests/Node/ExecutionTests.cs`)
 
 
 ## Limitations
