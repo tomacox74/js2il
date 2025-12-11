@@ -22,7 +22,7 @@ public sealed class EngineOptions
 }
 
 /// <summary>
-/// Entry point for executiing JavaScript code that has been compiled to a dotnet assembly.
+/// Entry point for executing JavaScript code that has been compiled to a dotnet assembly.
 /// </summary>
 public class Engine
 {
