@@ -79,19 +79,48 @@ js2il input.js output                           # Installed tool
 - Only run all tests if explicitly asked.. its time consuming and all tests will be run for PRs automatically
 
 ### Release Process
- - create a release branch off of master.  The branch name should be release/0.x.y where x.y is the new version number.
-```powershell
-npm run release:patch  # Bump version, update CHANGELOG
-git add CHANGELOG.md Js2IL/Js2IL.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
-git commit -m "chore(release): cut v0.x.y"
-```
- - create a pr back to master using the github cli
- - after the PR is merged, checkout master and pull the latest changes
- - create the release using the github cli (this creates the tag and triggers GitHub Actions):
-```powershell
-gh release create v0.x.y --title "v0.x.y" --notes "Release notes from CHANGELOG" --target master
-```
-GitHub Actions (`.github/workflows/release.yml`) builds and publishes when the release is created.
+
+**IMPORTANT**: Always create the release branch FIRST, before running any version bump commands.
+
+Follow these steps IN ORDER:
+
+1. **Create release branch** (from master):
+   ```powershell
+   git checkout master
+   git pull
+   git checkout -b release/0.x.y
+   ```
+
+2. **Bump version** (on the release branch):
+   ```powershell
+   npm run release:patch  # For patch version (0.x.y -> 0.x.y+1)
+   # OR
+   npm run release:minor  # For minor version (0.x.y -> 0.x+1.0)
+   # OR
+   npm run release:major  # For major version (0.x.y -> x+1.0.0)
+   ```
+   This updates CHANGELOG.md, Js2IL/Js2IL.csproj, and JavaScriptRuntime/JavaScriptRuntime.csproj
+
+3. **Commit version bump** (on the release branch):
+   ```powershell
+   git add CHANGELOG.md Js2IL/Js2IL.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
+   git commit -m "chore(release): cut v0.x.y"
+   ```
+
+4. **Push release branch and create PR**:
+   ```powershell
+   git push -u origin release/0.x.y
+   gh pr create --title "chore(release): Release v0.x.y" --body-file <release-notes.md> --base master --head release/0.x.y
+   ```
+
+5. **After PR is merged**, create the release (this creates the tag and triggers GitHub Actions):
+   ```powershell
+   git checkout master
+   git pull
+   gh release create v0.x.y --title "v0.x.y" --notes "See CHANGELOG.md for details" --target master
+   ```
+
+GitHub Actions (`.github/workflows/release.yml`) builds and publishes to NuGet when the release is created.
 
 ## Project Conventions
 
