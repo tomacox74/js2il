@@ -13,7 +13,7 @@ internal class Timers
     {
         if (callback is not Delegate del)
         {
-            throw new TypeError("namespace JavaScriptRuntime.EngineCore");
+            throw new TypeError("First argument to setTimeout must be a function");
         }
 
         var delayMs = TypeUtilities.ToNumber(delay);
