@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.3.6 - 2025-12-11
+
 ### Added
 - **Timers API**: Implemented `setTimeout` and `clearTimeout` global functions following Node.js timer semantics
   - `setTimeout(callback, delay, ...args)`: Schedules a callback to execute after a specified delay in milliseconds, returns a timer handle
@@ -13,10 +17,8 @@ All notable changes to this project are documented here.
   - Test infrastructure includes `MockTickSource` and `MockWaitHandle` for deterministic timer testing
   - Comprehensive test coverage: `SetTimeout_ZeroDelay`, `SetTimeout_MultipleZeroDelay_ExecutedInOrder`, `SetTimeout_OneSecondDelay`, `ClearTimeout_ZeroDelay`, `ClearTimeout_MultipleZeroDelay_ClearSecondTimer`
   - Updated `NodeSupport.json` documentation with timer API details and test references
-
 ### Fixed
 - **Variable Capture Optimization**: Block scopes (while/for/if bodies) no longer cause parent function variables to be incorrectly marked as "captured". Previously, any variable referenced from a child scope—including block scopes—was marked as captured and stored in a scope class instance. Now only function and class scopes trigger variable capture, since block scopes don't create closures. This eliminates unnecessary scope class allocations in functions with loops or conditionals, significantly improving performance for hot paths like the `setBitTrue`/`testBitTrue` methods in the prime sieve benchmark.
-
 ### Changed
 - **Install Script**: Updated `scripts/installLocalTool.js` to use `dotnet pack` instead of `dotnet publish` and clear the tool store cache before reinstalling, ensuring the newest version is always installed.
 - **Code Quality**: Refactored timer initialization in `GlobalThis` to use shared `EnsureTimers()` helper method, eliminating code duplication between `setTimeout` and `clearTimeout`
