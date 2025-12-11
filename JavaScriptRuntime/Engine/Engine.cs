@@ -2,7 +2,7 @@ namespace JavaScriptRuntime;
 
 /// <summary>
 /// Configuration options for the JavaScript engine.
-/// Allows mocks to be sustituted for testing.
+/// Allows mocks to be substituted for testing.
 /// </summary>
 public sealed class EngineOptions
 {
