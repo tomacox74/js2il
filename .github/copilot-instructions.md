@@ -72,9 +72,11 @@ js2il input.js output                           # Installed tool
 - Snapshot updates: `node scripts/updateVerifiedFiles.js` (updates all `*.received.*` → `*.verified.*`).  This tool is useful when a IL change affects many tests.
 - Test categories: Array, BinaryOperator, Classes, CompoundAssignment, ControlFlow, Function, etc.
 - Currently manually running the script tests\performance\PrimeJavaScript.js to compare node performance vs js2il performance.
+- Only run all tests if explicitly asked.. its time consuming and all tests will be run for PRs automatically
 
 ### Debugging
 - Use ilspycmd to disassemble generated DLLs to IL for inspection
+- Only run all tests if explicitly asked.. its time consuming and all tests will be run for PRs automatically
 
 ### Release Process
  - create a release branch off of master.  The branch name should be release/0.x.y where x.y is the new version number.

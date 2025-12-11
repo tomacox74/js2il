@@ -31,6 +31,7 @@ namespace Js2IL.Services.ILGenerators
         /// <summary>
         /// Emit: new T[length] given the element type handle, and fill elements using the provided callback.
         /// The callback must leave the element value on the stack for each index.
+        /// For length=0, creates an empty array via newarr (caller should use Array.Empty&lt;T&gt;() for better performance if available).
         /// </summary>
         public static void EmitNewArray(this InstructionEncoder il, int length, EntityHandle elementType, Action<InstructionEncoder,int> emitElementAt)
         {
@@ -55,6 +56,24 @@ namespace Js2IL.Services.ILGenerators
         public static void EmitNewObjectArray(this InstructionEncoder il, int length, EntityHandle objectType, Action<InstructionEncoder,int> emitElementAt)
         {
             il.EmitNewArray(length, objectType, emitElementAt);
+        }
+
+        /// <summary>
+        /// Emit: new object[length] and fill elements using the provided callback. For length=0, uses Array.Empty&lt;object&gt;().
+        /// The callback must leave the element value on the stack for each index.
+        /// </summary>
+        public static void EmitNewObjectArray(this InstructionEncoder il, int length, EntityHandle objectType, Utilities.Ecma335.MemberReferenceRegistry memberRefRegistry, Action<InstructionEncoder,int>? emitElementAt)
+        {
+            if (length == 0)
+            {
+                var arrayEmptyRef = memberRefRegistry.GetOrAddArrayEmptyObject();
+                il.Call(arrayEmptyRef);
+            }
+            else
+            {
+                if (emitElementAt is null) throw new ArgumentNullException(nameof(emitElementAt));
+                il.EmitNewArray(length, objectType, emitElementAt);
+            }
         }
 
         /// <summary>

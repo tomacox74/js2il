@@ -375,6 +375,44 @@
           "file": "Js2IL.Tests/ConsoleTests.cs"
         }
       ]
+    },
+    {
+      "name": "setTimeout",
+      "status": "supported",
+      "implementation": "JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs",
+      "docs": "https://nodejs.org/api/timers.html#settimeoutcallback-delay-args",
+      "notes": "Schedules a callback to be executed after a specified delay in milliseconds. Returns a timer handle that can be used with clearTimeout.",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.ExecutionTests.SetTimeout_ZeroDelay",
+          "file": "Js2IL.Tests/Node/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.ExecutionTests.SetTimeout_MultipleZeroDelay_ExecutedInOrder",
+          "file": "Js2IL.Tests/Node/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.ExecutionTests.SetTimeout_OneSecondDelay",
+          "file": "Js2IL.Tests/Node/ExecutionTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "clearTimeout",
+      "status": "supported",
+      "implementation": "JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs",
+      "docs": "https://nodejs.org/api/timers.html#cleartimeouttimeout",
+      "notes": "Cancels a timer that was previously created with setTimeout. Returns undefined (null in .NET).",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.ExecutionTests.ClearTimeout_ZeroDelay",
+          "file": "Js2IL.Tests/Node/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.ExecutionTests.ClearTimeout_MultipleZeroDelay_ClearSecondTimer",
+          "file": "Js2IL.Tests/Node/ExecutionTests.cs"
+        }
+      ]
     }
   ],
   "limitations": [

@@ -1,10 +1,7 @@
 using Js2IL.Services;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using System.IO;
 using System.Text;
 using System.Runtime.Loader;
 using JavaScriptRuntime;
@@ -28,7 +25,7 @@ namespace Js2IL.Tests
             Directory.CreateDirectory(_outputPath);
         }
 
-        protected Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, bool preferOutOfProc = false, [CallerFilePath] string sourceFilePath = "")
+        protected Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, bool preferOutOfProc = false, [CallerFilePath] string sourceFilePath = "", Action<IConsoleOutput> postTestProcessingAction = null!)
         {
             var js = GetJavaScript(testName);
             var ast = _parser.ParseJavaScript(js, "test.js");
@@ -51,7 +48,7 @@ namespace Js2IL.Tests
                 }
                 else
                 {
-                    il = ExecuteGeneratedAssemblyInProc(expectedPath, testName);
+                    il = ExecuteGeneratedAssemblyInProc(expectedPath, testName, postTestProcessingAction);
                 }
                 if (string.IsNullOrWhiteSpace(il))
                 {
@@ -125,7 +122,7 @@ namespace Js2IL.Tests
             return stdOut;
         }
 
-        private string ExecuteGeneratedAssemblyInProc(string assemblyPath, string? testName = null)
+        private string ExecuteGeneratedAssemblyInProc(string assemblyPath, string? testName = null, Action<IConsoleOutput>? postTestProcessingAction = null)
         {
             var prevOut = System.Console.Out;
             var prevErr = System.Console.Error;
@@ -268,7 +265,8 @@ namespace Js2IL.Tests
 
                 var paramInfos = entryPoint.GetParameters();
                 object?[]? args = paramInfos.Length == 0 ? null : new object?[] { System.Array.Empty<string>() };
-                try { entryPoint.Invoke(null, args); } catch { }
+                entryPoint.Invoke(null, args);
+                postTestProcessingAction?.Invoke(captured);
 
                 var outText = swOut.ToString();
                 if (!string.IsNullOrEmpty(testName) && testName.StartsWith("Process_Exit_", StringComparison.Ordinal))

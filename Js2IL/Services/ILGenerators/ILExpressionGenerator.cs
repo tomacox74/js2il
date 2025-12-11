@@ -1387,6 +1387,12 @@ namespace Js2IL.Services.ILGenerators
                 return typeof(string);
             }
 
+            // generic method for invoking intrusive functions
+            // TODO:  This should be done after checking variables not before... much work to be done
+            if (_runtime.TryInvokeIntrinsicFunction(this, identifier.Name, callExpression.Arguments)) {
+                return null; // dynamic return type
+            }
+
             var functionVariable = _variables.FindVariable(identifier.Name);
             if (functionVariable == null)
             {

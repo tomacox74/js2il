@@ -38,5 +38,11 @@ namespace Js2IL.Tests.Node
         [Fact]
         public Task Require_Path_Join_NestedFunction() => GenerateTest(
             nameof(Require_Path_Join_NestedFunction));
+
+        [Fact]
+        public Task SetTimeout_MultipleZeroDelay_ExecutedInOrder() => GenerateTest(nameof(SetTimeout_MultipleZeroDelay_ExecutedInOrder));
+
+        [Fact]
+        public Task SetTimeout_ZeroDelay() => GenerateTest(nameof(SetTimeout_ZeroDelay));
     }
 }

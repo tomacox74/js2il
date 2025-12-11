@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using System.IO;
+using JavaScriptRuntime;
 
 namespace Js2IL.Tests.Node
 {
@@ -8,23 +9,10 @@ namespace Js2IL.Tests.Node
         public ExecutionTests() : base("Node") { }
 
         [Fact]
-        public Task Require_Path_Join_Basic()
-            => ExecutionTest(nameof(Require_Path_Join_Basic), configureSettings: s => s.AddScrubber(sb => sb.Replace('\\', '/')));
+        public Task ClearTimeout_MultipleZeroDelay_ClearSecondTimer() => ExecutionTest(nameof(ClearTimeout_MultipleZeroDelay_ClearSecondTimer));
 
         [Fact]
-        public Task Require_Path_Join_NestedFunction()
-            => ExecutionTest(nameof(Require_Path_Join_NestedFunction), configureSettings: s => s.AddScrubber(sb => sb.Replace('\\', '/')));
-
-        [Fact]
-        public Task Global___dirname_PrintsDirectory()
-            => ExecutionTest(
-                nameof(Global___dirname_PrintsDirectory),
-                configureSettings: s =>
-                {
-                    s.AddScrubber(sb => sb.Replace('\\', '/'));
-                    var temp = Path.GetTempPath().Replace('\\', '/');
-                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
-                });
+        public Task ClearTimeout_ZeroDelay() => ExecutionTest(nameof(ClearTimeout_ZeroDelay));
 
         [Fact]
         public Task Environment_EnumerateProcessArgV()
@@ -66,6 +54,17 @@ namespace Js2IL.Tests.Node
                 });
 
         [Fact]
+        public Task Global___dirname_PrintsDirectory()
+            => ExecutionTest(
+                nameof(Global___dirname_PrintsDirectory),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                    var temp = Path.GetTempPath().Replace('\\', '/');
+                    s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
+                });
+
+        [Fact]
         public Task PerfHooks_PerformanceNow_Basic()
             => ExecutionTest(
                 nameof(PerfHooks_PerformanceNow_Basic),
@@ -73,5 +72,63 @@ namespace Js2IL.Tests.Node
                 {
                     // Keep as-is; output is integer ms values which should be stable enough.
                 });
+
+        [Fact]
+        public Task Require_Path_Join_Basic()
+            => ExecutionTest(nameof(Require_Path_Join_Basic), configureSettings: s => s.AddScrubber(sb => sb.Replace('\\', '/')));
+
+        [Fact]
+        public Task Require_Path_Join_NestedFunction()
+            => ExecutionTest(nameof(Require_Path_Join_NestedFunction), configureSettings: s => s.AddScrubber(sb => sb.Replace('\\', '/')));
+
+        [Fact]
+        public Task SetTimeout_MultipleZeroDelay_ExecutedInOrder() => ExecutionTest(nameof(SetTimeout_MultipleZeroDelay_ExecutedInOrder));
+
+        [Fact]
+        public async Task SetTimeout_OneSecondDelay()
+        {
+            var defaultOptionsProvider = JavaScriptRuntime.EngineOptions.DefaultOptionsProvider;
+            var mockTickSource = new Js2IL.Tests.Node.MockTickSource();
+            var mockWaitHandle = new Js2IL.Tests.Node.MockWaitHandle(
+                onSet: () => { },
+                onWaitOne: (msTimeout) =>
+                {
+                    // Simulate the passage of time by incrementing the mock tick source.
+                    mockTickSource.Increment(TimeSpan.FromMilliseconds(msTimeout));
+                });
+
+            JavaScriptRuntime.EngineOptions.DefaultOptionsProvider = () =>
+            {
+                return new JavaScriptRuntime.EngineOptions
+                {
+                    TickSource = mockTickSource,
+                    WaitHandle = mockWaitHandle,
+                };
+            };
+
+            var startTime = mockTickSource.GetTicks();
+
+            var postTestProcessingAction = new Action<IConsoleOutput>(output =>
+            {
+                var endTime = mockTickSource.GetTicks();
+                var elapsedMs = TimeSpan.FromTicks(endTime - startTime).TotalMilliseconds;
+                output.WriteLine($"Elapsed simulated time: {elapsedMs} ms");
+            });
+
+            try 
+            {                
+                await ExecutionTest(nameof(SetTimeout_OneSecondDelay), postTestProcessingAction: postTestProcessingAction);
+            }
+            finally
+            {
+                JavaScriptRuntime.EngineOptions.DefaultOptionsProvider = defaultOptionsProvider;
+            }
+        }
+
+        [Fact]
+        public Task SetTimeout_ZeroDelay() => ExecutionTest(nameof(SetTimeout_ZeroDelay));
+
+        [Fact]
+        public Task SetTimeout_ZeroDelay_WithArgs() => ExecutionTest(nameof(SetTimeout_ZeroDelay_WithArgs));
     }
 }

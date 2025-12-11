@@ -30,6 +30,18 @@ namespace JavaScriptRuntime
             }
         }
 
+        internal static JavaScriptRuntime.EngineCore.IScheduler? Scheduler
+        {
+            get => _scheduler;
+            set
+            {
+                _scheduler = value;
+                // Reset timers when scheduler changes (important for test isolation)
+                _timers = null;
+            }
+        }
+        private static JavaScriptRuntime.EngineCore.IScheduler? _scheduler;
+
         /// <summary>Directory name of the current module (script).</summary>
         public static string __dirname { get; private set; } = string.Empty;
 
@@ -46,6 +58,8 @@ namespace JavaScriptRuntime
         private static readonly JavaScriptRuntime.Console _console = new JavaScriptRuntime.Console();
         public static JavaScriptRuntime.Console console => _console;
 
+        private static Timers? _timers;
+
         /// <summary>
         /// ECMAScript global Infinity value (+∞).
         /// Exposed as a static property so identifiers bind at compile-time.
@@ -57,6 +71,19 @@ namespace JavaScriptRuntime
         /// Exposed as a static property so identifiers bind at compile-time.
         /// </summary>
         public static double NaN => double.NaN;
+
+        private static Timers EnsureTimers()
+        {
+            if (_timers == null)
+            {
+                if (Scheduler == null)
+                {
+                    throw new InvalidOperationException("{INTERNAL ERROR} No scheduler available for timers");
+                }
+                _timers = new Timers(Scheduler);
+            }
+            return _timers;
+        }
 
         /// <summary>
         /// Dynamic lookup for well-known globals by name.
@@ -81,6 +108,16 @@ namespace JavaScriptRuntime
                 default:
                     return null;
             }
+        }
+
+        public static object setTimeout(object callback, object delay, params object[] args)
+        {
+            return EnsureTimers().setTimeout(callback, delay, args);
+        }
+
+        public static object clearTimeout(object handle)
+        {
+            return EnsureTimers().clearTimeout(handle);
         }
 
         /// <summary>
