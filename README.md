@@ -113,58 +113,85 @@ Local development note
 dotnet run --project .\Js2IL -- .\tests\simple.js .\out
 ```
 
-## Release Workflow Automation
+## Release Workflow
 
-To cut a new release while keeping `CHANGELOG.md` and `Js2IL/Js2IL.csproj` in sync you can use the version bump script added in `scripts/bumpVersion.js`.
+**IMPORTANT**: Always create the release branch FIRST, before running any version bump commands.
 
-Usage (from repo root):
+### Complete Release Process
 
-```
-npm run release:patch     # bumps patch version (x.y.z -> x.y.(z+1))
-npm run release:minor     # bumps minor version (x.y.z -> x.(y+1).0)
-npm run release:major     # bumps major version ((x+1).0.0)
-node scripts/bumpVersion.js 0.2.0   # set an explicit version
-```
+Follow these steps IN ORDER:
 
-What it does:
-1. Reads current version from `Js2IL/Js2IL.csproj`.
-2. Extracts the `## Unreleased` section from `CHANGELOG.md`.
-3. Creates a new section: `## vNEW_VERSION - YYYY-MM-DD` populated with that content (skipping the placeholder `_Nothing yet._`).
-4. Resets the `## Unreleased` section body to the placeholder.
-5. Updates the `<Version>` element in both `Js2IL.csproj` and `JavaScriptRuntime.csproj` (adds if not present).
-6. Prints next git commands (add/commit/tag/push).
+#### 1. Create Release Branch
 
-Empty Unreleased:
-If there is no real content (only the placeholder) the script still creates an empty release section unless you pass `--skip-empty` (explicit invocation only).
-
-Example manual flow after bump:
+Start from a clean master branch:
 
 ```powershell
-# Create release branch
-git checkout -b release/<new-version>
-
-# Bump version
-npm run release:patch
-
-# Review changes
-git add CHANGELOG.md Js2IL/Js2IL.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
-git commit -m "chore(release): cut <new-version>"
-
-# Create PR back to master
-gh pr create --base master --head release/<new-version> --title "chore(release): cut <new-version>"
-
-# After PR is merged:
 git checkout master
-git pull origin master
-
-# Create release (this creates the tag and triggers GitHub Actions)
-gh release create v<new-version> --title "v<new-version>" --notes "Release notes from CHANGELOG" --target master
+git pull
+git checkout -b release/0.x.y
 ```
 
-CI / GitHub Actions:
-There is an existing workflow (`.github/workflows/release.yml`) for building & publishing artifacts when a release is created. The `gh release create` command automatically creates the tag and triggers the workflow.
+#### 2. Bump Version
 
-Limitations / TODO:
-- Does not preserve pre-release identifiers or generate them.
-- No automatic generation of release notes beyond what you curate in Unreleased.
-- Assumes a single `## Unreleased` sentinel header.
+Run the appropriate version bump script on the release branch:
+
+```powershell
+npm run release:patch  # For patch version (0.x.y -> 0.x.y+1)
+# OR
+npm run release:minor  # For minor version (0.x.y -> 0.x+1.0)
+# OR
+npm run release:major  # For major version (0.x.y -> x+1.0.0)
+```
+
+What the script does:
+- Reads current version from `Js2IL/Js2IL.csproj`
+- Extracts the `## Unreleased` section from `CHANGELOG.md`
+- Creates a new section: `## vNEW_VERSION - YYYY-MM-DD` with that content
+- Resets the `## Unreleased` section to placeholder
+- Updates the `<Version>` in both `Js2IL.csproj` and `JavaScriptRuntime.csproj`
+
+#### 3. Commit Version Bump
+
+Commit the changes on the release branch:
+
+```powershell
+git add CHANGELOG.md Js2IL/Js2IL.csproj JavaScriptRuntime/JavaScriptRuntime.csproj
+git commit -m "chore(release): cut v0.x.y"
+```
+
+#### 4. Push and Create PR
+
+Push the release branch and create a pull request:
+
+```powershell
+git push -u origin release/0.x.y
+gh pr create --title "chore(release): Release v0.x.y" --base master --head release/0.x.y
+```
+
+#### 5. Merge and Create Release
+
+After the PR is merged:
+
+```powershell
+git checkout master
+git pull
+gh release create v0.x.y --title "v0.x.y" --notes "See CHANGELOG.md for details" --target master
+```
+
+This creates the tag and triggers the GitHub Actions workflow (`.github/workflows/release.yml`) which builds and publishes to NuGet.
+
+This creates the tag and triggers the GitHub Actions workflow (`.github/workflows/release.yml`) which builds and publishes to NuGet.
+
+### Manual Version Override
+
+You can also set an explicit version:
+
+```powershell
+node scripts/bumpVersion.js 0.2.0
+```
+
+### Notes
+
+- Empty Unreleased: If there is no real content (only the placeholder) the script still creates an empty release section unless you pass `--skip-empty`
+- The script does not preserve pre-release identifiers
+- Assumes a single `## Unreleased` sentinel header in CHANGELOG.md
