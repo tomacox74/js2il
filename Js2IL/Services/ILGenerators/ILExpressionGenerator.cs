@@ -1387,7 +1387,7 @@ namespace Js2IL.Services.ILGenerators
                 return typeof(string);
             }
 
-            // generic method for invoking intrusive functions
+            // generic method for invoking intrinsic functions
             // TODO:  This should be done after checking variables not before... much work to be done
             if (_runtime.TryInvokeIntrinsicFunction(this, identifier.Name, callExpression.Arguments)) {
                 return null; // dynamic return type
