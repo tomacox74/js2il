@@ -76,7 +76,7 @@ js2il input.js output                           # Installed tool
 
 ### Debugging
 - Use ilspycmd to disassemble generated DLLs to IL for inspection
-- Only run all tests if explicity asked too.. its time consuming and all tests will be run for PRs automatically
+- Only run all tests if explicitly asked.. its time consuming and all tests will be run for PRs automatically
 
 ### Release Process
  - create a release branch off of master.  The branch name should be release/0.x.y where x.y is the new version number.
