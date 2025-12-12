@@ -420,7 +420,7 @@ namespace JavaScriptRuntime
             }
 
             var src = args ?? empty;
-            var coerced = new object[src.Length];
+            var coerced = new object[psChosen.Length];
             for (int i = 0; i < src.Length; i++) coerced[i] = src[i] is null ? 0.0 : CoerceToJsNumber(src[i]);
             
             object?[] invokeArgs = expectsParamsArray ? new object?[] { coerced } : coerced;
