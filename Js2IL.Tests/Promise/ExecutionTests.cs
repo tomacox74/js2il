@@ -17,4 +17,16 @@ public class ExecutionTests : ExecutionTestsBase
     {
         return ExecutionTest(nameof(Promise_Executor_Rejected));
     }
+
+    [Fact]
+    public Task Promise_Resolve_Then()
+    {
+        return ExecutionTest(nameof(Promise_Resolve_Then));
+    }
+
+    [Fact]
+    public Task Promise_Reject_Then()
+    {
+        return ExecutionTest(nameof(Promise_Reject_Then));
+    }
 }

@@ -107,6 +107,20 @@ public sealed class Promise
         }
     }
 
+    public static object? resolve(object? value)
+    {
+        var promise = new Promise();
+        promise.Settle(State.Fulfilled, value);
+        return promise;
+    }
+
+    public static object? reject(object? reason)
+    {
+        var promise = new Promise();
+        promise.Settle(State.Rejected, reason);
+        return promise;
+    }
+
     public object? @then(object? onFulfilled = null, object? onRejected = null)
     {
         var nextPromise = new Promise();
