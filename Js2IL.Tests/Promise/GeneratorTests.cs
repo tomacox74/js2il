@@ -7,8 +7,8 @@ public class GeneratorTests : GeneratorTestsBase
     }
 
     [Fact]
-    public Task Promise_Handler_Resolved()
+    public Task Promise_Executor_Resolved()
     {
-        return GenerateTest(nameof(Promise_Handler_Resolved));
+        return GenerateTest(nameof(Promise_Executor_Resolved));
     }
 }

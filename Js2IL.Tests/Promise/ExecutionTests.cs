@@ -7,8 +7,14 @@ public class ExecutionTests : ExecutionTestsBase
     }
 
     [Fact]
-    public Task Promise_Handler_Resolved()
+    public Task Promise_Executor_Resolved()
     {
-        return ExecutionTest(nameof(Promise_Handler_Resolved));
+        return ExecutionTest(nameof(Promise_Executor_Resolved));
+    }
+
+    [Fact]
+    public Task Promise_Executor_Rejected()
+    {
+        return ExecutionTest(nameof(Promise_Executor_Rejected));
     }
 }
