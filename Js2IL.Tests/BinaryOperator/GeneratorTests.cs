@@ -8,7 +8,7 @@ namespace Js2IL.Tests.BinaryOperator
         {
         }
 
-        // Binary Operator Tests
+        // Binary Operator Tests (sorted alphabetically)
         [Fact]
         public Task BinaryOperator_AddNumberNumber() { var testName = nameof(BinaryOperator_AddNumberNumber); return GenerateTest(testName); }
 
@@ -40,13 +40,17 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_EqualMethodReturn() { var testName = nameof(BinaryOperator_EqualMethodReturn); return GenerateTest(testName); }
 
         [Fact]
-        public Task BinaryOperator_EqualParameter() { var testName = nameof(BinaryOperator_EqualParameter); return GenerateTest(testName); }
-
-        [Fact]
         public Task BinaryOperator_EqualObjectPropertyVsMethodReturn() { var testName = nameof(BinaryOperator_EqualObjectPropertyVsMethodReturn); return GenerateTest(testName); }
 
         [Fact]
+        public Task BinaryOperator_EqualParameter() { var testName = nameof(BinaryOperator_EqualParameter); return GenerateTest(testName); }
+
+        [Fact]
         public Task BinaryOperator_ExpNumberNumber() { var testName = nameof(BinaryOperator_ExpNumberNumber); return GenerateTest(testName); }
+
+        // 'in' operator generator snapshot
+        [Fact]
+        public Task BinaryOperator_In_Object_OwnAndMissing() { var testName = nameof(BinaryOperator_In_Object_OwnAndMissing); return GenerateTest(testName); }
 
         [Fact]
         public Task BinaryOperator_GreaterThan() { var testName = nameof(BinaryOperator_GreaterThan); return GenerateTest(testName); }
@@ -55,10 +59,10 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_GreaterThanOrEqual() { var testName = nameof(BinaryOperator_GreaterThanOrEqual); return GenerateTest(testName); }
 
         [Fact]
-        public Task BinaryOperator_LeftShiftNumberNumber() { var testName = nameof(BinaryOperator_LeftShiftNumberNumber); return GenerateTest(testName); }
+        public Task BinaryOperator_LeftShiftBit31() { var testName = nameof(BinaryOperator_LeftShiftBit31); return GenerateTest(testName); }
 
         [Fact]
-        public Task BinaryOperator_LeftShiftBit31() { var testName = nameof(BinaryOperator_LeftShiftBit31); return GenerateTest(testName); }
+        public Task BinaryOperator_LeftShiftNumberNumber() { var testName = nameof(BinaryOperator_LeftShiftNumberNumber); return GenerateTest(testName); }
 
         [Fact]
         public Task BinaryOperator_LessThan() { var testName = nameof(BinaryOperator_LessThan); return GenerateTest(testName); }
@@ -86,16 +90,12 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_RightShiftNumberNumber() { var testName = nameof(BinaryOperator_RightShiftNumberNumber); return GenerateTest(testName); }
 
         [Fact]
+        public Task BinaryOperator_StrictEqualCapturedVariable() { var testName = nameof(BinaryOperator_StrictEqualCapturedVariable); return GenerateTest(testName); }
+
+        [Fact]
         public Task BinaryOperator_SubNumberNumber() { var testName = nameof(BinaryOperator_SubNumberNumber); return GenerateTest(testName); }
 
         [Fact]
         public Task BinaryOperator_UnsignedRightShiftNumberNumber() { var testName = nameof(BinaryOperator_UnsignedRightShiftNumberNumber); return GenerateTest(testName); }
-
-    // 'in' operator generator snapshot
-    [Fact]
-    public Task BinaryOperator_In_Object_OwnAndMissing() { var testName = nameof(BinaryOperator_In_Object_OwnAndMissing); return GenerateTest(testName); }
-
-    [Fact]
-    public Task BinaryOperator_StrictEqualCapturedVariable() { var testName = nameof(BinaryOperator_StrictEqualCapturedVariable); return GenerateTest(testName); }
     }
 }
