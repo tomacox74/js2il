@@ -1,4 +1,4 @@
-# ECMAScript 2025 Feature Coverage
+﻿# ECMAScript 2025 Feature Coverage
 
 [ECMAScript® 2025 Language Specification](https://tc39.es/ecma262/)
 
@@ -229,7 +229,7 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Binary \|\| (Logical OR) with short-circuit | Supported | `Js2IL.Tests/JavaScript/BinaryOperator_LogicalOr_Value.js` | Value form returns left if truthy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited. | 13.5.10 |
+| Binary \|\| (Logical OR) with short-circuit | Supported | `Js2IL.Tests/JavaScript/BinaryOperator_LogicalOr_Value.js` | Value form returns left if truthy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited. Recent fixes ensure strict-equality patterns (e.g. `id === 1024 \|\| id === 2047`) correctly handle captured/boxed variables by performing ToNumber conversion when the variable type is unknown, preventing incorrect direct object-to-number `ceq` comparisons. | 13.5.10 |
 | Binary && (Logical AND) with short-circuit | Supported | `Js2IL.Tests/JavaScript/BinaryOperator_LogicalAnd_Value.js` | Value form returns left if falsy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited. | 13.5.10 |
 | Binary in (property existence on object) | Supported | `Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js` | Implements key in obj via JavaScriptRuntime.Object.HasPropertyIn. Supports own properties on ExpandoObject/object literals and numeric/string keys; does not yet traverse prototype chain or throw TypeError for non-object RHS beyond null/undefined. | 13.5.10 |
 
@@ -800,4 +800,22 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
 | JSON.parse | Partially Supported | `Js2IL.Tests/JSONRuntimeTests.cs` | Implemented via host intrinsic JavaScriptRuntime.JSON.Parse(string). Maps invalid input to SyntaxError and non-string input to TypeError. Reviver parameter is not supported. Objects become ExpandoObject, arrays use JavaScriptRuntime.Array, numbers use double. | 24.5.1 |
+
+
+## [Promise Object (Host/runtime)](https://tc39.es/ecma262/#sec-promise-objects)
+
+### [Promise constructor and instance methods](https://tc39.es/ecma262/#sec-promise-constructor)
+
+#### [Promise constructor / resolve / reject](https://tc39.es/ecma262/#sec-promise-constructor)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Promise constructor (executor), Promise.resolve, Promise.reject | Supported | `Js2IL.Tests/Promise/JavaScript/Promise_Executor_Resolved.js`<br>`Js2IL.Tests/Promise/JavaScript/Promise_Executor_Rejected.js` | Constructor accepts an executor delegate and supports the basic resolve/reject fast-paths and dynamic delegate invocation used in tests. Promise.resolve/reject create already-settled Promise instances. | 27.1.1 |
+
+
+#### [Promise.prototype.then / catch / finally](https://tc39.es/ecma262/#sec-promise.prototype.then)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Promise.prototype.then / catch / finally | Supported | `Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js`<br>`Js2IL.Tests/Promise/JavaScript/Promise_Reject_Then.js`<br>`Js2IL.Tests/Promise/JavaScript/Promise_Resolve_ThenFinally.js`<br>`Js2IL.Tests/Promise/JavaScript/Promise_Reject_FinallyCatch.js`<br>`Js2IL.Tests/Promise/JavaScript/Promise_Resolve_FinallyThen.js`<br>`Js2IL.Tests/Promise/JavaScript/Promise_Resolve_FinallyThrows.js`<br>`Js2IL.Tests/Promise/JavaScript/Promise_Then_ReturnsResolvedPromise.js`<br>`Js2IL.Tests/Promise/JavaScript/Promise_Then_ReturnsRejectedPromise.js`<br>`Js2IL.Tests/Promise/JavaScript/Promise_Catch_ReturnsResolvedPromise.js`<br>`Js2IL.Tests/Promise/JavaScript/Promise_Catch_ReturnsRejectedPromise.js`<br>`Js2IL.Tests/Promise/JavaScript/Promise_Finally_ReturnsResolvedPromise.js`<br>`Js2IL.Tests/Promise/JavaScript/Promise_Finally_ReturnsRejectedPromise.js`<br>`Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js` | Implements `then`, `catch`, and `finally` with microtask scheduling support. `finally` handlers are treated as observers: non-Promise return values do not alter the settled result, while returned Promises are awaited and propagated (fixed earlier bug where Promise returns from finally were masked). Tests include chaining and then/catch/finally interactions. | 27.1.2 |
 
