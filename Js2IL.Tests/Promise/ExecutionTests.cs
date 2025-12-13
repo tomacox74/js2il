@@ -6,10 +6,17 @@ public class ExecutionTests : ExecutionTestsBase
     {       
     }
 
+    // Tests sorted alphabetically
     [Fact]
-    public Task Promise_Executor_Resolved()
+    public Task Promise_Catch_ReturnsRejectedPromise()
     {
-        return ExecutionTest(nameof(Promise_Executor_Resolved));
+        return ExecutionTest(nameof(Promise_Catch_ReturnsRejectedPromise));
+    }
+
+    [Fact]
+    public Task Promise_Catch_ReturnsResolvedPromise()
+    {
+        return ExecutionTest(nameof(Promise_Catch_ReturnsResolvedPromise));
     }
 
     [Fact]
@@ -19,27 +26,33 @@ public class ExecutionTests : ExecutionTestsBase
     }
 
     [Fact]
-    public Task Promise_Resolve_Then()
+    public Task Promise_Executor_Resolved()
     {
-        return ExecutionTest(nameof(Promise_Resolve_Then));
+        return ExecutionTest(nameof(Promise_Executor_Resolved));
     }
 
     [Fact]
-    public Task Promise_Reject_Then()
+    public Task Promise_Finally_ReturnsRejectedPromise()
     {
-        return ExecutionTest(nameof(Promise_Reject_Then));
+        return ExecutionTest(nameof(Promise_Finally_ReturnsRejectedPromise));
     }
 
     [Fact]
-    public Task Promise_Resolve_ThenFinally()
+    public Task Promise_Finally_ReturnsResolvedPromise()
     {
-        return ExecutionTest(nameof(Promise_Resolve_ThenFinally));
+        return ExecutionTest(nameof(Promise_Finally_ReturnsResolvedPromise));
     }
 
     [Fact]
     public Task Promise_Reject_FinallyCatch()
     {
         return ExecutionTest(nameof(Promise_Reject_FinallyCatch));
+    }
+
+    [Fact]
+    public Task Promise_Reject_Then()
+    {
+        return ExecutionTest(nameof(Promise_Reject_Then));
     }
 
     [Fact]
@@ -55,9 +68,21 @@ public class ExecutionTests : ExecutionTestsBase
     }
 
     [Fact]
-    public Task Promise_Then_ReturnsResolvedPromise()
+    public Task Promise_Resolve_Then()
     {
-        return ExecutionTest(nameof(Promise_Then_ReturnsResolvedPromise));
+        return ExecutionTest(nameof(Promise_Resolve_Then));
+    }
+
+    [Fact]
+    public Task Promise_Resolve_ThenFinally()
+    {
+        return ExecutionTest(nameof(Promise_Resolve_ThenFinally));
+    }
+
+    [Fact]
+    public Task Promise_Scheduling_StarvationTest()
+    {
+        return ExecutionTest(nameof(Promise_Scheduling_StarvationTest));
     }
 
     [Fact]
@@ -67,32 +92,8 @@ public class ExecutionTests : ExecutionTestsBase
     }
 
     [Fact]
-    public Task Promise_Catch_ReturnsResolvedPromise()
+    public Task Promise_Then_ReturnsResolvedPromise()
     {
-        return ExecutionTest(nameof(Promise_Catch_ReturnsResolvedPromise));
-    }
-
-    [Fact]
-    public Task Promise_Catch_ReturnsRejectedPromise()
-    {
-        return ExecutionTest(nameof(Promise_Catch_ReturnsRejectedPromise));
-    }
-
-    [Fact]
-    public Task Promise_Finally_ReturnsResolvedPromise()
-    {
-        return ExecutionTest(nameof(Promise_Finally_ReturnsResolvedPromise));
-    }
-
-    [Fact]
-    public Task Promise_Finally_ReturnsRejectedPromise()
-    {
-        return ExecutionTest(nameof(Promise_Finally_ReturnsRejectedPromise));
-    }
-
-    [Fact]
-    public Task Promise_Scheduling_StarvationTest()
-    {
-        return ExecutionTest(nameof(Promise_Scheduling_StarvationTest));
+        return ExecutionTest(nameof(Promise_Then_ReturnsResolvedPromise));
     }
 }
