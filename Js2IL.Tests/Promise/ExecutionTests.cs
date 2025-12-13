@@ -29,4 +29,64 @@ public class ExecutionTests : ExecutionTestsBase
     {
         return ExecutionTest(nameof(Promise_Reject_Then));
     }
+
+    [Fact]
+    public Task Promise_Resolve_ThenFinally()
+    {
+        return ExecutionTest(nameof(Promise_Resolve_ThenFinally));
+    }
+
+    [Fact]
+    public Task Promise_Reject_FinallyCatch()
+    {
+        return ExecutionTest(nameof(Promise_Reject_FinallyCatch));
+    }
+
+    [Fact]
+    public Task Promise_Resolve_FinallyThen()
+    {
+        return ExecutionTest(nameof(Promise_Resolve_FinallyThen));
+    }
+
+    [Fact]
+    public Task Promise_Resolve_FinallyThrows()
+    {
+        return ExecutionTest(nameof(Promise_Resolve_FinallyThrows));
+    }
+
+    [Fact]
+    public Task Promise_Then_ReturnsResolvedPromise()
+    {
+        return ExecutionTest(nameof(Promise_Then_ReturnsResolvedPromise));
+    }
+
+    [Fact]
+    public Task Promise_Then_ReturnsRejectedPromise()
+    {
+        return ExecutionTest(nameof(Promise_Then_ReturnsRejectedPromise));
+    }
+
+    [Fact]
+    public Task Promise_Catch_ReturnsResolvedPromise()
+    {
+        return ExecutionTest(nameof(Promise_Catch_ReturnsResolvedPromise));
+    }
+
+    [Fact]
+    public Task Promise_Catch_ReturnsRejectedPromise()
+    {
+        return ExecutionTest(nameof(Promise_Catch_ReturnsRejectedPromise));
+    }
+
+    [Fact]
+    public Task Promise_Finally_ReturnsResolvedPromise()
+    {
+        return ExecutionTest(nameof(Promise_Finally_ReturnsResolvedPromise));
+    }
+
+    [Fact]
+    public Task Promise_Finally_ReturnsRejectedPromise()
+    {
+        return ExecutionTest(nameof(Promise_Finally_ReturnsRejectedPromise));
+    }
 }
