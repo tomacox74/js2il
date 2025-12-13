@@ -94,5 +94,8 @@ namespace Js2IL.Tests.BinaryOperator
     // 'in' operator generator snapshot
     [Fact]
     public Task BinaryOperator_In_Object_OwnAndMissing() { var testName = nameof(BinaryOperator_In_Object_OwnAndMissing); return GenerateTest(testName); }
+
+    [Fact]
+    public Task BinaryOperator_StrictEqualCapturedVariable() { var testName = nameof(BinaryOperator_StrictEqualCapturedVariable); return GenerateTest(testName); }
     }
 }
