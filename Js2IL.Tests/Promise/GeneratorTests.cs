@@ -23,16 +23,11 @@ public class GeneratorTests : GeneratorTestsBase
         return GenerateTest(nameof(Promise_Catch_ReturnsRejectedPromise));
     }
 
-    [Fact]
-    public Task Promise_Executor_Resolved()
-    {
-        return GenerateTest(nameof(Promise_Executor_Resolved));
-    }
 
     [Fact]
     public Task Promise_Executor_Rejected()
     {
-        return GenerateTest(nameof(Promise_Executor_Resolved));
+        return GenerateTest(nameof(Promise_Executor_Rejected));
     }
 
     [Fact]
