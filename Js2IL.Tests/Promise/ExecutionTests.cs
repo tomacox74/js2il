@@ -89,4 +89,10 @@ public class ExecutionTests : ExecutionTestsBase
     {
         return ExecutionTest(nameof(Promise_Finally_ReturnsRejectedPromise));
     }
+
+    [Fact]
+    public Task Promise_Scheduling_StarvationTest()
+    {
+        return ExecutionTest(nameof(Promise_Scheduling_StarvationTest));
+    }
 }

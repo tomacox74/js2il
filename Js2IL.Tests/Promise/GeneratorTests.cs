@@ -89,4 +89,10 @@ public class GeneratorTests : GeneratorTestsBase
     {
         return GenerateTest(nameof(Promise_Finally_ReturnsRejectedPromise));
     }
+
+    [Fact]
+    public Task Promise_Scheduling_StarvationTest()
+    {
+        return GenerateTest(nameof(Promise_Scheduling_StarvationTest));
+    }
 }
