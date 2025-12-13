@@ -4,7 +4,29 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+### Added
+- **Promise Support**: Implemented Promise/A+ semantics with constructor, static methods, and prototype methods
+  - `new Promise(executor)`: Constructor accepts executor function with resolve/reject callbacks
+  - `Promise.resolve(value)`: Returns a Promise resolved with the given value
+  - `Promise.reject(reason)`: Returns a Promise rejected with the given reason
+  - `Promise.prototype.then(onFulfilled, onRejected)`: Registers fulfillment and rejection handlers, returns a new Promise
+  - `Promise.prototype.catch(onRejected)`: Registers rejection handler, returns a new Promise
+  - `Promise.prototype.finally(onFinally)`: Registers cleanup handler that executes regardless of settlement state, returns a new Promise
+  - Microtask scheduling integration via `EngineCore.IMicrotaskScheduler` for proper asynchronous execution
+  - Promise chaining and handler return value propagation (including nested Promise resolution)
+  - 15 comprehensive tests covering executor patterns, chaining, error handling, and microtask scheduling
+
+### Fixed
+- **Promise finally handlers**: Fixed bug where Promise returns from finally handlers were incorrectly masked. Finally handlers are now treated as observers—non-Promise return values don't alter the settled result, but returned Promises are properly awaited and propagated to the next handler in the chain.
+- **Binary operator type coercion**: Fixed strict equality (`===`) comparisons in logical OR patterns (e.g., `id === 1024 || id === 2047`) when comparing captured/boxed variables to numeric literals. The IL generator now correctly applies `ToNumber` conversion when the variable type is `Unknown` (boxed in scope fields), preventing incorrect direct `object`-to-`double` `ceq` comparisons that would always fail. Added regression test `BinaryOperator_StrictEqualCapturedVariable`.
+
+### Changed
+- **Runtime organization**: Reordered members in `JavaScriptRuntime/Promise.cs` to follow StyleCop conventions (nested types, fields, constructors, public methods, private methods)
+- **Test organization**: Alphabetically sorted test methods in `BinaryOperator` and `Promise` test classes for consistency
+
+### Documentation
+- Updated `ECMAScript2025_FeatureCoverage.json` with new Promise section (27.1) documenting constructor, static methods, and prototype methods
+- Enhanced Binary || operator notes to document the strict-equality type coercion fix for captured variables
 
 ## v0.3.6 - 2025-12-11
 
