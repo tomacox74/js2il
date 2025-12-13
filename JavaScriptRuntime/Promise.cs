@@ -4,13 +4,8 @@ namespace JavaScriptRuntime;
 [IntrinsicObject("Promise")]
 public sealed class Promise
 {
-    private enum State { Pending, Fulfilled, Rejected };
-
-    private State _state = State.Pending;
-
-    private object? _result;
-
-    private readonly List<Reaction> _reactions = new();
+    // Nested types
+    private enum State { Pending, Fulfilled, Rejected }
 
     private struct Reaction
     {
@@ -38,6 +33,14 @@ public sealed class Promise
         }
     }
 
+    // Fields
+    private State _state = State.Pending;
+
+    private object? _result;
+
+    private readonly List<Reaction> _reactions = new();
+
+    // Constructors
     public Promise(object? executor)
     {
         // as per the specification the delegate is called the executor
@@ -53,72 +56,7 @@ public sealed class Promise
     {
     }
 
-    private void InvokeExecutor(object? executor)
-    {
-        if (executor is not Delegate jsFunction)
-        {
-            throw new JavaScriptRuntime.TypeError("Promise resolver is not a function");
-        }
-
-        // the first paramter is ignored.. only exists for consistency
-        var unusedContext = System.Array.Empty<object>();
-        var Resolve = new Func<object[]?, object?, object?>((_, value) =>
-        {
-            return Settle(State.Fulfilled, value);
-        });
-
-        var Reject = new Func<object[]?, object?, object?>((_, reason) =>
-        {
-            return Settle(State.Rejected, reason);
-        });
-
-
-        try 
-        {
-            // strongly typed fast path for the common cases
-            if (executor is Func<object[]?, object?> func2)
-            {
-                func2(unusedContext);
-            }
-            else if (executor is Func<object[]?, object?, object?> func3)
-            {
-                func3(unusedContext, Resolve);
-            }
-            else if (executor is Func<object[]?, object?, object?, object?> func4)
-            {
-                func4(unusedContext, Resolve, Reject);
-            }
-            else
-            {
-                if (jsFunction.Method.ReturnType != typeof(object))
-                {
-                    // this would be unexpected.. and is a internal error
-                    // all javascript functions return something of type object.. can be null
-                    // technically we don't care.. this is to help catch internal bugs
-                    throw new InvalidOperationException("Promise executor has an invalid signature. Unexpected return value.");
-                }
-
-                // get the number of parameters
-                var paramCount = jsFunction.Method.GetParameters().Length;
-
-                if (paramCount == 0)
-                {
-                    throw new InvalidOperationException("Promise executor has an invalid signature. Missing scopes parameter.");
-                }
-
-                var args = new object?[paramCount];
-                args[0] = unusedContext;
-                args[1] = Resolve;
-                args[2] = Reject;
-                jsFunction.DynamicInvoke(args);
-            }
-        } 
-        catch (Exception ex)
-        {
-            Settle(State.Rejected, ex.InnerException ?? ex);
-        }
-    }
-
+    // Public methods
     public static object? resolve(object? value)
     {
         var promise = new Promise();
@@ -190,6 +128,73 @@ public sealed class Promise
         }
 
         return nextPromise;
+    }
+
+    // Private methods
+    private void InvokeExecutor(object? executor)
+    {
+        if (executor is not Delegate jsFunction)
+        {
+            throw new JavaScriptRuntime.TypeError("Promise resolver is not a function");
+        }
+
+        // the first paramter is ignored.. only exists for consistency
+        var unusedContext = System.Array.Empty<object>();
+        var Resolve = new Func<object[]?, object?, object?>((_, value) =>
+        {
+            return Settle(State.Fulfilled, value);
+        });
+
+        var Reject = new Func<object[]?, object?, object?>((_, reason) =>
+        {
+            return Settle(State.Rejected, reason);
+        });
+
+
+        try 
+        {
+            // strongly typed fast path for the common cases
+            if (executor is Func<object[]?, object?> func2)
+            {
+                func2(unusedContext);
+            }
+            else if (executor is Func<object[]?, object?, object?> func3)
+            {
+                func3(unusedContext, Resolve);
+            }
+            else if (executor is Func<object[]?, object?, object?, object?> func4)
+            {
+                func4(unusedContext, Resolve, Reject);
+            }
+            else
+            {
+                if (jsFunction.Method.ReturnType != typeof(object))
+                {
+                    // this would be unexpected.. and is a internal error
+                    // all javascript functions return something of type object.. can be null
+                    // technically we don't care.. this is to help catch internal bugs
+                    throw new InvalidOperationException("Promise executor has an invalid signature. Unexpected return value.");
+                }
+
+                // get the number of parameters
+                var paramCount = jsFunction.Method.GetParameters().Length;
+
+                if (paramCount == 0)
+                {
+                    throw new InvalidOperationException("Promise executor has an invalid signature. Missing scopes parameter.");
+                }
+
+                var args = new object?[paramCount];
+                args[0] = unusedContext;
+                args[1] = Resolve;
+                args[2] = Reject;
+                jsFunction.DynamicInvoke(args);
+            }
+        } 
+        catch (Exception ex)
+        {
+            Settle(State.Rejected, ex.InnerException ?? ex);
+        }
     }
 
     private object? Settle(State state, object? value)
