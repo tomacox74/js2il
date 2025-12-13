@@ -334,25 +334,25 @@ namespace Js2IL.Services.ILGenerators
                     _il.OpCode(ILOpCode.Unbox_any);
                     _il.Token(_bclReferences.BooleanType);
                 }
-                else if (leftType == JavascriptType.Object && (binaryExpression.Right is Acornima.Ast.BooleanLiteral || (binaryExpression.Right is Acornima.Ast.Literal brl && brl.Value is bool)))
+                else if ((leftType == JavascriptType.Object || leftType == JavascriptType.Unknown) && (binaryExpression.Right is Acornima.Ast.BooleanLiteral || (binaryExpression.Right is Acornima.Ast.Literal brl && brl.Value is bool)))
                 {
-                    // If right is a boolean literal and left is object (e.g., function return), convert left to boolean
+                    // If right is a boolean literal and left is object/unknown (e.g., function return, captured var), convert left to boolean
                     var toBool = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), typeof(bool), typeof(object));
                     _il.OpCode(ILOpCode.Call);
                     _il.Token(toBool);
                     leftType = JavascriptType.Boolean;
                 }
-                else if (leftType == JavascriptType.Object && (binaryExpression.Right is Acornima.Ast.NumericLiteral || (binaryExpression.Right is Acornima.Ast.UnaryExpression rur && rur.Operator.ToString() == "UnaryNegation" && rur.Argument is Acornima.Ast.NumericLiteral)))
+                else if ((leftType == JavascriptType.Object || leftType == JavascriptType.Unknown) && (binaryExpression.Right is Acornima.Ast.NumericLiteral || (binaryExpression.Right is Acornima.Ast.UnaryExpression rur && rur.Operator.ToString() == "UnaryNegation" && rur.Argument is Acornima.Ast.NumericLiteral)))
                 {
-                    // If right is a numeric literal and left is object (e.g., parameter), convert left to number
+                    // If right is a numeric literal and left is object/unknown (e.g., parameter, captured var), convert left to number
                     var toNum = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToNumber), typeof(double), typeof(object));
                     _il.OpCode(ILOpCode.Call);
                     _il.Token(toNum);
                     leftType = JavascriptType.Number;
                 }
-                else if (leftType == JavascriptType.Object && binaryExpression.Right is Acornima.Ast.Identifier)
+                else if ((leftType == JavascriptType.Object || leftType == JavascriptType.Unknown) && binaryExpression.Right is Acornima.Ast.Identifier)
                 {
-                    // If right is an identifier (which will load a boxed value) and left is object, convert left to number
+                    // If right is an identifier (which will load a boxed value) and left is object/unknown, convert left to number
                     // This handles cases like: methodResult == variableName
                     var toNum = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToNumber), typeof(double), typeof(object));
                     _il.OpCode(ILOpCode.Call);
