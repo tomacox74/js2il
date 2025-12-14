@@ -118,9 +118,50 @@ try {
 console.log();
 
 // ============================================================================
-// 3. JS2IL Benchmark
+// 3. YantraJS Benchmark
 // ============================================================================
-log("3. Compiling with JS2IL...", 'yellow');
+log("3. Running YantraJS benchmark...", 'yellow');
+try {
+    const yantraDir = path.join(__dirname, 'YantraJSComparison');
+    const yantraResult = execSync('dotnet run -c Release', {
+        cwd: yantraDir,
+        encoding: 'utf8',
+        stdio: 'pipe'
+    });
+
+    // Extract timing from YantraJS output
+    const yantraTimeMatch = yantraResult.match(/=== YantraJS Total Execution Time: (\d+)ms \(([\d.]+)s\) ===/);
+    let yantraMs = 0;
+    if (yantraTimeMatch) {
+        yantraMs = parseInt(yantraTimeMatch[1]);
+    }
+
+    // Extract passes and duration from YantraJS output
+    const yantraMatch = yantraResult.match(/rogiervandam-yantrajs;(\d+);([\d.]+);/);
+    if (yantraMatch) {
+        const yantraPasses = parseInt(yantraMatch[1]);
+        const yantraDuration = parseFloat(yantraMatch[2]);
+        log(`   [OK] YantraJS completed: ${yantraMs} ms total`, 'green');
+        log(`        Passes: ${yantraPasses} in ${yantraDuration} s`, 'gray');
+
+        results.push({
+            runtime: "YantraJS",
+            totalTimeMs: yantraMs,
+            passes: yantraPasses,
+            passDuration: yantraDuration,
+            passesPerSecond: Math.round((yantraPasses / yantraDuration) * 100) / 100
+        });
+    }
+} catch (error) {
+    log(`   [ERROR] YantraJS failed: ${error.message}`, 'red');
+}
+
+console.log();
+
+// ============================================================================
+// 4. JS2IL Benchmark
+// ============================================================================
+log("4. Compiling with JS2IL...", 'yellow');
 try {
     const compileStart = Date.now();
     execSync(`js2il "${path.join(__dirname, 'PrimeJavaScript.js')}" "${path.join(js2ilOutput, 'PrimeJavaScript')}"`, {
@@ -132,7 +173,7 @@ try {
     log(`   [OK] Compilation completed in: ${compileDuration} ms`, 'green');
 
     console.log();
-    log("4. Running JS2IL compiled benchmark...", 'yellow');
+    log("5. Running JS2IL compiled benchmark...", 'yellow');
     const js2ilStart = Date.now();
     const js2ilResult = execSync(`dotnet "${path.join(js2ilOutput, 'PrimeJavaScript', 'PrimeJavaScript.dll')}"`, {
         encoding: 'utf8',
@@ -205,11 +246,22 @@ header("KEY FINDINGS");
 // Calculate comparisons
 const nodeResult = results.find(r => r.runtime === "Node.js");
 const jintResult = results.find(r => r.runtime === "Jint");
+const yantraResult = results.find(r => r.runtime === "YantraJS");
 const js2ilResult = results.find(r => r.runtime === "JS2IL");
 
 if (js2ilResult && jintResult) {
     const js2ilVsJint = Math.round((js2ilResult.passes / jintResult.passes) * 100) / 100;
     log(`  * JS2IL is ${js2ilVsJint}x faster than Jint (interpreted .NET)`, 'green');
+}
+
+if (js2ilResult && yantraResult) {
+    if (js2ilResult.passes > yantraResult.passes) {
+        const js2ilVsYantra = Math.round((js2ilResult.passes / yantraResult.passes) * 100) / 100;
+        log(`  * JS2IL is ${js2ilVsYantra}x faster than YantraJS`, 'green');
+    } else {
+        const yantraVsJs2il = Math.round((yantraResult.passes / js2ilResult.passes) * 100) / 100;
+        log(`  * YantraJS is ${yantraVsJs2il}x faster than JS2IL`, 'yellow');
+    }
 }
 
 if (js2ilResult && nodeResult) {
@@ -225,6 +277,11 @@ if (js2ilResult && nodeResult) {
 if (nodeResult && jintResult) {
     const nodeVsJint = Math.round((nodeResult.passes / jintResult.passes) * 100) / 100;
     log(`  * Node.js is ${nodeVsJint}x faster than Jint`, 'cyan');
+}
+
+if (nodeResult && yantraResult) {
+    const nodeVsYantra = Math.round((nodeResult.passes / yantraResult.passes) * 100) / 100;
+    log(`  * Node.js is ${nodeVsYantra}x faster than YantraJS`, 'cyan');
 }
 
 console.log();
