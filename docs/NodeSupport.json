@@ -413,6 +413,75 @@
           "file": "Js2IL.Tests/Node/ExecutionTests.cs"
         }
       ]
+    },
+    {
+      "name": "Promise",
+      "status": "supported",
+      "implementation": "JavaScriptRuntime/Promise.cs, JavaScriptRuntime/Engine/EngineCore.cs",
+      "docs": "https://nodejs.org/api/globals.html#promise",
+      "notes": "Promise/A+ compliant implementation with microtask scheduling via IMicrotaskScheduler. Supports constructor, Promise.resolve(), Promise.reject(), then(), catch(), and finally(). Includes proper handling of returned Promises in handlers and chaining semantics.",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Promise.ExecutionTests.Promise_Executor_Resolved",
+          "file": "Js2IL.Tests/Promise/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Promise.ExecutionTests.Promise_Executor_Rejected",
+          "file": "Js2IL.Tests/Promise/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Promise.ExecutionTests.Promise_Resolve_Then",
+          "file": "Js2IL.Tests/Promise/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Promise.ExecutionTests.Promise_Reject_Then",
+          "file": "Js2IL.Tests/Promise/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Promise.ExecutionTests.Promise_Resolve_ThenFinally",
+          "file": "Js2IL.Tests/Promise/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Promise.ExecutionTests.Promise_Reject_FinallyCatch",
+          "file": "Js2IL.Tests/Promise/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Promise.ExecutionTests.Promise_Resolve_FinallyThen",
+          "file": "Js2IL.Tests/Promise/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Promise.ExecutionTests.Promise_Resolve_FinallyThrows",
+          "file": "Js2IL.Tests/Promise/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Promise.ExecutionTests.Promise_Then_ReturnsResolvedPromise",
+          "file": "Js2IL.Tests/Promise/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Promise.ExecutionTests.Promise_Then_ReturnsRejectedPromise",
+          "file": "Js2IL.Tests/Promise/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Promise.ExecutionTests.Promise_Catch_ReturnsResolvedPromise",
+          "file": "Js2IL.Tests/Promise/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Promise.ExecutionTests.Promise_Catch_ReturnsRejectedPromise",
+          "file": "Js2IL.Tests/Promise/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Promise.ExecutionTests.Promise_Finally_ReturnsResolvedPromise",
+          "file": "Js2IL.Tests/Promise/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Promise.ExecutionTests.Promise_Finally_ReturnsRejectedPromise",
+          "file": "Js2IL.Tests/Promise/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Promise.ExecutionTests.Promise_Scheduling_StarvationTest",
+          "file": "Js2IL.Tests/Promise/ExecutionTests.cs"
+        }
+      ]
     }
   ],
   "limitations": [
