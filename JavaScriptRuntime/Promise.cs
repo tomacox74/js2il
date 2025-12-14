@@ -18,7 +18,7 @@ public sealed class Promise
         /// i.e., for Promise.prototype.finally.
         /// </Summary>
         /// <Remarks>
-        /// Final handlers have the following charistics:
+        /// Final handlers have the following characteristics:
         /// * The handler does not accept any parameters
         /// * incomming promise state is copied to the newly returned promise
         /// </Remarks>
