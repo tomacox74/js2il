@@ -6,6 +6,11 @@ All notable changes to this project are documented here.
 
 _Nothing yet._
 
+## v0.4.0 - 2025-12-14
+
+
+
+
 ## v0.3.6 - 2025-12-11
 
 ### Added
