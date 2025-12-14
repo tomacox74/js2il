@@ -138,7 +138,7 @@ public sealed class Promise
             throw new JavaScriptRuntime.TypeError("Promise resolver is not a function");
         }
 
-        // the first paramter is ignored.. only exists for consistency
+        // the first parameter is ignored.. only exists for consistency
         var unusedContext = System.Array.Empty<object>();
         var Resolve = new Func<object[]?, object?, object?>((_, value) =>
         {
