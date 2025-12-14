@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+## v0.4.0 - 2025-12-14
+
 ### Added
 - **Promise Support**: Implemented Promise/A+ semantics with constructor, static methods, and prototype methods
   - `new Promise(executor)`: Constructor accepts executor function with resolve/reject callbacks
