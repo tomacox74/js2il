@@ -1,7 +1,7 @@
 # Node Support Coverage
 
 Target: `22.x LTS`
-Generated: `2025-12-11T01:21:30Z`
+Generated: `2025-12-14T00:00:29Z`
 
 
 ## Modules
@@ -174,6 +174,29 @@ Cancels a timer that was previously created with setTimeout. Returns undefined (
 Tests:
 - `Js2IL.Tests.Node.ExecutionTests.ClearTimeout_ZeroDelay` (`Js2IL.Tests/Node/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.ExecutionTests.ClearTimeout_MultipleZeroDelay_ClearSecondTimer` (`Js2IL.Tests/Node/ExecutionTests.cs`)
+
+### Promise (status: supported)
+Docs: [https://nodejs.org/api/globals.html#promise](https://nodejs.org/api/globals.html#promise)
+Implementation:
+- `JavaScriptRuntime/Promise.cs, JavaScriptRuntime/Engine/EngineCore.cs`
+Notes:
+Promise/A+ compliant implementation with microtask scheduling via IMicrotaskScheduler. Supports constructor, Promise.resolve(), Promise.reject(), then(), catch(), and finally(). Includes proper handling of returned Promises in handlers and chaining semantics.
+Tests:
+- `Js2IL.Tests.Promise.ExecutionTests.Promise_Executor_Resolved` (`Js2IL.Tests/Promise/ExecutionTests.cs`)
+- `Js2IL.Tests.Promise.ExecutionTests.Promise_Executor_Rejected` (`Js2IL.Tests/Promise/ExecutionTests.cs`)
+- `Js2IL.Tests.Promise.ExecutionTests.Promise_Resolve_Then` (`Js2IL.Tests/Promise/ExecutionTests.cs`)
+- `Js2IL.Tests.Promise.ExecutionTests.Promise_Reject_Then` (`Js2IL.Tests/Promise/ExecutionTests.cs`)
+- `Js2IL.Tests.Promise.ExecutionTests.Promise_Resolve_ThenFinally` (`Js2IL.Tests/Promise/ExecutionTests.cs`)
+- `Js2IL.Tests.Promise.ExecutionTests.Promise_Reject_FinallyCatch` (`Js2IL.Tests/Promise/ExecutionTests.cs`)
+- `Js2IL.Tests.Promise.ExecutionTests.Promise_Resolve_FinallyThen` (`Js2IL.Tests/Promise/ExecutionTests.cs`)
+- `Js2IL.Tests.Promise.ExecutionTests.Promise_Resolve_FinallyThrows` (`Js2IL.Tests/Promise/ExecutionTests.cs`)
+- `Js2IL.Tests.Promise.ExecutionTests.Promise_Then_ReturnsResolvedPromise` (`Js2IL.Tests/Promise/ExecutionTests.cs`)
+- `Js2IL.Tests.Promise.ExecutionTests.Promise_Then_ReturnsRejectedPromise` (`Js2IL.Tests/Promise/ExecutionTests.cs`)
+- `Js2IL.Tests.Promise.ExecutionTests.Promise_Catch_ReturnsResolvedPromise` (`Js2IL.Tests/Promise/ExecutionTests.cs`)
+- `Js2IL.Tests.Promise.ExecutionTests.Promise_Catch_ReturnsRejectedPromise` (`Js2IL.Tests/Promise/ExecutionTests.cs`)
+- `Js2IL.Tests.Promise.ExecutionTests.Promise_Finally_ReturnsResolvedPromise` (`Js2IL.Tests/Promise/ExecutionTests.cs`)
+- `Js2IL.Tests.Promise.ExecutionTests.Promise_Finally_ReturnsRejectedPromise` (`Js2IL.Tests/Promise/ExecutionTests.cs`)
+- `Js2IL.Tests.Promise.ExecutionTests.Promise_Scheduling_StarvationTest` (`Js2IL.Tests/Promise/ExecutionTests.cs`)
 
 
 ## Limitations
