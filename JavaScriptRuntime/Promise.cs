@@ -20,7 +20,7 @@ public sealed class Promise
         /// <Remarks>
         /// Final handlers have the following characteristics:
         /// * The handler does not accept any parameters
-        /// * incomming promise state is copied to the newly returned promise
+        /// * incoming promise state is copied to the newly returned promise
         /// </Remarks>
         public readonly bool IsFinally;
 
