@@ -28,6 +28,11 @@ All notable changes to this project are documented here.
 - Updated `ECMAScript2025_FeatureCoverage.json` with new Promise section (27.1) documenting constructor, static methods, and prototype methods
 - Enhanced Binary || operator notes to document the strict-equality type coercion fix for captured variables
 
+## v0.4.0 - 2025-12-14
+
+
+
+
 ## v0.3.6 - 2025-12-11
 
 ### Added
