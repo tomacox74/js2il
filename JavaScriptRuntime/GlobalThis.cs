@@ -40,6 +40,9 @@ namespace JavaScriptRuntime
                 _timers = null;
             }
         }
+
+        internal static JavaScriptRuntime.EngineCore.IMicrotaskScheduler? MicrotaskScheduler;
+
         private static JavaScriptRuntime.EngineCore.IScheduler? _scheduler;
 
         /// <summary>Directory name of the current module (script).</summary>

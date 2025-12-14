@@ -39,6 +39,7 @@ public class Engine
 
         // switch to dependency injection in the future
         GlobalThis.Scheduler = ctx;
+        GlobalThis.MicrotaskScheduler = ctx;
 
         scriptEntryPoint();
 

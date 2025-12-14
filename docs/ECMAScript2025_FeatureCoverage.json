@@ -499,7 +499,7 @@
                   "testScripts": [
                     "Js2IL.Tests/JavaScript/BinaryOperator_LogicalOr_Value.js"
                   ],
-                  "notes": "Value form returns left if truthy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited."
+                  "notes": "Value form returns left if truthy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited. Recent fixes ensure strict-equality patterns (e.g. `id === 1024 || id === 2047`) correctly handle captured/boxed variables by performing ToNumber conversion when the variable type is unknown, preventing incorrect direct object-to-number `ceq` comparisons."
                 },
                 {
                   "feature": "Binary && (Logical AND) with short-circuit",
@@ -1689,6 +1689,63 @@
                     "Js2IL.Tests/JSONRuntimeTests.cs"
                   ],
                   "notes": "Implemented via host intrinsic JavaScriptRuntime.JSON.Parse(string). Maps invalid input to SyntaxError and non-string input to TypeError. Reviver parameter is not supported. Objects become ExpandoObject, arrays use JavaScriptRuntime.Array, numbers use double."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "section": "27",
+      "title": "Promise Object (Host/runtime)",
+      "url": "https://tc39.es/ecma262/#sec-promise-objects",
+      "subsections": [
+        {
+          "subsection": "27.1",
+          "title": "Promise constructor and instance methods",
+          "url": "https://tc39.es/ecma262/#sec-promise-constructor",
+          "paragraphs": [
+            {
+              "paragraph": "27.1.1",
+              "title": "Promise constructor / resolve / reject",
+              "url": "https://tc39.es/ecma262/#sec-promise-constructor",
+              "features": [
+                {
+                  "feature": "Promise constructor (executor), Promise.resolve, Promise.reject",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Executor_Resolved.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Executor_Rejected.js"
+                  ],
+                  "notes": "Constructor accepts an executor delegate and supports the basic resolve/reject fast-paths and dynamic delegate invocation used in tests. Promise.resolve/reject create already-settled Promise instances."
+                }
+              ]
+            },
+            {
+              "paragraph": "27.1.2",
+              "title": "Promise.prototype.then / catch / finally",
+              "url": "https://tc39.es/ecma262/#sec-promise.prototype.then",
+              "features": [
+                {
+                  "feature": "Promise.prototype.then / catch / finally",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_Then.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Reject_Then.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_ThenFinally.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Reject_FinallyCatch.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_FinallyThen.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Resolve_FinallyThrows.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Then_ReturnsResolvedPromise.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Then_ReturnsRejectedPromise.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Catch_ReturnsResolvedPromise.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Catch_ReturnsRejectedPromise.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Finally_ReturnsResolvedPromise.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Finally_ReturnsRejectedPromise.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Scheduling_StarvationTest.js"
+                  ],
+                  "notes": "Implements `then`, `catch`, and `finally` with microtask scheduling support. `finally` handlers are treated as observers: non-Promise return values do not alter the settled result, while returned Promises are awaited and propagated (fixed earlier bug where Promise returns from finally were masked). Tests include chaining and then/catch/finally interactions."
                 }
               ]
             }

@@ -1,0 +1,1 @@
+Promise.reject("Hello from Promise.reject").finally(() => console.log("Hello from finally")).catch((message => console.log(message)));

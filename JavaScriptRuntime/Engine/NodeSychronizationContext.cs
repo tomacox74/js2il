@@ -25,12 +25,13 @@ struct TimerEntry : IEquatable<TimerEntry>
     }
 }
 
-public class NodeSychronizationContext : SynchronizationContext, IScheduler
+public class NodeSychronizationContext : SynchronizationContext, IScheduler, IMicrotaskScheduler
 {
     private static long _nextTimerId = 0;
     
-    private readonly Queue<SendOrPostCallbackItem> _macro = new();
+    private readonly Queue<Action> _macro = new();
     private readonly PriorityQueue<TimerEntry, long> _timers = new();
+    private readonly Queue<Action> _micro = new();
     private readonly ITickSource _tickSource;
 
     // Wake-up signal for the loop (sleep until new work arrives or next timer is due)
@@ -42,7 +43,7 @@ public class NodeSychronizationContext : SynchronizationContext, IScheduler
         _wakeup = waitHandle;
     }
 
-    static bool TryDequeue(Queue<SendOrPostCallbackItem> q, out SendOrPostCallbackItem item)
+    static bool TryDequeue(Queue<Action> q, out Action? item)
     {
         lock (q)
         {
@@ -60,14 +61,17 @@ public class NodeSychronizationContext : SynchronizationContext, IScheduler
             if (_timers.TryPeek(out var item, out long due) && due <= now)
             {
                 _timers.Dequeue();
-                lock (_macro) _macro.Enqueue(new(_ => item.Callback(), null));
+                lock (_macro) _macro.Enqueue(item.Callback);
             }
         }
     }
 
     public bool HasPendingWork()
     {
-        return _macro.Count > 0 || _timers.Count > 0;
+        lock (_micro)
+        {
+            return _macro.Count > 0 || _timers.Count > 0 || _micro.Count > 0;
+        }
     }
 
     public void RunOneIteration()
@@ -75,20 +79,21 @@ public class NodeSychronizationContext : SynchronizationContext, IScheduler
         // Fire any expired timers as macrotasks (only 1 per tick for simplicity)
         TryPromoteDueTimerToMacro();
 
-        if (TryDequeue(_macro, out var m)) 
+        if (TryDequeue(_macro, out var action)) 
         {   
-            m.D(m.S);
+            action?.Invoke();
         }
 
-        // TODO
-        //int ticks = 0;
-        //while (ticks++ < 1024 && TryDequeue(_nextTick, out var nt)) nt.D(nt.S);
-
-        //while (TryDequeue(_micro, out var mi)) mi.D(mi.S);
+        DrainMicrotasks();
     }
 
     public void WaitForWorkOrNextTimer(int maxWaitMs = 50)
     {
+        if (_micro.Count() > 0)
+        {
+             return;
+        }
+
         int waitMs = maxWaitMs;
         lock (_timers)
         {
@@ -126,6 +131,28 @@ public class NodeSychronizationContext : SynchronizationContext, IScheduler
         }
     }
 
-    private readonly record struct SendOrPostCallbackItem(SendOrPostCallback D, object? S);
+    void IMicrotaskScheduler.QueueMicrotask(Action task)
+    {
+        lock (_micro)
+        {
+            _micro.Enqueue(task);
+        }
+    }
+    
+    /// <summary>
+    /// Executes microtasks
+    /// </summary>
+    /// <param name="max">Maximum number of microtasks to execute in one call</param>
+    /// <remarks>
+    /// We limit how many we execute in a loop to ensure we don't starve execution of macro tasks and timers
+    /// </remarks>
+    private void DrainMicrotasks(int max = 1024)
+    {
+            int ticks = 0;
+            while (ticks++ < max && TryDequeue(_micro, out var action))
+            {
+                action?.Invoke();
+            }
+    }
 }
 

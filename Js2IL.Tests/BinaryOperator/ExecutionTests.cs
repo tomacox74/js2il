@@ -12,7 +12,7 @@ namespace Js2IL.Tests.BinaryOperator
         {
         }
 
-        // Binary Operator Tests
+        // Binary Operator Tests (sorted alphabetically)
         [Fact]
         public Task BinaryOperator_AddNumberNumber() { var testName = nameof(BinaryOperator_AddNumberNumber); return ExecutionTest(testName); }
 
@@ -44,13 +44,17 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_EqualMethodReturn() { var testName = nameof(BinaryOperator_EqualMethodReturn); return ExecutionTest(testName); }
 
         [Fact]
-        public Task BinaryOperator_EqualParameter() { var testName = nameof(BinaryOperator_EqualParameter); return ExecutionTest(testName); }
-
-        [Fact]
         public Task BinaryOperator_EqualObjectPropertyVsMethodReturn() { var testName = nameof(BinaryOperator_EqualObjectPropertyVsMethodReturn); return ExecutionTest(testName); }
 
         [Fact]
+        public Task BinaryOperator_EqualParameter() { var testName = nameof(BinaryOperator_EqualParameter); return ExecutionTest(testName); }
+
+        [Fact]
         public Task BinaryOperator_ExpNumberNumber() { var testName = nameof(BinaryOperator_ExpNumberNumber); return ExecutionTest(testName); }
+
+        // 'in' operator tests
+        [Fact]
+        public Task BinaryOperator_In_Object_OwnAndMissing() { var testName = nameof(BinaryOperator_In_Object_OwnAndMissing); return ExecutionTest(testName); }
 
         [Fact]
         public Task BinaryOperator_GreaterThan() { var testName = nameof(BinaryOperator_GreaterThan); return ExecutionTest(testName); }
@@ -58,15 +62,11 @@ namespace Js2IL.Tests.BinaryOperator
         [Fact]
         public Task BinaryOperator_GreaterThanOrEqual() { var testName = nameof(BinaryOperator_GreaterThanOrEqual); return ExecutionTest(testName); }
 
-        // 'in' operator tests
         [Fact]
-        public Task BinaryOperator_In_Object_OwnAndMissing() { var testName = nameof(BinaryOperator_In_Object_OwnAndMissing); return ExecutionTest(testName); }
+        public Task BinaryOperator_LeftShiftBit31() { var testName = nameof(BinaryOperator_LeftShiftBit31); return ExecutionTest(testName); }
 
         [Fact]
         public Task BinaryOperator_LeftShiftNumberNumber() { var testName = nameof(BinaryOperator_LeftShiftNumberNumber); return ExecutionTest(testName); }
-
-        [Fact]
-        public Task BinaryOperator_LeftShiftBit31() { var testName = nameof(BinaryOperator_LeftShiftBit31); return ExecutionTest(testName); }
 
         [Fact]
         public Task BinaryOperator_LessThan() { var testName = nameof(BinaryOperator_LessThan); return ExecutionTest(testName); }
@@ -94,6 +94,9 @@ namespace Js2IL.Tests.BinaryOperator
 
         [Fact]
         public Task BinaryOperator_RightShiftNumberNumber() { var testName = nameof(BinaryOperator_RightShiftNumberNumber); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task BinaryOperator_StrictEqualCapturedVariable() { var testName = nameof(BinaryOperator_StrictEqualCapturedVariable); return ExecutionTest(testName); }
 
         [Fact]
         public Task BinaryOperator_SubNumberNumber() { var testName = nameof(BinaryOperator_SubNumberNumber); return ExecutionTest(testName); }
