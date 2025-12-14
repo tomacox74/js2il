@@ -50,7 +50,7 @@ public sealed class Promise
     }
 
     /// <summary>
-    /// Private custructor for internal use (i.e. promise chaining)
+    /// Private constructor for internal use (i.e. promise chaining)
     /// </summary>
     internal Promise()
     {
