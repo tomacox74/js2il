@@ -14,13 +14,13 @@ public sealed class Promise
         public readonly Promise NextPromise;
 
         /// <Summary>
-        /// True if this reaction is for a finally handler
-        /// i.e. prom
+        /// True if this reaction is for a finally handler,
+        /// i.e., for Promise.prototype.finally.
         /// </Summary>
         /// <Remarks>
-        /// Final handlers have the following charistics:
+        /// Final handlers have the following characteristics:
         /// * The handler does not accept any parameters
-        /// * incomming promise state is copied to the newly returned promise
+        /// * incoming promise state is copied to the newly returned promise
         /// </Remarks>
         public readonly bool IsFinally;
 
@@ -50,7 +50,7 @@ public sealed class Promise
     }
 
     /// <summary>
-    /// Private custructor for internal use (i.e. promise chaining)
+    /// Private constructor for internal use (i.e. promise chaining)
     /// </summary>
     internal Promise()
     {
@@ -138,7 +138,7 @@ public sealed class Promise
             throw new JavaScriptRuntime.TypeError("Promise resolver is not a function");
         }
 
-        // the first paramter is ignored.. only exists for consistency
+        // the first parameter is ignored.. only exists for consistency
         var unusedContext = System.Array.Empty<object>();
         var Resolve = new Func<object[]?, object?, object?>((_, value) =>
         {
@@ -293,7 +293,7 @@ public sealed class Promise
     /// </Summary>
     /// <Remarks>
     /// Any value that is NOT a function is ignored.  Treated as a noop basically.
-    /// see 27.2.5.4.1 in teh ECMA 262
+    /// see 27.2.5.4.1 in the ECMA 262
     /// </Remarks>
     private static object? ExecuteHandler(object? handler, object? previousResult, bool isFinally)
     {
