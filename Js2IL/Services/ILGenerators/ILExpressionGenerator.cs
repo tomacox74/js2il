@@ -434,7 +434,7 @@ namespace Js2IL.Services.ILGenerators
                             javascriptType = localVar.Type;
                             // Propagate known CLR runtime type (e.g., const perf = require('perf_hooks')) so downstream
                             // member/property emission can bind typed getters and direct instance calls.
-                            clrType = localVar.RuntimeIntrinsicType;
+                            clrType = localVar.ClrType;
                         }
                         else
                         {
@@ -599,7 +599,7 @@ namespace Js2IL.Services.ILGenerators
                     if (baseVar != null)
                     {
                         // If the variable is known to be a CLR string, route to the string instance helper
-                        if (baseVar.RuntimeIntrinsicType == typeof(string))
+                        if (baseVar.ClrType == typeof(string))
                         {
                             return EmitStringInstanceMethodCall(mem.Object, methodName, callExpression);
                         }
@@ -608,7 +608,7 @@ namespace Js2IL.Services.ILGenerators
                         var recvRes = Emit(mem.Object, new TypeCoercion()); // stack: [receiver]
 
                         // If this variable is a known runtime intrinsic type, emit a direct instance call using the on-stack instance
-                        var runtimeType = baseVar.RuntimeIntrinsicType;
+                        var runtimeType = baseVar.ClrType;
                         if (runtimeType != null)
                         {
                             if (TryEmitIntrinsicInstanceCallOnStack(runtimeType, methodName, callExpression))
@@ -1239,12 +1239,12 @@ namespace Js2IL.Services.ILGenerators
             // Only applies to runtime intrinsic objects backed by a known CLR type.
             // If the Variable cache lacks the type (e.g., resolved from registry in nested function),
             // consult the shared registry for a recorded RuntimeIntrinsicType.
-            var runtimeType = baseVar.RuntimeIntrinsicType;
+            var runtimeType = baseVar.ClrType;
             if (runtimeType == null)
             {
                 var reg = _owner.Variables.GetVariableRegistry();
                 var vi = reg?.GetVariableInfo(baseVar.ScopeName, baseVar.Name) ?? reg?.FindVariable(baseVar.Name);
-                runtimeType = vi?.RuntimeIntrinsicType;
+                runtimeType = vi?.ClrType;
             }
             if (runtimeType == null)
             {
@@ -1808,7 +1808,7 @@ namespace Js2IL.Services.ILGenerators
 
                     // Resulting type after '+=' is dynamic; assume object, but hint CLR string for string appends
                     variable.Type = JavascriptType.Object;
-                    if (variable.RuntimeIntrinsicType == typeof(string))
+                    if (variable.ClrType == typeof(string))
                     {
                         // keep as string
                     }
@@ -1818,8 +1818,8 @@ namespace Js2IL.Services.ILGenerators
                         // (lightweight heuristic to aid subsequent string dispatch)
                         try
                         {
-                            if (assignmentExpression.Right is Acornima.Ast.StringLiteral)
-                                variable.RuntimeIntrinsicType = typeof(string);
+                            //if (assignmentExpression.Right is Acornima.Ast.StringLiteral)
+                                // variable.ClrType = typeof(string);
                         }
                         catch { /* best-effort */ }
                     }
@@ -1829,14 +1829,12 @@ namespace Js2IL.Services.ILGenerators
                 {
                     // Bitwise compound assignments (|=, &=, ^=, <<=, >>=, >>>=) handled
                     variable.Type = JavascriptType.Number;
-                    variable.RuntimeIntrinsicType = null;
                     return JavascriptType.Number;
                 }
                 else if (TryEmitArithmeticCompoundAssignment(opName, assignmentExpression, variable, scopeSlot, aid.Name))
                 {
                     // Arithmetic compound assignments (-=, *=, /=, %=, **=) handled
                     variable.Type = JavascriptType.Number;
-                    variable.RuntimeIntrinsicType = null;
                     return JavascriptType.Number;
                 }
                 else
@@ -1857,7 +1855,7 @@ namespace Js2IL.Services.ILGenerators
                     var rhsResult = Emit(assignmentExpression.Right, new TypeCoercion { boxResult = true });
                     _owner.CurrentAssignmentTarget = prevAssignment;
                     variable.Type = rhsResult.JsType;
-                    variable.RuntimeIntrinsicType = rhsResult.ClrType;
+                    //variable.ClrType = rhsResult.ClrType;
                     
                     // Store to variable (scope already loaded for fields, not needed for locals)
                     ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: isFieldVariable);
@@ -2156,8 +2154,11 @@ namespace Js2IL.Services.ILGenerators
 
             // Convert result back to double and box
             _il.OpCode(ILOpCode.Conv_r8);
-            _il.OpCode(ILOpCode.Box);
-            _il.Token(_owner.BclReferences.DoubleType);
+            if (variable.ClrType != typeof(double))
+            {
+                _il.OpCode(ILOpCode.Box);
+                _il.Token(_owner.BclReferences.DoubleType);
+            }
 
             // Store back
             ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false);
@@ -2754,7 +2755,7 @@ namespace Js2IL.Services.ILGenerators
                 var v = _variables.FindVariable(_owner.CurrentAssignmentTarget!);
                 if (v != null)
                 {
-                    v.RuntimeIntrinsicType = typeof(JavaScriptRuntime.Array);
+                    //v.ClrType = typeof(JavaScriptRuntime.Array);
                 }
             }
         }
@@ -2856,9 +2857,7 @@ namespace Js2IL.Services.ILGenerators
             if (context == CallSiteContext.Statement)
             {
                 // Statement-context: load, update, store
-                ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences);
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
-                _il.Token(_bclReferences.DoubleType);                  // [value]
+                ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences, unbox: true);
                 _il.LoadConstantR8(1.0);
                 if (updateExpression.Operator == Acornima.Operator.Increment)
                 {
@@ -2868,18 +2867,14 @@ namespace Js2IL.Services.ILGenerators
                 {
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Sub);
                 }
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
-                _il.Token(_bclReferences.DoubleType);                  // [boxedUpdated]
-                ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false);
+                ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false, valueIsBoxed: false, bclReferences: _owner.BclReferences);
                 return JavascriptType.Unknown;
             }
             else
             {
                 // Expression-context
                 // 1) Load current value
-                ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences);
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
-                _il.Token(_bclReferences.DoubleType);                  // [value]
+                ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences, unbox: true); // [cur]
 
                 // 2) Compute updated value and store back
                 _il.LoadConstantR8(1.0);
@@ -2891,14 +2886,11 @@ namespace Js2IL.Services.ILGenerators
                 {
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Sub);
                 }
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
-                _il.Token(_bclReferences.DoubleType);                  // [boxedUpdated]
-                ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false);
+
+                ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false, valueIsBoxed: true, bclReferences: _owner.BclReferences); // []
 
                 // 3) Reload UPDATED and optionally reverse to get ORIGINAL
-                ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences);
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
-                _il.Token(_bclReferences.DoubleType);                   // [updated]
+                ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences, unbox: true); // [updated]
 
                 if (!updateExpression.Prefix)
                 {

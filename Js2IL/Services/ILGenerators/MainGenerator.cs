@@ -17,6 +17,9 @@ namespace Js2IL.Services.ILGenerators
         private ClassesGenerator _classesGenerator;
         private MethodBodyStreamEncoder _methodBodyStreamEncoder;
         private SymbolTable _symbolTable;
+
+        private BaseClassLibraryReferences _bclReferences;
+
         private readonly ClassRegistry _classRegistry = new();
 
         public MainGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, SymbolTable symbolTable)
@@ -26,7 +29,8 @@ namespace Js2IL.Services.ILGenerators
             if (variables == null) throw new ArgumentNullException(nameof(variables));
             if (bclReferences == null) throw new ArgumentNullException(nameof(bclReferences));
             if (metadataBuilder == null) throw new ArgumentNullException(nameof(metadataBuilder));
-
+            
+            _bclReferences = bclReferences;
             _functionGenerator = new JavaScriptFunctionGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry);
             _ilGenerator = new ILMethodGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, _functionGenerator.FunctionRegistry);
             _classesGenerator = new ClassesGenerator(metadataBuilder, bclReferences, methodBodyStreamEncoder, _classRegistry, variables);
@@ -71,11 +75,6 @@ namespace Js2IL.Services.ILGenerators
             return false;
         }
 
-        public MainGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, SymbolTable symbolTable, TypeBuilder programTypeBuilder)
-            : this(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, symbolTable)
-        {
-        }
-
         /// <summary>
         /// Creates the global scope instance.
         /// The instance is stored in a local variable that can be accessed by variable operations.
@@ -114,7 +113,7 @@ namespace Js2IL.Services.ILGenerators
             _ilGenerator.IL.OpCode(ILOpCode.Ret);
 
             // local variables
-            var (localSignature, methodBodyAttributes) = MethodBuilder.CreateLocalVariableSignature(metadataBuilder, variables);
+            var (localSignature, methodBodyAttributes) = MethodBuilder.CreateLocalVariableSignature(metadataBuilder, variables, this._bclReferences);
 
             // First method tracking is now handled by the specific generators that own method emission.
 

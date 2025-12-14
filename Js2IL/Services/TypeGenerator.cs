@@ -431,13 +431,9 @@ namespace Js2IL.Services
                             variableType,
                             fieldHandle,
                             scopeTypeHandle,
-                            bindingInfo.Kind
+                            bindingInfo.Kind,
+                            bindingInfo.ClrType
                         );
-                        // If SymbolTable discovered a CLR runtime type (e.g., const x = require('path')) assign it now
-                        if (bindingInfo.RuntimeIntrinsicType != null)
-                        {
-                            _variableRegistry.SetRuntimeIntrinsicType(registryName, variableName, bindingInfo.RuntimeIntrinsicType);
-                        }
                     }
                     // Only advance when a field exists for this binding
                     fieldIndex++;
@@ -457,12 +453,9 @@ namespace Js2IL.Services
                             variableType,
                             default,  // No field handle for uncaptured
                             default,  // No scope type handle
-                            bindingInfo.Kind
+                            bindingInfo.Kind,
+                            bindingInfo.ClrType
                         );
-                        if (bindingInfo.RuntimeIntrinsicType != null)
-                        {
-                            _variableRegistry.SetRuntimeIntrinsicType(registryName, variableName, bindingInfo.RuntimeIntrinsicType);
-                        }
                     }
                 }
             }

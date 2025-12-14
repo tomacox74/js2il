@@ -134,10 +134,14 @@ namespace Js2IL.Services.ILGenerators
             if (variables == null) throw new ArgumentNullException(nameof(variables));
             if (bclReferences == null) throw new ArgumentNullException(nameof(bclReferences));
 
-            // Helper for optional unboxing
+            // Helper for optional unboxing if request
             void UnboxIfNeeded(JavascriptType jsType)
             {
                 if (!unbox) return;
+
+                // if the variable we are loading is a double already, then no unboxing is needed
+                if (variable.ClrType == typeof(double)) return;
+                
                 if (jsType == JavascriptType.Number)
                 {
                     il.OpCode(ILOpCode.Unbox_any);
@@ -150,12 +154,27 @@ namespace Js2IL.Services.ILGenerators
                 }
             }
 
+            // code assumes loaded value is boxed
+            void BoxIfNeeded()
+            {
+                if (unbox) return;
+                if (variable.ClrType == typeof(double))
+                {
+                    il.OpCode(ILOpCode.Box);
+                    il.Token(bclReferences.DoubleType);
+                }
+            }
+
             // Check if this is an uncaptured variable (uses local variable)
             if (variable.LocalSlot >= 0)
             {
                 // Load from local variable slot
                 il.LoadLocal(variable.LocalSlot);
+
+                // unbox and box are mutuallly exclusive
                 UnboxIfNeeded(variable.Type);
+                BoxIfNeeded();
+
                 return;
             }
 
@@ -260,7 +279,9 @@ namespace Js2IL.Services.ILGenerators
             this InstructionEncoder il,
             Variable variable,
             Variables variables,
-            bool scopeAlreadyLoaded = false)
+            bool scopeAlreadyLoaded = false,
+            bool valueIsBoxed = true,
+            BaseClassLibraryReferences? bclReferences = null)
         {
             if (variable == null) throw new ArgumentNullException(nameof(variable));
             if (variables == null) throw new ArgumentNullException(nameof(variables));
@@ -268,6 +289,25 @@ namespace Js2IL.Services.ILGenerators
             // Check if this is an uncaptured variable (uses local variable)
             if (variable.LocalSlot >= 0)
             {
+                // determine if we need to box the value before storing
+                if (!valueIsBoxed && variable.ClrType != typeof(double))
+                {
+                    if (variable.Type == JavascriptType.Number)
+                    {
+                        if (bclReferences == null)
+                        {
+                            throw new ArgumentNullException(nameof(bclReferences), "BCL references are required for boxing operations.");
+                        }
+
+                        il.OpCode(ILOpCode.Box);
+                        il.Token(bclReferences.DoubleType);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"Cannot store unboxed value into variable '{variable.Name}' of type '{variable.ClrType?.FullName}'");
+                    }
+                }
+
                 // Stack: [value]
                 // Store to local variable slot
                 il.StoreLocal(variable.LocalSlot);

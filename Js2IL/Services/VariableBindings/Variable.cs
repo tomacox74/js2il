@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using JavaScriptRuntime;
 
 namespace Js2IL.Services
 {
@@ -18,7 +19,7 @@ namespace Js2IL.Services
 
         // If this variable holds a known intrinsic runtime object (e.g., Node module instance),
         // capture its CLR type so emitters can bind directly to its methods.
-        public Type? RuntimeIntrinsicType { get; set; }
+        public required Type? ClrType { get; set; }
 
         // Unified optional metadata for compatibility with existing emitters
         public bool IsParameter { get; init; } = false;
@@ -200,13 +201,13 @@ namespace Js2IL.Services
                 {
                     paramFieldHandle = _registry.GetFieldHandle(_scopeName, name);
                     var viParamField = _registry.GetVariableInfo(_scopeName, name) ?? _registry.FindVariable(name);
-                    paramRuntimeType = viParamField?.RuntimeIntrinsicType;
+                    paramRuntimeType = viParamField?.ClrType;
                 }
                 catch (KeyNotFoundException)
                 {
                     // Parameter has no field backing, which is normal for simple parameters
                     var viParam = _registry.GetVariableInfo(_scopeName, name) ?? _registry.FindVariable(name);
-                    paramRuntimeType = viParam?.RuntimeIntrinsicType;
+                    paramRuntimeType = viParam?.ClrType;
                 }
                 
                 // Always return ParameterVariable with IsParameter = true so it loads via ldarg
@@ -218,7 +219,7 @@ namespace Js2IL.Services
                     FieldHandle = paramFieldHandle,
                     ScopeName = _scopeName,
                     Type = JavascriptType.Object, 
-                    RuntimeIntrinsicType = paramRuntimeType 
+                    ClrType = paramRuntimeType 
                 };
                 _variables[name] = p;
                 return p;
@@ -242,7 +243,7 @@ namespace Js2IL.Services
                     LocalSlot = localSlot,
                     ScopeName = _scopeName,
                     Type = JavascriptType.Unknown,
-                    RuntimeIntrinsicType = viUncaptured?.RuntimeIntrinsicType
+                    ClrType = viUncaptured?.ClrType
                 };
                 // Cache with scope-qualified key to allow proper shadowing in nested blocks
                 _variables[cacheKey] = lvUncaptured;
@@ -262,7 +263,7 @@ namespace Js2IL.Services
                         FieldHandle = currentScopeField,
                         ScopeName = _scopeName,
                         Type = JavascriptType.Unknown,
-                        RuntimeIntrinsicType = viDirect?.RuntimeIntrinsicType
+                        ClrType = viDirect?.ClrType
                     };
                     _variables[name] = lvDirect; // cache since it's stable for duration of method
                     return lvDirect;
@@ -290,7 +291,7 @@ namespace Js2IL.Services
                     ParentScopeIndex = idx,
                     FieldHandle = variableInfo.FieldHandle,
                     Type = JavascriptType.Unknown,
-                    RuntimeIntrinsicType = variableInfo.RuntimeIntrinsicType
+                    ClrType = variableInfo.ClrType
                 };
                 _variables[name] = sv;
                 return sv;
@@ -305,7 +306,7 @@ namespace Js2IL.Services
                     FieldHandle = variableInfo.FieldHandle,
                     ScopeName = variableInfo.ScopeName,
                     Type = JavascriptType.Unknown,
-                    RuntimeIntrinsicType = variableInfo.RuntimeIntrinsicType
+                    ClrType = variableInfo.ClrType
                 };
                 _variables[name] = lv;
                 return lv;
@@ -479,12 +480,12 @@ namespace Js2IL.Services
         }
 
         /// <summary>
-        /// Gets the type handle for a local variable at the specified index.
-        /// Returns the scope class type for scope instances, or null for non-scope locals.
+        ///  Gets the type handle for a local variable at the specified index.
+        ///  Returns the scope class type for scope instances, or null for non-scope locals.
         /// </summary>
         /// <param name="localIndex">The local variable index.</param>
         /// <returns>The type handle for scope locals, or null for non-scope locals (which will default to Object type).</returns>
-        public EntityHandle? GetLocalVariableType(int localIndex)
+        public EntityHandle? GetLocalVariableType(int localIndex, BaseClassLibraryReferences bclReferences)
         {
             // Local 0 is always the current function/global scope (if _hasLocalScope)
             if (localIndex == 0 && _hasLocalScope)
@@ -521,6 +522,17 @@ namespace Js2IL.Services
                         // Scope type not found (e.g., temporary locals like EqTmp_RHS_*), fall back to Object
                     }
                     break;
+                }
+            }
+
+            // partial support for known types.. if we have a clrtype of double then return that
+            // phase in support for more types in future work
+            var variable = _variables.Values.FirstOrDefault(v => v.LocalSlot == localIndex);
+            if (variable != null && variable.ClrType != null)
+            {
+                if (variable.ClrType == typeof(double))
+                {
+                    return bclReferences.DoubleType;
                 }
             }
 
@@ -603,7 +615,7 @@ namespace Js2IL.Services
                     LocalSlot = localSlot,
                     ScopeName = scopeName,
                     Type = JavascriptType.Unknown,
-                    RuntimeIntrinsicType = viUncaptured?.RuntimeIntrinsicType
+                    ClrType = viUncaptured?.ClrType
                 };
                 return true;
             }
@@ -618,7 +630,8 @@ namespace Js2IL.Services
                     Name = name,
                     FieldHandle = fh,
                     ScopeName = scopeName,
-                    Type = JavascriptType.Unknown
+                    Type = JavascriptType.Unknown,
+                    ClrType = _registry.GetVariableInfo(scopeName, name)?.ClrType
                 };
                 return true;
             }

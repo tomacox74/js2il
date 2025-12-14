@@ -98,7 +98,7 @@
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Variable_LetShadowing,
-			[1] object
+			[1] float64
 		)
 
 		IL_0000: newobj instance void Scopes.Variable_LetShadowing::.ctor()
@@ -109,38 +109,38 @@
 		IL_000e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0013: stfld object Scopes.Variable_LetShadowing::f
 		IL_0018: ldc.r8 1
-		IL_0021: box [System.Runtime]System.Double
-		IL_0026: stloc.1
-		IL_0027: ldloc.0
-		IL_0028: castclass Scopes.Variable_LetShadowing
-		IL_002d: ldfld object Scopes.Variable_LetShadowing::f
-		IL_0032: dup
-		IL_0033: brtrue.s IL_0058
+		IL_0021: stloc.1
+		IL_0022: ldloc.0
+		IL_0023: castclass Scopes.Variable_LetShadowing
+		IL_0028: ldfld object Scopes.Variable_LetShadowing::f
+		IL_002d: dup
+		IL_002e: brtrue.s IL_0053
 
-		IL_0035: pop
-		IL_0036: ldloc.0
-		IL_0037: ldnull
-		IL_0038: ldftn object Functions.f::f(object[])
-		IL_003e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0043: stfld object Scopes.Variable_LetShadowing::f
-		IL_0048: ldloc.0
-		IL_0049: castclass Scopes.Variable_LetShadowing
-		IL_004e: ldfld object Scopes.Variable_LetShadowing::f
-		IL_0053: br IL_0058
+		IL_0030: pop
+		IL_0031: ldloc.0
+		IL_0032: ldnull
+		IL_0033: ldftn object Functions.f::f(object[])
+		IL_0039: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_003e: stfld object Scopes.Variable_LetShadowing::f
+		IL_0043: ldloc.0
+		IL_0044: castclass Scopes.Variable_LetShadowing
+		IL_0049: ldfld object Scopes.Variable_LetShadowing::f
+		IL_004e: br IL_0053
 
-		IL_0058: ldc.i4.1
-		IL_0059: newarr [System.Runtime]System.Object
-		IL_005e: dup
-		IL_005f: ldc.i4.0
-		IL_0060: ldloc.0
-		IL_0061: stelem.ref
-		IL_0062: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0067: pop
-		IL_0068: ldc.i4.1
-		IL_0069: newarr [System.Runtime]System.Object
-		IL_006e: dup
-		IL_006f: ldc.i4.0
-		IL_0070: ldloc.1
+		IL_0053: ldc.i4.1
+		IL_0054: newarr [System.Runtime]System.Object
+		IL_0059: dup
+		IL_005a: ldc.i4.0
+		IL_005b: ldloc.0
+		IL_005c: stelem.ref
+		IL_005d: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0062: pop
+		IL_0063: ldc.i4.1
+		IL_0064: newarr [System.Runtime]System.Object
+		IL_0069: dup
+		IL_006a: ldc.i4.0
+		IL_006b: ldloc.1
+		IL_006c: box [System.Runtime]System.Double
 		IL_0071: stelem.ref
 		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_0077: pop

@@ -257,7 +257,7 @@ namespace Js2IL.Services.ILGenerators
                 il.OpCode(ILOpCode.Ret);
             }
 
-            var (localSignature, bodyAttributes) = MethodBuilder.CreateLocalVariableSignature(_metadataBuilder, functionVariables);
+            var (localSignature, bodyAttributes) = MethodBuilder.CreateLocalVariableSignature(_metadataBuilder, functionVariables, this._bclReferences);
 
             var bodyOffset = _methodBodyStreamEncoder.AddMethodBody(
                 il,

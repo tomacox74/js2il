@@ -91,7 +91,7 @@ namespace Js2IL.Services
             // Emit IL: return.
             // Prepare a TypeBuilder for the main script and pass it to MainGenerator
             var programTypeBuilder = new TypeBuilder(_metadataBuilder, "Scripts", name);
-            var mainGenerator = new MainGenerator(_variables!, _bclReferences, _metadataBuilder, methodBodyStream, symbolTable, programTypeBuilder);
+            var mainGenerator = new MainGenerator(_variables!, _bclReferences, _metadataBuilder, methodBodyStream, symbolTable);
             var bodyOffset = mainGenerator.GenerateMethod(ast);
             this._mainScriptMethod = programTypeBuilder.AddMethodDefinition(
                 MethodAttributes.Static | MethodAttributes.Public,
