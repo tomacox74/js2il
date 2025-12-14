@@ -14,8 +14,8 @@ public sealed class Promise
         public readonly Promise NextPromise;
 
         /// <Summary>
-        /// True if this reaction is for a finally handler
-        /// i.e. prom
+        /// True if this reaction is for a finally handler,
+        /// i.e., for Promise.prototype.finally.
         /// </Summary>
         /// <Remarks>
         /// Final handlers have the following charistics:
