@@ -293,7 +293,7 @@ public sealed class Promise
     /// </Summary>
     /// <Remarks>
     /// Any value that is NOT a function is ignored.  Treated as a noop basically.
-    /// see 27.2.5.4.1 in teh ECMA 262
+    /// see 27.2.5.4.1 in the ECMA 262
     /// </Remarks>
     private static object? ExecuteHandler(object? handler, object? previousResult, bool isFinally)
     {
