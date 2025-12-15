@@ -2669,6 +2669,33 @@ namespace Js2IL.Services.ILGenerators
                 }
                 return JavascriptType.Number;
             }
+            else if (op == Acornima.Operator.BitwiseNot)
+            {
+                // Bitwise NOT: ~x = NOT(ToInt32(x))
+                // Evaluate argument; if not already a number, convert using TypeUtilities.ToNumber(object)
+                var argJsType = Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = false }).JsType;
+                if (argJsType != JavascriptType.Number)
+                {
+                    EmitBoxIfNeeded(argJsType);
+                    var toNumRef = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToNumber), typeof(double), typeof(object));
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
+                    _il.Token(toNumRef);
+                }
+                // Convert to int32 for bitwise operation
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Conv_i4);
+                // Apply bitwise NOT
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Not);
+                // Convert back to double (JavaScript number)
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Conv_r8);
+                
+                if (typeCoercion.boxResult)
+                {
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
+                    _il.Token(_owner.BclReferences.DoubleType);
+                    return JavascriptType.Object;
+                }
+                return JavascriptType.Number;
+            }
             else
             {
                 throw ILEmitHelpers.NotSupported($"Unsupported unary operator: {op}", unaryExpression);

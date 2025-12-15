@@ -16,7 +16,7 @@ namespace Js2IL.Tests.UnaryOperator
         [Fact]
         public Task UnaryOperator_Typeof() => GenerateTest(nameof(UnaryOperator_Typeof));
 
-        [Fact(Skip = "Bitwise NOT operator not yet implemented - see issue #141")]
+        [Fact]
         public Task UnaryOperator_BitwiseNot() => GenerateTest(nameof(UnaryOperator_BitwiseNot));
     }
 }
