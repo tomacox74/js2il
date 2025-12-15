@@ -1,10 +1,47 @@
 # Node Support Coverage
 
 Target: `22.x LTS`
-Generated: `2025-12-14T00:00:29Z`
+Generated: `2025-12-15T23:19:26Z`
 
 
 ## Modules
+
+### fs (status: partial)
+Docs: [https://nodejs.org/api/fs.html](https://nodejs.org/api/fs.html)
+Implementation:
+- `JavaScriptRuntime/Node/FS.cs`
+
+| API | Kind | Status | Docs |
+| --- | ---- | ------ | ---- |
+| readFileSync(path[, options]) | function | supported | [docs](https://nodejs.org/api/fs.html#fsreadfilesyncpath-options) |
+| writeFileSync(path, data[, options]) | function | supported | [docs](https://nodejs.org/api/fs.html#fswritefilesyncfile-data-options) |
+| existsSync(path) | function | supported | [docs](https://nodejs.org/api/fs.html#fsexistssyncpath) |
+| readdirSync(path) | function | supported | [docs](https://nodejs.org/api/fs.html#fsreaddirsyncpath-options) |
+| readdirSync(path, { withFileTypes: true }) | function | supported | [docs](https://nodejs.org/api/fs.html#fsreaddirsyncpath-options) |
+| statSync(path) | function | supported | [docs](https://nodejs.org/api/fs.html#fsstatsyncpath-options) |
+| rmSync(path[, options]) | function | supported | [docs](https://nodejs.org/api/fs.html#fsrmsyncpath-options) |
+
+Tests:
+- `readFileSync(path[, options])`
+  - `Js2IL.Tests.Node.ExecutionTests.FS_ReadWrite_Utf8` (`Js2IL.Tests/Node/ExecutionTests.cs#L36`)
+  - `Js2IL.Tests.Node.GeneratorTests.FS_ReadWrite_Utf8` (`Js2IL.Tests/Node/GeneratorTests.cs`)
+- `writeFileSync(path, data[, options])`
+  - `Js2IL.Tests.Node.ExecutionTests.FS_ReadWrite_Utf8` (`Js2IL.Tests/Node/ExecutionTests.cs#L36`)
+  - `Js2IL.Tests.Node.GeneratorTests.FS_ReadWrite_Utf8` (`Js2IL.Tests/Node/GeneratorTests.cs`)
+- `existsSync(path)`
+  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ExistsSync_File_And_Directory` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
+  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ExistsSync_EmptyPath_ReturnsFalse` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
+- `readdirSync(path)`
+  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_Basic_Names` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
+  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_NonExistent_ReturnsEmpty` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
+- `readdirSync(path, { withFileTypes: true })`
+  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_WithFileTypes` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
+  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_NonExistent_ReturnsEmpty` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
+- `statSync(path)`
+  - `Js2IL.Tests.Node.FSAdditionalTests.FS_StatSync_FileSize` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
+  - `Js2IL.Tests.Node.FSAdditionalTests.FS_StatSync_NonExistentPath_ReturnsZero` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
+- `rmSync(path[, options])`
+  - `Js2IL.Tests.Node.FSAdditionalTests.FS_RmSync_Removes_File_And_Directory` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
 
 ### path (status: partial)
 Docs: [https://nodejs.org/api/path.html](https://nodejs.org/api/path.html)
@@ -48,43 +85,6 @@ Tests:
 - `performance.now()`
   - `Js2IL.Tests.Node.ExecutionTests.PerfHooks_PerformanceNow_Basic` (`Js2IL.Tests/Node/ExecutionTests.cs`)
   - `Js2IL.Tests.Node.GeneratorTests.PerfHooks_PerformanceNow_Basic` (`Js2IL.Tests/Node/GeneratorTests.cs`)
-
-### fs (status: partial)
-Docs: [https://nodejs.org/api/fs.html](https://nodejs.org/api/fs.html)
-Implementation:
-- `JavaScriptRuntime/Node/FS.cs`
-
-| API | Kind | Status | Docs |
-| --- | ---- | ------ | ---- |
-| readFileSync(path[, options]) | function | supported | [docs](https://nodejs.org/api/fs.html#fsreadfilesyncpath-options) |
-| writeFileSync(path, data[, options]) | function | supported | [docs](https://nodejs.org/api/fs.html#fswritefilesyncfile-data-options) |
-| existsSync(path) | function | supported | [docs](https://nodejs.org/api/fs.html#fsexistssyncpath) |
-| readdirSync(path) | function | supported | [docs](https://nodejs.org/api/fs.html#fsreaddirsyncpath-options) |
-| readdirSync(path, { withFileTypes: true }) | function | supported | [docs](https://nodejs.org/api/fs.html#fsreaddirsyncpath-options) |
-| statSync(path) | function | supported | [docs](https://nodejs.org/api/fs.html#fsstatsyncpath-options) |
-| rmSync(path[, options]) | function | supported | [docs](https://nodejs.org/api/fs.html#fsrmsyncpath-options) |
-
-Tests:
-- `readFileSync(path[, options])`
-  - `Js2IL.Tests.Node.ExecutionTests.FS_ReadWrite_Utf8` (`Js2IL.Tests/Node/ExecutionTests.cs#L36`)
-  - `Js2IL.Tests.Node.GeneratorTests.FS_ReadWrite_Utf8` (`Js2IL.Tests/Node/GeneratorTests.cs`)
-- `writeFileSync(path, data[, options])`
-  - `Js2IL.Tests.Node.ExecutionTests.FS_ReadWrite_Utf8` (`Js2IL.Tests/Node/ExecutionTests.cs#L36`)
-  - `Js2IL.Tests.Node.GeneratorTests.FS_ReadWrite_Utf8` (`Js2IL.Tests/Node/GeneratorTests.cs`)
-- `existsSync(path)`
-  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ExistsSync_File_And_Directory` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
-  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ExistsSync_EmptyPath_ReturnsFalse` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
-- `readdirSync(path)`
-  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_Basic_Names` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
-  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_NonExistent_ReturnsEmpty` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
-- `readdirSync(path, { withFileTypes: true })`
-  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_WithFileTypes` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
-  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_NonExistent_ReturnsEmpty` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
-- `statSync(path)`
-  - `Js2IL.Tests.Node.FSAdditionalTests.FS_StatSync_FileSize` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
-  - `Js2IL.Tests.Node.FSAdditionalTests.FS_StatSync_NonExistentPath_ReturnsZero` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
-- `rmSync(path[, options])`
-  - `Js2IL.Tests.Node.FSAdditionalTests.FS_RmSync_Removes_File_And_Directory` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
 
 ### process (status: partial)
 Docs: [https://nodejs.org/api/process.html](https://nodejs.org/api/process.html)

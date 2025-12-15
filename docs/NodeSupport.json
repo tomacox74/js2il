@@ -3,119 +3,6 @@
   "generatedAtUtc": "${UTC_NOW}",
   "modules": [
     {
-      "name": "path",
-      "status": "partial",
-      "implementation": "JavaScriptRuntime/Node/Path.cs",
-      "docs": "https://nodejs.org/api/path.html",
-      "apis": [
-        {
-          "name": "join(...parts)",
-          "kind": "function",
-          "status": "supported",
-          "docs": "https://nodejs.org/api/path.html#pathjoinpaths",
-          "tests": [
-            {
-              "name": "Js2IL.Tests.Node.ExecutionTests.Require_Path_Join_Basic",
-              "file": "Js2IL.Tests/Node/ExecutionTests.cs#L9"
-            },
-            {
-              "name": "Js2IL.Tests.Node.ExecutionTests.Require_Path_Join_NestedFunction",
-              "file": "Js2IL.Tests/Node/ExecutionTests.cs#L13"
-            },
-            {
-              "name": "Js2IL.Tests.Node.GeneratorTests.Require_Path_Join_Basic",
-              "file": "Js2IL.Tests/Node/GeneratorTests.cs"
-            },
-            {
-              "name": "Js2IL.Tests.Node.GeneratorTests.Require_Path_Join_NestedFunction",
-              "file": "Js2IL.Tests/Node/GeneratorTests.cs"
-            }
-          ]
-        },
-        {
-          "name": "resolve(...parts)",
-          "kind": "function",
-          "status": "supported",
-          "notes": "Resolves from right to left until an absolute path is constructed and returns a normalized absolute path via GetFullPath. Behavior is sufficient for current docs/scripts needs; edge cases like drive-letter nuances may differ from Node on non-Windows.",
-          "docs": "https://nodejs.org/api/path.html#pathresolvepaths",
-          "tests": [
-            {
-              "name": "Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Resolve_Relative_To_Absolute",
-              "file": "Js2IL.Tests/Node/PathAdditionalTests.cs"
-            }
-          ]
-        },
-        {
-          "name": "relative(from, to)",
-          "kind": "function",
-          "status": "supported",
-          "notes": "Uses System.IO.Path.GetRelativePath for platform-correct separators.",
-          "docs": "https://nodejs.org/api/path.html#pathrelativefrom-to",
-          "tests": [
-            {
-              "name": "Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Relative_Between_Two_Paths",
-              "file": "Js2IL.Tests/Node/PathAdditionalTests.cs"
-            }
-          ]
-        },
-        {
-          "name": "basename(path[, ext])",
-          "kind": "function",
-          "status": "supported",
-          "notes": "Ext trimming is supported when the name ends with the provided extension (exact match).",
-          "docs": "https://nodejs.org/api/path.html#pathbasenamepath-suffix",
-          "tests": [
-            {
-              "name": "Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Basename_And_Dirname",
-              "file": "Js2IL.Tests/Node/PathAdditionalTests.cs"
-            }
-          ]
-        },
-        {
-          "name": "dirname(path)",
-          "kind": "function",
-          "status": "supported",
-          "docs": "https://nodejs.org/api/path.html#pathdirnamepath",
-          "tests": [
-            {
-              "name": "Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Basename_And_Dirname",
-              "file": "Js2IL.Tests/Node/PathAdditionalTests.cs"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "perf_hooks",
-      "status": "partial",
-      "implementation": "JavaScriptRuntime/Node/PerfHooks.cs",
-      "docs": "https://nodejs.org/api/perf_hooks.html",
-      "apis": [
-        {
-          "name": "performance",
-          "kind": "property",
-          "status": "supported",
-          "docs": "https://nodejs.org/api/perf_hooks.html#performance"
-        },
-        {
-          "name": "performance.now()",
-          "kind": "function",
-          "status": "supported",
-          "docs": "https://nodejs.org/api/perf_hooks.html#performancenow",
-          "tests": [
-            {
-              "name": "Js2IL.Tests.Node.ExecutionTests.PerfHooks_PerformanceNow_Basic",
-              "file": "Js2IL.Tests/Node/ExecutionTests.cs"
-            },
-            {
-              "name": "Js2IL.Tests.Node.GeneratorTests.PerfHooks_PerformanceNow_Basic",
-              "file": "Js2IL.Tests/Node/GeneratorTests.cs"
-            }
-          ]
-        }
-      ]
-    },
-    {
       "name": "fs",
       "status": "partial",
       "implementation": "JavaScriptRuntime/Node/FS.cs",
@@ -239,11 +126,124 @@
       ]
     },
     {
+      "name": "path",
+      "status": "partial",
+      "implementation": "JavaScriptRuntime/Node/Path.cs",
+      "docs": "https://nodejs.org/api/path.html",
+      "apis": [
+        {
+          "name": "join(...parts)",
+          "kind": "function",
+          "status": "supported",
+          "docs": "https://nodejs.org/api/path.html#pathjoinpaths",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.ExecutionTests.Require_Path_Join_Basic",
+              "file": "Js2IL.Tests/Node/ExecutionTests.cs#L9"
+            },
+            {
+              "name": "Js2IL.Tests.Node.ExecutionTests.Require_Path_Join_NestedFunction",
+              "file": "Js2IL.Tests/Node/ExecutionTests.cs#L13"
+            },
+            {
+              "name": "Js2IL.Tests.Node.GeneratorTests.Require_Path_Join_Basic",
+              "file": "Js2IL.Tests/Node/GeneratorTests.cs"
+            },
+            {
+              "name": "Js2IL.Tests.Node.GeneratorTests.Require_Path_Join_NestedFunction",
+              "file": "Js2IL.Tests/Node/GeneratorTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "resolve(...parts)",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Resolves from right to left until an absolute path is constructed and returns a normalized absolute path via GetFullPath. Behavior is sufficient for current docs/scripts needs; edge cases like drive-letter nuances may differ from Node on non-Windows.",
+          "docs": "https://nodejs.org/api/path.html#pathresolvepaths",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Resolve_Relative_To_Absolute",
+              "file": "Js2IL.Tests/Node/PathAdditionalTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "relative(from, to)",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Uses System.IO.Path.GetRelativePath for platform-correct separators.",
+          "docs": "https://nodejs.org/api/path.html#pathrelativefrom-to",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Relative_Between_Two_Paths",
+              "file": "Js2IL.Tests/Node/PathAdditionalTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "basename(path[, ext])",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Ext trimming is supported when the name ends with the provided extension (exact match).",
+          "docs": "https://nodejs.org/api/path.html#pathbasenamepath-suffix",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Basename_And_Dirname",
+              "file": "Js2IL.Tests/Node/PathAdditionalTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "dirname(path)",
+          "kind": "function",
+          "status": "supported",
+          "docs": "https://nodejs.org/api/path.html#pathdirnamepath",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Basename_And_Dirname",
+              "file": "Js2IL.Tests/Node/PathAdditionalTests.cs"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "perf_hooks",
+      "status": "partial",
+      "implementation": "JavaScriptRuntime/Node/PerfHooks.cs",
+      "docs": "https://nodejs.org/api/perf_hooks.html",
+      "apis": [
+        {
+          "name": "performance",
+          "kind": "property",
+          "status": "supported",
+          "docs": "https://nodejs.org/api/perf_hooks.html#performance"
+        },
+        {
+          "name": "performance.now()",
+          "kind": "function",
+          "status": "supported",
+          "docs": "https://nodejs.org/api/perf_hooks.html#performancenow",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.ExecutionTests.PerfHooks_PerformanceNow_Basic",
+              "file": "Js2IL.Tests/Node/ExecutionTests.cs"
+            },
+            {
+              "name": "Js2IL.Tests.Node.GeneratorTests.PerfHooks_PerformanceNow_Basic",
+              "file": "Js2IL.Tests/Node/GeneratorTests.cs"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "process",
       "status": "partial",
       "implementation": [
         "JavaScriptRuntime/Node/Process.cs",
-  "JavaScriptRuntime/GlobalVariables.cs"
+        "JavaScriptRuntime/GlobalVariables.cs"
       ],
       "docs": "https://nodejs.org/api/process.html",
       "apis": [
@@ -355,7 +355,7 @@
       "status": "supported",
       "implementation": "JavaScriptRuntime/Console.cs",
       "docs": "https://nodejs.org/api/console.html#consoleerrordata-args",
-  "notes": "Writes to stderr.",
+      "notes": "Writes to stderr.",
       "tests": [
         {
           "name": "JavaScriptRuntime.Tests.ConsoleTests.Error_PrintsAllArgumentsWithSpaces",
@@ -368,7 +368,7 @@
       "status": "supported",
       "implementation": "JavaScriptRuntime/Console.cs",
       "docs": "https://nodejs.org/api/console.html#consolewarndata-args",
-  "notes": "Writes to stderr.",
+      "notes": "Writes to stderr.",
       "tests": [
         {
           "name": "JavaScriptRuntime.Tests.ConsoleTests.Warn_PrintsAllArgumentsWithSpaces",
