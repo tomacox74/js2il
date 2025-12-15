@@ -14,9 +14,38 @@ public partial class SymbolTableBuilder
 
     void InferVariableClrTypesForScope(Scope scope)
     {
-        // limited which types we do this for initally
-        bool isClassMethod = scope.Kind == ScopeKind.Function && scope.Parent != null && scope.Parent.Kind == ScopeKind.Class;
-        if (scope.Kind != ScopeKind.Global && isClassMethod == false)
+        // these are temporary gates as we slowing roll out type inference
+        bool isClassMethod(Scope? scope) =>
+            scope != null &&
+            scope.Kind == ScopeKind.Function &&
+            scope.Parent != null &&
+            scope.Parent.Kind == ScopeKind.Class;
+
+        // Check if this is a block scope that is a descendant of a class method,
+        // without crossing another function boundary (e.g., nested function or arrow function).
+        // Valid: classMethod -> block -> block -> block
+        // Invalid: classMethod -> function -> block (crosses function boundary)
+        bool isBlockScopeInClassMethod(Scope? scope)
+        {
+            if (scope == null || scope.Kind != ScopeKind.Block)
+                return false;
+            
+            var current = scope.Parent;
+            while (current != null)
+            {
+                if (isClassMethod(current))
+                    return true; // Found class method ancestor - valid!
+                
+                if (current.Kind == ScopeKind.Function)
+                    return false; // Hit another function before class method - invalid
+                
+                // Continue walking up through block scopes
+                current = current.Parent;
+            }
+            return false;
+        }
+
+        if (scope.Kind != ScopeKind.Global && isClassMethod(scope) == false && isBlockScopeInClassMethod(scope) == false)
         {
             return;
         }

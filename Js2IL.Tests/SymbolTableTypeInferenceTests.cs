@@ -102,6 +102,75 @@ public class SymbolTableTypeInferenceTests
         Assert.Equal(typeof(double), binding.ClrType);
     }
 
+    [Theory]
+    // For loop - iterator variable
+    [InlineData("for (let i = 0; i < 10; i++) { }", "i", typeof(double))]
+    // For loop - variable in body
+    [InlineData("for (let i = 0; i < 10; i++) { let x = 42; }", "x", typeof(double))]
+    // For...in loop
+    [InlineData("for (let key in {}) { let val = 'test'; }", "val", typeof(string))]
+    // For...of loop  
+    [InlineData("for (let item of []) { let count = 1; }", "count", typeof(double))]
+    // While loop
+    [InlineData("while (true) { let counter = 42; }", "counter", typeof(double))]
+    // Do-while loop
+    [InlineData("do { let flag = true; } while (false);", "flag", typeof(bool))]
+    // If block
+    [InlineData("if (true) { let value = 'hello'; }", "value", typeof(string))]
+    // Else block
+    [InlineData("if (false) { } else { let other = 99; }", "other", typeof(double))]
+    // Try block
+    [InlineData("try { let attempt = 1; } catch (e) { }", "attempt", typeof(double))]
+    // Catch block
+    [InlineData("try { } catch (e) { let recovered = 'ok'; }", "recovered", typeof(string))]
+    // Finally block
+    [InlineData("try { } finally { let cleanup = true; }", "cleanup", typeof(bool))]
+    // Switch case block (with braces)
+    [InlineData("switch (1) { case 1: { let matched = 42; } }", "matched", typeof(double))]
+    // NESTED block scopes - these are critical for real-world code like PrimeJavaScript
+    // For loop inside if block (2 levels deep)
+    [InlineData("if (true) { for (let i = 0; i < 10; i++) { let nested = 42; } }", "nested", typeof(double))]
+    // While loop inside for loop (2 levels deep)
+    [InlineData("for (let i = 0; i < 1; i++) { while (true) { let deep = 'test'; break; } }", "deep", typeof(string))]
+    // If inside while inside if (3 levels deep)
+    [InlineData("if (true) { while (true) { if (true) { let veryDeep = 123; } break; } }", "veryDeep", typeof(double))]
+    public void SymbolTable_InferTypes_BlockScope(string blockCode, string variableName, Type expectedType)
+    {
+        var code = $@"
+                class MyClass {{
+                    myMethod() {{
+                        {blockCode}
+                    }}
+                }}
+            ";
+
+        var symbolTable = BuildSymbolTable(code);
+        var binding = FindBindingByName(symbolTable.Root, variableName);
+        Assert.NotNull(binding);
+        Assert.Equal(expectedType, binding.ClrType);
+    }
+
+    private BindingInfo? FindBindingByName(Js2IL.SymbolTables.Scope scope, string name)
+    {
+        // Check current scope
+        if (scope.Bindings.TryGetValue(name, out var binding))
+        {
+            return binding;
+        }
+        
+        // Recursively search children
+        foreach (var child in scope.Children)
+        {
+            var found = FindBindingByName(child, name);
+            if (found != null)
+            {
+                return found;
+            }
+        }
+        
+        return null;
+    }
+
     private SymbolTable BuildSymbolTable(string source)
     {
         var ast = _parser.ParseJavaScript(source, "test.js");
