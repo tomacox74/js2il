@@ -1,0 +1,240 @@
+﻿// IL code: Math_Imul_Clz32_Basics
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Math_Imul_Clz32_Basics
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit toStr
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method toStr::.ctor
+
+	} // end of class toStr
+
+
+	// Fields
+	.field public object toStr
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Math_Imul_Clz32_Basics::.ctor
+
+} // end of class Scopes.Math_Imul_Clz32_Basics
+
+.class public auto ansi abstract sealed beforefieldinit Functions.toStr
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object toStr (
+			object[] scopes,
+			object n
+		) cil managed 
+	{
+		// Method begins at RVA 0x2064
+		// Header size: 12
+		// Code size: 89 (0x59)
+		.maxstack 32
+
+		IL_0000: ldarg.1
+		IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0006: ldc.r8 0.0
+		IL_000f: ceq
+		IL_0011: box [System.Runtime]System.Boolean
+		IL_0016: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+		IL_001b: brfalse IL_004d
+
+		IL_0020: ldc.r8 1
+		IL_0029: ldarg.1
+		IL_002a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_002f: div
+		IL_0030: ldc.r8 0.0
+		IL_0039: blt IL_0043
+
+		IL_003e: br IL_004d
+
+		IL_0043: ldstr "-0"
+		IL_0048: br IL_0058
+
+		IL_004d: ldstr ""
+		IL_0052: ldarg.1
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+
+		IL_0058: ret
+	} // end of method toStr::toStr
+
+} // end of class Functions.toStr
+
+.class public auto ansi beforefieldinit Scripts.Math_Imul_Clz32_Basics
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20cc
+		// Header size: 12
+		// Code size: 349 (0x15d)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.Math_Imul_Clz32_Basics,
+			[1] object,
+			[2] object,
+			[3] object,
+			[4] object,
+			[5] object,
+			[6] object
+		)
+
+		IL_0000: newobj instance void Scopes.Math_Imul_Clz32_Basics::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldnull
+		IL_0008: ldftn object Functions.toStr::toStr(object[], object)
+		IL_000e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0013: stfld object Scopes.Math_Imul_Clz32_Basics::toStr
+		IL_0018: ldc.r8 2
+		IL_0021: box [System.Runtime]System.Double
+		IL_0026: ldc.r8 3
+		IL_002f: box [System.Runtime]System.Double
+		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Math::imul(object, object)
+		IL_0039: stloc.1
+		IL_003a: ldc.r8 0.0
+		IL_0043: ldc.r8 1
+		IL_004c: sub
+		IL_004d: box [System.Runtime]System.Double
+		IL_0052: ldc.r8 2
+		IL_005b: box [System.Runtime]System.Double
+		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Math::imul(object, object)
+		IL_0065: stloc.2
+		IL_0066: ldc.r8 0.0
+		IL_006f: ldc.r8 1
+		IL_0078: sub
+		IL_0079: box [System.Runtime]System.Double
+		IL_007e: ldc.r8 0.0
+		IL_0087: box [System.Runtime]System.Double
+		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.Math::imul(object, object)
+		IL_0091: stloc.3
+		IL_0092: ldc.r8 0.0
+		IL_009b: box [System.Runtime]System.Double
+		IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.Math::clz32(object)
+		IL_00a5: stloc.s 4
+		IL_00a7: ldc.r8 1
+		IL_00b0: box [System.Runtime]System.Double
+		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Math::clz32(object)
+		IL_00ba: stloc.s 5
+		IL_00bc: ldc.r8 240
+		IL_00c5: box [System.Runtime]System.Double
+		IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.Math::clz32(object)
+		IL_00cf: stloc.s 6
+		IL_00d1: ldc.i4.1
+		IL_00d2: newarr [System.Runtime]System.Object
+		IL_00d7: dup
+		IL_00d8: ldc.i4.0
+		IL_00d9: ldloc.1
+		IL_00da: ldstr " "
+		IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00e4: ldloc.2
+		IL_00e5: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00ea: ldstr " "
+		IL_00ef: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00f4: ldloc.0
+		IL_00f5: castclass Scopes.Math_Imul_Clz32_Basics
+		IL_00fa: ldfld object Scopes.Math_Imul_Clz32_Basics::toStr
+		IL_00ff: dup
+		IL_0100: brtrue.s IL_0125
+
+		IL_0102: pop
+		IL_0103: ldloc.0
+		IL_0104: ldnull
+		IL_0105: ldftn object Functions.toStr::toStr(object[], object)
+		IL_010b: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0110: stfld object Scopes.Math_Imul_Clz32_Basics::toStr
+		IL_0115: ldloc.0
+		IL_0116: castclass Scopes.Math_Imul_Clz32_Basics
+		IL_011b: ldfld object Scopes.Math_Imul_Clz32_Basics::toStr
+		IL_0120: br IL_0125
+
+		IL_0125: ldc.i4.1
+		IL_0126: newarr [System.Runtime]System.Object
+		IL_012b: dup
+		IL_012c: ldc.i4.0
+		IL_012d: ldloc.0
+		IL_012e: stelem.ref
+		IL_012f: ldloc.3
+		IL_0130: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_0135: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_013a: stelem.ref
+		IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0140: pop
+		IL_0141: ldc.i4.3
+		IL_0142: newarr [System.Runtime]System.Object
+		IL_0147: dup
+		IL_0148: ldc.i4.0
+		IL_0149: ldloc.s 4
+		IL_014b: stelem.ref
+		IL_014c: dup
+		IL_014d: ldc.i4.1
+		IL_014e: ldloc.s 5
+		IL_0150: stelem.ref
+		IL_0151: dup
+		IL_0152: ldc.i4.2
+		IL_0153: ldloc.s 6
+		IL_0155: stelem.ref
+		IL_0156: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_015b: pop
+		IL_015c: ret
+	} // end of method Math_Imul_Clz32_Basics::Main
+
+} // end of class Scripts.Math_Imul_Clz32_Basics
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2235
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.Math_Imul_Clz32_Basics::Main()
+		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
