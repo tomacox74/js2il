@@ -1,0 +1,392 @@
+﻿// IL code: Math_Round_Trunc_NegativeHalves
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Math_Round_Trunc_NegativeHalves
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit ArrowFunction_r
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object n
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method ArrowFunction_r::.ctor
+
+	} // end of class ArrowFunction_r
+
+	.class nested public auto ansi beforefieldinit ArrowFunction_t
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object n
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2062
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method ArrowFunction_t::.ctor
+
+	} // end of class ArrowFunction_t
+
+	.class nested public auto ansi beforefieldinit toStr
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x206b
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method toStr::.ctor
+
+	} // end of class toStr
+
+
+	// Fields
+	.field public object toStr
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Math_Round_Trunc_NegativeHalves::.ctor
+
+} // end of class Scopes.Math_Round_Trunc_NegativeHalves
+
+.class public auto ansi abstract sealed beforefieldinit Functions.toStr
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object toStr (
+			object[] scopes,
+			object n
+		) cil managed 
+	{
+		// Method begins at RVA 0x2074
+		// Header size: 12
+		// Code size: 89 (0x59)
+		.maxstack 32
+
+		IL_0000: ldarg.1
+		IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0006: ldc.r8 0.0
+		IL_000f: ceq
+		IL_0011: box [System.Runtime]System.Boolean
+		IL_0016: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+		IL_001b: brfalse IL_004d
+
+		IL_0020: ldc.r8 1
+		IL_0029: ldarg.1
+		IL_002a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_002f: div
+		IL_0030: ldc.r8 0.0
+		IL_0039: blt IL_0043
+
+		IL_003e: br IL_004d
+
+		IL_0043: ldstr "-0"
+		IL_0048: br IL_0058
+
+		IL_004d: ldstr ""
+		IL_0052: ldarg.1
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+
+		IL_0058: ret
+	} // end of method toStr::toStr
+
+} // end of class Functions.toStr
+
+.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L3C19
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object ArrowFunction_L3C19 (
+			object[] scopes,
+			object n
+		) cil managed 
+	{
+		// Method begins at RVA 0x20dc
+		// Header size: 12
+		// Code size: 30 (0x1e)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.Math_Round_Trunc_NegativeHalves/ArrowFunction_r
+		)
+
+		IL_0000: newobj instance void Scopes.Math_Round_Trunc_NegativeHalves/ArrowFunction_r::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object Scopes.Math_Round_Trunc_NegativeHalves/ArrowFunction_r::n
+		IL_000d: ldloc.0
+		IL_000e: castclass Scopes.Math_Round_Trunc_NegativeHalves/ArrowFunction_r
+		IL_0013: ldfld object Scopes.Math_Round_Trunc_NegativeHalves/ArrowFunction_r::n
+		IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Math::round(object)
+		IL_001d: ret
+	} // end of method ArrowFunction_L3C19::ArrowFunction_L3C19
+
+} // end of class Functions.ArrowFunction_L3C19
+
+.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L4C19
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object ArrowFunction_L4C19 (
+			object[] scopes,
+			object n
+		) cil managed 
+	{
+		// Method begins at RVA 0x2108
+		// Header size: 12
+		// Code size: 30 (0x1e)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.Math_Round_Trunc_NegativeHalves/ArrowFunction_t
+		)
+
+		IL_0000: newobj instance void Scopes.Math_Round_Trunc_NegativeHalves/ArrowFunction_t::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object Scopes.Math_Round_Trunc_NegativeHalves/ArrowFunction_t::n
+		IL_000d: ldloc.0
+		IL_000e: castclass Scopes.Math_Round_Trunc_NegativeHalves/ArrowFunction_t
+		IL_0013: ldfld object Scopes.Math_Round_Trunc_NegativeHalves/ArrowFunction_t::n
+		IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Math::trunc(object)
+		IL_001d: ret
+	} // end of method ArrowFunction_L4C19::ArrowFunction_L4C19
+
+} // end of class Functions.ArrowFunction_L4C19
+
+.class public auto ansi beforefieldinit Scripts.Math_Round_Trunc_NegativeHalves
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2134
+		// Header size: 12
+		// Code size: 478 (0x1de)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.Math_Round_Trunc_NegativeHalves,
+			[1] object,
+			[2] object,
+			[3] object
+		)
+
+		IL_0000: newobj instance void Scopes.Math_Round_Trunc_NegativeHalves::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldnull
+		IL_0008: ldftn object Functions.toStr::toStr(object[], object)
+		IL_000e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0013: stfld object Scopes.Math_Round_Trunc_NegativeHalves::toStr
+		IL_0018: ldc.i4.8
+		IL_0019: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_001e: dup
+		IL_001f: ldc.r8 0.4
+		IL_0028: box [System.Runtime]System.Double
+		IL_002d: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0032: dup
+		IL_0033: ldc.r8 0.5
+		IL_003c: box [System.Runtime]System.Double
+		IL_0041: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0046: dup
+		IL_0047: ldc.r8 0.0
+		IL_0050: ldc.r8 0.4
+		IL_0059: sub
+		IL_005a: box [System.Runtime]System.Double
+		IL_005f: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0064: dup
+		IL_0065: ldc.r8 0.0
+		IL_006e: ldc.r8 0.5
+		IL_0077: sub
+		IL_0078: box [System.Runtime]System.Double
+		IL_007d: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0082: dup
+		IL_0083: ldc.r8 0.0
+		IL_008c: ldc.r8 0.50001
+		IL_0095: sub
+		IL_0096: box [System.Runtime]System.Double
+		IL_009b: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_00a0: dup
+		IL_00a1: ldc.r8 0.0
+		IL_00aa: ldc.r8 0.49999
+		IL_00b3: sub
+		IL_00b4: box [System.Runtime]System.Double
+		IL_00b9: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_00be: dup
+		IL_00bf: ldc.r8 1.5
+		IL_00c8: box [System.Runtime]System.Double
+		IL_00cd: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_00d2: dup
+		IL_00d3: ldc.r8 0.0
+		IL_00dc: ldc.r8 1.5
+		IL_00e5: sub
+		IL_00e6: box [System.Runtime]System.Double
+		IL_00eb: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_00f0: stloc.1
+		IL_00f1: ldloc.1
+		IL_00f2: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_00f7: ldc.i4.1
+		IL_00f8: newarr [System.Runtime]System.Object
+		IL_00fd: dup
+		IL_00fe: ldc.i4.0
+		IL_00ff: ldnull
+		IL_0100: ldftn object Functions.ArrowFunction_L3C19::ArrowFunction_L3C19(object[], object)
+		IL_0106: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_010b: ldc.i4.1
+		IL_010c: newarr [System.Runtime]System.Object
+		IL_0111: dup
+		IL_0112: ldc.i4.0
+		IL_0113: ldloc.0
+		IL_0114: stelem.ref
+		IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_011a: stelem.ref
+		IL_011b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
+		IL_0120: stloc.2
+		IL_0121: ldloc.1
+		IL_0122: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
+		IL_0127: ldc.i4.1
+		IL_0128: newarr [System.Runtime]System.Object
+		IL_012d: dup
+		IL_012e: ldc.i4.0
+		IL_012f: ldnull
+		IL_0130: ldftn object Functions.ArrowFunction_L4C19::ArrowFunction_L4C19(object[], object)
+		IL_0136: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_013b: ldc.i4.1
+		IL_013c: newarr [System.Runtime]System.Object
+		IL_0141: dup
+		IL_0142: ldc.i4.0
+		IL_0143: ldloc.0
+		IL_0144: stelem.ref
+		IL_0145: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_014a: stelem.ref
+		IL_014b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
+		IL_0150: stloc.3
+		IL_0151: ldc.i4.1
+		IL_0152: newarr [System.Runtime]System.Object
+		IL_0157: dup
+		IL_0158: ldc.i4.0
+		IL_0159: ldloc.2
+		IL_015a: ldstr "map"
+		IL_015f: ldc.i4.1
+		IL_0160: newarr [System.Runtime]System.Object
+		IL_0165: dup
+		IL_0166: ldc.i4.0
+		IL_0167: ldloc.0
+		IL_0168: castclass Scopes.Math_Round_Trunc_NegativeHalves
+		IL_016d: ldfld object Scopes.Math_Round_Trunc_NegativeHalves::toStr
+		IL_0172: stelem.ref
+		IL_0173: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0178: ldstr "join"
+		IL_017d: ldc.i4.1
+		IL_017e: newarr [System.Runtime]System.Object
+		IL_0183: dup
+		IL_0184: ldc.i4.0
+		IL_0185: ldstr " "
+		IL_018a: stelem.ref
+		IL_018b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0190: stelem.ref
+		IL_0191: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0196: pop
+		IL_0197: ldc.i4.1
+		IL_0198: newarr [System.Runtime]System.Object
+		IL_019d: dup
+		IL_019e: ldc.i4.0
+		IL_019f: ldloc.3
+		IL_01a0: ldstr "map"
+		IL_01a5: ldc.i4.1
+		IL_01a6: newarr [System.Runtime]System.Object
+		IL_01ab: dup
+		IL_01ac: ldc.i4.0
+		IL_01ad: ldloc.0
+		IL_01ae: castclass Scopes.Math_Round_Trunc_NegativeHalves
+		IL_01b3: ldfld object Scopes.Math_Round_Trunc_NegativeHalves::toStr
+		IL_01b8: stelem.ref
+		IL_01b9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_01be: ldstr "join"
+		IL_01c3: ldc.i4.1
+		IL_01c4: newarr [System.Runtime]System.Object
+		IL_01c9: dup
+		IL_01ca: ldc.i4.0
+		IL_01cb: ldstr " "
+		IL_01d0: stelem.ref
+		IL_01d1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_01d6: stelem.ref
+		IL_01d7: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_01dc: pop
+		IL_01dd: ret
+	} // end of method Math_Round_Trunc_NegativeHalves::Main
+
+} // end of class Scripts.Math_Round_Trunc_NegativeHalves
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x231e
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.Math_Round_Trunc_NegativeHalves::Main()
+		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
