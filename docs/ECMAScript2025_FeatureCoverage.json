@@ -1966,17 +1966,10 @@
               ]
             }
           ]
-        }
-      ]
-    },
-    {
-      "section": "23.2",
-      "title": "TypedArray Objects",
-      "url": "https://tc39.es/ecma262/#sec-typedarray-objects",
-      "subsections": [
+        },
         {
-          "subsection": "23.2.1",
-          "title": "Int32Array",
+          "subsection": "23.2",
+          "title": "TypedArray Objects",
           "url": "https://tc39.es/ecma262/#sec-typedarray-objects",
           "paragraphs": [
             {
@@ -2120,51 +2113,6 @@
           ]
         },
         {
-          "section": "25",
-          "title": "Keyed Collections",
-          "url": "https://tc39.es/ecma262/#sec-keyed-collections",
-          "subsections": [
-            {
-              "subsection": "25.4",
-              "title": "Set Objects",
-              "url": "https://tc39.es/ecma262/#sec-set-objects",
-              "paragraphs": [
-                {
-                  "paragraph": "25.4.5",
-                  "title": "Properties of Set Instances",
-                  "url": "https://tc39.es/ecma262/#sec-properties-of-set-instances",
-                  "features": [
-                    {
-                      "feature": "Set.prototype.add",
-                      "status": "Supported",
-                      "testScripts": [
-                        "Js2IL.Tests/Set/GeneratorTests.Set_Add_Has_Size.verified.txt"
-                      ],
-                      "notes": "Backed by JavaScriptRuntime.Set.add; returns the Set instance to allow chaining."
-                    },
-                    {
-                      "feature": "Set.prototype.has",
-                      "status": "Supported",
-                      "testScripts": [
-                        "Js2IL.Tests/Set/GeneratorTests.Set_Add_Has_Size.verified.txt"
-                      ],
-                      "notes": "Backed by JavaScriptRuntime.Set.has; strict equality for keys based on .NET object identity and string/double value semantics."
-                    },
-                    {
-                      "feature": "Set.prototype.size (getter)",
-                      "status": "Supported",
-                      "testScripts": [
-                        "Js2IL.Tests/Set/GeneratorTests.Set_Add_Has_Size.verified.txt"
-                      ],
-                      "notes": "Exposed via a 'size' property on JavaScriptRuntime.Set returning a JS number (double)."
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
           "subsection": "24.5",
           "title": "JSON Object",
           "url": "https://tc39.es/ecma262/#sec-json-object",
@@ -2181,6 +2129,51 @@
                     "Js2IL.Tests/JSONRuntimeTests.cs"
                   ],
                   "notes": "Implemented via host intrinsic JavaScriptRuntime.JSON.Parse(string). Maps invalid input to SyntaxError and non-string input to TypeError. Reviver parameter is not supported. Objects become ExpandoObject, arrays use JavaScriptRuntime.Array, numbers use double."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "section": "25",
+      "title": "Keyed Collections",
+      "url": "https://tc39.es/ecma262/#sec-keyed-collections",
+      "subsections": [
+        {
+          "subsection": "25.4",
+          "title": "Set Objects",
+          "url": "https://tc39.es/ecma262/#sec-set-objects",
+          "paragraphs": [
+            {
+              "paragraph": "25.4.5",
+              "title": "Properties of Set Instances",
+              "url": "https://tc39.es/ecma262/#sec-properties-of-set-instances",
+              "features": [
+                {
+                  "feature": "Set.prototype.add",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Set/GeneratorTests.Set_Add_Has_Size.verified.txt"
+                  ],
+                  "notes": "Backed by JavaScriptRuntime.Set.add; returns the Set instance to allow chaining."
+                },
+                {
+                  "feature": "Set.prototype.has",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Set/GeneratorTests.Set_Add_Has_Size.verified.txt"
+                  ],
+                  "notes": "Backed by JavaScriptRuntime.Set.has; strict equality for keys based on .NET object identity and string/double value semantics."
+                },
+                {
+                  "feature": "Set.prototype.size (getter)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Set/GeneratorTests.Set_Add_Has_Size.verified.txt"
+                  ],
+                  "notes": "Exposed via a 'size' property on JavaScriptRuntime.Set returning a JS number (double)."
                 }
               ]
             }
