@@ -135,6 +135,20 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | typeof | Supported | `Js2IL.Tests/JavaScript/UnaryOperator_Typeof.js` | Implemented via JavaScriptRuntime.TypeUtilities::Typeof and IL emission for UnaryExpression(typeof). typeof null returns 'object'; functions report 'function'; objects report 'object'. | 13.4.3 |
 
 
+#### [Prefix increment operator (++)](https://tc39.es/ecma262/#sec-prefix-increment-operator)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Unary ++ (Prefix increment) | Supported | `Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_PlusPlusPrefix.js` | Increments the value first, then returns the new value. | 13.4.4 |
+
+
+#### [Prefix decrement operator (--)](https://tc39.es/ecma262/#sec-prefix-decrement-operator)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Unary -- (Prefix decrement) | Supported | `Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_MinusMinusPrefix.js` | Decrements the value first, then returns the new value. | 13.4.5 |
+
+
 #### [Logical not operator (!)](https://tc39.es/ecma262/#sec-logical-not-operator)
 
 | Feature | Status | Test Scripts | Notes | Section |
@@ -146,14 +160,14 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Unary ++ (Postfix increment) | Supported | `Js2IL.Tests/JavaScript/UnaryOperator_PlusPlusPostfix.js` |  | 13.4.9 |
+| Unary ++ (Postfix increment) | Supported | `Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_PlusPlusPostfix.js` |  | 13.4.9 |
 
 
 #### [Postfix decrement operator (--)](https://tc39.es/ecma262/#sec-postfix-decrement-operator)
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Unary -- (Postfix decrement) | Supported | `Js2IL.Tests/JavaScript/UnaryOperator_MinusMinusPostfix.js` |  | 13.4.10 |
+| Unary -- (Postfix decrement) | Supported | `Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_MinusMinusPostfix.js` |  | 13.4.10 |
 
 
 #### [Bitwise NOT operator (~)](https://tc39.es/ecma262/#sec-bitwise-not-operator)
