@@ -4,6 +4,18 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+### Changed
+- **Performance Optimization - Unboxed Uncaptured Variables**: Implemented static type inference for uncaptured local variables, eliminating boxing overhead for primitive types (numbers, strings, booleans). Variables that are not captured by closures and maintain a stable type throughout their scope are now stored directly as their CLR types (e.g., `double`, `string`, `bool`) instead of being boxed as `System.Object`. This optimization:
+  - Adds new `InferVariableClrTypes` analysis pass in `SymbolTableBuilder` that tracks variable initialization and assignments to determine stable types
+  - Introduces `IsStableType` flag on `BindingInfo` to prevent type changes after inference
+  - Modifies IL generation to emit unboxed loads/stores for typed local variables, avoiding box/unbox instructions
+  - Applies only to uncaptured variables (captured variables remain boxed for closure compatibility)
+  - Significantly reduces memory allocations and improves runtime performance for numeric-intensive code
+  - Includes comprehensive test coverage in `SymbolTableTypeInferenceTests` with 8 test cases covering literals, binary expressions, assignments, conflicts, and mixed scenarios
+
+### Fixed
+- **Compound Assignment Bug in Class Methods**: Fixed incorrect IL generation for compound assignments (e.g., `+=`, `|=`) in class instance methods. Previously, the generator attempted to load the scope instance from `ldloc.0` for parent scope access in methods, but instance methods don't have a scope instance local—they receive scope arrays via parameters. The fix ensures compound assignments in class methods correctly load parent scopes from the `scopes` parameter array using `ldarg` + `ldelem_ref` + `castclass`, matching the pattern used for other variable operations in methods.
+
 ## v0.4.0 - 2025-12-14
 
 ### Added
