@@ -134,14 +134,15 @@ namespace Js2IL.Services.ILGenerators
             if (variables == null) throw new ArgumentNullException(nameof(variables));
             if (bclReferences == null) throw new ArgumentNullException(nameof(bclReferences));
 
-            // Helper for optional unboxing if request
+            // Helper for optional unboxing if requested
             void UnboxIfNeeded(JavascriptType jsType)
             {
                 if (!unbox) return;
 
-                // if the variable we are loading is a double already, then no unboxing is needed
-                if (variable.ClrType == typeof(double)) return;
+                // If the variable is a stable-type double stored in a local slot, it's already float64
+                if (variable.ClrType == typeof(double) && variable.IsStableType && variable.LocalSlot >= 0) return;
                 
+                // Unbox based on JavaScript type (Number or Boolean)
                 if (jsType == JavascriptType.Number)
                 {
                     il.OpCode(ILOpCode.Unbox_any);
@@ -158,7 +159,12 @@ namespace Js2IL.Services.ILGenerators
             void BoxIfNeeded()
             {
                 if (unbox) return;
-                if (variable.ClrType == typeof(double))
+
+                // unstable types are already boxed
+                // basically a unstable type is a variable that could be assigned different types
+                // value types are boxed boxed to allow this
+                // so we only need to box when the variable is not already stored as a boxed value
+                if (variable.IsStableType && variable.ClrType == typeof(double))
                 {
                     il.OpCode(ILOpCode.Box);
                     il.Token(bclReferences.DoubleType);
@@ -289,23 +295,21 @@ namespace Js2IL.Services.ILGenerators
             // Check if this is an uncaptured variable (uses local variable)
             if (variable.LocalSlot >= 0)
             {
-                // determine if we need to box the value before storing
-                if (!valueIsBoxed && variable.ClrType != typeof(double))
+                // Determine if we need to box the value before storing.
+                // The local slot is typed as float64 only when IsStableType AND ClrType == double.
+                // Otherwise, it's typed as object and requires boxing.
+                bool localIsTypedAsDouble = variable.IsStableType && variable.ClrType == typeof(double);
+                if (!valueIsBoxed && !localIsTypedAsDouble)
                 {
-                    if (variable.Type == JavascriptType.Number)
+                    // The value is an unboxed double that needs to be stored to an object-typed local
+                    // We always need to box it, regardless of what the variable's inferred type is
+                    if (bclReferences == null)
                     {
-                        if (bclReferences == null)
-                        {
-                            throw new ArgumentNullException(nameof(bclReferences), "BCL references are required for boxing operations.");
-                        }
+                        throw new ArgumentNullException(nameof(bclReferences), "BCL references are required for boxing operations.");
+                    }
 
-                        il.OpCode(ILOpCode.Box);
-                        il.Token(bclReferences.DoubleType);
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException($"Cannot store unboxed value into variable '{variable.Name}' of type '{variable.ClrType?.FullName}'");
-                    }
+                    il.OpCode(ILOpCode.Box);
+                    il.Token(bclReferences.DoubleType);
                 }
 
                 // Stack: [value]

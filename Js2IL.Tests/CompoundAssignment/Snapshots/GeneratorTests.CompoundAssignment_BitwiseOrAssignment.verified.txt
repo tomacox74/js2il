@@ -54,140 +54,133 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 323 (0x143)
+		// Code size: 288 (0x120)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.CompoundAssignment_BitwiseOrAssignment,
-			[1] object,
-			[2] object,
-			[3] object,
+			[1] float64,
+			[2] float64,
+			[3] float64,
 			[4] object
 		)
 
 		IL_0000: ldc.r8 5
-		IL_0009: box [System.Runtime]System.Double
-		IL_000e: stloc.1
-		IL_000f: ldloc.1
-		IL_0010: unbox.any [System.Runtime]System.Double
+		IL_0009: stloc.1
+		IL_000a: ldloc.1
+		IL_000b: conv.i4
+		IL_000c: ldc.r8 3
 		IL_0015: conv.i4
-		IL_0016: ldc.r8 3
-		IL_001f: conv.i4
-		IL_0020: or
-		IL_0021: conv.r8
-		IL_0022: box [System.Runtime]System.Double
-		IL_0027: stloc.1
-		IL_0028: ldc.i4.2
-		IL_0029: newarr [System.Runtime]System.Object
-		IL_002e: dup
-		IL_002f: ldc.i4.0
-		IL_0030: ldstr "x after 5 |= 3:"
-		IL_0035: stelem.ref
-		IL_0036: dup
-		IL_0037: ldc.i4.1
-		IL_0038: ldloc.1
-		IL_0039: stelem.ref
-		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_003f: pop
+		IL_0016: or
+		IL_0017: conv.r8
+		IL_0018: stloc.1
+		IL_0019: ldc.i4.2
+		IL_001a: newarr [System.Runtime]System.Object
+		IL_001f: dup
+		IL_0020: ldc.i4.0
+		IL_0021: ldstr "x after 5 |= 3:"
+		IL_0026: stelem.ref
+		IL_0027: dup
+		IL_0028: ldc.i4.1
+		IL_0029: ldloc.1
+		IL_002a: box [System.Runtime]System.Double
+		IL_002f: stelem.ref
+		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0035: pop
+		IL_0036: ldc.r8 0.0
+		IL_003f: stloc.2
 		IL_0040: ldc.r8 0.0
-		IL_0049: box [System.Runtime]System.Double
-		IL_004e: stloc.2
-		IL_004f: ldc.r8 0.0
-		IL_0058: box [System.Runtime]System.Double
-		IL_005d: stloc.3
-		// loop start (head: IL_005e)
-			IL_005e: ldloc.3
-			IL_005f: unbox.any [System.Runtime]System.Double
-			IL_0064: ldc.r8 4
-			IL_006d: blt IL_0077
+		IL_0049: stloc.3
+		// loop start (head: IL_004a)
+			IL_004a: ldloc.3
+			IL_004b: ldc.r8 4
+			IL_0054: blt IL_005e
 
-			IL_0072: br IL_00d9
+			IL_0059: br IL_00b1
 
-			IL_0077: ldloc.2
-			IL_0078: unbox.any [System.Runtime]System.Double
-			IL_007d: conv.i4
-			IL_007e: ldc.r8 1
-			IL_0087: conv.i4
-			IL_0088: ldloc.3
-			IL_0089: unbox.any [System.Runtime]System.Double
-			IL_008e: conv.i4
-			IL_008f: shl
-			IL_0090: conv.r8
-			IL_0091: conv.i4
-			IL_0092: or
-			IL_0093: conv.r8
+			IL_005e: ldloc.2
+			IL_005f: conv.i4
+			IL_0060: ldc.r8 1
+			IL_0069: conv.i4
+			IL_006a: ldloc.3
+			IL_006b: conv.i4
+			IL_006c: shl
+			IL_006d: conv.r8
+			IL_006e: conv.i4
+			IL_006f: or
+			IL_0070: conv.r8
+			IL_0071: stloc.2
+			IL_0072: ldc.i4.4
+			IL_0073: newarr [System.Runtime]System.Object
+			IL_0078: dup
+			IL_0079: ldc.i4.0
+			IL_007a: ldstr "allBits after iteration"
+			IL_007f: stelem.ref
+			IL_0080: dup
+			IL_0081: ldc.i4.1
+			IL_0082: ldloc.3
+			IL_0083: box [System.Runtime]System.Double
+			IL_0088: stelem.ref
+			IL_0089: dup
+			IL_008a: ldc.i4.2
+			IL_008b: ldstr ":"
+			IL_0090: stelem.ref
+			IL_0091: dup
+			IL_0092: ldc.i4.3
+			IL_0093: ldloc.2
 			IL_0094: box [System.Runtime]System.Double
-			IL_0099: stloc.2
-			IL_009a: ldc.i4.4
-			IL_009b: newarr [System.Runtime]System.Object
-			IL_00a0: dup
-			IL_00a1: ldc.i4.0
-			IL_00a2: ldstr "allBits after iteration"
-			IL_00a7: stelem.ref
-			IL_00a8: dup
-			IL_00a9: ldc.i4.1
-			IL_00aa: ldloc.3
-			IL_00ab: stelem.ref
-			IL_00ac: dup
-			IL_00ad: ldc.i4.2
-			IL_00ae: ldstr ":"
-			IL_00b3: stelem.ref
-			IL_00b4: dup
-			IL_00b5: ldc.i4.3
-			IL_00b6: ldloc.2
-			IL_00b7: stelem.ref
-			IL_00b8: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_00bd: pop
-			IL_00be: ldloc.3
-			IL_00bf: unbox.any [System.Runtime]System.Double
-			IL_00c4: ldc.r8 1
-			IL_00cd: add
-			IL_00ce: box [System.Runtime]System.Double
-			IL_00d3: stloc.3
-			IL_00d4: br IL_005e
+			IL_0099: stelem.ref
+			IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_009f: pop
+			IL_00a0: ldloc.3
+			IL_00a1: ldc.r8 1
+			IL_00aa: add
+			IL_00ab: stloc.3
+			IL_00ac: br IL_004a
 		// end loop
 
-		IL_00d9: ldc.i4.2
-		IL_00da: newarr [System.Runtime]System.Object
-		IL_00df: dup
-		IL_00e0: ldc.i4.0
-		IL_00e1: ldstr "final allBits:"
-		IL_00e6: stelem.ref
-		IL_00e7: dup
-		IL_00e8: ldc.i4.1
-		IL_00e9: ldloc.2
-		IL_00ea: stelem.ref
-		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_00f0: pop
-		IL_00f1: ldc.r8 0.0
-		IL_00fa: box [System.Runtime]System.Double
-		IL_00ff: stloc.s 4
-		IL_0101: ldloc.s 4
-		IL_0103: unbox.any [System.Runtime]System.Double
-		IL_0108: conv.i4
-		IL_0109: ldc.r8 1
-		IL_0112: conv.i4
-		IL_0113: ldc.r8 31
-		IL_011c: conv.i4
-		IL_011d: shl
-		IL_011e: conv.r8
-		IL_011f: conv.i4
-		IL_0120: or
-		IL_0121: conv.r8
-		IL_0122: box [System.Runtime]System.Double
-		IL_0127: stloc.s 4
-		IL_0129: ldc.i4.2
-		IL_012a: newarr [System.Runtime]System.Object
-		IL_012f: dup
-		IL_0130: ldc.i4.0
-		IL_0131: ldstr "value after |= (1 << 31):"
-		IL_0136: stelem.ref
-		IL_0137: dup
-		IL_0138: ldc.i4.1
-		IL_0139: ldloc.s 4
-		IL_013b: stelem.ref
-		IL_013c: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0141: pop
-		IL_0142: ret
+		IL_00b1: ldc.i4.2
+		IL_00b2: newarr [System.Runtime]System.Object
+		IL_00b7: dup
+		IL_00b8: ldc.i4.0
+		IL_00b9: ldstr "final allBits:"
+		IL_00be: stelem.ref
+		IL_00bf: dup
+		IL_00c0: ldc.i4.1
+		IL_00c1: ldloc.2
+		IL_00c2: box [System.Runtime]System.Double
+		IL_00c7: stelem.ref
+		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00cd: pop
+		IL_00ce: ldc.r8 0.0
+		IL_00d7: box [System.Runtime]System.Double
+		IL_00dc: stloc.s 4
+		IL_00de: ldloc.s 4
+		IL_00e0: unbox.any [System.Runtime]System.Double
+		IL_00e5: conv.i4
+		IL_00e6: ldc.r8 1
+		IL_00ef: conv.i4
+		IL_00f0: ldc.r8 31
+		IL_00f9: conv.i4
+		IL_00fa: shl
+		IL_00fb: conv.r8
+		IL_00fc: conv.i4
+		IL_00fd: or
+		IL_00fe: conv.r8
+		IL_00ff: box [System.Runtime]System.Double
+		IL_0104: stloc.s 4
+		IL_0106: ldc.i4.2
+		IL_0107: newarr [System.Runtime]System.Object
+		IL_010c: dup
+		IL_010d: ldc.i4.0
+		IL_010e: ldstr "value after |= (1 << 31):"
+		IL_0113: stelem.ref
+		IL_0114: dup
+		IL_0115: ldc.i4.1
+		IL_0116: ldloc.s 4
+		IL_0118: stelem.ref
+		IL_0119: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_011e: pop
+		IL_011f: ret
 	} // end of method CompoundAssignment_BitwiseOrAssignment::Main
 
 } // end of class Scripts.CompoundAssignment_BitwiseOrAssignment
@@ -199,7 +192,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21b3
+		// Method begins at RVA 0x2190
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

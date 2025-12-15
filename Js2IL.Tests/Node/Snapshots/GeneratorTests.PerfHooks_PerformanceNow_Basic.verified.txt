@@ -94,15 +94,15 @@
 	{
 		// Method begins at RVA 0x2074
 		// Header size: 12
-		// Code size: 286 (0x11e)
+		// Code size: 241 (0xf1)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.PerfHooks_PerformanceNow_Basic,
 			[1] object,
 			[2] object,
 			[3] object,
-			[4] object,
-			[5] object,
+			[4] float64,
+			[5] float64,
 			[6] object,
 			[7] object,
 			[8] object
@@ -119,96 +119,87 @@
 		IL_0018: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Node.PerfHooks/Performance::now()
 		IL_001d: stloc.3
 		IL_001e: ldc.r8 0.0
-		IL_0027: box [System.Runtime]System.Double
-		IL_002c: stloc.s 4
-		IL_002e: ldc.r8 0.0
-		IL_0037: box [System.Runtime]System.Double
-		IL_003c: stloc.s 5
-		// loop start (head: IL_003e)
-			IL_003e: ldloc.s 5
-			IL_0040: unbox.any [System.Runtime]System.Double
-			IL_0045: ldc.r8 10000
-			IL_004e: blt IL_0058
+		IL_0027: stloc.s 4
+		IL_0029: ldc.r8 0.0
+		IL_0032: stloc.s 5
+		// loop start (head: IL_0034)
+			IL_0034: ldloc.s 5
+			IL_0036: ldc.r8 10000
+			IL_003f: blt IL_0049
 
-			IL_0053: br IL_008b
+			IL_0044: br IL_0063
 
-			IL_0058: ldloc.s 4
-			IL_005a: unbox.any [System.Runtime]System.Double
-			IL_005f: ldloc.s 5
-			IL_0061: unbox.any [System.Runtime]System.Double
-			IL_0066: add
-			IL_0067: box [System.Runtime]System.Double
-			IL_006c: stloc.s 4
-			IL_006e: ldloc.s 5
-			IL_0070: unbox.any [System.Runtime]System.Double
-			IL_0075: ldc.r8 1
-			IL_007e: add
-			IL_007f: box [System.Runtime]System.Double
-			IL_0084: stloc.s 5
-			IL_0086: br IL_003e
+			IL_0049: ldloc.s 4
+			IL_004b: ldloc.s 5
+			IL_004d: add
+			IL_004e: stloc.s 4
+			IL_0050: ldloc.s 5
+			IL_0052: ldc.r8 1
+			IL_005b: add
+			IL_005c: stloc.s 5
+			IL_005e: br IL_0034
 		// end loop
 
-		IL_008b: ldloc.2
-		IL_008c: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.PerfHooks/Performance
-		IL_0091: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Node.PerfHooks/Performance::now()
-		IL_0096: stloc.s 6
-		IL_0098: ldc.i4.1
-		IL_0099: box [System.Runtime]System.Boolean
-		IL_009e: stloc.s 7
+		IL_0063: ldloc.2
+		IL_0064: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.PerfHooks/Performance
+		IL_0069: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Node.PerfHooks/Performance::now()
+		IL_006e: stloc.s 6
+		IL_0070: ldc.i4.1
+		IL_0071: box [System.Runtime]System.Boolean
+		IL_0076: stloc.s 7
 		.try
 		{
-			IL_00a0: ldloc.2
-			IL_00a1: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.PerfHooks/Performance
-			IL_00a6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Node.PerfHooks/Performance::now()
-			IL_00ab: pop
-			IL_00ac: leave IL_00bf
+			IL_0078: ldloc.2
+			IL_0079: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.PerfHooks/Performance
+			IL_007e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Node.PerfHooks/Performance::now()
+			IL_0083: pop
+			IL_0084: leave IL_0092
 		} // end .try
 		catch [JavaScriptRuntime]JavaScriptRuntime.Error
 		{
-			IL_00b1: pop
-			IL_00b2: ldc.i4.0
-			IL_00b3: box [System.Runtime]System.Boolean
-			IL_00b8: stloc.s 7
-			IL_00ba: leave IL_00bf
+			IL_0089: pop
+			IL_008a: ldc.i4.0
+			IL_008b: stloc.s 7
+			IL_008d: leave IL_0092
 		} // end handler
 
-		IL_00bf: ldloc.s 6
-		IL_00c1: ldloc.3
-		IL_00c2: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Subtract(object, object)
-		IL_00c7: stloc.s 8
-		IL_00c9: ldc.i4.2
-		IL_00ca: newarr [System.Runtime]System.Object
-		IL_00cf: dup
-		IL_00d0: ldc.i4.0
-		IL_00d1: ldstr "hasNow="
-		IL_00d6: stelem.ref
-		IL_00d7: dup
-		IL_00d8: ldc.i4.1
-		IL_00d9: ldloc.s 7
-		IL_00db: stelem.ref
-		IL_00dc: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_00e1: pop
-		IL_00e2: ldc.i4.2
-		IL_00e3: newarr [System.Runtime]System.Object
-		IL_00e8: dup
-		IL_00e9: ldc.i4.0
-		IL_00ea: ldstr "elapsedMsNonNegative="
-		IL_00ef: stelem.ref
-		IL_00f0: dup
-		IL_00f1: ldc.i4.1
-		IL_00f2: ldloc.s 8
-		IL_00f4: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_00f9: ldc.r8 0.0
-		IL_0102: clt
-		IL_0104: box [System.Runtime]System.Boolean
-		IL_0109: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-		IL_010e: ldc.i4.0
-		IL_010f: ceq
-		IL_0111: box [System.Runtime]System.Boolean
-		IL_0116: stelem.ref
-		IL_0117: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_011c: pop
-		IL_011d: ret
+		IL_0092: ldloc.s 6
+		IL_0094: ldloc.3
+		IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Subtract(object, object)
+		IL_009a: stloc.s 8
+		IL_009c: ldc.i4.2
+		IL_009d: newarr [System.Runtime]System.Object
+		IL_00a2: dup
+		IL_00a3: ldc.i4.0
+		IL_00a4: ldstr "hasNow="
+		IL_00a9: stelem.ref
+		IL_00aa: dup
+		IL_00ab: ldc.i4.1
+		IL_00ac: ldloc.s 7
+		IL_00ae: stelem.ref
+		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00b4: pop
+		IL_00b5: ldc.i4.2
+		IL_00b6: newarr [System.Runtime]System.Object
+		IL_00bb: dup
+		IL_00bc: ldc.i4.0
+		IL_00bd: ldstr "elapsedMsNonNegative="
+		IL_00c2: stelem.ref
+		IL_00c3: dup
+		IL_00c4: ldc.i4.1
+		IL_00c5: ldloc.s 8
+		IL_00c7: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_00cc: ldc.r8 0.0
+		IL_00d5: clt
+		IL_00d7: box [System.Runtime]System.Boolean
+		IL_00dc: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+		IL_00e1: ldc.i4.0
+		IL_00e2: ceq
+		IL_00e4: box [System.Runtime]System.Boolean
+		IL_00e9: stelem.ref
+		IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00ef: pop
+		IL_00f0: ret
 	} // end of method PerfHooks_PerformanceNow_Basic::Main
 
 } // end of class Scripts.PerfHooks_PerformanceNow_Basic
@@ -220,7 +211,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21b0
+		// Method begins at RVA 0x2184
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

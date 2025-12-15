@@ -54,12 +54,12 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 145 (0x91)
+		// Code size: 130 (0x82)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Array_Sort_Basic,
 			[1] object,
-			[2] object
+			[2] float64
 		)
 
 		IL_0000: ldc.i4.3
@@ -81,37 +81,34 @@
 		IL_0034: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::sort(object[])
 		IL_0039: pop
 		IL_003a: ldc.r8 0.0
-		IL_0043: box [System.Runtime]System.Double
-		IL_0048: stloc.2
-		// loop start (head: IL_0049)
-			IL_0049: ldloc.2
-			IL_004a: unbox.any [System.Runtime]System.Double
-			IL_004f: ldloc.1
-			IL_0050: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_0055: blt IL_005f
+		IL_0043: stloc.2
+		// loop start (head: IL_0044)
+			IL_0044: ldloc.2
+			IL_0045: ldloc.1
+			IL_0046: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_004b: blt IL_0055
 
-			IL_005a: br IL_0090
+			IL_0050: br IL_0081
 
-			IL_005f: ldc.i4.1
-			IL_0060: newarr [System.Runtime]System.Object
-			IL_0065: dup
-			IL_0066: ldc.i4.0
-			IL_0067: ldloc.1
-			IL_0068: ldloc.2
-			IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_006e: stelem.ref
-			IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_0074: pop
-			IL_0075: ldloc.2
-			IL_0076: unbox.any [System.Runtime]System.Double
-			IL_007b: ldc.r8 1
-			IL_0084: add
-			IL_0085: box [System.Runtime]System.Double
-			IL_008a: stloc.2
-			IL_008b: br IL_0049
+			IL_0055: ldc.i4.1
+			IL_0056: newarr [System.Runtime]System.Object
+			IL_005b: dup
+			IL_005c: ldc.i4.0
+			IL_005d: ldloc.1
+			IL_005e: ldloc.2
+			IL_005f: box [System.Runtime]System.Double
+			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0069: stelem.ref
+			IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_006f: pop
+			IL_0070: ldloc.2
+			IL_0071: ldc.r8 1
+			IL_007a: add
+			IL_007b: stloc.2
+			IL_007c: br IL_0044
 		// end loop
 
-		IL_0090: ret
+		IL_0081: ret
 	} // end of method Array_Sort_Basic::Main
 
 } // end of class Scripts.Array_Sort_Basic
@@ -123,7 +120,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2101
+		// Method begins at RVA 0x20f2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

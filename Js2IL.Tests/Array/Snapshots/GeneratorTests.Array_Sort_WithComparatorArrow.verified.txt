@@ -117,12 +117,12 @@
 	{
 		// Method begins at RVA 0x20a8
 		// Header size: 12
-		// Code size: 242 (0xf2)
+		// Code size: 227 (0xe3)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Array_Sort_WithComparatorArrow,
 			[1] object,
-			[2] object
+			[2] float64
 		)
 
 		IL_0000: ldc.i4.5
@@ -168,37 +168,34 @@
 		IL_0095: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::sort(object[])
 		IL_009a: pop
 		IL_009b: ldc.r8 0.0
-		IL_00a4: box [System.Runtime]System.Double
-		IL_00a9: stloc.2
-		// loop start (head: IL_00aa)
-			IL_00aa: ldloc.2
-			IL_00ab: unbox.any [System.Runtime]System.Double
-			IL_00b0: ldloc.1
-			IL_00b1: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_00b6: blt IL_00c0
+		IL_00a4: stloc.2
+		// loop start (head: IL_00a5)
+			IL_00a5: ldloc.2
+			IL_00a6: ldloc.1
+			IL_00a7: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_00ac: blt IL_00b6
 
-			IL_00bb: br IL_00f1
+			IL_00b1: br IL_00e2
 
-			IL_00c0: ldc.i4.1
-			IL_00c1: newarr [System.Runtime]System.Object
-			IL_00c6: dup
-			IL_00c7: ldc.i4.0
-			IL_00c8: ldloc.1
-			IL_00c9: ldloc.2
-			IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_00cf: stelem.ref
-			IL_00d0: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_00d5: pop
-			IL_00d6: ldloc.2
-			IL_00d7: unbox.any [System.Runtime]System.Double
-			IL_00dc: ldc.r8 1
-			IL_00e5: add
-			IL_00e6: box [System.Runtime]System.Double
-			IL_00eb: stloc.2
-			IL_00ec: br IL_00aa
+			IL_00b6: ldc.i4.1
+			IL_00b7: newarr [System.Runtime]System.Object
+			IL_00bc: dup
+			IL_00bd: ldc.i4.0
+			IL_00be: ldloc.1
+			IL_00bf: ldloc.2
+			IL_00c0: box [System.Runtime]System.Double
+			IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_00ca: stelem.ref
+			IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_00d0: pop
+			IL_00d1: ldloc.2
+			IL_00d2: ldc.r8 1
+			IL_00db: add
+			IL_00dc: stloc.2
+			IL_00dd: br IL_00a5
 		// end loop
 
-		IL_00f1: ret
+		IL_00e2: ret
 	} // end of method Array_Sort_WithComparatorArrow::Main
 
 } // end of class Scripts.Array_Sort_WithComparatorArrow
@@ -210,7 +207,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21a6
+		// Method begins at RVA 0x2197
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

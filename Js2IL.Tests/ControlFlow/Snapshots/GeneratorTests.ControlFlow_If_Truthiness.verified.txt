@@ -96,12 +96,12 @@
 	{
 		// Method begins at RVA 0x2074
 		// Header size: 12
-		// Code size: 321 (0x141)
+		// Code size: 306 (0x132)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ControlFlow_If_Truthiness,
 			[1] object,
-			[2] object
+			[2] float64
 		)
 
 		IL_0000: ldc.i4.s 10
@@ -153,54 +153,51 @@
 		IL_00b7: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_00bc: stloc.1
 		IL_00bd: ldc.r8 0.0
-		IL_00c6: box [System.Runtime]System.Double
-		IL_00cb: stloc.2
-		// loop start (head: IL_00cc)
-			IL_00cc: ldloc.2
-			IL_00cd: unbox.any [System.Runtime]System.Double
-			IL_00d2: ldloc.1
-			IL_00d3: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_00d8: blt IL_00e2
+		IL_00c6: stloc.2
+		// loop start (head: IL_00c7)
+			IL_00c7: ldloc.2
+			IL_00c8: ldloc.1
+			IL_00c9: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_00ce: blt IL_00d8
 
-			IL_00dd: br IL_0140
+			IL_00d3: br IL_0131
 
-			IL_00e2: ldloc.1
-			IL_00e3: ldloc.2
-			IL_00e4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_00e9: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_00ee: brtrue IL_00f8
+			IL_00d8: ldloc.1
+			IL_00d9: ldloc.2
+			IL_00da: box [System.Runtime]System.Double
+			IL_00df: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_00e4: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_00e9: brtrue IL_00f3
 
-			IL_00f3: br IL_0111
+			IL_00ee: br IL_010c
 
-			IL_00f8: ldc.i4.1
-			IL_00f9: newarr [System.Runtime]System.Object
-			IL_00fe: dup
-			IL_00ff: ldc.i4.0
-			IL_0100: ldstr "T"
-			IL_0105: stelem.ref
-			IL_0106: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_010b: pop
-			IL_010c: br IL_0125
+			IL_00f3: ldc.i4.1
+			IL_00f4: newarr [System.Runtime]System.Object
+			IL_00f9: dup
+			IL_00fa: ldc.i4.0
+			IL_00fb: ldstr "T"
+			IL_0100: stelem.ref
+			IL_0101: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_0106: pop
+			IL_0107: br IL_0120
 
-			IL_0111: ldc.i4.1
-			IL_0112: newarr [System.Runtime]System.Object
-			IL_0117: dup
-			IL_0118: ldc.i4.0
-			IL_0119: ldstr "F"
-			IL_011e: stelem.ref
-			IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_0124: pop
+			IL_010c: ldc.i4.1
+			IL_010d: newarr [System.Runtime]System.Object
+			IL_0112: dup
+			IL_0113: ldc.i4.0
+			IL_0114: ldstr "F"
+			IL_0119: stelem.ref
+			IL_011a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_011f: pop
 
-			IL_0125: ldloc.2
-			IL_0126: unbox.any [System.Runtime]System.Double
-			IL_012b: ldc.r8 1
-			IL_0134: add
-			IL_0135: box [System.Runtime]System.Double
-			IL_013a: stloc.2
-			IL_013b: br IL_00cc
+			IL_0120: ldloc.2
+			IL_0121: ldc.r8 1
+			IL_012a: add
+			IL_012b: stloc.2
+			IL_012c: br IL_00c7
 		// end loop
 
-		IL_0140: ret
+		IL_0131: ret
 	} // end of method ControlFlow_If_Truthiness::Main
 
 } // end of class Scripts.ControlFlow_If_Truthiness
@@ -212,7 +209,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c1
+		// Method begins at RVA 0x21b2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

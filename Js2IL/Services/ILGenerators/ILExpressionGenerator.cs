@@ -432,7 +432,18 @@ namespace Js2IL.Services.ILGenerators
                                 classRegistry: _owner.ClassRegistry);
                             // Prevent downstream Emit() from boxing again; variables are already boxed when needed
                             typeCoercion.boxResult = false;
-                            javascriptType = localVar.Type;
+                            
+                            // Determine the type that's actually on the stack after loading
+                            // For stable-type double variables, the value is already unboxed (native float64)
+                            // For unstable-type variables, report the actual Type to preserve original behavior
+                            if (localVar.IsStableType && localVar.ClrType == typeof(double))
+                            {
+                                javascriptType = JavascriptType.Number;
+                            }
+                            else
+                            {
+                                javascriptType = localVar.Type;
+                            }
                             // Propagate known CLR runtime type (e.g., const perf = require('perf_hooks')) so downstream
                             // member/property emission can bind typed getters and direct instance calls.
                             clrType = localVar.ClrType;
@@ -1852,11 +1863,15 @@ namespace Js2IL.Services.ILGenerators
                     
                     var prevAssignment = _owner.CurrentAssignmentTarget;
                     _owner.CurrentAssignmentTarget = aid.Name;
-                    // Always box the RHS so storing into an object-typed field is verifiable and consistent
-                    var rhsResult = Emit(assignmentExpression.Right, new TypeCoercion { boxResult = true });
+                    
+                    var rhsResult = Emit(assignmentExpression.Right, new TypeCoercion { boxResult = !variable.IsStableType });
                     _owner.CurrentAssignmentTarget = prevAssignment;
                     variable.Type = rhsResult.JsType;
-                    //variable.ClrType = rhsResult.ClrType;
+
+                    if (!variable.IsStableType)
+                    {
+                        variable.ClrType = rhsResult.ClrType;
+                    }
                     
                     // Store to variable (scope already loaded for fields, not needed for locals)
                     ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: isFieldVariable);
@@ -2114,13 +2129,26 @@ namespace Js2IL.Services.ILGenerators
 
             // Pattern: target = target <op> rhs
             // For bitwise operations, convert operands to int32, apply operation, convert back to double
-
+            
+            // Determine if the variable is stored as native float64 (stable-type double)
+            bool isStableDouble = variable.IsStableType && variable.ClrType == typeof(double);
+            
             // Load current value
-            ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences);
+            // For stable doubles, load directly (already float64)
+            // For non-stable types, load boxed object and explicitly unbox
+            if (isStableDouble)
+            {
+                ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences, unbox: true);
+            }
+            else
+            {
+                // Load as boxed object, then explicitly unbox to double
+                ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences, unbox: false);
+                _il.OpCode(ILOpCode.Unbox_any);
+                _il.Token(_owner.BclReferences.DoubleType);
+            }
 
-            // Convert LHS to int32 (unbox if needed, then convert to int32)
-            _il.OpCode(ILOpCode.Unbox_any);
-            _il.Token(_owner.BclReferences.DoubleType);
+            // Convert LHS to int32
             _il.OpCode(ILOpCode.Conv_i4);
 
             // Compute RHS and convert to int32
@@ -2153,16 +2181,11 @@ namespace Js2IL.Services.ILGenerators
             // Apply bitwise operation
             _il.OpCode(bitwiseOp.Value);
 
-            // Convert result back to double and box
+            // Convert result back to double
             _il.OpCode(ILOpCode.Conv_r8);
-            if (variable.ClrType != typeof(double))
-            {
-                _il.OpCode(ILOpCode.Box);
-                _il.Token(_owner.BclReferences.DoubleType);
-            }
-
-            // Store back
-            ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false);
+            
+            // Store back - pass valueIsBoxed=false (we have unboxed float64) and let EmitStoreVariable handle boxing
+            ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false, valueIsBoxed: false, bclReferences: _owner.BclReferences);
 
             return true;
         }
@@ -2189,9 +2212,8 @@ namespace Js2IL.Services.ILGenerators
                 if (string.Equals(opName, "ExponentiationAssignment", StringComparison.Ordinal))
                 {
                     // Pattern: target = Math.Pow(target, rhs)
-                    ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences);
-                    _il.OpCode(ILOpCode.Unbox_any);
-                    _il.Token(_owner.BclReferences.DoubleType);
+                    // Load current value as unboxed double
+                    ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences, unbox: true);
 
                     var prevAssignment = _owner.CurrentAssignmentTarget;
                     _owner.CurrentAssignmentTarget = variableName;
@@ -2221,9 +2243,8 @@ namespace Js2IL.Services.ILGenerators
                     _il.OpCode(ILOpCode.Call);
                     _il.Token(mathPowMethodRef);
 
-                    _il.OpCode(ILOpCode.Box);
-                    _il.Token(_owner.BclReferences.DoubleType);
-                    ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false);
+                    // Store back - value is unboxed double
+                    ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false, valueIsBoxed: false, bclReferences: _owner.BclReferences);
                     return true;
                 }
                 return false;
@@ -2233,11 +2254,7 @@ namespace Js2IL.Services.ILGenerators
             // Convert to double, apply operation, box result
 
             // Load current value
-            ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences);
-
-            // Convert LHS to double (unbox if needed)
-            _il.OpCode(ILOpCode.Unbox_any);
-            _il.Token(_owner.BclReferences.DoubleType);
+            ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences, unbox: true);
 
             // Compute RHS and convert to double
             var prevAssignment2 = _owner.CurrentAssignmentTarget;
@@ -2249,12 +2266,8 @@ namespace Js2IL.Services.ILGenerators
             // Apply arithmetic operation
             _il.OpCode(arithmeticOp.Value);
 
-            // Box result
-            _il.OpCode(ILOpCode.Box);
-            _il.Token(_owner.BclReferences.DoubleType);
-
             // Store back
-            ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false);
+            ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false, valueIsBoxed: false, bclReferences: _owner.BclReferences);
 
             return true;
         }
@@ -2855,10 +2868,24 @@ namespace Js2IL.Services.ILGenerators
             //   2) Compute UPDATED = value (+/-) 1 and store back (stfld)
             //   3) Produce result: UPDATED for prefix; ORIGINAL for postfix (by reloading updated and reversing +/- 1)
 
+            // Helper to emit explicit unbox for unstable double variables.
+            // UnboxIfNeeded in EmitLoadVariable only unboxes when Type==Number,
+            // but unstable double variables may have Type==Unknown while still being stored as boxed doubles.
+            // Only emit unbox if EmitLoadVariable didn't already unbox (i.e., when Type != Number).
+            void EmitUnboxUnstableDouble()
+            {
+                if (variable.ClrType == typeof(double) && !variable.IsStableType && variable.Type != JavascriptType.Number)
+                {
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
+                    _il.Token(_owner.BclReferences.DoubleType);
+                }
+            }
+
             if (context == CallSiteContext.Statement)
             {
                 // Statement-context: load, update, store
                 ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences, unbox: true);
+                EmitUnboxUnstableDouble();
                 _il.LoadConstantR8(1.0);
                 if (updateExpression.Operator == Acornima.Operator.Increment)
                 {
@@ -2876,6 +2903,7 @@ namespace Js2IL.Services.ILGenerators
                 // Expression-context
                 // 1) Load current value
                 ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences, unbox: true); // [cur]
+                EmitUnboxUnstableDouble();
 
                 // 2) Compute updated value and store back
                 _il.LoadConstantR8(1.0);
@@ -2892,6 +2920,7 @@ namespace Js2IL.Services.ILGenerators
 
                 // 3) Reload UPDATED and optionally reverse to get ORIGINAL
                 ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences, unbox: true); // [updated]
+                EmitUnboxUnstableDouble();
 
                 if (!updateExpression.Prefix)
                 {

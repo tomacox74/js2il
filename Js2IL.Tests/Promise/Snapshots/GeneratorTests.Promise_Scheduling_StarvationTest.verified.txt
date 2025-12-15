@@ -282,11 +282,11 @@
 	{
 		// Method begins at RVA 0x21c4
 		// Header size: 12
-		// Code size: 141 (0x8d)
+		// Code size: 126 (0x7e)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Promise_Scheduling_StarvationTest,
-			[1] object
+			[1] float64
 		)
 
 		IL_0000: ldc.i4.1
@@ -298,46 +298,43 @@
 		IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_0013: pop
 		IL_0014: ldc.r8 0.0
-		IL_001d: box [System.Runtime]System.Double
-		IL_0022: stloc.1
-		// loop start (head: IL_0023)
-			IL_0023: ldloc.1
-			IL_0024: unbox.any [System.Runtime]System.Double
-			IL_0029: ldc.r8 2048
-			IL_0032: blt IL_003c
+		IL_001d: stloc.1
+		// loop start (head: IL_001e)
+			IL_001e: ldloc.1
+			IL_001f: ldc.r8 2048
+			IL_0028: blt IL_0032
 
-			IL_0037: br IL_008c
+			IL_002d: br IL_007d
 
-			IL_003c: ldloc.1
-			IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-			IL_0042: ldstr "then"
-			IL_0047: ldc.i4.1
-			IL_0048: newarr [System.Runtime]System.Object
-			IL_004d: dup
-			IL_004e: ldc.i4.0
-			IL_004f: ldnull
-			IL_0050: ldftn object Functions.ArrowFunction_L5C28::ArrowFunction_L5C28(object[], object)
-			IL_0056: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-			IL_005b: ldc.i4.1
-			IL_005c: newarr [System.Runtime]System.Object
-			IL_0061: dup
-			IL_0062: ldc.i4.0
-			IL_0063: ldloc.0
-			IL_0064: stelem.ref
-			IL_0065: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-			IL_006a: stelem.ref
-			IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-			IL_0070: pop
-			IL_0071: ldloc.1
-			IL_0072: unbox.any [System.Runtime]System.Double
-			IL_0077: ldc.r8 1
-			IL_0080: add
-			IL_0081: box [System.Runtime]System.Double
-			IL_0086: stloc.1
-			IL_0087: br IL_0023
+			IL_0032: ldloc.1
+			IL_0033: box [System.Runtime]System.Double
+			IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+			IL_003d: ldstr "then"
+			IL_0042: ldc.i4.1
+			IL_0043: newarr [System.Runtime]System.Object
+			IL_0048: dup
+			IL_0049: ldc.i4.0
+			IL_004a: ldnull
+			IL_004b: ldftn object Functions.ArrowFunction_L5C28::ArrowFunction_L5C28(object[], object)
+			IL_0051: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+			IL_0056: ldc.i4.1
+			IL_0057: newarr [System.Runtime]System.Object
+			IL_005c: dup
+			IL_005d: ldc.i4.0
+			IL_005e: ldloc.0
+			IL_005f: stelem.ref
+			IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+			IL_0065: stelem.ref
+			IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_006b: pop
+			IL_006c: ldloc.1
+			IL_006d: ldc.r8 1
+			IL_0076: add
+			IL_0077: stloc.1
+			IL_0078: br IL_001e
 		// end loop
 
-		IL_008c: ret
+		IL_007d: ret
 	} // end of method Promise_Scheduling_StarvationTest::Main
 
 } // end of class Scripts.Promise_Scheduling_StarvationTest
@@ -349,7 +346,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x225d
+		// Method begins at RVA 0x224e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

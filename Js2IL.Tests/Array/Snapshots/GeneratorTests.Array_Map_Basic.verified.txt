@@ -100,13 +100,13 @@
 	{
 		// Method begins at RVA 0x207c
 		// Header size: 12
-		// Code size: 160 (0xa0)
+		// Code size: 145 (0x91)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Array_Map_Basic,
 			[1] object,
 			[2] object,
-			[3] object
+			[3] float64
 		)
 
 		IL_0000: ldc.i4.3
@@ -134,37 +134,34 @@
 		IL_0043: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
 		IL_0048: stloc.2
 		IL_0049: ldc.r8 0.0
-		IL_0052: box [System.Runtime]System.Double
-		IL_0057: stloc.3
-		// loop start (head: IL_0058)
-			IL_0058: ldloc.3
-			IL_0059: unbox.any [System.Runtime]System.Double
-			IL_005e: ldloc.2
-			IL_005f: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_0064: blt IL_006e
+		IL_0052: stloc.3
+		// loop start (head: IL_0053)
+			IL_0053: ldloc.3
+			IL_0054: ldloc.2
+			IL_0055: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_005a: blt IL_0064
 
-			IL_0069: br IL_009f
+			IL_005f: br IL_0090
 
-			IL_006e: ldc.i4.1
-			IL_006f: newarr [System.Runtime]System.Object
-			IL_0074: dup
-			IL_0075: ldc.i4.0
-			IL_0076: ldloc.2
-			IL_0077: ldloc.3
-			IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_007d: stelem.ref
-			IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_0083: pop
-			IL_0084: ldloc.3
-			IL_0085: unbox.any [System.Runtime]System.Double
-			IL_008a: ldc.r8 1
-			IL_0093: add
-			IL_0094: box [System.Runtime]System.Double
-			IL_0099: stloc.3
-			IL_009a: br IL_0058
+			IL_0064: ldc.i4.1
+			IL_0065: newarr [System.Runtime]System.Object
+			IL_006a: dup
+			IL_006b: ldc.i4.0
+			IL_006c: ldloc.2
+			IL_006d: ldloc.3
+			IL_006e: box [System.Runtime]System.Double
+			IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0078: stelem.ref
+			IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_007e: pop
+			IL_007f: ldloc.3
+			IL_0080: ldc.r8 1
+			IL_0089: add
+			IL_008a: stloc.3
+			IL_008b: br IL_0053
 		// end loop
 
-		IL_009f: ret
+		IL_0090: ret
 	} // end of method Array_Map_Basic::Main
 
 } // end of class Scripts.Array_Map_Basic
@@ -176,7 +173,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2128
+		// Method begins at RVA 0x2119
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

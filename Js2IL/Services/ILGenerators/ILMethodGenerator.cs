@@ -152,7 +152,10 @@ namespace Js2IL.Services.ILGenerators
                     _currentAssignmentTarget = tempName;
                     var initRes = _expressionEmitter.Emit(variableAST.Init, new TypeCoercion() { boxResult = true });
                     tempVar.Type = initRes.JsType;
-                    //tempVar.ClrType = initRes.ClrType;
+                    if (!tempVar.IsStableType)
+                    {
+                        tempVar.ClrType = initRes.ClrType;
+                    }
                     try { _variables.GetVariableRegistry()?.SetClrType(tempVar.ScopeName, tempVar.Name, initRes.ClrType); } catch { }
                 }
                 finally { _currentAssignmentTarget = prevAssignmentTarget; }
@@ -225,7 +228,10 @@ namespace Js2IL.Services.ILGenerators
                                     _il.OpCode(ILOpCode.Callvirt);
                                     _il.Token(mref);
                                     // Record the runtime intrinsic CLR type for the target variable so downstream member calls can bind directly
-                                    //targetVar.ClrType = clrProp.PropertyType;
+                                    if (!targetVar.IsStableType)
+                                    {
+                                        targetVar.ClrType = clrProp.PropertyType;
+                                    }
                                     try { _variables.GetVariableRegistry()?.SetClrType(targetVar.ScopeName, targetVar.Name, clrProp.PropertyType); } catch { }
                                     emittedDirectGetter = true;
                                 }
@@ -317,7 +323,14 @@ namespace Js2IL.Services.ILGenerators
                     var boxResult = variable.ClrType != typeof(double);
                     var initResult = this._expressionEmitter.Emit(variableAST.Init, new TypeCoercion() { boxResult = boxResult });
                     variable.Type = initResult.JsType;
-                    variable.ClrType = initResult.ClrType;
+                    if (!variable.IsStableType)
+                    {
+                        // unstable types are variables which can change types during their lifetime
+                        //  i.e. first a number, then a string.. etc..
+                        variable.ClrType = initResult.ClrType;
+                    }
+                    // else if stable type we are trusting that the type inference logic was correct
+
                     try { _variables.GetVariableRegistry()?.SetClrType(variable.ScopeName, variableName, initResult.ClrType); } catch { }
                 }
                 finally { _currentAssignmentTarget = prevAssignmentTarget2; }

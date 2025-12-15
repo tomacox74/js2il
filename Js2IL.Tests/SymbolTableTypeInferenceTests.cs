@@ -4,7 +4,7 @@ using Js2IL.Services;
 using System.Linq;
 using Xunit;
 
-namespace JS2IL.Tests;
+namespace Js2IL.Tests;
 
 public class SymbolTableTypeInferenceTests
 {

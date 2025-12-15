@@ -557,7 +557,12 @@ namespace Js2IL.Services
             // partial support for known types.. if we have a clrtype of double then return that
             // phase in support for more types in future work
             var variable = _variables.Values.FirstOrDefault(v => v.LocalSlot == localIndex);
-            if (variable != null && variable.ClrType != null)
+
+            // default behavior is to use the clr type object 
+            // if we have detected during analysis that the variable type remains a single type for its lifetime
+            // we can use a more specific clr type in the implementation
+            // the advanage of this is that we don't need to box and unbox values.
+            if (variable != null && variable.ClrType != null && variable.IsStableType)
             {
                 if (variable.ClrType == typeof(double))
                 {
