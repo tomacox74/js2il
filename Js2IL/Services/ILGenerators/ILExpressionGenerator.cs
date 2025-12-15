@@ -23,17 +23,147 @@ namespace Js2IL.Services.ILGenerators
         private BinaryOperators _binaryOperators;
 
         /// <summary>
+        /// Emits addition compound assignment (+=) using JS semantics.
+        /// </summary>
+        private void EmitAdditionAssignmentCore(Action loadCurrentValue, Action<JavascriptType> storeResult, Expression rhsExpr)
+        {
+            // Load current value
+            loadCurrentValue();
+            
+            // Compute RHS as boxed object
+            _ = Emit(rhsExpr, new TypeCoercion { boxResult = true });
+            
+            // Apply JS '+' semantics
+            _owner.Runtime.InvokeOperatorsAdd();
+            
+            // Store result
+            storeResult(JavascriptType.Object);
+        }
+
+        /// <summary>
+        /// Emits arithmetic compound assignment (-=, *=, /=, %=) core logic.
+        /// </summary>
+        private void EmitArithmeticCompoundAssignmentCore(ILOpCode arithmeticOp, Action loadCurrentValue, Action<JavascriptType> storeResult, Expression rhsExpr)
+        {
+            // Load current value
+            loadCurrentValue();
+            
+            // Convert to number
+            var toNumberRef = _owner.Runtime.GetStaticMethodRef(
+                typeof(JavaScriptRuntime.TypeUtilities),
+                nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                typeof(double), typeof(object));
+            _il.OpCode(ILOpCode.Call);
+            _il.Token(toNumberRef);
+            
+            // Compute RHS and convert to double
+            _ = Emit(rhsExpr, new TypeCoercion { boxResult = false });
+            _il.OpCode(ILOpCode.Conv_r8);
+            
+            // Apply arithmetic operation
+            _il.OpCode(arithmeticOp);
+            
+            // Box result
+            _il.OpCode(ILOpCode.Box);
+            _il.Token(_owner.BclReferences.DoubleType);
+            
+            // Store result
+            storeResult(JavascriptType.Number);
+        }
+
+        /// <summary>
+        /// Emits exponentiation compound assignment (**=) core logic.
+        /// </summary>
+        private void EmitExponentiationAssignmentCore(Action loadCurrentValue, Action<JavascriptType> storeResult, Expression rhsExpr)
+        {
+            // Load current value
+            loadCurrentValue();
+            
+            // Convert to number
+            var toNumberRef = _owner.Runtime.GetStaticMethodRef(
+                typeof(JavaScriptRuntime.TypeUtilities),
+                nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                typeof(double), typeof(object));
+            _il.OpCode(ILOpCode.Call);
+            _il.Token(toNumberRef);
+            
+            // Compute RHS and convert to double
+            _ = Emit(rhsExpr, new TypeCoercion { boxResult = false });
+            _il.OpCode(ILOpCode.Conv_r8);
+            
+            // Call Math.Pow
+            var powSig = new BlobBuilder();
+            new BlobEncoder(powSig)
+                .MethodSignature(isInstanceMethod: false)
+                .Parameters(2,
+                    returnType => returnType.Type().Double(),
+                    parameters =>
+                    {
+                        parameters.AddParameter().Type().Double();
+                        parameters.AddParameter().Type().Double();
+                    });
+            var powMethodSig = _owner.MetadataBuilder.GetOrAddBlob(powSig);
+            var mathPowMethodRef = _owner.MetadataBuilder.AddMemberReference(
+                _owner.BclReferences.SystemMathType,
+                _owner.MetadataBuilder.GetOrAddString("Pow"),
+                powMethodSig);
+            _il.OpCode(ILOpCode.Call);
+            _il.Token(mathPowMethodRef);
+            
+            // Box result
+            _il.OpCode(ILOpCode.Box);
+            _il.Token(_owner.BclReferences.DoubleType);
+            
+            // Store result
+            storeResult(JavascriptType.Number);
+        }
+
+        /// <summary>
+        /// Emits bitwise compound assignment (|=, &=, ^=, <<=, >>=, >>>=) core logic.
+        /// </summary>
+        private void EmitBitwiseCompoundAssignmentCore(ILOpCode bitwiseOp, Action loadCurrentValue, Action<JavascriptType> storeResult, Expression rhsExpr)
+        {
+            // Load current value
+            loadCurrentValue();
+            
+            // Convert to number then int32
+            var toNumberRef = _owner.Runtime.GetStaticMethodRef(
+                typeof(JavaScriptRuntime.TypeUtilities),
+                nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                typeof(double), typeof(object));
+            _il.OpCode(ILOpCode.Call);
+            _il.Token(toNumberRef);
+            _il.OpCode(ILOpCode.Conv_i4);
+            
+            // Compute RHS and convert to int32
+            _ = Emit(rhsExpr, new TypeCoercion { boxResult = false });
+            _il.OpCode(ILOpCode.Conv_r8);
+            _il.OpCode(ILOpCode.Conv_i4);
+            
+            // Apply bitwise operation
+            _il.OpCode(bitwiseOp);
+            
+            // Convert back to double and box
+            _il.OpCode(ILOpCode.Conv_r8);
+            _il.OpCode(ILOpCode.Box);
+            _il.Token(_owner.BclReferences.DoubleType);
+            
+            // Store result
+            storeResult(JavascriptType.Number);
+        }
+
+        /// <summary>
         /// Maps compound assignment operator names to their corresponding IL bitwise opcodes.
         /// Returns null if the operator is not a bitwise compound assignment.
         /// </summary>
-        private static ILOpCode? GetCompoundBitwiseOpCode(string operatorName) => operatorName switch
+        private static ILOpCode? GetCompoundBitwiseOpCode(Acornima.Operator op) => op switch
         {
-            "BitwiseOrAssignment" => ILOpCode.Or,
-            "BitwiseAndAssignment" => ILOpCode.And,
-            "BitwiseXorAssignment" => ILOpCode.Xor,
-            "LeftShiftAssignment" => ILOpCode.Shl,
-            "RightShiftAssignment" => ILOpCode.Shr,
-            "UnsignedRightShiftAssignment" => ILOpCode.Shr_un,
+            Acornima.Operator.BitwiseOrAssignment => ILOpCode.Or,
+            Acornima.Operator.BitwiseAndAssignment => ILOpCode.And,
+            Acornima.Operator.BitwiseXorAssignment => ILOpCode.Xor,
+            Acornima.Operator.LeftShiftAssignment => ILOpCode.Shl,
+            Acornima.Operator.RightShiftAssignment => ILOpCode.Shr,
+            Acornima.Operator.UnsignedRightShiftAssignment => ILOpCode.Shr_un,
             _ => null
         };
 
@@ -1798,9 +1928,9 @@ namespace Js2IL.Services.ILGenerators
                 }
                 
                 // Determine if this is a compound assignment (e.g., +=, |=, &=)
-                var opName = assignmentExpression.Operator.ToString();
+                var op = assignmentExpression.Operator;
 
-                if (string.Equals(opName, "AdditionAssignment", StringComparison.Ordinal))
+                if (op == Acornima.Operator.AdditionAssignment)
                 {
                     // Pattern: target = target + <rhs> using JS semantics via Operators.Add
                     // Load current value
@@ -1837,13 +1967,13 @@ namespace Js2IL.Services.ILGenerators
                     }
                     return JavascriptType.Object;
                 }
-                else if (TryEmitBitwiseCompoundAssignment(opName, assignmentExpression, variable, scopeSlot, aid.Name))
+                else if (TryEmitBitwiseCompoundAssignment(op, assignmentExpression, variable, scopeSlot, aid.Name))
                 {
                     // Bitwise compound assignments (|=, &=, ^=, <<=, >>=, >>>=) handled
                     variable.Type = JavascriptType.Number;
                     return JavascriptType.Number;
                 }
-                else if (TryEmitArithmeticCompoundAssignment(opName, assignmentExpression, variable, scopeSlot, aid.Name))
+                else if (TryEmitArithmeticCompoundAssignment(op, assignmentExpression, variable, scopeSlot, aid.Name))
                 {
                     // Arithmetic compound assignments (-=, *=, /=, %=, **=) handled
                     variable.Type = JavascriptType.Number;
@@ -1881,14 +2011,122 @@ namespace Js2IL.Services.ILGenerators
             }
             else if (_owner.InClassMethod && assignmentExpression.Left is MemberExpression me && me.Object is ThisExpression && !me.Computed && me.Property is Identifier pid)
             {
-                // this.prop = <expr>
-                _il.OpCode(ILOpCode.Ldarg_0); // load 'this'
-                var rhsType = Emit(assignmentExpression.Right, new TypeCoercion() { boxResult = true }).JsType;
+                // this.prop = <expr> or this.prop += <expr>
+                var op = assignmentExpression.Operator;
+                
                 // Lookup field by current class name
                 if (string.IsNullOrEmpty(_owner.CurrentClassName) || !_classRegistry.TryGetField(_owner.CurrentClassName!, pid.Name, out var fieldHandle))
                 {
                     throw ILEmitHelpers.NotSupported($"Unknown field '{pid.Name}' on class '{_owner.CurrentClassName}'", pid);
                 }
+                
+                // Handle compound assignments
+                if (op == Acornima.Operator.AdditionAssignment)
+                {
+                    // this.field += <expr> using JS semantics
+                    _il.OpCode(ILOpCode.Ldarg_0); // load 'this' for the later stfld
+                    EmitAdditionAssignmentCore(
+                        loadCurrentValue: () => {
+                            _il.OpCode(ILOpCode.Ldarg_0);
+                            _il.OpCode(ILOpCode.Ldfld);
+                            _il.Token(fieldHandle);
+                        },
+                        storeResult: (jsType) => {
+                            _il.OpCode(ILOpCode.Stfld);
+                            _il.Token(fieldHandle);
+                        },
+                        rhsExpr: assignmentExpression.Right);
+                    return JavascriptType.Object;
+                }
+                else if (op != Acornima.Operator.Assignment)
+                {
+                    // Handle arithmetic compound assignments: -=, *=, /=, %=, **=
+                    ILOpCode? arithmeticOp = op switch
+                    {
+                        Acornima.Operator.SubtractionAssignment => ILOpCode.Sub,
+                        Acornima.Operator.MultiplicationAssignment => ILOpCode.Mul,
+                        Acornima.Operator.DivisionAssignment => ILOpCode.Div,
+                        Acornima.Operator.RemainderAssignment => ILOpCode.Rem,
+                        _ => null
+                    };
+                    
+                    if (arithmeticOp != null)
+                    {
+                        // Pattern: this.field = this.field <op> rhs
+                        _il.OpCode(ILOpCode.Ldarg_0); // load 'this' for the later stfld
+                        EmitArithmeticCompoundAssignmentCore(
+                            arithmeticOp.Value,
+                            loadCurrentValue: () => {
+                                _il.OpCode(ILOpCode.Ldarg_0);
+                                _il.OpCode(ILOpCode.Ldfld);
+                                _il.Token(fieldHandle);
+                            },
+                            storeResult: (jsType) => {
+                                _il.OpCode(ILOpCode.Stfld);
+                                _il.Token(fieldHandle);
+                            },
+                            rhsExpr: assignmentExpression.Right);
+                        return JavascriptType.Number;
+                    }
+                    else if (op == Acornima.Operator.ExponentiationAssignment)
+                    {
+                        // this.field **= rhs using Math.Pow
+                        _il.OpCode(ILOpCode.Ldarg_0); // load 'this' for the later stfld
+                        EmitExponentiationAssignmentCore(
+                            loadCurrentValue: () => {
+                                _il.OpCode(ILOpCode.Ldarg_0);
+                                _il.OpCode(ILOpCode.Ldfld);
+                                _il.Token(fieldHandle);
+                            },
+                            storeResult: (jsType) => {
+                                _il.OpCode(ILOpCode.Stfld);
+                                _il.Token(fieldHandle);
+                            },
+                            rhsExpr: assignmentExpression.Right);
+                        return JavascriptType.Number;
+                    }
+                    else
+                    {
+                        // Bitwise compound assignments: |=, &=, ^=, <<=, >>=, >>>=
+                        ILOpCode? bitwiseOp = op switch
+                        {
+                            Acornima.Operator.BitwiseOrAssignment => ILOpCode.Or,
+                            Acornima.Operator.BitwiseAndAssignment => ILOpCode.And,
+                            Acornima.Operator.BitwiseXorAssignment => ILOpCode.Xor,
+                            Acornima.Operator.LeftShiftAssignment => ILOpCode.Shl,
+                            Acornima.Operator.RightShiftAssignment => ILOpCode.Shr,
+                            _ => null
+                        };
+                        
+                        if (bitwiseOp != null || op == Acornima.Operator.UnsignedRightShiftAssignment)
+                        {
+                            // Pattern: this.field = (int32)(this.field) <op> (int32)(rhs)
+                            _il.OpCode(ILOpCode.Ldarg_0); // load 'this' for the later stfld
+                            var effectiveOp = op == Acornima.Operator.UnsignedRightShiftAssignment ? ILOpCode.Shr_un : bitwiseOp!.Value;
+                            EmitBitwiseCompoundAssignmentCore(
+                                effectiveOp,
+                                loadCurrentValue: () => {
+                                    _il.OpCode(ILOpCode.Ldarg_0);
+                                    _il.OpCode(ILOpCode.Ldfld);
+                                    _il.Token(fieldHandle);
+                                },
+                                storeResult: (jsType) => {
+                                    _il.OpCode(ILOpCode.Stfld);
+                                    _il.Token(fieldHandle);
+                                },
+                                rhsExpr: assignmentExpression.Right);
+                            return JavascriptType.Number;
+                        }
+                        else
+                        {
+                            throw ILEmitHelpers.NotSupported($"Unsupported compound assignment operator '{op}' for this.field", me);
+                        }
+                    }
+                }
+                
+                // Simple assignment: this.prop = <expr>
+                _il.OpCode(ILOpCode.Ldarg_0); // load 'this'
+                var rhsType = Emit(assignmentExpression.Right, new TypeCoercion() { boxResult = true }).JsType;
                 _il.OpCode(ILOpCode.Stfld);
                 _il.Token(fieldHandle);
                 return JavascriptType.Object;
@@ -1899,7 +2137,7 @@ namespace Js2IL.Services.ILGenerators
                 // Evaluate receiver once and capture result/type info
                 var baseRes = Emit(aindex.Object, new TypeCoercion() { boxResult = false });
                 bool isKnownInt32 = baseRes.ClrType == typeof(JavaScriptRuntime.Int32Array);
-                var opName = assignmentExpression.Operator.ToString();
+                var op = assignmentExpression.Operator;
                 
                 if (isKnownInt32)
                 {
@@ -1924,7 +2162,7 @@ namespace Js2IL.Services.ILGenerators
                     _il.OpCode(ILOpCode.Box); _il.Token(_owner.BclReferences.Int32Type); _il.StoreLocal(idxLocal);
 
                     // Check if this is a compound assignment
-                    ILOpCode? bitwiseOp = GetCompoundBitwiseOpCode(opName);
+                    ILOpCode? bitwiseOp = GetCompoundBitwiseOpCode(op);
 
                     if (bitwiseOp != null)
                     {
@@ -1985,7 +2223,7 @@ namespace Js2IL.Services.ILGenerators
                 _il.StoreLocal(recvLocal);
                 
                 // Check if this is a compound bitwise assignment
-                ILOpCode? compoundOp = GetCompoundBitwiseOpCode(opName);
+                ILOpCode? compoundOp = GetCompoundBitwiseOpCode(op);
                 
                 if (compoundOp != null)
                 {
@@ -2110,19 +2348,10 @@ namespace Js2IL.Services.ILGenerators
         /// Attempts to emit bitwise compound assignment operators (|=, &=, ^=, <<=, >>=, >>>=).
         /// Returns true if the operator was handled, false otherwise.
         /// </summary>
-        private bool TryEmitBitwiseCompoundAssignment(string opName, AssignmentExpression assignmentExpression, 
+        private bool TryEmitBitwiseCompoundAssignment(Acornima.Operator op, AssignmentExpression assignmentExpression, 
             Variable variable, ScopeObjectReference scopeSlot, string variableName)
         {
-            ILOpCode? bitwiseOp = opName switch
-            {
-                "BitwiseOrAssignment" => ILOpCode.Or,
-                "BitwiseAndAssignment" => ILOpCode.And,
-                "BitwiseXorAssignment" => ILOpCode.Xor,
-                "LeftShiftAssignment" => ILOpCode.Shl,
-                "RightShiftAssignment" => ILOpCode.Shr,
-                "UnsignedRightShiftAssignment" => ILOpCode.Shr_un,
-                _ => null
-            };
+            ILOpCode? bitwiseOp = GetCompoundBitwiseOpCode(op);
 
             if (bitwiseOp == null)
                 return false;
@@ -2194,22 +2423,22 @@ namespace Js2IL.Services.ILGenerators
         /// Attempts to emit arithmetic compound assignment operators (-=, *=, /=, %=, **=).
         /// Returns true if the operator was handled, false otherwise.
         /// </summary>
-        private bool TryEmitArithmeticCompoundAssignment(string opName, AssignmentExpression assignmentExpression,
+        private bool TryEmitArithmeticCompoundAssignment(Acornima.Operator op, AssignmentExpression assignmentExpression,
             Variable variable, ScopeObjectReference scopeSlot, string variableName)
         {
-            ILOpCode? arithmeticOp = opName switch
+            ILOpCode? arithmeticOp = op switch
             {
-                "SubtractionAssignment" => ILOpCode.Sub,
-                "MultiplicationAssignment" => ILOpCode.Mul,
-                "DivisionAssignment" => ILOpCode.Div,
-                "RemainderAssignment" => ILOpCode.Rem,
+                Acornima.Operator.SubtractionAssignment => ILOpCode.Sub,
+                Acornima.Operator.MultiplicationAssignment => ILOpCode.Mul,
+                Acornima.Operator.DivisionAssignment => ILOpCode.Div,
+                Acornima.Operator.RemainderAssignment => ILOpCode.Rem,
                 _ => null
             };
 
             if (arithmeticOp == null)
             {
                 // Check for exponentiation separately as it requires a method call
-                if (string.Equals(opName, "ExponentiationAssignment", StringComparison.Ordinal))
+                if (op == Acornima.Operator.ExponentiationAssignment)
                 {
                     // Pattern: target = Math.Pow(target, rhs)
                     // Load current value as unboxed double
