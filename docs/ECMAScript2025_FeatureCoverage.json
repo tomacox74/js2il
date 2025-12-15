@@ -11,37 +11,6 @@
           "url": "https://tc39.es/ecma262/#sec-primary-expression",
           "paragraphs": [
             {
-              "paragraph": "13.1.3",
-              "title": "BooleanLiteral",
-              "url": "https://tc39.es/ecma262/#sec-boolean-literals",
-              "features": [
-                {
-                  "feature": "Boolean literals (true/false)",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/JavaScript/UnaryOperator_Typeof.js",
-                    "Js2IL.Tests/JavaScript/JSON_Parse_SimpleObject.js"
-                  ],
-                  "notes": "Emits proper IL for true/false and boxes when needed in arrays/log calls. See generator snapshot: Js2IL.Tests/Literals/GeneratorTests.BooleanLiteral.verified.txt."
-                }
-              ]
-            },
-            {
-              "paragraph": "13.1.4",
-              "title": "Template Literals",
-              "url": "https://tc39.es/ecma262/#sec-template-literals",
-              "features": [
-                {
-                  "feature": "Template literals (basic interpolation)",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/JavaScript/String_TemplateLiteral_Basic.js"
-                  ],
-                  "notes": "Concatenates quasis and expressions via runtime Operators.Add with JS string/number coercion. Tagged templates are not yet supported."
-                }
-              ]
-            },
-            {
               "paragraph": "13.1.1",
               "title": "NumericLiteral",
               "url": "https://tc39.es/ecma262/#sec-numeric-literals",
@@ -70,6 +39,37 @@
                     "Js2IL.Tests/JavaScript/String_Replace_Regex_Global.js"
                   ],
                   "notes": "Backed by .NET System.String; values are boxed/unboxed where needed in member calls and concatenation."
+                }
+              ]
+            },
+            {
+              "paragraph": "13.1.3",
+              "title": "BooleanLiteral",
+              "url": "https://tc39.es/ecma262/#sec-boolean-literals",
+              "features": [
+                {
+                  "feature": "Boolean literals (true/false)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/UnaryOperator_Typeof.js",
+                    "Js2IL.Tests/JavaScript/JSON_Parse_SimpleObject.js"
+                  ],
+                  "notes": "Emits proper IL for true/false and boxes when needed in arrays/log calls. See generator snapshot: Js2IL.Tests/Literals/GeneratorTests.BooleanLiteral.verified.txt."
+                }
+              ]
+            },
+            {
+              "paragraph": "13.1.4",
+              "title": "Template Literals",
+              "url": "https://tc39.es/ecma262/#sec-template-literals",
+              "features": [
+                {
+                  "feature": "Template literals (basic interpolation)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/String_TemplateLiteral_Basic.js"
+                  ],
+                  "notes": "Concatenates quasis and expressions via runtime Operators.Add with JS string/number coercion. Tagged templates are not yet supported."
                 }
               ]
             },
@@ -112,6 +112,29 @@
           "url": "https://tc39.es/ecma262/#sec-declarations",
           "paragraphs": [
             {
+              "paragraph": "13.2.3 (Function expressions)",
+              "title": "Function expressions (anonymous and named)",
+              "url": "https://tc39.es/ecma262/#sec-function-definitions",
+              "features": [
+                {
+                  "feature": "Function expressions (anonymous)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Function/JavaScript/Function_IIFE_Classic.js"
+                  ],
+                  "notes": "Emitted as static methods with delegate creation and closure binding as needed; supports immediate invocation patterns (IIFE)."
+                },
+                {
+                  "feature": "Named function expressions (internal self-binding for recursion)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Function/JavaScript/Function_IIFE_Recursive.js"
+                  ],
+                  "notes": "On first entry, the internal name is eagerly bound to a self-delegate via JavaScriptRuntime.Closure.CreateSelfDelegate(MethodBase, int), enabling recursion from within the function body."
+                }
+              ]
+            },
+            {
               "paragraph": "13.2.1",
               "title": "let/const",
               "url": "https://tc39.es/ecma262/#sec-let-and-const-declarations",
@@ -135,6 +158,23 @@
                     "Js2IL.Tests/JavaScript/Variable_ConstReassignmentError.js"
                   ],
                   "notes": "Assignment to a const Identifier and ++/-- on const emit a runtime TypeError; error is catchable via try/catch."
+                }
+              ]
+            },
+            {
+              "paragraph": "13.2.1",
+              "title": "var",
+              "url": "https://tc39.es/ecma262/#sec-variable-statement",
+              "features": [
+                {
+                  "feature": "var",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/Function_GlobalFunctionChangesGlobalVariableValue.js",
+                    "Js2IL.Tests/JavaScript/Function_GlobalFunctionDeclaresAndCallsNestedFunction.js",
+                    "Js2IL.Tests/JavaScript/Function_GlobalFunctionLogsGlobalVariable.js"
+                  ],
+                  "notes": ""
                 }
               ]
             },
@@ -174,23 +214,6 @@
               ]
             },
             {
-              "paragraph": "13.2.1",
-              "title": "var",
-              "url": "https://tc39.es/ecma262/#sec-variable-statement",
-              "features": [
-                {
-                  "feature": "var",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/JavaScript/Function_GlobalFunctionChangesGlobalVariableValue.js",
-                    "Js2IL.Tests/JavaScript/Function_GlobalFunctionDeclaresAndCallsNestedFunction.js",
-                    "Js2IL.Tests/JavaScript/Function_GlobalFunctionLogsGlobalVariable.js"
-                  ],
-                  "notes": ""
-                }
-              ]
-            },
-            {
               "paragraph": "13.2.3",
               "title": "Function declarations",
               "url": "https://tc39.es/ecma262/#sec-function-definitions",
@@ -218,29 +241,6 @@
                     "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterValue.js"
                   ],
                   "notes": "Covers expression- and block-bodied arrows, multiple parameters, nested functions, closure capture across scopes (including returning functions that capture globals/locals), and default parameter values. Not yet supported: rest parameters, lexical this/arguments semantics, and spread at call sites."
-                }
-              ]
-            },
-            {
-              "paragraph": "13.2.3 (Function expressions)",
-              "title": "Function expressions (anonymous and named)",
-              "url": "https://tc39.es/ecma262/#sec-function-definitions",
-              "features": [
-                {
-                  "feature": "Function expressions (anonymous)",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/Function/JavaScript/Function_IIFE_Classic.js"
-                  ],
-                  "notes": "Emitted as static methods with delegate creation and closure binding as needed; supports immediate invocation patterns (IIFE)."
-                },
-                {
-                  "feature": "Named function expressions (internal self-binding for recursion)",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/Function/JavaScript/Function_IIFE_Recursive.js"
-                  ],
-                  "notes": "On first entry, the internal name is eagerly bound to a self-delegate via JavaScriptRuntime.Closure.CreateSelfDelegate(MethodBase, int), enabling recursion from within the function body."
                 }
               ]
             },
@@ -450,21 +450,6 @@
           "title": "Binary Operators",
           "url": "https://tc39.es/ecma262/#sec-ecmascript-language-expressions",
           "paragraphs": [
-            {
-              "paragraph": "13.5.16",
-              "title": "Conditional (ternary) operator (?:)",
-              "url": "https://tc39.es/ecma262/#sec-conditional-operator",
-              "features": [
-                {
-                  "feature": "Conditional operator (?:)",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/JavaScript/ControlFlow_Conditional_Ternary.js"
-                  ],
-                  "notes": "Expression-level branching with both arms coerced to object where needed. Verified via generator and execution tests in ControlFlow subgroup."
-                }
-              ]
-            },
             {
               "paragraph": "13.5.1",
               "title": "Addition operator (+)",
@@ -705,6 +690,21 @@
                     "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js"
                   ],
                   "notes": "Implements key in obj via JavaScriptRuntime.Object.HasPropertyIn. Supports own properties on ExpandoObject/object literals and numeric/string keys; does not yet traverse prototype chain or throw TypeError for non-object RHS beyond null/undefined."
+                }
+              ]
+            },
+            {
+              "paragraph": "13.5.16",
+              "title": "Conditional (ternary) operator (?:)",
+              "url": "https://tc39.es/ecma262/#sec-conditional-operator",
+              "features": [
+                {
+                  "feature": "Conditional operator (?:)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/ControlFlow_Conditional_Ternary.js"
+                  ],
+                  "notes": "Expression-level branching with both arms coerced to object where needed. Verified via generator and execution tests in ControlFlow subgroup."
                 }
               ]
             }
@@ -2081,21 +2081,6 @@
               ]
             },
             {
-              "paragraph": "24.1.4",
-              "title": "String.prototype.localeCompare",
-              "url": "https://tc39.es/ecma262/#sec-string.prototype.localecompare",
-              "features": [
-                {
-                  "feature": "String.prototype.localeCompare (numeric compare)",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/JavaScript/String_LocaleCompare_Numeric.js"
-                  ],
-                  "notes": "Returns a number (boxed double) consistent with ECMAScript compare semantics; numeric option supported."
-                }
-              ]
-            },
-            {
               "paragraph": "24.1.3",
               "title": "String.prototype.replace",
               "url": "https://tc39.es/ecma262/#sec-string.prototype.replace",
@@ -2107,6 +2092,21 @@
                     "Js2IL.Tests/JavaScript/String_Replace_Regex_Global.js"
                   ],
                   "notes": "Supported when the receiver is String(x), the pattern is a regular expression literal, and the replacement is a string. Global (g) and ignoreCase (i) flags are honored. Function replacement, non-regex patterns, and other flags are not yet implemented. Implemented via host intrinsic JavaScriptRuntime.String.Replace and dynamic resolution in IL generator."
+                }
+              ]
+            },
+            {
+              "paragraph": "24.1.4",
+              "title": "String.prototype.localeCompare",
+              "url": "https://tc39.es/ecma262/#sec-string.prototype.localecompare",
+              "features": [
+                {
+                  "feature": "String.prototype.localeCompare (numeric compare)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/String_LocaleCompare_Numeric.js"
+                  ],
+                  "notes": "Returns a number (boxed double) consistent with ECMAScript compare semantics; numeric option supported."
                 }
               ]
             }
