@@ -92,6 +92,7 @@ public partial class SymbolTableBuilder
         {
             var binding = scope.Bindings[kvp.Key];
             binding.ClrType = kvp.Value;
+            binding.IsStableType = true;
         }
     }
 

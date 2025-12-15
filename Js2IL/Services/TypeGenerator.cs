@@ -432,7 +432,8 @@ namespace Js2IL.Services
                             fieldHandle,
                             scopeTypeHandle,
                             bindingInfo.Kind,
-                            bindingInfo.ClrType
+                            bindingInfo.ClrType,
+                            bindingInfo.IsStableType
                         );
                     }
                     // Only advance when a field exists for this binding
@@ -454,7 +455,8 @@ namespace Js2IL.Services
                             default,  // No field handle for uncaptured
                             default,  // No scope type handle
                             bindingInfo.Kind,
-                            bindingInfo.ClrType
+                            bindingInfo.ClrType,
+                            bindingInfo.IsStableType
                         );
                     }
                 }

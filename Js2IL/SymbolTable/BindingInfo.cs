@@ -24,6 +24,13 @@ public class BindingInfo
     /// </summary>
     public bool IsCaptured { get; set; }
 
+    /// <summary>
+    /// Indicates whether the variable's type has been inferred during static analysis
+    /// and is known to never change during the variable's lifetime.
+    /// When true, any attempt to change ClrType is a bug.
+    /// </summary>
+    public bool IsStableType { get; set; }
+
     public BindingInfo(string name, BindingKind kind, Node declarationNode)
     {
         Name = name;

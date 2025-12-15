@@ -919,7 +919,8 @@ namespace Js2IL.Services.ILGenerators
                             Name = vinfo.Name, 
                             ScopeName = vinfo.ScopeName, 
                             FieldHandle = vinfo.FieldHandle, 
-                            ClrType = vinfo.ClrType
+                            ClrType = vinfo.ClrType,
+                            IsStableType = vinfo.IsStableType
                         };
                     }
                 }

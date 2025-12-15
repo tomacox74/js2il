@@ -348,6 +348,7 @@ namespace Js2IL.Services.ILGenerators
                     break;
                 case NumericLiteral:
                     javascriptType = LoadValue(expression, typeCoercion);
+                    clrType = typeof(double);
                     break;
                 case BooleanLiteral:
                     javascriptType = LoadValue(expression, typeCoercion);

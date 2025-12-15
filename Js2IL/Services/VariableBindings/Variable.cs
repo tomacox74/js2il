@@ -17,9 +17,30 @@ namespace Js2IL.Services
         
         public JavascriptType Type = JavascriptType.Unknown;
 
+        private Type? _clrType;
+
         // If this variable holds a known intrinsic runtime object (e.g., Node module instance),
         // capture its CLR type so emitters can bind directly to its methods.
-        public required Type? ClrType { get; set; }
+        public required Type? ClrType 
+        { 
+            get => _clrType;
+            set
+            {
+                if (IsStableType && _clrType != null && _clrType != value)
+                {
+                    throw new InvalidOperationException(
+                        $"Attempted to change ClrType of stable-typed variable '{Name}' " +
+                        $"from '{_clrType.FullName}' to '{value?.FullName}'. This indicates a bug in type inference.");
+                }
+                _clrType = value;
+            }
+        }
+
+        /// <summary>
+        /// Indicates whether the variable's type has been inferred during static analysis
+        /// and is known to never change. When true, any attempt to change ClrType is a bug.
+        /// </summary>
+        public bool IsStableType { get; init; } = false;
 
         // Unified optional metadata for compatibility with existing emitters
         public bool IsParameter { get; init; } = false;
@@ -196,18 +217,21 @@ namespace Js2IL.Services
             {
                 FieldDefinitionHandle paramFieldHandle = default;
                 Type? paramRuntimeType = null;
+                bool paramIsStableType = false;
                 
                 try
                 {
                     paramFieldHandle = _registry.GetFieldHandle(_scopeName, name);
                     var viParamField = _registry.GetVariableInfo(_scopeName, name) ?? _registry.FindVariable(name);
                     paramRuntimeType = viParamField?.ClrType;
+                    paramIsStableType = viParamField?.IsStableType ?? false;
                 }
                 catch (KeyNotFoundException)
                 {
                     // Parameter has no field backing, which is normal for simple parameters
                     var viParam = _registry.GetVariableInfo(_scopeName, name) ?? _registry.FindVariable(name);
                     paramRuntimeType = viParam?.ClrType;
+                    paramIsStableType = viParam?.IsStableType ?? false;
                 }
                 
                 // Always return ParameterVariable with IsParameter = true so it loads via ldarg
@@ -219,7 +243,8 @@ namespace Js2IL.Services
                     FieldHandle = paramFieldHandle,
                     ScopeName = _scopeName,
                     Type = JavascriptType.Object, 
-                    ClrType = paramRuntimeType 
+                    ClrType = paramRuntimeType,
+                    IsStableType = paramIsStableType
                 };
                 _variables[name] = p;
                 return p;
@@ -243,7 +268,8 @@ namespace Js2IL.Services
                     LocalSlot = localSlot,
                     ScopeName = _scopeName,
                     Type = JavascriptType.Unknown,
-                    ClrType = viUncaptured?.ClrType
+                    ClrType = viUncaptured?.ClrType,
+                    IsStableType = viUncaptured?.IsStableType ?? false
                 };
                 // Cache with scope-qualified key to allow proper shadowing in nested blocks
                 _variables[cacheKey] = lvUncaptured;
@@ -263,7 +289,8 @@ namespace Js2IL.Services
                         FieldHandle = currentScopeField,
                         ScopeName = _scopeName,
                         Type = JavascriptType.Unknown,
-                        ClrType = viDirect?.ClrType
+                        ClrType = viDirect?.ClrType,
+                        IsStableType = viDirect?.IsStableType ?? false
                     };
                     _variables[name] = lvDirect; // cache since it's stable for duration of method
                     return lvDirect;
@@ -291,7 +318,8 @@ namespace Js2IL.Services
                     ParentScopeIndex = idx,
                     FieldHandle = variableInfo.FieldHandle,
                     Type = JavascriptType.Unknown,
-                    ClrType = variableInfo.ClrType
+                    ClrType = variableInfo.ClrType,
+                    IsStableType = variableInfo.IsStableType
                 };
                 _variables[name] = sv;
                 return sv;
@@ -306,7 +334,8 @@ namespace Js2IL.Services
                     FieldHandle = variableInfo.FieldHandle,
                     ScopeName = variableInfo.ScopeName,
                     Type = JavascriptType.Unknown,
-                    ClrType = variableInfo.ClrType
+                    ClrType = variableInfo.ClrType,
+                    IsStableType = variableInfo.IsStableType
                 };
                 _variables[name] = lv;
                 return lv;
@@ -615,7 +644,8 @@ namespace Js2IL.Services
                     LocalSlot = localSlot,
                     ScopeName = scopeName,
                     Type = JavascriptType.Unknown,
-                    ClrType = viUncaptured?.ClrType
+                    ClrType = viUncaptured?.ClrType,
+                    IsStableType = viUncaptured?.IsStableType ?? false
                 };
                 return true;
             }
@@ -625,13 +655,15 @@ namespace Js2IL.Services
             {
                 if (_registry == null) return false;
                 var fh = _registry.GetFieldHandle(scopeName, name);
+                var viField = _registry.GetVariableInfo(scopeName, name);
                 variable = new LocalVariable
                 {
                     Name = name,
                     FieldHandle = fh,
                     ScopeName = scopeName,
                     Type = JavascriptType.Unknown,
-                    ClrType = _registry.GetVariableInfo(scopeName, name)?.ClrType
+                    ClrType = viField?.ClrType,
+                    IsStableType = viField?.IsStableType ?? false
                 };
                 return true;
             }

@@ -32,13 +32,13 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 213 (0xd5)
+		// Code size: 198 (0xc6)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Int32Array_Set_FromArray_WithOffset,
 			[1] object,
 			[2] object,
-			[3] object
+			[3] float64
 		)
 
 		IL_0000: ldc.r8 5
@@ -76,37 +76,34 @@
 		IL_0078: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set(object[])
 		IL_007d: pop
 		IL_007e: ldc.r8 0.0
-		IL_0087: box [System.Runtime]System.Double
-		IL_008c: stloc.3
-		// loop start (head: IL_008d)
-			IL_008d: ldloc.3
-			IL_008e: unbox.any [System.Runtime]System.Double
-			IL_0093: ldloc.1
-			IL_0094: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_0099: blt IL_00a3
+		IL_0087: stloc.3
+		// loop start (head: IL_0088)
+			IL_0088: ldloc.3
+			IL_0089: ldloc.1
+			IL_008a: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_008f: blt IL_0099
 
-			IL_009e: br IL_00d4
+			IL_0094: br IL_00c5
 
-			IL_00a3: ldc.i4.1
-			IL_00a4: newarr [System.Runtime]System.Object
-			IL_00a9: dup
-			IL_00aa: ldc.i4.0
-			IL_00ab: ldloc.1
-			IL_00ac: ldloc.3
-			IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_00b2: stelem.ref
-			IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_00b8: pop
-			IL_00b9: ldloc.3
-			IL_00ba: unbox.any [System.Runtime]System.Double
-			IL_00bf: ldc.r8 1
-			IL_00c8: add
-			IL_00c9: box [System.Runtime]System.Double
-			IL_00ce: stloc.3
-			IL_00cf: br IL_008d
+			IL_0099: ldc.i4.1
+			IL_009a: newarr [System.Runtime]System.Object
+			IL_009f: dup
+			IL_00a0: ldc.i4.0
+			IL_00a1: ldloc.1
+			IL_00a2: ldloc.3
+			IL_00a3: box [System.Runtime]System.Double
+			IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_00ad: stelem.ref
+			IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_00b3: pop
+			IL_00b4: ldloc.3
+			IL_00b5: ldc.r8 1
+			IL_00be: add
+			IL_00bf: stloc.3
+			IL_00c0: br IL_0088
 		// end loop
 
-		IL_00d4: ret
+		IL_00c5: ret
 	} // end of method Int32Array_Set_FromArray_WithOffset::Main
 
 } // end of class Scripts.Int32Array_Set_FromArray_WithOffset
@@ -118,7 +115,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x213d
+		// Method begins at RVA 0x212e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

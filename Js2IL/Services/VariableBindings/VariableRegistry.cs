@@ -33,7 +33,7 @@ namespace Js2IL.Services.VariableBindings
         public void AddVariable(string scopeName, string variableName, VariableType type,
                                FieldDefinitionHandle fieldHandle, TypeDefinitionHandle scopeTypeHandle, Type? clrType)
         {
-            AddVariable(scopeName, variableName, type, fieldHandle, scopeTypeHandle, BindingKind.Var, clrType);
+            AddVariable(scopeName, variableName, type, fieldHandle, scopeTypeHandle, BindingKind.Var, clrType, isStableType: false);
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Js2IL.Services.VariableBindings
         /// </summary>
         public void AddVariable(string scopeName, string variableName, VariableType type,
                                FieldDefinitionHandle fieldHandle, TypeDefinitionHandle scopeTypeHandle,
-                               BindingKind bindingKind, Type? clrType)
+                               BindingKind bindingKind, Type? clrType, bool isStableType)
         {
             if (!_scopeVariables.ContainsKey(scopeName))
                 _scopeVariables[scopeName] = new List<VariableInfo>();
@@ -54,7 +54,8 @@ namespace Js2IL.Services.VariableBindings
                 FieldHandle = fieldHandle,
                 ScopeTypeHandle = scopeTypeHandle,
                 BindingKind = bindingKind,
-                ClrType = clrType
+                ClrType = clrType,
+                IsStableType = isStableType
             });
 
             if (!_scopeFields.ContainsKey(scopeName))
@@ -155,6 +156,12 @@ namespace Js2IL.Services.VariableBindings
                 var vi = list.FirstOrDefault(v => v.Name == variableName);
                 if (vi != null)
                 {
+                    if (vi.IsStableType && vi.ClrType != null && vi.ClrType != clrType)
+                    {
+                        throw new InvalidOperationException(
+                            $"Attempted to change ClrType of stable-typed variable '{variableName}' in scope '{scopeName}' " +
+                            $"from '{vi.ClrType.FullName}' to '{clrType.FullName}'. This indicates a bug in type inference.");
+                    }
                     vi.ClrType = clrType;
                 }
             }
@@ -213,5 +220,10 @@ namespace Js2IL.Services.VariableBindings
         public BindingKind BindingKind { get; set; }
         // Optional: CLR runtime type when known (e.g., Node module instance or intrinsic)
         public Type? ClrType { get; set; }
+        /// <summary>
+        /// Indicates whether the variable's type has been inferred during static analysis
+        /// and is known to never change. When true, any attempt to change ClrType is a bug.
+        /// </summary>
+        public bool IsStableType { get; set; }
     }
 }
