@@ -12,9 +12,28 @@ All notable changes to this project are documented here.
   - Applies only to uncaptured variables (captured variables remain boxed for closure compatibility)
   - Significantly reduces memory allocations and improves runtime performance for numeric-intensive code
   - Includes comprehensive test coverage in `SymbolTableTypeInferenceTests` with 8 test cases covering literals, binary expressions, assignments, conflicts, and mixed scenarios
+- **Extended Type Inference to Block Scopes in Class Methods**: Type inference now applies to variables declared in block scopes (for loops, while loops, if/else blocks, try/catch/finally, switch cases) within class methods. Previously, only variables at the direct function scope level were typed. This enables unboxed locals for loop iterator variables and intermediate calculations in nested control flow. The `isBlockScopeInClassMethod()` helper walks up the scope tree to verify the block is within a class method without crossing intermediate function boundaries.
 
 ### Fixed
 - **Compound Assignment Bug in Class Methods**: Fixed incorrect IL generation for compound assignments (e.g., `+=`, `|=`) in class instance methods. Previously, the generator attempted to load the scope instance from `ldloc.0` for parent scope access in methods, but instance methods don't have a scope instance local—they receive scope arrays via parameters. The fix ensures compound assignments in class methods correctly load parent scopes from the `scopes` parameter array using `ldarg` + `ldelem_ref` + `castclass`, matching the pattern used for other variable operations in methods.
+- **Block-Scope Local Variable Type Lookup**: Fixed `GetLocalVariableType` failing to find block-scope uncaptured variables, causing them to default to `System.Object` instead of their inferred CLR type. Block-scope variables are intentionally not cached in `_variables` (to support proper shadowing via lexical scope stack), but `GetLocalVariableType` needs to find them by slot index to emit typed locals. Added `_blockScopeLocalsBySlot` dictionary cache, populated by `TryResolveFieldBackedVariable` when resolving uncaptured block-scope variables. This fix enables `setBitsTrue` (PrimeJavaScript benchmark) to have 9 `float64` locals instead of 1, eliminating boxing overhead for bitwise operations in nested loops.
+
+### Added
+- **Unit Tests for Variables Class**: Added 12 comprehensive unit tests in `VariablesTests.cs` covering:
+  - Block-scope variable resolution with correct CLR type propagation
+  - Unique local slot allocation for variables in different block scopes
+  - Nested block scope shadowing (inner scope shadows outer scope variable of same name)
+  - `GetLocalVariableType` correctly returning `float64` for stable double-typed block-scope locals
+  - Multiple block scopes with same variable name getting different slots and types
+  - Non-stable and untyped variables correctly returning null from `GetLocalVariableType`
+  - Lexical scope stack push/pop ordering
+  - Integration test simulating `setBitsTrue` pattern with 5 `float64` variables across 2 block scopes
+- **Block-Scope Type Inference Tests**: Added 15 new test cases in `SymbolTableTypeInferenceTests.cs` covering type inference for variables in:
+  - For loops (iterator and body variables), for...in loops, for...of loops
+  - While loops, do-while loops
+  - If/else blocks, try/catch/finally blocks, switch case blocks
+  - Nested block scopes (2-3 levels deep): for inside if, while inside for, if inside while inside if
+- **InternalsVisibleTo**: Added `InternalsVisibleTo` attribute to `Js2IL.csproj` to expose internal classes (`Variables`, `Variable`, `VariableRegistry`) to the test project for comprehensive unit testing.
 
 ## v0.4.0 - 2025-12-14
 
