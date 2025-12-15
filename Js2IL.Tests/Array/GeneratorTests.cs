@@ -37,6 +37,9 @@ namespace Js2IL.Tests.Array
         public Task Array_Push_Basic() { var testName = nameof(Array_Push_Basic); return GenerateTest(testName); }
 
         [Fact]
+        public Task Array_Slice_Basic() { var testName = nameof(Array_Slice_Basic); return GenerateTest(testName); }
+
+        [Fact]
         public Task Array_Sort_Basic() { var testName = nameof(Array_Sort_Basic); return GenerateTest(testName); }
 
         [Fact]

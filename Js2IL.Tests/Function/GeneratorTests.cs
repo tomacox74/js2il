@@ -51,6 +51,9 @@ namespace Js2IL.Tests.Function
         public Task Function_IIFE_Recursive() { var testName = nameof(Function_IIFE_Recursive); return GenerateTest(testName); }
 
         [Fact]
+        public Task Function_IsEven_CompareResultToTrue() { var testName = nameof(Function_IsEven_CompareResultToTrue); return GenerateTest(testName); }
+
+        [Fact]
         public Task Function_NestedFunctionAccessesMultipleScopes() { var testName = nameof(Function_NestedFunctionAccessesMultipleScopes); return GenerateTest(testName); }
 
         [Fact]
