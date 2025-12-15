@@ -24,6 +24,12 @@ namespace Js2IL.Tests.Node
             nameof(PerfHooks_PerformanceNow_Basic));
 
         [Fact]
+        public Task ClearTimeout_MultipleZeroDelay_ClearSecondTimer() => GenerateTest(nameof(ClearTimeout_MultipleZeroDelay_ClearSecondTimer));
+
+        [Fact]
+        public Task ClearTimeout_ZeroDelay() => GenerateTest(nameof(ClearTimeout_ZeroDelay));
+
+        [Fact]
         public Task Process_Exit_NoArg_GeneratesCall() => GenerateTest(
             nameof(Process_Exit_NoArg_GeneratesCall));
 
@@ -43,6 +49,12 @@ namespace Js2IL.Tests.Node
         public Task SetTimeout_MultipleZeroDelay_ExecutedInOrder() => GenerateTest(nameof(SetTimeout_MultipleZeroDelay_ExecutedInOrder));
 
         [Fact]
+        public Task SetTimeout_OneSecondDelay() => GenerateTest(nameof(SetTimeout_OneSecondDelay));
+
+        [Fact]
         public Task SetTimeout_ZeroDelay() => GenerateTest(nameof(SetTimeout_ZeroDelay));
+
+        [Fact]
+        public Task SetTimeout_ZeroDelay_WithArgs() => GenerateTest(nameof(SetTimeout_ZeroDelay_WithArgs));
     }
 }

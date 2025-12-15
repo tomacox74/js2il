@@ -1,0 +1,136 @@
+﻿// IL code: Int32Array_Set_FromArray_WithOffset
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Int32Array_Set_FromArray_WithOffset
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Int32Array_Set_FromArray_WithOffset::.ctor
+
+} // end of class Scopes.Int32Array_Set_FromArray_WithOffset
+
+.class public auto ansi beforefieldinit Scripts.Int32Array_Set_FromArray_WithOffset
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x205c
+		// Header size: 12
+		// Code size: 213 (0xd5)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.Int32Array_Set_FromArray_WithOffset,
+			[1] object,
+			[2] object,
+			[3] object
+		)
+
+		IL_0000: ldc.r8 5
+		IL_0009: box [System.Runtime]System.Double
+		IL_000e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::.ctor(object)
+		IL_0013: stloc.1
+		IL_0014: ldc.i4.3
+		IL_0015: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_001a: dup
+		IL_001b: ldc.r8 10.9
+		IL_0024: box [System.Runtime]System.Double
+		IL_0029: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_002e: dup
+		IL_002f: ldc.r8 -3.4
+		IL_0038: box [System.Runtime]System.Double
+		IL_003d: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0042: dup
+		IL_0043: ldc.r8 2
+		IL_004c: box [System.Runtime]System.Double
+		IL_0051: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0056: stloc.2
+		IL_0057: ldloc.1
+		IL_0058: castclass [JavaScriptRuntime]JavaScriptRuntime.Int32Array
+		IL_005d: ldc.i4.2
+		IL_005e: newarr [System.Runtime]System.Object
+		IL_0063: dup
+		IL_0064: ldc.i4.0
+		IL_0065: ldloc.2
+		IL_0066: stelem.ref
+		IL_0067: dup
+		IL_0068: ldc.i4.1
+		IL_0069: ldc.r8 1
+		IL_0072: box [System.Runtime]System.Double
+		IL_0077: stelem.ref
+		IL_0078: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set(object[])
+		IL_007d: pop
+		IL_007e: ldc.r8 0.0
+		IL_0087: box [System.Runtime]System.Double
+		IL_008c: stloc.3
+		// loop start (head: IL_008d)
+			IL_008d: ldloc.3
+			IL_008e: unbox.any [System.Runtime]System.Double
+			IL_0093: ldloc.1
+			IL_0094: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_0099: blt IL_00a3
+
+			IL_009e: br IL_00d4
+
+			IL_00a3: ldc.i4.1
+			IL_00a4: newarr [System.Runtime]System.Object
+			IL_00a9: dup
+			IL_00aa: ldc.i4.0
+			IL_00ab: ldloc.1
+			IL_00ac: ldloc.3
+			IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_00b2: stelem.ref
+			IL_00b3: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+			IL_00b8: pop
+			IL_00b9: ldloc.3
+			IL_00ba: unbox.any [System.Runtime]System.Double
+			IL_00bf: ldc.r8 1
+			IL_00c8: add
+			IL_00c9: box [System.Runtime]System.Double
+			IL_00ce: stloc.3
+			IL_00cf: br IL_008d
+		// end loop
+
+		IL_00d4: ret
+	} // end of method Int32Array_Set_FromArray_WithOffset::Main
+
+} // end of class Scripts.Int32Array_Set_FromArray_WithOffset
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x213d
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.Int32Array_Set_FromArray_WithOffset::Main()
+		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

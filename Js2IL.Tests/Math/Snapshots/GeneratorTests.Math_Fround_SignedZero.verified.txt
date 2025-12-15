@@ -1,0 +1,196 @@
+﻿// IL code: Math_Fround_SignedZero
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Math_Fround_SignedZero
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit toStr
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method toStr::.ctor
+
+	} // end of class toStr
+
+
+	// Fields
+	.field public object toStr
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Math_Fround_SignedZero::.ctor
+
+} // end of class Scopes.Math_Fround_SignedZero
+
+.class public auto ansi abstract sealed beforefieldinit Functions.toStr
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object toStr (
+			object[] scopes,
+			object n
+		) cil managed 
+	{
+		// Method begins at RVA 0x2064
+		// Header size: 12
+		// Code size: 89 (0x59)
+		.maxstack 32
+
+		IL_0000: ldarg.1
+		IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0006: ldc.r8 0.0
+		IL_000f: ceq
+		IL_0011: box [System.Runtime]System.Boolean
+		IL_0016: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+		IL_001b: brfalse IL_004d
+
+		IL_0020: ldc.r8 1
+		IL_0029: ldarg.1
+		IL_002a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_002f: div
+		IL_0030: ldc.r8 0.0
+		IL_0039: blt IL_0043
+
+		IL_003e: br IL_004d
+
+		IL_0043: ldstr "-0"
+		IL_0048: br IL_0058
+
+		IL_004d: ldstr ""
+		IL_0052: ldarg.1
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+
+		IL_0058: ret
+	} // end of method toStr::toStr
+
+} // end of class Functions.toStr
+
+.class public auto ansi beforefieldinit Scripts.Math_Fround_SignedZero
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20cc
+		// Header size: 12
+		// Code size: 171 (0xab)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.Math_Fround_SignedZero,
+			[1] object,
+			[2] object
+		)
+
+		IL_0000: newobj instance void Scopes.Math_Fround_SignedZero::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldnull
+		IL_0008: ldftn object Functions.toStr::toStr(object[], object)
+		IL_000e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0013: stfld object Scopes.Math_Fround_SignedZero::toStr
+		IL_0018: ldc.r8 1.337
+		IL_0021: box [System.Runtime]System.Double
+		IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Math::fround(object)
+		IL_002b: stloc.1
+		IL_002c: ldc.r8 -0.0
+		IL_0035: box [System.Runtime]System.Double
+		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Math::fround(object)
+		IL_003f: stloc.2
+		IL_0040: ldc.i4.1
+		IL_0041: newarr [System.Runtime]System.Object
+		IL_0046: dup
+		IL_0047: ldc.i4.0
+		IL_0048: ldstr ""
+		IL_004d: ldloc.1
+		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0053: stelem.ref
+		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0059: pop
+		IL_005a: ldc.i4.1
+		IL_005b: newarr [System.Runtime]System.Object
+		IL_0060: dup
+		IL_0061: ldc.i4.0
+		IL_0062: ldloc.0
+		IL_0063: castclass Scopes.Math_Fround_SignedZero
+		IL_0068: ldfld object Scopes.Math_Fround_SignedZero::toStr
+		IL_006d: dup
+		IL_006e: brtrue.s IL_0093
+
+		IL_0070: pop
+		IL_0071: ldloc.0
+		IL_0072: ldnull
+		IL_0073: ldftn object Functions.toStr::toStr(object[], object)
+		IL_0079: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_007e: stfld object Scopes.Math_Fround_SignedZero::toStr
+		IL_0083: ldloc.0
+		IL_0084: castclass Scopes.Math_Fround_SignedZero
+		IL_0089: ldfld object Scopes.Math_Fround_SignedZero::toStr
+		IL_008e: br IL_0093
+
+		IL_0093: ldc.i4.1
+		IL_0094: newarr [System.Runtime]System.Object
+		IL_0099: dup
+		IL_009a: ldc.i4.0
+		IL_009b: ldloc.0
+		IL_009c: stelem.ref
+		IL_009d: ldloc.2
+		IL_009e: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_00a3: stelem.ref
+		IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00a9: pop
+		IL_00aa: ret
+	} // end of method Math_Fround_SignedZero::Main
+
+} // end of class Scripts.Math_Fround_SignedZero
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2183
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.Math_Fround_SignedZero::Main()
+		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
