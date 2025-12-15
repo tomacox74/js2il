@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.4.1 - 2025-12-15
+
 ### Changed
 - **Performance Optimization - Unboxed Uncaptured Variables**: Implemented static type inference for uncaptured local variables, eliminating boxing overhead for primitive types (numbers, strings, booleans). Variables that are not captured by closures and maintain a stable type throughout their scope are now stored directly as their CLR types (e.g., `double`, `string`, `bool`) instead of being boxed as `System.Object`. This optimization:
   - Adds new `InferVariableClrTypes` analysis pass in `SymbolTableBuilder` that tracks variable initialization and assignments to determine stable types
@@ -13,11 +17,9 @@ All notable changes to this project are documented here.
   - Significantly reduces memory allocations and improves runtime performance for numeric-intensive code
   - Includes comprehensive test coverage in `SymbolTableTypeInferenceTests` with 8 test cases covering literals, binary expressions, assignments, conflicts, and mixed scenarios
 - **Extended Type Inference to Block Scopes in Class Methods**: Type inference now applies to variables declared in block scopes (for loops, while loops, if/else blocks, try/catch/finally, switch cases) within class methods. Previously, only variables at the direct function scope level were typed. This enables unboxed locals for loop iterator variables and intermediate calculations in nested control flow. The `isBlockScopeInClassMethod()` helper walks up the scope tree to verify the block is within a class method without crossing intermediate function boundaries.
-
 ### Fixed
 - **Compound Assignment Bug in Class Methods**: Fixed incorrect IL generation for compound assignments (e.g., `+=`, `|=`) in class instance methods. Previously, the generator attempted to load the scope instance from `ldloc.0` for parent scope access in methods, but instance methods don't have a scope instance local—they receive scope arrays via parameters. The fix ensures compound assignments in class methods correctly load parent scopes from the `scopes` parameter array using `ldarg` + `ldelem_ref` + `castclass`, matching the pattern used for other variable operations in methods.
 - **Block-Scope Local Variable Type Lookup**: Fixed `GetLocalVariableType` failing to find block-scope uncaptured variables, causing them to default to `System.Object` instead of their inferred CLR type. Block-scope variables are intentionally not cached in `_variables` (to support proper shadowing via lexical scope stack), but `GetLocalVariableType` needs to find them by slot index to emit typed locals. Added `_blockScopeLocalsBySlot` dictionary cache, populated by `TryResolveFieldBackedVariable` when resolving uncaptured block-scope variables. This fix enables `setBitsTrue` (PrimeJavaScript benchmark) to have 9 `float64` locals instead of 1, eliminating boxing overhead for bitwise operations in nested loops.
-
 ### Added
 - **Bitwise NOT Operator (`~`)**: Implemented the unary bitwise NOT operator. The IL emission converts the operand to int32, applies the NOT instruction, and converts back to double. Type inference for bitwise NOT was already in place; this completes the implementation.
 - **Unit Tests for Variables Class**: Added 12 comprehensive unit tests in `VariablesTests.cs` covering:
