@@ -19,6 +19,7 @@ All notable changes to this project are documented here.
 - **Block-Scope Local Variable Type Lookup**: Fixed `GetLocalVariableType` failing to find block-scope uncaptured variables, causing them to default to `System.Object` instead of their inferred CLR type. Block-scope variables are intentionally not cached in `_variables` (to support proper shadowing via lexical scope stack), but `GetLocalVariableType` needs to find them by slot index to emit typed locals. Added `_blockScopeLocalsBySlot` dictionary cache, populated by `TryResolveFieldBackedVariable` when resolving uncaptured block-scope variables. This fix enables `setBitsTrue` (PrimeJavaScript benchmark) to have 9 `float64` locals instead of 1, eliminating boxing overhead for bitwise operations in nested loops.
 
 ### Added
+- **Bitwise NOT Operator (`~`)**: Implemented the unary bitwise NOT operator. The IL emission converts the operand to int32, applies the NOT instruction, and converts back to double. Type inference for bitwise NOT was already in place; this completes the implementation.
 - **Unit Tests for Variables Class**: Added 12 comprehensive unit tests in `VariablesTests.cs` covering:
   - Block-scope variable resolution with correct CLR type propagation
   - Unique local slot allocation for variables in different block scopes
