@@ -130,13 +130,29 @@ public partial class SymbolTableBuilder
                 return typeof(bool);
             case NonLogicalBinaryExpression binExpr:
             {
-                if (binExpr.Operator == Operator.Addition)
-                
+
+                switch (binExpr.Operator)
                 {
-                    return InferAddOperatorType(binExpr);
+                    case Operator.Addition:
+                        return InferAddOperatorType(binExpr);
+                    case Operator.BitwiseAnd:
+                    case Operator.BitwiseOr:
+                    case Operator.BitwiseXor:
+                    case Operator.LeftShift:
+                    case Operator.RightShift:
+                    case Operator.UnsignedRightShift:
+                        return typeof(double);
                 }
 
                 return null;
+            }
+            case NonUpdateUnaryExpression unaryExpr:
+            {
+                if (unaryExpr.Operator == Operator.BitwiseNot)
+                {
+                    return typeof(double);
+                }
+                return  null;
             }
         }
 

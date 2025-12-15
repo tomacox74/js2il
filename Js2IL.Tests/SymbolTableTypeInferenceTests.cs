@@ -21,6 +21,14 @@ public class SymbolTableTypeInferenceTests
     [InlineData(typeof(string), "'1' + '2'")]
     [InlineData(typeof(string), "'1' + 2")]
     [InlineData(typeof(string), "1 + '2'")]
+    // Bitwise operators always return numbers
+    [InlineData(typeof(double), "5 & 3")]       // AND
+    [InlineData(typeof(double), "5 | 3")]       // OR
+    [InlineData(typeof(double), "5 ^ 3")]       // XOR
+    [InlineData(typeof(double), "5 << 2")]      // Left shift
+    [InlineData(typeof(double), "5 >> 2")]      // Signed right shift
+    [InlineData(typeof(double), "5 >>> 2")]     // Unsigned right shift
+    [InlineData(typeof(double), "~5")]          // NOT (unary)
     public void SymbolTable_InferType_Init(Type? expectedType, string initializer)
     {
         var variableName = "testVar";
