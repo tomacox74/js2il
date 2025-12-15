@@ -31,9 +31,9 @@ namespace Js2IL.Services.VariableBindings
         /// Adds a variable to the registry with its scope and field information (legacy overload; assumes Var binding).
         /// </summary>
         public void AddVariable(string scopeName, string variableName, VariableType type,
-                               FieldDefinitionHandle fieldHandle, TypeDefinitionHandle scopeTypeHandle)
+                               FieldDefinitionHandle fieldHandle, TypeDefinitionHandle scopeTypeHandle, Type? clrType)
         {
-            AddVariable(scopeName, variableName, type, fieldHandle, scopeTypeHandle, BindingKind.Var);
+            AddVariable(scopeName, variableName, type, fieldHandle, scopeTypeHandle, BindingKind.Var, clrType, isStableType: false);
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Js2IL.Services.VariableBindings
         /// </summary>
         public void AddVariable(string scopeName, string variableName, VariableType type,
                                FieldDefinitionHandle fieldHandle, TypeDefinitionHandle scopeTypeHandle,
-                               BindingKind bindingKind)
+                               BindingKind bindingKind, Type? clrType, bool isStableType)
         {
             if (!_scopeVariables.ContainsKey(scopeName))
                 _scopeVariables[scopeName] = new List<VariableInfo>();
@@ -53,7 +53,9 @@ namespace Js2IL.Services.VariableBindings
                 VariableType = type,
                 FieldHandle = fieldHandle,
                 ScopeTypeHandle = scopeTypeHandle,
-                BindingKind = bindingKind
+                BindingKind = bindingKind,
+                ClrType = clrType,
+                IsStableType = isStableType
             });
 
             if (!_scopeFields.ContainsKey(scopeName))
@@ -146,15 +148,21 @@ namespace Js2IL.Services.VariableBindings
         /// Records the runtime intrinsic CLR type for a variable (e.g., result of require('fs')).
         /// This enables other generator contexts (nested functions) to recognize intrinsic instances.
         /// </summary>
-        public void SetRuntimeIntrinsicType(string scopeName, string variableName, Type? runtimeType)
+        public void SetClrType(string scopeName, string variableName, Type? clrType)
         {
-            if (runtimeType == null) return;
+            if (clrType == null) return;
             if (_scopeVariables.TryGetValue(scopeName, out var list))
             {
                 var vi = list.FirstOrDefault(v => v.Name == variableName);
                 if (vi != null)
                 {
-                    vi.RuntimeIntrinsicType = runtimeType;
+                    if (vi.IsStableType && vi.ClrType != null && vi.ClrType != clrType)
+                    {
+                        throw new InvalidOperationException(
+                            $"Attempted to change ClrType of stable-typed variable '{variableName}' in scope '{scopeName}' " +
+                            $"from '{vi.ClrType.FullName}' to '{clrType.FullName}'. This indicates a bug in type inference.");
+                    }
+                    vi.ClrType = clrType;
                 }
             }
         }
@@ -211,6 +219,11 @@ namespace Js2IL.Services.VariableBindings
         public TypeDefinitionHandle ScopeTypeHandle { get; set; }
         public BindingKind BindingKind { get; set; }
         // Optional: CLR runtime type when known (e.g., Node module instance or intrinsic)
-        public Type? RuntimeIntrinsicType { get; set; }
+        public Type? ClrType { get; set; }
+        /// <summary>
+        /// Indicates whether the variable's type has been inferred during static analysis
+        /// and is known to never change. When true, any attempt to change ClrType is a bug.
+        /// </summary>
+        public bool IsStableType { get; set; }
     }
 }

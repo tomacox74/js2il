@@ -67,7 +67,8 @@ namespace Js2IL.Services.ILGenerators
         /// </summary>
         public static (StandaloneSignatureHandle signature, MethodBodyAttributes attributes) CreateLocalVariableSignature(
             MetadataBuilder metadata,
-            Variables variables)
+            Variables variables,
+            BaseClassLibraryReferences bclReferences)
         {
             int numberOfLocals = variables.GetNumberOfLocals();
             if (numberOfLocals <= 0)
@@ -79,16 +80,22 @@ namespace Js2IL.Services.ILGenerators
             var localEncoder = new BlobEncoder(localSig).LocalVariableSignature(numberOfLocals);
             for (int i = 0; i < numberOfLocals; i++)
             {
-                var typeHandle = variables.GetLocalVariableType(i);
+                var typeHandle = variables.GetLocalVariableType(i, bclReferences);
                 
-                // Check if this is a TypeDefinitionHandle or TypeReferenceHandle
-                if (typeHandle.HasValue && typeHandle.Value.Kind == HandleKind.TypeDefinition)
+                if (typeHandle.HasValue)
                 {
-                    localEncoder.AddVariable().Type().Type((TypeDefinitionHandle)typeHandle.Value, isValueType: false);
-                }
-                else if (typeHandle.HasValue && typeHandle.Value.Kind == HandleKind.TypeReference)
-                {
-                    localEncoder.AddVariable().Type().Type((TypeReferenceHandle)typeHandle.Value, isValueType: false);
+                    if (typeHandle.Value == bclReferences.DoubleType)
+                    {
+                        localEncoder.AddVariable().Type().Double();
+                    }
+                    else if (typeHandle.Value.Kind == HandleKind.TypeDefinition)
+                    {
+                        localEncoder.AddVariable().Type().Type((TypeDefinitionHandle)typeHandle.Value, isValueType: false);
+                    }
+                    else if (typeHandle.Value.Kind == HandleKind.TypeReference)
+                    {
+                        localEncoder.AddVariable().Type().Type((TypeReferenceHandle)typeHandle.Value, isValueType: false);
+                    }
                 }
                 else
                 {

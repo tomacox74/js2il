@@ -29,9 +29,10 @@ namespace Js2IL.Tests
             var variableType = VariableType.Variable;
             var fieldHandle = CreateTestFieldHandle();
             var scopeTypeHandle = CreateTestTypeHandle();
+            var clrType = typeof(double);
 
             // Act
-            _registry.AddVariable(scopeName, variableName, variableType, fieldHandle, scopeTypeHandle);
+            _registry.AddVariable(scopeName, variableName, variableType, fieldHandle, scopeTypeHandle, clrType);
 
             // Assert
             var variables = _registry.GetVariablesForScope(scopeName);
@@ -43,6 +44,7 @@ namespace Js2IL.Tests
             Assert.Equal(variableType, variable.VariableType);
             Assert.Equal(fieldHandle, variable.FieldHandle);
             Assert.Equal(scopeTypeHandle, variable.ScopeTypeHandle);
+            Assert.Equal(clrType, variable.ClrType);
         }
 
         [Fact]
@@ -60,11 +62,13 @@ namespace Js2IL.Tests
             var field3 = CreateTestFieldHandle();
             var type1 = CreateTestTypeHandle();
             var type2 = CreateTestTypeHandle();
+            var clrType1 = typeof(string);
+            var clrType2 = typeof(double);
 
             // Act
-            _registry.AddVariable(scope1, var1, VariableType.Variable, field1, type1);
-            _registry.AddVariable(scope1, var2, VariableType.Function, field2, type1);
-            _registry.AddVariable(scope2, var3, VariableType.Parameter, field3, type2);
+            _registry.AddVariable(scope1, var1, VariableType.Variable, field1, type1, clrType1);
+            _registry.AddVariable(scope1, var2, VariableType.Function, field2, type1, null);
+            _registry.AddVariable(scope2, var3, VariableType.Parameter, field3, type2, clrType2);
 
             // Assert
             var scope1Variables = _registry.GetVariablesForScope(scope1).ToList();
@@ -73,9 +77,9 @@ namespace Js2IL.Tests
             Assert.Equal(2, scope1Variables.Count);
             Assert.Single(scope2Variables);
 
-            Assert.Contains(scope1Variables, v => v.Name == var1 && v.VariableType == VariableType.Variable);
-            Assert.Contains(scope1Variables, v => v.Name == var2 && v.VariableType == VariableType.Function);
-            Assert.Contains(scope2Variables, v => v.Name == var3 && v.VariableType == VariableType.Parameter);
+            Assert.Contains(scope1Variables, v => v.Name == var1 && v.VariableType == VariableType.Variable && v.ClrType == clrType1);
+            Assert.Contains(scope1Variables, v => v.Name == var2 && v.VariableType == VariableType.Function && v.ClrType == null);
+            Assert.Contains(scope2Variables, v => v.Name == var3 && v.VariableType == VariableType.Parameter && v.ClrType == clrType2);
         }
 
         [Fact]
@@ -97,7 +101,7 @@ namespace Js2IL.Tests
             var expectedFieldHandle = CreateTestFieldHandle();
             var scopeTypeHandle = CreateTestTypeHandle();
 
-            _registry.AddVariable(scopeName, variableName, VariableType.Variable, expectedFieldHandle, scopeTypeHandle);
+            _registry.AddVariable(scopeName, variableName, VariableType.Variable, expectedFieldHandle, scopeTypeHandle, typeof(bool));
 
             // Act
             var actualFieldHandle = _registry.GetFieldHandle(scopeName, variableName);
@@ -123,7 +127,7 @@ namespace Js2IL.Tests
             var fieldHandle = CreateTestFieldHandle();
             var scopeTypeHandle = CreateTestTypeHandle();
 
-            _registry.AddVariable(scopeName, existingVar, VariableType.Variable, fieldHandle, scopeTypeHandle);
+            _registry.AddVariable(scopeName, existingVar, VariableType.Variable, fieldHandle, scopeTypeHandle, null);
 
             // Act & Assert
             Assert.Throws<KeyNotFoundException>(() => _registry.GetFieldHandle(scopeName, nonExistentVar));
@@ -138,7 +142,7 @@ namespace Js2IL.Tests
             var fieldHandle = CreateTestFieldHandle();
             var expectedScopeTypeHandle = CreateTestTypeHandle();
 
-            _registry.AddVariable(scopeName, variableName, VariableType.Variable, fieldHandle, expectedScopeTypeHandle);
+            _registry.AddVariable(scopeName, variableName, VariableType.Variable, fieldHandle, expectedScopeTypeHandle, typeof(string));
 
             // Act
             var actualScopeTypeHandle = _registry.GetScopeTypeHandle(scopeName);
@@ -175,9 +179,9 @@ namespace Js2IL.Tests
             var fieldHandle = CreateTestFieldHandle();
             var typeHandle = CreateTestTypeHandle();
 
-            _registry.AddVariable(scope1, "var1", VariableType.Variable, fieldHandle, typeHandle);
-            _registry.AddVariable(scope2, "var2", VariableType.Function, fieldHandle, typeHandle);
-            _registry.AddVariable(scope3, "var3", VariableType.Parameter, fieldHandle, typeHandle);
+            _registry.AddVariable(scope1, "var1", VariableType.Variable, fieldHandle, typeHandle, typeof(double));
+            _registry.AddVariable(scope2, "var2", VariableType.Function, fieldHandle, typeHandle, null);
+            _registry.AddVariable(scope3, "var3", VariableType.Parameter, fieldHandle, typeHandle, typeof(string));
 
             // Act
             var scopeNames = _registry.GetAllScopeNames().ToList();
@@ -198,8 +202,9 @@ namespace Js2IL.Tests
             var variableType = VariableType.Function;
             var fieldHandle = CreateTestFieldHandle();
             var scopeTypeHandle = CreateTestTypeHandle();
+            var clrType = typeof(bool);
 
-            _registry.AddVariable(scopeName, variableName, variableType, fieldHandle, scopeTypeHandle);
+            _registry.AddVariable(scopeName, variableName, variableType, fieldHandle, scopeTypeHandle, clrType);
 
             // Act
             var foundVariable = _registry.FindVariable(variableName);
@@ -211,13 +216,14 @@ namespace Js2IL.Tests
             Assert.Equal(variableType, foundVariable.VariableType);
             Assert.Equal(fieldHandle, foundVariable.FieldHandle);
             Assert.Equal(scopeTypeHandle, foundVariable.ScopeTypeHandle);
+            Assert.Equal(clrType, foundVariable.ClrType);
         }
 
         [Fact]
         public void FindVariable_NonExistentVariable_ShouldReturnNull()
         {
             // Arrange
-            _registry.AddVariable("TestScope", "existingVar", VariableType.Variable, CreateTestFieldHandle(), CreateTestTypeHandle());
+            _registry.AddVariable("TestScope", "existingVar", VariableType.Variable, CreateTestFieldHandle(), CreateTestTypeHandle(), null);
 
             // Act
             var foundVariable = _registry.FindVariable("nonExistentVar");
@@ -239,8 +245,8 @@ namespace Js2IL.Tests
             var type1 = CreateTestTypeHandle();
             var type2 = CreateTestTypeHandle();
 
-            _registry.AddVariable(scope1, variableName, VariableType.Variable, field1, type1);
-            _registry.AddVariable(scope2, variableName, VariableType.Function, field2, type2);
+            _registry.AddVariable(scope1, variableName, VariableType.Variable, field1, type1, typeof(double));
+            _registry.AddVariable(scope2, variableName, VariableType.Function, field2, type2, typeof(string));
 
             // Act
             var foundVariable = _registry.FindVariable(variableName);
@@ -271,6 +277,7 @@ namespace Js2IL.Tests
             var variableType = VariableType.Function;
             var fieldHandle = CreateTestFieldHandle();
             var scopeTypeHandle = CreateTestTypeHandle();
+            var clrType = typeof(double);
 
             // Act
             variableInfo.Name = name;
@@ -278,6 +285,7 @@ namespace Js2IL.Tests
             variableInfo.VariableType = variableType;
             variableInfo.FieldHandle = fieldHandle;
             variableInfo.ScopeTypeHandle = scopeTypeHandle;
+            variableInfo.ClrType = clrType;
 
             // Assert
             Assert.Equal(name, variableInfo.Name);
@@ -285,6 +293,7 @@ namespace Js2IL.Tests
             Assert.Equal(variableType, variableInfo.VariableType);
             Assert.Equal(fieldHandle, variableInfo.FieldHandle);
             Assert.Equal(scopeTypeHandle, variableInfo.ScopeTypeHandle);
+            Assert.Equal(clrType, variableInfo.ClrType);
         }
 
         [Fact]
@@ -298,10 +307,12 @@ namespace Js2IL.Tests
             var field2 = CreateTestFieldHandle();
             var type1 = CreateTestTypeHandle();
             var type2 = CreateTestTypeHandle();
+            var clrType1 = typeof(bool);
+            var clrType2 = typeof(string);
 
             // Act
-            _registry.AddVariable(scope1, variableName, VariableType.Variable, field1, type1);
-            _registry.AddVariable(scope2, variableName, VariableType.Function, field2, type2);
+            _registry.AddVariable(scope1, variableName, VariableType.Variable, field1, type1, clrType1);
+            _registry.AddVariable(scope2, variableName, VariableType.Function, field2, type2, clrType2);
 
             // Assert
             var scope1Variables = _registry.GetVariablesForScope(scope1);
@@ -316,10 +327,12 @@ namespace Js2IL.Tests
             Assert.Equal(variableName, var1.Name);
             Assert.Equal(scope1, var1.ScopeName);
             Assert.Equal(VariableType.Variable, var1.VariableType);
+            Assert.Equal(clrType1, var1.ClrType);
 
             Assert.Equal(variableName, var2.Name);
             Assert.Equal(scope2, var2.ScopeName);
             Assert.Equal(VariableType.Function, var2.VariableType);
+            Assert.Equal(clrType2, var2.ClrType);
         }
 
         #region Helper Methods

@@ -54,11 +54,11 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 183 (0xb7)
+		// Code size: 173 (0xad)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Environment_EnumerateProcessArgV,
-			[1] object
+			[1] float64
 		)
 
 		IL_0000: ldc.i4.2
@@ -78,53 +78,51 @@
 		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_002f: pop
 		IL_0030: ldc.r8 0.0
-		IL_0039: box [System.Runtime]System.Double
-		IL_003e: stloc.1
-		// loop start (head: IL_003f)
-			IL_003f: ldloc.1
-			IL_0040: unbox.any [System.Runtime]System.Double
-			IL_0045: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-			IL_004a: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.Process
-			IL_004f: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Node.Process::get_argv()
-			IL_0054: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_0059: blt IL_0063
+		IL_0039: stloc.1
+		// loop start (head: IL_003a)
+			IL_003a: ldloc.1
+			IL_003b: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+			IL_0040: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.Process
+			IL_0045: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Node.Process::get_argv()
+			IL_004a: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_004f: blt IL_0059
 
-			IL_005e: br IL_00b6
+			IL_0054: br IL_00ac
 
-			IL_0063: ldc.i4.4
-			IL_0064: newarr [System.Runtime]System.Object
-			IL_0069: dup
-			IL_006a: ldc.i4.0
-			IL_006b: ldstr "arg"
-			IL_0070: stelem.ref
-			IL_0071: dup
-			IL_0072: ldc.i4.1
-			IL_0073: ldloc.1
-			IL_0074: stelem.ref
-			IL_0075: dup
-			IL_0076: ldc.i4.2
-			IL_0077: ldstr "="
-			IL_007c: stelem.ref
-			IL_007d: dup
-			IL_007e: ldc.i4.3
-			IL_007f: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-			IL_0084: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.Process
-			IL_0089: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Node.Process::get_argv()
-			IL_008e: ldloc.1
+			IL_0059: ldc.i4.4
+			IL_005a: newarr [System.Runtime]System.Object
+			IL_005f: dup
+			IL_0060: ldc.i4.0
+			IL_0061: ldstr "arg"
+			IL_0066: stelem.ref
+			IL_0067: dup
+			IL_0068: ldc.i4.1
+			IL_0069: ldloc.1
+			IL_006a: box [System.Runtime]System.Double
+			IL_006f: stelem.ref
+			IL_0070: dup
+			IL_0071: ldc.i4.2
+			IL_0072: ldstr "="
+			IL_0077: stelem.ref
+			IL_0078: dup
+			IL_0079: ldc.i4.3
+			IL_007a: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+			IL_007f: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.Process
+			IL_0084: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Node.Process::get_argv()
+			IL_0089: ldloc.1
+			IL_008a: box [System.Runtime]System.Double
 			IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_0094: stelem.ref
 			IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 			IL_009a: pop
 			IL_009b: ldloc.1
-			IL_009c: unbox.any [System.Runtime]System.Double
-			IL_00a1: ldc.r8 1
-			IL_00aa: add
-			IL_00ab: box [System.Runtime]System.Double
-			IL_00b0: stloc.1
-			IL_00b1: br IL_003f
+			IL_009c: ldc.r8 1
+			IL_00a5: add
+			IL_00a6: stloc.1
+			IL_00a7: br IL_003a
 		// end loop
 
-		IL_00b6: ret
+		IL_00ac: ret
 	} // end of method Environment_EnumerateProcessArgV::Main
 
 } // end of class Scripts.Environment_EnumerateProcessArgV
@@ -136,7 +134,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2127
+		// Method begins at RVA 0x211d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

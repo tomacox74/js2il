@@ -152,8 +152,11 @@ namespace Js2IL.Services.ILGenerators
                     _currentAssignmentTarget = tempName;
                     var initRes = _expressionEmitter.Emit(variableAST.Init, new TypeCoercion() { boxResult = true });
                     tempVar.Type = initRes.JsType;
-                    tempVar.RuntimeIntrinsicType = initRes.ClrType;
-                    try { _variables.GetVariableRegistry()?.SetRuntimeIntrinsicType(tempVar.ScopeName, tempVar.Name, initRes.ClrType); } catch { }
+                    if (!tempVar.IsStableType)
+                    {
+                        tempVar.ClrType = initRes.ClrType;
+                    }
+                    try { _variables.GetVariableRegistry()?.SetClrType(tempVar.ScopeName, tempVar.Name, initRes.ClrType); } catch { }
                 }
                 finally { _currentAssignmentTarget = prevAssignmentTarget; }
 
@@ -211,7 +214,7 @@ namespace Js2IL.Services.ILGenerators
                         }
 
                         // If tempVar has a known runtime intrinsic type with a matching property getter, prefer that
-                        var rtType = tempVar.RuntimeIntrinsicType;
+                        var rtType = tempVar.ClrType;
                         bool emittedDirectGetter = false;
                         if (rtType != null)
                         {
@@ -225,8 +228,11 @@ namespace Js2IL.Services.ILGenerators
                                     _il.OpCode(ILOpCode.Callvirt);
                                     _il.Token(mref);
                                     // Record the runtime intrinsic CLR type for the target variable so downstream member calls can bind directly
-                                    targetVar.RuntimeIntrinsicType = clrProp.PropertyType;
-                                    try { _variables.GetVariableRegistry()?.SetRuntimeIntrinsicType(targetVar.ScopeName, targetVar.Name, clrProp.PropertyType); } catch { }
+                                    if (!targetVar.IsStableType)
+                                    {
+                                        targetVar.ClrType = clrProp.PropertyType;
+                                    }
+                                    try { _variables.GetVariableRegistry()?.SetClrType(targetVar.ScopeName, targetVar.Name, clrProp.PropertyType); } catch { }
                                     emittedDirectGetter = true;
                                 }
                             }
@@ -314,10 +320,18 @@ namespace Js2IL.Services.ILGenerators
                 try
                 {
                     _currentAssignmentTarget = variableName;
-                    var initResult = this._expressionEmitter.Emit(variableAST.Init, new TypeCoercion() { boxResult = true });
+                    var boxResult = variable.ClrType != typeof(double);
+                    var initResult = this._expressionEmitter.Emit(variableAST.Init, new TypeCoercion() { boxResult = boxResult });
                     variable.Type = initResult.JsType;
-                    variable.RuntimeIntrinsicType = initResult.ClrType;
-                    try { _variables.GetVariableRegistry()?.SetRuntimeIntrinsicType(variable.ScopeName, variableName, initResult.ClrType); } catch { }
+                    if (!variable.IsStableType)
+                    {
+                        // unstable types are variables which can change types during their lifetime
+                        //  i.e. first a number, then a string.. etc..
+                        variable.ClrType = initResult.ClrType;
+                    }
+                    // else if stable type we are trusting that the type inference logic was correct
+
+                    try { _variables.GetVariableRegistry()?.SetClrType(variable.ScopeName, variableName, initResult.ClrType); } catch { }
                 }
                 finally { _currentAssignmentTarget = prevAssignmentTarget2; }
 
@@ -917,7 +931,9 @@ namespace Js2IL.Services.ILGenerators
                         { 
                             Name = vinfo.Name, 
                             ScopeName = vinfo.ScopeName, 
-                            FieldHandle = vinfo.FieldHandle 
+                            FieldHandle = vinfo.FieldHandle, 
+                            ClrType = vinfo.ClrType,
+                            IsStableType = vinfo.IsStableType
                         };
                     }
                 }
@@ -1373,7 +1389,7 @@ namespace Js2IL.Services.ILGenerators
             }
 
             // Locals signature
-            var (localSignature, bodyAttributes) = MethodBuilder.CreateLocalVariableSignature(_metadataBuilder, functionVariables);
+            var (localSignature, bodyAttributes) = MethodBuilder.CreateLocalVariableSignature(_metadataBuilder, functionVariables, this._bclReferences);
 
             var bodyOffset = _methodBodyStreamEncoder.AddMethodBody(
                 il,

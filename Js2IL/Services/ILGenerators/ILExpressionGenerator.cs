@@ -23,17 +23,147 @@ namespace Js2IL.Services.ILGenerators
         private BinaryOperators _binaryOperators;
 
         /// <summary>
+        /// Emits addition compound assignment (+=) using JS semantics.
+        /// </summary>
+        private void EmitAdditionAssignmentCore(Action loadCurrentValue, Action<JavascriptType> storeResult, Expression rhsExpr)
+        {
+            // Load current value
+            loadCurrentValue();
+            
+            // Compute RHS as boxed object
+            _ = Emit(rhsExpr, new TypeCoercion { boxResult = true });
+            
+            // Apply JS '+' semantics
+            _owner.Runtime.InvokeOperatorsAdd();
+            
+            // Store result
+            storeResult(JavascriptType.Object);
+        }
+
+        /// <summary>
+        /// Emits arithmetic compound assignment (-=, *=, /=, %=) core logic.
+        /// </summary>
+        private void EmitArithmeticCompoundAssignmentCore(ILOpCode arithmeticOp, Action loadCurrentValue, Action<JavascriptType> storeResult, Expression rhsExpr)
+        {
+            // Load current value
+            loadCurrentValue();
+            
+            // Convert to number
+            var toNumberRef = _owner.Runtime.GetStaticMethodRef(
+                typeof(JavaScriptRuntime.TypeUtilities),
+                nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                typeof(double), typeof(object));
+            _il.OpCode(ILOpCode.Call);
+            _il.Token(toNumberRef);
+            
+            // Compute RHS and convert to double
+            _ = Emit(rhsExpr, new TypeCoercion { boxResult = false });
+            _il.OpCode(ILOpCode.Conv_r8);
+            
+            // Apply arithmetic operation
+            _il.OpCode(arithmeticOp);
+            
+            // Box result
+            _il.OpCode(ILOpCode.Box);
+            _il.Token(_owner.BclReferences.DoubleType);
+            
+            // Store result
+            storeResult(JavascriptType.Number);
+        }
+
+        /// <summary>
+        /// Emits exponentiation compound assignment (**=) core logic.
+        /// </summary>
+        private void EmitExponentiationAssignmentCore(Action loadCurrentValue, Action<JavascriptType> storeResult, Expression rhsExpr)
+        {
+            // Load current value
+            loadCurrentValue();
+            
+            // Convert to number
+            var toNumberRef = _owner.Runtime.GetStaticMethodRef(
+                typeof(JavaScriptRuntime.TypeUtilities),
+                nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                typeof(double), typeof(object));
+            _il.OpCode(ILOpCode.Call);
+            _il.Token(toNumberRef);
+            
+            // Compute RHS and convert to double
+            _ = Emit(rhsExpr, new TypeCoercion { boxResult = false });
+            _il.OpCode(ILOpCode.Conv_r8);
+            
+            // Call Math.Pow
+            var powSig = new BlobBuilder();
+            new BlobEncoder(powSig)
+                .MethodSignature(isInstanceMethod: false)
+                .Parameters(2,
+                    returnType => returnType.Type().Double(),
+                    parameters =>
+                    {
+                        parameters.AddParameter().Type().Double();
+                        parameters.AddParameter().Type().Double();
+                    });
+            var powMethodSig = _owner.MetadataBuilder.GetOrAddBlob(powSig);
+            var mathPowMethodRef = _owner.MetadataBuilder.AddMemberReference(
+                _owner.BclReferences.SystemMathType,
+                _owner.MetadataBuilder.GetOrAddString("Pow"),
+                powMethodSig);
+            _il.OpCode(ILOpCode.Call);
+            _il.Token(mathPowMethodRef);
+            
+            // Box result
+            _il.OpCode(ILOpCode.Box);
+            _il.Token(_owner.BclReferences.DoubleType);
+            
+            // Store result
+            storeResult(JavascriptType.Number);
+        }
+
+        /// <summary>
+        /// Emits bitwise compound assignment (|=, &=, ^=, <<=, >>=, >>>=) core logic.
+        /// </summary>
+        private void EmitBitwiseCompoundAssignmentCore(ILOpCode bitwiseOp, Action loadCurrentValue, Action<JavascriptType> storeResult, Expression rhsExpr)
+        {
+            // Load current value
+            loadCurrentValue();
+            
+            // Convert to number then int32
+            var toNumberRef = _owner.Runtime.GetStaticMethodRef(
+                typeof(JavaScriptRuntime.TypeUtilities),
+                nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                typeof(double), typeof(object));
+            _il.OpCode(ILOpCode.Call);
+            _il.Token(toNumberRef);
+            _il.OpCode(ILOpCode.Conv_i4);
+            
+            // Compute RHS and convert to int32
+            _ = Emit(rhsExpr, new TypeCoercion { boxResult = false });
+            _il.OpCode(ILOpCode.Conv_r8);
+            _il.OpCode(ILOpCode.Conv_i4);
+            
+            // Apply bitwise operation
+            _il.OpCode(bitwiseOp);
+            
+            // Convert back to double and box
+            _il.OpCode(ILOpCode.Conv_r8);
+            _il.OpCode(ILOpCode.Box);
+            _il.Token(_owner.BclReferences.DoubleType);
+            
+            // Store result
+            storeResult(JavascriptType.Number);
+        }
+
+        /// <summary>
         /// Maps compound assignment operator names to their corresponding IL bitwise opcodes.
         /// Returns null if the operator is not a bitwise compound assignment.
         /// </summary>
-        private static ILOpCode? GetCompoundBitwiseOpCode(string operatorName) => operatorName switch
+        private static ILOpCode? GetCompoundBitwiseOpCode(Acornima.Operator op) => op switch
         {
-            "BitwiseOrAssignment" => ILOpCode.Or,
-            "BitwiseAndAssignment" => ILOpCode.And,
-            "BitwiseXorAssignment" => ILOpCode.Xor,
-            "LeftShiftAssignment" => ILOpCode.Shl,
-            "RightShiftAssignment" => ILOpCode.Shr,
-            "UnsignedRightShiftAssignment" => ILOpCode.Shr_un,
+            Acornima.Operator.BitwiseOrAssignment => ILOpCode.Or,
+            Acornima.Operator.BitwiseAndAssignment => ILOpCode.And,
+            Acornima.Operator.BitwiseXorAssignment => ILOpCode.Xor,
+            Acornima.Operator.LeftShiftAssignment => ILOpCode.Shl,
+            Acornima.Operator.RightShiftAssignment => ILOpCode.Shr,
+            Acornima.Operator.UnsignedRightShiftAssignment => ILOpCode.Shr_un,
             _ => null
         };
 
@@ -348,6 +478,7 @@ namespace Js2IL.Services.ILGenerators
                     break;
                 case NumericLiteral:
                     javascriptType = LoadValue(expression, typeCoercion);
+                    clrType = typeof(double);
                     break;
                 case BooleanLiteral:
                     javascriptType = LoadValue(expression, typeCoercion);
@@ -431,10 +562,21 @@ namespace Js2IL.Services.ILGenerators
                                 classRegistry: _owner.ClassRegistry);
                             // Prevent downstream Emit() from boxing again; variables are already boxed when needed
                             typeCoercion.boxResult = false;
-                            javascriptType = localVar.Type;
+                            
+                            // Determine the type that's actually on the stack after loading
+                            // For stable-type double variables, the value is already unboxed (native float64)
+                            // For unstable-type variables, report the actual Type to preserve original behavior
+                            if (localVar.IsStableType && localVar.ClrType == typeof(double))
+                            {
+                                javascriptType = JavascriptType.Number;
+                            }
+                            else
+                            {
+                                javascriptType = localVar.Type;
+                            }
                             // Propagate known CLR runtime type (e.g., const perf = require('perf_hooks')) so downstream
                             // member/property emission can bind typed getters and direct instance calls.
-                            clrType = localVar.RuntimeIntrinsicType;
+                            clrType = localVar.ClrType;
                         }
                         else
                         {
@@ -599,7 +741,7 @@ namespace Js2IL.Services.ILGenerators
                     if (baseVar != null)
                     {
                         // If the variable is known to be a CLR string, route to the string instance helper
-                        if (baseVar.RuntimeIntrinsicType == typeof(string))
+                        if (baseVar.ClrType == typeof(string))
                         {
                             return EmitStringInstanceMethodCall(mem.Object, methodName, callExpression);
                         }
@@ -608,7 +750,7 @@ namespace Js2IL.Services.ILGenerators
                         var recvRes = Emit(mem.Object, new TypeCoercion()); // stack: [receiver]
 
                         // If this variable is a known runtime intrinsic type, emit a direct instance call using the on-stack instance
-                        var runtimeType = baseVar.RuntimeIntrinsicType;
+                        var runtimeType = baseVar.ClrType;
                         if (runtimeType != null)
                         {
                             if (TryEmitIntrinsicInstanceCallOnStack(runtimeType, methodName, callExpression))
@@ -1239,12 +1381,12 @@ namespace Js2IL.Services.ILGenerators
             // Only applies to runtime intrinsic objects backed by a known CLR type.
             // If the Variable cache lacks the type (e.g., resolved from registry in nested function),
             // consult the shared registry for a recorded RuntimeIntrinsicType.
-            var runtimeType = baseVar.RuntimeIntrinsicType;
+            var runtimeType = baseVar.ClrType;
             if (runtimeType == null)
             {
                 var reg = _owner.Variables.GetVariableRegistry();
                 var vi = reg?.GetVariableInfo(baseVar.ScopeName, baseVar.Name) ?? reg?.FindVariable(baseVar.Name);
-                runtimeType = vi?.RuntimeIntrinsicType;
+                runtimeType = vi?.ClrType;
             }
             if (runtimeType == null)
             {
@@ -1786,9 +1928,9 @@ namespace Js2IL.Services.ILGenerators
                 }
                 
                 // Determine if this is a compound assignment (e.g., +=, |=, &=)
-                var opName = assignmentExpression.Operator.ToString();
+                var op = assignmentExpression.Operator;
 
-                if (string.Equals(opName, "AdditionAssignment", StringComparison.Ordinal))
+                if (op == Acornima.Operator.AdditionAssignment)
                 {
                     // Pattern: target = target + <rhs> using JS semantics via Operators.Add
                     // Load current value
@@ -1808,7 +1950,7 @@ namespace Js2IL.Services.ILGenerators
 
                     // Resulting type after '+=' is dynamic; assume object, but hint CLR string for string appends
                     variable.Type = JavascriptType.Object;
-                    if (variable.RuntimeIntrinsicType == typeof(string))
+                    if (variable.ClrType == typeof(string))
                     {
                         // keep as string
                     }
@@ -1818,25 +1960,23 @@ namespace Js2IL.Services.ILGenerators
                         // (lightweight heuristic to aid subsequent string dispatch)
                         try
                         {
-                            if (assignmentExpression.Right is Acornima.Ast.StringLiteral)
-                                variable.RuntimeIntrinsicType = typeof(string);
+                            //if (assignmentExpression.Right is Acornima.Ast.StringLiteral)
+                                // variable.ClrType = typeof(string);
                         }
                         catch { /* best-effort */ }
                     }
                     return JavascriptType.Object;
                 }
-                else if (TryEmitBitwiseCompoundAssignment(opName, assignmentExpression, variable, scopeSlot, aid.Name))
+                else if (TryEmitBitwiseCompoundAssignment(op, assignmentExpression, variable, scopeSlot, aid.Name))
                 {
                     // Bitwise compound assignments (|=, &=, ^=, <<=, >>=, >>>=) handled
                     variable.Type = JavascriptType.Number;
-                    variable.RuntimeIntrinsicType = null;
                     return JavascriptType.Number;
                 }
-                else if (TryEmitArithmeticCompoundAssignment(opName, assignmentExpression, variable, scopeSlot, aid.Name))
+                else if (TryEmitArithmeticCompoundAssignment(op, assignmentExpression, variable, scopeSlot, aid.Name))
                 {
                     // Arithmetic compound assignments (-=, *=, /=, %=, **=) handled
                     variable.Type = JavascriptType.Number;
-                    variable.RuntimeIntrinsicType = null;
                     return JavascriptType.Number;
                 }
                 else
@@ -1853,11 +1993,15 @@ namespace Js2IL.Services.ILGenerators
                     
                     var prevAssignment = _owner.CurrentAssignmentTarget;
                     _owner.CurrentAssignmentTarget = aid.Name;
-                    // Always box the RHS so storing into an object-typed field is verifiable and consistent
-                    var rhsResult = Emit(assignmentExpression.Right, new TypeCoercion { boxResult = true });
+                    
+                    var rhsResult = Emit(assignmentExpression.Right, new TypeCoercion { boxResult = !variable.IsStableType });
                     _owner.CurrentAssignmentTarget = prevAssignment;
                     variable.Type = rhsResult.JsType;
-                    variable.RuntimeIntrinsicType = rhsResult.ClrType;
+
+                    if (!variable.IsStableType)
+                    {
+                        variable.ClrType = rhsResult.ClrType;
+                    }
                     
                     // Store to variable (scope already loaded for fields, not needed for locals)
                     ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: isFieldVariable);
@@ -1867,14 +2011,122 @@ namespace Js2IL.Services.ILGenerators
             }
             else if (_owner.InClassMethod && assignmentExpression.Left is MemberExpression me && me.Object is ThisExpression && !me.Computed && me.Property is Identifier pid)
             {
-                // this.prop = <expr>
-                _il.OpCode(ILOpCode.Ldarg_0); // load 'this'
-                var rhsType = Emit(assignmentExpression.Right, new TypeCoercion() { boxResult = true }).JsType;
+                // this.prop = <expr> or this.prop += <expr>
+                var op = assignmentExpression.Operator;
+                
                 // Lookup field by current class name
                 if (string.IsNullOrEmpty(_owner.CurrentClassName) || !_classRegistry.TryGetField(_owner.CurrentClassName!, pid.Name, out var fieldHandle))
                 {
                     throw ILEmitHelpers.NotSupported($"Unknown field '{pid.Name}' on class '{_owner.CurrentClassName}'", pid);
                 }
+                
+                // Handle compound assignments
+                if (op == Acornima.Operator.AdditionAssignment)
+                {
+                    // this.field += <expr> using JS semantics
+                    _il.OpCode(ILOpCode.Ldarg_0); // load 'this' for the later stfld
+                    EmitAdditionAssignmentCore(
+                        loadCurrentValue: () => {
+                            _il.OpCode(ILOpCode.Ldarg_0);
+                            _il.OpCode(ILOpCode.Ldfld);
+                            _il.Token(fieldHandle);
+                        },
+                        storeResult: (jsType) => {
+                            _il.OpCode(ILOpCode.Stfld);
+                            _il.Token(fieldHandle);
+                        },
+                        rhsExpr: assignmentExpression.Right);
+                    return JavascriptType.Object;
+                }
+                else if (op != Acornima.Operator.Assignment)
+                {
+                    // Handle arithmetic compound assignments: -=, *=, /=, %=, **=
+                    ILOpCode? arithmeticOp = op switch
+                    {
+                        Acornima.Operator.SubtractionAssignment => ILOpCode.Sub,
+                        Acornima.Operator.MultiplicationAssignment => ILOpCode.Mul,
+                        Acornima.Operator.DivisionAssignment => ILOpCode.Div,
+                        Acornima.Operator.RemainderAssignment => ILOpCode.Rem,
+                        _ => null
+                    };
+                    
+                    if (arithmeticOp != null)
+                    {
+                        // Pattern: this.field = this.field <op> rhs
+                        _il.OpCode(ILOpCode.Ldarg_0); // load 'this' for the later stfld
+                        EmitArithmeticCompoundAssignmentCore(
+                            arithmeticOp.Value,
+                            loadCurrentValue: () => {
+                                _il.OpCode(ILOpCode.Ldarg_0);
+                                _il.OpCode(ILOpCode.Ldfld);
+                                _il.Token(fieldHandle);
+                            },
+                            storeResult: (jsType) => {
+                                _il.OpCode(ILOpCode.Stfld);
+                                _il.Token(fieldHandle);
+                            },
+                            rhsExpr: assignmentExpression.Right);
+                        return JavascriptType.Number;
+                    }
+                    else if (op == Acornima.Operator.ExponentiationAssignment)
+                    {
+                        // this.field **= rhs using Math.Pow
+                        _il.OpCode(ILOpCode.Ldarg_0); // load 'this' for the later stfld
+                        EmitExponentiationAssignmentCore(
+                            loadCurrentValue: () => {
+                                _il.OpCode(ILOpCode.Ldarg_0);
+                                _il.OpCode(ILOpCode.Ldfld);
+                                _il.Token(fieldHandle);
+                            },
+                            storeResult: (jsType) => {
+                                _il.OpCode(ILOpCode.Stfld);
+                                _il.Token(fieldHandle);
+                            },
+                            rhsExpr: assignmentExpression.Right);
+                        return JavascriptType.Number;
+                    }
+                    else
+                    {
+                        // Bitwise compound assignments: |=, &=, ^=, <<=, >>=, >>>=
+                        ILOpCode? bitwiseOp = op switch
+                        {
+                            Acornima.Operator.BitwiseOrAssignment => ILOpCode.Or,
+                            Acornima.Operator.BitwiseAndAssignment => ILOpCode.And,
+                            Acornima.Operator.BitwiseXorAssignment => ILOpCode.Xor,
+                            Acornima.Operator.LeftShiftAssignment => ILOpCode.Shl,
+                            Acornima.Operator.RightShiftAssignment => ILOpCode.Shr,
+                            _ => null
+                        };
+                        
+                        if (bitwiseOp != null || op == Acornima.Operator.UnsignedRightShiftAssignment)
+                        {
+                            // Pattern: this.field = (int32)(this.field) <op> (int32)(rhs)
+                            _il.OpCode(ILOpCode.Ldarg_0); // load 'this' for the later stfld
+                            var effectiveOp = op == Acornima.Operator.UnsignedRightShiftAssignment ? ILOpCode.Shr_un : bitwiseOp!.Value;
+                            EmitBitwiseCompoundAssignmentCore(
+                                effectiveOp,
+                                loadCurrentValue: () => {
+                                    _il.OpCode(ILOpCode.Ldarg_0);
+                                    _il.OpCode(ILOpCode.Ldfld);
+                                    _il.Token(fieldHandle);
+                                },
+                                storeResult: (jsType) => {
+                                    _il.OpCode(ILOpCode.Stfld);
+                                    _il.Token(fieldHandle);
+                                },
+                                rhsExpr: assignmentExpression.Right);
+                            return JavascriptType.Number;
+                        }
+                        else
+                        {
+                            throw ILEmitHelpers.NotSupported($"Unsupported compound assignment operator '{op}' for this.field", me);
+                        }
+                    }
+                }
+                
+                // Simple assignment: this.prop = <expr>
+                _il.OpCode(ILOpCode.Ldarg_0); // load 'this'
+                var rhsType = Emit(assignmentExpression.Right, new TypeCoercion() { boxResult = true }).JsType;
                 _il.OpCode(ILOpCode.Stfld);
                 _il.Token(fieldHandle);
                 return JavascriptType.Object;
@@ -1885,7 +2137,7 @@ namespace Js2IL.Services.ILGenerators
                 // Evaluate receiver once and capture result/type info
                 var baseRes = Emit(aindex.Object, new TypeCoercion() { boxResult = false });
                 bool isKnownInt32 = baseRes.ClrType == typeof(JavaScriptRuntime.Int32Array);
-                var opName = assignmentExpression.Operator.ToString();
+                var op = assignmentExpression.Operator;
                 
                 if (isKnownInt32)
                 {
@@ -1910,7 +2162,7 @@ namespace Js2IL.Services.ILGenerators
                     _il.OpCode(ILOpCode.Box); _il.Token(_owner.BclReferences.Int32Type); _il.StoreLocal(idxLocal);
 
                     // Check if this is a compound assignment
-                    ILOpCode? bitwiseOp = GetCompoundBitwiseOpCode(opName);
+                    ILOpCode? bitwiseOp = GetCompoundBitwiseOpCode(op);
 
                     if (bitwiseOp != null)
                     {
@@ -1971,7 +2223,7 @@ namespace Js2IL.Services.ILGenerators
                 _il.StoreLocal(recvLocal);
                 
                 // Check if this is a compound bitwise assignment
-                ILOpCode? compoundOp = GetCompoundBitwiseOpCode(opName);
+                ILOpCode? compoundOp = GetCompoundBitwiseOpCode(op);
                 
                 if (compoundOp != null)
                 {
@@ -2096,32 +2348,36 @@ namespace Js2IL.Services.ILGenerators
         /// Attempts to emit bitwise compound assignment operators (|=, &=, ^=, <<=, >>=, >>>=).
         /// Returns true if the operator was handled, false otherwise.
         /// </summary>
-        private bool TryEmitBitwiseCompoundAssignment(string opName, AssignmentExpression assignmentExpression, 
+        private bool TryEmitBitwiseCompoundAssignment(Acornima.Operator op, AssignmentExpression assignmentExpression, 
             Variable variable, ScopeObjectReference scopeSlot, string variableName)
         {
-            ILOpCode? bitwiseOp = opName switch
-            {
-                "BitwiseOrAssignment" => ILOpCode.Or,
-                "BitwiseAndAssignment" => ILOpCode.And,
-                "BitwiseXorAssignment" => ILOpCode.Xor,
-                "LeftShiftAssignment" => ILOpCode.Shl,
-                "RightShiftAssignment" => ILOpCode.Shr,
-                "UnsignedRightShiftAssignment" => ILOpCode.Shr_un,
-                _ => null
-            };
+            ILOpCode? bitwiseOp = GetCompoundBitwiseOpCode(op);
 
             if (bitwiseOp == null)
                 return false;
 
             // Pattern: target = target <op> rhs
             // For bitwise operations, convert operands to int32, apply operation, convert back to double
-
+            
+            // Determine if the variable is stored as native float64 (stable-type double)
+            bool isStableDouble = variable.IsStableType && variable.ClrType == typeof(double);
+            
             // Load current value
-            ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences);
+            // For stable doubles, load directly (already float64)
+            // For non-stable types, load boxed object and explicitly unbox
+            if (isStableDouble)
+            {
+                ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences, unbox: true);
+            }
+            else
+            {
+                // Load as boxed object, then explicitly unbox to double
+                ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences, unbox: false);
+                _il.OpCode(ILOpCode.Unbox_any);
+                _il.Token(_owner.BclReferences.DoubleType);
+            }
 
-            // Convert LHS to int32 (unbox if needed, then convert to int32)
-            _il.OpCode(ILOpCode.Unbox_any);
-            _il.Token(_owner.BclReferences.DoubleType);
+            // Convert LHS to int32
             _il.OpCode(ILOpCode.Conv_i4);
 
             // Compute RHS and convert to int32
@@ -2154,13 +2410,11 @@ namespace Js2IL.Services.ILGenerators
             // Apply bitwise operation
             _il.OpCode(bitwiseOp.Value);
 
-            // Convert result back to double and box
+            // Convert result back to double
             _il.OpCode(ILOpCode.Conv_r8);
-            _il.OpCode(ILOpCode.Box);
-            _il.Token(_owner.BclReferences.DoubleType);
-
-            // Store back
-            ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false);
+            
+            // Store back - pass valueIsBoxed=false (we have unboxed float64) and let EmitStoreVariable handle boxing
+            ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false, valueIsBoxed: false, bclReferences: _owner.BclReferences);
 
             return true;
         }
@@ -2169,27 +2423,26 @@ namespace Js2IL.Services.ILGenerators
         /// Attempts to emit arithmetic compound assignment operators (-=, *=, /=, %=, **=).
         /// Returns true if the operator was handled, false otherwise.
         /// </summary>
-        private bool TryEmitArithmeticCompoundAssignment(string opName, AssignmentExpression assignmentExpression,
+        private bool TryEmitArithmeticCompoundAssignment(Acornima.Operator op, AssignmentExpression assignmentExpression,
             Variable variable, ScopeObjectReference scopeSlot, string variableName)
         {
-            ILOpCode? arithmeticOp = opName switch
+            ILOpCode? arithmeticOp = op switch
             {
-                "SubtractionAssignment" => ILOpCode.Sub,
-                "MultiplicationAssignment" => ILOpCode.Mul,
-                "DivisionAssignment" => ILOpCode.Div,
-                "RemainderAssignment" => ILOpCode.Rem,
+                Acornima.Operator.SubtractionAssignment => ILOpCode.Sub,
+                Acornima.Operator.MultiplicationAssignment => ILOpCode.Mul,
+                Acornima.Operator.DivisionAssignment => ILOpCode.Div,
+                Acornima.Operator.RemainderAssignment => ILOpCode.Rem,
                 _ => null
             };
 
             if (arithmeticOp == null)
             {
                 // Check for exponentiation separately as it requires a method call
-                if (string.Equals(opName, "ExponentiationAssignment", StringComparison.Ordinal))
+                if (op == Acornima.Operator.ExponentiationAssignment)
                 {
                     // Pattern: target = Math.Pow(target, rhs)
-                    ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences);
-                    _il.OpCode(ILOpCode.Unbox_any);
-                    _il.Token(_owner.BclReferences.DoubleType);
+                    // Load current value as unboxed double
+                    ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences, unbox: true);
 
                     var prevAssignment = _owner.CurrentAssignmentTarget;
                     _owner.CurrentAssignmentTarget = variableName;
@@ -2219,9 +2472,8 @@ namespace Js2IL.Services.ILGenerators
                     _il.OpCode(ILOpCode.Call);
                     _il.Token(mathPowMethodRef);
 
-                    _il.OpCode(ILOpCode.Box);
-                    _il.Token(_owner.BclReferences.DoubleType);
-                    ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false);
+                    // Store back - value is unboxed double
+                    ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false, valueIsBoxed: false, bclReferences: _owner.BclReferences);
                     return true;
                 }
                 return false;
@@ -2231,11 +2483,7 @@ namespace Js2IL.Services.ILGenerators
             // Convert to double, apply operation, box result
 
             // Load current value
-            ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences);
-
-            // Convert LHS to double (unbox if needed)
-            _il.OpCode(ILOpCode.Unbox_any);
-            _il.Token(_owner.BclReferences.DoubleType);
+            ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences, unbox: true);
 
             // Compute RHS and convert to double
             var prevAssignment2 = _owner.CurrentAssignmentTarget;
@@ -2247,12 +2495,8 @@ namespace Js2IL.Services.ILGenerators
             // Apply arithmetic operation
             _il.OpCode(arithmeticOp.Value);
 
-            // Box result
-            _il.OpCode(ILOpCode.Box);
-            _il.Token(_owner.BclReferences.DoubleType);
-
             // Store back
-            ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false);
+            ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false, valueIsBoxed: false, bclReferences: _owner.BclReferences);
 
             return true;
         }
@@ -2754,7 +2998,7 @@ namespace Js2IL.Services.ILGenerators
                 var v = _variables.FindVariable(_owner.CurrentAssignmentTarget!);
                 if (v != null)
                 {
-                    v.RuntimeIntrinsicType = typeof(JavaScriptRuntime.Array);
+                    //v.ClrType = typeof(JavaScriptRuntime.Array);
                 }
             }
         }
@@ -2853,12 +3097,24 @@ namespace Js2IL.Services.ILGenerators
             //   2) Compute UPDATED = value (+/-) 1 and store back (stfld)
             //   3) Produce result: UPDATED for prefix; ORIGINAL for postfix (by reloading updated and reversing +/- 1)
 
+            // Helper to emit explicit unbox for unstable double variables.
+            // UnboxIfNeeded in EmitLoadVariable only unboxes when Type==Number,
+            // but unstable double variables may have Type==Unknown while still being stored as boxed doubles.
+            // Only emit unbox if EmitLoadVariable didn't already unbox (i.e., when Type != Number).
+            void EmitUnboxUnstableDouble()
+            {
+                if (variable.ClrType == typeof(double) && !variable.IsStableType && variable.Type != JavascriptType.Number)
+                {
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
+                    _il.Token(_owner.BclReferences.DoubleType);
+                }
+            }
+
             if (context == CallSiteContext.Statement)
             {
                 // Statement-context: load, update, store
-                ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences);
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
-                _il.Token(_bclReferences.DoubleType);                  // [value]
+                ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences, unbox: true);
+                EmitUnboxUnstableDouble();
                 _il.LoadConstantR8(1.0);
                 if (updateExpression.Operator == Acornima.Operator.Increment)
                 {
@@ -2868,18 +3124,15 @@ namespace Js2IL.Services.ILGenerators
                 {
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Sub);
                 }
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
-                _il.Token(_bclReferences.DoubleType);                  // [boxedUpdated]
-                ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false);
+                ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false, valueIsBoxed: false, bclReferences: _owner.BclReferences);
                 return JavascriptType.Unknown;
             }
             else
             {
                 // Expression-context
                 // 1) Load current value
-                ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences);
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
-                _il.Token(_bclReferences.DoubleType);                  // [value]
+                ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences, unbox: true); // [cur]
+                EmitUnboxUnstableDouble();
 
                 // 2) Compute updated value and store back
                 _il.LoadConstantR8(1.0);
@@ -2891,14 +3144,12 @@ namespace Js2IL.Services.ILGenerators
                 {
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Sub);
                 }
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
-                _il.Token(_bclReferences.DoubleType);                  // [boxedUpdated]
-                ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false);
+
+                ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false, valueIsBoxed: true, bclReferences: _owner.BclReferences); // []
 
                 // 3) Reload UPDATED and optionally reverse to get ORIGINAL
-                ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences);
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Unbox_any);
-                _il.Token(_bclReferences.DoubleType);                   // [updated]
+                ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences, unbox: true); // [updated]
+                EmitUnboxUnstableDouble();
 
                 if (!updateExpression.Prefix)
                 {

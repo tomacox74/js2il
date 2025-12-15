@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using JavaScriptRuntime;
 
 namespace Js2IL.Services
 {
@@ -16,9 +17,30 @@ namespace Js2IL.Services
         
         public JavascriptType Type = JavascriptType.Unknown;
 
+        private Type? _clrType;
+
         // If this variable holds a known intrinsic runtime object (e.g., Node module instance),
         // capture its CLR type so emitters can bind directly to its methods.
-        public Type? RuntimeIntrinsicType { get; set; }
+        public required Type? ClrType 
+        { 
+            get => _clrType;
+            set
+            {
+                if (IsStableType && _clrType != null && _clrType != value)
+                {
+                    throw new InvalidOperationException(
+                        $"Attempted to change ClrType of stable-typed variable '{Name}' " +
+                        $"from '{_clrType.FullName}' to '{value?.FullName}'. This indicates a bug in type inference.");
+                }
+                _clrType = value;
+            }
+        }
+
+        /// <summary>
+        /// Indicates whether the variable's type has been inferred during static analysis
+        /// and is known to never change. When true, any attempt to change ClrType is a bug.
+        /// </summary>
+        public bool IsStableType { get; init; } = false;
 
         // Unified optional metadata for compatibility with existing emitters
         public bool IsParameter { get; init; } = false;
@@ -195,18 +217,21 @@ namespace Js2IL.Services
             {
                 FieldDefinitionHandle paramFieldHandle = default;
                 Type? paramRuntimeType = null;
+                bool paramIsStableType = false;
                 
                 try
                 {
                     paramFieldHandle = _registry.GetFieldHandle(_scopeName, name);
                     var viParamField = _registry.GetVariableInfo(_scopeName, name) ?? _registry.FindVariable(name);
-                    paramRuntimeType = viParamField?.RuntimeIntrinsicType;
+                    paramRuntimeType = viParamField?.ClrType;
+                    paramIsStableType = viParamField?.IsStableType ?? false;
                 }
                 catch (KeyNotFoundException)
                 {
                     // Parameter has no field backing, which is normal for simple parameters
                     var viParam = _registry.GetVariableInfo(_scopeName, name) ?? _registry.FindVariable(name);
-                    paramRuntimeType = viParam?.RuntimeIntrinsicType;
+                    paramRuntimeType = viParam?.ClrType;
+                    paramIsStableType = viParam?.IsStableType ?? false;
                 }
                 
                 // Always return ParameterVariable with IsParameter = true so it loads via ldarg
@@ -218,7 +243,8 @@ namespace Js2IL.Services
                     FieldHandle = paramFieldHandle,
                     ScopeName = _scopeName,
                     Type = JavascriptType.Object, 
-                    RuntimeIntrinsicType = paramRuntimeType 
+                    ClrType = paramRuntimeType,
+                    IsStableType = paramIsStableType
                 };
                 _variables[name] = p;
                 return p;
@@ -242,7 +268,8 @@ namespace Js2IL.Services
                     LocalSlot = localSlot,
                     ScopeName = _scopeName,
                     Type = JavascriptType.Unknown,
-                    RuntimeIntrinsicType = viUncaptured?.RuntimeIntrinsicType
+                    ClrType = viUncaptured?.ClrType,
+                    IsStableType = viUncaptured?.IsStableType ?? false
                 };
                 // Cache with scope-qualified key to allow proper shadowing in nested blocks
                 _variables[cacheKey] = lvUncaptured;
@@ -262,7 +289,8 @@ namespace Js2IL.Services
                         FieldHandle = currentScopeField,
                         ScopeName = _scopeName,
                         Type = JavascriptType.Unknown,
-                        RuntimeIntrinsicType = viDirect?.RuntimeIntrinsicType
+                        ClrType = viDirect?.ClrType,
+                        IsStableType = viDirect?.IsStableType ?? false
                     };
                     _variables[name] = lvDirect; // cache since it's stable for duration of method
                     return lvDirect;
@@ -290,7 +318,8 @@ namespace Js2IL.Services
                     ParentScopeIndex = idx,
                     FieldHandle = variableInfo.FieldHandle,
                     Type = JavascriptType.Unknown,
-                    RuntimeIntrinsicType = variableInfo.RuntimeIntrinsicType
+                    ClrType = variableInfo.ClrType,
+                    IsStableType = variableInfo.IsStableType
                 };
                 _variables[name] = sv;
                 return sv;
@@ -305,7 +334,8 @@ namespace Js2IL.Services
                     FieldHandle = variableInfo.FieldHandle,
                     ScopeName = variableInfo.ScopeName,
                     Type = JavascriptType.Unknown,
-                    RuntimeIntrinsicType = variableInfo.RuntimeIntrinsicType
+                    ClrType = variableInfo.ClrType,
+                    IsStableType = variableInfo.IsStableType
                 };
                 _variables[name] = lv;
                 return lv;
@@ -479,12 +509,12 @@ namespace Js2IL.Services
         }
 
         /// <summary>
-        /// Gets the type handle for a local variable at the specified index.
-        /// Returns the scope class type for scope instances, or null for non-scope locals.
+        ///  Gets the type handle for a local variable at the specified index.
+        ///  Returns the scope class type for scope instances, or null for non-scope locals.
         /// </summary>
         /// <param name="localIndex">The local variable index.</param>
         /// <returns>The type handle for scope locals, or null for non-scope locals (which will default to Object type).</returns>
-        public EntityHandle? GetLocalVariableType(int localIndex)
+        public EntityHandle? GetLocalVariableType(int localIndex, BaseClassLibraryReferences bclReferences)
         {
             // Local 0 is always the current function/global scope (if _hasLocalScope)
             if (localIndex == 0 && _hasLocalScope)
@@ -521,6 +551,22 @@ namespace Js2IL.Services
                         // Scope type not found (e.g., temporary locals like EqTmp_RHS_*), fall back to Object
                     }
                     break;
+                }
+            }
+
+            // partial support for known types.. if we have a clrtype of double then return that
+            // phase in support for more types in future work
+            var variable = _variables.Values.FirstOrDefault(v => v.LocalSlot == localIndex);
+
+            // default behavior is to use the clr type object 
+            // if we have detected during analysis that the variable type remains a single type for its lifetime
+            // we can use a more specific clr type in the implementation
+            // the advanage of this is that we don't need to box and unbox values.
+            if (variable != null && variable.ClrType != null && variable.IsStableType)
+            {
+                if (variable.ClrType == typeof(double))
+                {
+                    return bclReferences.DoubleType;
                 }
             }
 
@@ -603,7 +649,8 @@ namespace Js2IL.Services
                     LocalSlot = localSlot,
                     ScopeName = scopeName,
                     Type = JavascriptType.Unknown,
-                    RuntimeIntrinsicType = viUncaptured?.RuntimeIntrinsicType
+                    ClrType = viUncaptured?.ClrType,
+                    IsStableType = viUncaptured?.IsStableType ?? false
                 };
                 return true;
             }
@@ -613,12 +660,15 @@ namespace Js2IL.Services
             {
                 if (_registry == null) return false;
                 var fh = _registry.GetFieldHandle(scopeName, name);
+                var viField = _registry.GetVariableInfo(scopeName, name);
                 variable = new LocalVariable
                 {
                     Name = name,
                     FieldHandle = fh,
                     ScopeName = scopeName,
-                    Type = JavascriptType.Unknown
+                    Type = JavascriptType.Unknown,
+                    ClrType = viField?.ClrType,
+                    IsStableType = viField?.IsStableType ?? false
                 };
                 return true;
             }

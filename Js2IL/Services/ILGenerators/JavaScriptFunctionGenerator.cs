@@ -291,7 +291,7 @@ namespace Js2IL.Services.ILGenerators
             }
 
             // Add method body including any scope locals we created (function scope instance)
-            var (localSignature, bodyAttributes) = MethodBuilder.CreateLocalVariableSignature(_metadataBuilder, variables);
+            var (localSignature, bodyAttributes) = MethodBuilder.CreateLocalVariableSignature(_metadataBuilder, variables, this._bclReferences);
 
             var bodyoffset = _methodBodyStreamEncoder.AddMethodBody(
                 il,

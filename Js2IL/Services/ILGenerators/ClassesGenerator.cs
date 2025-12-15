@@ -421,7 +421,7 @@ namespace Js2IL.Services.ILGenerators
             ilGen.IL.OpCode(ILOpCode.Ret);
 
             // Include locals created by ILMethodGenerator (e.g., scope instance for block-scoped vars)
-            var (localSignature, bodyAttributes) = MethodBuilder.CreateLocalVariableSignature(_metadata, methodVariables);
+            var (localSignature, bodyAttributes) = MethodBuilder.CreateLocalVariableSignature(_metadata, methodVariables, this._bcl);
 
             var ctorBody = _methodBodies.AddMethodBody(ilGen.IL, maxStack: 32, localVariablesSignature: localSignature, attributes: bodyAttributes);
             
@@ -579,7 +579,7 @@ namespace Js2IL.Services.ILGenerators
             }
 
             // Include locals created by ILMethodGenerator (e.g., scopes)
-            var (localSignature, bodyAttributes) = MethodBuilder.CreateLocalVariableSignature(_metadata, methodVariables);
+            var (localSignature, bodyAttributes) = MethodBuilder.CreateLocalVariableSignature(_metadata, methodVariables, this._bcl);
 
             var mbody = _methodBodies.AddMethodBody(ilGen.IL, maxStack: 32, localVariablesSignature: localSignature, attributes: bodyAttributes);
             var attrs = MethodAttributes.Public | MethodAttributes.HideBySig;

@@ -12,118 +12,25 @@ namespace Js2IL.SymbolTables
     /// </summary>
     public partial class SymbolTableBuilder
     {
-        private int _closureCounter = 0;
-        private string? _currentAssignmentTarget = null;
         private const string DefaultClassesNamespace = "Classes";
+
         // Track visited function expression nodes to avoid duplicating scopes when traversal
         // reaches the same AST node via multiple paths (explicit handling + reflective walk).
-        private readonly HashSet<Node> _visitedFunctionExpressions = new();
         private readonly HashSet<Node> _visitedArrowFunctions = new();
+        private readonly HashSet<Node> _visitedFunctionExpressions = new();
 
-        private static string SanitizeForMetadata(string name)
+        private int _closureCounter = 0;
+        private string? _currentAssignmentTarget = null;
+
+        public SymbolTable Build(Acornima.Ast.Program astRoot, string filePath)
         {
-            if (string.IsNullOrEmpty(name)) return "_";
-            var chars = name.Select(ch => char.IsLetterOrDigit(ch) || ch == '_' ? ch : '_').ToArray();
-            var result = new string(chars);
-            if (char.IsDigit(result[0])) result = "_" + result;
-            return result;
-        }
-
-        /// <summary>
-        /// Analyzes all scopes to determine which ones reference variables from parent scopes.
-        /// This is used to determine if classes need _scopes fields and if functions need scope arrays.
-        /// </summary>
-        private void AnalyzeFreeVariables(Scope scope)
-        {
-            // Process children first (bottom-up)
-            foreach (var child in scope.Children)
-            {
-                AnalyzeFreeVariables(child);
-            }
-
-            // For class scopes, check if any method child references parent variables
-            if (scope.Kind == ScopeKind.Class)
-            {
-                foreach (var methodScope in scope.Children.Where(c => c.Kind == ScopeKind.Function))
-                {
-                    if (methodScope.ReferencesParentScopeVariables)
-                    {
-                        scope.ReferencesParentScopeVariables = true;
-                        break;
-                    }
-                }
-                
-                // Also check class field initializers directly
-                if (!scope.ReferencesParentScopeVariables && scope.AstNode is ClassDeclaration classDecl)
-                {
-                    var localVariables = new HashSet<string>(scope.Bindings.Keys);
-                    foreach (var element in classDecl.Body.Body)
-                    {
-                        if (element is PropertyDefinition propDef && propDef.Value != null)
-                        {
-                            if (ContainsFreeVariable(propDef.Value, localVariables))
-                            {
-                                scope.ReferencesParentScopeVariables = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            // For function scopes, check if the function body references any non-local variables
-            else if (scope.Kind == ScopeKind.Function && scope.AstNode is FunctionExpression funcExpr)
-            {
-                scope.ReferencesParentScopeVariables = CheckFunctionReferencesParentVariables(funcExpr, scope);
-            }
-            else if (scope.Kind == ScopeKind.Function && scope.AstNode is FunctionDeclaration funcDecl)
-            {
-                // Convert FunctionDeclaration to use its body like FunctionExpression
-                if (funcDecl.Body is BlockStatement body)
-                {
-                    scope.ReferencesParentScopeVariables = CheckBodyReferencesParentVariables(body, scope);
-                }
-            }
-            else if (scope.Kind == ScopeKind.Function && scope.AstNode is ArrowFunctionExpression arrowExpr)
-            {
-                scope.ReferencesParentScopeVariables = CheckArrowFunctionReferencesParentVariables(arrowExpr, scope);
-            }
-        }
-
-        /// <summary>
-        /// Checks if an arrow function references variables not declared locally or in parameters.
-        /// </summary>
-        private bool CheckArrowFunctionReferencesParentVariables(ArrowFunctionExpression arrowExpr, Scope functionScope)
-        {
-            if (arrowExpr.Body is BlockStatement body)
-            {
-                return CheckBodyReferencesParentVariables(body, functionScope);
-            }
-            else
-            {
-                // Expression body - check the expression directly
-                var localVariables = new HashSet<string>(functionScope.Bindings.Keys);
-                localVariables.UnionWith(functionScope.Parameters);
-                return ContainsFreeVariable(arrowExpr.Body, localVariables);
-            }
-        }
-
-        /// <summary>
-        /// Checks if a function expression references variables not declared locally or in parameters.
-        /// </summary>
-        private bool CheckFunctionReferencesParentVariables(FunctionExpression funcExpr, Scope functionScope)
-        {
-            if (funcExpr.Body is not BlockStatement body) return false;
-            return CheckBodyReferencesParentVariables(body, functionScope);
-        }
-
-        /// <summary>
-        /// Checks if a block statement references variables not declared in the given scope or its parameters.
-        /// </summary>
-        private bool CheckBodyReferencesParentVariables(BlockStatement body, Scope scope)
-        {
-            var localVariables = new HashSet<string>(scope.Bindings.Keys);
-            localVariables.UnionWith(scope.Parameters);
-            return ContainsFreeVariable(body, localVariables);
+            var fileName = Path.GetFileNameWithoutExtension(filePath);
+            var globalScope = new Scope(fileName, ScopeKind.Global, null, astRoot);
+            BuildScopeRecursive(astRoot, globalScope);
+            AnalyzeFreeVariables(globalScope);
+            MarkCapturedVariables(globalScope);
+            InferVariableClrTypes(globalScope);
+            return new SymbolTable(globalScope);
         }
 
         /// <summary>
@@ -287,284 +194,115 @@ namespace Js2IL.SymbolTables
                    name == "setTimeout" || name == "setInterval" || name == "clearTimeout" || name == "clearInterval";
         }
 
-        /// <summary>
-        /// Marks variables as captured if they are referenced by any child scope.
-        /// This enables optimization: uncaptured variables can use local variables instead of fields.
-        /// </summary>
-        private void MarkCapturedVariables(Scope scope)
+        private static string NormalizeModuleName(string s)
         {
-            // For each child scope that references parent variables
-            foreach (var child in scope.Children)
-            {
-                // Only mark variables as captured if the child scope is a function or class scope
-                // Block scopes don't create closures, so variables referenced from block scopes
-                // don't need to be captured (they can use locals)
-                // Function scopes create closures, class scopes have field initializers that may reference outer variables
-                if ((child.Kind == ScopeKind.Function || child.Kind == ScopeKind.Class) && child.ReferencesParentScopeVariables)
-                {
-                    // Find which specific variables from this scope (and ancestors) are referenced by the child
-                    var capturedVars = CollectReferencedParentVariables(child, scope);
-                    foreach (var varName in capturedVars)
-                    {
-                        // Mark the variable in whichever ancestor scope it's declared
-                        var searchScope = scope;
-                        while (searchScope != null)
-                        {
-                            if (searchScope.Bindings.TryGetValue(varName, out var binding))
-                            {
-                                binding.IsCaptured = true;
-                                break;
-                            }
-                            searchScope = searchScope.Parent;
-                        }
-                    }
-                }
-                
-                // Recurse into child scopes
-                MarkCapturedVariables(child);
-            }
+            var trimmed = (s ?? string.Empty).Trim();
+            if (trimmed.StartsWith("node:", StringComparison.OrdinalIgnoreCase))
+                trimmed = trimmed.Substring("node:".Length);
+            return trimmed;
         }
 
-        /// <summary>
-        /// Collects the names of variables from targetScope (and its ancestors) that are referenced in childScope's AST node.
-        /// </summary>
-        private HashSet<string> CollectReferencedParentVariables(Scope childScope, Scope targetScope)
+        private static Type? ResolveNodeModuleType(string key)
         {
-            var result = new HashSet<string>();
-            var childLocals = new HashSet<string>(childScope.Bindings.Keys);
-            childLocals.UnionWith(childScope.Parameters);
-            
-            // Collect all ancestor variables, not just immediate parent
-            var ancestorVariables = new HashSet<string>();
-            var currentAncestor = targetScope;
-            while (currentAncestor != null)
+            if (string.IsNullOrWhiteSpace(key)) return null;
+            var asm = typeof(JavaScriptRuntime.Require).Assembly;
+            // Scan JavaScriptRuntime.Node namespace for [NodeModule(Name=key)]
+            foreach (var t in asm.GetTypes())
             {
-                foreach (var key in currentAncestor.Bindings.Keys)
-                {
-                    ancestorVariables.Add(key);
-                }
-                currentAncestor = currentAncestor.Parent;
+                if (!t.IsClass || t.IsAbstract) continue;
+                if (!string.Equals(t.Namespace, "JavaScriptRuntime.Node", StringComparison.Ordinal)) continue;
+                var attr = t.GetCustomAttributes(false).FirstOrDefault(a => a.GetType().FullName == "JavaScriptRuntime.Node.NodeModuleAttribute");
+                if (attr == null) continue;
+                var nameProp = attr.GetType().GetProperty("Name");
+                var nameVal = nameProp?.GetValue(attr) as string;
+                if (string.Equals(nameVal, key, StringComparison.OrdinalIgnoreCase))
+                    return t;
             }
-            
-            if (childScope.AstNode != null)
-            {
-                CollectFreeVariables(childScope.AstNode, childLocals, ancestorVariables, result);
-            }
-            
+            return null;
+        }
+
+        private static string SanitizeForMetadata(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return "_";
+            var chars = name.Select(ch => char.IsLetterOrDigit(ch) || ch == '_' ? ch : '_').ToArray();
+            var result = new string(chars);
+            if (char.IsDigit(result[0])) result = "_" + result;
             return result;
         }
 
-        /// <summary>
-        /// Recursively collects identifiers that are not in localVariables but are in targetVariables.
-        /// </summary>
-        private void CollectFreeVariables(Node? node, HashSet<string> localVariables, HashSet<string> targetVariables, HashSet<string> result)
+        private static void TryAssignClrTypeForRequireInit(VariableDeclarator decl, BindingInfo binding)
         {
-            if (node == null) return;
-
-            switch (node)
+            // Pattern: const name = require('path') or require("path")
+            var init = decl.Init;
+            if (init is CallExpression call && call.Callee is Identifier calleeId && calleeId.Name == "require")
             {
-                case Identifier id:
-                    // If this identifier is not local, not a global intrinsic, and is in target scope
-                    if (!localVariables.Contains(id.Name) && 
-                        !IsKnownGlobalIntrinsic(id.Name) && 
-                        targetVariables.Contains(id.Name))
-                    {
-                        result.Add(id.Name);
-                    }
-                    break;
-
-                case VariableDeclaration vd:
-                    // Add declared variables to local set
-                    var newLocals = new HashSet<string>(localVariables);
-                    foreach (var decl in vd.Declarations)
-                    {
-                        if (decl.Id is Identifier vid)
-                        {
-                            newLocals.Add(vid.Name);
-                        }
-                    }
-                    // Check initializers with updated local set
-                    foreach (var decl in vd.Declarations)
-                    {
-                        CollectFreeVariables(decl.Init, newLocals, targetVariables, result);
-                    }
-                    break;
-
-                case BlockStatement bs:
-                    foreach (var stmt in bs.Body)
-                    {
-                        CollectFreeVariables(stmt, localVariables, targetVariables, result);
-                    }
-                    break;
-
-                case ExpressionStatement es:
-                    CollectFreeVariables(es.Expression, localVariables, targetVariables, result);
-                    break;
-
-                case ReturnStatement rs:
-                    CollectFreeVariables(rs.Argument, localVariables, targetVariables, result);
-                    break;
-
-                case IfStatement ifs:
-                    CollectFreeVariables(ifs.Test, localVariables, targetVariables, result);
-                    CollectFreeVariables(ifs.Consequent, localVariables, targetVariables, result);
-                    CollectFreeVariables(ifs.Alternate, localVariables, targetVariables, result);
-                    break;
-
-                case ForStatement fs:
-                    CollectFreeVariables(fs.Init as Node, localVariables, targetVariables, result);
-                    CollectFreeVariables(fs.Test, localVariables, targetVariables, result);
-                    CollectFreeVariables(fs.Update, localVariables, targetVariables, result);
-                    CollectFreeVariables(fs.Body, localVariables, targetVariables, result);
-                    break;
-
-                case WhileStatement ws:
-                    CollectFreeVariables(ws.Test, localVariables, targetVariables, result);
-                    CollectFreeVariables(ws.Body, localVariables, targetVariables, result);
-                    break;
-
-                case DoWhileStatement dws:
-                    CollectFreeVariables(dws.Body, localVariables, targetVariables, result);
-                    CollectFreeVariables(dws.Test, localVariables, targetVariables, result);
-                    break;
-
-                case BinaryExpression be:
-                    CollectFreeVariables(be.Left, localVariables, targetVariables, result);
-                    CollectFreeVariables(be.Right, localVariables, targetVariables, result);
-                    break;
-
-                case UpdateExpression upe:
-                    CollectFreeVariables(upe.Argument, localVariables, targetVariables, result);
-                    break;
-
-                case UnaryExpression ue:
-                    CollectFreeVariables(ue.Argument, localVariables, targetVariables, result);
-                    break;
-
-                case CallExpression ce:
-                    CollectFreeVariables(ce.Callee, localVariables, targetVariables, result);
-                    foreach (var arg in ce.Arguments)
-                    {
-                        CollectFreeVariables(arg as Node, localVariables, targetVariables, result);
-                    }
-                    break;
-
-                case MemberExpression me:
-                    CollectFreeVariables(me.Object, localVariables, targetVariables, result);
-                    if (me.Computed)
-                    {
-                        CollectFreeVariables(me.Property as Node, localVariables, targetVariables, result);
-                    }
-                    break;
-
-                case AssignmentExpression ae:
-                    CollectFreeVariables(ae.Left, localVariables, targetVariables, result);
-                    CollectFreeVariables(ae.Right, localVariables, targetVariables, result);
-                    break;
-
-                case ConditionalExpression ce:
-                    CollectFreeVariables(ce.Test, localVariables, targetVariables, result);
-                    CollectFreeVariables(ce.Consequent, localVariables, targetVariables, result);
-                    CollectFreeVariables(ce.Alternate, localVariables, targetVariables, result);
-                    break;
-
-                case ArrayExpression arr:
-                    foreach (var elem in arr.Elements)
-                    {
-                        CollectFreeVariables(elem as Node, localVariables, targetVariables, result);
-                    }
-                    break;
-
-                case ObjectExpression obj:
-                    foreach (var prop in obj.Properties)
-                    {
-                        CollectFreeVariables(prop, localVariables, targetVariables, result);
-                    }
-                    break;
-
-                case Property prop:
-                    CollectFreeVariables(prop.Key as Node, localVariables, targetVariables, result);
-                    CollectFreeVariables(prop.Value as Node, localVariables, targetVariables, result);
-                    break;
-
-                case FunctionDeclaration funcDecl:
-                    // Process the function body with the function's local variables
-                    if (funcDecl.Body is BlockStatement funcBody)
-                    {
-                        foreach (var stmt in funcBody.Body)
-                        {
-                            CollectFreeVariables(stmt, localVariables, targetVariables, result);
-                        }
-                    }
-                    break;
-
-                case FunctionExpression funcExpr:
-                    // Process the function body with the function's local variables
-                    if (funcExpr.Body is BlockStatement funcExprBody)
-                    {
-                        foreach (var stmt in funcExprBody.Body)
-                        {
-                            CollectFreeVariables(stmt, localVariables, targetVariables, result);
-                        }
-                    }
-                    break;
-
-                case ArrowFunctionExpression arrowExpr:
-                    // Process the arrow function body
-                    if (arrowExpr.Body is BlockStatement arrowBody)
-                    {
-                        foreach (var stmt in arrowBody.Body)
-                        {
-                            CollectFreeVariables(stmt, localVariables, targetVariables, result);
-                        }
-                    }
-                    else
-                    {
-                        // Expression body
-                        CollectFreeVariables(arrowExpr.Body, localVariables, targetVariables, result);
-                    }
-                    break;
-
-                case ClassDeclaration classDecl:
-                    // Process class methods and field initializers
-                    foreach (var element in classDecl.Body.Body)
-                    {
-                        if (element is MethodDefinition mdef && mdef.Value is FunctionExpression mfunc)
-                        {
-                            // Process method body
-                            if (mfunc.Body is BlockStatement mblock)
-                            {
-                                foreach (var stmt in mblock.Body)
-                                {
-                                    CollectFreeVariables(stmt, localVariables, targetVariables, result);
-                                }
-                            }
-                        }
-                        else if (element is PropertyDefinition propDef)
-                        {
-                            // Process field initializer expression
-                            if (propDef.Value != null)
-                            {
-                                CollectFreeVariables(propDef.Value, localVariables, targetVariables, result);
-                            }
-                        }
-                    }
-                    break;
-
-                default:
-                    // For unknown node types, do nothing
-                    break;
+                if (call.Arguments.Count == 1 && call.Arguments[0] is Literal lit && lit.Value is string s)
+                {
+                    var moduleKey = NormalizeModuleName(s);
+                    var t = ResolveNodeModuleType(moduleKey);
+                    binding.ClrType = t;
+                }
             }
         }
 
-        public SymbolTable Build(Node astRoot, string filePath)
+        /// <summary>
+        /// Analyzes all scopes to determine which ones reference variables from parent scopes.
+        /// This is used to determine if classes need _scopes fields and if functions need scope arrays.
+        /// </summary>
+        private void AnalyzeFreeVariables(Scope scope)
         {
-            var fileName = Path.GetFileNameWithoutExtension(filePath);
-            var globalScope = new Scope(fileName, ScopeKind.Global, null, astRoot);
-            BuildScopeRecursive(astRoot, globalScope);
-            AnalyzeFreeVariables(globalScope);
-            MarkCapturedVariables(globalScope);
-            return new SymbolTable(globalScope);
+            // Process children first (bottom-up)
+            foreach (var child in scope.Children)
+            {
+                AnalyzeFreeVariables(child);
+            }
+
+            // For class scopes, check if any method child references parent variables
+            if (scope.Kind == ScopeKind.Class)
+            {
+                foreach (var methodScope in scope.Children.Where(c => c.Kind == ScopeKind.Function))
+                {
+                    if (methodScope.ReferencesParentScopeVariables)
+                    {
+                        scope.ReferencesParentScopeVariables = true;
+                        break;
+                    }
+                }
+                
+                // Also check class field initializers directly
+                if (!scope.ReferencesParentScopeVariables && scope.AstNode is ClassDeclaration classDecl)
+                {
+                    var localVariables = new HashSet<string>(scope.Bindings.Keys);
+                    foreach (var element in classDecl.Body.Body)
+                    {
+                        if (element is PropertyDefinition propDef && propDef.Value != null)
+                        {
+                            if (ContainsFreeVariable(propDef.Value, localVariables))
+                            {
+                                scope.ReferencesParentScopeVariables = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            // For function scopes, check if the function body references any non-local variables
+            else if (scope.Kind == ScopeKind.Function && scope.AstNode is FunctionExpression funcExpr)
+            {
+                scope.ReferencesParentScopeVariables = CheckFunctionReferencesParentVariables(funcExpr, scope);
+            }
+            else if (scope.Kind == ScopeKind.Function && scope.AstNode is FunctionDeclaration funcDecl)
+            {
+                // Convert FunctionDeclaration to use its body like FunctionExpression
+                if (funcDecl.Body is BlockStatement body)
+                {
+                    scope.ReferencesParentScopeVariables = CheckBodyReferencesParentVariables(body, scope);
+                }
+            }
+            else if (scope.Kind == ScopeKind.Function && scope.AstNode is ArrowFunctionExpression arrowExpr)
+            {
+                scope.ReferencesParentScopeVariables = CheckArrowFunctionReferencesParentVariables(arrowExpr, scope);
+            }
         }
 
         private void BuildScopeRecursive(Node node, Scope currentScope)
@@ -1005,46 +743,311 @@ namespace Js2IL.SymbolTables
             }
         }
 
-        private static void TryAssignClrTypeForRequireInit(VariableDeclarator decl, BindingInfo binding)
+        /// <summary>
+        /// Checks if an arrow function references variables not declared locally or in parameters.
+        /// </summary>
+        private bool CheckArrowFunctionReferencesParentVariables(ArrowFunctionExpression arrowExpr, Scope functionScope)
         {
-            // Pattern: const name = require('path') or require("path")
-            var init = decl.Init;
-            if (init is CallExpression call && call.Callee is Identifier calleeId && calleeId.Name == "require")
+            if (arrowExpr.Body is BlockStatement body)
             {
-                if (call.Arguments.Count == 1 && call.Arguments[0] is Literal lit && lit.Value is string s)
+                return CheckBodyReferencesParentVariables(body, functionScope);
+            }
+            else
+            {
+                // Expression body - check the expression directly
+                var localVariables = new HashSet<string>(functionScope.Bindings.Keys);
+                localVariables.UnionWith(functionScope.Parameters);
+                return ContainsFreeVariable(arrowExpr.Body, localVariables);
+            }
+        }
+
+        /// <summary>
+        /// Checks if a block statement references variables not declared in the given scope or its parameters.
+        /// </summary>
+        private bool CheckBodyReferencesParentVariables(BlockStatement body, Scope scope)
+        {
+            var localVariables = new HashSet<string>(scope.Bindings.Keys);
+            localVariables.UnionWith(scope.Parameters);
+            return ContainsFreeVariable(body, localVariables);
+        }
+
+        /// <summary>
+        /// Checks if a function expression references variables not declared locally or in parameters.
+        /// </summary>
+        private bool CheckFunctionReferencesParentVariables(FunctionExpression funcExpr, Scope functionScope)
+        {
+            if (funcExpr.Body is not BlockStatement body) return false;
+            return CheckBodyReferencesParentVariables(body, functionScope);
+        }
+
+        /// <summary>
+        /// Recursively collects identifiers that are not in localVariables but are in targetVariables.
+        /// </summary>
+        private void CollectFreeVariables(Node? node, HashSet<string> localVariables, HashSet<string> targetVariables, HashSet<string> result)
+        {
+            if (node == null) return;
+
+            switch (node)
+            {
+                case Identifier id:
+                    // If this identifier is not local, not a global intrinsic, and is in target scope
+                    if (!localVariables.Contains(id.Name) && 
+                        !IsKnownGlobalIntrinsic(id.Name) && 
+                        targetVariables.Contains(id.Name))
+                    {
+                        result.Add(id.Name);
+                    }
+                    break;
+
+                case VariableDeclaration vd:
+                    // Add declared variables to local set
+                    var newLocals = new HashSet<string>(localVariables);
+                    foreach (var decl in vd.Declarations)
+                    {
+                        if (decl.Id is Identifier vid)
+                        {
+                            newLocals.Add(vid.Name);
+                        }
+                    }
+                    // Check initializers with updated local set
+                    foreach (var decl in vd.Declarations)
+                    {
+                        CollectFreeVariables(decl.Init, newLocals, targetVariables, result);
+                    }
+                    break;
+
+                case BlockStatement bs:
+                    foreach (var stmt in bs.Body)
+                    {
+                        CollectFreeVariables(stmt, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case ExpressionStatement es:
+                    CollectFreeVariables(es.Expression, localVariables, targetVariables, result);
+                    break;
+
+                case ReturnStatement rs:
+                    CollectFreeVariables(rs.Argument, localVariables, targetVariables, result);
+                    break;
+
+                case IfStatement ifs:
+                    CollectFreeVariables(ifs.Test, localVariables, targetVariables, result);
+                    CollectFreeVariables(ifs.Consequent, localVariables, targetVariables, result);
+                    CollectFreeVariables(ifs.Alternate, localVariables, targetVariables, result);
+                    break;
+
+                case ForStatement fs:
+                    CollectFreeVariables(fs.Init as Node, localVariables, targetVariables, result);
+                    CollectFreeVariables(fs.Test, localVariables, targetVariables, result);
+                    CollectFreeVariables(fs.Update, localVariables, targetVariables, result);
+                    CollectFreeVariables(fs.Body, localVariables, targetVariables, result);
+                    break;
+
+                case WhileStatement ws:
+                    CollectFreeVariables(ws.Test, localVariables, targetVariables, result);
+                    CollectFreeVariables(ws.Body, localVariables, targetVariables, result);
+                    break;
+
+                case DoWhileStatement dws:
+                    CollectFreeVariables(dws.Body, localVariables, targetVariables, result);
+                    CollectFreeVariables(dws.Test, localVariables, targetVariables, result);
+                    break;
+
+                case BinaryExpression be:
+                    CollectFreeVariables(be.Left, localVariables, targetVariables, result);
+                    CollectFreeVariables(be.Right, localVariables, targetVariables, result);
+                    break;
+
+                case UpdateExpression upe:
+                    CollectFreeVariables(upe.Argument, localVariables, targetVariables, result);
+                    break;
+
+                case UnaryExpression ue:
+                    CollectFreeVariables(ue.Argument, localVariables, targetVariables, result);
+                    break;
+
+                case CallExpression ce:
+                    CollectFreeVariables(ce.Callee, localVariables, targetVariables, result);
+                    foreach (var arg in ce.Arguments)
+                    {
+                        CollectFreeVariables(arg as Node, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case MemberExpression me:
+                    CollectFreeVariables(me.Object, localVariables, targetVariables, result);
+                    if (me.Computed)
+                    {
+                        CollectFreeVariables(me.Property as Node, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case AssignmentExpression ae:
+                    CollectFreeVariables(ae.Left, localVariables, targetVariables, result);
+                    CollectFreeVariables(ae.Right, localVariables, targetVariables, result);
+                    break;
+
+                case ConditionalExpression ce:
+                    CollectFreeVariables(ce.Test, localVariables, targetVariables, result);
+                    CollectFreeVariables(ce.Consequent, localVariables, targetVariables, result);
+                    CollectFreeVariables(ce.Alternate, localVariables, targetVariables, result);
+                    break;
+
+                case ArrayExpression arr:
+                    foreach (var elem in arr.Elements)
+                    {
+                        CollectFreeVariables(elem as Node, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case ObjectExpression obj:
+                    foreach (var prop in obj.Properties)
+                    {
+                        CollectFreeVariables(prop, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case Property prop:
+                    CollectFreeVariables(prop.Key as Node, localVariables, targetVariables, result);
+                    CollectFreeVariables(prop.Value as Node, localVariables, targetVariables, result);
+                    break;
+
+                case FunctionDeclaration funcDecl:
+                    // Process the function body with the function's local variables
+                    if (funcDecl.Body is BlockStatement funcBody)
+                    {
+                        foreach (var stmt in funcBody.Body)
+                        {
+                            CollectFreeVariables(stmt, localVariables, targetVariables, result);
+                        }
+                    }
+                    break;
+
+                case FunctionExpression funcExpr:
+                    // Process the function body with the function's local variables
+                    if (funcExpr.Body is BlockStatement funcExprBody)
+                    {
+                        foreach (var stmt in funcExprBody.Body)
+                        {
+                            CollectFreeVariables(stmt, localVariables, targetVariables, result);
+                        }
+                    }
+                    break;
+
+                case ArrowFunctionExpression arrowExpr:
+                    // Process the arrow function body
+                    if (arrowExpr.Body is BlockStatement arrowBody)
+                    {
+                        foreach (var stmt in arrowBody.Body)
+                        {
+                            CollectFreeVariables(stmt, localVariables, targetVariables, result);
+                        }
+                    }
+                    else
+                    {
+                        // Expression body
+                        CollectFreeVariables(arrowExpr.Body, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case ClassDeclaration classDecl:
+                    // Process class methods and field initializers
+                    foreach (var element in classDecl.Body.Body)
+                    {
+                        if (element is MethodDefinition mdef && mdef.Value is FunctionExpression mfunc)
+                        {
+                            // Process method body
+                            if (mfunc.Body is BlockStatement mblock)
+                            {
+                                foreach (var stmt in mblock.Body)
+                                {
+                                    CollectFreeVariables(stmt, localVariables, targetVariables, result);
+                                }
+                            }
+                        }
+                        else if (element is PropertyDefinition propDef)
+                        {
+                            // Process field initializer expression
+                            if (propDef.Value != null)
+                            {
+                                CollectFreeVariables(propDef.Value, localVariables, targetVariables, result);
+                            }
+                        }
+                    }
+                    break;
+
+                default:
+                    // For unknown node types, do nothing
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Collects the names of variables from targetScope (and its ancestors) that are referenced in childScope's AST node.
+        /// </summary>
+        private HashSet<string> CollectReferencedParentVariables(Scope childScope, Scope targetScope)
+        {
+            var result = new HashSet<string>();
+            var childLocals = new HashSet<string>(childScope.Bindings.Keys);
+            childLocals.UnionWith(childScope.Parameters);
+            
+            // Collect all ancestor variables, not just immediate parent
+            var ancestorVariables = new HashSet<string>();
+            var currentAncestor = targetScope;
+            while (currentAncestor != null)
+            {
+                foreach (var key in currentAncestor.Bindings.Keys)
                 {
-                    var moduleKey = NormalizeModuleName(s);
-                    var t = ResolveNodeModuleType(moduleKey);
-                    binding.RuntimeIntrinsicType = t;
+                    ancestorVariables.Add(key);
                 }
+                currentAncestor = currentAncestor.Parent;
             }
-        }
-
-        private static string NormalizeModuleName(string s)
-        {
-            var trimmed = (s ?? string.Empty).Trim();
-            if (trimmed.StartsWith("node:", StringComparison.OrdinalIgnoreCase))
-                trimmed = trimmed.Substring("node:".Length);
-            return trimmed;
-        }
-
-        private static Type? ResolveNodeModuleType(string key)
-        {
-            if (string.IsNullOrWhiteSpace(key)) return null;
-            var asm = typeof(JavaScriptRuntime.Require).Assembly;
-            // Scan JavaScriptRuntime.Node namespace for [NodeModule(Name=key)]
-            foreach (var t in asm.GetTypes())
+            
+            if (childScope.AstNode != null)
             {
-                if (!t.IsClass || t.IsAbstract) continue;
-                if (!string.Equals(t.Namespace, "JavaScriptRuntime.Node", StringComparison.Ordinal)) continue;
-                var attr = t.GetCustomAttributes(false).FirstOrDefault(a => a.GetType().FullName == "JavaScriptRuntime.Node.NodeModuleAttribute");
-                if (attr == null) continue;
-                var nameProp = attr.GetType().GetProperty("Name");
-                var nameVal = nameProp?.GetValue(attr) as string;
-                if (string.Equals(nameVal, key, StringComparison.OrdinalIgnoreCase))
-                    return t;
+                CollectFreeVariables(childScope.AstNode, childLocals, ancestorVariables, result);
             }
-            return null;
+            
+            return result;
+        }
+
+        /// <summary>
+        /// Marks variables as captured if they are referenced by any child scope.
+        /// This enables optimization: uncaptured variables can use local variables instead of fields.
+        /// </summary>
+        private void MarkCapturedVariables(Scope scope)
+        {
+            // For each child scope that references parent variables
+            foreach (var child in scope.Children)
+            {
+                // Only mark variables as captured if the child scope is a function or class scope
+                // Block scopes don't create closures, so variables referenced from block scopes
+                // don't need to be captured (they can use locals)
+                // Function scopes create closures, class scopes have field initializers that may reference outer variables
+                if ((child.Kind == ScopeKind.Function || child.Kind == ScopeKind.Class) && child.ReferencesParentScopeVariables)
+                {
+                    // Find which specific variables from this scope (and ancestors) are referenced by the child
+                    var capturedVars = CollectReferencedParentVariables(child, scope);
+                    foreach (var varName in capturedVars)
+                    {
+                        // Mark the variable in whichever ancestor scope it's declared
+                        var searchScope = scope;
+                        while (searchScope != null)
+                        {
+                            if (searchScope.Bindings.TryGetValue(varName, out var binding))
+                            {
+                                binding.IsCaptured = true;
+                                break;
+                            }
+                            searchScope = searchScope.Parent;
+                        }
+                    }
+                }
+                
+                // Recurse into child scopes
+                MarkCapturedVariables(child);
+            }
         }
 
         private void ProcessChildNodes(Node node, Scope currentScope)
