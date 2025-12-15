@@ -111,39 +111,34 @@
 	{
 		// Method begins at RVA 0x2088
 		// Header size: 12
-		// Code size: 81 (0x51)
+		// Code size: 56 (0x38)
 		.maxstack 32
 		.locals init (
-			[0] object,
-			[1] object
+			[0] float64,
+			[1] float64
 		)
 
 		IL_0000: ldc.r8 0.0
-		IL_0009: box [System.Runtime]System.Double
-		IL_000e: stloc.0
-		IL_000f: ldc.r8 10
-		IL_0018: box [System.Runtime]System.Double
-		IL_001d: stloc.1
-		// loop start (head: IL_001e)
-			IL_001e: ldloc.0
-			IL_001f: unbox.any [System.Runtime]System.Double
-			IL_0024: ldloc.1
-			IL_0025: unbox.any [System.Runtime]System.Double
-			IL_002a: blt IL_0034
+		IL_0009: stloc.0
+		IL_000a: ldc.r8 10
+		IL_0013: stloc.1
+		// loop start (head: IL_0014)
+			IL_0014: ldloc.0
+			IL_0015: ldloc.1
+			IL_0016: blt IL_0020
 
-			IL_002f: br IL_004f
+			IL_001b: br IL_0031
 
-			IL_0034: ldloc.0
-			IL_0035: unbox.any [System.Runtime]System.Double
-			IL_003a: ldc.r8 1
-			IL_0043: add
-			IL_0044: box [System.Runtime]System.Double
-			IL_0049: stloc.0
-			IL_004a: br IL_001e
+			IL_0020: ldloc.0
+			IL_0021: ldc.r8 1
+			IL_002a: add
+			IL_002b: stloc.0
+			IL_002c: br IL_0014
 		// end loop
 
-		IL_004f: ldloc.0
-		IL_0050: ret
+		IL_0031: ldloc.0
+		IL_0032: box [System.Runtime]System.Double
+		IL_0037: ret
 	} // end of method C::run
 
 } // end of class Classes.C
@@ -155,7 +150,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e8
+		// Method begins at RVA 0x20cc
 		// Header size: 12
 		// Code size: 28 (0x1c)
 		.maxstack 32
@@ -187,7 +182,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2110
+		// Method begins at RVA 0x20f4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

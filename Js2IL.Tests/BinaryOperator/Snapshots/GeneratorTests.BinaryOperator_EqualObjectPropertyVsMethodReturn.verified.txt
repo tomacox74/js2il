@@ -111,44 +111,38 @@
 	{
 		// Method begins at RVA 0x2088
 		// Header size: 12
-		// Code size: 106 (0x6a)
+		// Code size: 76 (0x4c)
 		.maxstack 32
 		.locals init (
-			[0] object,
-			[1] object
+			[0] float64,
+			[1] float64
 		)
 
 		IL_0000: ldc.r8 0.0
-		IL_0009: box [System.Runtime]System.Double
-		IL_000e: stloc.0
-		IL_000f: ldc.r8 0.0
-		IL_0018: box [System.Runtime]System.Double
-		IL_001d: stloc.1
-		// loop start (head: IL_001e)
-			IL_001e: ldloc.1
-			IL_001f: unbox.any [System.Runtime]System.Double
-			IL_0024: ldc.r8 10
-			IL_002d: blt IL_0037
+		IL_0009: stloc.0
+		IL_000a: ldc.r8 0.0
+		IL_0013: stloc.1
+		// loop start (head: IL_0014)
+			IL_0014: ldloc.1
+			IL_0015: ldc.r8 10
+			IL_001e: blt IL_0028
 
-			IL_0032: br IL_0068
+			IL_0023: br IL_0045
 
-			IL_0037: ldloc.0
-			IL_0038: unbox.any [System.Runtime]System.Double
-			IL_003d: ldc.r8 1
-			IL_0046: add
-			IL_0047: box [System.Runtime]System.Double
-			IL_004c: stloc.0
-			IL_004d: ldloc.1
-			IL_004e: unbox.any [System.Runtime]System.Double
-			IL_0053: ldc.r8 1
-			IL_005c: add
-			IL_005d: box [System.Runtime]System.Double
-			IL_0062: stloc.1
-			IL_0063: br IL_001e
+			IL_0028: ldloc.0
+			IL_0029: ldc.r8 1
+			IL_0032: add
+			IL_0033: stloc.0
+			IL_0034: ldloc.1
+			IL_0035: ldc.r8 1
+			IL_003e: add
+			IL_003f: stloc.1
+			IL_0040: br IL_0014
 		// end loop
 
-		IL_0068: ldloc.0
-		IL_0069: ret
+		IL_0045: ldloc.0
+		IL_0046: box [System.Runtime]System.Double
+		IL_004b: ret
 	} // end of method Counter::count
 
 } // end of class Classes.Counter
@@ -160,7 +154,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2100
+		// Method begins at RVA 0x20e0
 		// Header size: 12
 		// Code size: 160 (0xa0)
 		.maxstack 32
@@ -235,7 +229,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21ac
+		// Method begins at RVA 0x218c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

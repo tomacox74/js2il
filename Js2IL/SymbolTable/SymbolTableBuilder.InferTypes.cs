@@ -9,6 +9,18 @@ public partial class SymbolTableBuilder
     /// </Summary>
     private void InferVariableClrTypes(Scope scope)
     {
+        InferVariableClrTypesRecursively(scope);
+    }
+
+    void InferVariableClrTypesForScope(Scope scope)
+    {
+        // limited which types we do this for initally
+        bool isClassMethod = scope.Kind == ScopeKind.Function && scope.Parent != null && scope.Parent.Kind == ScopeKind.Class;
+        if (scope.Kind != ScopeKind.Global && isClassMethod == false)
+        {
+            return;
+        }
+
         var proposedClrTypes = new Dictionary<string, Type>();
         var unitializedClrTypes = new HashSet<string>();
 
@@ -93,6 +105,16 @@ public partial class SymbolTableBuilder
             var binding = scope.Bindings[kvp.Key];
             binding.ClrType = kvp.Value;
             binding.IsStableType = true;
+        }      
+    }
+
+    void InferVariableClrTypesRecursively(Scope scope)
+    {
+        InferVariableClrTypesForScope(scope);
+
+        foreach (var childScope in scope.Children)
+        {
+            InferVariableClrTypesRecursively(childScope);
         }
     }
 
