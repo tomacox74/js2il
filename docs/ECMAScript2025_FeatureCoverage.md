@@ -1,4 +1,4 @@
-﻿# ECMAScript 2025 Feature Coverage
+# ECMAScript 2025 Feature Coverage
 
 [ECMAScript® 2025 Language Specification](https://tc39.es/ecma262/)
 
@@ -154,6 +154,13 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
 | Unary -- (Postfix decrement) | Supported | `Js2IL.Tests/JavaScript/UnaryOperator_MinusMinusPostfix.js` |  | 13.4.10 |
+
+
+#### [Bitwise NOT operator (~)](https://tc39.es/ecma262/#sec-bitwise-not-operator)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Unary ~ (Bitwise NOT) | Supported | `Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_BitwiseNot.js` | Converts operand to int32, applies bitwise NOT, converts back to double. Used in bit manipulation patterns. | 13.5.5 |
 
 
 ### [Binary Operators](https://tc39.es/ecma262/#sec-ecmascript-language-expressions)
