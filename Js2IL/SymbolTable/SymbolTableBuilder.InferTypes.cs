@@ -9,6 +9,47 @@ public partial class SymbolTableBuilder
     /// </Summary>
     private void InferVariableClrTypes(Scope scope)
     {
+        InferVariableClrTypesRecursively(scope);
+    }
+
+    void InferVariableClrTypesForScope(Scope scope)
+    {
+        // these are temporary gates as we slowing roll out type inference
+        bool isClassMethod(Scope? scope) =>
+            scope != null &&
+            scope.Kind == ScopeKind.Function &&
+            scope.Parent != null &&
+            scope.Parent.Kind == ScopeKind.Class;
+
+        // Check if this is a block scope that is a descendant of a class method,
+        // without crossing another function boundary (e.g., nested function or arrow function).
+        // Valid: classMethod -> block -> block -> block
+        // Invalid: classMethod -> function -> block (crosses function boundary)
+        bool isBlockScopeInClassMethod(Scope? scope)
+        {
+            if (scope == null || scope.Kind != ScopeKind.Block)
+                return false;
+            
+            var current = scope.Parent;
+            while (current != null)
+            {
+                if (isClassMethod(current))
+                    return true; // Found class method ancestor - valid!
+                
+                if (current.Kind == ScopeKind.Function)
+                    return false; // Hit another function before class method - invalid
+                
+                // Continue walking up through block scopes
+                current = current.Parent;
+            }
+            return false;
+        }
+
+        if (scope.Kind != ScopeKind.Global && isClassMethod(scope) == false && isBlockScopeInClassMethod(scope) == false)
+        {
+            return;
+        }
+
         var proposedClrTypes = new Dictionary<string, Type>();
         var unitializedClrTypes = new HashSet<string>();
 
@@ -93,6 +134,16 @@ public partial class SymbolTableBuilder
             var binding = scope.Bindings[kvp.Key];
             binding.ClrType = kvp.Value;
             binding.IsStableType = true;
+        }      
+    }
+
+    void InferVariableClrTypesRecursively(Scope scope)
+    {
+        InferVariableClrTypesForScope(scope);
+
+        foreach (var childScope in scope.Children)
+        {
+            InferVariableClrTypesRecursively(childScope);
         }
     }
 
@@ -108,13 +159,29 @@ public partial class SymbolTableBuilder
                 return typeof(bool);
             case NonLogicalBinaryExpression binExpr:
             {
-                if (binExpr.Operator == Operator.Addition)
-                
+
+                switch (binExpr.Operator)
                 {
-                    return InferAddOperatorType(binExpr);
+                    case Operator.Addition:
+                        return InferAddOperatorType(binExpr);
+                    case Operator.BitwiseAnd:
+                    case Operator.BitwiseOr:
+                    case Operator.BitwiseXor:
+                    case Operator.LeftShift:
+                    case Operator.RightShift:
+                    case Operator.UnsignedRightShift:
+                        return typeof(double);
                 }
 
                 return null;
+            }
+            case NonUpdateUnaryExpression unaryExpr:
+            {
+                if (unaryExpr.Operator == Operator.BitwiseNot)
+                {
+                    return typeof(double);
+                }
+                return  null;
             }
         }
 

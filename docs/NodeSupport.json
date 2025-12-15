@@ -3,11 +3,159 @@
   "generatedAtUtc": "${UTC_NOW}",
   "modules": [
     {
+      "name": "fs",
+      "status": "partial",
+      "implementation": "JavaScriptRuntime/Node/FS.cs",
+      "docs": "https://nodejs.org/api/fs.html",
+      "apis": [
+        {
+          "name": "existsSync(path)",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Returns true for existing files or directories.",
+          "docs": "https://nodejs.org/api/fs.html#fsexistssyncpath",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.FSAdditionalTests.FS_ExistsSync_File_And_Directory",
+              "file": "Js2IL.Tests/Node/FSAdditionalTests.cs"
+            },
+            {
+              "name": "Js2IL.Tests.Node.FSAdditionalTests.FS_ExistsSync_EmptyPath_ReturnsFalse",
+              "file": "Js2IL.Tests/Node/FSAdditionalTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "readdirSync(path, { withFileTypes: true })",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Returns an array of DirEnt-like objects with properties: name (string) and method isDirectory().",
+          "docs": "https://nodejs.org/api/fs.html#fsreaddirsyncpath-options",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_WithFileTypes",
+              "file": "Js2IL.Tests/Node/FSAdditionalTests.cs"
+            },
+            {
+              "name": "Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_NonExistent_ReturnsEmpty",
+              "file": "Js2IL.Tests/Node/FSAdditionalTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "readdirSync(path)",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Returns an array of names (strings).",
+          "docs": "https://nodejs.org/api/fs.html#fsreaddirsyncpath-options",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_Basic_Names",
+              "file": "Js2IL.Tests/Node/FSAdditionalTests.cs"
+            },
+            {
+              "name": "Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_NonExistent_ReturnsEmpty",
+              "file": "Js2IL.Tests/Node/FSAdditionalTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "readFileSync(path[, options])",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Text-only, returns UTF-8 string. Buffer is not implemented. Recognizes string encoding option 'utf8'/'utf-8'.",
+          "docs": "https://nodejs.org/api/fs.html#fsreadfilesyncpath-options",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.ExecutionTests.FS_ReadWrite_Utf8",
+              "file": "Js2IL.Tests/Node/ExecutionTests.cs#L36"
+            },
+            {
+              "name": "Js2IL.Tests.Node.GeneratorTests.FS_ReadWrite_Utf8",
+              "file": "Js2IL.Tests/Node/GeneratorTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "rmSync(path[, options])",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Removes a file or directory (recursive). Supports options.force to ignore errors.",
+          "docs": "https://nodejs.org/api/fs.html#fsrmsyncpath-options",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.FSAdditionalTests.FS_RmSync_Removes_File_And_Directory",
+              "file": "Js2IL.Tests/Node/FSAdditionalTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "statSync(path)",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Returns a minimal Stats-like object supporting size (number). Directories report size 0.",
+          "docs": "https://nodejs.org/api/fs.html#fsstatsyncpath-options",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.FSAdditionalTests.FS_StatSync_FileSize",
+              "file": "Js2IL.Tests/Node/FSAdditionalTests.cs"
+            },
+            {
+              "name": "Js2IL.Tests.Node.FSAdditionalTests.FS_StatSync_NonExistentPath_ReturnsZero",
+              "file": "Js2IL.Tests/Node/FSAdditionalTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "writeFileSync(path, data[, options])",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Text-only, accepts stringifiable data. Writes UTF-8. Recognizes string encoding option 'utf8'/'utf-8'.",
+          "docs": "https://nodejs.org/api/fs.html#fswritefilesyncfile-data-options",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.ExecutionTests.FS_ReadWrite_Utf8",
+              "file": "Js2IL.Tests/Node/ExecutionTests.cs#L36"
+            },
+            {
+              "name": "Js2IL.Tests.Node.GeneratorTests.FS_ReadWrite_Utf8",
+              "file": "Js2IL.Tests/Node/GeneratorTests.cs"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "path",
       "status": "partial",
       "implementation": "JavaScriptRuntime/Node/Path.cs",
       "docs": "https://nodejs.org/api/path.html",
       "apis": [
+        {
+          "name": "basename(path[, ext])",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Ext trimming is supported when the name ends with the provided extension (exact match).",
+          "docs": "https://nodejs.org/api/path.html#pathbasenamepath-suffix",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Basename_And_Dirname",
+              "file": "Js2IL.Tests/Node/PathAdditionalTests.cs"
+            }
+          ]
+        },
+        {
+          "name": "dirname(path)",
+          "kind": "function",
+          "status": "supported",
+          "docs": "https://nodejs.org/api/path.html#pathdirnamepath",
+          "tests": [
+            {
+              "name": "Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Basename_And_Dirname",
+              "file": "Js2IL.Tests/Node/PathAdditionalTests.cs"
+            }
+          ]
+        },
         {
           "name": "join(...parts)",
           "kind": "function",
@@ -33,19 +181,6 @@
           ]
         },
         {
-          "name": "resolve(...parts)",
-          "kind": "function",
-          "status": "supported",
-          "notes": "Resolves from right to left until an absolute path is constructed and returns a normalized absolute path via GetFullPath. Behavior is sufficient for current docs/scripts needs; edge cases like drive-letter nuances may differ from Node on non-Windows.",
-          "docs": "https://nodejs.org/api/path.html#pathresolvepaths",
-          "tests": [
-            {
-              "name": "Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Resolve_Relative_To_Absolute",
-              "file": "Js2IL.Tests/Node/PathAdditionalTests.cs"
-            }
-          ]
-        },
-        {
           "name": "relative(from, to)",
           "kind": "function",
           "status": "supported",
@@ -59,26 +194,14 @@
           ]
         },
         {
-          "name": "basename(path[, ext])",
+          "name": "resolve(...parts)",
           "kind": "function",
           "status": "supported",
-          "notes": "Ext trimming is supported when the name ends with the provided extension (exact match).",
-          "docs": "https://nodejs.org/api/path.html#pathbasenamepath-suffix",
+          "notes": "Resolves from right to left until an absolute path is constructed and returns a normalized absolute path via GetFullPath. Behavior is sufficient for current docs/scripts needs; edge cases like drive-letter nuances may differ from Node on non-Windows.",
+          "docs": "https://nodejs.org/api/path.html#pathresolvepaths",
           "tests": [
             {
-              "name": "Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Basename_And_Dirname",
-              "file": "Js2IL.Tests/Node/PathAdditionalTests.cs"
-            }
-          ]
-        },
-        {
-          "name": "dirname(path)",
-          "kind": "function",
-          "status": "supported",
-          "docs": "https://nodejs.org/api/path.html#pathdirnamepath",
-          "tests": [
-            {
-              "name": "Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Basename_And_Dirname",
+              "name": "Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Resolve_Relative_To_Absolute",
               "file": "Js2IL.Tests/Node/PathAdditionalTests.cs"
             }
           ]
@@ -116,146 +239,28 @@
       ]
     },
     {
-      "name": "fs",
-      "status": "partial",
-      "implementation": "JavaScriptRuntime/Node/FS.cs",
-      "docs": "https://nodejs.org/api/fs.html",
-      "apis": [
-        {
-          "name": "readFileSync(path[, options])",
-          "kind": "function",
-          "status": "supported",
-          "notes": "Text-only, returns UTF-8 string. Buffer is not implemented. Recognizes string encoding option 'utf8'/'utf-8'.",
-          "docs": "https://nodejs.org/api/fs.html#fsreadfilesyncpath-options",
-          "tests": [
-            {
-              "name": "Js2IL.Tests.Node.ExecutionTests.FS_ReadWrite_Utf8",
-              "file": "Js2IL.Tests/Node/ExecutionTests.cs#L36"
-            },
-            {
-              "name": "Js2IL.Tests.Node.GeneratorTests.FS_ReadWrite_Utf8",
-              "file": "Js2IL.Tests/Node/GeneratorTests.cs"
-            }
-          ]
-        },
-        {
-          "name": "writeFileSync(path, data[, options])",
-          "kind": "function",
-          "status": "supported",
-          "notes": "Text-only, accepts stringifiable data. Writes UTF-8. Recognizes string encoding option 'utf8'/'utf-8'.",
-          "docs": "https://nodejs.org/api/fs.html#fswritefilesyncfile-data-options",
-          "tests": [
-            {
-              "name": "Js2IL.Tests.Node.ExecutionTests.FS_ReadWrite_Utf8",
-              "file": "Js2IL.Tests/Node/ExecutionTests.cs#L36"
-            },
-            {
-              "name": "Js2IL.Tests.Node.GeneratorTests.FS_ReadWrite_Utf8",
-              "file": "Js2IL.Tests/Node/GeneratorTests.cs"
-            }
-          ]
-        },
-        {
-          "name": "existsSync(path)",
-          "kind": "function",
-          "status": "supported",
-          "notes": "Returns true for existing files or directories.",
-          "docs": "https://nodejs.org/api/fs.html#fsexistssyncpath",
-          "tests": [
-            {
-              "name": "Js2IL.Tests.Node.FSAdditionalTests.FS_ExistsSync_File_And_Directory",
-              "file": "Js2IL.Tests/Node/FSAdditionalTests.cs"
-            },
-            {
-              "name": "Js2IL.Tests.Node.FSAdditionalTests.FS_ExistsSync_EmptyPath_ReturnsFalse",
-              "file": "Js2IL.Tests/Node/FSAdditionalTests.cs"
-            }
-          ]
-        },
-        {
-          "name": "readdirSync(path)",
-          "kind": "function",
-          "status": "supported",
-          "notes": "Returns an array of names (strings).",
-          "docs": "https://nodejs.org/api/fs.html#fsreaddirsyncpath-options",
-          "tests": [
-            {
-              "name": "Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_Basic_Names",
-              "file": "Js2IL.Tests/Node/FSAdditionalTests.cs"
-            },
-            {
-              "name": "Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_NonExistent_ReturnsEmpty",
-              "file": "Js2IL.Tests/Node/FSAdditionalTests.cs"
-            }
-          ]
-        },
-        {
-          "name": "readdirSync(path, { withFileTypes: true })",
-          "kind": "function",
-          "status": "supported",
-          "notes": "Returns an array of DirEnt-like objects with properties: name (string) and method isDirectory().",
-          "docs": "https://nodejs.org/api/fs.html#fsreaddirsyncpath-options",
-          "tests": [
-            {
-              "name": "Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_WithFileTypes",
-              "file": "Js2IL.Tests/Node/FSAdditionalTests.cs"
-            },
-            {
-              "name": "Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_NonExistent_ReturnsEmpty",
-              "file": "Js2IL.Tests/Node/FSAdditionalTests.cs"
-            }
-          ]
-        },
-        {
-          "name": "statSync(path)",
-          "kind": "function",
-          "status": "supported",
-          "notes": "Returns a minimal Stats-like object supporting size (number). Directories report size 0.",
-          "docs": "https://nodejs.org/api/fs.html#fsstatsyncpath-options",
-          "tests": [
-            {
-              "name": "Js2IL.Tests.Node.FSAdditionalTests.FS_StatSync_FileSize",
-              "file": "Js2IL.Tests/Node/FSAdditionalTests.cs"
-            },
-            {
-              "name": "Js2IL.Tests.Node.FSAdditionalTests.FS_StatSync_NonExistentPath_ReturnsZero",
-              "file": "Js2IL.Tests/Node/FSAdditionalTests.cs"
-            }
-          ]
-        },
-        {
-          "name": "rmSync(path[, options])",
-          "kind": "function",
-          "status": "supported",
-          "notes": "Removes a file or directory (recursive). Supports options.force to ignore errors.",
-          "docs": "https://nodejs.org/api/fs.html#fsrmsyncpath-options",
-          "tests": [
-            {
-              "name": "Js2IL.Tests.Node.FSAdditionalTests.FS_RmSync_Removes_File_And_Directory",
-              "file": "Js2IL.Tests/Node/FSAdditionalTests.cs"
-            }
-          ]
-        }
-      ]
-    },
-    {
       "name": "process",
       "status": "partial",
       "implementation": [
         "JavaScriptRuntime/Node/Process.cs",
-  "JavaScriptRuntime/GlobalVariables.cs"
+        "JavaScriptRuntime/GlobalVariables.cs"
       ],
       "docs": "https://nodejs.org/api/process.html",
       "apis": [
         {
-          "name": "exitCode",
+          "name": "argv",
           "kind": "property",
           "status": "supported",
-          "docs": "https://nodejs.org/api/process.html#processexitcode",
+          "notes": "argv[0] normalized to current script filename; extra host args trimmed in tests.",
+          "docs": "https://nodejs.org/api/process.html#processargv",
           "tests": [
             {
-              "name": "Js2IL.Tests.Node.ProcessExitCodeTests.Process_exitCode_getter_setter_mirrors_Environment",
-              "file": "Js2IL.Tests/Node/ProcessExitCodeTests.cs"
+              "name": "Js2IL.Tests.Node.ExecutionTests.Environment_EnumerateProcessArgV",
+              "file": "Js2IL.Tests/Node/ExecutionTests.cs#L21"
+            },
+            {
+              "name": "Js2IL.Tests.Node.GeneratorTests.Environment_EnumerateProcessArgV",
+              "file": "Js2IL.Tests/Node/GeneratorTests.cs"
             }
           ]
         },
@@ -286,19 +291,14 @@
           ]
         },
         {
-          "name": "argv",
+          "name": "exitCode",
           "kind": "property",
           "status": "supported",
-          "notes": "argv[0] normalized to current script filename; extra host args trimmed in tests.",
-          "docs": "https://nodejs.org/api/process.html#processargv",
+          "docs": "https://nodejs.org/api/process.html#processexitcode",
           "tests": [
             {
-              "name": "Js2IL.Tests.Node.ExecutionTests.Environment_EnumerateProcessArgV",
-              "file": "Js2IL.Tests/Node/ExecutionTests.cs#L21"
-            },
-            {
-              "name": "Js2IL.Tests.Node.GeneratorTests.Environment_EnumerateProcessArgV",
-              "file": "Js2IL.Tests/Node/GeneratorTests.cs"
+              "name": "Js2IL.Tests.Node.ProcessExitCodeTests.Process_exitCode_getter_setter_mirrors_Environment",
+              "file": "Js2IL.Tests/Node/ProcessExitCodeTests.cs"
             }
           ]
         }
@@ -355,7 +355,7 @@
       "status": "supported",
       "implementation": "JavaScriptRuntime/Console.cs",
       "docs": "https://nodejs.org/api/console.html#consoleerrordata-args",
-  "notes": "Writes to stderr.",
+      "notes": "Writes to stderr.",
       "tests": [
         {
           "name": "JavaScriptRuntime.Tests.ConsoleTests.Error_PrintsAllArgumentsWithSpaces",
@@ -368,7 +368,7 @@
       "status": "supported",
       "implementation": "JavaScriptRuntime/Console.cs",
       "docs": "https://nodejs.org/api/console.html#consolewarndata-args",
-  "notes": "Writes to stderr.",
+      "notes": "Writes to stderr.",
       "tests": [
         {
           "name": "JavaScriptRuntime.Tests.ConsoleTests.Warn_PrintsAllArgumentsWithSpaces",

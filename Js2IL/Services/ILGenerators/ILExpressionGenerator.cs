@@ -2003,8 +2003,33 @@ namespace Js2IL.Services.ILGenerators
                         variable.ClrType = rhsResult.ClrType;
                     }
                     
+                    // If we have a stable typed double local but the RHS returned an object (e.g., method call),
+                    // we need to convert to double using ToNumber before storing.
+                    // We detect this by checking if clrType is null (dynamic call) or typeof(object).
+                    // IMPORTANT: If JsType is Number, the value is already an unboxed float64 - do NOT convert.
+                    bool rhsIsObjectOnStack = (rhsResult.ClrType == null || rhsResult.ClrType == typeof(object))
+                                             && rhsResult.JsType != JavascriptType.Number;
+                    bool needsToNumber = variable.IsStableType && variable.ClrType == typeof(double) 
+                                        && variable.LocalSlot >= 0 
+                                        && rhsIsObjectOnStack;
+                    if (needsToNumber)
+                    {
+                        // Call TypeUtilities.ToNumber to convert object to double
+                        var toNumberRef = _owner.Runtime.GetStaticMethodRef(
+                            typeof(JavaScriptRuntime.TypeUtilities),
+                            nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                            typeof(double), typeof(object));
+                        _il.OpCode(ILOpCode.Call);
+                        _il.Token(toNumberRef);
+                    }
+                    
                     // Store to variable (scope already loaded for fields, not needed for locals)
-                    ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: isFieldVariable);
+                    // Value is unboxed (float64) if:
+                    // - needsToNumber: we just converted it to double
+                    // - JsType is Number: the RHS emitted an unboxed float64
+                    bool valueIsUnboxed = needsToNumber || rhsResult.JsType == JavascriptType.Number;
+                    ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: isFieldVariable, 
+                        valueIsBoxed: !valueIsUnboxed, bclReferences: _owner.BclReferences);
                     
                     return rhsResult.JsType;
                 }
@@ -2636,6 +2661,33 @@ namespace Js2IL.Services.ILGenerators
                 }
                 // Negate the double on the stack
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Neg);
+                if (typeCoercion.boxResult)
+                {
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
+                    _il.Token(_owner.BclReferences.DoubleType);
+                    return JavascriptType.Object;
+                }
+                return JavascriptType.Number;
+            }
+            else if (op == Acornima.Operator.BitwiseNot)
+            {
+                // Bitwise NOT: ~x = NOT(ToInt32(x))
+                // Evaluate argument; if not already a number, convert using TypeUtilities.ToNumber(object)
+                var argJsType = Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = false }).JsType;
+                if (argJsType != JavascriptType.Number)
+                {
+                    EmitBoxIfNeeded(argJsType);
+                    var toNumRef = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToNumber), typeof(double), typeof(object));
+                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
+                    _il.Token(toNumRef);
+                }
+                // Convert to int32 for bitwise operation
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Conv_i4);
+                // Apply bitwise NOT
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Not);
+                // Convert back to double (JavaScript number)
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Conv_r8);
+                
                 if (typeCoercion.boxResult)
                 {
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);

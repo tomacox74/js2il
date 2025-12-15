@@ -1,10 +1,47 @@
 # Node Support Coverage
 
 Target: `22.x LTS`
-Generated: `2025-12-14T00:00:29Z`
+Generated: `2025-12-15T23:20:11Z`
 
 
 ## Modules
+
+### fs (status: partial)
+Docs: [https://nodejs.org/api/fs.html](https://nodejs.org/api/fs.html)
+Implementation:
+- `JavaScriptRuntime/Node/FS.cs`
+
+| API | Kind | Status | Docs |
+| --- | ---- | ------ | ---- |
+| existsSync(path) | function | supported | [docs](https://nodejs.org/api/fs.html#fsexistssyncpath) |
+| readdirSync(path, { withFileTypes: true }) | function | supported | [docs](https://nodejs.org/api/fs.html#fsreaddirsyncpath-options) |
+| readdirSync(path) | function | supported | [docs](https://nodejs.org/api/fs.html#fsreaddirsyncpath-options) |
+| readFileSync(path[, options]) | function | supported | [docs](https://nodejs.org/api/fs.html#fsreadfilesyncpath-options) |
+| rmSync(path[, options]) | function | supported | [docs](https://nodejs.org/api/fs.html#fsrmsyncpath-options) |
+| statSync(path) | function | supported | [docs](https://nodejs.org/api/fs.html#fsstatsyncpath-options) |
+| writeFileSync(path, data[, options]) | function | supported | [docs](https://nodejs.org/api/fs.html#fswritefilesyncfile-data-options) |
+
+Tests:
+- `existsSync(path)`
+  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ExistsSync_File_And_Directory` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
+  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ExistsSync_EmptyPath_ReturnsFalse` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
+- `readdirSync(path, { withFileTypes: true })`
+  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_WithFileTypes` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
+  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_NonExistent_ReturnsEmpty` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
+- `readdirSync(path)`
+  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_Basic_Names` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
+  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_NonExistent_ReturnsEmpty` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
+- `readFileSync(path[, options])`
+  - `Js2IL.Tests.Node.ExecutionTests.FS_ReadWrite_Utf8` (`Js2IL.Tests/Node/ExecutionTests.cs#L36`)
+  - `Js2IL.Tests.Node.GeneratorTests.FS_ReadWrite_Utf8` (`Js2IL.Tests/Node/GeneratorTests.cs`)
+- `rmSync(path[, options])`
+  - `Js2IL.Tests.Node.FSAdditionalTests.FS_RmSync_Removes_File_And_Directory` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
+- `statSync(path)`
+  - `Js2IL.Tests.Node.FSAdditionalTests.FS_StatSync_FileSize` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
+  - `Js2IL.Tests.Node.FSAdditionalTests.FS_StatSync_NonExistentPath_ReturnsZero` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
+- `writeFileSync(path, data[, options])`
+  - `Js2IL.Tests.Node.ExecutionTests.FS_ReadWrite_Utf8` (`Js2IL.Tests/Node/ExecutionTests.cs#L36`)
+  - `Js2IL.Tests.Node.GeneratorTests.FS_ReadWrite_Utf8` (`Js2IL.Tests/Node/GeneratorTests.cs`)
 
 ### path (status: partial)
 Docs: [https://nodejs.org/api/path.html](https://nodejs.org/api/path.html)
@@ -13,26 +50,26 @@ Implementation:
 
 | API | Kind | Status | Docs |
 | --- | ---- | ------ | ---- |
-| join(...parts) | function | supported | [docs](https://nodejs.org/api/path.html#pathjoinpaths) |
-| resolve(...parts) | function | supported | [docs](https://nodejs.org/api/path.html#pathresolvepaths) |
-| relative(from, to) | function | supported | [docs](https://nodejs.org/api/path.html#pathrelativefrom-to) |
 | basename(path[, ext]) | function | supported | [docs](https://nodejs.org/api/path.html#pathbasenamepath-suffix) |
 | dirname(path) | function | supported | [docs](https://nodejs.org/api/path.html#pathdirnamepath) |
+| join(...parts) | function | supported | [docs](https://nodejs.org/api/path.html#pathjoinpaths) |
+| relative(from, to) | function | supported | [docs](https://nodejs.org/api/path.html#pathrelativefrom-to) |
+| resolve(...parts) | function | supported | [docs](https://nodejs.org/api/path.html#pathresolvepaths) |
 
 Tests:
+- `basename(path[, ext])`
+  - `Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Basename_And_Dirname` (`Js2IL.Tests/Node/PathAdditionalTests.cs`)
+- `dirname(path)`
+  - `Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Basename_And_Dirname` (`Js2IL.Tests/Node/PathAdditionalTests.cs`)
 - `join(...parts)`
   - `Js2IL.Tests.Node.ExecutionTests.Require_Path_Join_Basic` (`Js2IL.Tests/Node/ExecutionTests.cs#L9`)
   - `Js2IL.Tests.Node.ExecutionTests.Require_Path_Join_NestedFunction` (`Js2IL.Tests/Node/ExecutionTests.cs#L13`)
   - `Js2IL.Tests.Node.GeneratorTests.Require_Path_Join_Basic` (`Js2IL.Tests/Node/GeneratorTests.cs`)
   - `Js2IL.Tests.Node.GeneratorTests.Require_Path_Join_NestedFunction` (`Js2IL.Tests/Node/GeneratorTests.cs`)
-- `resolve(...parts)`
-  - `Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Resolve_Relative_To_Absolute` (`Js2IL.Tests/Node/PathAdditionalTests.cs`)
 - `relative(from, to)`
   - `Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Relative_Between_Two_Paths` (`Js2IL.Tests/Node/PathAdditionalTests.cs`)
-- `basename(path[, ext])`
-  - `Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Basename_And_Dirname` (`Js2IL.Tests/Node/PathAdditionalTests.cs`)
-- `dirname(path)`
-  - `Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Basename_And_Dirname` (`Js2IL.Tests/Node/PathAdditionalTests.cs`)
+- `resolve(...parts)`
+  - `Js2IL.Tests.Node.PathAdditionalTests.Require_Path_Resolve_Relative_To_Absolute` (`Js2IL.Tests/Node/PathAdditionalTests.cs`)
 
 ### perf_hooks (status: partial)
 Docs: [https://nodejs.org/api/perf_hooks.html](https://nodejs.org/api/perf_hooks.html)
@@ -49,43 +86,6 @@ Tests:
   - `Js2IL.Tests.Node.ExecutionTests.PerfHooks_PerformanceNow_Basic` (`Js2IL.Tests/Node/ExecutionTests.cs`)
   - `Js2IL.Tests.Node.GeneratorTests.PerfHooks_PerformanceNow_Basic` (`Js2IL.Tests/Node/GeneratorTests.cs`)
 
-### fs (status: partial)
-Docs: [https://nodejs.org/api/fs.html](https://nodejs.org/api/fs.html)
-Implementation:
-- `JavaScriptRuntime/Node/FS.cs`
-
-| API | Kind | Status | Docs |
-| --- | ---- | ------ | ---- |
-| readFileSync(path[, options]) | function | supported | [docs](https://nodejs.org/api/fs.html#fsreadfilesyncpath-options) |
-| writeFileSync(path, data[, options]) | function | supported | [docs](https://nodejs.org/api/fs.html#fswritefilesyncfile-data-options) |
-| existsSync(path) | function | supported | [docs](https://nodejs.org/api/fs.html#fsexistssyncpath) |
-| readdirSync(path) | function | supported | [docs](https://nodejs.org/api/fs.html#fsreaddirsyncpath-options) |
-| readdirSync(path, { withFileTypes: true }) | function | supported | [docs](https://nodejs.org/api/fs.html#fsreaddirsyncpath-options) |
-| statSync(path) | function | supported | [docs](https://nodejs.org/api/fs.html#fsstatsyncpath-options) |
-| rmSync(path[, options]) | function | supported | [docs](https://nodejs.org/api/fs.html#fsrmsyncpath-options) |
-
-Tests:
-- `readFileSync(path[, options])`
-  - `Js2IL.Tests.Node.ExecutionTests.FS_ReadWrite_Utf8` (`Js2IL.Tests/Node/ExecutionTests.cs#L36`)
-  - `Js2IL.Tests.Node.GeneratorTests.FS_ReadWrite_Utf8` (`Js2IL.Tests/Node/GeneratorTests.cs`)
-- `writeFileSync(path, data[, options])`
-  - `Js2IL.Tests.Node.ExecutionTests.FS_ReadWrite_Utf8` (`Js2IL.Tests/Node/ExecutionTests.cs#L36`)
-  - `Js2IL.Tests.Node.GeneratorTests.FS_ReadWrite_Utf8` (`Js2IL.Tests/Node/GeneratorTests.cs`)
-- `existsSync(path)`
-  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ExistsSync_File_And_Directory` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
-  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ExistsSync_EmptyPath_ReturnsFalse` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
-- `readdirSync(path)`
-  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_Basic_Names` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
-  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_NonExistent_ReturnsEmpty` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
-- `readdirSync(path, { withFileTypes: true })`
-  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_WithFileTypes` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
-  - `Js2IL.Tests.Node.FSAdditionalTests.FS_ReaddirSync_NonExistent_ReturnsEmpty` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
-- `statSync(path)`
-  - `Js2IL.Tests.Node.FSAdditionalTests.FS_StatSync_FileSize` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
-  - `Js2IL.Tests.Node.FSAdditionalTests.FS_StatSync_NonExistentPath_ReturnsZero` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
-- `rmSync(path[, options])`
-  - `Js2IL.Tests.Node.FSAdditionalTests.FS_RmSync_Removes_File_And_Directory` (`Js2IL.Tests/Node/FSAdditionalTests.cs`)
-
 ### process (status: partial)
 Docs: [https://nodejs.org/api/process.html](https://nodejs.org/api/process.html)
 Implementation:
@@ -94,21 +94,21 @@ Implementation:
 
 | API | Kind | Status | Docs |
 | --- | ---- | ------ | ---- |
-| exitCode | property | supported | [docs](https://nodejs.org/api/process.html#processexitcode) |
+| argv | property | supported | [docs](https://nodejs.org/api/process.html#processargv) |
 | exit() | function | supported | [docs](https://nodejs.org/api/process.html#processexitcode) |
 | exit(code) | function | supported | [docs](https://nodejs.org/api/process.html#process_exit_code) |
-| argv | property | supported | [docs](https://nodejs.org/api/process.html#processargv) |
+| exitCode | property | supported | [docs](https://nodejs.org/api/process.html#processexitcode) |
 
 Tests:
-- `exitCode`
-  - `Js2IL.Tests.Node.ProcessExitCodeTests.Process_exitCode_getter_setter_mirrors_Environment` (`Js2IL.Tests/Node/ProcessExitCodeTests.cs`)
+- `argv`
+  - `Js2IL.Tests.Node.ExecutionTests.Environment_EnumerateProcessArgV` (`Js2IL.Tests/Node/ExecutionTests.cs#L21`)
+  - `Js2IL.Tests.Node.GeneratorTests.Environment_EnumerateProcessArgV` (`Js2IL.Tests/Node/GeneratorTests.cs`)
 - `exit()`
   - `Js2IL.Tests.Node.ProcessAdditionalTests.Process_Exit_Uses_Current_ExitCode` (`Js2IL.Tests/Node/ProcessAdditionalTests.cs`)
 - `exit(code)`
   - `Js2IL.Tests.Node.ProcessAdditionalTests.Process_Exit_Code_Sets_ExitCode` (`Js2IL.Tests/Node/ProcessAdditionalTests.cs`)
-- `argv`
-  - `Js2IL.Tests.Node.ExecutionTests.Environment_EnumerateProcessArgV` (`Js2IL.Tests/Node/ExecutionTests.cs#L21`)
-  - `Js2IL.Tests.Node.GeneratorTests.Environment_EnumerateProcessArgV` (`Js2IL.Tests/Node/GeneratorTests.cs`)
+- `exitCode`
+  - `Js2IL.Tests.Node.ProcessExitCodeTests.Process_exitCode_getter_setter_mirrors_Environment` (`Js2IL.Tests/Node/ProcessExitCodeTests.cs`)
 
 
 ## Globals

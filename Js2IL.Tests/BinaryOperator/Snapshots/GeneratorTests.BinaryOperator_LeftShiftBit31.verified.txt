@@ -54,16 +54,16 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 322 (0x142)
+		// Code size: 312 (0x138)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.BinaryOperator_LeftShiftBit31,
-			[1] object,
-			[2] object,
+			[1] float64,
+			[2] float64,
 			[3] float64,
 			[4] float64,
 			[5] object,
-			[6] object
+			[6] float64
 		)
 
 		IL_0000: ldc.r8 1
@@ -72,122 +72,120 @@
 		IL_0013: conv.i4
 		IL_0014: shl
 		IL_0015: conv.r8
-		IL_0016: box [System.Runtime]System.Double
-		IL_001b: stloc.1
-		IL_001c: ldc.i4.2
-		IL_001d: newarr [System.Runtime]System.Object
-		IL_0022: dup
-		IL_0023: ldc.i4.0
-		IL_0024: ldstr "mask31 is"
-		IL_0029: stelem.ref
-		IL_002a: dup
-		IL_002b: ldc.i4.1
-		IL_002c: ldloc.1
+		IL_0016: stloc.1
+		IL_0017: ldc.i4.2
+		IL_0018: newarr [System.Runtime]System.Object
+		IL_001d: dup
+		IL_001e: ldc.i4.0
+		IL_001f: ldstr "mask31 is"
+		IL_0024: stelem.ref
+		IL_0025: dup
+		IL_0026: ldc.i4.1
+		IL_0027: ldloc.1
+		IL_0028: box [System.Runtime]System.Double
 		IL_002d: stelem.ref
 		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_0033: pop
 		IL_0034: ldc.r8 0.0
-		IL_003d: box [System.Runtime]System.Double
-		IL_0042: stloc.2
-		IL_0043: ldloc.2
-		IL_0044: unbox.any [System.Runtime]System.Double
+		IL_003d: stloc.2
+		IL_003e: ldloc.2
+		IL_003f: conv.i4
+		IL_0040: ldc.r8 1
 		IL_0049: conv.i4
-		IL_004a: ldc.r8 1
+		IL_004a: ldc.r8 31
 		IL_0053: conv.i4
-		IL_0054: ldc.r8 31
-		IL_005d: conv.i4
-		IL_005e: shl
-		IL_005f: conv.r8
-		IL_0060: conv.i4
-		IL_0061: or
-		IL_0062: conv.r8
-		IL_0063: box [System.Runtime]System.Double
-		IL_0068: stloc.2
-		IL_0069: ldc.i4.2
-		IL_006a: newarr [System.Runtime]System.Object
-		IL_006f: dup
-		IL_0070: ldc.i4.0
-		IL_0071: ldstr "value after OR with bit 31:"
-		IL_0076: stelem.ref
-		IL_0077: dup
-		IL_0078: ldc.i4.1
-		IL_0079: ldloc.2
-		IL_007a: stelem.ref
-		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0080: pop
+		IL_0054: shl
+		IL_0055: conv.r8
+		IL_0056: conv.i4
+		IL_0057: or
+		IL_0058: conv.r8
+		IL_0059: stloc.2
+		IL_005a: ldc.i4.2
+		IL_005b: newarr [System.Runtime]System.Object
+		IL_0060: dup
+		IL_0061: ldc.i4.0
+		IL_0062: ldstr "value after OR with bit 31:"
+		IL_0067: stelem.ref
+		IL_0068: dup
+		IL_0069: ldc.i4.1
+		IL_006a: ldloc.2
+		IL_006b: box [System.Runtime]System.Double
+		IL_0070: stelem.ref
+		IL_0071: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0076: pop
+		IL_0077: ldc.r8 0.0
+		IL_0080: stloc.3
 		IL_0081: ldc.r8 0.0
-		IL_008a: stloc.3
-		IL_008b: ldc.r8 0.0
-		IL_0094: stloc.s 4
-		// loop start (head: IL_0096)
-			IL_0096: ldloc.s 4
-			IL_0098: ldc.r8 32
-			IL_00a1: blt IL_00ab
+		IL_008a: stloc.s 4
+		// loop start (head: IL_008c)
+			IL_008c: ldloc.s 4
+			IL_008e: ldc.r8 32
+			IL_0097: blt IL_00a1
 
-			IL_00a6: br IL_00d3
+			IL_009c: br IL_00c9
 
-			IL_00ab: ldloc.3
+			IL_00a1: ldloc.3
+			IL_00a2: conv.i4
+			IL_00a3: ldc.r8 1
 			IL_00ac: conv.i4
-			IL_00ad: ldc.r8 1
-			IL_00b6: conv.i4
-			IL_00b7: ldloc.s 4
-			IL_00b9: conv.i4
-			IL_00ba: shl
-			IL_00bb: conv.r8
-			IL_00bc: conv.i4
-			IL_00bd: or
-			IL_00be: conv.r8
-			IL_00bf: stloc.3
-			IL_00c0: ldloc.s 4
-			IL_00c2: ldc.r8 1
-			IL_00cb: add
-			IL_00cc: stloc.s 4
-			IL_00ce: br IL_0096
+			IL_00ad: ldloc.s 4
+			IL_00af: conv.i4
+			IL_00b0: shl
+			IL_00b1: conv.r8
+			IL_00b2: conv.i4
+			IL_00b3: or
+			IL_00b4: conv.r8
+			IL_00b5: stloc.3
+			IL_00b6: ldloc.s 4
+			IL_00b8: ldc.r8 1
+			IL_00c1: add
+			IL_00c2: stloc.s 4
+			IL_00c4: br IL_008c
 		// end loop
 
-		IL_00d3: ldc.i4.2
-		IL_00d4: newarr [System.Runtime]System.Object
-		IL_00d9: dup
-		IL_00da: ldc.i4.0
-		IL_00db: ldstr "all 32 bits set:"
-		IL_00e0: stelem.ref
-		IL_00e1: dup
-		IL_00e2: ldc.i4.1
-		IL_00e3: ldloc.3
-		IL_00e4: box [System.Runtime]System.Double
-		IL_00e9: stelem.ref
-		IL_00ea: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_00ef: pop
-		IL_00f0: ldc.r8 -2147483648
-		IL_00f9: box [System.Runtime]System.Double
-		IL_00fe: stloc.s 5
-		IL_0100: ldloc.s 5
-		IL_0102: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_00c9: ldc.i4.2
+		IL_00ca: newarr [System.Runtime]System.Object
+		IL_00cf: dup
+		IL_00d0: ldc.i4.0
+		IL_00d1: ldstr "all 32 bits set:"
+		IL_00d6: stelem.ref
+		IL_00d7: dup
+		IL_00d8: ldc.i4.1
+		IL_00d9: ldloc.3
+		IL_00da: box [System.Runtime]System.Double
+		IL_00df: stelem.ref
+		IL_00e0: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00e5: pop
+		IL_00e6: ldc.r8 -2147483648
+		IL_00ef: box [System.Runtime]System.Double
+		IL_00f4: stloc.s 5
+		IL_00f6: ldloc.s 5
+		IL_00f8: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_00fd: conv.i4
+		IL_00fe: ldc.r8 1
 		IL_0107: conv.i4
-		IL_0108: ldc.r8 1
+		IL_0108: ldc.r8 31
 		IL_0111: conv.i4
-		IL_0112: ldc.r8 31
-		IL_011b: conv.i4
-		IL_011c: shl
-		IL_011d: conv.r8
-		IL_011e: conv.i4
-		IL_011f: and
-		IL_0120: conv.r8
-		IL_0121: box [System.Runtime]System.Double
-		IL_0126: stloc.s 6
-		IL_0128: ldc.i4.2
-		IL_0129: newarr [System.Runtime]System.Object
-		IL_012e: dup
-		IL_012f: ldc.i4.0
-		IL_0130: ldstr "AND result with bit 31:"
-		IL_0135: stelem.ref
-		IL_0136: dup
-		IL_0137: ldc.i4.1
-		IL_0138: ldloc.s 6
-		IL_013a: stelem.ref
-		IL_013b: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0140: pop
-		IL_0141: ret
+		IL_0112: shl
+		IL_0113: conv.r8
+		IL_0114: conv.i4
+		IL_0115: and
+		IL_0116: conv.r8
+		IL_0117: stloc.s 6
+		IL_0119: ldc.i4.2
+		IL_011a: newarr [System.Runtime]System.Object
+		IL_011f: dup
+		IL_0120: ldc.i4.0
+		IL_0121: ldstr "AND result with bit 31:"
+		IL_0126: stelem.ref
+		IL_0127: dup
+		IL_0128: ldc.i4.1
+		IL_0129: ldloc.s 6
+		IL_012b: box [System.Runtime]System.Double
+		IL_0130: stelem.ref
+		IL_0131: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0136: pop
+		IL_0137: ret
 	} // end of method BinaryOperator_LeftShiftBit31::Main
 
 } // end of class Scripts.BinaryOperator_LeftShiftBit31
@@ -199,7 +197,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21b2
+		// Method begins at RVA 0x21a8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

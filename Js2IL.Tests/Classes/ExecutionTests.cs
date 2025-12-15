@@ -98,6 +98,15 @@ namespace Js2IL.Tests.Classes
 
         [Fact] public Task Classes_ForLoopMin() { var testName = nameof(Classes_ForLoopMin); return ExecutionTest(testName); }
 
+        // Bug repro: class method local variable initialized as number, then reassigned from method call.
+        // Type inference marks 'factor' as stable double, but method calls return object - must unbox before storing.
+        [Fact]
+        public Task Classes_ClassMethod_LocalVar_ReassignedFromMethodCall()
+        {
+            var testName = nameof(Classes_ClassMethod_LocalVar_ReassignedFromMethodCall);
+            return ExecutionTest(testName, allowUnhandledException: true);
+        }
+
         // Minimal repro for InvalidProgramException in ctor due to '1 + this.sieveSizeInBits'
         // Test enabled to validate current behavior.
         [Fact]

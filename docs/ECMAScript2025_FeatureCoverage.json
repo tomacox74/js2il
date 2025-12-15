@@ -11,37 +11,6 @@
           "url": "https://tc39.es/ecma262/#sec-primary-expression",
           "paragraphs": [
             {
-              "paragraph": "13.1.3",
-              "title": "BooleanLiteral",
-              "url": "https://tc39.es/ecma262/#sec-boolean-literals",
-              "features": [
-                {
-                  "feature": "Boolean literals (true/false)",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/JavaScript/UnaryOperator_Typeof.js",
-                    "Js2IL.Tests/JavaScript/JSON_Parse_SimpleObject.js"
-                  ],
-                  "notes": "Emits proper IL for true/false and boxes when needed in arrays/log calls. See generator snapshot: Js2IL.Tests/Literals/GeneratorTests.BooleanLiteral.verified.txt."
-                }
-              ]
-            },
-            {
-              "paragraph": "13.1.4",
-              "title": "Template Literals",
-              "url": "https://tc39.es/ecma262/#sec-template-literals",
-              "features": [
-                {
-                  "feature": "Template literals (basic interpolation)",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/JavaScript/String_TemplateLiteral_Basic.js"
-                  ],
-                  "notes": "Concatenates quasis and expressions via runtime Operators.Add with JS string/number coercion. Tagged templates are not yet supported."
-                }
-              ]
-            },
-            {
               "paragraph": "13.1.1",
               "title": "NumericLiteral",
               "url": "https://tc39.es/ecma262/#sec-numeric-literals",
@@ -70,6 +39,37 @@
                     "Js2IL.Tests/JavaScript/String_Replace_Regex_Global.js"
                   ],
                   "notes": "Backed by .NET System.String; values are boxed/unboxed where needed in member calls and concatenation."
+                }
+              ]
+            },
+            {
+              "paragraph": "13.1.3",
+              "title": "BooleanLiteral",
+              "url": "https://tc39.es/ecma262/#sec-boolean-literals",
+              "features": [
+                {
+                  "feature": "Boolean literals (true/false)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/UnaryOperator_Typeof.js",
+                    "Js2IL.Tests/JavaScript/JSON_Parse_SimpleObject.js"
+                  ],
+                  "notes": "Emits proper IL for true/false and boxes when needed in arrays/log calls. See generator snapshot: Js2IL.Tests/Literals/GeneratorTests.BooleanLiteral.verified.txt."
+                }
+              ]
+            },
+            {
+              "paragraph": "13.1.4",
+              "title": "Template Literals",
+              "url": "https://tc39.es/ecma262/#sec-template-literals",
+              "features": [
+                {
+                  "feature": "Template literals (basic interpolation)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/String_TemplateLiteral_Basic.js"
+                  ],
+                  "notes": "Concatenates quasis and expressions via runtime Operators.Add with JS string/number coercion. Tagged templates are not yet supported."
                 }
               ]
             },
@@ -112,6 +112,29 @@
           "url": "https://tc39.es/ecma262/#sec-declarations",
           "paragraphs": [
             {
+              "paragraph": "13.2.3 (Function expressions)",
+              "title": "Function expressions (anonymous and named)",
+              "url": "https://tc39.es/ecma262/#sec-function-definitions",
+              "features": [
+                {
+                  "feature": "Function expressions (anonymous)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Function/JavaScript/Function_IIFE_Classic.js"
+                  ],
+                  "notes": "Emitted as static methods with delegate creation and closure binding as needed; supports immediate invocation patterns (IIFE)."
+                },
+                {
+                  "feature": "Named function expressions (internal self-binding for recursion)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Function/JavaScript/Function_IIFE_Recursive.js"
+                  ],
+                  "notes": "On first entry, the internal name is eagerly bound to a self-delegate via JavaScriptRuntime.Closure.CreateSelfDelegate(MethodBase, int), enabling recursion from within the function body."
+                }
+              ]
+            },
+            {
               "paragraph": "13.2.1",
               "title": "let/const",
               "url": "https://tc39.es/ecma262/#sec-let-and-const-declarations",
@@ -135,6 +158,23 @@
                     "Js2IL.Tests/JavaScript/Variable_ConstReassignmentError.js"
                   ],
                   "notes": "Assignment to a const Identifier and ++/-- on const emit a runtime TypeError; error is catchable via try/catch."
+                }
+              ]
+            },
+            {
+              "paragraph": "13.2.1",
+              "title": "var",
+              "url": "https://tc39.es/ecma262/#sec-variable-statement",
+              "features": [
+                {
+                  "feature": "var",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/Function_GlobalFunctionChangesGlobalVariableValue.js",
+                    "Js2IL.Tests/JavaScript/Function_GlobalFunctionDeclaresAndCallsNestedFunction.js",
+                    "Js2IL.Tests/JavaScript/Function_GlobalFunctionLogsGlobalVariable.js"
+                  ],
+                  "notes": ""
                 }
               ]
             },
@@ -174,23 +214,6 @@
               ]
             },
             {
-              "paragraph": "13.2.1",
-              "title": "var",
-              "url": "https://tc39.es/ecma262/#sec-variable-statement",
-              "features": [
-                {
-                  "feature": "var",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/JavaScript/Function_GlobalFunctionChangesGlobalVariableValue.js",
-                    "Js2IL.Tests/JavaScript/Function_GlobalFunctionDeclaresAndCallsNestedFunction.js",
-                    "Js2IL.Tests/JavaScript/Function_GlobalFunctionLogsGlobalVariable.js"
-                  ],
-                  "notes": ""
-                }
-              ]
-            },
-            {
               "paragraph": "13.2.3",
               "title": "Function declarations",
               "url": "https://tc39.es/ecma262/#sec-function-definitions",
@@ -218,29 +241,6 @@
                     "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterValue.js"
                   ],
                   "notes": "Covers expression- and block-bodied arrows, multiple parameters, nested functions, closure capture across scopes (including returning functions that capture globals/locals), and default parameter values. Not yet supported: rest parameters, lexical this/arguments semantics, and spread at call sites."
-                }
-              ]
-            },
-            {
-              "paragraph": "13.2.3 (Function expressions)",
-              "title": "Function expressions (anonymous and named)",
-              "url": "https://tc39.es/ecma262/#sec-function-definitions",
-              "features": [
-                {
-                  "feature": "Function expressions (anonymous)",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/Function/JavaScript/Function_IIFE_Classic.js"
-                  ],
-                  "notes": "Emitted as static methods with delegate creation and closure binding as needed; supports immediate invocation patterns (IIFE)."
-                },
-                {
-                  "feature": "Named function expressions (internal self-binding for recursion)",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/Function/JavaScript/Function_IIFE_Recursive.js"
-                  ],
-                  "notes": "On first entry, the internal name is eagerly bound to a self-delegate via JavaScriptRuntime.Closure.CreateSelfDelegate(MethodBase, int), enabling recursion from within the function body." 
                 }
               ]
             },
@@ -354,11 +354,63 @@
               ]
             },
             {
+              "paragraph": "13.4.4",
+              "title": "Prefix increment operator (++)",
+              "url": "https://tc39.es/ecma262/#sec-prefix-increment-operator",
+              "features": [
+                {
+                  "feature": "Unary ++ (Prefix increment)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_PlusPlusPrefix.js"
+                  ],
+                  "notes": "Increments the value first, then returns the new value."
+                }
+              ]
+            },
+            {
+              "paragraph": "13.4.5",
+              "title": "Prefix decrement operator (--)",
+              "url": "https://tc39.es/ecma262/#sec-prefix-decrement-operator",
+              "features": [
+                {
+                  "feature": "Unary -- (Prefix decrement)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_MinusMinusPrefix.js"
+                  ],
+                  "notes": "Decrements the value first, then returns the new value."
+                }
+              ]
+            },
+            {
+              "paragraph": "13.4.6",
+              "title": "Bitwise NOT operator (~)",
+              "url": "https://tc39.es/ecma262/#sec-bitwise-not-operator",
+              "features": [
+                {
+                  "feature": "Unary ~ (Bitwise NOT)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_BitwiseNot.js"
+                  ],
+                  "notes": "Converts operand to int32, applies bitwise NOT, converts back to double. Used in bit manipulation patterns."
+                }
+              ]
+            },
+            {
               "paragraph": "13.4.7",
               "title": "Logical not operator (!)",
               "url": "https://tc39.es/ecma262/#sec-logical-not-operator",
               "features": [
-                { "feature": "Unary ! (Logical not)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_If_NotFlag.js"], "notes": "Branch inversion supported in conditionals (e.g., if (!x) ...), and value negation in non-branching contexts." }
+                {
+                  "feature": "Unary ! (Logical not)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/ControlFlow_If_NotFlag.js"
+                  ],
+                  "notes": "Branch inversion supported in conditionals (e.g., if (!x) ...), and value negation in non-branching contexts."
+                }
               ]
             },
             {
@@ -366,7 +418,14 @@
               "title": "Postfix increment operator (++)",
               "url": "https://tc39.es/ecma262/#sec-postfix-increment-operator",
               "features": [
-                { "feature": "Unary ++ (Postfix increment)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/UnaryOperator_PlusPlusPostfix.js"], "notes": "" }
+                {
+                  "feature": "Unary ++ (Postfix increment)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_PlusPlusPostfix.js"
+                  ],
+                  "notes": ""
+                }
               ]
             },
             {
@@ -374,7 +433,14 @@
               "title": "Postfix decrement operator (--)",
               "url": "https://tc39.es/ecma262/#sec-postfix-decrement-operator",
               "features": [
-                { "feature": "Unary -- (Postfix decrement)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/UnaryOperator_MinusMinusPostfix.js"], "notes": "" }
+                {
+                  "feature": "Unary -- (Postfix decrement)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_MinusMinusPostfix.js"
+                  ],
+                  "notes": ""
+                }
               ]
             }
           ]
@@ -385,31 +451,21 @@
           "url": "https://tc39.es/ecma262/#sec-ecmascript-language-expressions",
           "paragraphs": [
             {
-              "paragraph": "13.5.16",
-              "title": "Conditional (ternary) operator (?:)",
-              "url": "https://tc39.es/ecma262/#sec-conditional-operator",
-              "features": [
-                {
-                  "feature": "Conditional operator (?:)",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/JavaScript/ControlFlow_Conditional_Ternary.js"
-                  ],
-                  "notes": "Expression-level branching with both arms coerced to object where needed. Verified via generator and execution tests in ControlFlow subgroup."
-                }
-              ]
-            },
-            {
               "paragraph": "13.5.1",
               "title": "Addition operator (+)",
               "url": "https://tc39.es/ecma262/#sec-additive-operators",
               "features": [
-                { "feature": "Binary + (Addition)", "status": "Supported", "testScripts": [
-                  "Js2IL.Tests/JavaScript/BinaryOperator_AddNumberNumber.js",
-                  "Js2IL.Tests/JavaScript/BinaryOperator_AddStringNumber.js",
-                  "Js2IL.Tests/JavaScript/BinaryOperator_AddStringString.js",
-                  "Js2IL.Tests/JavaScript/Classes_ClassConstructor_TwoParams_AddMethod.js"
-                ], "notes": "Fast-path string concat; general '+' follows JS coercion via runtime helper." }
+                {
+                  "feature": "Binary + (Addition)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/BinaryOperator_AddNumberNumber.js",
+                    "Js2IL.Tests/JavaScript/BinaryOperator_AddStringNumber.js",
+                    "Js2IL.Tests/JavaScript/BinaryOperator_AddStringString.js",
+                    "Js2IL.Tests/JavaScript/Classes_ClassConstructor_TwoParams_AddMethod.js"
+                  ],
+                  "notes": "Fast-path string concat; general '+' follows JS coercion via runtime helper."
+                }
               ]
             },
             {
@@ -417,10 +473,15 @@
               "title": "Subtraction operator (-)",
               "url": "https://tc39.es/ecma262/#sec-subtraction-operator",
               "features": [
-                { "feature": "Binary - (Subtraction)", "status": "Supported", "testScripts": [
-                  "Js2IL.Tests/JavaScript/BinaryOperator_SubNumberNumber.js",
-                  "Js2IL.Tests/JavaScript/Classes_ClassConstructor_TwoParams_SubtractMethod.js"
-                ], "notes": "Numeric subtraction; matches JS semantics for non-numeric via coercion helpers where applicable." }
+                {
+                  "feature": "Binary - (Subtraction)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/BinaryOperator_SubNumberNumber.js",
+                    "Js2IL.Tests/JavaScript/Classes_ClassConstructor_TwoParams_SubtractMethod.js"
+                  ],
+                  "notes": "Numeric subtraction; matches JS semantics for non-numeric via coercion helpers where applicable."
+                }
               ]
             },
             {
@@ -428,9 +489,30 @@
               "title": "Multiplicative operators (*, /, %)",
               "url": "https://tc39.es/ecma262/#sec-multiplicative-operators",
               "features": [
-                { "feature": "Binary * (Multiplication)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/BinaryOperator_MulNumberNumber.js"], "notes": "" },
-                { "feature": "Binary / (Division)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/BinaryOperator_DivNumberNumber.js"], "notes": "" },
-                { "feature": "Binary % (Remainder)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/BinaryOperator_ModNumberNumber.js"], "notes": "" }
+                {
+                  "feature": "Binary * (Multiplication)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/BinaryOperator_MulNumberNumber.js"
+                  ],
+                  "notes": ""
+                },
+                {
+                  "feature": "Binary / (Division)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/BinaryOperator_DivNumberNumber.js"
+                  ],
+                  "notes": ""
+                },
+                {
+                  "feature": "Binary % (Remainder)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/BinaryOperator_ModNumberNumber.js"
+                  ],
+                  "notes": ""
+                }
               ]
             },
             {
@@ -438,7 +520,14 @@
               "title": "Exponentiation operator (**) ",
               "url": "https://tc39.es/ecma262/#sec-exp-operator",
               "features": [
-                { "feature": "Binary ** (Exponentiation)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/BinaryOperator_ExpNumberNumber.js"], "notes": "" }
+                {
+                  "feature": "Binary ** (Exponentiation)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/BinaryOperator_ExpNumberNumber.js"
+                  ],
+                  "notes": ""
+                }
               ]
             },
             {
@@ -446,9 +535,30 @@
               "title": "Bitwise operators (&, |, ^)",
               "url": "https://tc39.es/ecma262/#sec-binary-bitwise-operators",
               "features": [
-                { "feature": "Binary & (Bitwise AND)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/BinaryOperator_BitwiseAndNumberNumber.js"], "notes": "" },
-                { "feature": "Binary | (Bitwise OR)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/BinaryOperator_BitwiseOrNumberNumber.js"], "notes": "" },
-                { "feature": "Binary ^ (Bitwise XOR)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/BinaryOperator_BitwiseXorNumberNumber.js"], "notes": "" }
+                {
+                  "feature": "Binary & (Bitwise AND)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/BinaryOperator_BitwiseAndNumberNumber.js"
+                  ],
+                  "notes": ""
+                },
+                {
+                  "feature": "Binary | (Bitwise OR)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/BinaryOperator_BitwiseOrNumberNumber.js"
+                  ],
+                  "notes": ""
+                },
+                {
+                  "feature": "Binary ^ (Bitwise XOR)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/BinaryOperator_BitwiseXorNumberNumber.js"
+                  ],
+                  "notes": ""
+                }
               ]
             },
             {
@@ -456,9 +566,30 @@
               "title": "Shift operators (<<, >>, >>>)",
               "url": "https://tc39.es/ecma262/#sec-left-shift-operator",
               "features": [
-                { "feature": "Binary << (Left shift)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/BinaryOperator_LeftShiftNumberNumber.js"], "notes": "" },
-                { "feature": "Binary >> (Signed right shift)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/BinaryOperator_RightShiftNumberNumber.js"], "notes": "" },
-                { "feature": "Binary >>> (Unsigned right shift)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/BinaryOperator_UnsignedRightShiftNumberNumber.js"], "notes": "" }
+                {
+                  "feature": "Binary << (Left shift)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/BinaryOperator_LeftShiftNumberNumber.js"
+                  ],
+                  "notes": ""
+                },
+                {
+                  "feature": "Binary >> (Signed right shift)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/BinaryOperator_RightShiftNumberNumber.js"
+                  ],
+                  "notes": ""
+                },
+                {
+                  "feature": "Binary >>> (Unsigned right shift)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/BinaryOperator_UnsignedRightShiftNumberNumber.js"
+                  ],
+                  "notes": ""
+                }
               ]
             },
             {
@@ -466,10 +597,38 @@
               "title": "Relational operators (<, <=, >, >=)",
               "url": "https://tc39.es/ecma262/#sec-relational-operators",
               "features": [
-                { "feature": "Binary < (Less than)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/BinaryOperator_LessThan.js"], "notes": "" },
-                { "feature": "Binary <= (Less than or equal)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/BinaryOperator_LessThanOrEqual.js"], "notes": "" },
-                { "feature": "Binary > (Greater than)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/BinaryOperator_GreaterThan.js"], "notes": "" },
-                { "feature": "Binary >= (Greater than or equal)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/BinaryOperator_GreaterThanOrEqual.js"], "notes": "" }
+                {
+                  "feature": "Binary < (Less than)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/BinaryOperator_LessThan.js"
+                  ],
+                  "notes": ""
+                },
+                {
+                  "feature": "Binary <= (Less than or equal)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/BinaryOperator_LessThanOrEqual.js"
+                  ],
+                  "notes": ""
+                },
+                {
+                  "feature": "Binary > (Greater than)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/BinaryOperator_GreaterThan.js"
+                  ],
+                  "notes": ""
+                },
+                {
+                  "feature": "Binary >= (Greater than or equal)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/BinaryOperator_GreaterThanOrEqual.js"
+                  ],
+                  "notes": ""
+                }
               ]
             },
             {
@@ -477,15 +636,30 @@
               "title": "Equality operators (==)",
               "url": "https://tc39.es/ecma262/#sec-equality-operators",
               "features": [
-                { "feature": "Binary == (Equality)", "status": "Supported", "testScripts": [
-                  "Js2IL.Tests/JavaScript/BinaryOperator_Equal.js",
-                  "Js2IL.Tests/JavaScript/Function_IsEven_CompareResultToTrue.js"
-                ], "notes": "Covers numeric and boolean equality, including comparisons against literals and function-returned booleans with selective boxing/unboxing. See also generator snapshot: Js2IL.Tests/BinaryOperator/GeneratorTests.BinaryOperator_EqualBoolean.verified.txt." },
-                { "feature": "Binary != (Inequality)", "status": "Supported", "testScripts": [
-                  "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_NotEqual.js",
-                  "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_NotEqual.js"
-                ], "notes": "Value result emitted via Ceq inversion; conditional form branches with bne.un. Unboxing/coercion rules mirror equality operator handling for numbers/booleans." },
-                { "feature": "Binary !== (Strict inequality)", "status": "Supported", "testScripts": [], "notes": "Implemented alongside != in the IL generator (value + branching). Dedicated tests to be added; semantics match JavaScript strict inequality (no type coercion)." }
+                {
+                  "feature": "Binary == (Equality)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/BinaryOperator_Equal.js",
+                    "Js2IL.Tests/JavaScript/Function_IsEven_CompareResultToTrue.js"
+                  ],
+                  "notes": "Covers numeric and boolean equality, including comparisons against literals and function-returned booleans with selective boxing/unboxing. See also generator snapshot: Js2IL.Tests/BinaryOperator/GeneratorTests.BinaryOperator_EqualBoolean.verified.txt."
+                },
+                {
+                  "feature": "Binary != (Inequality)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_NotEqual.js",
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_NotEqual.js"
+                  ],
+                  "notes": "Value result emitted via Ceq inversion; conditional form branches with bne.un. Unboxing/coercion rules mirror equality operator handling for numbers/booleans."
+                },
+                {
+                  "feature": "Binary !== (Strict inequality)",
+                  "status": "Supported",
+                  "testScripts": [],
+                  "notes": "Implemented alongside != in the IL generator (value + branching). Dedicated tests to be added; semantics match JavaScript strict inequality (no type coercion)."
+                }
               ]
             },
             {
@@ -508,8 +682,7 @@
                     "Js2IL.Tests/JavaScript/BinaryOperator_LogicalAnd_Value.js"
                   ],
                   "notes": "Value form returns left if falsy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited."
-                }
-                ,
+                },
                 {
                   "feature": "Binary in (property existence on object)",
                   "status": "Supported",
@@ -517,6 +690,21 @@
                     "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js"
                   ],
                   "notes": "Implements key in obj via JavaScriptRuntime.Object.HasPropertyIn. Supports own properties on ExpandoObject/object literals and numeric/string keys; does not yet traverse prototype chain or throw TypeError for non-object RHS beyond null/undefined."
+                }
+              ]
+            },
+            {
+              "paragraph": "13.5.16",
+              "title": "Conditional (ternary) operator (?:)",
+              "url": "https://tc39.es/ecma262/#sec-conditional-operator",
+              "features": [
+                {
+                  "feature": "Conditional operator (?:)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/ControlFlow_Conditional_Ternary.js"
+                  ],
+                  "notes": "Expression-level branching with both arms coerced to object where needed. Verified via generator and execution tests in ControlFlow subgroup."
                 }
               ]
             }
@@ -594,442 +782,6 @@
       ]
     },
     {
-      "section": "20",
-      "title": "The Math Object",
-      "url": "https://tc39.es/ecma262/#sec-math-object",
-      "subsections": [
-        {
-          "subsection": "20.2.1",
-          "title": "Value Properties of the Math Object",
-          "url": "https://tc39.es/ecma262/#sec-value-properties-of-the-math-object",
-          "paragraphs": [
-            {
-              "paragraph": "20.2.1",
-              "title": "Math constants",
-              "url": "https://tc39.es/ecma262/#sec-value-properties-of-the-math-object",
-              "features": [
-                { "feature": "Math.E", "status": "Supported", "notes": "Euler’s number e." },
-                { "feature": "Math.LN10", "status": "Supported", "notes": "Natural logarithm of 10." },
-                { "feature": "Math.LN2", "status": "Supported", "notes": "Natural logarithm of 2." },
-                { "feature": "Math.LOG10E", "status": "Supported", "notes": "Base-10 logarithm of e." },
-                { "feature": "Math.LOG2E", "status": "Supported", "notes": "Base-2 logarithm of e." },
-                { "feature": "Math.PI", "status": "Supported", "notes": "Ratio of a circle’s circumference to its diameter." },
-                { "feature": "Math.SQRT1_2", "status": "Supported", "notes": "Square root of 1/2." },
-                { "feature": "Math.SQRT2", "status": "Supported", "notes": "Square root of 2." }
-              ]
-            }
-          ]
-        },
-        {
-          "subsection": "20.2.2",
-          "title": "Function Properties of the Math Object",
-          "url": "https://tc39.es/ecma262/#sec-function-properties-of-the-math-object",
-          "paragraphs": [
-            {
-              "paragraph": "20.2.2.1",
-              "title": "Math.abs",
-              "url": "https://tc39.es/ecma262/#sec-math.abs",
-              "features": [
-                { "feature": "Math.abs(x)", "status": "Supported", "notes": "Returns the absolute value; NaN propagates; ±Infinity preserved." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.2",
-              "title": "Math.acos",
-              "url": "https://tc39.es/ecma262/#sec-math.acos",
-              "features": [
-                { "feature": "Math.acos(x)", "status": "Supported", "notes": "Returns arc cosine in radians; out-of-domain yields NaN." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.3",
-              "title": "Math.acosh",
-              "url": "https://tc39.es/ecma262/#sec-math.acosh",
-              "features": [
-                { "feature": "Math.acosh(x)", "status": "Supported", "notes": "Inverse hyperbolic cosine; x < 1 yields NaN; Infinity preserved." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.4",
-              "title": "Math.asin",
-              "url": "https://tc39.es/ecma262/#sec-math.asin",
-              "features": [
-                { "feature": "Math.asin(x)", "status": "Supported", "notes": "Returns arc sine in radians; out-of-domain yields NaN." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.5",
-              "title": "Math.asinh",
-              "url": "https://tc39.es/ecma262/#sec-math.asinh",
-              "features": [
-                { "feature": "Math.asinh(x)", "status": "Supported", "notes": "Inverse hyperbolic sine; handles ±0, NaN, ±Infinity per spec." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.6",
-              "title": "Math.atan",
-              "url": "https://tc39.es/ecma262/#sec-math.atan",
-              "features": [
-                { "feature": "Math.atan(x)", "status": "Supported", "notes": "Returns arc tangent in radians; NaN propagates; ±Infinity maps to ±π/2." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.7",
-              "title": "Math.atan2",
-              "url": "https://tc39.es/ecma262/#sec-math.atan2",
-              "features": [
-                { "feature": "Math.atan2(y, x)", "status": "Supported", "notes": "Quadrant-aware arc tangent; handles zeros, NaN, and infinities per spec." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.9",
-              "title": "Math.ceil",
-              "url": "https://tc39.es/ecma262/#sec-math.ceil",
-              "features": [
-                {
-                  "feature": "Math.ceil(x)",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/Math/JavaScript/Math_Ceil_Sqrt_Basic.js"
-                  ],
-                  "notes": "Implements ceiling for numbers represented as double; arguments coerced via minimal ToNumber semantics. Returns NaN for NaN/undefined or negative zero preserved via .NET semantics."
-                }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.10",
-              "title": "Math.clz32",
-              "url": "https://tc39.es/ecma262/#sec-math.clz32",
-              "features": [
-                { "feature": "Math.clz32(x)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Imul_Clz32_Basics.js"], "notes": "Counts leading zero bits in the 32-bit unsigned integer representation." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.11",
-              "title": "Math.cos",
-              "url": "https://tc39.es/ecma262/#sec-math.cos",
-              "features": [
-                { "feature": "Math.cos(x)", "status": "Supported", "notes": "Cosine of x (radians); NaN propagates; Infinity yields NaN." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.12",
-              "title": "Math.cosh",
-              "url": "https://tc39.es/ecma262/#sec-math.cosh",
-              "features": [
-                { "feature": "Math.cosh(x)", "status": "Supported", "notes": "Hyperbolic cosine; handles ±0, NaN, ±Infinity per spec." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.13",
-              "title": "Math.exp",
-              "url": "https://tc39.es/ecma262/#sec-math.exp",
-              "features": [
-                { "feature": "Math.exp(x)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Log_Exp_Identity.js"], "notes": "e^x; consistent with JS semantics for NaN and infinities." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.14",
-              "title": "Math.expm1",
-              "url": "https://tc39.es/ecma262/#sec-math.expm1",
-              "features": [
-                { "feature": "Math.expm1(x)", "status": "Supported", "notes": "Returns e^x - 1 with improved precision for small x." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.15",
-              "title": "Math.floor",
-              "url": "https://tc39.es/ecma262/#sec-math.floor",
-              "features": [
-                { "feature": "Math.floor(x)", "status": "Supported", "notes": "Largest integer less than or equal to x; preserves -0 when appropriate." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.16",
-              "title": "Math.fround",
-              "url": "https://tc39.es/ecma262/#sec-math.fround",
-              "features": [
-                { "feature": "Math.fround(x)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Fround_SignedZero.js"], "notes": "Rounds to nearest 32-bit float; preserves signed zero." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.17",
-              "title": "Math.hypot",
-              "url": "https://tc39.es/ecma262/#sec-math.hypot",
-              "features": [
-                { "feature": "Math.hypot(...values)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Hypot_Infinity_NaN.js"], "notes": "Computes sqrt(sum(x_i^2)); returns Infinity if any arg is ±Infinity; NaN if any arg is NaN and none are Infinity." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.18",
-              "title": "Math.imul",
-              "url": "https://tc39.es/ecma262/#sec-math.imul",
-              "features": [
-                { "feature": "Math.imul(a, b)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Imul_Clz32_Basics.js"], "notes": "C-style 32-bit integer multiplication with wrapping." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.19",
-              "title": "Math.log",
-              "url": "https://tc39.es/ecma262/#sec-math.log",
-              "features": [
-                { "feature": "Math.log(x)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Log_Exp_Identity.js"], "notes": "Natural logarithm; log(1) = 0; negative x yields NaN; log(0) = -Infinity." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.20",
-              "title": "Math.log10",
-              "url": "https://tc39.es/ecma262/#sec-math.log10",
-              "features": [
-                { "feature": "Math.log10(x)", "status": "Supported", "notes": "Base-10 logarithm; JS semantics for 0, negatives, NaN, and infinities." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.21",
-              "title": "Math.log1p",
-              "url": "https://tc39.es/ecma262/#sec-math.log1p",
-              "features": [
-                { "feature": "Math.log1p(x)", "status": "Supported", "notes": "log(1 + x) with improved precision for small x." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.22",
-              "title": "Math.log2",
-              "url": "https://tc39.es/ecma262/#sec-math.log2",
-              "features": [
-                { "feature": "Math.log2(x)", "status": "Supported", "notes": "Base-2 logarithm; JS semantics for 0, negatives, NaN, and infinities." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.23",
-              "title": "Math.max",
-              "url": "https://tc39.es/ecma262/#sec-math.max",
-              "features": [
-                { "feature": "Math.max(...values)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Min_Max_NaN_EmptyArgs.js"], "notes": "Returns the largest of the given numbers; with no arguments returns -Infinity; if any argument is NaN returns NaN." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.24",
-              "title": "Math.sqrt",
-              "url": "https://tc39.es/ecma262/#sec-math.sqrt",
-              "features": [
-                {
-                  "feature": "Math.sqrt(x)",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/Math/JavaScript/Math_Ceil_Sqrt_Basic.js"
-                  ],
-                  "notes": "Returns the square root for non-negative inputs; negative or NaN yields NaN; Infinity maps to Infinity."
-                }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.25",
-              "title": "Math.pow",
-              "url": "https://tc39.es/ecma262/#sec-math.pow",
-              "features": [
-                { "feature": "Math.pow(x, y)", "status": "Supported", "notes": "Exponentiation; consistent with JS semantics including NaN and Infinity cases." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.26",
-              "title": "Math.random",
-              "url": "https://tc39.es/ecma262/#sec-math.random",
-              "features": [
-                { "feature": "Math.random()", "status": "Supported", "notes": "Returns a pseudo-random number in the range [0, 1)." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.27",
-              "title": "Math.round",
-              "url": "https://tc39.es/ecma262/#sec-math.round",
-              "features": [
-                { "feature": "Math.round(x)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Round_Trunc_NegativeHalves.js"], "notes": "Rounds to the nearest integer; ties at .5 round up toward +∞; exact -0.5 returns -0." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.28",
-              "title": "Math.sign",
-              "url": "https://tc39.es/ecma262/#sec-math.sign",
-              "features": [
-                { "feature": "Math.sign(x)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Sign_ZeroVariants.js"], "notes": "Returns 1, -1, 0, -0, or NaN depending on the sign of x; ±Infinity map to ±1." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.29",
-              "title": "Math.sin",
-              "url": "https://tc39.es/ecma262/#sec-math.sin",
-              "features": [
-                { "feature": "Math.sin(x)", "status": "Supported", "notes": "Sine of x (radians); NaN propagates; Infinity yields NaN." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.30",
-              "title": "Math.sinh",
-              "url": "https://tc39.es/ecma262/#sec-math.sinh",
-              "features": [
-                { "feature": "Math.sinh(x)", "status": "Supported", "notes": "Hyperbolic sine; handles ±0, NaN, ±Infinity per spec." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.31",
-              "title": "Math.tan",
-              "url": "https://tc39.es/ecma262/#sec-math.tan",
-              "features": [
-                { "feature": "Math.tan(x)", "status": "Supported", "notes": "Tangent of x (radians); NaN propagates; Infinity yields NaN." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.32",
-              "title": "Math.tanh",
-              "url": "https://tc39.es/ecma262/#sec-math.tanh",
-              "features": [
-                { "feature": "Math.tanh(x)", "status": "Supported", "notes": "Hyperbolic tangent; handles ±0, NaN, ±Infinity per spec." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.33",
-              "title": "Math.trunc",
-              "url": "https://tc39.es/ecma262/#sec-math.trunc",
-              "features": [
-                { "feature": "Math.trunc(x)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Round_Trunc_NegativeHalves.js"], "notes": "Removes fractional part; preserves sign for zero (can return -0)." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.34",
-              "title": "Math.min",
-              "url": "https://tc39.es/ecma262/#sec-math.min",
-              "features": [
-                { "feature": "Math.min(...values)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Min_Max_NaN_EmptyArgs.js"], "notes": "Returns the smallest of the given numbers; with no arguments returns Infinity; if any argument is NaN returns NaN." }
-              ]
-            },
-            {
-              "paragraph": "20.2.2.35",
-              "title": "Math.cbrt",
-              "url": "https://tc39.es/ecma262/#sec-math.cbrt",
-              "features": [
-                { "feature": "Math.cbrt(x)", "status": "Supported", "testScripts": ["Js2IL.Tests/Math/JavaScript/Math_Cbrt_Negative.js"], "notes": "Cube root; handles negative values returning negative result; NaN propagates; Infinity preserved." }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "section": "21",
-      "title": "Date Objects",
-      "url": "https://tc39.es/ecma262/#sec-date-objects",
-      "subsections": [
-        {
-          "subsection": "21.4.1",
-          "title": "The Date Constructor",
-          "url": "https://tc39.es/ecma262/#sec-date-constructor",
-          "paragraphs": [
-            {
-              "paragraph": "21.4.1",
-              "title": "Date constructor",
-              "url": "https://tc39.es/ecma262/#sec-date-constructor",
-              "features": [
-                {
-                  "feature": "new Date() (current time)",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/Date/ExecutionTests.cs"
-                  ],
-                  "notes": "Constructs a Date representing now (UTC). Stores milliseconds since Unix epoch internally."
-                },
-                {
-                  "feature": "new Date(milliseconds)",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js"
-                  ],
-                  "notes": "Constructs from milliseconds since Unix epoch; numeric argument is coerced per JS ToNumber minimal behavior."
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "subsection": "21.4.2",
-          "title": "Properties of the Date Constructor",
-          "url": "https://tc39.es/ecma262/#sec-properties-of-the-date-constructor",
-          "paragraphs": [
-            {
-              "paragraph": "21.4.2.1",
-              "title": "Date.now",
-              "url": "https://tc39.es/ecma262/#sec-date.now",
-              "features": [
-                {
-                  "feature": "Date.now()",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/Date/ExecutionTests.cs"
-                  ],
-                  "notes": "Returns current time in milliseconds since Unix epoch as a number (boxed double)."
-                }
-              ]
-            },
-            {
-              "paragraph": "21.4.2.2",
-              "title": "Date.parse",
-              "url": "https://tc39.es/ecma262/#sec-date.parse",
-              "features": [
-                {
-                  "feature": "Date.parse(string)",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/Date/ExecutionTests.cs",
-                    "Js2IL.Tests/Date/ExecutionTests.Date_Parse_IsoString.verified.txt"
-                  ],
-                  "notes": "Parses an ISO-like string to milliseconds since Unix epoch, or NaN on failure; returns a number (boxed double)."
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "subsection": "21.4.3",
-          "title": "Properties of the Date Prototype Object",
-          "url": "https://tc39.es/ecma262/#sec-properties-of-the-date-prototype-object",
-          "paragraphs": [
-            {
-              "paragraph": "21.4.3.5",
-              "title": "Date.prototype.getTime",
-              "url": "https://tc39.es/ecma262/#sec-date.prototype.gettime",
-              "features": [
-                {
-                  "feature": "Date.prototype.getTime",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js",
-                    "Js2IL.Tests/Date/ExecutionTests.Date_Construct_FromMs_GetTime_ToISOString.verified.txt"
-                  ],
-                  "notes": "Returns milliseconds since Unix epoch as a number (boxed double)."
-                }
-              ]
-            },
-            {
-              "paragraph": "21.4.3.27",
-              "title": "Date.prototype.toISOString",
-              "url": "https://tc39.es/ecma262/#sec-date.prototype.toisostring",
-              "features": [
-                {
-                  "feature": "Date.prototype.toISOString",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js",
-                    "Js2IL.Tests/Date/ExecutionTests.Date_Construct_FromMs_GetTime_ToISOString.verified.txt"
-                  ],
-                  "notes": "Returns a UTC ISO 8601 string with millisecond precision and trailing 'Z'."
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
       "section": "14",
       "title": "ECMAScript Language: Statements and Declarations",
       "url": "https://tc39.es/ecma262/#sec-ecmascript-language-statements-and-declarations",
@@ -1066,10 +818,114 @@
               "title": "Runtime Semantics: Evaluation",
               "url": "https://tc39.es/ecma262/#sec-if-statement",
               "features": [
-                { "feature": "if statement (LessThan)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_If_LessThan.js"], "notes": "" },
-                { "feature": "if statement (!flag)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_If_NotFlag.js"], "notes": "Logical not in conditional test supported." },
-                { "feature": "if statement (result == true)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/Function_IsEven_CompareResultToTrue.js"], "notes": "Compares function-returned boolean to true and branches accordingly." },
-                { "feature": "if condition truthiness (non-boolean)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_If_Truthiness.js"], "notes": "Conditions like if (url) are coerced via JS ToBoolean semantics (empty string/0/NaN/undefined/null => false; others => true)." }
+                {
+                  "feature": "if statement (LessThan)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/ControlFlow_If_LessThan.js"
+                  ],
+                  "notes": ""
+                },
+                {
+                  "feature": "if statement (!flag)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/ControlFlow_If_NotFlag.js"
+                  ],
+                  "notes": "Logical not in conditional test supported."
+                },
+                {
+                  "feature": "if statement (result == true)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/Function_IsEven_CompareResultToTrue.js"
+                  ],
+                  "notes": "Compares function-returned boolean to true and branches accordingly."
+                },
+                {
+                  "feature": "if condition truthiness (non-boolean)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/ControlFlow_If_Truthiness.js"
+                  ],
+                  "notes": "Conditions like if (url) are coerced via JS ToBoolean semantics (empty string/0/NaN/undefined/null => false; others => true)."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "subsection": "14.7.1",
+          "title": "The do-while Statement",
+          "url": "https://tc39.es/ecma262/#sec-do-while-statement",
+          "paragraphs": [
+            {
+              "paragraph": "14.7.1.1",
+              "title": "Runtime Semantics: DoWhileStatement Evaluation",
+              "url": "https://tc39.es/ecma262/#sec-do-while-statement",
+              "features": [
+                {
+                  "feature": "do-while loop (CountDownFromFive)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/ControlFlow_DoWhile_CountDownFromFive.js"
+                  ],
+                  "notes": ""
+                },
+                {
+                  "feature": "do-while loop: continue (skip even)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/ControlFlow_DoWhile_Continue_SkipEven.js"
+                  ],
+                  "notes": "continue branches to the post-body test point (LoopContext)."
+                },
+                {
+                  "feature": "do-while loop: break",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/ControlFlow_DoWhile_Break_AtThree.js"
+                  ],
+                  "notes": "break branches to loop end (LoopContext)."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "subsection": "14.7.2",
+          "title": "The while Statement",
+          "url": "https://tc39.es/ecma262/#sec-while-statement",
+          "paragraphs": [
+            {
+              "paragraph": "14.7.2.1",
+              "title": "Runtime Semantics: WhileStatement Evaluation",
+              "url": "https://tc39.es/ecma262/#sec-while-statement",
+              "features": [
+                {
+                  "feature": "while loop (CountDownFromFive)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/ControlFlow_While_CountDownFromFive.js"
+                  ],
+                  "notes": ""
+                },
+                {
+                  "feature": "while loop: continue (skip even)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/ControlFlow_While_Continue_SkipEven.js"
+                  ],
+                  "notes": "continue branches to loop head (LoopContext)."
+                },
+                {
+                  "feature": "while loop: break",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/ControlFlow_While_Break_AtThree.js"
+                  ],
+                  "notes": "break branches to loop end (LoopContext)."
+                }
               ]
             }
           ]
@@ -1084,53 +940,58 @@
               "title": "Runtime Semantics: ForLoopEvaluation",
               "url": "https://tc39.es/ecma262/#sec-runtime-semantics-forloopevaluation",
               "features": [
-                { "feature": "for loop (CountToFive)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_ForLoop_CountToFive.js"], "notes": "" },
-                { "feature": "for loop (CountDownFromFive)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_ForLoop_CountDownFromFive.js"], "notes": "" },
-                { "feature": "for loop (LessThanOrEqual)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_ForLoop_LessThanOrEqual.js"], "notes": "" },
-                { "feature": "for loop (GreaterThanOrEqual)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_ForLoop_GreaterThanOrEqual.js"], "notes": "" },
-                { "feature": "for loop: continue", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_ForLoop_Continue_SkipEven.js"], "notes": "Implements continue by branching to the update expression (LoopContext)." },
-                { "feature": "for loop: break", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_ForLoop_Break_AtThree.js"], "notes": "Implements break by branching to loop end label (LoopContext)." }
+                {
+                  "feature": "for loop (CountToFive)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/ControlFlow_ForLoop_CountToFive.js"
+                  ],
+                  "notes": ""
+                },
+                {
+                  "feature": "for loop (CountDownFromFive)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/ControlFlow_ForLoop_CountDownFromFive.js"
+                  ],
+                  "notes": ""
+                },
+                {
+                  "feature": "for loop (LessThanOrEqual)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/ControlFlow_ForLoop_LessThanOrEqual.js"
+                  ],
+                  "notes": ""
+                },
+                {
+                  "feature": "for loop (GreaterThanOrEqual)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/ControlFlow_ForLoop_GreaterThanOrEqual.js"
+                  ],
+                  "notes": ""
+                },
+                {
+                  "feature": "for loop: continue",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/ControlFlow_ForLoop_Continue_SkipEven.js"
+                  ],
+                  "notes": "Implements continue by branching to the update expression (LoopContext)."
+                },
+                {
+                  "feature": "for loop: break",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/ControlFlow_ForLoop_Break_AtThree.js"
+                  ],
+                  "notes": "Implements break by branching to loop end label (LoopContext)."
+                }
               ]
             }
           ]
-        }
-        ,
-        {
-          "subsection": "14.7.2",
-          "title": "The while Statement",
-          "url": "https://tc39.es/ecma262/#sec-while-statement",
-          "paragraphs": [
-            {
-              "paragraph": "14.7.2.1",
-              "title": "Runtime Semantics: WhileStatement Evaluation",
-              "url": "https://tc39.es/ecma262/#sec-while-statement",
-              "features": [
-                { "feature": "while loop (CountDownFromFive)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_While_CountDownFromFive.js"], "notes": "" },
-                { "feature": "while loop: continue (skip even)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_While_Continue_SkipEven.js"], "notes": "continue branches to loop head (LoopContext)." },
-                { "feature": "while loop: break", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_While_Break_AtThree.js"], "notes": "break branches to loop end (LoopContext)." }
-              ]
-            }
-          ]
-        }
-        ,
-        {
-          "subsection": "14.7.1",
-          "title": "The do-while Statement",
-          "url": "https://tc39.es/ecma262/#sec-do-while-statement",
-          "paragraphs": [
-            {
-              "paragraph": "14.7.1.1",
-              "title": "Runtime Semantics: DoWhileStatement Evaluation",
-              "url": "https://tc39.es/ecma262/#sec-do-while-statement",
-              "features": [
-                { "feature": "do-while loop (CountDownFromFive)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_DoWhile_CountDownFromFive.js"], "notes": "" },
-                { "feature": "do-while loop: continue (skip even)", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_DoWhile_Continue_SkipEven.js"], "notes": "continue branches to the post-body test point (LoopContext)." },
-                { "feature": "do-while loop: break", "status": "Supported", "testScripts": ["Js2IL.Tests/JavaScript/ControlFlow_DoWhile_Break_AtThree.js"], "notes": "break branches to loop end (LoopContext)." }
-              ]
-            }
-          ]
-        }
-        ,
+        },
         {
           "subsection": "14.7.5",
           "title": "The for-of Statement",
@@ -1152,8 +1013,7 @@
               ]
             }
           ]
-        }
-        ,
+        },
         {
           "subsection": "14.16",
           "title": "The try Statement",
@@ -1320,6 +1180,638 @@
       ]
     },
     {
+      "section": "20",
+      "title": "The Math Object",
+      "url": "https://tc39.es/ecma262/#sec-math-object",
+      "subsections": [
+        {
+          "subsection": "20.2.1",
+          "title": "Value Properties of the Math Object",
+          "url": "https://tc39.es/ecma262/#sec-value-properties-of-the-math-object",
+          "paragraphs": [
+            {
+              "paragraph": "20.2.1",
+              "title": "Math constants",
+              "url": "https://tc39.es/ecma262/#sec-value-properties-of-the-math-object",
+              "features": [
+                {
+                  "feature": "Math.E",
+                  "status": "Supported",
+                  "notes": "Euler’s number e."
+                },
+                {
+                  "feature": "Math.LN10",
+                  "status": "Supported",
+                  "notes": "Natural logarithm of 10."
+                },
+                {
+                  "feature": "Math.LN2",
+                  "status": "Supported",
+                  "notes": "Natural logarithm of 2."
+                },
+                {
+                  "feature": "Math.LOG10E",
+                  "status": "Supported",
+                  "notes": "Base-10 logarithm of e."
+                },
+                {
+                  "feature": "Math.LOG2E",
+                  "status": "Supported",
+                  "notes": "Base-2 logarithm of e."
+                },
+                {
+                  "feature": "Math.PI",
+                  "status": "Supported",
+                  "notes": "Ratio of a circle’s circumference to its diameter."
+                },
+                {
+                  "feature": "Math.SQRT1_2",
+                  "status": "Supported",
+                  "notes": "Square root of 1/2."
+                },
+                {
+                  "feature": "Math.SQRT2",
+                  "status": "Supported",
+                  "notes": "Square root of 2."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "subsection": "20.2.2",
+          "title": "Function Properties of the Math Object",
+          "url": "https://tc39.es/ecma262/#sec-function-properties-of-the-math-object",
+          "paragraphs": [
+            {
+              "paragraph": "20.2.2.1",
+              "title": "Math.abs",
+              "url": "https://tc39.es/ecma262/#sec-math.abs",
+              "features": [
+                {
+                  "feature": "Math.abs(x)",
+                  "status": "Supported",
+                  "notes": "Returns the absolute value; NaN propagates; ±Infinity preserved."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.2",
+              "title": "Math.acos",
+              "url": "https://tc39.es/ecma262/#sec-math.acos",
+              "features": [
+                {
+                  "feature": "Math.acos(x)",
+                  "status": "Supported",
+                  "notes": "Returns arc cosine in radians; out-of-domain yields NaN."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.3",
+              "title": "Math.acosh",
+              "url": "https://tc39.es/ecma262/#sec-math.acosh",
+              "features": [
+                {
+                  "feature": "Math.acosh(x)",
+                  "status": "Supported",
+                  "notes": "Inverse hyperbolic cosine; x < 1 yields NaN; Infinity preserved."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.4",
+              "title": "Math.asin",
+              "url": "https://tc39.es/ecma262/#sec-math.asin",
+              "features": [
+                {
+                  "feature": "Math.asin(x)",
+                  "status": "Supported",
+                  "notes": "Returns arc sine in radians; out-of-domain yields NaN."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.5",
+              "title": "Math.asinh",
+              "url": "https://tc39.es/ecma262/#sec-math.asinh",
+              "features": [
+                {
+                  "feature": "Math.asinh(x)",
+                  "status": "Supported",
+                  "notes": "Inverse hyperbolic sine; handles ±0, NaN, ±Infinity per spec."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.6",
+              "title": "Math.atan",
+              "url": "https://tc39.es/ecma262/#sec-math.atan",
+              "features": [
+                {
+                  "feature": "Math.atan(x)",
+                  "status": "Supported",
+                  "notes": "Returns arc tangent in radians; NaN propagates; ±Infinity maps to ±π/2."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.7",
+              "title": "Math.atan2",
+              "url": "https://tc39.es/ecma262/#sec-math.atan2",
+              "features": [
+                {
+                  "feature": "Math.atan2(y, x)",
+                  "status": "Supported",
+                  "notes": "Quadrant-aware arc tangent; handles zeros, NaN, and infinities per spec."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.9",
+              "title": "Math.ceil",
+              "url": "https://tc39.es/ecma262/#sec-math.ceil",
+              "features": [
+                {
+                  "feature": "Math.ceil(x)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Math/JavaScript/Math_Ceil_Sqrt_Basic.js"
+                  ],
+                  "notes": "Implements ceiling for numbers represented as double; arguments coerced via minimal ToNumber semantics. Returns NaN for NaN/undefined or negative zero preserved via .NET semantics."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.10",
+              "title": "Math.clz32",
+              "url": "https://tc39.es/ecma262/#sec-math.clz32",
+              "features": [
+                {
+                  "feature": "Math.clz32(x)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Math/JavaScript/Math_Imul_Clz32_Basics.js"
+                  ],
+                  "notes": "Counts leading zero bits in the 32-bit unsigned integer representation."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.11",
+              "title": "Math.cos",
+              "url": "https://tc39.es/ecma262/#sec-math.cos",
+              "features": [
+                {
+                  "feature": "Math.cos(x)",
+                  "status": "Supported",
+                  "notes": "Cosine of x (radians); NaN propagates; Infinity yields NaN."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.12",
+              "title": "Math.cosh",
+              "url": "https://tc39.es/ecma262/#sec-math.cosh",
+              "features": [
+                {
+                  "feature": "Math.cosh(x)",
+                  "status": "Supported",
+                  "notes": "Hyperbolic cosine; handles ±0, NaN, ±Infinity per spec."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.13",
+              "title": "Math.exp",
+              "url": "https://tc39.es/ecma262/#sec-math.exp",
+              "features": [
+                {
+                  "feature": "Math.exp(x)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Math/JavaScript/Math_Log_Exp_Identity.js"
+                  ],
+                  "notes": "e^x; consistent with JS semantics for NaN and infinities."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.14",
+              "title": "Math.expm1",
+              "url": "https://tc39.es/ecma262/#sec-math.expm1",
+              "features": [
+                {
+                  "feature": "Math.expm1(x)",
+                  "status": "Supported",
+                  "notes": "Returns e^x - 1 with improved precision for small x."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.15",
+              "title": "Math.floor",
+              "url": "https://tc39.es/ecma262/#sec-math.floor",
+              "features": [
+                {
+                  "feature": "Math.floor(x)",
+                  "status": "Supported",
+                  "notes": "Largest integer less than or equal to x; preserves -0 when appropriate."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.16",
+              "title": "Math.fround",
+              "url": "https://tc39.es/ecma262/#sec-math.fround",
+              "features": [
+                {
+                  "feature": "Math.fround(x)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Math/JavaScript/Math_Fround_SignedZero.js"
+                  ],
+                  "notes": "Rounds to nearest 32-bit float; preserves signed zero."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.17",
+              "title": "Math.hypot",
+              "url": "https://tc39.es/ecma262/#sec-math.hypot",
+              "features": [
+                {
+                  "feature": "Math.hypot(...values)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Math/JavaScript/Math_Hypot_Infinity_NaN.js"
+                  ],
+                  "notes": "Computes sqrt(sum(x_i^2)); returns Infinity if any arg is ±Infinity; NaN if any arg is NaN and none are Infinity."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.18",
+              "title": "Math.imul",
+              "url": "https://tc39.es/ecma262/#sec-math.imul",
+              "features": [
+                {
+                  "feature": "Math.imul(a, b)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Math/JavaScript/Math_Imul_Clz32_Basics.js"
+                  ],
+                  "notes": "C-style 32-bit integer multiplication with wrapping."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.19",
+              "title": "Math.log",
+              "url": "https://tc39.es/ecma262/#sec-math.log",
+              "features": [
+                {
+                  "feature": "Math.log(x)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Math/JavaScript/Math_Log_Exp_Identity.js"
+                  ],
+                  "notes": "Natural logarithm; log(1) = 0; negative x yields NaN; log(0) = -Infinity."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.20",
+              "title": "Math.log10",
+              "url": "https://tc39.es/ecma262/#sec-math.log10",
+              "features": [
+                {
+                  "feature": "Math.log10(x)",
+                  "status": "Supported",
+                  "notes": "Base-10 logarithm; JS semantics for 0, negatives, NaN, and infinities."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.21",
+              "title": "Math.log1p",
+              "url": "https://tc39.es/ecma262/#sec-math.log1p",
+              "features": [
+                {
+                  "feature": "Math.log1p(x)",
+                  "status": "Supported",
+                  "notes": "log(1 + x) with improved precision for small x."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.22",
+              "title": "Math.log2",
+              "url": "https://tc39.es/ecma262/#sec-math.log2",
+              "features": [
+                {
+                  "feature": "Math.log2(x)",
+                  "status": "Supported",
+                  "notes": "Base-2 logarithm; JS semantics for 0, negatives, NaN, and infinities."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.23",
+              "title": "Math.max",
+              "url": "https://tc39.es/ecma262/#sec-math.max",
+              "features": [
+                {
+                  "feature": "Math.max(...values)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Math/JavaScript/Math_Min_Max_NaN_EmptyArgs.js"
+                  ],
+                  "notes": "Returns the largest of the given numbers; with no arguments returns -Infinity; if any argument is NaN returns NaN."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.24",
+              "title": "Math.sqrt",
+              "url": "https://tc39.es/ecma262/#sec-math.sqrt",
+              "features": [
+                {
+                  "feature": "Math.sqrt(x)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Math/JavaScript/Math_Ceil_Sqrt_Basic.js"
+                  ],
+                  "notes": "Returns the square root for non-negative inputs; negative or NaN yields NaN; Infinity maps to Infinity."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.25",
+              "title": "Math.pow",
+              "url": "https://tc39.es/ecma262/#sec-math.pow",
+              "features": [
+                {
+                  "feature": "Math.pow(x, y)",
+                  "status": "Supported",
+                  "notes": "Exponentiation; consistent with JS semantics including NaN and Infinity cases."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.26",
+              "title": "Math.random",
+              "url": "https://tc39.es/ecma262/#sec-math.random",
+              "features": [
+                {
+                  "feature": "Math.random()",
+                  "status": "Supported",
+                  "notes": "Returns a pseudo-random number in the range [0, 1)."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.27",
+              "title": "Math.round",
+              "url": "https://tc39.es/ecma262/#sec-math.round",
+              "features": [
+                {
+                  "feature": "Math.round(x)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Math/JavaScript/Math_Round_Trunc_NegativeHalves.js"
+                  ],
+                  "notes": "Rounds to the nearest integer; ties at .5 round up toward +∞; exact -0.5 returns -0."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.28",
+              "title": "Math.sign",
+              "url": "https://tc39.es/ecma262/#sec-math.sign",
+              "features": [
+                {
+                  "feature": "Math.sign(x)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Math/JavaScript/Math_Sign_ZeroVariants.js"
+                  ],
+                  "notes": "Returns 1, -1, 0, -0, or NaN depending on the sign of x; ±Infinity map to ±1."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.29",
+              "title": "Math.sin",
+              "url": "https://tc39.es/ecma262/#sec-math.sin",
+              "features": [
+                {
+                  "feature": "Math.sin(x)",
+                  "status": "Supported",
+                  "notes": "Sine of x (radians); NaN propagates; Infinity yields NaN."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.30",
+              "title": "Math.sinh",
+              "url": "https://tc39.es/ecma262/#sec-math.sinh",
+              "features": [
+                {
+                  "feature": "Math.sinh(x)",
+                  "status": "Supported",
+                  "notes": "Hyperbolic sine; handles ±0, NaN, ±Infinity per spec."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.31",
+              "title": "Math.tan",
+              "url": "https://tc39.es/ecma262/#sec-math.tan",
+              "features": [
+                {
+                  "feature": "Math.tan(x)",
+                  "status": "Supported",
+                  "notes": "Tangent of x (radians); NaN propagates; Infinity yields NaN."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.32",
+              "title": "Math.tanh",
+              "url": "https://tc39.es/ecma262/#sec-math.tanh",
+              "features": [
+                {
+                  "feature": "Math.tanh(x)",
+                  "status": "Supported",
+                  "notes": "Hyperbolic tangent; handles ±0, NaN, ±Infinity per spec."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.33",
+              "title": "Math.trunc",
+              "url": "https://tc39.es/ecma262/#sec-math.trunc",
+              "features": [
+                {
+                  "feature": "Math.trunc(x)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Math/JavaScript/Math_Round_Trunc_NegativeHalves.js"
+                  ],
+                  "notes": "Removes fractional part; preserves sign for zero (can return -0)."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.34",
+              "title": "Math.min",
+              "url": "https://tc39.es/ecma262/#sec-math.min",
+              "features": [
+                {
+                  "feature": "Math.min(...values)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Math/JavaScript/Math_Min_Max_NaN_EmptyArgs.js"
+                  ],
+                  "notes": "Returns the smallest of the given numbers; with no arguments returns Infinity; if any argument is NaN returns NaN."
+                }
+              ]
+            },
+            {
+              "paragraph": "20.2.2.35",
+              "title": "Math.cbrt",
+              "url": "https://tc39.es/ecma262/#sec-math.cbrt",
+              "features": [
+                {
+                  "feature": "Math.cbrt(x)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Math/JavaScript/Math_Cbrt_Negative.js"
+                  ],
+                  "notes": "Cube root; handles negative values returning negative result; NaN propagates; Infinity preserved."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "section": "21",
+      "title": "Date Objects",
+      "url": "https://tc39.es/ecma262/#sec-date-objects",
+      "subsections": [
+        {
+          "subsection": "21.4.1",
+          "title": "The Date Constructor",
+          "url": "https://tc39.es/ecma262/#sec-date-constructor",
+          "paragraphs": [
+            {
+              "paragraph": "21.4.1",
+              "title": "Date constructor",
+              "url": "https://tc39.es/ecma262/#sec-date-constructor",
+              "features": [
+                {
+                  "feature": "new Date() (current time)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Date/ExecutionTests.cs"
+                  ],
+                  "notes": "Constructs a Date representing now (UTC). Stores milliseconds since Unix epoch internally."
+                },
+                {
+                  "feature": "new Date(milliseconds)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js"
+                  ],
+                  "notes": "Constructs from milliseconds since Unix epoch; numeric argument is coerced per JS ToNumber minimal behavior."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "subsection": "21.4.2",
+          "title": "Properties of the Date Constructor",
+          "url": "https://tc39.es/ecma262/#sec-properties-of-the-date-constructor",
+          "paragraphs": [
+            {
+              "paragraph": "21.4.2.1",
+              "title": "Date.now",
+              "url": "https://tc39.es/ecma262/#sec-date.now",
+              "features": [
+                {
+                  "feature": "Date.now()",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Date/ExecutionTests.cs"
+                  ],
+                  "notes": "Returns current time in milliseconds since Unix epoch as a number (boxed double)."
+                }
+              ]
+            },
+            {
+              "paragraph": "21.4.2.2",
+              "title": "Date.parse",
+              "url": "https://tc39.es/ecma262/#sec-date.parse",
+              "features": [
+                {
+                  "feature": "Date.parse(string)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Date/ExecutionTests.cs",
+                    "Js2IL.Tests/Date/ExecutionTests.Date_Parse_IsoString.verified.txt"
+                  ],
+                  "notes": "Parses an ISO-like string to milliseconds since Unix epoch, or NaN on failure; returns a number (boxed double)."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "subsection": "21.4.3",
+          "title": "Properties of the Date Prototype Object",
+          "url": "https://tc39.es/ecma262/#sec-properties-of-the-date-prototype-object",
+          "paragraphs": [
+            {
+              "paragraph": "21.4.3.5",
+              "title": "Date.prototype.getTime",
+              "url": "https://tc39.es/ecma262/#sec-date.prototype.gettime",
+              "features": [
+                {
+                  "feature": "Date.prototype.getTime",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js",
+                    "Js2IL.Tests/Date/ExecutionTests.Date_Construct_FromMs_GetTime_ToISOString.verified.txt"
+                  ],
+                  "notes": "Returns milliseconds since Unix epoch as a number (boxed double)."
+                }
+              ]
+            },
+            {
+              "paragraph": "21.4.3.27",
+              "title": "Date.prototype.toISOString",
+              "url": "https://tc39.es/ecma262/#sec-date.prototype.toisostring",
+              "features": [
+                {
+                  "feature": "Date.prototype.toISOString",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js",
+                    "Js2IL.Tests/Date/ExecutionTests.Date_Construct_FromMs_GetTime_ToISOString.verified.txt"
+                  ],
+                  "notes": "Returns a UTC ISO 8601 string with millisecond precision and trailing 'Z'."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "section": "23",
       "title": "Array Objects",
       "url": "https://tc39.es/ecma262/#sec-array-objects",
@@ -1474,58 +1966,51 @@
               ]
             }
           ]
-        }
-      ]
-    },
-    {
-          "section": "23.2",
+        },
+        {
+          "subsection": "23.2",
           "title": "TypedArray Objects",
           "url": "https://tc39.es/ecma262/#sec-typedarray-objects",
-          "subsections": [
+          "paragraphs": [
             {
-              "subsection": "23.2.1",
-              "title": "Int32Array",
+              "paragraph": "23.2.1.1",
+              "title": "Constructor and basic semantics",
               "url": "https://tc39.es/ecma262/#sec-typedarray-objects",
-              "paragraphs": [
+              "features": [
                 {
-                  "paragraph": "23.2.1.1",
-                  "title": "Constructor and basic semantics",
-                  "url": "https://tc39.es/ecma262/#sec-typedarray-objects",
-                  "features": [
-                    {
-                      "feature": "Int32Array: new Int32Array(length), length, index get/set (basic)",
-                      "status": "Supported",
-                      "testScripts": [
-                        "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js",
-                        "Js2IL.Tests/TypedArray/ExecutionTests.Int32Array_Construct_Length.verified.txt"
-                      ],
-                      "notes": "Minimal typed array: exposes numeric length, supports indexing; out-of-bounds reads return 0 and out-of-bounds writes are ignored."
-                    },
-                    {
-                      "feature": "Int32Array from array-like (copy and ToInt32 coercion)",
-                      "status": "Supported",
-                      "testScripts": [
-                        "Js2IL.Tests/TypedArray/JavaScript/Int32Array_FromArray_CopyAndCoerce.js",
-                        "Js2IL.Tests/TypedArray/ExecutionTests.Int32Array_FromArray_CopyAndCoerce.verified.txt"
-                      ],
-                      "notes": "Copies from array-like and coerces values using ToInt32-style truncation; NaN/Infinity/±0 become 0."
-                    },
-                    {
-                      "feature": "Int32Array.prototype.set(source[, offset])",
-                      "status": "Supported",
-                      "testScripts": [
-                        "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Set_FromArray_WithOffset.js",
-                        "Js2IL.Tests/TypedArray/ExecutionTests.Int32Array_Set_FromArray_WithOffset.verified.txt"
-                      ],
-                      "notes": "Copies elements from array-like or another Int32Array with optional offset; elements are coerced via ToInt32; offset < 0 treated as 0; copies stop at destination length."
-                    }
-                  ]
+                  "feature": "Int32Array: new Int32Array(length), length, index get/set (basic)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js",
+                    "Js2IL.Tests/TypedArray/ExecutionTests.Int32Array_Construct_Length.verified.txt"
+                  ],
+                  "notes": "Minimal typed array: exposes numeric length, supports indexing; out-of-bounds reads return 0 and out-of-bounds writes are ignored."
+                },
+                {
+                  "feature": "Int32Array from array-like (copy and ToInt32 coercion)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/TypedArray/JavaScript/Int32Array_FromArray_CopyAndCoerce.js",
+                    "Js2IL.Tests/TypedArray/ExecutionTests.Int32Array_FromArray_CopyAndCoerce.verified.txt"
+                  ],
+                  "notes": "Copies from array-like and coerces values using ToInt32-style truncation; NaN/Infinity/±0 become 0."
+                },
+                {
+                  "feature": "Int32Array.prototype.set(source[, offset])",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Set_FromArray_WithOffset.js",
+                    "Js2IL.Tests/TypedArray/ExecutionTests.Int32Array_Set_FromArray_WithOffset.verified.txt"
+                  ],
+                  "notes": "Copies elements from array-like or another Int32Array with optional offset; elements are coerced via ToInt32; offset < 0 treated as 0; copies stop at destination length."
                 }
               ]
             }
           ]
-        },
-        {
+        }
+      ]
+    },
+    {
       "section": "24",
       "title": "Text Processing",
       "url": "https://tc39.es/ecma262/#sec-text-processing",
@@ -1596,21 +2081,6 @@
               ]
             },
             {
-              "paragraph": "24.1.4",
-              "title": "String.prototype.localeCompare",
-              "url": "https://tc39.es/ecma262/#sec-string.prototype.localecompare",
-              "features": [
-                {
-                  "feature": "String.prototype.localeCompare (numeric compare)",
-                  "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/JavaScript/String_LocaleCompare_Numeric.js"
-                  ],
-                  "notes": "Returns a number (boxed double) consistent with ECMAScript compare semantics; numeric option supported."
-                }
-              ]
-            },
-            {
               "paragraph": "24.1.3",
               "title": "String.prototype.replace",
               "url": "https://tc39.es/ecma262/#sec-string.prototype.replace",
@@ -1624,49 +2094,19 @@
                   "notes": "Supported when the receiver is String(x), the pattern is a regular expression literal, and the replacement is a string. Global (g) and ignoreCase (i) flags are honored. Function replacement, non-regex patterns, and other flags are not yet implemented. Implemented via host intrinsic JavaScriptRuntime.String.Replace and dynamic resolution in IL generator."
                 }
               ]
-            }
-          ]
-        },
-        {
-          "section": "25",
-          "title": "Keyed Collections",
-          "url": "https://tc39.es/ecma262/#sec-keyed-collections",
-          "subsections": [
+            },
             {
-              "subsection": "25.4",
-              "title": "Set Objects",
-              "url": "https://tc39.es/ecma262/#sec-set-objects",
-              "paragraphs": [
+              "paragraph": "24.1.4",
+              "title": "String.prototype.localeCompare",
+              "url": "https://tc39.es/ecma262/#sec-string.prototype.localecompare",
+              "features": [
                 {
-                  "paragraph": "25.4.5",
-                  "title": "Properties of Set Instances",
-                  "url": "https://tc39.es/ecma262/#sec-properties-of-set-instances",
-                  "features": [
-                    {
-                      "feature": "Set.prototype.add",
-                      "status": "Supported",
-                      "testScripts": [
-                        "Js2IL.Tests/Set/GeneratorTests.Set_Add_Has_Size.verified.txt"
-                      ],
-                      "notes": "Backed by JavaScriptRuntime.Set.add; returns the Set instance to allow chaining."
-                    },
-                    {
-                      "feature": "Set.prototype.has",
-                      "status": "Supported",
-                      "testScripts": [
-                        "Js2IL.Tests/Set/GeneratorTests.Set_Add_Has_Size.verified.txt"
-                      ],
-                      "notes": "Backed by JavaScriptRuntime.Set.has; strict equality for keys based on .NET object identity and string/double value semantics."
-                    },
-                    {
-                      "feature": "Set.prototype.size (getter)",
-                      "status": "Supported",
-                      "testScripts": [
-                        "Js2IL.Tests/Set/GeneratorTests.Set_Add_Has_Size.verified.txt"
-                      ],
-                      "notes": "Exposed via a 'size' property on JavaScriptRuntime.Set returning a JS number (double)."
-                    }
-                  ]
+                  "feature": "String.prototype.localeCompare (numeric compare)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/JavaScript/String_LocaleCompare_Numeric.js"
+                  ],
+                  "notes": "Returns a number (boxed double) consistent with ECMAScript compare semantics; numeric option supported."
                 }
               ]
             }
@@ -1689,6 +2129,51 @@
                     "Js2IL.Tests/JSONRuntimeTests.cs"
                   ],
                   "notes": "Implemented via host intrinsic JavaScriptRuntime.JSON.Parse(string). Maps invalid input to SyntaxError and non-string input to TypeError. Reviver parameter is not supported. Objects become ExpandoObject, arrays use JavaScriptRuntime.Array, numbers use double."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "section": "25",
+      "title": "Keyed Collections",
+      "url": "https://tc39.es/ecma262/#sec-keyed-collections",
+      "subsections": [
+        {
+          "subsection": "25.4",
+          "title": "Set Objects",
+          "url": "https://tc39.es/ecma262/#sec-set-objects",
+          "paragraphs": [
+            {
+              "paragraph": "25.4.5",
+              "title": "Properties of Set Instances",
+              "url": "https://tc39.es/ecma262/#sec-properties-of-set-instances",
+              "features": [
+                {
+                  "feature": "Set.prototype.add",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Set/GeneratorTests.Set_Add_Has_Size.verified.txt"
+                  ],
+                  "notes": "Backed by JavaScriptRuntime.Set.add; returns the Set instance to allow chaining."
+                },
+                {
+                  "feature": "Set.prototype.has",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Set/GeneratorTests.Set_Add_Has_Size.verified.txt"
+                  ],
+                  "notes": "Backed by JavaScriptRuntime.Set.has; strict equality for keys based on .NET object identity and string/double value semantics."
+                },
+                {
+                  "feature": "Set.prototype.size (getter)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Set/GeneratorTests.Set_Add_Has_Size.verified.txt"
+                  ],
+                  "notes": "Exposed via a 'size' property on JavaScriptRuntime.Set returning a JS number (double)."
                 }
               ]
             }

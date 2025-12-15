@@ -109,6 +109,8 @@ namespace Js2IL.Services
         
         // Local variable slot allocation for uncaptured variables
         private readonly Dictionary<string, int> _localVariableSlots = new();
+        // Cache of block-scope local variables by slot, for GetLocalVariableType lookup
+        private readonly Dictionary<int, Variable> _blockScopeLocalsBySlot = new();
         private int _nextLocalSlot = 0; // Start after scope instance local (if any)
 
         /// <summary>
@@ -557,6 +559,12 @@ namespace Js2IL.Services
             // partial support for known types.. if we have a clrtype of double then return that
             // phase in support for more types in future work
             var variable = _variables.Values.FirstOrDefault(v => v.LocalSlot == localIndex);
+            
+            // Also check block-scope locals cache (these aren't stored in _variables for shadowing reasons)
+            if (variable == null && _blockScopeLocalsBySlot.TryGetValue(localIndex, out var blockScopeVar))
+            {
+                variable = blockScopeVar;
+            }
 
             // default behavior is to use the clr type object 
             // if we have detected during analysis that the variable type remains a single type for its lifetime
@@ -652,6 +660,8 @@ namespace Js2IL.Services
                     ClrType = viUncaptured?.ClrType,
                     IsStableType = viUncaptured?.IsStableType ?? false
                 };
+                // Cache by slot for GetLocalVariableType lookup (block scope locals aren't cached in _variables)
+                _blockScopeLocalsBySlot[localSlot] = variable;
                 return true;
             }
             

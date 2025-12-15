@@ -113,35 +113,31 @@
 	{
 		// Method begins at RVA 0x2088
 		// Header size: 12
-		// Code size: 66 (0x42)
+		// Code size: 46 (0x2e)
 		.maxstack 32
 		.locals init (
-			[0] object
+			[0] float64
 		)
 
 		IL_0000: ldc.r8 0.0
-		IL_0009: box [System.Runtime]System.Double
-		IL_000e: stloc.0
-		// loop start (head: IL_000f)
-			IL_000f: ldloc.0
-			IL_0010: unbox.any [System.Runtime]System.Double
-			IL_0015: ldarg.1
-			IL_0016: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_001b: blt IL_0025
+		IL_0009: stloc.0
+		// loop start (head: IL_000a)
+			IL_000a: ldloc.0
+			IL_000b: ldarg.1
+			IL_000c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0011: blt IL_001b
 
-			IL_0020: br IL_0040
+			IL_0016: br IL_002c
 
-			IL_0025: ldloc.0
-			IL_0026: unbox.any [System.Runtime]System.Double
-			IL_002b: ldc.r8 1
-			IL_0034: add
-			IL_0035: box [System.Runtime]System.Double
-			IL_003a: stloc.0
-			IL_003b: br IL_000f
+			IL_001b: ldloc.0
+			IL_001c: ldc.r8 1
+			IL_0025: add
+			IL_0026: stloc.0
+			IL_0027: br IL_000a
 		// end loop
 
-		IL_0040: ldarg.0
-		IL_0041: ret
+		IL_002c: ldarg.0
+		IL_002d: ret
 	} // end of method Counter::run
 
 } // end of class Classes.Counter
@@ -153,7 +149,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20d8
+		// Method begins at RVA 0x20c4
 		// Header size: 12
 		// Code size: 28 (0x1c)
 		.maxstack 32
@@ -181,7 +177,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2100
+		// Method begins at RVA 0x20ec
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -1,4 +1,4 @@
-﻿# ECMAScript 2025 Feature Coverage
+# ECMAScript 2025 Feature Coverage
 
 [ECMAScript® 2025 Language Specification](https://tc39.es/ecma262/)
 
@@ -135,6 +135,27 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | typeof | Supported | `Js2IL.Tests/JavaScript/UnaryOperator_Typeof.js` | Implemented via JavaScriptRuntime.TypeUtilities::Typeof and IL emission for UnaryExpression(typeof). typeof null returns 'object'; functions report 'function'; objects report 'object'. | 13.4.3 |
 
 
+#### [Prefix increment operator (++)](https://tc39.es/ecma262/#sec-prefix-increment-operator)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Unary ++ (Prefix increment) | Supported | `Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_PlusPlusPrefix.js` | Increments the value first, then returns the new value. | 13.4.4 |
+
+
+#### [Prefix decrement operator (--)](https://tc39.es/ecma262/#sec-prefix-decrement-operator)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Unary -- (Prefix decrement) | Supported | `Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_MinusMinusPrefix.js` | Decrements the value first, then returns the new value. | 13.4.5 |
+
+
+#### [Bitwise NOT operator (~)](https://tc39.es/ecma262/#sec-bitwise-not-operator)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Unary ~ (Bitwise NOT) | Supported | `Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_BitwiseNot.js` | Converts operand to int32, applies bitwise NOT, converts back to double. Used in bit manipulation patterns. | 13.4.6 |
+
+
 #### [Logical not operator (!)](https://tc39.es/ecma262/#sec-logical-not-operator)
 
 | Feature | Status | Test Scripts | Notes | Section |
@@ -146,14 +167,14 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Unary ++ (Postfix increment) | Supported | `Js2IL.Tests/JavaScript/UnaryOperator_PlusPlusPostfix.js` |  | 13.4.9 |
+| Unary ++ (Postfix increment) | Supported | `Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_PlusPlusPostfix.js` |  | 13.4.9 |
 
 
 #### [Postfix decrement operator (--)](https://tc39.es/ecma262/#sec-postfix-decrement-operator)
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Unary -- (Postfix decrement) | Supported | `Js2IL.Tests/JavaScript/UnaryOperator_MinusMinusPostfix.js` |  | 13.4.10 |
+| Unary -- (Postfix decrement) | Supported | `Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_MinusMinusPostfix.js` |  | 13.4.10 |
 
 
 ### [Binary Operators](https://tc39.es/ecma262/#sec-ecmascript-language-expressions)
@@ -732,9 +753,7 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Array.isArray | Supported | `Js2IL.Tests/JavaScript/Array_IsArray_Basic.js` | Returns true for JavaScriptRuntime.Array instances; false otherwise. | 23.1.2 |
 
 
-## [TypedArray Objects](https://tc39.es/ecma262/#sec-typedarray-objects)
-
-### [Int32Array](https://tc39.es/ecma262/#sec-typedarray-objects)
+### [TypedArray Objects](https://tc39.es/ecma262/#sec-typedarray-objects)
 
 #### [Constructor and basic semantics](https://tc39.es/ecma262/#sec-typedarray-objects)
 
@@ -746,8 +765,6 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 
 ## [Text Processing](https://tc39.es/ecma262/#sec-text-processing)
-
-### [Keyed Collections](https://tc39.es/ecma262/#sec-keyed-collections)
 
 ### [String Objects](https://tc39.es/ecma262/#sec-string-objects)
 
@@ -800,6 +817,19 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
 | JSON.parse | Partially Supported | `Js2IL.Tests/JSONRuntimeTests.cs` | Implemented via host intrinsic JavaScriptRuntime.JSON.Parse(string). Maps invalid input to SyntaxError and non-string input to TypeError. Reviver parameter is not supported. Objects become ExpandoObject, arrays use JavaScriptRuntime.Array, numbers use double. | 24.5.1 |
+
+
+## [Keyed Collections](https://tc39.es/ecma262/#sec-keyed-collections)
+
+### [Set Objects](https://tc39.es/ecma262/#sec-set-objects)
+
+#### [Properties of Set Instances](https://tc39.es/ecma262/#sec-properties-of-set-instances)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Set.prototype.add | Supported | `Js2IL.Tests/Set/GeneratorTests.Set_Add_Has_Size.verified.txt` | Backed by JavaScriptRuntime.Set.add; returns the Set instance to allow chaining. | 25.4.5 |
+| Set.prototype.has | Supported | `Js2IL.Tests/Set/GeneratorTests.Set_Add_Has_Size.verified.txt` | Backed by JavaScriptRuntime.Set.has; strict equality for keys based on .NET object identity and string/double value semantics. | 25.4.5 |
+| Set.prototype.size (getter) | Supported | `Js2IL.Tests/Set/GeneratorTests.Set_Add_Has_Size.verified.txt` | Exposed via a 'size' property on JavaScriptRuntime.Set returning a JS number (double). | 25.4.5 |
 
 
 ## [Promise Object (Host/runtime)](https://tc39.es/ecma262/#sec-promise-objects)
