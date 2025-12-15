@@ -11,7 +11,13 @@ namespace Js2IL.Tests.UnaryOperator
         public Task UnaryOperator_MinusMinusPostfix() => GenerateTest(nameof(UnaryOperator_MinusMinusPostfix));
 
         [Fact]
+        public Task UnaryOperator_MinusMinusPrefix() => GenerateTest(nameof(UnaryOperator_MinusMinusPrefix));
+
+        [Fact]
         public Task UnaryOperator_PlusPlusPostfix() => GenerateTest(nameof(UnaryOperator_PlusPlusPostfix));
+
+        [Fact]
+        public Task UnaryOperator_PlusPlusPrefix() => GenerateTest(nameof(UnaryOperator_PlusPlusPrefix));
 
         [Fact]
         public Task UnaryOperator_Typeof() => GenerateTest(nameof(UnaryOperator_Typeof));
