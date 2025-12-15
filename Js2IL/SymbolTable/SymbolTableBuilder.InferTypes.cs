@@ -181,7 +181,7 @@ public partial class SymbolTableBuilder
                 {
                     return typeof(double);
                 }
-                return  null;
+                return null;
             }
         }
 
