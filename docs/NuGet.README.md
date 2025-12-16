@@ -4,7 +4,7 @@ js2il is a .NET global tool that parses JavaScript (ES) and emits ECMA‑335 IL 
 
 ## Install
 
-- Prerequisite: .NET 8.0 SDK or runtime installed.
+- Prerequisite: .NET 10 SDK or later installed.
 - Install the tool globally:
 
 ```powershell
