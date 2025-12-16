@@ -202,7 +202,7 @@ Changed
 - Tests: adopted received generator snapshots for destructuring tests (Function/Arrow) to align verified output with current emitter formatting and reduce non-semantic churn.
 Fixed
 - Parameter destructuring: previously emitted undefined values due to missing binding/shorthand handling for `{a,b}` and alias patterns; now bindings populate scope fields correctly and execution snapshots log expected values.
-- Build: upgrade branch targets .NET 10 (net10.0) for early compatibility testing; CI workflow updated to use 10.0.x SDK. Master remains on net8.0 until upgrade validated.
+- Build: migrated to .NET 10 (net10.0); CI workflow updated to use 10.0.x SDK.
 
 ## v0.1.7 - 2025-11-12
 
