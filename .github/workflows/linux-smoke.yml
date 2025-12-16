@@ -93,7 +93,7 @@ jobs:
           node RunComparison.js
 
       - name: Update Performance History
-        if: github.event_name == 'release'
+        if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
         run: |
           cd tests/performance
           node -e "
@@ -135,7 +135,7 @@ jobs:
           "
 
       - name: Commit Performance History
-        if: github.event_name == 'release'
+        if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
