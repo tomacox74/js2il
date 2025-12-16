@@ -4,7 +4,7 @@ js2il is a .NET global tool that parses JavaScript (ES) and emits ECMA‑335 IL 
 
 ## Install
 
-- Prerequisite: .NET 8.0 SDK or runtime installed.
+- Prerequisite: .NET 10 SDK or later installed.
 - Install the tool globally:
 
 ```powershell
@@ -58,7 +58,7 @@ Given an input like `C:\code\sample.js`, js2il will emit the following into the 
 	- The assembly name is the input file name without extension.
 	- Contains a `Program.Main` entry point that executes your script when run.
 - `sample.runtimeconfig.json`
-	- Runtime configuration for the `dotnet` host (framework: .NET 8).
+	- Runtime configuration for the `dotnet` host (framework: .NET 10).
 - `JavaScriptRuntime.dll` (+ optional `JavaScriptRuntime.pdb` if available)
 	- Required runtime support library that provides JS primitives (e.g., `console.log`, arrays, objects) used by the emitted IL.
 	- This file is copied next to your generated assembly and must be present at runtime.
@@ -83,7 +83,7 @@ Notes:
 
 ## Troubleshooting
 
-- Ensure the .NET 8.0 SDK/runtime is on PATH: `dotnet --info`
+- Ensure the .NET 10 SDK/runtime is on PATH: `dotnet --info`
 - Use `-V` to print extra diagnostics.
 - File an issue with a minimal JS sample if you suspect a bug.
 

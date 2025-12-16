@@ -5,24 +5,25 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-  <!-- Tool packages cannot be self-contained/single-file/trimmed -->
-  <SelfContained>false</SelfContained>
-  <PublishSingleFile>false</PublishSingleFile>
-  <PublishTrimmed>false</PublishTrimmed>
-  <!-- NuGet tool packaging -->
-  <PackAsTool>true</PackAsTool>
-  <ToolCommandName>js2il</ToolCommandName>
-  <PackageId>js2il</PackageId>
-  <Version>0.4.1</Version>
-  <Authors>tomacox74</Authors>
-  <Company></Company>
-  <Description>JavaScript to .NET IL prototype: parse ES into AST and emit ECMA-335 IL to run on .NET.</Description>
-  <RepositoryUrl>https://github.com/tomacox74/js2il</RepositoryUrl>
-  <RepositoryType>git</RepositoryType>
-  <PackageReadmeFile>README.md</PackageReadmeFile>
-  <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-  <PackageTags>javascript;js;il;ecma-335;dotnet;compiler;transpiler;tool</PackageTags>
-  <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <!-- Tool packages cannot be self-contained/single-file/trimmed -->
+    <SelfContained>false</SelfContained>
+    <PublishSingleFile>false</PublishSingleFile>
+    <PublishTrimmed>false</PublishTrimmed>
+    <!-- NuGet tool packaging -->
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>js2il</ToolCommandName>
+    <PackageId>js2il</PackageId>
+    <Version>0.4.1</Version>
+    <Authors>tomacox74</Authors>
+    <Company></Company>
+    <Description>Compiles JavaScript to .NET assemblies — install, run, done.</Description>
+    <RepositoryUrl>https://github.com/tomacox74/js2il</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.jpg</PackageIcon>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageTags>javascript;js;il;ecma-335;dotnet;compiler;tool</PackageTags>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <!-- Expose internals to test project -->
@@ -42,6 +43,7 @@
   <!-- Include consumer README from docs as package root README.md -->
   <ItemGroup>
     <None Include="..\docs\NuGet.README.md" Pack="true" PackagePath="README.md" />
-  <None Include="..\docs\ECMAScript2025_FeatureCoverage.md" Pack="true" PackagePath="docs/ECMAScript2025_FeatureCoverage.md" />
+    <None Include="..\docs\ECMAScript2025_FeatureCoverage.md" Pack="true" PackagePath="docs/ECMAScript2025_FeatureCoverage.md" />
+    <None Include="..\icon.jpg" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>

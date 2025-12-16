@@ -1,4 +1,7 @@
 # js2il
+
+[![NuGet](https://img.shields.io/nuget/v/js2il.svg)](https://www.nuget.org/packages/js2il/)
+
 Modern JS to IL prototype.
 
 # JS2IL — JavaScript to .NET IL compiler
@@ -7,7 +10,7 @@ JS2IL compiles JavaScript source code to .NET Intermediate Language (IL), produc
 
 ## Usage
 
-Prerequisite: .NET 10 SDK (upgrade branch). Master currently targets .NET 8.
+Prerequisite: .NET 10 SDK.
 
 - Convert a JavaScript file (writes output next to the input file by default):
 
