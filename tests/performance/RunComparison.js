@@ -289,3 +289,25 @@ log("Note: More passes = better performance. Test runs for 5 seconds.", 'gray');
 if (js2ilResult && js2ilResult.compileDuration) {
     log(`      JS2IL compilation time: ${js2ilResult.compileDuration} ms (excluded from benchmark)`, 'gray');
 }
+
+// ============================================================================
+// Write results to JSON file for CI consumption
+// ============================================================================
+const jsonOutput = {
+    timestamp: new Date().toISOString(),
+    results: {
+        node: nodeResult ? { passes: nodeResult.passes, passesPerSecond: nodeResult.passesPerSecond } : null,
+        js2il: js2ilResult ? { passes: js2ilResult.passes, passesPerSecond: js2ilResult.passesPerSecond, compileDuration: js2ilResult.compileDuration } : null,
+        yantraJS: yantraResult ? { passes: yantraResult.passes, passesPerSecond: yantraResult.passesPerSecond } : null,
+        jint: jintResult ? { passes: jintResult.passes, passesPerSecond: jintResult.passesPerSecond } : null
+    },
+    comparisons: {
+        vsYantraJS: js2ilResult && yantraResult ? Math.round((js2ilResult.passes / yantraResult.passes) * 100) / 100 : null,
+        vsJint: js2ilResult && jintResult ? Math.round((js2ilResult.passes / jintResult.passes) * 100) / 100 : null,
+        vsNode: js2ilResult && nodeResult ? Math.round((nodeResult.passes / js2ilResult.passes) * 100) / 100 : null
+    }
+};
+
+const jsonPath = path.join(__dirname, 'results.json');
+fs.writeFileSync(jsonPath, JSON.stringify(jsonOutput, null, 2));
+log(`\nResults written to: ${jsonPath}`, 'gray');

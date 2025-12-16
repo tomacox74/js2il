@@ -8,6 +8,8 @@ on:
 jobs:
   smoke:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       DOTNET_NOLOGO: true
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
@@ -89,3 +91,54 @@ jobs:
         run: |
           cd tests/performance
           node RunComparison.js
+
+      - name: Update Performance History
+        if: github.event_name == 'release'
+        run: |
+          cd tests/performance
+          node -e "
+            const fs = require('fs');
+            const results = JSON.parse(fs.readFileSync('results.json', 'utf8'));
+            const historyPath = '../../docs/performance-history.json';
+            const history = JSON.parse(fs.readFileSync(historyPath, 'utf8'));
+            
+            const entry = {
+              version: process.env.TOOL_VERSION,
+              date: new Date().toISOString().split('T')[0],
+              js2il: results.results.js2il,
+              node: results.results.node,
+              yantraJS: results.results.yantraJS,
+              jint: results.results.jint,
+              comparisons: results.comparisons
+            };
+            
+            // Add new entry (or update if version exists)
+            const existingIndex = history.benchmarks.findIndex(b => b.version === entry.version);
+            if (existingIndex >= 0) {
+              history.benchmarks[existingIndex] = entry;
+            } else {
+              history.benchmarks.push(entry);
+            }
+            
+            // Sort by version descending
+            history.benchmarks.sort((a, b) => {
+              const partsA = a.version.split('.').map(Number);
+              const partsB = b.version.split('.').map(Number);
+              for (let i = 0; i < 3; i++) {
+                if (partsA[i] !== partsB[i]) return partsB[i] - partsA[i];
+              }
+              return 0;
+            });
+            
+            fs.writeFileSync(historyPath, JSON.stringify(history, null, 2) + '\n');
+            console.log('Updated performance-history.json with version', entry.version);
+          "
+
+      - name: Commit Performance History
+        if: github.event_name == 'release'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/performance-history.json
+          git diff --cached --quiet || git commit -m "docs: update performance history for v${TOOL_VERSION}"
+          git push
