@@ -1,4 +1,7 @@
 # js2il
+
+[![NuGet](https://img.shields.io/nuget/v/js2il.svg)](https://www.nuget.org/packages/js2il/)
+
 Modern JS to IL prototype.
 
 # JS2IL — JavaScript to .NET IL compiler
