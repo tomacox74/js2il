@@ -68,3 +68,18 @@ jobs:
             echo "Smoke test failed: expected output containing 'x is'"
             exit 1
           fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build Jint Comparison Project
+        run: |
+          cd tests/performance/JintComparison
+          dotnet build -c Release
+
+      - name: Run Performance Comparison
+        run: |
+          cd tests/performance
+          node RunComparison.js
