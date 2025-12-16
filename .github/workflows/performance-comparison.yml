@@ -48,6 +48,12 @@ jobs:
           cd tests/performance/JintComparison
           dotnet build -c Release
       
+      - name: Shutdown build server
+        run: |
+          # Kill VBCSCompiler and other build processes to free up resources
+          # before running performance benchmarks
+          dotnet build-server shutdown
+
       - name: Run Performance Comparison
         id: perf
         run: |
