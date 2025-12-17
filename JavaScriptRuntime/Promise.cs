@@ -191,6 +191,69 @@ public sealed class Promise
         return allPromise;
     }
 
+    public static object? allSettled(object? iterable)
+    {
+        // a weird corner case
+        if (iterable is string interableAsString)
+        {
+            iterable = new JavaScriptRuntime.Array(interableAsString.ToCharArray().Select(c => c.ToString()));
+        }
+
+        if (iterable is not System.Collections.IEnumerable enumerable)
+        {
+            return Promise.reject(new JavaScriptRuntime.TypeError("Promise.allSettled requires an iterable"));
+        }
+
+        var results = new JavaScriptRuntime.Array();
+        var settledCount = 0;
+        var allSettledPromise = new Promise();
+
+        void CheckForAllCompleted()
+        {
+            if (settledCount == results.Count)
+            {
+                allSettledPromise.Settle(State.Fulfilled, results);
+            }
+        }
+
+        foreach (var item in enumerable)
+        {
+            if (item is Promise p)
+            {
+                results.Add(null);
+                var index = results.Count - 1;
+
+                var onFulfilled = new Func<object?[], object?, object?>((_, value) =>
+                {
+                    results[index] = new FulfilledResult(value);
+                    settledCount++;
+                    CheckForAllCompleted();
+                    return null;
+                });
+
+                var onRejected = new Func<object?[], object?, object?>((_, reason) =>
+                {
+                    results[index] = new RejectedResult(reason);
+                    settledCount++;
+                    CheckForAllCompleted();
+                    return null;
+                });
+
+                p.then(onFulfilled, onRejected);
+            }
+            else
+            {
+                settledCount++;
+                results.Add(new FulfilledResult(item));
+            }
+        }
+
+        // check for 0 size arrays or if all items were non-promises
+        CheckForAllCompleted();
+
+        return allSettledPromise;
+    }
+
     // Private methods
     private void InvokeExecutor(object? executor)
     {
@@ -399,4 +462,37 @@ public sealed class Promise
         
         return result;
     }
+
+
+
+    private abstract class SettledResult
+    {
+        public readonly string status;
+
+        protected SettledResult(string status)
+        {
+            this.status = status;
+        }
+    }
+
+    private sealed class FulfilledResult : SettledResult
+    {
+        public readonly object? value;
+
+        public FulfilledResult(object? value) : base("fulfilled")
+        {
+            this.value = value;
+        }
+    }
+
+    private sealed class RejectedResult : SettledResult
+    {
+        public readonly object? reason;
+
+        public RejectedResult(object? reason) : base("rejected")
+        {
+            this.reason = reason;
+        }
+    }
+
 }

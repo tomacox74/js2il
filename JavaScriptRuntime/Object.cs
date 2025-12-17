@@ -288,26 +288,39 @@ namespace JavaScriptRuntime
                 return null;
             }
 
-            // Reflection fallback: expose public instance properties/fields of host objects
-            try
+            object? GetValue(Type type)
             {
-                var type = obj.GetType();
-                var prop = type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+                var prop = type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public);
                 if (prop != null && prop.CanRead)
                 {
                     return prop.GetValue(obj);
                 }
-                var field = type.GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+                var field = type.GetField(name, BindingFlags.Instance | BindingFlags.Public);
                 if (field != null)
                 {
                     return field.GetValue(obj);
                 }
+
+                var baseType = type.BaseType;
+                if (baseType != null && baseType != typeof(object))
+                {
+                    return GetValue(baseType);
+                }
+
+                return null;
+            }
+
+            // Reflection fallback: expose public instance properties/fields of host objects
+            try
+            {
+                return GetValue(obj.GetType());
             }
             catch
             {
                 // Swallow and return undefined/null on reflection failures
             }
-            // Unknown -> undefined/null
+
+            // Property not found; return undefined (null)
             return null;
         }
 
