@@ -7,6 +7,36 @@ public class GeneratorTests : GeneratorTestsBase
     }
 
     [Fact]
+    public Task Promise_All_AllResolved()
+    {
+        return GenerateTest(nameof(Promise_All_AllResolved));
+    }
+
+    [Fact]
+    public Task Promise_All_EmptyArray()
+    {
+        return GenerateTest(nameof(Promise_All_EmptyArray));
+    }
+
+    [Fact]
+    public Task Promise_All_MixedValues()
+    {
+        return GenerateTest(nameof(Promise_All_MixedValues));
+    }
+
+    [Fact]
+    public Task Promise_All_OneRejected()
+    {
+        return GenerateTest(nameof(Promise_All_OneRejected));
+    }
+
+    [Fact]
+    public Task Promise_All_OrderPreserved()
+    {
+        return GenerateTest(nameof(Promise_All_OrderPreserved));
+    }
+
+    [Fact]
     public Task Promise_Executor_Resolved()
     {
         return GenerateTest(nameof(Promise_Executor_Resolved));

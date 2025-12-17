@@ -8,6 +8,36 @@ public class ExecutionTests : ExecutionTestsBase
 
     // Tests sorted alphabetically
     [Fact]
+    public Task Promise_All_AllResolved()
+    {
+        return ExecutionTest(nameof(Promise_All_AllResolved));
+    }
+
+    [Fact]
+    public Task Promise_All_EmptyArray()
+    {
+        return ExecutionTest(nameof(Promise_All_EmptyArray));
+    }
+
+    [Fact]
+    public Task Promise_All_MixedValues()
+    {
+        return ExecutionTest(nameof(Promise_All_MixedValues));
+    }
+
+    [Fact]
+    public Task Promise_All_OneRejected()
+    {
+        return ExecutionTest(nameof(Promise_All_OneRejected));
+    }
+
+    [Fact]
+    public Task Promise_All_OrderPreserved()
+    {
+        return ExecutionTest(nameof(Promise_All_OrderPreserved));
+    }
+
+    [Fact]
     public Task Promise_Catch_ReturnsRejectedPromise()
     {
         return ExecutionTest(nameof(Promise_Catch_ReturnsRejectedPromise));
