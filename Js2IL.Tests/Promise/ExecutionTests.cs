@@ -44,6 +44,12 @@ public class ExecutionTests : ExecutionTestsBase
     }
 
     [Fact]
+    public Task Promise_All_NullIterable()
+    {
+        return ExecutionTest(nameof(Promise_All_NullIterable));
+    }
+
+    [Fact]
     public Task Promise_AllSettled_AllRejected()
     {
         return ExecutionTest(nameof(Promise_AllSettled_AllRejected));
@@ -74,6 +80,12 @@ public class ExecutionTests : ExecutionTestsBase
     }
 
     [Fact]
+    public Task Promise_AllSettled_NullIterable()
+    {
+        return ExecutionTest(nameof(Promise_AllSettled_NullIterable));
+    }
+
+    [Fact]
     public Task Promise_Any_AllRejected()
     {
         return ExecutionTest(nameof(Promise_Any_AllRejected));
@@ -95,6 +107,12 @@ public class ExecutionTests : ExecutionTestsBase
     public Task Promise_Any_OneResolved()
     {
         return ExecutionTest(nameof(Promise_Any_OneResolved));
+    }
+
+    [Fact]
+    public Task Promise_Any_NullIterable()
+    {
+        return ExecutionTest(nameof(Promise_Any_NullIterable));
     }
 
     [Fact]
@@ -209,5 +227,11 @@ public class ExecutionTests : ExecutionTestsBase
     public Task Promise_Race_MixedValues()
     {
         return ExecutionTest(nameof(Promise_Race_MixedValues));
+    }
+
+    [Fact]
+    public Task Promise_Race_NullIterable()
+    {
+        return ExecutionTest(nameof(Promise_Race_NullIterable));
     }
 }

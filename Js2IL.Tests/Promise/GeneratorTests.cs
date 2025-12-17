@@ -37,6 +37,12 @@ public class GeneratorTests : GeneratorTestsBase
     }
 
     [Fact]
+    public Task Promise_All_NullIterable()
+    {
+        return GenerateTest(nameof(Promise_All_NullIterable));
+    }
+
+    [Fact]
     public Task Promise_AllSettled_AllRejected()
     {
         return GenerateTest(nameof(Promise_AllSettled_AllRejected));
@@ -67,6 +73,12 @@ public class GeneratorTests : GeneratorTestsBase
     }
 
     [Fact]
+    public Task Promise_AllSettled_NullIterable()
+    {
+        return GenerateTest(nameof(Promise_AllSettled_NullIterable));
+    }
+
+    [Fact]
     public Task Promise_Any_AllRejected()
     {
         return GenerateTest(nameof(Promise_Any_AllRejected));
@@ -88,6 +100,12 @@ public class GeneratorTests : GeneratorTestsBase
     public Task Promise_Any_OneResolved()
     {
         return GenerateTest(nameof(Promise_Any_OneResolved));
+    }
+
+    [Fact]
+    public Task Promise_Any_NullIterable()
+    {
+        return GenerateTest(nameof(Promise_Any_NullIterable));
     }
 
     [Fact]
@@ -202,5 +220,11 @@ public class GeneratorTests : GeneratorTestsBase
     public Task Promise_Race_MixedValues()
     {
         return GenerateTest(nameof(Promise_Race_MixedValues));
+    }
+
+    [Fact]
+    public Task Promise_Race_NullIterable()
+    {
+        return GenerateTest(nameof(Promise_Race_NullIterable));
     }
 }
