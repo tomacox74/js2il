@@ -9,7 +9,7 @@ using System.Globalization;
 namespace JavaScriptRuntime
 {
     [IntrinsicObject("Array")]
-    public class Array : List<object>
+    public class Array : List<object?>
     {
         public Array() : base()
         {
@@ -179,26 +179,26 @@ namespace JavaScriptRuntime
             for (int i = 0; i < this.Count; i++)
             {
                 var value = this[i];
-                object mapped;
+                object? mapped;
 
-                if (cb is Func<object[], object, object, object, object> f3)
+                if (cb is Func<object?[], object?, object?, object?, object?> f3)
                 {
                     // (scopes, value, index, array)
-                    mapped = f3(System.Array.Empty<object>(), value, (double)i, this);
+                    mapped = f3(System.Array.Empty<object?>(), value, (double)i, this);
                 }
-                else if (cb is Func<object[], object, object, object> f2)
+                else if (cb is Func<object?[], object?, object?, object?> f2)
                 {
                     // (scopes, value, index)
                     mapped = f2(System.Array.Empty<object>(), value, (double)i);
                 }
-                else if (cb is Func<object[], object, object> f1)
+                else if (cb is Func<object?[], object?, object?> f1)
                 {
                     // (scopes, value)
-                    mapped = f1(System.Array.Empty<object>(), value);
+                    mapped = f1(System.Array.Empty<object?>(), value);
                 }
-                else if (cb is Func<object[], object> f0)
+                else if (cb is Func<object?[], object?> f0)
                 {
-                    mapped = f0(System.Array.Empty<object>());
+                    mapped = f0(System.Array.Empty<object?>());
                 }
                 else
                 {

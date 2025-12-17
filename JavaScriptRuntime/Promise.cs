@@ -130,6 +130,67 @@ public sealed class Promise
         return nextPromise;
     }
 
+    public static object? all(object? iterable)
+    {
+        // a weird corner case
+        if (iterable is string interableAsString)
+        {
+            iterable = new JavaScriptRuntime.Array(interableAsString.ToCharArray().Select(c => c.ToString()));
+        }
+
+        if (iterable is not System.Collections.IEnumerable enumerable)
+        {
+            return Promise.reject(new JavaScriptRuntime.TypeError("Promise.all requires an iterable"));
+        }
+
+        var results = new JavaScriptRuntime.Array();
+        var resolvedCount = 0;
+        var allPromise = new Promise();
+
+        void CheckForAllCompleted()
+        {
+            if (resolvedCount == results.Count)
+            {
+                allPromise.Settle(State.Fulfilled, results);
+            }
+        }
+
+        foreach (var item in enumerable)
+        {
+            if (item is Promise p)
+            {
+                results.Add(null);
+                var index = results.Count - 1;
+
+                var onFulfilled = new Func<object?[], object?, object?>((_, value) =>
+                {
+                    results[index] = value;
+                    resolvedCount++;
+                    CheckForAllCompleted();
+                    return null;
+                });
+
+                var onRejected = new Func<object?[], object?, object?>((_, reason) =>
+                {
+                    allPromise.Settle(State.Rejected, reason);
+                    return null;
+                });
+
+                p.then(onFulfilled, onRejected);
+            }
+            else
+            {
+                resolvedCount++;
+                results.Add(item);
+            }
+        }
+
+        // check for 0 size arrays or if all items were non-promises
+        CheckForAllCompleted();
+
+        return allPromise;
+    }
+
     // Private methods
     private void InvokeExecutor(object? executor)
     {
