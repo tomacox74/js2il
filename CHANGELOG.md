@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.4.2 - 2025-12-18
+
 ### Added
 - **Promise Combinators**: Implemented `Promise.all`, `Promise.allSettled`, `Promise.any`, and `Promise.race` static methods
   - `Promise.all(iterable)`: Returns a Promise that resolves when all input promises resolve, or rejects when any rejects
