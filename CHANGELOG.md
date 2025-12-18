@@ -4,7 +4,15 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+### Added
+- **Promise Combinators**: Implemented `Promise.all`, `Promise.allSettled`, `Promise.any`, and `Promise.race` static methods
+  - `Promise.all(iterable)`: Returns a Promise that resolves when all input promises resolve, or rejects when any rejects
+  - `Promise.allSettled(iterable)`: Returns a Promise that resolves when all input promises have settled (fulfilled or rejected)
+  - `Promise.any(iterable)`: Returns a Promise that resolves as soon as any input promise resolves, or rejects with AggregateError if all reject
+  - `Promise.race(iterable)`: Returns a Promise that settles as soon as any input promise settles
+  - Shared `Combine` helper method centralizes iteration and handler wiring for all combinator methods
+  - Handles non-Promise values in iterables by wrapping them via `Promise.resolve`
+  - Supports strings as iterables (character-by-character)
 
 ## v0.4.1 - 2025-12-15
 

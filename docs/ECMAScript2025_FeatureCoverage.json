@@ -2233,6 +2233,51 @@
                   "notes": "Implements `then`, `catch`, and `finally` with microtask scheduling support. `finally` handlers are treated as observers: non-Promise return values do not alter the settled result, while returned Promises are awaited and propagated (fixed earlier bug where Promise returns from finally were masked). Tests include chaining and then/catch/finally interactions."
                 }
               ]
+            },
+            {
+              "paragraph": "27.1.3",
+              "title": "Promise.all / Promise.allSettled / Promise.any / Promise.race",
+              "url": "https://tc39.es/ecma262/#sec-promise.all",
+              "features": [
+                {
+                  "feature": "Promise.all",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Promise/JavaScript/Promise_All_AllResolved.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_All_OneRejected.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_All_EmptyArray.js"
+                  ],
+                  "notes": "Returns a Promise that resolves when all input promises resolve (with an array of results), or rejects when any input promise rejects (with the first rejection reason)."
+                },
+                {
+                  "feature": "Promise.allSettled",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Promise/JavaScript/Promise_AllSettled_Mixed.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_AllSettled_AllResolved.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_AllSettled_AllRejected.js"
+                  ],
+                  "notes": "Returns a Promise that resolves when all input promises have settled (fulfilled or rejected), with an array of outcome objects containing status and value/reason."
+                },
+                {
+                  "feature": "Promise.any",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Any_FirstResolved.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Any_AllRejected.js"
+                  ],
+                  "notes": "Returns a Promise that resolves as soon as any input promise resolves, or rejects with an AggregateError if all input promises reject."
+                },
+                {
+                  "feature": "Promise.race",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Race_FirstResolved.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_Race_FirstRejected.js"
+                  ],
+                  "notes": "Returns a Promise that settles as soon as any input promise settles (resolves or rejects), with the same value or reason."
+                }
+              ]
             }
           ]
         }
