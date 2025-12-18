@@ -138,9 +138,26 @@ jobs:
 
       - name: Commit Performance History
         if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Check if there are changes to commit
           git add docs/performance-history.json
-          git diff --cached --quiet || git commit -m "docs: update performance history for v${TOOL_VERSION}"
-          git push
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
+          # Create a branch for the PR
+          branch="perf-history-v${TOOL_VERSION}"
+          git checkout -b "$branch"
+          git commit -m "docs: update performance history for v${TOOL_VERSION}"
+          git push origin "$branch"
+          
+          # Create PR (will auto-merge if allowed, otherwise needs manual merge)
+          gh pr create --title "docs: update performance history for v${TOOL_VERSION}" \
+            --body "Automated update of performance benchmarks for version ${TOOL_VERSION}." \
+            --base master --head "$branch"
