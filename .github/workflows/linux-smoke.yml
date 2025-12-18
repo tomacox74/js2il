@@ -157,7 +157,8 @@ jobs:
           git commit -m "docs: update performance history for v${TOOL_VERSION}"
           git push origin "$branch"
           
-          # Create PR (will auto-merge if allowed, otherwise needs manual merge)
+          # Create PR and enable auto-merge
           gh pr create --title "docs: update performance history for v${TOOL_VERSION}" \
             --body "Automated update of performance benchmarks for version ${TOOL_VERSION}." \
             --base master --head "$branch"
+          gh pr merge --auto --squash "$branch"
