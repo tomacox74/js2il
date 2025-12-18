@@ -20,6 +20,8 @@ jobs:
         with:
           # Need full history to read tags for determining the latest release version
           fetch-depth: 0
+          # Explicitly checkout master to avoid detached HEAD when triggered by release
+          ref: master
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
