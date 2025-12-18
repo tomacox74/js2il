@@ -132,15 +132,10 @@ public sealed class Promise
 
     public static object? all(object? iterable)
     {
-        // a weird corner case
-        if (iterable is string interableAsString)
+        var enumerable = ToEnumerableOrThrow(iterable, out TypeError? typeError);
+        if (typeError != null)
         {
-            iterable = new JavaScriptRuntime.Array(interableAsString.ToCharArray().Select(c => c.ToString()));
-        }
-
-        if (iterable is not System.Collections.IEnumerable enumerable)
-        {
-            return Promise.reject(new JavaScriptRuntime.TypeError("Promise.all requires an iterable"));
+            return Promise.reject(typeError);
         }
 
         var results = new JavaScriptRuntime.Array();
@@ -155,7 +150,7 @@ public sealed class Promise
             }
         }
 
-        foreach (var item in enumerable)
+        foreach (var item in enumerable!)
         {
             if (item is Promise p)
             {
@@ -193,15 +188,10 @@ public sealed class Promise
 
     public static object? allSettled(object? iterable)
     {
-        // a weird corner case
-        if (iterable is string interableAsString)
+        var enumerable = ToEnumerableOrThrow(iterable, out TypeError? typeError);
+        if (typeError != null)
         {
-            iterable = new JavaScriptRuntime.Array(interableAsString.ToCharArray().Select(c => c.ToString()));
-        }
-
-        if (iterable is not System.Collections.IEnumerable enumerable)
-        {
-            return Promise.reject(new JavaScriptRuntime.TypeError("Promise.allSettled requires an iterable"));
+            return Promise.reject(typeError);
         }
 
         var results = new JavaScriptRuntime.Array();
@@ -216,7 +206,7 @@ public sealed class Promise
             }
         }
 
-        foreach (var item in enumerable)
+        foreach (var item in enumerable!)
         {
             if (item is Promise p)
             {
@@ -253,6 +243,61 @@ public sealed class Promise
 
         return allSettledPromise;
     }
+
+    public static object? any(object? iterable)
+    {
+        var enumerable = ToEnumerableOrThrow(iterable, out TypeError? typeError);
+        if (typeError != null)
+        {
+            return Promise.reject(typeError);
+        }
+
+        var rejectionReasons = new JavaScriptRuntime.Array();
+        var rejectedCount = 0;
+        var anyPromise = new Promise();
+        var totalCount = 0;
+
+        foreach (var item in enumerable!)
+        {
+            totalCount++;
+
+            if (item is Promise p)
+            {
+                var onFulfilled = new Func<object?[], object?, object?>((_, value) =>
+                {
+                    anyPromise.Settle(State.Fulfilled, value);
+                    return null;
+                });
+
+                var onRejected = new Func<object?[], object?, object?>((_, reason) =>
+                {
+                    rejectionReasons.Add(reason);
+                    rejectedCount++;
+                    if (rejectedCount == totalCount)
+                    {
+                        anyPromise.Settle(State.Rejected, new AggregateError(rejectionReasons, "All promises were rejected"));
+                    }
+                    return null;
+                });
+
+                p.then(onFulfilled, onRejected);
+            }
+            else
+            {
+                anyPromise.Settle(State.Fulfilled, item);
+                return anyPromise;
+            }
+        }
+
+        // handle the case of an empty iterable
+        if (totalCount == 0)
+        {
+            anyPromise.Settle(State.Rejected, new AggregateError(rejectionReasons, "All promises were rejected"));
+        }
+
+        return anyPromise;
+    }
+
 
     // Private methods
     private void InvokeExecutor(object? executor)
@@ -463,7 +508,26 @@ public sealed class Promise
         return result;
     }
 
+    private static System.Collections.IEnumerable? ToEnumerableOrThrow(object? obj, out TypeError? typeError)
+    {
+        // in javascript strings are iterable
+        if (obj is string interableAsString)
+        {
+            obj = new JavaScriptRuntime.Array(interableAsString.ToCharArray().Select(c => c.ToString()));
+        }
 
+        if (obj is not System.Collections.IEnumerable enumerable)
+        {
+            typeError = new JavaScriptRuntime.TypeError("Promise method requires an iterable");
+            return null;
+        }
+        else
+        {
+            typeError = null!;
+        }
+
+        return enumerable;
+    }
 
     private abstract class SettledResult
     {

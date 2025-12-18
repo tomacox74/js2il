@@ -1,0 +1,275 @@
+﻿// IL code: Promise_Any_AllRejected
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Promise_Any_AllRejected
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit ArrowFunction_L6C10
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object result
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method ArrowFunction_L6C10::.ctor
+
+	} // end of class ArrowFunction_L6C10
+
+	.class nested public auto ansi beforefieldinit ArrowFunction_L9C11
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object 'error'
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2062
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method ArrowFunction_L9C11::.ctor
+
+	} // end of class ArrowFunction_L9C11
+
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Promise_Any_AllRejected::.ctor
+
+} // end of class Scopes.Promise_Any_AllRejected
+
+.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L6C10
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object ArrowFunction_L6C10 (
+			object[] scopes,
+			object result
+		) cil managed 
+	{
+		// Method begins at RVA 0x206c
+		// Header size: 12
+		// Code size: 35 (0x23)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.Promise_Any_AllRejected/ArrowFunction_L6C10
+		)
+
+		IL_0000: newobj instance void Scopes.Promise_Any_AllRejected/ArrowFunction_L6C10::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object Scopes.Promise_Any_AllRejected/ArrowFunction_L6C10::result
+		IL_000d: ldc.i4.1
+		IL_000e: newarr [System.Runtime]System.Object
+		IL_0013: dup
+		IL_0014: ldc.i4.0
+		IL_0015: ldstr "Should not reach here"
+		IL_001a: stelem.ref
+		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0020: pop
+		IL_0021: ldnull
+		IL_0022: ret
+	} // end of method ArrowFunction_L6C10::ArrowFunction_L6C10
+
+} // end of class Functions.ArrowFunction_L6C10
+
+.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L9C11
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object ArrowFunction_L9C11 (
+			object[] scopes,
+			object 'error'
+		) cil managed 
+	{
+		// Method begins at RVA 0x209c
+		// Header size: 12
+		// Code size: 113 (0x71)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.Promise_Any_AllRejected/ArrowFunction_L9C11
+		)
+
+		IL_0000: newobj instance void Scopes.Promise_Any_AllRejected/ArrowFunction_L9C11::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object Scopes.Promise_Any_AllRejected/ArrowFunction_L9C11::'error'
+		IL_000d: ldc.i4.2
+		IL_000e: newarr [System.Runtime]System.Object
+		IL_0013: dup
+		IL_0014: ldc.i4.0
+		IL_0015: ldstr "All rejected, error name:"
+		IL_001a: stelem.ref
+		IL_001b: dup
+		IL_001c: ldc.i4.1
+		IL_001d: ldloc.0
+		IL_001e: castclass Scopes.Promise_Any_AllRejected/ArrowFunction_L9C11
+		IL_0023: ldfld object Scopes.Promise_Any_AllRejected/ArrowFunction_L9C11::'error'
+		IL_0028: ldstr "name"
+		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_0032: stelem.ref
+		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0038: pop
+		IL_0039: ldc.i4.2
+		IL_003a: newarr [System.Runtime]System.Object
+		IL_003f: dup
+		IL_0040: ldc.i4.0
+		IL_0041: ldstr "Errors count:"
+		IL_0046: stelem.ref
+		IL_0047: dup
+		IL_0048: ldc.i4.1
+		IL_0049: ldloc.0
+		IL_004a: castclass Scopes.Promise_Any_AllRejected/ArrowFunction_L9C11
+		IL_004f: ldfld object Scopes.Promise_Any_AllRejected/ArrowFunction_L9C11::'error'
+		IL_0054: ldstr "errors"
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_005e: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_0063: box [System.Runtime]System.Double
+		IL_0068: stelem.ref
+		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_006e: pop
+		IL_006f: ldnull
+		IL_0070: ret
+	} // end of method ArrowFunction_L9C11::ArrowFunction_L9C11
+
+} // end of class Functions.ArrowFunction_L9C11
+
+.class public auto ansi beforefieldinit Scripts.Promise_Any_AllRejected
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x211c
+		// Header size: 12
+		// Code size: 159 (0x9f)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.Promise_Any_AllRejected,
+			[1] object,
+			[2] object,
+			[3] object
+		)
+
+		IL_0000: ldstr "Error 1"
+		IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
+		IL_000a: stloc.1
+		IL_000b: ldstr "Error 2"
+		IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
+		IL_0015: stloc.2
+		IL_0016: ldstr "Error 3"
+		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
+		IL_0020: stloc.3
+		IL_0021: ldc.i4.3
+		IL_0022: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0027: dup
+		IL_0028: ldloc.1
+		IL_0029: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_002e: dup
+		IL_002f: ldloc.2
+		IL_0030: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0035: dup
+		IL_0036: ldloc.3
+		IL_0037: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::'any'(object)
+		IL_0041: ldstr "then"
+		IL_0046: ldc.i4.1
+		IL_0047: newarr [System.Runtime]System.Object
+		IL_004c: dup
+		IL_004d: ldc.i4.0
+		IL_004e: ldnull
+		IL_004f: ldftn object Functions.ArrowFunction_L6C10::ArrowFunction_L6C10(object[], object)
+		IL_0055: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_005a: ldc.i4.1
+		IL_005b: newarr [System.Runtime]System.Object
+		IL_0060: dup
+		IL_0061: ldc.i4.0
+		IL_0062: ldloc.0
+		IL_0063: stelem.ref
+		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0069: stelem.ref
+		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_006f: ldstr "catch"
+		IL_0074: ldc.i4.1
+		IL_0075: newarr [System.Runtime]System.Object
+		IL_007a: dup
+		IL_007b: ldc.i4.0
+		IL_007c: ldnull
+		IL_007d: ldftn object Functions.ArrowFunction_L9C11::ArrowFunction_L9C11(object[], object)
+		IL_0083: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0088: ldc.i4.1
+		IL_0089: newarr [System.Runtime]System.Object
+		IL_008e: dup
+		IL_008f: ldc.i4.0
+		IL_0090: ldloc.0
+		IL_0091: stelem.ref
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0097: stelem.ref
+		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_009d: pop
+		IL_009e: ret
+	} // end of method Promise_Any_AllRejected::Main
+
+} // end of class Scripts.Promise_Any_AllRejected
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x21c7
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.Promise_Any_AllRejected::Main()
+		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

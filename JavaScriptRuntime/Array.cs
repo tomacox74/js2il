@@ -17,7 +17,7 @@ namespace JavaScriptRuntime
         public Array(int capacity) : base(capacity)
         {
         }
-        public Array(IEnumerable<object> collection) : base(collection)
+        public Array(System.Collections.IEnumerable collection) : base(collection.Cast<object?>())
         {
         }
 
