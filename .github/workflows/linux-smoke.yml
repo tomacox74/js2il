@@ -152,8 +152,9 @@ jobs:
             exit 0
           fi
           
-          # Create a branch for the PR
+          # Create a branch for the PR (delete if exists from previous run)
           branch="perf-history-v${TOOL_VERSION}"
+          git push origin --delete "$branch" 2>/dev/null || true
           git checkout -b "$branch"
           git commit -m "docs: update performance history for v${TOOL_VERSION}"
           git push origin "$branch"
