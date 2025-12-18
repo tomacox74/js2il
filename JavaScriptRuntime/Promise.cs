@@ -1,4 +1,7 @@
 using System;
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 namespace JavaScriptRuntime;
 
 [IntrinsicObject("Promise")]
@@ -132,172 +135,176 @@ public sealed class Promise
 
     public static object? all(object? iterable)
     {
-        var enumerable = ToEnumerableOrThrow(iterable, out TypeError? typeError);
-        if (typeError != null)
-        {
-            return Promise.reject(typeError);
-        }
 
-        var results = new JavaScriptRuntime.Array();
-        var resolvedCount = 0;
-        var allPromise = new Promise();
+        JavaScriptRuntime.Array? results = null;
+        int resolvedCount = 0;
+        Promise? allPromise = null;
+
+        Promise InitializeState()
+        {
+            results = new JavaScriptRuntime.Array();
+            allPromise = new Promise();
+            return allPromise;
+        }
 
         void CheckForAllCompleted()
         {
-            if (resolvedCount == results.Count)
+            if (resolvedCount == results!.Count)
             {
-                allPromise.Settle(State.Fulfilled, results);
+                allPromise!.Settle(State.Fulfilled, results);
             }
         }
 
-        foreach (var item in enumerable!)
+        AddPromiseResult AddPromise(Promise p)
         {
-            if (item is Promise p)
-            {
-                results.Add(null);
-                var index = results.Count - 1;
-
-                var onFulfilled = new Func<object?[], object?, object?>((_, value) =>
+            results!.Add(null);
+            var index = results.Count - 1;
+            return new AddPromiseResult(
+                onFulfilled: (value) =>
                 {
                     results[index] = value;
                     resolvedCount++;
                     CheckForAllCompleted();
-                    return null;
-                });
-
-                var onRejected = new Func<object?[], object?, object?>((_, reason) =>
+                },
+                onRejected: (reason) =>
                 {
-                    allPromise.Settle(State.Rejected, reason);
-                    return null;
+                    allPromise!.Settle(State.Rejected, reason);
                 });
-
-                p.then(onFulfilled, onRejected);
-            }
-            else
-            {
-                resolvedCount++;
-                results.Add(item);
-            }
         }
 
-        // check for 0 size arrays or if all items were non-promises
-        CheckForAllCompleted();
-
-        return allPromise;
+        return Combine(
+            initializeState: InitializeState,
+            iterable: iterable,
+            addPromise: AddPromise,
+            finalizeState: CheckForAllCompleted);
     }
 
     public static object? allSettled(object? iterable)
     {
-        var enumerable = ToEnumerableOrThrow(iterable, out TypeError? typeError);
-        if (typeError != null)
-        {
-            return Promise.reject(typeError);
-        }
-
-        var results = new JavaScriptRuntime.Array();
+        JavaScriptRuntime.Array? results = null;
         var settledCount = 0;
-        var allSettledPromise = new Promise();
+        Promise? allSettledPromise = null;
+
+        Promise InitializeState()
+        {
+            results = new JavaScriptRuntime.Array();
+            allSettledPromise = new Promise();
+            return allSettledPromise;
+        }
 
         void CheckForAllCompleted()
         {
-            if (settledCount == results.Count)
+            if (settledCount == results!.Count)
             {
-                allSettledPromise.Settle(State.Fulfilled, results);
+                allSettledPromise!.Settle(State.Fulfilled, results);
             }
         }
 
-        foreach (var item in enumerable!)
+        AddPromiseResult AddPromise(Promise p)
         {
-            if (item is Promise p)
-            {
-                results.Add(null);
-                var index = results.Count - 1;
-
-                var onFulfilled = new Func<object?[], object?, object?>((_, value) =>
+            results!.Add(null);
+            var index = results.Count - 1;
+            return new AddPromiseResult(
+                onFulfilled: (value) =>
                 {
                     results[index] = new FulfilledResult(value);
                     settledCount++;
                     CheckForAllCompleted();
-                    return null;
-                });
-
-                var onRejected = new Func<object?[], object?, object?>((_, reason) =>
+                },
+                onRejected: (reason) =>
                 {
                     results[index] = new RejectedResult(reason);
                     settledCount++;
                     CheckForAllCompleted();
-                    return null;
                 });
-
-                p.then(onFulfilled, onRejected);
-            }
-            else
-            {
-                settledCount++;
-                results.Add(new FulfilledResult(item));
-            }
         }
 
-        // check for 0 size arrays or if all items were non-promises
-        CheckForAllCompleted();
-
-        return allSettledPromise;
+        return Combine(
+            initializeState: InitializeState,
+            iterable: iterable,
+            addPromise: AddPromise,
+            finalizeState: CheckForAllCompleted);
     }
 
     public static object? any(object? iterable)
     {
-        var enumerable = ToEnumerableOrThrow(iterable, out TypeError? typeError);
-        if (typeError != null)
-        {
-            return Promise.reject(typeError);
-        }
-
-        var rejectionReasons = new JavaScriptRuntime.Array();
+        JavaScriptRuntime.Array? rejectionReasons = null;
         var rejectedCount = 0;
-        var anyPromise = new Promise();
+        Promise? anyPromise = null;
         var totalCount = 0;
 
-        foreach (var item in enumerable!)
+        Promise InitializeState()
+        {
+            rejectionReasons = new JavaScriptRuntime.Array();
+            anyPromise = new Promise();
+            return anyPromise;
+        }
+
+        AddPromiseResult AddPromise(Promise p)
         {
             totalCount++;
-
-            if (item is Promise p)
-            {
-                var onFulfilled = new Func<object?[], object?, object?>((_, value) =>
+            return new AddPromiseResult(
+                onFulfilled: (value) =>
                 {
-                    anyPromise.Settle(State.Fulfilled, value);
-                    return null;
-                });
-
-                var onRejected = new Func<object?[], object?, object?>((_, reason) =>
+                    anyPromise!.Settle(State.Fulfilled, value);
+                },
+                onRejected: (reason) =>
                 {
-                    rejectionReasons.Add(reason);
+                    rejectionReasons!.Add(reason);
                     rejectedCount++;
                     if (rejectedCount == totalCount)
                     {
-                        anyPromise.Settle(State.Rejected, new AggregateError(rejectionReasons, "All promises were rejected"));
+                        anyPromise!.Settle(State.Rejected, new AggregateError(rejectionReasons, "All promises were rejected"));
                     }
-                    return null;
                 });
-
-                p.then(onFulfilled, onRejected);
-            }
-            else
-            {
-                anyPromise.Settle(State.Fulfilled, item);
-                return anyPromise;
-            }
         }
 
-        // handle the case of an empty iterable
-        if (totalCount == 0)
+        void FinalizeState()
         {
-            anyPromise.Settle(State.Rejected, new AggregateError(rejectionReasons, "All promises were rejected"));
+            // handle the case of an empty iterable
+            if (totalCount == 0)
+            {
+                // this is the same error message nodejs returns for Promise.any with an empty iterable
+                anyPromise!.Settle(State.Rejected, new AggregateError(rejectionReasons!, "All promises were rejected"));
+            }
         }
 
-        return anyPromise;
+        return Combine(
+            initializeState: InitializeState,
+            iterable: iterable,
+            addPromise: AddPromise,
+            finalizeState: FinalizeState);
     }
 
+    public static object? race(object? iterable)
+    {
+        Promise? racePromise = null;
+
+        Promise InitializeState()
+        {
+            racePromise = new Promise();
+            return racePromise;
+        }
+
+        AddPromiseResult AddPromise(Promise p)
+        {
+            return new AddPromiseResult(
+                onFulfilled: (value) =>
+                {
+                    racePromise!.Settle(State.Fulfilled, value);
+                },
+                onRejected: (reason) =>
+                {
+                    racePromise!.Settle(State.Rejected, reason);
+                });
+        }
+
+        return Combine(
+            initializeState: InitializeState,
+            iterable: iterable,
+            addPromise: AddPromise,
+            finalizeState: () => { });
+    }
 
     // Private methods
     private void InvokeExecutor(object? executor)
@@ -527,6 +534,53 @@ public sealed class Promise
         }
 
         return enumerable;
+    }
+
+    private delegate void CombinePromiseHandler(object? value);
+    private record AddPromiseResult(CombinePromiseHandler onFulfilled, CombinePromiseHandler onRejected);
+    private delegate AddPromiseResult AddPromise(Promise p);
+
+    private static Promise Combine(
+        Func<Promise> initializeState,
+        object? iterable,
+        AddPromise addPromise,
+        Action finalizeState)
+    {
+        var enumerable = ToEnumerableOrThrow(iterable, out TypeError? typeError);
+        if (typeError != null)
+        {
+            return (Promise)Promise.reject(typeError)!;
+        }
+        
+        Promise combinedPromise = initializeState();
+
+        foreach (var item in enumerable!)
+        {
+            Promise? p = item as Promise;
+            if (p == null)
+            {
+                p = (Promise)Promise.resolve(item)!;
+            }
+
+            var handlers = addPromise(p);
+            p.then(
+                new Func<object?[], object?, object?>((_, value) =>
+                {
+                    handlers.onFulfilled(value);
+                    return null;
+                }),
+                new Func<object?[], object?, object?>((_, reason) =>
+                {
+                    handlers.onRejected(reason);
+                    return null;
+                })
+            );
+
+        }
+
+        finalizeState();
+
+        return combinedPromise;
     }
 
     private abstract class SettledResult
