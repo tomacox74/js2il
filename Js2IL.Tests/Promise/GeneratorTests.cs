@@ -7,6 +7,108 @@ public class GeneratorTests : GeneratorTestsBase
     }
 
     [Fact]
+    public Task Promise_All_AllResolved()
+    {
+        return GenerateTest(nameof(Promise_All_AllResolved));
+    }
+
+    [Fact]
+    public Task Promise_All_EmptyArray()
+    {
+        return GenerateTest(nameof(Promise_All_EmptyArray));
+    }
+
+    [Fact]
+    public Task Promise_All_MixedValues()
+    {
+        return GenerateTest(nameof(Promise_All_MixedValues));
+    }
+
+    [Fact]
+    public Task Promise_All_OneRejected()
+    {
+        return GenerateTest(nameof(Promise_All_OneRejected));
+    }
+
+    [Fact]
+    public Task Promise_All_OrderPreserved()
+    {
+        return GenerateTest(nameof(Promise_All_OrderPreserved));
+    }
+
+    [Fact]
+    public Task Promise_All_NullIterable()
+    {
+        return GenerateTest(nameof(Promise_All_NullIterable));
+    }
+
+    [Fact]
+    public Task Promise_AllSettled_AllRejected()
+    {
+        return GenerateTest(nameof(Promise_AllSettled_AllRejected));
+    }
+
+    [Fact]
+    public Task Promise_AllSettled_AllResolved()
+    {
+        return GenerateTest(nameof(Promise_AllSettled_AllResolved));
+    }
+
+    [Fact]
+    public Task Promise_AllSettled_EmptyArray()
+    {
+        return GenerateTest(nameof(Promise_AllSettled_EmptyArray));
+    }
+
+    [Fact]
+    public Task Promise_AllSettled_MixedResults()
+    {
+        return GenerateTest(nameof(Promise_AllSettled_MixedResults));
+    }
+
+    [Fact]
+    public Task Promise_AllSettled_MixedValues()
+    {
+        return GenerateTest(nameof(Promise_AllSettled_MixedValues));
+    }
+
+    [Fact]
+    public Task Promise_AllSettled_NullIterable()
+    {
+        return GenerateTest(nameof(Promise_AllSettled_NullIterable));
+    }
+
+    [Fact]
+    public Task Promise_Any_AllRejected()
+    {
+        return GenerateTest(nameof(Promise_Any_AllRejected));
+    }
+
+    [Fact]
+    public Task Promise_Any_EmptyArray()
+    {
+        return GenerateTest(nameof(Promise_Any_EmptyArray));
+    }
+
+    [Fact]
+    public Task Promise_Any_FirstResolved()
+    {
+        return GenerateTest(nameof(Promise_Any_FirstResolved));
+    }
+
+    [Fact]
+    public Task Promise_Any_OneResolved()
+    {
+        return GenerateTest(nameof(Promise_Any_OneResolved));
+    }
+
+    [Fact]
+    public Task Promise_Any_NullIterable()
+    {
+        return GenerateTest(nameof(Promise_Any_NullIterable));
+    }
+
+    [Fact]
     public Task Promise_Executor_Resolved()
     {
         return GenerateTest(nameof(Promise_Executor_Resolved));
@@ -94,5 +196,35 @@ public class GeneratorTests : GeneratorTestsBase
     public Task Promise_Then_ReturnsRejectedPromise()
     {
         return GenerateTest(nameof(Promise_Then_ReturnsRejectedPromise));
+    }
+
+    [Fact]
+    public Task Promise_Race_EmptyArray()
+    {
+        return GenerateTest(nameof(Promise_Race_EmptyArray));
+    }
+
+    [Fact]
+    public Task Promise_Race_FirstRejected()
+    {
+        return GenerateTest(nameof(Promise_Race_FirstRejected));
+    }
+
+    [Fact]
+    public Task Promise_Race_FirstResolved()
+    {
+        return GenerateTest(nameof(Promise_Race_FirstResolved));
+    }
+
+    [Fact]
+    public Task Promise_Race_MixedValues()
+    {
+        return GenerateTest(nameof(Promise_Race_MixedValues));
+    }
+
+    [Fact]
+    public Task Promise_Race_NullIterable()
+    {
+        return GenerateTest(nameof(Promise_Race_NullIterable));
     }
 }

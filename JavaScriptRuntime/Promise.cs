@@ -1,4 +1,7 @@
 using System;
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 namespace JavaScriptRuntime;
 
 [IntrinsicObject("Promise")]
@@ -128,6 +131,179 @@ public sealed class Promise
         }
 
         return nextPromise;
+    }
+
+    public static object? all(object? iterable)
+    {
+
+        JavaScriptRuntime.Array? results = null;
+        int resolvedCount = 0;
+        Promise? allPromise = null;
+
+        Promise InitializeState()
+        {
+            results = new JavaScriptRuntime.Array();
+            allPromise = new Promise();
+            return allPromise;
+        }
+
+        void CheckForAllCompleted()
+        {
+            if (resolvedCount == results!.Count)
+            {
+                allPromise!.Settle(State.Fulfilled, results);
+            }
+        }
+
+        AddPromiseResult AddPromise(Promise p)
+        {
+            results!.Add(null);
+            var index = results.Count - 1;
+            return new AddPromiseResult(
+                onFulfilled: (value) =>
+                {
+                    results[index] = value;
+                    resolvedCount++;
+                    CheckForAllCompleted();
+                },
+                onRejected: (reason) =>
+                {
+                    allPromise!.Settle(State.Rejected, reason);
+                });
+        }
+
+        return Combine(
+            initializeState: InitializeState,
+            iterable: iterable,
+            addPromise: AddPromise,
+            finalizeState: CheckForAllCompleted);
+    }
+
+    public static object? allSettled(object? iterable)
+    {
+        JavaScriptRuntime.Array? results = null;
+        var settledCount = 0;
+        Promise? allSettledPromise = null;
+
+        Promise InitializeState()
+        {
+            results = new JavaScriptRuntime.Array();
+            allSettledPromise = new Promise();
+            return allSettledPromise;
+        }
+
+        void CheckForAllCompleted()
+        {
+            if (settledCount == results!.Count)
+            {
+                allSettledPromise!.Settle(State.Fulfilled, results);
+            }
+        }
+
+        AddPromiseResult AddPromise(Promise p)
+        {
+            results!.Add(null);
+            var index = results.Count - 1;
+            return new AddPromiseResult(
+                onFulfilled: (value) =>
+                {
+                    results[index] = new FulfilledResult(value);
+                    settledCount++;
+                    CheckForAllCompleted();
+                },
+                onRejected: (reason) =>
+                {
+                    results[index] = new RejectedResult(reason);
+                    settledCount++;
+                    CheckForAllCompleted();
+                });
+        }
+
+        return Combine(
+            initializeState: InitializeState,
+            iterable: iterable,
+            addPromise: AddPromise,
+            finalizeState: CheckForAllCompleted);
+    }
+
+    public static object? any(object? iterable)
+    {
+        JavaScriptRuntime.Array? rejectionReasons = null;
+        var rejectedCount = 0;
+        Promise? anyPromise = null;
+        var totalCount = 0;
+
+        Promise InitializeState()
+        {
+            rejectionReasons = new JavaScriptRuntime.Array();
+            anyPromise = new Promise();
+            return anyPromise;
+        }
+
+        AddPromiseResult AddPromise(Promise p)
+        {
+            totalCount++;
+            return new AddPromiseResult(
+                onFulfilled: (value) =>
+                {
+                    anyPromise!.Settle(State.Fulfilled, value);
+                },
+                onRejected: (reason) =>
+                {
+                    rejectionReasons!.Add(reason);
+                    rejectedCount++;
+                    if (rejectedCount == totalCount)
+                    {
+                        anyPromise!.Settle(State.Rejected, new AggregateError(rejectionReasons, "All promises were rejected"));
+                    }
+                });
+        }
+
+        void FinalizeState()
+        {
+            // handle the case of an empty iterable
+            if (totalCount == 0)
+            {
+                // this is the same error message nodejs returns for Promise.any with an empty iterable
+                anyPromise!.Settle(State.Rejected, new AggregateError(rejectionReasons!, "All promises were rejected"));
+            }
+        }
+
+        return Combine(
+            initializeState: InitializeState,
+            iterable: iterable,
+            addPromise: AddPromise,
+            finalizeState: FinalizeState);
+    }
+
+    public static object? race(object? iterable)
+    {
+        Promise? racePromise = null;
+
+        Promise InitializeState()
+        {
+            racePromise = new Promise();
+            return racePromise;
+        }
+
+        AddPromiseResult AddPromise(Promise p)
+        {
+            return new AddPromiseResult(
+                onFulfilled: (value) =>
+                {
+                    racePromise!.Settle(State.Fulfilled, value);
+                },
+                onRejected: (reason) =>
+                {
+                    racePromise!.Settle(State.Rejected, reason);
+                });
+        }
+
+        return Combine(
+            initializeState: InitializeState,
+            iterable: iterable,
+            addPromise: AddPromise,
+            finalizeState: () => { });
     }
 
     // Private methods
@@ -338,4 +514,103 @@ public sealed class Promise
         
         return result;
     }
+
+    private static System.Collections.IEnumerable? ToEnumerableOrThrow(object? obj, out TypeError? typeError)
+    {
+        // in javascript strings are iterable
+        if (obj is string interableAsString)
+        {
+            obj = new JavaScriptRuntime.Array(interableAsString.ToCharArray().Select(c => c.ToString()));
+        }
+
+        if (obj is not System.Collections.IEnumerable enumerable)
+        {
+            typeError = new JavaScriptRuntime.TypeError("Promise method requires an iterable");
+            return null;
+        }
+        else
+        {
+            typeError = null!;
+        }
+
+        return enumerable;
+    }
+
+    private delegate void CombinePromiseHandler(object? value);
+    private record AddPromiseResult(CombinePromiseHandler onFulfilled, CombinePromiseHandler onRejected);
+    private delegate AddPromiseResult AddPromise(Promise p);
+
+    private static Promise Combine(
+        Func<Promise> initializeState,
+        object? iterable,
+        AddPromise addPromise,
+        Action finalizeState)
+    {
+        var enumerable = ToEnumerableOrThrow(iterable, out TypeError? typeError);
+        if (typeError != null)
+        {
+            return (Promise)Promise.reject(typeError)!;
+        }
+        
+        Promise combinedPromise = initializeState();
+
+        foreach (var item in enumerable!)
+        {
+            Promise? p = item as Promise;
+            if (p == null)
+            {
+                p = (Promise)Promise.resolve(item)!;
+            }
+
+            var handlers = addPromise(p);
+            p.then(
+                new Func<object?[], object?, object?>((_, value) =>
+                {
+                    handlers.onFulfilled(value);
+                    return null;
+                }),
+                new Func<object?[], object?, object?>((_, reason) =>
+                {
+                    handlers.onRejected(reason);
+                    return null;
+                })
+            );
+
+        }
+
+        finalizeState();
+
+        return combinedPromise;
+    }
+
+    private abstract class SettledResult
+    {
+        public readonly string status;
+
+        protected SettledResult(string status)
+        {
+            this.status = status;
+        }
+    }
+
+    private sealed class FulfilledResult : SettledResult
+    {
+        public readonly object? value;
+
+        public FulfilledResult(object? value) : base("fulfilled")
+        {
+            this.value = value;
+        }
+    }
+
+    private sealed class RejectedResult : SettledResult
+    {
+        public readonly object? reason;
+
+        public RejectedResult(object? reason) : base("rejected")
+        {
+            this.reason = reason;
+        }
+    }
+
 }

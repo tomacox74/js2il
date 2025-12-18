@@ -1,0 +1,198 @@
+﻿// IL code: Promise_All_MixedValues
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Promise_All_MixedValues
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit ArrowFunction_L5C35
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object results
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method ArrowFunction_L5C35::.ctor
+
+	} // end of class ArrowFunction_L5C35
+
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Promise_All_MixedValues::.ctor
+
+} // end of class Scopes.Promise_All_MixedValues
+
+.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L5C35
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object ArrowFunction_L5C35 (
+			object[] scopes,
+			object results
+		) cil managed 
+	{
+		// Method begins at RVA 0x2064
+		// Header size: 12
+		// Code size: 134 (0x86)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.Promise_All_MixedValues/ArrowFunction_L5C35
+		)
+
+		IL_0000: newobj instance void Scopes.Promise_All_MixedValues/ArrowFunction_L5C35::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object Scopes.Promise_All_MixedValues/ArrowFunction_L5C35::results
+		IL_000d: ldc.i4.4
+		IL_000e: newarr [System.Runtime]System.Object
+		IL_0013: dup
+		IL_0014: ldc.i4.0
+		IL_0015: ldstr "Mixed results:"
+		IL_001a: stelem.ref
+		IL_001b: dup
+		IL_001c: ldc.i4.1
+		IL_001d: ldloc.0
+		IL_001e: castclass Scopes.Promise_All_MixedValues/ArrowFunction_L5C35
+		IL_0023: ldfld object Scopes.Promise_All_MixedValues/ArrowFunction_L5C35::results
+		IL_0028: ldc.r8 0.0
+		IL_0031: box [System.Runtime]System.Double
+		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_003b: stelem.ref
+		IL_003c: dup
+		IL_003d: ldc.i4.2
+		IL_003e: ldloc.0
+		IL_003f: castclass Scopes.Promise_All_MixedValues/ArrowFunction_L5C35
+		IL_0044: ldfld object Scopes.Promise_All_MixedValues/ArrowFunction_L5C35::results
+		IL_0049: ldc.r8 1
+		IL_0052: box [System.Runtime]System.Double
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_005c: stelem.ref
+		IL_005d: dup
+		IL_005e: ldc.i4.3
+		IL_005f: ldloc.0
+		IL_0060: castclass Scopes.Promise_All_MixedValues/ArrowFunction_L5C35
+		IL_0065: ldfld object Scopes.Promise_All_MixedValues/ArrowFunction_L5C35::results
+		IL_006a: ldc.r8 2
+		IL_0073: box [System.Runtime]System.Double
+		IL_0078: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_007d: stelem.ref
+		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0083: pop
+		IL_0084: ldnull
+		IL_0085: ret
+	} // end of method ArrowFunction_L5C35::ArrowFunction_L5C35
+
+} // end of class Functions.ArrowFunction_L5C35
+
+.class public auto ansi beforefieldinit Scripts.Promise_All_MixedValues
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20f8
+		// Header size: 12
+		// Code size: 112 (0x70)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.Promise_All_MixedValues,
+			[1] object,
+			[2] object,
+			[3] float64
+		)
+
+		IL_0000: ldstr "promise"
+		IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+		IL_000a: stloc.1
+		IL_000b: ldstr "non-promise"
+		IL_0010: stloc.2
+		IL_0011: ldc.r8 42
+		IL_001a: stloc.3
+		IL_001b: ldc.i4.3
+		IL_001c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0021: dup
+		IL_0022: ldloc.1
+		IL_0023: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0028: dup
+		IL_0029: ldloc.2
+		IL_002a: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_002f: dup
+		IL_0030: ldloc.3
+		IL_0031: box [System.Runtime]System.Double
+		IL_0036: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::all(object)
+		IL_0040: ldstr "then"
+		IL_0045: ldc.i4.1
+		IL_0046: newarr [System.Runtime]System.Object
+		IL_004b: dup
+		IL_004c: ldc.i4.0
+		IL_004d: ldnull
+		IL_004e: ldftn object Functions.ArrowFunction_L5C35::ArrowFunction_L5C35(object[], object)
+		IL_0054: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0059: ldc.i4.1
+		IL_005a: newarr [System.Runtime]System.Object
+		IL_005f: dup
+		IL_0060: ldc.i4.0
+		IL_0061: ldloc.0
+		IL_0062: stelem.ref
+		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0068: stelem.ref
+		IL_0069: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_006e: pop
+		IL_006f: ret
+	} // end of method Promise_All_MixedValues::Main
+
+} // end of class Scripts.Promise_All_MixedValues
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2174
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.Promise_All_MixedValues::Main()
+		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

@@ -1,0 +1,159 @@
+﻿// IL code: Promise_All_EmptyArray
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Promise_All_EmptyArray
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit ArrowFunction_L1C21
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object results
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method ArrowFunction_L1C21::.ctor
+
+	} // end of class ArrowFunction_L1C21
+
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Promise_All_EmptyArray::.ctor
+
+} // end of class Scopes.Promise_All_EmptyArray
+
+.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L1C21
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object ArrowFunction_L1C21 (
+			object[] scopes,
+			object results
+		) cil managed 
+	{
+		// Method begins at RVA 0x2064
+		// Header size: 12
+		// Code size: 59 (0x3b)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.Promise_All_EmptyArray/ArrowFunction_L1C21
+		)
+
+		IL_0000: newobj instance void Scopes.Promise_All_EmptyArray/ArrowFunction_L1C21::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object Scopes.Promise_All_EmptyArray/ArrowFunction_L1C21::results
+		IL_000d: ldc.i4.2
+		IL_000e: newarr [System.Runtime]System.Object
+		IL_0013: dup
+		IL_0014: ldc.i4.0
+		IL_0015: ldstr "Empty array resolved with length:"
+		IL_001a: stelem.ref
+		IL_001b: dup
+		IL_001c: ldc.i4.1
+		IL_001d: ldloc.0
+		IL_001e: castclass Scopes.Promise_All_EmptyArray/ArrowFunction_L1C21
+		IL_0023: ldfld object Scopes.Promise_All_EmptyArray/ArrowFunction_L1C21::results
+		IL_0028: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_002d: box [System.Runtime]System.Double
+		IL_0032: stelem.ref
+		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0038: pop
+		IL_0039: ldnull
+		IL_003a: ret
+	} // end of method ArrowFunction_L1C21::ArrowFunction_L1C21
+
+} // end of class Functions.ArrowFunction_L1C21
+
+.class public auto ansi beforefieldinit Scripts.Promise_All_EmptyArray
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20ac
+		// Header size: 12
+		// Code size: 59 (0x3b)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.Promise_All_EmptyArray
+		)
+
+		IL_0000: ldc.i4.0
+		IL_0001: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::all(object)
+		IL_000b: ldstr "then"
+		IL_0010: ldc.i4.1
+		IL_0011: newarr [System.Runtime]System.Object
+		IL_0016: dup
+		IL_0017: ldc.i4.0
+		IL_0018: ldnull
+		IL_0019: ldftn object Functions.ArrowFunction_L1C21::ArrowFunction_L1C21(object[], object)
+		IL_001f: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0024: ldc.i4.1
+		IL_0025: newarr [System.Runtime]System.Object
+		IL_002a: dup
+		IL_002b: ldc.i4.0
+		IL_002c: ldloc.0
+		IL_002d: stelem.ref
+		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0033: stelem.ref
+		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0039: pop
+		IL_003a: ret
+	} // end of method Promise_All_EmptyArray::Main
+
+} // end of class Scripts.Promise_All_EmptyArray
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20f3
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.Promise_All_EmptyArray::Main()
+		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

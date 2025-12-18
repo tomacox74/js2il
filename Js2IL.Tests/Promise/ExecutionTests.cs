@@ -8,6 +8,114 @@ public class ExecutionTests : ExecutionTestsBase
 
     // Tests sorted alphabetically
     [Fact]
+    public Task Promise_All_AllResolved()
+    {
+        return ExecutionTest(nameof(Promise_All_AllResolved));
+    }
+
+    [Fact]
+    public Task Promise_All_EmptyArray()
+    {
+        return ExecutionTest(nameof(Promise_All_EmptyArray));
+    }
+
+    [Fact]
+    public Task Promise_All_MixedValues()
+    {
+        return ExecutionTest(nameof(Promise_All_MixedValues));
+    }
+
+    [Fact]
+    public Task Promise_All_OneRejected()
+    {
+        return ExecutionTest(nameof(Promise_All_OneRejected));
+    }
+
+    [Fact]
+    public Task Promise_All_OrderPreserved()
+    {
+        return ExecutionTest(nameof(Promise_All_OrderPreserved));
+    }
+
+    [Fact]
+    public  Task Promise_All_String()
+    {
+        return ExecutionTest(nameof(Promise_All_String));
+    }
+
+    [Fact]
+    public Task Promise_All_NullIterable()
+    {
+        return ExecutionTest(nameof(Promise_All_NullIterable));
+    }
+
+    [Fact]
+    public Task Promise_AllSettled_AllRejected()
+    {
+        return ExecutionTest(nameof(Promise_AllSettled_AllRejected));
+    }
+
+    [Fact]
+    public Task Promise_AllSettled_AllResolved()
+    {
+        return ExecutionTest(nameof(Promise_AllSettled_AllResolved));
+    }
+
+    [Fact]
+    public Task Promise_AllSettled_EmptyArray()
+    {
+        return ExecutionTest(nameof(Promise_AllSettled_EmptyArray));
+    }
+
+    [Fact]
+    public Task Promise_AllSettled_MixedResults()
+    {
+        return ExecutionTest(nameof(Promise_AllSettled_MixedResults));
+    }
+
+    [Fact]
+    public Task Promise_AllSettled_MixedValues()
+    {
+        return ExecutionTest(nameof(Promise_AllSettled_MixedValues));
+    }
+
+    [Fact]
+    public Task Promise_AllSettled_NullIterable()
+    {
+        return ExecutionTest(nameof(Promise_AllSettled_NullIterable));
+    }
+
+    [Fact]
+    public Task Promise_Any_AllRejected()
+    {
+        return ExecutionTest(nameof(Promise_Any_AllRejected));
+    }
+
+    [Fact]
+    public Task Promise_Any_EmptyArray()
+    {
+        return ExecutionTest(nameof(Promise_Any_EmptyArray));
+    }
+
+    [Fact]
+    public Task Promise_Any_FirstResolved()
+    {
+        return ExecutionTest(nameof(Promise_Any_FirstResolved));
+    }
+
+    [Fact]
+    public Task Promise_Any_OneResolved()
+    {
+        return ExecutionTest(nameof(Promise_Any_OneResolved));
+    }
+
+    [Fact]
+    public Task Promise_Any_NullIterable()
+    {
+        return ExecutionTest(nameof(Promise_Any_NullIterable));
+    }
+
+    [Fact]
     public Task Promise_Catch_ReturnsRejectedPromise()
     {
         return ExecutionTest(nameof(Promise_Catch_ReturnsRejectedPromise));
@@ -95,5 +203,35 @@ public class ExecutionTests : ExecutionTestsBase
     public Task Promise_Then_ReturnsResolvedPromise()
     {
         return ExecutionTest(nameof(Promise_Then_ReturnsResolvedPromise));
+    }
+
+    [Fact]
+    public Task Promise_Race_EmptyArray()
+    {
+        return ExecutionTest(nameof(Promise_Race_EmptyArray));
+    }
+
+    [Fact]
+    public Task Promise_Race_FirstRejected()
+    {
+        return ExecutionTest(nameof(Promise_Race_FirstRejected));
+    }
+
+    [Fact]
+    public Task Promise_Race_FirstResolved()
+    {
+        return ExecutionTest(nameof(Promise_Race_FirstResolved));
+    }
+
+    [Fact]
+    public Task Promise_Race_MixedValues()
+    {
+        return ExecutionTest(nameof(Promise_Race_MixedValues));
+    }
+
+    [Fact]
+    public Task Promise_Race_NullIterable()
+    {
+        return ExecutionTest(nameof(Promise_Race_NullIterable));
     }
 }

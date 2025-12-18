@@ -94,28 +94,28 @@ namespace JavaScriptRuntime
     public class AggregateError : Error
     {
         // In JS AggregateError has an iterable of errors. Represent as object[] here.
-        public object[] Errors { get; }
-        public object[] errors => Errors; // JS-style alias
+        public JavaScriptRuntime.Array Errors { get; }
+        public JavaScriptRuntime.Array errors => Errors; // JS-style alias
 
-        public AggregateError() : this(System.Array.Empty<object>(), null) { }
-        public AggregateError(IEnumerable<object> errors) : this(errors, null) { }
-        public AggregateError(IEnumerable<object> errors, string? message) : base(message)
+        public AggregateError() : this(System.Array.Empty<object?>(), null) { }
+        public AggregateError(System.Collections.IEnumerable errors) : this(errors, null) { }
+        public AggregateError(System.Collections.IEnumerable errors, string? message) : base(message)
         {
             Name = "AggregateError";
-            Errors = errors?.ToArray() ?? System.Array.Empty<object>();
+            Errors = new Array(errors);
         }
 
-        public AggregateError(IEnumerable<object> errors, string? message, Exception? inner) : base(message, inner)
+        public AggregateError(System.Collections.IEnumerable errors, string? message, Exception? inner) : base(message, inner)
         {
             Name = "AggregateError";
-            Errors = errors?.ToArray() ?? System.Array.Empty<object>();
+            Errors = new Array(errors);
         }
 
         public override string ToString()
         {
             var baseStr = base.ToString();
-            if (Errors.Length == 0) return baseStr;
-            return baseStr + $" (errors: {Errors.Length})";
+            if (Errors.length == 0) return baseStr;
+            return baseStr + $" (errors: {Errors.length})";
         }
     }
 }
