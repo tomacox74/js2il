@@ -43,9 +43,14 @@ namespace Js2IL.Tests
         {
             var exePath = GetJs2ILExecutablePath();
             ProcessStartInfo psi;
+            string launchMethod;
+
             if (exePath != null)
             {
                 var useDotnet = exePath.EndsWith(".dll", StringComparison.OrdinalIgnoreCase);
+                launchMethod = useDotnet ? $"dotnet {exePath}" : exePath;
+                Console.WriteLine($"[CliTests] Found executable: {exePath}");
+                Console.WriteLine($"[CliTests] Launch method: {launchMethod}");
                 psi = new ProcessStartInfo
                 {
                     FileName = useDotnet ? "dotnet" : exePath,
@@ -63,6 +68,7 @@ namespace Js2IL.Tests
                 // Locate Js2IL.csproj by walking up from the test assembly location.
                 var asmLocation = typeof(Js2IL.Services.AssemblyGenerator).Assembly.Location;
                 var dir = Path.GetDirectoryName(asmLocation)!;
+                Console.WriteLine($"[CliTests] No executable found, searching for Js2IL.csproj from: {dir}");
                 string? projectPath = null;
                 while (!string.IsNullOrEmpty(dir))
                 {
@@ -79,6 +85,8 @@ namespace Js2IL.Tests
                 if (projectPath == null)
                     throw new FileNotFoundException("Could not locate Js2IL.csproj to run dotnet run --project");
 
+                launchMethod = $"dotnet run --project {projectPath}";
+                Console.WriteLine($"[CliTests] Using fallback: {launchMethod}");
                 psi = new ProcessStartInfo
                 {
                     FileName = "dotnet",
@@ -90,10 +98,26 @@ namespace Js2IL.Tests
                 };
             }
 
+            Console.WriteLine($"[CliTests] Starting process: {psi.FileName} {psi.Arguments}");
             using var process = Process.Start(psi)!;
-            var stdout = process.StandardOutput.ReadToEnd();
-            var stderr = process.StandardError.ReadToEnd();
-            process.WaitForExit();
+            
+            // Use async reads to avoid deadlock and add a timeout
+            var stdoutTask = process.StandardOutput.ReadToEndAsync();
+            var stderrTask = process.StandardError.ReadToEndAsync();
+            
+            var exited = process.WaitForExit(30000); // 30 second timeout
+            if (!exited)
+            {
+                Console.WriteLine("[CliTests] ERROR: Process timed out after 30 seconds, killing...");
+                process.Kill();
+                throw new TimeoutException($"Process '{psi.FileName}' timed out after 30 seconds");
+            }
+            
+            var stdout = stdoutTask.GetAwaiter().GetResult();
+            var stderr = stderrTask.GetAwaiter().GetResult();
+            
+            Console.WriteLine($"[CliTests] Process exited with code: {process.ExitCode}");
+            Console.WriteLine($"[CliTests] stdout length: {stdout.Length}, stderr length: {stderr.Length}");
             
             return (process.ExitCode, stdout, stderr);
         }
