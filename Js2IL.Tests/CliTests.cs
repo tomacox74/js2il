@@ -121,7 +121,7 @@ namespace Js2IL.Tests
             return (process.ExitCode, stdout, stderr);
         }
 
-    [Fact]
+        [Fact]
         public void Version_Prints_and_ExitCode0()
         {
             var (code, stdout, stderr) = RunOutOfProc("--version");
@@ -130,9 +130,17 @@ namespace Js2IL.Tests
             Assert.True(string.IsNullOrWhiteSpace(stderr));
         }
 
-    [Fact(Skip = "PowerArgs HelpHook causes hang on Linux; skipping until resolved")]
+        [Fact]
         public void Help_PrintsUsage_And_ExitCode0()
         {
+            if (OperatingSystem.IsLinux())
+            {
+                // appears to hang indefinitely on Linux when -h is passed to the process.
+                // Skip this test on Linux until the root cause is identified and fixed.
+                Console.WriteLine("[CliTests] Skipping Help_PrintsUsage_And_ExitCode0 test on Linux due to hang.");
+                return;
+            }
+
             var (code, stdout, stderr) = RunOutOfProc("-h");
             Assert.Equal(0, code);
             // Accept either our custom usage or PowerArgs default (which uses the host process name)
@@ -140,7 +148,7 @@ namespace Js2IL.Tests
             Assert.True(string.IsNullOrWhiteSpace(stderr));
         }
 
-    [Fact]
+        [Fact]
         public void NoArgs_ShowsError_And_NonZeroExit()
         {
             var (code, stdout, stderr) = RunOutOfProc();
@@ -149,7 +157,7 @@ namespace Js2IL.Tests
             Assert.Contains("Usage:", stderr, StringComparison.OrdinalIgnoreCase);
         }
 
-    [Fact]
+        [Fact]
         public void NonexistentInput_ShowsError_And_NonZeroExit()
         {
             var missing = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("n") + ".js");
@@ -166,7 +174,7 @@ namespace Js2IL.Tests
             var tempRoot = Path.Combine(Path.GetTempPath(), "js2il_cli_test_" + Guid.NewGuid().ToString("n"));
             Directory.CreateDirectory(tempRoot);
             var jsFile = Path.Combine(tempRoot, "simple.js");
-            File.WriteAllText(jsFile, "console.log('x is ', 3);");
+            File.WriteAllText(jsFile, "console.log('x is', 3);");
             var outDir = Path.Combine(tempRoot, "out");
 
             try

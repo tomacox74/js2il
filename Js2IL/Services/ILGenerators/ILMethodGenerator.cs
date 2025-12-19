@@ -1213,7 +1213,7 @@ namespace Js2IL.Services.ILGenerators
 
         internal MethodDefinitionHandle GenerateArrowFunctionMethod(ArrowFunctionExpression arrowFunction, string registryScopeName, string ilMethodName, string[] paramNames)
         {
-            var arrowGen = new JavaScriptArrowFunctionGenerator(_variables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
+            var arrowGen = new JavaScriptArrowFunctionGenerator(_variables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry!);
             return arrowGen.GenerateArrowFunctionMethod(arrowFunction, registryScopeName, ilMethodName, paramNames);
         }
 

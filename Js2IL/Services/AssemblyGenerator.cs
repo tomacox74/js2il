@@ -36,14 +36,14 @@ namespace Js2IL.Services
         /// <param name="ast">The JavaScript AST.</param>
         /// <param name="name">The assembly name.</param>
         /// <param name="outputPath">The directory to output the generated assembly and related files to.</param>
-        public void Generate(Acornima.Ast.Program ast, string name, string outputPath)
+        public void Generate(ModuleDefinition module, string name, string outputPath)
         {
-            // Build scope tree first
+            // Build the symbol table
             var symbolTableBuilder = new SymbolTableBuilder();
-            var symbolTable = symbolTableBuilder.Build(ast, $"{name}.js");
+            var symbolTable = symbolTableBuilder.Build(module);
             
             // Call the new overload
-            Generate(ast, symbolTable, name, outputPath);
+            Generate(module.Ast, symbolTable, name, outputPath);
         }
 
         /// <summary>

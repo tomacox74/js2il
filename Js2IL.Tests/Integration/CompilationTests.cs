@@ -46,8 +46,14 @@ namespace Js2IL.Tests.Integration
             Directory.CreateDirectory(outputDir);
 
             var assemblyName = "GenerateFeatureCoverage_Script";
+            var module = new ModuleDefinition
+            {
+                Ast = ast,
+                Path = "test.js"
+            };
+
             var generator = new AssemblyGenerator();
-            generator.Generate(ast, assemblyName, outputDir);
+            generator.Generate(module, assemblyName, outputDir);
 
             var outputDll = Path.Combine(outputDir, assemblyName + ".dll");
             Assert.True(File.Exists(outputDll), $"Output assembly missing: {outputDll}");

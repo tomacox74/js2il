@@ -1,4 +1,5 @@
 using Js2IL.Services;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using System.Reflection;
@@ -40,12 +41,23 @@ namespace Js2IL.Tests
         protected Task GenerateTest(string testName, Action<VerifySettings>? configureSettings, [CallerFilePath] string sourceFilePath = "")
         {
             var js = GetJavaScript(testName);
-            var ast = _parser.ParseJavaScript(js, testName);
-            _validator.Validate(ast);
+            var testFilePath = Path.Combine(_outputPath, $"{testName}.js");
 
-            var generator = new AssemblyGenerator();
+            var mockFileSystem = new MockFileSystem();
+            mockFileSystem.AddFile(testFilePath, js);
 
-            generator.Generate(ast, testName, _outputPath);
+            var options = new CompilerOptions
+            {
+                OutputDirectory = _outputPath
+            };
+
+            var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFileSystem);
+            var compiler = serviceProvider.GetRequiredService<Compiler>();
+            
+            if (!compiler.Compile(testFilePath))
+            {
+                throw new InvalidOperationException($"Compilation failed for test {testName}");
+            }
 
             var expectedPath = Path.Combine(_outputPath, $"{testName}.dll");
 

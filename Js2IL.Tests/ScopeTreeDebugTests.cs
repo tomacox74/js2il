@@ -1,4 +1,5 @@
 using Acornima;
+using Acornima.Ast;
 using Js2IL.SymbolTables;
 using Js2IL.Services;
 using System;
@@ -19,6 +20,17 @@ namespace Js2IL.Tests
             _output = output;
             _parser = new JavaScriptParser();
             _scopeBuilder = new SymbolTableBuilder();
+        }
+
+        // Helper method to adapt old test API to new ModuleDefinition-based API
+        private SymbolTable BuildSymbolTable(Acornima.Ast.Program ast, string fileName)
+        {
+            var module = new ModuleDefinition
+            {
+                Ast = ast,
+                Path = fileName
+            };
+            return _scopeBuilder.Build(module);
         }
 
         [Fact]
@@ -57,7 +69,7 @@ namespace Js2IL.Tests
             }
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Inspect raw AST parameter node types
             if (ast is Acornima.Ast.Program prog && prog.Body[0] is Acornima.Ast.FunctionDeclaration fd)
@@ -103,7 +115,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Debug output
             _output.WriteLine($"Root scope: {scopeTree.Root.Name}");

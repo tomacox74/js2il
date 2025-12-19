@@ -1,4 +1,5 @@
 using Acornima;
+using Acornima.Ast;
 using Js2IL.SymbolTables;
 using Js2IL.Services;
 using System.Linq;
@@ -11,6 +12,16 @@ public class SymbolTableTypeInferenceTests
     private readonly JavaScriptParser _parser = new();
     private readonly SymbolTableBuilder _scopeBuilder = new();
 
+    // Helper method to adapt old test API to new ModuleDefinition-based API
+    private SymbolTable BuildSymbolTable(Acornima.Ast.Program ast, string fileName)
+    {
+        var module = new ModuleDefinition
+        {
+            Ast = ast,
+            Path = fileName
+        };
+        return _scopeBuilder.Build(module);
+    }
     [Theory]
     [InlineData(typeof(double), "42")]
     [InlineData(typeof(string), "'hello'")]
@@ -174,7 +185,7 @@ public class SymbolTableTypeInferenceTests
     private SymbolTable BuildSymbolTable(string source)
     {
         var ast = _parser.ParseJavaScript(source, "test.js");
-        var symbolTable = _scopeBuilder.Build(ast, "test.js");
+        var symbolTable = BuildSymbolTable(ast, "test.js");
         return symbolTable;
     }
 }

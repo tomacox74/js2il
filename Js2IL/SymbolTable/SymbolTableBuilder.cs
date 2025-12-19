@@ -22,15 +22,16 @@ namespace Js2IL.SymbolTables
         private int _closureCounter = 0;
         private string? _currentAssignmentTarget = null;
 
-        public SymbolTable Build(Acornima.Ast.Program astRoot, string filePath)
+        public SymbolTable Build(ModuleDefinition module)
         {
-            var fileName = Path.GetFileNameWithoutExtension(filePath);
-            var globalScope = new Scope(fileName, ScopeKind.Global, null, astRoot);
-            BuildScopeRecursive(astRoot, globalScope);
+            var fileName = Path.GetFileNameWithoutExtension(module.Path);
+            var globalScope = new Scope(fileName, ScopeKind.Global, null, module.Ast);
+            BuildScopeRecursive(module.Ast, globalScope);
             AnalyzeFreeVariables(globalScope);
             MarkCapturedVariables(globalScope);
             InferVariableClrTypes(globalScope);
-            return new SymbolTable(globalScope);
+            module.SymbolTable = new SymbolTable(globalScope);
+            return module.SymbolTable;
         }
 
         /// <summary>

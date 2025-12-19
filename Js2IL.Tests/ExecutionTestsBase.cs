@@ -1,4 +1,5 @@
 using Js2IL.Services;
+using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -28,11 +29,23 @@ namespace Js2IL.Tests
         protected Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, bool preferOutOfProc = false, [CallerFilePath] string sourceFilePath = "", Action<IConsoleOutput> postTestProcessingAction = null!)
         {
             var js = GetJavaScript(testName);
-            var ast = _parser.ParseJavaScript(js, "test.js");
-            _validator.Validate(ast);
+            var testFilePath = Path.Combine(_outputPath, $"{testName}.js");
 
-            var generator = new AssemblyGenerator();
-            generator.Generate(ast, testName, _outputPath);
+            var mockFileSystem = new MockFileSystem();
+            mockFileSystem.AddFile(testFilePath, js);
+
+            var options = new CompilerOptions
+            {
+                OutputDirectory = _outputPath
+            };
+
+            var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFileSystem);
+            var compiler = serviceProvider.GetRequiredService<Compiler>();
+            
+            if (!compiler.Compile(testFilePath))
+            {
+                throw new InvalidOperationException($"Compilation failed for test {testName}");
+            }
 
             var expectedPath = Path.Combine(_outputPath, $"{testName}.dll");
 
