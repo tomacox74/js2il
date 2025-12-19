@@ -15,22 +15,21 @@ namespace Js2IL.Tests
             var asmLocation = typeof(Js2IL.Services.AssemblyGenerator).Assembly.Location;
             var binDir = Path.GetDirectoryName(asmLocation)!;
 
-            // Check various naming conventions (case-sensitive on Linux):
-            // - Windows: Js2IL.exe / Js2IL.dll
-            // - Linux: Js2IL (no extension) / Js2IL.dll
-            string[] exeCandidates = { "Js2IL.exe", "js2il.exe", "Js2IL", "js2il" };
+            // Prefer the DLL (run via dotnet) for cross-platform consistency.
+            // Native executables may have platform-specific quirks (e.g., PowerArgs hangs on Linux).
             string[] dllCandidates = { "Js2IL.dll", "js2il.dll" };
-
-            foreach (var exe in exeCandidates)
-            {
-                var path = Path.Combine(binDir, exe);
-                if (File.Exists(path))
-                    return path;
-            }
+            string[] exeCandidates = { "Js2IL.exe", "js2il.exe", "Js2IL", "js2il" };
 
             foreach (var dll in dllCandidates)
             {
                 var path = Path.Combine(binDir, dll);
+                if (File.Exists(path))
+                    return path;
+            }
+
+            foreach (var exe in exeCandidates)
+            {
+                var path = Path.Combine(binDir, exe);
                 if (File.Exists(path))
                     return path;
             }
