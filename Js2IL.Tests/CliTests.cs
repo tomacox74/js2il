@@ -14,13 +14,26 @@ namespace Js2IL.Tests
             // Try to find a built js2il executable/dll next to the test assembly.
             var asmLocation = typeof(Js2IL.Services.AssemblyGenerator).Assembly.Location;
             var binDir = Path.GetDirectoryName(asmLocation)!;
-            var js2ilExe = Path.Combine(binDir, "js2il.exe");
-            var js2ilDll = Path.Combine(binDir, "js2il.dll");
 
-            if (File.Exists(js2ilExe))
-                return js2ilExe;
-            if (File.Exists(js2ilDll))
-                return js2ilDll;
+            // Check various naming conventions (case-sensitive on Linux):
+            // - Windows: Js2IL.exe / Js2IL.dll
+            // - Linux: Js2IL (no extension) / Js2IL.dll
+            string[] exeCandidates = { "Js2IL.exe", "js2il.exe", "Js2IL", "js2il" };
+            string[] dllCandidates = { "Js2IL.dll", "js2il.dll" };
+
+            foreach (var exe in exeCandidates)
+            {
+                var path = Path.Combine(binDir, exe);
+                if (File.Exists(path))
+                    return path;
+            }
+
+            foreach (var dll in dllCandidates)
+            {
+                var path = Path.Combine(binDir, dll);
+                if (File.Exists(path))
+                    return path;
+            }
 
             // Not found — caller may fallback to using `dotnet run --project` with the project path.
             return null;
