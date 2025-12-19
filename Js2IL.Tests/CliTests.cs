@@ -9,37 +9,73 @@ namespace Js2IL.Tests
 {
     public class CliTests
     {
-        private static string GetJs2ILExecutablePath()
+        private static string? GetJs2ILExecutablePath()
         {
-            // Find the js2il executable in the build output
+            // Try to find a built js2il executable/dll next to the test assembly.
             var asmLocation = typeof(Js2IL.Services.AssemblyGenerator).Assembly.Location;
             var binDir = Path.GetDirectoryName(asmLocation)!;
             var js2ilExe = Path.Combine(binDir, "js2il.exe");
             var js2ilDll = Path.Combine(binDir, "js2il.dll");
-            
-            // On Windows use .exe, otherwise use dotnet js2il.dll
+
             if (File.Exists(js2ilExe))
                 return js2ilExe;
             if (File.Exists(js2ilDll))
                 return js2ilDll;
-            
-            throw new FileNotFoundException($"js2il executable not found in {binDir}");
+
+            // Not found — caller may fallback to using `dotnet run --project` with the project path.
+            return null;
         }
 
         private static (int ExitCode, string StdOut, string StdErr) RunOutOfProc(params string[] args)
         {
             var exePath = GetJs2ILExecutablePath();
-            var useDotnet = exePath.EndsWith(".dll", StringComparison.OrdinalIgnoreCase);
-            
-            var psi = new ProcessStartInfo
+            ProcessStartInfo psi;
+            if (exePath != null)
             {
-                FileName = useDotnet ? "dotnet" : exePath,
-                Arguments = useDotnet ? $"\"{exePath}\" {string.Join(" ", args.Select(a => $"\"{a}\""))}" : string.Join(" ", args.Select(a => $"\"{a}\"")),
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
+                var useDotnet = exePath.EndsWith(".dll", StringComparison.OrdinalIgnoreCase);
+                psi = new ProcessStartInfo
+                {
+                    FileName = useDotnet ? "dotnet" : exePath,
+                    Arguments = useDotnet ? $"\"{exePath}\" {string.Join(" ", args.Select(a => $"\"{a}\""))}" : string.Join(" ", args.Select(a => $"\"{a}\"")),
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+            }
+            else
+            {
+                // Fall back to running the project via `dotnet run --project <path>` so CI runners
+                // that haven't produced an executable yet can still execute js2il.
+                // Locate Js2IL.csproj by walking up from the test assembly location.
+                var asmLocation = typeof(Js2IL.Services.AssemblyGenerator).Assembly.Location;
+                var dir = Path.GetDirectoryName(asmLocation)!;
+                string? projectPath = null;
+                while (!string.IsNullOrEmpty(dir))
+                {
+                    var candidate = Path.Combine(dir, "Js2IL", "Js2IL.csproj");
+                    if (File.Exists(candidate))
+                    {
+                        projectPath = candidate;
+                        break;
+                    }
+                    var parent = Path.GetDirectoryName(dir);
+                    if (string.IsNullOrEmpty(parent) || parent == dir) break;
+                    dir = parent;
+                }
+                if (projectPath == null)
+                    throw new FileNotFoundException("Could not locate Js2IL.csproj to run dotnet run --project");
+
+                psi = new ProcessStartInfo
+                {
+                    FileName = "dotnet",
+                    Arguments = $"run --no-build --project \"{projectPath}\" -- {string.Join(" ", args.Select(a => $"\"{a}\""))}",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+            }
 
             using var process = Process.Start(psi)!;
             var stdout = process.StandardOutput.ReadToEnd();
