@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -8,41 +9,50 @@ namespace Js2IL.Tests
 {
     public class CliTests
     {
-        private static (int ExitCode, string StdOut, string StdErr) RunInProc(params string[] args)
+        private static string GetJs2ILExecutablePath()
         {
-            // Capture console output
-            var prevOut = Console.Out;
-            var prevErr = Console.Error;
-            var prevExit = Environment.ExitCode;
+            // Find the js2il executable in the build output
+            var asmLocation = typeof(Js2IL.Services.AssemblyGenerator).Assembly.Location;
+            var binDir = Path.GetDirectoryName(asmLocation)!;
+            var js2ilExe = Path.Combine(binDir, "js2il.exe");
+            var js2ilDll = Path.Combine(binDir, "js2il.dll");
+            
+            // On Windows use .exe, otherwise use dotnet js2il.dll
+            if (File.Exists(js2ilExe))
+                return js2ilExe;
+            if (File.Exists(js2ilDll))
+                return js2ilDll;
+            
+            throw new FileNotFoundException($"js2il executable not found in {binDir}");
+        }
 
-            using var outWriter = new StringWriter();
-            using var errWriter = new StringWriter();
-            try
+        private static (int ExitCode, string StdOut, string StdErr) RunOutOfProc(params string[] args)
+        {
+            var exePath = GetJs2ILExecutablePath();
+            var useDotnet = exePath.EndsWith(".dll", StringComparison.OrdinalIgnoreCase);
+            
+            var psi = new ProcessStartInfo
             {
-                Console.SetOut(outWriter);
-                Console.SetError(errWriter);
-                Environment.ExitCode = 0;
+                FileName = useDotnet ? "dotnet" : exePath,
+                Arguments = useDotnet ? $"\"{exePath}\" {string.Join(" ", args.Select(a => $"\"{a}\""))}" : string.Join(" ", args.Select(a => $"\"{a}\"")),
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
 
-                // Reflectively invoke Js2IL.Program.Main (non-public)
-                var asm = typeof(Js2IL.Services.AssemblyGenerator).Assembly;
-                var progType = asm.GetType("Js2IL.Program", throwOnError: true)!;
-                var main = progType.GetMethod("Main", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
-                Assert.NotNull(main);
-                main!.Invoke(null, new object[] { args });
-            }
-            finally
-            {
-                Console.SetOut(prevOut);
-                Console.SetError(prevErr);
-            }
-
-            return (Environment.ExitCode, outWriter.ToString(), errWriter.ToString());
+            using var process = Process.Start(psi)!;
+            var stdout = process.StandardOutput.ReadToEnd();
+            var stderr = process.StandardError.ReadToEnd();
+            process.WaitForExit();
+            
+            return (process.ExitCode, stdout, stderr);
         }
 
     [Fact]
         public void Version_Prints_and_ExitCode0()
         {
-            var (code, stdout, stderr) = RunInProc("--version");
+            var (code, stdout, stderr) = RunOutOfProc("--version");
             Assert.Equal(0, code);
             Assert.Contains("js2il ", (stdout + stderr), StringComparison.OrdinalIgnoreCase);
             Assert.True(string.IsNullOrWhiteSpace(stderr));
@@ -51,7 +61,7 @@ namespace Js2IL.Tests
     [Fact]
         public void Help_PrintsUsage_And_ExitCode0()
         {
-            var (code, stdout, stderr) = RunInProc("-h");
+            var (code, stdout, stderr) = RunOutOfProc("-h");
             Assert.Equal(0, code);
             // Accept either our custom usage or PowerArgs default (which uses the host process name)
             Assert.True(stdout.Contains("Usage: js2il <InputFile>") || stdout.Contains("Usage - "), stdout);
@@ -61,7 +71,7 @@ namespace Js2IL.Tests
     [Fact]
         public void NoArgs_ShowsError_And_NonZeroExit()
         {
-            var (code, stdout, stderr) = RunInProc();
+            var (code, stdout, stderr) = RunOutOfProc();
             Assert.NotEqual(0, code);
             Assert.Contains("InputFile is required", stderr, StringComparison.OrdinalIgnoreCase);
             Assert.Contains("Usage:", stderr, StringComparison.OrdinalIgnoreCase);
@@ -71,7 +81,7 @@ namespace Js2IL.Tests
         public void NonexistentInput_ShowsError_And_NonZeroExit()
         {
             var missing = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("n") + ".js");
-            var (code, stdout, stderr) = RunInProc(missing);
+            var (code, stdout, stderr) = RunOutOfProc(missing);
             Assert.NotEqual(0, code);
             Assert.Contains("does not exist", stderr, StringComparison.OrdinalIgnoreCase);
             Assert.True(string.IsNullOrWhiteSpace(stdout));
@@ -90,7 +100,7 @@ namespace Js2IL.Tests
             try
             {
                 // Act
-                var (code, stdout, stderr) = RunInProc(jsFile, "-o", outDir);
+                var (code, stdout, stderr) = RunOutOfProc(jsFile, "-o", outDir);
 
                 // Assert
                 Assert.Equal(0, code);
