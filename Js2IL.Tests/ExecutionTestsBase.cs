@@ -26,13 +26,24 @@ namespace Js2IL.Tests
             Directory.CreateDirectory(_outputPath);
         }
 
-        protected Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, bool preferOutOfProc = false, [CallerFilePath] string sourceFilePath = "", Action<IConsoleOutput> postTestProcessingAction = null!)
+        protected Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, bool preferOutOfProc = false, [CallerFilePath] string sourceFilePath = "", Action<IConsoleOutput> postTestProcessingAction = null!, string[]? additionalScripts = null)
         {
             var js = GetJavaScript(testName);
             var testFilePath = Path.Combine(_outputPath, $"{testName}.js");
 
             var mockFileSystem = new MockFileSystem();
             mockFileSystem.AddFile(testFilePath, js);
+
+            // Add additional scripts to the mock file system
+            if (additionalScripts != null)
+            {
+                foreach (var scriptName in additionalScripts)
+                {
+                    var scriptContent = GetJavaScript(scriptName);
+                    var scriptPath = Path.Combine(_outputPath, $"{scriptName}.js");
+                    mockFileSystem.AddFile(scriptPath, scriptContent);
+                }
+            }
 
             var options = new CompilerOptions
             {

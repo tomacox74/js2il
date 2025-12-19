@@ -36,15 +36,29 @@ namespace Js2IL.Tests
         }
 
         protected Task GenerateTest(string testName, [CallerFilePath] string sourceFilePath = "")
-            => GenerateTest(testName, configureSettings: null, sourceFilePath);
+            => GenerateTest(testName, configureSettings: null, additionalScripts: null, sourceFilePath: sourceFilePath);
 
-        protected Task GenerateTest(string testName, Action<VerifySettings>? configureSettings, [CallerFilePath] string sourceFilePath = "")
+        protected Task GenerateTest(string testName, string[]? additionalScripts, [CallerFilePath] string sourceFilePath = "")
+            => GenerateTest(testName, configureSettings: null, additionalScripts: additionalScripts, sourceFilePath: sourceFilePath);
+
+        protected Task GenerateTest(string testName, Action<VerifySettings>? configureSettings, string[]? additionalScripts, [CallerFilePath] string sourceFilePath = "")
         {
             var js = GetJavaScript(testName);
             var testFilePath = Path.Combine(_outputPath, $"{testName}.js");
 
             var mockFileSystem = new MockFileSystem();
             mockFileSystem.AddFile(testFilePath, js);
+
+            // Add additional scripts to the mock file system
+            if (additionalScripts != null)
+            {
+                foreach (var scriptName in additionalScripts)
+                {
+                    var scriptContent = GetJavaScript(scriptName);
+                    var scriptPath = Path.Combine(_outputPath, $"{scriptName}.js");
+                    mockFileSystem.AddFile(scriptPath, scriptContent);
+                }
+            }
 
             var options = new CompilerOptions
             {
