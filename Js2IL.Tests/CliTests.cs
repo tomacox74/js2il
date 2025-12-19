@@ -39,7 +39,7 @@ namespace Js2IL.Tests
             return (Environment.ExitCode, outWriter.ToString(), errWriter.ToString());
         }
 
-    [Fact(Skip = "Temporarily disabled in CI (runner instability)")]
+    [Fact]
         public void Version_Prints_and_ExitCode0()
         {
             var (code, stdout, stderr) = RunInProc("--version");
@@ -48,7 +48,7 @@ namespace Js2IL.Tests
             Assert.True(string.IsNullOrWhiteSpace(stderr));
         }
 
-    [Fact(Skip = "Temporarily disabled in CI (runner instability)")]
+    [Fact]
         public void Help_PrintsUsage_And_ExitCode0()
         {
             var (code, stdout, stderr) = RunInProc("-h");
@@ -58,7 +58,7 @@ namespace Js2IL.Tests
             Assert.True(string.IsNullOrWhiteSpace(stderr));
         }
 
-    [Fact(Skip = "Temporarily disabled in CI (runner instability)")]
+    [Fact]
         public void NoArgs_ShowsError_And_NonZeroExit()
         {
             var (code, stdout, stderr) = RunInProc();
@@ -67,7 +67,7 @@ namespace Js2IL.Tests
             Assert.Contains("Usage:", stderr, StringComparison.OrdinalIgnoreCase);
         }
 
-    [Fact(Skip = "Temporarily disabled in CI (runner instability)")]
+    [Fact]
         public void NonexistentInput_ShowsError_And_NonZeroExit()
         {
             var missing = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("n") + ".js");
@@ -77,7 +77,7 @@ namespace Js2IL.Tests
             Assert.True(string.IsNullOrWhiteSpace(stdout));
         }
 
-    [Fact(Skip = "Temporarily disabled in CI (runner instability)")]
+    [Fact]
         public void Convert_SimpleJs_ProducesOutputs()
         {
             // Arrange: create simple JS file and output directory
