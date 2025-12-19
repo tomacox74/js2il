@@ -73,7 +73,9 @@ public class JavaScriptAstValidator : IAstValidator
                         }
                         else if (call.Arguments[0] is Literal lit && lit.Value is string modName)
                         {
-                            if (!SupportedRequireModules.Value.Contains(modName))
+                            var isLocalModule = modName.StartsWith(".") || modName.StartsWith("/");
+
+                            if (!SupportedRequireModules.Value.Contains(modName) && !isLocalModule)
                             {
                                 result.Errors.Add($"Module '{modName}' is not yet supported (line {node.Location.Start.Line})");
                                 result.IsValid = false;

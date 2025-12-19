@@ -40,7 +40,7 @@ namespace Js2IL.Tests
                 foreach (var scriptName in additionalScripts)
                 {
                     var scriptContent = GetJavaScript(scriptName);
-                    var scriptPath = Path.Combine(_outputPath, $"{scriptName}.js");
+                    var scriptPath = Path.Combine(_outputPath, $"./{scriptName}.js");
                     mockFileSystem.AddFile(scriptPath, scriptContent);
                 }
             }
