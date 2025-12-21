@@ -28,10 +28,10 @@ namespace JavaScriptRuntime
 
         // require("module") returns a Node core module instance; modules are singletons.
         // Unknown specifiers throw a ReferenceError.
-        public static object require(string specifier)
+        public static object? require(string specifier)
         {
             if (string.IsNullOrWhiteSpace(specifier))
-                throw new ReferenceError("require specifier must be a non-empty string");
+                throw new ReferenceError("require specifier must be a non-empty string"); 
 
             // temporary code until we have local module resolution and loading
             if (specifier.StartsWith(".") || specifier.StartsWith("/"))

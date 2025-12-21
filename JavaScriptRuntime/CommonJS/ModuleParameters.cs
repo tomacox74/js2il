@@ -7,6 +7,13 @@ namespace JavaScriptRuntime.CommonJS
     public delegate void ModuleMainDelegate(object? exports, object? require, object? module, object? __filename, object? __dirname);
 
     /// <summary>
+    /// Can't type moduleName as string because the javascript could be passing non-string values.
+    /// </summary>
+    /// <param name="moduleId">Module identifier</param>
+    /// <returns></returns>
+    public delegate object? RequireDelegate(object? moduleId);
+
+    /// <summary>
     /// Defines a parameter for a module main method.
     /// </summary>
     public sealed class ModuleParameterInfo

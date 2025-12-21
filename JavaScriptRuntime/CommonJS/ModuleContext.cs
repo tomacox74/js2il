@@ -9,7 +9,7 @@ public class ModuleContext
     private static string dirname;
     private static string filename;
 
-    private static readonly Func<object?, object?> defaultRequire = (object? id) =>
+    private static readonly RequireDelegate defaultRequire = (object? id) =>
     {
         if (id is not string moduleName || id == null)
         {
@@ -68,5 +68,5 @@ public class ModuleContext
 
     public required string __dirname;
 
-    public required Func<object?, object?> require { get; set; }
+    public required RequireDelegate require { get; set; }
 }

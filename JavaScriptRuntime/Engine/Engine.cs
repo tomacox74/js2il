@@ -1,43 +1,27 @@
+using JavaScriptRuntime.DependencyInjection;
+
 namespace JavaScriptRuntime;
-
-/// <summary>
-/// Configuration options for the JavaScript engine.
-/// Allows mocks to be substituted for testing.
-/// </summary>
-public sealed class EngineOptions
-{
-    public required EngineCore.ITickSource TickSource { get; set; }
-    public required EngineCore.IWaitHandle WaitHandle { get; set; }
-
-    public static Func<EngineOptions>? DefaultOptionsProvider { get; set; } = GetDefaultOptions;
-
-    public static EngineOptions GetDefaultOptions()
-    {
-        return new EngineOptions
-        {
-            TickSource = new EngineCore.TickSource(),
-            WaitHandle = new EngineCore.WaitHandle(),
-        };
-    }
-}
 
 /// <summary>
 /// Entry point for executing JavaScript code that has been compiled to a dotnet assembly.
 /// </summary>
 public class Engine
 {
+    /// <summary>
+    /// Only used for testing purposes to override the default service provider.
+    /// </summary>
+    internal static ServiceContainer? _serviceProviderOverride;
+
     public void Execute(CommonJS.ModuleMainDelegate scriptEntryPoint)
     {
-        var engineOptions = EngineOptions.DefaultOptionsProvider?.Invoke();
-        if (engineOptions == null)
-        {
-            throw new InvalidOperationException("No default engine options has been configured.");
-        }
+        var serviceProvider = _serviceProviderOverride ?? RuntimeServices.BuildServiceProvider();
+        
+        var tickSource = serviceProvider.Resolve<EngineCore.ITickSource>();
+        var waitHandle = serviceProvider.Resolve<EngineCore.IWaitHandle>();
 
-        var ctx = new EngineCore.NodeSychronizationContext(engineOptions.TickSource, engineOptions.WaitHandle);
+        var ctx = serviceProvider.Resolve<EngineCore.NodeSychronizationContext>();
         SynchronizationContext.SetSynchronizationContext(ctx);
 
-        // switch to dependency injection in the future
         GlobalThis.Scheduler = ctx;
         GlobalThis.MicrotaskScheduler = ctx;
 
@@ -52,5 +36,7 @@ public class Engine
             ctx.RunOneIteration();
             ctx.WaitForWorkOrNextTimer();
         }
+        
+        _serviceProviderOverride = null;
     }
 }

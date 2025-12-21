@@ -87,7 +87,6 @@ namespace Js2IL.Tests.Node
         [Fact]
         public async Task SetTimeout_OneSecondDelay()
         {
-            var defaultOptionsProvider = JavaScriptRuntime.EngineOptions.DefaultOptionsProvider;
             var mockTickSource = new Js2IL.Tests.Node.MockTickSource();
             var mockWaitHandle = new Js2IL.Tests.Node.MockWaitHandle(
                 onSet: () => { },
@@ -97,14 +96,11 @@ namespace Js2IL.Tests.Node
                     mockTickSource.Increment(TimeSpan.FromMilliseconds(msTimeout));
                 });
 
-            JavaScriptRuntime.EngineOptions.DefaultOptionsProvider = () =>
-            {
-                return new JavaScriptRuntime.EngineOptions
-                {
-                    TickSource = mockTickSource,
-                    WaitHandle = mockWaitHandle,
-                };
-            };
+            // Use DI to inject mocks
+            var container = JavaScriptRuntime.RuntimeServices.BuildServiceProvider();
+            container.Replace<JavaScriptRuntime.EngineCore.ITickSource>(mockTickSource);
+            container.Replace<JavaScriptRuntime.EngineCore.IWaitHandle>(mockWaitHandle);
+            JavaScriptRuntime.Engine._serviceProviderOverride = container;
 
             var startTime = mockTickSource.GetTicks();
 
@@ -121,7 +117,7 @@ namespace Js2IL.Tests.Node
             }
             finally
             {
-                JavaScriptRuntime.EngineOptions.DefaultOptionsProvider = defaultOptionsProvider;
+                JavaScriptRuntime.Engine._serviceProviderOverride = null;
             }
         }
 

@@ -38,7 +38,7 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 62 (0x3e)
+		// Code size: 63 (0x3f)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Require_Path_Join_Basic,
@@ -46,32 +46,33 @@
 			[2] object
 		)
 
-		IL_0000: ldstr "path"
-		IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.Require::require(string)
-		IL_000a: stloc.1
-		IL_000b: ldloc.1
-		IL_000c: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.Path
-		IL_0011: ldc.i4.2
-		IL_0012: newarr [System.Runtime]System.Object
-		IL_0017: dup
-		IL_0018: ldc.i4.0
-		IL_0019: ldstr "a"
-		IL_001e: stelem.ref
-		IL_001f: dup
-		IL_0020: ldc.i4.1
-		IL_0021: ldstr "b"
-		IL_0026: stelem.ref
-		IL_0027: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Node.Path::join(object[])
-		IL_002c: stloc.2
-		IL_002d: ldc.i4.1
-		IL_002e: newarr [System.Runtime]System.Object
-		IL_0033: dup
-		IL_0034: ldc.i4.0
-		IL_0035: ldloc.2
-		IL_0036: stelem.ref
-		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_003c: pop
-		IL_003d: ret
+		IL_0000: ldarg.1
+		IL_0001: ldstr "path"
+		IL_0006: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_000b: stloc.1
+		IL_000c: ldloc.1
+		IL_000d: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.Path
+		IL_0012: ldc.i4.2
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldstr "a"
+		IL_001f: stelem.ref
+		IL_0020: dup
+		IL_0021: ldc.i4.1
+		IL_0022: ldstr "b"
+		IL_0027: stelem.ref
+		IL_0028: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Node.Path::join(object[])
+		IL_002d: stloc.2
+		IL_002e: ldc.i4.1
+		IL_002f: newarr [System.Runtime]System.Object
+		IL_0034: dup
+		IL_0035: ldc.i4.0
+		IL_0036: ldloc.2
+		IL_0037: stelem.ref
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_003d: pop
+		IL_003e: ret
 	} // end of method Require_Path_Join_Basic::Main
 
 } // end of class Scripts.Require_Path_Join_Basic
@@ -83,7 +84,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20a6
+		// Method begins at RVA 0x20a7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
