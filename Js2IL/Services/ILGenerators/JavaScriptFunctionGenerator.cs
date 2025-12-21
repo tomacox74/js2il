@@ -4,6 +4,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Reflection;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Js2IL.Services.ILGenerators
 {
@@ -23,13 +24,16 @@ namespace Js2IL.Services.ILGenerators
         private readonly Dictionary<string, TypeDefinitionHandle> _globalFunctionOwnerTypes = new();
         private TypeDefinitionHandle _moduleOwnerType = default;
 
-        public JavaScriptFunctionGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, ClassRegistry? classRegistry = null)
+        private IServiceProvider _serviceProvider;
+
+        public JavaScriptFunctionGenerator(IServiceProvider serviceProvider, Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, ClassRegistry? classRegistry = null)
         {
             _variables = variables;
             _bclReferences = bclReferences;
             _metadataBuilder = metadataBuilder;
             _methodBodyStreamEncoder = methodBodyStreamEncoder;
             _classRegistry = classRegistry ?? new ClassRegistry();
+            this._serviceProvider = serviceProvider;
         }
 
         public void DeclareFunctions(SymbolTable symbolTable)
@@ -81,7 +85,7 @@ namespace Js2IL.Services.ILGenerators
                             var nestedName = (nestedDecl.Id as Identifier)!.Name;
                             var nestedParamNames = ILMethodGenerator.ExtractParameterNames(nestedDecl.Params).ToArray();
                             var nestedVars = new Variables(functionVariables, nestedName, nestedParamNames, isNestedFunction: true);
-                            var nestedGen = new ILMethodGenerator(nestedVars, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
+                            var nestedGen = new ILMethodGenerator(_serviceProvider, nestedVars, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
                             var nestedMethod = GenerateMethodForFunction(nestedDecl, nestedVars, nestedGen, nestedScope, symbolTable, nestedTb);
                             if (firstNestedMethod.IsNil) firstNestedMethod = nestedMethod;
                             if (this._firstMethod.IsNil) _firstMethod = nestedMethod;
@@ -91,7 +95,7 @@ namespace Js2IL.Services.ILGenerators
                     }
 
                     // Now generate the outer function method (nested handles already registered)
-                    var methodGenerator = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
+                    var methodGenerator = new ILMethodGenerator(_serviceProvider, functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
                     var methodDefinition = GenerateMethodForFunction(functionDeclaration, functionVariables, methodGenerator, funcScope, symbolTable, moduleTb);
                     if (this._firstMethod.IsNil) _firstMethod = methodDefinition;
                     _functionRegistry.Register(functionName, methodDefinition, paramNames.Length);
@@ -134,7 +138,7 @@ namespace Js2IL.Services.ILGenerators
                         // Pre-register parameter count before generating method body
                         _functionRegistry.PreRegisterParameterCount(nestedName, nestedParamNames.Length);
                         var nestedVars = new Variables(functionVariables, nestedName, nestedParamNames, isNestedFunction: true);
-                        var nestedGen = new ILMethodGenerator(nestedVars, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
+                        var nestedGen = new ILMethodGenerator(_serviceProvider, nestedVars, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
                         var nestedMethod = GenerateMethodForFunction(nestedDecl, nestedVars, nestedGen, nestedScope, symbolTable, nestedTb);
                         if (firstNestedMethod.IsNil) firstNestedMethod = nestedMethod;
                         if (this._firstMethod.IsNil) _firstMethod = nestedMethod;
@@ -143,7 +147,7 @@ namespace Js2IL.Services.ILGenerators
                 }
 
                 // Now generate outer method
-                var methodGenerator = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
+                var methodGenerator = new ILMethodGenerator(_serviceProvider, functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
                 var methodDefinition = GenerateMethodForFunction(functionDeclaration, functionVariables, methodGenerator, funcScope, symbolTable, tb);
                 if (this._firstMethod.IsNil) _firstMethod = methodDefinition;
                 _functionRegistry.Register(functionName, methodDefinition, paramNames.Length);
@@ -170,7 +174,7 @@ namespace Js2IL.Services.ILGenerators
 
                 bool isNested = scope.Kind == ScopeKind.Function; // nested if parent is a function
                 var functionVariables = new Variables(parentVars, functionName, paramNames, isNestedFunction: isNested);
-                var methodGenerator = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
+                var methodGenerator = new ILMethodGenerator(_serviceProvider, functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
                 var methodDefinition = GenerateMethodForFunction(functionDeclaration, functionVariables, methodGenerator, funcScope, symbolTable);
                 if (this._firstMethod.IsNil)
                 {
@@ -200,7 +204,7 @@ namespace Js2IL.Services.ILGenerators
             var variables = functionVariables;
             var il = methodGenerator.IL;
             // Runtime helper to reference JavaScriptRuntime methods (e.g., Object.GetProperty)
-            var runtime = new Js2IL.Services.Runtime(il, _bclReferences.TypeRefRegistry, _bclReferences.MemberRefRegistry);
+            var runtime = new Js2IL.Services.Runtime(il, _serviceProvider.GetRequiredService<TypeReferenceRegistry>(), _serviceProvider.GetRequiredService<MemberReferenceRegistry>());
 
             // Parameters are already registered in Variables constructor
 

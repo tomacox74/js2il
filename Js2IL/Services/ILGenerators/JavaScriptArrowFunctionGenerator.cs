@@ -19,7 +19,10 @@ namespace Js2IL.Services.ILGenerators
         private readonly ClassRegistry _classRegistry;
         private readonly FunctionRegistry _functionRegistry;
 
+        private readonly IServiceProvider _serviceProvider;
+
         public JavaScriptArrowFunctionGenerator(
+            IServiceProvider serviceProvider,
             Variables variables,
             BaseClassLibraryReferences bclReferences,
             MetadataBuilder metadataBuilder,
@@ -33,6 +36,7 @@ namespace Js2IL.Services.ILGenerators
             _methodBodyStreamEncoder = methodBodyStreamEncoder;
             _classRegistry = classRegistry;
             _functionRegistry = functionRegistry;
+            _serviceProvider = serviceProvider;
         }
 
         internal MethodDefinitionHandle GenerateArrowFunctionMethod(
@@ -43,7 +47,7 @@ namespace Js2IL.Services.ILGenerators
         {
             var functionVariables = new Variables(_variables, registryScopeName, paramNames, isNestedFunction: true);
             var pnames = paramNames ?? Array.Empty<string>();
-            var childGen = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
+            var childGen = new ILMethodGenerator(_serviceProvider, functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
             var il = childGen.IL;
 
             void DestructureArrowParamsIfAny()

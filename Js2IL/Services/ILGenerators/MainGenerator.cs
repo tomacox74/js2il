@@ -22,7 +22,7 @@ namespace Js2IL.Services.ILGenerators
 
         private readonly ClassRegistry _classRegistry = new();
 
-        public MainGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, SymbolTable symbolTable)
+        public MainGenerator(IServiceProvider serviceProvider, Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, SymbolTable symbolTable)
         {
             _symbolTable = symbolTable ?? throw new ArgumentNullException(nameof(symbolTable));
 
@@ -31,9 +31,9 @@ namespace Js2IL.Services.ILGenerators
             if (metadataBuilder == null) throw new ArgumentNullException(nameof(metadataBuilder));
             
             _bclReferences = bclReferences;
-            _functionGenerator = new JavaScriptFunctionGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry);
-            _ilGenerator = new ILMethodGenerator(variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, _functionGenerator.FunctionRegistry);
-            _classesGenerator = new ClassesGenerator(metadataBuilder, bclReferences, methodBodyStreamEncoder, _classRegistry, variables);
+            _functionGenerator = new JavaScriptFunctionGenerator(serviceProvider, variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry);
+            _ilGenerator = new ILMethodGenerator(serviceProvider, variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, _functionGenerator.FunctionRegistry);
+            _classesGenerator = new ClassesGenerator(serviceProvider,metadataBuilder, bclReferences, methodBodyStreamEncoder, _classRegistry, variables);
             this._methodBodyStreamEncoder = methodBodyStreamEncoder;
         }
 

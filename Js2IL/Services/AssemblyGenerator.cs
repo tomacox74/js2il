@@ -4,10 +4,11 @@ using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
 using Js2IL.Services.ILGenerators;
 using Js2IL.Utilities.Ecma335;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Js2IL.Services
 {
-    public class AssemblyGenerator
+    internal class AssemblyGenerator
     {
         // Standard public key as defined in ECMA-335 for reference assemblies
         private static readonly byte[] StandardPublicKey = new byte[] {
@@ -15,7 +16,7 @@ namespace Js2IL.Services
             0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
         };
 
-        public MetadataBuilder _metadataBuilder = new MetadataBuilder();
+        public MetadataBuilder _metadataBuilder;
         private BlobBuilder _ilBuilder = new BlobBuilder();
         private MethodDefinitionHandle _entryPoint;
 
@@ -24,9 +25,16 @@ namespace Js2IL.Services
 
         private  VariableBindings.VariableRegistry? _variableRegistry;
 
-        public AssemblyGenerator()
+        private TypeReferenceRegistry _typeReferenceRegistry;
+
+        private IServiceProvider _serviceProvider;
+
+        public AssemblyGenerator(IServiceProvider serviceProvider, MetadataBuilder metadataBuilder, TypeReferenceRegistry typeReferenceRegistry)
         {
-            this._bclReferences = new BaseClassLibraryReferences(_metadataBuilder);
+            this._metadataBuilder = metadataBuilder;
+            this._typeReferenceRegistry = typeReferenceRegistry;
+            this._bclReferences = serviceProvider.GetRequiredService<BaseClassLibraryReferences>();
+            this._serviceProvider = serviceProvider;
         }
 
         /// <summary>
@@ -97,26 +105,45 @@ namespace Js2IL.Services
 
         private MethodDefinitionHandle GenerateModule(ModuleDefinition module, MethodBodyStreamEncoder methodBodyStream, string moduleName)
         {
+
             // Get parameter info from shared ModuleParameters
             var paramCount = JavaScriptRuntime.CommonJS.ModuleParameters.Count;
             var parameterNames = JavaScriptRuntime.CommonJS.ModuleParameters.ParameterNames;
+
+            // create the tools we need to generate the module type and method
+            var programTypeBuilder = new TypeBuilder(_metadataBuilder, "Scripts", moduleName);
+            var variables = new Variables(_variableRegistry!, moduleName, parameterNames);
+            var mainGenerator = new MainGenerator(_serviceProvider, variables, _bclReferences, _metadataBuilder, methodBodyStream, module.SymbolTable!);
 
             // Create the method signature for the Main method with parameters
             var sigBuilder = new BlobBuilder();
             new BlobEncoder(sigBuilder)
                 .MethodSignature()
-                .Parameters(paramCount, returnType => returnType.Void(), parameters => 
+                .Parameters(paramCount, returnType => returnType.Void(), parameters =>
                 {
                     for (int i = 0; i < paramCount; i++)
                     {
-                        parameters.AddParameter().Type().Object();
+                        switch (i)
+                        {
+                            case 0:
+                                parameters.AddParameter().Type().Object();
+                                break;
+                            case 1:
+                                var requireDelegateReference = _typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.CommonJS.RequireDelegate)); 
+                                parameters.AddParameter().Type().Type(requireDelegateReference, false);
+                                break;
+                            case 2:
+                                parameters.AddParameter().Type().Object();
+                                break;
+                            case 3:
+                            case 4:
+                                parameters.AddParameter().Type().String();
+                                break;
+                        }
                     }
                 });
             var methodSig = this._metadataBuilder.GetOrAddBlob(sigBuilder);
 
-            var programTypeBuilder = new TypeBuilder(_metadataBuilder, "Scripts", moduleName);
-            var variables = new Variables(_variableRegistry!, moduleName, parameterNames);
-            var mainGenerator = new MainGenerator(variables, _bclReferences, _metadataBuilder, methodBodyStream, module.SymbolTable!);
             var bodyOffset = mainGenerator.GenerateMethod(module.Ast);
             var methodDefinitionHandle = programTypeBuilder.AddMethodDefinition(
                 MethodAttributes.Static | MethodAttributes.Public,
@@ -157,7 +184,7 @@ namespace Js2IL.Services
             // create a method generator to emit IL for the entry point
             // variables is unused
             var variables = new Variables(_variableRegistry!, "EntryPoint");
-            var entryPointGenerator = new ILMethodGenerator(variables, _bclReferences, _metadataBuilder, methodBodyStream, new ClassRegistry(), new FunctionRegistry());
+            var entryPointGenerator = new ILMethodGenerator(_serviceProvider, variables, _bclReferences, _metadataBuilder, methodBodyStream, new ClassRegistry(), new FunctionRegistry());
             var ilEncoder = entryPointGenerator.IL;
             var runtime = entryPointGenerator.Runtime;
 

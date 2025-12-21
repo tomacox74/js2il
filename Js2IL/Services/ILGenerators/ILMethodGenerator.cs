@@ -6,6 +6,8 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using Acornima;
 using Acornima.Ast;
+using Microsoft.Extensions.DependencyInjection;
+using Js2IL.Utilities.Ecma335;
 
 namespace Js2IL.Services.ILGenerators
 {
@@ -25,6 +27,8 @@ namespace Js2IL.Services.ILGenerators
         private string? _currentClassName;
         private string? _currentAssignmentTarget;
         private readonly Dictionary<string, string> _variableToClass = new();
+
+        private readonly IServiceProvider _serviceProvider;
 
         private readonly struct LoopContext
         {
@@ -58,7 +62,7 @@ namespace Js2IL.Services.ILGenerators
 
         private readonly FunctionRegistry? _functionRegistry;
 
-        public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, ClassRegistry? classRegistry = null, FunctionRegistry? functionRegistry = null, bool inClassMethod = false, string? currentClassName = null)
+        public ILMethodGenerator(IServiceProvider serviceProvider, Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, ClassRegistry? classRegistry = null, FunctionRegistry? functionRegistry = null, bool inClassMethod = false, string? currentClassName = null)
         {
             _variables = variables;
             _bclReferences = bclReferences;
@@ -66,7 +70,7 @@ namespace Js2IL.Services.ILGenerators
             var methodIl = new BlobBuilder();
             _cfb = new ControlFlowBuilder();
             _il = new InstructionEncoder(methodIl, _cfb);
-            this._runtime = new Runtime(_il, bclReferences.TypeRefRegistry, bclReferences.MemberRefRegistry);
+            _runtime = new Runtime(_il, serviceProvider.GetRequiredService<TypeReferenceRegistry>(), serviceProvider.GetRequiredService<MemberReferenceRegistry>());
             // Use a dedicated expression generator to avoid circular logic and enable incremental refactors
             this._expressionEmitter = new ILExpressionGenerator(this);
 
@@ -75,6 +79,7 @@ namespace Js2IL.Services.ILGenerators
             _functionRegistry = functionRegistry;
             _inClassMethod = inClassMethod;
             _currentClassName = currentClassName;
+            _serviceProvider = serviceProvider;
         }
 
         // Allow expression generator to record variable->class mapping when emitting `new ClassName()` in assignments/initializers
@@ -1213,7 +1218,7 @@ namespace Js2IL.Services.ILGenerators
 
         internal MethodDefinitionHandle GenerateArrowFunctionMethod(ArrowFunctionExpression arrowFunction, string registryScopeName, string ilMethodName, string[] paramNames)
         {
-            var arrowGen = new JavaScriptArrowFunctionGenerator(_variables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry!);
+            var arrowGen = new JavaScriptArrowFunctionGenerator(_serviceProvider,_variables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry!);
             return arrowGen.GenerateArrowFunctionMethod(arrowFunction, registryScopeName, ilMethodName, paramNames);
         }
 
@@ -1223,7 +1228,7 @@ namespace Js2IL.Services.ILGenerators
             var pnames = paramNames ?? Array.Empty<string>();
             // Share the parent ClassRegistry and FunctionRegistry so nested functions can resolve declared classes
             // and register their methods for lazy self-binding (recursion) support.
-            var childGen = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
+            var childGen = new ILMethodGenerator(_serviceProvider, functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
             var il = childGen.IL;
 
             // If this is a named function expression (e.g., function walk(node) { ... }), JS specifies

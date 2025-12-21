@@ -6,6 +6,7 @@ using System.Reflection;
 using Acornima.Ast;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Js2IL.Services.ILGenerators
 {
@@ -17,8 +18,11 @@ namespace Js2IL.Services.ILGenerators
         private readonly ClassRegistry _classRegistry;
         private readonly Variables _variables;
 
-        public ClassesGenerator(MetadataBuilder metadata, BaseClassLibraryReferences bcl, MethodBodyStreamEncoder methodBodies, ClassRegistry classRegistry, Variables variables)
+        private readonly IServiceProvider _serviceProvider;
+
+        public ClassesGenerator(IServiceProvider serviceProvider, MetadataBuilder metadata, BaseClassLibraryReferences bcl, MethodBodyStreamEncoder methodBodies, ClassRegistry classRegistry, Variables variables)
         {
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _metadata = metadata ?? throw new ArgumentNullException(nameof(metadata));
             _bcl = bcl ?? throw new ArgumentNullException(nameof(bcl));
             _methodBodies = methodBodies;
@@ -281,7 +285,7 @@ namespace Js2IL.Services.ILGenerators
                     .Parameters(0, r => r.Void(), p => { });
                 var cctorSig = _metadata.GetOrAddBlob(sigBuilder);
 
-                var ilGen = new ILMethodGenerator(_variables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: false, currentClassName: classScope.Name);
+                var ilGen = new ILMethodGenerator(_serviceProvider, _variables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: false, currentClassName: classScope.Name);
 
                 // For each static field with an initializer: evaluate and stsfld
                 foreach (var (field, initExpr) in staticFieldsWithInits)
@@ -363,7 +367,7 @@ namespace Js2IL.Services.ILGenerators
                 methodVariables = new Variables(_variables, constructorScopeName, paramNames, isNestedFunction: false);
             }
             
-            var ilGen = new ILMethodGenerator(methodVariables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: true, currentClassName: className);
+            var ilGen = new ILMethodGenerator(_serviceProvider, methodVariables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: true, currentClassName: className);
 
             // Call base System.Object constructor
             ilGen.IL.OpCode(ILOpCode.Ldarg_0);
@@ -521,7 +525,7 @@ namespace Js2IL.Services.ILGenerators
                 methodVariables = new Variables(_variables, methodScopeName, paramNames, isNestedFunction: false);
             }
             
-            var ilGen = new ILMethodGenerator(methodVariables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: true, currentClassName: className);
+            var ilGen = new ILMethodGenerator(_serviceProvider, methodVariables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: true, currentClassName: className);
 
             // Initialize default parameter values (instance methods: arg0=this, params start at arg1; static methods: params start at arg0)
             // and check for explicit return
@@ -781,7 +785,7 @@ namespace Js2IL.Services.ILGenerators
             }
             
             // Now handle object-pattern destructuring
-            var runtime = new Runtime(ilGen.IL, _bcl.TypeRefRegistry, _bcl.MemberRefRegistry);
+            var runtime = new Runtime(ilGen.IL, _serviceProvider.GetRequiredService<TypeReferenceRegistry>(), _serviceProvider.GetRequiredService<MemberReferenceRegistry>());
             MethodBuilder.EmitObjectPatternParameterDestructuring(
                 _metadata,
                 ilGen.IL,

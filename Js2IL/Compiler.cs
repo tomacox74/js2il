@@ -1,5 +1,6 @@
 using Js2IL.Services;
 using Js2IL.SymbolTables;
+using Microsoft.Extensions.DependencyInjection;
 namespace Js2IL;
 
 public class Compiler
@@ -12,12 +13,15 @@ public class Compiler
 
     private readonly ModuleLoader _moduleLoader;
 
-    public Compiler(CompilerOptions options, ModuleLoader moduleLoader)
+    private readonly IServiceProvider _serviceProvider;
+
+    public Compiler(IServiceProvider serviceProvider, CompilerOptions options, ModuleLoader moduleLoader)
     {
         this.outputDirectory = options.OutputDirectory;
         this.verbose = options.Verbose;
         this.analyzeUnused = options.AnalyzeUnused;
         this._moduleLoader = moduleLoader;
+        this._serviceProvider = serviceProvider;
     }   
 
     public bool Compile(string inputFile)
@@ -56,7 +60,7 @@ public class Compiler
 
         // Generate IL assembly
         Console.WriteLine("\nGenerating dotnet assembly...");
-        var assemblyGenerator = new AssemblyGenerator();
+        var assemblyGenerator = _serviceProvider.GetRequiredService<AssemblyGenerator>();
 
         // Resolve and validate output directory; create if missing
         if (!EnsureOutputPathExists(inputFile, this.outputDirectory, out var outputPath))

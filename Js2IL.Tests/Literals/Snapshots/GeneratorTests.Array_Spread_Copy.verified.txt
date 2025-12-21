@@ -52,10 +52,10 @@
 	.method public static 
 		void Main (
 			object exports,
-			object require,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
-			object __filename,
-			object __dirname
+			string __filename,
+			string __dirname
 		) cil managed 
 	{
 		// Method begins at RVA 0x2064
@@ -138,7 +138,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Array_Spread_Copy::Main(object, object, object, object, object)
+		IL_0006: ldftn void Scripts.Array_Spread_Copy::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

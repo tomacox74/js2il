@@ -19,15 +19,12 @@ namespace Js2IL.Services
             { 6, typeof(System.Func<object[], object, object, object, object, object, object, object>) }
         };
 
-        public BaseClassLibraryReferences(MetadataBuilder metadataBuilder)
+        public BaseClassLibraryReferences(TypeReferenceRegistry typeRefRegistr, MemberReferenceRegistry memberRefRegistr)
         {
-            _typeRefRegistry = new TypeReferenceRegistry(metadataBuilder);
-            _memberRefRegistry = new MemberReferenceRegistry(metadataBuilder, _typeRefRegistry);
+            _typeRefRegistry = typeRefRegistr;
+            _memberRefRegistry = memberRefRegistr;
         }
-
-        public TypeReferenceRegistry TypeRefRegistry => _typeRefRegistry;
-        public MemberReferenceRegistry MemberRefRegistry => _memberRefRegistry;
-
+        
         public TypeReferenceHandle BooleanType => _typeRefRegistry.GetOrAdd(typeof(bool));
         public TypeReferenceHandle DoubleType => _typeRefRegistry.GetOrAdd(typeof(double));
         public TypeReferenceHandle Int32Type => _typeRefRegistry.GetOrAdd(typeof(int));
