@@ -12,7 +12,7 @@ public class JavaScriptAstValidator : IAstValidator
         try
         {
             // Use a known runtime type to locate the assembly (Require lives in runtime assembly)
-            var asm = typeof(JavaScriptRuntime.Require).Assembly;
+            var asm = typeof(JavaScriptRuntime.Node.NodeModuleAttribute).Assembly;
             foreach (var t in asm.GetTypes())
             {
                 if (!t.IsClass || t.IsAbstract) continue;

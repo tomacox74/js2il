@@ -12,6 +12,8 @@ public class RuntimeServices
         container.Register<EngineCore.ITickSource, EngineCore.TickSource>();
         container.Register<EngineCore.IWaitHandle, EngineCore.WaitHandle>();
         container.Register<EngineCore.NodeSychronizationContext>();
+        container.Register<CommonJS.Require>();
+        container.Register<LocalModulesAssembly>();
         
         return container;
     }

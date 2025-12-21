@@ -1,4 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using JavaScriptRuntime.DependencyInjection;
 
 namespace JavaScriptRuntime.CommonJS;
 public class ModuleContext
@@ -9,15 +11,18 @@ public class ModuleContext
     private static string dirname;
     private static string filename;
 
-    private static readonly RequireDelegate defaultRequire = (object? id) =>
+    private static RequireDelegate CreateRequireDelegate(Require requireService)
     {
-        if (id is not string moduleName || id == null)
+        return (object? id) =>
         {
-            throw new TypeError("The \"id\" argument must be of type string.");
-        }
+            if (id is not string moduleName || id == null)
+            {
+                throw new TypeError("The \"id\" argument must be of type string.");
+            }
 
-        return Require.require(moduleName);
-    };
+            return requireService.RequireModule(moduleName);
+        };
+    }
 
     static ModuleContext()
     {
@@ -51,15 +56,23 @@ public class ModuleContext
         filename = string.Empty;
     }
 
-    public static ModuleContext CreateModuleContext()
+    public static ModuleContext CreateModuleContext([NotNull] ServiceContainer serviceProvider)
     {
+        ArgumentNullException.ThrowIfNull(serviceProvider);
+        var requireService = serviceProvider.Resolve<Require>();
         var context = new ModuleContext
         {
-            require = defaultRequire,
+            require = CreateRequireDelegate(requireService),
             __dirname = dirname,
             __filename = filename
         };
         return context;
+    }
+
+    public static ModuleContext CreateModuleContext()
+    {
+        // Fallback for legacy call sites (e.g. Node.Process.argv). Prefer passing a container.
+        return CreateModuleContext(JavaScriptRuntime.RuntimeServices.BuildServiceProvider());
     }
 
     public object? Exports { get; set; }

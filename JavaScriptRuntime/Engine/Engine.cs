@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using JavaScriptRuntime.DependencyInjection;
 
 namespace JavaScriptRuntime;
@@ -12,20 +13,22 @@ public class Engine
     /// </summary>
     internal static ServiceContainer? _serviceProviderOverride;
 
-    public void Execute(CommonJS.ModuleMainDelegate scriptEntryPoint)
+    public void Execute([NotNull] CommonJS.ModuleMainDelegate scriptEntryPoint)
     {
+        ArgumentException.ThrowIfNullOrEmpty(nameof(scriptEntryPoint));
+
         var serviceProvider = _serviceProviderOverride ?? RuntimeServices.BuildServiceProvider();
         
-        var tickSource = serviceProvider.Resolve<EngineCore.ITickSource>();
-        var waitHandle = serviceProvider.Resolve<EngineCore.IWaitHandle>();
-
         var ctx = serviceProvider.Resolve<EngineCore.NodeSychronizationContext>();
         SynchronizationContext.SetSynchronizationContext(ctx);
 
         GlobalThis.Scheduler = ctx;
         GlobalThis.MicrotaskScheduler = ctx;
 
-        var moduleContext = CommonJS.ModuleContext.CreateModuleContext();
+        // use for lookup of dependencies
+        serviceProvider.Resolve<LocalModulesAssembly>().ModulesAssembly = scriptEntryPoint.Method.Module.Assembly;
+
+        var moduleContext = CommonJS.ModuleContext.CreateModuleContext(serviceProvider);
 
         // Invoke script with module parameters (all null for now)
         // Parameters: exports, require, module, __filename, __dirname

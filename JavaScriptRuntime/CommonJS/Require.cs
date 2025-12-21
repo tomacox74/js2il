@@ -1,17 +1,24 @@
 using System.Reflection;
 
-namespace JavaScriptRuntime
+namespace JavaScriptRuntime.CommonJS
 {
-    public static class Require
+    sealed class Require
     {
         // Registry and instance cache; resolved lazily via [Node.NodeModule] attributes
-        private static readonly Dictionary<string, Type> _registry = new(StringComparer.OrdinalIgnoreCase);
-        private static readonly Dictionary<string, object> _instances = new(StringComparer.OrdinalIgnoreCase);
-        private static readonly HashSet<string> _notFound = new(StringComparer.OrdinalIgnoreCase);
-        private static readonly object _sync = new();
+        private readonly Dictionary<string, Type> _registry = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, object> _instances = new(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> _notFound = new(StringComparer.OrdinalIgnoreCase);
+
+        private readonly Assembly _localModulesAssembly;
+
+        public Require(LocalModulesAssembly localModulesAssembly)
+        {
+            // Preload local modules from the provided assembly
+            this._localModulesAssembly = localModulesAssembly.ModulesAssembly;
+        }
 
         // Deferred type lookup to avoid startup cost; scans assembly only on demand.
-        private static Type? FindModuleType(string name)
+        private Type? FindModuleType(string name)
         {
             var asm = typeof(Require).Assembly;
             foreach (var t in asm.GetTypes())
@@ -28,26 +35,51 @@ namespace JavaScriptRuntime
 
         // require("module") returns a Node core module instance; modules are singletons.
         // Unknown specifiers throw a ReferenceError.
-        public static object? require(string specifier)
+        public object? RequireModule(string specifier)
         {
             if (string.IsNullOrWhiteSpace(specifier))
                 throw new ReferenceError("require specifier must be a non-empty string"); 
 
-            // temporary code until we have local module resolution and loading
-            if (specifier.StartsWith(".") || specifier.StartsWith("/"))
-            {
-                // TODO
-                // 1. load local module if not already
-                // 2. return its exports object
-                return new object();
-            }
 
             var key = Normalize(specifier);
-            lock (_sync)
-            {
-                if (_instances.TryGetValue(key, out var existing))
-                    return existing;
+            var isLocalModule = key.StartsWith("./") || key.StartsWith("../") || key.StartsWith("/");
 
+            if (_instances.TryGetValue(key, out var existing))
+                return existing;
+
+            if (isLocalModule)
+            {
+                var moduleName = Path.GetFileNameWithoutExtension(key);
+                var TypeName = $"Scripts.{moduleName}";
+                var localType = _localModulesAssembly.GetType(TypeName);
+                if (localType == null)
+                    throw new ReferenceError($"Cannot find local module type '{TypeName}' in assembly");
+
+                // method is a static member
+                var moduleEntryPoint = localType.GetMethod("Main");
+                if (moduleEntryPoint == null)
+                    throw new TypeError($"Local module '{moduleName}' does not have a static Main method");
+
+                var moduleDelegate = (ModuleMainDelegate)Delegate.CreateDelegate(
+                    typeof(ModuleMainDelegate), moduleEntryPoint);
+
+                RequireDelegate require = (moduleId) => 
+                {
+                    if (moduleId is not string moduleName || moduleId == null)
+                    {
+                        throw new TypeError("The \"id\" argument must be of type string.");
+                    }
+                    return RequireModule(moduleName);
+                };
+
+                moduleDelegate(null, require, null, key, Path.GetDirectoryName(key) ?? "");
+
+                // todo
+                return null;
+
+            }
+            else
+            {
                 if (!_registry.TryGetValue(key, out var type))
                 {
                     if (_notFound.Contains(key))

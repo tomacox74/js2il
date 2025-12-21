@@ -214,7 +214,7 @@ namespace Js2IL.SymbolTables
         private static Type? ResolveNodeModuleType(string key)
         {
             if (string.IsNullOrWhiteSpace(key)) return null;
-            var asm = typeof(JavaScriptRuntime.Require).Assembly;
+            var asm = typeof(JavaScriptRuntime.Node.NodeModuleAttribute).Assembly;
             // Scan JavaScriptRuntime.Node namespace for [NodeModule(Name=key)]
             foreach (var t in asm.GetTypes())
             {

@@ -4,7 +4,7 @@ namespace JavaScriptRuntime.CommonJS
     /// Delegate type for compiled module main methods.
     /// Parameters: (exports, require, module, __filename, __dirname)
     /// </summary>
-    public delegate void ModuleMainDelegate(object? exports, object? require, object? module, object? __filename, object? __dirname);
+    public delegate void ModuleMainDelegate(object? exports, RequireDelegate require, object? module, string __filename, string __dirname);
 
     /// <summary>
     /// Can't type moduleName as string because the javascript could be passing non-string values.
