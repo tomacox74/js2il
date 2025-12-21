@@ -1,7 +1,3 @@
-using System;
-using System.IO;
-using System.Reflection;
-
 namespace JavaScriptRuntime
 {
     /// <summary>
@@ -10,26 +6,6 @@ namespace JavaScriptRuntime
     /// </summary>
     public static class GlobalThis
     {
-        static GlobalThis()
-        {
-            // Provide sensible defaults when running out-of-proc: resolve to the entry assembly path.
-            try
-            {
-                var entry = Assembly.GetEntryAssembly();
-                var file = entry?.Location;
-                if (!string.IsNullOrEmpty(file))
-                {
-                    __filename = file!;
-                    __dirname = System.IO.Path.GetDirectoryName(file!) ?? string.Empty;
-                    // argv is resolved on-demand by Process.argv from the environment provider.
-                }
-            }
-            catch
-            {
-                // Best-effort; leave defaults if anything goes wrong.
-            }
-        }
-
         internal static JavaScriptRuntime.EngineCore.IScheduler? Scheduler
         {
             get => _scheduler;
@@ -45,11 +21,6 @@ namespace JavaScriptRuntime
 
         private static JavaScriptRuntime.EngineCore.IScheduler? _scheduler;
 
-        /// <summary>Directory name of the current module (script).</summary>
-        public static string __dirname { get; private set; } = string.Empty;
-
-        /// <summary>Absolute filename of the current module (script).</summary>
-        public static string __filename { get; private set; } = string.Empty;
 
         /// <summary>Minimal process global with writable exitCode.</summary>
         public static JavaScriptRuntime.Node.Process process { get; } = new JavaScriptRuntime.Node.Process();
@@ -96,10 +67,6 @@ namespace JavaScriptRuntime
         {
             switch (name)
             {
-                case "__dirname":
-                    return __dirname;
-                case "__filename":
-                    return __filename;
                 case "process":
                     return process;
                 case "console":
@@ -121,26 +88,6 @@ namespace JavaScriptRuntime
         public static object clearTimeout(object handle)
         {
             return EnsureTimers().clearTimeout(handle);
-        }
-
-        /// <summary>
-        /// Sets the active module path context. Call before executing a translated script.
-        /// </summary>
-        public static void SetModuleContext(string? dirname, string? filename)
-        {
-            __dirname = dirname ?? string.Empty;
-            __filename = filename ?? string.Empty;
-            // argv is resolved on-demand by Process.argv from the environment provider.
-        }
-
-        /// <summary>
-        /// Resets globals to defaults (useful for tests).
-        /// </summary>
-        public static void Reset()
-        {
-            __dirname = string.Empty;
-            __filename = string.Empty;
-            process.exitCode = 0;
         }
     }
 }

@@ -28,11 +28,17 @@
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			object exports,
+			object require,
+			object module,
+			object __filename,
+			object __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 116 (0x74)
+		// Code size: 113 (0x71)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.FS_ReadWrite_Utf8,
@@ -54,36 +60,36 @@
 		IL_001d: newarr [System.Runtime]System.Object
 		IL_0022: dup
 		IL_0023: ldc.i4.0
-		IL_0024: call string [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get___dirname()
-		IL_0029: stelem.ref
-		IL_002a: dup
-		IL_002b: ldc.i4.1
-		IL_002c: ldstr "tmp.txt"
-		IL_0031: stelem.ref
-		IL_0032: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Node.Path::join(object[])
-		IL_0037: stloc.3
-		IL_0038: ldloc.1
-		IL_0039: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.FS
-		IL_003e: ldloc.3
-		IL_003f: ldstr "hello"
-		IL_0044: ldstr "utf8"
-		IL_0049: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Node.FS::writeFileSync(object, object, object)
-		IL_004e: pop
-		IL_004f: ldloc.1
-		IL_0050: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.FS
-		IL_0055: ldloc.3
-		IL_0056: ldstr "utf8"
-		IL_005b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Node.FS::readFileSync(object, object)
-		IL_0060: stloc.s 4
-		IL_0062: ldc.i4.1
-		IL_0063: newarr [System.Runtime]System.Object
-		IL_0068: dup
-		IL_0069: ldc.i4.0
-		IL_006a: ldloc.s 4
-		IL_006c: stelem.ref
-		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0072: pop
-		IL_0073: ret
+		IL_0024: ldarg.s __dirname
+		IL_0026: stelem.ref
+		IL_0027: dup
+		IL_0028: ldc.i4.1
+		IL_0029: ldstr "tmp.txt"
+		IL_002e: stelem.ref
+		IL_002f: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Node.Path::join(object[])
+		IL_0034: stloc.3
+		IL_0035: ldloc.1
+		IL_0036: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.FS
+		IL_003b: ldloc.3
+		IL_003c: ldstr "hello"
+		IL_0041: ldstr "utf8"
+		IL_0046: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Node.FS::writeFileSync(object, object, object)
+		IL_004b: pop
+		IL_004c: ldloc.1
+		IL_004d: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.FS
+		IL_0052: ldloc.3
+		IL_0053: ldstr "utf8"
+		IL_0058: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Node.FS::readFileSync(object, object)
+		IL_005d: stloc.s 4
+		IL_005f: ldc.i4.1
+		IL_0060: newarr [System.Runtime]System.Object
+		IL_0065: dup
+		IL_0066: ldc.i4.0
+		IL_0067: ldloc.s 4
+		IL_0069: stelem.ref
+		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_006f: pop
+		IL_0070: ret
 	} // end of method FS_ReadWrite_Utf8::Main
 
 } // end of class Scripts.FS_ReadWrite_Utf8
@@ -95,7 +101,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20dc
+		// Method begins at RVA 0x20d9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
@@ -103,9 +109,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.FS_ReadWrite_Utf8::Main()
-		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0006: ldftn void Scripts.FS_ReadWrite_Utf8::Main(object, object, object, object, object)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 

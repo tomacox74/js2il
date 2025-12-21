@@ -41,9 +41,11 @@ public class Engine
         GlobalThis.Scheduler = ctx;
         GlobalThis.MicrotaskScheduler = ctx;
 
+        var moduleContext = CommonJS.ModuleContext.CreateModuleContext();
+
         // Invoke script with module parameters (all null for now)
         // Parameters: exports, require, module, __filename, __dirname
-        scriptEntryPoint(null, null, null, null, null);
+        scriptEntryPoint(moduleContext.Exports, moduleContext.require, null, moduleContext.__filename, moduleContext.__dirname);    
 
         while (ctx.HasPendingWork())
         {
