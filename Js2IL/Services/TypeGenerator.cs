@@ -38,17 +38,15 @@ namespace Js2IL.Services
         /// Generates .NET types from the symbol table.
         /// Returns the root type definition handle.
         /// </summary>
-        public TypeDefinitionHandle GenerateTypes(SymbolTable symbolTable)
+        public void GenerateTypes(SymbolTable symbolTable)
         {            
             // Phase 1: Create all scope types (depth-first) for every scope discovered by the SymbolTable.
             // SymbolTable already contains scopes for function declarations, function expressions, arrow functions,
             // class methods, block scopes, etc. We rely on that being exhaustive and treat all of them uniformly.
-            var rootType = CreateAllTypes(symbolTable.Root, symbolTable.Root.Name);
+            CreateAllTypes(symbolTable.Root, symbolTable.Root.Name);
 
             // Phase 2: Populate the variable registry (fields + metadata for every binding).
             PopulateVariableRegistry(symbolTable.Root);
-
-            return rootType;
         }
 
         /// <summary>
@@ -143,7 +141,7 @@ namespace Js2IL.Services
         /// All fields must already be created before this is called.
         /// Root types go in the "Scopes" namespace, nested types are properly nested.
         /// </summary>
-        private TypeDefinitionHandle CreateAllTypes(Scope scope, string typeName)
+        private void CreateAllTypes(Scope scope, string typeName)
         {
             // First, recursively create all child types (depth-first)
             // We'll create the parent type first, then update children to be nested
@@ -160,8 +158,6 @@ namespace Js2IL.Services
                 }
                 CreateAllTypesNested(childScope, childScope.Name, parentType);
             }
-
-            return parentType;
         }
 
         /// <summary>

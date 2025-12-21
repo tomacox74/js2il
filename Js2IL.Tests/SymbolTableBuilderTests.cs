@@ -26,7 +26,8 @@ namespace Js2IL.Tests
                 Ast = ast,
                 Path = fileName
             };
-            return _scopeBuilder.Build(module);
+            _scopeBuilder.Build(module);
+            return module.SymbolTable!;
         }
 
         [Fact]

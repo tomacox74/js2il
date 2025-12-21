@@ -103,9 +103,10 @@ public class ModuleLoader
                 continue;
             }
 
+            var resolvedDepPath = ResolveModulePath(module.Path, dep);
             if (!modules._modules.ContainsKey(dep))
             {
-                if (TryLoadAndParseModule(dep, out var depModule) && depModule != null)
+                if (TryLoadAndParseModule(resolvedDepPath, out var depModule) && depModule != null)
                 {
                     modules._modules[dep] = depModule;
                 }
@@ -150,5 +151,15 @@ public class ModuleLoader
         });
 
         return dependencies;
+    }
+
+    private string ResolveModulePath(string basePath, string moduleSpecifier)
+    {
+        var baseDirectory = Path.GetDirectoryName(basePath) ?? ".";
+        var combinedPath = Path.Combine(baseDirectory, moduleSpecifier);
+
+        // Normalize the path
+        var fullPath = Path.GetFullPath(combinedPath);
+        return fullPath + ".js";
     }
 }    

@@ -20,7 +20,8 @@ public class SymbolTableTypeInferenceTests
             Ast = ast,
             Path = fileName
         };
-        return _scopeBuilder.Build(module);
+        _scopeBuilder.Build(module);
+        return module.SymbolTable!;
     }
     [Theory]
     [InlineData(typeof(double), "42")]

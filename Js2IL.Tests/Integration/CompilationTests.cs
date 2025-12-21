@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Js2IL.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Js2IL.Tests.Integration
 {
@@ -33,29 +34,23 @@ namespace Js2IL.Tests.Integration
             var scriptPath = Path.Combine(repoRoot, "scripts", "generateFeatureCoverage.js");
             Assert.True(File.Exists(scriptPath), $"Script file not found: {scriptPath}");
 
-            var js = File.ReadAllText(scriptPath);
-
-            var parser = new JavaScriptParser();
-            var ast = parser.ParseJavaScript(js, scriptPath);
-
-            var validator = new JavaScriptAstValidator();
-            var validation = validator.Validate(ast);
-            Assert.True(validation.IsValid, "Validation failed: " + string.Join("; ", validation.Errors));
-
             var outputDir = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", "Integration", "Compilation");
             Directory.CreateDirectory(outputDir);
 
-            var assemblyName = "GenerateFeatureCoverage_Script";
-            var module = new ModuleDefinition
+            var options = new CompilerOptions
             {
-                Ast = ast,
-                Path = "test.js"
+                OutputDirectory = outputDir
             };
 
-            var generator = new AssemblyGenerator();
-            generator.Generate(module, assemblyName, outputDir);
+            var serviceProvider = CompilerServices.BuildServiceProvider(options, fileSystem: null);
+            var compiler = serviceProvider.GetRequiredService<Compiler>();
+            
+            if (!compiler.Compile(scriptPath))
+            {
+                throw new InvalidOperationException($"Compilation failed for script {scriptPath}");
+            }
 
-            var outputDll = Path.Combine(outputDir, assemblyName + ".dll");
+            var outputDll = Path.Combine(outputDir, "generateFeatureCoverage.dll");
             Assert.True(File.Exists(outputDll), $"Output assembly missing: {outputDll}");
             Assert.True(new FileInfo(outputDll).Length > 0, "Output assembly is empty");
         }

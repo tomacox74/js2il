@@ -28,69 +28,53 @@ public class Compiler
             return false;
         }
 
-        var module = modules.rootModule;
-
-        // Step 3: Analyze unused code (if requested)
+        // Analyze unused code (if requested)
         if (this.analyzeUnused)
         {
-            Console.WriteLine("\nAnalyzing unused code...");
-            var unusedCodeAnalyzer = new UnusedCodeAnalyzer();
-            var unusedCodeResult = unusedCodeAnalyzer.Analyze(module.Ast);
-
-            if (unusedCodeResult.UnusedFunctions.Any())
-            {
-                Console.WriteLine("\nUnused Functions:");
-                foreach (var unusedFunc in unusedCodeResult.UnusedFunctions)
-                {
-                    Console.WriteLine($"  - {unusedFunc}");
-                }
-            }
-
-            if (unusedCodeResult.UnusedProperties.Any())
-            {
-                Console.WriteLine("\nUnused Properties:");
-                foreach (var unusedProp in unusedCodeResult.UnusedProperties)
-                {
-                    Console.WriteLine($"  - {unusedProp}");
-                }
-            }
-
-            if (unusedCodeResult.UnusedVariables.Any())
-            {
-                Console.WriteLine("\nUnused Variables:");
-                foreach (var unusedVar in unusedCodeResult.UnusedVariables)
-                {
-                    Console.WriteLine($"  - {unusedVar}");
-                }
-            }
-
-            if (unusedCodeResult.Warnings.Any())
-            {
-                Console.WriteLine("\nUnused Code Analysis Warnings:");
-                foreach (var warning in unusedCodeResult.Warnings)
-                {
-                    Logger.WriteLineWarning($"Warning: {warning}");
-                }
-            }
+            AnalyzeUnusedForModules(modules);
         }
 
-        // Step 4: Build scope tree
-        Console.WriteLine("\nBuilding scope tree...");
-        var symbolTable = _symbolTableBuilder.Build(module);
+        // Build scope trees
+        Console.WriteLine("\nBuild the symbol tables");
+        foreach (var mod in modules._modules.Values)
+        {
+            _symbolTableBuilder.Build(mod);
+        }
 
         if (this.verbose)
         {
-            Console.WriteLine("\nScope Tree Structure:");
-            PrintScopeTree(symbolTable.Root, 0);
+            
+            foreach (var mod in modules._modules.Values)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Scope Tree Structure:");
+                Console.WriteLine($"Module: {mod.Path}");
+                var symbolTable = mod.SymbolTable!;
+                PrintScopeTree(symbolTable.Root, 0);
+            }
         }
 
-        // Step 5: Generate IL
-        // NOTE: some checkes such as the existance of the the file parsed.InputFile are done by powerargs for us
+        // Generate IL assembly
         Console.WriteLine("\nGenerating dotnet assembly...");
         var assemblyGenerator = new AssemblyGenerator();
 
         // Resolve and validate output directory; create if missing
-        string outputPath;
+        if (!EnsureOutputPathExists(inputFile, this.outputDirectory, out var outputPath))
+        {
+            return false;
+        }
+
+        var assemblyName = Path.GetFileNameWithoutExtension(inputFile);
+
+        assemblyGenerator.Generate(modules, assemblyName, outputPath);
+
+        Console.WriteLine($"Compiliation succeeded. Output written to {outputPath}");
+
+        return true;
+    }
+
+    private bool EnsureOutputPathExists(string inputFile, string? outputDirectory, out string outputPath)
+    {
         if (string.IsNullOrWhiteSpace(outputDirectory))
         {
             outputPath = Path.GetDirectoryName(Path.GetFullPath(inputFile))!;
@@ -127,12 +111,6 @@ public class Compiler
             return false;
         }
 
-        var assemblyName = Path.GetFileNameWithoutExtension(inputFile);
-
-        assemblyGenerator.Generate(module.Ast, symbolTable, assemblyName, outputPath);
-
-        Console.WriteLine($"\nConversion complete. Output written to {outputPath}");
-
         return true;
     }
 
@@ -157,6 +135,63 @@ public class Compiler
         {
             PrintScopeTree(child, indentLevel + 1);
         }
+    }
+
+    private static void AnalyzeUnusedForModules(Modules modules)
+    {
+        foreach (var module in modules._modules.Values)
+        {
+            AnalyzeUnusedForModule(module);
+        }
+    }
+
+    private static void AnalyzeUnusedForModule(ModuleDefinition module)
+    {
+            Console.WriteLine();
+            Console.WriteLine($"Analyzing unused code for module: {module.Path}");
+            var unusedCodeAnalyzer = new UnusedCodeAnalyzer();
+            var unusedCodeResult = unusedCodeAnalyzer.Analyze(module.Ast);
+
+            if (unusedCodeResult.UnusedFunctions.Any())
+            {
+                Console.WriteLine();
+                Console.WriteLine("Unused Functions:");
+                foreach (var unusedFunc in unusedCodeResult.UnusedFunctions)
+                {
+                    Console.WriteLine($"  - {unusedFunc}");
+                }
+            }
+
+            if (unusedCodeResult.UnusedProperties.Any())
+            {
+                Console.WriteLine();
+                Console.WriteLine("Unused Properties:");
+                foreach (var unusedProp in unusedCodeResult.UnusedProperties)
+                {
+                    Console.WriteLine($"  - {unusedProp}");
+                }
+            }
+
+            if (unusedCodeResult.UnusedVariables.Any())
+            {
+                Console.WriteLine();
+                Console.WriteLine("Unused Variables:");
+                foreach (var unusedVar in unusedCodeResult.UnusedVariables)
+                {
+                    Console.WriteLine($"  - {unusedVar}");
+                }
+            }
+
+            if (unusedCodeResult.Warnings.Any())
+            {
+                Console.WriteLine();
+                Console.WriteLine("Unused Code Analysis Warnings:");
+                foreach (var warning in unusedCodeResult.Warnings)
+                {
+                    Logger.WriteLineWarning($"Warning: {warning}");
+                }
+            }
+        
     }
 
 }

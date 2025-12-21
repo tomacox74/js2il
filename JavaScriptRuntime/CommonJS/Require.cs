@@ -33,6 +33,15 @@ namespace JavaScriptRuntime
             if (string.IsNullOrWhiteSpace(specifier))
                 throw new ReferenceError("require specifier must be a non-empty string");
 
+            // temporary code until we have local module resolution and loading
+            if (specifier.StartsWith(".") || specifier.StartsWith("/"))
+            {
+                // TODO
+                // 1. load local module if not already
+                // 2. return its exports object
+                return new object();
+            }
+
             var key = Normalize(specifier);
             lock (_sync)
             {

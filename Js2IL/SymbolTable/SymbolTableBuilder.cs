@@ -1,9 +1,4 @@
 using Acornima.Ast;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 
 namespace Js2IL.SymbolTables
 {
@@ -22,16 +17,29 @@ namespace Js2IL.SymbolTables
         private int _closureCounter = 0;
         private string? _currentAssignmentTarget = null;
 
-        public SymbolTable Build(ModuleDefinition module)
+        public void Build(ModuleDefinition module)
         {
             var fileName = Path.GetFileNameWithoutExtension(module.Path);
             var globalScope = new Scope(fileName, ScopeKind.Global, null, module.Ast);
+
+            AddModuleBuiltInParameters(globalScope, module.Ast);
+
             BuildScopeRecursive(module.Ast, globalScope);
             AnalyzeFreeVariables(globalScope);
             MarkCapturedVariables(globalScope);
             InferVariableClrTypes(globalScope);
             module.SymbolTable = new SymbolTable(globalScope);
-            return module.SymbolTable;
+        }
+
+        private void AddModuleBuiltInParameters(Scope globalScope, Node astNode)
+        {
+            // Add built-in parameters for module system using shared ModuleParameters definition
+            foreach (var param in JavaScriptRuntime.CommonJS.ModuleParameters.Parameters)
+            {
+                var bindingKind = param.IsConst ? BindingKind.Const : BindingKind.Var;
+                globalScope.Bindings[param.Name] = new BindingInfo(param.Name, bindingKind, astNode);
+                globalScope.Parameters.Add(param.Name);
+            }
         }
 
         /// <summary>

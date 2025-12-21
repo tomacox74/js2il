@@ -26,7 +26,7 @@ public sealed class EngineOptions
 /// </summary>
 public class Engine
 {
-    public void Execute(Action scriptEntryPoint)
+    public void Execute(CommonJS.ModuleMainDelegate scriptEntryPoint)
     {
         var engineOptions = EngineOptions.DefaultOptionsProvider?.Invoke();
         if (engineOptions == null)
@@ -41,7 +41,9 @@ public class Engine
         GlobalThis.Scheduler = ctx;
         GlobalThis.MicrotaskScheduler = ctx;
 
-        scriptEntryPoint();
+        // Invoke script with module parameters (all null for now)
+        // Parameters: exports, require, module, __filename, __dirname
+        scriptEntryPoint(null, null, null, null, null);
 
         while (ctx.HasPendingWork())
         {
