@@ -87,8 +87,8 @@ namespace Js2IL.Tests.Node
         [Fact]
         public async Task SetTimeout_OneSecondDelay()
         {
-            var mockTickSource = new Js2IL.Tests.Node.MockTickSource();
-            var mockWaitHandle = new Js2IL.Tests.Node.MockWaitHandle(
+            var mockTickSource = new MockTickSource();
+            var mockWaitHandle = new MockWaitHandle(
                 onSet: () => { },
                 onWaitOne: (msTimeout) =>
                 {
