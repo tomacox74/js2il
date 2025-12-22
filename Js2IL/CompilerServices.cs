@@ -28,7 +28,7 @@ public static class CompilerServices
         services.AddSingleton<MetadataBuilder>();
 
 
-        // these classes cache references to external assembies.
+        // these classes cache references to external assemblies.
         // prior to having these caches the generated assembly had multiple references to the same types
         // these classes also have methods that generate references from provided dotnet types using reflection
         services.AddSingleton<Utilities.Ecma335.TypeReferenceRegistry>();
