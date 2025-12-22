@@ -482,6 +482,32 @@
       ]
     },
     {
+      "name": "setInterval",
+      "status": "supported",
+      "implementation": "JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs, JavaScriptRuntime/Engine/NodeSychronizationContext.cs",
+      "docs": "https://nodejs.org/api/timers.html#setintervalcallback-delay-args",
+      "notes": "Schedules a callback to run repeatedly with the specified delay in milliseconds. Returns a handle that can be used with clearInterval. Supports additional arguments passed to the callback.",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.ExecutionTests.SetInterval_ExecutesThreeTimes_ThenClears",
+          "file": "Js2IL.Tests/Node/ExecutionTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "clearInterval",
+      "status": "supported",
+      "implementation": "JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs, JavaScriptRuntime/Engine/NodeSychronizationContext.cs",
+      "docs": "https://nodejs.org/api/timers.html#clearintervaltimeout",
+      "notes": "Cancels a repeating timer that was previously created with setInterval. Returns undefined (null in .NET).",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.ExecutionTests.SetInterval_ExecutesThreeTimes_ThenClears",
+          "file": "Js2IL.Tests/Node/ExecutionTests.cs"
+        }
+      ]
+    },
+    {
       "name": "Promise",
       "status": "supported",
       "implementation": "JavaScriptRuntime/Promise.cs, JavaScriptRuntime/Engine/EngineCore.cs",

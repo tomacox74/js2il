@@ -139,8 +139,25 @@ namespace Js2IL.Services.ILGenerators
             {
                 if (!unbox) return;
 
-                // If the variable is a stable-type double stored in a local slot, it's already float64
-                if (variable.ClrType == typeof(double) && variable.IsStableType && variable.LocalSlot >= 0) return;
+                // Stable primitive variables are emitted as unboxed primitives in their storage locations.
+                // - For typed locals (double), ldloc already yields float64.
+                // - For scope fields (captured vars), ldfld yields the field's primitive type (e.g., float64/bool).
+                // Only parameters are always boxed (object) and require unboxing.
+                if (!variable.IsParameter && variable.IsStableType)
+                {
+                    if (jsType == JavascriptType.Number)
+                    {
+                        // Typed local optimization: already float64
+                        if (variable.LocalSlot >= 0 && variable.ClrType == typeof(double)) return;
+                        // Field-backed stable numbers are stored as float64
+                        if (variable.LocalSlot < 0) return;
+                    }
+                    else if (jsType == JavascriptType.Boolean)
+                    {
+                        // Field-backed stable booleans are stored as bool
+                        if (variable.LocalSlot < 0) return;
+                    }
+                }
                 
                 // Unbox based on JavaScript type (Number or Boolean)
                 if (jsType == JavascriptType.Number)
@@ -336,8 +353,21 @@ namespace Js2IL.Services.ILGenerators
                     throw new InvalidOperationException($"Scope '{variable.ScopeName}' not found in local slots");
                 }
 
-                // Allocate a temp local for the value
+                // Allocate a temp local for the value - temp slots are typed as object, so we must box first
                 var tempSlot = variables.AllocateBlockScopeLocal($"StoreTemp_{variable.Name}");
+                
+                // If the value is an unboxed primitive, box it before storing to the object-typed temp local
+                if (!valueIsBoxed)
+                {
+                    if (bclReferences == null)
+                    {
+                        throw new ArgumentNullException(nameof(bclReferences), "BCL references required for boxing when storing to temp local.");
+                    }
+                    il.OpCode(ILOpCode.Box);
+                    il.Token(bclReferences.DoubleType);
+                    valueIsBoxed = true;  // Value is now boxed
+                }
+                
                 il.StoreLocal(tempSlot);  // Stack: [] (value saved to temp)
 
                 // Load scope instance
@@ -367,6 +397,46 @@ namespace Js2IL.Services.ILGenerators
 
                 // Load value from temp
                 il.LoadLocal(tempSlot);  // Stack: [scope, value]
+            }
+
+            // If the incoming value is an unboxed primitive but this variable is not stored in a
+            // typed value-type field, we must box before stfld.
+            // Note: fields are only typed as value types for stable-typed variables.
+            if (!valueIsBoxed)
+            {
+                bool fieldIsTypedAsDouble = variable.IsStableType && variable.ClrType == typeof(double);
+                bool fieldIsTypedAsBool = variable.IsStableType && variable.ClrType == typeof(bool);
+
+                if (!fieldIsTypedAsDouble && !fieldIsTypedAsBool)
+                {
+                    if (bclReferences == null)
+                    {
+                        throw new ArgumentNullException(nameof(bclReferences), "BCL references are required for boxing operations.");
+                    }
+
+                    if (variable.Type == JavascriptType.Number)
+                    {
+                        il.OpCode(ILOpCode.Box);
+                        il.Token(bclReferences.DoubleType);
+                    }
+                    else if (variable.Type == JavascriptType.Boolean)
+                    {
+                        il.OpCode(ILOpCode.Box);
+                        il.Token(bclReferences.BooleanType);
+                    }
+                    else if (variable.Type == JavascriptType.Unknown)
+                    {
+                        // Callers only pass valueIsBoxed=false when emitting a known unboxed primitive.
+                        // For captured/update-expression paths the Variable.Type may not be updated yet.
+                        // Default to boxing as double to preserve existing numeric semantics.
+                        il.OpCode(ILOpCode.Box);
+                        il.Token(bclReferences.DoubleType);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"Attempted to store an unboxed value into variable '{variable.Name}' with non-primitive JS type '{variable.Type}'.");
+                    }
+                }
             }
 
             // Stack: [scope instance, value]

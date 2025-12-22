@@ -9,6 +9,9 @@ struct TimerEntry : IEquatable<TimerEntry>
     public required Action Callback;
     public required long DueTicks;
 
+    public required bool IsRepeating;
+    public required long IntervalTicks;
+
     public bool Equals(TimerEntry other)
     {
         return id == other.id;
@@ -55,6 +58,7 @@ public class NodeSychronizationContext : SynchronizationContext, IScheduler, IMi
     private readonly Queue<ImmediateEntry> _immediate = new();
     private readonly HashSet<long> _immediateIds = new();
     private readonly HashSet<long> _canceledImmediates = new();
+    private readonly HashSet<long> _canceledIntervals = new();
     private readonly Queue<Action> _macro = new();
     private readonly PriorityQueue<TimerEntry, long> _timers = new();
     private readonly Queue<Action> _micro = new();
@@ -105,7 +109,30 @@ public class NodeSychronizationContext : SynchronizationContext, IScheduler, IMi
             if (_timers.TryPeek(out var item, out long due) && due <= now)
             {
                 _timers.Dequeue();
+
+                // Check if this interval was canceled
+                if (item.IsRepeating && _canceledIntervals.Contains(item.id))
+                {
+                    // Don't execute and don't reschedule; clean up the cancel tracking
+                    _canceledIntervals.Remove(item.id);
+                    return;
+                }
+
                 lock (_macro) _macro.Enqueue(item.Callback);
+
+                // Reschedule repeating timers from "now" (Node-like drift behavior)
+                if (item.IsRepeating && item.IntervalTicks > 0)
+                {
+                    var nextEntry = new TimerEntry
+                    {
+                        id = item.id,
+                        Callback = item.Callback,
+                        DueTicks = now + item.IntervalTicks,
+                        IsRepeating = true,
+                        IntervalTicks = item.IntervalTicks
+                    };
+                    _timers.Enqueue(nextEntry, nextEntry.DueTicks);
+                }
             }
         }
     }
@@ -212,9 +239,18 @@ public class NodeSychronizationContext : SynchronizationContext, IScheduler, IMi
         var id = System.Threading.Interlocked.Increment(ref _nextTimerId);
 
         // struct so this is allocated on the stact
-        var entry = new TimerEntry { id = id, Callback = action, DueTicks =  now + delay.Ticks };
+        var entry = new TimerEntry
+        {
+            id = id,
+            Callback = action,
+            DueTicks = now + delay.Ticks,
+            IsRepeating = false,
+            IntervalTicks = 0
+        };
 
         this._timers.Enqueue(entry, entry.DueTicks);
+
+        _wakeup.Set();
 
         return entry;
     }
@@ -225,6 +261,41 @@ public class NodeSychronizationContext : SynchronizationContext, IScheduler, IMi
         if (handle is TimerEntry entry)
         {
             this._timers.Remove(entry, out var _, out var _);
+            _wakeup.Set();
+        }
+    }
+
+    object IScheduler.ScheduleInterval(Action action, TimeSpan interval)
+    {
+        var now = this._tickSource.GetTicks();
+        var id = System.Threading.Interlocked.Increment(ref _nextTimerId);
+        var ticks = interval.Ticks;
+        if (ticks < 0) ticks = 0;
+
+        var entry = new TimerEntry
+        {
+            id = id,
+            Callback = action,
+            DueTicks = now + ticks,
+            IsRepeating = true,
+            IntervalTicks = ticks
+        };
+
+        this._timers.Enqueue(entry, entry.DueTicks);
+        _wakeup.Set();
+        return entry;
+    }
+
+    void IScheduler.CancelInterval(object handle)
+    {
+        // Mark the interval as canceled; rescheduling will check this
+        if (handle is TimerEntry entry)
+        {
+            lock (_timers)
+            {
+                _canceledIntervals.Add(entry.id);
+            }
+            _wakeup.Set();
         }
     }
 

@@ -556,14 +556,13 @@ namespace Js2IL.Services.ILGenerators
                         var localVar = _variables.FindVariable(name);
                         if (localVar != null)
                         {
+                            var requestedBox = typeCoercion.boxResult;
                             // Load variable using centralized helper; auto-unboxes number/boolean when boxResult == false
                             _il.EmitLoadVariable(localVar, _variables, _owner.BclReferences, 
-                                unbox: !typeCoercion.boxResult,
+                                unbox: !requestedBox,
                                 inClassMethod: _owner.InClassMethod,
                                 currentClassName: _owner.CurrentClassName,
                                 classRegistry: _owner.ClassRegistry);
-                            // Prevent downstream Emit() from boxing again; variables are already boxed when needed
-                            typeCoercion.boxResult = false;
                             
                             // Determine the type that's actually on the stack after loading
                             // For stable-type double variables, the value is already unboxed (native float64)
@@ -576,6 +575,27 @@ namespace Js2IL.Services.ILGenerators
                             {
                                 javascriptType = localVar.Type;
                             }
+
+                            // If the caller needs a boxed object (e.g., stelem.ref into object[]), ensure
+                            // stable primitive locals are boxed here. The loader intentionally keeps stable
+                            // locals unboxed for performance.
+                            if (requestedBox && localVar.IsStableType)
+                            {
+                                // Stable primitives are stored unboxed; box when the caller needs an object.
+                                if (javascriptType == JavascriptType.Number)
+                                {
+                                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
+                                    _il.Token(_owner.BclReferences.DoubleType);
+                                }
+                                else if (javascriptType == JavascriptType.Boolean)
+                                {
+                                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
+                                    _il.Token(_owner.BclReferences.BooleanType);
+                                }
+                            }
+
+                            // Prevent downstream Emit() from boxing again; we have boxed if needed above.
+                            typeCoercion.boxResult = false;
                             // Propagate known CLR runtime type (e.g., const perf = require('perf_hooks')) so downstream
                             // member/property emission can bind typed getters and direct instance calls.
                             clrType = localVar.ClrType;
@@ -3150,6 +3170,9 @@ namespace Js2IL.Services.ILGenerators
             //   2) Compute UPDATED = value (+/-) 1 and store back (stfld)
             //   3) Produce result: UPDATED for prefix; ORIGINAL for postfix (by reloading updated and reversing +/- 1)
 
+            // Update expressions always coerce to Number.
+            variable.Type = JavascriptType.Number;
+
             // Helper to emit explicit unbox for unstable double variables.
             // UnboxIfNeeded in EmitLoadVariable only unboxes when Type==Number,
             // but unstable double variables may have Type==Unknown while still being stored as boxed doubles.
@@ -3198,7 +3221,7 @@ namespace Js2IL.Services.ILGenerators
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Sub);
                 }
 
-                ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false, valueIsBoxed: true, bclReferences: _owner.BclReferences); // []
+                ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false, valueIsBoxed: false, bclReferences: _owner.BclReferences); // []
 
                 // 3) Reload UPDATED and optionally reverse to get ORIGINAL
                 ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences, unbox: true); // [updated]

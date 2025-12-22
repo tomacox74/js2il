@@ -30,6 +30,9 @@ namespace Js2IL.Tests.Node
         public Task ClearTimeout_ZeroDelay() => GenerateTest(nameof(ClearTimeout_ZeroDelay));
 
         [Fact]
+        public Task SetInterval_ExecutesThreeTimes_ThenClears() => GenerateTest(nameof(SetInterval_ExecutesThreeTimes_ThenClears));
+
+        [Fact]
         public Task Process_Exit_NoArg_GeneratesCall() => GenerateTest(
             nameof(Process_Exit_NoArg_GeneratesCall));
 

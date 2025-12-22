@@ -109,7 +109,7 @@ namespace Js2IL.Tests
             return Verify(il, settings);
         }
 
-        private string ExecuteGeneratedAssembly(string assemblyPath, bool allowUnhandledException, string? testName = null)
+        private string ExecuteGeneratedAssembly(string assemblyPath, bool allowUnhandledException, string? testName = null, int timeoutMs = 30000)
         {
             var processInfo = new ProcessStartInfo
             {
@@ -123,7 +123,13 @@ namespace Js2IL.Tests
             };
 
             using var process = Process.Start(processInfo);
-            process!.WaitForExit();
+            bool exited = process!.WaitForExit(timeoutMs);
+            
+            if (!exited)
+            {
+                process.Kill();
+                throw new TimeoutException($"Test execution timed out after {timeoutMs}ms. Test may have an infinite loop.");
+            }
 
             string stdOut = process.StandardOutput.ReadToEnd();
             string stdErr = process.StandardError.ReadToEnd();
@@ -149,7 +155,7 @@ namespace Js2IL.Tests
             return stdOut;
         }
 
-        private string ExecuteGeneratedAssemblyInProc(string assemblyPath, string? testName = null, Action<IConsoleOutput>? postTestProcessingAction = null)
+        private string ExecuteGeneratedAssemblyInProc(string assemblyPath, string? testName = null, Action<IConsoleOutput>? postTestProcessingAction = null, int timeoutMs = 30000)
         {
             var prevOut = System.Console.Out;
             var prevErr = System.Console.Error;
@@ -260,7 +266,32 @@ namespace Js2IL.Tests
 
                 var paramInfos = entryPoint.GetParameters();
                 object?[]? args = paramInfos.Length == 0 ? null : new object?[] { System.Array.Empty<string>() };
-                entryPoint.Invoke(null, args);
+                
+                // Run the entry point in a separate thread with timeout to prevent infinite hangs
+                Exception? threadException = null;
+                var executionThread = new Thread(() =>
+                {
+                    try
+                    {
+                        entryPoint.Invoke(null, args);
+                    }
+                    catch (Exception ex)
+                    {
+                        threadException = ex;
+                    }
+                });
+                executionThread.Start();
+                bool completed = executionThread.Join(timeoutMs);
+                if (!completed)
+                {
+                    // Cannot safely abort managed threads, but we can at least fail the test
+                    throw new TimeoutException($"In-proc test execution timed out after {timeoutMs}ms. Test may have an infinite loop.");
+                }
+                if (threadException != null)
+                {
+                    throw threadException;
+                }
+                
                 postTestProcessingAction?.Invoke(captured);
 
                 var outText = swOut.ToString();

@@ -1,0 +1,235 @@
+﻿// IL code: SetInterval_ExecutesThreeTimes_ThenClears
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.SetInterval_ExecutesThreeTimes_ThenClears
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit ArrowFunction_id
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Block_L7C21
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2062
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L7C21::.ctor
+
+		} // end of class Block_L7C21
+
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method ArrowFunction_id::.ctor
+
+	} // end of class ArrowFunction_id
+
+
+	// Fields
+	.field public object count
+	.field public object id
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method SetInterval_ExecutesThreeTimes_ThenClears::.ctor
+
+} // end of class Scopes.SetInterval_ExecutesThreeTimes_ThenClears
+
+.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L3C23
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object ArrowFunction_L3C23 (
+			object[] scopes
+		) cil managed 
+	{
+		// Method begins at RVA 0x206c
+		// Header size: 12
+		// Code size: 179 (0xb3)
+		.maxstack 32
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: ldarg.0
+		IL_0001: ldc.i4.0
+		IL_0002: ldelem.ref
+		IL_0003: castclass Scopes.SetInterval_ExecutesThreeTimes_ThenClears
+		IL_0008: ldfld object Scopes.SetInterval_ExecutesThreeTimes_ThenClears::count
+		IL_000d: unbox.any [System.Runtime]System.Double
+		IL_0012: ldc.r8 1
+		IL_001b: add
+		IL_001c: box [System.Runtime]System.Double
+		IL_0021: stloc.0
+		IL_0022: ldarg.0
+		IL_0023: ldc.i4.0
+		IL_0024: ldelem.ref
+		IL_0025: castclass Scopes.SetInterval_ExecutesThreeTimes_ThenClears
+		IL_002a: ldloc.0
+		IL_002b: stfld object Scopes.SetInterval_ExecutesThreeTimes_ThenClears::count
+		IL_0030: ldc.i4.1
+		IL_0031: newarr [System.Runtime]System.Object
+		IL_0036: dup
+		IL_0037: ldc.i4.0
+		IL_0038: ldstr "tick "
+		IL_003d: ldarg.0
+		IL_003e: ldc.i4.0
+		IL_003f: ldelem.ref
+		IL_0040: castclass Scopes.SetInterval_ExecutesThreeTimes_ThenClears
+		IL_0045: ldfld object Scopes.SetInterval_ExecutesThreeTimes_ThenClears::count
+		IL_004a: unbox.any [System.Runtime]System.Double
+		IL_004f: box [System.Runtime]System.Double
+		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0059: stelem.ref
+		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_005f: pop
+		IL_0060: ldarg.0
+		IL_0061: ldc.i4.0
+		IL_0062: ldelem.ref
+		IL_0063: castclass Scopes.SetInterval_ExecutesThreeTimes_ThenClears
+		IL_0068: ldfld object Scopes.SetInterval_ExecutesThreeTimes_ThenClears::count
+		IL_006d: unbox.any [System.Runtime]System.Double
+		IL_0072: ldc.r8 3
+		IL_007b: beq IL_0085
+
+		IL_0080: br IL_00b1
+
+		IL_0085: ldarg.0
+		IL_0086: ldc.i4.0
+		IL_0087: ldelem.ref
+		IL_0088: castclass Scopes.SetInterval_ExecutesThreeTimes_ThenClears
+		IL_008d: ldfld object Scopes.SetInterval_ExecutesThreeTimes_ThenClears::id
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::clearInterval(object)
+		IL_0097: pop
+		IL_0098: ldc.i4.1
+		IL_0099: newarr [System.Runtime]System.Object
+		IL_009e: dup
+		IL_009f: ldc.i4.0
+		IL_00a0: ldstr "cleared"
+		IL_00a5: stelem.ref
+		IL_00a6: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_00ab: pop
+		IL_00ac: br IL_00b1
+
+		IL_00b1: ldnull
+		IL_00b2: ret
+	} // end of method ArrowFunction_L3C23::ArrowFunction_L3C23
+
+} // end of class Functions.ArrowFunction_L3C23
+
+.class public auto ansi beforefieldinit Scripts.SetInterval_ExecutesThreeTimes_ThenClears
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x212c
+		// Header size: 12
+		// Code size: 104 (0x68)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.SetInterval_ExecutesThreeTimes_ThenClears
+		)
+
+		IL_0000: newobj instance void Scopes.SetInterval_ExecutesThreeTimes_ThenClears::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldc.r8 0.0
+		IL_0010: box [System.Runtime]System.Double
+		IL_0015: stfld object Scopes.SetInterval_ExecutesThreeTimes_ThenClears::count
+		IL_001a: ldloc.0
+		IL_001b: ldnull
+		IL_001c: ldftn object Functions.ArrowFunction_L3C23::ArrowFunction_L3C23(object[])
+		IL_0022: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0027: ldc.i4.1
+		IL_0028: newarr [System.Runtime]System.Object
+		IL_002d: dup
+		IL_002e: ldc.i4.0
+		IL_002f: ldloc.0
+		IL_0030: stelem.ref
+		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0036: ldc.r8 10
+		IL_003f: box [System.Runtime]System.Double
+		IL_0044: call !!0[] [System.Runtime]System.Array::Empty<object>()
+		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setInterval(object, object, object[])
+		IL_004e: stfld object Scopes.SetInterval_ExecutesThreeTimes_ThenClears::id
+		IL_0053: ldc.i4.1
+		IL_0054: newarr [System.Runtime]System.Object
+		IL_0059: dup
+		IL_005a: ldc.i4.0
+		IL_005b: ldstr "setInterval scheduled"
+		IL_0060: stelem.ref
+		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0066: pop
+		IL_0067: ret
+	} // end of method SetInterval_ExecutesThreeTimes_ThenClears::Main
+
+} // end of class Scripts.SetInterval_ExecutesThreeTimes_ThenClears
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x21a0
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.SetInterval_ExecutesThreeTimes_ThenClears::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
