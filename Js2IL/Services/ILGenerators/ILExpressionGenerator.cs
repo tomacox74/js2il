@@ -556,13 +556,15 @@ namespace Js2IL.Services.ILGenerators
                         var localVar = _variables.FindVariable(name);
                         if (localVar != null)
                         {
-                            var requestedBox = typeCoercion.boxResult;
                             // Load variable using centralized helper; auto-unboxes number/boolean when boxResult == false
+                            // EmitLoadVariable handles boxing when unbox=false, so we don't need to box again
                             _il.EmitLoadVariable(localVar, _variables, _owner.BclReferences, 
-                                unbox: !requestedBox,
+                                unbox: !typeCoercion.boxResult,
                                 inClassMethod: _owner.InClassMethod,
                                 currentClassName: _owner.CurrentClassName,
                                 classRegistry: _owner.ClassRegistry);
+                            // Prevent downstream Emit() from boxing again; variables are already boxed when needed
+                            typeCoercion.boxResult = false;
                             
                             // Determine the type that's actually on the stack after loading
                             // For stable-type double variables, the value is already unboxed (native float64)
@@ -576,26 +578,6 @@ namespace Js2IL.Services.ILGenerators
                                 javascriptType = localVar.Type;
                             }
 
-                            // If the caller needs a boxed object (e.g., stelem.ref into object[]), ensure
-                            // stable primitive locals are boxed here. The loader intentionally keeps stable
-                            // locals unboxed for performance.
-                            if (requestedBox && localVar.IsStableType)
-                            {
-                                // Stable primitives are stored unboxed; box when the caller needs an object.
-                                if (javascriptType == JavascriptType.Number)
-                                {
-                                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
-                                    _il.Token(_owner.BclReferences.DoubleType);
-                                }
-                                else if (javascriptType == JavascriptType.Boolean)
-                                {
-                                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Box);
-                                    _il.Token(_owner.BclReferences.BooleanType);
-                                }
-                            }
-
-                            // Prevent downstream Emit() from boxing again; we have boxed if needed above.
-                            typeCoercion.boxResult = false;
                             // Propagate known CLR runtime type (e.g., const perf = require('perf_hooks')) so downstream
                             // member/property emission can bind typed getters and direct instance calls.
                             clrType = localVar.ClrType;
