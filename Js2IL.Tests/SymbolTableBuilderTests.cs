@@ -1,4 +1,5 @@
 using Acornima;
+using Acornima.Ast;
 using Js2IL.SymbolTables;
 using Js2IL.Services;
 using System.Linq;
@@ -17,6 +18,19 @@ namespace Js2IL.Tests
             _scopeBuilder = new SymbolTableBuilder();
         }
 
+        // Helper method to adapt old test API to new ModuleDefinition-based API
+        private SymbolTable BuildSymbolTable(Acornima.Ast.Program ast, string fileName)
+        {
+            var module = new ModuleDefinition
+            {
+                Ast = ast,
+                Path = fileName,
+                Name = Path.GetFileNameWithoutExtension(fileName)
+            };
+            _scopeBuilder.Build(module);
+            return module.SymbolTable!;
+        }
+
         [Fact]
         public void Build_SimpleVariableDeclaration_CreatesGlobalScopeWithBinding()
         {
@@ -25,7 +39,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             Assert.Equal("test", scopeTree.Root.Name);
@@ -47,7 +61,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             Assert.Equal(BindingKind.Let, scopeTree.Root.Bindings["y"].Kind);
@@ -67,7 +81,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Global scope should have the function binding
@@ -103,7 +117,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             var outerScope = scopeTree.Root.Children[0];
@@ -129,7 +143,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Global scope should have x
@@ -157,7 +171,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Global scope should have func variable
@@ -187,7 +201,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Should have one child scope with descriptive name based on assignment
@@ -216,7 +230,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "complex.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "complex.js");
+            var scopeTree = BuildSymbolTable(ast, "complex.js");
 
             // Assert
             Assert.Equal("complex", scopeTree.Root.Name);
@@ -253,7 +267,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Global scope should have x
@@ -282,7 +296,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Global scope should have no binding for the anonymous function (not assigned)
@@ -309,7 +323,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Global scope should not contain a binding for the internal name 'walk'
@@ -344,7 +358,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Global scope should have globalVar and myFunc bindings
@@ -374,7 +388,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Global scope should have globalVar and myFunc bindings
@@ -407,7 +421,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Global scope should have globalVar and myFunc bindings
@@ -431,7 +445,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Global scope should have globalVar and myFunc bindings
@@ -458,7 +472,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Global scope should have globalVar and myFunc bindings
@@ -484,7 +498,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Global scope should have globalVar and myFunc bindings
@@ -510,7 +524,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Global scope should have globalVar and myFunc bindings
@@ -534,7 +548,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Global scope should have globalVar and myFunc bindings
@@ -558,7 +572,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Global scope should have globalVar and myFunc bindings
@@ -586,7 +600,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Global scope variable is NOT captured
@@ -613,7 +627,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Global scope should have the arrow function binding
@@ -647,7 +661,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Should have one child scope (the arrow function)
@@ -678,7 +692,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Should have one child scope (the arrow function)
@@ -716,7 +730,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Should have Point class scope
@@ -754,7 +768,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Should have Config class scope
@@ -790,7 +804,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             // Should have function scope

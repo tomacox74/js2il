@@ -1,9 +1,4 @@
 using Acornima.Ast;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 
 namespace Js2IL.SymbolTables
 {
@@ -12,7 +7,7 @@ namespace Js2IL.SymbolTables
     /// </summary>
     public partial class SymbolTableBuilder
     {
-        private const string DefaultClassesNamespace = "Classes";
+        public const string DefaultClassesNamespace = "Classes";
 
         // Track visited function expression nodes to avoid duplicating scopes when traversal
         // reaches the same AST node via multiple paths (explicit handling + reflective walk).
@@ -22,15 +17,28 @@ namespace Js2IL.SymbolTables
         private int _closureCounter = 0;
         private string? _currentAssignmentTarget = null;
 
-        public SymbolTable Build(Acornima.Ast.Program astRoot, string filePath)
+        public void Build(ModuleDefinition module)
         {
-            var fileName = Path.GetFileNameWithoutExtension(filePath);
-            var globalScope = new Scope(fileName, ScopeKind.Global, null, astRoot);
-            BuildScopeRecursive(astRoot, globalScope);
+            var globalScope = new Scope(module.Name, ScopeKind.Global, null, module.Ast);
+
+            AddModuleBuiltInParameters(globalScope, module.Ast);
+
+            BuildScopeRecursive(globalScope,module.Ast, globalScope);
             AnalyzeFreeVariables(globalScope);
             MarkCapturedVariables(globalScope);
             InferVariableClrTypes(globalScope);
-            return new SymbolTable(globalScope);
+            module.SymbolTable = new SymbolTable(globalScope);
+        }
+
+        private void AddModuleBuiltInParameters(Scope globalScope, Node astNode)
+        {
+            // Add built-in parameters for module system using shared ModuleParameters definition
+            foreach (var param in JavaScriptRuntime.CommonJS.ModuleParameters.Parameters)
+            {
+                var bindingKind = param.IsConst ? BindingKind.Const : BindingKind.Var;
+                globalScope.Bindings[param.Name] = new BindingInfo(param.Name, bindingKind, astNode);
+                globalScope.Parameters.Add(param.Name);
+            }
         }
 
         /// <summary>
@@ -129,6 +137,14 @@ namespace Js2IL.SymbolTables
                     return ContainsFreeVariable(prop.Key as Node, localVariables) ||
                            ContainsFreeVariable(prop.Value as Node, localVariables);
 
+                case TemplateLiteral tl:
+                    // Template strings: only expressions can reference variables (quasis are raw text)
+                    return tl.Expressions.Any(expr => ContainsFreeVariable(expr as Node, localVariables));
+
+                case TaggedTemplateExpression tte:
+                    return ContainsFreeVariable(tte.Tag, localVariables) ||
+                           ContainsFreeVariable(tte.Quasi, localVariables);
+
                 // Classes: check method bodies for free variable references
                 case ClassDeclaration classDecl:
                     // Iterate through class methods and check their bodies
@@ -205,7 +221,7 @@ namespace Js2IL.SymbolTables
         private static Type? ResolveNodeModuleType(string key)
         {
             if (string.IsNullOrWhiteSpace(key)) return null;
-            var asm = typeof(JavaScriptRuntime.Require).Assembly;
+            var asm = typeof(JavaScriptRuntime.Node.NodeModuleAttribute).Assembly;
             // Scan JavaScriptRuntime.Node namespace for [NodeModule(Name=key)]
             foreach (var t in asm.GetTypes())
             {
@@ -305,19 +321,19 @@ namespace Js2IL.SymbolTables
             }
         }
 
-        private void BuildScopeRecursive(Node node, Scope currentScope)
+        private void BuildScopeRecursive(Scope globalScope, Node node, Scope currentScope)
         {
             switch (node)
             {
                 case Acornima.Ast.Program program:
                     foreach (var statement in program.Body)
-                        BuildScopeRecursive(statement, currentScope);
+                        BuildScopeRecursive(globalScope, statement, currentScope);
                     break;
                 case ClassDeclaration classDecl:
                     var className = (classDecl.Id as Identifier)?.Name ?? $"Class{++_closureCounter}";
                     var classScope = new Scope(className, ScopeKind.Class, currentScope, classDecl);
                     // Author authoritative .NET naming for classes here
-                    classScope.DotNetNamespace = DefaultClassesNamespace; // policy: all JS classes under "Classes"
+                    classScope.DotNetNamespace = DefaultClassesNamespace + "." + globalScope.Name; 
                     // Per user guidance, keep type name same as scope name for now
                     classScope.DotNetTypeName = SanitizeForMetadata(className);
                     currentScope.Bindings[className] = new BindingInfo(className, BindingKind.Let, classDecl);
@@ -378,7 +394,7 @@ namespace Js2IL.SymbolTables
                             }
                             if (mfunc.Body is BlockStatement mblock)
                             {
-                                foreach (var st in mblock.Body) BuildScopeRecursive(st, methodScope);
+                                foreach (var st in mblock.Body) BuildScopeRecursive(globalScope, st, methodScope);
                             }
                         }
                     }
@@ -392,11 +408,11 @@ namespace Js2IL.SymbolTables
                         if (funcDecl.Body is BlockStatement fblock)
                         {
                             foreach (var statement in fblock.Body)
-                                BuildScopeRecursive(statement, funcScope);
+                                BuildScopeRecursive(globalScope, statement, funcScope);
                         }
                         else
                         {
-                            BuildScopeRecursive(funcDecl.Body, funcScope);
+                            BuildScopeRecursive(globalScope, funcDecl.Body, funcScope);
                         }
                         break;
                 case FunctionExpression funcExpr:
@@ -426,12 +442,12 @@ namespace Js2IL.SymbolTables
                     {
                         // For function bodies, process statements directly in function scope without creating a block scope
                         foreach (var statement in funcExprBlock.Body)
-                            BuildScopeRecursive(statement, funcExprScope);
+                            BuildScopeRecursive(globalScope, statement, funcExprScope);
                     }
                     else
                     {
                         // Non-block body (expression body)
-                        BuildScopeRecursive(funcExpr.Body, funcExprScope);
+                        BuildScopeRecursive(globalScope, funcExpr.Body, funcExprScope);
                     }
                     break;
                 case VariableDeclaration varDecl:
@@ -474,7 +490,7 @@ namespace Js2IL.SymbolTables
                             {
                                 var previousTarget = _currentAssignmentTarget;
                                 _currentAssignmentTarget = id.Name;
-                                BuildScopeRecursive(decl.Init, currentScope);
+                                BuildScopeRecursive(globalScope, decl.Init, currentScope);
                                 _currentAssignmentTarget = previousTarget;
                             }
                             continue;
@@ -542,7 +558,7 @@ namespace Js2IL.SymbolTables
                             {
                                 var previousTarget = _currentAssignmentTarget;
                                 _currentAssignmentTarget = tempName;
-                                BuildScopeRecursive(decl.Init, currentScope);
+                                BuildScopeRecursive(globalScope, decl.Init, currentScope);
                                 _currentAssignmentTarget = previousTarget;
                             }
 
@@ -552,7 +568,7 @@ namespace Js2IL.SymbolTables
                         // Fallback: just visit the initializer if present
                         if (decl.Init != null)
                         {
-                            BuildScopeRecursive(decl.Init, currentScope);
+                            BuildScopeRecursive(globalScope, decl.Init, currentScope);
                         }
                     }
                     break;
@@ -570,14 +586,14 @@ namespace Js2IL.SymbolTables
 
                     var blockScope = new Scope(blockName, ScopeKind.Block, currentScope, blockStmt);
                     foreach (var statement in blockStmt.Body)
-                        BuildScopeRecursive(statement, blockScope);
+                        BuildScopeRecursive(globalScope, statement, blockScope);
                     break;
                 case ExpressionStatement exprStmt:
-                    BuildScopeRecursive(exprStmt.Expression, currentScope);
+                    BuildScopeRecursive(globalScope, exprStmt.Expression, currentScope);
                     break;
                 case AssignmentExpression assignExpr:
-                    BuildScopeRecursive(assignExpr.Right, currentScope);
-                    BuildScopeRecursive(assignExpr.Left, currentScope);
+                    BuildScopeRecursive(globalScope, assignExpr.Right, currentScope);
+                    BuildScopeRecursive(globalScope, assignExpr.Left, currentScope);
                     break;
                 case ArrowFunctionExpression arrowFunc:
                     // Avoid duplicate scopes for the same ArrowFunctionExpression node
@@ -666,27 +682,27 @@ namespace Js2IL.SymbolTables
                     {
                         // For function bodies, process statements directly in function scope without creating a block scope
                         foreach (var statement in arrowBlock.Body)
-                            BuildScopeRecursive(statement, arrowScope);
+                            BuildScopeRecursive(globalScope, statement, arrowScope);
                     }
                     else
                     {
                         // Arrow function with expression body
-                        BuildScopeRecursive(arrowFunc.Body, arrowScope);
+                        BuildScopeRecursive(globalScope, arrowFunc.Body, arrowScope);
                     }
                     break;
                 case CallExpression callExpr:
                     // Process callee and arguments but don't create scopes for call expressions themselves
-                    BuildScopeRecursive(callExpr.Callee, currentScope);
+                    BuildScopeRecursive(globalScope, callExpr.Callee, currentScope);
                     foreach (var arg in callExpr.Arguments)
                     {
-                        BuildScopeRecursive(arg, currentScope);
+                        BuildScopeRecursive(globalScope, arg, currentScope);
                     }
                     break;
                 case MemberExpression memberExpr:
-                    BuildScopeRecursive(memberExpr.Object, currentScope);
+                    BuildScopeRecursive(globalScope, memberExpr.Object, currentScope);
                     if (memberExpr.Computed)
                     {
-                        BuildScopeRecursive(memberExpr.Property, currentScope);
+                        BuildScopeRecursive(globalScope, memberExpr.Property, currentScope);
                     }
                     break;
                 case ArrayExpression arrayExpr:
@@ -694,22 +710,22 @@ namespace Js2IL.SymbolTables
                     {
                         if (element != null)
                         {
-                            BuildScopeRecursive(element, currentScope);
+                            BuildScopeRecursive(globalScope, element, currentScope);
                         }
                     }
                     break;
                 case ForStatement forStmt:
                     // Process init, test, and update expressions
                     if (forStmt.Init != null)
-                        BuildScopeRecursive(forStmt.Init, currentScope);
+                        BuildScopeRecursive(globalScope, forStmt.Init, currentScope);
                     if (forStmt.Test != null)
-                        BuildScopeRecursive(forStmt.Test, currentScope);
+                        BuildScopeRecursive(globalScope, forStmt.Test, currentScope);
                     if (forStmt.Update != null)
-                        BuildScopeRecursive(forStmt.Update, currentScope);
+                        BuildScopeRecursive(globalScope, forStmt.Update, currentScope);
                     
                     // Process the body statement (which may be a block or a single statement)
                     if (forStmt.Body != null)
-                        BuildScopeRecursive(forStmt.Body, currentScope);
+                        BuildScopeRecursive(globalScope, forStmt.Body, currentScope);
                     break;
                 case ForOfStatement forOf:
                     // Register loop variable binding if declared (e.g., for (const x of arr))
@@ -731,13 +747,13 @@ namespace Js2IL.SymbolTables
                         }
                     }
                     // Visit the iterable expression and loop body
-                    BuildScopeRecursive(forOf.Right, currentScope);
+                    BuildScopeRecursive(globalScope, forOf.Right, currentScope);
                     if (forOf.Body != null)
-                        BuildScopeRecursive(forOf.Body, currentScope);
+                        BuildScopeRecursive(globalScope, forOf.Body, currentScope);
                     break;
                 default:
                     // For other node types, recursively process their children
-                    ProcessChildNodes(node, currentScope);
+                    ProcessChildNodes(globalScope, node, currentScope);
                     break;
                 // Add more cases as needed for other node types
             }
@@ -881,6 +897,19 @@ namespace Js2IL.SymbolTables
                     {
                         CollectFreeVariables(me.Property as Node, localVariables, targetVariables, result);
                     }
+                    break;
+
+                case TemplateLiteral template:
+                    // Only expressions can reference identifiers; quasis are static strings.
+                    foreach (var expr in template.Expressions)
+                    {
+                        CollectFreeVariables(expr, localVariables, targetVariables, result);
+                    }
+                    break;
+
+                case TaggedTemplateExpression tagged:
+                    CollectFreeVariables(tagged.Tag, localVariables, targetVariables, result);
+                    CollectFreeVariables(tagged.Quasi, localVariables, targetVariables, result);
                     break;
 
                 case AssignmentExpression ae:
@@ -1050,7 +1079,7 @@ namespace Js2IL.SymbolTables
             }
         }
 
-        private void ProcessChildNodes(Node node, Scope currentScope)
+        private void ProcessChildNodes(Scope globalScope, Node node, Scope currentScope)
         {
             // Use reflection to get all node properties and recursively process them
             var properties = node.GetType().GetProperties();
@@ -1059,7 +1088,7 @@ namespace Js2IL.SymbolTables
                 var value = prop.GetValue(node);
                 if (value is Node childNode)
                 {
-                    BuildScopeRecursive(childNode, currentScope);
+                    BuildScopeRecursive(globalScope, childNode, currentScope);
                 }
                 else if (value is System.Collections.IEnumerable enumerable && 
                          !(value is string))
@@ -1068,7 +1097,7 @@ namespace Js2IL.SymbolTables
                     {
                         if (item is Node childNodeInList)
                         {
-                            BuildScopeRecursive(childNodeInList, currentScope);
+                            BuildScopeRecursive(globalScope, childNodeInList, currentScope);
                         }
                     }
                 }

@@ -45,7 +45,7 @@
 
 } // end of class Scopes.Classes_ClassWithStaticProperty_DefaultAndLog
 
-.class public auto ansi beforefieldinit Classes.Greeter
+.class public auto ansi beforefieldinit Classes.Classes_ClassWithStaticProperty_DefaultAndLog.Greeter
 	extends [System.Runtime]System.Object
 {
 	// Fields
@@ -74,18 +74,24 @@
 		.maxstack 8
 
 		IL_0000: ldstr "Hi from static"
-		IL_0005: stsfld object Classes.Greeter::message
+		IL_0005: stsfld object Classes.Classes_ClassWithStaticProperty_DefaultAndLog.Greeter::message
 		IL_000a: ret
 	} // end of method Greeter::.cctor
 
-} // end of class Classes.Greeter
+} // end of class Classes.Classes_ClassWithStaticProperty_DefaultAndLog.Greeter
 
 .class public auto ansi beforefieldinit Scripts.Classes_ClassWithStaticProperty_DefaultAndLog
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x2084
 		// Header size: 12
@@ -99,7 +105,7 @@
 		IL_0001: newarr [System.Runtime]System.Object
 		IL_0006: dup
 		IL_0007: ldc.i4.0
-		IL_0008: ldsfld object Classes.Greeter::message
+		IL_0008: ldsfld object Classes.Classes_ClassWithStaticProperty_DefaultAndLog.Greeter::message
 		IL_000d: stelem.ref
 		IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_0013: pop
@@ -123,9 +129,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Classes_ClassWithStaticProperty_DefaultAndLog::Main()
-		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0006: ldftn void Scripts.Classes_ClassWithStaticProperty_DefaultAndLog::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 

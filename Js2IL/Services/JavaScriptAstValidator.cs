@@ -12,7 +12,7 @@ public class JavaScriptAstValidator : IAstValidator
         try
         {
             // Use a known runtime type to locate the assembly (Require lives in runtime assembly)
-            var asm = typeof(JavaScriptRuntime.Require).Assembly;
+            var asm = typeof(JavaScriptRuntime.Node.NodeModuleAttribute).Assembly;
             foreach (var t in asm.GetTypes())
             {
                 if (!t.IsClass || t.IsAbstract) continue;
@@ -63,14 +63,28 @@ public class JavaScriptAstValidator : IAstValidator
                     break;
 
                 case NodeType.CallExpression:
-                    // Detect require("module") patterns for unsupported modules.
-                    if (node is CallExpression call &&
-                        call.Callee is Identifier id && id.Name == "require" &&
-                        call.Arguments.Count > 0 && call.Arguments[0] is Literal lit && lit.Value is string modName)
+                    // Detect require(...) patterns. Only literal string specifiers are supported.
+                    if (node is CallExpression call && call.Callee is Identifier id && id.Name == "require")
                     {
-                        if (!SupportedRequireModules.Value.Contains(modName))
+                        if (call.Arguments.Count == 0)
                         {
-                            result.Errors.Add($"Module '{modName}' is not yet supported (line {node.Location.Start.Line})");
+                            result.Errors.Add($"require() called without arguments (line {node.Location.Start.Line})");
+                            result.IsValid = false;
+                        }
+                        else if (call.Arguments[0] is Literal lit && lit.Value is string modName)
+                        {
+                            var isLocalModule = modName.StartsWith(".") || modName.StartsWith("/");
+
+                            if (!SupportedRequireModules.Value.Contains(modName) && !isLocalModule)
+                            {
+                                result.Errors.Add($"Module '{modName}' is not yet supported (line {node.Location.Start.Line})");
+                                result.IsValid = false;
+                            }
+                        }
+                        else
+                        {
+                            // Dynamic/non-literal require argument detected.
+                            result.Errors.Add($"Dynamic require() with non-literal argument is not supported (line {node.Location.Start.Line})");
                             result.IsValid = false;
                         }
                     }

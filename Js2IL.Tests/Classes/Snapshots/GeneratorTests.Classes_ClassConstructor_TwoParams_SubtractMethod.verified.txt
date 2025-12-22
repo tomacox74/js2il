@@ -87,7 +87,7 @@
 
 } // end of class Scopes.Classes_ClassConstructor_TwoParams_SubtractMethod
 
-.class public auto ansi beforefieldinit Classes.Subber
+.class public auto ansi beforefieldinit Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber
 	extends [System.Runtime]System.Object
 {
 	// Fields
@@ -110,10 +110,10 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: ldarg.0
 		IL_0007: ldarg.1
-		IL_0008: stfld object Classes.Subber::a
+		IL_0008: stfld object Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber::a
 		IL_000d: ldarg.0
 		IL_000e: ldarg.2
-		IL_000f: stfld object Classes.Subber::b
+		IL_000f: stfld object Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber::b
 		IL_0014: ret
 	} // end of method Subber::.ctor
 
@@ -126,21 +126,27 @@
 		.maxstack 32
 
 		IL_0000: ldarg.0
-		IL_0001: ldfld object Classes.Subber::a
+		IL_0001: ldfld object Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber::a
 		IL_0006: ldarg.0
-		IL_0007: ldfld object Classes.Subber::b
+		IL_0007: ldfld object Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber::b
 		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Subtract(object, object)
 		IL_0011: ret
 	} // end of method Subber::'sub'
 
-} // end of class Classes.Subber
+} // end of class Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber
 
 .class public auto ansi beforefieldinit Scripts.Classes_ClassConstructor_TwoParams_SubtractMethod
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x20b8
 		// Header size: 12
@@ -154,20 +160,20 @@
 
 		IL_0000: ldstr "Hello"
 		IL_0005: ldstr "World"
-		IL_000a: newobj instance void Classes.Subber::.ctor(object, object)
+		IL_000a: newobj instance void Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber::.ctor(object, object)
 		IL_000f: stloc.1
 		IL_0010: ldc.r8 10
 		IL_0019: box [System.Runtime]System.Double
 		IL_001e: ldc.r8 3
 		IL_0027: box [System.Runtime]System.Double
-		IL_002c: newobj instance void Classes.Subber::.ctor(object, object)
+		IL_002c: newobj instance void Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber::.ctor(object, object)
 		IL_0031: stloc.2
 		IL_0032: ldc.i4.1
 		IL_0033: newarr [System.Runtime]System.Object
 		IL_0038: dup
 		IL_0039: ldc.i4.0
 		IL_003a: ldloc.1
-		IL_003b: callvirt instance object Classes.Subber::'sub'()
+		IL_003b: callvirt instance object Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber::'sub'()
 		IL_0040: stelem.ref
 		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_0046: pop
@@ -176,7 +182,7 @@
 		IL_004d: dup
 		IL_004e: ldc.i4.0
 		IL_004f: ldloc.2
-		IL_0050: callvirt instance object Classes.Subber::'sub'()
+		IL_0050: callvirt instance object Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber::'sub'()
 		IL_0055: stelem.ref
 		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_005b: pop
@@ -200,9 +206,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Classes_ClassConstructor_TwoParams_SubtractMethod::Main()
-		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0006: ldftn void Scripts.Classes_ClassConstructor_TwoParams_SubtractMethod::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 

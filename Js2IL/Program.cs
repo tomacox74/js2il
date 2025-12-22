@@ -1,8 +1,5 @@
-﻿using PowerArgs;
-using Js2IL.Services;
-using Js2IL.SymbolTables;
-using Acornima.Ast;
-using System.IO;
+﻿using Microsoft.Extensions.DependencyInjection;
+using PowerArgs;
 using System.Reflection;
 
 namespace Js2IL;
@@ -33,12 +30,6 @@ public class Js2ILArgs
     [ArgDescription("Show version information and exit")]
     [ArgShortcut("--version")]
     public bool Version { get; set; }
-
-    [ArgDescription("Show help and exit")]
-    [HelpHook]
-    [ArgShortcut("?")]
-    [ArgShortcut("h")]
-    public bool Help { get; set; }
 }
 
 class Program
@@ -51,13 +42,6 @@ class Program
             if (parsed == null)
             {
                 // HelpHook likely handled output; treat as successful exit
-                return;
-            }
-
-            // --help handling
-            if (parsed.Help)
-            {
-                PrintUsage(Console.Out);
                 return;
             }
 
@@ -74,7 +58,7 @@ class Program
             // Require InputFile unless in help/version mode (PowerArgs won't enforce without [ArgRequired])
             if (string.IsNullOrWhiteSpace(parsed.InputFile))
             {
-                WriteLineError("Error: InputFile is required.");
+                Logger.WriteLineError("Error: InputFile is required.");
                 PrintUsage(Console.Error);
                 Environment.ExitCode = 1;
                 return;
@@ -83,193 +67,28 @@ class Program
             // Validate input file exists (covers cases where user provides a non-existent file)
             if (!File.Exists(parsed.InputFile))
             {
-                WriteLineError($"Error: Input file '{parsed.InputFile}' does not exist.");
-                Environment.ExitCode = 1;
-                return;
-            }
-            Console.WriteLine($"Converting {parsed.InputFile} to IL...");
-
-            // Step 1: Parse JavaScript to AST
-            Console.WriteLine("Parsing JavaScript...");
-            var jsSource = File.ReadAllText(parsed.InputFile);
-            var parser = new JavaScriptParser();
-            var ast = parser.ParseJavaScript(jsSource, parsed.InputFile);
-
-            if (parsed.Verbose)
-            {
-                Console.WriteLine("AST Structure:");
-                parser.VisitAst(ast, node =>
-                {
-                    Console.Write($"Node Type: {node.Type}");
-                    if (node is Acornima.Ast.NumericLiteral num)
-                        Console.Write($", Value: {num.Value}");
-                    if (node is Acornima.Ast.UnaryExpression unary)
-                        Console.Write($", Operator: {unary.Operator}");
-                    Console.WriteLine();
-                });
-            }
-
-            // Step 2: Validate AST
-            Console.WriteLine("\nValidating the Javascript is supported...");
-            var validator = new JavaScriptAstValidator();
-            var validationResult = validator.Validate(ast);
-
-            if (!validationResult.IsValid)
-            {
-                WriteLineError("\nValidation Errors:");
-                foreach (var error in validationResult.Errors)
-                {
-                    WriteLineError($"Error: {error}");
-                }
+                Logger.WriteLineError($"Error: Input file '{parsed.InputFile}' does not exist.");
                 Environment.ExitCode = 1;
                 return;
             }
 
-            if (validationResult.Warnings.Any())
+            var servicesProvider = CompilerServices.BuildServiceProvider(new CompilerOptions
             {
-                Console.WriteLine("\nValidation Warnings:");
-                foreach (var warning in validationResult.Warnings)
-                {
-                    WriteLineWarning($"Warning: {warning}");
-                }
-            }
-
-            // Step 3: Analyze unused code (if requested)
-            if (parsed.AnalyzeUnused)
-            {
-                Console.WriteLine("\nAnalyzing unused code...");
-                var unusedCodeAnalyzer = new UnusedCodeAnalyzer();
-                var unusedCodeResult = unusedCodeAnalyzer.Analyze(ast);
-
-                if (unusedCodeResult.UnusedFunctions.Any())
-                {
-                    Console.WriteLine("\nUnused Functions:");
-                    foreach (var unusedFunc in unusedCodeResult.UnusedFunctions)
-                    {
-                        Console.WriteLine($"  - {unusedFunc}");
-                    }
-                }
-
-                if (unusedCodeResult.UnusedProperties.Any())
-                {
-                    Console.WriteLine("\nUnused Properties:");
-                    foreach (var unusedProp in unusedCodeResult.UnusedProperties)
-                    {
-                        Console.WriteLine($"  - {unusedProp}");
-                    }
-                }
-
-                if (unusedCodeResult.UnusedVariables.Any())
-                {
-                    Console.WriteLine("\nUnused Variables:");
-                    foreach (var unusedVar in unusedCodeResult.UnusedVariables)
-                    {
-                        Console.WriteLine($"  - {unusedVar}");
-                    }
-                }
-
-                if (unusedCodeResult.Warnings.Any())
-                {
-                    Console.WriteLine("\nUnused Code Analysis Warnings:");
-                    foreach (var warning in unusedCodeResult.Warnings)
-                    {
-                        WriteLineWarning($"Warning: {warning}");
-                    }
-                }
-            }
-
-            // Step 4: Build scope tree
-            Console.WriteLine("\nBuilding scope tree...");
-            var symbolTableBuilder = new SymbolTableBuilder();
-            var symbolTable = symbolTableBuilder.Build(ast, parsed.InputFile);
-
-            if (parsed.Verbose)
-            {
-                Console.WriteLine("\nScope Tree Structure:");
-                PrintScopeTree(symbolTable.Root, 0);
-            }
-
-            // Step 5: Generate IL
-            // NOTE: some checkes such as the existance of the the file parsed.InputFile are done by powerargs for us
-            Console.WriteLine("\nGenerating dotnet assembly...");
-            var assemblyGenerator = new AssemblyGenerator();
-
-            // Resolve and validate output directory; create if missing
-            string outputPath;
-            if (string.IsNullOrWhiteSpace(parsed.OutputPath))
-            {
-                outputPath = Path.GetDirectoryName(Path.GetFullPath(parsed.InputFile))!;
-            }
-            else
-            {
-                outputPath = Path.GetFullPath(parsed.OutputPath);
-            }
-
-            // If a file exists at the output path, fail with a clear message
-            if (File.Exists(outputPath))
-            {
-                WriteLineError($"Error: Output path '{outputPath}' is a file. Provide a directory path.");
-                Environment.ExitCode = 1;
-                return;
-            }
-
-            // Ensure the directory exists (treat common IO issues as known failures)
-            try
-            {
-                Directory.CreateDirectory(outputPath);
-                if (parsed.Verbose)
-                {
-                    Console.WriteLine($"Ensured output directory exists: {outputPath}");
-                }
-            }
-            catch (Exception ex) when (ex is UnauthorizedAccessException
-                                     || ex is ArgumentException
-                                     || ex is PathTooLongException
-                                     || ex is NotSupportedException
-                                     || ex is DriveNotFoundException
-                                     || ex is IOException)
-            {
-                WriteLineError($"Error creating output directory '{outputPath}': {ex.Message}");
-                Environment.ExitCode = 1;
-                return;
-            }
-
-            var assemblyName = Path.GetFileNameWithoutExtension(parsed.InputFile);
-
-            assemblyGenerator.Generate(ast, symbolTable, assemblyName, outputPath);
-
-            Console.WriteLine($"\nConversion complete. Output written to {outputPath}");
+                OutputDirectory = parsed.OutputPath,
+                Verbose = parsed.Verbose,
+                AnalyzeUnused = parsed.AnalyzeUnused
+            });
+            var compiler = servicesProvider.GetRequiredService<Compiler>();
+            var success = compiler.Compile(parsed.InputFile);
+            Environment.ExitCode = success ? 0 : 1;
         }
         catch (ArgException ex)
         {
-            WriteLineError(ex.Message);
+            Logger.WriteLineError(ex.Message);
             // Avoid potential template generation issues by printing a simple usage message
             PrintUsage(Console.Error);
             Environment.ExitCode = 1;
             return;
-        }
-    }
-
-    /// <summary>
-    /// Helper method to print the scope tree structure for verbose output.
-    /// </summary>
-    private static void PrintScopeTree(Scope scope, int indentLevel)
-    {
-        var indent = new string(' ', indentLevel * 2);
-        Console.WriteLine($"{indent}{scope.Name} ({scope.Kind})");
-        
-        if (scope.Bindings.Any())
-        {
-            Console.WriteLine($"{indent}  Variables:");
-            foreach (var binding in scope.Bindings.Values)
-            {
-                Console.WriteLine($"{indent}    - {binding.Name} ({binding.Kind})");
-            }
-        }
-
-        foreach (var child in scope.Children)
-        {
-            PrintScopeTree(child, indentLevel + 1);
         }
     }
 
@@ -285,33 +104,5 @@ class Program
         writer.WriteLine("-a, --analyzeunused    Analyze and report unused properties and methods");
         writer.WriteLine("--version              Show version information and exit");
         writer.WriteLine("-h, -?, --help         Show help and exit");
-    }
-
-    private static void WriteLineWarning(string message)
-    {
-        var prev = Console.ForegroundColor;
-        try
-        {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine(message);
-        }
-        finally
-        {
-            Console.ForegroundColor = prev;
-        }
-    }
-
-    private static void WriteLineError(string message)
-    {
-        var prev = Console.ForegroundColor;
-        try
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.Error.WriteLine(message);
-        }
-        finally
-        {
-            Console.ForegroundColor = prev;
-        }
     }
 }

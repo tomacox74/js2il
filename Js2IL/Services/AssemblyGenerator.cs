@@ -3,12 +3,12 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
 using Js2IL.Services.ILGenerators;
-using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Js2IL.Services
 {
-    public class AssemblyGenerator : IGenerator
+    internal class AssemblyGenerator
     {
         // Standard public key as defined in ECMA-335 for reference assemblies
         private static readonly byte[] StandardPublicKey = new byte[] {
@@ -16,46 +16,36 @@ namespace Js2IL.Services
             0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
         };
 
-        public MetadataBuilder _metadataBuilder = new MetadataBuilder();
+        public MetadataBuilder _metadataBuilder;
         private BlobBuilder _ilBuilder = new BlobBuilder();
         private MethodDefinitionHandle _entryPoint;
 
         private MethodDefinitionHandle _mainScriptMethod;
         private BaseClassLibraryReferences _bclReferences;
 
-        private Variables? _variables;
+        private  VariableBindings.VariableRegistry? _variableRegistry;
 
-        public AssemblyGenerator()
-        {
-            this._bclReferences = new BaseClassLibraryReferences(_metadataBuilder);
-        }
+        private TypeReferenceRegistry _typeReferenceRegistry;
 
-        /// <summary>
-        /// Generates a new assembly from the provided AST.
-        /// </summary>
-        /// <param name="ast">The JavaScript AST.</param>
-        /// <param name="name">The assembly name.</param>
-        /// <param name="outputPath">The directory to output the generated assembly and related files to.</param>
-        public void Generate(Acornima.Ast.Program ast, string name, string outputPath)
+        private IServiceProvider _serviceProvider;
+
+        public AssemblyGenerator(IServiceProvider serviceProvider, MetadataBuilder metadataBuilder, TypeReferenceRegistry typeReferenceRegistry)
         {
-            // Build scope tree first
-            var symbolTableBuilder = new SymbolTableBuilder();
-            var symbolTable = symbolTableBuilder.Build(ast, $"{name}.js");
-            
-            // Call the new overload
-            Generate(ast, symbolTable, name, outputPath);
+            this._metadataBuilder = metadataBuilder;
+            this._typeReferenceRegistry = typeReferenceRegistry;
+            this._bclReferences = serviceProvider.GetRequiredService<BaseClassLibraryReferences>();
+            this._serviceProvider = serviceProvider;
         }
 
         /// <summary>
         /// Generates a new assembly from the provided AST and scope tree.
         /// </summary>
-        /// <param name="ast">The JavaScript AST.</param>
-        /// <param name="scopeTree">The pre-built scope tree.</param>
-        /// <param name="name">The assembly name.</param>
+        /// <param name="modules">Then javascript modules to generate the assembly from.</param>
+        /// <param name="assemblyName">The assembly name.</param>
         /// <param name="outputPath">The directory to output the generated assembly and related files to.</param>
-        public void Generate(Acornima.Ast.Program ast, SymbolTable symbolTable, string name, string outputPath)
+        public void Generate(Modules modules, string assemblyName, string outputPath)
         {
-            createAssemblyMetadata(name);
+            createAssemblyMetadata(assemblyName);
 
             // Add the <Module> type first (as required by .NET metadata) using TypeBuilder
             var moduleTypeBuilder = new TypeBuilder(_metadataBuilder, "", "<Module>");
@@ -67,47 +57,122 @@ namespace Js2IL.Services
             // there is 1 MethodBodyStreamEncoder for all methods in the assembly
             var methodBodyStream = new MethodBodyStreamEncoder(this._ilBuilder);
 
-            // Step 1: Generate .NET types from the scope tree
+            // Generate .NET types from the scope tree
+            this._variableRegistry = this.GenerateScopeTypes(modules, methodBodyStream);
+
+            // Compile the main script method
+            this.GenerateModules(modules, methodBodyStream);
+
+            // create the entry point for spining up the execution engine
+            createEntryPoint(methodBodyStream);
+
+            this.CreateAssembly(assemblyName, outputPath);
+        }
+
+        /// <summary>
+        /// Generates the scope types for the assembly.
+        /// </summary>
+        /// <param name="modules">The JavaScript modules (need the symbol tables)</param>
+        /// <remarks>
+        /// Scopes are for captured varables.  Fore example:
+        /// const globalVar = 42;
+        /// function logGlobal() { console.log(globalVar); }
+        /// We create 
+        /// class <ScopeName> {
+        ///     public object globalVar;
+        /// }
+        /// </remarks>
+        private VariableBindings.VariableRegistry GenerateScopeTypes(Modules modules, MethodBodyStreamEncoder methodBodyStream)
+        {
             var typeGenerator = new TypeGenerator(_metadataBuilder, _bclReferences, methodBodyStream);
-            var rootTypeHandle = typeGenerator.GenerateTypes(symbolTable);
 
-            // Step 2: Get the variable registry from the type generator and update Variables
-            var variableRegistry = typeGenerator.GetVariableRegistry();
-            _variables = new Variables(variableRegistry, symbolTable.Root.Name);
+            // Multi-module compilation: every module gets its own global scope type and registry entries.
+            // This avoids missing bindings for non-root modules and prevents collisions when different modules
+            // declare the same function/class names.
+            foreach (var module in modules._modules.Values)
+            {
+                typeGenerator.GenerateTypes(module.SymbolTable!);
+            }
 
-            // Previous design created a dispatch table for indirection and circular refs.
-            // New design: functions are referenced directly by static method handles stored in scope fields.
-            // Circular references are handled naturally because we assign delegates after all top-level
-            // methods are defined (during Main method body) or within function bodies for nested cases.
+            return typeGenerator.GetVariableRegistry();
+        }
 
-            // Create the method signature for the Main method.
+        private void GenerateModules(Modules modules, MethodBodyStreamEncoder methodBodyStream)
+        {
+            foreach (var module in modules._modules.Values)
+            {
+                var methodDefinitionHandle = GenerateModule(module, methodBodyStream, module.Name);
+                if (module == modules.rootModule)
+                {
+                    _mainScriptMethod = methodDefinitionHandle;
+                }
+            }
+        }
+
+        private MethodDefinitionHandle GenerateModule(ModuleDefinition module, MethodBodyStreamEncoder methodBodyStream, string moduleName)
+        {
+
+            // Get parameter info from shared ModuleParameters
+            var paramCount = JavaScriptRuntime.CommonJS.ModuleParameters.Count;
+            var parameterNames = JavaScriptRuntime.CommonJS.ModuleParameters.ParameterNames;
+
+            // create the tools we need to generate the module type and method
+            var programTypeBuilder = new TypeBuilder(_metadataBuilder, "Scripts", moduleName);
+            var variables = new Variables(_variableRegistry!, moduleName, parameterNames);
+            var mainGenerator = new MainGenerator(_serviceProvider, variables, _bclReferences, _metadataBuilder, methodBodyStream, module.SymbolTable!);
+
+            // Create the method signature for the Main method with parameters
             var sigBuilder = new BlobBuilder();
             new BlobEncoder(sigBuilder)
                 .MethodSignature()
-                .Parameters(0, returnType => returnType.Void(), parameters => { });
+                .Parameters(paramCount, returnType => returnType.Void(), parameters =>
+                {
+                    for (int i = 0; i < paramCount; i++)
+                    {
+                        switch (i)
+                        {
+                            case 0:
+                                parameters.AddParameter().Type().Object();
+                                break;
+                            case 1:
+                                var requireDelegateReference = _typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.CommonJS.RequireDelegate)); 
+                                parameters.AddParameter().Type().Type(requireDelegateReference, false);
+                                break;
+                            case 2:
+                                parameters.AddParameter().Type().Object();
+                                break;
+                            case 3:
+                            case 4:
+                                parameters.AddParameter().Type().String();
+                                break;
+                        }
+                    }
+                });
             var methodSig = this._metadataBuilder.GetOrAddBlob(sigBuilder);
 
-
-            // Emit IL: return.
-            // Prepare a TypeBuilder for the main script and pass it to MainGenerator
-            var programTypeBuilder = new TypeBuilder(_metadataBuilder, "Scripts", name);
-            var mainGenerator = new MainGenerator(_variables!, _bclReferences, _metadataBuilder, methodBodyStream, symbolTable);
-            var bodyOffset = mainGenerator.GenerateMethod(ast);
-            this._mainScriptMethod = programTypeBuilder.AddMethodDefinition(
+            var bodyOffset = mainGenerator.GenerateMethod(module.Ast);
+            var methodDefinitionHandle = programTypeBuilder.AddMethodDefinition(
                 MethodAttributes.Static | MethodAttributes.Public,
                 "Main",
                 methodSig,
                 bodyOffset);
+
+            // Add parameter names to metadata (sequence starts at 1 for first parameter)
+            int sequence = 1;
+            foreach (var paramName in parameterNames)
+            {
+                _metadataBuilder.AddParameter(
+                    ParameterAttributes.None,
+                    _metadataBuilder.GetOrAddString(paramName),
+                    sequence++);
+            }
 
             // Define the Script main type via TypeBuilder
             var programTypeDef = programTypeBuilder.AddTypeDefinition(
                 TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
                 _bclReferences.ObjectType);
 
-            // create the entry point for spining up the execution engine
-            createEntryPoint(methodBodyStream);
-
-            this.CreateAssembly(name, outputPath);
+            return methodDefinitionHandle;
         }
 
         private void createEntryPoint(MethodBodyStreamEncoder methodBodyStream)
@@ -122,9 +187,10 @@ namespace Js2IL.Services
                 hasScopesParam: false, 
                 returnsVoid: true);
 
-            // create a method generator to emit IL
-            // method generator is specifically for translating JavaScript constructs to IL so its a little overkill for the entry point
-            var entryPointGenerator = new ILMethodGenerator(_variables!, _bclReferences, _metadataBuilder, methodBodyStream, new ClassRegistry(), new FunctionRegistry());
+            // create a method generator to emit IL for the entry point
+            // variables is unused
+            var variables = new Variables(_variableRegistry!, "EntryPoint");
+            var entryPointGenerator = new ILMethodGenerator(_serviceProvider, variables, _bclReferences, _metadataBuilder, methodBodyStream, new ClassRegistry(), new FunctionRegistry());
             var ilEncoder = entryPointGenerator.IL;
             var runtime = entryPointGenerator.Runtime;
 
@@ -134,19 +200,20 @@ namespace Js2IL.Services
             // first create new instance of the engine
             runtime.InvokeEngineCtor();
 
-            // first create a new action delegate, no return value, no parameters
+            // Create a ModuleMainDelegate that wraps the main module method
+            // ModuleMainDelegate takes (exports, require, module, __filename, __dirname)
             ilEncoder.OpCode(ILOpCode.Ldnull);
             ilEncoder.OpCode(ILOpCode.Ldftn);
             ilEncoder.Token(this._mainScriptMethod);
             ilEncoder.OpCode(ILOpCode.Newobj);
-            ilEncoder.Token(_bclReferences.Action_Ctor_Ref);
+            ilEncoder.Token(_bclReferences.ModuleMainDelegate_Ctor_Ref);
 
             ilEncoder.OpCode(ILOpCode.Callvirt);
             var engineExecuteRef = entryPointGenerator.Runtime.GetInstanceMethodRef(
                 typeof(JavaScriptRuntime.Engine),
                 "Execute",
                 typeof(void),
-                typeof(Action));
+                typeof(JavaScriptRuntime.CommonJS.ModuleMainDelegate));
             ilEncoder.Token(engineExecuteRef);
 
             ilEncoder.OpCode(ILOpCode.Ret);

@@ -6,6 +6,7 @@ using Js2IL.Services;
 using Js2IL.Services.VariableBindings;
 using Js2IL.SymbolTables;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Js2IL.Tests
 {
@@ -24,9 +25,10 @@ namespace Js2IL.Tests
 
         public VariablesTests()
         {
+            var serviceProvider = CompilerServices.BuildServiceProvider(new CompilerOptions());
             _registry = new VariableRegistry();
-            _metadataBuilder = new MetadataBuilder();
-            _bclReferences = new BaseClassLibraryReferences(_metadataBuilder);
+            _metadataBuilder = serviceProvider.GetRequiredService<MetadataBuilder>();
+            _bclReferences = serviceProvider.GetRequiredService<BaseClassLibraryReferences>();
         }
 
         /// <summary>

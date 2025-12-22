@@ -339,6 +339,31 @@
       ]
     },
     {
+      "name": "require(id)",
+      "status": "partial",
+      "implementation": "JavaScriptRuntime/CommonJS/Require.cs, JavaScriptRuntime/CommonJS/ModuleContext.cs, JavaScriptRuntime/CommonJS/ModuleName.cs",
+      "docs": "https://nodejs.org/api/modules.html#requireid",
+      "notes": "Supports requiring implemented Node core modules (e.g., fs/path) and compiled local modules. Local requires support ./ and ../ resolution relative to the importing module and are cached (module body executes once). Does not implement full Node resolution (node_modules/package.json) and module.exports assignment semantics are incomplete.",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Require_Basic",
+          "file": "Js2IL.Tests/CommonJS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Require_NestedNameConflict",
+          "file": "Js2IL.Tests/CommonJS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Require_RelativeFromModule",
+          "file": "Js2IL.Tests/CommonJS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Require_SharedDependency_ExecutedOnce",
+          "file": "Js2IL.Tests/CommonJS/ExecutionTests.cs"
+        }
+      ]
+    },
+    {
       "name": "console.log",
       "status": "supported",
       "implementation": "JavaScriptRuntime/Console.cs",
@@ -486,7 +511,7 @@
   ],
   "limitations": [
     "No Buffer support yet; fs APIs operate on UTF-8 text only.",
-    "CommonJS globals (__dirname/__filename) are supported; ESM import.meta.url is not.",
+    "CommonJS globals (__dirname/__filename) are supported; require() is partially supported for compiled local modules and implemented core modules; ESM import.meta.url is not.",
     "Only a small subset of Node is implemented to support tests; many APIs are unimplemented."
   ]
 }

@@ -50,7 +50,7 @@
 
 } // end of class Scopes.Function_GlobalFunctionLogsGlobalVariable
 
-.class public auto ansi abstract sealed beforefieldinit Functions.logGlobalValues
+.class public auto ansi abstract sealed beforefieldinit Functions.Function_GlobalFunctionLogsGlobalVariable
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -98,16 +98,22 @@
 		IL_0047: pop
 		IL_0048: ldnull
 		IL_0049: ret
-	} // end of method logGlobalValues::logGlobalValues
+	} // end of method Function_GlobalFunctionLogsGlobalVariable::logGlobalValues
 
-} // end of class Functions.logGlobalValues
+} // end of class Functions.Function_GlobalFunctionLogsGlobalVariable
 
 .class public auto ansi beforefieldinit Scripts.Function_GlobalFunctionLogsGlobalVariable
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x20bc
 		// Header size: 12
@@ -121,7 +127,7 @@
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldnull
-		IL_0008: ldftn object Functions.logGlobalValues::logGlobalValues(object[])
+		IL_0008: ldftn object Functions.Function_GlobalFunctionLogsGlobalVariable::logGlobalValues(object[])
 		IL_000e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0013: stfld object Scopes.Function_GlobalFunctionLogsGlobalVariable::logGlobalValues
 		IL_0018: ldloc.0
@@ -140,7 +146,7 @@
 		IL_0045: pop
 		IL_0046: ldloc.0
 		IL_0047: ldnull
-		IL_0048: ldftn object Functions.logGlobalValues::logGlobalValues(object[])
+		IL_0048: ldftn object Functions.Function_GlobalFunctionLogsGlobalVariable::logGlobalValues(object[])
 		IL_004e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0053: stfld object Scopes.Function_GlobalFunctionLogsGlobalVariable::logGlobalValues
 		IL_0058: ldloc.0
@@ -176,9 +182,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Function_GlobalFunctionLogsGlobalVariable::Main()
-		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0006: ldftn void Scripts.Function_GlobalFunctionLogsGlobalVariable::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 

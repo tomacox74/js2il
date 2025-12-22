@@ -87,7 +87,7 @@
 
 } // end of class Scopes.Classes_ClassConstructor_Param_Field_Log
 
-.class public auto ansi beforefieldinit Classes.Greeter
+.class public auto ansi beforefieldinit Classes.Classes_ClassConstructor_Param_Field_Log.Greeter
 	extends [System.Runtime]System.Object
 {
 	// Fields
@@ -108,7 +108,7 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: ldarg.0
 		IL_0007: ldarg.1
-		IL_0008: stfld object Classes.Greeter::name
+		IL_0008: stfld object Classes.Classes_ClassConstructor_Param_Field_Log.Greeter::name
 		IL_000d: ret
 	} // end of method Greeter::.ctor
 
@@ -125,7 +125,7 @@
 		IL_0006: dup
 		IL_0007: ldc.i4.0
 		IL_0008: ldarg.0
-		IL_0009: ldfld object Classes.Greeter::name
+		IL_0009: ldfld object Classes.Classes_ClassConstructor_Param_Field_Log.Greeter::name
 		IL_000e: stelem.ref
 		IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_0014: pop
@@ -133,14 +133,20 @@
 		IL_0016: ret
 	} // end of method Greeter::sayName
 
-} // end of class Classes.Greeter
+} // end of class Classes.Classes_ClassConstructor_Param_Field_Log.Greeter
 
 .class public auto ansi beforefieldinit Scripts.Classes_ClassConstructor_Param_Field_Log
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x20b4
 		// Header size: 12
@@ -152,10 +158,10 @@
 		)
 
 		IL_0000: ldstr "Alice"
-		IL_0005: newobj instance void Classes.Greeter::.ctor(object)
+		IL_0005: newobj instance void Classes.Classes_ClassConstructor_Param_Field_Log.Greeter::.ctor(object)
 		IL_000a: stloc.1
 		IL_000b: ldloc.1
-		IL_000c: callvirt instance object Classes.Greeter::sayName()
+		IL_000c: callvirt instance object Classes.Classes_ClassConstructor_Param_Field_Log.Greeter::sayName()
 		IL_0011: pop
 		IL_0012: ret
 	} // end of method Classes_ClassConstructor_Param_Field_Log::Main
@@ -177,9 +183,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Classes_ClassConstructor_Param_Field_Log::Main()
-		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0006: ldftn void Scripts.Classes_ClassConstructor_Param_Field_Log::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 

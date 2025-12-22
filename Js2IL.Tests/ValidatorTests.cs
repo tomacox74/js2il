@@ -91,4 +91,14 @@ public class ValidatorTests
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, e => e.Contains("Module 'node:crypto' is not yet supported"));
     }
+
+    [Fact]
+    public void Validate_Require_DynamicArgument_ReportsError()
+    {
+        var js = "const name = './b'; const m = require(name);";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Dynamic require() with non-literal argument is not supported"));
+    }
 } 

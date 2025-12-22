@@ -48,7 +48,7 @@
 
 } // end of class Scopes.Array_AsArray_Ternary
 
-.class public auto ansi abstract sealed beforefieldinit Functions.asArray
+.class public auto ansi abstract sealed beforefieldinit Functions.Array_AsArray_Ternary
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -107,16 +107,22 @@
 		IL_005c: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 
 		IL_0061: ret
-	} // end of method asArray::asArray
+	} // end of method Array_AsArray_Ternary::asArray
 
-} // end of class Functions.asArray
+} // end of class Functions.Array_AsArray_Ternary
 
 .class public auto ansi beforefieldinit Scripts.Array_AsArray_Ternary
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x20d4
 		// Header size: 12
@@ -132,7 +138,7 @@
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldnull
-		IL_0008: ldftn object Functions.asArray::asArray(object[], object)
+		IL_0008: ldftn object Functions.Array_AsArray_Ternary::asArray(object[], object)
 		IL_000e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0013: stfld object Scopes.Array_AsArray_Ternary::asArray
 		IL_0018: ldloc.0
@@ -144,7 +150,7 @@
 		IL_0026: pop
 		IL_0027: ldloc.0
 		IL_0028: ldnull
-		IL_0029: ldftn object Functions.asArray::asArray(object[], object)
+		IL_0029: ldftn object Functions.Array_AsArray_Ternary::asArray(object[], object)
 		IL_002f: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0034: stfld object Scopes.Array_AsArray_Ternary::asArray
 		IL_0039: ldloc.0
@@ -175,7 +181,7 @@
 		IL_0081: pop
 		IL_0082: ldloc.0
 		IL_0083: ldnull
-		IL_0084: ldftn object Functions.asArray::asArray(object[], object)
+		IL_0084: ldftn object Functions.Array_AsArray_Ternary::asArray(object[], object)
 		IL_008a: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_008f: stfld object Scopes.Array_AsArray_Ternary::asArray
 		IL_0094: ldloc.0
@@ -233,9 +239,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Array_AsArray_Ternary::Main()
-		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0006: ldftn void Scripts.Array_AsArray_Ternary::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 

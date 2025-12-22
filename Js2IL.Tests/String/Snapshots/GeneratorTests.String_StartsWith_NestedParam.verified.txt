@@ -74,7 +74,7 @@
 
 } // end of class Scopes.String_StartsWith_NestedParam
 
-.class public auto ansi abstract sealed beforefieldinit Functions.outer
+.class public auto ansi abstract sealed beforefieldinit Functions.String_StartsWith_NestedParam
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -130,7 +130,7 @@
 			IL_0008: stfld object Scopes.String_StartsWith_NestedParam/outer::s
 			IL_000d: ldloc.0
 			IL_000e: ldnull
-			IL_000f: ldftn object Functions.outer/outer_Nested::inner(object[], object)
+			IL_000f: ldftn object Functions.String_StartsWith_NestedParam/outer_Nested::inner(object[], object)
 			IL_0015: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 			IL_001a: stfld object Scopes.String_StartsWith_NestedParam/outer::inner
 			IL_001f: ldloc.0
@@ -142,7 +142,7 @@
 			IL_002d: pop
 			IL_002e: ldloc.0
 			IL_002f: ldnull
-			IL_0030: ldftn object Functions.outer/outer_Nested::inner(object[], object)
+			IL_0030: ldftn object Functions.String_StartsWith_NestedParam/outer_Nested::inner(object[], object)
 			IL_0036: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 			IL_003b: stfld object Scopes.String_StartsWith_NestedParam/outer::inner
 			IL_0040: ldloc.0
@@ -171,14 +171,20 @@
 	} // end of class outer_Nested
 
 
-} // end of class Functions.outer
+} // end of class Functions.String_StartsWith_NestedParam
 
 .class public auto ansi beforefieldinit Scripts.String_StartsWith_NestedParam
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x2118
 		// Header size: 12
@@ -192,7 +198,7 @@
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldnull
-		IL_0008: ldftn object Functions.outer/outer_Nested::outer(object[], object)
+		IL_0008: ldftn object Functions.String_StartsWith_NestedParam/outer_Nested::outer(object[], object)
 		IL_000e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0013: stfld object Scopes.String_StartsWith_NestedParam::outer
 		IL_0018: ldc.i4.1
@@ -208,7 +214,7 @@
 		IL_002e: pop
 		IL_002f: ldloc.0
 		IL_0030: ldnull
-		IL_0031: ldftn object Functions.outer/outer_Nested::outer(object[], object)
+		IL_0031: ldftn object Functions.String_StartsWith_NestedParam/outer_Nested::outer(object[], object)
 		IL_0037: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_003c: stfld object Scopes.String_StartsWith_NestedParam::outer
 		IL_0041: ldloc.0
@@ -247,9 +253,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.String_StartsWith_NestedParam::Main()
-		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0006: ldftn void Scripts.String_StartsWith_NestedParam::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 

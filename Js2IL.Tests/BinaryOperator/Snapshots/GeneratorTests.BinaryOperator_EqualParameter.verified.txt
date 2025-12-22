@@ -48,7 +48,7 @@
 
 } // end of class Scopes.BinaryOperator_EqualParameter
 
-.class public auto ansi abstract sealed beforefieldinit Functions.testParam
+.class public auto ansi abstract sealed beforefieldinit Functions.BinaryOperator_EqualParameter
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -139,16 +139,22 @@
 		IL_00aa: pop
 		IL_00ab: ldnull
 		IL_00ac: ret
-	} // end of method testParam::testParam
+	} // end of method BinaryOperator_EqualParameter::testParam
 
-} // end of class Functions.testParam
+} // end of class Functions.BinaryOperator_EqualParameter
 
 .class public auto ansi beforefieldinit Scripts.BinaryOperator_EqualParameter
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x2120
 		// Header size: 12
@@ -162,7 +168,7 @@
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldnull
-		IL_0008: ldftn object Functions.testParam::testParam(object[], object)
+		IL_0008: ldftn object Functions.BinaryOperator_EqualParameter::testParam(object[], object)
 		IL_000e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0013: stfld object Scopes.BinaryOperator_EqualParameter::testParam
 		IL_0018: ldloc.0
@@ -174,7 +180,7 @@
 		IL_0026: pop
 		IL_0027: ldloc.0
 		IL_0028: ldnull
-		IL_0029: ldftn object Functions.testParam::testParam(object[], object)
+		IL_0029: ldftn object Functions.BinaryOperator_EqualParameter::testParam(object[], object)
 		IL_002f: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0034: stfld object Scopes.BinaryOperator_EqualParameter::testParam
 		IL_0039: ldloc.0
@@ -201,7 +207,7 @@
 		IL_0075: pop
 		IL_0076: ldloc.0
 		IL_0077: ldnull
-		IL_0078: ldftn object Functions.testParam::testParam(object[], object)
+		IL_0078: ldftn object Functions.BinaryOperator_EqualParameter::testParam(object[], object)
 		IL_007e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0083: stfld object Scopes.BinaryOperator_EqualParameter::testParam
 		IL_0088: ldloc.0
@@ -228,7 +234,7 @@
 		IL_00c4: pop
 		IL_00c5: ldloc.0
 		IL_00c6: ldnull
-		IL_00c7: ldftn object Functions.testParam::testParam(object[], object)
+		IL_00c7: ldftn object Functions.BinaryOperator_EqualParameter::testParam(object[], object)
 		IL_00cd: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_00d2: stfld object Scopes.BinaryOperator_EqualParameter::testParam
 		IL_00d7: ldloc.0
@@ -266,9 +272,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.BinaryOperator_EqualParameter::Main()
-		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0006: ldftn void Scripts.BinaryOperator_EqualParameter::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 

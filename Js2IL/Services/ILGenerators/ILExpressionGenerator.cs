@@ -367,9 +367,10 @@ namespace Js2IL.Services.ILGenerators
                             }
                         }
                         var paramNames = idParams.ToArray();
-                        var registryScopeName = !string.IsNullOrEmpty(_owner.CurrentAssignmentTarget)
+                        var arrowBaseScopeName = !string.IsNullOrEmpty(_owner.CurrentAssignmentTarget)
                             ? $"ArrowFunction_{_owner.CurrentAssignmentTarget}"
                             : $"ArrowFunction_L{arrowFunction.Location.Start.Line}C{arrowFunction.Location.Start.Column}";
+                        var registryScopeName = $"{_variables.GetGlobalScopeName()}/{arrowBaseScopeName}";
                         var ilMethodName = $"ArrowFunction_L{arrowFunction.Location.Start.Line}C{arrowFunction.Location.Start.Column}";
                         var methodHandle = _owner.GenerateArrowFunctionMethod(arrowFunction, registryScopeName, ilMethodName, paramNames);
 
@@ -432,19 +433,20 @@ namespace Js2IL.Services.ILGenerators
                         var paramNames = idList.ToArray();
                         // If the function expression is named (named function expression), prefer its declared name
                         // so that the symbol table scope name and variable registry line up (important for IIFE recursion scenarios).
-                        string registryScopeName;
+                        string baseScopeName;
                         if (funcExpr.Id is Identifier fid && !string.IsNullOrEmpty(fid.Name))
                         {
-                            registryScopeName = fid.Name;
+                            baseScopeName = fid.Name;
                         }
                         else if (!string.IsNullOrEmpty(_owner.CurrentAssignmentTarget))
                         {
-                            registryScopeName = $"FunctionExpression_{_owner.CurrentAssignmentTarget}";
+                            baseScopeName = $"FunctionExpression_{_owner.CurrentAssignmentTarget}";
                         }
                         else
                         {
-                            registryScopeName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
+                            baseScopeName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
                         }
+                        var registryScopeName = $"{_variables.GetGlobalScopeName()}/{baseScopeName}";
                         var ilMethodName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
                         var methodHandle = _owner.GenerateFunctionExpressionMethod(funcExpr, registryScopeName, ilMethodName, paramNames);
 
@@ -1500,24 +1502,6 @@ namespace Js2IL.Services.ILGenerators
             var _runtime = _owner.Runtime;
             var _bclReferences = _owner.BclReferences;
 
-            // Node-style require("module") support as a built-in
-            if (string.Equals(identifier.Name, "require", StringComparison.Ordinal))
-            {
-                if (callExpression.Arguments.Count != 1)
-                {
-                    throw new ArgumentException("require expects exactly one argument");
-                }
-                // Coerce argument to string (for literals this emits ldstr directly)
-                _ = Emit(callExpression.Arguments[0], new TypeCoercion() { toString = true });
-                _runtime.InvokeRequire();
-                // Identify module type for ClrType surface
-                string? mod = null;
-                var arg0 = callExpression.Arguments[0];
-                if (arg0 is StringLiteral s) mod = s.Value;
-                else if (arg0 is Literal glit && glit.Value is string gs) mod = gs;
-                return ResolveNodeModuleType(mod ?? string.Empty);
-            }
-
             // Global String(x) conversion support
             if (string.Equals(identifier.Name, "String", StringComparison.Ordinal))
             {
@@ -1565,15 +1549,31 @@ namespace Js2IL.Services.ILGenerators
             // - Load delegate value only (no need to keep a copy of the scope on the stack for the common case).
             // - If null, create and store the delegate, then reload the field to obtain the receiver for Invoke.
             _il.EmitLoadVariable(functionVariable, _variables, _bclReferences, unbox: false, inClassMethod: false, currentClassName: null, classRegistry: null); // stack: [delegate]
+
+            // this is messy.. nead to clean up EmitFunctionCall
+            if (identifier.Name == "require")
+            {
+                Emit(callExpression.Arguments[0], new TypeCoercion { boxResult = true });
+                _owner.Runtime.InvokeRequire();
+
+                if (callExpression.Arguments[0] is StringLiteral moduleName) {
+                    return ResolveNodeModuleType(moduleName.Value);
+                }
+
+                return null;
+            }
+
+
+            // Attempt to resolve method handle from function registry via owner generator BEFORE branching
+            // so we know the parameter count in both null and non-null paths
+            var fnReg = _owner.FunctionRegistry;
+            var registryHandle = fnReg?.Get(identifier.Name) ?? default;
+
             // Duplicate delegate for null check
             _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup);
             var nonNullLabel = _il.DefineLabel();
             var afterBindLabel = _il.DefineLabel();
             
-            // Attempt to resolve method handle from function registry via owner generator BEFORE branching
-            // so we know the parameter count in both null and non-null paths
-            var fnReg = _owner.FunctionRegistry;
-            var registryHandle = fnReg?.Get(identifier.Name) ?? default;
             // Get the expected parameter count for the function
             int expectedParamCount = fnReg?.GetParameterCount(identifier.Name) ?? callExpression.Arguments.Count;
             
@@ -1699,6 +1699,7 @@ namespace Js2IL.Services.ILGenerators
                 
                 // Call Closure.InvokeWithArgs(object target, object[] scopes, params object[] args)
                 _owner.Runtime.InvokeClosureInvokeWithArgs();
+
                 return null;
             }
 

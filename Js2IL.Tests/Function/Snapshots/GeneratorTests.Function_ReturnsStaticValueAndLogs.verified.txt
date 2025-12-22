@@ -48,7 +48,7 @@
 
 } // end of class Scopes.Function_ReturnsStaticValueAndLogs
 
-.class public auto ansi abstract sealed beforefieldinit Functions.returnsFive
+.class public auto ansi abstract sealed beforefieldinit Functions.Function_ReturnsStaticValueAndLogs
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -73,16 +73,22 @@
 		IL_0014: ldc.r8 5
 		IL_001d: box [System.Runtime]System.Double
 		IL_0022: ret
-	} // end of method returnsFive::returnsFive
+	} // end of method Function_ReturnsStaticValueAndLogs::returnsFive
 
-} // end of class Functions.returnsFive
+} // end of class Functions.Function_ReturnsStaticValueAndLogs
 
 .class public auto ansi beforefieldinit Scripts.Function_ReturnsStaticValueAndLogs
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x2094
 		// Header size: 12
@@ -97,7 +103,7 @@
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldnull
-		IL_0008: ldftn object Functions.returnsFive::returnsFive(object[])
+		IL_0008: ldftn object Functions.Function_ReturnsStaticValueAndLogs::returnsFive(object[])
 		IL_000e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0013: stfld object Scopes.Function_ReturnsStaticValueAndLogs::returnsFive
 		IL_0018: ldloc.0
@@ -109,7 +115,7 @@
 		IL_0026: pop
 		IL_0027: ldloc.0
 		IL_0028: ldnull
-		IL_0029: ldftn object Functions.returnsFive::returnsFive(object[])
+		IL_0029: ldftn object Functions.Function_ReturnsStaticValueAndLogs::returnsFive(object[])
 		IL_002f: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0034: stfld object Scopes.Function_ReturnsStaticValueAndLogs::returnsFive
 		IL_0039: ldloc.0
@@ -157,9 +163,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Function_ReturnsStaticValueAndLogs::Main()
-		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0006: ldftn void Scripts.Function_ReturnsStaticValueAndLogs::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 

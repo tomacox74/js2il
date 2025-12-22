@@ -112,7 +112,7 @@
 
 } // end of class Scopes.Classes_ClassConstructor_NewClassReferencingGlobal
 
-.class public auto ansi beforefieldinit Classes.Inner
+.class public auto ansi beforefieldinit Classes.Classes_ClassConstructor_NewClassReferencingGlobal.Inner
 	extends [System.Runtime]System.Object
 {
 	// Fields
@@ -134,21 +134,21 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: ldarg.0
 		IL_0007: ldarg.1
-		IL_0008: stfld object[] Classes.Inner::_scopes
+		IL_0008: stfld object[] Classes.Classes_ClassConstructor_NewClassReferencingGlobal.Inner::_scopes
 		IL_000d: ldarg.0
 		IL_000e: ldarg.0
-		IL_000f: ldfld object[] Classes.Inner::_scopes
+		IL_000f: ldfld object[] Classes.Classes_ClassConstructor_NewClassReferencingGlobal.Inner::_scopes
 		IL_0014: ldc.i4.0
 		IL_0015: ldelem.ref
 		IL_0016: castclass Scopes.Classes_ClassConstructor_NewClassReferencingGlobal
 		IL_001b: ldfld object Scopes.Classes_ClassConstructor_NewClassReferencingGlobal::GLOBAL_VALUE
-		IL_0020: stfld object Classes.Inner::'value'
+		IL_0020: stfld object Classes.Classes_ClassConstructor_NewClassReferencingGlobal.Inner::'value'
 		IL_0025: ret
 	} // end of method Inner::.ctor
 
-} // end of class Classes.Inner
+} // end of class Classes.Classes_ClassConstructor_NewClassReferencingGlobal.Inner
 
-.class public auto ansi beforefieldinit Classes.Outer
+.class public auto ansi beforefieldinit Classes.Classes_ClassConstructor_NewClassReferencingGlobal.Outer
 	extends [System.Runtime]System.Object
 {
 	// Fields
@@ -170,31 +170,37 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: ldarg.0
 		IL_0007: ldarg.1
-		IL_0008: stfld object[] Classes.Outer::_scopes
+		IL_0008: stfld object[] Classes.Classes_ClassConstructor_NewClassReferencingGlobal.Outer::_scopes
 		IL_000d: ldarg.0
 		IL_000e: ldc.i4.1
 		IL_000f: newarr [System.Runtime]System.Object
 		IL_0014: dup
 		IL_0015: ldc.i4.0
 		IL_0016: ldarg.0
-		IL_0017: ldfld object[] Classes.Outer::_scopes
+		IL_0017: ldfld object[] Classes.Classes_ClassConstructor_NewClassReferencingGlobal.Outer::_scopes
 		IL_001c: ldc.i4.0
 		IL_001d: ldelem.ref
 		IL_001e: castclass Scopes.Classes_ClassConstructor_NewClassReferencingGlobal
 		IL_0023: stelem.ref
-		IL_0024: newobj instance void Classes.Inner::.ctor(object[])
-		IL_0029: stfld object Classes.Outer::inner
+		IL_0024: newobj instance void Classes.Classes_ClassConstructor_NewClassReferencingGlobal.Inner::.ctor(object[])
+		IL_0029: stfld object Classes.Classes_ClassConstructor_NewClassReferencingGlobal.Outer::inner
 		IL_002e: ret
 	} // end of method Outer::.ctor
 
-} // end of class Classes.Outer
+} // end of class Classes.Classes_ClassConstructor_NewClassReferencingGlobal.Outer
 
 .class public auto ansi beforefieldinit Scripts.Classes_ClassConstructor_NewClassReferencingGlobal
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x20f0
 		// Header size: 12
@@ -217,15 +223,15 @@
 		IL_0021: ldc.i4.0
 		IL_0022: ldloc.0
 		IL_0023: stelem.ref
-		IL_0024: newobj instance void Classes.Outer::.ctor(object[])
+		IL_0024: newobj instance void Classes.Classes_ClassConstructor_NewClassReferencingGlobal.Outer::.ctor(object[])
 		IL_0029: stloc.1
 		IL_002a: ldc.i4.1
 		IL_002b: newarr [System.Runtime]System.Object
 		IL_0030: dup
 		IL_0031: ldc.i4.0
 		IL_0032: ldloc.1
-		IL_0033: castclass Classes.Outer
-		IL_0038: ldfld object Classes.Outer::inner
+		IL_0033: castclass Classes.Classes_ClassConstructor_NewClassReferencingGlobal.Outer
+		IL_0038: ldfld object Classes.Classes_ClassConstructor_NewClassReferencingGlobal.Outer::inner
 		IL_003d: ldstr "value"
 		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
 		IL_0047: stelem.ref
@@ -251,9 +257,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Classes_ClassConstructor_NewClassReferencingGlobal::Main()
-		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0006: ldftn void Scripts.Classes_ClassConstructor_NewClassReferencingGlobal::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 

@@ -1,4 +1,5 @@
 using Acornima;
+using Acornima.Ast;
 using Js2IL.SymbolTables;
 using Js2IL.Services;
 using Xunit;
@@ -16,6 +17,21 @@ namespace Js2IL.Tests
             _scopeBuilder = new SymbolTableBuilder();
         }
 
+        // Helper method to adapt old test API to new ModuleDefinition-based API
+        private SymbolTable BuildSymbolTable(Acornima.Ast.Program ast, string fileName)
+        {
+            var module = new ModuleDefinition
+            {
+                Ast = ast,
+                Path = fileName,
+                Name = Path.GetFileNameWithoutExtension(fileName)
+            };
+
+            _scopeBuilder.Build(module);
+
+            return module.SymbolTable!;
+        }
+
         [Fact]
         public void Build_ArrowFunctionWithAssignment_UsesDescriptiveName()
         {
@@ -28,7 +44,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             var arrowScope = scopeTree.Root.Children[0];
@@ -47,7 +63,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             var funcScope = scopeTree.Root.Children[0];
@@ -66,7 +82,7 @@ namespace Js2IL.Tests
             var ast = _parser.ParseJavaScript(code, "test.js");
 
             // Act
-            var scopeTree = _scopeBuilder.Build(ast, "test.js");
+            var scopeTree = BuildSymbolTable(ast, "test.js");
 
             // Assert
             var arrowScope = scopeTree.Root.Children[0];

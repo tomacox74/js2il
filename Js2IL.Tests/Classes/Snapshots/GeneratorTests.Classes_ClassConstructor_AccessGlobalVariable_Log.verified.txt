@@ -70,7 +70,7 @@
 
 } // end of class Scopes.Classes_ClassConstructor_AccessGlobalVariable_Log
 
-.class public auto ansi beforefieldinit Classes.MyClass
+.class public auto ansi beforefieldinit Classes.Classes_ClassConstructor_AccessGlobalVariable_Log.MyClass
 	extends [System.Runtime]System.Object
 {
 	// Fields
@@ -91,13 +91,13 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: ldarg.0
 		IL_0007: ldarg.1
-		IL_0008: stfld object[] Classes.MyClass::_scopes
+		IL_0008: stfld object[] Classes.Classes_ClassConstructor_AccessGlobalVariable_Log.MyClass::_scopes
 		IL_000d: ldc.i4.1
 		IL_000e: newarr [System.Runtime]System.Object
 		IL_0013: dup
 		IL_0014: ldc.i4.0
 		IL_0015: ldarg.0
-		IL_0016: ldfld object[] Classes.MyClass::_scopes
+		IL_0016: ldfld object[] Classes.Classes_ClassConstructor_AccessGlobalVariable_Log.MyClass::_scopes
 		IL_001b: ldc.i4.0
 		IL_001c: ldelem.ref
 		IL_001d: castclass Scopes.Classes_ClassConstructor_AccessGlobalVariable_Log
@@ -108,14 +108,20 @@
 		IL_002e: ret
 	} // end of method MyClass::.ctor
 
-} // end of class Classes.MyClass
+} // end of class Classes.Classes_ClassConstructor_AccessGlobalVariable_Log.MyClass
 
 .class public auto ansi beforefieldinit Scripts.Classes_ClassConstructor_AccessGlobalVariable_Log
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x20a8
 		// Header size: 12
@@ -137,7 +143,7 @@
 		IL_0018: ldc.i4.0
 		IL_0019: ldloc.0
 		IL_001a: stelem.ref
-		IL_001b: newobj instance void Classes.MyClass::.ctor(object[])
+		IL_001b: newobj instance void Classes.Classes_ClassConstructor_AccessGlobalVariable_Log.MyClass::.ctor(object[])
 		IL_0020: stloc.1
 		IL_0021: ret
 	} // end of method Classes_ClassConstructor_AccessGlobalVariable_Log::Main
@@ -159,9 +165,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Classes_ClassConstructor_AccessGlobalVariable_Log::Main()
-		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0006: ldftn void Scripts.Classes_ClassConstructor_AccessGlobalVariable_Log::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 

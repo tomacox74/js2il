@@ -67,7 +67,7 @@
 
 } // end of class Scopes.Classes_ClassPrivateProperty_HelperMethod_Log
 
-.class public auto ansi beforefieldinit Classes.Greeter
+.class public auto ansi beforefieldinit Classes.Classes_ClassPrivateProperty_HelperMethod_Log.Greeter
 	extends [System.Runtime]System.Object
 {
 	// Fields
@@ -86,7 +86,7 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: ldarg.0
 		IL_0007: ldstr "TopSecret"
-		IL_000c: stfld object Classes.Greeter::_secret
+		IL_000c: stfld object Classes.Classes_ClassPrivateProperty_HelperMethod_Log.Greeter::_secret
 		IL_0011: ret
 	} // end of method Greeter::.ctor
 
@@ -103,7 +103,7 @@
 		IL_0006: dup
 		IL_0007: ldc.i4.0
 		IL_0008: ldarg.0
-		IL_0009: ldfld object Classes.Greeter::_secret
+		IL_0009: ldfld object Classes.Classes_ClassPrivateProperty_HelperMethod_Log.Greeter::_secret
 		IL_000e: stelem.ref
 		IL_000f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_0014: pop
@@ -111,14 +111,20 @@
 		IL_0016: ret
 	} // end of method Greeter::logSecret
 
-} // end of class Classes.Greeter
+} // end of class Classes.Classes_ClassPrivateProperty_HelperMethod_Log.Greeter
 
 .class public auto ansi beforefieldinit Scripts.Classes_ClassPrivateProperty_HelperMethod_Log
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x20b0
 		// Header size: 12
@@ -129,10 +135,10 @@
 			[1] object
 		)
 
-		IL_0000: newobj instance void Classes.Greeter::.ctor()
+		IL_0000: newobj instance void Classes.Classes_ClassPrivateProperty_HelperMethod_Log.Greeter::.ctor()
 		IL_0005: stloc.1
 		IL_0006: ldloc.1
-		IL_0007: callvirt instance object Classes.Greeter::logSecret()
+		IL_0007: callvirt instance object Classes.Classes_ClassPrivateProperty_HelperMethod_Log.Greeter::logSecret()
 		IL_000c: pop
 		IL_000d: ret
 	} // end of method Classes_ClassPrivateProperty_HelperMethod_Log::Main
@@ -154,9 +160,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Classes_ClassPrivateProperty_HelperMethod_Log::Main()
-		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0006: ldftn void Scripts.Classes_ClassPrivateProperty_HelperMethod_Log::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 

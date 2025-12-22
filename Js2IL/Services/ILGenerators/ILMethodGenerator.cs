@@ -6,6 +6,8 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using Acornima;
 using Acornima.Ast;
+using Microsoft.Extensions.DependencyInjection;
+using Js2IL.Utilities.Ecma335;
 
 namespace Js2IL.Services.ILGenerators
 {
@@ -25,6 +27,8 @@ namespace Js2IL.Services.ILGenerators
         private string? _currentClassName;
         private string? _currentAssignmentTarget;
         private readonly Dictionary<string, string> _variableToClass = new();
+
+        private readonly IServiceProvider _serviceProvider;
 
         private readonly struct LoopContext
         {
@@ -58,7 +62,7 @@ namespace Js2IL.Services.ILGenerators
 
         private readonly FunctionRegistry? _functionRegistry;
 
-        public ILMethodGenerator(Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, ClassRegistry? classRegistry = null, FunctionRegistry? functionRegistry = null, bool inClassMethod = false, string? currentClassName = null)
+        public ILMethodGenerator(IServiceProvider serviceProvider, Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, ClassRegistry? classRegistry = null, FunctionRegistry? functionRegistry = null, bool inClassMethod = false, string? currentClassName = null)
         {
             _variables = variables;
             _bclReferences = bclReferences;
@@ -66,7 +70,7 @@ namespace Js2IL.Services.ILGenerators
             var methodIl = new BlobBuilder();
             _cfb = new ControlFlowBuilder();
             _il = new InstructionEncoder(methodIl, _cfb);
-            this._runtime = new Runtime(_il, bclReferences.TypeRefRegistry, bclReferences.MemberRefRegistry);
+            _runtime = new Runtime(_il, serviceProvider.GetRequiredService<TypeReferenceRegistry>(), serviceProvider.GetRequiredService<MemberReferenceRegistry>());
             // Use a dedicated expression generator to avoid circular logic and enable incremental refactors
             this._expressionEmitter = new ILExpressionGenerator(this);
 
@@ -75,6 +79,7 @@ namespace Js2IL.Services.ILGenerators
             _functionRegistry = functionRegistry;
             _inClassMethod = inClassMethod;
             _currentClassName = currentClassName;
+            _serviceProvider = serviceProvider;
         }
 
         // Allow expression generator to record variable->class mapping when emitting `new ClassName()` in assignments/initializers
@@ -414,7 +419,34 @@ namespace Js2IL.Services.ILGenerators
         public void InitializeLocalFunctionVariable(FunctionDeclaration functionDeclaration)
         {
             var functionName = (functionDeclaration.Id as Acornima.Ast.Identifier)!.Name;
-            var functionVariable = _variables.FindVariable(functionName) ?? throw new InvalidOperationException($"Variable '{functionName}' not found.");
+            var functionVariable = _variables.FindVariable(functionName);
+            if (functionVariable == null)
+            {
+                // Multi-module compilation: function declarations are stored on the module (global) scope.
+                // The registry keys are module-qualified, so fall back to an explicit lookup in the current module.
+                var registry = _variables.GetVariableRegistry();
+                if (registry != null)
+                {
+                    var moduleScope = _variables.GetGlobalScopeName();
+                    var vi = registry.GetVariableInfo(moduleScope, functionName);
+                    if (vi != null)
+                    {
+                        functionVariable = new LocalVariable
+                        {
+                            Name = functionName,
+                            FieldHandle = vi.FieldHandle,
+                            ScopeName = vi.ScopeName,
+                            Type = JavascriptType.Unknown,
+                            ClrType = vi.ClrType,
+                            IsStableType = vi.IsStableType
+                        };
+                    }
+                }
+            }
+            if (functionVariable == null)
+            {
+                throw new InvalidOperationException($"Variable '{functionName}' not found.");
+            }
             // Resolve emitted method for this function via function registry
             var methodHandle = _functionRegistry?.Get(functionName) ?? default;
             if (methodHandle.IsNil)
@@ -577,7 +609,9 @@ namespace Js2IL.Services.ILGenerators
 
             // Create a synthetic scope name matching SymbolTableBuilder convention so registry lookups succeed.
             // We rely on the same naming pattern used during symbol table build.
-            var scopeName = $"Block_L{blockStatement.Location.Start.Line}C{blockStatement.Location.Start.Column}";
+            var blockName = $"Block_L{blockStatement.Location.Start.Line}C{blockStatement.Location.Start.Column}";
+            // Registry scope names are module-qualified for all non-global scopes
+            var scopeName = $"{_variables.GetGlobalScopeName()}/{blockName}";
 
             // Emit inner statements and create the scope instance here if needed
             GenerateStatementsForBody(scopeName, true, blockStatement.Body);
@@ -1213,7 +1247,7 @@ namespace Js2IL.Services.ILGenerators
 
         internal MethodDefinitionHandle GenerateArrowFunctionMethod(ArrowFunctionExpression arrowFunction, string registryScopeName, string ilMethodName, string[] paramNames)
         {
-            var arrowGen = new JavaScriptArrowFunctionGenerator(_variables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
+            var arrowGen = new JavaScriptArrowFunctionGenerator(_serviceProvider,_variables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry!);
             return arrowGen.GenerateArrowFunctionMethod(arrowFunction, registryScopeName, ilMethodName, paramNames);
         }
 
@@ -1223,7 +1257,7 @@ namespace Js2IL.Services.ILGenerators
             var pnames = paramNames ?? Array.Empty<string>();
             // Share the parent ClassRegistry and FunctionRegistry so nested functions can resolve declared classes
             // and register their methods for lazy self-binding (recursion) support.
-            var childGen = new ILMethodGenerator(functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
+            var childGen = new ILMethodGenerator(_serviceProvider, functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
             var il = childGen.IL;
 
             // If this is a named function expression (e.g., function walk(node) { ... }), JS specifies

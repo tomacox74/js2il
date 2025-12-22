@@ -45,7 +45,7 @@
 
 } // end of class Scopes.Classes_ClassProperty_DefaultAndLog
 
-.class public auto ansi beforefieldinit Classes.Greeter
+.class public auto ansi beforefieldinit Classes.Classes_ClassProperty_DefaultAndLog.Greeter
 	extends [System.Runtime]System.Object
 {
 	// Fields
@@ -64,18 +64,24 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: ldarg.0
 		IL_0007: ldstr "Hi"
-		IL_000c: stfld object Classes.Greeter::message
+		IL_000c: stfld object Classes.Classes_ClassProperty_DefaultAndLog.Greeter::message
 		IL_0011: ret
 	} // end of method Greeter::.ctor
 
-} // end of class Classes.Greeter
+} // end of class Classes.Classes_ClassProperty_DefaultAndLog.Greeter
 
 .class public auto ansi beforefieldinit Scripts.Classes_ClassProperty_DefaultAndLog
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x2084
 		// Header size: 12
@@ -86,15 +92,15 @@
 			[1] object
 		)
 
-		IL_0000: newobj instance void Classes.Greeter::.ctor()
+		IL_0000: newobj instance void Classes.Classes_ClassProperty_DefaultAndLog.Greeter::.ctor()
 		IL_0005: stloc.1
 		IL_0006: ldc.i4.1
 		IL_0007: newarr [System.Runtime]System.Object
 		IL_000c: dup
 		IL_000d: ldc.i4.0
 		IL_000e: ldloc.1
-		IL_000f: castclass Classes.Greeter
-		IL_0014: ldfld object Classes.Greeter::message
+		IL_000f: castclass Classes.Classes_ClassProperty_DefaultAndLog.Greeter
+		IL_0014: ldfld object Classes.Classes_ClassProperty_DefaultAndLog.Greeter::message
 		IL_0019: stelem.ref
 		IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
 		IL_001f: pop
@@ -118,9 +124,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Classes_ClassProperty_DefaultAndLog::Main()
-		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0006: ldftn void Scripts.Classes_ClassProperty_DefaultAndLog::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 

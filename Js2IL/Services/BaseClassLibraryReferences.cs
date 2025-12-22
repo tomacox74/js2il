@@ -19,15 +19,12 @@ namespace Js2IL.Services
             { 6, typeof(System.Func<object[], object, object, object, object, object, object, object>) }
         };
 
-        public BaseClassLibraryReferences(MetadataBuilder metadataBuilder)
+        public BaseClassLibraryReferences(TypeReferenceRegistry typeRefRegistr, MemberReferenceRegistry memberRefRegistr)
         {
-            _typeRefRegistry = new TypeReferenceRegistry(metadataBuilder);
-            _memberRefRegistry = new MemberReferenceRegistry(metadataBuilder, _typeRefRegistry);
+            _typeRefRegistry = typeRefRegistr;
+            _memberRefRegistry = memberRefRegistr;
         }
-
-        public TypeReferenceRegistry TypeRefRegistry => _typeRefRegistry;
-        public MemberReferenceRegistry MemberRefRegistry => _memberRefRegistry;
-
+        
         public TypeReferenceHandle BooleanType => _typeRefRegistry.GetOrAdd(typeof(bool));
         public TypeReferenceHandle DoubleType => _typeRefRegistry.GetOrAdd(typeof(double));
         public TypeReferenceHandle Int32Type => _typeRefRegistry.GetOrAdd(typeof(int));
@@ -44,6 +41,7 @@ namespace Js2IL.Services
         public MemberReferenceHandle Array_SetItem_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Collections.Generic.List<object>), "set_Item");
         public MemberReferenceHandle Array_GetCount_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Collections.Generic.List<object>), "get_Count");
         public MemberReferenceHandle Action_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(System.Action), new[] { typeof(object), typeof(IntPtr) });
+        public MemberReferenceHandle ModuleMainDelegate_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.CommonJS.ModuleMainDelegate), new[] { typeof(object), typeof(IntPtr) });
         public MemberReferenceHandle MethodBase_GetCurrentMethod_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Reflection.MethodBase), "GetCurrentMethod", Type.EmptyTypes);
 
         public MemberReferenceHandle GetFuncCtorRef(int jsParamCount)

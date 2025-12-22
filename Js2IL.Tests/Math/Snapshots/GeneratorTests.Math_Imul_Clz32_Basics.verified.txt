@@ -48,7 +48,7 @@
 
 } // end of class Scopes.Math_Imul_Clz32_Basics
 
-.class public auto ansi abstract sealed beforefieldinit Functions.toStr
+.class public auto ansi abstract sealed beforefieldinit Functions.Math_Imul_Clz32_Basics
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -88,16 +88,22 @@
 		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 
 		IL_0058: ret
-	} // end of method toStr::toStr
+	} // end of method Math_Imul_Clz32_Basics::toStr
 
-} // end of class Functions.toStr
+} // end of class Functions.Math_Imul_Clz32_Basics
 
 .class public auto ansi beforefieldinit Scripts.Math_Imul_Clz32_Basics
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x20cc
 		// Header size: 12
@@ -117,7 +123,7 @@
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldnull
-		IL_0008: ldftn object Functions.toStr::toStr(object[], object)
+		IL_0008: ldftn object Functions.Math_Imul_Clz32_Basics::toStr(object[], object)
 		IL_000e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0013: stfld object Scopes.Math_Imul_Clz32_Basics::toStr
 		IL_0018: ldc.r8 2
@@ -174,7 +180,7 @@
 		IL_0102: pop
 		IL_0103: ldloc.0
 		IL_0104: ldnull
-		IL_0105: ldftn object Functions.toStr::toStr(object[], object)
+		IL_0105: ldftn object Functions.Math_Imul_Clz32_Basics::toStr(object[], object)
 		IL_010b: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0110: stfld object Scopes.Math_Imul_Clz32_Basics::toStr
 		IL_0115: ldloc.0
@@ -230,9 +236,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Math_Imul_Clz32_Basics::Main()
-		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0006: ldftn void Scripts.Math_Imul_Clz32_Basics::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 

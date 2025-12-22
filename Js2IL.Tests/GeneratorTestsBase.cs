@@ -1,4 +1,5 @@
 using Js2IL.Services;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using System.Reflection;
@@ -35,19 +36,47 @@ namespace Js2IL.Tests
         }
 
         protected Task GenerateTest(string testName, [CallerFilePath] string sourceFilePath = "")
-            => GenerateTest(testName, configureSettings: null, sourceFilePath);
+            => GenerateTest(testName, configureSettings: null, additionalScripts: null, sourceFilePath: sourceFilePath);
 
-        protected Task GenerateTest(string testName, Action<VerifySettings>? configureSettings, [CallerFilePath] string sourceFilePath = "")
+        protected Task GenerateTest(string testName, string[]? additionalScripts, [CallerFilePath] string sourceFilePath = "")
+            => GenerateTest(testName, configureSettings: null, additionalScripts: additionalScripts, sourceFilePath: sourceFilePath);
+
+        protected Task GenerateTest(string testName, Action<VerifySettings>? configureSettings, string[]? additionalScripts, [CallerFilePath] string sourceFilePath = "")
         {
             var js = GetJavaScript(testName);
-            var ast = _parser.ParseJavaScript(js, testName);
-            _validator.Validate(ast);
+            var testFilePath = Path.Combine(_outputPath, $"{testName}.js");
 
-            var generator = new AssemblyGenerator();
+            var mockFileSystem = new MockFileSystem();
+            mockFileSystem.AddFile(testFilePath, js);
 
-            generator.Generate(ast, testName, _outputPath);
+            // Add additional scripts to the mock file system
+            if (additionalScripts != null)
+            {
+                foreach (var scriptName in additionalScripts)
+                {
+                    var scriptContent = GetJavaScript(scriptName);
+                    var scriptPath = Path.Combine(_outputPath, $"{scriptName}.js");
+                    mockFileSystem.AddFile(scriptPath, scriptContent);
+                }
+            }
 
-            var expectedPath = Path.Combine(_outputPath, $"{testName}.dll");
+            var options = new CompilerOptions
+            {
+                OutputDirectory = _outputPath
+            };
+
+            var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFileSystem);
+            var compiler = serviceProvider.GetRequiredService<Compiler>();
+            
+            if (!compiler.Compile(testFilePath))
+            {
+                throw new InvalidOperationException($"Compilation failed for test {testName}");
+            }
+
+            // Compiler outputs <entryFileBasename>.dll into OutputDirectory.
+            // For nested-path test names (e.g. "CommonJS_Require_X/a"), the DLL will be "a.dll".
+            var assemblyName = Path.GetFileNameWithoutExtension(testFilePath);
+            var expectedPath = Path.Combine(_outputPath, $"{assemblyName}.dll");
 
             var il = Utilities.AssemblyToText.ConvertToText(expectedPath);
             
@@ -67,10 +96,13 @@ namespace Js2IL.Tests
         {
             var assembly = Assembly.GetExecutingAssembly();
             var category = GetType().Namespace?.Split('.').Last();
+            // Support nested module paths in tests (e.g., "CommonJS_Require_X/helpers/b").
+            // Embedded resource names use '.' separators, so normalize path separators to '.'.
+            var resourceKey = testName.Replace('\\', '.').Replace('/', '.');
             var categorySpecific = string.IsNullOrEmpty(category)
                 ? null
-                : $"Js2IL.Tests.{category}.JavaScript.{testName}.js";
-            var legacy = $"Js2IL.Tests.JavaScript.{testName}.js";
+                : $"Js2IL.Tests.{category}.JavaScript.{resourceKey}.js";
+            var legacy = $"Js2IL.Tests.JavaScript.{resourceKey}.js";
             using (var stream = (categorySpecific != null ? assembly.GetManifestResourceStream(categorySpecific) : null)
                                ?? assembly.GetManifestResourceStream(legacy))
             {

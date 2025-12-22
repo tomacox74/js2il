@@ -6,6 +6,7 @@ using System.Reflection;
 using Acornima.Ast;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Js2IL.Services.ILGenerators
 {
@@ -17,8 +18,11 @@ namespace Js2IL.Services.ILGenerators
         private readonly ClassRegistry _classRegistry;
         private readonly Variables _variables;
 
-        public ClassesGenerator(MetadataBuilder metadata, BaseClassLibraryReferences bcl, MethodBodyStreamEncoder methodBodies, ClassRegistry classRegistry, Variables variables)
+        private readonly IServiceProvider _serviceProvider;
+
+        public ClassesGenerator(IServiceProvider serviceProvider, MetadataBuilder metadata, BaseClassLibraryReferences bcl, MethodBodyStreamEncoder methodBodies, ClassRegistry classRegistry, Variables variables)
         {
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _metadata = metadata ?? throw new ArgumentNullException(nameof(metadata));
             _bcl = bcl ?? throw new ArgumentNullException(nameof(bcl));
             _methodBodies = methodBodies;
@@ -33,13 +37,23 @@ namespace Js2IL.Services.ILGenerators
         private System.Collections.Generic.List<string> DetermineParentScopesForClassMethod(Scope classScope)
         {
             var scopeNames = new System.Collections.Generic.List<string>();
+            var moduleName = _variables.GetGlobalScopeName();
             
             // Walk up from class's parent to root, collecting ancestor scope names
             var current = classScope.Parent;
             var ancestors = new System.Collections.Generic.Stack<string>();
             while (current != null)
             {
-                ancestors.Push(current.Name);
+                // Registry keys for non-global scopes are module-qualified (<module>/<scope>).
+                // Scope.Name in the symbol table is typically unqualified (e.g., "testFunction").
+                // Ensure we pass module-qualified names so Variables can map this._scopes correctly.
+                var name = current.Name;
+                if (!string.IsNullOrEmpty(name) && !name.Contains('/') && name != moduleName)
+                {
+                    name = $"{moduleName}/{name}";
+                }
+
+                ancestors.Push(name);
                 current = current.Parent;
             }
             
@@ -60,6 +74,8 @@ namespace Js2IL.Services.ILGenerators
 
         private void EmitClassesRecursive(Scope scope)
         {
+
+
             foreach (var child in scope.Children)
             {
                 if (child.Kind == ScopeKind.Class && child.AstNode is ClassDeclaration cdecl)
@@ -281,7 +297,7 @@ namespace Js2IL.Services.ILGenerators
                     .Parameters(0, r => r.Void(), p => { });
                 var cctorSig = _metadata.GetOrAddBlob(sigBuilder);
 
-                var ilGen = new ILMethodGenerator(_variables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: false, currentClassName: classScope.Name);
+                var ilGen = new ILMethodGenerator(_serviceProvider, _variables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: false, currentClassName: classScope.Name);
 
                 // For each static field with an initializer: evaluate and stsfld
                 foreach (var (field, initExpr) in staticFieldsWithInits)
@@ -349,8 +365,9 @@ namespace Js2IL.Services.ILGenerators
                 : Enumerable.Empty<string>();
                 
             Variables methodVariables;
-            // Build qualified scope name for constructor
-            var constructorScopeName = $"{className}/constructor";
+            // Registry scope names are module-qualified for all non-global scopes.
+            // Class method/constructor scopes are named by SymbolTableBuilder using only the method name.
+            var constructorScopeName = $"{_variables.GetGlobalScopeName()}/constructor";
             if (needsScopes)
             {
                 var parentScopeNames = DetermineParentScopesForClassMethod(classScope);
@@ -363,7 +380,7 @@ namespace Js2IL.Services.ILGenerators
                 methodVariables = new Variables(_variables, constructorScopeName, paramNames, isNestedFunction: false);
             }
             
-            var ilGen = new ILMethodGenerator(methodVariables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: true, currentClassName: className);
+            var ilGen = new ILMethodGenerator(_serviceProvider, methodVariables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: true, currentClassName: className);
 
             // Call base System.Object constructor
             ilGen.IL.OpCode(ILOpCode.Ldarg_0);
@@ -506,8 +523,9 @@ namespace Js2IL.Services.ILGenerators
             
             // For class instance methods, determine which parent scopes will be available via this._scopes
             // For static methods, use standard nested function semantics
-            // Build qualified scope name for method
-            var methodScopeName = $"{className}/{mname}";
+            // Registry scope names are module-qualified for all non-global scopes.
+            // Class method scopes are named by SymbolTableBuilder using only the method name.
+            var methodScopeName = $"{_variables.GetGlobalScopeName()}/{mname}";
             Variables methodVariables;
             if (!element.Static && _classRegistry.TryGetPrivateField(className, "_scopes", out var _))
             {
@@ -521,7 +539,7 @@ namespace Js2IL.Services.ILGenerators
                 methodVariables = new Variables(_variables, methodScopeName, paramNames, isNestedFunction: false);
             }
             
-            var ilGen = new ILMethodGenerator(methodVariables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: true, currentClassName: className);
+            var ilGen = new ILMethodGenerator(_serviceProvider, methodVariables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: true, currentClassName: className);
 
             // Initialize default parameter values (instance methods: arg0=this, params start at arg1; static methods: params start at arg0)
             // and check for explicit return
@@ -781,7 +799,7 @@ namespace Js2IL.Services.ILGenerators
             }
             
             // Now handle object-pattern destructuring
-            var runtime = new Runtime(ilGen.IL, _bcl.TypeRefRegistry, _bcl.MemberRefRegistry);
+            var runtime = new Runtime(ilGen.IL, _serviceProvider.GetRequiredService<TypeReferenceRegistry>(), _serviceProvider.GetRequiredService<MemberReferenceRegistry>());
             MethodBuilder.EmitObjectPatternParameterDestructuring(
                 _metadata,
                 ilGen.IL,

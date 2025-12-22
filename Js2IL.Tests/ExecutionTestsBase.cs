@@ -1,4 +1,5 @@
 using Js2IL.Services;
+using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -25,16 +26,42 @@ namespace Js2IL.Tests
             Directory.CreateDirectory(_outputPath);
         }
 
-        protected Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, bool preferOutOfProc = false, [CallerFilePath] string sourceFilePath = "", Action<IConsoleOutput> postTestProcessingAction = null!)
+        protected Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, bool preferOutOfProc = false, [CallerFilePath] string sourceFilePath = "", Action<IConsoleOutput> postTestProcessingAction = null!, string[]? additionalScripts = null)
         {
             var js = GetJavaScript(testName);
-            var ast = _parser.ParseJavaScript(js, "test.js");
-            _validator.Validate(ast);
+            var testFilePath = Path.Combine(_outputPath, $"{testName}.js");
 
-            var generator = new AssemblyGenerator();
-            generator.Generate(ast, testName, _outputPath);
+            var mockFileSystem = new MockFileSystem();
+            mockFileSystem.AddFile(testFilePath, js);
 
-            var expectedPath = Path.Combine(_outputPath, $"{testName}.dll");
+            // Add additional scripts to the mock file system
+            if (additionalScripts != null)
+            {
+                foreach (var scriptName in additionalScripts)
+                {
+                    var scriptContent = GetJavaScript(scriptName);
+                    var scriptPath = Path.Combine(_outputPath, $"{scriptName}.js");
+                    mockFileSystem.AddFile(scriptPath, scriptContent);
+                }
+            }
+
+            var options = new CompilerOptions
+            {
+                OutputDirectory = _outputPath
+            };
+
+            var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFileSystem);
+            var compiler = serviceProvider.GetRequiredService<Compiler>();
+            
+            if (!compiler.Compile(testFilePath))
+            {
+                throw new InvalidOperationException($"Compilation failed for test {testName}");
+            }
+
+            // Compiler outputs <entryFileBasename>.dll into OutputDirectory.
+            // For nested-path test names (e.g. "CommonJS_Require_X/a"), the DLL will be "a.dll".
+            var assemblyName = Path.GetFileNameWithoutExtension(testFilePath);
+            var expectedPath = Path.Combine(_outputPath, $"{assemblyName}.dll");
 
             string il;
             bool usedFallback = false;
@@ -157,19 +184,8 @@ namespace Js2IL.Tests
                 // Attempt to set module context on all plausible runtime assemblies pre-run
                 try
                 {
-                    // 1) The discovered jsRuntimeAsm (file-based or fallback)
-                    var gvType = jsRuntimeAsm?.GetType("JavaScriptRuntime.GlobalThis");
-                    var setCtx = gvType?.GetMethod("SetModuleContext", BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(string) });
-                    if (gvType != null && setCtx != null)
-                    {
-                        setCtx.Invoke(null, new object?[] { modDir, file });
-                    }
-                }
-                catch { }
-                try
-                {
                     // 2) The compile-time runtime assembly
-                    JavaScriptRuntime.GlobalThis.SetModuleContext(modDir, file);
+                    JavaScriptRuntime.CommonJS.ModuleContext.SetModuleContext(modDir, file);
                 }
                 catch { }
                 try
@@ -180,8 +196,8 @@ namespace Js2IL.Tests
                         if (!string.Equals(asm.GetName().Name, "JavaScriptRuntime", StringComparison.Ordinal)) continue;
                         try
                         {
-                            var gvt = asm.GetType("JavaScriptRuntime.GlobalThis");
-                            var sc = gvt?.GetMethod("SetModuleContext", BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(string) });
+                            var mct = asm.GetType("JavaScriptRuntime.CommonJS.ModuleContext");
+                            var sc = mct?.GetMethod("SetModuleContext", BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(string) });
                             sc?.Invoke(null, new object?[] { modDir, file });
                         }
                         catch { }
@@ -205,34 +221,13 @@ namespace Js2IL.Tests
                 {
                     if (jsRuntimeAsm != null)
                     {
-                        var gvType2 = jsRuntimeAsm.GetType("JavaScriptRuntime.GlobalThis");
-                        if (gvType2 != null)
+                        var mcType2 = jsRuntimeAsm.GetType("JavaScriptRuntime.CommonJS.ModuleContext");
+                        if (mcType2 != null)
                         {
-                            var setCtx2 = gvType2.GetMethod("SetModuleContext", BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(string) });
+                            var setCtx2 = mcType2.GetMethod("SetModuleContext", BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(string) });
                             if (setCtx2 != null)
                             {
                                 setCtx2.Invoke(null, new object?[] { modDir, file });
-                            }
-                            else
-                            {
-                                // Fallback: set __dirname/__filename directly if method not found
-                                var dirProp = gvType2.GetProperty("__dirname", BindingFlags.Public | BindingFlags.Static);
-                                var fileProp = gvType2.GetProperty("__filename", BindingFlags.Public | BindingFlags.Static);
-                                if (dirProp != null && dirProp.CanWrite)
-                                {
-                                    dirProp.SetValue(null, modDir);
-                                }
-                                if (fileProp != null && fileProp.CanWrite)
-                                {
-                                    fileProp.SetValue(null, file);
-                                }
-                                else
-                                {
-                                    var dirField = gvType2.GetField("__dirname", BindingFlags.NonPublic | BindingFlags.Static);
-                                    var fileField = gvType2.GetField("__filename", BindingFlags.NonPublic | BindingFlags.Static);
-                                    if (dirField != null) dirField.SetValue(null, modDir);
-                                    if (fileField != null) fileField.SetValue(null, file);
-                                }
                             }
                         }
                     }
@@ -336,8 +331,12 @@ namespace Js2IL.Tests
         private string GetJavaScript(string testName)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var categorySpecific = $"Js2IL.Tests.{GetType().Namespace?.Split('.').Last()}.JavaScript.{testName}.js";
-            var legacy = $"Js2IL.Tests.JavaScript.{testName}.js";
+            // Support nested module paths in tests (e.g., "CommonJS_Require_X/helpers/b").
+            // Embedded resource names use '.' separators, so normalize path separators to '.'.
+            var resourceKey = testName.Replace('\\', '.').Replace('/', '.');
+
+            var categorySpecific = $"Js2IL.Tests.{GetType().Namespace?.Split('.').Last()}.JavaScript.{resourceKey}.js";
+            var legacy = $"Js2IL.Tests.JavaScript.{resourceKey}.js";
             using (var stream = assembly.GetManifestResourceStream(categorySpecific) ?? assembly.GetManifestResourceStream(legacy))
             {
                 if (stream == null)

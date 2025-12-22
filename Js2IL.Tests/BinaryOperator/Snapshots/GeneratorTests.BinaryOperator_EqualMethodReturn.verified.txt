@@ -67,7 +67,7 @@
 
 } // end of class Scopes.BinaryOperator_EqualMethodReturn
 
-.class public auto ansi beforefieldinit Classes.TestClass
+.class public auto ansi beforefieldinit Classes.BinaryOperator_EqualMethodReturn.TestClass
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -97,14 +97,20 @@
 		IL_000e: ret
 	} // end of method TestClass::getValue
 
-} // end of class Classes.TestClass
+} // end of class Classes.BinaryOperator_EqualMethodReturn.TestClass
 
 .class public auto ansi beforefieldinit Scripts.BinaryOperator_EqualMethodReturn
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x209c
 		// Header size: 12
@@ -117,10 +123,10 @@
 			[3] float64
 		)
 
-		IL_0000: newobj instance void Classes.TestClass::.ctor()
+		IL_0000: newobj instance void Classes.BinaryOperator_EqualMethodReturn.TestClass::.ctor()
 		IL_0005: stloc.1
 		IL_0006: ldloc.1
-		IL_0007: callvirt instance object Classes.TestClass::getValue()
+		IL_0007: callvirt instance object Classes.BinaryOperator_EqualMethodReturn.TestClass::getValue()
 		IL_000c: stloc.2
 		IL_000d: ldc.r8 4
 		IL_0016: stloc.3
@@ -192,9 +198,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.BinaryOperator_EqualMethodReturn::Main()
-		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0006: ldftn void Scripts.BinaryOperator_EqualMethodReturn::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 

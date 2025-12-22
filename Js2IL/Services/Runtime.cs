@@ -198,11 +198,10 @@ namespace Js2IL.Services
             return _memberRefRegistry.GetOrAddMethod(runtimeType, methodName, parameterTypes);
         }
 
-        // Convenience: Emit a call to JavaScriptRuntime.Require.require(string) with string already on stack
         public void InvokeRequire()
         {
-            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Require), "require");
-            _il.OpCode(ILOpCode.Call);
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.CommonJS.RequireDelegate), "Invoke");
+            _il.OpCode(ILOpCode.Callvirt);
             _il.Token(mref);
         }
     }

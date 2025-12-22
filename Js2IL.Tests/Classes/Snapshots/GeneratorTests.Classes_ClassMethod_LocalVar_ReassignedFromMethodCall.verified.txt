@@ -149,7 +149,7 @@
 
 } // end of class Scopes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall
 
-.class public auto ansi beforefieldinit Classes.Counter
+.class public auto ansi beforefieldinit Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter
 	extends [System.Runtime]System.Object
 {
 	// Fields
@@ -169,7 +169,7 @@
 		IL_0006: ldarg.0
 		IL_0007: ldc.r8 0.0
 		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Classes.Counter::'value'
+		IL_0015: stfld object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
 		IL_001a: ret
 	} // end of method Counter::.ctor
 
@@ -183,19 +183,19 @@
 
 		IL_0000: ldarg.0
 		IL_0001: ldarg.0
-		IL_0002: ldfld object Classes.Counter::'value'
+		IL_0002: ldfld object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
 		IL_0007: ldc.r8 1
 		IL_0010: box [System.Runtime]System.Double
 		IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_001a: stfld object Classes.Counter::'value'
+		IL_001a: stfld object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
 		IL_001f: ldarg.0
-		IL_0020: ldfld object Classes.Counter::'value'
+		IL_0020: ldfld object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
 		IL_0025: ret
 	} // end of method Counter::getNext
 
-} // end of class Classes.Counter
+} // end of class Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter
 
-.class public auto ansi beforefieldinit Classes.Calculator
+.class public auto ansi beforefieldinit Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Calculator
 	extends [System.Runtime]System.Object
 {
 	// Fields
@@ -213,8 +213,8 @@
 		IL_0000: ldarg.0
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: ldarg.0
-		IL_0007: newobj instance void Classes.Counter::.ctor()
-		IL_000c: stfld object Classes.Calculator::counter
+		IL_0007: newobj instance void Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::.ctor()
+		IL_000c: stfld object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Calculator::counter
 		IL_0011: ret
 	} // end of method Calculator::.ctor
 
@@ -233,7 +233,7 @@
 		IL_0000: ldc.r8 1
 		IL_0009: stloc.0
 		IL_000a: ldarg.0
-		IL_000b: ldfld object Classes.Calculator::counter
+		IL_000b: ldfld object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Calculator::counter
 		IL_0010: ldstr "getNext"
 		IL_0015: ldc.i4.0
 		IL_0016: newarr [System.Runtime]System.Object
@@ -274,14 +274,20 @@
 		IL_006d: ret
 	} // end of method Calculator::compute
 
-} // end of class Classes.Calculator
+} // end of class Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Calculator
 
 .class public auto ansi beforefieldinit Scripts.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x2188
 		// Header size: 12
@@ -293,10 +299,10 @@
 			[2] object
 		)
 
-		IL_0000: newobj instance void Classes.Calculator::.ctor()
+		IL_0000: newobj instance void Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Calculator::.ctor()
 		IL_0005: stloc.1
 		IL_0006: ldloc.1
-		IL_0007: callvirt instance object Classes.Calculator::compute()
+		IL_0007: callvirt instance object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Calculator::compute()
 		IL_000c: stloc.2
 		IL_000d: ldc.i4.2
 		IL_000e: newarr [System.Runtime]System.Object
@@ -330,9 +336,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall::Main()
-		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0006: ldftn void Scripts.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 

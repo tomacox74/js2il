@@ -50,7 +50,7 @@
 
 } // end of class Scopes.Variable_ObjectDestructuring_Captured
 
-.class public auto ansi abstract sealed beforefieldinit Functions.compute
+.class public auto ansi abstract sealed beforefieldinit Functions.Variable_ObjectDestructuring_Captured
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -79,16 +79,22 @@
 		IL_0024: mul
 		IL_0025: box [System.Runtime]System.Double
 		IL_002a: ret
-	} // end of method compute::compute
+	} // end of method Variable_ObjectDestructuring_Captured::compute
 
-} // end of class Functions.compute
+} // end of class Functions.Variable_ObjectDestructuring_Captured
 
 .class public auto ansi beforefieldinit Scripts.Variable_ObjectDestructuring_Captured
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public static 
-		void Main () cil managed 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
 	{
 		// Method begins at RVA 0x209c
 		// Header size: 12
@@ -104,7 +110,7 @@
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldnull
-		IL_0008: ldftn object Functions.compute::compute(object[])
+		IL_0008: ldftn object Functions.Variable_ObjectDestructuring_Captured::compute(object[])
 		IL_000e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0013: stfld object Scopes.Variable_ObjectDestructuring_Captured::compute
 		IL_0018: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
@@ -178,7 +184,7 @@
 		IL_00e0: pop
 		IL_00e1: ldloc.0
 		IL_00e2: ldnull
-		IL_00e3: ldftn object Functions.compute::compute(object[])
+		IL_00e3: ldftn object Functions.Variable_ObjectDestructuring_Captured::compute(object[])
 		IL_00e9: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_00ee: stfld object Scopes.Variable_ObjectDestructuring_Captured::compute
 		IL_00f3: ldloc.0
@@ -216,9 +222,9 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Scripts.Variable_ObjectDestructuring_Captured::Main()
-		IL_000c: newobj instance void [System.Runtime]System.Action::.ctor(object, native int)
-		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [System.Runtime]System.Action)
+		IL_0006: ldftn void Scripts.Variable_ObjectDestructuring_Captured::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
 	} // end of method Program::Main
 
