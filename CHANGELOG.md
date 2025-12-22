@@ -4,7 +4,16 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+### Fixed
+- **CommonJS require caching**: Local modules are now cached so shared dependencies execute only once per process (e.g., `b -> d` and `c -> d` only run `d` once). (Fixes #157, Fixes #123)
+- **CommonJS relative require resolution**: `require('./...')` and `require('../...')` inside a module now resolve relative to the requiring module.
+- **Test harness path normalization**: CommonJS tests now support nested module paths by normalizing embedded resource names, expected DLL naming, and mock filesystem path casing/separators.
+
+### Changed
+- **CommonJS module identity**: Compiler/runtime now use stable path-based module ids for generated type names to avoid basename collisions (e.g., `./b` vs `./helpers/b`).
+
+### Added
+- **CommonJS regression tests**: Added execution + generator coverage for nested name conflicts, relative-from-module requires, and shared-dependency caching.
 
 ## v0.4.2 - 2025-12-18
 
