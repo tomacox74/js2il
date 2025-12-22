@@ -139,7 +139,7 @@ namespace Js2IL.Tests.Node
             for (int i = 0; i < 3; i++)
             {
                 int index = i;
-                handles[i] = scheduler.ScheduleInterval(() => counts[index]++, TimeSpan.FromMilliseconds(50 * (i + 1)));
+                handles[i] = scheduler.ScheduleInterval(() => counts[index]++, TimeSpan.FromMilliseconds(50d * (i + 1)));
             }
 
             // Cancel all of them immediately

@@ -147,10 +147,9 @@ namespace Js2IL.Services.ILGenerators
                 {
                     if (jsType == JavascriptType.Number)
                     {
-                        // Typed local optimization: already float64
-                        if (variable.LocalSlot >= 0 && variable.ClrType == typeof(double)) return;
-                        // Field-backed stable numbers are stored as float64
-                        if (variable.LocalSlot < 0) return;
+                        // Typed local optimization: already float64 (LocalSlot >= 0 with double ClrType)
+                        // Field-backed stable numbers are also stored as float64 (LocalSlot < 0)
+                        if (variable.LocalSlot < 0 || variable.ClrType == typeof(double)) return;
                     }
                     else if (jsType == JavascriptType.Boolean)
                     {

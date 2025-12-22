@@ -87,7 +87,7 @@ namespace Js2IL.Tests.Node
         [Fact]
         public Task SetInterval_ExecutesThreeTimes_ThenClears()
         {
-            // Test uses 10ms intervals, so should complete in ~30ms plus overhead
+            // Test uses 50ms intervals, so should complete in ~150ms plus overhead
             // clearInterval should stop the repeating timer after 3 ticks
             return ExecutionTest(nameof(SetInterval_ExecutesThreeTimes_ThenClears));
         }

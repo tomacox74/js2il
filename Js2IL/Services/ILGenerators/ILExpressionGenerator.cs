@@ -2030,7 +2030,7 @@ namespace Js2IL.Services.ILGenerators
                     // Determine if the value on the stack is boxed:
                     // - If needsToNumber: we just called ToNumber which returns unboxed double
                     // - Otherwise: use rhsResult.IsBoxed which reflects boxing state from Emit()
-                    bool valueIsBoxed = needsToNumber ? false : rhsResult.IsBoxed;
+                    bool valueIsBoxed = !needsToNumber && rhsResult.IsBoxed;
                     ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: isFieldVariable, 
                         valueIsBoxed: valueIsBoxed, bclReferences: _owner.BclReferences);
                     
