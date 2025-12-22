@@ -250,7 +250,27 @@ namespace Js2IL.Services
             }
 
             // Look up field-backed variables anywhere (may return parent/global first depending on insertion order)
-            var variableInfo = _registry?.FindVariable(name);
+            // IMPORTANT for multi-module compilation:
+            // Avoid registry-wide lookup which can return a same-named variable from a different module.
+            // Instead, only resolve against the current scope and the parent scopes that are actually
+            // available in this method's runtime scope chain.
+            VariableBindings.VariableInfo? variableInfo = null;
+            if (_registry != null)
+            {
+                // Prefer the current module/global scope explicitly when available.
+                variableInfo = _registry.GetVariableInfo(_globalScopeName, name);
+
+                // Then search explicit parent scopes in their runtime order (global first, then outer function scopes).
+                if (variableInfo == null && _parentScopeIndices.Count > 0)
+                {
+                    foreach (var scopeEntry in _parentScopeIndices.OrderBy(kvp => kvp.Value))
+                    {
+                        variableInfo = _registry.GetVariableInfo(scopeEntry.Key, name);
+                        if (variableInfo != null) break;
+                    }
+                }
+            }
+
             if (variableInfo == null)
             {
                 return null;
@@ -353,7 +373,19 @@ namespace Js2IL.Services
                 return new ScopeObjectReference { Location = ObjectReferenceLocation.Local, Address = 0 };
             }
             // Support block lexical scopes: allocate a new local slot on demand.
-            if (scopeName.StartsWith("Block_L", StringComparison.Ordinal))
+            static bool IsBlockScopeName(string n)
+            {
+                if (string.IsNullOrEmpty(n)) return false;
+                var lastSegment = n;
+                var slash = n.LastIndexOf('/');
+                if (slash >= 0 && slash + 1 < n.Length)
+                {
+                    lastSegment = n[(slash + 1)..];
+                }
+                return lastSegment.StartsWith("Block_L", StringComparison.Ordinal);
+            }
+
+            if (IsBlockScopeName(scopeName))
             {
                 // Avoid double allocation if already present
                 var existing = GetScopeLocalSlot(scopeName);
@@ -421,6 +453,11 @@ namespace Js2IL.Services
         public string GetCurrentScopeName()
         {
             return _scopeName;
+        }
+
+        public string GetGlobalScopeName()
+        {
+            return _globalScopeName;
         }
         
         /// <summary>

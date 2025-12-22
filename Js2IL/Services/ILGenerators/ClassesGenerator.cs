@@ -37,13 +37,23 @@ namespace Js2IL.Services.ILGenerators
         private System.Collections.Generic.List<string> DetermineParentScopesForClassMethod(Scope classScope)
         {
             var scopeNames = new System.Collections.Generic.List<string>();
+            var moduleName = _variables.GetGlobalScopeName();
             
             // Walk up from class's parent to root, collecting ancestor scope names
             var current = classScope.Parent;
             var ancestors = new System.Collections.Generic.Stack<string>();
             while (current != null)
             {
-                ancestors.Push(current.Name);
+                // Registry keys for non-global scopes are module-qualified (<module>/<scope>).
+                // Scope.Name in the symbol table is typically unqualified (e.g., "testFunction").
+                // Ensure we pass module-qualified names so Variables can map this._scopes correctly.
+                var name = current.Name;
+                if (!string.IsNullOrEmpty(name) && !name.Contains('/') && name != moduleName)
+                {
+                    name = $"{moduleName}/{name}";
+                }
+
+                ancestors.Push(name);
                 current = current.Parent;
             }
             
@@ -64,6 +74,8 @@ namespace Js2IL.Services.ILGenerators
 
         private void EmitClassesRecursive(Scope scope)
         {
+
+
             foreach (var child in scope.Children)
             {
                 if (child.Kind == ScopeKind.Class && child.AstNode is ClassDeclaration cdecl)
@@ -353,8 +365,9 @@ namespace Js2IL.Services.ILGenerators
                 : Enumerable.Empty<string>();
                 
             Variables methodVariables;
-            // Build qualified scope name for constructor
-            var constructorScopeName = $"{className}/constructor";
+            // Registry scope names are module-qualified for all non-global scopes.
+            // Class method/constructor scopes are named by SymbolTableBuilder using only the method name.
+            var constructorScopeName = $"{_variables.GetGlobalScopeName()}/constructor";
             if (needsScopes)
             {
                 var parentScopeNames = DetermineParentScopesForClassMethod(classScope);
@@ -510,8 +523,9 @@ namespace Js2IL.Services.ILGenerators
             
             // For class instance methods, determine which parent scopes will be available via this._scopes
             // For static methods, use standard nested function semantics
-            // Build qualified scope name for method
-            var methodScopeName = $"{className}/{mname}";
+            // Registry scope names are module-qualified for all non-global scopes.
+            // Class method scopes are named by SymbolTableBuilder using only the method name.
+            var methodScopeName = $"{_variables.GetGlobalScopeName()}/{mname}";
             Variables methodVariables;
             if (!element.Static && _classRegistry.TryGetPrivateField(className, "_scopes", out var _))
             {

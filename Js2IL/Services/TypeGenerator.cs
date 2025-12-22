@@ -49,6 +49,30 @@ namespace Js2IL.Services
             PopulateVariableRegistry(symbolTable.Root);
         }
 
+        private static string GetModuleName(Scope scope)
+        {
+            var current = scope;
+            while (current.Parent != null)
+            {
+                current = current.Parent;
+            }
+            return current.Name;
+        }
+
+        // Stable registry key for a scope across the compilation pipeline.
+        // - Global scope uses the module name directly.
+        // - All other scopes are module-qualified to prevent collisions between modules.
+        private static string GetRegistryScopeName(Scope scope)
+        {
+            if (scope.Kind == ScopeKind.Global)
+            {
+                return scope.Name;
+            }
+
+            var moduleName = GetModuleName(scope);
+            return $"{moduleName}/{scope.Name}";
+        }
+
         /// <summary>
         /// Gets the variable registry populated during type generation.
         /// </summary>
@@ -60,10 +84,11 @@ namespace Js2IL.Services
 
     private void CreateTypeFields(Scope scope, TypeBuilder typeBuilder)
         {
+            var scopeKey = GetRegistryScopeName(scope);
             
             // Create fields for this scope
-            _scopeFields[scope.Name] = new List<FieldDefinitionHandle>();
-            var scopeFields = _scopeFields[scope.Name];
+            _scopeFields[scopeKey] = new List<FieldDefinitionHandle>();
+            var scopeFields = _scopeFields[scopeKey];
 
             // Determine if this function scope contains nested functions
             bool hasNestedFunctions = scope.Children.Any(c => c.Kind == ScopeKind.Function);
@@ -190,8 +215,8 @@ namespace Js2IL.Services
             // For each child scope, collect the nesting relationship
             foreach (var childScope in scope.Children)
             {
-                var parentTypeHandle = _scopeTypes[scope.Name];
-                var nestedTypeHandle = _scopeTypes[childScope.Name];
+                var parentTypeHandle = _scopeTypes[GetRegistryScopeName(scope)];
+                var nestedTypeHandle = _scopeTypes[GetRegistryScopeName(childScope)];
                 
                 relationships.Add((nestedTypeHandle, parentTypeHandle));
                 
@@ -208,8 +233,8 @@ namespace Js2IL.Services
             // For each child scope, establish the nesting relationship
             foreach (var childScope in scope.Children)
             {
-                var parentTypeHandle = _scopeTypes[scope.Name];
-                var nestedTypeHandle = _scopeTypes[childScope.Name];
+                var parentTypeHandle = _scopeTypes[GetRegistryScopeName(scope)];
+                var nestedTypeHandle = _scopeTypes[GetRegistryScopeName(childScope)];
                 
                 // Establish the nesting relationship
                 _metadataBuilder.AddNestedType(nestedTypeHandle, parentTypeHandle);
@@ -255,10 +280,11 @@ namespace Js2IL.Services
             }
 
             // Store the type handle and constructor for later reference
-            _scopeTypes[scope.Name] = typeHandle;
-            _scopeConstructors[scope.Name] = ctorHandle;
+            var scopeKey = GetRegistryScopeName(scope);
+            _scopeTypes[scopeKey] = typeHandle;
+            _scopeConstructors[scopeKey] = ctorHandle;
             // Register the scope type immediately so even scopes without variables can be instantiated later.
-            _variableRegistry.EnsureScopeType(scope.Name, typeHandle);
+            _variableRegistry.EnsureScopeType(scopeKey, typeHandle);
 
             return typeHandle;
         }
@@ -343,19 +369,16 @@ namespace Js2IL.Services
         /// </summary>
         private void PopulateVariableRegistry(Scope scope)
         {
-            // Use qualified names only for class methods/constructors to avoid collisions (e.g., Point/constructor vs Person/constructor)
-            // Use simple names for functions/arrow functions as ILExpressionGenerator looks them up by simple name
-            bool isClassMember = scope.Parent?.Kind == ScopeKind.Class;
-            var registryName = isClassMember ? scope.GetQualifiedName() : scope.Name;
+            var registryName = GetRegistryScopeName(scope);
             
             // Guard: some scopes (e.g., block scopes) may legitimately have zero bindings; ensure a type was created.
-            if (!_scopeTypes.TryGetValue(scope.Name, out var scopeTypeHandle))
+            if (!_scopeTypes.TryGetValue(registryName, out var scopeTypeHandle))
             {
                 // If a scope type was not created (should not normally happen), skip but recurse to children.
                 foreach (var child in scope.Children) PopulateVariableRegistry(child);
                 return;
             }
-            var scopeFields = _scopeFields.GetValueOrDefault(scope.Name, new List<FieldDefinitionHandle>());
+            var scopeFields = _scopeFields.GetValueOrDefault(registryName, new List<FieldDefinitionHandle>());
             // Ensure scope type is registered
             _variableRegistry.EnsureScopeType(registryName, scopeTypeHandle);
 

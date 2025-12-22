@@ -367,9 +367,10 @@ namespace Js2IL.Services.ILGenerators
                             }
                         }
                         var paramNames = idParams.ToArray();
-                        var registryScopeName = !string.IsNullOrEmpty(_owner.CurrentAssignmentTarget)
+                        var arrowBaseScopeName = !string.IsNullOrEmpty(_owner.CurrentAssignmentTarget)
                             ? $"ArrowFunction_{_owner.CurrentAssignmentTarget}"
                             : $"ArrowFunction_L{arrowFunction.Location.Start.Line}C{arrowFunction.Location.Start.Column}";
+                        var registryScopeName = $"{_variables.GetGlobalScopeName()}/{arrowBaseScopeName}";
                         var ilMethodName = $"ArrowFunction_L{arrowFunction.Location.Start.Line}C{arrowFunction.Location.Start.Column}";
                         var methodHandle = _owner.GenerateArrowFunctionMethod(arrowFunction, registryScopeName, ilMethodName, paramNames);
 
@@ -432,19 +433,20 @@ namespace Js2IL.Services.ILGenerators
                         var paramNames = idList.ToArray();
                         // If the function expression is named (named function expression), prefer its declared name
                         // so that the symbol table scope name and variable registry line up (important for IIFE recursion scenarios).
-                        string registryScopeName;
+                        string baseScopeName;
                         if (funcExpr.Id is Identifier fid && !string.IsNullOrEmpty(fid.Name))
                         {
-                            registryScopeName = fid.Name;
+                            baseScopeName = fid.Name;
                         }
                         else if (!string.IsNullOrEmpty(_owner.CurrentAssignmentTarget))
                         {
-                            registryScopeName = $"FunctionExpression_{_owner.CurrentAssignmentTarget}";
+                            baseScopeName = $"FunctionExpression_{_owner.CurrentAssignmentTarget}";
                         }
                         else
                         {
-                            registryScopeName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
+                            baseScopeName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
                         }
+                        var registryScopeName = $"{_variables.GetGlobalScopeName()}/{baseScopeName}";
                         var ilMethodName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
                         var methodHandle = _owner.GenerateFunctionExpressionMethod(funcExpr, registryScopeName, ilMethodName, paramNames);
 

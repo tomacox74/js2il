@@ -84,9 +84,15 @@ namespace Js2IL.Services
         /// </remarks>
         private VariableBindings.VariableRegistry GenerateScopeTypes(Modules modules, MethodBodyStreamEncoder methodBodyStream)
         {
-            var mainModule = modules.rootModule;
             var typeGenerator = new TypeGenerator(_metadataBuilder, _bclReferences, methodBodyStream);
-            typeGenerator.GenerateTypes(mainModule.SymbolTable!);
+
+            // Multi-module compilation: every module gets its own global scope type and registry entries.
+            // This avoids missing bindings for non-root modules and prevents collisions when different modules
+            // declare the same function/class names.
+            foreach (var module in modules._modules.Values)
+            {
+                typeGenerator.GenerateTypes(module.SymbolTable!);
+            }
 
             return typeGenerator.GetVariableRegistry();
         }

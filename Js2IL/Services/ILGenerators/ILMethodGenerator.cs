@@ -419,7 +419,34 @@ namespace Js2IL.Services.ILGenerators
         public void InitializeLocalFunctionVariable(FunctionDeclaration functionDeclaration)
         {
             var functionName = (functionDeclaration.Id as Acornima.Ast.Identifier)!.Name;
-            var functionVariable = _variables.FindVariable(functionName) ?? throw new InvalidOperationException($"Variable '{functionName}' not found.");
+            var functionVariable = _variables.FindVariable(functionName);
+            if (functionVariable == null)
+            {
+                // Multi-module compilation: function declarations are stored on the module (global) scope.
+                // The registry keys are module-qualified, so fall back to an explicit lookup in the current module.
+                var registry = _variables.GetVariableRegistry();
+                if (registry != null)
+                {
+                    var moduleScope = _variables.GetGlobalScopeName();
+                    var vi = registry.GetVariableInfo(moduleScope, functionName);
+                    if (vi != null)
+                    {
+                        functionVariable = new LocalVariable
+                        {
+                            Name = functionName,
+                            FieldHandle = vi.FieldHandle,
+                            ScopeName = vi.ScopeName,
+                            Type = JavascriptType.Unknown,
+                            ClrType = vi.ClrType,
+                            IsStableType = vi.IsStableType
+                        };
+                    }
+                }
+            }
+            if (functionVariable == null)
+            {
+                throw new InvalidOperationException($"Variable '{functionName}' not found.");
+            }
             // Resolve emitted method for this function via function registry
             var methodHandle = _functionRegistry?.Get(functionName) ?? default;
             if (methodHandle.IsNil)
@@ -582,7 +609,9 @@ namespace Js2IL.Services.ILGenerators
 
             // Create a synthetic scope name matching SymbolTableBuilder convention so registry lookups succeed.
             // We rely on the same naming pattern used during symbol table build.
-            var scopeName = $"Block_L{blockStatement.Location.Start.Line}C{blockStatement.Location.Start.Column}";
+            var blockName = $"Block_L{blockStatement.Location.Start.Line}C{blockStatement.Location.Start.Column}";
+            // Registry scope names are module-qualified for all non-global scopes
+            var scopeName = $"{_variables.GetGlobalScopeName()}/{blockName}";
 
             // Emit inner statements and create the scope instance here if needed
             GenerateStatementsForBody(scopeName, true, blockStatement.Body);
