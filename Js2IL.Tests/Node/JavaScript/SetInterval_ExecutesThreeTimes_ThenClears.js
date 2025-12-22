@@ -8,6 +8,6 @@ const id = setInterval(() => {
         clearInterval(id);
         console.log("cleared");
     }
-}, 10);  // 10ms interval for fast testing
+}, 50);  // 50ms interval for stable CI testing
 
 console.log("setInterval scheduled");

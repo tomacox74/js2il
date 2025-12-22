@@ -106,11 +106,21 @@ public class NodeSychronizationContext : SynchronizationContext, IScheduler, IMi
         long now = _tickSource.GetTicks();
         lock (_timers)
         {
+            // First, remove any canceled intervals from the front of the queue
+            // (they may not be due yet, but we don't want to wait for them)
+            while (_timers.TryPeek(out var peeked, out _) && 
+                   peeked.IsRepeating && 
+                   _canceledIntervals.Contains(peeked.id))
+            {
+                _timers.Dequeue();
+                _canceledIntervals.Remove(peeked.id);
+            }
+
             if (_timers.TryPeek(out var item, out long due) && due <= now)
             {
                 _timers.Dequeue();
 
-                // Check if this interval was canceled
+                // Check if this interval was canceled (might have been canceled while we were processing)
                 if (item.IsRepeating && _canceledIntervals.Contains(item.id))
                 {
                     // Don't execute and don't reschedule; clean up the cancel tracking
