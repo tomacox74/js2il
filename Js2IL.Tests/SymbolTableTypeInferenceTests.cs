@@ -18,7 +18,8 @@ public class SymbolTableTypeInferenceTests
         var module = new ModuleDefinition
         {
             Ast = ast,
-            Path = fileName
+            Path = fileName,
+            Name = Path.GetFileNameWithoutExtension(fileName)
         };
         _scopeBuilder.Build(module);
         return module.SymbolTable!;

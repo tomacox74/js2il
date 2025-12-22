@@ -101,7 +101,7 @@ namespace Js2IL.Services
         {
             foreach (var module in modules._modules.Values)
             {
-                var methodDefinitionHandle = GenerateModule(module, methodBodyStream, Path.GetFileNameWithoutExtension(module.Path));
+                var methodDefinitionHandle = GenerateModule(module, methodBodyStream, module.Name);
                 if (module == modules.rootModule)
                 {
                     _mainScriptMethod = methodDefinitionHandle;

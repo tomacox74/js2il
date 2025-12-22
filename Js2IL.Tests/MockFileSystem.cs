@@ -5,14 +5,37 @@ namespace Js2IL.Tests;
 /// </summary>
 public class MockFileSystem : IFileSystem
 {
-    private readonly Dictionary<string, string> _files = new();
+    private readonly Dictionary<string, string> _files = new(StringComparer.OrdinalIgnoreCase);
+
+    private static string NormalizePath(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return path;
+        }
+
+        // Module resolution may produce paths with either '/' or '\\' separators.
+        // Normalize so lookups consistently hit the in-memory store.
+        var normalized = path.Replace('/', Path.DirectorySeparatorChar);
+
+        try
+        {
+            normalized = Path.GetFullPath(normalized);
+        }
+        catch
+        {
+            // If GetFullPath fails (unexpected), fall back to separator-normalized string.
+        }
+
+        return normalized;
+    }
 
     /// <summary>
     /// Adds a file to the mock file system.
     /// </summary>
     public void AddFile(string path, string content)
     {
-        _files[path] = content;
+        _files[NormalizePath(path)] = content;
     }
 
     /// <summary>
@@ -20,12 +43,13 @@ public class MockFileSystem : IFileSystem
     /// </summary>
     public string ReadAllText(string path)
     {
-        if (_files.TryGetValue(path, out var content))
+        var normalized = NormalizePath(path);
+        if (_files.TryGetValue(normalized, out var content))
         {
             return content;
         }
         // Fall back to real file system for other files
-        return File.ReadAllText(path);
+        return File.ReadAllText(normalized);
     }
 
     /// <summary>
@@ -33,10 +57,11 @@ public class MockFileSystem : IFileSystem
     /// </summary>
     public bool FileExists(string path)
     {
-        if (_files.ContainsKey(path))
+        var normalized = NormalizePath(path);
+        if (_files.ContainsKey(normalized))
         {
             return true;
         }
-        return File.Exists(path);
+        return File.Exists(normalized);
     }
 }

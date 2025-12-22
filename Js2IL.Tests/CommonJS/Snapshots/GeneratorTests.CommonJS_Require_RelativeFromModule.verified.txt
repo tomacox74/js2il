@@ -1,0 +1,212 @@
+﻿// IL code: a
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.a
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method a::.ctor
+
+} // end of class Scopes.a
+
+.class public auto ansi beforefieldinit Scopes.helpers_b
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2059
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method helpers_b::.ctor
+
+} // end of class Scopes.helpers_b
+
+.class public auto ansi beforefieldinit Scopes.helpers_c
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2062
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method helpers_c::.ctor
+
+} // end of class Scopes.helpers_c
+
+.class public auto ansi beforefieldinit Scripts.a
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x206c
+		// Header size: 12
+		// Code size: 33 (0x21)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.a
+		)
+
+		IL_0000: ldarg.1
+		IL_0001: ldstr "./helpers/b"
+		IL_0006: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_000b: pop
+		IL_000c: ldc.i4.1
+		IL_000d: newarr [System.Runtime]System.Object
+		IL_0012: dup
+		IL_0013: ldc.i4.0
+		IL_0014: ldstr "CommonJS_Require_RelativeFromModule a has been loaded"
+		IL_0019: stelem.ref
+		IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_001f: pop
+		IL_0020: ret
+	} // end of method a::Main
+
+} // end of class Scripts.a
+
+.class public auto ansi beforefieldinit Scripts.helpers_b
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x209c
+		// Header size: 12
+		// Code size: 55 (0x37)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.helpers_b,
+			[1] object
+		)
+
+		IL_0000: ldstr "CommonJS_Require_RelativeFromModule/helpers/b"
+		IL_0005: stloc.1
+		IL_0006: ldarg.1
+		IL_0007: ldstr "./c"
+		IL_000c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate::Invoke(object)
+		IL_0011: pop
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldstr "CommonJS_Require_RelativeFromModule loaded: "
+		IL_001f: ldloc.1
+		IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0025: ldstr ""
+		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_002f: stelem.ref
+		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0035: pop
+		IL_0036: ret
+	} // end of method helpers_b::Main
+
+} // end of class Scripts.helpers_b
+
+.class public auto ansi beforefieldinit Scripts.helpers_c
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x20e0
+		// Header size: 12
+		// Code size: 43 (0x2b)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.helpers_c,
+			[1] object
+		)
+
+		IL_0000: ldstr "CommonJS_Require_RelativeFromModule/helpers/c"
+		IL_0005: stloc.1
+		IL_0006: ldc.i4.1
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldstr "CommonJS_Require_RelativeFromModule loaded: "
+		IL_0013: ldloc.1
+		IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0019: ldstr ""
+		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0023: stelem.ref
+		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0029: pop
+		IL_002a: ret
+	} // end of method helpers_c::Main
+
+} // end of class Scripts.helpers_c
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2117
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.a::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

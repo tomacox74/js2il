@@ -58,7 +58,10 @@ namespace Js2IL.Tests
                 throw new InvalidOperationException($"Compilation failed for test {testName}");
             }
 
-            var expectedPath = Path.Combine(_outputPath, $"{testName}.dll");
+            // Compiler outputs <entryFileBasename>.dll into OutputDirectory.
+            // For nested-path test names (e.g. "CommonJS_Require_X/a"), the DLL will be "a.dll".
+            var assemblyName = Path.GetFileNameWithoutExtension(testFilePath);
+            var expectedPath = Path.Combine(_outputPath, $"{assemblyName}.dll");
 
             string il;
             bool usedFallback = false;
@@ -328,8 +331,12 @@ namespace Js2IL.Tests
         private string GetJavaScript(string testName)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var categorySpecific = $"Js2IL.Tests.{GetType().Namespace?.Split('.').Last()}.JavaScript.{testName}.js";
-            var legacy = $"Js2IL.Tests.JavaScript.{testName}.js";
+            // Support nested module paths in tests (e.g., "CommonJS_Require_X/helpers/b").
+            // Embedded resource names use '.' separators, so normalize path separators to '.'.
+            var resourceKey = testName.Replace('\\', '.').Replace('/', '.');
+
+            var categorySpecific = $"Js2IL.Tests.{GetType().Namespace?.Split('.').Last()}.JavaScript.{resourceKey}.js";
+            var legacy = $"Js2IL.Tests.JavaScript.{resourceKey}.js";
             using (var stream = assembly.GetManifestResourceStream(categorySpecific) ?? assembly.GetManifestResourceStream(legacy))
             {
                 if (stream == null)

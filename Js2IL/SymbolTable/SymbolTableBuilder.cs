@@ -19,8 +19,7 @@ namespace Js2IL.SymbolTables
 
         public void Build(ModuleDefinition module)
         {
-            var fileName = Path.GetFileNameWithoutExtension(module.Path);
-            var globalScope = new Scope(fileName, ScopeKind.Global, null, module.Ast);
+            var globalScope = new Scope(module.Name, ScopeKind.Global, null, module.Ast);
 
             AddModuleBuiltInParameters(globalScope, module.Ast);
 

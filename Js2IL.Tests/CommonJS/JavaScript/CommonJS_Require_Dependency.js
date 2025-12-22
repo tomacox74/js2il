@@ -1,3 +1,5 @@
+[1].map((x) => x);
+
 /**
  * Use the same class names amd functions in multiple files to ensure no name collisions occur
  */

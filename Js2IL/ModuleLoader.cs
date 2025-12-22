@@ -25,10 +25,12 @@ public class ModuleLoader
 
     public Modules? LoadModules(string modulePath)
     {
-        if (TryLoadAndParseModule(modulePath, out ModuleDefinition? module))
+        var rootModulePath = Path.GetFullPath(modulePath);
+
+        if (TryLoadAndParseModule(rootModulePath, rootModulePath, out ModuleDefinition? module))
         {
             var modules = new Modules { rootModule = module! };
-            modules._modules[modulePath] = module!;
+            modules._modules[rootModulePath] = module!;
 
             if (!LoadDepedencies(module!, modules))
             {
@@ -41,14 +43,17 @@ public class ModuleLoader
         return null;
     }
 
-    private bool TryLoadAndParseModule(string modulePath, out ModuleDefinition? module)
+    private bool TryLoadAndParseModule(string modulePath, string rootModulePath, out ModuleDefinition? module)
     {
         var jsSource = _fileSystem.ReadAllText(modulePath);
         var ast = _parser.ParseJavaScript(jsSource, modulePath);
 
+        var moduleName = JavaScriptRuntime.CommonJS.ModuleName.GetModuleIdFromPath(modulePath, rootModulePath);
+
         module = new ModuleDefinition
         {
             Path = modulePath,
+            Name = moduleName,
             Ast = ast
         };
 
@@ -104,16 +109,22 @@ public class ModuleLoader
             }
 
             var resolvedDepPath = ResolveModulePath(module.Path, dep);
-            if (!modules._modules.ContainsKey(dep))
+            if (!modules._modules.TryGetValue(resolvedDepPath, out var depModule))
             {
-                if (TryLoadAndParseModule(resolvedDepPath, out var depModule) && depModule != null)
+                if (TryLoadAndParseModule(resolvedDepPath, modules.rootModule.Path, out depModule) && depModule != null)
                 {
-                    modules._modules[dep] = depModule;
+                    modules._modules[resolvedDepPath] = depModule;
                 }
                 else
                 {
                     return false;
                 }
+            }
+
+            // Recursively load nested dependencies (guarded by the module cache above).
+            if (!LoadDepedencies(depModule!, modules))
+            {
+                return false;
             }
         }
 
@@ -160,6 +171,9 @@ public class ModuleLoader
 
         // Normalize the path
         var fullPath = Path.GetFullPath(combinedPath);
-        return fullPath + ".js";
+
+        return fullPath.EndsWith(".js", StringComparison.OrdinalIgnoreCase)
+            ? fullPath
+            : fullPath + ".js";
     }
 }    

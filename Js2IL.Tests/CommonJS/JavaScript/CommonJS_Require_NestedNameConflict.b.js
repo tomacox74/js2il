@@ -1,9 +1,6 @@
 [1].map((x) => x);
 
-require('./CommonJS_Require_Dependency');
-console.log('CommonJS_Require_Basic has been loaded');
-
-const moduleName = "CommonJS_Require_Basic";
+const moduleName = "CommonJS_Require_NestedNameConflict/b";
 
 class CommonClassName {
     Log() {
