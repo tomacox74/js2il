@@ -39,7 +39,10 @@ public class Compiler
         }
 
         // Build scope trees
-        Console.WriteLine("\nBuild the symbol tables");
+        if (this.verbose)
+        {
+            Console.WriteLine("Build the symbol tables");
+        }
         foreach (var mod in modules._modules.Values)
         {
             _symbolTableBuilder.Build(mod);
@@ -59,7 +62,10 @@ public class Compiler
         }
 
         // Generate IL assembly
-        Console.WriteLine("\nGenerating dotnet assembly...");
+        if (this.verbose)
+        {
+            Console.WriteLine("Generating dotnet assembly...");
+        }
         var assemblyGenerator = _serviceProvider.GetRequiredService<AssemblyGenerator>();
 
         // Resolve and validate output directory; create if missing
