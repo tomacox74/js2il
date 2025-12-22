@@ -1,7 +1,7 @@
 # Node Support Coverage
 
 Target: `22.x LTS`
-Generated: `2025-12-22T05:12:56Z`
+Generated: `2025-12-22T18:57:34Z`
 
 
 ## Modules
@@ -186,6 +186,28 @@ Cancels a timer that was previously created with setTimeout. Returns undefined (
 Tests:
 - `Js2IL.Tests.Node.ExecutionTests.ClearTimeout_ZeroDelay` (`Js2IL.Tests/Node/ExecutionTests.cs`)
 - `Js2IL.Tests.Node.ExecutionTests.ClearTimeout_MultipleZeroDelay_ClearSecondTimer` (`Js2IL.Tests/Node/ExecutionTests.cs`)
+
+### setImmediate (status: supported)
+Docs: [https://nodejs.org/api/timers.html#setimmediatecallback-args](https://nodejs.org/api/timers.html#setimmediatecallback-args)
+Implementation:
+- `JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs, JavaScriptRuntime/Engine/NodeSychronizationContext.cs`
+Notes:
+Schedules a callback to run on the next event loop iteration. Callbacks execute in FIFO order. Nested setImmediate calls run on the next iteration. Returns a handle that can be used with clearImmediate.
+Tests:
+- `Js2IL.Tests.Node.ExecutionTests.SetImmediate_ExecutesCallback` (`Js2IL.Tests/Node/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ExecutionTests.SetImmediate_WithArgs_PassesCorrectly` (`Js2IL.Tests/Node/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ExecutionTests.SetImmediate_Multiple_ExecuteInOrder` (`Js2IL.Tests/Node/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ExecutionTests.SetImmediate_ExecutesBeforeSetTimeout` (`Js2IL.Tests/Node/ExecutionTests.cs`)
+- `Js2IL.Tests.Node.ExecutionTests.SetImmediate_Nested_ExecutesInNextIteration` (`Js2IL.Tests/Node/ExecutionTests.cs`)
+
+### clearImmediate (status: supported)
+Docs: [https://nodejs.org/api/timers.html#clearimmediateimmediate](https://nodejs.org/api/timers.html#clearimmediateimmediate)
+Implementation:
+- `JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs, JavaScriptRuntime/Engine/NodeSychronizationContext.cs`
+Notes:
+Cancels an immediate that was previously created with setImmediate. Returns undefined (null in .NET).
+Tests:
+- `Js2IL.Tests.Node.ExecutionTests.ClearImmediate_CancelsCallback` (`Js2IL.Tests/Node/ExecutionTests.cs`)
 
 ### Promise (status: supported)
 Docs: [https://nodejs.org/api/globals.html#promise](https://nodejs.org/api/globals.html#promise)

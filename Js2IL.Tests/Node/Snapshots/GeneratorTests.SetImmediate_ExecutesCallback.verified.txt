@@ -1,0 +1,148 @@
+﻿// IL code: SetImmediate_ExecutesCallback
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.SetImmediate_ExecutesCallback
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit ArrowFunction_logHello
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method ArrowFunction_logHello::.ctor
+
+	} // end of class ArrowFunction_logHello
+
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method SetImmediate_ExecutesCallback::.ctor
+
+} // end of class Scopes.SetImmediate_ExecutesCallback
+
+.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L1C17
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object ArrowFunction_L1C17 (
+			object[] scopes
+		) cil managed 
+	{
+		// Method begins at RVA 0x2064
+		// Header size: 12
+		// Code size: 22 (0x16)
+		.maxstack 32
+
+		IL_0000: ldc.i4.1
+		IL_0001: newarr [System.Runtime]System.Object
+		IL_0006: dup
+		IL_0007: ldc.i4.0
+		IL_0008: ldstr "Hello, World!"
+		IL_000d: stelem.ref
+		IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_0013: pop
+		IL_0014: ldnull
+		IL_0015: ret
+	} // end of method ArrowFunction_L1C17::ArrowFunction_L1C17
+
+} // end of class Functions.ArrowFunction_L1C17
+
+.class public auto ansi beforefieldinit Scripts.SetImmediate_ExecutesCallback
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2088
+		// Header size: 12
+		// Code size: 61 (0x3d)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.SetImmediate_ExecutesCallback,
+			[1] object
+		)
+
+		IL_0000: ldnull
+		IL_0001: ldftn object Functions.ArrowFunction_L1C17::ArrowFunction_L1C17(object[])
+		IL_0007: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_000c: ldc.i4.1
+		IL_000d: newarr [System.Runtime]System.Object
+		IL_0012: dup
+		IL_0013: ldc.i4.0
+		IL_0014: ldloc.0
+		IL_0015: stelem.ref
+		IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_001b: stloc.1
+		IL_001c: ldloc.1
+		IL_001d: call !!0[] [System.Runtime]System.Array::Empty<object>()
+		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_0027: pop
+		IL_0028: ldc.i4.1
+		IL_0029: newarr [System.Runtime]System.Object
+		IL_002e: dup
+		IL_002f: ldc.i4.0
+		IL_0030: ldstr "setImmediate scheduled."
+		IL_0035: stelem.ref
+		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_003b: pop
+		IL_003c: ret
+	} // end of method SetImmediate_ExecutesCallback::Main
+
+} // end of class Scripts.SetImmediate_ExecutesCallback
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20d1
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.SetImmediate_ExecutesCallback::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

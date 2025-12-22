@@ -53,4 +53,38 @@ internal class Timers
         }
         return null;
     }
+
+    public object setImmediate(object callback, params object[] args)
+    {
+        if (callback is not Delegate del)
+        {
+            throw new TypeError("First argument to setImmediate must be a function");
+        }
+
+        var handle = _scheduler.ScheduleImmediate(() =>
+        {
+            var paramCount = del.Method.GetParameters().Length;
+
+            var invokeArgs = new object?[paramCount];
+            invokeArgs[0] = null; // scopes placeholder (ignored by bound closures)
+
+            for (int i = 0; i < args.Length && i + 1 < paramCount; i++)
+            {
+                invokeArgs[i + 1] = args[i];
+            }
+
+            del.DynamicInvoke(invokeArgs);
+        });
+
+        return handle;
+    }
+
+    public object clearImmediate(object handle)
+    {
+        if (handle != null)
+        {
+            _scheduler.CancelImmediate(handle);
+        }
+        return null;
+    }
 }

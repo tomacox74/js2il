@@ -440,6 +440,48 @@
       ]
     },
     {
+      "name": "setImmediate",
+      "status": "supported",
+      "implementation": "JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs, JavaScriptRuntime/Engine/NodeSychronizationContext.cs",
+      "docs": "https://nodejs.org/api/timers.html#setimmediatecallback-args",
+      "notes": "Schedules a callback to run on the next event loop iteration. Callbacks execute in FIFO order. Nested setImmediate calls run on the next iteration. Returns a handle that can be used with clearImmediate.",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.ExecutionTests.SetImmediate_ExecutesCallback",
+          "file": "Js2IL.Tests/Node/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.ExecutionTests.SetImmediate_WithArgs_PassesCorrectly",
+          "file": "Js2IL.Tests/Node/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.ExecutionTests.SetImmediate_Multiple_ExecuteInOrder",
+          "file": "Js2IL.Tests/Node/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.ExecutionTests.SetImmediate_ExecutesBeforeSetTimeout",
+          "file": "Js2IL.Tests/Node/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.Node.ExecutionTests.SetImmediate_Nested_ExecutesInNextIteration",
+          "file": "Js2IL.Tests/Node/ExecutionTests.cs"
+        }
+      ]
+    },
+    {
+      "name": "clearImmediate",
+      "status": "supported",
+      "implementation": "JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs, JavaScriptRuntime/Engine/NodeSychronizationContext.cs",
+      "docs": "https://nodejs.org/api/timers.html#clearimmediateimmediate",
+      "notes": "Cancels an immediate that was previously created with setImmediate. Returns undefined (null in .NET).",
+      "tests": [
+        {
+          "name": "Js2IL.Tests.Node.ExecutionTests.ClearImmediate_CancelsCallback",
+          "file": "Js2IL.Tests/Node/ExecutionTests.cs"
+        }
+      ]
+    },
+    {
       "name": "Promise",
       "status": "supported",
       "implementation": "JavaScriptRuntime/Promise.cs, JavaScriptRuntime/Engine/EngineCore.cs",
