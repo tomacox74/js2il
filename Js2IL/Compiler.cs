@@ -72,7 +72,7 @@ public class Compiler
 
         assemblyGenerator.Generate(modules, assemblyName, outputPath);
 
-        Console.WriteLine($"Compiliation succeeded. Output written to {outputPath}");
+        Console.WriteLine($"Compilation succeeded. Output written to {outputPath}");
 
         return true;
     }
