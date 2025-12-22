@@ -49,9 +49,11 @@ struct ImmediateEntry : IEquatable<ImmediateEntry>
 public class NodeSychronizationContext : SynchronizationContext, IScheduler, IMicrotaskScheduler
 {
     private static long _nextTimerId = 0;
-    private static long _nextImmediateId = 0;
+    private long _nextImmediateId = 0;
     
+    private readonly object _immediateLock = new();
     private readonly Queue<ImmediateEntry> _immediate = new();
+    private readonly HashSet<long> _immediateIds = new();
     private readonly HashSet<long> _canceledImmediates = new();
     private readonly Queue<Action> _macro = new();
     private readonly PriorityQueue<TimerEntry, long> _timers = new();
@@ -77,14 +79,22 @@ public class NodeSychronizationContext : SynchronizationContext, IScheduler, IMi
         return false;
     }
 
-    static bool TryDequeue(Queue<ImmediateEntry> q, out ImmediateEntry item)
+    private bool TryDequeueImmediate(out ImmediateEntry item, out bool canceled)
     {
-        lock (q)
+        lock (_immediateLock)
         {
-            if (q.Count > 0) { item = q.Dequeue(); return true; }
+            if (_immediate.Count == 0)
+            {
+                item = default;
+                canceled = false;
+                return false;
+            }
+
+            item = _immediate.Dequeue();
+            _immediateIds.Remove(item.id);
+            canceled = _canceledImmediates.Remove(item.id);
+            return true;
         }
-        item = default;
-        return false;
     }
 
     private void TryPromoteDueTimerToMacro()
@@ -127,22 +137,16 @@ public class NodeSychronizationContext : SynchronizationContext, IScheduler, IMi
     {
         // Snapshot count to ensure newly-queued immediates run on the next iteration.
         int count;
-        lock (_immediate)
+        lock (_immediateLock)
         {
             count = System.Math.Min(_immediate.Count, max);
         }
 
         for (int i = 0; i < count; i++)
         {
-            if (!TryDequeue(_immediate, out var entry))
+            if (!TryDequeueImmediate(out var entry, out var canceled))
             {
                 return;
-            }
-
-            bool canceled;
-            lock (_canceledImmediates)
-            {
-                canceled = _canceledImmediates.Remove(entry.id);
             }
 
             if (canceled)
@@ -172,9 +176,20 @@ public class NodeSychronizationContext : SynchronizationContext, IScheduler, IMi
 
     public void WaitForWorkOrNextTimer(int maxWaitMs = 50)
     {
-        if (_micro.Count() > 0) return;
-        if (_immediate.Count() > 0) return;
-        if (_macro.Count() > 0) return;
+        lock (_micro)
+        {
+            if (_micro.Count > 0) return;
+        }
+
+        lock (_immediateLock)
+        {
+            if (_immediate.Count > 0) return;
+        }
+
+        lock (_macro)
+        {
+            if (_macro.Count > 0) return;
+        }
 
         int waitMs = maxWaitMs;
         lock (_timers)
@@ -217,9 +232,10 @@ public class NodeSychronizationContext : SynchronizationContext, IScheduler, IMi
     {
         var id = System.Threading.Interlocked.Increment(ref _nextImmediateId);
         var entry = new ImmediateEntry { id = id, Callback = action };
-        lock (_immediate)
+        lock (_immediateLock)
         {
             _immediate.Enqueue(entry);
+            _immediateIds.Add(entry.id);
         }
         _wakeup.Set();
         return entry;
@@ -229,8 +245,12 @@ public class NodeSychronizationContext : SynchronizationContext, IScheduler, IMi
     {
         if (handle is ImmediateEntry entry)
         {
-            lock (_canceledImmediates)
+            lock (_immediateLock)
             {
+                if (!_immediateIds.Contains(entry.id))
+                {
+                    return;
+                }
                 _canceledImmediates.Add(entry.id);
             }
             _wakeup.Set();
