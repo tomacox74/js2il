@@ -2027,12 +2027,12 @@ namespace Js2IL.Services.ILGenerators
                     }
                     
                     // Store to variable (scope already loaded for fields, not needed for locals)
-                    // Value is unboxed (float64) if:
-                    // - needsToNumber: we just converted it to double
-                    // - JsType is Number: the RHS emitted an unboxed float64
-                    bool valueIsUnboxed = needsToNumber || rhsResult.JsType == JavascriptType.Number;
+                    // Determine if the value on the stack is boxed:
+                    // - If needsToNumber: we just called ToNumber which returns unboxed double
+                    // - Otherwise: use rhsResult.IsBoxed which reflects boxing state from Emit()
+                    bool valueIsBoxed = needsToNumber ? false : rhsResult.IsBoxed;
                     ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: isFieldVariable, 
-                        valueIsBoxed: !valueIsUnboxed, bclReferences: _owner.BclReferences);
+                        valueIsBoxed: valueIsBoxed, bclReferences: _owner.BclReferences);
                     
                     return rhsResult.JsType;
                 }
