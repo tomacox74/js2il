@@ -1,0 +1,164 @@
+﻿// IL code: SetImmediate_WithArgs_PassesCorrectly
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.SetImmediate_WithArgs_PassesCorrectly
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit logNameAge
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method logNameAge::.ctor
+
+	} // end of class logNameAge
+
+
+	// Fields
+	.field public object logNameAge
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method SetImmediate_WithArgs_PassesCorrectly::.ctor
+
+} // end of class Scopes.SetImmediate_WithArgs_PassesCorrectly
+
+.class public auto ansi abstract sealed beforefieldinit Functions.SetImmediate_WithArgs_PassesCorrectly
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object logNameAge (
+			object[] scopes,
+			object name,
+			object age
+		) cil managed 
+	{
+		// Method begins at RVA 0x2064
+		// Header size: 12
+		// Code size: 34 (0x22)
+		.maxstack 32
+
+		IL_0000: ldc.i4.1
+		IL_0001: newarr [System.Runtime]System.Object
+		IL_0006: dup
+		IL_0007: ldc.i4.0
+		IL_0008: ldarg.1
+		IL_0009: ldstr " "
+		IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0013: ldarg.2
+		IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0019: stelem.ref
+		IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_001f: pop
+		IL_0020: ldnull
+		IL_0021: ret
+	} // end of method SetImmediate_WithArgs_PassesCorrectly::logNameAge
+
+} // end of class Functions.SetImmediate_WithArgs_PassesCorrectly
+
+.class public auto ansi beforefieldinit Scripts.SetImmediate_WithArgs_PassesCorrectly
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x2094
+		// Header size: 12
+		// Code size: 93 (0x5d)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.SetImmediate_WithArgs_PassesCorrectly
+		)
+
+		IL_0000: newobj instance void Scopes.SetImmediate_WithArgs_PassesCorrectly::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldnull
+		IL_0008: ldftn object Functions.SetImmediate_WithArgs_PassesCorrectly::logNameAge(object[], object, object)
+		IL_000e: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_0013: stfld object Scopes.SetImmediate_WithArgs_PassesCorrectly::logNameAge
+		IL_0018: ldloc.0
+		IL_0019: castclass Scopes.SetImmediate_WithArgs_PassesCorrectly
+		IL_001e: ldfld object Scopes.SetImmediate_WithArgs_PassesCorrectly::logNameAge
+		IL_0023: ldc.i4.2
+		IL_0024: newarr [System.Runtime]System.Object
+		IL_0029: dup
+		IL_002a: ldc.i4.0
+		IL_002b: ldstr "Alice"
+		IL_0030: stelem.ref
+		IL_0031: dup
+		IL_0032: ldc.i4.1
+		IL_0033: ldc.r8 42
+		IL_003c: box [System.Runtime]System.Double
+		IL_0041: stelem.ref
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_0047: pop
+		IL_0048: ldc.i4.1
+		IL_0049: newarr [System.Runtime]System.Object
+		IL_004e: dup
+		IL_004f: ldc.i4.0
+		IL_0050: ldstr "setImmediate with args scheduled."
+		IL_0055: stelem.ref
+		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
+		IL_005b: pop
+		IL_005c: ret
+	} // end of method SetImmediate_WithArgs_PassesCorrectly::Main
+
+} // end of class Scripts.SetImmediate_WithArgs_PassesCorrectly
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20fd
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.SetImmediate_WithArgs_PassesCorrectly::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

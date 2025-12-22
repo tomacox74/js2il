@@ -25,10 +25,36 @@ struct TimerEntry : IEquatable<TimerEntry>
     }
 }
 
+struct ImmediateEntry : IEquatable<ImmediateEntry>
+{
+    public required long id;
+    public required Action Callback;
+
+    public bool Equals(ImmediateEntry other)
+    {
+        return id == other.id;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is ImmediateEntry other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return id.GetHashCode();
+    }
+}
+
 public class NodeSychronizationContext : SynchronizationContext, IScheduler, IMicrotaskScheduler
 {
     private static long _nextTimerId = 0;
+    private long _nextImmediateId = 0;
     
+    private readonly object _immediateLock = new();
+    private readonly Queue<ImmediateEntry> _immediate = new();
+    private readonly HashSet<long> _immediateIds = new();
+    private readonly HashSet<long> _canceledImmediates = new();
     private readonly Queue<Action> _macro = new();
     private readonly PriorityQueue<TimerEntry, long> _timers = new();
     private readonly Queue<Action> _micro = new();
@@ -53,6 +79,24 @@ public class NodeSychronizationContext : SynchronizationContext, IScheduler, IMi
         return false;
     }
 
+    private bool TryDequeueImmediate(out ImmediateEntry item, out bool canceled)
+    {
+        lock (_immediateLock)
+        {
+            if (_immediate.Count == 0)
+            {
+                item = default;
+                canceled = false;
+                return false;
+            }
+
+            item = _immediate.Dequeue();
+            _immediateIds.Remove(item.id);
+            canceled = _canceledImmediates.Remove(item.id);
+            return true;
+        }
+    }
+
     private void TryPromoteDueTimerToMacro()
     {
         long now = _tickSource.GetTicks();
@@ -70,12 +114,55 @@ public class NodeSychronizationContext : SynchronizationContext, IScheduler, IMi
     {
         lock (_micro)
         {
-            return _macro.Count > 0 || _timers.Count > 0 || _micro.Count > 0;
+            if (_micro.Count > 0) return true;
+        }
+
+        lock (_immediate)
+        {
+            if (_immediate.Count > 0) return true;
+        }
+
+        lock (_macro)
+        {
+            if (_macro.Count > 0) return true;
+        }
+
+        lock (_timers)
+        {
+            return _timers.Count > 0;
+        }
+    }
+
+    private void DrainImmediatesOneTick(int max = 1024)
+    {
+        // Snapshot count to ensure newly-queued immediates run on the next iteration.
+        int count;
+        lock (_immediateLock)
+        {
+            count = System.Math.Min(_immediate.Count, max);
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            if (!TryDequeueImmediate(out var entry, out var canceled))
+            {
+                return;
+            }
+
+            if (canceled)
+            {
+                continue;
+            }
+
+            entry.Callback?.Invoke();
         }
     }
 
     public void RunOneIteration()
     {
+        // Execute immediates first (higher priority than timers/macrotasks)
+        DrainImmediatesOneTick();
+
         // Fire any expired timers as macrotasks (only 1 per tick for simplicity)
         TryPromoteDueTimerToMacro();
 
@@ -89,9 +176,19 @@ public class NodeSychronizationContext : SynchronizationContext, IScheduler, IMi
 
     public void WaitForWorkOrNextTimer(int maxWaitMs = 50)
     {
-        if (_micro.Count() > 0)
+        lock (_micro)
         {
-             return;
+            if (_micro.Count > 0) return;
+        }
+
+        lock (_immediateLock)
+        {
+            if (_immediate.Count > 0) return;
+        }
+
+        lock (_macro)
+        {
+            if (_macro.Count > 0) return;
         }
 
         int waitMs = maxWaitMs;
@@ -128,6 +225,35 @@ public class NodeSychronizationContext : SynchronizationContext, IScheduler, IMi
         if (handle is TimerEntry entry)
         {
             this._timers.Remove(entry, out var _, out var _);
+        }
+    }
+
+    object IScheduler.ScheduleImmediate(Action action)
+    {
+        var id = System.Threading.Interlocked.Increment(ref _nextImmediateId);
+        var entry = new ImmediateEntry { id = id, Callback = action };
+        lock (_immediateLock)
+        {
+            _immediate.Enqueue(entry);
+            _immediateIds.Add(entry.id);
+        }
+        _wakeup.Set();
+        return entry;
+    }
+
+    void IScheduler.CancelImmediate(object handle)
+    {
+        if (handle is ImmediateEntry entry)
+        {
+            lock (_immediateLock)
+            {
+                if (!_immediateIds.Contains(entry.id))
+                {
+                    return;
+                }
+                _canceledImmediates.Add(entry.id);
+            }
+            _wakeup.Set();
         }
     }
 

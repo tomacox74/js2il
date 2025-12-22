@@ -89,5 +89,15 @@ namespace JavaScriptRuntime
         {
             return EnsureTimers().clearTimeout(handle);
         }
+
+        public static object setImmediate(object callback, params object[] args)
+        {
+            return EnsureTimers().setImmediate(callback, args);
+        }
+
+        public static object clearImmediate(object handle)
+        {
+            return EnsureTimers().clearImmediate(handle);
+        }
     }
 }

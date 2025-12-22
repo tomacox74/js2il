@@ -207,7 +207,8 @@ namespace Js2IL.SymbolTables
                    name == "JSON" || name == "undefined" || name == "null" || name == "Infinity" || name == "NaN" ||
                    name == "process" || name == "__dirname" || name == "__filename" || name == "require" ||
                    name == "Buffer" || name == "Int32Array" || name == "Error" || name == "Promise" ||
-                   name == "setTimeout" || name == "setInterval" || name == "clearTimeout" || name == "clearInterval";
+                   name == "setTimeout" || name == "setInterval" || name == "clearTimeout" || name == "clearInterval" ||
+                   name == "setImmediate" || name == "clearImmediate";
         }
 
         private static string NormalizeModuleName(string s)

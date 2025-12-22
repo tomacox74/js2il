@@ -14,6 +14,7 @@ All notable changes to this project are documented here.
 
 ### Added
 - **CommonJS regression tests**: Added execution + generator coverage for nested name conflicts, relative-from-module requires, and shared-dependency caching.
+- **Node timers setImmediate/clearImmediate**: Added `setImmediate(callback, ...args)` and `clearImmediate(handle)` with FIFO ordering, cancellation support, and nested immediates running on the next iteration. (Fixes #124)
 
 ## v0.4.2 - 2025-12-18
 

@@ -126,5 +126,23 @@ namespace Js2IL.Tests.Node
 
         [Fact]
         public Task SetTimeout_ZeroDelay_WithArgs() => ExecutionTest(nameof(SetTimeout_ZeroDelay_WithArgs));
+
+        [Fact]
+        public Task SetImmediate_ExecutesCallback() => ExecutionTest(nameof(SetImmediate_ExecutesCallback));
+
+        [Fact]
+        public Task SetImmediate_WithArgs_PassesCorrectly() => ExecutionTest(nameof(SetImmediate_WithArgs_PassesCorrectly));
+
+        [Fact]
+        public Task SetImmediate_Multiple_ExecuteInOrder() => ExecutionTest(nameof(SetImmediate_Multiple_ExecuteInOrder));
+
+        [Fact]
+        public Task ClearImmediate_CancelsCallback() => ExecutionTest(nameof(ClearImmediate_CancelsCallback));
+
+        [Fact]
+        public Task SetImmediate_ExecutesBeforeSetTimeout() => ExecutionTest(nameof(SetImmediate_ExecutesBeforeSetTimeout));
+
+        [Fact]
+        public Task SetImmediate_Nested_ExecutesInNextIteration() => ExecutionTest(nameof(SetImmediate_Nested_ExecutesInNextIteration));
     }
 }
