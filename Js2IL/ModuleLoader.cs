@@ -71,7 +71,10 @@ public class ModuleLoader
             });
         }
 
-        Console.WriteLine("\nValidating the Javascript is supported...");
+        if (this._verbose)
+        {
+            Console.WriteLine($"\nValidating module: {modulePath}");
+        }
         var validationResult = _validator.Validate(ast);
         if (!validationResult.IsValid)
         {
