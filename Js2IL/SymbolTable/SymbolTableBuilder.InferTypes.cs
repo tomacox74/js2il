@@ -21,6 +21,10 @@ public partial class SymbolTableBuilder
             scope.Parent != null &&
             scope.Parent.Kind == ScopeKind.Class;
 
+        bool isFunctionOrArrowFunction(Scope? scope) =>
+            scope != null &&
+            scope.Kind == ScopeKind.Function;
+
         // Check if this is a block scope that is a descendant of a class method,
         // without crossing another function boundary (e.g., nested function or arrow function).
         // Valid: classMethod -> block -> block -> block
@@ -45,7 +49,34 @@ public partial class SymbolTableBuilder
             return false;
         }
 
-        if (scope.Kind != ScopeKind.Global && isClassMethod(scope) == false && isBlockScopeInClassMethod(scope) == false)
+        // Check if this is a block scope that is a descendant of a function/arrow function,
+        // without crossing another function boundary.
+        // Valid: function -> block -> block -> block
+        // Invalid: function -> function -> block (crosses function boundary)
+        bool isBlockScopeInFunction(Scope? scope)
+        {
+            if (scope == null || scope.Kind != ScopeKind.Block)
+                return false;
+
+            var current = scope.Parent;
+            while (current != null)
+            {
+                if (isFunctionOrArrowFunction(current))
+                    return true;
+
+                if (current.Kind == ScopeKind.Function)
+                    return false;
+
+                current = current.Parent;
+            }
+            return false;
+        }
+
+        if (scope.Kind != ScopeKind.Global &&
+            isClassMethod(scope) == false &&
+            isBlockScopeInClassMethod(scope) == false &&
+            isFunctionOrArrowFunction(scope) == false &&
+            isBlockScopeInFunction(scope) == false)
         {
             return;
         }
