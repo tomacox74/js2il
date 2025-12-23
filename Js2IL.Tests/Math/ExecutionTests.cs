@@ -49,7 +49,7 @@ namespace Js2IL.Tests.Math
             return ExecutionTest(nameof(Math_Min_Max_NaN_EmptyArgs));
         }
 
-        [Fact(Skip = "Temporarily disabled in CI: rounding/truncation edge-case differences on Linux; will re-enable after harmonizing semantics")]
+        [Fact]
         public Task Math_Round_Trunc_NegativeHalves()
         {
             return ExecutionTest(nameof(Math_Round_Trunc_NegativeHalves));

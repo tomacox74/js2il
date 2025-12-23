@@ -80,7 +80,7 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 78 (0x4e)
+		// Code size: 98 (0x62)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ControlFlow_If_LessThan,
@@ -96,28 +96,32 @@
 		IL_0015: ldloc.2
 		IL_0016: blt IL_0020
 
-		IL_001b: br IL_0039
+		IL_001b: br IL_0043
 
-		IL_0020: ldc.i4.1
-		IL_0021: newarr [System.Runtime]System.Object
-		IL_0026: dup
-		IL_0027: ldc.i4.0
-		IL_0028: ldstr "lte"
-		IL_002d: stelem.ref
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0033: pop
-		IL_0034: br IL_004d
+		IL_0020: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0025: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_002a: ldc.i4.1
+		IL_002b: newarr [System.Runtime]System.Object
+		IL_0030: dup
+		IL_0031: ldc.i4.0
+		IL_0032: ldstr "lte"
+		IL_0037: stelem.ref
+		IL_0038: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_003d: pop
+		IL_003e: br IL_0061
 
-		IL_0039: ldc.i4.1
-		IL_003a: newarr [System.Runtime]System.Object
-		IL_003f: dup
-		IL_0040: ldc.i4.0
-		IL_0041: ldstr "gt"
-		IL_0046: stelem.ref
-		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_004c: pop
+		IL_0043: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0048: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_004d: ldc.i4.1
+		IL_004e: newarr [System.Runtime]System.Object
+		IL_0053: dup
+		IL_0054: ldc.i4.0
+		IL_0055: ldstr "gt"
+		IL_005a: stelem.ref
+		IL_005b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0060: pop
 
-		IL_004d: ret
+		IL_0061: ret
 	} // end of method ControlFlow_If_LessThan::Main
 
 } // end of class Scripts.ControlFlow_If_LessThan
@@ -129,7 +133,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20c6
+		// Method begins at RVA 0x20da
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

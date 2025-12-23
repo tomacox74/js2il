@@ -84,7 +84,7 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 110 (0x6e)
+		// Code size: 140 (0x8c)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction/ArrowFunction_nestedFunction,
@@ -95,52 +95,58 @@
 		IL_0005: stloc.0
 		IL_0006: ldstr "inner"
 		IL_000b: stloc.1
-		IL_000c: ldc.i4.2
-		IL_000d: newarr [System.Runtime]System.Object
-		IL_0012: dup
-		IL_0013: ldc.i4.0
-		IL_0014: ldstr "Global:"
-		IL_0019: stelem.ref
-		IL_001a: dup
-		IL_001b: ldc.i4.1
-		IL_001c: ldarg.0
+		IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0011: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_0016: ldc.i4.2
+		IL_0017: newarr [System.Runtime]System.Object
+		IL_001c: dup
 		IL_001d: ldc.i4.0
-		IL_001e: ldelem.ref
-		IL_001f: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes
-		IL_0024: ldfld object Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes::globalVar
-		IL_0029: stelem.ref
-		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_002f: pop
-		IL_0030: ldc.i4.2
-		IL_0031: newarr [System.Runtime]System.Object
-		IL_0036: dup
-		IL_0037: ldc.i4.0
-		IL_0038: ldstr "Outer:"
-		IL_003d: stelem.ref
-		IL_003e: dup
-		IL_003f: ldc.i4.1
-		IL_0040: ldarg.0
-		IL_0041: ldc.i4.1
-		IL_0042: ldelem.ref
-		IL_0043: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction
-		IL_0048: ldfld object Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction::outerVar
-		IL_004d: stelem.ref
-		IL_004e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0053: pop
-		IL_0054: ldc.i4.2
-		IL_0055: newarr [System.Runtime]System.Object
-		IL_005a: dup
-		IL_005b: ldc.i4.0
-		IL_005c: ldstr "Inner:"
+		IL_001e: ldstr "Global:"
+		IL_0023: stelem.ref
+		IL_0024: dup
+		IL_0025: ldc.i4.1
+		IL_0026: ldarg.0
+		IL_0027: ldc.i4.0
+		IL_0028: ldelem.ref
+		IL_0029: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes
+		IL_002e: ldfld object Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes::globalVar
+		IL_0033: stelem.ref
+		IL_0034: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0039: pop
+		IL_003a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003f: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_0044: ldc.i4.2
+		IL_0045: newarr [System.Runtime]System.Object
+		IL_004a: dup
+		IL_004b: ldc.i4.0
+		IL_004c: ldstr "Outer:"
+		IL_0051: stelem.ref
+		IL_0052: dup
+		IL_0053: ldc.i4.1
+		IL_0054: ldarg.0
+		IL_0055: ldc.i4.1
+		IL_0056: ldelem.ref
+		IL_0057: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction
+		IL_005c: ldfld object Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction::outerVar
 		IL_0061: stelem.ref
-		IL_0062: dup
-		IL_0063: ldc.i4.1
-		IL_0064: ldloc.1
-		IL_0065: stelem.ref
-		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_006b: pop
-		IL_006c: ldnull
-		IL_006d: ret
+		IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0067: pop
+		IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_006d: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_0072: ldc.i4.2
+		IL_0073: newarr [System.Runtime]System.Object
+		IL_0078: dup
+		IL_0079: ldc.i4.0
+		IL_007a: ldstr "Inner:"
+		IL_007f: stelem.ref
+		IL_0080: dup
+		IL_0081: ldc.i4.1
+		IL_0082: ldloc.1
+		IL_0083: stelem.ref
+		IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0089: pop
+		IL_008a: ldnull
+		IL_008b: ret
 	} // end of method ArrowFunction_L6C27::ArrowFunction_L6C27
 
 } // end of class Functions.ArrowFunction_L6C27
@@ -154,7 +160,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x20e8
+		// Method begins at RVA 0x2104
 		// Header size: 12
 		// Code size: 109 (0x6d)
 		.maxstack 32
@@ -232,7 +238,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2164
+		// Method begins at RVA 0x2180
 		// Header size: 12
 		// Code size: 86 (0x56)
 		.maxstack 32
@@ -289,7 +295,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c6
+		// Method begins at RVA 0x21e2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -8,8 +8,9 @@ public class ModuleContext
     /// <summary>
     /// temporary statics
     /// </summary>
-    private static string dirname;
-    private static string filename;
+
+    private readonly static ThreadLocal<string> dirname = new ThreadLocal<string>();
+    private readonly static ThreadLocal<string> filename = new ThreadLocal<string>();
 
     private static RequireDelegate CreateRequireDelegate(Require requireService)
     {
@@ -33,8 +34,8 @@ public class ModuleContext
                 var file = entry?.Location;
                 if (!string.IsNullOrEmpty(file))
                 {
-                    dirname = file!;
-                    dirname = System.IO.Path.GetDirectoryName(file!) ?? string.Empty;
+                    filename.Value = file!;
+                    dirname.Value = System.IO.Path.GetDirectoryName(file!) ?? string.Empty;
                     // argv is resolved on-demand by Process.argv from the environment provider.
                 }
             }
@@ -46,14 +47,14 @@ public class ModuleContext
 
     public static void SetModuleContext(string dir, string file)
     {
-        dirname = dir;
-        filename = file;
+        dirname.Value = dir;
+        filename.Value = file;
     }
 
     public static void ClearModuleContext()
     {
-        dirname = string.Empty;
-        filename = string.Empty;
+        dirname.Value = string.Empty;
+        filename.Value = string.Empty;
     }
 
     public static ModuleContext CreateModuleContext([NotNull] ServiceContainer serviceProvider)
@@ -63,8 +64,8 @@ public class ModuleContext
         var context = new ModuleContext
         {
             require = CreateRequireDelegate(requireService),
-            __dirname = dirname,
-            __filename = filename
+            __dirname = dirname.Value!,
+            __filename = filename.Value!
         };
         return context;
     }

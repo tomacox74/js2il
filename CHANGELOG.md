@@ -8,14 +8,23 @@ All notable changes to this project are documented here.
 - **CommonJS require caching**: Local modules are now cached so shared dependencies execute only once per process (e.g., `b -> d` and `c -> d` only run `d` once). (Fixes #157, Fixes #123)
 - **CommonJS relative require resolution**: `require('./...')` and `require('../...')` inside a module now resolve relative to the requiring module.
 - **Test harness path normalization**: CommonJS tests now support nested module paths by normalizing embedded resource names, expected DLL naming, and mock filesystem path casing/separators.
+- **Math operations alignment**: `Math.round()`, `Math.trunc()`, and `Math.imul()` now match Node.js behavior by removing custom `-0` handling that caused divergent outputs.
 
 ### Changed
+- **Console dependency injection refactoring**: Console migrated from static ThreadLocal fields to constructor-injected `ConsoleOutputSinks` pattern:
+  - Removed `Console.SetOutput()` and `Console.SetErrorOutput()` static methods
+  - Console now resolved via `ServiceProvider.Resolve<Console>()` with DI-injected sinks
+  - Test infrastructure updated to use `ServiceContainer` with per-test `ConsoleOutputSinks` instead of static setters
+  - Enables thread-safe per-test Console isolation, removing static state blocking parallel execution
+  - **Breaking Change**: Tests must configure Console via dependency injection rather than static methods
 - **CommonJS module identity**: Compiler/runtime now use stable path-based module ids for generated type names to avoid basename collisions (e.g., `./b` vs `./helpers/b`).
+- **Console array formatting**: Strings in console arrays now quoted with single quotes and special characters escaped to match Node.js output.
 
 ### Added
 - **CommonJS regression tests**: Added execution + generator coverage for nested name conflicts, relative-from-module requires, and shared-dependency caching.
 - **Node timers setImmediate/clearImmediate**: Added `setImmediate(callback, ...args)` and `clearImmediate(handle)` with FIFO ordering, cancellation support, and nested immediates running on the next iteration. (Fixes #124)
 - **Node timers setInterval/clearInterval**: Added `setInterval(callback, delay, ...args)` and `clearInterval(handle)` with repeating timer support, proper cancellation handling, and integration with the event loop scheduler. (Fixes #125)
+- **Snapshot management script**: Added `scripts/syncExecutionSnapshots.js` for execution test snapshot synchronization.
 
 ## v0.4.2 - 2025-12-18
 

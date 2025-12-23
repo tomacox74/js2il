@@ -123,7 +123,7 @@
 	{
 		// Method begins at RVA 0x20a8
 		// Header size: 12
-		// Code size: 227 (0xe3)
+		// Code size: 237 (0xed)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Array_Sort_WithComparatorArrow,
@@ -181,27 +181,29 @@
 			IL_00a7: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
 			IL_00ac: blt IL_00b6
 
-			IL_00b1: br IL_00e2
+			IL_00b1: br IL_00ec
 
-			IL_00b6: ldc.i4.1
-			IL_00b7: newarr [System.Runtime]System.Object
-			IL_00bc: dup
-			IL_00bd: ldc.i4.0
-			IL_00be: ldloc.1
-			IL_00bf: ldloc.2
-			IL_00c0: box [System.Runtime]System.Double
-			IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_00ca: stelem.ref
-			IL_00cb: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_00d0: pop
-			IL_00d1: ldloc.2
-			IL_00d2: ldc.r8 1
-			IL_00db: add
-			IL_00dc: stloc.2
-			IL_00dd: br IL_00a5
+			IL_00b6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_00bb: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+			IL_00c0: ldc.i4.1
+			IL_00c1: newarr [System.Runtime]System.Object
+			IL_00c6: dup
+			IL_00c7: ldc.i4.0
+			IL_00c8: ldloc.1
+			IL_00c9: ldloc.2
+			IL_00ca: box [System.Runtime]System.Double
+			IL_00cf: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_00d4: stelem.ref
+			IL_00d5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_00da: pop
+			IL_00db: ldloc.2
+			IL_00dc: ldc.r8 1
+			IL_00e5: add
+			IL_00e6: stloc.2
+			IL_00e7: br IL_00a5
 		// end loop
 
-		IL_00e2: ret
+		IL_00ec: ret
 	} // end of method Array_Sort_WithComparatorArrow::Main
 
 } // end of class Scripts.Array_Sort_WithComparatorArrow
@@ -213,7 +215,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2197
+		// Method begins at RVA 0x21a1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

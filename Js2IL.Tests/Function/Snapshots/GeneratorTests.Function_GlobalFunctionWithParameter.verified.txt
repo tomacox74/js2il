@@ -60,23 +60,25 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 26 (0x1a)
+		// Code size: 36 (0x24)
 		.maxstack 32
 
-		IL_0000: ldc.i4.2
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldstr "Message:"
-		IL_000d: stelem.ref
-		IL_000e: dup
-		IL_000f: ldc.i4.1
-		IL_0010: ldarg.1
-		IL_0011: stelem.ref
-		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0017: pop
-		IL_0018: ldnull
-		IL_0019: ret
+		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_000a: ldc.i4.2
+		IL_000b: newarr [System.Runtime]System.Object
+		IL_0010: dup
+		IL_0011: ldc.i4.0
+		IL_0012: ldstr "Message:"
+		IL_0017: stelem.ref
+		IL_0018: dup
+		IL_0019: ldc.i4.1
+		IL_001a: ldarg.1
+		IL_001b: stelem.ref
+		IL_001c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0021: pop
+		IL_0022: ldnull
+		IL_0023: ret
 	} // end of method Function_GlobalFunctionWithParameter::printMessage
 
 } // end of class Functions.Function_GlobalFunctionWithParameter
@@ -94,7 +96,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x208c
+		// Method begins at RVA 0x2094
 		// Header size: 12
 		// Code size: 95 (0x5f)
 		.maxstack 32
@@ -147,7 +149,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20f7
+		// Method begins at RVA 0x20ff
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

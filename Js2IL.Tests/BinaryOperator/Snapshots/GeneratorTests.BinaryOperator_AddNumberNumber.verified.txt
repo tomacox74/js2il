@@ -38,7 +38,7 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 50 (0x32)
+		// Code size: 60 (0x3c)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.BinaryOperator_AddNumberNumber,
@@ -49,20 +49,22 @@
 		IL_0009: ldc.r8 2
 		IL_0012: add
 		IL_0013: stloc.1
-		IL_0014: ldc.i4.2
-		IL_0015: newarr [System.Runtime]System.Object
-		IL_001a: dup
-		IL_001b: ldc.i4.0
-		IL_001c: ldstr "x is"
-		IL_0021: stelem.ref
-		IL_0022: dup
-		IL_0023: ldc.i4.1
-		IL_0024: ldloc.1
-		IL_0025: box [System.Runtime]System.Double
-		IL_002a: stelem.ref
-		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0030: pop
-		IL_0031: ret
+		IL_0014: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0019: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_001e: ldc.i4.2
+		IL_001f: newarr [System.Runtime]System.Object
+		IL_0024: dup
+		IL_0025: ldc.i4.0
+		IL_0026: ldstr "x is"
+		IL_002b: stelem.ref
+		IL_002c: dup
+		IL_002d: ldc.i4.1
+		IL_002e: ldloc.1
+		IL_002f: box [System.Runtime]System.Double
+		IL_0034: stelem.ref
+		IL_0035: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_003a: pop
+		IL_003b: ret
 	} // end of method BinaryOperator_AddNumberNumber::Main
 
 } // end of class Scripts.BinaryOperator_AddNumberNumber
@@ -74,7 +76,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x209a
+		// Method begins at RVA 0x20a4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -26,7 +26,7 @@ namespace Js2IL.Tests
             Directory.CreateDirectory(_outputPath);
         }
 
-        protected Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, bool preferOutOfProc = false, [CallerFilePath] string sourceFilePath = "", Action<IConsoleOutput> postTestProcessingAction = null!, string[]? additionalScripts = null)
+        protected Task ExecutionTest(string testName, bool allowUnhandledException = false, Action<VerifySettings>? configureSettings = null, bool preferOutOfProc = false, [CallerFilePath] string sourceFilePath = "", Action<IConsoleOutput> postTestProcessingAction = null!, string[]? additionalScripts = null, Action<JavaScriptRuntime.DependencyInjection.ServiceContainer>? addMocks = null)
         {
             var js = GetJavaScript(testName);
             var testFilePath = Path.Combine(_outputPath, $"{testName}.js");
@@ -75,7 +75,7 @@ namespace Js2IL.Tests
                 }
                 else
                 {
-                    il = ExecuteGeneratedAssemblyInProc(expectedPath, testName, postTestProcessingAction);
+                    il = ExecuteGeneratedAssemblyInProc(expectedPath, testName, postTestProcessingAction, addMocks: addMocks);
                 }
                 if (string.IsNullOrWhiteSpace(il))
                 {
@@ -155,201 +155,90 @@ namespace Js2IL.Tests
             return stdOut;
         }
 
-        private string ExecuteGeneratedAssemblyInProc(string assemblyPath, string? testName = null, Action<IConsoleOutput>? postTestProcessingAction = null, int timeoutMs = 30000)
+        private string ExecuteGeneratedAssemblyInProc(string assemblyPath, string? testName = null, Action<IConsoleOutput>? postTestProcessingAction = null, int timeoutMs = 30000, Action<JavaScriptRuntime.DependencyInjection.ServiceContainer>? addMocks = null)
         {
-            var prevOut = System.Console.Out;
-            var prevErr = System.Console.Error;
-            var swOut = new StringWriter();
-            var swErr = new StringWriter();
-            System.Console.SetOut(swOut);
-            System.Console.SetError(swErr);
+            ArgumentNullException.ThrowIfNull(assemblyPath, nameof(assemblyPath));
+            ArgumentNullException.ThrowIfNull(testName, nameof(testName));
 
+            var dir = Path.GetDirectoryName(assemblyPath)!;
+            var jsRuntimePath = Path.Combine(dir, "JavaScriptRuntime.dll");
+            Assembly? jsRuntimeAsm = null;
+            if (File.Exists(jsRuntimePath))
+            {
+                try { jsRuntimeAsm = AssemblyLoadContext.Default.LoadFromAssemblyPath(jsRuntimePath); } catch { }
+            }
+            jsRuntimeAsm ??= typeof(JavaScriptRuntime.EnvironmentProvider).Assembly;
+
+            var uniquePath = Path.Combine(dir, Path.GetFileNameWithoutExtension(assemblyPath) + $".run-{Guid.NewGuid():N}.dll");
+            File.Copy(assemblyPath, uniquePath, overwrite: true);
+            var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(uniquePath);
+            var entryPoint = assembly.EntryPoint ?? throw new InvalidOperationException("No entry point found in the generated assembly.");
+
+            var modDir = Path.GetDirectoryName(assemblyPath) ?? string.Empty;
+            var file = assemblyPath;
+            
+            // mocks are created here
             var captured = new CapturingConsoleOutput();
-            var consoleType = typeof(JavaScriptRuntime.Console);
-            var outputField = consoleType.GetField("_output", BindingFlags.NonPublic | BindingFlags.Static);
-            var previous = outputField?.GetValue(null) as IConsoleOutput;
-            JavaScriptRuntime.Console.SetOutput(captured);
-            try
+            var capturedEnvironment = new CapturingEnvironment();
+
+            var setupMocks = () =>
             {
-                var dir = Path.GetDirectoryName(assemblyPath)!;
-                var jsRuntimePath = Path.Combine(dir, "JavaScriptRuntime.dll");
-                Assembly? jsRuntimeAsm = null;
-                if (File.Exists(jsRuntimePath))
+                JavaScriptRuntime.CommonJS.ModuleContext.SetModuleContext(modDir, file);
+                JavaScriptRuntime.EnvironmentProvider.SuppressExit = true;
+                var serviceProvider = JavaScriptRuntime.RuntimeServices.BuildServiceProvider();
+                serviceProvider.RegisterInstance(new ConsoleOutputSinks
                 {
-                    try { jsRuntimeAsm = AssemblyLoadContext.Default.LoadFromAssemblyPath(jsRuntimePath); } catch { }
-                }
-                jsRuntimeAsm ??= typeof(JavaScriptRuntime.EnvironmentProvider).Assembly;
-
-                var uniquePath = Path.Combine(dir, Path.GetFileNameWithoutExtension(assemblyPath) + $".run-{Guid.NewGuid():N}.dll");
-                File.Copy(assemblyPath, uniquePath, overwrite: true);
-                var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(uniquePath);
-                var entryPoint = assembly.EntryPoint ?? throw new InvalidOperationException("No entry point found in the generated assembly.");
-
-                var modDir = Path.GetDirectoryName(assemblyPath) ?? string.Empty;
-                var file = assemblyPath;
-                // Attempt to set module context on all plausible runtime assemblies pre-run
-                try
-                {
-                    // 2) The compile-time runtime assembly
-                    JavaScriptRuntime.CommonJS.ModuleContext.SetModuleContext(modDir, file);
-                }
-                catch { }
-                try
-                {
-                    // 3) Any already-loaded runtime assemblies in the default context
-                    foreach (var asm in AssemblyLoadContext.Default.Assemblies)
-                    {
-                        if (!string.Equals(asm.GetName().Name, "JavaScriptRuntime", StringComparison.Ordinal)) continue;
-                        try
-                        {
-                            var mct = asm.GetType("JavaScriptRuntime.CommonJS.ModuleContext");
-                            var sc = mct?.GetMethod("SetModuleContext", BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(string) });
-                            sc?.Invoke(null, new object?[] { modDir, file });
-                        }
-                        catch { }
-                    }
-                }
-                catch { }
-
-                // Rebind jsRuntimeAsm to the actual loaded JavaScriptRuntime used by the generated assembly
-                try
-                {
-                    var loaded = AssemblyLoadContext.Default.Assemblies.FirstOrDefault(a => string.Equals(a.GetName().Name, "JavaScriptRuntime", StringComparison.Ordinal));
-                    if (loaded != null)
-                    {
-                        jsRuntimeAsm = loaded;
-                    }
-                }
-                catch { }
-
-                // Ensure module context is set on the actual runtime assembly instance used by the program
-                try
-                {
-                    if (jsRuntimeAsm != null)
-                    {
-                        var mcType2 = jsRuntimeAsm.GetType("JavaScriptRuntime.CommonJS.ModuleContext");
-                        if (mcType2 != null)
-                        {
-                            var setCtx2 = mcType2.GetMethod("SetModuleContext", BindingFlags.Public | BindingFlags.Static, new Type[] { typeof(string), typeof(string) });
-                            if (setCtx2 != null)
-                            {
-                                setCtx2.Invoke(null, new object?[] { modDir, file });
-                            }
-                        }
-                    }
-                }
-                catch { }
-
-                // Install a CapturingEnvironment so we can deterministically read the exit code without terminating
-                object? capEnvInstance = null;
-                Type? capturingEnvType = null;
-                try
-                {
-                    if (jsRuntimeAsm != null)
-                    {
-                        var envProvType = jsRuntimeAsm.GetType("JavaScriptRuntime.EnvironmentProvider");
-                        var suppressProp = envProvType?.GetProperty("SuppressExit", BindingFlags.Public | BindingFlags.Static);
-                        suppressProp?.SetValue(null, true);
-                        var ienvType = jsRuntimeAsm.GetType("JavaScriptRuntime.IEnvironment");
-                        capturingEnvType = jsRuntimeAsm.GetType("JavaScriptRuntime.CapturingEnvironment");
-                        var setEnv = envProvType?.GetMethod("SetEnvironment", BindingFlags.Public | BindingFlags.Static, new Type[] { ienvType! });
-                        if (setEnv != null && capturingEnvType != null)
-                        {
-                            capEnvInstance = Activator.CreateInstance(capturingEnvType);
-                            setEnv.Invoke(null, new object?[] { capEnvInstance });
-                        }
-                        // Reset process-wide exit code to a known state
-                        try { System.Environment.ExitCode = 0; } catch { }
-                    }
-                }
-                catch { }
-
-                var paramInfos = entryPoint.GetParameters();
-                object?[]? args = paramInfos.Length == 0 ? null : new object?[] { System.Array.Empty<string>() };
-                
-                // Run the entry point in a separate thread with timeout to prevent infinite hangs
-                Exception? threadException = null;
-                var executionThread = new Thread(() =>
-                {
-                    try
-                    {
-                        entryPoint.Invoke(null, args);
-                    }
-                    catch (Exception ex)
-                    {
-                        threadException = ex;
-                    }
+                    Output = captured,
+                    ErrorOutput = captured
                 });
-                executionThread.Start();
-                bool completed = executionThread.Join(timeoutMs);
-                if (!completed)
-                {
-                    // Cannot safely abort managed threads, but we can at least fail the test
-                    throw new TimeoutException($"In-proc test execution timed out after {timeoutMs}ms. Test may have an infinite loop.");
-                }
-                if (threadException != null)
-                {
-                    throw threadException;
-                }
-                
-                postTestProcessingAction?.Invoke(captured);
+                serviceProvider.RegisterInstance<IEnvironment>(capturedEnvironment);
 
-                var outText = swOut.ToString();
-                if (!string.IsNullOrEmpty(testName) && testName.StartsWith("Process_Exit_", StringComparison.Ordinal))
-                {
-                    int code = System.Environment.ExitCode;
-                    try
-                    {
-                        if (jsRuntimeAsm != null)
-                        {
-                            var envProvType = jsRuntimeAsm.GetType("JavaScriptRuntime.EnvironmentProvider");
-                            var lastProp = envProvType?.GetProperty("LastExitCodeSet", BindingFlags.Public | BindingFlags.Static);
-                            var lastVal = lastProp?.GetValue(null);
-                            if (lastVal is int last)
-                            {
-                                code = last;
-                            }
-                            else if (capEnvInstance != null && capturingEnvType != null)
-                            {
-                                var exitCalledWithCodeProp = capturingEnvType.GetProperty("ExitCalledWithCode", BindingFlags.Public | BindingFlags.Instance);
-                                var exitCodeProp = capturingEnvType.GetProperty("ExitCode", BindingFlags.Public | BindingFlags.Instance);
-                                var val = exitCalledWithCodeProp?.GetValue(capEnvInstance);
-                                if (val is int i)
-                                {
-                                    code = i;
-                                }
-                                else if (exitCodeProp != null)
-                                {
-                                    var ecVal = exitCodeProp.GetValue(capEnvInstance);
-                                    if (ecVal is int j)
-                                    {
-                                        code = j;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    catch { }
-                    outText = $"exitCode {code}\n";
-                }
-                if (string.IsNullOrEmpty(outText))
-                {
-                    outText = captured.GetOutput();
-                }
-                return outText;
-            }
-            finally
+                addMocks?.Invoke(serviceProvider);
+
+                JavaScriptRuntime.Engine._serviceProviderOverride.Value = serviceProvider;
+            };
+
+
+            // Run the entry point in a separate thread with timeout to prevent infinite hangs
+            Exception? threadException = null;
+            var executionThread = new Thread(() =>
             {
+                setupMocks();
+
                 try
                 {
-                    JavaScriptRuntime.EnvironmentProvider.SetEnvironment(new JavaScriptRuntime.DefaultEnvironment());
-                    JavaScriptRuntime.EnvironmentProvider.SuppressExit = false;
+                    ((Action)Delegate.CreateDelegate(typeof(Action), entryPoint))();
                 }
-                catch { }
-                JavaScriptRuntime.Console.SetOutput(previous ?? new DefaultConsoleOutput());
-                System.Console.SetOut(prevOut);
-                System.Console.SetError(prevErr);
+                catch (Exception ex)
+                {
+                    threadException = ex;
+                }
+                finally
+                {
+                    JavaScriptRuntime.Engine._serviceProviderOverride.Value = null;
+                }
+            });
+            executionThread.Start();
+            bool completed = executionThread.Join(timeoutMs);
+            if (!completed)
+            {
+                // Cannot safely abort managed threads, but we can at least fail the test
+                throw new TimeoutException($"In-proc test execution timed out after {timeoutMs}ms. Test may have an infinite loop.");
             }
+            if (threadException != null)
+            {
+                throw threadException;
+            }
+            
+            postTestProcessingAction?.Invoke(captured);
+
+            var outText = captured.GetOutput();
+            if (testName.StartsWith("Process_Exit_", StringComparison.Ordinal))
+            {
+                var code = capturedEnvironment.ExitCalledWithCode ?? 0;
+                outText = $"exitCode {code}\n";
+            }
+            return outText;
         }
 
         private sealed class CapturingConsoleOutput : IConsoleOutput

@@ -10,14 +10,21 @@ namespace JavaScriptRuntime.Node
     [NodeModule("process")]
     public sealed class Process
     {
+        IEnvironment _environment;
+
+        public Process(IEnvironment environment)
+        {
+            _environment = environment;
+        }
+
         /// <summary>
         /// Matches Node's writable process.exitCode (JavaScript number). Internally mirrors host Environment.ExitCode.
         /// Getter returns the current exit code as a double; setter accepts a double and truncates to int.
         /// </summary>
         public double exitCode
         {
-            get => (double)JavaScriptRuntime.EnvironmentProvider.Current.ExitCode;
-            set => JavaScriptRuntime.EnvironmentProvider.Current.ExitCode = (int)value;
+            get => (double)_environment.ExitCode;
+            set => _environment.ExitCode = (int)value;
         }
 
         /// <summary>
@@ -50,9 +57,7 @@ namespace JavaScriptRuntime.Node
         /// </summary>
         public void exit()
         {
-            // Record the current exit code for deterministic testing when termination is suppressed
-            try { JavaScriptRuntime.EnvironmentProvider.LastExitCodeSet = JavaScriptRuntime.EnvironmentProvider.Current.ExitCode; } catch { }
-            JavaScriptRuntime.EnvironmentProvider.Current.Exit();
+            _environment.Exit();
         }
 
         /// <summary>
@@ -69,10 +74,10 @@ namespace JavaScriptRuntime.Node
             {
                 ec = 0;
             }
+
             // Record explicitly provided exit code
-            try { JavaScriptRuntime.EnvironmentProvider.LastExitCodeSet = ec; } catch { }
-            JavaScriptRuntime.EnvironmentProvider.Current.ExitCode = ec;
-            JavaScriptRuntime.EnvironmentProvider.Current.Exit(ec);
+            _environment.ExitCode = ec;
+            _environment.Exit(ec);
         }
     }
 }

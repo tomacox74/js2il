@@ -397,7 +397,7 @@ public sealed class Promise
 
     private void EnqueueReaction(Reaction reaction)
     {
-        JavaScriptRuntime.EngineCore.IMicrotaskScheduler? scheduler = GlobalThis.MicrotaskScheduler;
+        var scheduler = GlobalThis.ServiceProvider?.Resolve<JavaScriptRuntime.EngineCore.IMicrotaskScheduler>(); 
         if (scheduler == null)
         {
             throw new InvalidOperationException("No microtask scheduler available");

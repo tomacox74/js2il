@@ -38,7 +38,7 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 63 (0x3f)
+		// Code size: 105 (0x69)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Require_Path_Join_Basic,
@@ -63,16 +63,30 @@
 		IL_0022: ldstr "b"
 		IL_0027: stelem.ref
 		IL_0028: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Node.Path::join(object[])
-		IL_002d: stloc.2
-		IL_002e: ldc.i4.1
-		IL_002f: newarr [System.Runtime]System.Object
-		IL_0034: dup
-		IL_0035: ldc.i4.0
-		IL_0036: ldloc.2
-		IL_0037: stelem.ref
-		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_003d: pop
-		IL_003e: ret
+		IL_002d: ldstr "replace"
+		IL_0032: ldc.i4.2
+		IL_0033: newarr [System.Runtime]System.Object
+		IL_0038: dup
+		IL_0039: ldc.i4.0
+		IL_003a: ldstr "\\"
+		IL_003f: stelem.ref
+		IL_0040: dup
+		IL_0041: ldc.i4.1
+		IL_0042: ldstr "/"
+		IL_0047: stelem.ref
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_004d: stloc.2
+		IL_004e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0053: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_0058: ldc.i4.1
+		IL_0059: newarr [System.Runtime]System.Object
+		IL_005e: dup
+		IL_005f: ldc.i4.0
+		IL_0060: ldloc.2
+		IL_0061: stelem.ref
+		IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0067: pop
+		IL_0068: ret
 	} // end of method Require_Path_Join_Basic::Main
 
 } // end of class Scripts.Require_Path_Join_Basic
@@ -84,7 +98,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20a7
+		// Method begins at RVA 0x20d1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -4,4 +4,6 @@ function joinWrapper(a, b) {
   return path.join(a, b);
 }
 
-console.log(joinWrapper('a','b'));
+let joinedPath = joinWrapper('a','b').replace('\\', '/');
+
+console.log(joinedPath);

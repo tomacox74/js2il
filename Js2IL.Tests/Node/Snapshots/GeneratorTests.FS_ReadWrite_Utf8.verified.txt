@@ -38,7 +38,7 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 115 (0x73)
+		// Code size: 125 (0x7d)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.FS_ReadWrite_Utf8,
@@ -83,15 +83,17 @@
 		IL_0055: ldstr "utf8"
 		IL_005a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Node.FS::readFileSync(object, object)
 		IL_005f: stloc.s 4
-		IL_0061: ldc.i4.1
-		IL_0062: newarr [System.Runtime]System.Object
-		IL_0067: dup
-		IL_0068: ldc.i4.0
-		IL_0069: ldloc.s 4
-		IL_006b: stelem.ref
-		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0071: pop
-		IL_0072: ret
+		IL_0061: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0066: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_006b: ldc.i4.1
+		IL_006c: newarr [System.Runtime]System.Object
+		IL_0071: dup
+		IL_0072: ldc.i4.0
+		IL_0073: ldloc.s 4
+		IL_0075: stelem.ref
+		IL_0076: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_007b: pop
+		IL_007c: ret
 	} // end of method FS_ReadWrite_Utf8::Main
 
 } // end of class Scripts.FS_ReadWrite_Utf8
@@ -103,7 +105,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20db
+		// Method begins at RVA 0x20e5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

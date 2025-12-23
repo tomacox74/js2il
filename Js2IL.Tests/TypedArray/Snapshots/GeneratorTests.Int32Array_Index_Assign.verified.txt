@@ -38,7 +38,7 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 100 (0x64)
+		// Code size: 110 (0x6e)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Int32Array_Index_Assign,
@@ -66,18 +66,20 @@
 		IL_0038: ldloc.3
 		IL_0039: ldloc.s 4
 		IL_003b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Int32Array::set_Item(object, object)
-		IL_0040: ldc.i4.1
-		IL_0041: newarr [System.Runtime]System.Object
-		IL_0046: dup
-		IL_0047: ldc.i4.0
-		IL_0048: ldloc.1
-		IL_0049: ldc.r8 1
-		IL_0052: box [System.Runtime]System.Double
-		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_005c: stelem.ref
-		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0062: pop
-		IL_0063: ret
+		IL_0040: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0045: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_004a: ldc.i4.1
+		IL_004b: newarr [System.Runtime]System.Object
+		IL_0050: dup
+		IL_0051: ldc.i4.0
+		IL_0052: ldloc.1
+		IL_0053: ldc.r8 1
+		IL_005c: box [System.Runtime]System.Double
+		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0066: stelem.ref
+		IL_0067: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_006c: pop
+		IL_006d: ret
 	} // end of method Int32Array_Index_Assign::Main
 
 } // end of class Scripts.Int32Array_Index_Assign
@@ -89,7 +91,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20cc
+		// Method begins at RVA 0x20d6
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

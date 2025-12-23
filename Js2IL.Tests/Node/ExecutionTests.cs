@@ -75,11 +75,11 @@ namespace Js2IL.Tests.Node
 
         [Fact]
         public Task Require_Path_Join_Basic()
-            => ExecutionTest(nameof(Require_Path_Join_Basic), configureSettings: s => s.AddScrubber(sb => sb.Replace('\\', '/')));
+            => ExecutionTest(nameof(Require_Path_Join_Basic));
 
         [Fact]
         public Task Require_Path_Join_NestedFunction()
-            => ExecutionTest(nameof(Require_Path_Join_NestedFunction), configureSettings: s => s.AddScrubber(sb => sb.Replace('\\', '/')));
+            => ExecutionTest(nameof(Require_Path_Join_NestedFunction));
 
         [Fact]
         public Task SetTimeout_MultipleZeroDelay_ExecutedInOrder() => ExecutionTest(nameof(SetTimeout_MultipleZeroDelay_ExecutedInOrder));
@@ -104,13 +104,14 @@ namespace Js2IL.Tests.Node
                     mockTickSource.Increment(TimeSpan.FromMilliseconds(msTimeout));
                 });
 
-            // Use DI to inject mocks
-            var container = JavaScriptRuntime.RuntimeServices.BuildServiceProvider();
-            container.Replace<JavaScriptRuntime.EngineCore.ITickSource>(mockTickSource);
-            container.Replace<JavaScriptRuntime.EngineCore.IWaitHandle>(mockWaitHandle);
-            JavaScriptRuntime.Engine._serviceProviderOverride = container;
 
             var startTime = mockTickSource.GetTicks();
+
+            var addMocks = new Action<JavaScriptRuntime.DependencyInjection.ServiceContainer>(container =>
+            {
+                container.Replace<JavaScriptRuntime.EngineCore.ITickSource>(mockTickSource);
+                container.Replace<JavaScriptRuntime.EngineCore.IWaitHandle>(mockWaitHandle);
+            });
 
             var postTestProcessingAction = new Action<IConsoleOutput>(output =>
             {
@@ -119,14 +120,7 @@ namespace Js2IL.Tests.Node
                 output.WriteLine($"Elapsed simulated time: {elapsedMs} ms");
             });
 
-            try 
-            {                
-                await ExecutionTest(nameof(SetTimeout_OneSecondDelay), postTestProcessingAction: postTestProcessingAction);
-            }
-            finally
-            {
-                JavaScriptRuntime.Engine._serviceProviderOverride = null;
-            }
+            await ExecutionTest(nameof(SetTimeout_OneSecondDelay), postTestProcessingAction: postTestProcessingAction, addMocks: addMocks);
         }
 
         [Fact]
