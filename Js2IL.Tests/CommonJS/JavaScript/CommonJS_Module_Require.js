@@ -11,6 +11,7 @@ const path = require('path');
 console.log("path module type:", typeof path);
 console.log("path.join type:", typeof path.join);
 
-// Use path.join to verify it works
+// Use path.join to verify it works - normalize to forward slashes for cross-platform
 const result = path.join("a", "b", "c");
-console.log("path.join result:", result);
+const normalizedResult = result.split("\\").join("/");
+console.log("path.join result:", normalizedResult);

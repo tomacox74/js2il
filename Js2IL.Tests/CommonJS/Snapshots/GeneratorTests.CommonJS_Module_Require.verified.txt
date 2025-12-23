@@ -38,12 +38,13 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 226 (0xe2)
+		// Code size: 276 (0x114)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.CommonJS_Module_Require,
 			[1] object,
-			[2] object
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -117,21 +118,39 @@
 		IL_00b8: stelem.ref
 		IL_00b9: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Node.Path::join(object[])
 		IL_00be: stloc.2
-		IL_00bf: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00c4: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_00c9: ldc.i4.2
-		IL_00ca: newarr [System.Runtime]System.Object
-		IL_00cf: dup
-		IL_00d0: ldc.i4.0
-		IL_00d1: ldstr "path.join result:"
-		IL_00d6: stelem.ref
-		IL_00d7: dup
-		IL_00d8: ldc.i4.1
-		IL_00d9: ldloc.2
-		IL_00da: stelem.ref
-		IL_00db: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00e0: pop
-		IL_00e1: ret
+		IL_00bf: ldloc.2
+		IL_00c0: ldstr "split"
+		IL_00c5: ldc.i4.1
+		IL_00c6: newarr [System.Runtime]System.Object
+		IL_00cb: dup
+		IL_00cc: ldc.i4.0
+		IL_00cd: ldstr "\\"
+		IL_00d2: stelem.ref
+		IL_00d3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_00d8: ldstr "join"
+		IL_00dd: ldc.i4.1
+		IL_00de: newarr [System.Runtime]System.Object
+		IL_00e3: dup
+		IL_00e4: ldc.i4.0
+		IL_00e5: ldstr "/"
+		IL_00ea: stelem.ref
+		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_00f0: stloc.3
+		IL_00f1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f6: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_00fb: ldc.i4.2
+		IL_00fc: newarr [System.Runtime]System.Object
+		IL_0101: dup
+		IL_0102: ldc.i4.0
+		IL_0103: ldstr "path.join result:"
+		IL_0108: stelem.ref
+		IL_0109: dup
+		IL_010a: ldc.i4.1
+		IL_010b: ldloc.3
+		IL_010c: stelem.ref
+		IL_010d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0112: pop
+		IL_0113: ret
 	} // end of method CommonJS_Module_Require::Main
 
 } // end of class Scripts.CommonJS_Module_Require
@@ -143,7 +162,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x214a
+		// Method begins at RVA 0x217c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
