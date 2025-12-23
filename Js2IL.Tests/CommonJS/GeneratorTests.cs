@@ -73,7 +73,7 @@ namespace Js2IL.Tests.CommonJS
         [Fact]
         public Task CommonJS_Module_Exports_Reassign()
         {
-            // Test that reassigning exports does NOT change module.exports
+            // Test that reassigning module.exports replaces the entire exports object
             return GenerateTest(nameof(CommonJS_Module_Exports_Reassign));
         }
 

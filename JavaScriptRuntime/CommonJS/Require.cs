@@ -117,7 +117,9 @@ namespace JavaScriptRuntime.CommonJS
 
             // Cache exports before executing (for circular dependency support)
             // The exports object is shared between `exports` param and `module.exports`
-            _instances[key] = module.exports!;
+            // Note: exports starts as ExpandoObject, so this should never be null initially,
+            // but we handle null defensively in case module.exports is set to null by user code.
+            _instances[key] = module.exports ?? new object();
 
             // Track parent-child relationship
             if (parentModule != null)
@@ -138,9 +140,12 @@ namespace JavaScriptRuntime.CommonJS
             
             try
             {
-                // Invoke module with exports alias pointing to module.exports
-                // Note: exports param is the initial module.exports value, 
-                // but module.exports is the authoritative source after execution
+                // Invoke module with `exports` parameter initially pointing to module.exports.
+                // IMPORTANT: The `exports` parameter is the initial module.exports value only.
+                // If the module body later reassigns module.exports, the `exports` parameter
+                // will not be updated and may diverge from module.exports. This matches
+                // Node.js CommonJS semantics, where module.exports is the authoritative value
+                // used for caching and for the return of require().
                 moduleDelegate(module.exports, moduleRequire, module, key, dirName);
             }
             finally

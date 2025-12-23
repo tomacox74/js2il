@@ -10,6 +10,9 @@ namespace JavaScriptRuntime.CommonJS;
 public class Module : DynamicObject
 {
     private readonly RequireDelegate _requireDelegate;
+    private readonly Func<object[], object?, object?> _requireFunc;
+    private Array? _cachedChildren;
+    private bool _childrenDirty = true;
 
     /// <summary>
     /// Creates a new Module instance.
@@ -25,6 +28,8 @@ public class Module : DynamicObject
         this.path = GetDirectoryName(filename);
         this.parent = parent;
         this._requireDelegate = requireDelegate;
+        // Cache the Func instance to avoid creating a new one on every access
+        this._requireFunc = (scopes, moduleId) => _requireDelegate(moduleId);
         this._childrenList = new List<Module>();
         this.paths = ComputeModulePaths(this.path);
         
@@ -69,7 +74,22 @@ public class Module : DynamicObject
     /// <summary>
     /// The module objects required by this module as a JavaScript-compatible array.
     /// </summary>
-    public object children => new Array(_childrenList.Cast<object>().ToArray());
+    /// <remarks>
+    /// This property caches the Array instance and only recreates it when the children
+    /// list is modified (via AddChild). The cache is invalidated when new children are added.
+    /// </remarks>
+    public object children
+    {
+        get
+        {
+            if (_childrenDirty || _cachedChildren == null)
+            {
+                _cachedChildren = new Array(_childrenList.Cast<object>().ToArray());
+                _childrenDirty = false;
+            }
+            return _cachedChildren;
+        }
+    }
     
     private readonly List<Module> _childrenList;
 
@@ -82,7 +102,7 @@ public class Module : DynamicObject
     /// The require function bound to this module's context.
     /// This property exposes the require delegate for JavaScript access.
     /// </summary>
-    public object require => (Func<object[], object?, object?>)((scopes, moduleId) => _requireDelegate(moduleId));
+    public object require => _requireFunc;
 
     /// <summary>
     /// Use the internal require function to import a module.
@@ -104,6 +124,7 @@ public class Module : DynamicObject
         if (!_childrenList.Contains(child))
         {
             _childrenList.Add(child);
+            _childrenDirty = true;
         }
     }
 
@@ -222,6 +243,9 @@ public class Module : DynamicObject
         {
             case "exports":
                 exports = value;
+                return true;
+            case "loaded":
+                loaded = value is bool b ? b : TypeUtilities.ToBoolean(value);
                 return true;
             default:
                 // Other properties are read-only
