@@ -95,9 +95,19 @@ namespace JavaScriptRuntime
             return EnsureTimers().setImmediate(callback, args);
         }
 
+        public static object setInterval(object callback, object delay, params object[] args)
+        {
+            return EnsureTimers().setInterval(callback, delay, args);
+        }
+
         public static object clearImmediate(object handle)
         {
             return EnsureTimers().clearImmediate(handle);
+        }
+
+        public static object clearInterval(object handle)
+        {
+            return EnsureTimers().clearInterval(handle);
         }
     }
 }

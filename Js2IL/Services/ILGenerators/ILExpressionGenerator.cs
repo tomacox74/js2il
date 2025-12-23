@@ -557,6 +557,7 @@ namespace Js2IL.Services.ILGenerators
                         if (localVar != null)
                         {
                             // Load variable using centralized helper; auto-unboxes number/boolean when boxResult == false
+                            // EmitLoadVariable handles boxing when unbox=false, so we don't need to box again
                             _il.EmitLoadVariable(localVar, _variables, _owner.BclReferences, 
                                 unbox: !typeCoercion.boxResult,
                                 inClassMethod: _owner.InClassMethod,
@@ -576,6 +577,7 @@ namespace Js2IL.Services.ILGenerators
                             {
                                 javascriptType = localVar.Type;
                             }
+
                             // Propagate known CLR runtime type (e.g., const perf = require('perf_hooks')) so downstream
                             // member/property emission can bind typed getters and direct instance calls.
                             clrType = localVar.ClrType;
@@ -2025,12 +2027,12 @@ namespace Js2IL.Services.ILGenerators
                     }
                     
                     // Store to variable (scope already loaded for fields, not needed for locals)
-                    // Value is unboxed (float64) if:
-                    // - needsToNumber: we just converted it to double
-                    // - JsType is Number: the RHS emitted an unboxed float64
-                    bool valueIsUnboxed = needsToNumber || rhsResult.JsType == JavascriptType.Number;
+                    // Determine if the value on the stack is boxed:
+                    // - If needsToNumber: we just called ToNumber which returns unboxed double
+                    // - Otherwise: use rhsResult.IsBoxed which reflects boxing state from Emit()
+                    bool valueIsBoxed = !needsToNumber && rhsResult.IsBoxed;
                     ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: isFieldVariable, 
-                        valueIsBoxed: !valueIsUnboxed, bclReferences: _owner.BclReferences);
+                        valueIsBoxed: valueIsBoxed, bclReferences: _owner.BclReferences);
                     
                     return rhsResult.JsType;
                 }
@@ -3150,6 +3152,9 @@ namespace Js2IL.Services.ILGenerators
             //   2) Compute UPDATED = value (+/-) 1 and store back (stfld)
             //   3) Produce result: UPDATED for prefix; ORIGINAL for postfix (by reloading updated and reversing +/- 1)
 
+            // Update expressions always coerce to Number.
+            variable.Type = JavascriptType.Number;
+
             // Helper to emit explicit unbox for unstable double variables.
             // UnboxIfNeeded in EmitLoadVariable only unboxes when Type==Number,
             // but unstable double variables may have Type==Unknown while still being stored as boxed doubles.
@@ -3198,7 +3203,7 @@ namespace Js2IL.Services.ILGenerators
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Sub);
                 }
 
-                ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false, valueIsBoxed: true, bclReferences: _owner.BclReferences); // []
+                ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false, valueIsBoxed: false, bclReferences: _owner.BclReferences); // []
 
                 // 3) Reload UPDATED and optionally reverse to get ORIGINAL
                 ILEmitHelpers.EmitLoadVariable(_il, variable, _variables, _owner.BclReferences, unbox: true); // [updated]

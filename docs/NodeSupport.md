@@ -1,7 +1,7 @@
 # Node Support Coverage
 
 Target: `22.x LTS`
-Generated: `2025-12-22T18:57:34Z`
+Generated: `2025-12-22T20:51:56Z`
 
 
 ## Modules
@@ -208,6 +208,24 @@ Notes:
 Cancels an immediate that was previously created with setImmediate. Returns undefined (null in .NET).
 Tests:
 - `Js2IL.Tests.Node.ExecutionTests.ClearImmediate_CancelsCallback` (`Js2IL.Tests/Node/ExecutionTests.cs`)
+
+### setInterval (status: supported)
+Docs: [https://nodejs.org/api/timers.html#setintervalcallback-delay-args](https://nodejs.org/api/timers.html#setintervalcallback-delay-args)
+Implementation:
+- `JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs, JavaScriptRuntime/Engine/NodeSychronizationContext.cs`
+Notes:
+Schedules a callback to run repeatedly with the specified delay in milliseconds. Returns a handle that can be used with clearInterval. Supports additional arguments passed to the callback.
+Tests:
+- `Js2IL.Tests.Node.ExecutionTests.SetInterval_ExecutesThreeTimes_ThenClears` (`Js2IL.Tests/Node/ExecutionTests.cs`)
+
+### clearInterval (status: supported)
+Docs: [https://nodejs.org/api/timers.html#clearintervaltimeout](https://nodejs.org/api/timers.html#clearintervaltimeout)
+Implementation:
+- `JavaScriptRuntime/GlobalThis.cs, JavaScriptRuntime/Timers.cs, JavaScriptRuntime/Engine/NodeSychronizationContext.cs`
+Notes:
+Cancels a repeating timer that was previously created with setInterval. Returns undefined (null in .NET).
+Tests:
+- `Js2IL.Tests.Node.ExecutionTests.SetInterval_ExecutesThreeTimes_ThenClears` (`Js2IL.Tests/Node/ExecutionTests.cs`)
 
 ### Promise (status: supported)
 Docs: [https://nodejs.org/api/globals.html#promise](https://nodejs.org/api/globals.html#promise)

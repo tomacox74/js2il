@@ -85,6 +85,14 @@ namespace Js2IL.Tests.Node
         public Task SetTimeout_MultipleZeroDelay_ExecutedInOrder() => ExecutionTest(nameof(SetTimeout_MultipleZeroDelay_ExecutedInOrder));
 
         [Fact]
+        public Task SetInterval_ExecutesThreeTimes_ThenClears()
+        {
+            // Test uses 50ms intervals, so should complete in ~150ms plus overhead
+            // clearInterval should stop the repeating timer after 3 ticks
+            return ExecutionTest(nameof(SetInterval_ExecutesThreeTimes_ThenClears));
+        }
+
+        [Fact]
         public async Task SetTimeout_OneSecondDelay()
         {
             var mockTickSource = new MockTickSource();

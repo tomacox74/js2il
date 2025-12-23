@@ -24,22 +24,19 @@ internal class Timers
 
         var handle = _scheduler.Schedule(() =>
         {
-            // Get the parameter count from the delegate's method
+            // Parameter count includes the leading scopes array parameter.
             var paramCount = del.Method.GetParameters().Length;
-            
-            // Build the arguments array
-            // First parameter is always the scopes array (which bound closures ignore)
-            // Remaining parameters are the extra args passed to setTimeout
-            var invokeArgs = new object?[paramCount];
-            invokeArgs[0] = null; // scopes placeholder (ignored by bound closures)
-            
-            // Fill in extra arguments (name, age, city, etc.)
-            for (int i = 0; i < args.Length && i + 1 < paramCount; i++)
+            var expectedArgCount = System.Math.Max(0, paramCount - 1);
+
+            // JS semantics: missing args -> undefined (null); extra args ignored.
+            var invokeArgs = new object[expectedArgCount];
+            for (int i = 0; i < expectedArgCount; i++)
             {
-                invokeArgs[i + 1] = args[i];
+                invokeArgs[i] = i < args.Length ? args[i] : null!;
             }
-            
-            del.DynamicInvoke(invokeArgs);
+
+            // Provide a non-null scopes array; bound closures ignore it.
+            Closure.InvokeWithArgs(del, System.Array.Empty<object>(), invokeArgs);
         }, TimeSpan.FromMilliseconds(delayMs));
 
         return handle;
@@ -54,6 +51,45 @@ internal class Timers
         return null;
     }
 
+    public object setInterval(object callback, object delay, params object[] args)
+    {
+        if (callback is not Delegate del)
+        {
+            throw new TypeError("First argument to setInterval must be a function");
+        }
+
+        var delayMs = TypeUtilities.ToNumber(delay);
+        if (delayMs < 0 || double.IsNaN(delayMs))
+        {
+            delayMs = 0;
+        }
+
+        var handle = _scheduler.ScheduleInterval(() =>
+        {
+            var paramCount = del.Method.GetParameters().Length;
+            var expectedArgCount = System.Math.Max(0, paramCount - 1);
+
+            var invokeArgs = new object[expectedArgCount];
+            for (int i = 0; i < expectedArgCount; i++)
+            {
+                invokeArgs[i] = i < args.Length ? args[i] : null!;
+            }
+
+            Closure.InvokeWithArgs(del, System.Array.Empty<object>(), invokeArgs);
+        }, TimeSpan.FromMilliseconds(delayMs));
+
+        return handle;
+    }
+
+    public object clearInterval(object handle)
+    {
+        if (handle != null)
+        {
+            _scheduler.CancelInterval(handle);
+        }
+        return null;
+    }
+
     public object setImmediate(object callback, params object[] args)
     {
         if (callback is not Delegate del)
@@ -64,16 +100,15 @@ internal class Timers
         var handle = _scheduler.ScheduleImmediate(() =>
         {
             var paramCount = del.Method.GetParameters().Length;
+            var expectedArgCount = System.Math.Max(0, paramCount - 1);
 
-            var invokeArgs = new object?[paramCount];
-            invokeArgs[0] = null; // scopes placeholder (ignored by bound closures)
-
-            for (int i = 0; i < args.Length && i + 1 < paramCount; i++)
+            var invokeArgs = new object[expectedArgCount];
+            for (int i = 0; i < expectedArgCount; i++)
             {
-                invokeArgs[i + 1] = args[i];
+                invokeArgs[i] = i < args.Length ? args[i] : null!;
             }
 
-            del.DynamicInvoke(invokeArgs);
+            Closure.InvokeWithArgs(del, System.Array.Empty<object>(), invokeArgs);
         });
 
         return handle;
