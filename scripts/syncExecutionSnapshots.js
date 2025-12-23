@@ -25,9 +25,10 @@ const testsRoot = path.join(__dirname, '..', 'Js2IL.Tests');
 const ignoredTests = [
     'TryFinally_NoCatch_Throw',
     'Promise_Resolve_FinallyThrows',
+    'Promise_Scheduling_StarvationTest',
     'SetTimeout_OneSecondDelay',
     'SetImmediate_ExecutesBeforeSetTimeout',
-    'Global__dirname_PrintsDirectory',
+    'Global___dirname_PrintsDirectory',
     'Environment_EnumerateProcessArgV'
 ];
 

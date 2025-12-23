@@ -179,7 +179,19 @@ namespace JavaScriptRuntime
             var options = RegexOptions.CultureInvariant;
             if (ignoreCase) options |= RegexOptions.IgnoreCase;
 
-            var re = new Regex(pattern, options);
+            Regex re;
+            try
+            {
+                re = new Regex(pattern, options);
+            }
+            catch (RegexParseException)
+            {
+                // Pattern is not a valid regex, treat as literal string (fallback to simple replace)
+                // This handles cases like string.replace('\\', '/') where the pattern is a plain string
+                var escapedPattern = Regex.Escape(pattern);
+                re = new Regex(escapedPattern, options);
+            }
+            
             if (global)
             {
                 return re.Replace(input, replacement);
