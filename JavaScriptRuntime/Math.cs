@@ -64,18 +64,9 @@ namespace JavaScriptRuntime
         {
             double d = ToNumber(x);
             if (double.IsNaN(d) || double.IsPositiveInfinity(d) || double.IsNegativeInfinity(d)) return d;
-            if (d == 0) return d; // preserve +0/-0
+            if (d == 0) return d; // preserve +0/-0 when the argument already equals zero
 
             double r = System.Math.Floor(d + 0.5);
-            // Only exact negative half ties (-0.5, -1.5, ...) that round to 0 should produce -0
-            if (r == 0 && d < 0)
-            {
-                // Check if d is exactly -0.5
-                if (d == -0.5)
-                    return -0.0;
-                // For other negatives close to zero (e.g., -0.4, -0.49999, -0.50001), JS returns +0 when rounding to 0
-                return 0.0;
-            }
             return r;
         }
 
@@ -87,7 +78,6 @@ namespace JavaScriptRuntime
             if (d > 0) return System.Math.Floor(d);
             // negative: toward zero
             double res = System.Math.Ceiling(d);
-            if (res == 0) return -0.0; // ensure -0
             return res;
         }
 
@@ -232,11 +222,6 @@ namespace JavaScriptRuntime
             int x = ToInt32(a);
             int y = ToInt32(b);
             int prod = unchecked(x * y);
-            if (prod == 0)
-            {
-                // Match JS behavior: Math.imul(-1, 0) => -0
-                if ((x == 0 && (y < 0)) || (y == 0 && (x < 0))) return -0.0;
-            }
             return (double)prod;
         }
 

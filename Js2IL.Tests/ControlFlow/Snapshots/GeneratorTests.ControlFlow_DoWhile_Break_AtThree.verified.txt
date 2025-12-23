@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 90 (0x5a)
+		// Code size: 100 (0x64)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ControlFlow_DoWhile_Break_AtThree,
@@ -95,35 +95,37 @@
 			IL_000a: ldc.i4.1
 			IL_000b: brtrue IL_0015
 
-			IL_0010: br IL_0059
+			IL_0010: br IL_0063
 
-			IL_0015: ldc.i4.1
-			IL_0016: newarr [System.Runtime]System.Object
-			IL_001b: dup
-			IL_001c: ldc.i4.0
-			IL_001d: ldloc.1
-			IL_001e: box [System.Runtime]System.Double
-			IL_0023: stelem.ref
-			IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_0029: pop
-			IL_002a: ldloc.1
-			IL_002b: ldc.r8 3
-			IL_0034: beq IL_003e
+			IL_0015: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_001a: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+			IL_001f: ldc.i4.1
+			IL_0020: newarr [System.Runtime]System.Object
+			IL_0025: dup
+			IL_0026: ldc.i4.0
+			IL_0027: ldloc.1
+			IL_0028: box [System.Runtime]System.Double
+			IL_002d: stelem.ref
+			IL_002e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0033: pop
+			IL_0034: ldloc.1
+			IL_0035: ldc.r8 3
+			IL_003e: beq IL_0048
 
-			IL_0039: br IL_0048
+			IL_0043: br IL_0052
 
-			IL_003e: br IL_0059
+			IL_0048: br IL_0063
 
-			IL_0043: br IL_0048
+			IL_004d: br IL_0052
 
-			IL_0048: ldloc.1
-			IL_0049: ldc.r8 1
-			IL_0052: add
-			IL_0053: stloc.1
-			IL_0054: br IL_000a
+			IL_0052: ldloc.1
+			IL_0053: ldc.r8 1
+			IL_005c: add
+			IL_005d: stloc.1
+			IL_005e: br IL_000a
 		// end loop
 
-		IL_0059: ret
+		IL_0063: ret
 	} // end of method ControlFlow_DoWhile_Break_AtThree::Main
 
 } // end of class Scripts.ControlFlow_DoWhile_Break_AtThree
@@ -135,7 +137,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20d2
+		// Method begins at RVA 0x20dc
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

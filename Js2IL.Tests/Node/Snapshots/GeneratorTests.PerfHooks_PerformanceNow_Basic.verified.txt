@@ -100,7 +100,7 @@
 	{
 		// Method begins at RVA 0x2074
 		// Header size: 12
-		// Code size: 247 (0xf7)
+		// Code size: 267 (0x10b)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.PerfHooks_PerformanceNow_Basic,
@@ -175,39 +175,43 @@
 		IL_009a: ldloc.3
 		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Subtract(object, object)
 		IL_00a0: stloc.s 8
-		IL_00a2: ldc.i4.2
-		IL_00a3: newarr [System.Runtime]System.Object
-		IL_00a8: dup
-		IL_00a9: ldc.i4.0
-		IL_00aa: ldstr "hasNow="
-		IL_00af: stelem.ref
-		IL_00b0: dup
-		IL_00b1: ldc.i4.1
-		IL_00b2: ldloc.s 7
-		IL_00b4: stelem.ref
-		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_00ba: pop
-		IL_00bb: ldc.i4.2
-		IL_00bc: newarr [System.Runtime]System.Object
-		IL_00c1: dup
-		IL_00c2: ldc.i4.0
-		IL_00c3: ldstr "elapsedMsNonNegative="
-		IL_00c8: stelem.ref
-		IL_00c9: dup
-		IL_00ca: ldc.i4.1
-		IL_00cb: ldloc.s 8
-		IL_00cd: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_00d2: ldc.r8 0.0
-		IL_00db: clt
-		IL_00dd: box [System.Runtime]System.Boolean
-		IL_00e2: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-		IL_00e7: ldc.i4.0
-		IL_00e8: ceq
-		IL_00ea: box [System.Runtime]System.Boolean
-		IL_00ef: stelem.ref
-		IL_00f0: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_00f5: pop
-		IL_00f6: ret
+		IL_00a2: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a7: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_00ac: ldc.i4.2
+		IL_00ad: newarr [System.Runtime]System.Object
+		IL_00b2: dup
+		IL_00b3: ldc.i4.0
+		IL_00b4: ldstr "hasNow="
+		IL_00b9: stelem.ref
+		IL_00ba: dup
+		IL_00bb: ldc.i4.1
+		IL_00bc: ldloc.s 7
+		IL_00be: stelem.ref
+		IL_00bf: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00c4: pop
+		IL_00c5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00ca: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_00cf: ldc.i4.2
+		IL_00d0: newarr [System.Runtime]System.Object
+		IL_00d5: dup
+		IL_00d6: ldc.i4.0
+		IL_00d7: ldstr "elapsedMsNonNegative="
+		IL_00dc: stelem.ref
+		IL_00dd: dup
+		IL_00de: ldc.i4.1
+		IL_00df: ldloc.s 8
+		IL_00e1: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_00e6: ldc.r8 0.0
+		IL_00ef: clt
+		IL_00f1: box [System.Runtime]System.Boolean
+		IL_00f6: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+		IL_00fb: ldc.i4.0
+		IL_00fc: ceq
+		IL_00fe: box [System.Runtime]System.Boolean
+		IL_0103: stelem.ref
+		IL_0104: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0109: pop
+		IL_010a: ret
 	} // end of method PerfHooks_PerformanceNow_Basic::Main
 
 } // end of class Scripts.PerfHooks_PerformanceNow_Basic
@@ -219,7 +223,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2188
+		// Method begins at RVA 0x219c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -79,24 +79,26 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 39 (0x27)
+		// Code size: 49 (0x31)
 		.maxstack 32
 
-		IL_0000: ldc.i4.2
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldstr "Hello, World!"
-		IL_000d: stelem.ref
-		IL_000e: dup
-		IL_000f: ldc.i4.1
-		IL_0010: ldc.r8 2
-		IL_0019: box [System.Runtime]System.Double
-		IL_001e: stelem.ref
-		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0024: pop
-		IL_0025: ldnull
-		IL_0026: ret
+		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_000a: ldc.i4.2
+		IL_000b: newarr [System.Runtime]System.Object
+		IL_0010: dup
+		IL_0011: ldc.i4.0
+		IL_0012: ldstr "Hello, World!"
+		IL_0017: stelem.ref
+		IL_0018: dup
+		IL_0019: ldc.i4.1
+		IL_001a: ldc.r8 2
+		IL_0023: box [System.Runtime]System.Double
+		IL_0028: stelem.ref
+		IL_0029: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_002e: pop
+		IL_002f: ldnull
+		IL_0030: ret
 	} // end of method ArrowFunction_L2C19::ArrowFunction_L2C19
 
 } // end of class Functions.ArrowFunction_L2C19
@@ -110,52 +112,54 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x20a0
+		// Method begins at RVA 0x20ac
 		// Header size: 12
-		// Code size: 101 (0x65)
+		// Code size: 111 (0x6f)
 		.maxstack 32
 
-		IL_0000: ldc.i4.2
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldstr "This is a proxy function."
-		IL_000d: stelem.ref
-		IL_000e: dup
-		IL_000f: ldc.i4.1
-		IL_0010: ldc.r8 1
-		IL_0019: box [System.Runtime]System.Double
-		IL_001e: stelem.ref
-		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0024: pop
-		IL_0025: ldarg.0
-		IL_0026: ldc.i4.0
-		IL_0027: ldelem.ref
-		IL_0028: castclass Scopes.ArrowFunction_GlobalFunctionCallsGlobalFunction
-		IL_002d: ldfld object Scopes.ArrowFunction_GlobalFunctionCallsGlobalFunction::helloWorld
-		IL_0032: dup
-		IL_0033: brtrue.s IL_005c
+		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_000a: ldc.i4.2
+		IL_000b: newarr [System.Runtime]System.Object
+		IL_0010: dup
+		IL_0011: ldc.i4.0
+		IL_0012: ldstr "This is a proxy function."
+		IL_0017: stelem.ref
+		IL_0018: dup
+		IL_0019: ldc.i4.1
+		IL_001a: ldc.r8 1
+		IL_0023: box [System.Runtime]System.Double
+		IL_0028: stelem.ref
+		IL_0029: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_002e: pop
+		IL_002f: ldarg.0
+		IL_0030: ldc.i4.0
+		IL_0031: ldelem.ref
+		IL_0032: castclass Scopes.ArrowFunction_GlobalFunctionCallsGlobalFunction
+		IL_0037: ldfld object Scopes.ArrowFunction_GlobalFunctionCallsGlobalFunction::helloWorld
+		IL_003c: dup
+		IL_003d: brtrue.s IL_0066
 
-		IL_0035: pop
-		IL_0036: ldarg.0
-		IL_0037: ldc.i4.0
-		IL_0038: ldelem.ref
-		IL_0039: ldnull
-		IL_003a: ldftn object Functions.ArrowFunction_L2C19::ArrowFunction_L2C19(object[])
-		IL_0040: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0045: stfld object Scopes.ArrowFunction_GlobalFunctionCallsGlobalFunction::helloWorld
-		IL_004a: ldarg.0
-		IL_004b: ldc.i4.0
-		IL_004c: ldelem.ref
-		IL_004d: castclass Scopes.ArrowFunction_GlobalFunctionCallsGlobalFunction
-		IL_0052: ldfld object Scopes.ArrowFunction_GlobalFunctionCallsGlobalFunction::helloWorld
-		IL_0057: br IL_005c
+		IL_003f: pop
+		IL_0040: ldarg.0
+		IL_0041: ldc.i4.0
+		IL_0042: ldelem.ref
+		IL_0043: ldnull
+		IL_0044: ldftn object Functions.ArrowFunction_L2C19::ArrowFunction_L2C19(object[])
+		IL_004a: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_004f: stfld object Scopes.ArrowFunction_GlobalFunctionCallsGlobalFunction::helloWorld
+		IL_0054: ldarg.0
+		IL_0055: ldc.i4.0
+		IL_0056: ldelem.ref
+		IL_0057: castclass Scopes.ArrowFunction_GlobalFunctionCallsGlobalFunction
+		IL_005c: ldfld object Scopes.ArrowFunction_GlobalFunctionCallsGlobalFunction::helloWorld
+		IL_0061: br IL_0066
 
-		IL_005c: ldarg.0
-		IL_005d: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0062: pop
-		IL_0063: ldnull
-		IL_0064: ret
+		IL_0066: ldarg.0
+		IL_0067: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_006c: pop
+		IL_006d: ldnull
+		IL_006e: ret
 	} // end of method ArrowFunction_L6C24::ArrowFunction_L6C24
 
 } // end of class Functions.ArrowFunction_L6C24
@@ -173,9 +177,9 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2114
+		// Method begins at RVA 0x2128
 		// Header size: 12
-		// Code size: 145 (0x91)
+		// Code size: 155 (0x9b)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ArrowFunction_GlobalFunctionCallsGlobalFunction,
@@ -227,20 +231,22 @@
 		IL_0064: stelem.ref
 		IL_0065: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
 		IL_006a: pop
-		IL_006b: ldc.i4.2
-		IL_006c: newarr [System.Runtime]System.Object
-		IL_0071: dup
-		IL_0072: ldc.i4.0
-		IL_0073: ldstr "finally is now"
-		IL_0078: stelem.ref
-		IL_0079: dup
-		IL_007a: ldc.i4.1
-		IL_007b: ldc.r8 3
-		IL_0084: box [System.Runtime]System.Double
-		IL_0089: stelem.ref
-		IL_008a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_008f: pop
-		IL_0090: ret
+		IL_006b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0070: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_0075: ldc.i4.2
+		IL_0076: newarr [System.Runtime]System.Object
+		IL_007b: dup
+		IL_007c: ldc.i4.0
+		IL_007d: ldstr "finally is now"
+		IL_0082: stelem.ref
+		IL_0083: dup
+		IL_0084: ldc.i4.1
+		IL_0085: ldc.r8 3
+		IL_008e: box [System.Runtime]System.Double
+		IL_0093: stelem.ref
+		IL_0094: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0099: pop
+		IL_009a: ret
 	} // end of method ArrowFunction_GlobalFunctionCallsGlobalFunction::Main
 
 } // end of class Scripts.ArrowFunction_GlobalFunctionCallsGlobalFunction
@@ -252,7 +258,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21b1
+		// Method begins at RVA 0x21cf
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -14,6 +14,7 @@ public class RuntimeServices
         container.Register<EngineCore.NodeSychronizationContext>();
         container.Register<CommonJS.Require>();
         container.Register<LocalModulesAssembly>();
+        container.Register<IEnvironment, DefaultEnvironment>();
         
         return container;
     }

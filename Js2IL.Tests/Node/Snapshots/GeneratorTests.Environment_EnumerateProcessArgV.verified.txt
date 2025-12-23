@@ -60,75 +60,79 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 173 (0xad)
+		// Code size: 193 (0xc1)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Environment_EnumerateProcessArgV,
 			[1] float64
 		)
 
-		IL_0000: ldc.i4.2
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldstr "argv length is"
-		IL_000d: stelem.ref
-		IL_000e: dup
-		IL_000f: ldc.i4.1
-		IL_0010: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-		IL_0015: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.Process
-		IL_001a: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Node.Process::get_argv()
-		IL_001f: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_0024: box [System.Runtime]System.Double
-		IL_0029: stelem.ref
-		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_002f: pop
-		IL_0030: ldc.r8 0.0
-		IL_0039: stloc.1
-		// loop start (head: IL_003a)
-			IL_003a: ldloc.1
-			IL_003b: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-			IL_0040: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.Process
-			IL_0045: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Node.Process::get_argv()
-			IL_004a: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_004f: blt IL_0059
+		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_000a: ldc.i4.2
+		IL_000b: newarr [System.Runtime]System.Object
+		IL_0010: dup
+		IL_0011: ldc.i4.0
+		IL_0012: ldstr "argv length is"
+		IL_0017: stelem.ref
+		IL_0018: dup
+		IL_0019: ldc.i4.1
+		IL_001a: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+		IL_001f: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.Process
+		IL_0024: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Node.Process::get_argv()
+		IL_0029: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_002e: box [System.Runtime]System.Double
+		IL_0033: stelem.ref
+		IL_0034: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0039: pop
+		IL_003a: ldc.r8 0.0
+		IL_0043: stloc.1
+		// loop start (head: IL_0044)
+			IL_0044: ldloc.1
+			IL_0045: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+			IL_004a: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.Process
+			IL_004f: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Node.Process::get_argv()
+			IL_0054: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_0059: blt IL_0063
 
-			IL_0054: br IL_00ac
+			IL_005e: br IL_00c0
 
-			IL_0059: ldc.i4.4
-			IL_005a: newarr [System.Runtime]System.Object
-			IL_005f: dup
-			IL_0060: ldc.i4.0
-			IL_0061: ldstr "arg"
-			IL_0066: stelem.ref
-			IL_0067: dup
-			IL_0068: ldc.i4.1
-			IL_0069: ldloc.1
-			IL_006a: box [System.Runtime]System.Double
-			IL_006f: stelem.ref
-			IL_0070: dup
-			IL_0071: ldc.i4.2
-			IL_0072: ldstr "="
-			IL_0077: stelem.ref
-			IL_0078: dup
-			IL_0079: ldc.i4.3
-			IL_007a: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-			IL_007f: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.Process
-			IL_0084: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Node.Process::get_argv()
-			IL_0089: ldloc.1
-			IL_008a: box [System.Runtime]System.Double
-			IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0094: stelem.ref
-			IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-			IL_009a: pop
-			IL_009b: ldloc.1
-			IL_009c: ldc.r8 1
-			IL_00a5: add
-			IL_00a6: stloc.1
-			IL_00a7: br IL_003a
+			IL_0063: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0068: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+			IL_006d: ldc.i4.4
+			IL_006e: newarr [System.Runtime]System.Object
+			IL_0073: dup
+			IL_0074: ldc.i4.0
+			IL_0075: ldstr "arg"
+			IL_007a: stelem.ref
+			IL_007b: dup
+			IL_007c: ldc.i4.1
+			IL_007d: ldloc.1
+			IL_007e: box [System.Runtime]System.Double
+			IL_0083: stelem.ref
+			IL_0084: dup
+			IL_0085: ldc.i4.2
+			IL_0086: ldstr "="
+			IL_008b: stelem.ref
+			IL_008c: dup
+			IL_008d: ldc.i4.3
+			IL_008e: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+			IL_0093: castclass [JavaScriptRuntime]JavaScriptRuntime.Node.Process
+			IL_0098: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Array [JavaScriptRuntime]JavaScriptRuntime.Node.Process::get_argv()
+			IL_009d: ldloc.1
+			IL_009e: box [System.Runtime]System.Double
+			IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_00a8: stelem.ref
+			IL_00a9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_00ae: pop
+			IL_00af: ldloc.1
+			IL_00b0: ldc.r8 1
+			IL_00b9: add
+			IL_00ba: stloc.1
+			IL_00bb: br IL_0044
 		// end loop
 
-		IL_00ac: ret
+		IL_00c0: ret
 	} // end of method Environment_EnumerateProcessArgV::Main
 
 } // end of class Scripts.Environment_EnumerateProcessArgV
@@ -140,7 +144,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x211d
+		// Method begins at RVA 0x2131
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

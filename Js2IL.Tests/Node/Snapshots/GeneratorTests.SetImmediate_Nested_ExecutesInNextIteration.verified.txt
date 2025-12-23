@@ -78,17 +78,19 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 20 (0x14)
+		// Code size: 30 (0x1e)
 		.maxstack 32
 
-		IL_0000: ldc.i4.1
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldstr "inner"
-		IL_000d: stelem.ref
-		IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0013: ret
+		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_000a: ldc.i4.1
+		IL_000b: newarr [System.Runtime]System.Object
+		IL_0010: dup
+		IL_0011: ldc.i4.0
+		IL_0012: ldstr "inner"
+		IL_0017: stelem.ref
+		IL_0018: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_001d: ret
 	} // end of method ArrowFunction_L3C17::ArrowFunction_L3C17
 
 } // end of class Functions.ArrowFunction_L3C17
@@ -102,37 +104,39 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x208c
+		// Method begins at RVA 0x2098
 		// Header size: 12
-		// Code size: 67 (0x43)
+		// Code size: 77 (0x4d)
 		.maxstack 32
 
-		IL_0000: ldc.i4.1
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldstr "outer"
-		IL_000d: stelem.ref
-		IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0013: pop
-		IL_0014: ldnull
-		IL_0015: ldftn object Functions.ArrowFunction_L3C17::ArrowFunction_L3C17(object[])
-		IL_001b: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0020: ldc.i4.1
-		IL_0021: newarr [System.Runtime]System.Object
-		IL_0026: dup
-		IL_0027: ldc.i4.0
-		IL_0028: ldarg.0
-		IL_0029: ldc.i4.0
-		IL_002a: ldelem.ref
-		IL_002b: castclass Scopes.SetImmediate_Nested_ExecutesInNextIteration
-		IL_0030: stelem.ref
-		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0036: call !!0[] [System.Runtime]System.Array::Empty<object>()
-		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_0040: pop
-		IL_0041: ldnull
-		IL_0042: ret
+		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_000a: ldc.i4.1
+		IL_000b: newarr [System.Runtime]System.Object
+		IL_0010: dup
+		IL_0011: ldc.i4.0
+		IL_0012: ldstr "outer"
+		IL_0017: stelem.ref
+		IL_0018: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_001d: pop
+		IL_001e: ldnull
+		IL_001f: ldftn object Functions.ArrowFunction_L3C17::ArrowFunction_L3C17(object[])
+		IL_0025: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_002a: ldc.i4.1
+		IL_002b: newarr [System.Runtime]System.Object
+		IL_0030: dup
+		IL_0031: ldc.i4.0
+		IL_0032: ldarg.0
+		IL_0033: ldc.i4.0
+		IL_0034: ldelem.ref
+		IL_0035: castclass Scopes.SetImmediate_Nested_ExecutesInNextIteration
+		IL_003a: stelem.ref
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0040: call !!0[] [System.Runtime]System.Array::Empty<object>()
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_004a: pop
+		IL_004b: ldnull
+		IL_004c: ret
 	} // end of method ArrowFunction_L1C13::ArrowFunction_L1C13
 
 } // end of class Functions.ArrowFunction_L1C13
@@ -150,9 +154,9 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20dc
+		// Method begins at RVA 0x20f4
 		// Header size: 12
-		// Code size: 59 (0x3b)
+		// Code size: 69 (0x45)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.SetImmediate_Nested_ExecutesInNextIteration
@@ -171,15 +175,17 @@
 		IL_001b: call !!0[] [System.Runtime]System.Array::Empty<object>()
 		IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
 		IL_0025: pop
-		IL_0026: ldc.i4.1
-		IL_0027: newarr [System.Runtime]System.Object
-		IL_002c: dup
-		IL_002d: ldc.i4.0
-		IL_002e: ldstr "scheduled nested immediates."
-		IL_0033: stelem.ref
-		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0039: pop
-		IL_003a: ret
+		IL_0026: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_002b: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_0030: ldc.i4.1
+		IL_0031: newarr [System.Runtime]System.Object
+		IL_0036: dup
+		IL_0037: ldc.i4.0
+		IL_0038: ldstr "scheduled nested immediates."
+		IL_003d: stelem.ref
+		IL_003e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0043: pop
+		IL_0044: ret
 	} // end of method SetImmediate_Nested_ExecutesInNextIteration::Main
 
 } // end of class Scripts.SetImmediate_Nested_ExecutesInNextIteration
@@ -191,7 +197,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2123
+		// Method begins at RVA 0x2145
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

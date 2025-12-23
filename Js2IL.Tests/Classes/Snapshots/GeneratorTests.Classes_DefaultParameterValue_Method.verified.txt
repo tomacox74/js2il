@@ -152,7 +152,7 @@
 	{
 		// Method begins at RVA 0x209c
 		// Header size: 12
-		// Code size: 57 (0x39)
+		// Code size: 67 (0x43)
 		.maxstack 32
 
 		IL_0000: ldarg.2
@@ -162,21 +162,23 @@
 		IL_000f: box [System.Runtime]System.Double
 		IL_0014: starg.s 2
 
-		IL_0016: ldc.i4.1
-		IL_0017: newarr [System.Runtime]System.Object
-		IL_001c: dup
-		IL_001d: ldc.i4.0
-		IL_001e: ldarg.1
-		IL_001f: unbox.any [System.Runtime]System.Double
-		IL_0024: ldarg.2
-		IL_0025: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_002a: add
-		IL_002b: box [System.Runtime]System.Double
-		IL_0030: stelem.ref
-		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0036: pop
-		IL_0037: ldarg.0
-		IL_0038: ret
+		IL_0016: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_001b: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_0020: ldc.i4.1
+		IL_0021: newarr [System.Runtime]System.Object
+		IL_0026: dup
+		IL_0027: ldc.i4.0
+		IL_0028: ldarg.1
+		IL_0029: unbox.any [System.Runtime]System.Double
+		IL_002e: ldarg.2
+		IL_002f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0034: add
+		IL_0035: box [System.Runtime]System.Double
+		IL_003a: stelem.ref
+		IL_003b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0040: pop
+		IL_0041: ldarg.0
+		IL_0042: ret
 	} // end of method Calculator::'add'
 
 	.method public hidebysig 
@@ -186,9 +188,9 @@
 			object ''
 		) cil managed 
 	{
-		// Method begins at RVA 0x20e4
+		// Method begins at RVA 0x20ec
 		// Header size: 12
-		// Code size: 108 (0x6c)
+		// Code size: 118 (0x76)
 		.maxstack 32
 
 		IL_0000: ldarg.1
@@ -212,24 +214,26 @@
 		IL_003b: box [System.Runtime]System.Double
 		IL_0040: starg.s 3
 
-		IL_0042: ldc.i4.1
-		IL_0043: newarr [System.Runtime]System.Object
-		IL_0048: dup
-		IL_0049: ldc.i4.0
-		IL_004a: ldarg.1
-		IL_004b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0050: ldarg.2
-		IL_0051: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0056: mul
-		IL_0057: ldarg.3
-		IL_0058: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_005d: mul
-		IL_005e: box [System.Runtime]System.Double
-		IL_0063: stelem.ref
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0069: pop
-		IL_006a: ldarg.0
-		IL_006b: ret
+		IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0047: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_004c: ldc.i4.1
+		IL_004d: newarr [System.Runtime]System.Object
+		IL_0052: dup
+		IL_0053: ldc.i4.0
+		IL_0054: ldarg.1
+		IL_0055: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_005a: ldarg.2
+		IL_005b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0060: mul
+		IL_0061: ldarg.3
+		IL_0062: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0067: mul
+		IL_0068: box [System.Runtime]System.Double
+		IL_006d: stelem.ref
+		IL_006e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0073: pop
+		IL_0074: ldarg.0
+		IL_0075: ret
 	} // end of method Calculator::multiply
 
 	.method public hidebysig 
@@ -237,9 +241,9 @@
 			object ''
 		) cil managed 
 	{
-		// Method begins at RVA 0x215c
+		// Method begins at RVA 0x2170
 		// Header size: 12
-		// Code size: 41 (0x29)
+		// Code size: 51 (0x33)
 		.maxstack 32
 
 		IL_0000: ldarg.1
@@ -248,18 +252,20 @@
 		IL_0006: ldstr "World"
 		IL_000b: starg.s 1
 
-		IL_000d: ldc.i4.1
-		IL_000e: newarr [System.Runtime]System.Object
-		IL_0013: dup
-		IL_0014: ldc.i4.0
-		IL_0015: ldstr "Hello, "
-		IL_001a: ldarg.1
-		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0020: stelem.ref
-		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0026: pop
-		IL_0027: ldarg.0
-		IL_0028: ret
+		IL_000d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0012: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_0017: ldc.i4.1
+		IL_0018: newarr [System.Runtime]System.Object
+		IL_001d: dup
+		IL_001e: ldc.i4.0
+		IL_001f: ldstr "Hello, "
+		IL_0024: ldarg.1
+		IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_002a: stelem.ref
+		IL_002b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0030: pop
+		IL_0031: ldarg.0
+		IL_0032: ret
 	} // end of method Calculator::greet
 
 	.method public hidebysig 
@@ -269,9 +275,9 @@
 			object ''
 		) cil managed 
 	{
-		// Method begins at RVA 0x2194
+		// Method begins at RVA 0x21b0
 		// Header size: 12
-		// Code size: 73 (0x49)
+		// Code size: 83 (0x53)
 		.maxstack 32
 
 		IL_0000: ldarg.2
@@ -295,16 +301,18 @@
 		IL_0030: box [System.Runtime]System.Double
 		IL_0035: starg.s 3
 
-		IL_0037: ldc.i4.1
-		IL_0038: newarr [System.Runtime]System.Object
-		IL_003d: dup
-		IL_003e: ldc.i4.0
-		IL_003f: ldarg.3
-		IL_0040: stelem.ref
-		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0046: pop
-		IL_0047: ldarg.0
-		IL_0048: ret
+		IL_0037: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003c: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_0041: ldc.i4.1
+		IL_0042: newarr [System.Runtime]System.Object
+		IL_0047: dup
+		IL_0048: ldc.i4.0
+		IL_0049: ldarg.3
+		IL_004a: stelem.ref
+		IL_004b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0050: pop
+		IL_0051: ldarg.0
+		IL_0052: ret
 	} // end of method Calculator::calculate
 
 } // end of class Classes.Classes_DefaultParameterValue_Method.Calculator
@@ -322,7 +330,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x21ec
+		// Method begins at RVA 0x2210
 		// Header size: 12
 		// Code size: 310 (0x136)
 		.maxstack 32
@@ -420,7 +428,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x232e
+		// Method begins at RVA 0x2352
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

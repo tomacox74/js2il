@@ -90,7 +90,7 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 82 (0x52)
+		// Code size: 92 (0x5c)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Function_ParameterDestructuring_Object/show
@@ -108,24 +108,26 @@
 		IL_0019: ldstr "b"
 		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
 		IL_0023: stfld object Scopes.Function_ParameterDestructuring_Object/show::b
-		IL_0028: ldc.i4.2
-		IL_0029: newarr [System.Runtime]System.Object
-		IL_002e: dup
-		IL_002f: ldc.i4.0
-		IL_0030: ldloc.0
-		IL_0031: castclass Scopes.Function_ParameterDestructuring_Object/show
-		IL_0036: ldfld object Scopes.Function_ParameterDestructuring_Object/show::a
-		IL_003b: stelem.ref
-		IL_003c: dup
-		IL_003d: ldc.i4.1
-		IL_003e: ldloc.0
-		IL_003f: castclass Scopes.Function_ParameterDestructuring_Object/show
-		IL_0044: ldfld object Scopes.Function_ParameterDestructuring_Object/show::b
-		IL_0049: stelem.ref
-		IL_004a: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_004f: pop
-		IL_0050: ldnull
-		IL_0051: ret
+		IL_0028: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_002d: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_0032: ldc.i4.2
+		IL_0033: newarr [System.Runtime]System.Object
+		IL_0038: dup
+		IL_0039: ldc.i4.0
+		IL_003a: ldloc.0
+		IL_003b: castclass Scopes.Function_ParameterDestructuring_Object/show
+		IL_0040: ldfld object Scopes.Function_ParameterDestructuring_Object/show::a
+		IL_0045: stelem.ref
+		IL_0046: dup
+		IL_0047: ldc.i4.1
+		IL_0048: ldloc.0
+		IL_0049: castclass Scopes.Function_ParameterDestructuring_Object/show
+		IL_004e: ldfld object Scopes.Function_ParameterDestructuring_Object/show::b
+		IL_0053: stelem.ref
+		IL_0054: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0059: pop
+		IL_005a: ldnull
+		IL_005b: ret
 	} // end of method Function_ParameterDestructuring_Object::show
 
 	.method public hidebysig static 
@@ -134,9 +136,9 @@
 			object param1
 		) cil managed 
 	{
-		// Method begins at RVA 0x20cc
+		// Method begins at RVA 0x20d4
 		// Header size: 12
-		// Code size: 239 (0xef)
+		// Code size: 249 (0xf9)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Function_ParameterDestructuring_Object/config,
@@ -197,38 +199,40 @@
 		IL_0081: box [System.Runtime]System.Boolean
 		IL_0086: stfld object Scopes.Function_ParameterDestructuring_Object/config::secure
 
-		IL_008b: ldc.i4.1
-		IL_008c: newarr [System.Runtime]System.Object
-		IL_0091: dup
-		IL_0092: ldc.i4.0
-		IL_0093: ldloc.0
-		IL_0094: castclass Scopes.Function_ParameterDestructuring_Object/config
-		IL_0099: ldfld object Scopes.Function_ParameterDestructuring_Object/config::secure
-		IL_009e: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-		IL_00a3: brtrue IL_00ad
+		IL_008b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0090: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_0095: ldc.i4.1
+		IL_0096: newarr [System.Runtime]System.Object
+		IL_009b: dup
+		IL_009c: ldc.i4.0
+		IL_009d: ldloc.0
+		IL_009e: castclass Scopes.Function_ParameterDestructuring_Object/config
+		IL_00a3: ldfld object Scopes.Function_ParameterDestructuring_Object/config::secure
+		IL_00a8: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+		IL_00ad: brtrue IL_00b7
 
-		IL_00a8: br IL_00b7
+		IL_00b2: br IL_00c1
 
-		IL_00ad: ldstr "https://"
-		IL_00b2: br IL_00bc
+		IL_00b7: ldstr "https://"
+		IL_00bc: br IL_00c6
 
-		IL_00b7: ldstr "http://"
+		IL_00c1: ldstr "http://"
 
-		IL_00bc: ldloc.0
-		IL_00bd: castclass Scopes.Function_ParameterDestructuring_Object/config
-		IL_00c2: ldfld object Scopes.Function_ParameterDestructuring_Object/config::host
-		IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00cc: ldstr ":"
+		IL_00c6: ldloc.0
+		IL_00c7: castclass Scopes.Function_ParameterDestructuring_Object/config
+		IL_00cc: ldfld object Scopes.Function_ParameterDestructuring_Object/config::host
 		IL_00d1: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00d6: ldloc.0
-		IL_00d7: castclass Scopes.Function_ParameterDestructuring_Object/config
-		IL_00dc: ldfld object Scopes.Function_ParameterDestructuring_Object/config::port
-		IL_00e1: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00e6: stelem.ref
-		IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_00ec: pop
-		IL_00ed: ldnull
-		IL_00ee: ret
+		IL_00d6: ldstr ":"
+		IL_00db: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00e0: ldloc.0
+		IL_00e1: castclass Scopes.Function_ParameterDestructuring_Object/config
+		IL_00e6: ldfld object Scopes.Function_ParameterDestructuring_Object/config::port
+		IL_00eb: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00f0: stelem.ref
+		IL_00f1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00f6: pop
+		IL_00f7: ldnull
+		IL_00f8: ret
 	} // end of method Function_ParameterDestructuring_Object::config
 
 } // end of class Functions.Function_ParameterDestructuring_Object
@@ -246,7 +250,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x21c8
+		// Method begins at RVA 0x21dc
 		// Header size: 12
 		// Code size: 447 (0x1bf)
 		.maxstack 32
@@ -410,7 +414,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2393
+		// Method begins at RVA 0x23a7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

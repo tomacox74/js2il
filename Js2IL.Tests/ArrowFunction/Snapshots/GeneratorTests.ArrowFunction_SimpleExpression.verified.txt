@@ -106,7 +106,7 @@
 	{
 		// Method begins at RVA 0x20ac
 		// Header size: 12
-		// Code size: 119 (0x77)
+		// Code size: 129 (0x81)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ArrowFunction_SimpleExpression,
@@ -124,41 +124,43 @@
 		IL_0015: stelem.ref
 		IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_001b: stloc.1
-		IL_001c: ldc.i4.2
-		IL_001d: newarr [System.Runtime]System.Object
-		IL_0022: dup
-		IL_0023: ldc.i4.0
-		IL_0024: ldstr "x is "
-		IL_0029: stelem.ref
-		IL_002a: dup
-		IL_002b: ldc.i4.1
-		IL_002c: ldloc.1
-		IL_002d: dup
-		IL_002e: brtrue.s IL_0044
+		IL_001c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0021: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_0026: ldc.i4.2
+		IL_0027: newarr [System.Runtime]System.Object
+		IL_002c: dup
+		IL_002d: ldc.i4.0
+		IL_002e: ldstr "x is "
+		IL_0033: stelem.ref
+		IL_0034: dup
+		IL_0035: ldc.i4.1
+		IL_0036: ldloc.1
+		IL_0037: dup
+		IL_0038: brtrue.s IL_004e
 
-		IL_0030: pop
-		IL_0031: ldnull
-		IL_0032: ldftn object Functions.ArrowFunction_L1C12::ArrowFunction_L1C12(object[], object, object)
-		IL_0038: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-		IL_003d: stloc.1
-		IL_003e: ldloc.1
-		IL_003f: br IL_0044
+		IL_003a: pop
+		IL_003b: ldnull
+		IL_003c: ldftn object Functions.ArrowFunction_L1C12::ArrowFunction_L1C12(object[], object, object)
+		IL_0042: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_0047: stloc.1
+		IL_0048: ldloc.1
+		IL_0049: br IL_004e
 
-		IL_0044: ldc.i4.1
-		IL_0045: newarr [System.Runtime]System.Object
-		IL_004a: dup
-		IL_004b: ldc.i4.0
-		IL_004c: ldloc.0
-		IL_004d: stelem.ref
-		IL_004e: ldc.r8 1
-		IL_0057: box [System.Runtime]System.Double
-		IL_005c: ldc.r8 2
-		IL_0065: box [System.Runtime]System.Double
-		IL_006a: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
-		IL_006f: stelem.ref
-		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0075: pop
-		IL_0076: ret
+		IL_004e: ldc.i4.1
+		IL_004f: newarr [System.Runtime]System.Object
+		IL_0054: dup
+		IL_0055: ldc.i4.0
+		IL_0056: ldloc.0
+		IL_0057: stelem.ref
+		IL_0058: ldc.r8 1
+		IL_0061: box [System.Runtime]System.Double
+		IL_0066: ldc.r8 2
+		IL_006f: box [System.Runtime]System.Double
+		IL_0074: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
+		IL_0079: stelem.ref
+		IL_007a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_007f: pop
+		IL_0080: ret
 	} // end of method ArrowFunction_SimpleExpression::Main
 
 } // end of class Scripts.ArrowFunction_SimpleExpression
@@ -170,7 +172,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x212f
+		// Method begins at RVA 0x2139
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using JavaScriptRuntime;
+using JavaScriptRuntime.DependencyInjection;
 using Xunit;
 
 namespace JavaScriptRuntime.Tests
@@ -32,9 +33,9 @@ namespace JavaScriptRuntime.Tests
         public void Log_PrintsAllArgumentsWithSpaces()
         {
             var testOutput = new TestConsoleOutput();
-            Console.SetOutput(testOutput);
+            var console = CreateConsole(testOutput);
 
-            Console.Log("Hello", "World", 42, JavaScriptRuntime.JsNull.Null);
+            console.Log("Hello", "World", 42, JavaScriptRuntime.JsNull.Null);
 
             Assert.Single(testOutput.Output);
             Assert.Equal("Hello World 42 null", testOutput.Output[0]);
@@ -44,9 +45,9 @@ namespace JavaScriptRuntime.Tests
         public void Log_PrintsLiteralBraces()
         {
             var testOutput = new TestConsoleOutput();
-            Console.SetOutput(testOutput);
+            var console = CreateConsole(testOutput);
 
-            Console.Log("Hello, {0}", "World");
+            console.Log("Hello, {0}", "World");
 
             Assert.Single(testOutput.Output);
             Assert.Equal("Hello, {0} World", testOutput.Output[0]);
@@ -56,9 +57,9 @@ namespace JavaScriptRuntime.Tests
         public void Log_PrintsBlankLineWhenNoArguments()
         {
             var testOutput = new TestConsoleOutput();
-            Console.SetOutput(testOutput);
+            var console = CreateConsole(testOutput);
 
-            Console.Log();
+            console.Log();
 
             Assert.Single(testOutput.Output);
             Assert.Equal(string.Empty, testOutput.Output[0]);
@@ -68,10 +69,10 @@ namespace JavaScriptRuntime.Tests
         public void Log_PrintsStringAndFloat()
         {
             var testOutput = new TestConsoleOutput();
-            Console.SetOutput(testOutput);
+            var console = CreateConsole(testOutput);
 
             // Use a double literal to match JS number semantics (R8)
-            Console.Log("Value:", 42d);
+            console.Log("Value:", 42d);
 
             Assert.Single(testOutput.Output);
             Assert.Equal("Value: 42", testOutput.Output[0]);
@@ -82,10 +83,9 @@ namespace JavaScriptRuntime.Tests
         {
             var stdout = new DualTestConsoleOutput(false);
             var stderr = new DualTestConsoleOutput(true);
-            Console.SetOutput(stdout);
-            Console.SetErrorOutput(stderr);
+            var console = CreateConsole(stdout, stderr);
 
-            Console.Error("Hello", "World", 42d, JavaScriptRuntime.JsNull.Null);
+            console.Error("Hello", "World", 42d, JavaScriptRuntime.JsNull.Null);
 
             Assert.Empty(stdout.StdOut);
             Assert.Single(stderr.StdErr);
@@ -97,10 +97,9 @@ namespace JavaScriptRuntime.Tests
         {
             var stdout = new DualTestConsoleOutput(false);
             var stderr = new DualTestConsoleOutput(true);
-            Console.SetOutput(stdout);
-            Console.SetErrorOutput(stderr);
+            var console = CreateConsole(stdout, stderr);
 
-            Console.Warn("Be", "careful", 7d);
+            console.Warn("Be", "careful", 7d);
 
             Assert.Empty(stdout.StdOut);
             Assert.Single(stderr.StdErr);
@@ -111,17 +110,30 @@ namespace JavaScriptRuntime.Tests
         public void Log_PrintsExpandoObjectProperties()
         {
             var testOutput = new TestConsoleOutput();
-            Console.SetOutput(testOutput);
+            var console = CreateConsole(testOutput);
 
             dynamic expando = new System.Dynamic.ExpandoObject();
             expando.name = "Alice";
             expando.age = 31;
 
-            Console.Log("x is", expando);
+            console.Log("x is", expando);
 
             Assert.Single(testOutput.Output);
             // The expected output should match the Node.js style: x is { name: 'Alice', age: 31 }
             Assert.Equal("x is { name: 'Alice', age: 31 }", testOutput.Output[0]);
+        }
+
+        private static Console CreateConsole(IConsoleOutput? output = null, IConsoleOutput? errorOutput = null)
+        {
+            var container = new ServiceContainer();
+            var sinks = new ConsoleOutputSinks
+            {
+                Output = output,
+                ErrorOutput = errorOutput
+            };
+            container.RegisterInstance(sinks);
+
+            return container.Resolve<Console>();
         }
     }
 }

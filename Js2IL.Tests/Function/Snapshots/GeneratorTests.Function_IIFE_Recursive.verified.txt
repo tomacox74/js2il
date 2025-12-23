@@ -103,7 +103,7 @@
 	{
 		// Method begins at RVA 0x2074
 		// Header size: 12
-		// Code size: 283 (0x11b)
+		// Code size: 293 (0x125)
 		.maxstack 8
 		.locals init (
 			[0] class Scopes.Function_IIFE_Recursive/walk,
@@ -126,102 +126,104 @@
 
 		IL_0024: pop
 
-		IL_0025: ldc.i4.3
-		IL_0026: newarr [System.Runtime]System.Object
-		IL_002b: dup
-		IL_002c: ldc.i4.0
-		IL_002d: ldstr "visit"
-		IL_0032: stelem.ref
-		IL_0033: dup
-		IL_0034: ldc.i4.1
-		IL_0035: ldarg.1
-		IL_0036: ldstr "name"
-		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_0040: stelem.ref
-		IL_0041: dup
-		IL_0042: ldc.i4.2
-		IL_0043: ldarg.2
-		IL_0044: stelem.ref
-		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_004a: pop
-		IL_004b: ldarg.2
-		IL_004c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0051: ldc.r8 2
-		IL_005a: bgt IL_0064
+		IL_0025: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_002a: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_002f: ldc.i4.3
+		IL_0030: newarr [System.Runtime]System.Object
+		IL_0035: dup
+		IL_0036: ldc.i4.0
+		IL_0037: ldstr "visit"
+		IL_003c: stelem.ref
+		IL_003d: dup
+		IL_003e: ldc.i4.1
+		IL_003f: ldarg.1
+		IL_0040: ldstr "name"
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_004a: stelem.ref
+		IL_004b: dup
+		IL_004c: ldc.i4.2
+		IL_004d: ldarg.2
+		IL_004e: stelem.ref
+		IL_004f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0054: pop
+		IL_0055: ldarg.2
+		IL_0056: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_005b: ldc.r8 2
+		IL_0064: bgt IL_006e
 
-		IL_005f: br IL_006b
+		IL_0069: br IL_0075
 
-		IL_0064: ldnull
-		IL_0065: ret
+		IL_006e: ldnull
+		IL_006f: ret
 
-		IL_0066: br IL_006b
+		IL_0070: br IL_0075
 
-		IL_006b: ldc.r8 0.0
-		IL_0074: stloc.1
-		// loop start (head: IL_0075)
-			IL_0075: ldloc.1
-			IL_0076: ldarg.1
-			IL_0077: ldstr "children"
-			IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-			IL_0081: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_0086: blt IL_0090
+		IL_0075: ldc.r8 0.0
+		IL_007e: stloc.1
+		// loop start (head: IL_007f)
+			IL_007f: ldloc.1
+			IL_0080: ldarg.1
+			IL_0081: ldstr "children"
+			IL_0086: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+			IL_008b: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_0090: blt IL_009a
 
-			IL_008b: br IL_0119
+			IL_0095: br IL_0123
 
-			IL_0090: ldarg.1
-			IL_0091: ldstr "children"
-			IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-			IL_009b: ldloc.1
-			IL_009c: box [System.Runtime]System.Double
-			IL_00a1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_00a6: stloc.2
-			IL_00a7: ldloc.0
-			IL_00a8: castclass Scopes.Function_IIFE_Recursive/walk
-			IL_00ad: ldfld object Scopes.Function_IIFE_Recursive/walk::walk
-			IL_00b2: dup
-			IL_00b3: brtrue.s IL_00d7
+			IL_009a: ldarg.1
+			IL_009b: ldstr "children"
+			IL_00a0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+			IL_00a5: ldloc.1
+			IL_00a6: box [System.Runtime]System.Double
+			IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_00b0: stloc.2
+			IL_00b1: ldloc.0
+			IL_00b2: castclass Scopes.Function_IIFE_Recursive/walk
+			IL_00b7: ldfld object Scopes.Function_IIFE_Recursive/walk::walk
+			IL_00bc: dup
+			IL_00bd: brtrue.s IL_00e1
 
-			IL_00b5: pop
-			IL_00b6: ldloc.0
-			IL_00b7: call class [System.Runtime]System.Reflection.MethodBase [System.Runtime]System.Reflection.MethodBase::GetCurrentMethod()
-			IL_00bc: ldc.i4.2
-			IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::CreateSelfDelegate(class [System.Runtime]System.Reflection.MethodBase, int32)
-			IL_00c2: stfld object Scopes.Function_IIFE_Recursive/walk::walk
-			IL_00c7: ldloc.0
-			IL_00c8: castclass Scopes.Function_IIFE_Recursive/walk
-			IL_00cd: ldfld object Scopes.Function_IIFE_Recursive/walk::walk
-			IL_00d2: br IL_00d7
+			IL_00bf: pop
+			IL_00c0: ldloc.0
+			IL_00c1: call class [System.Runtime]System.Reflection.MethodBase [System.Runtime]System.Reflection.MethodBase::GetCurrentMethod()
+			IL_00c6: ldc.i4.2
+			IL_00c7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::CreateSelfDelegate(class [System.Runtime]System.Reflection.MethodBase, int32)
+			IL_00cc: stfld object Scopes.Function_IIFE_Recursive/walk::walk
+			IL_00d1: ldloc.0
+			IL_00d2: castclass Scopes.Function_IIFE_Recursive/walk
+			IL_00d7: ldfld object Scopes.Function_IIFE_Recursive/walk::walk
+			IL_00dc: br IL_00e1
 
-			IL_00d7: ldc.i4.2
-			IL_00d8: newarr [System.Runtime]System.Object
-			IL_00dd: dup
-			IL_00de: ldc.i4.0
-			IL_00df: ldarg.0
-			IL_00e0: ldc.i4.0
-			IL_00e1: ldelem.ref
-			IL_00e2: castclass Scopes.Function_IIFE_Recursive
-			IL_00e7: stelem.ref
-			IL_00e8: dup
-			IL_00e9: ldc.i4.1
-			IL_00ea: ldloc.0
-			IL_00eb: stelem.ref
-			IL_00ec: ldloc.2
-			IL_00ed: ldarg.2
-			IL_00ee: unbox.any [System.Runtime]System.Double
-			IL_00f3: ldc.r8 1
-			IL_00fc: add
-			IL_00fd: box [System.Runtime]System.Double
-			IL_0102: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
-			IL_0107: pop
-			IL_0108: ldloc.1
-			IL_0109: ldc.r8 1
-			IL_0112: add
-			IL_0113: stloc.1
-			IL_0114: br IL_0075
+			IL_00e1: ldc.i4.2
+			IL_00e2: newarr [System.Runtime]System.Object
+			IL_00e7: dup
+			IL_00e8: ldc.i4.0
+			IL_00e9: ldarg.0
+			IL_00ea: ldc.i4.0
+			IL_00eb: ldelem.ref
+			IL_00ec: castclass Scopes.Function_IIFE_Recursive
+			IL_00f1: stelem.ref
+			IL_00f2: dup
+			IL_00f3: ldc.i4.1
+			IL_00f4: ldloc.0
+			IL_00f5: stelem.ref
+			IL_00f6: ldloc.2
+			IL_00f7: ldarg.2
+			IL_00f8: unbox.any [System.Runtime]System.Double
+			IL_00fd: ldc.r8 1
+			IL_0106: add
+			IL_0107: box [System.Runtime]System.Double
+			IL_010c: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
+			IL_0111: pop
+			IL_0112: ldloc.1
+			IL_0113: ldc.r8 1
+			IL_011c: add
+			IL_011d: stloc.1
+			IL_011e: br IL_007f
 		// end loop
 
-		IL_0119: ldnull
-		IL_011a: ret
+		IL_0123: ldnull
+		IL_0124: ret
 	} // end of method FunctionExpression_L2C1::FunctionExpression_L2C1
 
 } // end of class Functions.FunctionExpression_L2C1
@@ -239,7 +241,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x219c
+		// Method begins at RVA 0x21a8
 		// Header size: 12
 		// Code size: 213 (0xd5)
 		.maxstack 32
@@ -318,7 +320,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x227d
+		// Method begins at RVA 0x2289
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

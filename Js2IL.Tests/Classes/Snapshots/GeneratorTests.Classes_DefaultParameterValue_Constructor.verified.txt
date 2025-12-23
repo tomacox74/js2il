@@ -259,27 +259,29 @@
 	{
 		// Method begins at RVA 0x20f0
 		// Header size: 12
-		// Code size: 54 (0x36)
+		// Code size: 64 (0x40)
 		.maxstack 32
 
-		IL_0000: ldc.i4.1
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldarg.0
-		IL_0009: ldfld object Classes.Classes_DefaultParameterValue_Constructor.Person::name
-		IL_000e: ldstr " is "
-		IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0018: ldarg.0
-		IL_0019: ldfld object Classes.Classes_DefaultParameterValue_Constructor.Person::age
-		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0023: ldstr " years old"
+		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_000a: ldc.i4.1
+		IL_000b: newarr [System.Runtime]System.Object
+		IL_0010: dup
+		IL_0011: ldc.i4.0
+		IL_0012: ldarg.0
+		IL_0013: ldfld object Classes.Classes_DefaultParameterValue_Constructor.Person::name
+		IL_0018: ldstr " is "
+		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0022: ldarg.0
+		IL_0023: ldfld object Classes.Classes_DefaultParameterValue_Constructor.Person::age
 		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_002d: stelem.ref
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0033: pop
-		IL_0034: ldarg.0
-		IL_0035: ret
+		IL_002d: ldstr " years old"
+		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0037: stelem.ref
+		IL_0038: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_003d: pop
+		IL_003e: ldarg.0
+		IL_003f: ret
 	} // end of method Person::display
 
 } // end of class Classes.Classes_DefaultParameterValue_Constructor.Person
@@ -300,7 +302,7 @@
 			object depth
 		) cil managed 
 	{
-		// Method begins at RVA 0x2134
+		// Method begins at RVA 0x213c
 		// Header size: 12
 		// Code size: 72 (0x48)
 		.maxstack 32
@@ -336,32 +338,34 @@
 	.method public hidebysig 
 		instance object volume () cil managed 
 	{
-		// Method begins at RVA 0x2188
+		// Method begins at RVA 0x2190
 		// Header size: 12
-		// Code size: 57 (0x39)
+		// Code size: 67 (0x43)
 		.maxstack 32
 
-		IL_0000: ldc.i4.1
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldarg.0
-		IL_0009: ldfld object Classes.Classes_DefaultParameterValue_Constructor.Box::width
-		IL_000e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0013: ldarg.0
-		IL_0014: ldfld object Classes.Classes_DefaultParameterValue_Constructor.Box::height
-		IL_0019: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_001e: mul
-		IL_001f: ldarg.0
-		IL_0020: ldfld object Classes.Classes_DefaultParameterValue_Constructor.Box::depth
-		IL_0025: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_002a: mul
-		IL_002b: box [System.Runtime]System.Double
-		IL_0030: stelem.ref
-		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_0036: pop
-		IL_0037: ldarg.0
-		IL_0038: ret
+		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_000a: ldc.i4.1
+		IL_000b: newarr [System.Runtime]System.Object
+		IL_0010: dup
+		IL_0011: ldc.i4.0
+		IL_0012: ldarg.0
+		IL_0013: ldfld object Classes.Classes_DefaultParameterValue_Constructor.Box::width
+		IL_0018: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_001d: ldarg.0
+		IL_001e: ldfld object Classes.Classes_DefaultParameterValue_Constructor.Box::height
+		IL_0023: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0028: mul
+		IL_0029: ldarg.0
+		IL_002a: ldfld object Classes.Classes_DefaultParameterValue_Constructor.Box::depth
+		IL_002f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0034: mul
+		IL_0035: box [System.Runtime]System.Double
+		IL_003a: stelem.ref
+		IL_003b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0040: pop
+		IL_0041: ldarg.0
+		IL_0042: ret
 	} // end of method Box::volume
 
 } // end of class Classes.Classes_DefaultParameterValue_Constructor.Box
@@ -380,7 +384,7 @@
 			object height
 		) cil managed 
 	{
-		// Method begins at RVA 0x21d0
+		// Method begins at RVA 0x21e0
 		// Header size: 12
 		// Code size: 30 (0x1e)
 		.maxstack 32
@@ -405,28 +409,30 @@
 	.method public hidebysig 
 		instance object area () cil managed 
 	{
-		// Method begins at RVA 0x21fc
+		// Method begins at RVA 0x220c
 		// Header size: 12
-		// Code size: 45 (0x2d)
+		// Code size: 55 (0x37)
 		.maxstack 32
 
-		IL_0000: ldc.i4.1
-		IL_0001: newarr [System.Runtime]System.Object
-		IL_0006: dup
-		IL_0007: ldc.i4.0
-		IL_0008: ldarg.0
-		IL_0009: ldfld object Classes.Classes_DefaultParameterValue_Constructor.Rectangle::width
-		IL_000e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0013: ldarg.0
-		IL_0014: ldfld object Classes.Classes_DefaultParameterValue_Constructor.Rectangle::height
-		IL_0019: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_001e: mul
-		IL_001f: box [System.Runtime]System.Double
-		IL_0024: stelem.ref
-		IL_0025: call object [JavaScriptRuntime]JavaScriptRuntime.Console::Log(object[])
-		IL_002a: pop
-		IL_002b: ldarg.0
-		IL_002c: ret
+		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_000a: ldc.i4.1
+		IL_000b: newarr [System.Runtime]System.Object
+		IL_0010: dup
+		IL_0011: ldc.i4.0
+		IL_0012: ldarg.0
+		IL_0013: ldfld object Classes.Classes_DefaultParameterValue_Constructor.Rectangle::width
+		IL_0018: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_001d: ldarg.0
+		IL_001e: ldfld object Classes.Classes_DefaultParameterValue_Constructor.Rectangle::height
+		IL_0023: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0028: mul
+		IL_0029: box [System.Runtime]System.Double
+		IL_002e: stelem.ref
+		IL_002f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0034: pop
+		IL_0035: ldarg.0
+		IL_0036: ret
 	} // end of method Rectangle::area
 
 } // end of class Classes.Classes_DefaultParameterValue_Constructor.Rectangle
@@ -444,7 +450,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2238
+		// Method begins at RVA 0x2250
 		// Header size: 12
 		// Code size: 272 (0x110)
 		.maxstack 32
@@ -541,7 +547,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2354
+		// Method begins at RVA 0x236c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

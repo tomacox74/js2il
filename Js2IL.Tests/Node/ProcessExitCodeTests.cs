@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using JavaScriptRuntime;
 using Xunit;
+using JavaScriptRuntime.DependencyInjection;
 
 namespace Js2IL.Tests.Node
 {
@@ -12,11 +13,11 @@ namespace Js2IL.Tests.Node
         {
             // arrange
             var prev = Environment.ExitCode;
-            var prevEnv = EnvironmentProvider.Current;
+            var serviceProvider = RuntimeServices.BuildServiceProvider();
             try
             {
                 // Ensure we're using the default environment that mirrors System.Environment.ExitCode
-                EnvironmentProvider.SetEnvironment(new DefaultEnvironment());
+                GlobalThis.ServiceProvider = serviceProvider;
                 Environment.ExitCode = 0;
                 GlobalThis.process.exitCode = 7;
                 Assert.Equal(7, Environment.ExitCode);
@@ -29,7 +30,7 @@ namespace Js2IL.Tests.Node
             finally
             {
                 Environment.ExitCode = prev;
-                EnvironmentProvider.SetEnvironment(prevEnv);
+                GlobalThis.ServiceProvider = null;
             }
         }
     }

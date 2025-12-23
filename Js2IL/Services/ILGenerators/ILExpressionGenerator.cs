@@ -1064,9 +1064,7 @@ namespace Js2IL.Services.ILGenerators
 
             // Special-case: console is a global variable, not a constructible intrinsic, but we emit its calls
             // as static method calls on JavaScriptRuntime.Console to preserve historical IL snapshots.
-            var type = string.Equals(objectName, "console", StringComparison.Ordinal)
-                ? typeof(JavaScriptRuntime.Console)
-                : JavaScriptRuntime.IntrinsicObjectRegistry.Get(objectName);
+            var type = JavaScriptRuntime.IntrinsicObjectRegistry.Get(objectName);
             if (type == null)
             {
                 return false;

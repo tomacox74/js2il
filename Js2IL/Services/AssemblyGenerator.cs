@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics;
+using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
@@ -272,12 +273,25 @@ namespace Js2IL.Services
 
             RuntimeConfigWriter.WriteRuntimeConfigJson(assemblyDll, typeof(object).Assembly.GetName());
 
-            // Copy JavaScriptRuntime.dll instead of js2il.dll.
+            // Copy JavaScriptRuntime.dll to output directory
+            // only if its not already there
             var jsRuntimeDll = typeof(JavaScriptRuntime.Object).Assembly.Location!;
             var jsRuntimeAssemblyFileName = Path.GetFileName(jsRuntimeDll);
             var jsRuntimeDllDest = Path.Combine(outputPath, jsRuntimeAssemblyFileName);
             if (File.Exists(jsRuntimeDll))
             {
+                var sourceVersion = FileVersionInfo.GetVersionInfo(jsRuntimeDll).FileVersion;
+
+                if (File.Exists(jsRuntimeDllDest))
+                {
+                    var targetVersion = FileVersionInfo.GetVersionInfo(jsRuntimeDllDest).FileVersion;
+                    if (sourceVersion == targetVersion)
+                    {
+                        // same version, no need to copy
+                        return;
+                    }
+                }
+
                 File.Copy(jsRuntimeDll, jsRuntimeDllDest, true);
                 var jsRuntimePdb = Path.ChangeExtension(jsRuntimeDll, ".pdb");
                 var jsRuntimePdbDest = Path.ChangeExtension(jsRuntimeDllDest, ".pdb");
