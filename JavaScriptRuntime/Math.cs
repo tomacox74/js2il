@@ -67,6 +67,13 @@ namespace JavaScriptRuntime
             if (d == 0) return d; // preserve +0/-0 when the argument already equals zero
 
             double r = System.Math.Floor(d + 0.5);
+            
+            // ECMAScript spec: if result is 0 and input was negative, return -0
+            if (r == 0.0 && d < 0.0)
+            {
+                return -0.0;
+            }
+            
             return r;
         }
 
