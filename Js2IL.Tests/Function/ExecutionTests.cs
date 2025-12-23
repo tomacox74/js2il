@@ -58,5 +58,8 @@ namespace Js2IL.Tests.Function
 
         [Fact]
         public Task Function_ReturnsStaticValueAndLogs() { var testName = nameof(Function_ReturnsStaticValueAndLogs); return ExecutionTest(testName); }
+
+        [Fact(Skip = "Closures not bound when function escapes scope via object literal - see issue #167")]
+        public Task Function_ReturnObjectWithClosure() { var testName = nameof(Function_ReturnObjectWithClosure); return ExecutionTest(testName); }
     }
 }
