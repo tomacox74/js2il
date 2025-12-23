@@ -21,6 +21,16 @@ const { execSync } = require('child_process');
 
 const testsRoot = path.join(__dirname, '..', 'Js2IL.Tests');
 
+// Tests to ignore (e.g., timeout tests, error-path tests, environment-specific)
+const ignoredTests = [
+    'TryFinally_NoCatch_Throw',
+    'Promise_Resolve_FinallyThrows',
+    'SetTimeout_OneSecondDelay',
+    'SetImmediate_ExecutesBeforeSetTimeout',
+    'Global__dirname_PrintsDirectory',
+    'Environment_EnumerateProcessArgV'
+];
+
 // Test category directories that contain JavaScript/ and Snapshots/ folders
 const testCategories = [
     'Array',
@@ -114,6 +124,13 @@ function processCategory(category) {
     
     for (const jsFile of jsFiles) {
         const testName = path.basename(jsFile, '.js');
+        
+        // Skip ignored tests
+        if (ignoredTests.includes(testName)) {
+            console.log(`  ⏭️  ${testName}: ignored`);
+            skipped++;
+            continue;
+        }
         
         // Apply filter if specified
         if (filterPattern && !testName.includes(filterPattern)) {
