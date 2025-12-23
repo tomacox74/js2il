@@ -340,10 +340,10 @@
     },
     {
       "name": "require(id)",
-      "status": "partial",
-      "implementation": "JavaScriptRuntime/CommonJS/Require.cs, JavaScriptRuntime/CommonJS/ModuleContext.cs, JavaScriptRuntime/CommonJS/ModuleName.cs",
+      "status": "supported",
+      "implementation": "JavaScriptRuntime/CommonJS/Require.cs, JavaScriptRuntime/CommonJS/ModuleContext.cs, JavaScriptRuntime/CommonJS/ModuleName.cs, JavaScriptRuntime/CommonJS/Module.cs",
       "docs": "https://nodejs.org/api/modules.html#requireid",
-      "notes": "Supports requiring implemented Node core modules (e.g., fs/path) and compiled local modules. Local requires support ./ and ../ resolution relative to the importing module and are cached (module body executes once). Does not implement full Node resolution (node_modules/package.json) and module.exports assignment semantics are incomplete.",
+      "notes": "Supports requiring implemented Node core modules (e.g., fs/path) and compiled local modules. Local requires support ./ and ../ resolution relative to the importing module and are cached (module body executes once). Includes full module object support (module.exports, module.id, module.filename, module.path, module.loaded, module.parent, module.children, module.paths, module.require). Does not implement node_modules/package.json resolution.",
       "tests": [
         {
           "name": "Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Require_Basic",
@@ -359,6 +359,38 @@
         },
         {
           "name": "Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Require_SharedDependency_ExecutedOnce",
+          "file": "Js2IL.Tests/CommonJS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Module_Exports_Object",
+          "file": "Js2IL.Tests/CommonJS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Module_Exports_Reassign",
+          "file": "Js2IL.Tests/CommonJS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Module_Exports_Function",
+          "file": "Js2IL.Tests/CommonJS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Module_Identity",
+          "file": "Js2IL.Tests/CommonJS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Module_Loaded",
+          "file": "Js2IL.Tests/CommonJS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Module_Require",
+          "file": "Js2IL.Tests/CommonJS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Module_Paths",
+          "file": "Js2IL.Tests/CommonJS/ExecutionTests.cs"
+        },
+        {
+          "name": "Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Module_ParentChildren",
           "file": "Js2IL.Tests/CommonJS/ExecutionTests.cs"
         }
       ]

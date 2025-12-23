@@ -1,7 +1,7 @@
 # Node Support Coverage
 
 Target: `22.x LTS`
-Generated: `2025-12-22T20:51:56Z`
+Generated: `2025-12-23T19:02:35Z`
 
 
 ## Modules
@@ -129,17 +129,25 @@ Tests:
 - `Js2IL.Tests.Node.ExecutionTests.Environment_EnumerateProcessArgV` (`Js2IL.Tests/Node/ExecutionTests.cs#L21`)
 - `Js2IL.Tests.Node.GeneratorTests.Environment_EnumerateProcessArgV` (`Js2IL.Tests/Node/GeneratorTests.cs`)
 
-### require(id) (status: partial)
+### require(id) (status: supported)
 Docs: [https://nodejs.org/api/modules.html#requireid](https://nodejs.org/api/modules.html#requireid)
 Implementation:
-- `JavaScriptRuntime/CommonJS/Require.cs, JavaScriptRuntime/CommonJS/ModuleContext.cs, JavaScriptRuntime/CommonJS/ModuleName.cs`
+- `JavaScriptRuntime/CommonJS/Require.cs, JavaScriptRuntime/CommonJS/ModuleContext.cs, JavaScriptRuntime/CommonJS/ModuleName.cs, JavaScriptRuntime/CommonJS/Module.cs`
 Notes:
-Supports requiring implemented Node core modules (e.g., fs/path) and compiled local modules. Local requires support ./ and ../ resolution relative to the importing module and are cached (module body executes once). Does not implement full Node resolution (node_modules/package.json) and module.exports assignment semantics are incomplete.
+Supports requiring implemented Node core modules (e.g., fs/path) and compiled local modules. Local requires support ./ and ../ resolution relative to the importing module and are cached (module body executes once). Includes full module object support (module.exports, module.id, module.filename, module.path, module.loaded, module.parent, module.children, module.paths, module.require). Does not implement node_modules/package.json resolution.
 Tests:
 - `Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Require_Basic` (`Js2IL.Tests/CommonJS/ExecutionTests.cs`)
 - `Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Require_NestedNameConflict` (`Js2IL.Tests/CommonJS/ExecutionTests.cs`)
 - `Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Require_RelativeFromModule` (`Js2IL.Tests/CommonJS/ExecutionTests.cs`)
 - `Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Require_SharedDependency_ExecutedOnce` (`Js2IL.Tests/CommonJS/ExecutionTests.cs`)
+- `Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Module_Exports_Object` (`Js2IL.Tests/CommonJS/ExecutionTests.cs`)
+- `Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Module_Exports_Reassign` (`Js2IL.Tests/CommonJS/ExecutionTests.cs`)
+- `Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Module_Exports_Function` (`Js2IL.Tests/CommonJS/ExecutionTests.cs`)
+- `Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Module_Identity` (`Js2IL.Tests/CommonJS/ExecutionTests.cs`)
+- `Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Module_Loaded` (`Js2IL.Tests/CommonJS/ExecutionTests.cs`)
+- `Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Module_Require` (`Js2IL.Tests/CommonJS/ExecutionTests.cs`)
+- `Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Module_Paths` (`Js2IL.Tests/CommonJS/ExecutionTests.cs`)
+- `Js2IL.Tests.CommonJS.ExecutionTests.CommonJS_Module_ParentChildren` (`Js2IL.Tests/CommonJS/ExecutionTests.cs`)
 
 ### console.log (status: supported)
 Docs: [https://nodejs.org/api/console.html#consolelogdata-args](https://nodejs.org/api/console.html#consolelogdata-args)

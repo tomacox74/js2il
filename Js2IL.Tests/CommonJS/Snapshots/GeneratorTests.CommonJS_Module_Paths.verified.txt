@@ -1,0 +1,229 @@
+﻿// IL code: CommonJS_Module_Paths
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.CommonJS_Module_Paths
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Block_L8C60
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Block_L8C60::.ctor
+
+	} // end of class Block_L8C60
+
+	.class nested public auto ansi beforefieldinit Block_L11C7
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2062
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Block_L11C7::.ctor
+
+	} // end of class Block_L11C7
+
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method CommonJS_Module_Paths::.ctor
+
+} // end of class Scopes.CommonJS_Module_Paths
+
+.class public auto ansi beforefieldinit Scripts.CommonJS_Module_Paths
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x206c
+		// Header size: 12
+		// Code size: 363 (0x16b)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.CommonJS_Module_Paths
+		)
+
+		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_000a: ldc.i4.2
+		IL_000b: newarr [System.Runtime]System.Object
+		IL_0010: dup
+		IL_0011: ldc.i4.0
+		IL_0012: ldstr "module.paths type:"
+		IL_0017: stelem.ref
+		IL_0018: dup
+		IL_0019: ldc.i4.1
+		IL_001a: ldarg.2
+		IL_001b: ldstr "paths"
+		IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_0025: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_002a: stelem.ref
+		IL_002b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0030: pop
+		IL_0031: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0036: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_003b: ldc.i4.2
+		IL_003c: newarr [System.Runtime]System.Object
+		IL_0041: dup
+		IL_0042: ldc.i4.0
+		IL_0043: ldstr "module.paths is array:"
+		IL_0048: stelem.ref
+		IL_0049: dup
+		IL_004a: ldc.i4.1
+		IL_004b: ldarg.2
+		IL_004c: ldstr "paths"
+		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
+		IL_005b: stelem.ref
+		IL_005c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0061: pop
+		IL_0062: ldarg.2
+		IL_0063: ldstr "paths"
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.Array::isArray(object)
+		IL_0072: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+		IL_0077: brfalse IL_0129
+
+		IL_007c: ldarg.2
+		IL_007d: ldstr "paths"
+		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_0087: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_008c: ldc.r8 0.0
+		IL_0095: bgt IL_009f
+
+		IL_009a: br IL_0129
+
+		IL_009f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a4: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_00a9: ldc.i4.2
+		IL_00aa: newarr [System.Runtime]System.Object
+		IL_00af: dup
+		IL_00b0: ldc.i4.0
+		IL_00b1: ldstr "first path type:"
+		IL_00b6: stelem.ref
+		IL_00b7: dup
+		IL_00b8: ldc.i4.1
+		IL_00b9: ldarg.2
+		IL_00ba: ldstr "paths"
+		IL_00bf: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_00c4: ldc.r8 0.0
+		IL_00cd: box [System.Runtime]System.Double
+		IL_00d2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00d7: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_00dc: stelem.ref
+		IL_00dd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00e2: pop
+		IL_00e3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e8: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_00ed: ldc.i4.2
+		IL_00ee: newarr [System.Runtime]System.Object
+		IL_00f3: dup
+		IL_00f4: ldc.i4.0
+		IL_00f5: ldstr "paths length > 0:"
+		IL_00fa: stelem.ref
+		IL_00fb: dup
+		IL_00fc: ldc.i4.1
+		IL_00fd: ldarg.2
+		IL_00fe: ldstr "paths"
+		IL_0103: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_0108: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_010d: ldc.r8 0.0
+		IL_0116: cgt
+		IL_0118: box [System.Runtime]System.Boolean
+		IL_011d: stelem.ref
+		IL_011e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0123: pop
+		IL_0124: br IL_016a
+
+		IL_0129: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_012e: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_0133: ldc.i4.2
+		IL_0134: newarr [System.Runtime]System.Object
+		IL_0139: dup
+		IL_013a: ldc.i4.0
+		IL_013b: ldstr "module.paths is empty array:"
+		IL_0140: stelem.ref
+		IL_0141: dup
+		IL_0142: ldc.i4.1
+		IL_0143: ldarg.2
+		IL_0144: ldstr "paths"
+		IL_0149: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
+		IL_014e: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_0153: ldc.r8 0.0
+		IL_015c: ceq
+		IL_015e: box [System.Runtime]System.Boolean
+		IL_0163: stelem.ref
+		IL_0164: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0169: pop
+
+		IL_016a: ret
+	} // end of method CommonJS_Module_Paths::Main
+
+} // end of class Scripts.CommonJS_Module_Paths
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x21e3
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.CommonJS_Module_Paths::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

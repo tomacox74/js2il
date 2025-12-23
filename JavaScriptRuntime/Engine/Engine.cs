@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using JavaScriptRuntime.CommonJS;
 using JavaScriptRuntime.DependencyInjection;
 using JavaScriptRuntime.EngineCore;
 
@@ -14,7 +15,7 @@ public class Engine
     /// </summary>
     internal readonly static ThreadLocal<ServiceContainer?> _serviceProviderOverride = new(() => null);
 
-    public void Execute([NotNull] CommonJS.ModuleMainDelegate scriptEntryPoint)
+    public void Execute([NotNull] ModuleMainDelegate scriptEntryPoint)
     {
         try 
         {
@@ -28,16 +29,15 @@ public class Engine
             serviceProvider.RegisterInstance<IMicrotaskScheduler>(ctx);
             serviceProvider.RegisterInstance<IScheduler>(ctx);
 
-            GlobalThis.ServiceProvider = serviceProvider;;
+            GlobalThis.ServiceProvider = serviceProvider;
 
             // use for lookup of dependencies
             serviceProvider.Resolve<LocalModulesAssembly>().ModulesAssembly = scriptEntryPoint.Method.Module.Assembly;
 
-            var moduleContext = CommonJS.ModuleContext.CreateModuleContext(serviceProvider);
-
-            // Invoke script with module parameters (all null for now)
-            // Parameters: exports, require, module, __filename, __dirname
-            scriptEntryPoint(moduleContext.Exports, moduleContext.require, null, moduleContext.__filename, moduleContext.__dirname);    
+            // Execute the script using the CommonJS module system
+            // Future: Add ESM support with a different executor
+            var moduleExecutor = new ModuleExecutor(serviceProvider);
+            moduleExecutor.Execute(scriptEntryPoint);
 
             while (ctx.HasPendingWork())
             {
