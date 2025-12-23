@@ -421,16 +421,21 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
-        /// Split using a regex pattern with optional ignoreCase and limit.
+        /// Split using a string separator with optional ignoreCase and limit.
+        /// Note: When called with a plain string (not a regex literal), the pattern
+        /// should be treated as a literal string, not a regex pattern.
         /// </summary>
         public static object Split(string input, string pattern, bool ignoreCase, object? limit)
         {
             input ??= string.Empty;
             int maxCount = ToSplitLimit(limit);
             if (maxCount == 0) return new JavaScriptRuntime.Array();
+            
+            // Escape the pattern to treat it as a literal string, not a regex
+            var escapedPattern = Regex.Escape(pattern);
             var options = RegexOptions.CultureInvariant;
             if (ignoreCase) options |= RegexOptions.IgnoreCase;
-            var rx = new Regex(pattern, options);
+            var rx = new Regex(escapedPattern, options);
             return SplitWithRegex(input, rx, maxCount);
         }
 

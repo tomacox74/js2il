@@ -4,6 +4,16 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+### Added
+- **CommonJS Module object**: Implemented Node.js-compatible `module` object per CommonJS specification (Fixes #164):
+  - `module.exports`: The authoritative export value, properly aliased with `exports` parameter initially
+  - `module.id`, `module.filename`, `module.path`: Module identity properties
+  - `module.loaded`: Boolean indicating module load completion
+  - `module.parent`, `module.children`: Parent-child relationship tracking across module dependencies
+  - `module.paths`: Array of node_modules search paths following Node.js algorithm
+  - `module.require()`: Bound require function on module object
+- **CommonJS module tests**: Added 16 execution + generator tests for module object features
+
 ### Fixed
 - **CommonJS require caching**: Local modules are now cached so shared dependencies execute only once per process (e.g., `b -> d` and `c -> d` only run `d` once). (Fixes #157, Fixes #123)
 - **CommonJS relative require resolution**: `require('./...')` and `require('../...')` inside a module now resolve relative to the requiring module.

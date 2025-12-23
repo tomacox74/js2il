@@ -62,5 +62,67 @@ namespace Js2IL.Tests.CommonJS
                     "CommonJS_Require_SharedDependency_ExecutedOnce/d"
                 });
         }
+
+        [Fact]
+        public Task CommonJS_Module_Exports_Object()
+        {
+            // Test that exports and module.exports are aliases to the same object
+            return ExecutionTest(nameof(CommonJS_Module_Exports_Object));
+        }
+
+        [Fact]
+        public Task CommonJS_Module_Exports_Reassign()
+        {
+            // Test that reassigning module.exports replaces the entire exports object
+            return ExecutionTest(nameof(CommonJS_Module_Exports_Reassign));
+        }
+
+        [Fact]
+        public Task CommonJS_Module_Exports_Function()
+        {
+            // Test assigning a function to module.exports
+            return ExecutionTest(nameof(CommonJS_Module_Exports_Function));
+        }
+
+        [Fact]
+        public Task CommonJS_Module_Identity()
+        {
+            // Test module.id, module.filename, and module.path properties
+            return ExecutionTest(nameof(CommonJS_Module_Identity));
+        }
+
+        [Fact]
+        public Task CommonJS_Module_Loaded()
+        {
+            // Test module.loaded property
+            return ExecutionTest(nameof(CommonJS_Module_Loaded));
+        }
+
+        [Fact]
+        public Task CommonJS_Module_Require()
+        {
+            // Test module.require() method
+            return ExecutionTest(nameof(CommonJS_Module_Require));
+        }
+
+        [Fact]
+        public Task CommonJS_Module_Paths()
+        {
+            // Test module.paths array
+            return ExecutionTest(nameof(CommonJS_Module_Paths));
+        }
+
+        [Fact]
+        public Task CommonJS_Module_ParentChildren()
+        {
+            // Test module.parent and module.children relationships
+            return ExecutionTest(
+                "CommonJS_Module_ParentChildren_Main",
+                additionalScripts: new[]
+                {
+                    "CommonJS_Module_ParentChildren_Child1",
+                    "CommonJS_Module_ParentChildren_Child2"
+                });
+        }
     }
 }
