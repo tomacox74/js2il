@@ -159,12 +159,14 @@ namespace Js2IL.Services.ILGenerators
                 }
                 
                 // Unbox based on JavaScript type (Number or Boolean)
-                if (jsType == JavascriptType.Number)
+                // For parameters with stable ClrType, use ClrType to determine unbox type
+                // since parameters always have jsType=Object but may have known runtime type
+                if (jsType == JavascriptType.Number || (variable.IsParameter && variable.IsStableType && variable.ClrType == typeof(double)))
                 {
                     il.OpCode(ILOpCode.Unbox_any);
                     il.Token(bclReferences.DoubleType);
                 }
-                else if (jsType == JavascriptType.Boolean)
+                else if (jsType == JavascriptType.Boolean || (variable.IsParameter && variable.IsStableType && variable.ClrType == typeof(bool)))
                 {
                     il.OpCode(ILOpCode.Unbox_any);
                     il.Token(bclReferences.BooleanType);
@@ -311,11 +313,22 @@ namespace Js2IL.Services.ILGenerators
             // Check if this is an uncaptured variable (uses local variable)
             if (variable.LocalSlot >= 0)
             {
-                // Determine if we need to box the value before storing.
+                // Determine if we need to box/unbox the value before storing.
                 // The local slot is typed as float64 only when IsStableType AND ClrType == double.
                 // Otherwise, it's typed as object and requires boxing.
                 bool localIsTypedAsDouble = variable.IsStableType && variable.ClrType == typeof(double);
-                if (!valueIsBoxed && !localIsTypedAsDouble)
+                
+                if (valueIsBoxed && localIsTypedAsDouble)
+                {
+                    // The value is boxed but the local is typed as float64 - unbox it
+                    if (bclReferences == null)
+                    {
+                        throw new ArgumentNullException(nameof(bclReferences), "BCL references are required for unboxing operations.");
+                    }
+                    il.OpCode(ILOpCode.Unbox_any);
+                    il.Token(bclReferences.DoubleType);
+                }
+                else if (!valueIsBoxed && !localIsTypedAsDouble)
                 {
                     // The value is an unboxed double that needs to be stored to an object-typed local
                     // We always need to box it, regardless of what the variable's inferred type is

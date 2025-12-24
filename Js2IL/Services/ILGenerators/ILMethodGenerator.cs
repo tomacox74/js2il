@@ -322,11 +322,12 @@ namespace Js2IL.Services.ILGenerators
 
                 // Evaluate initializer and leave value on stack
                 var prevAssignmentTarget2 = _currentAssignmentTarget;
+                ExpressionResult initResult;
                 try
                 {
                     _currentAssignmentTarget = variableName;
                     var boxResult = variable.ClrType != typeof(double);
-                    var initResult = this._expressionEmitter.Emit(variableAST.Init, new TypeCoercion() { boxResult = boxResult });
+                    initResult = this._expressionEmitter.Emit(variableAST.Init, new TypeCoercion() { boxResult = boxResult });
                     variable.Type = initResult.JsType;
                     if (!variable.IsStableType)
                     {
@@ -343,7 +344,9 @@ namespace Js2IL.Services.ILGenerators
                 // Store value into variable using helper
                 // For local variables: Stack is [value]
                 // For field variables: Stack is [scope instance, value]
-                _il.EmitStoreVariable(variable, _variables, scopeAlreadyLoaded: !isLocalVariable);
+                // Pass the actual boxed state from the expression result to handle boxing/unboxing for typed locals
+                _il.EmitStoreVariable(variable, _variables, scopeAlreadyLoaded: !isLocalVariable, 
+                    valueIsBoxed: initResult.IsBoxed, bclReferences: _bclReferences);
             }
         }
 

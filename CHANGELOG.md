@@ -4,7 +4,8 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+### Fixed
+- **IL generation for typed locals**: Fixed incorrect IL emission when storing boxed values (from `Operators.Add` and other runtime helpers) to strongly-typed float64 locals. Values are now properly unboxed with `unbox.any` before `stloc`. Also fixed `ExpressionResult.IsBoxed` tracking through binary expressions and identifier loads, ensuring correct boxing state propagates through expression emission. This resolves issues with arithmetic operations in loops and compound assignments producing incorrect results.
 
 ## v0.5.0 - 2025-12-24
 
