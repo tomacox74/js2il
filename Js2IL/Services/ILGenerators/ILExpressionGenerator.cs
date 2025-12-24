@@ -314,6 +314,7 @@ namespace Js2IL.Services.ILGenerators
 
             JavascriptType javascriptType = JavascriptType.Unknown;
             Type? clrType = null;
+            bool isBoxed = false; // Track actual boxing state from sub-expressions
 
             switch (expression)
             {
@@ -476,6 +477,7 @@ namespace Js2IL.Services.ILGenerators
                         var res = _binaryOperators.Generate(binaryExpression, typeCoercion, branching);
                         javascriptType = res.JsType;
                         clrType = res.ClrType;
+                        isBoxed = res.IsBoxed;
                     }
                     break;
                 case NumericLiteral:
@@ -563,6 +565,20 @@ namespace Js2IL.Services.ILGenerators
                                 inClassMethod: _owner.InClassMethod,
                                 currentClassName: _owner.CurrentClassName,
                                 classRegistry: _owner.ClassRegistry);
+                            
+                            // Track actual boxed state after loading
+                            // - If unbox was requested (!typeCoercion.boxResult) and variable can be unboxed, result is unboxed
+                            // - Stable-type double locals are already unboxed (native float64 on stack)
+                            // - Parameters are always boxed unless explicitly unboxed
+                            bool wasUnboxed = !typeCoercion.boxResult && 
+                                ((localVar.IsStableType && localVar.ClrType == typeof(double)) || localVar.IsParameter);
+                            bool stableDoubleLocal = localVar.IsStableType && localVar.ClrType == typeof(double) && localVar.LocalSlot >= 0;
+                            
+                            // For stable double locals: they're stored as float64, so always unboxed after ldloc
+                            // For parameters with unbox=true: unbox.any was emitted, so unboxed
+                            // For all other cases: value stays boxed (object type)
+                            isBoxed = !stableDoubleLocal && !wasUnboxed;
+                            
                             // Prevent downstream Emit() from boxing again; variables are already boxed when needed
                             typeCoercion.boxResult = false;
                             
@@ -670,12 +686,13 @@ namespace Js2IL.Services.ILGenerators
                 }
             }
 
-            if (typeCoercion.boxResult)
+            if (typeCoercion.boxResult && !isBoxed)
             {
                 EmitBoxIfNeeded(javascriptType);
+                isBoxed = true;
             }
 
-            return new ExpressionResult { JsType = javascriptType, ClrType = clrType, IsBoxed = typeCoercion.boxResult };
+            return new ExpressionResult { JsType = javascriptType, ClrType = clrType, IsBoxed = isBoxed };
         }
 
         // Emits a call expression (function or member call) with context and optional result discard.
@@ -1943,11 +1960,21 @@ namespace Js2IL.Services.ILGenerators
                     _ = Emit(assignmentExpression.Right, new TypeCoercion { boxResult = true });
                     _owner.CurrentAssignmentTarget = prevAssignment;
 
-                    // Apply JS '+' semantics
+                    // Apply JS '+' semantics - returns boxed object
                     _owner.Runtime.InvokeOperatorsAdd();
 
-                    // Store back
-                    ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false);
+                    // For typed double locals, unbox the result before storing
+                    bool isTypedDoubleLocal = variable.IsStableType && variable.ClrType == typeof(double) && variable.LocalSlot >= 0;
+                    if (isTypedDoubleLocal)
+                    {
+                        // Unbox the result from Operators.Add
+                        _il.OpCode(ILOpCode.Unbox_any);
+                        _il.Token(_owner.BclReferences.DoubleType);
+                    }
+
+                    // Store back - valueIsBoxed=false for typed locals (already unboxed), true for others
+                    ILEmitHelpers.EmitStoreVariable(_il, variable, _variables, scopeAlreadyLoaded: false, 
+                        valueIsBoxed: !isTypedDoubleLocal, bclReferences: _owner.BclReferences);
 
                     // Resulting type after '+=' is dynamic; assume object, but hint CLR string for string appends
                     variable.Type = JavascriptType.Object;
