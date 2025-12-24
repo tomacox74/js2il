@@ -114,10 +114,12 @@ Follow these steps IN ORDER:
    ```
 
 5. **After PR is merged**, create the release (this creates the tag and triggers GitHub Actions):
+   create a release-notes.md file with the release notes copied from changelog.md for the new version.
+
    ```powershell
    git checkout master
    git pull
-   gh release create v0.x.y --title "v0.x.y" --notes "See CHANGELOG.md for details" --target master
+   gh release create v0.x.y --title "v0.x.y" --notes-file release-notes.md --target master
    ```
 
 GitHub Actions (`.github/workflows/release.yml`) builds and publishes to NuGet when the release is created.
