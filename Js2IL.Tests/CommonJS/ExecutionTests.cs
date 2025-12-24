@@ -124,5 +124,50 @@ namespace Js2IL.Tests.CommonJS
                     "CommonJS_Module_ParentChildren_Child2"
                 });
         }
+
+        [Fact]
+        public Task CommonJS_Export_Function()
+        {
+            // Test importing and calling a function exported from another module
+            return ExecutionTest(
+                "CommonJS_Export_Function_Main",
+                additionalScripts: new[] { "CommonJS_Export_Function_Lib" });
+        }
+
+        [Fact]
+        public Task CommonJS_Export_ObjectWithFunctions()
+        {
+            // Test importing an object with function properties (issue #156 repro)
+            return ExecutionTest(
+                "CommonJS_Export_ObjectWithFunctions_Main",
+                additionalScripts: new[] { "CommonJS_Export_ObjectWithFunctions_Lib" });
+        }
+
+        [Fact]
+        public Task CommonJS_Export_Class()
+        {
+            // Test importing and instantiating a class from another module
+            return ExecutionTest(
+                "CommonJS_Export_Class_Main",
+                additionalScripts: new[] { "CommonJS_Export_Class_Lib" });
+        }
+
+        [Fact]
+        public Task CommonJS_Export_ClassWithConstructor()
+        {
+            // Test importing a class with constructor parameters from another module
+            return ExecutionTest(
+                "CommonJS_Export_ClassWithConstructor_Main",
+                additionalScripts: new[] { "CommonJS_Export_ClassWithConstructor_Lib" });
+        }
+
+        [Fact]
+        public Task CommonJS_Export_NestedObjects()
+        {
+            // Test importing nested literal objects with fields and methods
+            return ExecutionTest(
+                "CommonJS_Export_NestedObjects_Main",
+                additionalScripts: new[] { "CommonJS_Export_NestedObjects_Lib" });
+        }
     }
 }

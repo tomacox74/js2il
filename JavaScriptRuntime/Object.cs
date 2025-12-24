@@ -123,7 +123,23 @@ namespace JavaScriptRuntime
                 return chosen.Invoke(jsArray, invokeArgs);
             }
 
-            // 3) Fallback to reflection on receiver type
+            // 3) ExpandoObject (object literal): properties may contain function delegates
+            if (receiver is System.Dynamic.ExpandoObject exp)
+            {
+                var dict = (IDictionary<string, object?>)exp;
+                if (dict.TryGetValue(methodName, out var propValue) && propValue != null)
+                {
+                    // If the property value is a delegate, invoke it using Closure.InvokeWithArgs
+                    if (propValue is Delegate)
+                    {
+                        return Closure.InvokeWithArgs(propValue, System.Array.Empty<object>(), callArgs);
+                    }
+                    throw new NotSupportedException($"Property '{methodName}' on object is not callable (type: {propValue.GetType().FullName})");
+                }
+                throw new NotSupportedException($"Property not found on object: {methodName}");
+            }
+
+            // 4) Fallback to reflection on receiver type
             return CallInstanceMethod(receiver, methodName, callArgs);
         }
         public static object GetItem(object obj, object index)

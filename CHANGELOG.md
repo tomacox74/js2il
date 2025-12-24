@@ -17,6 +17,7 @@ All notable changes to this project are documented here.
 ### Fixed
 - **CommonJS require caching**: Local modules are now cached so shared dependencies execute only once per process (e.g., `b -> d` and `c -> d` only run `d` once). (Fixes #157, Fixes #123)
 - **CommonJS relative require resolution**: `require('./...')` and `require('../...')` inside a module now resolve relative to the requiring module.
+- **CommonJS cross-module function calls**: Calling exported functions from another module now works correctly. `Object.CallMember` handles `ExpandoObject` receivers by invoking delegate properties via `Closure.InvokeWithArgs`. (Fixes #156)
 - **Test harness path normalization**: CommonJS tests now support nested module paths by normalizing embedded resource names, expected DLL naming, and mock filesystem path casing/separators.
 - **Math operations alignment**: `Math.round()`, `Math.trunc()`, and `Math.imul()` now match Node.js behavior by removing custom `-0` handling that caused divergent outputs.
 
