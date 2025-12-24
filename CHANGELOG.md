@@ -4,7 +4,8 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+### Fixed
+- **IL generation for equality comparison with ToNumber**: Fixed `AccessViolationException` when comparing two object-type values (e.g., `knownPrimeCount == countedPrimes`). After calling `TypeUtilities.ToNumber()` which returns native float64, the code was incorrectly emitting `unbox.any` on the already-unboxed result. Added tracking flag to skip redundant unbox operations. This fixes PrimeJavaScript.js benchmark execution.
 
 ## v0.5.1 - 2025-12-24
 

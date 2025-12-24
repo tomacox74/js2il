@@ -391,6 +391,7 @@ namespace Js2IL.Services.ILGenerators
 
             var rightResult = _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion() { toString = binaryExpression.Left is StringLiteral });
             var rightType = rightResult.JsType;
+            bool rightAlreadyUnboxed = false; // Track if we called ToNumber (which returns native float64)
             // If equality compare and left resolved to number, make right numeric too when reasonable
             if (equality && leftType == JavascriptType.Number && rightType != JavascriptType.Number)
             {
@@ -412,10 +413,11 @@ namespace Js2IL.Services.ILGenerators
                     _il.OpCode(ILOpCode.Call);
                     _il.Token(toNum);
                     rightType = JavascriptType.Number;
+                    rightAlreadyUnboxed = true; // ToNumber returns native float64, no unboxing needed
                 }
             }
-            // For equality comparisons, unbox right operand if needed
-            if (equality && rightType == JavascriptType.Number && rightResult.IsBoxed)
+            // For equality comparisons, unbox right operand if needed (but not if ToNumber was already called)
+            if (equality && rightType == JavascriptType.Number && rightResult.IsBoxed && !rightAlreadyUnboxed)
             {
                 // Unbox when the right operand value is boxed
                 _il.OpCode(ILOpCode.Unbox_any);
@@ -517,9 +519,9 @@ namespace Js2IL.Services.ILGenerators
             }
             if (equality)
             {
-                if (rightType == JavascriptType.Number && rightResult.IsBoxed)
+                if (rightType == JavascriptType.Number && rightResult.IsBoxed && !rightAlreadyUnboxed)
                 {
-                    // Unbox when the right operand value is boxed
+                    // Unbox when the right operand value is boxed (but not if ToNumber was already called)
                     _il.OpCode(ILOpCode.Unbox_any);
                     _il.Token(_bclReferences.DoubleType);
                 }
