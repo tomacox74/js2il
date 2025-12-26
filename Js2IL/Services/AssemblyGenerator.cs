@@ -151,7 +151,11 @@ namespace Js2IL.Services
                 });
             var methodSig = this._metadataBuilder.GetOrAddBlob(sigBuilder);
 
-            var bodyOffset = mainGenerator.GenerateMethod(module.Ast);
+            if (!JsMethodCompiler.TryCompileMethod(module.Ast, module.SymbolTable!.Root!, out var bodyOffset))
+            {
+                bodyOffset = mainGenerator.GenerateMethod(module.Ast);
+            }
+
             var methodDefinitionHandle = programTypeBuilder.AddMethodDefinition(
                 MethodAttributes.Static | MethodAttributes.Public,
                 "Main",

@@ -58,6 +58,32 @@ public class Scope
     }
 
     /// <summary>
+    /// Finds a symbol by name in this scope and parent scopes
+    /// </summary>
+    /// <remarks>
+    /// This method throws if the symbol is not found.
+    /// </remarks>
+    public Symbol FindSymbol(string name)
+    {
+        if (this.Bindings.ContainsKey(name) == false)
+        {
+            if (Parent != null)
+            {
+                return Parent.FindSymbol(name);
+            }
+            
+            // parent is null and we have undeclard symbol
+            // this actually can occur.. for example "console" or "require"
+            var globalBinding = new BindingInfo(name, BindingKind.Global, AstNode);
+            Bindings[name] = globalBinding;
+            return new Symbol(globalBinding);
+        }
+        // TODO.. search parent scopes if not found here
+        var bindingInfo = Bindings[name];
+        return new Symbol(bindingInfo);
+    }
+
+    /// <summary>
     /// Gets the fully qualified scope name by walking up the parent chain.
     /// E.g., "Point/constructor" for a constructor in the Point class.
     /// For the global scope, returns its name directly.

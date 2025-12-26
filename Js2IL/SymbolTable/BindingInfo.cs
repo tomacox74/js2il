@@ -7,7 +7,8 @@ public enum BindingKind
     Var,
     Let,
     Const,
-    Function
+    Function,
+    Global
 }
 
 public class BindingInfo

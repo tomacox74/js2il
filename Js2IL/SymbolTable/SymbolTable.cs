@@ -1,8 +1,3 @@
-using Acornima.Ast;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace Js2IL.SymbolTables
 {
     /// <summary>
