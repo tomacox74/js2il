@@ -1,6 +1,7 @@
 using Acornima.Ast;
 using Js2IL.HIR;
 using Js2IL.SymbolTables;
+using Js2IL.IR;
 
 namespace Js2IL;
 
@@ -21,11 +22,11 @@ public class JsMethodCompiler
             return false;
         }
  
-        if (!HIRToLIRLowerer.TryLower(hirMethod!))
+        if (!HIRToLIRLowerer.TryLower(hirMethod!, out var lirMethod))
         {
             return false;
-        }
+        }        
 
-        return true;
+        return false;
     }
 }
