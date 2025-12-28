@@ -13,6 +13,10 @@ public sealed class HIRToLIRLowerer
 
     private Dictionary<string, LocalVariable> _variableMap = new Dictionary<string, LocalVariable>();
 
+    private Dictionary<TempVariable, ValueStorage> _tempVarTypes = new Dictionary<TempVariable, ValueStorage>();
+
+    private Dictionary<LocalVariable, ValueStorage> _localVarTypes = new Dictionary<LocalVariable, ValueStorage>();
+
 
     public static bool TryLower(HIRMethod hirMethod, out MethodBodyIR lirMethod)
     {
@@ -65,6 +69,10 @@ public sealed class HIRToLIRLowerer
                 var localVar = CreateLocalVariable(exprStmt.Name.Name);
                 lirInstructions.Add(new LIRStoreLocal(valueTempVar, localVar));
 
+                // make the type transitive from temp to local
+                var storage = GetTempStorage(valueTempVar);
+                _localVarTypes[localVar] = storage;
+
                 return true;
             case HIRExpressionStatement exprStmt:
                 {
@@ -93,7 +101,9 @@ public sealed class HIRToLIRLowerer
                 {
                     case JavascriptType.String:
                         _methodBodyIR.Instructions.Add(new LIRConstString((string)literal.Value!, resultTempVar));
+                        this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
                         return true;
+
                     case JavascriptType.Number:
                         double value = 0;
                         if (literal.Value != null)
@@ -102,7 +112,9 @@ public sealed class HIRToLIRLowerer
                         }
 
                         _methodBodyIR.Instructions.Add(new LIRConstNumber(value, resultTempVar));
+                        this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                         return true;
+
                     default:
                         // Unsupported literal type
                         return false;
@@ -126,10 +138,22 @@ public sealed class HIRToLIRLowerer
                 }
 
                 _methodBodyIR.Instructions.Add(new LIRAddNumber(leftTempVar, rightTempVar, resultTempVar));
+                this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                 return true;
 
             case HIRCallExpression callExpr:
                 return TryLowerCallExpression(callExpr, out resultTempVar);
+
+            case HIRVariableExpression varExpr:
+                if (!_variableMap.TryGetValue(varExpr.Name.Name, out var localVar))
+                {
+                    return false;
+                }
+
+                _methodBodyIR.Instructions.Add(new LIRLoadLocal(localVar, resultTempVar));
+                var storage = GetLocalStorage(localVar);
+                this.DefineTempStorage(resultTempVar, storage);
+                return true;
             // Handle different expression types here
             default:
                 // Unsupported expression type
@@ -161,6 +185,7 @@ public sealed class HIRToLIRLowerer
 
         var consoleTempVar = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRGetIntrinsicGlobal("console", consoleTempVar));
+        this.DefineTempStorage(consoleTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Console)));
 
         // console.log takes its arguments as a array of type object
         var arrayTempVar = CreateTempVariable();
@@ -173,7 +198,7 @@ public sealed class HIRToLIRLowerer
                 return false;
             }
 
-            // we need to convert to object here if needed
+            argTempVar = EnsureObject(argTempVar);
             
             // store argTempVar into arrayTempVar at index
             _methodBodyIR.Instructions.Add(new LIRStoreElementRef(arrayTempVar, index, argTempVar));
@@ -199,5 +224,59 @@ public sealed class HIRToLIRLowerer
         _methodBodyIR.Locals.Add(localVar);
         _variableMap[name] = localVar;
         return localVar;
+    }
+
+    /// <summary>
+    /// Uses temp type inforamtion to determine if the temp variable is compatiable with the object type.
+    /// </summary>
+    /// <param name="tempVar">tempVar that needs to be checkedfor compatilbity</param>
+    /// <returns>if not compatible, returns a converrted tempVar</returns>
+    private TempVariable EnsureObject(TempVariable tempVar)
+    {
+        if (!IsObjectCompatible(tempVar))
+        {
+            var objectTempVar = CreateTempVariable();
+            var storage = this.GetTempStorage(tempVar);
+            _methodBodyIR.Instructions.Add(new LIRConvertToObject(tempVar, objectTempVar));
+            this.DefineTempStorage(objectTempVar, new ValueStorage(ValueStorageKind.BoxedValue, storage.ClrType));
+            return objectTempVar;
+        }
+
+        // For now, we assume all types are objects
+        return tempVar;
+    }
+
+    private bool IsObjectCompatible(TempVariable tempVar)
+    {
+        var s = GetTempStorage(tempVar);
+        return s.Kind is ValueStorageKind.BoxedValue or ValueStorageKind.Reference;
+    }
+
+    private void DefineTempStorage(TempVariable tempVar, ValueStorage storage)
+    {
+        _tempVarTypes[tempVar] = storage;
+    }
+
+    private ValueStorage GetTempStorage(TempVariable tempVar)
+    {
+        if (_tempVarTypes.TryGetValue(tempVar, out var storage))
+        {
+            return storage;
+        }
+        return new ValueStorage(ValueStorageKind.Unknown);
+    }
+
+    private void DefineLocalStorage(LocalVariable localVar, ValueStorage storage)
+    {
+        _localVarTypes[localVar] = storage;
+    }
+
+    private ValueStorage GetLocalStorage(LocalVariable localVar)
+    {
+        if (_localVarTypes.TryGetValue(localVar, out var storage))
+        {
+            return storage;
+        }
+        return new ValueStorage(ValueStorageKind.Unknown);
     }
 }

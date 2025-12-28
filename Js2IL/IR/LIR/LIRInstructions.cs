@@ -1,9 +1,16 @@
 namespace Js2IL.IR;
 
-public abstract record LIRInstruction
+public enum ValueStorageKind
 {
-    
-} 
+    Unknown,
+    UnboxedValue,
+    BoxedValue,
+    Reference
+}
+
+public sealed record ValueStorage(ValueStorageKind Kind, Type? ClrType = null);
+
+public abstract record LIRInstruction;
 
 public readonly record struct TempVariable(int Index);
 
@@ -28,4 +35,7 @@ public record LIRNewObjectArray(int ElementCount, TempVariable Result) : LIRInst
 public record LIRStoreElementRef(TempVariable Array, int Index, TempVariable Value) : LIRInstruction;
 
 public record LIRCallIntrinsic(TempVariable IntrinsicObject, string Name, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
+
 public record LIRReturn(TempVariable ReturnValue) : LIRInstruction;
+
+public record LIRConvertToObject(TempVariable Source, TempVariable Result) : LIRInstruction;
