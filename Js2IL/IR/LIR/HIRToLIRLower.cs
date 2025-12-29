@@ -51,7 +51,7 @@ public sealed class HIRToLIRLowerer
         switch (statement)
         {
             case HIRVariableDeclaration exprStmt:
-                // we need to create instructions for the initializer expression
+                // Create instructions for the initializer expression
                 TempVariable valueTempVar;
                 if (exprStmt.Initializer != null)
                 {
@@ -62,7 +62,7 @@ public sealed class HIRToLIRLowerer
                 }
                 else
                 {
-                    // no initializer means 'undefined'
+                    // No initializer means 'undefined'
                     valueTempVar = CreateTempVariable();
                     lirInstructions.Add(new LIRConstUndefined(valueTempVar));
                 }
@@ -70,7 +70,7 @@ public sealed class HIRToLIRLowerer
                 var localVar = CreateLocalVariable(exprStmt.Name.Name);
                 lirInstructions.Add(new LIRStoreLocal(valueTempVar, localVar));
 
-                // make the type transitive from temp to local
+                // Make the type transitive from temp to local
                 var storage = GetTempStorage(valueTempVar);
                 _localVarTypes[localVar] = storage;
 
@@ -92,7 +92,7 @@ public sealed class HIRToLIRLowerer
 
     private bool TryLowerExpression(HIRExpression expression, out TempVariable resultTempVar)
     {
-        // all expressions produce a result
+        // All expressions produce a result
         resultTempVar = CreateTempVariable();
 
         switch (expression)
@@ -178,8 +178,8 @@ public sealed class HIRToLIRLowerer
             return false;
         }
 
-        // so basically at this time we are hardcoded to only support console.log
-        // this draft is proof of concept
+        // At this time we are hardcoded to only support console.log
+        // This is proof of concept code
         if (calleePropAccess.Object is not HIRVariableExpression calleeObject ||
             calleeObject.Name.Name != "console")
         {
@@ -210,7 +210,7 @@ public sealed class HIRToLIRLowerer
 
             argTempVar = EnsureObject(argTempVar);
             
-            // store argTempVar into arrayTempVar at index
+            // Store argTempVar into arrayTempVar at index
             _methodBodyIR.Instructions.Add(new LIRStoreElementRef(arrayTempVar, index, argTempVar));
         }
 
@@ -239,8 +239,8 @@ public sealed class HIRToLIRLowerer
     /// <summary>
     /// Uses temp type information to determine if the temp variable is compatible with the object type.
     /// </summary>
-    /// <param name="tempVar">tempVar that needs to be checked for compatibility</param>
-    /// <returns>if not compatible, returns a converted tempVar</returns>
+    /// <param name="tempVar">Temp variable that needs to be checked for compatibility</param>
+    /// <returns>If not compatible, returns a converted temp variable</returns>
     private TempVariable EnsureObject(TempVariable tempVar)
     {
         if (!IsObjectCompatible(tempVar))

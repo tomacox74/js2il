@@ -9,9 +9,9 @@ namespace Js2IL.HIR;
 public static class HIRBuilder
 {
     /// <summary>
-    /// Attempts to parse a method from the ast node.
-    /// Failure is not a error, just falls back to a older legacy IL emitter.
-    /// TODO: Expand to make this the a required path for IL emission.
+    /// Attempts to parse a method from the AST node.
+    /// Failure is not an error, just falls back to an older legacy IL emitter.
+    /// TODO: Expand to make this the required path for IL emission.
     /// </summary>
     /// <param name="node"></param>
     /// <param name="method"></param>
@@ -114,7 +114,7 @@ class HIRMethodBuilder
         switch (expr)
         {
             case BinaryExpression binaryExpr:
-                // Example handling for binary expressions
+                // Handle binary expressions
                 HIRExpression? leftExpr;
                 HIRExpression? rightExpr;
 
@@ -128,7 +128,7 @@ class HIRMethodBuilder
                 return true;
 
             case CallExpression callExpr:
-                // Example handling for call expressions
+                // Handle call expressions
                 HIRExpression? calleeExpr;
                 var argExprs = new List<HIRExpression>();
 
@@ -153,7 +153,7 @@ class HIRMethodBuilder
                 hirExpr = new HIRVariableExpression(symbol);
                 return true;
             case MemberExpression memberExpr:
-                // Example handling for member expressions
+                // Handle member expressions
                 HIRExpression? objectExpr;
                 if (!TryParseExpression(memberExpr.Object, out objectExpr))
                 {
