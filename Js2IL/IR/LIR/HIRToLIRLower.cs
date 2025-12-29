@@ -5,28 +5,29 @@ namespace Js2IL.IR;
 
 public sealed class HIRToLIRLowerer
 {
-    private MethodBodyIR _methodBodyIR = new MethodBodyIR();
+    private readonly MethodBodyIR _methodBodyIR = new MethodBodyIR();
 
     private int _tempVarCounter = 0;
 
     private int _localVarCounter = 0;
 
-    private Dictionary<string, LocalVariable> _variableMap = new Dictionary<string, LocalVariable>();
+    private readonly Dictionary<string, LocalVariable> _variableMap = new Dictionary<string, LocalVariable>();
 
-    private Dictionary<TempVariable, ValueStorage> _tempVarTypes = new Dictionary<TempVariable, ValueStorage>();
+    private readonly Dictionary<TempVariable, ValueStorage> _tempVarTypes = new Dictionary<TempVariable, ValueStorage>();
 
-    private Dictionary<LocalVariable, ValueStorage> _localVarTypes = new Dictionary<LocalVariable, ValueStorage>();
+    private readonly Dictionary<LocalVariable, ValueStorage> _localVarTypes = new Dictionary<LocalVariable, ValueStorage>();
 
-
-    public static bool TryLower(HIRMethod hirMethod, out MethodBodyIR lirMethod)
+    public static bool TryLower(HIRMethod hirMethod, out MethodBodyIR? lirMethod)
     {
+        lirMethod = null;
+
         var lowerer = new HIRToLIRLowerer();
         if (lowerer.TryLowerStatements(hirMethod.Body.Statements))
         {
             lirMethod = lowerer._methodBodyIR;
             return true;
         }
-        lirMethod = null;
+
         return false;
     } 
 
@@ -49,7 +50,7 @@ public sealed class HIRToLIRLowerer
 
         switch (statement)
         {
-            case HRIVariableDeclaration exprStmt:
+            case HIRVariableDeclaration exprStmt:
                 // we need to create instructions for the initializer expression
                 TempVariable valueTempVar;
                 if (exprStmt.Initializer != null)

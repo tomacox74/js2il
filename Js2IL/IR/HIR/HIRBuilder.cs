@@ -33,8 +33,8 @@ public static class HIRBuilder
 
 class HIRMethodBuilder
 {
-    Scope _scope;
-    List<HIRStatement> _statements = new();
+    readonly Scope _scope;
+    readonly List<HIRStatement> _statements = new();
 
     public HIRMethodBuilder(Scope scope)
     {
@@ -95,11 +95,11 @@ class HIRMethodBuilder
                     return false;
                 }
 
-                var hirVarDeclWithInit = new HRIVariableDeclaration(symbol, hirInitExpr);
+                var hirVarDeclWithInit = new HIRVariableDeclaration(symbol, hirInitExpr);
                 _statements.Add(hirVarDeclWithInit);
                 return true;
             }
-            var hirVarDecl = new HRIVariableDeclaration(symbol);
+            var hirVarDecl = new HIRVariableDeclaration(symbol);
             _statements.Add(hirVarDecl);
             return true;
         }

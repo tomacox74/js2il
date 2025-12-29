@@ -19,18 +19,16 @@ namespace Js2IL;
 internal sealed class JsMethodCompiler
 {
 
-    private MetadataBuilder _metadataBuilder;
-    private TypeReferenceRegistry _typeReferenceRegistry;
-    private BaseClassLibraryReferences _bclReferences;
-    private IServiceProvider _serviceProvider;
-    private MemberReferenceRegistry _memberRefRegistry;
+    private readonly MetadataBuilder _metadataBuilder;
+    private readonly TypeReferenceRegistry _typeReferenceRegistry;
+    private readonly BaseClassLibraryReferences _bclReferences;
+    private readonly MemberReferenceRegistry _memberRefRegistry;
 
-    public JsMethodCompiler(MetadataBuilder metadataBuilder, TypeReferenceRegistry typeReferenceRegistry, MemberReferenceRegistry memberReferenceRegistry, BaseClassLibraryReferences bclReferences, IServiceProvider serviceProvider)
+    public JsMethodCompiler(MetadataBuilder metadataBuilder, TypeReferenceRegistry typeReferenceRegistry, MemberReferenceRegistry memberReferenceRegistry, BaseClassLibraryReferences bclReferences)
     {
         _metadataBuilder = metadataBuilder;
         _typeReferenceRegistry = typeReferenceRegistry;
         _bclReferences = bclReferences;
-        _serviceProvider = serviceProvider;
         _memberRefRegistry = memberReferenceRegistry;
     }
 
@@ -114,7 +112,7 @@ internal sealed class JsMethodCompiler
             }
 
             // Define the Script main type via TypeBuilder
-            var programTypeDef = programTypeBuilder.AddTypeDefinition(
+             programTypeBuilder.AddTypeDefinition(
                 TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
                 _bclReferences.ObjectType);
 

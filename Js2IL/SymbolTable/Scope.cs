@@ -78,7 +78,7 @@ public class Scope
             Bindings[name] = globalBinding;
             return new Symbol(globalBinding);
         }
-        // TODO.. search parent scopes if not found here
+        
         var bindingInfo = Bindings[name];
         return new Symbol(bindingInfo);
     }

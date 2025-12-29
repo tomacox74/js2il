@@ -1,3 +1,5 @@
+namespace Js2IL.HIR;
+
 public sealed class HIRExpressionStatement : HIRStatement
 {
     public HIRExpressionStatement(HIRExpression expression)

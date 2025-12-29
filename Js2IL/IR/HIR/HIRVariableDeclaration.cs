@@ -2,9 +2,9 @@ using Js2IL.SymbolTables;
 
 namespace Js2IL.HIR;
 
-public sealed class HRIVariableDeclaration : HIRStatement
+public sealed class HIRVariableDeclaration : HIRStatement
 {
-    public HRIVariableDeclaration(Symbol name, HIRExpression? initializer = null)
+    public HIRVariableDeclaration(Symbol name, HIRExpression? initializer = null)
     {
         Name = name;
         Initializer = initializer;
