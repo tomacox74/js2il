@@ -52,7 +52,7 @@ namespace Js2IL.Services.ILGenerators
             var toNumberRef = _owner.Runtime.GetStaticMethodRef(
                 typeof(JavaScriptRuntime.TypeUtilities),
                 nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
-                typeof(double), typeof(object));
+                0, typeof(object));
             _il.OpCode(ILOpCode.Call);
             _il.Token(toNumberRef);
             
@@ -83,7 +83,7 @@ namespace Js2IL.Services.ILGenerators
             var toNumberRef = _owner.Runtime.GetStaticMethodRef(
                 typeof(JavaScriptRuntime.TypeUtilities),
                 nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
-                typeof(double), typeof(object));
+                0, typeof(object));
             _il.OpCode(ILOpCode.Call);
             _il.Token(toNumberRef);
             
@@ -130,7 +130,7 @@ namespace Js2IL.Services.ILGenerators
             var toNumberRef = _owner.Runtime.GetStaticMethodRef(
                 typeof(JavaScriptRuntime.TypeUtilities),
                 nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
-                typeof(double), typeof(object));
+                0, typeof(object));
             _il.OpCode(ILOpCode.Call);
             _il.Token(toNumberRef);
             _il.OpCode(ILOpCode.Conv_i4);
@@ -607,7 +607,7 @@ namespace Js2IL.Services.ILGenerators
                             {
                                 var getter = prop.GetMethod;
                                 var declType = getter.DeclaringType!;
-                                var mref = _runtime.GetStaticMethodRef(declType, getter.Name, getter.ReturnType);
+                                var mref = _runtime.GetStaticMethodRef(declType, getter.Name, 0);
                                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
                                 _il.Token(mref);
                                 // Determine JS type from the CLR property type so downstream coercion/boxing behaves correctly
@@ -633,7 +633,7 @@ namespace Js2IL.Services.ILGenerators
                                 var getGlobal = _runtime.GetStaticMethodRef(
                                     typeof(JavaScriptRuntime.GlobalThis),
                                     nameof(JavaScriptRuntime.GlobalThis.Get),
-                                    typeof(object),
+                                    0,
                                     typeof(string));
                                 _il.Ldstr(_metadataBuilder, name);
                                 _il.Call(getGlobal);
@@ -667,7 +667,7 @@ namespace Js2IL.Services.ILGenerators
                 else
                 {
                     // Coerce any non-boolean value using JS truthiness via TypeUtilities.ToBoolean(object)
-                    var toBool = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), typeof(bool), typeof(object));
+                    var toBool = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), 0, typeof(object));
                     // Current value is on stack in its native representation; ensure it's boxed for ToBoolean(object)
                     EmitBoxIfNeeded(javascriptType);
                     // else: objects/strings already boxed/reference types in our model
@@ -847,7 +847,7 @@ namespace Js2IL.Services.ILGenerators
                         var dynCall = _owner.Runtime.GetStaticMethodRef(
                             typeof(JavaScriptRuntime.Object),
                             nameof(JavaScriptRuntime.Object.CallMember),
-                            typeof(object),
+                            0,
                             typeof(object), typeof(string), typeof(object[]));
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
                         _il.Token(dynCall);
@@ -870,7 +870,7 @@ namespace Js2IL.Services.ILGenerators
                         {
                             // Load the global instance (stack: instance)
                             var getterDecl = gvProp.GetMethod.DeclaringType!;
-                            var getterRef = _runtime.GetStaticMethodRef(getterDecl, gvProp.GetMethod.Name, gvProp.PropertyType);
+                            var getterRef = _runtime.GetStaticMethodRef(getterDecl, gvProp.GetMethod.Name, 0);
                             _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
                             _il.Token(getterRef);
 
@@ -896,7 +896,7 @@ namespace Js2IL.Services.ILGenerators
                             var reflectedParamTypes = ps.Select(p => p.ParameterType).ToArray();
                             var reflectedReturnType = chosen.ReturnType;
 
-                            var mrefHandle = _runtime.GetInstanceMethodRef(rt, chosen.Name, reflectedReturnType, reflectedParamTypes);
+                            var mrefHandle = _runtime.GetInstanceMethodRef(rt, chosen.Name, 0, reflectedParamTypes);
 
                             // Cast the global instance receiver to its concrete return type before callvirt
                             _il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
@@ -997,7 +997,7 @@ namespace Js2IL.Services.ILGenerators
                         var expectsParamsArray = ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
                         var reflectedParamTypes = expectsParamsArray ? new[] { typeof(object[]) } : ps.Select(p => p.ParameterType).ToArray();
                         var reflectedReturnType = chosen.ReturnType;
-                        var mrefHandle = _owner.Runtime.GetInstanceMethodRef(rt, chosen.Name, reflectedReturnType, reflectedParamTypes);
+                        var mrefHandle = _owner.Runtime.GetInstanceMethodRef(rt, chosen.Name, 0, reflectedParamTypes);
 
                         // Ensure the receiver is the declaring CLR type before callvirt (verifier safety)
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
@@ -1019,7 +1019,7 @@ namespace Js2IL.Services.ILGenerators
                 var callMember = _owner.Runtime.GetStaticMethodRef(
                     typeof(JavaScriptRuntime.Object),
                     nameof(JavaScriptRuntime.Object.CallMember),
-                    typeof(object),
+                    0,
                     typeof(object), typeof(string), typeof(object[]));
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
                 _il.Token(callMember);
@@ -1139,7 +1139,7 @@ namespace Js2IL.Services.ILGenerators
             var paramTypes = ps.Select(p => p.ParameterType).ToArray();
             var retType = chosen.ReturnType;
 
-            var mref = _runtime.GetStaticMethodRef(type, chosen.Name, retType, paramTypes);
+            var mref = _runtime.GetStaticMethodRef(type, chosen.Name, 0, paramTypes);
 
             if (expectsParamsArray)
             {
@@ -1381,7 +1381,7 @@ namespace Js2IL.Services.ILGenerators
             }
 
             // Emit the call
-            var mref = _runtime.GetStaticMethodRef(stringType, chosen.Name, chosen.ReturnType, chosenParams.Select(p => p.ParameterType).ToArray());
+            var mref = _runtime.GetStaticMethodRef(stringType, chosen.Name, 0, chosenParams.Select(p => p.ParameterType).ToArray());
             _il.Call(mref);
 
             // Return CLR type for downstream typing
@@ -1454,7 +1454,7 @@ namespace Js2IL.Services.ILGenerators
             var reflectedParamTypes = psChosen.Select(p => p.ParameterType).ToArray();
             var reflectedReturnType = chosen.ReturnType;
 
-            var mrefHandle = _runtime.GetInstanceMethodRef(rt, chosen.Name, reflectedReturnType, reflectedParamTypes);
+            var mrefHandle = _runtime.GetInstanceMethodRef(rt, chosen.Name, 0, reflectedParamTypes);
 
             // Cast receiver (currently object from ldfld) to the declaring CLR type for verifier safety
             _il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
@@ -1499,7 +1499,7 @@ namespace Js2IL.Services.ILGenerators
             var reflectedParamTypes = psChosen.Select(p => p.ParameterType).ToArray();
             var reflectedReturnType = chosen.ReturnType;
 
-            var mrefHandle = _runtime.GetInstanceMethodRef(rt, chosen.Name, reflectedReturnType, reflectedParamTypes);
+            var mrefHandle = _runtime.GetInstanceMethodRef(rt, chosen.Name, 0, reflectedParamTypes);
 
             // Cast receiver on stack to concrete CLR type before callvirt
             _il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
@@ -2046,7 +2046,7 @@ namespace Js2IL.Services.ILGenerators
                         var toNumberRef = _owner.Runtime.GetStaticMethodRef(
                             typeof(JavaScriptRuntime.TypeUtilities),
                             nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
-                            typeof(double), typeof(object));
+                            0, typeof(object));
                         _il.OpCode(ILOpCode.Call);
                         _il.Token(toNumberRef);
                     }
@@ -2223,7 +2223,7 @@ namespace Js2IL.Services.ILGenerators
                         // Get current value: instance.get_Item(index)
                         _il.LoadLocal(instLocal);
                         _il.LoadLocal(idxLocal); // index as object (boxed)
-                        var getItemRef = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Int32Array), "get_Item", typeof(object), typeof(object));
+                        var getItemRef = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Int32Array), "get_Item", 0, typeof(object));
                         _il.OpCode(ILOpCode.Callvirt); _il.Token(getItemRef);
                         // Result is boxed double, convert to int32 for bitwise op
                         _il.OpCode(ILOpCode.Unbox_any); _il.Token(_owner.BclReferences.DoubleType);
@@ -2244,7 +2244,7 @@ namespace Js2IL.Services.ILGenerators
                         _il.LoadLocal(instLocal);
                         _il.LoadLocal(idxLocal); // index as object (boxed)
                         _il.LoadLocal(valLocal); // value as object (boxed)
-                        var setItemRef = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Int32Array), "set_Item", typeof(void), typeof(object), typeof(object));
+                        var setItemRef = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Int32Array), "set_Item", 0, typeof(object), typeof(object));
                         _il.OpCode(ILOpCode.Callvirt); _il.Token(setItemRef);
                         return JavascriptType.Number;
                     }
@@ -2259,7 +2259,7 @@ namespace Js2IL.Services.ILGenerators
                     _il.LoadLocal(instLocal);                           // instance
                     _il.LoadLocal(idxLocal); // index as object (boxed)
                     _il.LoadLocal(valLocal2); // value as object (boxed)
-                    var setItemRef2 = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Int32Array), "set_Item", typeof(void), typeof(object), typeof(object));
+                    var setItemRef2 = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Int32Array), "set_Item", 0, typeof(object), typeof(object));
                     _il.OpCode(ILOpCode.Callvirt); _il.Token(setItemRef2);
                     // Do not leave the assigned value on the stack here; expression statement
                     // cleanup did not recognize this specialized fast-path and caused a residual
@@ -2290,7 +2290,7 @@ namespace Js2IL.Services.ILGenerators
                     var getItemRef = _owner.Runtime.GetStaticMethodRef(
                         typeof(JavaScriptRuntime.Object),
                         nameof(JavaScriptRuntime.Object.GetItem),
-                        typeof(object),
+                        0,
                         typeof(object),
                         typeof(object));
                     _il.OpCode(ILOpCode.Call);
@@ -2299,7 +2299,7 @@ namespace Js2IL.Services.ILGenerators
                     var coerceToInt32Ref = _owner.Runtime.GetStaticMethodRef(
                         typeof(JavaScriptRuntime.Object),
                         nameof(JavaScriptRuntime.Object.CoerceToInt32),
-                        typeof(int),
+                        0,
                         typeof(object));
                     _il.OpCode(ILOpCode.Call);
                     _il.Token(coerceToInt32Ref);
@@ -2310,7 +2310,7 @@ namespace Js2IL.Services.ILGenerators
                     var coerceRhsRef = _owner.Runtime.GetStaticMethodRef(
                         typeof(JavaScriptRuntime.Object),
                         nameof(JavaScriptRuntime.Object.CoerceToInt32),
-                        typeof(int),
+                        0,
                         typeof(object));
                     _il.OpCode(ILOpCode.Call);
                     _il.Token(coerceRhsRef);
@@ -2330,7 +2330,7 @@ namespace Js2IL.Services.ILGenerators
                     var assignItemRef = _owner.Runtime.GetStaticMethodRef(
                         typeof(JavaScriptRuntime.Object),
                         nameof(JavaScriptRuntime.Object.AssignItem),
-                        typeof(object),
+                        0,
                         typeof(object),
                         typeof(object),
                         typeof(object));
@@ -2349,7 +2349,7 @@ namespace Js2IL.Services.ILGenerators
                 var assignItemRef2 = _owner.Runtime.GetStaticMethodRef(
                     typeof(JavaScriptRuntime.Object),
                     nameof(JavaScriptRuntime.Object.AssignItem),
-                    typeof(object), // return type
+                    0, // unused parameter
                     typeof(object), // receiver
                     typeof(object), // index
                     typeof(object)); // value
@@ -2369,7 +2369,7 @@ namespace Js2IL.Services.ILGenerators
             var rhsType = Emit(assignmentExpression.Right, new TypeCoercion() { boxResult = false }).JsType;
             // Ensure numeric argument is a double (Conv_r8 handles ints/booleans to number)
             _il.OpCode(System.Reflection.Metadata.ILOpCode.Conv_r8);
-            var setExit = _runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Node.Process), "set_exitCode", typeof(void), typeof(double));
+            var setExit = _runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Node.Process), "set_exitCode", 0, typeof(double));
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
                     _il.Token(setExit);
                     return JavascriptType.Number;
@@ -2384,7 +2384,7 @@ namespace Js2IL.Services.ILGenerators
                 // Push property name and RHS (boxed) and call setter helper
                 _il.Ldstr(_owner.MetadataBuilder, pid2.Name);
                 _ = Emit(assignmentExpression.Right, new TypeCoercion() { boxResult = true });
-                var setPropRef = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.SetProperty), typeof(object), typeof(object), typeof(string), typeof(object));
+                var setPropRef = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.SetProperty), 0, typeof(object), typeof(string), typeof(object));
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
                 _il.Token(setPropRef);
                 // Drop the returned assigned value in statement contexts
@@ -2593,7 +2593,7 @@ namespace Js2IL.Services.ILGenerators
                     else
                     {
                         // General truthiness for objects: ToBoolean(object) then branch
-                        var toBoolRef = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), typeof(bool), typeof(object));
+                        var toBoolRef = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), 0, typeof(object));
                         // Ensure object on stack
                         EmitBoxIfNeeded(argType);
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
@@ -2634,7 +2634,7 @@ namespace Js2IL.Services.ILGenerators
                     else
                     {
                         // General truthiness via ToBoolean(object), then invert
-                        var toBoolRef = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), typeof(bool), typeof(object));
+                        var toBoolRef = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), 0, typeof(object));
                         EmitBoxIfNeeded(argType);
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
                         _il.Token(toBoolRef);
@@ -2649,7 +2649,7 @@ namespace Js2IL.Services.ILGenerators
             {
                 // Emit typeof: evaluate argument (boxed), then call JavaScriptRuntime.TypeUtilities.Typeof(object)
                 var _ = Emit(unaryExpression.Argument, new TypeCoercion() { boxResult = true });
-                var mref = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.Typeof), typeof(string), typeof(object));
+                var mref = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.Typeof), 0, typeof(object));
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
                 _il.Token(mref);
                 return JavascriptType.Object; // string
@@ -2683,7 +2683,7 @@ namespace Js2IL.Services.ILGenerators
                 if (argJsType != JavascriptType.Number)
                 {
                     EmitBoxIfNeeded(argJsType);
-                    var toNumRef = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToNumber), typeof(double), typeof(object));
+                    var toNumRef = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToNumber), 0, typeof(object));
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
                     _il.Token(toNumRef);
                 }
@@ -2705,7 +2705,7 @@ namespace Js2IL.Services.ILGenerators
                 if (argJsType != JavascriptType.Number)
                 {
                     EmitBoxIfNeeded(argJsType);
-                    var toNumRef = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToNumber), typeof(double), typeof(object));
+                    var toNumRef = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToNumber), 0, typeof(object));
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
                     _il.Token(toNumRef);
                 }
@@ -2918,7 +2918,7 @@ namespace Js2IL.Services.ILGenerators
                 if (propId.Name == "length")
                 {
                     // Generic length: arrays, strings, and collections
-                    var getLen = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetLength), typeof(double), typeof(object));
+                    var getLen = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetLength), 0, typeof(object));
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
                     _il.Token(getLen);
                     return new ExpressionResult { JsType = JavascriptType.Number, ClrType = typeof(double) };
@@ -2936,7 +2936,7 @@ namespace Js2IL.Services.ILGenerators
                         // Cast receiver to the declaring CLR type before invoking the getter
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Castclass);
                         _il.Token(_owner.Runtime.GetRuntimeTypeHandle(baseClr));
-                        var getterRef = _owner.Runtime.GetInstanceMethodRef(baseClr, pi.GetMethod.Name, pi.PropertyType);
+                        var getterRef = _owner.Runtime.GetInstanceMethodRef(baseClr, pi.GetMethod.Name, 0);
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
                         _il.Token(getterRef);
                         return new ExpressionResult { JsType = JavascriptType.Object, ClrType = pi.PropertyType };
@@ -2960,7 +2960,7 @@ namespace Js2IL.Services.ILGenerators
                 }
 
                 // Fallback: dynamic property lookup on runtime object graphs (e.g., ExpandoObject from JSON.parse)
-                var getProp = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), typeof(object), typeof(object), typeof(string));
+                var getProp = _owner.Runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), 0, typeof(object), typeof(string));
                 _il.Ldstr(_metadataBuilder, propId.Name);
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
                 _il.Token(getProp);
@@ -3060,7 +3060,7 @@ namespace Js2IL.Services.ILGenerators
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup);
                     _ = Emit(spread.Argument!, new TypeCoercion() { boxResult = true });
                     _il.OpCode(System.Reflection.Metadata.ILOpCode.Callvirt);
-                    var pushRange = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Array), nameof(JavaScriptRuntime.Array.PushRange), typeof(void), typeof(object));
+                    var pushRange = _owner.Runtime.GetInstanceMethodRef(typeof(JavaScriptRuntime.Array), nameof(JavaScriptRuntime.Array.PushRange), 0, typeof(object));
                     _il.Token(pushRange);
                 }
                 else
@@ -3357,7 +3357,7 @@ namespace Js2IL.Services.ILGenerators
             var reflectedParamTypes = psChosen.Select(p => p.ParameterType).ToArray();
             var reflectedReturnType = chosen.ReturnType;
 
-            var mrefHandle = _runtime.GetInstanceMethodRef(arrayType, chosen.Name, reflectedReturnType, reflectedParamTypes);
+            var mrefHandle = _runtime.GetInstanceMethodRef(arrayType, chosen.Name, 0, reflectedParamTypes);
 
             if (expectsParamsArray) EmitBoxedArgsArray(callExpression.Arguments);
             else EmitBoxedArgsInline(callExpression.Arguments);

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Acornima.Ast;
+﻿using Acornima.Ast;
 using System.Reflection.Metadata.Ecma335;
 
 namespace Js2IL.Services.ILGenerators

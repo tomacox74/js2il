@@ -229,7 +229,7 @@ namespace Js2IL.Services.ILGenerators
                                 var clrProp = rtType.GetProperty(propName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.IgnoreCase);
                                 if (clrProp?.GetMethod != null)
                                 {
-                                    var mref = _runtime.GetInstanceMethodRef(rtType, clrProp.GetMethod.Name, clrProp.PropertyType);
+                                    var mref = _runtime.GetInstanceMethodRef(rtType, clrProp.GetMethod.Name, 0);
                                     _il.OpCode(ILOpCode.Callvirt);
                                     _il.Token(mref);
                                     // Record the runtime intrinsic CLR type for the target variable so downstream member calls can bind directly
@@ -247,7 +247,7 @@ namespace Js2IL.Services.ILGenerators
                             // Fallback to runtime Object.GetProperty(temp, name)
                             var propName = (prop.Key as Acornima.Ast.Identifier)?.Name ?? (prop.Key as Acornima.Ast.Literal)?.Value?.ToString() ?? string.Empty;
                             _il.Ldstr(_metadataBuilder, propName);
-                            var getPropRef = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), typeof(object), typeof(object), typeof(string));
+                            var getPropRef = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), 0, typeof(object), typeof(string));
                             _il.OpCode(ILOpCode.Call);
                             _il.Token(getPropRef);
                         }

@@ -137,6 +137,13 @@ public sealed class HIRToLIRLowerer
                     return false;
                 }
 
+                if (GetTempStorage(leftTempVar).ClrType != typeof(double) ||
+                    GetTempStorage(rightTempVar).ClrType != typeof(double))
+                {
+                    // For now, only support number addition
+                    return false;
+                }
+
                 _methodBodyIR.Instructions.Add(new LIRAddNumber(leftTempVar, rightTempVar, resultTempVar));
                 this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                 return true;

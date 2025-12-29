@@ -222,7 +222,7 @@ namespace Js2IL.Services
             var engineExecuteRef = entryPointGenerator.Runtime.GetInstanceMethodRef(
                 typeof(JavaScriptRuntime.Engine),
                 "Execute",
-                typeof(void),
+                0,
                 typeof(JavaScriptRuntime.CommonJS.ModuleMainDelegate));
             ilEncoder.Token(engineExecuteRef);
 

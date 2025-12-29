@@ -16,20 +16,22 @@ namespace Js2IL;
 /// <remarks>
 /// AST -> HIR -> LIR -> IL
 /// </remarks>
-public sealed class JsMethodCompiler
+internal sealed class JsMethodCompiler
 {
 
     private MetadataBuilder _metadataBuilder;
     private TypeReferenceRegistry _typeReferenceRegistry;
     private BaseClassLibraryReferences _bclReferences;
     private IServiceProvider _serviceProvider;
+    private MemberReferenceRegistry _memberRefRegistry;
 
-    public JsMethodCompiler(MetadataBuilder metadataBuilder, TypeReferenceRegistry typeReferenceRegistry, BaseClassLibraryReferences bclReferences, IServiceProvider serviceProvider)
+    public JsMethodCompiler(MetadataBuilder metadataBuilder, TypeReferenceRegistry typeReferenceRegistry, MemberReferenceRegistry memberReferenceRegistry, BaseClassLibraryReferences bclReferences, IServiceProvider serviceProvider)
     {
         _metadataBuilder = metadataBuilder;
         _typeReferenceRegistry = typeReferenceRegistry;
         _bclReferences = bclReferences;
         _serviceProvider = serviceProvider;
+        _memberRefRegistry = memberReferenceRegistry;
     }
 
     public MethodDefinitionHandle TryCompileMethod(string moduleName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
@@ -138,11 +140,17 @@ public sealed class JsMethodCompiler
 
         var LocalVariablesSignature = CreateLocalVariablesSignature(methodBody);
 
+        var bodyAttributes = MethodBodyAttributes.None;
+        if (methodBody.Locals.Count > 0)
+        {
+            bodyAttributes |= MethodBodyAttributes.InitLocals;
+        }
+
         bodyOffset = methodBodyStreamEncoder.AddMethodBody(
                 ilEncoder,
                 maxStack: 32,
                 localVariablesSignature: LocalVariablesSignature,
-                attributes: MethodBodyAttributes.InitLocals);
+                attributes: bodyAttributes);
 
         return true;
     }
@@ -157,7 +165,9 @@ public sealed class JsMethodCompiler
             case LIRBeginInitArrayElement beginInitArrayElement:
                 // set the table to store a array element reference
                 ilEncoder.OpCode(ILOpCode.Dup);
-                ilEncoder.LoadLocal(beginInitArrayElement.Index);
+
+                // set the index to store at
+                ilEncoder.LoadConstantI4(beginInitArrayElement.Index);
                 break;
             case LIRConstNumber constNumber:
                 ilEncoder.LoadConstantR8(constNumber.Value);
@@ -168,9 +178,11 @@ public sealed class JsMethodCompiler
             case LIRConstUndefined:
                 ilEncoder.OpCode(ILOpCode.Ldnull);
                 break;
-            case LIRGetIntrinsicGlobal:
+            case LIRGetIntrinsicGlobal getIntrinsicGlobal:
+                EmitLoadIntrinsicGlobalVariable(getIntrinsicGlobal.Name, ilEncoder);
                 break;
             case LIRCallIntrinsic callIntrinsic:
+                EmitInvokeInstrinsicMethod(typeof(JavaScriptRuntime.Console), callIntrinsic.Name, ilEncoder);
                 break;
             case LIRConvertToObject convertToObject:
                 // temporary hardcode to double
@@ -200,6 +212,11 @@ public sealed class JsMethodCompiler
 
     private StandaloneSignatureHandle CreateLocalVariablesSignature(MethodBodyIR methodBody)
     {
+        if (methodBody.Locals.Count == 0)
+        {
+            return default;
+        }
+
         var localSig = new BlobBuilder();
         var localEncoder = new BlobEncoder(localSig).LocalVariableSignature(methodBody.Locals.Count);
 
@@ -210,5 +227,30 @@ public sealed class JsMethodCompiler
 
         var signature = _metadataBuilder.AddStandaloneSignature(_metadataBuilder.GetOrAddBlob(localSig));
         return signature;
+    }
+
+    /// <summary>
+    /// Loads a value onto the the stack for a given intrinsic global variable.
+    /// </summary>
+    /// <param name="variableName">The name of the intrinsic global variable.. i.e. 'console'</param>
+    /// <remarks>
+    /// When GlobalThis is changed to be instance-based rather than static-based, this method will need to be updated
+    /// </remarks>
+    public void EmitLoadIntrinsicGlobalVariable(string variableName, InstructionEncoder ilEncoder)
+    {
+        var gvType = typeof(JavaScriptRuntime.GlobalThis);
+        var gvProp = gvType.GetProperty(variableName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.IgnoreCase);
+        var getterDecl = gvProp?.GetMethod?.DeclaringType!;
+        var getterMref = _memberRefRegistry.GetOrAddMethod(getterDecl!, gvProp!.GetMethod!.Name);
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(getterMref);
+    }
+
+    public void EmitInvokeInstrinsicMethod(Type declaringType, string methodName, InstructionEncoder ilEncoder)
+    {
+        var methodMref = _memberRefRegistry.GetOrAddMethod(declaringType, methodName);
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodMref);
+        ilEncoder.OpCode(ILOpCode.Pop);
     }
 }
