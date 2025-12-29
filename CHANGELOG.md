@@ -4,7 +4,27 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+### Added
+- **Experimental IR Compilation Pipeline**: Introduced multi-tier intermediate representation (IR) for JavaScript to IL compilation:
+  - **HIR (High-level IR)**: AST-level representation with typed nodes (`HIRMethod`, `HIRBlock`, `HIRStatement`, `HIRExpression`) preserving JavaScript semantics
+  - **LIR (Low-level IR)**: Stack-machine IR closely mapping to IL instructions (`LIRInstruction` with opcodes like `LIRAddNumber`, `LIRNewObjectArray`, `LIRStoreElementRef`)
+  - **Three-phase pipeline**: AST → HIR (`HIRBuilder`) → LIR (`HIRToLIRLowerer`) → IL (`JsMethodCompiler`)
+  - **Fallback mechanism**: Methods that fail IR compilation fall back to legacy direct AST-to-IL generator
+  - Currently supports basic scenarios: variable declarations, binary expressions, console.log calls with numeric literals and arithmetic
+  - Foundation for future optimizations: dead code elimination, constant folding, type propagation, and register allocation
+
+### Changed
+- **Assembly generation architecture**: `AssemblyGenerator` now attempts IR-based compilation first via `JsMethodCompiler.TryCompileMethod()` before falling back to legacy `MainGenerator` path
+- **Dependency injection**: Added `JsMethodCompiler` as transient service in `CompilerServices`
+
+### Internal
+- New directory structure: `Js2IL/IR/` with `HIR/` and `LIR/` subdirectories
+- `MethodBodyIR` class encapsulates method body with instructions and local variables
+- `HIRBuilder` converts AST nodes to HIR representation
+- `HIRToLIRLowerer` performs SSA-style lowering with temporary variables
+- `JsMethodCompiler` orchestrates the full pipeline and emits final IL
+
+_Note: This is experimental infrastructure. Full feature parity with the legacy generator is planned for future releases._
 
 ## v0.5.2 - 2025-12-24
 
