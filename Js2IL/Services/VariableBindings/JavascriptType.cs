@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Js2IL.Services
 {
-    internal enum JavascriptType
+    public enum JavascriptType
     {
         /**
          * Represents an unknown type, typically used for variables that whose type cannot be determined at compile time.  
@@ -30,6 +30,8 @@ namespace Js2IL.Services
          */
         Null,
 
-        Function
+        Function,
+
+        String
     }
 }

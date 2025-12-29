@@ -9,7 +9,7 @@ namespace Js2IL.Utilities.Ecma335
     /// Registry for type references in a MetadataBuilder.
     /// Caches TypeReferenceHandle instances to avoid duplicate type references.
     /// </summary>
-    internal sealed class TypeReferenceRegistry
+    public sealed class TypeReferenceRegistry
     {
         private readonly MetadataBuilder _metadataBuilder;
         private readonly AssemblyReferenceRegistry _assemblyRefRegistry;

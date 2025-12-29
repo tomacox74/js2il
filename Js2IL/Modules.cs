@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Js2IL;
 
-public class ModuleDefinition
+public sealed class ModuleDefinition
 {
     // Module definition details would go here
     public required Acornima.Ast.Program Ast { get; set; }
@@ -17,7 +17,7 @@ public class ModuleDefinition
     public SymbolTable? SymbolTable { get; set; }
 }
 
-public class Modules
+public sealed class Modules
 {
     public required ModuleDefinition rootModule;
 

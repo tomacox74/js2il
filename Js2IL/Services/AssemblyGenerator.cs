@@ -112,7 +112,16 @@ namespace Js2IL.Services
 
         private MethodDefinitionHandle GenerateModule(ModuleDefinition module, MethodBodyStreamEncoder methodBodyStream, string moduleName)
         {
+            var methodCompiler = _serviceProvider.GetRequiredService<JsMethodCompiler>();
+            // new path which does proper IR/SSA lowering and IL generation
+            var methodDefinitionHandle = methodCompiler.TryCompileMethod(module.Name, module.Ast, module.SymbolTable!.Root!, methodBodyStream);
+            if (!methodDefinitionHandle.IsNil)
+            {
+                return methodDefinitionHandle;
+            }
 
+            // fallback to the old path.. eventually we will delete this code
+            
             // Get parameter info from shared ModuleParameters
             var paramCount = JavaScriptRuntime.CommonJS.ModuleParameters.Count;
             var parameterNames = JavaScriptRuntime.CommonJS.ModuleParameters.ParameterNames;
@@ -150,9 +159,9 @@ namespace Js2IL.Services
                     }
                 });
             var methodSig = this._metadataBuilder.GetOrAddBlob(sigBuilder);
-
             var bodyOffset = mainGenerator.GenerateMethod(module.Ast);
-            var methodDefinitionHandle = programTypeBuilder.AddMethodDefinition(
+
+            methodDefinitionHandle = programTypeBuilder.AddMethodDefinition(
                 MethodAttributes.Static | MethodAttributes.Public,
                 "Main",
                 methodSig,
@@ -213,7 +222,7 @@ namespace Js2IL.Services
             var engineExecuteRef = entryPointGenerator.Runtime.GetInstanceMethodRef(
                 typeof(JavaScriptRuntime.Engine),
                 "Execute",
-                typeof(void),
+                0,
                 typeof(JavaScriptRuntime.CommonJS.ModuleMainDelegate));
             ilEncoder.Token(engineExecuteRef);
 

@@ -185,7 +185,7 @@ namespace Js2IL.Services.ILGenerators
                                     // Get property value into temp
                                     il.LoadArgument(jsParamSeq);
                                     il.Ldstr(metadataBuilder, propName);
-                                    var getPropRef = runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), typeof(object), typeof(object), typeof(string));
+                                    var getPropRef = runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), 0, typeof(object), typeof(string));
                                     il.OpCode(System.Reflection.Metadata.ILOpCode.Call); il.Token(getPropRef);
                                     il.StoreLocal(tempLocal);
                                     
@@ -246,7 +246,7 @@ namespace Js2IL.Services.ILGenerators
                                     int tempLocal = variables.AllocateBlockScopeLocal($"DestructTemp_{propName}_L{p.Location.Start.Line}");
                                     il.LoadArgument(jsParamSeq);
                                     il.Ldstr(metadataBuilder, propName);
-                                    var getPropRef = runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), typeof(object), typeof(object), typeof(string));
+                                    var getPropRef = runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), 0, typeof(object), typeof(string));
                                     il.OpCode(System.Reflection.Metadata.ILOpCode.Call); 
                                     il.Token(getPropRef);
                                     il.StoreLocal(tempLocal);
@@ -278,7 +278,7 @@ namespace Js2IL.Services.ILGenerators
                                     il.LoadLocal(localScope.Address);
                                     il.LoadArgument(jsParamSeq);
                                     il.Ldstr(metadataBuilder, propName);
-                                    var getPropRef = runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), typeof(object), typeof(object), typeof(string));
+                                    var getPropRef = runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), 0, typeof(object), typeof(string));
                                     il.OpCode(System.Reflection.Metadata.ILOpCode.Call); 
                                     il.Token(getPropRef);
                                     il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld); 

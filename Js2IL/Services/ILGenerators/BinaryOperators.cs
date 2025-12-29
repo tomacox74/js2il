@@ -152,7 +152,7 @@ namespace Js2IL.Services.ILGenerators
                 // Load left (boxed) and call ToBoolean(object)
                 // Ensure the left operand is boxed as object so ToBoolean(object) can consume it
                 _ = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion() { boxResult = true });
-                var toBoolRef = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), typeof(bool), typeof(object));
+                var toBoolRef = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), 0, typeof(object));
                 _il.OpCode(ILOpCode.Call);
                 _il.Token(toBoolRef);
 
@@ -195,7 +195,7 @@ namespace Js2IL.Services.ILGenerators
 
             // Duplicate left, test truthiness on the copy
             _il.OpCode(ILOpCode.Dup);
-            var toBool = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), typeof(bool), typeof(object));
+            var toBool = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), 0, typeof(object));
             _il.OpCode(ILOpCode.Call);
             _il.Token(toBool);
 
@@ -234,7 +234,7 @@ namespace Js2IL.Services.ILGenerators
             _ = _methodExpressionEmitter.Emit(binaryExpression.Left, new TypeCoercion() { boxResult = true });
             // Evaluate right (object) boxed
             _ = _methodExpressionEmitter.Emit(binaryExpression.Right, new TypeCoercion() { boxResult = true });
-            var hasPropRef = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.HasPropertyIn), typeof(bool), typeof(object), typeof(object));
+            var hasPropRef = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.HasPropertyIn), 0, typeof(object), typeof(object));
             _il.OpCode(ILOpCode.Call);
             _il.Token(hasPropRef);
             if (branching == null)
@@ -280,7 +280,7 @@ namespace Js2IL.Services.ILGenerators
                     var toNum = _runtime.GetStaticMethodRef(
                         typeof(JavaScriptRuntime.TypeUtilities),
                         nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
-                        typeof(double), typeof(object));
+                        0, typeof(object));
                     _il.OpCode(ILOpCode.Call);
                     _il.Token(toNum);
                     _il.OpCode(ILOpCode.Conv_i4);
@@ -337,7 +337,7 @@ namespace Js2IL.Services.ILGenerators
                 else if ((leftType == JavascriptType.Object || leftType == JavascriptType.Unknown) && (binaryExpression.Right is Acornima.Ast.BooleanLiteral || (binaryExpression.Right is Acornima.Ast.Literal brl && brl.Value is bool)))
                 {
                     // If right is a boolean literal and left is object/unknown (e.g., function return, captured var), convert left to boolean
-                    var toBool = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), typeof(bool), typeof(object));
+                    var toBool = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), 0, typeof(object));
                     _il.OpCode(ILOpCode.Call);
                     _il.Token(toBool);
                     leftType = JavascriptType.Boolean;
@@ -345,7 +345,7 @@ namespace Js2IL.Services.ILGenerators
                 else if ((leftType == JavascriptType.Object || leftType == JavascriptType.Unknown) && (binaryExpression.Right is Acornima.Ast.NumericLiteral || (binaryExpression.Right is Acornima.Ast.UnaryExpression rur && rur.Operator.ToString() == "UnaryNegation" && rur.Argument is Acornima.Ast.NumericLiteral)))
                 {
                     // If right is a numeric literal and left is object/unknown (e.g., parameter, captured var), convert left to number
-                    var toNum = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToNumber), typeof(double), typeof(object));
+                    var toNum = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToNumber), 0, typeof(object));
                     _il.OpCode(ILOpCode.Call);
                     _il.Token(toNum);
                     leftType = JavascriptType.Number;
@@ -354,7 +354,7 @@ namespace Js2IL.Services.ILGenerators
                 {
                     // If right is an identifier (which will load a boxed value) and left is object/unknown, convert left to number
                     // This handles cases like: methodResult == variableName
-                    var toNum = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToNumber), typeof(double), typeof(object));
+                    var toNum = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToNumber), 0, typeof(object));
                     _il.OpCode(ILOpCode.Call);
                     _il.Token(toNum);
                     leftType = JavascriptType.Number;
@@ -409,7 +409,7 @@ namespace Js2IL.Services.ILGenerators
                     var toNum = _runtime.GetStaticMethodRef(
                         typeof(JavaScriptRuntime.TypeUtilities),
                         nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
-                        typeof(double), typeof(object));
+                        0, typeof(object));
                     _il.OpCode(ILOpCode.Call);
                     _il.Token(toNum);
                     rightType = JavascriptType.Number;
@@ -534,7 +534,7 @@ namespace Js2IL.Services.ILGenerators
                 else if (rightType == JavascriptType.Object && (binaryExpression.Left is Acornima.Ast.BooleanLiteral || (binaryExpression.Left is Acornima.Ast.Literal lbl && lbl.Value is bool)))
                 {
                     // If left is a boolean literal and right is object (e.g., function return), convert right to boolean
-                    var toBool = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), typeof(bool), typeof(object));
+                    var toBool = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.ToBoolean), 0, typeof(object));
                     _il.OpCode(ILOpCode.Call);
                     _il.Token(toBool);
                     rightType = JavascriptType.Boolean;
@@ -574,7 +574,7 @@ namespace Js2IL.Services.ILGenerators
                         var toNum = _runtime.GetStaticMethodRef(
                             typeof(JavaScriptRuntime.TypeUtilities),
                             nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
-                            typeof(double), typeof(object));
+                            0, typeof(object));
                         _il.OpCode(ILOpCode.Call);
                         _il.Token(toNum);
                         
@@ -598,7 +598,7 @@ namespace Js2IL.Services.ILGenerators
                             var toNum = _runtime.GetStaticMethodRef(
                                 typeof(JavaScriptRuntime.TypeUtilities),
                                 nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
-                                typeof(double), typeof(object));
+                                0, typeof(object));
                             _il.OpCode(ILOpCode.Call);
                             _il.Token(toNum);
                         }
@@ -607,7 +607,7 @@ namespace Js2IL.Services.ILGenerators
                             var toNum = _runtime.GetStaticMethodRef(
                                 typeof(JavaScriptRuntime.TypeUtilities),
                                 nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
-                                typeof(double), typeof(object));
+                                0, typeof(object));
                             _il.OpCode(ILOpCode.Call);
                             _il.Token(toNum);
                         }
@@ -688,7 +688,7 @@ namespace Js2IL.Services.ILGenerators
                     var toNum = _runtime.GetStaticMethodRef(
                         typeof(JavaScriptRuntime.TypeUtilities),
                         nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
-                        typeof(double), typeof(object));
+                        0, typeof(object));
                     _il.OpCode(ILOpCode.Call);
                     _il.Token(toNum);
                 }
@@ -775,7 +775,7 @@ namespace Js2IL.Services.ILGenerators
                 var toNum = _runtime.GetStaticMethodRef(
                     typeof(JavaScriptRuntime.TypeUtilities),
                     nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
-                    typeof(double), typeof(object));
+                    0, typeof(object));
                 _il.OpCode(ILOpCode.Call);
                 _il.Token(toNum);
             }
@@ -787,7 +787,7 @@ namespace Js2IL.Services.ILGenerators
                 var toNum = _runtime.GetStaticMethodRef(
                     typeof(JavaScriptRuntime.TypeUtilities),
                     nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
-                    typeof(double), typeof(object));
+                    0, typeof(object));
                 _il.OpCode(ILOpCode.Call);
                 _il.Token(toNum);
             }

@@ -7,7 +7,7 @@ using Js2IL.Utilities.Ecma335;
 
 namespace Js2IL.Services
 {
-    internal class Runtime
+    internal sealed class Runtime
     {
         private readonly Dictionary<string, Type> _runtimeTypeNameCache = new(StringComparer.Ordinal);
         private readonly InstructionEncoder _il;
@@ -186,13 +186,13 @@ namespace Js2IL.Services
             return _memberRefRegistry.GetOrAddConstructor(runtimeType, parameterTypes);
         }
 
-        public MemberReferenceHandle GetInstanceMethodRef(Type runtimeType, string methodName, Type returnType, params Type[] parameterTypes)
+        public MemberReferenceHandle GetInstanceMethodRef(Type runtimeType, string methodName, int notUsed, params Type[] parameterTypes)
         {
             // Delegate to MemberReferenceRegistry which uses reflection to discover the signature automatically
             return _memberRefRegistry.GetOrAddMethod(runtimeType, methodName, parameterTypes);
         }
 
-        public MemberReferenceHandle GetStaticMethodRef(Type runtimeType, string methodName, Type returnType, params Type[] parameterTypes)
+        public MemberReferenceHandle GetStaticMethodRef(Type runtimeType, string methodName, int notUsed, params Type[] parameterTypes)
         {
             // Delegate to MemberReferenceRegistry which uses reflection to discover the signature automatically
             return _memberRefRegistry.GetOrAddMethod(runtimeType, methodName, parameterTypes);

@@ -33,7 +33,7 @@ namespace Js2IL.Services.ILGenerators
             // Load incoming argument (object being destructured) and extract property
             il.LoadArgument(jsParamSeq);
             il.Ldstr(metadataBuilder, propName);
-            var getPropRef = runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), typeof(object), typeof(object), typeof(string));
+            var getPropRef = runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetProperty), 0, typeof(object), typeof(string));
             il.OpCode(System.Reflection.Metadata.ILOpCode.Call); il.Token(getPropRef);
             
             // Store the property value to the variable (field or local)
