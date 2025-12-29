@@ -8,7 +8,7 @@ namespace Js2IL.Utilities.Ecma335
     /// Centralized registry for MemberReferenceHandles to avoid duplicate metadata entries.
     /// Automatically builds method signatures via reflection for intrinsic runtime methods.
     /// </summary>
-    internal sealed class MemberReferenceRegistry
+    public sealed class MemberReferenceRegistry
     {
         private readonly MetadataBuilder _metadataBuilder;
         private readonly TypeReferenceRegistry _typeRefRegistry;

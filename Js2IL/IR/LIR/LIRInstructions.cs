@@ -32,6 +32,11 @@ public record LIRGetIntrinsicGlobal(string Name, TempVariable Result) : LIRInstr
 
 public record LIRNewObjectArray(int ElementCount, TempVariable Result) : LIRInstruction;
 
+/// <summary>
+/// Begins initialization of an array element (for multi-step initialization).  This is a hint.
+/// </summary>
+public record LIRBeginInitArrayElement(TempVariable Array, int Index) : LIRInstruction;
+
 public record LIRStoreElementRef(TempVariable Array, int Index, TempVariable Value) : LIRInstruction;
 
 public record LIRCallIntrinsic(TempVariable IntrinsicObject, string Name, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;

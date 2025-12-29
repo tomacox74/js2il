@@ -193,6 +193,8 @@ public sealed class HIRToLIRLowerer
 
         foreach (var (argExpr, index) in callExpr.Arguments.Select((expr, idx) => (expr, idx)))
         {
+            _methodBodyIR.Instructions.Add(new LIRBeginInitArrayElement(arrayTempVar, index));
+
             if (!TryLowerExpression(argExpr, out var argTempVar))
             {
                 return false;

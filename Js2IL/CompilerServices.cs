@@ -38,6 +38,8 @@ public static class CompilerServices
         services.AddSingleton<Services.AssemblyGenerator>();
         services.AddSingleton<Services.BaseClassLibraryReferences>();
 
+        services.AddTransient<JsMethodCompiler>();
+
         return services.BuildServiceProvider();
     }
 }

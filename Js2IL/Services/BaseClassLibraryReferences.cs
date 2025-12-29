@@ -4,7 +4,7 @@ using Js2IL.Utilities.Ecma335;
 
 namespace Js2IL.Services
 {
-    internal class BaseClassLibraryReferences
+    public class BaseClassLibraryReferences
     {
         private readonly TypeReferenceRegistry _typeRefRegistry;
         private readonly MemberReferenceRegistry _memberRefRegistry;
