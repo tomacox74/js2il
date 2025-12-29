@@ -236,10 +236,10 @@ public sealed class HIRToLIRLowerer
     }
 
     /// <summary>
-    /// Uses temp type inforamtion to determine if the temp variable is compatiable with the object type.
+    /// Uses temp type information to determine if the temp variable is compatible with the object type.
     /// </summary>
-    /// <param name="tempVar">tempVar that needs to be checkedfor compatilbity</param>
-    /// <returns>if not compatible, returns a converrted tempVar</returns>
+    /// <param name="tempVar">tempVar that needs to be checked for compatibility</param>
+    /// <returns>if not compatible, returns a converted tempVar</returns>
     private TempVariable EnsureObject(TempVariable tempVar)
     {
         if (!IsObjectCompatible(tempVar))
