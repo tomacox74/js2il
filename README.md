@@ -42,6 +42,12 @@ dotnet .\out\simple.dll
 
 ### Try it
 
+First, install js2il as a global tool:
+
+```powershell
+dotnet tool install -g js2il
+```
+
 Use the sample script at `tests/simple.js`:
 
 ```javascript
