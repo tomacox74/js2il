@@ -10,15 +10,11 @@ namespace Js2IL.Tests
 {
     public abstract class GeneratorTestsBase
     {
-        private readonly JavaScriptParser _parser;
-        private readonly JavaScriptAstValidator _validator;
         private readonly string _outputPath;
         private readonly VerifySettings _verifySettings = new();
 
         protected GeneratorTestsBase(string testCategory)
         {
-            _parser = new JavaScriptParser();
-            _validator = new JavaScriptAstValidator();
             _verifySettings.DisableDiff();
 
             // create a temp directory for the generated assemblies

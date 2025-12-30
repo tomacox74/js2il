@@ -5,6 +5,31 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 ### Added
+- **Pre-compile JavaScript validator improvements**: Enhanced `JavaScriptAstValidator` with comprehensive checks for unsupported JavaScript features:
+  - Rest parameters (`...args` in function declarations)
+  - Spread in function calls (`fn(...arr)`)
+  - Array destructuring in variable declarations (`const [a, b] = arr`)
+  - Object rest properties (`const {a, ...rest} = obj`)
+  - Nested destructuring patterns (`const {inner: {x}} = obj`)
+  - for...in loops
+  - switch statements
+  - with statements (deprecated)
+  - Labeled statements (`label: for (...)`)
+  - debugger statements
+  - new.target / import.meta meta properties
+  - super keyword
+  - Getter/setter properties in object literals and classes
+  - Computed property names (`{[expr]: value}`)
+  - Destructuring assignment (not in declarations)
+
+### Changed
+- **Validation directory structure**: Moved `JavaScriptAstValidator.cs` and `IAstValidator.cs` to new `Js2IL/Validation/` namespace for better organization
+- **AstWalker improvements**: Extended AST traversal to visit class declarations, class bodies, method definitions, property definitions, object patterns, array patterns, and rest elements
+
+### Internal
+- Moved `AstWalker.cs` to `Js2IL/Utilities/` namespace
+
+### Added (continued)
 - **Experimental IR Compilation Pipeline**: Introduced multi-tier intermediate representation (IR) for JavaScript to IL compilation:
   - **HIR (High-level IR)**: AST-level representation with typed nodes (`HIRMethod`, `HIRBlock`, `HIRStatement`, `HIRExpression`) preserving JavaScript semantics
   - **LIR (Low-level IR)**: Stack-machine IR closely mapping to IL instructions (`LIRInstruction` with opcodes like `LIRAddNumber`, `LIRNewObjectArray`, `LIRStoreElementRef`)

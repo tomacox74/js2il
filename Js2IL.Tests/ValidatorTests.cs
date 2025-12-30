@@ -1,5 +1,6 @@
 using Xunit;
 using Js2IL.Services;
+using Js2IL.Validation;
 using Acornima.Ast;
 
 namespace Js2IL.Tests;
@@ -101,4 +102,179 @@ public class ValidatorTests
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, e => e.Contains("Dynamic require() with non-literal argument is not supported"));
     }
+
+    #region Unsupported Feature Validation Tests
+
+    [Fact]
+    public void Validate_RestParameters_ReportsError()
+    {
+        var js = "function foo(...args) { console.log(args); }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Rest parameters"));
+    }
+
+    [Fact]
+    public void Validate_SpreadInFunctionCall_ReportsError()
+    {
+        var js = "const arr = [1, 2, 3]; console.log(...arr);";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Spread in function calls"));
+    }
+
+    [Fact]
+    public void Validate_DestructuringAssignment_ReportsError()
+    {
+        var js = "let x, y; [x, y] = [1, 2];";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Destructuring assignment"));
+    }
+
+    [Fact]
+    public void Validate_ArrayDestructuring_ReportsError()
+    {
+        var js = "const [a, b] = [1, 2];";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Array destructuring"));
+    }
+
+    [Fact]
+    public void Validate_ForInLoop_ReportsError()
+    {
+        var js = "const obj = {a: 1}; for (const k in obj) { console.log(k); }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("for...in"));
+    }
+
+    [Fact]
+    public void Validate_SwitchStatement_ReportsError()
+    {
+        var js = "const x = 1; switch(x) { case 1: break; default: break; }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Switch statements"));
+    }
+
+    [Fact]
+    public void Validate_ComputedPropertyNames_ReportsError()
+    {
+        var js = "const key = 'foo'; const obj = { [key]: 123 };";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Computed property names"));
+    }
+
+    [Fact]
+    public void Validate_ObjectRestProperties_ReportsError()
+    {
+        var js = "const obj = {a: 1, b: 2, c: 3}; const {a, ...rest} = obj;";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Rest properties"));
+    }
+
+    [Fact]
+    public void Validate_WithStatement_ReportsError()
+    {
+        // Note: 'with' only works in non-strict mode
+        var js = "var obj = {a: 1}; with(obj) { console.log(a); }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("'with' statement"));
+    }
+
+    [Fact]
+    public void Validate_LabeledStatement_ReportsError()
+    {
+        var js = "outer: for (let i = 0; i < 3; i++) { break outer; }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Labeled statements"));
+    }
+
+    [Fact]
+    public void Validate_DebuggerStatement_ReportsError()
+    {
+        var js = "function test() { debugger; }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("'debugger' statement"));
+    }
+
+    [Fact]
+    public void Validate_NestedDestructuring_ReportsError()
+    {
+        var js = "const obj = {inner: {x: 1}}; const {inner: {x}} = obj;";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Nested destructuring"));
+    }
+
+    [Fact]
+    public void Validate_NewTarget_ReportsError()
+    {
+        var js = "function Foo() { console.log(new.target); }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("new.target"));
+    }
+
+    [Fact]
+    public void Validate_SuperExpression_ReportsError()
+    {
+        var js = "class Parent { foo() {} } class Child extends Parent { foo() { super.foo(); } }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("super"));
+    }
+
+    [Fact]
+    public void Validate_Getter_ReportsError()
+    {
+        var js = "const obj = { get foo() { return 42; } };";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Getter"));
+    }
+
+    [Fact]
+    public void Validate_Setter_ReportsError()
+    {
+        var js = "const obj = { set foo(v) { this._foo = v; } };";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Setter"));
+    }
+
+    [Fact]
+    public void Validate_ClassGetter_ReportsError()
+    {
+        var js = "class Foo { get bar() { return 42; } }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Getter"));
+    }
+
+    #endregion
 } 
