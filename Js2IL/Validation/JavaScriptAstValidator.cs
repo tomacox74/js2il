@@ -1,5 +1,6 @@
 using Acornima.Ast;
 using Js2IL.Services;
+using Js2IL.Utilities;
 using System.Collections.Generic;
 using System.Reflection;
 
