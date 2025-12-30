@@ -28,6 +28,7 @@ public class JavaScriptAstValidator : IAstValidator
         catch { /* Ignore reflection errors; result will be empty set */ }
         return set;
     });
+
     public ValidationResult Validate(Acornima.Ast.Program ast)
     {
         var result = new ValidationResult { IsValid = true };
@@ -41,10 +42,10 @@ public class JavaScriptAstValidator : IAstValidator
             {
                 case NodeType.ClassDeclaration:
                 case NodeType.ClassExpression:
-                    // Classes are supported: no validation error or warning.
-                    // But check for unsupported class features
-                    ValidateClassBody(node, result);
+                    // Classes are supported - validation for class-specific features 
+                    // is handled by MethodDefinition and PropertyDefinition cases
                     break;
+
                 case NodeType.ImportDeclaration:
                 case NodeType.ExportNamedDeclaration:
                 case NodeType.ExportDefaultDeclaration:
@@ -60,11 +61,6 @@ public class JavaScriptAstValidator : IAstValidator
                 case NodeType.YieldExpression:
                     result.Errors.Add($"Generators are not yet supported (line {node.Location.Start.Line})");
                     result.IsValid = false;
-                    break;
-
-                case NodeType.SpreadElement:
-                    // Spread is allowed in array/object literals, but not in function call arguments
-                    ValidateSpreadElement(node, result);
                     break;
 
                 case NodeType.RestElement:
@@ -100,11 +96,8 @@ public class JavaScriptAstValidator : IAstValidator
 
                 case NodeType.MetaProperty:
                     // new.target and import.meta
-                    if (node is MetaProperty metaProp)
-                    {
-                        result.Errors.Add($"new.target/import.meta are not yet supported (line {node.Location.Start.Line})");
-                        result.IsValid = false;
-                    }
+                    result.Errors.Add($"new.target/import.meta are not yet supported (line {node.Location.Start.Line})");
+                    result.IsValid = false;
                     break;
 
                 case NodeType.Super:
@@ -120,13 +113,8 @@ public class JavaScriptAstValidator : IAstValidator
 
                 case NodeType.ObjectPattern:
                     // Object destructuring in declarations/parameters is supported,
-                    // but check for nested patterns and rest properties
+                    // but check for nested patterns (rest properties handled by RestElement case)
                     ValidateObjectPattern(node, result);
-                    break;
-
-                case NodeType.VariableDeclarator:
-                    // Check for array destructuring patterns in variable declarations
-                    ValidateVariableDeclarator(node, result);
                     break;
 
                 case NodeType.AssignmentExpression:
@@ -136,18 +124,12 @@ public class JavaScriptAstValidator : IAstValidator
 
                 case NodeType.Property:
                     // Check for computed properties, getters/setters in object literals
-                    // Also check for nested destructuring when used as AssignmentProperty
                     ValidateProperty(node, result);
                     break;
 
                 case NodeType.MethodDefinition:
-                    // Check for getters/setters and static members in classes
+                    // Check for getters/setters in classes
                     ValidateMethodDefinition(node, result);
-                    break;
-
-                case NodeType.PropertyDefinition:
-                    // Check for static class fields
-                    ValidatePropertyDefinition(node, result);
                     break;
 
                 case NodeType.CallExpression:
@@ -160,52 +142,20 @@ public class JavaScriptAstValidator : IAstValidator
         return result;
     }
 
-    private void ValidateClassBody(Node node, ValidationResult result)
-    {
-        // Validation for class-specific features is handled by MethodDefinition and PropertyDefinition
-    }
-
-    private void ValidateSpreadElement(Node node, ValidationResult result)
-    {
-        // SpreadElement parent check - if inside a CallExpression arguments, it's not supported
-        // The walker visits nodes depth-first, so we can't easily check parent here
-        // Instead, we check in CallExpression validation
-    }
-
-    private void ValidateVariableDeclarator(Node node, ValidationResult result)
-    {
-        if (node is VariableDeclarator decl)
-        {
-            // Check for array pattern in variable declarations
-            if (decl.Id is ArrayPattern)
-            {
-                result.Errors.Add($"Array destructuring is not yet supported (line {node.Location.Start.Line})");
-                result.IsValid = false;
-            }
-        }
-    }
-
     private void ValidateObjectPattern(Node node, ValidationResult result)
     {
         if (node is ObjectPattern pattern)
         {
             foreach (var prop in pattern.Properties)
             {
-                // Check for nested destructuring
-                if (prop is AssignmentProperty assignProp)
+                // Check for nested destructuring (combined if statements per review comment)
+                if (prop is AssignmentProperty assignProp &&
+                    (assignProp.Value is ObjectPattern || assignProp.Value is ArrayPattern))
                 {
-                    if (assignProp.Value is ObjectPattern || assignProp.Value is ArrayPattern)
-                    {
-                        result.Errors.Add($"Nested destructuring patterns are not yet supported (line {node.Location.Start.Line})");
-                        result.IsValid = false;
-                    }
-                }
-                // Check for rest properties
-                if (prop is RestElement)
-                {
-                    result.Errors.Add($"Rest properties in destructuring are not yet supported (line {node.Location.Start.Line})");
+                    result.Errors.Add($"Nested destructuring patterns are not yet supported (line {node.Location.Start.Line})");
                     result.IsValid = false;
                 }
+                // Note: Rest properties (RestElement) are handled by the main RestElement case
             }
         }
     }
@@ -267,11 +217,6 @@ public class JavaScriptAstValidator : IAstValidator
         }
     }
 
-    private void ValidatePropertyDefinition(Node node, ValidationResult result)
-    {
-        // Static class fields are supported - no validation errors needed
-    }
-
     private void ValidateCallExpression(Node node, ValidationResult result)
     {
         if (node is CallExpression call)
@@ -313,4 +258,4 @@ public class JavaScriptAstValidator : IAstValidator
             }
         }
     }
-} 
+}

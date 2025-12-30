@@ -182,7 +182,7 @@ public class ValidatorTests
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
         Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Rest properties"));
+        Assert.Contains(result.Errors, e => e.Contains("Rest parameters/properties"));
     }
 
     [Fact]
