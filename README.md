@@ -65,6 +65,8 @@ x is  3
 ## Status and scope
 - Experimental.
 - Not all JavaScript features are supported; `eval` is not supported.
+- See [JavaScript Feature Coverage](docs/ECMAScript2025_FeatureCoverage.md) for a comprehensive breakdown of supported JavaScript language features organized by specification section.
+- See [Node.js Feature Coverage](docs/NodeSupport.md) for details on supported Node.js modules, APIs, and globals.
 
 ### Recent improvements (refactor/method-signature-builder branch)
 - **Default values in destructuring patterns**: Object destructuring now fully supports default parameter values in function signatures, class constructors, and class methods (e.g., `function config({host = "localhost", port = 8080}) {...}`).
