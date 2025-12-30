@@ -2,11 +2,11 @@
 
 [![NuGet](https://img.shields.io/nuget/v/js2il.svg)](https://www.nuget.org/packages/js2il/)
 
-Modern JS to IL prototype.
+Modern JavaScript dotnet compiler.
 
 # JS2IL — JavaScript to .NET IL compiler
 
-JS2IL compiles JavaScript source code to .NET Intermediate Language (IL), producing managed assemblies that run on the .NET runtime. It enables execution of JavaScript code and libraries as native .NET assemblies.
+JS2IL compiles JavaScript source code to native .NET assemblies. It includes runtime support for some Node.js core modules, enabling JavaScript applications and libraries to run on the .NET runtime.
 
 ## Usage
 
