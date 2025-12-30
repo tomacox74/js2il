@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.5.3 - 2025-12-30
+
 ### Added
 - **Pre-compile JavaScript validator improvements**: Enhanced `JavaScriptAstValidator` with comprehensive checks for unsupported JavaScript features:
   - Rest parameters (`...args` in function declarations)
@@ -21,14 +25,11 @@ All notable changes to this project are documented here.
   - Getter/setter properties in object literals and classes
   - Computed property names (`{[expr]: value}`)
   - Destructuring assignment (not in declarations)
-
 ### Changed
 - **Validation directory structure**: Moved `JavaScriptAstValidator.cs` and `IAstValidator.cs` to new `Js2IL/Validation/` namespace for better organization
 - **AstWalker improvements**: Extended AST traversal to visit class declarations, class bodies, method definitions, property definitions, object patterns, array patterns, and rest elements
-
 ### Internal
 - Moved `AstWalker.cs` to `Js2IL/Utilities/` namespace
-
 ### Added (continued)
 - **Experimental IR Compilation Pipeline**: Introduced multi-tier intermediate representation (IR) for JavaScript to IL compilation:
   - **HIR (High-level IR)**: AST-level representation with typed nodes (`HIRMethod`, `HIRBlock`, `HIRStatement`, `HIRExpression`) preserving JavaScript semantics
@@ -37,18 +38,15 @@ All notable changes to this project are documented here.
   - **Fallback mechanism**: Methods that fail IR compilation fall back to legacy direct AST-to-IL generator
   - Currently supports basic scenarios: variable declarations, binary expressions, console.log calls with numeric literals and arithmetic
   - Foundation for future optimizations: dead code elimination, constant folding, type propagation, and register allocation
-
 ### Changed
 - **Assembly generation architecture**: `AssemblyGenerator` now attempts IR-based compilation first via `JsMethodCompiler.TryCompileMethod()` before falling back to legacy `MainGenerator` path
 - **Dependency injection**: Added `JsMethodCompiler` as transient service in `CompilerServices`
-
 ### Internal
 - New directory structure: `Js2IL/IR/` with `HIR/` and `LIR/` subdirectories
 - `MethodBodyIR` class encapsulates method body with instructions and local variables
 - `HIRBuilder` converts AST nodes to HIR representation
 - `HIRToLIRLowerer` performs SSA-style lowering with temporary variables
 - `JsMethodCompiler` orchestrates the full pipeline and emits final IL
-
 _Note: This is experimental infrastructure. Full feature parity with the legacy generator is planned for future releases._
 
 ## v0.5.2 - 2025-12-24
