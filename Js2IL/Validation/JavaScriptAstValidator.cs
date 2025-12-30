@@ -1,8 +1,9 @@
 using Acornima.Ast;
+using Js2IL.Services;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Js2IL.Services;
+namespace Js2IL.Validation;
 
 public class JavaScriptAstValidator : IAstValidator
 {
