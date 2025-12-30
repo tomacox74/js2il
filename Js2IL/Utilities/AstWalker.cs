@@ -1,6 +1,6 @@
 using Acornima.Ast;
 
-namespace Js2IL.Services;
+namespace Js2IL.Utilities;
 
 public class AstWalker
 {
@@ -42,6 +42,12 @@ public class AstWalker
                 break;
 
             case VariableDeclarator varDeclarator:
+                // Only visit the Id if it's a pattern (for destructuring validation)
+                // Don't visit simple Identifier to avoid false positives in unused code analysis
+                if (varDeclarator.Id is not Identifier)
+                {
+                    Visit(varDeclarator.Id, visitor);
+                }
                 Visit(varDeclarator.Init, visitor);
                 break;
 
@@ -153,6 +159,42 @@ public class AstWalker
 
             case SequenceExpression seqExpr:
                 VisitNodes(seqExpr.Expressions, visitor);
+                break;
+
+            case ObjectPattern objPattern:
+                VisitNodes(objPattern.Properties, visitor);
+                break;
+
+            case ArrayPattern arrPattern:
+                VisitNodes(arrPattern.Elements, visitor);
+                break;
+
+            case RestElement restElem:
+                Visit(restElem.Argument, visitor);
+                break;
+
+            case ClassDeclaration classDecl:
+                Visit(classDecl.SuperClass, visitor);
+                Visit(classDecl.Body, visitor);
+                break;
+
+            case ClassExpression classExpr:
+                Visit(classExpr.SuperClass, visitor);
+                Visit(classExpr.Body, visitor);
+                break;
+
+            case ClassBody classBody:
+                VisitNodes(classBody.Body, visitor);
+                break;
+
+            case MethodDefinition methodDef:
+                Visit(methodDef.Key, visitor);
+                Visit(methodDef.Value, visitor);
+                break;
+
+            case PropertyDefinition propDef:
+                Visit(propDef.Key, visitor);
+                Visit(propDef.Value, visitor);
                 break;
         }
     }

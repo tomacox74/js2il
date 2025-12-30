@@ -1,4 +1,5 @@
 using Js2IL.Services;
+using Js2IL.Validation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Reflection;
