@@ -111,39 +111,7 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-        private void DeclareFunctionsRecursive(Scope scope, Variables parentVars, SymbolTable symbolTable)
-        {
-            // Generate methods for each function declared directly in this scope
-            foreach (var funcScope in scope.Children.Where(c => c.Kind == ScopeKind.Function && c.AstNode is FunctionDeclaration))
-            {
-                var functionDeclaration = (FunctionDeclaration)funcScope.AstNode!;
-                var functionName = (functionDeclaration.Id as Identifier)!.Name;
-                var paramNames = ILMethodGenerator.ExtractParameterNames(functionDeclaration.Params).ToArray();
-
-                var registryScopeName = $"{parentVars.GetGlobalScopeName()}/{functionName}";
-
-                // Pre-register parameter count before generating method body
-                _functionRegistry.PreRegisterParameterCount(functionName, paramNames.Length);
-
-                bool isNested = scope.Kind == ScopeKind.Function; // nested if parent is a function
-                var functionVariables = new Variables(parentVars, registryScopeName, paramNames, isNestedFunction: isNested);
-                var methodGenerator = new ILMethodGenerator(_serviceProvider, functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
-                var methodDefinition = GenerateMethodForFunction(functionDeclaration, functionVariables, methodGenerator, funcScope, symbolTable);
-                if (this._firstMethod.IsNil)
-                {
-                    this._firstMethod = methodDefinition;
-                }
-                if (_functionRegistry.Get(functionName).IsNil)
-                {
-                    _functionRegistry.Register(functionName, methodDefinition, paramNames.Length);
-                }
-
-                // Recurse into nested functions with this function's Variables as the new parent
-                DeclareFunctionsRecursive(funcScope, functionVariables, symbolTable);
-            }
-        }
-
-        public MethodDefinitionHandle GenerateMethodForFunction(FunctionDeclaration functionDeclaration, Variables functionVariables, ILMethodGenerator methodGenerator, Scope? functionScope = null, SymbolTable? symbolTable = null, TypeBuilder? typeBuilder = null, string? registryScopeNameOverride = null)
+        public MethodDefinitionHandle GenerateMethodForFunction(FunctionDeclaration functionDeclaration, Variables functionVariables, ILMethodGenerator methodGenerator, Scope functionScope, SymbolTable symbolTable, TypeBuilder typeBuilder, string? registryScopeNameOverride = null)
         {
             var functionName = (functionDeclaration.Id as Acornima.Ast.Identifier)!.Name;
             var registryScopeName = registryScopeNameOverride ?? functionVariables.GetCurrentScopeName();
@@ -154,6 +122,14 @@ namespace Js2IL.Services.ILGenerators
                 throw new InvalidOperationException(); // unreachable, satisfies definite assignment
             }
             var blockStatement = (BlockStatement)functionDeclaration.Body;
+
+            var methodCompiler = _serviceProvider.GetRequiredService<JsMethodCompiler>();
+            var compiledMethod = methodCompiler.TryCompileMethod(typeBuilder, functionName, blockStatement, functionScope, _methodBodyStreamEncoder);
+            if (!compiledMethod.IsNil)
+            {
+                return compiledMethod;
+            }
+            // Generate method body normally
 
             var variables = functionVariables;
             var il = methodGenerator.IL;
