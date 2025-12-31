@@ -504,8 +504,21 @@ namespace Js2IL.Services.ILGenerators
 
     private MethodDefinitionHandle EmitMethod(TypeBuilder tb, Acornima.Ast.MethodDefinition element, Scope classScope)
         {
-            var className = classScope.Name;
             var mname = (element.Key as Identifier)?.Name ?? "method";
+            var mscope = classScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Function && s.Name == mname);
+
+            if (mscope != null)
+            {
+                var jsMethodCompiler = _serviceProvider.GetRequiredService<JsMethodCompiler>();
+                var methodDefHandle = jsMethodCompiler.TryCompileMethod(tb, mname, element, mscope, _methodBodies);
+                if (!methodDefHandle.IsNil)
+                {
+                    // Successfully compiled method via JsMethodCompiler
+                    return methodDefHandle;
+                }
+            }
+
+            var className = classScope.Name;
             var funcExpr = element.Value as FunctionExpression;
             var paramCount = funcExpr != null ? funcExpr.Params.Count : 0;
             var msig = MethodBuilder.BuildMethodSignature(

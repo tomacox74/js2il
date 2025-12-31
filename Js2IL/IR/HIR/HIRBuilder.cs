@@ -27,6 +27,10 @@ public static class HIRBuilder
                 // Parse block statements by processing their body statements
                 var blockBuilder = new HIRMethodBuilder(scope);
                 return blockBuilder.TryParseStatements(blockStmt.Body, out method);
+            case Acornima.Ast.MethodDefinition classMethodDef:
+                var funcExpr = classMethodDef.Value as FunctionExpression;                
+                var funcBuilder = new HIRMethodBuilder(scope);
+                return funcBuilder.TryParseStatements(funcExpr.Body.Body, out method);
             // Handle other node types as needed
             default:
                 method = null!;
