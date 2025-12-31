@@ -22,7 +22,11 @@ public static class HIRBuilder
         {
             case Acornima.Ast.Program programAst:
                 var builder = new HIRMethodBuilder(scope);
-                return builder.TryParseMain(programAst, out method);
+                return builder.TryParseStatements(programAst.Body, out method);
+            case Acornima.Ast.BlockStatement blockStmt:
+                // Could implement parsing for block statements if needed
+                var blockBuilder = new HIRMethodBuilder(scope);
+                return blockBuilder.TryParseStatements(blockStmt.Body, out method);
             // Handle other node types as needed
             default:
                 method = null!;
@@ -42,11 +46,11 @@ class HIRMethodBuilder
         _scope = scope;
     }
 
-    public bool TryParseMain([In, NotNull] Acornima.Ast.Program programAst, out HIRMethod? method)
+    public bool TryParseStatements([In, NotNull] IEnumerable<Acornima.Ast.Statement> statements, out HIRMethod? method)
     {
         method = null;
 
-        foreach (var statement in programAst.Body)
+        foreach (var statement in statements)
         {
             // Process each statement in the program body
             switch (statement)

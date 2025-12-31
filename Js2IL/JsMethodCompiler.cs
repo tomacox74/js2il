@@ -10,6 +10,37 @@ using Js2IL.Services;
 
 namespace Js2IL;
 
+sealed record MethodParameterDescriptor
+{
+    public MethodParameterDescriptor(string name, Type parameterType)
+    {
+        Name = name;
+        ParameterType = parameterType;
+    }
+
+    public string Name { get; init; }
+    public Type ParameterType { get; init; }
+}
+
+sealed record MethodDescriptor
+{
+    public MethodDescriptor(string name, TypeBuilder typeBuilder, IReadOnlyList<MethodParameterDescriptor> parameters)
+    {
+        Name = name;
+        TypeBuilder = typeBuilder;
+        Parameters = parameters;
+    }
+
+    public string Name { get; init; }
+    public TypeBuilder TypeBuilder { get; init; }
+    public IReadOnlyList<MethodParameterDescriptor> Parameters { get; init; }
+
+    /// <summary>
+    ///  default is to return object
+    /// </summary>
+    public bool ReturnsVoid { get; set; } = false;
+}
+
 /// <summary>
 /// Per method compiling from JS to IL
 /// </summary>
@@ -18,7 +49,6 @@ namespace Js2IL;
 /// </remarks>
 internal sealed class JsMethodCompiler
 {
-
     private readonly MetadataBuilder _metadataBuilder;
     private readonly TypeReferenceRegistry _typeReferenceRegistry;
     private readonly BaseClassLibraryReferences _bclReferences;
@@ -32,72 +62,130 @@ internal sealed class JsMethodCompiler
         _memberRefRegistry = memberReferenceRegistry;
     }
 
-    public MethodDefinitionHandle TryCompileMethod(string moduleName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
+    public MethodDefinitionHandle TryCompileMethod(TypeBuilder typeBuilder, string methodName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
     {
-        if (!HIRBuilder.TryParseMethod(node, scope, out var hirMethod))
+        if (!TryLowerASTToLIR(node, scope, out var lirMethod))
         {
-            // Nil
             return default;
         }
- 
-        if (!HIRToLIRLowerer.TryLower(hirMethod!, out var lirMethod))
-        {
-            // Nil
-            return default;
-        }        
 
-        return TryCompileIRToIL(moduleName, lirMethod!, methodBodyStreamEncoder);
+        var methodDescriptor = new MethodDescriptor(
+            methodName,
+            typeBuilder,
+            [new MethodParameterDescriptor("scopes", typeof(object[]))]);
+
+        return TryCompileIRToIL(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
     }
 
-    private MethodDefinitionHandle TryCompileIRToIL(string moduleName, MethodBodyIR methodBody, MethodBodyStreamEncoder methodBodyStreamEncoder)
-    { 
-            // Get parameter info from shared ModuleParameters
-            var paramCount = JavaScriptRuntime.CommonJS.ModuleParameters.Count;
-            var parameterNames = JavaScriptRuntime.CommonJS.ModuleParameters.ParameterNames;
+    public MethodDefinitionHandle TryCompileMainMethod(string moduleName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
+    {
+        if (!TryLowerASTToLIR(node, scope, out var lirMethod))
+        {
+            return default;
+        }
 
-            // create the tools we need to generate the module type and method
-            var programTypeBuilder = new TypeBuilder(_metadataBuilder, "Scripts", moduleName);
+        // create the tools we need to generate the module type and method
+        var programTypeBuilder = new TypeBuilder(_metadataBuilder, "Scripts", moduleName);
+
+        MethodParameterDescriptor[] parameters = [
+            new MethodParameterDescriptor("exports", typeof(object)),
+            new MethodParameterDescriptor("require", typeof(JavaScriptRuntime.CommonJS.RequireDelegate)),
+            new MethodParameterDescriptor("module", typeof(object)),
+            new MethodParameterDescriptor("__filename", typeof(string)),
+            new MethodParameterDescriptor("__dirname", typeof(string))  
+        ];
+
+
+        var methodDescriptor = new MethodDescriptor(
+            "Main",
+            programTypeBuilder,
+            parameters);
+
+        methodDescriptor.ReturnsVoid = true;
+
+        var methodDefinitionHandle = TryCompileIRToIL(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
+
+        // Define the Script main type via TypeBuilder
+        programTypeBuilder.AddTypeDefinition(
+            TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
+            _bclReferences.ObjectType);
+
+        return methodDefinitionHandle;
+    }
+
+    private bool TryLowerASTToLIR(Node node, Scope scope, out MethodBodyIR? methodBody)
+    {
+        methodBody = null;
+
+        if (!HIRBuilder.TryParseMethod(node, scope, out var hirMethod))
+        {
+            return false;
+        }
+
+        if (!HIRToLIRLowerer.TryLower(hirMethod!, out var lirMethod))
+        {
+            return false;
+        }
+
+        methodBody = lirMethod!;
+        return true;
+    }
+
+    private MethodDefinitionHandle TryCompileIRToIL(MethodDescriptor methodDescriptor, MethodBodyIR methodBody, MethodBodyStreamEncoder methodBodyStreamEncoder)
+    { 
+            var programTypeBuilder = methodDescriptor.TypeBuilder;
+            var methodParameters = methodDescriptor.Parameters;
             
             // Create the method signature for the Main method with parameters
             var sigBuilder = new BlobBuilder();
             new BlobEncoder(sigBuilder)
                 .MethodSignature()
-                .Parameters(paramCount, returnType => returnType.Void(), parameters =>
+                .Parameters(methodParameters.Count, returnType => 
+                { 
+                    if (methodDescriptor.ReturnsVoid)
+                        returnType.Void();
+                    else
+                        returnType.Type().Object();
+                }, parameters =>
                 {
-                    for (int i = 0; i < paramCount; i++)
+                    for (int i = 0; i < methodParameters.Count; i++)
                     {
-                        switch (i)
+                        var parameterDefinition = methodParameters[i];
+
+                        if (parameterDefinition.ParameterType == typeof(object))
                         {
-                            case 0:
-                                parameters.AddParameter().Type().Object();
-                                break;
-                            case 1:
-                                var requireDelegateReference = _typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.CommonJS.RequireDelegate)); 
-                                parameters.AddParameter().Type().Type(requireDelegateReference, false);
-                                break;
-                            case 2:
-                                parameters.AddParameter().Type().Object();
-                                break;
-                            case 3:
-                            case 4:
-                                parameters.AddParameter().Type().String();
-                                break;
+                            parameters.AddParameter().Type().Object();
+                        }
+                        else if (parameterDefinition.ParameterType == typeof(string))
+                        {
+                            parameters.AddParameter().Type().String();
+                        }
+                        else if (parameterDefinition.ParameterType.IsArray && parameterDefinition.ParameterType.GetElementType() == typeof(object))
+                        {
+                            parameters.AddParameter().Type().SZArray().Object();
+                        }
+                        else
+                        {
+                            // Assume it's a type reference
+                            var typeRef = _typeReferenceRegistry.GetOrAdd(parameterDefinition.ParameterType!);
+                            parameters.AddParameter().Type().Type(typeRef, false);
                         }
                     }
                 });
             var methodSig = this._metadataBuilder.GetOrAddBlob(sigBuilder);
 
             // Compile the method body to IL
-            if (!TryCompileMethodBodyToIL(methodBody, methodBodyStreamEncoder, out var bodyOffset))
+            if (!TryCompileMethodBodyToIL(methodBody, methodDescriptor.ReturnsVoid, methodBodyStreamEncoder, out var bodyOffset))
             {
                 // Failed to compile IL
                 return default;
             }
 
+            var parameterNames = methodParameters.Select(p => p.Name).ToArray();
 
             var methodDefinitionHandle = programTypeBuilder.AddMethodDefinition(
-                MethodAttributes.Static | MethodAttributes.Public,
-                "Main",
+                MethodAttributes.Static | MethodAttributes.Public | MethodAttributes.HideBySig,
+                methodDescriptor.Name,
                 methodSig,
                 bodyOffset);
 
@@ -111,15 +199,10 @@ internal sealed class JsMethodCompiler
                     sequence++);
             }
 
-            // Define the Script main type via TypeBuilder
-             programTypeBuilder.AddTypeDefinition(
-                TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
-                _bclReferences.ObjectType);
-
             return methodDefinitionHandle;
     }
 
-    private bool TryCompileMethodBodyToIL(MethodBodyIR methodBody, MethodBodyStreamEncoder methodBodyStreamEncoder, out int bodyOffset)
+    private bool TryCompileMethodBodyToIL(MethodBodyIR methodBody, bool returnsVoid, MethodBodyStreamEncoder methodBodyStreamEncoder, out int bodyOffset)
     {
         bodyOffset = -1;
         var methodBlob = new BlobBuilder();
@@ -134,6 +217,10 @@ internal sealed class JsMethodCompiler
             }
         }
 
+        if (!returnsVoid)
+        {
+            ilEncoder.OpCode(ILOpCode.Ldnull);
+        }
         ilEncoder.OpCode(ILOpCode.Ret);
 
         var LocalVariablesSignature = CreateLocalVariablesSignature(methodBody);
@@ -247,7 +334,7 @@ internal sealed class JsMethodCompiler
     public void EmitInvokeInstrinsicMethod(Type declaringType, string methodName, InstructionEncoder ilEncoder)
     {
         var methodMref = _memberRefRegistry.GetOrAddMethod(declaringType, methodName);
-        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.OpCode(ILOpCode.Callvirt);
         ilEncoder.Token(methodMref);
         ilEncoder.OpCode(ILOpCode.Pop);
     }
