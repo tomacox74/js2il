@@ -36,7 +36,7 @@ sealed record MethodDescriptor
     public IReadOnlyList<MethodParameterDescriptor> Parameters { get; init; }
 
     /// <summary>
-    ///  default is to return object
+    ///  Default is to return an object
     /// </summary>
     public bool ReturnsVoid { get; set; } = false;
 }
