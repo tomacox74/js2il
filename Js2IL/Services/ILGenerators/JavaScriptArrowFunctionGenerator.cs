@@ -2,7 +2,9 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using Acornima.Ast;
+using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Js2IL.Services.ILGenerators
 {
@@ -14,6 +16,7 @@ namespace Js2IL.Services.ILGenerators
         private readonly MethodBodyStreamEncoder _methodBodyStreamEncoder;
         private readonly ClassRegistry _classRegistry;
         private readonly FunctionRegistry _functionRegistry;
+        private readonly SymbolTable? _symbolTable;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -24,7 +27,8 @@ namespace Js2IL.Services.ILGenerators
             MetadataBuilder metadataBuilder,
             MethodBodyStreamEncoder methodBodyStreamEncoder,
             ClassRegistry classRegistry,
-            FunctionRegistry functionRegistry)
+            FunctionRegistry functionRegistry,
+            SymbolTable? symbolTable = null)
         {
             _variables = variables;
             _bclReferences = bclReferences;
@@ -32,6 +36,7 @@ namespace Js2IL.Services.ILGenerators
             _methodBodyStreamEncoder = methodBodyStreamEncoder;
             _classRegistry = classRegistry;
             _functionRegistry = functionRegistry;
+            _symbolTable = symbolTable;
             _serviceProvider = serviceProvider;
         }
 
@@ -41,9 +46,28 @@ namespace Js2IL.Services.ILGenerators
             string ilMethodName,
             string[] paramNames)
         {
+            // Try the new IR-based compilation pipeline first
+            if (_symbolTable != null)
+            {
+                var arrowScope = _symbolTable.FindScopeByAstNode(arrowFunction);
+                if (arrowScope != null)
+                {
+                    var methodCompiler = _serviceProvider.GetRequiredService<JsMethodCompiler>();
+                    var irTypeBuilder = new TypeBuilder(_metadataBuilder, "Functions", ilMethodName);
+                    var compiledMethod = methodCompiler.TryCompileMethod(irTypeBuilder, ilMethodName, arrowFunction, arrowScope, _methodBodyStreamEncoder);
+                    if (!compiledMethod.IsNil)
+                    {
+                        // Successfully compiled via IR pipeline; finalize the type and return
+                        irTypeBuilder.AddTypeDefinition(TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, _bclReferences.ObjectType);
+                        return compiledMethod;
+                    }
+                }
+            }
+
+            // Fallback to the old direct AST-to-IL code path
             var functionVariables = new Variables(_variables, registryScopeName, paramNames, isNestedFunction: true);
             var pnames = paramNames ?? Array.Empty<string>();
-            var childGen = new ILMethodGenerator(_serviceProvider, functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
+            var childGen = new ILMethodGenerator(_serviceProvider, functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry, symbolTable: _symbolTable);
             var il = childGen.IL;
 
             void DestructureArrowParamsIfAny()

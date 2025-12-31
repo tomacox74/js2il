@@ -59,10 +59,12 @@ namespace Js2IL.Services.ILGenerators
         internal ClassRegistry ClassRegistry => _classRegistry;
         internal IMethodExpressionEmitter ExpressionEmitter => _expressionEmitter;
         internal FunctionRegistry? FunctionRegistry => _functionRegistry;
+        internal SymbolTables.SymbolTable? SymbolTable => _symbolTable;
 
         private readonly FunctionRegistry? _functionRegistry;
+        private readonly SymbolTables.SymbolTable? _symbolTable;
 
-        public ILMethodGenerator(IServiceProvider serviceProvider, Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, ClassRegistry? classRegistry = null, FunctionRegistry? functionRegistry = null, bool inClassMethod = false, string? currentClassName = null)
+        public ILMethodGenerator(IServiceProvider serviceProvider, Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, ClassRegistry? classRegistry = null, FunctionRegistry? functionRegistry = null, bool inClassMethod = false, string? currentClassName = null, SymbolTables.SymbolTable? symbolTable = null)
         {
             _variables = variables;
             _bclReferences = bclReferences;
@@ -79,6 +81,7 @@ namespace Js2IL.Services.ILGenerators
             _functionRegistry = functionRegistry;
             _inClassMethod = inClassMethod;
             _currentClassName = currentClassName;
+            _symbolTable = symbolTable;
             _serviceProvider = serviceProvider;
         }
 
@@ -1250,7 +1253,7 @@ namespace Js2IL.Services.ILGenerators
 
         internal MethodDefinitionHandle GenerateArrowFunctionMethod(ArrowFunctionExpression arrowFunction, string registryScopeName, string ilMethodName, string[] paramNames)
         {
-            var arrowGen = new JavaScriptArrowFunctionGenerator(_serviceProvider,_variables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry!);
+            var arrowGen = new JavaScriptArrowFunctionGenerator(_serviceProvider, _variables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry!, _symbolTable);
             return arrowGen.GenerateArrowFunctionMethod(arrowFunction, registryScopeName, ilMethodName, paramNames);
         }
 
@@ -1260,7 +1263,7 @@ namespace Js2IL.Services.ILGenerators
             var pnames = paramNames ?? Array.Empty<string>();
             // Share the parent ClassRegistry and FunctionRegistry so nested functions can resolve declared classes
             // and register their methods for lazy self-binding (recursion) support.
-            var childGen = new ILMethodGenerator(_serviceProvider, functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry);
+            var childGen = new ILMethodGenerator(_serviceProvider, functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry, symbolTable: _symbolTable);
             var il = childGen.IL;
 
             // If this is a named function expression (e.g., function walk(node) { ... }), JS specifies
