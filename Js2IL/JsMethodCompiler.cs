@@ -88,6 +88,31 @@ internal sealed class JsMethodCompiler
         return TryCompileIRToIL(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
     }
 
+    public MethodDefinitionHandle TryCompileArrowFunction(string methodName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
+    {
+        if (!TryLowerASTToLIR(node, scope, out var lirMethod))
+        {
+            return default;
+        }
+
+        // Create the type builder for the arrow function
+        var arrowTypeBuilder = new TypeBuilder(_metadataBuilder, "Functions", methodName);
+
+        var methodDescriptor = new MethodDescriptor(
+            methodName,
+            arrowTypeBuilder,
+            [new MethodParameterDescriptor("scopes", typeof(object[]))]);
+
+        var methodDefinitionHandle = TryCompileIRToIL(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
+
+        // Define the arrow function type
+        arrowTypeBuilder.AddTypeDefinition(
+            TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
+            _bclReferences.ObjectType);
+
+        return methodDefinitionHandle;
+    }
+
     public MethodDefinitionHandle TryCompileMainMethod(string moduleName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
     {
         if (!TryLowerASTToLIR(node, scope, out var lirMethod))

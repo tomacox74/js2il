@@ -53,12 +53,9 @@ namespace Js2IL.Services.ILGenerators
                 if (arrowScope != null)
                 {
                     var methodCompiler = _serviceProvider.GetRequiredService<JsMethodCompiler>();
-                    var irTypeBuilder = new TypeBuilder(_metadataBuilder, "Functions", ilMethodName);
-                    var compiledMethod = methodCompiler.TryCompileMethod(irTypeBuilder, ilMethodName, arrowFunction, arrowScope, _methodBodyStreamEncoder);
+                    var compiledMethod = methodCompiler.TryCompileArrowFunction(ilMethodName, arrowFunction, arrowScope, _methodBodyStreamEncoder);
                     if (!compiledMethod.IsNil)
                     {
-                        // Successfully compiled via IR pipeline; finalize the type and return
-                        irTypeBuilder.AddTypeDefinition(TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, _bclReferences.ObjectType);
                         return compiledMethod;
                     }
                 }
