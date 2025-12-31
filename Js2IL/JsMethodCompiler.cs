@@ -94,8 +94,6 @@ internal sealed class JsMethodCompiler
             new MethodParameterDescriptor("__filename", typeof(string)),
             new MethodParameterDescriptor("__dirname", typeof(string))
         ];
-
-
         var methodDescriptor = new MethodDescriptor(
             "Main",
             programTypeBuilder,
