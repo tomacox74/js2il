@@ -223,6 +223,7 @@ internal sealed class JsMethodCompiler
         var methodBlob = new BlobBuilder();
         var ilEncoder = new InstructionEncoder(methodBlob);
 
+        bool hasExplicitReturn = false;
         foreach (var instruction in methodBody.Instructions)
         {
             if (!TryCompileInstructionToIL(instruction, ilEncoder))
@@ -230,22 +231,30 @@ internal sealed class JsMethodCompiler
                 // Failed to compile instruction
                 return false;
             }
+            if (instruction is LIRReturn)
+            {
+                hasExplicitReturn = true;
+            }
         }
 
-        if (!methodDescriptor.ReturnsVoid)
+        // Only emit implicit return if no explicit return was found
+        if (!hasExplicitReturn)
         {
-            if (methodDescriptor.IsStatic)
+            if (!methodDescriptor.ReturnsVoid)
             {
-                // For static methods implicit return is undefined (null in dotnet)
-                ilEncoder.OpCode(ILOpCode.Ldnull);
+                if (methodDescriptor.IsStatic)
+                {
+                    // For static methods implicit return is undefined (null in dotnet)
+                    ilEncoder.OpCode(ILOpCode.Ldnull);
+                }
+                else
+                {
+                    // For instance methods, load 'this' reference
+                    ilEncoder.OpCode(ILOpCode.Ldarg_0);
+                }
             }
-            else
-            {
-                // For instance methods, load 'this' reference
-                ilEncoder.OpCode(ILOpCode.Ldarg_0);
-            }
+            ilEncoder.OpCode(ILOpCode.Ret);
         }
-        ilEncoder.OpCode(ILOpCode.Ret);
 
         var LocalVariablesSignature = CreateLocalVariablesSignature(methodBody);
 
@@ -305,6 +314,12 @@ internal sealed class JsMethodCompiler
                 ilEncoder.LoadConstantI4(newObjectArray.ElementCount);
                 ilEncoder.OpCode(ILOpCode.Newarr);
                 ilEncoder.Token(_bclReferences.ObjectType);
+                break;
+            case LIRReturn lirReturn:
+                // Load the return value temp onto the stack, then ret
+                // The temp should already be boxed to object if needed
+                ilEncoder.LoadLocal(lirReturn.ReturnValue.Index);
+                ilEncoder.OpCode(ILOpCode.Ret);
                 break;
             case LIRStoreElementRef:
                 ilEncoder.OpCode(ILOpCode.Stelem_ref);
