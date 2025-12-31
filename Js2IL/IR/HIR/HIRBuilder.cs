@@ -28,9 +28,9 @@ public static class HIRBuilder
                 var blockBuilder = new HIRMethodBuilder(scope);
                 return blockBuilder.TryParseStatements(blockStmt.Body, out method);
             case Acornima.Ast.MethodDefinition classMethodDef:
-                var funcExpr = classMethodDef.Value as FunctionExpression;                
-                var funcBuilder = new HIRMethodBuilder(scope);
-                return funcBuilder.TryParseStatements(funcExpr.Body.Body, out method);
+                var methodFuncExpr = classMethodDef.Value as FunctionExpression;                
+                var methodBuilder = new HIRMethodBuilder(scope);
+                return methodBuilder.TryParseStatements(methodFuncExpr.Body.Body, out method);
             case Acornima.Ast.ArrowFunctionExpression arrowFunc:
                 // IR pipeline doesn't yet handle parameters or scope arrays
                 // Fall back to legacy emitter for arrow functions with parameters
@@ -48,6 +48,21 @@ public static class HIRBuilder
                 }
                 var arrowBuilder = new HIRMethodBuilder(scope);
                 return arrowBuilder.TryParseStatements(arrowBlock.Body, out method);
+            case Acornima.Ast.FunctionExpression funcExpr:
+                // FunctionExpression is used for class constructors and method values
+                // IR pipeline doesn't yet handle parameters
+                if (funcExpr.Params.Count > 0)
+                {
+                    method = null!;
+                    return false;
+                }
+                if (funcExpr.Body is not BlockStatement funcBlock)
+                {
+                    method = null!;
+                    return false;
+                }
+                var funcExprBuilder = new HIRMethodBuilder(scope);
+                return funcExprBuilder.TryParseStatements(funcBlock.Body, out method);
             // Handle other node types as needed
             default:
                 method = null!;

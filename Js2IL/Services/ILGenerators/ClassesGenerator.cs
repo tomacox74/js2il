@@ -347,6 +347,24 @@ namespace Js2IL.Services.ILGenerators
             Scope classScope,
             bool needsScopes)
         {
+            // Try the new IR-based compilation pipeline first for simple constructors
+            if (ctorFunc != null && !needsScopes && fieldsWithInits.Count == 0)
+            {
+                var ctorScope = classScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Function && s.Name == "constructor");
+                if (ctorScope != null)
+                {
+                    var jsMethodCompiler = _serviceProvider.GetRequiredService<JsMethodCompiler>();
+                    var (compiledCtor, ctorSignature) = jsMethodCompiler.TryCompileClassConstructor(tb, ctorFunc, ctorScope, _methodBodies, needsScopes);
+                    if (!compiledCtor.IsNil)
+                    {
+                        // Successfully compiled via IR pipeline - signature is returned from TryCompileIRToIL
+                        _classRegistry.RegisterConstructor(classScope.Name, compiledCtor, ctorSignature, 0, 0);
+                        return compiledCtor;
+                    }
+                }
+            }
+
+            // Fallback to the old direct AST-to-IL code path
             var className = classScope.Name;
             var userParamCount = ctorFunc?.Params.Count ?? 0;
             var totalParamCount = needsScopes ? userParamCount + 1 : userParamCount;
