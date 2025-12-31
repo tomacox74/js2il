@@ -92,7 +92,7 @@ internal sealed class JsMethodCompiler
             new MethodParameterDescriptor("require", typeof(JavaScriptRuntime.CommonJS.RequireDelegate)),
             new MethodParameterDescriptor("module", typeof(object)),
             new MethodParameterDescriptor("__filename", typeof(string)),
-            new MethodParameterDescriptor("__dirname", typeof(string))  
+            new MethodParameterDescriptor("__dirname", typeof(string))
         ];
 
 
