@@ -33,12 +33,17 @@ sealed record MethodDescriptor
 
     public string Name { get; init; }
     public TypeBuilder TypeBuilder { get; init; }
-    public IReadOnlyList<MethodParameterDescriptor> Parameters { get; init; }
+    public IReadOnlyList<MethodParameterDescriptor> Parameters { get; set; }
 
     /// <summary>
     ///  Default is to return an object
     /// </summary>
     public bool ReturnsVoid { get; set; } = false;
+
+    /// <summary>
+    /// Only classes methods are not static currently so we default to static
+    /// </summary>
+    public bool IsStatic {get; set; } = true;
 }
 
 /// <summary>
@@ -73,6 +78,12 @@ internal sealed class JsMethodCompiler
             methodName,
             typeBuilder,
             [new MethodParameterDescriptor("scopes", typeof(object[]))]);
+
+        if (node is Acornima.Ast.MethodDefinition methodDef)
+        {
+            methodDescriptor.IsStatic = methodDef.Static;
+            methodDescriptor.Parameters = Array.Empty<MethodParameterDescriptor>();
+        }
 
         return TryCompileIRToIL(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
     }
@@ -137,7 +148,7 @@ internal sealed class JsMethodCompiler
             // Create the method signature for the Main method with parameters
             var sigBuilder = new BlobBuilder();
             new BlobEncoder(sigBuilder)
-                .MethodSignature()
+                .MethodSignature(isInstanceMethod: !methodDescriptor.IsStatic)
                 .Parameters(methodParameters.Count, returnType => 
                 { 
                     if (methodDescriptor.ReturnsVoid)
@@ -173,7 +184,7 @@ internal sealed class JsMethodCompiler
             var methodSig = this._metadataBuilder.GetOrAddBlob(sigBuilder);
 
             // Compile the method body to IL
-            if (!TryCompileMethodBodyToIL(methodBody, methodDescriptor.ReturnsVoid, methodBodyStreamEncoder, out var bodyOffset))
+            if (!TryCompileMethodBodyToIL(methodDescriptor, methodBody, methodBodyStreamEncoder, out var bodyOffset))
             {
                 // Failed to compile IL
                 return default;
@@ -181,8 +192,14 @@ internal sealed class JsMethodCompiler
 
             var parameterNames = methodParameters.Select(p => p.Name).ToArray();
 
+            MethodAttributes methodAttributes = MethodAttributes.Public | MethodAttributes.HideBySig;
+            if (methodDescriptor.IsStatic)
+            {
+                methodAttributes |= MethodAttributes.Static;
+            }
+
             var methodDefinitionHandle = programTypeBuilder.AddMethodDefinition(
-                MethodAttributes.Static | MethodAttributes.Public | MethodAttributes.HideBySig,
+                methodAttributes,
                 methodDescriptor.Name,
                 methodSig,
                 bodyOffset);
@@ -200,7 +217,7 @@ internal sealed class JsMethodCompiler
             return methodDefinitionHandle;
     }
 
-    private bool TryCompileMethodBodyToIL(MethodBodyIR methodBody, bool returnsVoid, MethodBodyStreamEncoder methodBodyStreamEncoder, out int bodyOffset)
+    private bool TryCompileMethodBodyToIL(MethodDescriptor methodDescriptor, MethodBodyIR methodBody, MethodBodyStreamEncoder methodBodyStreamEncoder, out int bodyOffset)
     {
         bodyOffset = -1;
         var methodBlob = new BlobBuilder();
@@ -215,9 +232,18 @@ internal sealed class JsMethodCompiler
             }
         }
 
-        if (!returnsVoid)
+        if (!methodDescriptor.ReturnsVoid)
         {
-            ilEncoder.OpCode(ILOpCode.Ldnull);
+            if (methodDescriptor.IsStatic)
+            {
+                // For static methods implicit return is undefined (null in dotnet)
+                ilEncoder.OpCode(ILOpCode.Ldnull);
+            }
+            else
+            {
+                // For instance methods, load 'this' reference
+                ilEncoder.OpCode(ILOpCode.Ldarg_0);
+            }
         }
         ilEncoder.OpCode(ILOpCode.Ret);
 
