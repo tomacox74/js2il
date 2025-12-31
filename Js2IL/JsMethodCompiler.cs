@@ -41,7 +41,7 @@ sealed record MethodDescriptor
     public bool ReturnsVoid { get; set; } = false;
 
     /// <summary>
-    /// Only classes methods are not static currently so we default to static
+    /// Only class instance methods are not static currently, so we default to static.
     /// </summary>
     public bool IsStatic {get; set; } = true;
 }
