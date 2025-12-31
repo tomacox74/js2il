@@ -43,7 +43,7 @@ sealed record MethodDescriptor
     /// <summary>
     /// Only classes methods are not static currently so we default to static
     /// </summary>
-    public bool IsStatic {get; set; } = true;
+    public bool IsStatic { get; set; } = true;
 }
 
 /// <summary>
