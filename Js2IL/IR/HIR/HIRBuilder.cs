@@ -24,7 +24,7 @@ public static class HIRBuilder
                 var builder = new HIRMethodBuilder(scope);
                 return builder.TryParseStatements(programAst.Body, out method);
             case Acornima.Ast.BlockStatement blockStmt:
-                // Could implement parsing for block statements if needed
+                // Parse block statements by processing their body statements
                 var blockBuilder = new HIRMethodBuilder(scope);
                 return blockBuilder.TryParseStatements(blockStmt.Body, out method);
             // Handle other node types as needed
