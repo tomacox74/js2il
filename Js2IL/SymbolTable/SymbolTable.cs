@@ -48,14 +48,9 @@ public class SymbolTable
         if (scope.AstNode == astNode)
             return scope;
 
-        foreach (var child in scope.Children)
-        {
-            var found = FindScopeByAstNodeRecursive(child, astNode);
-            if (found != null)
-                return found;
-        }
-
-        return null;
+        return scope.Children
+            .Select(child => FindScopeByAstNodeRecursive(child, astNode))
+            .FirstOrDefault(found => found != null);
     }
 }
 

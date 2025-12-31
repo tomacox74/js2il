@@ -39,8 +39,8 @@ public static class HIRBuilder
                     method = null!;
                     return false;
                 }
-                // Only handle block-body arrow functions for now
-                // Concise (expression) arrow functions require return value handling not yet implemented
+                // Concise (expression-body) arrow functions fall back to legacy emitter
+                // (implicit return wrapping not yet implemented in HIR parser)
                 if (arrowFunc.Body is not BlockStatement arrowBlock)
                 {
                     method = null!;
