@@ -129,7 +129,7 @@ namespace Js2IL.Services.ILGenerators
             {
                 return compiledMethod;
             }
-                // Generate method body normally
+            // Generate method body normally
 
             var variables = functionVariables;
             var il = methodGenerator.IL;
