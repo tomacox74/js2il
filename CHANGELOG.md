@@ -4,7 +4,20 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+### Added
+- **IR pipeline support for arrow functions**: Extended `HIRBuilder` to handle `ArrowFunctionExpression` nodes with fallback guards:
+  - Block-body parameterless arrow functions now compile through IR pipeline
+  - Arrow functions with parameters fall back to legacy emitter (parameters not yet supported in IR)
+  - Concise expression-body arrow functions fall back to legacy emitter (return value handling not yet implemented)
+- **HIRReturnStatement**: New HIR node for explicit return statements in method bodies
+- **LIRReturn instruction**: Low-level IR instruction for method returns, handled by `JsMethodCompiler`
+
+### Changed
+- **IL optimization**: IR pipeline eliminates unnecessary `castclass` instructions when loading intrinsic globals (e.g., `console`), producing smaller method bodies
+
+### Internal
+- Extended `HIRToLIRLower` to lower `HIRReturnStatement` to `LIRReturn` instructions
+- `JsMethodCompiler` tracks explicit returns to avoid emitting redundant implicit return IL
 
 ## v0.5.3 - 2025-12-30
 
