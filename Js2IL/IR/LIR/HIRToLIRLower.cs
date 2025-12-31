@@ -84,6 +84,26 @@ public sealed class HIRToLIRLowerer
                     }
                     return true;
                 }
+            case HIRReturnStatement returnStmt:
+                {
+                    TempVariable returnTempVar;
+                    if (returnStmt.Expression != null)
+                    {
+                        // Lower the return expression
+                        if (!TryLowerExpression(returnStmt.Expression, out returnTempVar))
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        // Bare return - return undefined (null)
+                        returnTempVar = CreateTempVariable();
+                        lirInstructions.Add(new LIRConstUndefined(returnTempVar));
+                    }
+                    lirInstructions.Add(new LIRReturn(returnTempVar));
+                    return true;
+                }
             default:
                 // Unsupported statement type
                 return false;

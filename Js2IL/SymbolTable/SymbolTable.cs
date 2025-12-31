@@ -34,5 +34,23 @@ public class SymbolTable
         currentScope.Bindings.TryGetValue(bindingName, out var bindingInfo);
         return bindingInfo; 
     }
+
+    /// <summary>
+    /// Finds a scope by its AST node, searching recursively from the root.
+    /// </summary>
+    public Scope? FindScopeByAstNode(Acornima.Ast.Node astNode)
+    {
+        return FindScopeByAstNodeRecursive(Root, astNode);
+    }
+
+    private static Scope? FindScopeByAstNodeRecursive(Scope scope, Acornima.Ast.Node astNode)
+    {
+        if (scope.AstNode == astNode)
+            return scope;
+
+        return scope.Children
+            .Select(child => FindScopeByAstNodeRecursive(child, astNode))
+            .FirstOrDefault(found => found != null);
+    }
 }
 
