@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Xunit;
 
 namespace Js2IL.Tests.BinaryOperator
 {
@@ -10,7 +11,7 @@ namespace Js2IL.Tests.BinaryOperator
 
         // Binary Operator Tests (sorted alphabetically)
         [Fact]
-        public Task BinaryOperator_AddNumberNumber() { var testName = nameof(BinaryOperator_AddNumberNumber); return GenerateTest(testName); }
+        public Task BinaryOperator_AddNumberNumber() { var testName = nameof(BinaryOperator_AddNumberNumber); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
         public Task BinaryOperator_AddStringNumber() { var testName = nameof(BinaryOperator_AddStringNumber); return GenerateTest(testName); }

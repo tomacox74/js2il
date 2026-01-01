@@ -9,22 +9,11 @@ public sealed class HIRToLIRLowerer
 
     private int _tempVarCounter = 0;
 
-    private int _localVarCounter = 0;
+    // Source-level variables map to the current SSA value (TempVariable) at the current program point.
+    private readonly Dictionary<string, TempVariable> _variableMap = new Dictionary<string, TempVariable>();
 
-    private readonly Dictionary<string, LocalVariable> _variableMap = new Dictionary<string, LocalVariable>();
-
-    private readonly Dictionary<TempVariable, ValueStorage> _tempVarTypes = new Dictionary<TempVariable, ValueStorage>();
-
-    private readonly Dictionary<LocalVariable, ValueStorage> _localVarTypes = new Dictionary<LocalVariable, ValueStorage>();
-
-    private LocalVariable CreateScratchLocal(ValueStorage storage)
-    {
-        var localVar = new LocalVariable(_localVarCounter);
-        _localVarCounter++;
-        _methodBodyIR.Locals.Add(localVar);
-        _localVarTypes[localVar] = storage;
-        return localVar;
-    }
+    // Stable IL-local slot per JS variable declaration.
+    private readonly Dictionary<string, int> _variableSlots = new Dictionary<string, int>();
 
     public static bool TryLower(HIRMethod hirMethod, out MethodBodyIR? lirMethod)
     {
@@ -60,30 +49,33 @@ public sealed class HIRToLIRLowerer
         switch (statement)
         {
             case HIRVariableDeclaration exprStmt:
-                // Create instructions for the initializer expression
-                TempVariable valueTempVar;
-                if (exprStmt.Initializer != null)
                 {
-                    if (!TryLowerExpression(exprStmt.Initializer, out valueTempVar))
+                    // Variable declarations define a new binding in the current scope.
+                    // In SSA-style LIR we simply map the name to the produced value.
+                    TempVariable value;
+
+                    if (exprStmt.Initializer != null)
                     {
-                        return false;
+                        if (!TryLowerExpression(exprStmt.Initializer, out value))
+                        {
+                            return false;
+                        }
                     }
+                    else
+                    {
+                        // No initializer means 'undefined'
+                        value = CreateTempVariable();
+                        lirInstructions.Add(new LIRConstUndefined(value));
+                        DefineTempStorage(value, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    }
+
+                    _variableMap[exprStmt.Name.Name] = value;
+
+                    // Assign the declared variable a stable local slot and map this SSA temp to it.
+                    var slot = GetOrCreateVariableSlot(exprStmt.Name.Name);
+                    SetTempVariableSlot(value, slot);
+                    return true;
                 }
-                else
-                {
-                    // No initializer means 'undefined'
-                    valueTempVar = CreateTempVariable();
-                    lirInstructions.Add(new LIRConstUndefined(valueTempVar));
-                }
-
-                var localVar = CreateLocalVariable(exprStmt.Name.Name);
-                lirInstructions.Add(new LIRStoreLocal(valueTempVar, localVar));
-
-                // Make the type transitive from temp to local
-                var storage = GetTempStorage(valueTempVar);
-                _localVarTypes[localVar] = storage;
-
-                return true;
             case HIRExpressionStatement exprStmt:
                 {
                     // Lower the expression and discard the result
@@ -103,12 +95,16 @@ public sealed class HIRToLIRLowerer
                         {
                             return false;
                         }
+
+                        // IR pipeline methods currently return object; ensure boxing/conversion.
+                        returnTempVar = EnsureObject(returnTempVar);
                     }
                     else
                     {
                         // Bare return - return undefined (null)
                         returnTempVar = CreateTempVariable();
                         lirInstructions.Add(new LIRConstUndefined(returnTempVar));
+                        DefineTempStorage(returnTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     }
                     lirInstructions.Add(new LIRReturn(returnTempVar));
                     return true;
@@ -121,12 +117,13 @@ public sealed class HIRToLIRLowerer
 
     private bool TryLowerExpression(HIRExpression expression, out TempVariable resultTempVar)
     {
-        // All expressions produce a result
-        resultTempVar = CreateTempVariable();
+        resultTempVar = default;
 
         switch (expression)
         {
             case HIRLiteralExpression literal:
+                // All literals allocate a new SSA value.
+                resultTempVar = CreateTempVariable();
                 switch (literal.Kind)
                 {
                     case JavascriptType.String:
@@ -175,6 +172,8 @@ public sealed class HIRToLIRLowerer
                     return false;
                 }
 
+                resultTempVar = CreateTempVariable();
+
                 if (!TryLowerExpression(binaryExpr.Left, out var leftTempVar))
                 {
                     return false;
@@ -200,20 +199,18 @@ public sealed class HIRToLIRLowerer
                 return TryLowerCallExpression(callExpr, out resultTempVar);
 
             case HIRUnaryExpression unaryExpr:
-                return TryLowerUnaryExpression(unaryExpr, resultTempVar);
+                return TryLowerUnaryExpression(unaryExpr, out resultTempVar);
 
             case HIRUpdateExpression updateExpr:
-                return TryLowerUpdateExpression(updateExpr, resultTempVar);
+                return TryLowerUpdateExpression(updateExpr, out resultTempVar);
 
             case HIRVariableExpression varExpr:
-                if (!_variableMap.TryGetValue(varExpr.Name.Name, out var localVar))
+                if (!_variableMap.TryGetValue(varExpr.Name.Name, out resultTempVar))
                 {
                     return false;
                 }
 
-                _methodBodyIR.Instructions.Add(new LIRLoadLocal(localVar, resultTempVar));
-                var storage = GetLocalStorage(localVar);
-                this.DefineTempStorage(resultTempVar, storage);
+                // Variable reads are SSA value lookups (no load instruction).
                 return true;
             // Handle different expression types here
             default:
@@ -251,6 +248,7 @@ public sealed class HIRToLIRLowerer
         // console.log takes its arguments as a array of type object
         var arrayTempVar = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRNewObjectArray(callExpr.Arguments.Count(), arrayTempVar));
+        this.DefineTempStorage(arrayTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
         foreach (var (argExpr, index) in callExpr.Arguments.Select((expr, idx) => (expr, idx)))
         {
@@ -269,11 +267,16 @@ public sealed class HIRToLIRLowerer
 
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsic(consoleTempVar, "log", arrayTempVar, resultTempVar));
 
+        // console.log returns undefined (null)
+        this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
         return true;
     }
 
-    private bool TryLowerUnaryExpression(HIRUnaryExpression unaryExpr, TempVariable resultTempVar)
+    private bool TryLowerUnaryExpression(HIRUnaryExpression unaryExpr, out TempVariable resultTempVar)
     {
+        resultTempVar = CreateTempVariable();
+
         if (!TryLowerExpression(unaryExpr.Argument, out var unaryArgTempVar))
         {
             return false;
@@ -315,8 +318,10 @@ public sealed class HIRToLIRLowerer
         return false;
     }
 
-    private bool TryLowerUpdateExpression(HIRUpdateExpression updateExpr, TempVariable resultTempVar)
+    private bool TryLowerUpdateExpression(HIRUpdateExpression updateExpr, out TempVariable resultTempVar)
     {
+        resultTempVar = default;
+
         // Minimal: only support ++/-- on local variables (identifiers)
         if (updateExpr.Operator != Acornima.Operator.Increment && updateExpr.Operator != Acornima.Operator.Decrement)
         {
@@ -328,62 +333,67 @@ public sealed class HIRToLIRLowerer
             return false;
         }
 
-        if (!_variableMap.TryGetValue(updateVarExpr.Name.Name, out var targetLocal))
+        if (!_variableMap.TryGetValue(updateVarExpr.Name.Name, out var currentValue))
         {
             return false;
         }
+
+        var slot = GetOrCreateVariableSlot(updateVarExpr.Name.Name);
 
         // Only support numeric locals (double) for now
-        if (GetLocalStorage(targetLocal).ClrType != typeof(double))
+        if (GetTempStorage(currentValue).ClrType != typeof(double))
         {
             return false;
         }
 
-        var delta = updateExpr.Operator == Acornima.Operator.Increment ? 1.0 : -1.0;
+        var isIncrement = updateExpr.Operator == Acornima.Operator.Increment;
 
-        LocalVariable? scratchLocal = null;
+        // In SSA: ++/-- produces a new value and updates the variable binding.
+        // Prefix returns updated value; postfix returns original value.
+        var originalTemp = currentValue;
 
+        // Make sure the current value is associated with the variable slot.
+        SetTempVariableSlot(originalTemp, slot);
+
+        // For postfix, capture/box the original value *before* we emit the update that overwrites
+        // the stable variable local slot. Otherwise, later loads of originalTemp would observe the
+        // updated value.
+        TempVariable? boxedOriginalForPostfix = null;
         if (!updateExpr.Prefix)
         {
-            // Postfix: result is original value.
-            scratchLocal = CreateScratchLocal(new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-
-            var originalTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRLoadLocal(targetLocal, originalTemp));
-            this.DefineTempStorage(originalTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-            _methodBodyIR.Instructions.Add(new LIRStoreLocal(originalTemp, scratchLocal.Value));
+            boxedOriginalForPostfix = EnsureObject(originalTemp);
         }
 
-        // Compute updated value and store back
-        var currentTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRLoadLocal(targetLocal, currentTemp));
-        this.DefineTempStorage(currentTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-
         var deltaTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRConstNumber(delta, deltaTemp));
+        _methodBodyIR.Instructions.Add(new LIRConstNumber(1.0, deltaTemp));
         this.DefineTempStorage(deltaTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
 
         var updatedTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRAddNumber(currentTemp, deltaTemp, updatedTemp));
+        if (isIncrement)
+        {
+            _methodBodyIR.Instructions.Add(new LIRAddNumber(originalTemp, deltaTemp, updatedTemp));
+        }
+        else
+        {
+            _methodBodyIR.Instructions.Add(new LIRSubNumber(originalTemp, deltaTemp, updatedTemp));
+        }
         this.DefineTempStorage(updatedTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-        _methodBodyIR.Instructions.Add(new LIRStoreLocal(updatedTemp, targetLocal));
+
+        // The updated SSA value represents the same JS variable slot.
+        SetTempVariableSlot(updatedTemp, slot);
+
+        // Update variable mapping to the new SSA value.
+        _variableMap[updateVarExpr.Name.Name] = updatedTemp;
 
         if (updateExpr.Prefix)
         {
-            // Prefix returns the updated value
-            _methodBodyIR.Instructions.Add(new LIRLoadLocal(targetLocal, resultTempVar));
-            this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            // Prefix returns the updated value, boxed to object so we can store/emit without extra locals.
+            resultTempVar = EnsureObject(updatedTemp);
             return true;
         }
 
-        // Postfix returns the original value from scratch local
-        if (scratchLocal is null)
-        {
-            return false;
-        }
-
-        _methodBodyIR.Instructions.Add(new LIRLoadLocal(scratchLocal.Value, resultTempVar));
-        this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        // Postfix returns the original value.
+        resultTempVar = boxedOriginalForPostfix!.Value;
         return true;
     }
 
@@ -392,16 +402,31 @@ public sealed class HIRToLIRLowerer
         var tempVar = new TempVariable(_tempVarCounter);
         _tempVarCounter++;
         _methodBodyIR.Temps.Add(tempVar);
+        _methodBodyIR.TempStorages.Add(new ValueStorage(ValueStorageKind.Unknown));
+        _methodBodyIR.TempVariableSlots.Add(-1);
         return tempVar;
     }
 
-    private LocalVariable CreateLocalVariable(string name)
+    private int GetOrCreateVariableSlot(string name)
     {
-        var localVar = new LocalVariable(_localVarCounter);
-        _localVarCounter++;
-        _methodBodyIR.Locals.Add(localVar);
-        _variableMap[name] = localVar;
-        return localVar;
+        if (_variableSlots.TryGetValue(name, out var slot))
+        {
+            return slot;
+        }
+
+        slot = _methodBodyIR.VariableNames.Count;
+        _variableSlots[name] = slot;
+        _methodBodyIR.VariableNames.Add(name);
+        return slot;
+    }
+
+    private void SetTempVariableSlot(TempVariable temp, int slot)
+    {
+        if (temp.Index < 0 || temp.Index >= _methodBodyIR.TempVariableSlots.Count)
+        {
+            return;
+        }
+        _methodBodyIR.TempVariableSlots[temp.Index] = slot;
     }
 
     /// <summary>
@@ -432,29 +457,20 @@ public sealed class HIRToLIRLowerer
 
     private void DefineTempStorage(TempVariable tempVar, ValueStorage storage)
     {
-        _tempVarTypes[tempVar] = storage;
+        if (tempVar.Index < 0 || tempVar.Index >= _methodBodyIR.TempStorages.Count)
+        {
+            // Should never happen; indicates a temp was used without registration.
+            return;
+        }
+        _methodBodyIR.TempStorages[tempVar.Index] = storage;
     }
 
     private ValueStorage GetTempStorage(TempVariable tempVar)
     {
-        if (_tempVarTypes.TryGetValue(tempVar, out var storage))
+        if (tempVar.Index < 0 || tempVar.Index >= _methodBodyIR.TempStorages.Count)
         {
-            return storage;
+            return new ValueStorage(ValueStorageKind.Unknown);
         }
-        return new ValueStorage(ValueStorageKind.Unknown);
-    }
-
-    private void DefineLocalStorage(LocalVariable localVar, ValueStorage storage)
-    {
-        _localVarTypes[localVar] = storage;
-    }
-
-    private ValueStorage GetLocalStorage(LocalVariable localVar)
-    {
-        if (_localVarTypes.TryGetValue(localVar, out var storage))
-        {
-            return storage;
-        }
-        return new ValueStorage(ValueStorageKind.Unknown);
+        return _methodBodyIR.TempStorages[tempVar.Index];
     }
 }

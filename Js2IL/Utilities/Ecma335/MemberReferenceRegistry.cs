@@ -195,7 +195,26 @@ namespace Js2IL.Utilities.Ecma335
         /// </summary>
         public MemberReferenceHandle GetOrAddField(Type declaringType, string fieldName)
         {
-            throw new NotImplementedException("GetOrAddField not yet implemented.");
+            var fullTypeName = declaringType.FullName ?? declaringType.Name;
+            var key = $"{fullTypeName}::{fieldName}";
+
+            if (_cache.TryGetValue(key, out var existing))
+                return existing;
+
+            // Use reflection to find the field
+            var field = declaringType.GetField(fieldName,
+                BindingFlags.Public | BindingFlags.NonPublic |
+                BindingFlags.Instance | BindingFlags.Static)
+                ?? throw new ArgumentException($"Field '{fieldName}' not found on type '{fullTypeName}'");
+
+            // Build the member reference
+            var declaringTypeHandle = GetOrAddDeclaringTypeHandle(declaringType);
+            var signature = BuildFieldSignature(field);
+            var nameHandle = _metadataBuilder.GetOrAddString(fieldName);
+
+            var handle = _metadataBuilder.AddMemberReference(declaringTypeHandle, nameHandle, signature);
+            _cache[key] = handle;
+            return handle;
         }
 
         /// <summary>
@@ -325,6 +344,14 @@ namespace Js2IL.Utilities.Ecma335
                         }
                     });
 
+            return _metadataBuilder.GetOrAddBlob(sigBuilder);
+        }
+
+        private BlobHandle BuildFieldSignature(FieldInfo field)
+        {
+            var sigBuilder = new BlobBuilder();
+            var encoder = new BlobEncoder(sigBuilder).FieldSignature();
+            EncodeSignatureType(encoder, field.FieldType);
             return _metadataBuilder.GetOrAddBlob(sigBuilder);
         }
 
