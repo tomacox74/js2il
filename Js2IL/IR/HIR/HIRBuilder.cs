@@ -214,6 +214,9 @@ class HIRMethodBuilder
             case StringLiteral stringLiteralExpr:
                 hirExpr = new HIRLiteralExpression(JavascriptType.String, stringLiteralExpr.Value);
                 return true;
+            case BooleanLiteral booleanLiteralExpr:
+                hirExpr = new HIRLiteralExpression(JavascriptType.Boolean, booleanLiteralExpr.Value);
+                return true;
             // Handle other expression types as needed
             default:
                 return false;

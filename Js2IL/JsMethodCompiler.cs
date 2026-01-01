@@ -371,6 +371,9 @@ internal sealed class JsMethodCompiler
             case LIRConstString constString:
                 ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString(constString.Value));
                 break;
+            case LIRConstBoolean constBoolean:
+                ilEncoder.LoadConstantI4(constBoolean.Value ? 1 : 0);
+                break;
             case LIRConstUndefined:
                 ilEncoder.OpCode(ILOpCode.Ldnull);
                 break;
@@ -381,9 +384,16 @@ internal sealed class JsMethodCompiler
                 EmitInvokeInstrinsicMethod(typeof(JavaScriptRuntime.Console), callIntrinsic.Name, ilEncoder);
                 break;
             case LIRConvertToObject convertToObject:
-                // temporary hardcode to double
+                // Box the value type using the source type
                 ilEncoder.OpCode(ILOpCode.Box);
-                ilEncoder.Token(_bclReferences.DoubleType);
+                if (convertToObject.SourceType == typeof(bool))
+                {
+                    ilEncoder.Token(_bclReferences.BooleanType);
+                }
+                else
+                {
+                    ilEncoder.Token(_bclReferences.DoubleType);
+                }
                 break;
             case LIRLoadLocal loadLocal:
                 ilEncoder.LoadLocal(loadLocal.Source.Index);
