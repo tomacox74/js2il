@@ -198,6 +198,15 @@ class HIRMethodBuilder
 
                 hirExpr = new HIRCallExpression(calleeExpr!, argExprs);
                 return true;
+
+            case UnaryExpression unaryExpr:
+                if (!TryParseExpression(unaryExpr.Argument, out var unaryArgExpr))
+                {
+                    return false;
+                }
+
+                hirExpr = new HIRUnaryExpression(unaryExpr.Operator, unaryArgExpr!);
+                return true;
             case Identifier identifierExpr:
                 // FindSymbol always returns a Symbol; BindingKind.Global indicates an undeclared/ambient global.
                 // If the symbol is user-declared (var/let/const/function), it shadows any global constant.

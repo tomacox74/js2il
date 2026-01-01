@@ -190,6 +190,22 @@ public sealed class HIRToLIRLowerer
             case HIRCallExpression callExpr:
                 return TryLowerCallExpression(callExpr, out resultTempVar);
 
+            case HIRUnaryExpression unaryExpr:
+                if (unaryExpr.Operator != Acornima.Operator.TypeOf)
+                {
+                    return false;
+                }
+
+                if (!TryLowerExpression(unaryExpr.Argument, out var unaryArgTempVar))
+                {
+                    return false;
+                }
+
+                unaryArgTempVar = EnsureObject(unaryArgTempVar);
+                _methodBodyIR.Instructions.Add(new LIRTypeof(unaryArgTempVar, resultTempVar));
+                this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+                return true;
+
             case HIRVariableExpression varExpr:
                 if (!_variableMap.TryGetValue(varExpr.Name.Name, out var localVar))
                 {
