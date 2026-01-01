@@ -29,6 +29,10 @@ namespace Js2IL.Services
          * Distincly different than undefined in JavaScript.
          */
         Null,
+        /**
+         * The JavaScript undefined value (CLR null).
+         */
+        Undefined,
 
         Function,
 

@@ -192,7 +192,7 @@ class HIRMethodBuilder
                 // Handle 'undefined' as a built-in constant
                 if (identifierExpr.Name == "undefined")
                 {
-                    hirExpr = new HIRLiteralExpression(JavascriptType.Unknown, null);
+                    hirExpr = new HIRLiteralExpression(JavascriptType.Undefined, null);
                     return true;
                 }
                 var symbol = _scope.FindSymbol(identifierExpr.Name);
