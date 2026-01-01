@@ -22,18 +22,22 @@ public static class IRPipelineMetrics
     /// </summary>
     public static bool Enabled { get; set; } = false;
 
+    /// <summary>
+    /// Resets all metrics counters to zero.
+    /// Uses Interlocked.Exchange for thread-safe reset operations.
+    /// </summary>
     public static void Reset()
     {
-        _mainMethodAttempts = 0;
-        _mainMethodSuccesses = 0;
-        _functionAttempts = 0;
-        _functionSuccesses = 0;
-        _arrowFunctionAttempts = 0;
-        _arrowFunctionSuccesses = 0;
-        _classMethodAttempts = 0;
-        _classMethodSuccesses = 0;
-        _constructorAttempts = 0;
-        _constructorSuccesses = 0;
+        Interlocked.Exchange(ref _mainMethodAttempts, 0);
+        Interlocked.Exchange(ref _mainMethodSuccesses, 0);
+        Interlocked.Exchange(ref _functionAttempts, 0);
+        Interlocked.Exchange(ref _functionSuccesses, 0);
+        Interlocked.Exchange(ref _arrowFunctionAttempts, 0);
+        Interlocked.Exchange(ref _arrowFunctionSuccesses, 0);
+        Interlocked.Exchange(ref _classMethodAttempts, 0);
+        Interlocked.Exchange(ref _classMethodSuccesses, 0);
+        Interlocked.Exchange(ref _constructorAttempts, 0);
+        Interlocked.Exchange(ref _constructorSuccesses, 0);
     }
 
     public static void RecordMainMethodAttempt(bool success)
@@ -71,6 +75,11 @@ public static class IRPipelineMetrics
         if (success) Interlocked.Increment(ref _constructorSuccesses);
     }
 
+    /// <summary>
+    /// Gets a snapshot of current metrics.
+    /// Note: In concurrent scenarios, the snapshot may reflect an inconsistent state
+    /// if metrics are being recorded simultaneously. This is acceptable for audit purposes.
+    /// </summary>
     public static IRPipelineStats GetStats() => new(
         MainMethodAttempts: _mainMethodAttempts,
         MainMethodSuccesses: _mainMethodSuccesses,

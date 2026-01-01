@@ -10,7 +10,9 @@ namespace Js2IL.Tests;
 /// <summary>
 /// Audit test to track progress of IR pipeline adoption.
 /// Runs all execution tests and reports how many methods compiled via IR vs legacy.
+/// Uses a unique collection to prevent parallel execution since it modifies global static state.
 /// </summary>
+[Collection("IRPipelineMetrics")]
 public class IRPipelineAuditTests : IDisposable
 {
     private readonly ITestOutputHelper _output;
@@ -63,7 +65,10 @@ public class IRPipelineAuditTests : IDisposable
                 var js = reader.ReadToEnd();
 
                 // Extract a test name from the resource name
-                var testName = Path.GetFileNameWithoutExtension(resourceName.Replace("Js2IL.Tests.", "").Replace(".", "_"));
+                var resourceWithoutPrefix = resourceName.StartsWith("Js2IL.Tests.", StringComparison.Ordinal)
+                    ? resourceName.Substring("Js2IL.Tests.".Length)
+                    : resourceName;
+                var testName = Path.GetFileNameWithoutExtension(resourceWithoutPrefix);
                 
                 CompileJavaScript(js, testName);
                 compiled++;
@@ -95,7 +100,8 @@ public class IRPipelineAuditTests : IDisposable
             foreach (var (resource, error) in failures)
             {
                 var shortName = resource.Replace("Js2IL.Tests.", "");
-                _output.WriteLine($"  - {shortName}: {error.Split('\n')[0]}");
+                var firstLine = error.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? error;
+                _output.WriteLine($"  - {shortName}: {firstLine}");
             }
         }
         else if (failures.Count > 10)
@@ -104,7 +110,8 @@ public class IRPipelineAuditTests : IDisposable
             foreach (var (resource, error) in failures.Take(10))
             {
                 var shortName = resource.Replace("Js2IL.Tests.", "");
-                _output.WriteLine($"  - {shortName}: {error.Split('\n')[0]}");
+                var firstLine = error.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? error;
+                _output.WriteLine($"  - {shortName}: {firstLine}");
             }
         }
 
