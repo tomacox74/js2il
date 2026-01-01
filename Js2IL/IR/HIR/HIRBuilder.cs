@@ -199,6 +199,15 @@ class HIRMethodBuilder
                 hirExpr = new HIRCallExpression(calleeExpr!, argExprs);
                 return true;
 
+            case UpdateExpression updateExpr:
+                if (!TryParseExpression(updateExpr.Argument, out var updateArgExpr))
+                {
+                    return false;
+                }
+
+                hirExpr = new HIRUpdateExpression(updateExpr.Operator, updateExpr.Prefix, updateArgExpr!);
+                return true;
+
             case UnaryExpression unaryExpr:
                 if (!TryParseExpression(unaryExpr.Argument, out var unaryArgExpr))
                 {

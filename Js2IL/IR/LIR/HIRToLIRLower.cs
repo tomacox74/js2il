@@ -17,6 +17,15 @@ public sealed class HIRToLIRLowerer
 
     private readonly Dictionary<LocalVariable, ValueStorage> _localVarTypes = new Dictionary<LocalVariable, ValueStorage>();
 
+    private LocalVariable CreateScratchLocal(ValueStorage storage)
+    {
+        var localVar = new LocalVariable(_localVarCounter);
+        _localVarCounter++;
+        _methodBodyIR.Locals.Add(localVar);
+        _localVarTypes[localVar] = storage;
+        return localVar;
+    }
+
     public static bool TryLower(HIRMethod hirMethod, out MethodBodyIR? lirMethod)
     {
         lirMethod = null;
@@ -191,20 +200,10 @@ public sealed class HIRToLIRLowerer
                 return TryLowerCallExpression(callExpr, out resultTempVar);
 
             case HIRUnaryExpression unaryExpr:
-                if (unaryExpr.Operator != Acornima.Operator.TypeOf)
-                {
-                    return false;
-                }
+                return TryLowerUnaryExpression(unaryExpr, resultTempVar);
 
-                if (!TryLowerExpression(unaryExpr.Argument, out var unaryArgTempVar))
-                {
-                    return false;
-                }
-
-                unaryArgTempVar = EnsureObject(unaryArgTempVar);
-                _methodBodyIR.Instructions.Add(new LIRTypeof(unaryArgTempVar, resultTempVar));
-                this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
-                return true;
+            case HIRUpdateExpression updateExpr:
+                return TryLowerUpdateExpression(updateExpr, resultTempVar);
 
             case HIRVariableExpression varExpr:
                 if (!_variableMap.TryGetValue(varExpr.Name.Name, out var localVar))
@@ -270,6 +269,121 @@ public sealed class HIRToLIRLowerer
 
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsic(consoleTempVar, "log", arrayTempVar, resultTempVar));
 
+        return true;
+    }
+
+    private bool TryLowerUnaryExpression(HIRUnaryExpression unaryExpr, TempVariable resultTempVar)
+    {
+        if (!TryLowerExpression(unaryExpr.Argument, out var unaryArgTempVar))
+        {
+            return false;
+        }
+
+        if (unaryExpr.Operator == Acornima.Operator.TypeOf)
+        {
+            unaryArgTempVar = EnsureObject(unaryArgTempVar);
+            _methodBodyIR.Instructions.Add(new LIRTypeof(unaryArgTempVar, resultTempVar));
+            this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+            return true;
+        }
+
+        if (unaryExpr.Operator == Acornima.Operator.UnaryNegation)
+        {
+            // Minimal: only support numeric (double) negation for now
+            if (GetTempStorage(unaryArgTempVar).ClrType != typeof(double))
+            {
+                return false;
+            }
+            _methodBodyIR.Instructions.Add(new LIRNegateNumber(unaryArgTempVar, resultTempVar));
+            this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            return true;
+        }
+
+        if (unaryExpr.Operator == Acornima.Operator.BitwiseNot)
+        {
+            // Minimal: ~x where x is numeric (double). Legacy pipeline coerces via ToNumber;
+            // IR pipeline currently only supports number operands for this operator.
+            if (GetTempStorage(unaryArgTempVar).ClrType != typeof(double))
+            {
+                return false;
+            }
+            _methodBodyIR.Instructions.Add(new LIRBitwiseNotNumber(unaryArgTempVar, resultTempVar));
+            this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool TryLowerUpdateExpression(HIRUpdateExpression updateExpr, TempVariable resultTempVar)
+    {
+        // Minimal: only support ++/-- on local variables (identifiers)
+        if (updateExpr.Operator != Acornima.Operator.Increment && updateExpr.Operator != Acornima.Operator.Decrement)
+        {
+            return false;
+        }
+
+        if (updateExpr.Argument is not HIRVariableExpression updateVarExpr)
+        {
+            return false;
+        }
+
+        if (!_variableMap.TryGetValue(updateVarExpr.Name.Name, out var targetLocal))
+        {
+            return false;
+        }
+
+        // Only support numeric locals (double) for now
+        if (GetLocalStorage(targetLocal).ClrType != typeof(double))
+        {
+            return false;
+        }
+
+        var delta = updateExpr.Operator == Acornima.Operator.Increment ? 1.0 : -1.0;
+
+        LocalVariable? scratchLocal = null;
+
+        if (!updateExpr.Prefix)
+        {
+            // Postfix: result is original value.
+            scratchLocal = CreateScratchLocal(new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+            var originalTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadLocal(targetLocal, originalTemp));
+            this.DefineTempStorage(originalTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            _methodBodyIR.Instructions.Add(new LIRStoreLocal(originalTemp, scratchLocal.Value));
+        }
+
+        // Compute updated value and store back
+        var currentTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRLoadLocal(targetLocal, currentTemp));
+        this.DefineTempStorage(currentTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+        var deltaTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstNumber(delta, deltaTemp));
+        this.DefineTempStorage(deltaTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+        var updatedTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRAddNumber(currentTemp, deltaTemp, updatedTemp));
+        this.DefineTempStorage(updatedTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        _methodBodyIR.Instructions.Add(new LIRStoreLocal(updatedTemp, targetLocal));
+
+        if (updateExpr.Prefix)
+        {
+            // Prefix returns the updated value
+            _methodBodyIR.Instructions.Add(new LIRLoadLocal(targetLocal, resultTempVar));
+            this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            return true;
+        }
+
+        // Postfix returns the original value from scratch local
+        if (scratchLocal is null)
+        {
+            return false;
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRLoadLocal(scratchLocal.Value, resultTempVar));
+        this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
         return true;
     }
 
