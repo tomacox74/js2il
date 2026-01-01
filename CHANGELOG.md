@@ -17,6 +17,12 @@ All notable changes to this project are documented here.
   - Concise expression-body arrow functions fall back to legacy emitter (return value handling not yet implemented)
 - **HIRReturnStatement**: New HIR node for explicit return statements in method bodies
 - **LIRReturn instruction**: Low-level IR instruction for method returns, handled by `JsMethodCompiler`
+- **IR pipeline support for boolean literals**: Extended IR pipeline to handle `true` and `false` literals:
+  - Added `BooleanLiteral` case to `HIRBuilder.TryParseExpression`
+  - Added `LIRConstBoolean` instruction for boolean constants
+  - Added `JavascriptType.Boolean` case to `HIRToLIRLower`
+  - Extended `LIRConvertToObject` with `SourceType` parameter for proper boxing (bool vs double)
+  - IR metrics improved: 4.1% adoption (23/555 methods), 532 legacy fallbacks
 
 ### Changed
 - **IL optimization**: IR pipeline eliminates unnecessary `castclass` instructions when loading intrinsic globals (e.g., `console`), producing smaller method bodies
