@@ -143,9 +143,9 @@ public sealed class HIRToLIRLowerer
                         return true;
 
                     case JavascriptType.Null:
-                        // JavaScript 'null' literal
+                        // JavaScript 'null' literal - raw value, boxing added by EnsureObject when needed
                         _methodBodyIR.Instructions.Add(new LIRConstNull(resultTempVar));
-                        this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(JavaScriptRuntime.JsNull)));
+                        this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(JavaScriptRuntime.JsNull)));
                         return true;
 
                     case JavascriptType.Unknown:
