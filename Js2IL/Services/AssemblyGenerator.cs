@@ -115,6 +115,7 @@ namespace Js2IL.Services
             var methodCompiler = _serviceProvider.GetRequiredService<JsMethodCompiler>();
             // new path which does proper IR/SSA lowering and IL generation
             var methodDefinitionHandle = methodCompiler.TryCompileMainMethod(module.Name, module.Ast, module.SymbolTable!.Root!, methodBodyStream);
+            IR.IRPipelineMetrics.RecordMainMethodAttempt(!methodDefinitionHandle.IsNil);
             if (!methodDefinitionHandle.IsNil)
             {
                 return methodDefinitionHandle;
