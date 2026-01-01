@@ -33,6 +33,11 @@ All notable changes to this project are documented here.
   - Added `HIRUnaryExpression` parsing in `HIRBuilder`
   - Added `LIRTypeof` instruction and lowering support in `HIRToLIRLower`
   - `JsMethodCompiler` emits a direct call to `JavaScriptRuntime.TypeUtilities.Typeof(object)`
+- **IR pipeline support for unary/update operators**: Extended IR pipeline to compile unary `-`, unary `~`, and update expressions (`++`/`--`):
+  - Added `HIRUpdateExpression` and parsing of `UpdateExpression` nodes in `HIRBuilder`
+  - Added `LIRNegateNumber` and `LIRBitwiseNotNumber` instructions with lowering support in `HIRToLIRLower`
+  - `JsMethodCompiler` emits IL for numeric negation and bitwise NOT
+  - Generator tests can now assert on IR fallback with improved diagnostics (`IRPipelineMetrics.GetLastFailure()`)
 
 ### Changed
 - **IL optimization**: IR pipeline eliminates unnecessary `castclass` instructions when loading intrinsic globals (e.g., `console`), producing smaller method bodies
