@@ -29,6 +29,10 @@ All notable changes to this project are documented here.
   - Added `LIRConstNull` instruction for JavaScript null (boxed `JsNull.Null`)
   - Added `JavascriptType.Null` and `Unknown` cases to `HIRToLIRLower`
   - IL optimization: `undefined` now emits direct `ldnull` instead of `GlobalThis::Get("undefined")` call
+- **IR pipeline support for unary `typeof`**: Extended IR pipeline to compile `typeof` expressions:
+  - Added `HIRUnaryExpression` parsing in `HIRBuilder`
+  - Added `LIRTypeof` instruction and lowering support in `HIRToLIRLower`
+  - `JsMethodCompiler` emits a direct call to `JavaScriptRuntime.TypeUtilities.Typeof(object)`
 
 ### Changed
 - **IL optimization**: IR pipeline eliminates unnecessary `castclass` instructions when loading intrinsic globals (e.g., `console`), producing smaller method bodies

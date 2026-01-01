@@ -48,3 +48,5 @@ public record LIRCallIntrinsic(TempVariable IntrinsicObject, string Name, TempVa
 public record LIRReturn(TempVariable ReturnValue) : LIRInstruction;
 
 public record LIRConvertToObject(TempVariable Source, Type SourceType, TempVariable Result) : LIRInstruction;
+
+public record LIRTypeof(TempVariable Value, TempVariable Result) : LIRInstruction;

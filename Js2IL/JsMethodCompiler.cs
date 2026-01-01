@@ -403,6 +403,12 @@ internal sealed class JsMethodCompiler
                     ilEncoder.Token(_bclReferences.DoubleType);
                 }
                 break;
+            case LIRTypeof:
+                // Stack: [value(object)] -> call TypeUtilities.Typeof(object) -> [string]
+                var typeofMref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.Typeof));
+                ilEncoder.OpCode(ILOpCode.Call);
+                ilEncoder.Token(typeofMref);
+                break;
             case LIRLoadLocal loadLocal:
                 ilEncoder.LoadLocal(loadLocal.Source.Index);
                 break;
