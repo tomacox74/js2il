@@ -4,7 +4,7 @@ namespace Js2IL.HIR;
 
 public sealed class HIRLiteralExpression : HIRExpression
 {
-    public HIRLiteralExpression(JavascriptType type, object value)
+    public HIRLiteralExpression(JavascriptType type, object? value)
     {
         Kind = type;
         Value = value;
