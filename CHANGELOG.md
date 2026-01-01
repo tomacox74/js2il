@@ -5,6 +5,12 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 ### Added
+- **IR pipeline support for class constructors**: Extended IR compilation pipeline to handle class constructors with automatic fallback:
+  - `HIRBuilder` now handles `FunctionExpression` nodes (used by class constructor bodies)
+  - `JsMethodCompiler.TryCompileClassConstructor` attempts IR compilation with fail-fast guards
+  - `ClassesGenerator.EmitConstructor` tries IR pipeline first, falls back to legacy emitter
+  - Fail-fast conditions: `needsScopes`, parameters > 0, field initializers > 0
+  - Returns both method handle and signature to avoid duplicate signature creation
 - **IR pipeline support for arrow functions**: Extended `HIRBuilder` to handle `ArrowFunctionExpression` nodes with fallback guards:
   - Block-body parameterless arrow functions now compile through IR pipeline
   - Arrow functions with parameters fall back to legacy emitter (parameters not yet supported in IR)
