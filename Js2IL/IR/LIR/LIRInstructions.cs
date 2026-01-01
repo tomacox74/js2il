@@ -30,6 +30,8 @@ public record LIRStoreLocal(TempVariable Source, LocalVariable Destination) : LI
 
 public record LIRConstUndefined(TempVariable Result) : LIRInstruction;
 
+public record LIRConstNull(TempVariable Result) : LIRInstruction;
+
 public record LIRGetIntrinsicGlobal(string Name, TempVariable Result) : LIRInstruction;
 
 public record LIRNewObjectArray(int ElementCount, TempVariable Result) : LIRInstruction;

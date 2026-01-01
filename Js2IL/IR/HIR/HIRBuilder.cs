@@ -73,6 +73,16 @@ public static class HIRBuilder
 
 class HIRMethodBuilder
 {
+    /// <summary>
+    /// JavaScript global constants that can be compiled as literals when not shadowed.
+    /// </summary>
+    private static readonly Dictionary<string, (JavascriptType Kind, object? Value)> KnownGlobalConstants = new()
+    {
+        ["undefined"] = (JavascriptType.Undefined, null),
+        ["NaN"] = (JavascriptType.Number, double.NaN),
+        ["Infinity"] = (JavascriptType.Number, double.PositiveInfinity),
+    };
+
     readonly Scope _scope;
     readonly List<HIRStatement> _statements = new();
 
@@ -189,7 +199,23 @@ class HIRMethodBuilder
                 hirExpr = new HIRCallExpression(calleeExpr!, argExprs);
                 return true;
             case Identifier identifierExpr:
+                // FindSymbol always returns a Symbol; BindingKind.Global indicates an undeclared/ambient global.
+                // If the symbol is user-declared (var/let/const/function), it shadows any global constant.
                 var symbol = _scope.FindSymbol(identifierExpr.Name);
+                if (symbol.Kind != BindingKind.Global)
+                {
+                    hirExpr = new HIRVariableExpression(symbol);
+                    return true;
+                }
+
+                // Synthetic global binding: prefer known global constants when not shadowed.
+                if (KnownGlobalConstants.TryGetValue(identifierExpr.Name, out var constant))
+                {
+                    hirExpr = new HIRLiteralExpression(constant.Kind, constant.Value);
+                    return true;
+                }
+
+                // Otherwise treat it as a global variable reference (e.g., console/require).
                 hirExpr = new HIRVariableExpression(symbol);
                 return true;
             case MemberExpression memberExpr:
@@ -216,6 +242,10 @@ class HIRMethodBuilder
                 return true;
             case BooleanLiteral booleanLiteralExpr:
                 hirExpr = new HIRLiteralExpression(JavascriptType.Boolean, booleanLiteralExpr.Value);
+                return true;
+            case Literal genericLiteral when genericLiteral.Value is null:
+                // JavaScript 'null' literal
+                hirExpr = new HIRLiteralExpression(JavascriptType.Null, null);
                 return true;
             // Handle other expression types as needed
             default:

@@ -377,6 +377,10 @@ internal sealed class JsMethodCompiler
             case LIRConstUndefined:
                 ilEncoder.OpCode(ILOpCode.Ldnull);
                 break;
+            case LIRConstNull:
+                // JavaScript 'null' raw value (boxing handled by LIRConvertToObject)
+                ilEncoder.LoadConstantI4((int)JavaScriptRuntime.JsNull.Null);
+                break;
             case LIRGetIntrinsicGlobal getIntrinsicGlobal:
                 EmitLoadIntrinsicGlobalVariable(getIntrinsicGlobal.Name, ilEncoder);
                 break;
@@ -389,6 +393,10 @@ internal sealed class JsMethodCompiler
                 if (convertToObject.SourceType == typeof(bool))
                 {
                     ilEncoder.Token(_bclReferences.BooleanType);
+                }
+                else if (convertToObject.SourceType == typeof(JavaScriptRuntime.JsNull))
+                {
+                    ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull)));
                 }
                 else
                 {

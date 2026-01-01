@@ -23,6 +23,12 @@ All notable changes to this project are documented here.
   - Added `JavascriptType.Boolean` case to `HIRToLIRLower`
   - Extended `LIRConvertToObject` with `SourceType` parameter for proper boxing (bool vs double)
   - IR metrics improved: 4.1% adoption (23/555 methods), 532 legacy fallbacks
+- **IR pipeline support for null/undefined literals**: Extended IR pipeline to handle `null` and `undefined`:
+  - Added `Literal` with null value case to `HIRBuilder.TryParseExpression` for JavaScript `null`
+  - Added special handling for `undefined` identifier in `HIRBuilder.TryParseExpression`
+  - Added `LIRConstNull` instruction for JavaScript null (boxed `JsNull.Null`)
+  - Added `JavascriptType.Null` and `Unknown` cases to `HIRToLIRLower`
+  - IL optimization: `undefined` now emits direct `ldnull` instead of `GlobalThis::Get("undefined")` call
 
 ### Changed
 - **IL optimization**: IR pipeline eliminates unnecessary `castclass` instructions when loading intrinsic globals (e.g., `console`), producing smaller method bodies

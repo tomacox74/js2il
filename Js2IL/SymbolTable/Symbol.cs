@@ -13,4 +13,6 @@ public sealed class Symbol
 
     public string Name { get; }
     private readonly BindingInfo _bindingInfo;
+
+    public BindingKind Kind => _bindingInfo.Kind;
 }
