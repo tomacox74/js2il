@@ -20,6 +20,8 @@ public record LIRConstNumber(double Value, TempVariable Result) : LIRInstruction
 
 public record LIRConstString(string Value, TempVariable Result) : LIRInstruction;
 
+public record LIRConstBoolean(bool Value, TempVariable Result) : LIRInstruction;
+
 public record LIRAddNumber(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
 
 public record LIRLoadLocal(LocalVariable Source, TempVariable Result) : LIRInstruction;
@@ -43,4 +45,4 @@ public record LIRCallIntrinsic(TempVariable IntrinsicObject, string Name, TempVa
 
 public record LIRReturn(TempVariable ReturnValue) : LIRInstruction;
 
-public record LIRConvertToObject(TempVariable Source, TempVariable Result) : LIRInstruction;
+public record LIRConvertToObject(TempVariable Source, Type SourceType, TempVariable Result) : LIRInstruction;

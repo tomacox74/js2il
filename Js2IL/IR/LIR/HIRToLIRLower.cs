@@ -136,6 +136,12 @@ public sealed class HIRToLIRLowerer
                         this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                         return true;
 
+                    case JavascriptType.Boolean:
+                        bool boolValue = literal.Value != null && (bool)literal.Value;
+                        _methodBodyIR.Instructions.Add(new LIRConstBoolean(boolValue, resultTempVar));
+                        this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                        return true;
+
                     default:
                         // Unsupported literal type
                         return false;
@@ -267,7 +273,7 @@ public sealed class HIRToLIRLowerer
         {
             var objectTempVar = CreateTempVariable();
             var storage = this.GetTempStorage(tempVar);
-            _methodBodyIR.Instructions.Add(new LIRConvertToObject(tempVar, objectTempVar));
+            _methodBodyIR.Instructions.Add(new LIRConvertToObject(tempVar, storage.ClrType ?? typeof(object), objectTempVar));
             this.DefineTempStorage(objectTempVar, new ValueStorage(ValueStorageKind.BoxedValue, storage.ClrType));
             return objectTempVar;
         }
