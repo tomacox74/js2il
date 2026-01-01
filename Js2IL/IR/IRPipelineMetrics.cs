@@ -1,3 +1,5 @@
+using System.Threading;
+
 namespace Js2IL.IR;
 
 /// <summary>
@@ -6,91 +8,95 @@ namespace Js2IL.IR;
 /// </summary>
 public static class IRPipelineMetrics
 {
-    private static int _mainMethodAttempts;
-    private static int _mainMethodSuccesses;
-    private static int _functionAttempts;
-    private static int _functionSuccesses;
-    private static int _arrowFunctionAttempts;
-    private static int _arrowFunctionSuccesses;
-    private static int _classMethodAttempts;
-    private static int _classMethodSuccesses;
-    private static int _constructorAttempts;
-    private static int _constructorSuccesses;
+    private static readonly ThreadLocal<int> _mainMethodAttempts = new(() => 0);
+    private static readonly ThreadLocal<int> _mainMethodSuccesses = new(() => 0);
+    private static readonly ThreadLocal<int> _functionAttempts = new(() => 0);
+    private static readonly ThreadLocal<int> _functionSuccesses = new(() => 0);
+    private static readonly ThreadLocal<int> _arrowFunctionAttempts = new(() => 0);
+    private static readonly ThreadLocal<int> _arrowFunctionSuccesses = new(() => 0);
+    private static readonly ThreadLocal<int> _classMethodAttempts = new(() => 0);
+    private static readonly ThreadLocal<int> _classMethodSuccesses = new(() => 0);
+    private static readonly ThreadLocal<int> _constructorAttempts = new(() => 0);
+    private static readonly ThreadLocal<int> _constructorSuccesses = new(() => 0);
+
+    private static readonly ThreadLocal<bool> _enabled = new(() => false);
 
     /// <summary>
     /// When true, metrics are collected. Default is false for production.
     /// </summary>
-    public static bool Enabled { get; set; } = false;
+    public static bool Enabled
+    {
+        get => _enabled.Value;
+        set => _enabled.Value = value;
+    }
 
     /// <summary>
     /// Resets all metrics counters to zero.
-    /// Uses Interlocked.Exchange for thread-safe reset operations.
+    /// Note: This only resets metrics for the current thread.
     /// </summary>
     public static void Reset()
     {
-        Interlocked.Exchange(ref _mainMethodAttempts, 0);
-        Interlocked.Exchange(ref _mainMethodSuccesses, 0);
-        Interlocked.Exchange(ref _functionAttempts, 0);
-        Interlocked.Exchange(ref _functionSuccesses, 0);
-        Interlocked.Exchange(ref _arrowFunctionAttempts, 0);
-        Interlocked.Exchange(ref _arrowFunctionSuccesses, 0);
-        Interlocked.Exchange(ref _classMethodAttempts, 0);
-        Interlocked.Exchange(ref _classMethodSuccesses, 0);
-        Interlocked.Exchange(ref _constructorAttempts, 0);
-        Interlocked.Exchange(ref _constructorSuccesses, 0);
+        _mainMethodAttempts.Value = 0;
+        _mainMethodSuccesses.Value = 0;
+        _functionAttempts.Value = 0;
+        _functionSuccesses.Value = 0;
+        _arrowFunctionAttempts.Value = 0;
+        _arrowFunctionSuccesses.Value = 0;
+        _classMethodAttempts.Value = 0;
+        _classMethodSuccesses.Value = 0;
+        _constructorAttempts.Value = 0;
+        _constructorSuccesses.Value = 0;
     }
 
     public static void RecordMainMethodAttempt(bool success)
     {
         if (!Enabled) return;
-        Interlocked.Increment(ref _mainMethodAttempts);
-        if (success) Interlocked.Increment(ref _mainMethodSuccesses);
+        _mainMethodAttempts.Value++;
+        if (success) _mainMethodSuccesses.Value++;
     }
 
     public static void RecordFunctionAttempt(bool success)
     {
         if (!Enabled) return;
-        Interlocked.Increment(ref _functionAttempts);
-        if (success) Interlocked.Increment(ref _functionSuccesses);
+        _functionAttempts.Value++;
+        if (success) _functionSuccesses.Value++;
     }
 
     public static void RecordArrowFunctionAttempt(bool success)
     {
         if (!Enabled) return;
-        Interlocked.Increment(ref _arrowFunctionAttempts);
-        if (success) Interlocked.Increment(ref _arrowFunctionSuccesses);
+        _arrowFunctionAttempts.Value++;
+        if (success) _arrowFunctionSuccesses.Value++;
     }
 
     public static void RecordClassMethodAttempt(bool success)
     {
         if (!Enabled) return;
-        Interlocked.Increment(ref _classMethodAttempts);
-        if (success) Interlocked.Increment(ref _classMethodSuccesses);
+        _classMethodAttempts.Value++;
+        if (success) _classMethodSuccesses.Value++;
     }
 
     public static void RecordConstructorAttempt(bool success)
     {
         if (!Enabled) return;
-        Interlocked.Increment(ref _constructorAttempts);
-        if (success) Interlocked.Increment(ref _constructorSuccesses);
+        _constructorAttempts.Value++;
+        if (success) _constructorSuccesses.Value++;
     }
 
     /// <summary>
-    /// Gets a snapshot of current metrics.
-    /// Note: In concurrent scenarios, the snapshot may reflect an inconsistent state
-    /// if metrics are being recorded simultaneously. This is acceptable for audit purposes.
+    /// Gets a snapshot of current metrics for the current thread.
     /// </summary>
     public static IRPipelineStats GetStats() => new(
-        MainMethodAttempts: _mainMethodAttempts,
-        MainMethodSuccesses: _mainMethodSuccesses,
-        FunctionAttempts: _functionAttempts,
-        FunctionSuccesses: _functionSuccesses,
-        ArrowFunctionAttempts: _arrowFunctionAttempts,
-        ArrowFunctionSuccesses: _arrowFunctionSuccesses,
-        ClassMethodAttempts: _classMethodAttempts,
-        ClassMethodSuccesses: _classMethodSuccesses,
-        ConstructorAttempts: _constructorAttempts,
-        ConstructorSuccesses: _constructorSuccesses
+        MainMethodAttempts: _mainMethodAttempts.Value,
+        MainMethodSuccesses: _mainMethodSuccesses.Value,
+        FunctionAttempts: _functionAttempts.Value,
+        FunctionSuccesses: _functionSuccesses.Value,
+        ArrowFunctionAttempts: _arrowFunctionAttempts.Value,
+        ArrowFunctionSuccesses: _arrowFunctionSuccesses.Value,
+        ClassMethodAttempts: _classMethodAttempts.Value,
+        ClassMethodSuccesses: _classMethodSuccesses.Value,
+        ConstructorAttempts: _constructorAttempts.Value,
+        ConstructorSuccesses: _constructorSuccesses.Value
     );
 }
 

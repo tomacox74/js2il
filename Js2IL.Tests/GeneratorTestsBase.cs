@@ -31,61 +31,86 @@ namespace Js2IL.Tests
             }
         }
 
-        protected Task GenerateTest(string testName, [CallerFilePath] string sourceFilePath = "")
-            => GenerateTest(testName, configureSettings: null, additionalScripts: null, sourceFilePath: sourceFilePath);
-
         protected Task GenerateTest(string testName, string[]? additionalScripts, [CallerFilePath] string sourceFilePath = "")
             => GenerateTest(testName, configureSettings: null, additionalScripts: additionalScripts, sourceFilePath: sourceFilePath);
 
-        protected Task GenerateTest(string testName, Action<VerifySettings>? configureSettings, string[]? additionalScripts, [CallerFilePath] string sourceFilePath = "")
+        protected Task GenerateTest(string testName, Action<VerifySettings>? configureSettings = null, string[]? additionalScripts = null, [CallerFilePath] string sourceFilePath = "", bool assertOnIRPipelineFailure = false)
         {
-            var js = GetJavaScript(testName);
-            var testFilePath = Path.Combine(_outputPath, $"{testName}.js");
-
-            var mockFileSystem = new MockFileSystem();
-            mockFileSystem.AddFile(testFilePath, js);
-
-            // Add additional scripts to the mock file system
-            if (additionalScripts != null)
+            async Task RunAsync()
             {
-                foreach (var scriptName in additionalScripts)
+                if (assertOnIRPipelineFailure)
                 {
-                    var scriptContent = GetJavaScript(scriptName);
-                    var scriptPath = Path.Combine(_outputPath, $"{scriptName}.js");
-                    mockFileSystem.AddFile(scriptPath, scriptContent);
+                    IR.IRPipelineMetrics.Enabled = true;
+                    IR.IRPipelineMetrics.Reset();
+                }
+
+                try
+                {
+                    var js = GetJavaScript(testName);
+                    var testFilePath = Path.Combine(_outputPath, $"{testName}.js");
+
+                    var mockFileSystem = new MockFileSystem();
+                    mockFileSystem.AddFile(testFilePath, js);
+
+                    // Add additional scripts to the mock file system
+                    if (additionalScripts != null)
+                    {
+                        foreach (var scriptName in additionalScripts)
+                        {
+                            var scriptContent = GetJavaScript(scriptName);
+                            var scriptPath = Path.Combine(_outputPath, $"{scriptName}.js");
+                            mockFileSystem.AddFile(scriptPath, scriptContent);
+                        }
+                    }
+
+                    var options = new CompilerOptions
+                    {
+                        OutputDirectory = _outputPath
+                    };
+
+                    var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFileSystem);
+                    var compiler = serviceProvider.GetRequiredService<Compiler>();
+
+                    if (!compiler.Compile(testFilePath))
+                    {
+                        throw new InvalidOperationException($"Compilation failed for test {testName}");
+                    }
+
+                    // Compiler outputs <entryFileBasename>.dll into OutputDirectory.
+                    // For nested-path test names (e.g. "CommonJS_Require_X/a"), the DLL will be "a.dll".
+                    var assemblyName = Path.GetFileNameWithoutExtension(testFilePath);
+                    var expectedPath = Path.Combine(_outputPath, $"{assemblyName}.dll");
+
+                    var il = Utilities.AssemblyToText.ConvertToText(expectedPath);
+
+                    var settings = new VerifySettings(_verifySettings);
+                    var directory = Path.GetDirectoryName(sourceFilePath);
+                    if (!string.IsNullOrEmpty(directory))
+                    {
+                        var snapshotsDirectory = Path.Combine(directory, "Snapshots");
+                        Directory.CreateDirectory(snapshotsDirectory);
+                        settings.UseDirectory(snapshotsDirectory);
+                    }
+                    configureSettings?.Invoke(settings);
+
+                    if (assertOnIRPipelineFailure)
+                    {
+                        var stats = IR.IRPipelineMetrics.GetStats();
+                        Assert.True(stats.TotalFallbacks == 0, $"IR Pipeline fallback occurred in test {testName}: {stats.TotalFallbacks} fallbacks.");
+                    }
+
+                    await Verify(il, settings);
+                }
+                finally
+                {
+                    if (assertOnIRPipelineFailure)
+                    {
+                        IR.IRPipelineMetrics.Enabled = false;
+                    }
                 }
             }
 
-            var options = new CompilerOptions
-            {
-                OutputDirectory = _outputPath
-            };
-
-            var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFileSystem);
-            var compiler = serviceProvider.GetRequiredService<Compiler>();
-            
-            if (!compiler.Compile(testFilePath))
-            {
-                throw new InvalidOperationException($"Compilation failed for test {testName}");
-            }
-
-            // Compiler outputs <entryFileBasename>.dll into OutputDirectory.
-            // For nested-path test names (e.g. "CommonJS_Require_X/a"), the DLL will be "a.dll".
-            var assemblyName = Path.GetFileNameWithoutExtension(testFilePath);
-            var expectedPath = Path.Combine(_outputPath, $"{assemblyName}.dll");
-
-            var il = Utilities.AssemblyToText.ConvertToText(expectedPath);
-            
-            var settings = new VerifySettings(_verifySettings);
-            var directory = Path.GetDirectoryName(sourceFilePath);
-            if (!string.IsNullOrEmpty(directory))
-            {
-                var snapshotsDirectory = Path.Combine(directory, "Snapshots");
-                Directory.CreateDirectory(snapshotsDirectory);
-                settings.UseDirectory(snapshotsDirectory);
-            }
-            configureSettings?.Invoke(settings);
-            return Verify(il, settings);
+            return RunAsync();
         }
 
         private string GetJavaScript(string testName)
