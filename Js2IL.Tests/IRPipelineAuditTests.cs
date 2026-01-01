@@ -1,6 +1,7 @@
 using Js2IL.IR;
 using Js2IL.Services;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -30,9 +31,91 @@ public class IRPipelineAuditTests : IDisposable
     }
 
     /// <summary>
+    /// Reports IR pipeline metrics after compiling ALL embedded JavaScript test files.
+    /// This gives a comprehensive view of IR adoption across the entire test suite.
+    /// Run with: dotnet test --filter "FullSuiteIRPipelineMetrics" --logger "console;verbosity=detailed"
+    /// </summary>
+    [Fact]
+    public void FullSuiteIRPipelineMetrics()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        var resourceNames = assembly.GetManifestResourceNames()
+            .Where(r => r.EndsWith(".js", StringComparison.OrdinalIgnoreCase))
+            .Where(r => !r.Contains(".expected.")) // Skip expected output files
+            .OrderBy(r => r)
+            .ToList();
+
+        _output.WriteLine($"Found {resourceNames.Count} JavaScript test files");
+        _output.WriteLine("");
+
+        int compiled = 0;
+        int failed = 0;
+        var failures = new List<(string Resource, string Error)>();
+
+        foreach (var resourceName in resourceNames)
+        {
+            try
+            {
+                using var stream = assembly.GetManifestResourceStream(resourceName);
+                if (stream == null) continue;
+
+                using var reader = new StreamReader(stream);
+                var js = reader.ReadToEnd();
+
+                // Extract a test name from the resource name
+                var testName = Path.GetFileNameWithoutExtension(resourceName.Replace("Js2IL.Tests.", "").Replace(".", "_"));
+                
+                CompileJavaScript(js, testName);
+                compiled++;
+            }
+            catch (Exception ex)
+            {
+                failed++;
+                failures.Add((resourceName, ex.Message));
+            }
+        }
+
+        var stats = IRPipelineMetrics.GetStats();
+        
+        _output.WriteLine("=".PadRight(60, '='));
+        _output.WriteLine("IR PIPELINE ADOPTION REPORT - FULL TEST SUITE");
+        _output.WriteLine("=".PadRight(60, '='));
+        _output.WriteLine("");
+        _output.WriteLine($"Test Files: {compiled} compiled, {failed} failed to compile");
+        _output.WriteLine("");
+        _output.WriteLine(stats.ToString());
+        _output.WriteLine("");
+        _output.WriteLine("Goal: 100% IR pipeline adoption (0 legacy fallbacks)");
+        _output.WriteLine($"Current legacy fallbacks: {stats.TotalFallbacks}");
+        _output.WriteLine("");
+        
+        if (failures.Count > 0 && failures.Count <= 10)
+        {
+            _output.WriteLine("Compilation failures:");
+            foreach (var (resource, error) in failures)
+            {
+                var shortName = resource.Replace("Js2IL.Tests.", "");
+                _output.WriteLine($"  - {shortName}: {error.Split('\n')[0]}");
+            }
+        }
+        else if (failures.Count > 10)
+        {
+            _output.WriteLine($"Compilation failures: {failures.Count} (showing first 10)");
+            foreach (var (resource, error) in failures.Take(10))
+            {
+                var shortName = resource.Replace("Js2IL.Tests.", "");
+                _output.WriteLine($"  - {shortName}: {error.Split('\n')[0]}");
+            }
+        }
+
+        // This test always passes - it's for reporting
+        Assert.True(true);
+    }
+
+    /// <summary>
     /// Reports IR pipeline metrics after running a representative set of tests.
     /// This test always passes - it's for auditing purposes.
-    /// Run with: dotnet test --filter "IRPipelineAuditTests" -v n
+    /// Run with: dotnet test --filter "ReportIRPipelineMetrics" --logger "console;verbosity=detailed"
     /// </summary>
     [Fact]
     public void ReportIRPipelineMetrics()
