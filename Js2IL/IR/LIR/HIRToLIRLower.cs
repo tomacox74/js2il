@@ -142,6 +142,18 @@ public sealed class HIRToLIRLowerer
                         this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                         return true;
 
+                    case JavascriptType.Null:
+                        // JavaScript 'null' literal
+                        _methodBodyIR.Instructions.Add(new LIRConstNull(resultTempVar));
+                        this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(JavaScriptRuntime.JsNull)));
+                        return true;
+
+                    case JavascriptType.Unknown:
+                        // JavaScript 'undefined' - represented as CLR null
+                        _methodBodyIR.Instructions.Add(new LIRConstUndefined(resultTempVar));
+                        this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        return true;
+
                     default:
                         // Unsupported literal type
                         return false;

@@ -189,6 +189,12 @@ class HIRMethodBuilder
                 hirExpr = new HIRCallExpression(calleeExpr!, argExprs);
                 return true;
             case Identifier identifierExpr:
+                // Handle 'undefined' as a built-in constant
+                if (identifierExpr.Name == "undefined")
+                {
+                    hirExpr = new HIRLiteralExpression(JavascriptType.Unknown, null);
+                    return true;
+                }
                 var symbol = _scope.FindSymbol(identifierExpr.Name);
                 hirExpr = new HIRVariableExpression(symbol);
                 return true;
@@ -216,6 +222,10 @@ class HIRMethodBuilder
                 return true;
             case BooleanLiteral booleanLiteralExpr:
                 hirExpr = new HIRLiteralExpression(JavascriptType.Boolean, booleanLiteralExpr.Value);
+                return true;
+            case Literal genericLiteral when genericLiteral.Value is null:
+                // JavaScript 'null' literal
+                hirExpr = new HIRLiteralExpression(JavascriptType.Null, null);
                 return true;
             // Handle other expression types as needed
             default:

@@ -377,6 +377,12 @@ internal sealed class JsMethodCompiler
             case LIRConstUndefined:
                 ilEncoder.OpCode(ILOpCode.Ldnull);
                 break;
+            case LIRConstNull constNull:
+                // JavaScript 'null' → box JavaScriptRuntime.JsNull.Null
+                ilEncoder.LoadConstantI4((int)JavaScriptRuntime.JsNull.Null);
+                ilEncoder.OpCode(ILOpCode.Box);
+                ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull)));
+                break;
             case LIRGetIntrinsicGlobal getIntrinsicGlobal:
                 EmitLoadIntrinsicGlobalVariable(getIntrinsicGlobal.Name, ilEncoder);
                 break;
