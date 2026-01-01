@@ -8,21 +8,21 @@ namespace Js2IL.Tests.UnaryOperator
         public GeneratorTests() : base("UnaryOperator") { }
 
         [Fact]
-        public Task UnaryOperator_MinusMinusPostfix() => GenerateTest(nameof(UnaryOperator_MinusMinusPostfix));
+        public Task UnaryOperator_MinusMinusPostfix() => GenerateTest(nameof(UnaryOperator_MinusMinusPostfix), assertOnIRPipelineFailure: true);
 
         [Fact]
-        public Task UnaryOperator_MinusMinusPrefix() => GenerateTest(nameof(UnaryOperator_MinusMinusPrefix));
+        public Task UnaryOperator_MinusMinusPrefix() => GenerateTest(nameof(UnaryOperator_MinusMinusPrefix), assertOnIRPipelineFailure: true);
 
         [Fact]
-        public Task UnaryOperator_PlusPlusPostfix() => GenerateTest(nameof(UnaryOperator_PlusPlusPostfix));
+        public Task UnaryOperator_PlusPlusPostfix() => GenerateTest(nameof(UnaryOperator_PlusPlusPostfix), assertOnIRPipelineFailure: true);
 
         [Fact]
-        public Task UnaryOperator_PlusPlusPrefix() => GenerateTest(nameof(UnaryOperator_PlusPlusPrefix));
+        public Task UnaryOperator_PlusPlusPrefix() => GenerateTest(nameof(UnaryOperator_PlusPlusPrefix), assertOnIRPipelineFailure: true);
 
         [Fact]
-        public Task UnaryOperator_Typeof() => GenerateTest(nameof(UnaryOperator_Typeof));
+        public Task UnaryOperator_Typeof() => GenerateTest(nameof(UnaryOperator_Typeof), assertOnIRPipelineFailure: true);
 
         [Fact]
-        public Task UnaryOperator_BitwiseNot() => GenerateTest(nameof(UnaryOperator_BitwiseNot));
+        public Task UnaryOperator_BitwiseNot() => GenerateTest(nameof(UnaryOperator_BitwiseNot), assertOnIRPipelineFailure: true);
     }
 }

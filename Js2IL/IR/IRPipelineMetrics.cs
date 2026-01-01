@@ -19,6 +19,8 @@ public static class IRPipelineMetrics
     private static readonly ThreadLocal<int> _constructorAttempts = new(() => 0);
     private static readonly ThreadLocal<int> _constructorSuccesses = new(() => 0);
 
+    private static readonly ThreadLocal<string?> _lastFailure = new(() => null);
+
     private static readonly ThreadLocal<bool> _enabled = new(() => false);
 
     /// <summary>
@@ -46,7 +48,17 @@ public static class IRPipelineMetrics
         _classMethodSuccesses.Value = 0;
         _constructorAttempts.Value = 0;
         _constructorSuccesses.Value = 0;
+
+        _lastFailure.Value = null;
     }
+
+    public static void RecordFailure(string message)
+    {
+        if (!Enabled) return;
+        _lastFailure.Value = message;
+    }
+
+    public static string? GetLastFailure() => _lastFailure.Value;
 
     public static void RecordMainMethodAttempt(bool success)
     {

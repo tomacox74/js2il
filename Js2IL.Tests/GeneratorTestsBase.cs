@@ -96,7 +96,9 @@ namespace Js2IL.Tests
                     if (assertOnIRPipelineFailure)
                     {
                         var stats = IR.IRPipelineMetrics.GetStats();
-                        Assert.True(stats.TotalFallbacks == 0, $"IR Pipeline fallback occurred in test {testName}: {stats.TotalFallbacks} fallbacks.");
+                        var lastFailure = IR.IRPipelineMetrics.GetLastFailure();
+                        var details = string.IsNullOrWhiteSpace(lastFailure) ? string.Empty : $" LastFailure: {lastFailure}";
+                        Assert.True(stats.TotalFallbacks == 0, $"IR Pipeline fallback occurred in test {testName}: {stats.TotalFallbacks} fallbacks.{details}");
                     }
 
                     await Verify(il, settings);

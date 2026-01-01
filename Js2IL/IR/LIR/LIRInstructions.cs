@@ -50,3 +50,7 @@ public record LIRReturn(TempVariable ReturnValue) : LIRInstruction;
 public record LIRConvertToObject(TempVariable Source, Type SourceType, TempVariable Result) : LIRInstruction;
 
 public record LIRTypeof(TempVariable Value, TempVariable Result) : LIRInstruction;
+
+public record LIRNegateNumber(TempVariable Value, TempVariable Result) : LIRInstruction;
+
+public record LIRBitwiseNotNumber(TempVariable Value, TempVariable Result) : LIRInstruction;

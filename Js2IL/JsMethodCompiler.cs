@@ -200,11 +200,13 @@ internal sealed class JsMethodCompiler
 
         if (!HIRBuilder.TryParseMethod(node, scope, out var hirMethod))
         {
+            IR.IRPipelineMetrics.RecordFailure($"HIR parse failed for node type {node.Type}");
             return false;
         }
 
         if (!HIRToLIRLowerer.TryLower(hirMethod!, out var lirMethod))
         {
+            IR.IRPipelineMetrics.RecordFailure("HIR->LIR lowering failed");
             return false;
         }
 
@@ -307,6 +309,7 @@ internal sealed class JsMethodCompiler
             if (!TryCompileInstructionToIL(instruction, ilEncoder))
             {
                 // Failed to compile instruction
+                IR.IRPipelineMetrics.RecordFailure($"IL compile failed: unsupported LIR instruction {instruction.GetType().Name}");
                 return false;
             }
             if (instruction is LIRReturn)
@@ -408,6 +411,15 @@ internal sealed class JsMethodCompiler
                 var typeofMref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.Typeof));
                 ilEncoder.OpCode(ILOpCode.Call);
                 ilEncoder.Token(typeofMref);
+                break;
+            case LIRNegateNumber:
+                ilEncoder.OpCode(ILOpCode.Neg);
+                break;
+            case LIRBitwiseNotNumber:
+                // ~x = (double)(~(int)x)
+                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                ilEncoder.OpCode(ILOpCode.Not);
+                ilEncoder.OpCode(ILOpCode.Conv_r8);
                 break;
             case LIRLoadLocal loadLocal:
                 ilEncoder.LoadLocal(loadLocal.Source.Index);
