@@ -24,6 +24,13 @@ All notable changes to this project are documented here.
 ### Internal
 - Extended `HIRToLIRLower` to lower `HIRReturnStatement` to `LIRReturn` instructions
 - `JsMethodCompiler` tracks explicit returns to avoid emitting redundant implicit return IL
+- **IR pipeline metrics**: Added `IRPipelineMetrics` class to track IR vs legacy compilation statistics
+  - Instrumented all IR pipeline call sites (main methods, functions, arrow functions, class methods, constructors)
+  - Added `IRPipelineAuditTests` with two audit modes:
+    - `ReportIRPipelineMetrics`: Quick check with representative test cases
+    - `FullSuiteIRPipelineMetrics`: Comprehensive scan of all 300+ embedded test files
+  - Baseline metrics (full suite): 4.0% IR adoption (22/555 methods), 533 legacy fallbacks
+  - Run audit with: `dotnet test --filter "FullSuiteIRPipelineMetrics" --logger "console;verbosity=detailed"`
 
 ## v0.5.3 - 2025-12-30
 

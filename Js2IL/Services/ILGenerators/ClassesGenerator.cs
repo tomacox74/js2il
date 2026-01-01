@@ -355,6 +355,7 @@ namespace Js2IL.Services.ILGenerators
                 {
                     var jsMethodCompiler = _serviceProvider.GetRequiredService<JsMethodCompiler>();
                     var (compiledCtor, ctorSignature) = jsMethodCompiler.TryCompileClassConstructor(tb, ctorFunc, ctorScope, _methodBodies, needsScopes);
+                    IR.IRPipelineMetrics.RecordConstructorAttempt(!compiledCtor.IsNil);
                     if (!compiledCtor.IsNil)
                     {
                         // Successfully compiled via IR pipeline - signature is returned from TryCompileIRToIL
@@ -529,6 +530,7 @@ namespace Js2IL.Services.ILGenerators
             {
                 var jsMethodCompiler = _serviceProvider.GetRequiredService<JsMethodCompiler>();
                 var methodDefHandle = jsMethodCompiler.TryCompileMethod(tb, mname, element, mscope, _methodBodies);
+                IR.IRPipelineMetrics.RecordClassMethodAttempt(!methodDefHandle.IsNil);
                 if (!methodDefHandle.IsNil)
                 {
                     // Successfully compiled method via JsMethodCompiler

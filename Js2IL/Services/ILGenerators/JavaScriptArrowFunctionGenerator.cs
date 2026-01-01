@@ -54,6 +54,7 @@ namespace Js2IL.Services.ILGenerators
                 {
                     var methodCompiler = _serviceProvider.GetRequiredService<JsMethodCompiler>();
                     var compiledMethod = methodCompiler.TryCompileArrowFunction(ilMethodName, arrowFunction, arrowScope, _methodBodyStreamEncoder);
+                    IR.IRPipelineMetrics.RecordArrowFunctionAttempt(!compiledMethod.IsNil);
                     if (!compiledMethod.IsNil)
                     {
                         return compiledMethod;
