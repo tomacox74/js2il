@@ -129,6 +129,7 @@ internal sealed class ConsoleLogPeepholeOptimizer
         TempLocalAllocation allocation,
         Func<TempVariable, TempLocalAllocation, MethodBodyIR, bool> isMaterialized,
         Action<TempVariable, InstructionEncoder, TempLocalAllocation, MethodBodyIR> emitStoreTemp,
+        bool hasScopesParameter,
         out int consumed)
     {
         consumed = 0;
@@ -275,7 +276,7 @@ internal sealed class ConsoleLogPeepholeOptimizer
             {
                 ilEncoder.OpCode(ILOpCode.Dup);
                 ilEncoder.LoadConstantI4(argIdx);
-                EmitTempStackOnly(methodBody, storeInfos[argIdx].StoredValue, ilEncoder);
+                EmitTempStackOnly(methodBody, storeInfos[argIdx].StoredValue, ilEncoder, hasScopesParameter);
                 ilEncoder.OpCode(ILOpCode.Stelem_ref);
             }
 
@@ -410,6 +411,7 @@ internal sealed class ConsoleLogPeepholeOptimizer
             LIRConstBoolean => true,
             LIRConstUndefined => true,
             LIRConstNull => true,
+            LIRLoadParameter => true,
             LIRConvertToObject conv => CanEmitTempStackOnly(methodBody, conv.Source, definedInSequence),
             LIRTypeof t => CanEmitTempStackOnly(methodBody, t.Value, definedInSequence),
             LIRNegateNumber neg => CanEmitTempStackOnly(methodBody, neg.Value, definedInSequence),
@@ -537,7 +539,7 @@ internal sealed class ConsoleLogPeepholeOptimizer
     /// <summary>
     /// Emits a pure expression chain stack-only (no locals). The value ends up boxed on the stack.
     /// </summary>
-    private void EmitTempStackOnly(MethodBodyIR methodBody, TempVariable temp, InstructionEncoder ilEncoder)
+    private void EmitTempStackOnly(MethodBodyIR methodBody, TempVariable temp, InstructionEncoder ilEncoder, bool hasScopesParameter)
     {
         // Handle variable-mapped temps FIRST.
         if (temp.Index >= 0 && temp.Index < methodBody.TempVariableSlots.Count)
@@ -598,21 +600,21 @@ internal sealed class ConsoleLogPeepholeOptimizer
                 break;
 
             case LIRTypeof t:
-                EmitTempStackOnly(methodBody, t.Value, ilEncoder);
+                EmitTempStackOnly(methodBody, t.Value, ilEncoder, hasScopesParameter);
                 var typeofMethod = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.Typeof));
                 ilEncoder.OpCode(ILOpCode.Call);
                 ilEncoder.Token(typeofMethod);
                 break;
 
             case LIRNegateNumber neg:
-                EmitTempStackOnlyUnboxed(methodBody, neg.Value, ilEncoder);
+                EmitTempStackOnlyUnboxed(methodBody, neg.Value, ilEncoder, hasScopesParameter);
                 ilEncoder.OpCode(ILOpCode.Neg);
                 ilEncoder.OpCode(ILOpCode.Box);
                 ilEncoder.Token(_bclReferences.DoubleType);
                 break;
 
             case LIRBitwiseNotNumber not:
-                EmitTempStackOnlyUnboxed(methodBody, not.Value, ilEncoder);
+                EmitTempStackOnlyUnboxed(methodBody, not.Value, ilEncoder, hasScopesParameter);
                 ilEncoder.OpCode(ILOpCode.Conv_i4);
                 ilEncoder.OpCode(ILOpCode.Not);
                 ilEncoder.OpCode(ILOpCode.Conv_r8);
@@ -621,7 +623,7 @@ internal sealed class ConsoleLogPeepholeOptimizer
                 break;
 
             case LIRConvertToObject conv:
-                EmitTempStackOnlyUnboxed(methodBody, conv.Source, ilEncoder);
+                EmitTempStackOnlyUnboxed(methodBody, conv.Source, ilEncoder, hasScopesParameter);
                 if (conv.SourceType == typeof(bool))
                 {
                     ilEncoder.OpCode(ILOpCode.Box);
@@ -639,6 +641,13 @@ internal sealed class ConsoleLogPeepholeOptimizer
                 }
                 break;
 
+            case LIRLoadParameter lp:
+                // Parameters are already object (boxed), just load the argument
+                // JS param 0 -> IL arg 1 when hasScopesParameter, else IL arg 0
+                int argIndex = hasScopesParameter ? lp.ParameterIndex + 1 : lp.ParameterIndex;
+                ilEncoder.LoadArgument(argIndex);
+                break;
+
             default:
                 throw new InvalidOperationException($"EmitTempStackOnly: unexpected instruction {def.GetType().Name}");
         }
@@ -647,7 +656,7 @@ internal sealed class ConsoleLogPeepholeOptimizer
     /// <summary>
     /// Emits a pure expression chain stack-only, leaving the raw (unboxed) value on the stack.
     /// </summary>
-    private void EmitTempStackOnlyUnboxed(MethodBodyIR methodBody, TempVariable temp, InstructionEncoder ilEncoder)
+    private void EmitTempStackOnlyUnboxed(MethodBodyIR methodBody, TempVariable temp, InstructionEncoder ilEncoder, bool hasScopesParameter)
     {
         if (temp.Index >= 0 && temp.Index < methodBody.TempVariableSlots.Count)
         {
@@ -680,12 +689,12 @@ internal sealed class ConsoleLogPeepholeOptimizer
                 break;
 
             case LIRNegateNumber neg:
-                EmitTempStackOnlyUnboxed(methodBody, neg.Value, ilEncoder);
+                EmitTempStackOnlyUnboxed(methodBody, neg.Value, ilEncoder, hasScopesParameter);
                 ilEncoder.OpCode(ILOpCode.Neg);
                 break;
 
             case LIRBitwiseNotNumber not:
-                EmitTempStackOnlyUnboxed(methodBody, not.Value, ilEncoder);
+                EmitTempStackOnlyUnboxed(methodBody, not.Value, ilEncoder, hasScopesParameter);
                 ilEncoder.OpCode(ILOpCode.Conv_i4);
                 ilEncoder.OpCode(ILOpCode.Not);
                 ilEncoder.OpCode(ILOpCode.Conv_r8);

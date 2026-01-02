@@ -44,10 +44,17 @@ public record LIRStoreElementRef(TempVariable Array, int Index, TempVariable Val
 public record LIRCallIntrinsic(TempVariable IntrinsicObject, string Name, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
 
 /// <summary>
-/// Calls a user-defined function with zero parameters.
+/// Loads a function parameter by its index (0-based, relative to JS parameters).
+/// The IL argument index is computed by the emitter based on method context
+/// (static methods start at arg0, instance/nested functions at arg1 due to scopes/this).
+/// </summary>
+public record LIRLoadParameter(int ParameterIndex, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Calls a user-defined function with parameters.
 /// The Symbol contains the BindingInfo used to look up the compiled method handle.
 /// </summary>
-public record LIRCallFunction(Symbol FunctionSymbol, TempVariable ScopesArray, TempVariable Result) : LIRInstruction;
+public record LIRCallFunction(Symbol FunctionSymbol, TempVariable ScopesArray, IReadOnlyList<TempVariable> Arguments, TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Creates the scopes array for function invocation.

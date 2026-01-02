@@ -45,6 +45,13 @@ sealed record MethodDescriptor
     /// Only class instance methods are not static currently, so we default to static.
     /// </summary>
     public bool IsStatic {get; set; } = true;
+
+    /// <summary>
+    /// Whether the method has a scopes array as its first IL argument.
+    /// User-defined functions have this (arg0 = scopes, arg1+ = JS params).
+    /// Module Main methods don't have this (arg0+ = module wrapper params).
+    /// </summary>
+    public bool HasScopesParameter { get; set; } = true;
 }
 
 /// <summary>
@@ -76,15 +83,48 @@ internal sealed class JsMethodCompiler
 
     public MethodDefinitionHandle TryCompileMethod(TypeBuilder typeBuilder, string methodName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
     {
-        if (!TryLowerASTToLIR(node, scope, out var lirMethod))
+        // Extract params and body from the node based on its type
+        NodeList<Node>? functionParams = null;
+        Node bodyNode = node;
+        
+        if (node is FunctionDeclaration funcDecl)
+        {
+            functionParams = funcDecl.Params;
+            bodyNode = funcDecl.Body;
+        }
+        else if (node is Acornima.Ast.MethodDefinition classMethDef && classMethDef.Value is FunctionExpression methodFuncExpr)
+        {
+            functionParams = methodFuncExpr.Params;
+            bodyNode = classMethDef; // HIRBuilder handles MethodDefinition
+        }
+
+        // Check for simple identifier parameters only (no defaults, destructuring, rest)
+        if (functionParams.HasValue && !AllParamsAreSimpleIdentifiers(functionParams.Value))
         {
             return default;
+        }
+
+        if (!TryLowerASTToLIR(bodyNode, scope, out var lirMethod))
+        {
+            return default;
+        }
+
+        // Build parameter descriptors: scopes array + JS parameters
+        var parameters = new List<MethodParameterDescriptor>
+        {
+            new MethodParameterDescriptor("scopes", typeof(object[]))
+        };
+        
+        // Add JS function parameters (all typed as object)
+        foreach (var paramName in lirMethod!.Parameters)
+        {
+            parameters.Add(new MethodParameterDescriptor(paramName, typeof(object)));
         }
 
         var methodDescriptor = new MethodDescriptor(
             methodName,
             typeBuilder,
-            [new MethodParameterDescriptor("scopes", typeof(object[]))]);
+            parameters);
 
         if (node is Acornima.Ast.MethodDefinition methodDef)
         {
@@ -97,6 +137,12 @@ internal sealed class JsMethodCompiler
 
     public MethodDefinitionHandle TryCompileArrowFunction(string methodName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
     {
+        // Check for simple identifier parameters only (no defaults, destructuring, rest)
+        if (node is ArrowFunctionExpression arrowFunc && !AllParamsAreSimpleIdentifiers(arrowFunc.Params))
+        {
+            return default;
+        }
+
         if (!TryLowerASTToLIR(node, scope, out var lirMethod))
         {
             return default;
@@ -105,10 +151,22 @@ internal sealed class JsMethodCompiler
         // Create the type builder for the arrow function
         var arrowTypeBuilder = new TypeBuilder(_metadataBuilder, "Functions", methodName);
 
+        // Build parameter descriptors: scopes array + JS parameters
+        var parameters = new List<MethodParameterDescriptor>
+        {
+            new MethodParameterDescriptor("scopes", typeof(object[]))
+        };
+        
+        // Add JS function parameters (all typed as object)
+        foreach (var paramName in lirMethod!.Parameters)
+        {
+            parameters.Add(new MethodParameterDescriptor(paramName, typeof(object)));
+        }
+
         var methodDescriptor = new MethodDescriptor(
             methodName,
             arrowTypeBuilder,
-            [new MethodParameterDescriptor("scopes", typeof(object[]))]);
+            parameters);
 
         var methodDefinitionHandle = TryCompileIRToIL(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
 
@@ -190,6 +248,7 @@ internal sealed class JsMethodCompiler
             parameters);
 
         methodDescriptor.ReturnsVoid = true;
+        methodDescriptor.HasScopesParameter = false;
 
         var methodDefinitionHandle = TryCompileIRToIL(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
 
@@ -205,6 +264,22 @@ internal sealed class JsMethodCompiler
 
     #region Core Pipeline - AST to LIR to IL
 
+    /// <summary>
+    /// Returns true if all parameters are simple identifiers (no destructuring, defaults, or rest patterns).
+    /// Used to determine if the IR pipeline can be used for a function.
+    /// </summary>
+    private static bool AllParamsAreSimpleIdentifiers(in NodeList<Node> parameters)
+    {
+        foreach (var param in parameters)
+        {
+            if (param is not Identifier)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private bool TryLowerASTToLIR(Node node, Scope scope, out MethodBodyIR? methodBody)
     {
         methodBody = null;
@@ -215,7 +290,7 @@ internal sealed class JsMethodCompiler
             return false;
         }
 
-        if (!HIRToLIRLowerer.TryLower(hirMethod!, out var lirMethod))
+        if (!HIRToLIRLowerer.TryLower(hirMethod!, scope, out var lirMethod))
         {
             IR.IRPipelineMetrics.RecordFailure("HIR->LIR lowering failed");
             return false;
@@ -344,6 +419,7 @@ internal sealed class JsMethodCompiler
                 methodBody, i, ilEncoder, allocation,
                 IsMaterialized,
                 EmitStoreTemp,
+                methodDescriptor.HasScopesParameter,
                 out var consumed))
             {
                 i += consumed - 1;
@@ -364,17 +440,17 @@ internal sealed class JsMethodCompiler
                     continue;
 
                 case LIRBranchIfFalse branchFalse:
-                    EmitBranchCondition(branchFalse.Condition, ilEncoder, allocation, methodBody, tempDefinitions);
+                    EmitBranchCondition(branchFalse.Condition, ilEncoder, allocation, methodBody, tempDefinitions, methodDescriptor);
                     ilEncoder.Branch(ILOpCode.Brfalse, labelMap[branchFalse.TargetLabel]);
                     continue;
 
                 case LIRBranchIfTrue branchTrue:
-                    EmitBranchCondition(branchTrue.Condition, ilEncoder, allocation, methodBody, tempDefinitions);
+                    EmitBranchCondition(branchTrue.Condition, ilEncoder, allocation, methodBody, tempDefinitions, methodDescriptor);
                     ilEncoder.Branch(ILOpCode.Brtrue, labelMap[branchTrue.TargetLabel]);
                     continue;
             }
 
-            if (!TryCompileInstructionToIL(instruction, ilEncoder, allocation, methodBody))
+            if (!TryCompileInstructionToIL(instruction, ilEncoder, allocation, methodBody, methodDescriptor))
             {
                 // Failed to compile instruction
                 IR.IRPipelineMetrics.RecordFailure($"IL compile failed: unsupported LIR instruction {instruction.GetType().Name}");
@@ -426,19 +502,19 @@ internal sealed class JsMethodCompiler
 
     #region Instruction Emission
 
-    private bool TryCompileInstructionToIL(LIRInstruction instruction, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodBodyIR methodBody)
+    private bool TryCompileInstructionToIL(LIRInstruction instruction, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodBodyIR methodBody, MethodDescriptor methodDescriptor)
     {
         switch (instruction)
         {
             case LIRAddNumber addNumber:
-                EmitLoadTemp(addNumber.Left, ilEncoder, allocation, methodBody);
-                EmitLoadTemp(addNumber.Right, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(addNumber.Left, ilEncoder, allocation, methodBody, methodDescriptor);
+                EmitLoadTemp(addNumber.Right, ilEncoder, allocation, methodBody, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Add);
                 EmitStoreTemp(addNumber.Result, ilEncoder, allocation, methodBody);
                 break;
             case LIRSubNumber subNumber:
-                EmitLoadTemp(subNumber.Left, ilEncoder, allocation, methodBody);
-                EmitLoadTemp(subNumber.Right, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(subNumber.Left, ilEncoder, allocation, methodBody, methodDescriptor);
+                EmitLoadTemp(subNumber.Right, ilEncoder, allocation, methodBody, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Sub);
                 EmitStoreTemp(subNumber.Result, ilEncoder, allocation, methodBody);
                 break;
@@ -494,8 +570,8 @@ internal sealed class JsMethodCompiler
                 EmitStoreTemp(getIntrinsicGlobal.Result, ilEncoder, allocation, methodBody);
                 break;
             case LIRCallIntrinsic callIntrinsic:
-                EmitLoadTemp(callIntrinsic.IntrinsicObject, ilEncoder, allocation, methodBody);
-                EmitLoadTemp(callIntrinsic.ArgumentsArray, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(callIntrinsic.IntrinsicObject, ilEncoder, allocation, methodBody, methodDescriptor);
+                EmitLoadTemp(callIntrinsic.ArgumentsArray, ilEncoder, allocation, methodBody, methodDescriptor);
                 EmitInvokeInstrinsicMethod(typeof(JavaScriptRuntime.Console), callIntrinsic.Name, ilEncoder);
 
                 if (IsMaterialized(callIntrinsic.Result, allocation, methodBody))
@@ -513,7 +589,7 @@ internal sealed class JsMethodCompiler
                     break;
                 }
 
-                EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodBody, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Box);
                 if (convertToObject.SourceType == typeof(bool))
                 {
@@ -535,7 +611,7 @@ internal sealed class JsMethodCompiler
                 {
                     break;
                 }
-                EmitLoadTemp(((LIRTypeof)instruction).Value, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(((LIRTypeof)instruction).Value, ilEncoder, allocation, methodBody, methodDescriptor);
                 var typeofMref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.Typeof));
                 ilEncoder.OpCode(ILOpCode.Call);
                 ilEncoder.Token(typeofMref);
@@ -547,7 +623,7 @@ internal sealed class JsMethodCompiler
                     break;
                 }
 
-                EmitLoadTemp(((LIRNegateNumber)instruction).Value, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(((LIRNegateNumber)instruction).Value, ilEncoder, allocation, methodBody, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Neg);
                 EmitStoreTemp(((LIRNegateNumber)instruction).Result, ilEncoder, allocation, methodBody);
                 break;
@@ -557,7 +633,7 @@ internal sealed class JsMethodCompiler
                     break;
                 }
 
-                EmitLoadTemp(((LIRBitwiseNotNumber)instruction).Value, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(((LIRBitwiseNotNumber)instruction).Value, ilEncoder, allocation, methodBody, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Conv_i4);
                 ilEncoder.OpCode(ILOpCode.Not);
                 ilEncoder.OpCode(ILOpCode.Conv_r8);
@@ -568,8 +644,8 @@ internal sealed class JsMethodCompiler
                 {
                     break;
                 }
-                EmitLoadTemp(cmpLt.Left, ilEncoder, allocation, methodBody);
-                EmitLoadTemp(cmpLt.Right, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(cmpLt.Left, ilEncoder, allocation, methodBody, methodDescriptor);
+                EmitLoadTemp(cmpLt.Right, ilEncoder, allocation, methodBody, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Clt);
                 EmitStoreTemp(cmpLt.Result, ilEncoder, allocation, methodBody);
                 break;
@@ -578,8 +654,8 @@ internal sealed class JsMethodCompiler
                 {
                     break;
                 }
-                EmitLoadTemp(cmpGt.Left, ilEncoder, allocation, methodBody);
-                EmitLoadTemp(cmpGt.Right, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(cmpGt.Left, ilEncoder, allocation, methodBody, methodDescriptor);
+                EmitLoadTemp(cmpGt.Right, ilEncoder, allocation, methodBody, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Cgt);
                 EmitStoreTemp(cmpGt.Result, ilEncoder, allocation, methodBody);
                 break;
@@ -588,8 +664,8 @@ internal sealed class JsMethodCompiler
                 {
                     break;
                 }
-                EmitLoadTemp(cmpLe.Left, ilEncoder, allocation, methodBody);
-                EmitLoadTemp(cmpLe.Right, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(cmpLe.Left, ilEncoder, allocation, methodBody, methodDescriptor);
+                EmitLoadTemp(cmpLe.Right, ilEncoder, allocation, methodBody, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Cgt);
                 ilEncoder.OpCode(ILOpCode.Ldc_i4_0);
                 ilEncoder.OpCode(ILOpCode.Ceq);
@@ -600,8 +676,8 @@ internal sealed class JsMethodCompiler
                 {
                     break;
                 }
-                EmitLoadTemp(cmpGe.Left, ilEncoder, allocation, methodBody);
-                EmitLoadTemp(cmpGe.Right, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(cmpGe.Left, ilEncoder, allocation, methodBody, methodDescriptor);
+                EmitLoadTemp(cmpGe.Right, ilEncoder, allocation, methodBody, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Clt);
                 ilEncoder.OpCode(ILOpCode.Ldc_i4_0);
                 ilEncoder.OpCode(ILOpCode.Ceq);
@@ -612,8 +688,8 @@ internal sealed class JsMethodCompiler
                 {
                     break;
                 }
-                EmitLoadTemp(cmpEq.Left, ilEncoder, allocation, methodBody);
-                EmitLoadTemp(cmpEq.Right, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(cmpEq.Left, ilEncoder, allocation, methodBody, methodDescriptor);
+                EmitLoadTemp(cmpEq.Right, ilEncoder, allocation, methodBody, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Ceq);
                 EmitStoreTemp(cmpEq.Result, ilEncoder, allocation, methodBody);
                 break;
@@ -622,8 +698,8 @@ internal sealed class JsMethodCompiler
                 {
                     break;
                 }
-                EmitLoadTemp(cmpNe.Left, ilEncoder, allocation, methodBody);
-                EmitLoadTemp(cmpNe.Right, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(cmpNe.Left, ilEncoder, allocation, methodBody, methodDescriptor);
+                EmitLoadTemp(cmpNe.Right, ilEncoder, allocation, methodBody, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Ceq);
                 ilEncoder.OpCode(ILOpCode.Ldc_i4_0);
                 ilEncoder.OpCode(ILOpCode.Ceq);
@@ -634,8 +710,8 @@ internal sealed class JsMethodCompiler
                 {
                     break;
                 }
-                EmitLoadTemp(cmpBoolEq.Left, ilEncoder, allocation, methodBody);
-                EmitLoadTemp(cmpBoolEq.Right, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(cmpBoolEq.Left, ilEncoder, allocation, methodBody, methodDescriptor);
+                EmitLoadTemp(cmpBoolEq.Right, ilEncoder, allocation, methodBody, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Ceq);
                 EmitStoreTemp(cmpBoolEq.Result, ilEncoder, allocation, methodBody);
                 break;
@@ -644,8 +720,8 @@ internal sealed class JsMethodCompiler
                 {
                     break;
                 }
-                EmitLoadTemp(cmpBoolNe.Left, ilEncoder, allocation, methodBody);
-                EmitLoadTemp(cmpBoolNe.Right, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(cmpBoolNe.Left, ilEncoder, allocation, methodBody, methodDescriptor);
+                EmitLoadTemp(cmpBoolNe.Right, ilEncoder, allocation, methodBody, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Ceq);
                 ilEncoder.OpCode(ILOpCode.Ldc_i4_0);
                 ilEncoder.OpCode(ILOpCode.Ceq);
@@ -662,15 +738,15 @@ internal sealed class JsMethodCompiler
                 EmitStoreTemp(newObjectArray.Result, ilEncoder, allocation, methodBody);
                 break;
             case LIRReturn lirReturn:
-                EmitLoadTemp(lirReturn.ReturnValue, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(lirReturn.ReturnValue, ilEncoder, allocation, methodBody, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Ret);
                 break;
             case LIRStoreElementRef:
                 {
                     var store = (LIRStoreElementRef)instruction;
-                    EmitLoadTemp(store.Array, ilEncoder, allocation, methodBody);
+                    EmitLoadTemp(store.Array, ilEncoder, allocation, methodBody, methodDescriptor);
                     ilEncoder.LoadConstantI4(store.Index);
-                    EmitLoadTemp(store.Value, ilEncoder, allocation, methodBody);
+                    EmitLoadTemp(store.Value, ilEncoder, allocation, methodBody, methodDescriptor);
                     ilEncoder.OpCode(ILOpCode.Stelem_ref);
                     break;
                 }
@@ -695,6 +771,22 @@ internal sealed class JsMethodCompiler
                     EmitStoreTemp(createScopes.Result, ilEncoder, allocation, methodBody);
                     break;
                 }
+            case LIRLoadParameter loadParam:
+                {
+                    if (!IsMaterialized(loadParam.Result, allocation, methodBody))
+                    {
+                        break;
+                    }
+                    // JS parameter index is 0-based. IL arg index depends on method type:
+                    // - User functions: arg0 is scopes array, so JS param 0 -> IL arg 1
+                    // - Module Main: no scopes array, so JS param 0 -> IL arg 0
+                    int ilArgIndex = methodDescriptor.HasScopesParameter 
+                        ? loadParam.ParameterIndex + 1 
+                        : loadParam.ParameterIndex;
+                    ilEncoder.LoadArgument(ilArgIndex);
+                    EmitStoreTemp(loadParam.Result, ilEncoder, allocation, methodBody);
+                    break;
+                }
             case LIRCallFunction callFunc:
                 {
                     // Look up the method handle from CompiledMethodCache
@@ -703,19 +795,27 @@ internal sealed class JsMethodCompiler
                         return false; // Fall back to legacy emitter
                     }
 
-                    // Create delegate: ldnull, ldftn, newobj Func<object[], object>::.ctor
+                    int jsParamCount = callFunc.Arguments.Count;
+
+                    // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
                     ilEncoder.OpCode(ILOpCode.Ldnull);
                     ilEncoder.OpCode(ILOpCode.Ldftn);
                     ilEncoder.Token(methodHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(0)); // Func<object[], object>
+                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount));
 
                     // Load scopes array
-                    EmitLoadTemp(callFunc.ScopesArray, ilEncoder, allocation, methodBody);
+                    EmitLoadTemp(callFunc.ScopesArray, ilEncoder, allocation, methodBody, methodDescriptor);
 
-                    // Invoke: callvirt Func<object[], object>::Invoke
+                    // Load all arguments
+                    foreach (var arg in callFunc.Arguments)
+                    {
+                        EmitLoadTemp(arg, ilEncoder, allocation, methodBody, methodDescriptor);
+                    }
+
+                    // Invoke: callvirt Func<object[], [object, ...], object>::Invoke
                     ilEncoder.OpCode(ILOpCode.Callvirt);
-                    ilEncoder.Token(_bclReferences.GetFuncInvokeRef(0));
+                    ilEncoder.Token(_bclReferences.GetFuncInvokeRef(jsParamCount));
 
                     if (IsMaterialized(callFunc.Result, allocation, methodBody))
                     {
@@ -747,7 +847,8 @@ internal sealed class JsMethodCompiler
         InstructionEncoder ilEncoder,
         TempLocalAllocation allocation,
         MethodBodyIR methodBody,
-        Dictionary<int, LIRInstruction> tempDefinitions)
+        Dictionary<int, LIRInstruction> tempDefinitions,
+        MethodDescriptor methodDescriptor)
     {
         // Check if the condition is a non-materialized comparison that we should inline
         if (!IsMaterialized(condition, allocation, methodBody) &&
@@ -759,12 +860,12 @@ internal sealed class JsMethodCompiler
             BranchConditionOptimizer.EmitInlineComparison(
                 definingInstruction,
                 ilEncoder,
-                (temp, encoder) => EmitLoadTemp(temp, encoder, allocation, methodBody));
+                (temp, encoder) => EmitLoadTemp(temp, encoder, allocation, methodBody, methodDescriptor));
         }
         else
         {
             // Load the condition from its local normally
-            EmitLoadTemp(condition, ilEncoder, allocation, methodBody);
+            EmitLoadTemp(condition, ilEncoder, allocation, methodBody, methodDescriptor);
         }
     }
 
@@ -858,7 +959,7 @@ internal sealed class JsMethodCompiler
         return signature;
     }
 
-    private void EmitLoadTemp(TempVariable temp, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodBodyIR methodBody)
+    private void EmitLoadTemp(TempVariable temp, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodBodyIR methodBody, MethodDescriptor methodDescriptor)
     {
         // Check if materialized - if so, load from local
         if (IsMaterialized(temp, allocation, methodBody))
@@ -893,9 +994,16 @@ internal sealed class JsMethodCompiler
             case LIRConstNull:
                 ilEncoder.LoadConstantI4((int)JavaScriptRuntime.JsNull.Null);
                 break;
+            case LIRLoadParameter loadParam:
+                // Emit ldarg.X inline - no local slot needed
+                int ilArgIndex = methodDescriptor.HasScopesParameter 
+                    ? loadParam.ParameterIndex + 1 
+                    : loadParam.ParameterIndex;
+                ilEncoder.LoadArgument(ilArgIndex);
+                break;
             case LIRConvertToObject convertToObject:
                 // Emit the source inline and box it
-                EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodBody, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Box);
                 if (convertToObject.SourceType == typeof(bool))
                 {

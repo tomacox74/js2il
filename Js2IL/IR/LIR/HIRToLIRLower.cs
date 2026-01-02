@@ -7,6 +7,7 @@ namespace Js2IL.IR;
 public sealed class HIRToLIRLowerer
 {
     private readonly MethodBodyIR _methodBodyIR = new MethodBodyIR();
+    private readonly Scope? _scope;
 
     private int _tempVarCounter = 0;
     private int _labelCounter = 0;
@@ -19,11 +20,38 @@ public sealed class HIRToLIRLowerer
     // Keyed by BindingInfo reference to give each shadowed variable its own slot.
     private readonly Dictionary<BindingInfo, int> _variableSlots = new Dictionary<BindingInfo, int>();
 
-    public static bool TryLower(HIRMethod hirMethod, out MethodBodyIR? lirMethod)
+    // Maps parameter bindings to their 0-based JS parameter index (not IL arg index)
+    private readonly Dictionary<BindingInfo, int> _parameterIndexMap = new Dictionary<BindingInfo, int>();
+
+    private HIRToLIRLowerer(Scope? scope)
+    {
+        _scope = scope;
+        InitializeParameters();
+    }
+
+    private void InitializeParameters()
+    {
+        if (_scope == null) return;
+
+        // Build ordered parameter list from scope.Parameters
+        // Parameters are simple identifiers, so scope.Parameters contains the names in order
+        int paramIndex = 0;
+        foreach (var paramName in _scope.Parameters)
+        {
+            if (_scope.Bindings.TryGetValue(paramName, out var binding))
+            {
+                _parameterIndexMap[binding] = paramIndex;
+                _methodBodyIR.Parameters.Add(paramName);
+            }
+            paramIndex++;
+        }
+    }
+
+    public static bool TryLower(HIRMethod hirMethod, Scope? scope, out MethodBodyIR? lirMethod)
     {
         lirMethod = null;
 
-        var lowerer = new HIRToLIRLowerer();
+        var lowerer = new HIRToLIRLowerer(scope);
         
         if (lowerer.TryLowerStatements(hirMethod.Body.Statements))
         {
@@ -32,6 +60,12 @@ public sealed class HIRToLIRLowerer
         }
 
         return false;
+    }
+
+    // Backward compatibility overload for callers that don't provide scope
+    public static bool TryLower(HIRMethod hirMethod, out MethodBodyIR? lirMethod)
+    {
+        return TryLower(hirMethod, null, out lirMethod);
     } 
 
     public bool TryLowerStatements(IEnumerable<HIRStatement> statements)
@@ -240,6 +274,17 @@ public sealed class HIRToLIRLowerer
                 // Look up the binding using the Symbol's BindingInfo directly
                 // This correctly resolves shadowed variables to the right binding
                 var binding = varExpr.Name.BindingInfo;
+                
+                // Check if this is a parameter - emit LIRLoadParameter
+                if (_parameterIndexMap.TryGetValue(binding, out var paramIndex))
+                {
+                    resultTempVar = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRLoadParameter(paramIndex, resultTempVar));
+                    // Parameters are always type object (unknown type)
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    return true;
+                }
+                
                 if (!_variableMap.TryGetValue(binding, out resultTempVar))
                 {
                     return false;
@@ -268,11 +313,26 @@ public sealed class HIRToLIRLowerer
             {
                 return false;
             }
-            
-            // For now, only support zero-parameter function calls
-            if (callExpr.Arguments.Length > 0)
+
+            // Check if the function has simple identifier parameters (no defaults, destructuring, rest).
+            // If the function uses complex params, it will be compiled via traditional generator
+            // with a different calling convention, so we must bail out to ensure Main is also
+            // compiled traditionally to maintain calling convention consistency.
+            if (!FunctionHasSimpleParams(symbol))
             {
                 return false;
+            }
+            
+            // Lower all arguments first
+            var arguments = new List<TempVariable>();
+            foreach (var arg in callExpr.Arguments)
+            {
+                if (!TryLowerExpression(arg, out var argTemp))
+                {
+                    return false;
+                }
+                // Ensure arguments are boxed as object for function calls
+                arguments.Add(EnsureObject(argTemp));
             }
 
             // Create scopes array placeholder.
@@ -284,8 +344,8 @@ public sealed class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRCreateScopesArray(default, scopesTempVar));
             DefineTempStorage(scopesTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
-            // Emit the function call
-            _methodBodyIR.Instructions.Add(new LIRCallFunction(symbol, scopesTempVar, resultTempVar));
+            // Emit the function call with arguments
+            _methodBodyIR.Instructions.Add(new LIRCallFunction(symbol, scopesTempVar, arguments, resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
             return true;
@@ -651,5 +711,47 @@ public sealed class HIRToLIRLowerer
             return new ValueStorage(ValueStorageKind.Unknown);
         }
         return _methodBodyIR.TempStorages[tempVar.Index];
+    }
+
+    /// <summary>
+    /// Returns true if the function binding has only simple identifier parameters
+    /// (no defaults, destructuring, or rest patterns).
+    /// </summary>
+    private static bool FunctionHasSimpleParams(Symbol functionSymbol)
+    {
+        // Get the declaration node for the function binding
+        var declarationNode = functionSymbol.BindingInfo.DeclarationNode;
+        
+        Acornima.Ast.NodeList<Acornima.Ast.Node>? parameters = null;
+        
+        if (declarationNode is Acornima.Ast.FunctionDeclaration funcDecl)
+        {
+            parameters = funcDecl.Params;
+        }
+        else if (declarationNode is Acornima.Ast.FunctionExpression funcExpr)
+        {
+            parameters = funcExpr.Params;
+        }
+        else if (declarationNode is Acornima.Ast.ArrowFunctionExpression arrowFunc)
+        {
+            parameters = arrowFunc.Params;
+        }
+        
+        // If we couldn't find parameters, bail out conservatively
+        if (parameters == null)
+        {
+            return false;
+        }
+        
+        // Check that all params are simple identifiers
+        foreach (var param in parameters.Value)
+        {
+            if (param is not Acornima.Ast.Identifier)
+            {
+                return false;
+            }
+        }
+        
+        return true;
     }
 }
