@@ -26,6 +26,11 @@ public record LIRAddNumber(TempVariable Left, TempVariable Right, TempVariable R
 
 public record LIRConcatStrings(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
 
+/// <summary>
+/// Dynamic addition using Operators.Add runtime helper. Used when operand types are unknown.
+/// </summary>
+public record LIRAddDynamic(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
+
 public record LIRSubNumber(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
 
 public record LIRConstUndefined(TempVariable Result) : LIRInstruction;

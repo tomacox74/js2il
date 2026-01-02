@@ -483,7 +483,12 @@ public sealed class HIRToLIRLowerer
                 return true;
             }
 
-            return false;
+            // Dynamic addition (unknown types) - box operands and call Operators.Add
+            var leftBoxed = EnsureObject(leftTempVar);
+            var rightBoxed = EnsureObject(rightTempVar);
+            _methodBodyIR.Instructions.Add(new LIRAddDynamic(leftBoxed, rightBoxed, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
+            return true;
         }
 
         // Handle comparison operators

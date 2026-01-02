@@ -277,6 +277,12 @@ internal sealed class LIRToILCompiler
                 EmitStringConcat(ilEncoder);
                 EmitStoreTemp(concatStrings.Result, ilEncoder, allocation);
                 break;
+            case LIRAddDynamic addDynamic:
+                EmitLoadTemp(addDynamic.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(addDynamic.Right, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsAdd(ilEncoder);
+                EmitStoreTemp(addDynamic.Result, ilEncoder, allocation);
+                break;
             case LIRSubNumber subNumber:
                 EmitLoadTemp(subNumber.Left, ilEncoder, allocation, methodDescriptor);
                 EmitLoadTemp(subNumber.Right, ilEncoder, allocation, methodDescriptor);
@@ -867,6 +873,13 @@ internal sealed class LIRToILCompiler
     {
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(_bclReferences.String_Concat_Ref);
+    }
+
+    private void EmitOperatorsAdd(InstructionEncoder ilEncoder)
+    {
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "Add");
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
     }
 
     #endregion
