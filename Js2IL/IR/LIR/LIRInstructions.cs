@@ -24,6 +24,8 @@ public record LIRConstBoolean(bool Value, TempVariable Result) : LIRInstruction;
 
 public record LIRAddNumber(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
 
+public record LIRConcatStrings(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
+
 public record LIRSubNumber(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
 
 public record LIRConstUndefined(TempVariable Result) : LIRInstruction;

@@ -43,6 +43,7 @@ namespace Js2IL.Services
         public MemberReferenceHandle Action_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(System.Action), new[] { typeof(object), typeof(IntPtr) });
         public MemberReferenceHandle ModuleMainDelegate_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.CommonJS.ModuleMainDelegate), new[] { typeof(object), typeof(IntPtr) });
         public MemberReferenceHandle MethodBase_GetCurrentMethod_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Reflection.MethodBase), "GetCurrentMethod", Type.EmptyTypes);
+        public MemberReferenceHandle String_Concat_Ref => _memberRefRegistry.GetOrAddMethod(typeof(string), "Concat", new[] { typeof(string), typeof(string) });
 
         public MemberReferenceHandle GetFuncCtorRef(int jsParamCount)
         {

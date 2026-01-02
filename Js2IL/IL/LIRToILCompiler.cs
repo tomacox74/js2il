@@ -271,6 +271,12 @@ internal sealed class LIRToILCompiler
                 ilEncoder.OpCode(ILOpCode.Add);
                 EmitStoreTemp(addNumber.Result, ilEncoder, allocation);
                 break;
+            case LIRConcatStrings concatStrings:
+                EmitLoadTemp(concatStrings.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(concatStrings.Right, ilEncoder, allocation, methodDescriptor);
+                EmitStringConcat(ilEncoder);
+                EmitStoreTemp(concatStrings.Result, ilEncoder, allocation);
+                break;
             case LIRSubNumber subNumber:
                 EmitLoadTemp(subNumber.Left, ilEncoder, allocation, methodDescriptor);
                 EmitLoadTemp(subNumber.Right, ilEncoder, allocation, methodDescriptor);
@@ -855,6 +861,12 @@ internal sealed class LIRToILCompiler
         var methodMref = _memberRefRegistry.GetOrAddMethod(declaringType, methodName);
         ilEncoder.OpCode(ILOpCode.Callvirt);
         ilEncoder.Token(methodMref);
+    }
+
+    private void EmitStringConcat(InstructionEncoder ilEncoder)
+    {
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(_bclReferences.String_Concat_Ref);
     }
 
     #endregion
