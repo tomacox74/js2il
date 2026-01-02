@@ -270,14 +270,7 @@ internal sealed class JsMethodCompiler
     /// </summary>
     private static bool AllParamsAreSimpleIdentifiers(in NodeList<Node> parameters)
     {
-        foreach (var param in parameters)
-        {
-            if (param is not Identifier)
-            {
-                return false;
-            }
-        }
-        return true;
+        return parameters.All(param => param is Identifier);
     }
 
     private bool TryLowerASTToLIR(Node node, Scope scope, out MethodBodyIR? methodBody)

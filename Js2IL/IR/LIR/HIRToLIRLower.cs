@@ -744,14 +744,6 @@ public sealed class HIRToLIRLowerer
         }
         
         // Check that all params are simple identifiers
-        foreach (var param in parameters.Value)
-        {
-            if (param is not Acornima.Ast.Identifier)
-            {
-                return false;
-            }
-        }
-        
-        return true;
+        return parameters.Value.All(param => param is Acornima.Ast.Identifier);
     }
 }

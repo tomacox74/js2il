@@ -86,14 +86,7 @@ public static class HIRBuilder
     /// </summary>
     private static bool AllParamsAreSimpleIdentifiers(in NodeList<Node> parameters)
     {
-        foreach (var param in parameters)
-        {
-            if (param is not Acornima.Ast.Identifier)
-            {
-                return false;
-            }
-        }
-        return true;
+        return parameters.All(param => param is Acornima.Ast.Identifier);
     }
 }
 
