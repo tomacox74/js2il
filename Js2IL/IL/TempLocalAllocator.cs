@@ -1,6 +1,7 @@
 using System.Reflection.Metadata.Ecma335;
+using Js2IL.IR;
 
-namespace Js2IL.IR;
+namespace Js2IL.IL;
 
 /// <summary>
 /// Result of temp local allocation - maps SSA temps to IL local slots.

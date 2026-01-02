@@ -1,9 +1,10 @@
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
+using Js2IL.IR;
 using Js2IL.Services;
 using Js2IL.Utilities.Ecma335;
 
-namespace Js2IL.IR;
+namespace Js2IL.IL;
 
 /// <summary>
 /// Peephole optimizer for console.log calls.
@@ -127,8 +128,8 @@ internal sealed class ConsoleLogPeepholeOptimizer
         int startIndex,
         InstructionEncoder ilEncoder,
         TempLocalAllocation allocation,
-        Func<TempVariable, TempLocalAllocation, MethodBodyIR, bool> isMaterialized,
-        Action<TempVariable, InstructionEncoder, TempLocalAllocation, MethodBodyIR> emitStoreTemp,
+        Func<TempVariable, TempLocalAllocation, bool> isMaterialized,
+        Action<TempVariable, InstructionEncoder, TempLocalAllocation> emitStoreTemp,
         bool hasScopesParameter,
         out int consumed)
     {
@@ -240,9 +241,9 @@ internal sealed class ConsoleLogPeepholeOptimizer
 
                 EmitInvokeIntrinsicMethod(typeof(JavaScriptRuntime.Console), "log", ilEncoder);
 
-                if (isMaterialized(call.Result, allocation, methodBody))
+                if (isMaterialized(call.Result, allocation))
                 {
-                    emitStoreTemp(call.Result, ilEncoder, allocation, methodBody);
+                    emitStoreTemp(call.Result, ilEncoder, allocation);
                 }
                 else
                 {
@@ -282,9 +283,9 @@ internal sealed class ConsoleLogPeepholeOptimizer
 
             EmitInvokeIntrinsicMethod(typeof(JavaScriptRuntime.Console), "log", ilEncoder);
 
-            if (isMaterialized(call.Result, allocation, methodBody))
+            if (isMaterialized(call.Result, allocation))
             {
-                emitStoreTemp(call.Result, ilEncoder, allocation, methodBody);
+                emitStoreTemp(call.Result, ilEncoder, allocation);
             }
             else
             {
