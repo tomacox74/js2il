@@ -63,6 +63,6 @@ namespace Js2IL.Tests.Function
         public Task Function_ParameterDestructuring_Object() { var testName = nameof(Function_ParameterDestructuring_Object); return GenerateTest(testName); }
 
         [Fact]
-        public Task Function_ReturnsStaticValueAndLogs() { var testName = nameof(Function_ReturnsStaticValueAndLogs); return GenerateTest(testName); }
+        public Task Function_ReturnsStaticValueAndLogs() { var testName = nameof(Function_ReturnsStaticValueAndLogs); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
     }
 }

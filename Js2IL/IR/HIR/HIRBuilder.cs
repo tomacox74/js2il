@@ -207,6 +207,18 @@ class HIRMethodBuilder
                 hirStatement = new HIRBlock([]); // empty block = no-op
                 return true;
 
+            case ReturnStatement returnStmt:
+                HIRExpression? returnExpr = null;
+                if (returnStmt.Argument != null)
+                {
+                    if (!TryParseExpression(returnStmt.Argument, out returnExpr))
+                    {
+                        return false;
+                    }
+                }
+                hirStatement = new HIRReturnStatement(returnExpr);
+                return true;
+
             default:
                 // Unsupported statement type
                 return false;
