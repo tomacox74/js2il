@@ -14,10 +14,13 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_AddNumberNumber() { var testName = nameof(BinaryOperator_AddNumberNumber); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task BinaryOperator_AddStringNumber() { var testName = nameof(BinaryOperator_AddStringNumber); return GenerateTest(testName); }
+        public Task BinaryOperator_AddObjectObject() { var testName = nameof(BinaryOperator_AddObjectObject); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task BinaryOperator_AddStringString() { var testName = nameof(BinaryOperator_AddStringString); return GenerateTest(testName); }
+        public Task BinaryOperator_AddStringNumber() { var testName = nameof(BinaryOperator_AddStringNumber); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+
+        [Fact]
+        public Task BinaryOperator_AddStringString() { var testName = nameof(BinaryOperator_AddStringString); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
         public Task BinaryOperator_BitwiseAndNumberNumber() { var testName = nameof(BinaryOperator_BitwiseAndNumberNumber); return GenerateTest(testName); }

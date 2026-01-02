@@ -464,16 +464,30 @@ public sealed class HIRToLIRLowerer
         var leftType = GetTempStorage(leftTempVar).ClrType;
         var rightType = GetTempStorage(rightTempVar).ClrType;
 
-        // Handle addition (currently only supports number + number)
+        // Handle addition
         if (binaryExpr.Operator == Acornima.Operator.Addition)
         {
-            if (leftType != typeof(double) || rightType != typeof(double))
+            // Number + Number
+            if (leftType == typeof(double) && rightType == typeof(double))
             {
-                return false;
+                _methodBodyIR.Instructions.Add(new LIRAddNumber(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
             }
 
-            _methodBodyIR.Instructions.Add(new LIRAddNumber(leftTempVar, rightTempVar, resultTempVar));
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            // String + String
+            if (leftType == typeof(string) && rightType == typeof(string))
+            {
+                _methodBodyIR.Instructions.Add(new LIRConcatStrings(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+                return true;
+            }
+
+            // Dynamic addition (unknown types) - box operands and call Operators.Add
+            var leftBoxed = EnsureObject(leftTempVar);
+            var rightBoxed = EnsureObject(rightTempVar);
+            _methodBodyIR.Instructions.Add(new LIRAddDynamic(leftBoxed, rightBoxed, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
             return true;
         }
 

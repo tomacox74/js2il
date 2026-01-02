@@ -24,6 +24,16 @@ public record LIRConstBoolean(bool Value, TempVariable Result) : LIRInstruction;
 
 public record LIRAddNumber(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
 
+/// <summary>
+/// String concatenation using String.Concat. Used when both operands are known to be strings.
+/// </summary>
+public record LIRConcatStrings(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Dynamic addition using Operators.Add runtime helper. Used when operand types are unknown.
+/// </summary>
+public record LIRAddDynamic(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
+
 public record LIRSubNumber(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
 
 public record LIRConstUndefined(TempVariable Result) : LIRInstruction;

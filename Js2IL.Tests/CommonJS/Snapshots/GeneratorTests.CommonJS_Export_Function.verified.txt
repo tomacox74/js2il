@@ -148,15 +148,22 @@
 	{
 		// Method begins at RVA 0x20d0
 		// Header size: 12
-		// Code size: 22 (0x16)
+		// Code size: 26 (0x1a)
 		.maxstack 32
+		.locals init (
+			[0] object
+		)
 
 		IL_0000: ldstr "Hello, "
 		IL_0005: ldarg.1
 		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_000b: ldstr "!"
-		IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0015: ret
+		IL_000b: stloc.0
+		IL_000c: ldloc.0
+		IL_000d: ldstr "!"
+		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0017: stloc.0
+		IL_0018: ldloc.0
+		IL_0019: ret
 	} // end of method CommonJS_Export_Function_Lib::greet
 
 } // end of class Functions.CommonJS_Export_Function_Lib
@@ -174,7 +181,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20f4
+		// Method begins at RVA 0x20f8
 		// Header size: 12
 		// Code size: 48 (0x30)
 		.maxstack 32
@@ -208,7 +215,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2130
+		// Method begins at RVA 0x2134
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -213,22 +213,24 @@
 
 	.method public hidebysig 
 		instance object 'add' (
-			object '',
-			object ''
+			object a,
+			object b
 		) cil managed 
 	{
 		// Method begins at RVA 0x2158
 		// Header size: 12
-		// Code size: 19 (0x13)
+		// Code size: 10 (0xa)
 		.maxstack 32
+		.locals init (
+			[0] object
+		)
 
 		IL_0000: ldarg.1
-		IL_0001: unbox.any [System.Runtime]System.Double
-		IL_0006: ldarg.2
-		IL_0007: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000c: add
-		IL_000d: box [System.Runtime]System.Double
-		IL_0012: ret
+		IL_0001: ldarg.2
+		IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0007: stloc.0
+		IL_0008: ldloc.0
+		IL_0009: ret
 	} // end of method Calculator::'add'
 
 	.method public hidebysig 
@@ -237,7 +239,7 @@
 			object ''
 		) cil managed 
 	{
-		// Method begins at RVA 0x2178
+		// Method begins at RVA 0x2170
 		// Header size: 12
 		// Code size: 19 (0x13)
 		.maxstack 32
@@ -266,7 +268,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2198
+		// Method begins at RVA 0x2190
 		// Header size: 12
 		// Code size: 18 (0x12)
 		.maxstack 32
@@ -291,7 +293,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21b6
+		// Method begins at RVA 0x21ae
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

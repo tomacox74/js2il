@@ -271,6 +271,18 @@ internal sealed class LIRToILCompiler
                 ilEncoder.OpCode(ILOpCode.Add);
                 EmitStoreTemp(addNumber.Result, ilEncoder, allocation);
                 break;
+            case LIRConcatStrings concatStrings:
+                EmitLoadTemp(concatStrings.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(concatStrings.Right, ilEncoder, allocation, methodDescriptor);
+                EmitStringConcat(ilEncoder);
+                EmitStoreTemp(concatStrings.Result, ilEncoder, allocation);
+                break;
+            case LIRAddDynamic addDynamic:
+                EmitLoadTemp(addDynamic.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(addDynamic.Right, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsAdd(ilEncoder);
+                EmitStoreTemp(addDynamic.Result, ilEncoder, allocation);
+                break;
             case LIRSubNumber subNumber:
                 EmitLoadTemp(subNumber.Left, ilEncoder, allocation, methodDescriptor);
                 EmitLoadTemp(subNumber.Right, ilEncoder, allocation, methodDescriptor);
@@ -537,9 +549,10 @@ internal sealed class LIRToILCompiler
                         break;
                     }
                     // JS parameter index is 0-based. IL arg index depends on method type:
-                    // - User functions: arg0 is scopes array, so JS param 0 -> IL arg 1
-                    // - Module Main: no scopes array, so JS param 0 -> IL arg 0
-                    int ilArgIndex = methodDescriptor.HasScopesParameter
+                    // - User functions (static): arg0 is scopes array, so JS param 0 -> IL arg 1
+                    // - Instance methods: arg0 is 'this', so JS param 0 -> IL arg 1
+                    // - Module Main (static, no scopes): JS param 0 -> IL arg 0
+                    int ilArgIndex = (methodDescriptor.HasScopesParameter || !methodDescriptor.IsStatic)
                         ? loadParam.ParameterIndex + 1
                         : loadParam.ParameterIndex;
                     ilEncoder.LoadArgument(ilArgIndex);
@@ -754,7 +767,8 @@ internal sealed class LIRToILCompiler
                 break;
             case LIRLoadParameter loadParam:
                 // Emit ldarg.X inline - no local slot needed
-                int ilArgIndex = methodDescriptor.HasScopesParameter
+                // For instance methods, arg0 is 'this', so JS param 0 -> IL arg 1
+                int ilArgIndex = (methodDescriptor.HasScopesParameter || !methodDescriptor.IsStatic)
                     ? loadParam.ParameterIndex + 1
                     : loadParam.ParameterIndex;
                 ilEncoder.LoadArgument(ilArgIndex);
@@ -855,6 +869,19 @@ internal sealed class LIRToILCompiler
         var methodMref = _memberRefRegistry.GetOrAddMethod(declaringType, methodName);
         ilEncoder.OpCode(ILOpCode.Callvirt);
         ilEncoder.Token(methodMref);
+    }
+
+    private void EmitStringConcat(InstructionEncoder ilEncoder)
+    {
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(_bclReferences.String_Concat_Ref);
+    }
+
+    private void EmitOperatorsAdd(InstructionEncoder ilEncoder)
+    {
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "Add");
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
     }
 
     #endregion

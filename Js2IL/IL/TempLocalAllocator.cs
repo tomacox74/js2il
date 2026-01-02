@@ -185,6 +185,14 @@ internal static class TempLocalAllocator
                 yield return add.Left;
                 yield return add.Right;
                 break;
+            case LIRConcatStrings concat:
+                yield return concat.Left;
+                yield return concat.Right;
+                break;
+            case LIRAddDynamic addDyn:
+                yield return addDyn.Left;
+                yield return addDyn.Right;
+                break;
             case LIRSubNumber sub:
                 yield return sub.Left;
                 yield return sub.Right;
@@ -301,6 +309,12 @@ internal static class TempLocalAllocator
                 return true;
             case LIRAddNumber add:
                 defined = add.Result;
+                return true;
+            case LIRConcatStrings concat:
+                defined = concat.Result;
+                return true;
+            case LIRAddDynamic addDyn:
+                defined = addDyn.Result;
                 return true;
             case LIRSubNumber sub:
                 defined = sub.Result;
