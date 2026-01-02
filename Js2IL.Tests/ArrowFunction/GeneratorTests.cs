@@ -17,7 +17,7 @@ namespace Js2IL.Tests.ArrowFunction
         public Task ArrowFunction_DefaultParameterExpression() { var testName = nameof(ArrowFunction_DefaultParameterExpression); return GenerateTest(testName); }
 
         [Fact]
-        public Task ArrowFunction_DefaultParameterValue() { var testName = nameof(ArrowFunction_DefaultParameterValue); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+        public Task ArrowFunction_DefaultParameterValue() { var testName = nameof(ArrowFunction_DefaultParameterValue); return GenerateTest(testName); }
 
         [Fact]
         public Task ArrowFunction_GlobalFunctionCallsGlobalFunction() { var testName = nameof(ArrowFunction_GlobalFunctionCallsGlobalFunction); return GenerateTest(testName); }

@@ -211,10 +211,12 @@
 	{
 		// Method begins at RVA 0x20fc
 		// Header size: 12
-		// Code size: 175 (0xaf)
+		// Code size: 109 (0x6d)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi
+			[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[1] object[],
+			[2] object
 		)
 
 		IL_0000: ldarg.1
@@ -238,43 +240,29 @@
 		IL_003b: box [System.Runtime]System.Double
 		IL_0040: starg.s z
 
-		IL_0042: newobj instance void Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi::.ctor()
+		IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0047: stloc.0
-		IL_0048: ldloc.0
-		IL_0049: ldarg.1
-		IL_004a: stfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi::x
-		IL_004f: ldloc.0
+		IL_0048: ldc.i4.1
+		IL_0049: newarr [System.Runtime]System.Object
+		IL_004e: stloc.1
+		IL_004f: ldarg.1
 		IL_0050: ldarg.2
-		IL_0051: stfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi::y
-		IL_0056: ldloc.0
-		IL_0057: ldarg.3
-		IL_0058: stfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi::z
-		IL_005d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0062: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0067: ldc.i4.1
-		IL_0068: newarr [System.Runtime]System.Object
-		IL_006d: dup
-		IL_006e: ldc.i4.0
-		IL_006f: ldloc.0
-		IL_0070: castclass Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi
-		IL_0075: ldfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi::x
-		IL_007a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_007f: ldloc.0
-		IL_0080: castclass Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi
-		IL_0085: ldfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi::y
-		IL_008a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_008f: mul
-		IL_0090: ldloc.0
-		IL_0091: castclass Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi
-		IL_0096: ldfld object Scopes.ArrowFunction_DefaultParameterValue/ArrowFunction_multi::z
-		IL_009b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_00a0: mul
-		IL_00a1: box [System.Runtime]System.Double
-		IL_00a6: stelem.ref
-		IL_00a7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00ac: pop
-		IL_00ad: ldnull
-		IL_00ae: ret
+		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
+		IL_0056: stloc.2
+		IL_0057: ldloc.2
+		IL_0058: ldarg.3
+		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
+		IL_005e: stloc.2
+		IL_005f: ldloc.1
+		IL_0060: ldc.i4.0
+		IL_0061: ldloc.2
+		IL_0062: stelem.ref
+		IL_0063: ldloc.0
+		IL_0064: ldloc.1
+		IL_0065: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_006a: pop
+		IL_006b: ldnull
+		IL_006c: ret
 	} // end of method ArrowFunction_L10C14::ArrowFunction_L10C14
 
 } // end of class Functions.ArrowFunction_L10C14
@@ -292,7 +280,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x21b8
+		// Method begins at RVA 0x2178
 		// Header size: 12
 		// Code size: 544 (0x220)
 		.maxstack 32
@@ -535,7 +523,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x23e4
+		// Method begins at RVA 0x23a4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

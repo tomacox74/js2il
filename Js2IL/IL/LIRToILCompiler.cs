@@ -815,6 +815,18 @@ internal sealed class LIRToILCompiler
                     ilEncoder.Token(_bclReferences.DoubleType);
                 }
                 break;
+            case LIRMulDynamic mulDynamic:
+                // Emit inline dynamic multiplication
+                EmitLoadTemp(mulDynamic.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(mulDynamic.Right, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsMultiply(ilEncoder);
+                break;
+            case LIRAddDynamic addDynamic:
+                // Emit inline dynamic addition
+                EmitLoadTemp(addDynamic.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(addDynamic.Right, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsAdd(ilEncoder);
+                break;
             default:
                 throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - unsupported instruction {def.GetType().Name}");
         }
