@@ -136,7 +136,9 @@ internal sealed class JsMethodCompiler
         if (node is Acornima.Ast.MethodDefinition methodDef)
         {
             methodDescriptor.IsStatic = methodDef.Static;
-            methodDescriptor.Parameters = Array.Empty<MethodParameterDescriptor>();
+            // Instance methods don't have the scopes parameter
+            methodDescriptor.Parameters = parameters.Skip(1).ToList();
+            methodDescriptor.HasScopesParameter = false;
         }
 
         return CreateILCompiler().TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);

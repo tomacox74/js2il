@@ -549,9 +549,10 @@ internal sealed class LIRToILCompiler
                         break;
                     }
                     // JS parameter index is 0-based. IL arg index depends on method type:
-                    // - User functions: arg0 is scopes array, so JS param 0 -> IL arg 1
-                    // - Module Main: no scopes array, so JS param 0 -> IL arg 0
-                    int ilArgIndex = methodDescriptor.HasScopesParameter
+                    // - User functions (static): arg0 is scopes array, so JS param 0 -> IL arg 1
+                    // - Instance methods: arg0 is 'this', so JS param 0 -> IL arg 1
+                    // - Module Main (static, no scopes): JS param 0 -> IL arg 0
+                    int ilArgIndex = (methodDescriptor.HasScopesParameter || !methodDescriptor.IsStatic)
                         ? loadParam.ParameterIndex + 1
                         : loadParam.ParameterIndex;
                     ilEncoder.LoadArgument(ilArgIndex);
@@ -766,7 +767,8 @@ internal sealed class LIRToILCompiler
                 break;
             case LIRLoadParameter loadParam:
                 // Emit ldarg.X inline - no local slot needed
-                int ilArgIndex = methodDescriptor.HasScopesParameter
+                // For instance methods, arg0 is 'this', so JS param 0 -> IL arg 1
+                int ilArgIndex = (methodDescriptor.HasScopesParameter || !methodDescriptor.IsStatic)
                     ? loadParam.ParameterIndex + 1
                     : loadParam.ParameterIndex;
                 ilEncoder.LoadArgument(ilArgIndex);
