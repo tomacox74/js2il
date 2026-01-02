@@ -59,6 +59,7 @@ internal sealed class JsMethodCompiler
     private readonly TypeReferenceRegistry _typeReferenceRegistry;
     private readonly BaseClassLibraryReferences _bclReferences;
     private readonly MemberReferenceRegistry _memberRefRegistry;
+    private readonly ConsoleLogPeepholeOptimizer _consoleLogOptimizer;
 
     public JsMethodCompiler(MetadataBuilder metadataBuilder, TypeReferenceRegistry typeReferenceRegistry, MemberReferenceRegistry memberReferenceRegistry, BaseClassLibraryReferences bclReferences)
     {
@@ -66,7 +67,10 @@ internal sealed class JsMethodCompiler
         _typeReferenceRegistry = typeReferenceRegistry;
         _bclReferences = bclReferences;
         _memberRefRegistry = memberReferenceRegistry;
+        _consoleLogOptimizer = new ConsoleLogPeepholeOptimizer(metadataBuilder, bclReferences, memberReferenceRegistry, typeReferenceRegistry);
     }
+
+    #region Public API - Entry Points
 
     public MethodDefinitionHandle TryCompileMethod(TypeBuilder typeBuilder, string methodName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
     {
@@ -195,6 +199,10 @@ internal sealed class JsMethodCompiler
         return methodDefinitionHandle;
     }
 
+    #endregion
+
+    #region Core Pipeline - AST to LIR to IL
+
     private bool TryLowerASTToLIR(Node node, Scope scope, out MethodBodyIR? methodBody)
     {
         methodBody = null;
@@ -302,24 +310,68 @@ internal sealed class JsMethodCompiler
     {
         bodyOffset = -1;
         var methodBlob = new BlobBuilder();
-        var ilEncoder = new InstructionEncoder(methodBlob);
+        var controlFlowBuilder = new ControlFlowBuilder();
+        var ilEncoder = new InstructionEncoder(methodBlob, controlFlowBuilder);
 
         // Pre-pass: find console.log(oneArg) sequences that we will emit stack-only, and avoid
         // allocating IL locals for temps that are only used within those sequences.
-        var peepholeReplaced = ComputeStackOnlyConsoleLogPeepholeMask(methodBody);
+        var peepholeReplaced = _consoleLogOptimizer.ComputeStackOnlyMask(methodBody);
+        
+        // Build map of temp → defining instruction for branch condition inlining
+        var tempDefinitions = BranchConditionOptimizer.BuildTempDefinitionMap(methodBody);
+        
+        // Mark comparison temps only used by branches as non-materialized
+        BranchConditionOptimizer.MarkBranchOnlyComparisonTemps(methodBody, peepholeReplaced, tempDefinitions);
+        
         var allocation = TempLocalAllocator.Allocate(methodBody, peepholeReplaced);
+
+        // Pre-create IL labels for all LIR labels
+        var labelMap = new Dictionary<int, LabelHandle>();
+        foreach (var lirLabel in methodBody.Instructions
+            .OfType<LIRLabel>()
+            .Where(l => !labelMap.ContainsKey(l.LabelId)))
+        {
+            labelMap[lirLabel.LabelId] = ilEncoder.DefineLabel();
+        }
 
         bool hasExplicitReturn = false;
         for (int i = 0; i < methodBody.Instructions.Count; i++)
         {
             // Peephole: console.log(<singleArg>) emitted stack-only
-            if (TryEmitConsoleLogPeephole(methodBody, i, ilEncoder, allocation, out var consumed))
+            if (_consoleLogOptimizer.TryEmitPeephole(
+                methodBody, i, ilEncoder, allocation,
+                IsMaterialized,
+                EmitStoreTemp,
+                out var consumed))
             {
                 i += consumed - 1;
                 continue;
             }
 
             var instruction = methodBody.Instructions[i];
+            
+            // Handle control flow instructions directly
+            switch (instruction)
+            {
+                case LIRLabel lirLabel:
+                    ilEncoder.MarkLabel(labelMap[lirLabel.LabelId]);
+                    continue;
+
+                case LIRBranch branch:
+                    ilEncoder.Branch(ILOpCode.Br, labelMap[branch.TargetLabel]);
+                    continue;
+
+                case LIRBranchIfFalse branchFalse:
+                    EmitBranchCondition(branchFalse.Condition, ilEncoder, allocation, methodBody, tempDefinitions);
+                    ilEncoder.Branch(ILOpCode.Brfalse, labelMap[branchFalse.TargetLabel]);
+                    continue;
+
+                case LIRBranchIfTrue branchTrue:
+                    EmitBranchCondition(branchTrue.Condition, ilEncoder, allocation, methodBody, tempDefinitions);
+                    ilEncoder.Branch(ILOpCode.Brtrue, labelMap[branchTrue.TargetLabel]);
+                    continue;
+            }
+
             if (!TryCompileInstructionToIL(instruction, ilEncoder, allocation, methodBody))
             {
                 // Failed to compile instruction
@@ -368,234 +420,9 @@ internal sealed class JsMethodCompiler
         return true;
     }
 
-    private bool[]? ComputeStackOnlyConsoleLogPeepholeMask(MethodBodyIR methodBody)
-    {
-        int tempCount = methodBody.Temps.Count;
-        if (tempCount == 0)
-        {
-            return null;
-        }
+    #endregion
 
-        var replaced = new bool[methodBody.Instructions.Count];
-
-        for (int i = 0; i < methodBody.Instructions.Count; i++)
-        {
-            if (TryMatchConsoleLogMultiArgSequence(methodBody, i, out var lastStoreIndex, out var storeInfos))
-            {
-                int callIndex = lastStoreIndex + 1;
-                
-                // Build set of temps defined in this sequence
-                var definedInSequence = new HashSet<TempVariable>();
-                for (int j = i; j <= lastStoreIndex; j++)
-                {
-                    if (TempLocalAllocator.TryGetDefinedTemp(methodBody.Instructions[j], out var def))
-                    {
-                        definedInSequence.Add(def);
-                    }
-                }
-
-                // For single-arg case, check update expression pattern
-                if (storeInfos.Count == 1)
-                {
-                    int idx = i + 2;
-                    if (methodBody.Instructions[idx] is LIRBeginInitArrayElement)
-                    {
-                        idx++;
-                    }
-                    if (TryMatchUpdateExpressionForConsoleArg(methodBody, idx, storeInfos[0].StoreIndex, storeInfos[0].StoredValue, out _, out _, out _))
-                    {
-                        for (int j = i; j <= callIndex; j++)
-                        {
-                            replaced[j] = true;
-                        }
-                        i = callIndex;
-                        continue;
-                    }
-                }
-
-                // Check if ALL arguments can be emitted stack-only
-                bool allArgsStackOnly = true;
-                foreach (var (_, storedValue) in storeInfos)
-                {
-                    if (!CanEmitTempStackOnly(methodBody, storedValue, definedInSequence))
-                    {
-                        allArgsStackOnly = false;
-                        break;
-                    }
-                }
-
-                if (allArgsStackOnly)
-                {
-                    for (int j = i; j <= callIndex; j++)
-                    {
-                        replaced[j] = true;
-                    }
-                    i = callIndex;
-                }
-            }
-        }
-
-        // Determine which temps are used outside replaced regions.
-        var usedOutside = new bool[tempCount];
-        for (int i = 0; i < methodBody.Instructions.Count; i++)
-        {
-            if (replaced[i])
-            {
-                continue;
-            }
-
-            foreach (var used in TempLocalAllocator.EnumerateUsedTemps(methodBody.Instructions[i])
-                .Where(u => u.Index >= 0 && u.Index < tempCount))
-            {
-                usedOutside[used.Index] = true;
-            }
-        }
-
-        return usedOutside;
-    }
-
-    /// <summary>
-    /// Matches a console.log sequence with N arguments (N >= 1).
-    /// Pattern:
-    ///   GetIntrinsicGlobal("console") -> tConsole
-    ///   NewObjectArray(N) -> tArr
-    ///   For each arg i in 0..N-1:
-    ///     (optional) BeginInitArrayElement(tArr, i)
-    ///     ... (value computation) ...
-    ///     StoreElementRef(tArr, i, tVal_i)
-    ///   CallIntrinsic(tConsole, "log", tArr) -> tRes
-    /// </summary>
-    private static bool TryMatchConsoleLogMultiArgSequence(
-        MethodBodyIR methodBody,
-        int startIndex,
-        out int lastStoreIndex,
-        out List<(int StoreIndex, TempVariable StoredValue)> storeInfos)
-    {
-        lastStoreIndex = -1;
-        storeInfos = new List<(int StoreIndex, TempVariable StoredValue)>();
-
-        if (startIndex + 3 >= methodBody.Instructions.Count)
-        {
-            return false;
-        }
-
-        if (methodBody.Instructions[startIndex] is not LIRGetIntrinsicGlobal g || !string.Equals(g.Name, "console", StringComparison.OrdinalIgnoreCase))
-        {
-            return false;
-        }
-
-        if (methodBody.Instructions[startIndex + 1] is not LIRNewObjectArray a || a.ElementCount < 1)
-        {
-            return false;
-        }
-
-        int argCount = a.ElementCount;
-        int searchIdx = startIndex + 2;
-
-        for (int argIdx = 0; argIdx < argCount; argIdx++)
-        {
-            // Skip optional BeginInitArrayElement
-            if (searchIdx < methodBody.Instructions.Count &&
-                methodBody.Instructions[searchIdx] is LIRBeginInitArrayElement begin &&
-                begin.Array == a.Result && begin.Index == argIdx)
-            {
-                searchIdx++;
-            }
-
-            // Find the StoreElementRef for this argument index
-            int storeIndex = -1;
-            for (int j = searchIdx; j < methodBody.Instructions.Count; j++)
-            {
-                if (methodBody.Instructions[j] is LIRStoreElementRef s && s.Array == a.Result && s.Index == argIdx)
-                {
-                    storeIndex = j;
-                    storeInfos.Add((j, s.Value));
-                    searchIdx = j + 1;
-                    break;
-                }
-
-                // Bail out if we hit another intrinsic/global/array init
-                if (methodBody.Instructions[j] is LIRGetIntrinsicGlobal or LIRNewObjectArray)
-                {
-                    return false;
-                }
-            }
-
-            if (storeIndex < 0)
-            {
-                return false;
-            }
-        }
-
-        if (storeInfos.Count != argCount)
-        {
-            return false;
-        }
-
-        lastStoreIndex = storeInfos[^1].StoreIndex;
-
-        // Check that CallIntrinsic immediately follows the last store
-        if (lastStoreIndex + 1 >= methodBody.Instructions.Count)
-        {
-            return false;
-        }
-
-        if (methodBody.Instructions[lastStoreIndex + 1] is not LIRCallIntrinsic call ||
-            call.IntrinsicObject != g.Result ||
-            call.ArgumentsArray != a.Result ||
-            !string.Equals(call.Name, "log", StringComparison.OrdinalIgnoreCase))
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    private bool CanEmitTempStackOnly(MethodBodyIR methodBody, TempVariable temp, HashSet<TempVariable> definedInSequence)
-    {
-        // Check for variable-mapped temps FIRST.
-        // Variable-mapped temps CAN be emitted stack-only by loading from the variable local.
-        if (temp.Index >= 0 &&
-            temp.Index < methodBody.TempVariableSlots.Count &&
-            methodBody.TempVariableSlots[temp.Index] >= 0)
-        {
-            return true;
-        }
-
-        var def = TryFindDefInstruction(methodBody, temp);
-        if (def == null)
-        {
-            // No definition and not variable-mapped - can't emit
-            return false;
-        }
-
-        return def switch
-        {
-            LIRConstNumber => true,
-            LIRConstString => true,
-            LIRConstBoolean => true,
-            LIRConstUndefined => true,
-            LIRConstNull => true,
-            LIRConvertToObject conv => CanEmitTempStackOnly(methodBody, conv.Source, definedInSequence),
-            LIRTypeof t => CanEmitTempStackOnly(methodBody, t.Value, definedInSequence),
-            LIRNegateNumber neg => CanEmitTempStackOnly(methodBody, neg.Value, definedInSequence),
-            LIRBitwiseNotNumber not => CanEmitTempStackOnly(methodBody, not.Value, definedInSequence),
-            // Comparison operators
-            LIRCompareNumberLessThan cmp => CanEmitTempStackOnly(methodBody, cmp.Left, definedInSequence) && CanEmitTempStackOnly(methodBody, cmp.Right, definedInSequence),
-            LIRCompareNumberGreaterThan cmp => CanEmitTempStackOnly(methodBody, cmp.Left, definedInSequence) && CanEmitTempStackOnly(methodBody, cmp.Right, definedInSequence),
-            LIRCompareNumberLessThanOrEqual cmp => CanEmitTempStackOnly(methodBody, cmp.Left, definedInSequence) && CanEmitTempStackOnly(methodBody, cmp.Right, definedInSequence),
-            LIRCompareNumberGreaterThanOrEqual cmp => CanEmitTempStackOnly(methodBody, cmp.Left, definedInSequence) && CanEmitTempStackOnly(methodBody, cmp.Right, definedInSequence),
-            LIRCompareNumberEqual cmp => CanEmitTempStackOnly(methodBody, cmp.Left, definedInSequence) && CanEmitTempStackOnly(methodBody, cmp.Right, definedInSequence),
-            LIRCompareNumberNotEqual cmp => CanEmitTempStackOnly(methodBody, cmp.Left, definedInSequence) && CanEmitTempStackOnly(methodBody, cmp.Right, definedInSequence),
-            LIRCompareBooleanEqual cmp => CanEmitTempStackOnly(methodBody, cmp.Left, definedInSequence) && CanEmitTempStackOnly(methodBody, cmp.Right, definedInSequence),
-            LIRCompareBooleanNotEqual cmp => CanEmitTempStackOnly(methodBody, cmp.Left, definedInSequence) && CanEmitTempStackOnly(methodBody, cmp.Right, definedInSequence),
-            // Array ops that are part of this sequence are fine
-            LIRGetIntrinsicGlobal g when definedInSequence.Contains(g.Result) => true,
-            LIRNewObjectArray a when definedInSequence.Contains(a.Result) => true,
-            // Anything else (variable reads, calls, etc.) cannot be emitted stack-only
-            _ => false,
-        };
-    }
+    #region Instruction Emission
 
     private bool TryCompileInstructionToIL(LIRInstruction instruction, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodBodyIR methodBody)
     {
@@ -619,7 +446,6 @@ internal sealed class JsMethodCompiler
             case LIRConstNumber constNumber:
                 if (!IsMaterialized(constNumber.Result, allocation, methodBody))
                 {
-                    // Pure and unused
                     break;
                 }
                 ilEncoder.LoadConstantR8(constNumber.Value);
@@ -628,7 +454,6 @@ internal sealed class JsMethodCompiler
             case LIRConstString constString:
                 if (!IsMaterialized(constString.Result, allocation, methodBody))
                 {
-                    // Pure and unused
                     break;
                 }
                 ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString(constString.Value));
@@ -637,7 +462,6 @@ internal sealed class JsMethodCompiler
             case LIRConstBoolean constBoolean:
                 if (!IsMaterialized(constBoolean.Result, allocation, methodBody))
                 {
-                    // Pure and unused
                     break;
                 }
                 ilEncoder.LoadConstantI4(constBoolean.Value ? 1 : 0);
@@ -646,7 +470,6 @@ internal sealed class JsMethodCompiler
             case LIRConstUndefined:
                 if (!IsMaterialized(((LIRConstUndefined)instruction).Result, allocation, methodBody))
                 {
-                    // Pure and unused
                     break;
                 }
                 ilEncoder.OpCode(ILOpCode.Ldnull);
@@ -655,24 +478,20 @@ internal sealed class JsMethodCompiler
             case LIRConstNull:
                 if (!IsMaterialized(((LIRConstNull)instruction).Result, allocation, methodBody))
                 {
-                    // Pure and unused
                     break;
                 }
-                // JavaScript 'null' raw value (boxing handled by LIRConvertToObject)
                 ilEncoder.LoadConstantI4((int)JavaScriptRuntime.JsNull.Null);
                 EmitStoreTemp(((LIRConstNull)instruction).Result, ilEncoder, allocation, methodBody);
                 break;
             case LIRGetIntrinsicGlobal getIntrinsicGlobal:
                 if (!IsMaterialized(getIntrinsicGlobal.Result, allocation, methodBody))
                 {
-                    // Pure and unused
                     break;
                 }
                 EmitLoadIntrinsicGlobalVariable(getIntrinsicGlobal.Name, ilEncoder);
                 EmitStoreTemp(getIntrinsicGlobal.Result, ilEncoder, allocation, methodBody);
                 break;
             case LIRCallIntrinsic callIntrinsic:
-                // Stack: [this, args] -> callvirt -> [object?]
                 EmitLoadTemp(callIntrinsic.IntrinsicObject, ilEncoder, allocation, methodBody);
                 EmitLoadTemp(callIntrinsic.ArgumentsArray, ilEncoder, allocation, methodBody);
                 EmitInvokeInstrinsicMethod(typeof(JavaScriptRuntime.Console), callIntrinsic.Name, ilEncoder);
@@ -683,19 +502,16 @@ internal sealed class JsMethodCompiler
                 }
                 else
                 {
-                    // Side effects needed, but result unused
                     ilEncoder.OpCode(ILOpCode.Pop);
                 }
                 break;
             case LIRConvertToObject convertToObject:
                 if (!IsMaterialized(convertToObject.Result, allocation, methodBody))
                 {
-                    // Pure and unused
                     break;
                 }
 
                 EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodBody);
-                // Box the value type using the source type
                 ilEncoder.OpCode(ILOpCode.Box);
                 if (convertToObject.SourceType == typeof(bool))
                 {
@@ -715,10 +531,8 @@ internal sealed class JsMethodCompiler
             case LIRTypeof:
                 if (!IsMaterialized(((LIRTypeof)instruction).Result, allocation, methodBody))
                 {
-                    // Pure and unused
                     break;
                 }
-                // Stack: [value(object)] -> call TypeUtilities.Typeof(object) -> [string]
                 EmitLoadTemp(((LIRTypeof)instruction).Value, ilEncoder, allocation, methodBody);
                 var typeofMref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.Typeof));
                 ilEncoder.OpCode(ILOpCode.Call);
@@ -728,7 +542,6 @@ internal sealed class JsMethodCompiler
             case LIRNegateNumber:
                 if (!IsMaterialized(((LIRNegateNumber)instruction).Result, allocation, methodBody))
                 {
-                    // Pure and unused
                     break;
                 }
 
@@ -739,18 +552,15 @@ internal sealed class JsMethodCompiler
             case LIRBitwiseNotNumber:
                 if (!IsMaterialized(((LIRBitwiseNotNumber)instruction).Result, allocation, methodBody))
                 {
-                    // Pure and unused
                     break;
                 }
 
-                // ~x = (double)(~(int)x)
                 EmitLoadTemp(((LIRBitwiseNotNumber)instruction).Value, ilEncoder, allocation, methodBody);
                 ilEncoder.OpCode(ILOpCode.Conv_i4);
                 ilEncoder.OpCode(ILOpCode.Not);
                 ilEncoder.OpCode(ILOpCode.Conv_r8);
                 EmitStoreTemp(((LIRBitwiseNotNumber)instruction).Result, ilEncoder, allocation, methodBody);
                 break;
-            // Comparison operators for numbers
             case LIRCompareNumberLessThan cmpLt:
                 if (!IsMaterialized(cmpLt.Result, allocation, methodBody))
                 {
@@ -776,7 +586,6 @@ internal sealed class JsMethodCompiler
                 {
                     break;
                 }
-                // <= is !(a > b) => (a > b) == 0
                 EmitLoadTemp(cmpLe.Left, ilEncoder, allocation, methodBody);
                 EmitLoadTemp(cmpLe.Right, ilEncoder, allocation, methodBody);
                 ilEncoder.OpCode(ILOpCode.Cgt);
@@ -789,7 +598,6 @@ internal sealed class JsMethodCompiler
                 {
                     break;
                 }
-                // >= is !(a < b) => (a < b) == 0
                 EmitLoadTemp(cmpGe.Left, ilEncoder, allocation, methodBody);
                 EmitLoadTemp(cmpGe.Right, ilEncoder, allocation, methodBody);
                 ilEncoder.OpCode(ILOpCode.Clt);
@@ -812,7 +620,6 @@ internal sealed class JsMethodCompiler
                 {
                     break;
                 }
-                // != is !(a == b) => (a == b) == 0
                 EmitLoadTemp(cmpNe.Left, ilEncoder, allocation, methodBody);
                 EmitLoadTemp(cmpNe.Right, ilEncoder, allocation, methodBody);
                 ilEncoder.OpCode(ILOpCode.Ceq);
@@ -820,7 +627,6 @@ internal sealed class JsMethodCompiler
                 ilEncoder.OpCode(ILOpCode.Ceq);
                 EmitStoreTemp(cmpNe.Result, ilEncoder, allocation, methodBody);
                 break;
-            // Comparison operators for booleans
             case LIRCompareBooleanEqual cmpBoolEq:
                 if (!IsMaterialized(cmpBoolEq.Result, allocation, methodBody))
                 {
@@ -836,7 +642,6 @@ internal sealed class JsMethodCompiler
                 {
                     break;
                 }
-                // != is !(a == b) => (a == b) == 0
                 EmitLoadTemp(cmpBoolNe.Left, ilEncoder, allocation, methodBody);
                 EmitLoadTemp(cmpBoolNe.Right, ilEncoder, allocation, methodBody);
                 ilEncoder.OpCode(ILOpCode.Ceq);
@@ -847,7 +652,6 @@ internal sealed class JsMethodCompiler
             case LIRNewObjectArray newObjectArray:
                 if (!IsMaterialized(newObjectArray.Result, allocation, methodBody))
                 {
-                    // Pure and unused
                     break;
                 }
                 ilEncoder.LoadConstantI4(newObjectArray.ElementCount);
@@ -856,8 +660,6 @@ internal sealed class JsMethodCompiler
                 EmitStoreTemp(newObjectArray.Result, ilEncoder, allocation, methodBody);
                 break;
             case LIRReturn lirReturn:
-                // Load the return value temp onto the stack, then ret
-                // The temp should already be boxed to object if needed
                 EmitLoadTemp(lirReturn.ReturnValue, ilEncoder, allocation, methodBody);
                 ilEncoder.OpCode(ILOpCode.Ret);
                 break;
@@ -877,6 +679,44 @@ internal sealed class JsMethodCompiler
         return true;
     }
 
+    #endregion
+
+    #region Branch Condition Handling
+
+    /// <summary>
+    /// Emits the condition for a branch instruction. If the condition is a non-materialized
+    /// comparison, emits the comparison inline. Otherwise loads the temp normally.
+    /// </summary>
+    private void EmitBranchCondition(
+        TempVariable condition,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodBodyIR methodBody,
+        Dictionary<int, LIRInstruction> tempDefinitions)
+    {
+        // Check if the condition is a non-materialized comparison that we should inline
+        if (!IsMaterialized(condition, allocation, methodBody) &&
+            condition.Index >= 0 &&
+            tempDefinitions.TryGetValue(condition.Index, out var definingInstruction) &&
+            BranchConditionOptimizer.IsComparisonInstruction(definingInstruction))
+        {
+            // Emit the comparison inline without storing to a local
+            BranchConditionOptimizer.EmitInlineComparison(
+                definingInstruction,
+                ilEncoder,
+                (temp, encoder) => EmitLoadTemp(temp, encoder, allocation, methodBody));
+        }
+        else
+        {
+            // Load the condition from its local normally
+            EmitLoadTemp(condition, ilEncoder, allocation, methodBody);
+        }
+    }
+
+    #endregion
+
+    #region Temp/Local Variable Management
+
     private StandaloneSignatureHandle CreateLocalVariablesSignature(MethodBodyIR methodBody, TempLocalAllocation allocation)
     {
         if (methodBody.VariableNames.Count == 0 && allocation.SlotStorages.Count == 0)
@@ -895,7 +735,6 @@ internal sealed class JsMethodCompiler
         {
             var typeEncoder = localEncoder.AddVariable().Type();
             
-            // Use tracked storage type if available, otherwise default to double
             if (i < methodBody.VariableStorages.Count)
             {
                 var storage = methodBody.VariableStorages[i];
@@ -918,7 +757,6 @@ internal sealed class JsMethodCompiler
             }
             else
             {
-                // Default to double for backwards compatibility
                 typeEncoder.Double();
             }
         }
@@ -927,11 +765,8 @@ internal sealed class JsMethodCompiler
         for (int i = 0; i < allocation.SlotStorages.Count; i++)
         {
             var storage = allocation.SlotStorages[i];
-
             var typeEncoder = localEncoder.AddVariable().Type();
 
-            // Keep LIR independent of IL locals; we only use locals to materialize SSA values.
-            // Unknown/boxed values are stored as object.
             if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
             {
                 typeEncoder.Double();
@@ -1025,7 +860,6 @@ internal sealed class JsMethodCompiler
     {
         if (!IsMaterialized(temp, allocation, methodBody))
         {
-            // If a value is on the stack but not materialized, discard.
             ilEncoder.OpCode(ILOpCode.Pop);
             return;
         }
@@ -1051,503 +885,8 @@ internal sealed class JsMethodCompiler
         return methodBody.VariableNames.Count + slot;
     }
 
-    private bool TryEmitConsoleLogPeephole(MethodBodyIR methodBody, int startIndex, InstructionEncoder ilEncoder, TempLocalAllocation allocation, out int consumed)
-    {
-        consumed = 0;
-
-        // Pattern:
-        //   GetIntrinsicGlobal("console") -> tConsole
-        //   NewObjectArray(N) -> tArr
-        //   For each arg i in 0..N-1:
-        //     (optional) BeginInitArrayElement(tArr, i)
-        //     ... (value computation) ...
-        //     StoreElementRef(tArr, i, tVal_i)
-        //   CallIntrinsic(tConsole, "log", tArr) -> tRes
-
-        if (startIndex + 3 >= methodBody.Instructions.Count)
-        {
-            return false;
-        }
-
-        if (methodBody.Instructions[startIndex] is not LIRGetIntrinsicGlobal g || !string.Equals(g.Name, "console", StringComparison.OrdinalIgnoreCase))
-        {
-            return false;
-        }
-
-        if (methodBody.Instructions[startIndex + 1] is not LIRNewObjectArray a || a.ElementCount < 1)
-        {
-            return false;
-        }
-
-        int argCount = a.ElementCount;
-        int idx = startIndex + 2;
-
-        // Collect all StoreElementRef instructions for this array
-        var storeInfos = new List<(int StoreIndex, TempVariable StoredValue)>();
-        int searchIdx = idx;
-        
-        for (int argIdx = 0; argIdx < argCount; argIdx++)
-        {
-            // Skip optional BeginInitArrayElement
-            if (searchIdx < methodBody.Instructions.Count && 
-                methodBody.Instructions[searchIdx] is LIRBeginInitArrayElement begin &&
-                begin.Array == a.Result && begin.Index == argIdx)
-            {
-                searchIdx++;
-            }
-
-            // Find the StoreElementRef for this argument index
-            int storeIndex = -1;
-            for (int j = searchIdx; j < methodBody.Instructions.Count; j++)
-            {
-                if (methodBody.Instructions[j] is LIRStoreElementRef s && s.Array == a.Result && s.Index == argIdx)
-                {
-                    storeIndex = j;
-                    storeInfos.Add((j, s.Value));
-                    searchIdx = j + 1;
-                    break;
-                }
-
-                // Bail out if we hit another intrinsic/global/array init
-                if (methodBody.Instructions[j] is LIRGetIntrinsicGlobal or LIRNewObjectArray)
-                {
-                    return false;
-                }
-            }
-
-            if (storeIndex < 0)
-            {
-                return false;
-            }
-        }
-
-        if (storeInfos.Count != argCount)
-        {
-            return false;
-        }
-
-        int lastStoreIndex = storeInfos[^1].StoreIndex;
-
-        // Check that CallIntrinsic immediately follows the last store
-        if (lastStoreIndex + 1 >= methodBody.Instructions.Count)
-        {
-            return false;
-        }
-
-        if (methodBody.Instructions[lastStoreIndex + 1] is not LIRCallIntrinsic call || 
-            call.IntrinsicObject != g.Result || 
-            call.ArgumentsArray != a.Result || 
-            !string.Equals(call.Name, "log", StringComparison.OrdinalIgnoreCase))
-        {
-            return false;
-        }
-
-        // Build the set of temps defined in this sequence (for stack-only analysis)
-        var definedInSequence = new HashSet<TempVariable>();
-        for (int i = startIndex; i <= lastStoreIndex; i++)
-        {
-            if (TempLocalAllocator.TryGetDefinedTemp(methodBody.Instructions[i], out var def))
-            {
-                definedInSequence.Add(def);
-            }
-        }
-
-        // For single-arg case, check for update expression pattern first
-        if (argCount == 1)
-        {
-            var (storeIndex, storedValue) = storeInfos[0];
-            if (TryMatchUpdateExpressionForConsoleArg(methodBody, idx, storeIndex, storedValue, out var updatedVarSlot, out var isDecrement, out var isPrefix))
-            {
-                EmitLoadIntrinsicGlobalVariable("console", ilEncoder);
-                ilEncoder.LoadConstantI4(1);
-                ilEncoder.OpCode(ILOpCode.Newarr);
-                ilEncoder.Token(_bclReferences.ObjectType);
-                ilEncoder.OpCode(ILOpCode.Dup);
-                ilEncoder.LoadConstantI4(0);
-
-                EmitStackOnlyUpdateExpressionValue(ilEncoder, updatedVarSlot, isDecrement, isPrefix);
-                ilEncoder.OpCode(ILOpCode.Stelem_ref);
-
-                EmitInvokeInstrinsicMethod(typeof(JavaScriptRuntime.Console), "log", ilEncoder);
-
-                if (IsMaterialized(call.Result, allocation, methodBody))
-                {
-                    EmitStoreTemp(call.Result, ilEncoder, allocation, methodBody);
-                }
-                else
-                {
-                    ilEncoder.OpCode(ILOpCode.Pop);
-                }
-
-                consumed = (lastStoreIndex + 1) - startIndex + 1;
-                return true;
-            }
-        }
-
-        // Check if ALL arguments can be emitted stack-only
-        bool allArgsStackOnly = true;
-        foreach (var (_, storedValue) in storeInfos)
-        {
-            if (!CanEmitTempStackOnly(methodBody, storedValue, definedInSequence))
-            {
-                allArgsStackOnly = false;
-                break;
-            }
-        }
-
-        if (allArgsStackOnly)
-        {
-            EmitLoadIntrinsicGlobalVariable("console", ilEncoder);
-            ilEncoder.LoadConstantI4(argCount);
-            ilEncoder.OpCode(ILOpCode.Newarr);
-            ilEncoder.Token(_bclReferences.ObjectType);
-
-            for (int argIdx = 0; argIdx < argCount; argIdx++)
-            {
-                ilEncoder.OpCode(ILOpCode.Dup);
-                ilEncoder.LoadConstantI4(argIdx);
-                EmitTempStackOnly(methodBody, storeInfos[argIdx].StoredValue, ilEncoder);
-                ilEncoder.OpCode(ILOpCode.Stelem_ref);
-            }
-
-            EmitInvokeInstrinsicMethod(typeof(JavaScriptRuntime.Console), "log", ilEncoder);
-
-            if (IsMaterialized(call.Result, allocation, methodBody))
-            {
-                EmitStoreTemp(call.Result, ilEncoder, allocation, methodBody);
-            }
-            else
-            {
-                ilEncoder.OpCode(ILOpCode.Pop);
-            }
-
-            consumed = (lastStoreIndex + 1) - startIndex + 1;
-            return true;
-        }
-
-        // If we can't handle it stack-only, don't consume the sequence.
-        // Let normal instruction-by-instruction compilation handle it (with proper temp allocation).
-        return false;
-    }
-
-    private void EmitStackOnlyUpdateExpressionValue(InstructionEncoder ilEncoder, int updatedVarSlot, bool isDecrement, bool isPrefix)
-    {
-        // Emit stack-only update and value production, boxed.
-        // We intentionally avoid any temp locals here.
-        if (!isPrefix)
-        {
-            // postfix: value is old
-            ilEncoder.LoadLocal(updatedVarSlot);
-            ilEncoder.OpCode(ILOpCode.Dup);
-            ilEncoder.LoadConstantR8(1.0);
-            ilEncoder.OpCode(isDecrement ? ILOpCode.Sub : ILOpCode.Add);
-            ilEncoder.StoreLocal(updatedVarSlot);
-            ilEncoder.OpCode(ILOpCode.Box);
-            ilEncoder.Token(_bclReferences.DoubleType);
-        }
-        else
-        {
-            // prefix: value is new
-            ilEncoder.LoadLocal(updatedVarSlot);
-            ilEncoder.LoadConstantR8(1.0);
-            ilEncoder.OpCode(isDecrement ? ILOpCode.Sub : ILOpCode.Add);
-            ilEncoder.OpCode(ILOpCode.Dup);
-            ilEncoder.StoreLocal(updatedVarSlot);
-            ilEncoder.OpCode(ILOpCode.Box);
-            ilEncoder.Token(_bclReferences.DoubleType);
-        }
-    }
-
-    /// <summary>
-    /// Emits a pure expression chain stack-only (no locals). The value ends up boxed on the stack.
-    /// Only call this after CanEmitTempStackOnly returns true.
-    /// </summary>
-    private void EmitTempStackOnly(MethodBodyIR methodBody, TempVariable temp, InstructionEncoder ilEncoder)
-    {
-        // Handle variable-mapped temps FIRST.
-        // Variable-mapped temps are loaded directly from their local slot.
-        if (temp.Index >= 0 && temp.Index < methodBody.TempVariableSlots.Count)
-        {
-            var varSlot = methodBody.TempVariableSlots[temp.Index];
-            if (varSlot >= 0)
-            {
-                // Load the variable and box it.
-                ilEncoder.LoadLocal(varSlot);
-                ilEncoder.OpCode(ILOpCode.Box);
-                ilEncoder.Token(_bclReferences.DoubleType);
-                return;
-            }
-        }
-
-        var def = TryFindDefInstruction(methodBody, temp);
-        if (def == null)
-        {
-            throw new InvalidOperationException($"EmitTempStackOnly: temp {temp.Index} has no definition and is not variable-mapped");
-        }
-
-        switch (def)
-        {
-            case LIRConstNumber cn:
-                ilEncoder.LoadConstantR8(cn.Value);
-                ilEncoder.OpCode(ILOpCode.Box);
-                ilEncoder.Token(_bclReferences.DoubleType);
-                break;
-
-            case LIRConstString cs:
-                ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString(cs.Value));
-                // Strings are already reference types, no boxing needed.
-                break;
-
-            case LIRConstBoolean cb:
-                ilEncoder.LoadConstantI4(cb.Value ? 1 : 0);
-                ilEncoder.OpCode(ILOpCode.Box);
-                ilEncoder.Token(_bclReferences.BooleanType);
-                break;
-
-            case LIRConstUndefined:
-                ilEncoder.OpCode(ILOpCode.Ldnull);
-                break;
-
-            case LIRConstNull:
-                // Load the JsNull enum value (0) and box it
-                ilEncoder.LoadConstantI4((int)JavaScriptRuntime.JsNull.Null);
-                ilEncoder.OpCode(ILOpCode.Box);
-                ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull)));
-                break;
-
-            case LIRTypeof t:
-                // Emit typeof: push the boxed value, call TypeUtilities.Typeof, result is string (already object)
-                // t.Value is already boxed (object), so use EmitTempStackOnly which produces boxed values.
-                EmitTempStackOnly(methodBody, t.Value, ilEncoder);
-                var typeofMethod = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.Typeof));
-                ilEncoder.OpCode(ILOpCode.Call);
-                ilEncoder.Token(typeofMethod);
-                // Result is a string, which is already an object reference.
-                break;
-
-            case LIRNegateNumber neg:
-                EmitTempStackOnlyUnboxed(methodBody, neg.Value, ilEncoder);
-                ilEncoder.OpCode(ILOpCode.Neg);
-                ilEncoder.OpCode(ILOpCode.Box);
-                ilEncoder.Token(_bclReferences.DoubleType);
-                break;
-
-            case LIRBitwiseNotNumber not:
-                EmitTempStackOnlyUnboxed(methodBody, not.Value, ilEncoder);
-                ilEncoder.OpCode(ILOpCode.Conv_i4);
-                ilEncoder.OpCode(ILOpCode.Not);
-                ilEncoder.OpCode(ILOpCode.Conv_r8);
-                ilEncoder.OpCode(ILOpCode.Box);
-                ilEncoder.Token(_bclReferences.DoubleType);
-                break;
-
-            case LIRConvertToObject conv:
-                // Emit the source and box it.
-                EmitTempStackOnlyUnboxed(methodBody, conv.Source, ilEncoder);
-                if (conv.SourceType == typeof(bool))
-                {
-                    ilEncoder.OpCode(ILOpCode.Box);
-                    ilEncoder.Token(_bclReferences.BooleanType);
-                }
-                else if (conv.SourceType == typeof(JavaScriptRuntime.JsNull))
-                {
-                    ilEncoder.OpCode(ILOpCode.Box);
-                    ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull)));
-                }
-                else
-                {
-                    ilEncoder.OpCode(ILOpCode.Box);
-                    ilEncoder.Token(_bclReferences.DoubleType);
-                }
-                break;
-
-            default:
-                throw new InvalidOperationException($"EmitTempStackOnly: unexpected instruction {def.GetType().Name}");
-        }
-    }
-
-    /// <summary>
-    /// Emits a pure expression chain stack-only, leaving the raw (unboxed) value on the stack.
-    /// Used for intermediate values in expression chains.
-    /// </summary>
-    private void EmitTempStackOnlyUnboxed(MethodBodyIR methodBody, TempVariable temp, InstructionEncoder ilEncoder)
-    {
-        // Handle variable-mapped temps FIRST.
-        // Variable-mapped temps are loaded directly from their local slot.
-        if (temp.Index >= 0 && temp.Index < methodBody.TempVariableSlots.Count)
-        {
-            var varSlot = methodBody.TempVariableSlots[temp.Index];
-            if (varSlot >= 0)
-            {
-                // Load the variable (unboxed, already double).
-                ilEncoder.LoadLocal(varSlot);
-                return;
-            }
-        }
-
-        var def = TryFindDefInstruction(methodBody, temp);
-        if (def == null)
-        {
-            throw new InvalidOperationException($"EmitTempStackOnlyUnboxed: temp {temp.Index} has no definition and is not variable-mapped");
-        }
-
-        switch (def)
-        {
-            case LIRConstNumber cn:
-                ilEncoder.LoadConstantR8(cn.Value);
-                break;
-
-            case LIRConstBoolean cb:
-                ilEncoder.LoadConstantI4(cb.Value ? 1 : 0);
-                break;
-
-            case LIRConstNull:
-                // Load unboxed JsNull enum value (0)
-                ilEncoder.LoadConstantI4((int)JavaScriptRuntime.JsNull.Null);
-                break;
-
-            case LIRNegateNumber neg:
-                EmitTempStackOnlyUnboxed(methodBody, neg.Value, ilEncoder);
-                ilEncoder.OpCode(ILOpCode.Neg);
-                break;
-
-            case LIRBitwiseNotNumber not:
-                EmitTempStackOnlyUnboxed(methodBody, not.Value, ilEncoder);
-                ilEncoder.OpCode(ILOpCode.Conv_i4);
-                ilEncoder.OpCode(ILOpCode.Not);
-                ilEncoder.OpCode(ILOpCode.Conv_r8);
-                break;
-
-            default:
-                throw new InvalidOperationException($"EmitTempStackOnlyUnboxed: unexpected instruction {def.GetType().Name}");
-        }
-    }
-
-    private bool TryMatchUpdateExpressionForConsoleArg(
-        MethodBodyIR methodBody,
-        int start,
-        int storeIndex,
-        TempVariable storedValue,
-        out int updatedVarSlot,
-        out bool isDecrement,
-        out bool isPrefix)
-    {
-        updatedVarSlot = -1;
-        isDecrement = false;
-        isPrefix = false;
-
-        // Detect pattern produced by HIRToLIRLowerer for x++/x-- used as a single console.log arg:
-        //   (postfix) ConvertToObject(original) -> tObj
-        //            ConstNumber(1) -> tDelta
-        //            AddNumber/SubNumber(original, tDelta) -> tUpdated (mapped to var slot)
-        //            StoreElementRef(arr,0,tObj)
-        //   (prefix)  ConstNumber(1) -> tDelta
-        //            AddNumber/SubNumber(original, tDelta) -> tUpdated (mapped to var slot)
-        //            ConvertToObject(tUpdated) -> tObj
-        //            StoreElementRef(arr,0,tObj)
-
-        if (TryFindDefInstruction(methodBody, storedValue) is not LIRConvertToObject valueConv)
-        {
-            return false;
-        }
-
-        // Find the AddNumber or SubNumber that produces the updated value in the intervening range.
-        TempVariable updateResult;
-        TempVariable updateLeft;
-        TempVariable updateRight;
-        bool foundUpdate = false;
-        updateResult = default!;
-        updateLeft = default!;
-        updateRight = default!;
-
-        for (int i = start; i < storeIndex; i++)
-        {
-            if (methodBody.Instructions[i] is LIRAddNumber add)
-            {
-                updateResult = add.Result;
-                updateLeft = add.Left;
-                updateRight = add.Right;
-                isDecrement = false;
-                foundUpdate = true;
-                break;
-            }
-            if (methodBody.Instructions[i] is LIRSubNumber sub)
-            {
-                updateResult = sub.Result;
-                updateLeft = sub.Left;
-                updateRight = sub.Right;
-                isDecrement = true;
-                foundUpdate = true;
-                break;
-            }
-        }
-        if (!foundUpdate)
-        {
-            return false;
-        }
-
-        if (updateResult.Index >= 0 && updateResult.Index < methodBody.TempVariableSlots.Count)
-        {
-            updatedVarSlot = methodBody.TempVariableSlots[updateResult.Index];
-        }
-        if (updatedVarSlot < 0)
-        {
-            return false;
-        }
-
-        var rightDef = TryFindDefInstruction(methodBody, updateRight!);
-        if (rightDef is not LIRConstNumber cn)
-        {
-            return false;
-        }
-        if (cn.Value is not 1.0)
-        {
-            return false;
-        }
-
-        bool prefix = valueConv.Source == updateResult;
-        bool postfix = valueConv.Source == updateLeft;
-        if (!prefix && !postfix)
-        {
-            return false;
-        }
-
-        isPrefix = prefix;
-        return true;
-    }
-
-    private void EmitTempAsObject(MethodBodyIR methodBody, TempVariable valueTemp, InstructionEncoder ilEncoder, TempLocalAllocation allocation)
-    {
-        // If this temp was produced by an explicit convert-to-object, inline it.
-        var def = TryFindDefInstruction(methodBody, valueTemp);
-        if (def is LIRConvertToObject conv)
-        {
-            // Emit source value then box.
-            EmitLoadTemp(conv.Source, ilEncoder, allocation, methodBody);
-            ilEncoder.OpCode(ILOpCode.Box);
-            if (conv.SourceType == typeof(bool))
-            {
-                ilEncoder.Token(_bclReferences.BooleanType);
-            }
-            else if (conv.SourceType == typeof(JavaScriptRuntime.JsNull))
-            {
-                ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull)));
-            }
-            else
-            {
-                ilEncoder.Token(_bclReferences.DoubleType);
-            }
-            return;
-        }
-
-        // Otherwise assume already object-compatible in this IR subset.
-        EmitLoadTemp(valueTemp, ilEncoder, allocation, methodBody);
-    }
-
     private static LIRInstruction? TryFindDefInstruction(MethodBodyIR methodBody, TempVariable temp)
     {
-        // Cheap linear scan; IR pipeline methods are small today.
-        // If this becomes hot, build an index map once per method.
         foreach (var instr in methodBody.Instructions
             .Where(i => TempLocalAllocator.TryGetDefinedTemp(i, out var defined) && defined == temp))
         {
@@ -1556,300 +895,13 @@ internal sealed class JsMethodCompiler
         return null;
     }
 
-    private readonly record struct TempLocalAllocation(int[] TempToSlot, IReadOnlyList<ValueStorage> SlotStorages)
-    {
-        public bool IsMaterialized(TempVariable temp)
-            => temp.Index >= 0 && temp.Index < TempToSlot.Length && TempToSlot[temp.Index] >= 0;
+    #endregion
 
-        public int GetSlot(TempVariable temp)
-        {
-            if (temp.Index < 0 || temp.Index >= TempToSlot.Length)
-            {
-                throw new InvalidOperationException($"Temp index out of range: {temp.Index}");
-            }
-
-            var slot = TempToSlot[temp.Index];
-            if (slot < 0)
-            {
-                throw new InvalidOperationException($"Temp {temp.Index} was not materialized into an IL local slot.");
-            }
-
-            return slot;
-        }
-    }
-
-    private static class TempLocalAllocator
-    {
-        private readonly record struct StorageKey(ValueStorageKind Kind, Type? ClrType);
-
-        public static TempLocalAllocation Allocate(MethodBodyIR methodBody, bool[]? shouldMaterializeTemp = null)
-        {
-            int tempCount = methodBody.Temps.Count;
-            if (tempCount == 0)
-            {
-                return new TempLocalAllocation(Array.Empty<int>(), Array.Empty<ValueStorage>());
-            }
-
-            var lastUse = new int[tempCount];
-            Array.Fill(lastUse, -1);
-
-            // First pass: determine last use for each temp.
-            for (int i = 0; i < methodBody.Instructions.Count; i++)
-            {
-                foreach (var used in EnumerateUsedTemps(methodBody.Instructions[i])
-                    .Where(u => u.Index >= 0 && u.Index < tempCount &&
-                        (shouldMaterializeTemp is null || shouldMaterializeTemp[u.Index])))
-                {
-                    lastUse[used.Index] = i;
-                }
-            }
-
-            // Second pass: linear-scan allocation with reuse after last use.
-            var tempToSlot = new int[tempCount];
-            Array.Fill(tempToSlot, -1);
-
-            var slotStorages = new List<ValueStorage>();
-            var freeByKey = new Dictionary<StorageKey, Stack<int>>();
-
-            for (int i = 0; i < methodBody.Instructions.Count; i++)
-            {
-                var instruction = methodBody.Instructions[i];
-
-                // Free dead operands before allocating the result so we can reuse within the same instruction.
-                foreach (var used in EnumerateUsedTemps(instruction))
-                {
-                    if (used.Index < 0 || used.Index >= tempCount)
-                    {
-                        continue;
-                    }
-
-                    if (lastUse[used.Index] != i)
-                    {
-                        continue;
-                    }
-
-                    var usedSlot = tempToSlot[used.Index];
-                    if (usedSlot < 0)
-                    {
-                        continue;
-                    }
-
-                    var usedStorage = GetTempStorage(methodBody, used);
-                    var key = new StorageKey(usedStorage.Kind, usedStorage.ClrType);
-                    if (!freeByKey.TryGetValue(key, out var stack))
-                    {
-                        stack = new Stack<int>();
-                        freeByKey[key] = stack;
-                    }
-                    stack.Push(usedSlot);
-                }
-
-                // Allocate a slot for result if it will be used later.
-                // Skip allocation for constant temps that can be emitted inline.
-                if (TryGetDefinedTemp(instruction, out var defined) &&
-                    defined.Index >= 0 &&
-                    defined.Index < tempCount &&
-                    lastUse[defined.Index] >= 0 &&
-                    (shouldMaterializeTemp is null || shouldMaterializeTemp[defined.Index]) &&
-                    !CanEmitInline(instruction))
-                {
-                    var storage = GetTempStorage(methodBody, defined);
-                    var key = new StorageKey(storage.Kind, storage.ClrType);
-
-                    int slot;
-                    if (freeByKey.TryGetValue(key, out var stack) && stack.Count > 0)
-                    {
-                        slot = stack.Pop();
-                    }
-                    else
-                    {
-                        slot = slotStorages.Count;
-                        slotStorages.Add(storage);
-                    }
-
-                    tempToSlot[defined.Index] = slot;
-                }
-            }
-
-            return new TempLocalAllocation(tempToSlot, slotStorages);
-        }
-
-        /// <summary>
-        /// Returns true if the instruction defines a constant that can be emitted inline
-        /// without needing a local variable slot.
-        /// </summary>
-        private static bool CanEmitInline(LIRInstruction instruction)
-        {
-            return instruction is LIRConstNumber or LIRConstString or LIRConstBoolean or LIRConstUndefined or LIRConstNull;
-        }
-
-        private static ValueStorage GetTempStorage(MethodBodyIR methodBody, TempVariable temp)
-        {
-            if (temp.Index >= 0 && temp.Index < methodBody.TempStorages.Count)
-            {
-                return methodBody.TempStorages[temp.Index];
-            }
-
-            return new ValueStorage(ValueStorageKind.Unknown);
-        }
-
-        internal static IEnumerable<TempVariable> EnumerateUsedTemps(LIRInstruction instruction)
-        {
-            switch (instruction)
-            {
-                case LIRAddNumber add:
-                    yield return add.Left;
-                    yield return add.Right;
-                    break;
-                case LIRSubNumber sub:
-                    yield return sub.Left;
-                    yield return sub.Right;
-                    break;
-                case LIRBeginInitArrayElement begin:
-                    yield return begin.Array;
-                    break;
-                case LIRCallIntrinsic call:
-                    yield return call.IntrinsicObject;
-                    yield return call.ArgumentsArray;
-                    break;
-                case LIRConvertToObject conv:
-                    yield return conv.Source;
-                    break;
-                case LIRTypeof t:
-                    yield return t.Value;
-                    break;
-                case LIRNegateNumber neg:
-                    yield return neg.Value;
-                    break;
-                case LIRBitwiseNotNumber not:
-                    yield return not.Value;
-                    break;
-                case LIRCompareNumberLessThan cmp:
-                    yield return cmp.Left;
-                    yield return cmp.Right;
-                    break;
-                case LIRCompareNumberGreaterThan cmp:
-                    yield return cmp.Left;
-                    yield return cmp.Right;
-                    break;
-                case LIRCompareNumberLessThanOrEqual cmp:
-                    yield return cmp.Left;
-                    yield return cmp.Right;
-                    break;
-                case LIRCompareNumberGreaterThanOrEqual cmp:
-                    yield return cmp.Left;
-                    yield return cmp.Right;
-                    break;
-                case LIRCompareNumberEqual cmp:
-                    yield return cmp.Left;
-                    yield return cmp.Right;
-                    break;
-                case LIRCompareNumberNotEqual cmp:
-                    yield return cmp.Left;
-                    yield return cmp.Right;
-                    break;
-                case LIRCompareBooleanEqual cmp:
-                    yield return cmp.Left;
-                    yield return cmp.Right;
-                    break;
-                case LIRCompareBooleanNotEqual cmp:
-                    yield return cmp.Left;
-                    yield return cmp.Right;
-                    break;
-                case LIRStoreElementRef store:
-                    yield return store.Array;
-                    yield return store.Value;
-                    break;
-                case LIRReturn ret:
-                    yield return ret.ReturnValue;
-                    break;
-            }
-        }
-
-        internal static bool TryGetDefinedTemp(LIRInstruction instruction, out TempVariable defined)
-        {
-            switch (instruction)
-            {
-                case LIRConstNumber c:
-                    defined = c.Result;
-                    return true;
-                case LIRConstString c:
-                    defined = c.Result;
-                    return true;
-                case LIRConstBoolean c:
-                    defined = c.Result;
-                    return true;
-                case LIRConstUndefined c:
-                    defined = c.Result;
-                    return true;
-                case LIRConstNull c:
-                    defined = c.Result;
-                    return true;
-                case LIRGetIntrinsicGlobal g:
-                    defined = g.Result;
-                    return true;
-                case LIRNewObjectArray n:
-                    defined = n.Result;
-                    return true;
-                case LIRAddNumber add:
-                    defined = add.Result;
-                    return true;
-                case LIRSubNumber sub:
-                    defined = sub.Result;
-                    return true;
-                case LIRCallIntrinsic call:
-                    defined = call.Result;
-                    return true;
-                case LIRConvertToObject conv:
-                    defined = conv.Result;
-                    return true;
-                case LIRTypeof t:
-                    defined = t.Result;
-                    return true;
-                case LIRNegateNumber neg:
-                    defined = neg.Result;
-                    return true;
-                case LIRBitwiseNotNumber not:
-                    defined = not.Result;
-                    return true;
-                case LIRCompareNumberLessThan cmp:
-                    defined = cmp.Result;
-                    return true;
-                case LIRCompareNumberGreaterThan cmp:
-                    defined = cmp.Result;
-                    return true;
-                case LIRCompareNumberLessThanOrEqual cmp:
-                    defined = cmp.Result;
-                    return true;
-                case LIRCompareNumberGreaterThanOrEqual cmp:
-                    defined = cmp.Result;
-                    return true;
-                case LIRCompareNumberEqual cmp:
-                    defined = cmp.Result;
-                    return true;
-                case LIRCompareNumberNotEqual cmp:
-                    defined = cmp.Result;
-                    return true;
-                case LIRCompareBooleanEqual cmp:
-                    defined = cmp.Result;
-                    return true;
-                case LIRCompareBooleanNotEqual cmp:
-                    defined = cmp.Result;
-                    return true;
-                default:
-                    defined = default;
-                    return false;
-            }
-        }
-    }
+    #region Intrinsic/Runtime Helpers
 
     /// <summary>
     /// Loads a value onto the the stack for a given intrinsic global variable.
     /// </summary>
-    /// <param name="variableName">The name of the intrinsic global variable.. i.e. 'console'</param>
-    /// <remarks>
-    /// When GlobalThis is changed to be instance-based rather than static-based, this method will need to be updated
-    /// </remarks>
     public void EmitLoadIntrinsicGlobalVariable(string variableName, InstructionEncoder ilEncoder)
     {
         var gvType = typeof(JavaScriptRuntime.GlobalThis);
@@ -1866,4 +918,6 @@ internal sealed class JsMethodCompiler
         ilEncoder.OpCode(ILOpCode.Callvirt);
         ilEncoder.Token(methodMref);
     }
+
+    #endregion
 }

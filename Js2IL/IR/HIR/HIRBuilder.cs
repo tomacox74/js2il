@@ -83,13 +83,15 @@ class HIRMethodBuilder
         ["Infinity"] = (JavascriptType.Number, double.PositiveInfinity),
     };
 
-    readonly Scope _scope;
+    readonly Scope _rootScope;
+    Scope _currentScope;
     readonly List<HIRStatement> _statements = new();
 
     public HIRMethodBuilder(Scope scope)
     {
         ArgumentNullException.ThrowIfNull(scope, nameof(scope));
-        _scope = scope;
+        _rootScope = scope;
+        _currentScope = scope;
     }
 
     public bool TryParseStatements([In, NotNull] IEnumerable<Acornima.Ast.Statement> statements, out HIRMethod? method)
@@ -98,32 +100,11 @@ class HIRMethodBuilder
 
         foreach (var statement in statements)
         {
-            // Process each statement in the program body
-            switch (statement)
+            if (!TryParseStatement(statement, out var hirStatement))
             {
-                case VariableDeclaration declStmt:
-                    foreach (var decl in declStmt.Declarations)
-                    {
-                        if (!TryAddDeclarator(decl))
-                        {
-                            return false;
-                        }
-                    }
-                    
-                    break;
-                case ExpressionStatement exprStmt:
-                    if (!TryParseExpression(exprStmt.Expression, out var hirExpr))
-                    {
-                        return false;
-                    }
-                    var hirExprStmt = new HIRExpressionStatement(hirExpr!);
-                    _statements.Add(hirExprStmt);
-                    break;
-                // Handle other statement types as needed
-                default:
-                    // Unsupported statement type
-                    return false;
+                return false;
             }
+            _statements.Add(hirStatement!);
         }
         method = new HIRMethod
         {
@@ -133,11 +114,95 @@ class HIRMethodBuilder
         return true;
     }
 
-    private bool TryAddDeclarator(Acornima.Ast.VariableDeclarator decl)
+    private bool TryParseStatement(Acornima.Ast.Statement statement, out HIRStatement? hirStatement)
     {
+        hirStatement = null;
+
+        switch (statement)
+        {
+            case VariableDeclaration declStmt:
+                // Variable declarations can have multiple declarators, handle them as a block
+                var declStatements = new List<HIRStatement>();
+                foreach (var decl in declStmt.Declarations)
+                {
+                    if (!TryParseDeclarator(decl, out var declHir))
+                    {
+                        return false;
+                    }
+                    declStatements.Add(declHir!);
+                }
+                // If single declaration, return it directly; otherwise wrap in block
+                hirStatement = declStatements.Count == 1
+                    ? declStatements[0]
+                    : new HIRBlock(declStatements);
+                return true;
+
+            case ExpressionStatement exprStmt:
+                if (!TryParseExpression(exprStmt.Expression, out var hirExpr))
+                {
+                    return false;
+                }
+                hirStatement = new HIRExpressionStatement(hirExpr!);
+                return true;
+
+            case IfStatement ifStmt:
+                if (!TryParseExpression(ifStmt.Test, out var testExpr))
+                {
+                    return false;
+                }
+
+                if (!TryParseStatement(ifStmt.Consequent, out var consequentStmt))
+                {
+                    return false;
+                }
+
+                HIRStatement? alternateStmt = null;
+                if (ifStmt.Alternate != null && !TryParseStatement(ifStmt.Alternate, out alternateStmt))
+                {
+                    return false;
+                }
+
+                hirStatement = new HIRIfStatement(testExpr!, consequentStmt!, alternateStmt);
+                return true;
+
+            case BlockStatement blockStmt:
+                // Find the child scope for this block statement (if one exists)
+                var blockScope = FindChildScopeForAstNode(blockStmt);
+                var previousScope = _currentScope;
+                if (blockScope != null)
+                {
+                    _currentScope = blockScope;
+                }
+                
+                var blockStatements = new List<HIRStatement>();
+                foreach (var innerStmt in blockStmt.Body)
+                {
+                    if (!TryParseStatement(innerStmt, out var innerHir))
+                    {
+                        _currentScope = previousScope;
+                        return false;
+                    }
+                    blockStatements.Add(innerHir!);
+                }
+                
+                // Restore the previous scope
+                _currentScope = previousScope;
+                hirStatement = new HIRBlock(blockStatements);
+                return true;
+
+            default:
+                // Unsupported statement type
+                return false;
+        }
+    }
+
+    private bool TryParseDeclarator(Acornima.Ast.VariableDeclarator decl, out HIRStatement? hirStatement)
+    {
+        hirStatement = null;
+
         if (decl.Id is Identifier id)
         {
-            var symbol = _scope.FindSymbol(id.Name);
+            var symbol = _currentScope.FindSymbol(id.Name);
             if (decl.Init != null)
             {
                 if (!TryParseExpression(decl.Init, out var hirInitExpr))
@@ -145,12 +210,10 @@ class HIRMethodBuilder
                     return false;
                 }
 
-                var hirVarDeclWithInit = new HIRVariableDeclaration(symbol, hirInitExpr);
-                _statements.Add(hirVarDeclWithInit);
+                hirStatement = new HIRVariableDeclaration(symbol, hirInitExpr);
                 return true;
             }
-            var hirVarDecl = new HIRVariableDeclaration(symbol);
-            _statements.Add(hirVarDecl);
+            hirStatement = new HIRVariableDeclaration(symbol);
             return true;
         }
 
@@ -219,7 +282,7 @@ class HIRMethodBuilder
             case Identifier identifierExpr:
                 // FindSymbol always returns a Symbol; BindingKind.Global indicates an undeclared/ambient global.
                 // If the symbol is user-declared (var/let/const/function), it shadows any global constant.
-                var symbol = _scope.FindSymbol(identifierExpr.Name);
+                var symbol = _currentScope.FindSymbol(identifierExpr.Name);
                 if (symbol.Kind != BindingKind.Global)
                 {
                     hirExpr = new HIRVariableExpression(symbol);
@@ -269,5 +332,14 @@ class HIRMethodBuilder
             default:
                 return false;
         }
+    }
+    
+    /// <summary>
+    /// Finds the child scope that corresponds to the given AST node.
+    /// Returns null if no matching child scope exists.
+    /// </summary>
+    private Scope? FindChildScopeForAstNode(Node astNode)
+    {
+        return _currentScope.Children.FirstOrDefault(child => ReferenceEquals(child.AstNode, astNode));
     }
 }

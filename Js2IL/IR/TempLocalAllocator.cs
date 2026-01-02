@@ -1,0 +1,310 @@
+using System.Reflection.Metadata.Ecma335;
+
+namespace Js2IL.IR;
+
+/// <summary>
+/// Result of temp local allocation - maps SSA temps to IL local slots.
+/// </summary>
+internal readonly record struct TempLocalAllocation(int[] TempToSlot, IReadOnlyList<ValueStorage> SlotStorages)
+{
+    public bool IsMaterialized(TempVariable temp)
+        => temp.Index >= 0 && temp.Index < TempToSlot.Length && TempToSlot[temp.Index] >= 0;
+
+    public int GetSlot(TempVariable temp)
+    {
+        if (temp.Index < 0 || temp.Index >= TempToSlot.Length)
+        {
+            throw new InvalidOperationException($"Temp index out of range: {temp.Index}");
+        }
+
+        var slot = TempToSlot[temp.Index];
+        if (slot < 0)
+        {
+            throw new InvalidOperationException($"Temp {temp.Index} was not materialized into an IL local slot.");
+        }
+
+        return slot;
+    }
+}
+
+/// <summary>
+/// Linear-scan register allocator for SSA temps → IL locals.
+/// Reuses local slots when temps are no longer live.
+/// </summary>
+internal static class TempLocalAllocator
+{
+    private readonly record struct StorageKey(ValueStorageKind Kind, Type? ClrType);
+
+    public static TempLocalAllocation Allocate(MethodBodyIR methodBody, bool[]? shouldMaterializeTemp = null)
+    {
+        int tempCount = methodBody.Temps.Count;
+        if (tempCount == 0)
+        {
+            return new TempLocalAllocation(Array.Empty<int>(), Array.Empty<ValueStorage>());
+        }
+
+        var lastUse = new int[tempCount];
+        Array.Fill(lastUse, -1);
+
+        // First pass: determine last use for each temp.
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            foreach (var used in EnumerateUsedTemps(methodBody.Instructions[i])
+                .Where(u => u.Index >= 0 && u.Index < tempCount &&
+                    (shouldMaterializeTemp is null || shouldMaterializeTemp[u.Index])))
+            {
+                lastUse[used.Index] = i;
+            }
+        }
+
+        // Second pass: linear-scan allocation with reuse after last use.
+        var tempToSlot = new int[tempCount];
+        Array.Fill(tempToSlot, -1);
+
+        var slotStorages = new List<ValueStorage>();
+        var freeByKey = new Dictionary<StorageKey, Stack<int>>();
+
+        for (int i = 0; i < methodBody.Instructions.Count; i++)
+        {
+            var instruction = methodBody.Instructions[i];
+
+            // Free dead operands before allocating the result so we can reuse within the same instruction.
+            foreach (var used in EnumerateUsedTemps(instruction))
+            {
+                if (used.Index < 0 || used.Index >= tempCount)
+                {
+                    continue;
+                }
+
+                if (lastUse[used.Index] != i)
+                {
+                    continue;
+                }
+
+                var usedSlot = tempToSlot[used.Index];
+                if (usedSlot < 0)
+                {
+                    continue;
+                }
+
+                var usedStorage = GetTempStorage(methodBody, used);
+                var key = new StorageKey(usedStorage.Kind, usedStorage.ClrType);
+                if (!freeByKey.TryGetValue(key, out var stack))
+                {
+                    stack = new Stack<int>();
+                    freeByKey[key] = stack;
+                }
+                stack.Push(usedSlot);
+            }
+
+            // Allocate a slot for result if it will be used later.
+            // Skip allocation for constant temps that can be emitted inline.
+            if (TryGetDefinedTemp(instruction, out var defined) &&
+                defined.Index >= 0 &&
+                defined.Index < tempCount &&
+                lastUse[defined.Index] >= 0 &&
+                (shouldMaterializeTemp is null || shouldMaterializeTemp[defined.Index]) &&
+                !CanEmitInline(instruction))
+            {
+                var storage = GetTempStorage(methodBody, defined);
+                var key = new StorageKey(storage.Kind, storage.ClrType);
+
+                int slot;
+                if (freeByKey.TryGetValue(key, out var stack) && stack.Count > 0)
+                {
+                    slot = stack.Pop();
+                }
+                else
+                {
+                    slot = slotStorages.Count;
+                    slotStorages.Add(storage);
+                }
+
+                tempToSlot[defined.Index] = slot;
+            }
+        }
+
+        return new TempLocalAllocation(tempToSlot, slotStorages);
+    }
+
+    /// <summary>
+    /// Returns true if the instruction defines a constant that can be emitted inline
+    /// without needing a local variable slot.
+    /// </summary>
+    private static bool CanEmitInline(LIRInstruction instruction)
+    {
+        return instruction is LIRConstNumber or LIRConstString or LIRConstBoolean or LIRConstUndefined or LIRConstNull;
+    }
+
+    private static ValueStorage GetTempStorage(MethodBodyIR methodBody, TempVariable temp)
+    {
+        if (temp.Index >= 0 && temp.Index < methodBody.TempStorages.Count)
+        {
+            return methodBody.TempStorages[temp.Index];
+        }
+
+        return new ValueStorage(ValueStorageKind.Unknown);
+    }
+
+    /// <summary>
+    /// Enumerates all temps used (read) by an instruction.
+    /// </summary>
+    internal static IEnumerable<TempVariable> EnumerateUsedTemps(LIRInstruction instruction)
+    {
+        switch (instruction)
+        {
+            case LIRAddNumber add:
+                yield return add.Left;
+                yield return add.Right;
+                break;
+            case LIRSubNumber sub:
+                yield return sub.Left;
+                yield return sub.Right;
+                break;
+            case LIRBeginInitArrayElement begin:
+                yield return begin.Array;
+                break;
+            case LIRCallIntrinsic call:
+                yield return call.IntrinsicObject;
+                yield return call.ArgumentsArray;
+                break;
+            case LIRConvertToObject conv:
+                yield return conv.Source;
+                break;
+            case LIRTypeof t:
+                yield return t.Value;
+                break;
+            case LIRNegateNumber neg:
+                yield return neg.Value;
+                break;
+            case LIRBitwiseNotNumber not:
+                yield return not.Value;
+                break;
+            case LIRCompareNumberLessThan cmp:
+                yield return cmp.Left;
+                yield return cmp.Right;
+                break;
+            case LIRCompareNumberGreaterThan cmp:
+                yield return cmp.Left;
+                yield return cmp.Right;
+                break;
+            case LIRCompareNumberLessThanOrEqual cmp:
+                yield return cmp.Left;
+                yield return cmp.Right;
+                break;
+            case LIRCompareNumberGreaterThanOrEqual cmp:
+                yield return cmp.Left;
+                yield return cmp.Right;
+                break;
+            case LIRCompareNumberEqual cmp:
+                yield return cmp.Left;
+                yield return cmp.Right;
+                break;
+            case LIRCompareNumberNotEqual cmp:
+                yield return cmp.Left;
+                yield return cmp.Right;
+                break;
+            case LIRCompareBooleanEqual cmp:
+                yield return cmp.Left;
+                yield return cmp.Right;
+                break;
+            case LIRCompareBooleanNotEqual cmp:
+                yield return cmp.Left;
+                yield return cmp.Right;
+                break;
+            case LIRStoreElementRef store:
+                yield return store.Array;
+                yield return store.Value;
+                break;
+            case LIRReturn ret:
+                yield return ret.ReturnValue;
+                break;
+            case LIRBranchIfFalse branchFalse:
+                yield return branchFalse.Condition;
+                break;
+            case LIRBranchIfTrue branchTrue:
+                yield return branchTrue.Condition;
+                break;
+            // LIRLabel and LIRBranch don't use temps
+        }
+    }
+
+    /// <summary>
+    /// Gets the temp defined (written) by an instruction, if any.
+    /// </summary>
+    internal static bool TryGetDefinedTemp(LIRInstruction instruction, out TempVariable defined)
+    {
+        switch (instruction)
+        {
+            case LIRConstNumber c:
+                defined = c.Result;
+                return true;
+            case LIRConstString c:
+                defined = c.Result;
+                return true;
+            case LIRConstBoolean c:
+                defined = c.Result;
+                return true;
+            case LIRConstUndefined c:
+                defined = c.Result;
+                return true;
+            case LIRConstNull c:
+                defined = c.Result;
+                return true;
+            case LIRGetIntrinsicGlobal g:
+                defined = g.Result;
+                return true;
+            case LIRNewObjectArray n:
+                defined = n.Result;
+                return true;
+            case LIRAddNumber add:
+                defined = add.Result;
+                return true;
+            case LIRSubNumber sub:
+                defined = sub.Result;
+                return true;
+            case LIRCallIntrinsic call:
+                defined = call.Result;
+                return true;
+            case LIRConvertToObject conv:
+                defined = conv.Result;
+                return true;
+            case LIRTypeof t:
+                defined = t.Result;
+                return true;
+            case LIRNegateNumber neg:
+                defined = neg.Result;
+                return true;
+            case LIRBitwiseNotNumber not:
+                defined = not.Result;
+                return true;
+            case LIRCompareNumberLessThan cmp:
+                defined = cmp.Result;
+                return true;
+            case LIRCompareNumberGreaterThan cmp:
+                defined = cmp.Result;
+                return true;
+            case LIRCompareNumberLessThanOrEqual cmp:
+                defined = cmp.Result;
+                return true;
+            case LIRCompareNumberGreaterThanOrEqual cmp:
+                defined = cmp.Result;
+                return true;
+            case LIRCompareNumberEqual cmp:
+                defined = cmp.Result;
+                return true;
+            case LIRCompareNumberNotEqual cmp:
+                defined = cmp.Result;
+                return true;
+            case LIRCompareBooleanEqual cmp:
+                defined = cmp.Result;
+                return true;
+            case LIRCompareBooleanNotEqual cmp:
+                defined = cmp.Result;
+                return true;
+            default:
+                defined = default;
+                return false;
+        }
+    }
+}

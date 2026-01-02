@@ -69,7 +69,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -80,48 +80,44 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 98 (0x62)
+		// Code size: 85 (0x55)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ControlFlow_If_LessThan,
-			[1] float64,
-			[2] float64
+			[0] float64,
+			[1] float64
 		)
 
 		IL_0000: ldc.r8 3
-		IL_0009: stloc.1
+		IL_0009: stloc.0
 		IL_000a: ldc.r8 5
-		IL_0013: stloc.2
-		IL_0014: ldloc.1
-		IL_0015: ldloc.2
-		IL_0016: blt IL_0020
+		IL_0013: stloc.1
+		IL_0014: ldloc.0
+		IL_0015: ldloc.1
+		IL_0016: clt
+		IL_0018: brfalse IL_003b
 
-		IL_001b: br IL_0043
+		IL_001d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0022: ldc.i4.1
+		IL_0023: newarr [System.Runtime]System.Object
+		IL_0028: dup
+		IL_0029: ldc.i4.0
+		IL_002a: ldstr "lte"
+		IL_002f: stelem.ref
+		IL_0030: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0035: pop
+		IL_0036: br IL_0054
 
-		IL_0020: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0025: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_002a: ldc.i4.1
-		IL_002b: newarr [System.Runtime]System.Object
-		IL_0030: dup
-		IL_0031: ldc.i4.0
-		IL_0032: ldstr "lte"
-		IL_0037: stelem.ref
-		IL_0038: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_003d: pop
-		IL_003e: br IL_0061
+		IL_003b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0040: ldc.i4.1
+		IL_0041: newarr [System.Runtime]System.Object
+		IL_0046: dup
+		IL_0047: ldc.i4.0
+		IL_0048: ldstr "gt"
+		IL_004d: stelem.ref
+		IL_004e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0053: pop
 
-		IL_0043: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0048: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_004d: ldc.i4.1
-		IL_004e: newarr [System.Runtime]System.Object
-		IL_0053: dup
-		IL_0054: ldc.i4.0
-		IL_0055: ldstr "gt"
-		IL_005a: stelem.ref
-		IL_005b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0060: pop
-
-		IL_0061: ret
+		IL_0054: ret
 	} // end of method ControlFlow_If_LessThan::Main
 
 } // end of class Scripts.ControlFlow_If_LessThan
@@ -133,7 +129,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20da
+		// Method begins at RVA 0x20cd
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
