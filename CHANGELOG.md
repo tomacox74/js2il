@@ -5,6 +5,33 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 ### Added
+- **Pure SSA LIR IR pipeline (experimental)**: New Low-level Intermediate Representation with pure SSA semantics for IL code generation:
+  - All operations use `TempVariable` (SSA temps), eliminating mutable local variable concepts at the LIR level
+  - `TempLocalAllocator` performs linear-scan register allocation mapping temps to IL locals
+  - Peephole optimization framework for pattern-based IL optimization
+  
+- **Multi-argument console.log peephole optimization**: Extended stack-only emission to handle N-argument console.log calls:
+  - `TryEmitConsoleLogPeephole` handles console.log with any number of arguments (previously only 1)
+  - `TryMatchConsoleLogMultiArgSequence` matches console.log IR patterns with N arguments
+  - `ComputeStackOnlyConsoleLogPeepholeMask` identifies temps consumed by peepholes to exclude from allocation
+  - Result: Functions like `console.log("Hello", 2)` now emit 0 locals instead of 5
+
+- **LIRSubNumber instruction**: Added subtraction instruction for decrement (`--`) operations:
+  - Emits `IL_sub` instead of `add -1` for cleaner IL
+
+- **MemberReferenceRegistry.GetOrAddField**: Added field reference caching to avoid duplicate metadata entries
+
+### Changed
+- **IL optimization for console.log**: Multi-argument console.log calls now use efficient `dup`/stack pattern:
+  - Before: 56 bytes, 5 locals (Console, object[], string, float64, object)
+  - After: 44 bytes, 0 locals (pure stack operations)
+
+### Internal
+- Refactored `TryMatchConsoleLogOneArgSequence` → `TryMatchConsoleLogMultiArgSequence` for N-argument support
+- Removed `CanEmitConsoleLogArgStackOnly` (functionality merged into multi-arg matcher)
+- Extended `CanEmitTempStackOnly` to handle variable-mapped temps via local slot loading
+
+### Added
 - **IR pipeline support for class constructors**: Extended IR compilation pipeline to handle class constructors with automatic fallback:
   - `HIRBuilder` now handles `FunctionExpression` nodes (used by class constructor bodies)
   - `JsMethodCompiler.TryCompileClassConstructor` attempts IR compilation with fail-fast guards
