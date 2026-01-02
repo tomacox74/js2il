@@ -225,6 +225,12 @@ internal static class TempLocalAllocator
             case LIRBranchIfTrue branchTrue:
                 yield return branchTrue.Condition;
                 break;
+            case LIRCallFunction callFunc:
+                yield return callFunc.ScopesArray;
+                break;
+            case LIRCreateScopesArray createScopes:
+                // GlobalScope is not used yet (we pass null for now)
+                break;
             // LIRLabel and LIRBranch don't use temps
         }
     }
@@ -301,6 +307,12 @@ internal static class TempLocalAllocator
                 return true;
             case LIRCompareBooleanNotEqual cmp:
                 defined = cmp.Result;
+                return true;
+            case LIRCallFunction callFunc:
+                defined = callFunc.Result;
+                return true;
+            case LIRCreateScopesArray createScopes:
+                defined = createScopes.Result;
                 return true;
             default:
                 defined = default;

@@ -1,3 +1,5 @@
+using Js2IL.SymbolTables;
+
 namespace Js2IL.IR;
 
 public enum ValueStorageKind
@@ -40,6 +42,18 @@ public record LIRBeginInitArrayElement(TempVariable Array, int Index) : LIRInstr
 public record LIRStoreElementRef(TempVariable Array, int Index, TempVariable Value) : LIRInstruction;
 
 public record LIRCallIntrinsic(TempVariable IntrinsicObject, string Name, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Calls a user-defined function with zero parameters.
+/// The Symbol contains the BindingInfo used to look up the compiled method handle.
+/// </summary>
+public record LIRCallFunction(Symbol FunctionSymbol, TempVariable ScopesArray, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Creates the scopes array for function invocation.
+/// For global scope calls, this is an array containing just the global scope instance.
+/// </summary>
+public record LIRCreateScopesArray(TempVariable GlobalScope, TempVariable Result) : LIRInstruction;
 
 public record LIRReturn(TempVariable ReturnValue) : LIRInstruction;
 

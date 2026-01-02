@@ -258,6 +258,39 @@ public sealed class HIRToLIRLowerer
     {
         resultTempVar = CreateTempVariable();
 
+        // Case 1: User-defined function call (callee is a variable referencing a function)
+        if (callExpr.Callee is HIRVariableExpression funcVarExpr)
+        {
+            var symbol = funcVarExpr.Name;
+            
+            // Only handle function bindings for now (BindingKind.Function)
+            if (symbol.Kind != BindingKind.Function)
+            {
+                return false;
+            }
+            
+            // For now, only support zero-parameter function calls
+            if (callExpr.Arguments.Length > 0)
+            {
+                return false;
+            }
+
+            // Create scopes array: [globalScope]
+            // For now, we need a way to reference the global scope.
+            // The global scope is typically local 0 in the main method.
+            // We'll emit a placeholder that the IL emitter will handle.
+            var scopesTempVar = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCreateScopesArray(default, scopesTempVar));
+            DefineTempStorage(scopesTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+            // Emit the function call
+            _methodBodyIR.Instructions.Add(new LIRCallFunction(symbol, scopesTempVar, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+            return true;
+        }
+
+        // Case 2: Property access call (e.g., console.log)
         if (callExpr.Callee is not HIRPropertyAccessExpression calleePropAccess)
         {
             return false;

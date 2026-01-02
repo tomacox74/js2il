@@ -41,7 +41,7 @@ namespace Js2IL.Tests.Function
             var testName = nameof(Function_HelloWorld);
             // Ensure GenerateTest uses the correct input and expected output for HelloWorld
             // If GenerateTest is implemented in GeneratorTestsBase, verify its logic and the source files it uses.
-            return GenerateTest(testName);
+            return GenerateTest(testName, assertOnIRPipelineFailure: true);
         }
 
         [Fact]

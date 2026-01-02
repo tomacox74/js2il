@@ -85,7 +85,24 @@ namespace Js2IL.Services.ILGenerators
             ScopeInstanceEmitter.EmitCreateLeafScopeInstance(variables, _ilGenerator.IL, _ilGenerator.MetadataBuilder);
         }
 
-        public int GenerateMethod(Acornima.Ast.Program ast)
+        /// <summary>
+        /// Declares classes and functions, populating the CompiledMethodCache.
+        /// This must be called before attempting IR compilation of the main method.
+        /// </summary>
+        public void DeclareClassesAndFunctions(SymbolTable symbolTable)
+        {
+            // First, declare classes so their types exist under the Classes namespace
+            _classesGenerator.DeclareClasses(symbolTable);
+
+            // Declare functions (emits static method definitions and populates CompiledMethodCache)
+            _functionGenerator.DeclareFunctions(symbolTable);
+        }
+
+        /// <summary>
+        /// Generates the main method body using the legacy IL emitter.
+        /// Call DeclareClassesAndFunctions first.
+        /// </summary>
+        public int GenerateMethodBody(Acornima.Ast.Program ast)
         {
             var metadataBuilder = _ilGenerator.MetadataBuilder;
             var variables = _ilGenerator.Variables;
@@ -97,14 +114,6 @@ namespace Js2IL.Services.ILGenerators
                 CreateGlobalScopeInstance(variables);
             }
 
-            // Note: Do not pre-instantiate function or nested scopes in Main.
-            // Function scopes are created at call-time by the function generator.
-
-            // First, declare classes so their types exist under the Classes namespace
-            _classesGenerator.DeclareClasses(_symbolTable);
-
-            // Declare functions (emits static method definitions) and then bind them to scope fields.
-            _functionGenerator.DeclareFunctions(_symbolTable);
             // Initialize top-level function variables directly (no dispatch table indirection)
             _ilGenerator.InitializeLocalFunctionVariables(ast.Body.OfType<Acornima.Ast.FunctionDeclaration>());
 
@@ -115,13 +124,21 @@ namespace Js2IL.Services.ILGenerators
             // local variables
             var (localSignature, methodBodyAttributes) = MethodBuilder.CreateLocalVariableSignature(metadataBuilder, variables, this._bclReferences);
 
-            // First method tracking is now handled by the specific generators that own method emission.
-
             return _methodBodyStreamEncoder.AddMethodBody(
                 _ilGenerator.IL,
                 maxStack: 32,
                 localVariablesSignature: localSignature,
                 attributes: methodBodyAttributes);
+        }
+
+        /// <summary>
+        /// Generates the complete main method including class/function declarations and method body.
+        /// This is the original combined method for backward compatibility.
+        /// </summary>
+        public int GenerateMethod(Acornima.Ast.Program ast)
+        {
+            DeclareClassesAndFunctions(_symbolTable);
+            return GenerateMethodBody(ast);
         }
     }
 }
