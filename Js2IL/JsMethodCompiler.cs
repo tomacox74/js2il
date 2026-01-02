@@ -313,7 +313,7 @@ internal sealed class JsMethodCompiler
         for (int i = 0; i < methodBody.Instructions.Count; i++)
         {
             // Peephole: console.log(<singleArg>) emitted stack-only
-            if (TryEmitConsoleLogOneArgPeephole(methodBody, i, ilEncoder, allocation, out var consumed))
+            if (TryEmitConsoleLogPeephole(methodBody, i, ilEncoder, allocation, out var consumed))
             {
                 i += consumed - 1;
                 continue;
@@ -380,10 +380,51 @@ internal sealed class JsMethodCompiler
 
         for (int i = 0; i < methodBody.Instructions.Count; i++)
         {
-            if (TryMatchConsoleLogOneArgSequence(methodBody, i, out var idxAfterBegin, out var storeIndex, out var callIndex, out var store, out var call))
+            if (TryMatchConsoleLogMultiArgSequence(methodBody, i, out var lastStoreIndex, out var storeInfos))
             {
-                // Only mark as replaceable if the stored value can be emitted without relying on temp locals.
-                if (CanEmitConsoleLogArgStackOnly(methodBody, idxAfterBegin, storeIndex, store.Value))
+                int callIndex = lastStoreIndex + 1;
+                
+                // Build set of temps defined in this sequence
+                var definedInSequence = new HashSet<TempVariable>();
+                for (int j = i; j <= lastStoreIndex; j++)
+                {
+                    if (TempLocalAllocator.TryGetDefinedTemp(methodBody.Instructions[j], out var def))
+                    {
+                        definedInSequence.Add(def);
+                    }
+                }
+
+                // For single-arg case, check update expression pattern
+                if (storeInfos.Count == 1)
+                {
+                    int idx = i + 2;
+                    if (methodBody.Instructions[idx] is LIRBeginInitArrayElement)
+                    {
+                        idx++;
+                    }
+                    if (TryMatchUpdateExpressionForConsoleArg(methodBody, idx, storeInfos[0].StoreIndex, storeInfos[0].StoredValue, out _, out _, out _))
+                    {
+                        for (int j = i; j <= callIndex; j++)
+                        {
+                            replaced[j] = true;
+                        }
+                        i = callIndex;
+                        continue;
+                    }
+                }
+
+                // Check if ALL arguments can be emitted stack-only
+                bool allArgsStackOnly = true;
+                foreach (var (_, storedValue) in storeInfos)
+                {
+                    if (!CanEmitTempStackOnly(methodBody, storedValue, definedInSequence))
+                    {
+                        allArgsStackOnly = false;
+                        break;
+                    }
+                }
+
+                if (allArgsStackOnly)
                 {
                     for (int j = i; j <= callIndex; j++)
                     {
@@ -415,20 +456,25 @@ internal sealed class JsMethodCompiler
         return usedOutside;
     }
 
-    private static bool TryMatchConsoleLogOneArgSequence(
+    /// <summary>
+    /// Matches a console.log sequence with N arguments (N >= 1).
+    /// Pattern:
+    ///   GetIntrinsicGlobal("console") -> tConsole
+    ///   NewObjectArray(N) -> tArr
+    ///   For each arg i in 0..N-1:
+    ///     (optional) BeginInitArrayElement(tArr, i)
+    ///     ... (value computation) ...
+    ///     StoreElementRef(tArr, i, tVal_i)
+    ///   CallIntrinsic(tConsole, "log", tArr) -> tRes
+    /// </summary>
+    private static bool TryMatchConsoleLogMultiArgSequence(
         MethodBodyIR methodBody,
         int startIndex,
-        out int idxAfterBegin,
-        out int storeIndex,
-        out int callIndex,
-        out LIRStoreElementRef store,
-        out LIRCallIntrinsic call)
+        out int lastStoreIndex,
+        out List<(int StoreIndex, TempVariable StoredValue)> storeInfos)
     {
-        idxAfterBegin = -1;
-        storeIndex = -1;
-        callIndex = -1;
-        store = default!;
-        call = default!;
+        lastStoreIndex = -1;
+        storeInfos = new List<(int StoreIndex, TempVariable StoredValue)>();
 
         if (startIndex + 3 >= methodBody.Instructions.Count)
         {
@@ -440,69 +486,71 @@ internal sealed class JsMethodCompiler
             return false;
         }
 
-        if (methodBody.Instructions[startIndex + 1] is not LIRNewObjectArray a || a.ElementCount != 1)
+        if (methodBody.Instructions[startIndex + 1] is not LIRNewObjectArray a || a.ElementCount < 1)
         {
             return false;
         }
 
-        int idx = startIndex + 2;
-        if (methodBody.Instructions[idx] is LIRBeginInitArrayElement begin)
+        int argCount = a.ElementCount;
+        int searchIdx = startIndex + 2;
+
+        for (int argIdx = 0; argIdx < argCount; argIdx++)
         {
-            if (begin.Array != a.Result || begin.Index != 0)
+            // Skip optional BeginInitArrayElement
+            if (searchIdx < methodBody.Instructions.Count &&
+                methodBody.Instructions[searchIdx] is LIRBeginInitArrayElement begin &&
+                begin.Array == a.Result && begin.Index == argIdx)
             {
-                return false;
+                searchIdx++;
             }
-            idx++;
-        }
 
-        idxAfterBegin = idx;
-
-        for (int j = idx; j < methodBody.Instructions.Count - 1; j++)
-        {
-            if (methodBody.Instructions[j] is LIRStoreElementRef s && s.Array == a.Result && s.Index == 0)
+            // Find the StoreElementRef for this argument index
+            int storeIndex = -1;
+            for (int j = searchIdx; j < methodBody.Instructions.Count; j++)
             {
-                if (methodBody.Instructions[j + 1] is LIRCallIntrinsic c && c.IntrinsicObject == g.Result && c.ArgumentsArray == a.Result && string.Equals(c.Name, "log", StringComparison.OrdinalIgnoreCase))
+                if (methodBody.Instructions[j] is LIRStoreElementRef s && s.Array == a.Result && s.Index == argIdx)
                 {
                     storeIndex = j;
-                    callIndex = j + 1;
-                    store = s;
-                    call = c;
-                    return true;
+                    storeInfos.Add((j, s.Value));
+                    searchIdx = j + 1;
+                    break;
                 }
-                return false;
+
+                // Bail out if we hit another intrinsic/global/array init
+                if (methodBody.Instructions[j] is LIRGetIntrinsicGlobal or LIRNewObjectArray)
+                {
+                    return false;
+                }
             }
 
-            if (methodBody.Instructions[j] is LIRGetIntrinsicGlobal or LIRNewObjectArray)
+            if (storeIndex < 0)
             {
                 return false;
             }
         }
 
-        return false;
-    }
-
-    private bool CanEmitConsoleLogArgStackOnly(MethodBodyIR methodBody, int start, int storeIndex, TempVariable storedValue)
-    {
-        // Update expression case (x++/x--) is handled stack-only.
-        if (TryMatchUpdateExpressionForConsoleArg(methodBody, start, storeIndex, storedValue, out _, out _, out _))
+        if (storeInfos.Count != argCount)
         {
-            return true;
+            return false;
         }
 
-        // Check if the stored value's definition chain can be emitted purely from constants/pure ops.
-        // Build set of temps defined within this console.log sequence.
-        var definedInSequence = new HashSet<TempVariable>();
-        // Include temps from GetIntrinsicGlobal and NewObjectArray (indices start-1 and start-2 or so)
-        for (int i = Math.Max(0, start - 3); i < storeIndex; i++)
+        lastStoreIndex = storeInfos[^1].StoreIndex;
+
+        // Check that CallIntrinsic immediately follows the last store
+        if (lastStoreIndex + 1 >= methodBody.Instructions.Count)
         {
-            if (TempLocalAllocator.TryGetDefinedTemp(methodBody.Instructions[i], out var def))
-            {
-                definedInSequence.Add(def);
-            }
+            return false;
         }
 
-        // Check if storedValue can be emitted stack-only
-        return CanEmitTempStackOnly(methodBody, storedValue, definedInSequence);
+        if (methodBody.Instructions[lastStoreIndex + 1] is not LIRCallIntrinsic call ||
+            call.IntrinsicObject != g.Result ||
+            call.ArgumentsArray != a.Result ||
+            !string.Equals(call.Name, "log", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        return true;
     }
 
     private bool CanEmitTempStackOnly(MethodBodyIR methodBody, TempVariable temp, HashSet<TempVariable> definedInSequence)
@@ -845,15 +893,17 @@ internal sealed class JsMethodCompiler
         return methodBody.VariableNames.Count + slot;
     }
 
-    private bool TryEmitConsoleLogOneArgPeephole(MethodBodyIR methodBody, int startIndex, InstructionEncoder ilEncoder, TempLocalAllocation allocation, out int consumed)
+    private bool TryEmitConsoleLogPeephole(MethodBodyIR methodBody, int startIndex, InstructionEncoder ilEncoder, TempLocalAllocation allocation, out int consumed)
     {
         consumed = 0;
 
         // Pattern:
         //   GetIntrinsicGlobal("console") -> tConsole
-        //   NewObjectArray(1) -> tArr
-        //   (optional) BeginInitArrayElement(tArr, 0)
-        //   StoreElementRef(tArr, 0, tVal)
+        //   NewObjectArray(N) -> tArr
+        //   For each arg i in 0..N-1:
+        //     (optional) BeginInitArrayElement(tArr, i)
+        //     ... (value computation) ...
+        //     StoreElementRef(tArr, i, tVal_i)
         //   CallIntrinsic(tConsole, "log", tArr) -> tRes
 
         if (startIndex + 3 >= methodBody.Instructions.Count)
@@ -866,88 +916,77 @@ internal sealed class JsMethodCompiler
             return false;
         }
 
-        if (methodBody.Instructions[startIndex + 1] is not LIRNewObjectArray a || a.ElementCount != 1)
+        if (methodBody.Instructions[startIndex + 1] is not LIRNewObjectArray a || a.ElementCount < 1)
         {
             return false;
         }
 
+        int argCount = a.ElementCount;
         int idx = startIndex + 2;
-        if (methodBody.Instructions[idx] is LIRBeginInitArrayElement begin)
+
+        // Collect all StoreElementRef instructions for this array
+        var storeInfos = new List<(int StoreIndex, TempVariable StoredValue)>();
+        int searchIdx = idx;
+        
+        for (int argIdx = 0; argIdx < argCount; argIdx++)
         {
-            // Must refer to the same array/index
-            if (begin.Array != a.Result || begin.Index != 0)
+            // Skip optional BeginInitArrayElement
+            if (searchIdx < methodBody.Instructions.Count && 
+                methodBody.Instructions[searchIdx] is LIRBeginInitArrayElement begin &&
+                begin.Array == a.Result && begin.Index == argIdx)
+            {
+                searchIdx++;
+            }
+
+            // Find the StoreElementRef for this argument index
+            int storeIndex = -1;
+            for (int j = searchIdx; j < methodBody.Instructions.Count; j++)
+            {
+                if (methodBody.Instructions[j] is LIRStoreElementRef s && s.Array == a.Result && s.Index == argIdx)
+                {
+                    storeIndex = j;
+                    storeInfos.Add((j, s.Value));
+                    searchIdx = j + 1;
+                    break;
+                }
+
+                // Bail out if we hit another intrinsic/global/array init
+                if (methodBody.Instructions[j] is LIRGetIntrinsicGlobal or LIRNewObjectArray)
+                {
+                    return false;
+                }
+            }
+
+            if (storeIndex < 0)
             {
                 return false;
             }
-            idx++;
         }
 
-        // In this IR, argument evaluation occurs between BeginInitArrayElement and StoreElementRef.
-        // Scan forward to find the store+call pair.
-        int storeIndex = -1;
-        for (int j = idx; j < methodBody.Instructions.Count - 1; j++)
-        {
-            if (methodBody.Instructions[j] is LIRStoreElementRef s && s.Array == a.Result && s.Index == 0)
-            {
-                storeIndex = j;
-                break;
-            }
-
-            // Bail out if we hit another intrinsic/global/array init; keep this peephole conservative.
-            if (methodBody.Instructions[j] is LIRGetIntrinsicGlobal or LIRNewObjectArray)
-            {
-                return false;
-            }
-        }
-
-        if (storeIndex < 0)
+        if (storeInfos.Count != argCount)
         {
             return false;
         }
 
-        if (methodBody.Instructions[storeIndex] is not LIRStoreElementRef store)
+        int lastStoreIndex = storeInfos[^1].StoreIndex;
+
+        // Check that CallIntrinsic immediately follows the last store
+        if (lastStoreIndex + 1 >= methodBody.Instructions.Count)
         {
             return false;
         }
 
-        if (methodBody.Instructions[storeIndex + 1] is not LIRCallIntrinsic call || call.IntrinsicObject != g.Result || call.ArgumentsArray != a.Result || !string.Equals(call.Name, "log", StringComparison.OrdinalIgnoreCase))
+        if (methodBody.Instructions[lastStoreIndex + 1] is not LIRCallIntrinsic call || 
+            call.IntrinsicObject != g.Result || 
+            call.ArgumentsArray != a.Result || 
+            !string.Equals(call.Name, "log", StringComparison.OrdinalIgnoreCase))
         {
             return false;
         }
 
-        // Try a special-case for x++/x-- update expressions so we can keep everything stack-only.
-        // This avoids materializing console/array/value temps as locals.
-        if (TryMatchUpdateExpressionForConsoleArg(methodBody, idx, storeIndex, store.Value, out var updatedVarSlot, out var isDecrement, out var isPrefix))
-        {
-            EmitLoadIntrinsicGlobalVariable("console", ilEncoder);
-            ilEncoder.LoadConstantI4(1);
-            ilEncoder.OpCode(ILOpCode.Newarr);
-            ilEncoder.Token(_bclReferences.ObjectType);
-            ilEncoder.OpCode(ILOpCode.Dup);
-            ilEncoder.LoadConstantI4(0);
-
-            // Emit boxed update-expression value *after* array+index are on the stack.
-            EmitStackOnlyUpdateExpressionValue(ilEncoder, updatedVarSlot, isDecrement, isPrefix);
-            ilEncoder.OpCode(ILOpCode.Stelem_ref);
-
-            EmitInvokeInstrinsicMethod(typeof(JavaScriptRuntime.Console), "log", ilEncoder);
-
-            if (IsMaterialized(call.Result, allocation, methodBody))
-            {
-                EmitStoreTemp(call.Result, ilEncoder, allocation, methodBody);
-            }
-            else
-            {
-                ilEncoder.OpCode(ILOpCode.Pop);
-            }
-
-            consumed = (storeIndex + 1) - startIndex + 1;
-            return true;
-        }
-
-        // Try pure expression chain emission (constants, typeof, unary ops, etc.)
+        // Build the set of temps defined in this sequence (for stack-only analysis)
         var definedInSequence = new HashSet<TempVariable>();
-        for (int i = Math.Max(0, idx - 3); i < storeIndex; i++)
+        for (int i = startIndex; i <= lastStoreIndex; i++)
         {
             if (TempLocalAllocator.TryGetDefinedTemp(methodBody.Instructions[i], out var def))
             {
@@ -955,18 +994,63 @@ internal sealed class JsMethodCompiler
             }
         }
 
-        if (CanEmitTempStackOnly(methodBody, store.Value, definedInSequence))
+        // For single-arg case, check for update expression pattern first
+        if (argCount == 1)
+        {
+            var (storeIndex, storedValue) = storeInfos[0];
+            if (TryMatchUpdateExpressionForConsoleArg(methodBody, idx, storeIndex, storedValue, out var updatedVarSlot, out var isDecrement, out var isPrefix))
+            {
+                EmitLoadIntrinsicGlobalVariable("console", ilEncoder);
+                ilEncoder.LoadConstantI4(1);
+                ilEncoder.OpCode(ILOpCode.Newarr);
+                ilEncoder.Token(_bclReferences.ObjectType);
+                ilEncoder.OpCode(ILOpCode.Dup);
+                ilEncoder.LoadConstantI4(0);
+
+                EmitStackOnlyUpdateExpressionValue(ilEncoder, updatedVarSlot, isDecrement, isPrefix);
+                ilEncoder.OpCode(ILOpCode.Stelem_ref);
+
+                EmitInvokeInstrinsicMethod(typeof(JavaScriptRuntime.Console), "log", ilEncoder);
+
+                if (IsMaterialized(call.Result, allocation, methodBody))
+                {
+                    EmitStoreTemp(call.Result, ilEncoder, allocation, methodBody);
+                }
+                else
+                {
+                    ilEncoder.OpCode(ILOpCode.Pop);
+                }
+
+                consumed = (lastStoreIndex + 1) - startIndex + 1;
+                return true;
+            }
+        }
+
+        // Check if ALL arguments can be emitted stack-only
+        bool allArgsStackOnly = true;
+        foreach (var (_, storedValue) in storeInfos)
+        {
+            if (!CanEmitTempStackOnly(methodBody, storedValue, definedInSequence))
+            {
+                allArgsStackOnly = false;
+                break;
+            }
+        }
+
+        if (allArgsStackOnly)
         {
             EmitLoadIntrinsicGlobalVariable("console", ilEncoder);
-            ilEncoder.LoadConstantI4(1);
+            ilEncoder.LoadConstantI4(argCount);
             ilEncoder.OpCode(ILOpCode.Newarr);
             ilEncoder.Token(_bclReferences.ObjectType);
-            ilEncoder.OpCode(ILOpCode.Dup);
-            ilEncoder.LoadConstantI4(0);
 
-            // Emit the pure expression value stack-only (boxed).
-            EmitTempStackOnly(methodBody, store.Value, ilEncoder);
-            ilEncoder.OpCode(ILOpCode.Stelem_ref);
+            for (int argIdx = 0; argIdx < argCount; argIdx++)
+            {
+                ilEncoder.OpCode(ILOpCode.Dup);
+                ilEncoder.LoadConstantI4(argIdx);
+                EmitTempStackOnly(methodBody, storeInfos[argIdx].StoredValue, ilEncoder);
+                ilEncoder.OpCode(ILOpCode.Stelem_ref);
+            }
 
             EmitInvokeInstrinsicMethod(typeof(JavaScriptRuntime.Console), "log", ilEncoder);
 
@@ -979,7 +1063,7 @@ internal sealed class JsMethodCompiler
                 ilEncoder.OpCode(ILOpCode.Pop);
             }
 
-            consumed = (storeIndex + 1) - startIndex + 1;
+            consumed = (lastStoreIndex + 1) - startIndex + 1;
             return true;
         }
 
