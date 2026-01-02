@@ -104,7 +104,7 @@ internal static class TempLocalAllocator
                 defined.Index < tempCount &&
                 lastUse[defined.Index] >= 0 &&
                 (shouldMaterializeTemp is null || shouldMaterializeTemp[defined.Index]) &&
-                !CanEmitInline(instruction))
+                !CanEmitInline(instruction, methodBody))
             {
                 var storage = GetTempStorage(methodBody, defined);
                 var key = new StorageKey(storage.Kind, storage.ClrType);
@@ -131,9 +131,36 @@ internal static class TempLocalAllocator
     /// Returns true if the instruction defines a constant that can be emitted inline
     /// without needing a local variable slot.
     /// </summary>
-    private static bool CanEmitInline(LIRInstruction instruction)
+    private static bool CanEmitInline(LIRInstruction instruction, MethodBodyIR methodBody)
     {
-        return instruction is LIRConstNumber or LIRConstString or LIRConstBoolean or LIRConstUndefined or LIRConstNull;
+        if (instruction is LIRConstNumber or LIRConstString or LIRConstBoolean or LIRConstUndefined or LIRConstNull)
+        {
+            return true;
+        }
+
+        // LIRConvertToObject can be emitted inline if its source is an inline constant
+        if (instruction is LIRConvertToObject convertToObject)
+        {
+            var sourceDefinition = TryFindDefInstruction(methodBody, convertToObject.Source);
+            return sourceDefinition != null && CanEmitInline(sourceDefinition, methodBody);
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Finds the instruction that defines the given temp variable.
+    /// </summary>
+    private static LIRInstruction? TryFindDefInstruction(MethodBodyIR methodBody, TempVariable temp)
+    {
+        foreach (var inst in methodBody.Instructions)
+        {
+            if (TryGetDefinedTemp(inst, out var def) && def.Index == temp.Index)
+            {
+                return inst;
+            }
+        }
+        return null;
     }
 
     private static ValueStorage GetTempStorage(MethodBodyIR methodBody, TempVariable temp)

@@ -893,6 +893,23 @@ internal sealed class JsMethodCompiler
             case LIRConstNull:
                 ilEncoder.LoadConstantI4((int)JavaScriptRuntime.JsNull.Null);
                 break;
+            case LIRConvertToObject convertToObject:
+                // Emit the source inline and box it
+                EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodBody);
+                ilEncoder.OpCode(ILOpCode.Box);
+                if (convertToObject.SourceType == typeof(bool))
+                {
+                    ilEncoder.Token(_bclReferences.BooleanType);
+                }
+                else if (convertToObject.SourceType == typeof(JavaScriptRuntime.JsNull))
+                {
+                    ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull)));
+                }
+                else
+                {
+                    ilEncoder.Token(_bclReferences.DoubleType);
+                }
+                break;
             default:
                 throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - unsupported instruction {def.GetType().Name}");
         }
