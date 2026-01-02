@@ -197,6 +197,10 @@ internal static class TempLocalAllocator
                 yield return sub.Left;
                 yield return sub.Right;
                 break;
+            case LIRMulNumber mul:
+                yield return mul.Left;
+                yield return mul.Right;
+                break;
             case LIRBeginInitArrayElement begin:
                 yield return begin.Array;
                 break;
@@ -318,6 +322,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRSubNumber sub:
                 defined = sub.Result;
+                return true;
+            case LIRMulNumber mul:
+                defined = mul.Result;
                 return true;
             case LIRCallIntrinsic call:
                 defined = call.Result;

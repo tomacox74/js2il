@@ -289,6 +289,12 @@ internal sealed class LIRToILCompiler
                 ilEncoder.OpCode(ILOpCode.Sub);
                 EmitStoreTemp(subNumber.Result, ilEncoder, allocation);
                 break;
+            case LIRMulNumber mulNumber:
+                EmitLoadTemp(mulNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(mulNumber.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Mul);
+                EmitStoreTemp(mulNumber.Result, ilEncoder, allocation);
+                break;
             case LIRBeginInitArrayElement:
                 // Pure SSA LIR lowering does not rely on stack tricks; this is a no-op hint.
                 break;
