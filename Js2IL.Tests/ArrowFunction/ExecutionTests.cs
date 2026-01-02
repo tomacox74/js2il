@@ -14,6 +14,9 @@ namespace Js2IL.Tests.ArrowFunction
         public Task ArrowFunction_CapturesOuterVariable() { var testName = nameof(ArrowFunction_CapturesOuterVariable); return ExecutionTest(testName); }
 
         [Fact]
+        public Task ArrowFunction_DefaultParameterExpression() { var testName = nameof(ArrowFunction_DefaultParameterExpression); return ExecutionTest(testName); }
+
+        [Fact]
         public Task ArrowFunction_DefaultParameterValue() { var testName = nameof(ArrowFunction_DefaultParameterValue); return ExecutionTest(testName); }
 
         [Fact]

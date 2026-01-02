@@ -63,6 +63,13 @@ public record LIRCallIntrinsic(TempVariable IntrinsicObject, string Name, TempVa
 public record LIRLoadParameter(int ParameterIndex, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Stores a value back to a function parameter by its index (0-based, relative to JS parameters).
+/// Used for default parameter initialization when the argument is null/undefined.
+/// The IL argument index is computed by the emitter based on method context.
+/// </summary>
+public record LIRStoreParameter(int ParameterIndex, TempVariable Value) : LIRInstruction;
+
+/// <summary>
 /// Calls a user-defined function with parameters.
 /// The Symbol contains the BindingInfo used to look up the compiled method handle.
 /// </summary>

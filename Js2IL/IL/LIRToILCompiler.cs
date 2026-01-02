@@ -565,6 +565,18 @@ internal sealed class LIRToILCompiler
                     EmitStoreTemp(loadParam.Result, ilEncoder, allocation);
                     break;
                 }
+            case LIRStoreParameter storeParam:
+                {
+                    // JS parameter index is 0-based. IL arg index depends on method type:
+                    // - User functions: arg0 is scopes array, so JS param 0 -> IL arg 1
+                    // - Module Main: no scopes array, so JS param 0 -> IL arg 0
+                    int ilArgIndex = methodDescriptor.HasScopesParameter
+                        ? storeParam.ParameterIndex + 1
+                        : storeParam.ParameterIndex;
+                    EmitLoadTemp(storeParam.Value, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.StoreArgument(ilArgIndex);
+                    break;
+                }
             case LIRCallFunction callFunc:
                 {
                     // Look up the method handle from CompiledMethodCache

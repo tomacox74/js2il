@@ -274,12 +274,19 @@ internal sealed class JsMethodCompiler
     #region Core Pipeline - AST to LIR to IL
 
     /// <summary>
-    /// Returns true if all parameters are simple identifiers (no destructuring, defaults, or rest patterns).
+    /// Returns true if all parameters are simple identifiers or simple default parameters.
+    /// Supports: Identifier, AssignmentPattern with Identifier left-hand side.
+    /// Does not support: destructuring patterns, rest patterns, nested defaults.
     /// Used to determine if the IR pipeline can be used for a function.
     /// </summary>
     private static bool AllParamsAreSimpleIdentifiers(in NodeList<Node> parameters)
     {
-        return parameters.All(param => param is Identifier);
+        return parameters.All(param => param switch
+        {
+            Identifier => true,
+            AssignmentPattern ap => ap.Left is Identifier,
+            _ => false
+        });
     }
 
     private bool TryLowerASTToLIR(Node node, Scope scope, out MethodBodyIR? methodBody)

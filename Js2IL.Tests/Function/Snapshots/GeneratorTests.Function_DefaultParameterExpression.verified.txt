@@ -1,0 +1,250 @@
+﻿// IL code: Function_DefaultParameterExpression
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Function_DefaultParameterExpression
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit calculate
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method calculate::.ctor
+
+	} // end of class calculate
+
+
+	// Fields
+	.field public object calculate
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Function_DefaultParameterExpression::.ctor
+
+} // end of class Scopes.Function_DefaultParameterExpression
+
+.class public auto ansi abstract sealed beforefieldinit Functions.Function_DefaultParameterExpression
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object calculate (
+			object[] scopes,
+			object a,
+			object param2,
+			object param3
+		) cil managed 
+	{
+		// Method begins at RVA 0x2064
+		// Header size: 12
+		// Code size: 83 (0x53)
+		.maxstack 32
+
+		IL_0000: ldarg.2
+		IL_0001: brtrue IL_001d
+
+		IL_0006: ldarg.1
+		IL_0007: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_000c: ldc.r8 2
+		IL_0015: mul
+		IL_0016: box [System.Runtime]System.Double
+		IL_001b: starg.s param2
+
+		IL_001d: ldarg.3
+		IL_001e: brtrue IL_0037
+
+		IL_0023: ldarg.1
+		IL_0024: unbox.any [System.Runtime]System.Double
+		IL_0029: ldarg.2
+		IL_002a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_002f: add
+		IL_0030: box [System.Runtime]System.Double
+		IL_0035: starg.s param3
+
+		IL_0037: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003c: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_0041: ldc.i4.1
+		IL_0042: newarr [System.Runtime]System.Object
+		IL_0047: dup
+		IL_0048: ldc.i4.0
+		IL_0049: ldarg.3
+		IL_004a: stelem.ref
+		IL_004b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0050: pop
+		IL_0051: ldnull
+		IL_0052: ret
+	} // end of method Function_DefaultParameterExpression::calculate
+
+} // end of class Functions.Function_DefaultParameterExpression
+
+.class public auto ansi beforefieldinit Scripts.Function_DefaultParameterExpression
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x20c4
+		// Header size: 12
+		// Code size: 307 (0x133)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.Function_DefaultParameterExpression
+		)
+
+		IL_0000: newobj instance void Scopes.Function_DefaultParameterExpression::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldnull
+		IL_0008: ldftn object Functions.Function_DefaultParameterExpression::calculate(object[], object, object, object)
+		IL_000e: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
+		IL_0013: stfld object Scopes.Function_DefaultParameterExpression::calculate
+		IL_0018: ldloc.0
+		IL_0019: castclass Scopes.Function_DefaultParameterExpression
+		IL_001e: ldfld object Scopes.Function_DefaultParameterExpression::calculate
+		IL_0023: dup
+		IL_0024: brtrue.s IL_0049
+
+		IL_0026: pop
+		IL_0027: ldloc.0
+		IL_0028: ldnull
+		IL_0029: ldftn object Functions.Function_DefaultParameterExpression::calculate(object[], object, object, object)
+		IL_002f: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
+		IL_0034: stfld object Scopes.Function_DefaultParameterExpression::calculate
+		IL_0039: ldloc.0
+		IL_003a: castclass Scopes.Function_DefaultParameterExpression
+		IL_003f: ldfld object Scopes.Function_DefaultParameterExpression::calculate
+		IL_0044: br IL_0049
+
+		IL_0049: ldc.i4.1
+		IL_004a: newarr [System.Runtime]System.Object
+		IL_004f: dup
+		IL_0050: ldc.i4.0
+		IL_0051: ldloc.0
+		IL_0052: stelem.ref
+		IL_0053: ldc.r8 5
+		IL_005c: box [System.Runtime]System.Double
+		IL_0061: ldnull
+		IL_0062: ldnull
+		IL_0063: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
+		IL_0068: pop
+		IL_0069: ldloc.0
+		IL_006a: castclass Scopes.Function_DefaultParameterExpression
+		IL_006f: ldfld object Scopes.Function_DefaultParameterExpression::calculate
+		IL_0074: dup
+		IL_0075: brtrue.s IL_009a
+
+		IL_0077: pop
+		IL_0078: ldloc.0
+		IL_0079: ldnull
+		IL_007a: ldftn object Functions.Function_DefaultParameterExpression::calculate(object[], object, object, object)
+		IL_0080: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
+		IL_0085: stfld object Scopes.Function_DefaultParameterExpression::calculate
+		IL_008a: ldloc.0
+		IL_008b: castclass Scopes.Function_DefaultParameterExpression
+		IL_0090: ldfld object Scopes.Function_DefaultParameterExpression::calculate
+		IL_0095: br IL_009a
+
+		IL_009a: ldc.i4.1
+		IL_009b: newarr [System.Runtime]System.Object
+		IL_00a0: dup
+		IL_00a1: ldc.i4.0
+		IL_00a2: ldloc.0
+		IL_00a3: stelem.ref
+		IL_00a4: ldc.r8 5
+		IL_00ad: box [System.Runtime]System.Double
+		IL_00b2: ldc.r8 8
+		IL_00bb: box [System.Runtime]System.Double
+		IL_00c0: ldnull
+		IL_00c1: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
+		IL_00c6: pop
+		IL_00c7: ldloc.0
+		IL_00c8: castclass Scopes.Function_DefaultParameterExpression
+		IL_00cd: ldfld object Scopes.Function_DefaultParameterExpression::calculate
+		IL_00d2: dup
+		IL_00d3: brtrue.s IL_00f8
+
+		IL_00d5: pop
+		IL_00d6: ldloc.0
+		IL_00d7: ldnull
+		IL_00d8: ldftn object Functions.Function_DefaultParameterExpression::calculate(object[], object, object, object)
+		IL_00de: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
+		IL_00e3: stfld object Scopes.Function_DefaultParameterExpression::calculate
+		IL_00e8: ldloc.0
+		IL_00e9: castclass Scopes.Function_DefaultParameterExpression
+		IL_00ee: ldfld object Scopes.Function_DefaultParameterExpression::calculate
+		IL_00f3: br IL_00f8
+
+		IL_00f8: ldc.i4.1
+		IL_00f9: newarr [System.Runtime]System.Object
+		IL_00fe: dup
+		IL_00ff: ldc.i4.0
+		IL_0100: ldloc.0
+		IL_0101: stelem.ref
+		IL_0102: ldc.r8 5
+		IL_010b: box [System.Runtime]System.Double
+		IL_0110: ldc.r8 8
+		IL_0119: box [System.Runtime]System.Double
+		IL_011e: ldc.r8 20
+		IL_0127: box [System.Runtime]System.Double
+		IL_012c: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
+		IL_0131: pop
+		IL_0132: ret
+	} // end of method Function_DefaultParameterExpression::Main
+
+} // end of class Scripts.Function_DefaultParameterExpression
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2203
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.Function_DefaultParameterExpression::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

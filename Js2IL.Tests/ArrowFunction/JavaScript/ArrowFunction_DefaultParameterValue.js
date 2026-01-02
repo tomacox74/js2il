@@ -11,10 +11,6 @@ const multi = (x = 5, y = 3, z = 2) => {
     console.log(x * y * z);
 };
 
-const calculate = (a, b = a * 2, c = a + b) => {
-    console.log(c);
-};
-
 // Test with no arguments (all defaults)
 greet();
 
@@ -30,8 +26,3 @@ multi();
 multi(2);
 multi(2, 4);
 multi(2, 4, 3);
-
-// Test parameter referencing other parameters
-calculate(5);
-calculate(5, 8);
-calculate(5, 8, 20);
