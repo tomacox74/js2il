@@ -24,6 +24,9 @@ public record LIRConstBoolean(bool Value, TempVariable Result) : LIRInstruction;
 
 public record LIRAddNumber(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
 
+/// <summary>
+/// String concatenation using String.Concat. Used when both operands are known to be strings.
+/// </summary>
 public record LIRConcatStrings(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
 
 /// <summary>
