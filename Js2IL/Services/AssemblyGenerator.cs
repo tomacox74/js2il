@@ -136,7 +136,7 @@ namespace Js2IL.Services
                 return methodDefinitionHandle;
             }
 
-            // fallback to the old path - generate the main method body using legacy emitter
+            // fallback to the legacy path - generate the main method body using legacy emitter
             var programTypeBuilder = new TypeBuilder(_metadataBuilder, "Scripts", moduleName);
 
             // Create the method signature for the Main method with parameters

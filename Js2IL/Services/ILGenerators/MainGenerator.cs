@@ -87,7 +87,9 @@ namespace Js2IL.Services.ILGenerators
 
         /// <summary>
         /// Declares classes and functions, populating the CompiledMethodCache.
-        /// This must be called before attempting IR compilation of the main method.
+        /// This must be called before attempting IR compilation of the main method,
+        /// because the IR pipeline relies on CompiledMethodCache to obtain compiled function
+        /// method handles when emitting function call instructions.
         /// </summary>
         public void DeclareClassesAndFunctions(SymbolTable symbolTable)
         {

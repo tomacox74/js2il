@@ -51,7 +51,9 @@ public record LIRCallFunction(Symbol FunctionSymbol, TempVariable ScopesArray, T
 
 /// <summary>
 /// Creates the scopes array for function invocation.
-/// For global scope calls, this is an array containing just the global scope instance.
+/// Currently, no concrete scope instances are tracked here; the created array may contain null.
+/// The <paramref name="GlobalScope"/> parameter is reserved for future use when global
+/// scope tracking is implemented.
 /// </summary>
 public record LIRCreateScopesArray(TempVariable GlobalScope, TempVariable Result) : LIRInstruction;
 

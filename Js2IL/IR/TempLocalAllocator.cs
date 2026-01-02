@@ -228,8 +228,9 @@ internal static class TempLocalAllocator
             case LIRCallFunction callFunc:
                 yield return callFunc.ScopesArray;
                 break;
-            case LIRCreateScopesArray createScopes:
-                // GlobalScope is not used yet (we pass null for now)
+            case LIRCreateScopesArray:
+                // The GlobalScope field on LIRCreateScopesArray does not currently correspond to any temp,
+                // so no temps are consumed from it here.
                 break;
             // LIRLabel and LIRBranch don't use temps
         }

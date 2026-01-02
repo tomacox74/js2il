@@ -680,9 +680,9 @@ internal sealed class JsMethodCompiler
                     {
                         break;
                     }
-                    // Create scopes array with 1 element (global scope)
-                    // For now, we pass an empty array since the helloWorld function
-                    // doesn't capture any variables from global scope
+                    // Create scopes array with 1 element containing a null placeholder.
+                    // The called function expects a scopes array but when no variables are
+                    // captured, the IR pipeline doesn't create scope instances, so we pass null.
                     ilEncoder.LoadConstantI4(1);
                     ilEncoder.OpCode(ILOpCode.Newarr);
                     ilEncoder.Token(_bclReferences.ObjectType);

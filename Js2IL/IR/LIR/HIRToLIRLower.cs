@@ -275,10 +275,11 @@ public sealed class HIRToLIRLowerer
                 return false;
             }
 
-            // Create scopes array: [globalScope]
-            // For now, we need a way to reference the global scope.
-            // The global scope is typically local 0 in the main method.
-            // We'll emit a placeholder that the IL emitter will handle.
+            // Create scopes array placeholder.
+            // In the legacy direct IL emitter, the global scope instance was typically stored
+            // in local 0 of the main method, and that local was used to populate this array.
+            // In the IR-based pipeline used here, we currently pass 'default' (effectively null)
+            // and let the downstream IL emitter decide how (or whether) to materialize scopes.
             var scopesTempVar = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRCreateScopesArray(default, scopesTempVar));
             DefineTempStorage(scopesTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
