@@ -18,6 +18,7 @@ namespace Js2IL.Services.ILGenerators
         private MethodDefinitionHandle _firstMethod = default;
         private readonly FunctionRegistry _functionRegistry = new();
         private readonly SymbolTable? _symbolTable;
+        private readonly CompiledMethodCache _compiledMethodCache;
 
         public FunctionRegistry FunctionRegistry => _functionRegistry;
 
@@ -35,6 +36,7 @@ namespace Js2IL.Services.ILGenerators
             _methodBodyStreamEncoder = methodBodyStreamEncoder;
             _classRegistry = classRegistry ?? new ClassRegistry();
             _symbolTable = symbolTable;
+            _compiledMethodCache = serviceProvider.GetRequiredService<CompiledMethodCache>();
             this._serviceProvider = serviceProvider;
         }
 
@@ -108,6 +110,12 @@ namespace Js2IL.Services.ILGenerators
                 var methodDefinition = GenerateMethodForFunction(functionDeclaration, functionVariables, methodGenerator, funcScope, symbolTable, moduleTb, registryScopeName);
                 if (this._firstMethod.IsNil) _firstMethod = methodDefinition;
                 _functionRegistry.Register(functionName, methodDefinition, paramNames.Length);
+
+                // Register in CompiledMethodCache for IR pipeline function call emission
+                if (root.Bindings.TryGetValue(functionName, out var binding))
+                {
+                    _compiledMethodCache.Add(binding, methodDefinition);
+                }
 
                 globalMethods.Add((functionName, methodDefinition, funcScope, functionVariables, nestedTb, firstNestedMethod));
             }

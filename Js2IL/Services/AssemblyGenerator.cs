@@ -112,8 +112,23 @@ namespace Js2IL.Services
 
         private MethodDefinitionHandle GenerateModule(ModuleDefinition module, MethodBodyStreamEncoder methodBodyStream, string moduleName)
         {
+            // Get parameter info from shared ModuleParameters
+            var paramCount = JavaScriptRuntime.CommonJS.ModuleParameters.Count;
+            var parameterNames = JavaScriptRuntime.CommonJS.ModuleParameters.ParameterNames;
+
+            // Create Variables for the module - needed for both IR and legacy paths
+            var variables = new Variables(_variableRegistry!, moduleName, parameterNames);
+            
+            // Create MainGenerator to handle function/class declarations
+            // This is needed even for IR path because functions must be compiled first
+            var mainGenerator = new MainGenerator(_serviceProvider, variables, _bclReferences, _metadataBuilder, methodBodyStream, module.SymbolTable!);
+            
+            // Declare functions and classes first - this populates CompiledMethodCache
+            // which is needed for IR pipeline to emit function calls
+            mainGenerator.DeclareClassesAndFunctions(module.SymbolTable!);
+
+            // Now try IR pipeline for the main method body
             var methodCompiler = _serviceProvider.GetRequiredService<JsMethodCompiler>();
-            // new path which does proper IR/SSA lowering and IL generation
             var methodDefinitionHandle = methodCompiler.TryCompileMainMethod(module.Name, module.Ast, module.SymbolTable!.Root!, methodBodyStream);
             IR.IRPipelineMetrics.RecordMainMethodAttempt(!methodDefinitionHandle.IsNil);
             if (!methodDefinitionHandle.IsNil)
@@ -121,16 +136,8 @@ namespace Js2IL.Services
                 return methodDefinitionHandle;
             }
 
-            // fallback to the old path.. eventually we will delete this code
-            
-            // Get parameter info from shared ModuleParameters
-            var paramCount = JavaScriptRuntime.CommonJS.ModuleParameters.Count;
-            var parameterNames = JavaScriptRuntime.CommonJS.ModuleParameters.ParameterNames;
-
-            // create the tools we need to generate the module type and method
+            // fallback to the legacy path - generate the main method body using legacy emitter
             var programTypeBuilder = new TypeBuilder(_metadataBuilder, "Scripts", moduleName);
-            var variables = new Variables(_variableRegistry!, moduleName, parameterNames);
-            var mainGenerator = new MainGenerator(_serviceProvider, variables, _bclReferences, _metadataBuilder, methodBodyStream, module.SymbolTable!);
 
             // Create the method signature for the Main method with parameters
             var sigBuilder = new BlobBuilder();
@@ -160,7 +167,7 @@ namespace Js2IL.Services
                     }
                 });
             var methodSig = this._metadataBuilder.GetOrAddBlob(sigBuilder);
-            var bodyOffset = mainGenerator.GenerateMethod(module.Ast);
+            var bodyOffset = mainGenerator.GenerateMethodBody(module.Ast);
 
             methodDefinitionHandle = programTypeBuilder.AddMethodDefinition(
                 MethodAttributes.Static | MethodAttributes.Public,

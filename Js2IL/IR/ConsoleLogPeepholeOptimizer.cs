@@ -546,8 +546,19 @@ internal sealed class ConsoleLogPeepholeOptimizer
             if (varSlot >= 0)
             {
                 ilEncoder.LoadLocal(varSlot);
-                ilEncoder.OpCode(ILOpCode.Box);
-                ilEncoder.Token(_bclReferences.DoubleType);
+                // Get the storage type to determine if boxing is needed
+                var storage = methodBody.TempStorages[temp.Index];
+                if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
+                {
+                    ilEncoder.OpCode(ILOpCode.Box);
+                    ilEncoder.Token(_bclReferences.DoubleType);
+                }
+                else if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(bool))
+                {
+                    ilEncoder.OpCode(ILOpCode.Box);
+                    ilEncoder.Token(_bclReferences.BooleanType);
+                }
+                // Reference types (object, string, etc.) are already boxed, no boxing needed
                 return;
             }
         }

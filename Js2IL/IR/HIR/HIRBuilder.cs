@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Acornima.Ast;
 using Js2IL.Services;
@@ -21,6 +22,16 @@ public static class HIRBuilder
         switch (node)
         {
             case Acornima.Ast.Program programAst:
+                // IR pipeline doesn't yet support the scope-as-class pattern.
+                // Fall back to legacy emitter when any variable or function is captured
+                // (needs scope fields for closure access).
+                // Non-captured function declarations work because the IR pipeline calls them
+                // directly via CompiledMethodCache lookup.
+                if (scope.Bindings.Values.Any(b => b.IsCaptured))
+                {
+                    method = null!;
+                    return false;
+                }
                 var builder = new HIRMethodBuilder(scope);
                 return builder.TryParseStatements(programAst.Body, out method);
             case Acornima.Ast.BlockStatement blockStmt:
@@ -188,6 +199,12 @@ class HIRMethodBuilder
                 // Restore the previous scope
                 _currentScope = previousScope;
                 hirStatement = new HIRBlock(blockStatements);
+                return true;
+
+            case FunctionDeclaration:
+                // Function declarations are hoisted and compiled separately by JavaScriptFunctionGenerator.
+                // In the main method body, we skip them (they're not executable statements).
+                hirStatement = new HIRBlock([]); // empty block = no-op
                 return true;
 
             default:

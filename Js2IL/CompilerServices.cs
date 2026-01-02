@@ -37,6 +37,7 @@ public static class CompilerServices
         services.AddSingleton<ModuleLoader>();
         services.AddSingleton<Services.AssemblyGenerator>();
         services.AddSingleton<Services.BaseClassLibraryReferences>();
+        services.AddSingleton<Services.CompiledMethodCache>();
 
         services.AddTransient<JsMethodCompiler>();
 
