@@ -82,11 +82,18 @@ public static class HIRBuilder
     }
 
     /// <summary>
-    /// Returns true if all parameters are simple identifiers (no destructuring, defaults, or rest patterns).
+    /// Returns true if all parameters are simple identifiers or simple default parameter patterns.
+    /// Supports: Identifier, AssignmentPattern with Identifier left-hand side.
+    /// Does not support: destructuring patterns, rest patterns, nested defaults.
     /// </summary>
     private static bool AllParamsAreSimpleIdentifiers(in NodeList<Node> parameters)
     {
-        return parameters.All(param => param is Acornima.Ast.Identifier);
+        return parameters.All(param => param switch
+        {
+            Acornima.Ast.Identifier => true,
+            Acornima.Ast.AssignmentPattern ap => ap.Left is Acornima.Ast.Identifier,
+            _ => false
+        });
     }
 }
 

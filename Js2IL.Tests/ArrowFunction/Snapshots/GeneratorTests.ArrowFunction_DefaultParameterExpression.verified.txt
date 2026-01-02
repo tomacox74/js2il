@@ -1,0 +1,246 @@
+﻿// IL code: ArrowFunction_DefaultParameterExpression
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.ArrowFunction_DefaultParameterExpression
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit ArrowFunction_calculate
+		extends [System.Runtime]System.Object
+	{
+		// Fields
+		.field public object a
+		.field public object b
+		.field public object c
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method ArrowFunction_calculate::.ctor
+
+	} // end of class ArrowFunction_calculate
+
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method ArrowFunction_DefaultParameterExpression::.ctor
+
+} // end of class Scopes.ArrowFunction_DefaultParameterExpression
+
+.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L2C18
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object ArrowFunction_L2C18 (
+			object[] scopes,
+			object a,
+			object b,
+			object c
+		) cil managed 
+	{
+		// Method begins at RVA 0x2064
+		// Header size: 12
+		// Code size: 95 (0x5f)
+		.maxstack 32
+
+		IL_0000: ldarg.2
+		IL_0001: brtrue IL_0031
+
+		IL_0006: ldarg.1
+		IL_0007: ldc.r8 2
+		IL_0010: box [System.Runtime]System.Double
+		IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
+		IL_001a: pop
+		IL_001b: ldarg.1
+		IL_001c: ldc.r8 2
+		IL_0025: box [System.Runtime]System.Double
+		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
+		IL_002f: starg.s b
+
+		IL_0031: ldarg.3
+		IL_0032: brtrue IL_0048
+
+		IL_0037: ldarg.1
+		IL_0038: ldarg.2
+		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_003e: pop
+		IL_003f: ldarg.1
+		IL_0040: ldarg.2
+		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0046: starg.s c
+
+		IL_0048: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_004d: ldc.i4.1
+		IL_004e: newarr [System.Runtime]System.Object
+		IL_0053: dup
+		IL_0054: ldc.i4.0
+		IL_0055: ldarg.3
+		IL_0056: stelem.ref
+		IL_0057: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_005c: pop
+		IL_005d: ldnull
+		IL_005e: ret
+	} // end of method ArrowFunction_L2C18::ArrowFunction_L2C18
+
+} // end of class Functions.ArrowFunction_L2C18
+
+.class public auto ansi beforefieldinit Scripts.ArrowFunction_DefaultParameterExpression
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x20d0
+		// Header size: 12
+		// Code size: 236 (0xec)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.ArrowFunction_DefaultParameterExpression,
+			[1] object
+		)
+
+		IL_0000: ldnull
+		IL_0001: ldftn object Functions.ArrowFunction_L2C18::ArrowFunction_L2C18(object[], object, object, object)
+		IL_0007: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
+		IL_000c: ldc.i4.1
+		IL_000d: newarr [System.Runtime]System.Object
+		IL_0012: dup
+		IL_0013: ldc.i4.0
+		IL_0014: ldloc.0
+		IL_0015: stelem.ref
+		IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_001b: stloc.1
+		IL_001c: ldloc.1
+		IL_001d: dup
+		IL_001e: brtrue.s IL_0034
+
+		IL_0020: pop
+		IL_0021: ldnull
+		IL_0022: ldftn object Functions.ArrowFunction_L2C18::ArrowFunction_L2C18(object[], object, object, object)
+		IL_0028: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
+		IL_002d: stloc.1
+		IL_002e: ldloc.1
+		IL_002f: br IL_0034
+
+		IL_0034: ldc.i4.1
+		IL_0035: newarr [System.Runtime]System.Object
+		IL_003a: dup
+		IL_003b: ldc.i4.0
+		IL_003c: ldloc.0
+		IL_003d: stelem.ref
+		IL_003e: ldc.r8 5
+		IL_0047: box [System.Runtime]System.Double
+		IL_004c: ldnull
+		IL_004d: ldnull
+		IL_004e: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
+		IL_0053: pop
+		IL_0054: ldloc.1
+		IL_0055: dup
+		IL_0056: brtrue.s IL_006c
+
+		IL_0058: pop
+		IL_0059: ldnull
+		IL_005a: ldftn object Functions.ArrowFunction_L2C18::ArrowFunction_L2C18(object[], object, object, object)
+		IL_0060: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
+		IL_0065: stloc.1
+		IL_0066: ldloc.1
+		IL_0067: br IL_006c
+
+		IL_006c: ldc.i4.1
+		IL_006d: newarr [System.Runtime]System.Object
+		IL_0072: dup
+		IL_0073: ldc.i4.0
+		IL_0074: ldloc.0
+		IL_0075: stelem.ref
+		IL_0076: ldc.r8 5
+		IL_007f: box [System.Runtime]System.Double
+		IL_0084: ldc.r8 8
+		IL_008d: box [System.Runtime]System.Double
+		IL_0092: ldnull
+		IL_0093: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
+		IL_0098: pop
+		IL_0099: ldloc.1
+		IL_009a: dup
+		IL_009b: brtrue.s IL_00b1
+
+		IL_009d: pop
+		IL_009e: ldnull
+		IL_009f: ldftn object Functions.ArrowFunction_L2C18::ArrowFunction_L2C18(object[], object, object, object)
+		IL_00a5: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
+		IL_00aa: stloc.1
+		IL_00ab: ldloc.1
+		IL_00ac: br IL_00b1
+
+		IL_00b1: ldc.i4.1
+		IL_00b2: newarr [System.Runtime]System.Object
+		IL_00b7: dup
+		IL_00b8: ldc.i4.0
+		IL_00b9: ldloc.0
+		IL_00ba: stelem.ref
+		IL_00bb: ldc.r8 5
+		IL_00c4: box [System.Runtime]System.Double
+		IL_00c9: ldc.r8 8
+		IL_00d2: box [System.Runtime]System.Double
+		IL_00d7: ldc.r8 20
+		IL_00e0: box [System.Runtime]System.Double
+		IL_00e5: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
+		IL_00ea: pop
+		IL_00eb: ret
+	} // end of method ArrowFunction_DefaultParameterExpression::Main
+
+} // end of class Scripts.ArrowFunction_DefaultParameterExpression
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x21c8
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.ArrowFunction_DefaultParameterExpression::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

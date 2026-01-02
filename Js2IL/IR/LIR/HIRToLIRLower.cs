@@ -1,3 +1,4 @@
+using Acornima.Ast;
 using Js2IL.HIR;
 using Js2IL.Services;
 using Js2IL.SymbolTables;
@@ -23,6 +24,9 @@ public sealed class HIRToLIRLowerer
     // Maps parameter bindings to their 0-based JS parameter index (not IL arg index)
     private readonly Dictionary<BindingInfo, int> _parameterIndexMap = new Dictionary<BindingInfo, int>();
 
+    // Track whether parameter initialization was successful (affects TryLower result)
+    private bool _parameterInitSucceeded = true;
+
     private HIRToLIRLowerer(Scope? scope)
     {
         _scope = scope;
@@ -34,7 +38,7 @@ public sealed class HIRToLIRLowerer
         if (_scope == null) return;
 
         // Build ordered parameter list from scope.Parameters
-        // Parameters are simple identifiers, so scope.Parameters contains the names in order
+        // Parameters are simple identifiers or AssignmentPatterns, so scope.Parameters contains the names in order
         int paramIndex = 0;
         foreach (var paramName in _scope.Parameters)
         {
@@ -45,6 +49,132 @@ public sealed class HIRToLIRLowerer
             }
             paramIndex++;
         }
+
+        // Emit default parameter initializers for parameters with defaults
+        // If any fail, mark the initialization as failed (will cause TryLower to return false)
+        _parameterInitSucceeded = EmitDefaultParameterInitializers();
+    }
+
+    /// <summary>
+    /// Extracts the AST parameter list from the scope's AST node (if it's a function).
+    /// Returns null if the scope doesn't have accessible parameters.
+    /// </summary>
+    private NodeList<Node>? GetAstParameters()
+    {
+        if (_scope?.AstNode == null) return null;
+
+        return _scope.AstNode switch
+        {
+            FunctionDeclaration funcDecl => funcDecl.Params,
+            FunctionExpression funcExpr => funcExpr.Params,
+            ArrowFunctionExpression arrowFunc => arrowFunc.Params,
+            _ => null
+        };
+    }
+
+    /// <summary>
+    /// Emits LIR instructions to initialize default parameter values.
+    /// For each parameter with a default (AssignmentPattern), emits:
+    /// - Load parameter, check if null
+    /// - If null, evaluate default expression and store back to parameter
+    /// </summary>
+    /// <returns>True if all default parameters were successfully lowered, false if any failed (method should fall back to legacy)</returns>
+    private bool EmitDefaultParameterInitializers()
+    {
+        var astParams = GetAstParameters();
+        if (astParams == null) return true; // No parameters, success
+
+        var parameters = astParams.Value;
+        for (int i = 0; i < parameters.Count; i++)
+        {
+            if (parameters[i] is not AssignmentPattern ap) continue;
+            if (ap.Left is not Identifier paramId) continue;
+
+            // Get the binding for this parameter
+            if (!_scope!.Bindings.TryGetValue(paramId.Name, out var binding)) continue;
+            if (!_parameterIndexMap.TryGetValue(binding, out var paramIndex)) continue;
+
+            // Convert AST default expression to HIR first to check if we can lower it
+            var hirDefaultExpr = ConvertAstToHIRExpression(ap.Right);
+            if (hirDefaultExpr == null)
+            {
+                // Can't convert this default expression - entire method should fall back to legacy
+                return false;
+            }
+
+            // Record instruction count before we start, so we can roll back if lowering fails
+            var instructionCountBefore = _methodBodyIR.Instructions.Count;
+
+            // Emit: load parameter, check if null, if so evaluate default and store back
+            var notNullLabel = CreateLabel();
+
+            // Load parameter value
+            var paramTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadParameter(paramIndex, paramTemp));
+            DefineTempStorage(paramTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+            // Branch if not null (brtrue)
+            _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(paramTemp, notNullLabel));
+
+            // Evaluate default value expression
+            if (!TryLowerExpression(hirDefaultExpr, out var defaultValueTemp))
+            {
+                // If we can't lower the default expression, roll back all instructions
+                // and signal that the entire method should fall back to legacy.
+                // Note: We only rollback instructions here, not temp variables or labels.
+                // This is acceptable because when we return false, the entire MethodBodyIR is discarded
+                // and the method falls back to legacy compilation - the orphaned temps/labels are never used.
+                while (_methodBodyIR.Instructions.Count > instructionCountBefore)
+                {
+                    _methodBodyIR.Instructions.RemoveAt(_methodBodyIR.Instructions.Count - 1);
+                }
+                return false;
+            }
+
+            // Ensure the default value is boxed to object
+            defaultValueTemp = EnsureObject(defaultValueTemp);
+
+            // Store back to parameter
+            _methodBodyIR.Instructions.Add(new LIRStoreParameter(paramIndex, defaultValueTemp));
+
+            // Not-null label
+            _methodBodyIR.Instructions.Add(new LIRLabel(notNullLabel));
+        }
+
+        return true; // All default parameters successfully lowered
+    }
+
+    /// <summary>
+    /// Converts an AST Expression to an HIR Expression for lowering.
+    /// This is a simplified conversion for default parameter expressions.
+    /// </summary>
+    private HIRExpression? ConvertAstToHIRExpression(Expression expr)
+    {
+        return expr switch
+        {
+            NumericLiteral lit => new HIRLiteralExpression(JavascriptType.Number, lit.Value),
+            StringLiteral lit => new HIRLiteralExpression(JavascriptType.String, lit.Value),
+            BooleanLiteral lit => new HIRLiteralExpression(JavascriptType.Boolean, lit.Value),
+            Literal lit when lit.Value is null => new HIRLiteralExpression(JavascriptType.Null, null),
+            Identifier id => ConvertIdentifierToHIRExpression(id),
+            BinaryExpression binExpr => ConvertBinaryExpressionToHIR(binExpr),
+            _ => null
+        };
+    }
+
+    private HIRExpression? ConvertIdentifierToHIRExpression(Identifier id)
+    {
+        if (_scope == null) return null;
+        var symbol = _scope.FindSymbol(id.Name);
+        return new HIRVariableExpression(symbol);
+    }
+
+    private HIRExpression? ConvertBinaryExpressionToHIR(BinaryExpression binExpr)
+    {
+        var left = ConvertAstToHIRExpression(binExpr.Left);
+        var right = ConvertAstToHIRExpression(binExpr.Right);
+        if (left == null || right == null) return null;
+        return new HIRBinaryExpression(binExpr.Operator, left, right);
     }
 
     public static bool TryLower(HIRMethod hirMethod, Scope? scope, out MethodBodyIR? lirMethod)
@@ -52,6 +182,12 @@ public sealed class HIRToLIRLowerer
         lirMethod = null;
 
         var lowerer = new HIRToLIRLowerer(scope);
+
+        // If default parameter initialization failed, fall back to legacy emitter
+        if (!lowerer._parameterInitSucceeded)
+        {
+            return false;
+        }
         
         if (lowerer.TryLowerStatements(hirMethod.Body.Statements))
         {
@@ -492,15 +628,25 @@ public sealed class HIRToLIRLowerer
         }
 
         // Handle multiplication
+        // LIRMulNumber emitted when both operands are known to be double (uses native IL mul instruction).
+        // LIRMulDynamic emitted otherwise (calls Operators.Multiply at runtime for type coercion).
+        // Type inference could be improved to track numeric types through more expressions to prefer LIRMulNumber.
         if (binaryExpr.Operator == Acornima.Operator.Multiplication)
         {
-            if (leftType != typeof(double) || rightType != typeof(double))
+            // Number * Number - uses native IL mul instruction (optimal path)
+            if (leftType == typeof(double) && rightType == typeof(double))
             {
-                return false;
+                _methodBodyIR.Instructions.Add(new LIRMulNumber(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
             }
 
-            _methodBodyIR.Instructions.Add(new LIRMulNumber(leftTempVar, rightTempVar, resultTempVar));
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            // Dynamic multiplication - types unknown at compile time, box operands and call Operators.Multiply
+            // This has runtime overhead but handles mixed types correctly (e.g., string to number coercion)
+            var leftBoxed = EnsureObject(leftTempVar);
+            var rightBoxed = EnsureObject(rightTempVar);
+            _methodBodyIR.Instructions.Add(new LIRMulDynamic(leftBoxed, rightBoxed, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
             return true;
         }
 

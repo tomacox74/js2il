@@ -91,5 +91,15 @@ namespace JavaScriptRuntime
             var db = ToNumber(b);
             return da - db;
         }
+
+        /// <summary>
+        /// Implements JavaScript '*' semantics. Both operands are coerced to numbers; result is a double (may be NaN).
+        /// </summary>
+        public static object Multiply(object? a, object? b)
+        {
+            var da = ToNumber(a);
+            var db = ToNumber(b);
+            return da * db;
+        }
     }
 }

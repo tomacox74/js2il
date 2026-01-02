@@ -265,16 +265,18 @@
 	{
 		// Method begins at RVA 0x21a0
 		// Header size: 12
-		// Code size: 19 (0x13)
+		// Code size: 10 (0xa)
 		.maxstack 32
+		.locals init (
+			[0] object
+		)
 
 		IL_0000: ldarg.1
-		IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0006: ldarg.2
-		IL_0007: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000c: mul
-		IL_000d: box [System.Runtime]System.Double
-		IL_0012: ret
+		IL_0001: ldarg.2
+		IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
+		IL_0007: stloc.0
+		IL_0008: ldloc.0
+		IL_0009: ret
 	} // end of method CommonJS_Export_ObjectWithFunctions_Lib::multiply
 
 } // end of class Functions.CommonJS_Export_ObjectWithFunctions_Lib
@@ -292,7 +294,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x21c0
+		// Method begins at RVA 0x21b8
 		// Header size: 12
 		// Code size: 144 (0x90)
 		.maxstack 32
@@ -352,7 +354,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x225c
+		// Method begins at RVA 0x2254
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

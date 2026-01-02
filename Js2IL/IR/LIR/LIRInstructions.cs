@@ -38,6 +38,11 @@ public record LIRSubNumber(TempVariable Left, TempVariable Right, TempVariable R
 
 public record LIRMulNumber(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
 
+/// <summary>
+/// Dynamic multiplication using Operators.Multiply runtime helper. Used when operand types are unknown.
+/// </summary>
+public record LIRMulDynamic(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
+
 public record LIRConstUndefined(TempVariable Result) : LIRInstruction;
 
 public record LIRConstNull(TempVariable Result) : LIRInstruction;
@@ -61,6 +66,13 @@ public record LIRCallIntrinsic(TempVariable IntrinsicObject, string Name, TempVa
 /// (static methods start at arg0, instance/nested functions at arg1 due to scopes/this).
 /// </summary>
 public record LIRLoadParameter(int ParameterIndex, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Stores a value back to a function parameter by its index (0-based, relative to JS parameters).
+/// Used for default parameter initialization when the argument is null/undefined.
+/// The IL argument index is computed by the emitter based on method context.
+/// </summary>
+public record LIRStoreParameter(int ParameterIndex, TempVariable Value) : LIRInstruction;
 
 /// <summary>
 /// Calls a user-defined function with parameters.

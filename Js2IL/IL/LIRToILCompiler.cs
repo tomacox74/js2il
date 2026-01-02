@@ -179,6 +179,7 @@ internal sealed class LIRToILCompiler
                 IsMaterialized,
                 EmitStoreTemp,
                 methodDescriptor.HasScopesParameter,
+                !methodDescriptor.IsStatic,
                 out var consumed))
             {
                 i += consumed - 1;
@@ -294,6 +295,12 @@ internal sealed class LIRToILCompiler
                 EmitLoadTemp(mulNumber.Right, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Mul);
                 EmitStoreTemp(mulNumber.Result, ilEncoder, allocation);
+                break;
+            case LIRMulDynamic mulDynamic:
+                EmitLoadTemp(mulDynamic.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(mulDynamic.Right, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsMultiply(ilEncoder);
+                EmitStoreTemp(mulDynamic.Result, ilEncoder, allocation);
                 break;
             case LIRBeginInitArrayElement:
                 // Pure SSA LIR lowering does not rely on stack tricks; this is a no-op hint.
@@ -565,6 +572,19 @@ internal sealed class LIRToILCompiler
                     EmitStoreTemp(loadParam.Result, ilEncoder, allocation);
                     break;
                 }
+            case LIRStoreParameter storeParam:
+                {
+                    // JS parameter index is 0-based. IL arg index depends on method type:
+                    // - User functions (static): arg0 is scopes array, so JS param 0 -> IL arg 1
+                    // - Instance methods: arg0 is 'this', so JS param 0 -> IL arg 1
+                    // - Module Main (static, no scopes): JS param 0 -> IL arg 0
+                    int ilArgIndex = (methodDescriptor.HasScopesParameter || !methodDescriptor.IsStatic)
+                        ? storeParam.ParameterIndex + 1
+                        : storeParam.ParameterIndex;
+                    EmitLoadTemp(storeParam.Value, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.StoreArgument(ilArgIndex);
+                    break;
+                }
             case LIRCallFunction callFunc:
                 {
                     // Look up the method handle from CompiledMethodCache
@@ -796,6 +816,18 @@ internal sealed class LIRToILCompiler
                     ilEncoder.Token(_bclReferences.DoubleType);
                 }
                 break;
+            case LIRMulDynamic mulDynamic:
+                // Emit inline dynamic multiplication
+                EmitLoadTemp(mulDynamic.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(mulDynamic.Right, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsMultiply(ilEncoder);
+                break;
+            case LIRAddDynamic addDynamic:
+                // Emit inline dynamic addition
+                EmitLoadTemp(addDynamic.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(addDynamic.Right, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsAdd(ilEncoder);
+                break;
             default:
                 throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - unsupported instruction {def.GetType().Name}");
         }
@@ -886,6 +918,13 @@ internal sealed class LIRToILCompiler
     private void EmitOperatorsAdd(InstructionEncoder ilEncoder)
     {
         var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "Add");
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+    }
+
+    private void EmitOperatorsMultiply(InstructionEncoder ilEncoder)
+    {
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "Multiply");
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
     }

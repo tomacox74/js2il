@@ -91,7 +91,7 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_MulNumberNumber() { var testName = nameof(BinaryOperator_MulNumberNumber); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task BinaryOperator_MulObjectObject() { var testName = nameof(BinaryOperator_MulObjectObject); return GenerateTest(testName); }
+        public Task BinaryOperator_MulObjectObject() { var testName = nameof(BinaryOperator_MulObjectObject); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
         public Task BinaryOperator_NotEqual() { var testName = nameof(BinaryOperator_NotEqual); return GenerateTest(testName, assertOnIRPipelineFailure: true); }

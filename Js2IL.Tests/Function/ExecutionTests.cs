@@ -9,6 +9,9 @@ namespace Js2IL.Tests.Function
         }
 
         [Fact]
+        public Task Function_DefaultParameterExpression() { var testName = nameof(Function_DefaultParameterExpression); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Function_DefaultParameterValue() { var testName = nameof(Function_DefaultParameterValue); return ExecutionTest(testName); }
 
         [Fact]
