@@ -4,65 +4,57 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.5.4 - 2026-01-02
+
 ### Added
 - **IR pipeline if-statement support**: Full support for `if`/`else` statements in the new AST→HIR→LIR→IL pipeline:
   - New HIR node: `HIRIfStatement` with `Test`, `Consequent`, and optional `Alternate` properties
   - New LIR instructions: `LIRBranchIfFalse`, `LIRBranch`, `LIRLabel` for control flow
   - Proper IL emission with conditional branching (`brfalse`, `br`) and label resolution
   - Supports nested if-else chains and block statements
-
 ### Fixed
 - **Variable shadowing in IR pipeline**: Block-scoped variables with the same name now correctly get separate IL local slots:
   - Changed `_variableMap` and `_variableSlots` in `HIRToLIRLower` to key by `BindingInfo` reference instead of variable name string
   - Added `_currentScope` tracking in `HIRBuilder` to resolve shadowed variables to the correct binding
   - Each `let`/`const` declaration creates a unique `BindingInfo`, enabling correct identity comparison
   - Example: `let x = 1; { let x = 2; }` now generates 2 IL locals instead of incorrectly sharing 1
-
 ### Changed
 - **Cleaner if-statement lowering**: Refactored `HIRIfStatement` handling in `HIRToLIRLower`:
   - Combined duplicate `if (Alternate != null)` checks
   - Deferred `endLabel` creation until needed (avoids wasted label IDs when no else block)
-
 - **IR pipeline comparison operators**: Full support for comparison operators in the new AST→HIR→LIR→IL pipeline:
   - New LIR instructions: `LIRCompareNumberLessThan`, `LIRCompareNumberGreaterThan`, `LIRCompareNumberLessThanOrEqual`, `LIRCompareNumberGreaterThanOrEqual`, `LIRCompareNumberEqual`, `LIRCompareNumberNotEqual`, `LIRCompareBooleanEqual`, `LIRCompareBooleanNotEqual`
   - HIR→LIR lowering for `==`, `===`, `!=`, `!==`, `<`, `>`, `<=`, `>=` operators
   - Proper IL emission using `ceq`, `clt`, `cgt` instructions
-
 - **Variable storage type tracking**: Added `VariableStorages` list to `MethodBodyIR` for tracking CLR types of JavaScript variables:
   - Variables now get properly typed IL locals (bool, double, string, object) instead of defaulting to double
   - Comparison results stored in bool-typed locals for correct semantics
-
 - **Constant inline emission optimization**: Constants can now be emitted directly on the stack without local allocation:
   - `CanEmitInline` check in `TempLocalAllocator` skips slot allocation for `LIRConstNumber`, `LIRConstString`, `LIRConstBoolean`, `LIRConstUndefined`, `LIRConstNull`
   - `EmitLoadTemp` emits unmaterialized constants inline
   - Result: `var x = 1 == 2` generates 2 bool locals instead of 4 (2 bool + 2 float64)
-
 - **Pure SSA LIR IR pipeline (experimental)**: New Low-level Intermediate Representation with pure SSA semantics for IL code generation:
   - All operations use `TempVariable` (SSA temps), eliminating mutable local variable concepts at the LIR level
   - `TempLocalAllocator` performs linear-scan register allocation mapping temps to IL locals
   - Peephole optimization framework for pattern-based IL optimization
-  
 - **Multi-argument console.log peephole optimization**: Extended stack-only emission to handle N-argument console.log calls:
   - `TryEmitConsoleLogPeephole` handles console.log with any number of arguments (previously only 1)
   - `TryMatchConsoleLogMultiArgSequence` matches console.log IR patterns with N arguments
   - `ComputeStackOnlyConsoleLogPeepholeMask` identifies temps consumed by peepholes to exclude from allocation
   - Result: Functions like `console.log("Hello", 2)` now emit 0 locals instead of 5
-
 - **LIRSubNumber instruction**: Added subtraction instruction for decrement (`--`) operations:
   - Emits `IL_sub` instead of `add -1` for cleaner IL
-
 - **MemberReferenceRegistry.GetOrAddField**: Added field reference caching to avoid duplicate metadata entries
-
 ### Changed
 - **IL optimization for console.log**: Multi-argument console.log calls now use efficient `dup`/stack pattern:
   - Before: 56 bytes, 5 locals (Console, object[], string, float64, object)
   - After: 44 bytes, 0 locals (pure stack operations)
-
 ### Internal
 - Refactored `TryMatchConsoleLogOneArgSequence` → `TryMatchConsoleLogMultiArgSequence` for N-argument support
 - Removed `CanEmitConsoleLogArgStackOnly` (functionality merged into multi-arg matcher)
 - Extended `CanEmitTempStackOnly` to handle variable-mapped temps via local slot loading
-
 - **IR pipeline support for class constructors**: Extended IR compilation pipeline to handle class constructors with automatic fallback:
   - `HIRBuilder` now handles `FunctionExpression` nodes (used by class constructor bodies)
   - `JsMethodCompiler.TryCompileClassConstructor` attempts IR compilation with fail-fast guards
@@ -96,10 +88,8 @@ All notable changes to this project are documented here.
   - Added `LIRNegateNumber` and `LIRBitwiseNotNumber` instructions with lowering support in `HIRToLIRLower`
   - `JsMethodCompiler` emits IL for numeric negation and bitwise NOT
   - Generator tests can now assert on IR fallback with improved diagnostics (`IRPipelineMetrics.GetLastFailure()`)
-
 ### Changed
 - **IL optimization**: IR pipeline eliminates unnecessary `castclass` instructions when loading intrinsic globals (e.g., `console`), producing smaller method bodies
-
 ### Internal
 - Extended `HIRToLIRLower` to lower `HIRReturnStatement` to `LIRReturn` instructions
 - `JsMethodCompiler` tracks explicit returns to avoid emitting redundant implicit return IL
