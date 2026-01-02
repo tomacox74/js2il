@@ -24,6 +24,7 @@ internal readonly record struct StackifyResult(bool[] CanStackify)
 /// 2. The use immediately follows the definition (no intervening instructions that push/pop the stack)
 /// 3. No control flow (branches/labels) between definition and use
 /// 4. The temp is consumed in the correct stack order (LIFO)
+/// 5. The defining instruction can be emitted inline (i.e., CanEmitInline returns true)
 /// 
 /// Additionally, attempts to reorder instructions to make more values stack-friendly
 /// when safe to do so.
@@ -46,6 +47,7 @@ internal static class Stackify
 
         // Build def-use information
         var defIndex = new int[tempCount];
+        var defInstruction = new LIRInstruction?[tempCount];
         var useIndices = new List<int>[tempCount];
         Array.Fill(defIndex, -1);
 
@@ -63,6 +65,7 @@ internal static class Stackify
                 def.Index >= 0 && def.Index < tempCount)
             {
                 defIndex[def.Index] = i;
+                defInstruction[def.Index] = instruction;
             }
 
             foreach (var used in TempLocalAllocator.EnumerateUsedTemps(instruction))
@@ -79,9 +82,17 @@ internal static class Stackify
         {
             var def = defIndex[tempIdx];
             var uses = useIndices[tempIdx];
+            var instr = defInstruction[tempIdx];
 
             // Must have exactly one definition and one use
-            if (def < 0 || uses.Count != 1)
+            if (def < 0 || uses.Count != 1 || instr == null)
+            {
+                continue;
+            }
+
+            // Only instructions that can be emitted inline are candidates
+            // This prevents marking temps that require materialization (like LIRCreateScopesArray)
+            if (!CanEmitInline(instr, methodBody, defInstruction))
             {
                 continue;
             }
@@ -216,6 +227,42 @@ internal static class Stackify
     private static bool IsControlFlowInstruction(LIRInstruction instruction)
     {
         return instruction is LIRLabel or LIRBranch or LIRBranchIfFalse or LIRBranchIfTrue;
+    }
+
+    /// <summary>
+    /// Returns true if the instruction can be emitted inline without storing to a local.
+    /// This must match what LIRToILCompiler.EmitLoadTemp supports for inline emission.
+    /// </summary>
+    private static bool CanEmitInline(LIRInstruction instruction, MethodBodyIR methodBody, LIRInstruction?[] defInstruction)
+    {
+        switch (instruction)
+        {
+            // Simple constants and parameter loads
+            case LIRConstNumber:
+            case LIRConstString:
+            case LIRConstBoolean:
+            case LIRConstUndefined:
+            case LIRConstNull:
+            case LIRLoadParameter:
+                return true;
+
+            // LIRConvertToObject can be emitted inline if its source can be emitted inline
+            case LIRConvertToObject convertToObject:
+                var sourceIdx = convertToObject.Source.Index;
+                if (sourceIdx >= 0 && sourceIdx < defInstruction.Length && defInstruction[sourceIdx] != null)
+                {
+                    return CanEmitInline(defInstruction[sourceIdx]!, methodBody, defInstruction);
+                }
+                return false;
+
+            // Dynamic operations can be emitted inline if their operands can be
+            case LIRMulDynamic:
+            case LIRAddDynamic:
+                return true; // These are supported in EmitLoadTemp
+
+            default:
+                return false;
+        }
     }
 
     /// <summary>
@@ -448,21 +495,21 @@ internal static class Stackify
     private static bool TryGetCommutativeBinaryOperands(LIRInstruction instruction,
         out TempVariable left, out TempVariable right)
     {
+        // NOTE: Only numeric operations are truly commutative.
+        // LIRAddDynamic and LIRConcatStrings are NOT commutative because they may perform
+        // string concatenation, which is order-dependent ("Hello" + "World" != "World" + "Hello").
         switch (instruction)
         {
             case LIRAddNumber add:
                 left = add.Left;
                 right = add.Right;
                 return true;
-            case LIRAddDynamic addDyn:
-                left = addDyn.Left;
-                right = addDyn.Right;
-                return true;
             case LIRMulNumber mul:
                 left = mul.Left;
                 right = mul.Right;
                 return true;
             case LIRMulDynamic mulDyn:
+                // Multiplication is always numeric and commutative
                 left = mulDyn.Left;
                 right = mulDyn.Right;
                 return true;
@@ -482,6 +529,7 @@ internal static class Stackify
                 left = cmpBoolNe.Left;
                 right = cmpBoolNe.Right;
                 return true;
+            // NOT included: LIRAddDynamic, LIRConcatStrings - string concatenation is not commutative
             default:
                 left = default;
                 right = default;
@@ -491,10 +539,10 @@ internal static class Stackify
 
     private static LIRInstruction? SwapBinaryOperands(LIRInstruction instruction)
     {
+        // Only swap for truly commutative operations (not LIRAddDynamic)
         return instruction switch
         {
             LIRAddNumber add => new LIRAddNumber(add.Right, add.Left, add.Result),
-            LIRAddDynamic addDyn => new LIRAddDynamic(addDyn.Right, addDyn.Left, addDyn.Result),
             LIRMulNumber mul => new LIRMulNumber(mul.Right, mul.Left, mul.Result),
             LIRMulDynamic mulDyn => new LIRMulDynamic(mulDyn.Right, mulDyn.Left, mulDyn.Result),
             LIRCompareNumberEqual cmpEq => new LIRCompareNumberEqual(cmpEq.Right, cmpEq.Left, cmpEq.Result),

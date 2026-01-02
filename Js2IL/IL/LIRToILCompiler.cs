@@ -149,6 +149,10 @@ internal sealed class LIRToILCompiler
         var controlFlowBuilder = new ControlFlowBuilder();
         var ilEncoder = new InstructionEncoder(methodBlob, controlFlowBuilder);
 
+        // Optimization pass: Reorder instructions to make more values stack-friendly
+        // DISABLED FOR NOW: This can interfere with variable semantics
+        // Stackify.OptimizeInstructionOrder(MethodBody);
+
         // Pre-pass: find console.log(oneArg) sequences that we will emit stack-only, and avoid
         // allocating IL locals for temps that are only used within those sequences.
         var peepholeReplaced = _consoleLogOptimizer.ComputeStackOnlyMask(MethodBody);
@@ -158,6 +162,11 @@ internal sealed class LIRToILCompiler
 
         // Mark comparison temps only used by branches as non-materialized
         BranchConditionOptimizer.MarkBranchOnlyComparisonTemps(MethodBody, peepholeReplaced, tempDefinitions);
+
+        // Stackify analysis: identify temps that can stay on the stack
+        // DISABLED FOR NOW: The marking logic needs more work
+        // var stackifyResult = Stackify.Analyze(MethodBody);
+        // MarkStackifiableTemps(stackifyResult, peepholeReplaced);
 
         var allocation = TempLocalAllocator.Allocate(MethodBody, peepholeReplaced);
 
@@ -883,6 +892,27 @@ internal sealed class LIRToILCompiler
             return instr;
         }
         return null;
+    }
+
+    /// <summary>
+    /// Marks stackifiable temps as non-materialized in the peephole mask.
+    /// This prevents TempLocalAllocator from allocating IL local slots for temps that can stay on the stack.
+    /// </summary>
+    private void MarkStackifiableTemps(StackifyResult stackifyResult, bool[]? shouldMaterializeTemp)
+    {
+        if (shouldMaterializeTemp == null || stackifyResult.CanStackify.Length == 0)
+        {
+            return;
+        }
+
+        for (int i = 0; i < Math.Min(stackifyResult.CanStackify.Length, shouldMaterializeTemp.Length); i++)
+        {
+            if (stackifyResult.CanStackify[i])
+            {
+                // This temp can stay on the stack - mark it as not needing materialization
+                shouldMaterializeTemp[i] = false;
+            }
+        }
     }
 
     #endregion
