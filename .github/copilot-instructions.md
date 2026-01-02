@@ -207,3 +207,37 @@ This approach:
 - Supports complex markdown formatting
 - Prevents CLI hanging issues with long descriptions
 - Makes issue content easier to review before submission
+
+## Resolving PR Review Comment Threads
+
+When branch protection requires all conversations to be resolved before merging, use the GitHub GraphQL API to programmatically resolve review threads.
+
+### Step 1: Get Review Thread IDs
+```powershell
+gh api graphql -f query='query { repository(owner: \"tomacox74\", name: \"js2il\") { pullRequest(number: <PR_NUMBER>) { reviewThreads(first: 50) { nodes { id isResolved } } } } }'
+```
+
+### Step 2: Resolve Each Thread
+The GraphQL mutation requires proper JSON escaping. Use `[System.IO.File]::WriteAllText` to create a properly formatted JSON body file (avoids PowerShell escaping issues and BOM characters):
+
+```powershell
+# Single thread resolution
+[System.IO.File]::WriteAllText("body.json", '{"query": "mutation { resolveReviewThread(input: {threadId: \"<THREAD_ID>\"}) { thread { isResolved } } }"}')
+gh api graphql --input body.json
+```
+
+### Step 3: Batch Resolution (Multiple Threads)
+```powershell
+$threadIds = @("PRRT_xxx", "PRRT_yyy", "PRRT_zzz")
+foreach ($id in $threadIds) {
+    [System.IO.File]::WriteAllText("body.json", "{`"query`": `"mutation { resolveReviewThread(input: {threadId: \`"$id\`"}) { thread { isResolved } } }`"}")
+    gh api graphql --input body.json
+}
+Remove-Item body.json -ErrorAction SilentlyContinue
+```
+
+### Why This Approach
+- **PowerShell escaping is complex**: Direct `-f query='...'` fails with nested quotes in GraphQL
+- **BOM issues**: `Out-File -Encoding utf8` adds BOM which breaks JSON parsing
+- **`WriteAllText` works**: Writes UTF-8 without BOM, handles escaping correctly
+- Thread IDs have format `PRRT_kwDO...` (Pull Request Review Thread)
