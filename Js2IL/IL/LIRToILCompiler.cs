@@ -568,9 +568,10 @@ internal sealed class LIRToILCompiler
             case LIRStoreParameter storeParam:
                 {
                     // JS parameter index is 0-based. IL arg index depends on method type:
-                    // - User functions: arg0 is scopes array, so JS param 0 -> IL arg 1
-                    // - Module Main: no scopes array, so JS param 0 -> IL arg 0
-                    int ilArgIndex = methodDescriptor.HasScopesParameter
+                    // - User functions (static): arg0 is scopes array, so JS param 0 -> IL arg 1
+                    // - Instance methods: arg0 is 'this', so JS param 0 -> IL arg 1
+                    // - Module Main (static, no scopes): JS param 0 -> IL arg 0
+                    int ilArgIndex = (methodDescriptor.HasScopesParameter || !methodDescriptor.IsStatic)
                         ? storeParam.ParameterIndex + 1
                         : storeParam.ParameterIndex;
                     EmitLoadTemp(storeParam.Value, ilEncoder, allocation, methodDescriptor);

@@ -525,6 +525,8 @@ namespace Js2IL.Services.ILGenerators
         {
             var mname = (element.Key as Identifier)?.Name ?? "method";
             var mscope = classScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Function && s.Name == mname);
+            var className = classScope.Name;
+            var funcExpr = element.Value as FunctionExpression;
 
             if (mscope != null)
             {
@@ -534,12 +536,24 @@ namespace Js2IL.Services.ILGenerators
                 if (!methodDefHandle.IsNil)
                 {
                     // Successfully compiled method via JsMethodCompiler
+                    // Register in ClassRegistry so call sites can find it with correct parameter counts
+                    if (!element.Static && funcExpr != null)
+                    {
+                        var irParamCount = funcExpr.Params.Count;
+                        var irSig = MethodBuilder.BuildMethodSignature(
+                            _metadata,
+                            isInstance: true,
+                            paramCount: irParamCount,
+                            hasScopesParam: false,
+                            returnsVoid: false);
+                        int minParams = ILMethodGenerator.CountRequiredParameters(funcExpr.Params);
+                        int maxParams = irParamCount;
+                        _classRegistry.RegisterMethod(className, mname, methodDefHandle, irSig, minParams, maxParams);
+                    }
                     return methodDefHandle;
                 }
             }
 
-            var className = classScope.Name;
-            var funcExpr = element.Value as FunctionExpression;
             var paramCount = funcExpr != null ? funcExpr.Params.Count : 0;
             var msig = MethodBuilder.BuildMethodSignature(
                 _metadata,
