@@ -132,14 +132,9 @@ class HIRMethodBuilder
                     declStatements.Add(declHir!);
                 }
                 // If single declaration, return it directly; otherwise wrap in block
-                if (declStatements.Count == 1)
-                {
-                    hirStatement = declStatements[0];
-                }
-                else
-                {
-                    hirStatement = new HIRBlock(declStatements);
-                }
+                hirStatement = declStatements.Count == 1
+                    ? declStatements[0]
+                    : new HIRBlock(declStatements);
                 return true;
 
             case ExpressionStatement exprStmt:
@@ -162,12 +157,9 @@ class HIRMethodBuilder
                 }
 
                 HIRStatement? alternateStmt = null;
-                if (ifStmt.Alternate != null)
+                if (ifStmt.Alternate != null && !TryParseStatement(ifStmt.Alternate, out alternateStmt))
                 {
-                    if (!TryParseStatement(ifStmt.Alternate, out alternateStmt))
-                    {
-                        return false;
-                    }
+                    return false;
                 }
 
                 hirStatement = new HIRIfStatement(testExpr!, consequentStmt!, alternateStmt);
@@ -348,13 +340,6 @@ class HIRMethodBuilder
     /// </summary>
     private Scope? FindChildScopeForAstNode(Node astNode)
     {
-        foreach (var child in _currentScope.Children)
-        {
-            if (ReferenceEquals(child.AstNode, astNode))
-            {
-                return child;
-            }
-        }
-        return null;
+        return _currentScope.Children.FirstOrDefault(child => ReferenceEquals(child.AstNode, astNode));
     }
 }

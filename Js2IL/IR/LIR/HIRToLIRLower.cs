@@ -164,17 +164,8 @@ public sealed class HIRToLIRLowerer
                     return true;
                 }
             case HIRBlock block:
-                {
-                    // Lower each statement in the block
-                    foreach (var innerStatement in block.Statements)
-                    {
-                        if (!TryLowerStatement(innerStatement))
-                        {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
+                // Lower each statement in the block - return false on first failure
+                return block.Statements.All(TryLowerStatement);
             default:
                 // Unsupported statement type
                 return false;

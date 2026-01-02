@@ -16,12 +16,11 @@ internal static class BranchConditionOptimizer
     public static Dictionary<int, LIRInstruction> BuildTempDefinitionMap(MethodBodyIR methodBody)
     {
         var result = new Dictionary<int, LIRInstruction>();
-        foreach (var instruction in methodBody.Instructions)
+        foreach (var instruction in methodBody.Instructions
+            .Where(instr => TempLocalAllocator.TryGetDefinedTemp(instr, out var d) && d.Index >= 0))
         {
-            if (TempLocalAllocator.TryGetDefinedTemp(instruction, out var defined) && defined.Index >= 0)
-            {
-                result[defined.Index] = instruction;
-            }
+            TempLocalAllocator.TryGetDefinedTemp(instruction, out var defined);
+            result[defined.Index] = instruction;
         }
         return result;
     }
@@ -32,7 +31,7 @@ internal static class BranchConditionOptimizer
     /// </summary>
     public static void MarkBranchOnlyComparisonTemps(
         MethodBodyIR methodBody,
-        bool[]? peepholeReplaced,
+        bool[]? shouldMaterializeTemp,
         Dictionary<int, LIRInstruction> tempDefinitions)
     {
         int tempCount = methodBody.Temps.Count;
@@ -52,34 +51,32 @@ internal static class BranchConditionOptimizer
         {
             bool isBranch = instruction is LIRBranchIfFalse or LIRBranchIfTrue;
             
-            foreach (var used in TempLocalAllocator.EnumerateUsedTemps(instruction))
+            foreach (var used in TempLocalAllocator.EnumerateUsedTemps(instruction)
+                .Where(u => u.Index >= 0 && u.Index < tempCount))
             {
-                if (used.Index >= 0 && used.Index < tempCount)
+                useCount[used.Index]++;
+                if (!isBranch)
                 {
-                    useCount[used.Index]++;
-                    if (!isBranch)
-                    {
-                        usedByBranchOnly[used.Index] = false;
-                    }
+                    usedByBranchOnly[used.Index] = false;
                 }
             }
         }
 
         // Mark comparison temps that are only used once by a branch as non-materialized
-        if (peepholeReplaced == null)
+        if (shouldMaterializeTemp == null)
         {
             return; // Will be created fresh, no way to mark
         }
 
         for (int i = 0; i < tempCount; i++)
         {
-            if (useCount[i] == 1 && usedByBranchOnly[i] && tempDefinitions.TryGetValue(i, out var definingInstruction))
+            if (useCount[i] == 1
+                && usedByBranchOnly[i]
+                && tempDefinitions.TryGetValue(i, out var definingInstruction)
+                && IsComparisonInstruction(definingInstruction))
             {
-                if (IsComparisonInstruction(definingInstruction))
-                {
-                    // Mark this temp as not needing materialization (false = not used outside)
-                    peepholeReplaced[i] = false;
-                }
+                // Mark this temp as not needing materialization (false = not used outside)
+                shouldMaterializeTemp[i] = false;
             }
         }
     }

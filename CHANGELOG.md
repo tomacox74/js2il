@@ -23,7 +23,6 @@ All notable changes to this project are documented here.
   - Combined duplicate `if (Alternate != null)` checks
   - Deferred `endLabel` creation until needed (avoids wasted label IDs when no else block)
 
-### Added
 - **IR pipeline comparison operators**: Full support for comparison operators in the new AST→HIR→LIR→IL pipeline:
   - New LIR instructions: `LIRCompareNumberLessThan`, `LIRCompareNumberGreaterThan`, `LIRCompareNumberLessThanOrEqual`, `LIRCompareNumberGreaterThanOrEqual`, `LIRCompareNumberEqual`, `LIRCompareNumberNotEqual`, `LIRCompareBooleanEqual`, `LIRCompareBooleanNotEqual`
   - HIR→LIR lowering for `==`, `===`, `!=`, `!==`, `<`, `>`, `<=`, `>=` operators

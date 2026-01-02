@@ -327,12 +327,11 @@ internal sealed class JsMethodCompiler
 
         // Pre-create IL labels for all LIR labels
         var labelMap = new Dictionary<int, LabelHandle>();
-        foreach (var instr in methodBody.Instructions)
+        foreach (var lirLabel in methodBody.Instructions
+            .OfType<LIRLabel>()
+            .Where(l => !labelMap.ContainsKey(l.LabelId)))
         {
-            if (instr is LIRLabel lirLabel && !labelMap.ContainsKey(lirLabel.LabelId))
-            {
-                labelMap[lirLabel.LabelId] = ilEncoder.DefineLabel();
-            }
+            labelMap[lirLabel.LabelId] = ilEncoder.DefineLabel();
         }
 
         bool hasExplicitReturn = false;
