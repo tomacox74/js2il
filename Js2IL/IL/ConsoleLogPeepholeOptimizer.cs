@@ -426,6 +426,9 @@ internal sealed class ConsoleLogPeepholeOptimizer
             LIRCompareNumberNotEqual cmp => CanEmitTempStackOnly(methodBody, cmp.Left, definedInSequence) && CanEmitTempStackOnly(methodBody, cmp.Right, definedInSequence),
             LIRCompareBooleanEqual cmp => CanEmitTempStackOnly(methodBody, cmp.Left, definedInSequence) && CanEmitTempStackOnly(methodBody, cmp.Right, definedInSequence),
             LIRCompareBooleanNotEqual cmp => CanEmitTempStackOnly(methodBody, cmp.Left, definedInSequence) && CanEmitTempStackOnly(methodBody, cmp.Right, definedInSequence),
+            // Dynamic operators
+            LIRAddDynamic add => CanEmitTempStackOnly(methodBody, add.Left, definedInSequence) && CanEmitTempStackOnly(methodBody, add.Right, definedInSequence),
+            LIRMulDynamic mul => CanEmitTempStackOnly(methodBody, mul.Left, definedInSequence) && CanEmitTempStackOnly(methodBody, mul.Right, definedInSequence),
             // Array ops that are part of this sequence are fine
             LIRGetIntrinsicGlobal g when definedInSequence.Contains(g.Result) => true,
             LIRNewObjectArray a when definedInSequence.Contains(a.Result) => true,
@@ -647,6 +650,26 @@ internal sealed class ConsoleLogPeepholeOptimizer
                 // JS param 0 -> IL arg 1 when hasScopesParameter, else IL arg 0
                 int argIndex = hasScopesParameter ? lp.ParameterIndex + 1 : lp.ParameterIndex;
                 ilEncoder.LoadArgument(argIndex);
+                break;
+
+            case LIRAddDynamic add:
+                EmitTempStackOnly(methodBody, add.Left, ilEncoder, hasScopesParameter);
+                EmitTempStackOnly(methodBody, add.Right, ilEncoder, hasScopesParameter);
+                {
+                    var addMethod = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "Add");
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(addMethod);
+                }
+                break;
+
+            case LIRMulDynamic mul:
+                EmitTempStackOnly(methodBody, mul.Left, ilEncoder, hasScopesParameter);
+                EmitTempStackOnly(methodBody, mul.Right, ilEncoder, hasScopesParameter);
+                {
+                    var mulMethod = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "Multiply");
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(mulMethod);
+                }
                 break;
 
             default:
