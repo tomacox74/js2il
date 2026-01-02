@@ -179,6 +179,7 @@ internal sealed class LIRToILCompiler
                 IsMaterialized,
                 EmitStoreTemp,
                 methodDescriptor.HasScopesParameter,
+                !methodDescriptor.IsStatic,
                 out var consumed))
             {
                 i += consumed - 1;
