@@ -64,14 +64,26 @@ sealed record MethodDescriptor
 internal sealed class JsMethodCompiler
 {
     private readonly MetadataBuilder _metadataBuilder;
+    private readonly TypeReferenceRegistry _typeReferenceRegistry;
+    private readonly MemberReferenceRegistry _memberReferenceRegistry;
     private readonly BaseClassLibraryReferences _bclReferences;
-    private readonly LIRToILCompiler _lirToILCompiler;
+    private readonly CompiledMethodCache _compiledMethodCache;
 
     public JsMethodCompiler(MetadataBuilder metadataBuilder, TypeReferenceRegistry typeReferenceRegistry, MemberReferenceRegistry memberReferenceRegistry, BaseClassLibraryReferences bclReferences, CompiledMethodCache compiledMethodCache)
     {
         _metadataBuilder = metadataBuilder;
+        _typeReferenceRegistry = typeReferenceRegistry;
+        _memberReferenceRegistry = memberReferenceRegistry;
         _bclReferences = bclReferences;
-        _lirToILCompiler = new LIRToILCompiler(metadataBuilder, typeReferenceRegistry, memberReferenceRegistry, bclReferences, compiledMethodCache);
+        _compiledMethodCache = compiledMethodCache;
+    }
+
+    /// <summary>
+    /// Creates a new LIRToILCompiler instance for compiling a single method.
+    /// </summary>
+    private LIRToILCompiler CreateILCompiler()
+    {
+        return new LIRToILCompiler(_metadataBuilder, _typeReferenceRegistry, _memberReferenceRegistry, _bclReferences, _compiledMethodCache);
     }
 
     #region Public API - Entry Points
@@ -127,7 +139,7 @@ internal sealed class JsMethodCompiler
             methodDescriptor.Parameters = Array.Empty<MethodParameterDescriptor>();
         }
 
-        return _lirToILCompiler.TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
+        return CreateILCompiler().TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
     }
 
     public MethodDefinitionHandle TryCompileArrowFunction(string methodName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
@@ -163,7 +175,7 @@ internal sealed class JsMethodCompiler
             arrowTypeBuilder,
             parameters);
 
-        var methodDefinitionHandle = _lirToILCompiler.TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
+        var methodDefinitionHandle = CreateILCompiler().TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
 
         // Define the arrow function type
         arrowTypeBuilder.AddTypeDefinition(
@@ -217,7 +229,7 @@ internal sealed class JsMethodCompiler
         // The IR pipeline needs to be extended to handle these in future PRs.
         // For now, this will compile but produce incomplete constructor IL,
         // so the fail-fast guards above should prevent reaching here.
-        return _lirToILCompiler.TryCompileWithSignature(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
+        return CreateILCompiler().TryCompileWithSignature(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
     }
 
     public MethodDefinitionHandle TryCompileMainMethod(string moduleName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
@@ -245,7 +257,7 @@ internal sealed class JsMethodCompiler
         methodDescriptor.ReturnsVoid = true;
         methodDescriptor.HasScopesParameter = false;
 
-        var methodDefinitionHandle = _lirToILCompiler.TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
+        var methodDefinitionHandle = CreateILCompiler().TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
 
         // Define the Script main type via TypeBuilder
         programTypeBuilder.AddTypeDefinition(

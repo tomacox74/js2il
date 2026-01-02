@@ -12,7 +12,8 @@ namespace Js2IL.IL;
 /// </summary>
 /// <remarks>
 /// This class is responsible for the final stage of the JS to IL compilation pipeline:
-/// LIR -> IL
+/// LIR -> IL.
+/// This class is designed for single-use; create a new instance for each method compilation.
 /// </remarks>
 internal sealed class LIRToILCompiler
 {
@@ -22,8 +23,13 @@ internal sealed class LIRToILCompiler
     private readonly MemberReferenceRegistry _memberRefRegistry;
     private readonly ConsoleLogPeepholeOptimizer _consoleLogOptimizer;
     private readonly CompiledMethodCache _compiledMethodCache;
-    private MethodBodyIR _methodBody = null!;
+    private MethodBodyIR? _methodBody;
     private bool _compiled;
+
+    /// <summary>
+    /// Gets the method body, throwing if not yet set.
+    /// </summary>
+    private MethodBodyIR MethodBody => _methodBody ?? throw new InvalidOperationException("MethodBody has not been set.");
 
     public LIRToILCompiler(
         MetadataBuilder metadataBuilder,
@@ -145,19 +151,19 @@ internal sealed class LIRToILCompiler
 
         // Pre-pass: find console.log(oneArg) sequences that we will emit stack-only, and avoid
         // allocating IL locals for temps that are only used within those sequences.
-        var peepholeReplaced = _consoleLogOptimizer.ComputeStackOnlyMask(_methodBody);
+        var peepholeReplaced = _consoleLogOptimizer.ComputeStackOnlyMask(MethodBody);
 
         // Build map of temp → defining instruction for branch condition inlining
-        var tempDefinitions = BranchConditionOptimizer.BuildTempDefinitionMap(_methodBody);
+        var tempDefinitions = BranchConditionOptimizer.BuildTempDefinitionMap(MethodBody);
 
         // Mark comparison temps only used by branches as non-materialized
-        BranchConditionOptimizer.MarkBranchOnlyComparisonTemps(_methodBody, peepholeReplaced, tempDefinitions);
+        BranchConditionOptimizer.MarkBranchOnlyComparisonTemps(MethodBody, peepholeReplaced, tempDefinitions);
 
-        var allocation = TempLocalAllocator.Allocate(_methodBody, peepholeReplaced);
+        var allocation = TempLocalAllocator.Allocate(MethodBody, peepholeReplaced);
 
         // Pre-create IL labels for all LIR labels
         var labelMap = new Dictionary<int, LabelHandle>();
-        foreach (var lirLabel in _methodBody.Instructions
+        foreach (var lirLabel in MethodBody.Instructions
             .OfType<LIRLabel>()
             .Where(l => !labelMap.ContainsKey(l.LabelId)))
         {
@@ -165,11 +171,11 @@ internal sealed class LIRToILCompiler
         }
 
         bool hasExplicitReturn = false;
-        for (int i = 0; i < _methodBody.Instructions.Count; i++)
+        for (int i = 0; i < MethodBody.Instructions.Count; i++)
         {
             // Peephole: console.log(<singleArg>) emitted stack-only
             if (_consoleLogOptimizer.TryEmitPeephole(
-                _methodBody, i, ilEncoder, allocation,
+                MethodBody, i, ilEncoder, allocation,
                 IsMaterialized,
                 EmitStoreTemp,
                 methodDescriptor.HasScopesParameter,
@@ -179,7 +185,7 @@ internal sealed class LIRToILCompiler
                 continue;
             }
 
-            var instruction = _methodBody.Instructions[i];
+            var instruction = MethodBody.Instructions[i];
 
             // Handle control flow instructions directly
             switch (instruction)
@@ -237,7 +243,7 @@ internal sealed class LIRToILCompiler
         var localVariablesSignature = CreateLocalVariablesSignature(allocation);
 
         var bodyAttributes = MethodBodyAttributes.None;
-        if (_methodBody.VariableNames.Count > 0 || allocation.SlotStorages.Count > 0)
+        if (MethodBody.VariableNames.Count > 0 || allocation.SlotStorages.Count > 0)
         {
             bodyAttributes |= MethodBodyAttributes.InitLocals;
         }
@@ -271,7 +277,7 @@ internal sealed class LIRToILCompiler
                 ilEncoder.OpCode(ILOpCode.Sub);
                 EmitStoreTemp(subNumber.Result, ilEncoder, allocation);
                 break;
-            case LIRBeginInitArrayElement beginInitArrayElement:
+            case LIRBeginInitArrayElement:
                 // Pure SSA LIR lowering does not rely on stack tricks; this is a no-op hint.
                 break;
             case LIRConstNumber constNumber:
@@ -627,12 +633,12 @@ internal sealed class LIRToILCompiler
 
     private StandaloneSignatureHandle CreateLocalVariablesSignature(TempLocalAllocation allocation)
     {
-        if (_methodBody.VariableNames.Count == 0 && allocation.SlotStorages.Count == 0)
+        if (MethodBody.VariableNames.Count == 0 && allocation.SlotStorages.Count == 0)
         {
             return default;
         }
 
-        int varCount = _methodBody.VariableNames.Count;
+        int varCount = MethodBody.VariableNames.Count;
         int totalLocals = varCount + allocation.SlotStorages.Count;
 
         var localSig = new BlobBuilder();
@@ -643,9 +649,9 @@ internal sealed class LIRToILCompiler
         {
             var typeEncoder = localEncoder.AddVariable().Type();
 
-            if (i < _methodBody.VariableStorages.Count)
+            if (i < MethodBody.VariableStorages.Count)
             {
-                var storage = _methodBody.VariableStorages[i];
+                var storage = MethodBody.VariableStorages[i];
                 if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(bool))
                 {
                     typeEncoder.Boolean();
@@ -779,8 +785,8 @@ internal sealed class LIRToILCompiler
     {
         // Variable-mapped temps always materialize into their stable variable local slot.
         if (temp.Index >= 0 &&
-            temp.Index < _methodBody.TempVariableSlots.Count &&
-            _methodBody.TempVariableSlots[temp.Index] >= 0)
+            temp.Index < MethodBody.TempVariableSlots.Count &&
+            MethodBody.TempVariableSlots[temp.Index] >= 0)
         {
             return true;
         }
@@ -803,9 +809,9 @@ internal sealed class LIRToILCompiler
     private int GetSlotForTemp(TempVariable temp, TempLocalAllocation allocation)
     {
         // Variable-mapped temps always go to their stable variable slot.
-        if (temp.Index >= 0 && temp.Index < _methodBody.TempVariableSlots.Count)
+        if (temp.Index >= 0 && temp.Index < MethodBody.TempVariableSlots.Count)
         {
-            int varSlot = _methodBody.TempVariableSlots[temp.Index];
+            int varSlot = MethodBody.TempVariableSlots[temp.Index];
             if (varSlot >= 0)
             {
                 return varSlot;
@@ -814,12 +820,12 @@ internal sealed class LIRToILCompiler
 
         // Other temps go after variable locals.
         var slot = allocation.GetSlot(temp);
-        return _methodBody.VariableNames.Count + slot;
+        return MethodBody.VariableNames.Count + slot;
     }
 
     private LIRInstruction? TryFindDefInstruction(TempVariable temp)
     {
-        foreach (var instr in _methodBody.Instructions
+        foreach (var instr in MethodBody.Instructions
             .Where(i => TempLocalAllocator.TryGetDefinedTemp(i, out var defined) && defined == temp))
         {
             return instr;
