@@ -31,7 +31,6 @@ All notable changes to this project are documented here.
 - Removed `CanEmitConsoleLogArgStackOnly` (functionality merged into multi-arg matcher)
 - Extended `CanEmitTempStackOnly` to handle variable-mapped temps via local slot loading
 
-### Added
 - **IR pipeline support for class constructors**: Extended IR compilation pipeline to handle class constructors with automatic fallback:
   - `HIRBuilder` now handles `FunctionExpression` nodes (used by class constructor bodies)
   - `JsMethodCompiler.TryCompileClassConstructor` attempts IR compilation with fail-fast guards

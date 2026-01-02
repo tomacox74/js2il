@@ -2,6 +2,7 @@ using Acornima.Ast;
 using Js2IL.HIR;
 using Js2IL.SymbolTables;
 using Js2IL.IR;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
@@ -307,7 +308,6 @@ internal sealed class JsMethodCompiler
         // allocating IL locals for temps that are only used within those sequences.
         var peepholeReplaced = ComputeStackOnlyConsoleLogPeepholeMask(methodBody);
         var allocation = TempLocalAllocator.Allocate(methodBody, peepholeReplaced);
-        var varCount = methodBody.VariableNames.Count;
 
         bool hasExplicitReturn = false;
         for (int i = 0; i < methodBody.Instructions.Count; i++)
@@ -444,12 +444,10 @@ internal sealed class JsMethodCompiler
                 continue;
             }
 
-            foreach (var used in TempLocalAllocator.EnumerateUsedTemps(methodBody.Instructions[i]))
+            foreach (var used in TempLocalAllocator.EnumerateUsedTemps(methodBody.Instructions[i])
+                .Where(u => u.Index >= 0 && u.Index < tempCount))
             {
-                if (used.Index >= 0 && used.Index < tempCount)
-                {
-                    usedOutside[used.Index] = true;
-                }
+                usedOutside[used.Index] = true;
             }
         }
 
@@ -557,12 +555,11 @@ internal sealed class JsMethodCompiler
     {
         // Check for variable-mapped temps FIRST.
         // Variable-mapped temps CAN be emitted stack-only by loading from the variable local.
-        if (temp.Index >= 0 && temp.Index < methodBody.TempVariableSlots.Count)
+        if (temp.Index >= 0 &&
+            temp.Index < methodBody.TempVariableSlots.Count &&
+            methodBody.TempVariableSlots[temp.Index] >= 0)
         {
-            if (methodBody.TempVariableSlots[temp.Index] >= 0)
-            {
-                return true;
-            }
+            return true;
         }
 
         var def = TryFindDefInstruction(methodBody, temp);
@@ -852,12 +849,11 @@ internal sealed class JsMethodCompiler
     private static bool IsMaterialized(TempVariable temp, TempLocalAllocation allocation, MethodBodyIR methodBody)
     {
         // Variable-mapped temps always materialize into their stable variable local slot.
-        if (temp.Index >= 0 && temp.Index < methodBody.TempVariableSlots.Count)
+        if (temp.Index >= 0 &&
+            temp.Index < methodBody.TempVariableSlots.Count &&
+            methodBody.TempVariableSlots[temp.Index] >= 0)
         {
-            if (methodBody.TempVariableSlots[temp.Index] >= 0)
-            {
-                return true;
-            }
+            return true;
         }
 
         return allocation.IsMaterialized(temp);
@@ -1204,7 +1200,7 @@ internal sealed class JsMethodCompiler
                 break;
 
             default:
-                throw new InvalidOperationException($"EmitTempStackOnly: unexpected instruction {def?.GetType().Name}");
+                throw new InvalidOperationException($"EmitTempStackOnly: unexpected instruction {def.GetType().Name}");
         }
     }
 
@@ -1261,7 +1257,7 @@ internal sealed class JsMethodCompiler
                 break;
 
             default:
-                throw new InvalidOperationException($"EmitTempStackOnlyUnboxed: unexpected instruction {def?.GetType().Name}");
+                throw new InvalidOperationException($"EmitTempStackOnlyUnboxed: unexpected instruction {def.GetType().Name}");
         }
     }
 
@@ -1390,12 +1386,10 @@ internal sealed class JsMethodCompiler
     {
         // Cheap linear scan; IR pipeline methods are small today.
         // If this becomes hot, build an index map once per method.
-        foreach (var instr in methodBody.Instructions)
+        foreach (var instr in methodBody.Instructions
+            .Where(i => TempLocalAllocator.TryGetDefinedTemp(i, out var defined) && defined == temp))
         {
-            if (TempLocalAllocator.TryGetDefinedTemp(instr, out var defined) && defined == temp)
-            {
-                return instr;
-            }
+            return instr;
         }
         return null;
     }
@@ -1440,16 +1434,11 @@ internal sealed class JsMethodCompiler
             // First pass: determine last use for each temp.
             for (int i = 0; i < methodBody.Instructions.Count; i++)
             {
-                foreach (var used in EnumerateUsedTemps(methodBody.Instructions[i]))
+                foreach (var used in EnumerateUsedTemps(methodBody.Instructions[i])
+                    .Where(u => u.Index >= 0 && u.Index < tempCount &&
+                        (shouldMaterializeTemp is null || shouldMaterializeTemp[u.Index])))
                 {
-                    if (used.Index >= 0 && used.Index < tempCount)
-                    {
-                        if (shouldMaterializeTemp is not null && !shouldMaterializeTemp[used.Index])
-                        {
-                            continue;
-                        }
-                        lastUse[used.Index] = i;
-                    }
+                    lastUse[used.Index] = i;
                 }
             }
 
@@ -1494,26 +1483,27 @@ internal sealed class JsMethodCompiler
                 }
 
                 // Allocate a slot for result if it will be used later.
-                if (TryGetDefinedTemp(instruction, out var defined))
+                if (TryGetDefinedTemp(instruction, out var defined) &&
+                    defined.Index >= 0 &&
+                    defined.Index < tempCount &&
+                    lastUse[defined.Index] >= 0 &&
+                    (shouldMaterializeTemp is null || shouldMaterializeTemp[defined.Index]))
                 {
-                    if (defined.Index >= 0 && defined.Index < tempCount && lastUse[defined.Index] >= 0 && (shouldMaterializeTemp is null || shouldMaterializeTemp[defined.Index]))
+                    var storage = GetTempStorage(methodBody, defined);
+                    var key = new StorageKey(storage.Kind, storage.ClrType);
+
+                    int slot;
+                    if (freeByKey.TryGetValue(key, out var stack) && stack.Count > 0)
                     {
-                        var storage = GetTempStorage(methodBody, defined);
-                        var key = new StorageKey(storage.Kind, storage.ClrType);
-
-                        int slot;
-                        if (freeByKey.TryGetValue(key, out var stack) && stack.Count > 0)
-                        {
-                            slot = stack.Pop();
-                        }
-                        else
-                        {
-                            slot = slotStorages.Count;
-                            slotStorages.Add(storage);
-                        }
-
-                        tempToSlot[defined.Index] = slot;
+                        slot = stack.Pop();
                     }
+                    else
+                    {
+                        slot = slotStorages.Count;
+                        slotStorages.Add(storage);
+                    }
+
+                    tempToSlot[defined.Index] = slot;
                 }
             }
 
