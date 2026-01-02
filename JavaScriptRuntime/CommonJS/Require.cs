@@ -11,7 +11,7 @@ namespace JavaScriptRuntime.CommonJS
         private readonly Dictionary<string, Module> _modules = new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> _notFound = new(StringComparer.OrdinalIgnoreCase);
 
-        private readonly Assembly _localModulesAssembly;
+        private readonly Assembly? _localModulesAssembly;
         
         // Track the current parent module for establishing parent-child relationships
         private Module? _currentParentModule;
@@ -19,7 +19,7 @@ namespace JavaScriptRuntime.CommonJS
         public Require(LocalModulesAssembly localModulesAssembly)
         {
             // Preload local modules from the provided assembly
-            this._localModulesAssembly = localModulesAssembly.ModulesAssembly;
+            _localModulesAssembly = localModulesAssembly.ModulesAssembly;
         }
 
         /// <summary>
@@ -87,6 +87,9 @@ namespace JavaScriptRuntime.CommonJS
         /// </summary>
         private object? RequireLocalModule(string key)
         {
+            if (_localModulesAssembly == null)
+                throw new ReferenceError($"Cannot require local module '{key}': no local modules assembly provided");
+            
             var moduleId = ModuleName.GetModuleIdFromSpecifier(key);
             var TypeName = $"Scripts.{moduleId}";
             var localType = _localModulesAssembly.GetType(TypeName);
@@ -157,7 +160,7 @@ namespace JavaScriptRuntime.CommonJS
 
             // Return module.exports (which may have been reassigned during execution)
             // Update cache with final exports value
-            _instances[key] = module.exports;
+            _instances[key] = module.exports!;
             return module.exports;
         }
 

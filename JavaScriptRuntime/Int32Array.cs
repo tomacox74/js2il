@@ -41,7 +41,7 @@ namespace JavaScriptRuntime
             {
                 int len = jsArray.Count;
                 var buf = new int[len];
-                for (int i = 0; i < len; i++) buf[i] = ToInt32(jsArray[i]);
+                for (int i = 0; i < len; i++) buf[i] = ToInt32(jsArray[i]!);
                 _buffer = buf;
                 return;
             }
@@ -120,7 +120,7 @@ namespace JavaScriptRuntime
             {
                 for (int i = 0; i < jsArray.Count && (offset + i) < _buffer.Length; i++)
                 {
-                    _buffer[offset + i] = ToInt32(jsArray[i]);
+                    _buffer[offset + i] = ToInt32(jsArray[i]!);
                 }
                 return null!;
             }

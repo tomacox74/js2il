@@ -159,7 +159,7 @@ namespace JavaScriptRuntime
                     return d < 0d ? -1 : 1;
                 }
 
-                this.Sort((a, b) => CompareUsingCallback(a, b));
+                this.Sort((a, b) => CompareUsingCallback(a!, b!));
                 return this;
             }
 
