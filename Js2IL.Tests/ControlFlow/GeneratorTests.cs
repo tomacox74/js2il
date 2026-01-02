@@ -45,13 +45,13 @@ namespace Js2IL.Tests.ControlFlow
         public Task ControlFlow_ForOf_Array_Basic() { var testName = nameof(ControlFlow_ForOf_Array_Basic); return GenerateTest(testName); }
 
         [Fact]
-        public Task ControlFlow_If_BooleanLiteral() { var testName = nameof(ControlFlow_If_BooleanLiteral); return GenerateTest(testName); }
+        public Task ControlFlow_If_BooleanLiteral() { var testName = nameof(ControlFlow_If_BooleanLiteral); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task ControlFlow_If_LessThan() { var testName = nameof(ControlFlow_If_LessThan); return GenerateTest(testName); }
+        public Task ControlFlow_If_LessThan() { var testName = nameof(ControlFlow_If_LessThan); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task ControlFlow_If_NotEqual() { var testName = nameof(ControlFlow_If_NotEqual); return GenerateTest(testName); }
+        public Task ControlFlow_If_NotEqual() { var testName = nameof(ControlFlow_If_NotEqual); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
         public Task ControlFlow_If_NotFlag() { var testName = nameof(ControlFlow_If_NotFlag); return GenerateTest(testName); }

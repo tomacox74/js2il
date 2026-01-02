@@ -62,3 +62,26 @@ public record LIRCompareNumberNotEqual(TempVariable Left, TempVariable Right, Te
 // Comparison operators for boolean values (result is bool)
 public record LIRCompareBooleanEqual(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
 public record LIRCompareBooleanNotEqual(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
+
+// Control flow instructions
+/// <summary>
+/// Marks a branch target location. LabelId is assigned during lowering.
+/// </summary>
+public record LIRLabel(int LabelId) : LIRInstruction;
+
+/// <summary>
+/// Unconditional branch to a label.
+/// </summary>
+public record LIRBranch(int TargetLabel) : LIRInstruction;
+
+/// <summary>
+/// Branch to TargetLabel if Condition is false (0), otherwise fall through.
+/// This matches IL's brfalse semantics.
+/// </summary>
+public record LIRBranchIfFalse(TempVariable Condition, int TargetLabel) : LIRInstruction;
+
+/// <summary>
+/// Branch to TargetLabel if Condition is true (non-zero), otherwise fall through.
+/// This matches IL's brtrue semantics.
+/// </summary>
+public record LIRBranchIfTrue(TempVariable Condition, int TargetLabel) : LIRInstruction;

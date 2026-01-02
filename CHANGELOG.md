@@ -5,6 +5,25 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 ### Added
+- **IR pipeline if-statement support**: Full support for `if`/`else` statements in the new AST→HIR→LIR→IL pipeline:
+  - New HIR node: `HIRIfStatement` with `Test`, `Consequent`, and optional `Alternate` properties
+  - New LIR instructions: `LIRBranchIfFalse`, `LIRBranch`, `LIRLabel` for control flow
+  - Proper IL emission with conditional branching (`brfalse`, `br`) and label resolution
+  - Supports nested if-else chains and block statements
+
+### Fixed
+- **Variable shadowing in IR pipeline**: Block-scoped variables with the same name now correctly get separate IL local slots:
+  - Changed `_variableMap` and `_variableSlots` in `HIRToLIRLower` to key by `BindingInfo` reference instead of variable name string
+  - Added `_currentScope` tracking in `HIRBuilder` to resolve shadowed variables to the correct binding
+  - Each `let`/`const` declaration creates a unique `BindingInfo`, enabling correct identity comparison
+  - Example: `let x = 1; { let x = 2; }` now generates 2 IL locals instead of incorrectly sharing 1
+
+### Changed
+- **Cleaner if-statement lowering**: Refactored `HIRIfStatement` handling in `HIRToLIRLower`:
+  - Combined duplicate `if (Alternate != null)` checks
+  - Deferred `endLabel` creation until needed (avoids wasted label IDs when no else block)
+
+### Added
 - **IR pipeline comparison operators**: Full support for comparison operators in the new AST→HIR→LIR→IL pipeline:
   - New LIR instructions: `LIRCompareNumberLessThan`, `LIRCompareNumberGreaterThan`, `LIRCompareNumberLessThanOrEqual`, `LIRCompareNumberGreaterThanOrEqual`, `LIRCompareNumberEqual`, `LIRCompareNumberNotEqual`, `LIRCompareBooleanEqual`, `LIRCompareBooleanNotEqual`
   - HIR→LIR lowering for `==`, `===`, `!=`, `!==`, `<`, `>`, `<=`, `>=` operators

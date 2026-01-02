@@ -1,5 +1,6 @@
 using Js2IL.HIR;
 using Js2IL.Services;
+using Js2IL.SymbolTables;
 
 namespace Js2IL.IR;
 
@@ -8,18 +9,22 @@ public sealed class HIRToLIRLowerer
     private readonly MethodBodyIR _methodBodyIR = new MethodBodyIR();
 
     private int _tempVarCounter = 0;
+    private int _labelCounter = 0;
 
     // Source-level variables map to the current SSA value (TempVariable) at the current program point.
-    private readonly Dictionary<string, TempVariable> _variableMap = new Dictionary<string, TempVariable>();
+    // Keyed by BindingInfo reference to correctly handle shadowed variables with the same name.
+    private readonly Dictionary<BindingInfo, TempVariable> _variableMap = new Dictionary<BindingInfo, TempVariable>();
 
     // Stable IL-local slot per JS variable declaration.
-    private readonly Dictionary<string, int> _variableSlots = new Dictionary<string, int>();
+    // Keyed by BindingInfo reference to give each shadowed variable its own slot.
+    private readonly Dictionary<BindingInfo, int> _variableSlots = new Dictionary<BindingInfo, int>();
 
     public static bool TryLower(HIRMethod hirMethod, out MethodBodyIR? lirMethod)
     {
         lirMethod = null;
 
         var lowerer = new HIRToLIRLowerer();
+        
         if (lowerer.TryLowerStatements(hirMethod.Body.Statements))
         {
             lirMethod = lowerer._methodBodyIR;
@@ -69,12 +74,14 @@ public sealed class HIRToLIRLowerer
                         DefineTempStorage(value, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     }
 
-                    _variableMap[exprStmt.Name.Name] = value;
+                    // Use BindingInfo as key for correct shadowing behavior
+                    var binding = exprStmt.Name.BindingInfo;
+                    _variableMap[binding] = value;
 
                     // Assign the declared variable a stable local slot and map this SSA temp to it.
                     // Track the storage type for the variable slot.
                     var storage = GetTempStorage(value);
-                    var slot = GetOrCreateVariableSlot(exprStmt.Name.Name, storage);
+                    var slot = GetOrCreateVariableSlot(binding, exprStmt.Name.Name, storage);
                     SetTempVariableSlot(value, slot);
                     return true;
                 }
@@ -111,11 +118,70 @@ public sealed class HIRToLIRLowerer
                     lirInstructions.Add(new LIRReturn(returnTempVar));
                     return true;
                 }
+            case HIRIfStatement ifStmt:
+                {
+                    // Evaluate the test condition
+                    if (!TryLowerExpression(ifStmt.Test, out var conditionTemp))
+                    {
+                        return false;
+                    }
+
+                    int elseLabel = CreateLabel();
+
+                    // Branch to else if condition is false
+                    lirInstructions.Add(new LIRBranchIfFalse(conditionTemp, elseLabel));
+
+                    // Consequent block (then)
+                    if (!TryLowerStatement(ifStmt.Consequent))
+                    {
+                        return false;
+                    }
+
+                    // Alternate block (else) - if present
+                    if (ifStmt.Alternate != null)
+                    {
+                        // Jump over else block
+                        int endLabel = CreateLabel();
+                        lirInstructions.Add(new LIRBranch(endLabel));
+
+                        // Else label
+                        lirInstructions.Add(new LIRLabel(elseLabel));
+
+                        if (!TryLowerStatement(ifStmt.Alternate))
+                        {
+                            return false;
+                        }
+
+                        // End label
+                        lirInstructions.Add(new LIRLabel(endLabel));
+                    }
+                    else
+                    {
+                        // No else block - just emit the else label (which is effectively the end)
+                        lirInstructions.Add(new LIRLabel(elseLabel));
+                    }
+
+                    return true;
+                }
+            case HIRBlock block:
+                {
+                    // Lower each statement in the block
+                    foreach (var innerStatement in block.Statements)
+                    {
+                        if (!TryLowerStatement(innerStatement))
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
             default:
                 // Unsupported statement type
                 return false;
         }
     }
+
+    private int CreateLabel() => _labelCounter++;
 
     private bool TryLowerExpression(HIRExpression expression, out TempVariable resultTempVar)
     {
@@ -180,7 +246,10 @@ public sealed class HIRToLIRLowerer
                 return TryLowerUpdateExpression(updateExpr, out resultTempVar);
 
             case HIRVariableExpression varExpr:
-                if (!_variableMap.TryGetValue(varExpr.Name.Name, out resultTempVar))
+                // Look up the binding using the Symbol's BindingInfo directly
+                // This correctly resolves shadowed variables to the right binding
+                var binding = varExpr.Name.BindingInfo;
+                if (!_variableMap.TryGetValue(binding, out resultTempVar))
                 {
                     return false;
                 }
@@ -416,7 +485,8 @@ public sealed class HIRToLIRLowerer
             return false;
         }
 
-        if (!_variableMap.TryGetValue(updateVarExpr.Name.Name, out var currentValue))
+        var updateBinding = updateVarExpr.Name.BindingInfo;
+        if (!_variableMap.TryGetValue(updateBinding, out var currentValue))
         {
             return false;
         }
@@ -427,7 +497,7 @@ public sealed class HIRToLIRLowerer
             return false;
         }
 
-        var slot = GetOrCreateVariableSlot(updateVarExpr.Name.Name, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var slot = GetOrCreateVariableSlot(updateBinding, updateVarExpr.Name.Name, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
 
         var isIncrement = updateExpr.Operator == Acornima.Operator.Increment;
 
@@ -466,7 +536,7 @@ public sealed class HIRToLIRLowerer
         SetTempVariableSlot(updatedTemp, slot);
 
         // Update variable mapping to the new SSA value.
-        _variableMap[updateVarExpr.Name.Name] = updatedTemp;
+        _variableMap[updateBinding] = updatedTemp;
 
         if (updateExpr.Prefix)
         {
@@ -490,16 +560,16 @@ public sealed class HIRToLIRLowerer
         return tempVar;
     }
 
-    private int GetOrCreateVariableSlot(string name, ValueStorage storage)
+    private int GetOrCreateVariableSlot(BindingInfo binding, string displayName, ValueStorage storage)
     {
-        if (_variableSlots.TryGetValue(name, out var slot))
+        if (_variableSlots.TryGetValue(binding, out var slot))
         {
             return slot;
         }
 
         slot = _methodBodyIR.VariableNames.Count;
-        _variableSlots[name] = slot;
-        _methodBodyIR.VariableNames.Add(name);
+        _variableSlots[binding] = slot;
+        _methodBodyIR.VariableNames.Add(displayName);
         _methodBodyIR.VariableStorages.Add(storage);
         return slot;
     }

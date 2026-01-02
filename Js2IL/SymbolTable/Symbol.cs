@@ -8,11 +8,16 @@ public sealed class Symbol
     public Symbol(BindingInfo bindingInfo)
     {
         Name = bindingInfo.Name;
-        _bindingInfo = bindingInfo;
+        BindingInfo = bindingInfo;
     }
 
     public string Name { get; }
-    private readonly BindingInfo _bindingInfo;
+    
+    /// <summary>
+    /// The underlying binding info for this symbol. Useful for identity comparison
+    /// when the same variable name exists in different scopes (shadowing).
+    /// </summary>
+    public BindingInfo BindingInfo { get; }
 
-    public BindingKind Kind => _bindingInfo.Kind;
+    public BindingKind Kind => BindingInfo.Kind;
 }
