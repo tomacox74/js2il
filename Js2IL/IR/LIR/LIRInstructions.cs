@@ -36,6 +36,8 @@ public record LIRAddDynamic(TempVariable Left, TempVariable Right, TempVariable 
 
 public record LIRSubNumber(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
 
+public record LIRMulNumber(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
+
 public record LIRConstUndefined(TempVariable Result) : LIRInstruction;
 
 public record LIRConstNull(TempVariable Result) : LIRInstruction;

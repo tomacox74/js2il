@@ -491,6 +491,19 @@ public sealed class HIRToLIRLowerer
             return true;
         }
 
+        // Handle multiplication
+        if (binaryExpr.Operator == Acornima.Operator.Multiplication)
+        {
+            if (leftType != typeof(double) || rightType != typeof(double))
+            {
+                return false;
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRMulNumber(leftTempVar, rightTempVar, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            return true;
+        }
+
         // Handle comparison operators
         switch (binaryExpr.Operator)
         {
