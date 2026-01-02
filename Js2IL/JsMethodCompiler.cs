@@ -580,6 +580,15 @@ internal sealed class JsMethodCompiler
             LIRTypeof t => CanEmitTempStackOnly(methodBody, t.Value, definedInSequence),
             LIRNegateNumber neg => CanEmitTempStackOnly(methodBody, neg.Value, definedInSequence),
             LIRBitwiseNotNumber not => CanEmitTempStackOnly(methodBody, not.Value, definedInSequence),
+            // Comparison operators
+            LIRCompareNumberLessThan cmp => CanEmitTempStackOnly(methodBody, cmp.Left, definedInSequence) && CanEmitTempStackOnly(methodBody, cmp.Right, definedInSequence),
+            LIRCompareNumberGreaterThan cmp => CanEmitTempStackOnly(methodBody, cmp.Left, definedInSequence) && CanEmitTempStackOnly(methodBody, cmp.Right, definedInSequence),
+            LIRCompareNumberLessThanOrEqual cmp => CanEmitTempStackOnly(methodBody, cmp.Left, definedInSequence) && CanEmitTempStackOnly(methodBody, cmp.Right, definedInSequence),
+            LIRCompareNumberGreaterThanOrEqual cmp => CanEmitTempStackOnly(methodBody, cmp.Left, definedInSequence) && CanEmitTempStackOnly(methodBody, cmp.Right, definedInSequence),
+            LIRCompareNumberEqual cmp => CanEmitTempStackOnly(methodBody, cmp.Left, definedInSequence) && CanEmitTempStackOnly(methodBody, cmp.Right, definedInSequence),
+            LIRCompareNumberNotEqual cmp => CanEmitTempStackOnly(methodBody, cmp.Left, definedInSequence) && CanEmitTempStackOnly(methodBody, cmp.Right, definedInSequence),
+            LIRCompareBooleanEqual cmp => CanEmitTempStackOnly(methodBody, cmp.Left, definedInSequence) && CanEmitTempStackOnly(methodBody, cmp.Right, definedInSequence),
+            LIRCompareBooleanNotEqual cmp => CanEmitTempStackOnly(methodBody, cmp.Left, definedInSequence) && CanEmitTempStackOnly(methodBody, cmp.Right, definedInSequence),
             // Array ops that are part of this sequence are fine
             LIRGetIntrinsicGlobal g when definedInSequence.Contains(g.Result) => true,
             LIRNewObjectArray a when definedInSequence.Contains(a.Result) => true,
@@ -741,6 +750,100 @@ internal sealed class JsMethodCompiler
                 ilEncoder.OpCode(ILOpCode.Conv_r8);
                 EmitStoreTemp(((LIRBitwiseNotNumber)instruction).Result, ilEncoder, allocation, methodBody);
                 break;
+            // Comparison operators for numbers
+            case LIRCompareNumberLessThan cmpLt:
+                if (!IsMaterialized(cmpLt.Result, allocation, methodBody))
+                {
+                    break;
+                }
+                EmitLoadTemp(cmpLt.Left, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(cmpLt.Right, ilEncoder, allocation, methodBody);
+                ilEncoder.OpCode(ILOpCode.Clt);
+                EmitStoreTemp(cmpLt.Result, ilEncoder, allocation, methodBody);
+                break;
+            case LIRCompareNumberGreaterThan cmpGt:
+                if (!IsMaterialized(cmpGt.Result, allocation, methodBody))
+                {
+                    break;
+                }
+                EmitLoadTemp(cmpGt.Left, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(cmpGt.Right, ilEncoder, allocation, methodBody);
+                ilEncoder.OpCode(ILOpCode.Cgt);
+                EmitStoreTemp(cmpGt.Result, ilEncoder, allocation, methodBody);
+                break;
+            case LIRCompareNumberLessThanOrEqual cmpLe:
+                if (!IsMaterialized(cmpLe.Result, allocation, methodBody))
+                {
+                    break;
+                }
+                // <= is !(a > b) => (a > b) == 0
+                EmitLoadTemp(cmpLe.Left, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(cmpLe.Right, ilEncoder, allocation, methodBody);
+                ilEncoder.OpCode(ILOpCode.Cgt);
+                ilEncoder.OpCode(ILOpCode.Ldc_i4_0);
+                ilEncoder.OpCode(ILOpCode.Ceq);
+                EmitStoreTemp(cmpLe.Result, ilEncoder, allocation, methodBody);
+                break;
+            case LIRCompareNumberGreaterThanOrEqual cmpGe:
+                if (!IsMaterialized(cmpGe.Result, allocation, methodBody))
+                {
+                    break;
+                }
+                // >= is !(a < b) => (a < b) == 0
+                EmitLoadTemp(cmpGe.Left, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(cmpGe.Right, ilEncoder, allocation, methodBody);
+                ilEncoder.OpCode(ILOpCode.Clt);
+                ilEncoder.OpCode(ILOpCode.Ldc_i4_0);
+                ilEncoder.OpCode(ILOpCode.Ceq);
+                EmitStoreTemp(cmpGe.Result, ilEncoder, allocation, methodBody);
+                break;
+            case LIRCompareNumberEqual cmpEq:
+                if (!IsMaterialized(cmpEq.Result, allocation, methodBody))
+                {
+                    break;
+                }
+                EmitLoadTemp(cmpEq.Left, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(cmpEq.Right, ilEncoder, allocation, methodBody);
+                ilEncoder.OpCode(ILOpCode.Ceq);
+                EmitStoreTemp(cmpEq.Result, ilEncoder, allocation, methodBody);
+                break;
+            case LIRCompareNumberNotEqual cmpNe:
+                if (!IsMaterialized(cmpNe.Result, allocation, methodBody))
+                {
+                    break;
+                }
+                // != is !(a == b) => (a == b) == 0
+                EmitLoadTemp(cmpNe.Left, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(cmpNe.Right, ilEncoder, allocation, methodBody);
+                ilEncoder.OpCode(ILOpCode.Ceq);
+                ilEncoder.OpCode(ILOpCode.Ldc_i4_0);
+                ilEncoder.OpCode(ILOpCode.Ceq);
+                EmitStoreTemp(cmpNe.Result, ilEncoder, allocation, methodBody);
+                break;
+            // Comparison operators for booleans
+            case LIRCompareBooleanEqual cmpBoolEq:
+                if (!IsMaterialized(cmpBoolEq.Result, allocation, methodBody))
+                {
+                    break;
+                }
+                EmitLoadTemp(cmpBoolEq.Left, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(cmpBoolEq.Right, ilEncoder, allocation, methodBody);
+                ilEncoder.OpCode(ILOpCode.Ceq);
+                EmitStoreTemp(cmpBoolEq.Result, ilEncoder, allocation, methodBody);
+                break;
+            case LIRCompareBooleanNotEqual cmpBoolNe:
+                if (!IsMaterialized(cmpBoolNe.Result, allocation, methodBody))
+                {
+                    break;
+                }
+                // != is !(a == b) => (a == b) == 0
+                EmitLoadTemp(cmpBoolNe.Left, ilEncoder, allocation, methodBody);
+                EmitLoadTemp(cmpBoolNe.Right, ilEncoder, allocation, methodBody);
+                ilEncoder.OpCode(ILOpCode.Ceq);
+                ilEncoder.OpCode(ILOpCode.Ldc_i4_0);
+                ilEncoder.OpCode(ILOpCode.Ceq);
+                EmitStoreTemp(cmpBoolNe.Result, ilEncoder, allocation, methodBody);
+                break;
             case LIRNewObjectArray newObjectArray:
                 if (!IsMaterialized(newObjectArray.Result, allocation, methodBody))
                 {
@@ -790,9 +893,34 @@ internal sealed class JsMethodCompiler
         // Variable locals first
         for (int i = 0; i < varCount; i++)
         {
-            // Current IR pipeline only uses numeric locals for ++/-- tests.
-            // Default to float64 for variable slots.
-            localEncoder.AddVariable().Type().Double();
+            var typeEncoder = localEncoder.AddVariable().Type();
+            
+            // Use tracked storage type if available, otherwise default to double
+            if (i < methodBody.VariableStorages.Count)
+            {
+                var storage = methodBody.VariableStorages[i];
+                if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(bool))
+                {
+                    typeEncoder.Boolean();
+                }
+                else if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
+                {
+                    typeEncoder.Double();
+                }
+                else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType == typeof(string))
+                {
+                    typeEncoder.String();
+                }
+                else
+                {
+                    typeEncoder.Object();
+                }
+            }
+            else
+            {
+                // Default to double for backwards compatibility
+                typeEncoder.Double();
+            }
         }
 
         // Then temp locals
@@ -840,10 +968,44 @@ internal sealed class JsMethodCompiler
         return signature;
     }
 
-    private static void EmitLoadTemp(TempVariable temp, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodBodyIR methodBody)
+    private void EmitLoadTemp(TempVariable temp, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodBodyIR methodBody)
     {
-        var slot = GetSlotForTemp(temp, allocation, methodBody);
-        ilEncoder.LoadLocal(slot);
+        // Check if materialized - if so, load from local
+        if (IsMaterialized(temp, allocation, methodBody))
+        {
+            var slot = GetSlotForTemp(temp, allocation, methodBody);
+            ilEncoder.LoadLocal(slot);
+            return;
+        }
+
+        // Not materialized - try to emit inline
+        var def = TryFindDefInstruction(methodBody, temp);
+        if (def == null)
+        {
+            throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - no definition found");
+        }
+
+        // Emit the constant/expression inline
+        switch (def)
+        {
+            case LIRConstNumber constNum:
+                ilEncoder.LoadConstantR8(constNum.Value);
+                break;
+            case LIRConstString constStr:
+                ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString(constStr.Value));
+                break;
+            case LIRConstBoolean constBool:
+                ilEncoder.LoadConstantI4(constBool.Value ? 1 : 0);
+                break;
+            case LIRConstUndefined:
+                ilEncoder.OpCode(ILOpCode.Ldnull);
+                break;
+            case LIRConstNull:
+                ilEncoder.LoadConstantI4((int)JavaScriptRuntime.JsNull.Null);
+                break;
+            default:
+                throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - unsupported instruction {def.GetType().Name}");
+        }
     }
 
     private static bool IsMaterialized(TempVariable temp, TempLocalAllocation allocation, MethodBodyIR methodBody)
@@ -1483,11 +1645,13 @@ internal sealed class JsMethodCompiler
                 }
 
                 // Allocate a slot for result if it will be used later.
+                // Skip allocation for constant temps that can be emitted inline.
                 if (TryGetDefinedTemp(instruction, out var defined) &&
                     defined.Index >= 0 &&
                     defined.Index < tempCount &&
                     lastUse[defined.Index] >= 0 &&
-                    (shouldMaterializeTemp is null || shouldMaterializeTemp[defined.Index]))
+                    (shouldMaterializeTemp is null || shouldMaterializeTemp[defined.Index]) &&
+                    !CanEmitInline(instruction))
                 {
                     var storage = GetTempStorage(methodBody, defined);
                     var key = new StorageKey(storage.Kind, storage.ClrType);
@@ -1508,6 +1672,15 @@ internal sealed class JsMethodCompiler
             }
 
             return new TempLocalAllocation(tempToSlot, slotStorages);
+        }
+
+        /// <summary>
+        /// Returns true if the instruction defines a constant that can be emitted inline
+        /// without needing a local variable slot.
+        /// </summary>
+        private static bool CanEmitInline(LIRInstruction instruction)
+        {
+            return instruction is LIRConstNumber or LIRConstString or LIRConstBoolean or LIRConstUndefined or LIRConstNull;
         }
 
         private static ValueStorage GetTempStorage(MethodBodyIR methodBody, TempVariable temp)
@@ -1550,6 +1723,38 @@ internal sealed class JsMethodCompiler
                     break;
                 case LIRBitwiseNotNumber not:
                     yield return not.Value;
+                    break;
+                case LIRCompareNumberLessThan cmp:
+                    yield return cmp.Left;
+                    yield return cmp.Right;
+                    break;
+                case LIRCompareNumberGreaterThan cmp:
+                    yield return cmp.Left;
+                    yield return cmp.Right;
+                    break;
+                case LIRCompareNumberLessThanOrEqual cmp:
+                    yield return cmp.Left;
+                    yield return cmp.Right;
+                    break;
+                case LIRCompareNumberGreaterThanOrEqual cmp:
+                    yield return cmp.Left;
+                    yield return cmp.Right;
+                    break;
+                case LIRCompareNumberEqual cmp:
+                    yield return cmp.Left;
+                    yield return cmp.Right;
+                    break;
+                case LIRCompareNumberNotEqual cmp:
+                    yield return cmp.Left;
+                    yield return cmp.Right;
+                    break;
+                case LIRCompareBooleanEqual cmp:
+                    yield return cmp.Left;
+                    yield return cmp.Right;
+                    break;
+                case LIRCompareBooleanNotEqual cmp:
+                    yield return cmp.Left;
+                    yield return cmp.Right;
                     break;
                 case LIRStoreElementRef store:
                     yield return store.Array;
@@ -1606,6 +1811,30 @@ internal sealed class JsMethodCompiler
                     return true;
                 case LIRBitwiseNotNumber not:
                     defined = not.Result;
+                    return true;
+                case LIRCompareNumberLessThan cmp:
+                    defined = cmp.Result;
+                    return true;
+                case LIRCompareNumberGreaterThan cmp:
+                    defined = cmp.Result;
+                    return true;
+                case LIRCompareNumberLessThanOrEqual cmp:
+                    defined = cmp.Result;
+                    return true;
+                case LIRCompareNumberGreaterThanOrEqual cmp:
+                    defined = cmp.Result;
+                    return true;
+                case LIRCompareNumberEqual cmp:
+                    defined = cmp.Result;
+                    return true;
+                case LIRCompareNumberNotEqual cmp:
+                    defined = cmp.Result;
+                    return true;
+                case LIRCompareBooleanEqual cmp:
+                    defined = cmp.Result;
+                    return true;
+                case LIRCompareBooleanNotEqual cmp:
+                    defined = cmp.Result;
                     return true;
                 default:
                     defined = default;

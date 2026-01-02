@@ -5,6 +5,20 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 ### Added
+- **IR pipeline comparison operators**: Full support for comparison operators in the new AST→HIR→LIR→IL pipeline:
+  - New LIR instructions: `LIRCompareNumberLessThan`, `LIRCompareNumberGreaterThan`, `LIRCompareNumberLessThanOrEqual`, `LIRCompareNumberGreaterThanOrEqual`, `LIRCompareNumberEqual`, `LIRCompareNumberNotEqual`, `LIRCompareBooleanEqual`, `LIRCompareBooleanNotEqual`
+  - HIR→LIR lowering for `==`, `===`, `!=`, `!==`, `<`, `>`, `<=`, `>=` operators
+  - Proper IL emission using `ceq`, `clt`, `cgt` instructions
+
+- **Variable storage type tracking**: Added `VariableStorages` list to `MethodBodyIR` for tracking CLR types of JavaScript variables:
+  - Variables now get properly typed IL locals (bool, double, string, object) instead of defaulting to double
+  - Comparison results stored in bool-typed locals for correct semantics
+
+- **Constant inline emission optimization**: Constants can now be emitted directly on the stack without local allocation:
+  - `CanEmitInline` check in `TempLocalAllocator` skips slot allocation for `LIRConstNumber`, `LIRConstString`, `LIRConstBoolean`, `LIRConstUndefined`, `LIRConstNull`
+  - `EmitLoadTemp` emits unmaterialized constants inline
+  - Result: `var x = 1 == 2` generates 2 bool locals instead of 4 (2 bool + 2 float64)
+
 - **Pure SSA LIR IR pipeline (experimental)**: New Low-level Intermediate Representation with pure SSA semantics for IL code generation:
   - All operations use `TempVariable` (SSA temps), eliminating mutable local variable concepts at the LIR level
   - `TempLocalAllocator` performs linear-scan register allocation mapping temps to IL locals

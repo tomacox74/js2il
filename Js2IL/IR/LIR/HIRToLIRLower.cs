@@ -72,7 +72,9 @@ public sealed class HIRToLIRLowerer
                     _variableMap[exprStmt.Name.Name] = value;
 
                     // Assign the declared variable a stable local slot and map this SSA temp to it.
-                    var slot = GetOrCreateVariableSlot(exprStmt.Name.Name);
+                    // Track the storage type for the variable slot.
+                    var storage = GetTempStorage(value);
+                    var slot = GetOrCreateVariableSlot(exprStmt.Name.Name, storage);
                     SetTempVariableSlot(value, slot);
                     return true;
                 }
@@ -166,34 +168,7 @@ public sealed class HIRToLIRLowerer
                 }
 
             case HIRBinaryExpression binaryExpr:
-                if (binaryExpr.Operator != Acornima.Operator.Addition)
-                {
-                    // Unsupported binary operator
-                    return false;
-                }
-
-                resultTempVar = CreateTempVariable();
-
-                if (!TryLowerExpression(binaryExpr.Left, out var leftTempVar))
-                {
-                    return false;
-                }
-
-                if (!TryLowerExpression(binaryExpr.Right, out var rightTempVar))
-                {
-                    return false;
-                }
-
-                if (GetTempStorage(leftTempVar).ClrType != typeof(double) ||
-                    GetTempStorage(rightTempVar).ClrType != typeof(double))
-                {
-                    // For now, only support number addition
-                    return false;
-                }
-
-                _methodBodyIR.Instructions.Add(new LIRAddNumber(leftTempVar, rightTempVar, resultTempVar));
-                this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                return true;
+                return TryLowerBinaryExpression(binaryExpr, out resultTempVar);
 
             case HIRCallExpression callExpr:
                 return TryLowerCallExpression(callExpr, out resultTempVar);
@@ -318,6 +293,114 @@ public sealed class HIRToLIRLowerer
         return false;
     }
 
+    private bool TryLowerBinaryExpression(HIRBinaryExpression binaryExpr, out TempVariable resultTempVar)
+    {
+        resultTempVar = CreateTempVariable();
+
+        if (!TryLowerExpression(binaryExpr.Left, out var leftTempVar))
+        {
+            return false;
+        }
+
+        if (!TryLowerExpression(binaryExpr.Right, out var rightTempVar))
+        {
+            return false;
+        }
+
+        var leftType = GetTempStorage(leftTempVar).ClrType;
+        var rightType = GetTempStorage(rightTempVar).ClrType;
+
+        // Handle addition (currently only supports number + number)
+        if (binaryExpr.Operator == Acornima.Operator.Addition)
+        {
+            if (leftType != typeof(double) || rightType != typeof(double))
+            {
+                return false;
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRAddNumber(leftTempVar, rightTempVar, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            return true;
+        }
+
+        // Handle comparison operators
+        switch (binaryExpr.Operator)
+        {
+            case Acornima.Operator.LessThan:
+                if (leftType != typeof(double) || rightType != typeof(double))
+                {
+                    return false;
+                }
+                _methodBodyIR.Instructions.Add(new LIRCompareNumberLessThan(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                return true;
+
+            case Acornima.Operator.GreaterThan:
+                if (leftType != typeof(double) || rightType != typeof(double))
+                {
+                    return false;
+                }
+                _methodBodyIR.Instructions.Add(new LIRCompareNumberGreaterThan(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                return true;
+
+            case Acornima.Operator.LessThanOrEqual:
+                if (leftType != typeof(double) || rightType != typeof(double))
+                {
+                    return false;
+                }
+                _methodBodyIR.Instructions.Add(new LIRCompareNumberLessThanOrEqual(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                return true;
+
+            case Acornima.Operator.GreaterThanOrEqual:
+                if (leftType != typeof(double) || rightType != typeof(double))
+                {
+                    return false;
+                }
+                _methodBodyIR.Instructions.Add(new LIRCompareNumberGreaterThanOrEqual(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                return true;
+
+            case Acornima.Operator.Equality:
+            case Acornima.Operator.StrictEquality:
+                // Support both number and boolean equality
+                if (leftType == typeof(double) && rightType == typeof(double))
+                {
+                    _methodBodyIR.Instructions.Add(new LIRCompareNumberEqual(leftTempVar, rightTempVar, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
+                else if (leftType == typeof(bool) && rightType == typeof(bool))
+                {
+                    _methodBodyIR.Instructions.Add(new LIRCompareBooleanEqual(leftTempVar, rightTempVar, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
+                return false;
+
+            case Acornima.Operator.Inequality:
+            case Acornima.Operator.StrictInequality:
+                // Support both number and boolean inequality
+                if (leftType == typeof(double) && rightType == typeof(double))
+                {
+                    _methodBodyIR.Instructions.Add(new LIRCompareNumberNotEqual(leftTempVar, rightTempVar, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
+                else if (leftType == typeof(bool) && rightType == typeof(bool))
+                {
+                    _methodBodyIR.Instructions.Add(new LIRCompareBooleanNotEqual(leftTempVar, rightTempVar, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
+                return false;
+
+            default:
+                return false;
+        }
+    }
+
     private bool TryLowerUpdateExpression(HIRUpdateExpression updateExpr, out TempVariable resultTempVar)
     {
         resultTempVar = default;
@@ -338,13 +421,13 @@ public sealed class HIRToLIRLowerer
             return false;
         }
 
-        var slot = GetOrCreateVariableSlot(updateVarExpr.Name.Name);
-
         // Only support numeric locals (double) for now
         if (GetTempStorage(currentValue).ClrType != typeof(double))
         {
             return false;
         }
+
+        var slot = GetOrCreateVariableSlot(updateVarExpr.Name.Name, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
 
         var isIncrement = updateExpr.Operator == Acornima.Operator.Increment;
 
@@ -407,7 +490,7 @@ public sealed class HIRToLIRLowerer
         return tempVar;
     }
 
-    private int GetOrCreateVariableSlot(string name)
+    private int GetOrCreateVariableSlot(string name, ValueStorage storage)
     {
         if (_variableSlots.TryGetValue(name, out var slot))
         {
@@ -417,6 +500,7 @@ public sealed class HIRToLIRLowerer
         slot = _methodBodyIR.VariableNames.Count;
         _variableSlots[name] = slot;
         _methodBodyIR.VariableNames.Add(name);
+        _methodBodyIR.VariableStorages.Add(storage);
         return slot;
     }
 

@@ -11,6 +11,11 @@ public sealed class MethodBodyIR
     public List<string> VariableNames { get; } = new();
 
     /// <summary>
+    /// Storage/type information for each variable slot (indexed by slot number).
+    /// </summary>
+    public List<ValueStorage> VariableStorages { get; } = new();
+
+    /// <summary>
     /// SSA value slots produced/consumed by LIR instructions.
     /// These are not source-level locals; they are value IDs.
     /// </summary>
