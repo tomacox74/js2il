@@ -72,7 +72,7 @@ namespace JavaScriptRuntime
             return GetTimers().setTimeout(callback, delay, args);
         }
 
-        public static object clearTimeout(object handle)
+        public static object? clearTimeout(object handle)
         {
             return GetTimers().clearTimeout(handle);
         }
@@ -87,12 +87,12 @@ namespace JavaScriptRuntime
             return GetTimers().setInterval(callback, delay, args);
         }
 
-        public static object clearImmediate(object handle)
+        public static object? clearImmediate(object handle)
         {
             return GetTimers().clearImmediate(handle);
         }
 
-        public static object clearInterval(object handle)
+        public static object? clearInterval(object handle)
         {
             return GetTimers().clearInterval(handle);
         }

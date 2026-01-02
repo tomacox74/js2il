@@ -42,7 +42,7 @@ internal class Timers
         return handle;
     }
 
-    public object clearTimeout(object handle)
+    public object? clearTimeout(object handle)
     {
         if (handle != null)
         {
@@ -81,7 +81,7 @@ internal class Timers
         return handle;
     }
 
-    public object clearInterval(object handle)
+    public object? clearInterval(object handle)
     {
         if (handle != null)
         {
@@ -114,7 +114,7 @@ internal class Timers
         return handle;
     }
 
-    public object clearImmediate(object handle)
+    public object? clearImmediate(object handle)
     {
         if (handle != null)
         {

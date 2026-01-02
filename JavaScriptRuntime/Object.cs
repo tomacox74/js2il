@@ -181,7 +181,7 @@ namespace JavaScriptRuntime
                 {
                     return null!; // undefined
                 }
-                return array[intIndex];
+                return array[intIndex]!;
             }
             else if (obj is Int32Array i32)
             {
