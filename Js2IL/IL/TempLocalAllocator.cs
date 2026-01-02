@@ -201,6 +201,10 @@ internal static class TempLocalAllocator
                 yield return mul.Left;
                 yield return mul.Right;
                 break;
+            case LIRMulDynamic mulDyn:
+                yield return mulDyn.Left;
+                yield return mulDyn.Right;
+                break;
             case LIRBeginInitArrayElement begin:
                 yield return begin.Array;
                 break;
@@ -325,6 +329,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRMulNumber mul:
                 defined = mul.Result;
+                return true;
+            case LIRMulDynamic mulDyn:
+                defined = mulDyn.Result;
                 return true;
             case LIRCallIntrinsic call:
                 defined = call.Result;

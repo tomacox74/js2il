@@ -295,6 +295,12 @@ internal sealed class LIRToILCompiler
                 ilEncoder.OpCode(ILOpCode.Mul);
                 EmitStoreTemp(mulNumber.Result, ilEncoder, allocation);
                 break;
+            case LIRMulDynamic mulDynamic:
+                EmitLoadTemp(mulDynamic.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(mulDynamic.Right, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsMultiply(ilEncoder);
+                EmitStoreTemp(mulDynamic.Result, ilEncoder, allocation);
+                break;
             case LIRBeginInitArrayElement:
                 // Pure SSA LIR lowering does not rely on stack tricks; this is a no-op hint.
                 break;
@@ -899,6 +905,13 @@ internal sealed class LIRToILCompiler
     private void EmitOperatorsAdd(InstructionEncoder ilEncoder)
     {
         var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "Add");
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+    }
+
+    private void EmitOperatorsMultiply(InstructionEncoder ilEncoder)
+    {
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "Multiply");
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
     }

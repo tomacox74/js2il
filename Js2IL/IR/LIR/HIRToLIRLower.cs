@@ -627,13 +627,19 @@ public sealed class HIRToLIRLowerer
         // Handle multiplication
         if (binaryExpr.Operator == Acornima.Operator.Multiplication)
         {
-            if (leftType != typeof(double) || rightType != typeof(double))
+            // Number * Number
+            if (leftType == typeof(double) && rightType == typeof(double))
             {
-                return false;
+                _methodBodyIR.Instructions.Add(new LIRMulNumber(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
             }
 
-            _methodBodyIR.Instructions.Add(new LIRMulNumber(leftTempVar, rightTempVar, resultTempVar));
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            // Dynamic multiplication (unknown types) - box operands and call Operators.Multiply
+            var leftBoxed = EnsureObject(leftTempVar);
+            var rightBoxed = EnsureObject(rightTempVar);
+            _methodBodyIR.Instructions.Add(new LIRMulDynamic(leftBoxed, rightBoxed, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
             return true;
         }
 

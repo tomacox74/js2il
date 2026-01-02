@@ -38,6 +38,11 @@ public record LIRSubNumber(TempVariable Left, TempVariable Right, TempVariable R
 
 public record LIRMulNumber(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
 
+/// <summary>
+/// Dynamic multiplication using Operators.Multiply runtime helper. Used when operand types are unknown.
+/// </summary>
+public record LIRMulDynamic(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
+
 public record LIRConstUndefined(TempVariable Result) : LIRInstruction;
 
 public record LIRConstNull(TempVariable Result) : LIRInstruction;

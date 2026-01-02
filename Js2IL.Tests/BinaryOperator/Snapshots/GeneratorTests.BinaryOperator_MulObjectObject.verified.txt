@@ -61,16 +61,18 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 19 (0x13)
+		// Code size: 10 (0xa)
 		.maxstack 32
+		.locals init (
+			[0] object
+		)
 
 		IL_0000: ldarg.1
-		IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0006: ldarg.2
-		IL_0007: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000c: mul
-		IL_000d: box [System.Runtime]System.Double
-		IL_0012: ret
+		IL_0001: ldarg.2
+		IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
+		IL_0007: stloc.0
+		IL_0008: ldloc.0
+		IL_0009: ret
 	} // end of method BinaryOperator_MulObjectObject::'mul'
 
 } // end of class Functions.BinaryOperator_MulObjectObject
@@ -88,7 +90,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2084
+		// Method begins at RVA 0x207c
 		// Header size: 12
 		// Code size: 167 (0xa7)
 		.maxstack 32
@@ -171,7 +173,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2137
+		// Method begins at RVA 0x212f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
