@@ -134,7 +134,7 @@ namespace Js2IL.Services.ILGenerators
             var blockStatement = (BlockStatement)functionDeclaration.Body;
 
             var methodCompiler = _serviceProvider.GetRequiredService<JsMethodCompiler>();
-            var compiledMethod = methodCompiler.TryCompileMethod(typeBuilder, functionName, blockStatement, functionScope, _methodBodyStreamEncoder);
+            var compiledMethod = methodCompiler.TryCompileMethod(typeBuilder, functionName, functionDeclaration, functionScope, _methodBodyStreamEncoder);
             IR.IRPipelineMetrics.RecordFunctionAttempt(!compiledMethod.IsNil);
             if (!compiledMethod.IsNil)
             {

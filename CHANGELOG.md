@@ -4,7 +4,24 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+### Added
+- **IR pipeline function parameter support**: Functions with simple identifier parameters can now be compiled via the IR pipeline:
+  - New `LIRLoadParameter` instruction for loading function parameters by index
+  - New `LIRCallFunction` instruction for calling user-defined functions with arguments
+  - `MethodDescriptor.HasScopesParameter` flag distinguishes Main (no scopes) from user functions (scopes as arg0)
+  - Parameter index mapping: JS param 0 → IL arg 1 for user functions, IL arg 0 for Main
+  - `AllParamsAreSimpleIdentifiers` check gates IR compilation for functions with complex parameters
+
+### Changed
+- **Console.log peephole optimization for parameters**: Extended stack-only emission to handle function parameters:
+  - Added `LIRLoadParameter` to `CanEmitTempStackOnly()` in `ConsoleLogPeepholeOptimizer`
+  - Parameters now emit inline as `ldarg.X` instead of requiring local storage
+  - Result: `printMessage(message) { console.log("Message:", message); }` emits 0 locals instead of 2
+
+### Fixed
+- **Main method parameter indexing**: Fixed `InvalidProgramException` for `__dirname`/`__filename` access in Main:
+  - Main has no scopes array parameter, so JS param 0 maps to IL arg 0 (not arg 1)
+  - `HasScopesParameter = false` for Main ensures correct `ldarg.X` indices
 
 ## v0.5.4 - 2026-01-02
 

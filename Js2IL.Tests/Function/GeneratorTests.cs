@@ -30,10 +30,10 @@ namespace Js2IL.Tests.Function
         public Task Function_GlobalFunctionWithArrayIteration() { var testName = nameof(Function_GlobalFunctionWithArrayIteration); return GenerateTest(testName); }
 
         [Fact]
-        public Task Function_GlobalFunctionWithMultipleParameters() { var testName = nameof(Function_GlobalFunctionWithMultipleParameters); return GenerateTest(testName); }
+        public Task Function_GlobalFunctionWithMultipleParameters() { var testName = nameof(Function_GlobalFunctionWithMultipleParameters); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task Function_GlobalFunctionWithParameter() { var testName = nameof(Function_GlobalFunctionWithParameter); return GenerateTest(testName); }
+        public Task Function_GlobalFunctionWithParameter() { var testName = nameof(Function_GlobalFunctionWithParameter); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
         public Task Function_HelloWorld()

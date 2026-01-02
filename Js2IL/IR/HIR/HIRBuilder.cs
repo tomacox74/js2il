@@ -43,9 +43,9 @@ public static class HIRBuilder
                 var methodBuilder = new HIRMethodBuilder(scope);
                 return methodBuilder.TryParseStatements(methodFuncExpr.Body.Body, out method);
             case Acornima.Ast.ArrowFunctionExpression arrowFunc:
-                // IR pipeline doesn't yet handle parameters or scope arrays
-                // Fall back to legacy emitter for arrow functions with parameters
-                if (arrowFunc.Params.Count > 0)
+                // IR pipeline supports simple identifier parameters only
+                // Fall back to legacy emitter for destructuring, defaults, rest patterns
+                if (!AllParamsAreSimpleIdentifiers(arrowFunc.Params))
                 {
                     method = null!;
                     return false;
@@ -61,8 +61,8 @@ public static class HIRBuilder
                 return arrowBuilder.TryParseStatements(arrowBlock.Body, out method);
             case Acornima.Ast.FunctionExpression funcExpr:
                 // FunctionExpression is used for class constructors and method values
-                // IR pipeline doesn't yet handle parameters
-                if (funcExpr.Params.Count > 0)
+                // IR pipeline supports simple identifier parameters only
+                if (!AllParamsAreSimpleIdentifiers(funcExpr.Params))
                 {
                     method = null!;
                     return false;
@@ -79,6 +79,14 @@ public static class HIRBuilder
                 method = null!;
                 return false;
         }
+    }
+
+    /// <summary>
+    /// Returns true if all parameters are simple identifiers (no destructuring, defaults, or rest patterns).
+    /// </summary>
+    private static bool AllParamsAreSimpleIdentifiers(in NodeList<Node> parameters)
+    {
+        return parameters.All(param => param is Acornima.Ast.Identifier);
     }
 }
 
