@@ -1,5 +1,6 @@
 using System.Reflection.Metadata.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
+using Js2IL.IL;
  
 namespace Js2IL;
  
@@ -37,7 +38,7 @@ public static class CompilerServices
         services.AddSingleton<ModuleLoader>();
         services.AddSingleton<Services.AssemblyGenerator>();
         services.AddSingleton<Services.BaseClassLibraryReferences>();
-        services.AddSingleton<Services.CompiledMethodCache>();
+        services.AddSingleton<CompiledMethodCache>();
 
         services.AddTransient<JsMethodCompiler>();
 

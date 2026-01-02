@@ -1,7 +1,7 @@
 using System.Reflection.Metadata;
 using Js2IL.SymbolTables;
 
-namespace Js2IL.Services;
+namespace Js2IL.IL;
 
 /// <summary>
 /// Cache of compiled method handles, used during IL emission phase (LIR → IL).
