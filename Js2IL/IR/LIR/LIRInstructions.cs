@@ -50,3 +50,15 @@ public record LIRTypeof(TempVariable Value, TempVariable Result) : LIRInstructio
 public record LIRNegateNumber(TempVariable Value, TempVariable Result) : LIRInstruction;
 
 public record LIRBitwiseNotNumber(TempVariable Value, TempVariable Result) : LIRInstruction;
+
+// Comparison operators for numeric values (result is bool)
+public record LIRCompareNumberLessThan(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
+public record LIRCompareNumberGreaterThan(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
+public record LIRCompareNumberLessThanOrEqual(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
+public record LIRCompareNumberGreaterThanOrEqual(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
+public record LIRCompareNumberEqual(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
+public record LIRCompareNumberNotEqual(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
+
+// Comparison operators for boolean values (result is bool)
+public record LIRCompareBooleanEqual(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
+public record LIRCompareBooleanNotEqual(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
