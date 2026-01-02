@@ -120,7 +120,10 @@ public sealed class HIRToLIRLowerer
             if (!TryLowerExpression(hirDefaultExpr, out var defaultValueTemp))
             {
                 // If we can't lower the default expression, roll back all instructions
-                // and signal that the entire method should fall back to legacy
+                // and signal that the entire method should fall back to legacy.
+                // Note: We only rollback instructions here, not temp variables or labels.
+                // This is acceptable because when we return false, the entire MethodBodyIR is discarded
+                // and the method falls back to legacy compilation - the orphaned temps/labels are never used.
                 while (_methodBodyIR.Instructions.Count > instructionCountBefore)
                 {
                     _methodBodyIR.Instructions.RemoveAt(_methodBodyIR.Instructions.Count - 1);
@@ -625,9 +628,12 @@ public sealed class HIRToLIRLowerer
         }
 
         // Handle multiplication
+        // LIRMulNumber emitted when both operands are known to be double (uses native IL mul instruction).
+        // LIRMulDynamic emitted otherwise (calls Operators.Multiply at runtime for type coercion).
+        // Type inference could be improved to track numeric types through more expressions to prefer LIRMulNumber.
         if (binaryExpr.Operator == Acornima.Operator.Multiplication)
         {
-            // Number * Number
+            // Number * Number - uses native IL mul instruction (optimal path)
             if (leftType == typeof(double) && rightType == typeof(double))
             {
                 _methodBodyIR.Instructions.Add(new LIRMulNumber(leftTempVar, rightTempVar, resultTempVar));
@@ -635,7 +641,8 @@ public sealed class HIRToLIRLowerer
                 return true;
             }
 
-            // Dynamic multiplication (unknown types) - box operands and call Operators.Multiply
+            // Dynamic multiplication - types unknown at compile time, box operands and call Operators.Multiply
+            // This has runtime overhead but handles mixed types correctly (e.g., string to number coercion)
             var leftBoxed = EnsureObject(leftTempVar);
             var rightBoxed = EnsureObject(rightTempVar);
             _methodBodyIR.Instructions.Add(new LIRMulDynamic(leftBoxed, rightBoxed, resultTempVar));
