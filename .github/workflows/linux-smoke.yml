@@ -133,12 +133,3 @@ jobs:
             fs.writeFileSync(historyPath, JSON.stringify(history, null, 2) + '\n');
             console.log('Updated performance-history.json with version', entry.version);
           "
-
-      - name: Commit Performance History
-        if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/performance-history.json
-          git diff --cached --quiet || git commit -m "docs: update performance history for v${TOOL_VERSION}"
-          git push
