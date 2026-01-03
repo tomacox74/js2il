@@ -26,6 +26,9 @@ internal sealed class LIRToILCompiler
     private MethodBodyIR? _methodBody;
     private bool _compiled;
 
+    // Temporary flag to disable console.log peephole optimization for testing
+    private const bool EnableConsoleLogPeephole = true;
+
     /// <summary>
     /// Gets the method body, throwing if not yet set.
     /// </summary>
@@ -151,7 +154,9 @@ internal sealed class LIRToILCompiler
 
         // Pre-pass: find console.log(oneArg) sequences that we will emit stack-only, and avoid
         // allocating IL locals for temps that are only used within those sequences.
-        var peepholeReplaced = _consoleLogOptimizer.ComputeStackOnlyMask(MethodBody);
+        var peepholeReplaced = EnableConsoleLogPeephole 
+            ? _consoleLogOptimizer.ComputeStackOnlyMask(MethodBody)
+            : new bool[MethodBody.Temps.Count];
 
         // Build map of temp → defining instruction for branch condition inlining
         var tempDefinitions = BranchConditionOptimizer.BuildTempDefinitionMap(MethodBody);
@@ -178,7 +183,7 @@ internal sealed class LIRToILCompiler
         for (int i = 0; i < MethodBody.Instructions.Count; i++)
         {
             // Peephole: console.log(<singleArg>) emitted stack-only
-            if (_consoleLogOptimizer.TryEmitPeephole(
+            if (EnableConsoleLogPeephole && _consoleLogOptimizer.TryEmitPeephole(
                 MethodBody, i, ilEncoder, allocation,
                 IsMaterialized,
                 EmitStoreTemp,
