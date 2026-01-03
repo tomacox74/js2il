@@ -150,7 +150,7 @@ internal sealed class LIRToILCompiler
         var ilEncoder = new InstructionEncoder(methodBlob, controlFlowBuilder);
 
         // Optimization pass: Reorder instructions to make more values stack-friendly
-        // DISABLED FOR NOW: This can interfere with variable semantics
+        // NOTE: Disabled - instruction reordering can interfere with variable semantics
         // Stackify.OptimizeInstructionOrder(MethodBody);
 
         // Pre-pass: find console.log(oneArg) sequences that we will emit stack-only, and avoid
@@ -164,9 +164,8 @@ internal sealed class LIRToILCompiler
         BranchConditionOptimizer.MarkBranchOnlyComparisonTemps(MethodBody, peepholeReplaced, tempDefinitions);
 
         // Stackify analysis: identify temps that can stay on the stack
-        // DISABLED FOR NOW: The marking logic needs more work
-        // var stackifyResult = Stackify.Analyze(MethodBody);
-        // MarkStackifiableTemps(stackifyResult, peepholeReplaced);
+        var stackifyResult = Stackify.Analyze(MethodBody);
+        MarkStackifiableTemps(stackifyResult, peepholeReplaced);
 
         var allocation = TempLocalAllocator.Allocate(MethodBody, peepholeReplaced);
 
