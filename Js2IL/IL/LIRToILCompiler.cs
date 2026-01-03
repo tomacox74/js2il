@@ -26,7 +26,10 @@ internal sealed class LIRToILCompiler
     private MethodBodyIR? _methodBody;
     private bool _compiled;
 
-    // Temporary flag to disable console.log peephole optimization for testing
+    // Flag to enable/disable console.log peephole optimization.
+    // TODO(#211): Remove this flag once Stackify can fully replace ConsoleLogPeepholeOptimizer.
+    // Set to false to test Stackify in isolation (currently causes 152 test failures due to
+    // missing inline emission support for some instruction types).
     private const bool EnableConsoleLogPeephole = true;
 
     /// <summary>
@@ -165,8 +168,11 @@ internal sealed class LIRToILCompiler
         BranchConditionOptimizer.MarkBranchOnlyComparisonTemps(MethodBody, peepholeReplaced, tempDefinitions);
 
         // Stackify analysis: identify temps that can stay on the stack
-        var stackifyResult = Stackify.Analyze(MethodBody);
-        MarkStackifiableTemps(stackifyResult, peepholeReplaced);
+        // NOTE: Integration temporarily disabled. The current implementation can cause temps
+        // marked as stackable to have their defining instructions re-emitted multiple times
+        // during IL emission, duplicating computation. See #211 for the fix plan.
+        // var stackifyResult = Stackify.Analyze(MethodBody);
+        // MarkStackifiableTemps(stackifyResult, peepholeReplaced);
 
         var allocation = TempLocalAllocator.Allocate(MethodBody, peepholeReplaced);
 

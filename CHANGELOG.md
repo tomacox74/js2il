@@ -10,11 +10,8 @@ All notable changes to this project are documented here.
   - `StackifyResult.IsStackable()` provides O(1) lookup for temp stackability
   - Checks for control flow barriers (branches/labels) between definition and use
   - `CanEmitInline()` validates instruction types support inline emission
-  - Integrated into `LIRToILCompiler` pipeline via `MarkStackifiableTemps()`
-  - Reduces IL local count and eliminates redundant `stloc`/`ldloc` pairs
+  - Integration with `LIRToILCompiler` via `MarkStackifiableTemps()` (currently disabled, see #211)
 - **Console.log peephole flag**: Added `EnableConsoleLogPeephole` flag to `LIRToILCompiler` for testing Stackify in isolation
-
-### Added
 - **IR pipeline function parameter support**: Functions with simple identifier parameters can now be compiled via the IR pipeline:
   - New `LIRLoadParameter` instruction for loading function parameters by index
   - New `LIRCallFunction` instruction for calling user-defined functions with arguments
