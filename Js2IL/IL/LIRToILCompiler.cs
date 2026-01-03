@@ -149,10 +149,6 @@ internal sealed class LIRToILCompiler
         var controlFlowBuilder = new ControlFlowBuilder();
         var ilEncoder = new InstructionEncoder(methodBlob, controlFlowBuilder);
 
-        // Optimization pass: Reorder instructions to make more values stack-friendly
-        // NOTE: Disabled - instruction reordering can interfere with variable semantics
-        // Stackify.OptimizeInstructionOrder(MethodBody);
-
         // Pre-pass: find console.log(oneArg) sequences that we will emit stack-only, and avoid
         // allocating IL locals for temps that are only used within those sequences.
         var peepholeReplaced = _consoleLogOptimizer.ComputeStackOnlyMask(MethodBody);
