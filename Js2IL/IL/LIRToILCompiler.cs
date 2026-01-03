@@ -26,6 +26,12 @@ internal sealed class LIRToILCompiler
     private MethodBodyIR? _methodBody;
     private bool _compiled;
 
+    // Flag to enable/disable console.log peephole optimization.
+    // TODO(#211): Remove this flag once Stackify can fully replace ConsoleLogPeepholeOptimizer.
+    // Set to false to test Stackify in isolation (currently causes 152 test failures due to
+    // missing inline emission support for some instruction types).
+    private const bool EnableConsoleLogPeephole = true;
+
     /// <summary>
     /// Gets the method body, throwing if not yet set.
     /// </summary>
@@ -151,13 +157,22 @@ internal sealed class LIRToILCompiler
 
         // Pre-pass: find console.log(oneArg) sequences that we will emit stack-only, and avoid
         // allocating IL locals for temps that are only used within those sequences.
-        var peepholeReplaced = _consoleLogOptimizer.ComputeStackOnlyMask(MethodBody);
+        var peepholeReplaced = EnableConsoleLogPeephole 
+            ? _consoleLogOptimizer.ComputeStackOnlyMask(MethodBody)
+            : new bool[MethodBody.Temps.Count];
 
         // Build map of temp → defining instruction for branch condition inlining
         var tempDefinitions = BranchConditionOptimizer.BuildTempDefinitionMap(MethodBody);
 
         // Mark comparison temps only used by branches as non-materialized
         BranchConditionOptimizer.MarkBranchOnlyComparisonTemps(MethodBody, peepholeReplaced, tempDefinitions);
+
+        // Stackify analysis: identify temps that can stay on the stack
+        // NOTE: Integration temporarily disabled. The current implementation can cause temps
+        // marked as stackable to have their defining instructions re-emitted multiple times
+        // during IL emission, duplicating computation. See #211 for the fix plan.
+        // var stackifyResult = Stackify.Analyze(MethodBody);
+        // MarkStackifiableTemps(stackifyResult, peepholeReplaced);
 
         var allocation = TempLocalAllocator.Allocate(MethodBody, peepholeReplaced);
 
@@ -174,7 +189,7 @@ internal sealed class LIRToILCompiler
         for (int i = 0; i < MethodBody.Instructions.Count; i++)
         {
             // Peephole: console.log(<singleArg>) emitted stack-only
-            if (_consoleLogOptimizer.TryEmitPeephole(
+            if (EnableConsoleLogPeephole && _consoleLogOptimizer.TryEmitPeephole(
                 MethodBody, i, ilEncoder, allocation,
                 IsMaterialized,
                 EmitStoreTemp,
@@ -883,6 +898,27 @@ internal sealed class LIRToILCompiler
             return instr;
         }
         return null;
+    }
+
+    /// <summary>
+    /// Marks stackifiable temps as non-materialized in the peephole mask.
+    /// This prevents TempLocalAllocator from allocating IL local slots for temps that can stay on the stack.
+    /// </summary>
+    private void MarkStackifiableTemps(StackifyResult stackifyResult, bool[]? shouldMaterializeTemp)
+    {
+        if (shouldMaterializeTemp == null || stackifyResult.CanStackify.Length == 0)
+        {
+            return;
+        }
+
+        for (int i = 0; i < Math.Min(stackifyResult.CanStackify.Length, shouldMaterializeTemp.Length); i++)
+        {
+            if (stackifyResult.CanStackify[i])
+            {
+                // This temp can stay on the stack - mark it as not needing materialization
+                shouldMaterializeTemp[i] = false;
+            }
+        }
     }
 
     #endregion
