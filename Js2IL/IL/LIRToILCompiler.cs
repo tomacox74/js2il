@@ -168,11 +168,8 @@ internal sealed class LIRToILCompiler
         BranchConditionOptimizer.MarkBranchOnlyComparisonTemps(MethodBody, peepholeReplaced, tempDefinitions);
 
         // Stackify analysis: identify temps that can stay on the stack
-        // NOTE: Integration temporarily disabled. The current implementation can cause temps
-        // marked as stackable to have their defining instructions re-emitted multiple times
-        // during IL emission, duplicating computation. See #211 for the fix plan.
-        // var stackifyResult = Stackify.Analyze(MethodBody);
-        // MarkStackifiableTemps(stackifyResult, peepholeReplaced);
+        var stackifyResult = Stackify.Analyze(MethodBody);
+        MarkStackifiableTemps(stackifyResult, peepholeReplaced);
 
         var allocation = TempLocalAllocator.Allocate(MethodBody, peepholeReplaced);
 
