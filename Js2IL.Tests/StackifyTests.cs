@@ -150,6 +150,114 @@ public class StackifyTests
 
     #endregion
 
+    #region Bug Reproduction Tests
+
+    /// <summary>
+    /// Reproduces the bug found by the code reviewer where temps that are results of
+    /// binary operations (like LIRAddDynamic) were incorrectly marked as stackable.
+    /// 
+    /// When the IL emitter encounters a stackable temp, it re-emits the defining instruction
+    /// inline. For constants this is fine, but for operations like "Hello, " + name,
+    /// re-emitting causes duplicate computation.
+    /// 
+    /// Example JavaScript: return "Hello, " + name + "!";
+    /// LIR:
+    ///   t0 = "Hello, "
+    ///   t1 = ldarg name
+    ///   t2 = t0 + t1         // "Hello, " + name
+    ///   t3 = "!"
+    ///   t4 = t2 + t3         // ("Hello, " + name) + "!"
+    ///   return t4
+    /// 
+    /// Bug: t2 was marked stackable because LIRAddDynamic was in CanEmitInline.
+    /// This caused the IL emitter to re-emit "Hello, " + name multiple times.
+    /// </summary>
+    [Fact]
+    public void Analyze_BinaryOperationResult_NotStackable()
+    {
+        // Arrange - simulates: return "Hello, " + name + "!"
+        var methodBody = new MethodBodyIR();
+        var t0 = new TempVariable(0); // "Hello, "
+        var t1 = new TempVariable(1); // name (parameter)
+        var t2 = new TempVariable(2); // "Hello, " + name
+        var t3 = new TempVariable(3); // "!"
+        var t4 = new TempVariable(4); // ("Hello, " + name) + "!"
+
+        methodBody.Temps.Add(t0);
+        methodBody.Temps.Add(t1);
+        methodBody.Temps.Add(t2);
+        methodBody.Temps.Add(t3);
+        methodBody.Temps.Add(t4);
+
+        // t0 = "Hello, "
+        methodBody.Instructions.Add(new LIRConstString("Hello, ", t0));
+        // t1 = ldarg.1 (name parameter)
+        methodBody.Instructions.Add(new LIRLoadParameter(1, t1));
+        // t2 = t0 + t1 (dynamic add for string concatenation)
+        methodBody.Instructions.Add(new LIRAddDynamic(t0, t1, t2));
+        // t3 = "!"
+        methodBody.Instructions.Add(new LIRConstString("!", t3));
+        // t4 = t2 + t3
+        methodBody.Instructions.Add(new LIRAddDynamic(t2, t3, t4));
+        // return t4
+        methodBody.Instructions.Add(new LIRReturn(t4));
+
+        // Act
+        var result = Stackify.Analyze(methodBody);
+
+        // Assert
+        // t0 and t1 could be stackable (simple constants/parameters used once)
+        // But t2 (result of binary op) should NOT be stackable!
+        // If t2 is marked stackable, the IL emitter will re-emit the entire
+        // "Hello, " + name computation when loading t2 for the second add.
+        Assert.False(result.IsStackable(t2), 
+            "t2 (result of LIRAddDynamic) should NOT be stackable - " +
+            "re-emitting would cause duplicate computation of the binary operation");
+
+        // t4 is also a binary op result, but it's only used by return which consumes it immediately,
+        // so whether it's stackable or not doesn't cause duplicate computation.
+        // However, for consistency, binary op results should not be stackable.
+        Assert.False(result.IsStackable(t4),
+            "t4 (result of LIRAddDynamic) should NOT be stackable for consistency");
+    }
+
+    /// <summary>
+    /// Verifies that temps defined by multiplication operations are not stackable.
+    /// </summary>
+    [Fact]
+    public void Analyze_MultiplyOperationResult_NotStackable()
+    {
+        // Arrange - simulates: return (a * b) * c
+        var methodBody = new MethodBodyIR();
+        var t0 = new TempVariable(0); // a
+        var t1 = new TempVariable(1); // b
+        var t2 = new TempVariable(2); // a * b
+        var t3 = new TempVariable(3); // c
+        var t4 = new TempVariable(4); // (a * b) * c
+
+        methodBody.Temps.Add(t0);
+        methodBody.Temps.Add(t1);
+        methodBody.Temps.Add(t2);
+        methodBody.Temps.Add(t3);
+        methodBody.Temps.Add(t4);
+
+        methodBody.Instructions.Add(new LIRLoadParameter(1, t0));
+        methodBody.Instructions.Add(new LIRLoadParameter(2, t1));
+        methodBody.Instructions.Add(new LIRMulDynamic(t0, t1, t2));
+        methodBody.Instructions.Add(new LIRLoadParameter(3, t3));
+        methodBody.Instructions.Add(new LIRMulDynamic(t2, t3, t4));
+        methodBody.Instructions.Add(new LIRReturn(t4));
+
+        // Act
+        var result = Stackify.Analyze(methodBody);
+
+        // Assert
+        Assert.False(result.IsStackable(t2),
+            "t2 (result of LIRMulDynamic) should NOT be stackable");
+    }
+
+    #endregion
+
     #region IsStackable Tests
 
     [Fact]

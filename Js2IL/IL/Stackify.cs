@@ -228,22 +228,34 @@ internal static class Stackify
 
     /// <summary>
     /// Returns true if the instruction can be emitted inline without storing to a local.
-    /// This must match what LIRToILCompiler.EmitLoadTemp supports for inline emission.
+    /// 
+    /// IMPORTANT: This method determines which instructions can be safely re-emitted
+    /// when loading a stackable temp. Only instructions that are:
+    /// 1. Side-effect free (no state changes)
+    /// 2. Trivially cheap to re-execute (constants, parameter loads)
+    /// should return true.
+    /// 
+    /// Binary operations (LIRAddDynamic, LIRMulDynamic, etc.) must NOT be included here
+    /// because re-emitting them would cause duplicate computation of the entire operation.
     /// </summary>
     private static bool CanEmitInline(LIRInstruction instruction, MethodBodyIR methodBody, LIRInstruction?[] defInstruction)
     {
         switch (instruction)
         {
-            // Simple constants and parameter loads
+            // Simple constants - trivially cheap to re-emit
             case LIRConstNumber:
             case LIRConstString:
             case LIRConstBoolean:
             case LIRConstUndefined:
             case LIRConstNull:
+                return true;
+
+            // Parameter loads - just ldarg, trivially cheap
             case LIRLoadParameter:
                 return true;
 
             // LIRConvertToObject can be emitted inline if its source can be emitted inline
+            // (it's just a box operation on a trivial value)
             case LIRConvertToObject convertToObject:
                 var sourceIdx = convertToObject.Source.Index;
                 if (sourceIdx >= 0 && sourceIdx < defInstruction.Length && defInstruction[sourceIdx] != null)
@@ -252,10 +264,11 @@ internal static class Stackify
                 }
                 return false;
 
-            // Dynamic operations can be emitted inline if their operands can be
-            case LIRMulDynamic:
-            case LIRAddDynamic:
-                return true; // These are supported in EmitLoadTemp
+            // NOTE: LIRAddDynamic, LIRMulDynamic, and other binary operations are intentionally
+            // NOT included here. While the IL emitter can technically emit them inline, doing so
+            // would cause the entire computation to be duplicated each time the temp is loaded.
+            // This was the bug found by the code reviewer - expressions like "Hello, " + name + "!"
+            // were being computed multiple times.
 
             default:
                 return false;
