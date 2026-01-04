@@ -109,18 +109,12 @@ public class EnvironmentLayoutBuilder
         for (int i = 0; i < ancestorScopes.Count; i++)
         {
             var ancestorScope = ancestorScopes[i];
-            TypeDefinitionHandle typeHandle = default;
             
-            // Try to get the scope type handle from ScopeMetadataRegistry
-            try
-            {
-                typeHandle = _scopeMetadata.GetScopeTypeHandle(ancestorScope.Name);
-            }
-            catch (KeyNotFoundException)
-            {
-                // Scope type not yet registered (may happen during early phases)
-                // Leave as default handle - caller can handle this
-            }
+            // Try to get the scope type handle from ScopeMetadataRegistry without using exceptions for control flow
+            _scopeMetadata.TryGetScopeTypeHandle(ancestorScope.Name, out TypeDefinitionHandle typeHandle);
+            
+            // If the scope type is not yet registered (may happen during early phases),
+            // typeHandle will remain the default handle and the caller can handle this.
 
             slots.Add(new ScopeSlot(i, ancestorScope.Name, typeHandle));
         }
@@ -160,18 +154,9 @@ public class EnvironmentLayoutBuilder
                     var parentIndex = scopeChain.IndexOf(current.Name);
                     if (parentIndex >= 0)
                     {
-                        TypeDefinitionHandle scopeTypeHandle = default;
-                        FieldDefinitionHandle fieldHandle = default;
-
-                        try
-                        {
-                            scopeTypeHandle = _scopeMetadata.GetScopeTypeHandle(current.Name);
-                            fieldHandle = _scopeMetadata.GetFieldHandle(current.Name, name);
-                        }
-                        catch (KeyNotFoundException)
-                        {
-                            // Not yet registered - leave as default
-                        }
+                        // Try to resolve metadata; if not yet registered, handles remain default
+                        _scopeMetadata.TryGetScopeTypeHandle(current.Name, out TypeDefinitionHandle scopeTypeHandle);
+                        _scopeMetadata.TryGetFieldHandle(current.Name, name, out FieldDefinitionHandle fieldHandle);
 
                         storage[binding] = BindingStorage.ForParentScopeField(
                             fieldHandle,
@@ -200,48 +185,24 @@ public class EnvironmentLayoutBuilder
         // Check if it's a parameter (and not destructured)
         if (scope.Parameters.Contains(name) && !scope.DestructuredParameters.Contains(name))
         {
-            if (binding.IsCaptured)
-            {
-                // Captured parameter - stored as a field on the leaf scope
-                return GetLeafScopeFieldStorage(scope, name);
-            }
-            else
-            {
-                // Non-captured parameter - use IL argument
-                var paramIndex = GetParameterIndex(scope, name);
-                return BindingStorage.ForArgument(paramIndex);
-            }
+            // Captured parameter - stored as a field on the leaf scope
+            // Non-captured parameter - use IL argument
+            var paramIndex = GetParameterIndex(scope, name);
+            return binding.IsCaptured
+                ? GetLeafScopeFieldStorage(scope, name)
+                : BindingStorage.ForArgument(paramIndex);
         }
 
         // Local variable or function declaration
-        if (binding.IsCaptured)
-        {
-            // Captured binding - stored as a field on the leaf scope
-            return GetLeafScopeFieldStorage(scope, name);
-        }
-        else
-        {
-            // Non-captured binding - can use IL local
-            // Note: the actual local index is assigned during IL emission
-            // We use -1 as a placeholder indicating "assign during emission"
-            return BindingStorage.ForLocal(-1);
-        }
+        return binding.IsCaptured
+            ? GetLeafScopeFieldStorage(scope, name)
+            : BindingStorage.ForLocal(-1);
     }
 
     private BindingStorage GetLeafScopeFieldStorage(Scope scope, string name)
     {
-        TypeDefinitionHandle scopeTypeHandle = default;
-        FieldDefinitionHandle fieldHandle = default;
-
-        try
-        {
-            scopeTypeHandle = _scopeMetadata.GetScopeTypeHandle(scope.Name);
-            fieldHandle = _scopeMetadata.GetFieldHandle(scope.Name, name);
-        }
-        catch (KeyNotFoundException)
-        {
-            // Not yet registered - leave as default
-        }
+        _scopeMetadata.TryGetScopeTypeHandle(scope.Name, out TypeDefinitionHandle scopeTypeHandle);
+        _scopeMetadata.TryGetFieldHandle(scope.Name, name, out FieldDefinitionHandle fieldHandle);
 
         return BindingStorage.ForLeafScopeField(fieldHandle, scopeTypeHandle);
     }
@@ -249,10 +210,8 @@ public class EnvironmentLayoutBuilder
     private int GetParameterIndex(Scope scope, string name)
     {
         int index = 0;
-        foreach (var param in scope.Parameters)
+        foreach (var param in scope.Parameters.Where(p => !scope.DestructuredParameters.Contains(p)))
         {
-            if (scope.DestructuredParameters.Contains(param))
-                continue; // Skip destructured params
             if (param == name)
                 return index;
             index++;

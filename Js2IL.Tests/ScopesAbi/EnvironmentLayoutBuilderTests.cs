@@ -461,10 +461,10 @@ public class EnvironmentLayoutBuilderTests
         var paramABinding = funcScope.Bindings["a"];
         var paramBBinding = funcScope.Bindings["b"];
 
-        Assert.True(layout.StorageByBinding.ContainsKey(paramABinding));
-        Assert.True(layout.StorageByBinding.ContainsKey(paramBBinding));
-        Assert.Equal(BindingStorageKind.IlArgument, layout.StorageByBinding[paramABinding].Kind);
-        Assert.Equal(BindingStorageKind.IlArgument, layout.StorageByBinding[paramBBinding].Kind);
+        Assert.True(layout.StorageByBinding.TryGetValue(paramABinding, out var storageA));
+        Assert.True(layout.StorageByBinding.TryGetValue(paramBBinding, out var storageB));
+        Assert.Equal(BindingStorageKind.IlArgument, storageA.Kind);
+        Assert.Equal(BindingStorageKind.IlArgument, storageB.Kind);
     }
 
     [Fact]
@@ -563,13 +563,13 @@ public class EnvironmentLayoutBuilderTests
         var typeHandle = CreateTestTypeHandle();
         
         // Add a dummy variable to register the scope type
-        var fieldHandle = _metadataBuilder.AddFieldDefinition(
+        var dummyFieldHandle = _metadataBuilder.AddFieldDefinition(
             FieldAttributes.Public,
             _metadataBuilder.GetOrAddString("_dummy"),
             _metadataBuilder.GetOrAddBlob(new byte[] { 0x06, 0x0e }));
         
         _scopeMetadata.RegisterScopeType(scope.Name, typeHandle);
-        _scopeMetadata.RegisterField(scope.Name, "_dummy", fieldHandle);
+        _scopeMetadata.RegisterField(scope.Name, "_dummy", dummyFieldHandle);
 
         // Also register real bindings
         foreach (var (name, binding) in scope.Bindings)
