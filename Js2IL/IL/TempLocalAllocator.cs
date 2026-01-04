@@ -283,6 +283,16 @@ internal static class TempLocalAllocator
             case LIRLoadParameter:
                 // LIRLoadParameter doesn't consume any temps (it loads from IL argument)
                 break;
+            case LIRStoreLeafScopeField storeLeaf:
+                yield return storeLeaf.Value;
+                break;
+            case LIRStoreParentScopeField storeParent:
+                yield return storeParent.Value;
+                break;
+            case LIRLoadLeafScopeField:
+            case LIRLoadParentScopeField:
+                // Load instructions don't consume temps (they load from scope fields)
+                break;
             // LIRLabel and LIRBranch don't use temps
         }
     }
@@ -380,6 +390,12 @@ internal static class TempLocalAllocator
                 return true;
             case LIRLoadParameter loadParam:
                 defined = loadParam.Result;
+                return true;
+            case LIRLoadLeafScopeField loadLeaf:
+                defined = loadLeaf.Result;
+                return true;
+            case LIRLoadParentScopeField loadParent:
+                defined = loadParent.Result;
                 return true;
             default:
                 defined = default;

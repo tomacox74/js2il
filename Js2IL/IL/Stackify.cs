@@ -303,6 +303,16 @@ internal static class Stackify
             case LIRCreateScopesArray:
                 return (0, 1);
 
+            // Scope field loads: produce 1 value (field is loaded from memory, not from stack temps)
+            case LIRLoadLeafScopeField:
+            case LIRLoadParentScopeField:
+                return (0, 1);
+
+            // Scope field stores: consume 1 value (the value being stored, not counting the scope instance/array which comes from local/arg)
+            case LIRStoreLeafScopeField:
+            case LIRStoreParentScopeField:
+                return (1, 0);
+
             // Binary ops: consume 2, produce 1
             case LIRAddNumber:
             case LIRAddDynamic:
