@@ -21,16 +21,9 @@ internal sealed class LIRToILCompiler
     private readonly TypeReferenceRegistry _typeReferenceRegistry;
     private readonly BaseClassLibraryReferences _bclReferences;
     private readonly MemberReferenceRegistry _memberRefRegistry;
-    private readonly ConsoleLogPeepholeOptimizer _consoleLogOptimizer;
     private readonly CompiledMethodCache _compiledMethodCache;
     private MethodBodyIR? _methodBody;
     private bool _compiled;
-
-    // Flag to enable/disable console.log peephole optimization.
-    // TODO(#211): Remove this flag once Stackify can fully replace ConsoleLogPeepholeOptimizer.
-    // Set to false to test Stackify in isolation (currently causes 152 test failures due to
-    // missing inline emission support for some instruction types).
-    private const bool EnableConsoleLogPeephole = false;
 
     /// <summary>
     /// Gets the method body, throwing if not yet set.
@@ -49,7 +42,6 @@ internal sealed class LIRToILCompiler
         _bclReferences = bclReferences;
         _memberRefRegistry = memberReferenceRegistry;
         _compiledMethodCache = compiledMethodCache;
-        _consoleLogOptimizer = new ConsoleLogPeepholeOptimizer(metadataBuilder, bclReferences, memberReferenceRegistry, typeReferenceRegistry);
     }
 
     #region Public API
@@ -155,41 +147,21 @@ internal sealed class LIRToILCompiler
         var controlFlowBuilder = new ControlFlowBuilder();
         var ilEncoder = new InstructionEncoder(methodBlob, controlFlowBuilder);
 
-        // Pre-pass: find console.log(oneArg) sequences that we will emit stack-only, and avoid
-        // allocating IL locals for temps that are only used within those sequences.
-        // The peephole returns an array where true = "used outside peephole, must materialize".
-        bool[] peepholeReplaced;
-        if (EnableConsoleLogPeephole)
-        {
-            var mask = _consoleLogOptimizer.ComputeStackOnlyMask(MethodBody);
-            if (mask != null)
-            {
-                peepholeReplaced = mask;
-            }
-            else
-            {
-                // No temps - nothing to do
-                peepholeReplaced = Array.Empty<bool>();
-            }
-        }
-        else
-        {
-            // When peephole is disabled, all temps should start as "needs materialization"
-            peepholeReplaced = new bool[MethodBody.Temps.Count];
-            Array.Fill(peepholeReplaced, true);
-        }
+        // All temps start as "needs materialization". Stackify will mark which ones can stay on stack.
+        var shouldMaterialize = new bool[MethodBody.Temps.Count];
+        Array.Fill(shouldMaterialize, true);
 
         // Build map of temp → defining instruction for branch condition inlining
         var tempDefinitions = BranchConditionOptimizer.BuildTempDefinitionMap(MethodBody);
 
         // Mark comparison temps only used by branches as non-materialized
-        BranchConditionOptimizer.MarkBranchOnlyComparisonTemps(MethodBody, peepholeReplaced, tempDefinitions);
+        BranchConditionOptimizer.MarkBranchOnlyComparisonTemps(MethodBody, shouldMaterialize, tempDefinitions);
 
         // Stackify analysis: identify temps that can stay on the stack
         var stackifyResult = Stackify.Analyze(MethodBody);
-        MarkStackifiableTemps(stackifyResult, peepholeReplaced);
+        MarkStackifiableTemps(stackifyResult, shouldMaterialize);
 
-        var allocation = TempLocalAllocator.Allocate(MethodBody, peepholeReplaced);
+        var allocation = TempLocalAllocator.Allocate(MethodBody, shouldMaterialize);
 
         // Pre-create IL labels for all LIR labels
         var labelMap = new Dictionary<int, LabelHandle>();
@@ -203,19 +175,6 @@ internal sealed class LIRToILCompiler
         bool hasExplicitReturn = false;
         for (int i = 0; i < MethodBody.Instructions.Count; i++)
         {
-            // Peephole: console.log(<singleArg>) emitted stack-only
-            if (EnableConsoleLogPeephole && _consoleLogOptimizer.TryEmitPeephole(
-                MethodBody, i, ilEncoder, allocation,
-                IsMaterialized,
-                EmitStoreTemp,
-                methodDescriptor.HasScopesParameter,
-                !methodDescriptor.IsStatic,
-                out var consumed))
-            {
-                i += consumed - 1;
-                continue;
-            }
-
             var instruction = MethodBody.Instructions[i];
 
             // Handle control flow instructions directly
