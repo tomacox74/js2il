@@ -26,6 +26,9 @@ internal readonly record struct StackifyResult(bool[] CanStackify)
 /// 4. The temp is consumed in the correct stack order (LIFO)
 /// 5. The defining instruction can be emitted inline (i.e., CanEmitInline returns true)
 /// </summary>
+/// <remarks>
+/// For a detailed explanation (with examples), see docs/Stackify.md.
+/// </remarks>
 internal static class Stackify
 {
     /// <summary>
