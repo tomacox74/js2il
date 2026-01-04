@@ -637,6 +637,61 @@ internal sealed class LIRToILCompiler
                     }
                     break;
                 }
+            case LIRLoadLeafScopeField loadLeafField:
+                {
+                    if (!IsMaterialized(loadLeafField.Result, allocation))
+                    {
+                        break;
+                    }
+                    
+                    // Emit: ldloc.0 (scope instance), ldfld (field handle)
+                    ilEncoder.LoadLocal(0); // Scope instance is always in local 0
+                    ilEncoder.OpCode(ILOpCode.Ldfld);
+                    ilEncoder.Token(loadLeafField.FieldHandle);
+                    EmitStoreTemp(loadLeafField.Result, ilEncoder, allocation);
+                    break;
+                }
+            case LIRStoreLeafScopeField storeLeafField:
+                {
+                    // Emit: ldloc.0 (scope instance), ldarg/ldloc Value, stfld (field handle)
+                    ilEncoder.LoadLocal(0); // Scope instance is always in local 0
+                    EmitLoadTemp(storeLeafField.Value, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Stfld);
+                    ilEncoder.Token(storeLeafField.FieldHandle);
+                    break;
+                }
+            case LIRLoadParentScopeField loadParentField:
+                {
+                    if (!IsMaterialized(loadParentField.Result, allocation))
+                    {
+                        break;
+                    }
+                    
+                    // Emit: ldarg scopes, ldc.i4 index, ldelem.ref, castclass (scope type), ldfld (field handle)
+                    // Scopes array is arg 0 for static functions with captured variables
+                    ilEncoder.LoadArgument(0);  // TODO: This assumes scopes is always arg 0 - needs refinement
+                    ilEncoder.LoadConstantI4(loadParentField.ParentScopeIndex);
+                    ilEncoder.OpCode(ILOpCode.Ldelem_ref);
+                    ilEncoder.OpCode(ILOpCode.Castclass);
+                    ilEncoder.Token(loadParentField.ScopeType);
+                    ilEncoder.OpCode(ILOpCode.Ldfld);
+                    ilEncoder.Token(loadParentField.FieldHandle);
+                    EmitStoreTemp(loadParentField.Result, ilEncoder, allocation);
+                    break;
+                }
+            case LIRStoreParentScopeField storeParentField:
+                {
+                    // Emit: ldarg scopes, ldc.i4 index, ldelem.ref, castclass (scope type), ldarg/ldloc Value, stfld (field handle)
+                    ilEncoder.LoadArgument(0);  // TODO: This assumes scopes is always arg 0 - needs refinement
+                    ilEncoder.LoadConstantI4(storeParentField.ParentScopeIndex);
+                    ilEncoder.OpCode(ILOpCode.Ldelem_ref);
+                    ilEncoder.OpCode(ILOpCode.Castclass);
+                    ilEncoder.Token(storeParentField.ScopeType);
+                    EmitLoadTemp(storeParentField.Value, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Stfld);
+                    ilEncoder.Token(storeParentField.FieldHandle);
+                    break;
+                }
             default:
                 return false;
         }

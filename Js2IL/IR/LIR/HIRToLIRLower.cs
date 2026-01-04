@@ -1,6 +1,7 @@
 using Acornima.Ast;
 using Js2IL.HIR;
 using Js2IL.Services;
+using Js2IL.Services.ScopesAbi;
 using Js2IL.SymbolTables;
 
 namespace Js2IL.IR;
@@ -9,6 +10,7 @@ public sealed class HIRToLIRLowerer
 {
     private readonly MethodBodyIR _methodBodyIR = new MethodBodyIR();
     private readonly Scope? _scope;
+    private readonly EnvironmentLayout? _environmentLayout;
 
     private int _tempVarCounter = 0;
     private int _labelCounter = 0;
@@ -27,9 +29,10 @@ public sealed class HIRToLIRLowerer
     // Track whether parameter initialization was successful (affects TryLower result)
     private bool _parameterInitSucceeded = true;
 
-    private HIRToLIRLowerer(Scope? scope)
+    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout)
     {
         _scope = scope;
+        _environmentLayout = environmentLayout;
         InitializeParameters();
     }
 
@@ -181,7 +184,27 @@ public sealed class HIRToLIRLowerer
     {
         lirMethod = null;
 
-        var lowerer = new HIRToLIRLowerer(scope);
+        // Build EnvironmentLayout for this method if scope is provided
+        EnvironmentLayout? environmentLayout = null;
+        if (scope != null)
+        {
+            // For now, we'll need to get ScopeMetadataRegistry from somewhere
+            // This is a temporary approach - in real implementation this should be passed via DI
+            // TODO: Pass ScopeMetadataRegistry via parameter or make it accessible
+            try
+            {
+                var scopeMetadata = new Services.VariableBindings.ScopeMetadataRegistry();
+                var builder = new EnvironmentLayoutBuilder(scopeMetadata);
+                environmentLayout = builder.Build(scope, CallableKind.Function);
+            }
+            catch
+            {
+                // If we can't build environment layout, fall back to legacy
+                return false;
+            }
+        }
+
+        var lowerer = new HIRToLIRLowerer(scope, environmentLayout);
 
         // If default parameter initialization failed, fall back to legacy emitter
         if (!lowerer._parameterInitSucceeded)
@@ -226,7 +249,6 @@ public sealed class HIRToLIRLowerer
             case HIRVariableDeclaration exprStmt:
                 {
                     // Variable declarations define a new binding in the current scope.
-                    // In SSA-style LIR we simply map the name to the produced value.
                     TempVariable value;
 
                     if (exprStmt.Initializer != null)
@@ -246,12 +268,31 @@ public sealed class HIRToLIRLowerer
 
                     // Use BindingInfo as key for correct shadowing behavior
                     var binding = exprStmt.Name.BindingInfo;
+
+                    // Check if this binding should be stored in a scope field (captured variable)
+                    if (_environmentLayout != null)
+                    {
+                        var storage = _environmentLayout.GetStorage(binding);
+                        if (storage != null && storage.Kind == BindingStorageKind.LeafScopeField)
+                        {
+                            // Captured variable - store to leaf scope field
+                            if (!storage.FieldHandle.IsNil && !storage.DeclaringScopeType.IsNil)
+                            {
+                                lirInstructions.Add(new LIRStoreLeafScopeField(binding, storage.FieldHandle, storage.DeclaringScopeType, value));
+                                // Also map in SSA for subsequent reads (though they'll use field load)
+                                _variableMap[binding] = value;
+                                return true;
+                            }
+                        }
+                    }
+
+                    // Non-captured variable - use SSA temp
                     _variableMap[binding] = value;
 
                     // Assign the declared variable a stable local slot and map this SSA temp to it.
                     // Track the storage type for the variable slot.
-                    var storage = GetTempStorage(value);
-                    var slot = GetOrCreateVariableSlot(binding, exprStmt.Name.Name, storage);
+                    var storageInfo = GetTempStorage(value);
+                    var slot = GetOrCreateVariableSlot(binding, exprStmt.Name.Name, storageInfo);
                     SetTempVariableSlot(value, slot);
                     return true;
                 }
@@ -411,7 +452,55 @@ public sealed class HIRToLIRLowerer
                 // This correctly resolves shadowed variables to the right binding
                 var binding = varExpr.Name.BindingInfo;
                 
-                // Check if this is a parameter - emit LIRLoadParameter
+                // Check if this binding is stored in a scope field (captured variable)
+                if (_environmentLayout != null)
+                {
+                    var storage = _environmentLayout.GetStorage(binding);
+                    if (storage != null)
+                    {
+                        switch (storage.Kind)
+                        {
+                            case BindingStorageKind.IlArgument:
+                                // Non-captured parameter - use LIRLoadParameter
+                                if (storage.JsParameterIndex >= 0)
+                                {
+                                    resultTempVar = CreateTempVariable();
+                                    _methodBodyIR.Instructions.Add(new LIRLoadParameter(storage.JsParameterIndex, resultTempVar));
+                                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                                    return true;
+                                }
+                                break;
+
+                            case BindingStorageKind.LeafScopeField:
+                                // Captured variable in current scope - load from leaf scope field
+                                if (!storage.FieldHandle.IsNil && !storage.DeclaringScopeType.IsNil)
+                                {
+                                    resultTempVar = CreateTempVariable();
+                                    _methodBodyIR.Instructions.Add(new LIRLoadLeafScopeField(binding, storage.FieldHandle, storage.DeclaringScopeType, resultTempVar));
+                                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                                    return true;
+                                }
+                                break;
+
+                            case BindingStorageKind.ParentScopeField:
+                                // Captured variable in parent scope - load from parent scope field
+                                if (storage.ParentScopeIndex >= 0 && !storage.FieldHandle.IsNil && !storage.DeclaringScopeType.IsNil)
+                                {
+                                    resultTempVar = CreateTempVariable();
+                                    _methodBodyIR.Instructions.Add(new LIRLoadParentScopeField(binding, storage.FieldHandle, storage.DeclaringScopeType, storage.ParentScopeIndex, resultTempVar));
+                                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                                    return true;
+                                }
+                                break;
+
+                            case BindingStorageKind.IlLocal:
+                                // Non-captured local - use SSA temp (fall through to default behavior)
+                                break;
+                        }
+                    }
+                }
+                
+                // Fallback: Check if this is a parameter (legacy behavior)
                 if (_parameterIndexMap.TryGetValue(binding, out var paramIndex))
                 {
                     resultTempVar = CreateTempVariable();

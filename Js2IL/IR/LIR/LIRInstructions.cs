@@ -1,4 +1,5 @@
 using Js2IL.SymbolTables;
+using System.Reflection.Metadata;
 
 namespace Js2IL.IR;
 
@@ -132,3 +133,31 @@ public record LIRBranchIfFalse(TempVariable Condition, int TargetLabel) : LIRIns
 /// This matches IL's brtrue semantics.
 /// </summary>
 public record LIRBranchIfTrue(TempVariable Condition, int TargetLabel) : LIRInstruction;
+
+/// <summary>
+/// Loads a captured variable from a field on the leaf (current) scope instance.
+/// The scope instance is in IL local 0, and the field handle is looked up via BindingInfo.
+/// Emits: ldloc.0 (scope instance), ldfld (field handle)
+/// </summary>
+public record LIRLoadLeafScopeField(BindingInfo Binding, FieldDefinitionHandle FieldHandle, TypeDefinitionHandle ScopeType, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Stores a value to a captured variable field on the leaf (current) scope instance.
+/// The scope instance is in IL local 0, and the field handle is looked up via BindingInfo.
+/// Emits: ldloc.0 (scope instance), ldarg/ldloc Value, stfld (field handle)
+/// </summary>
+public record LIRStoreLeafScopeField(BindingInfo Binding, FieldDefinitionHandle FieldHandle, TypeDefinitionHandle ScopeType, TempVariable Value) : LIRInstruction;
+
+/// <summary>
+/// Loads a captured variable from a field on a parent scope instance.
+/// The parent scope is accessed via the scopes array parameter, indexed by the parent scope index.
+/// Emits: ldarg scopes, ldc.i4 index, ldelem.ref, castclass (scope type), ldfld (field handle)
+/// </summary>
+public record LIRLoadParentScopeField(BindingInfo Binding, FieldDefinitionHandle FieldHandle, TypeDefinitionHandle ScopeType, int ParentScopeIndex, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Stores a value to a captured variable field on a parent scope instance.
+/// The parent scope is accessed via the scopes array parameter, indexed by the parent scope index.
+/// Emits: ldarg scopes, ldc.i4 index, ldelem.ref, castclass (scope type), ldarg/ldloc Value, stfld (field handle)
+/// </summary>
+public record LIRStoreParentScopeField(BindingInfo Binding, FieldDefinitionHandle FieldHandle, TypeDefinitionHandle ScopeType, int ParentScopeIndex, TempVariable Value) : LIRInstruction;
