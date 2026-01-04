@@ -353,7 +353,6 @@ internal static class Stackify
             case LIRConstUndefined:
             case LIRConstNull:
             case LIRGetIntrinsicGlobal:
-            case LIRNewObjectArray:
             case LIRLoadParameter:
             case LIRCreateScopesArray:
                 return (0, 1);
@@ -404,10 +403,6 @@ internal static class Stackify
             case LIRCallFunction call:
                 return (1 + call.Arguments.Count, 1);
 
-            // StoreElementRef: consumes array + value, produces nothing
-            case LIRStoreElementRef:
-                return (2, 0);
-
             // Return: consumes return value
             case LIRReturn:
                 return (1, 0);
@@ -417,7 +412,6 @@ internal static class Stackify
                 return (1, 0);
 
             // Hints and control flow have no stack effect at LIR level
-            case LIRBeginInitArrayElement:
             case LIRLabel:
             case LIRBranch:
                 return (0, 0);
