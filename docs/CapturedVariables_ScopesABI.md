@@ -596,13 +596,30 @@ This is not an IL concern; it is metadata used by call sites and by LIR→IL whe
 - Added DI singleton registration for both registries
 - Created 32 comprehensive tests covering ABI contracts, scope ordering, and binding storage
 
-### Phase 1: IR pipeline reads captured variables
+### Phase 1: IR pipeline reads captured variables ✅ COMPLETED
 
-- Extend HIR variable nodes to carry `BindingInfo` identity (already partially true).
-- Update HIR→LIR lowering so loads/stores are explicit for non-SSA-captured values.
-- Implement LIR→IL lowering for `BindingStorageKind.*ScopeField`.
+- ✅ Extend HIR variable nodes to carry `BindingInfo` identity (already partially true).
+- ✅ Update HIR→LIR lowering so loads/stores are explicit for non-SSA-captured values.
+- ✅ Implement LIR→IL lowering for `BindingStorageKind.*ScopeField`.
 
-**Note on `LIRCreateScopesArray`**: The existing `LIRCreateScopesArray` instruction is a placeholder that emits a 1-element array containing `null`. When implementing captured variable support, it should be replaced or extended to accept the `ScopeChainLayout` (or equivalent metadata) so the LIR explicitly encodes which scope instances populate which slots. A richer instruction shape might look like:
+**Implementation Details** (PR #229):
+- Added new LIR instructions: `LIRLoadLeafScopeField`, `LIRLoadParentScopeField` for reading captured variables from scope objects
+- Extended `HIRToLIRLower` to consult `EnvironmentLayout` and emit appropriate field load instructions
+- LIR→IL emission generates correct IL patterns:
+  - Leaf scope: `ldloc.X` → `ldfld`
+  - Parent scope: `ldarg.X` → `ldc.i4 index` → `ldelem.ref` → `castclass` → `ldfld`
+  - Class method parent scope: `ldarg.0` → `ldfld _scopes` → `ldc.i4 index` → `ldelem.ref` → `castclass` → `ldfld`
+- Scope field loads are stackable and support inline emission in Stackify
+- Added `LIRBuildArray` instruction to optimize console.log array creation using dup pattern (newarr → [dup, ldc.i4, ldarg/ldloc, stelem.ref]*)
+- Wired `ScopeMetadataRegistry` through full compilation pipeline for field handle lookups
+
+**Known Regressions** (tracked for Phase 2):
+- Issue #211: ConsoleLogPeepholeOptimizer doesn't recognize `LIRBuildArray` pattern, causing some methods to use locals where they previously didn't (e.g., `ArrowFunction_DefaultParameterExpression` has 2 locals instead of 0)
+- Issue #227: Obsolete LIR instructions (`LIRNewObjectArray`, `LIRBeginInitArrayElement`, `LIRStoreElementRef`) should be removed
+
+**Note on `LIRCreateScopesArray`**: The existing `LIRCreateScopesArray` instruction is a placeholder that emits a 1-element array containing `null`. ~~When implementing captured variable support, it should be replaced or extended to accept the `ScopeChainLayout` (or equivalent metadata) so the LIR explicitly encodes which scope instances populate which slots.~~ **Update (Phase 1):** Captured variable reads are now implemented without modifying `LIRCreateScopesArray`. Read operations use dedicated `LIRLoadLeafScopeField` and `LIRLoadParentScopeField` instructions. The scopes array construction remains a placeholder; proper implementation is deferred to Phase 2 (write support) and Phase 3 (scopes materialization).
+
+A richer instruction shape for future scopes array construction might look like:
 
 ```csharp
 public record LIRBuildScopesArray(

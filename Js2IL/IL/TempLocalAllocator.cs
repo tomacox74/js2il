@@ -140,8 +140,18 @@ internal static class TempLocalAllocator
         }
 
         // LIRConvertToObject can be emitted inline if its source is an inline constant
+        // AND the source is not backed by a variable slot. If the source is backed by a
+        // variable slot, that slot may be overwritten by a later SSA value before the
+        // box is consumed (e.g., postfix increment: x++ must capture the old value before
+        // the slot is updated, so the box must materialize).
         if (instruction is LIRConvertToObject convertToObject)
         {
+            var sourceIdx = convertToObject.Source.Index;
+            // If the source is backed by a variable slot, don't inline - the slot may be modified
+            if (sourceIdx >= 0 && sourceIdx < methodBody.TempVariableSlots.Count && methodBody.TempVariableSlots[sourceIdx] >= 0)
+            {
+                return false;
+            }
             var sourceDefinition = TryFindDefInstruction(methodBody, convertToObject.Source);
             return sourceDefinition != null && CanEmitInline(sourceDefinition, methodBody);
         }
@@ -283,6 +293,22 @@ internal static class TempLocalAllocator
             case LIRLoadParameter:
                 // LIRLoadParameter doesn't consume any temps (it loads from IL argument)
                 break;
+            case LIRStoreLeafScopeField storeLeaf:
+                yield return storeLeaf.Value;
+                break;
+            case LIRStoreParentScopeField storeParent:
+                yield return storeParent.Value;
+                break;
+            case LIRLoadLeafScopeField:
+            case LIRLoadParentScopeField:
+                // Load instructions don't consume temps (they load from scope fields)
+                break;
+            case LIRBuildArray buildArray:
+                foreach (var elem in buildArray.Elements)
+                {
+                    yield return elem;
+                }
+                break;
             // LIRLabel and LIRBranch don't use temps
         }
     }
@@ -380,6 +406,15 @@ internal static class TempLocalAllocator
                 return true;
             case LIRLoadParameter loadParam:
                 defined = loadParam.Result;
+                return true;
+            case LIRLoadLeafScopeField loadLeaf:
+                defined = loadLeaf.Result;
+                return true;
+            case LIRLoadParentScopeField loadParent:
+                defined = loadParent.Result;
+                return true;
+            case LIRBuildArray buildArray:
+                defined = buildArray.Result;
                 return true;
             default:
                 defined = default;

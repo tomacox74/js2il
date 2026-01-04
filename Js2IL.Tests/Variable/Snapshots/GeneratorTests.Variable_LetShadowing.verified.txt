@@ -59,26 +59,35 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 38 (0x26)
+		// Code size: 44 (0x2c)
 		.maxstack 32
 		.locals init (
-			[0] float64
+			[0] float64,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[2] object,
+			[3] object[]
 		)
 
 		IL_0000: ldc.r8 2
 		IL_0009: stloc.0
 		IL_000a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_000f: ldc.i4.1
-		IL_0010: newarr [System.Runtime]System.Object
-		IL_0015: dup
-		IL_0016: ldc.i4.0
-		IL_0017: ldloc.0
-		IL_0018: box [System.Runtime]System.Double
-		IL_001d: stelem.ref
-		IL_001e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0023: pop
-		IL_0024: ldnull
-		IL_0025: ret
+		IL_000f: stloc.1
+		IL_0010: ldloc.0
+		IL_0011: box [System.Runtime]System.Double
+		IL_0016: stloc.2
+		IL_0017: ldc.i4.1
+		IL_0018: newarr [System.Runtime]System.Object
+		IL_001d: dup
+		IL_001e: ldc.i4.0
+		IL_001f: ldloc.2
+		IL_0020: stelem.ref
+		IL_0021: stloc.3
+		IL_0022: ldloc.1
+		IL_0023: ldloc.3
+		IL_0024: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0029: pop
+		IL_002a: ldnull
+		IL_002b: ret
 	} // end of method Variable_LetShadowing::f
 
 } // end of class Functions.Variable_LetShadowing
@@ -96,13 +105,15 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2098
+		// Method begins at RVA 0x209c
 		// Header size: 12
-		// Code size: 67 (0x43)
+		// Code size: 73 (0x49)
 		.maxstack 32
 		.locals init (
 			[0] float64,
-			[1] object[]
+			[1] object[],
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[3] object
 		)
 
 		IL_0000: ldc.r8 1
@@ -121,16 +132,22 @@
 		IL_0022: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
 		IL_0027: pop
 		IL_0028: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_002d: ldc.i4.1
-		IL_002e: newarr [System.Runtime]System.Object
-		IL_0033: dup
-		IL_0034: ldc.i4.0
-		IL_0035: ldloc.0
-		IL_0036: box [System.Runtime]System.Double
-		IL_003b: stelem.ref
-		IL_003c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0041: pop
-		IL_0042: ret
+		IL_002d: stloc.2
+		IL_002e: ldloc.0
+		IL_002f: box [System.Runtime]System.Double
+		IL_0034: stloc.3
+		IL_0035: ldc.i4.1
+		IL_0036: newarr [System.Runtime]System.Object
+		IL_003b: dup
+		IL_003c: ldc.i4.0
+		IL_003d: ldloc.3
+		IL_003e: stelem.ref
+		IL_003f: stloc.1
+		IL_0040: ldloc.2
+		IL_0041: ldloc.1
+		IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0047: pop
+		IL_0048: ret
 	} // end of method Variable_LetShadowing::Main
 
 } // end of class Scripts.Variable_LetShadowing
@@ -142,7 +159,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e7
+		// Method begins at RVA 0x20f1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

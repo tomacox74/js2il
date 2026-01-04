@@ -257,12 +257,25 @@ internal static class Stackify
             case LIRLoadParameter:
                 return true;
 
+            // Scope field loads - side-effect free field reads, similar to parameter loads
+            case LIRLoadLeafScopeField:
+            case LIRLoadParentScopeField:
+                return true;
+
             // LIRConvertToObject can be emitted inline if its source can be emitted inline
-            // (it's just a box operation on a trivial value)
+            // AND the source is not backed by a variable slot. If the source is backed by
+            // a variable slot, that slot may be overwritten by a later SSA value before the
+            // box is consumed (e.g., postfix increment: x++ must capture the old value before
+            // the slot is updated, so the box must materialize).
             case LIRConvertToObject convertToObject:
                 var sourceIdx = convertToObject.Source.Index;
                 if (sourceIdx >= 0 && sourceIdx < defInstruction.Length && defInstruction[sourceIdx] != null)
                 {
+                    // If the source is backed by a variable slot, don't inline - the slot may be modified
+                    if (sourceIdx < methodBody.TempVariableSlots.Count && methodBody.TempVariableSlots[sourceIdx] >= 0)
+                    {
+                        return false;
+                    }
                     return CanEmitInline(defInstruction[sourceIdx]!, methodBody, defInstruction);
                 }
                 return false;
@@ -302,6 +315,21 @@ internal static class Stackify
             case LIRLoadParameter:
             case LIRCreateScopesArray:
                 return (0, 1);
+
+            // LIRBuildArray: consumes N element temps, produces 1 array reference
+            // The dup pattern keeps array on stack internally, net effect is: pop N, push 1
+            case LIRBuildArray buildArray:
+                return (buildArray.Elements.Count, 1);
+
+            // Scope field loads: produce 1 value (field is loaded from memory, not from stack temps)
+            case LIRLoadLeafScopeField:
+            case LIRLoadParentScopeField:
+                return (0, 1);
+
+            // Scope field stores: consume 1 value (the value being stored, not counting the scope instance/array which comes from local/arg)
+            case LIRStoreLeafScopeField:
+            case LIRStoreParentScopeField:
+                return (1, 0);
 
             // Binary ops: consume 2, produce 1
             case LIRAddNumber:

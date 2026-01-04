@@ -61,47 +61,57 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 94 (0x5e)
+		// Code size: 92 (0x5c)
 		.maxstack 32
+		.locals init (
+			[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[1] object[]
+		)
 
 		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_000a: ldc.i4.2
-		IL_000b: newarr [System.Runtime]System.Object
-		IL_0010: dup
-		IL_0011: ldc.i4.0
-		IL_0012: ldstr "Global message:"
-		IL_0017: stelem.ref
-		IL_0018: dup
-		IL_0019: ldc.i4.1
-		IL_001a: ldarg.0
-		IL_001b: ldc.i4.0
-		IL_001c: ldelem.ref
-		IL_001d: castclass Scopes.Function_GlobalFunctionLogsGlobalVariable
-		IL_0022: ldfld object Scopes.Function_GlobalFunctionLogsGlobalVariable::globalMessage
-		IL_0027: stelem.ref
-		IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_002d: pop
-		IL_002e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0033: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0038: ldc.i4.2
-		IL_0039: newarr [System.Runtime]System.Object
-		IL_003e: dup
-		IL_003f: ldc.i4.0
-		IL_0040: ldstr "Global number:"
-		IL_0045: stelem.ref
-		IL_0046: dup
-		IL_0047: ldc.i4.1
-		IL_0048: ldarg.0
-		IL_0049: ldc.i4.0
-		IL_004a: ldelem.ref
-		IL_004b: castclass Scopes.Function_GlobalFunctionLogsGlobalVariable
-		IL_0050: ldfld object Scopes.Function_GlobalFunctionLogsGlobalVariable::globalNumber
-		IL_0055: stelem.ref
-		IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_005b: pop
-		IL_005c: ldnull
-		IL_005d: ret
+		IL_0005: stloc.0
+		IL_0006: ldc.i4.2
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: dup
+		IL_000d: ldc.i4.0
+		IL_000e: ldstr "Global message:"
+		IL_0013: stelem.ref
+		IL_0014: dup
+		IL_0015: ldc.i4.1
+		IL_0016: ldarg.0
+		IL_0017: ldc.i4.0
+		IL_0018: ldelem.ref
+		IL_0019: castclass Scopes.Function_GlobalFunctionLogsGlobalVariable
+		IL_001e: ldfld object Scopes.Function_GlobalFunctionLogsGlobalVariable::globalMessage
+		IL_0023: stelem.ref
+		IL_0024: stloc.1
+		IL_0025: ldloc.0
+		IL_0026: ldloc.1
+		IL_0027: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_002c: pop
+		IL_002d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0032: stloc.0
+		IL_0033: ldc.i4.2
+		IL_0034: newarr [System.Runtime]System.Object
+		IL_0039: dup
+		IL_003a: ldc.i4.0
+		IL_003b: ldstr "Global number:"
+		IL_0040: stelem.ref
+		IL_0041: dup
+		IL_0042: ldc.i4.1
+		IL_0043: ldarg.0
+		IL_0044: ldc.i4.0
+		IL_0045: ldelem.ref
+		IL_0046: castclass Scopes.Function_GlobalFunctionLogsGlobalVariable
+		IL_004b: ldfld object Scopes.Function_GlobalFunctionLogsGlobalVariable::globalNumber
+		IL_0050: stelem.ref
+		IL_0051: stloc.1
+		IL_0052: ldloc.0
+		IL_0053: ldloc.1
+		IL_0054: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0059: pop
+		IL_005a: ldnull
+		IL_005b: ret
 	} // end of method Function_GlobalFunctionLogsGlobalVariable::logGlobalValues
 
 } // end of class Functions.Function_GlobalFunctionLogsGlobalVariable
@@ -119,7 +129,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20d0
+		// Method begins at RVA 0x20cc
 		// Header size: 12
 		// Code size: 121 (0x79)
 		.maxstack 32
@@ -178,7 +188,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2155
+		// Method begins at RVA 0x2151
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

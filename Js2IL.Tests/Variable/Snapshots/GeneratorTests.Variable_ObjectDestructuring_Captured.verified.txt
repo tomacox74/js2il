@@ -61,24 +61,26 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 43 (0x2b)
+		// Code size: 34 (0x22)
 		.maxstack 32
+		.locals init (
+			[0] object
+		)
 
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.0
 		IL_0002: ldelem.ref
 		IL_0003: castclass Scopes.Variable_ObjectDestructuring_Captured
 		IL_0008: ldfld object Scopes.Variable_ObjectDestructuring_Captured::a
-		IL_000d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0012: ldarg.0
-		IL_0013: ldc.i4.0
-		IL_0014: ldelem.ref
-		IL_0015: castclass Scopes.Variable_ObjectDestructuring_Captured
-		IL_001a: ldfld object Scopes.Variable_ObjectDestructuring_Captured::b
-		IL_001f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0024: mul
-		IL_0025: box [System.Runtime]System.Double
-		IL_002a: ret
+		IL_000d: ldarg.0
+		IL_000e: ldc.i4.0
+		IL_000f: ldelem.ref
+		IL_0010: castclass Scopes.Variable_ObjectDestructuring_Captured
+		IL_0015: ldfld object Scopes.Variable_ObjectDestructuring_Captured::b
+		IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
+		IL_001f: stloc.0
+		IL_0020: ldloc.0
+		IL_0021: ret
 	} // end of method Variable_ObjectDestructuring_Captured::compute
 
 } // end of class Functions.Variable_ObjectDestructuring_Captured
@@ -96,7 +98,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x209c
+		// Method begins at RVA 0x2094
 		// Header size: 12
 		// Code size: 312 (0x138)
 		.maxstack 32
@@ -220,7 +222,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21e0
+		// Method begins at RVA 0x21d8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

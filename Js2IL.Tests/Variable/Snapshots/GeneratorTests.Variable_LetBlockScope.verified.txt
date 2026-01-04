@@ -60,11 +60,14 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 73 (0x49)
+		// Code size: 89 (0x59)
 		.maxstack 32
 		.locals init (
 			[0] float64,
-			[1] float64
+			[1] float64,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[3] object,
+			[4] object[]
 		)
 
 		IL_0000: ldc.r8 1
@@ -72,26 +75,38 @@
 		IL_000a: ldc.r8 2
 		IL_0013: stloc.1
 		IL_0014: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0019: ldc.i4.1
-		IL_001a: newarr [System.Runtime]System.Object
-		IL_001f: dup
-		IL_0020: ldc.i4.0
-		IL_0021: ldloc.1
-		IL_0022: box [System.Runtime]System.Double
-		IL_0027: stelem.ref
-		IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_002d: pop
-		IL_002e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0033: ldc.i4.1
-		IL_0034: newarr [System.Runtime]System.Object
-		IL_0039: dup
-		IL_003a: ldc.i4.0
-		IL_003b: ldloc.0
-		IL_003c: box [System.Runtime]System.Double
-		IL_0041: stelem.ref
-		IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0047: pop
-		IL_0048: ret
+		IL_0019: stloc.2
+		IL_001a: ldloc.1
+		IL_001b: box [System.Runtime]System.Double
+		IL_0020: stloc.3
+		IL_0021: ldc.i4.1
+		IL_0022: newarr [System.Runtime]System.Object
+		IL_0027: dup
+		IL_0028: ldc.i4.0
+		IL_0029: ldloc.3
+		IL_002a: stelem.ref
+		IL_002b: stloc.s 4
+		IL_002d: ldloc.2
+		IL_002e: ldloc.s 4
+		IL_0030: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0035: pop
+		IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003b: stloc.2
+		IL_003c: ldloc.0
+		IL_003d: box [System.Runtime]System.Double
+		IL_0042: stloc.3
+		IL_0043: ldc.i4.1
+		IL_0044: newarr [System.Runtime]System.Object
+		IL_0049: dup
+		IL_004a: ldc.i4.0
+		IL_004b: ldloc.3
+		IL_004c: stelem.ref
+		IL_004d: stloc.s 4
+		IL_004f: ldloc.2
+		IL_0050: ldloc.s 4
+		IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0057: pop
+		IL_0058: ret
 	} // end of method Variable_LetBlockScope::Main
 
 } // end of class Scripts.Variable_LetBlockScope
@@ -103,7 +118,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20b9
+		// Method begins at RVA 0x20c9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
