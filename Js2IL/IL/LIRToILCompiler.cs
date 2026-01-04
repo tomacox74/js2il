@@ -667,9 +667,10 @@ internal sealed class LIRToILCompiler
                         break;
                     }
                     
-                    // Emit: ldarg scopes, ldc.i4 index, ldelem.ref, castclass (scope type), ldfld (field handle)
-                    // Scopes array is arg 0 for static functions with captured variables
-                    ilEncoder.LoadArgument(0);  // TODO: This assumes scopes is always arg 0 - needs refinement
+                    // Emit IL to load parent scope field
+                    // For static methods with scopes parameter: ldarg.0 (scopes array)
+                    // For instance methods: ldarg.0 (this), ldfld _scopes
+                    EmitLoadScopesArray(ilEncoder, methodDescriptor);
                     ilEncoder.LoadConstantI4(loadParentField.ParentScopeIndex);
                     ilEncoder.OpCode(ILOpCode.Ldelem_ref);
                     ilEncoder.OpCode(ILOpCode.Castclass);
@@ -681,8 +682,10 @@ internal sealed class LIRToILCompiler
                 }
             case LIRStoreParentScopeField storeParentField:
                 {
-                    // Emit: ldarg scopes, ldc.i4 index, ldelem.ref, castclass (scope type), ldarg/ldloc Value, stfld (field handle)
-                    ilEncoder.LoadArgument(0);  // TODO: This assumes scopes is always arg 0 - needs refinement
+                    // Emit IL to store to parent scope field
+                    // For static methods with scopes parameter: ldarg.0 (scopes array)
+                    // For instance methods: ldarg.0 (this), ldfld _scopes
+                    EmitLoadScopesArray(ilEncoder, methodDescriptor);
                     ilEncoder.LoadConstantI4(storeParentField.ParentScopeIndex);
                     ilEncoder.OpCode(ILOpCode.Ldelem_ref);
                     ilEncoder.OpCode(ILOpCode.Castclass);
@@ -923,6 +926,33 @@ internal sealed class LIRToILCompiler
 
         var slot = GetSlotForTemp(temp, allocation);
         ilEncoder.StoreLocal(slot);
+    }
+
+    /// <summary>
+    /// Emits IL to load the scopes array onto the stack.
+    /// For static methods with scopes parameter: ldarg.0 (scopes array is first parameter)
+    /// For instance methods: ldarg.0 (this), ldfld _scopes (scopes stored in instance field)
+    /// </summary>
+    private void EmitLoadScopesArray(InstructionEncoder ilEncoder, MethodDescriptor methodDescriptor)
+    {
+        if (methodDescriptor.IsStatic && methodDescriptor.HasScopesParameter)
+        {
+            // Static function with scopes parameter - scopes is arg 0
+            ilEncoder.LoadArgument(0);
+        }
+        else if (!methodDescriptor.IsStatic && methodDescriptor.ScopesFieldHandle.HasValue)
+        {
+            // Instance method with _scopes field
+            // ldarg.0 (this), ldfld _scopes
+            ilEncoder.LoadArgument(0);
+            ilEncoder.OpCode(ILOpCode.Ldfld);
+            ilEncoder.Token(methodDescriptor.ScopesFieldHandle.Value);
+        }
+        else
+        {
+            // Static method without scopes parameter (e.g., module Main) - shouldn't have parent scope access
+            throw new InvalidOperationException("Cannot load scopes array - method has no scopes parameter and no _scopes field");
+        }
     }
 
     private int GetSlotForTemp(TempVariable temp, TempLocalAllocation allocation)

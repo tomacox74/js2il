@@ -53,6 +53,12 @@ sealed record MethodDescriptor
     /// Module Main methods don't have this (arg0+ = module wrapper params).
     /// </summary>
     public bool HasScopesParameter { get; set; } = true;
+
+    /// <summary>
+    /// For instance methods that access parent scopes, this is the field handle to the _scopes field.
+    /// When set, IL emission loads scopes via: ldarg.0 (this), ldfld ScopesFieldHandle
+    /// </summary>
+    public FieldDefinitionHandle? ScopesFieldHandle { get; set; }
 }
 
 /// <summary>
@@ -91,6 +97,9 @@ internal sealed class JsMethodCompiler
     #region Public API - Entry Points
 
     public MethodDefinitionHandle TryCompileMethod(TypeBuilder typeBuilder, string methodName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
+        => TryCompileMethod(typeBuilder, methodName, node, scope, methodBodyStreamEncoder, scopesFieldHandle: null);
+
+    public MethodDefinitionHandle TryCompileMethod(TypeBuilder typeBuilder, string methodName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder, FieldDefinitionHandle? scopesFieldHandle)
     {
         // Extract params and body from the node based on its type
         NodeList<Node>? functionParams = null;
@@ -141,6 +150,11 @@ internal sealed class JsMethodCompiler
             // Instance methods don't have the scopes parameter
             methodDescriptor.Parameters = parameters.Skip(1).ToList();
             methodDescriptor.HasScopesParameter = false;
+            // Instance methods access scopes via this._scopes field
+            if (!methodDef.Static && scopesFieldHandle.HasValue)
+            {
+                methodDescriptor.ScopesFieldHandle = scopesFieldHandle;
+            }
         }
 
         return CreateILCompiler().TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);

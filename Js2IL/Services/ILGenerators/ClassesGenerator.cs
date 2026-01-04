@@ -531,7 +531,15 @@ namespace Js2IL.Services.ILGenerators
             if (mscope != null)
             {
                 var jsMethodCompiler = _serviceProvider.GetRequiredService<JsMethodCompiler>();
-                var methodDefHandle = jsMethodCompiler.TryCompileMethod(tb, mname, element, mscope, _methodBodies);
+                
+                // For instance methods, pass the _scopes field handle if it exists
+                FieldDefinitionHandle? scopesFieldHandle = null;
+                if (!element.Static && _classRegistry.TryGetPrivateField(className, "_scopes", out var scopesField))
+                {
+                    scopesFieldHandle = scopesField;
+                }
+                
+                var methodDefHandle = jsMethodCompiler.TryCompileMethod(tb, mname, element, mscope, _methodBodies, scopesFieldHandle);
                 IR.IRPipelineMetrics.RecordClassMethodAttempt(!methodDefHandle.IsNil);
                 if (!methodDefHandle.IsNil)
                 {
