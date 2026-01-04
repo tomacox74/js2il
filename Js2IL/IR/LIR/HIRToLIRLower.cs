@@ -180,21 +180,17 @@ public sealed class HIRToLIRLowerer
         return new HIRBinaryExpression(binExpr.Operator, left, right);
     }
 
-    public static bool TryLower(HIRMethod hirMethod, Scope? scope, out MethodBodyIR? lirMethod)
+    public static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, out MethodBodyIR? lirMethod)
     {
         lirMethod = null;
 
         // Build EnvironmentLayout for this method if scope is provided
         EnvironmentLayout? environmentLayout = null;
-        if (scope != null)
+        if (scope != null && scopeMetadataRegistry != null)
         {
-            // For now, we'll need to get ScopeMetadataRegistry from somewhere
-            // This is a temporary approach - in real implementation this should be passed via DI
-            // TODO: Pass ScopeMetadataRegistry via parameter or make it accessible
             try
             {
-                var scopeMetadata = new Services.VariableBindings.ScopeMetadataRegistry();
-                var builder = new EnvironmentLayoutBuilder(scopeMetadata);
+                var builder = new EnvironmentLayoutBuilder(scopeMetadataRegistry);
                 environmentLayout = builder.Build(scope, CallableKind.Function);
             }
             catch
@@ -224,7 +220,7 @@ public sealed class HIRToLIRLowerer
     // Backward compatibility overload for callers that don't provide scope
     public static bool TryLower(HIRMethod hirMethod, out MethodBodyIR? lirMethod)
     {
-        return TryLower(hirMethod, null, out lirMethod);
+        return TryLower(hirMethod, null, null, out lirMethod);
     } 
 
     public bool TryLowerStatements(IEnumerable<HIRStatement> statements)
