@@ -230,16 +230,16 @@ public sealed class HIRToLIRLowerer
 
         // Find the first binding that uses leaf scope field storage
         var leafScopeStorage = _environmentLayout.StorageByBinding.Values
-            .FirstOrDefault(s => s.Kind == BindingStorageKind.LeafScopeField && !s.DeclaringScopeType.IsNil);
+            .FirstOrDefault(s => s.Kind == BindingStorageKind.LeafScopeField && !s.DeclaringScope.IsNil);
 
         if (leafScopeStorage != null)
         {
             // Found a leaf scope field - emit scope instance creation
-            _methodBodyIR.Instructions.Insert(0, new LIRCreateLeafScopeInstance(leafScopeStorage.DeclaringScopeType));
+            _methodBodyIR.Instructions.Insert(0, new LIRCreateLeafScopeInstance(leafScopeStorage.DeclaringScope));
             
             // Record that we need a scope local in the method
             _methodBodyIR.NeedsLeafScopeLocal = true;
-            _methodBodyIR.LeafScopeType = leafScopeStorage.DeclaringScopeType;
+            _methodBodyIR.LeafScopeId = leafScopeStorage.DeclaringScope;
         }
     }
 
@@ -298,10 +298,10 @@ public sealed class HIRToLIRLowerer
                         // Captured variable - store to leaf scope field
                         if (storage != null && 
                             storage.Kind == BindingStorageKind.LeafScopeField &&
-                            !storage.FieldHandle.IsNil && 
-                            !storage.DeclaringScopeType.IsNil)
+                            !storage.Field.IsNil && 
+                            !storage.DeclaringScope.IsNil)
                         {
-                            lirInstructions.Add(new LIRStoreLeafScopeField(binding, storage.FieldHandle, storage.DeclaringScopeType, value));
+                            lirInstructions.Add(new LIRStoreLeafScopeField(binding, storage.Field, storage.DeclaringScope, value));
                             // Also map in SSA for subsequent reads (though they'll use field load)
                             _variableMap[binding] = value;
                             return true;
@@ -498,10 +498,10 @@ public sealed class HIRToLIRLowerer
 
                             case BindingStorageKind.LeafScopeField:
                                 // Captured variable in current scope - load from leaf scope field
-                                if (!storage.FieldHandle.IsNil && !storage.DeclaringScopeType.IsNil)
+                                if (!storage.Field.IsNil && !storage.DeclaringScope.IsNil)
                                 {
                                     resultTempVar = CreateTempVariable();
-                                    _methodBodyIR.Instructions.Add(new LIRLoadLeafScopeField(binding, storage.FieldHandle, storage.DeclaringScopeType, resultTempVar));
+                                    _methodBodyIR.Instructions.Add(new LIRLoadLeafScopeField(binding, storage.Field, storage.DeclaringScope, resultTempVar));
                                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                                     return true;
                                 }
@@ -509,10 +509,10 @@ public sealed class HIRToLIRLowerer
 
                             case BindingStorageKind.ParentScopeField:
                                 // Captured variable in parent scope - load from parent scope field
-                                if (storage.ParentScopeIndex >= 0 && !storage.FieldHandle.IsNil && !storage.DeclaringScopeType.IsNil)
+                                if (storage.ParentScopeIndex >= 0 && !storage.Field.IsNil && !storage.DeclaringScope.IsNil)
                                 {
                                     resultTempVar = CreateTempVariable();
-                                    _methodBodyIR.Instructions.Add(new LIRLoadParentScopeField(binding, storage.FieldHandle, storage.DeclaringScopeType, storage.ParentScopeIndex, resultTempVar));
+                                    _methodBodyIR.Instructions.Add(new LIRLoadParentScopeField(binding, storage.Field, storage.DeclaringScope, storage.ParentScopeIndex, resultTempVar));
                                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                                     return true;
                                 }
@@ -990,10 +990,10 @@ public sealed class HIRToLIRLowerer
                 {
                     case BindingStorageKind.LeafScopeField:
                         // Captured variable in current scope - store to leaf scope field
-                        if (!storage.FieldHandle.IsNil && !storage.DeclaringScopeType.IsNil)
+                        if (!storage.Field.IsNil && !storage.DeclaringScope.IsNil)
                         {
                             var boxedValue = EnsureObject(valueToStore);
-                            lirInstructions.Add(new LIRStoreLeafScopeField(binding, storage.FieldHandle, storage.DeclaringScopeType, boxedValue));
+                            lirInstructions.Add(new LIRStoreLeafScopeField(binding, storage.Field, storage.DeclaringScope, boxedValue));
                             // Also update SSA map for subsequent reads
                             _variableMap[binding] = boxedValue;
                             resultTempVar = boxedValue;
@@ -1003,10 +1003,10 @@ public sealed class HIRToLIRLowerer
 
                     case BindingStorageKind.ParentScopeField:
                         // Captured variable in parent scope - store to parent scope field
-                        if (storage.ParentScopeIndex >= 0 && !storage.FieldHandle.IsNil && !storage.DeclaringScopeType.IsNil)
+                        if (storage.ParentScopeIndex >= 0 && !storage.Field.IsNil && !storage.DeclaringScope.IsNil)
                         {
                             var boxedValue = EnsureObject(valueToStore);
-                            lirInstructions.Add(new LIRStoreParentScopeField(binding, storage.FieldHandle, storage.DeclaringScopeType, storage.ParentScopeIndex, boxedValue));
+                            lirInstructions.Add(new LIRStoreParentScopeField(binding, storage.Field, storage.DeclaringScope, storage.ParentScopeIndex, boxedValue));
                             // Also update SSA map for subsequent reads, mirroring leaf-scope behavior
                             _variableMap[binding] = boxedValue;
                             resultTempVar = boxedValue;
@@ -1079,10 +1079,10 @@ public sealed class HIRToLIRLowerer
 
                     case BindingStorageKind.LeafScopeField:
                         // Captured variable in current scope
-                        if (!storage.FieldHandle.IsNil && !storage.DeclaringScopeType.IsNil)
+                        if (!storage.Field.IsNil && !storage.DeclaringScope.IsNil)
                         {
                             result = CreateTempVariable();
-                            _methodBodyIR.Instructions.Add(new LIRLoadLeafScopeField(binding, storage.FieldHandle, storage.DeclaringScopeType, result));
+                            _methodBodyIR.Instructions.Add(new LIRLoadLeafScopeField(binding, storage.Field, storage.DeclaringScope, result));
                             DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                             return true;
                         }
@@ -1090,10 +1090,10 @@ public sealed class HIRToLIRLowerer
 
                     case BindingStorageKind.ParentScopeField:
                         // Captured variable in parent scope
-                        if (storage.ParentScopeIndex >= 0 && !storage.FieldHandle.IsNil && !storage.DeclaringScopeType.IsNil)
+                        if (storage.ParentScopeIndex >= 0 && !storage.Field.IsNil && !storage.DeclaringScope.IsNil)
                         {
                             result = CreateTempVariable();
-                            _methodBodyIR.Instructions.Add(new LIRLoadParentScopeField(binding, storage.FieldHandle, storage.DeclaringScopeType, storage.ParentScopeIndex, result));
+                            _methodBodyIR.Instructions.Add(new LIRLoadParentScopeField(binding, storage.Field, storage.DeclaringScope, storage.ParentScopeIndex, result));
                             DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                             return true;
                         }

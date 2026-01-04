@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using Acornima;
+using Js2IL.IR;
 using Js2IL.Services.ScopesAbi;
 using Js2IL.Services.VariableBindings;
 using Js2IL.SymbolTables;
@@ -244,29 +245,29 @@ public class EnvironmentLayoutBuilderTests
     [Fact]
     public void BindingStorage_ForLeafScopeField_HasCorrectKind()
     {
-        var fieldHandle = CreateTestFieldHandle();
-        var typeHandle = CreateTestTypeHandle();
+        var fieldId = new FieldId("TestScope", "testField");
+        var scopeId = new ScopeId("TestScope");
         
-        var storage = BindingStorage.ForLeafScopeField(fieldHandle, typeHandle);
+        var storage = BindingStorage.ForLeafScopeField(fieldId, scopeId);
 
         Assert.Equal(BindingStorageKind.LeafScopeField, storage.Kind);
-        Assert.Equal(fieldHandle, storage.FieldHandle);
-        Assert.Equal(typeHandle, storage.DeclaringScopeType);
+        Assert.Equal(fieldId, storage.Field);
+        Assert.Equal(scopeId, storage.DeclaringScope);
         Assert.Equal(-1, storage.ParentScopeIndex); // leaf scope is not in array
     }
 
     [Fact]
     public void BindingStorage_ForParentScopeField_HasCorrectKind()
     {
-        var fieldHandle = CreateTestFieldHandle();
-        var typeHandle = CreateTestTypeHandle();
+        var fieldId = new FieldId("ParentScope", "parentField");
+        var scopeId = new ScopeId("ParentScope");
 
-        var storage = BindingStorage.ForParentScopeField(fieldHandle, typeHandle, parentScopeIndex: 1);
+        var storage = BindingStorage.ForParentScopeField(fieldId, scopeId, parentScopeIndex: 1);
 
         Assert.Equal(BindingStorageKind.ParentScopeField, storage.Kind);
         Assert.Equal(1, storage.ParentScopeIndex);
-        Assert.Equal(fieldHandle, storage.FieldHandle);
-        Assert.Equal(typeHandle, storage.DeclaringScopeType);
+        Assert.Equal(fieldId, storage.Field);
+        Assert.Equal(scopeId, storage.DeclaringScope);
     }
 
     #endregion
