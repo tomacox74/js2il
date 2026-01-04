@@ -269,16 +269,16 @@ public sealed class HIRToLIRLowerer
                     if (_environmentLayout != null)
                     {
                         var storage = _environmentLayout.GetStorage(binding);
-                        if (storage != null && storage.Kind == BindingStorageKind.LeafScopeField)
+                        // Captured variable - store to leaf scope field
+                        if (storage != null && 
+                            storage.Kind == BindingStorageKind.LeafScopeField &&
+                            !storage.FieldHandle.IsNil && 
+                            !storage.DeclaringScopeType.IsNil)
                         {
-                            // Captured variable - store to leaf scope field
-                            if (!storage.FieldHandle.IsNil && !storage.DeclaringScopeType.IsNil)
-                            {
-                                lirInstructions.Add(new LIRStoreLeafScopeField(binding, storage.FieldHandle, storage.DeclaringScopeType, value));
-                                // Also map in SSA for subsequent reads (though they'll use field load)
-                                _variableMap[binding] = value;
-                                return true;
-                            }
+                            lirInstructions.Add(new LIRStoreLeafScopeField(binding, storage.FieldHandle, storage.DeclaringScopeType, value));
+                            // Also map in SSA for subsequent reads (though they'll use field load)
+                            _variableMap[binding] = value;
+                            return true;
                         }
                     }
 

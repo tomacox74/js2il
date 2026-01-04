@@ -61,15 +61,7 @@ internal sealed class ConsoleLogPeepholeOptimizer
                 }
 
                 // Check if ALL arguments can be emitted stack-only
-                bool allArgsStackOnly = true;
-                foreach (var element in buildArrayElements)
-                {
-                    if (!CanEmitTempStackOnly(methodBody, element, definedInSequence))
-                    {
-                        allArgsStackOnly = false;
-                        break;
-                    }
-                }
+                bool allArgsStackOnly = buildArrayElements.All(element => CanEmitTempStackOnly(methodBody, element, definedInSequence));
 
                 if (allArgsStackOnly)
                 {
@@ -366,7 +358,7 @@ internal sealed class ConsoleLogPeepholeOptimizer
             return false;
         }
 
-        var buildArray = (LIRBuildArray)methodBody.Instructions[buildArrayIndex];
+        _ = (LIRBuildArray)methodBody.Instructions[buildArrayIndex]; // Type assertion to ensure pattern matched correctly
         var call = (LIRCallIntrinsic)methodBody.Instructions[buildArrayIndex + 1];
         int argCount = elements.Count;
 
@@ -381,15 +373,7 @@ internal sealed class ConsoleLogPeepholeOptimizer
         }
 
         // Check if ALL arguments can be emitted stack-only
-        bool allArgsStackOnly = true;
-        foreach (var element in elements)
-        {
-            if (!CanEmitTempStackOnly(methodBody, element, definedInSequence))
-            {
-                allArgsStackOnly = false;
-                break;
-            }
-        }
+        bool allArgsStackOnly = elements.All(element => CanEmitTempStackOnly(methodBody, element, definedInSequence));
 
         if (allArgsStackOnly)
         {
