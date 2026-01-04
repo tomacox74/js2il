@@ -629,8 +629,10 @@ internal sealed class LIRToILCompiler
                     }
                     
                     // Emit: ldloc.0 (scope instance), ldfld (field handle)
-                    // Resolve field handle from ScopeMetadataRegistry
-                    var fieldHandle = _scopeMetadataRegistry.GetFieldHandle(loadLeafField.Field.ScopeName, loadLeafField.Field.FieldName);
+                    var fieldHandle = ResolveFieldHandle(
+                        loadLeafField.Field.ScopeName,
+                        loadLeafField.Field.FieldName,
+                        "LIRLoadLeafScopeField instruction");
                     ilEncoder.LoadLocal(0); // Scope instance is always in local 0
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(fieldHandle);
@@ -640,8 +642,10 @@ internal sealed class LIRToILCompiler
             case LIRStoreLeafScopeField storeLeafField:
                 {
                     // Emit: ldloc.0 (scope instance), ldarg/ldloc Value, stfld (field handle)
-                    // Resolve field handle from ScopeMetadataRegistry
-                    var fieldHandle = _scopeMetadataRegistry.GetFieldHandle(storeLeafField.Field.ScopeName, storeLeafField.Field.FieldName);
+                    var fieldHandle = ResolveFieldHandle(
+                        storeLeafField.Field.ScopeName,
+                        storeLeafField.Field.FieldName,
+                        "LIRStoreLeafScopeField instruction");
                     ilEncoder.LoadLocal(0); // Scope instance is always in local 0
                     EmitLoadTemp(storeLeafField.Value, ilEncoder, allocation, methodDescriptor);
                     ilEncoder.OpCode(ILOpCode.Stfld);
@@ -658,9 +662,13 @@ internal sealed class LIRToILCompiler
                     // Emit IL to load parent scope field
                     // For static methods with scopes parameter: ldarg.0 (scopes array)
                     // For instance methods: ldarg.0 (this), ldfld _scopes
-                    // Resolve handles from ScopeMetadataRegistry
-                    var scopeTypeHandle = _scopeMetadataRegistry.GetScopeTypeHandle(loadParentField.Scope.Name);
-                    var fieldHandle = _scopeMetadataRegistry.GetFieldHandle(loadParentField.Field.ScopeName, loadParentField.Field.FieldName);
+                    var scopeTypeHandle = ResolveScopeTypeHandle(
+                        loadParentField.Scope.Name,
+                        "LIRLoadParentScopeField instruction (castclass)");
+                    var fieldHandle = ResolveFieldHandle(
+                        loadParentField.Field.ScopeName,
+                        loadParentField.Field.FieldName,
+                        "LIRLoadParentScopeField instruction");
                     EmitLoadScopesArray(ilEncoder, methodDescriptor);
                     ilEncoder.LoadConstantI4(loadParentField.ParentScopeIndex);
                     ilEncoder.OpCode(ILOpCode.Ldelem_ref);
@@ -676,9 +684,13 @@ internal sealed class LIRToILCompiler
                     // Emit IL to store to parent scope field
                     // For static methods with scopes parameter: ldarg.0 (scopes array)
                     // For instance methods: ldarg.0 (this), ldfld _scopes
-                    // Resolve handles from ScopeMetadataRegistry
-                    var scopeTypeHandle = _scopeMetadataRegistry.GetScopeTypeHandle(storeParentField.Scope.Name);
-                    var fieldHandle = _scopeMetadataRegistry.GetFieldHandle(storeParentField.Field.ScopeName, storeParentField.Field.FieldName);
+                    var scopeTypeHandle = ResolveScopeTypeHandle(
+                        storeParentField.Scope.Name,
+                        "LIRStoreParentScopeField instruction (castclass)");
+                    var fieldHandle = ResolveFieldHandle(
+                        storeParentField.Field.ScopeName,
+                        storeParentField.Field.FieldName,
+                        "LIRStoreParentScopeField instruction");
                     EmitLoadScopesArray(ilEncoder, methodDescriptor);
                     ilEncoder.LoadConstantI4(storeParentField.ParentScopeIndex);
                     ilEncoder.OpCode(ILOpCode.Ldelem_ref);
@@ -692,8 +704,9 @@ internal sealed class LIRToILCompiler
             case LIRCreateLeafScopeInstance createScope:
                 {
                     // Emit: newobj instance void ScopeType::.ctor(), stloc.0
-                    // Resolve scope type handle from ScopeMetadataRegistry
-                    var scopeTypeHandle = _scopeMetadataRegistry.GetScopeTypeHandle(createScope.Scope.Name);
+                    var scopeTypeHandle = ResolveScopeTypeHandle(
+                        createScope.Scope.Name,
+                        "LIRCreateLeafScopeInstance instruction");
                     var ctorRef = GetScopeConstructorRef(scopeTypeHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
                     ilEncoder.Token(ctorRef);
@@ -785,7 +798,9 @@ internal sealed class LIRToILCompiler
         if (hasLeafScope)
         {
             var typeEncoder = localEncoder.AddVariable().Type();
-            var leafScopeTypeHandle = _scopeMetadataRegistry.GetScopeTypeHandle(MethodBody.LeafScopeId.Name);
+            var leafScopeTypeHandle = ResolveScopeTypeHandle(
+                MethodBody.LeafScopeId.Name,
+                "local variable signature creation (leaf scope local)");
             typeEncoder.Type(leafScopeTypeHandle, false);
         }
 
@@ -936,9 +951,11 @@ internal sealed class LIRToILCompiler
                 break;
             case LIRLoadLeafScopeField loadLeafField:
                 // Emit inline: ldloc.0 (scope instance), ldfld (field handle)
-                // Resolve field handle from ScopeMetadataRegistry
                 {
-                    var fieldHandle = _scopeMetadataRegistry.GetFieldHandle(loadLeafField.Field.ScopeName, loadLeafField.Field.FieldName);
+                    var fieldHandle = ResolveFieldHandle(
+                        loadLeafField.Field.ScopeName,
+                        loadLeafField.Field.FieldName,
+                        "inline LIRLoadLeafScopeField emission");
                     ilEncoder.LoadLocal(0);
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(fieldHandle);
@@ -946,10 +963,14 @@ internal sealed class LIRToILCompiler
                 break;
             case LIRLoadParentScopeField loadParentField:
                 // Emit inline: load scopes array, index, cast, ldfld
-                // Resolve handles from ScopeMetadataRegistry
                 {
-                    var scopeTypeHandle = _scopeMetadataRegistry.GetScopeTypeHandle(loadParentField.Scope.Name);
-                    var fieldHandle = _scopeMetadataRegistry.GetFieldHandle(loadParentField.Field.ScopeName, loadParentField.Field.FieldName);
+                    var scopeTypeHandle = ResolveScopeTypeHandle(
+                        loadParentField.Scope.Name,
+                        "inline LIRLoadParentScopeField emission (castclass)");
+                    var fieldHandle = ResolveFieldHandle(
+                        loadParentField.Field.ScopeName,
+                        loadParentField.Field.FieldName,
+                        "inline LIRLoadParentScopeField emission");
                     EmitLoadScopesArray(ilEncoder, methodDescriptor);
                     ilEncoder.LoadConstantI4(loadParentField.ParentScopeIndex);
                     ilEncoder.OpCode(ILOpCode.Ldelem_ref);
@@ -1195,6 +1216,44 @@ internal sealed class LIRToILCompiler
         var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "Multiply");
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
+    }
+
+    #endregion
+
+    #region Handle Resolution Helpers
+
+    /// <summary>
+    /// Resolves a scope type handle from the registry with improved error context.
+    /// </summary>
+    private TypeDefinitionHandle ResolveScopeTypeHandle(string scopeName, string context)
+    {
+        try
+        {
+            return _scopeMetadataRegistry.GetScopeTypeHandle(scopeName);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            throw new InvalidOperationException(
+                $"Failed to resolve scope type handle for '{scopeName}' during {context}.",
+                ex);
+        }
+    }
+
+    /// <summary>
+    /// Resolves a field handle from the registry with improved error context.
+    /// </summary>
+    private FieldDefinitionHandle ResolveFieldHandle(string scopeName, string fieldName, string context)
+    {
+        try
+        {
+            return _scopeMetadataRegistry.GetFieldHandle(scopeName, fieldName);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            throw new InvalidOperationException(
+                $"Failed to resolve field handle for '{fieldName}' in scope '{scopeName}' during {context}.",
+                ex);
+        }
     }
 
     #endregion

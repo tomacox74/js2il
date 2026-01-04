@@ -19,8 +19,8 @@ public readonly struct FieldId : IEquatable<FieldId>
 
     public FieldId(string scopeName, string fieldName)
     {
-        ScopeName = scopeName ?? throw new ArgumentNullException(nameof(scopeName));
-        FieldName = fieldName ?? throw new ArgumentNullException(nameof(fieldName));
+        ScopeName = scopeName ?? string.Empty;
+        FieldName = fieldName ?? string.Empty;
     }
 
     /// <summary>
@@ -31,7 +31,7 @@ public readonly struct FieldId : IEquatable<FieldId>
     /// <summary>
     /// A nil/invalid FieldId.
     /// </summary>
-    public static FieldId Nil => default;
+    public static FieldId Nil => new(string.Empty, string.Empty);
 
     public bool Equals(FieldId other) => ScopeName == other.ScopeName && FieldName == other.FieldName;
 

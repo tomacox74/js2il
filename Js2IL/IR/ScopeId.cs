@@ -14,7 +14,7 @@ public readonly struct ScopeId : IEquatable<ScopeId>
 
     public ScopeId(string name)
     {
-        Name = name ?? throw new ArgumentNullException(nameof(name));
+        Name = name ?? string.Empty;
     }
 
     /// <summary>
@@ -25,7 +25,7 @@ public readonly struct ScopeId : IEquatable<ScopeId>
     /// <summary>
     /// A nil/invalid ScopeId.
     /// </summary>
-    public static ScopeId Nil => default;
+    public static ScopeId Nil => new(string.Empty);
 
     public bool Equals(ScopeId other) => Name == other.Name;
 
