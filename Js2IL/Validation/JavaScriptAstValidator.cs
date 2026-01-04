@@ -33,10 +33,22 @@ public class JavaScriptAstValidator : IAstValidator
     {
         var result = new ValidationResult { IsValid = true };
         
+        // Track whether we're currently inside a class method or constructor
+        var contextStack = new Stack<ValidationContext>();
+        contextStack.Push(new ValidationContext { IsInClassMethod = false });
+        
         // Visit all nodes in the AST
         var walker = new AstWalker();
-        walker.Visit(ast, node =>
+        walker.VisitWithContext(ast, node =>
         {
+            var currentContext = contextStack.Peek();
+            
+            // Push new context for class methods and constructors
+            if (node is MethodDefinition)
+            {
+                contextStack.Push(new ValidationContext { IsInClassMethod = true });
+            }
+            
             // Check for unsupported features
             switch (node.Type)
             {
@@ -105,6 +117,15 @@ public class JavaScriptAstValidator : IAstValidator
                     result.IsValid = false;
                     break;
 
+                case NodeType.ThisExpression:
+                    // 'this' is supported in class methods and constructors, but not elsewhere
+                    if (!currentContext.IsInClassMethod)
+                    {
+                        result.Errors.Add($"The 'this' keyword is not yet supported outside of class methods and constructors (line {node.Location.Start.Line})");
+                        result.IsValid = false;
+                    }
+                    break;
+
                 case NodeType.ArrayPattern:
                     // Array destructuring is not supported
                     result.Errors.Add($"Array destructuring is not yet supported (line {node.Location.Start.Line})");
@@ -136,6 +157,20 @@ public class JavaScriptAstValidator : IAstValidator
                     // Detect require(...) patterns and spread in call arguments
                     ValidateCallExpression(node, result);
                     break;
+
+                case NodeType.FunctionDeclaration:
+                case NodeType.FunctionExpression:
+                case NodeType.ArrowFunctionExpression:
+                    // Check for parameter count limit
+                    ValidateFunctionParameters(node, result);
+                    break;
+            }
+        }, exitNode =>
+        {
+            // Pop context when leaving class methods
+            if (exitNode is MethodDefinition)
+            {
+                contextStack.Pop();
             }
         });
 
@@ -257,5 +292,28 @@ public class JavaScriptAstValidator : IAstValidator
                 }
             }
         }
+    }
+
+    private void ValidateFunctionParameters(Node node, ValidationResult result)
+    {
+        int paramCount = node switch
+        {
+            FunctionDeclaration fd => fd.Params.Count,
+            FunctionExpression fe => fe.Params.Count,
+            ArrowFunctionExpression af => af.Params.Count,
+            _ => 0
+        };
+
+        // Check for parameter count limit (issue #220)
+        if (paramCount > 6)
+        {
+            result.Errors.Add($"Functions with more than 6 parameters are not yet supported (line {node.Location.Start.Line})");
+            result.IsValid = false;
+        }
+    }
+
+    private class ValidationContext
+    {
+        public bool IsInClassMethod { get; set; }
     }
 }

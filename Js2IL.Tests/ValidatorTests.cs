@@ -276,5 +276,104 @@ public class ValidatorTests
         Assert.Contains(result.Errors, e => e.Contains("Getter"));
     }
 
+    [Fact]
+    public void Validate_ThisExpression_ReportsError()
+    {
+        // Issue #218: 'this' is not yet supported outside class methods/constructors
+        var js = "function foo() { console.log(this); }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("'this' keyword is not yet supported outside of class methods and constructors"));
+    }
+
+    [Fact]
+    public void Validate_ThisInArrowFunction_ReportsError()
+    {
+        // Issue #218: 'this' in arrow functions (outside classes) is not yet supported
+        var js = "const foo = () => this.bar;";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("'this' keyword is not yet supported outside of class methods and constructors"));
+    }
+
+    [Fact]
+    public void Validate_ThisInClassMethod_Valid()
+    {
+        // Issue #218: 'this' IS supported in class methods
+        var js = "class Foo { bar() { return this.x; } }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_ThisInClassConstructor_Valid()
+    {
+        // Issue #218: 'this' IS supported in class constructors
+        var js = "class Foo { constructor(x) { this.x = x; } }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_FunctionWithMoreThan6Parameters_ReportsError()
+    {
+        // Issue #220: Functions with >6 parameters are not supported
+        var js = "function foo(a, b, c, d, e, f, g) { return a + b + c + d + e + f + g; }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("more than 6 parameters"));
+    }
+
+    [Fact]
+    public void Validate_ArrowFunctionWithMoreThan6Parameters_ReportsError()
+    {
+        // Issue #220: Arrow functions with >6 parameters are not supported
+        var js = "const foo = (a, b, c, d, e, f, g) => a + b + c + d + e + f + g;";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("more than 6 parameters"));
+    }
+
+    [Fact]
+    public void Validate_FunctionWith6Parameters_Valid()
+    {
+        // Issue #220: Functions with exactly 6 parameters should be valid
+        var js = "function foo(a, b, c, d, e, f) { return a + b + c + d + e + f; }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_CallWith6Arguments_Valid()
+    {
+        // Issue #220: Call expressions with exactly 6 arguments should be valid
+        var js = "function test() { console.log(1, 2, 3, 4, 5, 6); }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_ConsoleLogWithMoreThan6Arguments_Valid()
+    {
+        // Issue #220: Built-in functions like console.log can accept >6 arguments
+        var js = "console.log(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
     #endregion
 } 
