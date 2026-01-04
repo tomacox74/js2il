@@ -1,3 +1,5 @@
+using System.Reflection.Metadata;
+
 namespace Js2IL.IR;
 
 public sealed class MethodBodyIR
@@ -33,4 +35,15 @@ public sealed class MethodBodyIR
     public List<int> TempVariableSlots { get; } = new();
 
     public List<LIRInstruction> Instructions { get; } = new();
+
+    /// <summary>
+    /// Whether this method body needs a leaf scope local in slot 0.
+    /// When true, the IL emitter must reserve local 0 for the scope instance.
+    /// </summary>
+    public bool NeedsLeafScopeLocal { get; set; }
+
+    /// <summary>
+    /// The type handle of the leaf scope class, if NeedsLeafScopeLocal is true.
+    /// </summary>
+    public TypeDefinitionHandle LeafScopeType { get; set; }
 }

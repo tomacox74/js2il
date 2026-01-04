@@ -22,11 +22,10 @@ public static class HIRBuilder
         switch (node)
         {
             case Acornima.Ast.Program programAst:
-                // IR pipeline doesn't yet support the scope-as-class pattern.
-                // Fall back to legacy emitter when any variable or function is captured
-                // (needs scope fields for closure access).
-                // Non-captured function declarations work because the IR pipeline calls them
-                // directly via CompiledMethodCache lookup.
+                // IR pipeline supports captured variable reads (Phase 1) but writes require proper
+                // scope instance creation and scopes array materialization at call sites.
+                // Fall back to legacy emitter when any variable in the current scope is captured
+                // to ensure proper closure semantics until Phase 3 (scopes materialization) is complete.
                 if (scope.Bindings.Values.Any(b => b.IsCaptured))
                 {
                     method = null!;
@@ -35,10 +34,24 @@ public static class HIRBuilder
                 var builder = new HIRMethodBuilder(scope);
                 return builder.TryParseStatements(programAst.Body, out method);
             case Acornima.Ast.BlockStatement blockStmt:
+                // Fall back to legacy emitter for closures (accessing parent scope variables or own captured variables)
+                // until Phase 3 (scopes materialization at call sites) is complete
+                if (scope.ReferencesParentScopeVariables || scope.Bindings.Values.Any(b => b.IsCaptured))
+                {
+                    method = null!;
+                    return false;
+                }
                 // Parse block statements by processing their body statements
                 var blockBuilder = new HIRMethodBuilder(scope);
                 return blockBuilder.TryParseStatements(blockStmt.Body, out method);
             case Acornima.Ast.MethodDefinition classMethodDef:
+                // Fall back to legacy emitter for closures (accessing parent scope variables or own captured variables)
+                // until Phase 3 (scopes materialization at call sites) is complete
+                if (scope.ReferencesParentScopeVariables || scope.Bindings.Values.Any(b => b.IsCaptured))
+                {
+                    method = null!;
+                    return false;
+                }
                 var methodFuncExpr = classMethodDef.Value as FunctionExpression;                
                 var methodBuilder = new HIRMethodBuilder(scope);
                 return methodBuilder.TryParseStatements(methodFuncExpr.Body.Body, out method);
@@ -57,6 +70,13 @@ public static class HIRBuilder
                     method = null!;
                     return false;
                 }
+                // Fall back to legacy emitter for closures (accessing parent scope variables or own captured variables)
+                // until Phase 3 (scopes materialization at call sites) is complete
+                if (scope.ReferencesParentScopeVariables || scope.Bindings.Values.Any(b => b.IsCaptured))
+                {
+                    method = null!;
+                    return false;
+                }
                 var arrowBuilder = new HIRMethodBuilder(scope);
                 return arrowBuilder.TryParseStatements(arrowBlock.Body, out method);
             case Acornima.Ast.FunctionExpression funcExpr:
@@ -68,6 +88,13 @@ public static class HIRBuilder
                     return false;
                 }
                 if (funcExpr.Body is not BlockStatement funcBlock)
+                {
+                    method = null!;
+                    return false;
+                }
+                // Fall back to legacy emitter for closures (accessing parent scope variables or own captured variables)
+                // until Phase 3 (scopes materialization at call sites) is complete
+                if (scope.ReferencesParentScopeVariables || scope.Bindings.Values.Any(b => b.IsCaptured))
                 {
                     method = null!;
                     return false;
@@ -343,6 +370,24 @@ class HIRMethodBuilder
                 // Otherwise treat it as a global variable reference (e.g., console/require).
                 hirExpr = new HIRVariableExpression(symbol);
                 return true;
+            case AssignmentExpression assignExpr:
+                // Handle assignment expressions (e.g., x = 5, y = x + 1)
+                // Currently only support simple identifier targets
+                if (assignExpr.Left is not Identifier assignTargetId)
+                {
+                    return false; // Only support identifier targets for now
+                }
+
+                var targetSymbol = _currentScope.FindSymbol(assignTargetId.Name);
+                
+                if (!TryParseExpression(assignExpr.Right, out var assignValueExpr))
+                {
+                    return false;
+                }
+
+                hirExpr = new HIRAssignmentExpression(targetSymbol, assignExpr.Operator, assignValueExpr!);
+                return true;
+
             case MemberExpression memberExpr:
                 // Handle member expressions
                 HIRExpression? objectExpr;

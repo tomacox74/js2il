@@ -27,7 +27,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -38,30 +38,35 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 45 (0x2d)
+		// Code size: 44 (0x2c)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.String_PlusEquals_Append,
-			[1] object
+			[0] string,
+			[1] string,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[3] object[]
 		)
 
 		IL_0000: ldstr "a"
-		IL_0005: stloc.1
-		IL_0006: ldloc.1
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
 		IL_0007: ldstr "b"
-		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0011: stloc.1
+		IL_000c: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0011: stloc.0
 		IL_0012: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0017: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_001c: ldc.i4.1
-		IL_001d: newarr [System.Runtime]System.Object
-		IL_0022: dup
-		IL_0023: ldc.i4.0
-		IL_0024: ldloc.1
-		IL_0025: stelem.ref
-		IL_0026: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_002b: pop
-		IL_002c: ret
+		IL_0017: stloc.2
+		IL_0018: ldc.i4.1
+		IL_0019: newarr [System.Runtime]System.Object
+		IL_001e: dup
+		IL_001f: ldc.i4.0
+		IL_0020: ldloc.0
+		IL_0021: stelem.ref
+		IL_0022: stloc.3
+		IL_0023: ldloc.2
+		IL_0024: ldloc.3
+		IL_0025: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_002a: pop
+		IL_002b: ret
 	} // end of method String_PlusEquals_Append::Main
 
 } // end of class Scripts.String_PlusEquals_Append
@@ -73,7 +78,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2095
+		// Method begins at RVA 0x2094
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

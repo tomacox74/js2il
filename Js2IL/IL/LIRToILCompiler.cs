@@ -675,11 +675,39 @@ internal sealed class LIRToILCompiler
                     ilEncoder.Token(storeParentField.FieldHandle);
                     break;
                 }
+            case LIRCreateLeafScopeInstance createScope:
+                {
+                    // Emit: newobj instance void ScopeType::.ctor(), stloc.0
+                    // Get the constructor method reference for the scope type
+                    var ctorRef = GetScopeConstructorRef(createScope.ScopeType);
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(ctorRef);
+                    ilEncoder.StoreLocal(0); // Scope instance is always in local 0
+                    break;
+                }
             default:
                 return false;
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// Gets a member reference handle for the default constructor of a scope type.
+    /// </summary>
+    private MemberReferenceHandle GetScopeConstructorRef(TypeDefinitionHandle scopeType)
+    {
+        // The scope constructor is a parameterless instance method
+        // Signature: void .ctor()
+        var ctorSignature = new BlobBuilder();
+        new BlobEncoder(ctorSignature)
+            .MethodSignature(SignatureCallingConvention.Default, 0, isInstanceMethod: true)
+            .Parameters(0, returnType => returnType.Void(), parameters => { });
+
+        return _metadataBuilder.AddMemberReference(
+            scopeType,
+            _metadataBuilder.GetOrAddString(".ctor"),
+            _metadataBuilder.GetOrAddBlob(ctorSignature));
     }
 
     #endregion
@@ -722,18 +750,30 @@ internal sealed class LIRToILCompiler
 
     private StandaloneSignatureHandle CreateLocalVariablesSignature(TempLocalAllocation allocation)
     {
-        if (MethodBody.VariableNames.Count == 0 && allocation.SlotStorages.Count == 0)
+        int varCount = MethodBody.VariableNames.Count;
+        int tempLocals = allocation.SlotStorages.Count;
+        bool hasLeafScope = MethodBody.NeedsLeafScopeLocal && !MethodBody.LeafScopeType.IsNil;
+        
+        // If we need a leaf scope local, it goes in slot 0
+        int scopeLocalCount = hasLeafScope ? 1 : 0;
+        int totalLocals = scopeLocalCount + varCount + tempLocals;
+
+        if (totalLocals == 0)
         {
             return default;
         }
 
-        int varCount = MethodBody.VariableNames.Count;
-        int totalLocals = varCount + allocation.SlotStorages.Count;
-
         var localSig = new BlobBuilder();
         var localEncoder = new BlobEncoder(localSig).LocalVariableSignature(totalLocals);
 
-        // Variable locals first
+        // Local 0: Scope instance (if needed)
+        if (hasLeafScope)
+        {
+            var typeEncoder = localEncoder.AddVariable().Type();
+            typeEncoder.Type(MethodBody.LeafScopeType, false);
+        }
+
+        // Variable locals (shifted by scope local count)
         for (int i = 0; i < varCount; i++)
         {
             var typeEncoder = localEncoder.AddVariable().Type();
@@ -1039,19 +1079,22 @@ internal sealed class LIRToILCompiler
 
     private int GetSlotForTemp(TempVariable temp, TempLocalAllocation allocation)
     {
-        // Variable-mapped temps always go to their stable variable slot.
+        // Calculate offset for scope local (if present)
+        int scopeLocalOffset = (MethodBody.NeedsLeafScopeLocal && !MethodBody.LeafScopeType.IsNil) ? 1 : 0;
+        
+        // Variable-mapped temps always go to their stable variable slot (after scope local).
         if (temp.Index >= 0 && temp.Index < MethodBody.TempVariableSlots.Count)
         {
             int varSlot = MethodBody.TempVariableSlots[temp.Index];
             if (varSlot >= 0)
             {
-                return varSlot;
+                return scopeLocalOffset + varSlot;
             }
         }
 
-        // Other temps go after variable locals.
+        // Other temps go after variable locals (and scope local).
         var slot = allocation.GetSlot(temp);
-        return MethodBody.VariableNames.Count + slot;
+        return scopeLocalOffset + MethodBody.VariableNames.Count + slot;
     }
 
     private LIRInstruction? TryFindDefInstruction(TempVariable temp)

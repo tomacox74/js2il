@@ -160,3 +160,10 @@ public record LIRLoadParentScopeField(BindingInfo Binding, FieldDefinitionHandle
 /// Emits: ldarg scopes, ldc.i4 index, ldelem.ref, castclass (scope type), ldarg/ldloc Value, stfld (field handle)
 /// </summary>
 public record LIRStoreParentScopeField(BindingInfo Binding, FieldDefinitionHandle FieldHandle, TypeDefinitionHandle ScopeType, int ParentScopeIndex, TempVariable Value) : LIRInstruction;
+
+/// <summary>
+/// Creates a new instance of the leaf scope class and stores it in IL local 0.
+/// This is required before any LIRLoadLeafScopeField or LIRStoreLeafScopeField instructions.
+/// Emits: newobj instance void ScopeType::.ctor(), stloc.0
+/// </summary>
+public record LIRCreateLeafScopeInstance(TypeDefinitionHandle ScopeType) : LIRInstruction;
