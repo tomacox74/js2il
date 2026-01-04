@@ -1,5 +1,6 @@
 using Js2IL.IR;
 using Js2IL.Services;
+using Js2IL.Services.VariableBindings;
 using Js2IL.Utilities.Ecma335;
 using System.Reflection;
 using System.Reflection.Metadata;
@@ -22,6 +23,7 @@ internal sealed class LIRToILCompiler
     private readonly BaseClassLibraryReferences _bclReferences;
     private readonly MemberReferenceRegistry _memberRefRegistry;
     private readonly CompiledMethodCache _compiledMethodCache;
+    private readonly ScopeMetadataRegistry _scopeMetadataRegistry;
     private MethodBodyIR? _methodBody;
     private bool _compiled;
 
@@ -35,13 +37,15 @@ internal sealed class LIRToILCompiler
         TypeReferenceRegistry typeReferenceRegistry,
         MemberReferenceRegistry memberReferenceRegistry,
         BaseClassLibraryReferences bclReferences,
-        CompiledMethodCache compiledMethodCache)
+        CompiledMethodCache compiledMethodCache,
+        ScopeMetadataRegistry scopeMetadataRegistry)
     {
         _metadataBuilder = metadataBuilder;
         _typeReferenceRegistry = typeReferenceRegistry;
         _bclReferences = bclReferences;
         _memberRefRegistry = memberReferenceRegistry;
         _compiledMethodCache = compiledMethodCache;
+        _scopeMetadataRegistry = scopeMetadataRegistry;
     }
 
     #region Public API
@@ -625,19 +629,23 @@ internal sealed class LIRToILCompiler
                     }
                     
                     // Emit: ldloc.0 (scope instance), ldfld (field handle)
+                    // Resolve field handle from ScopeMetadataRegistry
+                    var fieldHandle = _scopeMetadataRegistry.GetFieldHandle(loadLeafField.Field.ScopeName, loadLeafField.Field.FieldName);
                     ilEncoder.LoadLocal(0); // Scope instance is always in local 0
                     ilEncoder.OpCode(ILOpCode.Ldfld);
-                    ilEncoder.Token(loadLeafField.FieldHandle);
+                    ilEncoder.Token(fieldHandle);
                     EmitStoreTemp(loadLeafField.Result, ilEncoder, allocation);
                     break;
                 }
             case LIRStoreLeafScopeField storeLeafField:
                 {
                     // Emit: ldloc.0 (scope instance), ldarg/ldloc Value, stfld (field handle)
+                    // Resolve field handle from ScopeMetadataRegistry
+                    var fieldHandle = _scopeMetadataRegistry.GetFieldHandle(storeLeafField.Field.ScopeName, storeLeafField.Field.FieldName);
                     ilEncoder.LoadLocal(0); // Scope instance is always in local 0
                     EmitLoadTemp(storeLeafField.Value, ilEncoder, allocation, methodDescriptor);
                     ilEncoder.OpCode(ILOpCode.Stfld);
-                    ilEncoder.Token(storeLeafField.FieldHandle);
+                    ilEncoder.Token(fieldHandle);
                     break;
                 }
             case LIRLoadParentScopeField loadParentField:
@@ -650,13 +658,16 @@ internal sealed class LIRToILCompiler
                     // Emit IL to load parent scope field
                     // For static methods with scopes parameter: ldarg.0 (scopes array)
                     // For instance methods: ldarg.0 (this), ldfld _scopes
+                    // Resolve handles from ScopeMetadataRegistry
+                    var scopeTypeHandle = _scopeMetadataRegistry.GetScopeTypeHandle(loadParentField.Scope.Name);
+                    var fieldHandle = _scopeMetadataRegistry.GetFieldHandle(loadParentField.Field.ScopeName, loadParentField.Field.FieldName);
                     EmitLoadScopesArray(ilEncoder, methodDescriptor);
                     ilEncoder.LoadConstantI4(loadParentField.ParentScopeIndex);
                     ilEncoder.OpCode(ILOpCode.Ldelem_ref);
                     ilEncoder.OpCode(ILOpCode.Castclass);
-                    ilEncoder.Token(loadParentField.ScopeType);
+                    ilEncoder.Token(scopeTypeHandle);
                     ilEncoder.OpCode(ILOpCode.Ldfld);
-                    ilEncoder.Token(loadParentField.FieldHandle);
+                    ilEncoder.Token(fieldHandle);
                     EmitStoreTemp(loadParentField.Result, ilEncoder, allocation);
                     break;
                 }
@@ -665,21 +676,25 @@ internal sealed class LIRToILCompiler
                     // Emit IL to store to parent scope field
                     // For static methods with scopes parameter: ldarg.0 (scopes array)
                     // For instance methods: ldarg.0 (this), ldfld _scopes
+                    // Resolve handles from ScopeMetadataRegistry
+                    var scopeTypeHandle = _scopeMetadataRegistry.GetScopeTypeHandle(storeParentField.Scope.Name);
+                    var fieldHandle = _scopeMetadataRegistry.GetFieldHandle(storeParentField.Field.ScopeName, storeParentField.Field.FieldName);
                     EmitLoadScopesArray(ilEncoder, methodDescriptor);
                     ilEncoder.LoadConstantI4(storeParentField.ParentScopeIndex);
                     ilEncoder.OpCode(ILOpCode.Ldelem_ref);
                     ilEncoder.OpCode(ILOpCode.Castclass);
-                    ilEncoder.Token(storeParentField.ScopeType);
+                    ilEncoder.Token(scopeTypeHandle);
                     EmitLoadTemp(storeParentField.Value, ilEncoder, allocation, methodDescriptor);
                     ilEncoder.OpCode(ILOpCode.Stfld);
-                    ilEncoder.Token(storeParentField.FieldHandle);
+                    ilEncoder.Token(fieldHandle);
                     break;
                 }
             case LIRCreateLeafScopeInstance createScope:
                 {
                     // Emit: newobj instance void ScopeType::.ctor(), stloc.0
-                    // Get the constructor method reference for the scope type
-                    var ctorRef = GetScopeConstructorRef(createScope.ScopeType);
+                    // Resolve scope type handle from ScopeMetadataRegistry
+                    var scopeTypeHandle = _scopeMetadataRegistry.GetScopeTypeHandle(createScope.Scope.Name);
+                    var ctorRef = GetScopeConstructorRef(scopeTypeHandle);
                     ilEncoder.OpCode(ILOpCode.Newobj);
                     ilEncoder.Token(ctorRef);
                     ilEncoder.StoreLocal(0); // Scope instance is always in local 0
@@ -752,7 +767,7 @@ internal sealed class LIRToILCompiler
     {
         int varCount = MethodBody.VariableNames.Count;
         int tempLocals = allocation.SlotStorages.Count;
-        bool hasLeafScope = MethodBody.NeedsLeafScopeLocal && !MethodBody.LeafScopeType.IsNil;
+        bool hasLeafScope = MethodBody.NeedsLeafScopeLocal && !MethodBody.LeafScopeId.IsNil;
         
         // If we need a leaf scope local, it goes in slot 0
         int scopeLocalCount = hasLeafScope ? 1 : 0;
@@ -770,7 +785,8 @@ internal sealed class LIRToILCompiler
         if (hasLeafScope)
         {
             var typeEncoder = localEncoder.AddVariable().Type();
-            typeEncoder.Type(MethodBody.LeafScopeType, false);
+            var leafScopeTypeHandle = _scopeMetadataRegistry.GetScopeTypeHandle(MethodBody.LeafScopeId.Name);
+            typeEncoder.Type(leafScopeTypeHandle, false);
         }
 
         // Variable locals (shifted by scope local count)
@@ -920,19 +936,28 @@ internal sealed class LIRToILCompiler
                 break;
             case LIRLoadLeafScopeField loadLeafField:
                 // Emit inline: ldloc.0 (scope instance), ldfld (field handle)
-                ilEncoder.LoadLocal(0);
-                ilEncoder.OpCode(ILOpCode.Ldfld);
-                ilEncoder.Token(loadLeafField.FieldHandle);
+                // Resolve field handle from ScopeMetadataRegistry
+                {
+                    var fieldHandle = _scopeMetadataRegistry.GetFieldHandle(loadLeafField.Field.ScopeName, loadLeafField.Field.FieldName);
+                    ilEncoder.LoadLocal(0);
+                    ilEncoder.OpCode(ILOpCode.Ldfld);
+                    ilEncoder.Token(fieldHandle);
+                }
                 break;
             case LIRLoadParentScopeField loadParentField:
                 // Emit inline: load scopes array, index, cast, ldfld
-                EmitLoadScopesArray(ilEncoder, methodDescriptor);
-                ilEncoder.LoadConstantI4(loadParentField.ParentScopeIndex);
-                ilEncoder.OpCode(ILOpCode.Ldelem_ref);
-                ilEncoder.OpCode(ILOpCode.Castclass);
-                ilEncoder.Token(loadParentField.ScopeType);
-                ilEncoder.OpCode(ILOpCode.Ldfld);
-                ilEncoder.Token(loadParentField.FieldHandle);
+                // Resolve handles from ScopeMetadataRegistry
+                {
+                    var scopeTypeHandle = _scopeMetadataRegistry.GetScopeTypeHandle(loadParentField.Scope.Name);
+                    var fieldHandle = _scopeMetadataRegistry.GetFieldHandle(loadParentField.Field.ScopeName, loadParentField.Field.FieldName);
+                    EmitLoadScopesArray(ilEncoder, methodDescriptor);
+                    ilEncoder.LoadConstantI4(loadParentField.ParentScopeIndex);
+                    ilEncoder.OpCode(ILOpCode.Ldelem_ref);
+                    ilEncoder.OpCode(ILOpCode.Castclass);
+                    ilEncoder.Token(scopeTypeHandle);
+                    ilEncoder.OpCode(ILOpCode.Ldfld);
+                    ilEncoder.Token(fieldHandle);
+                }
                 break;
             case LIRGetIntrinsicGlobal getIntrinsicGlobal:
                 // Emit inline: call IntrinsicObjectRegistry.GetOrDefault
@@ -1080,7 +1105,7 @@ internal sealed class LIRToILCompiler
     private int GetSlotForTemp(TempVariable temp, TempLocalAllocation allocation)
     {
         // Calculate offset for scope local (if present)
-        int scopeLocalOffset = (MethodBody.NeedsLeafScopeLocal && !MethodBody.LeafScopeType.IsNil) ? 1 : 0;
+        int scopeLocalOffset = (MethodBody.NeedsLeafScopeLocal && !MethodBody.LeafScopeId.IsNil) ? 1 : 0;
         
         // Variable-mapped temps always go to their stable variable slot (after scope local).
         if (temp.Index >= 0 && temp.Index < MethodBody.TempVariableSlots.Count)

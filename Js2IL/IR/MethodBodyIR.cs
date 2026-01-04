@@ -1,5 +1,3 @@
-using System.Reflection.Metadata;
-
 namespace Js2IL.IR;
 
 public sealed class MethodBodyIR
@@ -43,7 +41,8 @@ public sealed class MethodBodyIR
     public bool NeedsLeafScopeLocal { get; set; }
 
     /// <summary>
-    /// The type handle of the leaf scope class, if NeedsLeafScopeLocal is true.
+    /// The scope ID of the leaf scope class, if NeedsLeafScopeLocal is true.
+    /// The actual TypeDefinitionHandle is resolved via ScopeMetadataRegistry during IL emission.
     /// </summary>
-    public TypeDefinitionHandle LeafScopeType { get; set; }
+    public ScopeId LeafScopeId { get; set; }
 }

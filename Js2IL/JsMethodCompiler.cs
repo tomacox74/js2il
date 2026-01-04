@@ -91,7 +91,7 @@ internal sealed class JsMethodCompiler
     /// </summary>
     private LIRToILCompiler CreateILCompiler()
     {
-        return new LIRToILCompiler(_metadataBuilder, _typeReferenceRegistry, _memberReferenceRegistry, _bclReferences, _compiledMethodCache);
+        return new LIRToILCompiler(_metadataBuilder, _typeReferenceRegistry, _memberReferenceRegistry, _bclReferences, _compiledMethodCache, _scopeMetadataRegistry);
     }
 
     #region Public API - Entry Points

@@ -1,4 +1,4 @@
-using System.Reflection.Metadata;
+using Js2IL.IR;
 
 namespace Js2IL.Services.ScopesAbi;
 
@@ -8,11 +8,11 @@ namespace Js2IL.Services.ScopesAbi;
 /// </summary>
 /// <param name="Index">The 0-based index in the scopes array.</param>
 /// <param name="ScopeName">The name of the scope (module-qualified if needed).</param>
-/// <param name="ScopeTypeHandle">The TypeDefinitionHandle for the scope class (for castclass).</param>
+/// <param name="ScopeId">The ScopeId for the scope class (resolved to handle during IL emission).</param>
 public sealed record ScopeSlot(
     int Index,
     string ScopeName,
-    TypeDefinitionHandle ScopeTypeHandle
+    ScopeId ScopeId
 );
 
 /// <summary>

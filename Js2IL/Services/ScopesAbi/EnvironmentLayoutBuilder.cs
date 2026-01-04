@@ -1,4 +1,4 @@
-using System.Reflection.Metadata;
+using Js2IL.IR;
 using Js2IL.Services.VariableBindings;
 using Js2IL.SymbolTables;
 
@@ -110,13 +110,10 @@ public class EnvironmentLayoutBuilder
         {
             var ancestorScope = ancestorScopes[i];
             
-            // Try to get the scope type handle from ScopeMetadataRegistry without using exceptions for control flow
-            _scopeMetadata.TryGetScopeTypeHandle(ancestorScope.Name, out TypeDefinitionHandle typeHandle);
-            
-            // If the scope type is not yet registered (may happen during early phases),
-            // typeHandle will remain the default handle and the caller can handle this.
+            // Use ScopeId for IR-level abstraction (no direct handle references)
+            var scopeId = new ScopeId(ancestorScope.Name);
 
-            slots.Add(new ScopeSlot(i, ancestorScope.Name, typeHandle));
+            slots.Add(new ScopeSlot(i, ancestorScope.Name, scopeId));
         }
 
         return new ScopeChainLayout(slots);
@@ -154,13 +151,13 @@ public class EnvironmentLayoutBuilder
                     var parentIndex = scopeChain.IndexOf(current.Name);
                     if (parentIndex >= 0)
                     {
-                        // Try to resolve metadata; if not yet registered, handles remain default
-                        _scopeMetadata.TryGetScopeTypeHandle(current.Name, out TypeDefinitionHandle scopeTypeHandle);
-                        _scopeMetadata.TryGetFieldHandle(current.Name, name, out FieldDefinitionHandle fieldHandle);
+                        // Use ScopeId and FieldId for IR-level abstraction (no direct handle references)
+                        var scopeId = new ScopeId(current.Name);
+                        var fieldId = new FieldId(current.Name, name);
 
                         storage[binding] = BindingStorage.ForParentScopeField(
-                            fieldHandle,
-                            scopeTypeHandle,
+                            fieldId,
+                            scopeId,
                             parentIndex
                         );
                     }
@@ -201,10 +198,11 @@ public class EnvironmentLayoutBuilder
 
     private BindingStorage GetLeafScopeFieldStorage(Scope scope, string name)
     {
-        _scopeMetadata.TryGetScopeTypeHandle(scope.Name, out TypeDefinitionHandle scopeTypeHandle);
-        _scopeMetadata.TryGetFieldHandle(scope.Name, name, out FieldDefinitionHandle fieldHandle);
+        // Use ScopeId and FieldId for IR-level abstraction (no direct handle references)
+        var scopeId = new ScopeId(scope.Name);
+        var fieldId = new FieldId(scope.Name, name);
 
-        return BindingStorage.ForLeafScopeField(fieldHandle, scopeTypeHandle);
+        return BindingStorage.ForLeafScopeField(fieldId, scopeId);
     }
 
     private int GetParameterIndex(Scope scope, string name)

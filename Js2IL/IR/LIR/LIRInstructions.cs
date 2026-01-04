@@ -1,5 +1,4 @@
 using Js2IL.SymbolTables;
-using System.Reflection.Metadata;
 
 namespace Js2IL.IR;
 
@@ -138,32 +137,32 @@ public record LIRBranchIfTrue(TempVariable Condition, int TargetLabel) : LIRInst
 /// The scope instance is in IL local 0, and the field handle is looked up via BindingInfo.
 /// Emits: ldloc.0 (scope instance), ldfld (field handle)
 /// </summary>
-public record LIRLoadLeafScopeField(BindingInfo Binding, FieldDefinitionHandle FieldHandle, TypeDefinitionHandle ScopeType, TempVariable Result) : LIRInstruction;
+public record LIRLoadLeafScopeField(BindingInfo Binding, FieldId Field, ScopeId Scope, TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Stores a value to a captured variable field on the leaf (current) scope instance.
 /// The scope instance is in IL local 0, and the field handle is looked up via BindingInfo.
 /// Emits: ldloc.0 (scope instance), ldarg/ldloc Value, stfld (field handle)
 /// </summary>
-public record LIRStoreLeafScopeField(BindingInfo Binding, FieldDefinitionHandle FieldHandle, TypeDefinitionHandle ScopeType, TempVariable Value) : LIRInstruction;
+public record LIRStoreLeafScopeField(BindingInfo Binding, FieldId Field, ScopeId Scope, TempVariable Value) : LIRInstruction;
 
 /// <summary>
 /// Loads a captured variable from a field on a parent scope instance.
 /// The parent scope is accessed via the scopes array parameter, indexed by the parent scope index.
 /// Emits: ldarg scopes, ldc.i4 index, ldelem.ref, castclass (scope type), ldfld (field handle)
 /// </summary>
-public record LIRLoadParentScopeField(BindingInfo Binding, FieldDefinitionHandle FieldHandle, TypeDefinitionHandle ScopeType, int ParentScopeIndex, TempVariable Result) : LIRInstruction;
+public record LIRLoadParentScopeField(BindingInfo Binding, FieldId Field, ScopeId Scope, int ParentScopeIndex, TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Stores a value to a captured variable field on a parent scope instance.
 /// The parent scope is accessed via the scopes array parameter, indexed by the parent scope index.
 /// Emits: ldarg scopes, ldc.i4 index, ldelem.ref, castclass (scope type), ldarg/ldloc Value, stfld (field handle)
 /// </summary>
-public record LIRStoreParentScopeField(BindingInfo Binding, FieldDefinitionHandle FieldHandle, TypeDefinitionHandle ScopeType, int ParentScopeIndex, TempVariable Value) : LIRInstruction;
+public record LIRStoreParentScopeField(BindingInfo Binding, FieldId Field, ScopeId Scope, int ParentScopeIndex, TempVariable Value) : LIRInstruction;
 
 /// <summary>
 /// Creates a new instance of the leaf scope class and stores it in IL local 0.
 /// This is required before any LIRLoadLeafScopeField or LIRStoreLeafScopeField instructions.
 /// Emits: newobj instance void ScopeType::.ctor(), stloc.0
 /// </summary>
-public record LIRCreateLeafScopeInstance(TypeDefinitionHandle ScopeType) : LIRInstruction;
+public record LIRCreateLeafScopeInstance(ScopeId Scope) : LIRInstruction;

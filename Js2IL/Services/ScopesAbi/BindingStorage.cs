@@ -1,4 +1,4 @@
-using System.Reflection.Metadata;
+using Js2IL.IR;
 
 namespace Js2IL.Services.ScopesAbi;
 
@@ -38,15 +38,15 @@ public enum BindingStorageKind
 /// <param name="Kind">The storage kind (local, argument, field).</param>
 /// <param name="LocalIndex">For IlLocal: the local variable index. Otherwise -1.</param>
 /// <param name="JsParameterIndex">For IlArgument: the JavaScript parameter index (0-based). Otherwise -1.</param>
-/// <param name="FieldHandle">For LeafScopeField/ParentScopeField: the field definition handle. Otherwise default.</param>
-/// <param name="DeclaringScopeType">For LeafScopeField/ParentScopeField: the scope class type handle. Otherwise default.</param>
+/// <param name="Field">For LeafScopeField/ParentScopeField: the field identifier. Otherwise default.</param>
+/// <param name="DeclaringScope">For LeafScopeField/ParentScopeField: the scope identifier. Otherwise default.</param>
 /// <param name="ParentScopeIndex">For ParentScopeField: the index in the scopes array (object[] scopes). Otherwise -1.</param>
 public sealed record BindingStorage(
     BindingStorageKind Kind,
     int LocalIndex = -1,
     int JsParameterIndex = -1,
-    FieldDefinitionHandle FieldHandle = default,
-    TypeDefinitionHandle DeclaringScopeType = default,
+    FieldId Field = default,
+    ScopeId DeclaringScope = default,
     int ParentScopeIndex = -1
 )
 {
@@ -69,24 +69,24 @@ public sealed record BindingStorage(
     /// <summary>
     /// Creates a BindingStorage for a field on the leaf (current) scope.
     /// </summary>
-    public static BindingStorage ForLeafScopeField(FieldDefinitionHandle fieldHandle, TypeDefinitionHandle scopeType)
+    public static BindingStorage ForLeafScopeField(FieldId field, ScopeId scope)
     {
         return new BindingStorage(
             BindingStorageKind.LeafScopeField,
-            FieldHandle: fieldHandle,
-            DeclaringScopeType: scopeType
+            Field: field,
+            DeclaringScope: scope
         );
     }
 
     /// <summary>
     /// Creates a BindingStorage for a field on a parent scope.
     /// </summary>
-    public static BindingStorage ForParentScopeField(FieldDefinitionHandle fieldHandle, TypeDefinitionHandle scopeType, int parentScopeIndex)
+    public static BindingStorage ForParentScopeField(FieldId field, ScopeId scope, int parentScopeIndex)
     {
         return new BindingStorage(
             BindingStorageKind.ParentScopeField,
-            FieldHandle: fieldHandle,
-            DeclaringScopeType: scopeType,
+            Field: field,
+            DeclaringScope: scope,
             ParentScopeIndex: parentScopeIndex
         );
     }
