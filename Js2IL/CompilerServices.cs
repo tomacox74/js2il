@@ -1,6 +1,7 @@
 using System.Reflection.Metadata.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
 using Js2IL.IL;
+using Js2IL.Services.VariableBindings;
  
 namespace Js2IL;
  
@@ -34,6 +35,12 @@ public static class CompilerServices
         // these classes also have methods that generate references from provided dotnet types using reflection
         services.AddSingleton<Utilities.Ecma335.TypeReferenceRegistry>();
         services.AddSingleton<Utilities.Ecma335.MemberReferenceRegistry>();
+
+        // Scope metadata and variable registries - singleton per compilation
+        // ScopeMetadataRegistry holds scope type handles and field handles
+        // VariableRegistry wraps ScopeMetadataRegistry and adds variable metadata
+        services.AddSingleton<ScopeMetadataRegistry>();
+        services.AddSingleton<VariableRegistry>();
 
         services.AddSingleton<ModuleLoader>();
         services.AddSingleton<Services.AssemblyGenerator>();

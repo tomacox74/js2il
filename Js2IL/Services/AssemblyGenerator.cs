@@ -24,18 +24,19 @@ namespace Js2IL.Services
         private MethodDefinitionHandle _mainScriptMethod;
         private BaseClassLibraryReferences _bclReferences;
 
-        private  VariableBindings.VariableRegistry? _variableRegistry;
+        private readonly VariableBindings.VariableRegistry _variableRegistry;
 
         private TypeReferenceRegistry _typeReferenceRegistry;
 
         private IServiceProvider _serviceProvider;
 
-        public AssemblyGenerator(IServiceProvider serviceProvider, MetadataBuilder metadataBuilder, TypeReferenceRegistry typeReferenceRegistry)
+        public AssemblyGenerator(IServiceProvider serviceProvider, MetadataBuilder metadataBuilder, TypeReferenceRegistry typeReferenceRegistry, VariableBindings.VariableRegistry variableRegistry)
         {
             this._metadataBuilder = metadataBuilder;
             this._typeReferenceRegistry = typeReferenceRegistry;
             this._bclReferences = serviceProvider.GetRequiredService<BaseClassLibraryReferences>();
             this._serviceProvider = serviceProvider;
+            this._variableRegistry = variableRegistry;
         }
 
         /// <summary>
@@ -58,8 +59,8 @@ namespace Js2IL.Services
             // there is 1 MethodBodyStreamEncoder for all methods in the assembly
             var methodBodyStream = new MethodBodyStreamEncoder(this._ilBuilder);
 
-            // Generate .NET types from the scope tree
-            this._variableRegistry = this.GenerateScopeTypes(modules, methodBodyStream);
+            // Generate .NET types from the scope tree (populates the injected VariableRegistry)
+            this.GenerateScopeTypes(modules, methodBodyStream);
 
             // Compile the main script method
             this.GenerateModules(modules, methodBodyStream);
@@ -83,9 +84,9 @@ namespace Js2IL.Services
         ///     public object globalVar;
         /// }
         /// </remarks>
-        private VariableBindings.VariableRegistry GenerateScopeTypes(Modules modules, MethodBodyStreamEncoder methodBodyStream)
+        private void GenerateScopeTypes(Modules modules, MethodBodyStreamEncoder methodBodyStream)
         {
-            var typeGenerator = new TypeGenerator(_metadataBuilder, _bclReferences, methodBodyStream);
+            var typeGenerator = new TypeGenerator(_metadataBuilder, _bclReferences, methodBodyStream, _variableRegistry);
 
             // Multi-module compilation: every module gets its own global scope type and registry entries.
             // This avoids missing bindings for non-root modules and prevents collisions when different modules
@@ -94,8 +95,6 @@ namespace Js2IL.Services
             {
                 typeGenerator.GenerateTypes(module.SymbolTable!);
             }
-
-            return typeGenerator.GetVariableRegistry();
         }
 
         private void GenerateModules(Modules modules, MethodBodyStreamEncoder methodBodyStream)
@@ -117,7 +116,7 @@ namespace Js2IL.Services
             var parameterNames = JavaScriptRuntime.CommonJS.ModuleParameters.ParameterNames;
 
             // Create Variables for the module - needed for both IR and legacy paths
-            var variables = new Variables(_variableRegistry!, moduleName, parameterNames);
+            var variables = new Variables(_variableRegistry, moduleName, parameterNames);
             
             // Create MainGenerator to handle function/class declarations
             // This is needed even for IR path because functions must be compiled first
