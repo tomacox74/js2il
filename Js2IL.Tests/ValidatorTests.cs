@@ -343,17 +343,6 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_CallWithMoreThan6Arguments_ReportsError()
-    {
-        // Issue #220: Call expressions with >6 arguments are not supported
-        var js = "function test() { console.log(1, 2, 3, 4, 5, 6, 7); }";
-        var ast = _parser.ParseJavaScript(js, "test.js");
-        var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("more than 6 arguments"));
-    }
-
-    [Fact]
     public void Validate_FunctionWith6Parameters_Valid()
     {
         // Issue #220: Functions with exactly 6 parameters should be valid
@@ -369,6 +358,17 @@ public class ValidatorTests
     {
         // Issue #220: Call expressions with exactly 6 arguments should be valid
         var js = "function test() { console.log(1, 2, 3, 4, 5, 6); }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_ConsoleLogWithMoreThan6Arguments_Valid()
+    {
+        // Issue #220: Built-in functions like console.log can accept >6 arguments
+        var js = "console.log(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);";
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
         Assert.True(result.IsValid);

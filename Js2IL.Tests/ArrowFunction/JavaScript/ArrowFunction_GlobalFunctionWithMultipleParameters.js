@@ -19,7 +19,7 @@ const f5 = (a, b, c, d, e) => {
 };
 
 const f6 = (a, b, c, d, e, f) => {
-    console.log("f6", a, b, c, d, e, f);
+    console.log("f6 " + a + " " + b + " " + c + " " + d + " " + e + " " + f);
 };
 
 f1(1);

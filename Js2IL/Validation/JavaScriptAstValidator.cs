@@ -258,13 +258,6 @@ public class JavaScriptAstValidator : IAstValidator
     {
         if (node is CallExpression call)
         {
-            // Check for argument count limit (issue #220)
-            if (call.Arguments.Count > 6)
-            {
-                result.Errors.Add($"Function calls with more than 6 arguments are not yet supported (line {node.Location.Start.Line})");
-                result.IsValid = false;
-            }
-
             // Check for spread in function call arguments
             foreach (var arg in call.Arguments)
             {
