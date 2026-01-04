@@ -11,6 +11,7 @@ public sealed class HIRToLIRLowerer
     private readonly MethodBodyIR _methodBodyIR = new MethodBodyIR();
     private readonly Scope? _scope;
     private readonly EnvironmentLayout? _environmentLayout;
+    private readonly EnvironmentLayoutBuilder? _environmentLayoutBuilder;
 
     private int _tempVarCounter = 0;
     private int _labelCounter = 0;
@@ -29,10 +30,11 @@ public sealed class HIRToLIRLowerer
     // Track whether parameter initialization was successful (affects TryLower result)
     private bool _parameterInitSucceeded = true;
 
-    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout)
+    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder)
     {
         _scope = scope;
         _environmentLayout = environmentLayout;
+        _environmentLayoutBuilder = environmentLayoutBuilder;
         InitializeParameters();
     }
 
@@ -186,12 +188,13 @@ public sealed class HIRToLIRLowerer
 
         // Build EnvironmentLayout for this method if scope is provided
         EnvironmentLayout? environmentLayout = null;
+        EnvironmentLayoutBuilder? environmentLayoutBuilder = null;
         if (scope != null && scopeMetadataRegistry != null)
         {
             try
             {
-                var builder = new EnvironmentLayoutBuilder(scopeMetadataRegistry);
-                environmentLayout = builder.Build(scope, CallableKind.Function);
+                environmentLayoutBuilder = new EnvironmentLayoutBuilder(scopeMetadataRegistry);
+                environmentLayout = environmentLayoutBuilder.Build(scope, CallableKind.Function);
             }
             catch
             {
@@ -200,7 +203,7 @@ public sealed class HIRToLIRLowerer
             }
         }
 
-        var lowerer = new HIRToLIRLowerer(scope, environmentLayout);
+        var lowerer = new HIRToLIRLowerer(scope, environmentLayout, environmentLayoutBuilder);
 
         // If default parameter initialization failed, fall back to legacy emitter
         if (!lowerer._parameterInitSucceeded)
@@ -241,6 +244,167 @@ public sealed class HIRToLIRLowerer
             _methodBodyIR.NeedsLeafScopeLocal = true;
             _methodBodyIR.LeafScopeId = leafScopeStorage.DeclaringScope;
         }
+    }
+
+    /// <summary>
+    /// Builds a LIRBuildScopesArray instruction for calling a function.
+    /// Determines the callee's required scope chain and maps each slot to a source in the caller.
+    /// </summary>
+    private bool TryBuildScopesArrayForCallee(Symbol calleeSymbol, TempVariable resultTemp)
+    {
+        // Find the callee's scope from its binding's declaration scope
+        var calleeScope = FindCalleeScope(calleeSymbol);
+        if (calleeScope == null)
+        {
+            // Can't determine callee's scope - fall back to empty scopes array
+            // This happens for builtin functions or when scope info is unavailable
+            _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(Array.Empty<ScopeSlotSource>(), resultTemp));
+            return true;
+        }
+
+        // Check if the callee needs parent scopes
+        if (!calleeScope.ReferencesParentScopeVariables)
+        {
+            // Callee doesn't need parent scopes - emit empty array
+            _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(Array.Empty<ScopeSlotSource>(), resultTemp));
+            return true;
+        }
+
+        // Build the callee's environment layout to get its scope chain
+        if (_environmentLayoutBuilder == null)
+        {
+            // No layout builder available - fall back to legacy
+            return false;
+        }
+
+        EnvironmentLayout calleeLayout;
+        try
+        {
+            calleeLayout = _environmentLayoutBuilder.Build(calleeScope, CallableKind.Function);
+        }
+        catch
+        {
+            return false;
+        }
+
+        // Map each slot in the callee's scope chain to a source in the caller
+        var slotSources = new List<ScopeSlotSource>();
+        foreach (var slot in calleeLayout.ScopeChain.Slots)
+        {
+            if (!TryMapScopeSlotToSource(slot, out var slotSource))
+            {
+                return false;
+            }
+            slotSources.Add(slotSource);
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(slotSources, resultTemp));
+        return true;
+    }
+
+    /// <summary>
+    /// Finds the scope associated with a function symbol.
+    /// </summary>
+    private Scope? FindCalleeScope(Symbol symbol)
+    {
+        if (_scope == null) return null;
+
+        // The function's scope is a child scope of the scope where it's declared
+        // We need to find it by looking at child scopes whose AST node matches
+        return FindScopeByDeclarationNode(symbol.BindingInfo.DeclarationNode, _scope);
+    }
+
+    /// <summary>
+    /// Recursively searches for a scope whose AST node matches the given declaration node.
+    /// For function declarations, the scope's AstNode is the FunctionDeclaration itself.
+    /// </summary>
+    private static Scope? FindScopeByDeclarationNode(Acornima.Ast.Node declarationNode, Scope root)
+    {
+        // Check if this scope's AST node matches the declaration
+        if (root.AstNode == declarationNode)
+        {
+            return root;
+        }
+
+        // Search child scopes
+        foreach (var child in root.Children)
+        {
+            var found = FindScopeByDeclarationNode(declarationNode, child);
+            if (found != null) return found;
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Maps a callee scope slot to a source in the caller context.
+    /// </summary>
+    private bool TryMapScopeSlotToSource(ScopeSlot slot, out ScopeSlotSource slotSource)
+    {
+        slotSource = default;
+
+        // The caller needs to provide this scope instance to the callee.
+        // Determine where the caller can get this scope from:
+        // 1. If it's the caller's leaf scope -> LeafLocal (ldloc.0)
+        // 2. If it's in the caller's parent scopes -> ScopesArgument (ldarg scopesArg, ldelem.ref)
+        // 3. If caller is a class method with _scopes -> ThisScopes (ldarg.0, ldfld _scopes, ldelem.ref)
+
+        // Check if this is the caller's leaf scope
+        if (_scope != null && _scope.Name == slot.ScopeName)
+        {
+            // The caller's own scope instance
+            if (_methodBodyIR.NeedsLeafScopeLocal)
+            {
+                slotSource = new ScopeSlotSource(slot, ScopeInstanceSource.LeafLocal);
+                return true;
+            }
+            // If we don't have a leaf scope local, we can't provide this scope
+            return false;
+        }
+
+        // Check if this scope is in the caller's environment layout (from parent scopes)
+        if (_environmentLayout != null)
+        {
+            var callerSlotIndex = _environmentLayout.ScopeChain.IndexOf(slot.ScopeName);
+            if (callerSlotIndex >= 0)
+            {
+                // Found in caller's scope chain
+                var scopesSource = _environmentLayout.Abi.ScopesSource;
+                if (scopesSource == ScopesSource.Argument)
+                {
+                    slotSource = new ScopeSlotSource(slot, ScopeInstanceSource.ScopesArgument, callerSlotIndex);
+                    return true;
+                }
+                else if (scopesSource == ScopesSource.ThisField)
+                {
+                    slotSource = new ScopeSlotSource(slot, ScopeInstanceSource.ThisScopes, callerSlotIndex);
+                    return true;
+                }
+            }
+        }
+
+        // Check if the caller's scope has a parent with this name
+        // This handles the case where the caller is global scope and we need to pass it
+        var currentScope = _scope;
+        while (currentScope != null)
+        {
+            if (currentScope.Name == slot.ScopeName)
+            {
+                // This is an ancestor scope of the caller
+                // In global/module main, the leaf scope local holds the global scope instance
+                if (_methodBodyIR.NeedsLeafScopeLocal && _scope == currentScope)
+                {
+                    slotSource = new ScopeSlotSource(slot, ScopeInstanceSource.LeafLocal);
+                    return true;
+                }
+            }
+            currentScope = currentScope.Parent;
+        }
+
+        // Can't find this scope in the caller's context
+        // This might happen for scopes that don't have runtime instances
+        // For now, we'll fail - the caller should fall back to legacy
+        return false;
     }
 
     // Backward compatibility overload for callers that don't provide scope
@@ -585,13 +749,12 @@ public sealed class HIRToLIRLowerer
                 arguments.Add(EnsureObject(argTemp));
             }
 
-            // Create scopes array placeholder.
-            // In the legacy direct IL emitter, the global scope instance was typically stored
-            // in local 0 of the main method, and that local was used to populate this array.
-            // In the IR-based pipeline used here, we currently pass 'default' (effectively null)
-            // and let the downstream IL emitter decide how (or whether) to materialize scopes.
+            // Build the scopes array for the callee
             var scopesTempVar = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRCreateScopesArray(default, scopesTempVar));
+            if (!TryBuildScopesArrayForCallee(symbol, scopesTempVar))
+            {
+                return false;
+            }
             DefineTempStorage(scopesTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
             // Emit the function call with arguments
