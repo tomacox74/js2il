@@ -630,10 +630,49 @@ public record LIRBuildScopesArray(
 
 The IL emitter then simply iterates slots and emits `stelem.ref` for each populated slot.
 
-### Phase 2: IR pipeline writes captured variables
+### Phase 2: IR pipeline writes captured variables ✅ COMPLETED
 
-- Ensure assignments to captured variables store to `stfld` rather than temp locals.
-- Add closure tests where inner function mutates outer bindings.
+- ✅ Ensure assignments to captured variables store to `stfld` rather than temp locals.
+- ✅ Add closure tests where inner function mutates outer bindings.
+
+**Implementation Details** (PR #232):
+- Added `HIRAssignmentExpression` node to represent variable assignment expressions in HIR
+- Added `LIRCreateLeafScopeInstance` instruction to create scope instance and store to local slot 0 at method entry
+- Extended `LIRToILCompiler` to emit:
+  - `newobj` + `stloc.0` for scope instance creation
+  - `stfld` for captured variable writes (leaf and parent scopes)
+- Extended `HIRToLIRLower` with:
+  - `TryLowerAssignmentExpression`: handles simple and compound assignments (+=, -=, *=, /=, etc.)
+  - `TryLoadVariable`: loads from scope fields or SSA map depending on binding storage
+  - `TryLowerCompoundOperation`: handles compound assignment operators
+  - `EmitScopeInstanceCreationIfNeeded`: emits `LIRCreateLeafScopeInstance` when method has leaf scope fields
+  - Extended `TryLowerUpdateExpression` for captured variable ++ and --
+- Updated `MethodBodyIR` with `NeedsLeafScopeLocal` and `LeafScopeType` properties for scope local tracking
+- Updated `LIRToILCompiler.CreateLocalVariablesSignature()` to reserve slot 0 for scope instance when needed
+- Added new LIR instructions: `LIRStoreLeafScopeField`, `LIRStoreParentScopeField` for writing captured variables
+- Added closure fallback checks in `HIRBuilder` for all function types (Program, BlockStatement, MethodDefinition, ArrowFunctionExpression, FunctionExpression) to ensure proper closure semantics
+
+**Test Files Added**:
+- `Function_ClosureMutatesOuterVariable.js` - tests inner function modifying captured variable
+- `ArrowFunction_ClosureMutatesOuterVariable.js` - tests arrow function modifying captured variable
+
+**IL Emission Pattern for Captured Variable Writes**:
+```il
+// Leaf scope field write (variable in current scope captured by inner function):
+ldloc.0              // load leaf scope instance
+<value>              // load value to store
+stfld <field>        // store to scope field
+
+// Parent scope field write (variable from ancestor scope):
+ldarg.<scopesArg>    // load scopes array
+ldc.i4 <index>       // parent scope index
+ldelem.ref           // get scope instance from array
+castclass <type>     // cast to concrete scope type
+<value>              // load value to store
+stfld <field>        // store to scope field
+```
+
+**Note on Closure Fallback**: Functions that access parent scope variables or have captured variables currently fall back to the legacy emitter. This is necessary until Phase 3 (scopes materialization at call sites) is complete, as the IR-compiled functions cannot yet properly populate the scopes array when calling legacy-compiled functions.
 
 ### Phase 3: Consolidate call-site scopes materialization
 

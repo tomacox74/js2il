@@ -228,20 +228,18 @@ public sealed class HIRToLIRLowerer
     {
         if (_environmentLayout == null) return;
 
-        // Check if any bindings use leaf scope field storage
-        foreach (var kvp in _environmentLayout.StorageByBinding)
+        // Find the first binding that uses leaf scope field storage
+        var leafScopeStorage = _environmentLayout.StorageByBinding.Values
+            .FirstOrDefault(s => s.Kind == BindingStorageKind.LeafScopeField && !s.DeclaringScope.IsNil);
+
+        if (leafScopeStorage != null)
         {
-            var storage = kvp.Value;
-            if (storage.Kind == BindingStorageKind.LeafScopeField && !storage.DeclaringScope.IsNil)
-            {
-                // Found a leaf scope field - emit scope instance creation
-                _methodBodyIR.Instructions.Insert(0, new LIRCreateLeafScopeInstance(storage.DeclaringScope));
-                
-                // Record that we need a scope local in the method
-                _methodBodyIR.NeedsLeafScopeLocal = true;
-                _methodBodyIR.LeafScopeId = storage.DeclaringScope;
-                return;
-            }
+            // Found a leaf scope field - emit scope instance creation
+            _methodBodyIR.Instructions.Insert(0, new LIRCreateLeafScopeInstance(leafScopeStorage.DeclaringScope));
+            
+            // Record that we need a scope local in the method
+            _methodBodyIR.NeedsLeafScopeLocal = true;
+            _methodBodyIR.LeafScopeId = leafScopeStorage.DeclaringScope;
         }
     }
 
@@ -887,29 +885,17 @@ public sealed class HIRToLIRLowerer
             return false;
         }
 
-        // Check if this is a captured variable that needs scope field storage
-        BindingStorage? bindingStorage = null;
-        if (_environmentLayout != null)
-        {
-            bindingStorage = _environmentLayout.GetStorage(updateBinding);
-        }
-
-        // For non-captured variables, use variable slots
-        int slot = -1;
-        if (bindingStorage == null || bindingStorage.Kind == BindingStorageKind.IlLocal)
-        {
-            slot = GetOrCreateVariableSlot(updateBinding, updateVarExpr.Name.Name, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-        }
+        // Get or create a variable slot for this non-captured variable
+        // Note: Captured variables are rejected earlier (Reference/object check), so we only reach here
+        // for IlLocal bindings or when there's no environment layout
+        var slot = GetOrCreateVariableSlot(updateBinding, updateVarExpr.Name.Name, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
 
         // In SSA: ++/-- produces a new value and updates the variable binding.
         // Prefix returns updated value; postfix returns original value.
         var originalTemp = currentValue;
 
-        // Make sure the current value is associated with the variable slot (for non-captured variables).
-        if (slot >= 0)
-        {
-            SetTempVariableSlot(originalTemp, slot);
-        }
+        // Make sure the current value is associated with the variable slot.
+        SetTempVariableSlot(originalTemp, slot);
 
         // For postfix, capture/box the original value *before* we emit the update that overwrites
         // the stable variable local slot. Otherwise, later loads of originalTemp would observe the
@@ -935,41 +921,11 @@ public sealed class HIRToLIRLowerer
         }
         this.DefineTempStorage(updatedTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
 
-        // Store back to the appropriate location
-        if (bindingStorage != null)
-        {
-            switch (bindingStorage.Kind)
-            {
-                case BindingStorageKind.LeafScopeField:
-                    if (!bindingStorage.Field.IsNil && !bindingStorage.DeclaringScope.IsNil)
-                    {
-                        var boxedUpdated = EnsureObject(updatedTemp);
-                        _methodBodyIR.Instructions.Add(new LIRStoreLeafScopeField(updateBinding, bindingStorage.Field, bindingStorage.DeclaringScope, boxedUpdated));
-                        _variableMap[updateBinding] = boxedUpdated;
-                    }
-                    break;
-
-                case BindingStorageKind.ParentScopeField:
-                    if (bindingStorage.ParentScopeIndex >= 0 && !bindingStorage.Field.IsNil && !bindingStorage.DeclaringScope.IsNil)
-                    {
-                        var boxedUpdated = EnsureObject(updatedTemp);
-                        _methodBodyIR.Instructions.Add(new LIRStoreParentScopeField(updateBinding, bindingStorage.Field, bindingStorage.DeclaringScope, bindingStorage.ParentScopeIndex, boxedUpdated));
-                    }
-                    break;
-
-                case BindingStorageKind.IlLocal:
-                    // Non-captured local - use SSA
-                    SetTempVariableSlot(updatedTemp, slot);
-                    _variableMap[updateBinding] = updatedTemp;
-                    break;
-            }
-        }
-        else
-        {
-            // No environment layout - use SSA
-            SetTempVariableSlot(updatedTemp, slot);
-            _variableMap[updateBinding] = updatedTemp;
-        }
+        // Store back to the appropriate location.
+        // Note: Captured variables (LeafScopeField, ParentScopeField) are rejected earlier at line ~877
+        // because they load as Reference/object type. Only IlLocal and no-environment-layout cases reach here.
+        SetTempVariableSlot(updatedTemp, slot);
+        _variableMap[updateBinding] = updatedTemp;
 
         if (updateExpr.Prefix)
         {
@@ -1051,6 +1007,8 @@ public sealed class HIRToLIRLowerer
                         {
                             var boxedValue = EnsureObject(valueToStore);
                             lirInstructions.Add(new LIRStoreParentScopeField(binding, storage.Field, storage.DeclaringScope, storage.ParentScopeIndex, boxedValue));
+                            // Also update SSA map for subsequent reads, mirroring leaf-scope behavior
+                            _variableMap[binding] = boxedValue;
                             resultTempVar = boxedValue;
                             return true;
                         }
