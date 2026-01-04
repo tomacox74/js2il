@@ -80,11 +80,13 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 106 (0x6a)
+		// Code size: 114 (0x72)
 		.maxstack 32
 		.locals init (
 			[0] float64,
-			[1] float64
+			[1] float64,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[3] object[]
 		)
 
 		IL_0000: ldc.r8 1
@@ -96,40 +98,48 @@
 		IL_0016: ceq
 		IL_0018: ldc.i4.0
 		IL_0019: ceq
-		IL_001b: brfalse IL_0047
+		IL_001b: brfalse IL_004b
 
 		IL_0020: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0025: ldc.i4.2
-		IL_0026: newarr [System.Runtime]System.Object
-		IL_002b: dup
-		IL_002c: ldc.i4.0
-		IL_002d: ldstr "branch"
-		IL_0032: stelem.ref
-		IL_0033: dup
-		IL_0034: ldc.i4.1
+		IL_0025: stloc.2
+		IL_0026: ldc.i4.2
+		IL_0027: newarr [System.Runtime]System.Object
+		IL_002c: dup
+		IL_002d: ldc.i4.0
+		IL_002e: ldstr "branch"
+		IL_0033: stelem.ref
+		IL_0034: dup
 		IL_0035: ldc.i4.1
-		IL_0036: box [System.Runtime]System.Boolean
-		IL_003b: stelem.ref
-		IL_003c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0041: pop
-		IL_0042: br IL_0069
+		IL_0036: ldc.i4.1
+		IL_0037: box [System.Runtime]System.Boolean
+		IL_003c: stelem.ref
+		IL_003d: stloc.3
+		IL_003e: ldloc.2
+		IL_003f: ldloc.3
+		IL_0040: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0045: pop
+		IL_0046: br IL_0071
 
-		IL_0047: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_004c: ldc.i4.2
-		IL_004d: newarr [System.Runtime]System.Object
-		IL_0052: dup
-		IL_0053: ldc.i4.0
-		IL_0054: ldstr "branch"
-		IL_0059: stelem.ref
-		IL_005a: dup
-		IL_005b: ldc.i4.1
-		IL_005c: ldc.i4.0
-		IL_005d: box [System.Runtime]System.Boolean
-		IL_0062: stelem.ref
-		IL_0063: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0068: pop
+		IL_004b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0050: stloc.2
+		IL_0051: ldc.i4.2
+		IL_0052: newarr [System.Runtime]System.Object
+		IL_0057: dup
+		IL_0058: ldc.i4.0
+		IL_0059: ldstr "branch"
+		IL_005e: stelem.ref
+		IL_005f: dup
+		IL_0060: ldc.i4.1
+		IL_0061: ldc.i4.0
+		IL_0062: box [System.Runtime]System.Boolean
+		IL_0067: stelem.ref
+		IL_0068: stloc.3
+		IL_0069: ldloc.2
+		IL_006a: ldloc.3
+		IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0070: pop
 
-		IL_0069: ret
+		IL_0071: ret
 	} // end of method ControlFlow_If_NotEqual::Main
 
 } // end of class Scripts.ControlFlow_If_NotEqual
@@ -141,7 +151,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e2
+		// Method begins at RVA 0x20ea
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

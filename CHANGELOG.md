@@ -5,6 +5,16 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 ### Added
+- **Phase 1 Captured Variable Reads**: IR pipeline can now read captured variables from parent scopes:
+  - `LIRLoadLeafScopeField`: Loads variable from current scope's field (`ldloc.X` → `ldfld`)
+  - `LIRLoadParentScopeField`: Loads variable from parent scope via scopes array (`ldarg.X` → `ldelem.ref` → `castclass` → `ldfld`)
+  - Class instance methods load parent scopes via `this._scopes` field
+  - Integration with `EnvironmentLayout` to determine binding storage location
+  - Scope field loads are stackable and support inline emission in Stackify
+- **LIRBuildArray instruction**: Optimized array initialization using dup pattern:
+  - Single instruction bundles array creation + element initialization
+  - Emits: `newarr` → `[dup, ldc.i4 index, ldarg/ldloc, stelem.ref]*`
+  - Replaces separate `LIRNewObjectArray` + `LIRBeginInitArrayElement` + `LIRStoreElementRef` sequence
 - **Phase 0 Scopes ABI Facade**: New facade types describing the scopes ABI contract for callable methods:
   - `ScopesLayoutKind`: Enum distinguishing `LegacyScopesLayout` vs `GeneralizedScopesLayout`
   - `CallableAbi`: Defines method signature shape with `ScopesSource` (None/Argument/ThisField) and `JsParamToIlArgIndex()` mapping
@@ -33,6 +43,10 @@ All notable changes to this project are documented here.
   - `AllParamsAreSimpleIdentifiers` check gates IR compilation for functions with complex parameters
 
 ### Changed
+- **ScopeMetadataRegistry wired through compilation pipeline**: `ScopeMetadataRegistry` now flows through full compilation:
+  - `LIRToILCompiler` receives `ScopeMetadataRegistry` for field handle lookups during IL emission
+  - `HIRToLIRLower` consults `EnvironmentLayout` to determine binding storage location
+  - Enables LIR instructions to reference scope fields without accessing legacy `VariableRegistry`
 - **VariableRegistry refactored as facade**: `VariableRegistry` now wraps `ScopeMetadataRegistry` for backward compatibility:
   - Constructor accepts `ScopeMetadataRegistry` (creates default if not provided)
   - Exposes `ScopeMetadata` property for direct access to handle registry
@@ -54,6 +68,10 @@ All notable changes to this project are documented here.
 - **Main method parameter indexing**: Fixed `InvalidProgramException` for `__dirname`/`__filename` access in Main:
   - Main has no scopes array parameter, so JS param 0 maps to IL arg 0 (not arg 1)
   - `HasScopesParameter = false` for Main ensures correct `ldarg.X` indices
+
+### Known Issues
+- **Minor IL regression with LIRBuildArray**: Some tests show increased local count due to `ConsoleLogPeepholeOptimizer` not recognizing the new `LIRBuildArray` instruction pattern (tracked: #211, #228). This does not affect correctness, only IL size. The fix is to complete #211 (replace ConsoleLogPeepholeOptimizer with generalized Stackify inline emission).
+- **Obsolete LIR instructions**: `LIRNewObjectArray`, `LIRBeginInitArrayElement`, `LIRStoreElementRef` are now dead code after `LIRBuildArray` introduction (tracked: #227)
 
 ## v0.5.4 - 2026-01-02
 

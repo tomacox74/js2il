@@ -533,6 +533,34 @@ internal sealed class LIRToILCompiler
                 ilEncoder.Token(_bclReferences.ObjectType);
                 EmitStoreTemp(newObjectArray.Result, ilEncoder, allocation);
                 break;
+            case LIRBuildArray buildArray:
+                {
+                    // Emit: newarr Object
+                    ilEncoder.LoadConstantI4(buildArray.Elements.Count);
+                    ilEncoder.OpCode(ILOpCode.Newarr);
+                    ilEncoder.Token(_bclReferences.ObjectType);
+                    
+                    // For each element: dup, ldc.i4 index, load element value, stelem.ref
+                    for (int i = 0; i < buildArray.Elements.Count; i++)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Dup);
+                        ilEncoder.LoadConstantI4(i);
+                        EmitLoadTemp(buildArray.Elements[i], ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Stelem_ref);
+                    }
+                    
+                    // Array reference is still on stack - store if materialized, pop if not
+                    if (IsMaterialized(buildArray.Result, allocation))
+                    {
+                        EmitStoreTemp(buildArray.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        // Array stays on stack for next instruction (e.g., call argument)
+                        // Don't pop - stackify should have determined this is stackable
+                    }
+                    break;
+                }
             case LIRReturn lirReturn:
                 EmitLoadTemp(lirReturn.ReturnValue, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Ret);
@@ -897,6 +925,22 @@ internal sealed class LIRToILCompiler
                 EmitLoadTemp(addDynamic.Left, ilEncoder, allocation, methodDescriptor);
                 EmitLoadTemp(addDynamic.Right, ilEncoder, allocation, methodDescriptor);
                 EmitOperatorsAdd(ilEncoder);
+                break;
+            case LIRLoadLeafScopeField loadLeafField:
+                // Emit inline: ldloc.0 (scope instance), ldfld (field handle)
+                ilEncoder.LoadLocal(0);
+                ilEncoder.OpCode(ILOpCode.Ldfld);
+                ilEncoder.Token(loadLeafField.FieldHandle);
+                break;
+            case LIRLoadParentScopeField loadParentField:
+                // Emit inline: load scopes array, index, cast, ldfld
+                EmitLoadScopesArray(ilEncoder, methodDescriptor);
+                ilEncoder.LoadConstantI4(loadParentField.ParentScopeIndex);
+                ilEncoder.OpCode(ILOpCode.Ldelem_ref);
+                ilEncoder.OpCode(ILOpCode.Castclass);
+                ilEncoder.Token(loadParentField.ScopeType);
+                ilEncoder.OpCode(ILOpCode.Ldfld);
+                ilEncoder.Token(loadParentField.FieldHandle);
                 break;
             default:
                 throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - unsupported instruction {def.GetType().Name}");

@@ -38,11 +38,16 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 117 (0x75)
+		// Code size: 141 (0x8d)
 		.maxstack 32
 		.locals init (
 			[0] bool,
-			[1] bool
+			[1] bool,
+			[2] bool,
+			[3] bool,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[5] object,
+			[6] object[]
 		)
 
 		IL_0000: ldc.r8 1
@@ -58,34 +63,46 @@
 		IL_002d: ceq
 		IL_002f: stloc.1
 		IL_0030: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0035: ldc.i4.2
-		IL_0036: newarr [System.Runtime]System.Object
-		IL_003b: dup
-		IL_003c: ldc.i4.0
-		IL_003d: ldstr "x is"
-		IL_0042: stelem.ref
-		IL_0043: dup
-		IL_0044: ldc.i4.1
-		IL_0045: ldloc.0
-		IL_0046: box [System.Runtime]System.Boolean
-		IL_004b: stelem.ref
-		IL_004c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0051: pop
-		IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0057: ldc.i4.2
-		IL_0058: newarr [System.Runtime]System.Object
-		IL_005d: dup
-		IL_005e: ldc.i4.0
-		IL_005f: ldstr "y is"
-		IL_0064: stelem.ref
-		IL_0065: dup
-		IL_0066: ldc.i4.1
-		IL_0067: ldloc.1
-		IL_0068: box [System.Runtime]System.Boolean
-		IL_006d: stelem.ref
-		IL_006e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0073: pop
-		IL_0074: ret
+		IL_0035: stloc.s 4
+		IL_0037: ldloc.0
+		IL_0038: box [System.Runtime]System.Boolean
+		IL_003d: stloc.s 5
+		IL_003f: ldc.i4.2
+		IL_0040: newarr [System.Runtime]System.Object
+		IL_0045: dup
+		IL_0046: ldc.i4.0
+		IL_0047: ldstr "x is"
+		IL_004c: stelem.ref
+		IL_004d: dup
+		IL_004e: ldc.i4.1
+		IL_004f: ldloc.s 5
+		IL_0051: stelem.ref
+		IL_0052: stloc.s 6
+		IL_0054: ldloc.s 4
+		IL_0056: ldloc.s 6
+		IL_0058: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_005d: pop
+		IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0063: stloc.s 4
+		IL_0065: ldloc.1
+		IL_0066: box [System.Runtime]System.Boolean
+		IL_006b: stloc.s 5
+		IL_006d: ldc.i4.2
+		IL_006e: newarr [System.Runtime]System.Object
+		IL_0073: dup
+		IL_0074: ldc.i4.0
+		IL_0075: ldstr "y is"
+		IL_007a: stelem.ref
+		IL_007b: dup
+		IL_007c: ldc.i4.1
+		IL_007d: ldloc.s 5
+		IL_007f: stelem.ref
+		IL_0080: stloc.s 6
+		IL_0082: ldloc.s 4
+		IL_0084: ldloc.s 6
+		IL_0086: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_008b: pop
+		IL_008c: ret
 	} // end of method BinaryOperator_NotEqual::Main
 
 } // end of class Scripts.BinaryOperator_NotEqual
@@ -97,7 +114,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20dd
+		// Method begins at RVA 0x20f5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

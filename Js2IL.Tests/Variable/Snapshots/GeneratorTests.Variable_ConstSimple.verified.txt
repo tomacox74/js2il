@@ -38,25 +38,34 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 37 (0x25)
+		// Code size: 43 (0x2b)
 		.maxstack 32
 		.locals init (
-			[0] float64
+			[0] float64,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[2] object,
+			[3] object[]
 		)
 
 		IL_0000: ldc.r8 42
 		IL_0009: stloc.0
 		IL_000a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_000f: ldc.i4.1
-		IL_0010: newarr [System.Runtime]System.Object
-		IL_0015: dup
-		IL_0016: ldc.i4.0
-		IL_0017: ldloc.0
-		IL_0018: box [System.Runtime]System.Double
-		IL_001d: stelem.ref
-		IL_001e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0023: pop
-		IL_0024: ret
+		IL_000f: stloc.1
+		IL_0010: ldloc.0
+		IL_0011: box [System.Runtime]System.Double
+		IL_0016: stloc.2
+		IL_0017: ldc.i4.1
+		IL_0018: newarr [System.Runtime]System.Object
+		IL_001d: dup
+		IL_001e: ldc.i4.0
+		IL_001f: ldloc.2
+		IL_0020: stelem.ref
+		IL_0021: stloc.3
+		IL_0022: ldloc.1
+		IL_0023: ldloc.3
+		IL_0024: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0029: pop
+		IL_002a: ret
 	} // end of method Variable_ConstSimple::Main
 
 } // end of class Scripts.Variable_ConstSimple
@@ -68,7 +77,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x208d
+		// Method begins at RVA 0x2093
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

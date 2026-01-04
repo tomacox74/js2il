@@ -595,25 +595,24 @@ public sealed class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRGetIntrinsicGlobal("console", consoleTempVar));
         this.DefineTempStorage(consoleTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Console)));
 
-        // console.log takes its arguments as a array of type object
-        var arrayTempVar = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRNewObjectArray(callExpr.Arguments.Count(), arrayTempVar));
-        this.DefineTempStorage(arrayTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
-
-        foreach (var (argExpr, index) in callExpr.Arguments.Select((expr, idx) => (expr, idx)))
+        // console.log takes its arguments as an array of type object
+        // First, lower all argument expressions to temps
+        var argTemps = new List<TempVariable>();
+        foreach (var argExpr in callExpr.Arguments)
         {
-            _methodBodyIR.Instructions.Add(new LIRBeginInitArrayElement(arrayTempVar, index));
-
             if (!TryLowerExpression(argExpr, out var argTempVar))
             {
                 return false;
             }
 
             argTempVar = EnsureObject(argTempVar);
-            
-            // Store argTempVar into arrayTempVar at index
-            _methodBodyIR.Instructions.Add(new LIRStoreElementRef(arrayTempVar, index, argTempVar));
+            argTemps.Add(argTempVar);
         }
+
+        // Create the arguments array with all elements in one instruction
+        var arrayTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRBuildArray(argTemps, arrayTempVar));
+        this.DefineTempStorage(arrayTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
         _methodBodyIR.Instructions.Add(new LIRCallIntrinsic(consoleTempVar, "log", arrayTempVar, resultTempVar));
 

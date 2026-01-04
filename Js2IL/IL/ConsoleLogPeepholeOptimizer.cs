@@ -45,6 +45,43 @@ internal sealed class ConsoleLogPeepholeOptimizer
 
         for (int i = 0; i < methodBody.Instructions.Count; i++)
         {
+            // Try the new LIRBuildArray pattern first (simpler, 3-instruction sequence)
+            if (TryMatchConsoleLogBuildArraySequence(methodBody, i, out var buildArrayIndex, out var buildArrayElements))
+            {
+                int callIndex = buildArrayIndex + 1;
+
+                // Build set of temps defined in this sequence
+                var definedInSequence = new HashSet<TempVariable>();
+                for (int j = i; j <= buildArrayIndex; j++)
+                {
+                    if (TempLocalAllocator.TryGetDefinedTemp(methodBody.Instructions[j], out var def))
+                    {
+                        definedInSequence.Add(def);
+                    }
+                }
+
+                // Check if ALL arguments can be emitted stack-only
+                bool allArgsStackOnly = true;
+                foreach (var element in buildArrayElements)
+                {
+                    if (!CanEmitTempStackOnly(methodBody, element, definedInSequence))
+                    {
+                        allArgsStackOnly = false;
+                        break;
+                    }
+                }
+
+                if (allArgsStackOnly)
+                {
+                    for (int j = i; j <= callIndex; j++)
+                    {
+                        replaced[j] = true;
+                    }
+                    i = callIndex;
+                    continue;
+                }
+            }
+
             if (TryMatchConsoleLogMultiArgSequence(methodBody, i, out var lastStoreIndex, out var storeInfos))
             {
                 int callIndex = lastStoreIndex + 1;
@@ -135,6 +172,13 @@ internal sealed class ConsoleLogPeepholeOptimizer
         out int consumed)
     {
         consumed = 0;
+
+        // Try the new LIRBuildArray pattern first (simpler, 3-instruction sequence)
+        if (TryEmitBuildArrayPeephole(
+            methodBody, startIndex, ilEncoder, allocation, isMaterialized, emitStoreTemp, hasScopesParameter, isInstanceMethod, out consumed))
+        {
+            return true;
+        }
 
         if (startIndex + 3 >= methodBody.Instructions.Count)
         {
@@ -299,6 +343,126 @@ internal sealed class ConsoleLogPeepholeOptimizer
 
         // If we can't handle it stack-only, don't consume the sequence.
         return false;
+    }
+
+    /// <summary>
+    /// Tries to emit a console.log sequence using LIRBuildArray (3-instruction pattern) stack-only.
+    /// </summary>
+    private bool TryEmitBuildArrayPeephole(
+        MethodBodyIR methodBody,
+        int startIndex,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        Func<TempVariable, TempLocalAllocation, bool> isMaterialized,
+        Action<TempVariable, InstructionEncoder, TempLocalAllocation> emitStoreTemp,
+        bool hasScopesParameter,
+        bool isInstanceMethod,
+        out int consumed)
+    {
+        consumed = 0;
+
+        if (!TryMatchConsoleLogBuildArraySequence(methodBody, startIndex, out var buildArrayIndex, out var elements))
+        {
+            return false;
+        }
+
+        var buildArray = (LIRBuildArray)methodBody.Instructions[buildArrayIndex];
+        var call = (LIRCallIntrinsic)methodBody.Instructions[buildArrayIndex + 1];
+        int argCount = elements.Count;
+
+        // Build set of temps defined in this sequence
+        var definedInSequence = new HashSet<TempVariable>();
+        for (int j = startIndex; j <= buildArrayIndex; j++)
+        {
+            if (TempLocalAllocator.TryGetDefinedTemp(methodBody.Instructions[j], out var def))
+            {
+                definedInSequence.Add(def);
+            }
+        }
+
+        // Check if ALL arguments can be emitted stack-only
+        bool allArgsStackOnly = true;
+        foreach (var element in elements)
+        {
+            if (!CanEmitTempStackOnly(methodBody, element, definedInSequence))
+            {
+                allArgsStackOnly = false;
+                break;
+            }
+        }
+
+        if (allArgsStackOnly)
+        {
+            EmitLoadIntrinsicGlobalVariable("console", ilEncoder);
+            ilEncoder.LoadConstantI4(argCount);
+            ilEncoder.OpCode(ILOpCode.Newarr);
+            ilEncoder.Token(_bclReferences.ObjectType);
+
+            for (int argIdx = 0; argIdx < argCount; argIdx++)
+            {
+                ilEncoder.OpCode(ILOpCode.Dup);
+                ilEncoder.LoadConstantI4(argIdx);
+                EmitTempStackOnly(methodBody, elements[argIdx], ilEncoder, hasScopesParameter, isInstanceMethod);
+                ilEncoder.OpCode(ILOpCode.Stelem_ref);
+            }
+
+            EmitInvokeIntrinsicMethod(typeof(JavaScriptRuntime.Console), "log", ilEncoder);
+
+            if (isMaterialized(call.Result, allocation))
+            {
+                emitStoreTemp(call.Result, ilEncoder, allocation);
+            }
+            else
+            {
+                ilEncoder.OpCode(ILOpCode.Pop);
+            }
+
+            consumed = 3; // LIRGetIntrinsicGlobal, LIRBuildArray, LIRCallIntrinsic
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Matches a console.log sequence using LIRBuildArray (3-instruction pattern):
+    /// LIRGetIntrinsicGlobal("console"), LIRBuildArray, LIRCallIntrinsic
+    /// </summary>
+    private static bool TryMatchConsoleLogBuildArraySequence(
+        MethodBodyIR methodBody,
+        int startIndex,
+        out int buildArrayIndex,
+        out IReadOnlyList<TempVariable> elements)
+    {
+        buildArrayIndex = -1;
+        elements = Array.Empty<TempVariable>();
+
+        if (startIndex + 2 >= methodBody.Instructions.Count)
+        {
+            return false;
+        }
+
+        if (methodBody.Instructions[startIndex] is not LIRGetIntrinsicGlobal g || !string.Equals(g.Name, "console", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        if (methodBody.Instructions[startIndex + 1] is not LIRBuildArray buildArray || buildArray.Elements.Count < 1)
+        {
+            return false;
+        }
+
+        if (methodBody.Instructions[startIndex + 2] is not LIRCallIntrinsic call ||
+            call.IntrinsicObject != g.Result ||
+            call.ArgumentsArray != buildArray.Result ||
+            !string.Equals(call.Name, "log", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        buildArrayIndex = startIndex + 1;
+        elements = buildArray.Elements;
+        return true;
     }
 
     /// <summary>
