@@ -50,8 +50,6 @@ public record LIRConstNull(TempVariable Result) : LIRInstruction;
 
 public record LIRGetIntrinsicGlobal(string Name, TempVariable Result) : LIRInstruction;
 
-public record LIRNewObjectArray(int ElementCount, TempVariable Result) : LIRInstruction;
-
 /// <summary>
 /// Creates and initializes an object array with the given elements in a single operation.
 /// All element temps must be computed before this instruction executes.
@@ -59,13 +57,6 @@ public record LIRNewObjectArray(int ElementCount, TempVariable Result) : LIRInst
 /// newarr Object, [dup, ldc.i4 index, ldtemp, stelem.ref]*, leaving array on stack.
 /// </summary>
 public record LIRBuildArray(IReadOnlyList<TempVariable> Elements, TempVariable Result) : LIRInstruction;
-
-/// <summary>
-/// Begins initialization of an array element (for multi-step initialization).  This is a hint.
-/// </summary>
-public record LIRBeginInitArrayElement(TempVariable Array, int Index) : LIRInstruction;
-
-public record LIRStoreElementRef(TempVariable Array, int Index, TempVariable Value) : LIRInstruction;
 
 public record LIRCallIntrinsic(TempVariable IntrinsicObject, string Name, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
 

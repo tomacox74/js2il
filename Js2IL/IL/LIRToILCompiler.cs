@@ -291,9 +291,6 @@ internal sealed class LIRToILCompiler
                 EmitOperatorsMultiply(ilEncoder);
                 EmitStoreTemp(mulDynamic.Result, ilEncoder, allocation);
                 break;
-            case LIRBeginInitArrayElement:
-                // Pure SSA LIR lowering does not rely on stack tricks; this is a no-op hint.
-                break;
             case LIRConstNumber constNumber:
                 if (!IsMaterialized(constNumber.Result, allocation))
                 {
@@ -500,16 +497,6 @@ internal sealed class LIRToILCompiler
                 ilEncoder.OpCode(ILOpCode.Ceq);
                 EmitStoreTemp(cmpBoolNe.Result, ilEncoder, allocation);
                 break;
-            case LIRNewObjectArray newObjectArray:
-                if (!IsMaterialized(newObjectArray.Result, allocation))
-                {
-                    break;
-                }
-                ilEncoder.LoadConstantI4(newObjectArray.ElementCount);
-                ilEncoder.OpCode(ILOpCode.Newarr);
-                ilEncoder.Token(_bclReferences.ObjectType);
-                EmitStoreTemp(newObjectArray.Result, ilEncoder, allocation);
-                break;
             case LIRBuildArray buildArray:
                 {
                     if (!IsMaterialized(buildArray.Result, allocation))
@@ -539,15 +526,6 @@ internal sealed class LIRToILCompiler
                 EmitLoadTemp(lirReturn.ReturnValue, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Ret);
                 break;
-            case LIRStoreElementRef:
-                {
-                    var store = (LIRStoreElementRef)instruction;
-                    EmitLoadTemp(store.Array, ilEncoder, allocation, methodDescriptor);
-                    ilEncoder.LoadConstantI4(store.Index);
-                    EmitLoadTemp(store.Value, ilEncoder, allocation, methodDescriptor);
-                    ilEncoder.OpCode(ILOpCode.Stelem_ref);
-                    break;
-                }
             case LIRCreateScopesArray createScopes:
                 {
                     if (!IsMaterialized(createScopes.Result, allocation))
