@@ -5,6 +5,19 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 ### Added
+- **Phase 0 Scopes ABI Facade**: New facade types describing the scopes ABI contract for callable methods:
+  - `ScopesLayoutKind`: Enum distinguishing `LegacyScopesLayout` vs `GeneralizedScopesLayout`
+  - `CallableAbi`: Defines method signature shape with `ScopesSource` (None/Argument/ThisField) and `JsParamToIlArgIndex()` mapping
+  - `ScopeChainLayout`: Describes `object[] scopes` array layout with deterministic outermost-first ordering
+  - `BindingStorage`: Runtime storage location for bindings (`IlLocal`, `IlArgument`, `LeafScopeField`, `ParentScopeField`)
+  - `EnvironmentLayout`: Complete environment specification combining ABI + scope chain + storage map
+  - `EnvironmentLayoutBuilder`: Consumes `SymbolTable`/`BindingInfo` to produce `EnvironmentLayout`
+  - 32 new tests verifying ABI contracts, scope-chain ordering, and `_scopes` parameter presence
+- **ScopeMetadataRegistry**: New minimal interface for scope and field handle lookups extracted from `VariableRegistry`:
+  - Contains `_scopeTypes`, `_scopeFields`, `_allScopeTypes` collections
+  - Methods: `RegisterScopeType()`, `RegisterField()`, `GetScopeTypeHandle()`, `GetFieldHandle()`
+  - `TryGet` variants for safer handle lookups without exceptions
+  - Registered as singleton in DI container
 - **Stackify optimization pass**: New analysis pass that identifies temps which can remain on the evaluation stack instead of being stored to IL locals:
   - `Stackify.Analyze()` identifies single-use temps consumed immediately after definition
   - `StackifyResult.IsStackable()` provides O(1) lookup for temp stackability
@@ -20,6 +33,18 @@ All notable changes to this project are documented here.
   - `AllParamsAreSimpleIdentifiers` check gates IR compilation for functions with complex parameters
 
 ### Changed
+- **VariableRegistry refactored as facade**: `VariableRegistry` now wraps `ScopeMetadataRegistry` for backward compatibility:
+  - Constructor accepts `ScopeMetadataRegistry` (creates default if not provided)
+  - Exposes `ScopeMetadata` property for direct access to handle registry
+  - All handle-related methods (`GetScopeTypeHandle`, `GetFieldHandle`, `EnsureScopeType`) delegate to `_scopeMetadata`
+  - Registered as singleton in DI container, receives `ScopeMetadataRegistry` via constructor injection
+  - Full backward compatibility maintained - all public methods unchanged
+- **DI-based VariableRegistry wiring**: `VariableRegistry` and `ScopeMetadataRegistry` now managed via dependency injection:
+  - Both registered as singletons in `CompilerServices`
+  - `AssemblyGenerator` receives `VariableRegistry` via constructor injection (no longer creates it)
+  - `TypeGenerator` receives `VariableRegistry` via constructor parameter (no longer uses `new VariableRegistry()`)
+  - Removed `TypeGenerator.GetVariableRegistry()` method (no longer needed)
+  - `EnvironmentLayoutBuilder` depends on `ScopeMetadataRegistry` (minimal interface, not full `VariableRegistry`)
 - **Console.log peephole optimization for parameters**: Extended stack-only emission to handle function parameters:
   - Added `LIRLoadParameter` to `CanEmitTempStackOnly()` in `ConsoleLogPeepholeOptimizer`
   - Parameters now emit inline as `ldarg.X` instead of requiring local storage
