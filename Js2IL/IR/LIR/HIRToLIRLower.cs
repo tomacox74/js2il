@@ -207,6 +207,9 @@ public sealed class HIRToLIRLowerer
         {
             return false;
         }
+
+        // Emit scope instance creation if there are leaf scope fields
+        lowerer.EmitScopeInstanceCreationIfNeeded();
         
         if (lowerer.TryLowerStatements(hirMethod.Body.Statements))
         {
@@ -215,6 +218,31 @@ public sealed class HIRToLIRLowerer
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Emits LIRCreateLeafScopeInstance at the start of the method if any bindings
+    /// are stored in leaf scope fields.
+    /// </summary>
+    private void EmitScopeInstanceCreationIfNeeded()
+    {
+        if (_environmentLayout == null) return;
+
+        // Check if any bindings use leaf scope field storage
+        foreach (var kvp in _environmentLayout.StorageByBinding)
+        {
+            var storage = kvp.Value;
+            if (storage.Kind == BindingStorageKind.LeafScopeField && !storage.DeclaringScopeType.IsNil)
+            {
+                // Found a leaf scope field - emit scope instance creation
+                _methodBodyIR.Instructions.Insert(0, new LIRCreateLeafScopeInstance(storage.DeclaringScopeType));
+                
+                // Record that we need a scope local in the method
+                _methodBodyIR.NeedsLeafScopeLocal = true;
+                _methodBodyIR.LeafScopeType = storage.DeclaringScopeType;
+                return;
+            }
+        }
     }
 
     // Backward compatibility overload for callers that don't provide scope
@@ -442,6 +470,9 @@ public sealed class HIRToLIRLowerer
 
             case HIRUpdateExpression updateExpr:
                 return TryLowerUpdateExpression(updateExpr, out resultTempVar);
+
+            case HIRAssignmentExpression assignExpr:
+                return TryLowerAssignmentExpression(assignExpr, out resultTempVar);
 
             case HIRVariableExpression varExpr:
                 // Look up the binding using the Symbol's BindingInfo directly
@@ -816,7 +847,7 @@ public sealed class HIRToLIRLowerer
     {
         resultTempVar = default;
 
-        // Minimal: only support ++/-- on local variables (identifiers)
+        // Only support ++/-- on identifiers
         if (updateExpr.Operator != Acornima.Operator.Increment && updateExpr.Operator != Acornima.Operator.Decrement)
         {
             return false;
@@ -828,27 +859,57 @@ public sealed class HIRToLIRLowerer
         }
 
         var updateBinding = updateVarExpr.Name.BindingInfo;
-        if (!_variableMap.TryGetValue(updateBinding, out var currentValue))
+        var isIncrement = updateExpr.Operator == Acornima.Operator.Increment;
+
+        // Load the current value (handles both captured and non-captured variables)
+        if (!TryLoadVariable(updateBinding, out var currentValue))
         {
+            return false;
+        }
+
+        // For captured variables loaded from scope fields, the storage is always object (Reference).
+        // For non-captured numeric locals, we only support double.
+        var currentStorage = GetTempStorage(currentValue);
+        
+        // If the variable is from a scope field (Reference type), we need to handle it differently
+        // as it comes boxed as object. For now, we only support numeric updates on locals.
+        // TODO: Support dynamic increment/decrement for captured variables
+        if (currentStorage.Kind == ValueStorageKind.Reference && currentStorage.ClrType == typeof(object))
+        {
+            // Captured variable - bail out for now, needs runtime support
+            // In the future: call a runtime helper to increment/decrement
             return false;
         }
 
         // Only support numeric locals (double) for now
-        if (GetTempStorage(currentValue).ClrType != typeof(double))
+        if (currentStorage.ClrType != typeof(double))
         {
             return false;
         }
 
-        var slot = GetOrCreateVariableSlot(updateBinding, updateVarExpr.Name.Name, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        // Check if this is a captured variable that needs scope field storage
+        BindingStorage? bindingStorage = null;
+        if (_environmentLayout != null)
+        {
+            bindingStorage = _environmentLayout.GetStorage(updateBinding);
+        }
 
-        var isIncrement = updateExpr.Operator == Acornima.Operator.Increment;
+        // For non-captured variables, use variable slots
+        int slot = -1;
+        if (bindingStorage == null || bindingStorage.Kind == BindingStorageKind.IlLocal)
+        {
+            slot = GetOrCreateVariableSlot(updateBinding, updateVarExpr.Name.Name, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        }
 
         // In SSA: ++/-- produces a new value and updates the variable binding.
         // Prefix returns updated value; postfix returns original value.
         var originalTemp = currentValue;
 
-        // Make sure the current value is associated with the variable slot.
-        SetTempVariableSlot(originalTemp, slot);
+        // Make sure the current value is associated with the variable slot (for non-captured variables).
+        if (slot >= 0)
+        {
+            SetTempVariableSlot(originalTemp, slot);
+        }
 
         // For postfix, capture/box the original value *before* we emit the update that overwrites
         // the stable variable local slot. Otherwise, later loads of originalTemp would observe the
@@ -874,11 +935,41 @@ public sealed class HIRToLIRLowerer
         }
         this.DefineTempStorage(updatedTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
 
-        // The updated SSA value represents the same JS variable slot.
-        SetTempVariableSlot(updatedTemp, slot);
+        // Store back to the appropriate location
+        if (bindingStorage != null)
+        {
+            switch (bindingStorage.Kind)
+            {
+                case BindingStorageKind.LeafScopeField:
+                    if (!bindingStorage.FieldHandle.IsNil && !bindingStorage.DeclaringScopeType.IsNil)
+                    {
+                        var boxedUpdated = EnsureObject(updatedTemp);
+                        _methodBodyIR.Instructions.Add(new LIRStoreLeafScopeField(updateBinding, bindingStorage.FieldHandle, bindingStorage.DeclaringScopeType, boxedUpdated));
+                        _variableMap[updateBinding] = boxedUpdated;
+                    }
+                    break;
 
-        // Update variable mapping to the new SSA value.
-        _variableMap[updateBinding] = updatedTemp;
+                case BindingStorageKind.ParentScopeField:
+                    if (bindingStorage.ParentScopeIndex >= 0 && !bindingStorage.FieldHandle.IsNil && !bindingStorage.DeclaringScopeType.IsNil)
+                    {
+                        var boxedUpdated = EnsureObject(updatedTemp);
+                        _methodBodyIR.Instructions.Add(new LIRStoreParentScopeField(updateBinding, bindingStorage.FieldHandle, bindingStorage.DeclaringScopeType, bindingStorage.ParentScopeIndex, boxedUpdated));
+                    }
+                    break;
+
+                case BindingStorageKind.IlLocal:
+                    // Non-captured local - use SSA
+                    SetTempVariableSlot(updatedTemp, slot);
+                    _variableMap[updateBinding] = updatedTemp;
+                    break;
+            }
+        }
+        else
+        {
+            // No environment layout - use SSA
+            SetTempVariableSlot(updatedTemp, slot);
+            _variableMap[updateBinding] = updatedTemp;
+        }
 
         if (updateExpr.Prefix)
         {
@@ -890,6 +981,253 @@ public sealed class HIRToLIRLowerer
         // Postfix returns the original value.
         resultTempVar = boxedOriginalForPostfix!.Value;
         return true;
+    }
+
+    private bool TryLowerAssignmentExpression(HIRAssignmentExpression assignExpr, out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        var binding = assignExpr.Target.BindingInfo;
+        var lirInstructions = _methodBodyIR.Instructions;
+
+        // For compound assignment (+=, -=, etc.), we need to load the current value first
+        TempVariable valueToStore;
+        if (assignExpr.Operator == Acornima.Operator.Assignment)
+        {
+            // Simple assignment: x = expr
+            if (!TryLowerExpression(assignExpr.Value, out valueToStore))
+            {
+                return false;
+            }
+        }
+        else
+        {
+            // Compound assignment: x += expr, x -= expr, etc.
+            // First, load the current value of the variable
+            TempVariable currentValue;
+            if (!TryLoadVariable(binding, out currentValue))
+            {
+                return false;
+            }
+
+            // Lower the RHS expression
+            if (!TryLowerExpression(assignExpr.Value, out var rhsValue))
+            {
+                return false;
+            }
+
+            // Perform the compound operation
+            if (!TryLowerCompoundOperation(assignExpr.Operator, currentValue, rhsValue, out valueToStore))
+            {
+                return false;
+            }
+        }
+
+        // Store the value to the appropriate location
+        // Check if this binding should be stored in a scope field (captured variable)
+        if (_environmentLayout != null)
+        {
+            var storage = _environmentLayout.GetStorage(binding);
+            if (storage != null)
+            {
+                switch (storage.Kind)
+                {
+                    case BindingStorageKind.LeafScopeField:
+                        // Captured variable in current scope - store to leaf scope field
+                        if (!storage.FieldHandle.IsNil && !storage.DeclaringScopeType.IsNil)
+                        {
+                            var boxedValue = EnsureObject(valueToStore);
+                            lirInstructions.Add(new LIRStoreLeafScopeField(binding, storage.FieldHandle, storage.DeclaringScopeType, boxedValue));
+                            // Also update SSA map for subsequent reads
+                            _variableMap[binding] = boxedValue;
+                            resultTempVar = boxedValue;
+                            return true;
+                        }
+                        break;
+
+                    case BindingStorageKind.ParentScopeField:
+                        // Captured variable in parent scope - store to parent scope field
+                        if (storage.ParentScopeIndex >= 0 && !storage.FieldHandle.IsNil && !storage.DeclaringScopeType.IsNil)
+                        {
+                            var boxedValue = EnsureObject(valueToStore);
+                            lirInstructions.Add(new LIRStoreParentScopeField(binding, storage.FieldHandle, storage.DeclaringScopeType, storage.ParentScopeIndex, boxedValue));
+                            resultTempVar = boxedValue;
+                            return true;
+                        }
+                        break;
+
+                    case BindingStorageKind.IlArgument:
+                        // Storing to a parameter
+                        if (storage.JsParameterIndex >= 0)
+                        {
+                            var boxedValue = EnsureObject(valueToStore);
+                            lirInstructions.Add(new LIRStoreParameter(storage.JsParameterIndex, boxedValue));
+                            resultTempVar = boxedValue;
+                            return true;
+                        }
+                        break;
+
+                    case BindingStorageKind.IlLocal:
+                        // Non-captured local - use SSA temp (fall through to default behavior)
+                        break;
+                }
+            }
+        }
+
+        // Check parameter index map for parameters (fallback)
+        if (_parameterIndexMap.TryGetValue(binding, out var paramIndex))
+        {
+            var boxedValue = EnsureObject(valueToStore);
+            lirInstructions.Add(new LIRStoreParameter(paramIndex, boxedValue));
+            resultTempVar = boxedValue;
+            return true;
+        }
+
+        // Non-captured local variable - update SSA map
+        // Get or create a variable slot for this binding
+        var storageInfo = GetTempStorage(valueToStore);
+        var slot = GetOrCreateVariableSlot(binding, assignExpr.Target.Name, storageInfo);
+        SetTempVariableSlot(valueToStore, slot);
+        _variableMap[binding] = valueToStore;
+        resultTempVar = valueToStore;
+        return true;
+    }
+
+    /// <summary>
+    /// Loads the current value of a variable, handling both captured and non-captured variables.
+    /// </summary>
+    private bool TryLoadVariable(BindingInfo binding, out TempVariable result)
+    {
+        result = default;
+
+        // Check if this binding is stored in a scope field (captured variable)
+        if (_environmentLayout != null)
+        {
+            var storage = _environmentLayout.GetStorage(binding);
+            if (storage != null)
+            {
+                switch (storage.Kind)
+                {
+                    case BindingStorageKind.IlArgument:
+                        // Non-captured parameter
+                        if (storage.JsParameterIndex >= 0)
+                        {
+                            result = CreateTempVariable();
+                            _methodBodyIR.Instructions.Add(new LIRLoadParameter(storage.JsParameterIndex, result));
+                            DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                            return true;
+                        }
+                        break;
+
+                    case BindingStorageKind.LeafScopeField:
+                        // Captured variable in current scope
+                        if (!storage.FieldHandle.IsNil && !storage.DeclaringScopeType.IsNil)
+                        {
+                            result = CreateTempVariable();
+                            _methodBodyIR.Instructions.Add(new LIRLoadLeafScopeField(binding, storage.FieldHandle, storage.DeclaringScopeType, result));
+                            DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                            return true;
+                        }
+                        break;
+
+                    case BindingStorageKind.ParentScopeField:
+                        // Captured variable in parent scope
+                        if (storage.ParentScopeIndex >= 0 && !storage.FieldHandle.IsNil && !storage.DeclaringScopeType.IsNil)
+                        {
+                            result = CreateTempVariable();
+                            _methodBodyIR.Instructions.Add(new LIRLoadParentScopeField(binding, storage.FieldHandle, storage.DeclaringScopeType, storage.ParentScopeIndex, result));
+                            DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                            return true;
+                        }
+                        break;
+
+                    case BindingStorageKind.IlLocal:
+                        // Non-captured local - use SSA map
+                        break;
+                }
+            }
+        }
+
+        // Fallback: Check parameter index map
+        if (_parameterIndexMap.TryGetValue(binding, out var paramIndex))
+        {
+            result = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadParameter(paramIndex, result));
+            DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
+        // Non-captured local: look up in SSA map
+        if (_variableMap.TryGetValue(binding, out result))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Performs a compound operation (+=, -=, *=, etc.) on two operands.
+    /// </summary>
+    private bool TryLowerCompoundOperation(Acornima.Operator op, TempVariable currentValue, TempVariable rhsValue, out TempVariable result)
+    {
+        result = CreateTempVariable();
+
+        var leftType = GetTempStorage(currentValue).ClrType;
+        var rightType = GetTempStorage(rhsValue).ClrType;
+
+        switch (op)
+        {
+            case Acornima.Operator.AdditionAssignment:
+                // Number + Number
+                if (leftType == typeof(double) && rightType == typeof(double))
+                {
+                    _methodBodyIR.Instructions.Add(new LIRAddNumber(currentValue, rhsValue, result));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    return true;
+                }
+                // String + String
+                if (leftType == typeof(string) && rightType == typeof(string))
+                {
+                    _methodBodyIR.Instructions.Add(new LIRConcatStrings(currentValue, rhsValue, result));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+                    return true;
+                }
+                // Dynamic addition
+                var leftBoxed = EnsureObject(currentValue);
+                var rightBoxed = EnsureObject(rhsValue);
+                _methodBodyIR.Instructions.Add(new LIRAddDynamic(leftBoxed, rightBoxed, result));
+                DefineTempStorage(result, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
+                return true;
+
+            case Acornima.Operator.SubtractionAssignment:
+                if (leftType == typeof(double) && rightType == typeof(double))
+                {
+                    _methodBodyIR.Instructions.Add(new LIRSubNumber(currentValue, rhsValue, result));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    return true;
+                }
+                // Subtraction requires numeric types
+                return false;
+
+            case Acornima.Operator.MultiplicationAssignment:
+                if (leftType == typeof(double) && rightType == typeof(double))
+                {
+                    _methodBodyIR.Instructions.Add(new LIRMulNumber(currentValue, rhsValue, result));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    return true;
+                }
+                // Dynamic multiplication
+                var leftMulBoxed = EnsureObject(currentValue);
+                var rightMulBoxed = EnsureObject(rhsValue);
+                _methodBodyIR.Instructions.Add(new LIRMulDynamic(leftMulBoxed, rightMulBoxed, result));
+                DefineTempStorage(result, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
+                return true;
+
+            // Add more compound operators as needed
+            default:
+                return false;
+        }
     }
 
     private TempVariable CreateTempVariable()

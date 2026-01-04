@@ -67,5 +67,8 @@ namespace Js2IL.Tests.Function
 
         [Fact]
         public Task Function_ReturnsStaticValueAndLogs() { var testName = nameof(Function_ReturnsStaticValueAndLogs); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+
+        [Fact]
+        public Task Function_ClosureMutatesOuterVariable() { var testName = nameof(Function_ClosureMutatesOuterVariable); return GenerateTest(testName); }
     }
 }
