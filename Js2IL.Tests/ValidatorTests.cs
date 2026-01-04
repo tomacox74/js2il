@@ -279,23 +279,45 @@ public class ValidatorTests
     [Fact]
     public void Validate_ThisExpression_ReportsError()
     {
-        // Issue #218: 'this' is not yet supported
+        // Issue #218: 'this' is not yet supported outside class methods/constructors
         var js = "function foo() { console.log(this); }";
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
         Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("'this' keyword is not yet supported"));
+        Assert.Contains(result.Errors, e => e.Contains("'this' keyword is not yet supported outside of class methods and constructors"));
     }
 
     [Fact]
     public void Validate_ThisInArrowFunction_ReportsError()
     {
-        // Issue #218: 'this' in arrow functions is not yet supported
+        // Issue #218: 'this' in arrow functions (outside classes) is not yet supported
         var js = "const foo = () => this.bar;";
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
         Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("'this' keyword is not yet supported"));
+        Assert.Contains(result.Errors, e => e.Contains("'this' keyword is not yet supported outside of class methods and constructors"));
+    }
+
+    [Fact]
+    public void Validate_ThisInClassMethod_Valid()
+    {
+        // Issue #218: 'this' IS supported in class methods
+        var js = "class Foo { bar() { return this.x; } }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
+    public void Validate_ThisInClassConstructor_Valid()
+    {
+        // Issue #218: 'this' IS supported in class constructors
+        var js = "class Foo { constructor(x) { this.x = x; } }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]

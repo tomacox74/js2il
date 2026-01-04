@@ -33,10 +33,23 @@ public class JavaScriptAstValidator : IAstValidator
     {
         var result = new ValidationResult { IsValid = true };
         
+        // Track whether we're currently inside a class method or constructor
+        var contextStack = new Stack<ValidationContext>();
+        contextStack.Push(new ValidationContext { IsInClassMethod = false });
+        
         // Visit all nodes in the AST
         var walker = new AstWalker();
-        walker.Visit(ast, node =>
+        walker.VisitWithContext(ast, node =>
         {
+            var currentContext = contextStack.Peek();
+            
+            // Push new context for class methods and constructors
+            if (node is MethodDefinition || 
+                (node is FunctionExpression fe && IsClassConstructor(fe)))
+            {
+                contextStack.Push(new ValidationContext { IsInClassMethod = true });
+            }
+            
             // Check for unsupported features
             switch (node.Type)
             {
@@ -106,8 +119,12 @@ public class JavaScriptAstValidator : IAstValidator
                     break;
 
                 case NodeType.ThisExpression:
-                    result.Errors.Add($"The 'this' keyword is not yet supported (line {node.Location.Start.Line})");
-                    result.IsValid = false;
+                    // 'this' is supported in class methods and constructors, but not elsewhere
+                    if (!currentContext.IsInClassMethod)
+                    {
+                        result.Errors.Add($"The 'this' keyword is not yet supported outside of class methods and constructors (line {node.Location.Start.Line})");
+                        result.IsValid = false;
+                    }
                     break;
 
                 case NodeType.ArrayPattern:
@@ -148,6 +165,14 @@ public class JavaScriptAstValidator : IAstValidator
                     // Check for parameter count limit
                     ValidateFunctionParameters(node, result);
                     break;
+            }
+        }, exitNode =>
+        {
+            // Pop context when leaving class methods/constructors
+            if (exitNode is MethodDefinition || 
+                (exitNode is FunctionExpression fe && IsClassConstructor(fe)))
+            {
+                contextStack.Pop();
             }
         });
 
@@ -294,5 +319,17 @@ public class JavaScriptAstValidator : IAstValidator
             result.Errors.Add($"Functions with more than 6 parameters are not yet supported (line {node.Location.Start.Line})");
             result.IsValid = false;
         }
+    }
+
+    private bool IsClassConstructor(FunctionExpression fe)
+    {
+        // Check if this function expression is a class constructor by checking its parent
+        // Constructor functions are directly nested under ClassBody
+        return false; // Will be properly detected through MethodDefinition context
+    }
+
+    private class ValidationContext
+    {
+        public bool IsInClassMethod { get; set; }
     }
 }

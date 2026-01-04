@@ -199,12 +199,217 @@ public class AstWalker
         }
     }
 
+    public void VisitWithContext(Node? node, Action<Node> enterNode, Action<Node> exitNode)
+    {
+        if (node == null) return;
+
+        // Visit the current node (enter)
+        enterNode(node);
+
+        // Visit child nodes based on node type
+        switch (node)
+        {
+            case Acornima.Ast.Program program:
+                VisitNodesWithContext(program.Body, enterNode, exitNode);
+                break;
+
+            case BlockStatement block:
+                VisitNodesWithContext(block.Body, enterNode, exitNode);
+                break;
+
+            case FunctionDeclaration func:
+                VisitNodesWithContext(func.Params, enterNode, exitNode);
+                VisitWithContext(func.Body, enterNode, exitNode);
+                break;
+
+            case FunctionExpression funcExpr:
+                VisitNodesWithContext(funcExpr.Params, enterNode, exitNode);
+                VisitWithContext(funcExpr.Body, enterNode, exitNode);
+                break;
+
+            case ArrowFunctionExpression arrowFunc:
+                VisitNodesWithContext(arrowFunc.Params, enterNode, exitNode);
+                VisitWithContext(arrowFunc.Body, enterNode, exitNode);
+                break;
+
+            case VariableDeclaration varDecl:
+                VisitNodesWithContext(varDecl.Declarations, enterNode, exitNode);
+                break;
+
+            case VariableDeclarator varDeclarator:
+                if (varDeclarator.Id is not Identifier)
+                {
+                    VisitWithContext(varDeclarator.Id, enterNode, exitNode);
+                }
+                VisitWithContext(varDeclarator.Init, enterNode, exitNode);
+                break;
+
+            case ExpressionStatement exprStmt:
+                VisitWithContext(exprStmt.Expression, enterNode, exitNode);
+                break;
+
+            case BinaryExpression binaryExpr:
+                VisitWithContext(binaryExpr.Left, enterNode, exitNode);
+                VisitWithContext(binaryExpr.Right, enterNode, exitNode);
+                break;
+
+            case CallExpression callExpr:
+                VisitWithContext(callExpr.Callee, enterNode, exitNode);
+                VisitNodesWithContext(callExpr.Arguments, enterNode, exitNode);
+                break;
+
+            case MemberExpression memberExpr:
+                VisitWithContext(memberExpr.Object, enterNode, exitNode);
+                VisitWithContext(memberExpr.Property, enterNode, exitNode);
+                break;
+
+            case ReturnStatement returnStmt:
+                VisitWithContext(returnStmt.Argument, enterNode, exitNode);
+                break;
+
+            case IfStatement ifStmt:
+                VisitWithContext(ifStmt.Test, enterNode, exitNode);
+                VisitWithContext(ifStmt.Consequent, enterNode, exitNode);
+                VisitWithContext(ifStmt.Alternate, enterNode, exitNode);
+                break;
+
+            case WhileStatement whileStmt:
+                VisitWithContext(whileStmt.Test, enterNode, exitNode);
+                VisitWithContext(whileStmt.Body, enterNode, exitNode);
+                break;
+
+            case ForStatement forStmt:
+                VisitWithContext(forStmt.Init, enterNode, exitNode);
+                VisitWithContext(forStmt.Test, enterNode, exitNode);
+                VisitWithContext(forStmt.Update, enterNode, exitNode);
+                VisitWithContext(forStmt.Body, enterNode, exitNode);
+                break;
+
+            case ForInStatement forInStmt:
+                VisitWithContext(forInStmt.Left, enterNode, exitNode);
+                VisitWithContext(forInStmt.Right, enterNode, exitNode);
+                VisitWithContext(forInStmt.Body, enterNode, exitNode);
+                break;
+
+            case ForOfStatement forOfStmt:
+                VisitWithContext(forOfStmt.Left, enterNode, exitNode);
+                VisitWithContext(forOfStmt.Right, enterNode, exitNode);
+                VisitWithContext(forOfStmt.Body, enterNode, exitNode);
+                break;
+
+            case SwitchStatement switchStmt:
+                VisitWithContext(switchStmt.Discriminant, enterNode, exitNode);
+                VisitNodesWithContext(switchStmt.Cases, enterNode, exitNode);
+                break;
+
+            case SwitchCase switchCase:
+                VisitWithContext(switchCase.Test, enterNode, exitNode);
+                VisitNodesWithContext(switchCase.Consequent, enterNode, exitNode);
+                break;
+
+            case TryStatement tryStmt:
+                VisitWithContext(tryStmt.Block, enterNode, exitNode);
+                VisitWithContext(tryStmt.Handler, enterNode, exitNode);
+                VisitWithContext(tryStmt.Finalizer, enterNode, exitNode);
+                break;
+
+            case CatchClause catchClause:
+                VisitWithContext(catchClause.Param, enterNode, exitNode);
+                VisitWithContext(catchClause.Body, enterNode, exitNode);
+                break;
+
+            case ThrowStatement throwStmt:
+                VisitWithContext(throwStmt.Argument, enterNode, exitNode);
+                break;
+
+            case ArrayExpression arrayExpr:
+                VisitNodesWithContext(arrayExpr.Elements, enterNode, exitNode);
+                break;
+
+            case ObjectExpression objExpr:
+                VisitNodesWithContext(objExpr.Properties, enterNode, exitNode);
+                break;
+
+            case Property prop:
+                VisitWithContext(prop.Key, enterNode, exitNode);
+                VisitWithContext(prop.Value, enterNode, exitNode);
+                break;
+
+            case ConditionalExpression condExpr:
+                VisitWithContext(condExpr.Test, enterNode, exitNode);
+                VisitWithContext(condExpr.Consequent, enterNode, exitNode);
+                VisitWithContext(condExpr.Alternate, enterNode, exitNode);
+                break;
+
+            case UnaryExpression unaryExpr:
+                VisitWithContext(unaryExpr.Argument, enterNode, exitNode);
+                break;
+
+            case AssignmentExpression assignExpr:
+                VisitWithContext(assignExpr.Left, enterNode, exitNode);
+                VisitWithContext(assignExpr.Right, enterNode, exitNode);
+                break;
+
+            case SequenceExpression seqExpr:
+                VisitNodesWithContext(seqExpr.Expressions, enterNode, exitNode);
+                break;
+
+            case ObjectPattern objPattern:
+                VisitNodesWithContext(objPattern.Properties, enterNode, exitNode);
+                break;
+
+            case ArrayPattern arrPattern:
+                VisitNodesWithContext(arrPattern.Elements, enterNode, exitNode);
+                break;
+
+            case RestElement restElem:
+                VisitWithContext(restElem.Argument, enterNode, exitNode);
+                break;
+
+            case ClassDeclaration classDecl:
+                VisitWithContext(classDecl.SuperClass, enterNode, exitNode);
+                VisitWithContext(classDecl.Body, enterNode, exitNode);
+                break;
+
+            case ClassExpression classExpr:
+                VisitWithContext(classExpr.SuperClass, enterNode, exitNode);
+                VisitWithContext(classExpr.Body, enterNode, exitNode);
+                break;
+
+            case ClassBody classBody:
+                VisitNodesWithContext(classBody.Body, enterNode, exitNode);
+                break;
+
+            case MethodDefinition methodDef:
+                VisitWithContext(methodDef.Key, enterNode, exitNode);
+                VisitWithContext(methodDef.Value, enterNode, exitNode);
+                break;
+
+            case PropertyDefinition propDef:
+                VisitWithContext(propDef.Key, enterNode, exitNode);
+                VisitWithContext(propDef.Value, enterNode, exitNode);
+                break;
+        }
+
+        // Exit the current node
+        exitNode(node);
+    }
+
     private void VisitNodes<T>(IEnumerable<T> nodes, Action<Node> visitor) where T : Node?
     {
         if (nodes == null) return;
         foreach (var node in nodes)
         {
             Visit(node, visitor);
+        }
+    }
+
+    private void VisitNodesWithContext<T>(IEnumerable<T> nodes, Action<Node> enterNode, Action<Node> exitNode) where T : Node?
+    {
+        if (nodes == null) return;
+        foreach (var node in nodes)
+        {
+            VisitWithContext(node, enterNode, exitNode);
         }
     }
 } 
