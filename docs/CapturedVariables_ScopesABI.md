@@ -135,6 +135,14 @@ instance object M(object p0, object p1, ...)
 - Parent scopes are read from `this._scopes`.
 - There is no `object[] scopes` parameter.
 
+**Note on class fields vs captured bindings**
+
+ES6 class fields (instance and static) are emitted as .NET fields on the class type itself. They are accessed via standard `this.field` / `ClassName.field` patterns, **not** through the scopes chain. The scopes ABI only governs access to **lexically captured variables** from enclosing scopes (functions, blocks, global). The class scope itself has no runtime "scope instance" — it exists only as compile-time metadata. At runtime:
+
+- Class instance fields → fields on `this`
+- Class static fields → static fields on the type
+- Parent scope variables → `this._scopes[index].field`
+
 #### 1.4 Main/module entrypoint
 
 No scopes parameter is required.
@@ -161,8 +169,7 @@ Individual elements of `scopes[]` are permitted to be `null` when the callee nev
 
 - This is an optimization only; it must not change semantics.
 - The callee’s lowering must never dereference a `null` slot because its `EnvironmentLayout` would not contain any `ParentScopeField` accesses that point at that slot.
-- For the first implementation of this ABI, it is acceptable (and simpler) to always populate all slots that are part of the required chain.
-
+- For the first implementation of this ABI, it is acceptable (and simpler) to always populate all slots that are part of the required chain.- To determine which slots are required (for future optimization): collect the set of `ParentScopeIndex` values from all `ParentScopeField` entries in `EnvironmentLayout.StorageByBinding`. Slots not in this set may be left `null`.
 This is the simplest, scales to deep nesting, and matches the direction used by class method ancestor computation.
 
 #### 2.2 Compatibility rule (current legacy behavior constraints)
@@ -587,6 +594,17 @@ This is not an IL concern; it is metadata used by call sites and by LIR→IL whe
 - Update HIR→LIR lowering so loads/stores are explicit for non-SSA-captured values.
 - Implement LIR→IL lowering for `BindingStorageKind.*ScopeField`.
 
+**Note on `LIRCreateScopesArray`**: The existing `LIRCreateScopesArray` instruction is a placeholder that emits a 1-element array containing `null`. When implementing captured variable support, it should be replaced or extended to accept the `ScopeChainLayout` (or equivalent metadata) so the LIR explicitly encodes which scope instances populate which slots. A richer instruction shape might look like:
+
+```csharp
+public record LIRBuildScopesArray(
+    IReadOnlyList<TempVariable?> ScopeInstances,  // null = slot not populated
+    TempVariable Result
+) : LIRInstruction;
+```
+
+The IL emitter then simply iterates slots and emits `stelem.ref` for each populated slot.
+
 ### Phase 2: IR pipeline writes captured variables
 
 - Ensure assignments to captured variables store to `stfld` rather than temp locals.
@@ -613,6 +631,16 @@ To avoid regressions in legacy code that is being retired:
   - construct a generalized `object[] scopes` that matches the IR callee’s `ScopeChainLayout`
 
 No common helper in `JavaScriptRuntime` is required for correctness; constructing arrays directly in emitted IL is acceptable.
+
+**Callable metadata store**
+
+The IR pipeline should introduce a new callable metadata registry keyed by `BindingInfo` (not string name), storing:
+
+- `MethodDefinitionHandle`
+- `EnvironmentLayout` (including `CallableAbi` and `ScopeChainLayout`)
+- `ScopesLayoutKind`
+
+This replaces the role of the legacy `FunctionRegistry` (which is string-keyed and lacks scope metadata) for IR-compiled callables. The legacy `FunctionRegistry` continues to serve the legacy pipeline during migration but should not be extended; the facade's metadata store is the forward path.
 
 ## Compatibility and Versioning
 
