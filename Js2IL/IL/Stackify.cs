@@ -262,6 +262,47 @@ internal static class Stackify
             case LIRLoadParentScopeField:
                 return true;
 
+            // Intrinsic global loads - just a dictionary lookup, no side effects
+            case LIRGetIntrinsicGlobal:
+                return true;
+
+            // Scopes array creation - creates a small array, safe to inline
+            // Used once per closure creation, no observable side effects
+            case LIRCreateScopesArray:
+                return true;
+
+            // Unary operators - cheap runtime calls, no side effects
+            case LIRBitwiseNotNumber:
+            case LIRTypeof:
+            case LIRNegateNumber:
+                return true;
+
+            // LIRBuildArray creates an array and initializes elements inline.
+            // Safe to inline if all element temps can be emitted inline.
+            // Used for call arguments (e.g., console.log) where array is consumed immediately.
+            case LIRBuildArray buildArray:
+                foreach (var element in buildArray.Elements)
+                {
+                    var elemIdx = element.Index;
+                    if (elemIdx < 0 || elemIdx >= defInstruction.Length || defInstruction[elemIdx] == null)
+                        return false;
+                    if (!CanEmitInline(defInstruction[elemIdx]!, methodBody, defInstruction))
+                        return false;
+                }
+                return true;
+
+            // LIRCallIntrinsic calls an intrinsic method (e.g., console.log).
+            // Has side effects but Stackify only marks single-use temps as stackable,
+            // so the call won't be duplicated. Safe to inline.
+            case LIRCallIntrinsic:
+                return true;
+
+            // LIRCallFunction calls a user-defined function.
+            // Has side effects but Stackify only marks single-use temps as stackable,
+            // so the call won't be duplicated. Safe to inline.
+            case LIRCallFunction:
+                return true;
+
             // LIRConvertToObject can be emitted inline if its source can be emitted inline
             // AND the source is not backed by a variable slot. If the source is backed by
             // a variable slot, that slot may be overwritten by a later SSA value before the
@@ -269,13 +310,14 @@ internal static class Stackify
             // the slot is updated, so the box must materialize).
             case LIRConvertToObject convertToObject:
                 var sourceIdx = convertToObject.Source.Index;
+                // Check variable slot first - if source is backed by a variable slot, don't inline
+                if (sourceIdx >= 0 && sourceIdx < methodBody.TempVariableSlots.Count && methodBody.TempVariableSlots[sourceIdx] >= 0)
+                {
+                    return false;
+                }
+                // Now check if the source's defining instruction can be inlined
                 if (sourceIdx >= 0 && sourceIdx < defInstruction.Length && defInstruction[sourceIdx] != null)
                 {
-                    // If the source is backed by a variable slot, don't inline - the slot may be modified
-                    if (sourceIdx < methodBody.TempVariableSlots.Count && methodBody.TempVariableSlots[sourceIdx] >= 0)
-                    {
-                        return false;
-                    }
                     return CanEmitInline(defInstruction[sourceIdx]!, methodBody, defInstruction);
                 }
                 return false;

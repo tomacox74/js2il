@@ -30,7 +30,7 @@ internal sealed class LIRToILCompiler
     // TODO(#211): Remove this flag once Stackify can fully replace ConsoleLogPeepholeOptimizer.
     // Set to false to test Stackify in isolation (currently causes 152 test failures due to
     // missing inline emission support for some instruction types).
-    private const bool EnableConsoleLogPeephole = true;
+    private const bool EnableConsoleLogPeephole = false;
 
     /// <summary>
     /// Gets the method body, throwing if not yet set.
@@ -157,9 +157,27 @@ internal sealed class LIRToILCompiler
 
         // Pre-pass: find console.log(oneArg) sequences that we will emit stack-only, and avoid
         // allocating IL locals for temps that are only used within those sequences.
-        var peepholeReplaced = EnableConsoleLogPeephole 
-            ? _consoleLogOptimizer.ComputeStackOnlyMask(MethodBody)
-            : new bool[MethodBody.Temps.Count];
+        // The peephole returns an array where true = "used outside peephole, must materialize".
+        bool[] peepholeReplaced;
+        if (EnableConsoleLogPeephole)
+        {
+            var mask = _consoleLogOptimizer.ComputeStackOnlyMask(MethodBody);
+            if (mask != null)
+            {
+                peepholeReplaced = mask;
+            }
+            else
+            {
+                // No temps - nothing to do
+                peepholeReplaced = Array.Empty<bool>();
+            }
+        }
+        else
+        {
+            // When peephole is disabled, all temps should start as "needs materialization"
+            peepholeReplaced = new bool[MethodBody.Temps.Count];
+            Array.Fill(peepholeReplaced, true);
+        }
 
         // Build map of temp → defining instruction for branch condition inlining
         var tempDefinitions = BranchConditionOptimizer.BuildTempDefinitionMap(MethodBody);
@@ -535,6 +553,12 @@ internal sealed class LIRToILCompiler
                 break;
             case LIRBuildArray buildArray:
                 {
+                    if (!IsMaterialized(buildArray.Result, allocation))
+                    {
+                        // Will be emitted inline via EmitLoadTemp when the temp is used
+                        break;
+                    }
+                    
                     // Emit: newarr Object
                     ilEncoder.LoadConstantI4(buildArray.Elements.Count);
                     ilEncoder.OpCode(ILOpCode.Newarr);
@@ -549,16 +573,7 @@ internal sealed class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Stelem_ref);
                     }
                     
-                    // Array reference is still on stack - store if materialized, pop if not
-                    if (IsMaterialized(buildArray.Result, allocation))
-                    {
-                        EmitStoreTemp(buildArray.Result, ilEncoder, allocation);
-                    }
-                    else
-                    {
-                        // Array stays on stack for next instruction (e.g., call argument)
-                        // Don't pop - stackify should have determined this is stackable
-                    }
+                    EmitStoreTemp(buildArray.Result, ilEncoder, allocation);
                     break;
                 }
             case LIRReturn lirReturn:
@@ -942,6 +957,92 @@ internal sealed class LIRToILCompiler
                 ilEncoder.OpCode(ILOpCode.Ldfld);
                 ilEncoder.Token(loadParentField.FieldHandle);
                 break;
+            case LIRGetIntrinsicGlobal getIntrinsicGlobal:
+                // Emit inline: call IntrinsicObjectRegistry.GetOrDefault
+                EmitLoadIntrinsicGlobalVariable(getIntrinsicGlobal.Name, ilEncoder);
+                break;
+            case LIRCreateScopesArray:
+                // Emit inline: create 1-element scopes array with null placeholder
+                ilEncoder.LoadConstantI4(1);
+                ilEncoder.OpCode(ILOpCode.Newarr);
+                ilEncoder.Token(_bclReferences.ObjectType);
+                ilEncoder.OpCode(ILOpCode.Dup);
+                ilEncoder.LoadConstantI4(0);
+                ilEncoder.OpCode(ILOpCode.Ldnull);
+                ilEncoder.OpCode(ILOpCode.Stelem_ref);
+                break;
+            case LIRBitwiseNotNumber bitwiseNot:
+                // Emit inline: load value, convert to int, bitwise not, convert back to double
+                EmitLoadTemp(bitwiseNot.Value, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                ilEncoder.OpCode(ILOpCode.Not);
+                ilEncoder.OpCode(ILOpCode.Conv_r8);
+                break;
+            case LIRTypeof typeofInstr:
+                // Emit inline: load value, call TypeUtilities.Typeof
+                EmitLoadTemp(typeofInstr.Value, ilEncoder, allocation, methodDescriptor);
+                var typeofMref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.TypeUtilities), nameof(JavaScriptRuntime.TypeUtilities.Typeof));
+                ilEncoder.OpCode(ILOpCode.Call);
+                ilEncoder.Token(typeofMref);
+                break;
+            case LIRBuildArray buildArray:
+                // Emit inline array construction using dup pattern
+                ilEncoder.LoadConstantI4(buildArray.Elements.Count);
+                ilEncoder.OpCode(ILOpCode.Newarr);
+                ilEncoder.Token(_bclReferences.ObjectType);
+                for (int i = 0; i < buildArray.Elements.Count; i++)
+                {
+                    ilEncoder.OpCode(ILOpCode.Dup);
+                    ilEncoder.LoadConstantI4(i);
+                    EmitLoadTemp(buildArray.Elements[i], ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Stelem_ref);
+                }
+                // Array reference stays on stack
+                break;
+            case LIRCallIntrinsic callIntrinsic:
+                // Emit inline intrinsic call (e.g., console.log)
+                EmitLoadTemp(callIntrinsic.IntrinsicObject, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(callIntrinsic.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
+                EmitInvokeIntrinsicMethod(typeof(JavaScriptRuntime.Console), callIntrinsic.Name, ilEncoder);
+                // Result stays on stack (caller will handle it)
+                break;
+            case LIRNegateNumber negateNumber:
+                // Emit inline: load value, negate
+                EmitLoadTemp(negateNumber.Value, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Neg);
+                break;
+            case LIRCallFunction callFunc:
+                {
+                    // Look up the method handle from CompiledMethodCache
+                    if (!_compiledMethodCache.TryGet(callFunc.FunctionSymbol.BindingInfo, out var methodHandle))
+                    {
+                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - function not found in cache");
+                    }
+
+                    int jsParamCount = callFunc.Arguments.Count;
+
+                    // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
+                    ilEncoder.OpCode(ILOpCode.Ldnull);
+                    ilEncoder.OpCode(ILOpCode.Ldftn);
+                    ilEncoder.Token(methodHandle);
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount));
+
+                    // Load scopes array
+                    EmitLoadTemp(callFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
+
+                    // Load all arguments
+                    foreach (var arg in callFunc.Arguments)
+                    {
+                        EmitLoadTemp(arg, ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    // Invoke: callvirt Func<object[], [object, ...], object>::Invoke
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(_bclReferences.GetFuncInvokeRef(jsParamCount));
+                    // Result stays on stack
+                    break;
+                }
             default:
                 throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - unsupported instruction {def.GetType().Name}");
         }
