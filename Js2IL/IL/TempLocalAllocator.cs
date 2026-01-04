@@ -127,7 +127,6 @@ internal static class TempLocalAllocator
 
         return new TempLocalAllocation(tempToSlot, slotStorages);
     }
-
     /// <summary>
     /// Returns true if the instruction defines a constant that can be emitted inline
     /// without needing a local variable slot.
