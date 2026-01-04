@@ -22,13 +22,14 @@ namespace Js2IL.Services
         private readonly Dictionary<string, TypeDefinitionHandle> _scopeTypes;
         private readonly Dictionary<string, List<FieldDefinitionHandle>> _scopeFields;
         private readonly Dictionary<string, MethodDefinitionHandle> _scopeConstructors;
-        private readonly VariableRegistry _variableRegistry = new();
+        private readonly VariableRegistry _variableRegistry;
 
-        public TypeGenerator(MetadataBuilder metadataBuilder, BaseClassLibraryReferences bclReferences, MethodBodyStreamEncoder methodBodyStream)
+        public TypeGenerator(MetadataBuilder metadataBuilder, BaseClassLibraryReferences bclReferences, MethodBodyStreamEncoder methodBodyStream, VariableRegistry variableRegistry)
         {
             _metadataBuilder = metadataBuilder;
             _bclReferences = bclReferences;
             _methodBodyStream = methodBodyStream;
+            _variableRegistry = variableRegistry;
             _scopeTypes = new Dictionary<string, TypeDefinitionHandle>();
             _scopeFields = new Dictionary<string, List<FieldDefinitionHandle>>();
             _scopeConstructors = new Dictionary<string, MethodDefinitionHandle>();
@@ -71,14 +72,6 @@ namespace Js2IL.Services
 
             var moduleName = GetModuleName(scope);
             return $"{moduleName}/{scope.Name}";
-        }
-
-        /// <summary>
-        /// Gets the variable registry populated during type generation.
-        /// </summary>
-        public VariableRegistry GetVariableRegistry()
-        {
-            return _variableRegistry;
         }
 
 

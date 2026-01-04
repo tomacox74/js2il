@@ -16,16 +16,35 @@ namespace Js2IL.Services.VariableBindings
     /// <summary>
     /// Registry that contains all variables discovered through static analysis of the JavaScript AST.
     /// Populated by TypeGenerator and consumed by Variables class.
+    /// Acts as a facade over ScopeMetadataRegistry for backward compatibility.
     /// </summary>
     public class VariableRegistry
     {
         private readonly Dictionary<string, List<VariableInfo>> _scopeVariables = new();
-        private readonly Dictionary<string, TypeDefinitionHandle> _scopeTypes = new();
-        private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _scopeFields = new();
-        // Track scope type handles even when no variables (so empty method scopes can still be instantiated)
-        private readonly Dictionary<string, TypeDefinitionHandle> _allScopeTypes = new();
+        private readonly ScopeMetadataRegistry _scopeMetadata;
         // Track uncaptured variables (no scope backing field, will use local variables)
         private readonly Dictionary<string, HashSet<string>> _uncapturedVariables = new();
+
+        /// <summary>
+        /// Creates a new VariableRegistry with an internal ScopeMetadataRegistry.
+        /// </summary>
+        public VariableRegistry() : this(new ScopeMetadataRegistry())
+        {
+        }
+
+        /// <summary>
+        /// Creates a new VariableRegistry with the specified ScopeMetadataRegistry.
+        /// </summary>
+        public VariableRegistry(ScopeMetadataRegistry scopeMetadata)
+        {
+            _scopeMetadata = scopeMetadata ?? throw new ArgumentNullException(nameof(scopeMetadata));
+        }
+
+        /// <summary>
+        /// Gets the underlying ScopeMetadataRegistry for direct access to scope/field handles.
+        /// New code should depend on ScopeMetadataRegistry directly instead of VariableRegistry.
+        /// </summary>
+        public ScopeMetadataRegistry ScopeMetadata => _scopeMetadata;
 
         /// <summary>
         /// Adds a variable to the registry with its scope and field information (legacy overload; assumes Var binding).
@@ -58,14 +77,11 @@ namespace Js2IL.Services.VariableBindings
                 IsStableType = isStableType
             });
 
-            if (!_scopeFields.ContainsKey(scopeName))
-                _scopeFields[scopeName] = new Dictionary<string, FieldDefinitionHandle>();
-            
-            _scopeFields[scopeName][variableName] = fieldHandle;
-            // Only set scope type if it's not NIL (avoid overwriting valid handle with default)
+            // Delegate field/type registration to ScopeMetadataRegistry
+            _scopeMetadata.RegisterField(scopeName, variableName, fieldHandle);
             if (!scopeTypeHandle.IsNil)
             {
-                _scopeTypes[scopeName] = scopeTypeHandle;
+                _scopeMetadata.RegisterScopeType(scopeName, scopeTypeHandle);
             }
         }
 
@@ -82,7 +98,7 @@ namespace Js2IL.Services.VariableBindings
         /// </summary>
         public FieldDefinitionHandle GetFieldHandle(string scopeName, string variableName)
         {
-            return _scopeFields[scopeName][variableName];
+            return _scopeMetadata.GetFieldHandle(scopeName, variableName);
         }
 
         /// <summary>
@@ -90,11 +106,7 @@ namespace Js2IL.Services.VariableBindings
         /// </summary>
         public TypeDefinitionHandle GetScopeTypeHandle(string scopeName)
         {
-            if (_scopeTypes.TryGetValue(scopeName, out var h))
-                return h;
-            if (_allScopeTypes.TryGetValue(scopeName, out var any))
-                return any;
-            throw new KeyNotFoundException($"Scope type handle not found for scope '{scopeName}'");
+            return _scopeMetadata.GetScopeTypeHandle(scopeName);
         }
 
         /// <summary>
@@ -103,10 +115,7 @@ namespace Js2IL.Services.VariableBindings
         /// </summary>
         public void EnsureScopeType(string scopeName, TypeDefinitionHandle typeHandle)
         {
-            if (scopeName == null) return;
-            if (typeHandle.IsNil) return;
-            if (!_allScopeTypes.ContainsKey(scopeName))
-                _allScopeTypes[scopeName] = typeHandle;
+            _scopeMetadata.EnsureScopeType(scopeName, typeHandle);
         }
 
         /// <summary>
@@ -115,7 +124,7 @@ namespace Js2IL.Services.VariableBindings
         public IEnumerable<string> GetAllScopeNames()
         {
             // Return all scopes that have either variables or just type definitions
-            return _scopeVariables.Keys.Union(_allScopeTypes.Keys);
+            return _scopeVariables.Keys.Union(_scopeMetadata.GetAllScopeNames());
         }
 
         /// <summary>

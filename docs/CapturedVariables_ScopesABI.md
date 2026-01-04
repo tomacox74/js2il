@@ -573,20 +573,28 @@ Casting and local typing are **.NET/IL emission concerns**.
 
 ## Integration Plan (Migration)
 
-### Phase 0: Introduce facade + ABI tests
+### Phase 0: Introduce facade + ABI tests ✅ COMPLETED
 
-- Add the facade types and a builder that consumes `SymbolTable`/`BindingInfo`.
-- Add targeted tests that verify:
+- ✅ Add the facade types and a builder that consumes `SymbolTable`/`BindingInfo`.
+- ✅ Add targeted tests that verify:
   - method signatures match the ABI
   - scope-chain ordering is deterministic
   - `_scopes` is present only when required
 
 Additionally, introduce an explicit notion of **layout kind** for callables (conceptual):
 
-- `LegacyScopesLayout`
-- `GeneralizedScopesLayout`
+- ✅ `LegacyScopesLayout`
+- ✅ `GeneralizedScopesLayout`
 
 This is not an IL concern; it is metadata used by call sites and by LIR→IL when interpreting indices.
+
+**Implementation Details** (PR #226):
+- Created facade types: `ScopesLayoutKind`, `CallableAbi`, `ScopeChainLayout`, `BindingStorage`, `EnvironmentLayout`
+- Implemented `EnvironmentLayoutBuilder` that consumes `SymbolTable` and produces `EnvironmentLayout`
+- Extracted `ScopeMetadataRegistry` from `VariableRegistry` for minimal handle lookup interface
+- Refactored `VariableRegistry` to act as facade over `ScopeMetadataRegistry`
+- Added DI singleton registration for both registries
+- Created 32 comprehensive tests covering ABI contracts, scope ordering, and binding storage
 
 ### Phase 1: IR pipeline reads captured variables
 
