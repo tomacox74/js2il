@@ -105,6 +105,11 @@ public class JavaScriptAstValidator : IAstValidator
                     result.IsValid = false;
                     break;
 
+                case NodeType.ThisExpression:
+                    result.Errors.Add($"The 'this' keyword is not yet supported (line {node.Location.Start.Line})");
+                    result.IsValid = false;
+                    break;
+
                 case NodeType.ArrayPattern:
                     // Array destructuring is not supported
                     result.Errors.Add($"Array destructuring is not yet supported (line {node.Location.Start.Line})");
@@ -135,6 +140,13 @@ public class JavaScriptAstValidator : IAstValidator
                 case NodeType.CallExpression:
                     // Detect require(...) patterns and spread in call arguments
                     ValidateCallExpression(node, result);
+                    break;
+
+                case NodeType.FunctionDeclaration:
+                case NodeType.FunctionExpression:
+                case NodeType.ArrowFunctionExpression:
+                    // Check for parameter count limit
+                    ValidateFunctionParameters(node, result);
                     break;
             }
         });
@@ -221,6 +233,13 @@ public class JavaScriptAstValidator : IAstValidator
     {
         if (node is CallExpression call)
         {
+            // Check for argument count limit (issue #220)
+            if (call.Arguments.Count > 6)
+            {
+                result.Errors.Add($"Function calls with more than 6 arguments are not yet supported (line {node.Location.Start.Line})");
+                result.IsValid = false;
+            }
+
             // Check for spread in function call arguments
             foreach (var arg in call.Arguments)
             {
@@ -256,6 +275,24 @@ public class JavaScriptAstValidator : IAstValidator
                     result.IsValid = false;
                 }
             }
+        }
+    }
+
+    private void ValidateFunctionParameters(Node node, ValidationResult result)
+    {
+        int paramCount = node switch
+        {
+            FunctionDeclaration fd => fd.Params.Count,
+            FunctionExpression fe => fe.Params.Count,
+            ArrowFunctionExpression af => af.Params.Count,
+            _ => 0
+        };
+
+        // Check for parameter count limit (issue #220)
+        if (paramCount > 6)
+        {
+            result.Errors.Add($"Functions with more than 6 parameters are not yet supported (line {node.Location.Start.Line})");
+            result.IsValid = false;
         }
     }
 }
