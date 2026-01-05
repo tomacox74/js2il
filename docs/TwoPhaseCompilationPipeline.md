@@ -484,21 +484,45 @@ This is intended to be implemented incrementally and keep the system runnable.
 - Refactor class/function/arrow “declare” entry points into signature-only
 - Keep Phase 2 using existing compile routines
 
+Legacy AST→IL impact:
+
+- **Minimal / mostly orchestration.** Legacy AST→IL remains the body compiler for Phase 2 at this point.
+- Split the legacy entry points so they can be invoked as:
+  - **Phase 1**: “declare signatures only” (types + method defs / descriptors)
+  - **Phase 2**: “compile bodies” (existing AST→IL body emission)
+- Avoid any AST→IL code path that *implicitly* compiles other callables during emission (e.g., depth-first nested function compilation) by moving that work into Phase 1 discovery/declare.
+
 ### Milestone 2: Dependency graph + ordering
 
 - Add AST visitor to build dependencies
 - Add SCC/topo planner
 - Compile bodies in plan order
 
+Legacy AST→IL impact:
+
+- **No semantic changes to AST→IL emission.** The change is *when* it runs:
+  - AST→IL body compilation is invoked by the coordinator in planned order.
+- Legacy “compile main” should move to the end (after callable bodies) to match the planned ordering.
+
 ### Milestone 3: Replace ad-hoc caches with unified registry
 
 - Migrate `CompiledMethodCache` and `CompiledArrowFunctionCache` behind `CallableRegistry`
 - Keep old caches as adapters temporarily to minimize churn
 
+Legacy AST→IL impact:
+
+- Update the legacy AST→IL emitters that “load callable as value” (delegate creation) and any direct-call sites that consult ad-hoc caches to go through the unified `CallableRegistry`.
+- Remove any remaining coupling where the legacy pipeline assumes “callee body must have been compiled already” to obtain a token.
+
 ### Milestone 4: Switch callable loads to MemberReference (Option B)
 
 - Standardize signature generation for function/arrow/class methods
 - Update LIR→IL emitter to use `MemberReferenceHandle` tokens for callable loads
+
+Legacy AST→IL impact:
+
+- If the legacy AST→IL pipeline also emits “function as value” delegates using `ldftn`, it should be updated to accept **either** a methoddef handle (Option A) **or** a memberref token (Option B) from the registry.
+- After this milestone, legacy AST→IL should no longer need bodies to be compiled to load a callable as a value; it should be able to emit delegate creation from the declared signature alone.
 
 ### Execution plan (how we implement and validate)
 
