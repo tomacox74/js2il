@@ -62,7 +62,7 @@ Example shape:
 - `bool RequiresScopesParameter`
 - `int JsParamCount`
 - `CallableInvokeShape InvokeShape` (e.g., `Func<object?, object?>`, `Func<object?, object?, object?>`, etc.)
-- `MethodSignatureBlobHandle SignatureBlob` (optional cache for fast `MemberReference` creation)
+- `MethodSignatureBlobHandle SignatureBlob` (optional cache for fast signature encoding)
 
 #### `CallableRegistry`
 Single source of truth mapping `CallableId` → declaration info.
@@ -70,8 +70,7 @@ Single source of truth mapping `CallableId` → declaration info.
 Required operations:
 
 - `Declare(CallableId, CallableSignature)`: ensures method/type metadata exists
-- `TryGetMethodDefHandle(CallableId, out MethodDefinitionHandle)` (Option A)
-- `GetOrCreateMemberRef(CallableId) : MemberReferenceHandle` (Option B)
+- `TryGetMethodDefHandle(CallableId, out MethodDefinitionHandle)`
 - `MarkBodyCompiled(CallableId)` for diagnostics/invariants
 
 This is the abstraction that replaces “function cache vs arrow cache vs class registry in isolation” during planning.
@@ -101,7 +100,7 @@ Expose the same underlying registry as different interfaces (or conceptual views
   - `IReadOnlyCollection<CallableId> AllCallables`
 - `ICallableDeclarationWriter` (Phase 1 only)
   - `Declare(CallableId, CallableSignature)`
-  - `SetToken(CallableId, CallableToken)` where token is either methoddef (Option A) or memberref descriptor (Option B)
+  - `SetToken(CallableId, CallableToken)`
 - `ICallableDeclarationReader` (Phase 2+)
   - `GetDeclaredToken(CallableId)` (must succeed in strict mode)
   - `TryGetDeclaredToken(CallableId, out CallableToken)` (for migration/legacy fallback)
@@ -460,10 +459,10 @@ It may consult registries/caches for tokens or cells, but compilation must alrea
 
 ## Phase 1: Declaration mechanics (how we “declare” without bodies)
 
-### Two options for callable references
+### Callable references (chosen approach)
 
 <a id="option-a"></a>
-#### Option A (incremental): pre-create `MethodDefinitionHandle` for every callable
+#### Option A: pre-create `MethodDefinitionHandle` for every callable
 
 Mechanics:
 
@@ -493,25 +492,6 @@ Type handle note:
 - A similar “pre-allocate handles first” approach can be used for `TypeDefinitionHandle` (TypeDef token, `0x02xxxxxx`) if we want stable type tokens early.
 - In many cases we do not need to embed TypeDef tokens into IL (unless we emit `ldtoken`/reflection-style constructs), but we still must emit TypeDefs in metadata to own methods/fields.
 - As already noted earlier in this document: `MetadataBuilder.AddTypeDefinition(...)` requires correct `fieldList`/`methodList`, so pre-allocating TypeDef handles implies the same **precomputed table layout** requirement.
-
-<a id="option-b"></a>
-#### Option B (robust): caches store a “memberref descriptor” and emit `MemberReferenceHandle`
-
-Mechanics:
-
-1. Phase 1 records `(owner type ref/def, method name, signature blob)`.
-2. When IL emission needs a token, create/lookup a `MemberReferenceHandle`.
-
-Benefits:
-
-- Reduces ordering hazards even further.
-- Avoids coupling IR emission to the moment methoddefs are created.
-
-Tradeoff:
-
-- Requires standardizing signature blob construction for all callable shapes.
-
-Recommendation: implement Option A first if easiest; keep Option B as the end state.
 
 ---
 
@@ -552,11 +532,9 @@ When lowering emits `LIRLoadFunction` / `LIRLoadArrowFunction`, IL emission must
 - `ldftn <method token>`
 - `newobj instance void class [System.Runtime]System.Func`...
 
-Under [Option B](#option-b), `<method token>` is a `MemberReferenceHandle`.
+Under Option A, `<method token>` is a `MethodDefinitionHandle`.
 
-Under [Option A](#option-a), `<method token>` is a `MethodDefinitionHandle`.
-
-In both cases the delegate signature must match `JsParamCount`.
+The delegate signature must match `JsParamCount`.
 
 ### Calling methods
 
@@ -572,6 +550,66 @@ But when a direct target cannot be resolved (unknown receiver type, [SCC][scc] e
 ## Migration plan (more concrete)
 
 This is intended to be implemented incrementally and keep the system runnable.
+
+### Legacy AST→IL pipeline: file-by-file changes
+
+This section answers: **what changes are needed in the legacy generators to make Option A two-phase work**, and **when** we should do them.
+
+#### `JavaScriptFunctionGenerator.cs`
+
+Today it does **both** declaration and compilation (and it does nested function bodies depth-first), because call sites (and the IR pipeline via `CompiledMethodCache`) need method handles.
+
+- **Milestone 1 (Phase 1 declaration):** split into “declare-only” vs “compile body” APIs.
+  - `DeclareFunctions(...)` becomes *signature/metadata only*:
+    - create/ensure the `Functions.<ModuleName>` owner type
+    - enumerate function declaration scopes (top-level + nested)
+    - pre-register parameter counts (for recursion metadata / delegate ctor selection)
+    - allocate/store `MethodDefinitionHandle` for each declared function and populate the callable-token store (initially still `CompiledMethodCache` as an adapter)
+  - Move IR attempts and legacy body emission out of `DeclareFunctions(...)`.
+- **Milestone 2 (Phase 2 compilation order):** compile function bodies via the plan order (not depth-first).
+  - implement `CompileFunctionBodies(plan)` that emits bodies for the already-declared MethodDefs.
+- **Milestone 3 (registry unification):** stop writing directly to `CompiledMethodCache`; instead populate it from the unified `CallableRegistry` adapter until the IR pipeline is updated to read from `CallableRegistry`.
+
+Key outcome: function call sites can rely on **handles existing** even when bodies are compiled later.
+
+#### `JavaScriptArrowFunctionGenerator.cs`
+
+Today arrow compilation is effectively **on-demand** (called from expression emission) with an IR-first attempt and legacy fallback.
+
+- **Milestone 1:** eliminate “compile on demand” as the default mechanism.
+  - Introduce a Phase 1 step that discovers and declares arrow callables up-front (stable identity + `MethodDefinitionHandle`).
+  - Change arrow emission sites to only **reference** the predeclared handle when loading an arrow as a value.
+- **Milestone 2:** move arrow body compilation into Phase 2 and compile in planned order.
+  - Keep the existing legacy body logic, but run it from the coordinator (not from `ILExpressionGenerator`).
+- **Milestone 3:** route all arrow callable token lookups through `CallableRegistry` (and remove any remaining ad-hoc arrow token storage).
+
+Key outcome: arrow creation (`ldftn` + delegate) is always based on declared metadata, never a trigger to compile.
+
+#### `ILMethodGenerator.cs`
+
+Today it exposes helper entry points that *compile nested callables during statement/expression emission* (e.g., `GenerateArrowFunctionMethod(...)`, `GenerateFunctionExpressionMethod(...)`).
+
+- **Milestone 1:** stop being a callable compiler during emission.
+  - Replace “generate method now” call paths with “lookup declared handle” call paths.
+  - Keep the ability to emit *bodies* for a callable when the coordinator invokes Phase 2.
+- **Milestone 2:** ensure initialization logic that previously relied on depth-first ordering is moved into Phase 2 orchestration.
+  - Example: nested function variable initialization should assume tokens exist, not bodies.
+- **Milestone 3:** remove/retire any remaining compilation-on-demand helper APIs.
+
+Key outcome: statement generation becomes deterministic and does not mutate the global callable set.
+
+#### `ILExpressionGenerator.cs`
+
+This is the main place where “callables as values” are created, so it must become a **pure consumer** of Phase 1 declarations.
+
+- **Milestone 1:** for `FunctionExpression` and `ArrowFunctionExpression`:
+  - compute the callable identity (scope/name or location-based key)
+  - lookup the predeclared `MethodDefinitionHandle` in the token store
+  - emit delegate creation (`ldnull; ldftn <methoddef>; newobj <FuncCtor>`) without compiling anything
+- **Milestone 2:** remove any remaining assumptions that nested callables were compiled depth-first.
+- **Milestone 3:** switch lookups from legacy adapters (string keys / AST node keys) to `CallableId` lookups in `CallableRegistry`.
+
+Key outcome: expression emission never triggers compilation.
 
 ### Milestone 1: Coordinator + Phase 1 declarations
 
@@ -609,15 +647,9 @@ Legacy AST→IL impact:
 - Update the legacy AST→IL emitters that “load callable as value” (delegate creation) and any direct-call sites that consult ad-hoc caches to go through the unified `CallableRegistry`.
 - Remove any remaining coupling where the legacy pipeline assumes “callee body must have been compiled already” to obtain a token.
 
-### Milestone 4: Switch callable loads to MemberReference (Option B)
+### Milestone 4: (TBD / optional)
 
-- Standardize signature generation for function/arrow/class methods
-- Update LIR→IL emitter to use `MemberReferenceHandle` tokens for callable loads
-
-Legacy AST→IL impact:
-
-- If the legacy AST→IL pipeline also emits “function as value” delegates using `ldftn`, it should be updated to accept **either** a methoddef handle (Option A) **or** a memberref token (Option B) from the registry.
-- After this milestone, legacy AST→IL should no longer need bodies to be compiled to load a callable as a value; it should be able to emit delegate creation from the declared signature alone.
+If we later need additional mechanisms for cycles or initialization ordering (e.g., callable indirection tables/cells), capture them as a dedicated milestone. For Option A as described in this document, this milestone is not required.
 
 ### Execution plan (how we implement and validate)
 
@@ -674,13 +706,6 @@ Recommended PR sequence (small, mergeable increments):
    - Deliverable: in strict mode, on-demand compilation paths throw a diagnostic that points back to the missing Phase 1 declaration.
    - Done when:
      - Strict IR tests stop failing due to ordering and instead either pass or produce a targeted diagnostic.
-
-7. **Migrate callable loads to Option B (`MemberReference`)**
-   - Touchpoints: signature construction and LIR→IL callable-load emission.
-   - Deliverable: callable loads as values use `ldftn` with `MemberReferenceHandle`, decoupling from when methoddefs are created.
-   - Done when:
-     - Delegate construction works for functions, arrows, and class methods.
-     - Phase 1/2 separation is robust against reordering.
 
 Validation strategy (keep feedback tight):
 
@@ -947,7 +972,7 @@ The IR pipeline must not compile callables on-demand. It should only:
 
 Callable reference strategy:
 
-- Options and tradeoffs (Option A methoddef vs Option B memberref) are specified in “Phase 1: Declaration mechanics”.
+- The callable reference strategy is specified in “Phase 1: Declaration mechanics”.
 - In strict mode, the IR pipeline should treat a missing callable reference as a Phase 1 bug (not as a cue to compile-on-demand).
 
 ---
