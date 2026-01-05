@@ -1,4 +1,5 @@
 using Js2IL.IR;
+using System.Linq;
 
 namespace Js2IL.IL;
 
@@ -282,9 +283,8 @@ internal static class Stackify
             // Safe to inline if all element temps can be emitted inline.
             // Used for call arguments (e.g., console.log) where array is consumed immediately.
             case LIRBuildArray buildArray:
-                foreach (var element in buildArray.Elements)
+                foreach (var elemIdx in buildArray.Elements.Select(e => e.Index))
                 {
-                    var elemIdx = element.Index;
                     if (elemIdx < 0 || elemIdx >= defInstruction.Length || defInstruction[elemIdx] == null)
                         return false;
                     if (!CanEmitInline(defInstruction[elemIdx]!, methodBody, defInstruction))
@@ -295,9 +295,8 @@ internal static class Stackify
             // LIRNewJsArray creates a JavaScriptRuntime.Array and initializes elements inline.
             // Safe to inline if all element temps can be emitted inline.
             case LIRNewJsArray newJsArray:
-                foreach (var element in newJsArray.Elements)
+                foreach (var elemIdx in newJsArray.Elements.Select(e => e.Index))
                 {
-                    var elemIdx = element.Index;
                     if (elemIdx < 0 || elemIdx >= defInstruction.Length || defInstruction[elemIdx] == null)
                         return false;
                     if (!CanEmitInline(defInstruction[elemIdx]!, methodBody, defInstruction))
@@ -308,9 +307,8 @@ internal static class Stackify
             // LIRNewJsObject creates an ExpandoObject and initializes properties inline.
             // Safe to inline if all property value temps can be emitted inline.
             case LIRNewJsObject newJsObject:
-                foreach (var prop in newJsObject.Properties)
+                foreach (var valueIdx in newJsObject.Properties.Select(p => p.Value.Index))
                 {
-                    var valueIdx = prop.Value.Index;
                     if (valueIdx < 0 || valueIdx >= defInstruction.Length || defInstruction[valueIdx] == null)
                         return false;
                     if (!CanEmitInline(defInstruction[valueIdx]!, methodBody, defInstruction))
