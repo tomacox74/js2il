@@ -34,4 +34,4 @@ Expand the AST→HIR→LIR→IL pipeline to support object/array literals and re
 - Updated generator snapshots across Array/Literals/Math/Promise/etc.
 
 ## Testing
-- Focused `dotnet test` run planned after commit (Array Join/Pop/Slice + Literals).
+- `dotnet test Js2IL.Tests/Js2IL.Tests.csproj -c Release --filter ...` (focused): 8 passed, 0 failed
