@@ -487,6 +487,12 @@ public sealed class HIRToLIRLowerer
                     var storageInfo = GetTempStorage(value);
                     var slot = GetOrCreateVariableSlot(binding, exprStmt.Name.Name, storageInfo);
                     SetTempVariableSlot(value, slot);
+
+                    // Mark all variable slots as single-assignment initially.
+                    // This will be removed if the variable is reassigned later.
+                    // const variables are always single-assignment by definition.
+                    // let/var variables are single-assignment if never reassigned after initialization.
+                    _methodBodyIR.SingleAssignmentSlots.Add(slot);
                     return true;
                 }
             case HIRExpressionStatement exprStmt:
@@ -1097,6 +1103,10 @@ public sealed class HIRToLIRLowerer
         SetTempVariableSlot(updatedTemp, slot);
         _variableMap[updateBinding] = updatedTemp;
 
+        // Update expressions (++/--) are reassignments, so the variable is not single-assignment.
+        // Remove it from the single-assignment set to prevent incorrect inlining.
+        _methodBodyIR.SingleAssignmentSlots.Remove(slot);
+
         if (updateExpr.Prefix)
         {
             // Prefix returns the updated value, boxed to object so we can store/emit without extra locals.
@@ -1218,6 +1228,10 @@ public sealed class HIRToLIRLowerer
         SetTempVariableSlot(valueToStore, slot);
         _variableMap[binding] = valueToStore;
         resultTempVar = valueToStore;
+
+        // This is a reassignment (not initial declaration), so the variable is not single-assignment.
+        // Remove it from the single-assignment set to prevent incorrect inlining.
+        _methodBodyIR.SingleAssignmentSlots.Remove(slot);
         return true;
     }
 
