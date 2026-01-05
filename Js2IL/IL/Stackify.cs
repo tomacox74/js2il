@@ -269,6 +269,7 @@ internal static class Stackify
             // Scopes array creation - creates a small array, safe to inline
             // Used once per closure creation, no observable side effects
             case LIRCreateScopesArray:
+            case LIRBuildScopesArray:
                 return true;
 
             // Unary operators - cheap runtime calls, no side effects
@@ -355,6 +356,7 @@ internal static class Stackify
             case LIRGetIntrinsicGlobal:
             case LIRLoadParameter:
             case LIRCreateScopesArray:
+            case LIRBuildScopesArray:
                 return (0, 1);
 
             // LIRBuildArray: consumes N element temps, produces 1 array reference

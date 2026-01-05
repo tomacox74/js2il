@@ -1,6 +1,7 @@
 using System.Reflection.Metadata.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
 using Js2IL.IL;
+using Js2IL.Services.ScopesAbi;
 using Js2IL.Services.VariableBindings;
  
 namespace Js2IL;
@@ -46,6 +47,11 @@ public static class CompilerServices
         services.AddSingleton<Services.AssemblyGenerator>();
         services.AddSingleton<Services.BaseClassLibraryReferences>();
         services.AddSingleton<CompiledMethodCache>();
+
+        // CallableMetadataRegistry will be populated and queried by the IL generators in a future phase.
+        // It is registered here so that downstream components can start depending on it without breaking changes
+        // when the callable metadata discovery and registration pipeline is fully integrated.
+        services.AddSingleton<CallableMetadataRegistry>();
 
         services.AddTransient<JsMethodCompiler>();
 

@@ -1,3 +1,4 @@
+using Js2IL.Services.ScopesAbi;
 using Js2IL.SymbolTables;
 
 namespace Js2IL.IR;
@@ -85,7 +86,37 @@ public record LIRCallFunction(Symbol FunctionSymbol, TempVariable ScopesArray, I
 /// The <paramref name="GlobalScope"/> parameter is reserved for future use when global
 /// scope tracking is implemented.
 /// </summary>
+[Obsolete("Use LIRBuildScopesArray instead for proper scope materialization")]
 public record LIRCreateScopesArray(TempVariable GlobalScope, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Represents a scope slot in the scopes array along with the source of its value.
+/// </summary>
+/// <param name="Slot">The scope slot metadata from ScopeChainLayout.</param>
+/// <param name="Source">The source of the scope instance (LeafLocal, ScopesArgument, or ThisScopes).</param>
+/// <param name="SourceIndex">For ScopesArgument or ThisScopes: the index in the source array. For LeafLocal: -1.</param>
+public readonly record struct ScopeSlotSource(ScopeSlot Slot, ScopeInstanceSource Source, int SourceIndex = -1);
+
+/// <summary>
+/// Where a scope instance comes from in the caller context.
+/// </summary>
+public enum ScopeInstanceSource
+{
+    /// <summary>The scope instance is in the caller's leaf local (ldloc.0).</summary>
+    LeafLocal,
+    /// <summary>The scope instance is in the caller's scopes argument (ldarg scopesArg, ldelem.ref).</summary>
+    ScopesArgument,
+    /// <summary>The scope instance is in the caller's this._scopes field (ldarg.0, ldfld _scopes, ldelem.ref).</summary>
+    ThisScopes
+}
+
+/// <summary>
+/// Builds the scopes array (object[]) for a function call.
+/// Each slot specifies where to load the scope instance from in the caller context.
+/// </summary>
+/// <param name="Slots">The ordered list of scope slots with their sources. Empty if the callee doesn't need scopes.</param>
+/// <param name="Result">The temp variable to store the created array.</param>
+public record LIRBuildScopesArray(IReadOnlyList<ScopeSlotSource> Slots, TempVariable Result) : LIRInstruction;
 
 public record LIRReturn(TempVariable ReturnValue) : LIRInstruction;
 

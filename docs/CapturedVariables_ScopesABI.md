@@ -674,9 +674,9 @@ stfld <field>        // store to scope field
 
 **Note on Closure Fallback**: Functions that access parent scope variables or have captured variables currently fall back to the legacy emitter. This is necessary until Phase 3 (scopes materialization at call sites) is complete, as the IR-compiled functions cannot yet properly populate the scopes array when calling legacy-compiled functions.
 
-### Phase 3: Consolidate call-site scopes materialization
+### Phase 3: Consolidate call-site scopes materialization ✅ COMPLETED
 
-- Move scope-array construction logic behind the facade for both pipelines.
+- ✅ Move scope-array construction logic behind the facade for both pipelines.
 - This reduces interop bugs where one side uses a different ordering or subset.
 
 In Case A migration:
@@ -705,6 +705,28 @@ The IR pipeline should introduce a new callable metadata registry keyed by `Bind
 - `ScopesLayoutKind`
 
 This replaces the role of the legacy `FunctionRegistry` (which is string-keyed and lacks scope metadata) for IR-compiled callables. The legacy `FunctionRegistry` continues to serve the legacy pipeline during migration but should not be extended; the facade's metadata store is the forward path.
+
+**Implementation Details**:
+- Created `CallableMetadataRegistry` to store compiled callable metadata keyed by `BindingInfo`
+- Created `CallableMetadata` record type containing `MethodDefinitionHandle`, `EnvironmentLayout`, and `ScopesLayoutKind`
+- Added `LIRBuildScopesArray` instruction to replace the placeholder `LIRCreateScopesArray`:
+  - Carries `IReadOnlyList<ScopeSlotSource>` specifying where each scope instance comes from
+  - Supports `LeafLocal`, `ScopesArgument`, and `ThisScopes` sources
+- Extended `HIRToLIRLower` with `TryBuildScopesArrayForCallee` method:
+  - Looks up callee's scope from symbol table
+  - Builds callee's `EnvironmentLayout` to get its `ScopeChainLayout`
+  - Maps each slot to a source in the caller's context via `TryMapScopeSlotToSource`
+- Extended `LIRToILCompiler` to emit proper scopes array construction:
+  - For empty layouts: creates 1-element array with null (ABI compatibility)
+  - For non-empty layouts: creates array of proper size, populates each slot from its source
+  - Added `EmitLoadScopeInstance` helper for loading from leaf local, scopes argument, or this._scopes
+- Updated `Stackify` and `TempLocalAllocator` to handle the new `LIRBuildScopesArray` instruction
+- Marked `LIRCreateScopesArray` as `[Obsolete]` to guide migration
+
+**Current Limitations**:
+- Closure fallback remains in `HIRBuilder` for complex scenarios (transitive scope passing)
+- When a caller doesn't directly reference parent scopes but calls a function that does, the legacy emitter handles this correctly
+- Full removal of the fallback requires additional work on scope passthrough
 
 ## Compatibility and Versioning
 

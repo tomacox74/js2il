@@ -282,6 +282,9 @@ internal static class TempLocalAllocator
                 // The GlobalScope field on LIRCreateScopesArray does not currently correspond to any temp,
                 // so no temps are consumed from it here.
                 break;
+            case LIRBuildScopesArray:
+                // LIRBuildScopesArray doesn't consume temps - it loads scope instances from locals/args directly
+                break;
             case LIRLoadParameter:
                 // LIRLoadParameter doesn't consume any temps (it loads from IL argument)
                 break;
@@ -392,6 +395,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRCreateScopesArray createScopes:
                 defined = createScopes.Result;
+                return true;
+            case LIRBuildScopesArray buildScopes:
+                defined = buildScopes.Result;
                 return true;
             case LIRLoadParameter loadParam:
                 defined = loadParam.Result;
