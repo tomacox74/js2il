@@ -585,6 +585,72 @@ public sealed class HIRToLIRLowerer
 
                     return true;
                 }
+            case HIRForStatement forStmt:
+                {
+                    // For loop structure:
+                    // init
+                    // loop_start:
+                    //   if (!test) goto end
+                    //   body
+                    //   update
+                    //   goto loop_start
+                    // end:
+
+                    // Lower init statement (if present)
+                    if (forStmt.Init != null && !TryLowerStatement(forStmt.Init))
+                    {
+                        return false;
+                    }
+
+                    int loopStartLabel = CreateLabel();
+                    int loopEndLabel = CreateLabel();
+
+                    // Loop start label
+                    lirInstructions.Add(new LIRLabel(loopStartLabel));
+
+                    // Test condition (if present)
+                    if (forStmt.Test != null)
+                    {
+                        if (!TryLowerExpression(forStmt.Test, out var conditionTemp))
+                        {
+                            return false;
+                        }
+
+                        // If the condition is boxed, convert to boolean using IsTruthy
+                        var conditionStorage = GetTempStorage(conditionTemp);
+                        if (conditionStorage.Kind == ValueStorageKind.BoxedValue)
+                        {
+                            var isTruthyTemp = CreateTempVariable();
+                            lirInstructions.Add(new LIRCallIsTruthy(conditionTemp, isTruthyTemp));
+                            DefineTempStorage(isTruthyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                            conditionTemp = isTruthyTemp;
+                        }
+
+                        // Branch to end if condition is false
+                        lirInstructions.Add(new LIRBranchIfFalse(conditionTemp, loopEndLabel));
+                    }
+
+                    // Loop body
+                    if (!TryLowerStatement(forStmt.Body))
+                    {
+                        return false;
+                    }
+
+                    // Update expression (if present)
+                    if (forStmt.Update != null && !TryLowerExpression(forStmt.Update, out _))
+                    {
+                        return false;
+                    }
+                    // Note: Update expression result is discarded (e.g., i++ side effect is what matters)
+
+                    // Jump back to loop start
+                    lirInstructions.Add(new LIRBranch(loopStartLabel));
+
+                    // Loop end label
+                    lirInstructions.Add(new LIRLabel(loopEndLabel));
+
+                    return true;
+                }
             case HIRBlock block:
                 // Lower each statement in the block - return false on first failure
                 return block.Statements.All(TryLowerStatement);
@@ -1652,7 +1718,96 @@ public sealed class HIRToLIRLowerer
                 DefineTempStorage(result, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
                 return true;
 
-            // Add more compound operators as needed
+            case Acornima.Operator.DivisionAssignment:
+                if (leftType == typeof(double) && rightType == typeof(double))
+                {
+                    _methodBodyIR.Instructions.Add(new LIRDivNumber(currentValue, rhsValue, result));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    return true;
+                }
+                // Division requires numeric types
+                return false;
+
+            case Acornima.Operator.RemainderAssignment:
+                if (leftType == typeof(double) && rightType == typeof(double))
+                {
+                    _methodBodyIR.Instructions.Add(new LIRModNumber(currentValue, rhsValue, result));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    return true;
+                }
+                // Remainder requires numeric types
+                return false;
+
+            case Acornima.Operator.ExponentiationAssignment:
+                if (leftType == typeof(double) && rightType == typeof(double))
+                {
+                    _methodBodyIR.Instructions.Add(new LIRExpNumber(currentValue, rhsValue, result));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    return true;
+                }
+                // Exponentiation requires numeric types
+                return false;
+
+            case Acornima.Operator.BitwiseAndAssignment:
+                if (leftType == typeof(double) && rightType == typeof(double))
+                {
+                    _methodBodyIR.Instructions.Add(new LIRBitwiseAnd(currentValue, rhsValue, result));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    return true;
+                }
+                // Bitwise AND requires numeric types
+                return false;
+
+            case Acornima.Operator.BitwiseOrAssignment:
+                if (leftType == typeof(double) && rightType == typeof(double))
+                {
+                    _methodBodyIR.Instructions.Add(new LIRBitwiseOr(currentValue, rhsValue, result));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    return true;
+                }
+                // Bitwise OR requires numeric types
+                return false;
+
+            case Acornima.Operator.BitwiseXorAssignment:
+                if (leftType == typeof(double) && rightType == typeof(double))
+                {
+                    _methodBodyIR.Instructions.Add(new LIRBitwiseXor(currentValue, rhsValue, result));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    return true;
+                }
+                // Bitwise XOR requires numeric types
+                return false;
+
+            case Acornima.Operator.LeftShiftAssignment:
+                if (leftType == typeof(double) && rightType == typeof(double))
+                {
+                    _methodBodyIR.Instructions.Add(new LIRLeftShift(currentValue, rhsValue, result));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    return true;
+                }
+                // Left shift requires numeric types
+                return false;
+
+            case Acornima.Operator.RightShiftAssignment:
+                if (leftType == typeof(double) && rightType == typeof(double))
+                {
+                    _methodBodyIR.Instructions.Add(new LIRRightShift(currentValue, rhsValue, result));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    return true;
+                }
+                // Right shift requires numeric types
+                return false;
+
+            case Acornima.Operator.UnsignedRightShiftAssignment:
+                if (leftType == typeof(double) && rightType == typeof(double))
+                {
+                    _methodBodyIR.Instructions.Add(new LIRUnsignedRightShift(currentValue, rhsValue, result));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    return true;
+                }
+                // Unsigned right shift requires numeric types
+                return false;
+
             default:
                 return false;
         }

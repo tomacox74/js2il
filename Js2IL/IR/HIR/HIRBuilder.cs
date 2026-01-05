@@ -261,6 +261,82 @@ class HIRMethodBuilder
                 hirStatement = new HIRReturnStatement(returnExpr);
                 return true;
 
+            case ForStatement forStmt:
+                {
+                    // For loops with 'let' create a child block scope for the loop variable
+                    // Find the child scope for the for loop (if one exists)
+                    var forScope = FindChildScopeForAstNode(forStmt);
+                    var previousForScope = _currentScope;
+                    if (forScope != null)
+                    {
+                        _currentScope = forScope;
+                    }
+
+                    // Parse init - can be VariableDeclaration or Expression
+                    HIRStatement? forInitStmt = null;
+                    if (forStmt.Init != null)
+                    {
+                        if (forStmt.Init is VariableDeclaration varDecl)
+                        {
+                            var forDeclStatements = new List<HIRStatement>();
+                            foreach (var decl in varDecl.Declarations)
+                            {
+                                if (!TryParseDeclarator(decl, out var declHir))
+                                {
+                                    _currentScope = previousForScope;
+                                    return false;
+                                }
+                                forDeclStatements.Add(declHir!);
+                            }
+                            forInitStmt = forDeclStatements.Count == 1
+                                ? forDeclStatements[0]
+                                : new HIRBlock(forDeclStatements);
+                        }
+                        else if (forStmt.Init is Acornima.Ast.Expression initExpr)
+                        {
+                            if (!TryParseExpression(initExpr, out var hirInitExpr))
+                            {
+                                _currentScope = previousForScope;
+                                return false;
+                            }
+                            forInitStmt = new HIRExpressionStatement(hirInitExpr!);
+                        }
+                        else
+                        {
+                            _currentScope = previousForScope;
+                            return false;
+                        }
+                    }
+
+                    // Parse test condition
+                    HIRExpression? forTestExpr = null;
+                    if (forStmt.Test != null && !TryParseExpression(forStmt.Test, out forTestExpr))
+                    {
+                        _currentScope = previousForScope;
+                        return false;
+                    }
+
+                    // Parse update expression
+                    HIRExpression? updateExpr = null;
+                    if (forStmt.Update != null && !TryParseExpression(forStmt.Update, out updateExpr))
+                    {
+                        _currentScope = previousForScope;
+                        return false;
+                    }
+
+                    // Parse body
+                    if (!TryParseStatement(forStmt.Body, out var bodyStmt))
+                    {
+                        _currentScope = previousForScope;
+                        return false;
+                    }
+
+                    // Restore the previous scope
+                    _currentScope = previousForScope;
+                    hirStatement = new HIRForStatement(forInitStmt, forTestExpr, updateExpr, bodyStmt!);
+                    return true;
+                }
+
             default:
                 // Unsupported statement type
                 return false;

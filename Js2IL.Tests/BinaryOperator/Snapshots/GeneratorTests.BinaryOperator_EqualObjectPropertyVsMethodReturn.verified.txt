@@ -111,11 +111,12 @@
 	{
 		// Method begins at RVA 0x2088
 		// Header size: 12
-		// Code size: 76 (0x4c)
+		// Code size: 75 (0x4b)
 		.maxstack 32
 		.locals init (
 			[0] float64,
-			[1] float64
+			[1] float64,
+			[2] object
 		)
 
 		IL_0000: ldc.r8 0.0
@@ -125,24 +126,25 @@
 		// loop start (head: IL_0014)
 			IL_0014: ldloc.1
 			IL_0015: ldc.r8 10
-			IL_001e: blt IL_0028
+			IL_001e: clt
+			IL_0020: brfalse IL_0042
 
-			IL_0023: br IL_0045
-
-			IL_0028: ldloc.0
-			IL_0029: ldc.r8 1
-			IL_0032: add
-			IL_0033: stloc.0
-			IL_0034: ldloc.1
-			IL_0035: ldc.r8 1
-			IL_003e: add
-			IL_003f: stloc.1
-			IL_0040: br IL_0014
+			IL_0025: ldloc.0
+			IL_0026: ldc.r8 1
+			IL_002f: add
+			IL_0030: stloc.0
+			IL_0031: ldloc.1
+			IL_0032: ldc.r8 1
+			IL_003b: add
+			IL_003c: stloc.1
+			IL_003d: br IL_0014
 		// end loop
 
-		IL_0045: ldloc.0
-		IL_0046: box [System.Runtime]System.Double
-		IL_004b: ret
+		IL_0042: ldloc.0
+		IL_0043: box [System.Runtime]System.Double
+		IL_0048: stloc.2
+		IL_0049: ldloc.2
+		IL_004a: ret
 	} // end of method Counter::count
 
 } // end of class Classes.BinaryOperator_EqualObjectPropertyVsMethodReturn.Counter
