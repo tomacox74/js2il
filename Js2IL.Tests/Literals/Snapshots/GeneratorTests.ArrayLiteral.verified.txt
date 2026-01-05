@@ -49,7 +49,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -60,12 +60,13 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 130 (0x82)
+		// Code size: 126 (0x7e)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ArrayLiteral,
-			[1] object,
-			[2] float64
+			[0] object,
+			[1] float64,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[3] object
 		)
 
 		IL_0000: ldc.i4.3
@@ -79,42 +80,44 @@
 		IL_001c: dup
 		IL_001d: ldstr "dotnet bot"
 		IL_0022: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0027: stloc.1
+		IL_0027: stloc.0
 		IL_0028: ldc.r8 0.0
-		IL_0031: stloc.2
+		IL_0031: stloc.1
 		// loop start (head: IL_0032)
-			IL_0032: ldloc.2
-			IL_0033: ldloc.1
+			IL_0032: ldloc.1
+			IL_0033: ldloc.0
 			IL_0034: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_0039: blt IL_0043
+			IL_0039: clt
+			IL_003b: brfalse IL_007d
 
-			IL_003e: br IL_0081
-
-			IL_0043: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0048: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-			IL_004d: ldc.i4.2
-			IL_004e: newarr [System.Runtime]System.Object
-			IL_0053: dup
-			IL_0054: ldc.i4.0
-			IL_0055: ldstr ""
-			IL_005a: stelem.ref
-			IL_005b: dup
-			IL_005c: ldc.i4.1
-			IL_005d: ldloc.1
-			IL_005e: ldloc.2
-			IL_005f: box [System.Runtime]System.Double
-			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0069: stelem.ref
-			IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_006f: pop
-			IL_0070: ldloc.2
-			IL_0071: ldc.r8 1
-			IL_007a: add
-			IL_007b: stloc.2
-			IL_007c: br IL_0032
+			IL_0040: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0045: stloc.2
+			IL_0046: ldloc.1
+			IL_0047: box [System.Runtime]System.Double
+			IL_004c: stloc.3
+			IL_004d: ldloc.2
+			IL_004e: ldc.i4.2
+			IL_004f: newarr [System.Runtime]System.Object
+			IL_0054: dup
+			IL_0055: ldc.i4.0
+			IL_0056: ldstr ""
+			IL_005b: stelem.ref
+			IL_005c: dup
+			IL_005d: ldc.i4.1
+			IL_005e: ldloc.0
+			IL_005f: ldloc.3
+			IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0065: stelem.ref
+			IL_0066: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_006b: pop
+			IL_006c: ldloc.1
+			IL_006d: ldc.r8 1
+			IL_0076: add
+			IL_0077: stloc.1
+			IL_0078: br IL_0032
 		// end loop
 
-		IL_0081: ret
+		IL_007d: ret
 	} // end of method ArrayLiteral::Main
 
 } // end of class Scripts.ArrayLiteral
@@ -126,7 +129,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20f2
+		// Method begins at RVA 0x20ee
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
