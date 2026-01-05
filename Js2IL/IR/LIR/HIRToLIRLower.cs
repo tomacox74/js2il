@@ -488,13 +488,11 @@ public sealed class HIRToLIRLowerer
                     var slot = GetOrCreateVariableSlot(binding, exprStmt.Name.Name, storageInfo);
                     SetTempVariableSlot(value, slot);
 
-                    // Mark const variables as single-assignment for optimization purposes.
-                    // const variables can never be reassigned, so their values are stable
-                    // and can be inlined even when backed by a variable slot.
-                    if (binding.Kind == BindingKind.Const)
-                    {
-                        _methodBodyIR.SingleAssignmentSlots.Add(slot);
-                    }
+                    // Mark all variable slots as single-assignment initially.
+                    // This will be removed if the variable is reassigned later.
+                    // const variables are always single-assignment by definition.
+                    // let/var variables are single-assignment if never reassigned after initialization.
+                    _methodBodyIR.SingleAssignmentSlots.Add(slot);
                     return true;
                 }
             case HIRExpressionStatement exprStmt:
@@ -1105,6 +1103,10 @@ public sealed class HIRToLIRLowerer
         SetTempVariableSlot(updatedTemp, slot);
         _variableMap[updateBinding] = updatedTemp;
 
+        // Update expressions (++/--) are reassignments, so the variable is not single-assignment.
+        // Remove it from the single-assignment set to prevent incorrect inlining.
+        _methodBodyIR.SingleAssignmentSlots.Remove(slot);
+
         if (updateExpr.Prefix)
         {
             // Prefix returns the updated value, boxed to object so we can store/emit without extra locals.
@@ -1226,6 +1228,10 @@ public sealed class HIRToLIRLowerer
         SetTempVariableSlot(valueToStore, slot);
         _variableMap[binding] = valueToStore;
         resultTempVar = valueToStore;
+
+        // This is a reassignment (not initial declaration), so the variable is not single-assignment.
+        // Remove it from the single-assignment set to prevent incorrect inlining.
+        _methodBodyIR.SingleAssignmentSlots.Remove(slot);
         return true;
     }
 
