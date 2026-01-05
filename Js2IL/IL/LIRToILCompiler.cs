@@ -1,5 +1,6 @@
 using Js2IL.IR;
 using Js2IL.Services;
+using Js2IL.Services.ILGenerators;
 using Js2IL.Services.VariableBindings;
 using Js2IL.Utilities.Ecma335;
 using System.Reflection;
@@ -357,6 +358,12 @@ internal sealed class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Pop);
                 }
                 break;
+            case LIRCallInstanceMethod callInstance:
+                EmitInstanceMethodCall(callInstance, ilEncoder, allocation, methodDescriptor);
+                break;
+            case LIRCallIntrinsicStatic callIntrinsicStatic:
+                EmitIntrinsicStaticCall(callIntrinsicStatic, ilEncoder, allocation, methodDescriptor);
+                break;
             case LIRConvertToObject convertToObject:
                 if (!IsMaterialized(convertToObject.Result, allocation))
                 {
@@ -663,16 +670,140 @@ internal sealed class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Newarr);
                     ilEncoder.Token(_bclReferences.ObjectType);
                     
-                    // For each element: dup, ldc.i4 index, load element value, stelem.ref
+                    // For each element: dup, ldc.i4 index, load element value (boxed), stelem.ref
                     for (int i = 0; i < buildArray.Elements.Count; i++)
                     {
                         ilEncoder.OpCode(ILOpCode.Dup);
                         ilEncoder.LoadConstantI4(i);
-                        EmitLoadTemp(buildArray.Elements[i], ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTempAsObject(buildArray.Elements[i], ilEncoder, allocation, methodDescriptor);
                         ilEncoder.OpCode(ILOpCode.Stelem_ref);
                     }
                     
                     EmitStoreTemp(buildArray.Result, ilEncoder, allocation);
+                    break;
+                }
+            case LIRNewJsArray newJsArray:
+                {
+                    if (!IsMaterialized(newJsArray.Result, allocation))
+                    {
+                        // Will be emitted inline via EmitLoadTemp when the temp is used
+                        break;
+                    }
+
+                    // Emit: ldc.i4 capacity, newobj JavaScriptRuntime.Array::.ctor(int)
+                    ilEncoder.LoadConstantI4(newJsArray.Elements.Count);
+                    var arrayCtor = _memberRefRegistry.GetOrAddConstructor(
+                        typeof(JavaScriptRuntime.Array),
+                        parameterTypes: new[] { typeof(int) });
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(arrayCtor);
+
+                    // For each element: dup, load element value (boxed), callvirt Add
+                    var addMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(System.Collections.Generic.List<object>),
+                        "Add");
+                    for (int i = 0; i < newJsArray.Elements.Count; i++)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Dup);
+                        EmitLoadTempAsObject(newJsArray.Elements[i], ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Callvirt);
+                        ilEncoder.Token(addMethod);
+                    }
+
+                    EmitStoreTemp(newJsArray.Result, ilEncoder, allocation);
+                    break;
+                }
+            case LIRNewJsObject newJsObject:
+                {
+                    if (!IsMaterialized(newJsObject.Result, allocation))
+                    {
+                        // Will be emitted inline via EmitLoadTemp when the temp is used
+                        break;
+                    }
+
+                    // Emit: newobj ExpandoObject::.ctor()
+                    var expandoCtor = _memberRefRegistry.GetOrAddConstructor(
+                        typeof(System.Dynamic.ExpandoObject),
+                        parameterTypes: Type.EmptyTypes);
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(expandoCtor);
+
+                    // For each property: dup, ldstr key, load value, callvirt IDictionary.set_Item
+                    var setItemMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(System.Collections.Generic.IDictionary<string, object>),
+                        "set_Item");
+                    foreach (var prop in newJsObject.Properties)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Dup);
+                        ilEncoder.Ldstr(_metadataBuilder, prop.Key);
+                        EmitLoadTempAsObject(prop.Value, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Callvirt);
+                        ilEncoder.Token(setItemMethod);
+                    }
+
+                    EmitStoreTemp(newJsObject.Result, ilEncoder, allocation);
+                    break;
+                }
+            case LIRGetLength getLength:
+                {
+                    if (!IsMaterialized(getLength.Result, allocation))
+                    {
+                        break;
+                    }
+
+                    // Emit: call JavaScriptRuntime.Object.GetLength(object)
+                    EmitLoadTempAsObject(getLength.Object, ilEncoder, allocation, methodDescriptor);
+                    var getLengthMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.GetLength),
+                        parameterTypes: new[] { typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(getLengthMethod);
+                    EmitStoreTemp(getLength.Result, ilEncoder, allocation);
+                    break;
+                }
+            case LIRGetItem getItem:
+                {
+                    if (!IsMaterialized(getItem.Result, allocation))
+                    {
+                        break;
+                    }
+
+                    // Emit: call JavaScriptRuntime.Object.GetItem(object, object)
+                    EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsObject(getItem.Index, ilEncoder, allocation, methodDescriptor);
+                    var getItemMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.GetItem),
+                        parameterTypes: new[] { typeof(object), typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(getItemMethod);
+                    EmitStoreTemp(getItem.Result, ilEncoder, allocation);
+                    break;
+                }
+            case LIRArrayPushRange arrayPushRange:
+                {
+                    // Emit: ldtemp target, ldtemp source, callvirt PushRange
+                    EmitLoadTemp(arrayPushRange.TargetArray, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTemp(arrayPushRange.SourceArray, ilEncoder, allocation, methodDescriptor);
+                    var pushRangeMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Array),
+                        nameof(JavaScriptRuntime.Array.PushRange),
+                        parameterTypes: new[] { typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(pushRangeMethod);
+                    break;
+                }
+            case LIRArrayAdd arrayAdd:
+                {
+                    // Emit: ldtemp target, ldtemp element, callvirt Add
+                    EmitLoadTemp(arrayAdd.TargetArray, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTemp(arrayAdd.Element, ilEncoder, allocation, methodDescriptor);
+                    var addMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(System.Collections.Generic.List<object>),
+                        "Add");
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(addMethod);
                     break;
                 }
             case LIRReturn lirReturn:
@@ -1184,16 +1315,99 @@ internal sealed class LIRToILCompiler
                 {
                     ilEncoder.OpCode(ILOpCode.Dup);
                     ilEncoder.LoadConstantI4(i);
-                    EmitLoadTemp(buildArray.Elements[i], ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsObject(buildArray.Elements[i], ilEncoder, allocation, methodDescriptor);
                     ilEncoder.OpCode(ILOpCode.Stelem_ref);
                 }
                 // Array reference stays on stack
+                break;
+            case LIRNewJsArray newJsArray:
+                {
+                    // Emit inline JavaScriptRuntime.Array construction using dup pattern
+                    ilEncoder.LoadConstantI4(newJsArray.Elements.Count);
+                    var arrayCtor = _memberRefRegistry.GetOrAddConstructor(
+                        typeof(JavaScriptRuntime.Array),
+                        parameterTypes: new[] { typeof(int) });
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(arrayCtor);
+
+                    // For each element: dup, load element value, callvirt Add
+                    var addMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(System.Collections.Generic.List<object>),
+                        "Add");
+                    for (int i = 0; i < newJsArray.Elements.Count; i++)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Dup);
+                        EmitLoadTemp(newJsArray.Elements[i], ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Callvirt);
+                        ilEncoder.Token(addMethod);
+                    }
+                    // Array reference stays on stack
+                }
+                break;
+            case LIRNewJsObject newJsObject:
+                {
+                    // Emit inline ExpandoObject construction
+                    var expandoCtor = _memberRefRegistry.GetOrAddConstructor(
+                        typeof(System.Dynamic.ExpandoObject),
+                        parameterTypes: Type.EmptyTypes);
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(expandoCtor);
+
+                    // For each property: dup, ldstr key, load value, callvirt IDictionary.set_Item
+                    var setItemMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(System.Collections.Generic.IDictionary<string, object>),
+                        "set_Item");
+                    foreach (var prop in newJsObject.Properties)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Dup);
+                        ilEncoder.Ldstr(_metadataBuilder, prop.Key);
+                        EmitLoadTemp(prop.Value, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Callvirt);
+                        ilEncoder.Token(setItemMethod);
+                    }
+                    // Object reference stays on stack
+                }
+                break;
+            case LIRGetLength getLength:
+                // Emit inline: call JavaScriptRuntime.Object.GetLength(object)
+                EmitLoadTempAsObject(getLength.Object, ilEncoder, allocation, methodDescriptor);
+                {
+                    var getLengthMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.GetLength),
+                        parameterTypes: new[] { typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(getLengthMethod);
+                }
+                break;
+            case LIRGetItem getItem:
+                // Emit inline: call JavaScriptRuntime.Object.GetItem(object, object)
+                EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTempAsObject(getItem.Index, ilEncoder, allocation, methodDescriptor);
+                {
+                    var getItemMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.GetItem),
+                        parameterTypes: new[] { typeof(object), typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(getItemMethod);
+                }
                 break;
             case LIRCallIntrinsic callIntrinsic:
                 // Emit inline intrinsic call (e.g., console.log)
                 EmitLoadTemp(callIntrinsic.IntrinsicObject, ilEncoder, allocation, methodDescriptor);
                 EmitLoadTemp(callIntrinsic.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
                 EmitInvokeIntrinsicMethod(typeof(JavaScriptRuntime.Console), callIntrinsic.Name, ilEncoder);
+                // Result stays on stack (caller will handle it)
+                break;
+            case LIRCallInstanceMethod callInstance:
+                // Emit inline instance method call - result stays on stack
+                EmitInstanceMethodCallInline(callInstance, ilEncoder, allocation, methodDescriptor);
+                break;
+            case LIRCallIntrinsicStatic callIntrinsicStatic:
+                // Emit inline intrinsic static call (e.g., Array.isArray)
+                // We reuse the main EmitIntrinsicStaticCall but need to handle unmaterialized result
+                EmitIntrinsicStaticCallInline(callIntrinsicStatic, ilEncoder, allocation, methodDescriptor);
                 // Result stays on stack (caller will handle it)
                 break;
             case LIRNegateNumber negateNumber:
@@ -1261,6 +1475,52 @@ internal sealed class LIRToILCompiler
 
         var slot = GetSlotForTemp(temp, allocation);
         ilEncoder.StoreLocal(slot);
+    }
+
+    /// <summary>
+    /// Emits IL to load a temp value as an object reference.
+    /// If the temp's storage is an unboxed value type, emits a box instruction.
+    /// </summary>
+    private void EmitLoadTempAsObject(TempVariable temp, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
+    {
+        // Load the temp value
+        EmitLoadTemp(temp, ilEncoder, allocation, methodDescriptor);
+
+        // Check if boxing is needed based on storage type
+        var storage = GetTempStorage(temp);
+        if (storage.Kind == ValueStorageKind.UnboxedValue)
+        {
+            ilEncoder.OpCode(ILOpCode.Box);
+            if (storage.ClrType == typeof(double))
+            {
+                ilEncoder.Token(_bclReferences.DoubleType);
+            }
+            else if (storage.ClrType == typeof(bool))
+            {
+                ilEncoder.Token(_bclReferences.BooleanType);
+            }
+            else if (storage.ClrType == typeof(JavaScriptRuntime.JsNull))
+            {
+                ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsNull)));
+            }
+            else
+            {
+                // Default to double for unknown numeric types
+                ilEncoder.Token(_bclReferences.DoubleType);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets the storage type for a temp variable.
+    /// </summary>
+    private ValueStorage GetTempStorage(TempVariable temp)
+    {
+        if (temp.Index >= 0 && temp.Index < MethodBody.TempStorages.Count)
+        {
+            return MethodBody.TempStorages[temp.Index];
+        }
+        return new ValueStorage(ValueStorageKind.Unknown);
     }
 
     /// <summary>
@@ -1442,6 +1702,316 @@ internal sealed class LIRToILCompiler
         var methodMref = _memberRefRegistry.GetOrAddMethod(declaringType, methodName);
         ilEncoder.OpCode(ILOpCode.Callvirt);
         ilEncoder.Token(methodMref);
+    }
+
+    private void EmitInstanceMethodCall(
+        LIRCallInstanceMethod instruction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        // Resolve the instance method using heuristics aligned with intrinsic static calls.
+        // Prefer object[] signature (variadic JS-style), else exact arity match with object parameters.
+        var receiverType = instruction.ReceiverClrType;
+
+        var allMethods = receiverType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        var methods = allMethods
+            .Where(mi => string.Equals(mi.Name, instruction.MethodName, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        var argCount = instruction.Arguments.Count;
+
+        var chosen = methods.FirstOrDefault(mi =>
+        {
+            var ps = mi.GetParameters();
+            return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+        });
+
+        if (chosen == null)
+        {
+            chosen = methods.FirstOrDefault(mi =>
+            {
+                var ps = mi.GetParameters();
+                return ps.Length == argCount && ps.All(p => p.ParameterType == typeof(object));
+            });
+        }
+
+        if (chosen == null)
+        {
+            throw new InvalidOperationException(
+                $"No matching instance method found: {receiverType.FullName}.{instruction.MethodName} with {argCount} argument(s)");
+        }
+
+        // Load receiver
+        EmitLoadTemp(instruction.Receiver, ilEncoder, allocation, methodDescriptor);
+
+        var parameters = chosen.GetParameters();
+        var expectsParamsArray = parameters.Length == 1 && parameters[0].ParameterType == typeof(object[]);
+
+        if (expectsParamsArray)
+        {
+            EmitObjectArrayFromTemps(instruction.Arguments, ilEncoder, allocation, methodDescriptor);
+        }
+        else
+        {
+            foreach (var arg in instruction.Arguments)
+            {
+                EmitLoadTempAsObject(arg, ilEncoder, allocation, methodDescriptor);
+            }
+        }
+
+        var paramTypes = parameters.Select(p => p.ParameterType).ToArray();
+        var methodRef = _memberRefRegistry.GetOrAddMethod(receiverType, chosen.Name, paramTypes);
+        ilEncoder.OpCode(ILOpCode.Callvirt);
+        ilEncoder.Token(methodRef);
+
+        if (IsMaterialized(instruction.Result, allocation))
+        {
+            EmitStoreTemp(instruction.Result, ilEncoder, allocation);
+        }
+        else
+        {
+            if (chosen.ReturnType != typeof(void))
+            {
+                ilEncoder.OpCode(ILOpCode.Pop);
+            }
+        }
+    }
+
+    private void EmitInstanceMethodCallInline(
+        LIRCallInstanceMethod instruction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        var receiverType = instruction.ReceiverClrType;
+
+        var allMethods = receiverType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+        var methods = allMethods
+            .Where(mi => string.Equals(mi.Name, instruction.MethodName, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        var argCount = instruction.Arguments.Count;
+
+        var chosen = methods.FirstOrDefault(mi =>
+        {
+            var ps = mi.GetParameters();
+            return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+        });
+
+        if (chosen == null)
+        {
+            chosen = methods.FirstOrDefault(mi =>
+            {
+                var ps = mi.GetParameters();
+                return ps.Length == argCount && ps.All(p => p.ParameterType == typeof(object));
+            });
+        }
+
+        if (chosen == null)
+        {
+            throw new InvalidOperationException(
+                $"No matching instance method found: {receiverType.FullName}.{instruction.MethodName} with {argCount} argument(s)");
+        }
+
+        EmitLoadTemp(instruction.Receiver, ilEncoder, allocation, methodDescriptor);
+
+        var parameters = chosen.GetParameters();
+        var expectsParamsArray = parameters.Length == 1 && parameters[0].ParameterType == typeof(object[]);
+
+        if (expectsParamsArray)
+        {
+            EmitObjectArrayFromTemps(instruction.Arguments, ilEncoder, allocation, methodDescriptor);
+        }
+        else
+        {
+            foreach (var arg in instruction.Arguments)
+            {
+                EmitLoadTempAsObject(arg, ilEncoder, allocation, methodDescriptor);
+            }
+        }
+
+        var paramTypes = parameters.Select(p => p.ParameterType).ToArray();
+        var methodRef = _memberRefRegistry.GetOrAddMethod(receiverType, chosen.Name, paramTypes);
+        ilEncoder.OpCode(ILOpCode.Callvirt);
+        ilEncoder.Token(methodRef);
+    }
+
+    private void EmitObjectArrayFromTemps(
+        IReadOnlyList<TempVariable> args,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        ilEncoder.LoadConstantI4(args.Count);
+        ilEncoder.OpCode(ILOpCode.Newarr);
+        ilEncoder.Token(_bclReferences.ObjectType);
+
+        for (int i = 0; i < args.Count; i++)
+        {
+            ilEncoder.OpCode(ILOpCode.Dup);
+            ilEncoder.LoadConstantI4(i);
+            EmitLoadTempAsObject(args[i], ilEncoder, allocation, methodDescriptor);
+            ilEncoder.OpCode(ILOpCode.Stelem_ref);
+        }
+    }
+
+    /// <summary>
+    /// Emits a static method call on an intrinsic type (e.g., Array.isArray, Math.abs).
+    /// Uses the same method resolution strategy as the legacy pipeline.
+    /// </summary>
+    private void EmitIntrinsicStaticCall(
+        LIRCallIntrinsicStatic instruction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(instruction.IntrinsicName);
+        if (intrinsicType == null)
+        {
+            throw new InvalidOperationException($"Unknown intrinsic type: {instruction.IntrinsicName}");
+        }
+
+        // Resolve the static method using the same heuristics as the legacy pipeline:
+        // 1. Exact arity match first
+        // 2. Fallback to params object[] signature
+        var allMethods = intrinsicType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+        var methods = allMethods.Where(mi => string.Equals(mi.Name, instruction.MethodName, StringComparison.OrdinalIgnoreCase)).ToList();
+
+        var argCount = instruction.Arguments.Count;
+        var chosen = methods.FirstOrDefault(mi => mi.GetParameters().Length == argCount);
+        if (chosen == null)
+        {
+            // Try params object[] signature
+            chosen = methods.FirstOrDefault(mi =>
+            {
+                var ps = mi.GetParameters();
+                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+            });
+        }
+
+        if (chosen == null)
+        {
+            throw new InvalidOperationException(
+                $"No matching static method found: {intrinsicType.FullName}.{instruction.MethodName} with {argCount} argument(s)");
+        }
+
+        var parameters = chosen.GetParameters();
+        var expectsParamsArray = parameters.Length == 1 && parameters[0].ParameterType == typeof(object[]);
+
+        if (expectsParamsArray)
+        {
+            // Build an object[] array with all arguments
+            ilEncoder.LoadConstantI4(argCount);
+            ilEncoder.OpCode(ILOpCode.Newarr);
+            ilEncoder.Token(_bclReferences.ObjectType);
+
+            for (int i = 0; i < argCount; i++)
+            {
+                ilEncoder.OpCode(ILOpCode.Dup);
+                ilEncoder.LoadConstantI4(i);
+                EmitLoadTempAsObject(instruction.Arguments[i], ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Stelem_ref);
+            }
+        }
+        else
+        {
+            // Load each argument directly (boxing handled if needed based on target parameter type)
+            foreach (var arg in instruction.Arguments)
+            {
+                EmitLoadTempAsObject(arg, ilEncoder, allocation, methodDescriptor);
+            }
+        }
+
+        // Emit the static call
+        var paramTypes = chosen.GetParameters().Select(p => p.ParameterType).ToArray();
+        var methodRef = _memberRefRegistry.GetOrAddMethod(intrinsicType, chosen.Name, paramTypes);
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+
+        // Store or pop result
+        if (IsMaterialized(instruction.Result, allocation))
+        {
+            EmitStoreTemp(instruction.Result, ilEncoder, allocation);
+        }
+        else
+        {
+            // If the method returns void, don't pop
+            if (chosen.ReturnType != typeof(void))
+            {
+                ilEncoder.OpCode(ILOpCode.Pop);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Emits intrinsic static call for inline (unmaterialized) temps - leaves result on stack.
+    /// </summary>
+    private void EmitIntrinsicStaticCallInline(
+        LIRCallIntrinsicStatic instruction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor)
+    {
+        var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(instruction.IntrinsicName);
+        if (intrinsicType == null)
+        {
+            throw new InvalidOperationException($"Unknown intrinsic type: {instruction.IntrinsicName}");
+        }
+
+        // Resolve the static method (same logic as EmitIntrinsicStaticCall)
+        var allMethods = intrinsicType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+        var methods = allMethods.Where(mi => string.Equals(mi.Name, instruction.MethodName, StringComparison.OrdinalIgnoreCase)).ToList();
+
+        var argCount = instruction.Arguments.Count;
+        var chosen = methods.FirstOrDefault(mi => mi.GetParameters().Length == argCount);
+        if (chosen == null)
+        {
+            chosen = methods.FirstOrDefault(mi =>
+            {
+                var ps = mi.GetParameters();
+                return ps.Length == 1 && ps[0].ParameterType == typeof(object[]);
+            });
+        }
+
+        if (chosen == null)
+        {
+            throw new InvalidOperationException(
+                $"No matching static method found: {intrinsicType.FullName}.{instruction.MethodName} with {argCount} argument(s)");
+        }
+
+        var parameters = chosen.GetParameters();
+        var expectsParamsArray = parameters.Length == 1 && parameters[0].ParameterType == typeof(object[]);
+
+        if (expectsParamsArray)
+        {
+            // Build an object[] array with all arguments
+            ilEncoder.LoadConstantI4(argCount);
+            ilEncoder.OpCode(ILOpCode.Newarr);
+            ilEncoder.Token(_bclReferences.ObjectType);
+
+            for (int i = 0; i < argCount; i++)
+            {
+                ilEncoder.OpCode(ILOpCode.Dup);
+                ilEncoder.LoadConstantI4(i);
+                EmitLoadTempAsObject(instruction.Arguments[i], ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Stelem_ref);
+            }
+        }
+        else
+        {
+            // Load each argument directly (boxing handled if needed based on target parameter type)
+            foreach (var arg in instruction.Arguments)
+            {
+                EmitLoadTempAsObject(arg, ilEncoder, allocation, methodDescriptor);
+            }
+        }
+
+        // Emit the static call - result stays on stack
+        var paramTypes = chosen.GetParameters().Select(p => p.ParameterType).ToArray();
+        var methodRef = _memberRefRegistry.GetOrAddMethod(intrinsicType, chosen.Name, paramTypes);
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
     }
 
     private void EmitStringConcat(InstructionEncoder ilEncoder)

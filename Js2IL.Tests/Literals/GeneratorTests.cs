@@ -7,11 +7,11 @@ namespace Js2IL.Tests.Literals
         public GeneratorTests() : base("Literals") { }
 
         // Literal code generation tests
-        [Fact] public Task ArrayLiteral() { var testName = nameof(ArrayLiteral); return GenerateTest(testName); }
-        [Fact] public Task Array_Spread_Copy() { var testName = nameof(Array_Spread_Copy); return GenerateTest(testName); }
-        [Fact] public Task BooleanLiteral() { var testName = nameof(BooleanLiteral); return GenerateTest(testName); }
-        [Fact] public Task Literals_NullAndUndefined() { var testName = nameof(Literals_NullAndUndefined); return GenerateTest(testName); }
-        [Fact] public Task ObjectLiteral() { var testName = nameof(ObjectLiteral); return GenerateTest(testName); }
+        [Fact] public Task ArrayLiteral() { var testName = nameof(ArrayLiteral); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+        [Fact] public Task Array_Spread_Copy() { var testName = nameof(Array_Spread_Copy); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+        [Fact] public Task BooleanLiteral() { var testName = nameof(BooleanLiteral); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+        [Fact] public Task Literals_NullAndUndefined() { var testName = nameof(Literals_NullAndUndefined); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+        [Fact] public Task ObjectLiteral() { var testName = nameof(ObjectLiteral); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
         // Now supported: generate IL for numeric-key object literal
         [Fact] public Task ObjectLiteral_NumericKey() { var testName = nameof(ObjectLiteral_NumericKey); return GenerateTest(testName); }
 

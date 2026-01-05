@@ -98,11 +98,12 @@
 	{
 		// Method begins at RVA 0x209c
 		// Header size: 12
-		// Code size: 60 (0x3c)
+		// Code size: 62 (0x3e)
 		.maxstack 32
 		.locals init (
 			[0] object,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[2] object[]
 		)
 
 		IL_0000: ldnull
@@ -118,20 +119,22 @@
 		IL_001b: stloc.0
 		IL_001c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0021: stloc.1
-		IL_0022: ldloc.1
-		IL_0023: ldc.i4.2
-		IL_0024: newarr [System.Runtime]System.Object
-		IL_0029: dup
-		IL_002a: ldc.i4.0
-		IL_002b: ldstr "Output:"
-		IL_0030: stelem.ref
-		IL_0031: dup
-		IL_0032: ldc.i4.1
-		IL_0033: ldloc.0
-		IL_0034: stelem.ref
-		IL_0035: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_003a: pop
-		IL_003b: ret
+		IL_0022: ldc.i4.2
+		IL_0023: newarr [System.Runtime]System.Object
+		IL_0028: dup
+		IL_0029: ldc.i4.0
+		IL_002a: ldstr "Output:"
+		IL_002f: stelem.ref
+		IL_0030: dup
+		IL_0031: ldc.i4.1
+		IL_0032: ldloc.0
+		IL_0033: stelem.ref
+		IL_0034: stloc.2
+		IL_0035: ldloc.1
+		IL_0036: ldloc.2
+		IL_0037: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_003c: pop
+		IL_003d: ret
 	} // end of method Function_ReturnsStaticValueAndLogs::Main
 
 } // end of class Scripts.Function_ReturnsStaticValueAndLogs
@@ -143,7 +146,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e4
+		// Method begins at RVA 0x20e6
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
