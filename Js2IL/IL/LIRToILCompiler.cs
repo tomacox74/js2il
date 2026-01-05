@@ -538,14 +538,7 @@ internal sealed class LIRToILCompiler
                     }
                     // Legacy placeholder: Create scopes array with 1 element containing null.
                     // This is deprecated - use LIRBuildScopesArray instead.
-                    ilEncoder.LoadConstantI4(1);
-                    ilEncoder.OpCode(ILOpCode.Newarr);
-                    ilEncoder.Token(_bclReferences.ObjectType);
-                    // Store null as the global scope placeholder
-                    ilEncoder.OpCode(ILOpCode.Dup);
-                    ilEncoder.LoadConstantI4(0);
-                    ilEncoder.OpCode(ILOpCode.Ldnull);
-                    ilEncoder.OpCode(ILOpCode.Stelem_ref);
+                    EmitEmptyScopesArray(ilEncoder);
                     EmitStoreTemp(createScopes.Result, ilEncoder, allocation);
                     break;
                 }
@@ -560,32 +553,11 @@ internal sealed class LIRToILCompiler
                     {
                         // Empty scopes array - create 1-element array with null for ABI compatibility
                         // (Functions always expect at least a 1-element array)
-                        ilEncoder.LoadConstantI4(1);
-                        ilEncoder.OpCode(ILOpCode.Newarr);
-                        ilEncoder.Token(_bclReferences.ObjectType);
-                        ilEncoder.OpCode(ILOpCode.Dup);
-                        ilEncoder.LoadConstantI4(0);
-                        ilEncoder.OpCode(ILOpCode.Ldnull);
-                        ilEncoder.OpCode(ILOpCode.Stelem_ref);
+                        EmitEmptyScopesArray(ilEncoder);
                     }
                     else
                     {
-                        // Create array with proper size
-                        ilEncoder.LoadConstantI4(buildScopes.Slots.Count);
-                        ilEncoder.OpCode(ILOpCode.Newarr);
-                        ilEncoder.Token(_bclReferences.ObjectType);
-                        
-                        // Populate each slot
-                        foreach (var slotSource in buildScopes.Slots)
-                        {
-                            ilEncoder.OpCode(ILOpCode.Dup); // Keep array reference for next stelem
-                            ilEncoder.LoadConstantI4(slotSource.Slot.Index);
-                            
-                            // Load the scope instance from the appropriate source
-                            EmitLoadScopeInstance(ilEncoder, slotSource, methodDescriptor);
-                            
-                            ilEncoder.OpCode(ILOpCode.Stelem_ref);
-                        }
+                        EmitPopulateScopesArray(ilEncoder, buildScopes.Slots, methodDescriptor);
                     }
                     
                     EmitStoreTemp(buildScopes.Result, ilEncoder, allocation);
@@ -1026,45 +998,17 @@ internal sealed class LIRToILCompiler
                 break;
             case LIRCreateScopesArray:
                 // Emit inline: create 1-element scopes array with null placeholder
-                ilEncoder.LoadConstantI4(1);
-                ilEncoder.OpCode(ILOpCode.Newarr);
-                ilEncoder.Token(_bclReferences.ObjectType);
-                ilEncoder.OpCode(ILOpCode.Dup);
-                ilEncoder.LoadConstantI4(0);
-                ilEncoder.OpCode(ILOpCode.Ldnull);
-                ilEncoder.OpCode(ILOpCode.Stelem_ref);
+                EmitEmptyScopesArray(ilEncoder);
                 break;
             case LIRBuildScopesArray buildScopes:
                 // Emit inline: create scopes array with scope instances
                 if (buildScopes.Slots.Count == 0)
                 {
-                    // Empty scopes array - create 1-element array with null for ABI compatibility
-                    ilEncoder.LoadConstantI4(1);
-                    ilEncoder.OpCode(ILOpCode.Newarr);
-                    ilEncoder.Token(_bclReferences.ObjectType);
-                    ilEncoder.OpCode(ILOpCode.Dup);
-                    ilEncoder.LoadConstantI4(0);
-                    ilEncoder.OpCode(ILOpCode.Ldnull);
-                    ilEncoder.OpCode(ILOpCode.Stelem_ref);
+                    EmitEmptyScopesArray(ilEncoder);
                 }
                 else
                 {
-                    // Create array with proper size
-                    ilEncoder.LoadConstantI4(buildScopes.Slots.Count);
-                    ilEncoder.OpCode(ILOpCode.Newarr);
-                    ilEncoder.Token(_bclReferences.ObjectType);
-                    
-                    // Populate each slot
-                    foreach (var slotSource in buildScopes.Slots)
-                    {
-                        ilEncoder.OpCode(ILOpCode.Dup); // Keep array reference for next stelem
-                        ilEncoder.LoadConstantI4(slotSource.Slot.Index);
-                        
-                        // Load the scope instance from the appropriate source
-                        EmitLoadScopeInstance(ilEncoder, slotSource, methodDescriptor);
-                        
-                        ilEncoder.OpCode(ILOpCode.Stelem_ref);
-                    }
+                    EmitPopulateScopesArray(ilEncoder, buildScopes.Slots, methodDescriptor);
                 }
                 // Array reference stays on stack
                 break;
@@ -1235,6 +1179,44 @@ internal sealed class LIRToILCompiler
 
             default:
                 throw new ArgumentException($"Unknown ScopeInstanceSource: {slotSource.Source}");
+        }
+    }
+
+    /// <summary>
+    /// Emits IL to create a 1-element scopes array with null.
+    /// Used for ABI compatibility when callee doesn't need scopes.
+    /// </summary>
+    private void EmitEmptyScopesArray(InstructionEncoder ilEncoder)
+    {
+        ilEncoder.LoadConstantI4(1);
+        ilEncoder.OpCode(ILOpCode.Newarr);
+        ilEncoder.Token(_bclReferences.ObjectType);
+        ilEncoder.OpCode(ILOpCode.Dup);
+        ilEncoder.LoadConstantI4(0);
+        ilEncoder.OpCode(ILOpCode.Ldnull);
+        ilEncoder.OpCode(ILOpCode.Stelem_ref);
+    }
+
+    /// <summary>
+    /// Emits IL to create and populate a scopes array with scope instances.
+    /// </summary>
+    private void EmitPopulateScopesArray(InstructionEncoder ilEncoder, IReadOnlyList<ScopeSlotSource> slots, MethodDescriptor methodDescriptor)
+    {
+        // Create array with proper size
+        ilEncoder.LoadConstantI4(slots.Count);
+        ilEncoder.OpCode(ILOpCode.Newarr);
+        ilEncoder.Token(_bclReferences.ObjectType);
+        
+        // Populate each slot
+        foreach (var slotSource in slots)
+        {
+            ilEncoder.OpCode(ILOpCode.Dup); // Keep array reference for next stelem
+            ilEncoder.LoadConstantI4(slotSource.Slot.Index);
+            
+            // Load the scope instance from the appropriate source
+            EmitLoadScopeInstance(ilEncoder, slotSource, methodDescriptor);
+            
+            ilEncoder.OpCode(ILOpCode.Stelem_ref);
         }
     }
 

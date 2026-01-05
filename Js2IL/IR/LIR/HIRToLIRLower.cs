@@ -298,7 +298,7 @@ public sealed class HIRToLIRLowerer
             slotSources.Add(slotSource);
         }
 
-        _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(slotSources, resultTemp));
+        _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(slotSources.ToList(), resultTemp));
         return true;
     }
 
@@ -309,9 +309,17 @@ public sealed class HIRToLIRLowerer
     {
         if (_scope == null) return null;
 
+        // Walk up to the root/global scope, since the callee may be declared
+        // in an ancestor or sibling scope relative to the current scope.
+        var rootScope = _scope;
+        while (rootScope.Parent != null)
+        {
+            rootScope = rootScope.Parent;
+        }
+
         // The function's scope is a child scope of the scope where it's declared
         // We need to find it by looking at child scopes whose AST node matches
-        return FindScopeByDeclarationNode(symbol.BindingInfo.DeclarationNode, _scope);
+        return FindScopeByDeclarationNode(symbol.BindingInfo.DeclarationNode, rootScope);
     }
 
     /// <summary>
@@ -388,15 +396,14 @@ public sealed class HIRToLIRLowerer
         var currentScope = _scope;
         while (currentScope != null)
         {
-            if (currentScope.Name == slot.ScopeName)
+            // This is an ancestor scope of the caller
+            // In global/module main, the leaf scope local holds the global scope instance
+            if (currentScope.Name == slot.ScopeName &&
+                _methodBodyIR.NeedsLeafScopeLocal &&
+                _scope == currentScope)
             {
-                // This is an ancestor scope of the caller
-                // In global/module main, the leaf scope local holds the global scope instance
-                if (_methodBodyIR.NeedsLeafScopeLocal && _scope == currentScope)
-                {
-                    slotSource = new ScopeSlotSource(slot, ScopeInstanceSource.LeafLocal);
-                    return true;
-                }
+                slotSource = new ScopeSlotSource(slot, ScopeInstanceSource.LeafLocal);
+                return true;
             }
             currentScope = currentScope.Parent;
         }

@@ -706,7 +706,7 @@ The IR pipeline should introduce a new callable metadata registry keyed by `Bind
 
 This replaces the role of the legacy `FunctionRegistry` (which is string-keyed and lacks scope metadata) for IR-compiled callables. The legacy `FunctionRegistry` continues to serve the legacy pipeline during migration but should not be extended; the facade's metadata store is the forward path.
 
-**Implementation Details** (PR #TBD):
+**Implementation Details**:
 - Created `CallableMetadataRegistry` to store compiled callable metadata keyed by `BindingInfo`
 - Created `CallableMetadata` record type containing `MethodDefinitionHandle`, `EnvironmentLayout`, and `ScopesLayoutKind`
 - Added `LIRBuildScopesArray` instruction to replace the placeholder `LIRCreateScopesArray`:
