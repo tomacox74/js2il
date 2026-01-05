@@ -103,6 +103,13 @@ namespace Js2IL.Services.ILGenerators
                         if (firstNestedMethod.IsNil) firstNestedMethod = nestedMethod;
                         if (this._firstMethod.IsNil) _firstMethod = nestedMethod;
                         _functionRegistry.Register(nestedName, nestedMethod, nestedParamNames.Length);
+                        
+                        // Register nested function in CompiledMethodCache for IR pipeline function call emission
+                        // The nested function's binding is in the parent function's scope (funcScope)
+                        if (funcScope.Bindings.TryGetValue(nestedName, out var nestedBinding))
+                        {
+                            _compiledMethodCache.Add(nestedBinding, nestedMethod);
+                        }
                     }
                 }
 
