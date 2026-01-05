@@ -310,24 +310,18 @@ class HIRMethodBuilder
 
                     // Parse test condition
                     HIRExpression? forTestExpr = null;
-                    if (forStmt.Test != null)
+                    if (forStmt.Test != null && !TryParseExpression(forStmt.Test, out forTestExpr))
                     {
-                        if (!TryParseExpression(forStmt.Test, out forTestExpr))
-                        {
-                            _currentScope = previousForScope;
-                            return false;
-                        }
+                        _currentScope = previousForScope;
+                        return false;
                     }
 
                     // Parse update expression
                     HIRExpression? updateExpr = null;
-                    if (forStmt.Update != null)
+                    if (forStmt.Update != null && !TryParseExpression(forStmt.Update, out updateExpr))
                     {
-                        if (!TryParseExpression(forStmt.Update, out updateExpr))
-                        {
-                            _currentScope = previousForScope;
-                            return false;
-                        }
+                        _currentScope = previousForScope;
+                        return false;
                     }
 
                     // Parse body

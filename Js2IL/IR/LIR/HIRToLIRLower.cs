@@ -597,12 +597,9 @@ public sealed class HIRToLIRLowerer
                     // end:
 
                     // Lower init statement (if present)
-                    if (forStmt.Init != null)
+                    if (forStmt.Init != null && !TryLowerStatement(forStmt.Init))
                     {
-                        if (!TryLowerStatement(forStmt.Init))
-                        {
-                            return false;
-                        }
+                        return false;
                     }
 
                     int loopStartLabel = CreateLabel();
@@ -640,14 +637,11 @@ public sealed class HIRToLIRLowerer
                     }
 
                     // Update expression (if present)
-                    if (forStmt.Update != null)
+                    if (forStmt.Update != null && !TryLowerExpression(forStmt.Update, out _))
                     {
-                        if (!TryLowerExpression(forStmt.Update, out _))
-                        {
-                            return false;
-                        }
-                        // Note: Update expression result is discarded (e.g., i++ side effect is what matters)
+                        return false;
                     }
+                    // Note: Update expression result is discarded (e.g., i++ side effect is what matters)
 
                     // Jump back to loop start
                     lirInstructions.Add(new LIRBranch(loopStartLabel));
