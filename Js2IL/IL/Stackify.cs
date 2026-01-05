@@ -305,16 +305,23 @@ internal static class Stackify
                 return true;
 
             // LIRConvertToObject can be emitted inline if its source can be emitted inline
-            // AND the source is not backed by a variable slot. If the source is backed by
-            // a variable slot, that slot may be overwritten by a later SSA value before the
-            // box is consumed (e.g., postfix increment: x++ must capture the old value before
-            // the slot is updated, so the box must materialize).
+            // AND the source is not backed by a variable slot that could be modified.
+            // If the source is backed by a variable slot, that slot may be overwritten by a later
+            // SSA value before the box is consumed (e.g., postfix increment: x++ must capture 
+            // the old value before the slot is updated, so the box must materialize).
+            // However, if the slot is marked as single-assignment (e.g., const variables),
+            // the value is guaranteed to never change, so we can safely inline.
             case LIRConvertToObject convertToObject:
                 var sourceIdx = convertToObject.Source.Index;
-                // Check variable slot first - if source is backed by a variable slot, don't inline
+                // Check variable slot first - if source is backed by a variable slot
                 if (sourceIdx >= 0 && sourceIdx < methodBody.TempVariableSlots.Count && methodBody.TempVariableSlots[sourceIdx] >= 0)
                 {
-                    return false;
+                    var varSlot = methodBody.TempVariableSlots[sourceIdx];
+                    // If the variable slot is single-assignment, it's safe to inline
+                    if (!methodBody.SingleAssignmentSlots.Contains(varSlot))
+                    {
+                        return false;
+                    }
                 }
                 // Now check if the source's defining instruction can be inlined
                 if (sourceIdx >= 0 && sourceIdx < defInstruction.Length && defInstruction[sourceIdx] != null)

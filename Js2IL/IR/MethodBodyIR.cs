@@ -45,4 +45,12 @@ public sealed class MethodBodyIR
     /// The actual TypeDefinitionHandle is resolved via ScopeMetadataRegistry during IL emission.
     /// </summary>
     public ScopeId LeafScopeId { get; set; }
+
+    /// <summary>
+    /// Set of variable slots that are only assigned once (at initialization).
+    /// Variables in this set are safe to inline even when backed by a slot,
+    /// because their value cannot change between definition and use.
+    /// This enables optimizations like inlining LIRConvertToObject for const variables.
+    /// </summary>
+    public HashSet<int> SingleAssignmentSlots { get; } = new();
 }

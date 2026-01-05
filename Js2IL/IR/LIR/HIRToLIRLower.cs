@@ -487,6 +487,14 @@ public sealed class HIRToLIRLowerer
                     var storageInfo = GetTempStorage(value);
                     var slot = GetOrCreateVariableSlot(binding, exprStmt.Name.Name, storageInfo);
                     SetTempVariableSlot(value, slot);
+
+                    // Mark const variables as single-assignment for optimization purposes.
+                    // const variables can never be reassigned, so their values are stable
+                    // and can be inlined even when backed by a variable slot.
+                    if (binding.Kind == BindingKind.Const)
+                    {
+                        _methodBodyIR.SingleAssignmentSlots.Add(slot);
+                    }
                     return true;
                 }
             case HIRExpressionStatement exprStmt:
