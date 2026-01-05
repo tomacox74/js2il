@@ -617,13 +617,25 @@ Key outcome: expression emission never triggers compilation.
 - Refactor class/function/arrow “declare” entry points into signature-only
 - Keep Phase 2 using existing compile routines
 
+Usability expectation:
+
+- After Milestone 1, the compiler should remain in a **fully usable state**.
+- The current behavior (“try IR first, then fall back to legacy AST→IL if IR fails”) remains, but the **IR attempt moves into Phase 2 body compilation** rather than happening during declaration.
+
 Legacy AST→IL impact:
 
 - **Minimal / mostly orchestration.** Legacy AST→IL remains the body compiler for Phase 2 at this point.
 - Split the legacy entry points so they can be invoked as:
   - **Phase 1**: “declare signatures only” (types + method defs / descriptors)
   - **Phase 2**: “compile bodies” (existing AST→IL body emission)
-- Avoid any AST→IL code path that *implicitly* compiles other callables during emission (e.g., depth-first nested function compilation) by moving that work into Phase 1 discovery/declare.
+- Avoid any AST→IL code path that *implicitly* compiles other callables during emission (e.g., arrow/function-expression on-demand compilation) by moving callable compilation into explicit Phase 2 entry points.
+
+Where the IR attempts move to (Milestone 1):
+
+- **Function declarations:** move the `TryCompileMethod(...)` attempt out of `JavaScriptFunctionGenerator.DeclareFunctions(...)` and into a Phase 2 API (e.g., `CompileFunctionBody(...)` / `CompileFunctionBodies(...)`) that is invoked by the coordinator.
+- **Arrow functions / function expressions:** move any `TryCompileArrowFunction(...)` / IR attempts out of expression-time helper methods and into Phase 2 compilation of the corresponding declared callable.
+
+In other words: **Phase 1 declares tokens; Phase 2 compiles bodies and may attempt IR-first-then-legacy per callable.**
 
 ### Milestone 2: Dependency graph + ordering
 
