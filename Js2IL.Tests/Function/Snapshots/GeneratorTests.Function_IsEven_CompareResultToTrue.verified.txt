@@ -79,7 +79,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -90,59 +90,51 @@
 	{
 		// Method begins at RVA 0x2094
 		// Header size: 12
-		// Code size: 141 (0x8d)
+		// Code size: 90 (0x5a)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Function_IsEven_CompareResultToTrue
+			[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[1] object,
+			[2] bool,
+			[3] object,
+			[4] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.Function_IsEven_CompareResultToTrue::.ctor()
+		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldnull
-		IL_0008: ldftn object Functions.Function_IsEven_CompareResultToTrue::isEven(object[], object)
-		IL_000e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0013: stfld object Scopes.Function_IsEven_CompareResultToTrue::isEven
-		IL_0018: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_001d: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0022: ldc.i4.1
-		IL_0023: newarr [System.Runtime]System.Object
-		IL_0028: dup
-		IL_0029: ldc.i4.0
-		IL_002a: ldloc.0
-		IL_002b: castclass Scopes.Function_IsEven_CompareResultToTrue
-		IL_0030: ldfld object Scopes.Function_IsEven_CompareResultToTrue::isEven
-		IL_0035: dup
-		IL_0036: brtrue.s IL_005b
-
-		IL_0038: pop
-		IL_0039: ldloc.0
-		IL_003a: ldnull
-		IL_003b: ldftn object Functions.Function_IsEven_CompareResultToTrue::isEven(object[], object)
-		IL_0041: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0046: stfld object Scopes.Function_IsEven_CompareResultToTrue::isEven
-		IL_004b: ldloc.0
-		IL_004c: castclass Scopes.Function_IsEven_CompareResultToTrue
-		IL_0051: ldfld object Scopes.Function_IsEven_CompareResultToTrue::isEven
-		IL_0056: br IL_005b
-
-		IL_005b: ldc.i4.1
-		IL_005c: newarr [System.Runtime]System.Object
-		IL_0061: dup
-		IL_0062: ldc.i4.0
-		IL_0063: ldloc.0
-		IL_0064: stelem.ref
-		IL_0065: ldc.r8 4
-		IL_006e: box [System.Runtime]System.Double
-		IL_0073: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
-		IL_0078: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-		IL_007d: ldc.i4.1
-		IL_007e: ceq
-		IL_0080: box [System.Runtime]System.Boolean
-		IL_0085: stelem.ref
-		IL_0086: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_008b: pop
-		IL_008c: ret
+		IL_0006: ldnull
+		IL_0007: ldftn object Functions.Function_IsEven_CompareResultToTrue::isEven(object[], object)
+		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldnull
+		IL_001b: stelem.ref
+		IL_001c: ldc.r8 4
+		IL_0025: box [System.Runtime]System.Double
+		IL_002a: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_002f: stloc.1
+		IL_0030: ldloc.1
+		IL_0031: ldc.i4.1
+		IL_0032: box [System.Runtime]System.Boolean
+		IL_0037: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+		IL_003c: stloc.2
+		IL_003d: ldloc.2
+		IL_003e: box [System.Runtime]System.Boolean
+		IL_0043: stloc.3
+		IL_0044: ldc.i4.1
+		IL_0045: newarr [System.Runtime]System.Object
+		IL_004a: dup
+		IL_004b: ldc.i4.0
+		IL_004c: ldloc.3
+		IL_004d: stelem.ref
+		IL_004e: stloc.s 4
+		IL_0050: ldloc.0
+		IL_0051: ldloc.s 4
+		IL_0053: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0058: pop
+		IL_0059: ret
 	} // end of method Function_IsEven_CompareResultToTrue::Main
 
 } // end of class Scripts.Function_IsEven_CompareResultToTrue
@@ -154,7 +146,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x212d
+		// Method begins at RVA 0x20fa
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

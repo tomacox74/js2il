@@ -200,56 +200,71 @@
 	{
 		// Method begins at RVA 0x20f8
 		// Header size: 12
-		// Code size: 141 (0x8d)
+		// Code size: 129 (0x81)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.BinaryOperator_StrictEqualCapturedVariable/ArrowFunction_L12C8
+			[0] bool,
+			[1] bool,
+			[2] object,
+			[3] object,
+			[4] object,
+			[5] object,
+			[6] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
-		IL_0000: newobj instance void Scopes.BinaryOperator_StrictEqualCapturedVariable/ArrowFunction_L12C8::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldarg.1
-		IL_0008: stfld object Scopes.BinaryOperator_StrictEqualCapturedVariable/ArrowFunction_L12C8::id
-		IL_000d: ldloc.0
-		IL_000e: castclass Scopes.BinaryOperator_StrictEqualCapturedVariable/ArrowFunction_L12C8
-		IL_0013: ldfld object Scopes.BinaryOperator_StrictEqualCapturedVariable/ArrowFunction_L12C8::id
-		IL_0018: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_001d: ldc.r8 3
-		IL_0026: ceq
-		IL_0028: box [System.Runtime]System.Boolean
-		IL_002d: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-		IL_0032: brtrue IL_005a
+		IL_0000: ldarg.1
+		IL_0001: ldc.r8 3
+		IL_000a: box [System.Runtime]System.Double
+		IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0014: stloc.0
+		IL_0015: ldarg.1
+		IL_0016: ldc.r8 7
+		IL_001f: box [System.Runtime]System.Double
+		IL_0024: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0029: stloc.1
+		IL_002a: ldloc.0
+		IL_002b: box [System.Runtime]System.Boolean
+		IL_0030: stloc.2
+		IL_0031: ldloc.2
+		IL_0032: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0037: stloc.0
+		IL_0038: ldloc.0
+		IL_0039: brtrue IL_004d
 
-		IL_0037: ldloc.0
-		IL_0038: castclass Scopes.BinaryOperator_StrictEqualCapturedVariable/ArrowFunction_L12C8
-		IL_003d: ldfld object Scopes.BinaryOperator_StrictEqualCapturedVariable/ArrowFunction_L12C8::id
-		IL_0042: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0047: ldc.r8 7
-		IL_0050: beq IL_005a
+		IL_003e: ldloc.1
+		IL_003f: box [System.Runtime]System.Boolean
+		IL_0044: stloc.3
+		IL_0045: ldloc.3
+		IL_0046: stloc.s 5
+		IL_0048: br IL_0050
 
-		IL_0055: br IL_008b
+		IL_004d: ldloc.2
+		IL_004e: stloc.s 5
 
-		IL_005a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_005f: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0064: ldc.i4.2
-		IL_0065: newarr [System.Runtime]System.Object
-		IL_006a: dup
-		IL_006b: ldc.i4.0
-		IL_006c: ldstr "matched:"
-		IL_0071: stelem.ref
-		IL_0072: dup
-		IL_0073: ldc.i4.1
-		IL_0074: ldloc.0
-		IL_0075: castclass Scopes.BinaryOperator_StrictEqualCapturedVariable/ArrowFunction_L12C8
-		IL_007a: ldfld object Scopes.BinaryOperator_StrictEqualCapturedVariable/ArrowFunction_L12C8::id
-		IL_007f: stelem.ref
-		IL_0080: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0085: pop
-		IL_0086: br IL_008b
+		IL_0050: ldloc.s 5
+		IL_0052: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0057: stloc.1
+		IL_0058: ldloc.1
+		IL_0059: brfalse IL_007f
 
-		IL_008b: ldnull
-		IL_008c: ret
+		IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0063: stloc.s 6
+		IL_0065: ldloc.s 6
+		IL_0067: ldc.i4.2
+		IL_0068: newarr [System.Runtime]System.Object
+		IL_006d: dup
+		IL_006e: ldc.i4.0
+		IL_006f: ldstr "matched:"
+		IL_0074: stelem.ref
+		IL_0075: dup
+		IL_0076: ldc.i4.1
+		IL_0077: ldarg.1
+		IL_0078: stelem.ref
+		IL_0079: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_007e: pop
+
+		IL_007f: ldnull
+		IL_0080: ret
 	} // end of method ArrowFunction_L12C8::ArrowFunction_L12C8
 
 } // end of class Functions.ArrowFunction_L12C8
@@ -267,7 +282,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2194
+		// Method begins at RVA 0x2188
 		// Header size: 12
 		// Code size: 147 (0x93)
 		.maxstack 32
@@ -339,7 +354,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2233
+		// Method begins at RVA 0x2227
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

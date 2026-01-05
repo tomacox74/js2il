@@ -388,6 +388,20 @@ internal static class Stackify
             case LIRMulNumber:
             case LIRMulDynamic:
             case LIRConcatStrings:
+            case LIRDivNumber:
+            case LIRModNumber:
+            case LIRExpNumber:
+            case LIRBitwiseAnd:
+            case LIRBitwiseOr:
+            case LIRBitwiseXor:
+            case LIRLeftShift:
+            case LIRRightShift:
+            case LIRUnsignedRightShift:
+            case LIRInOperator:
+            case LIREqualDynamic:
+            case LIRNotEqualDynamic:
+            case LIRStrictEqualDynamic:
+            case LIRStrictNotEqualDynamic:
             case LIRCompareNumberLessThan:
             case LIRCompareNumberGreaterThan:
             case LIRCompareNumberLessThanOrEqual:
@@ -403,6 +417,8 @@ internal static class Stackify
             case LIRTypeof:
             case LIRNegateNumber:
             case LIRBitwiseNotNumber:
+            case LIRCallIsTruthy:
+            case LIRCopyTemp:
                 return (1, 1);
 
             // Call: consumes args + object, produces result

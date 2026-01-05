@@ -501,6 +501,155 @@ internal sealed class LIRToILCompiler
                 ilEncoder.OpCode(ILOpCode.Ceq);
                 EmitStoreTemp(cmpBoolNe.Result, ilEncoder, allocation);
                 break;
+            
+            // Division
+            case LIRDivNumber divNumber:
+                EmitLoadTemp(divNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(divNumber.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Div);
+                EmitStoreTemp(divNumber.Result, ilEncoder, allocation);
+                break;
+
+            // Remainder (modulo)
+            case LIRModNumber modNumber:
+                EmitLoadTemp(modNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(modNumber.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Rem);
+                EmitStoreTemp(modNumber.Result, ilEncoder, allocation);
+                break;
+
+            // Exponentiation (Math.Pow)
+            case LIRExpNumber expNumber:
+                EmitLoadTemp(expNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(expNumber.Right, ilEncoder, allocation, methodDescriptor);
+                EmitMathPow(ilEncoder);
+                EmitStoreTemp(expNumber.Result, ilEncoder, allocation);
+                break;
+
+            // Bitwise AND: convert to int32, and, convert back to double
+            case LIRBitwiseAnd bitwiseAnd:
+                EmitLoadTemp(bitwiseAnd.Left, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                EmitLoadTemp(bitwiseAnd.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                ilEncoder.OpCode(ILOpCode.And);
+                ilEncoder.OpCode(ILOpCode.Conv_r8);
+                EmitStoreTemp(bitwiseAnd.Result, ilEncoder, allocation);
+                break;
+
+            // Bitwise OR: convert to int32, or, convert back to double
+            case LIRBitwiseOr bitwiseOr:
+                EmitLoadTemp(bitwiseOr.Left, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                EmitLoadTemp(bitwiseOr.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                ilEncoder.OpCode(ILOpCode.Or);
+                ilEncoder.OpCode(ILOpCode.Conv_r8);
+                EmitStoreTemp(bitwiseOr.Result, ilEncoder, allocation);
+                break;
+
+            // Bitwise XOR: convert to int32, xor, convert back to double
+            case LIRBitwiseXor bitwiseXor:
+                EmitLoadTemp(bitwiseXor.Left, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                EmitLoadTemp(bitwiseXor.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                ilEncoder.OpCode(ILOpCode.Xor);
+                ilEncoder.OpCode(ILOpCode.Conv_r8);
+                EmitStoreTemp(bitwiseXor.Result, ilEncoder, allocation);
+                break;
+
+            // Left shift: convert to int32, shift, convert back to double
+            case LIRLeftShift leftShift:
+                EmitLoadTemp(leftShift.Left, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                EmitLoadTemp(leftShift.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                ilEncoder.OpCode(ILOpCode.Shl);
+                ilEncoder.OpCode(ILOpCode.Conv_r8);
+                EmitStoreTemp(leftShift.Result, ilEncoder, allocation);
+                break;
+
+            // Right shift (signed): convert to int32, shift, convert back to double
+            case LIRRightShift rightShift:
+                EmitLoadTemp(rightShift.Left, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                EmitLoadTemp(rightShift.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                ilEncoder.OpCode(ILOpCode.Shr);
+                ilEncoder.OpCode(ILOpCode.Conv_r8);
+                EmitStoreTemp(rightShift.Result, ilEncoder, allocation);
+                break;
+
+            // Unsigned right shift: convert to int32 (to preserve negative values), reinterpret as uint32, shift, convert back to double
+            case LIRUnsignedRightShift unsignedRightShift:
+                EmitLoadTemp(unsignedRightShift.Left, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Conv_i4);  // Convert to int32 first (handles negatives)
+                ilEncoder.OpCode(ILOpCode.Conv_u4);  // Then reinterpret as uint32 (no value change, just type)
+                EmitLoadTemp(unsignedRightShift.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Conv_i4);
+                ilEncoder.OpCode(ILOpCode.Shr_un);
+                ilEncoder.OpCode(ILOpCode.Conv_r_un); // Convert unsigned to double
+                EmitStoreTemp(unsignedRightShift.Result, ilEncoder, allocation);
+                break;
+
+            // Call Operators.IsTruthy
+            case LIRCallIsTruthy callIsTruthy:
+                if (!IsMaterialized(callIsTruthy.Result, allocation))
+                {
+                    break;
+                }
+                EmitLoadTemp(callIsTruthy.Value, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsIsTruthy(ilEncoder);
+                EmitStoreTemp(callIsTruthy.Result, ilEncoder, allocation);
+                break;
+
+            // Copy temp variable
+            case LIRCopyTemp copyTemp:
+                EmitLoadTemp(copyTemp.Source, ilEncoder, allocation, methodDescriptor);
+                EmitStoreTemp(copyTemp.Destination, ilEncoder, allocation);
+                break;
+
+            // 'in' operator - calls Operators.In
+            case LIRInOperator inOp:
+                EmitLoadTemp(inOp.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(inOp.Right, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsIn(ilEncoder);
+                EmitStoreTemp(inOp.Result, ilEncoder, allocation);
+                break;
+
+            // Dynamic equality - calls Operators.Equal
+            case LIREqualDynamic equalDynamic:
+                EmitLoadTemp(equalDynamic.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(equalDynamic.Right, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsEqual(ilEncoder);
+                EmitStoreTemp(equalDynamic.Result, ilEncoder, allocation);
+                break;
+
+            // Dynamic inequality - calls Operators.NotEqual
+            case LIRNotEqualDynamic notEqualDynamic:
+                EmitLoadTemp(notEqualDynamic.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(notEqualDynamic.Right, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsNotEqual(ilEncoder);
+                EmitStoreTemp(notEqualDynamic.Result, ilEncoder, allocation);
+                break;
+
+            // Dynamic strict equality - calls Operators.StrictEqual
+            case LIRStrictEqualDynamic strictEqualDynamic:
+                EmitLoadTemp(strictEqualDynamic.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(strictEqualDynamic.Right, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsStrictEqual(ilEncoder);
+                EmitStoreTemp(strictEqualDynamic.Result, ilEncoder, allocation);
+                break;
+
+            // Dynamic strict inequality - calls Operators.StrictNotEqual
+            case LIRStrictNotEqualDynamic strictNotEqualDynamic:
+                EmitLoadTemp(strictNotEqualDynamic.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(strictNotEqualDynamic.Right, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsStrictNotEqual(ilEncoder);
+                EmitStoreTemp(strictNotEqualDynamic.Result, ilEncoder, allocation);
+                break;
+
             case LIRBuildArray buildArray:
                 {
                     if (!IsMaterialized(buildArray.Result, allocation))
@@ -1311,6 +1460,55 @@ internal sealed class LIRToILCompiler
     private void EmitOperatorsMultiply(InstructionEncoder ilEncoder)
     {
         var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "Multiply");
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+    }
+
+    private void EmitMathPow(InstructionEncoder ilEncoder)
+    {
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(System.Math), "Pow");
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+    }
+
+    private void EmitOperatorsIsTruthy(InstructionEncoder ilEncoder)
+    {
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "IsTruthy");
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+    }
+
+    private void EmitOperatorsIn(InstructionEncoder ilEncoder)
+    {
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "In");
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+    }
+
+    private void EmitOperatorsEqual(InstructionEncoder ilEncoder)
+    {
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "Equal");
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+    }
+
+    private void EmitOperatorsNotEqual(InstructionEncoder ilEncoder)
+    {
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "NotEqual");
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+    }
+
+    private void EmitOperatorsStrictEqual(InstructionEncoder ilEncoder)
+    {
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "StrictEqual");
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+    }
+
+    private void EmitOperatorsStrictNotEqual(InstructionEncoder ilEncoder)
+    {
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "StrictNotEqual");
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
     }

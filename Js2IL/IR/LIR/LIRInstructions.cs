@@ -23,27 +23,6 @@ public record LIRConstString(string Value, TempVariable Result) : LIRInstruction
 
 public record LIRConstBoolean(bool Value, TempVariable Result) : LIRInstruction;
 
-public record LIRAddNumber(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
-
-/// <summary>
-/// String concatenation using String.Concat. Used when both operands are known to be strings.
-/// </summary>
-public record LIRConcatStrings(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
-
-/// <summary>
-/// Dynamic addition using Operators.Add runtime helper. Used when operand types are unknown.
-/// </summary>
-public record LIRAddDynamic(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
-
-public record LIRSubNumber(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
-
-public record LIRMulNumber(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
-
-/// <summary>
-/// Dynamic multiplication using Operators.Multiply runtime helper. Used when operand types are unknown.
-/// </summary>
-public record LIRMulDynamic(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
-
 public record LIRConstUndefined(TempVariable Result) : LIRInstruction;
 
 public record LIRConstNull(TempVariable Result) : LIRInstruction;
@@ -127,18 +106,6 @@ public record LIRTypeof(TempVariable Value, TempVariable Result) : LIRInstructio
 public record LIRNegateNumber(TempVariable Value, TempVariable Result) : LIRInstruction;
 
 public record LIRBitwiseNotNumber(TempVariable Value, TempVariable Result) : LIRInstruction;
-
-// Comparison operators for numeric values (result is bool)
-public record LIRCompareNumberLessThan(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
-public record LIRCompareNumberGreaterThan(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
-public record LIRCompareNumberLessThanOrEqual(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
-public record LIRCompareNumberGreaterThanOrEqual(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
-public record LIRCompareNumberEqual(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
-public record LIRCompareNumberNotEqual(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
-
-// Comparison operators for boolean values (result is bool)
-public record LIRCompareBooleanEqual(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
-public record LIRCompareBooleanNotEqual(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
 
 // Control flow instructions
 /// <summary>

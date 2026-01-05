@@ -42,9 +42,8 @@
 		.maxstack 32
 		.locals init (
 			[0] string,
-			[1] string,
-			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[3] object[]
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[2] object[]
 		)
 
 		IL_0000: ldstr "a"
@@ -54,16 +53,16 @@
 		IL_000c: call string [System.Runtime]System.String::Concat(string, string)
 		IL_0011: stloc.0
 		IL_0012: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0017: stloc.2
+		IL_0017: stloc.1
 		IL_0018: ldc.i4.1
 		IL_0019: newarr [System.Runtime]System.Object
 		IL_001e: dup
 		IL_001f: ldc.i4.0
 		IL_0020: ldloc.0
 		IL_0021: stelem.ref
-		IL_0022: stloc.3
-		IL_0023: ldloc.2
-		IL_0024: ldloc.3
+		IL_0022: stloc.2
+		IL_0023: ldloc.1
+		IL_0024: ldloc.2
 		IL_0025: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_002a: pop
 		IL_002b: ret
