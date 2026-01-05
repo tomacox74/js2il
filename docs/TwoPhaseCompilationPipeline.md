@@ -196,6 +196,21 @@ Then map:
 
 ## Compilation planning (SCC/topo)
 
+Before we talk about the planner output, it helps to define **SCC**.
+
+An **SCC (Strongly Connected Component)** is a set of nodes in a directed graph where every node can reach every other node (possibly through intermediate nodes). In this design, the graph nodes are **callables** (functions, arrows, class methods/ctors), and edges are “A depends on B” references.
+
+Why SCCs matter here:
+
+- SCCs represent **cycles** in the callable dependency graph (mutual recursion or cross-kind recursion).
+- A cycle means there is **no valid linear compile order** that satisfies “compile all of A’s dependencies before A”.
+
+The practical challenges SCCs introduce:
+
+- **Ordering:** we can topologically order SCCs, but not the callables *inside* an SCC.
+- **Codegen policy:** within an SCC we may need a conservative rule (e.g., late-bind SCC-internal invocation edges) to avoid relying on assumptions that only hold in acyclic graphs.
+- **Debuggability:** without SCC awareness, failures look like “missing callable token” or “ordering issue”; with SCC awareness, we can diagnose “cycle detected” and apply a deliberate strategy.
+
 ### Output plan representation
 
 The planner should output a list of *stages*:
