@@ -76,13 +76,61 @@ Required operations:
 
 This is the abstraction that replaces “function cache vs arrow cache vs class registry in isolation” during planning.
 
+##### `CallableRegistry` design proposal (responsibilities + separation of concerns)
+
+`CallableRegistry` is one backing store, but it serves multiple phases. To keep it from becoming a “god object”, define it in terms of **role-focused views** with clear mutation rules.
+
+**Core responsibilities** (what the backing store actually owns):
+
+- **Catalog:** which `CallableId`s exist for the module being compiled.
+- **Declarations:** the declared signature/descriptor needed to emit calls and delegate loads.
+- **Diagnostics state:** whether a body has been compiled, plus any debug metadata (source location, display name).
+
+**Non-responsibilities** (things that should *not* live here):
+
+- Building the dependency graph / computing [SCC][scc]s (planner owns this)
+- Emitting IL (LIR→IL owns this)
+- Defining policy decisions like “late-bind within [SCC][scc]” (policy can consult registry state, but should not be embedded as ad-hoc logic)
+
+**Proposed shape: one store, multiple views**
+
+Expose the same underlying registry as different interfaces (or conceptual views in the implementation):
+
+- `ICallableCatalog` (read-mostly)
+  - `TryGet(CallableId, out CallableInfo)`
+  - `IReadOnlyCollection<CallableId> AllCallables`
+- `ICallableDeclarationWriter` (Phase 1 only)
+  - `Declare(CallableId, CallableSignature)`
+  - `SetToken(CallableId, CallableToken)` where token is either methoddef (Option A) or memberref descriptor (Option B)
+- `ICallableDeclarationReader` (Phase 2+)
+  - `GetDeclaredToken(CallableId)` (must succeed in strict mode)
+  - `TryGetDeclaredToken(CallableId, out CallableToken)` (for migration/legacy fallback)
+
+This allows Phase 1 code to have write access while Phase 2/LIR→IL consumers only get read access.
+
+**Lifecycle and invariants**
+
+- Discovery registers every callable into the catalog (Phase 1 precondition for strict mode).
+- Declaration stores the token/descriptor for every callable before any body compilation begins.
+- Phase 2 (body compilation and LIR→IL) must only read from the registry; it must not create/declare new callables.
+- Strict invariant: every `CallableId` referenced by IR/LIR has a declared token/descriptor.
+
+**Legacy adapters (migration-only)**
+
+To avoid introducing separate caches (e.g., an arrow-function cache), legacy emitters can be supported with temporary adapters that map legacy keys → `CallableId`:
+
+- `BindingInfo` → `CallableId(FunctionDeclaration)`
+- `ArrowFunctionExpression` AST node → `CallableId(Arrow@loc)`
+
+Adapters should live at the boundary (legacy emitter side), while the canonical storage remains `CallableId`-keyed.
+
 #### `CompilationPlanner`
 Responsible for:
 
 1. Discovering all callables
 2. Building a dependency graph
-3. Computing SCC + topo order
-4. Producing a compile plan: ordered list of callables (or SCC groups)
+3. Computing [SCC][scc] + topo order
+4. Producing a compile plan: ordered list of callables (or [SCC][scc] groups)
 
 ---
 
@@ -105,7 +153,7 @@ Proposed:
 2. `DeclareAllTypesAndMethods(callables)` (Phase 1)
 3. `BuildDependencyGraph(callables)`
 4. `CompileBodiesInPlanOrder(plan)` (Phase 2)
-5. `CompileMain(ast)` (after bodies, or last SCC)
+5. `CompileMain(ast)` (after bodies, or last [SCC][scc])
 
 Concrete change: `MainGenerator.DeclareClassesAndFunctions` becomes a thin wrapper that calls a new coordinator (e.g., `TwoPhaseCompilationCoordinator`).
 
@@ -120,6 +168,14 @@ Split class compilation into two operations:
   - compiles constructors/method bodies according to the plan
 
 This avoids today’s ordering hazard where class methods are attempted in IR before function/arrow caches exist.
+
+Important metadata detail (ties back to current behavior):
+
+- In `System.Reflection.Metadata`, a `TypeDefinition` row includes `fieldList` and `methodList` which are **table layout pointers** (the starting row index for that type’s fields/methods).
+- This means `MetadataBuilder.AddTypeDefinition(...)` can be *called at any time*, but you can only do it safely “in advance” if you already know what values to use for `fieldList` / `methodList`.
+- Practically, Phase 1 must handle this in one of two ways:
+  - **Precompute layout:** discover all fields/methods for each type and add type definitions in an order where the starting handles are known deterministically.
+  - **Defer emission:** use a builder that buffers member declarations and only writes the `TypeDefinition` row once it can compute the correct list starts (this is effectively what JS2IL’s type-building helpers do today).
 
 ### Function declarations
 
@@ -194,22 +250,26 @@ Then map:
 
 ---
 
-## Compilation planning (SCC/topo)
+## SCC (Strongly Connected Component)
 
-Before we talk about the planner output, it helps to define **SCC**.
+An **[SCC][scc] (Strongly Connected Component)** is a set of nodes in a directed graph where every node can reach every other node (possibly through intermediate nodes). In this design, the graph nodes are **callables** (functions, arrows, class methods/ctors), and edges are “A depends on B” references.
 
-An **SCC (Strongly Connected Component)** is a set of nodes in a directed graph where every node can reach every other node (possibly through intermediate nodes). In this design, the graph nodes are **callables** (functions, arrows, class methods/ctors), and edges are “A depends on B” references.
+Why **[SCC][scc]s** matter here:
 
-Why SCCs matter here:
-
-- SCCs represent **cycles** in the callable dependency graph (mutual recursion or cross-kind recursion).
+- They represent **cycles** in the callable dependency graph (mutual recursion or cross-kind recursion).
 - A cycle means there is **no valid linear compile order** that satisfies “compile all of A’s dependencies before A”.
 
-The practical challenges SCCs introduce:
+Practical challenges **[SCC][scc]s** introduce:
 
-- **Ordering:** we can topologically order SCCs, but not the callables *inside* an SCC.
-- **Codegen policy:** within an SCC we may need a conservative rule (e.g., late-bind SCC-internal invocation edges) to avoid relying on assumptions that only hold in acyclic graphs.
-- **Debuggability:** without SCC awareness, failures look like “missing callable token” or “ordering issue”; with SCC awareness, we can diagnose “cycle detected” and apply a deliberate strategy.
+- **Ordering:** we can topologically order [SCC][scc]s, but not the callables *inside* a single [SCC][scc].
+- **Codegen policy:** within an [SCC][scc] we may need a conservative rule (e.g., late-bind [SCC][scc]-internal invocation edges) to avoid relying on assumptions that only hold in acyclic graphs.
+- **Debuggability:** without [SCC][scc] awareness, failures look like “missing callable token” or “ordering issue”; with [SCC][scc] awareness, we can diagnose “cycle detected” and apply a deliberate strategy.
+
+---
+
+## Compilation planning ([SCC][scc]/topo)
+
+See [SCC][scc] for the definition and why it matters.
 
 ### Output plan representation
 
@@ -217,67 +277,67 @@ The planner should output a list of *stages*:
 
 - each stage is either:
   - a single callable (acyclic)
-  - or an SCC group of multiple callables
+  - or an [SCC][scc] group of multiple callables
 
 Example:
 
-1. SCC #1: `Arrow(A1)`
-2. SCC #2: `Function(foo)`
-3. SCC #3: `{ Function(a), Function(b) }` (mutual recursion)
-4. SCC #4: `ClassMethod(C.m)`
+1. [SCC][scc] #1: `Arrow(A1)`
+2. [SCC][scc] #2: `Function(foo)`
+3. [SCC][scc] #3: `{ Function(a), Function(b) }` (mutual recursion)
+4. [SCC][scc] #4: `ClassMethod(C.m)`
 
-### Policy inside SCCs
+### Policy inside [SCC][scc]s
 
-When compiling an SCC group, we should not require early-bound calls among members.
+When compiling an [SCC][scc] group, we should not require early-bound calls among members.
 
 Two acceptable policies:
 
 - Emit early-bound calls/delegates anyway (works because declarations exist), or
-- Emit late-bound calls only for edges within the SCC (more conservative)
+- Emit late-bound calls only for edges within the [SCC][scc] (more conservative)
 
 This is a tuning knob for correctness vs. complexity.
 
 ---
 
-## SCC escape hatch (detailed)
+## [SCC][scc] escape hatch (detailed)
 
-This section explains the “escape hatch” strategy for **strongly connected components (SCCs)** in the callable dependency graph.
+This section explains the “escape hatch” strategy for **strongly connected components ([SCC][scc]s)** in the callable dependency graph.
 
-### What an SCC means in this compiler
+### What an [SCC][scc] means in this compiler
 
-An SCC is a set of callables where each callable is reachable from every other callable in the set (directly or indirectly).
+An [SCC][scc] is a set of callables where each callable is reachable from every other callable in the set (directly or indirectly).
 
-In JS2IL terms, SCCs arise from:
+In JS2IL terms, [SCC][scc]s arise from:
 
 - Mutual recursion between functions
 - A class method referencing a function value that (transitively) references the class
 - Arrows captured into variables that then feed back into other callables
 
-Key point: SCCs are not “bad”; they are a signal that **static, one-way dependency ordering is impossible**. We need a policy for codegen that remains correct.
+Key point: [SCC][scc]s are not “bad”; they are a signal that **static, one-way dependency ordering is impossible**. We need a policy for codegen that remains correct.
 
-### Why SCCs are tricky even with Phase 1 declarations
+### Why [SCC][scc]s are tricky even with Phase 1 declarations
 
 If Phase 1 produces a resolvable token for every callable, we *can* still emit early-bound calls/delegates in a cycle.
 
-However, SCCs are where we often hit cases like:
+However, [SCC][scc]s are where we often hit cases like:
 
 - “I need a callable value to exist and be callable before I’ve finished compiling all participants.”
-- “I want to inline/optimize assuming a target is known, but within SCC that assumption may be fragile.”
+- “I want to inline/optimize assuming a target is known, but within [SCC][scc] that assumption may be fragile.”
 
 So the escape hatch is a conservative policy to keep correctness and reduce implementation complexity.
 
 ### The escape hatch in one sentence
 
-Within an SCC, allow codegen to **emit late-bound invocation for SCC-internal edges**, while keeping SCC-external edges early-bound.
+Within an [SCC][scc], allow codegen to **emit late-bound invocation for [SCC][scc]-internal edges**, while keeping [SCC][scc]-external edges early-bound.
 
 This keeps most of the program early-bound and only degrades the cyclic portion.
 
-### Planner output needed to support SCC policy
+### Planner output needed to support [SCC][scc] policy
 
 The compilation planner should produce two artifacts:
 
-1. **Stage order**: SCCs in topological order
-2. **SCC membership map**: `CallableId -> SccId`
+1. **Stage order**: [SCC][scc]s in topological order
+2. **[SCC][scc] membership map**: `CallableId -> SccId`
 
 Additionally (recommended), the planner can produce an **edge classification function**:
 
@@ -289,13 +349,13 @@ Codegen can then choose early-bound vs late-bound per call site.
 
 We should scope the escape hatch to the smallest, safest subset:
 
-- Late-bind only **invocation edges** that target a known callable inside the same SCC.
+- Late-bind only **invocation edges** that target a known callable inside the same [SCC][scc].
 - Do **not** late-bind global intrinsic calls (Math/Array/etc.) or obviously non-cyclic operations.
 
 Common cases:
 
-- `a()` where `a` resolves to a specific declared function in the same SCC → late-bound invoke
-- `arr.map(a)` where `a` is a function value from same SCC → still can be early-bound delegate load (see below)
+- `a()` where `a` resolves to a specific declared function in the same [SCC][scc] → late-bound invoke
+- `arr.map(a)` where `a` is a function value from same [SCC][scc] → still can be early-bound delegate load (see below)
 
 ### Late-binding mechanism options
 
@@ -322,11 +382,11 @@ Cons:
 
 #### Option 2: Late-bound via indirection table (“cell”)
 
-Represent each callable in an SCC by a mutable cell that can be assigned once compilation completes.
+Represent each callable in an [SCC][scc] by a mutable cell that can be assigned once compilation completes.
 
 - Phase 1 declares a static field (or scope field) that will hold the callable delegate
 - Phase 2 compiles each method and sets its cell
-- SCC-internal call sites load the cell and invoke
+- [SCC][scc]-internal call sites load the cell and invoke
 
 Pros:
 
@@ -345,12 +405,12 @@ It’s useful to separate two concepts:
 1. **Loading a callable value** (delegate creation): `ldftn` + `newobj`
 2. **Invoking** (calling a function)
 
-Even in SCCs, it can be reasonable to keep **delegate loads early-bound**, because Phase 1 guarantees the token/signature exists.
+Even in [SCC][scc]s, it can be reasonable to keep **delegate loads early-bound**, because Phase 1 guarantees the token/signature exists.
 
 The escape hatch can be limited to **invocation**. That provides a good balance:
 
 - `arr.map(toStr)` still gets a fast delegate
-- but `toStr(x)` might use late-bound invoke only when `toStr` is SCC-internal and the policy says so
+- but `toStr(x)` might use late-bound invoke only when `toStr` is [SCC][scc]-internal and the policy says so
 
 ### How codegen decides (concrete decision table)
 
@@ -364,7 +424,7 @@ Given a call site inside callable `Caller`:
 
 ### Implementation hook points
 
-The minimal places we need to thread SCC knowledge:
+The minimal places we need to thread [SCC][scc] knowledge:
 
 1. **Planner** produces `SccId` mapping.
 2. **Lowering / LIR generation** needs access to `SccId` mapping when choosing instruction forms.
@@ -379,9 +439,9 @@ If we want to keep LIR stable, the flag approach is simplest.
 
 ### Diagnostics
 
-To make this debuggable (and avoid silent performance regressions), emit diagnostics per SCC:
+To make this debuggable (and avoid silent performance regressions), emit diagnostics per [SCC][scc]:
 
-- SCC id and members
+- [SCC][scc] id and members
 - Which edges are late-bound (caller → callee)
 
 In strict-IR tests, it can be useful to assert:
@@ -394,7 +454,7 @@ The escape hatch must preserve the architectural rule:
 
 - Late-binding must not perform compilation-on-demand.
 
-It may consult registries/caches for tokens or cells, but compilation must already be complete (Phase 2) or in-progress within the SCC stage.
+It may consult registries/caches for tokens or cells, but compilation must already be complete (Phase 2) or in-progress within the [SCC][scc] stage.
 
 ---
 
@@ -402,6 +462,7 @@ It may consult registries/caches for tokens or cells, but compilation must alrea
 
 ### Two options for callable references
 
+<a id="option-a"></a>
 #### Option A (incremental): pre-create `MethodDefinitionHandle` for every callable
 
 Mechanics:
@@ -415,6 +476,25 @@ Constraints:
 - Requires knowing exact signatures early.
 - Requires ensuring each method is associated with the correct owning type.
 
+Findings (validated by PoC):
+
+- A `MethodDefinitionHandle` (MethodDef token, `0x06xxxxxx`) is valid even if the method body IL has not been emitted yet.
+  - Call sites can reference the MethodDef token as long as the final metadata includes the corresponding MethodDef row.
+  - Practically this means: **declare/allocate method rows first, emit bodies later** (compiler-style).
+- This pushes a hard requirement into Phase 1: **the layout of method and type rows must be deterministic and precomputed**.
+  - In `System.Reflection.Metadata`, method ownership is inferred from `TypeDefinition.methodList` ranges, not from an explicit “owner” column.
+  - Therefore, Phase 1 needs to decide the complete ordering and row ranges for:
+    - `TypeDefinition` rows
+    - `MethodDefinition` rows (per type)
+    - (and similarly `FieldDefinition` rows if fields are used)
+
+Type handle note:
+
+- A similar “pre-allocate handles first” approach can be used for `TypeDefinitionHandle` (TypeDef token, `0x02xxxxxx`) if we want stable type tokens early.
+- In many cases we do not need to embed TypeDef tokens into IL (unless we emit `ldtoken`/reflection-style constructs), but we still must emit TypeDefs in metadata to own methods/fields.
+- As already noted earlier in this document: `MetadataBuilder.AddTypeDefinition(...)` requires correct `fieldList`/`methodList`, so pre-allocating TypeDef handles implies the same **precomputed table layout** requirement.
+
+<a id="option-b"></a>
 #### Option B (robust): caches store a “memberref descriptor” and emit `MemberReferenceHandle`
 
 Mechanics:
@@ -453,7 +533,7 @@ If any step fails, the fallback policy is decided centrally:
 
 ### Compiling Main
 
-Main should be compiled after all callables (or after the SCC that contains Main’s dependencies).
+Main should be compiled after all callables (or after the [SCC][scc] that contains Main’s dependencies).
 
 This guarantees:
 
@@ -472,9 +552,9 @@ When lowering emits `LIRLoadFunction` / `LIRLoadArrowFunction`, IL emission must
 - `ldftn <method token>`
 - `newobj instance void class [System.Runtime]System.Func`...
 
-Under Option A, `<method token>` is a `MethodDefinitionHandle`.
+Under [Option B](#option-b), `<method token>` is a `MemberReferenceHandle`.
 
-Under Option B, `<method token>` is a `MemberReferenceHandle`.
+Under [Option A](#option-a), `<method token>` is a `MethodDefinitionHandle`.
 
 In both cases the delegate signature must match `JsParamCount`.
 
@@ -485,7 +565,7 @@ Direct calls can remain as:
 - `call` (static)
 - `callvirt` (instance)
 
-But when a direct target cannot be resolved (unknown receiver type, SCC edge policy), emit dynamic runtime dispatch as today.
+But when a direct target cannot be resolved (unknown receiver type, [SCC][scc] edge policy), emit dynamic runtime dispatch as today.
 
 ---
 
@@ -510,7 +590,7 @@ Legacy AST→IL impact:
 ### Milestone 2: Dependency graph + ordering
 
 - Add AST visitor to build dependencies
-- Add SCC/topo planner
+- Add [SCC][scc]/topo planner
 - Compile bodies in plan order
 
 Legacy AST→IL impact:
@@ -521,7 +601,7 @@ Legacy AST→IL impact:
 
 ### Milestone 3: Replace ad-hoc caches with unified registry
 
-- Migrate `CompiledMethodCache` and `CompiledArrowFunctionCache` behind `CallableRegistry`
+- Migrate ad-hoc “callable token caches” (e.g., `CompiledMethodCache`) behind `CallableRegistry` (or delete them)
 - Keep old caches as adapters temporarily to minimize churn
 
 Legacy AST→IL impact:
@@ -575,19 +655,19 @@ Recommended PR sequence (small, mergeable increments):
      - Phase 1 completes without emitting any method bodies.
      - Existing compilation still succeeds because Phase 2 compiles bodies the old way.
 
-4. **Add dependency collection (AST-first) + planner (SCC/topo)**
+4. **Add dependency collection (AST-first) + planner ([SCC][scc]/topo)**
    - Touchpoints: a new AST visitor that resolves identifiers via the symbol table and records `CallableId` edges.
-   - Deliverable: a stable plan output (ordered callables and SCC groups) that can be logged for debugging.
+   - Deliverable: a stable plan output (ordered callables and [SCC][scc] groups) that can be logged for debugging.
    - Done when:
      - The planner produces deterministic output for the same input.
      - The plan can be inspected in logs for failing tests.
 
 5. **Compile bodies in plan order (still using current body compilers)**
    - Touchpoints: coordinator Phase 2 loop; class/function/arrow “compile body” entry points.
-   - Deliverable: Phase 2 compiles callables SCC-by-SCC, then compiles main.
+   - Deliverable: Phase 2 compiles callables [SCC][scc]-by-[SCC][scc], then compiles main.
    - Done when:
      - With flag on, a representative set of tests compiles and runs.
-     - Cycles do not deadlock compilation; SCC policy is exercised (even if conservative).
+     - Cycles do not deadlock compilation; [SCC][scc] policy is exercised (even if conservative).
 
 6. **Enforce the invariant: IR emission never triggers compilation**
    - Touchpoints: IR pipeline entry points and any helper that currently "compiles on demand".
@@ -621,7 +701,7 @@ Add invariant checks (fail fast in strict mode):
 Add structured diagnostics:
 
 - “Missing callable token for X”
-- “SCC cycle detected: [a,b,c] (policy=latebound-within-scc)”
+- “[SCC][scc] cycle detected: [a,b,c] (policy=latebound-within-scc)”
 
 These help avoid vague failures like “lowering failed” when the true issue is declaration ordering.
 
@@ -668,7 +748,7 @@ The tables below are meant to be the “implementation cheat sheet”. When buil
 | Function expression (assigned) | `const f = function(a){}` | `FunctionExpression_f` | `"{moduleName}/FunctionExpression_f"` | `FunctionExpression_LxCy` | Generated as a nested function method via expression emitter | Legacy: method handle returned from generation; planned: `CallableId(FunctionExpr@loc or assignment)` |
 | Function expression (not assigned) | `(function(a){})` | `FunctionExpression_LxCy` | `"{moduleName}/FunctionExpression_LxCy"` | `FunctionExpression_LxCy` | Generated as a nested function method via expression emitter | Same as above |
 | Named function expression | `const f = function g(a){}` | `g` (internal) | `"{moduleName}/g"` | `FunctionExpression_LxCy` (still location-based) | Generated as a nested function method; recursion uses internal binding | Same as above |
-| Arrow function (assigned) | `const f = (a)=>a+1` | `ArrowFunction_f` | `"{moduleName}/ArrowFunction_f"` | `ArrowFunction_LxCy` | Generated as a nested function method via arrow emitter | IR: `ArrowFunctionExpression` → `MethodDefinitionHandle` (CompiledArrowFunctionCache); planned: `CallableId(Arrow@loc/assignment)` |
+| Arrow function (assigned) | `const f = (a)=>a+1` | `ArrowFunction_f` | `"{moduleName}/ArrowFunction_f"` | `ArrowFunction_LxCy` | Generated as a nested function method via arrow emitter | IR: `ArrowFunctionExpression` → token (legacy adapter); planned: `CallableId(Arrow@loc/assignment)` |
 | Arrow function (not assigned) | `arr.map((x)=>x)` | `ArrowFunction_LxCy` | `"{moduleName}/ArrowFunction_LxCy"` | `ArrowFunction_LxCy` | Generated as a nested function method via arrow emitter | Same as above |
 | Class declaration | `class C {}` | `C` (or `Class<N>`) | N/A (class itself not a variable scope key) | N/A | Namespace `Classes.{moduleName}`, type name `SanitizeForMetadata(C)` | `ClassRegistry` keyed by class name string |
 | Class constructor | `constructor(a){}` | Method scope name is `constructor` (method pseudo-scope) | `"{moduleName}/constructor"` (current) | `.ctor` | Inside class type `Classes.{moduleName}.C` | `ClassRegistry.RegisterConstructor(className, ...)` |
@@ -686,7 +766,7 @@ Notes:
 |---|---|---|---|
 | `VariableRegistry` (scope field lookup) | Resolve captured variables/fields by scope | `string registryScopeName` (often `"{module}/{scope}"`) | Keep string key for storage lookup; also map from `CallableId` → registryScopeName |
 | `CompiledMethodCache` | IR callable token lookup for function decls | `BindingInfo` → `MethodDefinitionHandle` | `CallableId(FunctionDecl)` → token/descriptor (adapter keeps BindingInfo path) |
-| `CompiledArrowFunctionCache` | IR callable token lookup for arrows | `ArrowFunctionExpression` → `MethodDefinitionHandle` | `CallableId(Arrow)` → token/descriptor (adapter keeps AST-node path) |
+| *(legacy arrow-function token cache)* | IR callable token lookup for arrows | `ArrowFunctionExpression` → token | `CallableId(Arrow)` → token/descriptor (adapter keeps AST-node path) |
 | `FunctionRegistry` | Legacy emitter lookup by name (and arity info) | `string functionName` → method handle/arity | Prefer `CallableId` to avoid collisions; keep name-based lookup for legacy compatibility |
 | `ClassRegistry` | Class type + ctor/method metadata for call sites | `string className` (+ member name) | `CallableId(ClassCtor/ClassMethod)` should carry class name + member name; registry remains class-centered |
 
@@ -851,9 +931,9 @@ This is a **summary view** of the end-to-end flow. Detailed mechanics are define
 - Phase 1: Discover + Declare (no bodies)
   - See: “Phase 1: Declaration mechanics (how we declare without bodies)” and the registry/signature sections
 - Phase 2: Compile bodies (dependency-safe)
-  - See: “Phase 2: Body compilation mechanics” and the SCC policy sections
-- Ordering and SCC handling:
-  - See: “Dependency discovery”, “Compilation planning (SCC/topo)”, and “SCC escape hatch (detailed)” 
+  - See: “Phase 2: Body compilation mechanics” and the [SCC][scc] policy sections
+- Ordering and [SCC][scc] handling:
+  - See: “Dependency discovery”, “Compilation planning ([SCC][scc]/topo)”, and “[SCC][scc] escape hatch (detailed)” 
 
 ---
 
@@ -878,7 +958,7 @@ Two-phase compilation is not just correctness; it enables performance:
 
 - Most calls can become early-bound (direct call or cached delegate) once dependencies are known.
 - Late-binding can be restricted to:
-  - cycles (SCCs)
+  - cycles ([SCC][scc]s)
   - unsupported IR constructs that intentionally fall back
 
 This aligns with the goal: **avoid compile-on-demand** while keeping the fast path fast.
@@ -904,3 +984,5 @@ After Phase 2:
 
 - All compiled bodies are present in the module.
 - Strict-IR tests can assert no fallback due to missing callables.
+
+[scc]: #scc-strongly-connected-component
