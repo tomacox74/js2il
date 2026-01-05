@@ -830,109 +830,15 @@ We’ll treat dependencies as edges in a directed graph.
 
 ## High-level pipeline overview
 
-### Phase 0: Parse / Validate / Symbol Table
-Unchanged:
+This is a **summary view** of the end-to-end flow. Detailed mechanics are defined earlier in this document:
 
-1. Parse JS → AST
-2. Validate supported syntax
-3. Build symbol table / scopes
-
-The symbol table is the primary input for discovery.
-
-### Phase 1: Discover + Declare (no bodies)
-This phase must be **purely declarative**: it may allocate metadata and create method/type definitions, but must not need other bodies to exist.
-
-Outputs:
-
-- All class types exist (type handles created)
-- All callable method *definitions* exist or have stable reference descriptors
-- Registries/caches are populated with callable metadata
-
-### Phase 2: Compile bodies (dependency-safe)
-This phase compiles callable bodies and fills method bodies.
-
-Outputs:
-
-- All callable bodies compiled (or explicitly compiled via legacy path where needed)
-- Main method compiled
-
----
-
-## Phase 1: Discover + Declare (detailed)
-
-### 1. Discover all callables
-Walk the program once (AST + symbol table) to collect:
-
-- Class declarations + their members (ctors/methods)
-- Function declarations
-- Function expressions and arrow functions (as expressions)
-
-Important: discovery should provide a **stable mapping** from a callable to a key used by caches.
-
-Recommended keys:
-
-- Function declarations: existing `Symbol` / `BindingInfo` identity (preferred over string name)
-- Arrow functions: existing AST node identity (`ArrowFunctionExpression`) plus scope identity if needed
-- Class methods/ctors: (class scope ID / type handle, member name, kind)
-
-### 2. Declare class types (types only)
-Create type definitions for all classes so their handles exist.
-
-- Do not compile constructors/methods here.
-- Record declared members into `ClassRegistry` so call sites can resolve member references.
-
-### 3. Declare callable method definitions (signatures only)
-For every discovered callable:
-
-- Create a `MethodDefinition` (or record a descriptor sufficient to create a `MemberReference` later)
-- Store it in the appropriate cache/registry
-
-At this point we must know:
-
-- Parameter shape (JS arity)
-- Whether the method requires `object[] scopes` parameter
-- Whether it is static/instance from the runtime’s point of view
-
-**Key principle:** after Phase 1, any IR compilation can always say “load callable X” without triggering compilation.
-
----
-
-## Dependency graph and compilation ordering
-
-### Why ordering is still needed
-Even with full declaration, compilation order can still matter for:
-
-- Optimizations (early-bound call vs late-bound call)
-- Closure/scope layout initialization
-- Ensuring required metadata for delegate creation is fixed and consistent
-
-### Graph model
-Each discovered callable is a node.
-
-Edges represent “A needs B’s callable reference” or “A needs B’s member metadata” while compiling.
-
-Examples:
-
-- `ClassMethod(C.m)` depends on `Arrow(a)` when `C.m` references `a` as a value
-- `Function(foo)` depends on `Class(C)` when `foo` uses `new C()`
-- `Arrow(a)` depends on `Function(bar)` when it calls `bar()`
-
-### Handling cycles
-Cycles are possible:
-
-- Mutual recursion: `function a(){ b(); } function b(){ a(); }`
-- Cross-kind recursion: class method references an arrow that references the class
-
-We handle this with SCC (Strongly Connected Components):
-
-- Compute SCCs on the dependency graph
-- Compile SCCs in topological order
-- Within an SCC:
-  - Declaration already guarantees callable references exist
-  - Compilation can proceed in any order
-  - Calls that cannot be statically resolved (or require complete body knowledge) may be emitted via runtime dynamic dispatch
-
-The goal is: **late-binding only where necessary (mostly cycles)**.
+- Phase 0 (unchanged): Parse → Validate → Symbol Table
+- Phase 1: Discover + Declare (no bodies)
+  - See: “Phase 1: Declaration mechanics (how we declare without bodies)” and the registry/signature sections
+- Phase 2: Compile bodies (dependency-safe)
+  - See: “Phase 2: Body compilation mechanics” and the SCC policy sections
+- Ordering and SCC handling:
+  - See: “Dependency discovery”, “Compilation planning (SCC/topo)”, and “SCC escape hatch (detailed)” 
 
 ---
 
@@ -944,72 +850,10 @@ The IR pipeline must not compile callables on-demand. It should only:
 - Lower expressions/statements to HIR/LIR
 - Emit IL that references callables via caches/registries
 
-### “Callable reference” strategy
-There are two workable approaches:
+Callable reference strategy:
 
-#### Option A: Cache `MethodDefinitionHandle`
-- Pros: simple; existing delegate emission uses `ldftn` with a methoddef token.
-- Cons: requires methoddefs to exist early and can still be sensitive to ordering if methoddefs are created during body compilation.
-
-#### Option B: Cache “method reference descriptor” and emit `MemberReference`
-Instead of requiring a methoddef handle to already exist, caches store:
-
-- Owner type handle
-- Method name
-- Signature blob
-
-IL emission uses a `MemberReference` token.
-
-- Pros: reduces ordering constraints; declaration can be separated cleanly.
-- Cons: requires consistent signature construction; requires updating caches and emitter.
-
-**Recommendation:** start with Option A if it’s easier, but migrate toward Option B for robustness.
-
----
-
-## Practical migration plan (incremental)
-
-### Step 1: Formalize “declare” as signature-only
-Refactor existing “declare” methods so they only:
-
-- Discover callables
-- Create type + method definitions (or reference descriptors)
-- Populate caches/registries
-
-No bodies compiled.
-
-### Step 2: Add dependency collection
-During HIR building / lowering (or a pre-pass over AST), record dependencies between callables.
-
-This can be implemented as:
-
-- A lightweight visitor that looks for:
-  - function references used as values
-  - arrow expressions used as values
-  - `new` expressions
-  - member accesses to known class instances
-
-### Step 3: Compile callable bodies in dependency order
-Add a coordinator that:
-
-1. builds the dependency graph
-2. SCC + topo sort
-3. compiles callables SCC-by-SCC
-
-### Step 4: Compile Main last
-Once caches are fully populated and bodies are compiled, compile Main with IR.
-
----
-
-## What this means for `DeclareClassesAndFunctions`
-
-The current method in `MainGenerator` is a useful entry point, but it should conceptually become:
-
-1. **Discover + Declare** (classes + all callables)
-2. **Compile bodies** (dependency-aware)
-3. **Compile main**
-
-Importantly, the implementation should no longer rely on the sequence “classes then functions then arrows” because dependencies cut across these categories.
+- Options and tradeoffs (Option A methoddef vs Option B memberref) are specified in “Phase 1: Declaration mechanics”.
+- In strict mode, the IR pipeline should treat a missing callable reference as a Phase 1 bug (not as a cue to compile-on-demand).
 
 ---
 
