@@ -1,6 +1,11 @@
 # Captured Variables: Scopes ABI Facade (Design)
 
-## Background
+This document is a **spec/design for the target (“ideal”) scopes ABI** that both the legacy compiler and the IR pipeline should converge on.
+
+- The **ABI Contract (Authoritative)** section is normative.
+- Any sections labeled **migration** or **compatibility** exist only to constrain incremental rollout.
+
+## Background (non-normative)
 
 JS2IL historically compiled **AST → IL** directly. Closures and captured variables were supported via a **scope-as-class** model:
 
@@ -44,9 +49,9 @@ can interoperate during migration **without sharing** `VariableRegistry` / `Vari
 - **Binding**: A variable/function/class binding represented by `BindingInfo` in the symbol table.
 - **Captured binding**: A binding declared in an outer scope and referenced by an inner function/class/method; emitted as a scope-field.
 
-## Existing (de-facto) ABI Conventions in JS2IL
+## Current alignment (non-normative)
 
-This design intentionally aligns with the existing conventions so migration does not break.
+This design intentionally aligns with the existing conventions so migration does not break, but the contract below is written in terms of the **ideal ABI**.
 
 ### Method signature encoding
 
@@ -154,7 +159,7 @@ No scopes parameter is required.
 
 Ordering must be deterministic and shared.
 
-#### 2.1 General rule (recommended)
+#### 2.1 General rule (ideal)
 
 `object[] scopes` is ordered from **outermost** to **innermost** ancestor scope:
 
@@ -172,7 +177,7 @@ Individual elements of `scopes[]` are permitted to be `null` when the callee nev
 - For the first implementation of this ABI, it is acceptable (and simpler) to always populate all slots that are part of the required chain.- To determine which slots are required (for future optimization): collect the set of `ParentScopeIndex` values from all `ParentScopeField` entries in `EnvironmentLayout.StorageByBinding`. Slots not in this set may be left `null`.
 This is the simplest, scales to deep nesting, and matches the direction used by class method ancestor computation.
 
-#### 2.2 Compatibility rule (current legacy behavior constraints)
+#### 2.2 Migration constraint (legacy layout)
 
 Legacy `Variable.ParentScopeIndex` and `Variables.GetParentScopeObject(...)` historically assume:
 
@@ -212,6 +217,8 @@ During migration, there will be two valid layouts:
 **Interop rule:** the caller must build the scopes array in the **callee’s declared layout**.
 
 This allows IR to adopt the generalized layout immediately without requiring a full retrofit of legacy internal variable machinery.
+
+Once migration is complete, this section should be removable and only 2.1 should remain.
 
 ### 3) Argument indexing (JS params vs IL args)
 
