@@ -472,9 +472,20 @@ class HIRMethodBuilder
                     return false;
                 }
 
+                if (memberExpr.Computed)
+                {
+                    // Computed property access: obj[expr]
+                    if (!TryParseExpression(memberExpr.Property, out var indexExpr))
+                    {
+                        return false;
+                    }
+                    hirExpr = new HIRIndexAccessExpression(objectExpr!, indexExpr!);
+                    return true;
+                }
+
                 if (memberExpr.Property is not Identifier propertyIdentifier)
                 {
-                    return false; // Only support identifier properties for now
+                    return false; // Only support identifier properties for non-computed access
                 }
 
                 hirExpr = new HIRPropertyAccessExpression(objectExpr!, propertyIdentifier.Name);
@@ -493,6 +504,80 @@ class HIRMethodBuilder
                 // JavaScript 'null' literal
                 hirExpr = new HIRLiteralExpression(JavascriptType.Null, null);
                 return true;
+
+            case ArrayExpression arrayExpr:
+                // Parse array literal elements including spread elements
+                var arrayElements = new List<HIRExpression>();
+                foreach (var element in arrayExpr.Elements)
+                {
+                    if (element is SpreadElement spreadElement)
+                    {
+                        // Parse the spread element's argument
+                        if (!TryParseExpression(spreadElement.Argument, out var spreadArgHir))
+                        {
+                            return false;
+                        }
+                        arrayElements.Add(new HIRSpreadElement(spreadArgHir!));
+                    }
+                    else
+                    {
+                        if (!TryParseExpression(element, out var elementHir))
+                        {
+                            return false;
+                        }
+                        arrayElements.Add(elementHir!);
+                    }
+                }
+                hirExpr = new HIRArrayExpression(arrayElements);
+                return true;
+
+            case ObjectExpression objExpr:
+                // Parse object literal properties
+                var objectProperties = new List<HIRObjectProperty>();
+                foreach (var property in objExpr.Properties)
+                {
+                    if (property is not ObjectProperty objProp)
+                    {
+                        // Spread properties, method definitions etc. not yet supported
+                        return false;
+                    }
+
+                    // Determine property key name
+                    string? propName = null;
+                    if (objProp.Key is Identifier keyId)
+                    {
+                        propName = keyId.Name;
+                    }
+                    else if (objProp.Key is StringLiteral strLit)
+                    {
+                        propName = strLit.Value;
+                    }
+                    else if (objProp.Key is NumericLiteral numLit)
+                    {
+                        propName = numLit.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                    }
+                    else
+                    {
+                        // Computed property keys not yet supported
+                        return false;
+                    }
+
+                    // Parse property value (Value is a Node, cast to Expression)
+                    if (objProp.Value is not Acornima.Ast.Expression valueExpression)
+                    {
+                        // Property value is not an expression (e.g., shorthand method)
+                        return false;
+                    }
+                    if (!TryParseExpression(valueExpression, out var valueExpr))
+                    {
+                        return false;
+                    }
+
+                    objectProperties.Add(new HIRObjectProperty(propName!, valueExpr!));
+                }
+                hirExpr = new HIRObjectExpression(objectProperties);
+                return true;
+
             // Handle other expression types as needed
             default:
                 return false;

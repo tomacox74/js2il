@@ -1,28 +1,37 @@
 ## Summary
 
-Add for loop support and compound operators to the HIRLIRIL pipeline.
+Expand the AST→HIR→LIR→IL pipeline to support object/array literals and related runtime semantics, while preventing Stackify from duplicating call side effects.
 
 ## Changes
 
 ### New Features
-- **For loop support**: Added HIRForStatement node and full parsing/lowering pipeline for or loops
-- **Compound operators**: Added all missing compound assignment operators to TryLowerCompoundOperation:
-  - /=, %=, **= (arithmetic)
-  - &=, |=, ^= (bitwise)
-  - <<=, >>=, >>>= (shift)
+- **Object literals (IR pipeline)**: Lower `{ ... }` to runtime `ExpandoObject` initialization.
+- **Array literals (IR pipeline)**: Lower `[ ... ]` including spread (`[...arr]`) to `JavaScriptRuntime.Array` construction.
+- **Computed/index access**: Lower `obj[index]` via runtime `Object.GetItem`.
+- **`length` property**: Lower `obj.length` via runtime `Object.GetLength`.
+- **General call lowering**:
+  - Typed array instance calls via `LIRCallInstanceMethod` (e.g., `arr.join()`, `arr.pop()`, `arr.slice()`), including `slice()` typed as `JavaScriptRuntime.Array` for chaining.
+  - Intrinsic static calls via `LIRCallIntrinsicStatic` (e.g., `Math.*`, `Array.isArray`).
+- **Correct JS truthiness**: Boxed/object conditions branch through `Operators.IsTruthy(...)`.
+- **Stackify correctness**: Never inline/stackify call-like instructions to avoid duplicate invocation in emitted IL.
 
 ### Files Added
-- Js2IL/IR/HIR/HIRForStatement.cs - HIR node for for loops
+- Js2IL/IR/HIR/HIRArrayExpression.cs
+- Js2IL/IR/HIR/HIRSpreadElement.cs
+- Js2IL/IR/HIR/HIRObjectExpression.cs
+- Js2IL/IR/HIR/HIRIndexAccessExpression.cs
+- Js2IL/IR/LIR/LIRArrayInstructions.cs
 
 ### Files Modified
-- Js2IL/IR/HIR/HIRBuilder.cs - Added ForStatement parsing with scope handling
-- Js2IL/IR/LIR/HIRToLIRLower.cs - Added for loop lowering and compound operators
-- Test files with ssertOnIRPipelineFailure: true for applicable tests
-- Updated 17 generator snapshots
+- Js2IL/IR/HIR/HIRBuilder.cs
+- Js2IL/IR/LIR/HIRToLIRLower.cs
+- Js2IL/IR/LIR/LIRInstructions.cs
+- Js2IL/IL/LIRToILCompiler.cs
+- Js2IL/IL/TempLocalAllocator.cs
+- Js2IL/IL/Stackify.cs
+- Js2IL.Tests/Array/GeneratorTests.cs (enforce IR pipeline where required)
+- Js2IL.Tests/Literals/GeneratorTests.cs (enforce IR pipeline where required)
+- Updated generator snapshots across Array/Literals/Math/Promise/etc.
 
 ## Testing
-- All 828 tests pass (820 passed, 8 skipped)
-- Enabled IR pipeline assertions for:
-  - 11 compound assignment tests
-  - 27 binary operator tests  
-  - 1 for loop test
+- Focused `dotnet test` run planned after commit (Array Join/Pop/Slice + Literals).

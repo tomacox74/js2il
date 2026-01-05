@@ -29,15 +29,30 @@ public record LIRConstNull(TempVariable Result) : LIRInstruction;
 
 public record LIRGetIntrinsicGlobal(string Name, TempVariable Result) : LIRInstruction;
 
-/// <summary>
-/// Creates and initializes an object array with the given elements in a single operation.
-/// All element temps must be computed before this instruction executes.
-/// IL emitter uses dup pattern for efficient stack-based initialization:
-/// newarr Object, [dup, ldc.i4 index, ldtemp, stelem.ref]*, leaving array on stack.
-/// </summary>
-public record LIRBuildArray(IReadOnlyList<TempVariable> Elements, TempVariable Result) : LIRInstruction;
-
 public record LIRCallIntrinsic(TempVariable IntrinsicObject, string Name, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Calls a known CLR instance method on a known receiver type.
+/// The receiver temp is expected to already be of <paramref name="ReceiverClrType"/>.
+/// Arguments are JS arguments (boxed as object) and may be packed by the IL emitter
+/// into an object[] depending on the target method signature.
+/// </summary>
+public record LIRCallInstanceMethod(
+    TempVariable Receiver,
+    Type ReceiverClrType,
+    string MethodName,
+    IReadOnlyList<TempVariable> Arguments,
+    TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Calls a static method on an intrinsic object (e.g., Array.isArray, Math.abs, JSON.parse).
+/// The intrinsic type is resolved via IntrinsicObjectRegistry using the IntrinsicName.
+/// </summary>
+/// <param name="IntrinsicName">The JavaScript intrinsic name (e.g., "Array", "Math", "JSON").</param>
+/// <param name="MethodName">The method name to call (e.g., "isArray", "abs", "parse").</param>
+/// <param name="Arguments">The argument temps (already boxed as object).</param>
+/// <param name="Result">The temp variable to store the call result.</param>
+public record LIRCallIntrinsicStatic(string IntrinsicName, string MethodName, IReadOnlyList<TempVariable> Arguments, TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Loads a function parameter by its index (0-based, relative to JS parameters).

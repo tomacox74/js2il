@@ -220,6 +220,19 @@ internal static class TempLocalAllocator
                 yield return call.IntrinsicObject;
                 yield return call.ArgumentsArray;
                 break;
+            case LIRCallInstanceMethod callInstance:
+                yield return callInstance.Receiver;
+                foreach (var arg in callInstance.Arguments)
+                {
+                    yield return arg;
+                }
+                break;
+            case LIRCallIntrinsicStatic callStatic:
+                foreach (var arg in callStatic.Arguments)
+                {
+                    yield return arg;
+                }
+                break;
             case LIRConvertToObject conv:
                 yield return conv.Source;
                 break;
@@ -368,6 +381,33 @@ internal static class TempLocalAllocator
                     yield return elem;
                 }
                 break;
+            case LIRNewJsArray newJsArray:
+                foreach (var elem in newJsArray.Elements)
+                {
+                    yield return elem;
+                }
+                break;
+            case LIRNewJsObject newJsObject:
+                foreach (var prop in newJsObject.Properties)
+                {
+                    yield return prop.Value;
+                }
+                break;
+            case LIRGetLength getLength:
+                yield return getLength.Object;
+                break;
+            case LIRGetItem getItem:
+                yield return getItem.Object;
+                yield return getItem.Index;
+                break;
+            case LIRArrayPushRange pushRange:
+                yield return pushRange.TargetArray;
+                yield return pushRange.SourceArray;
+                break;
+            case LIRArrayAdd arrayAdd:
+                yield return arrayAdd.TargetArray;
+                yield return arrayAdd.Element;
+                break;
             // LIRLabel and LIRBranch don't use temps
         }
     }
@@ -417,6 +457,12 @@ internal static class TempLocalAllocator
                 return true;
             case LIRCallIntrinsic call:
                 defined = call.Result;
+                return true;
+            case LIRCallInstanceMethod callInstance:
+                defined = callInstance.Result;
+                return true;
+            case LIRCallIntrinsicStatic callStatic:
+                defined = callStatic.Result;
                 return true;
             case LIRConvertToObject conv:
                 defined = conv.Result;
@@ -522,6 +568,18 @@ internal static class TempLocalAllocator
                 return true;
             case LIRBuildArray buildArray:
                 defined = buildArray.Result;
+                return true;
+            case LIRNewJsArray newJsArray:
+                defined = newJsArray.Result;
+                return true;
+            case LIRNewJsObject newJsObject:
+                defined = newJsObject.Result;
+                return true;
+            case LIRGetLength getLength:
+                defined = getLength.Result;
+                return true;
+            case LIRGetItem getItem:
+                defined = getItem.Result;
                 return true;
             default:
                 defined = default;

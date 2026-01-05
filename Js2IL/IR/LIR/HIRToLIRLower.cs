@@ -538,11 +538,15 @@ public sealed class HIRToLIRLowerer
 
                     int elseLabel = CreateLabel();
 
-                    // If the condition is boxed (e.g., result of logical OR/AND), we need to
+                    // If the condition is boxed or is an object reference, we need to
                     // convert it to a boolean using IsTruthy before branching.
-                    // This is because brfalse on a boxed boolean checks for null, not false.
+                    // This is because brfalse on a boxed boolean checks for null, not false,
+                    // and JavaScript has different truthiness rules (0, "", null, undefined, NaN are falsy).
                     var conditionStorage = GetTempStorage(conditionTemp);
-                    if (conditionStorage.Kind == ValueStorageKind.BoxedValue)
+                    bool needsTruthyCheck = conditionStorage.Kind == ValueStorageKind.BoxedValue ||
+                        (conditionStorage.Kind == ValueStorageKind.Reference && conditionStorage.ClrType == typeof(object));
+                    
+                    if (needsTruthyCheck)
                     {
                         var isTruthyTemp = CreateTempVariable();
                         lirInstructions.Add(new LIRCallIsTruthy(conditionTemp, isTruthyTemp));
@@ -616,9 +620,12 @@ public sealed class HIRToLIRLowerer
                             return false;
                         }
 
-                        // If the condition is boxed, convert to boolean using IsTruthy
+                        // If the condition is boxed or is an object reference, convert to boolean using IsTruthy
                         var conditionStorage = GetTempStorage(conditionTemp);
-                        if (conditionStorage.Kind == ValueStorageKind.BoxedValue)
+                        bool needsTruthyCheck = conditionStorage.Kind == ValueStorageKind.BoxedValue ||
+                            (conditionStorage.Kind == ValueStorageKind.Reference && conditionStorage.ClrType == typeof(object));
+                        
+                        if (needsTruthyCheck)
                         {
                             var isTruthyTemp = CreateTempVariable();
                             lirInstructions.Add(new LIRCallIsTruthy(conditionTemp, isTruthyTemp));
@@ -726,6 +733,18 @@ public sealed class HIRToLIRLowerer
 
             case HIRAssignmentExpression assignExpr:
                 return TryLowerAssignmentExpression(assignExpr, out resultTempVar);
+
+            case HIRArrayExpression arrayExpr:
+                return TryLowerArrayExpression(arrayExpr, out resultTempVar);
+
+            case HIRObjectExpression objectExpr:
+                return TryLowerObjectExpression(objectExpr, out resultTempVar);
+
+            case HIRPropertyAccessExpression propAccessExpr:
+                return TryLowerPropertyAccessExpression(propAccessExpr, out resultTempVar);
+
+            case HIRIndexAccessExpression indexAccessExpr:
+                return TryLowerIndexAccessExpression(indexAccessExpr, out resultTempVar);
 
             case HIRVariableExpression varExpr:
                 // Look up the binding using the Symbol's BindingInfo directly
@@ -855,14 +874,88 @@ public sealed class HIRToLIRLowerer
             return true;
         }
 
-        // Case 2: Property access call (e.g., console.log)
+        // Case 2: Property access call (e.g., console.log, Array.isArray, Math.abs)
         if (callExpr.Callee is not HIRPropertyAccessExpression calleePropAccess)
         {
             return false;
         }
 
-        // At this time we are hardcoded to only support console.log
-        // This is proof of concept code
+        // Case 2a: Typed Array instance method calls (e.g., arr.join(), arr.push(...)).
+        // If we can lower the receiver expression and its CLR type is known to be JavaScriptRuntime.Array,
+        // emit a general typed instance call.
+        if (TryLowerExpression(calleePropAccess.Object, out var arrayReceiverTempVar))
+        {
+            var receiverStorage = GetTempStorage(arrayReceiverTempVar);
+            if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Array))
+            {
+                var arrayArgTemps = new List<TempVariable>();
+                foreach (var argExpr in callExpr.Arguments)
+                {
+                    if (!TryLowerExpression(argExpr, out var argTempVar))
+                    {
+                        return false;
+                    }
+                    arrayArgTemps.Add(EnsureObject(argTempVar));
+                }
+
+                _methodBodyIR.Instructions.Add(new LIRCallInstanceMethod(
+                    arrayReceiverTempVar,
+                    typeof(JavaScriptRuntime.Array),
+                    calleePropAccess.PropertyName,
+                    arrayArgTemps,
+                    resultTempVar));
+
+                // Track a more precise runtime type when we know it, so chained calls can lower.
+                // Example: arr.slice(...).join(',') requires the result of slice() to be treated as an Array receiver.
+                var returnClrType = string.Equals(calleePropAccess.PropertyName, "slice", StringComparison.OrdinalIgnoreCase)
+                    ? typeof(JavaScriptRuntime.Array)
+                    : typeof(object);
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, returnClrType));
+                return true;
+            }
+        }
+
+        // Case 2b: Intrinsic static method call (e.g., Array.isArray, Math.abs, JSON.parse)
+        // Check if the object is a global variable that maps to an intrinsic type
+        if (calleePropAccess.Object is HIRVariableExpression calleeGlobalVar &&
+            calleeGlobalVar.Name.Kind == BindingKind.Global)
+        {
+            var intrinsicName = calleeGlobalVar.Name.Name;
+            var methodName = calleePropAccess.PropertyName;
+
+            // Try to resolve the intrinsic type via IntrinsicObjectRegistry
+            var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(intrinsicName);
+            if (intrinsicType != null)
+            {
+                // Check if there's a matching static method
+                var staticMethods = intrinsicType.GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+                    .Where(mi => string.Equals(mi.Name, methodName, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                if (staticMethods.Count > 0)
+                {
+                    // Lower all arguments
+                    var staticArgTemps = new List<TempVariable>();
+                    foreach (var argExpr in callExpr.Arguments)
+                    {
+                        if (!TryLowerExpression(argExpr, out var argTempVar))
+                        {
+                            return false;
+                        }
+                        argTempVar = EnsureObject(argTempVar);
+                        staticArgTemps.Add(argTempVar);
+                    }
+
+                    // Emit the intrinsic static call
+                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(intrinsicName, methodName, staticArgTemps, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    return true;
+                }
+            }
+        }
+
+        // Case 2c: console.log (instance global, not a static intrinsic)
+        // This is the legacy hardcoded path for console.log
         if (calleePropAccess.Object is not HIRVariableExpression calleeObject ||
             calleeObject.Name.Name != "console")
         {
@@ -1584,6 +1677,141 @@ public sealed class HIRToLIRLowerer
         // This is a reassignment (not initial declaration), so the variable is not single-assignment.
         // Remove it from the single-assignment set to prevent incorrect inlining.
         _methodBodyIR.SingleAssignmentSlots.Remove(slot);
+        return true;
+    }
+
+    private bool TryLowerArrayExpression(HIRArrayExpression arrayExpr, out TempVariable resultTempVar)
+    {
+        resultTempVar = CreateTempVariable();
+
+        // Check if there are any spread elements
+        bool hasSpreadElements = arrayExpr.Elements.Any(e => e is HIRSpreadElement);
+
+        if (!hasSpreadElements)
+        {
+            // Simple case: no spread elements, use LIRNewJsArray
+            var elementTemps = new List<TempVariable>();
+            foreach (var element in arrayExpr.Elements)
+            {
+                if (!TryLowerExpression(element, out var elementTemp))
+                {
+                    return false;
+                }
+                // Ensure each element is boxed as object for the array
+                elementTemps.Add(EnsureObject(elementTemp));
+            }
+
+            // Emit the LIRNewJsArray instruction
+            _methodBodyIR.Instructions.Add(new LIRNewJsArray(elementTemps, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array)));
+            return true;
+        }
+
+        // Complex case: has spread elements
+        // First, collect all non-spread elements for initial capacity hint
+        // Then emit array creation + individual Add/PushRange calls
+
+        // Create the array with capacity 1 (minimum - will grow as needed)
+        _methodBodyIR.Instructions.Add(new LIRNewJsArray(Array.Empty<TempVariable>(), resultTempVar));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array)));
+
+        // Process each element
+        foreach (var element in arrayExpr.Elements)
+        {
+            if (element is HIRSpreadElement spreadElement)
+            {
+                // Lower the spread argument
+                if (!TryLowerExpression(spreadElement.Argument, out var spreadArgTemp))
+                {
+                    return false;
+                }
+                var boxedSpreadArg = EnsureObject(spreadArgTemp);
+                // Emit PushRange to spread the elements
+                _methodBodyIR.Instructions.Add(new LIRArrayPushRange(resultTempVar, boxedSpreadArg));
+            }
+            else
+            {
+                // Lower regular element
+                if (!TryLowerExpression(element, out var elementTemp))
+                {
+                    return false;
+                }
+                var boxedElement = EnsureObject(elementTemp);
+                // Emit Add for single element
+                _methodBodyIR.Instructions.Add(new LIRArrayAdd(resultTempVar, boxedElement));
+            }
+        }
+
+        return true;
+    }
+
+    private bool TryLowerObjectExpression(HIRObjectExpression objectExpr, out TempVariable resultTempVar)
+    {
+        resultTempVar = CreateTempVariable();
+
+        // Lower all property values first
+        var properties = new List<ObjectProperty>();
+        foreach (var prop in objectExpr.Properties)
+        {
+            if (!TryLowerExpression(prop.Value, out var valueTemp))
+            {
+                return false;
+            }
+            // Ensure each value is boxed as object for the dictionary
+            var boxedValue = EnsureObject(valueTemp);
+            properties.Add(new ObjectProperty(prop.Key, boxedValue));
+        }
+
+        // Emit the LIRNewJsObject instruction
+        _methodBodyIR.Instructions.Add(new LIRNewJsObject(properties, resultTempVar));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(System.Dynamic.ExpandoObject)));
+        return true;
+    }
+
+    private bool TryLowerPropertyAccessExpression(HIRPropertyAccessExpression propAccessExpr, out TempVariable resultTempVar)
+    {
+        resultTempVar = CreateTempVariable();
+
+        // Lower the object expression
+        if (!TryLowerExpression(propAccessExpr.Object, out var objectTemp))
+        {
+            return false;
+        }
+
+        // Currently we only support the 'length' property
+        if (propAccessExpr.PropertyName == "length")
+        {
+            var boxedObject = EnsureObject(objectTemp);
+            _methodBodyIR.Instructions.Add(new LIRGetLength(boxedObject, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            return true;
+        }
+
+        // Unsupported property access
+        return false;
+    }
+
+    private bool TryLowerIndexAccessExpression(HIRIndexAccessExpression indexAccessExpr, out TempVariable resultTempVar)
+    {
+        resultTempVar = CreateTempVariable();
+
+        // Lower the object expression
+        if (!TryLowerExpression(indexAccessExpr.Object, out var objectTemp))
+        {
+            return false;
+        }
+
+        // Lower the index expression
+        if (!TryLowerExpression(indexAccessExpr.Index, out var indexTemp))
+        {
+            return false;
+        }
+
+        var boxedObject = EnsureObject(objectTemp);
+        var boxedIndex = EnsureObject(indexTemp);
+        _methodBodyIR.Instructions.Add(new LIRGetItem(boxedObject, boxedIndex, resultTempVar));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
         return true;
     }
 

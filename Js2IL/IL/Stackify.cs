@@ -292,17 +292,64 @@ internal static class Stackify
                 }
                 return true;
 
-            // LIRCallIntrinsic calls an intrinsic method (e.g., console.log).
-            // Has side effects but Stackify only marks single-use temps as stackable,
-            // so the call won't be duplicated. Safe to inline.
-            case LIRCallIntrinsic:
+            // LIRNewJsArray creates a JavaScriptRuntime.Array and initializes elements inline.
+            // Safe to inline if all element temps can be emitted inline.
+            case LIRNewJsArray newJsArray:
+                foreach (var element in newJsArray.Elements)
+                {
+                    var elemIdx = element.Index;
+                    if (elemIdx < 0 || elemIdx >= defInstruction.Length || defInstruction[elemIdx] == null)
+                        return false;
+                    if (!CanEmitInline(defInstruction[elemIdx]!, methodBody, defInstruction))
+                        return false;
+                }
                 return true;
 
-            // LIRCallFunction calls a user-defined function.
-            // Has side effects but Stackify only marks single-use temps as stackable,
-            // so the call won't be duplicated. Safe to inline.
-            case LIRCallFunction:
+            // LIRNewJsObject creates an ExpandoObject and initializes properties inline.
+            // Safe to inline if all property value temps can be emitted inline.
+            case LIRNewJsObject newJsObject:
+                foreach (var prop in newJsObject.Properties)
+                {
+                    var valueIdx = prop.Value.Index;
+                    if (valueIdx < 0 || valueIdx >= defInstruction.Length || defInstruction[valueIdx] == null)
+                        return false;
+                    if (!CanEmitInline(defInstruction[valueIdx]!, methodBody, defInstruction))
+                        return false;
+                }
                 return true;
+
+            // LIRGetLength and LIRGetItem are pure runtime calls
+            case LIRGetLength:
+            case LIRGetItem:
+                return true;
+
+            // LIRArrayPushRange and LIRArrayAdd have side effects (mutate the array)
+            // but don't produce results, so they're not candidates for inlining
+            case LIRArrayPushRange:
+            case LIRArrayAdd:
+                return false;
+
+
+            // LIRCallIntrinsic calls an intrinsic method (e.g., console.log).
+            // Calls are not safe to inline/stackify because the emitter will still
+            // execute them in the main pass when the result temp is not materialized.
+            // If the temp is later loaded (stackified), the call would be emitted again.
+            case LIRCallIntrinsic:
+                return false;
+
+            // LIRCallInstanceMethod calls a known CLR instance method on a typed receiver.
+            case LIRCallInstanceMethod:
+                // Instance method calls may have side effects (and may mutate the receiver).
+                // They must never be inlined/re-emitted by Stackify.
+                return false;
+
+            // LIRCallIntrinsicStatic calls a static method on an intrinsic type (e.g., Array.isArray).
+            case LIRCallIntrinsicStatic:
+                return false;
+
+            // LIRCallFunction calls a user-defined function.
+            case LIRCallFunction:
+                return false;
 
             // LIRConvertToObject can be emitted inline if its source can be emitted inline
             // AND the source is not backed by a variable slot that could be modified.
@@ -371,6 +418,33 @@ internal static class Stackify
             case LIRBuildArray buildArray:
                 return (buildArray.Elements.Count, 1);
 
+            // LIRNewJsArray: consumes N element temps, produces 1 JavaScriptRuntime.Array reference
+            // The dup pattern keeps array on stack internally, net effect is: pop N, push 1
+            case LIRNewJsArray newJsArray:
+                return (newJsArray.Elements.Count, 1);
+
+            // LIRNewJsObject: consumes N property value temps, produces 1 ExpandoObject reference
+            // The dup pattern keeps object on stack internally, net effect is: pop N, push 1
+            case LIRNewJsObject newJsObject:
+                return (newJsObject.Properties.Count, 1);
+
+            // LIRGetLength: consumes 1 object, produces 1 double
+            case LIRGetLength:
+                return (1, 1);
+
+            // LIRGetItem: consumes 2 (object + index), produces 1 value
+            case LIRGetItem:
+                return (2, 1);
+
+            // LIRArrayPushRange: consumes 2 (target array + source), produces 0 (void return)
+            case LIRArrayPushRange:
+                return (2, 0);
+
+            // LIRArrayAdd: consumes 2 (target array + element), produces 0 (void return)
+            case LIRArrayAdd:
+                return (2, 0);
+
+
             // Scope field loads: produce 1 value (field is loaded from memory, not from stack temps)
             case LIRLoadLeafScopeField:
             case LIRLoadParentScopeField:
@@ -424,6 +498,14 @@ internal static class Stackify
             // Call: consumes args + object, produces result
             case LIRCallIntrinsic:
                 return (2, 1);
+
+            // Instance call: consumes receiver + N args, produces result
+            case LIRCallInstanceMethod callInstance:
+                return (1 + callInstance.Arguments.Count, 1);
+
+            // Intrinsic static call: consumes N args, produces 1 result
+            case LIRCallIntrinsicStatic callStatic:
+                return (callStatic.Arguments.Count, 1);
 
             case LIRCallFunction call:
                 return (1 + call.Arguments.Count, 1);
