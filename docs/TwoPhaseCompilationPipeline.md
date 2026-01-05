@@ -500,6 +500,75 @@ This is intended to be implemented incrementally and keep the system runnable.
 - Standardize signature generation for function/arrow/class methods
 - Update LIR→IL emitter to use `MemberReferenceHandle` tokens for callable loads
 
+### Execution plan (how we implement and validate)
+
+This section is intentionally **implementation-oriented**: it describes a practical way to execute the migration while keeping `master` runnable.
+
+Guiding rules:
+
+- Land changes behind a compiler option (e.g., `CompilerOptions.TwoPhaseCompilation`) until the final flip.
+- Keep Phase 1 (declare) side-effect free with respect to bodies: no IR lowering and no IL body emission.
+- Make each milestone shippable: after each PR, the compiler should still build and a representative test slice should pass.
+
+Recommended PR sequence (small, mergeable increments):
+
+1. **Add the coordinator skeleton (no behavior change)**
+   - Touchpoints: `MainGenerator` entry-point orchestration.
+   - Deliverable: a new coordinator path that can be enabled by option, but initially delegates to the legacy ordering.
+   - Done when:
+     - Flag-off path is unchanged.
+     - Flag-on path runs end-to-end for a trivial input (even if it still uses legacy internals).
+
+2. **Introduce `CallableId` + `CallableRegistry` as adapters over existing state**
+   - Touchpoints: caches/registries currently used for function + arrow callable loads, plus class registry.
+   - Deliverable: one place that answers “given a callable identity, what token should IL use to reference it?”
+   - Done when:
+     - All existing call-sites that "load callable as value" can be routed through the registry.
+     - Diagnostics can report a missing callable by `CallableId` (not just a string key).
+
+3. **Make “declare” truly signature-only for one category at a time**
+   - Suggested order (lowest risk → highest):
+     - function declarations
+     - class types + method signatures
+     - arrow functions
+   - Deliverable: `Declare*` paths create the metadata required to reference the callable (methoddef or memberref), without compiling bodies.
+   - Done when:
+     - Phase 1 completes without emitting any method bodies.
+     - Existing compilation still succeeds because Phase 2 compiles bodies the old way.
+
+4. **Add dependency collection (AST-first) + planner (SCC/topo)**
+   - Touchpoints: a new AST visitor that resolves identifiers via the symbol table and records `CallableId` edges.
+   - Deliverable: a stable plan output (ordered callables and SCC groups) that can be logged for debugging.
+   - Done when:
+     - The planner produces deterministic output for the same input.
+     - The plan can be inspected in logs for failing tests.
+
+5. **Compile bodies in plan order (still using current body compilers)**
+   - Touchpoints: coordinator Phase 2 loop; class/function/arrow “compile body” entry points.
+   - Deliverable: Phase 2 compiles callables SCC-by-SCC, then compiles main.
+   - Done when:
+     - With flag on, a representative set of tests compiles and runs.
+     - Cycles do not deadlock compilation; SCC policy is exercised (even if conservative).
+
+6. **Enforce the invariant: IR emission never triggers compilation**
+   - Touchpoints: IR pipeline entry points and any helper that currently "compiles on demand".
+   - Deliverable: in strict mode, on-demand compilation paths throw a diagnostic that points back to the missing Phase 1 declaration.
+   - Done when:
+     - Strict IR tests stop failing due to ordering and instead either pass or produce a targeted diagnostic.
+
+7. **Migrate callable loads to Option B (`MemberReference`)**
+   - Touchpoints: signature construction and LIR→IL callable-load emission.
+   - Deliverable: callable loads as values use `ldftn` with `MemberReferenceHandle`, decoupling from when methoddefs are created.
+   - Done when:
+     - Delegate construction works for functions, arrows, and class methods.
+     - Phase 1/2 separation is robust against reordering.
+
+Validation strategy (keep feedback tight):
+
+- Prefer execution tests that cover callables-as-values and cross-category calls:
+  - Functions calling arrows, class methods calling functions, passing functions as callbacks.
+- Expect generator snapshot churn once ordering and token strategies change; update snapshots only after execution behavior is stable.
+
 ---
 
 ## Diagnostics and invariants (implementation enforcement)
