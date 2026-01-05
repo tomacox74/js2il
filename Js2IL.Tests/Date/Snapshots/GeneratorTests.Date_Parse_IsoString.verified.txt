@@ -38,11 +38,12 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 35 (0x23)
+		// Code size: 37 (0x25)
 		.maxstack 32
 		.locals init (
 			[0] object,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[2] object[]
 		)
 
 		IL_0000: ldstr "2024-12-11T15:33:20.000Z"
@@ -50,16 +51,18 @@
 		IL_000a: stloc.0
 		IL_000b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0010: stloc.1
-		IL_0011: ldloc.1
-		IL_0012: ldc.i4.1
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: dup
-		IL_0019: ldc.i4.0
-		IL_001a: ldloc.0
-		IL_001b: stelem.ref
-		IL_001c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0021: pop
-		IL_0022: ret
+		IL_0011: ldc.i4.1
+		IL_0012: newarr [System.Runtime]System.Object
+		IL_0017: dup
+		IL_0018: ldc.i4.0
+		IL_0019: ldloc.0
+		IL_001a: stelem.ref
+		IL_001b: stloc.2
+		IL_001c: ldloc.1
+		IL_001d: ldloc.2
+		IL_001e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0023: pop
+		IL_0024: ret
 	} // end of method Date_Parse_IsoString::Main
 
 } // end of class Scripts.Date_Parse_IsoString
@@ -71,7 +74,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x208b
+		// Method begins at RVA 0x208d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

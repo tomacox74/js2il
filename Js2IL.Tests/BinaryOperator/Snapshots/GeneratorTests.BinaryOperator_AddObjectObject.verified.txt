@@ -92,10 +92,12 @@
 	{
 		// Method begins at RVA 0x207c
 		// Header size: 12
-		// Code size: 231 (0xe7)
+		// Code size: 145 (0x91)
 		.maxstack 32
 		.locals init (
-			[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[1] object,
+			[2] object[]
 		)
 
 		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -114,65 +116,45 @@
 		IL_002a: ldc.r8 2
 		IL_0033: box [System.Runtime]System.Double
 		IL_0038: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
-		IL_003d: pop
-		IL_003e: ldloc.0
-		IL_003f: ldc.i4.1
-		IL_0040: newarr [System.Runtime]System.Object
-		IL_0045: dup
-		IL_0046: ldc.i4.0
-		IL_0047: ldnull
-		IL_0048: ldftn object Functions.BinaryOperator_AddObjectObject::'add'(object[], object, object)
-		IL_004e: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-		IL_0053: ldc.i4.1
-		IL_0054: newarr [System.Runtime]System.Object
-		IL_0059: dup
-		IL_005a: ldc.i4.0
-		IL_005b: ldnull
-		IL_005c: stelem.ref
-		IL_005d: ldc.r8 1
-		IL_0066: box [System.Runtime]System.Double
-		IL_006b: ldc.r8 2
-		IL_0074: box [System.Runtime]System.Double
-		IL_0079: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
-		IL_007e: stelem.ref
-		IL_007f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0084: pop
-		IL_0085: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_008a: stloc.0
-		IL_008b: ldnull
-		IL_008c: ldftn object Functions.BinaryOperator_AddObjectObject::'add'(object[], object, object)
-		IL_0092: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-		IL_0097: ldc.i4.1
-		IL_0098: newarr [System.Runtime]System.Object
-		IL_009d: dup
-		IL_009e: ldc.i4.0
-		IL_009f: ldnull
-		IL_00a0: stelem.ref
-		IL_00a1: ldstr "a:"
-		IL_00a6: ldstr "b"
-		IL_00ab: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
-		IL_00b0: pop
-		IL_00b1: ldloc.0
-		IL_00b2: ldc.i4.1
-		IL_00b3: newarr [System.Runtime]System.Object
-		IL_00b8: dup
-		IL_00b9: ldc.i4.0
-		IL_00ba: ldnull
-		IL_00bb: ldftn object Functions.BinaryOperator_AddObjectObject::'add'(object[], object, object)
-		IL_00c1: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-		IL_00c6: ldc.i4.1
-		IL_00c7: newarr [System.Runtime]System.Object
-		IL_00cc: dup
-		IL_00cd: ldc.i4.0
-		IL_00ce: ldnull
-		IL_00cf: stelem.ref
-		IL_00d0: ldstr "a:"
-		IL_00d5: ldstr "b"
-		IL_00da: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
-		IL_00df: stelem.ref
-		IL_00e0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00e5: pop
-		IL_00e6: ret
+		IL_003d: stloc.1
+		IL_003e: ldc.i4.1
+		IL_003f: newarr [System.Runtime]System.Object
+		IL_0044: dup
+		IL_0045: ldc.i4.0
+		IL_0046: ldloc.1
+		IL_0047: stelem.ref
+		IL_0048: stloc.2
+		IL_0049: ldloc.0
+		IL_004a: ldloc.2
+		IL_004b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0050: pop
+		IL_0051: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0056: stloc.0
+		IL_0057: ldnull
+		IL_0058: ldftn object Functions.BinaryOperator_AddObjectObject::'add'(object[], object, object)
+		IL_005e: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_0063: ldc.i4.1
+		IL_0064: newarr [System.Runtime]System.Object
+		IL_0069: dup
+		IL_006a: ldc.i4.0
+		IL_006b: ldnull
+		IL_006c: stelem.ref
+		IL_006d: ldstr "a:"
+		IL_0072: ldstr "b"
+		IL_0077: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
+		IL_007c: stloc.1
+		IL_007d: ldc.i4.1
+		IL_007e: newarr [System.Runtime]System.Object
+		IL_0083: dup
+		IL_0084: ldc.i4.0
+		IL_0085: ldloc.1
+		IL_0086: stelem.ref
+		IL_0087: stloc.2
+		IL_0088: ldloc.0
+		IL_0089: ldloc.2
+		IL_008a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_008f: pop
+		IL_0090: ret
 	} // end of method BinaryOperator_AddObjectObject::Main
 
 } // end of class Scripts.BinaryOperator_AddObjectObject
@@ -184,7 +166,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x216f
+		// Method begins at RVA 0x2119
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
