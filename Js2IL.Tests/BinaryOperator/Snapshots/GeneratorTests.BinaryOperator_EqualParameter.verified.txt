@@ -60,93 +60,109 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 213 (0xd5)
+		// Code size: 228 (0xe4)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.BinaryOperator_EqualParameter/testParam,
-			[1] object,
-			[2] object,
-			[3] object
+			[0] bool,
+			[1] bool,
+			[2] bool,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[4] object,
+			[5] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.BinaryOperator_EqualParameter/testParam::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldarg.1
-		IL_0007: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000c: ldc.r8 3
-		IL_0015: ceq
-		IL_0017: box [System.Runtime]System.Boolean
-		IL_001c: stloc.1
-		IL_001d: ldarg.1
-		IL_001e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0023: ldc.r8 5
-		IL_002c: ceq
-		IL_002e: box [System.Runtime]System.Boolean
-		IL_0033: stloc.2
-		IL_0034: ldarg.1
-		IL_0035: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_003a: ldc.r8 7
-		IL_0043: ceq
-		IL_0045: box [System.Runtime]System.Boolean
-		IL_004a: stloc.3
-		IL_004b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0050: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0055: ldc.i4.2
-		IL_0056: newarr [System.Runtime]System.Object
-		IL_005b: dup
-		IL_005c: ldc.i4.0
-		IL_005d: ldstr "value:"
-		IL_0062: stelem.ref
-		IL_0063: dup
-		IL_0064: ldc.i4.1
-		IL_0065: ldarg.1
-		IL_0066: stelem.ref
-		IL_0067: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_006c: pop
-		IL_006d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0072: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0077: ldc.i4.2
-		IL_0078: newarr [System.Runtime]System.Object
-		IL_007d: dup
-		IL_007e: ldc.i4.0
-		IL_007f: ldstr "value == 3:"
-		IL_0084: stelem.ref
-		IL_0085: dup
-		IL_0086: ldc.i4.1
-		IL_0087: ldloc.1
-		IL_0088: stelem.ref
-		IL_0089: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_008e: pop
-		IL_008f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0094: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0099: ldc.i4.2
-		IL_009a: newarr [System.Runtime]System.Object
-		IL_009f: dup
-		IL_00a0: ldc.i4.0
-		IL_00a1: ldstr "value == 5:"
-		IL_00a6: stelem.ref
-		IL_00a7: dup
-		IL_00a8: ldc.i4.1
-		IL_00a9: ldloc.2
+		IL_0000: ldarg.1
+		IL_0001: ldc.r8 3
+		IL_000a: box [System.Runtime]System.Double
+		IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+		IL_0014: stloc.0
+		IL_0015: ldarg.1
+		IL_0016: ldc.r8 5
+		IL_001f: box [System.Runtime]System.Double
+		IL_0024: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+		IL_0029: stloc.1
+		IL_002a: ldarg.1
+		IL_002b: ldc.r8 7
+		IL_0034: box [System.Runtime]System.Double
+		IL_0039: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::Equal(object, object)
+		IL_003e: stloc.2
+		IL_003f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0044: stloc.3
+		IL_0045: ldloc.3
+		IL_0046: ldc.i4.2
+		IL_0047: newarr [System.Runtime]System.Object
+		IL_004c: dup
+		IL_004d: ldc.i4.0
+		IL_004e: ldstr "value:"
+		IL_0053: stelem.ref
+		IL_0054: dup
+		IL_0055: ldc.i4.1
+		IL_0056: ldarg.1
+		IL_0057: stelem.ref
+		IL_0058: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_005d: pop
+		IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0063: stloc.3
+		IL_0064: ldloc.0
+		IL_0065: box [System.Runtime]System.Boolean
+		IL_006a: stloc.s 4
+		IL_006c: ldc.i4.2
+		IL_006d: newarr [System.Runtime]System.Object
+		IL_0072: dup
+		IL_0073: ldc.i4.0
+		IL_0074: ldstr "value == 3:"
+		IL_0079: stelem.ref
+		IL_007a: dup
+		IL_007b: ldc.i4.1
+		IL_007c: ldloc.s 4
+		IL_007e: stelem.ref
+		IL_007f: stloc.s 5
+		IL_0081: ldloc.3
+		IL_0082: ldloc.s 5
+		IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0089: pop
+		IL_008a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008f: stloc.3
+		IL_0090: ldloc.1
+		IL_0091: box [System.Runtime]System.Boolean
+		IL_0096: stloc.s 4
+		IL_0098: ldc.i4.2
+		IL_0099: newarr [System.Runtime]System.Object
+		IL_009e: dup
+		IL_009f: ldc.i4.0
+		IL_00a0: ldstr "value == 5:"
+		IL_00a5: stelem.ref
+		IL_00a6: dup
+		IL_00a7: ldc.i4.1
+		IL_00a8: ldloc.s 4
 		IL_00aa: stelem.ref
-		IL_00ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00b0: pop
-		IL_00b1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b6: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_00bb: ldc.i4.2
-		IL_00bc: newarr [System.Runtime]System.Object
-		IL_00c1: dup
-		IL_00c2: ldc.i4.0
-		IL_00c3: ldstr "value == 7:"
-		IL_00c8: stelem.ref
-		IL_00c9: dup
-		IL_00ca: ldc.i4.1
-		IL_00cb: ldloc.3
-		IL_00cc: stelem.ref
-		IL_00cd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00d2: pop
-		IL_00d3: ldnull
-		IL_00d4: ret
+		IL_00ab: stloc.s 5
+		IL_00ad: ldloc.3
+		IL_00ae: ldloc.s 5
+		IL_00b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00b5: pop
+		IL_00b6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00bb: stloc.3
+		IL_00bc: ldloc.2
+		IL_00bd: box [System.Runtime]System.Boolean
+		IL_00c2: stloc.s 4
+		IL_00c4: ldc.i4.2
+		IL_00c5: newarr [System.Runtime]System.Object
+		IL_00ca: dup
+		IL_00cb: ldc.i4.0
+		IL_00cc: ldstr "value == 7:"
+		IL_00d1: stelem.ref
+		IL_00d2: dup
+		IL_00d3: ldc.i4.1
+		IL_00d4: ldloc.s 4
+		IL_00d6: stelem.ref
+		IL_00d7: stloc.s 5
+		IL_00d9: ldloc.3
+		IL_00da: ldloc.s 5
+		IL_00dc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00e1: pop
+		IL_00e2: ldnull
+		IL_00e3: ret
 	} // end of method BinaryOperator_EqualParameter::testParam
 
 } // end of class Functions.BinaryOperator_EqualParameter
@@ -164,7 +180,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2148
+		// Method begins at RVA 0x2154
 		// Header size: 12
 		// Code size: 127 (0x7f)
 		.maxstack 32
@@ -220,7 +236,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21d3
+		// Method begins at RVA 0x21df
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -27,7 +27,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -38,37 +38,45 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 64 (0x40)
+		// Code size: 66 (0x42)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.BinaryOperator_UnsignedRightShiftNumberNumber,
-			[1] float64
+			[0] float64,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[2] object,
+			[3] object[]
 		)
 
-		IL_0000: ldc.r8 -16
-		IL_0009: conv.i4
-		IL_000a: ldc.r8 2
-		IL_0013: conv.i4
-		IL_0014: shr.un
-		IL_0015: conv.u4
-		IL_0016: conv.r8
-		IL_0017: stloc.1
-		IL_0018: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_001d: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0022: ldc.i4.2
-		IL_0023: newarr [System.Runtime]System.Object
-		IL_0028: dup
-		IL_0029: ldc.i4.0
-		IL_002a: ldstr "x is"
-		IL_002f: stelem.ref
-		IL_0030: dup
-		IL_0031: ldc.i4.1
-		IL_0032: ldloc.1
-		IL_0033: box [System.Runtime]System.Double
-		IL_0038: stelem.ref
-		IL_0039: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_003e: pop
-		IL_003f: ret
+		IL_0000: ldc.r8 16
+		IL_0009: neg
+		IL_000a: conv.i4
+		IL_000b: conv.u4
+		IL_000c: ldc.r8 2
+		IL_0015: conv.i4
+		IL_0016: shr.un
+		IL_0017: conv.r.un
+		IL_0018: stloc.0
+		IL_0019: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_001e: stloc.1
+		IL_001f: ldloc.0
+		IL_0020: box [System.Runtime]System.Double
+		IL_0025: stloc.2
+		IL_0026: ldc.i4.2
+		IL_0027: newarr [System.Runtime]System.Object
+		IL_002c: dup
+		IL_002d: ldc.i4.0
+		IL_002e: ldstr "x is"
+		IL_0033: stelem.ref
+		IL_0034: dup
+		IL_0035: ldc.i4.1
+		IL_0036: ldloc.2
+		IL_0037: stelem.ref
+		IL_0038: stloc.3
+		IL_0039: ldloc.1
+		IL_003a: ldloc.3
+		IL_003b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0040: pop
+		IL_0041: ret
 	} // end of method BinaryOperator_UnsignedRightShiftNumberNumber::Main
 
 } // end of class Scripts.BinaryOperator_UnsignedRightShiftNumberNumber
@@ -80,7 +88,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20a8
+		// Method begins at RVA 0x20aa
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

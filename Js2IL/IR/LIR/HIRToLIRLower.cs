@@ -538,6 +538,18 @@ public sealed class HIRToLIRLowerer
 
                     int elseLabel = CreateLabel();
 
+                    // If the condition is boxed (e.g., result of logical OR/AND), we need to
+                    // convert it to a boolean using IsTruthy before branching.
+                    // This is because brfalse on a boxed boolean checks for null, not false.
+                    var conditionStorage = GetTempStorage(conditionTemp);
+                    if (conditionStorage.Kind == ValueStorageKind.BoxedValue)
+                    {
+                        var isTruthyTemp = CreateTempVariable();
+                        lirInstructions.Add(new LIRCallIsTruthy(conditionTemp, isTruthyTemp));
+                        DefineTempStorage(isTruthyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                        conditionTemp = isTruthyTemp;
+                    }
+
                     // Branch to else if condition is false
                     lirInstructions.Add(new LIRBranchIfFalse(conditionTemp, elseLabel));
 
@@ -939,6 +951,218 @@ public sealed class HIRToLIRLowerer
             return true;
         }
 
+        // Handle subtraction
+        if (binaryExpr.Operator == Acornima.Operator.Subtraction)
+        {
+            // Number - Number - uses native IL sub instruction
+            if (leftType == typeof(double) && rightType == typeof(double))
+            {
+                _methodBodyIR.Instructions.Add(new LIRSubNumber(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+            // TODO: Add LIRSubDynamic for unknown types if needed
+            return false;
+        }
+
+        // Handle division
+        if (binaryExpr.Operator == Acornima.Operator.Division)
+        {
+            // Number / Number - uses native IL div instruction
+            if (leftType == typeof(double) && rightType == typeof(double))
+            {
+                _methodBodyIR.Instructions.Add(new LIRDivNumber(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+            // TODO: Add LIRDivDynamic for unknown types if needed
+            return false;
+        }
+
+        // Handle remainder (modulo)
+        if (binaryExpr.Operator == Acornima.Operator.Remainder)
+        {
+            // Number % Number - uses native IL rem instruction
+            if (leftType == typeof(double) && rightType == typeof(double))
+            {
+                _methodBodyIR.Instructions.Add(new LIRModNumber(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+            // TODO: Add LIRModDynamic for unknown types if needed
+            return false;
+        }
+
+        // Handle exponentiation (** operator)
+        if (binaryExpr.Operator == Acornima.Operator.Exponentiation)
+        {
+            // Number ** Number - calls Math.Pow
+            if (leftType == typeof(double) && rightType == typeof(double))
+            {
+                _methodBodyIR.Instructions.Add(new LIRExpNumber(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+            // TODO: Add LIRExpDynamic for unknown types if needed
+            return false;
+        }
+
+        // Handle bitwise operators
+        if (binaryExpr.Operator == Acornima.Operator.BitwiseAnd)
+        {
+            if (leftType == typeof(double) && rightType == typeof(double))
+            {
+                _methodBodyIR.Instructions.Add(new LIRBitwiseAnd(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+            return false;
+        }
+
+        if (binaryExpr.Operator == Acornima.Operator.BitwiseOr)
+        {
+            if (leftType == typeof(double) && rightType == typeof(double))
+            {
+                _methodBodyIR.Instructions.Add(new LIRBitwiseOr(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+            return false;
+        }
+
+        if (binaryExpr.Operator == Acornima.Operator.BitwiseXor)
+        {
+            if (leftType == typeof(double) && rightType == typeof(double))
+            {
+                _methodBodyIR.Instructions.Add(new LIRBitwiseXor(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+            return false;
+        }
+
+        // Handle shift operators
+        if (binaryExpr.Operator == Acornima.Operator.LeftShift)
+        {
+            if (leftType == typeof(double) && rightType == typeof(double))
+            {
+                _methodBodyIR.Instructions.Add(new LIRLeftShift(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+            return false;
+        }
+
+        if (binaryExpr.Operator == Acornima.Operator.RightShift)
+        {
+            if (leftType == typeof(double) && rightType == typeof(double))
+            {
+                _methodBodyIR.Instructions.Add(new LIRRightShift(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+            return false;
+        }
+
+        if (binaryExpr.Operator == Acornima.Operator.UnsignedRightShift)
+        {
+            if (leftType == typeof(double) && rightType == typeof(double))
+            {
+                _methodBodyIR.Instructions.Add(new LIRUnsignedRightShift(leftTempVar, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
+            }
+            return false;
+        }
+
+        // Handle logical operators with short-circuit evaluation
+        // These need to be decomposed into multiple LIR instructions
+        // 
+        // IMPORTANT: JavaScript logical operators (&&, ||) return one of the OPERAND VALUES,
+        // not a boolean. For example: `1 && "hello"` returns "hello", `0 || "default"` returns "default".
+        // This is why we store the result as BoxedValue (the actual operand) rather than UnboxedValue bool.
+        // If the result is then used in a boolean context (like an if-statement condition), a separate
+        // IsTruthy check will be applied - this is correct JS semantics, not redundant.
+        if (binaryExpr.Operator == Acornima.Operator.LogicalAnd)
+        {
+            // Logical AND: if left is falsy, return left, otherwise return right
+            // We need to evaluate left first, then conditionally evaluate right
+            
+            int falsyLabel = CreateLabel();
+            int endLabel = CreateLabel();
+            
+            // Ensure left is boxed for truthiness check
+            var leftBoxed = EnsureObject(leftTempVar);
+            
+            // Create temp to hold IsTruthy result (bool) - used only for branching
+            var isTruthyTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallIsTruthy(leftBoxed, isTruthyTemp));
+            DefineTempStorage(isTruthyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            
+            // If left is falsy, branch to falsyLabel
+            _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(isTruthyTemp, falsyLabel));
+            
+            // Left was truthy, result is right (the actual VALUE, not boolean)
+            var rightBoxed = EnsureObject(rightTempVar);
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(rightBoxed, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
+            _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+            
+            // Falsy label: result is left (the actual VALUE, not boolean)
+            _methodBodyIR.Instructions.Add(new LIRLabel(falsyLabel));
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(leftBoxed, resultTempVar));
+            
+            // End label
+            _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+            
+            return true;
+        }
+
+        if (binaryExpr.Operator == Acornima.Operator.LogicalOr)
+        {
+            // Logical OR: if left is truthy, return left, otherwise return right
+            
+            int truthyLabel = CreateLabel();
+            int endLabel = CreateLabel();
+            
+            // Ensure left is boxed for truthiness check
+            var leftBoxed = EnsureObject(leftTempVar);
+            
+            // Create temp to hold IsTruthy result (bool) - used only for branching
+            var isTruthyTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallIsTruthy(leftBoxed, isTruthyTemp));
+            DefineTempStorage(isTruthyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            
+            // If left is truthy, branch to truthyLabel
+            _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isTruthyTemp, truthyLabel));
+            
+            // Left was falsy, result is right (the actual VALUE, not boolean)
+            var rightBoxed = EnsureObject(rightTempVar);
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(rightBoxed, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
+            _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+            
+            // Truthy label: result is left (the actual VALUE, not boolean)
+            _methodBodyIR.Instructions.Add(new LIRLabel(truthyLabel));
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(leftBoxed, resultTempVar));
+            
+            // End label
+            _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+            
+            return true;
+        }
+
+        // Handle 'in' operator
+        if (binaryExpr.Operator == Acornima.Operator.In)
+        {
+            // 'in' operator: checks if property exists in object
+            var leftBoxed = EnsureObject(leftTempVar);
+            var rightBoxed = EnsureObject(rightTempVar);
+            _methodBodyIR.Instructions.Add(new LIRInOperator(leftBoxed, rightBoxed, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            return true;
+        }
+
         // Handle comparison operators
         switch (binaryExpr.Operator)
         {
@@ -979,8 +1203,7 @@ public sealed class HIRToLIRLowerer
                 return true;
 
             case Acornima.Operator.Equality:
-            case Acornima.Operator.StrictEquality:
-                // Support both number and boolean equality
+                // Support both number and boolean equality, with dynamic fallback
                 if (leftType == typeof(double) && rightType == typeof(double))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareNumberEqual(leftTempVar, rightTempVar, resultTempVar));
@@ -993,11 +1216,42 @@ public sealed class HIRToLIRLowerer
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                     return true;
                 }
-                return false;
+                else
+                {
+                    // Dynamic equality for unknown types
+                    var leftBoxed = EnsureObject(leftTempVar);
+                    var rightBoxed = EnsureObject(rightTempVar);
+                    _methodBodyIR.Instructions.Add(new LIREqualDynamic(leftBoxed, rightBoxed, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
+
+            case Acornima.Operator.StrictEquality:
+                // Support both number and boolean strict equality, with dynamic fallback
+                if (leftType == typeof(double) && rightType == typeof(double))
+                {
+                    _methodBodyIR.Instructions.Add(new LIRCompareNumberEqual(leftTempVar, rightTempVar, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
+                else if (leftType == typeof(bool) && rightType == typeof(bool))
+                {
+                    _methodBodyIR.Instructions.Add(new LIRCompareBooleanEqual(leftTempVar, rightTempVar, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
+                else
+                {
+                    // Dynamic strict equality for unknown types
+                    var leftBoxed = EnsureObject(leftTempVar);
+                    var rightBoxed = EnsureObject(rightTempVar);
+                    _methodBodyIR.Instructions.Add(new LIRStrictEqualDynamic(leftBoxed, rightBoxed, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
 
             case Acornima.Operator.Inequality:
-            case Acornima.Operator.StrictInequality:
-                // Support both number and boolean inequality
+                // Support both number and boolean inequality, with dynamic fallback
                 if (leftType == typeof(double) && rightType == typeof(double))
                 {
                     _methodBodyIR.Instructions.Add(new LIRCompareNumberNotEqual(leftTempVar, rightTempVar, resultTempVar));
@@ -1010,7 +1264,39 @@ public sealed class HIRToLIRLowerer
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                     return true;
                 }
-                return false;
+                else
+                {
+                    // Dynamic inequality for unknown types
+                    var leftBoxed = EnsureObject(leftTempVar);
+                    var rightBoxed = EnsureObject(rightTempVar);
+                    _methodBodyIR.Instructions.Add(new LIRNotEqualDynamic(leftBoxed, rightBoxed, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
+
+            case Acornima.Operator.StrictInequality:
+                // Support both number and boolean strict inequality, with dynamic fallback
+                if (leftType == typeof(double) && rightType == typeof(double))
+                {
+                    _methodBodyIR.Instructions.Add(new LIRCompareNumberNotEqual(leftTempVar, rightTempVar, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
+                else if (leftType == typeof(bool) && rightType == typeof(bool))
+                {
+                    _methodBodyIR.Instructions.Add(new LIRCompareBooleanNotEqual(leftTempVar, rightTempVar, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
+                else
+                {
+                    // Dynamic strict inequality for unknown types
+                    var leftBoxed = EnsureObject(leftTempVar);
+                    var rightBoxed = EnsureObject(rightTempVar);
+                    _methodBodyIR.Instructions.Add(new LIRStrictNotEqualDynamic(leftBoxed, rightBoxed, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
 
             default:
                 return false;

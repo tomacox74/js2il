@@ -100,12 +100,14 @@ internal static class TempLocalAllocator
 
             // Allocate a slot for result if it will be used later.
             // Skip allocation for constant temps that can be emitted inline.
+            // Skip allocation for temps that are already mapped to a variable slot.
             if (TryGetDefinedTemp(instruction, out var defined) &&
                 defined.Index >= 0 &&
                 defined.Index < tempCount &&
                 lastUse[defined.Index] >= 0 &&
                 (shouldMaterializeTemp is null || shouldMaterializeTemp[defined.Index]) &&
-                !CanEmitInline(instruction, methodBody))
+                !CanEmitInline(instruction, methodBody) &&
+                !(defined.Index < methodBody.TempVariableSlots.Count && methodBody.TempVariableSlots[defined.Index] >= 0))
             {
                 var storage = GetTempStorage(methodBody, defined);
                 var key = new StorageKey(storage.Kind, storage.ClrType);
@@ -262,6 +264,68 @@ internal static class TempLocalAllocator
                 yield return cmp.Left;
                 yield return cmp.Right;
                 break;
+            case LIRDivNumber div:
+                yield return div.Left;
+                yield return div.Right;
+                break;
+            case LIRModNumber mod:
+                yield return mod.Left;
+                yield return mod.Right;
+                break;
+            case LIRExpNumber exp:
+                yield return exp.Left;
+                yield return exp.Right;
+                break;
+            case LIRBitwiseAnd bitwiseAnd:
+                yield return bitwiseAnd.Left;
+                yield return bitwiseAnd.Right;
+                break;
+            case LIRBitwiseOr bitwiseOr:
+                yield return bitwiseOr.Left;
+                yield return bitwiseOr.Right;
+                break;
+            case LIRBitwiseXor bitwiseXor:
+                yield return bitwiseXor.Left;
+                yield return bitwiseXor.Right;
+                break;
+            case LIRLeftShift leftShift:
+                yield return leftShift.Left;
+                yield return leftShift.Right;
+                break;
+            case LIRRightShift rightShift:
+                yield return rightShift.Left;
+                yield return rightShift.Right;
+                break;
+            case LIRUnsignedRightShift unsignedRightShift:
+                yield return unsignedRightShift.Left;
+                yield return unsignedRightShift.Right;
+                break;
+            case LIRCallIsTruthy callIsTruthy:
+                yield return callIsTruthy.Value;
+                break;
+            case LIRCopyTemp copyTemp:
+                yield return copyTemp.Source;
+                break;
+            case LIRInOperator inOp:
+                yield return inOp.Left;
+                yield return inOp.Right;
+                break;
+            case LIREqualDynamic equalDyn:
+                yield return equalDyn.Left;
+                yield return equalDyn.Right;
+                break;
+            case LIRNotEqualDynamic notEqualDyn:
+                yield return notEqualDyn.Left;
+                yield return notEqualDyn.Right;
+                break;
+            case LIRStrictEqualDynamic strictEqualDyn:
+                yield return strictEqualDyn.Left;
+                yield return strictEqualDyn.Right;
+                break;
+            case LIRStrictNotEqualDynamic strictNotEqualDyn:
+                yield return strictNotEqualDyn.Left;
+                yield return strictNotEqualDyn.Right;
+                break;
             case LIRReturn ret:
                 yield return ret.ReturnValue;
                 break;
@@ -389,6 +453,54 @@ internal static class TempLocalAllocator
                 return true;
             case LIRCompareBooleanNotEqual cmp:
                 defined = cmp.Result;
+                return true;
+            case LIRDivNumber div:
+                defined = div.Result;
+                return true;
+            case LIRModNumber mod:
+                defined = mod.Result;
+                return true;
+            case LIRExpNumber exp:
+                defined = exp.Result;
+                return true;
+            case LIRBitwiseAnd bitwiseAnd:
+                defined = bitwiseAnd.Result;
+                return true;
+            case LIRBitwiseOr bitwiseOr:
+                defined = bitwiseOr.Result;
+                return true;
+            case LIRBitwiseXor bitwiseXor:
+                defined = bitwiseXor.Result;
+                return true;
+            case LIRLeftShift leftShift:
+                defined = leftShift.Result;
+                return true;
+            case LIRRightShift rightShift:
+                defined = rightShift.Result;
+                return true;
+            case LIRUnsignedRightShift unsignedRightShift:
+                defined = unsignedRightShift.Result;
+                return true;
+            case LIRCallIsTruthy callIsTruthy:
+                defined = callIsTruthy.Result;
+                return true;
+            case LIRCopyTemp copyTemp:
+                defined = copyTemp.Destination;
+                return true;
+            case LIRInOperator inOp:
+                defined = inOp.Result;
+                return true;
+            case LIREqualDynamic equalDyn:
+                defined = equalDyn.Result;
+                return true;
+            case LIRNotEqualDynamic notEqualDyn:
+                defined = notEqualDyn.Result;
+                return true;
+            case LIRStrictEqualDynamic strictEqualDyn:
+                defined = strictEqualDyn.Result;
+                return true;
+            case LIRStrictNotEqualDynamic strictNotEqualDyn:
+                defined = strictNotEqualDyn.Result;
                 return true;
             case LIRCallFunction callFunc:
                 defined = callFunc.Result;

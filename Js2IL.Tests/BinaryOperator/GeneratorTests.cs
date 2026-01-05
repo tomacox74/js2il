@@ -23,16 +23,16 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_AddStringString() { var testName = nameof(BinaryOperator_AddStringString); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task BinaryOperator_BitwiseAndNumberNumber() { var testName = nameof(BinaryOperator_BitwiseAndNumberNumber); return GenerateTest(testName); }
+        public Task BinaryOperator_BitwiseAndNumberNumber() { var testName = nameof(BinaryOperator_BitwiseAndNumberNumber); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task BinaryOperator_BitwiseOrNumberNumber() { var testName = nameof(BinaryOperator_BitwiseOrNumberNumber); return GenerateTest(testName); }
+        public Task BinaryOperator_BitwiseOrNumberNumber() { var testName = nameof(BinaryOperator_BitwiseOrNumberNumber); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task BinaryOperator_BitwiseXorNumberNumber() { var testName = nameof(BinaryOperator_BitwiseXorNumberNumber); return GenerateTest(testName); }
+        public Task BinaryOperator_BitwiseXorNumberNumber() { var testName = nameof(BinaryOperator_BitwiseXorNumberNumber); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task BinaryOperator_DivNumberNumber() { var testName = nameof(BinaryOperator_DivNumberNumber); return GenerateTest(testName); }
+        public Task BinaryOperator_DivNumberNumber() { var testName = nameof(BinaryOperator_DivNumberNumber); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
         public Task BinaryOperator_Equal() { var testName = nameof(BinaryOperator_Equal); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
@@ -47,10 +47,10 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_EqualObjectPropertyVsMethodReturn() { var testName = nameof(BinaryOperator_EqualObjectPropertyVsMethodReturn); return GenerateTest(testName); }
 
         [Fact]
-        public Task BinaryOperator_EqualParameter() { var testName = nameof(BinaryOperator_EqualParameter); return GenerateTest(testName); }
+        public Task BinaryOperator_EqualParameter() { var testName = nameof(BinaryOperator_EqualParameter); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task BinaryOperator_ExpNumberNumber() { var testName = nameof(BinaryOperator_ExpNumberNumber); return GenerateTest(testName); }
+        public Task BinaryOperator_ExpNumberNumber() { var testName = nameof(BinaryOperator_ExpNumberNumber); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         // 'in' operator generator snapshot
         [Fact]
@@ -66,7 +66,7 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_LeftShiftBit31() { var testName = nameof(BinaryOperator_LeftShiftBit31); return GenerateTest(testName); }
 
         [Fact]
-        public Task BinaryOperator_LeftShiftNumberNumber() { var testName = nameof(BinaryOperator_LeftShiftNumberNumber); return GenerateTest(testName); }
+        public Task BinaryOperator_LeftShiftNumberNumber() { var testName = nameof(BinaryOperator_LeftShiftNumberNumber); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
         public Task BinaryOperator_LessThan() { var testName = nameof(BinaryOperator_LessThan); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
@@ -76,16 +76,16 @@ namespace Js2IL.Tests.BinaryOperator
 
         // Logical operator generator tests
         [Fact]
-        public Task BinaryOperator_LogicalAnd_Value() { var testName = nameof(BinaryOperator_LogicalAnd_Value); return GenerateTest(testName); }
+        public Task BinaryOperator_LogicalAnd_Value() { var testName = nameof(BinaryOperator_LogicalAnd_Value); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
         public Task BinaryOperator_LogicalOr_ArrayHasData() { var testName = nameof(BinaryOperator_LogicalOr_ArrayHasData); return GenerateTest(testName); }
 
         [Fact]
-        public Task BinaryOperator_LogicalOr_Value() { var testName = nameof(BinaryOperator_LogicalOr_Value); return GenerateTest(testName); }
+        public Task BinaryOperator_LogicalOr_Value() { var testName = nameof(BinaryOperator_LogicalOr_Value); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task BinaryOperator_ModNumberNumber() { var testName = nameof(BinaryOperator_ModNumberNumber); return GenerateTest(testName); }
+        public Task BinaryOperator_ModNumberNumber() { var testName = nameof(BinaryOperator_ModNumberNumber); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
         public Task BinaryOperator_MulNumberNumber() { var testName = nameof(BinaryOperator_MulNumberNumber); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
@@ -97,15 +97,15 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_NotEqual() { var testName = nameof(BinaryOperator_NotEqual); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task BinaryOperator_RightShiftNumberNumber() { var testName = nameof(BinaryOperator_RightShiftNumberNumber); return GenerateTest(testName); }
+        public Task BinaryOperator_RightShiftNumberNumber() { var testName = nameof(BinaryOperator_RightShiftNumberNumber); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
         public Task BinaryOperator_StrictEqualCapturedVariable() { var testName = nameof(BinaryOperator_StrictEqualCapturedVariable); return GenerateTest(testName); }
 
         [Fact]
-        public Task BinaryOperator_SubNumberNumber() { var testName = nameof(BinaryOperator_SubNumberNumber); return GenerateTest(testName); }
+        public Task BinaryOperator_SubNumberNumber() { var testName = nameof(BinaryOperator_SubNumberNumber); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task BinaryOperator_UnsignedRightShiftNumberNumber() { var testName = nameof(BinaryOperator_UnsignedRightShiftNumberNumber); return GenerateTest(testName); }
+        public Task BinaryOperator_UnsignedRightShiftNumberNumber() { var testName = nameof(BinaryOperator_UnsignedRightShiftNumberNumber); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
     }
 }

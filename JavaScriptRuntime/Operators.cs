@@ -101,5 +101,173 @@ namespace JavaScriptRuntime
             var db = ToNumber(b);
             return da * db;
         }
+
+        /// <summary>
+        /// Implements JavaScript '==' (loose equality) semantics.
+        /// </summary>
+        public static bool Equal(object? a, object? b)
+        {
+            // Identical references
+            if (ReferenceEquals(a, b))
+                return true;
+
+            // Both null/undefined
+            if ((a == null || a is JsNull) && (b == null || b is JsNull))
+                return true;
+
+            // Type coercion: compare as numbers if both can be numeric
+            // Note: JavaScript uses IEEE 754 floating-point comparison semantics where
+            // direct equality (==) is intentional and matches JS behavior (NaN != NaN, etc.)
+            if (a is double da && b is double db)
+                return da == db;
+
+            if (a is int ia && b is int ib)
+                return ia == ib;
+
+            if (a is bool ba && b is bool bb)
+                return ba == bb;
+
+            // String comparison
+            if (a is string sa && b is string sb)
+                return sa == sb;
+
+            // Mixed types: numeric comparison when both are convertible
+            if (CanConvertToNumber(a) && CanConvertToNumber(b))
+            {
+                var na = ToNumber(a);
+                var nb = ToNumber(b);
+                return na == nb;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if a value can be converted to a number without throwing.
+        /// </summary>
+        private static bool CanConvertToNumber(object? value)
+        {
+            return value == null
+                   || value is JsNull
+                   || value is bool
+                   || value is int
+                   || value is double
+                   || value is string;
+        }
+
+        /// <summary>
+        /// Implements JavaScript '!=' (loose inequality) semantics.
+        /// </summary>
+        public static bool NotEqual(object? a, object? b)
+        {
+            return !Equal(a, b);
+        }
+
+        /// <summary>
+        /// Implements JavaScript '===' (strict equality) semantics.
+        /// </summary>
+        public static bool StrictEqual(object? a, object? b)
+        {
+            // Identical references
+            if (ReferenceEquals(a, b))
+                return true;
+
+            // Must be same type
+            if (a == null || b == null)
+                return a == null && b == null;
+
+            if (a.GetType() != b.GetType())
+            {
+                // Special case: int and double can be compared
+                // Note: JavaScript uses IEEE 754 floating-point comparison semantics
+                if ((a is double || a is int) && (b is double || b is int))
+                {
+                    return ToNumber(a) == ToNumber(b);
+                }
+                return false;
+            }
+
+            // Same type, value comparison
+            return a.Equals(b);
+        }
+
+        /// <summary>
+        /// Implements JavaScript '!==' (strict inequality) semantics.
+        /// </summary>
+        public static bool StrictNotEqual(object? a, object? b)
+        {
+            return !StrictEqual(a, b);
+        }
+
+        /// <summary>
+        /// Implements JavaScript 'in' operator. Checks if property exists in object.
+        /// </summary>
+        /// <remarks>
+        /// Performance note: For objects that are not dictionaries, arrays, or ExpandoObject,
+        /// this method falls back to reflection which can be slow. The reflection results
+        /// are not cached, so avoid using 'in' operator in hot paths with CLR objects.
+        /// Consider using dictionary-based objects for performance-critical code.
+        /// </remarks>
+        public static bool In(object? property, object? obj)
+        {
+            if (obj == null)
+                return false;
+
+            // Convert property to string
+            var propName = DotNet2JSConversions.ToString(property);
+            
+            // Check if object has the property
+            if (obj is System.Collections.IDictionary dict)
+            {
+                return dict.Contains(propName);
+            }
+
+            // For arrays, check if index exists
+            if (obj is object?[] array)
+            {
+                if (int.TryParse(propName, out var index))
+                {
+                    return index >= 0 && index < array.Length;
+                }
+                return false;
+            }
+
+            // For generic objects (ExpandoObject, dynamic objects)
+            if (obj is System.Dynamic.ExpandoObject expando)
+            {
+                var dict2 = (System.Collections.Generic.IDictionary<string, object?>)expando;
+                return dict2.ContainsKey(propName);
+            }
+
+            // Fallback: check using reflection (not cached - see performance note above)
+            var type = obj.GetType();
+            var prop = type.GetProperty(propName);
+            if (prop != null)
+                return true;
+            var field = type.GetField(propName);
+            return field != null;
+        }
+
+        /// <summary>
+        /// Tests if a value is truthy according to JavaScript semantics.
+        /// </summary>
+        public static bool IsTruthy(object? value)
+        {
+            if (value == null)
+                return false;
+            if (value is JsNull)
+                return false;
+            if (value is bool b)
+                return b;
+            // Note: JavaScript uses IEEE 754 semantics - 0, -0, and NaN are falsy
+            if (value is double d)
+                return d != 0 && !double.IsNaN(d);
+            if (value is int i)
+                return i != 0;
+            if (value is string s)
+                return s.Length > 0;
+            // Objects are truthy
+            return true;
+        }
     }
 }
