@@ -1077,6 +1077,12 @@ public sealed class HIRToLIRLowerer
 
         // Handle logical operators with short-circuit evaluation
         // These need to be decomposed into multiple LIR instructions
+        // 
+        // IMPORTANT: JavaScript logical operators (&&, ||) return one of the OPERAND VALUES,
+        // not a boolean. For example: `1 && "hello"` returns "hello", `0 || "default"` returns "default".
+        // This is why we store the result as BoxedValue (the actual operand) rather than UnboxedValue bool.
+        // If the result is then used in a boolean context (like an if-statement condition), a separate
+        // IsTruthy check will be applied - this is correct JS semantics, not redundant.
         if (binaryExpr.Operator == Acornima.Operator.LogicalAnd)
         {
             // Logical AND: if left is falsy, return left, otherwise return right
@@ -1088,7 +1094,7 @@ public sealed class HIRToLIRLowerer
             // Ensure left is boxed for truthiness check
             var leftBoxed = EnsureObject(leftTempVar);
             
-            // Create temp to hold IsTruthy result
+            // Create temp to hold IsTruthy result (bool) - used only for branching
             var isTruthyTemp = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRCallIsTruthy(leftBoxed, isTruthyTemp));
             DefineTempStorage(isTruthyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
@@ -1096,13 +1102,13 @@ public sealed class HIRToLIRLowerer
             // If left is falsy, branch to falsyLabel
             _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(isTruthyTemp, falsyLabel));
             
-            // Left was truthy, result is right
+            // Left was truthy, result is right (the actual VALUE, not boolean)
             var rightBoxed = EnsureObject(rightTempVar);
             _methodBodyIR.Instructions.Add(new LIRCopyTemp(rightBoxed, resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
             _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
             
-            // Falsy label: result is left
+            // Falsy label: result is left (the actual VALUE, not boolean)
             _methodBodyIR.Instructions.Add(new LIRLabel(falsyLabel));
             _methodBodyIR.Instructions.Add(new LIRCopyTemp(leftBoxed, resultTempVar));
             
@@ -1122,7 +1128,7 @@ public sealed class HIRToLIRLowerer
             // Ensure left is boxed for truthiness check
             var leftBoxed = EnsureObject(leftTempVar);
             
-            // Create temp to hold IsTruthy result
+            // Create temp to hold IsTruthy result (bool) - used only for branching
             var isTruthyTemp = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRCallIsTruthy(leftBoxed, isTruthyTemp));
             DefineTempStorage(isTruthyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
@@ -1130,13 +1136,13 @@ public sealed class HIRToLIRLowerer
             // If left is truthy, branch to truthyLabel
             _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isTruthyTemp, truthyLabel));
             
-            // Left was falsy, result is right
+            // Left was falsy, result is right (the actual VALUE, not boolean)
             var rightBoxed = EnsureObject(rightTempVar);
             _methodBodyIR.Instructions.Add(new LIRCopyTemp(rightBoxed, resultTempVar));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
             _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
             
-            // Truthy label: result is left
+            // Truthy label: result is left (the actual VALUE, not boolean)
             _methodBodyIR.Instructions.Add(new LIRLabel(truthyLabel));
             _methodBodyIR.Instructions.Add(new LIRCopyTemp(leftBoxed, resultTempVar));
             
