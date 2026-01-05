@@ -1,37 +1,18 @@
 ## Summary
 
-Expand the AST→HIR→LIR→IL pipeline to support object/array literals and related runtime semantics, while preventing Stackify from duplicating call side effects.
+Make the planning docs read as “ideal/spec-first” rather than historical implementation notes, and record recent metadata-emission findings that impact the two-phase pipeline design.
 
 ## Changes
 
-### New Features
-- **Object literals (IR pipeline)**: Lower `{ ... }` to runtime `ExpandoObject` initialization.
-- **Array literals (IR pipeline)**: Lower `[ ... ]` including spread (`[...arr]`) to `JavaScriptRuntime.Array` construction.
-- **Computed/index access**: Lower `obj[index]` via runtime `Object.GetItem`.
-- **`length` property**: Lower `obj.length` via runtime `Object.GetLength`.
-- **General call lowering**:
-  - Typed array instance calls via `LIRCallInstanceMethod` (e.g., `arr.join()`, `arr.pop()`, `arr.slice()`), including `slice()` typed as `JavaScriptRuntime.Array` for chaining.
-  - Intrinsic static calls via `LIRCallIntrinsicStatic` (e.g., `Math.*`, `Array.isArray`).
-- **Correct JS truthiness**: Boxed/object conditions branch through `Operators.IsTruthy(...)`.
-- **Stackify correctness**: Never inline/stackify call-like instructions to avoid duplicate invocation in emitted IL.
+### Docs
+- Reframe the two-phase compilation plan as ideal-first (spec-first), with migration notes clearly non-normative.
+- Add a reader-friendly SCC definition and link all SCC mentions back to it.
+- Clarify `CallableRegistry` responsibilities and propose role-based views to keep concerns separated.
+- Record PoC-validated finding: `MethodDefinitionHandle`/MethodDef tokens can be referenced before IL bodies are emitted, but this requires deterministic precomputed metadata table layout (type/method/field row ordering).
 
-### Files Added
-- Js2IL/IR/HIR/HIRArrayExpression.cs
-- Js2IL/IR/HIR/HIRSpreadElement.cs
-- Js2IL/IR/HIR/HIRObjectExpression.cs
-- Js2IL/IR/HIR/HIRIndexAccessExpression.cs
-- Js2IL/IR/LIR/LIRArrayInstructions.cs
+### Samples (supporting evidence)
+- `samples/MemberReferencePoC`: emits a tiny assembly via `System.Reflection.Metadata` showing both MemberRef (`0x0A...`) and MethodDef (`0x06...`) call sites; demonstrates MethodDef token usage before body emission when row layout is predetermined.
+- `samples/CSharpMutualRecursion`: real C# compiler output demonstrating mutual recursion and showing intra-assembly calls use MethodDef tokens.
 
-### Files Modified
-- Js2IL/IR/HIR/HIRBuilder.cs
-- Js2IL/IR/LIR/HIRToLIRLower.cs
-- Js2IL/IR/LIR/LIRInstructions.cs
-- Js2IL/IL/LIRToILCompiler.cs
-- Js2IL/IL/TempLocalAllocator.cs
-- Js2IL/IL/Stackify.cs
-- Js2IL.Tests/Array/GeneratorTests.cs (enforce IR pipeline where required)
-- Js2IL.Tests/Literals/GeneratorTests.cs (enforce IR pipeline where required)
-- Updated generator snapshots across Array/Literals/Math/Promise/etc.
-
-## Testing
-- `dotnet test Js2IL.Tests/Js2IL.Tests.csproj -c Release --filter ...` (focused): 8 passed, 0 failed
+## Notes
+- Docs + samples only; no compiler behavior changes.
