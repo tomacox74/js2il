@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
+using Acornima.Ast;
 using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
@@ -20,19 +21,24 @@ namespace Js2IL.Services.ILGenerators
         private MethodBodyStreamEncoder _methodBodyStreamEncoder;
         private SymbolTable _symbolTable;
 
+        private readonly Variables _rootVariables;
+        private readonly ILogger _logger;
+        private readonly bool _verbose;
+        private readonly DeclaredCallableStore _declaredCallableStore;
+
         private BaseClassLibraryReferences _bclReferences;
 
         private readonly ClassRegistry _classRegistry = new();
         
         private readonly TwoPhaseCompilationCoordinator? _twoPhaseCoordinator;
-        private readonly CallableDeclarationService? _callableDeclarationService;
         private readonly IServiceProvider _serviceProvider;
 
         public MainGenerator(IServiceProvider serviceProvider, Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, SymbolTable symbolTable)
         {
             _symbolTable = symbolTable ?? throw new ArgumentNullException(nameof(symbolTable));
 
-            if (variables == null) throw new ArgumentNullException(nameof(variables));
+            _rootVariables = variables ?? throw new ArgumentNullException(nameof(variables));
+
             if (bclReferences == null) throw new ArgumentNullException(nameof(bclReferences));
             if (metadataBuilder == null) throw new ArgumentNullException(nameof(metadataBuilder));
             
@@ -40,6 +46,9 @@ namespace Js2IL.Services.ILGenerators
             _bclReferences = bclReferences;
             _methodBodyStreamEncoder = methodBodyStreamEncoder;
             var compilerOptions = serviceProvider.GetRequiredService<CompilerOptions>();
+            _verbose = compilerOptions?.Verbose ?? false;
+            _logger = serviceProvider.GetRequiredService<ILogger>();
+            _declaredCallableStore = serviceProvider.GetRequiredService<DeclaredCallableStore>();
             _functionGenerator = new JavaScriptFunctionGenerator(serviceProvider, variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, symbolTable);
             _ilGenerator = new ILMethodGenerator(serviceProvider, variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, _functionGenerator.FunctionRegistry, symbolTable: symbolTable);
             _classesGenerator = new ClassesGenerator(serviceProvider,metadataBuilder, bclReferences, methodBodyStreamEncoder, _classRegistry, variables);
@@ -48,18 +57,164 @@ namespace Js2IL.Services.ILGenerators
             if (compilerOptions.TwoPhaseCompilation)
             {
                 _twoPhaseCoordinator = serviceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
-                _callableDeclarationService = serviceProvider.GetRequiredService<CallableDeclarationService>();
-                
-                // Configure the declaration service with the compilation context
-                _callableDeclarationService.Configure(
-                    metadataBuilder,
-                    methodBodyStreamEncoder,
-                    bclReferences,
-                    _classRegistry,
-                    _functionGenerator.FunctionRegistry,
-                    variables,
-                    symbolTable);
             }
+        }
+
+        private void DeclarePhase1AnonymousCallables(IReadOnlyList<CallableId> callables, MetadataBuilder metadataBuilder)
+        {
+            // This is a temporary Milestone 1 adapter: we proactively compile arrows/function expressions
+            // so that later expression emission can resolve handles without on-demand compilation.
+            // The design doc ultimately wants true signature-only declaration here.
+
+            var previousStrictMode = _declaredCallableStore.StrictMode;
+            _declaredCallableStore.StrictMode = false;
+
+            try
+            {
+                foreach (var callable in callables)
+                {
+                    switch (callable.Kind)
+                    {
+                        case CallableKind.Arrow:
+                            if (callable.AstNode is not ArrowFunctionExpression arrowExpr)
+                            {
+                                continue;
+                            }
+
+                            // Skip if already declared (may have been created during earlier nested compilation)
+                            if (_declaredCallableStore.TryGetHandle(arrowExpr, out _))
+                            {
+                                continue;
+                            }
+
+                            // Skip arrows inside class scopes (requires class context; see #244)
+                            if (IsInsideClassScope(callable))
+                            {
+                                if (_verbose)
+                                {
+                                    _logger.WriteLine($"[TwoPhase] Phase 1: Skipping arrow inside class: {callable.DisplayName}");
+                                }
+                                continue;
+                            }
+
+                            DeclareArrowFunction(callable, arrowExpr, metadataBuilder);
+                            break;
+
+                        case CallableKind.FunctionExpression:
+                            if (callable.AstNode is not FunctionExpression funcExpr)
+                            {
+                                continue;
+                            }
+
+                            if (_declaredCallableStore.TryGetHandle(funcExpr, out _))
+                            {
+                                continue;
+                            }
+
+                            if (IsInsideClassScope(callable))
+                            {
+                                if (_verbose)
+                                {
+                                    _logger.WriteLine($"[TwoPhase] Phase 1: Skipping function expression inside class: {callable.DisplayName}");
+                                }
+                                continue;
+                            }
+
+                            DeclareFunctionExpression(callable, funcExpr, metadataBuilder);
+                            break;
+                    }
+                }
+            }
+            finally
+            {
+                _declaredCallableStore.StrictMode = previousStrictMode;
+            }
+        }
+
+        private void DeclareArrowFunction(CallableId callable, ArrowFunctionExpression arrowExpr, MetadataBuilder metadataBuilder)
+        {
+            var paramNames = ILMethodGenerator.ExtractParameterNames(arrowExpr.Params).ToArray();
+            var moduleName = _symbolTable.Root.Name;
+            var arrowBaseScopeName = callable.Name != null
+                ? $"ArrowFunction_{callable.Name}"
+                : $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{arrowExpr.Location.Start.Column}";
+            var registryScopeName = $"{moduleName}/{arrowBaseScopeName}";
+            var ilMethodName = $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{arrowExpr.Location.Start.Column}";
+
+            var arrowGen = new JavaScriptArrowFunctionGenerator(
+                _serviceProvider,
+                _rootVariables,
+                _bclReferences,
+                metadataBuilder,
+                _methodBodyStreamEncoder,
+                _classRegistry,
+                _functionGenerator.FunctionRegistry,
+                _symbolTable);
+
+            arrowGen.GenerateArrowFunctionMethod(arrowExpr, registryScopeName, ilMethodName, paramNames);
+
+            if (_verbose)
+            {
+                _logger.WriteLine($"[TwoPhase] Phase 1: Declared arrow: {ilMethodName}");
+            }
+        }
+
+        private void DeclareFunctionExpression(CallableId callable, FunctionExpression funcExpr, MetadataBuilder metadataBuilder)
+        {
+            var paramNames = ILMethodGenerator.ExtractParameterNames(funcExpr.Params).ToArray();
+            string baseScopeName;
+            if (funcExpr.Id is Identifier fid && !string.IsNullOrEmpty(fid.Name))
+            {
+                baseScopeName = fid.Name;
+            }
+            else if (callable.Name != null)
+            {
+                baseScopeName = $"FunctionExpression_{callable.Name}";
+            }
+            else
+            {
+                baseScopeName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
+            }
+
+            var moduleName = _symbolTable.Root.Name;
+            var registryScopeName = $"{moduleName}/{baseScopeName}";
+            var ilMethodName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
+
+            var methodGen = new ILMethodGenerator(
+                _serviceProvider,
+                _rootVariables,
+                _bclReferences,
+                metadataBuilder,
+                _methodBodyStreamEncoder,
+                _classRegistry,
+                _functionGenerator.FunctionRegistry,
+                symbolTable: _symbolTable);
+
+            methodGen.GenerateFunctionExpressionMethod(funcExpr, registryScopeName, ilMethodName, paramNames);
+
+            if (_verbose)
+            {
+                _logger.WriteLine($"[TwoPhase] Phase 1: Declared function expression: {ilMethodName}");
+            }
+        }
+
+        private bool IsInsideClassScope(CallableId callable)
+        {
+            if (callable.AstNode == null)
+            {
+                return false;
+            }
+
+            var scope = _symbolTable.FindScopeByAstNode(callable.AstNode);
+            while (scope != null)
+            {
+                if (scope.Kind == ScopeKind.Class)
+                {
+                    return true;
+                }
+                scope = scope.Parent;
+            }
+            return false;
         }
 
         /// <summary>
@@ -118,7 +273,7 @@ namespace Js2IL.Services.ILGenerators
         /// </summary>
         public void DeclareClassesAndFunctions(SymbolTable symbolTable)
         {
-            if (_twoPhaseCoordinator != null && _callableDeclarationService != null)
+            if (_twoPhaseCoordinator != null)
             {
                 // Two-phase path: discover callables, then declare all in Phase 1
                 _twoPhaseCoordinator.RunPhase1Discovery(symbolTable);
@@ -134,7 +289,7 @@ namespace Js2IL.Services.ILGenerators
                     // Phase 1a: Declare all arrow functions and function expressions first
                     // This populates DeclaredCallableStore so that when ClassesGenerator and
                     // JavaScriptFunctionGenerator compile bodies, nested arrows are already available.
-                    _callableDeclarationService.DeclareAllCallables(discoveredCallables);
+                    DeclarePhase1AnonymousCallables(discoveredCallables, _ilGenerator.MetadataBuilder);
                 }
                 
                 // Phase 1b: Now enable strict mode and let the existing generators run

@@ -15,10 +15,9 @@ namespace Js2IL.Services.TwoPhaseCompilation;
 /// </summary>
 /// <remarks>
 /// Milestone 1 Implementation:
-/// - Coordinator discovers and logs callables
-/// - All arrow functions and function expressions are compiled upfront during Phase 1
-/// - This ensures expression emission never triggers compilation (the key Milestone 1 invariant)
-/// - Body compilation still uses existing emitters (no ordering changes yet)
+/// - Coordinator discovers and logs callables.
+/// - Phase 1 declaration is still delegated to existing generators.
+/// - Expression emission is being migrated toward lookup-only behavior (see docs/TwoPhaseCompilationPipeline.md).
 /// </remarks>
 public sealed class TwoPhaseCompilationCoordinator
 {
