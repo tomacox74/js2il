@@ -21,7 +21,7 @@ namespace Js2IL.Services.ILGenerators
         private readonly FunctionRegistry _functionRegistry = new();
         private readonly SymbolTable? _symbolTable;
         private readonly CompiledMethodCache _compiledMethodCache;
-        private readonly DeclaredCallableStore _declaredCallableStore;
+        private readonly TwoPhaseCompilationCoordinator? _twoPhaseCoordinator;
 
         public FunctionRegistry FunctionRegistry => _functionRegistry;
 
@@ -40,7 +40,7 @@ namespace Js2IL.Services.ILGenerators
             _classRegistry = classRegistry ?? new ClassRegistry();
             _symbolTable = symbolTable;
             _compiledMethodCache = serviceProvider.GetRequiredService<CompiledMethodCache>();
-            _declaredCallableStore = serviceProvider.GetRequiredService<DeclaredCallableStore>();
+            _twoPhaseCoordinator = serviceProvider.GetService<TwoPhaseCompilationCoordinator>();
             this._serviceProvider = serviceProvider;
         }
 
@@ -113,9 +113,9 @@ namespace Js2IL.Services.ILGenerators
                         {
                             _compiledMethodCache.Add(nestedBinding, nestedMethod);
                         }
-                        
-                        // Register in DeclaredCallableStore for two-phase compilation lookup
-                        _declaredCallableStore.RegisterByScopeName(nestedRegistryScopeName, nestedMethod);
+
+                        // Two-phase: register the token in the canonical CallableRegistry
+                        _twoPhaseCoordinator?.RegisterToken(nestedDecl, (EntityHandle)nestedMethod);
                     }
                 }
 
@@ -130,9 +130,9 @@ namespace Js2IL.Services.ILGenerators
                 {
                     _compiledMethodCache.Add(binding, methodDefinition);
                 }
-                
-                // Register in DeclaredCallableStore for two-phase compilation lookup
-                _declaredCallableStore.RegisterByScopeName(registryScopeName, methodDefinition);
+
+                // Two-phase: register the token in the canonical CallableRegistry
+                _twoPhaseCoordinator?.RegisterToken(functionDeclaration, (EntityHandle)methodDefinition);
 
                 globalMethods.Add((functionName, methodDefinition, funcScope, functionVariables, nestedTb, firstNestedMethod));
             }

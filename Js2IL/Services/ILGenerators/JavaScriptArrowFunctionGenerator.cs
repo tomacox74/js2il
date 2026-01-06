@@ -18,7 +18,7 @@ namespace Js2IL.Services.ILGenerators
         private readonly ClassRegistry _classRegistry;
         private readonly FunctionRegistry _functionRegistry;
         private readonly SymbolTable? _symbolTable;
-        private readonly DeclaredCallableStore _declaredCallableStore;
+        private readonly TwoPhaseCompilationCoordinator? _twoPhaseCoordinator;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -40,7 +40,7 @@ namespace Js2IL.Services.ILGenerators
             _functionRegistry = functionRegistry;
             _symbolTable = symbolTable;
             _serviceProvider = serviceProvider;
-            _declaredCallableStore = serviceProvider.GetRequiredService<DeclaredCallableStore>();
+            _twoPhaseCoordinator = serviceProvider.GetService<TwoPhaseCompilationCoordinator>();
         }
 
         internal MethodDefinitionHandle GenerateArrowFunctionMethod(
@@ -49,11 +49,13 @@ namespace Js2IL.Services.ILGenerators
             string ilMethodName,
             string[] paramNames)
         {
-            // Phase 1 lookup: Check if this arrow function was already declared
-            // If so, return the pre-declared handle without re-compiling
-            if (_declaredCallableStore.TryGetHandle(arrowFunction, out var existingHandle))
+            // Two-phase lookup: only skip compilation when we already have a MethodDef token.
+            // Phase 1 may have populated a MemberRef token (signature-only), which is not a compiled body.
+            if (_twoPhaseCoordinator != null &&
+                _twoPhaseCoordinator.TryGetToken(arrowFunction, out var existingToken) &&
+                existingToken.Kind == HandleKind.MethodDefinition)
             {
-                return existingHandle;
+                return (MethodDefinitionHandle)existingToken;
             }
 
             // Try the new IR-based compilation pipeline first
@@ -67,8 +69,8 @@ namespace Js2IL.Services.ILGenerators
                     IR.IRPipelineMetrics.RecordArrowFunctionAttempt(!compiledMethod.IsNil);
                     if (!compiledMethod.IsNil)
                     {
-                        // Register in DeclaredCallableStore for future lookups
-                        _declaredCallableStore.RegisterArrowFunction(arrowFunction, compiledMethod);
+                        // Two-phase: register the token in the canonical CallableRegistry
+                        _twoPhaseCoordinator?.RegisterToken(arrowFunction, (EntityHandle)compiledMethod);
                         return compiledMethod;
                     }
                 }
@@ -317,10 +319,10 @@ namespace Js2IL.Services.ILGenerators
             var tb = new TypeBuilder(_metadataBuilder, "Functions", ilMethodName);
             var mdh = tb.AddMethodDefinition(MethodAttributes.Static | MethodAttributes.Public | MethodAttributes.HideBySig, ilMethodName, methodSig, bodyOffset, firstParam);
             tb.AddTypeDefinition(TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, _bclReferences.ObjectType);
-            
-            // Register in DeclaredCallableStore for future lookups (legacy path)
-            _declaredCallableStore.RegisterArrowFunction(arrowFunction, mdh);
-            
+
+            // Two-phase: register the token in the canonical CallableRegistry
+            _twoPhaseCoordinator?.RegisterToken(arrowFunction, (EntityHandle)mdh);
+
             return mdh;
         }
     }

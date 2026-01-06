@@ -16,10 +16,10 @@ public sealed record CallableInfo
     public required CallableSignature Signature { get; init; }
     
     /// <summary>
-    /// The declared method token (populated during Phase 1 declaration).
-    /// This handle is valid even before the method body is compiled.
+    /// The declared callable token (populated during Phase 1 declaration).
+    /// In Phase 1 this may be a MemberRef (signature-only); Phase 2 may overwrite with a MethodDef.
     /// </summary>
-    public MethodDefinitionHandle? MethodToken { get; init; }
+    public EntityHandle? Token { get; init; }
     
     /// <summary>
     /// Whether the body has been compiled (set during Phase 2).
@@ -56,7 +56,7 @@ public interface ICallableDeclarationWriter
     /// <summary>
     /// Sets the method token for a previously declared callable (Phase 1 - token allocation).
     /// </summary>
-    void SetToken(CallableId id, MethodDefinitionHandle token);
+    void SetToken(CallableId id, EntityHandle token);
 }
 
 /// <summary>
@@ -68,13 +68,13 @@ public interface ICallableDeclarationReader
     /// Gets the declared method token for a callable (must exist in strict mode).
     /// </summary>
     /// <exception cref="InvalidOperationException">Thrown in strict mode if callable is not declared.</exception>
-    MethodDefinitionHandle GetDeclaredToken(CallableId id);
+    EntityHandle GetDeclaredToken(CallableId id);
     
     /// <summary>
     /// Attempts to get the declared method token for a callable.
     /// Used for legacy/migration fallback paths.
     /// </summary>
-    bool TryGetDeclaredToken(CallableId id, out MethodDefinitionHandle token);
+    bool TryGetDeclaredToken(CallableId id, out EntityHandle token);
     
     /// <summary>
     /// Gets the signature for a declared callable.
@@ -132,7 +132,7 @@ public sealed class CallableRegistry : ICallableCatalog, ICallableDeclarationWri
         {
             Id = id,
             Signature = signature,
-            MethodToken = null,
+            Token = null,
             BodyCompiled = false
         };
         
@@ -151,7 +151,7 @@ public sealed class CallableRegistry : ICallableCatalog, ICallableDeclarationWri
             });
     }
 
-    public void SetToken(CallableId id, MethodDefinitionHandle token)
+    public void SetToken(CallableId id, EntityHandle token)
     {
         if (!_callables.TryGetValue(id, out var info))
         {
@@ -160,18 +160,18 @@ public sealed class CallableRegistry : ICallableCatalog, ICallableDeclarationWri
                 "Call Declare() first during Phase 1 discovery.");
         }
         
-        _callables.TryUpdate(id, info with { MethodToken = token }, info);
+        _callables.TryUpdate(id, info with { Token = token }, info);
     }
 
     #endregion
 
     #region ICallableDeclarationReader
 
-    public MethodDefinitionHandle GetDeclaredToken(CallableId id)
+    public EntityHandle GetDeclaredToken(CallableId id)
     {
-        if (_callables.TryGetValue(id, out var info) && info.MethodToken.HasValue)
+        if (_callables.TryGetValue(id, out var info) && info.Token.HasValue)
         {
-            return info.MethodToken.Value;
+            return info.Token.Value;
         }
         
         if (StrictMode)
@@ -184,11 +184,11 @@ public sealed class CallableRegistry : ICallableCatalog, ICallableDeclarationWri
         return default;
     }
 
-    public bool TryGetDeclaredToken(CallableId id, out MethodDefinitionHandle token)
+    public bool TryGetDeclaredToken(CallableId id, out EntityHandle token)
     {
-        if (_callables.TryGetValue(id, out var info) && info.MethodToken.HasValue)
+        if (_callables.TryGetValue(id, out var info) && info.Token.HasValue)
         {
-            token = info.MethodToken.Value;
+            token = info.Token.Value;
             return true;
         }
         
@@ -232,7 +232,7 @@ public sealed class CallableRegistry : ICallableCatalog, ICallableDeclarationWri
     public int Count => _callables.Count;
 
     /// <summary>Gets the number of callables with tokens allocated.</summary>
-    public int TokensAllocated => _callables.Values.Count(c => c.MethodToken.HasValue);
+    public int TokensAllocated => _callables.Values.Count(c => c.Token.HasValue);
 
     /// <summary>Gets the number of callables with bodies compiled.</summary>
     public int BodiesCompiled => _callables.Values.Count(c => c.BodyCompiled);

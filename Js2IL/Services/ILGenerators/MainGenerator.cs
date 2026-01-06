@@ -24,7 +24,6 @@ namespace Js2IL.Services.ILGenerators
         private readonly Variables _rootVariables;
         private readonly ILogger _logger;
         private readonly bool _verbose;
-        private readonly DeclaredCallableStore _declaredCallableStore;
 
         private BaseClassLibraryReferences _bclReferences;
 
@@ -46,9 +45,8 @@ namespace Js2IL.Services.ILGenerators
             _bclReferences = bclReferences;
             _methodBodyStreamEncoder = methodBodyStreamEncoder;
             var compilerOptions = serviceProvider.GetRequiredService<CompilerOptions>();
-            _verbose = compilerOptions?.Verbose ?? false;
+            _verbose = compilerOptions.Verbose;
             _logger = serviceProvider.GetRequiredService<ILogger>();
-            _declaredCallableStore = serviceProvider.GetRequiredService<DeclaredCallableStore>();
             _functionGenerator = new JavaScriptFunctionGenerator(serviceProvider, variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, symbolTable);
             _ilGenerator = new ILMethodGenerator(serviceProvider, variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, _functionGenerator.FunctionRegistry, symbolTable: symbolTable);
             _classesGenerator = new ClassesGenerator(serviceProvider,metadataBuilder, bclReferences, methodBodyStreamEncoder, _classRegistry, variables);
@@ -62,72 +60,132 @@ namespace Js2IL.Services.ILGenerators
 
         private void DeclarePhase1AnonymousCallables(IReadOnlyList<CallableId> callables, MetadataBuilder metadataBuilder)
         {
-            // This is a temporary Milestone 1 adapter: we proactively compile arrows/function expressions
-            // so that later expression emission can resolve handles without on-demand compilation.
-            // The design doc ultimately wants true signature-only declaration here.
+            // Milestone 1 (Option B): Phase 1 is declare-only.
+            // We emit MemberRef tokens for arrow functions and function expressions so that
+            // expression emission can always do lookup-only (no compilation).
 
-            var previousStrictMode = _declaredCallableStore.StrictMode;
-            _declaredCallableStore.StrictMode = false;
-
-            try
+            var registry = _twoPhaseCoordinator?.Registry;
+            if (registry == null)
             {
-                foreach (var callable in callables)
+                return;
+            }
+
+            // Use Module scope for TypeRef resolution so we can reference types that will be emitted later.
+            // The single module row is always index 1.
+            var moduleHandle = MetadataTokens.EntityHandle(TableIndex.Module, 1);
+
+            // Cache TypeRefs by "namespace/name" to avoid duplicates.
+            var typeRefCache = new System.Collections.Generic.Dictionary<string, TypeReferenceHandle>(StringComparer.Ordinal);
+
+            foreach (var callable in callables)
+            {
+                switch (callable.Kind)
                 {
-                    switch (callable.Kind)
-                    {
-                        case CallableKind.Arrow:
-                            if (callable.AstNode is not ArrowFunctionExpression arrowExpr)
-                            {
-                                continue;
-                            }
+                    case CallableKind.Arrow:
+                        // Skip if already has a token (idempotent); Phase 2 may overwrite MemberRef with MethodDef.
+                        if (registry.TryGetDeclaredToken(callable, out var existingToken) && !existingToken.IsNil)
+                        {
+                            continue;
+                        }
 
-                            // Skip if already declared (may have been created during earlier nested compilation)
-                            if (_declaredCallableStore.TryGetHandle(arrowExpr, out _))
-                            {
-                                continue;
-                            }
+                        // Build a MemberRef to Functions.<ILMethodName>::<ILMethodName>(object[] scopes, object...)
+                        var signature = registry.GetSignature(callable);
+                        if (signature == null)
+                        {
+                            continue;
+                        }
 
-                            // Skip arrows inside class scopes (requires class context; see #244)
-                            if (IsInsideClassScope(callable))
-                            {
-                                if (_verbose)
-                                {
-                                    _logger.WriteLine($"[TwoPhase] Phase 1: Skipping arrow inside class: {callable.DisplayName}");
-                                }
-                                continue;
-                            }
+                        var ilMethodName = signature.ILMethodName;
+                        var typeKey = $"Functions/{ilMethodName}";
+                        if (!typeRefCache.TryGetValue(typeKey, out var typeRef))
+                        {
+                            typeRef = metadataBuilder.AddTypeReference(
+                                moduleHandle,
+                                metadataBuilder.GetOrAddString("Functions"),
+                                metadataBuilder.GetOrAddString(ilMethodName));
+                            typeRefCache[typeKey] = typeRef;
+                        }
 
-                            DeclareArrowFunction(callable, arrowExpr, metadataBuilder);
-                            break;
+                        var paramCount = 1 + callable.JsParamCount;
+                        var methodSig = MethodBuilder.BuildMethodSignature(
+                            metadataBuilder,
+                            isInstance: false,
+                            paramCount: paramCount,
+                            hasScopesParam: true,
+                            returnsVoid: false);
 
-                        case CallableKind.FunctionExpression:
-                            if (callable.AstNode is not FunctionExpression funcExpr)
-                            {
-                                continue;
-                            }
+                        var memberRef = metadataBuilder.AddMemberReference(
+                            typeRef,
+                            metadataBuilder.GetOrAddString(ilMethodName),
+                            methodSig);
 
-                            if (_declaredCallableStore.TryGetHandle(funcExpr, out _))
-                            {
-                                continue;
-                            }
+                        registry.SetToken(callable, (EntityHandle)memberRef);
+                        break;
 
-                            if (IsInsideClassScope(callable))
-                            {
-                                if (_verbose)
-                                {
-                                    _logger.WriteLine($"[TwoPhase] Phase 1: Skipping function expression inside class: {callable.DisplayName}");
-                                }
-                                continue;
-                            }
+                    case CallableKind.FunctionExpression:
+                        if (registry.TryGetDeclaredToken(callable, out var existingToken2) && !existingToken2.IsNil)
+                        {
+                            continue;
+                        }
 
-                            DeclareFunctionExpression(callable, funcExpr, metadataBuilder);
-                            break;
-                    }
+                        var signature2 = registry.GetSignature(callable);
+                        if (signature2 == null)
+                        {
+                            continue;
+                        }
+
+                        var ilMethodName2 = signature2.ILMethodName;
+                        var typeKey2 = $"Functions/{ilMethodName2}";
+                        if (!typeRefCache.TryGetValue(typeKey2, out var typeRef2))
+                        {
+                            typeRef2 = metadataBuilder.AddTypeReference(
+                                moduleHandle,
+                                metadataBuilder.GetOrAddString("Functions"),
+                                metadataBuilder.GetOrAddString(ilMethodName2));
+                            typeRefCache[typeKey2] = typeRef2;
+                        }
+
+                        var paramCount2 = 1 + callable.JsParamCount;
+                        var methodSig2 = MethodBuilder.BuildMethodSignature(
+                            metadataBuilder,
+                            isInstance: false,
+                            paramCount: paramCount2,
+                            hasScopesParam: true,
+                            returnsVoid: false);
+
+                        var memberRef2 = metadataBuilder.AddMemberReference(
+                            typeRef2,
+                            metadataBuilder.GetOrAddString(ilMethodName2),
+                            methodSig2);
+
+                        registry.SetToken(callable, (EntityHandle)memberRef2);
+                        break;
                 }
             }
-            finally
+        }
+
+        private void CompilePhase2AnonymousCallables(IReadOnlyList<CallableId> callables, MetadataBuilder metadataBuilder)
+        {
+            foreach (var callable in callables)
             {
-                _declaredCallableStore.StrictMode = previousStrictMode;
+                switch (callable.Kind)
+                {
+                    case CallableKind.Arrow:
+                        if (callable.AstNode is not ArrowFunctionExpression arrowExpr)
+                        {
+                            continue;
+                        }
+                        DeclareArrowFunction(callable, arrowExpr, metadataBuilder);
+                        break;
+
+                    case CallableKind.FunctionExpression:
+                        if (callable.AstNode is not FunctionExpression funcExpr)
+                        {
+                            continue;
+                        }
+                        DeclareFunctionExpression(callable, funcExpr, metadataBuilder);
+                        break;
+                }
             }
         }
 
@@ -278,32 +336,28 @@ namespace Js2IL.Services.ILGenerators
                 // Two-phase path: discover callables, then declare all in Phase 1
                 _twoPhaseCoordinator.RunPhase1Discovery(symbolTable);
                 
-                // Phase 1: Declaration (strict mode NOT enabled yet)
-                // We declare in a specific order:
-                // 1. First, all arrows and function expressions (so they're available for nested compilation)
-                // 2. Then classes (which may contain arrows in constructors/methods)
-                // 3. Finally function declarations (which may contain nested functions)
+                // Phase 1: Declaration (declare-only; no bodies)
                 var discoveredCallables = _twoPhaseCoordinator.DiscoveredCallables;
                 if (discoveredCallables != null)
                 {
-                    // Phase 1a: Declare all arrow functions and function expressions first
-                    // This populates DeclaredCallableStore so that when ClassesGenerator and
-                    // JavaScriptFunctionGenerator compile bodies, nested arrows are already available.
+                    // Phase 1: declare all arrow functions and function expressions (MemberRef tokens)
                     DeclarePhase1AnonymousCallables(discoveredCallables, _ilGenerator.MetadataBuilder);
                 }
-                
-                // Phase 1b: Let the existing generators run (classes and function declarations)
-                _twoPhaseCoordinator.RunPhase1Declaration(() =>
+
+                // Enable strict mode before any body compilation so that expression emission cannot compile.
+                _twoPhaseCoordinator.EnableStrictMode();
+
+                // Phase 2: Compile bodies using existing generators.
+                _twoPhaseCoordinator.RunPhase2BodyCompilation(() =>
                 {
-                    // Classes and function declarations - these will compile bodies that may
-                    // reference the pre-declared arrows/function expressions
+                    if (discoveredCallables != null)
+                    {
+                        CompilePhase2AnonymousCallables(discoveredCallables, _ilGenerator.MetadataBuilder);
+                    }
+
                     _classesGenerator.DeclareClasses(symbolTable);
                     _functionGenerator.DeclareFunctions(symbolTable);
                 });
-                
-                // Phase 1 complete: Enable strict mode for main body emission (Phase 2)
-                // This enforces the Milestone 1 invariant: "expression emission never triggers compilation"
-                _twoPhaseCoordinator.EnableStrictMode();
             }
             else
             {

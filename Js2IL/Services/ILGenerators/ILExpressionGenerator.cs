@@ -377,13 +377,14 @@ namespace Js2IL.Services.ILGenerators
                         // Milestone 1: In strict mode (two-phase compilation), lookup the pre-declared handle
                         // instead of triggering compilation. This satisfies the invariant:
                         // "expression emission never triggers compilation"
-                        System.Reflection.Metadata.MethodDefinitionHandle methodHandle;
-                        var declaredStore = _owner.DeclaredCallableStore;
-                        if (declaredStore.StrictMode)
+                        System.Reflection.Metadata.EntityHandle methodToken;
+                        var registry = _owner.TwoPhaseCoordinator?.Registry;
+                        if (registry?.StrictMode == true)
                         {
-                            // Strict mode: must lookup from pre-declared store
-                            methodHandle = declaredStore.GetHandle(arrowFunction);
-                            if (methodHandle.IsNil)
+                            // Strict mode: must lookup from the canonical CallableRegistry
+                            if (_owner.TwoPhaseCoordinator == null ||
+                                !_owner.TwoPhaseCoordinator.TryGetToken(arrowFunction, out methodToken) ||
+                                methodToken.IsNil)
                             {
                                 throw new InvalidOperationException(
                                     $"[TwoPhase] Arrow function at {ilMethodName} was not pre-declared during Phase 1.");
@@ -392,18 +393,22 @@ namespace Js2IL.Services.ILGenerators
                         else
                         {
                             // Legacy mode: compile on demand
-                            methodHandle = _owner.GenerateArrowFunctionMethod(arrowFunction, registryScopeName, ilMethodName, paramNames);
+                            var compiled = _owner.GenerateArrowFunctionMethod(arrowFunction, registryScopeName, ilMethodName, paramNames);
+                            methodToken = (System.Reflection.Metadata.EntityHandle)compiled;
                         }
 
                         // Register arrow function with parameter count if it has a name (assigned to a variable)
                         if (!string.IsNullOrEmpty(_owner.CurrentAssignmentTarget))
                         {
-                            _owner.RegisterFunction(_owner.CurrentAssignmentTarget, methodHandle, paramNames.Length);
+                            if (methodToken.Kind == System.Reflection.Metadata.HandleKind.MethodDefinition)
+                            {
+                                _owner.RegisterFunction(_owner.CurrentAssignmentTarget, (System.Reflection.Metadata.MethodDefinitionHandle)methodToken, paramNames.Length);
+                            }
                         }
 
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldftn);
-                        _il.Token(methodHandle);
+                        _il.Token(methodToken);
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
                         var ctorRef = _bclReferences.GetFuncCtorRef(paramNames.Length);
                         _il.Token(ctorRef);
@@ -472,13 +477,14 @@ namespace Js2IL.Services.ILGenerators
                         
                         // Milestone 1: In strict mode (two-phase compilation), lookup the pre-declared handle
                         // instead of triggering compilation.
-                        System.Reflection.Metadata.MethodDefinitionHandle methodHandle;
-                        var declaredStore = _owner.DeclaredCallableStore;
-                        if (declaredStore.StrictMode)
+                        System.Reflection.Metadata.EntityHandle methodToken;
+                        var registry = _owner.TwoPhaseCoordinator?.Registry;
+                        if (registry?.StrictMode == true)
                         {
-                            // Strict mode: must lookup from pre-declared store
-                            methodHandle = declaredStore.GetHandle(funcExpr);
-                            if (methodHandle.IsNil)
+                            // Strict mode: must lookup from the canonical CallableRegistry
+                            if (_owner.TwoPhaseCoordinator == null ||
+                                !_owner.TwoPhaseCoordinator.TryGetToken(funcExpr, out methodToken) ||
+                                methodToken.IsNil)
                             {
                                 throw new InvalidOperationException(
                                     $"[TwoPhase] Function expression at {ilMethodName} was not pre-declared during Phase 1.");
@@ -487,12 +493,13 @@ namespace Js2IL.Services.ILGenerators
                         else
                         {
                             // Legacy mode: compile on demand
-                            methodHandle = _owner.GenerateFunctionExpressionMethod(funcExpr, registryScopeName, ilMethodName, paramNames);
+                            var compiled = _owner.GenerateFunctionExpressionMethod(funcExpr, registryScopeName, ilMethodName, paramNames);
+                            methodToken = (System.Reflection.Metadata.EntityHandle)compiled;
                         }
 
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldftn);
-                        _il.Token(methodHandle);
+                        _il.Token(methodToken);
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
                         var ctorRef = _bclReferences.GetFuncCtorRef(paramNames.Length);
                         _il.Token(ctorRef);
@@ -1585,7 +1592,7 @@ namespace Js2IL.Services.ILGenerators
             bool isLocalVariable = functionVariable.LocalSlot >= 0;
 
             // For field variables, we'll need scope reference for store operations
-            ScopeObjectReference scopeObjectReference = default;
+            ScopeObjectReference scopeObjectReference = new ScopeObjectReference { Location = ObjectReferenceLocation.Local, Address = -1 };
             if (!isLocalVariable)
             {
                 scopeObjectReference = _variables.GetScopeLocalSlot(functionVariable.ScopeName);
@@ -1974,7 +1981,7 @@ namespace Js2IL.Services.ILGenerators
                 bool isLocalVariable = variable.LocalSlot >= 0;
                 
                 // Load the appropriate scope instance that holds this field (only for field variables)
-                ScopeObjectReference scopeSlot = default;
+                ScopeObjectReference scopeSlot = new ScopeObjectReference { Location = ObjectReferenceLocation.Local, Address = -1 };
                 if (!isLocalVariable)
                 {
                     scopeSlot = _variables.GetScopeLocalSlot(variable.ScopeName);

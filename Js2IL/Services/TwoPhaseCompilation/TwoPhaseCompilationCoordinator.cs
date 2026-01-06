@@ -18,14 +18,13 @@ namespace Js2IL.Services.TwoPhaseCompilation;
 /// <remarks>
 /// Milestone 1 Implementation:
 /// - Coordinator discovers callables and populates CallableRegistry with signatures.
-/// - Phase 1 declaration still combines signature+body (future milestones will split).
-/// - After Phase 1 completes, strict mode is enabled so expression emission uses lookup-only.
+/// - Phase 1 declares callable tokens without compiling bodies (Option B: MemberRefs).
+/// - Strict mode is enabled before Phase 2 so expression emission uses lookup-only.
 /// - See docs/TwoPhaseCompilationPipeline.md for the full design.
 /// </remarks>
 public sealed class TwoPhaseCompilationCoordinator
 {
     private readonly ILogger _logger;
-    private readonly DeclaredCallableStore _declaredCallableStore;
     private readonly bool _verbose;
     
     // Registry for storing callable declarations (CallableId-keyed, per design doc)
@@ -34,12 +33,10 @@ public sealed class TwoPhaseCompilationCoordinator
 
     public TwoPhaseCompilationCoordinator(
         ILogger logger, 
-        CompilerOptions compilerOptions,
-        DeclaredCallableStore declaredCallableStore)
+        CompilerOptions compilerOptions)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _verbose = compilerOptions?.Verbose ?? false;
-        _declaredCallableStore = declaredCallableStore ?? throw new ArgumentNullException(nameof(declaredCallableStore));
     }
 
     /// <summary>
@@ -134,7 +131,7 @@ public sealed class TwoPhaseCompilationCoordinator
     /// Registers a method token for a callable by its AST node.
     /// Called by generators after creating a MethodDefinitionHandle.
     /// </summary>
-    public void RegisterToken(Node astNode, MethodDefinitionHandle token)
+    public void RegisterToken(Node astNode, EntityHandle token)
     {
         if (_registry == null || _discoveredCallables == null)
         {
@@ -152,7 +149,7 @@ public sealed class TwoPhaseCompilationCoordinator
     /// <summary>
     /// Attempts to get a declared token for an AST node via the CallableRegistry.
     /// </summary>
-    public bool TryGetToken(Node astNode, out MethodDefinitionHandle token)
+    public bool TryGetToken(Node astNode, out EntityHandle token)
     {
         token = default;
         if (_registry == null || _discoveredCallables == null)
@@ -193,11 +190,6 @@ public sealed class TwoPhaseCompilationCoordinator
             _logger.WriteLine("[TwoPhase] Phase 1 Declaration: Creating method tokens...");
         }
 
-        // NOTE: Strict mode is OFF during Phase 1 declaration.
-        // Arrows/function expressions inside classes are compiled during ClassesGenerator.DeclareClasses,
-        // and they need to compile on-demand. Strict mode will be enabled AFTER Phase 1 completes.
-        _declaredCallableStore.StrictMode = false;
-        
         // For Milestone 1, we delegate to the existing declaration code
         // which still combines declaration and body compilation.
         // Future milestones will split this into signature-only + body compilation.
@@ -205,19 +197,24 @@ public sealed class TwoPhaseCompilationCoordinator
 
         if (_verbose)
         {
-            var stats = _declaredCallableStore.GetStats();
-            _logger.WriteLine($"[TwoPhase] Phase 1 Declaration complete. Declared: {stats.ByAstNode} by node, {stats.ByScopeName} by scope name.");
+            if (_registry != null)
+            {
+                _logger.WriteLine($"[TwoPhase] Phase 1 Declaration complete. Tokens allocated: {_registry.TokensAllocated}/{_registry.Count}.");
+            }
+            else
+            {
+                _logger.WriteLine("[TwoPhase] Phase 1 Declaration complete.");
+            }
         }
     }
     
     /// <summary>
     /// Enables strict mode after Phase 1 declaration is complete.
     /// This enforces the Milestone 1 invariant: "expression emission never triggers compilation"
-    /// by making DeclaredCallableStore throw if a lookup fails.
+    /// by making CallableRegistry throw if a lookup fails.
     /// </summary>
     public void EnableStrictMode()
     {
-        _declaredCallableStore.StrictMode = true;
         if (_registry != null)
         {
             _registry.StrictMode = true;

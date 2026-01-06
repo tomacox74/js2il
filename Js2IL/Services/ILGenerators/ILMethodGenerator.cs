@@ -28,7 +28,7 @@ namespace Js2IL.Services.ILGenerators
         private string? _currentClassName;
         private string? _currentAssignmentTarget;
         private readonly Dictionary<string, string> _variableToClass = new();
-        private readonly DeclaredCallableStore _declaredCallableStore;
+        private readonly TwoPhaseCompilationCoordinator? _twoPhaseCoordinator;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -62,7 +62,7 @@ namespace Js2IL.Services.ILGenerators
         internal IMethodExpressionEmitter ExpressionEmitter => _expressionEmitter;
         internal FunctionRegistry? FunctionRegistry => _functionRegistry;
         internal SymbolTables.SymbolTable? SymbolTable => _symbolTable;
-        internal DeclaredCallableStore DeclaredCallableStore => _declaredCallableStore;
+        internal TwoPhaseCompilationCoordinator? TwoPhaseCoordinator => _twoPhaseCoordinator;
 
         private readonly FunctionRegistry? _functionRegistry;
         private readonly SymbolTables.SymbolTable? _symbolTable;
@@ -86,7 +86,7 @@ namespace Js2IL.Services.ILGenerators
             _currentClassName = currentClassName;
             _symbolTable = symbolTable;
             _serviceProvider = serviceProvider;
-            _declaredCallableStore = serviceProvider.GetRequiredService<DeclaredCallableStore>();
+            _twoPhaseCoordinator = serviceProvider.GetService<TwoPhaseCompilationCoordinator>();
         }
 
         // Allow expression generator to record variable->class mapping when emitting `new ClassName()` in assignments/initializers
@@ -1263,11 +1263,13 @@ namespace Js2IL.Services.ILGenerators
 
         internal MethodDefinitionHandle GenerateFunctionExpressionMethod(FunctionExpression funcExpr, string registryScopeName, string ilMethodName, string[] paramNames)
         {
-            // Phase 1 lookup: Check if this function expression was already declared
-            // If so, return the pre-declared handle without re-compiling
-            if (_declaredCallableStore.TryGetHandle(funcExpr, out var existingHandle))
+            // Two-phase lookup: only short-circuit when we already have a MethodDef.
+            // Phase 1 may have stored a MemberRef (signature-only) which is not a compiled body.
+            if (_twoPhaseCoordinator != null &&
+                _twoPhaseCoordinator.TryGetToken(funcExpr, out var existingToken) &&
+                existingToken.Kind == System.Reflection.Metadata.HandleKind.MethodDefinition)
             {
-                return existingHandle;
+                return (System.Reflection.Metadata.MethodDefinitionHandle)existingToken;
             }
 
             var functionVariables = new Variables(_variables, registryScopeName, paramNames, isNestedFunction: true);
@@ -1487,9 +1489,9 @@ namespace Js2IL.Services.ILGenerators
             // known so we can ldftn this method and store delegate before executing body. Current change ensures
             // internal binding exists so outer recursion pattern can be updated next.
             tb.AddTypeDefinition(TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, _bclReferences.ObjectType);
-            
-            // Register in DeclaredCallableStore for future lookups
-            _declaredCallableStore.RegisterFunctionExpression(funcExpr, mdh);
+
+            // Two-phase: register the token in the canonical CallableRegistry
+            _twoPhaseCoordinator?.RegisterToken(funcExpr, (System.Reflection.Metadata.EntityHandle)mdh);
             
             return mdh;
         }
