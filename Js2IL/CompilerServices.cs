@@ -67,6 +67,9 @@ public static class CompilerServices
         // DeclaredCallableStore holds pre-declared method handles for arrow/function expressions
         // populated in Phase 1, consumed in Phase 2 expression emission
         services.AddSingleton<DeclaredCallableStore>();
+        
+        // CallableDeclarationService handles Phase 1 declaration of arrows and function expressions
+        services.AddTransient<CallableDeclarationService>();
 
         services.AddTransient<JsMethodCompiler>();
         

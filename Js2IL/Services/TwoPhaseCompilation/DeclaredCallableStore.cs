@@ -30,6 +30,12 @@ public sealed class DeclaredCallableStore
     
     // Keyed by scope name for function declarations
     private readonly ConcurrentDictionary<string, MethodDefinitionHandle> _byScopeName = new();
+    
+    /// <summary>
+    /// When true, GetHandle and GetHandleStrict will throw if the handle is not found.
+    /// This is the strict mode for Milestone 1 where all callables must be pre-declared.
+    /// </summary>
+    public bool StrictMode { get; set; } = false;
 
     /// <summary>
     /// Registers a method handle for an arrow function expression.
@@ -91,6 +97,35 @@ public sealed class DeclaredCallableStore
     public bool Contains(Node node)
     {
         return _byAstNode.ContainsKey(node);
+    }
+
+    /// <summary>
+    /// Gets the pre-declared method handle for an AST node, throwing if not found in strict mode.
+    /// </summary>
+    /// <param name="node">The AST node to look up.</param>
+    /// <returns>The method handle, or default if not found and not in strict mode.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when in strict mode and the handle is not found.</exception>
+    public MethodDefinitionHandle GetHandle(Node node)
+    {
+        if (_byAstNode.TryGetValue(node, out var handle))
+        {
+            return handle;
+        }
+        
+        if (StrictMode)
+        {
+            var location = node switch
+            {
+                ArrowFunctionExpression a => $"ArrowFunction_L{a.Location.Start.Line}C{a.Location.Start.Column}",
+                FunctionExpression f => $"FunctionExpression_L{f.Location.Start.Line}C{f.Location.Start.Column}",
+                _ => node.GetType().Name
+            };
+            throw new InvalidOperationException(
+                $"[TwoPhase] Strict mode violation: Callable at {location} was not pre-declared. " +
+                "This indicates a bug in Phase 1 discovery or declaration.");
+        }
+        
+        return default;
     }
 
     /// <summary>

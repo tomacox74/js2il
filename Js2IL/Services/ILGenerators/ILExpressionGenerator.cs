@@ -373,7 +373,27 @@ namespace Js2IL.Services.ILGenerators
                             : $"ArrowFunction_L{arrowFunction.Location.Start.Line}C{arrowFunction.Location.Start.Column}";
                         var registryScopeName = $"{_variables.GetGlobalScopeName()}/{arrowBaseScopeName}";
                         var ilMethodName = $"ArrowFunction_L{arrowFunction.Location.Start.Line}C{arrowFunction.Location.Start.Column}";
-                        var methodHandle = _owner.GenerateArrowFunctionMethod(arrowFunction, registryScopeName, ilMethodName, paramNames);
+                        
+                        // Milestone 1: In strict mode (two-phase compilation), lookup the pre-declared handle
+                        // instead of triggering compilation. This satisfies the invariant:
+                        // "expression emission never triggers compilation"
+                        System.Reflection.Metadata.MethodDefinitionHandle methodHandle;
+                        var declaredStore = _owner.DeclaredCallableStore;
+                        if (declaredStore.StrictMode)
+                        {
+                            // Strict mode: must lookup from pre-declared store
+                            methodHandle = declaredStore.GetHandle(arrowFunction);
+                            if (methodHandle.IsNil)
+                            {
+                                throw new InvalidOperationException(
+                                    $"[TwoPhase] Arrow function at {ilMethodName} was not pre-declared during Phase 1.");
+                            }
+                        }
+                        else
+                        {
+                            // Legacy mode: compile on demand
+                            methodHandle = _owner.GenerateArrowFunctionMethod(arrowFunction, registryScopeName, ilMethodName, paramNames);
+                        }
 
                         // Register arrow function with parameter count if it has a name (assigned to a variable)
                         if (!string.IsNullOrEmpty(_owner.CurrentAssignmentTarget))
@@ -449,7 +469,26 @@ namespace Js2IL.Services.ILGenerators
                         }
                         var registryScopeName = $"{_variables.GetGlobalScopeName()}/{baseScopeName}";
                         var ilMethodName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
-                        var methodHandle = _owner.GenerateFunctionExpressionMethod(funcExpr, registryScopeName, ilMethodName, paramNames);
+                        
+                        // Milestone 1: In strict mode (two-phase compilation), lookup the pre-declared handle
+                        // instead of triggering compilation.
+                        System.Reflection.Metadata.MethodDefinitionHandle methodHandle;
+                        var declaredStore = _owner.DeclaredCallableStore;
+                        if (declaredStore.StrictMode)
+                        {
+                            // Strict mode: must lookup from pre-declared store
+                            methodHandle = declaredStore.GetHandle(funcExpr);
+                            if (methodHandle.IsNil)
+                            {
+                                throw new InvalidOperationException(
+                                    $"[TwoPhase] Function expression at {ilMethodName} was not pre-declared during Phase 1.");
+                            }
+                        }
+                        else
+                        {
+                            // Legacy mode: compile on demand
+                            methodHandle = _owner.GenerateFunctionExpressionMethod(funcExpr, registryScopeName, ilMethodName, paramNames);
+                        }
 
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldftn);

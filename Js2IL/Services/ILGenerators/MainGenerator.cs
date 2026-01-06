@@ -25,6 +25,8 @@ namespace Js2IL.Services.ILGenerators
         private readonly ClassRegistry _classRegistry = new();
         
         private readonly TwoPhaseCompilationCoordinator? _twoPhaseCoordinator;
+        private readonly CallableDeclarationService? _callableDeclarationService;
+        private readonly IServiceProvider _serviceProvider;
 
         public MainGenerator(IServiceProvider serviceProvider, Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, SymbolTable symbolTable)
         {
@@ -34,17 +36,29 @@ namespace Js2IL.Services.ILGenerators
             if (bclReferences == null) throw new ArgumentNullException(nameof(bclReferences));
             if (metadataBuilder == null) throw new ArgumentNullException(nameof(metadataBuilder));
             
+            _serviceProvider = serviceProvider;
             _bclReferences = bclReferences;
+            _methodBodyStreamEncoder = methodBodyStreamEncoder;
             var compilerOptions = serviceProvider.GetRequiredService<CompilerOptions>();
             _functionGenerator = new JavaScriptFunctionGenerator(serviceProvider, variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, symbolTable);
             _ilGenerator = new ILMethodGenerator(serviceProvider, variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, _functionGenerator.FunctionRegistry, symbolTable: symbolTable);
             _classesGenerator = new ClassesGenerator(serviceProvider,metadataBuilder, bclReferences, methodBodyStreamEncoder, _classRegistry, variables);
-            this._methodBodyStreamEncoder = methodBodyStreamEncoder;
             
             // Initialize two-phase coordinator if enabled
             if (compilerOptions.TwoPhaseCompilation)
             {
                 _twoPhaseCoordinator = serviceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
+                _callableDeclarationService = serviceProvider.GetRequiredService<CallableDeclarationService>();
+                
+                // Configure the declaration service with the compilation context
+                _callableDeclarationService.Configure(
+                    metadataBuilder,
+                    methodBodyStreamEncoder,
+                    bclReferences,
+                    _classRegistry,
+                    _functionGenerator.FunctionRegistry,
+                    variables,
+                    symbolTable);
             }
         }
 
@@ -104,13 +118,31 @@ namespace Js2IL.Services.ILGenerators
         /// </summary>
         public void DeclareClassesAndFunctions(SymbolTable symbolTable)
         {
-            if (_twoPhaseCoordinator != null)
+            if (_twoPhaseCoordinator != null && _callableDeclarationService != null)
             {
-                // Two-phase path: discover callables, then delegate to legacy declaration
+                // Two-phase path: discover callables, then declare all in Phase 1
                 _twoPhaseCoordinator.RunPhase1Discovery(symbolTable);
+                
+                // Phase 1: Declaration (strict mode NOT enabled yet)
+                // We declare in a specific order:
+                // 1. First, all arrows and function expressions (so they're available for nested compilation)
+                // 2. Then classes (which may contain arrows in constructors/methods)
+                // 3. Finally function declarations (which may contain nested functions)
+                var discoveredCallables = _twoPhaseCoordinator.DiscoveredCallables;
+                if (discoveredCallables != null)
+                {
+                    // Phase 1a: Declare all arrow functions and function expressions first
+                    // This populates DeclaredCallableStore so that when ClassesGenerator and
+                    // JavaScriptFunctionGenerator compile bodies, nested arrows are already available.
+                    _callableDeclarationService.DeclareAllCallables(discoveredCallables);
+                }
+                
+                // Phase 1b: Now enable strict mode and let the existing generators run
+                // At this point all arrows/function expressions should be declared
                 _twoPhaseCoordinator.RunPhase1Declaration(() =>
                 {
-                    // Legacy declaration path (will be replaced in Milestone 2+)
+                    // Classes and function declarations - these will compile bodies that may
+                    // reference the pre-declared arrows/function expressions
                     _classesGenerator.DeclareClasses(symbolTable);
                     _functionGenerator.DeclareFunctions(symbolTable);
                 });

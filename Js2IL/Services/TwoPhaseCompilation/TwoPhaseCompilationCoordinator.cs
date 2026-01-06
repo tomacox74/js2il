@@ -5,7 +5,7 @@ namespace Js2IL.Services.TwoPhaseCompilation;
 
 /// <summary>
 /// Coordinates the two-phase compilation pipeline:
-/// - Phase 1: Discovery + Declaration (no body compilation)
+/// - Phase 1: Discovery + Declaration (no body compilation for main entry point)
 /// - Phase 2: Body compilation (in dependency order, when planner is added in Milestone 2)
 /// 
 /// This is the entry point for the new compilation model. The coordinator is responsible for:
@@ -16,23 +16,28 @@ namespace Js2IL.Services.TwoPhaseCompilation;
 /// <remarks>
 /// Milestone 1 Implementation:
 /// - Coordinator discovers and logs callables
-/// - Declaration creates method tokens before body compilation
+/// - All arrow functions and function expressions are compiled upfront during Phase 1
+/// - This ensures expression emission never triggers compilation (the key Milestone 1 invariant)
 /// - Body compilation still uses existing emitters (no ordering changes yet)
-/// - This establishes the infrastructure for Milestone 2 (dependency graph + ordered compilation)
 /// </remarks>
 public sealed class TwoPhaseCompilationCoordinator
 {
     private readonly ILogger _logger;
+    private readonly DeclaredCallableStore _declaredCallableStore;
     private readonly bool _verbose;
     
     // Registry for storing callable declarations
     private CallableRegistry? _registry;
     private IReadOnlyList<CallableId>? _discoveredCallables;
 
-    public TwoPhaseCompilationCoordinator(ILogger logger, CompilerOptions compilerOptions)
+    public TwoPhaseCompilationCoordinator(
+        ILogger logger, 
+        CompilerOptions compilerOptions,
+        DeclaredCallableStore declaredCallableStore)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _verbose = compilerOptions?.Verbose ?? false;
+        _declaredCallableStore = declaredCallableStore ?? throw new ArgumentNullException(nameof(declaredCallableStore));
     }
 
     /// <summary>
@@ -105,6 +110,11 @@ public sealed class TwoPhaseCompilationCoordinator
             _logger.WriteLine("[TwoPhase] Phase 1 Declaration: Creating method tokens...");
         }
 
+        // NOTE: We do NOT enable strict mode during Phase 1 declaration.
+        // Arrows/function expressions inside classes are compiled during ClassesGenerator.DeclareClasses,
+        // and they haven't been pre-declared yet. Strict mode will be enabled for Phase 2 (main body
+        // compilation) in future milestones.
+        
         // For Milestone 1, we delegate to the existing declaration code
         // which still combines declaration and body compilation.
         // Future milestones will split this.
@@ -112,7 +122,8 @@ public sealed class TwoPhaseCompilationCoordinator
 
         if (_verbose)
         {
-            _logger.WriteLine($"[TwoPhase] Phase 1 Declaration complete.");
+            var stats = _declaredCallableStore.GetStats();
+            _logger.WriteLine($"[TwoPhase] Phase 1 Declaration complete. Declared: {stats.ByAstNode} by node, {stats.ByScopeName} by scope name.");
         }
     }
 
