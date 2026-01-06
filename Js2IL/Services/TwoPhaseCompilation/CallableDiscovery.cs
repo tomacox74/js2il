@@ -82,7 +82,7 @@ public sealed class CallableDiscovery
             _discovered.Add(callableId);
             
             // Recurse into nested functions
-            var functionScopeName = $"{_moduleName}/{funcName}";
+            var functionScopeName = $"{parentScopeName}/{funcName}";
             DiscoverFromScope(functionScope, functionScopeName);
         }
         else if (astNode is FunctionExpression funcExpr)
@@ -105,8 +105,8 @@ public sealed class CallableDiscovery
             
             // Recurse into nested functions
             var scopeName = funcName != null 
-                ? $"{_moduleName}/{funcName}" 
-                : $"{_moduleName}/FunctionExpression_{location}";
+                ? $"{parentScopeName}/{funcName}" 
+                : $"{parentScopeName}/FunctionExpression_{location}";
             DiscoverFromScope(functionScope, scopeName);
         }
         else if (astNode is ArrowFunctionExpression arrowExpr)
@@ -136,8 +136,8 @@ public sealed class CallableDiscovery
             
             // Recurse into nested functions (arrows can contain nested arrows/functions)
             var scopeName = assignmentTarget != null 
-                ? $"{_moduleName}/ArrowFunction_{assignmentTarget}" 
-                : $"{_moduleName}/ArrowFunction_{location}";
+                ? $"{parentScopeName}/ArrowFunction_{assignmentTarget}" 
+                : $"{parentScopeName}/ArrowFunction_{location}";
             DiscoverFromScope(functionScope, scopeName);
         }
     }
@@ -187,10 +187,9 @@ public sealed class CallableDiscovery
         }
         
         // Discover methods
-        foreach (var member in classDecl.Body.Body.OfType<MethodDefinition>())
+        foreach (var member in classDecl.Body.Body.OfType<MethodDefinition>().Where(m => m.Key is Identifier))
         {
-            var methodKey = member.Key as Identifier;
-            if (methodKey == null) continue;
+            var methodKey = (Identifier)member.Key;
             
             var methodName = methodKey.Name;
             if (methodName == "constructor") continue; // Already handled
@@ -213,7 +212,7 @@ public sealed class CallableDiscovery
         
         // Recurse into class scope for any nested callables in method bodies
         // (e.g., arrows defined inside methods)
-        var classScopeName = $"{_moduleName}/{className}";
+        var classScopeName = $"{parentScopeName}/{className}";
         foreach (var child in classScope.Children)
         {
             if (child.Kind == ScopeKind.Function && child.AstNode is FunctionExpression)

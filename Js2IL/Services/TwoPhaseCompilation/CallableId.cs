@@ -130,10 +130,14 @@ public sealed record CallableId
 
     public override string ToString() => DisplayName;
 
-    // Equality excludes AstNode (reference comparison would break caching)
+    /// <summary>
+    /// Custom equality that excludes AstNode (reference comparison would break caching).
+    /// Only compares Kind, DeclaringScopeName, Name, Location, and JsParamCount.
+    /// </summary>
     public bool Equals(CallableId? other)
     {
         if (other is null) return false;
+        if (ReferenceEquals(this, other)) return true;
         return Kind == other.Kind &&
                DeclaringScopeName == other.DeclaringScopeName &&
                Name == other.Name &&

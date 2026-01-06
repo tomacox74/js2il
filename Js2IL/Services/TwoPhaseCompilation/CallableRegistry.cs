@@ -118,7 +118,7 @@ public sealed class CallableRegistry : ICallableCatalog, ICallableDeclarationWri
         {
             lock (_lock)
             {
-                return _callables.Keys.ToList();
+                return _callables.Keys.ToList().AsReadOnly();
             }
         }
     }
@@ -139,9 +139,14 @@ public sealed class CallableRegistry : ICallableCatalog, ICallableDeclarationWri
     {
         lock (_lock)
         {
-            if (_callables.ContainsKey(id))
+            if (_callables.TryGetValue(id, out var existing))
             {
                 // Allow re-declaration with same signature (idempotent)
+                if (!Equals(existing.Signature, signature))
+                {
+                    throw new InvalidOperationException(
+                        $"Callable '{id.DisplayName}' re-declared with a different signature.");
+                }
                 return;
             }
             

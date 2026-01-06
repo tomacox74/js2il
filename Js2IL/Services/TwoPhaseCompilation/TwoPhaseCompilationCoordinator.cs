@@ -148,11 +148,13 @@ public sealed class TwoPhaseCompilationCoordinator
     /// </summary>
     /// <param name="symbolTable">The symbol table for the module.</param>
     /// <param name="declareAction">Action to declare callables (existing generators).</param>
-    /// <param name="compileAction">Action to compile bodies (existing generators).</param>
+    /// <param name="compileAction">Action to compile bodies (existing generators). Pass null to skip Phase 2.</param>
+    /// <param name="skipPhase2">If true, Phase 2 body compilation is skipped (for Milestone 1 where declareAction includes body compilation).</param>
     public void RunFullPipeline(
         SymbolTable symbolTable,
         Action declareAction,
-        Action compileAction)
+        Action? compileAction = null,
+        bool skipPhase2 = false)
     {
         if (_verbose)
         {
@@ -168,9 +170,9 @@ public sealed class TwoPhaseCompilationCoordinator
         RunPhase1Declaration(declareAction);
 
         // Phase 2: Body Compilation
-        // For Milestone 1, this is already done in declareAction
-        // The compileAction is for future use when we split declare/compile
-        if (compileAction != declareAction)
+        // For Milestone 1, skipPhase2 should be true since declareAction includes body compilation
+        // Future milestones will pass skipPhase2=false and a separate compileAction
+        if (!skipPhase2 && compileAction != null)
         {
             RunPhase2BodyCompilation(compileAction);
         }
