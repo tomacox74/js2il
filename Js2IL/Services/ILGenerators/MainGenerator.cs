@@ -27,7 +27,7 @@ namespace Js2IL.Services.ILGenerators
         private readonly CompilerOptions _compilerOptions;
         private readonly TwoPhaseCompilationCoordinator? _twoPhaseCoordinator;
 
-        public MainGenerator(IServiceProvider serviceProvider, Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, SymbolTable symbolTable, CompilerOptions? compilerOptions = null)
+        public MainGenerator(IServiceProvider serviceProvider, Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, SymbolTable symbolTable)
         {
             _symbolTable = symbolTable ?? throw new ArgumentNullException(nameof(symbolTable));
 
@@ -36,7 +36,7 @@ namespace Js2IL.Services.ILGenerators
             if (metadataBuilder == null) throw new ArgumentNullException(nameof(metadataBuilder));
             
             _bclReferences = bclReferences;
-            _compilerOptions = compilerOptions ?? new CompilerOptions();
+            _compilerOptions = serviceProvider.GetRequiredService<CompilerOptions>();
             _functionGenerator = new JavaScriptFunctionGenerator(serviceProvider, variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, symbolTable);
             _ilGenerator = new ILMethodGenerator(serviceProvider, variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, _functionGenerator.FunctionRegistry, symbolTable: symbolTable);
             _classesGenerator = new ClassesGenerator(serviceProvider,metadataBuilder, bclReferences, methodBodyStreamEncoder, _classRegistry, variables);
