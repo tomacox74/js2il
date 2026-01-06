@@ -3,6 +3,7 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection;
 using Js2IL.IL;
+using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +21,7 @@ namespace Js2IL.Services.ILGenerators
         private readonly FunctionRegistry _functionRegistry = new();
         private readonly SymbolTable? _symbolTable;
         private readonly CompiledMethodCache _compiledMethodCache;
+        private readonly DeclaredCallableStore _declaredCallableStore;
 
         public FunctionRegistry FunctionRegistry => _functionRegistry;
 
@@ -38,6 +40,7 @@ namespace Js2IL.Services.ILGenerators
             _classRegistry = classRegistry ?? new ClassRegistry();
             _symbolTable = symbolTable;
             _compiledMethodCache = serviceProvider.GetRequiredService<CompiledMethodCache>();
+            _declaredCallableStore = serviceProvider.GetRequiredService<DeclaredCallableStore>();
             this._serviceProvider = serviceProvider;
         }
 
@@ -110,6 +113,9 @@ namespace Js2IL.Services.ILGenerators
                         {
                             _compiledMethodCache.Add(nestedBinding, nestedMethod);
                         }
+                        
+                        // Register in DeclaredCallableStore for two-phase compilation lookup
+                        _declaredCallableStore.RegisterByScopeName(nestedRegistryScopeName, nestedMethod);
                     }
                 }
 
@@ -124,6 +130,9 @@ namespace Js2IL.Services.ILGenerators
                 {
                     _compiledMethodCache.Add(binding, methodDefinition);
                 }
+                
+                // Register in DeclaredCallableStore for two-phase compilation lookup
+                _declaredCallableStore.RegisterByScopeName(registryScopeName, methodDefinition);
 
                 globalMethods.Add((functionName, methodDefinition, funcScope, functionVariables, nestedTb, firstNestedMethod));
             }

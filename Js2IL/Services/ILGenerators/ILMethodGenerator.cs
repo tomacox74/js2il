@@ -6,6 +6,7 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using Acornima;
 using Acornima.Ast;
+using Js2IL.Services.TwoPhaseCompilation;
 using Microsoft.Extensions.DependencyInjection;
 using Js2IL.Utilities.Ecma335;
 
@@ -27,6 +28,7 @@ namespace Js2IL.Services.ILGenerators
         private string? _currentClassName;
         private string? _currentAssignmentTarget;
         private readonly Dictionary<string, string> _variableToClass = new();
+        private readonly DeclaredCallableStore _declaredCallableStore;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -60,6 +62,7 @@ namespace Js2IL.Services.ILGenerators
         internal IMethodExpressionEmitter ExpressionEmitter => _expressionEmitter;
         internal FunctionRegistry? FunctionRegistry => _functionRegistry;
         internal SymbolTables.SymbolTable? SymbolTable => _symbolTable;
+        internal DeclaredCallableStore DeclaredCallableStore => _declaredCallableStore;
 
         private readonly FunctionRegistry? _functionRegistry;
         private readonly SymbolTables.SymbolTable? _symbolTable;
@@ -83,6 +86,7 @@ namespace Js2IL.Services.ILGenerators
             _currentClassName = currentClassName;
             _symbolTable = symbolTable;
             _serviceProvider = serviceProvider;
+            _declaredCallableStore = serviceProvider.GetRequiredService<DeclaredCallableStore>();
         }
 
         // Allow expression generator to record variable->class mapping when emitting `new ClassName()` in assignments/initializers
@@ -1259,6 +1263,13 @@ namespace Js2IL.Services.ILGenerators
 
         internal MethodDefinitionHandle GenerateFunctionExpressionMethod(FunctionExpression funcExpr, string registryScopeName, string ilMethodName, string[] paramNames)
         {
+            // Phase 1 lookup: Check if this function expression was already declared
+            // If so, return the pre-declared handle without re-compiling
+            if (_declaredCallableStore.TryGetHandle(funcExpr, out var existingHandle))
+            {
+                return existingHandle;
+            }
+
             var functionVariables = new Variables(_variables, registryScopeName, paramNames, isNestedFunction: true);
             var pnames = paramNames ?? Array.Empty<string>();
             // Share the parent ClassRegistry and FunctionRegistry so nested functions can resolve declared classes
@@ -1476,6 +1487,10 @@ namespace Js2IL.Services.ILGenerators
             // known so we can ldftn this method and store delegate before executing body. Current change ensures
             // internal binding exists so outer recursion pattern can be updated next.
             tb.AddTypeDefinition(TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, _bclReferences.ObjectType);
+            
+            // Register in DeclaredCallableStore for future lookups
+            _declaredCallableStore.RegisterFunctionExpression(funcExpr, mdh);
+            
             return mdh;
         }
 

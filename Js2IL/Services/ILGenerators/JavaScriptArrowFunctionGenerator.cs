@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using Acornima.Ast;
+using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,7 @@ namespace Js2IL.Services.ILGenerators
         private readonly ClassRegistry _classRegistry;
         private readonly FunctionRegistry _functionRegistry;
         private readonly SymbolTable? _symbolTable;
+        private readonly DeclaredCallableStore _declaredCallableStore;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -38,6 +40,7 @@ namespace Js2IL.Services.ILGenerators
             _functionRegistry = functionRegistry;
             _symbolTable = symbolTable;
             _serviceProvider = serviceProvider;
+            _declaredCallableStore = serviceProvider.GetRequiredService<DeclaredCallableStore>();
         }
 
         internal MethodDefinitionHandle GenerateArrowFunctionMethod(
@@ -46,6 +49,13 @@ namespace Js2IL.Services.ILGenerators
             string ilMethodName,
             string[] paramNames)
         {
+            // Phase 1 lookup: Check if this arrow function was already declared
+            // If so, return the pre-declared handle without re-compiling
+            if (_declaredCallableStore.TryGetHandle(arrowFunction, out var existingHandle))
+            {
+                return existingHandle;
+            }
+
             // Try the new IR-based compilation pipeline first
             if (_symbolTable != null)
             {
@@ -57,6 +67,8 @@ namespace Js2IL.Services.ILGenerators
                     IR.IRPipelineMetrics.RecordArrowFunctionAttempt(!compiledMethod.IsNil);
                     if (!compiledMethod.IsNil)
                     {
+                        // Register in DeclaredCallableStore for future lookups
+                        _declaredCallableStore.RegisterArrowFunction(arrowFunction, compiledMethod);
                         return compiledMethod;
                     }
                 }
@@ -305,6 +317,10 @@ namespace Js2IL.Services.ILGenerators
             var tb = new TypeBuilder(_metadataBuilder, "Functions", ilMethodName);
             var mdh = tb.AddMethodDefinition(MethodAttributes.Static | MethodAttributes.Public | MethodAttributes.HideBySig, ilMethodName, methodSig, bodyOffset, firstParam);
             tb.AddTypeDefinition(TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, _bclReferences.ObjectType);
+            
+            // Register in DeclaredCallableStore for future lookups (legacy path)
+            _declaredCallableStore.RegisterArrowFunction(arrowFunction, mdh);
+            
             return mdh;
         }
     }

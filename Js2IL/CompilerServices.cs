@@ -63,6 +63,10 @@ public static class CompilerServices
         // It is registered here so that downstream components can start depending on it without breaking changes
         // when the callable metadata discovery and registration pipeline is fully integrated.
         services.AddSingleton<CallableMetadataRegistry>();
+        
+        // DeclaredCallableStore holds pre-declared method handles for arrow/function expressions
+        // populated in Phase 1, consumed in Phase 2 expression emission
+        services.AddSingleton<DeclaredCallableStore>();
 
         services.AddTransient<JsMethodCompiler>();
         
