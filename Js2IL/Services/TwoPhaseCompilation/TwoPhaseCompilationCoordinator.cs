@@ -1,6 +1,8 @@
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
+using System.Linq;
 using Acornima.Ast;
+using Js2IL.Services.ILGenerators;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
 
@@ -108,6 +110,134 @@ public sealed class TwoPhaseCompilationCoordinator
 
             compileClassesAndFunctionsPhase2();
         });
+    }
+
+    /// <summary>
+    /// Phase 2 (Milestone 1): Compile anonymous callables (arrows + function expressions).
+    ///
+    /// This logic previously lived in MainGenerator; keeping it here makes MainGenerator a thin
+    /// orchestration layer and keeps the two-phase implementation in one place.
+    /// </summary>
+    internal void CompilePhase2AnonymousCallables(
+        IReadOnlyList<CallableId> callables,
+        MetadataBuilder metadataBuilder,
+        IServiceProvider serviceProvider,
+        Variables rootVariables,
+        BaseClassLibraryReferences bclReferences,
+        MethodBodyStreamEncoder methodBodyStreamEncoder,
+        ClassRegistry classRegistry,
+        FunctionRegistry functionRegistry,
+        SymbolTable symbolTable)
+    {
+        foreach (var callable in callables)
+        {
+            switch (callable.Kind)
+            {
+                case CallableKind.Arrow:
+                    if (callable.AstNode is ArrowFunctionExpression arrowExpr)
+                    {
+                        CompileArrowFunction(callable, arrowExpr, metadataBuilder, serviceProvider, rootVariables, bclReferences, methodBodyStreamEncoder, classRegistry, functionRegistry, symbolTable);
+                    }
+                    break;
+
+                case CallableKind.FunctionExpression:
+                    if (callable.AstNode is FunctionExpression funcExpr)
+                    {
+                        CompileFunctionExpression(callable, funcExpr, metadataBuilder, serviceProvider, rootVariables, bclReferences, methodBodyStreamEncoder, classRegistry, functionRegistry, symbolTable);
+                    }
+                    break;
+            }
+        }
+    }
+
+    private void CompileArrowFunction(
+        CallableId callable,
+        ArrowFunctionExpression arrowExpr,
+        MetadataBuilder metadataBuilder,
+        IServiceProvider serviceProvider,
+        Variables rootVariables,
+        BaseClassLibraryReferences bclReferences,
+        MethodBodyStreamEncoder methodBodyStreamEncoder,
+        ClassRegistry classRegistry,
+        FunctionRegistry functionRegistry,
+        SymbolTable symbolTable)
+    {
+        var paramNames = ILMethodGenerator.ExtractParameterNames(arrowExpr.Params).ToArray();
+        var moduleName = symbolTable.Root.Name;
+
+        var arrowBaseScopeName = callable.Name != null
+            ? $"ArrowFunction_{callable.Name}"
+            : $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{arrowExpr.Location.Start.Column}";
+
+        var registryScopeName = $"{moduleName}/{arrowBaseScopeName}";
+        var ilMethodName = $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{arrowExpr.Location.Start.Column}";
+
+        var arrowGen = new JavaScriptArrowFunctionGenerator(
+            serviceProvider,
+            rootVariables,
+            bclReferences,
+            metadataBuilder,
+            methodBodyStreamEncoder,
+            classRegistry,
+            functionRegistry,
+            symbolTable);
+
+        arrowGen.GenerateArrowFunctionMethod(arrowExpr, registryScopeName, ilMethodName, paramNames);
+
+        if (_verbose)
+        {
+            _logger.WriteLine($"[TwoPhase] Phase 2: Compiled arrow: {ilMethodName}");
+        }
+    }
+
+    private void CompileFunctionExpression(
+        CallableId callable,
+        FunctionExpression funcExpr,
+        MetadataBuilder metadataBuilder,
+        IServiceProvider serviceProvider,
+        Variables rootVariables,
+        BaseClassLibraryReferences bclReferences,
+        MethodBodyStreamEncoder methodBodyStreamEncoder,
+        ClassRegistry classRegistry,
+        FunctionRegistry functionRegistry,
+        SymbolTable symbolTable)
+    {
+        var paramNames = ILMethodGenerator.ExtractParameterNames(funcExpr.Params).ToArray();
+
+        string baseScopeName;
+        if (funcExpr.Id is Identifier fid && !string.IsNullOrEmpty(fid.Name))
+        {
+            baseScopeName = fid.Name;
+        }
+        else if (callable.Name != null)
+        {
+            baseScopeName = $"FunctionExpression_{callable.Name}";
+        }
+        else
+        {
+            baseScopeName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
+        }
+
+        var moduleName = symbolTable.Root.Name;
+        var registryScopeName = $"{moduleName}/{baseScopeName}";
+        var ilMethodName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
+
+        var methodGen = new ILMethodGenerator(
+            serviceProvider,
+            rootVariables,
+            bclReferences,
+            metadataBuilder,
+            methodBodyStreamEncoder,
+            classRegistry,
+            functionRegistry,
+            symbolTable: symbolTable);
+
+        methodGen.GenerateFunctionExpressionMethod(funcExpr, registryScopeName, ilMethodName, paramNames);
+
+        if (_verbose)
+        {
+            _logger.WriteLine($"[TwoPhase] Phase 2: Compiled function expression: {ilMethodName}");
+        }
     }
 
     private void DeclarePhase1AnonymousCallablesTokens(IReadOnlyList<CallableId> callables, MetadataBuilder metadataBuilder)

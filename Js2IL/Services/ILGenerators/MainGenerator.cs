@@ -58,98 +58,6 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-        private void CompilePhase2AnonymousCallables(IReadOnlyList<CallableId> callables, MetadataBuilder metadataBuilder)
-        {
-            foreach (var callable in callables)
-            {
-                switch (callable.Kind)
-                {
-                    case CallableKind.Arrow:
-                        if (callable.AstNode is not ArrowFunctionExpression arrowExpr)
-                        {
-                            continue;
-                        }
-                        DeclareArrowFunction(callable, arrowExpr, metadataBuilder);
-                        break;
-
-                    case CallableKind.FunctionExpression:
-                        if (callable.AstNode is not FunctionExpression funcExpr)
-                        {
-                            continue;
-                        }
-                        DeclareFunctionExpression(callable, funcExpr, metadataBuilder);
-                        break;
-                }
-            }
-        }
-
-        private void DeclareArrowFunction(CallableId callable, ArrowFunctionExpression arrowExpr, MetadataBuilder metadataBuilder)
-        {
-            var paramNames = ILMethodGenerator.ExtractParameterNames(arrowExpr.Params).ToArray();
-            var moduleName = _symbolTable.Root.Name;
-            var arrowBaseScopeName = callable.Name != null
-                ? $"ArrowFunction_{callable.Name}"
-                : $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{arrowExpr.Location.Start.Column}";
-            var registryScopeName = $"{moduleName}/{arrowBaseScopeName}";
-            var ilMethodName = $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{arrowExpr.Location.Start.Column}";
-
-            var arrowGen = new JavaScriptArrowFunctionGenerator(
-                _serviceProvider,
-                _rootVariables,
-                _bclReferences,
-                metadataBuilder,
-                _methodBodyStreamEncoder,
-                _classRegistry,
-                _functionGenerator.FunctionRegistry,
-                _symbolTable);
-
-            arrowGen.GenerateArrowFunctionMethod(arrowExpr, registryScopeName, ilMethodName, paramNames);
-
-            if (_verbose)
-            {
-                _logger.WriteLine($"[TwoPhase] Phase 2: Compiled arrow: {ilMethodName}");
-            }
-        }
-
-        private void DeclareFunctionExpression(CallableId callable, FunctionExpression funcExpr, MetadataBuilder metadataBuilder)
-        {
-            var paramNames = ILMethodGenerator.ExtractParameterNames(funcExpr.Params).ToArray();
-            string baseScopeName;
-            if (funcExpr.Id is Identifier fid && !string.IsNullOrEmpty(fid.Name))
-            {
-                baseScopeName = fid.Name;
-            }
-            else if (callable.Name != null)
-            {
-                baseScopeName = $"FunctionExpression_{callable.Name}";
-            }
-            else
-            {
-                baseScopeName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
-            }
-
-            var moduleName = _symbolTable.Root.Name;
-            var registryScopeName = $"{moduleName}/{baseScopeName}";
-            var ilMethodName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
-
-            var methodGen = new ILMethodGenerator(
-                _serviceProvider,
-                _rootVariables,
-                _bclReferences,
-                metadataBuilder,
-                _methodBodyStreamEncoder,
-                _classRegistry,
-                _functionGenerator.FunctionRegistry,
-                symbolTable: _symbolTable);
-
-            methodGen.GenerateFunctionExpressionMethod(funcExpr, registryScopeName, ilMethodName, paramNames);
-
-            if (_verbose)
-            {
-                _logger.WriteLine($"[TwoPhase] Phase 2: Compiled function expression: {ilMethodName}");
-            }
-        }
-
         /// <summary>
         /// Determines if the global scope instance needs to be created.
         /// The instance is only needed when:
@@ -212,7 +120,16 @@ namespace Js2IL.Services.ILGenerators
                     symbolTable,
                     _ilGenerator.MetadataBuilder,
                     compileAnonymousCallablesPhase2: callables =>
-                        CompilePhase2AnonymousCallables(callables, _ilGenerator.MetadataBuilder),
+                        _twoPhaseCoordinator.CompilePhase2AnonymousCallables(
+                            callables,
+                            _ilGenerator.MetadataBuilder,
+                            _serviceProvider,
+                            _rootVariables,
+                            _bclReferences,
+                            _methodBodyStreamEncoder,
+                            _classRegistry,
+                            _functionGenerator.FunctionRegistry,
+                            _symbolTable),
                     compileClassesAndFunctionsPhase2: () =>
                     {
                         _classesGenerator.DeclareClasses(symbolTable);
