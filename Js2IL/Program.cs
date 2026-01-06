@@ -48,27 +48,12 @@ class Program
             // Version handling (PowerArgs default alias is -Version from property name)
             if (parsed.Version)
             {
+                var versionProvider = CompilerServices.BuildServiceProvider(new CompilerOptions());
+                var versionLogger = versionProvider.GetRequiredService<ILogger>();
                 var asm = Assembly.GetExecutingAssembly();
                 var name = asm.GetName();
                 var version = name.Version?.ToString() ?? "unknown";
-                Console.WriteLine($"js2il {version}");
-                return;
-            }
-
-            // Require InputFile unless in help/version mode (PowerArgs won't enforce without [ArgRequired])
-            if (string.IsNullOrWhiteSpace(parsed.InputFile))
-            {
-                Logger.WriteLineError("Error: InputFile is required.");
-                PrintUsage(Console.Error);
-                Environment.ExitCode = 1;
-                return;
-            }
-
-            // Validate input file exists (covers cases where user provides a non-existent file)
-            if (!File.Exists(parsed.InputFile))
-            {
-                Logger.WriteLineError($"Error: Input file '{parsed.InputFile}' does not exist.");
-                Environment.ExitCode = 1;
+                versionLogger.WriteLine($"js2il {version}");
                 return;
             }
 
@@ -78,31 +63,52 @@ class Program
                 Verbose = parsed.Verbose,
                 AnalyzeUnused = parsed.AnalyzeUnused
             });
+            var logger = servicesProvider.GetRequiredService<ILogger>();
+
+            // Require InputFile unless in help/version mode (PowerArgs won't enforce without [ArgRequired])
+            if (string.IsNullOrWhiteSpace(parsed.InputFile))
+            {
+                logger.WriteLineError("Error: InputFile is required.");
+                PrintUsage(logger);
+                Environment.ExitCode = 1;
+                return;
+            }
+
+            // Validate input file exists (covers cases where user provides a non-existent file)
+            if (!File.Exists(parsed.InputFile))
+            {
+                logger.WriteLineError($"Error: Input file '{parsed.InputFile}' does not exist.");
+                Environment.ExitCode = 1;
+                return;
+            }
+
             var compiler = servicesProvider.GetRequiredService<Compiler>();
             var success = compiler.Compile(parsed.InputFile);
             Environment.ExitCode = success ? 0 : 1;
         }
         catch (ArgException ex)
         {
-            Logger.WriteLineError(ex.Message);
-            // Avoid potential template generation issues by printing a simple usage message
-            PrintUsage(Console.Error);
+            // Args.Parse failed, so we need to create a minimal service provider for logging
+            var errorProvider = CompilerServices.BuildServiceProvider(new CompilerOptions());
+            var errorLogger = errorProvider.GetRequiredService<ILogger>();
+            errorLogger.WriteLineError(ex.Message);
+            PrintUsage(errorLogger);
             Environment.ExitCode = 1;
             return;
         }
     }
 
-    // Overload to print usage to a chosen writer (used for error cases to stderr)
-    private static void PrintUsage(TextWriter writer)
+    // Print usage information using the logger (outputs to stderr for error scenarios)
+    private static void PrintUsage(ILogger logger)
     {
-        writer.WriteLine("Usage: js2il <InputFile> [<OutputPath>] [options]");
-        writer.WriteLine();
-        writer.WriteLine("Option                 Description");
-        writer.WriteLine("-i, --input            The JavaScript file to convert (positional supported)");
-        writer.WriteLine("-o, --output           The output directory for the generated IL (created if missing)");
-        writer.WriteLine("-v, --verbose          Enable verbose output");
-        writer.WriteLine("-a, --analyzeunused    Analyze and report unused properties and methods");
-        writer.WriteLine("--version              Show version information and exit");
-        writer.WriteLine("-h, -?, --help         Show help and exit");
+        logger.WriteLineError("Usage: js2il <InputFile> [<OutputPath>] [options]");
+        logger.WriteLineError("");
+        logger.WriteLineError("Option                 Description");
+        logger.WriteLineError("-i, --input            The JavaScript file to convert (positional supported)");
+        logger.WriteLineError("-o, --output           The output directory for the generated IL (created if missing)");
+        logger.WriteLineError("-v, --verbose          Enable verbose output");
+        logger.WriteLineError("-a, --analyzeunused    Analyze and report unused properties and methods");
+        logger.WriteLineError("--version              Show version information and exit");
+        logger.WriteLineError("-h, -?, --help         Show help and exit");
     }
 }

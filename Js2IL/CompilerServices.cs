@@ -8,7 +8,7 @@ namespace Js2IL;
  
 public static class CompilerServices
 {
-    public static ServiceProvider BuildServiceProvider(CompilerOptions options, IFileSystem? fileSystem = null)
+    public static ServiceProvider BuildServiceProvider(CompilerOptions options, IFileSystem? fileSystem = null, ILogger? logger = null)
     {
         var services = new ServiceCollection();
 
@@ -19,6 +19,16 @@ public static class CompilerServices
         else
         {
             services.AddSingleton<IFileSystem, FileSystem>();
+        }
+
+        // Logger
+        if (logger != null)
+        {
+            services.AddSingleton(logger);
+        }
+        else
+        {
+            services.AddSingleton<ILogger, Logger>();
         }
 
         // compiler and compiler options

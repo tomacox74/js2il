@@ -68,7 +68,8 @@ namespace Js2IL.Tests
                         OutputDirectory = _outputPath
                     };
 
-                    var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFileSystem);
+                    var testLogger = new TestLogger();
+                    var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFileSystem, testLogger);
                     var compiler = serviceProvider.GetRequiredService<Compiler>();
 
                     if (!compiler.Compile(testFilePath))

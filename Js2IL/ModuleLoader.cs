@@ -15,13 +15,15 @@ public class ModuleLoader
     private readonly JavaScriptParser _parser = new JavaScriptParser();
     private readonly JavaScriptAstValidator _validator = new JavaScriptAstValidator();
     private readonly IFileSystem _fileSystem;
+    private readonly ILogger _logger;
 
     private readonly bool _verbose;
 
-    public ModuleLoader(CompilerOptions options, IFileSystem fileSystem)
+    public ModuleLoader(CompilerOptions options, IFileSystem fileSystem, ILogger logger)
     {
         _verbose = options.Verbose;
         _fileSystem = fileSystem;
+        _logger = logger;
     }
 
     public Modules? LoadModules(string modulePath)
@@ -60,39 +62,39 @@ public class ModuleLoader
 
         if (this._verbose)
         {
-            Console.WriteLine("AST Structure:");
+            _logger.WriteLine("AST Structure:");
             _parser.VisitAst(ast, node =>
             {
-                Console.Write($"Node Type: {node.Type}");
+                var message = $"Node Type: {node.Type}";
                 if (node is Acornima.Ast.NumericLiteral num)
-                    Console.Write($", Value: {num.Value}");
+                    message += $", Value: {num.Value}";
                 if (node is Acornima.Ast.UnaryExpression unary)
-                    Console.Write($", Operator: {unary.Operator}");
-                Console.WriteLine();
+                    message += $", Operator: {unary.Operator}";
+                _logger.WriteLine(message);
             });
         }
 
         if (this._verbose)
         {
-            Console.WriteLine($"\nValidating module: {modulePath}");
+            _logger.WriteLine($"\nValidating module: {modulePath}");
         }
         var validationResult = _validator.Validate(ast);
         if (!validationResult.IsValid)
         {
-            Logger.WriteLineError("\nValidation Errors:");
+            _logger.WriteLineError("\nValidation Errors:");
             foreach (var error in validationResult.Errors)
             {
-                Logger.WriteLineError($"Error: {error}");
+                _logger.WriteLineError($"Error: {error}");
             }
             return false;
         }
 
         if (validationResult.Warnings.Any())
         {
-            Console.WriteLine("\nValidation Warnings:");
+            _logger.WriteLine("\nValidation Warnings:");
             foreach (var warning in validationResult.Warnings)
             {
-                Logger.WriteLineWarning($"Warning: {warning}");
+                _logger.WriteLineWarning($"Warning: {warning}");
             }
         }
         
