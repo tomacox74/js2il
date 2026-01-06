@@ -45,8 +45,7 @@ namespace Js2IL.Services.ILGenerators
             // Initialize two-phase coordinator if enabled
             if (_compilerOptions.TwoPhaseCompilation)
             {
-                var logger = serviceProvider.GetRequiredService<ILogger>();
-                _twoPhaseCoordinator = new TwoPhaseCompilationCoordinator(logger, _compilerOptions.Verbose);
+                _twoPhaseCoordinator = serviceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
             }
         }
 

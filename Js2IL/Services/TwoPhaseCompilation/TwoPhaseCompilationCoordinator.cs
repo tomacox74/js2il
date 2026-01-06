@@ -29,10 +29,10 @@ public sealed class TwoPhaseCompilationCoordinator
     private CallableRegistry? _registry;
     private IReadOnlyList<CallableId>? _discoveredCallables;
 
-    public TwoPhaseCompilationCoordinator(ILogger logger, bool verbose = false)
+    public TwoPhaseCompilationCoordinator(ILogger logger, CompilerOptions compilerOptions)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _verbose = verbose;
+        _verbose = compilerOptions?.Verbose ?? false;
     }
 
     /// <summary>
