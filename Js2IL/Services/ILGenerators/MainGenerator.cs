@@ -107,7 +107,7 @@ namespace Js2IL.Services.ILGenerators
 
             if (_verbose)
             {
-                _logger.WriteLine($"[TwoPhase] Phase 1: Declared arrow: {ilMethodName}");
+                _logger.WriteLine($"[TwoPhase] Phase 2: Compiled arrow: {ilMethodName}");
             }
         }
 
@@ -146,27 +146,8 @@ namespace Js2IL.Services.ILGenerators
 
             if (_verbose)
             {
-                _logger.WriteLine($"[TwoPhase] Phase 1: Declared function expression: {ilMethodName}");
+                _logger.WriteLine($"[TwoPhase] Phase 2: Compiled function expression: {ilMethodName}");
             }
-        }
-
-        private bool IsInsideClassScope(CallableId callable)
-        {
-            if (callable.AstNode == null)
-            {
-                return false;
-            }
-
-            var scope = _symbolTable.FindScopeByAstNode(callable.AstNode);
-            while (scope != null)
-            {
-                if (scope.Kind == ScopeKind.Class)
-                {
-                    return true;
-                }
-                scope = scope.Parent;
-            }
-            return false;
         }
 
         /// <summary>

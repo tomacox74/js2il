@@ -2,6 +2,7 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using Acornima.Ast;
 using Js2IL.SymbolTables;
+using Js2IL.Utilities.Ecma335;
 
 namespace Js2IL.Services.TwoPhaseCompilation;
 
@@ -29,27 +30,34 @@ public sealed class TwoPhaseCompilationCoordinator
     private readonly bool _verbose;
     
     // Registry for storing callable declarations (CallableId-keyed, per design doc)
-    private CallableRegistry? _registry;
+    // Injected from DI - single instance per compilation
+    private readonly CallableRegistry _registry;
+    
     private IReadOnlyList<CallableId>? _discoveredCallables;
+    
+    // O(1) lookup index from AST node to CallableId (populated during discovery)
+    private Dictionary<Node, CallableId>? _astNodeIndex;
 
     public TwoPhaseCompilationCoordinator(
         ILogger logger, 
-        CompilerOptions compilerOptions)
+        CompilerOptions compilerOptions,
+        CallableRegistry registry)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _verbose = compilerOptions?.Verbose ?? false;
+        _registry = registry ?? throw new ArgumentNullException(nameof(registry));
     }
 
     /// <summary>
     /// Gets the callable registry after Phase 1 completes.
     /// This is the single source of truth for callable declarations (per design doc).
     /// </summary>
-    public CallableRegistry? Registry => _registry;
+    public CallableRegistry Registry => _registry;
     
     /// <summary>
     /// Gets the declaration reader interface for Phase 2 consumers.
     /// </summary>
-    public ICallableDeclarationReader? DeclarationReader => _registry;
+    public ICallableDeclarationReader DeclarationReader => _registry;
 
     /// <summary>
     /// Gets the list of discovered callables after Phase 1 discovery.
@@ -101,11 +109,6 @@ public sealed class TwoPhaseCompilationCoordinator
     {
         // Phase 1 declares MemberRefs for arrows and function expressions.
         // These are sufficient for ldftn/call token usage without compiling bodies.
-        var registry = _registry;
-        if (registry == null)
-        {
-            return;
-        }
 
         // Use Module scope for TypeRef resolution so we can reference types that will be emitted later.
         // The single module row is always index 1.
@@ -122,24 +125,24 @@ public sealed class TwoPhaseCompilationCoordinator
             }
 
             // Skip if already has a token (idempotent); Phase 2 may overwrite MemberRef with MethodDef.
-            if (registry.TryGetDeclaredToken(callable, out var existingToken) && !existingToken.IsNil)
+            if (_registry.TryGetDeclaredToken(callable, out var existingToken) && !existingToken.IsNil)
             {
                 continue;
             }
 
-            var signature = registry.GetSignature(callable);
+            var signature = _registry.GetSignature(callable);
             if (signature == null)
             {
                 continue;
             }
 
             var ilMethodName = signature.ILMethodName;
-            var typeKey = $"Functions/{ilMethodName}";
+            var typeKey = $"{TypeBuilder.FunctionsNamespace}/{ilMethodName}";
             if (!typeRefCache.TryGetValue(typeKey, out var typeRef))
             {
                 typeRef = metadataBuilder.AddTypeReference(
                     moduleHandle,
-                    metadataBuilder.GetOrAddString("Functions"),
+                    metadataBuilder.GetOrAddString(TypeBuilder.FunctionsNamespace),
                     metadataBuilder.GetOrAddString(ilMethodName));
                 typeRefCache[typeKey] = typeRef;
             }
@@ -157,7 +160,7 @@ public sealed class TwoPhaseCompilationCoordinator
                 metadataBuilder.GetOrAddString(ilMethodName),
                 methodSig);
 
-            registry.SetToken(callable, (EntityHandle)memberRef);
+            _registry.SetToken(callable, (EntityHandle)memberRef);
         }
     }
 
@@ -175,8 +178,8 @@ public sealed class TwoPhaseCompilationCoordinator
         var discovery = new CallableDiscovery(symbolTable);
         _discoveredCallables = discovery.DiscoverAll();
 
-        // Initialize the registry and populate with discovered callable signatures
-        _registry = new CallableRegistry();
+        // Build O(1) lookup index from AST node to CallableId
+        _astNodeIndex = new Dictionary<Node, CallableId>(_discoveredCallables.Count);
         
         foreach (var callable in _discoveredCallables)
         {
@@ -193,6 +196,12 @@ public sealed class TwoPhaseCompilationCoordinator
             };
             
             _registry.Declare(callable, signature);
+            
+            // Add to AST node index for O(1) lookup
+            if (callable.AstNode != null)
+            {
+                _astNodeIndex[callable.AstNode] = callable;
+            }
         }
 
         if (_verbose)
@@ -236,17 +245,17 @@ public sealed class TwoPhaseCompilationCoordinator
     /// <summary>
     /// Registers a method token for a callable by its AST node.
     /// Called by generators after creating a MethodDefinitionHandle.
+    /// Uses O(1) dictionary lookup instead of linear search.
     /// </summary>
     public void RegisterToken(Node astNode, EntityHandle token)
     {
-        if (_registry == null || _discoveredCallables == null)
+        if (_astNodeIndex == null)
         {
-            return; // Not in two-phase mode or discovery not run yet
+            return; // Discovery not run yet
         }
         
-        // Find the CallableId that matches this AST node
-        var callable = _discoveredCallables.FirstOrDefault(c => ReferenceEquals(c.AstNode, astNode));
-        if (callable != null)
+        // O(1) lookup using the AST node index
+        if (_astNodeIndex.TryGetValue(astNode, out var callable))
         {
             _registry.SetToken(callable, token);
         }
@@ -254,17 +263,18 @@ public sealed class TwoPhaseCompilationCoordinator
     
     /// <summary>
     /// Attempts to get a declared token for an AST node via the CallableRegistry.
+    /// Uses O(1) dictionary lookup instead of linear search.
     /// </summary>
     public bool TryGetToken(Node astNode, out EntityHandle token)
     {
         token = default;
-        if (_registry == null || _discoveredCallables == null)
+        if (_astNodeIndex == null)
         {
-            return false;
+            return false; // Discovery not run yet
         }
         
-        var callable = _discoveredCallables.FirstOrDefault(c => ReferenceEquals(c.AstNode, astNode));
-        if (callable != null)
+        // O(1) lookup using the AST node index
+        if (_astNodeIndex.TryGetValue(astNode, out var callable))
         {
             return _registry.TryGetDeclaredToken(callable, out token);
         }
@@ -303,14 +313,7 @@ public sealed class TwoPhaseCompilationCoordinator
 
         if (_verbose)
         {
-            if (_registry != null)
-            {
-                _logger.WriteLine($"[TwoPhase] Phase 1 Declaration complete. Tokens allocated: {_registry.TokensAllocated}/{_registry.Count}.");
-            }
-            else
-            {
-                _logger.WriteLine("[TwoPhase] Phase 1 Declaration complete.");
-            }
+            _logger.WriteLine($"[TwoPhase] Phase 1 Declaration complete. Tokens allocated: {_registry.TokensAllocated}/{_registry.Count}.");
         }
     }
     
@@ -321,10 +324,7 @@ public sealed class TwoPhaseCompilationCoordinator
     /// </summary>
     public void EnableStrictMode()
     {
-        if (_registry != null)
-        {
-            _registry.StrictMode = true;
-        }
+        _registry.StrictMode = true;
         
         if (_verbose)
         {

@@ -18,7 +18,7 @@ namespace Js2IL.Services.ILGenerators
         private readonly ClassRegistry _classRegistry;
         private readonly FunctionRegistry _functionRegistry;
         private readonly SymbolTable? _symbolTable;
-        private readonly TwoPhaseCompilationCoordinator? _twoPhaseCoordinator;
+        private readonly TwoPhaseCompilationCoordinator _twoPhaseCoordinator;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -40,7 +40,7 @@ namespace Js2IL.Services.ILGenerators
             _functionRegistry = functionRegistry;
             _symbolTable = symbolTable;
             _serviceProvider = serviceProvider;
-            _twoPhaseCoordinator = serviceProvider.GetService<TwoPhaseCompilationCoordinator>();
+            _twoPhaseCoordinator = serviceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
         }
 
         internal MethodDefinitionHandle GenerateArrowFunctionMethod(

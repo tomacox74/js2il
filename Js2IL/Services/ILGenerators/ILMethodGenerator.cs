@@ -28,7 +28,7 @@ namespace Js2IL.Services.ILGenerators
         private string? _currentClassName;
         private string? _currentAssignmentTarget;
         private readonly Dictionary<string, string> _variableToClass = new();
-        private readonly TwoPhaseCompilationCoordinator? _twoPhaseCoordinator;
+        private readonly TwoPhaseCompilationCoordinator _twoPhaseCoordinator;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -62,13 +62,14 @@ namespace Js2IL.Services.ILGenerators
         internal IMethodExpressionEmitter ExpressionEmitter => _expressionEmitter;
         internal FunctionRegistry? FunctionRegistry => _functionRegistry;
         internal SymbolTables.SymbolTable? SymbolTable => _symbolTable;
-        internal TwoPhaseCompilationCoordinator? TwoPhaseCoordinator => _twoPhaseCoordinator;
+        internal IServiceProvider ServiceProvider => _serviceProvider;
 
         private readonly FunctionRegistry? _functionRegistry;
         private readonly SymbolTables.SymbolTable? _symbolTable;
 
         public ILMethodGenerator(IServiceProvider serviceProvider, Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, ClassRegistry? classRegistry = null, FunctionRegistry? functionRegistry = null, bool inClassMethod = false, string? currentClassName = null, SymbolTables.SymbolTable? symbolTable = null)
         {
+            _serviceProvider = serviceProvider;
             _variables = variables;
             _bclReferences = bclReferences;
             _metadataBuilder = metadataBuilder;
@@ -85,8 +86,7 @@ namespace Js2IL.Services.ILGenerators
             _inClassMethod = inClassMethod;
             _currentClassName = currentClassName;
             _symbolTable = symbolTable;
-            _serviceProvider = serviceProvider;
-            _twoPhaseCoordinator = serviceProvider.GetService<TwoPhaseCompilationCoordinator>();
+            _twoPhaseCoordinator = serviceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
         }
 
         // Allow expression generator to record variable->class mapping when emitting `new ClassName()` in assignments/initializers

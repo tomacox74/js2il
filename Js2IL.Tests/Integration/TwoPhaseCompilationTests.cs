@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Js2IL.Services;
+using Js2IL.Services.TwoPhaseCompilation;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -108,6 +109,33 @@ calc.add(5);
 console.log(calc.getValue());
 ";
             AssertCompilesWithTwoPhase(js);
+        }
+
+        /// <summary>
+        /// Verifies the Milestone 1 invariant: strict mode enforces lookup-only behavior.
+        /// When strict mode is enabled, CallableRegistry.GetDeclaredToken throws if a callable is not found.
+        /// </summary>
+        [Fact]
+        public void TwoPhaseCompilation_StrictMode_ThrowsWhenCallableNotDeclared()
+        {
+            // Create a CallableRegistry and enable strict mode
+            var registry = new CallableRegistry();
+            registry.StrictMode = true;
+
+            // Create a dummy CallableId that was never declared
+            var undeclaredCallable = new CallableId
+            {
+                Kind = CallableKind.Arrow,
+                DeclaringScopeName = "TestModule",
+                Name = "undeclared",
+                JsParamCount = 0,
+                Location = new SourceLocation(1, 1),
+                AstNode = null
+            };
+
+            // Attempting to get a declared token for an undeclared callable should throw
+            var ex = Assert.Throws<InvalidOperationException>(() => registry.GetDeclaredToken(undeclaredCallable));
+            Assert.Contains("missing callable token", ex.Message.ToLowerInvariant());
         }
 
         private void AssertCompilesWithTwoPhase(string jsCode)

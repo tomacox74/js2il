@@ -21,7 +21,7 @@ namespace Js2IL.Services.ILGenerators
         private readonly FunctionRegistry _functionRegistry = new();
         private readonly SymbolTable? _symbolTable;
         private readonly CompiledMethodCache _compiledMethodCache;
-        private readonly TwoPhaseCompilationCoordinator? _twoPhaseCoordinator;
+        private readonly TwoPhaseCompilationCoordinator _twoPhaseCoordinator;
 
         public FunctionRegistry FunctionRegistry => _functionRegistry;
 
@@ -40,7 +40,7 @@ namespace Js2IL.Services.ILGenerators
             _classRegistry = classRegistry ?? new ClassRegistry();
             _symbolTable = symbolTable;
             _compiledMethodCache = serviceProvider.GetRequiredService<CompiledMethodCache>();
-            _twoPhaseCoordinator = serviceProvider.GetService<TwoPhaseCompilationCoordinator>();
+            _twoPhaseCoordinator = serviceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
             this._serviceProvider = serviceProvider;
         }
 

@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using Acornima.Ast;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
+using Js2IL.Services.TwoPhaseCompilation;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Js2IL.Services.ILGenerators
 {
@@ -15,6 +17,7 @@ namespace Js2IL.Services.ILGenerators
     internal sealed class ILExpressionGenerator : IMethodExpressionEmitter
     {
         private readonly ILMethodGenerator _owner;
+        private readonly TwoPhaseCompilationCoordinator _twoPhaseCoordinator;
 
         private Variables _variables => _owner.Variables;
 
@@ -174,6 +177,7 @@ namespace Js2IL.Services.ILGenerators
         public ILExpressionGenerator(ILMethodGenerator owner)
         {
             _owner = owner ?? throw new ArgumentNullException(nameof(owner));
+            _twoPhaseCoordinator = owner.ServiceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
 
             _binaryOperators = new BinaryOperators(owner.MetadataBuilder, _il, _variables, this, owner.BclReferences, owner.Runtime, owner);
         }
@@ -378,12 +382,11 @@ namespace Js2IL.Services.ILGenerators
                         // instead of triggering compilation. This satisfies the invariant:
                         // "expression emission never triggers compilation"
                         System.Reflection.Metadata.EntityHandle methodToken;
-                        var registry = _owner.TwoPhaseCoordinator?.Registry;
+                        var registry = _twoPhaseCoordinator.Registry;
                         if (registry?.StrictMode == true)
                         {
                             // Strict mode: must lookup from the canonical CallableRegistry
-                            if (_owner.TwoPhaseCoordinator == null ||
-                                !_owner.TwoPhaseCoordinator.TryGetToken(arrowFunction, out methodToken) ||
+                            if (!_twoPhaseCoordinator.TryGetToken(arrowFunction, out methodToken) ||
                                 methodToken.IsNil)
                             {
                                 throw new InvalidOperationException(
@@ -478,12 +481,11 @@ namespace Js2IL.Services.ILGenerators
                         // Milestone 1: In strict mode (two-phase compilation), lookup the pre-declared handle
                         // instead of triggering compilation.
                         System.Reflection.Metadata.EntityHandle methodToken;
-                        var registry = _owner.TwoPhaseCoordinator?.Registry;
+                        var registry = _twoPhaseCoordinator.Registry;
                         if (registry?.StrictMode == true)
                         {
                             // Strict mode: must lookup from the canonical CallableRegistry
-                            if (_owner.TwoPhaseCoordinator == null ||
-                                !_owner.TwoPhaseCoordinator.TryGetToken(funcExpr, out methodToken) ||
+                            if (!_twoPhaseCoordinator.TryGetToken(funcExpr, out methodToken) ||
                                 methodToken.IsNil)
                             {
                                 throw new InvalidOperationException(
