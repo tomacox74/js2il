@@ -292,8 +292,7 @@ namespace Js2IL.Services.ILGenerators
                     DeclarePhase1AnonymousCallables(discoveredCallables, _ilGenerator.MetadataBuilder);
                 }
                 
-                // Phase 1b: Now enable strict mode and let the existing generators run
-                // At this point all arrows/function expressions should be declared
+                // Phase 1b: Let the existing generators run (classes and function declarations)
                 _twoPhaseCoordinator.RunPhase1Declaration(() =>
                 {
                     // Classes and function declarations - these will compile bodies that may
@@ -301,6 +300,10 @@ namespace Js2IL.Services.ILGenerators
                     _classesGenerator.DeclareClasses(symbolTable);
                     _functionGenerator.DeclareFunctions(symbolTable);
                 });
+                
+                // Phase 1 complete: Enable strict mode for main body emission (Phase 2)
+                // This enforces the Milestone 1 invariant: "expression emission never triggers compilation"
+                _twoPhaseCoordinator.EnableStrictMode();
             }
             else
             {

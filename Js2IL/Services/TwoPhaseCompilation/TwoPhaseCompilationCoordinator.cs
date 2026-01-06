@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 using Acornima.Ast;
 using Js2IL.SymbolTables;
 
@@ -5,19 +6,21 @@ namespace Js2IL.Services.TwoPhaseCompilation;
 
 /// <summary>
 /// Coordinates the two-phase compilation pipeline:
-/// - Phase 1: Discovery + Declaration (no body compilation for main entry point)
+/// - Phase 1: Discovery + Declaration (create method tokens)
 /// - Phase 2: Body compilation (in dependency order, when planner is added in Milestone 2)
 /// 
 /// This is the entry point for the new compilation model. The coordinator is responsible for:
 /// 1. Invoking CallableDiscovery to find all callables
-/// 2. Invoking declaration APIs to create method tokens (Phase 1)
-/// 3. Invoking body compilation in the appropriate order (Phase 2)
+/// 2. Populating CallableRegistry with signatures (Phase 1 - discovery)
+/// 3. Invoking declaration APIs to create method tokens (Phase 1 - token allocation)
+/// 4. Invoking body compilation in the appropriate order (Phase 2)
 /// </summary>
 /// <remarks>
 /// Milestone 1 Implementation:
-/// - Coordinator discovers and logs callables.
-/// - Phase 1 declaration is still delegated to existing generators.
-/// - Expression emission is being migrated toward lookup-only behavior (see docs/TwoPhaseCompilationPipeline.md).
+/// - Coordinator discovers callables and populates CallableRegistry with signatures.
+/// - Phase 1 declaration still combines signature+body (future milestones will split).
+/// - After Phase 1 completes, strict mode is enabled so expression emission uses lookup-only.
+/// - See docs/TwoPhaseCompilationPipeline.md for the full design.
 /// </remarks>
 public sealed class TwoPhaseCompilationCoordinator
 {
@@ -25,7 +28,7 @@ public sealed class TwoPhaseCompilationCoordinator
     private readonly DeclaredCallableStore _declaredCallableStore;
     private readonly bool _verbose;
     
-    // Registry for storing callable declarations
+    // Registry for storing callable declarations (CallableId-keyed, per design doc)
     private CallableRegistry? _registry;
     private IReadOnlyList<CallableId>? _discoveredCallables;
 
@@ -41,8 +44,14 @@ public sealed class TwoPhaseCompilationCoordinator
 
     /// <summary>
     /// Gets the callable registry after Phase 1 completes.
+    /// This is the single source of truth for callable declarations (per design doc).
     /// </summary>
     public CallableRegistry? Registry => _registry;
+    
+    /// <summary>
+    /// Gets the declaration reader interface for Phase 2 consumers.
+    /// </summary>
+    public ICallableDeclarationReader? DeclarationReader => _registry;
 
     /// <summary>
     /// Gets the list of discovered callables after Phase 1 discovery.
@@ -50,7 +59,7 @@ public sealed class TwoPhaseCompilationCoordinator
     public IReadOnlyList<CallableId>? DiscoveredCallables => _discoveredCallables;
 
     /// <summary>
-    /// Phase 1: Discover all callables in the module.
+    /// Phase 1: Discover all callables in the module and populate CallableRegistry.
     /// This must be called before RunPhase1Declaration.
     /// </summary>
     public void RunPhase1Discovery(SymbolTable symbolTable)
@@ -62,6 +71,26 @@ public sealed class TwoPhaseCompilationCoordinator
 
         var discovery = new CallableDiscovery(symbolTable);
         _discoveredCallables = discovery.DiscoverAll();
+
+        // Initialize the registry and populate with discovered callable signatures
+        _registry = new CallableRegistry();
+        
+        foreach (var callable in _discoveredCallables)
+        {
+            // Build CallableSignature from CallableId
+            // For Milestone 1, we use a placeholder owner type handle (will be refined in future milestones)
+            var signature = new CallableSignature
+            {
+                OwnerTypeHandle = default, // Will be set during token allocation
+                RequiresScopesParameter = true, // All JS callables take scopes parameter
+                JsParamCount = callable.JsParamCount,
+                InvokeShape = CallableSignature.GetInvokeShape(callable.JsParamCount),
+                IsInstanceMethod = callable.Kind == CallableKind.ClassMethod,
+                ILMethodName = GetILMethodName(callable)
+            };
+            
+            _registry.Declare(callable, signature);
+        }
 
         if (_verbose)
         {
@@ -79,18 +108,73 @@ public sealed class TwoPhaseCompilationCoordinator
                 _logger.WriteLine($"  [{callable.Kind}] {callable.DisplayName} (params: {callable.JsParamCount})");
             }
         }
-
-        // Initialize the registry with discovered callables
-        _registry = new CallableRegistry();
+    }
+    
+    /// <summary>
+    /// Derives the IL method name for a callable (used for CallableSignature).
+    /// </summary>
+    private static string GetILMethodName(CallableId callable)
+    {
+        return callable.Kind switch
+        {
+            CallableKind.FunctionDeclaration => callable.Name ?? "anonymous",
+            CallableKind.FunctionExpression => callable.Location.HasValue 
+                ? $"FunctionExpression_L{callable.Location.Value.Line}C{callable.Location.Value.Column}"
+                : "FunctionExpression_anonymous",
+            CallableKind.Arrow => callable.Location.HasValue
+                ? $"ArrowFunction_L{callable.Location.Value.Line}C{callable.Location.Value.Column}"
+                : "ArrowFunction_anonymous",
+            CallableKind.ClassConstructor => ".ctor",
+            CallableKind.ClassMethod or CallableKind.ClassStaticMethod => callable.Name ?? "method",
+            _ => "unknown"
+        };
+    }
+    
+    /// <summary>
+    /// Registers a method token for a callable by its AST node.
+    /// Called by generators after creating a MethodDefinitionHandle.
+    /// </summary>
+    public void RegisterToken(Node astNode, MethodDefinitionHandle token)
+    {
+        if (_registry == null || _discoveredCallables == null)
+        {
+            return; // Not in two-phase mode or discovery not run yet
+        }
+        
+        // Find the CallableId that matches this AST node
+        var callable = _discoveredCallables.FirstOrDefault(c => ReferenceEquals(c.AstNode, astNode));
+        if (callable != null)
+        {
+            _registry.SetToken(callable, token);
+        }
+    }
+    
+    /// <summary>
+    /// Attempts to get a declared token for an AST node via the CallableRegistry.
+    /// </summary>
+    public bool TryGetToken(Node astNode, out MethodDefinitionHandle token)
+    {
+        token = default;
+        if (_registry == null || _discoveredCallables == null)
+        {
+            return false;
+        }
+        
+        var callable = _discoveredCallables.FirstOrDefault(c => ReferenceEquals(c.AstNode, astNode));
+        if (callable != null)
+        {
+            return _registry.TryGetDeclaredToken(callable, out token);
+        }
+        
+        return false;
     }
 
     /// <summary>
     /// Phase 1: Declare all discovered callables (create method tokens).
-    /// This prepares the registry with signatures but does NOT compile bodies.
+    /// This prepares the registry with signatures and tokens.
     /// 
-    /// For Milestone 1, this is a skeleton that prepares the registry.
-    /// The actual declaration/token allocation will be refined as we split
-    /// the existing generators into declare-only and compile-body phases.
+    /// For Milestone 1, declaration still includes body compilation.
+    /// Future milestones will split into signature-only declaration + separate body compilation.
     /// </summary>
     /// <param name="declareAction">
     /// Action that performs the actual declaration using existing generators.
@@ -109,20 +193,39 @@ public sealed class TwoPhaseCompilationCoordinator
             _logger.WriteLine("[TwoPhase] Phase 1 Declaration: Creating method tokens...");
         }
 
-        // NOTE: We do NOT enable strict mode during Phase 1 declaration.
+        // NOTE: Strict mode is OFF during Phase 1 declaration.
         // Arrows/function expressions inside classes are compiled during ClassesGenerator.DeclareClasses,
-        // and they haven't been pre-declared yet. Strict mode will be enabled for Phase 2 (main body
-        // compilation) in future milestones.
+        // and they need to compile on-demand. Strict mode will be enabled AFTER Phase 1 completes.
+        _declaredCallableStore.StrictMode = false;
         
         // For Milestone 1, we delegate to the existing declaration code
         // which still combines declaration and body compilation.
-        // Future milestones will split this.
+        // Future milestones will split this into signature-only + body compilation.
         declareAction();
 
         if (_verbose)
         {
             var stats = _declaredCallableStore.GetStats();
             _logger.WriteLine($"[TwoPhase] Phase 1 Declaration complete. Declared: {stats.ByAstNode} by node, {stats.ByScopeName} by scope name.");
+        }
+    }
+    
+    /// <summary>
+    /// Enables strict mode after Phase 1 declaration is complete.
+    /// This enforces the Milestone 1 invariant: "expression emission never triggers compilation"
+    /// by making DeclaredCallableStore throw if a lookup fails.
+    /// </summary>
+    public void EnableStrictMode()
+    {
+        _declaredCallableStore.StrictMode = true;
+        if (_registry != null)
+        {
+            _registry.StrictMode = true;
+        }
+        
+        if (_verbose)
+        {
+            _logger.WriteLine("[TwoPhase] Strict mode enabled: expression emission will only lookup, not compile.");
         }
     }
 
