@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using Acornima.Ast;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
+using Js2IL.Services.TwoPhaseCompilation;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Js2IL.Services.ILGenerators
 {
@@ -15,6 +17,7 @@ namespace Js2IL.Services.ILGenerators
     internal sealed class ILExpressionGenerator : IMethodExpressionEmitter
     {
         private readonly ILMethodGenerator _owner;
+        private readonly TwoPhaseCompilationCoordinator _twoPhaseCoordinator;
 
         private Variables _variables => _owner.Variables;
 
@@ -174,6 +177,7 @@ namespace Js2IL.Services.ILGenerators
         public ILExpressionGenerator(ILMethodGenerator owner)
         {
             _owner = owner ?? throw new ArgumentNullException(nameof(owner));
+            _twoPhaseCoordinator = owner.ServiceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
 
             _binaryOperators = new BinaryOperators(owner.MetadataBuilder, _il, _variables, this, owner.BclReferences, owner.Runtime, owner);
         }
@@ -373,17 +377,41 @@ namespace Js2IL.Services.ILGenerators
                             : $"ArrowFunction_L{arrowFunction.Location.Start.Line}C{arrowFunction.Location.Start.Column}";
                         var registryScopeName = $"{_variables.GetGlobalScopeName()}/{arrowBaseScopeName}";
                         var ilMethodName = $"ArrowFunction_L{arrowFunction.Location.Start.Line}C{arrowFunction.Location.Start.Column}";
-                        var methodHandle = _owner.GenerateArrowFunctionMethod(arrowFunction, registryScopeName, ilMethodName, paramNames);
+                        
+                        // Milestone 1: In strict mode (two-phase compilation), lookup the pre-declared handle
+                        // instead of triggering compilation. This satisfies the invariant:
+                        // "expression emission never triggers compilation"
+                        System.Reflection.Metadata.EntityHandle methodToken;
+                        var registry = _twoPhaseCoordinator.Registry;
+                        if (registry?.StrictMode == true)
+                        {
+                            // Strict mode: must lookup from the canonical CallableRegistry
+                            if (!_twoPhaseCoordinator.TryGetToken(arrowFunction, out methodToken) ||
+                                methodToken.IsNil)
+                            {
+                                throw new InvalidOperationException(
+                                    $"[TwoPhase] Arrow function at {ilMethodName} was not pre-declared during Phase 1.");
+                            }
+                        }
+                        else
+                        {
+                            // Legacy mode: compile on demand
+                            var compiled = _owner.GenerateArrowFunctionMethod(arrowFunction, registryScopeName, ilMethodName, paramNames);
+                            methodToken = (System.Reflection.Metadata.EntityHandle)compiled;
+                        }
 
                         // Register arrow function with parameter count if it has a name (assigned to a variable)
                         if (!string.IsNullOrEmpty(_owner.CurrentAssignmentTarget))
                         {
-                            _owner.RegisterFunction(_owner.CurrentAssignmentTarget, methodHandle, paramNames.Length);
+                            if (methodToken.Kind == System.Reflection.Metadata.HandleKind.MethodDefinition)
+                            {
+                                _owner.RegisterFunction(_owner.CurrentAssignmentTarget, (System.Reflection.Metadata.MethodDefinitionHandle)methodToken, paramNames.Length);
+                            }
                         }
 
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldftn);
-                        _il.Token(methodHandle);
+                        _il.Token(methodToken);
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
                         var ctorRef = _bclReferences.GetFuncCtorRef(paramNames.Length);
                         _il.Token(ctorRef);
@@ -449,11 +477,31 @@ namespace Js2IL.Services.ILGenerators
                         }
                         var registryScopeName = $"{_variables.GetGlobalScopeName()}/{baseScopeName}";
                         var ilMethodName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
-                        var methodHandle = _owner.GenerateFunctionExpressionMethod(funcExpr, registryScopeName, ilMethodName, paramNames);
+                        
+                        // Milestone 1: In strict mode (two-phase compilation), lookup the pre-declared handle
+                        // instead of triggering compilation.
+                        System.Reflection.Metadata.EntityHandle methodToken;
+                        var registry = _twoPhaseCoordinator.Registry;
+                        if (registry?.StrictMode == true)
+                        {
+                            // Strict mode: must lookup from the canonical CallableRegistry
+                            if (!_twoPhaseCoordinator.TryGetToken(funcExpr, out methodToken) ||
+                                methodToken.IsNil)
+                            {
+                                throw new InvalidOperationException(
+                                    $"[TwoPhase] Function expression at {ilMethodName} was not pre-declared during Phase 1.");
+                            }
+                        }
+                        else
+                        {
+                            // Legacy mode: compile on demand
+                            var compiled = _owner.GenerateFunctionExpressionMethod(funcExpr, registryScopeName, ilMethodName, paramNames);
+                            methodToken = (System.Reflection.Metadata.EntityHandle)compiled;
+                        }
 
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldftn);
-                        _il.Token(methodHandle);
+                        _il.Token(methodToken);
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
                         var ctorRef = _bclReferences.GetFuncCtorRef(paramNames.Length);
                         _il.Token(ctorRef);
@@ -1546,7 +1594,7 @@ namespace Js2IL.Services.ILGenerators
             bool isLocalVariable = functionVariable.LocalSlot >= 0;
 
             // For field variables, we'll need scope reference for store operations
-            ScopeObjectReference scopeObjectReference = default;
+            ScopeObjectReference scopeObjectReference = new ScopeObjectReference { Location = ObjectReferenceLocation.Local, Address = -1 };
             if (!isLocalVariable)
             {
                 scopeObjectReference = _variables.GetScopeLocalSlot(functionVariable.ScopeName);
@@ -1935,7 +1983,7 @@ namespace Js2IL.Services.ILGenerators
                 bool isLocalVariable = variable.LocalSlot >= 0;
                 
                 // Load the appropriate scope instance that holds this field (only for field variables)
-                ScopeObjectReference scopeSlot = default;
+                ScopeObjectReference scopeSlot = new ScopeObjectReference { Location = ObjectReferenceLocation.Local, Address = -1 };
                 if (!isLocalVariable)
                 {
                     scopeSlot = _variables.GetScopeLocalSlot(variable.ScopeName);

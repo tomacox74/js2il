@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
+using Acornima.Ast;
 using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
@@ -20,26 +21,35 @@ namespace Js2IL.Services.ILGenerators
         private MethodBodyStreamEncoder _methodBodyStreamEncoder;
         private SymbolTable _symbolTable;
 
+        private readonly Variables _rootVariables;
+        private readonly ILogger _logger;
+        private readonly bool _verbose;
+
         private BaseClassLibraryReferences _bclReferences;
 
         private readonly ClassRegistry _classRegistry = new();
         
         private readonly TwoPhaseCompilationCoordinator? _twoPhaseCoordinator;
+        private readonly IServiceProvider _serviceProvider;
 
         public MainGenerator(IServiceProvider serviceProvider, Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, SymbolTable symbolTable)
         {
             _symbolTable = symbolTable ?? throw new ArgumentNullException(nameof(symbolTable));
 
-            if (variables == null) throw new ArgumentNullException(nameof(variables));
+            _rootVariables = variables ?? throw new ArgumentNullException(nameof(variables));
+
             if (bclReferences == null) throw new ArgumentNullException(nameof(bclReferences));
             if (metadataBuilder == null) throw new ArgumentNullException(nameof(metadataBuilder));
             
+            _serviceProvider = serviceProvider;
             _bclReferences = bclReferences;
+            _methodBodyStreamEncoder = methodBodyStreamEncoder;
             var compilerOptions = serviceProvider.GetRequiredService<CompilerOptions>();
+            _verbose = compilerOptions.Verbose;
+            _logger = serviceProvider.GetRequiredService<ILogger>();
             _functionGenerator = new JavaScriptFunctionGenerator(serviceProvider, variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, symbolTable);
             _ilGenerator = new ILMethodGenerator(serviceProvider, variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, _functionGenerator.FunctionRegistry, symbolTable: symbolTable);
             _classesGenerator = new ClassesGenerator(serviceProvider,metadataBuilder, bclReferences, methodBodyStreamEncoder, _classRegistry, variables);
-            this._methodBodyStreamEncoder = methodBodyStreamEncoder;
             
             // Initialize two-phase coordinator if enabled
             if (compilerOptions.TwoPhaseCompilation)
@@ -106,14 +116,25 @@ namespace Js2IL.Services.ILGenerators
         {
             if (_twoPhaseCoordinator != null)
             {
-                // Two-phase path: discover callables, then delegate to legacy declaration
-                _twoPhaseCoordinator.RunPhase1Discovery(symbolTable);
-                _twoPhaseCoordinator.RunPhase1Declaration(() =>
-                {
-                    // Legacy declaration path (will be replaced in Milestone 2+)
-                    _classesGenerator.DeclareClasses(symbolTable);
-                    _functionGenerator.DeclareFunctions(symbolTable);
-                });
+                _twoPhaseCoordinator.RunMilestone1OptionB(
+                    symbolTable,
+                    _ilGenerator.MetadataBuilder,
+                    compileAnonymousCallablesPhase2: callables =>
+                        _twoPhaseCoordinator.CompilePhase2AnonymousCallables(
+                            callables,
+                            _ilGenerator.MetadataBuilder,
+                            _serviceProvider,
+                            _rootVariables,
+                            _bclReferences,
+                            _methodBodyStreamEncoder,
+                            _classRegistry,
+                            _functionGenerator.FunctionRegistry,
+                            _symbolTable),
+                    compileClassesAndFunctionsPhase2: () =>
+                    {
+                        _classesGenerator.DeclareClasses(symbolTable);
+                        _functionGenerator.DeclareFunctions(symbolTable);
+                    });
             }
             else
             {

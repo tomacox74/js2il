@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using Acornima.Ast;
+using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,7 @@ namespace Js2IL.Services.ILGenerators
         private readonly ClassRegistry _classRegistry;
         private readonly FunctionRegistry _functionRegistry;
         private readonly SymbolTable? _symbolTable;
+        private readonly TwoPhaseCompilationCoordinator _twoPhaseCoordinator;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -38,6 +40,7 @@ namespace Js2IL.Services.ILGenerators
             _functionRegistry = functionRegistry;
             _symbolTable = symbolTable;
             _serviceProvider = serviceProvider;
+            _twoPhaseCoordinator = serviceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
         }
 
         internal MethodDefinitionHandle GenerateArrowFunctionMethod(
@@ -46,6 +49,15 @@ namespace Js2IL.Services.ILGenerators
             string ilMethodName,
             string[] paramNames)
         {
+            // Two-phase lookup: only skip compilation when we already have a MethodDef token.
+            // Phase 1 may have populated a MemberRef token (signature-only), which is not a compiled body.
+            if (_twoPhaseCoordinator != null &&
+                _twoPhaseCoordinator.TryGetToken(arrowFunction, out var existingToken) &&
+                existingToken.Kind == HandleKind.MethodDefinition)
+            {
+                return (MethodDefinitionHandle)existingToken;
+            }
+
             // Try the new IR-based compilation pipeline first
             if (_symbolTable != null)
             {
@@ -57,6 +69,8 @@ namespace Js2IL.Services.ILGenerators
                     IR.IRPipelineMetrics.RecordArrowFunctionAttempt(!compiledMethod.IsNil);
                     if (!compiledMethod.IsNil)
                     {
+                        // Two-phase: register the token in the canonical CallableRegistry
+                        _twoPhaseCoordinator?.RegisterToken(arrowFunction, (EntityHandle)compiledMethod);
                         return compiledMethod;
                     }
                 }
@@ -305,6 +319,10 @@ namespace Js2IL.Services.ILGenerators
             var tb = new TypeBuilder(_metadataBuilder, "Functions", ilMethodName);
             var mdh = tb.AddMethodDefinition(MethodAttributes.Static | MethodAttributes.Public | MethodAttributes.HideBySig, ilMethodName, methodSig, bodyOffset, firstParam);
             tb.AddTypeDefinition(TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, _bclReferences.ObjectType);
+
+            // Two-phase: register the token in the canonical CallableRegistry
+            _twoPhaseCoordinator?.RegisterToken(arrowFunction, (EntityHandle)mdh);
+
             return mdh;
         }
     }

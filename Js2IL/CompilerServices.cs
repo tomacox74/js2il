@@ -64,10 +64,14 @@ public static class CompilerServices
         // when the callable metadata discovery and registration pipeline is fully integrated.
         services.AddSingleton<CallableMetadataRegistry>();
 
+        // CallableRegistry is the canonical store for callable declarations (used by TwoPhaseCompilationCoordinator)
+        services.AddSingleton<Services.TwoPhaseCompilation.CallableRegistry>();
+
         services.AddTransient<JsMethodCompiler>();
         
-        // Two-phase compilation coordinator (transient - new instance per module)
-        services.AddTransient<TwoPhaseCompilationCoordinator>();
+        // Two-phase compilation coordinator (singleton per compilation)
+        // Generators resolve this from DI and must observe a single shared coordinator instance.
+        services.AddSingleton<TwoPhaseCompilationCoordinator>();
 
         return services.BuildServiceProvider();
     }
