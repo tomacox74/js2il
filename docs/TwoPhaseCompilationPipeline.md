@@ -1,4 +1,4 @@
-# JS2IL Two-Phase Compilation Pipeline (Design Plan)
+# JS2IL Two-Phase Compilation Pipeline
 
 This document describes a proposed **two-phase compilation pipeline** for JS2IL that is **dependency-safe** across:
 
@@ -8,12 +8,29 @@ This document describes a proposed **two-phase compilation pipeline** for JS2IL 
 
 The goal is to make IR compilation reliable without relying on “compile-on-demand” during AST→HIR→LIR→IL.
 
-> Status: planning / design. This document describes a migration path and does not imply the implementation is complete.
+> Status (Jan 2026): **Milestone 1 is implemented** behind `CompilerOptions.TwoPhaseCompilation` (Option B: Phase 1 declares tokens for anonymous callables as `MemberReferenceHandle`s and enables strict lookup-only emission). **Milestone 2 is not implemented yet** (no dependency graph / planner; function/class bodies are still compiled using legacy ordering). The switch to Phase-1 `MethodDefinitionHandle` preallocation is **Option A** work and is targeted for **Milestone 2+**, not Milestone 1.
 
 This doc is written **ideal-first**:
 
 - Treat the **Phase 1 / Phase 2** mechanics and the invariants as the target design.
 - Any discussion of “today”, “migration”, or “legacy” is non-normative context for rollout.
+
+---
+
+## Current implementation snapshot (Milestone 1)
+
+When `CompilerOptions.TwoPhaseCompilation` is enabled, JS2IL now has a real (partial) two-phase coordinator:
+
+- **Phase 1: Discovery** runs via `CallableDiscovery` and populates a unified `CallableRegistry` keyed by `CallableId`.
+- **Phase 1: Declaration (Option B)** pre-declares tokens for **arrow functions** and **function expressions** as `MemberReferenceHandle`s (enough for `ldftn` + delegate creation) without compiling bodies.
+- **Strict mode** is enabled before any body compilation so expression emission becomes **lookup-only** for arrows/function expressions (no on-demand compilation).
+- **Phase 2: Body compilation** compiles discovered anonymous callables first, then runs the existing class/function generators.
+
+What is *not* implemented yet (still Milestone 2+):
+
+- No dependency graph / [SCC][scc] planner; Phase 2 ordering is deterministic but not dependency-aware.
+- Function declarations and class constructors/methods are still declared+compiled in the legacy generators (including some depth-first nested compilation patterns).
+- Phase 1 does **not** preallocate `MethodDefinitionHandle`s for anonymous callables yet (Option A).
 
 ---
 
@@ -462,7 +479,7 @@ It may consult registries/caches for tokens or cells, but compilation must alrea
 ### Callable references (chosen approach)
 
 <a id="option-a"></a>
-#### Option A: pre-create `MethodDefinitionHandle` for every callable
+#### Option A (target): pre-create `MethodDefinitionHandle` for every callable
 
 Mechanics:
 
@@ -494,6 +511,26 @@ Type handle note:
 - As already noted earlier in this document: `MetadataBuilder.AddTypeDefinition(...)` requires correct `fieldList`/`methodList`, so pre-allocating TypeDef handles implies the same **precomputed table layout** requirement.
 
 ---
+
+<a id="option-b"></a>
+#### Option B (implemented in Milestone 1): pre-create `MemberReferenceHandle` for anonymous callables
+
+This is the pragmatic approach currently used by the coordinator for **arrow functions** and **function expressions**.
+
+Mechanics:
+
+1. Phase 1 discovery records every callable as a `CallableId` in `CallableRegistry`.
+2. Phase 1 declaration creates:
+  - a `TypeReference` to `Functions.<ILMethodName>` (the type will be emitted later), and
+  - a `MemberReference` to `<ILMethodName>(object[] scopes, object p1, ..., object pn) -> object`.
+3. Store that `MemberReferenceHandle` in `CallableRegistry`.
+4. Enable strict mode so expression emission can only *lookup* tokens.
+5. Phase 2 later emits the real method body (and may register a `MethodDefinitionHandle` for the same callable, overwriting the token).
+
+Why this exists:
+
+- It avoids the “precompute all MethodDef row ownership/layout” constraint of Option A.
+- It still satisfies the Milestone 1 invariant for anonymous callables: `ldftn` and delegate creation never trigger compilation.
 
 ## Phase 2: Body compilation mechanics
 
@@ -534,6 +571,8 @@ When lowering emits `LIRLoadFunction` / `LIRLoadArrowFunction`, IL emission must
 
 Under Option A, `<method token>` is a `MethodDefinitionHandle`.
 
+Under the current Milestone 1 implementation (Option B for arrows/function expressions), `<method token>` is a `MemberReferenceHandle`.
+
 The delegate signature must match `JsParamCount`.
 
 ### Calling methods
@@ -553,69 +592,19 @@ This is intended to be implemented incrementally and keep the system runnable.
 
 ### Legacy AST→IL pipeline: file-by-file changes
 
-This section answers: **what changes are needed in the legacy generators to make Option A two-phase work**, and **when** we should do them.
 
-#### `JavaScriptFunctionGenerator.cs`
+### Milestone 1: Coordinator + Phase 1 declarations (completed)
 
-Today it does **both** declaration and compilation (and it does nested function bodies depth-first), because call sites (and the IR pipeline via `CompiledMethodCache`) need method handles.
+Implemented behind `CompilerOptions.TwoPhaseCompilation`:
 
-- **Milestone 1 (Phase 1 declaration):** split into “declare-only” vs “compile body” APIs.
-  - `DeclareFunctions(...)` becomes *signature/metadata only*:
-    - create/ensure the `Functions.<ModuleName>` owner type
-    - enumerate function declaration scopes (top-level + nested)
-    - pre-register parameter counts (for recursion metadata / delegate ctor selection)
-    - allocate/store `MethodDefinitionHandle` for each declared function and populate the callable-token store (initially still `CompiledMethodCache` as an adapter)
-  - Move IR attempts and legacy body emission out of `DeclareFunctions(...)`.
-- **Milestone 2 (Phase 2 compilation order):** compile function bodies via the plan order (not depth-first).
-  - implement `CompileFunctionBodies(plan)` that emits bodies for the already-declared MethodDefs.
-- **Milestone 3 (registry unification):** stop writing directly to `CompiledMethodCache`; instead populate it from the unified `CallableRegistry` adapter until the IR pipeline is updated to read from `CallableRegistry`.
+- `CallableId`, `CallableSignature`, `CallableDiscovery`, `CallableRegistry`
+- `TwoPhaseCompilationCoordinator` to orchestrate Phase 1 + Phase 2
+- Phase 1 declaration for **arrows/function expressions** using Option B (MemberRefs)
+- Strict-mode enforcement so expression emission is lookup-only for those anonymous callables
 
-Key outcome: function call sites can rely on **handles existing** even when bodies are compiled later.
+Non-goal for Milestone 1:
 
-#### `JavaScriptArrowFunctionGenerator.cs`
-
-Today arrow compilation is effectively **on-demand** (called from expression emission) with an IR-first attempt and legacy fallback.
-
-- **Milestone 1:** eliminate “compile on demand” as the default mechanism.
-  - Introduce a Phase 1 step that discovers and declares arrow callables up-front (stable identity + `MethodDefinitionHandle`).
-  - Change arrow emission sites to only **reference** the predeclared handle when loading an arrow as a value.
-- **Milestone 2:** move arrow body compilation into Phase 2 and compile in planned order.
-  - Keep the existing legacy body logic, but run it from the coordinator (not from `ILExpressionGenerator`).
-- **Milestone 3:** route all arrow callable token lookups through `CallableRegistry` (and remove any remaining ad-hoc arrow token storage).
-
-Key outcome: arrow creation (`ldftn` + delegate) is always based on declared metadata, never a trigger to compile.
-
-#### `ILMethodGenerator.cs`
-
-Today it exposes helper entry points that *compile nested callables during statement/expression emission* (e.g., `GenerateArrowFunctionMethod(...)`, `GenerateFunctionExpressionMethod(...)`).
-
-- **Milestone 1:** stop being a callable compiler during emission.
-  - Replace “generate method now” call paths with “lookup declared handle” call paths.
-  - Keep the ability to emit *bodies* for a callable when the coordinator invokes Phase 2.
-- **Milestone 2:** ensure initialization logic that previously relied on depth-first ordering is moved into Phase 2 orchestration.
-  - Example: nested function variable initialization should assume tokens exist, not bodies.
-- **Milestone 3:** remove/retire any remaining compilation-on-demand helper APIs.
-
-Key outcome: statement generation becomes deterministic and does not mutate the global callable set.
-
-#### `ILExpressionGenerator.cs`
-
-This is the main place where “callables as values” are created, so it must become a **pure consumer** of Phase 1 declarations.
-
-- **Milestone 1:** for `FunctionExpression` and `ArrowFunctionExpression`:
-  - compute the callable identity (scope/name or location-based key)
-  - lookup the predeclared `MethodDefinitionHandle` in the token store
-  - emit delegate creation (`ldnull; ldftn <methoddef>; newobj <FuncCtor>`) without compiling anything
-- **Milestone 2:** remove any remaining assumptions that nested callables were compiled depth-first.
-- **Milestone 3:** switch lookups from legacy adapters (string keys / AST node keys) to `CallableId` lookups in `CallableRegistry`.
-
-Key outcome: expression emission never triggers compilation.
-
-### Milestone 1: Coordinator + Phase 1 declarations
-
-- Add `CallableDiscovery` and `CallableRegistry`
-- Refactor class/function/arrow “declare” entry points into signature-only
-- Keep Phase 2 using existing compile routines
+- Preallocating `MethodDefinitionHandle`s in Phase 1 (Option A). This requires restructuring declaration to allocate real MethodDef rows (with correct owning types) before any body compilation and is deferred to Milestone 2+.
 
 Usability expectation:
 
@@ -624,30 +613,35 @@ Usability expectation:
 
 Legacy AST→IL impact:
 
-- **Minimal / mostly orchestration.** Legacy AST→IL remains the body compiler for Phase 2 at this point.
-- Split the legacy entry points so they can be invoked as:
-  - **Phase 1**: “declare signatures only” (types + method defs / descriptors)
-  - **Phase 2**: “compile bodies” (existing AST→IL body emission)
-- Avoid any AST→IL code path that *implicitly* compiles other callables during emission (e.g., arrow/function-expression on-demand compilation) by moving callable compilation into explicit Phase 2 entry points.
+- **Minimal / mostly orchestration.** Existing generators still compile bodies; the key Milestone 1 behavior is that *anonymous callable token resolution* is lookup-only in strict mode.
 
-Where the IR attempts move to (Milestone 1):
+### Milestone 2: Dependency graph + ordering (remaining work)
 
-- **Function declarations:** move the `TryCompileMethod(...)` attempt out of `JavaScriptFunctionGenerator.DeclareFunctions(...)` and into a Phase 2 API (e.g., `CompileFunctionBody(...)` / `CompileFunctionBodies(...)`) that is invoked by the coordinator.
-- **Arrow functions / function expressions:** move any `TryCompileArrowFunction(...)` / IR attempts out of expression-time helper methods and into Phase 2 compilation of the corresponding declared callable.
+Milestone 2 is the point where “two-phase” becomes *dependency-correct*, not just “declare tokens early”.
 
-In other words: **Phase 1 declares tokens; Phase 2 compiles bodies and may attempt IR-first-then-legacy per callable.**
+Recommended sequence (to minimize churn):
 
-### Milestone 2: Dependency graph + ordering
+- **Milestone 2a: Switch anonymous callables to `MethodDefinitionHandle` (Option A subset)**
+  - Change Phase 1 declaration for **arrow functions** and **function expressions** to allocate real `MethodDefinitionHandle`s (not `MemberReferenceHandle`s).
+  - Keep bodies uncompiled during Phase 1; Phase 2 attaches bodies to the preallocated MethodDefs.
+  - This locks in the long-term token model early so later planner/orchestration work doesn’t need a second refactor.
 
-- Add AST visitor to build dependencies
-- Add [SCC][scc]/topo planner
-- Compile bodies in plan order
+- **Milestone 2b: Dependency discovery + planner**
+  - Add an AST-based dependency collector that maps identifier references (via the symbol table) to `CallableId` edges.
+  - Compute [SCC][scc] groups + a deterministic topo order of groups.
+
+- **Milestone 2c: True Phase 2 planned compilation**
+  - Compile callable bodies in planner order.
+  - Move function declarations and class constructors/methods to the same model: Phase 1 declares tokens/signatures only; Phase 2 owns all body compilation.
+  - Move `TryCompileMethod(...)` out of function/class “declare” paths into explicit Phase 2 compilation APIs invoked by the coordinator.
+  - Remove depth-first assumptions (no more “compile nested bodies early so handles exist”).
+  - Ensure main method emission happens after callable body compilation (or after the [SCC][scc] group it depends on), so IR/LIR lookups never observe undeclared tokens.
 
 Legacy AST→IL impact:
 
-- **No semantic changes to AST→IL emission.** The change is *when* it runs:
-  - AST→IL body compilation is invoked by the coordinator in planned order.
-- Legacy “compile main” should move to the end (after callable bodies) to match the planned ordering.
+- **No semantic changes to AST→IL emission are intended.** The change is *when* it runs:
+  - body compilation is invoked by the coordinator in planned order.
+  - main is emitted after callable bodies so expression emission never needs to compile.
 
 ### Milestone 3: Replace ad-hoc caches with unified registry
 

@@ -71,6 +71,7 @@ x is  3
 ## Status and scope
 - Experimental.
 - Not all JavaScript features are supported; `eval` is not supported.
+- Two-phase compilation pipeline work is available behind `CompilerOptions.TwoPhaseCompilation` (experimental). See `docs/TwoPhaseCompilationPipeline.md`.
 - See [JavaScript Feature Coverage](docs/ECMAScript2025_FeatureCoverage.md) for a comprehensive breakdown of supported JavaScript language features organized by specification section.
 - See [Node.js Feature Coverage](docs/NodeSupport.md) for details on supported Node.js modules, APIs, and globals.
 
@@ -86,6 +87,8 @@ Errors and exit codes
 ## Roadmap
 - Phase 1: Implement sufficient JavaScript semantics to compile most libraries without optimizations (excluding `eval`).
 - Phase 2: Apply static and runtime optimizations (e.g., unboxed integers, selective closure fields, direct call paths, shape-based optimizations) to approach or exceed typical Node.js performance.
+
+Note: the Roadmap “Phase 1/Phase 2” is a product maturity plan and is separate from the compiler’s “two-phase compilation pipeline” terminology.
 
 .NET provides a rich type system, cross-platform support, and an out-of-the-box GC implementation that has benefited from many years of optimizations.
 
