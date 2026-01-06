@@ -11,11 +11,6 @@ namespace Js2IL.Utilities.Ecma335
     /// </summary>
     internal sealed class TypeBuilder
     {
-        /// <summary>
-        /// The namespace used for generated function types (arrows, function expressions, etc.).
-        /// </summary>
-        public const string FunctionsNamespace = "Functions";
-
         private readonly MetadataBuilder _metadataBuilder;
         private readonly string _namespaceName;
         private readonly string _typeName;

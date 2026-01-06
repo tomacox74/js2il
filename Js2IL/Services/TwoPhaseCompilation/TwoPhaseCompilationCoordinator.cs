@@ -26,6 +26,11 @@ namespace Js2IL.Services.TwoPhaseCompilation;
 /// </remarks>
 public sealed class TwoPhaseCompilationCoordinator
 {
+    /// <summary>
+    /// The namespace used for generated function types (arrows, function expressions, etc.).
+    /// </summary>
+    public const string FunctionsNamespace = "Functions";
+
     private readonly ILogger _logger;
     private readonly bool _verbose;
     
@@ -137,12 +142,12 @@ public sealed class TwoPhaseCompilationCoordinator
             }
 
             var ilMethodName = signature.ILMethodName;
-            var typeKey = $"{TypeBuilder.FunctionsNamespace}/{ilMethodName}";
+            var typeKey = $"{TwoPhaseCompilationCoordinator.FunctionsNamespace}/{ilMethodName}";
             if (!typeRefCache.TryGetValue(typeKey, out var typeRef))
             {
                 typeRef = metadataBuilder.AddTypeReference(
                     moduleHandle,
-                    metadataBuilder.GetOrAddString(TypeBuilder.FunctionsNamespace),
+                    metadataBuilder.GetOrAddString(TwoPhaseCompilationCoordinator.FunctionsNamespace),
                     metadataBuilder.GetOrAddString(ilMethodName));
                 typeRefCache[typeKey] = typeRef;
             }
