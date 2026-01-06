@@ -29,14 +29,17 @@ namespace Js2IL.Services
         private TypeReferenceRegistry _typeReferenceRegistry;
 
         private IServiceProvider _serviceProvider;
+        
+        private readonly CompilerOptions _compilerOptions;
 
-        public AssemblyGenerator(IServiceProvider serviceProvider, MetadataBuilder metadataBuilder, TypeReferenceRegistry typeReferenceRegistry, VariableBindings.VariableRegistry variableRegistry)
+        public AssemblyGenerator(IServiceProvider serviceProvider, MetadataBuilder metadataBuilder, TypeReferenceRegistry typeReferenceRegistry, VariableBindings.VariableRegistry variableRegistry, CompilerOptions compilerOptions)
         {
             this._metadataBuilder = metadataBuilder;
             this._typeReferenceRegistry = typeReferenceRegistry;
             this._bclReferences = serviceProvider.GetRequiredService<BaseClassLibraryReferences>();
             this._serviceProvider = serviceProvider;
             this._variableRegistry = variableRegistry;
+            this._compilerOptions = compilerOptions;
         }
 
         /// <summary>
@@ -120,7 +123,7 @@ namespace Js2IL.Services
             
             // Create MainGenerator to handle function/class declarations
             // This is needed even for IR path because functions must be compiled first
-            var mainGenerator = new MainGenerator(_serviceProvider, variables, _bclReferences, _metadataBuilder, methodBodyStream, module.SymbolTable!);
+            var mainGenerator = new MainGenerator(_serviceProvider, variables, _bclReferences, _metadataBuilder, methodBodyStream, module.SymbolTable!, _compilerOptions);
             
             // Declare functions and classes first - this populates CompiledMethodCache
             // which is needed for IR pipeline to emit function calls
