@@ -1,4 +1,5 @@
 using System.Reflection.Metadata;
+using System.Reflection.Metadata.Ecma335;
 using Acornima.Ast;
 using Js2IL.SymbolTables;
 
@@ -54,6 +55,111 @@ public sealed class TwoPhaseCompilationCoordinator
     /// Gets the list of discovered callables after Phase 1 discovery.
     /// </summary>
     public IReadOnlyList<CallableId>? DiscoveredCallables => _discoveredCallables;
+
+    /// <summary>
+    /// Milestone 1 (Option B): Phase 1 is declare-only.
+    ///
+    /// This runs:
+    /// 1) Phase 1 discovery
+    /// 2) Phase 1 token declaration (MemberRefs for arrows/function expressions)
+    /// 3) Enable strict mode
+    /// 4) Phase 2 body compilation via provided callbacks
+    /// </summary>
+    /// <remarks>
+    /// We keep Phase 2 body compilation delegated to generators, but centralize the
+    /// orchestration and the Phase 1 declare-only MemberRef emission here so MainGenerator
+    /// stays thin and the coordinator matches the design doc responsibilities.
+    /// </remarks>
+    public void RunMilestone1OptionB(
+        SymbolTable symbolTable,
+        MetadataBuilder metadataBuilder,
+        Action<IReadOnlyList<CallableId>> compileAnonymousCallablesPhase2,
+        Action compileClassesAndFunctionsPhase2)
+    {
+        RunPhase1Discovery(symbolTable);
+
+        if (_discoveredCallables != null)
+        {
+            DeclarePhase1AnonymousCallablesTokens(_discoveredCallables, metadataBuilder);
+        }
+
+        // Enable strict mode before any body compilation so expression emission cannot compile.
+        EnableStrictMode();
+
+        RunPhase2BodyCompilation(() =>
+        {
+            if (_discoveredCallables != null)
+            {
+                compileAnonymousCallablesPhase2(_discoveredCallables);
+            }
+
+            compileClassesAndFunctionsPhase2();
+        });
+    }
+
+    private void DeclarePhase1AnonymousCallablesTokens(IReadOnlyList<CallableId> callables, MetadataBuilder metadataBuilder)
+    {
+        // Phase 1 declares MemberRefs for arrows and function expressions.
+        // These are sufficient for ldftn/call token usage without compiling bodies.
+        var registry = _registry;
+        if (registry == null)
+        {
+            return;
+        }
+
+        // Use Module scope for TypeRef resolution so we can reference types that will be emitted later.
+        // The single module row is always index 1.
+        var moduleHandle = MetadataTokens.EntityHandle(TableIndex.Module, 1);
+
+        // Cache TypeRefs by "namespace/name" to avoid duplicates.
+        var typeRefCache = new Dictionary<string, TypeReferenceHandle>(StringComparer.Ordinal);
+
+        foreach (var callable in callables)
+        {
+            if (callable.Kind is not (CallableKind.Arrow or CallableKind.FunctionExpression))
+            {
+                continue;
+            }
+
+            // Skip if already has a token (idempotent); Phase 2 may overwrite MemberRef with MethodDef.
+            if (registry.TryGetDeclaredToken(callable, out var existingToken) && !existingToken.IsNil)
+            {
+                continue;
+            }
+
+            var signature = registry.GetSignature(callable);
+            if (signature == null)
+            {
+                continue;
+            }
+
+            var ilMethodName = signature.ILMethodName;
+            var typeKey = $"Functions/{ilMethodName}";
+            if (!typeRefCache.TryGetValue(typeKey, out var typeRef))
+            {
+                typeRef = metadataBuilder.AddTypeReference(
+                    moduleHandle,
+                    metadataBuilder.GetOrAddString("Functions"),
+                    metadataBuilder.GetOrAddString(ilMethodName));
+                typeRefCache[typeKey] = typeRef;
+            }
+
+            var paramCount = 1 + callable.JsParamCount;
+            var methodSig = ILGenerators.MethodBuilder.BuildMethodSignature(
+                metadataBuilder,
+                isInstance: false,
+                paramCount: paramCount,
+                hasScopesParam: true,
+                returnsVoid: false);
+
+            var memberRef = metadataBuilder.AddMemberReference(
+                typeRef,
+                metadataBuilder.GetOrAddString(ilMethodName),
+                methodSig);
+
+            registry.SetToken(callable, (EntityHandle)memberRef);
+        }
+    }
 
     /// <summary>
     /// Phase 1: Discover all callables in the module and populate CallableRegistry.

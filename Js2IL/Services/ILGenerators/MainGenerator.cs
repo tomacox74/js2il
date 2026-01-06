@@ -58,112 +58,6 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-        private void DeclarePhase1AnonymousCallables(IReadOnlyList<CallableId> callables, MetadataBuilder metadataBuilder)
-        {
-            // Milestone 1 (Option B): Phase 1 is declare-only.
-            // We emit MemberRef tokens for arrow functions and function expressions so that
-            // expression emission can always do lookup-only (no compilation).
-
-            var registry = _twoPhaseCoordinator?.Registry;
-            if (registry == null)
-            {
-                return;
-            }
-
-            // Use Module scope for TypeRef resolution so we can reference types that will be emitted later.
-            // The single module row is always index 1.
-            var moduleHandle = MetadataTokens.EntityHandle(TableIndex.Module, 1);
-
-            // Cache TypeRefs by "namespace/name" to avoid duplicates.
-            var typeRefCache = new System.Collections.Generic.Dictionary<string, TypeReferenceHandle>(StringComparer.Ordinal);
-
-            foreach (var callable in callables)
-            {
-                switch (callable.Kind)
-                {
-                    case CallableKind.Arrow:
-                        // Skip if already has a token (idempotent); Phase 2 may overwrite MemberRef with MethodDef.
-                        if (registry.TryGetDeclaredToken(callable, out var existingToken) && !existingToken.IsNil)
-                        {
-                            continue;
-                        }
-
-                        // Build a MemberRef to Functions.<ILMethodName>::<ILMethodName>(object[] scopes, object...)
-                        var signature = registry.GetSignature(callable);
-                        if (signature == null)
-                        {
-                            continue;
-                        }
-
-                        var ilMethodName = signature.ILMethodName;
-                        var typeKey = $"Functions/{ilMethodName}";
-                        if (!typeRefCache.TryGetValue(typeKey, out var typeRef))
-                        {
-                            typeRef = metadataBuilder.AddTypeReference(
-                                moduleHandle,
-                                metadataBuilder.GetOrAddString("Functions"),
-                                metadataBuilder.GetOrAddString(ilMethodName));
-                            typeRefCache[typeKey] = typeRef;
-                        }
-
-                        var paramCount = 1 + callable.JsParamCount;
-                        var methodSig = MethodBuilder.BuildMethodSignature(
-                            metadataBuilder,
-                            isInstance: false,
-                            paramCount: paramCount,
-                            hasScopesParam: true,
-                            returnsVoid: false);
-
-                        var memberRef = metadataBuilder.AddMemberReference(
-                            typeRef,
-                            metadataBuilder.GetOrAddString(ilMethodName),
-                            methodSig);
-
-                        registry.SetToken(callable, (EntityHandle)memberRef);
-                        break;
-
-                    case CallableKind.FunctionExpression:
-                        if (registry.TryGetDeclaredToken(callable, out var existingToken2) && !existingToken2.IsNil)
-                        {
-                            continue;
-                        }
-
-                        var signature2 = registry.GetSignature(callable);
-                        if (signature2 == null)
-                        {
-                            continue;
-                        }
-
-                        var ilMethodName2 = signature2.ILMethodName;
-                        var typeKey2 = $"Functions/{ilMethodName2}";
-                        if (!typeRefCache.TryGetValue(typeKey2, out var typeRef2))
-                        {
-                            typeRef2 = metadataBuilder.AddTypeReference(
-                                moduleHandle,
-                                metadataBuilder.GetOrAddString("Functions"),
-                                metadataBuilder.GetOrAddString(ilMethodName2));
-                            typeRefCache[typeKey2] = typeRef2;
-                        }
-
-                        var paramCount2 = 1 + callable.JsParamCount;
-                        var methodSig2 = MethodBuilder.BuildMethodSignature(
-                            metadataBuilder,
-                            isInstance: false,
-                            paramCount: paramCount2,
-                            hasScopesParam: true,
-                            returnsVoid: false);
-
-                        var memberRef2 = metadataBuilder.AddMemberReference(
-                            typeRef2,
-                            metadataBuilder.GetOrAddString(ilMethodName2),
-                            methodSig2);
-
-                        registry.SetToken(callable, (EntityHandle)memberRef2);
-                        break;
-                }
-            }
-        }
-
         private void CompilePhase2AnonymousCallables(IReadOnlyList<CallableId> callables, MetadataBuilder metadataBuilder)
         {
             foreach (var callable in callables)
@@ -333,31 +227,16 @@ namespace Js2IL.Services.ILGenerators
         {
             if (_twoPhaseCoordinator != null)
             {
-                // Two-phase path: discover callables, then declare all in Phase 1
-                _twoPhaseCoordinator.RunPhase1Discovery(symbolTable);
-                
-                // Phase 1: Declaration (declare-only; no bodies)
-                var discoveredCallables = _twoPhaseCoordinator.DiscoveredCallables;
-                if (discoveredCallables != null)
-                {
-                    // Phase 1: declare all arrow functions and function expressions (MemberRef tokens)
-                    DeclarePhase1AnonymousCallables(discoveredCallables, _ilGenerator.MetadataBuilder);
-                }
-
-                // Enable strict mode before any body compilation so that expression emission cannot compile.
-                _twoPhaseCoordinator.EnableStrictMode();
-
-                // Phase 2: Compile bodies using existing generators.
-                _twoPhaseCoordinator.RunPhase2BodyCompilation(() =>
-                {
-                    if (discoveredCallables != null)
+                _twoPhaseCoordinator.RunMilestone1OptionB(
+                    symbolTable,
+                    _ilGenerator.MetadataBuilder,
+                    compileAnonymousCallablesPhase2: callables =>
+                        CompilePhase2AnonymousCallables(callables, _ilGenerator.MetadataBuilder),
+                    compileClassesAndFunctionsPhase2: () =>
                     {
-                        CompilePhase2AnonymousCallables(discoveredCallables, _ilGenerator.MetadataBuilder);
-                    }
-
-                    _classesGenerator.DeclareClasses(symbolTable);
-                    _functionGenerator.DeclareFunctions(symbolTable);
-                });
+                        _classesGenerator.DeclareClasses(symbolTable);
+                        _functionGenerator.DeclareFunctions(symbolTable);
+                    });
             }
             else
             {
