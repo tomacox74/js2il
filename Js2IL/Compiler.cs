@@ -14,14 +14,16 @@ public class Compiler
     private readonly ModuleLoader _moduleLoader;
 
     private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger _logger;
 
-    public Compiler(IServiceProvider serviceProvider, CompilerOptions options, ModuleLoader moduleLoader)
+    public Compiler(IServiceProvider serviceProvider, CompilerOptions options, ModuleLoader moduleLoader, ILogger logger)
     {
         this.outputDirectory = options.OutputDirectory;
         this.verbose = options.Verbose;
         this.analyzeUnused = options.AnalyzeUnused;
         this._moduleLoader = moduleLoader;
         this._serviceProvider = serviceProvider;
+        this._logger = logger;
     }   
 
     public bool Compile(string inputFile)
@@ -41,7 +43,7 @@ public class Compiler
         // Build scope trees
         if (this.verbose)
         {
-            Console.WriteLine("Build the symbol tables");
+            _logger.WriteLine("Build the symbol tables");
         }
         foreach (var mod in modules._modules.Values)
         {
@@ -53,9 +55,9 @@ public class Compiler
             
             foreach (var mod in modules._modules.Values)
             {
-                Console.WriteLine();
-                Console.WriteLine("Scope Tree Structure:");
-                Console.WriteLine($"Module: {mod.Path}");
+                _logger.WriteLine();
+                _logger.WriteLine("Scope Tree Structure:");
+                _logger.WriteLine($"Module: {mod.Path}");
                 var symbolTable = mod.SymbolTable!;
                 PrintScopeTree(symbolTable.Root, 0);
             }
@@ -64,7 +66,7 @@ public class Compiler
         // Generate IL assembly
         if (this.verbose)
         {
-            Console.WriteLine("Generating dotnet assembly...");
+            _logger.WriteLine("Generating dotnet assembly...");
         }
         var assemblyGenerator = _serviceProvider.GetRequiredService<AssemblyGenerator>();
 
@@ -78,7 +80,7 @@ public class Compiler
 
         assemblyGenerator.Generate(modules, assemblyName, outputPath);
 
-        Console.WriteLine($"Compilation succeeded. Output written to {outputPath}");
+        _logger.WriteLine($"Compilation succeeded. Output written to {outputPath}");
 
         return true;
     }
@@ -97,7 +99,7 @@ public class Compiler
         // If a file exists at the output path, fail with a clear message
         if (File.Exists(outputPath))
         {
-            Logger.WriteLineError($"Error: Output path '{outputPath}' is a file. Provide a directory path.");
+            _logger.WriteLineError($"Error: Output path '{outputPath}' is a file. Provide a directory path.");
             return false;
         }
 
@@ -107,7 +109,7 @@ public class Compiler
             Directory.CreateDirectory(outputPath);
             if (this.verbose)
             {
-                Console.WriteLine($"Ensured output directory exists: {outputPath}");
+                _logger.WriteLine($"Ensured output directory exists: {outputPath}");
             }
         }
         catch (Exception ex) when (ex is UnauthorizedAccessException
@@ -117,7 +119,7 @@ public class Compiler
                                     || ex is DriveNotFoundException
                                     || ex is IOException)
         {
-            Logger.WriteLineError($"Error creating output directory '{outputPath}': {ex.Message}");
+            _logger.WriteLineError($"Error creating output directory '{outputPath}': {ex.Message}");
             return false;
         }
 
@@ -127,17 +129,17 @@ public class Compiler
     /// <summary>
     /// Helper method to print the scope tree structure for verbose output.
     /// </summary>
-    private static void PrintScopeTree(Scope scope, int indentLevel)
+    private void PrintScopeTree(Scope scope, int indentLevel)
     {
         var indent = new string(' ', indentLevel * 2);
-        Console.WriteLine($"{indent}{scope.Name} ({scope.Kind})");
+        _logger.WriteLine($"{indent}{scope.Name} ({scope.Kind})");
         
         if (scope.Bindings.Any())
         {
-            Console.WriteLine($"{indent}  Variables:");
+            _logger.WriteLine($"{indent}  Variables:");
             foreach (var binding in scope.Bindings.Values)
             {
-                Console.WriteLine($"{indent}    - {binding.Name} ({binding.Kind})");
+                _logger.WriteLine($"{indent}    - {binding.Name} ({binding.Kind})");
             }
         }
 
@@ -147,7 +149,7 @@ public class Compiler
         }
     }
 
-    private static void AnalyzeUnusedForModules(Modules modules)
+    private void AnalyzeUnusedForModules(Modules modules)
     {
         foreach (var module in modules._modules.Values)
         {
@@ -155,50 +157,50 @@ public class Compiler
         }
     }
 
-    private static void AnalyzeUnusedForModule(ModuleDefinition module)
+    private void AnalyzeUnusedForModule(ModuleDefinition module)
     {
-            Console.WriteLine();
-            Console.WriteLine($"Analyzing unused code for module: {module.Path}");
+            _logger.WriteLine();
+            _logger.WriteLine($"Analyzing unused code for module: {module.Path}");
             var unusedCodeAnalyzer = new UnusedCodeAnalyzer();
             var unusedCodeResult = unusedCodeAnalyzer.Analyze(module.Ast);
 
             if (unusedCodeResult.UnusedFunctions.Any())
             {
-                Console.WriteLine();
-                Console.WriteLine("Unused Functions:");
+                _logger.WriteLine();
+                _logger.WriteLine("Unused Functions:");
                 foreach (var unusedFunc in unusedCodeResult.UnusedFunctions)
                 {
-                    Console.WriteLine($"  - {unusedFunc}");
+                    _logger.WriteLine($"  - {unusedFunc}");
                 }
             }
 
             if (unusedCodeResult.UnusedProperties.Any())
             {
-                Console.WriteLine();
-                Console.WriteLine("Unused Properties:");
+                _logger.WriteLine();
+                _logger.WriteLine("Unused Properties:");
                 foreach (var unusedProp in unusedCodeResult.UnusedProperties)
                 {
-                    Console.WriteLine($"  - {unusedProp}");
+                    _logger.WriteLine($"  - {unusedProp}");
                 }
             }
 
             if (unusedCodeResult.UnusedVariables.Any())
             {
-                Console.WriteLine();
-                Console.WriteLine("Unused Variables:");
+                _logger.WriteLine();
+                _logger.WriteLine("Unused Variables:");
                 foreach (var unusedVar in unusedCodeResult.UnusedVariables)
                 {
-                    Console.WriteLine($"  - {unusedVar}");
+                    _logger.WriteLine($"  - {unusedVar}");
                 }
             }
 
             if (unusedCodeResult.Warnings.Any())
             {
-                Console.WriteLine();
-                Console.WriteLine("Unused Code Analysis Warnings:");
+                _logger.WriteLine();
+                _logger.WriteLine("Unused Code Analysis Warnings:");
                 foreach (var warning in unusedCodeResult.Warnings)
                 {
-                    Logger.WriteLineWarning($"Warning: {warning}");
+                    _logger.WriteLineWarning($"Warning: {warning}");
                 }
             }
         

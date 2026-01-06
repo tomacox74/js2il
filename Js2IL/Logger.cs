@@ -1,8 +1,18 @@
 namespace Js2IL;
 
-internal class Logger
+internal class Logger : ILogger
 {
-    public static void WriteLineWarning(string message)
+    public void WriteLine(string message)
+    {
+        Console.WriteLine(message);
+    }
+
+    public void WriteLine()
+    {
+        Console.WriteLine();
+    }
+
+    public void WriteLineWarning(string message)
     {
         var prev = Console.ForegroundColor;
         try
@@ -16,7 +26,7 @@ internal class Logger
         }
     }
 
-    public static void WriteLineError(string message)
+    public void WriteLineError(string message)
     {
         var prev = Console.ForegroundColor;
         try
