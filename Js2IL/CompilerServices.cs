@@ -2,6 +2,7 @@ using System.Reflection.Metadata.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
 using Js2IL.IL;
 using Js2IL.Services.ScopesAbi;
+using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.Services.VariableBindings;
  
 namespace Js2IL;
@@ -64,6 +65,9 @@ public static class CompilerServices
         services.AddSingleton<CallableMetadataRegistry>();
 
         services.AddTransient<JsMethodCompiler>();
+        
+        // Two-phase compilation coordinator (transient - new instance per module)
+        services.AddTransient<TwoPhaseCompilationCoordinator>();
 
         return services.BuildServiceProvider();
     }

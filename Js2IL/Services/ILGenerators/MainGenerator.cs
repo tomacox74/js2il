@@ -2,8 +2,10 @@
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
+using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Js2IL.Services.ILGenerators
 {
@@ -21,6 +23,8 @@ namespace Js2IL.Services.ILGenerators
         private BaseClassLibraryReferences _bclReferences;
 
         private readonly ClassRegistry _classRegistry = new();
+        
+        private readonly TwoPhaseCompilationCoordinator? _twoPhaseCoordinator;
 
         public MainGenerator(IServiceProvider serviceProvider, Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, SymbolTable symbolTable)
         {
@@ -31,10 +35,17 @@ namespace Js2IL.Services.ILGenerators
             if (metadataBuilder == null) throw new ArgumentNullException(nameof(metadataBuilder));
             
             _bclReferences = bclReferences;
+            var compilerOptions = serviceProvider.GetRequiredService<CompilerOptions>();
             _functionGenerator = new JavaScriptFunctionGenerator(serviceProvider, variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, symbolTable);
             _ilGenerator = new ILMethodGenerator(serviceProvider, variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, _functionGenerator.FunctionRegistry, symbolTable: symbolTable);
             _classesGenerator = new ClassesGenerator(serviceProvider,metadataBuilder, bclReferences, methodBodyStreamEncoder, _classRegistry, variables);
             this._methodBodyStreamEncoder = methodBodyStreamEncoder;
+            
+            // Initialize two-phase coordinator if enabled
+            if (compilerOptions.TwoPhaseCompilation)
+            {
+                _twoPhaseCoordinator = serviceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
+            }
         }
 
         /// <summary>
@@ -93,11 +104,25 @@ namespace Js2IL.Services.ILGenerators
         /// </summary>
         public void DeclareClassesAndFunctions(SymbolTable symbolTable)
         {
-            // First, declare classes so their types exist under the Classes namespace
-            _classesGenerator.DeclareClasses(symbolTable);
+            if (_twoPhaseCoordinator != null)
+            {
+                // Two-phase path: discover callables, then delegate to legacy declaration
+                _twoPhaseCoordinator.RunPhase1Discovery(symbolTable);
+                _twoPhaseCoordinator.RunPhase1Declaration(() =>
+                {
+                    // Legacy declaration path (will be replaced in Milestone 2+)
+                    _classesGenerator.DeclareClasses(symbolTable);
+                    _functionGenerator.DeclareFunctions(symbolTable);
+                });
+            }
+            else
+            {
+                // Legacy path: declare classes first so their types exist under the Classes namespace
+                _classesGenerator.DeclareClasses(symbolTable);
 
-            // Declare functions (emits static method definitions and populates CompiledMethodCache)
-            _functionGenerator.DeclareFunctions(symbolTable);
+                // Declare functions (emits static method definitions and populates CompiledMethodCache)
+                _functionGenerator.DeclareFunctions(symbolTable);
+            }
         }
 
         /// <summary>
