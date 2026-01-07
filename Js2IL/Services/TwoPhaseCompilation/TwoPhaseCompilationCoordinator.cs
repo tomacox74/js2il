@@ -53,12 +53,6 @@ public sealed class TwoPhaseCompilationCoordinator
     }
 
     /// <summary>
-    /// Gets the callable registry after Phase 1 completes.
-    /// This is the single source of truth for callable declarations (per design doc).
-    /// </summary>
-    public CallableRegistry Registry => _registry;
-    
-    /// <summary>
     /// Gets the declaration reader interface for Phase 2 consumers.
     /// </summary>
     public ICallableDeclarationReader DeclarationReader => _registry;

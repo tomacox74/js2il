@@ -1265,7 +1265,8 @@ namespace Js2IL.Services.ILGenerators
         {
             // Two-phase lookup: only short-circuit when we already have a MethodDef.
             // Phase 1 may have stored a MemberRef (signature-only) which is not a compiled body.
-            if (_twoPhaseCoordinator.Registry.TryGetDeclaredTokenForAstNode(funcExpr, out var existingToken) &&
+            var callableRegistry = _serviceProvider.GetRequiredService<CallableRegistry>();
+            if (callableRegistry.TryGetDeclaredTokenForAstNode(funcExpr, out var existingToken) &&
                 existingToken.Kind == System.Reflection.Metadata.HandleKind.MethodDefinition)
             {
                 return (System.Reflection.Metadata.MethodDefinitionHandle)existingToken;
@@ -1490,7 +1491,7 @@ namespace Js2IL.Services.ILGenerators
             tb.AddTypeDefinition(TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, _bclReferences.ObjectType);
 
             // Two-phase: register the token in the canonical CallableRegistry
-            _twoPhaseCoordinator.Registry.SetDeclaredTokenForAstNode(funcExpr, (System.Reflection.Metadata.EntityHandle)mdh);
+            callableRegistry.SetDeclaredTokenForAstNode(funcExpr, (System.Reflection.Metadata.EntityHandle)mdh);
             
             return mdh;
         }
