@@ -1,10 +1,12 @@
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Linq;
+using System.Reflection;
 using Acornima.Ast;
 using Js2IL.Services.ILGenerators;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Js2IL.Services.TwoPhaseCompilation;
 
@@ -140,9 +142,15 @@ public sealed class TwoPhaseCompilationCoordinator
     /// Note: the full Milestone 2c behavior is still being wired in.
     /// For now, this preserves Milestone 2a behavior behind the TwoPhaseCompilation option.
     /// </summary>
-    public void RunMilestone2c(
+    internal void RunMilestone2c(
         SymbolTable symbolTable,
         MetadataBuilder metadataBuilder,
+        IServiceProvider serviceProvider,
+        Variables rootVariables,
+        BaseClassLibraryReferences bclReferences,
+        MethodBodyStreamEncoder methodBodyStreamEncoder,
+        ClassRegistry classRegistry,
+        FunctionRegistry functionRegistry,
         Action<IReadOnlyList<CallableId>> compileAnonymousCallablesPhase2,
         Action compileClassesAndFunctionsPhase2)
     {
@@ -202,6 +210,20 @@ public sealed class TwoPhaseCompilationCoordinator
             // Keep existing safety invariant for now: classes/functions are emitted before anonymous callables.
             compileClassesAndFunctionsPhase2();
 
+            // Milestone 2c: move function declarations to Phase 2 (planned order).
+            // We compile bodies in plan order (IR-first, legacy fallback), but finalize MethodDefs in a single
+            // deterministic block so metadata ordering stays valid.
+            CompileAndFinalizePhase2FunctionDeclarations(
+                symbolTable,
+                metadataBuilder,
+                ordered,
+                serviceProvider,
+                rootVariables,
+                bclReferences,
+                methodBodyStreamEncoder,
+                classRegistry,
+                functionRegistry);
+
             if (_methodDefRowCountAtPreallocation.HasValue && _expectedMethodDefsBeforeAnonymousCallables.HasValue)
             {
                 var expected = _methodDefRowCountAtPreallocation.Value + _expectedMethodDefsBeforeAnonymousCallables.Value;
@@ -209,11 +231,8 @@ public sealed class TwoPhaseCompilationCoordinator
                 if (actual != expected)
                 {
                     throw new InvalidOperationException(
-                        $"[TwoPhase] Milestone 2a MethodDef preallocation mismatch: expected MethodDef row count {expected} after declaring classes/functions, but was {actual}. " +
-                        "This indicates the preallocation offset is wrong (likely due to unexpected extra MethodDef emissions during class/function declaration). " +
-                        "Common causes include new synthesized methods (for example, class static field initializers or helper methods) being emitted without updating CallableDiscovery/" +
-                        "preallocation logic (_expectedMethodDefsBeforeAnonymousCallables). Verify that any additional MethodDef emissions during class/function declaration are either " +
-                        "accounted for in the preallocation calculation or are moved to a phase that runs after anonymous callable preallocation."
+                        $"[TwoPhase] Milestone 2c MethodDef preallocation mismatch: expected MethodDef row count {expected} after declaring classes + finalizing function declarations, but was {actual}. " +
+                        "This indicates the preallocation offset is wrong (likely due to unexpected extra MethodDef emissions during class declaration or function finalization)."
                     );
                 }
             }
@@ -223,6 +242,149 @@ public sealed class TwoPhaseCompilationCoordinator
                 compileAnonymousCallablesPhase2(ordered);
             }
         });
+    }
+
+    private void CompileAndFinalizePhase2FunctionDeclarations(
+        SymbolTable symbolTable,
+        MetadataBuilder metadataBuilder,
+        IReadOnlyList<CallableId> plannedOrder,
+        IServiceProvider serviceProvider,
+        Variables rootVariables,
+        BaseClassLibraryReferences bclReferences,
+        MethodBodyStreamEncoder methodBodyStreamEncoder,
+        ClassRegistry classRegistry,
+        FunctionRegistry functionRegistry)
+    {
+        if (_discoveredCallables == null)
+        {
+            return;
+        }
+
+        var moduleName = symbolTable.Root.Name;
+
+        // Deterministic declaration order for MethodDef row allocation: discovery order.
+        var functionDeclCallables = _discoveredCallables
+            .Where(c => c.Kind == CallableKind.FunctionDeclaration)
+            .ToList();
+        if (functionDeclCallables.Count == 0)
+        {
+            return;
+        }
+
+        // Preallocate MethodDef handles for function declarations if not already present.
+        var nextRowId = metadataBuilder.GetRowCount(TableIndex.MethodDef) + 1;
+        foreach (var callable in functionDeclCallables)
+        {
+            if (_registry.TryGetDeclaredToken(callable, out var existingToken) && !existingToken.IsNil)
+            {
+                continue;
+            }
+
+            var preallocated = MetadataTokens.MethodDefinitionHandle(nextRowId++);
+            _registry.SetToken(callable, preallocated);
+            if (callable.AstNode is FunctionDeclaration fd)
+            {
+                _registry.SetDeclaredTokenForAstNode(fd, preallocated);
+                var fnName = (fd.Id as Identifier)?.Name;
+                if (!string.IsNullOrEmpty(fnName))
+                {
+                    var jsParamNames = ILMethodGenerator.ExtractParameterNames(fd.Params).ToArray();
+                    functionRegistry.PreRegisterParameterCount(fnName, jsParamNames.Length);
+                    functionRegistry.Register(fnName, preallocated, jsParamNames.Length);
+                }
+            }
+        }
+
+        // Compile bodies in planned order (no MethodDef rows emitted here).
+        var compiled = new Dictionary<CallableId, CompiledCallableBody>();
+        foreach (var callable in plannedOrder)
+        {
+            if (callable.Kind != CallableKind.FunctionDeclaration)
+            {
+                continue;
+            }
+
+            if (callable.AstNode is not FunctionDeclaration funcDecl)
+            {
+                continue;
+            }
+
+            if (!_registry.TryGetDeclaredToken(callable, out var tok) || tok.Kind != HandleKind.MethodDefinition)
+            {
+                throw new InvalidOperationException($"[TwoPhase] FunctionDeclaration missing declared token: {callable.DisplayName}");
+            }
+            var expected = (MethodDefinitionHandle)tok;
+            if (expected.IsNil)
+            {
+                throw new InvalidOperationException($"[TwoPhase] FunctionDeclaration has nil token: {callable.DisplayName}");
+            }
+
+            var funcScope = symbolTable.FindScopeByAstNode(funcDecl);
+            if (funcScope == null)
+            {
+                throw new InvalidOperationException($"[TwoPhase] FunctionDeclaration scope not found: {callable.DisplayName}");
+            }
+
+            var registryScopeName = $"{moduleName}/{(funcDecl.Id as Identifier)?.Name}";
+            var methodName = (funcDecl.Id as Identifier)?.Name ?? callable.Name ?? "anonymous";
+
+            // IR first
+            var methodCompiler = serviceProvider.GetRequiredService<JsMethodCompiler>();
+            var irBody = methodCompiler.TryCompileCallableBody(
+                callable: callable,
+                expectedMethodDef: expected,
+                ilMethodName: methodName,
+                node: funcDecl,
+                scope: funcScope,
+                methodBodyStreamEncoder: methodBodyStreamEncoder,
+                isInstanceMethod: false,
+                hasScopesParameter: true,
+                scopesFieldHandle: null,
+                returnsVoid: false);
+
+            CompiledCallableBody body;
+            if (irBody != null)
+            {
+                body = irBody;
+            }
+            else
+            {
+                body = LegacyFunctionBodyCompiler.CompileFunctionDeclarationBody(
+                    serviceProvider,
+                    metadataBuilder,
+                    methodBodyStreamEncoder,
+                    bclReferences,
+                    rootVariables,
+                    classRegistry,
+                    functionRegistry,
+                    symbolTable,
+                    callable,
+                    expected,
+                    funcDecl,
+                    funcScope,
+                    registryScopeName);
+            }
+
+            compiled[callable] = body;
+            _registry.MarkBodyCompiledForAstNode(funcDecl);
+        }
+
+        // Finalize MethodDef/Param rows deterministically (discovery order) as a single contiguous block.
+        var tb = new TypeBuilder(metadataBuilder, FunctionsNamespace, moduleName);
+        foreach (var callable in functionDeclCallables)
+        {
+            if (!compiled.TryGetValue(callable, out var body))
+            {
+                // Some function declarations may not be reachable in the plan ordering yet; in Milestone 2c,
+                // this should not happen because the plan is authoritative.
+                throw new InvalidOperationException($"[TwoPhase] Missing compiled body for function declaration: {callable.DisplayName}");
+            }
+            _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, tb, body);
+        }
+
+        tb.AddTypeDefinition(
+            TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
+            bclReferences.ObjectType);
     }
 
     /// <summary>

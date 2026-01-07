@@ -459,18 +459,19 @@ namespace Js2IL.Services.ILGenerators
             {
                 throw new InvalidOperationException($"Variable '{functionName}' not found.");
             }
-            // Resolve emitted method for this function via function registry
-            var methodHandle = _functionRegistry?.Get(functionName) ?? default;
-            if (methodHandle.IsNil)
+
+            // Two-phase: prefer CallableRegistry token lookup by AST node (avoids name collisions).
+            var methodHandle = default(MethodDefinitionHandle);
+            var callableRegistry = _serviceProvider.GetRequiredService<CallableRegistry>();
+            if (callableRegistry.TryGetDeclaredTokenForAstNode(functionDeclaration, out var token) &&
+                token.Kind == System.Reflection.Metadata.HandleKind.MethodDefinition)
             {
-                // Two-phase fallback: try resolving via CallableRegistry (Phase 1 may have preallocated tokens).
-                var callableRegistry = _serviceProvider.GetRequiredService<CallableRegistry>();
-                if (callableRegistry.TryGetDeclaredTokenForAstNode(functionDeclaration, out var token) &&
-                    token.Kind == System.Reflection.Metadata.HandleKind.MethodDefinition)
-                {
-                    methodHandle = (MethodDefinitionHandle)token;
-                }
-                // If still not found, skip (leave null) – may be emitted later (legacy nested ordering).
+                methodHandle = (MethodDefinitionHandle)token;
+            }
+            else
+            {
+                // Legacy fallback: function registry name-based lookup.
+                methodHandle = _functionRegistry?.Get(functionName) ?? default;
             }
 
             // now we assign a local variable to the function delegate
