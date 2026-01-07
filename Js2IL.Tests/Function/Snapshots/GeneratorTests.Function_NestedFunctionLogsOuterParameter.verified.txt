@@ -77,102 +77,95 @@
 .class public auto ansi abstract sealed beforefieldinit Functions.Function_NestedFunctionLogsOuterParameter
 	extends [System.Runtime]System.Object
 {
-	// Nested Types
-	.class nested public auto ansi abstract sealed beforefieldinit outerFunction_Nested
-		extends [System.Runtime]System.Object
+	// Methods
+	.method public hidebysig static 
+		object outerFunction (
+			object[] scopes,
+			object outerParam
+		) cil managed 
 	{
-		// Methods
-		.method public hidebysig static 
-			object innerFunction (
-				object[] scopes,
-				object innerParam
-			) cil managed 
-		{
-			// Method begins at RVA 0x206c
-			// Header size: 12
-			// Code size: 82 (0x52)
-			.maxstack 32
+		// Method begins at RVA 0x206c
+		// Header size: 12
+		// Code size: 59 (0x3b)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction
+		)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-			IL_000a: ldc.i4.2
-			IL_000b: newarr [System.Runtime]System.Object
-			IL_0010: dup
-			IL_0011: ldc.i4.0
-			IL_0012: ldstr "Outer Param:"
-			IL_0017: stelem.ref
-			IL_0018: dup
-			IL_0019: ldc.i4.1
-			IL_001a: ldarg.0
-			IL_001b: ldc.i4.1
-			IL_001c: ldelem.ref
-			IL_001d: castclass Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction
-			IL_0022: ldfld object Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction::outerParam
-			IL_0027: stelem.ref
-			IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_002d: pop
-			IL_002e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0033: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-			IL_0038: ldc.i4.2
-			IL_0039: newarr [System.Runtime]System.Object
-			IL_003e: dup
-			IL_003f: ldc.i4.0
-			IL_0040: ldstr "Inner Param:"
-			IL_0045: stelem.ref
-			IL_0046: dup
-			IL_0047: ldc.i4.1
-			IL_0048: ldarg.1
-			IL_0049: stelem.ref
-			IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_004f: pop
-			IL_0050: ldnull
-			IL_0051: ret
-		} // end of method outerFunction_Nested::innerFunction
+		IL_0000: newobj instance void Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction::outerParam
+		IL_000d: ldloc.0
+		IL_000e: ldnull
+		IL_000f: ldftn object Functions.Function_NestedFunctionLogsOuterParameter::innerFunction(object[], object)
+		IL_0015: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_001a: stfld object Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction::innerFunction
+		IL_001f: ldloc.0
+		IL_0020: ldfld object Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction::innerFunction
+		IL_0025: ldc.i4.2
+		IL_0026: newarr [System.Runtime]System.Object
+		IL_002b: dup
+		IL_002c: ldc.i4.0
+		IL_002d: ldarg.0
+		IL_002e: ldc.i4.0
+		IL_002f: ldelem.ref
+		IL_0030: stelem.ref
+		IL_0031: dup
+		IL_0032: ldc.i4.1
+		IL_0033: ldloc.0
+		IL_0034: stelem.ref
+		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_003a: ret
+	} // end of method Function_NestedFunctionLogsOuterParameter::outerFunction
 
-		.method public hidebysig static 
-			object outerFunction (
-				object[] scopes,
-				object outerParam
-			) cil managed 
-		{
-			// Method begins at RVA 0x20cc
-			// Header size: 12
-			// Code size: 59 (0x3b)
-			.maxstack 32
-			.locals init (
-				[0] class Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction
-			)
+	.method public hidebysig static 
+		object innerFunction (
+			object[] scopes,
+			object innerParam
+		) cil managed 
+	{
+		// Method begins at RVA 0x20b4
+		// Header size: 12
+		// Code size: 82 (0x52)
+		.maxstack 32
 
-			IL_0000: newobj instance void Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction::.ctor()
-			IL_0005: stloc.0
-			IL_0006: ldloc.0
-			IL_0007: ldarg.1
-			IL_0008: stfld object Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction::outerParam
-			IL_000d: ldloc.0
-			IL_000e: ldnull
-			IL_000f: ldftn object Functions.Function_NestedFunctionLogsOuterParameter/outerFunction_Nested::innerFunction(object[], object)
-			IL_0015: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-			IL_001a: stfld object Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction::innerFunction
-			IL_001f: ldloc.0
-			IL_0020: ldfld object Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction::innerFunction
-			IL_0025: ldc.i4.2
-			IL_0026: newarr [System.Runtime]System.Object
-			IL_002b: dup
-			IL_002c: ldc.i4.0
-			IL_002d: ldarg.0
-			IL_002e: ldc.i4.0
-			IL_002f: ldelem.ref
-			IL_0030: stelem.ref
-			IL_0031: dup
-			IL_0032: ldc.i4.1
-			IL_0033: ldloc.0
-			IL_0034: stelem.ref
-			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-			IL_003a: ret
-		} // end of method outerFunction_Nested::outerFunction
-
-	} // end of class outerFunction_Nested
-
+		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_000a: ldc.i4.2
+		IL_000b: newarr [System.Runtime]System.Object
+		IL_0010: dup
+		IL_0011: ldc.i4.0
+		IL_0012: ldstr "Outer Param:"
+		IL_0017: stelem.ref
+		IL_0018: dup
+		IL_0019: ldc.i4.1
+		IL_001a: ldarg.0
+		IL_001b: ldc.i4.1
+		IL_001c: ldelem.ref
+		IL_001d: castclass Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction
+		IL_0022: ldfld object Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction::outerParam
+		IL_0027: stelem.ref
+		IL_0028: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_002d: pop
+		IL_002e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0033: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_0038: ldc.i4.2
+		IL_0039: newarr [System.Runtime]System.Object
+		IL_003e: dup
+		IL_003f: ldc.i4.0
+		IL_0040: ldstr "Inner Param:"
+		IL_0045: stelem.ref
+		IL_0046: dup
+		IL_0047: ldc.i4.1
+		IL_0048: ldarg.1
+		IL_0049: stelem.ref
+		IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_004f: pop
+		IL_0050: ldnull
+		IL_0051: ret
+	} // end of method Function_NestedFunctionLogsOuterParameter::innerFunction
 
 } // end of class Functions.Function_NestedFunctionLogsOuterParameter
 
@@ -202,7 +195,7 @@
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldnull
-		IL_0008: ldftn object Functions.Function_NestedFunctionLogsOuterParameter/outerFunction_Nested::outerFunction(object[], object)
+		IL_0008: ldftn object Functions.Function_NestedFunctionLogsOuterParameter::outerFunction(object[], object)
 		IL_000e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0013: stfld object Scopes.Function_NestedFunctionLogsOuterParameter::outerFunction
 		IL_0018: ldloc.0
@@ -214,7 +207,7 @@
 		IL_0026: pop
 		IL_0027: ldloc.0
 		IL_0028: ldnull
-		IL_0029: ldftn object Functions.Function_NestedFunctionLogsOuterParameter/outerFunction_Nested::outerFunction(object[], object)
+		IL_0029: ldftn object Functions.Function_NestedFunctionLogsOuterParameter::outerFunction(object[], object)
 		IL_002f: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0034: stfld object Scopes.Function_NestedFunctionLogsOuterParameter::outerFunction
 		IL_0039: ldloc.0

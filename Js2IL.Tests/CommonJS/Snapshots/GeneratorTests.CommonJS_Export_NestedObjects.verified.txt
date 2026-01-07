@@ -271,36 +271,6 @@
 
 } // end of class Scripts.CommonJS_Export_NestedObjects_Main
 
-.class public auto ansi abstract sealed beforefieldinit Functions.FunctionExpression_L7C14
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object FunctionExpression_L7C14 (
-			object[] scopes,
-			object a,
-			object b
-		) cil managed 
-	{
-		// Method begins at RVA 0x2230
-		// Header size: 1
-		// Code size: 21 (0x15)
-		.maxstack 8
-
-		IL_0000: ldarg.1
-		IL_0001: unbox.any [System.Runtime]System.Double
-		IL_0006: ldarg.2
-		IL_0007: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000c: add
-		IL_000d: box [System.Runtime]System.Double
-		IL_0012: ret
-
-		IL_0013: ldnull
-		IL_0014: ret
-	} // end of method FunctionExpression_L7C14::FunctionExpression_L7C14
-
-} // end of class Functions.FunctionExpression_L7C14
-
 .class public auto ansi abstract sealed beforefieldinit Functions.FunctionExpression_L10C19
 	extends [System.Runtime]System.Object
 {
@@ -312,21 +282,20 @@
 			object b
 		) cil managed 
 	{
-		// Method begins at RVA 0x2246
-		// Header size: 1
-		// Code size: 21 (0x15)
-		.maxstack 8
+		// Method begins at RVA 0x2230
+		// Header size: 12
+		// Code size: 10 (0xa)
+		.maxstack 32
+		.locals init (
+			[0] object
+		)
 
 		IL_0000: ldarg.1
-		IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0006: ldarg.2
-		IL_0007: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_000c: mul
-		IL_000d: box [System.Runtime]System.Double
-		IL_0012: ret
-
-		IL_0013: ldnull
-		IL_0014: ret
+		IL_0001: ldarg.2
+		IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
+		IL_0007: stloc.0
+		IL_0008: ldloc.0
+		IL_0009: ret
 	} // end of method FunctionExpression_L10C19::FunctionExpression_L10C19
 
 } // end of class Functions.FunctionExpression_L10C19
@@ -341,21 +310,52 @@
 			object 'value'
 		) cil managed 
 	{
-		// Method begins at RVA 0x225c
-		// Header size: 1
+		// Method begins at RVA 0x2248
+		// Header size: 12
 		// Code size: 14 (0xe)
-		.maxstack 8
+		.maxstack 32
+		.locals init (
+			[0] object
+		)
 
 		IL_0000: ldstr "Num: "
 		IL_0005: ldarg.1
 		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_000b: ret
-
-		IL_000c: ldnull
+		IL_000b: stloc.0
+		IL_000c: ldloc.0
 		IL_000d: ret
 	} // end of method FunctionExpression_L16C20::FunctionExpression_L16C20
 
 } // end of class Functions.FunctionExpression_L16C20
+
+.class public auto ansi abstract sealed beforefieldinit Functions.FunctionExpression_L7C14
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object FunctionExpression_L7C14 (
+			object[] scopes,
+			object a,
+			object b
+		) cil managed 
+	{
+		// Method begins at RVA 0x2264
+		// Header size: 12
+		// Code size: 10 (0xa)
+		.maxstack 32
+		.locals init (
+			[0] object
+		)
+
+		IL_0000: ldarg.1
+		IL_0001: ldarg.2
+		IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0007: stloc.0
+		IL_0008: ldloc.0
+		IL_0009: ret
+	} // end of method FunctionExpression_L7C14::FunctionExpression_L7C14
+
+} // end of class Functions.FunctionExpression_L7C14
 
 .class public auto ansi beforefieldinit Scripts.CommonJS_Export_NestedObjects_Lib
 	extends [System.Runtime]System.Object
@@ -370,7 +370,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x226c
+		// Method begins at RVA 0x227c
 		// Header size: 12
 		// Code size: 176 (0xb0)
 		.maxstack 32
@@ -434,7 +434,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2328
+		// Method begins at RVA 0x2338
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

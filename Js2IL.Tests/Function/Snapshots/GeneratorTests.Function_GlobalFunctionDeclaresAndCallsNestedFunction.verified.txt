@@ -76,110 +76,103 @@
 .class public auto ansi abstract sealed beforefieldinit Functions.Function_GlobalFunctionDeclaresAndCallsNestedFunction
 	extends [System.Runtime]System.Object
 {
-	// Nested Types
-	.class nested public auto ansi abstract sealed beforefieldinit outerFunction_Nested
-		extends [System.Runtime]System.Object
+	// Methods
+	.method public hidebysig static 
+		object outerFunction (
+			object[] scopes
+		) cil managed 
 	{
-		// Methods
-		.method public hidebysig static 
-			object innerFunction (
-				object[] scopes
-			) cil managed 
-		{
-			// Method begins at RVA 0x206c
-			// Header size: 12
-			// Code size: 33 (0x21)
-			.maxstack 32
-			.locals init (
-				[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
-			)
+		// Method begins at RVA 0x206c
+		// Header size: 12
+		// Code size: 121 (0x79)
+		.maxstack 32
+		.locals init (
+			[0] object,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[2] object[]
+		)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: stloc.0
-			IL_0006: ldloc.0
-			IL_0007: ldc.i4.1
-			IL_0008: newarr [System.Runtime]System.Object
-			IL_000d: dup
-			IL_000e: ldc.i4.0
-			IL_000f: ldstr "Inside nested function"
-			IL_0014: stelem.ref
-			IL_0015: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_001a: pop
-			IL_001b: ldstr "nested result"
-			IL_0020: ret
-		} // end of method outerFunction_Nested::innerFunction
+		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0005: stloc.1
+		IL_0006: ldloc.1
+		IL_0007: ldc.i4.1
+		IL_0008: newarr [System.Runtime]System.Object
+		IL_000d: dup
+		IL_000e: ldc.i4.0
+		IL_000f: ldstr "Before nested function declaration"
+		IL_0014: stelem.ref
+		IL_0015: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_001a: pop
+		IL_001b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0020: stloc.1
+		IL_0021: ldloc.1
+		IL_0022: ldc.i4.1
+		IL_0023: newarr [System.Runtime]System.Object
+		IL_0028: dup
+		IL_0029: ldc.i4.0
+		IL_002a: ldstr "After nested function declaration"
+		IL_002f: stelem.ref
+		IL_0030: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0035: pop
+		IL_0036: ldnull
+		IL_0037: ldftn object Functions.Function_GlobalFunctionDeclaresAndCallsNestedFunction::innerFunction(object[])
+		IL_003d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0042: ldc.i4.1
+		IL_0043: newarr [System.Runtime]System.Object
+		IL_0048: dup
+		IL_0049: ldc.i4.0
+		IL_004a: ldnull
+		IL_004b: stelem.ref
+		IL_004c: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0051: stloc.0
+		IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0057: stloc.1
+		IL_0058: ldc.i4.2
+		IL_0059: newarr [System.Runtime]System.Object
+		IL_005e: dup
+		IL_005f: ldc.i4.0
+		IL_0060: ldstr "Nested function returned:"
+		IL_0065: stelem.ref
+		IL_0066: dup
+		IL_0067: ldc.i4.1
+		IL_0068: ldloc.0
+		IL_0069: stelem.ref
+		IL_006a: stloc.2
+		IL_006b: ldloc.1
+		IL_006c: ldloc.2
+		IL_006d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0072: pop
+		IL_0073: ldstr "outer result"
+		IL_0078: ret
+	} // end of method Function_GlobalFunctionDeclaresAndCallsNestedFunction::outerFunction
 
-		.method public hidebysig static 
-			object outerFunction (
-				object[] scopes
-			) cil managed 
-		{
-			// Method begins at RVA 0x209c
-			// Header size: 12
-			// Code size: 121 (0x79)
-			.maxstack 32
-			.locals init (
-				[0] object,
-				[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-				[2] object[]
-			)
+	.method public hidebysig static 
+		object innerFunction (
+			object[] scopes
+		) cil managed 
+	{
+		// Method begins at RVA 0x20f4
+		// Header size: 12
+		// Code size: 33 (0x21)
+		.maxstack 32
+		.locals init (
+			[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
+		)
 
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: stloc.1
-			IL_0006: ldloc.1
-			IL_0007: ldc.i4.1
-			IL_0008: newarr [System.Runtime]System.Object
-			IL_000d: dup
-			IL_000e: ldc.i4.0
-			IL_000f: ldstr "Before nested function declaration"
-			IL_0014: stelem.ref
-			IL_0015: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_001a: pop
-			IL_001b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0020: stloc.1
-			IL_0021: ldloc.1
-			IL_0022: ldc.i4.1
-			IL_0023: newarr [System.Runtime]System.Object
-			IL_0028: dup
-			IL_0029: ldc.i4.0
-			IL_002a: ldstr "After nested function declaration"
-			IL_002f: stelem.ref
-			IL_0030: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0035: pop
-			IL_0036: ldnull
-			IL_0037: ldftn object Functions.Function_GlobalFunctionDeclaresAndCallsNestedFunction/outerFunction_Nested::innerFunction(object[])
-			IL_003d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-			IL_0042: ldc.i4.1
-			IL_0043: newarr [System.Runtime]System.Object
-			IL_0048: dup
-			IL_0049: ldc.i4.0
-			IL_004a: ldnull
-			IL_004b: stelem.ref
-			IL_004c: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-			IL_0051: stloc.0
-			IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0057: stloc.1
-			IL_0058: ldc.i4.2
-			IL_0059: newarr [System.Runtime]System.Object
-			IL_005e: dup
-			IL_005f: ldc.i4.0
-			IL_0060: ldstr "Nested function returned:"
-			IL_0065: stelem.ref
-			IL_0066: dup
-			IL_0067: ldc.i4.1
-			IL_0068: ldloc.0
-			IL_0069: stelem.ref
-			IL_006a: stloc.2
-			IL_006b: ldloc.1
-			IL_006c: ldloc.2
-			IL_006d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0072: pop
-			IL_0073: ldstr "outer result"
-			IL_0078: ret
-		} // end of method outerFunction_Nested::outerFunction
-
-	} // end of class outerFunction_Nested
-
+		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldc.i4.1
+		IL_0008: newarr [System.Runtime]System.Object
+		IL_000d: dup
+		IL_000e: ldc.i4.0
+		IL_000f: ldstr "Inside nested function"
+		IL_0014: stelem.ref
+		IL_0015: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_001a: pop
+		IL_001b: ldstr "nested result"
+		IL_0020: ret
+	} // end of method Function_GlobalFunctionDeclaresAndCallsNestedFunction::innerFunction
 
 } // end of class Functions.Function_GlobalFunctionDeclaresAndCallsNestedFunction
 
@@ -218,7 +211,7 @@
 		IL_0015: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_001a: pop
 		IL_001b: ldnull
-		IL_001c: ldftn object Functions.Function_GlobalFunctionDeclaresAndCallsNestedFunction/outerFunction_Nested::outerFunction(object[])
+		IL_001c: ldftn object Functions.Function_GlobalFunctionDeclaresAndCallsNestedFunction::outerFunction(object[])
 		IL_0022: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0027: ldc.i4.1
 		IL_0028: newarr [System.Runtime]System.Object
