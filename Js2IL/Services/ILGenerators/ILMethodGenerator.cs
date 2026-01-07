@@ -29,6 +29,7 @@ namespace Js2IL.Services.ILGenerators
         private string? _currentAssignmentTarget;
         private readonly Dictionary<string, string> _variableToClass = new();
         private readonly TwoPhaseCompilationCoordinator _twoPhaseCoordinator;
+        private readonly CallableRegistry _callableRegistry;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -87,6 +88,7 @@ namespace Js2IL.Services.ILGenerators
             _currentClassName = currentClassName;
             _symbolTable = symbolTable;
             _twoPhaseCoordinator = serviceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
+            _callableRegistry = serviceProvider.GetRequiredService<CallableRegistry>();
         }
 
         // Allow expression generator to record variable->class mapping when emitting `new ClassName()` in assignments/initializers
@@ -1265,8 +1267,7 @@ namespace Js2IL.Services.ILGenerators
         {
             // Two-phase lookup: only short-circuit when we already have a MethodDef.
             // Phase 1 may have stored a MemberRef (signature-only) which is not a compiled body.
-            var callableRegistry = _serviceProvider.GetRequiredService<CallableRegistry>();
-            if (callableRegistry.TryGetDeclaredTokenForAstNode(funcExpr, out var existingToken) &&
+            if (_callableRegistry.TryGetDeclaredTokenForAstNode(funcExpr, out var existingToken) &&
                 existingToken.Kind == System.Reflection.Metadata.HandleKind.MethodDefinition)
             {
                 return (System.Reflection.Metadata.MethodDefinitionHandle)existingToken;
@@ -1491,7 +1492,7 @@ namespace Js2IL.Services.ILGenerators
             tb.AddTypeDefinition(TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, _bclReferences.ObjectType);
 
             // Two-phase: register the token in the canonical CallableRegistry
-            callableRegistry.SetDeclaredTokenForAstNode(funcExpr, (System.Reflection.Metadata.EntityHandle)mdh);
+            _callableRegistry.SetDeclaredTokenForAstNode(funcExpr, (System.Reflection.Metadata.EntityHandle)mdh);
             
             return mdh;
         }
