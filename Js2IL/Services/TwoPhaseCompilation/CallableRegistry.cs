@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Reflection.Metadata;
+using Acornima.Ast;
 
 namespace Js2IL.Services.TwoPhaseCompilation;
 
@@ -95,12 +96,62 @@ public interface ICallableDeclarationReader
 public sealed class CallableRegistry : ICallableCatalog, ICallableDeclarationWriter, ICallableDeclarationReader
 {
     private readonly ConcurrentDictionary<CallableId, CallableInfo> _callables = new();
+
+    // O(1) lookup index from AST node to CallableId (populated during discovery)
+    private Dictionary<Node, CallableId>? _callableByAstNode;
     
     /// <summary>
     /// Whether to throw on missing callable lookups (strict mode).
     /// When true, GetDeclaredToken throws if the callable is not declared.
     /// </summary>
     public bool StrictMode { get; set; }
+
+    #region AST Node Lookup (Discovery Index)
+
+    internal void ResetAstNodeIndex(int capacity)
+    {
+        _callableByAstNode = new Dictionary<Node, CallableId>(capacity);
+    }
+
+    internal void IndexAstNode(Node astNode, CallableId callable)
+    {
+        _callableByAstNode ??= new Dictionary<Node, CallableId>();
+        _callableByAstNode[astNode] = callable;
+    }
+
+    /// <summary>
+    /// Registers/overwrites the declared token for a callable identified by its AST node.
+    /// This is used by generators after creating a MethodDefinitionHandle.
+    /// </summary>
+    public void SetDeclaredTokenForAstNode(Node astNode, EntityHandle token)
+    {
+        if (_callableByAstNode == null)
+        {
+            return; // Discovery not run yet
+        }
+
+        if (_callableByAstNode.TryGetValue(astNode, out var callable))
+        {
+            SetToken(callable, token);
+        }
+    }
+
+    /// <summary>
+    /// Attempts to get a declared token for a callable identified by its AST node.
+    /// </summary>
+    public bool TryGetDeclaredTokenForAstNode(Node astNode, out EntityHandle token)
+    {
+        token = default;
+        if (_callableByAstNode == null)
+        {
+            return false; // Discovery not run yet
+        }
+
+        return _callableByAstNode.TryGetValue(astNode, out var callable) &&
+               TryGetDeclaredToken(callable, out token);
+    }
+
+    #endregion
 
     #region ICallableCatalog
 

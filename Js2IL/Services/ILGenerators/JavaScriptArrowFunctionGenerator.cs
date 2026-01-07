@@ -18,7 +18,7 @@ namespace Js2IL.Services.ILGenerators
         private readonly ClassRegistry _classRegistry;
         private readonly FunctionRegistry _functionRegistry;
         private readonly SymbolTable? _symbolTable;
-        private readonly TwoPhaseCompilationCoordinator _twoPhaseCoordinator;
+        private readonly CallableRegistry _callableRegistry;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -40,7 +40,7 @@ namespace Js2IL.Services.ILGenerators
             _functionRegistry = functionRegistry;
             _symbolTable = symbolTable;
             _serviceProvider = serviceProvider;
-            _twoPhaseCoordinator = serviceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
+            _callableRegistry = serviceProvider.GetRequiredService<CallableRegistry>();
         }
 
         internal MethodDefinitionHandle GenerateArrowFunctionMethod(
@@ -51,7 +51,7 @@ namespace Js2IL.Services.ILGenerators
         {
             // Two-phase lookup: only skip compilation when we already have a MethodDef token.
             // Phase 1 may have populated a MemberRef token (signature-only), which is not a compiled body.
-            if (_twoPhaseCoordinator.TryGetToken(arrowFunction, out var existingToken) &&
+            if (_callableRegistry.TryGetDeclaredTokenForAstNode(arrowFunction, out var existingToken) &&
                 existingToken.Kind == HandleKind.MethodDefinition)
             {
                 return (MethodDefinitionHandle)existingToken;
@@ -69,7 +69,7 @@ namespace Js2IL.Services.ILGenerators
                     if (!compiledMethod.IsNil)
                     {
                         // Two-phase: register the token in the canonical CallableRegistry
-                        _twoPhaseCoordinator.RegisterToken(arrowFunction, (EntityHandle)compiledMethod);
+                        _callableRegistry.SetDeclaredTokenForAstNode(arrowFunction, (EntityHandle)compiledMethod);
                         return compiledMethod;
                     }
                 }
@@ -320,7 +320,7 @@ namespace Js2IL.Services.ILGenerators
             tb.AddTypeDefinition(TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, _bclReferences.ObjectType);
 
             // Two-phase: register the token in the canonical CallableRegistry
-            _twoPhaseCoordinator.RegisterToken(arrowFunction, (EntityHandle)mdh);
+            _callableRegistry.SetDeclaredTokenForAstNode(arrowFunction, (EntityHandle)mdh);
 
             return mdh;
         }

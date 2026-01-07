@@ -21,7 +21,7 @@ namespace Js2IL.Services.ILGenerators
         private readonly FunctionRegistry _functionRegistry = new();
         private readonly SymbolTable? _symbolTable;
         private readonly CompiledMethodCache _compiledMethodCache;
-        private readonly TwoPhaseCompilationCoordinator _twoPhaseCoordinator;
+        private readonly CallableRegistry _callableRegistry;
 
         public FunctionRegistry FunctionRegistry => _functionRegistry;
 
@@ -40,7 +40,7 @@ namespace Js2IL.Services.ILGenerators
             _classRegistry = classRegistry ?? new ClassRegistry();
             _symbolTable = symbolTable;
             _compiledMethodCache = serviceProvider.GetRequiredService<CompiledMethodCache>();
-            _twoPhaseCoordinator = serviceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
+            _callableRegistry = serviceProvider.GetRequiredService<CallableRegistry>();
             this._serviceProvider = serviceProvider;
         }
 
@@ -115,7 +115,7 @@ namespace Js2IL.Services.ILGenerators
                         }
 
                         // Two-phase: register the token in the canonical CallableRegistry
-                        _twoPhaseCoordinator.RegisterToken(nestedDecl, (EntityHandle)nestedMethod);
+                        _callableRegistry.SetDeclaredTokenForAstNode(nestedDecl, (EntityHandle)nestedMethod);
                     }
                 }
 
@@ -132,7 +132,7 @@ namespace Js2IL.Services.ILGenerators
                 }
 
                 // Two-phase: register the token in the canonical CallableRegistry
-                _twoPhaseCoordinator.RegisterToken(functionDeclaration, (EntityHandle)methodDefinition);
+                _callableRegistry.SetDeclaredTokenForAstNode(functionDeclaration, (EntityHandle)methodDefinition);
 
                 globalMethods.Add((functionName, methodDefinition, funcScope, functionVariables, nestedTb, firstNestedMethod));
             }

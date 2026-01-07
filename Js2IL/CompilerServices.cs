@@ -65,7 +65,10 @@ public static class CompilerServices
         services.AddSingleton<CallableMetadataRegistry>();
 
         // CallableRegistry is the canonical store for callable declarations (used by TwoPhaseCompilationCoordinator)
-        services.AddSingleton<Services.TwoPhaseCompilation.CallableRegistry>();
+        services.AddSingleton<CallableRegistry>();
+        services.AddSingleton<ICallableCatalog>(sp => sp.GetRequiredService<CallableRegistry>());
+        services.AddSingleton<ICallableDeclarationWriter>(sp => sp.GetRequiredService<CallableRegistry>());
+        services.AddSingleton<ICallableDeclarationReader>(sp => sp.GetRequiredService<CallableRegistry>());
 
         services.AddTransient<JsMethodCompiler>();
         
