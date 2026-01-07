@@ -18,7 +18,7 @@ internal static class LegacyFunctionBodyCompiler
         MetadataBuilder metadataBuilder,
         MethodBodyStreamEncoder methodBodyStreamEncoder,
         BaseClassLibraryReferences bclReferences,
-        Variables parentVariables,
+        Variables functionVariables,
         ClassRegistry classRegistry,
         FunctionRegistry functionRegistry,
         SymbolTable symbolTable,
@@ -32,7 +32,7 @@ internal static class LegacyFunctionBodyCompiler
         if (metadataBuilder == null) throw new ArgumentNullException(nameof(metadataBuilder));
         // MethodBodyStreamEncoder is a struct; cannot be null.
         if (bclReferences == null) throw new ArgumentNullException(nameof(bclReferences));
-        if (parentVariables == null) throw new ArgumentNullException(nameof(parentVariables));
+        if (functionVariables == null) throw new ArgumentNullException(nameof(functionVariables));
         if (classRegistry == null) throw new ArgumentNullException(nameof(classRegistry));
         if (functionRegistry == null) throw new ArgumentNullException(nameof(functionRegistry));
         if (symbolTable == null) throw new ArgumentNullException(nameof(symbolTable));
@@ -50,7 +50,13 @@ internal static class LegacyFunctionBodyCompiler
         }
 
         var paramNames = ILMethodGenerator.ExtractParameterNames(functionDeclaration.Params).ToArray();
-        var functionVariables = new Variables(parentVariables, registryScopeName, paramNames, isNestedFunction: false);
+
+        // In two-phase mode, the coordinator is responsible for constructing Variables with the correct
+        // parent scope relationship (needed for captured variables in nested functions).
+        if (!string.Equals(functionVariables.GetCurrentScopeName(), registryScopeName, StringComparison.Ordinal))
+        {
+            throw new InvalidOperationException($"[TwoPhase] Variables scope mismatch. Expected '{registryScopeName}', got '{functionVariables.GetCurrentScopeName()}'.");
+        }
 
         var methodGenerator = new ILMethodGenerator(
             serviceProvider,

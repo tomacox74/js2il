@@ -616,6 +616,60 @@ public sealed class TwoPhaseCompilationCoordinator
 
         var moduleName = symbolTable.Root.Name;
 
+        // Build Variables for each function declaration with correct parent scope wiring.
+        // This is required for nested function bodies compiled via the legacy emitter path.
+        var variablesByFunctionDecl = new Dictionary<FunctionDeclaration, Variables>();
+        void BuildVariablesForFunctionScopes(Scope currentScope, Variables currentFunctionVariables)
+        {
+            foreach (var child in currentScope.Children)
+            {
+                if (child.Kind == ScopeKind.Function && child.AstNode is FunctionDeclaration childFuncDecl)
+                {
+                    var fnName = (childFuncDecl.Id as Identifier)?.Name;
+                    if (string.IsNullOrEmpty(fnName))
+                    {
+                        // FunctionDeclaration should always be named; keep defensive.
+                        continue;
+                    }
+
+                    var registryScopeName = $"{moduleName}/{fnName}";
+                    var paramNames = ILMethodGenerator.ExtractParameterNames(childFuncDecl.Params).ToArray();
+
+                    // If we're inside another function, this is a nested function.
+                    var isNestedFunction = currentFunctionVariables.GetCurrentScopeName() != rootVariables.GetCurrentScopeName();
+                    var childVars = new Variables(currentFunctionVariables, registryScopeName, paramNames, isNestedFunction: isNestedFunction);
+
+                    variablesByFunctionDecl[childFuncDecl] = childVars;
+
+                    // Recurse: any function declarations underneath are nested within this function.
+                    BuildVariablesForFunctionScopes(child, childVars);
+                }
+                else
+                {
+                    // Keep traversing to find function declarations nested in blocks, etc.
+                    BuildVariablesForFunctionScopes(child, currentFunctionVariables);
+                }
+            }
+        }
+
+        // Seed with top-level functions under the module root.
+        foreach (var topFuncScope in symbolTable.Root.Children.Where(c => c.Kind == ScopeKind.Function && c.AstNode is FunctionDeclaration))
+        {
+            var topFuncDecl = (FunctionDeclaration)topFuncScope.AstNode!;
+            var topName = (topFuncDecl.Id as Identifier)?.Name;
+            if (string.IsNullOrEmpty(topName))
+            {
+                continue;
+            }
+
+            var topRegistryScopeName = $"{moduleName}/{topName}";
+            var topParamNames = ILMethodGenerator.ExtractParameterNames(topFuncDecl.Params).ToArray();
+            var topVars = new Variables(rootVariables, topRegistryScopeName, topParamNames, isNestedFunction: false);
+            variablesByFunctionDecl[topFuncDecl] = topVars;
+
+            BuildVariablesForFunctionScopes(topFuncScope, topVars);
+        }
+
         // Deterministic declaration order for MethodDef row allocation: discovery order.
         var functionDeclCallables = _discoveredCallables
             .Where(c => c.Kind == CallableKind.FunctionDeclaration)
@@ -679,7 +733,12 @@ public sealed class TwoPhaseCompilationCoordinator
                 throw new InvalidOperationException($"[TwoPhase] FunctionDeclaration scope not found: {callable.DisplayName}");
             }
 
-            var registryScopeName = $"{moduleName}/{(funcDecl.Id as Identifier)?.Name}";
+            if (!variablesByFunctionDecl.TryGetValue(funcDecl, out var functionVariables))
+            {
+                throw new InvalidOperationException($"[TwoPhase] Variables not found for function declaration: {callable.DisplayName}");
+            }
+
+            var registryScopeName = functionVariables.GetCurrentScopeName();
             var methodName = (funcDecl.Id as Identifier)?.Name ?? callable.Name ?? "anonymous";
 
             // IR first
@@ -708,7 +767,7 @@ public sealed class TwoPhaseCompilationCoordinator
                     metadataBuilder,
                     methodBodyStreamEncoder,
                     bclReferences,
-                    rootVariables,
+                    functionVariables,
                     classRegistry,
                     functionRegistry,
                     symbolTable,

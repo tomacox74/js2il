@@ -227,7 +227,24 @@ internal static class LegacyClassBodyCompiler
             ? ILMethodGenerator.ExtractParameterNames(funcExpr.Params)
             : Enumerable.Empty<string>();
 
-        var methodScopeName = $"{rootVariables.GetGlobalScopeName()}/{clrMethodName}";
+        // IMPORTANT: The Variables scope name must match the VariableRegistry scope name.
+        // For class methods, the registry uses the actual method scope name (e.g. "<ClassName>/<method>").
+        // Using a synthetic name like "GlobalScope/<method>" breaks scope-local slot lookup.
+        // VariableRegistry keys are module-qualified for all non-global scopes.
+        // IMPORTANT: do NOT use scope.GetQualifiedName() here; TypeGenerator currently uses only scope.Name.
+        // This mirrors TypeGenerator.GetRegistryScopeName.
+        string? methodScopeName = null;
+        if (funcExpr != null)
+        {
+            var methodScope = symbolTable.FindScopeByAstNode(funcExpr);
+            if (methodScope != null)
+            {
+                methodScopeName = methodScope.Kind == ScopeKind.Global
+                    ? methodScope.Name
+                    : $"{rootVariables.GetGlobalScopeName()}/{methodScope.Name}";
+            }
+        }
+        methodScopeName ??= $"{rootVariables.GetGlobalScopeName()}/{clrMethodName}";
         Variables methodVariables;
         if (!methodDef.Static && classRegistry.TryGetPrivateField(className, "_scopes", out var _))
         {
@@ -255,7 +272,63 @@ internal static class LegacyClassBodyCompiler
         if (funcExpr != null)
         {
             ushort paramStartIndex = (ushort)(methodDef.Static ? 0 : 1);
-            ilGen.EmitDefaultParameterInitializers(funcExpr.Params, parameterStartIndex: paramStartIndex);
+
+            // When the method scope has field-backed variables, we must create the leaf scope instance
+            // and initialize parameter fields / destructured params before emitting the body.
+            // This mirrors the behavior in ILMethodGenerator.GenerateFunctionExpressionMethod.
+            var registry = methodVariables.GetVariableRegistry();
+            var fields = registry?.GetVariablesForScope(methodScopeName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
+            if (registry != null && fields.Any())
+            {
+                ScopeInstanceEmitter.EmitCreateLeafScopeInstance(methodVariables, ilGen.IL, metadataBuilder);
+                // Default parameter values must be initialized before field initialization.
+                ilGen.EmitDefaultParameterInitializers(funcExpr.Params, parameterStartIndex: paramStartIndex);
+
+                var localScope = methodVariables.GetLocalScopeSlot();
+                if (localScope.Address >= 0 && funcExpr.Params.Count > 0)
+                {
+                    var fieldNames = new HashSet<string>(fields.Select(f => f.Name));
+
+                    // Initialize captured identifier parameters into scope fields.
+                    ushort jsParamSeq = paramStartIndex;
+                    for (int i = 0; i < funcExpr.Params.Count; i++)
+                    {
+                        var paramNode = funcExpr.Params[i];
+                        Identifier? pid = paramNode as Identifier;
+                        if (pid == null && paramNode is AssignmentPattern ap)
+                        {
+                            pid = ap.Left as Identifier;
+                        }
+
+                        if (pid != null && fieldNames.Contains(pid.Name))
+                        {
+                            ilGen.IL.LoadLocal(localScope.Address);
+                            ilGen.EmitLoadParameterWithDefault(paramNode, jsParamSeq);
+                            var fh = registry.GetFieldHandle(methodScopeName, pid.Name);
+                            ilGen.IL.OpCode(ILOpCode.Stfld);
+                            ilGen.IL.Token(fh);
+                        }
+
+                        jsParamSeq++;
+                    }
+
+                    // Destructure object-pattern parameters into scope fields/locals (supports defaults like { host = "localhost" }).
+                    MethodBuilder.EmitObjectPatternParameterDestructuring(
+                        metadataBuilder,
+                        ilGen.IL,
+                        ilGen.Runtime,
+                        methodVariables,
+                        methodScopeName,
+                        funcExpr.Params,
+                        ilGen.ExpressionEmitter,
+                        startingJsParamSeq: paramStartIndex,
+                        castScopeForStore: true);
+                }
+            }
+            else
+            {
+                ilGen.EmitDefaultParameterInitializers(funcExpr.Params, parameterStartIndex: paramStartIndex);
+            }
 
             if (funcExpr.Body is BlockStatement bstmt)
             {
