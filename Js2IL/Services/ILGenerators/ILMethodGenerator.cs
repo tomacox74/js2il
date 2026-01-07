@@ -463,7 +463,14 @@ namespace Js2IL.Services.ILGenerators
             var methodHandle = _functionRegistry?.Get(functionName) ?? default;
             if (methodHandle.IsNil)
             {
-                // If not found, skip (leave null) – may be emitted later (nested ordering). TODO: revisit ordering guarantees.
+                // Two-phase fallback: try resolving via CallableRegistry (Phase 1 may have preallocated tokens).
+                var callableRegistry = _serviceProvider.GetRequiredService<CallableRegistry>();
+                if (callableRegistry.TryGetDeclaredTokenForAstNode(functionDeclaration, out var token) &&
+                    token.Kind == System.Reflection.Metadata.HandleKind.MethodDefinition)
+                {
+                    methodHandle = (MethodDefinitionHandle)token;
+                }
+                // If still not found, skip (leave null) – may be emitted later (legacy nested ordering).
             }
 
             // now we assign a local variable to the function delegate
