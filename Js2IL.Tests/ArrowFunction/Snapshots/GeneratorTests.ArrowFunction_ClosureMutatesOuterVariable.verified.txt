@@ -76,18 +76,61 @@
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_ClosureMutatesOuterVariable
 	extends [System.Runtime]System.Object
 {
+	// Methods
+	.method public hidebysig static 
+		object createCounter (
+			object[] scopes,
+			object start
+		) cil managed 
+	{
+		// Method begins at RVA 0x206c
+		// Header size: 12
+		// Code size: 54 (0x36)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.ArrowFunction_ClosureMutatesOuterVariable/createCounter,
+			[1] object
+		)
+
+		IL_0000: newobj instance void Scopes.ArrowFunction_ClosureMutatesOuterVariable/createCounter::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldarg.1
+		IL_0008: stfld object Scopes.ArrowFunction_ClosureMutatesOuterVariable/createCounter::count
+		IL_000d: ldnull
+		IL_000e: ldftn object [ArrowFunction_ClosureMutatesOuterVariable]Functions.ArrowFunction_L7C23::ArrowFunction_L7C23(object[])
+		IL_0014: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0019: ldc.i4.2
+		IL_001a: newarr [System.Runtime]System.Object
+		IL_001f: dup
+		IL_0020: ldc.i4.0
+		IL_0021: ldarg.0
+		IL_0022: ldc.i4.0
+		IL_0023: ldelem.ref
+		IL_0024: castclass Scopes.ArrowFunction_ClosureMutatesOuterVariable
+		IL_0029: stelem.ref
+		IL_002a: dup
+		IL_002b: ldc.i4.1
+		IL_002c: ldloc.0
+		IL_002d: stelem.ref
+		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0033: stloc.1
+		IL_0034: ldloc.1
+		IL_0035: ret
+	} // end of method ArrowFunction_ClosureMutatesOuterVariable::createCounter
+
 } // end of class Functions.ArrowFunction_ClosureMutatesOuterVariable
 
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L7C22
+.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L7C23
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object ArrowFunction_L7C22 (
+		object ArrowFunction_L7C23 (
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x206c
+		// Method begins at RVA 0x20b0
 		// Header size: 12
 		// Code size: 62 (0x3e)
 		.maxstack 32
@@ -115,51 +158,9 @@
 
 		IL_003c: ldnull
 		IL_003d: ret
-	} // end of method ArrowFunction_L7C22::ArrowFunction_L7C22
+	} // end of method ArrowFunction_L7C23::ArrowFunction_L7C23
 
-	.method public hidebysig static 
-		object createCounter (
-			object[] scopes,
-			object start
-		) cil managed 
-	{
-		// Method begins at RVA 0x20b8
-		// Header size: 12
-		// Code size: 54 (0x36)
-		.maxstack 32
-		.locals init (
-			[0] class Scopes.ArrowFunction_ClosureMutatesOuterVariable/createCounter,
-			[1] object
-		)
-
-		IL_0000: newobj instance void Scopes.ArrowFunction_ClosureMutatesOuterVariable/createCounter::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldarg.1
-		IL_0008: stfld object Scopes.ArrowFunction_ClosureMutatesOuterVariable/createCounter::count
-		IL_000d: ldnull
-		IL_000e: ldftn object Functions.ArrowFunction_L7C22::ArrowFunction_L7C22(object[])
-		IL_0014: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0019: ldc.i4.2
-		IL_001a: newarr [System.Runtime]System.Object
-		IL_001f: dup
-		IL_0020: ldc.i4.0
-		IL_0021: ldarg.0
-		IL_0022: ldc.i4.0
-		IL_0023: ldelem.ref
-		IL_0024: castclass Scopes.ArrowFunction_ClosureMutatesOuterVariable
-		IL_0029: stelem.ref
-		IL_002a: dup
-		IL_002b: ldc.i4.1
-		IL_002c: ldloc.0
-		IL_002d: stelem.ref
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0033: stloc.1
-		IL_0034: ldloc.1
-		IL_0035: ret
-	} // end of method ArrowFunction_L7C22::createCounter
-
-} // end of class Functions.ArrowFunction_L7C22
+} // end of class Functions.ArrowFunction_L7C23
 
 .class public auto ansi beforefieldinit Scripts.ArrowFunction_ClosureMutatesOuterVariable
 	extends [System.Runtime]System.Object
@@ -187,7 +188,7 @@
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldnull
-		IL_0008: ldftn object Functions.ArrowFunction_L7C22::createCounter(object[], object)
+		IL_0008: ldftn object Functions.ArrowFunction_ClosureMutatesOuterVariable::createCounter(object[], object)
 		IL_000e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0013: stfld object Scopes.ArrowFunction_ClosureMutatesOuterVariable::createCounter
 		IL_0018: ldloc.0
@@ -199,7 +200,7 @@
 		IL_0026: pop
 		IL_0027: ldloc.0
 		IL_0028: ldnull
-		IL_0029: ldftn object Functions.ArrowFunction_L7C22::createCounter(object[], object)
+		IL_0029: ldftn object Functions.ArrowFunction_ClosureMutatesOuterVariable::createCounter(object[], object)
 		IL_002f: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0034: stfld object Scopes.ArrowFunction_ClosureMutatesOuterVariable::createCounter
 		IL_0039: ldloc.0

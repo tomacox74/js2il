@@ -51,8 +51,7 @@ namespace Js2IL.Services.ILGenerators
         {
             // Two-phase lookup: only skip compilation when we already have a MethodDef token.
             // Phase 1 may have populated a MemberRef token (signature-only), which is not a compiled body.
-            if (_twoPhaseCoordinator != null &&
-                _twoPhaseCoordinator.TryGetToken(arrowFunction, out var existingToken) &&
+            if (_twoPhaseCoordinator.TryGetToken(arrowFunction, out var existingToken) &&
                 existingToken.Kind == HandleKind.MethodDefinition)
             {
                 return (MethodDefinitionHandle)existingToken;
@@ -70,7 +69,7 @@ namespace Js2IL.Services.ILGenerators
                     if (!compiledMethod.IsNil)
                     {
                         // Two-phase: register the token in the canonical CallableRegistry
-                        _twoPhaseCoordinator?.RegisterToken(arrowFunction, (EntityHandle)compiledMethod);
+                        _twoPhaseCoordinator.RegisterToken(arrowFunction, (EntityHandle)compiledMethod);
                         return compiledMethod;
                     }
                 }
@@ -321,7 +320,7 @@ namespace Js2IL.Services.ILGenerators
             tb.AddTypeDefinition(TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, _bclReferences.ObjectType);
 
             // Two-phase: register the token in the canonical CallableRegistry
-            _twoPhaseCoordinator?.RegisterToken(arrowFunction, (EntityHandle)mdh);
+            _twoPhaseCoordinator.RegisterToken(arrowFunction, (EntityHandle)mdh);
 
             return mdh;
         }

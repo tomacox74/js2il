@@ -115,7 +115,7 @@ namespace Js2IL.Services.ILGenerators
                         }
 
                         // Two-phase: register the token in the canonical CallableRegistry
-                        _twoPhaseCoordinator?.RegisterToken(nestedDecl, (EntityHandle)nestedMethod);
+                        _twoPhaseCoordinator.RegisterToken(nestedDecl, (EntityHandle)nestedMethod);
                     }
                 }
 
@@ -132,7 +132,7 @@ namespace Js2IL.Services.ILGenerators
                 }
 
                 // Two-phase: register the token in the canonical CallableRegistry
-                _twoPhaseCoordinator?.RegisterToken(functionDeclaration, (EntityHandle)methodDefinition);
+                _twoPhaseCoordinator.RegisterToken(functionDeclaration, (EntityHandle)methodDefinition);
 
                 globalMethods.Add((functionName, methodDefinition, funcScope, functionVariables, nestedTb, firstNestedMethod));
             }

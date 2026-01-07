@@ -103,12 +103,15 @@ public sealed class TwoPhaseCompilationCoordinator
 
         RunPhase2BodyCompilation(() =>
         {
+            // Declare classes and functions FIRST so their constructors/methods are registered
+            // in ClassRegistry before anonymous callables are compiled.
+            // Arrow functions may contain `new ClassName()` which requires the class to exist.
+            compileClassesAndFunctionsPhase2();
+
             if (_discoveredCallables != null)
             {
                 compileAnonymousCallablesPhase2(_discoveredCallables);
             }
-
-            compileClassesAndFunctionsPhase2();
         });
     }
 
@@ -165,16 +168,22 @@ public sealed class TwoPhaseCompilationCoordinator
         var paramNames = ILMethodGenerator.ExtractParameterNames(arrowExpr.Params).ToArray();
         var moduleName = symbolTable.Root.Name;
 
+        // Use 1-based column to match the CallableId.SourceLocation format used in Phase 1 declaration
+        var col1Based = arrowExpr.Location.Start.Column + 1;
         var arrowBaseScopeName = callable.Name != null
             ? $"ArrowFunction_{callable.Name}"
-            : $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{arrowExpr.Location.Start.Column}";
+            : $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{col1Based}";
 
         var registryScopeName = $"{moduleName}/{arrowBaseScopeName}";
-        var ilMethodName = $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{arrowExpr.Location.Start.Column}";
+        var ilMethodName = $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{col1Based}";
+
+        // Find the arrow function's scope and build Variables representing its parent scope
+        var arrowScope = symbolTable.FindScopeByAstNode(arrowExpr);
+        var parentVariables = BuildParentVariablesForCallable(rootVariables, arrowScope, moduleName);
 
         var arrowGen = new JavaScriptArrowFunctionGenerator(
             serviceProvider,
-            rootVariables,
+            parentVariables,
             bclReferences,
             metadataBuilder,
             methodBodyStreamEncoder,
@@ -204,6 +213,8 @@ public sealed class TwoPhaseCompilationCoordinator
     {
         var paramNames = ILMethodGenerator.ExtractParameterNames(funcExpr.Params).ToArray();
 
+        // Use 1-based column to match the CallableId.SourceLocation format used in Phase 1 declaration
+        var col1Based = funcExpr.Location.Start.Column + 1;
         string baseScopeName;
         if (funcExpr.Id is Identifier fid && !string.IsNullOrEmpty(fid.Name))
         {
@@ -215,16 +226,20 @@ public sealed class TwoPhaseCompilationCoordinator
         }
         else
         {
-            baseScopeName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
+            baseScopeName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{col1Based}";
         }
 
         var moduleName = symbolTable.Root.Name;
         var registryScopeName = $"{moduleName}/{baseScopeName}";
-        var ilMethodName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
+        var ilMethodName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{col1Based}";
+
+        // Find the function expression's scope and build Variables representing its parent scope
+        var funcScope = symbolTable.FindScopeByAstNode(funcExpr);
+        var parentVariables = BuildParentVariablesForCallable(rootVariables, funcScope, moduleName);
 
         var methodGen = new ILMethodGenerator(
             serviceProvider,
-            rootVariables,
+            parentVariables,
             bclReferences,
             metadataBuilder,
             methodBodyStreamEncoder,
@@ -532,5 +547,53 @@ public sealed class TwoPhaseCompilationCoordinator
         {
             _logger.WriteLine("[TwoPhase] Two-phase compilation pipeline complete.");
         }
+    }
+
+    /// <summary>
+    /// Builds a Variables instance representing the parent scope of a nested callable.
+    /// The generator will then create the actual callable's Variables from this parent.
+    /// This ensures the parent scope chain is properly represented so captured variables can be resolved.
+    /// </summary>
+    private Variables BuildParentVariablesForCallable(Variables rootVariables, Scope? callableScope, string moduleName)
+    {
+        if (callableScope?.Parent == null)
+        {
+            // Callable is at global level, just use rootVariables
+            return rootVariables;
+        }
+
+        var parentScope = callableScope.Parent;
+        
+        // If parent is the global scope, rootVariables already represents it
+        if (parentScope.Kind == ScopeKind.Global)
+        {
+            return rootVariables;
+        }
+
+        // Build a Variables for the parent function scope with its own parent chain
+        // Use the same naming convention as TypeGenerator.GetRegistryScopeName():
+        // {moduleName}/{scopeName} for non-global scopes
+        var parentScopeName = $"{moduleName}/{parentScope.Name}";
+        
+        // Collect grandparent scopes (parent's parents)
+        var grandparentScopeNames = new List<string>();
+        var current = parentScope.Parent;
+        while (current != null)
+        {
+            // Use the correct registry scope name format
+            if (current.Kind == ScopeKind.Global)
+            {
+                grandparentScopeNames.Insert(0, moduleName); // Global scope uses module name
+            }
+            else
+            {
+                grandparentScopeNames.Insert(0, $"{moduleName}/{current.Name}");
+            }
+            current = current.Parent;
+        }
+
+        // Create Variables for the parent scope
+        // Empty parameter names since we're not compiling the parent, just representing its scope
+        return new Variables(rootVariables, parentScopeName, Array.Empty<string>(), grandparentScopeNames, parameterStartIndex: 1);
     }
 }
