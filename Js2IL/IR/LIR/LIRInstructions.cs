@@ -76,15 +76,6 @@ public record LIRStoreParameter(int ParameterIndex, TempVariable Value) : LIRIns
 public record LIRCallFunction(Symbol FunctionSymbol, TempVariable ScopesArray, IReadOnlyList<TempVariable> Arguments, TempVariable Result, CallableId? CallableId = null) : LIRInstruction;
 
 /// <summary>
-/// Creates the scopes array for function invocation.
-/// Currently, no concrete scope instances are tracked here; the created array may contain null.
-/// The <paramref name="GlobalScope"/> parameter is reserved for future use when global
-/// scope tracking is implemented.
-/// </summary>
-[Obsolete("Use LIRBuildScopesArray instead for proper scope materialization")]
-public record LIRCreateScopesArray(TempVariable GlobalScope, TempVariable Result) : LIRInstruction;
-
-/// <summary>
 /// Represents a scope slot in the scopes array along with the source of its value.
 /// </summary>
 /// <param name="Slot">The scope slot metadata from ScopeChainLayout.</param>

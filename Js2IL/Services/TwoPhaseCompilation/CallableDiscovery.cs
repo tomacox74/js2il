@@ -1,5 +1,6 @@
 using Acornima.Ast;
 using Js2IL.SymbolTables;
+using Js2IL.Utilities;
 
 namespace Js2IL.Services.TwoPhaseCompilation;
 
@@ -217,7 +218,7 @@ public sealed class CallableDiscovery
             {
                 Kind = member.Static ? CallableKind.ClassStaticMethod : CallableKind.ClassMethod,
                 DeclaringScopeName = parentScopeName,
-                Name = $"{className}.{methodName}",
+                Name = JavaScriptCallableNaming.MakeClassMethodCallableName(className, methodName),
                 Location = location,
                 JsParamCount = methodParamCount,
                 AstNode = member

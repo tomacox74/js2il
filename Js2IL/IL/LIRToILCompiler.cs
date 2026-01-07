@@ -812,18 +812,6 @@ internal sealed class LIRToILCompiler
                 EmitLoadTemp(lirReturn.ReturnValue, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Ret);
                 break;
-            case LIRCreateScopesArray createScopes:
-                {
-                    if (!IsMaterialized(createScopes.Result, allocation))
-                    {
-                        break;
-                    }
-                    // Legacy placeholder: Create scopes array with 1 element containing null.
-                    // This is deprecated - use LIRBuildScopesArray instead.
-                    EmitEmptyScopesArray(ilEncoder);
-                    EmitStoreTemp(createScopes.Result, ilEncoder, allocation);
-                    break;
-                }
             case LIRBuildScopesArray buildScopes:
                 {
                     if (!IsMaterialized(buildScopes.Result, allocation))
@@ -1289,10 +1277,6 @@ internal sealed class LIRToILCompiler
             case LIRGetIntrinsicGlobal getIntrinsicGlobal:
                 // Emit inline: call IntrinsicObjectRegistry.GetOrDefault
                 EmitLoadIntrinsicGlobalVariable(getIntrinsicGlobal.Name, ilEncoder);
-                break;
-            case LIRCreateScopesArray:
-                // Emit inline: create 1-element scopes array with null placeholder
-                EmitEmptyScopesArray(ilEncoder);
                 break;
             case LIRBuildScopesArray buildScopes:
                 // Emit inline: create scopes array with scope instances

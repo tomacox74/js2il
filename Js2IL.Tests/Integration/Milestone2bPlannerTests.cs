@@ -86,4 +86,66 @@ function f() { return new C(); }
 
         Assert.Contains(ctor, plan.Graph.GetDependencies(f));
     }
+
+    [Fact]
+    public void Milestone2b1_Collects_ThisMethodDependency_WhenResolvable()
+    {
+        var js = @"
+class C {
+    a() { return this.b(); }
+    b() { return 1; }
+}
+function f() { return new C().a(); }
+";
+
+        var (symbolTable, coordinator) = BuildCoordinator(js);
+        var plan = coordinator.ComputeMilestone2bPlan(symbolTable);
+
+        var a = plan.Graph.NodesInStableOrder.Single(c => c.Kind == CallableKind.ClassMethod && c.Name == "C.a");
+        var b = plan.Graph.NodesInStableOrder.Single(c => c.Kind == CallableKind.ClassMethod && c.Name == "C.b");
+
+        Assert.Contains(b, plan.Graph.GetDependencies(a));
+    }
+
+    [Fact]
+    public void Milestone2b1_Collects_SuperMethodDependency_WhenResolvable()
+    {
+        var js = @"
+class Base {
+    m() { return 1; }
+}
+class Derived extends Base {
+    n() { return super.m(); }
+}
+function f() { return new Derived().n(); }
+";
+
+        var (symbolTable, coordinator) = BuildCoordinator(js);
+        var plan = coordinator.ComputeMilestone2bPlan(symbolTable);
+
+        var n = plan.Graph.NodesInStableOrder.Single(c => c.Kind == CallableKind.ClassMethod && c.Name == "Derived.n");
+        var m = plan.Graph.NodesInStableOrder.Single(c => c.Kind == CallableKind.ClassMethod && c.Name == "Base.m");
+
+        Assert.Contains(m, plan.Graph.GetDependencies(n));
+    }
+
+    [Fact]
+    public void Milestone2b1_DoesNotCollect_ObjMemberCallDependency()
+    {
+        var js = @"
+class C {
+    a(obj) { return obj.b(); }
+    b() { return 1; }
+}
+function f() { return new C().a({ b: () => 2 }); }
+";
+
+        var (symbolTable, coordinator) = BuildCoordinator(js);
+        var plan = coordinator.ComputeMilestone2bPlan(symbolTable);
+
+        var a = plan.Graph.NodesInStableOrder.Single(c => c.Kind == CallableKind.ClassMethod && c.Name == "C.a");
+        var b = plan.Graph.NodesInStableOrder.Single(c => c.Kind == CallableKind.ClassMethod && c.Name == "C.b");
+
+        Assert.DoesNotContain(b, plan.Graph.GetDependencies(a));
+    }
 }
