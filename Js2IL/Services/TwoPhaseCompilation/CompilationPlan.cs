@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Js2IL.Services.TwoPhaseCompilation;
 
 public sealed record CompilationPlanStage(int SccId, IReadOnlyList<CallableId> Members);

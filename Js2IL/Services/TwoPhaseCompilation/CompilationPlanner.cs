@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Js2IL.Services.TwoPhaseCompilation;
 
@@ -31,14 +33,14 @@ public static class CompilationPlanner
 
             foreach (var w in graph.GetDependencies(v))
             {
-                if (!indexByNode.ContainsKey(w))
+                if (!indexByNode.TryGetValue(w, out var wIndex))
                 {
                     StrongConnect(w);
                     lowlinkByNode[v] = Math.Min(lowlinkByNode[v], lowlinkByNode[w]);
                 }
                 else if (onStack.Contains(w))
                 {
-                    lowlinkByNode[v] = Math.Min(lowlinkByNode[v], indexByNode[w]);
+                    lowlinkByNode[v] = Math.Min(lowlinkByNode[v], wIndex);
                 }
             }
 
@@ -63,12 +65,9 @@ public static class CompilationPlanner
         }
 
         // Visit nodes in stable discovery order.
-        foreach (var node in graph.NodesInStableOrder)
+        foreach (var node in graph.NodesInStableOrder.Where(node => !indexByNode.ContainsKey(node)))
         {
-            if (!indexByNode.ContainsKey(node))
-            {
-                StrongConnect(node);
-            }
+            StrongConnect(node);
         }
 
         // Build membership map

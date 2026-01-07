@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Acornima.Ast;
 using Js2IL.SymbolTables;
 
@@ -28,12 +31,9 @@ public sealed class CallableDependencyCollector
         _callablesInStableOrder = callablesInStableOrder ?? throw new ArgumentNullException(nameof(callablesInStableOrder));
 
         _classConstructors = new Dictionary<(string, string), CallableId>();
-        foreach (var c in _callablesInStableOrder)
+        foreach (var c in _callablesInStableOrder.Where(c => c.Kind == CallableKind.ClassConstructor && !string.IsNullOrEmpty(c.Name)))
         {
-            if (c.Kind == CallableKind.ClassConstructor && !string.IsNullOrEmpty(c.Name))
-            {
-                _classConstructors[(c.DeclaringScopeName, c.Name!)] = c;
-            }
+            _classConstructors[(c.DeclaringScopeName, c.Name!)] = c;
         }
     }
 
