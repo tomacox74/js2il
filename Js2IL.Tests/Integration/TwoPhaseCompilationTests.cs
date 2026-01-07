@@ -151,7 +151,6 @@ console.log(calc.getValue());
                 var options = new CompilerOptions
                 {
                     OutputDirectory = outputDir,
-                    TwoPhaseCompilation = true,
                     Verbose = true
                 };
 

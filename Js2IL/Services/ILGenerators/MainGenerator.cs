@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Js2IL.Services.ILGenerators
 {
     /// <summary>
-    /// Generates the Main function which is teh entry point for execution
+    /// Generates the Main function which is the entry point for execution
     /// </summary>
     internal class MainGenerator
     {
@@ -29,7 +29,7 @@ namespace Js2IL.Services.ILGenerators
 
         private readonly ClassRegistry _classRegistry = new();
         
-        private readonly TwoPhaseCompilationCoordinator? _twoPhaseCoordinator;
+        private readonly TwoPhaseCompilationCoordinator _twoPhaseCoordinator;
         private readonly IServiceProvider _serviceProvider;
 
         public MainGenerator(IServiceProvider serviceProvider, Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, SymbolTable symbolTable)
@@ -49,13 +49,8 @@ namespace Js2IL.Services.ILGenerators
             _logger = serviceProvider.GetRequiredService<ILogger>();
             _functionGenerator = new JavaScriptFunctionGenerator(serviceProvider, variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, symbolTable);
             _ilGenerator = new ILMethodGenerator(serviceProvider, variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, _functionGenerator.FunctionRegistry, symbolTable: symbolTable);
-            _classesGenerator = new ClassesGenerator(serviceProvider,metadataBuilder, bclReferences, methodBodyStreamEncoder, _classRegistry, variables);
-            
-            // Initialize two-phase coordinator if enabled
-            if (compilerOptions.TwoPhaseCompilation)
-            {
-                _twoPhaseCoordinator = serviceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
-            }
+            _classesGenerator = new ClassesGenerator(serviceProvider,metadataBuilder, bclReferences, methodBodyStreamEncoder, _classRegistry, variables);            
+            _twoPhaseCoordinator = serviceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
         }
 
         /// <summary>
@@ -114,36 +109,25 @@ namespace Js2IL.Services.ILGenerators
         /// </summary>
         public void DeclareClassesAndFunctions(SymbolTable symbolTable)
         {
-            if (_twoPhaseCoordinator != null)
-            {
-                _twoPhaseCoordinator.RunMilestone1OptionB(
-                    symbolTable,
-                    _ilGenerator.MetadataBuilder,
-                    compileAnonymousCallablesPhase2: callables =>
-                        _twoPhaseCoordinator.CompilePhase2AnonymousCallables(
-                            callables,
-                            _ilGenerator.MetadataBuilder,
-                            _serviceProvider,
-                            _rootVariables,
-                            _bclReferences,
-                            _methodBodyStreamEncoder,
-                            _classRegistry,
-                            _functionGenerator.FunctionRegistry,
-                            _symbolTable),
-                    compileClassesAndFunctionsPhase2: () =>
-                    {
-                        _classesGenerator.DeclareClasses(symbolTable);
-                        _functionGenerator.DeclareFunctions(symbolTable);
-                    });
-            }
-            else
-            {
-                // Legacy path: declare classes first so their types exist under the Classes namespace
-                _classesGenerator.DeclareClasses(symbolTable);
-
-                // Declare functions (emits static method definitions and populates CompiledMethodCache)
-                _functionGenerator.DeclareFunctions(symbolTable);
-            }
+            _twoPhaseCoordinator.RunMilestone1OptionB(
+                symbolTable,
+                _ilGenerator.MetadataBuilder,
+                compileAnonymousCallablesPhase2: callables =>
+                    _twoPhaseCoordinator.CompilePhase2AnonymousCallables(
+                        callables,
+                        _ilGenerator.MetadataBuilder,
+                        _serviceProvider,
+                        _rootVariables,
+                        _bclReferences,
+                        _methodBodyStreamEncoder,
+                        _classRegistry,
+                        _functionGenerator.FunctionRegistry,
+                        _symbolTable),
+                compileClassesAndFunctionsPhase2: () =>
+                {
+                    _classesGenerator.DeclareClasses(symbolTable);
+                    _functionGenerator.DeclareFunctions(symbolTable);
+                });
         }
 
         /// <summary>
