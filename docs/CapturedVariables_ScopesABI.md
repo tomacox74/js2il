@@ -75,9 +75,9 @@ If a class needs access to parent scopes, it contains:
 
 ### IR pipeline placeholder
 
-The current IR lowering emits `LIRCreateScopesArray(default, ...)` as a placeholder.
+The current IR lowering emits `LIRBuildScopesArray(...)` to materialize the scopes array. The legacy `LIRCreateScopesArray` placeholder has been removed.
 
-This document defines how that instruction (or an equivalent) must be materialized once environments are supported.
+This document defines how that instruction must be materialized once environments are supported.
 
 ## ABI Contract (Authoritative)
 
@@ -624,7 +624,7 @@ This is not an IL concern; it is metadata used by call sites and by LIR→IL whe
 - Issue #211: ConsoleLogPeepholeOptimizer doesn't recognize `LIRBuildArray` pattern, causing some methods to use locals where they previously didn't (e.g., `ArrowFunction_DefaultParameterExpression` has 2 locals instead of 0)
 - Issue #227: Obsolete LIR instructions (`LIRNewObjectArray`, `LIRBeginInitArrayElement`, `LIRStoreElementRef`) should be removed
 
-**Note on `LIRCreateScopesArray`**: The existing `LIRCreateScopesArray` instruction is a placeholder that emits a 1-element array containing `null`. ~~When implementing captured variable support, it should be replaced or extended to accept the `ScopeChainLayout` (or equivalent metadata) so the LIR explicitly encodes which scope instances populate which slots.~~ **Update (Phase 1):** Captured variable reads are now implemented without modifying `LIRCreateScopesArray`. Read operations use dedicated `LIRLoadLeafScopeField` and `LIRLoadParentScopeField` instructions. The scopes array construction remains a placeholder; proper implementation is deferred to Phase 2 (write support) and Phase 3 (scopes materialization).
+**Note on scopes array construction**: `LIRCreateScopesArray` has been removed; `LIRBuildScopesArray` is the canonical instruction and carries explicit slot sources. Captured variable reads use `LIRLoadLeafScopeField` / `LIRLoadParentScopeField`; scopes array construction for writes/materialization is handled via `LIRBuildScopesArray` and still evolves with future phases.
 
 A richer instruction shape for future scopes array construction might look like:
 
@@ -728,7 +728,7 @@ This replaces the role of the legacy `FunctionRegistry` (which is string-keyed a
   - For non-empty layouts: creates array of proper size, populates each slot from its source
   - Added `EmitLoadScopeInstance` helper for loading from leaf local, scopes argument, or this._scopes
 - Updated `Stackify` and `TempLocalAllocator` to handle the new `LIRBuildScopesArray` instruction
-- Marked `LIRCreateScopesArray` as `[Obsolete]` to guide migration
+- Removed `LIRCreateScopesArray` (migration completed); `LIRBuildScopesArray` is the single scopes-array instruction.
 
 **Current Limitations**:
 - Closure fallback remains in `HIRBuilder` for complex scenarios (transitive scope passing)

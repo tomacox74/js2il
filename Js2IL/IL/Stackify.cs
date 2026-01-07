@@ -92,7 +92,7 @@ internal static class Stackify
             }
 
             // Only instructions that can be emitted inline are candidates
-            // This prevents marking temps that require materialization (like LIRCreateScopesArray)
+            // This prevents marking temps that require materialization (like LIRBuildScopesArray)
             if (!CanEmitInline(instr, methodBody, defInstruction))
             {
                 continue;
@@ -269,7 +269,6 @@ internal static class Stackify
 
             // Scopes array creation - creates a small array, safe to inline
             // Used once per closure creation, no observable side effects
-            case LIRCreateScopesArray:
             case LIRBuildScopesArray:
                 return true;
 
@@ -407,7 +406,6 @@ internal static class Stackify
             case LIRConstNull:
             case LIRGetIntrinsicGlobal:
             case LIRLoadParameter:
-            case LIRCreateScopesArray:
             case LIRBuildScopesArray:
                 return (0, 1);
 
