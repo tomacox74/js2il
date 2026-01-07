@@ -129,6 +129,28 @@ public sealed class TwoPhaseCompilationCoordinator
     }
 
     /// <summary>
+    /// Milestone 2c: True Phase 2 planned compilation.
+    ///
+    /// This is the long-term entry point that will:
+    /// - Run Phase 1 discovery + declaration (signature/tokens only)
+    /// - Enable strict lookup-only mode
+    /// - Compile callable bodies in the Milestone 2b plan order
+    /// - Compile main AFTER planned callables
+    ///
+    /// Note: the full Milestone 2c behavior is still being wired in.
+    /// For now, this preserves Milestone 2a behavior behind the TwoPhaseCompilation option.
+    /// </summary>
+    public void RunMilestone2c(
+        SymbolTable symbolTable,
+        MetadataBuilder metadataBuilder,
+        Action<IReadOnlyList<CallableId>> compileAnonymousCallablesPhase2,
+        Action compileClassesAndFunctionsPhase2)
+    {
+        // Until the full body-only + finalize pass lands, keep existing behavior.
+        RunMilestone2a(symbolTable, metadataBuilder, compileAnonymousCallablesPhase2, compileClassesAndFunctionsPhase2);
+    }
+
+    /// <summary>
     /// Milestone 2b: builds the dependency graph and computes SCC/topo stages.
     /// Does not change compilation behavior.
     /// </summary>
@@ -414,9 +436,37 @@ public sealed class TwoPhaseCompilationCoordinator
                 ? $"ArrowFunction_L{callable.Location.Value.Line}C{callable.Location.Value.Column}"
                 : "ArrowFunction_anonymous",
             CallableKind.ClassConstructor => ".ctor",
-            CallableKind.ClassMethod or CallableKind.ClassStaticMethod => callable.Name ?? "method",
+            CallableKind.ClassMethod or CallableKind.ClassStaticMethod => TryGetClassMemberName(callable.Name) ?? "method",
+            CallableKind.ClassGetter or CallableKind.ClassStaticGetter => TryGetAccessorMethodName(callable.Name, "get") ?? "get",
+            CallableKind.ClassSetter or CallableKind.ClassStaticSetter => TryGetAccessorMethodName(callable.Name, "set") ?? "set",
             _ => "unknown"
         };
+    }
+
+    private static string? TryGetClassMemberName(string? callableName)
+    {
+        // CallableId convention for class methods: "ClassName.methodName".
+        if (string.IsNullOrWhiteSpace(callableName)) return null;
+        var dot = callableName.IndexOf('.');
+        if (dot < 0 || dot >= callableName.Length - 1) return null;
+        var member = callableName[(dot + 1)..];
+        return string.IsNullOrWhiteSpace(member) ? null : member;
+    }
+
+    private static string? TryGetAccessorMethodName(string? callableName, string accessorKind)
+    {
+        // CallableId convention for accessors: "ClassName.get:prop" / "ClassName.set:prop".
+        if (string.IsNullOrWhiteSpace(callableName)) return null;
+        var dot = callableName.IndexOf('.');
+        if (dot < 0 || dot >= callableName.Length - 1) return null;
+        var tail = callableName[(dot + 1)..];
+        var colon = tail.IndexOf(':');
+        if (colon < 0 || colon >= tail.Length - 1) return null;
+        var kind = tail[..colon];
+        var prop = tail[(colon + 1)..];
+        if (!string.Equals(kind, accessorKind, StringComparison.Ordinal)) return null;
+        if (string.IsNullOrWhiteSpace(prop)) return null;
+        return $"{accessorKind}_{prop}";
     }
     
     /// <summary>

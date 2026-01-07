@@ -98,6 +98,19 @@ namespace Js2IL.Utilities.Ecma335
             TypeAttributes attributes,
             EntityHandle baseType)
         {
+            return AddTypeDefinition(attributes, baseType, firstFieldOverride: null, firstMethodOverride: null);
+        }
+
+        /// <summary>
+        /// Overload that allows forcing the FieldList/MethodList pointers.
+        /// This is used by the two-phase pipeline to declare types before method bodies are emitted.
+        /// </summary>
+        public TypeDefinitionHandle AddTypeDefinition(
+            TypeAttributes attributes,
+            EntityHandle baseType,
+            FieldDefinitionHandle? firstFieldOverride,
+            MethodDefinitionHandle? firstMethodOverride)
+        {
             if (_typeDefinitionAdded)
             {
                 throw new InvalidOperationException("AddTypeDefinition can only be called once per TypeBuilder instance.");
@@ -108,14 +121,18 @@ namespace Js2IL.Utilities.Ecma335
             var nameHandle = _metadataBuilder.GetOrAddString(_typeName);
 
             // 5th parameter: first field definition handle or next row if none were added.
-            var fieldList = !_firstFieldDefinition.IsNil
-                ? _firstFieldDefinition
-                : MetadataTokens.FieldDefinitionHandle(_metadataBuilder.GetRowCount(TableIndex.Field) + 1);
+            var fieldList = firstFieldOverride.HasValue && !firstFieldOverride.Value.IsNil
+                ? firstFieldOverride.Value
+                : (!_firstFieldDefinition.IsNil
+                    ? _firstFieldDefinition
+                    : MetadataTokens.FieldDefinitionHandle(_metadataBuilder.GetRowCount(TableIndex.Field) + 1));
 
             // 6th parameter: first method definition handle or next row if none were added at the time of the call.
-            var methodList = !_firstMethodDefinition.IsNil
-                ? _firstMethodDefinition
-                : MetadataTokens.MethodDefinitionHandle(_metadataBuilder.GetRowCount(TableIndex.MethodDef) + 1);
+            var methodList = firstMethodOverride.HasValue && !firstMethodOverride.Value.IsNil
+                ? firstMethodOverride.Value
+                : (!_firstMethodDefinition.IsNil
+                    ? _firstMethodDefinition
+                    : MetadataTokens.MethodDefinitionHandle(_metadataBuilder.GetRowCount(TableIndex.MethodDef) + 1));
 
             var typeHandle = _metadataBuilder.AddTypeDefinition(attributes, nsHandle, nameHandle, baseType, fieldList, methodList);
             _typeDefinitionAdded = true;

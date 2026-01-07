@@ -213,12 +213,37 @@ public sealed class CallableDiscovery
             
             var methodParamCount = (member.Value as FunctionExpression)?.Params.Count ?? 0;
             var location = SourceLocation.FromNode(member);
+
+            // Distinguish methods vs accessors so CallableId keys remain unique.
+            // Acornima models class members as MethodDefinition with a Kind (PropertyKind).
+            // We keep CLR method naming concerns in the emitters; here we just classify callables.
+            CallableKind kind;
+            var memberKind = member.Kind;
+            if (memberKind == PropertyKind.Get)
+            {
+                kind = member.Static ? CallableKind.ClassStaticGetter : CallableKind.ClassGetter;
+            }
+            else if (memberKind == PropertyKind.Set)
+            {
+                kind = member.Static ? CallableKind.ClassStaticSetter : CallableKind.ClassSetter;
+            }
+            else
+            {
+                kind = member.Static ? CallableKind.ClassStaticMethod : CallableKind.ClassMethod;
+            }
+
+            var callableName = kind switch
+            {
+                CallableKind.ClassGetter or CallableKind.ClassStaticGetter => JavaScriptCallableNaming.MakeClassAccessorCallableName(className, "get", methodName),
+                CallableKind.ClassSetter or CallableKind.ClassStaticSetter => JavaScriptCallableNaming.MakeClassAccessorCallableName(className, "set", methodName),
+                _ => JavaScriptCallableNaming.MakeClassMethodCallableName(className, methodName)
+            };
             
             var methodId = new CallableId
             {
-                Kind = member.Static ? CallableKind.ClassStaticMethod : CallableKind.ClassMethod,
+                Kind = kind,
                 DeclaringScopeName = parentScopeName,
-                Name = JavaScriptCallableNaming.MakeClassMethodCallableName(className, methodName),
+                Name = callableName,
                 Location = location,
                 JsParamCount = methodParamCount,
                 AstNode = member

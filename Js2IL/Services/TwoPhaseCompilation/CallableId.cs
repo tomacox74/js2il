@@ -21,9 +21,21 @@ public enum CallableKind
     
     /// <summary>A class instance method: class C { m() {} }</summary>
     ClassMethod,
+
+    /// <summary>A class instance getter: class C { get x() {} }</summary>
+    ClassGetter,
+
+    /// <summary>A class instance setter: class C { set x(v) {} }</summary>
+    ClassSetter,
     
     /// <summary>A class static method: class C { static m() {} }</summary>
     ClassStaticMethod,
+
+    /// <summary>A class static getter: class C { static get x() {} }</summary>
+    ClassStaticGetter,
+
+    /// <summary>A class static setter: class C { static set x(v) {} }</summary>
+    ClassStaticSetter,
     
     /// <summary>A synthesized class static initializer (.cctor) for static field initialization.</summary>
     ClassStaticInitializer

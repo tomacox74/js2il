@@ -9,6 +9,7 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using Js2IL.Utilities.Ecma335;
 using Js2IL.Services;
+using Js2IL.Services.TwoPhaseCompilation;
 
 namespace Js2IL;
 
@@ -95,6 +96,83 @@ internal sealed class JsMethodCompiler
     }
 
     #region Public API - Entry Points
+
+    /// <summary>
+    /// Two-phase API: attempt to compile a callable body to IL without emitting a MethodDef row.
+    /// Phase 1 must preallocate <paramref name="expectedMethodDef"/>.
+    /// </summary>
+    public CompiledCallableBody? TryCompileCallableBody(
+        CallableId callable,
+        MethodDefinitionHandle expectedMethodDef,
+        string ilMethodName,
+        Node node,
+        Scope scope,
+        MethodBodyStreamEncoder methodBodyStreamEncoder,
+        bool isInstanceMethod,
+        bool hasScopesParameter,
+        FieldDefinitionHandle? scopesFieldHandle,
+        bool returnsVoid = false)
+    {
+        // Extract params/body from supported node shapes
+        NodeList<Node>? functionParams = null;
+        Node bodyNode = node;
+
+        if (node is FunctionDeclaration funcDecl)
+        {
+            functionParams = funcDecl.Params;
+            bodyNode = funcDecl.Body;
+        }
+        else if (node is FunctionExpression funcExpr)
+        {
+            functionParams = funcExpr.Params;
+            bodyNode = funcExpr.Body;
+        }
+        else if (node is ArrowFunctionExpression arrowExpr)
+        {
+            functionParams = arrowExpr.Params;
+            bodyNode = arrowExpr;
+        }
+        else if (node is Acornima.Ast.MethodDefinition classMethDef && classMethDef.Value is FunctionExpression methodFuncExpr)
+        {
+            functionParams = methodFuncExpr.Params;
+            bodyNode = classMethDef; // HIRBuilder handles MethodDefinition
+        }
+
+        // Check for simple identifier parameters only (no destructuring/rest). Defaults are OK.
+        if (functionParams.HasValue && !AllParamsAreSimpleIdentifiers(functionParams.Value))
+        {
+            return null;
+        }
+
+        if (!TryLowerASTToLIR(bodyNode, scope, out var lirMethod))
+        {
+            return null;
+        }
+
+        var parameters = new List<MethodParameterDescriptor>();
+        if (hasScopesParameter)
+        {
+            parameters.Add(new MethodParameterDescriptor("scopes", typeof(object[])));
+        }
+
+        foreach (var paramName in lirMethod!.Parameters)
+        {
+            parameters.Add(new MethodParameterDescriptor(paramName, typeof(object)));
+        }
+
+        // Dummy TypeBuilder (not used by body-only compilation)
+        var dummyType = new TypeBuilder(_metadataBuilder, "", "<TwoPhaseDummy>");
+
+        var methodDescriptor = new MethodDescriptor(ilMethodName, dummyType, parameters)
+        {
+            IsStatic = !isInstanceMethod,
+            HasScopesParameter = hasScopesParameter,
+            ReturnsVoid = returnsVoid,
+            ScopesFieldHandle = scopesFieldHandle
+        };
+
+        return CreateILCompiler().TryCompileCallableBody(callable, expectedMethodDef, methodDescriptor, lirMethod!, methodBodyStreamEncoder);
+    }
 
     public MethodDefinitionHandle TryCompileMethod(TypeBuilder typeBuilder, string methodName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
         => TryCompileMethod(typeBuilder, methodName, node, scope, methodBodyStreamEncoder, scopesFieldHandle: null);

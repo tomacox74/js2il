@@ -523,10 +523,23 @@ namespace Js2IL.Services.ILGenerators
 
     private MethodDefinitionHandle EmitMethod(TypeBuilder tb, Acornima.Ast.MethodDefinition element, Scope classScope)
         {
-            var mname = (element.Key as Identifier)?.Name ?? "method";
-            var mscope = classScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Function && s.Name == mname);
+            var memberName = (element.Key as Identifier)?.Name ?? "method";
             var className = classScope.Name;
             var funcExpr = element.Value as FunctionExpression;
+
+            // Accessors are modeled as MethodDefinition with Kind Get/Set.
+            // Emit CLR-friendly names to avoid collisions and match standard getter/setter conventions.
+            var mname = element.Kind switch
+            {
+                PropertyKind.Get => $"get_{memberName}",
+                PropertyKind.Set => $"set_{memberName}",
+                _ => memberName
+            };
+
+            // Prefer matching by AST node for correctness across methods vs accessors.
+            var mscope = funcExpr != null
+                ? classScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Function && ReferenceEquals(s.AstNode, funcExpr))
+                : classScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Function && s.Name == memberName);
 
             if (mscope != null)
             {
@@ -638,9 +651,13 @@ namespace Js2IL.Services.ILGenerators
 
             if (!hasExplicitReturn)
             {
-                // JavaScript methods without an explicit return should return 'this' for fluent patterns
-                // and to avoid leaving an unexpected value on the stack causing invalid IL at runtime.
-                if (!element.Static)
+                // Methods default to returning 'this' (fluent pattern).
+                // Accessors default to returning undefined (null) when missing explicit return.
+                if (element.Kind is PropertyKind.Get or PropertyKind.Set)
+                {
+                    ilGen.IL.OpCode(ILOpCode.Ldnull);
+                }
+                else if (!element.Static)
                 {
                     ilGen.IL.OpCode(ILOpCode.Ldarg_0); // load 'this'
                 }
