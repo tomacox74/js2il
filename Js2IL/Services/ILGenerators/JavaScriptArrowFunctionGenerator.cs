@@ -83,7 +83,7 @@ namespace Js2IL.Services.ILGenerators
                                 $"Expected preallocated {expectedPreallocatedHandle.Value}, got {compiledMethod}.");
                         }
                         // Two-phase: register the token in the canonical CallableRegistry
-                        _callableRegistry.SetDeclaredTokenForAstNode(arrowFunction, (EntityHandle)compiledMethod);
+                        _callableRegistry.SetDeclaredTokenForAstNode(arrowFunction, compiledMethod);
                         _callableRegistry.MarkBodyCompiledForAstNode(arrowFunction);
                         return compiledMethod;
                     }
@@ -342,7 +342,7 @@ namespace Js2IL.Services.ILGenerators
             }
 
             // Two-phase: register the token in the canonical CallableRegistry
-            _callableRegistry.SetDeclaredTokenForAstNode(arrowFunction, (EntityHandle)mdh);
+            _callableRegistry.SetDeclaredTokenForAstNode(arrowFunction, mdh);
             _callableRegistry.MarkBodyCompiledForAstNode(arrowFunction);
 
             return mdh;

@@ -1507,7 +1507,7 @@ namespace Js2IL.Services.ILGenerators
             tb.AddTypeDefinition(TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, _bclReferences.ObjectType);
 
             // Two-phase: register the token in the canonical CallableRegistry
-            _callableRegistry.SetDeclaredTokenForAstNode(funcExpr, (System.Reflection.Metadata.EntityHandle)mdh);
+            _callableRegistry.SetDeclaredTokenForAstNode(funcExpr, mdh);
             _callableRegistry.MarkBodyCompiledForAstNode(funcExpr);
             
             return mdh;

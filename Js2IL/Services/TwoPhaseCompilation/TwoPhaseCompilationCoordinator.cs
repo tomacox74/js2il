@@ -297,7 +297,7 @@ public sealed class TwoPhaseCompilationCoordinator
             }
 
             var preallocated = MetadataTokens.MethodDefinitionHandle(nextRowId++);
-            _registry.SetToken(callable, (EntityHandle)preallocated);
+            _registry.SetToken(callable, preallocated);
         }
     }
 

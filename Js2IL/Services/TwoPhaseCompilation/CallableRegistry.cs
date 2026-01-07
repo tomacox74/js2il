@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Reflection.Metadata;
+using System.Reflection.Metadata.Ecma335;
 using Acornima.Ast;
 
 namespace Js2IL.Services.TwoPhaseCompilation;
@@ -20,7 +21,7 @@ public sealed record CallableInfo
     /// The declared callable token (populated during Phase 1 declaration).
     /// In Phase 1 this may be a MemberRef (signature-only); Phase 2 may overwrite with a MethodDef.
     /// </summary>
-    public EntityHandle? Token { get; init; }
+    public MethodDefinitionHandle? Token { get; init; }
     
     /// <summary>
     /// Whether the body has been compiled (set during Phase 2).
@@ -57,7 +58,7 @@ public interface ICallableDeclarationWriter
     /// <summary>
     /// Sets the method token for a previously declared callable (Phase 1 - token allocation).
     /// </summary>
-    void SetToken(CallableId id, EntityHandle token);
+    void SetToken(CallableId id, MethodDefinitionHandle token);
 }
 
 /// <summary>
@@ -123,7 +124,7 @@ public sealed class CallableRegistry : ICallableCatalog, ICallableDeclarationWri
     /// Registers/overwrites the declared token for a callable identified by its AST node.
     /// This is used by generators after creating a MethodDefinitionHandle.
     /// </summary>
-    public void SetDeclaredTokenForAstNode(Node astNode, EntityHandle token)
+    public void SetDeclaredTokenForAstNode(Node astNode, MethodDefinitionHandle token)
     {
         if (_callableByAstNode == null)
         {
@@ -233,7 +234,7 @@ public sealed class CallableRegistry : ICallableCatalog, ICallableDeclarationWri
             });
     }
 
-    public void SetToken(CallableId id, EntityHandle token)
+    public void SetToken(CallableId id, MethodDefinitionHandle token)
     {
         if (!_callables.TryGetValue(id, out var info))
         {
