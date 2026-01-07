@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Acornima.Ast;
 using Js2IL.SymbolTables;
+using Js2IL.Utilities;
 
 namespace Js2IL.Services.TwoPhaseCompilation;
 
@@ -24,6 +25,12 @@ public sealed class CallableDependencyCollector
     // Lookup for class constructor callables by (declaringScopeName, className)
     private readonly Dictionary<(string DeclaringScopeName, string ClassName), CallableId> _classConstructors;
 
+    // Lookup for class method callables by (declaringScopeName, className, methodName)
+    private readonly Dictionary<(string DeclaringScopeName, string ClassName, string MethodName), CallableId> _classMethods;
+
+    // Lookup for class static method callables by (declaringScopeName, className, methodName)
+    private readonly Dictionary<(string DeclaringScopeName, string ClassName, string MethodName), CallableId> _classStaticMethods;
+
     public CallableDependencyCollector(SymbolTable symbolTable, CallableRegistry registry, IReadOnlyList<CallableId> callablesInStableOrder)
     {
         _symbolTable = symbolTable ?? throw new ArgumentNullException(nameof(symbolTable));
@@ -34,6 +41,24 @@ public sealed class CallableDependencyCollector
         foreach (var c in _callablesInStableOrder.Where(c => c.Kind == CallableKind.ClassConstructor && !string.IsNullOrEmpty(c.Name)))
         {
             _classConstructors[(c.DeclaringScopeName, c.Name!)] = c;
+        }
+
+        _classMethods = new Dictionary<(string, string, string), CallableId>();
+        foreach (var c in _callablesInStableOrder.Where(c => c.Kind == CallableKind.ClassMethod && !string.IsNullOrEmpty(c.Name)))
+        {
+            if (JavaScriptCallableNaming.TrySplitClassMethodCallableName(c.Name, out var className, out var methodName))
+            {
+                _classMethods[(c.DeclaringScopeName, className, methodName)] = c;
+            }
+        }
+
+        _classStaticMethods = new Dictionary<(string, string, string), CallableId>();
+        foreach (var c in _callablesInStableOrder.Where(c => c.Kind == CallableKind.ClassStaticMethod && !string.IsNullOrEmpty(c.Name)))
+        {
+            if (JavaScriptCallableNaming.TrySplitClassMethodCallableName(c.Name, out var className, out var methodName))
+            {
+                _classStaticMethods[(c.DeclaringScopeName, className, methodName)] = c;
+            }
         }
     }
 
@@ -60,6 +85,29 @@ public sealed class CallableDependencyCollector
 
         var callerScope = ResolveScopeForCallable(caller);
         var deps = new HashSet<CallableId>();
+
+        // Optional class context for member-call edges (Milestone 2b1).
+        // This is intentionally narrow: only this.method() and super.method() are considered.
+        string? callerClassName = null;
+        bool callerIsStaticMethod = false;
+        Scope? callerClassScope = null;
+        if (caller.Kind is CallableKind.ClassMethod or CallableKind.ClassStaticMethod)
+        {
+            callerIsStaticMethod = caller.Kind == CallableKind.ClassStaticMethod;
+
+            if (JavaScriptCallableNaming.TrySplitClassMethodCallableName(caller.Name, out var parsedClass, out _))
+            {
+                callerClassName = parsedClass;
+            }
+
+            // Find the class scope that encloses this method body scope (for resolving super).
+            var s = callerScope;
+            while (s != null && s.Kind != ScopeKind.Class)
+            {
+                s = s.Parent;
+            }
+            callerClassScope = s;
+        }
 
         void AddDependency(CallableId callee)
         {
@@ -113,6 +161,83 @@ public sealed class CallableDependencyCollector
             if (_classConstructors.TryGetValue((declaringScopeName, classIdentifier.Name), out var ctorId))
             {
                 AddDependency(ctorId);
+            }
+        }
+
+        void TryAddThisOrSuperMemberCallDependency(CallExpression callExpr)
+        {
+            if (callerClassName == null)
+            {
+                return;
+            }
+
+            if (callExpr.Callee is not MemberExpression mem)
+            {
+                return;
+            }
+
+            if (mem.Computed)
+            {
+                return;
+            }
+
+            if (mem.Property is not Identifier propId)
+            {
+                return;
+            }
+
+            var methodName = propId.Name;
+
+            // this.method()
+            if (mem.Object is ThisExpression)
+            {
+                var table = callerIsStaticMethod ? _classStaticMethods : _classMethods;
+                if (table.TryGetValue((caller.DeclaringScopeName, callerClassName, methodName), out var callee))
+                {
+                    AddDependency(callee);
+                }
+                return;
+            }
+
+            // super.method() - resolve base class name via symbol table if possible.
+            if (mem.Object is Super)
+            {
+                if (callerClassScope?.AstNode is not ClassDeclaration classDecl)
+                {
+                    return;
+                }
+
+                if (classDecl.SuperClass is not Identifier superId)
+                {
+                    return;
+                }
+
+                if (callerScope == null)
+                {
+                    return;
+                }
+
+                var symbol = callerScope.FindSymbol(superId.Name);
+                var binding = symbol.BindingInfo;
+                if (binding.DeclarationNode is not ClassDeclaration superClassDecl)
+                {
+                    return;
+                }
+
+                var superScope = _symbolTable.FindScopeByAstNode(superClassDecl);
+                if (superScope?.Parent == null)
+                {
+                    return;
+                }
+
+                var superDeclaringScopeName = GetDeclaringScopeName(superScope.Parent, _symbolTable.Root.Name);
+                var superClassName = superId.Name;
+
+                var table = callerIsStaticMethod ? _classStaticMethods : _classMethods;
+                if (table.TryGetValue((superDeclaringScopeName, superClassName, methodName), out var callee))
+                {
+                    AddDependency(callee);
+                }
             }
         }
 
@@ -214,6 +339,9 @@ public sealed class CallableDependencyCollector
                     break;
 
                 case CallExpression callExpr:
+                    // Milestone 2b1: add narrow, class-aware member-call edges when statically knowable.
+                    // This intentionally ignores obj.m() since it is generally dynamic in JavaScript.
+                    TryAddThisOrSuperMemberCallDependency(callExpr);
                     VisitNode(callExpr.Callee);
                     foreach (var a in callExpr.Arguments) VisitNode(a as Node);
                     break;

@@ -671,8 +671,12 @@ Recommended sequence (to minimize churn):
   - Recommended initial rules:
     - Include `new C()` edges as above (identifier-resolvable class bindings).
     - Include `this.m()` edges inside a known class/method body when `m` resolves to a declared method on the same class.
+    - Include `super.m()` edges when the base class is identifier-resolvable and `m` resolves to a declared method on that base class.
     - Keep `obj.m()` / `obj["m"]()` out-of-scope unless the receiver is proven to be a specific class (e.g., by a dedicated intrinsic typing rule).
   - Keep the planner unchanged; this milestone is about improving the **graph**, not changing compilation order semantics.
+
+  Notes:
+  - Typed intrinsics and broader receiver-type inference are intentionally deferred to later milestones/optimizations.
 
 - **Milestone 2c: True Phase 2 planned compilation**
   - Compile callable bodies in planner order.
