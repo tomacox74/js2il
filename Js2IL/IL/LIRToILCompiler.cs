@@ -1,8 +1,10 @@
 using Js2IL.IR;
 using Js2IL.Services;
 using Js2IL.Services.ILGenerators;
+using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.Services.VariableBindings;
 using Js2IL.Utilities.Ecma335;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
@@ -19,11 +21,11 @@ namespace Js2IL.IL;
 /// </remarks>
 internal sealed class LIRToILCompiler
 {
+    private readonly IServiceProvider _serviceProvider;
     private readonly MetadataBuilder _metadataBuilder;
     private readonly TypeReferenceRegistry _typeReferenceRegistry;
     private readonly BaseClassLibraryReferences _bclReferences;
     private readonly MemberReferenceRegistry _memberRefRegistry;
-    private readonly CompiledMethodCache _compiledMethodCache;
     private readonly ScopeMetadataRegistry _scopeMetadataRegistry;
     private MethodBodyIR? _methodBody;
     private bool _compiled;
@@ -38,14 +40,14 @@ internal sealed class LIRToILCompiler
         TypeReferenceRegistry typeReferenceRegistry,
         MemberReferenceRegistry memberReferenceRegistry,
         BaseClassLibraryReferences bclReferences,
-        CompiledMethodCache compiledMethodCache,
-        ScopeMetadataRegistry scopeMetadataRegistry)
+        ScopeMetadataRegistry scopeMetadataRegistry,
+        IServiceProvider serviceProvider)
     {
+        _serviceProvider = serviceProvider;
         _metadataBuilder = metadataBuilder;
         _typeReferenceRegistry = typeReferenceRegistry;
         _bclReferences = bclReferences;
         _memberRefRegistry = memberReferenceRegistry;
-        _compiledMethodCache = compiledMethodCache;
         _scopeMetadataRegistry = scopeMetadataRegistry;
     }
 
@@ -875,11 +877,23 @@ internal sealed class LIRToILCompiler
                 }
             case LIRCallFunction callFunc:
                 {
-                    // Look up the method handle from CompiledMethodCache
-                    if (!_compiledMethodCache.TryGet(callFunc.FunctionSymbol.BindingInfo, out var methodHandle))
+                    if (callFunc.CallableId is not { } callableId)
                     {
                         return false; // Fall back to legacy emitter
                     }
+
+                    var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+                    if (reader == null)
+                    {
+                        return false; // Fall back to legacy emitter
+                    }
+
+                    if (!reader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)
+                    {
+                        return false; // Fall back to legacy emitter
+                    }
+
+                    var methodHandle = (MethodDefinitionHandle)token;
 
                     int jsParamCount = callFunc.Arguments.Count;
 
@@ -1417,11 +1431,18 @@ internal sealed class LIRToILCompiler
                 break;
             case LIRCallFunction callFunc:
                 {
-                    // Look up the method handle from CompiledMethodCache
-                    if (!_compiledMethodCache.TryGet(callFunc.FunctionSymbol.BindingInfo, out var methodHandle))
+                    if (callFunc.CallableId is not { } callableId)
                     {
-                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - function not found in cache");
+                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing CallableId for LIRCallFunction");
                     }
+
+                    var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+                    if (reader == null || !reader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)
+                    {
+                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing declared token for callable {callableId.DisplayName}");
+                    }
+
+                    var methodHandle = (MethodDefinitionHandle)token;
 
                     int jsParamCount = callFunc.Arguments.Count;
 

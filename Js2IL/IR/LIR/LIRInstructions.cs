@@ -1,4 +1,5 @@
 using Js2IL.Services.ScopesAbi;
+using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.SymbolTables;
 
 namespace Js2IL.IR;
@@ -72,7 +73,7 @@ public record LIRStoreParameter(int ParameterIndex, TempVariable Value) : LIRIns
 /// Calls a user-defined function with parameters.
 /// The Symbol contains the BindingInfo used to look up the compiled method handle.
 /// </summary>
-public record LIRCallFunction(Symbol FunctionSymbol, TempVariable ScopesArray, IReadOnlyList<TempVariable> Arguments, TempVariable Result) : LIRInstruction;
+public record LIRCallFunction(Symbol FunctionSymbol, TempVariable ScopesArray, IReadOnlyList<TempVariable> Arguments, TempVariable Result, CallableId? CallableId = null) : LIRInstruction;
 
 /// <summary>
 /// Creates the scopes array for function invocation.

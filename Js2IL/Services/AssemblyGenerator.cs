@@ -122,8 +122,8 @@ namespace Js2IL.Services
             // This is needed even for IR path because functions must be compiled first
             var mainGenerator = new MainGenerator(_serviceProvider, variables, _bclReferences, _metadataBuilder, methodBodyStream, module.SymbolTable!);
             
-            // Declare functions and classes first - this populates CompiledMethodCache
-            // which is needed for IR pipeline to emit function calls
+            // Declare functions and classes first - this populates CallableRegistry with tokens
+            // which is needed for IR pipeline to emit function calls (ldftn)
             mainGenerator.DeclareClassesAndFunctions(module.SymbolTable!);
 
             // Now try IR pipeline for the main method body
