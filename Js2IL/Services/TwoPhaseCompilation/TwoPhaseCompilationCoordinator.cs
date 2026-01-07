@@ -53,16 +53,6 @@ public sealed class TwoPhaseCompilationCoordinator
     }
 
     /// <summary>
-    /// Gets the declaration reader interface for Phase 2 consumers.
-    /// </summary>
-    public ICallableDeclarationReader DeclarationReader => _registry;
-
-    /// <summary>
-    /// Gets the list of discovered callables after Phase 1 discovery.
-    /// </summary>
-    public IReadOnlyList<CallableId>? DiscoveredCallables => _discoveredCallables;
-
-    /// <summary>
     /// Milestone 1 (Option B): Phase 1 is declare-only.
     ///
     /// This runs:
