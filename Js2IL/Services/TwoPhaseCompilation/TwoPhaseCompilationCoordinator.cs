@@ -146,8 +146,72 @@ public sealed class TwoPhaseCompilationCoordinator
         Action<IReadOnlyList<CallableId>> compileAnonymousCallablesPhase2,
         Action compileClassesAndFunctionsPhase2)
     {
-        // Until the full body-only + finalize pass lands, keep existing behavior.
-        RunMilestone2a(symbolTable, metadataBuilder, compileAnonymousCallablesPhase2, compileClassesAndFunctionsPhase2);
+        RunPhase1Discovery(symbolTable);
+
+        // Milestone 2b: compute dependency graph + SCC/topo plan.
+        var plan = ComputeMilestone2bPlan(symbolTable);
+
+        // Build a deterministic compilation order from the plan.
+        var ordered = new List<CallableId>(_discoveredCallables?.Count ?? 0);
+        var seen = new HashSet<CallableId>();
+        foreach (var stage in plan.Stages)
+        {
+            foreach (var member in stage.Members)
+            {
+                if (seen.Add(member))
+                {
+                    ordered.Add(member);
+                }
+            }
+        }
+
+        // Safety: if the plan missed some discovered callables (should not happen), append them.
+        // Milestone 2c full enforcement will treat this as an error.
+        if (_discoveredCallables != null)
+        {
+            foreach (var c in _discoveredCallables)
+            {
+                if (seen.Add(c)) ordered.Add(c);
+            }
+        }
+
+        if (_discoveredCallables != null)
+        {
+            PreallocatePhase1AnonymousCallablesMethodDefsInOrder(_discoveredCallables, ordered, metadataBuilder);
+        }
+
+        // Enable strict mode before any body compilation so expression emission cannot compile.
+        EnableStrictMode();
+
+        // Milestone 2c (partial): compile Phase 2 bodies in plan order.
+        // Today, only anonymous callables are compiled directly by the coordinator; classes and functions
+        // remain delegated to the existing generators (which compile depth-first).
+        RunPhase2BodyCompilation(() =>
+        {
+            // Keep existing safety invariant for now: classes/functions are emitted before anonymous callables.
+            compileClassesAndFunctionsPhase2();
+
+            if (_methodDefRowCountAtPreallocation.HasValue && _expectedMethodDefsBeforeAnonymousCallables.HasValue)
+            {
+                var expected = _methodDefRowCountAtPreallocation.Value + _expectedMethodDefsBeforeAnonymousCallables.Value;
+                var actual = metadataBuilder.GetRowCount(TableIndex.MethodDef);
+                if (actual != expected)
+                {
+                    throw new InvalidOperationException(
+                        $"[TwoPhase] Milestone 2a MethodDef preallocation mismatch: expected MethodDef row count {expected} after declaring classes/functions, but was {actual}. " +
+                        "This indicates the preallocation offset is wrong (likely due to unexpected extra MethodDef emissions during class/function declaration). " +
+                        "Common causes include new synthesized methods (for example, class static field initializers or helper methods) being emitted without updating CallableDiscovery/" +
+                        "preallocation logic (_expectedMethodDefsBeforeAnonymousCallables). Verify that any additional MethodDef emissions during class/function declaration are either " +
+                        "accounted for in the preallocation calculation or are moved to a phase that runs after anonymous callable preallocation."
+                    );
+                }
+            }
+
+            if (_discoveredCallables != null)
+            {
+                compileAnonymousCallablesPhase2(ordered);
+            }
+        });
     }
 
     /// <summary>
@@ -353,6 +417,44 @@ public sealed class TwoPhaseCompilationCoordinator
             }
 
             // Idempotent: if token already set, do not overwrite.
+            if (_registry.TryGetDeclaredToken(callable, out var existingToken) && !existingToken.IsNil)
+            {
+                continue;
+            }
+
+            var preallocated = MetadataTokens.MethodDefinitionHandle(nextRowId++);
+            _registry.SetToken(callable, preallocated);
+        }
+    }
+
+    private void PreallocatePhase1AnonymousCallablesMethodDefsInOrder(
+        IReadOnlyList<CallableId> discoveredCallables,
+        IReadOnlyList<CallableId> compilationOrder,
+        MetadataBuilder metadataBuilder)
+    {
+        _methodDefRowCountAtPreallocation = metadataBuilder.GetRowCount(TableIndex.MethodDef);
+
+        // Phase 2 ordering baseline: classes + function declarations are still emitted before anonymous callables.
+        _expectedMethodDefsBeforeAnonymousCallables = discoveredCallables.Count(c => c.Kind is
+            CallableKind.FunctionDeclaration or
+            CallableKind.ClassConstructor or
+            CallableKind.ClassMethod or
+            CallableKind.ClassGetter or
+            CallableKind.ClassSetter or
+            CallableKind.ClassStaticMethod or
+            CallableKind.ClassStaticGetter or
+            CallableKind.ClassStaticSetter or
+            CallableKind.ClassStaticInitializer);
+
+        var nextRowId = _methodDefRowCountAtPreallocation.Value + _expectedMethodDefsBeforeAnonymousCallables.Value + 1;
+
+        foreach (var callable in compilationOrder)
+        {
+            if (callable.Kind is not (CallableKind.Arrow or CallableKind.FunctionExpression))
+            {
+                continue;
+            }
+
             if (_registry.TryGetDeclaredToken(callable, out var existingToken) && !existingToken.IsNil)
             {
                 continue;
