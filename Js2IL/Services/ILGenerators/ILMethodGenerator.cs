@@ -1265,12 +1265,20 @@ namespace Js2IL.Services.ILGenerators
 
         internal MethodDefinitionHandle GenerateFunctionExpressionMethod(FunctionExpression funcExpr, string registryScopeName, string ilMethodName, string[] paramNames)
         {
-            // Two-phase lookup: only short-circuit when we already have a MethodDef.
-            // Phase 1 may have stored a MemberRef (signature-only) which is not a compiled body.
+            // Two-phase lookup:
+            // - Milestone 2a may preallocate a MethodDef token for this function expression during Phase 1.
+            // - A MethodDef token does NOT imply the body is compiled.
+            // Only short-circuit when the registry says the body is compiled.
+            System.Reflection.Metadata.MethodDefinitionHandle? expectedPreallocatedHandle = null;
             if (_callableRegistry.TryGetDeclaredTokenForAstNode(funcExpr, out var existingToken) &&
                 existingToken.Kind == System.Reflection.Metadata.HandleKind.MethodDefinition)
             {
-                return (System.Reflection.Metadata.MethodDefinitionHandle)existingToken;
+                var existingMdh = (System.Reflection.Metadata.MethodDefinitionHandle)existingToken;
+                if (_callableRegistry.IsBodyCompiledForAstNode(funcExpr))
+                {
+                    return existingMdh;
+                }
+                expectedPreallocatedHandle = existingMdh;
             }
 
             var functionVariables = new Variables(_variables, registryScopeName, paramNames, isNestedFunction: true);
@@ -1473,6 +1481,14 @@ namespace Js2IL.Services.ILGenerators
             // Host the function expression method on its own type under Functions namespace
             var tb = new Js2IL.Utilities.Ecma335.TypeBuilder(_metadataBuilder, "Functions", ilMethodName);
             var mdh = tb.AddMethodDefinition(MethodAttributes.Static | MethodAttributes.Public | MethodAttributes.HideBySig, ilMethodName, methodSig, bodyOffset, firstParam);
+
+            if (expectedPreallocatedHandle.HasValue && mdh != expectedPreallocatedHandle.Value)
+            {
+                throw new InvalidOperationException(
+                    $"[TwoPhase] Milestone 2a: compiled function expression handle mismatch for {ilMethodName}. " +
+                    $"Expected preallocated token 0x{MetadataTokens.GetToken(expectedPreallocatedHandle.Value):X8}, " +
+                    $"got token 0x{MetadataTokens.GetToken(mdh):X8}.");
+            }
             // Register named function expression in function registry so recursive calls can lazy-bind.
             if (internalNameId != null && _functionRegistry != null)
             {
@@ -1492,7 +1508,8 @@ namespace Js2IL.Services.ILGenerators
             tb.AddTypeDefinition(TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, _bclReferences.ObjectType);
 
             // Two-phase: register the token in the canonical CallableRegistry
-            _callableRegistry.SetDeclaredTokenForAstNode(funcExpr, (System.Reflection.Metadata.EntityHandle)mdh);
+            _callableRegistry.SetDeclaredTokenForAstNode(funcExpr, mdh);
+            _callableRegistry.MarkBodyCompiledForAstNode(funcExpr);
             
             return mdh;
         }

@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Reflection.Metadata;
+using System.Reflection.Metadata.Ecma335;
 using Acornima.Ast;
 
 namespace Js2IL.Services.TwoPhaseCompilation;
@@ -18,9 +19,10 @@ public sealed record CallableInfo
     
     /// <summary>
     /// The declared callable token (populated during Phase 1 declaration).
-    /// In Phase 1 this may be a MemberRef (signature-only); Phase 2 may overwrite with a MethodDef.
+    /// This is always a MethodDefinitionHandle; Phase 1 reserves the handle without emitting the body,
+    /// and Phase 2 emits the method body using this reserved handle.
     /// </summary>
-    public EntityHandle? Token { get; init; }
+    public MethodDefinitionHandle? Token { get; init; }
     
     /// <summary>
     /// Whether the body has been compiled (set during Phase 2).
@@ -57,22 +59,30 @@ public interface ICallableDeclarationWriter
     /// <summary>
     /// Sets the method token for a previously declared callable (Phase 1 - token allocation).
     /// </summary>
-    void SetToken(CallableId id, EntityHandle token);
+    void SetToken(CallableId id, MethodDefinitionHandle token);
 }
 
 /// <summary>
 /// Read interface for Phase 2: looking up declared callable tokens.
 /// </summary>
+/// <remarks>
+/// Note: getter methods return <see cref="EntityHandle"/> rather than <see cref="MethodDefinitionHandle"/>
+/// for backward compatibility with callers that may check <c>HandleKind</c> before casting.
+/// Since Milestone 2a, stored tokens are always <see cref="MethodDefinitionHandle"/>; callers can
+/// safely cast after verifying <c>token.Kind == HandleKind.MethodDefinition</c>.
+/// </remarks>
 public interface ICallableDeclarationReader
 {
     /// <summary>
     /// Gets the declared method token for a callable (must exist in strict mode).
+    /// Returns an <see cref="EntityHandle"/>; since Milestone 2a this is always a <see cref="MethodDefinitionHandle"/>.
     /// </summary>
     /// <exception cref="InvalidOperationException">Thrown in strict mode if callable is not declared.</exception>
     EntityHandle GetDeclaredToken(CallableId id);
     
     /// <summary>
     /// Attempts to get the declared method token for a callable.
+    /// Returns an <see cref="EntityHandle"/>; since Milestone 2a this is always a <see cref="MethodDefinitionHandle"/>.
     /// Used for legacy/migration fallback paths.
     /// </summary>
     bool TryGetDeclaredToken(CallableId id, out EntityHandle token);
@@ -123,7 +133,7 @@ public sealed class CallableRegistry : ICallableCatalog, ICallableDeclarationWri
     /// Registers/overwrites the declared token for a callable identified by its AST node.
     /// This is used by generators after creating a MethodDefinitionHandle.
     /// </summary>
-    public void SetDeclaredTokenForAstNode(Node astNode, EntityHandle token)
+    public void SetDeclaredTokenForAstNode(Node astNode, MethodDefinitionHandle token)
     {
         if (_callableByAstNode == null)
         {
@@ -149,6 +159,37 @@ public sealed class CallableRegistry : ICallableCatalog, ICallableDeclarationWri
 
         return _callableByAstNode.TryGetValue(astNode, out var callable) &&
                TryGetDeclaredToken(callable, out token);
+    }
+
+    /// <summary>
+    /// Marks a callable body as compiled using its AST node.
+    /// Safe to call multiple times.
+    /// </summary>
+    public void MarkBodyCompiledForAstNode(Node astNode)
+    {
+        if (_callableByAstNode == null)
+        {
+            return;
+        }
+
+        if (_callableByAstNode.TryGetValue(astNode, out var callable))
+        {
+            MarkBodyCompiled(callable);
+        }
+    }
+
+    /// <summary>
+    /// Checks if a callable body has been compiled using its AST node.
+    /// Returns false if discovery was not run.
+    /// </summary>
+    public bool IsBodyCompiledForAstNode(Node astNode)
+    {
+        if (_callableByAstNode == null)
+        {
+            return false;
+        }
+
+        return _callableByAstNode.TryGetValue(astNode, out var callable) && IsBodyCompiled(callable);
     }
 
     #endregion
@@ -202,7 +243,7 @@ public sealed class CallableRegistry : ICallableCatalog, ICallableDeclarationWri
             });
     }
 
-    public void SetToken(CallableId id, EntityHandle token)
+    public void SetToken(CallableId id, MethodDefinitionHandle token)
     {
         if (!_callables.TryGetValue(id, out var info))
         {

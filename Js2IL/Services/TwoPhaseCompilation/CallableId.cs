@@ -23,7 +23,10 @@ public enum CallableKind
     ClassMethod,
     
     /// <summary>A class static method: class C { static m() {} }</summary>
-    ClassStaticMethod
+    ClassStaticMethod,
+    
+    /// <summary>A synthesized class static initializer (.cctor) for static field initialization.</summary>
+    ClassStaticInitializer
 }
 
 /// <summary>
