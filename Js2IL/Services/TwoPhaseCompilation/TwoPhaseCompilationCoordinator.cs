@@ -165,13 +165,24 @@ public sealed class TwoPhaseCompilationCoordinator
             }
         }
 
-        // Safety: if the plan missed some discovered callables (should not happen), append them.
-        // Milestone 2c full enforcement will treat this as an error.
+        // Milestone 2c: plan is authoritative.
+        // If discovery produced callables that are missing from the plan (or duplicates exist), fail fast.
         if (_discoveredCallables != null)
         {
-            foreach (var c in _discoveredCallables)
+            if (seen.Count != _discoveredCallables.Count)
             {
-                if (seen.Add(c)) ordered.Add(c);
+                var missing = _discoveredCallables.Where(c => !seen.Contains(c)).Select(c => c.UniqueKey).ToArray();
+                throw new InvalidOperationException(
+                    "[TwoPhase] Milestone 2c: compilation plan did not include every discovered callable. " +
+                    $"Discovered={_discoveredCallables.Count}, PlannedDistinct={seen.Count}. " +
+                    (missing.Length > 0 ? ("Missing: " + string.Join(", ", missing)) : ""));
+            }
+
+            if (ordered.Count != _discoveredCallables.Count)
+            {
+                throw new InvalidOperationException(
+                    "[TwoPhase] Milestone 2c: compilation plan contained duplicate callables (after de-dup). " +
+                    $"Discovered={_discoveredCallables.Count}, PlannedOrderedDistinct={ordered.Count}.");
             }
         }
 
