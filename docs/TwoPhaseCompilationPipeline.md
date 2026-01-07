@@ -8,7 +8,7 @@ This document describes a proposed **two-phase compilation pipeline** for JS2IL 
 
 The goal is to make IR compilation reliable without relying on “compile-on-demand” during AST→HIR→LIR→IL.
 
-> Status (Jan 2026): **Milestone 1 is implemented** behind `CompilerOptions.TwoPhaseCompilation` (Option B: Phase 1 declares tokens for anonymous callables as `MemberReferenceHandle`s and enables strict lookup-only emission). **Milestone 2 is not implemented yet** (no dependency graph / planner; function/class bodies are still compiled using legacy ordering). The switch to Phase-1 `MethodDefinitionHandle` preallocation is **Option A** work and is targeted for **Milestone 2+**, not Milestone 1.
+> Status (Jan 2026): **Milestone 1 is implemented** behind `CompilerOptions.TwoPhaseCompilation`. **Milestone 2a is implemented**: Phase 1 now assigns **anonymous callables** (arrow functions + function expressions) a `MethodDefinitionHandle` token model (Option A subset), while still keeping bodies uncompiled in Phase 1. **Milestone 2b+ is not implemented yet** (no dependency graph / planner; function/class bodies are still compiled using legacy ordering).
 
 This doc is written **ideal-first**:
 
@@ -17,12 +17,13 @@ This doc is written **ideal-first**:
 
 ---
 
-## Current implementation snapshot (Milestone 1)
+## Current implementation snapshot (Milestone 1 + Milestone 2a)
 
 When `CompilerOptions.TwoPhaseCompilation` is enabled, JS2IL now has a real (partial) two-phase coordinator:
 
 - **Phase 1: Discovery** runs via `CallableDiscovery` and populates a unified `CallableRegistry` keyed by `CallableId`.
-- **Phase 1: Declaration (Option B)** pre-declares tokens for **arrow functions** and **function expressions** as `MemberReferenceHandle`s (enough for `ldftn` + delegate creation) without compiling bodies.
+- **Phase 1: Declaration (Milestone 2a / Option A subset)** assigns **arrow functions** and **function expressions** a `MethodDefinitionHandle` token model without compiling bodies.
+  - Implementation detail: this is currently done via deterministic **MethodDef row id reservation** (predicting the handle that will be produced later) rather than emitting real MethodDef rows in Phase 1.
 - **Strict mode** is enabled before any body compilation so expression emission becomes **lookup-only** for arrows/function expressions (no on-demand compilation).
 - **Phase 2: Body compilation** compiles discovered anonymous callables first, then runs the existing class/function generators.
 
@@ -30,7 +31,7 @@ What is *not* implemented yet (still Milestone 2+):
 
 - No dependency graph / [SCC][scc] planner; Phase 2 ordering is deterministic but not dependency-aware.
 - Function declarations and class constructors/methods are still declared+compiled in the legacy generators (including some depth-first nested compilation patterns).
-- Phase 1 does **not** preallocate `MethodDefinitionHandle`s for anonymous callables yet (Option A).
+- Phase 2 is still mixed: anonymous callables are driven by the coordinator, but function declarations and class bodies are still compiled using legacy generators and ordering.
 
 ---
 
@@ -512,10 +513,36 @@ Type handle note:
 
 ---
 
+#### Option A subset (implemented in Milestone 2a): reserve MethodDef handles for anonymous callables
+
+This is the current approach for **arrow functions** and **function expressions**.
+
+Intent:
+
+- Switch the token model used by `ldftn` / delegate creation from `MemberReferenceHandle` to `MethodDefinitionHandle`.
+- Keep Phase 1 **body-free** (no IR lowering, no IL body emission).
+
+Mechanics (current implementation detail):
+
+1. Phase 1 discovery collects all anonymous callables.
+2. Phase 1 assigns each anonymous callable an **expected** `MethodDefinitionHandle` by reserving row ids (i.e., predicting what handle will be returned later when methods are actually added).
+3. Before compiling those anonymous callables in Phase 2, the coordinator sanity-checks that the number of MethodDefs added by other declaration steps matches what was assumed during reservation.
+4. When each anonymous callable body is later compiled, the generator verifies that the real `MethodDefinitionHandle` allocated by metadata emission matches the reserved handle.
+
+Important nuance / gotcha:
+
+- Any additional synthesized methods emitted before anonymous callables are compiled (e.g., class `.cctor` generated for **static field initializers**) must be accounted for in the reservation math, otherwise the sanity check will fail.
+
+What this is *not*:
+
+- This is not “true Option A” (where Phase 1 emits real MethodDef rows that are later given bodies). Instead, it is a deterministic reservation strategy that keeps Phase 1 metadata emission requirements minimal.
+
+---
+
 <a id="option-b"></a>
 #### Option B (implemented in Milestone 1): pre-create `MemberReferenceHandle` for anonymous callables
 
-This is the pragmatic approach currently used by the coordinator for **arrow functions** and **function expressions**.
+This was the pragmatic approach used by the coordinator for **arrow functions** and **function expressions** in Milestone 1.
 
 Mechanics:
 
@@ -571,7 +598,9 @@ When lowering emits `LIRLoadFunction` / `LIRLoadArrowFunction`, IL emission must
 
 Under Option A, `<method token>` is a `MethodDefinitionHandle`.
 
-Under the current Milestone 1 implementation (Option B for arrows/function expressions), `<method token>` is a `MemberReferenceHandle`.
+Under the current Milestone 2a implementation (Option A subset for arrows/function expressions), `<method token>` is a `MethodDefinitionHandle`.
+
+(Historical: under the Milestone 1 Option B implementation for arrows/function expressions, `<method token>` was a `MemberReferenceHandle`.)
 
 The delegate signature must match `JsParamCount`.
 
@@ -599,12 +628,12 @@ Implemented behind `CompilerOptions.TwoPhaseCompilation`:
 
 - `CallableId`, `CallableSignature`, `CallableDiscovery`, `CallableRegistry`
 - `TwoPhaseCompilationCoordinator` to orchestrate Phase 1 + Phase 2
-- Phase 1 declaration for **arrows/function expressions** using Option B (MemberRefs)
+- Phase 1 declaration for **arrows/function expressions** using Option B (MemberRefs) (historical Milestone 1 implementation; now superseded by Milestone 2a)
 - Strict-mode enforcement so expression emission is lookup-only for those anonymous callables
 
-Non-goal for Milestone 1:
+Non-goals for Milestone 1:
 
-- Preallocating `MethodDefinitionHandle`s in Phase 1 (Option A). This requires restructuring declaration to allocate real MethodDef rows (with correct owning types) before any body compilation and is deferred to Milestone 2+.
+- Preallocating `MethodDefinitionHandle`s in Phase 1 (Option A). (This was deferred at the time; anonymous callables are now handled in Milestone 2a via the Option A subset reservation strategy. Full Option A for all callables remains deferred.)
 
 Usability expectation:
 
@@ -621,10 +650,11 @@ Milestone 2 is the point where “two-phase” becomes *dependency-correct*, not
 
 Recommended sequence (to minimize churn):
 
-- **Milestone 2a: Switch anonymous callables to `MethodDefinitionHandle` (Option A subset)**
-  - Change Phase 1 declaration for **arrow functions** and **function expressions** to allocate real `MethodDefinitionHandle`s (not `MemberReferenceHandle`s).
-  - Keep bodies uncompiled during Phase 1; Phase 2 attaches bodies to the preallocated MethodDefs.
-  - This locks in the long-term token model early so later planner/orchestration work doesn’t need a second refactor.
+- **Milestone 2a: Switch anonymous callables to `MethodDefinitionHandle` (Option A subset)** (completed)
+  - Anonymous callables (arrow functions + function expressions) now use a `MethodDefinitionHandle` token model.
+  - Phase 1 remains body-free.
+  - Implementation uses deterministic **MethodDef handle reservation** with a sanity check to ensure later emission matches the reserved handles.
+  - Accounts for synthesized `.cctor` methods introduced by class static field initializers.
 
 - **Milestone 2b: Dependency discovery + planner**
   - Add an AST-based dependency collector that maps identifier references (via the symbol table) to `CallableId` edges.
