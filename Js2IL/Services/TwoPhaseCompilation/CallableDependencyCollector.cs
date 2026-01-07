@@ -46,19 +46,23 @@ public sealed class CallableDependencyCollector
         _classMethods = new Dictionary<(string, string, string), CallableId>();
         foreach (var c in _callablesInStableOrder.Where(c => c.Kind == CallableKind.ClassMethod && !string.IsNullOrEmpty(c.Name)))
         {
-            if (JavaScriptCallableNaming.TrySplitClassMethodCallableName(c.Name, out var className, out var methodName))
+            if (!JavaScriptCallableNaming.TrySplitClassMethodCallableName(c.Name, out var className, out var methodName))
             {
-                _classMethods[(c.DeclaringScopeName, className, methodName)] = c;
+                continue;
             }
+
+            _classMethods[(c.DeclaringScopeName, className, methodName)] = c;
         }
 
         _classStaticMethods = new Dictionary<(string, string, string), CallableId>();
         foreach (var c in _callablesInStableOrder.Where(c => c.Kind == CallableKind.ClassStaticMethod && !string.IsNullOrEmpty(c.Name)))
         {
-            if (JavaScriptCallableNaming.TrySplitClassMethodCallableName(c.Name, out var className, out var methodName))
+            if (!JavaScriptCallableNaming.TrySplitClassMethodCallableName(c.Name, out var className, out var methodName))
             {
-                _classStaticMethods[(c.DeclaringScopeName, className, methodName)] = c;
+                continue;
             }
+
+            _classStaticMethods[(c.DeclaringScopeName, className, methodName)] = c;
         }
     }
 
