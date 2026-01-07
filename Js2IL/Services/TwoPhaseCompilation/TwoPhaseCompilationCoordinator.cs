@@ -42,6 +42,12 @@ public sealed class TwoPhaseCompilationCoordinator
     
     private IReadOnlyList<CallableId>? _discoveredCallables;
 
+    /// <summary>
+    /// Last Milestone 2b plan computed for this compilation (if computed).
+    /// This is a plan artifact only; Milestone 2c will use it for ordering.
+    /// </summary>
+    public CompilationPlan? LastComputedPlanMilestone2b { get; private set; }
+
     // Milestone 2a: used to validate that our preallocated MethodDef row ids stay stable.
     private int? _methodDefRowCountAtPreallocation;
     private int? _expectedMethodDefsBeforeAnonymousCallables;
@@ -77,6 +83,10 @@ public sealed class TwoPhaseCompilationCoordinator
         Action compileClassesAndFunctionsPhase2)
     {
         RunPhase1Discovery(symbolTable);
+
+        // Milestone 2b: compute dependency graph + SCC/topo plan (plan artifact only).
+        // We intentionally do not change compilation order here; Milestone 2c will consume this plan.
+        ComputeMilestone2bPlan(symbolTable);
 
         if (_discoveredCallables != null)
         {
@@ -116,6 +126,31 @@ public sealed class TwoPhaseCompilationCoordinator
                 compileAnonymousCallablesPhase2(_discoveredCallables);
             }
         });
+    }
+
+    /// <summary>
+    /// Milestone 2b: builds the dependency graph and computes SCC/topo stages.
+    /// Does not change compilation behavior.
+    /// </summary>
+    public CompilationPlan ComputeMilestone2bPlan(SymbolTable symbolTable)
+    {
+        if (_discoveredCallables == null)
+        {
+            throw new InvalidOperationException("Phase 1 Discovery must be run before computing the Milestone 2b plan.");
+        }
+
+        var collector = new CallableDependencyCollector(symbolTable, _registry, _discoveredCallables);
+        var graph = collector.Collect();
+        var plan = CompilationPlanner.ComputePlan(graph);
+        LastComputedPlanMilestone2b = plan;
+
+        if (_verbose)
+        {
+            _logger.WriteLine($"[TwoPhase] Milestone 2b: computed dependency plan (SCC stages: {plan.Stages.Count}).");
+            _logger.WriteLine(plan.ToDebugString());
+        }
+
+        return plan;
     }
 
     /// <summary>
