@@ -2,13 +2,13 @@
 
 This document describes a proposed **two-phase compilation pipeline** for JS2IL that is **eventually dependency-safe** across:
 
-- Classes (constructors, methods) *(full class member dependency tracking is deferred until Milestone 2b1)*
+- Classes (constructors, methods) *(dynamic member-call dependency tracking such as `obj.m()` remains out-of-scope; see Milestone 2b1)*
 - Function declarations/expressions
 - Arrow functions
 
 The goal is to make IR compilation reliable without relying on “compile-on-demand” during AST→HIR→LIR→IL.
 
-> Status (Jan 2026): **Milestone 1 is implemented** behind `CompilerOptions.TwoPhaseCompilation`. **Milestone 2a is implemented**: Phase 1 now assigns **anonymous callables** (arrow functions + function expressions) a `MethodDefinitionHandle` token model (Option A subset), while still keeping bodies uncompiled in Phase 1. **Milestone 2b+ is not implemented yet** (no dependency graph / planner; function/class bodies are still compiled using legacy ordering).
+> Status (Jan 2026): **Milestone 1** and **Milestone 2a** are implemented behind `CompilerOptions.TwoPhaseCompilation`. **Milestone 2b** (dependency graph + SCC/topo planner) and **Milestone 2b1** (high-confidence member-call edges for `this.m()` / `super.m()`) are implemented as a **plan artifact** (logged in verbose mode) but are **not yet used to change compilation order** (Milestone 2c).
 
 This doc is written **ideal-first**:
 
@@ -29,7 +29,7 @@ When `CompilerOptions.TwoPhaseCompilation` is enabled, JS2IL now has a real (par
 
 What is *not* implemented yet (still Milestone 2+):
 
-- No dependency graph / [SCC][scc] planner; Phase 2 ordering is deterministic but not dependency-aware.
+- Compilation is not yet performed in planner order; Phase 2 ordering is deterministic but not dependency-aware (Milestone 2c).
 - Function declarations and class constructors/methods are still declared+compiled in the legacy generators (including some depth-first nested compilation patterns).
 - Phase 2 is still mixed: anonymous callables are driven by the coordinator, but function declarations and class bodies are still compiled using legacy generators and ordering.
 
@@ -252,7 +252,10 @@ Class-related dependencies (recommended phased approach):
 - **Milestone 2b scope (safe subset):** record dependencies only when the target is **identifier-resolvable** via the symbol table.
   - `new C()` depends on `C` constructor signature availability **only when** `C` resolves to a class binding.
   - `C(...)` (rare, but possible if `C` is a callable binding) depends on `C` **only when** it resolves to a callable binding.
-- **Deferred until Milestone 2b1:** property/member call edges such as `obj.m()` / `obj["m"]()`.
+- **Milestone 2b1 scope (high-confidence subset):** member-call edges only where the target is statically knowable.
+  - `this.m()` inside a class method can depend on the declared class method `m`.
+  - `super.m()` can depend on the declared base class method `m` when the base class is identifier-resolvable.
+- **Still deferred (post-2b1):** general property/member call edges such as `obj.m()` / `obj["m"]()`.
   - In general these are dynamic in JS, and attempting to infer them too early creates noisy graphs and oversized [SCC][scc]s.
 
 Note: calls through unknown values (`x()`) do not create a compile-time dependency.
@@ -269,7 +272,7 @@ Then map:
 - function decl symbol → `CallableId` (kind `FunctionDeclaration`)
 - arrow AST node → `CallableId` (kind `Arrow` + stable location)
 - class method → `CallableId` (kind `ClassMethod` with `className + methodName` and scope id)
-  - Note: Milestone 2b’s dependency collector should not attempt to create edges for member calls unless they are identifier-resolvable (e.g., `new C()`); member-call edges are covered in Milestone 2b1.
+  - Note: member-call edges are intentionally narrow: `this.m()` / `super.m()` only. `obj.m()` remains treated as dynamic.
 
 ---
 
@@ -662,11 +665,11 @@ Recommended sequence (to minimize churn):
   - Implementation uses deterministic **MethodDef handle reservation** with a sanity check to ensure later emission matches the reserved handles.
   - Accounts for synthesized `.cctor` methods introduced by class static field initializers.
 
-- **Milestone 2b: Dependency discovery + planner**
+- **Milestone 2b: Dependency discovery + planner** (completed)
   - Add an AST-based dependency collector that maps identifier references (via the symbol table) to `CallableId` edges.
   - Compute [SCC][scc] groups + a deterministic topo order of groups.
 
-- **Milestone 2b1: Class-aware dependency edges (member calls)**
+- **Milestone 2b1: Class-aware dependency edges (member calls)** (completed)
   - Extend dependency discovery to include **class member dependencies** only where they are *high confidence*.
   - Recommended initial rules:
     - Include `new C()` edges as above (identifier-resolvable class bindings).
@@ -741,18 +744,18 @@ Recommended PR sequence (small, mergeable increments):
      - Phase 1 completes without emitting any method bodies.
      - Existing compilation still succeeds because Phase 2 compiles bodies the old way.
 
-4. **Add dependency collection (AST-first) + planner ([SCC][scc]/topo)**
+4. **Add dependency collection (AST-first) + planner ([SCC][scc]/topo)** (completed)
    - Touchpoints: a new AST visitor that resolves identifiers via the symbol table and records `CallableId` edges.
    - Deliverable: a stable plan output (ordered callables and [SCC][scc] groups) that can be logged for debugging.
    - Done when:
      - The planner produces deterministic output for the same input.
      - The plan can be inspected in logs for failing tests.
 
-4b. **(Optional, recommended) Add class-aware dependency edges (Milestone 2b1)**
+4b. **(Optional, recommended) Add class-aware dependency edges (Milestone 2b1)** (completed)
     - Touchpoints: extend dependency collection with the class rules described in Milestone 2b1.
     - Deliverable: class-heavy programs produce a more accurate dependency plan without adding noisy edges from dynamic member calls.
     - Done when:
-      - `new C()` and `this.m()`-style edges show up in the plan where applicable.
+      - `new C()`, `this.m()`, and `super.m()`-style edges show up in the plan where applicable.
       - No broad over-approximation is introduced for `obj.m()` in the general case.
 
 5. **Compile bodies in plan order (still using current body compilers)**
@@ -1004,7 +1007,7 @@ A dependency is any situation where compiling callable **A** needs to reference 
 - `A` references `B` as a **value** (e.g., `arr.map(B)` or `const x = () => ...`)
 - `A` calls `B` (direct call or through runtime helpers)
 - `A` constructs a class (`new C()`) that needs constructor metadata (identifier-resolvable in Milestone 2b)
-- `A` invokes a class member (`obj.m()`) where the target is statically resolvable (deferred until Milestone 2b1; treated as dynamic in the general case)
+- `A` invokes a class member (`obj.m()`) where the target is statically resolvable (still treated as dynamic in the general case; only `this.m()` / `super.m()` are modeled as dependencies today)
 
 We’ll treat dependencies as edges in a directed graph.
 
