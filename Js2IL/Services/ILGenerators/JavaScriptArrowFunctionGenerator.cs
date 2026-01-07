@@ -71,23 +71,40 @@ namespace Js2IL.Services.ILGenerators
                 var arrowScope = _symbolTable.FindScopeByAstNode(arrowFunction);
                 if (arrowScope != null)
                 {
-                    var methodCompiler = _serviceProvider.GetRequiredService<JsMethodCompiler>();
-                    var compiledMethod = methodCompiler.TryCompileArrowFunction(ilMethodName, arrowFunction, arrowScope, _methodBodyStreamEncoder);
-                    IR.IRPipelineMetrics.RecordArrowFunctionAttempt(!compiledMethod.IsNil);
-                    if (!compiledMethod.IsNil)
+                    // Two-phase milestone 2c: compile body without emitting MethodDef, then finalize immediately
+                    // so token preallocation remains stable even under planned ordering.
+                    if (expectedPreallocatedHandle.HasValue &&
+                        _callableRegistry.TryGetCallableIdForAstNode(arrowFunction, out var callableId))
                     {
-                        if (expectedPreallocatedHandle.HasValue && compiledMethod != expectedPreallocatedHandle.Value)
+                        var methodCompiler = _serviceProvider.GetRequiredService<JsMethodCompiler>();
+                        var compiledBody = methodCompiler.TryCompileCallableBody(
+                            callable: callableId,
+                            expectedMethodDef: expectedPreallocatedHandle.Value,
+                            ilMethodName: ilMethodName,
+                            node: arrowFunction,
+                            scope: arrowScope,
+                            methodBodyStreamEncoder: _methodBodyStreamEncoder,
+                            isInstanceMethod: false,
+                            hasScopesParameter: true,
+                            scopesFieldHandle: null,
+                            returnsVoid: false);
+
+                        IR.IRPipelineMetrics.RecordArrowFunctionAttempt(compiledBody != null);
+                        if (compiledBody != null)
                         {
-                            throw new InvalidOperationException(
-                                $"[TwoPhase] Milestone 2a: compiled arrow handle mismatch for {ilMethodName}. " +
-                                $"Expected preallocated token 0x{MetadataTokens.GetToken(expectedPreallocatedHandle.Value):X8}, " +
-                                $"got token 0x{MetadataTokens.GetToken(compiledMethod):X8}.");
+                            var irTb = new TypeBuilder(_metadataBuilder, "Functions", ilMethodName);
+                            _ = MethodDefinitionFinalizer.EmitMethod(_metadataBuilder, irTb, compiledBody);
+                            irTb.AddTypeDefinition(
+                                TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
+                                _bclReferences.ObjectType);
+
+                            _callableRegistry.SetDeclaredTokenForAstNode(arrowFunction, expectedPreallocatedHandle.Value);
+                            _callableRegistry.MarkBodyCompiledForAstNode(arrowFunction);
+                            return expectedPreallocatedHandle.Value;
                         }
-                        // Two-phase: register the token in the canonical CallableRegistry
-                        _callableRegistry.SetDeclaredTokenForAstNode(arrowFunction, compiledMethod);
-                        _callableRegistry.MarkBodyCompiledForAstNode(arrowFunction);
-                        return compiledMethod;
                     }
+
+                    // Fallback to legacy AST-to-IL pipeline below when IR compilation isn't supported.
                 }
             }
 

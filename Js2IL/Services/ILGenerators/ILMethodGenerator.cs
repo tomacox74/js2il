@@ -1281,18 +1281,66 @@ namespace Js2IL.Services.ILGenerators
                 expectedPreallocatedHandle = existingMdh;
             }
 
-            var functionVariables = new Variables(_variables, registryScopeName, paramNames, isNestedFunction: true);
-            var pnames = paramNames ?? Array.Empty<string>();
+            var safeParamNames = paramNames ?? Array.Empty<string>();
+
+            // If this is a named function expression (e.g., function walk(node) { ... }), JS specifies
+            // that the name is bound inside the function body to the function object itself (for recursion).
+            Identifier? internalNameId = funcExpr.Id as Identifier;
+
+            // Try IR pipeline (body-only) first when we have a preallocated MethodDef token.
+            // If IR compilation fails (unsupported params/body), fall back to the legacy AST-to-IL emitter.
+            if (expectedPreallocatedHandle.HasValue && _symbolTable != null)
+            {
+                var funcScope = _symbolTable.FindScopeByAstNode(funcExpr);
+                if (funcScope != null && _callableRegistry.TryGetCallableIdForAstNode(funcExpr, out var callableId))
+                {
+                    // Support named function expression recursion by pre-registering parameter count.
+                    if (internalNameId != null && _functionRegistry != null)
+                    {
+                        _functionRegistry.PreRegisterParameterCount(internalNameId.Name, safeParamNames.Length);
+                    }
+
+                    var methodCompiler = _serviceProvider.GetRequiredService<JsMethodCompiler>();
+                    var compiledBody = methodCompiler.TryCompileCallableBody(
+                        callable: callableId,
+                        expectedMethodDef: expectedPreallocatedHandle.Value,
+                        ilMethodName: ilMethodName,
+                        node: funcExpr,
+                        scope: funcScope,
+                        methodBodyStreamEncoder: _methodBodyStreamEncoder,
+                        isInstanceMethod: false,
+                        hasScopesParameter: true,
+                        scopesFieldHandle: null,
+                        returnsVoid: false);
+
+                    if (compiledBody != null)
+                    {
+                        var irTb = new Js2IL.Utilities.Ecma335.TypeBuilder(_metadataBuilder, "Functions", ilMethodName);
+                        _ = Js2IL.Services.TwoPhaseCompilation.MethodDefinitionFinalizer.EmitMethod(_metadataBuilder, irTb, compiledBody);
+                        irTb.AddTypeDefinition(TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, _bclReferences.ObjectType);
+
+                        if (internalNameId != null && _functionRegistry != null)
+                        {
+                            var plen = paramNames?.Length ?? -1;
+                            if (_functionRegistry.Get(internalNameId.Name).IsNil)
+                            {
+                                _functionRegistry.Register(internalNameId.Name, expectedPreallocatedHandle.Value, plen);
+                            }
+                        }
+
+                        _callableRegistry.SetDeclaredTokenForAstNode(funcExpr, expectedPreallocatedHandle.Value);
+                        _callableRegistry.MarkBodyCompiledForAstNode(funcExpr);
+                        return expectedPreallocatedHandle.Value;
+                    }
+                }
+            }
+
+            var functionVariables = new Variables(_variables, registryScopeName, safeParamNames, isNestedFunction: true);
+            var pnames = safeParamNames;
             // Share the parent ClassRegistry and FunctionRegistry so nested functions can resolve declared classes
             // and register their methods for lazy self-binding (recursion) support.
             var childGen = new ILMethodGenerator(_serviceProvider, functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry, symbolTable: _symbolTable);
             var il = childGen.IL;
-
-            // If this is a named function expression (e.g., function walk(node) { ... }), JS specifies
-            // that the name is bound inside the function body to the function object itself (for recursion).
-            // Strategy: after (optionally) creating the scope instance and before emitting the body, store
-            // the delegate into the scope field matching the name (if one exists in the registry scope).
-            Identifier? internalNameId = funcExpr.Id as Identifier;
 
             // Pre-register the function's parameter count BEFORE generating the body.
             // This allows recursive calls within the function body to find the correct parameter count.
