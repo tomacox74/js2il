@@ -41,9 +41,6 @@ public sealed class TwoPhaseCompilationCoordinator
     private readonly CallableRegistry _registry;
     
     private IReadOnlyList<CallableId>? _discoveredCallables;
-    
-    // O(1) lookup index from AST node to CallableId (populated during discovery)
-    private Dictionary<Node, CallableId>? _astNodeIndex;
 
     public TwoPhaseCompilationCoordinator(
         ILogger logger, 
@@ -328,8 +325,8 @@ public sealed class TwoPhaseCompilationCoordinator
         var discovery = new CallableDiscovery(symbolTable);
         _discoveredCallables = discovery.DiscoverAll();
 
-        // Build O(1) lookup index from AST node to CallableId
-        _astNodeIndex = new Dictionary<Node, CallableId>(_discoveredCallables.Count);
+        // Build O(1) lookup index from AST node to CallableId (stored in CallableRegistry)
+        _registry.ResetAstNodeIndex(_discoveredCallables.Count);
         
         foreach (var callable in _discoveredCallables)
         {
@@ -350,7 +347,7 @@ public sealed class TwoPhaseCompilationCoordinator
             // Add to AST node index for O(1) lookup
             if (callable.AstNode != null)
             {
-                _astNodeIndex[callable.AstNode] = callable;
+                _registry.IndexAstNode(callable.AstNode, callable);
             }
         }
 
@@ -392,46 +389,6 @@ public sealed class TwoPhaseCompilationCoordinator
         };
     }
     
-    /// <summary>
-    /// Registers a method token for a callable by its AST node.
-    /// Called by generators after creating a MethodDefinitionHandle.
-    /// Uses O(1) dictionary lookup instead of linear search.
-    /// </summary>
-    public void RegisterToken(Node astNode, EntityHandle token)
-    {
-        if (_astNodeIndex == null)
-        {
-            return; // Discovery not run yet
-        }
-        
-        // O(1) lookup using the AST node index
-        if (_astNodeIndex.TryGetValue(astNode, out var callable))
-        {
-            _registry.SetToken(callable, token);
-        }
-    }
-    
-    /// <summary>
-    /// Attempts to get a declared token for an AST node via the CallableRegistry.
-    /// Uses O(1) dictionary lookup instead of linear search.
-    /// </summary>
-    public bool TryGetToken(Node astNode, out EntityHandle token)
-    {
-        token = default;
-        if (_astNodeIndex == null)
-        {
-            return false; // Discovery not run yet
-        }
-        
-        // O(1) lookup using the AST node index
-        if (_astNodeIndex.TryGetValue(astNode, out var callable))
-        {
-            return _registry.TryGetDeclaredToken(callable, out token);
-        }
-        
-        return false;
-    }
-
     /// <summary>
     /// Phase 1: Declare all discovered callables (create method tokens).
     /// This prepares the registry with signatures and tokens.

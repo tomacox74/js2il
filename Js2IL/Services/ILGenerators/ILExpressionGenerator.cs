@@ -386,7 +386,7 @@ namespace Js2IL.Services.ILGenerators
                         if (registry?.StrictMode == true)
                         {
                             // Strict mode: must lookup from the canonical CallableRegistry
-                            if (!_twoPhaseCoordinator.TryGetToken(arrowFunction, out methodToken) ||
+                            if (!registry.TryGetDeclaredTokenForAstNode(arrowFunction, out methodToken) ||
                                 methodToken.IsNil)
                             {
                                 throw new InvalidOperationException(
@@ -485,7 +485,7 @@ namespace Js2IL.Services.ILGenerators
                         if (registry?.StrictMode == true)
                         {
                             // Strict mode: must lookup from the canonical CallableRegistry
-                            if (!_twoPhaseCoordinator.TryGetToken(funcExpr, out methodToken) ||
+                            if (!registry.TryGetDeclaredTokenForAstNode(funcExpr, out methodToken) ||
                                 methodToken.IsNil)
                             {
                                 throw new InvalidOperationException(
