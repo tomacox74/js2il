@@ -130,6 +130,27 @@ public sealed class CallableRegistry : ICallableCatalog, ICallableDeclarationWri
     }
 
     /// <summary>
+    /// Attempts to get the <see cref="CallableId"/> registered for a given AST node.
+    /// Used by Milestone 2b dependency discovery.
+    /// </summary>
+    public bool TryGetCallableIdForAstNode(Node astNode, out CallableId callable)
+    {
+        callable = null!;
+        if (_callableByAstNode == null)
+        {
+            return false;
+        }
+
+        if (_callableByAstNode.TryGetValue(astNode, out var found) && found != null)
+        {
+            callable = found;
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// Registers/overwrites the declared token for a callable identified by its AST node.
     /// This is used by generators after creating a MethodDefinitionHandle.
     /// </summary>
