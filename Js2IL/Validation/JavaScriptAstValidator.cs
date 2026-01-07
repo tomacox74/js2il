@@ -33,9 +33,10 @@ public class JavaScriptAstValidator : IAstValidator
     {
         var result = new ValidationResult { IsValid = true };
         
-        // Track whether we're currently inside a class method or constructor
+        // Track whether we're currently inside a class method or constructor,
+        // and whether we're inside a nested function within a class method
         var contextStack = new Stack<ValidationContext>();
-        contextStack.Push(new ValidationContext { IsInClassMethod = false });
+        contextStack.Push(new ValidationContext { IsInClassMethod = false, IsInNestedFunctionInClassMethod = false, MethodDefinitionFunctionValue = null });
         
         // Visit all nodes in the AST
         var walker = new AstWalker();
@@ -44,9 +45,22 @@ public class JavaScriptAstValidator : IAstValidator
             var currentContext = contextStack.Peek();
             
             // Push new context for class methods and constructors
-            if (node is MethodDefinition)
+            if (node is MethodDefinition methodDef)
             {
-                contextStack.Push(new ValidationContext { IsInClassMethod = true });
+                contextStack.Push(new ValidationContext 
+                { 
+                    IsInClassMethod = true, 
+                    IsInNestedFunctionInClassMethod = false,
+                    // Track the function expression that is the method body so we don't treat it as nested
+                    MethodDefinitionFunctionValue = methodDef.Value
+                });
+            }
+            // Push new context for nested functions within class methods (but not the method body itself)
+            else if ((node is ArrowFunctionExpression || node is FunctionExpression || node is FunctionDeclaration) 
+                     && currentContext.IsInClassMethod
+                     && !ReferenceEquals(node, currentContext.MethodDefinitionFunctionValue))
+            {
+                contextStack.Push(new ValidationContext { IsInClassMethod = true, IsInNestedFunctionInClassMethod = true, MethodDefinitionFunctionValue = null });
             }
             
             // Check for unsupported features
@@ -119,9 +133,15 @@ public class JavaScriptAstValidator : IAstValidator
 
                 case NodeType.ThisExpression:
                     // 'this' is supported in class methods and constructors, but not elsewhere
+                    // or in nested functions within class methods (issue #244)
                     if (!currentContext.IsInClassMethod)
                     {
                         result.Errors.Add($"The 'this' keyword is not yet supported outside of class methods and constructors (line {node.Location.Start.Line})");
+                        result.IsValid = false;
+                    }
+                    else if (currentContext.IsInNestedFunctionInClassMethod)
+                    {
+                        result.Errors.Add($"Arrow functions or nested functions using 'this' inside class constructors/methods are not yet supported (line {node.Location.Start.Line})");
                         result.IsValid = false;
                     }
                     break;
@@ -169,6 +189,12 @@ public class JavaScriptAstValidator : IAstValidator
         {
             // Pop context when leaving class methods
             if (exitNode is MethodDefinition)
+            {
+                contextStack.Pop();
+            }
+            // Pop context when leaving nested functions within class methods
+            else if ((exitNode is ArrowFunctionExpression || exitNode is FunctionExpression || exitNode is FunctionDeclaration)
+                     && contextStack.Count > 1 && contextStack.Peek().IsInNestedFunctionInClassMethod)
             {
                 contextStack.Pop();
             }
@@ -315,5 +341,9 @@ public class JavaScriptAstValidator : IAstValidator
     private class ValidationContext
     {
         public bool IsInClassMethod { get; set; }
+        public bool IsInNestedFunctionInClassMethod { get; set; }
+        // Track the FunctionExpression that is the direct body of a MethodDefinition
+        // so we don't incorrectly treat it as a nested function
+        public Node? MethodDefinitionFunctionValue { get; set; }
     }
 }
