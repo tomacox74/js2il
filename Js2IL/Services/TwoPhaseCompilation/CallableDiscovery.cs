@@ -181,7 +181,7 @@ public sealed class CallableDiscovery
                 DeclaringScopeName = parentScopeName,
                 Name = className,
                 JsParamCount = 0,
-                AstNode = classDecl
+                AstNode = null
             };
             
             _discovered.Add(ctorId);
@@ -198,7 +198,7 @@ public sealed class CallableDiscovery
                 DeclaringScopeName = parentScopeName,
                 Name = className,
                 JsParamCount = 0,
-                AstNode = classDecl
+                AstNode = null
             };
             _discovered.Add(cctorId);
         }
