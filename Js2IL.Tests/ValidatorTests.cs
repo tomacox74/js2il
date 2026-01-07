@@ -321,6 +321,63 @@ public class ValidatorTests
     }
 
     [Fact]
+    public void Validate_ThisInArrowFunctionInsideClassConstructor_ReportsError()
+    {
+        // Issue #244: 'this' in arrow function inside class constructor is not yet supported
+        var js = @"
+class Counter {
+    constructor(initial) {
+        this.count = initial;
+        this.increment = () => {
+            this.count = this.count + 1;
+        };
+    }
+}";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Arrow functions or nested functions using 'this' inside class constructors/methods are not yet supported"));
+    }
+
+    [Fact]
+    public void Validate_ThisInArrowFunctionInsideClassMethod_ReportsError()
+    {
+        // Issue #244: 'this' in arrow function inside class method is not yet supported
+        var js = @"
+class Counter {
+    doSomething() {
+        const callback = () => {
+            return this.value;
+        };
+        return callback();
+    }
+}";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Arrow functions or nested functions using 'this' inside class constructors/methods are not yet supported"));
+    }
+
+    [Fact]
+    public void Validate_ThisInNestedFunctionExpressionInsideClassMethod_ReportsError()
+    {
+        // Issue #244: 'this' in function expression inside class method is not yet supported
+        var js = @"
+class Counter {
+    doSomething() {
+        const callback = function() {
+            return this.value;
+        };
+        return callback();
+    }
+}";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("Arrow functions or nested functions using 'this' inside class constructors/methods are not yet supported"));
+    }
+
+    [Fact]
     public void Validate_FunctionWithMoreThan6Parameters_ReportsError()
     {
         // Issue #220: Functions with >6 parameters are not supported
