@@ -186,6 +186,22 @@ public sealed class CallableDiscovery
             _discovered.Add(ctorId);
         }
         
+        // Check if the class has static fields with initializers -> needs a .cctor
+        bool hasStaticFieldInits = classDecl.Body.Body.OfType<PropertyDefinition>()
+            .Any(p => p.Static && p.Value != null);
+        if (hasStaticFieldInits)
+        {
+            var cctorId = new CallableId
+            {
+                Kind = CallableKind.ClassStaticInitializer,
+                DeclaringScopeName = parentScopeName,
+                Name = className,
+                JsParamCount = 0,
+                AstNode = classDecl
+            };
+            _discovered.Add(cctorId);
+        }
+        
         // Discover methods
         foreach (var member in classDecl.Body.Body.OfType<MethodDefinition>().Where(m => m.Key is Identifier))
         {
@@ -236,7 +252,8 @@ public sealed class CallableDiscovery
             ArrowFunctions = _discovered.Count(c => c.Kind == CallableKind.Arrow),
             ClassConstructors = _discovered.Count(c => c.Kind == CallableKind.ClassConstructor),
             ClassMethods = _discovered.Count(c => c.Kind == CallableKind.ClassMethod),
-            ClassStaticMethods = _discovered.Count(c => c.Kind == CallableKind.ClassStaticMethod)
+            ClassStaticMethods = _discovered.Count(c => c.Kind == CallableKind.ClassStaticMethod),
+            ClassStaticInitializers = _discovered.Count(c => c.Kind == CallableKind.ClassStaticInitializer)
         };
     }
 }
@@ -253,4 +270,5 @@ public record struct DiscoveryStats
     public int ClassConstructors { get; init; }
     public int ClassMethods { get; init; }
     public int ClassStaticMethods { get; init; }
+    public int ClassStaticInitializers { get; init; }
 }

@@ -49,12 +49,20 @@ namespace Js2IL.Services.ILGenerators
             string ilMethodName,
             string[] paramNames)
         {
-            // Two-phase lookup: only skip compilation when we already have a MethodDef token.
-            // Phase 1 may have populated a MemberRef token (signature-only), which is not a compiled body.
+            // Two-phase lookup:
+            // - Milestone 2a may preallocate a MethodDef token for this arrow during Phase 1.
+            // - A MethodDef token does NOT imply the body is compiled.
+            // Only short-circuit when the registry says the body is compiled.
+            MethodDefinitionHandle? expectedPreallocatedHandle = null;
             if (_callableRegistry.TryGetDeclaredTokenForAstNode(arrowFunction, out var existingToken) &&
                 existingToken.Kind == HandleKind.MethodDefinition)
             {
-                return (MethodDefinitionHandle)existingToken;
+                var existingMdh = (MethodDefinitionHandle)existingToken;
+                if (_callableRegistry.IsBodyCompiledForAstNode(arrowFunction))
+                {
+                    return existingMdh;
+                }
+                expectedPreallocatedHandle = existingMdh;
             }
 
             // Try the new IR-based compilation pipeline first
@@ -68,8 +76,15 @@ namespace Js2IL.Services.ILGenerators
                     IR.IRPipelineMetrics.RecordArrowFunctionAttempt(!compiledMethod.IsNil);
                     if (!compiledMethod.IsNil)
                     {
+                        if (expectedPreallocatedHandle.HasValue && compiledMethod != expectedPreallocatedHandle.Value)
+                        {
+                            throw new InvalidOperationException(
+                                $"[TwoPhase] Milestone 2a: compiled arrow handle mismatch for {ilMethodName}. " +
+                                $"Expected preallocated {expectedPreallocatedHandle.Value}, got {compiledMethod}.");
+                        }
                         // Two-phase: register the token in the canonical CallableRegistry
                         _callableRegistry.SetDeclaredTokenForAstNode(arrowFunction, (EntityHandle)compiledMethod);
+                        _callableRegistry.MarkBodyCompiledForAstNode(arrowFunction);
                         return compiledMethod;
                     }
                 }
@@ -319,8 +334,16 @@ namespace Js2IL.Services.ILGenerators
             var mdh = tb.AddMethodDefinition(MethodAttributes.Static | MethodAttributes.Public | MethodAttributes.HideBySig, ilMethodName, methodSig, bodyOffset, firstParam);
             tb.AddTypeDefinition(TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, _bclReferences.ObjectType);
 
+            if (expectedPreallocatedHandle.HasValue && mdh != expectedPreallocatedHandle.Value)
+            {
+                throw new InvalidOperationException(
+                    $"[TwoPhase] Milestone 2a: compiled arrow handle mismatch for {ilMethodName}. " +
+                    $"Expected preallocated {expectedPreallocatedHandle.Value}, got {mdh}.");
+            }
+
             // Two-phase: register the token in the canonical CallableRegistry
             _callableRegistry.SetDeclaredTokenForAstNode(arrowFunction, (EntityHandle)mdh);
+            _callableRegistry.MarkBodyCompiledForAstNode(arrowFunction);
 
             return mdh;
         }

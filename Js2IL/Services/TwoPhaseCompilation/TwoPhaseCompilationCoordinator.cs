@@ -42,6 +42,10 @@ public sealed class TwoPhaseCompilationCoordinator
     
     private IReadOnlyList<CallableId>? _discoveredCallables;
 
+    // Milestone 2a: used to validate that our preallocated MethodDef row ids stay stable.
+    private int? _methodDefRowCountAtPreallocation;
+    private int? _expectedMethodDefsBeforeAnonymousCallables;
+
     public TwoPhaseCompilationCoordinator(
         ILogger logger, 
         CompilerOptions compilerOptions,
@@ -76,7 +80,7 @@ public sealed class TwoPhaseCompilationCoordinator
 
         if (_discoveredCallables != null)
         {
-            DeclarePhase1AnonymousCallablesTokens(_discoveredCallables, metadataBuilder);
+            PreallocatePhase1AnonymousCallablesMethodDefs(_discoveredCallables, metadataBuilder);
         }
 
         // Enable strict mode before any body compilation so expression emission cannot compile.
@@ -88,6 +92,21 @@ public sealed class TwoPhaseCompilationCoordinator
             // in ClassRegistry before anonymous callables are compiled.
             // Arrow functions may contain `new ClassName()` which requires the class to exist.
             compileClassesAndFunctionsPhase2();
+
+            // Milestone 2a sanity check: the number of MethodDef rows added by class/function declaration
+            // must match what we assumed when preallocating anonymous callable MethodDef handles.
+            if (_methodDefRowCountAtPreallocation.HasValue && _expectedMethodDefsBeforeAnonymousCallables.HasValue)
+            {
+                var expected = _methodDefRowCountAtPreallocation.Value + _expectedMethodDefsBeforeAnonymousCallables.Value;
+                var actual = metadataBuilder.GetRowCount(TableIndex.MethodDef);
+                if (actual != expected)
+                {
+                    throw new InvalidOperationException(
+                        $"[TwoPhase] Milestone 2a MethodDef preallocation mismatch: expected MethodDef row count {expected} after declaring classes/functions, but was {actual}. " +
+                        "This indicates the preallocation offset is wrong (likely due to unexpected extra MethodDef emissions during class/function declaration)."
+                    );
+                }
+            }
 
             if (_discoveredCallables != null)
             {
@@ -121,6 +140,7 @@ public sealed class TwoPhaseCompilationCoordinator
                     if (callable.AstNode is ArrowFunctionExpression arrowExpr)
                     {
                         CompileArrowFunction(callable, arrowExpr, metadataBuilder, serviceProvider, rootVariables, bclReferences, methodBodyStreamEncoder, classRegistry, functionRegistry, symbolTable);
+                        _registry.MarkBodyCompiled(callable);
                     }
                     break;
 
@@ -128,6 +148,7 @@ public sealed class TwoPhaseCompilationCoordinator
                     if (callable.AstNode is FunctionExpression funcExpr)
                     {
                         CompileFunctionExpression(callable, funcExpr, metadataBuilder, serviceProvider, rootVariables, bclReferences, methodBodyStreamEncoder, classRegistry, functionRegistry, symbolTable);
+                        _registry.MarkBodyCompiled(callable);
                     }
                     break;
             }
@@ -236,17 +257,31 @@ public sealed class TwoPhaseCompilationCoordinator
         }
     }
 
-    private void DeclarePhase1AnonymousCallablesTokens(IReadOnlyList<CallableId> callables, MetadataBuilder metadataBuilder)
+    private void PreallocatePhase1AnonymousCallablesMethodDefs(IReadOnlyList<CallableId> callables, MetadataBuilder metadataBuilder)
     {
-        // Phase 1 declares MemberRefs for arrows and function expressions.
-        // These are sufficient for ldftn/call token usage without compiling bodies.
+        // Milestone 2a (Option A subset): preallocate MethodDef tokens for anonymous callables.
+        //
+        // Important: we are NOT emitting MethodDef rows here. We are reserving their row ids
+        // deterministically so any IL emitted during class/function compilation can reference the
+        // future MethodDef token. The actual MethodDef rows get emitted later during Phase 2 when
+        // the callable bodies are compiled.
+        //
+        // This relies on the fact that MethodDef row ids are assigned sequentially. As long as the
+        // number of MethodDef rows emitted before anonymous callables is deterministic (and matches
+        // our computed offset), the predicted handles will match the real handles allocated later.
 
-        // Use Module scope for TypeRef resolution so we can reference types that will be emitted later.
-        // The single module row is always index 1.
-        var moduleHandle = MetadataTokens.EntityHandle(TableIndex.Module, 1);
+        _methodDefRowCountAtPreallocation = metadataBuilder.GetRowCount(TableIndex.MethodDef);
 
-        // Cache TypeRefs by "namespace/name" to avoid duplicates.
-        var typeRefCache = new Dictionary<string, TypeReferenceHandle>(StringComparer.Ordinal);
+        // Phase 2 ordering (today): declare classes + function declarations first, then compile anonymous callables.
+        // We assume those steps will emit one MethodDef per corresponding callable.
+        _expectedMethodDefsBeforeAnonymousCallables = callables.Count(c => c.Kind is
+            CallableKind.FunctionDeclaration or
+            CallableKind.ClassConstructor or
+            CallableKind.ClassMethod or
+            CallableKind.ClassStaticMethod or
+            CallableKind.ClassStaticInitializer);
+
+        var nextRowId = _methodDefRowCountAtPreallocation.Value + _expectedMethodDefsBeforeAnonymousCallables.Value + 1;
 
         foreach (var callable in callables)
         {
@@ -255,43 +290,14 @@ public sealed class TwoPhaseCompilationCoordinator
                 continue;
             }
 
-            // Skip if already has a token (idempotent); Phase 2 may overwrite MemberRef with MethodDef.
+            // Idempotent: if token already set, do not overwrite.
             if (_registry.TryGetDeclaredToken(callable, out var existingToken) && !existingToken.IsNil)
             {
                 continue;
             }
 
-            var signature = _registry.GetSignature(callable);
-            if (signature == null)
-            {
-                continue;
-            }
-
-            var ilMethodName = signature.ILMethodName;
-            var typeKey = $"{TwoPhaseCompilationCoordinator.FunctionsNamespace}/{ilMethodName}";
-            if (!typeRefCache.TryGetValue(typeKey, out var typeRef))
-            {
-                typeRef = metadataBuilder.AddTypeReference(
-                    moduleHandle,
-                    metadataBuilder.GetOrAddString(TwoPhaseCompilationCoordinator.FunctionsNamespace),
-                    metadataBuilder.GetOrAddString(ilMethodName));
-                typeRefCache[typeKey] = typeRef;
-            }
-
-            var paramCount = 1 + callable.JsParamCount;
-            var methodSig = ILGenerators.MethodBuilder.BuildMethodSignature(
-                metadataBuilder,
-                isInstance: false,
-                paramCount: paramCount,
-                hasScopesParam: true,
-                returnsVoid: false);
-
-            var memberRef = metadataBuilder.AddMemberReference(
-                typeRef,
-                metadataBuilder.GetOrAddString(ilMethodName),
-                methodSig);
-
-            _registry.SetToken(callable, (EntityHandle)memberRef);
+            var preallocated = MetadataTokens.MethodDefinitionHandle(nextRowId++);
+            _registry.SetToken(callable, (EntityHandle)preallocated);
         }
     }
 

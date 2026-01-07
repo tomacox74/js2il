@@ -151,6 +151,37 @@ public sealed class CallableRegistry : ICallableCatalog, ICallableDeclarationWri
                TryGetDeclaredToken(callable, out token);
     }
 
+    /// <summary>
+    /// Marks a callable body as compiled using its AST node.
+    /// Safe to call multiple times.
+    /// </summary>
+    public void MarkBodyCompiledForAstNode(Node astNode)
+    {
+        if (_callableByAstNode == null)
+        {
+            return;
+        }
+
+        if (_callableByAstNode.TryGetValue(astNode, out var callable))
+        {
+            MarkBodyCompiled(callable);
+        }
+    }
+
+    /// <summary>
+    /// Checks if a callable body has been compiled using its AST node.
+    /// Returns false if discovery was not run.
+    /// </summary>
+    public bool IsBodyCompiledForAstNode(Node astNode)
+    {
+        if (_callableByAstNode == null)
+        {
+            return false;
+        }
+
+        return _callableByAstNode.TryGetValue(astNode, out var callable) && IsBodyCompiled(callable);
+    }
+
     #endregion
 
     #region ICallableCatalog
