@@ -20,7 +20,6 @@ namespace Js2IL.Services.ILGenerators
         private MethodDefinitionHandle _firstMethod = default;
         private readonly FunctionRegistry _functionRegistry = new();
         private readonly SymbolTable? _symbolTable;
-        private readonly CompiledMethodCache _compiledMethodCache;
         private readonly CallableRegistry _callableRegistry;
 
         public FunctionRegistry FunctionRegistry => _functionRegistry;
@@ -39,7 +38,6 @@ namespace Js2IL.Services.ILGenerators
             _methodBodyStreamEncoder = methodBodyStreamEncoder;
             _classRegistry = classRegistry ?? new ClassRegistry();
             _symbolTable = symbolTable;
-            _compiledMethodCache = serviceProvider.GetRequiredService<CompiledMethodCache>();
             _callableRegistry = serviceProvider.GetRequiredService<CallableRegistry>();
             this._serviceProvider = serviceProvider;
         }
@@ -106,13 +104,6 @@ namespace Js2IL.Services.ILGenerators
                         if (firstNestedMethod.IsNil) firstNestedMethod = nestedMethod;
                         if (this._firstMethod.IsNil) _firstMethod = nestedMethod;
                         _functionRegistry.Register(nestedName, nestedMethod, nestedParamNames.Length);
-                        
-                        // Register nested function in CompiledMethodCache for IR pipeline function call emission
-                        // The nested function's binding is in the parent function's scope (funcScope)
-                        if (funcScope.Bindings.TryGetValue(nestedName, out var nestedBinding))
-                        {
-                            _compiledMethodCache.Add(nestedBinding, nestedMethod);
-                        }
 
                         // Two-phase: register the token in the canonical CallableRegistry
                         _callableRegistry.SetDeclaredTokenForAstNode(nestedDecl, nestedMethod);
@@ -124,12 +115,6 @@ namespace Js2IL.Services.ILGenerators
                 var methodDefinition = GenerateMethodForFunction(functionDeclaration, functionVariables, methodGenerator, funcScope, symbolTable, moduleTb, registryScopeName);
                 if (this._firstMethod.IsNil) _firstMethod = methodDefinition;
                 _functionRegistry.Register(functionName, methodDefinition, paramNames.Length);
-
-                // Register in CompiledMethodCache for IR pipeline function call emission
-                if (root.Bindings.TryGetValue(functionName, out var binding))
-                {
-                    _compiledMethodCache.Add(binding, methodDefinition);
-                }
 
                 // Two-phase: register the token in the canonical CallableRegistry
                 _callableRegistry.SetDeclaredTokenForAstNode(functionDeclaration, methodDefinition);

@@ -26,7 +26,6 @@ internal sealed class LIRToILCompiler
     private readonly TypeReferenceRegistry _typeReferenceRegistry;
     private readonly BaseClassLibraryReferences _bclReferences;
     private readonly MemberReferenceRegistry _memberRefRegistry;
-    private readonly CompiledMethodCache _compiledMethodCache;
     private readonly ScopeMetadataRegistry _scopeMetadataRegistry;
     private MethodBodyIR? _methodBody;
     private bool _compiled;
@@ -41,7 +40,6 @@ internal sealed class LIRToILCompiler
         TypeReferenceRegistry typeReferenceRegistry,
         MemberReferenceRegistry memberReferenceRegistry,
         BaseClassLibraryReferences bclReferences,
-        CompiledMethodCache compiledMethodCache,
         ScopeMetadataRegistry scopeMetadataRegistry,
         IServiceProvider serviceProvider)
     {
@@ -50,7 +48,6 @@ internal sealed class LIRToILCompiler
         _typeReferenceRegistry = typeReferenceRegistry;
         _bclReferences = bclReferences;
         _memberRefRegistry = memberReferenceRegistry;
-        _compiledMethodCache = compiledMethodCache;
         _scopeMetadataRegistry = scopeMetadataRegistry;
     }
 
@@ -880,28 +877,23 @@ internal sealed class LIRToILCompiler
                 }
             case LIRCallFunction callFunc:
                 {
-                    MethodDefinitionHandle methodHandle = default;
-                    var resolved = false;
-
-                    // Prefer the canonical CallableRegistry token when we have a CallableId.
-                    if (callFunc.CallableId is { } callableId)
+                    if (callFunc.CallableId is not { } callableId)
                     {
-                        var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
-                        if (reader != null && reader.TryGetDeclaredToken(callableId, out var token) && token.Kind == HandleKind.MethodDefinition)
-                        {
-                            methodHandle = (MethodDefinitionHandle)token;
-                            resolved = true;
-                        }
+                        return false; // Fall back to legacy emitter
                     }
 
-                    // Fallback to legacy CompiledMethodCache during transition.
-                    if (!resolved)
+                    var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+                    if (reader == null)
                     {
-                        if (!_compiledMethodCache.TryGet(callFunc.FunctionSymbol.BindingInfo, out methodHandle))
-                        {
-                            return false; // Fall back to legacy emitter
-                        }
+                        return false; // Fall back to legacy emitter
                     }
+
+                    if (!reader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)
+                    {
+                        return false; // Fall back to legacy emitter
+                    }
+
+                    var methodHandle = (MethodDefinitionHandle)token;
 
                     int jsParamCount = callFunc.Arguments.Count;
 
@@ -1439,11 +1431,18 @@ internal sealed class LIRToILCompiler
                 break;
             case LIRCallFunction callFunc:
                 {
-                    // Look up the method handle from CompiledMethodCache
-                    if (!_compiledMethodCache.TryGet(callFunc.FunctionSymbol.BindingInfo, out var methodHandle))
+                    if (callFunc.CallableId is not { } callableId)
                     {
-                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - function not found in cache");
+                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing CallableId for LIRCallFunction");
                     }
+
+                    var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+                    if (reader == null || !reader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)
+                    {
+                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing declared token for callable {callableId.DisplayName}");
+                    }
+
+                    var methodHandle = (MethodDefinitionHandle)token;
 
                     int jsParamCount = callFunc.Arguments.Count;
 
