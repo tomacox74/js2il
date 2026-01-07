@@ -1,8 +1,10 @@
 using Js2IL.IR;
 using Js2IL.Services;
 using Js2IL.Services.ILGenerators;
+using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.Services.VariableBindings;
 using Js2IL.Utilities.Ecma335;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
@@ -19,6 +21,7 @@ namespace Js2IL.IL;
 /// </remarks>
 internal sealed class LIRToILCompiler
 {
+    private readonly IServiceProvider _serviceProvider;
     private readonly MetadataBuilder _metadataBuilder;
     private readonly TypeReferenceRegistry _typeReferenceRegistry;
     private readonly BaseClassLibraryReferences _bclReferences;
@@ -39,8 +42,10 @@ internal sealed class LIRToILCompiler
         MemberReferenceRegistry memberReferenceRegistry,
         BaseClassLibraryReferences bclReferences,
         CompiledMethodCache compiledMethodCache,
-        ScopeMetadataRegistry scopeMetadataRegistry)
+        ScopeMetadataRegistry scopeMetadataRegistry,
+        IServiceProvider serviceProvider)
     {
+        _serviceProvider = serviceProvider;
         _metadataBuilder = metadataBuilder;
         _typeReferenceRegistry = typeReferenceRegistry;
         _bclReferences = bclReferences;
@@ -875,10 +880,27 @@ internal sealed class LIRToILCompiler
                 }
             case LIRCallFunction callFunc:
                 {
-                    // Look up the method handle from CompiledMethodCache
-                    if (!_compiledMethodCache.TryGet(callFunc.FunctionSymbol.BindingInfo, out var methodHandle))
+                    MethodDefinitionHandle methodHandle = default;
+                    var resolved = false;
+
+                    // Prefer the canonical CallableRegistry token when we have a CallableId.
+                    if (callFunc.CallableId is { } callableId)
                     {
-                        return false; // Fall back to legacy emitter
+                        var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+                        if (reader != null && reader.TryGetDeclaredToken(callableId, out var token) && token.Kind == HandleKind.MethodDefinition)
+                        {
+                            methodHandle = (MethodDefinitionHandle)token;
+                            resolved = true;
+                        }
+                    }
+
+                    // Fallback to legacy CompiledMethodCache during transition.
+                    if (!resolved)
+                    {
+                        if (!_compiledMethodCache.TryGet(callFunc.FunctionSymbol.BindingInfo, out methodHandle))
+                        {
+                            return false; // Fall back to legacy emitter
+                        }
                     }
 
                     int jsParamCount = callFunc.Arguments.Count;

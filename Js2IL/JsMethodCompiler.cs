@@ -69,6 +69,7 @@ sealed record MethodDescriptor
 /// </remarks>
 internal sealed class JsMethodCompiler
 {
+    private readonly IServiceProvider _serviceProvider;
     private readonly MetadataBuilder _metadataBuilder;
     private readonly TypeReferenceRegistry _typeReferenceRegistry;
     private readonly MemberReferenceRegistry _memberReferenceRegistry;
@@ -76,7 +77,7 @@ internal sealed class JsMethodCompiler
     private readonly CompiledMethodCache _compiledMethodCache;
     private readonly Services.VariableBindings.ScopeMetadataRegistry _scopeMetadataRegistry;
 
-    public JsMethodCompiler(MetadataBuilder metadataBuilder, TypeReferenceRegistry typeReferenceRegistry, MemberReferenceRegistry memberReferenceRegistry, BaseClassLibraryReferences bclReferences, CompiledMethodCache compiledMethodCache, Services.VariableBindings.ScopeMetadataRegistry scopeMetadataRegistry)
+    public JsMethodCompiler(MetadataBuilder metadataBuilder, TypeReferenceRegistry typeReferenceRegistry, MemberReferenceRegistry memberReferenceRegistry, BaseClassLibraryReferences bclReferences, CompiledMethodCache compiledMethodCache, Services.VariableBindings.ScopeMetadataRegistry scopeMetadataRegistry, IServiceProvider serviceProvider)
     {
         _metadataBuilder = metadataBuilder;
         _typeReferenceRegistry = typeReferenceRegistry;
@@ -84,6 +85,7 @@ internal sealed class JsMethodCompiler
         _bclReferences = bclReferences;
         _compiledMethodCache = compiledMethodCache;
         _scopeMetadataRegistry = scopeMetadataRegistry;
+        _serviceProvider = serviceProvider;
     }
 
     /// <summary>
@@ -91,7 +93,7 @@ internal sealed class JsMethodCompiler
     /// </summary>
     private LIRToILCompiler CreateILCompiler()
     {
-        return new LIRToILCompiler(_metadataBuilder, _typeReferenceRegistry, _memberReferenceRegistry, _bclReferences, _compiledMethodCache, _scopeMetadataRegistry);
+        return new LIRToILCompiler(_metadataBuilder, _typeReferenceRegistry, _memberReferenceRegistry, _bclReferences, _compiledMethodCache, _scopeMetadataRegistry, _serviceProvider);
     }
 
     #region Public API - Entry Points

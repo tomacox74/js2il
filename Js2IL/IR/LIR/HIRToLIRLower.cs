@@ -868,7 +868,8 @@ public sealed class HIRToLIRLowerer
             DefineTempStorage(scopesTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
             // Emit the function call with arguments
-            _methodBodyIR.Instructions.Add(new LIRCallFunction(symbol, scopesTempVar, arguments, resultTempVar));
+            var callableId = TryCreateCallableIdForFunctionDeclaration(symbol);
+            _methodBodyIR.Instructions.Add(new LIRCallFunction(symbol, scopesTempVar, arguments, resultTempVar, callableId));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
             return true;
@@ -996,6 +997,66 @@ public sealed class HIRToLIRLowerer
         this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
         return true;
+    }
+
+    private Js2IL.Services.TwoPhaseCompilation.CallableId? TryCreateCallableIdForFunctionDeclaration(Symbol symbol)
+    {
+        if (_scope == null)
+        {
+            return null;
+        }
+
+        // IR lowering currently only supports direct calls where the callee is a function binding.
+        // For now, only attach CallableId for function declarations (named function foo() {}).
+        if (symbol.BindingInfo.Kind != BindingKind.Function)
+        {
+            return null;
+        }
+
+        if (symbol.BindingInfo.DeclarationNode is not FunctionDeclaration funcDecl)
+        {
+            return null;
+        }
+
+        var declaringScope = FindDeclaringScope(symbol.BindingInfo);
+        if (declaringScope == null)
+        {
+            return null;
+        }
+
+        var root = declaringScope;
+        while (root.Parent != null)
+        {
+            root = root.Parent;
+        }
+
+        var moduleName = root.Name;
+        var declaringScopeName = declaringScope.Kind == ScopeKind.Global
+            ? moduleName
+            : $"{moduleName}/{declaringScope.GetQualifiedName()}";
+
+        return new Js2IL.Services.TwoPhaseCompilation.CallableId
+        {
+            Kind = Js2IL.Services.TwoPhaseCompilation.CallableKind.FunctionDeclaration,
+            DeclaringScopeName = declaringScopeName,
+            Name = symbol.Name,
+            JsParamCount = funcDecl.Params.Count,
+            AstNode = funcDecl
+        };
+    }
+
+    private Scope? FindDeclaringScope(BindingInfo binding)
+    {
+        var current = _scope;
+        while (current != null)
+        {
+            if (current.Bindings.TryGetValue(binding.Name, out var candidate) && ReferenceEquals(candidate, binding))
+            {
+                return current;
+            }
+            current = current.Parent;
+        }
+        return null;
     }
 
     private bool TryLowerUnaryExpression(HIRUnaryExpression unaryExpr, out TempVariable resultTempVar)
