@@ -109,7 +109,7 @@ namespace Js2IL.Services.ILGenerators
         /// </summary>
         public void DeclareClassesAndFunctions(SymbolTable symbolTable)
         {
-            _twoPhaseCoordinator.RunMilestone1OptionB(
+            _twoPhaseCoordinator.RunMilestone2a(
                 symbolTable,
                 _ilGenerator.MetadataBuilder,
                 compileAnonymousCallablesPhase2: callables =>

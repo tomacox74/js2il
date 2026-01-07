@@ -19,7 +19,8 @@ public sealed record CallableInfo
     
     /// <summary>
     /// The declared callable token (populated during Phase 1 declaration).
-    /// In Phase 1 this may be a MemberRef (signature-only); Phase 2 may overwrite with a MethodDef.
+    /// This is always a MethodDefinitionHandle; Phase 1 reserves the handle without emitting the body,
+    /// and Phase 2 emits the method body using this reserved handle.
     /// </summary>
     public MethodDefinitionHandle? Token { get; init; }
     
@@ -64,16 +65,24 @@ public interface ICallableDeclarationWriter
 /// <summary>
 /// Read interface for Phase 2: looking up declared callable tokens.
 /// </summary>
+/// <remarks>
+/// Note: getter methods return <see cref="EntityHandle"/> rather than <see cref="MethodDefinitionHandle"/>
+/// for backward compatibility with callers that may check <c>HandleKind</c> before casting.
+/// Since Milestone 2a, stored tokens are always <see cref="MethodDefinitionHandle"/>; callers can
+/// safely cast after verifying <c>token.Kind == HandleKind.MethodDefinition</c>.
+/// </remarks>
 public interface ICallableDeclarationReader
 {
     /// <summary>
     /// Gets the declared method token for a callable (must exist in strict mode).
+    /// Returns an <see cref="EntityHandle"/>; since Milestone 2a this is always a <see cref="MethodDefinitionHandle"/>.
     /// </summary>
     /// <exception cref="InvalidOperationException">Thrown in strict mode if callable is not declared.</exception>
     EntityHandle GetDeclaredToken(CallableId id);
     
     /// <summary>
     /// Attempts to get the declared method token for a callable.
+    /// Returns an <see cref="EntityHandle"/>; since Milestone 2a this is always a <see cref="MethodDefinitionHandle"/>.
     /// Used for legacy/migration fallback paths.
     /// </summary>
     bool TryGetDeclaredToken(CallableId id, out EntityHandle token);

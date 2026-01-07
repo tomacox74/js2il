@@ -80,7 +80,8 @@ namespace Js2IL.Services.ILGenerators
                         {
                             throw new InvalidOperationException(
                                 $"[TwoPhase] Milestone 2a: compiled arrow handle mismatch for {ilMethodName}. " +
-                                $"Expected preallocated {expectedPreallocatedHandle.Value}, got {compiledMethod}.");
+                                $"Expected preallocated token 0x{MetadataTokens.GetToken(expectedPreallocatedHandle.Value):X8}, " +
+                                $"got token 0x{MetadataTokens.GetToken(compiledMethod):X8}.");
                         }
                         // Two-phase: register the token in the canonical CallableRegistry
                         _callableRegistry.SetDeclaredTokenForAstNode(arrowFunction, compiledMethod);
@@ -338,7 +339,8 @@ namespace Js2IL.Services.ILGenerators
             {
                 throw new InvalidOperationException(
                     $"[TwoPhase] Milestone 2a: compiled arrow handle mismatch for {ilMethodName}. " +
-                    $"Expected preallocated {expectedPreallocatedHandle.Value}, got {mdh}.");
+                    $"Expected preallocated token 0x{MetadataTokens.GetToken(expectedPreallocatedHandle.Value):X8}, " +
+                    $"got token 0x{MetadataTokens.GetToken(mdh):X8}.");
             }
 
             // Two-phase: register the token in the canonical CallableRegistry

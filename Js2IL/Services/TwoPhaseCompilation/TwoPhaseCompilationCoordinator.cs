@@ -67,10 +67,10 @@ public sealed class TwoPhaseCompilationCoordinator
     /// </summary>
     /// <remarks>
     /// We keep Phase 2 body compilation delegated to generators, but centralize the
-    /// orchestration and the Phase 1 declare-only MemberRef emission here so MainGenerator
+    /// orchestration and the Phase 1 declaration here so MainGenerator
     /// stays thin and the coordinator matches the design doc responsibilities.
     /// </remarks>
-    public void RunMilestone1OptionB(
+    public void RunMilestone2a(
         SymbolTable symbolTable,
         MetadataBuilder metadataBuilder,
         Action<IReadOnlyList<CallableId>> compileAnonymousCallablesPhase2,
@@ -103,7 +103,10 @@ public sealed class TwoPhaseCompilationCoordinator
                 {
                     throw new InvalidOperationException(
                         $"[TwoPhase] Milestone 2a MethodDef preallocation mismatch: expected MethodDef row count {expected} after declaring classes/functions, but was {actual}. " +
-                        "This indicates the preallocation offset is wrong (likely due to unexpected extra MethodDef emissions during class/function declaration)."
+                        "This indicates the preallocation offset is wrong (likely due to unexpected extra MethodDef emissions during class/function declaration). " +
+                        "Common causes include new synthesized methods (for example, class static field initializers or helper methods) being emitted without updating CallableDiscovery/" +
+                        "preallocation logic (_expectedMethodDefsBeforeAnonymousCallables). Verify that any additional MethodDef emissions during class/function declaration are either " +
+                        "accounted for in the preallocation calculation or are moved to a phase that runs after anonymous callable preallocation."
                     );
                 }
             }
@@ -140,7 +143,8 @@ public sealed class TwoPhaseCompilationCoordinator
                     if (callable.AstNode is ArrowFunctionExpression arrowExpr)
                     {
                         CompileArrowFunction(callable, arrowExpr, metadataBuilder, serviceProvider, rootVariables, bclReferences, methodBodyStreamEncoder, classRegistry, functionRegistry, symbolTable);
-                        _registry.MarkBodyCompiled(callable);
+                        // Note: body is marked as compiled by the generator (JavaScriptArrowFunctionGenerator)
+                        // after it successfully emits the method body. No duplicate call here.
                     }
                     break;
 
@@ -148,7 +152,8 @@ public sealed class TwoPhaseCompilationCoordinator
                     if (callable.AstNode is FunctionExpression funcExpr)
                     {
                         CompileFunctionExpression(callable, funcExpr, metadataBuilder, serviceProvider, rootVariables, bclReferences, methodBodyStreamEncoder, classRegistry, functionRegistry, symbolTable);
-                        _registry.MarkBodyCompiled(callable);
+                        // Note: body is marked as compiled by the generator (ILMethodGenerator.GenerateFunctionExpressionMethod)
+                        // after it successfully emits the method body. No duplicate call here.
                     }
                     break;
             }

@@ -1486,7 +1486,8 @@ namespace Js2IL.Services.ILGenerators
             {
                 throw new InvalidOperationException(
                     $"[TwoPhase] Milestone 2a: compiled function expression handle mismatch for {ilMethodName}. " +
-                    $"Expected preallocated {expectedPreallocatedHandle.Value}, got {mdh}.");
+                    $"Expected preallocated token 0x{MetadataTokens.GetToken(expectedPreallocatedHandle.Value):X8}, " +
+                    $"got token 0x{MetadataTokens.GetToken(mdh):X8}.");
             }
             // Register named function expression in function registry so recursive calls can lazy-bind.
             if (internalNameId != null && _functionRegistry != null)
