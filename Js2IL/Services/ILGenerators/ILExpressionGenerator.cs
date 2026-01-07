@@ -17,7 +17,7 @@ namespace Js2IL.Services.ILGenerators
     internal sealed class ILExpressionGenerator : IMethodExpressionEmitter
     {
         private readonly ILMethodGenerator _owner;
-        private readonly TwoPhaseCompilationCoordinator _twoPhaseCoordinator;
+        private readonly CallableRegistry _callableRegistry;
 
         private Variables _variables => _owner.Variables;
 
@@ -177,7 +177,7 @@ namespace Js2IL.Services.ILGenerators
         public ILExpressionGenerator(ILMethodGenerator owner)
         {
             _owner = owner ?? throw new ArgumentNullException(nameof(owner));
-            _twoPhaseCoordinator = owner.ServiceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
+            _callableRegistry = owner.ServiceProvider.GetRequiredService<CallableRegistry>();
 
             _binaryOperators = new BinaryOperators(owner.MetadataBuilder, _il, _variables, this, owner.BclReferences, owner.Runtime, owner);
         }
@@ -382,8 +382,8 @@ namespace Js2IL.Services.ILGenerators
                         // instead of triggering compilation. This satisfies the invariant:
                         // "expression emission never triggers compilation"
                         System.Reflection.Metadata.EntityHandle methodToken;
-                        var registry = _twoPhaseCoordinator.Registry;
-                        if (registry?.StrictMode == true)
+                        var registry = _callableRegistry;
+                        if (registry.StrictMode)
                         {
                             // Strict mode: must lookup from the canonical CallableRegistry
                             if (!registry.TryGetDeclaredTokenForAstNode(arrowFunction, out methodToken) ||
@@ -481,8 +481,8 @@ namespace Js2IL.Services.ILGenerators
                         // Milestone 1: In strict mode (two-phase compilation), lookup the pre-declared handle
                         // instead of triggering compilation.
                         System.Reflection.Metadata.EntityHandle methodToken;
-                        var registry = _twoPhaseCoordinator.Registry;
-                        if (registry?.StrictMode == true)
+                        var registry = _callableRegistry;
+                        if (registry.StrictMode)
                         {
                             // Strict mode: must lookup from the canonical CallableRegistry
                             if (!registry.TryGetDeclaredTokenForAstNode(funcExpr, out methodToken) ||
