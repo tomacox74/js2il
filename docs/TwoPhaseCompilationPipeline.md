@@ -8,7 +8,7 @@ This document describes a proposed **two-phase compilation pipeline** for JS2IL 
 
 The goal is to make IR compilation reliable without relying on “compile-on-demand” during AST→HIR→LIR→IL.
 
-> Status (Jan 2026): Two-phase compilation is always enabled. **Milestone 1** and **Milestone 2a** are implemented. **Milestone 2b** (dependency graph + SCC/topo planner) and **Milestone 2b1** (high-confidence member-call edges for `this.m()` / `super.m()`) are implemented as a **plan artifact** (logged in verbose mode) but are **not yet used to change compilation order** (Milestone 2c).
+> Status (Jan 2026): Two-phase compilation is always enabled. **Milestone 1**, **Milestone 2a**, **Milestone 2b**, **Milestone 2b1**, and **Milestone 2c** are implemented. Phase 2 compilation uses the Milestone 2b plan ordering (and treats the plan as authoritative).
 
 This doc is written **ideal-first**:
 
@@ -17,21 +17,26 @@ This doc is written **ideal-first**:
 
 ---
 
-## Current implementation snapshot (Milestone 1 + Milestone 2a)
+## Current implementation snapshot (Milestone 1 + Milestone 2c)
 
-JS2IL now has a real (partial) two-phase coordinator:
+JS2IL now has a real two-phase coordinator:
 
-- **Phase 1: Discovery** runs via `CallableDiscovery` and populates a unified `CallableRegistry` keyed by `CallableId`.
-- **Phase 1: Declaration (Milestone 2a / Option A subset)** assigns **arrow functions** and **function expressions** a `MethodDefinitionHandle` token model without compiling bodies.
-  - Implementation detail: this is currently done via deterministic **MethodDef row id reservation** (predicting the handle that will be produced later) rather than emitting real MethodDef rows in Phase 1.
-- **Strict mode** is enabled before any body compilation so expression emission becomes **lookup-only** for arrows/function expressions (no on-demand compilation).
-- **Phase 2: Body compilation** compiles discovered anonymous callables first, then runs the existing class/function generators.
+- **Phase 1: Discovery** runs via `CallableDiscovery` and populates `CallableRegistry` keyed by `CallableId`.
+- **Milestone 2b/2b1: Planner** computes a dependency graph, SCC groups, and a deterministic stage order.
+- **Phase 1 (token preallocation)** reserves `MethodDefinitionHandle` row ids for planned callables so Phase 2 can compile bodies without changing metadata ordering.
+  - Anonymous callables (arrow functions + function expressions) use a deterministic **MethodDef row id reservation** strategy.
+  - Class callables are preallocated before class type definitions so `TypeDef.MethodList` can point at a contiguous per-type block (ECMA-335 requirement).
+- **Strict mode** is enabled before any body compilation so expression emission is **lookup-only** for callable tokens.
+- **Phase 2: Body compilation (Milestone 2c)** compiles callable bodies in the planner order and then finalizes MethodDef rows deterministically.
+  - Class callables are finalized grouped by class type (TypeDef order) to preserve per-type `MethodList` contiguity.
+  - Function declarations are compiled in plan order and finalized as a deterministic contiguous block.
+  - Anonymous callables are compiled in plan order after classes/functions are declared.
+  - The main method body is emitted after `DeclareClassesAndFunctions(...)` completes (see `MainGenerator.GenerateMethodBody`).
 
-What is *not* implemented yet (still Milestone 2+):
+What is *still incomplete* (post-Milestone 2c):
 
-- Compilation is not yet performed in planner order; Phase 2 ordering is deterministic but not dependency-aware (Milestone 2c).
-- Function declarations and class constructors/methods are still declared+compiled in the legacy generators (including some depth-first nested compilation patterns).
-- Phase 2 is still mixed: anonymous callables are driven by the coordinator, but function declarations and class bodies are still compiled using legacy generators and ordering.
+- The planner does not attempt broad dynamic receiver tracking (`obj.m()` / `obj["m"]()`); it only adds high-confidence member edges (`this.m()`, `super.m()`) per Milestone 2b1.
+- Several legacy emitters/registries still exist alongside `CallableRegistry` (see Milestone 3).
 
 ---
 
@@ -653,7 +658,7 @@ Legacy AST→IL impact:
 
 - **Minimal / mostly orchestration.** Existing generators still compile bodies; the key Milestone 1 behavior is that *anonymous callable token resolution* is lookup-only in strict mode.
 
-### Milestone 2: Dependency graph + ordering (remaining work)
+### Milestone 2: Dependency graph + ordering (completed)
 
 Milestone 2 is the point where “two-phase” becomes *dependency-correct*, not just “declare tokens early”.
 
@@ -681,12 +686,13 @@ Recommended sequence (to minimize churn):
   Notes:
   - Typed intrinsics and broader receiver-type inference are intentionally deferred to later milestones/optimizations.
 
-- **Milestone 2c: True Phase 2 planned compilation**
+- **Milestone 2c: True Phase 2 planned compilation** (completed)
   - Compile callable bodies in planner order.
-  - Move function declarations and class constructors/methods to the same model: Phase 1 declares tokens/signatures only; Phase 2 owns all body compilation.
-  - Move `TryCompileMethod(...)` out of function/class “declare” paths into explicit Phase 2 compilation APIs invoked by the coordinator.
-  - Remove depth-first assumptions (no more “compile nested bodies early so handles exist”).
-  - Ensure main method emission happens after callable body compilation (or after the [SCC][scc] group it depends on), so IR/LIR lookups never observe undeclared tokens.
+  - Treat the plan as authoritative: if Phase 1 discovers a callable that is missing from the plan, compilation fails fast.
+  - Move function declarations and class callables (constructors/methods/accessors/static initializers) to the Phase 2 body-compilation model.
+  - Preserve ECMA-335 metadata ordering invariants:
+    - Class method bodies are compiled in plan order but **finalized** grouped by class type so each `TypeDef.MethodList` points at a contiguous block.
+    - Main method emission happens after planned callables are compiled (via `MainGenerator.DeclareClassesAndFunctions` → `GenerateMethodBody`).
 
 Legacy AST→IL impact:
 
@@ -694,15 +700,18 @@ Legacy AST→IL impact:
   - body compilation is invoked by the coordinator in planned order.
   - main is emitted after callable bodies so expression emission never needs to compile.
 
-### Milestone 3: Replace ad-hoc caches with unified registry
+### Milestone 3: Finish unifying callable lookups (remaining work)
 
-- Migrate ad-hoc “callable token caches” (e.g., `CompiledMethodCache`) behind `CallableRegistry` (or delete them)
-- Keep old caches as adapters temporarily to minimize churn
+Milestone 2c makes Phase 2 compilation ordering plan-driven, but some token/metadata lookups are still split across multiple registries.
 
-Legacy AST→IL impact:
+Remaining work for Milestone 3:
 
-- Update the legacy AST→IL emitters that “load callable as value” (delegate creation) and any direct-call sites that consult ad-hoc caches to go through the unified `CallableRegistry`.
-- Remove any remaining coupling where the legacy pipeline assumes “callee body must have been compiled already” to obtain a token.
+- Make `CallableRegistry` the single source of truth for callable tokens at all call sites (remove remaining name-based fallback paths).
+- Reduce (or eliminate) reliance on separate registries for callable lookup (`FunctionRegistry`, class constructor caches) where practical.
+- Consolidate the “body-only compilation” surface:
+  - Prefer one API shape (e.g., `TryCompileCallableBody(...)` returning `CompiledCallableBody`) for both IR-first and legacy fallback compilers.
+  - Keep legacy AST→IL emitters as an implementation detail, not as an alternate token source.
+- Keep module-awareness as a hard invariant for callable identity/lookup (avoid cross-module name collisions).
 
 ### Milestone 4: (TBD / optional)
 
@@ -718,7 +727,9 @@ Guiding rules:
 - Keep Phase 1 (declare) side-effect free with respect to bodies: no IR lowering and no IL body emission.
 - Make each milestone shippable: after each PR, the compiler should still build and a representative test slice should pass.
 
-Recommended PR sequence (small, mergeable increments):
+Recommended PR sequence (historical; Milestones 1–2c are completed):
+
+- Note: Two-phase compilation is always enabled; any references to flags/options below are historical context.
 
 1. **Add the coordinator skeleton (no behavior change)**
    - Touchpoints: `MainGenerator` entry-point orchestration.
