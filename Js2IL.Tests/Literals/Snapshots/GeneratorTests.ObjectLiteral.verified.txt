@@ -38,40 +38,43 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 79 (0x4f)
+		// Code size: 85 (0x55)
 		.maxstack 32
 		.locals init (
-			[0] object,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			[0] class Scopes.ObjectLiteral,
+			[1] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
-		IL_0000: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0005: dup
-		IL_0006: ldstr "name"
-		IL_000b: ldstr "Alice"
-		IL_0010: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0015: dup
-		IL_0016: ldstr "age"
-		IL_001b: ldc.r8 31
-		IL_0024: box [System.Runtime]System.Double
-		IL_0029: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_002e: stloc.0
-		IL_002f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0000: newobj instance void Scopes.ObjectLiteral::.ctor()
+		IL_0005: stloc.0
+		IL_0006: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_000b: dup
+		IL_000c: ldstr "name"
+		IL_0011: ldstr "Alice"
+		IL_0016: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_001b: dup
+		IL_001c: ldstr "age"
+		IL_0021: ldc.r8 31
+		IL_002a: box [System.Runtime]System.Double
+		IL_002f: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
 		IL_0034: stloc.1
-		IL_0035: ldloc.1
-		IL_0036: ldc.i4.2
-		IL_0037: newarr [System.Runtime]System.Object
-		IL_003c: dup
-		IL_003d: ldc.i4.0
-		IL_003e: ldstr "x is"
-		IL_0043: stelem.ref
-		IL_0044: dup
-		IL_0045: ldc.i4.1
-		IL_0046: ldloc.0
-		IL_0047: stelem.ref
-		IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_004d: pop
-		IL_004e: ret
+		IL_0035: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003a: stloc.2
+		IL_003b: ldloc.2
+		IL_003c: ldc.i4.2
+		IL_003d: newarr [System.Runtime]System.Object
+		IL_0042: dup
+		IL_0043: ldc.i4.0
+		IL_0044: ldstr "x is"
+		IL_0049: stelem.ref
+		IL_004a: dup
+		IL_004b: ldc.i4.1
+		IL_004c: ldloc.1
+		IL_004d: stelem.ref
+		IL_004e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0053: pop
+		IL_0054: ret
 	} // end of method ObjectLiteral::Main
 
 } // end of class Scripts.ObjectLiteral
@@ -83,7 +86,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20b7
+		// Method begins at RVA 0x20bd
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -98,9 +98,9 @@ Based on the legacy emitters:
 ### 1) Closures & captured variables (Phase 3: scopes materialization)
 **Goal**: remove the fallback restrictions around `scope.ReferencesParentScopeVariables` and `IsCaptured`.
 
-- [ ] PL1.1 Enable new pipeline for methods where `scope.ReferencesParentScopeVariables` is true.
-- [ ] PL1.2 Enable new pipeline for scopes that contain captured bindings (`IsCaptured == true`).
-- [ ] PL1.3 Audit + complete captured-variable *writes* semantics (reads/writes must agree with legacy closure behavior).
+- [x] PL1.1 Enable new pipeline for methods where `scope.ReferencesParentScopeVariables` is true.
+- [x] PL1.2 Enable new pipeline for scopes that contain captured bindings (`IsCaptured == true`).
+- [x] PL1.3 Audit + complete captured-variable *writes* semantics (reads/writes must agree with legacy closure behavior).
 - [ ] PL1.4 Ensure leaf scope instance creation is correct in all cases:
   - [ ] PL1.4a create leaf scope instance exactly when required (and only once)
   - [ ] PL1.4b correct leaf local lifetime across control-flow and loops

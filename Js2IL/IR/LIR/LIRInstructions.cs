@@ -108,6 +108,11 @@ public record LIRReturn(TempVariable ReturnValue) : LIRInstruction;
 
 public record LIRConvertToObject(TempVariable Source, Type SourceType, TempVariable Result) : LIRInstruction;
 
+/// <summary>
+/// Converts a value (typically an object) to a JavaScript number (double) using runtime coercion.
+/// </summary>
+public record LIRConvertToNumber(TempVariable Source, TempVariable Result) : LIRInstruction;
+
 public record LIRTypeof(TempVariable Value, TempVariable Result) : LIRInstruction;
 
 public record LIRNegateNumber(TempVariable Value, TempVariable Result) : LIRInstruction;

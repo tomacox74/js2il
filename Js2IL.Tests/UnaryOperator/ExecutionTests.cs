@@ -20,6 +20,9 @@ namespace Js2IL.Tests.UnaryOperator
         public Task UnaryOperator_PlusPlusPrefix() => ExecutionTest(nameof(UnaryOperator_PlusPlusPrefix));
 
         [Fact]
+        public Task UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction() => ExecutionTest(nameof(UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction));
+
+        [Fact]
         public Task UnaryOperator_Typeof() => ExecutionTest(nameof(UnaryOperator_Typeof));
 
         [Fact]

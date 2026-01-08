@@ -1,6 +1,7 @@
 using Js2IL.IR;
 using Js2IL.Services.VariableBindings;
 using Js2IL.SymbolTables;
+using Js2IL.Utilities;
 
 namespace Js2IL.Services.ScopesAbi;
 
@@ -69,6 +70,11 @@ public class EnvironmentLayoutBuilder
         return new EnvironmentLayout(abi, scopeChain, storageByBinding, layoutKind);
     }
 
+    // Must match the compiler's stable registry scope naming convention.
+    // - Global scope uses the module name directly.
+    // - Non-global scopes are module-qualified: {module}/{scopeName}
+    private static string GetRegistryScopeName(Scope scope) => ScopeNaming.GetRegistryScopeName(scope);
+
     /// <summary>
     /// Builds the scope chain layout for a callable.
     /// </summary>
@@ -111,9 +117,10 @@ public class EnvironmentLayoutBuilder
             var ancestorScope = ancestorScopes[i];
             
             // Use ScopeId for IR-level abstraction (no direct handle references)
-            var scopeId = new ScopeId(ancestorScope.Name);
+            var registryName = GetRegistryScopeName(ancestorScope);
+            var scopeId = new ScopeId(registryName);
 
-            slots.Add(new ScopeSlot(i, ancestorScope.Name, scopeId));
+            slots.Add(new ScopeSlot(i, registryName, scopeId));
         }
 
         return new ScopeChainLayout(slots);
@@ -148,12 +155,13 @@ public class EnvironmentLayoutBuilder
                 if (binding.IsCaptured && !storage.ContainsKey(binding))
                 {
                     // This is a parent scope field
-                    var parentIndex = scopeChain.IndexOf(current.Name);
+                    var parentIndex = scopeChain.IndexOf(GetRegistryScopeName(current));
                     if (parentIndex >= 0)
                     {
                         // Use ScopeId and FieldId for IR-level abstraction (no direct handle references)
-                        var scopeId = new ScopeId(current.Name);
-                        var fieldId = new FieldId(current.Name, name);
+                        var registryName = GetRegistryScopeName(current);
+                        var scopeId = new ScopeId(registryName);
+                        var fieldId = new FieldId(registryName, name);
 
                         storage[binding] = BindingStorage.ForParentScopeField(
                             fieldId,
@@ -199,8 +207,9 @@ public class EnvironmentLayoutBuilder
     private BindingStorage GetLeafScopeFieldStorage(Scope scope, string name)
     {
         // Use ScopeId and FieldId for IR-level abstraction (no direct handle references)
-        var scopeId = new ScopeId(scope.Name);
-        var fieldId = new FieldId(scope.Name, name);
+        var registryName = GetRegistryScopeName(scope);
+        var scopeId = new ScopeId(registryName);
+        var fieldId = new FieldId(registryName, name);
 
         return BindingStorage.ForLeafScopeField(fieldId, scopeId);
     }

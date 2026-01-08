@@ -2,6 +2,7 @@ using Acornima.Ast;
 using Js2IL.HIR;
 using Js2IL.Services;
 using Js2IL.Services.ScopesAbi;
+using Js2IL.Utilities;
 using Js2IL.SymbolTables;
 
 namespace Js2IL.IR;
@@ -231,6 +232,18 @@ public sealed class HIRToLIRLowerer
     {
         if (_environmentLayout == null) return;
 
+        // Special-case: the global/module scope instance is needed to satisfy the ABI expectation
+        // that scopes[0] is the module/global scope when lowering direct user-defined calls from the
+        // entry point. Even if the global scope has no leaf fields, creating the instance is cheap
+        // and enables IR lowering to build scopes arrays without falling back.
+        if (_scope != null && _scope.Kind == ScopeKind.Global && !_methodBodyIR.NeedsLeafScopeLocal)
+        {
+            _methodBodyIR.Instructions.Insert(0, new LIRCreateLeafScopeInstance(new ScopeId(_scope.Name)));
+            _methodBodyIR.NeedsLeafScopeLocal = true;
+            _methodBodyIR.LeafScopeId = new ScopeId(_scope.Name);
+            return;
+        }
+
         // Find the first binding that uses leaf scope field storage
         var leafScopeStorage = _environmentLayout.StorageByBinding.Values
             .FirstOrDefault(s => s.Kind == BindingStorageKind.LeafScopeField && !s.DeclaringScope.IsNil);
@@ -262,11 +275,31 @@ public sealed class HIRToLIRLowerer
             return true;
         }
 
-        // Check if the callee needs parent scopes
+        // Even if the callee doesn't directly reference parent scope variables, it may need the global
+        // scope to correctly construct closures for nested functions that capture globals.
+        // To preserve the historic ABI expectation that scopes[0] is the global scope (when available),
+        // ensure we at least pass the global scope slot.
         if (!calleeScope.ReferencesParentScopeVariables)
         {
-            // Callee doesn't need parent scopes - emit empty array
-            _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(Array.Empty<ScopeSlotSource>(), resultTemp));
+            if (_scope == null)
+            {
+                _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(Array.Empty<ScopeSlotSource>(), resultTemp));
+                return true;
+            }
+
+            // Global slot is always index 0 and uses the module name.
+            var root = _scope;
+            while (root.Parent != null)
+            {
+                root = root.Parent;
+            }
+            var moduleName = root.Name;
+            var globalSlot = new ScopeSlot(Index: 0, ScopeName: moduleName, ScopeId: new ScopeId(moduleName));
+            if (!TryMapScopeSlotToSource(globalSlot, out var globalSlotSource))
+            {
+                return false;
+            }
+            _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(new[] { globalSlotSource }, resultTemp));
             return true;
         }
 
@@ -358,7 +391,7 @@ public sealed class HIRToLIRLowerer
         // 3. If caller is a class method with _scopes -> ThisScopes (ldarg.0, ldfld _scopes, ldelem.ref)
 
         // Check if this is the caller's leaf scope
-        if (_scope != null && _scope.Name == slot.ScopeName)
+        if (_scope != null && ScopeNaming.GetRegistryScopeName(_scope) == slot.ScopeName)
         {
             // The caller's own scope instance
             if (_methodBodyIR.NeedsLeafScopeLocal)
@@ -389,23 +422,6 @@ public sealed class HIRToLIRLowerer
                     return true;
                 }
             }
-        }
-
-        // Check if the caller's scope has a parent with this name
-        // This handles the case where the caller is global scope and we need to pass it
-        var currentScope = _scope;
-        while (currentScope != null)
-        {
-            // This is an ancestor scope of the caller
-            // In global/module main, the leaf scope local holds the global scope instance
-            if (currentScope.Name == slot.ScopeName &&
-                _methodBodyIR.NeedsLeafScopeLocal &&
-                _scope == currentScope)
-            {
-                slotSource = new ScopeSlotSource(slot, ScopeInstanceSource.LeafLocal);
-                return true;
-            }
-            currentScope = currentScope.Parent;
         }
 
         // Can't find this scope in the caller's context
@@ -472,7 +488,9 @@ public sealed class HIRToLIRLowerer
                             !storage.Field.IsNil && 
                             !storage.DeclaringScope.IsNil)
                         {
-                            lirInstructions.Add(new LIRStoreLeafScopeField(binding, storage.Field, storage.DeclaringScope, value));
+                            // Scope fields are always object-typed; box value types before storing.
+                            var boxedValue = EnsureObject(value);
+                            lirInstructions.Add(new LIRStoreLeafScopeField(binding, storage.Field, storage.DeclaringScope, boxedValue));
                             // Also map in SSA for subsequent reads (though they'll use field load)
                             _variableMap[binding] = value;
                             return true;
@@ -1541,6 +1559,13 @@ public sealed class HIRToLIRLowerer
         var updateBinding = updateVarExpr.Name.BindingInfo;
         var isIncrement = updateExpr.Operator == Acornima.Operator.Increment;
 
+        // Updating a const is a runtime TypeError in the legacy pipeline.
+        // We don't have TypeError emission in IR yet, so fall back.
+        if (updateBinding.Kind == BindingKind.Const)
+        {
+            return false;
+        }
+
         // Load the current value (handles both captured and non-captured variables)
         if (!TryLoadVariable(updateBinding, out var currentValue))
         {
@@ -1550,15 +1575,87 @@ public sealed class HIRToLIRLowerer
         // For captured variables loaded from scope fields, the storage is always object (Reference).
         // For non-captured numeric locals, we only support double.
         var currentStorage = GetTempStorage(currentValue);
-        
-        // If the variable is from a scope field (Reference type), we need to handle it differently
-        // as it comes boxed as object. For now, we only support numeric updates on locals.
-        // TODO: Support dynamic increment/decrement for captured variables
+
+        // Captured variable update: value is boxed (object) and stored in a scope field.
+        // Implement numeric coercion via runtime TypeUtilities.ToNumber(object?) and then store
+        // the boxed updated value back to the appropriate scope field.
         if (currentStorage.Kind == ValueStorageKind.Reference && currentStorage.ClrType == typeof(object))
         {
-            // Captured variable - bail out for now, needs runtime support
-            // In the future: call a runtime helper to increment/decrement
-            return false;
+            if (_environmentLayout == null)
+            {
+                return false;
+            }
+
+            var storage = _environmentLayout.GetStorage(updateBinding);
+            if (storage == null)
+            {
+                return false;
+            }
+
+            // For postfix, we must capture the old value before the field store happens.
+            // Use LIRCopyTemp so Stackify will materialize the captured value.
+            TempVariable? originalSnapshotForPostfix = null;
+            if (!updateExpr.Prefix)
+            {
+                var snapshot = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRCopyTemp(currentValue, snapshot));
+                DefineTempStorage(snapshot, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                originalSnapshotForPostfix = snapshot;
+            }
+
+            var currentNumber = EnsureNumber(currentValue);
+
+            var deltaOneTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstNumber(1.0, deltaOneTemp));
+            DefineTempStorage(deltaOneTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+            var updatedNumber = CreateTempVariable();
+            if (isIncrement)
+            {
+                _methodBodyIR.Instructions.Add(new LIRAddNumber(currentNumber, deltaOneTemp, updatedNumber));
+            }
+            else
+            {
+                _methodBodyIR.Instructions.Add(new LIRSubNumber(currentNumber, deltaOneTemp, updatedNumber));
+            }
+            DefineTempStorage(updatedNumber, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+            var updatedBoxed = EnsureObject(updatedNumber);
+
+            switch (storage.Kind)
+            {
+                case BindingStorageKind.LeafScopeField:
+                    if (storage.Field.IsNil || storage.DeclaringScope.IsNil)
+                    {
+                        return false;
+                    }
+                    _methodBodyIR.Instructions.Add(new LIRStoreLeafScopeField(updateBinding, storage.Field, storage.DeclaringScope, updatedBoxed));
+                    break;
+
+                case BindingStorageKind.ParentScopeField:
+                    if (storage.ParentScopeIndex < 0 || storage.Field.IsNil || storage.DeclaringScope.IsNil)
+                    {
+                        return false;
+                    }
+                    _methodBodyIR.Instructions.Add(new LIRStoreParentScopeField(updateBinding, storage.Field, storage.DeclaringScope, storage.ParentScopeIndex, updatedBoxed));
+                    break;
+
+                default:
+                    // Not a captured storage - fall back to local update path.
+                    return false;
+            }
+
+            // Update SSA map for subsequent reads.
+            _variableMap[updateBinding] = updatedBoxed;
+
+            if (updateExpr.Prefix)
+            {
+                resultTempVar = updatedBoxed;
+                return true;
+            }
+
+            resultTempVar = originalSnapshotForPostfix!.Value;
+            return true;
         }
 
         // Only support numeric locals (double) for now
@@ -1623,6 +1720,22 @@ public sealed class HIRToLIRLowerer
         // Postfix returns the original value.
         resultTempVar = boxedOriginalForPostfix!.Value;
         return true;
+    }
+
+    private TempVariable EnsureNumber(TempVariable tempVar)
+    {
+        var storage = GetTempStorage(tempVar);
+
+        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
+        {
+            return tempVar;
+        }
+
+        // Dynamic numeric coercion: object -> double via runtime helper.
+        var numberTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConvertToNumber(EnsureObject(tempVar), numberTempVar));
+        DefineTempStorage(numberTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        return numberTempVar;
     }
 
     private bool TryLowerAssignmentExpression(HIRAssignmentExpression assignExpr, out TempVariable resultTempVar)

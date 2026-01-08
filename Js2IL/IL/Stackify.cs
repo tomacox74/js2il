@@ -278,6 +278,25 @@ internal static class Stackify
             case LIRNegateNumber:
                 return true;
 
+            // LIRConvertToNumber can be emitted inline if its source can be emitted inline
+            // AND the source is not backed by a variable slot that could be modified.
+            // This mirrors the postfix increment safety rule used for LIRConvertToObject.
+            case LIRConvertToNumber convertToNumber:
+                var numSourceIdx = convertToNumber.Source.Index;
+                if (numSourceIdx >= 0 && numSourceIdx < methodBody.TempVariableSlots.Count && methodBody.TempVariableSlots[numSourceIdx] >= 0)
+                {
+                    var varSlot = methodBody.TempVariableSlots[numSourceIdx];
+                    if (!methodBody.SingleAssignmentSlots.Contains(varSlot))
+                    {
+                        return false;
+                    }
+                }
+                if (numSourceIdx >= 0 && numSourceIdx < defInstruction.Length && defInstruction[numSourceIdx] != null)
+                {
+                    return CanEmitInline(defInstruction[numSourceIdx]!, methodBody, defInstruction);
+                }
+                return false;
+
             // LIRBuildArray creates an array and initializes elements inline.
             // Safe to inline if all element temps can be emitted inline.
             // Used for call arguments (e.g., console.log) where array is consumed immediately.
@@ -484,6 +503,7 @@ internal static class Stackify
 
             // Unary ops: consume 1, produce 1
             case LIRConvertToObject:
+            case LIRConvertToNumber:
             case LIRTypeof:
             case LIRNegateNumber:
             case LIRBitwiseNotNumber:

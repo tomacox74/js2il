@@ -156,69 +156,70 @@
 	{
 		// Method begins at RVA 0x20e0
 		// Header size: 12
-		// Code size: 140 (0x8c)
+		// Code size: 125 (0x7d)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction/ArrowFunction_nestedFunction,
-			[1] object
+			[0] string,
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
-		IL_0000: newobj instance void Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction/ArrowFunction_nestedFunction::.ctor()
+		IL_0000: ldstr "inner"
 		IL_0005: stloc.0
-		IL_0006: ldstr "inner"
+		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_000b: stloc.1
-		IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0011: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0016: ldc.i4.2
-		IL_0017: newarr [System.Runtime]System.Object
-		IL_001c: dup
-		IL_001d: ldc.i4.0
-		IL_001e: ldstr "Global:"
-		IL_0023: stelem.ref
-		IL_0024: dup
-		IL_0025: ldc.i4.1
-		IL_0026: ldarg.0
-		IL_0027: ldc.i4.0
-		IL_0028: ldelem.ref
-		IL_0029: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes
-		IL_002e: ldfld object Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes::globalVar
-		IL_0033: stelem.ref
-		IL_0034: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0039: pop
-		IL_003a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_003f: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0044: ldc.i4.2
-		IL_0045: newarr [System.Runtime]System.Object
-		IL_004a: dup
-		IL_004b: ldc.i4.0
-		IL_004c: ldstr "Outer:"
-		IL_0051: stelem.ref
-		IL_0052: dup
-		IL_0053: ldc.i4.1
-		IL_0054: ldarg.0
-		IL_0055: ldc.i4.1
-		IL_0056: ldelem.ref
-		IL_0057: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction
-		IL_005c: ldfld object Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction::outerVar
-		IL_0061: stelem.ref
-		IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0067: pop
-		IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_006d: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0072: ldc.i4.2
-		IL_0073: newarr [System.Runtime]System.Object
-		IL_0078: dup
-		IL_0079: ldc.i4.0
-		IL_007a: ldstr "Inner:"
-		IL_007f: stelem.ref
-		IL_0080: dup
-		IL_0081: ldc.i4.1
-		IL_0082: ldloc.1
-		IL_0083: stelem.ref
-		IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0089: pop
-		IL_008a: ldnull
-		IL_008b: ret
+		IL_000c: ldloc.1
+		IL_000d: ldc.i4.2
+		IL_000e: newarr [System.Runtime]System.Object
+		IL_0013: dup
+		IL_0014: ldc.i4.0
+		IL_0015: ldstr "Global:"
+		IL_001a: stelem.ref
+		IL_001b: dup
+		IL_001c: ldc.i4.1
+		IL_001d: ldarg.0
+		IL_001e: ldc.i4.0
+		IL_001f: ldelem.ref
+		IL_0020: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes
+		IL_0025: ldfld object Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes::globalVar
+		IL_002a: stelem.ref
+		IL_002b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0030: pop
+		IL_0031: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0036: stloc.1
+		IL_0037: ldloc.1
+		IL_0038: ldc.i4.2
+		IL_0039: newarr [System.Runtime]System.Object
+		IL_003e: dup
+		IL_003f: ldc.i4.0
+		IL_0040: ldstr "Outer:"
+		IL_0045: stelem.ref
+		IL_0046: dup
+		IL_0047: ldc.i4.1
+		IL_0048: ldarg.0
+		IL_0049: ldc.i4.1
+		IL_004a: ldelem.ref
+		IL_004b: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction
+		IL_0050: ldfld object Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction::outerVar
+		IL_0055: stelem.ref
+		IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_005b: pop
+		IL_005c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0061: stloc.1
+		IL_0062: ldloc.1
+		IL_0063: ldc.i4.2
+		IL_0064: newarr [System.Runtime]System.Object
+		IL_0069: dup
+		IL_006a: ldc.i4.0
+		IL_006b: ldstr "Inner:"
+		IL_0070: stelem.ref
+		IL_0071: dup
+		IL_0072: ldc.i4.1
+		IL_0073: ldloc.0
+		IL_0074: stelem.ref
+		IL_0075: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_007a: pop
+		IL_007b: ldnull
+		IL_007c: ret
 	} // end of method ArrowFunction_L6C28::ArrowFunction_L6C28
 
 } // end of class Functions.ArrowFunction_L6C28
@@ -236,7 +237,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2178
+		// Method begins at RVA 0x216c
 		// Header size: 12
 		// Code size: 79 (0x4f)
 		.maxstack 32
@@ -291,7 +292,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21d3
+		// Method begins at RVA 0x21c7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -397,7 +397,7 @@ public class EnvironmentLayoutBuilderTests
         // Assert - outermost (global) should be first, then outer
         Assert.True(layout.ScopeChain.Length >= 2);
         Assert.Equal("test", layout.ScopeChain.Slots[0].ScopeName); // global scope
-        Assert.Equal("outer", layout.ScopeChain.Slots[1].ScopeName);
+        Assert.Equal("test/outer", layout.ScopeChain.Slots[1].ScopeName);
     }
 
     [Fact]

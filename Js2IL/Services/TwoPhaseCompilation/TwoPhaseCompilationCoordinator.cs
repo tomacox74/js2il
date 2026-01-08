@@ -1305,7 +1305,7 @@ public sealed class TwoPhaseCompilationCoordinator
         }
 
         // Build a Variables for the parent function scope with its own parent chain
-        // Use the same naming convention as TypeGenerator.GetRegistryScopeName():
+        // Use the same naming convention as ScopeNaming.GetRegistryScopeName():
         // {moduleName}/{scopeName} for non-global scopes
         var parentScopeName = $"{moduleName}/{parentScope.Name}";
         

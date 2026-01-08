@@ -127,29 +127,36 @@
 	{
 		// Method begins at RVA 0x20b4
 		// Header size: 12
-		// Code size: 60 (0x3c)
+		// Code size: 63 (0x3f)
 		.maxstack 32
+		.locals init (
+			[0] object,
+			[1] object
+		)
 
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.1
 		IL_0002: ldelem.ref
 		IL_0003: castclass Scopes.Function_ClosureMutatesOuterVariable/createCounter
-		IL_0008: ldarg.0
-		IL_0009: ldc.i4.1
-		IL_000a: ldelem.ref
-		IL_000b: castclass Scopes.Function_ClosureMutatesOuterVariable/createCounter
-		IL_0010: ldfld object Scopes.Function_ClosureMutatesOuterVariable/createCounter::count
-		IL_0015: unbox.any [System.Runtime]System.Double
-		IL_001a: ldc.r8 1
-		IL_0023: add
-		IL_0024: box [System.Runtime]System.Double
-		IL_0029: stfld object Scopes.Function_ClosureMutatesOuterVariable/createCounter::count
-		IL_002e: ldarg.0
-		IL_002f: ldc.i4.1
-		IL_0030: ldelem.ref
-		IL_0031: castclass Scopes.Function_ClosureMutatesOuterVariable/createCounter
-		IL_0036: ldfld object Scopes.Function_ClosureMutatesOuterVariable/createCounter::count
-		IL_003b: ret
+		IL_0008: ldfld object Scopes.Function_ClosureMutatesOuterVariable/createCounter::count
+		IL_000d: stloc.0
+		IL_000e: ldloc.0
+		IL_000f: ldc.r8 1
+		IL_0018: box [System.Runtime]System.Double
+		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0022: stloc.1
+		IL_0023: ldarg.0
+		IL_0024: ldc.i4.1
+		IL_0025: ldelem.ref
+		IL_0026: castclass Scopes.Function_ClosureMutatesOuterVariable/createCounter
+		IL_002b: ldloc.1
+		IL_002c: stfld object Scopes.Function_ClosureMutatesOuterVariable/createCounter::count
+		IL_0031: ldarg.0
+		IL_0032: ldc.i4.1
+		IL_0033: ldelem.ref
+		IL_0034: castclass Scopes.Function_ClosureMutatesOuterVariable/createCounter
+		IL_0039: ldfld object Scopes.Function_ClosureMutatesOuterVariable/createCounter::count
+		IL_003e: ret
 	} // end of method Function_ClosureMutatesOuterVariable::increment
 
 } // end of class Functions.Function_ClosureMutatesOuterVariable
@@ -167,7 +174,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20fc
+		// Method begins at RVA 0x2100
 		// Header size: 12
 		// Code size: 280 (0x118)
 		.maxstack 32
@@ -310,7 +317,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2220
+		// Method begins at RVA 0x2224
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

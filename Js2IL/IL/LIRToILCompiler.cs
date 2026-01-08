@@ -473,6 +473,25 @@ internal sealed class LIRToILCompiler
 
                 EmitStoreTemp(convertToObject.Result, ilEncoder, allocation);
                 break;
+
+            case LIRConvertToNumber convertToNumber:
+                if (!IsMaterialized(convertToNumber.Result, allocation))
+                {
+                    break;
+                }
+
+                // Convert boxed/object value to JS number (double) using runtime coercion.
+                EmitLoadTempAsObject(convertToNumber.Source, ilEncoder, allocation, methodDescriptor);
+                {
+                    var toNumberMref = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.TypeUtilities),
+                        nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                        parameterTypes: new[] { typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(toNumberMref);
+                }
+                EmitStoreTemp(convertToNumber.Result, ilEncoder, allocation);
+                break;
             case LIRTypeof:
                 if (!IsMaterialized(((LIRTypeof)instruction).Result, allocation))
                 {
@@ -1313,6 +1332,18 @@ internal sealed class LIRToILCompiler
                 else
                 {
                     ilEncoder.Token(_bclReferences.DoubleType);
+                }
+                break;
+            case LIRConvertToNumber convertToNumber:
+                // Emit inline: load as object, call TypeUtilities.ToNumber(object)
+                EmitLoadTempAsObject(convertToNumber.Source, ilEncoder, allocation, methodDescriptor);
+                {
+                    var toNumberMref = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.TypeUtilities),
+                        nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                        parameterTypes: new[] { typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(toNumberMref);
                 }
                 break;
             case LIRMulDynamic mulDynamic:

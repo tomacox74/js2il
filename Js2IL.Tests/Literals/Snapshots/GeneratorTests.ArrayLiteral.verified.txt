@@ -60,64 +60,67 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 126 (0x7e)
+		// Code size: 134 (0x86)
 		.maxstack 32
 		.locals init (
-			[0] object,
-			[1] float64,
-			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[3] object
+			[0] class Scopes.ArrayLiteral,
+			[1] object,
+			[2] float64,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[4] object
 		)
 
-		IL_0000: ldc.i4.3
-		IL_0001: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0006: dup
-		IL_0007: ldstr "cat"
-		IL_000c: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0011: dup
-		IL_0012: ldstr "dog"
-		IL_0017: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_001c: dup
-		IL_001d: ldstr "dotnet bot"
-		IL_0022: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0027: stloc.0
-		IL_0028: ldc.r8 0.0
-		IL_0031: stloc.1
-		// loop start (head: IL_0032)
-			IL_0032: ldloc.1
-			IL_0033: ldloc.0
-			IL_0034: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_0039: clt
-			IL_003b: brfalse IL_007d
+		IL_0000: newobj instance void Scopes.ArrayLiteral::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.i4.3
+		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_000c: dup
+		IL_000d: ldstr "cat"
+		IL_0012: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0017: dup
+		IL_0018: ldstr "dog"
+		IL_001d: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0022: dup
+		IL_0023: ldstr "dotnet bot"
+		IL_0028: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_002d: stloc.1
+		IL_002e: ldc.r8 0.0
+		IL_0037: stloc.2
+		// loop start (head: IL_0038)
+			IL_0038: ldloc.2
+			IL_0039: ldloc.1
+			IL_003a: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_003f: clt
+			IL_0041: brfalse IL_0085
 
-			IL_0040: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0045: stloc.2
-			IL_0046: ldloc.1
-			IL_0047: box [System.Runtime]System.Double
-			IL_004c: stloc.3
-			IL_004d: ldloc.2
-			IL_004e: ldc.i4.2
-			IL_004f: newarr [System.Runtime]System.Object
-			IL_0054: dup
-			IL_0055: ldc.i4.0
-			IL_0056: ldstr ""
-			IL_005b: stelem.ref
-			IL_005c: dup
-			IL_005d: ldc.i4.1
-			IL_005e: ldloc.0
-			IL_005f: ldloc.3
-			IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0065: stelem.ref
-			IL_0066: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_006b: pop
-			IL_006c: ldloc.1
-			IL_006d: ldc.r8 1
-			IL_0076: add
-			IL_0077: stloc.1
-			IL_0078: br IL_0032
+			IL_0046: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_004b: stloc.3
+			IL_004c: ldloc.2
+			IL_004d: box [System.Runtime]System.Double
+			IL_0052: stloc.s 4
+			IL_0054: ldloc.3
+			IL_0055: ldc.i4.2
+			IL_0056: newarr [System.Runtime]System.Object
+			IL_005b: dup
+			IL_005c: ldc.i4.0
+			IL_005d: ldstr ""
+			IL_0062: stelem.ref
+			IL_0063: dup
+			IL_0064: ldc.i4.1
+			IL_0065: ldloc.1
+			IL_0066: ldloc.s 4
+			IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_006d: stelem.ref
+			IL_006e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0073: pop
+			IL_0074: ldloc.2
+			IL_0075: ldc.r8 1
+			IL_007e: add
+			IL_007f: stloc.2
+			IL_0080: br IL_0038
 		// end loop
 
-		IL_007d: ret
+		IL_0085: ret
 	} // end of method ArrayLiteral::Main
 
 } // end of class Scripts.ArrayLiteral
@@ -129,7 +132,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ee
+		// Method begins at RVA 0x20f6
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

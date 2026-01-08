@@ -397,7 +397,7 @@ internal sealed class JsMethodCompiler
 
         if (!HIRToLIRLowerer.TryLower(hirMethod!, scope, _scopeMetadataRegistry, out var lirMethod))
         {
-            IR.IRPipelineMetrics.RecordFailure("HIR->LIR lowering failed");
+            IR.IRPipelineMetrics.RecordFailure($"HIR->LIR lowering failed for scope '{scope.GetQualifiedName()}' (kind={scope.Kind}) node={node.Type}");
             return false;
         }
 
