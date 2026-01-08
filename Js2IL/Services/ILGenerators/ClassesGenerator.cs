@@ -31,6 +31,29 @@ namespace Js2IL.Services.ILGenerators
             _variables = variables ?? throw new ArgumentNullException(nameof(variables));
         }
 
+        private string GetRegistryClassName(Scope classScope)
+        {
+            if (classScope == null) throw new ArgumentNullException(nameof(classScope));
+            var ns = classScope.DotNetNamespace ?? "Classes";
+            var name = classScope.DotNetTypeName ?? classScope.Name;
+            return $"{ns}.{name}";
+        }
+
+        private string GetClassDeclaringScopeName(Scope classScope)
+        {
+            if (classScope == null) throw new ArgumentNullException(nameof(classScope));
+            var moduleName = _variables.GetGlobalScopeName();
+            var parent = classScope.Parent;
+            if (parent == null || parent.Kind == ScopeKind.Global)
+            {
+                return moduleName;
+            }
+
+            // CallableDiscovery uses module-qualified scope paths (e.g., "<module>/<function>").
+            // Scope.GetQualifiedName() omits the global scope, so prefix with module.
+            return $"{moduleName}/{parent.GetQualifiedName()}";
+        }
+
         /// <summary>
         /// Determines which parent scopes will be available to a class method at runtime.
         /// Walks the scope tree from classScope up to global to build the ordered list.
@@ -95,6 +118,10 @@ namespace Js2IL.Services.ILGenerators
         {
             var callableRegistry = _serviceProvider.GetRequiredService<CallableRegistry>();
 
+            var jsClassName = classScope.Name;
+            var registryClassName = GetRegistryClassName(classScope);
+            var declaringScopeName = GetClassDeclaringScopeName(classScope);
+
             var ns = classScope.DotNetNamespace ?? "Classes";
             var name = classScope.DotNetTypeName ?? classScope.Name;
             var tb = new TypeBuilder(_metadata, ns, name);
@@ -148,12 +175,12 @@ namespace Js2IL.Services.ILGenerators
                         if (pdef.Static)
                         {
                             var fh = tb.AddFieldDefinition(FieldAttributes.Private | FieldAttributes.Static, emittedName, fSigHandle);
-                            _classRegistry.RegisterStaticField(classScope.Name, pname, fh);
+                            _classRegistry.RegisterStaticField(registryClassName, pname, fh);
                         }
                         else
                         {
                             var fh = tb.AddFieldDefinition(FieldAttributes.Private, emittedName, fSigHandle);
-                            _classRegistry.RegisterPrivateField(classScope.Name, pname, fh);
+                            _classRegistry.RegisterPrivateField(registryClassName, pname, fh);
                         }
                         declaredFieldNames.Add(pname);
                     }
@@ -162,12 +189,12 @@ namespace Js2IL.Services.ILGenerators
                         if (pdef.Static)
                         {
                             var fh = tb.AddFieldDefinition(FieldAttributes.Public | FieldAttributes.Static, pid.Name, fSigHandle);
-                            _classRegistry.RegisterStaticField(classScope.Name, pid.Name, fh);
+                            _classRegistry.RegisterStaticField(registryClassName, pid.Name, fh);
                         }
                         else
                         {
                             var fh = tb.AddFieldDefinition(FieldAttributes.Public, pid.Name, fSigHandle);
-                            _classRegistry.RegisterField(classScope.Name, pid.Name, fh);
+                            _classRegistry.RegisterField(registryClassName, pid.Name, fh);
                         }
                         declaredFieldNames.Add(pid.Name);
                     }
@@ -181,7 +208,7 @@ namespace Js2IL.Services.ILGenerators
                 new BlobEncoder(scopesSig).Field().Type().SZArray().Object();
                 var scopesSigHandle = _metadata.GetOrAddBlob(scopesSig);
                 scopesField = tb.AddFieldDefinition(FieldAttributes.Private, "_scopes", scopesSigHandle);
-                _classRegistry.RegisterPrivateField(classScope.Name, "_scopes", scopesField.Value);
+                _classRegistry.RegisterPrivateField(registryClassName, "_scopes", scopesField.Value);
             }
 
             // Pre-scan methods for this.<prop> assignments (same as legacy) to declare backing fields.
@@ -236,7 +263,7 @@ namespace Js2IL.Services.ILGenerators
                             new BlobEncoder(fSig).Field().Type().Object();
                             var fSigHandle = _metadata.GetOrAddBlob(fSig);
                             var fh = tb.AddFieldDefinition(FieldAttributes.Public, prop, fSigHandle);
-                            _classRegistry.RegisterField(classScope.Name, prop, fh);
+                            _classRegistry.RegisterField(registryClassName, prop, fh);
                             declaredFieldNames.Add(prop);
                         }
                     }
@@ -247,6 +274,13 @@ namespace Js2IL.Services.ILGenerators
             MethodDefinitionHandle? firstMethod = null;
             foreach (var id in callableRegistry.AllCallables)
             {
+                // CallableRegistry is shared across modules; class names may collide across modules.
+                // Restrict matching to this class's declaring scope (module-qualified) to avoid collisions.
+                if (!string.Equals(id.DeclaringScopeName, declaringScopeName, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
                 if (id.Kind is not (
                     CallableKind.ClassConstructor or
                     CallableKind.ClassMethod or
@@ -285,12 +319,12 @@ namespace Js2IL.Services.ILGenerators
             {
                 _metadata.AddNestedType(typeHandle, parentType);
             }
-            _classRegistry.Register(classScope.Name, typeHandle);
+            _classRegistry.Register(registryClassName, typeHandle);
 
             // Two-phase: register constructor + instance method signatures/parameter counts so call sites can resolve
             // without requiring bodies to be compiled yet.
             // Note: static methods are not currently part of the direct callvirt optimization paths.
-            var className = classScope.Name;
+            var className = registryClassName;
 
             // Constructor
             var ctorMember = cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>()
@@ -309,7 +343,10 @@ namespace Js2IL.Services.ILGenerators
             else
             {
                 // Default constructor callable (synthetic) - find by name
-                var ctorId = callableRegistry.AllCallables.FirstOrDefault(c => c.Kind == CallableKind.ClassConstructor && string.Equals(c.Name, className, StringComparison.Ordinal));
+                var ctorId = callableRegistry.AllCallables.FirstOrDefault(c =>
+                    c.Kind == CallableKind.ClassConstructor &&
+                    string.Equals(c.DeclaringScopeName, declaringScopeName, StringComparison.Ordinal) &&
+                    string.Equals(c.Name, jsClassName, StringComparison.Ordinal));
                 if (ctorId != null && callableRegistry.TryGetDeclaredToken(ctorId, out var ctorTok) && ctorTok.Kind == HandleKind.MethodDefinition)
                 {
                     ctorHandle = (MethodDefinitionHandle)ctorTok;
@@ -391,6 +428,7 @@ namespace Js2IL.Services.ILGenerators
 
         private TypeDefinitionHandle EmitClass(Scope classScope, ClassDeclaration cdecl, TypeDefinitionHandle parentType)
         {
+            var registryClassName = GetRegistryClassName(classScope);
             // Resolve authoritative .NET names from symbol table; fall back if absent
             var ns = classScope.DotNetNamespace ?? "Classes";
             var name = classScope.DotNetTypeName ?? classScope.Name;
@@ -457,13 +495,13 @@ namespace Js2IL.Services.ILGenerators
                         {
                             var fh = tb.AddFieldDefinition(FieldAttributes.Private | FieldAttributes.Static, emittedName, fSigHandle);
                             // Track static private separately if needed later; for now reuse RegisterStaticField
-                            _classRegistry.RegisterStaticField(classScope.Name, pname, fh);
+                            _classRegistry.RegisterStaticField(registryClassName, pname, fh);
                             staticFieldsWithInits.Add((fh, pdef.Value as Expression));
                         }
                         else
                         {
                             var fh = tb.AddFieldDefinition(FieldAttributes.Private, emittedName, fSigHandle);
-                            _classRegistry.RegisterPrivateField(classScope.Name, pname, fh);
+                            _classRegistry.RegisterPrivateField(registryClassName, pname, fh);
                             fieldsWithInits.Add((fh, pdef.Value as Expression));
                         }
                         declaredFieldNames.Add(pname);
@@ -474,13 +512,13 @@ namespace Js2IL.Services.ILGenerators
                         if (pdef.Static)
                         {
                             var fh = tb.AddFieldDefinition(FieldAttributes.Public | FieldAttributes.Static, pid.Name, fSigHandle);
-                            _classRegistry.RegisterStaticField(classScope.Name, pid.Name, fh);
+                            _classRegistry.RegisterStaticField(registryClassName, pid.Name, fh);
                             staticFieldsWithInits.Add((fh, pdef.Value as Expression));
                         }
                         else
                         {
                             var fh = tb.AddFieldDefinition(FieldAttributes.Public, pid.Name, fSigHandle);
-                            _classRegistry.RegisterField(classScope.Name, pid.Name, fh);
+                            _classRegistry.RegisterField(registryClassName, pid.Name, fh);
                             fieldsWithInits.Add((fh, pdef.Value as Expression));
                         }
                         declaredFieldNames.Add(pid.Name);
@@ -496,7 +534,7 @@ namespace Js2IL.Services.ILGenerators
                 new BlobEncoder(scopesSig).Field().Type().SZArray().Object();
                 var scopesSigHandle = _metadata.GetOrAddBlob(scopesSig);
                 scopesField = tb.AddFieldDefinition(FieldAttributes.Private, "_scopes", scopesSigHandle);
-                _classRegistry.RegisterPrivateField(classScope.Name, "_scopes", scopesField.Value);
+                _classRegistry.RegisterPrivateField(registryClassName, "_scopes", scopesField.Value);
             }
 
 
@@ -552,7 +590,7 @@ namespace Js2IL.Services.ILGenerators
                             new BlobEncoder(fSig).Field().Type().Object();
                             var fSigHandle = _metadata.GetOrAddBlob(fSig);
                             var fh = tb.AddFieldDefinition(FieldAttributes.Public, prop, fSigHandle);
-                            _classRegistry.RegisterField(classScope.Name, prop, fh);
+                            _classRegistry.RegisterField(registryClassName, prop, fh);
                             declaredFieldNames.Add(prop);
                         }
                     }
@@ -575,7 +613,7 @@ namespace Js2IL.Services.ILGenerators
                 _metadata.AddNestedType(typeHandle, parentType);
             }
             // Register the class type for later lookup using the JS-visible identifier (scope name)
-            _classRegistry.Register(classScope.Name, typeHandle);
+            _classRegistry.Register(registryClassName, typeHandle);
 
             // Methods: create stubs for now; real method codegen will come later
             foreach (var element in cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>())
@@ -599,7 +637,7 @@ namespace Js2IL.Services.ILGenerators
                     .Parameters(0, r => r.Void(), p => { });
                 var cctorSig = _metadata.GetOrAddBlob(sigBuilder);
 
-                var ilGen = new ILMethodGenerator(_serviceProvider, _variables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: false, currentClassName: classScope.Name);
+                var ilGen = new ILMethodGenerator(_serviceProvider, _variables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: false, currentClassName: registryClassName);
 
                 // For each static field with an initializer: evaluate and stsfld
                 foreach (var (field, initExpr) in staticFieldsWithInits)
@@ -649,6 +687,8 @@ namespace Js2IL.Services.ILGenerators
             Scope classScope,
             bool needsScopes)
         {
+            var registryClassName = GetRegistryClassName(classScope);
+
             // Try the new IR-based compilation pipeline first for simple constructors
             if (ctorFunc != null && !needsScopes && fieldsWithInits.Count == 0)
             {
@@ -661,14 +701,14 @@ namespace Js2IL.Services.ILGenerators
                     if (!compiledCtor.IsNil)
                     {
                         // Successfully compiled via IR pipeline - signature is returned from TryCompileIRToIL
-                        _classRegistry.RegisterConstructor(classScope.Name, compiledCtor, ctorSignature, 0, 0);
+                        _classRegistry.RegisterConstructor(registryClassName, compiledCtor, ctorSignature, 0, 0);
                         return compiledCtor;
                     }
                 }
             }
 
             // Fallback to the old direct AST-to-IL code path
-            var className = classScope.Name;
+            var className = registryClassName;
             var userParamCount = ctorFunc?.Params.Count ?? 0;
             var totalParamCount = needsScopes ? userParamCount + 1 : userParamCount;
 
@@ -826,7 +866,7 @@ namespace Js2IL.Services.ILGenerators
     private MethodDefinitionHandle EmitMethod(TypeBuilder tb, Acornima.Ast.MethodDefinition element, Scope classScope)
         {
             var memberName = (element.Key as Identifier)?.Name ?? "method";
-            var className = classScope.Name;
+            var className = GetRegistryClassName(classScope);
             var funcExpr = element.Value as FunctionExpression;
 
             // Accessors are modeled as MethodDefinition with Kind Get/Set.

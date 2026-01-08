@@ -13,6 +13,13 @@ namespace Js2IL.Services.TwoPhaseCompilation;
 
 internal static class LegacyClassBodyCompiler
 {
+    private static string GetRegistryClassName(Variables variables, Scope classScope)
+    {
+        var ns = classScope.DotNetNamespace ?? "Classes";
+        var name = classScope.DotNetTypeName ?? classScope.Name;
+        return $"{ns}.{name}";
+    }
+
     private static List<string> DetermineParentScopesForClassMethod(Variables variables, Scope classScope)
     {
         var scopeNames = new List<string>();
@@ -57,7 +64,7 @@ internal static class LegacyClassBodyCompiler
     {
         if (expectedMethodDef.IsNil) throw new ArgumentException("Expected MethodDef cannot be nil.", nameof(expectedMethodDef));
 
-        var className = classScope.Name;
+        var className = GetRegistryClassName(rootVariables, classScope);
 
         // Build instance + static field initializer lists from the AST and registry.
         var fieldsWithInits = new List<(FieldDefinitionHandle Field, Expression? Init)>();
@@ -149,22 +156,71 @@ internal static class LegacyClassBodyCompiler
         if (ctorFunc != null)
         {
             ushort paramStartIndex = (ushort)(needsScopes ? 2 : 1);
+
+            // Default parameter values must be initialized before destructuring.
             ilGen.EmitDefaultParameterInitializers(ctorFunc.Params, parameterStartIndex: paramStartIndex);
 
-            bool hasDestructuredParams = ctorFunc.Params.Any(p => p is ObjectPattern);
-            bool needScopeInstance = hasDestructuredParams;
+            bool hasDestructuredParams = ctorFunc.Params.Any(p => p is ObjectPattern || (p is AssignmentPattern ap && ap.Left is ObjectPattern));
 
-            bool scopeCreated = false;
-            if (needScopeInstance && ctorFunc.Params.Count > 0)
+            // When destructuring parameters (or when this scope has field-backed vars), create the leaf scope instance
+            // and initialize parameter fields/destructured bindings before emitting the body.
+            var registry = methodVariables.GetVariableRegistry();
+            var fields = registry?.GetVariablesForScope(constructorScopeName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
+            var fieldNames = new HashSet<string>(fields.Select(f => f.Name));
+
+            bool createdLeafScope = false;
+            if (hasDestructuredParams || (registry != null && fields.Any()))
             {
-                // Reuse ILMethodGenerator helper via reflection? Keep minimal: let GenerateStatementsForBody create as needed.
-                scopeCreated = false;
+                ScopeInstanceEmitter.EmitCreateLeafScopeInstance(methodVariables, ilGen.IL, metadataBuilder);
+                createdLeafScope = true;
+
+                // Initialize captured identifier parameters into scope fields.
+                var localScope = methodVariables.GetLocalScopeSlot();
+                if (localScope.Address >= 0 && ctorFunc.Params.Count > 0)
+                {
+                    ushort jsParamSeq = paramStartIndex;
+                    for (int i = 0; i < ctorFunc.Params.Count; i++)
+                    {
+                        var paramNode = ctorFunc.Params[i];
+                        Identifier? pid = paramNode as Identifier;
+                        if (pid == null && paramNode is AssignmentPattern ap)
+                        {
+                            pid = ap.Left as Identifier;
+                        }
+
+                        if (pid != null && fieldNames.Contains(pid.Name) && registry != null)
+                        {
+                            ilGen.IL.LoadLocal(localScope.Address);
+                            ilGen.EmitLoadParameterWithDefault(paramNode, jsParamSeq);
+                            var fh = registry.GetFieldHandle(constructorScopeName, pid.Name);
+                            ilGen.IL.OpCode(ILOpCode.Stfld);
+                            ilGen.IL.Token(fh);
+                        }
+
+                        jsParamSeq++;
+                    }
+
+                    if (hasDestructuredParams)
+                    {
+                        // Destructure object-pattern parameters into scope fields/locals (supports defaults like { host = "localhost" }).
+                        MethodBuilder.EmitObjectPatternParameterDestructuring(
+                            metadataBuilder,
+                            ilGen.IL,
+                            ilGen.Runtime,
+                            methodVariables,
+                            constructorScopeName,
+                            ctorFunc.Params,
+                            ilGen.ExpressionEmitter,
+                            startingJsParamSeq: paramStartIndex,
+                            castScopeForStore: true);
+                    }
+                }
             }
 
             if (ctorFunc.Body is BlockStatement bstmt)
             {
-                bool shouldCreateScope = needScopeInstance && !scopeCreated;
-                ilGen.GenerateStatementsForBody(methodVariables.GetLeafScopeName(), shouldCreateScope, bstmt.Body);
+                // If we already created the scope, the body emitter must not create another one.
+                ilGen.GenerateStatementsForBody(methodVariables.GetLeafScopeName(), !createdLeafScope && hasDestructuredParams, bstmt.Body);
             }
         }
 
@@ -212,7 +268,7 @@ internal static class LegacyClassBodyCompiler
     {
         if (expectedMethodDef.IsNil) throw new ArgumentException("Expected MethodDef cannot be nil.", nameof(expectedMethodDef));
 
-        var className = classScope.Name;
+        var className = GetRegistryClassName(rootVariables, classScope);
 
         var funcExpr = methodDef.Value as FunctionExpression;
         var paramCount = funcExpr?.Params.Count ?? 0;
@@ -391,7 +447,7 @@ internal static class LegacyClassBodyCompiler
     {
         if (expectedMethodDef.IsNil) throw new ArgumentException("Expected MethodDef cannot be nil.", nameof(expectedMethodDef));
 
-        var className = classScope.Name;
+        var className = GetRegistryClassName(rootVariables, classScope);
 
         var sigBuilder = new BlobBuilder();
         new BlobEncoder(sigBuilder)

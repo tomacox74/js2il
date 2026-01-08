@@ -572,7 +572,12 @@ public sealed class TwoPhaseCompilationCoordinator
             throw new InvalidOperationException($"[TwoPhase] Class scope not found for callable: {callable.DisplayName}");
         }
 
-        return (classScope, classDecl, className);
+        // ClassRegistry keys use CLR full names (namespace + type) to avoid collisions across modules.
+        var ns = classScope.DotNetNamespace ?? "Classes";
+        var typeName = classScope.DotNetTypeName ?? classScope.Name;
+        var registryClassName = $"{ns}.{typeName}";
+
+        return (classScope, classDecl, registryClassName);
     }
 
     private static Scope ResolveScopeByPath(SymbolTable symbolTable, string scopePath)
