@@ -165,7 +165,7 @@
 	{
 		// Method begins at RVA 0x2140
 		// Header size: 12
-		// Code size: 253 (0xfd)
+		// Code size: 231 (0xe7)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Function_GlobalFunctionChangesGlobalVariableValue
@@ -215,54 +215,49 @@
 		IL_007a: castclass Scopes.Function_GlobalFunctionChangesGlobalVariableValue
 		IL_007f: ldfld object Scopes.Function_GlobalFunctionChangesGlobalVariableValue::changeGlobalValues
 		IL_0084: dup
-		IL_0085: brtrue.s IL_00aa
+		IL_0085: brtrue.s IL_008e
 
 		IL_0087: pop
-		IL_0088: ldloc.0
-		IL_0089: ldnull
-		IL_008a: ldftn object Functions.Function_GlobalFunctionChangesGlobalVariableValue::changeGlobalValues(object[])
-		IL_0090: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0095: stfld object Scopes.Function_GlobalFunctionChangesGlobalVariableValue::changeGlobalValues
-		IL_009a: ldloc.0
-		IL_009b: castclass Scopes.Function_GlobalFunctionChangesGlobalVariableValue
-		IL_00a0: ldfld object Scopes.Function_GlobalFunctionChangesGlobalVariableValue::changeGlobalValues
-		IL_00a5: br IL_00aa
+		IL_0088: ldnull
+		IL_0089: br IL_008e
 
-		IL_00aa: ldc.i4.1
-		IL_00ab: newarr [System.Runtime]System.Object
-		IL_00b0: dup
-		IL_00b1: ldc.i4.0
-		IL_00b2: ldloc.0
-		IL_00b3: stelem.ref
-		IL_00b4: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_00b9: pop
-		IL_00ba: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00bf: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_00c4: ldc.i4.4
-		IL_00c5: newarr [System.Runtime]System.Object
+		IL_008e: ldc.i4.1
+		IL_008f: newarr [System.Runtime]System.Object
+		IL_0094: dup
+		IL_0095: ldc.i4.0
+		IL_0096: ldloc.0
+		IL_0097: stelem.ref
+		IL_0098: ldc.i4.0
+		IL_0099: newarr [System.Runtime]System.Object
+		IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_00a3: pop
+		IL_00a4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a9: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_00ae: ldc.i4.4
+		IL_00af: newarr [System.Runtime]System.Object
+		IL_00b4: dup
+		IL_00b5: ldc.i4.0
+		IL_00b6: ldstr "End - counter:"
+		IL_00bb: stelem.ref
+		IL_00bc: dup
+		IL_00bd: ldc.i4.1
+		IL_00be: ldloc.0
+		IL_00bf: castclass Scopes.Function_GlobalFunctionChangesGlobalVariableValue
+		IL_00c4: ldfld object Scopes.Function_GlobalFunctionChangesGlobalVariableValue::counter
+		IL_00c9: stelem.ref
 		IL_00ca: dup
-		IL_00cb: ldc.i4.0
-		IL_00cc: ldstr "End - counter:"
+		IL_00cb: ldc.i4.2
+		IL_00cc: ldstr "message:"
 		IL_00d1: stelem.ref
 		IL_00d2: dup
-		IL_00d3: ldc.i4.1
+		IL_00d3: ldc.i4.3
 		IL_00d4: ldloc.0
 		IL_00d5: castclass Scopes.Function_GlobalFunctionChangesGlobalVariableValue
-		IL_00da: ldfld object Scopes.Function_GlobalFunctionChangesGlobalVariableValue::counter
+		IL_00da: ldfld object Scopes.Function_GlobalFunctionChangesGlobalVariableValue::message
 		IL_00df: stelem.ref
-		IL_00e0: dup
-		IL_00e1: ldc.i4.2
-		IL_00e2: ldstr "message:"
-		IL_00e7: stelem.ref
-		IL_00e8: dup
-		IL_00e9: ldc.i4.3
-		IL_00ea: ldloc.0
-		IL_00eb: castclass Scopes.Function_GlobalFunctionChangesGlobalVariableValue
-		IL_00f0: ldfld object Scopes.Function_GlobalFunctionChangesGlobalVariableValue::message
-		IL_00f5: stelem.ref
-		IL_00f6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00fb: pop
-		IL_00fc: ret
+		IL_00e0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00e5: pop
+		IL_00e6: ret
 	} // end of method Function_GlobalFunctionChangesGlobalVariableValue::Main
 
 } // end of class Scripts.Function_GlobalFunctionChangesGlobalVariableValue
@@ -274,7 +269,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2249
+		// Method begins at RVA 0x2233
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
