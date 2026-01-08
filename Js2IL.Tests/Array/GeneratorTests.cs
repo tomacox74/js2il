@@ -7,7 +7,7 @@ namespace Js2IL.Tests.Array
         public GeneratorTests() : base("Array") { }
 
         [Fact]
-        public Task Array_AsArray_Ternary() { var testName = nameof(Array_AsArray_Ternary); return GenerateTest(testName); }
+        public Task Array_AsArray_Ternary() { var testName = nameof(Array_AsArray_Ternary); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
         public Task Array_EmptyLength_IsZero() { var testName = nameof(Array_EmptyLength_IsZero); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
