@@ -22,36 +22,13 @@ public static class HIRBuilder
         switch (node)
         {
             case Acornima.Ast.Program programAst:
-                // IR pipeline supports captured variable reads (Phase 1) but writes require proper
-                // scope instance creation and scopes array materialization at call sites.
-                // Fall back to legacy emitter when any variable in the current scope is captured
-                // to ensure proper closure semantics until Phase 3 (scopes materialization) is complete.
-                if (scope.Bindings.Values.Any(b => b.IsCaptured))
-                {
-                    method = null!;
-                    return false;
-                }
                 var builder = new HIRMethodBuilder(scope);
                 return builder.TryParseStatements(programAst.Body, out method);
             case Acornima.Ast.BlockStatement blockStmt:
-                // Fall back to legacy emitter for closures (accessing parent scope variables or own captured variables)
-                // until Phase 3 (scopes materialization at call sites) is complete
-                if (scope.ReferencesParentScopeVariables || scope.Bindings.Values.Any(b => b.IsCaptured))
-                {
-                    method = null!;
-                    return false;
-                }
                 // Parse block statements by processing their body statements
                 var blockBuilder = new HIRMethodBuilder(scope);
                 return blockBuilder.TryParseStatements(blockStmt.Body, out method);
             case Acornima.Ast.MethodDefinition classMethodDef:
-                // Fall back to legacy emitter for closures (accessing parent scope variables or own captured variables)
-                // until Phase 3 (scopes materialization at call sites) is complete
-                if (scope.ReferencesParentScopeVariables || scope.Bindings.Values.Any(b => b.IsCaptured))
-                {
-                    method = null!;
-                    return false;
-                }
                 var methodFuncExpr = classMethodDef.Value as FunctionExpression;                
                 var methodBuilder = new HIRMethodBuilder(scope);
                 return methodBuilder.TryParseStatements(methodFuncExpr.Body.Body, out method);
@@ -70,13 +47,6 @@ public static class HIRBuilder
                     method = null!;
                     return false;
                 }
-                // Fall back to legacy emitter for closures (accessing parent scope variables or own captured variables)
-                // until Phase 3 (scopes materialization at call sites) is complete
-                if (scope.ReferencesParentScopeVariables || scope.Bindings.Values.Any(b => b.IsCaptured))
-                {
-                    method = null!;
-                    return false;
-                }
                 var arrowBuilder = new HIRMethodBuilder(scope);
                 return arrowBuilder.TryParseStatements(arrowBlock.Body, out method);
             case Acornima.Ast.FunctionExpression funcExpr:
@@ -88,13 +58,6 @@ public static class HIRBuilder
                     return false;
                 }
                 if (funcExpr.Body is not BlockStatement funcBlock)
-                {
-                    method = null!;
-                    return false;
-                }
-                // Fall back to legacy emitter for closures (accessing parent scope variables or own captured variables)
-                // until Phase 3 (scopes materialization at call sites) is complete
-                if (scope.ReferencesParentScopeVariables || scope.Bindings.Values.Any(b => b.IsCaptured))
                 {
                     method = null!;
                     return false;

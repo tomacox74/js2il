@@ -236,6 +236,9 @@ internal static class TempLocalAllocator
             case LIRConvertToObject conv:
                 yield return conv.Source;
                 break;
+            case LIRConvertToNumber convNum:
+                yield return convNum.Source;
+                break;
             case LIRTypeof t:
                 yield return t.Value;
                 break;
@@ -462,6 +465,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRConvertToObject conv:
                 defined = conv.Result;
+                return true;
+            case LIRConvertToNumber convNum:
+                defined = convNum.Result;
                 return true;
             case LIRTypeof t:
                 defined = t.Result;
