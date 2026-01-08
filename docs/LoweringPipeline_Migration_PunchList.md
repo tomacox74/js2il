@@ -101,18 +101,18 @@ Based on the legacy emitters:
 - [x] PL1.1 Enable new pipeline for methods where `scope.ReferencesParentScopeVariables` is true.
 - [x] PL1.2 Enable new pipeline for scopes that contain captured bindings (`IsCaptured == true`).
 - [x] PL1.3 Audit + complete captured-variable *writes* semantics (reads/writes must agree with legacy closure behavior).
-- [ ] PL1.4 Ensure leaf scope instance creation is correct in all cases:
-  - [ ] PL1.4a create leaf scope instance exactly when required (and only once)
-  - [ ] PL1.4b correct leaf local lifetime across control-flow and loops
+- [x] PL1.4 Ensure leaf scope instance creation is correct in all cases:
+  - [x] PL1.4a create leaf scope instance exactly when required (and only once)
+  - [x] PL1.4b correct leaf local lifetime across control-flow and loops
 - [ ] PL1.5 Ensure call sites always build the correct scopes array for callee requirements:
-  - [ ] PL1.5a direct calls (`f(...)`)
-  - [ ] PL1.5b calls via variables / re-assignment
-  - [ ] PL1.5c nested functions and function expressions used as values
-  - [ ] PL1.5d class method calls that access parent scopes
-- [ ] PL1.6 Confirm the scopes source selection is correct for:
-  - [ ] PL1.6a static methods (scopes passed as arg)
-  - [ ] PL1.6b instance methods (scopes loaded from `this._scopes`)
-- [ ] PL1.7 Expand execution tests for closures (both reads and writes across nesting levels).
+  - [x] PL1.5a direct calls (`f(...)`)
+  - [ ] PL1.5b calls via variables / re-assignment (blocked on IR support for function values / rebinding)
+  - [ ] PL1.5c nested functions and function expressions used as values (blocked on IR support for FunctionExpression/ArrowFunctionExpression as values)
+  - [x] PL1.5d class method calls that access parent scopes
+- [x] PL1.6 Confirm the scopes source selection is correct for:
+  - [x] PL1.6a static methods (scopes passed as arg)
+  - [x] PL1.6b instance methods (scopes loaded from `this._scopes`)
+- [x] PL1.7 Expand execution tests for closures (both reads and writes across nesting levels).
 
 ### 2) Expand HIR statement support to match legacy
 - [ ] PL2.1 `while` statements

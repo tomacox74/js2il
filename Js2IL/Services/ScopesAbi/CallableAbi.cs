@@ -67,8 +67,8 @@ public sealed record CallableAbi(
     {
         return new CallableAbi(
             IsInstanceMethod: false,
-            HasScopesParam: needsParentScopes,
-            ScopesSource: needsParentScopes ? ScopesSource.Argument : ScopesSource.None,
+            HasScopesParam: true,
+            ScopesSource: ScopesSource.Argument,
             JsParameterCount: jsParameterCount
         );
     }

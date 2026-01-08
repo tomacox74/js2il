@@ -62,7 +62,7 @@ public class EnvironmentLayoutBuilder
         };
 
         // Build scope chain layout (ancestor scopes from outermost to innermost)
-        var scopeChain = BuildScopeChainLayout(scope, layoutKind);
+        var scopeChain = BuildScopeChainLayout(scope, layoutKind, abi);
 
         // Build binding storage map
         var storageByBinding = BuildStorageMap(scope, scopeChain, kind);
@@ -78,10 +78,12 @@ public class EnvironmentLayoutBuilder
     /// <summary>
     /// Builds the scope chain layout for a callable.
     /// </summary>
-    private ScopeChainLayout BuildScopeChainLayout(Scope scope, ScopesLayoutKind layoutKind)
+    private ScopeChainLayout BuildScopeChainLayout(Scope scope, ScopesLayoutKind layoutKind, CallableAbi abi)
     {
-        // If this scope doesn't reference parent scopes, return empty chain
-        if (!scope.ReferencesParentScopeVariables)
+        // Only build a scope chain when the callable can access a scopes array at runtime.
+        // Functions always receive scopes (even if they don't reference parent variables),
+        // which is required so they can forward scopes to nested functions.
+        if (abi.ScopesSource == ScopesSource.None)
         {
             return ScopeChainLayout.Empty;
         }

@@ -59,6 +59,36 @@ public sealed class HIRToLIRLowerer
         // Emit default parameter initializers for parameters with defaults
         // If any fail, mark the initialization as failed (will cause TryLower to return false)
         _parameterInitSucceeded = EmitDefaultParameterInitializers();
+
+        // For captured identifier parameters, initialize the corresponding leaf-scope fields.
+        // This must happen after default parameter initialization so the final value is stored.
+        // Without this, nested functions reading captured parameters will observe null.
+        if (_parameterInitSucceeded)
+        {
+            EmitCapturedParameterFieldInitializers();
+        }
+    }
+
+    private void EmitCapturedParameterFieldInitializers()
+    {
+        if (_scope == null || _environmentLayout == null) return;
+
+        foreach (var (binding, jsParamIndex) in _parameterIndexMap)
+        {
+            var storage = _environmentLayout.GetStorage(binding);
+            if (storage == null) continue;
+
+            if (storage.Kind == BindingStorageKind.LeafScopeField && !storage.Field.IsNil && !storage.DeclaringScope.IsNil)
+            {
+                // Load the parameter (object) and store to leaf scope field.
+                var paramTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRLoadParameter(jsParamIndex, paramTemp));
+                DefineTempStorage(paramTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                var boxed = EnsureObject(paramTemp);
+                _methodBodyIR.Instructions.Add(new LIRStoreLeafScopeField(binding, storage.Field, storage.DeclaringScope, boxed));
+            }
+        }
     }
 
     /// <summary>
@@ -183,7 +213,7 @@ public sealed class HIRToLIRLowerer
         return new HIRBinaryExpression(binExpr.Operator, left, right);
     }
 
-    public static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, out MethodBodyIR? lirMethod)
+    public static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind callableKind, out MethodBodyIR? lirMethod)
     {
         lirMethod = null;
 
@@ -195,7 +225,7 @@ public sealed class HIRToLIRLowerer
             try
             {
                 environmentLayoutBuilder = new EnvironmentLayoutBuilder(scopeMetadataRegistry);
-                environmentLayout = environmentLayoutBuilder.Build(scope, CallableKind.Function);
+                environmentLayout = environmentLayoutBuilder.Build(scope, callableKind);
             }
             catch
             {
@@ -224,6 +254,12 @@ public sealed class HIRToLIRLowerer
         return false;
     }
 
+    // Backward compatibility overload for callers that don't provide callable kind
+    public static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, out MethodBodyIR? lirMethod)
+    {
+        return TryLower(hirMethod, scope, scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind.Function, out lirMethod);
+    }
+
     /// <summary>
     /// Emits LIRCreateLeafScopeInstance at the start of the method if any bindings
     /// are stored in leaf scope fields.
@@ -238,9 +274,7 @@ public sealed class HIRToLIRLowerer
         // and enables IR lowering to build scopes arrays without falling back.
         if (_scope != null && _scope.Kind == ScopeKind.Global && !_methodBodyIR.NeedsLeafScopeLocal)
         {
-            _methodBodyIR.Instructions.Insert(0, new LIRCreateLeafScopeInstance(new ScopeId(_scope.Name)));
-            _methodBodyIR.NeedsLeafScopeLocal = true;
-            _methodBodyIR.LeafScopeId = new ScopeId(_scope.Name);
+            EnsureLeafScopeInstance(new ScopeId(_scope.Name));
             return;
         }
 
@@ -250,13 +284,31 @@ public sealed class HIRToLIRLowerer
 
         if (leafScopeStorage != null)
         {
-            // Found a leaf scope field - emit scope instance creation
-            _methodBodyIR.Instructions.Insert(0, new LIRCreateLeafScopeInstance(leafScopeStorage.DeclaringScope));
-            
-            // Record that we need a scope local in the method
-            _methodBodyIR.NeedsLeafScopeLocal = true;
-            _methodBodyIR.LeafScopeId = leafScopeStorage.DeclaringScope;
+            // Found a leaf scope field - ensure scope instance creation
+            EnsureLeafScopeInstance(leafScopeStorage.DeclaringScope);
         }
+    }
+
+    private bool EnsureLeafScopeInstance(ScopeId scopeId)
+    {
+        if (_methodBodyIR.NeedsLeafScopeLocal)
+        {
+            // If we already decided on a leaf scope id, it must match.
+            if (!_methodBodyIR.LeafScopeId.IsNil && _methodBodyIR.LeafScopeId != scopeId)
+            {
+                return false;
+            }
+            if (_methodBodyIR.LeafScopeId.IsNil)
+            {
+                _methodBodyIR.LeafScopeId = scopeId;
+            }
+            return true;
+        }
+
+        _methodBodyIR.Instructions.Insert(0, new LIRCreateLeafScopeInstance(scopeId));
+        _methodBodyIR.NeedsLeafScopeLocal = true;
+        _methodBodyIR.LeafScopeId = scopeId;
+        return true;
     }
 
     /// <summary>
@@ -394,13 +446,12 @@ public sealed class HIRToLIRLowerer
         if (_scope != null && ScopeNaming.GetRegistryScopeName(_scope) == slot.ScopeName)
         {
             // The caller's own scope instance
-            if (_methodBodyIR.NeedsLeafScopeLocal)
+            if (!EnsureLeafScopeInstance(slot.ScopeId))
             {
-                slotSource = new ScopeSlotSource(slot, ScopeInstanceSource.LeafLocal);
-                return true;
+                return false;
             }
-            // If we don't have a leaf scope local, we can't provide this scope
-            return false;
+            slotSource = new ScopeSlotSource(slot, ScopeInstanceSource.LeafLocal);
+            return true;
         }
 
         // Check if this scope is in the caller's environment layout (from parent scopes)
