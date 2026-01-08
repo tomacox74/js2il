@@ -98,97 +98,97 @@ Based on the legacy emitters:
 ### 1) Closures & captured variables (Phase 3: scopes materialization)
 **Goal**: remove the fallback restrictions around `scope.ReferencesParentScopeVariables` and `IsCaptured`.
 
-- [ ] Enable new pipeline for methods where `scope.ReferencesParentScopeVariables` is true.
-- [ ] Enable new pipeline for scopes that contain captured bindings (`IsCaptured == true`).
-- [ ] Audit + complete captured-variable *writes* semantics (reads/writes must agree with legacy closure behavior).
-- [ ] Ensure leaf scope instance creation is correct in all cases:
-  - [ ] create leaf scope instance exactly when required (and only once)
-  - [ ] correct leaf local lifetime across control-flow and loops
-- [ ] Ensure call sites always build the correct scopes array for callee requirements:
-  - [ ] direct calls (`f(...)`)
-  - [ ] calls via variables / re-assignment
-  - [ ] nested functions and function expressions used as values
-  - [ ] class method calls that access parent scopes
-- [ ] Confirm the scopes source selection is correct for:
-  - [ ] static methods (scopes passed as arg)
-  - [ ] instance methods (scopes loaded from `this._scopes`)
-- [ ] Expand execution tests for closures (both reads and writes across nesting levels).
+- [ ] PL1.1 Enable new pipeline for methods where `scope.ReferencesParentScopeVariables` is true.
+- [ ] PL1.2 Enable new pipeline for scopes that contain captured bindings (`IsCaptured == true`).
+- [ ] PL1.3 Audit + complete captured-variable *writes* semantics (reads/writes must agree with legacy closure behavior).
+- [ ] PL1.4 Ensure leaf scope instance creation is correct in all cases:
+  - [ ] PL1.4a create leaf scope instance exactly when required (and only once)
+  - [ ] PL1.4b correct leaf local lifetime across control-flow and loops
+- [ ] PL1.5 Ensure call sites always build the correct scopes array for callee requirements:
+  - [ ] PL1.5a direct calls (`f(...)`)
+  - [ ] PL1.5b calls via variables / re-assignment
+  - [ ] PL1.5c nested functions and function expressions used as values
+  - [ ] PL1.5d class method calls that access parent scopes
+- [ ] PL1.6 Confirm the scopes source selection is correct for:
+  - [ ] PL1.6a static methods (scopes passed as arg)
+  - [ ] PL1.6b instance methods (scopes loaded from `this._scopes`)
+- [ ] PL1.7 Expand execution tests for closures (both reads and writes across nesting levels).
 
 ### 2) Expand HIR statement support to match legacy
-- [ ] `while` statements
-- [ ] `do/while` statements
-- [ ] `for..of` statements
-- [ ] `for..in` statements (if legacy supports it; confirm)
-- [ ] `break` / `continue` (requires loop label tracking)
-- [ ] `switch` statements (if legacy supports it; confirm)
-- [ ] `try/catch/finally`
-  - [ ] Add HIR nodes for try/catch/finally (including catch parameter binding)
-  - [ ] Add LIR representation for exception regions (try region + handler regions)
-  - [ ] Emit IL exception regions in `LIRToILCompiler` (ExceptionRegion / EH tables)
-  - [ ] Ensure `finally` executes on all exits (normal fallthrough, `return`, `throw`, `break`/`continue` once supported)
-  - [ ] Validate catch variable scoping semantics match legacy (block-scoped catch param)
-- [ ] `throw`
+- [ ] PL2.1 `while` statements
+- [ ] PL2.2 `do/while` statements
+- [ ] PL2.3 `for..of` statements
+- [ ] PL2.4 `for..in` statements (if legacy supports it; confirm)
+- [ ] PL2.5 `break` / `continue` (requires loop label tracking)
+- [ ] PL2.6 `switch` statements (if legacy supports it; confirm)
+- [ ] PL2.7 `try/catch/finally`
+  - [ ] PL2.7a Add HIR nodes for try/catch/finally (including catch parameter binding)
+  - [ ] PL2.7b Add LIR representation for exception regions (try region + handler regions)
+  - [ ] PL2.7c Emit IL exception regions in `LIRToILCompiler` (ExceptionRegion / EH tables)
+  - [ ] PL2.7d Ensure `finally` executes on all exits (normal fallthrough, `return`, `throw`, `break`/`continue` once supported)
+  - [ ] PL2.7e Validate catch variable scoping semantics match legacy (block-scoped catch param)
+- [ ] PL2.8 `throw`
 
 ### 3) Expand HIR expression support to match legacy
-- [ ] `ConditionalExpression` (ternary)
-- [ ] `LogicalExpression` (`&&`, `||`) with correct short-circuit semantics
-- [ ] `NewExpression`
-  - [ ] built-in Error types
-  - [ ] user-defined classes
-  - [ ] argument count checking (match legacy)
-- [ ] `TemplateLiteral` (including interpolation)
-- [ ] `ThisExpression` (especially important for class methods)
-- [ ] `FunctionExpression` as an expression (closure creation)
-- [ ] `ArrowFunctionExpression` as an expression (closure creation)
-  - [ ] concise-body arrows must wrap implicit return
+- [ ] PL3.1 `ConditionalExpression` (ternary)
+- [ ] PL3.2 `LogicalExpression` (`&&`, `||`) with correct short-circuit semantics
+- [ ] PL3.3 `NewExpression`
+  - [ ] PL3.3a built-in Error types
+  - [ ] PL3.3b user-defined classes
+  - [ ] PL3.3c argument count checking (match legacy)
+- [ ] PL3.4 `TemplateLiteral` (including interpolation)
+- [ ] PL3.5 `ThisExpression` (especially important for class methods)
+- [ ] PL3.6 `FunctionExpression` as an expression (closure creation)
+- [ ] PL3.7 `ArrowFunctionExpression` as an expression (closure creation)
+  - [ ] PL3.7a concise-body arrows must wrap implicit return
 
 ### 4) Variable declarators & assignment targets
 The new HIR currently only supports identifier declarators and identifier assignment LHS.
 
-- [ ] Variable declarator destructuring:
-  - [ ] `const {a, b} = obj`
-  - [ ] `const [a, b] = arr`
-  - [ ] nested patterns + defaults
-  - [ ] rest elements (`...rest`)
-- [ ] Assignment targets beyond identifiers:
-  - [ ] `obj.prop = value`
-  - [ ] `obj[index] = value`
-  - [ ] destructuring assignment (`({a} = obj)`)
-- [ ] Object literal spread properties (`{...x, a: 1}`)
-- [ ] Object literal computed keys (`{ [expr]: value }`)
-- [ ] Object literal shorthand properties and methods
+- [ ] PL4.1 Variable declarator destructuring:
+  - [ ] PL4.1a `const {a, b} = obj`
+  - [ ] PL4.1b `const [a, b] = arr`
+  - [ ] PL4.1c nested patterns + defaults
+  - [ ] PL4.1d rest elements (`...rest`)
+- [ ] PL4.2 Assignment targets beyond identifiers:
+  - [ ] PL4.2a `obj.prop = value`
+  - [ ] PL4.2b `obj[index] = value`
+  - [ ] PL4.2c destructuring assignment (`({a} = obj)`)
+- [ ] PL4.3 Object literal spread properties (`{...x, a: 1}`)
+- [ ] PL4.4 Object literal computed keys (`{ [expr]: value }`)
+- [ ] PL4.5 Object literal shorthand properties and methods
 
 ### 5) Classes: constructors + field initialization
 `TryCompileClassConstructor` currently refuses most real constructors.
 
-- [ ] Emit required base constructor call(s):
-  - [ ] `System.Object::.ctor` for classes without explicit `extends`
-  - [ ] correct `super(...)` behavior for derived classes
-- [ ] Support constructor parameters (including defaults / destructuring / rest as applicable).
-- [ ] Support field initialization (public fields + private fields + static fields if supported by legacy).
-- [ ] Support `this` initialization / return semantics:
-  - constructors return `this` unless explicitly returning an object
-- [ ] Ensure instance method default return value matches JS (`undefined`), not `this`.
+- [ ] PL5.1 Emit required base constructor call(s):
+  - [ ] PL5.1a `System.Object::.ctor` for classes without explicit `extends`
+  - [ ] PL5.1b correct `super(...)` behavior for derived classes
+- [ ] PL5.2 Support constructor parameters (including defaults / destructuring / rest as applicable).
+- [ ] PL5.3 Support field initialization (public fields + private fields + static fields if supported by legacy).
+- [ ] PL5.4 Support `this` initialization / return semantics:
+  - [ ] PL5.4a constructors return `this` unless explicitly returning an object
+- [ ] PL5.5 Ensure instance method default return value matches JS (`undefined`), not `this`.
 
 ### 6) Two-phase compilation parity
 The repo already has a two-phase coordinator and a `TryCompileCallableBody` API in the new pipeline.
 
-- [ ] Ensure all callable shapes used by two-phase mode can be compiled via IR (functions, arrows, class methods, constructors).
-- [ ] Ensure dependency discovery and required scope-chain layout are consistent with IR call-site scopes materialization.
+- [ ] PL6.1 Ensure all callable shapes used by two-phase mode can be compiled via IR (functions, arrows, class methods, constructors).
+- [ ] PL6.2 Ensure dependency discovery and required scope-chain layout are consistent with IR call-site scopes materialization.
 
 ### 7) Deletion targets (what can be removed once punch list is complete)
 These are candidates to delete **after** the new pipeline reaches feature parity and no longer needs fallback:
 
 **High confidence once IR is complete**
-- [ ] `Js2IL/Services/ILGenerators/BinaryOperators.cs`
-- [ ] `Js2IL/Services/ILGenerators/ILExpressionGenerator.cs`
-- [ ] `Js2IL/Services/ILGenerators/ILMethodGenerator.cs`
-- [ ] `Js2IL/Services/TwoPhaseCompilation/LegacyFunctionBodyCompiler.cs`
-- [ ] `Js2IL/Services/TwoPhaseCompilation/LegacyClassBodyCompiler.cs`
+- [ ] PL7.1 `Js2IL/Services/ILGenerators/BinaryOperators.cs`
+- [ ] PL7.2 `Js2IL/Services/ILGenerators/ILExpressionGenerator.cs`
+- [ ] PL7.3 `Js2IL/Services/ILGenerators/ILMethodGenerator.cs`
+- [ ] PL7.4 `Js2IL/Services/TwoPhaseCompilation/LegacyFunctionBodyCompiler.cs`
+- [ ] PL7.5 `Js2IL/Services/TwoPhaseCompilation/LegacyClassBodyCompiler.cs`
 
 **Likely, but requires follow-up audit**
-- [ ] `Js2IL/Services/VariableBindings/Variables.cs`
-- [ ] `Js2IL/Services/VariableBindings/Variable.cs`
+- [ ] PL7.6 `Js2IL/Services/VariableBindings/Variables.cs`
+- [ ] PL7.7 `Js2IL/Services/VariableBindings/Variable.cs`
 
 Notes on `Variables`/`Variable` deletion:
 - Today they are heavily referenced by the *legacy* body compilers and generators.
