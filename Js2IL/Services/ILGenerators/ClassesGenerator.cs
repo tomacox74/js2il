@@ -93,13 +93,7 @@ namespace Js2IL.Services.ILGenerators
         public void DeclareClasses(SymbolTable table)
         {
             if (table == null) throw new ArgumentNullException(nameof(table));
-            var opts = _serviceProvider.GetRequiredService<CompilerOptions>();
-            if (opts.TwoPhaseCompilation)
-            {
-                EmitClassesRecursiveTwoPhase(table.Root);
-                return;
-            }
-            EmitClassesRecursive(table.Root);
+            EmitClassesRecursiveTwoPhase(table.Root);
         }
 
         private void EmitClassesRecursiveTwoPhase(Scope scope)

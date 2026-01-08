@@ -8,7 +8,7 @@ This document describes a proposed **two-phase compilation pipeline** for JS2IL 
 
 The goal is to make IR compilation reliable without relying on “compile-on-demand” during AST→HIR→LIR→IL.
 
-> Status (Jan 2026): **Milestone 1** and **Milestone 2a** are implemented behind `CompilerOptions.TwoPhaseCompilation`. **Milestone 2b** (dependency graph + SCC/topo planner) and **Milestone 2b1** (high-confidence member-call edges for `this.m()` / `super.m()`) are implemented as a **plan artifact** (logged in verbose mode) but are **not yet used to change compilation order** (Milestone 2c).
+> Status (Jan 2026): Two-phase compilation is always enabled. **Milestone 1** and **Milestone 2a** are implemented. **Milestone 2b** (dependency graph + SCC/topo planner) and **Milestone 2b1** (high-confidence member-call edges for `this.m()` / `super.m()`) are implemented as a **plan artifact** (logged in verbose mode) but are **not yet used to change compilation order** (Milestone 2c).
 
 This doc is written **ideal-first**:
 
@@ -19,7 +19,7 @@ This doc is written **ideal-first**:
 
 ## Current implementation snapshot (Milestone 1 + Milestone 2a)
 
-When `CompilerOptions.TwoPhaseCompilation` is enabled, JS2IL now has a real (partial) two-phase coordinator:
+JS2IL now has a real (partial) two-phase coordinator:
 
 - **Phase 1: Discovery** runs via `CallableDiscovery` and populates a unified `CallableRegistry` keyed by `CallableId`.
 - **Phase 1: Declaration (Milestone 2a / Option A subset)** assigns **arrow functions** and **function expressions** a `MethodDefinitionHandle` token model without compiling bodies.
@@ -633,7 +633,7 @@ This is intended to be implemented incrementally and keep the system runnable.
 
 ### Milestone 1: Coordinator + Phase 1 declarations (completed)
 
-Implemented behind `CompilerOptions.TwoPhaseCompilation`:
+Implemented:
 
 - `CallableId`, `CallableSignature`, `CallableDiscovery`, `CallableRegistry`
 - `TwoPhaseCompilationCoordinator` to orchestrate Phase 1 + Phase 2
@@ -714,7 +714,7 @@ This section is intentionally **implementation-oriented**: it describes a practi
 
 Guiding rules:
 
-- Land changes behind a compiler option (e.g., `CompilerOptions.TwoPhaseCompilation`) until the final flip.
+- (Historical) Land changes behind a compiler option until the final flip.
 - Keep Phase 1 (declare) side-effect free with respect to bodies: no IR lowering and no IL body emission.
 - Make each milestone shippable: after each PR, the compiler should still build and a representative test slice should pass.
 

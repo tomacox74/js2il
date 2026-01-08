@@ -140,7 +140,7 @@ public sealed class TwoPhaseCompilationCoordinator
     /// - Compile main AFTER planned callables
     ///
     /// Note: the full Milestone 2c behavior is still being wired in.
-    /// For now, this preserves Milestone 2a behavior behind the TwoPhaseCompilation option.
+    /// Two-phase compilation is always enabled.
     /// </summary>
     internal void RunMilestone2c(
         SymbolTable symbolTable,

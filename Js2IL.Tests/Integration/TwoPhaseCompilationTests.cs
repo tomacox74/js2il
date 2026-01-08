@@ -9,7 +9,7 @@ namespace Js2IL.Tests.Integration
 {
     /// <summary>
     /// Tests for the Two-Phase Compilation Pipeline (Milestone 1).
-    /// These tests verify that the TwoPhaseCompilation option works correctly.
+    /// These tests verify that the two-phase compilation pipeline works correctly.
     /// </summary>
     public class TwoPhaseCompilationTests
     {

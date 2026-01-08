@@ -109,16 +109,7 @@ namespace Js2IL.Services.ILGenerators
         /// </summary>
         public void DeclareClassesAndFunctions(SymbolTable symbolTable)
         {
-            var compilerOptions = _serviceProvider.GetRequiredService<CompilerOptions>();
-            if (!compilerOptions.TwoPhaseCompilation)
-            {
-                // Legacy path: keep the existing ordering.
-                _classesGenerator.DeclareClasses(symbolTable);
-                _functionGenerator.DeclareFunctions(symbolTable);
-                return;
-            }
-
-            // Two-phase path (Milestone 2c): coordinator owns ordering and compilation.
+            // Two-phase pipeline is always enabled: coordinator owns ordering and compilation.
             _twoPhaseCoordinator.RunMilestone2c(
                 symbolTable,
                 _ilGenerator.MetadataBuilder,
