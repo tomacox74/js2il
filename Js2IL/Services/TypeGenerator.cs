@@ -6,6 +6,7 @@ using Js2IL.SymbolTables;
 using Js2IL.Services.VariableBindings;
 using System.Linq;
 using Js2IL.Utilities.Ecma335;
+using Js2IL.Utilities;
 
 namespace Js2IL.Services
 {
@@ -50,29 +51,7 @@ namespace Js2IL.Services
             PopulateVariableRegistry(symbolTable.Root);
         }
 
-        private static string GetModuleName(Scope scope)
-        {
-            var current = scope;
-            while (current.Parent != null)
-            {
-                current = current.Parent;
-            }
-            return current.Name;
-        }
-
-        // Stable registry key for a scope across the compilation pipeline.
-        // - Global scope uses the module name directly.
-        // - All other scopes are module-qualified to prevent collisions between modules.
-        private static string GetRegistryScopeName(Scope scope)
-        {
-            if (scope.Kind == ScopeKind.Global)
-            {
-                return scope.Name;
-            }
-
-            var moduleName = GetModuleName(scope);
-            return $"{moduleName}/{scope.Name}";
-        }
+        private static string GetRegistryScopeName(Scope scope) => ScopeNaming.GetRegistryScopeName(scope);
 
 
     private void CreateTypeFields(Scope scope, TypeBuilder typeBuilder)

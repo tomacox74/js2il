@@ -2,6 +2,7 @@ using Acornima.Ast;
 using Js2IL.HIR;
 using Js2IL.Services;
 using Js2IL.Services.ScopesAbi;
+using Js2IL.Utilities;
 using Js2IL.SymbolTables;
 
 namespace Js2IL.IR;
@@ -389,28 +390,8 @@ public sealed class HIRToLIRLowerer
         // 2. If it's in the caller's parent scopes -> ScopesArgument (ldarg scopesArg, ldelem.ref)
         // 3. If caller is a class method with _scopes -> ThisScopes (ldarg.0, ldfld _scopes, ldelem.ref)
 
-        static string GetModuleName(Scope scope)
-        {
-            var current = scope;
-            while (current.Parent != null)
-            {
-                current = current.Parent;
-            }
-            return current.Name;
-        }
-
-        static string GetRegistryScopeName(Scope scope)
-        {
-            if (scope.Kind == ScopeKind.Global)
-            {
-                return scope.Name;
-            }
-            var moduleName = GetModuleName(scope);
-            return $"{moduleName}/{scope.Name}";
-        }
-
         // Check if this is the caller's leaf scope
-        if (_scope != null && GetRegistryScopeName(_scope) == slot.ScopeName)
+        if (_scope != null && ScopeNaming.GetRegistryScopeName(_scope) == slot.ScopeName)
         {
             // The caller's own scope instance
             if (_methodBodyIR.NeedsLeafScopeLocal)

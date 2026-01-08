@@ -1,6 +1,7 @@
 using Js2IL.IR;
 using Js2IL.Services.VariableBindings;
 using Js2IL.SymbolTables;
+using Js2IL.Utilities;
 
 namespace Js2IL.Services.ScopesAbi;
 
@@ -69,29 +70,10 @@ public class EnvironmentLayoutBuilder
         return new EnvironmentLayout(abi, scopeChain, storageByBinding, layoutKind);
     }
 
-    private static string GetModuleName(Scope scope)
-    {
-        var current = scope;
-        while (current.Parent != null)
-        {
-            current = current.Parent;
-        }
-        return current.Name;
-    }
-
-    // Must match TypeGenerator's registry scope naming convention.
+    // Must match the compiler's stable registry scope naming convention.
     // - Global scope uses the module name directly.
     // - Non-global scopes are module-qualified: {module}/{scopeName}
-    private static string GetRegistryScopeName(Scope scope)
-    {
-        if (scope.Kind == ScopeKind.Global)
-        {
-            return scope.Name;
-        }
-
-        var moduleName = GetModuleName(scope);
-        return $"{moduleName}/{scope.Name}";
-    }
+    private static string GetRegistryScopeName(Scope scope) => ScopeNaming.GetRegistryScopeName(scope);
 
     /// <summary>
     /// Builds the scope chain layout for a callable.
