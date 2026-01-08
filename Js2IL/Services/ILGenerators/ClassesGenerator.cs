@@ -7,6 +7,7 @@ using Acornima.Ast;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
 using Microsoft.Extensions.DependencyInjection;
+using Js2IL.Services.TwoPhaseCompilation;
 
 namespace Js2IL.Services.ILGenerators
 {
@@ -28,6 +29,29 @@ namespace Js2IL.Services.ILGenerators
             _methodBodies = methodBodies;
             _classRegistry = classRegistry ?? throw new ArgumentNullException(nameof(classRegistry));
             _variables = variables ?? throw new ArgumentNullException(nameof(variables));
+        }
+
+        private string GetRegistryClassName(Scope classScope)
+        {
+            if (classScope == null) throw new ArgumentNullException(nameof(classScope));
+            var ns = classScope.DotNetNamespace ?? "Classes";
+            var name = classScope.DotNetTypeName ?? classScope.Name;
+            return $"{ns}.{name}";
+        }
+
+        private string GetClassDeclaringScopeName(Scope classScope)
+        {
+            if (classScope == null) throw new ArgumentNullException(nameof(classScope));
+            var moduleName = _variables.GetGlobalScopeName();
+            var parent = classScope.Parent;
+            if (parent == null || parent.Kind == ScopeKind.Global)
+            {
+                return moduleName;
+            }
+
+            // CallableDiscovery uses module-qualified scope paths (e.g., "<module>/<function>").
+            // Scope.GetQualifiedName() omits the global scope, so prefix with module.
+            return $"{moduleName}/{parent.GetQualifiedName()}";
         }
 
         /// <summary>
@@ -69,7 +93,324 @@ namespace Js2IL.Services.ILGenerators
         public void DeclareClasses(SymbolTable table)
         {
             if (table == null) throw new ArgumentNullException(nameof(table));
-            EmitClassesRecursive(table.Root);
+            EmitClassesRecursiveTwoPhase(table.Root);
+        }
+
+        private void EmitClassesRecursiveTwoPhase(Scope scope)
+        {
+            foreach (var child in scope.Children)
+            {
+                if (child.Kind == ScopeKind.Class && child.AstNode is ClassDeclaration cdecl)
+                {
+                    DeclareClassTwoPhase(child, cdecl, parentType: default);
+                }
+                EmitClassesRecursiveTwoPhase(child);
+            }
+        }
+
+        private TypeDefinitionHandle DeclareClassTwoPhase(Scope classScope, ClassDeclaration cdecl, TypeDefinitionHandle parentType)
+        {
+            var callableRegistry = _serviceProvider.GetRequiredService<CallableRegistry>();
+
+            var jsClassName = classScope.Name;
+            var registryClassName = GetRegistryClassName(classScope);
+            var declaringScopeName = GetClassDeclaringScopeName(classScope);
+
+            var ns = classScope.DotNetNamespace ?? "Classes";
+            var name = classScope.DotNetTypeName ?? classScope.Name;
+            var tb = new TypeBuilder(_metadata, ns, name);
+
+            var typeAttrs = parentType.IsNil
+                ? TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit
+                : TypeAttributes.NestedPublic | TypeAttributes.Class | TypeAttributes.BeforeFieldInit;
+
+            // Determine whether this class needs to capture parent scopes (same heuristic as legacy path)
+            bool classNeedsParentScopes = classScope.ReferencesParentScopeVariables;
+            if (!classNeedsParentScopes)
+            {
+                var ctor = cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>()
+                    .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+                if (ctor?.Value is FunctionExpression ctorExpr)
+                {
+                    classNeedsParentScopes = ShouldCreateMethodScopeInstance(ctorExpr, classScope);
+                }
+
+                if (!classNeedsParentScopes)
+                {
+                    foreach (var method in cdecl.Body.Body
+                        .OfType<Acornima.Ast.MethodDefinition>()
+                        .Where(m => m.Value is FunctionExpression &&
+                                    (m.Key as Identifier)?.Name != "constructor"))
+                    {
+                        var funcExpr = (FunctionExpression)method.Value;
+                        if (ShouldCreateMethodScopeInstance(funcExpr, classScope))
+                        {
+                            classNeedsParentScopes = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Fields (instance + static) and registries - same as legacy declaration.
+            var declaredFieldNames = new System.Collections.Generic.HashSet<string>(StringComparer.Ordinal);
+            foreach (var pdef in cdecl.Body.Body.OfType<Acornima.Ast.PropertyDefinition>())
+            {
+                var fSig = new BlobBuilder();
+                new BlobEncoder(fSig).Field().Type().Object();
+                var fSigHandle = _metadata.GetOrAddBlob(fSig);
+
+                if (pdef.Key is Acornima.Ast.PrivateIdentifier priv)
+                {
+                    var pname = priv.Name;
+                    var emittedName = ManglePrivateFieldName(pname);
+                    if (pdef.Static)
+                    {
+                        var fh = tb.AddFieldDefinition(FieldAttributes.Private | FieldAttributes.Static, emittedName, fSigHandle);
+                        _classRegistry.RegisterStaticField(registryClassName, pname, fh);
+                    }
+                    else
+                    {
+                        var fh = tb.AddFieldDefinition(FieldAttributes.Private, emittedName, fSigHandle);
+                        _classRegistry.RegisterPrivateField(registryClassName, pname, fh);
+                    }
+                    declaredFieldNames.Add(pname);
+                }
+                else if (pdef.Key is Identifier pid)
+                {
+                    if (pdef.Static)
+                    {
+                        var fh = tb.AddFieldDefinition(FieldAttributes.Public | FieldAttributes.Static, pid.Name, fSigHandle);
+                        _classRegistry.RegisterStaticField(registryClassName, pid.Name, fh);
+                    }
+                    else
+                    {
+                        var fh = tb.AddFieldDefinition(FieldAttributes.Public, pid.Name, fSigHandle);
+                        _classRegistry.RegisterField(registryClassName, pid.Name, fh);
+                    }
+                    declaredFieldNames.Add(pid.Name);
+                }
+            }
+
+            FieldDefinitionHandle? scopesField = null;
+            if (classNeedsParentScopes)
+            {
+                var scopesSig = new BlobBuilder();
+                new BlobEncoder(scopesSig).Field().Type().SZArray().Object();
+                var scopesSigHandle = _metadata.GetOrAddBlob(scopesSig);
+                scopesField = tb.AddFieldDefinition(FieldAttributes.Private, "_scopes", scopesSigHandle);
+                _classRegistry.RegisterPrivateField(registryClassName, "_scopes", scopesField.Value);
+            }
+
+            // Pre-scan methods for this.<prop> assignments (same as legacy) to declare backing fields.
+            System.Collections.Generic.IEnumerable<string> FindThisAssignedProps(Acornima.Ast.Node node)
+            {
+                if (node is null) yield break;
+                switch (node)
+                {
+                    case Acornima.Ast.AssignmentExpression a when a.Left is Acornima.Ast.MemberExpression me && me.Object is Acornima.Ast.ThisExpression && !me.Computed && me.Property is Identifier pid:
+                        yield return pid.Name;
+                        break;
+                    case Acornima.Ast.BlockStatement b:
+                        foreach (var s in b.Body)
+                            foreach (var n in FindThisAssignedProps(s)) yield return n;
+                        break;
+                    case Acornima.Ast.ExpressionStatement es:
+                        foreach (var n in FindThisAssignedProps(es.Expression)) yield return n;
+                        break;
+                    case Acornima.Ast.IfStatement ifs:
+                        foreach (var n in FindThisAssignedProps(ifs.Consequent)) yield return n;
+                        if (ifs.Alternate != null) foreach (var n in FindThisAssignedProps(ifs.Alternate)) yield return n;
+                        break;
+                    case Acornima.Ast.ForStatement fs:
+                        if (fs.Init is Acornima.Ast.Node init) foreach (var n in FindThisAssignedProps(init)) yield return n;
+                        if (fs.Test is Acornima.Ast.Node test) foreach (var n in FindThisAssignedProps(test)) yield return n;
+                        if (fs.Update is Acornima.Ast.Node upd) foreach (var n in FindThisAssignedProps(upd)) yield return n;
+                        foreach (var n in FindThisAssignedProps(fs.Body)) yield return n;
+                        break;
+                    case Acornima.Ast.CallExpression ce:
+                        foreach (var arg in ce.Arguments)
+                            foreach (var n in FindThisAssignedProps(arg)) yield return n;
+                        break;
+                    case Acornima.Ast.MemberExpression mem:
+                        if (mem.Object is Acornima.Ast.Node on) foreach (var n in FindThisAssignedProps(on)) yield return n;
+                        if (mem.Property is Acornima.Ast.Node pn) foreach (var n in FindThisAssignedProps(pn)) yield return n;
+                        break;
+                    case Acornima.Ast.AssignmentExpression a2:
+                        if (a2.Right is Acornima.Ast.Node rn) foreach (var n in FindThisAssignedProps(rn)) yield return n;
+                        break;
+                }
+            }
+
+            foreach (var m in cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>())
+            {
+                if (m.Value is FunctionExpression fe && fe.Body is BlockStatement body)
+                {
+                    foreach (var prop in FindThisAssignedProps(body).Distinct(StringComparer.Ordinal))
+                    {
+                        if (!declaredFieldNames.Contains(prop))
+                        {
+                            var fSig = new BlobBuilder();
+                            new BlobEncoder(fSig).Field().Type().Object();
+                            var fSigHandle = _metadata.GetOrAddBlob(fSig);
+                            var fh = tb.AddFieldDefinition(FieldAttributes.Public, prop, fSigHandle);
+                            _classRegistry.RegisterField(registryClassName, prop, fh);
+                            declaredFieldNames.Add(prop);
+                        }
+                    }
+                }
+            }
+
+            // Determine first preallocated method def for this class (if any)
+            MethodDefinitionHandle? firstMethod = null;
+            foreach (var id in callableRegistry.AllCallables)
+            {
+                // CallableRegistry is shared across modules; class names may collide across modules.
+                // Restrict matching to this class's declaring scope (module-qualified) to avoid collisions.
+                if (!string.Equals(id.DeclaringScopeName, declaringScopeName, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                if (id.Kind is not (
+                    CallableKind.ClassConstructor or
+                    CallableKind.ClassMethod or
+                    CallableKind.ClassGetter or
+                    CallableKind.ClassSetter or
+                    CallableKind.ClassStaticMethod or
+                    CallableKind.ClassStaticGetter or
+                    CallableKind.ClassStaticSetter or
+                    CallableKind.ClassStaticInitializer))
+                {
+                    continue;
+                }
+
+                // Match this class by naming conventions
+                if (id.Kind == CallableKind.ClassConstructor || id.Kind == CallableKind.ClassStaticInitializer)
+                {
+                    if (!string.Equals(id.Name, classScope.Name, StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    if (!Js2IL.Utilities.JavaScriptCallableNaming.TrySplitClassMethodCallableName(id.Name, out var candidateClassName, out _))
+                    {
+                        continue;
+                    }
+
+                    if (!string.Equals(candidateClassName, classScope.Name, StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
+                }
+
+                if (callableRegistry.TryGetDeclaredToken(id, out var tok) && tok.Kind == HandleKind.MethodDefinition)
+                {
+                    var mdh = (MethodDefinitionHandle)tok;
+                    if (firstMethod == null || MetadataTokens.GetRowNumber(mdh) < MetadataTokens.GetRowNumber(firstMethod.Value))
+                    {
+                        firstMethod = mdh;
+                    }
+                }
+            }
+
+            var typeHandle = tb.AddTypeDefinition(typeAttrs, _bcl.ObjectType, firstFieldOverride: null, firstMethodOverride: firstMethod);
+            if (!parentType.IsNil)
+            {
+                _metadata.AddNestedType(typeHandle, parentType);
+            }
+            _classRegistry.Register(registryClassName, typeHandle);
+
+            // Two-phase: register constructor + instance method signatures/parameter counts so call sites can resolve
+            // without requiring bodies to be compiled yet.
+            // Note: static methods are not currently part of the direct callvirt optimization paths.
+            var className = registryClassName;
+
+            // Constructor
+            var ctorMember = cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>()
+                .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+            FunctionExpression? ctorFunc = ctorMember?.Value as FunctionExpression;
+
+            MethodDefinitionHandle ctorHandle = default;
+            if (ctorMember != null)
+            {
+                if (!callableRegistry.TryGetDeclaredTokenForAstNode(ctorMember, out var ctorTok) || ctorTok.Kind != HandleKind.MethodDefinition)
+                {
+                    throw new InvalidOperationException($"[TwoPhase] Missing declared token for class constructor: {className}");
+                }
+                ctorHandle = (MethodDefinitionHandle)ctorTok;
+            }
+            else
+            {
+                // Default constructor callable (synthetic) - find by name
+                var ctorId = callableRegistry.AllCallables.FirstOrDefault(c =>
+                    c.Kind == CallableKind.ClassConstructor &&
+                    string.Equals(c.DeclaringScopeName, declaringScopeName, StringComparison.Ordinal) &&
+                    string.Equals(c.Name, jsClassName, StringComparison.Ordinal));
+                if (ctorId != null && callableRegistry.TryGetDeclaredToken(ctorId, out var ctorTok) && ctorTok.Kind == HandleKind.MethodDefinition)
+                {
+                    ctorHandle = (MethodDefinitionHandle)ctorTok;
+                }
+            }
+
+            if (!ctorHandle.IsNil)
+            {
+                var needsScopes = classNeedsParentScopes;
+                var userParamCount = ctorFunc?.Params.Count ?? 0;
+                var totalParamCount = needsScopes ? userParamCount + 1 : userParamCount;
+                var ctorSig = MethodBuilder.BuildMethodSignature(
+                    _metadata,
+                    isInstance: true,
+                    paramCount: totalParamCount,
+                    hasScopesParam: needsScopes,
+                    returnsVoid: true);
+
+                int minUserParams = ctorFunc != null ? ILMethodGenerator.CountRequiredParameters(ctorFunc.Params) : 0;
+                int minTotalParams = needsScopes ? minUserParams + 1 : minUserParams;
+                int maxTotalParams = totalParamCount;
+                _classRegistry.RegisterConstructor(className, ctorHandle, ctorSig, minTotalParams, maxTotalParams);
+            }
+
+            // Instance methods/accessors (non-static only)
+            foreach (var member in cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>().Where(m => m.Key is Identifier))
+            {
+                var memberName = ((Identifier)member.Key).Name;
+                if (memberName == "constructor") continue;
+
+                if (member.Static) continue;
+
+                if (!callableRegistry.TryGetDeclaredTokenForAstNode(member, out var methTok) || methTok.Kind != HandleKind.MethodDefinition)
+                {
+                    // Missing token should not happen in two-phase mode.
+                    continue;
+                }
+                var methodHandle = (MethodDefinitionHandle)methTok;
+                if (methodHandle.IsNil) continue;
+
+                var clrMethodName = member.Kind switch
+                {
+                    PropertyKind.Get => $"get_{memberName}",
+                    PropertyKind.Set => $"set_{memberName}",
+                    _ => memberName
+                };
+
+                var funcExpr = member.Value as FunctionExpression;
+                var paramCount = funcExpr?.Params.Count ?? 0;
+                var msig = MethodBuilder.BuildMethodSignature(
+                    _metadata,
+                    isInstance: true,
+                    paramCount: paramCount,
+                    hasScopesParam: false,
+                    returnsVoid: false);
+
+                int minParams = funcExpr != null ? ILMethodGenerator.CountRequiredParameters(funcExpr.Params) : 0;
+                int maxParams = funcExpr?.Params.Count ?? 0;
+                _classRegistry.RegisterMethod(className, clrMethodName, methodHandle, msig, minParams, maxParams);
+            }
+
+            return typeHandle;
         }
 
         private void EmitClassesRecursive(Scope scope)
@@ -89,6 +430,7 @@ namespace Js2IL.Services.ILGenerators
 
         private TypeDefinitionHandle EmitClass(Scope classScope, ClassDeclaration cdecl, TypeDefinitionHandle parentType)
         {
+            var registryClassName = GetRegistryClassName(classScope);
             // Resolve authoritative .NET names from symbol table; fall back if absent
             var ns = classScope.DotNetNamespace ?? "Classes";
             var name = classScope.DotNetTypeName ?? classScope.Name;
@@ -155,13 +497,13 @@ namespace Js2IL.Services.ILGenerators
                         {
                             var fh = tb.AddFieldDefinition(FieldAttributes.Private | FieldAttributes.Static, emittedName, fSigHandle);
                             // Track static private separately if needed later; for now reuse RegisterStaticField
-                            _classRegistry.RegisterStaticField(classScope.Name, pname, fh);
+                            _classRegistry.RegisterStaticField(registryClassName, pname, fh);
                             staticFieldsWithInits.Add((fh, pdef.Value as Expression));
                         }
                         else
                         {
                             var fh = tb.AddFieldDefinition(FieldAttributes.Private, emittedName, fSigHandle);
-                            _classRegistry.RegisterPrivateField(classScope.Name, pname, fh);
+                            _classRegistry.RegisterPrivateField(registryClassName, pname, fh);
                             fieldsWithInits.Add((fh, pdef.Value as Expression));
                         }
                         declaredFieldNames.Add(pname);
@@ -172,13 +514,13 @@ namespace Js2IL.Services.ILGenerators
                         if (pdef.Static)
                         {
                             var fh = tb.AddFieldDefinition(FieldAttributes.Public | FieldAttributes.Static, pid.Name, fSigHandle);
-                            _classRegistry.RegisterStaticField(classScope.Name, pid.Name, fh);
+                            _classRegistry.RegisterStaticField(registryClassName, pid.Name, fh);
                             staticFieldsWithInits.Add((fh, pdef.Value as Expression));
                         }
                         else
                         {
                             var fh = tb.AddFieldDefinition(FieldAttributes.Public, pid.Name, fSigHandle);
-                            _classRegistry.RegisterField(classScope.Name, pid.Name, fh);
+                            _classRegistry.RegisterField(registryClassName, pid.Name, fh);
                             fieldsWithInits.Add((fh, pdef.Value as Expression));
                         }
                         declaredFieldNames.Add(pid.Name);
@@ -194,7 +536,7 @@ namespace Js2IL.Services.ILGenerators
                 new BlobEncoder(scopesSig).Field().Type().SZArray().Object();
                 var scopesSigHandle = _metadata.GetOrAddBlob(scopesSig);
                 scopesField = tb.AddFieldDefinition(FieldAttributes.Private, "_scopes", scopesSigHandle);
-                _classRegistry.RegisterPrivateField(classScope.Name, "_scopes", scopesField.Value);
+                _classRegistry.RegisterPrivateField(registryClassName, "_scopes", scopesField.Value);
             }
 
 
@@ -250,7 +592,7 @@ namespace Js2IL.Services.ILGenerators
                             new BlobEncoder(fSig).Field().Type().Object();
                             var fSigHandle = _metadata.GetOrAddBlob(fSig);
                             var fh = tb.AddFieldDefinition(FieldAttributes.Public, prop, fSigHandle);
-                            _classRegistry.RegisterField(classScope.Name, prop, fh);
+                            _classRegistry.RegisterField(registryClassName, prop, fh);
                             declaredFieldNames.Add(prop);
                         }
                     }
@@ -273,7 +615,7 @@ namespace Js2IL.Services.ILGenerators
                 _metadata.AddNestedType(typeHandle, parentType);
             }
             // Register the class type for later lookup using the JS-visible identifier (scope name)
-            _classRegistry.Register(classScope.Name, typeHandle);
+            _classRegistry.Register(registryClassName, typeHandle);
 
             // Methods: create stubs for now; real method codegen will come later
             foreach (var element in cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>())
@@ -297,7 +639,7 @@ namespace Js2IL.Services.ILGenerators
                     .Parameters(0, r => r.Void(), p => { });
                 var cctorSig = _metadata.GetOrAddBlob(sigBuilder);
 
-                var ilGen = new ILMethodGenerator(_serviceProvider, _variables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: false, currentClassName: classScope.Name);
+                var ilGen = new ILMethodGenerator(_serviceProvider, _variables, _bcl, _metadata, _methodBodies, _classRegistry, functionRegistry: null, inClassMethod: false, currentClassName: registryClassName);
 
                 // For each static field with an initializer: evaluate and stsfld
                 foreach (var (field, initExpr) in staticFieldsWithInits)
@@ -347,6 +689,8 @@ namespace Js2IL.Services.ILGenerators
             Scope classScope,
             bool needsScopes)
         {
+            var registryClassName = GetRegistryClassName(classScope);
+
             // Try the new IR-based compilation pipeline first for simple constructors
             if (ctorFunc != null && !needsScopes && fieldsWithInits.Count == 0)
             {
@@ -359,14 +703,14 @@ namespace Js2IL.Services.ILGenerators
                     if (!compiledCtor.IsNil)
                     {
                         // Successfully compiled via IR pipeline - signature is returned from TryCompileIRToIL
-                        _classRegistry.RegisterConstructor(classScope.Name, compiledCtor, ctorSignature, 0, 0);
+                        _classRegistry.RegisterConstructor(registryClassName, compiledCtor, ctorSignature, 0, 0);
                         return compiledCtor;
                     }
                 }
             }
 
             // Fallback to the old direct AST-to-IL code path
-            var className = classScope.Name;
+            var className = registryClassName;
             var userParamCount = ctorFunc?.Params.Count ?? 0;
             var totalParamCount = needsScopes ? userParamCount + 1 : userParamCount;
 
@@ -523,10 +867,23 @@ namespace Js2IL.Services.ILGenerators
 
     private MethodDefinitionHandle EmitMethod(TypeBuilder tb, Acornima.Ast.MethodDefinition element, Scope classScope)
         {
-            var mname = (element.Key as Identifier)?.Name ?? "method";
-            var mscope = classScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Function && s.Name == mname);
-            var className = classScope.Name;
+            var memberName = (element.Key as Identifier)?.Name ?? "method";
+            var className = GetRegistryClassName(classScope);
             var funcExpr = element.Value as FunctionExpression;
+
+            // Accessors are modeled as MethodDefinition with Kind Get/Set.
+            // Emit CLR-friendly names to avoid collisions and match standard getter/setter conventions.
+            var mname = element.Kind switch
+            {
+                PropertyKind.Get => $"get_{memberName}",
+                PropertyKind.Set => $"set_{memberName}",
+                _ => memberName
+            };
+
+            // Prefer matching by AST node for correctness across methods vs accessors.
+            var mscope = funcExpr != null
+                ? classScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Function && ReferenceEquals(s.AstNode, funcExpr))
+                : classScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Function && s.Name == memberName);
 
             if (mscope != null)
             {
@@ -638,9 +995,13 @@ namespace Js2IL.Services.ILGenerators
 
             if (!hasExplicitReturn)
             {
-                // JavaScript methods without an explicit return should return 'this' for fluent patterns
-                // and to avoid leaving an unexpected value on the stack causing invalid IL at runtime.
-                if (!element.Static)
+                // Methods default to returning 'this' (fluent pattern).
+                // Accessors default to returning undefined (null) when missing explicit return.
+                if (element.Kind is PropertyKind.Get or PropertyKind.Set)
+                {
+                    ilGen.IL.OpCode(ILOpCode.Ldnull);
+                }
+                else if (!element.Static)
                 {
                     ilGen.IL.OpCode(ILOpCode.Ldarg_0); // load 'this'
                 }

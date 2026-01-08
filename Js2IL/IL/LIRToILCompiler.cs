@@ -53,6 +53,90 @@ internal sealed class LIRToILCompiler
 
     #region Public API
 
+    /// <summary>
+    /// Two-phase API: compile a callable body to IL and return the resulting body metadata
+    /// without emitting a MethodDef row. The MethodDef row is emitted later in a deterministic
+    /// per-type order.
+    /// </summary>
+    public CompiledCallableBody? TryCompileCallableBody(
+        CallableId callable,
+        MethodDefinitionHandle expectedMethodDef,
+        MethodDescriptor methodDescriptor,
+        MethodBodyIR methodBody,
+        MethodBodyStreamEncoder methodBodyStreamEncoder)
+    {
+        if (_compiled)
+        {
+            throw new InvalidOperationException("LIRToILCompiler can only compile a single method. Create a new instance for each method.");
+        }
+        _compiled = true;
+        _methodBody = methodBody;
+
+        var methodParameters = methodDescriptor.Parameters;
+
+        // Build method signature
+        var sigBuilder = new BlobBuilder();
+        new BlobEncoder(sigBuilder)
+            .MethodSignature(isInstanceMethod: !methodDescriptor.IsStatic)
+            .Parameters(methodParameters.Count, returnType =>
+            {
+                if (methodDescriptor.ReturnsVoid)
+                    returnType.Void();
+                else
+                    returnType.Type().Object();
+            }, parameters =>
+            {
+                for (int i = 0; i < methodParameters.Count; i++)
+                {
+                    var parameterDefinition = methodParameters[i];
+
+                    if (parameterDefinition.ParameterType == typeof(object))
+                    {
+                        parameters.AddParameter().Type().Object();
+                    }
+                    else if (parameterDefinition.ParameterType == typeof(string))
+                    {
+                        parameters.AddParameter().Type().String();
+                    }
+                    else if (parameterDefinition.ParameterType.IsArray && parameterDefinition.ParameterType.GetElementType() == typeof(object))
+                    {
+                        parameters.AddParameter().Type().SZArray().Object();
+                    }
+                    else
+                    {
+                        var typeRef = _typeReferenceRegistry.GetOrAdd(parameterDefinition.ParameterType!);
+                        parameters.AddParameter().Type().Type(typeRef, false);
+                    }
+                }
+            });
+        var methodSig = _metadataBuilder.GetOrAddBlob(sigBuilder);
+
+        // Compile body
+        if (!TryCompileMethodBodyToIL(methodDescriptor, methodBodyStreamEncoder, out var bodyOffset))
+        {
+            return null;
+        }
+
+        MethodAttributes methodAttributes = MethodAttributes.Public | MethodAttributes.HideBySig;
+        if (methodDescriptor.IsStatic)
+        {
+            methodAttributes |= MethodAttributes.Static;
+        }
+
+        var result = new CompiledCallableBody
+        {
+            Callable = callable,
+            MethodName = methodDescriptor.Name,
+            ExpectedMethodDef = expectedMethodDef,
+            Attributes = methodAttributes,
+            Signature = methodSig,
+            BodyOffset = bodyOffset,
+            ParameterNames = methodParameters.Select(p => p.Name).ToArray()
+        };
+        result.Validate();
+        return result;
+    }
+
     public MethodDefinitionHandle TryCompile(MethodDescriptor methodDescriptor, MethodBodyIR methodBody, MethodBodyStreamEncoder methodBodyStreamEncoder)
     {
         var (methodDef, _) = TryCompileWithSignature(methodDescriptor, methodBody, methodBodyStreamEncoder);

@@ -182,6 +182,17 @@ namespace Js2IL.Services.ILGenerators
             _binaryOperators = new BinaryOperators(owner.MetadataBuilder, _il, _variables, this, owner.BclReferences, owner.Runtime, owner);
         }
 
+        private string QualifyClassName(string className)
+        {
+            if (string.IsNullOrEmpty(className) || className.Contains('.'))
+            {
+                return className;
+            }
+
+            var moduleName = _variables.GetGlobalScopeName();
+            return $"Classes.{moduleName}.{className}";
+        }
+
         // ---- Small helpers to reduce duplication ----
         private void EmitLoadScopeObject(ScopeObjectReference slot)
         {
@@ -786,7 +797,8 @@ namespace Js2IL.Services.ILGenerators
                 if (mem.Object is Acornima.Ast.Identifier baseId)
                 {
                     // If the base identifier resolves to a known class, emit a static call without loading an instance.
-                    if (_classRegistry.TryGet(baseId.Name, out var classType) && !classType.IsNil)
+                    var baseClassKey = QualifyClassName(baseId.Name);
+                    if (_classRegistry.TryGet(baseClassKey, out var classType) && !classType.IsNil)
                     {
                         // Build static method signature: object method(object, ...)
                         var sArgCount = callExpression.Arguments.Count;
@@ -2841,12 +2853,13 @@ namespace Js2IL.Services.ILGenerators
                 }
 
                 // Try Classes registry first (cached ctor + signature + param count)
-                if (_classRegistry.TryGetConstructor(cid.Name, out var ctorDef, out var minParamCount, out var maxParamCount))
+                var classKey = QualifyClassName(cid.Name);
+                if (_classRegistry.TryGetConstructor(classKey, out var ctorDef, out var minParamCount, out var maxParamCount))
                 {
                     var argc = newExpression.Arguments.Count;
                     
                     // Check if this class has a _scopes field (meaning it needs parent scope access)
-                    bool classNeedsScopes = _classRegistry.TryGetPrivateField(cid.Name, "_scopes", out var _);
+                    bool classNeedsScopes = _classRegistry.TryGetPrivateField(classKey, "_scopes", out var _);
                     int expectedMinArgs = classNeedsScopes ? minParamCount - 1 : minParamCount;
                     int expectedMaxArgs = classNeedsScopes ? maxParamCount - 1 : maxParamCount;
                     
@@ -2887,12 +2900,12 @@ namespace Js2IL.Services.ILGenerators
                     _il.Token(ctorDef);
                     if (!string.IsNullOrEmpty(_owner.CurrentAssignmentTarget))
                     {
-                        _owner.RecordVariableToClass(_owner.CurrentAssignmentTarget!, cid.Name);
+                        _owner.RecordVariableToClass(_owner.CurrentAssignmentTarget!, classKey);
                     }
                     return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
                 }
                 // No cached constructor found: treat as unsupported (all emitted classes must register constructors).
-                if (_classRegistry.TryGet(cid.Name, out var registeredType) && !registeredType.IsNil)
+                if (_classRegistry.TryGet(classKey, out var registeredType) && !registeredType.IsNil)
                 {
                     throw ILEmitHelpers.NotSupported($"Constructor for class '{cid.Name}' was not cached. All classes must register their constructors.", newExpression);
                 }
@@ -2944,10 +2957,11 @@ namespace Js2IL.Services.ILGenerators
             // allow static field/method access without evaluating an instance first.
             if (!memberExpression.Computed && memberExpression.Object is Identifier staticBase && memberExpression.Property is Identifier staticProp)
             {
-                if (_classRegistry.TryGet(staticBase.Name, out var typeHandle))
+                var staticClassKey = QualifyClassName(staticBase.Name);
+                if (_classRegistry.TryGet(staticClassKey, out var typeHandle))
                 {
                     // Support static field access: ClassName.prop
-                    if (_classRegistry.TryGetStaticField(staticBase.Name, staticProp.Name, out var sfield))
+                    if (_classRegistry.TryGetStaticField(staticClassKey, staticProp.Name, out var sfield))
                     {
                         _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldsfld);
                         _il.Token(sfield);

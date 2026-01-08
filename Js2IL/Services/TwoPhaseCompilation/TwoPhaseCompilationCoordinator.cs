@@ -1,10 +1,13 @@
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Linq;
+using System.Reflection;
 using Acornima.Ast;
 using Js2IL.Services.ILGenerators;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
+using Js2IL.Utilities;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Js2IL.Services.TwoPhaseCompilation;
 
@@ -126,6 +129,696 @@ public sealed class TwoPhaseCompilationCoordinator
                 compileAnonymousCallablesPhase2(_discoveredCallables);
             }
         });
+    }
+
+    /// <summary>
+    /// Milestone 2c: True Phase 2 planned compilation.
+    ///
+    /// This is the long-term entry point that will:
+    /// - Run Phase 1 discovery + declaration (signature/tokens only)
+    /// - Enable strict lookup-only mode
+    /// - Compile callable bodies in the Milestone 2b plan order
+    /// - Compile main AFTER planned callables
+    ///
+    /// Note: the full Milestone 2c behavior is still being wired in.
+    /// Two-phase compilation is always enabled.
+    /// </summary>
+    internal void RunMilestone2c(
+        SymbolTable symbolTable,
+        MetadataBuilder metadataBuilder,
+        IServiceProvider serviceProvider,
+        Variables rootVariables,
+        BaseClassLibraryReferences bclReferences,
+        MethodBodyStreamEncoder methodBodyStreamEncoder,
+        ClassRegistry classRegistry,
+        FunctionRegistry functionRegistry,
+        Action<IReadOnlyList<CallableId>> compileAnonymousCallablesPhase2,
+        Action compileClassesAndFunctionsPhase2)
+    {
+        RunPhase1Discovery(symbolTable);
+
+        // Milestone 2b: compute dependency graph + SCC/topo plan.
+        var plan = ComputeMilestone2bPlan(symbolTable);
+
+        // Build a deterministic compilation order from the plan.
+        var ordered = new List<CallableId>(_discoveredCallables?.Count ?? 0);
+        var seen = new HashSet<CallableId>();
+        foreach (var stage in plan.Stages)
+        {
+            foreach (var member in stage.Members.Where(member => seen.Add(member)))
+            {
+                ordered.Add(member);
+            }
+        }
+
+        // Milestone 2c: plan is authoritative.
+        // If discovery produced callables that are missing from the plan (or duplicates exist), fail fast.
+        if (_discoveredCallables != null)
+        {
+            if (seen.Count != _discoveredCallables.Count)
+            {
+                var missingCallables = _discoveredCallables.Where(c => !seen.Contains(c)).ToArray();
+                var sample = missingCallables.Take(10).Select(c => c.UniqueKey).ToArray();
+                throw new InvalidOperationException(
+                    "[TwoPhase] Milestone 2c: compilation plan did not include every discovered callable. " +
+                    $"Discovered={_discoveredCallables.Count}, PlannedDistinct={seen.Count}. " +
+                    (sample.Length > 0
+                        ? ("Missing (sample): " + string.Join(", ", sample) + (missingCallables.Length > sample.Length ? $" (+{missingCallables.Length - sample.Length} more)" : ""))
+                        : ""));
+            }
+
+            if (ordered.Count != _discoveredCallables.Count)
+            {
+                throw new InvalidOperationException(
+                    "[TwoPhase] Milestone 2c: compilation plan contained duplicate callables (after de-dup). " +
+                    $"Discovered={_discoveredCallables.Count}, PlannedOrderedDistinct={ordered.Count}.");
+            }
+        }
+
+        if (_discoveredCallables != null)
+        {
+            // Milestone 2c: class callable MethodDefs must be preallocated BEFORE class type declarations so
+            // TypeDef.MethodList can point at the correct first MethodDef row for each class.
+            // We preallocate in class declaration order (TypeDef order) to satisfy ECMA-335 method list rules.
+            PreallocatePhase1ClassCallablesMethodDefs(symbolTable, metadataBuilder);
+
+            PreallocatePhase1AnonymousCallablesMethodDefsInOrder(_discoveredCallables, ordered, metadataBuilder);
+        }
+
+        // Enable strict mode before any body compilation so expression emission cannot compile.
+        EnableStrictMode();
+
+        // Milestone 2c (partial): compile Phase 2 bodies in plan order.
+        // Today, only anonymous callables are compiled directly by the coordinator; classes and functions
+        // remain delegated to the existing generators (which compile depth-first).
+        RunPhase2BodyCompilation(() =>
+        {
+            // Keep existing safety invariant for now: classes/functions are emitted before anonymous callables.
+            compileClassesAndFunctionsPhase2();
+
+            // Milestone 2c: move class constructors/methods/accessors/.cctor bodies to planned Phase 2.
+            // Compile bodies in plan order, then emit MethodDef rows grouped by class type (TypeDef order)
+            // to satisfy ECMA-335 contiguous method list requirements.
+            CompileAndFinalizePhase2ClassCallables(
+                symbolTable,
+                metadataBuilder,
+                ordered,
+                serviceProvider,
+                rootVariables,
+                bclReferences,
+                methodBodyStreamEncoder,
+                classRegistry);
+
+            // Milestone 2c: move function declarations to Phase 2 (planned order).
+            // We compile bodies in plan order (IR-first, legacy fallback), but finalize MethodDefs in a single
+            // deterministic block so metadata ordering stays valid.
+            CompileAndFinalizePhase2FunctionDeclarations(
+                symbolTable,
+                metadataBuilder,
+                ordered,
+                serviceProvider,
+                rootVariables,
+                bclReferences,
+                methodBodyStreamEncoder,
+                classRegistry,
+                functionRegistry);
+
+            if (_methodDefRowCountAtPreallocation.HasValue && _expectedMethodDefsBeforeAnonymousCallables.HasValue)
+            {
+                var expected = _methodDefRowCountAtPreallocation.Value + _expectedMethodDefsBeforeAnonymousCallables.Value;
+                var actual = metadataBuilder.GetRowCount(TableIndex.MethodDef);
+                if (actual != expected)
+                {
+                    throw new InvalidOperationException(
+                        $"[TwoPhase] Milestone 2c MethodDef preallocation mismatch: expected MethodDef row count {expected} after declaring classes + finalizing class callables + finalizing function declarations, but was {actual}. " +
+                        "This indicates the preallocation offset is wrong (likely due to unexpected extra MethodDef emissions during finalization)."
+                    );
+                }
+            }
+
+            if (_discoveredCallables != null)
+            {
+                compileAnonymousCallablesPhase2(ordered);
+            }
+        });
+    }
+
+    private void PreallocatePhase1ClassCallablesMethodDefs(SymbolTable symbolTable, MetadataBuilder metadataBuilder)
+    {
+        if (_discoveredCallables == null)
+        {
+            return;
+        }
+
+        var nextRowId = metadataBuilder.GetRowCount(TableIndex.MethodDef) + 1;
+
+        foreach (var classScope in EnumerateClassScopesInDeclarationOrder(symbolTable.Root))
+        {
+            if (classScope.AstNode is not ClassDeclaration classDecl)
+            {
+                continue;
+            }
+
+            foreach (var callable in GetClassCallablesInDeclarationOrder(classScope, classDecl))
+            {
+                // Idempotent: if token already set, do not overwrite.
+                if (_registry.TryGetDeclaredToken(callable, out var existingToken) && !existingToken.IsNil)
+                {
+                    continue;
+                }
+
+                var preallocated = MetadataTokens.MethodDefinitionHandle(nextRowId++);
+                _registry.SetToken(callable, preallocated);
+            }
+        }
+    }
+
+    private void CompileAndFinalizePhase2ClassCallables(
+        SymbolTable symbolTable,
+        MetadataBuilder metadataBuilder,
+        IReadOnlyList<CallableId> plannedOrder,
+        IServiceProvider serviceProvider,
+        Variables rootVariables,
+        BaseClassLibraryReferences bclReferences,
+        MethodBodyStreamEncoder methodBodyStreamEncoder,
+        ClassRegistry classRegistry)
+    {
+        if (_discoveredCallables == null)
+        {
+            return;
+        }
+
+        var compiled = new Dictionary<CallableId, CompiledCallableBody>();
+        var methodCompiler = serviceProvider.GetRequiredService<JsMethodCompiler>();
+
+        // Phase 2: compile bodies in planned order (no MethodDef rows emitted here)
+        foreach (var callable in plannedOrder)
+        {
+            if (callable.Kind is not (
+                CallableKind.ClassConstructor or
+                CallableKind.ClassMethod or
+                CallableKind.ClassGetter or
+                CallableKind.ClassSetter or
+                CallableKind.ClassStaticMethod or
+                CallableKind.ClassStaticGetter or
+                CallableKind.ClassStaticSetter or
+                CallableKind.ClassStaticInitializer))
+            {
+                continue;
+            }
+
+            if (!_registry.TryGetDeclaredToken(callable, out var tok) || tok.Kind != HandleKind.MethodDefinition)
+            {
+                throw new InvalidOperationException($"[TwoPhase] Class callable missing declared token: {callable.DisplayName}");
+            }
+            var expected = (MethodDefinitionHandle)tok;
+            if (expected.IsNil)
+            {
+                throw new InvalidOperationException($"[TwoPhase] Class callable has nil token: {callable.DisplayName}");
+            }
+
+            var (classScope, classDecl, className) = ResolveClassScope(symbolTable, callable);
+            var hasScopes = classRegistry.TryGetPrivateField(className, "_scopes", out var scopesField);
+
+            CompiledCallableBody body;
+            switch (callable.Kind)
+            {
+                case CallableKind.ClassConstructor:
+                {
+                    // Constructors need legacy emission for base ctor call + field initializers.
+                    FunctionExpression? ctorFunc = null;
+                    if (callable.AstNode is Acornima.Ast.MethodDefinition ctorDef)
+                    {
+                        ctorFunc = ctorDef.Value as FunctionExpression;
+                    }
+                    else
+                    {
+                        var ctorMember = classDecl.Body.Body
+                            .OfType<Acornima.Ast.MethodDefinition>()
+                            .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+                        ctorFunc = ctorMember?.Value as FunctionExpression;
+                    }
+
+                    body = LegacyClassBodyCompiler.CompileConstructorBody(
+                        serviceProvider,
+                        metadataBuilder,
+                        methodBodyStreamEncoder,
+                        bclReferences,
+                        classRegistry,
+                        rootVariables,
+                        symbolTable,
+                        callable,
+                        expected,
+                        classScope,
+                        classDecl,
+                        ctorFunc,
+                        needsScopes: hasScopes);
+                    break;
+                }
+
+                case CallableKind.ClassStaticInitializer:
+                {
+                    body = LegacyClassBodyCompiler.CompileStaticInitializerBody(
+                        serviceProvider,
+                        metadataBuilder,
+                        methodBodyStreamEncoder,
+                        bclReferences,
+                        classRegistry,
+                        rootVariables,
+                        symbolTable,
+                        callable,
+                        expected,
+                        classScope,
+                        classDecl);
+                    break;
+                }
+
+                default:
+                {
+                    if (callable.AstNode is not Acornima.Ast.MethodDefinition methodDef)
+                    {
+                        throw new InvalidOperationException($"[TwoPhase] Class method callable missing AST node: {callable.DisplayName}");
+                    }
+
+                    var memberName = (methodDef.Key as Identifier)?.Name ?? "method";
+                    var clrMethodName = methodDef.Kind switch
+                    {
+                        PropertyKind.Get => $"get_{memberName}",
+                        PropertyKind.Set => $"set_{memberName}",
+                        _ => memberName
+                    };
+
+                    // IR first (body-only), fallback to legacy emitter.
+                    CompiledCallableBody? irBody = null;
+                    try
+                    {
+                        var funcExpr = methodDef.Value as FunctionExpression;
+                        if (funcExpr != null)
+                        {
+                            var methodScope = symbolTable.FindScopeByAstNode(funcExpr);
+                            if (methodScope != null)
+                            {
+                                FieldDefinitionHandle? scopesFieldHandle = null;
+                                if (!methodDef.Static && hasScopes)
+                                {
+                                    scopesFieldHandle = scopesField;
+                                }
+
+                                irBody = methodCompiler.TryCompileCallableBody(
+                                    callable: callable,
+                                    expectedMethodDef: expected,
+                                    ilMethodName: clrMethodName,
+                                    node: methodDef,
+                                    scope: methodScope,
+                                    methodBodyStreamEncoder: methodBodyStreamEncoder,
+                                    isInstanceMethod: !methodDef.Static,
+                                    hasScopesParameter: false,
+                                    scopesFieldHandle: scopesFieldHandle,
+                                    returnsVoid: false);
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // Fall back to legacy compilation.
+                        irBody = null;
+                    }
+
+                    body = irBody ?? LegacyClassBodyCompiler.CompileMethodBody(
+                        serviceProvider,
+                        metadataBuilder,
+                        methodBodyStreamEncoder,
+                        bclReferences,
+                        classRegistry,
+                        rootVariables,
+                        symbolTable,
+                        callable,
+                        expected,
+                        classScope,
+                        methodDef,
+                        clrMethodName);
+                    break;
+                }
+            }
+
+            compiled[callable] = body;
+            if (callable.AstNode != null)
+            {
+                _registry.MarkBodyCompiledForAstNode(callable.AstNode);
+            }
+        }
+
+        // Finalize MethodDef/Param rows in TypeDef order (class declaration order), preserving per-type contiguity.
+        foreach (var classScope in EnumerateClassScopesInDeclarationOrder(symbolTable.Root))
+        {
+            if (classScope.AstNode is not ClassDeclaration classDecl)
+            {
+                continue;
+            }
+
+            var ns = classScope.DotNetNamespace ?? "Classes";
+            var name = classScope.DotNetTypeName ?? classScope.Name;
+            var tb = new TypeBuilder(metadataBuilder, ns, name);
+
+            foreach (var callable in GetClassCallablesInDeclarationOrder(classScope, classDecl))
+            {
+                if (!compiled.TryGetValue(callable, out var body))
+                {
+                    throw new InvalidOperationException($"[TwoPhase] Missing compiled body for class callable: {callable.DisplayName}");
+                }
+
+                _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, tb, body);
+            }
+        }
+    }
+
+    private static IEnumerable<Scope> EnumerateClassScopesInDeclarationOrder(Scope scope)
+    {
+        foreach (var child in scope.Children)
+        {
+            if (child.Kind == ScopeKind.Class)
+            {
+                yield return child;
+            }
+
+            foreach (var nested in EnumerateClassScopesInDeclarationOrder(child))
+            {
+                yield return nested;
+            }
+        }
+    }
+
+    private IEnumerable<CallableId> GetClassCallablesInDeclarationOrder(Scope classScope, ClassDeclaration classDecl)
+    {
+        var className = classScope.Name;
+
+        // Constructor (explicit or synthetic)
+        var ctorMember = classDecl.Body.Body
+            .OfType<Acornima.Ast.MethodDefinition>()
+            .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+
+        if (ctorMember != null && _registry.TryGetCallableIdForAstNode(ctorMember, out var ctorCallable))
+        {
+            yield return ctorCallable;
+        }
+        else
+        {
+            var synthCtor = _discoveredCallables!.FirstOrDefault(c => c.Kind == CallableKind.ClassConstructor && string.Equals(c.Name, className, StringComparison.Ordinal));
+            if (synthCtor != null)
+            {
+                yield return synthCtor;
+            }
+        }
+
+        // Methods/accessors in source order
+        foreach (var member in classDecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>().Where(m => m.Key is Identifier))
+        {
+            var methodName = ((Identifier)member.Key).Name;
+            if (methodName == "constructor") continue;
+
+            if (_registry.TryGetCallableIdForAstNode(member, out var methodCallable))
+            {
+                yield return methodCallable;
+            }
+        }
+
+        // Static initializer (.cctor) if needed (legacy ordering: after methods)
+        bool hasStaticFieldInits = classDecl.Body.Body.OfType<Acornima.Ast.PropertyDefinition>()
+            .Any(p => p.Static && p.Value != null);
+        if (hasStaticFieldInits)
+        {
+            var cctor = _discoveredCallables!.FirstOrDefault(c => c.Kind == CallableKind.ClassStaticInitializer && string.Equals(c.Name, className, StringComparison.Ordinal));
+            if (cctor != null)
+            {
+                yield return cctor;
+            }
+        }
+    }
+
+    private static (Scope ClassScope, ClassDeclaration ClassDecl, string ClassName) ResolveClassScope(SymbolTable symbolTable, CallableId callable)
+    {
+        if (string.IsNullOrEmpty(callable.Name))
+        {
+            throw new InvalidOperationException($"[TwoPhase] Class callable missing Name: {callable.DisplayName}");
+        }
+
+        var className = callable.Kind is CallableKind.ClassConstructor or CallableKind.ClassStaticInitializer
+            ? callable.Name
+            : (JavaScriptCallableNaming.TrySplitClassMethodCallableName(callable.Name, out var cn, out _) ? cn : "");
+
+        if (string.IsNullOrEmpty(className))
+        {
+            throw new InvalidOperationException($"[TwoPhase] Invalid class callable name format: {callable.DisplayName}");
+        }
+
+        var declaringScope = ResolveScopeByPath(symbolTable, callable.DeclaringScopeName);
+        var classScope = declaringScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Class && string.Equals(s.Name, className, StringComparison.Ordinal));
+        if (classScope == null || classScope.AstNode is not ClassDeclaration classDecl)
+        {
+            throw new InvalidOperationException($"[TwoPhase] Class scope not found for callable: {callable.DisplayName} (DeclaringScope='{callable.DeclaringScopeName}', ClassName='{className}')");
+        }
+
+        // ClassRegistry keys use CLR full names (namespace + type) to avoid collisions across modules.
+        var ns = classScope.DotNetNamespace ?? "Classes";
+        var typeName = classScope.DotNetTypeName ?? classScope.Name;
+        var registryClassName = $"{ns}.{typeName}";
+
+        return (classScope, classDecl, registryClassName);
+    }
+
+    private static Scope ResolveScopeByPath(SymbolTable symbolTable, string scopePath)
+    {
+        if (string.IsNullOrWhiteSpace(scopePath))
+        {
+            return symbolTable.Root;
+        }
+
+        var parts = scopePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        var idx = 0;
+        if (parts.Length > 0 && string.Equals(parts[0], symbolTable.Root.Name, StringComparison.Ordinal))
+        {
+            idx = 1;
+        }
+
+        var current = symbolTable.Root;
+        for (var i = idx; i < parts.Length; i++)
+        {
+            // Scope names are used as path segments; they must not contain '/'.
+            if (current.Children.Any(s => s.Name.Contains('/')))
+            {
+                throw new InvalidOperationException("[TwoPhase] Invalid scope name: scope names must not contain '/'.");
+            }
+
+            var next = current.Children.FirstOrDefault(s => string.Equals(s.Name, parts[i], StringComparison.Ordinal));
+            if (next == null)
+            {
+                throw new InvalidOperationException($"[TwoPhase] Declaring scope not found: '{scopePath}'");
+            }
+            current = next;
+        }
+
+        return current;
+    }
+
+    private void CompileAndFinalizePhase2FunctionDeclarations(
+        SymbolTable symbolTable,
+        MetadataBuilder metadataBuilder,
+        IReadOnlyList<CallableId> plannedOrder,
+        IServiceProvider serviceProvider,
+        Variables rootVariables,
+        BaseClassLibraryReferences bclReferences,
+        MethodBodyStreamEncoder methodBodyStreamEncoder,
+        ClassRegistry classRegistry,
+        FunctionRegistry functionRegistry)
+    {
+        if (_discoveredCallables == null)
+        {
+            return;
+        }
+
+        var moduleName = symbolTable.Root.Name;
+
+        // Build Variables for each function declaration with correct parent scope wiring.
+        // This is required for nested function bodies compiled via the legacy emitter path.
+        var variablesByFunctionDecl = new Dictionary<FunctionDeclaration, Variables>();
+        void BuildVariablesForFunctionScopes(Scope currentScope, Variables currentFunctionVariables)
+        {
+            foreach (var child in currentScope.Children)
+            {
+                if (child.Kind == ScopeKind.Function && child.AstNode is FunctionDeclaration childFuncDecl)
+                {
+                    var fnName = (childFuncDecl.Id as Identifier)?.Name;
+                    if (string.IsNullOrEmpty(fnName))
+                    {
+                        // FunctionDeclaration should always be named; keep defensive.
+                        continue;
+                    }
+
+                    var registryScopeName = $"{moduleName}/{fnName}";
+                    var paramNames = ILMethodGenerator.ExtractParameterNames(childFuncDecl.Params).ToArray();
+
+                    // If we're inside another function, this is a nested function.
+                    var isNestedFunction = currentFunctionVariables.GetCurrentScopeName() != rootVariables.GetCurrentScopeName();
+                    var childVars = new Variables(currentFunctionVariables, registryScopeName, paramNames, isNestedFunction: isNestedFunction);
+
+                    variablesByFunctionDecl[childFuncDecl] = childVars;
+
+                    // Recurse: any function declarations underneath are nested within this function.
+                    BuildVariablesForFunctionScopes(child, childVars);
+                }
+                else
+                {
+                    // Keep traversing to find function declarations nested in blocks, etc.
+                    BuildVariablesForFunctionScopes(child, currentFunctionVariables);
+                }
+            }
+        }
+
+        // Seed with top-level functions under the module root.
+        foreach (var topFuncScope in symbolTable.Root.Children.Where(c => c.Kind == ScopeKind.Function && c.AstNode is FunctionDeclaration))
+        {
+            var topFuncDecl = (FunctionDeclaration)topFuncScope.AstNode!;
+            var topName = (topFuncDecl.Id as Identifier)?.Name;
+            if (string.IsNullOrEmpty(topName))
+            {
+                continue;
+            }
+
+            var topRegistryScopeName = $"{moduleName}/{topName}";
+            var topParamNames = ILMethodGenerator.ExtractParameterNames(topFuncDecl.Params).ToArray();
+            var topVars = new Variables(rootVariables, topRegistryScopeName, topParamNames, isNestedFunction: false);
+            variablesByFunctionDecl[topFuncDecl] = topVars;
+
+            BuildVariablesForFunctionScopes(topFuncScope, topVars);
+        }
+
+        // Deterministic declaration order for MethodDef row allocation: discovery order.
+        var functionDeclCallables = _discoveredCallables
+            .Where(c => c.Kind == CallableKind.FunctionDeclaration)
+            .ToList();
+        if (functionDeclCallables.Count == 0)
+        {
+            return;
+        }
+
+        // Preallocate MethodDef handles for function declarations if not already present.
+        var nextRowId = metadataBuilder.GetRowCount(TableIndex.MethodDef) + 1;
+        foreach (var callable in functionDeclCallables)
+        {
+            if (_registry.TryGetDeclaredToken(callable, out var existingToken) && !existingToken.IsNil)
+            {
+                continue;
+            }
+
+            var preallocated = MetadataTokens.MethodDefinitionHandle(nextRowId++);
+            _registry.SetToken(callable, preallocated);
+            if (callable.AstNode is FunctionDeclaration fd)
+            {
+                _registry.SetDeclaredTokenForAstNode(fd, preallocated);
+                var fnName = (fd.Id as Identifier)?.Name;
+                if (!string.IsNullOrEmpty(fnName))
+                {
+                    var jsParamNames = ILMethodGenerator.ExtractParameterNames(fd.Params).ToArray();
+                    functionRegistry.PreRegisterParameterCount(fnName, jsParamNames.Length);
+                    functionRegistry.Register(fnName, preallocated, jsParamNames.Length);
+                }
+            }
+        }
+
+        // Compile bodies in planned order (no MethodDef rows emitted here).
+        var compiled = new Dictionary<CallableId, CompiledCallableBody>();
+        foreach (var callable in plannedOrder)
+        {
+            if (callable.Kind != CallableKind.FunctionDeclaration)
+            {
+                continue;
+            }
+
+            if (callable.AstNode is not FunctionDeclaration funcDecl)
+            {
+                continue;
+            }
+
+            if (!_registry.TryGetDeclaredToken(callable, out var tok) || tok.Kind != HandleKind.MethodDefinition)
+            {
+                throw new InvalidOperationException($"[TwoPhase] FunctionDeclaration missing declared token: {callable.DisplayName}");
+            }
+            var expected = (MethodDefinitionHandle)tok;
+            if (expected.IsNil)
+            {
+                throw new InvalidOperationException($"[TwoPhase] FunctionDeclaration has nil token: {callable.DisplayName}");
+            }
+
+            var funcScope = symbolTable.FindScopeByAstNode(funcDecl);
+            if (funcScope == null)
+            {
+                throw new InvalidOperationException($"[TwoPhase] FunctionDeclaration scope not found: {callable.DisplayName}");
+            }
+
+            if (!variablesByFunctionDecl.TryGetValue(funcDecl, out var functionVariables))
+            {
+                throw new InvalidOperationException($"[TwoPhase] Variables not found for function declaration: {callable.DisplayName}");
+            }
+
+            var registryScopeName = functionVariables.GetCurrentScopeName();
+            var methodName = (funcDecl.Id as Identifier)?.Name ?? callable.Name ?? "anonymous";
+
+            // IR first
+            var methodCompiler = serviceProvider.GetRequiredService<JsMethodCompiler>();
+            var irBody = methodCompiler.TryCompileCallableBody(
+                callable: callable,
+                expectedMethodDef: expected,
+                ilMethodName: methodName,
+                node: funcDecl,
+                scope: funcScope,
+                methodBodyStreamEncoder: methodBodyStreamEncoder,
+                isInstanceMethod: false,
+                hasScopesParameter: true,
+                scopesFieldHandle: null,
+                returnsVoid: false);
+
+            CompiledCallableBody body;
+            if (irBody != null)
+            {
+                body = irBody;
+            }
+            else
+            {
+                body = LegacyFunctionBodyCompiler.CompileFunctionDeclarationBody(
+                    serviceProvider,
+                    metadataBuilder,
+                    methodBodyStreamEncoder,
+                    bclReferences,
+                    functionVariables,
+                    classRegistry,
+                    functionRegistry,
+                    symbolTable,
+                    callable,
+                    expected,
+                    funcDecl,
+                    funcScope,
+                    registryScopeName);
+            }
+
+            compiled[callable] = body;
+            _registry.MarkBodyCompiledForAstNode(funcDecl);
+        }
+
+        // Finalize MethodDef/Param rows deterministically (discovery order) as a single contiguous block.
+        var tb = new TypeBuilder(metadataBuilder, FunctionsNamespace, moduleName);
+        foreach (var callable in functionDeclCallables)
+        {
+            if (!compiled.TryGetValue(callable, out var body))
+            {
+                // Milestone 2c: the plan is authoritative.
+                throw new InvalidOperationException($"[TwoPhase] Missing compiled body for function declaration: {callable.DisplayName}");
+            }
+            _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, tb, body);
+        }
+
+        tb.AddTypeDefinition(
+            TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
+            bclReferences.ObjectType);
     }
 
     /// <summary>
@@ -341,6 +1034,44 @@ public sealed class TwoPhaseCompilationCoordinator
         }
     }
 
+    private void PreallocatePhase1AnonymousCallablesMethodDefsInOrder(
+        IReadOnlyList<CallableId> discoveredCallables,
+        IReadOnlyList<CallableId> compilationOrder,
+        MetadataBuilder metadataBuilder)
+    {
+        _methodDefRowCountAtPreallocation = metadataBuilder.GetRowCount(TableIndex.MethodDef);
+
+        // Phase 2 ordering baseline: classes + function declarations are still emitted before anonymous callables.
+        _expectedMethodDefsBeforeAnonymousCallables = discoveredCallables.Count(c => c.Kind is
+            CallableKind.FunctionDeclaration or
+            CallableKind.ClassConstructor or
+            CallableKind.ClassMethod or
+            CallableKind.ClassGetter or
+            CallableKind.ClassSetter or
+            CallableKind.ClassStaticMethod or
+            CallableKind.ClassStaticGetter or
+            CallableKind.ClassStaticSetter or
+            CallableKind.ClassStaticInitializer);
+
+        var nextRowId = _methodDefRowCountAtPreallocation.Value + _expectedMethodDefsBeforeAnonymousCallables.Value + 1;
+
+        foreach (var callable in compilationOrder)
+        {
+            if (callable.Kind is not (CallableKind.Arrow or CallableKind.FunctionExpression))
+            {
+                continue;
+            }
+
+            if (_registry.TryGetDeclaredToken(callable, out var existingToken) && !existingToken.IsNil)
+            {
+                continue;
+            }
+
+            var preallocated = MetadataTokens.MethodDefinitionHandle(nextRowId++);
+            _registry.SetToken(callable, preallocated);
+        }
+    }
+
     /// <summary>
     /// Phase 1: Discover all callables in the module and populate CallableRegistry.
     /// This must be called before RunPhase1Declaration.
@@ -414,9 +1145,37 @@ public sealed class TwoPhaseCompilationCoordinator
                 ? $"ArrowFunction_L{callable.Location.Value.Line}C{callable.Location.Value.Column}"
                 : "ArrowFunction_anonymous",
             CallableKind.ClassConstructor => ".ctor",
-            CallableKind.ClassMethod or CallableKind.ClassStaticMethod => callable.Name ?? "method",
+            CallableKind.ClassMethod or CallableKind.ClassStaticMethod => TryGetClassMemberName(callable.Name) ?? "method",
+            CallableKind.ClassGetter or CallableKind.ClassStaticGetter => TryGetAccessorMethodName(callable.Name, "get") ?? "get",
+            CallableKind.ClassSetter or CallableKind.ClassStaticSetter => TryGetAccessorMethodName(callable.Name, "set") ?? "set",
             _ => "unknown"
         };
+    }
+
+    private static string? TryGetClassMemberName(string? callableName)
+    {
+        // CallableId convention for class methods: "ClassName.methodName".
+        if (string.IsNullOrWhiteSpace(callableName)) return null;
+        var dot = callableName.IndexOf('.');
+        if (dot < 0 || dot >= callableName.Length - 1) return null;
+        var member = callableName[(dot + 1)..];
+        return string.IsNullOrWhiteSpace(member) ? null : member;
+    }
+
+    private static string? TryGetAccessorMethodName(string? callableName, string accessorKind)
+    {
+        // CallableId convention for accessors: "ClassName.get:prop" / "ClassName.set:prop".
+        if (string.IsNullOrWhiteSpace(callableName)) return null;
+        var dot = callableName.IndexOf('.');
+        if (dot < 0 || dot >= callableName.Length - 1) return null;
+        var tail = callableName[(dot + 1)..];
+        var colon = tail.IndexOf(':');
+        if (colon < 0 || colon >= tail.Length - 1) return null;
+        var kind = tail[..colon];
+        var prop = tail[(colon + 1)..];
+        if (!string.Equals(kind, accessorKind, StringComparison.Ordinal)) return null;
+        if (string.IsNullOrWhiteSpace(prop)) return null;
+        return $"{accessorKind}_{prop}";
     }
     
     /// <summary>

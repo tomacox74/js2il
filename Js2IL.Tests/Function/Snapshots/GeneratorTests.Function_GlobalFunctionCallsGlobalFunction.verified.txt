@@ -80,7 +80,7 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 85 (0x55)
+		// Code size: 111 (0x6f)
 		.maxstack 32
 
 		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -104,19 +104,28 @@
 		IL_0032: castclass Scopes.Function_GlobalFunctionCallsGlobalFunction
 		IL_0037: ldfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorld
 		IL_003c: dup
-		IL_003d: brtrue.s IL_0046
+		IL_003d: brtrue.s IL_0066
 
 		IL_003f: pop
-		IL_0040: ldnull
-		IL_0041: br IL_0046
+		IL_0040: ldarg.0
+		IL_0041: ldc.i4.0
+		IL_0042: ldelem.ref
+		IL_0043: ldnull
+		IL_0044: ldftn object Functions.Function_GlobalFunctionCallsGlobalFunction::helloWorld(object[])
+		IL_004a: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_004f: stfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorld
+		IL_0054: ldarg.0
+		IL_0055: ldc.i4.0
+		IL_0056: ldelem.ref
+		IL_0057: castclass Scopes.Function_GlobalFunctionCallsGlobalFunction
+		IL_005c: ldfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorld
+		IL_0061: br IL_0066
 
-		IL_0046: ldarg.0
-		IL_0047: ldc.i4.0
-		IL_0048: newarr [System.Runtime]System.Object
-		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_0052: pop
-		IL_0053: ldnull
-		IL_0054: ret
+		IL_0066: ldarg.0
+		IL_0067: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_006c: pop
+		IL_006d: ldnull
+		IL_006e: ret
 	} // end of method Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
 
 	.method public hidebysig static 
@@ -124,7 +133,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x20d0
+		// Method begins at RVA 0x20e8
 		// Header size: 12
 		// Code size: 46 (0x2e)
 		.maxstack 32
@@ -167,7 +176,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x210c
+		// Method begins at RVA 0x2124
 		// Header size: 12
 		// Code size: 155 (0x9b)
 		.maxstack 32
@@ -239,7 +248,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21b3
+		// Method begins at RVA 0x21cb
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

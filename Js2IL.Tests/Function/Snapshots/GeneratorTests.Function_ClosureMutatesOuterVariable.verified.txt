@@ -77,87 +77,80 @@
 .class public auto ansi abstract sealed beforefieldinit Functions.Function_ClosureMutatesOuterVariable
 	extends [System.Runtime]System.Object
 {
-	// Nested Types
-	.class nested public auto ansi abstract sealed beforefieldinit createCounter_Nested
-		extends [System.Runtime]System.Object
+	// Methods
+	.method public hidebysig static 
+		object createCounter (
+			object[] scopes,
+			object start
+		) cil managed 
 	{
-		// Methods
-		.method public hidebysig static 
-			object increment (
-				object[] scopes
-			) cil managed 
-		{
-			// Method begins at RVA 0x206c
-			// Header size: 12
-			// Code size: 60 (0x3c)
-			.maxstack 32
+		// Method begins at RVA 0x206c
+		// Header size: 12
+		// Code size: 59 (0x3b)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.Function_ClosureMutatesOuterVariable/createCounter
+		)
 
-			IL_0000: ldarg.0
-			IL_0001: ldc.i4.1
-			IL_0002: ldelem.ref
-			IL_0003: castclass Scopes.Function_ClosureMutatesOuterVariable/createCounter
-			IL_0008: ldarg.0
-			IL_0009: ldc.i4.1
-			IL_000a: ldelem.ref
-			IL_000b: castclass Scopes.Function_ClosureMutatesOuterVariable/createCounter
-			IL_0010: ldfld object Scopes.Function_ClosureMutatesOuterVariable/createCounter::count
-			IL_0015: unbox.any [System.Runtime]System.Double
-			IL_001a: ldc.r8 1
-			IL_0023: add
-			IL_0024: box [System.Runtime]System.Double
-			IL_0029: stfld object Scopes.Function_ClosureMutatesOuterVariable/createCounter::count
-			IL_002e: ldarg.0
-			IL_002f: ldc.i4.1
-			IL_0030: ldelem.ref
-			IL_0031: castclass Scopes.Function_ClosureMutatesOuterVariable/createCounter
-			IL_0036: ldfld object Scopes.Function_ClosureMutatesOuterVariable/createCounter::count
-			IL_003b: ret
-		} // end of method createCounter_Nested::increment
+		IL_0000: newobj instance void Scopes.Function_ClosureMutatesOuterVariable/createCounter::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldnull
+		IL_0008: ldftn object Functions.Function_ClosureMutatesOuterVariable::increment(object[])
+		IL_000e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0013: stfld object Scopes.Function_ClosureMutatesOuterVariable/createCounter::increment
+		IL_0018: ldloc.0
+		IL_0019: ldarg.1
+		IL_001a: stfld object Scopes.Function_ClosureMutatesOuterVariable/createCounter::count
+		IL_001f: ldloc.0
+		IL_0020: ldfld object Scopes.Function_ClosureMutatesOuterVariable/createCounter::increment
+		IL_0025: ldc.i4.2
+		IL_0026: newarr [System.Runtime]System.Object
+		IL_002b: dup
+		IL_002c: ldc.i4.0
+		IL_002d: ldarg.0
+		IL_002e: ldc.i4.0
+		IL_002f: ldelem.ref
+		IL_0030: stelem.ref
+		IL_0031: dup
+		IL_0032: ldc.i4.1
+		IL_0033: ldloc.0
+		IL_0034: stelem.ref
+		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_003a: ret
+	} // end of method Function_ClosureMutatesOuterVariable::createCounter
 
-		.method public hidebysig static 
-			object createCounter (
-				object[] scopes,
-				object start
-			) cil managed 
-		{
-			// Method begins at RVA 0x20b4
-			// Header size: 12
-			// Code size: 59 (0x3b)
-			.maxstack 32
-			.locals init (
-				[0] class Scopes.Function_ClosureMutatesOuterVariable/createCounter
-			)
+	.method public hidebysig static 
+		object increment (
+			object[] scopes
+		) cil managed 
+	{
+		// Method begins at RVA 0x20b4
+		// Header size: 12
+		// Code size: 60 (0x3c)
+		.maxstack 32
 
-			IL_0000: newobj instance void Scopes.Function_ClosureMutatesOuterVariable/createCounter::.ctor()
-			IL_0005: stloc.0
-			IL_0006: ldloc.0
-			IL_0007: ldnull
-			IL_0008: ldftn object Functions.Function_ClosureMutatesOuterVariable/createCounter_Nested::increment(object[])
-			IL_000e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-			IL_0013: stfld object Scopes.Function_ClosureMutatesOuterVariable/createCounter::increment
-			IL_0018: ldloc.0
-			IL_0019: ldarg.1
-			IL_001a: stfld object Scopes.Function_ClosureMutatesOuterVariable/createCounter::count
-			IL_001f: ldloc.0
-			IL_0020: ldfld object Scopes.Function_ClosureMutatesOuterVariable/createCounter::increment
-			IL_0025: ldc.i4.2
-			IL_0026: newarr [System.Runtime]System.Object
-			IL_002b: dup
-			IL_002c: ldc.i4.0
-			IL_002d: ldarg.0
-			IL_002e: ldc.i4.0
-			IL_002f: ldelem.ref
-			IL_0030: stelem.ref
-			IL_0031: dup
-			IL_0032: ldc.i4.1
-			IL_0033: ldloc.0
-			IL_0034: stelem.ref
-			IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-			IL_003a: ret
-		} // end of method createCounter_Nested::createCounter
-
-	} // end of class createCounter_Nested
-
+		IL_0000: ldarg.0
+		IL_0001: ldc.i4.1
+		IL_0002: ldelem.ref
+		IL_0003: castclass Scopes.Function_ClosureMutatesOuterVariable/createCounter
+		IL_0008: ldarg.0
+		IL_0009: ldc.i4.1
+		IL_000a: ldelem.ref
+		IL_000b: castclass Scopes.Function_ClosureMutatesOuterVariable/createCounter
+		IL_0010: ldfld object Scopes.Function_ClosureMutatesOuterVariable/createCounter::count
+		IL_0015: unbox.any [System.Runtime]System.Double
+		IL_001a: ldc.r8 1
+		IL_0023: add
+		IL_0024: box [System.Runtime]System.Double
+		IL_0029: stfld object Scopes.Function_ClosureMutatesOuterVariable/createCounter::count
+		IL_002e: ldarg.0
+		IL_002f: ldc.i4.1
+		IL_0030: ldelem.ref
+		IL_0031: castclass Scopes.Function_ClosureMutatesOuterVariable/createCounter
+		IL_0036: ldfld object Scopes.Function_ClosureMutatesOuterVariable/createCounter::count
+		IL_003b: ret
+	} // end of method Function_ClosureMutatesOuterVariable::increment
 
 } // end of class Functions.Function_ClosureMutatesOuterVariable
 
@@ -187,7 +180,7 @@
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldnull
-		IL_0008: ldftn object Functions.Function_ClosureMutatesOuterVariable/createCounter_Nested::createCounter(object[], object)
+		IL_0008: ldftn object Functions.Function_ClosureMutatesOuterVariable::createCounter(object[], object)
 		IL_000e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0013: stfld object Scopes.Function_ClosureMutatesOuterVariable::createCounter
 		IL_0018: ldloc.0
@@ -199,7 +192,7 @@
 		IL_0026: pop
 		IL_0027: ldloc.0
 		IL_0028: ldnull
-		IL_0029: ldftn object Functions.Function_ClosureMutatesOuterVariable/createCounter_Nested::createCounter(object[], object)
+		IL_0029: ldftn object Functions.Function_ClosureMutatesOuterVariable::createCounter(object[], object)
 		IL_002f: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0034: stfld object Scopes.Function_ClosureMutatesOuterVariable::createCounter
 		IL_0039: ldloc.0

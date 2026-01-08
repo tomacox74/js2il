@@ -109,9 +109,16 @@ namespace Js2IL.Services.ILGenerators
         /// </summary>
         public void DeclareClassesAndFunctions(SymbolTable symbolTable)
         {
-            _twoPhaseCoordinator.RunMilestone2a(
+            // Two-phase pipeline is always enabled: coordinator owns ordering and compilation.
+            _twoPhaseCoordinator.RunMilestone2c(
                 symbolTable,
                 _ilGenerator.MetadataBuilder,
+                _serviceProvider,
+                _rootVariables,
+                _bclReferences,
+                _methodBodyStreamEncoder,
+                _classRegistry,
+                _functionGenerator.FunctionRegistry,
                 compileAnonymousCallablesPhase2: callables =>
                     _twoPhaseCoordinator.CompilePhase2AnonymousCallables(
                         callables,
@@ -126,7 +133,7 @@ namespace Js2IL.Services.ILGenerators
                 compileClassesAndFunctionsPhase2: () =>
                 {
                     _classesGenerator.DeclareClasses(symbolTable);
-                    _functionGenerator.DeclareFunctions(symbolTable);
+                    // Milestone 2c: function declarations are moved to planned Phase 2.
                 });
         }
 

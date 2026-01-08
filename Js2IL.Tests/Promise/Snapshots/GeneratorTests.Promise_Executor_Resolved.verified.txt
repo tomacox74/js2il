@@ -71,6 +71,45 @@
 
 } // end of class Scopes.Promise_Executor_Resolved
 
+.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L5C8
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object ArrowFunction_L5C8 (
+			object[] scopes,
+			object message
+		) cil managed 
+	{
+		// Method begins at RVA 0x206c
+		// Header size: 12
+		// Code size: 33 (0x21)
+		.maxstack 32
+		.locals init (
+			[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
+		)
+
+		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldc.i4.2
+		IL_0008: newarr [System.Runtime]System.Object
+		IL_000d: dup
+		IL_000e: ldc.i4.0
+		IL_000f: ldstr "Promise resolved with message:"
+		IL_0014: stelem.ref
+		IL_0015: dup
+		IL_0016: ldc.i4.1
+		IL_0017: ldarg.1
+		IL_0018: stelem.ref
+		IL_0019: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_001e: pop
+		IL_001f: ldnull
+		IL_0020: ret
+	} // end of method ArrowFunction_L5C8::ArrowFunction_L5C8
+
+} // end of class Functions.ArrowFunction_L5C8
+
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L1C23
 	extends [System.Runtime]System.Object
 {
@@ -81,7 +120,7 @@
 			object resolve
 		) cil managed 
 	{
-		// Method begins at RVA 0x206c
+		// Method begins at RVA 0x209c
 		// Header size: 12
 		// Code size: 77 (0x4d)
 		.maxstack 32
@@ -130,45 +169,6 @@
 	} // end of method ArrowFunction_L1C23::ArrowFunction_L1C23
 
 } // end of class Functions.ArrowFunction_L1C23
-
-.class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L5C8
-	extends [System.Runtime]System.Object
-{
-	// Methods
-	.method public hidebysig static 
-		object ArrowFunction_L5C8 (
-			object[] scopes,
-			object message
-		) cil managed 
-	{
-		// Method begins at RVA 0x20c8
-		// Header size: 12
-		// Code size: 33 (0x21)
-		.maxstack 32
-		.locals init (
-			[0] class [JavaScriptRuntime]JavaScriptRuntime.Console
-		)
-
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldc.i4.2
-		IL_0008: newarr [System.Runtime]System.Object
-		IL_000d: dup
-		IL_000e: ldc.i4.0
-		IL_000f: ldstr "Promise resolved with message:"
-		IL_0014: stelem.ref
-		IL_0015: dup
-		IL_0016: ldc.i4.1
-		IL_0017: ldarg.1
-		IL_0018: stelem.ref
-		IL_0019: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_001e: pop
-		IL_001f: ldnull
-		IL_0020: ret
-	} // end of method ArrowFunction_L5C8::ArrowFunction_L5C8
-
-} // end of class Functions.ArrowFunction_L5C8
 
 .class public auto ansi beforefieldinit Scripts.Promise_Executor_Resolved
 	extends [System.Runtime]System.Object

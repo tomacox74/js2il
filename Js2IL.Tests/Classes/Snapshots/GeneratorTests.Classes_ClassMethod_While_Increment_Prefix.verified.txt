@@ -113,31 +113,34 @@
 	{
 		// Method begins at RVA 0x2088
 		// Header size: 12
-		// Code size: 46 (0x2e)
+		// Code size: 52 (0x34)
 		.maxstack 32
 		.locals init (
-			[0] float64
+			[0] class Scopes.Classes_ClassMethod_While_Increment_Prefix/Counter/run,
+			[1] float64
 		)
 
-		IL_0000: ldc.r8 0.0
-		IL_0009: stloc.0
-		// loop start (head: IL_000a)
-			IL_000a: ldloc.0
-			IL_000b: ldarg.1
-			IL_000c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0011: blt IL_001b
+		IL_0000: newobj instance void Scopes.Classes_ClassMethod_While_Increment_Prefix/Counter/run::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.r8 0.0
+		IL_000f: stloc.1
+		// loop start (head: IL_0010)
+			IL_0010: ldloc.1
+			IL_0011: ldarg.1
+			IL_0012: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0017: blt IL_0021
 
-			IL_0016: br IL_002c
+			IL_001c: br IL_0032
 
-			IL_001b: ldloc.0
-			IL_001c: ldc.r8 1
-			IL_0025: add
-			IL_0026: stloc.0
-			IL_0027: br IL_000a
+			IL_0021: ldloc.1
+			IL_0022: ldc.r8 1
+			IL_002b: add
+			IL_002c: stloc.1
+			IL_002d: br IL_0010
 		// end loop
 
-		IL_002c: ldarg.0
-		IL_002d: ret
+		IL_0032: ldarg.0
+		IL_0033: ret
 	} // end of method Counter::run
 
 } // end of class Classes.Classes_ClassMethod_While_Increment_Prefix.Counter
@@ -155,7 +158,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20c4
+		// Method begins at RVA 0x20c8
 		// Header size: 12
 		// Code size: 28 (0x1c)
 		.maxstack 32
@@ -183,7 +186,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20ec
+		// Method begins at RVA 0x20f0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
