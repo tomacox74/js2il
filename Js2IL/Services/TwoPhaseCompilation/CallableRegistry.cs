@@ -68,21 +68,21 @@ public interface ICallableDeclarationWriter
 /// <remarks>
 /// Note: getter methods return <see cref="EntityHandle"/> rather than <see cref="MethodDefinitionHandle"/>
 /// for backward compatibility with callers that may check <c>HandleKind</c> before casting.
-/// Since Milestone 2a, stored tokens are always <see cref="MethodDefinitionHandle"/>; callers can
+/// Stored tokens are always <see cref="MethodDefinitionHandle"/>; callers can
 /// safely cast after verifying <c>token.Kind == HandleKind.MethodDefinition</c>.
 /// </remarks>
 public interface ICallableDeclarationReader
 {
     /// <summary>
     /// Gets the declared method token for a callable (must exist in strict mode).
-    /// Returns an <see cref="EntityHandle"/>; since Milestone 2a this is always a <see cref="MethodDefinitionHandle"/>.
+    /// Returns an <see cref="EntityHandle"/>; this is always a <see cref="MethodDefinitionHandle"/>.
     /// </summary>
     /// <exception cref="InvalidOperationException">Thrown in strict mode if callable is not declared.</exception>
     EntityHandle GetDeclaredToken(CallableId id);
     
     /// <summary>
     /// Attempts to get the declared method token for a callable.
-    /// Returns an <see cref="EntityHandle"/>; since Milestone 2a this is always a <see cref="MethodDefinitionHandle"/>.
+    /// Returns an <see cref="EntityHandle"/>; this is always a <see cref="MethodDefinitionHandle"/>.
     /// Used for legacy/migration fallback paths.
     /// </summary>
     bool TryGetDeclaredToken(CallableId id, out EntityHandle token);
@@ -131,7 +131,7 @@ public sealed class CallableRegistry : ICallableCatalog, ICallableDeclarationWri
 
     /// <summary>
     /// Attempts to get the <see cref="CallableId"/> registered for a given AST node.
-    /// Used by Milestone 2b dependency discovery.
+    /// Used by dependency discovery.
     /// </summary>
     public bool TryGetCallableIdForAstNode(Node astNode, out CallableId callable)
     {

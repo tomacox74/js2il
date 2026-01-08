@@ -389,7 +389,7 @@ namespace Js2IL.Services.ILGenerators
                         var registryScopeName = $"{_variables.GetGlobalScopeName()}/{arrowBaseScopeName}";
                         var ilMethodName = $"ArrowFunction_L{arrowFunction.Location.Start.Line}C{arrowFunction.Location.Start.Column}";
                         
-                        // Milestone 1: In strict mode (two-phase compilation), lookup the pre-declared handle
+                        // Two-phase: In strict mode, lookup the pre-declared handle
                         // instead of triggering compilation. This satisfies the invariant:
                         // "expression emission never triggers compilation"
                         System.Reflection.Metadata.EntityHandle methodToken;
@@ -489,7 +489,7 @@ namespace Js2IL.Services.ILGenerators
                         var registryScopeName = $"{_variables.GetGlobalScopeName()}/{baseScopeName}";
                         var ilMethodName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
                         
-                        // Milestone 1: In strict mode (two-phase compilation), lookup the pre-declared handle
+                        // Two-phase: In strict mode, lookup the pre-declared handle
                         // instead of triggering compilation.
                         System.Reflection.Metadata.EntityHandle methodToken;
                         var registry = _callableRegistry;
@@ -1641,22 +1641,69 @@ namespace Js2IL.Services.ILGenerators
             }
 
 
-            // Attempt to resolve method handle from function registry via owner generator BEFORE branching
-            // so we know the parameter count in both null and non-null paths
-            var fnReg = _owner.FunctionRegistry;
-            var registryHandle = fnReg?.Get(identifier.Name) ?? default;
+            // In two-phase strict mode, do NOT rely on name-keyed registries for callable lookup.
+            // Resolve the callable token via SymbolTable binding -> declaration AST node -> CallableRegistry.
+            MethodDefinitionHandle registryHandle = default;
+            int expectedParamCount = callExpression.Arguments.Count;
+            bool isRegisteredFunction = false;
+
+            var symbolTable = _owner.SymbolTable;
+            if (_callableRegistry.StrictMode)
+            {
+                if (symbolTable == null)
+                {
+                    throw new InvalidOperationException("[TwoPhase] Strict mode requires a SymbolTable for callable resolution.");
+                }
+
+                var fqn = $"{functionVariable.ScopeName}/{identifier.Name}";
+                var binding = symbolTable.GetBindingInfo(fqn);
+                if (binding != null)
+                {
+                    isRegisteredFunction = binding.Kind == Js2IL.SymbolTables.BindingKind.Function;
+
+                    // Prefer signature param count from registry when available; fall back to AST param count.
+                    if (_callableRegistry.TryGetCallableIdForAstNode(binding.DeclarationNode, out var callableId))
+                    {
+                        var sig = _callableRegistry.GetSignature(callableId);
+                        if (sig != null)
+                        {
+                            expectedParamCount = sig.JsParamCount;
+                        }
+                    }
+                    else if (binding.DeclarationNode is FunctionDeclaration fd)
+                    {
+                        expectedParamCount = fd.Params.Count;
+                    }
+                    else if (binding.DeclarationNode is FunctionExpression fe)
+                    {
+                        expectedParamCount = fe.Params.Count;
+                    }
+                    else if (binding.DeclarationNode is ArrowFunctionExpression af)
+                    {
+                        expectedParamCount = af.Params.Count;
+                    }
+
+                    if (_callableRegistry.TryGetDeclaredTokenForAstNode(binding.DeclarationNode, out var token) &&
+                        token.Kind == HandleKind.MethodDefinition)
+                    {
+                        registryHandle = (MethodDefinitionHandle)token;
+                        isRegisteredFunction = true;
+                    }
+                }
+            }
+            else
+            {
+                // Legacy (non-strict) fallback: keep current behavior if a FunctionRegistry exists.
+                var fnReg = _owner.FunctionRegistry;
+                registryHandle = fnReg?.Get(identifier.Name) ?? default;
+                expectedParamCount = fnReg?.GetParameterCount(identifier.Name) ?? callExpression.Arguments.Count;
+                isRegisteredFunction = fnReg?.IsRegistered(identifier.Name) ?? false;
+            }
 
             // Duplicate delegate for null check
             _il.OpCode(System.Reflection.Metadata.ILOpCode.Dup);
             var nonNullLabel = _il.DefineLabel();
             var afterBindLabel = _il.DefineLabel();
-            
-            // Get the expected parameter count for the function
-            int expectedParamCount = fnReg?.GetParameterCount(identifier.Name) ?? callExpression.Arguments.Count;
-            
-            // Check if the function is registered (either pre-registered or fully registered).
-            // For recursive calls, the function is pre-registered but handle is nil.
-            bool isRegisteredFunction = fnReg?.IsRegistered(identifier.Name) ?? false;
             
             _il.Branch(System.Reflection.Metadata.ILOpCode.Brtrue_s, nonNullLabel);
             // Null path: pop the duplicate null
@@ -1686,51 +1733,6 @@ namespace Js2IL.Services.ILGenerators
                     _il.Token(functionVariable.FieldHandle);
                 }
                 // Reload the stored delegate to use as the call receiver
-                _il.EmitLoadVariable(functionVariable, _variables, _bclReferences, unbox: false, inClassMethod: false, currentClassName: null, classRegistry: null);
-            }
-            else if (isRegisteredFunction && registryHandle.IsNil)
-            {
-                // Pre-registered function (nil handle) - use runtime self-binding
-                // This happens during recursive function calls before the method is finalized
-                var _metadataBuilder = _owner.MetadataBuilder;
-                // Stack the scope for stfld (only for field variables)
-                if (!isLocalVariable)
-                {
-                    EmitLoadScopeObject(scopeObjectReference);
-                }
-                // Call System.Reflection.MethodBase.GetCurrentMethod() to get current function
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
-                _il.Token(_bclReferences.MethodBase_GetCurrentMethod_Ref);
-                // Load parameter count as Int32
-                _il.LoadConstantI4(expectedParamCount);
-                // Call Closure.CreateSelfDelegate(MethodBase, int) to create typed delegate
-                var closureTypeRef = _owner.Runtime.GetRuntimeTypeHandle(typeof(JavaScriptRuntime.Closure));
-                var makeSelfSig = new BlobBuilder();
-                new BlobEncoder(makeSelfSig)
-                    .MethodSignature(isInstanceMethod: false)
-                    .Parameters(2,
-                        rt => rt.Type().Object(),
-                        p => {
-                            p.AddParameter().Type().Type(_bclReferences.MethodBaseType, isValueType: false);
-                            p.AddParameter().Type().Int32();
-                        });
-                var makeSelfRef = _metadataBuilder.AddMemberReference(
-                    closureTypeRef,
-                    _metadataBuilder.GetOrAddString(nameof(JavaScriptRuntime.Closure.CreateSelfDelegate)),
-                    _metadataBuilder.GetOrAddBlob(makeSelfSig));
-                _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
-                _il.Token(makeSelfRef);
-                // Store delegate to variable (local or field)
-                if (isLocalVariable)
-                {
-                    _il.StoreLocal(functionVariable.LocalSlot);
-                }
-                else
-                {
-                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Stfld);
-                    _il.Token(functionVariable.FieldHandle);
-                }
-                // Reload to use as call receiver
                 _il.EmitLoadVariable(functionVariable, _variables, _bclReferences, unbox: false, inClassMethod: false, currentClassName: null, classRegistry: null);
             }
             else
@@ -2873,6 +2875,39 @@ namespace Js2IL.Services.ILGenerators
                         else
                         {
                             throw ILEmitHelpers.NotSupported($"Constructor for class '{cid.Name}' expects {expectedMinArgs}-{expectedMaxArgs} argument(s) but call site has {argc}.", newExpression);
+                        }
+                    }
+
+                    // Prefer CallableRegistry as the token source in strict two-phase mode.
+                    // This ensures all callable tokens (including class ctors) come from the unified registry.
+                    if (_callableRegistry.StrictMode)
+                    {
+                        var symbolTable = _owner.SymbolTable;
+                        if (symbolTable == null)
+                        {
+                            throw new InvalidOperationException("[TwoPhase] Strict mode requires a SymbolTable for class constructor resolution.");
+                        }
+
+                        var moduleName = _variables.GetGlobalScopeName();
+                        var binding = symbolTable.GetBindingInfo($"{moduleName}/{cid.Name}");
+                        if (binding?.DeclarationNode is ClassDeclaration classDecl)
+                        {
+                            var ctorMember = classDecl.Body.Body
+                                .OfType<Acornima.Ast.MethodDefinition>()
+                                .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+
+                            Node ctorNode = (Node?)ctorMember ?? classDecl.Body;
+
+                            if (_callableRegistry.TryGetDeclaredTokenForAstNode(ctorNode, out var token) &&
+                                token.Kind == HandleKind.MethodDefinition)
+                            {
+                                ctorDef = (MethodDefinitionHandle)token;
+                            }
+                            else
+                            {
+                                throw new InvalidOperationException(
+                                    $"[TwoPhase] Missing declared constructor token for class '{cid.Name}'.");
+                            }
                         }
                     }
 

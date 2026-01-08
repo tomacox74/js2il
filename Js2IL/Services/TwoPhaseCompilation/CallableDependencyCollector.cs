@@ -8,13 +8,13 @@ using Js2IL.Utilities;
 namespace Js2IL.Services.TwoPhaseCompilation;
 
 /// <summary>
-/// Milestone 2b: AST-based dependency discovery.
+/// AST-based dependency discovery.
 ///
 /// Scope (by design):
 /// - Record edges when targets are identifier-resolvable via the symbol table.
 /// - Record edges for inline anonymous callables (arrow/function expression nodes) without descending into their bodies.
 /// - Record edges for <c>new C()</c> only when <c>C</c> resolves to a class binding (constructor metadata).
-/// - Do NOT attempt to add edges for member calls like <c>obj.m()</c> (deferred to Milestone 2b1).
+/// - Add only narrow, class-aware edges for <c>this.m()</c> and <c>super.m()</c>; do NOT attempt to model <c>obj.m()</c>.
 /// </summary>
 public sealed class CallableDependencyCollector
 {
@@ -90,7 +90,7 @@ public sealed class CallableDependencyCollector
         var callerScope = ResolveScopeForCallable(caller);
         var deps = new HashSet<CallableId>();
 
-        // Optional class context for member-call edges (Milestone 2b1).
+        // Optional class context for member-call edges.
         // This is intentionally narrow: only this.method() and super.method() are considered.
         string? callerClassName = null;
         bool callerIsStaticMethod = false;
@@ -291,7 +291,7 @@ public sealed class CallableDependencyCollector
                     return;
 
                 case MemberExpression me:
-                    // Milestone 2b: do not treat non-computed property identifiers as variable references.
+                    // Do not treat non-computed property identifiers as variable references.
                     VisitNode(me.Object);
                     if (me.Computed)
                     {
@@ -343,7 +343,7 @@ public sealed class CallableDependencyCollector
                     break;
 
                 case CallExpression callExpr:
-                    // Milestone 2b1: add narrow, class-aware member-call edges when statically knowable.
+                    // Add narrow, class-aware member-call edges when statically knowable.
                     // This intentionally ignores obj.m() since it is generally dynamic in JavaScript.
                     TryAddThisOrSuperMemberCallDependency(callExpr);
                     VisitNode(callExpr.Callee);
