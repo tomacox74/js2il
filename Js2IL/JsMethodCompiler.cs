@@ -160,8 +160,10 @@ internal sealed class JsMethodCompiler
             parameters.Add(new MethodParameterDescriptor(paramName, typeof(object)));
         }
 
-        // Dummy TypeBuilder (not used by body-only compilation)
-        var dummyType = new TypeBuilder(_metadataBuilder, "", "<TwoPhaseDummy>");
+        // Dummy TypeBuilder (body-only compilation does not emit a TypeDef).
+        // Use a deterministic unique name to avoid any future collisions if this ever changes.
+        var dummyTypeName = $"<TwoPhaseDummy_M{MetadataTokens.GetRowNumber(expectedMethodDef)}>";
+        var dummyType = new TypeBuilder(_metadataBuilder, "", dummyTypeName);
 
         var methodDescriptor = new MethodDescriptor(ilMethodName, dummyType, parameters)
         {

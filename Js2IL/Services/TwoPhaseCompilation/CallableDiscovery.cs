@@ -181,7 +181,10 @@ public sealed class CallableDiscovery
                 DeclaringScopeName = parentScopeName,
                 Name = className,
                 JsParamCount = 0,
-                AstNode = null
+                // For synthetic callables we still want a stable AST node for indexing,
+                // but it must be unique per callable (CallableRegistry indexes Node -> CallableId).
+                // Use ClassBody for the default ctor; use ClassDeclaration for .cctor.
+                AstNode = classDecl.Body
             };
             
             _discovered.Add(ctorId);
@@ -198,7 +201,7 @@ public sealed class CallableDiscovery
                 DeclaringScopeName = parentScopeName,
                 Name = className,
                 JsParamCount = 0,
-                AstNode = null
+                AstNode = classDecl
             };
             _discovered.Add(cctorId);
         }

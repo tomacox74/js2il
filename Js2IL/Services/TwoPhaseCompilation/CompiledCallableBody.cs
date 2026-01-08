@@ -21,6 +21,10 @@ public sealed record CompiledCallableBody
 
     public required BlobHandle Signature { get; init; }
 
+    /// <summary>
+    /// Offset into the MethodBodyStream where the method body was written.
+    /// Note: 0 is a valid offset.
+    /// </summary>
     public required int BodyOffset { get; init; }
 
     public required string[] ParameterNames { get; init; }
@@ -29,7 +33,7 @@ public sealed record CompiledCallableBody
     {
         if (ExpectedMethodDef.IsNil) throw new InvalidOperationException("ExpectedMethodDef cannot be nil.");
         if (string.IsNullOrWhiteSpace(MethodName)) throw new InvalidOperationException("MethodName cannot be null or empty.");
-        if (BodyOffset < 0) throw new InvalidOperationException("BodyOffset must be a valid method body offset.");
+        if (BodyOffset < 0) throw new InvalidOperationException("BodyOffset must be a valid method body offset (0 is valid).");
         if (ParameterNames == null) throw new InvalidOperationException("ParameterNames cannot be null.");
     }
 }

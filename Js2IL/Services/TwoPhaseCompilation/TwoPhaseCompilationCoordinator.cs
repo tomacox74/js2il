@@ -6,6 +6,7 @@ using Acornima.Ast;
 using Js2IL.Services.ILGenerators;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
+using Js2IL.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Js2IL.Services.TwoPhaseCompilation;
@@ -179,11 +180,14 @@ public sealed class TwoPhaseCompilationCoordinator
         {
             if (seen.Count != _discoveredCallables.Count)
             {
-                var missing = _discoveredCallables.Where(c => !seen.Contains(c)).Select(c => c.UniqueKey).ToArray();
+                var missingCallables = _discoveredCallables.Where(c => !seen.Contains(c)).ToArray();
+                var sample = missingCallables.Take(10).Select(c => c.UniqueKey).ToArray();
                 throw new InvalidOperationException(
                     "[TwoPhase] Milestone 2c: compilation plan did not include every discovered callable. " +
                     $"Discovered={_discoveredCallables.Count}, PlannedDistinct={seen.Count}. " +
-                    (missing.Length > 0 ? ("Missing: " + string.Join(", ", missing)) : ""));
+                    (sample.Length > 0
+                        ? ("Missing (sample): " + string.Join(", ", sample) + (missingCallables.Length > sample.Length ? $" (+{missingCallables.Length - sample.Length} more)" : ""))
+                        : ""));
             }
 
             if (ordered.Count != _discoveredCallables.Count)
@@ -563,13 +567,18 @@ public sealed class TwoPhaseCompilationCoordinator
 
         var className = callable.Kind is CallableKind.ClassConstructor or CallableKind.ClassStaticInitializer
             ? callable.Name
-            : (callable.Name.Contains('.') ? callable.Name[..callable.Name.IndexOf('.')] : callable.Name);
+            : (JavaScriptCallableNaming.TrySplitClassMethodCallableName(callable.Name, out var cn, out _) ? cn : "");
+
+        if (string.IsNullOrEmpty(className))
+        {
+            throw new InvalidOperationException($"[TwoPhase] Invalid class callable name format: {callable.DisplayName}");
+        }
 
         var declaringScope = ResolveScopeByPath(symbolTable, callable.DeclaringScopeName);
         var classScope = declaringScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Class && string.Equals(s.Name, className, StringComparison.Ordinal));
         if (classScope == null || classScope.AstNode is not ClassDeclaration classDecl)
         {
-            throw new InvalidOperationException($"[TwoPhase] Class scope not found for callable: {callable.DisplayName}");
+            throw new InvalidOperationException($"[TwoPhase] Class scope not found for callable: {callable.DisplayName} (DeclaringScope='{callable.DeclaringScopeName}', ClassName='{className}')");
         }
 
         // ClassRegistry keys use CLR full names (namespace + type) to avoid collisions across modules.
@@ -582,6 +591,11 @@ public sealed class TwoPhaseCompilationCoordinator
 
     private static Scope ResolveScopeByPath(SymbolTable symbolTable, string scopePath)
     {
+        if (string.IsNullOrWhiteSpace(scopePath))
+        {
+            return symbolTable.Root;
+        }
+
         var parts = scopePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
         var idx = 0;
         if (parts.Length > 0 && string.Equals(parts[0], symbolTable.Root.Name, StringComparison.Ordinal))
