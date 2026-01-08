@@ -80,7 +80,7 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 111 (0x6f)
+		// Code size: 85 (0x55)
 		.maxstack 32
 
 		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
@@ -104,28 +104,19 @@
 		IL_0032: castclass Scopes.Function_GlobalFunctionCallsGlobalFunction
 		IL_0037: ldfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorld
 		IL_003c: dup
-		IL_003d: brtrue.s IL_0066
+		IL_003d: brtrue.s IL_0046
 
 		IL_003f: pop
-		IL_0040: ldarg.0
-		IL_0041: ldc.i4.0
-		IL_0042: ldelem.ref
-		IL_0043: ldnull
-		IL_0044: ldftn object Functions.Function_GlobalFunctionCallsGlobalFunction::helloWorld(object[])
-		IL_004a: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_004f: stfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorld
-		IL_0054: ldarg.0
-		IL_0055: ldc.i4.0
-		IL_0056: ldelem.ref
-		IL_0057: castclass Scopes.Function_GlobalFunctionCallsGlobalFunction
-		IL_005c: ldfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorld
-		IL_0061: br IL_0066
+		IL_0040: ldnull
+		IL_0041: br IL_0046
 
-		IL_0066: ldarg.0
-		IL_0067: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_006c: pop
-		IL_006d: ldnull
-		IL_006e: ret
+		IL_0046: ldarg.0
+		IL_0047: ldc.i4.0
+		IL_0048: newarr [System.Runtime]System.Object
+		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_0052: pop
+		IL_0053: ldnull
+		IL_0054: ret
 	} // end of method Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
 
 	.method public hidebysig static 
@@ -133,7 +124,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x20e8
+		// Method begins at RVA 0x20d0
 		// Header size: 12
 		// Code size: 46 (0x2e)
 		.maxstack 32
@@ -176,9 +167,9 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2124
+		// Method begins at RVA 0x210c
 		// Header size: 12
-		// Code size: 155 (0x9b)
+		// Code size: 133 (0x85)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Function_GlobalFunctionCallsGlobalFunction
@@ -200,43 +191,38 @@
 		IL_002b: castclass Scopes.Function_GlobalFunctionCallsGlobalFunction
 		IL_0030: ldfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
 		IL_0035: dup
-		IL_0036: brtrue.s IL_005b
+		IL_0036: brtrue.s IL_003f
 
 		IL_0038: pop
-		IL_0039: ldloc.0
-		IL_003a: ldnull
-		IL_003b: ldftn object Functions.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy(object[])
-		IL_0041: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0046: stfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
-		IL_004b: ldloc.0
-		IL_004c: castclass Scopes.Function_GlobalFunctionCallsGlobalFunction
-		IL_0051: ldfld object Scopes.Function_GlobalFunctionCallsGlobalFunction::helloWorldProxy
-		IL_0056: br IL_005b
+		IL_0039: ldnull
+		IL_003a: br IL_003f
 
-		IL_005b: ldc.i4.1
-		IL_005c: newarr [System.Runtime]System.Object
-		IL_0061: dup
-		IL_0062: ldc.i4.0
-		IL_0063: ldloc.0
-		IL_0064: stelem.ref
-		IL_0065: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_006a: pop
-		IL_006b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0070: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0075: ldc.i4.2
-		IL_0076: newarr [System.Runtime]System.Object
-		IL_007b: dup
-		IL_007c: ldc.i4.0
-		IL_007d: ldstr "finally is now"
-		IL_0082: stelem.ref
-		IL_0083: dup
-		IL_0084: ldc.i4.1
-		IL_0085: ldc.r8 3
-		IL_008e: box [System.Runtime]System.Double
-		IL_0093: stelem.ref
-		IL_0094: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0099: pop
-		IL_009a: ret
+		IL_003f: ldc.i4.1
+		IL_0040: newarr [System.Runtime]System.Object
+		IL_0045: dup
+		IL_0046: ldc.i4.0
+		IL_0047: ldloc.0
+		IL_0048: stelem.ref
+		IL_0049: ldc.i4.0
+		IL_004a: newarr [System.Runtime]System.Object
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_0054: pop
+		IL_0055: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005a: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_005f: ldc.i4.2
+		IL_0060: newarr [System.Runtime]System.Object
+		IL_0065: dup
+		IL_0066: ldc.i4.0
+		IL_0067: ldstr "finally is now"
+		IL_006c: stelem.ref
+		IL_006d: dup
+		IL_006e: ldc.i4.1
+		IL_006f: ldc.r8 3
+		IL_0078: box [System.Runtime]System.Double
+		IL_007d: stelem.ref
+		IL_007e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0083: pop
+		IL_0084: ret
 	} // end of method Function_GlobalFunctionCallsGlobalFunction::Main
 
 } // end of class Scripts.Function_GlobalFunctionCallsGlobalFunction
@@ -248,7 +234,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21cb
+		// Method begins at RVA 0x219d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

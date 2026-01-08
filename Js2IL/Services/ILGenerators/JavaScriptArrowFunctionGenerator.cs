@@ -50,7 +50,7 @@ namespace Js2IL.Services.ILGenerators
             string[] paramNames)
         {
             // Two-phase lookup:
-            // - Milestone 2a may preallocate a MethodDef token for this arrow during Phase 1.
+            // - Phase 1 may preallocate a MethodDef token for this arrow.
             // - A MethodDef token does NOT imply the body is compiled.
             // Only short-circuit when the registry says the body is compiled.
             MethodDefinitionHandle? expectedPreallocatedHandle = null;
@@ -71,7 +71,7 @@ namespace Js2IL.Services.ILGenerators
                 var arrowScope = _symbolTable.FindScopeByAstNode(arrowFunction);
                 if (arrowScope != null)
                 {
-                    // Two-phase milestone 2c: compile body without emitting MethodDef, then finalize immediately
+                    // Two-phase: compile body without emitting MethodDef, then finalize immediately
                     // so token preallocation remains stable even under planned ordering.
                     if (expectedPreallocatedHandle.HasValue &&
                         _callableRegistry.TryGetCallableIdForAstNode(arrowFunction, out var callableId))
@@ -355,7 +355,7 @@ namespace Js2IL.Services.ILGenerators
             if (expectedPreallocatedHandle.HasValue && mdh != expectedPreallocatedHandle.Value)
             {
                 throw new InvalidOperationException(
-                    $"[TwoPhase] Milestone 2a: compiled arrow handle mismatch for {ilMethodName}. " +
+                    $"[TwoPhase] Preallocation: compiled arrow handle mismatch for {ilMethodName}. " +
                     $"Expected preallocated token 0x{MetadataTokens.GetToken(expectedPreallocatedHandle.Value):X8}, " +
                     $"got token 0x{MetadataTokens.GetToken(mdh):X8}.");
             }

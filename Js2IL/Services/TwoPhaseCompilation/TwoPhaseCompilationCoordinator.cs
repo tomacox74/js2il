@@ -14,7 +14,7 @@ namespace Js2IL.Services.TwoPhaseCompilation;
 /// <summary>
 /// Coordinates the two-phase compilation pipeline:
 /// - Phase 1: Discovery + Declaration (create method tokens)
-/// - Phase 2: Body compilation (in dependency order, when planner is added in Milestone 2)
+/// - Phase 2: Body compilation (in dependency order)
 /// 
 /// This is the entry point for the new compilation model. The coordinator is responsible for:
 /// 1. Invoking CallableDiscovery to find all callables
@@ -23,10 +23,10 @@ namespace Js2IL.Services.TwoPhaseCompilation;
 /// 4. Invoking body compilation in the appropriate order (Phase 2)
 /// </summary>
 /// <remarks>
-/// Milestone 1 Implementation:
+/// Current implementation notes:
 /// - Coordinator discovers callables and populates CallableRegistry with signatures.
-/// - Phase 1 declares callable tokens without compiling bodies (Option B: MemberRefs).
-/// - Strict mode is enabled before Phase 2 so expression emission uses lookup-only.
+/// - Phase 1 reserves callable tokens without compiling bodies.
+/// - Strict mode is enabled before Phase 2 so expression emission is lookup-only.
 /// - See docs/TwoPhaseCompilationPipeline.md for the full design.
 /// </remarks>
 public sealed class TwoPhaseCompilationCoordinator
@@ -46,12 +46,11 @@ public sealed class TwoPhaseCompilationCoordinator
     private IReadOnlyList<CallableId>? _discoveredCallables;
 
     /// <summary>
-    /// Last Milestone 2b plan computed for this compilation (if computed).
-    /// This is a plan artifact only; Milestone 2c will use it for ordering.
+    /// Last dependency plan computed for this compilation (if computed).
     /// </summary>
-    public CompilationPlan? LastComputedPlanMilestone2b { get; private set; }
+    public CompilationPlan? LastComputedPlan { get; private set; }
 
-    // Milestone 2a: used to validate that our preallocated MethodDef row ids stay stable.
+    // Used to validate that preallocated MethodDef row ids stay stable.
     private int? _methodDefRowCountAtPreallocation;
     private int? _expectedMethodDefsBeforeAnonymousCallables;
 
@@ -66,20 +65,21 @@ public sealed class TwoPhaseCompilationCoordinator
     }
 
     /// <summary>
-    /// Milestone 1 (Option B): Phase 1 is declare-only.
+    /// Two-phase compilation entry point for the anonymous-callable preallocation sanity-check path.
     ///
     /// This runs:
     /// 1) Phase 1 discovery
-    /// 2) Phase 1 token declaration (MemberRefs for arrows/function expressions)
-    /// 3) Enable strict mode
-    /// 4) Phase 2 body compilation via provided callbacks
+    /// 2) Dependency plan computation (plan artifact only)
+    /// 3) Phase 1 token preallocation for anonymous callables
+    /// 4) Enable strict mode
+    /// 5) Phase 2 body compilation via provided callbacks
     /// </summary>
     /// <remarks>
     /// We keep Phase 2 body compilation delegated to generators, but centralize the
     /// orchestration and the Phase 1 declaration here so MainGenerator
     /// stays thin and the coordinator matches the design doc responsibilities.
     /// </remarks>
-    public void RunMilestone2a(
+    public void RunTwoPhaseWithAnonymousPreallocationCheck(
         SymbolTable symbolTable,
         MetadataBuilder metadataBuilder,
         Action<IReadOnlyList<CallableId>> compileAnonymousCallablesPhase2,
@@ -87,9 +87,9 @@ public sealed class TwoPhaseCompilationCoordinator
     {
         RunPhase1Discovery(symbolTable);
 
-        // Milestone 2b: compute dependency graph + SCC/topo plan (plan artifact only).
-        // We intentionally do not change compilation order here; Milestone 2c will consume this plan.
-        ComputeMilestone2bPlan(symbolTable);
+        // Compute dependency graph + SCC/topo plan (plan artifact only).
+        // This entry point does not change compilation order; planned ordering is used by the planned compilation path.
+        ComputeDependencyPlan(symbolTable);
 
         if (_discoveredCallables != null)
         {
@@ -106,7 +106,7 @@ public sealed class TwoPhaseCompilationCoordinator
             // Arrow functions may contain `new ClassName()` which requires the class to exist.
             compileClassesAndFunctionsPhase2();
 
-            // Milestone 2a sanity check: the number of MethodDef rows added by class/function declaration
+            // Sanity check: the number of MethodDef rows added by class/function declaration
             // must match what we assumed when preallocating anonymous callable MethodDef handles.
             if (_methodDefRowCountAtPreallocation.HasValue && _expectedMethodDefsBeforeAnonymousCallables.HasValue)
             {
@@ -115,7 +115,7 @@ public sealed class TwoPhaseCompilationCoordinator
                 if (actual != expected)
                 {
                     throw new InvalidOperationException(
-                        $"[TwoPhase] Milestone 2a MethodDef preallocation mismatch: expected MethodDef row count {expected} after declaring classes/functions, but was {actual}. " +
+                        $"[TwoPhase] MethodDef preallocation mismatch: expected MethodDef row count {expected} after declaring classes/functions, but was {actual}. " +
                         "This indicates the preallocation offset is wrong (likely due to unexpected extra MethodDef emissions during class/function declaration). " +
                         "Common causes include new synthesized methods (for example, class static field initializers or helper methods) being emitted without updating CallableDiscovery/" +
                         "preallocation logic (_expectedMethodDefsBeforeAnonymousCallables). Verify that any additional MethodDef emissions during class/function declaration are either " +
@@ -132,18 +132,16 @@ public sealed class TwoPhaseCompilationCoordinator
     }
 
     /// <summary>
-    /// Milestone 2c: True Phase 2 planned compilation.
+    /// Two-phase compilation entry point for planned Phase 2 compilation.
     ///
-    /// This is the long-term entry point that will:
-    /// - Run Phase 1 discovery + declaration (signature/tokens only)
+    /// This will:
+    /// - Run Phase 1 discovery
+    /// - Compute a dependency plan (SCC + deterministic stage order)
+    /// - Reserve MethodDef rows deterministically
     /// - Enable strict lookup-only mode
-    /// - Compile callable bodies in the Milestone 2b plan order
-    /// - Compile main AFTER planned callables
-    ///
-    /// Note: the full Milestone 2c behavior is still being wired in.
-    /// Two-phase compilation is always enabled.
+    /// - Compile callable bodies in plan order and finalize MethodDef rows deterministically
     /// </summary>
-    internal void RunMilestone2c(
+    internal void RunPlannedTwoPhaseCompilation(
         SymbolTable symbolTable,
         MetadataBuilder metadataBuilder,
         IServiceProvider serviceProvider,
@@ -157,8 +155,8 @@ public sealed class TwoPhaseCompilationCoordinator
     {
         RunPhase1Discovery(symbolTable);
 
-        // Milestone 2b: compute dependency graph + SCC/topo plan.
-        var plan = ComputeMilestone2bPlan(symbolTable);
+        // Compute dependency graph + SCC/topo plan.
+        var plan = ComputeDependencyPlan(symbolTable);
 
         // Build a deterministic compilation order from the plan.
         var ordered = new List<CallableId>(_discoveredCallables?.Count ?? 0);
@@ -171,7 +169,7 @@ public sealed class TwoPhaseCompilationCoordinator
             }
         }
 
-        // Milestone 2c: plan is authoritative.
+        // Plan is authoritative.
         // If discovery produced callables that are missing from the plan (or duplicates exist), fail fast.
         if (_discoveredCallables != null)
         {
@@ -180,7 +178,7 @@ public sealed class TwoPhaseCompilationCoordinator
                 var missingCallables = _discoveredCallables.Where(c => !seen.Contains(c)).ToArray();
                 var sample = missingCallables.Take(10).Select(c => c.UniqueKey).ToArray();
                 throw new InvalidOperationException(
-                    "[TwoPhase] Milestone 2c: compilation plan did not include every discovered callable. " +
+                    "[TwoPhase] Compilation plan did not include every discovered callable. " +
                     $"Discovered={_discoveredCallables.Count}, PlannedDistinct={seen.Count}. " +
                     (sample.Length > 0
                         ? ("Missing (sample): " + string.Join(", ", sample) + (missingCallables.Length > sample.Length ? $" (+{missingCallables.Length - sample.Length} more)" : ""))
@@ -190,14 +188,14 @@ public sealed class TwoPhaseCompilationCoordinator
             if (ordered.Count != _discoveredCallables.Count)
             {
                 throw new InvalidOperationException(
-                    "[TwoPhase] Milestone 2c: compilation plan contained duplicate callables (after de-dup). " +
+                    "[TwoPhase] Compilation plan contained duplicate callables (after de-dup). " +
                     $"Discovered={_discoveredCallables.Count}, PlannedOrderedDistinct={ordered.Count}.");
             }
         }
 
         if (_discoveredCallables != null)
         {
-            // Milestone 2c: class callable MethodDefs must be preallocated BEFORE class type declarations so
+            // Class callable MethodDefs must be preallocated BEFORE class type declarations so
             // TypeDef.MethodList can point at the correct first MethodDef row for each class.
             // We preallocate in class declaration order (TypeDef order) to satisfy ECMA-335 method list rules.
             PreallocatePhase1ClassCallablesMethodDefs(symbolTable, metadataBuilder);
@@ -208,7 +206,7 @@ public sealed class TwoPhaseCompilationCoordinator
         // Enable strict mode before any body compilation so expression emission cannot compile.
         EnableStrictMode();
 
-        // Milestone 2c (partial): compile Phase 2 bodies in plan order.
+        // Compile Phase 2 bodies in plan order.
         // Today, only anonymous callables are compiled directly by the coordinator; classes and functions
         // remain delegated to the existing generators (which compile depth-first).
         RunPhase2BodyCompilation(() =>
@@ -216,7 +214,7 @@ public sealed class TwoPhaseCompilationCoordinator
             // Keep existing safety invariant for now: classes/functions are emitted before anonymous callables.
             compileClassesAndFunctionsPhase2();
 
-            // Milestone 2c: move class constructors/methods/accessors/.cctor bodies to planned Phase 2.
+            // Compile class constructors/methods/accessors/.cctor bodies in planned Phase 2.
             // Compile bodies in plan order, then emit MethodDef rows grouped by class type (TypeDef order)
             // to satisfy ECMA-335 contiguous method list requirements.
             CompileAndFinalizePhase2ClassCallables(
@@ -229,7 +227,7 @@ public sealed class TwoPhaseCompilationCoordinator
                 methodBodyStreamEncoder,
                 classRegistry);
 
-            // Milestone 2c: move function declarations to Phase 2 (planned order).
+            // Compile function declarations in planned Phase 2 order.
             // We compile bodies in plan order (IR-first, legacy fallback), but finalize MethodDefs in a single
             // deterministic block so metadata ordering stays valid.
             CompileAndFinalizePhase2FunctionDeclarations(
@@ -250,7 +248,7 @@ public sealed class TwoPhaseCompilationCoordinator
                 if (actual != expected)
                 {
                     throw new InvalidOperationException(
-                        $"[TwoPhase] Milestone 2c MethodDef preallocation mismatch: expected MethodDef row count {expected} after declaring classes + finalizing class callables + finalizing function declarations, but was {actual}. " +
+                        $"[TwoPhase] MethodDef preallocation mismatch: expected MethodDef row count {expected} after declaring classes + finalizing class callables + finalizing function declarations, but was {actual}. " +
                         "This indicates the preallocation offset is wrong (likely due to unexpected extra MethodDef emissions during finalization)."
                     );
                 }
@@ -810,7 +808,7 @@ public sealed class TwoPhaseCompilationCoordinator
         {
             if (!compiled.TryGetValue(callable, out var body))
             {
-                // Milestone 2c: the plan is authoritative.
+                // The plan is authoritative.
                 throw new InvalidOperationException($"[TwoPhase] Missing compiled body for function declaration: {callable.DisplayName}");
             }
             _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, tb, body);
@@ -822,24 +820,23 @@ public sealed class TwoPhaseCompilationCoordinator
     }
 
     /// <summary>
-    /// Milestone 2b: builds the dependency graph and computes SCC/topo stages.
-    /// Does not change compilation behavior.
+    /// Builds the dependency graph and computes SCC/topo stages.
     /// </summary>
-    public CompilationPlan ComputeMilestone2bPlan(SymbolTable symbolTable)
+    public CompilationPlan ComputeDependencyPlan(SymbolTable symbolTable)
     {
         if (_discoveredCallables == null)
         {
-            throw new InvalidOperationException("Phase 1 Discovery must be run before computing the Milestone 2b plan.");
+            throw new InvalidOperationException("Phase 1 Discovery must be run before computing the dependency plan.");
         }
 
         var collector = new CallableDependencyCollector(symbolTable, _registry, _discoveredCallables);
         var graph = collector.Collect();
         var plan = CompilationPlanner.ComputePlan(graph);
-        LastComputedPlanMilestone2b = plan;
+        LastComputedPlan = plan;
 
         if (_verbose)
         {
-            _logger.WriteLine($"[TwoPhase] Milestone 2b: computed dependency plan (SCC stages: {plan.Stages.Count}).");
+            _logger.WriteLine($"[TwoPhase] Computed dependency plan (SCC stages: {plan.Stages.Count}).");
             _logger.WriteLine(plan.ToDebugString());
         }
 
@@ -847,7 +844,7 @@ public sealed class TwoPhaseCompilationCoordinator
     }
 
     /// <summary>
-    /// Phase 2 (Milestone 1): Compile anonymous callables (arrows + function expressions).
+    /// Phase 2: Compile anonymous callables (arrows + function expressions).
     ///
     /// This logic previously lived in MainGenerator; keeping it here makes MainGenerator a thin
     /// orchestration layer and keeps the two-phase implementation in one place.
@@ -992,7 +989,7 @@ public sealed class TwoPhaseCompilationCoordinator
 
     private void PreallocatePhase1AnonymousCallablesMethodDefs(IReadOnlyList<CallableId> callables, MetadataBuilder metadataBuilder)
     {
-        // Milestone 2a (Option A subset): preallocate MethodDef tokens for anonymous callables.
+        // Preallocate MethodDef tokens for anonymous callables.
         //
         // Important: we are NOT emitting MethodDef rows here. We are reserving their row ids
         // deterministically so any IL emitted during class/function compilation can reference the
@@ -1092,7 +1089,7 @@ public sealed class TwoPhaseCompilationCoordinator
         foreach (var callable in _discoveredCallables)
         {
             // Build CallableSignature from CallableId
-            // For Milestone 1, we use a placeholder owner type handle (will be refined in future milestones)
+            // Placeholder owner type handle (is set during token allocation)
             var signature = new CallableSignature
             {
                 OwnerTypeHandle = default, // Will be set during token allocation
@@ -1182,8 +1179,8 @@ public sealed class TwoPhaseCompilationCoordinator
     /// Phase 1: Declare all discovered callables (create method tokens).
     /// This prepares the registry with signatures and tokens.
     /// 
-    /// For Milestone 1, declaration still includes body compilation.
-    /// Future milestones will split into signature-only declaration + separate body compilation.
+    /// In the current implementation, declaration may include body compilation depending on the caller.
+    /// Future iterations can split signature-only declaration from body compilation.
     /// </summary>
     /// <param name="declareAction">
     /// Action that performs the actual declaration using existing generators.
@@ -1202,9 +1199,7 @@ public sealed class TwoPhaseCompilationCoordinator
             _logger.WriteLine("[TwoPhase] Phase 1 Declaration: Creating method tokens...");
         }
 
-        // For Milestone 1, we delegate to the existing declaration code
-        // which still combines declaration and body compilation.
-        // Future milestones will split this into signature-only + body compilation.
+        // Delegate to the existing declaration code.
         declareAction();
 
         if (_verbose)
@@ -1215,7 +1210,7 @@ public sealed class TwoPhaseCompilationCoordinator
     
     /// <summary>
     /// Enables strict mode after Phase 1 declaration is complete.
-    /// This enforces the Milestone 1 invariant: "expression emission never triggers compilation"
+    /// This enforces the invariant: "expression emission never triggers compilation"
     /// by making CallableRegistry throw if a lookup fails.
     /// </summary>
     public void EnableStrictMode()
@@ -1231,8 +1226,7 @@ public sealed class TwoPhaseCompilationCoordinator
     /// <summary>
     /// Phase 2: Compile callable bodies.
     /// 
-    /// For Milestone 1, this is a pass-through to the existing compilation logic.
-    /// Future milestones will compile in dependency order using the planner.
+    /// This is a pass-through to the provided compilation logic.
     /// </summary>
     /// <param name="compileAction">
     /// Action that performs the actual body compilation using existing generators.
@@ -1244,8 +1238,6 @@ public sealed class TwoPhaseCompilationCoordinator
             _logger.WriteLine("[TwoPhase] Phase 2: Compiling callable bodies...");
         }
 
-        // For Milestone 1, we use existing compilation order.
-        // Milestone 2 will introduce dependency-aware ordering.
         compileAction();
 
         if (_verbose)
@@ -1261,7 +1253,7 @@ public sealed class TwoPhaseCompilationCoordinator
     /// <param name="symbolTable">The symbol table for the module.</param>
     /// <param name="declareAction">Action to declare callables (existing generators).</param>
     /// <param name="compileAction">Action to compile bodies (existing generators). Pass null to skip Phase 2.</param>
-    /// <param name="skipPhase2">If true, Phase 2 body compilation is skipped (for Milestone 1 where declareAction includes body compilation).</param>
+    /// <param name="skipPhase2">If true, Phase 2 body compilation is skipped (when declareAction includes body compilation).</param>
     public void RunFullPipeline(
         SymbolTable symbolTable,
         Action declareAction,
@@ -1277,13 +1269,9 @@ public sealed class TwoPhaseCompilationCoordinator
         RunPhase1Discovery(symbolTable);
 
         // Phase 1: Declaration
-        // For Milestone 1, declaration is combined with body compilation in declareAction
-        // Future milestones will separate these
         RunPhase1Declaration(declareAction);
 
         // Phase 2: Body Compilation
-        // For Milestone 1, skipPhase2 should be true since declareAction includes body compilation
-        // Future milestones will pass skipPhase2=false and a separate compileAction
         if (!skipPhase2 && compileAction != null)
         {
             RunPhase2BodyCompilation(compileAction);

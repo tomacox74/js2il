@@ -6,7 +6,7 @@ namespace Js2IL.Services.TwoPhaseCompilation;
 
 /// <summary>
 /// Computes SCC groups and a deterministic topo order of SCC stages.
-/// Milestone 2b does not change compilation order yet; this is a plan artifact.
+/// This produces a deterministic plan artifact that can be used to order compilation.
 /// </summary>
 public static class CompilationPlanner
 {

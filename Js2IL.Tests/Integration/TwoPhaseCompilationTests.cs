@@ -8,7 +8,7 @@ using Xunit;
 namespace Js2IL.Tests.Integration
 {
     /// <summary>
-    /// Tests for the Two-Phase Compilation Pipeline (Milestone 1).
+    /// Tests for the Two-Phase Compilation Pipeline.
     /// These tests verify that the two-phase compilation pipeline works correctly.
     /// </summary>
     public class TwoPhaseCompilationTests
@@ -112,7 +112,7 @@ console.log(calc.getValue());
         }
 
         /// <summary>
-        /// Verifies the Milestone 1 invariant: strict mode enforces lookup-only behavior.
+        /// Verifies the invariant: strict mode enforces lookup-only behavior.
         /// When strict mode is enabled, CallableRegistry.GetDeclaredToken throws if a callable is not found.
         /// </summary>
         [Fact]

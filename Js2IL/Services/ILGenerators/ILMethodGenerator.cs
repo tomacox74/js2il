@@ -1274,7 +1274,7 @@ namespace Js2IL.Services.ILGenerators
         internal MethodDefinitionHandle GenerateFunctionExpressionMethod(FunctionExpression funcExpr, string registryScopeName, string ilMethodName, string[] paramNames)
         {
             // Two-phase lookup:
-            // - Milestone 2a may preallocate a MethodDef token for this function expression during Phase 1.
+            // - Phase 1 may preallocate a MethodDef token for this function expression.
             // - A MethodDef token does NOT imply the body is compiled.
             // Only short-circuit when the registry says the body is compiled.
             System.Reflection.Metadata.MethodDefinitionHandle? expectedPreallocatedHandle = null;
@@ -1541,7 +1541,7 @@ namespace Js2IL.Services.ILGenerators
             if (expectedPreallocatedHandle.HasValue && mdh != expectedPreallocatedHandle.Value)
             {
                 throw new InvalidOperationException(
-                    $"[TwoPhase] Milestone 2a: compiled function expression handle mismatch for {ilMethodName}. " +
+                    $"[TwoPhase] Preallocation: compiled function expression handle mismatch for {ilMethodName}. " +
                     $"Expected preallocated token 0x{MetadataTokens.GetToken(expectedPreallocatedHandle.Value):X8}, " +
                     $"got token 0x{MetadataTokens.GetToken(mdh):X8}.");
             }

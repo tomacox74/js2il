@@ -7,7 +7,7 @@ namespace Js2IL.Services.TwoPhaseCompilation;
 public sealed record CompilationPlanStage(int SccId, IReadOnlyList<CallableId> Members);
 
 /// <summary>
-/// Output of Milestone 2b: SCC groups + deterministic topo-ordered stages.
+/// Output of dependency planning: SCC groups + deterministic topo-ordered stages.
 /// </summary>
 public sealed class CompilationPlan
 {

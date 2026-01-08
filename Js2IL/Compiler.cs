@@ -93,6 +93,14 @@ public class Compiler
         }
         else
         {
+            var ext = Path.GetExtension(outputDirectory);
+            if (string.Equals(ext, ".dll", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(ext, ".exe", StringComparison.OrdinalIgnoreCase))
+            {
+                _logger.WriteLineWarning(
+                    $"Warning: Output path '{outputDirectory}' is treated as a directory. Did you intend it to be an output directory name?");
+            }
+
             outputPath = Path.GetFullPath(outputDirectory);
         }
 
