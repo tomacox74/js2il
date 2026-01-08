@@ -121,7 +121,12 @@ Based on the legacy emitters:
 - [ ] `for..in` statements (if legacy supports it; confirm)
 - [ ] `break` / `continue` (requires loop label tracking)
 - [ ] `switch` statements (if legacy supports it; confirm)
-- [ ] `try/catch/finally` (requires exception regions in IL; legacy already emits these)
+- [ ] `try/catch/finally`
+  - [ ] Add HIR nodes for try/catch/finally (including catch parameter binding)
+  - [ ] Add LIR representation for exception regions (try region + handler regions)
+  - [ ] Emit IL exception regions in `LIRToILCompiler` (ExceptionRegion / EH tables)
+  - [ ] Ensure `finally` executes on all exits (normal fallthrough, `return`, `throw`, `break`/`continue` once supported)
+  - [ ] Validate catch variable scoping semantics match legacy (block-scoped catch param)
 - [ ] `throw`
 
 ### 3) Expand HIR expression support to match legacy
@@ -205,3 +210,8 @@ Notes on `Variables`/`Variable` deletion:
 - Add/extend execution tests under `Js2IL.Tests/*/ExecutionTests`.
 - Update generator snapshots only after execution behavior matches legacy (if snapshots are used for the area).
 - Confirm `IRPipelineMetrics` has no new failure hotspots for common test suites.
+
+**Exception handling validation (try/catch/finally)**
+- `try/finally` runs finally on `return` and `throw`.
+- `try/catch` binds catch parameter correctly and does not leak it outside the catch block.
+- Nested try blocks (try inside catch/finally) behave as expected.
