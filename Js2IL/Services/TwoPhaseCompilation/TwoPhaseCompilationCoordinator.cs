@@ -165,12 +165,9 @@ public sealed class TwoPhaseCompilationCoordinator
         var seen = new HashSet<CallableId>();
         foreach (var stage in plan.Stages)
         {
-            foreach (var member in stage.Members)
+            foreach (var member in stage.Members.Where(member => seen.Add(member)))
             {
-                if (seen.Add(member))
-                {
-                    ordered.Add(member);
-                }
+                ordered.Add(member);
             }
         }
 
@@ -606,6 +603,12 @@ public sealed class TwoPhaseCompilationCoordinator
         var current = symbolTable.Root;
         for (var i = idx; i < parts.Length; i++)
         {
+            // Scope names are used as path segments; they must not contain '/'.
+            if (current.Children.Any(s => s.Name.Contains('/')))
+            {
+                throw new InvalidOperationException("[TwoPhase] Invalid scope name: scope names must not contain '/'.");
+            }
+
             var next = current.Children.FirstOrDefault(s => string.Equals(s.Name, parts[i], StringComparison.Ordinal));
             if (next == null)
             {
@@ -807,8 +810,7 @@ public sealed class TwoPhaseCompilationCoordinator
         {
             if (!compiled.TryGetValue(callable, out var body))
             {
-                // Some function declarations may not be reachable in the plan ordering yet; in Milestone 2c,
-                // this should not happen because the plan is authoritative.
+                // Milestone 2c: the plan is authoritative.
                 throw new InvalidOperationException($"[TwoPhase] Missing compiled body for function declaration: {callable.DisplayName}");
             }
             _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, tb, body);

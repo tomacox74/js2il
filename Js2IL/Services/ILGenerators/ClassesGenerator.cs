@@ -137,16 +137,16 @@ namespace Js2IL.Services.ILGenerators
 
                 if (!classNeedsParentScopes)
                 {
-                    foreach (var method in cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>())
+                    foreach (var method in cdecl.Body.Body
+                        .OfType<Acornima.Ast.MethodDefinition>()
+                        .Where(m => m.Value is FunctionExpression &&
+                                    (m.Key as Identifier)?.Name != "constructor"))
                     {
-                        if (method.Value is FunctionExpression funcExpr &&
-                            (method.Key as Identifier)?.Name != "constructor")
+                        var funcExpr = (FunctionExpression)method.Value;
+                        if (ShouldCreateMethodScopeInstance(funcExpr, classScope))
                         {
-                            if (ShouldCreateMethodScopeInstance(funcExpr, classScope))
-                            {
-                                classNeedsParentScopes = true;
-                                break;
-                            }
+                            classNeedsParentScopes = true;
+                            break;
                         }
                     }
                 }
@@ -154,44 +154,41 @@ namespace Js2IL.Services.ILGenerators
 
             // Fields (instance + static) and registries - same as legacy declaration.
             var declaredFieldNames = new System.Collections.Generic.HashSet<string>(StringComparer.Ordinal);
-            foreach (var element in cdecl.Body.Body)
+            foreach (var pdef in cdecl.Body.Body.OfType<Acornima.Ast.PropertyDefinition>())
             {
-                if (element is Acornima.Ast.PropertyDefinition pdef)
-                {
-                    var fSig = new BlobBuilder();
-                    new BlobEncoder(fSig).Field().Type().Object();
-                    var fSigHandle = _metadata.GetOrAddBlob(fSig);
+                var fSig = new BlobBuilder();
+                new BlobEncoder(fSig).Field().Type().Object();
+                var fSigHandle = _metadata.GetOrAddBlob(fSig);
 
-                    if (pdef.Key is Acornima.Ast.PrivateIdentifier priv)
+                if (pdef.Key is Acornima.Ast.PrivateIdentifier priv)
+                {
+                    var pname = priv.Name;
+                    var emittedName = ManglePrivateFieldName(pname);
+                    if (pdef.Static)
                     {
-                        var pname = priv.Name;
-                        var emittedName = ManglePrivateFieldName(pname);
-                        if (pdef.Static)
-                        {
-                            var fh = tb.AddFieldDefinition(FieldAttributes.Private | FieldAttributes.Static, emittedName, fSigHandle);
-                            _classRegistry.RegisterStaticField(registryClassName, pname, fh);
-                        }
-                        else
-                        {
-                            var fh = tb.AddFieldDefinition(FieldAttributes.Private, emittedName, fSigHandle);
-                            _classRegistry.RegisterPrivateField(registryClassName, pname, fh);
-                        }
-                        declaredFieldNames.Add(pname);
+                        var fh = tb.AddFieldDefinition(FieldAttributes.Private | FieldAttributes.Static, emittedName, fSigHandle);
+                        _classRegistry.RegisterStaticField(registryClassName, pname, fh);
                     }
-                    else if (pdef.Key is Identifier pid)
+                    else
                     {
-                        if (pdef.Static)
-                        {
-                            var fh = tb.AddFieldDefinition(FieldAttributes.Public | FieldAttributes.Static, pid.Name, fSigHandle);
-                            _classRegistry.RegisterStaticField(registryClassName, pid.Name, fh);
-                        }
-                        else
-                        {
-                            var fh = tb.AddFieldDefinition(FieldAttributes.Public, pid.Name, fSigHandle);
-                            _classRegistry.RegisterField(registryClassName, pid.Name, fh);
-                        }
-                        declaredFieldNames.Add(pid.Name);
+                        var fh = tb.AddFieldDefinition(FieldAttributes.Private, emittedName, fSigHandle);
+                        _classRegistry.RegisterPrivateField(registryClassName, pname, fh);
                     }
+                    declaredFieldNames.Add(pname);
+                }
+                else if (pdef.Key is Identifier pid)
+                {
+                    if (pdef.Static)
+                    {
+                        var fh = tb.AddFieldDefinition(FieldAttributes.Public | FieldAttributes.Static, pid.Name, fSigHandle);
+                        _classRegistry.RegisterStaticField(registryClassName, pid.Name, fh);
+                    }
+                    else
+                    {
+                        var fh = tb.AddFieldDefinition(FieldAttributes.Public, pid.Name, fSigHandle);
+                        _classRegistry.RegisterField(registryClassName, pid.Name, fh);
+                    }
+                    declaredFieldNames.Add(pid.Name);
                 }
             }
 
@@ -291,11 +288,22 @@ namespace Js2IL.Services.ILGenerators
                 // Match this class by naming conventions
                 if (id.Kind == CallableKind.ClassConstructor || id.Kind == CallableKind.ClassStaticInitializer)
                 {
-                    if (!string.Equals(id.Name, classScope.Name, StringComparison.Ordinal)) continue;
+                    if (!string.Equals(id.Name, classScope.Name, StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
                 }
                 else
                 {
-                    if (id.Name == null || !id.Name.StartsWith(classScope.Name + ".", StringComparison.Ordinal)) continue;
+                    if (!Js2IL.Utilities.JavaScriptCallableNaming.TrySplitClassMethodCallableName(id.Name, out var candidateClassName, out _))
+                    {
+                        continue;
+                    }
+
+                    if (!string.Equals(candidateClassName, classScope.Name, StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
                 }
 
                 if (callableRegistry.TryGetDeclaredToken(id, out var tok) && tok.Kind == HandleKind.MethodDefinition)
