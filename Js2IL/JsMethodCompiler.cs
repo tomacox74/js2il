@@ -10,6 +10,7 @@ using System.Reflection.Metadata.Ecma335;
 using Js2IL.Utilities.Ecma335;
 using Js2IL.Services;
 using Js2IL.Services.TwoPhaseCompilation;
+using ScopesCallableKind = Js2IL.Services.ScopesAbi.CallableKind;
 
 namespace Js2IL;
 
@@ -144,7 +145,13 @@ internal sealed class JsMethodCompiler
             return null;
         }
 
-        if (!TryLowerASTToLIR(bodyNode, scope, out var lirMethod))
+        var callableKind = ScopesCallableKind.Function;
+        if (isInstanceMethod)
+        {
+            callableKind = hasScopesParameter ? ScopesCallableKind.Constructor : ScopesCallableKind.ClassMethod;
+        }
+
+        if (!TryLowerASTToLIR(bodyNode, scope, callableKind, out var lirMethod))
         {
             return null;
         }
@@ -202,7 +209,13 @@ internal sealed class JsMethodCompiler
             return default;
         }
 
-        if (!TryLowerASTToLIR(bodyNode, scope, out var lirMethod))
+        var callableKind = ScopesCallableKind.Function;
+        if (node is Acornima.Ast.MethodDefinition md && !md.Static)
+        {
+            callableKind = ScopesCallableKind.ClassMethod;
+        }
+
+        if (!TryLowerASTToLIR(bodyNode, scope, callableKind, out var lirMethod))
         {
             return default;
         }
@@ -248,7 +261,7 @@ internal sealed class JsMethodCompiler
             return default;
         }
 
-        if (!TryLowerASTToLIR(node, scope, out var lirMethod))
+        if (!TryLowerASTToLIR(node, scope, ScopesCallableKind.Function, out var lirMethod))
         {
             return default;
         }
@@ -307,7 +320,7 @@ internal sealed class JsMethodCompiler
             return default;
         }
 
-        if (!TryLowerASTToLIR(ctorFunc, constructorScope, out var lirMethod))
+        if (!TryLowerASTToLIR(ctorFunc, constructorScope, ScopesCallableKind.Constructor, out var lirMethod))
         {
             return default;
         }
@@ -332,7 +345,7 @@ internal sealed class JsMethodCompiler
 
     public MethodDefinitionHandle TryCompileMainMethod(string moduleName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
     {
-        if (!TryLowerASTToLIR(node, scope, out var lirMethod))
+        if (!TryLowerASTToLIR(node, scope, ScopesCallableKind.ModuleMain, out var lirMethod))
         {
             return default;
         }
@@ -385,7 +398,7 @@ internal sealed class JsMethodCompiler
         });
     }
 
-    private bool TryLowerASTToLIR(Node node, Scope scope, out MethodBodyIR? methodBody)
+    private bool TryLowerASTToLIR(Node node, Scope scope, ScopesCallableKind callableKind, out MethodBodyIR? methodBody)
     {
         methodBody = null;
 
@@ -395,7 +408,7 @@ internal sealed class JsMethodCompiler
             return false;
         }
 
-        if (!HIRToLIRLowerer.TryLower(hirMethod!, scope, _scopeMetadataRegistry, out var lirMethod))
+        if (!HIRToLIRLowerer.TryLower(hirMethod!, scope, _scopeMetadataRegistry, callableKind, out var lirMethod))
         {
             IR.IRPipelineMetrics.RecordFailure($"HIR->LIR lowering failed for scope '{scope.GetQualifiedName()}' (kind={scope.Kind}) node={node.Type}");
             return false;
@@ -404,6 +417,10 @@ internal sealed class JsMethodCompiler
         methodBody = lirMethod!;
         return true;
     }
+
+    // Backward-compatible helper for existing call sites.
+    private bool TryLowerASTToLIR(Node node, Scope scope, out MethodBodyIR? methodBody)
+        => TryLowerASTToLIR(node, scope, ScopesCallableKind.Function, out methodBody);
 
     #endregion
 }

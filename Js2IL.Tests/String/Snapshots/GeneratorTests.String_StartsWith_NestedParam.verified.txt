@@ -86,10 +86,11 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 93 (0x5d)
+		// Code size: 54 (0x36)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.String_StartsWith_NestedParam/outer
+			[0] class Scopes.String_StartsWith_NestedParam/outer,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Scopes.String_StartsWith_NestedParam/outer::.ctor()
@@ -97,42 +98,26 @@
 		IL_0006: ldloc.0
 		IL_0007: ldarg.1
 		IL_0008: stfld object Scopes.String_StartsWith_NestedParam/outer::s
-		IL_000d: ldloc.0
-		IL_000e: ldnull
-		IL_000f: ldftn object Functions.String_StartsWith_NestedParam::inner(object[], object)
-		IL_0015: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_001a: stfld object Scopes.String_StartsWith_NestedParam/outer::inner
-		IL_001f: ldloc.0
-		IL_0020: castclass Scopes.String_StartsWith_NestedParam/outer
-		IL_0025: ldfld object Scopes.String_StartsWith_NestedParam/outer::inner
-		IL_002a: dup
-		IL_002b: brtrue.s IL_0034
-
-		IL_002d: pop
-		IL_002e: ldnull
-		IL_002f: br IL_0034
-
-		IL_0034: ldc.i4.2
-		IL_0035: newarr [System.Runtime]System.Object
-		IL_003a: dup
-		IL_003b: ldc.i4.0
-		IL_003c: ldarg.0
-		IL_003d: ldc.i4.0
-		IL_003e: ldelem.ref
-		IL_003f: castclass Scopes.String_StartsWith_NestedParam
-		IL_0044: stelem.ref
-		IL_0045: dup
-		IL_0046: ldc.i4.1
-		IL_0047: ldloc.0
-		IL_0048: stelem.ref
-		IL_0049: ldc.i4.1
-		IL_004a: newarr [System.Runtime]System.Object
-		IL_004f: dup
-		IL_0050: ldc.i4.0
-		IL_0051: ldstr "a"
-		IL_0056: stelem.ref
-		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_005c: ret
+		IL_000d: ldnull
+		IL_000e: ldftn object Functions.String_StartsWith_NestedParam::inner(object[], object)
+		IL_0014: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0019: ldc.i4.2
+		IL_001a: newarr [System.Runtime]System.Object
+		IL_001f: dup
+		IL_0020: ldc.i4.0
+		IL_0021: ldarg.0
+		IL_0022: ldc.i4.0
+		IL_0023: ldelem.ref
+		IL_0024: stelem.ref
+		IL_0025: dup
+		IL_0026: ldc.i4.1
+		IL_0027: ldloc.0
+		IL_0028: stelem.ref
+		IL_0029: ldstr "a"
+		IL_002e: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_0033: stloc.1
+		IL_0034: ldloc.1
+		IL_0035: ret
 	} // end of method String_StartsWith_NestedParam::outer
 
 	.method public hidebysig static 
@@ -141,7 +126,7 @@
 			object p
 		) cil managed 
 	{
-		// Method begins at RVA 0x20d8
+		// Method begins at RVA 0x20b0
 		// Header size: 12
 		// Code size: 34 (0x22)
 		.maxstack 32
@@ -177,7 +162,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2108
+		// Method begins at RVA 0x20e0
 		// Header size: 12
 		// Code size: 65 (0x41)
 		.maxstack 32
@@ -227,7 +212,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2155
+		// Method begins at RVA 0x212d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

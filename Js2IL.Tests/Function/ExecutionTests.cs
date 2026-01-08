@@ -67,5 +67,11 @@ namespace Js2IL.Tests.Function
 
         [Fact]
         public Task Function_ClosureMutatesOuterVariable() { var testName = nameof(Function_ClosureMutatesOuterVariable); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Closure_OuterNeedsLeafScopeInstanceToCallInner() { var testName = nameof(Function_Closure_OuterNeedsLeafScopeInstanceToCallInner); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_Closure_MultiLevel_ReadWriteAcrossScopes() { var testName = nameof(Function_Closure_MultiLevel_ReadWriteAcrossScopes); return ExecutionTest(testName); }
     }
 }
