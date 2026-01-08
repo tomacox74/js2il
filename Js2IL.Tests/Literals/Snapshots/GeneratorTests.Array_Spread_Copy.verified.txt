@@ -60,70 +60,73 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 161 (0xa1)
+		// Code size: 169 (0xa9)
 		.maxstack 32
 		.locals init (
-			[0] object,
+			[0] class Scopes.Array_Spread_Copy,
 			[1] object,
-			[2] float64,
-			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[4] object
+			[2] object,
+			[3] float64,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[5] object
 		)
 
-		IL_0000: ldc.i4.3
-		IL_0001: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0006: dup
-		IL_0007: ldc.r8 1
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_001a: dup
-		IL_001b: ldc.r8 2
-		IL_0024: box [System.Runtime]System.Double
-		IL_0029: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_002e: dup
-		IL_002f: ldc.r8 3
-		IL_0038: box [System.Runtime]System.Double
-		IL_003d: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0042: stloc.0
-		IL_0043: ldc.i4.0
-		IL_0044: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0049: stloc.1
-		IL_004a: ldloc.1
-		IL_004b: ldloc.0
-		IL_004c: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
-		IL_0051: ldc.r8 0.0
-		IL_005a: stloc.2
-		// loop start (head: IL_005b)
-			IL_005b: ldloc.2
-			IL_005c: ldloc.1
-			IL_005d: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_0062: clt
-			IL_0064: brfalse IL_00a0
+		IL_0000: newobj instance void Scopes.Array_Spread_Copy::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.i4.3
+		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_000c: dup
+		IL_000d: ldc.r8 1
+		IL_0016: box [System.Runtime]System.Double
+		IL_001b: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0020: dup
+		IL_0021: ldc.r8 2
+		IL_002a: box [System.Runtime]System.Double
+		IL_002f: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0034: dup
+		IL_0035: ldc.r8 3
+		IL_003e: box [System.Runtime]System.Double
+		IL_0043: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0048: stloc.1
+		IL_0049: ldc.i4.0
+		IL_004a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_004f: stloc.2
+		IL_0050: ldloc.2
+		IL_0051: ldloc.1
+		IL_0052: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::PushRange(object)
+		IL_0057: ldc.r8 0.0
+		IL_0060: stloc.3
+		// loop start (head: IL_0061)
+			IL_0061: ldloc.3
+			IL_0062: ldloc.2
+			IL_0063: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_0068: clt
+			IL_006a: brfalse IL_00a8
 
-			IL_0069: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_006e: stloc.3
-			IL_006f: ldloc.2
-			IL_0070: box [System.Runtime]System.Double
-			IL_0075: stloc.s 4
-			IL_0077: ldloc.3
-			IL_0078: ldc.i4.1
-			IL_0079: newarr [System.Runtime]System.Object
-			IL_007e: dup
-			IL_007f: ldc.i4.0
-			IL_0080: ldloc.1
-			IL_0081: ldloc.s 4
-			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0088: stelem.ref
-			IL_0089: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_008e: pop
-			IL_008f: ldloc.2
-			IL_0090: ldc.r8 1
-			IL_0099: add
-			IL_009a: stloc.2
-			IL_009b: br IL_005b
+			IL_006f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0074: stloc.s 4
+			IL_0076: ldloc.3
+			IL_0077: box [System.Runtime]System.Double
+			IL_007c: stloc.s 5
+			IL_007e: ldloc.s 4
+			IL_0080: ldc.i4.1
+			IL_0081: newarr [System.Runtime]System.Object
+			IL_0086: dup
+			IL_0087: ldc.i4.0
+			IL_0088: ldloc.2
+			IL_0089: ldloc.s 5
+			IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0090: stelem.ref
+			IL_0091: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0096: pop
+			IL_0097: ldloc.3
+			IL_0098: ldc.r8 1
+			IL_00a1: add
+			IL_00a2: stloc.3
+			IL_00a3: br IL_0061
 		// end loop
 
-		IL_00a0: ret
+		IL_00a8: ret
 	} // end of method Array_Spread_Copy::Main
 
 } // end of class Scripts.Array_Spread_Copy
@@ -135,7 +138,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2111
+		// Method begins at RVA 0x2119
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

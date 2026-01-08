@@ -98,43 +98,46 @@
 	{
 		// Method begins at RVA 0x209c
 		// Header size: 12
-		// Code size: 62 (0x3e)
+		// Code size: 68 (0x44)
 		.maxstack 32
 		.locals init (
-			[0] object,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[2] object[]
+			[0] class Scopes.Function_ReturnsStaticValueAndLogs,
+			[1] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[3] object[]
 		)
 
-		IL_0000: ldnull
-		IL_0001: ldftn object Functions.Function_ReturnsStaticValueAndLogs::returnsFive(object[])
-		IL_0007: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_000c: ldc.i4.1
-		IL_000d: newarr [System.Runtime]System.Object
-		IL_0012: dup
-		IL_0013: ldc.i4.0
-		IL_0014: ldnull
-		IL_0015: stelem.ref
-		IL_0016: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_001b: stloc.0
-		IL_001c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0000: newobj instance void Scopes.Function_ReturnsStaticValueAndLogs::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldnull
+		IL_0007: ldftn object Functions.Function_ReturnsStaticValueAndLogs::returnsFive(object[])
+		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
 		IL_0021: stloc.1
-		IL_0022: ldc.i4.2
-		IL_0023: newarr [System.Runtime]System.Object
-		IL_0028: dup
-		IL_0029: ldc.i4.0
-		IL_002a: ldstr "Output:"
-		IL_002f: stelem.ref
-		IL_0030: dup
-		IL_0031: ldc.i4.1
-		IL_0032: ldloc.0
-		IL_0033: stelem.ref
-		IL_0034: stloc.2
-		IL_0035: ldloc.1
-		IL_0036: ldloc.2
-		IL_0037: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_003c: pop
-		IL_003d: ret
+		IL_0022: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0027: stloc.2
+		IL_0028: ldc.i4.2
+		IL_0029: newarr [System.Runtime]System.Object
+		IL_002e: dup
+		IL_002f: ldc.i4.0
+		IL_0030: ldstr "Output:"
+		IL_0035: stelem.ref
+		IL_0036: dup
+		IL_0037: ldc.i4.1
+		IL_0038: ldloc.1
+		IL_0039: stelem.ref
+		IL_003a: stloc.3
+		IL_003b: ldloc.2
+		IL_003c: ldloc.3
+		IL_003d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0042: pop
+		IL_0043: ret
 	} // end of method Function_ReturnsStaticValueAndLogs::Main
 
 } // end of class Scripts.Function_ReturnsStaticValueAndLogs
@@ -146,7 +149,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e6
+		// Method begins at RVA 0x20ec
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

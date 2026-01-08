@@ -38,36 +38,39 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 50 (0x32)
+		// Code size: 56 (0x38)
 		.maxstack 32
 		.locals init (
-			[0] string,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[2] object[]
+			[0] class Scopes.BinaryOperator_AddStringString,
+			[1] string,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[3] object[]
 		)
 
-		IL_0000: ldstr "1"
-		IL_0005: ldstr "2"
-		IL_000a: call string [System.Runtime]System.String::Concat(string, string)
-		IL_000f: stloc.0
-		IL_0010: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0000: newobj instance void Scopes.BinaryOperator_AddStringString::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldstr "1"
+		IL_000b: ldstr "2"
+		IL_0010: call string [System.Runtime]System.String::Concat(string, string)
 		IL_0015: stloc.1
-		IL_0016: ldc.i4.2
-		IL_0017: newarr [System.Runtime]System.Object
-		IL_001c: dup
-		IL_001d: ldc.i4.0
-		IL_001e: ldstr "x is"
-		IL_0023: stelem.ref
-		IL_0024: dup
-		IL_0025: ldc.i4.1
-		IL_0026: ldloc.0
-		IL_0027: stelem.ref
-		IL_0028: stloc.2
-		IL_0029: ldloc.1
-		IL_002a: ldloc.2
-		IL_002b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0030: pop
-		IL_0031: ret
+		IL_0016: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_001b: stloc.2
+		IL_001c: ldc.i4.2
+		IL_001d: newarr [System.Runtime]System.Object
+		IL_0022: dup
+		IL_0023: ldc.i4.0
+		IL_0024: ldstr "x is"
+		IL_0029: stelem.ref
+		IL_002a: dup
+		IL_002b: ldc.i4.1
+		IL_002c: ldloc.1
+		IL_002d: stelem.ref
+		IL_002e: stloc.3
+		IL_002f: ldloc.2
+		IL_0030: ldloc.3
+		IL_0031: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0036: pop
+		IL_0037: ret
 	} // end of method BinaryOperator_AddStringString::Main
 
 } // end of class Scripts.BinaryOperator_AddStringString
@@ -79,7 +82,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x209a
+		// Method begins at RVA 0x20a0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

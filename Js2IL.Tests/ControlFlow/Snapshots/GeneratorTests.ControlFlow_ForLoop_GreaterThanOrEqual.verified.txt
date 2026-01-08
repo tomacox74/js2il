@@ -60,49 +60,52 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 80 (0x50)
+		// Code size: 88 (0x58)
 		.maxstack 32
 		.locals init (
-			[0] float64,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[2] object,
-			[3] object[]
+			[0] class Scopes.ControlFlow_ForLoop_GreaterThanOrEqual,
+			[1] float64,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[3] object,
+			[4] object[]
 		)
 
-		IL_0000: ldc.r8 0.0
-		IL_0009: stloc.0
-		// loop start (head: IL_000a)
-			IL_000a: ldloc.0
-			IL_000b: ldc.r8 5
-			IL_0014: cgt
-			IL_0016: ldc.i4.0
-			IL_0017: ceq
-			IL_0019: brfalse IL_004f
+		IL_0000: newobj instance void Scopes.ControlFlow_ForLoop_GreaterThanOrEqual::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.r8 0.0
+		IL_000f: stloc.1
+		// loop start (head: IL_0010)
+			IL_0010: ldloc.1
+			IL_0011: ldc.r8 5
+			IL_001a: cgt
+			IL_001c: ldc.i4.0
+			IL_001d: ceq
+			IL_001f: brfalse IL_0057
 
-			IL_001e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0023: stloc.1
-			IL_0024: ldloc.0
-			IL_0025: box [System.Runtime]System.Double
-			IL_002a: stloc.2
-			IL_002b: ldc.i4.1
-			IL_002c: newarr [System.Runtime]System.Object
-			IL_0031: dup
-			IL_0032: ldc.i4.0
-			IL_0033: ldloc.2
-			IL_0034: stelem.ref
-			IL_0035: stloc.3
-			IL_0036: ldloc.1
-			IL_0037: ldloc.3
-			IL_0038: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_003d: pop
-			IL_003e: ldloc.0
-			IL_003f: ldc.r8 1
-			IL_0048: add
-			IL_0049: stloc.0
-			IL_004a: br IL_000a
+			IL_0024: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0029: stloc.2
+			IL_002a: ldloc.1
+			IL_002b: box [System.Runtime]System.Double
+			IL_0030: stloc.3
+			IL_0031: ldc.i4.1
+			IL_0032: newarr [System.Runtime]System.Object
+			IL_0037: dup
+			IL_0038: ldc.i4.0
+			IL_0039: ldloc.3
+			IL_003a: stelem.ref
+			IL_003b: stloc.s 4
+			IL_003d: ldloc.2
+			IL_003e: ldloc.s 4
+			IL_0040: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0045: pop
+			IL_0046: ldloc.1
+			IL_0047: ldc.r8 1
+			IL_0050: add
+			IL_0051: stloc.1
+			IL_0052: br IL_0010
 		// end loop
 
-		IL_004f: ret
+		IL_0057: ret
 	} // end of method ControlFlow_ForLoop_GreaterThanOrEqual::Main
 
 } // end of class Scripts.ControlFlow_ForLoop_GreaterThanOrEqual
@@ -114,7 +117,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20c0
+		// Method begins at RVA 0x20c8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

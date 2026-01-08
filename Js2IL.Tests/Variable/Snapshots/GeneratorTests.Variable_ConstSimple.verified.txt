@@ -38,28 +38,31 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 39 (0x27)
+		// Code size: 45 (0x2d)
 		.maxstack 32
 		.locals init (
-			[0] float64,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			[0] class Scopes.Variable_ConstSimple,
+			[1] float64,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
-		IL_0000: ldc.r8 42
-		IL_0009: stloc.0
-		IL_000a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0000: newobj instance void Scopes.Variable_ConstSimple::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.r8 42
 		IL_000f: stloc.1
-		IL_0010: ldloc.1
-		IL_0011: ldc.i4.1
-		IL_0012: newarr [System.Runtime]System.Object
-		IL_0017: dup
-		IL_0018: ldc.i4.0
-		IL_0019: ldloc.0
-		IL_001a: box [System.Runtime]System.Double
-		IL_001f: stelem.ref
-		IL_0020: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0025: pop
-		IL_0026: ret
+		IL_0010: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0015: stloc.2
+		IL_0016: ldloc.2
+		IL_0017: ldc.i4.1
+		IL_0018: newarr [System.Runtime]System.Object
+		IL_001d: dup
+		IL_001e: ldc.i4.0
+		IL_001f: ldloc.1
+		IL_0020: box [System.Runtime]System.Double
+		IL_0025: stelem.ref
+		IL_0026: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_002b: pop
+		IL_002c: ret
 	} // end of method Variable_ConstSimple::Main
 
 } // end of class Scripts.Variable_ConstSimple
@@ -71,7 +74,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x208f
+		// Method begins at RVA 0x2095
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
