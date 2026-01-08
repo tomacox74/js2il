@@ -48,7 +48,7 @@ public class EnvironmentLayoutBuilderTests
     #region CallableAbi Tests
 
     [Fact]
-    public void CallableAbi_ForFunction_NoParentScopes_ScopesSourceIsNone()
+    public void CallableAbi_ForFunction_NoParentScopes_StillHasScopesParam()
     {
         // Arrange & Act
         var abi = CallableAbi.ForFunction(jsParameterCount: 2, needsParentScopes: false);
