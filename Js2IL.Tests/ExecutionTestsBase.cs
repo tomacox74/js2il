@@ -66,37 +66,14 @@ namespace Js2IL.Tests
             var expectedPath = Path.Combine(_outputPath, $"{assemblyName}.dll");
 
             string il;
-            bool usedFallback = false;
-            string? fallbackReason = null;
-
-            try
+            
+            if (preferOutOfProc)
             {
-                if (preferOutOfProc)
-                {
-                    il = ExecuteGeneratedAssembly(expectedPath, allowUnhandledException, testName);
-                }
-                else
-                {
-                    il = ExecuteGeneratedAssemblyInProc(expectedPath, testName, postTestProcessingAction, addMocks: addMocks);
-                }
-                if (string.IsNullOrWhiteSpace(il))
-                {
-                    usedFallback = true;
-                    fallbackReason = "in-proc produced empty output";
-                    il = ExecuteGeneratedAssembly(expectedPath, allowUnhandledException, testName);
-                }
-            }
-            catch (Exception ex)
-            {
-                usedFallback = true;
-                fallbackReason = $"in-proc error: {ex.GetType().Name}";
                 il = ExecuteGeneratedAssembly(expectedPath, allowUnhandledException, testName);
             }
-
-            if (usedFallback)
+            else
             {
-                var reason = string.IsNullOrWhiteSpace(fallbackReason) ? "unknown reason" : fallbackReason;
-                System.Console.WriteLine($"[ExecutionTestsBase] Fallback to out-of-proc execution; reason: {reason}");
+                il = ExecuteGeneratedAssemblyInProc(expectedPath, testName, postTestProcessingAction, addMocks: addMocks);
             }
 
             var settings = new VerifySettings(_verifySettings);
