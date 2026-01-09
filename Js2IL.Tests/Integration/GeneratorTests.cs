@@ -2,9 +2,9 @@ using System.Threading.Tasks;
 
 namespace Js2IL.Tests.Integration
 {
-    public class CompilationTests : GeneratorTestsBase
+    public class GeneratorTests : GeneratorTestsBase
     {
-        public CompilationTests() : base("Integration") { }
+        public GeneratorTests() : base("Integration") { }
 
         [Fact]
         public Task Compile_Scripts_GenerateFeatureCoverage() => GenerateTest(nameof(Compile_Scripts_GenerateFeatureCoverage));

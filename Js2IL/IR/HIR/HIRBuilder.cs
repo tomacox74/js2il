@@ -571,6 +571,30 @@ class HIRMethodBuilder
 
         switch (expr)
         {
+            case ConditionalExpression conditionalExpr:
+                // Handle conditional (ternary) expressions: test ? consequent : alternate
+                if (!TryParseExpression(conditionalExpr.Test, out var testExpr) ||
+                    !TryParseExpression(conditionalExpr.Consequent, out var consequentExpr) ||
+                    !TryParseExpression(conditionalExpr.Alternate, out var alternateExpr))
+                {
+                    return false;
+                }
+
+                hirExpr = new HIRConditionalExpression(testExpr!, consequentExpr!, alternateExpr!);
+                return true;
+
+            case LogicalExpression logicalExpr:
+                // Handle logical expressions (&&, ||) as binary expressions.
+                // Short-circuit semantics are handled during lowering.
+                if (!TryParseExpression(logicalExpr.Left, out var logicalLeft) ||
+                    !TryParseExpression(logicalExpr.Right, out var logicalRight))
+                {
+                    return false;
+                }
+
+                hirExpr = new HIRBinaryExpression(logicalExpr.Operator, logicalLeft!, logicalRight!);
+                return true;
+
             case BinaryExpression binaryExpr:
                 // Handle binary expressions
                 HIRExpression? leftExpr;

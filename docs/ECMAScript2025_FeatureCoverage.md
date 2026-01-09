@@ -250,8 +250,8 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Binary \|\| (Logical OR) with short-circuit | Supported | `Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalOr_Value.js` | Value form returns left if truthy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited. Recent fixes ensure strict-equality patterns (e.g. `id === 1024 \|\| id === 2047`) correctly handle captured/boxed variables by performing ToNumber conversion when the variable type is unknown, preventing incorrect direct object-to-number `ceq` comparisons. | 13.5.10 |
-| Binary && (Logical AND) with short-circuit | Supported | `Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalAnd_Value.js` | Value form returns left if falsy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited. | 13.5.10 |
+| Binary \|\| (Logical OR) with short-circuit | Supported | `Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalOr_Value.js`<br>`Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalOr_ShortCircuit.js` | Value form returns left if truthy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited. Recent fixes ensure strict-equality patterns (e.g. `id === 1024 \|\| id === 2047`) correctly handle captured/boxed variables by performing ToNumber conversion when the variable type is unknown, preventing incorrect direct object-to-number `ceq` comparisons. | 13.5.10 |
+| Binary && (Logical AND) with short-circuit | Supported | `Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalAnd_Value.js`<br>`Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalAnd_ShortCircuit.js` | Value form returns left if falsy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited. | 13.5.10 |
 | Binary in (property existence on object) | Supported | `Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_In_Object_OwnAndMissing.js` | Implements key in obj via JavaScriptRuntime.Object.HasPropertyIn. Supports own properties on ExpandoObject/object literals and numeric/string keys; does not yet traverse prototype chain or throw TypeError for non-object RHS beyond null/undefined. | 13.5.10 |
 
 
@@ -259,7 +259,7 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Conditional operator (?:) | Supported | `Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Conditional_Ternary.js` | Expression-level branching with both arms coerced to object where needed. Verified via generator and execution tests in ControlFlow subgroup. | 13.5.16 |
+| Conditional operator (?:) | Supported | `Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Conditional_Ternary.js`<br>`Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Conditional_Ternary_ShortCircuit.js` | Expression-level branching with both arms coerced to object where needed; only the selected arm is evaluated. Verified via generator and execution tests in ControlFlow subgroup. | 13.5.16 |
 
 
 ### [Assignment Operators](https://tc39.es/ecma262/#sec-assignment-operators)
