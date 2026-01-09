@@ -19,8 +19,8 @@
                   "feature": "Numeric literals (integer and decimal)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/BinaryOperator_AddNumberNumber.js",
-                    "Js2IL.Tests/JavaScript/BinaryOperator_MulNumberNumber.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_AddNumberNumber.js",
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_MulNumberNumber.js"
                   ],
                   "notes": "Numbers are represented as double and used pervasively across arithmetic, comparison, and control-flow tests."
                 }
@@ -35,8 +35,8 @@
                   "feature": "String literals (single/double quotes; escapes)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/String_StartsWith_Basic.js",
-                    "Js2IL.Tests/JavaScript/String_Replace_Regex_Global.js"
+                    "Js2IL.Tests/String/JavaScript/String_StartsWith_Basic.js",
+                    "Js2IL.Tests/String/JavaScript/String_Replace_Regex_Global.js"
                   ],
                   "notes": "Backed by .NET System.String; values are boxed/unboxed where needed in member calls and concatenation."
                 }
@@ -51,8 +51,8 @@
                   "feature": "Boolean literals (true/false)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/UnaryOperator_Typeof.js",
-                    "Js2IL.Tests/JavaScript/JSON_Parse_SimpleObject.js"
+                    "Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_Typeof.js",
+                    "Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js"
                   ],
                   "notes": "Emits proper IL for true/false and boxes when needed in arrays/log calls. See generator snapshot: Js2IL.Tests/Literals/GeneratorTests.BooleanLiteral.verified.txt."
                 }
@@ -67,7 +67,7 @@
                   "feature": "Template literals (basic interpolation)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/String_TemplateLiteral_Basic.js"
+                    "Js2IL.Tests/String/JavaScript/String_TemplateLiteral_Basic.js"
                   ],
                   "notes": "Concatenates quasis and expressions via runtime Operators.Add with JS string/number coercion. Tagged templates are not yet supported."
                 }
@@ -82,8 +82,8 @@
                   "feature": "null literal",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Literals_NullAndUndefined.js",
-                    "Js2IL.Tests/JavaScript/JSON_Parse_SimpleObject.js"
+                    "Js2IL.Tests/Literals/JavaScript/Literals_NullAndUndefined.js",
+                    "Js2IL.Tests/JSON/JavaScript/JSON_Parse_SimpleObject.js"
                   ],
                   "notes": "null emission validated in literals and variable tests; see execution snapshot Js2IL.Tests/Literals/ExecutionTests.Literals_NullAndUndefined.verified.txt."
                 }
@@ -98,7 +98,7 @@
                   "feature": "undefined identifier usage",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Literals_NullAndUndefined.js"
+                    "Js2IL.Tests/Literals/JavaScript/Literals_NullAndUndefined.js"
                   ],
                   "notes": "Handled as the ECMAScript undefined value and participates in JS truthiness; see execution snapshot Js2IL.Tests/Literals/ExecutionTests.Literals_NullAndUndefined.verified.txt."
                 }
@@ -143,11 +143,11 @@
                   "feature": "let/const",
                   "status": "Partially Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Variable_LetBlockScope.js",
-                    "Js2IL.Tests/JavaScript/Variable_LetShadowing.js",
-                    "Js2IL.Tests/JavaScript/Variable_LetNestedShadowingChain.js",
-                    "Js2IL.Tests/JavaScript/Variable_LetFunctionNestedShadowing.js",
-                    "Js2IL.Tests/JavaScript/Variable_ConstSimple.js"
+                    "Js2IL.Tests/Variable/JavaScript/Variable_LetBlockScope.js",
+                    "Js2IL.Tests/Variable/JavaScript/Variable_LetShadowing.js",
+                    "Js2IL.Tests/Variable/JavaScript/Variable_LetNestedShadowingChain.js",
+                    "Js2IL.Tests/Variable/JavaScript/Variable_LetFunctionNestedShadowing.js",
+                    "Js2IL.Tests/Variable/JavaScript/Variable_ConstSimple.js"
                   ],
                   "notes": "Block scoping, shadowing chain, nested function capture, and simple const initialization implemented. Temporal dead zone access error (Variable_TemporalDeadZoneAccess.js) and reads before initialization are still pending."
                 },
@@ -155,7 +155,7 @@
                   "feature": "Const reassignment throws TypeError",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Variable_ConstReassignmentError.js"
+                    "Js2IL.Tests/Variable/JavaScript/Variable_ConstReassignmentError.js"
                   ],
                   "notes": "Assignment to a const Identifier and ++/-- on const emit a runtime TypeError; error is catchable via try/catch."
                 }
@@ -170,9 +170,9 @@
                   "feature": "var",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Function_GlobalFunctionChangesGlobalVariableValue.js",
-                    "Js2IL.Tests/JavaScript/Function_GlobalFunctionDeclaresAndCallsNestedFunction.js",
-                    "Js2IL.Tests/JavaScript/Function_GlobalFunctionLogsGlobalVariable.js"
+                    "Js2IL.Tests/Function/JavaScript/Function_GlobalFunctionChangesGlobalVariableValue.js",
+                    "Js2IL.Tests/Function/JavaScript/Function_GlobalFunctionDeclaresAndCallsNestedFunction.js",
+                    "Js2IL.Tests/Function/JavaScript/Function_GlobalFunctionLogsGlobalVariable.js"
                   ],
                   "notes": ""
                 }
@@ -222,7 +222,7 @@
                   "feature": "Function declarations",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Function_HelloWorld.js"
+                    "Js2IL.Tests/Function/JavaScript/Function_HelloWorld.js"
                   ],
                   "notes": "Hoisted and initialized before top-level statement evaluation so functions can call each other by name prior to IIFE invocation."
                 },
@@ -230,13 +230,13 @@
                   "feature": "Arrow functions",
                   "status": "Partially Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/ArrowFunction_SimpleExpression.js",
-                    "Js2IL.Tests/JavaScript/ArrowFunction_BlockBody_Return.js",
-                    "Js2IL.Tests/JavaScript/ArrowFunction_GlobalFunctionCallsGlobalFunction.js",
-                    "Js2IL.Tests/JavaScript/ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.js",
-                    "Js2IL.Tests/JavaScript/ArrowFunction_GlobalFunctionWithMultipleParameters.js",
-                    "Js2IL.Tests/JavaScript/ArrowFunction_NestedFunctionAccessesMultipleScopes.js",
-                    "Js2IL.Tests/JavaScript/ArrowFunction_CapturesOuterVariable.js",
+                    "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_SimpleExpression.js",
+                    "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_BlockBody_Return.js",
+                    "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_GlobalFunctionCallsGlobalFunction.js",
+                    "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.js",
+                    "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_GlobalFunctionWithMultipleParameters.js",
+                    "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_NestedFunctionAccessesMultipleScopes.js",
+                    "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_CapturesOuterVariable.js",
                     "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_ParameterDestructuring_Object.js",
                     "Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterValue.js"
                   ],
@@ -295,7 +295,7 @@
                   "feature": "Array literal basic construction",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/ArrayLiteral.js"
+                    "Js2IL.Tests/Literals/JavaScript/ArrayLiteral.js"
                   ],
                   "notes": "Covers creation, element access, and length property. See also verified output in Literals/GeneratorTests.ArrayLiteral.verified.txt."
                 },
@@ -303,7 +303,7 @@
                   "feature": "Array literal spread (copy elements)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Array_Spread_Copy.js"
+                    "Js2IL.Tests/Literals/JavaScript/Array_Spread_Copy.js"
                   ],
                   "notes": "Spread elements in array literals are emitted via JavaScriptRuntime.Array.PushRange; supports copying from another array."
                 }
@@ -325,7 +325,7 @@
                   "feature": "Object literal basic construction",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/ObjectLiteral.js"
+                    "Js2IL.Tests/Literals/JavaScript/ObjectLiteral.js"
                   ],
                   "notes": "Covers creation and property access. See also verified output in Literals/GeneratorTests.ObjectLiteral.verified.txt."
                 }
@@ -347,7 +347,7 @@
                   "feature": "typeof",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/UnaryOperator_Typeof.js"
+                    "Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_Typeof.js"
                   ],
                   "notes": "Implemented via JavaScriptRuntime.TypeUtilities::Typeof and IL emission for UnaryExpression(typeof). typeof null returns 'object'; functions report 'function'; objects report 'object'."
                 }
@@ -407,9 +407,10 @@
                   "feature": "Unary ! (Logical not)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/ControlFlow_If_NotFlag.js"
+                    "Js2IL.Tests/UnaryOperator/JavaScript/UnaryOperator_LogicalNot.js",
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_NotFlag.js"
                   ],
-                  "notes": "Branch inversion supported in conditionals (e.g., if (!x) ...), and value negation in non-branching contexts."
+                  "notes": "Supported end-to-end in IR pipeline (HIR unary + LIRLogicalNot) using JavaScriptRuntime.TypeUtilities.ToBoolean for JS truthiness, then invert. Covered both in a dedicated unary-operator fixture and in control-flow conditionals (if (!x) ...)."
                 }
               ]
             },
@@ -459,10 +460,10 @@
                   "feature": "Binary + (Addition)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/BinaryOperator_AddNumberNumber.js",
-                    "Js2IL.Tests/JavaScript/BinaryOperator_AddStringNumber.js",
-                    "Js2IL.Tests/JavaScript/BinaryOperator_AddStringString.js",
-                    "Js2IL.Tests/JavaScript/Classes_ClassConstructor_TwoParams_AddMethod.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_AddNumberNumber.js",
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_AddStringNumber.js",
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_AddStringString.js",
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_TwoParams_AddMethod.js"
                   ],
                   "notes": "Fast-path string concat; general '+' follows JS coercion via runtime helper."
                 }
@@ -477,8 +478,8 @@
                   "feature": "Binary - (Subtraction)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/BinaryOperator_SubNumberNumber.js",
-                    "Js2IL.Tests/JavaScript/Classes_ClassConstructor_TwoParams_SubtractMethod.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_SubNumberNumber.js",
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_TwoParams_SubtractMethod.js"
                   ],
                   "notes": "Numeric subtraction; matches JS semantics for non-numeric via coercion helpers where applicable."
                 }
@@ -493,7 +494,7 @@
                   "feature": "Binary * (Multiplication)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/BinaryOperator_MulNumberNumber.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_MulNumberNumber.js"
                   ],
                   "notes": ""
                 },
@@ -501,7 +502,7 @@
                   "feature": "Binary / (Division)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/BinaryOperator_DivNumberNumber.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_DivNumberNumber.js"
                   ],
                   "notes": ""
                 },
@@ -509,7 +510,7 @@
                   "feature": "Binary % (Remainder)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/BinaryOperator_ModNumberNumber.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_ModNumberNumber.js"
                   ],
                   "notes": ""
                 }
@@ -524,7 +525,7 @@
                   "feature": "Binary ** (Exponentiation)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/BinaryOperator_ExpNumberNumber.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_ExpNumberNumber.js"
                   ],
                   "notes": ""
                 }
@@ -539,7 +540,7 @@
                   "feature": "Binary & (Bitwise AND)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/BinaryOperator_BitwiseAndNumberNumber.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_BitwiseAndNumberNumber.js"
                   ],
                   "notes": ""
                 },
@@ -547,7 +548,7 @@
                   "feature": "Binary | (Bitwise OR)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/BinaryOperator_BitwiseOrNumberNumber.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_BitwiseOrNumberNumber.js"
                   ],
                   "notes": ""
                 },
@@ -555,7 +556,7 @@
                   "feature": "Binary ^ (Bitwise XOR)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/BinaryOperator_BitwiseXorNumberNumber.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_BitwiseXorNumberNumber.js"
                   ],
                   "notes": ""
                 }
@@ -570,7 +571,7 @@
                   "feature": "Binary << (Left shift)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/BinaryOperator_LeftShiftNumberNumber.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LeftShiftNumberNumber.js"
                   ],
                   "notes": ""
                 },
@@ -578,7 +579,7 @@
                   "feature": "Binary >> (Signed right shift)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/BinaryOperator_RightShiftNumberNumber.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_RightShiftNumberNumber.js"
                   ],
                   "notes": ""
                 },
@@ -586,7 +587,7 @@
                   "feature": "Binary >>> (Unsigned right shift)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/BinaryOperator_UnsignedRightShiftNumberNumber.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_UnsignedRightShiftNumberNumber.js"
                   ],
                   "notes": ""
                 }
@@ -601,7 +602,7 @@
                   "feature": "Binary < (Less than)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/BinaryOperator_LessThan.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThan.js"
                   ],
                   "notes": ""
                 },
@@ -609,7 +610,7 @@
                   "feature": "Binary <= (Less than or equal)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/BinaryOperator_LessThanOrEqual.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LessThanOrEqual.js"
                   ],
                   "notes": ""
                 },
@@ -617,7 +618,7 @@
                   "feature": "Binary > (Greater than)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/BinaryOperator_GreaterThan.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThan.js"
                   ],
                   "notes": ""
                 },
@@ -625,7 +626,7 @@
                   "feature": "Binary >= (Greater than or equal)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/BinaryOperator_GreaterThanOrEqual.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_GreaterThanOrEqual.js"
                   ],
                   "notes": ""
                 }
@@ -640,8 +641,8 @@
                   "feature": "Binary == (Equality)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/BinaryOperator_Equal.js",
-                    "Js2IL.Tests/JavaScript/Function_IsEven_CompareResultToTrue.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_Equal.js",
+                    "Js2IL.Tests/Function/JavaScript/Function_IsEven_CompareResultToTrue.js"
                   ],
                   "notes": "Covers numeric and boolean equality, including comparisons against literals and function-returned booleans with selective boxing/unboxing. See also generator snapshot: Js2IL.Tests/BinaryOperator/GeneratorTests.BinaryOperator_EqualBoolean.verified.txt."
                 },
@@ -671,7 +672,7 @@
                   "feature": "Binary || (Logical OR) with short-circuit",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/BinaryOperator_LogicalOr_Value.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalOr_Value.js"
                   ],
                   "notes": "Value form returns left if truthy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited. Recent fixes ensure strict-equality patterns (e.g. `id === 1024 || id === 2047`) correctly handle captured/boxed variables by performing ToNumber conversion when the variable type is unknown, preventing incorrect direct object-to-number `ceq` comparisons."
                 },
@@ -679,7 +680,7 @@
                   "feature": "Binary && (Logical AND) with short-circuit",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/BinaryOperator_LogicalAnd_Value.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalAnd_Value.js"
                   ],
                   "notes": "Value form returns left if falsy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited."
                 },
@@ -702,7 +703,7 @@
                   "feature": "Conditional operator (?:)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/ControlFlow_Conditional_Ternary.js"
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Conditional_Ternary.js"
                   ],
                   "notes": "Expression-level branching with both arms coerced to object where needed. Verified via generator and execution tests in ControlFlow subgroup."
                 }
@@ -746,7 +747,7 @@
                   "feature": "Compound assignment += with strings",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/String_PlusEquals_Append.js"
+                    "Js2IL.Tests/String/JavaScript/String_PlusEquals_Append.js"
                   ],
                   "notes": "+= on identifiers uses JavaScriptRuntime.Operators.Add for JS coercion and stores back to the same binding; validated by generator snapshot."
                 },
@@ -800,7 +801,7 @@
                   "feature": "return statement (basic)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Function_ReturnsStaticValueAndLogs.js"
+                    "Js2IL.Tests/Function/JavaScript/Function_ReturnsStaticValueAndLogs.js"
                   ],
                   "notes": "Function returns propagate values (boxed) to callers; validated by execution snapshot showing returned value."
                 }
@@ -822,7 +823,7 @@
                   "feature": "if statement (LessThan)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/ControlFlow_If_LessThan.js"
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_LessThan.js"
                   ],
                   "notes": ""
                 },
@@ -830,7 +831,7 @@
                   "feature": "if statement (!flag)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/ControlFlow_If_NotFlag.js"
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_NotFlag.js"
                   ],
                   "notes": "Logical not in conditional test supported."
                 },
@@ -838,7 +839,7 @@
                   "feature": "if statement (result == true)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Function_IsEven_CompareResultToTrue.js"
+                    "Js2IL.Tests/Function/JavaScript/Function_IsEven_CompareResultToTrue.js"
                   ],
                   "notes": "Compares function-returned boolean to true and branches accordingly."
                 },
@@ -846,7 +847,7 @@
                   "feature": "if condition truthiness (non-boolean)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/ControlFlow_If_Truthiness.js"
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_If_Truthiness.js"
                   ],
                   "notes": "Conditions like if (url) are coerced via JS ToBoolean semantics (empty string/0/NaN/undefined/null => false; others => true)."
                 }
@@ -868,7 +869,7 @@
                   "feature": "do-while loop (CountDownFromFive)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/ControlFlow_DoWhile_CountDownFromFive.js"
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_CountDownFromFive.js"
                   ],
                   "notes": ""
                 },
@@ -876,7 +877,7 @@
                   "feature": "do-while loop: continue (skip even)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/ControlFlow_DoWhile_Continue_SkipEven.js"
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_Continue_SkipEven.js"
                   ],
                   "notes": "continue branches to the post-body test point (LoopContext)."
                 },
@@ -884,9 +885,25 @@
                   "feature": "do-while loop: break",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/ControlFlow_DoWhile_Break_AtThree.js"
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_Break_AtThree.js"
                   ],
                   "notes": "break branches to loop end (LoopContext)."
+                },
+                {
+                  "feature": "do-while loop: labeled continue",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_LabeledContinue.js"
+                  ],
+                  "notes": "Supports continue <label> where <label> targets an enclosing loop."
+                },
+                {
+                  "feature": "do-while loop: labeled break",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_DoWhile_LabeledBreak.js"
+                  ],
+                  "notes": "Supports break <label> where <label> targets an enclosing loop."
                 }
               ]
             }
@@ -906,7 +923,7 @@
                   "feature": "while loop (CountDownFromFive)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/ControlFlow_While_CountDownFromFive.js"
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_CountDownFromFive.js"
                   ],
                   "notes": ""
                 },
@@ -914,7 +931,7 @@
                   "feature": "while loop: continue (skip even)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/ControlFlow_While_Continue_SkipEven.js"
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_Continue_SkipEven.js"
                   ],
                   "notes": "continue branches to loop head (LoopContext)."
                 },
@@ -922,9 +939,25 @@
                   "feature": "while loop: break",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/ControlFlow_While_Break_AtThree.js"
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_Break_AtThree.js"
                   ],
                   "notes": "break branches to loop end (LoopContext)."
+                },
+                {
+                  "feature": "while loop: labeled continue",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_LabeledContinue.js"
+                  ],
+                  "notes": "Supports continue <label> where <label> targets an enclosing loop."
+                },
+                {
+                  "feature": "while loop: labeled break",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_While_LabeledBreak.js"
+                  ],
+                  "notes": "Supports break <label> where <label> targets an enclosing loop."
                 }
               ]
             }
@@ -944,7 +977,7 @@
                   "feature": "for loop (CountToFive)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/ControlFlow_ForLoop_CountToFive.js"
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_CountToFive.js"
                   ],
                   "notes": ""
                 },
@@ -952,7 +985,7 @@
                   "feature": "for loop (CountDownFromFive)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/ControlFlow_ForLoop_CountDownFromFive.js"
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_CountDownFromFive.js"
                   ],
                   "notes": ""
                 },
@@ -960,7 +993,7 @@
                   "feature": "for loop (LessThanOrEqual)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/ControlFlow_ForLoop_LessThanOrEqual.js"
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LessThanOrEqual.js"
                   ],
                   "notes": ""
                 },
@@ -968,7 +1001,7 @@
                   "feature": "for loop (GreaterThanOrEqual)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/ControlFlow_ForLoop_GreaterThanOrEqual.js"
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_GreaterThanOrEqual.js"
                   ],
                   "notes": ""
                 },
@@ -976,7 +1009,7 @@
                   "feature": "for loop: continue",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/ControlFlow_ForLoop_Continue_SkipEven.js"
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_Continue_SkipEven.js"
                   ],
                   "notes": "Implements continue by branching to the update expression (LoopContext)."
                 },
@@ -984,9 +1017,25 @@
                   "feature": "for loop: break",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/ControlFlow_ForLoop_Break_AtThree.js"
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_Break_AtThree.js"
                   ],
                   "notes": "Implements break by branching to loop end label (LoopContext)."
+                },
+                {
+                  "feature": "for loop: labeled continue",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LabeledContinue.js"
+                  ],
+                  "notes": "Supports continue <label> where <label> targets an enclosing loop."
+                },
+                {
+                  "feature": "for loop: labeled break",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForLoop_LabeledBreak.js"
+                  ],
+                  "notes": "Supports break <label> where <label> targets an enclosing loop."
                 }
               ]
             }
@@ -1004,11 +1053,34 @@
               "features": [
                 {
                   "feature": "for-of over arrays (enumerate values)",
-                  "status": "Supported",
+                  "status": "Partially Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/ControlFlow_ForOf_Array_Basic.js"
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Array_Basic.js",
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Continue.js",
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_Break.js",
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledContinue.js",
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForOf_LabeledBreak.js"
                   ],
-                  "notes": "Emitted by indexing iterable via JavaScriptRuntime.Object.GetLength(object) and GetItem(object, double); uses object locals for iterator state."
+                  "notes": "Lowered to an index loop over a normalized iterable (JavaScriptRuntime.Object.NormalizeForOfIterable), then accessed via JavaScriptRuntime.Object.GetLength(object) + GetItem(object, double). Supports arrays, strings, typed arrays, and .NET IEnumerable (via Array.from), but does not implement full JS iterator protocol (Symbol.iterator)."
+                }
+              ]
+            },
+            {
+              "paragraph": "14.7.5.2",
+              "title": "Runtime Semantics: ForInOfBodyEvaluation (for-in)",
+              "url": "https://tc39.es/ecma262/#sec-runtime-semantics-forinofbodyevaluation",
+              "features": [
+                {
+                  "feature": "for-in over objects (enumerate enumerable keys)",
+                  "status": "Partially Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Object_Basic.js",
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Continue.js",
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Break.js",
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_LabeledContinue.js",
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_LabeledBreak.js"
+                  ],
+                  "notes": "Lowered to an index loop over JavaScriptRuntime.Object.GetEnumerableKeys(object). Minimal semantics: supports ExpandoObject (object literals), JS Array/Int32Array/string index keys, and IDictionary keys; does not currently model full prototype-chain enumeration rules."
                 }
               ]
             }
@@ -1028,7 +1100,7 @@
                   "feature": "throw statement",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/TryCatch_NoBinding.js"
+                    "Js2IL.Tests/TryCatch/JavaScript/TryCatch_NoBinding.js"
                   ],
                   "notes": "Emits throw of JavaScriptRuntime.Error; used in try/catch tests."
                 },
@@ -1036,8 +1108,8 @@
                   "feature": "try/catch (no binding)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/TryCatch_NoBinding.js",
-                    "Js2IL.Tests/JavaScript/TryCatch_NoBinding_NoThrow.js"
+                    "Js2IL.Tests/TryCatch/JavaScript/TryCatch_NoBinding.js",
+                    "Js2IL.Tests/TryCatch/JavaScript/TryCatch_NoBinding_NoThrow.js"
                   ],
                   "notes": "Catch blocks currently handle only JavaScriptRuntime.Error thrown within the try; exceptions thrown later (after returning a closure) are not caught by the earlier catch."
                 },
@@ -1045,8 +1117,8 @@
                   "feature": "try/finally (no catch)",
                   "status": "Partially Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/TryFinally_NoCatch.js",
-                    "Js2IL.Tests/JavaScript/TryFinally_NoCatch_Throw.js"
+                    "Js2IL.Tests/TryCatch/JavaScript/TryFinally_NoCatch.js",
+                    "Js2IL.Tests/TryCatch/JavaScript/TryFinally_NoCatch_Throw.js"
                   ],
                   "notes": "Finally emission is in place. Execution test for throw is skipped pending unhandled Error semantics at top-level; generator snapshot verifies structure."
                 }
@@ -1075,7 +1147,7 @@
                   "feature": "Class declaration (empty)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Classes_DeclareEmptyClass.js"
+                    "Js2IL.Tests/Classes/JavaScript/Classes_DeclareEmptyClass.js"
                   ],
                   "notes": ""
                 },
@@ -1083,7 +1155,7 @@
                   "feature": "Instance method (declare and call)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Classes_ClassWithMethod_HelloWorld.js"
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithMethod_HelloWorld.js"
                   ],
                   "notes": ""
                 },
@@ -1091,7 +1163,7 @@
                   "feature": "Static method (declare and call)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js"
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticMethod_HelloWorld.js"
                   ],
                   "notes": ""
                 },
@@ -1099,7 +1171,7 @@
                   "feature": "Instance field initializer (public property default)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Classes_ClassProperty_DefaultAndLog.js"
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassProperty_DefaultAndLog.js"
                   ],
                   "notes": "Emitted by assigning defaults in the generated .ctor."
                 },
@@ -1107,7 +1179,7 @@
                   "feature": "Static field initializer (static property default)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js"
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassWithStaticProperty_DefaultAndLog.js"
                   ],
                   "notes": "Emitted as a static field initialized in a synthesized .cctor; accessed via ldsfld."
                 },
@@ -1115,7 +1187,7 @@
                   "feature": "Constructor with parameter and this.field assignment; method reads field",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Classes_ClassConstructor_Param_Field_Log.js"
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_Param_Field_Log.js"
                   ],
                   "notes": ""
                 },
@@ -1123,9 +1195,9 @@
                   "feature": "Constructor with multiple parameters; method uses fields",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Classes_ClassConstructor_WithMultipleParameters.js",
-                    "Js2IL.Tests/JavaScript/Classes_ClassConstructor_TwoParams_AddMethod.js",
-                    "Js2IL.Tests/JavaScript/Classes_ClassConstructor_TwoParams_SubtractMethod.js"
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_WithMultipleParameters.js",
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_TwoParams_AddMethod.js",
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_TwoParams_SubtractMethod.js"
                   ],
                   "notes": "Covers multi-parameter constructors and arithmetic in instance methods."
                 },
@@ -1133,7 +1205,7 @@
                   "feature": "Private instance field (#) with helper method access",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js"
+                    "Js2IL.Tests/Classes/JavaScript/Classes_ClassPrivateField_HelperMethod_Log.js"
                   ],
                   "notes": "Generated as a private .NET field with a mangled name; accessible only within the class."
                 },
@@ -1724,7 +1796,7 @@
                   "feature": "new Date(milliseconds)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js"
+                    "Js2IL.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js"
                   ],
                   "notes": "Constructs from milliseconds since Unix epoch; numeric argument is coerced per JS ToNumber minimal behavior."
                 }
@@ -1762,7 +1834,7 @@
                   "status": "Supported",
                   "testScripts": [
                     "Js2IL.Tests/Date/ExecutionTests.cs",
-                    "Js2IL.Tests/Date/ExecutionTests.Date_Parse_IsoString.verified.txt"
+                    "Js2IL.Tests/Date/JavaScript/Date_Parse_IsoString.js"
                   ],
                   "notes": "Parses an ISO-like string to milliseconds since Unix epoch, or NaN on failure; returns a number (boxed double)."
                 }
@@ -1784,8 +1856,7 @@
                   "feature": "Date.prototype.getTime",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js",
-                    "Js2IL.Tests/Date/ExecutionTests.Date_Construct_FromMs_GetTime_ToISOString.verified.txt"
+                    "Js2IL.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js"
                   ],
                   "notes": "Returns milliseconds since Unix epoch as a number (boxed double)."
                 }
@@ -1800,8 +1871,7 @@
                   "feature": "Date.prototype.toISOString",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js",
-                    "Js2IL.Tests/Date/ExecutionTests.Date_Construct_FromMs_GetTime_ToISOString.verified.txt"
+                    "Js2IL.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js"
                   ],
                   "notes": "Returns a UTC ISO 8601 string with millisecond precision and trailing 'Z'."
                 }
@@ -1830,8 +1900,8 @@
                   "feature": "Array.length property (read)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Array_LengthProperty_ReturnsCount.js",
-                    "Js2IL.Tests/JavaScript/Array_EmptyLength_IsZero.js"
+                    "Js2IL.Tests/Array/JavaScript/Array_LengthProperty_ReturnsCount.js",
+                    "Js2IL.Tests/Array/JavaScript/Array_EmptyLength_IsZero.js"
                   ],
                   "notes": "length getter returns number of elements; emitted via JavaScriptRuntime.Object.GetLength(object). Used by for-of implementation."
                 }
@@ -1846,7 +1916,7 @@
                   "feature": "Array.prototype.join",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Array_Join_Basic.js"
+                    "Js2IL.Tests/Array/JavaScript/Array_Join_Basic.js"
                   ],
                   "notes": "Elements are stringified via DotNet2JSConversions.ToString and joined with a separator (default ','). Codegen dispatches to JavaScriptRuntime.Array.join(object[])."
                 }
@@ -1861,7 +1931,7 @@
                   "feature": "Array.prototype.pop",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Array_Pop_Basic.js"
+                    "Js2IL.Tests/Array/JavaScript/Array_Pop_Basic.js"
                   ],
                   "notes": "Removes and returns the last element; when empty returns undefined (represented as null in this runtime)."
                 }
@@ -1876,7 +1946,7 @@
                   "feature": "Array.prototype.push",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Array_Push_Basic.js"
+                    "Js2IL.Tests/Array/JavaScript/Array_Push_Basic.js"
                   ],
                   "notes": "Appends items to the end of the array and returns the new length (as a JS number)."
                 }
@@ -1891,7 +1961,7 @@
                   "feature": "Array.prototype.map",
                   "status": "Partially Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Array_Map_Basic.js"
+                    "Js2IL.Tests/Array/JavaScript/Array_Map_Basic.js"
                   ],
                   "notes": "Supports value-callback mapping including nested callback closures. thisArg and standard callback parameter injections (index, array) are not yet supported; callback currently receives only the element value. Returns a new array."
                 }
@@ -1906,7 +1976,7 @@
                   "feature": "Array.prototype.sort (default comparator)",
                   "status": "Partially Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Array_Sort_Basic.js"
+                    "Js2IL.Tests/Array/JavaScript/Array_Sort_Basic.js"
                   ],
                   "notes": "Default lexicographic sort implemented in JavaScriptRuntime.Array.sort(); comparator function parameter is not yet supported. Returns the array instance."
                 }
@@ -1921,7 +1991,7 @@
                   "feature": "Array.prototype.slice",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Array_Slice_Basic.js"
+                    "Js2IL.Tests/Array/JavaScript/Array_Slice_Basic.js"
                   ],
                   "notes": "Returns a shallow copy; handles negative indices and undefined end per spec."
                 }
@@ -1936,8 +2006,8 @@
                   "feature": "Array.prototype.splice",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Array_Splice_Basic.js",
-                    "Js2IL.Tests/JavaScript/Array_Splice_InsertAndDelete.js"
+                    "Js2IL.Tests/Array/JavaScript/Array_Splice_Basic.js",
+                    "Js2IL.Tests/Array/JavaScript/Array_Splice_InsertAndDelete.js"
                   ],
                   "notes": "Mutates the array by removing and/or inserting elements; returns an array of removed elements."
                 }
@@ -1959,7 +2029,7 @@
                   "feature": "Array.isArray",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/Array_IsArray_Basic.js"
+                    "Js2IL.Tests/Array/JavaScript/Array_IsArray_Basic.js"
                   ],
                   "notes": "Returns true for JavaScriptRuntime.Array instances; false otherwise."
                 }
@@ -1982,7 +2052,7 @@
                   "status": "Supported",
                   "testScripts": [
                     "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js",
-                    "Js2IL.Tests/TypedArray/ExecutionTests.Int32Array_Construct_Length.verified.txt"
+                    "Js2IL.Tests/TypedArray/Snapshots/ExecutionTests.Int32Array_Construct_Length.verified.txt"
                   ],
                   "notes": "Minimal typed array: exposes numeric length, supports indexing; out-of-bounds reads return 0 and out-of-bounds writes are ignored."
                 },
@@ -1991,7 +2061,7 @@
                   "status": "Supported",
                   "testScripts": [
                     "Js2IL.Tests/TypedArray/JavaScript/Int32Array_FromArray_CopyAndCoerce.js",
-                    "Js2IL.Tests/TypedArray/ExecutionTests.Int32Array_FromArray_CopyAndCoerce.verified.txt"
+                    "Js2IL.Tests/TypedArray/Snapshots/ExecutionTests.Int32Array_FromArray_CopyAndCoerce.verified.txt"
                   ],
                   "notes": "Copies from array-like and coerces values using ToInt32-style truncation; NaN/Infinity/±0 become 0."
                 },
@@ -2000,7 +2070,7 @@
                   "status": "Supported",
                   "testScripts": [
                     "Js2IL.Tests/TypedArray/JavaScript/Int32Array_Set_FromArray_WithOffset.js",
-                    "Js2IL.Tests/TypedArray/ExecutionTests.Int32Array_Set_FromArray_WithOffset.verified.txt"
+                    "Js2IL.Tests/TypedArray/Snapshots/ExecutionTests.Int32Array_Set_FromArray_WithOffset.verified.txt"
                   ],
                   "notes": "Copies elements from array-like or another Int32Array with optional offset; elements are coerced via ToInt32; offset < 0 treated as 0; copies stop at destination length."
                 }
@@ -2029,7 +2099,7 @@
                   "feature": "String.prototype.startsWith",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/String_StartsWith_Basic.js"
+                    "Js2IL.Tests/String/JavaScript/String_StartsWith_Basic.js"
                   ],
                   "notes": "Reflection-based string dispatch routes CLR string receivers to JavaScriptRuntime.String.StartsWith with optional position argument. Returns a boolean value (boxed)."
                 }
@@ -2043,10 +2113,8 @@
                 {
                   "feature": "String.prototype.includes",
                   "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/String/GeneratorTests.String_Includes.verified.txt"
-                  ],
-                  "notes": "Reflection-based dispatch recognizes definite string receivers and routes to JavaScriptRuntime.String.Includes; supports optional position argument. Returns a boolean value."
+                  "testScripts": [],
+                  "notes": "Reflection-based dispatch recognizes definite string receivers and routes to JavaScriptRuntime.String.Includes; supports optional position argument. Returns a boolean value. (No dedicated JS fixture currently referenced in this doc.)"
                 }
               ]
             },
@@ -2058,10 +2126,8 @@
                 {
                   "feature": "String.prototype.endsWith",
                   "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/String/GeneratorTests.String_EndsWith.verified.txt"
-                  ],
-                  "notes": "Implemented in JavaScriptRuntime.String and wired via IL generator for definite string receivers. Supports optional end position. Returns a boolean value."
+                  "testScripts": [],
+                  "notes": "Implemented in JavaScriptRuntime.String and wired via IL generator for definite string receivers. Supports optional end position. Returns a boolean value. (No dedicated JS fixture currently referenced in this doc.)"
                 }
               ]
             },
@@ -2074,7 +2140,7 @@
                   "feature": "String.prototype.split",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/String_Split_Basic.js"
+                    "Js2IL.Tests/String/JavaScript/String_Split_Basic.js"
                   ],
                   "notes": "Supports string and regular-expression separators and optional limit. Implemented via JavaScriptRuntime.String.Split and returned as JavaScriptRuntime.Array. Separator omitted or undefined returns [input]. Empty string separator splits into individual UTF-16 code units."
                 }
@@ -2089,7 +2155,7 @@
                   "feature": "String.prototype.replace (regex literal, string replacement)",
                   "status": "Partially Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/String_Replace_Regex_Global.js"
+                    "Js2IL.Tests/String/JavaScript/String_Replace_Regex_Global.js"
                   ],
                   "notes": "Supported when the receiver is String(x), the pattern is a regular expression literal, and the replacement is a string. Global (g) and ignoreCase (i) flags are honored. Function replacement, non-regex patterns, and other flags are not yet implemented. Implemented via host intrinsic JavaScriptRuntime.String.Replace and dynamic resolution in IL generator."
                 }
@@ -2104,7 +2170,7 @@
                   "feature": "String.prototype.localeCompare (numeric compare)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/JavaScript/String_LocaleCompare_Numeric.js"
+                    "Js2IL.Tests/String/JavaScript/String_LocaleCompare_Numeric.js"
                   ],
                   "notes": "Returns a number (boxed double) consistent with ECMAScript compare semantics; numeric option supported."
                 }
@@ -2154,26 +2220,20 @@
                 {
                   "feature": "Set.prototype.add",
                   "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/Set/GeneratorTests.Set_Add_Has_Size.verified.txt"
-                  ],
-                  "notes": "Backed by JavaScriptRuntime.Set.add; returns the Set instance to allow chaining."
+                  "testScripts": [],
+                  "notes": "Backed by JavaScriptRuntime.Set.add; returns the Set instance to allow chaining. (No dedicated JS fixture currently referenced in this doc.)"
                 },
                 {
                   "feature": "Set.prototype.has",
                   "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/Set/GeneratorTests.Set_Add_Has_Size.verified.txt"
-                  ],
-                  "notes": "Backed by JavaScriptRuntime.Set.has; strict equality for keys based on .NET object identity and string/double value semantics."
+                  "testScripts": [],
+                  "notes": "Backed by JavaScriptRuntime.Set.has; strict equality for keys based on .NET object identity and string/double value semantics. (No dedicated JS fixture currently referenced in this doc.)"
                 },
                 {
                   "feature": "Set.prototype.size (getter)",
                   "status": "Supported",
-                  "testScripts": [
-                    "Js2IL.Tests/Set/GeneratorTests.Set_Add_Has_Size.verified.txt"
-                  ],
-                  "notes": "Exposed via a 'size' property on JavaScriptRuntime.Set returning a JS number (double)."
+                  "testScripts": [],
+                  "notes": "Exposed via a 'size' property on JavaScriptRuntime.Set returning a JS number (double). (No dedicated JS fixture currently referenced in this doc.)"
                 }
               ]
             }
@@ -2253,7 +2313,7 @@
                   "feature": "Promise.allSettled",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/Promise/JavaScript/Promise_AllSettled_Mixed.js",
+                    "Js2IL.Tests/Promise/JavaScript/Promise_AllSettled_MixedResults.js",
                     "Js2IL.Tests/Promise/JavaScript/Promise_AllSettled_AllResolved.js",
                     "Js2IL.Tests/Promise/JavaScript/Promise_AllSettled_AllRejected.js"
                   ],

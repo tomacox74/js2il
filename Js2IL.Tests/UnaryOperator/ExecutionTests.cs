@@ -27,5 +27,8 @@ namespace Js2IL.Tests.UnaryOperator
 
         [Fact]
         public Task UnaryOperator_BitwiseNot() => ExecutionTest(nameof(UnaryOperator_BitwiseNot));
+
+        [Fact]
+        public Task UnaryOperator_LogicalNot() => ExecutionTest(nameof(UnaryOperator_LogicalNot));
     }
 }

@@ -562,6 +562,9 @@ namespace Js2IL.Services.ILGenerators
                 case ForOfStatement forOfStatement:
                     GenerateForOfStatement(forOfStatement);
                     break;
+                case ForInStatement forInStatement:
+                    GenerateForInStatement(forInStatement);
+                    break;
                 case WhileStatement whileStatement:
                     GenerateWhileStatement(whileStatement);
                     break;
@@ -617,6 +620,7 @@ namespace Js2IL.Services.ILGenerators
             bool hasLexical = blockStatement.Body.Any(s =>
                 (s is VariableDeclaration vd && vd.Kind is VariableDeclarationKind.Let or VariableDeclarationKind.Const)
                 || (s is ForOfStatement fof && fof.Left is VariableDeclaration fovd && (fovd.Kind is VariableDeclarationKind.Let or VariableDeclarationKind.Const))
+                || (s is ForInStatement fin && fin.Left is VariableDeclaration finvd && (finvd.Kind is VariableDeclarationKind.Let or VariableDeclarationKind.Const))
             );
 
             // If no lexical declarations, just emit statements directly.
@@ -918,8 +922,9 @@ namespace Js2IL.Services.ILGenerators
             int lenLocal = _variables.AllocateBlockScopeLocal($"ForOfTemp_Len_L{forOf.Location.Start.Line}C{forOf.Location.Start.Column}");
             int idxLocal = _variables.AllocateBlockScopeLocal($"ForOfTemp_Idx_L{forOf.Location.Start.Line}C{forOf.Location.Start.Column}");
 
-            // Store iterable into iterLocal
+            // Store iterable into iterLocal (normalized to work with GetLength/GetItem)
             _ = _expressionEmitter.Emit(forOf.Right, new TypeCoercion() { boxResult = true });
+            _runtime.InvokeNormalizeForOfIterable();
             _il.StoreLocal(iterLocal);
 
             // Compute length and store in lenLocal (boxed)
@@ -1052,6 +1057,165 @@ namespace Js2IL.Services.ILGenerators
             _il.Token(_bclReferences.DoubleType);
             _il.StoreLocal(idxLocal);
 
+            _il.Branch(ILOpCode.Br, loopStartLabel);
+
+            _il.MarkLabel(loopEndLabel);
+            _loopStack.Pop();
+        }
+
+        public void GenerateForInStatement(Acornima.Ast.ForInStatement forIn)
+        {
+            // Desugar: for (k in obj) { body }
+            //   -> let keys = Object.GetEnumerableKeys(obj);
+            //      let len = Object.GetLength(keys);
+            //      let i = 0;
+            //      while (i < len) { let k = Object.GetItem(keys, i); body; i++; }
+
+            var loopStartLabel = _il.DefineLabel();
+            var loopBodyLabel = _il.DefineLabel();
+            var loopEndLabel = _il.DefineLabel();
+            var loopContinueLabel = _il.DefineLabel();
+
+            // Determine binding target name (const/let/identifier)
+            string? keyVarName = null;
+            if (forIn.Left is VariableDeclaration vdecl && vdecl.Declarations.Count == 1 && vdecl.Declarations[0].Id is Identifier vid)
+            {
+                keyVarName = vid.Name;
+            }
+            else if (forIn.Left is Identifier id)
+            {
+                keyVarName = id.Name;
+            }
+            else
+            {
+                ILEmitHelpers.ThrowNotSupported($"Unsupported for-in left-hand side: {forIn.Left?.Type}", forIn.Left);
+            }
+
+            int keysLocal = _variables.AllocateBlockScopeLocal($"ForInTemp_Keys_L{forIn.Location.Start.Line}C{forIn.Location.Start.Column}");
+            int lenLocal = _variables.AllocateBlockScopeLocal($"ForInTemp_Len_L{forIn.Location.Start.Line}C{forIn.Location.Start.Column}");
+            int idxLocal = _variables.AllocateBlockScopeLocal($"ForInTemp_Idx_L{forIn.Location.Start.Line}C{forIn.Location.Start.Column}");
+
+            // keys = Object.GetEnumerableKeys(obj)
+            _ = _expressionEmitter.Emit(forIn.Right, new TypeCoercion() { boxResult = true });
+            _runtime.InvokeGetEnumerableKeysFromObject();
+            _il.StoreLocal(keysLocal);
+
+            // len = Object.GetLength(keys)
+            _il.LoadLocal(keysLocal);
+            _runtime.InvokeGetLengthFromObject();
+            _il.OpCode(ILOpCode.Box);
+            _il.Token(_bclReferences.DoubleType);
+            _il.StoreLocal(lenLocal);
+
+            // idx = 0
+            _il.LoadConstantR8(0);
+            _il.OpCode(ILOpCode.Box);
+            _il.Token(_bclReferences.DoubleType);
+            _il.StoreLocal(idxLocal);
+
+            // loop test
+            _il.MarkLabel(loopStartLabel);
+            _il.LoadLocal(idxLocal);
+            _il.OpCode(ILOpCode.Unbox_any);
+            _il.Token(_bclReferences.DoubleType);
+            _il.LoadLocal(lenLocal);
+            _il.OpCode(ILOpCode.Unbox_any);
+            _il.Token(_bclReferences.DoubleType);
+            _il.Branch(ILOpCode.Blt, loopBodyLabel);
+            _il.Branch(ILOpCode.Br, loopEndLabel);
+
+            // Push loop context: continue -> continueLabel, break -> end
+            _loopStack.Push(new LoopContext(loopContinueLabel, loopEndLabel));
+
+            // Body
+            _il.MarkLabel(loopBodyLabel);
+
+            if (!string.IsNullOrEmpty(keyVarName))
+            {
+                var targetVar = _variables.FindVariable(keyVarName!);
+                if (targetVar == null)
+                {
+                    var registry = _variables.GetVariableRegistry();
+                    var leafScope = _variables.GetLeafScopeName();
+                    var vinfo = registry?.GetVariableInfo(leafScope, keyVarName!);
+                    if (vinfo == null)
+                    {
+                        if (forIn.Left is VariableDeclaration vdecl2)
+                        {
+                            DeclareVariable(vdecl2);
+                            targetVar = _variables.FindVariable(keyVarName!);
+                            if (targetVar == null)
+                                throw new InvalidOperationException($"Variable '{keyVarName}' not found.");
+                        }
+                        else
+                        {
+                            ILEmitHelpers.ThrowNotSupported($"for-in target '{keyVarName}' could not be resolved.", forIn.Left);
+                        }
+                    }
+                    else
+                    {
+                        targetVar = new LocalVariable
+                        {
+                            Name = vinfo.Name,
+                            ScopeName = vinfo.ScopeName,
+                            FieldHandle = vinfo.FieldHandle,
+                            ClrType = vinfo.ClrType,
+                            IsStableType = vinfo.IsStableType
+                        };
+                    }
+                }
+
+                bool isFieldVariable = targetVar.LocalSlot < 0;
+                if (isFieldVariable)
+                {
+                    var tslot = _variables.GetScopeLocalSlot(targetVar.ScopeName);
+                    var regFI = _variables.GetVariableRegistry();
+                    var tdefFI = regFI?.GetScopeTypeHandle(targetVar.ScopeName) ?? default;
+
+                    if (tslot.Location == ObjectReferenceLocation.Parameter)
+                    {
+                        _il.LoadArgument(tslot.Address);
+                        if (!tdefFI.IsNil)
+                        {
+                            _il.OpCode(ILOpCode.Castclass);
+                            _il.Token(tdefFI);
+                        }
+                    }
+                    else if (tslot.Location == ObjectReferenceLocation.ScopeArray)
+                    {
+                        _il.LoadArgument(0);
+                        _il.LoadConstantI4(tslot.Address);
+                        _il.OpCode(ILOpCode.Ldelem_ref);
+                        if (!tdefFI.IsNil)
+                        {
+                            _il.OpCode(ILOpCode.Castclass);
+                            _il.Token(tdefFI);
+                        }
+                    }
+                    else
+                    {
+                        _il.LoadLocal(tslot.Address);
+                    }
+                }
+
+                _il.LoadLocal(keysLocal);
+                _il.LoadLocal(idxLocal);
+                _runtime.InvokeGetItemFromObject();
+                _il.EmitStoreVariable(targetVar, _variables, scopeAlreadyLoaded: isFieldVariable);
+            }
+
+            GenerateStatement(forIn.Body);
+
+            // continue: idx++
+            _il.MarkLabel(loopContinueLabel);
+            _il.LoadLocal(idxLocal);
+            _il.OpCode(ILOpCode.Unbox_any);
+            _il.Token(_bclReferences.DoubleType);
+            _il.LoadConstantR8(1);
+            _il.OpCode(ILOpCode.Add);
+            _il.OpCode(ILOpCode.Box);
+            _il.Token(_bclReferences.DoubleType);
+            _il.StoreLocal(idxLocal);
             _il.Branch(ILOpCode.Br, loopStartLabel);
 
             _il.MarkLabel(loopEndLabel);

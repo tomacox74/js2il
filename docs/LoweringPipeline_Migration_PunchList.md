@@ -117,8 +117,8 @@ Based on the legacy emitters:
 ### 2) Expand HIR statement support to match legacy
 - [x] PL2.1 `while` statements
 - [x] PL2.2 `do/while` statements
-- [ ] PL2.3 `for..of` statements
-- [ ] PL2.4 `for..in` statements (if legacy supports it; confirm)
+- [x] PL2.3 `for..of` statements
+- [x] PL2.4 `for..in` statements (if legacy supports it; confirm)
 - [x] PL2.5 `break` / `continue` (requires loop label tracking)
 - [ ] PL2.6 `switch` statements (if legacy supports it; confirm)
 - [ ] PL2.7 `try/catch/finally`

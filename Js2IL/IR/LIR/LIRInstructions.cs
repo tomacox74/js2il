@@ -119,6 +119,8 @@ public record LIRNegateNumber(TempVariable Value, TempVariable Result) : LIRInst
 
 public record LIRBitwiseNotNumber(TempVariable Value, TempVariable Result) : LIRInstruction;
 
+public record LIRLogicalNot(TempVariable Value, TempVariable Result) : LIRInstruction;
+
 // Control flow instructions
 /// <summary>
 /// Marks a branch target location. LabelId is assigned during lowering.

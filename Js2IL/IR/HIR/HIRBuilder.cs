@@ -300,6 +300,86 @@ class HIRMethodBuilder
                     return true;
                 }
 
+            case ForOfStatement forOfStmt:
+                {
+                    // Parse RHS iterable expression
+                    if (!TryParseExpression(forOfStmt.Right, out var iterableExpr))
+                    {
+                        return false;
+                    }
+
+                    // Parse body
+                    if (!TryParseStatement(forOfStmt.Body, out var bodyStmt))
+                    {
+                        return false;
+                    }
+
+                    // Determine loop target identifier
+                    string? targetName = null;
+                    if (forOfStmt.Left is VariableDeclaration vd && vd.Declarations.Count == 1 && vd.Declarations[0].Id is Identifier vid)
+                    {
+                        targetName = vid.Name;
+                    }
+                    else if (forOfStmt.Left is Identifier id)
+                    {
+                        targetName = id.Name;
+                    }
+
+                    if (string.IsNullOrEmpty(targetName))
+                    {
+                        return false;
+                    }
+
+                    var symbol = _currentScope.FindSymbol(targetName!);
+                    if (symbol == null)
+                    {
+                        return false;
+                    }
+
+                    hirStatement = new HIRForOfStatement(symbol, iterableExpr!, bodyStmt!);
+                    return true;
+                }
+
+            case ForInStatement forInStmt:
+                {
+                    // Parse RHS enumerable expression
+                    if (!TryParseExpression(forInStmt.Right, out var enumerableExpr))
+                    {
+                        return false;
+                    }
+
+                    // Parse body
+                    if (!TryParseStatement(forInStmt.Body, out var bodyStmt))
+                    {
+                        return false;
+                    }
+
+                    // Determine loop target identifier
+                    string? targetName = null;
+                    if (forInStmt.Left is VariableDeclaration vd && vd.Declarations.Count == 1 && vd.Declarations[0].Id is Identifier vid)
+                    {
+                        targetName = vid.Name;
+                    }
+                    else if (forInStmt.Left is Identifier id)
+                    {
+                        targetName = id.Name;
+                    }
+
+                    if (string.IsNullOrEmpty(targetName))
+                    {
+                        return false;
+                    }
+
+                    var symbol = _currentScope.FindSymbol(targetName!);
+                    if (symbol == null)
+                    {
+                        return false;
+                    }
+
+                    hirStatement = new HIRForInStatement(symbol, enumerableExpr!, bodyStmt!);
+                    return true;
+                }
+
             case WhileStatement whileStmt:
                 {
                     if (!TryParseExpression(whileStmt.Test, out var whileTestExpr))
@@ -353,6 +433,8 @@ class HIRMethodBuilder
                     hirStatement = labeledBody switch
                     {
                         HIRForStatement forStmt => new HIRForStatement(forStmt.Init, forStmt.Test, forStmt.Update, forStmt.Body, labelName),
+                        HIRForOfStatement forOfStmt => new HIRForOfStatement(forOfStmt.Target, forOfStmt.Iterable, forOfStmt.Body, labelName),
+                        HIRForInStatement forInStmt => new HIRForInStatement(forInStmt.Target, forInStmt.Enumerable, forInStmt.Body, labelName),
                         HIRWhileStatement whileStmt => new HIRWhileStatement(whileStmt.Test, whileStmt.Body, labelName),
                         HIRDoWhileStatement dws => new HIRDoWhileStatement(dws.Body, dws.Test, labelName),
                         _ => null

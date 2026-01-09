@@ -755,6 +755,173 @@ public sealed class HIRToLIRLowerer
 
                     return true;
                 }
+
+            case Js2IL.HIR.HIRForOfStatement forOfStmt:
+                {
+                    // Desugar for..of:
+                    // iter = Object.NormalizeForOfIterable(rhs)
+                    // len = iter.length
+                    // idx = 0
+                    // loop_start:
+                    //   if (!(idx < len)) goto end
+                    //   target = iter[idx]
+                    //   body
+                    // loop_update:
+                    //   idx = idx + 1
+                    //   goto loop_start
+                    // end:
+
+                    if (!TryLowerExpression(forOfStmt.Iterable, out var rhsTemp))
+                    {
+                        return false;
+                    }
+
+                    var rhsBoxed = EnsureObject(rhsTemp);
+
+                    var iterTemp = CreateTempVariable();
+                    lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "NormalizeForOfIterable", new[] { rhsBoxed }, iterTemp));
+                    DefineTempStorage(iterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    // NOTE: temp-local allocation is linear and does not account for loop back-edges.
+                    // Pin loop-carry temps to stable variable slots so values remain correct across iterations.
+                    SetTempVariableSlot(iterTemp, CreateAnonymousVariableSlot("$forOf_iter", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
+
+                    var lenTemp = CreateTempVariable();
+                    lirInstructions.Add(new LIRGetLength(iterTemp, lenTemp));
+                    DefineTempStorage(lenTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    SetTempVariableSlot(lenTemp, CreateAnonymousVariableSlot("$forOf_len", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double))));
+
+                    var idxTemp = CreateTempVariable();
+                    lirInstructions.Add(new LIRConstNumber(0.0, idxTemp));
+                    DefineTempStorage(idxTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    SetTempVariableSlot(idxTemp, CreateAnonymousVariableSlot("$forOf_idx", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double))));
+
+                    int loopStartLabel = CreateLabel();
+                    int loopUpdateLabel = CreateLabel();
+                    int loopEndLabel = CreateLabel();
+
+                    lirInstructions.Add(new LIRLabel(loopStartLabel));
+
+                    var condTemp = CreateTempVariable();
+                    lirInstructions.Add(new LIRCompareNumberLessThan(idxTemp, lenTemp, condTemp));
+                    DefineTempStorage(condTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    lirInstructions.Add(new LIRBranchIfFalse(condTemp, loopEndLabel));
+
+                    // target = iter[idx]
+                    var itemTemp = CreateTempVariable();
+                    lirInstructions.Add(new LIRGetItem(EnsureObject(iterTemp), EnsureObject(idxTemp), itemTemp));
+                    DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    if (!TryStoreToBinding(forOfStmt.Target.BindingInfo, itemTemp, out _))
+                    {
+                        return false;
+                    }
+
+                    _loopStack.Push(new LoopContext(loopEndLabel, loopUpdateLabel, forOfStmt.Label));
+                    try
+                    {
+                        if (!TryLowerStatement(forOfStmt.Body))
+                        {
+                            return false;
+                        }
+                    }
+                    finally
+                    {
+                        _loopStack.Pop();
+                    }
+
+                    lirInstructions.Add(new LIRLabel(loopUpdateLabel));
+                    var oneTemp = CreateTempVariable();
+                    lirInstructions.Add(new LIRConstNumber(1.0, oneTemp));
+                    DefineTempStorage(oneTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    var updatedIdx = CreateTempVariable();
+                    lirInstructions.Add(new LIRAddNumber(idxTemp, oneTemp, updatedIdx));
+                    DefineTempStorage(updatedIdx, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    lirInstructions.Add(new LIRCopyTemp(updatedIdx, idxTemp));
+                    lirInstructions.Add(new LIRBranch(loopStartLabel));
+                    lirInstructions.Add(new LIRLabel(loopEndLabel));
+                    return true;
+                }
+
+            case Js2IL.HIR.HIRForInStatement forInStmt:
+                {
+                    // Desugar for..in:
+                    // keys = Object.GetEnumerableKeys(rhs)
+                    // len = keys.length
+                    // idx = 0
+                    // loop_start:
+                    //   if (!(idx < len)) goto end
+                    //   target = keys[idx]
+                    //   body
+                    // loop_update:
+                    //   idx = idx + 1
+                    //   goto loop_start
+                    // end:
+
+                    if (!TryLowerExpression(forInStmt.Enumerable, out var rhsTemp))
+                    {
+                        return false;
+                    }
+
+                    var rhsBoxed = EnsureObject(rhsTemp);
+
+                    var keysTemp = CreateTempVariable();
+                    lirInstructions.Add(new LIRCallIntrinsicStatic("Object", "GetEnumerableKeys", new[] { rhsBoxed }, keysTemp));
+                    DefineTempStorage(keysTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    // Pin loop-carry temps to stable variable slots (see note in for..of lowering).
+                    SetTempVariableSlot(keysTemp, CreateAnonymousVariableSlot("$forIn_keys", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
+
+                    var lenTemp = CreateTempVariable();
+                    lirInstructions.Add(new LIRGetLength(keysTemp, lenTemp));
+                    DefineTempStorage(lenTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    SetTempVariableSlot(lenTemp, CreateAnonymousVariableSlot("$forIn_len", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double))));
+
+                    var idxTemp = CreateTempVariable();
+                    lirInstructions.Add(new LIRConstNumber(0.0, idxTemp));
+                    DefineTempStorage(idxTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    SetTempVariableSlot(idxTemp, CreateAnonymousVariableSlot("$forIn_idx", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double))));
+
+                    int loopStartLabel = CreateLabel();
+                    int loopUpdateLabel = CreateLabel();
+                    int loopEndLabel = CreateLabel();
+
+                    lirInstructions.Add(new LIRLabel(loopStartLabel));
+                    var condTemp = CreateTempVariable();
+                    lirInstructions.Add(new LIRCompareNumberLessThan(idxTemp, lenTemp, condTemp));
+                    DefineTempStorage(condTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    lirInstructions.Add(new LIRBranchIfFalse(condTemp, loopEndLabel));
+
+                    var keyTemp = CreateTempVariable();
+                    lirInstructions.Add(new LIRGetItem(EnsureObject(keysTemp), EnsureObject(idxTemp), keyTemp));
+                    DefineTempStorage(keyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    if (!TryStoreToBinding(forInStmt.Target.BindingInfo, keyTemp, out _))
+                    {
+                        return false;
+                    }
+
+                    _loopStack.Push(new LoopContext(loopEndLabel, loopUpdateLabel, forInStmt.Label));
+                    try
+                    {
+                        if (!TryLowerStatement(forInStmt.Body))
+                        {
+                            return false;
+                        }
+                    }
+                    finally
+                    {
+                        _loopStack.Pop();
+                    }
+
+                    lirInstructions.Add(new LIRLabel(loopUpdateLabel));
+                    var oneTemp = CreateTempVariable();
+                    lirInstructions.Add(new LIRConstNumber(1.0, oneTemp));
+                    DefineTempStorage(oneTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    var updatedIdx = CreateTempVariable();
+                    lirInstructions.Add(new LIRAddNumber(idxTemp, oneTemp, updatedIdx));
+                    DefineTempStorage(updatedIdx, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    lirInstructions.Add(new LIRCopyTemp(updatedIdx, idxTemp));
+                    lirInstructions.Add(new LIRBranch(loopStartLabel));
+                    lirInstructions.Add(new LIRLabel(loopEndLabel));
+                    return true;
+                }
             case HIRWhileStatement whileStmt:
                 {
                     // While loop structure:
@@ -1339,6 +1506,16 @@ public sealed class HIRToLIRLowerer
             unaryArgTempVar = EnsureObject(unaryArgTempVar);
             _methodBodyIR.Instructions.Add(new LIRTypeof(unaryArgTempVar, resultTempVar));
             this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+            return true;
+        }
+
+        if (unaryExpr.Operator == Acornima.Operator.LogicalNot)
+        {
+            // JS logical not: coerce to boolean (truthiness) then invert.
+            // Minimal implementation uses runtime TypeUtilities.ToBoolean(object).
+            unaryArgTempVar = EnsureObject(unaryArgTempVar);
+            _methodBodyIR.Instructions.Add(new LIRLogicalNot(unaryArgTempVar, resultTempVar));
+            this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
             return true;
         }
 
@@ -1986,6 +2163,81 @@ public sealed class HIRToLIRLowerer
         return numberTempVar;
     }
 
+    private bool TryStoreToBinding(BindingInfo binding, TempVariable valueToStore, out TempVariable storedValue)
+    {
+        storedValue = default;
+
+        var lirInstructions = _methodBodyIR.Instructions;
+
+        // Store via environment layout (captured vars, parameters)
+        if (_environmentLayout != null)
+        {
+            var storage = _environmentLayout.GetStorage(binding);
+            if (storage != null)
+            {
+                switch (storage.Kind)
+                {
+                    case BindingStorageKind.LeafScopeField:
+                        if (!storage.Field.IsNil && !storage.DeclaringScope.IsNil)
+                        {
+                            var boxedValue = EnsureObject(valueToStore);
+                            lirInstructions.Add(new LIRStoreLeafScopeField(binding, storage.Field, storage.DeclaringScope, boxedValue));
+                            _variableMap[binding] = boxedValue;
+                            storedValue = boxedValue;
+                            return true;
+                        }
+                        break;
+
+                    case BindingStorageKind.ParentScopeField:
+                        if (storage.ParentScopeIndex >= 0 && !storage.Field.IsNil && !storage.DeclaringScope.IsNil)
+                        {
+                            var boxedValue = EnsureObject(valueToStore);
+                            lirInstructions.Add(new LIRStoreParentScopeField(binding, storage.Field, storage.DeclaringScope, storage.ParentScopeIndex, boxedValue));
+                            _variableMap[binding] = boxedValue;
+                            storedValue = boxedValue;
+                            return true;
+                        }
+                        break;
+
+                    case BindingStorageKind.IlArgument:
+                        if (storage.JsParameterIndex >= 0)
+                        {
+                            var boxedValue = EnsureObject(valueToStore);
+                            lirInstructions.Add(new LIRStoreParameter(storage.JsParameterIndex, boxedValue));
+                            storedValue = boxedValue;
+                            return true;
+                        }
+                        break;
+
+                    case BindingStorageKind.IlLocal:
+                        // Non-captured local - fall through to local-slot behavior
+                        break;
+                }
+            }
+        }
+
+        // Fallback parameter index map (when environment layout isn't present)
+        if (_parameterIndexMap.TryGetValue(binding, out var paramIndex))
+        {
+            var boxedValue = EnsureObject(valueToStore);
+            lirInstructions.Add(new LIRStoreParameter(paramIndex, boxedValue));
+            storedValue = boxedValue;
+            return true;
+        }
+
+        // Non-captured variable - use stable variable slot
+        _variableMap[binding] = valueToStore;
+
+        var storageInfo = GetTempStorage(valueToStore);
+        var slot = GetOrCreateVariableSlot(binding, binding.Name, storageInfo);
+        SetTempVariableSlot(valueToStore, slot);
+        // for..of/in assigns each iteration; do not treat as single-assignment
+        _methodBodyIR.SingleAssignmentSlots.Remove(slot);
+
+        storedValue = valueToStore;
+        return true;
+    }
+
     private bool TryLowerAssignmentExpression(HIRAssignmentExpression assignExpr, out TempVariable resultTempVar)
     {
         resultTempVar = default;
@@ -2482,6 +2734,14 @@ public sealed class HIRToLIRLowerer
 
         slot = _methodBodyIR.VariableNames.Count;
         _variableSlots[binding] = slot;
+        _methodBodyIR.VariableNames.Add(displayName);
+        _methodBodyIR.VariableStorages.Add(storage);
+        return slot;
+    }
+
+    private int CreateAnonymousVariableSlot(string displayName, ValueStorage storage)
+    {
+        var slot = _methodBodyIR.VariableNames.Count;
         _methodBodyIR.VariableNames.Add(displayName);
         _methodBodyIR.VariableStorages.Add(storage);
         return slot;

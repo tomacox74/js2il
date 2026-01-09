@@ -27,5 +27,8 @@ namespace Js2IL.Tests.UnaryOperator
 
         [Fact]
         public Task UnaryOperator_BitwiseNot() => GenerateTest(nameof(UnaryOperator_BitwiseNot), assertOnIRPipelineFailure: true);
+
+        [Fact]
+        public Task UnaryOperator_LogicalNot() => GenerateTest(nameof(UnaryOperator_LogicalNot), assertOnIRPipelineFailure: true);
     }
 }

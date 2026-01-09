@@ -525,6 +525,25 @@ internal sealed class LIRToILCompiler
                 ilEncoder.OpCode(ILOpCode.Conv_r8);
                 EmitStoreTemp(((LIRBitwiseNotNumber)instruction).Result, ilEncoder, allocation);
                 break;
+            case LIRLogicalNot logicalNot:
+                if (!IsMaterialized(logicalNot.Result, allocation))
+                {
+                    break;
+                }
+
+                EmitLoadTempAsObject(logicalNot.Value, ilEncoder, allocation, methodDescriptor);
+                {
+                    var toBooleanMref = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.TypeUtilities),
+                        nameof(JavaScriptRuntime.TypeUtilities.ToBoolean),
+                        parameterTypes: new[] { typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(toBooleanMref);
+                }
+                ilEncoder.OpCode(ILOpCode.Ldc_i4_0);
+                ilEncoder.OpCode(ILOpCode.Ceq);
+                EmitStoreTemp(logicalNot.Result, ilEncoder, allocation);
+                break;
             case LIRCompareNumberLessThan cmpLt:
                 if (!IsMaterialized(cmpLt.Result, allocation))
                 {
@@ -1411,6 +1430,20 @@ internal sealed class LIRToILCompiler
                 ilEncoder.OpCode(ILOpCode.Conv_i4);
                 ilEncoder.OpCode(ILOpCode.Not);
                 ilEncoder.OpCode(ILOpCode.Conv_r8);
+                break;
+            case LIRLogicalNot logicalNot:
+                // Emit inline: load as object, call ToBoolean, invert
+                EmitLoadTempAsObject(logicalNot.Value, ilEncoder, allocation, methodDescriptor);
+                {
+                    var toBooleanMref = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.TypeUtilities),
+                        nameof(JavaScriptRuntime.TypeUtilities.ToBoolean),
+                        parameterTypes: new[] { typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(toBooleanMref);
+                }
+                ilEncoder.OpCode(ILOpCode.Ldc_i4_0);
+                ilEncoder.OpCode(ILOpCode.Ceq);
                 break;
             case LIRTypeof typeofInstr:
                 // Emit inline: load value, call TypeUtilities.Typeof

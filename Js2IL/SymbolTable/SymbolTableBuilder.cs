@@ -752,6 +752,30 @@ namespace Js2IL.SymbolTables
                     if (forOf.Body != null)
                         BuildScopeRecursive(globalScope, forOf.Body, currentScope);
                     break;
+                case ForInStatement forIn:
+                    // Register loop variable binding if declared (e.g., for (const k in obj))
+                    if (forIn.Left is VariableDeclaration forInDecl)
+                    {
+                        foreach (var decl in forInDecl.Declarations)
+                        {
+                            if (decl.Id is Identifier id)
+                            {
+                                var kind = forInDecl.Kind switch
+                                {
+                                    VariableDeclarationKind.Var => BindingKind.Var,
+                                    VariableDeclarationKind.Let => BindingKind.Let,
+                                    VariableDeclarationKind.Const => BindingKind.Const,
+                                    _ => BindingKind.Var
+                                };
+                                currentScope.Bindings[id.Name] = new BindingInfo(id.Name, kind, decl);
+                            }
+                        }
+                    }
+                    // Visit the object expression and loop body
+                    BuildScopeRecursive(globalScope, forIn.Right, currentScope);
+                    if (forIn.Body != null)
+                        BuildScopeRecursive(globalScope, forIn.Body, currentScope);
+                    break;
                 default:
                     // For other node types, recursively process their children
                     ProcessChildNodes(globalScope, node, currentScope);
