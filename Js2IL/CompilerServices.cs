@@ -4,6 +4,7 @@ using Js2IL.IL;
 using Js2IL.Services.ScopesAbi;
 using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.Services.VariableBindings;
+using Js2IL.Services;
  
 namespace Js2IL;
  
@@ -62,6 +63,9 @@ public static class CompilerServices
         // It is registered here so that downstream components can start depending on it without breaking changes
         // when the callable metadata discovery and registration pipeline is fully integrated.
         services.AddSingleton<CallableMetadataRegistry>();
+
+        // Shared ClassRegistry used by both legacy generators and IR pipeline (PL3.3b new Foo())
+        services.AddSingleton<ClassRegistry>();
 
         // CallableRegistry is the canonical store for callable declarations (used by TwoPhaseCompilationCoordinator)
         services.AddSingleton<CallableRegistry>();

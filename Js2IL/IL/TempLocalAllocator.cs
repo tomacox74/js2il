@@ -428,6 +428,16 @@ internal static class TempLocalAllocator
                     yield return arg;
                 }
                 break;
+            case LIRNewUserClass newUserClass:
+                if (newUserClass.NeedsScopes && newUserClass.ScopesArray.HasValue)
+                {
+                    yield return newUserClass.ScopesArray.Value;
+                }
+                foreach (var arg in newUserClass.Arguments)
+                {
+                    yield return arg;
+                }
+                break;
             // LIRLabel and LIRBranch don't use temps
         }
     }
@@ -615,6 +625,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRNewIntrinsicObject newIntrinsic:
                 defined = newIntrinsic.Result;
+                return true;
+            case LIRNewUserClass newUserClass:
+                defined = newUserClass.Result;
                 return true;
             default:
                 defined = default;

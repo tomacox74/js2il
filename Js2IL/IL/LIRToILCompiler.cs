@@ -944,6 +944,60 @@ internal sealed class LIRToILCompiler
                     break;
                 }
 
+            case LIRNewUserClass newUserClass:
+                {
+                    if (!IsMaterialized(newUserClass.Result, allocation))
+                    {
+                        break;
+                    }
+
+                    // Resolve constructor token via CallableRegistry (two-phase declared tokens)
+                    var registry = _serviceProvider.GetService<CallableRegistry>();
+                    if (registry == null)
+                    {
+                        return false;
+                    }
+
+                    if (!registry.TryGetDeclaredTokenForAstNode(newUserClass.ConstructorNode, out var token) || token.Kind != HandleKind.MethodDefinition)
+                    {
+                        return false;
+                    }
+
+                    var ctorDef = (MethodDefinitionHandle)token;
+
+                    int argc = newUserClass.Arguments.Count;
+                    if (argc < newUserClass.MinArgCount || argc > newUserClass.MaxArgCount)
+                    {
+                        return false;
+                    }
+
+                    if (newUserClass.NeedsScopes)
+                    {
+                        if (newUserClass.ScopesArray is not { } scopesTemp)
+                        {
+                            return false;
+                        }
+                        EmitLoadTemp(scopesTemp, ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    foreach (var arg in newUserClass.Arguments)
+                    {
+                        EmitLoadTemp(arg, ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    int paddingNeeded = newUserClass.MaxArgCount - argc;
+                    for (int i = 0; i < paddingNeeded; i++)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(ctorDef);
+
+                    EmitStoreTemp(newUserClass.Result, ilEncoder, allocation);
+                    break;
+                }
+
             // 'in' operator - calls Operators.In
             case LIRInOperator inOp:
                 EmitLoadTemp(inOp.Left, ilEncoder, allocation, methodDescriptor);
@@ -1605,6 +1659,55 @@ internal sealed class LIRToILCompiler
             case LIRNewIntrinsicObject newIntrinsic:
                 {
                     EmitNewIntrinsicObjectCore(newIntrinsic, ilEncoder, allocation, methodDescriptor);
+                    break;
+                }
+
+            case LIRNewUserClass newUserClass:
+                {
+                    // Emit inline user-defined class construction (newobj) with optional scopes array.
+                    // Constructor token is resolved via CallableRegistry (two-phase declared tokens).
+                    var registry = _serviceProvider.GetService<CallableRegistry>();
+                    if (registry == null)
+                    {
+                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing CallableRegistry");
+                    }
+
+                    if (!registry.TryGetDeclaredTokenForAstNode(newUserClass.ConstructorNode, out var token) || token.Kind != HandleKind.MethodDefinition)
+                    {
+                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing declared constructor token for class {newUserClass.ClassName}");
+                    }
+
+                    var ctorDef = (MethodDefinitionHandle)token;
+
+                    int argc = newUserClass.Arguments.Count;
+                    if (argc < newUserClass.MinArgCount || argc > newUserClass.MaxArgCount)
+                    {
+                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - invalid argument count {argc} for class {newUserClass.ClassName}");
+                    }
+
+                    if (newUserClass.NeedsScopes)
+                    {
+                        if (newUserClass.ScopesArray is not { } scopesTemp)
+                        {
+                            throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing scopes array temp for class {newUserClass.ClassName}");
+                        }
+                        EmitLoadTemp(scopesTemp, ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    foreach (var arg in newUserClass.Arguments)
+                    {
+                        EmitLoadTemp(arg, ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    int paddingNeeded = newUserClass.MaxArgCount - argc;
+                    for (int i = 0; i < paddingNeeded; i++)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(ctorDef);
+                    // Result stays on stack
                     break;
                 }
 

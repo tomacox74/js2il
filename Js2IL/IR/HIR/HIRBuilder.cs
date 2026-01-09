@@ -213,6 +213,12 @@ class HIRMethodBuilder
                 hirStatement = new HIRBlock([]); // empty block = no-op
                 return true;
 
+            case ClassDeclaration:
+                // Class declarations are compiled separately by ClassesGenerator.
+                // In the main method body, treat them as non-executable statements for the IR pipeline.
+                hirStatement = new HIRBlock([]); // empty block = no-op
+                return true;
+
             case ReturnStatement returnStmt:
                 HIRExpression? returnExpr = null;
                 if (returnStmt.Argument != null)
@@ -634,6 +640,7 @@ class HIRMethodBuilder
             case NewExpression newExpr:
                 // PL3.3: NewExpression support in IR pipeline.
                 // - PL3.3a: built-in Error types
+                // - PL3.3b: user-defined classes
                 // - PL3.3d: Array constructor semantics
                 // - PL3.3e/f: String/Boolean/Number constructor sugar
                 // - PL3.3g: intrinsic runtime constructors (Date/RegExp/Set/Promise/Int32Array/etc.)
@@ -645,8 +652,24 @@ class HIRMethodBuilder
                 var newCalleeSymbol = _currentScope.FindSymbol(newCalleeId.Name);
                 if (newCalleeSymbol.Kind != BindingKind.Global)
                 {
-                    // Shadowed identifier: treat as user-defined ctor (not supported in IR yet).
-                    return false;
+                    // User-defined class ctor: allow only when the binding is a ClassDeclaration.
+                    if (newCalleeSymbol.BindingInfo.DeclarationNode is not ClassDeclaration)
+                    {
+                        return false;
+                    }
+
+                    var userArgs = new List<HIRExpression>();
+                    foreach (var arg in newExpr.Arguments)
+                    {
+                        if (!TryParseExpression(arg, out var argHirExpr))
+                        {
+                            return false;
+                        }
+                        userArgs.Add(argHirExpr!);
+                    }
+
+                    hirExpr = new HIRNewExpression(new HIRVariableExpression(newCalleeSymbol), userArgs);
+                    return true;
                 }
 
                 var calleeName = newCalleeId.Name;

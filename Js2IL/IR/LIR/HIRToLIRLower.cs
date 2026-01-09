@@ -421,6 +421,37 @@ public sealed class HIRToLIRLowerer
         return true;
     }
 
+    private bool TryBuildScopesArrayForClassConstructor(Scope classScope, TempVariable resultTemp)
+    {
+        if (_environmentLayoutBuilder == null)
+        {
+            return false;
+        }
+
+        EnvironmentLayout calleeLayout;
+        try
+        {
+            calleeLayout = _environmentLayoutBuilder.Build(classScope, CallableKind.Constructor);
+        }
+        catch
+        {
+            return false;
+        }
+
+        var slotSources = new List<ScopeSlotSource>();
+        foreach (var slot in calleeLayout.ScopeChain.Slots)
+        {
+            if (!TryMapScopeSlotToSource(slot, out var slotSource))
+            {
+                return false;
+            }
+            slotSources.Add(slotSource);
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(slotSources, resultTemp));
+        return true;
+    }
+
     /// <summary>
     /// Finds the scope associated with a function symbol.
     /// </summary>
@@ -1641,10 +1672,15 @@ public sealed class HIRToLIRLowerer
             return false;
         }
 
-        // Only treat as built-in when not shadowed by user code.
+        // User-defined class: `new ClassName(...)`
         if (calleeVar.Name.Kind != BindingKind.Global)
         {
-            return false;
+            if (calleeVar.Name.BindingInfo.DeclarationNode is not ClassDeclaration classDecl)
+            {
+                return false;
+            }
+
+            return TryLowerNewUserDefinedClass(classDecl, newExpr.Arguments, out resultTempVar);
         }
 
         var ctorName = calleeVar.Name.Name;
@@ -1813,6 +1849,94 @@ public sealed class HIRToLIRLowerer
         }
 
         return false;
+    }
+
+    private bool TryLowerNewUserDefinedClass(ClassDeclaration classDecl, IReadOnlyList<HIRExpression> args, out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        if (_scope == null)
+        {
+            return false;
+        }
+
+        // Resolve the class scope to determine whether it needs parent scopes.
+        var rootScope = _scope;
+        while (rootScope.Parent != null)
+        {
+            rootScope = rootScope.Parent;
+        }
+
+        var classScope = FindScopeByDeclarationNode(classDecl, rootScope);
+        if (classScope == null)
+        {
+            return false;
+        }
+
+        bool needsScopes = classScope.ReferencesParentScopeVariables;
+        TempVariable? scopesTemp = null;
+        if (needsScopes)
+        {
+            scopesTemp = CreateTempVariable();
+            if (!TryBuildScopesArrayForClassConstructor(classScope, scopesTemp.Value))
+            {
+                return false;
+            }
+            DefineTempStorage(scopesTemp.Value, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+        }
+
+        // Lower arguments (boxed)
+        var argTemps = new List<TempVariable>(args.Count);
+        foreach (var arg in args)
+        {
+            if (!TryLowerExpression(arg, out var argTemp))
+            {
+                return false;
+            }
+            argTemps.Add(EnsureObject(argTemp));
+        }
+
+        // Compute ctor arg range from AST (min required vs max including defaults)
+        var ctorMember = classDecl.Body.Body
+            .OfType<MethodDefinition>()
+            .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+        Node ctorNodeForToken = (Node?)ctorMember ?? classDecl.Body;
+
+        int minArgs = 0;
+        int maxArgs = 0;
+        if (ctorMember?.Value is FunctionExpression ctorFunc)
+        {
+            foreach (var p in ctorFunc.Params)
+            {
+                switch (p)
+                {
+                    case RestElement:
+                        return false;
+                    case AssignmentPattern:
+                        maxArgs++;
+                        break;
+                    default:
+                        minArgs++;
+                        maxArgs++;
+                        break;
+                }
+            }
+        }
+
+        var className = classDecl.Id is Identifier cid ? cid.Name : classScope.Name;
+
+        resultTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRNewUserClass(
+            ClassName: className,
+            ConstructorNode: ctorNodeForToken,
+            NeedsScopes: needsScopes,
+            ScopesArray: scopesTemp,
+            MinArgCount: minArgs,
+            MaxArgCount: maxArgs,
+            Arguments: argTemps,
+            Result: resultTempVar));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
     }
 
     private bool TryLowerCallExpression(HIRCallExpression callExpr, out TempVariable resultTempVar)
