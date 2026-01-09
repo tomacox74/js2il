@@ -135,15 +135,26 @@
 	{
 		// Method begins at RVA 0x20a4
 		// Header size: 12
-		// Code size: 13 (0xd)
+		// Code size: 38 (0x26)
 		.maxstack 32
 
 		IL_0000: ldstr "oops"
-		IL_0005: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-		IL_000a: throw
+		IL_0005: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_000a: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
+		IL_000f: dup
+		IL_0010: isinst [System.Runtime]System.Exception
+		IL_0015: dup
+		IL_0016: brtrue IL_0022
 
-		IL_000b: ldnull
-		IL_000c: ret
+		IL_001b: pop
+		IL_001c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+		IL_0021: throw
+
+		IL_0022: pop
+		IL_0023: throw
+
+		IL_0024: ldnull
+		IL_0025: ret
 	} // end of method ArrowFunction_L1C55::ArrowFunction_L1C55
 
 } // end of class Functions.ArrowFunction_L1C55
@@ -158,7 +169,7 @@
 			object message
 		) cil managed 
 	{
-		// Method begins at RVA 0x20c0
+		// Method begins at RVA 0x20d8
 		// Header size: 12
 		// Code size: 34 (0x22)
 		.maxstack 32
@@ -194,7 +205,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20f0
+		// Method begins at RVA 0x2108
 		// Header size: 12
 		// Code size: 150 (0x96)
 		.maxstack 32
@@ -268,7 +279,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2192
+		// Method begins at RVA 0x21aa
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
