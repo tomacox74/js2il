@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Collections.Immutable;
 using Acornima.Ast;
 using Js2IL.Services;
 
@@ -422,14 +423,18 @@ class HIRMethodBuilder
 
             case LabeledStatement labeledStmt:
                 {
-                    // Minimal labeled-statement support: only label loops so labeled break/continue can target them.
-                    // Other labeled statement forms (e.g. labeled blocks) are not yet supported in HIR.
+                    // Support labeled loops and labeled blocks so labeled break can target them.
                     if (!TryParseStatement(labeledStmt.Body, out var labeledBody))
                     {
                         return false;
                     }
 
                     var labelName = labeledStmt.Label?.Name;
+                    if (string.IsNullOrEmpty(labelName))
+                    {
+                        return false;
+                    }
+
                     hirStatement = labeledBody switch
                     {
                         HIRForStatement forStmt => new HIRForStatement(forStmt.Init, forStmt.Test, forStmt.Update, forStmt.Body, labelName),
@@ -437,10 +442,97 @@ class HIRMethodBuilder
                         HIRForInStatement forInStmt => new HIRForInStatement(forInStmt.Target, forInStmt.Enumerable, forInStmt.Body, labelName),
                         HIRWhileStatement whileStmt => new HIRWhileStatement(whileStmt.Test, whileStmt.Body, labelName),
                         HIRDoWhileStatement dws => new HIRDoWhileStatement(dws.Body, dws.Test, labelName),
-                        _ => null
+                        _ => new HIRLabeledStatement(labelName, labeledBody!)
                     };
 
-                    return hirStatement != null;
+                    return true;
+                }
+
+            case SwitchStatement switchStmt:
+                {
+                    if (!TryParseExpression(switchStmt.Discriminant, out var discriminant))
+                    {
+                        return false;
+                    }
+
+                    var cases = new List<HIRSwitchCase>();
+                    foreach (var sc in switchStmt.Cases)
+                    {
+                        HIRExpression? test = null;
+                        if (sc.Test != null && !TryParseExpression(sc.Test, out test))
+                        {
+                            return false;
+                        }
+
+                        var consequent = new List<HIRStatement>();
+                        foreach (var consStmt in sc.Consequent)
+                        {
+                            if (!TryParseStatement(consStmt, out var consHir))
+                            {
+                                return false;
+                            }
+                            consequent.Add(consHir!);
+                        }
+
+                        cases.Add(new HIRSwitchCase(test, consequent.ToImmutableArray()));
+                    }
+
+                    hirStatement = new HIRSwitchStatement(discriminant!, cases);
+                    return true;
+                }
+
+            case TryStatement tryStmt:
+                {
+                    if (!TryParseStatement(tryStmt.Block, out var tryBlock))
+                    {
+                        return false;
+                    }
+
+                    BindingInfo? catchParamBinding = null;
+                    HIRStatement? catchBody = null;
+                    if (tryStmt.Handler != null)
+                    {
+                        // Catch clause body is a BlockStatement; parsing it will enter the correct child scope.
+                        if (!TryParseStatement(tryStmt.Handler.Body, out catchBody))
+                        {
+                            return false;
+                        }
+
+                        if (tryStmt.Handler.Param is Identifier catchId)
+                        {
+                            // Catch parameter is block-scoped to the catch body.
+                            // TryParseStatement restores _currentScope after parsing the catch block,
+                            // so resolve the binding from the catch block's child scope directly.
+                            var catchScope = FindChildScopeForAstNode(tryStmt.Handler.Body) ?? _currentScope;
+                            catchParamBinding = catchScope.FindSymbol(catchId.Name).BindingInfo;
+                        }
+                        else if (tryStmt.Handler.Param != null)
+                        {
+                            return false;
+                        }
+                    }
+
+                    HIRStatement? finallyBody = null;
+                    if (tryStmt.Finalizer != null)
+                    {
+                        if (!TryParseStatement(tryStmt.Finalizer, out finallyBody))
+                        {
+                            return false;
+                        }
+                    }
+
+                    hirStatement = new HIRTryStatement(tryBlock!, catchParamBinding, catchBody, finallyBody);
+                    return true;
+                }
+
+            case ThrowStatement throwStmt:
+                {
+                    if (throwStmt.Argument == null || !TryParseExpression(throwStmt.Argument, out var argExpr))
+                    {
+                        return false;
+                    }
+                    hirStatement = new HIRThrowStatement(argExpr!);
+                    return true;
                 }
 
             default:

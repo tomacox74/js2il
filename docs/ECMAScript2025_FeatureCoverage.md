@@ -363,15 +363,26 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | for-in over objects (enumerate enumerable keys) | Partially Supported | `Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Object_Basic.js`<br>`Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Continue.js`<br>`Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_Break.js`<br>`Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_LabeledContinue.js`<br>`Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_ForIn_LabeledBreak.js` | Lowered to an index loop over JavaScriptRuntime.Object.GetEnumerableKeys(object). Minimal semantics: supports ExpandoObject (object literals), JS Array/Int32Array/string index keys, and IDictionary keys; does not currently model full prototype-chain enumeration rules. | 14.7.5.2 |
 
 
+### [The switch Statement](https://tc39.es/ecma262/#sec-switch-statement)
+
+#### [Runtime Semantics: SwitchStatement Evaluation](https://tc39.es/ecma262/#sec-switch-statement)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| switch statement (cases, fallthrough, default, break) | Supported | `Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_Fallthrough.js`<br>`Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_DefaultInMiddle_Fallthrough.js`<br>`Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_MultiCaseSharedBody.js`<br>`Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_NestedBreak.js`<br>`Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_LabeledBreak.js` | Supports fallthrough semantics, default placement, multiple case labels sharing a body, nested switch break behavior, and labeled break out of a switch. | 14.12.1 |
+
+
 ### [The try Statement](https://tc39.es/ecma262/#sec-try-statement)
 
 #### [Runtime Semantics: TryStatement Evaluation](https://tc39.es/ecma262/#sec-try-statement)
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| throw statement | Supported | `Js2IL.Tests/TryCatch/JavaScript/TryCatch_NoBinding.js` | Emits throw of JavaScriptRuntime.Error; used in try/catch tests. | 14.16.1 |
-| try/catch (no binding) | Supported | `Js2IL.Tests/TryCatch/JavaScript/TryCatch_NoBinding.js`<br>`Js2IL.Tests/TryCatch/JavaScript/TryCatch_NoBinding_NoThrow.js` | Catch blocks currently handle only JavaScriptRuntime.Error thrown within the try; exceptions thrown later (after returning a closure) are not caught by the earlier catch. | 14.16.1 |
-| try/finally (no catch) | Partially Supported | `Js2IL.Tests/TryCatch/JavaScript/TryFinally_NoCatch.js`<br>`Js2IL.Tests/TryCatch/JavaScript/TryFinally_NoCatch_Throw.js` | Finally emission is in place. Execution test for throw is skipped pending unhandled Error semantics at top-level; generator snapshot verifies structure. | 14.16.1 |
+| throw statement | Supported | `Js2IL.Tests/TryCatch/JavaScript/TryCatch_NoBinding.js`<br>`Js2IL.Tests/TryCatch/JavaScript/TryCatchFinally_ThrowValue.js` | Supports throwing any JS value. Non-Exception values are wrapped in JavaScriptRuntime.JsThrownValueException; catch unwrapping binds the original value. JavaScriptRuntime.Error is thrown directly. | 14.16.1 |
+| try/catch (no binding) | Supported | `Js2IL.Tests/TryCatch/JavaScript/TryCatch_NoBinding.js`<br>`Js2IL.Tests/TryCatch/JavaScript/TryCatch_NoBinding_NoThrow.js` | Catch blocks handle values thrown within the try region (including non-Exception JS values via JsThrownValueException) and bind the caught value only when a binding is present. | 14.16.1 |
+| try/catch (with binding; block-scoped catch parameter) | Supported | `Js2IL.Tests/TryCatch/JavaScript/TryCatch_ScopedParam.js` | Catch parameter binding is block-scoped to the catch clause and does not leak outside the catch block. | 14.16.1 |
+| try/catch/finally | Supported | `Js2IL.Tests/TryCatch/JavaScript/TryCatchFinally_ThrowValue.js` | Supports catch + finally with correct finally execution and catch binding when throwing arbitrary JS values. | 14.16.1 |
+| try/finally (no catch) | Partially Supported | `Js2IL.Tests/TryCatch/JavaScript/TryFinally_NoCatch.js`<br>`Js2IL.Tests/TryCatch/JavaScript/TryFinally_NoCatch_Throw.js`<br>`Js2IL.Tests/TryCatch/JavaScript/TryFinally_Return.js` | Finally emission is in place and executes on normal and return exits. Execution test for unhandled throw is skipped pending top-level unhandled Error semantics; generator snapshot verifies structure. | 14.16.1 |
 
 
 ## [ECMAScript Language: Classes](https://tc39.es/ecma262/#sec-ecmascript-language-classes)

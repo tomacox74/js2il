@@ -767,6 +767,51 @@ namespace Js2IL.SymbolTables
                     if (forIn.Body != null)
                         BuildScopeRecursive(globalScope, forIn.Body, currentScope);
                     break;
+
+                case TryStatement tryStmt:
+                    // Process try block
+                    BuildScopeRecursive(globalScope, tryStmt.Block, currentScope);
+
+                    // Process catch handler with catch-param binding scoped to the catch block
+                    if (tryStmt.Handler != null)
+                    {
+                        var handler = tryStmt.Handler;
+                        if (handler.Body is BlockStatement catchBlock)
+                        {
+                            var catchBlockName = $"Block_L{catchBlock.Location.Start.Line}C{catchBlock.Location.Start.Column}";
+                            var existingCatchScope = currentScope.Children.FirstOrDefault(s => s.Kind == ScopeKind.Block && s.Name == catchBlockName);
+                            var catchScope = existingCatchScope ?? new Scope(catchBlockName, ScopeKind.Block, currentScope, catchBlock);
+
+                            if (handler.Param is Identifier cid)
+                            {
+                                if (!catchScope.Bindings.ContainsKey(cid.Name))
+                                {
+                                    catchScope.Bindings[cid.Name] = new BindingInfo(cid.Name, BindingKind.Let, cid);
+                                }
+                            }
+                            else if (handler.Param != null)
+                            {
+                                // Destructured catch parameters not supported.
+                                break;
+                            }
+
+                            foreach (var stmt in catchBlock.Body)
+                            {
+                                BuildScopeRecursive(globalScope, stmt, catchScope);
+                            }
+                        }
+                        else
+                        {
+                            BuildScopeRecursive(globalScope, handler.Body, currentScope);
+                        }
+                    }
+
+                    // Process finally
+                    if (tryStmt.Finalizer != null)
+                    {
+                        BuildScopeRecursive(globalScope, tryStmt.Finalizer, currentScope);
+                    }
+                    break;
                 default:
                     // For other node types, recursively process their children
                     ProcessChildNodes(globalScope, node, currentScope);

@@ -43,11 +43,19 @@ This is the set of AST constructs that the new pipeline can currently parse and 
 - Expression statements.
 - `if/else`.
 - Block statements (including child block scopes for `{}` and `for (let ...)` scopes).
+- `while`.
+- `do { } while (...)`.
 - `return` (with or without value).
 - `for (init; test; update) { ... }` where:
   - `init` is a `VariableDeclaration` (identifier declarators only) or an expression,
   - `test` is optional expression,
   - `update` is optional expression.
+- `for..of`.
+- `for..in`.
+- `break` / `continue` (including labeled `break`/`continue`).
+- `switch`.
+- `try/catch/finally`.
+- `throw`.
 
 **Expressions (HIRBuilder)**
 - Binary expressions (`BinaryExpression`) (operator support depends on lowering + LIR/IL support).
@@ -76,12 +84,7 @@ This is the set of AST constructs that the new pipeline can currently parse and 
 Based on the legacy emitters:
 
 **Statements supported in legacy but not in HIRBuilder**
-- `throw`
-- `try/catch/finally`
-- `while`
-- `do { } while (...)`
-- `for (x of y)`
-- `break` / `continue`
+- (none currently identified; statement parity items are tracked in PL2.*)
 
 **Expressions supported in legacy but not in HIRBuilder**
 - `new` expressions
@@ -120,14 +123,14 @@ Based on the legacy emitters:
 - [x] PL2.3 `for..of` statements
 - [x] PL2.4 `for..in` statements (if legacy supports it; confirm)
 - [x] PL2.5 `break` / `continue` (requires loop label tracking)
-- [ ] PL2.6 `switch` statements (if legacy supports it; confirm)
-- [ ] PL2.7 `try/catch/finally`
-  - [ ] PL2.7a Add HIR nodes for try/catch/finally (including catch parameter binding)
-  - [ ] PL2.7b Add LIR representation for exception regions (try region + handler regions)
-  - [ ] PL2.7c Emit IL exception regions in `LIRToILCompiler` (ExceptionRegion / EH tables)
-  - [ ] PL2.7d Ensure `finally` executes on all exits (normal fallthrough, `return`, `throw`, `break`/`continue` once supported)
-  - [ ] PL2.7e Validate catch variable scoping semantics match legacy (block-scoped catch param)
-- [ ] PL2.8 `throw`
+- [x] PL2.6 `switch` statements (if legacy supports it; confirm)
+- [x] PL2.7 `try/catch/finally`
+  - [x] PL2.7a Add HIR nodes for try/catch/finally (including catch parameter binding)
+  - [x] PL2.7b Add LIR representation for exception regions (try region + handler regions)
+  - [x] PL2.7c Emit IL exception regions in `LIRToILCompiler` (ExceptionRegion / EH tables)
+  - [x] PL2.7d Ensure `finally` executes on all exits (normal fallthrough, `return`, `throw`, `break`/`continue` once supported)
+  - [x] PL2.7e Validate catch variable scoping semantics match legacy (block-scoped catch param)
+- [x] PL2.8 `throw`
 
 ### 3) Expand HIR expression support to match legacy
 - [ ] PL3.1 `ConditionalExpression` (ternary)

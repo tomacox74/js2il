@@ -35,6 +35,18 @@ public sealed class MethodBodyIR
     public List<LIRInstruction> Instructions { get; } = new();
 
     /// <summary>
+    /// Exception handling regions (try/catch/finally) to be emitted into the IL EH table.
+    /// Label ids refer to LIRLabel ids.
+    /// </summary>
+    public List<ExceptionRegionInfo> ExceptionRegions { get; } = new();
+
+    /// <summary>
+    /// Optional epilogue label id used for return statements inside try/finally.
+    /// When set, IL emission will translate returns to store+leave and emit an epilogue block.
+    /// </summary>
+    public int? ReturnEpilogueLabelId { get; set; }
+
+    /// <summary>
     /// Whether this method body needs a leaf scope local in slot 0.
     /// When true, the IL emitter must reserve local 0 for the scope instance.
     /// </summary>

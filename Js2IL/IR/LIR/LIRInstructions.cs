@@ -145,6 +145,42 @@ public record LIRBranchIfFalse(TempVariable Condition, int TargetLabel) : LIRIns
 public record LIRBranchIfTrue(TempVariable Condition, int TargetLabel) : LIRInstruction;
 
 /// <summary>
+/// Branches out of a protected region (try/catch) to a target label.
+/// Emitted as IL 'leave'.
+/// </summary>
+public record LIRLeave(int TargetLabel) : LIRInstruction;
+
+/// <summary>
+/// Ends a finally handler. Emitted as IL 'endfinally'.
+/// </summary>
+public record LIREndFinally : LIRInstruction;
+
+/// <summary>
+/// Stores the current exception object (on stack at catch handler entry) into a temp.
+/// </summary>
+public record LIRStoreException(TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Unwraps a caught CLR Exception into a JavaScript catch value.
+/// - If exception is JsThrownValueException => Value
+/// - If exception is JavaScriptRuntime.Error => the exception object
+/// - Otherwise rethrows (treat as compiler/runtime bug)
+/// </summary>
+public record LIRUnwrapCatchException(TempVariable Exception, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Throws a JavaScript value. If the value is a CLR Exception, throws it directly;
+/// otherwise wraps it in JsThrownValueException and throws.
+/// </summary>
+public record LIRThrow(TempVariable Value) : LIRInstruction;
+
+/// <summary>
+/// Throws a new JavaScriptRuntime.TypeError with the provided message.
+/// Used for const reassignment attempts.
+/// </summary>
+public record LIRThrowNewTypeError(string Message) : LIRInstruction;
+
+/// <summary>
 /// Loads a captured variable from a field on the leaf (current) scope instance.
 /// The scope instance is in IL local 0, and the field handle is looked up via BindingInfo.
 /// Emits: ldloc.0 (scope instance), ldfld (field handle)

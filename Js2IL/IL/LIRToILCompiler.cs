@@ -279,6 +279,10 @@ internal sealed class LIRToILCompiler
                     ilEncoder.Branch(ILOpCode.Br, labelMap[branch.TargetLabel]);
                     continue;
 
+                case LIRLeave leave:
+                    ilEncoder.Branch(ILOpCode.Leave, labelMap[leave.TargetLabel]);
+                    continue;
+
                 case LIRBranchIfFalse branchFalse:
                     EmitBranchCondition(branchFalse.Condition, ilEncoder, allocation, tempDefinitions, methodDescriptor);
                     ilEncoder.Branch(ILOpCode.Brfalse, labelMap[branchFalse.TargetLabel]);
@@ -287,6 +291,10 @@ internal sealed class LIRToILCompiler
                 case LIRBranchIfTrue branchTrue:
                     EmitBranchCondition(branchTrue.Condition, ilEncoder, allocation, tempDefinitions, methodDescriptor);
                     ilEncoder.Branch(ILOpCode.Brtrue, labelMap[branchTrue.TargetLabel]);
+                    continue;
+
+                case LIREndFinally:
+                    ilEncoder.OpCode(ILOpCode.Endfinally);
                     continue;
             }
 
@@ -319,6 +327,35 @@ internal sealed class LIRToILCompiler
                 }
             }
             ilEncoder.OpCode(ILOpCode.Ret);
+        }
+
+        // Register exception regions (try/catch/finally) for the method body.
+        foreach (var region in MethodBody.ExceptionRegions)
+        {
+            switch (region.Kind)
+            {
+                case Js2IL.IR.ExceptionRegionKind.Catch:
+                    {
+                        var catchType = region.CatchType ?? typeof(System.Exception);
+                        var catchTypeRef = _typeReferenceRegistry.GetOrAdd(catchType);
+                        controlFlowBuilder.AddCatchRegion(
+                            labelMap[region.TryStartLabelId],
+                            labelMap[region.TryEndLabelId],
+                            labelMap[region.HandlerStartLabelId],
+                            labelMap[region.HandlerEndLabelId],
+                            catchTypeRef);
+                        break;
+                    }
+                case Js2IL.IR.ExceptionRegionKind.Finally:
+                    controlFlowBuilder.AddFinallyRegion(
+                        labelMap[region.TryStartLabelId],
+                        labelMap[region.TryEndLabelId],
+                        labelMap[region.HandlerStartLabelId],
+                        labelMap[region.HandlerEndLabelId]);
+                    break;
+                default:
+                    throw new NotSupportedException($"Unsupported exception region kind: {region.Kind}");
+            }
         }
 
         var localVariablesSignature = CreateLocalVariablesSignature(allocation);
@@ -740,6 +777,106 @@ internal sealed class LIRToILCompiler
                 EmitLoadTemp(copyTemp.Source, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(copyTemp.Destination, ilEncoder, allocation);
                 break;
+
+            case LIRStoreException storeException:
+                // Exception object is on stack at catch handler entry.
+                EmitStoreTemp(storeException.Result, ilEncoder, allocation);
+                break;
+
+            case LIRUnwrapCatchException unwrapCatch:
+                {
+                    // Unwrap CLR exception to JS catch value.
+                    // Stack discipline: ensure stack is empty on all paths.
+                    var isThrownValue = ilEncoder.DefineLabel();
+                    var isJsError = ilEncoder.DefineLabel();
+                    var done = ilEncoder.DefineLabel();
+
+                    var thrownType = _typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.JsThrownValueException));
+                    var errorType = _typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Error));
+
+                    // Load exception (object)
+                    EmitLoadTemp(unwrapCatch.Exception, ilEncoder, allocation, methodDescriptor);
+
+                    // dup; isinst JsThrownValueException
+                    ilEncoder.OpCode(ILOpCode.Dup);
+                    ilEncoder.OpCode(ILOpCode.Isinst);
+                    ilEncoder.Token(thrownType);
+                    ilEncoder.OpCode(ILOpCode.Dup);
+                    ilEncoder.Branch(ILOpCode.Brtrue, isThrownValue);
+                    ilEncoder.OpCode(ILOpCode.Pop); // pop null
+
+                    // dup; isinst Error
+                    ilEncoder.OpCode(ILOpCode.Dup);
+                    ilEncoder.OpCode(ILOpCode.Isinst);
+                    ilEncoder.Token(errorType);
+                    ilEncoder.OpCode(ILOpCode.Dup);
+                    ilEncoder.Branch(ILOpCode.Brtrue, isJsError);
+                    ilEncoder.OpCode(ILOpCode.Pop); // pop null
+
+                    // Unknown exception: discard original and rethrow.
+                    ilEncoder.OpCode(ILOpCode.Pop);
+                    ilEncoder.OpCode(ILOpCode.Rethrow);
+
+                    ilEncoder.MarkLabel(isThrownValue);
+                    // Stack: ex, (JsThrownValueException)
+                    ilEncoder.OpCode(ILOpCode.Pop); // pop ex
+                    var getValue = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.JsThrownValueException),
+                        "get_Value");
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(getValue);
+                    EmitStoreTemp(unwrapCatch.Result, ilEncoder, allocation);
+                    ilEncoder.Branch(ILOpCode.Br, done);
+
+                    ilEncoder.MarkLabel(isJsError);
+                    // Stack: ex, (Error)
+                    ilEncoder.OpCode(ILOpCode.Pop); // pop ex
+                    EmitStoreTemp(unwrapCatch.Result, ilEncoder, allocation);
+                    ilEncoder.MarkLabel(done);
+                    break;
+                }
+
+            case LIRThrow throwInstr:
+                {
+                    // Throw JS value: if already a CLR Exception, throw it; otherwise wrap.
+                    var throwException = ilEncoder.DefineLabel();
+                    var exceptionType = _typeReferenceRegistry.GetOrAdd(typeof(System.Exception));
+                    var wrapperCtor = _memberRefRegistry.GetOrAddConstructor(
+                        typeof(JavaScriptRuntime.JsThrownValueException),
+                        parameterTypes: new[] { typeof(object) });
+
+                    EmitLoadTempAsObject(throwInstr.Value, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Dup);
+                    ilEncoder.OpCode(ILOpCode.Isinst);
+                    ilEncoder.Token(exceptionType);
+                    ilEncoder.OpCode(ILOpCode.Dup);
+                    ilEncoder.Branch(ILOpCode.Brtrue, throwException);
+                    ilEncoder.OpCode(ILOpCode.Pop); // pop null
+
+                    // Wrap and throw.
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(wrapperCtor);
+                    ilEncoder.OpCode(ILOpCode.Throw);
+
+                    ilEncoder.MarkLabel(throwException);
+                    // Stack: value, exception
+                    ilEncoder.OpCode(ILOpCode.Pop); // pop original value
+                    ilEncoder.OpCode(ILOpCode.Throw);
+                    break;
+                }
+
+            case LIRThrowNewTypeError throwTypeError:
+                {
+                    // throw new JavaScriptRuntime.TypeError(message)
+                    var ctor = _memberRefRegistry.GetOrAddConstructor(
+                        typeof(JavaScriptRuntime.TypeError),
+                        parameterTypes: new[] { typeof(string) });
+                    ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString(throwTypeError.Message));
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(ctor);
+                    ilEncoder.OpCode(ILOpCode.Throw);
+                    break;
+                }
 
             // 'in' operator - calls Operators.In
             case LIRInOperator inOp:

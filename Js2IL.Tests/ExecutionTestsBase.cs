@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Runtime.Loader;
 using JavaScriptRuntime;
+using System.Runtime.ExceptionServices;
 
 namespace Js2IL.Tests
 {
@@ -65,39 +66,9 @@ namespace Js2IL.Tests
             var assemblyName = Path.GetFileNameWithoutExtension(testFilePath);
             var expectedPath = Path.Combine(_outputPath, $"{assemblyName}.dll");
 
-            string il;
-            bool usedFallback = false;
-            string? fallbackReason = null;
-
-            try
-            {
-                if (preferOutOfProc)
-                {
-                    il = ExecuteGeneratedAssembly(expectedPath, allowUnhandledException, testName);
-                }
-                else
-                {
-                    il = ExecuteGeneratedAssemblyInProc(expectedPath, testName, postTestProcessingAction, addMocks: addMocks);
-                }
-                if (string.IsNullOrWhiteSpace(il))
-                {
-                    usedFallback = true;
-                    fallbackReason = "in-proc produced empty output";
-                    il = ExecuteGeneratedAssembly(expectedPath, allowUnhandledException, testName);
-                }
-            }
-            catch (Exception ex)
-            {
-                usedFallback = true;
-                fallbackReason = $"in-proc error: {ex.GetType().Name}";
-                il = ExecuteGeneratedAssembly(expectedPath, allowUnhandledException, testName);
-            }
-
-            if (usedFallback)
-            {
-                var reason = string.IsNullOrWhiteSpace(fallbackReason) ? "unknown reason" : fallbackReason;
-                System.Console.WriteLine($"[ExecutionTestsBase] Fallback to out-of-proc execution; reason: {reason}");
-            }
+            var il = preferOutOfProc
+                ? ExecuteGeneratedAssembly(expectedPath, allowUnhandledException, testName)
+                : ExecuteGeneratedAssemblyInProc(expectedPath, testName, postTestProcessingAction, addMocks: addMocks);
 
             var settings = new VerifySettings(_verifySettings);
             var directory = Path.GetDirectoryName(sourceFilePath);
@@ -162,6 +133,21 @@ namespace Js2IL.Tests
             ArgumentNullException.ThrowIfNull(assemblyPath, nameof(assemblyPath));
             ArgumentNullException.ThrowIfNull(testName, nameof(testName));
 
+            var assemblySimpleName = Path.GetFileNameWithoutExtension(assemblyPath);
+            var needsIsolation = testName.Contains('/', StringComparison.Ordinal) || testName.Contains('\\', StringComparison.Ordinal);
+
+            if (!needsIsolation)
+            {
+                foreach (var loaded in AssemblyLoadContext.Default.Assemblies)
+                {
+                    if (string.Equals(loaded.GetName().Name, assemblySimpleName, StringComparison.Ordinal))
+                    {
+                        needsIsolation = true;
+                        break;
+                    }
+                }
+            }
+
             var dir = Path.GetDirectoryName(assemblyPath)!;
             var jsRuntimePath = Path.Combine(dir, "JavaScriptRuntime.dll");
             Assembly? jsRuntimeAsm = null;
@@ -171,76 +157,144 @@ namespace Js2IL.Tests
             }
             jsRuntimeAsm ??= typeof(JavaScriptRuntime.EnvironmentProvider).Assembly;
 
-            var uniquePath = Path.Combine(dir, Path.GetFileNameWithoutExtension(assemblyPath) + $".run-{Guid.NewGuid():N}.dll");
-            File.Copy(assemblyPath, uniquePath, overwrite: true);
-            var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(uniquePath);
-            var entryPoint = assembly.EntryPoint ?? throw new InvalidOperationException("No entry point found in the generated assembly.");
+            var uniquePath = Path.Combine(dir, assemblySimpleName + $".run-{Guid.NewGuid():N}.dll");
 
-            var modDir = Path.GetDirectoryName(assemblyPath) ?? string.Empty;
-            var file = assemblyPath;
-            
-            // mocks are created here
-            var captured = new CapturingConsoleOutput();
-            var capturedEnvironment = new CapturingEnvironment();
-
-            var setupMocks = () =>
+            TestAssemblyLoadContext? alc = null;
+            string outText;
+            try
             {
-                JavaScriptRuntime.CommonJS.ModuleContext.SetModuleContext(modDir, file);
-                JavaScriptRuntime.EnvironmentProvider.SuppressExit = true;
-                var serviceProvider = JavaScriptRuntime.RuntimeServices.BuildServiceProvider();
-                serviceProvider.RegisterInstance(new ConsoleOutputSinks
+                Assembly assembly;
+                if (needsIsolation)
                 {
-                    Output = captured,
-                    ErrorOutput = captured
+                    File.Copy(assemblyPath, uniquePath, overwrite: true);
+
+                    // Load the generated assembly into an isolated collectible ALC per test to avoid
+                    // collisions when multiple tests compile to the same assembly name (e.g., many
+                    // CommonJS tests have an entry module named "a").
+                    // IMPORTANT: We must ensure the generated assembly binds to the already-loaded
+                    // JavaScriptRuntime assembly, otherwise runtime statics/mocks won't match.
+                    alc = new TestAssemblyLoadContext(jsRuntimeAsm, dir);
+                    // Load from stream so we can delete the copied DLL without relying on GC.Collect
+                    // to release file locks.
+                    using var stream = File.OpenRead(uniquePath);
+                    assembly = alc.LoadFromStream(stream);
+                }
+                else
+                {
+                    // Most tests produce a unique assembly name; running in the default ALC keeps behavior
+                    // identical to out-of-proc execution and avoids subtle cross-ALC runtime edge cases.
+                    assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
+                }
+
+                var entryPoint = assembly.EntryPoint ?? throw new InvalidOperationException("No entry point found in the generated assembly.");
+
+                var modDir = Path.GetDirectoryName(assemblyPath) ?? string.Empty;
+                var file = assemblyPath;
+
+                // mocks are created here
+                var captured = new CapturingConsoleOutput();
+                var capturedEnvironment = new CapturingEnvironment();
+
+                var setupMocks = () =>
+                {
+                    JavaScriptRuntime.CommonJS.ModuleContext.SetModuleContext(modDir, file);
+                    JavaScriptRuntime.EnvironmentProvider.SuppressExit = true;
+                    var serviceProvider = JavaScriptRuntime.RuntimeServices.BuildServiceProvider();
+                    serviceProvider.RegisterInstance(new ConsoleOutputSinks
+                    {
+                        Output = captured,
+                        ErrorOutput = captured
+                    });
+                    serviceProvider.RegisterInstance<IEnvironment>(capturedEnvironment);
+
+                    addMocks?.Invoke(serviceProvider);
+
+                    JavaScriptRuntime.Engine._serviceProviderOverride.Value = serviceProvider;
+                };
+
+
+                // Run the entry point in a separate thread with timeout to prevent infinite hangs
+                ExceptionDispatchInfo? threadException = null;
+                var executionThread = new Thread(() =>
+                {
+                    setupMocks();
+
+                    try
+                    {
+                        ((Action)Delegate.CreateDelegate(typeof(Action), entryPoint))();
+                    }
+                    catch (Exception ex)
+                    {
+                        threadException = ExceptionDispatchInfo.Capture(ex);
+                    }
+                    finally
+                    {
+                        JavaScriptRuntime.Engine._serviceProviderOverride.Value = null;
+                    }
                 });
-                serviceProvider.RegisterInstance<IEnvironment>(capturedEnvironment);
-
-                addMocks?.Invoke(serviceProvider);
-
-                JavaScriptRuntime.Engine._serviceProviderOverride.Value = serviceProvider;
-            };
-
-
-            // Run the entry point in a separate thread with timeout to prevent infinite hangs
-            Exception? threadException = null;
-            var executionThread = new Thread(() =>
-            {
-                setupMocks();
-
-                try
+                executionThread.Start();
+                bool completed = executionThread.Join(timeoutMs);
+                if (!completed)
                 {
-                    ((Action)Delegate.CreateDelegate(typeof(Action), entryPoint))();
+                    // Cannot safely abort managed threads, but we can at least fail the test
+                    throw new TimeoutException($"In-proc test execution timed out after {timeoutMs}ms. Test may have an infinite loop.");
                 }
-                catch (Exception ex)
+                if (threadException != null)
                 {
-                    threadException = ex;
+                    threadException.Throw();
                 }
-                finally
-                {
-                    JavaScriptRuntime.Engine._serviceProviderOverride.Value = null;
-                }
-            });
-            executionThread.Start();
-            bool completed = executionThread.Join(timeoutMs);
-            if (!completed)
-            {
-                // Cannot safely abort managed threads, but we can at least fail the test
-                throw new TimeoutException($"In-proc test execution timed out after {timeoutMs}ms. Test may have an infinite loop.");
-            }
-            if (threadException != null)
-            {
-                throw threadException;
-            }
-            
-            postTestProcessingAction?.Invoke(captured);
+                
+                postTestProcessingAction?.Invoke(captured);
 
-            var outText = captured.GetOutput();
-            if (testName.StartsWith("Process_Exit_", StringComparison.Ordinal))
-            {
-                var code = capturedEnvironment.ExitCalledWithCode ?? 0;
-                outText = $"exitCode {code}\n";
+                outText = captured.GetOutput();
+                if (testName.StartsWith("Process_Exit_", StringComparison.Ordinal))
+                {
+                    var code = capturedEnvironment.ExitCalledWithCode ?? 0;
+                    outText = $"exitCode {code}\n";
+                }
             }
+            finally
+            {
+                if (alc != null)
+                {
+                    alc.Unload();
+                }
+
+                try { File.Delete(uniquePath); } catch { }
+            }
+
             return outText;
+        }
+
+        private sealed class TestAssemblyLoadContext : AssemblyLoadContext
+        {
+            private readonly Assembly _jsRuntimeAssembly;
+            private readonly string _baseDirectory;
+
+            public TestAssemblyLoadContext(Assembly jsRuntimeAssembly, string baseDirectory)
+                : base(isCollectible: true)
+            {
+                _jsRuntimeAssembly = jsRuntimeAssembly;
+                _baseDirectory = baseDirectory;
+            }
+
+            protected override Assembly? Load(AssemblyName assemblyName)
+            {
+                // Ensure the generated assembly uses the same JavaScriptRuntime assembly instance
+                // as the test host, so shared statics (Engine overrides, ModuleContext, etc.) work.
+                if (string.Equals(assemblyName.Name, _jsRuntimeAssembly.GetName().Name, StringComparison.Ordinal))
+                {
+                    return _jsRuntimeAssembly;
+                }
+
+                var candidatePath = Path.Combine(_baseDirectory, (assemblyName.Name ?? string.Empty) + ".dll");
+                if (File.Exists(candidatePath))
+                {
+                    return LoadFromAssemblyPath(candidatePath);
+                }
+
+                return null;
+            }
         }
 
         private sealed class CapturingConsoleOutput : IConsoleOutput

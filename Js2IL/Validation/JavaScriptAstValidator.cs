@@ -100,8 +100,7 @@ public class JavaScriptAstValidator : IAstValidator
                     break;
 
                 case NodeType.SwitchStatement:
-                    result.Errors.Add($"Switch statements are not yet supported (line {node.Location.Start.Line})");
-                    result.IsValid = false;
+                    // Switch statements are supported (PL2.6)
                     break;
 
                 case NodeType.WithStatement:
