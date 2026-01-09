@@ -59,7 +59,7 @@ namespace Js2IL.Tests.String
         public Task String_TemplateLiteral_Basic()
         {
             var testName = nameof(String_TemplateLiteral_Basic);
-            return GenerateTest(testName);
+            return GenerateTest(testName, assertOnIRPipelineFailure: true);
         }
 
         [Fact]

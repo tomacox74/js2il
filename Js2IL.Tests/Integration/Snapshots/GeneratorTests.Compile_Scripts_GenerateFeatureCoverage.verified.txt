@@ -526,29 +526,53 @@
 	{
 		// Method begins at RVA 0x22dc
 		// Header size: 12
-		// Code size: 60 (0x3c)
+		// Code size: 85 (0x55)
 		.maxstack 32
+		.locals init (
+			[0] bool,
+			[1] string,
+			[2] string,
+			[3] object,
+			[4] object
+		)
 
 		IL_0000: ldarg.2
-		IL_0001: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-		IL_0006: brtrue IL_0010
+		IL_0001: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0006: stloc.0
+		IL_0007: ldloc.0
+		IL_0008: brfalse IL_004f
 
-		IL_000b: br IL_003a
+		IL_000d: ldarg.1
+		IL_000e: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_0013: stloc.1
+		IL_0014: ldstr "["
+		IL_0019: ldloc.1
+		IL_001a: call string [System.Runtime]System.String::Concat(string, string)
+		IL_001f: stloc.1
+		IL_0020: ldloc.1
+		IL_0021: ldstr "]("
+		IL_0026: call string [System.Runtime]System.String::Concat(string, string)
+		IL_002b: stloc.1
+		IL_002c: ldarg.2
+		IL_002d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_0032: stloc.2
+		IL_0033: ldloc.1
+		IL_0034: ldloc.2
+		IL_0035: call string [System.Runtime]System.String::Concat(string, string)
+		IL_003a: stloc.2
+		IL_003b: ldloc.2
+		IL_003c: ldstr ")"
+		IL_0041: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0046: stloc.2
+		IL_0047: ldloc.2
+		IL_0048: stloc.s 4
+		IL_004a: br IL_0052
 
-		IL_0010: ldstr "["
-		IL_0015: ldarg.1
-		IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_001b: ldstr "]("
-		IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0025: ldarg.2
-		IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_002b: ldstr ")"
-		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0035: br IL_003b
+		IL_004f: ldarg.1
+		IL_0050: stloc.s 4
 
-		IL_003a: ldarg.1
-
-		IL_003b: ret
+		IL_0052: ldloc.s 4
+		IL_0054: ret
 	} // end of method Compile_Scripts_GenerateFeatureCoverage::link
 
 	.method public hidebysig static 
@@ -750,7 +774,7 @@
 			object sectionRef
 		) cil managed 
 	{
-		// Method begins at RVA 0x243c
+		// Method begins at RVA 0x2458
 		// Header size: 12
 		// Code size: 252 (0xfc)
 		.maxstack 32
@@ -880,7 +904,7 @@
 			object parentSection
 		) cil managed 
 	{
-		// Method begins at RVA 0x2544
+		// Method begins at RVA 0x2560
 		// Header size: 12
 		// Code size: 463 (0x1cf)
 		.maxstack 32
@@ -1082,7 +1106,7 @@
 			object parentSection
 		) cil managed 
 	{
-		// Method begins at RVA 0x2b70
+		// Method begins at RVA 0x2b8c
 		// Header size: 12
 		// Code size: 463 (0x1cf)
 		.maxstack 32
@@ -1283,7 +1307,7 @@
 			object sections
 		) cil managed 
 	{
-		// Method begins at RVA 0x2720
+		// Method begins at RVA 0x273c
 		// Header size: 12
 		// Code size: 1091 (0x443)
 		.maxstack 32
@@ -1669,7 +1693,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x2324
+		// Method begins at RVA 0x2340
 		// Header size: 12
 		// Code size: 266 (0x10a)
 		.maxstack 32
@@ -1788,7 +1812,7 @@
 			object s
 		) cil managed 
 	{
-		// Method begins at RVA 0x2d4c
+		// Method begins at RVA 0x2d68
 		// Header size: 12
 		// Code size: 83 (0x53)
 		.maxstack 32
@@ -1843,7 +1867,7 @@
 			object b
 		) cil managed 
 	{
-		// Method begins at RVA 0x2dac
+		// Method begins at RVA 0x2dc8
 		// Header size: 12
 		// Code size: 144 (0x90)
 		.maxstack 32
@@ -1910,7 +1934,7 @@
 			object b
 		) cil managed 
 	{
-		// Method begins at RVA 0x2e48
+		// Method begins at RVA 0x2e64
 		// Header size: 12
 		// Code size: 144 (0x90)
 		.maxstack 32
@@ -1977,7 +2001,7 @@
 			object b
 		) cil managed 
 	{
-		// Method begins at RVA 0x2ee4
+		// Method begins at RVA 0x2f00
 		// Header size: 12
 		// Code size: 144 (0x90)
 		.maxstack 32
@@ -2046,7 +2070,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2f80
+		// Method begins at RVA 0x2f9c
 		// Header size: 12
 		// Code size: 295 (0x127)
 		.maxstack 32
@@ -2168,7 +2192,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x30b3
+		// Method begins at RVA 0x30cf
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

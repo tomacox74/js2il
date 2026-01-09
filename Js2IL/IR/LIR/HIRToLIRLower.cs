@@ -1545,6 +1545,9 @@ public sealed class HIRToLIRLowerer
             case HIRUpdateExpression updateExpr:
                 return TryLowerUpdateExpression(updateExpr, out resultTempVar);
 
+            case HIRTemplateLiteralExpression templateLiteral:
+                return TryLowerTemplateLiteralExpression(templateLiteral, out resultTempVar);
+
             case HIRAssignmentExpression assignExpr:
                 return TryLowerAssignmentExpression(assignExpr, out resultTempVar);
 
@@ -1635,6 +1638,55 @@ public sealed class HIRToLIRLowerer
                 // Unsupported expression type
                 return false;
         }
+    }
+
+    private bool TryLowerTemplateLiteralExpression(HIRTemplateLiteralExpression templateLiteral, out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        var quasis = templateLiteral.Quasis;
+        var exprs = templateLiteral.Expressions;
+
+        // Start with the first quasi (or empty string if missing).
+        var current = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstString(quasis.Count > 0 ? quasis[0] : string.Empty, current));
+        DefineTempStorage(current, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+        for (int i = 0; i < exprs.Count; i++)
+        {
+            if (!TryLowerExpression(exprs[i], out var exprTemp))
+            {
+                return false;
+            }
+
+            // Interpolations are converted to string using JS semantics.
+            var exprAsString = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConvertToString(exprTemp, exprAsString));
+            DefineTempStorage(exprAsString, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+            var concat1 = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConcatStrings(current, exprAsString, concat1));
+            DefineTempStorage(concat1, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+            current = concat1;
+
+            // Append the tail quasi (if present). Missing quasis are treated as empty string.
+            var tail = (i + 1) < quasis.Count ? quasis[i + 1] : string.Empty;
+            if (!string.IsNullOrEmpty(tail))
+            {
+                var tailTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRConstString(tail, tailTemp));
+                DefineTempStorage(tailTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+                var concat2 = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRConcatStrings(current, tailTemp, concat2));
+                DefineTempStorage(concat2, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+                current = concat2;
+            }
+        }
+
+        resultTempVar = current;
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+        return true;
     }
 
     private bool TryLowerNewExpression(HIRNewExpression newExpr, out TempVariable resultTempVar)

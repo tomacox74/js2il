@@ -577,6 +577,40 @@ class HIRMethodBuilder
 
         switch (expr)
         {
+            case TemplateLiteral templateLiteral:
+                {
+                    static string GetQuasiText(TemplateElement te)
+                    {
+                        var val = te.Value;
+                        // Prefer cooked when available; fall back to raw.
+                        var cooked = val.Cooked;
+                        if (!string.IsNullOrEmpty(cooked))
+                        {
+                            return cooked!;
+                        }
+                        return val.Raw ?? string.Empty;
+                    }
+
+                    var quasis = new List<string>(templateLiteral.Quasis.Count);
+                    foreach (var quasi in templateLiteral.Quasis)
+                    {
+                        quasis.Add(GetQuasiText(quasi));
+                    }
+
+                    var expressions = new List<HIRExpression>(templateLiteral.Expressions.Count);
+                    foreach (var exprNode in templateLiteral.Expressions)
+                    {
+                        if (!TryParseExpression(exprNode, out var parsedExpr))
+                        {
+                            return false;
+                        }
+                        expressions.Add(parsedExpr!);
+                    }
+
+                    hirExpr = new HIRTemplateLiteralExpression(quasis, expressions);
+                    return true;
+                }
+
             case ConditionalExpression conditionalExpr:
                 // Handle conditional (ternary) expressions: test ? consequent : alternate
                 if (!TryParseExpression(conditionalExpr.Test, out var testExpr) ||

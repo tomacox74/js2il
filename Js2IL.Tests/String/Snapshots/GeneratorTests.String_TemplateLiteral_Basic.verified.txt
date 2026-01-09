@@ -27,7 +27,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -38,38 +38,57 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 84 (0x54)
+		// Code size: 111 (0x6f)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.String_TemplateLiteral_Basic,
-			[1] object,
-			[2] float64
+			[1] string,
+			[2] float64,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[4] string,
+			[5] string,
+			[6] object[]
 		)
 
-		IL_0000: ldstr "Alice"
-		IL_0005: stloc.1
-		IL_0006: ldc.r8 31
-		IL_000f: stloc.2
-		IL_0010: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0015: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_001a: ldc.i4.1
-		IL_001b: newarr [System.Runtime]System.Object
-		IL_0020: dup
-		IL_0021: ldc.i4.0
-		IL_0022: ldstr "Name: "
-		IL_0027: ldloc.1
-		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_002d: ldstr ", Age: "
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0037: ldloc.2
-		IL_0038: box [System.Runtime]System.Double
-		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0042: ldstr ""
-		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_004c: stelem.ref
-		IL_004d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0052: pop
-		IL_0053: ret
+		IL_0000: newobj instance void Scopes.String_TemplateLiteral_Basic::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldstr "Alice"
+		IL_000b: stloc.1
+		IL_000c: ldc.r8 31
+		IL_0015: stloc.2
+		IL_0016: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_001b: stloc.3
+		IL_001c: ldloc.1
+		IL_001d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_0022: stloc.s 4
+		IL_0024: ldstr "Name: "
+		IL_0029: ldloc.s 4
+		IL_002b: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0030: stloc.s 4
+		IL_0032: ldloc.s 4
+		IL_0034: ldstr ", Age: "
+		IL_0039: call string [System.Runtime]System.String::Concat(string, string)
+		IL_003e: stloc.s 4
+		IL_0040: ldloc.2
+		IL_0041: box [System.Runtime]System.Double
+		IL_0046: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_004b: stloc.s 5
+		IL_004d: ldloc.s 4
+		IL_004f: ldloc.s 5
+		IL_0051: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0056: stloc.s 5
+		IL_0058: ldc.i4.1
+		IL_0059: newarr [System.Runtime]System.Object
+		IL_005e: dup
+		IL_005f: ldc.i4.0
+		IL_0060: ldloc.s 5
+		IL_0062: stelem.ref
+		IL_0063: stloc.s 6
+		IL_0065: ldloc.3
+		IL_0066: ldloc.s 6
+		IL_0068: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_006d: pop
+		IL_006e: ret
 	} // end of method String_TemplateLiteral_Basic::Main
 
 } // end of class Scripts.String_TemplateLiteral_Basic
@@ -81,7 +100,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20bc
+		// Method begins at RVA 0x20d7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

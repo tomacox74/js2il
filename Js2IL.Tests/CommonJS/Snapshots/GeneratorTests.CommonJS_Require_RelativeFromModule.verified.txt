@@ -154,7 +154,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -165,30 +165,41 @@
 	{
 		// Method begins at RVA 0x20f4
 		// Header size: 12
-		// Code size: 53 (0x35)
+		// Code size: 59 (0x3b)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.helpers_c,
-			[1] object
+			[1] string,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[3] string,
+			[4] object[]
 		)
 
-		IL_0000: ldstr "CommonJS_Require_RelativeFromModule/helpers/c"
-		IL_0005: stloc.1
-		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_000b: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0010: ldc.i4.1
-		IL_0011: newarr [System.Runtime]System.Object
-		IL_0016: dup
-		IL_0017: ldc.i4.0
-		IL_0018: ldstr "CommonJS_Require_RelativeFromModule loaded: "
-		IL_001d: ldloc.1
-		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0023: ldstr ""
-		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_002d: stelem.ref
-		IL_002e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0033: pop
-		IL_0034: ret
+		IL_0000: newobj instance void Scopes.helpers_c::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldstr "CommonJS_Require_RelativeFromModule/helpers/c"
+		IL_000b: stloc.1
+		IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0011: stloc.2
+		IL_0012: ldloc.1
+		IL_0013: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_0018: stloc.3
+		IL_0019: ldstr "CommonJS_Require_RelativeFromModule loaded: "
+		IL_001e: ldloc.3
+		IL_001f: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0024: stloc.3
+		IL_0025: ldc.i4.1
+		IL_0026: newarr [System.Runtime]System.Object
+		IL_002b: dup
+		IL_002c: ldc.i4.0
+		IL_002d: ldloc.3
+		IL_002e: stelem.ref
+		IL_002f: stloc.s 4
+		IL_0031: ldloc.2
+		IL_0032: ldloc.s 4
+		IL_0034: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0039: pop
+		IL_003a: ret
 	} // end of method helpers_c::Main
 
 } // end of class Scripts.helpers_c
@@ -200,7 +211,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2135
+		// Method begins at RVA 0x213b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
