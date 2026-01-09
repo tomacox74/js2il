@@ -319,30 +319,45 @@
 	{
 		// Method begins at RVA 0x2114
 		// Header size: 12
-		// Code size: 65 (0x41)
+		// Code size: 75 (0x4b)
 		.maxstack 32
+		.locals init (
+			[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[1] string,
+			[2] object[]
+		)
 
 		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_000a: ldc.i4.1
-		IL_000b: newarr [System.Runtime]System.Object
-		IL_0010: dup
-		IL_0011: ldc.i4.0
-		IL_0012: ldstr "class from "
-		IL_0017: ldarg.0
-		IL_0018: ldfld object[] Classes.b.CommonClassName::_scopes
-		IL_001d: ldc.i4.0
-		IL_001e: ldelem.ref
-		IL_001f: castclass Scopes.b
-		IL_0024: ldfld object Scopes.b::moduleName
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_002e: ldstr " has been loaded"
-		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0038: stelem.ref
-		IL_0039: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_003e: pop
-		IL_003f: ldarg.0
-		IL_0040: ret
+		IL_0005: stloc.0
+		IL_0006: ldarg.0
+		IL_0007: ldfld object[] Classes.b.CommonClassName::_scopes
+		IL_000c: ldc.i4.0
+		IL_000d: ldelem.ref
+		IL_000e: castclass Scopes.b
+		IL_0013: ldfld object Scopes.b::moduleName
+		IL_0018: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_001d: stloc.1
+		IL_001e: ldstr "class from "
+		IL_0023: ldloc.1
+		IL_0024: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0029: stloc.1
+		IL_002a: ldloc.1
+		IL_002b: ldstr " has been loaded"
+		IL_0030: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0035: stloc.1
+		IL_0036: ldc.i4.1
+		IL_0037: newarr [System.Runtime]System.Object
+		IL_003c: dup
+		IL_003d: ldc.i4.0
+		IL_003e: ldloc.1
+		IL_003f: stelem.ref
+		IL_0040: stloc.2
+		IL_0041: ldloc.0
+		IL_0042: ldloc.2
+		IL_0043: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0048: pop
+		IL_0049: ldarg.0
+		IL_004a: ret
 	} // end of method CommonClassName::Log
 
 } // end of class Classes.b.CommonClassName
@@ -356,31 +371,46 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x2164
+		// Method begins at RVA 0x216c
 		// Header size: 12
-		// Code size: 60 (0x3c)
+		// Code size: 70 (0x46)
 		.maxstack 32
+		.locals init (
+			[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[1] string,
+			[2] object[]
+		)
 
 		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_000a: ldc.i4.1
-		IL_000b: newarr [System.Runtime]System.Object
-		IL_0010: dup
-		IL_0011: ldc.i4.0
-		IL_0012: ldstr "Function from "
-		IL_0017: ldarg.0
-		IL_0018: ldc.i4.0
-		IL_0019: ldelem.ref
-		IL_001a: castclass Scopes.b
-		IL_001f: ldfld object Scopes.b::moduleName
-		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0029: ldstr " has been called"
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0033: stelem.ref
-		IL_0034: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0039: pop
-		IL_003a: ldnull
-		IL_003b: ret
+		IL_0005: stloc.0
+		IL_0006: ldarg.0
+		IL_0007: ldc.i4.0
+		IL_0008: ldelem.ref
+		IL_0009: castclass Scopes.b
+		IL_000e: ldfld object Scopes.b::moduleName
+		IL_0013: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_0018: stloc.1
+		IL_0019: ldstr "Function from "
+		IL_001e: ldloc.1
+		IL_001f: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0024: stloc.1
+		IL_0025: ldloc.1
+		IL_0026: ldstr " has been called"
+		IL_002b: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0030: stloc.1
+		IL_0031: ldc.i4.1
+		IL_0032: newarr [System.Runtime]System.Object
+		IL_0037: dup
+		IL_0038: ldc.i4.0
+		IL_0039: ldloc.1
+		IL_003a: stelem.ref
+		IL_003b: stloc.2
+		IL_003c: ldloc.0
+		IL_003d: ldloc.2
+		IL_003e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0043: pop
+		IL_0044: ldnull
+		IL_0045: ret
 	} // end of method b::commonFunctionName
 
 } // end of class Functions.b
@@ -395,7 +425,7 @@
 			object x
 		) cil managed 
 	{
-		// Method begins at RVA 0x21ac
+		// Method begins at RVA 0x21c0
 		// Header size: 12
 		// Code size: 2 (0x2)
 		.maxstack 32
@@ -419,7 +449,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x21bc
+		// Method begins at RVA 0x21d0
 		// Header size: 12
 		// Code size: 184 (0xb8)
 		.maxstack 32
@@ -510,7 +540,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x2280
+		// Method begins at RVA 0x2294
 		// Header size: 12
 		// Code size: 14 (0xe)
 		.maxstack 32
@@ -526,32 +556,47 @@
 	.method public hidebysig 
 		instance object Log () cil managed 
 	{
-		// Method begins at RVA 0x229c
+		// Method begins at RVA 0x22b0
 		// Header size: 12
-		// Code size: 65 (0x41)
+		// Code size: 75 (0x4b)
 		.maxstack 32
+		.locals init (
+			[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[1] string,
+			[2] object[]
+		)
 
 		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_000a: ldc.i4.1
-		IL_000b: newarr [System.Runtime]System.Object
-		IL_0010: dup
-		IL_0011: ldc.i4.0
-		IL_0012: ldstr "class from "
-		IL_0017: ldarg.0
-		IL_0018: ldfld object[] Classes.helpers_b.CommonClassName::_scopes
-		IL_001d: ldc.i4.0
-		IL_001e: ldelem.ref
-		IL_001f: castclass Scopes.helpers_b
-		IL_0024: ldfld object Scopes.helpers_b::moduleName
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_002e: ldstr " has been loaded"
-		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0038: stelem.ref
-		IL_0039: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_003e: pop
-		IL_003f: ldarg.0
-		IL_0040: ret
+		IL_0005: stloc.0
+		IL_0006: ldarg.0
+		IL_0007: ldfld object[] Classes.helpers_b.CommonClassName::_scopes
+		IL_000c: ldc.i4.0
+		IL_000d: ldelem.ref
+		IL_000e: castclass Scopes.helpers_b
+		IL_0013: ldfld object Scopes.helpers_b::moduleName
+		IL_0018: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_001d: stloc.1
+		IL_001e: ldstr "class from "
+		IL_0023: ldloc.1
+		IL_0024: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0029: stloc.1
+		IL_002a: ldloc.1
+		IL_002b: ldstr " has been loaded"
+		IL_0030: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0035: stloc.1
+		IL_0036: ldc.i4.1
+		IL_0037: newarr [System.Runtime]System.Object
+		IL_003c: dup
+		IL_003d: ldc.i4.0
+		IL_003e: ldloc.1
+		IL_003f: stelem.ref
+		IL_0040: stloc.2
+		IL_0041: ldloc.0
+		IL_0042: ldloc.2
+		IL_0043: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0048: pop
+		IL_0049: ldarg.0
+		IL_004a: ret
 	} // end of method CommonClassName::Log
 
 } // end of class Classes.helpers_b.CommonClassName
@@ -565,31 +610,46 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x22ec
+		// Method begins at RVA 0x2308
 		// Header size: 12
-		// Code size: 60 (0x3c)
+		// Code size: 70 (0x46)
 		.maxstack 32
+		.locals init (
+			[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[1] string,
+			[2] object[]
+		)
 
 		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_000a: ldc.i4.1
-		IL_000b: newarr [System.Runtime]System.Object
-		IL_0010: dup
-		IL_0011: ldc.i4.0
-		IL_0012: ldstr "Function from "
-		IL_0017: ldarg.0
-		IL_0018: ldc.i4.0
-		IL_0019: ldelem.ref
-		IL_001a: castclass Scopes.helpers_b
-		IL_001f: ldfld object Scopes.helpers_b::moduleName
-		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0029: ldstr " has been called"
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0033: stelem.ref
-		IL_0034: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0039: pop
-		IL_003a: ldnull
-		IL_003b: ret
+		IL_0005: stloc.0
+		IL_0006: ldarg.0
+		IL_0007: ldc.i4.0
+		IL_0008: ldelem.ref
+		IL_0009: castclass Scopes.helpers_b
+		IL_000e: ldfld object Scopes.helpers_b::moduleName
+		IL_0013: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+		IL_0018: stloc.1
+		IL_0019: ldstr "Function from "
+		IL_001e: ldloc.1
+		IL_001f: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0024: stloc.1
+		IL_0025: ldloc.1
+		IL_0026: ldstr " has been called"
+		IL_002b: call string [System.Runtime]System.String::Concat(string, string)
+		IL_0030: stloc.1
+		IL_0031: ldc.i4.1
+		IL_0032: newarr [System.Runtime]System.Object
+		IL_0037: dup
+		IL_0038: ldc.i4.0
+		IL_0039: ldloc.1
+		IL_003a: stelem.ref
+		IL_003b: stloc.2
+		IL_003c: ldloc.0
+		IL_003d: ldloc.2
+		IL_003e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0043: pop
+		IL_0044: ldnull
+		IL_0045: ret
 	} // end of method helpers_b::commonFunctionName
 
 } // end of class Functions.helpers_b
@@ -604,7 +664,7 @@
 			object x
 		) cil managed 
 	{
-		// Method begins at RVA 0x2334
+		// Method begins at RVA 0x235c
 		// Header size: 12
 		// Code size: 2 (0x2)
 		.maxstack 32
@@ -628,7 +688,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2344
+		// Method begins at RVA 0x236c
 		// Header size: 12
 		// Code size: 184 (0xb8)
 		.maxstack 32
@@ -714,7 +774,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2408
+		// Method begins at RVA 0x2430
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
