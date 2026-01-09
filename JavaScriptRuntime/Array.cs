@@ -21,6 +21,57 @@ namespace JavaScriptRuntime
         {
         }
 
+        /// <summary>
+        /// Implements the JavaScript Array constructor semantics:
+        ///  - new Array() => []
+        ///  - new Array(len) where len is a non-negative integer => array with that length
+        ///  - new Array(a, b, ...) => array containing the provided elements
+        ///
+        /// Note: In this runtime model, CLR null represents JS undefined.
+        /// </summary>
+        public static Array Construct(object[] args)
+        {
+            if (args == null || args.Length == 0)
+            {
+                return new Array();
+            }
+
+            if (args.Length == 1)
+            {
+                var a0 = args[0];
+
+                // JS: if the single argument is a number, it is treated as length (with RangeError for invalid).
+                // Otherwise it is treated as an element.
+                if (a0 is double || a0 is float || a0 is int || a0 is long || a0 is short || a0 is byte)
+                {
+                    var d = TypeUtilities.ToNumber(a0);
+                    // JS requires a finite integer in [0, 2^32-1]. Keep minimal and clamp to int.MaxValue.
+                    if (double.IsNaN(d) || double.IsInfinity(d))
+                    {
+                        throw new RangeError("Invalid array length");
+                    }
+
+                    var len = (long)d;
+                    if (d != len || len < 0 || len > int.MaxValue)
+                    {
+                        throw new RangeError("Invalid array length");
+                    }
+
+                    var result = new Array();
+                    for (int i = 0; i < (int)len; i++)
+                    {
+                        result.Add(null);
+                    }
+                    return result;
+                }
+
+                return new Array(new object?[] { a0 });
+            }
+
+            // Multiple arguments => array of elements.
+            return new Array(args);
+        }
+
         public static Array Empty => new Array();
         public static implicit operator Array(object[] array)
         {

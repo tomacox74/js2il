@@ -632,8 +632,11 @@ class HIRMethodBuilder
                 return true;
 
             case NewExpression newExpr:
-                // PL3.3a: support only built-in Error types (new Error(...), new TypeError(...), etc.)
-                // to keep other NewExpression forms falling back to legacy for now.
+                // PL3.3: NewExpression support in IR pipeline.
+                // - PL3.3a: built-in Error types
+                // - PL3.3d: Array constructor semantics
+                // - PL3.3e/f: String/Boolean/Number constructor sugar
+                // - PL3.3g: intrinsic runtime constructors (Date/RegExp/Set/Promise/Int32Array/etc.)
                 if (newExpr.Callee is not Identifier newCalleeId)
                 {
                     return false;
@@ -646,7 +649,16 @@ class HIRMethodBuilder
                     return false;
                 }
 
-                if (!Js2IL.IR.BuiltInErrorTypes.IsBuiltInErrorTypeName(newCalleeId.Name))
+                var calleeName = newCalleeId.Name;
+
+                bool isBuiltInError = Js2IL.IR.BuiltInErrorTypes.IsBuiltInErrorTypeName(calleeName);
+                bool isArrayCtor = string.Equals(calleeName, "Array", StringComparison.Ordinal);
+                bool isStringCtor = string.Equals(calleeName, "String", StringComparison.Ordinal);
+                bool isBooleanCtor = string.Equals(calleeName, "Boolean", StringComparison.Ordinal);
+                bool isNumberCtor = string.Equals(calleeName, "Number", StringComparison.Ordinal);
+                var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(calleeName);
+
+                if (!isBuiltInError && !isArrayCtor && !isStringCtor && !isBooleanCtor && !isNumberCtor && intrinsicType == null)
                 {
                     return false;
                 }
@@ -661,10 +673,32 @@ class HIRMethodBuilder
                     newArgExprs.Add(argHirExpr!);
                 }
 
-                if (newArgExprs.Count > 1)
+                if (isBuiltInError && newArgExprs.Count > 1)
                 {
                     // Match legacy behavior for built-in Error types.
                     return false;
+                }
+
+                // For constructor-sugar primitives, accept 0 or 1 argument only.
+                if ((isStringCtor || isBooleanCtor || isNumberCtor) && newArgExprs.Count > 1)
+                {
+                    return false;
+                }
+
+                // For generic intrinsic ctors, keep the IR surface conservative for now.
+                // We only lower common ctor shapes: .ctor(), .ctor(object), .ctor(object, object).
+                if (intrinsicType != null && !(isArrayCtor || isStringCtor || isBooleanCtor || isNumberCtor))
+                {
+                    bool isStaticClass = intrinsicType.IsAbstract && intrinsicType.IsSealed;
+                    if (isStaticClass)
+                    {
+                        // Constructible intrinsics must be non-static classes.
+                        return false;
+                    }
+                    if (newArgExprs.Count > 2)
+                    {
+                        return false;
+                    }
                 }
 
                 hirExpr = new HIRNewExpression(new HIRVariableExpression(newCalleeSymbol), newArgExprs);

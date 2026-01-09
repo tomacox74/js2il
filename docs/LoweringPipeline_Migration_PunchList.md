@@ -139,10 +139,10 @@ Based on the legacy emitters:
   - [x] PL3.3a built-in Error types
   - [ ] PL3.3b user-defined classes
   - [ ] PL3.3c argument count checking (match legacy)
-  - [ ] PL3.3d built-in Array constructor (`new Array()` / `new Array(n)` / `new Array(a, b, ...)`) semantics
-  - [ ] PL3.3e built-in String constructor (`new String()` / `new String(x)`) as syntactic sugar for native strings
-  - [ ] PL3.3f built-in Boolean/Number constructors (`new Boolean(x)`, `new Number(x)`) wrapper/sugar semantics
-  - [ ] PL3.3g built-in constructors for remaining existing runtime intrinsics (e.g., Date, RegExp, Set, Promise, Int32Array)
+  - [x] PL3.3d built-in Array constructor (`new Array()` / `new Array(n)` / `new Array(a, b, ...)`) semantics
+  - [x] PL3.3e built-in String constructor (`new String()` / `new String(x)`) as syntactic sugar for native strings
+  - [x] PL3.3f built-in Boolean/Number constructors (`new Boolean(x)`, `new Number(x)`) wrapper/sugar semantics
+  - [x] PL3.3g built-in constructors for remaining existing runtime intrinsics (e.g., Date, RegExp, Set, Promise, Int32Array)
 - [ ] PL3.4 `TemplateLiteral` (including interpolation)
 - [ ] PL3.5 `ThisExpression` (especially important for class methods)
 - [ ] PL3.6 `FunctionExpression` as an expression (closure creation)

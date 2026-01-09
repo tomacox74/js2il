@@ -529,6 +529,42 @@ internal sealed class LIRToILCompiler
                 }
                 EmitStoreTemp(convertToNumber.Result, ilEncoder, allocation);
                 break;
+
+            case LIRConvertToBoolean convertToBoolean:
+                if (!IsMaterialized(convertToBoolean.Result, allocation))
+                {
+                    break;
+                }
+
+                EmitLoadTempAsObject(convertToBoolean.Source, ilEncoder, allocation, methodDescriptor);
+                {
+                    var toBooleanMref = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.TypeUtilities),
+                        nameof(JavaScriptRuntime.TypeUtilities.ToBoolean),
+                        parameterTypes: new[] { typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(toBooleanMref);
+                }
+                EmitStoreTemp(convertToBoolean.Result, ilEncoder, allocation);
+                break;
+
+            case LIRConvertToString convertToString:
+                if (!IsMaterialized(convertToString.Result, allocation))
+                {
+                    break;
+                }
+
+                EmitLoadTempAsObject(convertToString.Source, ilEncoder, allocation, methodDescriptor);
+                {
+                    var toStringMref = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.DotNet2JSConversions),
+                        nameof(JavaScriptRuntime.DotNet2JSConversions.ToString),
+                        parameterTypes: new[] { typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(toStringMref);
+                }
+                EmitStoreTemp(convertToString.Result, ilEncoder, allocation);
+                break;
             case LIRTypeof:
                 if (!IsMaterialized(((LIRTypeof)instruction).Result, allocation))
                 {
@@ -909,6 +945,51 @@ internal sealed class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Newobj);
                     ilEncoder.Token(defaultCtor);
                     EmitStoreTemp(newError.Result, ilEncoder, allocation);
+                    break;
+                }
+
+            case LIRNewIntrinsicObject newIntrinsic:
+                {
+                    if (!IsMaterialized(newIntrinsic.Result, allocation))
+                    {
+                        break;
+                    }
+
+                    var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(newIntrinsic.IntrinsicName)
+                        ?? throw new InvalidOperationException($"Unknown intrinsic type: {newIntrinsic.IntrinsicName}");
+
+                    bool isStaticClass = intrinsicType.IsAbstract && intrinsicType.IsSealed;
+                    if (isStaticClass)
+                    {
+                        throw new InvalidOperationException($"Intrinsic '{newIntrinsic.IntrinsicName}' is not constructible (static class). ");
+                    }
+
+                    var argc = newIntrinsic.Arguments.Count;
+                    ConstructorInfo? chosenCtor = argc switch
+                    {
+                        0 => intrinsicType.GetConstructor(Type.EmptyTypes),
+                        1 => intrinsicType.GetConstructor(new[] { typeof(object) }),
+                        2 => intrinsicType.GetConstructor(new[] { typeof(object), typeof(object) }),
+                        _ => null
+                    };
+
+                    if (chosenCtor == null)
+                    {
+                        throw new InvalidOperationException(
+                            $"No matching intrinsic constructor found: {intrinsicType.FullName} with {argc} argument(s)");
+                    }
+
+                    // Load constructor args
+                    foreach (var arg in newIntrinsic.Arguments)
+                    {
+                        EmitLoadTempAsObject(arg, ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    var ctorParamTypes = chosenCtor.GetParameters().Select(p => p.ParameterType).ToArray();
+                    var ctorRef = _memberRefRegistry.GetOrAddConstructor(intrinsicType, ctorParamTypes);
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(ctorRef);
+                    EmitStoreTemp(newIntrinsic.Result, ilEncoder, allocation);
                     break;
                 }
 
@@ -1561,6 +1642,69 @@ internal sealed class LIRToILCompiler
                     ilEncoder.Token(toNumberMref);
                 }
                 break;
+
+            case LIRConvertToBoolean convertToBoolean:
+                EmitLoadTempAsObject(convertToBoolean.Source, ilEncoder, allocation, methodDescriptor);
+                {
+                    var toBooleanMref = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.TypeUtilities),
+                        nameof(JavaScriptRuntime.TypeUtilities.ToBoolean),
+                        parameterTypes: new[] { typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(toBooleanMref);
+                }
+                break;
+
+            case LIRConvertToString convertToString:
+                EmitLoadTempAsObject(convertToString.Source, ilEncoder, allocation, methodDescriptor);
+                {
+                    var toStringMref = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.DotNet2JSConversions),
+                        nameof(JavaScriptRuntime.DotNet2JSConversions.ToString),
+                        parameterTypes: new[] { typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(toStringMref);
+                }
+                break;
+
+            case LIRNewIntrinsicObject newIntrinsic:
+                {
+                    var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(newIntrinsic.IntrinsicName)
+                        ?? throw new InvalidOperationException($"Unknown intrinsic type: {newIntrinsic.IntrinsicName}");
+
+                    bool isStaticClass = intrinsicType.IsAbstract && intrinsicType.IsSealed;
+                    if (isStaticClass)
+                    {
+                        throw new InvalidOperationException($"Intrinsic '{newIntrinsic.IntrinsicName}' is not constructible (static class). ");
+                    }
+
+                    var argc = newIntrinsic.Arguments.Count;
+                    ConstructorInfo? chosenCtor = argc switch
+                    {
+                        0 => intrinsicType.GetConstructor(Type.EmptyTypes),
+                        1 => intrinsicType.GetConstructor(new[] { typeof(object) }),
+                        2 => intrinsicType.GetConstructor(new[] { typeof(object), typeof(object) }),
+                        _ => null
+                    };
+
+                    if (chosenCtor == null)
+                    {
+                        throw new InvalidOperationException(
+                            $"No matching intrinsic constructor found: {intrinsicType.FullName} with {argc} argument(s)");
+                    }
+
+                    foreach (var arg in newIntrinsic.Arguments)
+                    {
+                        EmitLoadTempAsObject(arg, ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    var ctorParamTypes = chosenCtor.GetParameters().Select(p => p.ParameterType).ToArray();
+                    var ctorRef = _memberRefRegistry.GetOrAddConstructor(intrinsicType, ctorParamTypes);
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(ctorRef);
+                    break;
+                }
+
             case LIRMulDynamic mulDynamic:
                 // Emit inline dynamic multiplication
                 EmitLoadTemp(mulDynamic.Left, ilEncoder, allocation, methodDescriptor);
