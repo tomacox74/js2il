@@ -146,13 +146,13 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_ForInLoop_ReportsError()
+    public void Validate_ForInLoop_IsValid()
     {
         var js = "const obj = {a: 1}; for (const k in obj) { console.log(k); }";
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("for...in"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
@@ -197,13 +197,13 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_LabeledStatement_ReportsError()
+    public void Validate_LabeledStatement_IsValid()
     {
         var js = "outer: for (let i = 0; i < 3; i++) { break outer; }";
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Labeled statements"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
