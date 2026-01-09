@@ -300,6 +300,67 @@ class HIRMethodBuilder
                     return true;
                 }
 
+            case WhileStatement whileStmt:
+                {
+                    if (!TryParseExpression(whileStmt.Test, out var whileTestExpr))
+                    {
+                        return false;
+                    }
+
+                    if (!TryParseStatement(whileStmt.Body, out var bodyStmt))
+                    {
+                        return false;
+                    }
+
+                    hirStatement = new HIRWhileStatement(whileTestExpr!, bodyStmt!);
+                    return true;
+                }
+
+            case DoWhileStatement doWhileStmt:
+                {
+                    if (!TryParseStatement(doWhileStmt.Body, out var bodyStmt))
+                    {
+                        return false;
+                    }
+
+                    if (!TryParseExpression(doWhileStmt.Test, out var doWhileTestExpr))
+                    {
+                        return false;
+                    }
+
+                    hirStatement = new HIRDoWhileStatement(bodyStmt!, doWhileTestExpr!);
+                    return true;
+                }
+
+            case BreakStatement breakStmt:
+                hirStatement = new HIRBreakStatement(breakStmt.Label?.Name);
+                return true;
+
+            case ContinueStatement continueStmt:
+                hirStatement = new HIRContinueStatement(continueStmt.Label?.Name);
+                return true;
+
+            case LabeledStatement labeledStmt:
+                {
+                    // Minimal labeled-statement support: only label loops so labeled break/continue can target them.
+                    // Other labeled statement forms (e.g. labeled blocks) are not yet supported in HIR.
+                    if (!TryParseStatement(labeledStmt.Body, out var labeledBody))
+                    {
+                        return false;
+                    }
+
+                    var labelName = labeledStmt.Label?.Name;
+                    hirStatement = labeledBody switch
+                    {
+                        HIRForStatement forStmt => new HIRForStatement(forStmt.Init, forStmt.Test, forStmt.Update, forStmt.Body, labelName),
+                        HIRWhileStatement whileStmt => new HIRWhileStatement(whileStmt.Test, whileStmt.Body, labelName),
+                        HIRDoWhileStatement dws => new HIRDoWhileStatement(dws.Body, dws.Test, labelName),
+                        _ => null
+                    };
+
+                    return hirStatement != null;
+                }
+
             default:
                 // Unsupported statement type
                 return false;

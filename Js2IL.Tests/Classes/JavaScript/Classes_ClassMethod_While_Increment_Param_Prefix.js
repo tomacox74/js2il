@@ -8,3 +8,5 @@ class Counter {
 
 const c = new Counter();
 c.run(0);
+
+console.log("Classes_ClassMethod_While_Increment_Param_Prefix");

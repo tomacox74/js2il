@@ -17,6 +17,22 @@ public sealed class HIRToLIRLowerer
     private int _tempVarCounter = 0;
     private int _labelCounter = 0;
 
+    private readonly Stack<LoopContext> _loopStack = new();
+
+    private readonly struct LoopContext
+    {
+        public LoopContext(int breakLabel, int continueLabel, string? labelName)
+        {
+            BreakLabel = breakLabel;
+            ContinueLabel = continueLabel;
+            LabelName = labelName;
+        }
+
+        public int BreakLabel { get; }
+        public int ContinueLabel { get; }
+        public string? LabelName { get; }
+    }
+
     // Source-level variables map to the current SSA value (TempVariable) at the current program point.
     // Keyed by BindingInfo reference to correctly handle shadowed variables with the same name.
     private readonly Dictionary<BindingInfo, TempVariable> _variableMap = new Dictionary<BindingInfo, TempVariable>();
@@ -676,6 +692,7 @@ public sealed class HIRToLIRLowerer
                     }
 
                     int loopStartLabel = CreateLabel();
+                    int loopUpdateLabel = CreateLabel();
                     int loopEndLabel = CreateLabel();
 
                     // Loop start label
@@ -707,10 +724,21 @@ public sealed class HIRToLIRLowerer
                     }
 
                     // Loop body
-                    if (!TryLowerStatement(forStmt.Body))
+                    _loopStack.Push(new LoopContext(loopEndLabel, loopUpdateLabel, forStmt.Label));
+                    try
                     {
-                        return false;
+                        if (!TryLowerStatement(forStmt.Body))
+                        {
+                            return false;
+                        }
                     }
+                    finally
+                    {
+                        _loopStack.Pop();
+                    }
+
+                    // Continue target (for-loops continue runs update, then loops)
+                    lirInstructions.Add(new LIRLabel(loopUpdateLabel));
 
                     // Update expression (if present)
                     if (forStmt.Update != null && !TryLowerExpression(forStmt.Update, out _))
@@ -727,6 +755,149 @@ public sealed class HIRToLIRLowerer
 
                     return true;
                 }
+            case HIRWhileStatement whileStmt:
+                {
+                    // While loop structure:
+                    // loop_start:
+                    //   if (!test) goto end
+                    //   body
+                    //   goto loop_start
+                    // end:
+
+                    int loopStartLabel = CreateLabel();
+                    int loopEndLabel = CreateLabel();
+
+                    // Loop start label
+                    lirInstructions.Add(new LIRLabel(loopStartLabel));
+
+                    // Test condition
+                    if (!TryLowerExpression(whileStmt.Test, out var conditionTemp))
+                    {
+                        return false;
+                    }
+
+                    // If the condition is boxed or is an object reference, convert to boolean using IsTruthy
+                    var conditionStorage = GetTempStorage(conditionTemp);
+                    bool needsTruthyCheck = conditionStorage.Kind == ValueStorageKind.BoxedValue ||
+                        (conditionStorage.Kind == ValueStorageKind.Reference && conditionStorage.ClrType == typeof(object));
+
+                    if (needsTruthyCheck)
+                    {
+                        var isTruthyTemp = CreateTempVariable();
+                        lirInstructions.Add(new LIRCallIsTruthy(conditionTemp, isTruthyTemp));
+                        DefineTempStorage(isTruthyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                        conditionTemp = isTruthyTemp;
+                    }
+
+                    // Branch to end if condition is false
+                    lirInstructions.Add(new LIRBranchIfFalse(conditionTemp, loopEndLabel));
+
+                    // Loop body
+                    _loopStack.Push(new LoopContext(loopEndLabel, loopStartLabel, whileStmt.Label));
+                    try
+                    {
+                        if (!TryLowerStatement(whileStmt.Body))
+                        {
+                            return false;
+                        }
+                    }
+                    finally
+                    {
+                        _loopStack.Pop();
+                    }
+
+                    // Jump back to loop start
+                    lirInstructions.Add(new LIRBranch(loopStartLabel));
+
+                    // Loop end label
+                    lirInstructions.Add(new LIRLabel(loopEndLabel));
+
+                    return true;
+                }
+            case HIRDoWhileStatement doWhileStmt:
+                {
+                    // Do/while loop structure:
+                    // loop_start:
+                    //   body
+                    // loop_test:
+                    //   if (!test) goto end
+                    //   goto loop_start
+                    // end:
+
+                    int loopStartLabel = CreateLabel();
+                    int loopTestLabel = CreateLabel();
+                    int loopEndLabel = CreateLabel();
+
+                    // Loop start label
+                    lirInstructions.Add(new LIRLabel(loopStartLabel));
+
+                    // Loop body (always executes at least once)
+                    _loopStack.Push(new LoopContext(loopEndLabel, loopTestLabel, doWhileStmt.Label));
+                    try
+                    {
+                        if (!TryLowerStatement(doWhileStmt.Body))
+                        {
+                            return false;
+                        }
+                    }
+                    finally
+                    {
+                        _loopStack.Pop();
+                    }
+
+                    // Continue target (do/while continue should skip remainder of body and go to test)
+                    lirInstructions.Add(new LIRLabel(loopTestLabel));
+
+                    // Test condition
+                    if (!TryLowerExpression(doWhileStmt.Test, out var conditionTemp))
+                    {
+                        return false;
+                    }
+
+                    // If the condition is boxed or is an object reference, convert to boolean using IsTruthy
+                    var conditionStorage = GetTempStorage(conditionTemp);
+                    bool needsTruthyCheck = conditionStorage.Kind == ValueStorageKind.BoxedValue ||
+                        (conditionStorage.Kind == ValueStorageKind.Reference && conditionStorage.ClrType == typeof(object));
+
+                    if (needsTruthyCheck)
+                    {
+                        var isTruthyTemp = CreateTempVariable();
+                        lirInstructions.Add(new LIRCallIsTruthy(conditionTemp, isTruthyTemp));
+                        DefineTempStorage(isTruthyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                        conditionTemp = isTruthyTemp;
+                    }
+
+                    // Branch to end if condition is false
+                    lirInstructions.Add(new LIRBranchIfFalse(conditionTemp, loopEndLabel));
+
+                    // Jump back to loop start
+                    lirInstructions.Add(new LIRBranch(loopStartLabel));
+
+                    // Loop end label
+                    lirInstructions.Add(new LIRLabel(loopEndLabel));
+
+                    return true;
+                }
+            case HIRBreakStatement breakStmt:
+                {
+                    if (!TryResolveLoopTarget(breakStmt.Label, out var target, isBreak: true))
+                    {
+                        return false;
+                    }
+
+                    lirInstructions.Add(new LIRBranch(target));
+                    return true;
+                }
+            case HIRContinueStatement continueStmt:
+                {
+                    if (!TryResolveLoopTarget(continueStmt.Label, out var target, isBreak: false))
+                    {
+                        return false;
+                    }
+
+                    lirInstructions.Add(new LIRBranch(target));
+                    return true;
+                }
             case HIRBlock block:
                 // Lower each statement in the block - return false on first failure
                 return block.Statements.All(TryLowerStatement);
@@ -734,6 +905,32 @@ public sealed class HIRToLIRLowerer
                 // Unsupported statement type
                 return false;
         }
+    }
+
+    private bool TryResolveLoopTarget(string? label, out int targetLabel, bool isBreak)
+    {
+        targetLabel = default;
+
+        if (_loopStack.Count == 0)
+        {
+            return false;
+        }
+
+        if (string.IsNullOrEmpty(label))
+        {
+            var ctx = _loopStack.Peek();
+            targetLabel = isBreak ? ctx.BreakLabel : ctx.ContinueLabel;
+            return true;
+        }
+
+        foreach (var ctx in _loopStack.Where(ctx => string.Equals(ctx.LabelName, label, global::System.StringComparison.Ordinal)))
+        {
+            targetLabel = isBreak ? ctx.BreakLabel : ctx.ContinueLabel;
+            return true;
+        }
+
+
+        return false;
     }
 
     private int CreateLabel() => _labelCounter++;

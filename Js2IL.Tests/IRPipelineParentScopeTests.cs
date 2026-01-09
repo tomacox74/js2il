@@ -43,7 +43,7 @@ public class IRPipelineParentScopeTests
                 OutputDirectory = outputPath
             };
 
-            var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFileSystem);
+            var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFileSystem, new TestLogger());
             var compiler = serviceProvider.GetRequiredService<Compiler>();
 
             Assert.True(compiler.Compile(testFilePath));
@@ -112,7 +112,7 @@ public class IRPipelineParentScopeTests
                 OutputDirectory = outputPath
             };
 
-            var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFileSystem);
+            var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFileSystem, new TestLogger());
             var compiler = serviceProvider.GetRequiredService<Compiler>();
 
             Assert.True(compiler.Compile(testFilePath));

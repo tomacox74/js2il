@@ -9,12 +9,14 @@ public sealed class HIRForStatement : HIRStatement
         HIRStatement? init,
         HIRExpression? test,
         HIRExpression? update,
-        HIRStatement body)
+        HIRStatement body,
+        string? label = null)
     {
         Init = init;
         Test = test;
         Update = update;
         Body = body;
+        Label = label;
     }
 
     /// <summary>
@@ -37,4 +39,9 @@ public sealed class HIRForStatement : HIRStatement
     /// The loop body statement.
     /// </summary>
     public HIRStatement Body { get; }
+
+    /// <summary>
+    /// Optional label name (e.g. label: for (...) { ... }).
+    /// </summary>
+    public string? Label { get; }
 }

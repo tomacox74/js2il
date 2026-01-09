@@ -19,8 +19,6 @@ namespace Js2IL.Tests.ControlFlow
 
         [Fact]
         public Task ControlFlow_DoWhile_Break_AtThree() { var testName = nameof(ControlFlow_DoWhile_Break_AtThree); return ExecutionTest(testName); }
-
-        // Pending feature: continue statement support
         [Fact]
         public Task ControlFlow_DoWhile_Continue_SkipEven() { var testName = nameof(ControlFlow_DoWhile_Continue_SkipEven); return ExecutionTest(testName); }
 
@@ -29,6 +27,9 @@ namespace Js2IL.Tests.ControlFlow
 
         [Fact]
         public Task ControlFlow_DoWhile_NestedLet() { var testName = nameof(ControlFlow_DoWhile_NestedLet); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_DoWhile_CountUp_AtLeastOnce() { var testName = nameof(ControlFlow_DoWhile_CountUp_AtLeastOnce); return ExecutionTest(testName); }
 
         [Fact]
         public Task ControlFlow_ForLoop_Break_AtThree() { var testName = nameof(ControlFlow_ForLoop_Break_AtThree); return ExecutionTest(testName); }
