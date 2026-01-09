@@ -239,6 +239,12 @@ internal static class TempLocalAllocator
             case LIRConvertToNumber convNum:
                 yield return convNum.Source;
                 break;
+            case LIRConvertToBoolean convBool:
+                yield return convBool.Source;
+                break;
+            case LIRConvertToString convString:
+                yield return convString.Source;
+                break;
             case LIRTypeof t:
                 yield return t.Value;
                 break;
@@ -416,6 +422,12 @@ internal static class TempLocalAllocator
                     yield return newError.Message.Value;
                 }
                 break;
+            case LIRNewIntrinsicObject newIntrinsic:
+                foreach (var arg in newIntrinsic.Arguments)
+                {
+                    yield return arg;
+                }
+                break;
             // LIRLabel and LIRBranch don't use temps
         }
     }
@@ -477,6 +489,12 @@ internal static class TempLocalAllocator
                 return true;
             case LIRConvertToNumber convNum:
                 defined = convNum.Result;
+                return true;
+            case LIRConvertToBoolean convBool:
+                defined = convBool.Result;
+                return true;
+            case LIRConvertToString convString:
+                defined = convString.Result;
                 return true;
             case LIRTypeof t:
                 defined = t.Result;
@@ -594,6 +612,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRNewBuiltInError newError:
                 defined = newError.Result;
+                return true;
+            case LIRNewIntrinsicObject newIntrinsic:
+                defined = newIntrinsic.Result;
                 return true;
             default:
                 defined = default;

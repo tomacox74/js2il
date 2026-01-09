@@ -113,6 +113,16 @@ public record LIRConvertToObject(TempVariable Source, Type SourceType, TempVaria
 /// </summary>
 public record LIRConvertToNumber(TempVariable Source, TempVariable Result) : LIRInstruction;
 
+/// <summary>
+/// Converts a value (typically an object) to a JavaScript boolean (truthiness) using runtime coercion.
+/// </summary>
+public record LIRConvertToBoolean(TempVariable Source, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Converts a value (typically an object) to a JavaScript string using runtime coercion.
+/// </summary>
+public record LIRConvertToString(TempVariable Source, TempVariable Result) : LIRInstruction;
+
 public record LIRTypeof(TempVariable Value, TempVariable Result) : LIRInstruction;
 
 public record LIRNegateNumber(TempVariable Value, TempVariable Result) : LIRInstruction;
@@ -184,6 +194,13 @@ public record LIRThrowNewTypeError(string Message) : LIRInstruction;
 /// Constructs a built-in JavaScriptRuntime Error type (Error, TypeError, etc.) with optional message.
 /// </summary>
 public record LIRNewBuiltInError(string ErrorTypeName, TempVariable? Message, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Creates a new instance of a JavaScriptRuntime intrinsic type via its constructor.
+/// The intrinsic type is resolved via IntrinsicObjectRegistry using IntrinsicName.
+/// Supported ctor shapes are intentionally minimal and selected by arity.
+/// </summary>
+public record LIRNewIntrinsicObject(string IntrinsicName, IReadOnlyList<TempVariable> Arguments, TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Loads a captured variable from a field on the leaf (current) scope instance.

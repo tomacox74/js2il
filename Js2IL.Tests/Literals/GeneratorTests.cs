@@ -18,6 +18,9 @@ namespace Js2IL.Tests.Literals
         // Repro for property assignment on object literal (expected to fail until supported)
         [Fact] public Task ObjectLiteral_PropertyAssign() { var testName = nameof(ObjectLiteral_PropertyAssign); return GenerateTest(testName); }
 
+        [Fact] public Task NewExpression_Boolean_Sugar() { var testName = nameof(NewExpression_Boolean_Sugar); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+        [Fact] public Task NewExpression_Number_Sugar() { var testName = nameof(NewExpression_Number_Sugar); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+
     // No helper needed; GenerateTest loads embedded JS by convention
     }
 }

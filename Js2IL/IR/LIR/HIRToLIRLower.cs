@@ -1647,31 +1647,172 @@ public sealed class HIRToLIRLowerer
             return false;
         }
 
-        var errorTypeName = calleeVar.Name.Name;
-        if (!BuiltInErrorTypes.IsBuiltInErrorTypeName(errorTypeName))
-        {
-            return false;
-        }
+        var ctorName = calleeVar.Name.Name;
 
-        if (newExpr.Arguments.Count > 1)
+        // PL3.3a: built-in Error types
+        if (BuiltInErrorTypes.IsBuiltInErrorTypeName(ctorName))
         {
-            return false;
-        }
-
-        TempVariable? messageTemp = null;
-        if (newExpr.Arguments.Count == 1)
-        {
-            if (!TryLowerExpression(newExpr.Arguments[0], out var loweredMessage))
+            if (newExpr.Arguments.Count > 1)
             {
                 return false;
             }
-            messageTemp = EnsureObject(loweredMessage);
+
+            TempVariable? messageTemp = null;
+            if (newExpr.Arguments.Count == 1)
+            {
+                if (!TryLowerExpression(newExpr.Arguments[0], out var loweredMessage))
+                {
+                    return false;
+                }
+                messageTemp = EnsureObject(loweredMessage);
+            }
+
+            resultTempVar = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRNewBuiltInError(ctorName, messageTemp, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
         }
 
-        resultTempVar = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRNewBuiltInError(errorTypeName, messageTemp, resultTempVar));
-        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
-        return true;
+        // PL3.3d: Array constructor semantics
+        if (string.Equals(ctorName, "Array", StringComparison.Ordinal))
+        {
+            var argTemps = new List<TempVariable>(newExpr.Arguments.Count);
+            foreach (var arg in newExpr.Arguments)
+            {
+                if (!TryLowerExpression(arg, out var argTemp))
+                {
+                    return false;
+                }
+                argTemps.Add(EnsureObject(argTemp));
+            }
+
+            resultTempVar = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic("Array", "Construct", argTemps, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
+        // PL3.3e: String constructor sugar
+        if (string.Equals(ctorName, "String", StringComparison.Ordinal))
+        {
+            if (newExpr.Arguments.Count > 1)
+            {
+                return false;
+            }
+
+            TempVariable source;
+            if (newExpr.Arguments.Count == 0)
+            {
+                source = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRConstUndefined(source));
+                DefineTempStorage(source, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            }
+            else
+            {
+                if (!TryLowerExpression(newExpr.Arguments[0], out var argTemp))
+                {
+                    return false;
+                }
+                source = EnsureObject(argTemp);
+            }
+
+            resultTempVar = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConvertToString(source, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+            return true;
+        }
+
+        // PL3.3f: Boolean/Number constructor sugar
+        if (string.Equals(ctorName, "Boolean", StringComparison.Ordinal))
+        {
+            if (newExpr.Arguments.Count > 1)
+            {
+                return false;
+            }
+
+            TempVariable source;
+            if (newExpr.Arguments.Count == 0)
+            {
+                source = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRConstUndefined(source));
+                DefineTempStorage(source, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            }
+            else
+            {
+                if (!TryLowerExpression(newExpr.Arguments[0], out var argTemp))
+                {
+                    return false;
+                }
+                source = EnsureObject(argTemp);
+            }
+
+            resultTempVar = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConvertToBoolean(source, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            return true;
+        }
+
+        if (string.Equals(ctorName, "Number", StringComparison.Ordinal))
+        {
+            if (newExpr.Arguments.Count > 1)
+            {
+                return false;
+            }
+
+            TempVariable source;
+            if (newExpr.Arguments.Count == 0)
+            {
+                source = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRConstUndefined(source));
+                DefineTempStorage(source, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            }
+            else
+            {
+                if (!TryLowerExpression(newExpr.Arguments[0], out var argTemp))
+                {
+                    return false;
+                }
+                source = EnsureObject(argTemp);
+            }
+
+            resultTempVar = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConvertToNumber(source, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            return true;
+        }
+
+        // PL3.3g: generic intrinsic constructor support (Date/RegExp/Set/Promise/Int32Array/etc.)
+        var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(ctorName);
+        if (intrinsicType != null)
+        {
+            bool isStaticClass = intrinsicType.IsAbstract && intrinsicType.IsSealed;
+            if (isStaticClass)
+            {
+                return false;
+            }
+
+            if (newExpr.Arguments.Count > 2)
+            {
+                return false;
+            }
+
+            var argTemps = new List<TempVariable>(newExpr.Arguments.Count);
+            foreach (var arg in newExpr.Arguments)
+            {
+                if (!TryLowerExpression(arg, out var argTemp))
+                {
+                    return false;
+                }
+                argTemps.Add(EnsureObject(argTemp));
+            }
+
+            resultTempVar = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRNewIntrinsicObject(ctorName, argTemps, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
+        return false;
     }
 
     private bool TryLowerCallExpression(HIRCallExpression callExpr, out TempVariable resultTempVar)

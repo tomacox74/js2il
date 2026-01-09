@@ -29,6 +29,12 @@ namespace Js2IL.Tests.Array
         public Task Array_New_Empty() { var testName = nameof(Array_New_Empty); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Array_New_Length() { var testName = nameof(Array_New_Length); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_New_MultipleArgs() { var testName = nameof(Array_New_MultipleArgs); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Array_Pop_Basic() { var testName = nameof(Array_Pop_Basic); return ExecutionTest(testName); }
 
         [Fact]

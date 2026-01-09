@@ -57,5 +57,12 @@ namespace Js2IL.Tests.String
         {
             return ExecutionTest(nameof(String_TemplateLiteral_Basic));
         }
+
+        [Fact]
+        public Task String_New_Sugar()
+        {
+            var testName = nameof(String_New_Sugar);
+            return ExecutionTest(testName);
+        }
     }
 }

@@ -28,7 +28,13 @@ namespace Js2IL.Tests.Array
         public Task Array_Map_NestedParam() { var testName = nameof(Array_Map_NestedParam); return GenerateTest(testName); }
 
         [Fact]
-        public Task Array_New_Empty() { var testName = nameof(Array_New_Empty); return GenerateTest(testName); }
+        public Task Array_New_Empty() { var testName = nameof(Array_New_Empty); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+
+        [Fact]
+        public Task Array_New_Length() { var testName = nameof(Array_New_Length); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+
+        [Fact]
+        public Task Array_New_MultipleArgs() { var testName = nameof(Array_New_MultipleArgs); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
         public Task Array_Pop_Basic() { var testName = nameof(Array_Pop_Basic); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
