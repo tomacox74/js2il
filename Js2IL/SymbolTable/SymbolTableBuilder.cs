@@ -363,32 +363,29 @@ namespace Js2IL.SymbolTables
                                 else if (p is ObjectPattern op)
                                 {
                                     // Destructuring parameter - register bindings for each property
-                                    foreach (var pnode in op.Properties)
+                                    foreach (var prop in op.Properties.OfType<Property>())
                                     {
-                                        if (pnode is Property prop)
+                                        // Handle default values: {a = 10} where Value is AssignmentPattern
+                                        Identifier? bindId = null;
+                                        if (prop.Value is AssignmentPattern apPattern && apPattern.Left is Identifier apLeftId)
                                         {
-                                            // Handle default values: {a = 10} where Value is AssignmentPattern
-                                            Identifier? bindId = null;
-                                            if (prop.Value is AssignmentPattern apPattern && apPattern.Left is Identifier apLeftId)
-                                            {
-                                                bindId = apLeftId;
-                                            }
-                                            else
-                                            {
-                                                bindId = prop.Value as Identifier ?? prop.Key as Identifier;
-                                            }
-                                            
-                                            if (bindId != null && !methodScope.Bindings.ContainsKey(bindId.Name))
-                                            {
-                                                methodScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, bindId);
-                                                // Mark as parameter so TypeGenerator creates fields/locals for them
-                                                methodScope.Parameters.Add(bindId.Name);
-                                            }
-                                            // Track that this is a destructured parameter (needs field for storage)
-                                            if (bindId != null && !methodScope.DestructuredParameters.Contains(bindId.Name))
-                                            {
-                                                methodScope.DestructuredParameters.Add(bindId.Name);
-                                            }
+                                            bindId = apLeftId;
+                                        }
+                                        else
+                                        {
+                                            bindId = prop.Value as Identifier ?? prop.Key as Identifier;
+                                        }
+
+                                        if (bindId != null && !methodScope.Bindings.ContainsKey(bindId.Name))
+                                        {
+                                            methodScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, bindId);
+                                            // Mark as parameter so TypeGenerator creates fields/locals for them
+                                            methodScope.Parameters.Add(bindId.Name);
+                                        }
+                                        // Track that this is a destructured parameter (needs field for storage)
+                                        if (bindId != null && !methodScope.DestructuredParameters.Contains(bindId.Name))
+                                        {
+                                            methodScope.DestructuredParameters.Add(bindId.Name);
                                         }
                                     }
                                 }
@@ -622,29 +619,26 @@ namespace Js2IL.SymbolTables
                         else if (param is ObjectPattern op)
                         {
                             // Destructured parameter: bind each property identifier as a local binding in arrow function scope
-                            foreach (var pnode in op.Properties)
+                            foreach (var prop in op.Properties.OfType<Property>())
                             {
-                                if (pnode is Property prop)
+                                // Handle default values: {a = 10} where Value is AssignmentPattern
+                                // Extract the binding identifier
+                                Identifier? bindId = null;
+                                if (prop.Value is AssignmentPattern apPattern && apPattern.Left is Identifier apLeftId)
                                 {
-                                    // Handle default values: {a = 10} where Value is AssignmentPattern
-                                    // Extract the binding identifier
-                                    Identifier? bindId = null;
-                                    if (prop.Value is AssignmentPattern apPattern && apPattern.Left is Identifier apLeftId)
-                                    {
-                                        bindId = apLeftId;
-                                    }
-                                    else
-                                    {
-                                        // Binding target name: prefer value identifier (alias), else shorthand key identifier
-                                        bindId = prop.Value as Identifier ?? prop.Key as Identifier;
-                                    }
-                                    
-                                    if (bindId != null && !arrowScope.Bindings.ContainsKey(bindId.Name))
-                                    {
-                                        arrowScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, bindId);
-                                        // Mark as parameter so TypeGenerator creates fields for them
-                                        arrowScope.Parameters.Add(bindId.Name);
-                                    }
+                                    bindId = apLeftId;
+                                }
+                                else
+                                {
+                                    // Binding target name: prefer value identifier (alias), else shorthand key identifier
+                                    bindId = prop.Value as Identifier ?? prop.Key as Identifier;
+                                }
+
+                                if (bindId != null && !arrowScope.Bindings.ContainsKey(bindId.Name))
+                                {
+                                    arrowScope.Bindings[bindId.Name] = new BindingInfo(bindId.Name, BindingKind.Var, bindId);
+                                    // Mark as parameter so TypeGenerator creates fields for them
+                                    arrowScope.Parameters.Add(bindId.Name);
                                 }
                             }
                             // Parameter list will still receive a synthetic name during codegen; no binding needed for it.
