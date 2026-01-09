@@ -5,7 +5,7 @@ namespace Js2IL.Tests.String
 {
     public class GeneratorTests : GeneratorTestsBase
     {
-    public GeneratorTests() : base("String") {}
+    public GeneratorTests() : base("String") { }
         [Fact]
         public Task String_LocaleCompare_Numeric()
         {
@@ -61,8 +61,12 @@ namespace Js2IL.Tests.String
             var testName = nameof(String_TemplateLiteral_Basic);
             return GenerateTest(testName);
         }
-        
-            [Fact]
-            public Task String_New_Sugar() { var testName = nameof(String_New_Sugar); return GenerateTest(testName); }
+
+        [Fact]
+        public Task String_New_Sugar()
+        {
+            var testName = nameof(String_New_Sugar);
+            return GenerateTest(testName);
+        }
     }
 }

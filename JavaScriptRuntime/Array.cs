@@ -42,7 +42,9 @@ namespace JavaScriptRuntime
 
                 // JS: if the single argument is a number, it is treated as length (with RangeError for invalid).
                 // Otherwise it is treated as an element.
-                if (a0 is double || a0 is float || a0 is int || a0 is long || a0 is short || a0 is byte)
+                if (a0 is double || a0 is float || a0 is decimal ||
+                    a0 is int || a0 is long || a0 is short || a0 is byte || a0 is sbyte ||
+                    a0 is uint || a0 is ulong || a0 is ushort)
                 {
                     var d = TypeUtilities.ToNumber(a0);
                     // JS requires a finite integer in [0, 2^32-1]. Keep minimal and clamp to int.MaxValue.
@@ -51,14 +53,16 @@ namespace JavaScriptRuntime
                         throw new RangeError("Invalid array length");
                     }
 
-                    var len = (long)d;
-                    if (d != len || len < 0 || len > int.MaxValue)
+                    // Validate that d is a non-negative integer within [0, int.MaxValue].
+                    if (d < 0 || d > int.MaxValue || d % 1 != 0)
                     {
                         throw new RangeError("Invalid array length");
                     }
 
+                    var len = (int)d;
+
                     var result = new Array();
-                    for (int i = 0; i < (int)len; i++)
+                    for (int i = 0; i < len; i++)
                     {
                         result.Add(null);
                     }
