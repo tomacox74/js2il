@@ -64,7 +64,7 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| var | Supported | `Js2IL.Tests/Function/JavaScript/Function_GlobalFunctionChangesGlobalVariableValue.js`<br>`Js2IL.Tests/Function/JavaScript/Function_GlobalFunctionDeclaresAndCallsNestedFunction.js`<br>`Js2IL.Tests/Function/JavaScript/Function_GlobalFunctionLogsGlobalVariable.js` |  | 13.2.1 |
+| var | Supported | `Js2IL.Tests/Function/JavaScript/Function_GlobalFunctionChangesGlobalVariableValue.js`<br>`Js2IL.Tests/Function/JavaScript/Function_GlobalFunctionDeclaresAndCallsNestedFunction.js`<br>`Js2IL.Tests/Function/JavaScript/Function_GlobalFunctionLogsGlobalVariable.js` |  | 13.2.1.1 |
 
 
 #### [Binding patterns (destructuring)](https://tc39.es/ecma262/#sec-destructuring-binding-patterns)
@@ -803,35 +803,35 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| String.prototype.startsWith | Supported | `Js2IL.Tests/String/JavaScript/String_StartsWith_Basic.js` | Reflection-based string dispatch routes CLR string receivers to JavaScriptRuntime.String.StartsWith with optional position argument. Returns a boolean value (boxed). | 24.1.3 |
+| String.prototype.startsWith | Supported | `Js2IL.Tests/String/JavaScript/String_StartsWith_Basic.js` | Reflection-based string dispatch routes CLR string receivers to JavaScriptRuntime.String.StartsWith with optional position argument. Returns a boolean value (boxed). | 24.1.3.1 |
 
 
 #### [String.prototype.includes](https://tc39.es/ecma262/#sec-string.prototype.includes)
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| String.prototype.includes | Supported |  | Reflection-based dispatch recognizes definite string receivers and routes to JavaScriptRuntime.String.Includes; supports optional position argument. Returns a boolean value. (No dedicated JS fixture currently referenced in this doc.) | 24.1.3 |
+| String.prototype.includes | Supported |  | Reflection-based dispatch recognizes definite string receivers and routes to JavaScriptRuntime.String.Includes; supports optional position argument. Returns a boolean value. (No dedicated JS fixture currently referenced in this doc.) | 24.1.3.2 |
 
 
 #### [String.prototype.endsWith](https://tc39.es/ecma262/#sec-string.prototype.endswith)
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| String.prototype.endsWith | Supported |  | Implemented in JavaScriptRuntime.String and wired via IL generator for definite string receivers. Supports optional end position. Returns a boolean value. (No dedicated JS fixture currently referenced in this doc.) | 24.1.3 |
+| String.prototype.endsWith | Supported |  | Implemented in JavaScriptRuntime.String and wired via IL generator for definite string receivers. Supports optional end position. Returns a boolean value. (No dedicated JS fixture currently referenced in this doc.) | 24.1.3.3 |
 
 
 #### [String.prototype.split](https://tc39.es/ecma262/#sec-string.prototype.split)
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| String.prototype.split | Supported | `Js2IL.Tests/String/JavaScript/String_Split_Basic.js` | Supports string and regular-expression separators and optional limit. Implemented via JavaScriptRuntime.String.Split and returned as JavaScriptRuntime.Array. Separator omitted or undefined returns [input]. Empty string separator splits into individual UTF-16 code units. | 24.1.3 |
+| String.prototype.split | Supported | `Js2IL.Tests/String/JavaScript/String_Split_Basic.js` | Supports string and regular-expression separators and optional limit. Implemented via JavaScriptRuntime.String.Split and returned as JavaScriptRuntime.Array. Separator omitted or undefined returns [input]. Empty string separator splits into individual UTF-16 code units. | 24.1.3.4 |
 
 
 #### [String.prototype.replace](https://tc39.es/ecma262/#sec-string.prototype.replace)
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| String.prototype.replace (regex literal, string replacement) | Partially Supported | `Js2IL.Tests/String/JavaScript/String_Replace_Regex_Global.js` | Supported when the receiver is String(x), the pattern is a regular expression literal, and the replacement is a string. Global (g) and ignoreCase (i) flags are honored. Function replacement, non-regex patterns, and other flags are not yet implemented. Implemented via host intrinsic JavaScriptRuntime.String.Replace and dynamic resolution in IL generator. | 24.1.3 |
+| String.prototype.replace (regex literal, string replacement) | Partially Supported | `Js2IL.Tests/String/JavaScript/String_Replace_Regex_Global.js` | Supported when the receiver is String(x), the pattern is a regular expression literal, and the replacement is a string. Global (g) and ignoreCase (i) flags are honored. Function replacement, non-regex patterns, and other flags are not yet implemented. Implemented via host intrinsic JavaScriptRuntime.String.Replace and dynamic resolution in IL generator. | 24.1.3.5 |
 
 
 #### [String.prototype.localeCompare](https://tc39.es/ecma262/#sec-string.prototype.localecompare)
