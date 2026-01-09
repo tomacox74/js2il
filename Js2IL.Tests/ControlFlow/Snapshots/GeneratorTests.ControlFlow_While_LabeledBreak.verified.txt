@@ -14,6 +14,28 @@
 		.class nested public auto ansi beforefieldinit Block_L4C30
 			extends [System.Runtime]System.Object
 		{
+			// Nested Types
+			.class nested public auto ansi beforefieldinit Block_L5C17
+				extends [System.Runtime]System.Object
+			{
+				// Methods
+				.method public hidebysig specialname rtspecialname 
+					instance void .ctor () cil managed 
+				{
+					// Method begins at RVA 0x206b
+					// Header size: 1
+					// Code size: 8 (0x8)
+					.maxstack 8
+
+					IL_0000: ldarg.0
+					IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+					IL_0006: nop
+					IL_0007: ret
+				} // end of method Block_L5C17::.ctor
+
+			} // end of class Block_L5C17
+
+
 			// Methods
 			.method public hidebysig specialname rtspecialname 
 				instance void .ctor () cil managed 
@@ -80,9 +102,9 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x206c
+		// Method begins at RVA 0x2074
 		// Header size: 12
-		// Code size: 158 (0x9e)
+		// Code size: 175 (0xaf)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ControlFlow_While_LabeledBreak,
@@ -97,62 +119,67 @@
 		IL_000f: stloc.1
 		// loop start (head: IL_0010)
 			IL_0010: ldc.i4.1
-			IL_0011: brfalse IL_0082
+			IL_0011: brfalse IL_0093
 
 			IL_0016: ldc.r8 0.0
 			IL_001f: stloc.2
 			// loop start (head: IL_0020)
 				IL_0020: ldloc.2
-				IL_0021: ldc.r8 1
+				IL_0021: ldc.r8 2
 				IL_002a: clt
-				IL_002c: brfalse IL_0062
+				IL_002c: brfalse IL_0073
 
-				IL_0031: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0036: stloc.3
-				IL_0037: ldloc.3
-				IL_0038: ldc.i4.1
-				IL_0039: newarr [System.Runtime]System.Object
-				IL_003e: dup
-				IL_003f: ldc.i4.0
-				IL_0040: ldstr "a"
-				IL_0045: stelem.ref
-				IL_0046: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-				IL_004b: pop
-				IL_004c: br IL_0082
+				IL_0031: ldloc.2
+				IL_0032: ldc.r8 1
+				IL_003b: ceq
+				IL_003d: brfalse IL_0062
 
-				IL_0051: ldloc.2
-				IL_0052: ldc.r8 1
-				IL_005b: add
-				IL_005c: stloc.2
-				IL_005d: br IL_0020
+				IL_0042: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0047: stloc.3
+				IL_0048: ldloc.3
+				IL_0049: ldc.i4.1
+				IL_004a: newarr [System.Runtime]System.Object
+				IL_004f: dup
+				IL_0050: ldc.i4.0
+				IL_0051: ldstr "a"
+				IL_0056: stelem.ref
+				IL_0057: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+				IL_005c: pop
+				IL_005d: br IL_0093
+
+				IL_0062: ldloc.2
+				IL_0063: ldc.r8 1
+				IL_006c: add
+				IL_006d: stloc.2
+				IL_006e: br IL_0020
 			// end loop
 
-			IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0067: stloc.3
-			IL_0068: ldloc.3
-			IL_0069: ldc.i4.1
-			IL_006a: newarr [System.Runtime]System.Object
-			IL_006f: dup
-			IL_0070: ldc.i4.0
-			IL_0071: ldstr "x"
-			IL_0076: stelem.ref
-			IL_0077: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_007c: pop
-			IL_007d: br IL_0010
+			IL_0073: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0078: stloc.3
+			IL_0079: ldloc.3
+			IL_007a: ldc.i4.1
+			IL_007b: newarr [System.Runtime]System.Object
+			IL_0080: dup
+			IL_0081: ldc.i4.0
+			IL_0082: ldstr "x"
+			IL_0087: stelem.ref
+			IL_0088: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_008d: pop
+			IL_008e: br IL_0010
 		// end loop
 
-		IL_0082: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0087: stloc.3
-		IL_0088: ldloc.3
-		IL_0089: ldc.i4.1
-		IL_008a: newarr [System.Runtime]System.Object
-		IL_008f: dup
-		IL_0090: ldc.i4.0
-		IL_0091: ldstr "b"
-		IL_0096: stelem.ref
-		IL_0097: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_009c: pop
-		IL_009d: ret
+		IL_0093: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0098: stloc.3
+		IL_0099: ldloc.3
+		IL_009a: ldc.i4.1
+		IL_009b: newarr [System.Runtime]System.Object
+		IL_00a0: dup
+		IL_00a1: ldc.i4.0
+		IL_00a2: ldstr "b"
+		IL_00a7: stelem.ref
+		IL_00a8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00ad: pop
+		IL_00ae: ret
 	} // end of method ControlFlow_While_LabeledBreak::Main
 
 } // end of class Scripts.ControlFlow_While_LabeledBreak
@@ -164,7 +191,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2116
+		// Method begins at RVA 0x212f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

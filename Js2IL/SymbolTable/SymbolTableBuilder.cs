@@ -539,17 +539,14 @@ namespace Js2IL.SymbolTables
                             }
 
                             // Create bindings for each property in the pattern (only simple identifiers for now)
-                            foreach (var pnode in objPattern.Properties)
+                            foreach (var prop in objPattern.Properties.OfType<Property>())
                             {
-                                if (pnode is Property prop)
+                                // The binding identifier is in prop.Value for patterns like { performance }
+                                if (prop.Value is Identifier bid)
                                 {
-                                    // The binding identifier is in prop.Value for patterns like { performance }
-                                    if (prop.Value is Identifier bid)
+                                    if (!targetScope.Bindings.ContainsKey(bid.Name))
                                     {
-                                        if (!targetScope.Bindings.ContainsKey(bid.Name))
-                                        {
-                                            targetScope.Bindings[bid.Name] = new BindingInfo(bid.Name, kind, decl);
-                                        }
+                                        targetScope.Bindings[bid.Name] = new BindingInfo(bid.Name, kind, decl);
                                     }
                                 }
                             }
