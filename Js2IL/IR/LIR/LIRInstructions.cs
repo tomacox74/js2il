@@ -1,6 +1,7 @@
 using Js2IL.Services.ScopesAbi;
 using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.SymbolTables;
+using Acornima.Ast;
 
 namespace Js2IL.IR;
 
@@ -201,6 +202,20 @@ public record LIRNewBuiltInError(string ErrorTypeName, TempVariable? Message, Te
 /// Supported ctor shapes are intentionally minimal and selected by arity.
 /// </summary>
 public record LIRNewIntrinsicObject(string IntrinsicName, IReadOnlyList<TempVariable> Arguments, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Creates a new instance of a user-defined JavaScript class (compiled as a .NET type).
+/// Constructor tokens are resolved via <see cref="CallableRegistry"/> using <see cref="ConstructorNode"/>.
+/// </summary>
+public record LIRNewUserClass(
+    string ClassName,
+    Node ConstructorNode,
+    bool NeedsScopes,
+    TempVariable? ScopesArray,
+    int MinArgCount,
+    int MaxArgCount,
+    IReadOnlyList<TempVariable> Arguments,
+    TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Loads a captured variable from a field on the leaf (current) scope instance.

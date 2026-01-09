@@ -27,7 +27,7 @@ namespace Js2IL.Services.ILGenerators
 
         private BaseClassLibraryReferences _bclReferences;
 
-        private readonly ClassRegistry _classRegistry = new();
+        private readonly ClassRegistry _classRegistry;
         
         private readonly TwoPhaseCompilationCoordinator _twoPhaseCoordinator;
         private readonly IServiceProvider _serviceProvider;
@@ -47,6 +47,7 @@ namespace Js2IL.Services.ILGenerators
             var compilerOptions = serviceProvider.GetRequiredService<CompilerOptions>();
             _verbose = compilerOptions.Verbose;
             _logger = serviceProvider.GetRequiredService<ILogger>();
+            _classRegistry = serviceProvider.GetRequiredService<ClassRegistry>();
             _functionGenerator = new JavaScriptFunctionGenerator(serviceProvider, variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, symbolTable);
             _ilGenerator = new ILMethodGenerator(serviceProvider, variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, _functionGenerator.FunctionRegistry, symbolTable: symbolTable);
             _classesGenerator = new ClassesGenerator(serviceProvider,metadataBuilder, bclReferences, methodBodyStreamEncoder, _classRegistry, variables);            
