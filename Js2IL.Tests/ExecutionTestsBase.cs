@@ -150,74 +150,126 @@ namespace Js2IL.Tests
 
             var uniquePath = Path.Combine(dir, Path.GetFileNameWithoutExtension(assemblyPath) + $".run-{Guid.NewGuid():N}.dll");
             File.Copy(assemblyPath, uniquePath, overwrite: true);
-            var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(uniquePath);
-            var entryPoint = assembly.EntryPoint ?? throw new InvalidOperationException("No entry point found in the generated assembly.");
 
-            var modDir = Path.GetDirectoryName(assemblyPath) ?? string.Empty;
-            var file = assemblyPath;
+            // Load the generated assembly into an isolated collectible ALC per test to avoid
+            // collisions when multiple tests compile to the same assembly name (e.g., many
+            // CommonJS tests have an entry module named "a").
+            // IMPORTANT: We must ensure the generated assembly binds to the already-loaded
+            // JavaScriptRuntime assembly, otherwise runtime statics/mocks won't match.
+            var alc = new TestAssemblyLoadContext(jsRuntimeAsm, dir);
+            string outText;
+            try
+            {
+                var assembly = alc.LoadFromAssemblyPath(uniquePath);
+                var entryPoint = assembly.EntryPoint ?? throw new InvalidOperationException("No entry point found in the generated assembly.");
+
+                var modDir = Path.GetDirectoryName(assemblyPath) ?? string.Empty;
+                var file = assemblyPath;
             
             // mocks are created here
             var captured = new CapturingConsoleOutput();
             var capturedEnvironment = new CapturingEnvironment();
 
-            var setupMocks = () =>
-            {
-                JavaScriptRuntime.CommonJS.ModuleContext.SetModuleContext(modDir, file);
-                JavaScriptRuntime.EnvironmentProvider.SuppressExit = true;
-                var serviceProvider = JavaScriptRuntime.RuntimeServices.BuildServiceProvider();
-                serviceProvider.RegisterInstance(new ConsoleOutputSinks
+                var setupMocks = () =>
                 {
-                    Output = captured,
-                    ErrorOutput = captured
-                });
-                serviceProvider.RegisterInstance<IEnvironment>(capturedEnvironment);
+                    JavaScriptRuntime.CommonJS.ModuleContext.SetModuleContext(modDir, file);
+                    JavaScriptRuntime.EnvironmentProvider.SuppressExit = true;
+                    var serviceProvider = JavaScriptRuntime.RuntimeServices.BuildServiceProvider();
+                    serviceProvider.RegisterInstance(new ConsoleOutputSinks
+                    {
+                        Output = captured,
+                        ErrorOutput = captured
+                    });
+                    serviceProvider.RegisterInstance<IEnvironment>(capturedEnvironment);
 
-                addMocks?.Invoke(serviceProvider);
+                    addMocks?.Invoke(serviceProvider);
 
-                JavaScriptRuntime.Engine._serviceProviderOverride.Value = serviceProvider;
-            };
+                    JavaScriptRuntime.Engine._serviceProviderOverride.Value = serviceProvider;
+                };
 
 
             // Run the entry point in a separate thread with timeout to prevent infinite hangs
-            Exception? threadException = null;
-            var executionThread = new Thread(() =>
-            {
-                setupMocks();
+                Exception? threadException = null;
+                var executionThread = new Thread(() =>
+                {
+                    setupMocks();
 
-                try
+                    try
+                    {
+                        ((Action)Delegate.CreateDelegate(typeof(Action), entryPoint))();
+                    }
+                    catch (Exception ex)
+                    {
+                        threadException = ex;
+                    }
+                    finally
+                    {
+                        JavaScriptRuntime.Engine._serviceProviderOverride.Value = null;
+                    }
+                });
+                executionThread.Start();
+                bool completed = executionThread.Join(timeoutMs);
+                if (!completed)
                 {
-                    ((Action)Delegate.CreateDelegate(typeof(Action), entryPoint))();
+                    // Cannot safely abort managed threads, but we can at least fail the test
+                    throw new TimeoutException($"In-proc test execution timed out after {timeoutMs}ms. Test may have an infinite loop.");
                 }
-                catch (Exception ex)
+                if (threadException != null)
                 {
-                    threadException = ex;
+                    throw threadException;
                 }
-                finally
-                {
-                    JavaScriptRuntime.Engine._serviceProviderOverride.Value = null;
-                }
-            });
-            executionThread.Start();
-            bool completed = executionThread.Join(timeoutMs);
-            if (!completed)
-            {
-                // Cannot safely abort managed threads, but we can at least fail the test
-                throw new TimeoutException($"In-proc test execution timed out after {timeoutMs}ms. Test may have an infinite loop.");
-            }
-            if (threadException != null)
-            {
-                throw threadException;
-            }
-            
-            postTestProcessingAction?.Invoke(captured);
+                
+                postTestProcessingAction?.Invoke(captured);
 
-            var outText = captured.GetOutput();
-            if (testName.StartsWith("Process_Exit_", StringComparison.Ordinal))
-            {
-                var code = capturedEnvironment.ExitCalledWithCode ?? 0;
-                outText = $"exitCode {code}\n";
+                outText = captured.GetOutput();
+                if (testName.StartsWith("Process_Exit_", StringComparison.Ordinal))
+                {
+                    var code = capturedEnvironment.ExitCalledWithCode ?? 0;
+                    outText = $"exitCode {code}\n";
+                }
             }
+            finally
+            {
+                alc.Unload();
+                for (var i = 0; i < 3; i++)
+                {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                }
+            }
+
             return outText;
+        }
+
+        private sealed class TestAssemblyLoadContext : AssemblyLoadContext
+        {
+            private readonly Assembly _jsRuntimeAssembly;
+            private readonly string _baseDirectory;
+
+            public TestAssemblyLoadContext(Assembly jsRuntimeAssembly, string baseDirectory)
+                : base(isCollectible: true)
+            {
+                _jsRuntimeAssembly = jsRuntimeAssembly;
+                _baseDirectory = baseDirectory;
+            }
+
+            protected override Assembly? Load(AssemblyName assemblyName)
+            {
+                // Ensure the generated assembly uses the same JavaScriptRuntime assembly instance
+                // as the test host, so shared statics (Engine overrides, ModuleContext, etc.) work.
+                if (string.Equals(assemblyName.Name, _jsRuntimeAssembly.GetName().Name, StringComparison.Ordinal))
+                {
+                    return _jsRuntimeAssembly;
+                }
+
+                var candidatePath = Path.Combine(_baseDirectory, (assemblyName.Name ?? string.Empty) + ".dll");
+                if (File.Exists(candidatePath))
+                {
+                    return LoadFromAssemblyPath(candidatePath);
+                }
+
+                return null;
+            }
         }
 
         private sealed class CapturingConsoleOutput : IConsoleOutput
