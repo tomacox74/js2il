@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Runtime.Loader;
 using JavaScriptRuntime;
+using System.Runtime.ExceptionServices;
 
 namespace Js2IL.Tests
 {
@@ -139,6 +140,21 @@ namespace Js2IL.Tests
             ArgumentNullException.ThrowIfNull(assemblyPath, nameof(assemblyPath));
             ArgumentNullException.ThrowIfNull(testName, nameof(testName));
 
+            var assemblySimpleName = Path.GetFileNameWithoutExtension(assemblyPath);
+            var needsIsolation = testName.Contains('/', StringComparison.Ordinal) || testName.Contains('\\', StringComparison.Ordinal);
+
+            if (!needsIsolation)
+            {
+                foreach (var loaded in AssemblyLoadContext.Default.Assemblies)
+                {
+                    if (string.Equals(loaded.GetName().Name, assemblySimpleName, StringComparison.Ordinal))
+                    {
+                        needsIsolation = true;
+                        break;
+                    }
+                }
+            }
+
             var dir = Path.GetDirectoryName(assemblyPath)!;
             var jsRuntimePath = Path.Combine(dir, "JavaScriptRuntime.dll");
             Assembly? jsRuntimeAsm = null;
@@ -148,19 +164,32 @@ namespace Js2IL.Tests
             }
             jsRuntimeAsm ??= typeof(JavaScriptRuntime.EnvironmentProvider).Assembly;
 
-            var uniquePath = Path.Combine(dir, Path.GetFileNameWithoutExtension(assemblyPath) + $".run-{Guid.NewGuid():N}.dll");
-            File.Copy(assemblyPath, uniquePath, overwrite: true);
+            var uniquePath = Path.Combine(dir, assemblySimpleName + $".run-{Guid.NewGuid():N}.dll");
 
-            // Load the generated assembly into an isolated collectible ALC per test to avoid
-            // collisions when multiple tests compile to the same assembly name (e.g., many
-            // CommonJS tests have an entry module named "a").
-            // IMPORTANT: We must ensure the generated assembly binds to the already-loaded
-            // JavaScriptRuntime assembly, otherwise runtime statics/mocks won't match.
-            var alc = new TestAssemblyLoadContext(jsRuntimeAsm, dir);
+            TestAssemblyLoadContext? alc = null;
             string outText;
             try
             {
-                var assembly = alc.LoadFromAssemblyPath(uniquePath);
+                Assembly assembly;
+                if (needsIsolation)
+                {
+                    File.Copy(assemblyPath, uniquePath, overwrite: true);
+
+                    // Load the generated assembly into an isolated collectible ALC per test to avoid
+                    // collisions when multiple tests compile to the same assembly name (e.g., many
+                    // CommonJS tests have an entry module named "a").
+                    // IMPORTANT: We must ensure the generated assembly binds to the already-loaded
+                    // JavaScriptRuntime assembly, otherwise runtime statics/mocks won't match.
+                    alc = new TestAssemblyLoadContext(jsRuntimeAsm, dir);
+                    assembly = alc.LoadFromAssemblyPath(uniquePath);
+                }
+                else
+                {
+                    // Most tests produce a unique assembly name; running in the default ALC keeps behavior
+                    // identical to out-of-proc execution and avoids subtle cross-ALC runtime edge cases.
+                    assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
+                }
+
                 var entryPoint = assembly.EntryPoint ?? throw new InvalidOperationException("No entry point found in the generated assembly.");
 
                 var modDir = Path.GetDirectoryName(assemblyPath) ?? string.Empty;
@@ -188,8 +217,8 @@ namespace Js2IL.Tests
                 };
 
 
-            // Run the entry point in a separate thread with timeout to prevent infinite hangs
-                Exception? threadException = null;
+                // Run the entry point in a separate thread with timeout to prevent infinite hangs
+                ExceptionDispatchInfo? threadException = null;
                 var executionThread = new Thread(() =>
                 {
                     setupMocks();
@@ -200,7 +229,7 @@ namespace Js2IL.Tests
                     }
                     catch (Exception ex)
                     {
-                        threadException = ex;
+                        threadException = ExceptionDispatchInfo.Capture(ex);
                     }
                     finally
                     {
@@ -216,7 +245,7 @@ namespace Js2IL.Tests
                 }
                 if (threadException != null)
                 {
-                    throw threadException;
+                    threadException.Throw();
                 }
                 
                 postTestProcessingAction?.Invoke(captured);
@@ -230,12 +259,17 @@ namespace Js2IL.Tests
             }
             finally
             {
-                alc.Unload();
-                for (var i = 0; i < 3; i++)
+                if (alc != null)
                 {
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
+                    alc.Unload();
+                    for (var i = 0; i < 3; i++)
+                    {
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                    }
                 }
+
+                try { File.Delete(uniquePath); } catch { }
             }
 
             return outText;
