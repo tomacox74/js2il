@@ -126,6 +126,15 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Object literal basic construction | Supported | `Js2IL.Tests/Literals/JavaScript/ObjectLiteral.js` | Covers creation and property access. See also verified output in Literals/GeneratorTests.ObjectLiteral.verified.txt. | 13.2.5.1 |
 
 
+### [Left-Hand-Side Expressions](https://tc39.es/ecma262/#sec-left-hand-side-expressions)
+
+#### [The new Operator](https://tc39.es/ecma262/#sec-new-operator)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| NewExpression for built-in Error types (Error/TypeError/RangeError/ReferenceError/SyntaxError/URIError/EvalError/AggregateError) | Supported | `Js2IL.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js` | Supported in the new IR pipeline for global (non-shadowed) built-in Error identifiers with 0 or 1 argument. When provided, the message is coerced to string. Other NewExpression forms (custom constructors, member expressions, multiple args) are not yet supported in the IR pipeline. | 13.3.1 |
+
+
 ### [Unary Operators](https://tc39.es/ecma262/#sec-ecmascript-language-expressions)
 
 #### [typeof operator](https://tc39.es/ecma262/#sec-typeof-operator)
