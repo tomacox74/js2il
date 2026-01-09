@@ -672,7 +672,8 @@
                   "feature": "Binary || (Logical OR) with short-circuit",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalOr_Value.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalOr_Value.js",
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalOr_ShortCircuit.js"
                   ],
                   "notes": "Value form returns left if truthy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited. Recent fixes ensure strict-equality patterns (e.g. `id === 1024 || id === 2047`) correctly handle captured/boxed variables by performing ToNumber conversion when the variable type is unknown, preventing incorrect direct object-to-number `ceq` comparisons."
                 },
@@ -680,7 +681,8 @@
                   "feature": "Binary && (Logical AND) with short-circuit",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalAnd_Value.js"
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalAnd_Value.js",
+                    "Js2IL.Tests/BinaryOperator/JavaScript/BinaryOperator_LogicalAnd_ShortCircuit.js"
                   ],
                   "notes": "Value form returns left if falsy, otherwise right; branching form uses JS ToBoolean for conditions. Right-hand side is not evaluated when short-circuited."
                 },
@@ -703,9 +705,10 @@
                   "feature": "Conditional operator (?:)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Conditional_Ternary.js"
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Conditional_Ternary.js",
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Conditional_Ternary_ShortCircuit.js"
                   ],
-                  "notes": "Expression-level branching with both arms coerced to object where needed. Verified via generator and execution tests in ControlFlow subgroup."
+                  "notes": "Expression-level branching with both arms coerced to object where needed; only the selected arm is evaluated. Verified via generator and execution tests in ControlFlow subgroup."
                 }
               ]
             }
