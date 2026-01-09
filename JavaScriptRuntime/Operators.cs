@@ -111,9 +111,12 @@ namespace JavaScriptRuntime
             if (ReferenceEquals(a, b))
                 return true;
 
-            // Both null/undefined
-            if ((a == null || a is JsNull) && (b == null || b is JsNull))
-                return true;
+            // JavaScript null/undefined special-case: null == undefined is true,
+            // but null/undefined are not equal to any other value.
+            var aIsNullish = a == null || a is JsNull;
+            var bIsNullish = b == null || b is JsNull;
+            if (aIsNullish || bIsNullish)
+                return aIsNullish && bIsNullish;
 
             // Type coercion: compare as numbers if both can be numeric
             // Note: JavaScript uses IEEE 754 floating-point comparison semantics where
