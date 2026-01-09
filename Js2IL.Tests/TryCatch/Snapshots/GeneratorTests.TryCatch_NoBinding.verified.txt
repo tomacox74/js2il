@@ -69,7 +69,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -80,57 +80,75 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 113 (0x71)
+		// Code size: 135 (0x87)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.TryCatch_NoBinding
+			[0] class Scopes.TryCatch_NoBinding,
+			[1] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
+		IL_0000: newobj instance void Scopes.TryCatch_NoBinding::.ctor()
+		IL_0005: stloc.0
 		.try
 		{
-			IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-			IL_000a: ldc.i4.1
-			IL_000b: newarr [System.Runtime]System.Object
-			IL_0010: dup
-			IL_0011: ldc.i4.0
-			IL_0012: ldstr "before throw"
-			IL_0017: stelem.ref
-			IL_0018: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_001d: pop
-			IL_001e: ldstr "test error message"
-			IL_0023: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-			IL_0028: throw
+			IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_000b: stloc.2
+			IL_000c: ldloc.2
+			IL_000d: ldc.i4.1
+			IL_000e: newarr [System.Runtime]System.Object
+			IL_0013: dup
+			IL_0014: ldc.i4.0
+			IL_0015: ldstr "before throw"
+			IL_001a: stelem.ref
+			IL_001b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0020: pop
+			IL_0021: ldstr "test error message"
+			IL_0026: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
+			IL_0030: dup
+			IL_0031: isinst [System.Runtime]System.Exception
+			IL_0036: dup
+			IL_0037: brtrue IL_0043
 
-			IL_0029: leave IL_0052
+			IL_003c: pop
+			IL_003d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_0042: throw
+
+			IL_0043: pop
+			IL_0044: throw
+
+			IL_0045: leave IL_006b
 		} // end .try
-		catch [JavaScriptRuntime]JavaScriptRuntime.Error
+		catch [System.Runtime]System.Exception
 		{
-			IL_002e: pop
-			IL_002f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0034: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-			IL_0039: ldc.i4.1
-			IL_003a: newarr [System.Runtime]System.Object
-			IL_003f: dup
-			IL_0040: ldc.i4.0
-			IL_0041: ldstr "in catch"
-			IL_0046: stelem.ref
-			IL_0047: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_004c: pop
-			IL_004d: leave IL_0052
+			IL_004a: stloc.1
+			IL_004b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0050: stloc.2
+			IL_0051: ldloc.2
+			IL_0052: ldc.i4.1
+			IL_0053: newarr [System.Runtime]System.Object
+			IL_0058: dup
+			IL_0059: ldc.i4.0
+			IL_005a: ldstr "in catch"
+			IL_005f: stelem.ref
+			IL_0060: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0065: pop
+			IL_0066: leave IL_006b
 		} // end handler
 
-		IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0057: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_005c: ldc.i4.1
-		IL_005d: newarr [System.Runtime]System.Object
-		IL_0062: dup
-		IL_0063: ldc.i4.0
-		IL_0064: ldstr "after catch"
-		IL_0069: stelem.ref
-		IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_006f: pop
-		IL_0070: ret
+		IL_006b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0070: stloc.2
+		IL_0071: ldloc.2
+		IL_0072: ldc.i4.1
+		IL_0073: newarr [System.Runtime]System.Object
+		IL_0078: dup
+		IL_0079: ldc.i4.0
+		IL_007a: ldstr "after catch"
+		IL_007f: stelem.ref
+		IL_0080: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0085: pop
+		IL_0086: ret
 	} // end of method TryCatch_NoBinding::Main
 
 } // end of class Scripts.TryCatch_NoBinding
@@ -142,7 +160,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20fc
+		// Method begins at RVA 0x2110
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -878,6 +878,51 @@ internal sealed class LIRToILCompiler
                     break;
                 }
 
+            case LIRNewBuiltInError newError:
+                {
+                    if (!IsMaterialized(newError.Result, allocation))
+                    {
+                        break;
+                    }
+
+                    var errorClrType = newError.ErrorTypeName switch
+                    {
+                        "Error" => typeof(JavaScriptRuntime.Error),
+                        "EvalError" => typeof(JavaScriptRuntime.EvalError),
+                        "RangeError" => typeof(JavaScriptRuntime.RangeError),
+                        "ReferenceError" => typeof(JavaScriptRuntime.ReferenceError),
+                        "SyntaxError" => typeof(JavaScriptRuntime.SyntaxError),
+                        "TypeError" => typeof(JavaScriptRuntime.TypeError),
+                        "URIError" => typeof(JavaScriptRuntime.URIError),
+                        "AggregateError" => typeof(JavaScriptRuntime.AggregateError),
+                        _ => throw new InvalidOperationException($"Unknown built-in error type: {newError.ErrorTypeName}")
+                    };
+
+                    if (newError.Message.HasValue)
+                    {
+                        // JS: Error(message) stringifies message.
+                        EmitLoadTempAsObject(newError.Message.Value, ilEncoder, allocation, methodDescriptor);
+                        var toString = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.DotNet2JSConversions),
+                            nameof(JavaScriptRuntime.DotNet2JSConversions.ToString),
+                            parameterTypes: new[] { typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(toString);
+
+                        var ctor = _memberRefRegistry.GetOrAddConstructor(errorClrType, parameterTypes: new[] { typeof(string) });
+                        ilEncoder.OpCode(ILOpCode.Newobj);
+                        ilEncoder.Token(ctor);
+                        EmitStoreTemp(newError.Result, ilEncoder, allocation);
+                        break;
+                    }
+
+                    var defaultCtor = _memberRefRegistry.GetOrAddConstructor(errorClrType, parameterTypes: Type.EmptyTypes);
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(defaultCtor);
+                    EmitStoreTemp(newError.Result, ilEncoder, allocation);
+                    break;
+                }
+
             // 'in' operator - calls Operators.In
             case LIRInOperator inOp:
                 EmitLoadTemp(inOp.Left, ilEncoder, allocation, methodDescriptor);
@@ -1490,6 +1535,42 @@ internal sealed class LIRToILCompiler
                     ilEncoder.Token(_bclReferences.DoubleType);
                 }
                 break;
+
+            case LIRNewBuiltInError newError:
+                {
+                    var errorClrType = newError.ErrorTypeName switch
+                    {
+                        "Error" => typeof(JavaScriptRuntime.Error),
+                        "EvalError" => typeof(JavaScriptRuntime.EvalError),
+                        "RangeError" => typeof(JavaScriptRuntime.RangeError),
+                        "ReferenceError" => typeof(JavaScriptRuntime.ReferenceError),
+                        "SyntaxError" => typeof(JavaScriptRuntime.SyntaxError),
+                        "TypeError" => typeof(JavaScriptRuntime.TypeError),
+                        "URIError" => typeof(JavaScriptRuntime.URIError),
+                        "AggregateError" => typeof(JavaScriptRuntime.AggregateError),
+                        _ => throw new InvalidOperationException($"Unknown built-in error type: {newError.ErrorTypeName}")
+                    };
+
+                    if (newError.Message.HasValue)
+                    {
+                        EmitLoadTempAsObject(newError.Message.Value, ilEncoder, allocation, methodDescriptor);
+                        var toString = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.DotNet2JSConversions),
+                            nameof(JavaScriptRuntime.DotNet2JSConversions.ToString),
+                            parameterTypes: new[] { typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(toString);
+                        var ctor = _memberRefRegistry.GetOrAddConstructor(errorClrType, parameterTypes: new[] { typeof(string) });
+                        ilEncoder.OpCode(ILOpCode.Newobj);
+                        ilEncoder.Token(ctor);
+                        break;
+                    }
+
+                    var defaultCtor = _memberRefRegistry.GetOrAddConstructor(errorClrType, parameterTypes: Type.EmptyTypes);
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(defaultCtor);
+                    break;
+                }
             case LIRConvertToNumber convertToNumber:
                 // Emit inline: load as object, call TypeUtilities.ToNumber(object)
                 EmitLoadTempAsObject(convertToNumber.Source, ilEncoder, allocation, methodDescriptor);

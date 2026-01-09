@@ -91,6 +91,13 @@ namespace JavaScriptRuntime
         public TypeError(string? message, Exception? inner) : base(message, inner) { Name = "TypeError"; }
     }
 
+    public class URIError : Error
+    {
+        public URIError() : base() { Name = "URIError"; }
+        public URIError(string? message) : base(message) { Name = "URIError"; }
+        public URIError(string? message, Exception? inner) : base(message, inner) { Name = "URIError"; }
+    }
+
     public class AggregateError : Error
     {
         // In JS AggregateError has an iterable of errors. Represent as object[] here.
