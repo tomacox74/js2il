@@ -1525,6 +1525,9 @@ public sealed class HIRToLIRLowerer
             case HIRBinaryExpression binaryExpr:
                 return TryLowerBinaryExpression(binaryExpr, out resultTempVar);
 
+            case HIRConditionalExpression conditionalExpr:
+                return TryLowerConditionalExpression(conditionalExpr, out resultTempVar);
+
             case HIRCallExpression callExpr:
                 return TryLowerCallExpression(callExpr, out resultTempVar);
 
@@ -1921,11 +1924,77 @@ public sealed class HIRToLIRLowerer
     {
         resultTempVar = CreateTempVariable();
 
+        // IMPORTANT: logical operators must short-circuit; do not lower RHS eagerly.
         if (!TryLowerExpression(binaryExpr.Left, out var leftTempVar))
         {
             return false;
         }
 
+        // Handle logical operators with correct short-circuit evaluation.
+        // JavaScript logical operators (&&, ||) return one of the operand VALUES (not a boolean).
+        if (binaryExpr.Operator == Acornima.Operator.LogicalAnd)
+        {
+            int falsyLabel = CreateLabel();
+            int endLabel = CreateLabel();
+
+            var leftBoxed = EnsureObject(leftTempVar);
+
+            var isTruthyTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallIsTruthy(leftBoxed, isTruthyTemp));
+            DefineTempStorage(isTruthyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+            _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(isTruthyTemp, falsyLabel));
+
+            // Left was truthy; evaluate RHS and return it.
+            if (!TryLowerExpression(binaryExpr.Right, out var andRightTempVar))
+            {
+                return false;
+            }
+            var rightBoxed = EnsureObject(andRightTempVar);
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(rightBoxed, resultTempVar));
+            _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+
+            // Left was falsy; return left.
+            _methodBodyIR.Instructions.Add(new LIRLabel(falsyLabel));
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(leftBoxed, resultTempVar));
+            _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
+            return true;
+        }
+
+        if (binaryExpr.Operator == Acornima.Operator.LogicalOr)
+        {
+            int truthyLabel = CreateLabel();
+            int endLabel = CreateLabel();
+
+            var leftBoxed = EnsureObject(leftTempVar);
+
+            var isTruthyTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallIsTruthy(leftBoxed, isTruthyTemp));
+            DefineTempStorage(isTruthyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+            _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isTruthyTemp, truthyLabel));
+
+            // Left was falsy; evaluate RHS and return it.
+            if (!TryLowerExpression(binaryExpr.Right, out var orRightTempVar))
+            {
+                return false;
+            }
+            var rightBoxed = EnsureObject(orRightTempVar);
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(rightBoxed, resultTempVar));
+            _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+
+            // Left was truthy; return left.
+            _methodBodyIR.Instructions.Add(new LIRLabel(truthyLabel));
+            _methodBodyIR.Instructions.Add(new LIRCopyTemp(leftBoxed, resultTempVar));
+            _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
+            return true;
+        }
+
+        // Non-logical operators: evaluate RHS eagerly.
         if (!TryLowerExpression(binaryExpr.Right, out var rightTempVar))
         {
             return false;
@@ -2106,83 +2175,6 @@ public sealed class HIRToLIRLowerer
                 return true;
             }
             return false;
-        }
-
-        // Handle logical operators with short-circuit evaluation
-        // These need to be decomposed into multiple LIR instructions
-        // 
-        // IMPORTANT: JavaScript logical operators (&&, ||) return one of the OPERAND VALUES,
-        // not a boolean. For example: `1 && "hello"` returns "hello", `0 || "default"` returns "default".
-        // This is why we store the result as BoxedValue (the actual operand) rather than UnboxedValue bool.
-        // If the result is then used in a boolean context (like an if-statement condition), a separate
-        // IsTruthy check will be applied - this is correct JS semantics, not redundant.
-        if (binaryExpr.Operator == Acornima.Operator.LogicalAnd)
-        {
-            // Logical AND: if left is falsy, return left, otherwise return right
-            // We need to evaluate left first, then conditionally evaluate right
-            
-            int falsyLabel = CreateLabel();
-            int endLabel = CreateLabel();
-            
-            // Ensure left is boxed for truthiness check
-            var leftBoxed = EnsureObject(leftTempVar);
-            
-            // Create temp to hold IsTruthy result (bool) - used only for branching
-            var isTruthyTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRCallIsTruthy(leftBoxed, isTruthyTemp));
-            DefineTempStorage(isTruthyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
-            
-            // If left is falsy, branch to falsyLabel
-            _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(isTruthyTemp, falsyLabel));
-            
-            // Left was truthy, result is right (the actual VALUE, not boolean)
-            var rightBoxed = EnsureObject(rightTempVar);
-            _methodBodyIR.Instructions.Add(new LIRCopyTemp(rightBoxed, resultTempVar));
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
-            _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
-            
-            // Falsy label: result is left (the actual VALUE, not boolean)
-            _methodBodyIR.Instructions.Add(new LIRLabel(falsyLabel));
-            _methodBodyIR.Instructions.Add(new LIRCopyTemp(leftBoxed, resultTempVar));
-            
-            // End label
-            _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
-            
-            return true;
-        }
-
-        if (binaryExpr.Operator == Acornima.Operator.LogicalOr)
-        {
-            // Logical OR: if left is truthy, return left, otherwise return right
-            
-            int truthyLabel = CreateLabel();
-            int endLabel = CreateLabel();
-            
-            // Ensure left is boxed for truthiness check
-            var leftBoxed = EnsureObject(leftTempVar);
-            
-            // Create temp to hold IsTruthy result (bool) - used only for branching
-            var isTruthyTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRCallIsTruthy(leftBoxed, isTruthyTemp));
-            DefineTempStorage(isTruthyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
-            
-            // If left is truthy, branch to truthyLabel
-            _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(isTruthyTemp, truthyLabel));
-            
-            // Left was falsy, result is right (the actual VALUE, not boolean)
-            var rightBoxed = EnsureObject(rightTempVar);
-            _methodBodyIR.Instructions.Add(new LIRCopyTemp(rightBoxed, resultTempVar));
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
-            _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
-            
-            // Truthy label: result is left (the actual VALUE, not boolean)
-            _methodBodyIR.Instructions.Add(new LIRLabel(truthyLabel));
-            _methodBodyIR.Instructions.Add(new LIRCopyTemp(leftBoxed, resultTempVar));
-            
-            // End label
-            _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
-            
-            return true;
         }
 
         // Handle 'in' operator
@@ -2842,6 +2834,54 @@ public sealed class HIRToLIRLowerer
 
         // Unsupported property access
         return false;
+    }
+
+    private bool TryLowerConditionalExpression(HIRConditionalExpression conditionalExpr, out TempVariable resultTempVar)
+    {
+        resultTempVar = CreateTempVariable();
+
+        // Evaluate the test condition, then branch to either consequent or alternate.
+        if (!TryLowerExpression(conditionalExpr.Test, out var conditionTemp))
+        {
+            return false;
+        }
+
+        var conditionBoxed = EnsureObject(conditionTemp);
+        var isTruthyTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCallIsTruthy(conditionBoxed, isTruthyTemp));
+        DefineTempStorage(isTruthyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+
+        int elseLabel = CreateLabel();
+        int endLabel = CreateLabel();
+
+        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(isTruthyTemp, elseLabel));
+
+        // Consequent branch
+        if (!TryLowerExpression(conditionalExpr.Consequent, out var consequentTemp))
+        {
+            return false;
+        }
+
+        // For now, always box the result so branches can join safely.
+        var consequentBoxed = EnsureObject(consequentTemp);
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(consequentBoxed, resultTempVar));
+        _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+
+        // Alternate branch
+        _methodBodyIR.Instructions.Add(new LIRLabel(elseLabel));
+
+        if (!TryLowerExpression(conditionalExpr.Alternate, out var alternateTemp))
+        {
+            return false;
+        }
+
+        var alternateBoxed = EnsureObject(alternateTemp);
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(alternateBoxed, resultTempVar));
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
+        return true;
     }
 
     private bool TryLowerIndexAccessExpression(HIRIndexAccessExpression indexAccessExpr, out TempVariable resultTempVar)

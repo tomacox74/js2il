@@ -81,10 +81,16 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_LogicalAnd_Value() { var testName = nameof(BinaryOperator_LogicalAnd_Value); return ExecutionTest(testName); }
 
         [Fact]
+        public Task BinaryOperator_LogicalAnd_ShortCircuit() { var testName = nameof(BinaryOperator_LogicalAnd_ShortCircuit); return ExecutionTest(testName); }
+
+        [Fact]
         public Task BinaryOperator_LogicalOr_ArrayHasData() { var testName = nameof(BinaryOperator_LogicalOr_ArrayHasData); return ExecutionTest(testName); }
 
         [Fact]
         public Task BinaryOperator_LogicalOr_Value() { var testName = nameof(BinaryOperator_LogicalOr_Value); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task BinaryOperator_LogicalOr_ShortCircuit() { var testName = nameof(BinaryOperator_LogicalOr_ShortCircuit); return ExecutionTest(testName); }
 
         [Fact]
         public Task BinaryOperator_ModNumberNumber() { var testName = nameof(BinaryOperator_ModNumberNumber); return ExecutionTest(testName); }

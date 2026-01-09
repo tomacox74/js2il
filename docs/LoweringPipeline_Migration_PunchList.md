@@ -133,8 +133,8 @@ Based on the legacy emitters:
 - [x] PL2.8 `throw`
 
 ### 3) Expand HIR expression support to match legacy
-- [ ] PL3.1 `ConditionalExpression` (ternary)
-- [ ] PL3.2 `LogicalExpression` (`&&`, `||`) with correct short-circuit semantics
+- [x] PL3.1 `ConditionalExpression` (ternary)
+- [x] PL3.2 `LogicalExpression` (`&&`, `||`) with correct short-circuit semantics
 - [ ] PL3.3 `NewExpression`
   - [ ] PL3.3a built-in Error types
   - [ ] PL3.3b user-defined classes

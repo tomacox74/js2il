@@ -204,12 +204,11 @@
 		.maxstack 32
 		.locals init (
 			[0] bool,
-			[1] bool,
+			[1] object,
 			[2] object,
 			[3] object,
 			[4] object,
-			[5] object,
-			[6] class [JavaScriptRuntime]JavaScriptRuntime.Console
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.Console
 		)
 
 		IL_0000: ldarg.1
@@ -217,39 +216,39 @@
 		IL_000a: box [System.Runtime]System.Double
 		IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
 		IL_0014: stloc.0
-		IL_0015: ldarg.1
-		IL_0016: ldc.r8 7
-		IL_001f: box [System.Runtime]System.Double
-		IL_0024: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0029: stloc.1
-		IL_002a: ldloc.0
-		IL_002b: box [System.Runtime]System.Boolean
-		IL_0030: stloc.2
-		IL_0031: ldloc.2
-		IL_0032: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_0037: stloc.0
-		IL_0038: ldloc.0
-		IL_0039: brtrue IL_004d
+		IL_0015: ldloc.0
+		IL_0016: box [System.Runtime]System.Boolean
+		IL_001b: stloc.1
+		IL_001c: ldloc.1
+		IL_001d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0022: stloc.0
+		IL_0023: ldloc.0
+		IL_0024: brtrue IL_004d
 
-		IL_003e: ldloc.1
+		IL_0029: ldarg.1
+		IL_002a: ldc.r8 7
+		IL_0033: box [System.Runtime]System.Double
+		IL_0038: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_003d: stloc.0
+		IL_003e: ldloc.0
 		IL_003f: box [System.Runtime]System.Boolean
-		IL_0044: stloc.3
-		IL_0045: ldloc.3
-		IL_0046: stloc.s 5
+		IL_0044: stloc.2
+		IL_0045: ldloc.2
+		IL_0046: stloc.s 4
 		IL_0048: br IL_0050
 
-		IL_004d: ldloc.2
-		IL_004e: stloc.s 5
+		IL_004d: ldloc.1
+		IL_004e: stloc.s 4
 
-		IL_0050: ldloc.s 5
+		IL_0050: ldloc.s 4
 		IL_0052: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_0057: stloc.1
-		IL_0058: ldloc.1
+		IL_0057: stloc.0
+		IL_0058: ldloc.0
 		IL_0059: brfalse IL_007f
 
 		IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0063: stloc.s 6
-		IL_0065: ldloc.s 6
+		IL_0063: stloc.s 5
+		IL_0065: ldloc.s 5
 		IL_0067: ldc.i4.2
 		IL_0068: newarr [System.Runtime]System.Object
 		IL_006d: dup
