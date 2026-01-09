@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace JavaScriptRuntime
 {
+    [IntrinsicObject("Object")]
     public class Object
     {
         /// <summary>
@@ -162,6 +163,16 @@ namespace JavaScriptRuntime
                     break;
             }
 
+            // String: return character at index as a 1-length string
+            if (obj is string str)
+            {
+                if (intIndex < 0 || intIndex >= str.Length)
+                {
+                    return null!; // undefined
+                }
+                return str[intIndex].ToString();
+            }
+
             // ExpandoObject (object literal): numeric index coerces to property name string per JS ToPropertyKey
             if (obj is System.Dynamic.ExpandoObject exp)
             {
@@ -193,6 +204,107 @@ namespace JavaScriptRuntime
                 // todo: add generic object index access support
                 throw new Exception("Object does not support index access. Only arrays are supported for index access.");
             }
+        }
+
+        /// <summary>
+        /// Normalizes an iterable for use by for..of desugaring.
+        /// Returns a value compatible with GetLength/GetItem (string, Array, Int32Array).
+        /// - string stays string (GetItem returns 1-length strings)
+        /// - Array/Int32Array pass through
+        /// - Set and any other IEnumerable are converted via Array.from
+        /// </summary>
+        public static object NormalizeForOfIterable(object? iterable)
+        {
+            if (iterable is null || iterable is JsNull)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot iterate over null or undefined");
+            }
+
+            if (iterable is string)
+            {
+                return iterable;
+            }
+
+            if (iterable is Array || iterable is Int32Array)
+            {
+                return iterable;
+            }
+
+            if (iterable is System.Collections.IEnumerable)
+            {
+                return JavaScriptRuntime.Array.from(iterable)!;
+            }
+
+            throw new JavaScriptRuntime.TypeError("Object is not iterable");
+        }
+
+        /// <summary>
+        /// Returns enumerable property keys for for..in. Minimal implementation:
+        /// - ExpandoObject: own keys
+        /// - Array/Int32Array/string: numeric indices as strings
+        /// - IDictionary: keys coerced to strings
+        /// Other types: empty list
+        /// </summary>
+        public static JavaScriptRuntime.Array GetEnumerableKeys(object? obj)
+        {
+            if (obj is null || obj is JsNull)
+            {
+                throw new JavaScriptRuntime.TypeError("Right-hand side of 'for...in' should be an object");
+            }
+
+            // ExpandoObject (object literal)
+            if (obj is System.Dynamic.ExpandoObject exp)
+            {
+                var dict = (IDictionary<string, object?>)exp;
+                var keys = new JavaScriptRuntime.Array(dict.Keys.Cast<object?>());
+                return keys;
+            }
+
+            // JS Array: enumerate indices
+            if (obj is JavaScriptRuntime.Array jsArr)
+            {
+                var keys = new JavaScriptRuntime.Array();
+                for (int i = 0; i < jsArr.Count; i++)
+                {
+                    keys.Add(i.ToString());
+                }
+                return keys;
+            }
+
+            // Typed array: enumerate indices
+            if (obj is JavaScriptRuntime.Int32Array i32)
+            {
+                var keys = new JavaScriptRuntime.Array();
+                for (int i = 0; i < i32.length; i++)
+                {
+                    keys.Add(i.ToString());
+                }
+                return keys;
+            }
+
+            // String: enumerate indices
+            if (obj is string s)
+            {
+                var keys = new JavaScriptRuntime.Array();
+                for (int i = 0; i < s.Length; i++)
+                {
+                    keys.Add(i.ToString());
+                }
+                return keys;
+            }
+
+            // IDictionary: enumerate keys
+            if (obj is System.Collections.IDictionary dictObj)
+            {
+                var keys = new JavaScriptRuntime.Array();
+                foreach (var k in dictObj.Keys)
+                {
+                    keys.Add(DotNet2JSConversions.ToString(k));
+                }
+                return keys;
+            }
+
+            return JavaScriptRuntime.Array.Empty;
         }
 
         /// <summary>

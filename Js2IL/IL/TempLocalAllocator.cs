@@ -248,6 +248,9 @@ internal static class TempLocalAllocator
             case LIRBitwiseNotNumber not:
                 yield return not.Value;
                 break;
+            case LIRLogicalNot logicalNot:
+                yield return logicalNot.Value;
+                break;
             case LIRCompareNumberLessThan cmp:
                 yield return cmp.Left;
                 yield return cmp.Right;
@@ -477,6 +480,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRBitwiseNotNumber not:
                 defined = not.Result;
+                return true;
+            case LIRLogicalNot logicalNot:
+                defined = logicalNot.Result;
                 return true;
             case LIRCompareNumberLessThan cmp:
                 defined = cmp.Result;

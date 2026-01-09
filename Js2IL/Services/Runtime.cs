@@ -51,6 +51,20 @@ namespace Js2IL.Services
             _il.Call(mref);
         }
 
+        public void InvokeNormalizeForOfIterable()
+        {
+            // we assume the object is already on the stack
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Object), "NormalizeForOfIterable");
+            _il.Call(mref);
+        }
+
+        public void InvokeGetEnumerableKeysFromObject()
+        {
+            // we assume the object is already on the stack
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Object), "GetEnumerableKeys");
+            _il.Call(mref);
+        }
+
         public void InvokeOperatorsAdd()
         {
             // assumes two object operands are on the stack

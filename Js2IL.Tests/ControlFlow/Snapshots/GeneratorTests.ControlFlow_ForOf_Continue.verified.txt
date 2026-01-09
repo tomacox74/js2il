@@ -1,0 +1,192 @@
+﻿// IL code: ControlFlow_ForOf_Continue
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.ControlFlow_ForOf_Continue
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Block_L2C21
+		extends [System.Runtime]System.Object
+	{
+		// Nested Types
+		.class nested public auto ansi beforefieldinit Block_L3C17
+			extends [System.Runtime]System.Object
+		{
+			// Methods
+			.method public hidebysig specialname rtspecialname 
+				instance void .ctor () cil managed 
+			{
+				// Method begins at RVA 0x2062
+				// Header size: 1
+				// Code size: 8 (0x8)
+				.maxstack 8
+
+				IL_0000: ldarg.0
+				IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+				IL_0006: nop
+				IL_0007: ret
+			} // end of method Block_L3C17::.ctor
+
+		} // end of class Block_L3C17
+
+
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Block_L2C21::.ctor
+
+	} // end of class Block_L2C21
+
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method ControlFlow_ForOf_Continue::.ctor
+
+} // end of class Scopes.ControlFlow_ForOf_Continue
+
+.class public auto ansi beforefieldinit Scripts.ControlFlow_ForOf_Continue
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x206c
+		// Header size: 12
+		// Code size: 176 (0xb0)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.ControlFlow_ForOf_Continue,
+			[1] object,
+			[2] object,
+			[3] float64,
+			[4] float64,
+			[5] object,
+			[6] object,
+			[7] bool,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[9] float64
+		)
+
+		IL_0000: newobj instance void Scopes.ControlFlow_ForOf_Continue::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.i4.3
+		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_000c: dup
+		IL_000d: ldstr "a"
+		IL_0012: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0017: dup
+		IL_0018: ldstr "b"
+		IL_001d: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0022: dup
+		IL_0023: ldstr "c"
+		IL_0028: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_002d: stloc.1
+		IL_002e: ldloc.1
+		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::NormalizeForOfIterable(object)
+		IL_0034: stloc.2
+		IL_0035: ldloc.2
+		IL_0036: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_003b: stloc.3
+		IL_003c: ldc.r8 0.0
+		IL_0045: stloc.s 4
+		// loop start (head: IL_0047)
+			IL_0047: ldloc.s 4
+			IL_0049: ldloc.3
+			IL_004a: clt
+			IL_004c: brfalse IL_00af
+
+			IL_0051: ldloc.s 4
+			IL_0053: box [System.Runtime]System.Double
+			IL_0058: stloc.s 6
+			IL_005a: ldloc.2
+			IL_005b: ldloc.s 6
+			IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0062: stloc.s 5
+			IL_0064: ldloc.s 5
+			IL_0066: ldstr "b"
+			IL_006b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_0070: stloc.s 7
+			IL_0072: ldloc.s 7
+			IL_0074: brfalse IL_007e
+
+			IL_0079: br IL_0098
+
+			IL_007e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0083: stloc.s 8
+			IL_0085: ldloc.s 8
+			IL_0087: ldc.i4.1
+			IL_0088: newarr [System.Runtime]System.Object
+			IL_008d: dup
+			IL_008e: ldc.i4.0
+			IL_008f: ldloc.s 5
+			IL_0091: stelem.ref
+			IL_0092: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0097: pop
+
+			IL_0098: ldloc.s 4
+			IL_009a: ldc.r8 1
+			IL_00a3: add
+			IL_00a4: stloc.s 9
+			IL_00a6: ldloc.s 9
+			IL_00a8: stloc.s 4
+			IL_00aa: br IL_0047
+		// end loop
+
+		IL_00af: ret
+	} // end of method ControlFlow_ForOf_Continue::Main
+
+} // end of class Scripts.ControlFlow_ForOf_Continue
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2128
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.ControlFlow_ForOf_Continue::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

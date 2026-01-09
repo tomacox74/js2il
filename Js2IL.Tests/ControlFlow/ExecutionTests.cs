@@ -53,6 +53,51 @@ namespace Js2IL.Tests.ControlFlow
         public Task ControlFlow_ForOf_Array_Basic() { var testName = nameof(ControlFlow_ForOf_Array_Basic); return ExecutionTest(testName); }
 
         [Fact]
+        public Task ControlFlow_ForIn_Object_Basic() { var testName = nameof(ControlFlow_ForIn_Object_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForOf_Break() { var testName = nameof(ControlFlow_ForOf_Break); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForOf_Continue() { var testName = nameof(ControlFlow_ForOf_Continue); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForIn_Break() { var testName = nameof(ControlFlow_ForIn_Break); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForIn_Continue() { var testName = nameof(ControlFlow_ForIn_Continue); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForOf_LabeledBreak() { var testName = nameof(ControlFlow_ForOf_LabeledBreak); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForOf_LabeledContinue() { var testName = nameof(ControlFlow_ForOf_LabeledContinue); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForIn_LabeledBreak() { var testName = nameof(ControlFlow_ForIn_LabeledBreak); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForIn_LabeledContinue() { var testName = nameof(ControlFlow_ForIn_LabeledContinue); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_While_LabeledBreak() { var testName = nameof(ControlFlow_While_LabeledBreak); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_While_LabeledContinue() { var testName = nameof(ControlFlow_While_LabeledContinue); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForLoop_LabeledBreak() { var testName = nameof(ControlFlow_ForLoop_LabeledBreak); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_ForLoop_LabeledContinue() { var testName = nameof(ControlFlow_ForLoop_LabeledContinue); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_DoWhile_LabeledBreak() { var testName = nameof(ControlFlow_DoWhile_LabeledBreak); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_DoWhile_LabeledContinue() { var testName = nameof(ControlFlow_DoWhile_LabeledContinue); return ExecutionTest(testName); }
+
+        [Fact]
         public Task ControlFlow_If_BooleanLiteral() { var testName = nameof(ControlFlow_If_BooleanLiteral); return ExecutionTest(testName); }
 
         [Fact]

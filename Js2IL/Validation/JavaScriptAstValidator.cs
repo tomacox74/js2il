@@ -96,8 +96,7 @@ public class JavaScriptAstValidator : IAstValidator
                     break;
 
                 case NodeType.ForInStatement:
-                    result.Errors.Add($"for...in loops are not yet supported (line {node.Location.Start.Line})");
-                    result.IsValid = false;
+                    // for...in loops are supported (PL2.4)
                     break;
 
                 case NodeType.SwitchStatement:
@@ -111,8 +110,7 @@ public class JavaScriptAstValidator : IAstValidator
                     break;
 
                 case NodeType.LabeledStatement:
-                    result.Errors.Add($"Labeled statements are not yet supported (line {node.Location.Start.Line})");
-                    result.IsValid = false;
+                    // Labeled statements are supported (used for labeled break/continue)
                     break;
 
                 case NodeType.DebuggerStatement:
