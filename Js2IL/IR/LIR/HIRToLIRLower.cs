@@ -819,6 +819,7 @@ public sealed class HIRToLIRLowerer
                     // Do/while loop structure:
                     // loop_start:
                     //   body
+                    // loop_test:
                     //   if (!test) goto end
                     //   goto loop_start
                     // end:
@@ -922,14 +923,12 @@ public sealed class HIRToLIRLowerer
             return true;
         }
 
-        foreach (var ctx in _loopStack)
+        foreach (var ctx in _loopStack.Where(ctx => string.Equals(ctx.LabelName, label, global::System.StringComparison.Ordinal)))
         {
-            if (string.Equals(ctx.LabelName, label, global::System.StringComparison.Ordinal))
-            {
-                targetLabel = isBreak ? ctx.BreakLabel : ctx.ContinueLabel;
-                return true;
-            }
+            targetLabel = isBreak ? ctx.BreakLabel : ctx.ContinueLabel;
+            return true;
         }
+
 
         return false;
     }
