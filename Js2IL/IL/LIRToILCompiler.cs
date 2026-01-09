@@ -885,18 +885,7 @@ internal sealed class LIRToILCompiler
                         break;
                     }
 
-                    var errorClrType = newError.ErrorTypeName switch
-                    {
-                        "Error" => typeof(JavaScriptRuntime.Error),
-                        "EvalError" => typeof(JavaScriptRuntime.EvalError),
-                        "RangeError" => typeof(JavaScriptRuntime.RangeError),
-                        "ReferenceError" => typeof(JavaScriptRuntime.ReferenceError),
-                        "SyntaxError" => typeof(JavaScriptRuntime.SyntaxError),
-                        "TypeError" => typeof(JavaScriptRuntime.TypeError),
-                        "URIError" => typeof(JavaScriptRuntime.URIError),
-                        "AggregateError" => typeof(JavaScriptRuntime.AggregateError),
-                        _ => throw new InvalidOperationException($"Unknown built-in error type: {newError.ErrorTypeName}")
-                    };
+                    var errorClrType = Js2IL.IR.BuiltInErrorTypes.GetRuntimeErrorClrType(newError.ErrorTypeName);
 
                     if (newError.Message.HasValue)
                     {
@@ -1538,18 +1527,7 @@ internal sealed class LIRToILCompiler
 
             case LIRNewBuiltInError newError:
                 {
-                    var errorClrType = newError.ErrorTypeName switch
-                    {
-                        "Error" => typeof(JavaScriptRuntime.Error),
-                        "EvalError" => typeof(JavaScriptRuntime.EvalError),
-                        "RangeError" => typeof(JavaScriptRuntime.RangeError),
-                        "ReferenceError" => typeof(JavaScriptRuntime.ReferenceError),
-                        "SyntaxError" => typeof(JavaScriptRuntime.SyntaxError),
-                        "TypeError" => typeof(JavaScriptRuntime.TypeError),
-                        "URIError" => typeof(JavaScriptRuntime.URIError),
-                        "AggregateError" => typeof(JavaScriptRuntime.AggregateError),
-                        _ => throw new InvalidOperationException($"Unknown built-in error type: {newError.ErrorTypeName}")
-                    };
+                    var errorClrType = Js2IL.IR.BuiltInErrorTypes.GetRuntimeErrorClrType(newError.ErrorTypeName);
 
                     if (newError.Message.HasValue)
                     {
