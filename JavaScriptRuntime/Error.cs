@@ -105,6 +105,7 @@ namespace JavaScriptRuntime
         public JavaScriptRuntime.Array errors => Errors; // JS-style alias
 
         public AggregateError() : this(System.Array.Empty<object?>(), null) { }
+        public AggregateError(string? message) : this(System.Array.Empty<object?>(), message) { }
         public AggregateError(System.Collections.IEnumerable errors) : this(errors, null) { }
         public AggregateError(System.Collections.IEnumerable errors, string? message) : base(message)
         {

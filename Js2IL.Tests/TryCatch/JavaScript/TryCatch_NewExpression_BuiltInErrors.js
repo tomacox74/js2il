@@ -5,5 +5,10 @@ try {
     console.log(e);
 }
 
-const e2 = new Error("boom");
-console.log(e2);
+console.log(new Error("boom"));
+console.log(new EvalError("eval"));
+console.log(new RangeError("range"));
+console.log(new ReferenceError("ref"));
+console.log(new SyntaxError("syntax"));
+console.log(new URIError("uri"));
+console.log(new AggregateError("agg"));

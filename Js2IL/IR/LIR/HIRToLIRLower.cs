@@ -1632,18 +1632,6 @@ public sealed class HIRToLIRLowerer
         }
     }
 
-    private static readonly HashSet<string> BuiltInErrorTypeNames = new(StringComparer.Ordinal)
-    {
-        "Error",
-        "EvalError",
-        "RangeError",
-        "ReferenceError",
-        "SyntaxError",
-        "TypeError",
-        "URIError",
-        "AggregateError",
-    };
-
     private bool TryLowerNewExpression(HIRNewExpression newExpr, out TempVariable resultTempVar)
     {
         resultTempVar = default;
@@ -1660,7 +1648,7 @@ public sealed class HIRToLIRLowerer
         }
 
         var errorTypeName = calleeVar.Name.Name;
-        if (!BuiltInErrorTypeNames.Contains(errorTypeName))
+        if (!BuiltInErrorTypes.IsBuiltInErrorTypeName(errorTypeName))
         {
             return false;
         }

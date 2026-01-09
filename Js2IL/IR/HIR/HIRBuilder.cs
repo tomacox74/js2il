@@ -100,20 +100,6 @@ class HIRMethodBuilder
         ["Infinity"] = (JavascriptType.Number, double.PositiveInfinity),
     };
 
-    private static readonly HashSet<string> BuiltInErrorTypeNames = new(StringComparer.Ordinal)
-    {
-        "Error",
-        "EvalError",
-        "RangeError",
-        "ReferenceError",
-        "SyntaxError",
-        "TypeError",
-        "URIError",
-        "AggregateError",
-    };
-
-    private static bool IsBuiltInErrorTypeName(string name) => BuiltInErrorTypeNames.Contains(name);
-
     readonly Scope _rootScope;
     Scope _currentScope;
     readonly List<HIRStatement> _statements = new();
@@ -660,7 +646,7 @@ class HIRMethodBuilder
                     return false;
                 }
 
-                if (!IsBuiltInErrorTypeName(newCalleeId.Name))
+                if (!Js2IL.IR.BuiltInErrorTypes.IsBuiltInErrorTypeName(newCalleeId.Name))
                 {
                     return false;
                 }
