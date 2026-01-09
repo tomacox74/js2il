@@ -49,7 +49,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -60,53 +60,62 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 119 (0x77)
+		// Code size: 121 (0x79)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ControlFlow_While_Continue_SkipEven,
-			[1] float64
+			[1] float64,
+			[2] float64,
+			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[4] object,
+			[5] object[]
 		)
 
-		IL_0000: ldc.r8 0.0
-		IL_0009: stloc.1
-		// loop start (head: IL_000a)
-			IL_000a: ldloc.1
-			IL_000b: ldc.r8 10
-			IL_0014: blt IL_001e
+		IL_0000: newobj instance void Scopes.ControlFlow_While_Continue_SkipEven::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.r8 0.0
+		IL_000f: stloc.1
+		// loop start (head: IL_0010)
+			IL_0010: ldloc.1
+			IL_0011: ldc.r8 10
+			IL_001a: clt
+			IL_001c: brfalse IL_0078
 
-			IL_0019: br IL_0076
+			IL_0021: ldloc.1
+			IL_0022: ldc.r8 1
+			IL_002b: add
+			IL_002c: stloc.1
+			IL_002d: ldloc.1
+			IL_002e: ldc.r8 2
+			IL_0037: rem
+			IL_0038: stloc.2
+			IL_0039: ldloc.2
+			IL_003a: ldc.r8 0.0
+			IL_0043: ceq
+			IL_0045: brfalse IL_004f
 
-			IL_001e: ldloc.1
-			IL_001f: ldc.r8 1
-			IL_0028: add
-			IL_0029: stloc.1
-			IL_002a: ldloc.1
-			IL_002b: ldc.r8 2
-			IL_0034: rem
-			IL_0035: ldc.r8 0.0
-			IL_003e: beq IL_0048
+			IL_004a: br IL_0010
 
-			IL_0043: br IL_0052
-
-			IL_0048: br IL_000a
-
-			IL_004d: br IL_0052
-
-			IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0057: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-			IL_005c: ldc.i4.1
-			IL_005d: newarr [System.Runtime]System.Object
-			IL_0062: dup
-			IL_0063: ldc.i4.0
-			IL_0064: ldloc.1
-			IL_0065: box [System.Runtime]System.Double
-			IL_006a: stelem.ref
-			IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0070: pop
-			IL_0071: br IL_000a
+			IL_004f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0054: stloc.3
+			IL_0055: ldloc.1
+			IL_0056: box [System.Runtime]System.Double
+			IL_005b: stloc.s 4
+			IL_005d: ldc.i4.1
+			IL_005e: newarr [System.Runtime]System.Object
+			IL_0063: dup
+			IL_0064: ldc.i4.0
+			IL_0065: ldloc.s 4
+			IL_0067: stelem.ref
+			IL_0068: stloc.s 5
+			IL_006a: ldloc.3
+			IL_006b: ldloc.s 5
+			IL_006d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0072: pop
+			IL_0073: br IL_0010
 		// end loop
 
-		IL_0076: ret
+		IL_0078: ret
 	} // end of method ControlFlow_While_Continue_SkipEven::Main
 
 } // end of class Scripts.ControlFlow_While_Continue_SkipEven
@@ -118,7 +127,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e7
+		// Method begins at RVA 0x20e9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

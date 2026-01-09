@@ -115,11 +115,11 @@ Based on the legacy emitters:
 - [x] PL1.7 Expand execution tests for closures (both reads and writes across nesting levels).
 
 ### 2) Expand HIR statement support to match legacy
-- [ ] PL2.1 `while` statements
-- [ ] PL2.2 `do/while` statements
+- [x] PL2.1 `while` statements
+- [x] PL2.2 `do/while` statements
 - [ ] PL2.3 `for..of` statements
 - [ ] PL2.4 `for..in` statements (if legacy supports it; confirm)
-- [ ] PL2.5 `break` / `continue` (requires loop label tracking)
+- [x] PL2.5 `break` / `continue` (requires loop label tracking)
 - [ ] PL2.6 `switch` statements (if legacy supports it; confirm)
 - [ ] PL2.7 `try/catch/finally`
   - [ ] PL2.7a Add HIR nodes for try/catch/finally (including catch parameter binding)

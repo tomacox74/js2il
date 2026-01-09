@@ -12,22 +12,25 @@ namespace Js2IL.Tests.ControlFlow
         public Task ControlFlow_Conditional_Ternary() { var testName = nameof(ControlFlow_Conditional_Ternary); return GenerateTest(testName); }
 
         [Fact]
-        public Task ControlFlow_DoWhile_Break_AtThree() { var testName = nameof(ControlFlow_DoWhile_Break_AtThree); return GenerateTest(testName); }
+        public Task ControlFlow_DoWhile_Break_AtThree() { var testName = nameof(ControlFlow_DoWhile_Break_AtThree); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task ControlFlow_DoWhile_Continue_SkipEven() { var testName = nameof(ControlFlow_DoWhile_Continue_SkipEven); return GenerateTest(testName); }
+        public Task ControlFlow_DoWhile_Continue_SkipEven() { var testName = nameof(ControlFlow_DoWhile_Continue_SkipEven); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task ControlFlow_DoWhile_CountDownFromFive() { var testName = "ControlFlow_DoWhile_CountDownFromFive"; return GenerateTest(testName); }
+        public Task ControlFlow_DoWhile_CountDownFromFive() { var testName = "ControlFlow_DoWhile_CountDownFromFive"; return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
         public Task ControlFlow_DoWhile_NestedLet() { var testName = "ControlFlow_DoWhile_NestedLet"; return GenerateTest(testName); }
 
         [Fact]
-        public Task ControlFlow_ForLoop_Break_AtThree() { var testName = nameof(ControlFlow_ForLoop_Break_AtThree); return GenerateTest(testName); }
+        public Task ControlFlow_DoWhile_CountUp_AtLeastOnce() { var testName = nameof(ControlFlow_DoWhile_CountUp_AtLeastOnce); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task ControlFlow_ForLoop_Continue_SkipEven() { var testName = nameof(ControlFlow_ForLoop_Continue_SkipEven); return GenerateTest(testName); }
+        public Task ControlFlow_ForLoop_Break_AtThree() { var testName = nameof(ControlFlow_ForLoop_Break_AtThree); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+
+        [Fact]
+        public Task ControlFlow_ForLoop_Continue_SkipEven() { var testName = nameof(ControlFlow_ForLoop_Continue_SkipEven); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
         public Task ControlFlow_ForLoop_CountDownFromFive() { var testName = "ControlFlow_ForLoop_CountDownFromFive"; return GenerateTest(testName, assertOnIRPipelineFailure: true); }
@@ -60,10 +63,10 @@ namespace Js2IL.Tests.ControlFlow
         public Task ControlFlow_If_Truthiness() { var testName = nameof(ControlFlow_If_Truthiness); return GenerateTest(testName); }
 
         [Fact]
-        public Task ControlFlow_While_Break_AtThree() { var testName = nameof(ControlFlow_While_Break_AtThree); return GenerateTest(testName); }
+        public Task ControlFlow_While_Break_AtThree() { var testName = nameof(ControlFlow_While_Break_AtThree); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task ControlFlow_While_Continue_SkipEven() { var testName = nameof(ControlFlow_While_Continue_SkipEven); return GenerateTest(testName); }
+        public Task ControlFlow_While_Continue_SkipEven() { var testName = nameof(ControlFlow_While_Continue_SkipEven); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
         public Task ControlFlow_While_CountDownFromFive() { var testName = "ControlFlow_While_CountDownFromFive"; return GenerateTest(testName); }
