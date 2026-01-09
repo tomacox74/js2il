@@ -154,7 +154,7 @@ console.log(calc.getValue());
                     Verbose = true
                 };
 
-                var serviceProvider = CompilerServices.BuildServiceProvider(options, fileSystem: null);
+                var serviceProvider = CompilerServices.BuildServiceProvider(options, fileSystem: null, new TestLogger());
                 var compiler = serviceProvider.GetRequiredService<Compiler>();
                 
                 var result = compiler.Compile(inputFile);
