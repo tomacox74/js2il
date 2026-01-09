@@ -3,3 +3,5 @@ class Greeter {
 }
 
 // we don't instantiate, only declare
+
+console.log("Classes_ClassWithMethod_NoInstantiation");

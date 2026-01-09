@@ -19,3 +19,5 @@ class PrimeSieve {
 
 // Force constructor execution
 new PrimeSieve(100);
+
+console.log("Classes_PrimeCtor_BitArrayAdd");
