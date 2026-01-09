@@ -17,11 +17,16 @@ public sealed class HIRToLIRLowerer
     private int _tempVarCounter = 0;
     private int _labelCounter = 0;
 
-    private readonly Stack<LoopContext> _loopStack = new();
+    private readonly Stack<ControlFlowContext> _controlFlowStack = new();
 
-    private readonly struct LoopContext
+    private readonly Stack<int> _protectedControlFlowDepthStack = new();
+    private int? _returnEpilogueReturnSlot;
+    private TempVariable? _returnEpilogueLoadTemp;
+    private bool _needsReturnEpilogueBlock;
+
+    private readonly struct ControlFlowContext
     {
-        public LoopContext(int breakLabel, int continueLabel, string? labelName)
+        public ControlFlowContext(int breakLabel, int? continueLabel, string? labelName)
         {
             BreakLabel = breakLabel;
             ContinueLabel = continueLabel;
@@ -29,7 +34,7 @@ public sealed class HIRToLIRLowerer
         }
 
         public int BreakLabel { get; }
-        public int ContinueLabel { get; }
+        public int? ContinueLabel { get; }
         public string? LabelName { get; }
     }
 
@@ -263,6 +268,19 @@ public sealed class HIRToLIRLowerer
         
         if (lowerer.TryLowerStatements(hirMethod.Body.Statements))
         {
+            // If a return epilogue is needed (for try/finally), emit it at the end.
+            if (lowerer._needsReturnEpilogueBlock && lowerer._methodBodyIR.ReturnEpilogueLabelId.HasValue)
+            {
+                // Ensure epilogue storage exists and then emit: label + return <slotValue>
+                lowerer.EnsureReturnEpilogueStorage();
+                lowerer._methodBodyIR.Instructions.Add(new LIRLabel(lowerer._methodBodyIR.ReturnEpilogueLabelId.Value));
+                if (!lowerer._returnEpilogueLoadTemp.HasValue)
+                {
+                    return false;
+                }
+                lowerer._methodBodyIR.Instructions.Add(new LIRReturn(lowerer._returnEpilogueLoadTemp.Value));
+            }
+
             lirMethod = lowerer._methodBodyIR;
             return true;
         }
@@ -610,7 +628,264 @@ public sealed class HIRToLIRLowerer
                         lirInstructions.Add(new LIRConstUndefined(returnTempVar));
                         DefineTempStorage(returnTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     }
+
+                    // If we are inside a protected region with a finally handler, we must use leave
+                    // so finally runs before returning.
+                    if (_protectedControlFlowDepthStack.Count > 0 && _methodBodyIR.ReturnEpilogueLabelId.HasValue)
+                    {
+                        if (!TryEmitReturnViaEpilogue(returnTempVar))
+                        {
+                            return false;
+                        }
+                        return true;
+                    }
+
                     lirInstructions.Add(new LIRReturn(returnTempVar));
+                    return true;
+                }
+            case HIRLabeledStatement labeledStmt:
+                {
+                    var endLabel = CreateLabel();
+                    _controlFlowStack.Push(new ControlFlowContext(endLabel, null, labeledStmt.Label));
+                    try
+                    {
+                        if (!TryLowerStatement(labeledStmt.Body))
+                        {
+                            return false;
+                        }
+                    }
+                    finally
+                    {
+                        _controlFlowStack.Pop();
+                    }
+
+                    lirInstructions.Add(new LIRLabel(endLabel));
+                    return true;
+                }
+            case HIRSwitchStatement switchStmt:
+                {
+                    if (!TryLowerExpression(switchStmt.Discriminant, out var discriminantTemp))
+                    {
+                        return false;
+                    }
+
+                    discriminantTemp = EnsureObject(discriminantTemp);
+
+                    var endLabel = CreateLabel();
+                    _controlFlowStack.Push(new ControlFlowContext(endLabel, null, null));
+
+                    try
+                    {
+                        // Create a label for each case start.
+                        var caseLabels = new int[switchStmt.Cases.Length];
+                        for (int i = 0; i < caseLabels.Length; i++)
+                        {
+                            caseLabels[i] = CreateLabel();
+                        }
+
+                        int? defaultCaseIndex = null;
+                        for (int i = 0; i < switchStmt.Cases.Length; i++)
+                        {
+                            if (switchStmt.Cases[i].Test == null)
+                            {
+                                defaultCaseIndex = i;
+                                break;
+                            }
+                        }
+
+                        // Dispatch: compare discriminant === caseTest in order.
+                        for (int i = 0; i < switchStmt.Cases.Length; i++)
+                        {
+                            var sc = switchStmt.Cases[i];
+                            if (sc.Test == null)
+                            {
+                                continue;
+                            }
+
+                            if (!TryLowerExpression(sc.Test, out var testTemp))
+                            {
+                                return false;
+                            }
+
+                            testTemp = EnsureObject(testTemp);
+                            var cmpTemp = CreateTempVariable();
+                            lirInstructions.Add(new LIRStrictEqualDynamic(discriminantTemp, testTemp, cmpTemp));
+                            DefineTempStorage(cmpTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                            lirInstructions.Add(new LIRBranchIfTrue(cmpTemp, caseLabels[i]));
+                        }
+
+                        // No match: jump to default if present, else end.
+                        lirInstructions.Add(new LIRBranch(defaultCaseIndex.HasValue ? caseLabels[defaultCaseIndex.Value] : endLabel));
+
+                        // Emit case bodies in order; fallthrough is natural.
+                        for (int i = 0; i < switchStmt.Cases.Length; i++)
+                        {
+                            lirInstructions.Add(new LIRLabel(caseLabels[i]));
+                            foreach (var cons in switchStmt.Cases[i].Consequent)
+                            {
+                                if (!TryLowerStatement(cons))
+                                {
+                                    return false;
+                                }
+                            }
+                        }
+
+                        // End of switch.
+                        lirInstructions.Add(new LIRLabel(endLabel));
+                        return true;
+                    }
+                    finally
+                    {
+                        _controlFlowStack.Pop();
+                    }
+                }
+            case HIRTryStatement tryStmt:
+                {
+                    var hasCatch = tryStmt.CatchBody != null;
+                    var hasFinally = tryStmt.FinallyBody != null;
+                    if (!hasCatch && !hasFinally)
+                    {
+                        return TryLowerStatement(tryStmt.TryBlock);
+                    }
+
+                    // Track current control-flow depth so we can decide when break/continue exits the try.
+                    _protectedControlFlowDepthStack.Push(_controlFlowStack.Count);
+
+                    // Any return inside a protected region must use 'leave' to an epilogue outside the region.
+                    if (!_methodBodyIR.ReturnEpilogueLabelId.HasValue)
+                    {
+                        _methodBodyIR.ReturnEpilogueLabelId = CreateLabel();
+                    }
+
+                    try
+                    {
+                        var outerTryStart = CreateLabel();
+                        var outerTryEnd = CreateLabel();
+                        var endLabel = CreateLabel();
+
+                        int innerTryStart = outerTryStart;
+                        int innerTryEnd = outerTryEnd;
+
+                        int catchStart = 0;
+                        int catchEnd = 0;
+                        if (hasCatch)
+                        {
+                            innerTryStart = CreateLabel();
+                            innerTryEnd = CreateLabel();
+                            catchStart = CreateLabel();
+                            catchEnd = CreateLabel();
+                        }
+
+                        int finallyStart = 0;
+                        int finallyEnd = 0;
+                        if (hasFinally)
+                        {
+                            finallyStart = CreateLabel();
+                            finallyEnd = CreateLabel();
+                        }
+
+                        // Outer try label (used for finally when present)
+                        lirInstructions.Add(new LIRLabel(outerTryStart));
+
+                        // Inner try/catch (if catch present) or direct try.
+                        if (hasCatch)
+                        {
+                            lirInstructions.Add(new LIRLabel(innerTryStart));
+                        }
+
+                        if (!TryLowerStatement(tryStmt.TryBlock))
+                        {
+                            return false;
+                        }
+
+                        lirInstructions.Add(new LIRLeave(endLabel));
+
+                        if (hasCatch)
+                        {
+                            lirInstructions.Add(new LIRLabel(innerTryEnd));
+                            lirInstructions.Add(new LIRLabel(catchStart));
+
+                            // Catch handler starts with the exception object on the stack.
+                            var exTemp = CreateTempVariable();
+                            lirInstructions.Add(new LIRStoreException(exTemp));
+                            DefineTempStorage(exTemp, new ValueStorage(ValueStorageKind.Reference, typeof(System.Exception)));
+                            SetTempVariableSlot(exTemp, CreateAnonymousVariableSlot("$catch_ex", new ValueStorage(ValueStorageKind.Reference, typeof(System.Exception))));
+
+                            if (tryStmt.CatchParamBinding != null)
+                            {
+                                var jsCatchValue = CreateTempVariable();
+                                lirInstructions.Add(new LIRUnwrapCatchException(exTemp, jsCatchValue));
+                                DefineTempStorage(jsCatchValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                                SetTempVariableSlot(jsCatchValue, CreateAnonymousVariableSlot("$catch_value", new ValueStorage(ValueStorageKind.Reference, typeof(object))));
+
+                                if (!TryStoreToBinding(tryStmt.CatchParamBinding, jsCatchValue, out _))
+                                {
+                                    return false;
+                                }
+                            }
+
+                            if (tryStmt.CatchBody != null && !TryLowerStatement(tryStmt.CatchBody))
+                            {
+                                return false;
+                            }
+
+                            lirInstructions.Add(new LIRLeave(endLabel));
+                            lirInstructions.Add(new LIRLabel(catchEnd));
+                        }
+
+                        lirInstructions.Add(new LIRLabel(outerTryEnd));
+
+                        if (hasFinally)
+                        {
+                            lirInstructions.Add(new LIRLabel(finallyStart));
+                            if (tryStmt.FinallyBody != null && !TryLowerStatement(tryStmt.FinallyBody))
+                            {
+                                return false;
+                            }
+                            lirInstructions.Add(new LIREndFinally());
+                            lirInstructions.Add(new LIRLabel(finallyEnd));
+                        }
+
+                        lirInstructions.Add(new LIRLabel(endLabel));
+
+                        // Register EH regions.
+                        if (hasCatch)
+                        {
+                            _methodBodyIR.ExceptionRegions.Add(new ExceptionRegionInfo(
+                                ExceptionRegionKind.Catch,
+                                TryStartLabelId: innerTryStart,
+                                TryEndLabelId: innerTryEnd,
+                                HandlerStartLabelId: catchStart,
+                                HandlerEndLabelId: catchEnd,
+                                CatchType: typeof(System.Exception)));
+                        }
+
+                        if (hasFinally)
+                        {
+                            _methodBodyIR.ExceptionRegions.Add(new ExceptionRegionInfo(
+                                ExceptionRegionKind.Finally,
+                                TryStartLabelId: outerTryStart,
+                                TryEndLabelId: outerTryEnd,
+                                HandlerStartLabelId: finallyStart,
+                                HandlerEndLabelId: finallyEnd));
+                        }
+
+                        return true;
+                    }
+                    finally
+                    {
+                        _protectedControlFlowDepthStack.Pop();
+                    }
+                }
+            case HIRThrowStatement throwStmt:
+                {
+                    if (!TryLowerExpression(throwStmt.Argument, out var argTemp))
+                    {
+                        return false;
+                    }
+
+                    argTemp = EnsureObject(argTemp);
+                    lirInstructions.Add(new LIRThrow(argTemp));
                     return true;
                 }
             case HIRIfStatement ifStmt:
@@ -724,7 +999,7 @@ public sealed class HIRToLIRLowerer
                     }
 
                     // Loop body
-                    _loopStack.Push(new LoopContext(loopEndLabel, loopUpdateLabel, forStmt.Label));
+                    _controlFlowStack.Push(new ControlFlowContext(loopEndLabel, loopUpdateLabel, forStmt.Label));
                     try
                     {
                         if (!TryLowerStatement(forStmt.Body))
@@ -734,7 +1009,7 @@ public sealed class HIRToLIRLowerer
                     }
                     finally
                     {
-                        _loopStack.Pop();
+                        _controlFlowStack.Pop();
                     }
 
                     // Continue target (for-loops continue runs update, then loops)
@@ -815,7 +1090,7 @@ public sealed class HIRToLIRLowerer
                         return false;
                     }
 
-                    _loopStack.Push(new LoopContext(loopEndLabel, loopUpdateLabel, forOfStmt.Label));
+                    _controlFlowStack.Push(new ControlFlowContext(loopEndLabel, loopUpdateLabel, forOfStmt.Label));
                     try
                     {
                         if (!TryLowerStatement(forOfStmt.Body))
@@ -825,7 +1100,7 @@ public sealed class HIRToLIRLowerer
                     }
                     finally
                     {
-                        _loopStack.Pop();
+                        _controlFlowStack.Pop();
                     }
 
                     lirInstructions.Add(new LIRLabel(loopUpdateLabel));
@@ -897,7 +1172,7 @@ public sealed class HIRToLIRLowerer
                         return false;
                     }
 
-                    _loopStack.Push(new LoopContext(loopEndLabel, loopUpdateLabel, forInStmt.Label));
+                    _controlFlowStack.Push(new ControlFlowContext(loopEndLabel, loopUpdateLabel, forInStmt.Label));
                     try
                     {
                         if (!TryLowerStatement(forInStmt.Body))
@@ -907,7 +1182,7 @@ public sealed class HIRToLIRLowerer
                     }
                     finally
                     {
-                        _loopStack.Pop();
+                        _controlFlowStack.Pop();
                     }
 
                     lirInstructions.Add(new LIRLabel(loopUpdateLabel));
@@ -960,7 +1235,7 @@ public sealed class HIRToLIRLowerer
                     lirInstructions.Add(new LIRBranchIfFalse(conditionTemp, loopEndLabel));
 
                     // Loop body
-                    _loopStack.Push(new LoopContext(loopEndLabel, loopStartLabel, whileStmt.Label));
+                    _controlFlowStack.Push(new ControlFlowContext(loopEndLabel, loopStartLabel, whileStmt.Label));
                     try
                     {
                         if (!TryLowerStatement(whileStmt.Body))
@@ -970,7 +1245,7 @@ public sealed class HIRToLIRLowerer
                     }
                     finally
                     {
-                        _loopStack.Pop();
+                        _controlFlowStack.Pop();
                     }
 
                     // Jump back to loop start
@@ -999,7 +1274,7 @@ public sealed class HIRToLIRLowerer
                     lirInstructions.Add(new LIRLabel(loopStartLabel));
 
                     // Loop body (always executes at least once)
-                    _loopStack.Push(new LoopContext(loopEndLabel, loopTestLabel, doWhileStmt.Label));
+                    _controlFlowStack.Push(new ControlFlowContext(loopEndLabel, loopTestLabel, doWhileStmt.Label));
                     try
                     {
                         if (!TryLowerStatement(doWhileStmt.Body))
@@ -1009,7 +1284,7 @@ public sealed class HIRToLIRLowerer
                     }
                     finally
                     {
-                        _loopStack.Pop();
+                        _controlFlowStack.Pop();
                     }
 
                     // Continue target (do/while continue should skip remainder of body and go to test)
@@ -1047,22 +1322,36 @@ public sealed class HIRToLIRLowerer
                 }
             case HIRBreakStatement breakStmt:
                 {
-                    if (!TryResolveLoopTarget(breakStmt.Label, out var target, isBreak: true))
+                    if (!TryResolveControlFlowTarget(breakStmt.Label, out var target, out var matchedAbsoluteIndex, isBreak: true))
                     {
                         return false;
                     }
 
-                    lirInstructions.Add(new LIRBranch(target));
+                    if (_protectedControlFlowDepthStack.Count > 0 && matchedAbsoluteIndex < _protectedControlFlowDepthStack.Peek())
+                    {
+                        lirInstructions.Add(new LIRLeave(target));
+                    }
+                    else
+                    {
+                        lirInstructions.Add(new LIRBranch(target));
+                    }
                     return true;
                 }
             case HIRContinueStatement continueStmt:
                 {
-                    if (!TryResolveLoopTarget(continueStmt.Label, out var target, isBreak: false))
+                    if (!TryResolveControlFlowTarget(continueStmt.Label, out var target, out var matchedAbsoluteIndex, isBreak: false))
                     {
                         return false;
                     }
 
-                    lirInstructions.Add(new LIRBranch(target));
+                    if (_protectedControlFlowDepthStack.Count > 0 && matchedAbsoluteIndex < _protectedControlFlowDepthStack.Peek())
+                    {
+                        lirInstructions.Add(new LIRLeave(target));
+                    }
+                    else
+                    {
+                        lirInstructions.Add(new LIRBranch(target));
+                    }
                     return true;
                 }
             case HIRBlock block:
@@ -1074,30 +1363,110 @@ public sealed class HIRToLIRLowerer
         }
     }
 
-    private bool TryResolveLoopTarget(string? label, out int targetLabel, bool isBreak)
+    private bool TryResolveControlFlowTarget(string? label, out int targetLabel, out int matchedAbsoluteIndex, bool isBreak)
     {
         targetLabel = default;
+        matchedAbsoluteIndex = -1;
 
-        if (_loopStack.Count == 0)
+        var total = _controlFlowStack.Count;
+
+        // Stack enumerates from top to bottom.
+        int fromTop = 0;
+
+        if (string.IsNullOrEmpty(label))
+        {
+            if (isBreak)
+            {
+                if (_controlFlowStack.Count == 0)
+                {
+                    return false;
+                }
+                targetLabel = _controlFlowStack.Peek().BreakLabel;
+                matchedAbsoluteIndex = total - 1; // top element
+                return true;
+            }
+
+            // continue without label targets nearest loop context
+            foreach (var ctx in _controlFlowStack)
+            {
+                if (ctx.ContinueLabel.HasValue)
+                {
+                    targetLabel = ctx.ContinueLabel.Value;
+                    matchedAbsoluteIndex = total - 1 - fromTop;
+                    return true;
+                }
+                fromTop++;
+            }
+
+            return false;
+        }
+
+        foreach (var ctx in _controlFlowStack)
+        {
+            if (!string.Equals(ctx.LabelName, label, global::System.StringComparison.Ordinal))
+            {
+                fromTop++;
+                continue;
+            }
+
+            if (isBreak)
+            {
+                targetLabel = ctx.BreakLabel;
+                matchedAbsoluteIndex = total - 1 - fromTop;
+                return true;
+            }
+
+            if (ctx.ContinueLabel.HasValue)
+            {
+                targetLabel = ctx.ContinueLabel.Value;
+                matchedAbsoluteIndex = total - 1 - fromTop;
+                return true;
+            }
+
+            fromTop++;
+        }
+
+        return false;
+    }
+
+    private bool TryEmitReturnViaEpilogue(TempVariable returnValue)
+    {
+        if (!_methodBodyIR.ReturnEpilogueLabelId.HasValue)
         {
             return false;
         }
 
-        if (string.IsNullOrEmpty(label))
+        EnsureReturnEpilogueStorage();
+
+        // Store return value into the dedicated slot.
+        var storeTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(returnValue, storeTemp));
+        DefineTempStorage(storeTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        SetTempVariableSlot(storeTemp, _returnEpilogueReturnSlot!.Value);
+
+        // Leave to epilogue (outside of try/finally so finally executes).
+        _methodBodyIR.Instructions.Add(new LIRLeave(_methodBodyIR.ReturnEpilogueLabelId.Value));
+        _needsReturnEpilogueBlock = true;
+        return true;
+    }
+
+    private void EnsureReturnEpilogueStorage()
+    {
+        if (_returnEpilogueReturnSlot.HasValue && _returnEpilogueLoadTemp.HasValue)
         {
-            var ctx = _loopStack.Peek();
-            targetLabel = isBreak ? ctx.BreakLabel : ctx.ContinueLabel;
-            return true;
+            return;
         }
 
-        foreach (var ctx in _loopStack.Where(ctx => string.Equals(ctx.LabelName, label, global::System.StringComparison.Ordinal)))
-        {
-            targetLabel = isBreak ? ctx.BreakLabel : ctx.ContinueLabel;
-            return true;
-        }
+        // Reserve a stable slot for the return value.
+        var slot = CreateAnonymousVariableSlot("$return", new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        _returnEpilogueReturnSlot = slot;
 
-
-        return false;
+        // Create a load temp mapped to the slot so epilogue can return it.
+        var loadTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstUndefined(loadTemp));
+        DefineTempStorage(loadTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        SetTempVariableSlot(loadTemp, slot);
+        _returnEpilogueLoadTemp = loadTemp;
     }
 
     private int CreateLabel() => _labelCounter++;
@@ -1984,11 +2353,12 @@ public sealed class HIRToLIRLowerer
         var updateBinding = updateVarExpr.Name.BindingInfo;
         var isIncrement = updateExpr.Operator == Acornima.Operator.Increment;
 
-        // Updating a const is a runtime TypeError in the legacy pipeline.
-        // We don't have TypeError emission in IR yet, so fall back.
+        // Updating a const is a runtime TypeError.
         if (updateBinding.Kind == BindingKind.Const)
         {
-            return false;
+            _methodBodyIR.Instructions.Add(new LIRThrowNewTypeError("Assignment to constant variable."));
+            resultTempVar = CreateTempVariable();
+            return true;
         }
 
         // Load the current value (handles both captured and non-captured variables)
@@ -2244,6 +2614,14 @@ public sealed class HIRToLIRLowerer
 
         var binding = assignExpr.Target.BindingInfo;
         var lirInstructions = _methodBodyIR.Instructions;
+
+        // Assigning to a const is a runtime TypeError.
+        if (binding.Kind == BindingKind.Const)
+        {
+            lirInstructions.Add(new LIRThrowNewTypeError("Assignment to constant variable."));
+            resultTempVar = CreateTempVariable();
+            return true;
+        }
 
         // For compound assignment (+=, -=, etc.), we need to load the current value first
         TempVariable valueToStore;

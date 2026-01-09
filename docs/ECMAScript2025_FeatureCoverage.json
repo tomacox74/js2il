@@ -1087,6 +1087,32 @@
           ]
         },
         {
+          "subsection": "14.12",
+          "title": "The switch Statement",
+          "url": "https://tc39.es/ecma262/#sec-switch-statement",
+          "paragraphs": [
+            {
+              "paragraph": "14.12.1",
+              "title": "Runtime Semantics: SwitchStatement Evaluation",
+              "url": "https://tc39.es/ecma262/#sec-switch-statement",
+              "features": [
+                {
+                  "feature": "switch statement (cases, fallthrough, default, break)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_Fallthrough.js",
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_DefaultInMiddle_Fallthrough.js",
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_MultiCaseSharedBody.js",
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_NestedBreak.js",
+                    "Js2IL.Tests/ControlFlow/JavaScript/ControlFlow_Switch_LabeledBreak.js"
+                  ],
+                  "notes": "Supports fallthrough semantics, default placement, multiple case labels sharing a body, nested switch break behavior, and labeled break out of a switch."
+                }
+              ]
+            }
+          ]
+        },
+        {
           "subsection": "14.16",
           "title": "The try Statement",
           "url": "https://tc39.es/ecma262/#sec-try-statement",
@@ -1100,9 +1126,10 @@
                   "feature": "throw statement",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/TryCatch/JavaScript/TryCatch_NoBinding.js"
+                    "Js2IL.Tests/TryCatch/JavaScript/TryCatch_NoBinding.js",
+                    "Js2IL.Tests/TryCatch/JavaScript/TryCatchFinally_ThrowValue.js"
                   ],
-                  "notes": "Emits throw of JavaScriptRuntime.Error; used in try/catch tests."
+                  "notes": "Supports throwing any JS value. Non-Exception values are wrapped in JavaScriptRuntime.JsThrownValueException; catch unwrapping binds the original value. JavaScriptRuntime.Error is thrown directly."
                 },
                 {
                   "feature": "try/catch (no binding)",
@@ -1111,16 +1138,33 @@
                     "Js2IL.Tests/TryCatch/JavaScript/TryCatch_NoBinding.js",
                     "Js2IL.Tests/TryCatch/JavaScript/TryCatch_NoBinding_NoThrow.js"
                   ],
-                  "notes": "Catch blocks currently handle only JavaScriptRuntime.Error thrown within the try; exceptions thrown later (after returning a closure) are not caught by the earlier catch."
+                  "notes": "Catch blocks handle values thrown within the try region (including non-Exception JS values via JsThrownValueException) and bind the caught value only when a binding is present."
+                },
+                {
+                  "feature": "try/catch (with binding; block-scoped catch parameter)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/TryCatch/JavaScript/TryCatch_ScopedParam.js"
+                  ],
+                  "notes": "Catch parameter binding is block-scoped to the catch clause and does not leak outside the catch block."
+                },
+                {
+                  "feature": "try/catch/finally",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/TryCatch/JavaScript/TryCatchFinally_ThrowValue.js"
+                  ],
+                  "notes": "Supports catch + finally with correct finally execution and catch binding when throwing arbitrary JS values."
                 },
                 {
                   "feature": "try/finally (no catch)",
                   "status": "Partially Supported",
                   "testScripts": [
                     "Js2IL.Tests/TryCatch/JavaScript/TryFinally_NoCatch.js",
-                    "Js2IL.Tests/TryCatch/JavaScript/TryFinally_NoCatch_Throw.js"
+                    "Js2IL.Tests/TryCatch/JavaScript/TryFinally_NoCatch_Throw.js",
+                    "Js2IL.Tests/TryCatch/JavaScript/TryFinally_Return.js"
                   ],
-                  "notes": "Finally emission is in place. Execution test for throw is skipped pending unhandled Error semantics at top-level; generator snapshot verifies structure."
+                  "notes": "Finally emission is in place and executes on normal and return exits. Execution test for unhandled throw is skipped pending top-level unhandled Error semantics; generator snapshot verifies structure."
                 }
               ]
             }

@@ -1,0 +1,185 @@
+﻿// IL code: Variable_ConstReassignmentError
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Variable_ConstReassignmentError
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit Block_L2C4
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Block_L2C4::.ctor
+
+	} // end of class Block_L2C4
+
+	.class nested public auto ansi beforefieldinit Block_L5C12
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2062
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method Block_L5C12::.ctor
+
+	} // end of class Block_L5C12
+
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Variable_ConstReassignmentError::.ctor
+
+} // end of class Scopes.Variable_ConstReassignmentError
+
+.class public auto ansi beforefieldinit Scripts.Variable_ConstReassignmentError
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x206c
+		// Header size: 12
+		// Code size: 143 (0x8f)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.Variable_ConstReassignmentError,
+			[1] float64,
+			[2] object,
+			[3] object,
+			[4] object,
+			[5] class [JavaScriptRuntime]JavaScriptRuntime.Console
+		)
+
+		IL_0000: newobj instance void Scopes.Variable_ConstReassignmentError::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.r8 5
+		IL_000f: stloc.1
+		.try
+		{
+			IL_0010: ldstr "Assignment to constant variable."
+			IL_0015: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+			IL_001a: throw
+
+			IL_001b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0020: stloc.s 5
+			IL_0022: ldloc.s 5
+			IL_0024: ldc.i4.1
+			IL_0025: newarr [System.Runtime]System.Object
+			IL_002a: dup
+			IL_002b: ldc.i4.0
+			IL_002c: ldstr "NO_ERROR"
+			IL_0031: stelem.ref
+			IL_0032: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0037: pop
+			IL_0038: leave IL_008e
+		} // end .try
+		catch [System.Runtime]System.Exception
+		{
+			IL_003d: stloc.2
+			IL_003e: ldloc.2
+			IL_003f: dup
+			IL_0040: isinst [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException
+			IL_0045: dup
+			IL_0046: brtrue IL_005c
+
+			IL_004b: pop
+			IL_004c: dup
+			IL_004d: isinst [JavaScriptRuntime]JavaScriptRuntime.Error
+			IL_0052: dup
+			IL_0053: brtrue IL_0069
+
+			IL_0058: pop
+			IL_0059: pop
+			IL_005a: rethrow
+
+			IL_005c: pop
+			IL_005d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::get_Value()
+			IL_0062: stloc.s 4
+			IL_0064: br IL_006c
+
+			IL_0069: pop
+			IL_006a: stloc.s 4
+
+			IL_006c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0071: stloc.s 5
+			IL_0073: ldloc.s 5
+			IL_0075: ldc.i4.1
+			IL_0076: newarr [System.Runtime]System.Object
+			IL_007b: dup
+			IL_007c: ldc.i4.0
+			IL_007d: ldstr "CONST_REASSIGN_ERROR"
+			IL_0082: stelem.ref
+			IL_0083: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0088: pop
+			IL_0089: leave IL_008e
+		} // end handler
+
+		IL_008e: ret
+	} // end of method Variable_ConstReassignmentError::Main
+
+} // end of class Scripts.Variable_ConstReassignmentError
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2118
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.Variable_ConstReassignmentError::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

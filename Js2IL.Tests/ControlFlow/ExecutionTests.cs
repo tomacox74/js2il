@@ -120,5 +120,21 @@ namespace Js2IL.Tests.ControlFlow
             
         [Fact]
         public Task ControlFlow_While_CountDownFromFive() { var testName = nameof(ControlFlow_While_CountDownFromFive); return ExecutionTest(testName); }
+
+        // Switch statements
+        [Fact]
+        public Task ControlFlow_Switch_LabeledBreak() { var testName = nameof(ControlFlow_Switch_LabeledBreak); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_Switch_Fallthrough() { var testName = nameof(ControlFlow_Switch_Fallthrough); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_Switch_DefaultInMiddle_Fallthrough() { var testName = nameof(ControlFlow_Switch_DefaultInMiddle_Fallthrough); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_Switch_MultiCaseSharedBody() { var testName = nameof(ControlFlow_Switch_MultiCaseSharedBody); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task ControlFlow_Switch_NestedBreak() { var testName = nameof(ControlFlow_Switch_NestedBreak); return ExecutionTest(testName); }
      }
 }

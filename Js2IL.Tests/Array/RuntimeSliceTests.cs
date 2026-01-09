@@ -96,7 +96,7 @@ namespace Js2IL.Tests.Array
 
             // Original unchanged
             Assert.Equal(beforeCount, arr.Count);
-            Assert.Equal(0d, (double)arr[0]);
+            Assert.Equal(0d, Assert.IsType<double>(arr[0]));
 
             // Shallow copy: same reference for object elements
             Assert.Single(slice);

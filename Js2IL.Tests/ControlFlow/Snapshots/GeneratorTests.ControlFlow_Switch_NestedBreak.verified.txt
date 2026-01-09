@@ -1,0 +1,172 @@
+// IL code: ControlFlow_Switch_NestedBreak
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.ControlFlow_Switch_NestedBreak
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method ControlFlow_Switch_NestedBreak::.ctor
+
+} // end of class Scopes.ControlFlow_Switch_NestedBreak
+
+.class public auto ansi beforefieldinit Scripts.ControlFlow_Switch_NestedBreak
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x205c
+		// Header size: 12
+		// Code size: 269 (0x10d)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.ControlFlow_Switch_NestedBreak,
+			[1] bool,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console
+		)
+
+		IL_0000: newobj instance void Scopes.ControlFlow_Switch_NestedBreak::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.r8 1
+		IL_000f: box [System.Runtime]System.Double
+		IL_0014: ldc.r8 1
+		IL_001d: box [System.Runtime]System.Double
+		IL_0022: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0027: stloc.1
+		IL_0028: ldloc.1
+		IL_0029: brtrue IL_0033
+
+		IL_002e: br IL_00d6
+
+		IL_0033: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0038: stloc.2
+		IL_0039: ldloc.2
+		IL_003a: ldc.i4.1
+		IL_003b: newarr [System.Runtime]System.Object
+		IL_0040: dup
+		IL_0041: ldc.i4.0
+		IL_0042: ldstr "outer"
+		IL_0047: stelem.ref
+		IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_004d: pop
+		IL_004e: ldc.r8 2
+		IL_0057: box [System.Runtime]System.Double
+		IL_005c: ldc.r8 2
+		IL_0065: box [System.Runtime]System.Double
+		IL_006a: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_006f: stloc.1
+		IL_0070: ldloc.1
+		IL_0071: brtrue IL_007b
+
+		IL_0076: br IL_009b
+
+		IL_007b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0080: stloc.2
+		IL_0081: ldloc.2
+		IL_0082: ldc.i4.1
+		IL_0083: newarr [System.Runtime]System.Object
+		IL_0088: dup
+		IL_0089: ldc.i4.0
+		IL_008a: ldstr "inner"
+		IL_008f: stelem.ref
+		IL_0090: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0095: pop
+		IL_0096: br IL_00b6
+
+		IL_009b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a0: stloc.2
+		IL_00a1: ldloc.2
+		IL_00a2: ldc.i4.1
+		IL_00a3: newarr [System.Runtime]System.Object
+		IL_00a8: dup
+		IL_00a9: ldc.i4.0
+		IL_00aa: ldstr "innerdefault"
+		IL_00af: stelem.ref
+		IL_00b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00b5: pop
+
+		IL_00b6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00bb: stloc.2
+		IL_00bc: ldloc.2
+		IL_00bd: ldc.i4.1
+		IL_00be: newarr [System.Runtime]System.Object
+		IL_00c3: dup
+		IL_00c4: ldc.i4.0
+		IL_00c5: ldstr "afterinner"
+		IL_00ca: stelem.ref
+		IL_00cb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00d0: pop
+		IL_00d1: br IL_00f1
+
+		IL_00d6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00db: stloc.2
+		IL_00dc: ldloc.2
+		IL_00dd: ldc.i4.1
+		IL_00de: newarr [System.Runtime]System.Object
+		IL_00e3: dup
+		IL_00e4: ldc.i4.0
+		IL_00e5: ldstr "outerdefault"
+		IL_00ea: stelem.ref
+		IL_00eb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00f0: pop
+
+		IL_00f1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f6: stloc.2
+		IL_00f7: ldloc.2
+		IL_00f8: ldc.i4.1
+		IL_00f9: newarr [System.Runtime]System.Object
+		IL_00fe: dup
+		IL_00ff: ldc.i4.0
+		IL_0100: ldstr "done"
+		IL_0105: stelem.ref
+		IL_0106: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_010b: pop
+		IL_010c: ret
+	} // end of method ControlFlow_Switch_NestedBreak::Main
+
+} // end of class Scripts.ControlFlow_Switch_NestedBreak
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2175
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.ControlFlow_Switch_NestedBreak::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

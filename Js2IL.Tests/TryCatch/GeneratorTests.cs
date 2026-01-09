@@ -23,5 +23,15 @@ namespace Js2IL.Tests.TryCatch
         // Try/Finally (no catch) with throw inside try
         [Fact]
         public Task TryFinally_NoCatch_Throw() { var testName = nameof(TryFinally_NoCatch_Throw); return GenerateTest(testName); }
+
+        // New pipeline regression coverage
+        [Fact]
+        public Task TryFinally_Return() { var testName = nameof(TryFinally_Return); return GenerateTest(testName); }
+
+        [Fact]
+        public Task TryCatch_ScopedParam() { var testName = nameof(TryCatch_ScopedParam); return GenerateTest(testName); }
+
+        [Fact]
+        public Task TryCatchFinally_ThrowValue() { var testName = nameof(TryCatchFinally_ThrowValue); return GenerateTest(testName); }
     }
 }

@@ -156,13 +156,13 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_SwitchStatement_ReportsError()
+    public void Validate_SwitchStatement_IsValid()
     {
         var js = "const x = 1; switch(x) { case 1: break; default: break; }";
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Switch statements"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
