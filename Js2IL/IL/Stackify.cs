@@ -297,6 +297,12 @@ internal static class Stackify
                 }
                 return false;
 
+            // LIRConcatStrings (System.String::Concat) is side-effect free.
+            // It can be emitted inline only if both operands are safely loadable inline.
+            // This avoids creating new inlining paths that could fail at IL emission time.
+            case LIRConcatStrings concatStrings:
+                return IsInlineableOperand(concatStrings.Left) && IsInlineableOperand(concatStrings.Right);
+
             // LIRBuildArray creates an array and initializes elements inline.
             // Safe to inline if all element temps can be emitted inline.
             // Used for call arguments (e.g., console.log) where array is consumed immediately.
@@ -401,6 +407,31 @@ internal static class Stackify
 
             default:
                 return false;
+        }
+
+        bool IsInlineableOperand(TempVariable temp)
+        {
+            var idx = temp.Index;
+            if (idx < 0)
+            {
+                return false;
+            }
+
+            // Temps backed by variable slots are always materialized into stable locals,
+            // so they are safe operands for inline concat.
+            if (idx < methodBody.TempVariableSlots.Count && methodBody.TempVariableSlots[idx] >= 0)
+            {
+                return true;
+            }
+
+            // If we have a defining instruction for the operand, it must itself be inlineable.
+            if (idx < defInstruction.Length && defInstruction[idx] != null)
+            {
+                return CanEmitInline(defInstruction[idx]!, methodBody, defInstruction);
+            }
+
+            // No def instruction and not variable-backed: conservatively disallow.
+            return false;
         }
     }
 
