@@ -162,7 +162,7 @@
               ]
             },
             {
-              "paragraph": "13.2.1",
+              "paragraph": "13.2.1.1",
               "title": "var",
               "url": "https://tc39.es/ecma262/#sec-variable-statement",
               "features": [
@@ -328,6 +328,28 @@
                     "Js2IL.Tests/Literals/JavaScript/ObjectLiteral.js"
                   ],
                   "notes": "Covers creation and property access. See also verified output in Literals/GeneratorTests.ObjectLiteral.verified.txt."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "subsection": "13.3",
+          "title": "Left-Hand-Side Expressions",
+          "url": "https://tc39.es/ecma262/#sec-left-hand-side-expressions",
+          "paragraphs": [
+            {
+              "paragraph": "13.3.1",
+              "title": "The new Operator",
+              "url": "https://tc39.es/ecma262/#sec-new-operator",
+              "features": [
+                {
+                  "feature": "NewExpression for built-in Error types (Error/TypeError/RangeError/ReferenceError/SyntaxError/URIError/EvalError/AggregateError)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/TryCatch/JavaScript/TryCatch_NewExpression_BuiltInErrors.js"
+                  ],
+                  "notes": "Supported in the new IR pipeline for global (non-shadowed) built-in Error identifiers with 0 or 1 argument. When provided, the message is coerced to string. Other NewExpression forms (custom constructors, member expressions, multiple args) are not yet supported in the IR pipeline."
                 }
               ]
             }
@@ -733,14 +755,7 @@
                   "notes": "Emitted as a dynamic SetProperty call for non-computed MemberExpression targets. Supports ExpandoObject (object literal) and reflection-backed host objects; arrays/typed arrays ignore arbitrary dot properties."
                 }
               ]
-            }
-          ]
-        },
-        {
-          "subsection": "13.15",
-          "title": "Assignment Operators",
-          "url": "https://tc39.es/ecma262/#sec-assignment-operators",
-          "paragraphs": [
+            },
             {
               "paragraph": "13.15.2",
               "title": "Assignment Operators (+=, -=, ...)",
@@ -2138,7 +2153,7 @@
           "url": "https://tc39.es/ecma262/#sec-string-objects",
           "paragraphs": [
             {
-              "paragraph": "24.1.3",
+              "paragraph": "24.1.3.1",
               "title": "String.prototype.startsWith",
               "url": "https://tc39.es/ecma262/#sec-string.prototype.startswith",
               "features": [
@@ -2153,7 +2168,7 @@
               ]
             },
             {
-              "paragraph": "24.1.3",
+              "paragraph": "24.1.3.2",
               "title": "String.prototype.includes",
               "url": "https://tc39.es/ecma262/#sec-string.prototype.includes",
               "features": [
@@ -2166,7 +2181,7 @@
               ]
             },
             {
-              "paragraph": "24.1.3",
+              "paragraph": "24.1.3.3",
               "title": "String.prototype.endsWith",
               "url": "https://tc39.es/ecma262/#sec-string.prototype.endswith",
               "features": [
@@ -2179,7 +2194,7 @@
               ]
             },
             {
-              "paragraph": "24.1.3",
+              "paragraph": "24.1.3.4",
               "title": "String.prototype.split",
               "url": "https://tc39.es/ecma262/#sec-string.prototype.split",
               "features": [
@@ -2194,7 +2209,7 @@
               ]
             },
             {
-              "paragraph": "24.1.3",
+              "paragraph": "24.1.3.5",
               "title": "String.prototype.replace",
               "url": "https://tc39.es/ecma262/#sec-string.prototype.replace",
               "features": [

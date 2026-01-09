@@ -631,6 +631,45 @@ class HIRMethodBuilder
                 hirExpr = new HIRCallExpression(calleeExpr!, argExprs);
                 return true;
 
+            case NewExpression newExpr:
+                // PL3.3a: support only built-in Error types (new Error(...), new TypeError(...), etc.)
+                // to keep other NewExpression forms falling back to legacy for now.
+                if (newExpr.Callee is not Identifier newCalleeId)
+                {
+                    return false;
+                }
+
+                var newCalleeSymbol = _currentScope.FindSymbol(newCalleeId.Name);
+                if (newCalleeSymbol.Kind != BindingKind.Global)
+                {
+                    // Shadowed identifier: treat as user-defined ctor (not supported in IR yet).
+                    return false;
+                }
+
+                if (!Js2IL.IR.BuiltInErrorTypes.IsBuiltInErrorTypeName(newCalleeId.Name))
+                {
+                    return false;
+                }
+
+                var newArgExprs = new List<HIRExpression>();
+                foreach (var arg in newExpr.Arguments)
+                {
+                    if (!TryParseExpression(arg, out var argHirExpr))
+                    {
+                        return false;
+                    }
+                    newArgExprs.Add(argHirExpr!);
+                }
+
+                if (newArgExprs.Count > 1)
+                {
+                    // Match legacy behavior for built-in Error types.
+                    return false;
+                }
+
+                hirExpr = new HIRNewExpression(new HIRVariableExpression(newCalleeSymbol), newArgExprs);
+                return true;
+
             case UpdateExpression updateExpr:
                 if (!TryParseExpression(updateExpr.Argument, out var updateArgExpr))
                 {

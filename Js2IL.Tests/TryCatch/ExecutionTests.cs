@@ -30,5 +30,8 @@ namespace Js2IL.Tests.TryCatch
 
         [Fact]
         public Task TryCatchFinally_ThrowValue() { var testName = nameof(TryCatchFinally_ThrowValue); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task TryCatch_NewExpression_BuiltInErrors() { var testName = nameof(TryCatch_NewExpression_BuiltInErrors); return ExecutionTest(testName); }
     }
 }

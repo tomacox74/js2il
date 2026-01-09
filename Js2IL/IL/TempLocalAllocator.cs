@@ -410,6 +410,12 @@ internal static class TempLocalAllocator
                 yield return arrayAdd.TargetArray;
                 yield return arrayAdd.Element;
                 break;
+            case LIRNewBuiltInError newError:
+                if (newError.Message.HasValue)
+                {
+                    yield return newError.Message.Value;
+                }
+                break;
             // LIRLabel and LIRBranch don't use temps
         }
     }
@@ -585,6 +591,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRGetItem getItem:
                 defined = getItem.Result;
+                return true;
+            case LIRNewBuiltInError newError:
+                defined = newError.Result;
                 return true;
             default:
                 defined = default;

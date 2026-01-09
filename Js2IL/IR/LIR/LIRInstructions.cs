@@ -181,6 +181,11 @@ public record LIRThrow(TempVariable Value) : LIRInstruction;
 public record LIRThrowNewTypeError(string Message) : LIRInstruction;
 
 /// <summary>
+/// Constructs a built-in JavaScriptRuntime Error type (Error, TypeError, etc.) with optional message.
+/// </summary>
+public record LIRNewBuiltInError(string ErrorTypeName, TempVariable? Message, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Loads a captured variable from a field on the leaf (current) scope instance.
 /// The scope instance is in IL local 0, and the field handle is looked up via BindingInfo.
 /// Emits: ldloc.0 (scope instance), ldfld (field handle)

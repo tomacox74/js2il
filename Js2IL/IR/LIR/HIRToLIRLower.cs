@@ -1531,6 +1531,9 @@ public sealed class HIRToLIRLowerer
             case HIRCallExpression callExpr:
                 return TryLowerCallExpression(callExpr, out resultTempVar);
 
+            case HIRNewExpression newExpr:
+                return TryLowerNewExpression(newExpr, out resultTempVar);
+
             case HIRUnaryExpression unaryExpr:
                 return TryLowerUnaryExpression(unaryExpr, out resultTempVar);
 
@@ -1627,6 +1630,48 @@ public sealed class HIRToLIRLowerer
                 // Unsupported expression type
                 return false;
         }
+    }
+
+    private bool TryLowerNewExpression(HIRNewExpression newExpr, out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        if (newExpr.Callee is not HIRVariableExpression calleeVar)
+        {
+            return false;
+        }
+
+        // Only treat as built-in when not shadowed by user code.
+        if (calleeVar.Name.Kind != BindingKind.Global)
+        {
+            return false;
+        }
+
+        var errorTypeName = calleeVar.Name.Name;
+        if (!BuiltInErrorTypes.IsBuiltInErrorTypeName(errorTypeName))
+        {
+            return false;
+        }
+
+        if (newExpr.Arguments.Count > 1)
+        {
+            return false;
+        }
+
+        TempVariable? messageTemp = null;
+        if (newExpr.Arguments.Count == 1)
+        {
+            if (!TryLowerExpression(newExpr.Arguments[0], out var loweredMessage))
+            {
+                return false;
+            }
+            messageTemp = EnsureObject(loweredMessage);
+        }
+
+        resultTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRNewBuiltInError(errorTypeName, messageTemp, resultTempVar));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
     }
 
     private bool TryLowerCallExpression(HIRCallExpression callExpr, out TempVariable resultTempVar)
