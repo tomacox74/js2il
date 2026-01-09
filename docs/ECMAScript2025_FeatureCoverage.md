@@ -280,8 +280,6 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Property assignment on objects (obj.prop = value) | Supported | `Js2IL.Tests/Literals/JavaScript/ObjectLiteral_PropertyAssign.js` | Emitted as a dynamic SetProperty call for non-computed MemberExpression targets. Supports ExpandoObject (object literal) and reflection-backed host objects; arrays/typed arrays ignore arbitrary dot properties. | 13.15.1 |
 
 
-### [Assignment Operators](https://tc39.es/ecma262/#sec-assignment-operators)
-
 #### [Assignment Operators (+=, -=, ...)](https://tc39.es/ecma262/#sec-assignment-operators)
 
 | Feature | Status | Test Scripts | Notes | Section |
