@@ -1368,62 +1368,63 @@ public sealed class HIRToLIRLowerer
         targetLabel = default;
         matchedAbsoluteIndex = -1;
 
-        var total = _controlFlowStack.Count;
-
-        // Stack enumerates from top to bottom.
-        int fromTop = 0;
+        // Enumerate from top to bottom; Stack<T>.ToArray() returns top-first.
+        var contexts = _controlFlowStack.ToArray();
+        var total = contexts.Length;
 
         if (string.IsNullOrEmpty(label))
         {
             if (isBreak)
             {
-                if (_controlFlowStack.Count == 0)
+                if (total == 0)
                 {
                     return false;
                 }
-                targetLabel = _controlFlowStack.Peek().BreakLabel;
-                matchedAbsoluteIndex = total - 1; // top element
+
+                targetLabel = contexts[0].BreakLabel;
+                matchedAbsoluteIndex = total - 1;
                 return true;
             }
 
             // continue without label targets nearest loop context
-            foreach (var ctx in _controlFlowStack)
+            for (int i = 0; i < total; i++)
             {
-                if (ctx.ContinueLabel.HasValue)
+                if (contexts[i].ContinueLabel is int continueLabel)
                 {
-                    targetLabel = ctx.ContinueLabel.Value;
-                    matchedAbsoluteIndex = total - 1 - fromTop;
+                    targetLabel = continueLabel;
+                    matchedAbsoluteIndex = total - 1 - i;
                     return true;
                 }
-                fromTop++;
             }
 
             return false;
         }
 
-        foreach (var ctx in _controlFlowStack)
+        for (int i = 0; i < total; i++)
         {
+            var ctx = contexts[i];
             if (!string.Equals(ctx.LabelName, label, global::System.StringComparison.Ordinal))
             {
-                fromTop++;
                 continue;
             }
 
             if (isBreak)
             {
                 targetLabel = ctx.BreakLabel;
-                matchedAbsoluteIndex = total - 1 - fromTop;
+                matchedAbsoluteIndex = total - 1 - i;
                 return true;
             }
 
-            if (ctx.ContinueLabel.HasValue)
+            if (ctx.ContinueLabel is int continueLabel)
             {
-                targetLabel = ctx.ContinueLabel.Value;
-                matchedAbsoluteIndex = total - 1 - fromTop;
+                targetLabel = continueLabel;
+                matchedAbsoluteIndex = total - 1 - i;
                 return true;
             }
 
-            fromTop++;
+            // Labeled continue targeting a non-loop labeled statement is invalid; do not fall through
+            // to outer contexts with the same label.
+            return false;
         }
 
         return false;

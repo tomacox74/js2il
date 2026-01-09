@@ -66,16 +66,9 @@ namespace Js2IL.Tests
             var assemblyName = Path.GetFileNameWithoutExtension(testFilePath);
             var expectedPath = Path.Combine(_outputPath, $"{assemblyName}.dll");
 
-            string il;
-            
-            if (preferOutOfProc)
-            {
-                il = ExecuteGeneratedAssembly(expectedPath, allowUnhandledException, testName);
-            }
-            else
-            {
-                il = ExecuteGeneratedAssemblyInProc(expectedPath, testName, postTestProcessingAction, addMocks: addMocks);
-            }
+            var il = preferOutOfProc
+                ? ExecuteGeneratedAssembly(expectedPath, allowUnhandledException, testName)
+                : ExecuteGeneratedAssemblyInProc(expectedPath, testName, postTestProcessingAction, addMocks: addMocks);
 
             var settings = new VerifySettings(_verifySettings);
             var directory = Path.GetDirectoryName(sourceFilePath);
@@ -181,7 +174,10 @@ namespace Js2IL.Tests
                     // IMPORTANT: We must ensure the generated assembly binds to the already-loaded
                     // JavaScriptRuntime assembly, otherwise runtime statics/mocks won't match.
                     alc = new TestAssemblyLoadContext(jsRuntimeAsm, dir);
-                    assembly = alc.LoadFromAssemblyPath(uniquePath);
+                    // Load from stream so we can delete the copied DLL without relying on GC.Collect
+                    // to release file locks.
+                    using var stream = File.OpenRead(uniquePath);
+                    assembly = alc.LoadFromStream(stream);
                 }
                 else
                 {
@@ -194,10 +190,10 @@ namespace Js2IL.Tests
 
                 var modDir = Path.GetDirectoryName(assemblyPath) ?? string.Empty;
                 var file = assemblyPath;
-            
-            // mocks are created here
-            var captured = new CapturingConsoleOutput();
-            var capturedEnvironment = new CapturingEnvironment();
+
+                // mocks are created here
+                var captured = new CapturingConsoleOutput();
+                var capturedEnvironment = new CapturingEnvironment();
 
                 var setupMocks = () =>
                 {
@@ -262,11 +258,6 @@ namespace Js2IL.Tests
                 if (alc != null)
                 {
                     alc.Unload();
-                    for (var i = 0; i < 3; i++)
-                    {
-                        GC.Collect();
-                        GC.WaitForPendingFinalizers();
-                    }
                 }
 
                 try { File.Delete(uniquePath); } catch { }

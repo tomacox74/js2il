@@ -459,12 +459,9 @@ class HIRMethodBuilder
                     foreach (var sc in switchStmt.Cases)
                     {
                         HIRExpression? test = null;
-                        if (sc.Test != null)
+                        if (sc.Test != null && !TryParseExpression(sc.Test, out test))
                         {
-                            if (!TryParseExpression(sc.Test, out test))
-                            {
-                                return false;
-                            }
+                            return false;
                         }
 
                         var consequent = new List<HIRStatement>();
@@ -501,18 +498,17 @@ class HIRMethodBuilder
                             return false;
                         }
 
-                        if (tryStmt.Handler.Param != null)
+                        if (tryStmt.Handler.Param is Identifier catchId)
                         {
-                            if (tryStmt.Handler.Param is not Identifier catchId)
-                            {
-                                return false;
-                            }
-
                             // Catch parameter is block-scoped to the catch body.
                             // TryParseStatement restores _currentScope after parsing the catch block,
                             // so resolve the binding from the catch block's child scope directly.
                             var catchScope = FindChildScopeForAstNode(tryStmt.Handler.Body) ?? _currentScope;
                             catchParamBinding = catchScope.FindSymbol(catchId.Name).BindingInfo;
+                        }
+                        else if (tryStmt.Handler.Param != null)
+                        {
+                            return false;
                         }
                     }
 
@@ -531,11 +527,7 @@ class HIRMethodBuilder
 
             case ThrowStatement throwStmt:
                 {
-                    if (throwStmt.Argument == null)
-                    {
-                        return false;
-                    }
-                    if (!TryParseExpression(throwStmt.Argument, out var argExpr))
+                    if (throwStmt.Argument == null || !TryParseExpression(throwStmt.Argument, out var argExpr))
                     {
                         return false;
                     }
