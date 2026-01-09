@@ -389,7 +389,12 @@ public sealed class HIRToLIRLowerer
             return true;
         }
 
-        // Build the callee's environment layout to get its scope chain
+        return TryBuildScopesArrayFromLayout(calleeScope, CallableKind.Function, resultTemp);
+    }
+
+    private bool TryBuildScopesArrayFromLayout(Scope calleeScope, CallableKind callableKind, TempVariable resultTemp)
+    {
+        // Build the callee's environment layout to get its scope chain.
         if (_environmentLayoutBuilder == null)
         {
             // No layout builder available - fall back to legacy
@@ -399,45 +404,14 @@ public sealed class HIRToLIRLowerer
         EnvironmentLayout calleeLayout;
         try
         {
-            calleeLayout = _environmentLayoutBuilder.Build(calleeScope, CallableKind.Function);
+            calleeLayout = _environmentLayoutBuilder.Build(calleeScope, callableKind);
         }
         catch
         {
             return false;
         }
 
-        // Map each slot in the callee's scope chain to a source in the caller
-        var slotSources = new List<ScopeSlotSource>();
-        foreach (var slot in calleeLayout.ScopeChain.Slots)
-        {
-            if (!TryMapScopeSlotToSource(slot, out var slotSource))
-            {
-                return false;
-            }
-            slotSources.Add(slotSource);
-        }
-
-        _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(slotSources.ToList(), resultTemp));
-        return true;
-    }
-
-    private bool TryBuildScopesArrayForClassConstructor(Scope classScope, TempVariable resultTemp)
-    {
-        if (_environmentLayoutBuilder == null)
-        {
-            return false;
-        }
-
-        EnvironmentLayout calleeLayout;
-        try
-        {
-            calleeLayout = _environmentLayoutBuilder.Build(classScope, CallableKind.Constructor);
-        }
-        catch
-        {
-            return false;
-        }
-
+        // Map each slot in the callee's scope chain to a source in the caller.
         var slotSources = new List<ScopeSlotSource>();
         foreach (var slot in calleeLayout.ScopeChain.Slots)
         {
@@ -1878,7 +1852,7 @@ public sealed class HIRToLIRLowerer
         if (needsScopes)
         {
             scopesTemp = CreateTempVariable();
-            if (!TryBuildScopesArrayForClassConstructor(classScope, scopesTemp.Value))
+            if (!TryBuildScopesArrayFromLayout(classScope, CallableKind.Constructor, scopesTemp.Value))
             {
                 return false;
             }
