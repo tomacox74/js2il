@@ -1651,11 +1651,53 @@ public sealed class HIRToLIRLowerer
 
             case HIRArrowFunctionExpression arrowExpr:
                 return TryLowerArrowFunctionExpression(arrowExpr, out resultTempVar);
+            case HIRFunctionExpression funcExpr:
+                return TryLowerFunctionExpression(funcExpr, out resultTempVar);
             // Handle different expression types here
             default:
                 // Unsupported expression type
                 return false;
         }
+    }
+
+    private bool TryLowerFunctionExpression(HIRFunctionExpression funcExpr, out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        if (_scope == null)
+        {
+            return false;
+        }
+
+        // Find the function expression scope so we can compute its required scope-chain layout.
+        var rootScope = _scope;
+        while (rootScope.Parent != null)
+        {
+            rootScope = rootScope.Parent;
+        }
+
+        var funcScope = FindScopeByAstNode(funcExpr.Function, rootScope);
+        if (funcScope == null)
+        {
+            return false;
+        }
+
+        // Build scopes[] to bind for closure semantics.
+        var scopesTemp = CreateTempVariable();
+        if (!TryBuildScopesArrayForClosureBinding(funcScope, scopesTemp))
+        {
+            return false;
+        }
+        DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+        resultTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCreateBoundFunctionExpression(
+            FunctionNode: funcExpr.Function,
+            JsParamCount: funcExpr.Function.Params.Count,
+            ScopesArray: scopesTemp,
+            Result: resultTempVar));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
     }
 
     private bool TryLowerArrowFunctionExpression(HIRArrowFunctionExpression arrowExpr, out TempVariable resultTempVar)

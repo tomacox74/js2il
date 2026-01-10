@@ -889,6 +889,18 @@ class HIRMethodBuilder
                 hirExpr = new HIRArrowFunctionExpression(arrowExpr);
                 return true;
 
+            case FunctionExpression funcExpr:
+                // PL3.6: FunctionExpression as an expression (closure creation)
+                // Treat the function expression as an opaque callable value; its body is compiled separately.
+                // Support is intentionally conservative: only simple identifier/default params.
+                if (!HIRBuilder.AllParamsAreSimpleIdentifiers(funcExpr.Params))
+                {
+                    return false;
+                }
+
+                hirExpr = new HIRFunctionExpression(funcExpr);
+                return true;
+
             case NumericLiteral literalExpr:
                 hirExpr = new HIRLiteralExpression(JavascriptType.Number, literalExpr.Value);
                 return true;

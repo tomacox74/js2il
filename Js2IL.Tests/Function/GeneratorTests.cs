@@ -73,5 +73,8 @@ namespace Js2IL.Tests.Function
 
         [Fact]
         public Task Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter() { var testName = nameof(Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+
+        [Fact]
+        public Task Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter() { var testName = nameof(Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
     }
 }
