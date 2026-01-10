@@ -80,16 +80,15 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 173 (0xad)
+		// Code size: 157 (0x9d)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.TryCatch_NoBinding_NoThrow,
 			[1] float64,
 			[2] float64,
 			[3] object,
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[5] object,
-			[6] object[]
+			[4] object,
+			[5] object[]
 		)
 
 		IL_0000: newobj instance void Scopes.TryCatch_NoBinding_NoThrow::.ctor()
@@ -97,73 +96,65 @@
 		IL_0006: ldc.r8 7
 		IL_000f: stloc.1
 		IL_0010: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0015: stloc.s 4
-		IL_0017: ldloc.s 4
-		IL_0019: ldc.i4.1
-		IL_001a: newarr [System.Runtime]System.Object
-		IL_001f: dup
-		IL_0020: ldc.i4.0
-		IL_0021: ldstr "before try"
-		IL_0026: stelem.ref
-		IL_0027: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_002c: pop
+		IL_0015: ldc.i4.1
+		IL_0016: newarr [System.Runtime]System.Object
+		IL_001b: dup
+		IL_001c: ldc.i4.0
+		IL_001d: ldstr "before try"
+		IL_0022: stelem.ref
+		IL_0023: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0028: pop
 		.try
 		{
-			IL_002d: ldloc.1
-			IL_002e: ldc.r8 4
-			IL_0037: add
-			IL_0038: stloc.2
-			IL_0039: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_003e: stloc.s 4
-			IL_0040: ldloc.2
-			IL_0041: box [System.Runtime]System.Double
-			IL_0046: stloc.s 5
-			IL_0048: ldc.i4.2
-			IL_0049: newarr [System.Runtime]System.Object
-			IL_004e: dup
-			IL_004f: ldc.i4.0
-			IL_0050: ldstr "Inside catch.  Calculated value is"
-			IL_0055: stelem.ref
-			IL_0056: dup
-			IL_0057: ldc.i4.1
-			IL_0058: ldloc.s 5
-			IL_005a: stelem.ref
-			IL_005b: stloc.s 6
-			IL_005d: ldloc.s 4
-			IL_005f: ldloc.s 6
-			IL_0061: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0066: pop
-			IL_0067: leave IL_008f
+			IL_0029: ldloc.1
+			IL_002a: ldc.r8 4
+			IL_0033: add
+			IL_0034: stloc.2
+			IL_0035: ldloc.2
+			IL_0036: box [System.Runtime]System.Double
+			IL_003b: stloc.s 4
+			IL_003d: ldc.i4.2
+			IL_003e: newarr [System.Runtime]System.Object
+			IL_0043: dup
+			IL_0044: ldc.i4.0
+			IL_0045: ldstr "Inside catch.  Calculated value is"
+			IL_004a: stelem.ref
+			IL_004b: dup
+			IL_004c: ldc.i4.1
+			IL_004d: ldloc.s 4
+			IL_004f: stelem.ref
+			IL_0050: stloc.s 5
+			IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0057: ldloc.s 5
+			IL_0059: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_005e: pop
+			IL_005f: leave IL_0083
 		} // end .try
 		catch [System.Runtime]System.Exception
 		{
-			IL_006c: stloc.3
-			IL_006d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0072: stloc.s 4
-			IL_0074: ldloc.s 4
-			IL_0076: ldc.i4.1
-			IL_0077: newarr [System.Runtime]System.Object
-			IL_007c: dup
-			IL_007d: ldc.i4.0
-			IL_007e: ldstr "inside catch.. we should not be here"
-			IL_0083: stelem.ref
-			IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0089: pop
-			IL_008a: leave IL_008f
+			IL_0064: stloc.3
+			IL_0065: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_006a: ldc.i4.1
+			IL_006b: newarr [System.Runtime]System.Object
+			IL_0070: dup
+			IL_0071: ldc.i4.0
+			IL_0072: ldstr "inside catch.. we should not be here"
+			IL_0077: stelem.ref
+			IL_0078: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_007d: pop
+			IL_007e: leave IL_0083
 		} // end handler
 
-		IL_008f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0094: stloc.s 4
-		IL_0096: ldloc.s 4
-		IL_0098: ldc.i4.1
-		IL_0099: newarr [System.Runtime]System.Object
-		IL_009e: dup
-		IL_009f: ldc.i4.0
-		IL_00a0: ldstr "try/catch finished."
-		IL_00a5: stelem.ref
-		IL_00a6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00ab: pop
-		IL_00ac: ret
+		IL_0083: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0088: ldc.i4.1
+		IL_0089: newarr [System.Runtime]System.Object
+		IL_008e: dup
+		IL_008f: ldc.i4.0
+		IL_0090: ldstr "try/catch finished."
+		IL_0095: stelem.ref
+		IL_0096: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_009b: pop
+		IL_009c: ret
 	} // end of method TryCatch_NoBinding_NoThrow::Main
 
 } // end of class Scripts.TryCatch_NoBinding_NoThrow
@@ -175,7 +166,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2138
+		// Method begins at RVA 0x2128
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

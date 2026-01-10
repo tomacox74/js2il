@@ -142,6 +142,30 @@ internal static class Stackify
             }
         }
 
+        // Special-case: receiver temps for intrinsic instance calls (e.g., console.log).
+        // Restrict this to receivers defined by LIRGetIntrinsicGlobal (e.g., GlobalThis.console)
+        // which are expected to be pure/singleton lookups.
+        // This avoids materializing receivers like GlobalThis.get_console() into locals.
+        {
+            var useInstr = methodBody.Instructions[useIndex];
+            var defInstr = methodBody.Instructions[defIndex];
+            if (defInstr is LIRGetIntrinsicGlobal &&
+                useInstr is LIRCallIntrinsic callIntrinsic &&
+                callIntrinsic.IntrinsicObject.Index == targetTemp.Index)
+            {
+                for (int i = defIndex + 1; i < useIndex; i++)
+                {
+                    var instr = methodBody.Instructions[i];
+                    if (IsControlFlowInstruction(instr))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }
+
         // Check for intervening control flow
         for (int i = defIndex + 1; i < useIndex; i++)
         {

@@ -80,11 +80,10 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 130 (0x82)
+		// Code size: 124 (0x7c)
 		.maxstack 32
-		.locals init (
-			[0] class Scopes.TryFinally_NoCatch_Throw,
-			[1] class [JavaScriptRuntime]JavaScriptRuntime.Console
+		.locals (
+			[0] class Scopes.TryFinally_NoCatch_Throw
 		)
 
 		IL_0000: newobj instance void Scopes.TryFinally_NoCatch_Throw::.ctor()
@@ -92,61 +91,55 @@
 		.try
 		{
 			IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_000b: stloc.1
-			IL_000c: ldloc.1
-			IL_000d: ldc.i4.1
-			IL_000e: newarr [System.Runtime]System.Object
-			IL_0013: dup
-			IL_0014: ldc.i4.0
-			IL_0015: ldstr "in try"
-			IL_001a: stelem.ref
-			IL_001b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0020: pop
-			IL_0021: ldstr "boom"
-			IL_0026: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_002b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
-			IL_0030: dup
-			IL_0031: isinst [System.Runtime]System.Exception
-			IL_0036: dup
-			IL_0037: brtrue IL_0043
+			IL_000b: ldc.i4.1
+			IL_000c: newarr [System.Runtime]System.Object
+			IL_0011: dup
+			IL_0012: ldc.i4.0
+			IL_0013: ldstr "in try"
+			IL_0018: stelem.ref
+			IL_0019: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_001e: pop
+			IL_001f: ldstr "boom"
+			IL_0024: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_0029: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Error::.ctor(string)
+			IL_002e: dup
+			IL_002f: isinst [System.Runtime]System.Exception
+			IL_0034: dup
+			IL_0035: brtrue IL_0041
 
-			IL_003c: pop
-			IL_003d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_003a: pop
+			IL_003b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.JsThrownValueException::.ctor(object)
+			IL_0040: throw
+
+			IL_0041: pop
 			IL_0042: throw
 
-			IL_0043: pop
-			IL_0044: throw
-
-			IL_0045: leave IL_0066
+			IL_0043: leave IL_0062
 		} // end .try
 		finally
 		{
-			IL_004a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_004f: stloc.1
-			IL_0050: ldloc.1
-			IL_0051: ldc.i4.1
-			IL_0052: newarr [System.Runtime]System.Object
-			IL_0057: dup
-			IL_0058: ldc.i4.0
-			IL_0059: ldstr "in finally"
-			IL_005e: stelem.ref
-			IL_005f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0064: pop
-			IL_0065: endfinally
+			IL_0048: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_004d: ldc.i4.1
+			IL_004e: newarr [System.Runtime]System.Object
+			IL_0053: dup
+			IL_0054: ldc.i4.0
+			IL_0055: ldstr "in finally"
+			IL_005a: stelem.ref
+			IL_005b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0060: pop
+			IL_0061: endfinally
 		} // end handler
 
-		IL_0066: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_006b: stloc.1
-		IL_006c: ldloc.1
-		IL_006d: ldc.i4.1
-		IL_006e: newarr [System.Runtime]System.Object
-		IL_0073: dup
-		IL_0074: ldc.i4.0
-		IL_0075: ldstr "after finally"
-		IL_007a: stelem.ref
-		IL_007b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0080: pop
-		IL_0081: ret
+		IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0067: ldc.i4.1
+		IL_0068: newarr [System.Runtime]System.Object
+		IL_006d: dup
+		IL_006e: ldc.i4.0
+		IL_006f: ldstr "after finally"
+		IL_0074: stelem.ref
+		IL_0075: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_007a: pop
+		IL_007b: ret
 	} // end of method TryFinally_NoCatch_Throw::Main
 
 } // end of class Scripts.TryFinally_NoCatch_Throw
@@ -158,7 +151,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x210c
+		// Method begins at RVA 0x2104
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

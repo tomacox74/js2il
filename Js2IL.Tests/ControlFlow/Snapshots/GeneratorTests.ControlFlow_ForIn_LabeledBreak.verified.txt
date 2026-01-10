@@ -104,7 +104,7 @@
 	{
 		// Method begins at RVA 0x2074
 		// Header size: 12
-		// Code size: 265 (0x109)
+		// Code size: 261 (0x105)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ControlFlow_ForIn_LabeledBreak,
@@ -115,9 +115,8 @@
 			[5] object,
 			[6] float64,
 			[7] object,
-			[8] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[9] bool,
-			[10] float64
+			[8] bool,
+			[9] float64
 		)
 
 		IL_0000: newobj instance void Scopes.ControlFlow_ForIn_LabeledBreak::.ctor()
@@ -151,7 +150,7 @@
 			IL_0070: ldloc.s 4
 			IL_0072: ldloc.3
 			IL_0073: clt
-			IL_0075: brfalse IL_0108
+			IL_0075: brfalse IL_0104
 
 			IL_007a: ldloc.s 4
 			IL_007c: box [System.Runtime]System.Double
@@ -166,45 +165,43 @@
 				IL_0098: ldloc.s 6
 				IL_009a: ldc.r8 1
 				IL_00a3: clt
-				IL_00a5: brfalse IL_00f1
+				IL_00a5: brfalse IL_00ed
 
 				IL_00aa: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_00af: stloc.s 8
-				IL_00b1: ldloc.s 8
-				IL_00b3: ldc.i4.1
-				IL_00b4: newarr [System.Runtime]System.Object
-				IL_00b9: dup
-				IL_00ba: ldc.i4.0
-				IL_00bb: ldloc.s 5
-				IL_00bd: stelem.ref
-				IL_00be: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-				IL_00c3: pop
-				IL_00c4: ldloc.s 5
-				IL_00c6: ldstr "b"
-				IL_00cb: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_00d0: stloc.s 9
-				IL_00d2: ldloc.s 9
-				IL_00d4: brfalse IL_00de
+				IL_00af: ldc.i4.1
+				IL_00b0: newarr [System.Runtime]System.Object
+				IL_00b5: dup
+				IL_00b6: ldc.i4.0
+				IL_00b7: ldloc.s 5
+				IL_00b9: stelem.ref
+				IL_00ba: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+				IL_00bf: pop
+				IL_00c0: ldloc.s 5
+				IL_00c2: ldstr "b"
+				IL_00c7: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_00cc: stloc.s 8
+				IL_00ce: ldloc.s 8
+				IL_00d0: brfalse IL_00da
 
-				IL_00d9: br IL_0108
+				IL_00d5: br IL_0104
 
-				IL_00de: ldloc.s 6
-				IL_00e0: ldc.r8 1
-				IL_00e9: add
-				IL_00ea: stloc.s 6
-				IL_00ec: br IL_0098
+				IL_00da: ldloc.s 6
+				IL_00dc: ldc.r8 1
+				IL_00e5: add
+				IL_00e6: stloc.s 6
+				IL_00e8: br IL_0098
 			// end loop
 
-			IL_00f1: ldloc.s 4
-			IL_00f3: ldc.r8 1
-			IL_00fc: add
-			IL_00fd: stloc.s 10
-			IL_00ff: ldloc.s 10
-			IL_0101: stloc.s 4
-			IL_0103: br IL_0070
+			IL_00ed: ldloc.s 4
+			IL_00ef: ldc.r8 1
+			IL_00f8: add
+			IL_00f9: stloc.s 9
+			IL_00fb: ldloc.s 9
+			IL_00fd: stloc.s 4
+			IL_00ff: br IL_0070
 		// end loop
 
-		IL_0108: ret
+		IL_0104: ret
 	} // end of method ControlFlow_ForIn_LabeledBreak::Main
 
 } // end of class Scripts.ControlFlow_ForIn_LabeledBreak
@@ -216,7 +213,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2189
+		// Method begins at RVA 0x2185
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -82,15 +82,14 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 121 (0x79)
+		// Code size: 117 (0x75)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ControlFlow_DoWhile_Continue_SkipEven,
 			[1] float64,
 			[2] float64,
-			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[4] object,
-			[5] object[]
+			[3] object,
+			[4] object[]
 		)
 
 		IL_0000: newobj instance void Scopes.ControlFlow_DoWhile_Continue_SkipEven::.ctor()
@@ -101,7 +100,7 @@
 			IL_0010: ldloc.1
 			IL_0011: ldc.r8 10
 			IL_001a: clt
-			IL_001c: brfalse IL_0078
+			IL_001c: brfalse IL_0074
 
 			IL_0021: ldloc.1
 			IL_0022: ldc.r8 1
@@ -118,26 +117,24 @@
 
 			IL_004a: br IL_0010
 
-			IL_004f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0054: stloc.3
-			IL_0055: ldloc.1
-			IL_0056: box [System.Runtime]System.Double
-			IL_005b: stloc.s 4
-			IL_005d: ldc.i4.1
-			IL_005e: newarr [System.Runtime]System.Object
-			IL_0063: dup
-			IL_0064: ldc.i4.0
-			IL_0065: ldloc.s 4
-			IL_0067: stelem.ref
-			IL_0068: stloc.s 5
-			IL_006a: ldloc.3
-			IL_006b: ldloc.s 5
-			IL_006d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0072: pop
-			IL_0073: br IL_0010
+			IL_004f: ldloc.1
+			IL_0050: box [System.Runtime]System.Double
+			IL_0055: stloc.3
+			IL_0056: ldc.i4.1
+			IL_0057: newarr [System.Runtime]System.Object
+			IL_005c: dup
+			IL_005d: ldc.i4.0
+			IL_005e: ldloc.3
+			IL_005f: stelem.ref
+			IL_0060: stloc.s 4
+			IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0067: ldloc.s 4
+			IL_0069: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_006e: pop
+			IL_006f: br IL_0010
 		// end loop
 
-		IL_0078: ret
+		IL_0074: ret
 	} // end of method ControlFlow_DoWhile_Continue_SkipEven::Main
 
 } // end of class Scripts.ControlFlow_DoWhile_Continue_SkipEven
@@ -149,7 +146,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20f1
+		// Method begins at RVA 0x20ed
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

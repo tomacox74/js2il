@@ -60,14 +60,13 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 85 (0x55)
+		// Code size: 81 (0x51)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ControlFlow_ForLoop_CountDownFromFive,
 			[1] float64,
-			[2] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[3] object,
-			[4] object[]
+			[2] object,
+			[3] object[]
 		)
 
 		IL_0000: newobj instance void Scopes.ControlFlow_ForLoop_CountDownFromFive::.ctor()
@@ -78,32 +77,30 @@
 			IL_0010: ldloc.1
 			IL_0011: ldc.r8 0.0
 			IL_001a: cgt
-			IL_001c: brfalse IL_0054
+			IL_001c: brfalse IL_0050
 
-			IL_0021: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0026: stloc.2
-			IL_0027: ldloc.1
-			IL_0028: box [System.Runtime]System.Double
-			IL_002d: stloc.3
-			IL_002e: ldc.i4.1
-			IL_002f: newarr [System.Runtime]System.Object
-			IL_0034: dup
-			IL_0035: ldc.i4.0
-			IL_0036: ldloc.3
-			IL_0037: stelem.ref
-			IL_0038: stloc.s 4
-			IL_003a: ldloc.2
-			IL_003b: ldloc.s 4
-			IL_003d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0042: pop
-			IL_0043: ldloc.1
-			IL_0044: ldc.r8 1
-			IL_004d: sub
-			IL_004e: stloc.1
-			IL_004f: br IL_0010
+			IL_0021: ldloc.1
+			IL_0022: box [System.Runtime]System.Double
+			IL_0027: stloc.2
+			IL_0028: ldc.i4.1
+			IL_0029: newarr [System.Runtime]System.Object
+			IL_002e: dup
+			IL_002f: ldc.i4.0
+			IL_0030: ldloc.2
+			IL_0031: stelem.ref
+			IL_0032: stloc.3
+			IL_0033: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0038: ldloc.3
+			IL_0039: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_003e: pop
+			IL_003f: ldloc.1
+			IL_0040: ldc.r8 1
+			IL_0049: sub
+			IL_004a: stloc.1
+			IL_004b: br IL_0010
 		// end loop
 
-		IL_0054: ret
+		IL_0050: ret
 	} // end of method ControlFlow_ForLoop_CountDownFromFive::Main
 
 } // end of class Scripts.ControlFlow_ForLoop_CountDownFromFive
@@ -115,7 +112,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20c5
+		// Method begins at RVA 0x20c1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

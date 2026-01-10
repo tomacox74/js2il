@@ -60,15 +60,14 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 169 (0xa9)
+		// Code size: 165 (0xa5)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Array_Spread_Copy,
 			[1] object,
 			[2] object,
 			[3] float64,
-			[4] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[5] object
+			[4] object
 		)
 
 		IL_0000: newobj instance void Scopes.Array_Spread_Copy::.ctor()
@@ -101,32 +100,30 @@
 			IL_0062: ldloc.2
 			IL_0063: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
 			IL_0068: clt
-			IL_006a: brfalse IL_00a8
+			IL_006a: brfalse IL_00a4
 
-			IL_006f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0074: stloc.s 4
-			IL_0076: ldloc.3
-			IL_0077: box [System.Runtime]System.Double
-			IL_007c: stloc.s 5
-			IL_007e: ldloc.s 4
-			IL_0080: ldc.i4.1
-			IL_0081: newarr [System.Runtime]System.Object
-			IL_0086: dup
-			IL_0087: ldc.i4.0
-			IL_0088: ldloc.2
-			IL_0089: ldloc.s 5
-			IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0090: stelem.ref
-			IL_0091: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0096: pop
-			IL_0097: ldloc.3
-			IL_0098: ldc.r8 1
-			IL_00a1: add
-			IL_00a2: stloc.3
-			IL_00a3: br IL_0061
+			IL_006f: ldloc.3
+			IL_0070: box [System.Runtime]System.Double
+			IL_0075: stloc.s 4
+			IL_0077: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_007c: ldc.i4.1
+			IL_007d: newarr [System.Runtime]System.Object
+			IL_0082: dup
+			IL_0083: ldc.i4.0
+			IL_0084: ldloc.2
+			IL_0085: ldloc.s 4
+			IL_0087: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_008c: stelem.ref
+			IL_008d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0092: pop
+			IL_0093: ldloc.3
+			IL_0094: ldc.r8 1
+			IL_009d: add
+			IL_009e: stloc.3
+			IL_009f: br IL_0061
 		// end loop
 
-		IL_00a8: ret
+		IL_00a4: ret
 	} // end of method Array_Spread_Copy::Main
 
 } // end of class Scripts.Array_Spread_Copy
@@ -138,7 +135,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2119
+		// Method begins at RVA 0x2115
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
