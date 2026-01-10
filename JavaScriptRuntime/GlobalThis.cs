@@ -31,6 +31,7 @@ namespace JavaScriptRuntime
         /// </summary>
         public static JavaScriptRuntime.Console console 
         {
+            [StackifyInline]
             get => _serviceProvider.Value!.Resolve<JavaScriptRuntime.Console>();
         }
 

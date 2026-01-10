@@ -490,6 +490,11 @@ internal sealed class LIRToILCompiler
                 EmitInstanceMethodCall(callInstance, ilEncoder, allocation, methodDescriptor);
                 break;
             case LIRCallIntrinsicStatic callIntrinsicStatic:
+                if (!IsMaterialized(callIntrinsicStatic.Result, allocation) && IntrinsicInlining.IsStackifyInlineable(callIntrinsicStatic))
+                {
+                    // Safe, side-effect-free call marked for stackify inlining. It will be emitted at the load site.
+                    break;
+                }
                 EmitIntrinsicStaticCall(callIntrinsicStatic, ilEncoder, allocation, methodDescriptor);
                 break;
             case LIRConvertToObject convertToObject:

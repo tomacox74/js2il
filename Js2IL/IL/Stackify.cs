@@ -366,8 +366,8 @@ internal static class Stackify
                 return false;
 
             // LIRCallIntrinsicStatic calls a static method on an intrinsic type (e.g., Array.isArray).
-            case LIRCallIntrinsicStatic:
-                return false;
+            case LIRCallIntrinsicStatic callStatic:
+                return IntrinsicInlining.IsStackifyInlineable(callStatic);
 
             // LIRCallFunction calls a user-defined function.
             case LIRCallFunction:
