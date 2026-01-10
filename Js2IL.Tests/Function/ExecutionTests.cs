@@ -79,5 +79,17 @@ namespace Js2IL.Tests.Function
 
         [Fact]
         public Task Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter() { var testName = nameof(Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_CallViaVariable_Reassignment() { var testName = nameof(Function_CallViaVariable_Reassignment); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_NestedFunctionExpression_ReturnedAndCalledViaVariable() { var testName = nameof(Function_NestedFunctionExpression_ReturnedAndCalledViaVariable); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_NestedFunctionDeclaration_AssignedAndCalledViaVariable() { var testName = nameof(Function_NestedFunctionDeclaration_AssignedAndCalledViaVariable); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_CallViaVariable_Reassignment_ClosureValues() { var testName = nameof(Function_CallViaVariable_Reassignment_ClosureValues); return ExecutionTest(testName); }
     }
 }
