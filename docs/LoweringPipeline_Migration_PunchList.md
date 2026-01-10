@@ -110,8 +110,8 @@ Based on the legacy emitters:
   - [x] PL1.4b correct leaf local lifetime across control-flow and loops
 - [ ] PL1.5 Ensure call sites always build the correct scopes array for callee requirements:
   - [x] PL1.5a direct calls (`f(...)`)
-  - [ ] PL1.5b calls via variables / re-assignment (blocked on IR support for function values / rebinding)
-  - [ ] PL1.5c nested functions and function expressions used as values (blocked on IR support for FunctionExpression/ArrowFunctionExpression as values)
+  - [x] PL1.5b calls via variables / re-assignment
+  - [x] PL1.5c nested functions and function expressions used as values
   - [x] PL1.5d class method calls that access parent scopes
 - [x] PL1.6 Confirm the scopes source selection is correct for:
   - [x] PL1.6a static methods (scopes passed as arg)
