@@ -42,4 +42,30 @@ new Foo();
         Assert.Equal(1, stats.MainMethodSuccesses);
         Assert.Null(IRPipelineMetrics.GetLastFailure());
     }
+
+      [Fact]
+      public void IR_NewExpression_UserDefinedClass_ConstructorArgCountMismatch_ThrowsNotSupported()
+      {
+        var js = @"
+    class Foo {
+      constructor(a, b = 2) {
+      }
+    }
+    new Foo();
+    ";
+
+        var outputPath = Path.Combine(Path.GetTempPath(), "Js2IL.Tests", "IRNewExpressionUserDefinedClass_ArgCountMismatch");
+        Directory.CreateDirectory(outputPath);
+
+        var testFilePath = Path.Combine(outputPath, "test.js");
+        var mockFs = new MockFileSystem();
+        mockFs.AddFile(testFilePath, js);
+
+        var options = new CompilerOptions { OutputDirectory = outputPath };
+        var serviceProvider = CompilerServices.BuildServiceProvider(options, mockFs, new TestLogger());
+        var compiler = serviceProvider.GetRequiredService<Compiler>();
+
+        var ex = Assert.Throws<NotSupportedException>(() => compiler.Compile(testFilePath));
+        Assert.Contains("Constructor for class 'Foo' expects 1-2 argument(s) but call site has 0.", ex.Message);
+      }
 }

@@ -139,7 +139,7 @@ Based on the legacy emitters:
 - [ ] PL3.3 `NewExpression`
   - [x] PL3.3a built-in Error types
   - [x] PL3.3b user-defined classes
-  - [ ] PL3.3c argument count checking (match legacy)
+  - [x] PL3.3c argument count checking (match legacy)
   - [x] PL3.3d built-in Array constructor (`new Array()` / `new Array(n)` / `new Array(a, b, ...)`) semantics
   - [x] PL3.3e built-in String constructor (`new String()` / `new String(x)`) as syntactic sugar for native strings
   - [x] PL3.3f built-in Boolean/Number constructors (`new Boolean(x)`, `new Number(x)`) wrapper/sugar semantics
@@ -147,8 +147,8 @@ Based on the legacy emitters:
 - [x] PL3.4 `TemplateLiteral` (including interpolation)
 - [x] PL3.5 `ThisExpression` (supported for class methods/constructors)
 - [ ] PL3.6 `FunctionExpression` as an expression (closure creation)
-- [ ] PL3.7 `ArrowFunctionExpression` as an expression (closure creation)
-  - [ ] PL3.7a concise-body arrows must wrap implicit return
+- [x] PL3.7 `ArrowFunctionExpression` as an expression (closure creation)
+  - [x] PL3.7a concise-body arrows must wrap implicit return
 
 ### 8) Intrinsic constructor-like calls (no `new`)
 These are `CallExpression` forms (e.g., `Date(x)`, `Boolean()`) and are distinct from `NewExpression`.

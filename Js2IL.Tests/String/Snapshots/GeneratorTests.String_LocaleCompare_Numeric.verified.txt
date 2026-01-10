@@ -96,7 +96,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -107,11 +107,13 @@
 	{
 		// Method begins at RVA 0x20a8
 		// Header size: 12
-		// Code size: 145 (0x91)
+		// Code size: 136 (0x88)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.String_LocaleCompare_Numeric,
-			[1] object
+			[1] object,
+			[2] object,
+			[3] object[]
 		)
 
 		IL_0000: newobj instance void Scopes.String_LocaleCompare_Numeric::.ctor()
@@ -128,44 +130,47 @@
 		IL_0023: ldstr "1"
 		IL_0028: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_002d: stloc.1
-		IL_002e: ldloc.1
-		IL_002f: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_0034: ldc.i4.1
-		IL_0035: newarr [System.Runtime]System.Object
-		IL_003a: dup
-		IL_003b: ldc.i4.0
-		IL_003c: ldnull
-		IL_003d: ldftn object Functions.ArrowFunction_L2C13::ArrowFunction_L2C13(object[], object, object)
-		IL_0043: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-		IL_0048: ldc.i4.1
-		IL_0049: newarr [System.Runtime]System.Object
-		IL_004e: dup
-		IL_004f: ldc.i4.0
-		IL_0050: ldloc.0
-		IL_0051: stelem.ref
-		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0057: stelem.ref
-		IL_0058: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::sort(object[])
-		IL_005d: pop
-		IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0063: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0068: ldc.i4.1
-		IL_0069: newarr [System.Runtime]System.Object
-		IL_006e: dup
-		IL_006f: ldc.i4.0
-		IL_0070: ldloc.1
-		IL_0071: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_0076: ldc.i4.1
-		IL_0077: newarr [System.Runtime]System.Object
-		IL_007c: dup
-		IL_007d: ldc.i4.0
-		IL_007e: ldstr ","
-		IL_0083: stelem.ref
-		IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
-		IL_0089: stelem.ref
-		IL_008a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_008f: pop
-		IL_0090: ret
+		IL_002e: ldnull
+		IL_002f: ldftn object Functions.ArrowFunction_L2C13::ArrowFunction_L2C13(object[], object, object)
+		IL_0035: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_003a: ldc.i4.1
+		IL_003b: newarr [System.Runtime]System.Object
+		IL_0040: dup
+		IL_0041: ldc.i4.0
+		IL_0042: ldloc.0
+		IL_0043: stelem.ref
+		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0049: stloc.2
+		IL_004a: ldloc.1
+		IL_004b: ldc.i4.1
+		IL_004c: newarr [System.Runtime]System.Object
+		IL_0051: dup
+		IL_0052: ldc.i4.0
+		IL_0053: ldloc.2
+		IL_0054: stelem.ref
+		IL_0055: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::sort(object[])
+		IL_005a: pop
+		IL_005b: ldloc.1
+		IL_005c: ldc.i4.1
+		IL_005d: newarr [System.Runtime]System.Object
+		IL_0062: dup
+		IL_0063: ldc.i4.0
+		IL_0064: ldstr ","
+		IL_0069: stelem.ref
+		IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_006f: stloc.2
+		IL_0070: ldc.i4.1
+		IL_0071: newarr [System.Runtime]System.Object
+		IL_0076: dup
+		IL_0077: ldc.i4.0
+		IL_0078: ldloc.2
+		IL_0079: stelem.ref
+		IL_007a: stloc.3
+		IL_007b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0080: ldloc.3
+		IL_0081: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0086: pop
+		IL_0087: ret
 	} // end of method String_LocaleCompare_Numeric::Main
 
 } // end of class Scripts.String_LocaleCompare_Numeric
@@ -177,7 +182,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2145
+		// Method begins at RVA 0x213c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

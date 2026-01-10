@@ -1648,11 +1648,104 @@ public sealed class HIRToLIRLowerer
 
                 // Variable reads are SSA value lookups (no load instruction).
                 return true;
+
+            case HIRArrowFunctionExpression arrowExpr:
+                return TryLowerArrowFunctionExpression(arrowExpr, out resultTempVar);
             // Handle different expression types here
             default:
                 // Unsupported expression type
                 return false;
         }
+    }
+
+    private bool TryLowerArrowFunctionExpression(HIRArrowFunctionExpression arrowExpr, out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        if (_scope == null)
+        {
+            return false;
+        }
+
+        // Find the arrow function scope so we can compute its required scope-chain layout.
+        var rootScope = _scope;
+        while (rootScope.Parent != null)
+        {
+            rootScope = rootScope.Parent;
+        }
+
+        var arrowScope = FindScopeByAstNode(arrowExpr.Arrow, rootScope);
+        if (arrowScope == null)
+        {
+            return false;
+        }
+
+        // Build scopes[] to bind for closure semantics.
+        var scopesTemp = CreateTempVariable();
+        if (!TryBuildScopesArrayForClosureBinding(arrowScope, scopesTemp))
+        {
+            return false;
+        }
+        DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+        resultTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCreateBoundArrowFunction(
+            ArrowNode: arrowExpr.Arrow,
+            JsParamCount: arrowExpr.Arrow.Params.Count,
+            ScopesArray: scopesTemp,
+            Result: resultTempVar));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
+    }
+
+    private bool TryBuildScopesArrayForClosureBinding(Scope calleeScope, TempVariable resultTemp)
+    {
+        // Mirror the call-site logic: even when the callee doesn't reference parent variables,
+        // preserve the ABI expectation that scopes[0] is the global scope when available.
+        if (!calleeScope.ReferencesParentScopeVariables)
+        {
+            if (_scope == null)
+            {
+                _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(Array.Empty<ScopeSlotSource>(), resultTemp));
+                return true;
+            }
+
+            var root = _scope;
+            while (root.Parent != null)
+            {
+                root = root.Parent;
+            }
+            var moduleName = root.Name;
+            var globalSlot = new ScopeSlot(Index: 0, ScopeName: moduleName, ScopeId: new ScopeId(moduleName));
+            if (!TryMapScopeSlotToSource(globalSlot, out var globalSlotSource))
+            {
+                return false;
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(new[] { globalSlotSource }, resultTemp));
+            return true;
+        }
+
+        return TryBuildScopesArrayFromLayout(calleeScope, CallableKind.Function, resultTemp);
+    }
+
+    private static Scope? FindScopeByAstNode(Node astNode, Scope current)
+    {
+        if (ReferenceEquals(current.AstNode, astNode))
+        {
+            return current;
+        }
+
+        foreach (var child in current.Children)
+        {
+            var found = FindScopeByAstNode(astNode, child);
+            if (found != null)
+            {
+                return found;
+            }
+        }
+
+        return null;
     }
 
     private bool TryLowerTemplateLiteralExpression(HIRTemplateLiteralExpression templateLiteral, out TempVariable resultTempVar)
@@ -2065,7 +2158,8 @@ public sealed class HIRToLIRLowerer
 
                 // Track a more precise runtime type when we know it, so chained calls can lower.
                 // Example: arr.slice(...).join(',') requires the result of slice() to be treated as an Array receiver.
-                var returnClrType = string.Equals(calleePropAccess.PropertyName, "slice", StringComparison.OrdinalIgnoreCase)
+                var returnClrType = (string.Equals(calleePropAccess.PropertyName, "slice", StringComparison.OrdinalIgnoreCase)
+                                     || string.Equals(calleePropAccess.PropertyName, "map", StringComparison.OrdinalIgnoreCase))
                     ? typeof(JavaScriptRuntime.Array)
                     : typeof(object);
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, returnClrType));

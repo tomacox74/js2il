@@ -951,11 +951,6 @@ internal sealed class LIRToILCompiler
 
             case LIRNewUserClass newUserClass:
                 {
-                    if (!IsMaterialized(newUserClass.Result, allocation))
-                    {
-                        break;
-                    }
-
                     // Resolve constructor token via CallableRegistry (two-phase declared tokens)
                     var registry = _serviceProvider.GetService<CallableRegistry>();
                     if (registry == null)
@@ -973,7 +968,19 @@ internal sealed class LIRToILCompiler
                     int argc = newUserClass.Arguments.Count;
                     if (argc < newUserClass.MinArgCount || argc > newUserClass.MaxArgCount)
                     {
-                        return false;
+                        var expectedMinArgs = newUserClass.MinArgCount;
+                        var expectedMaxArgs = newUserClass.MaxArgCount;
+
+                        if (expectedMinArgs == expectedMaxArgs)
+                        {
+                            ILEmitHelpers.ThrowNotSupported(
+                                $"Constructor for class '{newUserClass.ClassName}' expects {expectedMinArgs} argument(s) but call site has {argc}.",
+                                newUserClass.ConstructorNode);
+                        }
+
+                        ILEmitHelpers.ThrowNotSupported(
+                            $"Constructor for class '{newUserClass.ClassName}' expects {expectedMinArgs}-{expectedMaxArgs} argument(s) but call site has {argc}.",
+                            newUserClass.ConstructorNode);
                     }
 
                     if (newUserClass.NeedsScopes)
@@ -999,7 +1006,14 @@ internal sealed class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Newobj);
                     ilEncoder.Token(ctorDef);
 
-                    EmitStoreTemp(newUserClass.Result, ilEncoder, allocation);
+                    if (IsMaterialized(newUserClass.Result, allocation))
+                    {
+                        EmitStoreTemp(newUserClass.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
                     break;
                 }
 
@@ -1313,6 +1327,56 @@ internal sealed class LIRToILCompiler
                     {
                         ilEncoder.OpCode(ILOpCode.Pop);
                     }
+                    break;
+                }
+
+            case LIRCreateBoundArrowFunction createArrow:
+                {
+                    if (!IsMaterialized(createArrow.Result, allocation))
+                    {
+                        break;
+                    }
+
+                    // Resolve CallableId from AST node and then the declared MethodDef token.
+                    var registry = _serviceProvider.GetService<Js2IL.Services.TwoPhaseCompilation.CallableRegistry>();
+                    if (registry == null)
+                    {
+                        return false;
+                    }
+
+                    if (!registry.TryGetCallableIdForAstNode(createArrow.ArrowNode, out var callableId))
+                    {
+                        return false;
+                    }
+
+                    var reader = _serviceProvider.GetService<Js2IL.Services.TwoPhaseCompilation.ICallableDeclarationReader>();
+                    if (reader == null)
+                    {
+                        return false;
+                    }
+
+                    if (!reader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)
+                    {
+                        return false;
+                    }
+
+                    var methodHandle = (MethodDefinitionHandle)token;
+                    var jsParamCount = createArrow.JsParamCount;
+
+                    // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
+                    ilEncoder.OpCode(ILOpCode.Ldnull);
+                    ilEncoder.OpCode(ILOpCode.Ldftn);
+                    ilEncoder.Token(methodHandle);
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount));
+
+                    // Bind delegate to scopes array: Closure.Bind(object, object[])
+                    EmitLoadTemp(createArrow.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    var bindRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), "Bind", new[] { typeof(object), typeof(object[]) });
+                    ilEncoder.Token(bindRef);
+
+                    EmitStoreTemp(createArrow.Result, ilEncoder, allocation);
                     break;
                 }
             case LIRLoadLeafScopeField loadLeafField:
@@ -1716,7 +1780,19 @@ internal sealed class LIRToILCompiler
                     int argc = newUserClass.Arguments.Count;
                     if (argc < newUserClass.MinArgCount || argc > newUserClass.MaxArgCount)
                     {
-                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - invalid argument count {argc} for class {newUserClass.ClassName}");
+                        var expectedMinArgs = newUserClass.MinArgCount;
+                        var expectedMaxArgs = newUserClass.MaxArgCount;
+
+                        if (expectedMinArgs == expectedMaxArgs)
+                        {
+                            ILEmitHelpers.ThrowNotSupported(
+                                $"Constructor for class '{newUserClass.ClassName}' expects {expectedMinArgs} argument(s) but call site has {argc}.",
+                                newUserClass.ConstructorNode);
+                        }
+
+                        ILEmitHelpers.ThrowNotSupported(
+                            $"Constructor for class '{newUserClass.ClassName}' expects {expectedMinArgs}-{expectedMaxArgs} argument(s) but call site has {argc}.",
+                            newUserClass.ConstructorNode);
                     }
 
                     if (newUserClass.NeedsScopes)
@@ -1977,6 +2053,39 @@ internal sealed class LIRToILCompiler
                     // Invoke: callvirt Func<object[], [object, ...], object>::Invoke
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(_bclReferences.GetFuncInvokeRef(jsParamCount));
+                    // Result stays on stack
+                    break;
+                }
+
+            case LIRCreateBoundArrowFunction createArrow:
+                {
+                    var registry = _serviceProvider.GetService<Js2IL.Services.TwoPhaseCompilation.CallableRegistry>();
+                    if (registry == null || !registry.TryGetCallableIdForAstNode(createArrow.ArrowNode, out var callableId))
+                    {
+                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing CallableId for arrow function AST node");
+                    }
+
+                    var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+                    if (reader == null || !reader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)
+                    {
+                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing declared token for callable {callableId.DisplayName}");
+                    }
+
+                    var methodHandle = (MethodDefinitionHandle)token;
+                    int jsParamCount = createArrow.JsParamCount;
+
+                    // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
+                    ilEncoder.OpCode(ILOpCode.Ldnull);
+                    ilEncoder.OpCode(ILOpCode.Ldftn);
+                    ilEncoder.Token(methodHandle);
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount));
+
+                    // Bind delegate to scopes array: Closure.Bind(object, object[])
+                    EmitLoadTemp(createArrow.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    var bindRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), "Bind", new[] { typeof(object), typeof(object[]) });
+                    ilEncoder.Token(bindRef);
                     // Result stays on stack
                     break;
                 }

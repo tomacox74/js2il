@@ -73,5 +73,8 @@ namespace Js2IL.Tests.Function
 
         [Fact]
         public Task Function_Closure_MultiLevel_ReadWriteAcrossScopes() { var testName = nameof(Function_Closure_MultiLevel_ReadWriteAcrossScopes); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter() { var testName = nameof(Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter); return ExecutionTest(testName); }
     }
 }
