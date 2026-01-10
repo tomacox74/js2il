@@ -390,6 +390,11 @@ internal sealed class LIRToILCompiler
                 EmitStoreTemp(addNumber.Result, ilEncoder, allocation);
                 break;
             case LIRConcatStrings concatStrings:
+                if (!IsMaterialized(concatStrings.Result, allocation))
+                {
+                    // Stackify will re-emit concat inline at the single use site.
+                    break;
+                }
                 EmitLoadTemp(concatStrings.Left, ilEncoder, allocation, methodDescriptor);
                 EmitLoadTemp(concatStrings.Right, ilEncoder, allocation, methodDescriptor);
                 EmitStringConcat(ilEncoder);
@@ -1654,6 +1659,12 @@ internal sealed class LIRToILCompiler
 
             case LIRConvertToString convertToString:
                 EmitConvertToStringCore(convertToString.Source, ilEncoder, allocation, methodDescriptor);
+                break;
+
+            case LIRConcatStrings concatStrings:
+                EmitLoadTemp(concatStrings.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(concatStrings.Right, ilEncoder, allocation, methodDescriptor);
+                EmitStringConcat(ilEncoder);
                 break;
 
             case LIRNewIntrinsicObject newIntrinsic:
