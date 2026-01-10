@@ -13,6 +13,7 @@ public sealed class HIRToLIRLowerer
     private readonly Scope? _scope;
     private readonly EnvironmentLayout? _environmentLayout;
     private readonly EnvironmentLayoutBuilder? _environmentLayoutBuilder;
+    private readonly CallableKind _callableKind;
 
     private int _tempVarCounter = 0;
     private int _labelCounter = 0;
@@ -52,11 +53,12 @@ public sealed class HIRToLIRLowerer
     // Track whether parameter initialization was successful (affects TryLower result)
     private bool _parameterInitSucceeded = true;
 
-    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder)
+    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, CallableKind callableKind)
     {
         _scope = scope;
         _environmentLayout = environmentLayout;
         _environmentLayoutBuilder = environmentLayoutBuilder;
+        _callableKind = callableKind;
         InitializeParameters();
     }
 
@@ -255,7 +257,7 @@ public sealed class HIRToLIRLowerer
             }
         }
 
-        var lowerer = new HIRToLIRLowerer(scope, environmentLayout, environmentLayoutBuilder);
+        var lowerer = new HIRToLIRLowerer(scope, environmentLayout, environmentLayoutBuilder, callableKind);
 
         // If default parameter initialization failed, fall back to legacy emitter
         if (!lowerer._parameterInitSucceeded)
@@ -1483,6 +1485,19 @@ public sealed class HIRToLIRLowerer
 
         switch (expression)
         {
+            case HIRThisExpression:
+                // PL3.5: ThisExpression.
+                // Only supported for instance callables where IL arg0 is the receiver.
+                if (_callableKind is not CallableKind.ClassMethod and not CallableKind.Constructor)
+                {
+                    return false;
+                }
+
+                resultTempVar = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRLoadThis(resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                return true;
+
             case HIRLiteralExpression literal:
                 // All literals allocate a new SSA value.
                 resultTempVar = CreateTempVariable();

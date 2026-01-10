@@ -73,6 +73,7 @@ This is the set of AST constructs that the new pipeline can currently parse and 
   - keys: identifier / string literal / numeric literal
   - values: expression
   - (no spread properties, computed keys, methods/getters/setters, or shorthand)
+- `this` (`ThisExpression`) in class methods/constructors
 
 **Lowering / IL emission highlights (LIR)**
 - Numeric arithmetic + bitwise + shifts + comparisons have LIR instruction types and IL emission cases.
@@ -144,7 +145,7 @@ Based on the legacy emitters:
   - [x] PL3.3f built-in Boolean/Number constructors (`new Boolean(x)`, `new Number(x)`) wrapper/sugar semantics
   - [x] PL3.3g built-in constructors for remaining existing runtime intrinsics (e.g., Date, RegExp, Set, Promise, Int32Array)
 - [x] PL3.4 `TemplateLiteral` (including interpolation)
-- [ ] PL3.5 `ThisExpression` (especially important for class methods)
+- [x] PL3.5 `ThisExpression` (supported for class methods/constructors)
 - [ ] PL3.6 `FunctionExpression` as an expression (closure creation)
 - [ ] PL3.7 `ArrowFunctionExpression` as an expression (closure creation)
   - [ ] PL3.7a concise-body arrows must wrap implicit return

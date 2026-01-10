@@ -135,7 +135,7 @@ internal static class TempLocalAllocator
     /// </summary>
     private static bool CanEmitInline(LIRInstruction instruction, MethodBodyIR methodBody)
     {
-        if (instruction is LIRConstNumber or LIRConstString or LIRConstBoolean or LIRConstUndefined or LIRConstNull or LIRLoadParameter)
+        if (instruction is LIRConstNumber or LIRConstString or LIRConstBoolean or LIRConstUndefined or LIRConstNull or LIRLoadParameter or LIRLoadThis)
         {
             return true;
         }
@@ -370,6 +370,9 @@ internal static class TempLocalAllocator
             case LIRBuildScopesArray:
                 // LIRBuildScopesArray doesn't consume temps - it loads scope instances from locals/args directly
                 break;
+            case LIRLoadThis:
+                // LIRLoadThis doesn't consume any temps (it loads from IL argument 0)
+                break;
             case LIRLoadParameter:
                 // LIRLoadParameter doesn't consume any temps (it loads from IL argument)
                 break;
@@ -595,6 +598,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRBuildScopesArray buildScopes:
                 defined = buildScopes.Result;
+                return true;
+            case LIRLoadThis loadThis:
+                defined = loadThis.Result;
                 return true;
             case LIRLoadParameter loadParam:
                 defined = loadParam.Result;

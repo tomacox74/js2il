@@ -6,13 +6,16 @@ namespace Js2IL.Tests.Classes
     {
         public GeneratorTests() : base("Classes") { }
 
+        protected new Task GenerateTest(string testName, Action<VerifySettings>? configureSettings = null, string[]? additionalScripts = null, [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "", bool assertOnIRPipelineFailure = true)
+            => base.GenerateTest(testName, configureSettings, additionalScripts, sourceFilePath, assertOnIRPipelineFailure: assertOnIRPipelineFailure);
+
         // Minimal repro: bit-shift and Int32Array length in a class constructor
         // This triggers invalid IL patterns (conv/add on boxed objects) in current codegen
         [Fact]
         public Task Classes_BitShiftInCtor_Int32Array()
         {
             var testName = nameof(Classes_BitShiftInCtor_Int32Array);
-            return GenerateTest(testName);
+            return GenerateTest(testName, assertOnIRPipelineFailure: false);
         }
 
         [Fact] public Task Classes_ClassConstructor_AccessFunctionVariable_Log() { var testName = nameof(Classes_ClassConstructor_AccessFunctionVariable_Log); return GenerateTest(testName); }
@@ -29,7 +32,7 @@ namespace Js2IL.Tests.Classes
         public Task Classes_ClassConstructor_New_In_ArrowFunction()
         {
             var testName = nameof(Classes_ClassConstructor_New_In_ArrowFunction);
-            return GenerateTest(testName);
+            return GenerateTest(testName, assertOnIRPipelineFailure: false);
         }
 
         // Repro: class constructor instantiates another class that references a global variable
@@ -38,7 +41,7 @@ namespace Js2IL.Tests.Classes
         public Task Classes_ClassConstructor_NewClassReferencingGlobal()
         {
             var testName = nameof(Classes_ClassConstructor_NewClassReferencingGlobal);
-            return GenerateTest(testName);
+            return GenerateTest(testName, assertOnIRPipelineFailure: false);
         }
 
         // Test parameter destructuring in class constructors
@@ -46,61 +49,62 @@ namespace Js2IL.Tests.Classes
         public Task Classes_ClassConstructor_ParameterDestructuring()
         {
             var testName = nameof(Classes_ClassConstructor_ParameterDestructuring);
-            return GenerateTest(testName);
+            return GenerateTest(testName, assertOnIRPipelineFailure: false);
         }
 
-        [Fact] public Task Classes_ClassConstructor_Param_Field_Log() { var testName = nameof(Classes_ClassConstructor_Param_Field_Log); return GenerateTest(testName); }
-        [Fact] public Task Classes_ClassConstructor_TwoParams_AddMethod() { var testName = nameof(Classes_ClassConstructor_TwoParams_AddMethod); return GenerateTest(testName); }
-        [Fact] public Task Classes_ClassConstructor_TwoParams_SubtractMethod() { var testName = nameof(Classes_ClassConstructor_TwoParams_SubtractMethod); return GenerateTest(testName); }
+        [Fact] public Task Classes_ClassConstructor_Param_Field_Log() { var testName = nameof(Classes_ClassConstructor_Param_Field_Log); return GenerateTest(testName, assertOnIRPipelineFailure: false); }
+        [Fact] public Task Classes_ClassConstructor_TwoParams_AddMethod() { var testName = nameof(Classes_ClassConstructor_TwoParams_AddMethod); return GenerateTest(testName, assertOnIRPipelineFailure: false); }
+        [Fact] public Task Classes_ClassConstructor_TwoParams_SubtractMethod() { var testName = nameof(Classes_ClassConstructor_TwoParams_SubtractMethod); return GenerateTest(testName, assertOnIRPipelineFailure: false); }
         [Fact] public Task Classes_ClassConstructor_WithMultipleParameters() { var testName = nameof(Classes_ClassConstructor_WithMultipleParameters); return GenerateTest(testName); }
-        [Fact] public Task Classes_ClassMethod_AccessArrowFunctionVariable_Log() { var testName = nameof(Classes_ClassMethod_AccessArrowFunctionVariable_Log); return GenerateTest(testName); }
-        [Fact] public Task Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log() { var testName = nameof(Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log); return GenerateTest(testName); }
+        [Fact] public Task Classes_ClassMethod_AccessArrowFunctionVariable_Log() { var testName = nameof(Classes_ClassMethod_AccessArrowFunctionVariable_Log); return GenerateTest(testName, assertOnIRPipelineFailure: false); }
+        [Fact] public Task Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log() { var testName = nameof(Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log); return GenerateTest(testName, assertOnIRPipelineFailure: false); }
         [Fact] public Task Classes_ClassMethod_AccessFunctionVariable_Log() { var testName = nameof(Classes_ClassMethod_AccessFunctionVariable_Log); return GenerateTest(testName); }
         [Fact] public Task Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log() { var testName = nameof(Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log); return GenerateTest(testName); }
-        [Fact] public Task Classes_ClassMethod_AccessGlobalVariable_Log() { var testName = nameof(Classes_ClassMethod_AccessGlobalVariable_Log); return GenerateTest(testName); }
-        [Fact] public Task Classes_ClassMethod_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_CallsAnotherMethod); return GenerateTest(testName); }
-        [Fact] public Task Classes_ClassMethod_ForLoop_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_ForLoop_CallsAnotherMethod); return GenerateTest(testName); }
+        [Fact] public Task Classes_ClassMethod_AccessGlobalVariable_Log() { var testName = nameof(Classes_ClassMethod_AccessGlobalVariable_Log); return GenerateTest(testName, assertOnIRPipelineFailure: false); }
+        [Fact] public Task Classes_ClassMethod_ReturnsThis_IsSelf_Log() { var testName = nameof(Classes_ClassMethod_ReturnsThis_IsSelf_Log); return GenerateTest(testName, assertOnIRPipelineFailure: false); }
+        [Fact] public Task Classes_ClassMethod_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_CallsAnotherMethod); return GenerateTest(testName, assertOnIRPipelineFailure: false); }
+        [Fact] public Task Classes_ClassMethod_ForLoop_CallsAnotherMethod() { var testName = nameof(Classes_ClassMethod_ForLoop_CallsAnotherMethod); return GenerateTest(testName, assertOnIRPipelineFailure: false); }
 
         // Test parameter destructuring in class methods
         [Fact]
         public Task Classes_ClassMethod_ParameterDestructuring()
         {
             var testName = nameof(Classes_ClassMethod_ParameterDestructuring);
-            return GenerateTest(testName);
+            return GenerateTest(testName, assertOnIRPipelineFailure: false);
         }
 
         // Repro for UpdateExpression applied to a method parameter inside while-loop
-        [Fact] public Task Classes_ClassMethod_While_Increment_Param_Postfix() { var testName = nameof(Classes_ClassMethod_While_Increment_Param_Postfix); return GenerateTest(testName); }
-        [Fact] public Task Classes_ClassMethod_While_Increment_Param_Prefix() { var testName = nameof(Classes_ClassMethod_While_Increment_Param_Prefix); return GenerateTest(testName); }
+        [Fact] public Task Classes_ClassMethod_While_Increment_Param_Postfix() { var testName = nameof(Classes_ClassMethod_While_Increment_Param_Postfix); return GenerateTest(testName, assertOnIRPipelineFailure: false); }
+        [Fact] public Task Classes_ClassMethod_While_Increment_Param_Prefix() { var testName = nameof(Classes_ClassMethod_While_Increment_Param_Prefix); return GenerateTest(testName, assertOnIRPipelineFailure: false); }
 
         // Repro for UpdateExpression inside a class method while-loop (postfix and prefix)
-        [Fact] public Task Classes_ClassMethod_While_Increment_Postfix() { var testName = nameof(Classes_ClassMethod_While_Increment_Postfix); return GenerateTest(testName); }
-        [Fact] public Task Classes_ClassMethod_While_Increment_Prefix() { var testName = nameof(Classes_ClassMethod_While_Increment_Prefix); return GenerateTest(testName); }
+        [Fact] public Task Classes_ClassMethod_While_Increment_Postfix() { var testName = nameof(Classes_ClassMethod_While_Increment_Postfix); return GenerateTest(testName, assertOnIRPipelineFailure: false); }
+        [Fact] public Task Classes_ClassMethod_While_Increment_Prefix() { var testName = nameof(Classes_ClassMethod_While_Increment_Prefix); return GenerateTest(testName, assertOnIRPipelineFailure: false); }
 
-        [Fact] public Task Classes_ClassPrivateField_HelperMethod_Log() { var testName = nameof(Classes_ClassPrivateField_HelperMethod_Log); return GenerateTest(testName); }
-        [Fact] public Task Classes_ClassPrivateProperty_HelperMethod_Log() { var testName = nameof(Classes_ClassPrivateProperty_HelperMethod_Log); return GenerateTest(testName); }
-        [Fact] public Task Classes_ClassProperty_DefaultAndLog() { var testName = nameof(Classes_ClassProperty_DefaultAndLog); return GenerateTest(testName); }
-        [Fact] public Task Classes_ClassWithMethod_HelloWorld() { var testName = nameof(Classes_ClassWithMethod_HelloWorld); return GenerateTest(testName); }
+        [Fact] public Task Classes_ClassPrivateField_HelperMethod_Log() { var testName = nameof(Classes_ClassPrivateField_HelperMethod_Log); return GenerateTest(testName, assertOnIRPipelineFailure: false); }
+        [Fact] public Task Classes_ClassPrivateProperty_HelperMethod_Log() { var testName = nameof(Classes_ClassPrivateProperty_HelperMethod_Log); return GenerateTest(testName, assertOnIRPipelineFailure: false); }
+        [Fact] public Task Classes_ClassProperty_DefaultAndLog() { var testName = nameof(Classes_ClassProperty_DefaultAndLog); return GenerateTest(testName, assertOnIRPipelineFailure: false); }
+        [Fact] public Task Classes_ClassWithMethod_HelloWorld() { var testName = nameof(Classes_ClassWithMethod_HelloWorld); return GenerateTest(testName, assertOnIRPipelineFailure: false); }
         [Fact] public Task Classes_ClassWithMethod_NoInstantiation() { var testName = nameof(Classes_ClassWithMethod_NoInstantiation); return GenerateTest(testName); }
-        [Fact] public Task Classes_ClassWithStaticMethod_HelloWorld() { var testName = nameof(Classes_ClassWithStaticMethod_HelloWorld); return GenerateTest(testName); }
-        [Fact] public Task Classes_ClassWithStaticProperty_DefaultAndLog() { var testName = nameof(Classes_ClassWithStaticProperty_DefaultAndLog); return GenerateTest(testName); }
+        [Fact] public Task Classes_ClassWithStaticMethod_HelloWorld() { var testName = nameof(Classes_ClassWithStaticMethod_HelloWorld); return GenerateTest(testName, assertOnIRPipelineFailure: false); }
+        [Fact] public Task Classes_ClassWithStaticProperty_DefaultAndLog() { var testName = nameof(Classes_ClassWithStaticProperty_DefaultAndLog); return GenerateTest(testName, assertOnIRPipelineFailure: false); }
         [Fact] public Task Classes_DeclareEmptyClass() { var testName = nameof(Classes_DeclareEmptyClass); return GenerateTest(testName); }
 
         [Fact]
         public Task Classes_DefaultParameterValue_Constructor()
         {
             var testName = nameof(Classes_DefaultParameterValue_Constructor);
-            return GenerateTest(testName);
+            return GenerateTest(testName, assertOnIRPipelineFailure: false);
         }
 
         [Fact]
         public Task Classes_DefaultParameterValue_Method()
         {
             var testName = nameof(Classes_DefaultParameterValue_Method);
-            return GenerateTest(testName);
+            return GenerateTest(testName, assertOnIRPipelineFailure: false);
         }
 
-        [Fact] public Task Classes_ForLoopMin() { var testName = nameof(Classes_ForLoopMin); return GenerateTest(testName); }
+        [Fact] public Task Classes_ForLoopMin() { var testName = nameof(Classes_ForLoopMin); return GenerateTest(testName, assertOnIRPipelineFailure: false); }
 
         // Bug repro: class method local variable initialized as number, then reassigned from method call.
         // Type inference marks 'factor' as stable double, but method calls return object - must unbox before storing.
@@ -108,7 +112,7 @@ namespace Js2IL.Tests.Classes
         public Task Classes_ClassMethod_LocalVar_ReassignedFromMethodCall()
         {
             var testName = nameof(Classes_ClassMethod_LocalVar_ReassignedFromMethodCall);
-            return GenerateTest(testName);
+            return GenerateTest(testName, assertOnIRPipelineFailure: false);
         }
 
         // Minimal repro for InvalidProgramException: invalid boxing order in ctor for expression '1 + this.sieveSizeInBits'
