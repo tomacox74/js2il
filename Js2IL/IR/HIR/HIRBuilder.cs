@@ -577,6 +577,17 @@ class HIRMethodBuilder
 
         switch (expr)
         {
+            case ThisExpression:
+                // PL3.5: ThisExpression support.
+                // For now, only support 'this' inside class instance methods/constructors.
+                // (Top-level/function 'this' semantics are more complex and remain legacy.)
+                if (_rootScope.Parent?.Kind != ScopeKind.Class)
+                {
+                    return false;
+                }
+                hirExpr = new HIRThisExpression();
+                return true;
+
             case TemplateLiteral templateLiteral:
                 {
                     static string GetQuasiText(TemplateElement te)

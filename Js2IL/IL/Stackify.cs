@@ -280,6 +280,7 @@ internal static class Stackify
 
             // Parameter loads - just ldarg, trivially cheap
             case LIRLoadParameter:
+            case LIRLoadThis:
                 return true;
 
             // Scope field loads - side-effect free field reads, similar to parameter loads
@@ -480,6 +481,7 @@ internal static class Stackify
             case LIRConstNull:
             case LIRGetIntrinsicGlobal:
             case LIRLoadParameter:
+            case LIRLoadThis:
             case LIRBuildScopesArray:
                 return (0, 1);
 

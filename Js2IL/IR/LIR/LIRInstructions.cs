@@ -57,6 +57,12 @@ public record LIRCallInstanceMethod(
 public record LIRCallIntrinsicStatic(string IntrinsicName, string MethodName, IReadOnlyList<TempVariable> Arguments, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Loads the current receiver ('this') for instance callables (class methods/constructors).
+/// Emitted as IL 'ldarg.0'.
+/// </summary>
+public record LIRLoadThis(TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Loads a function parameter by its index (0-based, relative to JS parameters).
 /// The IL argument index is computed by the emitter based on method context
 /// (static methods start at arg0, instance/nested functions at arg1 due to scopes/this).

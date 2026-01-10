@@ -1217,6 +1217,22 @@ internal sealed class LIRToILCompiler
                     EmitStoreTemp(buildScopes.Result, ilEncoder, allocation);
                     break;
                 }
+            case LIRLoadThis loadThis:
+                {
+                    if (!IsMaterialized(loadThis.Result, allocation))
+                    {
+                        break;
+                    }
+
+                    if (methodDescriptor.IsStatic)
+                    {
+                        return false; // Fall back to legacy emitter
+                    }
+
+                    ilEncoder.LoadArgument(0);
+                    EmitStoreTemp(loadThis.Result, ilEncoder, allocation);
+                    break;
+                }
             case LIRLoadParameter loadParam:
                 {
                     if (!IsMaterialized(loadParam.Result, allocation))
@@ -1589,6 +1605,13 @@ internal sealed class LIRToILCompiler
                 break;
             case LIRConstNull:
                 ilEncoder.LoadConstantI4((int)JavaScriptRuntime.JsNull.Null);
+                break;
+            case LIRLoadThis:
+                if (methodDescriptor.IsStatic)
+                {
+                    throw new InvalidOperationException("Cannot emit 'this' in a static method");
+                }
+                ilEncoder.LoadArgument(0);
                 break;
             case LIRLoadParameter loadParam:
                 // Emit ldarg.X inline - no local slot needed
