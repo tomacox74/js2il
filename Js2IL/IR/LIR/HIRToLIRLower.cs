@@ -1651,11 +1651,42 @@ public sealed class HIRToLIRLowerer
 
             case HIRArrowFunctionExpression arrowExpr:
                 return TryLowerArrowFunctionExpression(arrowExpr, out resultTempVar);
+            case HIRFunctionExpression funcExpr:
+                return TryLowerFunctionExpression(funcExpr, out resultTempVar);
             // Handle different expression types here
             default:
                 // Unsupported expression type
                 return false;
         }
+    }
+
+    private bool TryLowerFunctionExpression(HIRFunctionExpression funcExpr, out TempVariable resultTempVar)
+    {
+        resultTempVar = default;
+
+        if (_scope == null)
+        {
+            return false;
+        }
+
+        // Scope is resolved during HIR construction (avoid keeping AST nodes in HIR).
+        var funcScope = funcExpr.FunctionScope;
+
+        // Build scopes[] to bind for closure semantics.
+        var scopesTemp = CreateTempVariable();
+        if (!TryBuildScopesArrayForClosureBinding(funcScope, scopesTemp))
+        {
+            return false;
+        }
+        DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+        resultTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCreateBoundFunctionExpression(
+            CallableId: funcExpr.CallableId,
+            ScopesArray: scopesTemp,
+            Result: resultTempVar));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
     }
 
     private bool TryLowerArrowFunctionExpression(HIRArrowFunctionExpression arrowExpr, out TempVariable resultTempVar)
@@ -1667,18 +1698,8 @@ public sealed class HIRToLIRLowerer
             return false;
         }
 
-        // Find the arrow function scope so we can compute its required scope-chain layout.
-        var rootScope = _scope;
-        while (rootScope.Parent != null)
-        {
-            rootScope = rootScope.Parent;
-        }
-
-        var arrowScope = FindScopeByAstNode(arrowExpr.Arrow, rootScope);
-        if (arrowScope == null)
-        {
-            return false;
-        }
+        // Scope is resolved during HIR construction (avoid keeping AST nodes in HIR).
+        var arrowScope = arrowExpr.FunctionScope;
 
         // Build scopes[] to bind for closure semantics.
         var scopesTemp = CreateTempVariable();
@@ -1690,8 +1711,7 @@ public sealed class HIRToLIRLowerer
 
         resultTempVar = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRCreateBoundArrowFunction(
-            ArrowNode: arrowExpr.Arrow,
-            JsParamCount: arrowExpr.Arrow.Params.Count,
+            CallableId: arrowExpr.CallableId,
             ScopesArray: scopesTemp,
             Result: resultTempVar));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));

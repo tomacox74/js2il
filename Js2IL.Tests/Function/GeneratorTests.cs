@@ -18,13 +18,13 @@ namespace Js2IL.Tests.Function
         public Task Function_GlobalFunctionCallsGlobalFunction() { var testName = nameof(Function_GlobalFunctionCallsGlobalFunction); return GenerateTest(testName); }
 
         [Fact]
-        public Task Function_GlobalFunctionChangesGlobalVariableValue() { var testName = nameof(Function_GlobalFunctionChangesGlobalVariableValue); return GenerateTest(testName); }
+        public Task Function_GlobalFunctionChangesGlobalVariableValue() { var testName = nameof(Function_GlobalFunctionChangesGlobalVariableValue); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task Function_GlobalFunctionDeclaresAndCallsNestedFunction() { var testName = nameof(Function_GlobalFunctionDeclaresAndCallsNestedFunction); return GenerateTest(testName); }
+        public Task Function_GlobalFunctionDeclaresAndCallsNestedFunction() { var testName = nameof(Function_GlobalFunctionDeclaresAndCallsNestedFunction); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task Function_GlobalFunctionLogsGlobalVariable() { var testName = nameof(Function_GlobalFunctionLogsGlobalVariable); return GenerateTest(testName); }
+        public Task Function_GlobalFunctionLogsGlobalVariable() { var testName = nameof(Function_GlobalFunctionLogsGlobalVariable); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
         public Task Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal() { var testName = nameof(Function_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal); return GenerateTest(testName); }
@@ -54,10 +54,10 @@ namespace Js2IL.Tests.Function
         public Task Function_IIFE_Recursive() { var testName = nameof(Function_IIFE_Recursive); return GenerateTest(testName); }
 
         [Fact]
-        public Task Function_IsEven_CompareResultToTrue() { var testName = nameof(Function_IsEven_CompareResultToTrue); return GenerateTest(testName); }
+        public Task Function_IsEven_CompareResultToTrue() { var testName = nameof(Function_IsEven_CompareResultToTrue); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task Function_NestedFunctionAccessesMultipleScopes() { var testName = nameof(Function_NestedFunctionAccessesMultipleScopes); return GenerateTest(testName); }
+        public Task Function_NestedFunctionAccessesMultipleScopes() { var testName = nameof(Function_NestedFunctionAccessesMultipleScopes); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
         public Task Function_NestedFunctionLogsOuterParameter() { var testName = nameof(Function_NestedFunctionLogsOuterParameter); return GenerateTest(testName); }
@@ -73,5 +73,8 @@ namespace Js2IL.Tests.Function
 
         [Fact]
         public Task Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter() { var testName = nameof(Function_ArrowFunctionExpression_ConciseBody_ForEachCapturesOuter); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+
+        [Fact]
+        public Task Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter() { var testName = nameof(Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
     }
 }

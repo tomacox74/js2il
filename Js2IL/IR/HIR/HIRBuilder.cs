@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Collections.Immutable;
 using Acornima.Ast;
 using Js2IL.Services;
+using Js2IL.Services.TwoPhaseCompilation;
 
 using Js2IL.SymbolTables;
 
@@ -886,7 +887,79 @@ class HIRMethodBuilder
                     return false;
                 }
 
-                hirExpr = new HIRArrowFunctionExpression(arrowExpr);
+                var arrowScope = FindChildScopeForAstNode(arrowExpr);
+                if (arrowScope == null)
+                {
+                    return false;
+                }
+
+                // Match CallableDiscovery conventions so CallableRegistry lookups succeed.
+                string? assignmentTarget = null;
+                if (arrowScope.Name.StartsWith("ArrowFunction_") && !arrowScope.Name.StartsWith("ArrowFunction_L"))
+                {
+                    assignmentTarget = arrowScope.Name.Substring("ArrowFunction_".Length);
+                }
+
+                var root = _currentScope;
+                while (root.Parent != null)
+                {
+                    root = root.Parent;
+                }
+                var moduleName = root.Name;
+                var declaringScopeName = _currentScope.Kind == ScopeKind.Global
+                    ? moduleName
+                    : $"{moduleName}/{_currentScope.GetQualifiedName()}";
+
+                var arrowCallableId = new CallableId
+                {
+                    Kind = CallableKind.Arrow,
+                    DeclaringScopeName = declaringScopeName,
+                    Name = assignmentTarget,
+                    Location = SourceLocation.FromNode(arrowExpr),
+                    JsParamCount = arrowExpr.Params.Count,
+                    AstNode = null
+                };
+
+                hirExpr = new HIRArrowFunctionExpression(arrowCallableId, arrowScope);
+                return true;
+
+            case FunctionExpression funcExpr:
+                // PL3.6: FunctionExpression as an expression (closure creation)
+                // Treat the function expression as an opaque callable value; its body is compiled separately.
+                // Support is intentionally conservative: only simple identifier/default params.
+                if (!HIRBuilder.AllParamsAreSimpleIdentifiers(funcExpr.Params))
+                {
+                    return false;
+                }
+
+                var funcScope = FindChildScopeForAstNode(funcExpr);
+                if (funcScope == null)
+                {
+                    return false;
+                }
+
+                var root2 = _currentScope;
+                while (root2.Parent != null)
+                {
+                    root2 = root2.Parent;
+                }
+                var moduleName2 = root2.Name;
+                var declaringScopeName2 = _currentScope.Kind == ScopeKind.Global
+                    ? moduleName2
+                    : $"{moduleName2}/{_currentScope.GetQualifiedName()}";
+
+                var functionName = (funcExpr.Id as Identifier)?.Name;
+                var funcCallableId = new CallableId
+                {
+                    Kind = CallableKind.FunctionExpression,
+                    DeclaringScopeName = declaringScopeName2,
+                    Name = functionName,
+                    Location = SourceLocation.FromNode(funcExpr),
+                    JsParamCount = funcExpr.Params.Count,
+                    AstNode = null
+                };
+
+                hirExpr = new HIRFunctionExpression(funcCallableId, funcScope);
                 return true;
 
             case NumericLiteral literalExpr:

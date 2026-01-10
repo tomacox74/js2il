@@ -3,9 +3,9 @@ using Js2IL.SymbolTables;
 
 namespace Js2IL.HIR;
 
-public sealed class HIRArrowFunctionExpression : HIRExpression
+public sealed class HIRFunctionExpression : HIRExpression
 {
-	public HIRArrowFunctionExpression(CallableId callableId, Scope functionScope)
+	public HIRFunctionExpression(CallableId callableId, Scope functionScope)
 	{
 		CallableId = callableId;
 		FunctionScope = functionScope;

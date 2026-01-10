@@ -146,7 +146,7 @@ Based on the legacy emitters:
   - [x] PL3.3g built-in constructors for remaining existing runtime intrinsics (e.g., Date, RegExp, Set, Promise, Int32Array)
 - [x] PL3.4 `TemplateLiteral` (including interpolation)
 - [x] PL3.5 `ThisExpression` (supported for class methods/constructors)
-- [ ] PL3.6 `FunctionExpression` as an expression (closure creation)
+- [x] PL3.6 `FunctionExpression` as an expression (closure creation)
 - [x] PL3.7 `ArrowFunctionExpression` as an expression (closure creation)
   - [x] PL3.7a concise-body arrows must wrap implicit return
 
