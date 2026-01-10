@@ -104,15 +104,14 @@
 	{
 		// Method begins at RVA 0x2074
 		// Header size: 12
-		// Code size: 153 (0x99)
+		// Code size: 149 (0x95)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ControlFlow_While_LabeledContinue,
 			[1] float64,
 			[2] float64,
-			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[4] object,
-			[5] object[]
+			[3] object,
+			[4] object[]
 		)
 
 		IL_0000: newobj instance void Scopes.ControlFlow_While_LabeledContinue::.ctor()
@@ -123,7 +122,7 @@
 			IL_0010: ldloc.1
 			IL_0011: ldc.r8 3
 			IL_001a: clt
-			IL_001c: brfalse IL_0098
+			IL_001c: brfalse IL_0094
 
 			IL_0021: ldloc.1
 			IL_0022: ldc.r8 1
@@ -135,7 +134,7 @@
 				IL_0037: ldloc.2
 				IL_0038: ldc.r8 1
 				IL_0041: clt
-				IL_0043: brfalse IL_0093
+				IL_0043: brfalse IL_008f
 
 				IL_0048: ldloc.1
 				IL_0049: ldc.r8 2
@@ -144,33 +143,31 @@
 
 				IL_0059: br IL_0010
 
-				IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_0063: stloc.3
-				IL_0064: ldloc.1
-				IL_0065: box [System.Runtime]System.Double
-				IL_006a: stloc.s 4
-				IL_006c: ldc.i4.1
-				IL_006d: newarr [System.Runtime]System.Object
-				IL_0072: dup
-				IL_0073: ldc.i4.0
-				IL_0074: ldloc.s 4
-				IL_0076: stelem.ref
-				IL_0077: stloc.s 5
-				IL_0079: ldloc.3
-				IL_007a: ldloc.s 5
-				IL_007c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-				IL_0081: pop
-				IL_0082: ldloc.2
-				IL_0083: ldc.r8 1
-				IL_008c: add
-				IL_008d: stloc.2
-				IL_008e: br IL_0037
+				IL_005e: ldloc.1
+				IL_005f: box [System.Runtime]System.Double
+				IL_0064: stloc.3
+				IL_0065: ldc.i4.1
+				IL_0066: newarr [System.Runtime]System.Object
+				IL_006b: dup
+				IL_006c: ldc.i4.0
+				IL_006d: ldloc.3
+				IL_006e: stelem.ref
+				IL_006f: stloc.s 4
+				IL_0071: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0076: ldloc.s 4
+				IL_0078: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+				IL_007d: pop
+				IL_007e: ldloc.2
+				IL_007f: ldc.r8 1
+				IL_0088: add
+				IL_0089: stloc.2
+				IL_008a: br IL_0037
 			// end loop
 
-			IL_0093: br IL_0010
+			IL_008f: br IL_0010
 		// end loop
 
-		IL_0098: ret
+		IL_0094: ret
 	} // end of method ControlFlow_While_LabeledContinue::Main
 
 } // end of class Scripts.ControlFlow_While_LabeledContinue
@@ -182,7 +179,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2119
+		// Method begins at RVA 0x2115
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
