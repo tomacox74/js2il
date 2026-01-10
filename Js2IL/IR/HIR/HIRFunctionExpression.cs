@@ -1,13 +1,16 @@
-using Acornima.Ast;
+using Js2IL.Services.TwoPhaseCompilation;
+using Js2IL.SymbolTables;
 
 namespace Js2IL.HIR;
 
 public sealed class HIRFunctionExpression : HIRExpression
 {
-	public HIRFunctionExpression(FunctionExpression function)
+	public HIRFunctionExpression(CallableId callableId, Scope functionScope)
 	{
-		Function = function;
+		CallableId = callableId;
+		FunctionScope = functionScope;
 	}
 
-	public FunctionExpression Function { get; }
+	public CallableId CallableId { get; }
+	public Scope FunctionScope { get; }
 }

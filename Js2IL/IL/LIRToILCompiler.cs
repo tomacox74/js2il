@@ -1337,31 +1337,20 @@ internal sealed class LIRToILCompiler
                         break;
                     }
 
-                    // Resolve CallableId from AST node and then the declared MethodDef token.
-                    var registry = _serviceProvider.GetService<Js2IL.Services.TwoPhaseCompilation.CallableRegistry>();
-                    if (registry == null)
-                    {
-                        return false;
-                    }
-
-                    if (!registry.TryGetCallableIdForAstNode(createArrow.ArrowNode, out var callableId))
-                    {
-                        return false;
-                    }
-
                     var reader = _serviceProvider.GetService<Js2IL.Services.TwoPhaseCompilation.ICallableDeclarationReader>();
                     if (reader == null)
                     {
                         return false;
                     }
 
+                    var callableId = createArrow.CallableId;
                     if (!reader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)
                     {
                         return false;
                     }
 
                     var methodHandle = (MethodDefinitionHandle)token;
-                    var jsParamCount = createArrow.JsParamCount;
+                    var jsParamCount = createArrow.CallableId.JsParamCount;
 
                     // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
                     ilEncoder.OpCode(ILOpCode.Ldnull);
@@ -1387,30 +1376,20 @@ internal sealed class LIRToILCompiler
                         break;
                     }
 
-                    var registry = _serviceProvider.GetService<Js2IL.Services.TwoPhaseCompilation.CallableRegistry>();
-                    if (registry == null)
-                    {
-                        return false;
-                    }
-
-                    if (!registry.TryGetCallableIdForAstNode(createFunc.FunctionNode, out var callableId))
-                    {
-                        return false;
-                    }
-
                     var reader = _serviceProvider.GetService<Js2IL.Services.TwoPhaseCompilation.ICallableDeclarationReader>();
                     if (reader == null)
                     {
                         return false;
                     }
 
+                    var callableId = createFunc.CallableId;
                     if (!reader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)
                     {
                         return false;
                     }
 
                     var methodHandle = (MethodDefinitionHandle)token;
-                    var jsParamCount = createFunc.JsParamCount;
+                    var jsParamCount = createFunc.CallableId.JsParamCount;
 
                     // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
                     ilEncoder.OpCode(ILOpCode.Ldnull);
@@ -2108,20 +2087,15 @@ internal sealed class LIRToILCompiler
 
             case LIRCreateBoundArrowFunction createArrow:
                 {
-                    var registry = _serviceProvider.GetService<Js2IL.Services.TwoPhaseCompilation.CallableRegistry>();
-                    if (registry == null || !registry.TryGetCallableIdForAstNode(createArrow.ArrowNode, out var callableId))
-                    {
-                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing CallableId for arrow function AST node");
-                    }
-
                     var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+                    var callableId = createArrow.CallableId;
                     if (reader == null || !reader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)
                     {
                         throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing declared token for callable {callableId.DisplayName}");
                     }
 
                     var methodHandle = (MethodDefinitionHandle)token;
-                    int jsParamCount = createArrow.JsParamCount;
+                    int jsParamCount = createArrow.CallableId.JsParamCount;
 
                     // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
                     ilEncoder.OpCode(ILOpCode.Ldnull);
@@ -2141,20 +2115,15 @@ internal sealed class LIRToILCompiler
 
             case LIRCreateBoundFunctionExpression createFunc:
                 {
-                    var registry = _serviceProvider.GetService<Js2IL.Services.TwoPhaseCompilation.CallableRegistry>();
-                    if (registry == null || !registry.TryGetCallableIdForAstNode(createFunc.FunctionNode, out var callableId))
-                    {
-                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing CallableId for function expression AST node");
-                    }
-
                     var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+                    var callableId = createFunc.CallableId;
                     if (reader == null || !reader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)
                     {
                         throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing declared token for callable {callableId.DisplayName}");
                     }
 
                     var methodHandle = (MethodDefinitionHandle)token;
-                    int jsParamCount = createFunc.JsParamCount;
+                    int jsParamCount = createFunc.CallableId.JsParamCount;
 
                     // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
                     ilEncoder.OpCode(ILOpCode.Ldnull);
