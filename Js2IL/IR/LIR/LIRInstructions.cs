@@ -83,6 +83,12 @@ public record LIRStoreParameter(int ParameterIndex, TempVariable Value) : LIRIns
 public record LIRCallFunction(Symbol FunctionSymbol, TempVariable ScopesArray, IReadOnlyList<TempVariable> Arguments, TempVariable Result, CallableId? CallableId = null) : LIRInstruction;
 
 /// <summary>
+/// Creates a JS callable value (delegate) for an ArrowFunctionExpression and binds it to a scopes array.
+/// Emits: ldnull, ldftn <method>, newobj Func&lt;...&gt;::.ctor, ldloc/ldarg scopesArray, call Closure.Bind(object, object[])
+/// </summary>
+public record LIRCreateBoundArrowFunction(Node ArrowNode, int JsParamCount, TempVariable ScopesArray, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Represents a scope slot in the scopes array along with the source of its value.
 /// </summary>
 /// <param name="Slot">The scope slot metadata from ScopeChainLayout.</param>

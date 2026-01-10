@@ -41,15 +41,21 @@ public static class HIRBuilder
                     method = null!;
                     return false;
                 }
-                // Concise (expression-body) arrow functions fall back to legacy emitter
-                // (implicit return wrapping not yet implemented in HIR parser)
-                if (arrowFunc.Body is not BlockStatement arrowBlock)
-                {
-                    method = null!;
-                    return false;
-                }
                 var arrowBuilder = new HIRMethodBuilder(scope);
-                return arrowBuilder.TryParseStatements(arrowBlock.Body, out method);
+
+                // PL3.7a: concise-body arrows wrap implicit return
+                if (arrowFunc.Body is BlockStatement arrowBlock)
+                {
+                    return arrowBuilder.TryParseStatements(arrowBlock.Body, out method);
+                }
+
+                if (arrowFunc.Body is Expression conciseExpr)
+                {
+                    return arrowBuilder.TryParseConciseBodyExpression(conciseExpr, out method);
+                }
+
+                method = null!;
+                return false;
             case Acornima.Ast.FunctionExpression funcExpr:
                 // FunctionExpression is used for class constructors and method values
                 // IR pipeline supports simple identifier parameters only
@@ -77,7 +83,7 @@ public static class HIRBuilder
     /// Supports: Identifier, AssignmentPattern with Identifier left-hand side.
     /// Does not support: destructuring patterns, rest patterns, nested defaults.
     /// </summary>
-    private static bool AllParamsAreSimpleIdentifiers(in NodeList<Node> parameters)
+    internal static bool AllParamsAreSimpleIdentifiers(in NodeList<Node> parameters)
     {
         return parameters.All(param => param switch
         {
@@ -126,6 +132,23 @@ class HIRMethodBuilder
         method = new HIRMethod
         {
             Body = new HIRBlock(_statements)
+        };
+
+        return true;
+    }
+
+    public bool TryParseConciseBodyExpression([In, NotNull] Acornima.Ast.Expression expression, out HIRMethod? method)
+    {
+        method = null;
+
+        if (!TryParseExpression(expression, out var hirExpr))
+        {
+            return false;
+        }
+
+        method = new HIRMethod
+        {
+            Body = new HIRBlock(new List<HIRStatement> { new HIRReturnStatement(hirExpr) })
         };
 
         return true;
@@ -852,6 +875,18 @@ class HIRMethodBuilder
                 }
 
                 hirExpr = new HIRPropertyAccessExpression(objectExpr!, propertyIdentifier.Name);
+                return true;
+
+            case ArrowFunctionExpression arrowExpr:
+                // PL3.7: ArrowFunctionExpression as an expression (closure creation)
+                // We treat the arrow as an opaque callable value; its body is compiled separately.
+                // Support is intentionally conservative: only simple identifier/default params.
+                if (!HIRBuilder.AllParamsAreSimpleIdentifiers(arrowExpr.Params))
+                {
+                    return false;
+                }
+
+                hirExpr = new HIRArrowFunctionExpression(arrowExpr);
                 return true;
 
             case NumericLiteral literalExpr:

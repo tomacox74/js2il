@@ -79,12 +79,17 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 11 (0xb)
+		// Code size: 13 (0xd)
 		.maxstack 32
+		.locals init (
+			[0] object
+		)
 
 		IL_0000: ldstr "cleanup failed"
 		IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
-		IL_000a: ret
+		IL_000a: stloc.0
+		IL_000b: ldloc.0
+		IL_000c: ret
 	} // end of method ArrowFunction_L1C29::ArrowFunction_L1C29
 
 } // end of class Functions.ArrowFunction_L1C29
@@ -99,25 +104,29 @@
 			object e
 		) cil managed 
 	{
-		// Method begins at RVA 0x2084
+		// Method begins at RVA 0x2088
 		// Header size: 12
-		// Code size: 34 (0x22)
+		// Code size: 31 (0x1f)
 		.maxstack 32
+		.locals init (
+			[0] object
+		)
 
 		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_000a: ldc.i4.2
-		IL_000b: newarr [System.Runtime]System.Object
-		IL_0010: dup
-		IL_0011: ldc.i4.0
-		IL_0012: ldstr "Caught:"
-		IL_0017: stelem.ref
-		IL_0018: dup
-		IL_0019: ldc.i4.1
-		IL_001a: ldarg.1
-		IL_001b: stelem.ref
-		IL_001c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0021: ret
+		IL_0005: ldc.i4.2
+		IL_0006: newarr [System.Runtime]System.Object
+		IL_000b: dup
+		IL_000c: ldc.i4.0
+		IL_000d: ldstr "Caught:"
+		IL_0012: stelem.ref
+		IL_0013: dup
+		IL_0014: ldc.i4.1
+		IL_0015: ldarg.1
+		IL_0016: stelem.ref
+		IL_0017: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_001c: stloc.0
+		IL_001d: ldloc.0
+		IL_001e: ret
 	} // end of method ArrowFunction_L1C75::ArrowFunction_L1C75
 
 } // end of class Functions.ArrowFunction_L1C75

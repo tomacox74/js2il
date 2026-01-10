@@ -441,6 +441,10 @@ internal static class TempLocalAllocator
                     yield return arg;
                 }
                 break;
+
+            case LIRCreateBoundArrowFunction createArrow:
+                yield return createArrow.ScopesArray;
+                break;
             // LIRLabel and LIRBranch don't use temps
         }
     }
@@ -595,6 +599,10 @@ internal static class TempLocalAllocator
                 return true;
             case LIRCallFunction callFunc:
                 defined = callFunc.Result;
+                return true;
+
+            case LIRCreateBoundArrowFunction createArrow:
+                defined = createArrow.Result;
                 return true;
             case LIRBuildScopesArray buildScopes:
                 defined = buildScopes.Result;
