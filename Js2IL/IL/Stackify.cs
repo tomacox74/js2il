@@ -143,12 +143,15 @@ internal static class Stackify
         }
 
         // Special-case: receiver temps for intrinsic instance calls (e.g., console.log).
-        // If the target temp is the first operand (receiver) of LIRCallIntrinsic, we can safely
-        // inline/re-emit it at the use site as long as there is no intervening control flow.
+        // Restrict this to receivers defined by LIRGetIntrinsicGlobal (e.g., GlobalThis.console)
+        // which are expected to be pure/singleton lookups.
         // This avoids materializing receivers like GlobalThis.get_console() into locals.
         {
             var useInstr = methodBody.Instructions[useIndex];
-            if (useInstr is LIRCallIntrinsic callIntrinsic && callIntrinsic.IntrinsicObject.Index == targetTemp.Index)
+            var defInstr = methodBody.Instructions[defIndex];
+            if (defInstr is LIRGetIntrinsicGlobal &&
+                useInstr is LIRCallIntrinsic callIntrinsic &&
+                callIntrinsic.IntrinsicObject.Index == targetTemp.Index)
             {
                 for (int i = defIndex + 1; i < useIndex; i++)
                 {
@@ -480,23 +483,20 @@ internal static class Stackify
             case LIRBuildScopesArray:
                 return (0, 1);
 
-            // LIRBuildArray: produces 1 array reference.
-            // IMPORTANT: While the IL emitted for this instruction will consume element values,
-            // those values are loaded within the instruction's emission. It does not pop
-            // pre-existing unrelated values already on the evaluation stack (e.g., a receiver
-            // kept alive for a following callvirt). Model as (0, 1) for inter-instruction analysis.
+            // LIRBuildArray: consumes N element temps, produces 1 array reference
+            // The dup pattern keeps array on stack internally, net effect is: pop N, push 1
             case LIRBuildArray buildArray:
-                return (0, 1);
+                return (buildArray.Elements.Count, 1);
 
-            // LIRNewJsArray: produces 1 JavaScriptRuntime.Array reference.
-            // Like LIRBuildArray, it does not pop pre-existing unrelated stack values.
+            // LIRNewJsArray: consumes N element temps, produces 1 JavaScriptRuntime.Array reference
+            // The dup pattern keeps array on stack internally, net effect is: pop N, push 1
             case LIRNewJsArray newJsArray:
-                return (0, 1);
+                return (newJsArray.Elements.Count, 1);
 
-            // LIRNewJsObject: produces 1 ExpandoObject reference.
-            // Like LIRBuildArray, it does not pop pre-existing unrelated stack values.
+            // LIRNewJsObject: consumes N property value temps, produces 1 ExpandoObject reference
+            // The dup pattern keeps object on stack internally, net effect is: pop N, push 1
             case LIRNewJsObject newJsObject:
-                return (0, 1);
+                return (newJsObject.Properties.Count, 1);
 
             // LIRGetLength: consumes 1 object, produces 1 double
             case LIRGetLength:
