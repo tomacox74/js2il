@@ -146,7 +146,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -157,110 +157,138 @@
 	{
 		// Method begins at RVA 0x20ec
 		// Header size: 12
-		// Code size: 338 (0x152)
+		// Code size: 366 (0x16e)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Math_Sign_ZeroVariants,
 			[1] object,
-			[2] object
+			[2] object,
+			[3] float64,
+			[4] object,
+			[5] object,
+			[6] object,
+			[7] object,
+			[8] class [JavaScriptRuntime]JavaScriptRuntime.Array
 		)
 
 		IL_0000: newobj instance void Scopes.Math_Sign_ZeroVariants::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldnull
-		IL_0008: ldftn object Functions.Math_Sign_ZeroVariants::toStr(object[], object)
-		IL_000e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0013: stfld object Scopes.Math_Sign_ZeroVariants::toStr
-		IL_0018: ldc.i4.7
-		IL_0019: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_001e: dup
-		IL_001f: ldc.r8 0.0
-		IL_0028: box [System.Runtime]System.Double
-		IL_002d: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0032: dup
-		IL_0033: ldc.r8 0.0
-		IL_003c: ldc.r8 0.0
-		IL_0045: ldc.r8 1
-		IL_004e: sub
-		IL_004f: mul
-		IL_0050: box [System.Runtime]System.Double
-		IL_0055: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_005a: dup
-		IL_005b: ldc.r8 1
-		IL_0064: box [System.Runtime]System.Double
-		IL_0069: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_006e: dup
-		IL_006f: ldc.r8 0.0
-		IL_0078: ldc.r8 1
-		IL_0081: sub
+		IL_0006: ldc.r8 0.0
+		IL_000f: ldc.r8 1
+		IL_0018: sub
+		IL_0019: stloc.3
+		IL_001a: ldc.r8 0.0
+		IL_0023: ldloc.3
+		IL_0024: mul
+		IL_0025: stloc.3
+		IL_0026: ldloc.3
+		IL_0027: box [System.Runtime]System.Double
+		IL_002c: stloc.s 4
+		IL_002e: ldc.r8 0.0
+		IL_0037: ldc.r8 1
+		IL_0040: sub
+		IL_0041: stloc.3
+		IL_0042: ldloc.3
+		IL_0043: box [System.Runtime]System.Double
+		IL_0048: stloc.s 5
+		IL_004a: ldc.r8 0.0
+		IL_0053: ldc.r8 1
+		IL_005c: sub
+		IL_005d: stloc.3
+		IL_005e: ldc.r8 (00 00 00 00 00 00 F0 7F)
+		IL_0067: ldloc.3
+		IL_0068: mul
+		IL_0069: stloc.3
+		IL_006a: ldloc.3
+		IL_006b: box [System.Runtime]System.Double
+		IL_0070: stloc.s 6
+		IL_0072: ldc.i4.7
+		IL_0073: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0078: dup
+		IL_0079: ldc.r8 0.0
 		IL_0082: box [System.Runtime]System.Double
 		IL_0087: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_008c: dup
-		IL_008d: call float64 [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_NaN()
-		IL_0092: box [System.Runtime]System.Double
-		IL_0097: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_009c: dup
-		IL_009d: call float64 [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Infinity()
-		IL_00a2: box [System.Runtime]System.Double
-		IL_00a7: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_00ac: dup
-		IL_00ad: call float64 [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_Infinity()
-		IL_00b2: ldc.r8 0.0
-		IL_00bb: ldc.r8 1
-		IL_00c4: sub
-		IL_00c5: mul
-		IL_00c6: box [System.Runtime]System.Double
-		IL_00cb: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_00d0: stloc.1
-		IL_00d1: ldloc.1
-		IL_00d2: castclass [JavaScriptRuntime]JavaScriptRuntime.Array
-		IL_00d7: ldc.i4.1
-		IL_00d8: newarr [System.Runtime]System.Object
-		IL_00dd: dup
-		IL_00de: ldc.i4.0
-		IL_00df: ldnull
-		IL_00e0: ldftn object Functions.ArrowFunction_L3C22::ArrowFunction_L3C22(object[], object)
-		IL_00e6: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_00eb: ldc.i4.1
-		IL_00ec: newarr [System.Runtime]System.Object
-		IL_00f1: dup
-		IL_00f2: ldc.i4.0
-		IL_00f3: ldloc.0
-		IL_00f4: stelem.ref
-		IL_00f5: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_00fa: stelem.ref
-		IL_00fb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
-		IL_0100: stloc.2
-		IL_0101: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0106: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_010b: ldc.i4.1
-		IL_010c: newarr [System.Runtime]System.Object
-		IL_0111: dup
-		IL_0112: ldc.i4.0
-		IL_0113: ldloc.2
-		IL_0114: ldstr "map"
-		IL_0119: ldc.i4.1
-		IL_011a: newarr [System.Runtime]System.Object
-		IL_011f: dup
-		IL_0120: ldc.i4.0
-		IL_0121: ldloc.0
-		IL_0122: castclass Scopes.Math_Sign_ZeroVariants
-		IL_0127: ldfld object Scopes.Math_Sign_ZeroVariants::toStr
-		IL_012c: stelem.ref
-		IL_012d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0132: ldstr "join"
-		IL_0137: ldc.i4.1
-		IL_0138: newarr [System.Runtime]System.Object
-		IL_013d: dup
-		IL_013e: ldc.i4.0
-		IL_013f: ldstr " "
-		IL_0144: stelem.ref
-		IL_0145: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_014a: stelem.ref
-		IL_014b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0150: pop
-		IL_0151: ret
+		IL_008d: ldloc.s 4
+		IL_008f: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0094: dup
+		IL_0095: ldc.r8 1
+		IL_009e: box [System.Runtime]System.Double
+		IL_00a3: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_00a8: dup
+		IL_00a9: ldloc.s 5
+		IL_00ab: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_00b0: dup
+		IL_00b1: ldc.r8 (00 00 00 00 00 00 F8 FF)
+		IL_00ba: box [System.Runtime]System.Double
+		IL_00bf: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_00c4: dup
+		IL_00c5: ldc.r8 (00 00 00 00 00 00 F0 7F)
+		IL_00ce: box [System.Runtime]System.Double
+		IL_00d3: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_00d8: dup
+		IL_00d9: ldloc.s 6
+		IL_00db: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_00e0: stloc.1
+		IL_00e1: ldnull
+		IL_00e2: ldftn object Functions.ArrowFunction_L3C22::ArrowFunction_L3C22(object[], object)
+		IL_00e8: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_00ed: ldc.i4.1
+		IL_00ee: newarr [System.Runtime]System.Object
+		IL_00f3: dup
+		IL_00f4: ldc.i4.0
+		IL_00f5: ldloc.0
+		IL_00f6: stelem.ref
+		IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_00fc: stloc.s 7
+		IL_00fe: ldloc.1
+		IL_00ff: ldc.i4.1
+		IL_0100: newarr [System.Runtime]System.Object
+		IL_0105: dup
+		IL_0106: ldc.i4.0
+		IL_0107: ldloc.s 7
+		IL_0109: stelem.ref
+		IL_010a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
+		IL_010f: stloc.2
+		IL_0110: ldnull
+		IL_0111: ldftn object Functions.Math_Sign_ZeroVariants::toStr(object[], object)
+		IL_0117: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_011c: ldc.i4.1
+		IL_011d: newarr [System.Runtime]System.Object
+		IL_0122: dup
+		IL_0123: ldc.i4.0
+		IL_0124: ldloc.0
+		IL_0125: stelem.ref
+		IL_0126: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_012b: stloc.s 7
+		IL_012d: ldloc.2
+		IL_012e: ldc.i4.1
+		IL_012f: newarr [System.Runtime]System.Object
+		IL_0134: dup
+		IL_0135: ldc.i4.0
+		IL_0136: ldloc.s 7
+		IL_0138: stelem.ref
+		IL_0139: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::map(object[])
+		IL_013e: stloc.s 8
+		IL_0140: ldloc.s 8
+		IL_0142: ldc.i4.1
+		IL_0143: newarr [System.Runtime]System.Object
+		IL_0148: dup
+		IL_0149: ldc.i4.0
+		IL_014a: ldstr " "
+		IL_014f: stelem.ref
+		IL_0150: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_0155: stloc.s 7
+		IL_0157: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_015c: ldc.i4.1
+		IL_015d: newarr [System.Runtime]System.Object
+		IL_0162: dup
+		IL_0163: ldc.i4.0
+		IL_0164: ldloc.s 7
+		IL_0166: stelem.ref
+		IL_0167: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_016c: pop
+		IL_016d: ret
 	} // end of method Math_Sign_ZeroVariants::Main
 
 } // end of class Scripts.Math_Sign_ZeroVariants
@@ -272,7 +300,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x224a
+		// Method begins at RVA 0x2266
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

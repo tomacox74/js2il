@@ -62,8 +62,11 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 55 (0x37)
+		// Code size: 57 (0x39)
 		.maxstack 32
+		.locals init (
+			[0] object
+		)
 
 		IL_0000: ldarg.1
 		IL_0001: ldstr "localeCompare"
@@ -87,7 +90,9 @@
 		IL_002b: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
 		IL_0030: stelem.ref
 		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0036: ret
+		IL_0036: stloc.0
+		IL_0037: ldloc.0
+		IL_0038: ret
 	} // end of method ArrowFunction_L2C13::ArrowFunction_L2C13
 
 } // end of class Functions.ArrowFunction_L2C13
@@ -105,15 +110,14 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20a8
+		// Method begins at RVA 0x20ac
 		// Header size: 12
-		// Code size: 136 (0x88)
+		// Code size: 134 (0x86)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.String_LocaleCompare_Numeric,
 			[1] object,
-			[2] object,
-			[3] object[]
+			[2] object
 		)
 
 		IL_0000: newobj instance void Scopes.String_LocaleCompare_Numeric::.ctor()
@@ -159,18 +163,16 @@
 		IL_0069: stelem.ref
 		IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
 		IL_006f: stloc.2
-		IL_0070: ldc.i4.1
-		IL_0071: newarr [System.Runtime]System.Object
-		IL_0076: dup
-		IL_0077: ldc.i4.0
-		IL_0078: ldloc.2
-		IL_0079: stelem.ref
-		IL_007a: stloc.3
-		IL_007b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0080: ldloc.3
-		IL_0081: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0086: pop
-		IL_0087: ret
+		IL_0070: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0075: ldc.i4.1
+		IL_0076: newarr [System.Runtime]System.Object
+		IL_007b: dup
+		IL_007c: ldc.i4.0
+		IL_007d: ldloc.2
+		IL_007e: stelem.ref
+		IL_007f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0084: pop
+		IL_0085: ret
 	} // end of method String_LocaleCompare_Numeric::Main
 
 } // end of class Scripts.String_LocaleCompare_Numeric
@@ -182,7 +184,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x213c
+		// Method begins at RVA 0x213e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

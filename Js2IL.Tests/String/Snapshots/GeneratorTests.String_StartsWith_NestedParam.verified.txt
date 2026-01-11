@@ -128,23 +128,30 @@
 	{
 		// Method begins at RVA 0x20b0
 		// Header size: 12
-		// Code size: 34 (0x22)
+		// Code size: 38 (0x26)
 		.maxstack 32
+		.locals init (
+			[0] object
+		)
 
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.1
 		IL_0002: ldelem.ref
 		IL_0003: castclass Scopes.String_StartsWith_NestedParam/outer
 		IL_0008: ldfld object Scopes.String_StartsWith_NestedParam/outer::s
-		IL_000d: ldstr "startsWith"
-		IL_0012: ldc.i4.1
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: dup
-		IL_0019: ldc.i4.0
-		IL_001a: ldarg.1
-		IL_001b: stelem.ref
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0021: ret
+		IL_000d: stloc.0
+		IL_000e: ldloc.0
+		IL_000f: ldstr "startsWith"
+		IL_0014: ldc.i4.1
+		IL_0015: newarr [System.Runtime]System.Object
+		IL_001a: dup
+		IL_001b: ldc.i4.0
+		IL_001c: ldarg.1
+		IL_001d: stelem.ref
+		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0023: stloc.0
+		IL_0024: ldloc.0
+		IL_0025: ret
 	} // end of method String_StartsWith_NestedParam::inner
 
 } // end of class Functions.String_StartsWith_NestedParam
@@ -162,14 +169,13 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20e0
+		// Method begins at RVA 0x20e4
 		// Header size: 12
-		// Code size: 63 (0x3f)
+		// Code size: 61 (0x3d)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.String_StartsWith_NestedParam,
-			[1] object,
-			[2] object[]
+			[1] object
 		)
 
 		IL_0000: newobj instance void Scopes.String_StartsWith_NestedParam::.ctor()
@@ -186,18 +192,16 @@
 		IL_001c: ldstr "abc"
 		IL_0021: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
 		IL_0026: stloc.1
-		IL_0027: ldc.i4.1
-		IL_0028: newarr [System.Runtime]System.Object
-		IL_002d: dup
-		IL_002e: ldc.i4.0
-		IL_002f: ldloc.1
-		IL_0030: stelem.ref
-		IL_0031: stloc.2
-		IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0037: ldloc.2
-		IL_0038: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_003d: pop
-		IL_003e: ret
+		IL_0027: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_002c: ldc.i4.1
+		IL_002d: newarr [System.Runtime]System.Object
+		IL_0032: dup
+		IL_0033: ldc.i4.0
+		IL_0034: ldloc.1
+		IL_0035: stelem.ref
+		IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_003b: pop
+		IL_003c: ret
 	} // end of method String_StartsWith_NestedParam::Main
 
 } // end of class Scripts.String_StartsWith_NestedParam
@@ -209,7 +213,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x212b
+		// Method begins at RVA 0x212d
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

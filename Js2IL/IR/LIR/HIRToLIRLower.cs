@@ -250,9 +250,10 @@ public sealed class HIRToLIRLowerer
                 environmentLayoutBuilder = new EnvironmentLayoutBuilder(scopeMetadataRegistry);
                 environmentLayout = environmentLayoutBuilder.Build(scope, callableKind);
             }
-            catch
+            catch (Exception ex)
             {
                 // If we can't build environment layout, fall back to legacy
+                IRPipelineMetrics.RecordFailure($"EnvironmentLayout build failed for scope '{scope.GetQualifiedName()}' (kind={scope.Kind}) callableKind={callableKind}: {ex.GetType().Name}: {ex.Message}");
                 return false;
             }
         }
@@ -426,8 +427,40 @@ public sealed class HIRToLIRLowerer
 
         _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(slotSources, resultTemp));
         return true;
+
     }
 
+
+    private bool TryBuildScopesArrayForClassConstructor(Scope classScope, TempVariable resultTemp)
+    {
+        if (classScope.ReferencesParentScopeVariables)
+        {
+            return TryBuildScopesArrayFromLayout(classScope, CallableKind.Constructor, resultTemp);
+        }
+
+        // Preserve ABI expectation that scopes[0] is the global/module scope when available.
+        if (_scope == null)
+        {
+            _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(Array.Empty<ScopeSlotSource>(), resultTemp));
+            return true;
+        }
+
+        var root = _scope;
+        while (root.Parent != null)
+        {
+            root = root.Parent;
+        }
+
+        var moduleName = root.Name;
+        var globalSlot = new ScopeSlot(Index: 0, ScopeName: moduleName, ScopeId: new ScopeId(moduleName));
+        if (!TryMapScopeSlotToSource(globalSlot, out var globalSlotSource))
+        {
+            return false;
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(new[] { globalSlotSource }, resultTemp));
+        return true;
+    }
     /// <summary>
     /// Finds the scope associated with a function symbol.
     /// </summary>
@@ -534,6 +567,7 @@ public sealed class HIRToLIRLowerer
         {
             if (!TryLowerStatement(statement))
             {
+                IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering statement {statement.GetType().Name}");
                 return false;
             }
         }
@@ -556,6 +590,7 @@ public sealed class HIRToLIRLowerer
                     {
                         if (!TryLowerExpression(exprStmt.Initializer, out value))
                         {
+                            IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering variable initializer expression {exprStmt.Initializer.GetType().Name} for '{exprStmt.Name.Name}'");
                             return false;
                         }
                     }
@@ -610,6 +645,7 @@ public sealed class HIRToLIRLowerer
                     // Lower the expression and discard the result
                     if (!TryLowerExpression(exprStmt.Expression, out var _))
                     {
+                        IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering expression statement {exprStmt.Expression.GetType().Name}");
                         return false;
                     }
                     return true;
@@ -1549,10 +1585,20 @@ public sealed class HIRToLIRLowerer
                 return TryLowerConditionalExpression(conditionalExpr, out resultTempVar);
 
             case HIRCallExpression callExpr:
-                return TryLowerCallExpression(callExpr, out resultTempVar);
+                if (!TryLowerCallExpression(callExpr, out resultTempVar))
+                {
+                    IRPipelineMetrics.RecordFailure($"HIR->LIR: failed lowering CallExpression (callee={callExpr.Callee.GetType().Name})");
+                    return false;
+                }
+                return true;
 
             case HIRNewExpression newExpr:
-                return TryLowerNewExpression(newExpr, out resultTempVar);
+                if (!TryLowerNewExpression(newExpr, out resultTempVar))
+                {
+                    IRPipelineMetrics.RecordFailure($"HIR->LIR: failed lowering NewExpression (callee={newExpr.Callee.GetType().Name})");
+                    return false;
+                }
+                return true;
 
             case HIRUnaryExpression unaryExpr:
                 return TryLowerUnaryExpression(unaryExpr, out resultTempVar);
@@ -1561,19 +1607,34 @@ public sealed class HIRToLIRLowerer
                 return TryLowerUpdateExpression(updateExpr, out resultTempVar);
 
             case HIRTemplateLiteralExpression templateLiteral:
-                return TryLowerTemplateLiteralExpression(templateLiteral, out resultTempVar);
+                if (!TryLowerTemplateLiteralExpression(templateLiteral, out resultTempVar))
+                {
+                    IRPipelineMetrics.RecordFailure("HIR->LIR: failed lowering TemplateLiteralExpression");
+                    return false;
+                }
+                return true;
 
             case HIRAssignmentExpression assignExpr:
                 return TryLowerAssignmentExpression(assignExpr, out resultTempVar);
 
             case HIRArrayExpression arrayExpr:
-                return TryLowerArrayExpression(arrayExpr, out resultTempVar);
+                if (!TryLowerArrayExpression(arrayExpr, out resultTempVar))
+                {
+                    IRPipelineMetrics.RecordFailure("HIR->LIR: failed lowering ArrayExpression");
+                    return false;
+                }
+                return true;
 
             case HIRObjectExpression objectExpr:
                 return TryLowerObjectExpression(objectExpr, out resultTempVar);
 
             case HIRPropertyAccessExpression propAccessExpr:
-                return TryLowerPropertyAccessExpression(propAccessExpr, out resultTempVar);
+                if (!TryLowerPropertyAccessExpression(propAccessExpr, out resultTempVar))
+                {
+                    IRPipelineMetrics.RecordFailure($"HIR->LIR: failed lowering PropertyAccessExpression (property='{propAccessExpr.PropertyName}')");
+                    return false;
+                }
+                return true;
 
             case HIRIndexAccessExpression indexAccessExpr:
                 return TryLowerIndexAccessExpression(indexAccessExpr, out resultTempVar);
@@ -1643,6 +1704,47 @@ public sealed class HIRToLIRLowerer
                 
                 if (!_variableMap.TryGetValue(binding, out resultTempVar))
                 {
+                    // Intrinsic globals (e.g., console, process, Infinity, NaN) are exposed via JavaScriptRuntime.GlobalThis.
+                    // If this identifier is a Global binding and maps to a GlobalThis static property, emit a load.
+                    if (varExpr.Name.Kind == BindingKind.Global)
+                    {
+                        var globalName = varExpr.Name.Name;
+                        var gvType = typeof(JavaScriptRuntime.GlobalThis);
+                        var gvProp = gvType.GetProperty(globalName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.IgnoreCase);
+                        if (gvProp != null)
+                        {
+                            resultTempVar = CreateTempVariable();
+                            _methodBodyIR.Instructions.Add(new LIRGetIntrinsicGlobal(globalName, resultTempVar));
+                            // Track the concrete CLR type when known (e.g., console -> JavaScriptRuntime.Console)
+                            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, gvProp.PropertyType));
+                            return true;
+                        }
+                    }
+
+                    // Function declarations are compiled separately and are not SSA-assigned in the HIR body.
+                    // When a function declaration identifier is used as a value (e.g., returned or assigned),
+                    // create a delegate and bind it to the appropriate scopes array.
+                    if (varExpr.Name.BindingInfo.Kind == BindingKind.Function)
+                    {
+                        var callableId = TryCreateCallableIdForFunctionDeclaration(varExpr.Name);
+                        if (callableId == null)
+                        {
+                            return false;
+                        }
+
+                        var scopesTemp = CreateTempVariable();
+                        if (!TryBuildScopesArrayForCallee(varExpr.Name, scopesTemp))
+                        {
+                            return false;
+                        }
+                        DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+                        resultTempVar = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRCreateBoundFunctionExpression(callableId, scopesTemp, resultTempVar));
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        return true;
+                    }
+
                     return false;
                 }
 
@@ -1656,6 +1758,7 @@ public sealed class HIRToLIRLowerer
             // Handle different expression types here
             default:
                 // Unsupported expression type
+                IRPipelineMetrics.RecordFailure($"HIR->LIR: unsupported expression type {expression.GetType().Name}");
                 return false;
         }
     }
@@ -2027,12 +2130,12 @@ public sealed class HIRToLIRLowerer
             return false;
         }
 
-        bool needsScopes = classScope.ReferencesParentScopeVariables;
+        bool needsScopes = DoesClassNeedParentScopes(classDecl, classScope);
         TempVariable? scopesTemp = null;
         if (needsScopes)
         {
             scopesTemp = CreateTempVariable();
-            if (!TryBuildScopesArrayFromLayout(classScope, CallableKind.Constructor, scopesTemp.Value))
+            if (!TryBuildScopesArrayForClassConstructor(classScope, scopesTemp.Value))
             {
                 return false;
             }
@@ -2102,10 +2205,44 @@ public sealed class HIRToLIRLowerer
         {
             var symbol = funcVarExpr.Name;
             
-            // Only handle function bindings for now (BindingKind.Function)
+            // If the callee is not a direct function binding (e.g., it's a local/const holding a closure),
+            // invoke via runtime dispatch (Closure.InvokeWithArgs).
             if (symbol.Kind != BindingKind.Function)
             {
-                return false;
+                // Lower callee value
+                if (!TryLowerExpression(funcVarExpr, out var calleeTemp))
+                {
+                    return false;
+                }
+                calleeTemp = EnsureObject(calleeTemp);
+
+                // Lower arguments and pack into an object[]
+                var callArgTemps = new List<TempVariable>();
+                foreach (var arg in callExpr.Arguments)
+                {
+                    if (!TryLowerExpression(arg, out var argTemp))
+                    {
+                        return false;
+                    }
+                    callArgTemps.Add(EnsureObject(argTemp));
+                }
+
+                var argsArrayTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRBuildArray(callArgTemps, argsArrayTemp));
+                DefineTempStorage(argsArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+                // Build a scopes array for the current context. Bound closures ignore the passed scopes,
+                // but unbound function values still require a scopes array.
+                var scopesTemp = CreateTempVariable();
+                if (!TryBuildCurrentScopesArray(scopesTemp))
+                {
+                    return false;
+                }
+                DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+                _methodBodyIR.Instructions.Add(new LIRCallFunctionValue(calleeTemp, scopesTemp, argsArrayTemp, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                return true;
             }
 
             // Check if the function has simple identifier parameters (no defaults, destructuring, rest).
@@ -2145,46 +2282,48 @@ public sealed class HIRToLIRLowerer
             return true;
         }
 
+        // Case 1b: Indirect call where the callee is an expression value (e.g., IIFE:
+        // (function() { ... })(), (() => 1)(), or getFn()()).
+        // Exclude property-access calls here to avoid accidentally breaking method-call semantics
+        // that are handled by intrinsic/typed-member lowering below.
+        if (callExpr.Callee is not HIRVariableExpression && callExpr.Callee is not HIRPropertyAccessExpression)
+        {
+            if (!TryLowerExpression(callExpr.Callee, out var calleeTemp))
+            {
+                return false;
+            }
+            calleeTemp = EnsureObject(calleeTemp);
+
+            var callArgTemps = new List<TempVariable>();
+            foreach (var arg in callExpr.Arguments)
+            {
+                if (!TryLowerExpression(arg, out var argTemp))
+                {
+                    return false;
+                }
+                callArgTemps.Add(EnsureObject(argTemp));
+            }
+
+            var argsArrayTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRBuildArray(callArgTemps, argsArrayTemp));
+            DefineTempStorage(argsArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+            var scopesTemp = CreateTempVariable();
+            if (!TryBuildCurrentScopesArray(scopesTemp))
+            {
+                return false;
+            }
+            DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+            _methodBodyIR.Instructions.Add(new LIRCallFunctionValue(calleeTemp, scopesTemp, argsArrayTemp, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
         // Case 2: Property access call (e.g., console.log, Array.isArray, Math.abs)
         if (callExpr.Callee is not HIRPropertyAccessExpression calleePropAccess)
         {
             return false;
-        }
-
-        // Case 2a: Typed Array instance method calls (e.g., arr.join(), arr.push(...)).
-        // If we can lower the receiver expression and its CLR type is known to be JavaScriptRuntime.Array,
-        // emit a general typed instance call.
-        if (TryLowerExpression(calleePropAccess.Object, out var arrayReceiverTempVar))
-        {
-            var receiverStorage = GetTempStorage(arrayReceiverTempVar);
-            if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Array))
-            {
-                var arrayArgTemps = new List<TempVariable>();
-                foreach (var argExpr in callExpr.Arguments)
-                {
-                    if (!TryLowerExpression(argExpr, out var argTempVar))
-                    {
-                        return false;
-                    }
-                    arrayArgTemps.Add(EnsureObject(argTempVar));
-                }
-
-                _methodBodyIR.Instructions.Add(new LIRCallInstanceMethod(
-                    arrayReceiverTempVar,
-                    typeof(JavaScriptRuntime.Array),
-                    calleePropAccess.PropertyName,
-                    arrayArgTemps,
-                    resultTempVar));
-
-                // Track a more precise runtime type when we know it, so chained calls can lower.
-                // Example: arr.slice(...).join(',') requires the result of slice() to be treated as an Array receiver.
-                var returnClrType = (string.Equals(calleePropAccess.PropertyName, "slice", StringComparison.OrdinalIgnoreCase)
-                                     || string.Equals(calleePropAccess.PropertyName, "map", StringComparison.OrdinalIgnoreCase))
-                    ? typeof(JavaScriptRuntime.Array)
-                    : typeof(object);
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, returnClrType));
-                return true;
-            }
         }
 
         // Case 2b: Intrinsic static method call (e.g., Array.isArray, Math.abs, JSON.parse)
@@ -2226,26 +2365,139 @@ public sealed class HIRToLIRLowerer
             }
         }
 
-        // Case 2c: console.log (instance global, not a static intrinsic)
-        // This is the legacy hardcoded path for console.log
-        if (calleePropAccess.Object is not HIRVariableExpression calleeObject ||
-            calleeObject.Name.Name != "console")
+        // Case 2b.2: User-defined class static method call (e.g., Greeter.helloWorld()).
+        // If the receiver is a class identifier (ClassDeclaration binding) and the member is a static method,
+        // emit a direct call to the declared method token via CallableRegistry.
+        if (calleePropAccess.Object is HIRVariableExpression classVarExpr &&
+            classVarExpr.Name.BindingInfo.DeclarationNode is ClassDeclaration classDecl)
+        {
+            var className = classVarExpr.Name.Name;
+            var memberName = calleePropAccess.PropertyName;
+
+            var member = classDecl.Body.Body
+                .OfType<MethodDefinition>()
+                .FirstOrDefault(m =>
+                    m.Static &&
+                    m.Key is Identifier kid &&
+                    string.Equals(kid.Name, memberName, StringComparison.Ordinal));
+
+            if (member?.Value is FunctionExpression memberFunc)
+            {
+                // Create a CallableId that matches CallableDiscovery conventions.
+                var callableId = TryCreateCallableIdForClassStaticMethod(classVarExpr.Name, member, memberName, memberFunc.Params.Count);
+                if (callableId == null)
+                {
+                    return false;
+                }
+
+                // Lower all arguments (evaluate extras for side effects, but only pass up to declared param count).
+                var declaredParamCount = memberFunc.Params.Count;
+                var callArgTemps = new List<TempVariable>(declaredParamCount);
+
+                for (int i = 0; i < callExpr.Arguments.Length; i++)
+                {
+                    if (!TryLowerExpression(callExpr.Arguments[i], out var argTemp))
+                    {
+                        return false;
+                    }
+
+                    argTemp = EnsureObject(argTemp);
+
+                    if (i < declaredParamCount)
+                    {
+                        callArgTemps.Add(argTemp);
+                    }
+                    // else: evaluated for side effects, result intentionally ignored
+                }
+
+                // Pad missing args with undefined (null) to match the declared signature.
+                while (callArgTemps.Count < declaredParamCount)
+                {
+                    var undefTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRConstUndefined(undefTemp));
+                    DefineTempStorage(undefTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    callArgTemps.Add(undefTemp);
+                }
+
+                _methodBodyIR.Instructions.Add(new LIRCallDeclaredCallable(callableId, callArgTemps, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                return true;
+            }
+        }
+
+        // Lower receiver once for instance/member call cases below.
+        // IMPORTANT: Do not lower the receiver more than once; it may have side effects (e.g. promise chaining).
+        if (!TryLowerExpression(calleePropAccess.Object, out var receiverTempVar))
         {
             return false;
         }
 
-        if (calleePropAccess.PropertyName != "log")
+        // Case 2a: Typed Array instance method calls (e.g., arr.join(), arr.push(...)).
+        // If the receiver CLR type is known to be JavaScriptRuntime.Array, emit a typed instance call.
         {
-            return false;
+            var receiverStorage = GetTempStorage(receiverTempVar);
+            if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Array))
+            {
+                var arrayArgTemps = new List<TempVariable>();
+                foreach (var argExpr in callExpr.Arguments)
+                {
+                    if (!TryLowerExpression(argExpr, out var argTempVar))
+                    {
+                        return false;
+                    }
+                    arrayArgTemps.Add(EnsureObject(argTempVar));
+                }
+
+                _methodBodyIR.Instructions.Add(new LIRCallInstanceMethod(
+                    receiverTempVar,
+                    typeof(JavaScriptRuntime.Array),
+                    calleePropAccess.PropertyName,
+                    arrayArgTemps,
+                    resultTempVar));
+
+                // Track a more precise runtime type when we know it, so chained calls can lower.
+                // Example: arr.slice(...).join(',') requires the result of slice() to be treated as an Array receiver.
+                var returnClrType = (string.Equals(calleePropAccess.PropertyName, "slice", StringComparison.OrdinalIgnoreCase)
+                                     || string.Equals(calleePropAccess.PropertyName, "map", StringComparison.OrdinalIgnoreCase))
+                    ? typeof(JavaScriptRuntime.Array)
+                    : typeof(object);
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, returnClrType));
+                return true;
+            }
+
+            // Case 2a.2: Typed Console instance method calls (e.g., console.log(...)).
+            // The console intrinsic is a known runtime type and exposes instance methods; calling them directly
+            // avoids generic dispatch and keeps generator output stable.
+            if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Console))
+            {
+                var consoleArgTemps = new List<TempVariable>();
+                foreach (var argExpr in callExpr.Arguments)
+                {
+                    if (!TryLowerExpression(argExpr, out var argTempVar))
+                    {
+                        return false;
+                    }
+                    consoleArgTemps.Add(EnsureObject(argTempVar));
+                }
+
+                _methodBodyIR.Instructions.Add(new LIRCallInstanceMethod(
+                    receiverTempVar,
+                    typeof(JavaScriptRuntime.Console),
+                    calleePropAccess.PropertyName,
+                    consoleArgTemps,
+                    resultTempVar));
+
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                return true;
+            }
         }
 
-        var consoleTempVar = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRGetIntrinsicGlobal("console", consoleTempVar));
-        this.DefineTempStorage(consoleTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Console)));
+        // Case 2c: Generic member call via runtime dispatcher.
+        // This is a catch-all for calls like `output.join(',')` where `output` may be boxed as object,
+        // so typed receiver lowering can't prove the receiver type.
+        receiverTempVar = EnsureObject(receiverTempVar);
 
-        // console.log takes its arguments as an array of type object
-        // First, lower all argument expressions to temps
-        var argTemps = new List<TempVariable>();
+        var argTempsGeneric = new List<TempVariable>();
         foreach (var argExpr in callExpr.Arguments)
         {
             if (!TryLowerExpression(argExpr, out var argTempVar))
@@ -2253,20 +2505,83 @@ public sealed class HIRToLIRLowerer
                 return false;
             }
 
-            argTempVar = EnsureObject(argTempVar);
-            argTemps.Add(argTempVar);
+            argTempsGeneric.Add(EnsureObject(argTempVar));
         }
 
-        // Create the arguments array with all elements in one instruction
-        var arrayTempVar = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRBuildArray(argTemps, arrayTempVar));
-        this.DefineTempStorage(arrayTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+        var argsArrayTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRBuildArray(argTempsGeneric, argsArrayTempVar));
+        DefineTempStorage(argsArrayTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
 
-        _methodBodyIR.Instructions.Add(new LIRCallIntrinsic(consoleTempVar, "log", arrayTempVar, resultTempVar));
+        _methodBodyIR.Instructions.Add(new LIRCallMember(receiverTempVar, calleePropAccess.PropertyName, argsArrayTempVar, resultTempVar));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
+    }
 
-        // console.log returns undefined (null)
-        this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+    private Js2IL.Services.TwoPhaseCompilation.CallableId? TryCreateCallableIdForClassStaticMethod(
+        Symbol classSymbol,
+        MethodDefinition methodDef,
+        string methodName,
+        int declaredParamCount)
+    {
+        if (_scope == null)
+        {
+            return null;
+        }
 
+        var declaringScope = FindDeclaringScope(classSymbol.BindingInfo);
+        if (declaringScope == null)
+        {
+            return null;
+        }
+
+        var root = declaringScope;
+        while (root.Parent != null)
+        {
+            root = root.Parent;
+        }
+
+        var moduleName = root.Name;
+        var declaringScopeName = declaringScope.Kind == ScopeKind.Global
+            ? moduleName
+            : $"{moduleName}/{declaringScope.GetQualifiedName()}";
+
+        var callableName = JavaScriptCallableNaming.MakeClassMethodCallableName(classSymbol.Name, methodName);
+        var location = Js2IL.Services.TwoPhaseCompilation.SourceLocation.FromNode(methodDef);
+
+        return new Js2IL.Services.TwoPhaseCompilation.CallableId
+        {
+            Kind = Js2IL.Services.TwoPhaseCompilation.CallableKind.ClassStaticMethod,
+            DeclaringScopeName = declaringScopeName,
+            Name = callableName,
+            Location = location,
+            JsParamCount = declaredParamCount,
+            AstNode = methodDef
+        };
+    }
+
+    /// <summary>
+    /// Builds an object[] scopes array for the current caller context.
+    /// This is used for indirect calls where we cannot statically determine the callee scope chain.
+    /// </summary>
+    private bool TryBuildCurrentScopesArray(TempVariable resultTemp)
+    {
+        if (_environmentLayout == null || _environmentLayout.ScopeChain.Slots.Count == 0)
+        {
+            _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(Array.Empty<ScopeSlotSource>(), resultTemp));
+            return true;
+        }
+
+        var slotSources = new List<ScopeSlotSource>(_environmentLayout.ScopeChain.Slots.Count);
+        foreach (var slot in _environmentLayout.ScopeChain.Slots)
+        {
+            if (!TryMapScopeSlotToSource(slot, out var slotSource))
+            {
+                return false;
+            }
+            slotSources.Add(slotSource);
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(slotSources, resultTemp));
         return true;
     }
 
@@ -2991,6 +3306,47 @@ public sealed class HIRToLIRLowerer
         return numberTempVar;
     }
 
+    private TempVariable EnsureBoolean(TempVariable tempVar)
+    {
+        var storage = GetTempStorage(tempVar);
+
+        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(bool))
+        {
+            return tempVar;
+        }
+
+        var boolTempVar = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConvertToBoolean(EnsureObject(tempVar), boolTempVar));
+        DefineTempStorage(boolTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        return boolTempVar;
+    }
+
+    private TempVariable CoerceToVariableSlotStorage(int slot, TempVariable value)
+    {
+        if (slot < 0 || slot >= _methodBodyIR.VariableStorages.Count)
+        {
+            return value;
+        }
+
+        var slotStorage = _methodBodyIR.VariableStorages[slot];
+        if (slotStorage.Kind == ValueStorageKind.UnboxedValue && slotStorage.ClrType == typeof(double))
+        {
+            return EnsureNumber(value);
+        }
+
+        if (slotStorage.Kind == ValueStorageKind.UnboxedValue && slotStorage.ClrType == typeof(bool))
+        {
+            return EnsureBoolean(value);
+        }
+
+        if (slotStorage.Kind is ValueStorageKind.Reference or ValueStorageKind.BoxedValue)
+        {
+            return EnsureObject(value);
+        }
+
+        return value;
+    }
+
     private bool TryStoreToBinding(BindingInfo binding, TempVariable valueToStore, out TempVariable storedValue)
     {
         storedValue = default;
@@ -3054,10 +3410,10 @@ public sealed class HIRToLIRLowerer
         }
 
         // Non-captured variable - use stable variable slot
-        _variableMap[binding] = valueToStore;
-
         var storageInfo = GetTempStorage(valueToStore);
         var slot = GetOrCreateVariableSlot(binding, binding.Name, storageInfo);
+        valueToStore = CoerceToVariableSlotStorage(slot, valueToStore);
+        _variableMap[binding] = valueToStore;
         SetTempVariableSlot(valueToStore, slot);
         // for..of/in assigns each iteration; do not treat as single-assignment
         _methodBodyIR.SingleAssignmentSlots.Remove(slot);
@@ -3180,6 +3536,7 @@ public sealed class HIRToLIRLowerer
         // Get or create a variable slot for this binding
         var storageInfo = GetTempStorage(valueToStore);
         var slot = GetOrCreateVariableSlot(binding, assignExpr.Target.Name, storageInfo);
+        valueToStore = CoerceToVariableSlotStorage(slot, valueToStore);
         SetTempVariableSlot(valueToStore, slot);
         _variableMap[binding] = valueToStore;
         resultTempVar = valueToStore;
@@ -3188,6 +3545,147 @@ public sealed class HIRToLIRLowerer
         // Remove it from the single-assignment set to prevent incorrect inlining.
         _methodBodyIR.SingleAssignmentSlots.Remove(slot);
         return true;
+    }
+
+    private bool DoesClassNeedParentScopes(ClassDeclaration classDecl, Scope classScope)
+    {
+        if (classScope.ReferencesParentScopeVariables)
+        {
+            return true;
+        }
+
+        // Match ClassesGenerator's heuristic for when a class must capture parent scopes:
+        // if any constructor/method contains nested functions or news a class that itself
+        // requires parent scopes.
+        var ctor = classDecl.Body.Body.OfType<MethodDefinition>()
+            .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+
+        if (ctor?.Value is FunctionExpression ctorExpr && MethodBodyRequiresParentScopes(ctorExpr.Body, classScope))
+        {
+            return true;
+        }
+
+        foreach (var method in classDecl.Body.Body
+            .OfType<MethodDefinition>()
+            .Where(m => m.Value is FunctionExpression && (m.Key as Identifier)?.Name != "constructor"))
+        {
+            if (method.Value is FunctionExpression funcExpr && MethodBodyRequiresParentScopes(funcExpr.Body, classScope))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool MethodBodyRequiresParentScopes(Node? body, Scope classScope)
+    {
+        bool found = false;
+
+        void Walk(Node? n)
+        {
+            if (n == null || found) return;
+
+            switch (n)
+            {
+                case BlockStatement bs:
+                    foreach (var st in bs.Body) Walk(st);
+                    break;
+                case ExpressionStatement es:
+                    Walk(es.Expression);
+                    break;
+                case VariableDeclaration vd:
+                    foreach (var d in vd.Declarations)
+                    {
+                        Walk(d.Init as Node);
+                    }
+                    break;
+                case IfStatement ifs:
+                    Walk(ifs.Test);
+                    Walk(ifs.Consequent);
+                    Walk(ifs.Alternate);
+                    break;
+                case WhileStatement ws:
+                    Walk(ws.Test);
+                    Walk(ws.Body);
+                    break;
+                case DoWhileStatement dws:
+                    Walk(dws.Body);
+                    Walk(dws.Test);
+                    break;
+                case ForStatement fs:
+                    Walk(fs.Init as Node);
+                    Walk(fs.Test);
+                    Walk(fs.Update);
+                    Walk(fs.Body);
+                    break;
+                case ForInStatement fi:
+                    Walk(fi.Left as Node);
+                    Walk(fi.Right as Node);
+                    Walk(fi.Body);
+                    break;
+                case ForOfStatement fof:
+                    Walk(fof.Left as Node);
+                    Walk(fof.Right as Node);
+                    Walk(fof.Body);
+                    break;
+                case ReturnStatement rs:
+                    Walk(rs.Argument);
+                    break;
+                case AssignmentExpression ae:
+                    Walk(ae.Left);
+                    Walk(ae.Right);
+                    break;
+                case CallExpression ce:
+                    Walk(ce.Callee);
+                    foreach (var a in ce.Arguments) Walk(a as Node);
+                    break;
+                case NewExpression ne:
+                    if (ne.Callee is Identifier classId)
+                    {
+                        var foundClassScope = FindClassScopeByName(classScope, classId.Name);
+                        if (foundClassScope != null && foundClassScope.ReferencesParentScopeVariables)
+                        {
+                            found = true;
+                            return;
+                        }
+                    }
+                    foreach (var a in ne.Arguments) Walk(a as Node);
+                    break;
+
+                case FunctionDeclaration:
+                case FunctionExpression:
+                case ArrowFunctionExpression:
+                    found = true;
+                    return;
+
+                default:
+                    // Conservative: keep walking common container nodes we know about.
+                    break;
+            }
+        }
+
+        Walk(body);
+        return found;
+    }
+
+    private static Scope? FindClassScopeByName(Scope startScope, string className)
+    {
+        var current = startScope;
+        while (current != null)
+        {
+            foreach (var child in current.Children)
+            {
+                if (child.Kind == ScopeKind.Class && string.Equals(child.Name, className, StringComparison.Ordinal))
+                {
+                    return child;
+                }
+            }
+
+            current = current.Parent;
+        }
+
+        return null;
     }
 
     private bool TryLowerArrayExpression(HIRArrayExpression arrayExpr, out TempVariable resultTempVar)
@@ -3282,6 +3780,25 @@ public sealed class HIRToLIRLowerer
     {
         resultTempVar = CreateTempVariable();
 
+        // User-defined class static field access (e.g., Greeter.message).
+        // Classes are compiled as .NET types, and static class fields are emitted as CLR static fields.
+        // When the receiver is the class identifier, lower directly to a static field load.
+        if (propAccessExpr.Object is HIRVariableExpression classVarExpr &&
+            classVarExpr.Name.BindingInfo.DeclarationNode is ClassDeclaration)
+        {
+            if (!TryGetRegistryClassNameForClassSymbol(classVarExpr.Name, out var registryClassName))
+            {
+                return false;
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRLoadUserClassStaticField(
+                RegistryClassName: registryClassName,
+                FieldName: propAccessExpr.PropertyName,
+                Result: resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
         // Lower the object expression
         if (!TryLowerExpression(propAccessExpr.Object, out var objectTemp))
         {
@@ -3297,8 +3814,49 @@ public sealed class HIRToLIRLowerer
             return true;
         }
 
-        // Unsupported property access
-        return false;
+        // General property access: treat as an item access with a string key (obj[propName]).
+        // This enables lowering for cases like `console.log(s.n)` without falling back to legacy.
+        var keyTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstString(propAccessExpr.PropertyName, keyTemp));
+        DefineTempStorage(keyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+        var boxedObjectGeneric = EnsureObject(objectTemp);
+        var boxedKey = EnsureObject(keyTemp);
+        _methodBodyIR.Instructions.Add(new LIRGetItem(boxedObjectGeneric, boxedKey, resultTempVar));
+        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
+    }
+
+    private bool TryGetRegistryClassNameForClassSymbol(Symbol classSymbol, out string registryClassName)
+    {
+        registryClassName = string.Empty;
+
+        if (_scope == null)
+        {
+            return false;
+        }
+
+        var declaringScope = FindDeclaringScope(classSymbol.BindingInfo);
+        if (declaringScope == null)
+        {
+            return false;
+        }
+
+        // The class scope is expected to be a child scope of the declaring scope.
+        var classScope = declaringScope.Children.FirstOrDefault(s =>
+            s.Kind == ScopeKind.Class &&
+            string.Equals(s.Name, classSymbol.Name, StringComparison.Ordinal));
+
+        if (classScope == null)
+        {
+            return false;
+        }
+
+        // Match TwoPhaseCompilationCoordinator registry naming (namespace + type name).
+        var ns = classScope.DotNetNamespace ?? "Classes";
+        var typeName = classScope.DotNetTypeName ?? classScope.Name;
+        registryClassName = $"{ns}.{typeName}";
+        return true;
     }
 
     private bool TryLowerConditionalExpression(HIRConditionalExpression conditionalExpr, out TempVariable resultTempVar)

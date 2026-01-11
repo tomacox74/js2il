@@ -27,7 +27,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -38,42 +38,51 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 93 (0x5d)
+		// Code size: 105 (0x69)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Date_Construct_FromMs_GetTime_ToISOString,
-			[1] object
+			[1] object,
+			[2] object
 		)
 
-		IL_0000: ldc.r8 1733912000000
-		IL_0009: box [System.Runtime]System.Double
-		IL_000e: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Date::.ctor(object)
-		IL_0013: stloc.1
-		IL_0014: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0019: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_001e: ldc.i4.1
-		IL_001f: newarr [System.Runtime]System.Object
-		IL_0024: dup
-		IL_0025: ldc.i4.0
-		IL_0026: ldloc.1
-		IL_0027: castclass [JavaScriptRuntime]JavaScriptRuntime.Date
-		IL_002c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Date::getTime()
-		IL_0031: stelem.ref
-		IL_0032: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0037: pop
-		IL_0038: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_003d: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0042: ldc.i4.1
-		IL_0043: newarr [System.Runtime]System.Object
-		IL_0048: dup
-		IL_0049: ldc.i4.0
-		IL_004a: ldloc.1
-		IL_004b: castclass [JavaScriptRuntime]JavaScriptRuntime.Date
-		IL_0050: callvirt instance string [JavaScriptRuntime]JavaScriptRuntime.Date::toISOString()
-		IL_0055: stelem.ref
-		IL_0056: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_005b: pop
-		IL_005c: ret
+		IL_0000: newobj instance void Scopes.Date_Construct_FromMs_GetTime_ToISOString::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.r8 1733912000000
+		IL_000f: box [System.Runtime]System.Double
+		IL_0014: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Date::.ctor(object)
+		IL_0019: stloc.1
+		IL_001a: ldloc.1
+		IL_001b: ldstr "getTime"
+		IL_0020: ldc.i4.0
+		IL_0021: newarr [System.Runtime]System.Object
+		IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_002b: stloc.2
+		IL_002c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0031: ldc.i4.1
+		IL_0032: newarr [System.Runtime]System.Object
+		IL_0037: dup
+		IL_0038: ldc.i4.0
+		IL_0039: ldloc.2
+		IL_003a: stelem.ref
+		IL_003b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0040: pop
+		IL_0041: ldloc.1
+		IL_0042: ldstr "toISOString"
+		IL_0047: ldc.i4.0
+		IL_0048: newarr [System.Runtime]System.Object
+		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0052: stloc.2
+		IL_0053: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0058: ldc.i4.1
+		IL_0059: newarr [System.Runtime]System.Object
+		IL_005e: dup
+		IL_005f: ldc.i4.0
+		IL_0060: ldloc.2
+		IL_0061: stelem.ref
+		IL_0062: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0067: pop
+		IL_0068: ret
 	} // end of method Date_Construct_FromMs_GetTime_ToISOString::Main
 
 } // end of class Scripts.Date_Construct_FromMs_GetTime_ToISOString
@@ -85,7 +94,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20c5
+		// Method begins at RVA 0x20d1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

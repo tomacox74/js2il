@@ -164,6 +164,22 @@ internal static class Stackify
 
                 return true;
             }
+
+            if (defInstr is LIRGetIntrinsicGlobal &&
+                useInstr is LIRCallInstanceMethod callInstanceMethod &&
+                callInstanceMethod.Receiver.Index == targetTemp.Index)
+            {
+                for (int i = defIndex + 1; i < useIndex; i++)
+                {
+                    var instr = methodBody.Instructions[i];
+                    if (IsControlFlowInstruction(instr))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
         }
 
         // Check for intervening control flow
@@ -398,6 +414,19 @@ internal static class Stackify
             case LIRCallFunction:
                 return false;
 
+            // LIRCallFunctionValue calls a function value via runtime dispatch.
+            case LIRCallFunctionValue:
+                return false;
+
+            // LIRCallMember calls a member via runtime dispatcher.
+            case LIRCallMember:
+                return false;
+
+            // LIRCallDeclaredCallable performs a direct call to a declared method.
+            // Like other calls, it must never be inlined/re-emitted by Stackify.
+            case LIRCallDeclaredCallable:
+                return false;
+
             // LIRConvertToObject can be emitted inline if its source can be emitted inline
             // AND the source is not backed by a variable slot that could be modified.
             // If the source is backed by a variable slot, that slot may be overwritten by a later
@@ -480,6 +509,7 @@ internal static class Stackify
             case LIRConstUndefined:
             case LIRConstNull:
             case LIRGetIntrinsicGlobal:
+            case LIRLoadUserClassStaticField:
             case LIRLoadParameter:
             case LIRLoadThis:
             case LIRBuildScopesArray:
@@ -580,8 +610,20 @@ internal static class Stackify
             case LIRCallIntrinsicStatic callStatic:
                 return (callStatic.Arguments.Count, 1);
 
+            // Declared callable direct call: consumes N args, produces 1 result
+            case LIRCallDeclaredCallable callDeclared:
+                return (callDeclared.Arguments.Count, 1);
+
             case LIRCallFunction call:
                 return (1 + call.Arguments.Count, 1);
+
+            case LIRCallFunctionValue:
+                // target + scopesArray + argsArray -> result
+                return (3, 1);
+
+            case LIRCallMember:
+                // receiver + methodName + argsArray -> result
+                return (3, 1);
 
             // Return: consumes return value
             case LIRReturn:

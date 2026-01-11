@@ -70,6 +70,47 @@ namespace JavaScriptRuntime
         public static string Replace(string input, object patternOrString, object replacement)
         {
             input ??= string.Empty;
+
+            // If the pattern is a RegExp object, use its compiled Regex (and global flag)
+            // rather than falling back to ToString() which would treat it as a plain string.
+            if (patternOrString is RegExp regExp)
+            {
+                // Replacement may be a string or a callback delegate.
+                if (replacement is Func<object[], object, object> f1 || replacement is Func<object[], object> f0)
+                {
+                    string Invoke(string match)
+                    {
+                        if (replacement is Func<object[], object, object> cb1)
+                        {
+                            var r = cb1(System.Array.Empty<object>(), match);
+                            return DotNet2JSConversions.ToString(r);
+                        }
+
+                        var cb0 = (Func<object[], object>)replacement;
+                        var r0 = cb0(System.Array.Empty<object>());
+                        return DotNet2JSConversions.ToString(r0);
+                    }
+
+                    var evaluator = new MatchEvaluator(m => Invoke(m.Value));
+                    if (regExp.Global)
+                    {
+                        return regExp.Regex.Replace(input, evaluator);
+                    }
+
+                    // Replace only the first match
+                    return regExp.Regex.Replace(input, evaluator, 1, 0);
+                }
+
+                var replacementText = DotNet2JSConversions.ToString(replacement) ?? string.Empty;
+                if (regExp.Global)
+                {
+                    return regExp.Regex.Replace(input, replacementText);
+                }
+
+                // Replace only the first match
+                return regExp.Regex.Replace(input, replacementText, 1);
+            }
+
             var pattern = patternOrString?.ToString() ?? string.Empty;
             var repl = replacement?.ToString() ?? string.Empty;
             if (pattern.Length == 0)

@@ -99,13 +99,13 @@
 		.maxstack 32
 
 		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_000a: ldc.i4.1
-		IL_000b: newarr [System.Runtime]System.Object
-		IL_0010: dup
-		IL_0011: ldc.i4.0
-		IL_0012: ldarg.0
-		IL_0013: ldfld object Classes.Classes_ClassPrivateProperty_HelperMethod_Log.Greeter::_secret
+		IL_0005: ldc.i4.1
+		IL_0006: newarr [System.Runtime]System.Object
+		IL_000b: dup
+		IL_000c: ldc.i4.0
+		IL_000d: ldarg.0
+		IL_000e: ldstr "_secret"
+		IL_0013: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 		IL_0018: stelem.ref
 		IL_0019: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_001e: pop
@@ -119,7 +119,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -130,19 +130,24 @@
 	{
 		// Method begins at RVA 0x20bc
 		// Header size: 12
-		// Code size: 14 (0xe)
+		// Code size: 31 (0x1f)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Classes_ClassPrivateProperty_HelperMethod_Log,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Classes.Classes_ClassPrivateProperty_HelperMethod_Log.Greeter::.ctor()
-		IL_0005: stloc.1
-		IL_0006: ldloc.1
-		IL_0007: callvirt instance object Classes.Classes_ClassPrivateProperty_HelperMethod_Log.Greeter::logSecret()
-		IL_000c: pop
-		IL_000d: ret
+		IL_0000: newobj instance void Scopes.Classes_ClassPrivateProperty_HelperMethod_Log::.ctor()
+		IL_0005: stloc.0
+		IL_0006: newobj instance void Classes.Classes_ClassPrivateProperty_HelperMethod_Log.Greeter::.ctor()
+		IL_000b: stloc.1
+		IL_000c: ldloc.1
+		IL_000d: ldstr "logSecret"
+		IL_0012: ldc.i4.0
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_001d: pop
+		IL_001e: ret
 	} // end of method Classes_ClassPrivateProperty_HelperMethod_Log::Main
 
 } // end of class Scripts.Classes_ClassPrivateProperty_HelperMethod_Log
@@ -154,7 +159,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20d6
+		// Method begins at RVA 0x20e7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -367,6 +367,15 @@ internal static class TempLocalAllocator
                     yield return arg;
                 }
                 break;
+            case LIRCallFunctionValue callValue:
+                yield return callValue.FunctionValue;
+                yield return callValue.ScopesArray;
+                yield return callValue.ArgumentsArray;
+                break;
+            case LIRCallMember callMember:
+                yield return callMember.Receiver;
+                yield return callMember.ArgumentsArray;
+                break;
             case LIRBuildScopesArray:
                 // LIRBuildScopesArray doesn't consume temps - it loads scope instances from locals/args directly
                 break;
@@ -437,6 +446,13 @@ internal static class TempLocalAllocator
                     yield return newUserClass.ScopesArray.Value;
                 }
                 foreach (var arg in newUserClass.Arguments)
+                {
+                    yield return arg;
+                }
+                break;
+
+            case LIRCallDeclaredCallable callDeclared:
+                foreach (var arg in callDeclared.Arguments)
                 {
                     yield return arg;
                 }
@@ -605,6 +621,14 @@ internal static class TempLocalAllocator
                 defined = callFunc.Result;
                 return true;
 
+            case LIRCallFunctionValue callValue:
+                defined = callValue.Result;
+                return true;
+
+            case LIRCallMember callMember:
+                defined = callMember.Result;
+                return true;
+
             case LIRCreateBoundArrowFunction createArrow:
                 defined = createArrow.Result;
                 return true;
@@ -650,6 +674,14 @@ internal static class TempLocalAllocator
                 return true;
             case LIRNewUserClass newUserClass:
                 defined = newUserClass.Result;
+                return true;
+
+            case LIRCallDeclaredCallable callDeclared:
+                defined = callDeclared.Result;
+                return true;
+
+            case LIRLoadUserClassStaticField loadStaticField:
+                defined = loadStaticField.Result;
                 return true;
             default:
                 defined = default;

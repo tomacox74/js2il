@@ -86,7 +86,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -97,55 +97,69 @@
 	{
 		// Method begins at RVA 0x2090
 		// Header size: 12
-		// Code size: 113 (0x71)
+		// Code size: 135 (0x87)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Promise_Any_OneResolved,
 			[1] object,
 			[2] object,
-			[3] object
+			[3] object,
+			[4] class [JavaScriptRuntime]JavaScriptRuntime.Array,
+			[5] object,
+			[6] object,
+			[7] object[]
 		)
 
-		IL_0000: ldstr "Error 1"
-		IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
-		IL_000a: stloc.1
-		IL_000b: ldstr "Success"
-		IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-		IL_0015: stloc.2
-		IL_0016: ldstr "Error 3"
-		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
-		IL_0020: stloc.3
-		IL_0021: ldc.i4.3
-		IL_0022: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0027: dup
-		IL_0028: ldloc.1
-		IL_0029: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_002e: dup
-		IL_002f: ldloc.2
-		IL_0030: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_0035: dup
-		IL_0036: ldloc.3
-		IL_0037: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
-		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::'any'(object)
-		IL_0041: ldstr "then"
-		IL_0046: ldc.i4.1
-		IL_0047: newarr [System.Runtime]System.Object
-		IL_004c: dup
-		IL_004d: ldc.i4.0
-		IL_004e: ldnull
-		IL_004f: ldftn object Functions.ArrowFunction_L5C32::ArrowFunction_L5C32(object[], object)
-		IL_0055: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_005a: ldc.i4.1
-		IL_005b: newarr [System.Runtime]System.Object
-		IL_0060: dup
-		IL_0061: ldc.i4.0
-		IL_0062: ldloc.0
-		IL_0063: stelem.ref
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0069: stelem.ref
-		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_006f: pop
-		IL_0070: ret
+		IL_0000: newobj instance void Scopes.Promise_Any_OneResolved::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldstr "Error 1"
+		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
+		IL_0010: stloc.1
+		IL_0011: ldstr "Success"
+		IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+		IL_001b: stloc.2
+		IL_001c: ldstr "Error 3"
+		IL_0021: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
+		IL_0026: stloc.3
+		IL_0027: ldc.i4.3
+		IL_0028: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_002d: dup
+		IL_002e: ldloc.1
+		IL_002f: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0034: dup
+		IL_0035: ldloc.2
+		IL_0036: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_003b: dup
+		IL_003c: ldloc.3
+		IL_003d: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0042: stloc.s 4
+		IL_0044: ldloc.s 4
+		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::'any'(object)
+		IL_004b: stloc.s 5
+		IL_004d: ldnull
+		IL_004e: ldftn object Functions.ArrowFunction_L5C32::ArrowFunction_L5C32(object[], object)
+		IL_0054: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0059: ldc.i4.1
+		IL_005a: newarr [System.Runtime]System.Object
+		IL_005f: dup
+		IL_0060: ldc.i4.0
+		IL_0061: ldloc.0
+		IL_0062: stelem.ref
+		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0068: stloc.s 6
+		IL_006a: ldc.i4.1
+		IL_006b: newarr [System.Runtime]System.Object
+		IL_0070: dup
+		IL_0071: ldc.i4.0
+		IL_0072: ldloc.s 6
+		IL_0074: stelem.ref
+		IL_0075: stloc.s 7
+		IL_0077: ldloc.s 5
+		IL_0079: ldstr "then"
+		IL_007e: ldloc.s 7
+		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0085: pop
+		IL_0086: ret
 	} // end of method Promise_Any_OneResolved::Main
 
 } // end of class Scripts.Promise_Any_OneResolved
@@ -157,7 +171,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x210d
+		// Method begins at RVA 0x2123
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

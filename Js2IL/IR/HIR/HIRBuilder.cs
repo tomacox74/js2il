@@ -161,6 +161,12 @@ class HIRMethodBuilder
 
         switch (statement)
         {
+            case EmptyStatement:
+                // Empty statements can appear from stray semicolons (e.g., after function declarations).
+                // Treat as a no-op.
+                hirStatement = new HIRBlock([]);
+                return true;
+
             case VariableDeclaration declStmt:
                 // Variable declarations can have multiple declarators, handle them as a block
                 var declStatements = new List<HIRStatement>();
@@ -971,6 +977,23 @@ class HIRMethodBuilder
             case BooleanLiteral booleanLiteralExpr:
                 hirExpr = new HIRLiteralExpression(JavascriptType.Boolean, booleanLiteralExpr.Value);
                 return true;
+            case Literal regexLiteral when regexLiteral.Raw != null && regexLiteral.Raw.TrimStart().StartsWith("/"):
+                // Regex literal like /pattern/flags.
+                // NOTE: Acornima 1.1.1 does not expose parsed pattern/flags on Literal,
+                // so we extract from Literal.Value when possible and otherwise parse Literal.Raw.
+                if (TryExtractRegexLiteral(regexLiteral, out var pattern, out var flags))
+                {
+                    var regExpSymbol = _currentScope.FindSymbol("RegExp");
+                    hirExpr = new HIRNewExpression(
+                        new HIRVariableExpression(regExpSymbol),
+                        new List<HIRExpression>
+                        {
+                            new HIRLiteralExpression(JavascriptType.String, pattern),
+                            new HIRLiteralExpression(JavascriptType.String, flags)
+                        });
+                    return true;
+                }
+                return false;
             case Literal genericLiteral when genericLiteral.Value is null:
                 // JavaScript 'null' literal
                 hirExpr = new HIRLiteralExpression(JavascriptType.Null, null);
@@ -1053,6 +1076,66 @@ class HIRMethodBuilder
             default:
                 return false;
         }
+    }
+
+    private static bool TryExtractRegexLiteral(Literal literal, out string pattern, out string flags)
+    {
+        pattern = string.Empty;
+        flags = string.Empty;
+
+        // Prefer structured data if Acornima provides it via Literal.Value (implementation detail).
+        // We use reflection to avoid hard dependency on internal Acornima types.
+        if (literal.Value != null)
+        {
+            var valueType = literal.Value.GetType();
+            var patternProp = valueType.GetProperty("Pattern") ?? valueType.GetProperty("pattern");
+            var flagsProp = valueType.GetProperty("Flags") ?? valueType.GetProperty("flags");
+            if (patternProp != null && flagsProp != null)
+            {
+                var p = patternProp.GetValue(literal.Value) as string;
+                var f = flagsProp.GetValue(literal.Value) as string;
+                if (p != null && f != null)
+                {
+                    pattern = p;
+                    flags = f;
+                    return true;
+                }
+            }
+        }
+
+        // Acornima represents regex literals as Literal with Raw like "/b/g".
+        var raw = literal.Raw;
+        if (string.IsNullOrWhiteSpace(raw))
+        {
+            return false;
+        }
+        raw = raw.Trim();
+        if (raw.Length < 2 || raw[0] != '/')
+        {
+            return false;
+        }
+
+        // Find the final unescaped '/'
+        int lastSlash = -1;
+        bool escaped = false;
+        for (int i = 1; i < raw.Length; i++)
+        {
+            char c = raw[i];
+            if (!escaped && c == '/')
+            {
+                lastSlash = i;
+            }
+            escaped = (!escaped && c == '\\');
+        }
+
+        if (lastSlash <= 0)
+        {
+            return false;
+        }
+
+        pattern = raw.Substring(1, lastSlash - 1);
+        flags = raw.Substring(lastSlash + 1);
+        return true;
     }
     
     /// <summary>

@@ -86,10 +86,11 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 59 (0x3b)
+		// Code size: 49 (0x31)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction
+			[0] class Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction::.ctor()
@@ -97,27 +98,25 @@
 		IL_0006: ldloc.0
 		IL_0007: ldarg.1
 		IL_0008: stfld object Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction::outerParam
-		IL_000d: ldloc.0
-		IL_000e: ldnull
-		IL_000f: ldftn object Functions.Function_NestedFunctionLogsOuterParameter::innerFunction(object[], object)
-		IL_0015: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_001a: stfld object Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction::innerFunction
-		IL_001f: ldloc.0
-		IL_0020: ldfld object Scopes.Function_NestedFunctionLogsOuterParameter/outerFunction::innerFunction
-		IL_0025: ldc.i4.2
-		IL_0026: newarr [System.Runtime]System.Object
-		IL_002b: dup
-		IL_002c: ldc.i4.0
-		IL_002d: ldarg.0
-		IL_002e: ldc.i4.0
-		IL_002f: ldelem.ref
-		IL_0030: stelem.ref
-		IL_0031: dup
-		IL_0032: ldc.i4.1
-		IL_0033: ldloc.0
-		IL_0034: stelem.ref
-		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_003a: ret
+		IL_000d: ldnull
+		IL_000e: ldftn object Functions.Function_NestedFunctionLogsOuterParameter::innerFunction(object[], object)
+		IL_0014: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0019: ldc.i4.2
+		IL_001a: newarr [System.Runtime]System.Object
+		IL_001f: dup
+		IL_0020: ldc.i4.0
+		IL_0021: ldarg.0
+		IL_0022: ldc.i4.0
+		IL_0023: ldelem.ref
+		IL_0024: stelem.ref
+		IL_0025: dup
+		IL_0026: ldc.i4.1
+		IL_0027: ldloc.0
+		IL_0028: stelem.ref
+		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_002e: stloc.1
+		IL_002f: ldloc.1
+		IL_0030: ret
 	} // end of method Function_NestedFunctionLogsOuterParameter::outerFunction
 
 	.method public hidebysig static 
@@ -126,7 +125,7 @@
 			object innerParam
 		) cil managed 
 	{
-		// Method begins at RVA 0x20b4
+		// Method begins at RVA 0x20ac
 		// Header size: 12
 		// Code size: 72 (0x48)
 		.maxstack 32
@@ -171,7 +170,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -180,69 +179,48 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2108
+		// Method begins at RVA 0x2100
 		// Header size: 12
-		// Code size: 117 (0x75)
+		// Code size: 73 (0x49)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Function_NestedFunctionLogsOuterParameter,
-			[1] object
+			[1] object,
+			[2] object[]
 		)
 
 		IL_0000: newobj instance void Scopes.Function_NestedFunctionLogsOuterParameter::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldnull
-		IL_0008: ldftn object Functions.Function_NestedFunctionLogsOuterParameter::outerFunction(object[], object)
-		IL_000e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0013: stfld object Scopes.Function_NestedFunctionLogsOuterParameter::outerFunction
-		IL_0018: ldloc.0
-		IL_0019: castclass Scopes.Function_NestedFunctionLogsOuterParameter
-		IL_001e: ldfld object Scopes.Function_NestedFunctionLogsOuterParameter::outerFunction
-		IL_0023: dup
-		IL_0024: brtrue.s IL_002d
-
-		IL_0026: pop
-		IL_0027: ldnull
-		IL_0028: br IL_002d
-
-		IL_002d: ldc.i4.1
-		IL_002e: newarr [System.Runtime]System.Object
-		IL_0033: dup
-		IL_0034: ldc.i4.0
-		IL_0035: ldloc.0
-		IL_0036: stelem.ref
+		IL_0006: ldnull
+		IL_0007: ldftn object Functions.Function_NestedFunctionLogsOuterParameter::outerFunction(object[], object)
+		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: ldstr "Value from outer"
+		IL_0021: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
+		IL_0026: stloc.1
+		IL_0027: ldc.i4.1
+		IL_0028: newarr [System.Runtime]System.Object
+		IL_002d: dup
+		IL_002e: ldc.i4.0
+		IL_002f: ldstr "Value from inner"
+		IL_0034: stelem.ref
+		IL_0035: stloc.2
+		IL_0036: ldloc.1
 		IL_0037: ldc.i4.1
 		IL_0038: newarr [System.Runtime]System.Object
 		IL_003d: dup
 		IL_003e: ldc.i4.0
-		IL_003f: ldstr "Value from outer"
-		IL_0044: stelem.ref
-		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_004a: stloc.1
-		IL_004b: ldloc.1
-		IL_004c: dup
-		IL_004d: brtrue.s IL_0056
-
-		IL_004f: pop
-		IL_0050: ldnull
-		IL_0051: br IL_0056
-
-		IL_0056: ldc.i4.1
-		IL_0057: newarr [System.Runtime]System.Object
-		IL_005c: dup
-		IL_005d: ldc.i4.0
-		IL_005e: ldloc.0
-		IL_005f: stelem.ref
-		IL_0060: ldc.i4.1
-		IL_0061: newarr [System.Runtime]System.Object
-		IL_0066: dup
-		IL_0067: ldc.i4.0
-		IL_0068: ldstr "Value from inner"
-		IL_006d: stelem.ref
-		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_0073: pop
-		IL_0074: ret
+		IL_003f: ldnull
+		IL_0040: stelem.ref
+		IL_0041: ldloc.2
+		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_0047: pop
+		IL_0048: ret
 	} // end of method Function_NestedFunctionLogsOuterParameter::Main
 
 } // end of class Scripts.Function_NestedFunctionLogsOuterParameter
@@ -254,7 +232,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2189
+		// Method begins at RVA 0x2155
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

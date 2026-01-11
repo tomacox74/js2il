@@ -254,7 +254,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -265,36 +265,52 @@
 	{
 		// Method begins at RVA 0x218c
 		// Header size: 12
-		// Code size: 87 (0x57)
+		// Code size: 118 (0x76)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Classes_BitShiftInCtor_Int32Array,
-			[1] object
+			[1] object,
+			[2] object
 		)
 
-		IL_0000: ldc.r8 64
-		IL_0009: box [System.Runtime]System.Double
-		IL_000e: newobj instance void Classes.Classes_BitShiftInCtor_Int32Array.BitBag::.ctor(object)
-		IL_0013: stloc.1
-		IL_0014: ldloc.1
-		IL_0015: ldc.r8 1
-		IL_001e: box [System.Runtime]System.Double
-		IL_0023: callvirt instance object Classes.Classes_BitShiftInCtor_Int32Array.BitBag::set(object)
-		IL_0028: pop
-		IL_0029: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_002e: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0033: ldc.i4.1
-		IL_0034: newarr [System.Runtime]System.Object
-		IL_0039: dup
-		IL_003a: ldc.i4.0
-		IL_003b: ldloc.1
-		IL_003c: ldc.r8 1
-		IL_0045: box [System.Runtime]System.Double
-		IL_004a: callvirt instance object Classes.Classes_BitShiftInCtor_Int32Array.BitBag::test(object)
-		IL_004f: stelem.ref
-		IL_0050: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0055: pop
-		IL_0056: ret
+		IL_0000: newobj instance void Scopes.Classes_BitShiftInCtor_Int32Array::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.r8 64
+		IL_000f: box [System.Runtime]System.Double
+		IL_0014: newobj instance void Classes.Classes_BitShiftInCtor_Int32Array.BitBag::.ctor(object)
+		IL_0019: stloc.1
+		IL_001a: ldloc.1
+		IL_001b: ldstr "set"
+		IL_0020: ldc.i4.1
+		IL_0021: newarr [System.Runtime]System.Object
+		IL_0026: dup
+		IL_0027: ldc.i4.0
+		IL_0028: ldc.r8 1
+		IL_0031: box [System.Runtime]System.Double
+		IL_0036: stelem.ref
+		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_003c: pop
+		IL_003d: ldloc.1
+		IL_003e: ldstr "test"
+		IL_0043: ldc.i4.1
+		IL_0044: newarr [System.Runtime]System.Object
+		IL_0049: dup
+		IL_004a: ldc.i4.0
+		IL_004b: ldc.r8 1
+		IL_0054: box [System.Runtime]System.Double
+		IL_0059: stelem.ref
+		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_005f: stloc.2
+		IL_0060: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0065: ldc.i4.1
+		IL_0066: newarr [System.Runtime]System.Object
+		IL_006b: dup
+		IL_006c: ldc.i4.0
+		IL_006d: ldloc.2
+		IL_006e: stelem.ref
+		IL_006f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0074: pop
+		IL_0075: ret
 	} // end of method Classes_BitShiftInCtor_Int32Array::Main
 
 } // end of class Scripts.Classes_BitShiftInCtor_Int32Array
@@ -306,7 +322,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21ef
+		// Method begins at RVA 0x220e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

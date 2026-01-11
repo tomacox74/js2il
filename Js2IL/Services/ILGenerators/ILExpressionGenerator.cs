@@ -2959,6 +2959,7 @@ namespace Js2IL.Services.ILGenerators
                 {
                     Emit(newExpression.Arguments[i], new TypeCoercion() { boxResult = true });
                 }
+
                 _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
                 _il.Token(ctorRef2);
                 // Best-effort map CLR type for known JavaScript error classes
