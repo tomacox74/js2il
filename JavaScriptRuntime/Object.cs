@@ -44,16 +44,19 @@ namespace JavaScriptRuntime
                     throw new NotSupportedException($"Host intrinsic method not found: String.{methodName}");
                 }
 
-                // Prefer methods that can accept provided arg count; allow padding with defaults
+                // Prefer exact-arity overloads (receiver + provided args). Only fall back to
+                // longer-arity methods (padding with defaults) when no exact match exists.
                 int jsArgCount = callArgs.Length;
-                var viable = candidates
-                    .Where(m => m.GetParameters().Length >= 1 + jsArgCount)
-                    .OrderBy(m => m.GetParameters().Length)
+                var exact = candidates
+                    .Where(m => m.GetParameters().Length == 1 + jsArgCount)
                     .ToList();
-                if (viable.Count == 0)
-                {
-                    viable = candidates.Where(m => m.GetParameters().Length == 1 + jsArgCount).ToList();
-                }
+
+                var viable = exact.Count > 0
+                    ? exact
+                    : candidates
+                        .Where(m => m.GetParameters().Length >= 1 + jsArgCount)
+                        .OrderBy(m => m.GetParameters().Length)
+                        .ToList();
                 var chosen = viable
                     .OrderByDescending(m => m.GetParameters().Skip(1).Take(jsArgCount).Count(p => p.ParameterType != typeof(object)))
                     .FirstOrDefault();
