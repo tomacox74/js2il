@@ -27,6 +27,24 @@ namespace JavaScriptRuntime
             if (receiver is string || receiver is char[] || receiver is System.Text.StringBuilder)
             {
                 var input = DotNet2JSConversions.ToString(receiver);
+
+                // Special-case: String.prototype.replace with a RegExp pattern.
+                // The reflection-based overload selection below can't reliably pick the regex path
+                // because args are object-typed at runtime.
+                if (string.Equals(methodName, "replace", StringComparison.OrdinalIgnoreCase)
+                    && callArgs.Length >= 2
+                    && callArgs[0] is RegExp re)
+                {
+                    var replacement = DotNet2JSConversions.ToString(callArgs[1]) ?? string.Empty;
+                    if (re.Global)
+                    {
+                        return re.Regex.Replace(input, replacement);
+                    }
+
+                    // Non-global replace: first occurrence only.
+                    return re.Regex.Replace(input, replacement, 1);
+                }
+
                 var stringType = typeof(JavaScriptRuntime.String);
                 var candidates = stringType
                     .GetMethods(BindingFlags.Public | BindingFlags.Static)
@@ -201,8 +219,10 @@ namespace JavaScriptRuntime
             }
             else
             {
-                // todo: add generic object index access support
-                throw new Exception("Object does not support index access. Only arrays are supported for index access.");
+                // Generic object index access: treat index as a property key (JS ToPropertyKey -> string)
+                // and fall back to dynamic property lookup (public fields/properties and ExpandoObject).
+                var propName = DotNet2JSConversions.ToString(index);
+                return GetProperty(obj, propName)!;
             }
         }
 
@@ -561,9 +581,16 @@ namespace JavaScriptRuntime
             }
 
             var src = args ?? empty;
-            var coerced = new object[psChosen.Length];
-            for (int i = 0; i < src.Length; i++) coerced[i] = src[i] is null ? 0.0 : CoerceToJsNumber(src[i]);
-            
+
+            // JavaScript semantics: extra args are ignored (unless the target explicitly accepts params object[]).
+            // Also ensure we never write past the end of the argument array.
+            var coerced = expectsParamsArray ? new object[src.Length] : new object[psChosen.Length];
+            var copyCount = expectsParamsArray ? src.Length : System.Math.Min(src.Length, coerced.Length);
+            for (int i = 0; i < copyCount; i++)
+            {
+                coerced[i] = src[i] is null ? 0.0 : CoerceToJsNumber(src[i]);
+            }
+
             object?[] invokeArgs = expectsParamsArray ? new object?[] { coerced } : coerced;
             return chosen.Invoke(instance, invokeArgs);
         }

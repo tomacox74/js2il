@@ -98,6 +98,13 @@ public record LIRCallFunctionValue(TempVariable FunctionValue, TempVariable Scop
 public record LIRCallMember(TempVariable Receiver, string MethodName, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Calls a declared callable directly via its MethodDefinitionHandle (resolved via CallableRegistry).
+/// This is intended for cases where runtime dispatch isn't appropriate (e.g., user-defined class static method calls).
+/// The argument list must match the target method signature.
+/// </summary>
+public record LIRCallDeclaredCallable(CallableId CallableId, IReadOnlyList<TempVariable> Arguments, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Creates a JS callable value (delegate) for an ArrowFunctionExpression and binds it to a scopes array.
 /// Emits: ldnull, ldftn <method>, newobj Func&lt;...&gt;::.ctor, ldloc/ldarg scopesArray, call Closure.Bind(object, object[])
 /// </summary>
@@ -248,6 +255,16 @@ public record LIRNewUserClass(
     int MinArgCount,
     int MaxArgCount,
     IReadOnlyList<TempVariable> Arguments,
+    TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Loads a static field from a user-defined JavaScript class (compiled as a .NET type).
+/// The field handle is resolved via <see cref="Js2IL.Services.ClassRegistry"/> using <see cref="RegistryClassName"/>.
+/// Emits: ldsfld object <Class>::<Field>
+/// </summary>
+public record LIRLoadUserClassStaticField(
+    string RegistryClassName,
+    string FieldName,
     TempVariable Result) : LIRInstruction;
 
 /// <summary>

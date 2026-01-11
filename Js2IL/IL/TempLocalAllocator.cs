@@ -451,6 +451,13 @@ internal static class TempLocalAllocator
                 }
                 break;
 
+            case LIRCallDeclaredCallable callDeclared:
+                foreach (var arg in callDeclared.Arguments)
+                {
+                    yield return arg;
+                }
+                break;
+
             case LIRCreateBoundArrowFunction createArrow:
                 yield return createArrow.ScopesArray;
                 break;
@@ -667,6 +674,14 @@ internal static class TempLocalAllocator
                 return true;
             case LIRNewUserClass newUserClass:
                 defined = newUserClass.Result;
+                return true;
+
+            case LIRCallDeclaredCallable callDeclared:
+                defined = callDeclared.Result;
+                return true;
+
+            case LIRLoadUserClassStaticField loadStaticField:
+                defined = loadStaticField.Result;
                 return true;
             default:
                 defined = default;

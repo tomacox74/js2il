@@ -301,7 +301,7 @@ internal sealed class LIRToILCompiler
             if (!TryCompileInstructionToIL(instruction, ilEncoder, allocation, methodDescriptor))
             {
                 // Failed to compile instruction
-                IRPipelineMetrics.RecordFailure($"IL compile failed: unsupported LIR instruction {instruction.GetType().Name}");
+                IRPipelineMetrics.RecordFailureIfUnset($"IL compile failed: unsupported LIR instruction {instruction.GetType().Name}");
                 return false;
             }
             if (instruction is LIRReturn)
@@ -1017,6 +1017,34 @@ internal sealed class LIRToILCompiler
                     break;
                 }
 
+            case LIRLoadUserClassStaticField loadStaticField:
+                {
+                    var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+                    if (classRegistry == null)
+                    {
+                        return false;
+                    }
+
+                    if (!classRegistry.TryGetStaticField(loadStaticField.RegistryClassName, loadStaticField.FieldName, out var fieldHandle))
+                    {
+                        return false;
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Ldsfld);
+                    ilEncoder.Token(fieldHandle);
+
+                    if (IsMaterialized(loadStaticField.Result, allocation))
+                    {
+                        EmitStoreTemp(loadStaticField.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+
+                    break;
+                }
+
             // 'in' operator - calls Operators.In
             case LIRInOperator inOp:
                 EmitLoadTemp(inOp.Left, ilEncoder, allocation, methodDescriptor);
@@ -1372,6 +1400,40 @@ internal sealed class LIRToILCompiler
                     if (IsMaterialized(callMember.Result, allocation))
                     {
                         EmitStoreTemp(callMember.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+                    break;
+                }
+
+            case LIRCallDeclaredCallable callDeclared:
+                {
+                    var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+                    if (reader == null)
+                    {
+                        return false; // Fall back to legacy emitter
+                    }
+
+                    if (!reader.TryGetDeclaredToken(callDeclared.CallableId, out var token) || token.Kind != HandleKind.MethodDefinition)
+                    {
+                        return false; // Fall back to legacy emitter
+                    }
+
+                    var methodHandle = (MethodDefinitionHandle)token;
+
+                    foreach (var arg in callDeclared.Arguments)
+                    {
+                        EmitLoadTemp(arg, ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(methodHandle);
+
+                    if (IsMaterialized(callDeclared.Result, allocation))
+                    {
+                        EmitStoreTemp(callDeclared.Result, ilEncoder, allocation);
                     }
                     else
                     {
@@ -1899,6 +1961,24 @@ internal sealed class LIRToILCompiler
                     break;
                 }
 
+            case LIRLoadUserClassStaticField loadStaticField:
+                {
+                    var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+                    if (classRegistry == null)
+                    {
+                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing ClassRegistry for static field load {loadStaticField.RegistryClassName}::{loadStaticField.FieldName}");
+                    }
+
+                    if (!classRegistry.TryGetStaticField(loadStaticField.RegistryClassName, loadStaticField.FieldName, out var fieldHandle))
+                    {
+                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing registered static field {loadStaticField.RegistryClassName}::{loadStaticField.FieldName}");
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Ldsfld);
+                    ilEncoder.Token(fieldHandle);
+                    break;
+                }
+
             case LIRMulDynamic mulDynamic:
                 // Emit inline dynamic multiplication
                 EmitLoadTemp(mulDynamic.Left, ilEncoder, allocation, methodDescriptor);
@@ -2173,6 +2253,27 @@ internal sealed class LIRToILCompiler
                         new[] { typeof(object), typeof(string), typeof(object[]) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(callMemberRef);
+                    break;
+                }
+
+            case LIRCallDeclaredCallable callDeclared:
+                {
+                    var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+                    if (reader == null || !reader.TryGetDeclaredToken(callDeclared.CallableId, out var token) || token.Kind != HandleKind.MethodDefinition)
+                    {
+                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing declared token for callable {callDeclared.CallableId.DisplayName}");
+                    }
+
+                    var methodHandle = (MethodDefinitionHandle)token;
+
+                    foreach (var arg in callDeclared.Arguments)
+                    {
+                        EmitLoadTemp(arg, ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(methodHandle);
+                    // Result stays on stack
                     break;
                 }
 

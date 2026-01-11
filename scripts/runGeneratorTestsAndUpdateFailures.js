@@ -156,7 +156,9 @@ function main() {
 
   const result = childProcess.spawnSync('dotnet', dotnetArgs, {
     cwd: repoRoot,
-    stdio: 'inherit',
+    // Suppress dotnet test output to avoid overwhelming the console (and hanging chat sessions).
+    // We rely on TRX parsing below to report failures.
+    stdio: ['ignore', 'ignore', 'ignore'],
     shell: false,
   });
 
@@ -173,6 +175,9 @@ function main() {
   writeFailedTestsFile(failedTestsPath, failedTests);
 
   console.log(`Wrote ${failedTests.length} failing test(s) to: ${failedTestsPath}`);
+  if (result.status !== 0) {
+    console.log(`dotnet test exited with code: ${result.status}`);
+  }
 
   process.exit(result.status ?? 0);
 }

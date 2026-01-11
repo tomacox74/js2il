@@ -89,6 +89,13 @@ namespace JavaScriptRuntime
             if (target == null) throw new ArgumentNullException(nameof(target));
             if (scopes == null) throw new ArgumentNullException(nameof(scopes));
 
+            // CommonJS require(...) is passed into scripts as a RequireDelegate, which does not include
+            // the standard js2il scopes array parameter. Support calling it via the generic dispatcher.
+            if (target is global::JavaScriptRuntime.CommonJS.RequireDelegate require)
+            {
+                return require(args.Length > 0 ? args[0] : null)!;
+            }
+
             // JavaScript semantics: missing args are 'undefined' (modeled as CLR null); extra args are ignored.
             // Dispatch on delegate type (arity) rather than args.Length.
             if (target is Func<object[], object> f0)

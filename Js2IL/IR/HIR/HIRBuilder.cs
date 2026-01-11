@@ -977,6 +977,21 @@ class HIRMethodBuilder
             case BooleanLiteral booleanLiteralExpr:
                 hirExpr = new HIRLiteralExpression(JavascriptType.Boolean, booleanLiteralExpr.Value);
                 return true;
+            case Literal regexLiteral when regexLiteral.Raw != null && regexLiteral.Raw.TrimStart().StartsWith("/"):
+                // Regex literal like /pattern/flags
+                if (TryParseRegexLiteralRaw(regexLiteral, out var pattern, out var flags))
+                {
+                    var regExpSymbol = _currentScope.FindSymbol("RegExp");
+                    hirExpr = new HIRNewExpression(
+                        new HIRVariableExpression(regExpSymbol),
+                        new List<HIRExpression>
+                        {
+                            new HIRLiteralExpression(JavascriptType.String, pattern),
+                            new HIRLiteralExpression(JavascriptType.String, flags)
+                        });
+                    return true;
+                }
+                return false;
             case Literal genericLiteral when genericLiteral.Value is null:
                 // JavaScript 'null' literal
                 hirExpr = new HIRLiteralExpression(JavascriptType.Null, null);
@@ -1059,6 +1074,46 @@ class HIRMethodBuilder
             default:
                 return false;
         }
+    }
+
+    private static bool TryParseRegexLiteralRaw(Literal literal, out string pattern, out string flags)
+    {
+        pattern = string.Empty;
+        flags = string.Empty;
+
+        // Acornima represents regex literals as Literal with Raw like "/b/g".
+        var raw = literal.Raw;
+        if (string.IsNullOrWhiteSpace(raw))
+        {
+            return false;
+        }
+        raw = raw.Trim();
+        if (raw.Length < 2 || raw[0] != '/')
+        {
+            return false;
+        }
+
+        // Find the final unescaped '/'
+        int lastSlash = -1;
+        bool escaped = false;
+        for (int i = 1; i < raw.Length; i++)
+        {
+            char c = raw[i];
+            if (!escaped && c == '/')
+            {
+                lastSlash = i;
+            }
+            escaped = (!escaped && c == '\\');
+        }
+
+        if (lastSlash <= 0)
+        {
+            return false;
+        }
+
+        pattern = raw.Substring(1, lastSlash - 1);
+        flags = raw.Substring(lastSlash + 1);
+        return true;
     }
     
     /// <summary>

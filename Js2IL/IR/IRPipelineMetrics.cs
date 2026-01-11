@@ -58,6 +58,19 @@ public static class IRPipelineMetrics
         _lastFailure.Value = message;
     }
 
+    /// <summary>
+    /// Records a failure message only if no failure has been recorded yet for the current thread.
+    /// Useful for preserving the first, most specific failure when outer layers also report failures.
+    /// </summary>
+    public static void RecordFailureIfUnset(string message)
+    {
+        if (!Enabled) return;
+        if (string.IsNullOrWhiteSpace(_lastFailure.Value))
+        {
+            _lastFailure.Value = message;
+        }
+    }
+
     public static string? GetLastFailure() => _lastFailure.Value;
 
     public static void RecordMainMethodAttempt(bool success)
