@@ -2322,7 +2322,34 @@ public sealed class HIRToLIRLowerer
             }
         }
 
-        // Case 2c: console.log (instance global, not a static intrinsic)
+        // Case 2c: Generic member call via runtime dispatcher.
+        // This is a catch-all for calls like `output.join(',')` where `output` may be boxed as object,
+        // so typed receiver lowering can't prove the receiver type.
+        if (TryLowerExpression(calleePropAccess.Object, out var receiverTempVar))
+        {
+            receiverTempVar = EnsureObject(receiverTempVar);
+
+            var argTempsGeneric = new List<TempVariable>();
+            foreach (var argExpr in callExpr.Arguments)
+            {
+                if (!TryLowerExpression(argExpr, out var argTempVar))
+                {
+                    return false;
+                }
+
+                argTempsGeneric.Add(EnsureObject(argTempVar));
+            }
+
+            var argsArrayTempVar = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRBuildArray(argTempsGeneric, argsArrayTempVar));
+            DefineTempStorage(argsArrayTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+            _methodBodyIR.Instructions.Add(new LIRCallMember(receiverTempVar, calleePropAccess.PropertyName, argsArrayTempVar, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
+        // Case 2d: console.log (instance global, not a static intrinsic)
         // This is the legacy hardcoded path for console.log
         if (calleePropAccess.Object is not HIRVariableExpression calleeObject ||
             calleeObject.Name.Name != "console")

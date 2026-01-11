@@ -90,6 +90,14 @@ public record LIRCallFunction(Symbol FunctionSymbol, TempVariable ScopesArray, I
 public record LIRCallFunctionValue(TempVariable FunctionValue, TempVariable ScopesArray, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Calls a member method on a receiver via runtime dispatch.
+/// This is used for method calls where the receiver type is not known at compile time,
+/// e.g., `x.join(',')` when `x` is boxed as object.
+/// Emits: call JavaScriptRuntime.Object.CallMember(object receiver, string methodName, object[]? args)
+/// </summary>
+public record LIRCallMember(TempVariable Receiver, string MethodName, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Creates a JS callable value (delegate) for an ArrowFunctionExpression and binds it to a scopes array.
 /// Emits: ldnull, ldftn <method>, newobj Func&lt;...&gt;::.ctor, ldloc/ldarg scopesArray, call Closure.Bind(object, object[])
 /// </summary>

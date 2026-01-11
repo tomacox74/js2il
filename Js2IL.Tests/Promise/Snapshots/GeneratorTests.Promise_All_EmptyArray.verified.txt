@@ -88,7 +88,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -99,34 +99,49 @@
 	{
 		// Method begins at RVA 0x209c
 		// Header size: 12
-		// Code size: 59 (0x3b)
+		// Code size: 83 (0x53)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Promise_All_EmptyArray
+			[0] class Scopes.Promise_All_EmptyArray,
+			[1] object,
+			[2] object,
+			[3] object[]
 		)
 
-		IL_0000: ldc.i4.0
-		IL_0001: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
-		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::all(object)
-		IL_000b: ldstr "then"
-		IL_0010: ldc.i4.1
-		IL_0011: newarr [System.Runtime]System.Object
-		IL_0016: dup
-		IL_0017: ldc.i4.0
-		IL_0018: ldnull
-		IL_0019: ldftn object Functions.ArrowFunction_L1C22::ArrowFunction_L1C22(object[], object)
-		IL_001f: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0024: ldc.i4.1
-		IL_0025: newarr [System.Runtime]System.Object
-		IL_002a: dup
-		IL_002b: ldc.i4.0
-		IL_002c: ldloc.0
-		IL_002d: stelem.ref
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0000: newobj instance void Scopes.Promise_All_EmptyArray::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.i4.0
+		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::all(object)
+		IL_0011: pop
+		IL_0012: ldc.i4.0
+		IL_0013: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::all(object)
+		IL_001d: stloc.1
+		IL_001e: ldnull
+		IL_001f: ldftn object Functions.ArrowFunction_L1C22::ArrowFunction_L1C22(object[], object)
+		IL_0025: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_002a: ldc.i4.1
+		IL_002b: newarr [System.Runtime]System.Object
+		IL_0030: dup
+		IL_0031: ldc.i4.0
+		IL_0032: ldloc.0
 		IL_0033: stelem.ref
-		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0039: pop
-		IL_003a: ret
+		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0039: stloc.2
+		IL_003a: ldc.i4.1
+		IL_003b: newarr [System.Runtime]System.Object
+		IL_0040: dup
+		IL_0041: ldc.i4.0
+		IL_0042: ldloc.2
+		IL_0043: stelem.ref
+		IL_0044: stloc.3
+		IL_0045: ldloc.1
+		IL_0046: ldstr "then"
+		IL_004b: ldloc.3
+		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0051: pop
+		IL_0052: ret
 	} // end of method Promise_All_EmptyArray::Main
 
 } // end of class Scripts.Promise_All_EmptyArray
@@ -138,7 +153,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20e3
+		// Method begins at RVA 0x20fb
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

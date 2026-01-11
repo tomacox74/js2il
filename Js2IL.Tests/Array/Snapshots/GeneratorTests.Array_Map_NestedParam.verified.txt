@@ -184,23 +184,30 @@
 	{
 		// Method begins at RVA 0x20dc
 		// Header size: 12
-		// Code size: 34 (0x22)
+		// Code size: 38 (0x26)
 		.maxstack 32
+		.locals init (
+			[0] object
+		)
 
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.1
 		IL_0002: ldelem.ref
 		IL_0003: castclass Scopes.Array_Map_NestedParam/outer
 		IL_0008: ldfld object Scopes.Array_Map_NestedParam/outer::arr
-		IL_000d: ldstr "map"
-		IL_0012: ldc.i4.1
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: dup
-		IL_0019: ldc.i4.0
-		IL_001a: ldarg.1
-		IL_001b: stelem.ref
-		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0021: ret
+		IL_000d: stloc.0
+		IL_000e: ldloc.0
+		IL_000f: ldstr "map"
+		IL_0014: ldc.i4.1
+		IL_0015: newarr [System.Runtime]System.Object
+		IL_001a: dup
+		IL_001b: ldc.i4.0
+		IL_001c: ldarg.1
+		IL_001d: stelem.ref
+		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0023: stloc.0
+		IL_0024: ldloc.0
+		IL_0025: ret
 	} // end of method Array_Map_NestedParam::inner
 
 } // end of class Functions.Array_Map_NestedParam
@@ -215,7 +222,7 @@
 			object x
 		) cil managed 
 	{
-		// Method begins at RVA 0x210c
+		// Method begins at RVA 0x2110
 		// Header size: 12
 		// Code size: 12 (0xc)
 		.maxstack 32
@@ -241,7 +248,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2124
+		// Method begins at RVA 0x2128
 		// Header size: 12
 		// Code size: 153 (0x99)
 		.maxstack 32
@@ -321,7 +328,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c9
+		// Method begins at RVA 0x21cd
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

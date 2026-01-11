@@ -1355,6 +1355,31 @@ internal sealed class LIRToILCompiler
                     break;
                 }
 
+            case LIRCallMember callMember:
+                {
+                    // Emit: ldloc/ldarg receiver, ldstr methodName, ldloc/ldarg argsArray, call Object.CallMember
+                    EmitLoadTempAsObject(callMember.Receiver, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.Ldstr(_metadataBuilder, callMember.MethodName);
+                    EmitLoadTemp(callMember.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
+
+                    var callMemberRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.CallMember),
+                        new[] { typeof(object), typeof(string), typeof(object[]) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(callMemberRef);
+
+                    if (IsMaterialized(callMember.Result, allocation))
+                    {
+                        EmitStoreTemp(callMember.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+                    break;
+                }
+
             case LIRCreateBoundArrowFunction createArrow:
                 {
                     if (!IsMaterialized(createArrow.Result, allocation))
@@ -2132,6 +2157,22 @@ internal sealed class LIRToILCompiler
                     {
                         ilEncoder.OpCode(ILOpCode.Pop);
                     }
+                    break;
+                }
+
+            case LIRCallMember callMember:
+                {
+                    // Inline emission of member call via runtime dispatcher.
+                    EmitLoadTempAsObject(callMember.Receiver, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.Ldstr(_metadataBuilder, callMember.MethodName);
+                    EmitLoadTemp(callMember.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
+
+                    var callMemberRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.CallMember),
+                        new[] { typeof(object), typeof(string), typeof(object[]) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(callMemberRef);
                     break;
                 }
 

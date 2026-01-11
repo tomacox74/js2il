@@ -85,7 +85,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -96,38 +96,52 @@
 	{
 		// Method begins at RVA 0x2088
 		// Header size: 12
-		// Code size: 67 (0x43)
+		// Code size: 90 (0x5a)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Promise_Reject_Then
+			[0] class Scopes.Promise_Reject_Then,
+			[1] object,
+			[2] object,
+			[3] object[]
 		)
 
-		IL_0000: ldstr "Hello from Promise.reject"
-		IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
-		IL_000a: ldstr "then"
-		IL_000f: ldc.i4.2
-		IL_0010: newarr [System.Runtime]System.Object
-		IL_0015: dup
-		IL_0016: ldc.i4.0
-		IL_0017: ldc.i4.0
-		IL_0018: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_001d: stelem.ref
-		IL_001e: dup
-		IL_001f: ldc.i4.1
-		IL_0020: ldnull
-		IL_0021: ldftn object Functions.ArrowFunction_L1C57::ArrowFunction_L1C57(object[], object)
-		IL_0027: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_002c: ldc.i4.1
-		IL_002d: newarr [System.Runtime]System.Object
-		IL_0032: dup
-		IL_0033: ldc.i4.0
-		IL_0034: ldloc.0
-		IL_0035: stelem.ref
-		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_003b: stelem.ref
-		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0041: pop
-		IL_0042: ret
+		IL_0000: newobj instance void Scopes.Promise_Reject_Then::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldstr "Hello from Promise.reject"
+		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
+		IL_0010: pop
+		IL_0011: ldstr "Hello from Promise.reject"
+		IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
+		IL_001b: stloc.1
+		IL_001c: ldnull
+		IL_001d: ldftn object Functions.ArrowFunction_L1C57::ArrowFunction_L1C57(object[], object)
+		IL_0023: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0028: ldc.i4.1
+		IL_0029: newarr [System.Runtime]System.Object
+		IL_002e: dup
+		IL_002f: ldc.i4.0
+		IL_0030: ldloc.0
+		IL_0031: stelem.ref
+		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0037: stloc.2
+		IL_0038: ldc.i4.2
+		IL_0039: newarr [System.Runtime]System.Object
+		IL_003e: dup
+		IL_003f: ldc.i4.0
+		IL_0040: ldc.i4.0
+		IL_0041: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0046: stelem.ref
+		IL_0047: dup
+		IL_0048: ldc.i4.1
+		IL_0049: ldloc.2
+		IL_004a: stelem.ref
+		IL_004b: stloc.3
+		IL_004c: ldloc.1
+		IL_004d: ldstr "then"
+		IL_0052: ldloc.3
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0058: pop
+		IL_0059: ret
 	} // end of method Promise_Reject_Then::Main
 
 } // end of class Scripts.Promise_Reject_Then
@@ -139,7 +153,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20d7
+		// Method begins at RVA 0x20ee
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

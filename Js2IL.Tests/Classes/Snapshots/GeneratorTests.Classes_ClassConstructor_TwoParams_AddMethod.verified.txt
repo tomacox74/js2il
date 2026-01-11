@@ -139,7 +139,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -150,47 +150,63 @@
 	{
 		// Method begins at RVA 0x20b8
 		// Header size: 12
-		// Code size: 113 (0x71)
+		// Code size: 143 (0x8f)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Classes_ClassConstructor_TwoParams_AddMethod,
 			[1] object,
-			[2] object
+			[2] object,
+			[3] object,
+			[4] object[]
 		)
 
-		IL_0000: ldstr "Hello"
-		IL_0005: ldstr "World"
-		IL_000a: newobj instance void Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder::.ctor(object, object)
-		IL_000f: stloc.1
-		IL_0010: ldc.r8 5
-		IL_0019: box [System.Runtime]System.Double
-		IL_001e: ldc.r8 7
-		IL_0027: box [System.Runtime]System.Double
-		IL_002c: newobj instance void Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder::.ctor(object, object)
-		IL_0031: stloc.2
-		IL_0032: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0037: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_003c: ldc.i4.1
-		IL_003d: newarr [System.Runtime]System.Object
-		IL_0042: dup
-		IL_0043: ldc.i4.0
-		IL_0044: ldloc.1
-		IL_0045: callvirt instance object Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder::'add'()
-		IL_004a: stelem.ref
-		IL_004b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0050: pop
-		IL_0051: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0056: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_005b: ldc.i4.1
-		IL_005c: newarr [System.Runtime]System.Object
-		IL_0061: dup
-		IL_0062: ldc.i4.0
+		IL_0000: newobj instance void Scopes.Classes_ClassConstructor_TwoParams_AddMethod::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldstr "Hello"
+		IL_000b: ldstr "World"
+		IL_0010: newobj instance void Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder::.ctor(object, object)
+		IL_0015: stloc.1
+		IL_0016: ldc.r8 5
+		IL_001f: box [System.Runtime]System.Double
+		IL_0024: ldc.r8 7
+		IL_002d: box [System.Runtime]System.Double
+		IL_0032: newobj instance void Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder::.ctor(object, object)
+		IL_0037: stloc.2
+		IL_0038: ldloc.1
+		IL_0039: ldstr "add"
+		IL_003e: ldc.i4.0
+		IL_003f: newarr [System.Runtime]System.Object
+		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0049: stloc.3
+		IL_004a: ldc.i4.1
+		IL_004b: newarr [System.Runtime]System.Object
+		IL_0050: dup
+		IL_0051: ldc.i4.0
+		IL_0052: ldloc.3
+		IL_0053: stelem.ref
+		IL_0054: stloc.s 4
+		IL_0056: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005b: ldloc.s 4
+		IL_005d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0062: pop
 		IL_0063: ldloc.2
-		IL_0064: callvirt instance object Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder::'add'()
-		IL_0069: stelem.ref
-		IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_006f: pop
-		IL_0070: ret
+		IL_0064: ldstr "add"
+		IL_0069: ldc.i4.0
+		IL_006a: newarr [System.Runtime]System.Object
+		IL_006f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0074: stloc.3
+		IL_0075: ldc.i4.1
+		IL_0076: newarr [System.Runtime]System.Object
+		IL_007b: dup
+		IL_007c: ldc.i4.0
+		IL_007d: ldloc.3
+		IL_007e: stelem.ref
+		IL_007f: stloc.s 4
+		IL_0081: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0086: ldloc.s 4
+		IL_0088: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_008d: pop
+		IL_008e: ret
 	} // end of method Classes_ClassConstructor_TwoParams_AddMethod::Main
 
 } // end of class Scripts.Classes_ClassConstructor_TwoParams_AddMethod
@@ -202,7 +218,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2135
+		// Method begins at RVA 0x2153
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

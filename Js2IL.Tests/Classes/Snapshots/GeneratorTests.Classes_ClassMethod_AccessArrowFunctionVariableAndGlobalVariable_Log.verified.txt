@@ -173,7 +173,7 @@
 	{
 		// Method begins at RVA 0x20ec
 		// Header size: 12
-		// Code size: 53 (0x35)
+		// Code size: 59 (0x3b)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log/ArrowFunction_testArrowFunction,
@@ -192,19 +192,21 @@
 		IL_0019: ldarg.0
 		IL_001a: ldc.i4.0
 		IL_001b: ldelem.ref
-		IL_001c: castclass Scopes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log
-		IL_0021: stelem.ref
-		IL_0022: dup
-		IL_0023: ldc.i4.1
-		IL_0024: ldloc.0
-		IL_0025: stelem.ref
-		IL_0026: newobj instance void Classes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log.MyClass::.ctor(object[])
-		IL_002b: stloc.1
-		IL_002c: ldloc.1
-		IL_002d: callvirt instance object Classes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log.MyClass::logValues()
-		IL_0032: pop
-		IL_0033: ldnull
-		IL_0034: ret
+		IL_001c: stelem.ref
+		IL_001d: dup
+		IL_001e: ldc.i4.1
+		IL_001f: ldloc.0
+		IL_0020: stelem.ref
+		IL_0021: newobj instance void Classes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log.MyClass::.ctor(object[])
+		IL_0026: stloc.1
+		IL_0027: ldloc.1
+		IL_0028: ldstr "logValues"
+		IL_002d: ldc.i4.0
+		IL_002e: newarr [System.Runtime]System.Object
+		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0038: pop
+		IL_0039: ldnull
+		IL_003a: ret
 	} // end of method ArrowFunction_L3C27::ArrowFunction_L3C27
 
 } // end of class Functions.ArrowFunction_L3C27
@@ -213,7 +215,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -222,13 +224,14 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2130
+		// Method begins at RVA 0x2134
 		// Header size: 12
-		// Code size: 79 (0x4f)
+		// Code size: 71 (0x47)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log,
-			[1] object
+			[1] object,
+			[2] object[]
 		)
 
 		IL_0000: newobj instance void Scopes.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log::.ctor()
@@ -247,25 +250,20 @@
 		IL_0026: stelem.ref
 		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_002c: stloc.1
-		IL_002d: ldloc.1
-		IL_002e: dup
-		IL_002f: brtrue.s IL_0038
-
-		IL_0031: pop
-		IL_0032: ldnull
-		IL_0033: br IL_0038
-
-		IL_0038: ldc.i4.1
-		IL_0039: newarr [System.Runtime]System.Object
-		IL_003e: dup
-		IL_003f: ldc.i4.0
-		IL_0040: ldloc.0
-		IL_0041: stelem.ref
-		IL_0042: ldc.i4.0
-		IL_0043: newarr [System.Runtime]System.Object
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_004d: pop
-		IL_004e: ret
+		IL_002d: ldc.i4.0
+		IL_002e: newarr [System.Runtime]System.Object
+		IL_0033: stloc.2
+		IL_0034: ldloc.1
+		IL_0035: ldc.i4.1
+		IL_0036: newarr [System.Runtime]System.Object
+		IL_003b: dup
+		IL_003c: ldc.i4.0
+		IL_003d: ldnull
+		IL_003e: stelem.ref
+		IL_003f: ldloc.2
+		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_0045: pop
+		IL_0046: ret
 	} // end of method Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log::Main
 
 } // end of class Scripts.Classes_ClassMethod_AccessArrowFunctionVariableAndGlobalVariable_Log
@@ -277,7 +275,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x218b
+		// Method begins at RVA 0x2187
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

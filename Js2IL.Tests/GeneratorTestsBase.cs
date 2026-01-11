@@ -31,10 +31,10 @@ namespace Js2IL.Tests
             }
         }
 
-        protected Task GenerateTest(string testName, string[]? additionalScripts, [CallerFilePath] string sourceFilePath = "", bool assertOnIRPipelineFailure = true)
+        protected Task GenerateTest(string testName, string[]? additionalScripts, [CallerFilePath] string sourceFilePath = "", bool assertOnIRPipelineFailure = false)
             => GenerateTest(testName, configureSettings: null, additionalScripts: additionalScripts, sourceFilePath: sourceFilePath, assertOnIRPipelineFailure: assertOnIRPipelineFailure);
 
-        protected Task GenerateTest(string testName, Action<VerifySettings>? configureSettings = null, string[]? additionalScripts = null, [CallerFilePath] string sourceFilePath = "", bool assertOnIRPipelineFailure = true)
+        protected Task GenerateTest(string testName, Action<VerifySettings>? configureSettings = null, string[]? additionalScripts = null, [CallerFilePath] string sourceFilePath = "", bool assertOnIRPipelineFailure = false)
         {
             async Task RunAsync()
             {

@@ -545,7 +545,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -556,7 +556,7 @@
 	{
 		// Method begins at RVA 0x237c
 		// Header size: 12
-		// Code size: 423 (0x1a7)
+		// Code size: 511 (0x1ff)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Classes_ClassConstructor_ParameterDestructuring,
@@ -566,116 +566,143 @@
 			[4] object,
 			[5] object,
 			[6] object,
-			[7] object
+			[7] object,
+			[8] object
 		)
 
-		IL_0000: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0005: dup
-		IL_0006: ldstr "x"
-		IL_000b: ldc.r8 10
-		IL_0014: box [System.Runtime]System.Double
-		IL_0019: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_001e: dup
-		IL_001f: ldstr "y"
-		IL_0024: ldc.r8 20
-		IL_002d: box [System.Runtime]System.Double
-		IL_0032: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0037: newobj instance void Classes.Classes_ClassConstructor_ParameterDestructuring.Point::.ctor(object)
-		IL_003c: stloc.1
-		IL_003d: ldloc.1
-		IL_003e: callvirt instance object Classes.Classes_ClassConstructor_ParameterDestructuring.Point::display()
-		IL_0043: pop
-		IL_0044: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0049: dup
-		IL_004a: ldstr "x"
-		IL_004f: ldc.r8 -5
-		IL_0058: box [System.Runtime]System.Double
-		IL_005d: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0062: dup
-		IL_0063: ldstr "y"
-		IL_0068: ldc.r8 15
-		IL_0071: box [System.Runtime]System.Double
-		IL_0076: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_007b: newobj instance void Classes.Classes_ClassConstructor_ParameterDestructuring.Point::.ctor(object)
-		IL_0080: stloc.2
-		IL_0081: ldloc.2
-		IL_0082: callvirt instance object Classes.Classes_ClassConstructor_ParameterDestructuring.Point::display()
-		IL_0087: pop
-		IL_0088: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_008d: dup
-		IL_008e: ldstr "name"
-		IL_0093: ldstr "Alice"
-		IL_0098: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_009d: dup
-		IL_009e: ldstr "age"
-		IL_00a3: ldc.r8 30
-		IL_00ac: box [System.Runtime]System.Double
-		IL_00b1: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_00b6: dup
-		IL_00b7: ldstr "city"
-		IL_00bc: ldstr "Seattle"
-		IL_00c1: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_00c6: newobj instance void Classes.Classes_ClassConstructor_ParameterDestructuring.Person::.ctor(object)
-		IL_00cb: stloc.3
-		IL_00cc: ldloc.3
-		IL_00cd: callvirt instance object Classes.Classes_ClassConstructor_ParameterDestructuring.Person::greet()
-		IL_00d2: pop
-		IL_00d3: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_00d8: dup
-		IL_00d9: ldstr "name"
-		IL_00de: ldstr "Bob"
-		IL_00e3: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_00e8: dup
-		IL_00e9: ldstr "age"
-		IL_00ee: ldc.r8 25
-		IL_00f7: box [System.Runtime]System.Double
-		IL_00fc: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0101: dup
-		IL_0102: ldstr "city"
-		IL_0107: ldstr "Portland"
-		IL_010c: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0111: newobj instance void Classes.Classes_ClassConstructor_ParameterDestructuring.Person::.ctor(object)
-		IL_0116: stloc.s 4
-		IL_0118: ldloc.s 4
-		IL_011a: callvirt instance object Classes.Classes_ClassConstructor_ParameterDestructuring.Person::greet()
-		IL_011f: pop
-		IL_0120: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0125: dup
-		IL_0126: ldstr "host"
-		IL_012b: ldstr "example.com"
-		IL_0130: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0135: newobj instance void Classes.Classes_ClassConstructor_ParameterDestructuring.Config::.ctor(object)
-		IL_013a: stloc.s 5
-		IL_013c: ldloc.s 5
-		IL_013e: callvirt instance object Classes.Classes_ClassConstructor_ParameterDestructuring.Config::display()
-		IL_0143: pop
-		IL_0144: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0149: dup
-		IL_014a: ldstr "host"
-		IL_014f: ldstr "api.test.com"
-		IL_0154: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0159: dup
-		IL_015a: ldstr "port"
-		IL_015f: ldc.r8 3000
-		IL_0168: box [System.Runtime]System.Double
-		IL_016d: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0172: dup
-		IL_0173: ldstr "secure"
-		IL_0178: ldc.i4.1
-		IL_0179: box [System.Runtime]System.Boolean
-		IL_017e: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0183: newobj instance void Classes.Classes_ClassConstructor_ParameterDestructuring.Config::.ctor(object)
-		IL_0188: stloc.s 6
-		IL_018a: ldloc.s 6
-		IL_018c: callvirt instance object Classes.Classes_ClassConstructor_ParameterDestructuring.Config::display()
-		IL_0191: pop
-		IL_0192: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0197: newobj instance void Classes.Classes_ClassConstructor_ParameterDestructuring.Config::.ctor(object)
-		IL_019c: stloc.s 7
-		IL_019e: ldloc.s 7
-		IL_01a0: callvirt instance object Classes.Classes_ClassConstructor_ParameterDestructuring.Config::display()
-		IL_01a5: pop
-		IL_01a6: ret
+		IL_0000: newobj instance void Scopes.Classes_ClassConstructor_ParameterDestructuring::.ctor()
+		IL_0005: stloc.0
+		IL_0006: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_000b: dup
+		IL_000c: ldstr "x"
+		IL_0011: ldc.r8 10
+		IL_001a: box [System.Runtime]System.Double
+		IL_001f: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0024: dup
+		IL_0025: ldstr "y"
+		IL_002a: ldc.r8 20
+		IL_0033: box [System.Runtime]System.Double
+		IL_0038: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_003d: newobj instance void Classes.Classes_ClassConstructor_ParameterDestructuring.Point::.ctor(object)
+		IL_0042: stloc.1
+		IL_0043: ldloc.1
+		IL_0044: ldstr "display"
+		IL_0049: ldc.i4.0
+		IL_004a: newarr [System.Runtime]System.Object
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0054: pop
+		IL_0055: ldc.r8 5
+		IL_005e: neg
+		IL_005f: box [System.Runtime]System.Double
+		IL_0064: stloc.s 8
+		IL_0066: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_006b: dup
+		IL_006c: ldstr "x"
+		IL_0071: ldloc.s 8
+		IL_0073: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0078: dup
+		IL_0079: ldstr "y"
+		IL_007e: ldc.r8 15
+		IL_0087: box [System.Runtime]System.Double
+		IL_008c: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0091: newobj instance void Classes.Classes_ClassConstructor_ParameterDestructuring.Point::.ctor(object)
+		IL_0096: stloc.2
+		IL_0097: ldloc.2
+		IL_0098: ldstr "display"
+		IL_009d: ldc.i4.0
+		IL_009e: newarr [System.Runtime]System.Object
+		IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_00a8: pop
+		IL_00a9: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_00ae: dup
+		IL_00af: ldstr "name"
+		IL_00b4: ldstr "Alice"
+		IL_00b9: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_00be: dup
+		IL_00bf: ldstr "age"
+		IL_00c4: ldc.r8 30
+		IL_00cd: box [System.Runtime]System.Double
+		IL_00d2: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_00d7: dup
+		IL_00d8: ldstr "city"
+		IL_00dd: ldstr "Seattle"
+		IL_00e2: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_00e7: newobj instance void Classes.Classes_ClassConstructor_ParameterDestructuring.Person::.ctor(object)
+		IL_00ec: stloc.3
+		IL_00ed: ldloc.3
+		IL_00ee: ldstr "greet"
+		IL_00f3: ldc.i4.0
+		IL_00f4: newarr [System.Runtime]System.Object
+		IL_00f9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_00fe: pop
+		IL_00ff: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0104: dup
+		IL_0105: ldstr "name"
+		IL_010a: ldstr "Bob"
+		IL_010f: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0114: dup
+		IL_0115: ldstr "age"
+		IL_011a: ldc.r8 25
+		IL_0123: box [System.Runtime]System.Double
+		IL_0128: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_012d: dup
+		IL_012e: ldstr "city"
+		IL_0133: ldstr "Portland"
+		IL_0138: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_013d: newobj instance void Classes.Classes_ClassConstructor_ParameterDestructuring.Person::.ctor(object)
+		IL_0142: stloc.s 4
+		IL_0144: ldloc.s 4
+		IL_0146: ldstr "greet"
+		IL_014b: ldc.i4.0
+		IL_014c: newarr [System.Runtime]System.Object
+		IL_0151: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0156: pop
+		IL_0157: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_015c: dup
+		IL_015d: ldstr "host"
+		IL_0162: ldstr "example.com"
+		IL_0167: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_016c: newobj instance void Classes.Classes_ClassConstructor_ParameterDestructuring.Config::.ctor(object)
+		IL_0171: stloc.s 5
+		IL_0173: ldloc.s 5
+		IL_0175: ldstr "display"
+		IL_017a: ldc.i4.0
+		IL_017b: newarr [System.Runtime]System.Object
+		IL_0180: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0185: pop
+		IL_0186: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_018b: dup
+		IL_018c: ldstr "host"
+		IL_0191: ldstr "api.test.com"
+		IL_0196: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_019b: dup
+		IL_019c: ldstr "port"
+		IL_01a1: ldc.r8 3000
+		IL_01aa: box [System.Runtime]System.Double
+		IL_01af: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_01b4: dup
+		IL_01b5: ldstr "secure"
+		IL_01ba: ldc.i4.1
+		IL_01bb: box [System.Runtime]System.Boolean
+		IL_01c0: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_01c5: newobj instance void Classes.Classes_ClassConstructor_ParameterDestructuring.Config::.ctor(object)
+		IL_01ca: stloc.s 6
+		IL_01cc: ldloc.s 6
+		IL_01ce: ldstr "display"
+		IL_01d3: ldc.i4.0
+		IL_01d4: newarr [System.Runtime]System.Object
+		IL_01d9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_01de: pop
+		IL_01df: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_01e4: newobj instance void Classes.Classes_ClassConstructor_ParameterDestructuring.Config::.ctor(object)
+		IL_01e9: stloc.s 7
+		IL_01eb: ldloc.s 7
+		IL_01ed: ldstr "display"
+		IL_01f2: ldc.i4.0
+		IL_01f3: newarr [System.Runtime]System.Object
+		IL_01f8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_01fd: pop
+		IL_01fe: ret
 	} // end of method Classes_ClassConstructor_ParameterDestructuring::Main
 
 } // end of class Scripts.Classes_ClassConstructor_ParameterDestructuring
@@ -687,7 +714,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x252f
+		// Method begins at RVA 0x2587
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
