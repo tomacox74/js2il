@@ -340,15 +340,17 @@ namespace JavaScriptRuntime
             try
             {
                 var type = obj.GetType();
-                foreach (var p in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+                foreach (var p in type
+                    .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                    .Where(p => p.CanRead && !excluded.Contains(p.Name)))
                 {
-                    if (!p.CanRead) continue;
-                    if (excluded.Contains(p.Name)) continue;
                     dict[p.Name] = p.GetValue(obj);
                 }
-                foreach (var f in type.GetFields(BindingFlags.Instance | BindingFlags.Public))
+
+                foreach (var f in type
+                    .GetFields(BindingFlags.Instance | BindingFlags.Public)
+                    .Where(f => !excluded.Contains(f.Name)))
                 {
-                    if (excluded.Contains(f.Name)) continue;
                     dict[f.Name] = f.GetValue(obj);
                 }
             }

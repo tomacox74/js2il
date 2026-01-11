@@ -3256,9 +3256,8 @@ public sealed class HIRToLIRLowerer
 
                     foreach (var prop in obj.Properties)
                     {
-                        excludedKeyTemps.Add(EmitConstString(prop.Key));
-
                         var keyTemp = EmitConstString(prop.Key);
+                        excludedKeyTemps.Add(keyTemp);
                         var getResult = CreateTempVariable();
                         _methodBodyIR.Instructions.Add(new LIRGetItem(sourceValue, EnsureObject(keyTemp), getResult));
                         DefineTempStorage(getResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
@@ -3345,8 +3344,14 @@ public sealed class HIRToLIRLowerer
         var lenTemp = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRGetLength(sourceObject, lenTemp));
         DefineTempStorage(lenTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        // NOTE: temp-local allocation is linear and does not account for loop back-edges.
+        // Pin loop-carry temps to stable variable slots so values remain correct across iterations.
+        SetTempVariableSlot(lenTemp, CreateAnonymousVariableSlot("$arrayRest_len", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double))));
 
-        var idxTemp = EmitConstNumber(startIndex);
+        var idxTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstNumber((double)startIndex, idxTemp));
+        DefineTempStorage(idxTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        SetTempVariableSlot(idxTemp, CreateAnonymousVariableSlot("$arrayRest_idx", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double))));
 
         var loopLabel = CreateLabel();
         var endLabel = CreateLabel();
@@ -3364,11 +3369,13 @@ public sealed class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRArrayAdd(restArray, EnsureObject(itemTemp)));
 
         // idx = idx + 1
-        var oneTemp = EmitConstNumber(1);
-        var nextIdx = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRAddNumber(idxTemp, oneTemp, nextIdx));
-        DefineTempStorage(nextIdx, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-        idxTemp = nextIdx;
+        var oneTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstNumber(1.0, oneTemp));
+        DefineTempStorage(oneTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        var updatedIdx = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRAddNumber(idxTemp, oneTemp, updatedIdx));
+        DefineTempStorage(updatedIdx, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(updatedIdx, idxTemp));
 
         _methodBodyIR.Instructions.Add(new LIRBranch(loopLabel));
         _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
