@@ -166,15 +166,15 @@ These are `CallExpression` forms (e.g., `Date(x)`, `Boolean()`) and are distinct
 ### 4) Variable declarators & assignment targets
 The new HIR currently only supports identifier declarators and identifier assignment LHS.
 
-- [ ] PL4.1 Variable declarator destructuring:
-  - [ ] PL4.1a `const {a, b} = obj`
-  - [ ] PL4.1b `const [a, b] = arr`
-  - [ ] PL4.1c nested patterns + defaults
-  - [ ] PL4.1d rest elements (`...rest`)
-- [ ] PL4.2 Assignment targets beyond identifiers:
-  - [ ] PL4.2a `obj.prop = value`
-  - [ ] PL4.2b `obj[index] = value`
-  - [ ] PL4.2c destructuring assignment (`({a} = obj)`)
+- [x] PL4.1 Variable declarator destructuring:
+  - [x] PL4.1a `const {a, b} = obj`
+  - [x] PL4.1b `const [a, b] = arr`
+  - [x] PL4.1c nested patterns + defaults
+  - [x] PL4.1d rest elements (`...rest`)
+- [x] PL4.2 Assignment targets beyond identifiers:
+  - [x] PL4.2a `obj.prop = value`
+  - [x] PL4.2b `obj[index] = value`
+  - [x] PL4.2c destructuring assignment (`({a} = obj)`)
 - [ ] PL4.3 Object literal spread properties (`{...x, a: 1}`)
 - [ ] PL4.4 Object literal computed keys (`{ [expr]: value }`)
 - [ ] PL4.5 Object literal shorthand properties and methods

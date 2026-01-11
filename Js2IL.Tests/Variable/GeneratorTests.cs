@@ -16,8 +16,16 @@ namespace Js2IL.Tests.Variable
         [Fact(Skip = "try/catch + TDZ runtime check not implemented yet")] public Task Variable_TemporalDeadZoneAccess() { var testName = nameof(Variable_TemporalDeadZoneAccess); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         // Object destructuring generator tests
-        [Fact] public Task Variable_ObjectDestructuring_Basic() { var testName = nameof(Variable_ObjectDestructuring_Basic); return GenerateTest(testName); }
-        [Fact(Skip = "Defaults in variable destructuring not yet implemented")] public Task Variable_ObjectDestructuring_WithDefaults() { var testName = nameof(Variable_ObjectDestructuring_WithDefaults); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
-        [Fact] public Task Variable_ObjectDestructuring_Captured() { var testName = nameof(Variable_ObjectDestructuring_Captured); return GenerateTest(testName); }
+        [Fact] public Task Variable_ObjectDestructuring_Basic() { var testName = nameof(Variable_ObjectDestructuring_Basic); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+        [Fact] public Task Variable_ObjectDestructuring_WithDefaults() { var testName = nameof(Variable_ObjectDestructuring_WithDefaults); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+        [Fact] public Task Variable_ObjectDestructuring_Captured() { var testName = nameof(Variable_ObjectDestructuring_Captured); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+
+        // Destructuring + assignment targets (PL4.*)
+        [Fact] public Task Variable_ArrayDestructuring_Basic() { var testName = nameof(Variable_ArrayDestructuring_Basic); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+        [Fact] public Task Variable_ArrayDestructuring_DefaultsAndRest() { var testName = nameof(Variable_ArrayDestructuring_DefaultsAndRest); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+        [Fact] public Task Variable_NestedDestructuring_Defaults() { var testName = nameof(Variable_NestedDestructuring_Defaults); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+        [Fact] public Task Variable_ObjectDestructuring_Rest() { var testName = nameof(Variable_ObjectDestructuring_Rest); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+        [Fact] public Task Variable_AssignmentTargets_MemberAndIndex() { var testName = nameof(Variable_AssignmentTargets_MemberAndIndex); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
+        [Fact] public Task Variable_DestructuringAssignment_Basic() { var testName = nameof(Variable_DestructuringAssignment_Basic); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
     }
 }

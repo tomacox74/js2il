@@ -184,14 +184,19 @@
               "url": "https://tc39.es/ecma262/#sec-destructuring-binding-patterns",
               "features": [
                 {
-                  "feature": "Object destructuring in variable declarations (const/let) — basic",
+                  "feature": "Destructuring in variable declarations (object/array patterns, defaults, rest, nested)",
                   "status": "Supported",
                   "testScripts": [
                     "Js2IL.Tests/Node/JavaScript/PerfHooks_PerformanceNow_Basic.js",
                     "Js2IL.Tests/Variable/JavaScript/Variable_ObjectDestructuring_Basic.js",
-                    "Js2IL.Tests/Variable/JavaScript/Variable_ObjectDestructuring_Captured.js"
+                    "Js2IL.Tests/Variable/JavaScript/Variable_ObjectDestructuring_WithDefaults.js",
+                    "Js2IL.Tests/Variable/JavaScript/Variable_ObjectDestructuring_Captured.js",
+                    "Js2IL.Tests/Variable/JavaScript/Variable_ObjectDestructuring_Rest.js",
+                    "Js2IL.Tests/Variable/JavaScript/Variable_ArrayDestructuring_Basic.js",
+                    "Js2IL.Tests/Variable/JavaScript/Variable_ArrayDestructuring_DefaultsAndRest.js",
+                    "Js2IL.Tests/Variable/JavaScript/Variable_NestedDestructuring_Defaults.js"
                   ],
-                  "notes": "Supports object patterns in variable declarations (const/let), e.g., const { x, y } = obj; The initializer is evaluated once and properties are bound via JavaScriptRuntime.Object.GetProperty. Handles both uncaptured variables (stored in IL locals) and captured variables (stored in scope fields). Works correctly when destructured variables are captured by nested functions. Not yet supported: default values, renaming (alias), rest properties, nested patterns, array destructuring, and assignment destructuring."
+                  "notes": "Supports object and array binding patterns in variable declarators (const/let/var), including nested patterns, default values, and rest elements/properties. The initializer is evaluated once, then bindings are populated via JavaScriptRuntime.Object.GetItem (string keys for objects, numeric indices for arrays). Object rest ({ a, ...rest }) uses JavaScriptRuntime.Object.Rest to create a new object excluding the bound keys; array rest ([a, ...rest]) builds a new JavaScriptRuntime.Array from the remaining indices. Handles both uncaptured variables (stored in IL locals) and captured variables (stored in scope fields), including cases where destructured bindings are captured by nested functions. Limitations: computed keys in patterns are not yet supported."
                 },
                 {
                   "feature": "Object destructuring in function/arrow parameters — basic",
@@ -785,9 +790,26 @@
                   "feature": "Property assignment on objects (obj.prop = value)",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/Literals/JavaScript/ObjectLiteral_PropertyAssign.js"
+                    "Js2IL.Tests/Literals/JavaScript/ObjectLiteral_PropertyAssign.js",
+                    "Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js"
                   ],
-                  "notes": "Emitted as a dynamic SetProperty call for non-computed MemberExpression targets. Supports ExpandoObject (object literal) and reflection-backed host objects; arrays/typed arrays ignore arbitrary dot properties."
+                  "notes": "Supports assignment to non-computed member targets and returns the assigned value (JavaScript assignment-expression semantics). Emitted via JavaScriptRuntime.Object.SetItem(obj, key, value) with a string key. Supports ExpandoObject (object literals) and reflection-backed host objects; strings are treated as immutable and ignore writes."
+                },
+                {
+                  "feature": "Computed property/index assignment (obj[index] = value; arr[i] = value)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Variable/JavaScript/Variable_AssignmentTargets_MemberAndIndex.js"
+                  ],
+                  "notes": "Supports computed MemberExpression assignment via JavaScriptRuntime.Object.SetItem(obj, index, value). Works for object literals (ExpandoObject), JavaScriptRuntime.Array index writes (including extending length), and Int32Array index writes."
+                },
+                {
+                  "feature": "Destructuring assignment ({a} = obj; [a] = arr)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Variable/JavaScript/Variable_DestructuringAssignment_Basic.js"
+                  ],
+                  "notes": "Supports destructuring assignment expressions with object/array patterns. Applies defaults when extracted values are undefined and supports rest elements/properties. The overall assignment expression evaluates to the RHS value."
                 }
               ]
             },

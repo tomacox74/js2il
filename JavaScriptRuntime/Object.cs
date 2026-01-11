@@ -213,6 +213,154 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// Sets an item on an object by index/key.
+        /// Used by codegen for computed member assignment and property assignment.
+        /// Returns the assigned value to match JavaScript assignment expression semantics.
+        /// </summary>
+        public static object? SetItem(object? obj, object index, object? value)
+        {
+            if (obj is null)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot set properties of null or undefined");
+            }
+
+            if (obj is JsNull)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot set properties of null");
+            }
+
+            // Compute both numeric index and property key string.
+            int intIndex;
+            switch (index)
+            {
+                case int ii: intIndex = ii; break;
+                case double dd: intIndex = (int)dd; break;
+                case float ff: intIndex = (int)ff; break;
+                case long ll: intIndex = (int)ll; break;
+                case short ss: intIndex = ss; break;
+                case byte bb: intIndex = bb; break;
+                case string s when int.TryParse(s, out var pi): intIndex = pi; break;
+                case bool b: intIndex = b ? 1 : 0; break;
+                default:
+                    try { intIndex = Convert.ToInt32(index); }
+                    catch { intIndex = 0; }
+                    break;
+            }
+
+            var propName = DotNet2JSConversions.ToString(index);
+
+            // Strings are immutable in JS; silently ignore and return value.
+            if (obj is string)
+            {
+                return value;
+            }
+
+            // ExpandoObject (object literal): assign by property name
+            if (obj is System.Dynamic.ExpandoObject exp)
+            {
+                var dict = (IDictionary<string, object?>)exp;
+                dict[propName] = value;
+                return value;
+            }
+
+            // JS Array index assignment
+            if (obj is Array array)
+            {
+                if (intIndex < 0)
+                {
+                    // Negative indices behave like properties in JS; treat as property for host safety.
+                    return SetProperty(array, propName, value);
+                }
+
+                if (intIndex < array.Count)
+                {
+                    array[intIndex] = value!;
+                    return value;
+                }
+
+                if (intIndex == array.Count)
+                {
+                    array.Add(value);
+                    return value;
+                }
+
+                // Extend with undefined (null) up to the index, then add.
+                while (array.Count < intIndex)
+                {
+                    array.Add(null);
+                }
+                array.Add(value);
+                return value;
+            }
+
+            // Typed arrays: coerce and store when in-bounds
+            if (obj is Int32Array i32)
+            {
+                // Int32Array indexer handles coercion and bounds.
+                i32[index] = value!;
+                return value;
+            }
+
+            // Generic object: treat as property assignment (ToPropertyKey -> string)
+            return SetProperty(obj, propName, value);
+        }
+
+        /// <summary>
+        /// Object rest helper used by destructuring: { a, ...rest }.
+        /// Returns a new ExpandoObject with enumerable keys copied excluding the provided keys.
+        /// </summary>
+        public static object Rest(object? obj, object[] excludedKeys)
+        {
+            if (obj is null || obj is JsNull)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot destructure null or undefined");
+            }
+
+            var excluded = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var k in excludedKeys)
+            {
+                excluded.Add(DotNet2JSConversions.ToString(k));
+            }
+
+            var result = new System.Dynamic.ExpandoObject();
+            var dict = (IDictionary<string, object?>)result;
+
+            if (obj is System.Dynamic.ExpandoObject exp)
+            {
+                var src = (IDictionary<string, object?>)exp;
+                foreach (var kvp in src)
+                {
+                    if (excluded.Contains(kvp.Key)) continue;
+                    dict[kvp.Key] = kvp.Value;
+                }
+                return result;
+            }
+
+            // Reflection fallback for host objects: copy public instance properties/fields.
+            try
+            {
+                var type = obj.GetType();
+                foreach (var p in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+                {
+                    if (!p.CanRead) continue;
+                    if (excluded.Contains(p.Name)) continue;
+                    dict[p.Name] = p.GetValue(obj);
+                }
+                foreach (var f in type.GetFields(BindingFlags.Instance | BindingFlags.Public))
+                {
+                    if (excluded.Contains(f.Name)) continue;
+                    dict[f.Name] = f.GetValue(obj);
+                }
+            }
+            catch
+            {
+                // Best-effort; return whatever we could copy.
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Normalizes an iterable for use by for..of desugaring.
         /// Returns a value compatible with GetLength/GetItem (string, Array, Int32Array).
         /// - string stays string (GetItem returns 1-length strings)

@@ -1,0 +1,210 @@
+﻿// IL code: Variable_ArrayDestructuring_DefaultsAndRest
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Variable_ArrayDestructuring_DefaultsAndRest
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Variable_ArrayDestructuring_DefaultsAndRest::.ctor
+
+} // end of class Scopes.Variable_ArrayDestructuring_DefaultsAndRest
+
+.class public auto ansi beforefieldinit Scripts.Variable_ArrayDestructuring_DefaultsAndRest
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x205c
+		// Header size: 12
+		// Code size: 388 (0x184)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.Variable_ArrayDestructuring_DefaultsAndRest,
+			[1] object,
+			[2] object,
+			[3] object,
+			[4] object,
+			[5] object,
+			[6] float64
+		)
+
+		IL_0000: newobj instance void Scopes.Variable_ArrayDestructuring_DefaultsAndRest::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.i4.1
+		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_000c: dup
+		IL_000d: ldc.r8 10
+		IL_0016: box [System.Runtime]System.Double
+		IL_001b: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0020: stloc.1
+		IL_0021: ldloc.1
+		IL_0022: brtrue IL_0032
+
+		IL_0027: ldstr "Cannot destructure null or undefined"
+		IL_002c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+		IL_0031: throw
+
+		IL_0032: ldloc.1
+		IL_0033: ldc.r8 0.0
+		IL_003c: box [System.Runtime]System.Double
+		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0046: stloc.s 5
+		IL_0048: ldloc.s 5
+		IL_004a: brtrue IL_0063
+
+		IL_004f: ldc.r8 1
+		IL_0058: box [System.Runtime]System.Double
+		IL_005d: stloc.2
+		IL_005e: br IL_0066
+
+		IL_0063: ldloc.s 5
+		IL_0065: stloc.2
+
+		IL_0066: ldloc.1
+		IL_0067: ldc.r8 1
+		IL_0070: box [System.Runtime]System.Double
+		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_007a: stloc.s 5
+		IL_007c: ldloc.s 5
+		IL_007e: brtrue IL_0097
+
+		IL_0083: ldc.r8 2
+		IL_008c: box [System.Runtime]System.Double
+		IL_0091: stloc.3
+		IL_0092: br IL_009a
+
+		IL_0097: ldloc.s 5
+		IL_0099: stloc.3
+
+		IL_009a: ldc.i4.0
+		IL_009b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_00a0: stloc.s 4
+		IL_00a2: ldloc.1
+		IL_00a3: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_00a8: stloc.s 6
+		// loop start (head: IL_00aa)
+			IL_00aa: ldc.r8 2
+			IL_00b3: ldloc.s 6
+			IL_00b5: clt
+			IL_00b7: brfalse IL_00f0
+
+			IL_00bc: ldloc.s 4
+			IL_00be: ldloc.1
+			IL_00bf: ldc.r8 2
+			IL_00c8: box [System.Runtime]System.Double
+			IL_00cd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_00d2: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+			IL_00d7: ldc.r8 2
+			IL_00e0: ldc.r8 1
+			IL_00e9: add
+			IL_00ea: pop
+			IL_00eb: br IL_00aa
+		// end loop
+
+		IL_00f0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00f5: ldc.i4.2
+		IL_00f6: newarr [System.Runtime]System.Object
+		IL_00fb: dup
+		IL_00fc: ldc.i4.0
+		IL_00fd: ldstr "a="
+		IL_0102: stelem.ref
+		IL_0103: dup
+		IL_0104: ldc.i4.1
+		IL_0105: ldloc.2
+		IL_0106: stelem.ref
+		IL_0107: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_010c: pop
+		IL_010d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0112: ldc.i4.2
+		IL_0113: newarr [System.Runtime]System.Object
+		IL_0118: dup
+		IL_0119: ldc.i4.0
+		IL_011a: ldstr "b="
+		IL_011f: stelem.ref
+		IL_0120: dup
+		IL_0121: ldc.i4.1
+		IL_0122: ldloc.3
+		IL_0123: stelem.ref
+		IL_0124: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0129: pop
+		IL_012a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_012f: ldc.i4.2
+		IL_0130: newarr [System.Runtime]System.Object
+		IL_0135: dup
+		IL_0136: ldc.i4.0
+		IL_0137: ldstr "rest.length="
+		IL_013c: stelem.ref
+		IL_013d: dup
+		IL_013e: ldc.i4.1
+		IL_013f: ldloc.s 4
+		IL_0141: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_0146: box [System.Runtime]System.Double
+		IL_014b: stelem.ref
+		IL_014c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0151: pop
+		IL_0152: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0157: ldc.i4.2
+		IL_0158: newarr [System.Runtime]System.Object
+		IL_015d: dup
+		IL_015e: ldc.i4.0
+		IL_015f: ldstr "rest0="
+		IL_0164: stelem.ref
+		IL_0165: dup
+		IL_0166: ldc.i4.1
+		IL_0167: ldloc.s 4
+		IL_0169: ldc.r8 0.0
+		IL_0172: box [System.Runtime]System.Double
+		IL_0177: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_017c: stelem.ref
+		IL_017d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0182: pop
+		IL_0183: ret
+	} // end of method Variable_ArrayDestructuring_DefaultsAndRest::Main
+
+} // end of class Scripts.Variable_ArrayDestructuring_DefaultsAndRest
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x21ec
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.Variable_ArrayDestructuring_DefaultsAndRest::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+
