@@ -78,7 +78,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -89,24 +89,41 @@
 	{
 		// Method begins at RVA 0x208c
 		// Header size: 12
-		// Code size: 29 (0x1d)
+		// Code size: 60 (0x3c)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Function_IIFE_Classic
+			[0] class Scopes.Function_IIFE_Classic,
+			[1] object,
+			[2] object[]
 		)
 
-		IL_0000: ldnull
-		IL_0001: ldftn object Functions.FunctionExpression_L1C2::FunctionExpression_L1C2(object[])
-		IL_0007: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_000c: ldc.i4.1
-		IL_000d: newarr [System.Runtime]System.Object
-		IL_0012: dup
-		IL_0013: ldc.i4.0
-		IL_0014: ldloc.0
-		IL_0015: stelem.ref
-		IL_0016: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_001b: pop
-		IL_001c: ret
+		IL_0000: newobj instance void Scopes.Function_IIFE_Classic::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldnull
+		IL_0007: ldftn object Functions.FunctionExpression_L1C2::FunctionExpression_L1C2(object[])
+		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.1
+		IL_0022: ldc.i4.0
+		IL_0023: newarr [System.Runtime]System.Object
+		IL_0028: stloc.2
+		IL_0029: ldloc.1
+		IL_002a: ldc.i4.1
+		IL_002b: newarr [System.Runtime]System.Object
+		IL_0030: dup
+		IL_0031: ldc.i4.0
+		IL_0032: ldnull
+		IL_0033: stelem.ref
+		IL_0034: ldloc.2
+		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_003a: pop
+		IL_003b: ret
 	} // end of method Function_IIFE_Classic::Main
 
 } // end of class Scripts.Function_IIFE_Classic
@@ -118,7 +135,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20b5
+		// Method begins at RVA 0x20d4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

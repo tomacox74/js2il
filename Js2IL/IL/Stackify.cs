@@ -398,6 +398,10 @@ internal static class Stackify
             case LIRCallFunction:
                 return false;
 
+            // LIRCallFunctionValue calls a function value via runtime dispatch.
+            case LIRCallFunctionValue:
+                return false;
+
             // LIRConvertToObject can be emitted inline if its source can be emitted inline
             // AND the source is not backed by a variable slot that could be modified.
             // If the source is backed by a variable slot, that slot may be overwritten by a later
@@ -582,6 +586,10 @@ internal static class Stackify
 
             case LIRCallFunction call:
                 return (1 + call.Arguments.Count, 1);
+
+            case LIRCallFunctionValue:
+                // target + scopesArray + argsArray -> result
+                return (3, 1);
 
             // Return: consumes return value
             case LIRReturn:

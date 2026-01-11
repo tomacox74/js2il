@@ -84,11 +84,12 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 102 (0x66)
+		// Code size: 80 (0x50)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction,
-			[1] object
+			[1] object,
+			[2] object[]
 		)
 
 		IL_0000: newobj instance void Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes/ArrowFunction_testFunction::.ctor()
@@ -106,41 +107,30 @@
 		IL_0025: ldarg.0
 		IL_0026: ldc.i4.0
 		IL_0027: ldelem.ref
-		IL_0028: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes
-		IL_002d: stelem.ref
-		IL_002e: dup
-		IL_002f: ldc.i4.1
-		IL_0030: ldloc.0
-		IL_0031: stelem.ref
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0037: stloc.1
-		IL_0038: ldloc.1
-		IL_0039: dup
-		IL_003a: brtrue.s IL_0043
-
-		IL_003c: pop
-		IL_003d: ldnull
-		IL_003e: br IL_0043
-
-		IL_0043: ldc.i4.2
-		IL_0044: newarr [System.Runtime]System.Object
-		IL_0049: dup
-		IL_004a: ldc.i4.0
-		IL_004b: ldarg.0
-		IL_004c: ldc.i4.0
-		IL_004d: ldelem.ref
-		IL_004e: castclass Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes
-		IL_0053: stelem.ref
-		IL_0054: dup
-		IL_0055: ldc.i4.1
-		IL_0056: ldloc.0
-		IL_0057: stelem.ref
-		IL_0058: ldc.i4.0
-		IL_0059: newarr [System.Runtime]System.Object
-		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_0063: pop
-		IL_0064: ldnull
-		IL_0065: ret
+		IL_0028: stelem.ref
+		IL_0029: dup
+		IL_002a: ldc.i4.1
+		IL_002b: ldloc.0
+		IL_002c: stelem.ref
+		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0032: stloc.1
+		IL_0033: ldc.i4.0
+		IL_0034: newarr [System.Runtime]System.Object
+		IL_0039: stloc.2
+		IL_003a: ldloc.1
+		IL_003b: ldc.i4.1
+		IL_003c: newarr [System.Runtime]System.Object
+		IL_0041: dup
+		IL_0042: ldc.i4.0
+		IL_0043: ldarg.0
+		IL_0044: ldc.i4.0
+		IL_0045: ldelem.ref
+		IL_0046: stelem.ref
+		IL_0047: ldloc.2
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_004d: pop
+		IL_004e: ldnull
+		IL_004f: ret
 	} // end of method ArrowFunction_L3C22::ArrowFunction_L3C22
 
 } // end of class Functions.ArrowFunction_L3C22
@@ -154,7 +144,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x20e0
+		// Method begins at RVA 0x20c8
 		// Header size: 12
 		// Code size: 119 (0x77)
 		.maxstack 32
@@ -221,7 +211,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -230,13 +220,14 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2164
+		// Method begins at RVA 0x214c
 		// Header size: 12
-		// Code size: 79 (0x4f)
+		// Code size: 71 (0x47)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes,
-			[1] object
+			[1] object,
+			[2] object[]
 		)
 
 		IL_0000: newobj instance void Scopes.ArrowFunction_NestedFunctionAccessesMultipleScopes::.ctor()
@@ -255,25 +246,20 @@
 		IL_0026: stelem.ref
 		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_002c: stloc.1
-		IL_002d: ldloc.1
-		IL_002e: dup
-		IL_002f: brtrue.s IL_0038
-
-		IL_0031: pop
-		IL_0032: ldnull
-		IL_0033: br IL_0038
-
-		IL_0038: ldc.i4.1
-		IL_0039: newarr [System.Runtime]System.Object
-		IL_003e: dup
-		IL_003f: ldc.i4.0
-		IL_0040: ldloc.0
-		IL_0041: stelem.ref
-		IL_0042: ldc.i4.0
-		IL_0043: newarr [System.Runtime]System.Object
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_004d: pop
-		IL_004e: ret
+		IL_002d: ldc.i4.0
+		IL_002e: newarr [System.Runtime]System.Object
+		IL_0033: stloc.2
+		IL_0034: ldloc.1
+		IL_0035: ldc.i4.1
+		IL_0036: newarr [System.Runtime]System.Object
+		IL_003b: dup
+		IL_003c: ldc.i4.0
+		IL_003d: ldnull
+		IL_003e: stelem.ref
+		IL_003f: ldloc.2
+		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_0045: pop
+		IL_0046: ret
 	} // end of method ArrowFunction_NestedFunctionAccessesMultipleScopes::Main
 
 } // end of class Scripts.ArrowFunction_NestedFunctionAccessesMultipleScopes
@@ -285,7 +271,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21bf
+		// Method begins at RVA 0x219f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -60,6 +60,8 @@ This is the set of AST constructs that the new pipeline can currently parse and 
 **Expressions (HIRBuilder)**
 - Binary expressions (`BinaryExpression`) (operator support depends on lowering + LIR/IL support).
 - Call expressions (`CallExpression`) with expression callee.
+  - Note: IR lowering supports direct calls to function *bindings* like `foo(...)`, plus indirect calls through function values (e.g., `const f = makeFn(); f()` and IIFEs) via runtime dispatch.
+  - Selected intrinsic/member-call shapes like `console.log(...)` are handled by specialized lowering.
 - Update expressions (`++x`, `x++`, `--x`, `x--`).
 - Unary expressions (e.g. `!`, `-`, `+`, `~`, `typeof` depending on lowering).
 - Identifier references (including known global constants `undefined`, `NaN`, `Infinity` when not shadowed).
@@ -110,8 +112,8 @@ Based on the legacy emitters:
   - [x] PL1.4b correct leaf local lifetime across control-flow and loops
 - [ ] PL1.5 Ensure call sites always build the correct scopes array for callee requirements:
   - [x] PL1.5a direct calls (`f(...)`)
-  - [x] PL1.5b calls via variables / re-assignment
-  - [x] PL1.5c nested functions and function expressions used as values
+  - [x] PL1.5b calls via variables / re-assignment (e.g., `const f = makeFn(); f()`)
+  - [x] PL1.5c nested functions and function expressions used as values (as call targets)
   - [x] PL1.5d class method calls that access parent scopes
 - [x] PL1.6 Confirm the scopes source selection is correct for:
   - [x] PL1.6a static methods (scopes passed as arg)

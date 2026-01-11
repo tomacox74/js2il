@@ -1330,6 +1330,31 @@ internal sealed class LIRToILCompiler
                     break;
                 }
 
+            case LIRCallFunctionValue callValue:
+                {
+                    // Emit: ldarg/ldloc target, ldarg/ldloc scopesArray, ldarg/ldloc argsArray, call Closure.InvokeWithArgs
+                    EmitLoadTemp(callValue.FunctionValue, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTemp(callValue.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTemp(callValue.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
+
+                    var invokeRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Closure),
+                        "InvokeWithArgs",
+                        new[] { typeof(object), typeof(object[]), typeof(object[]) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(invokeRef);
+
+                    if (IsMaterialized(callValue.Result, allocation))
+                    {
+                        EmitStoreTemp(callValue.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+                    break;
+                }
+
             case LIRCreateBoundArrowFunction createArrow:
                 {
                     if (!IsMaterialized(createArrow.Result, allocation))
@@ -2082,6 +2107,31 @@ internal sealed class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(_bclReferences.GetFuncInvokeRef(jsParamCount));
                     // Result stays on stack
+                    break;
+                }
+
+            case LIRCallFunctionValue callValue:
+                {
+                    // Inline emission uses the same lowering as the main pass for calls.
+                    EmitLoadTemp(callValue.FunctionValue, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTemp(callValue.ScopesArray, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTemp(callValue.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
+
+                    var invokeRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Closure),
+                        "InvokeWithArgs",
+                        new[] { typeof(object), typeof(object[]), typeof(object[]) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(invokeRef);
+
+                    if (IsMaterialized(callValue.Result, allocation))
+                    {
+                        EmitStoreTemp(callValue.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
                     break;
                 }
 

@@ -1643,6 +1643,30 @@ public sealed class HIRToLIRLowerer
                 
                 if (!_variableMap.TryGetValue(binding, out resultTempVar))
                 {
+                    // Function declarations are compiled separately and are not SSA-assigned in the HIR body.
+                    // When a function declaration identifier is used as a value (e.g., returned or assigned),
+                    // create a delegate and bind it to the appropriate scopes array.
+                    if (varExpr.Name.BindingInfo.Kind == BindingKind.Function)
+                    {
+                        var callableId = TryCreateCallableIdForFunctionDeclaration(varExpr.Name);
+                        if (callableId == null)
+                        {
+                            return false;
+                        }
+
+                        var scopesTemp = CreateTempVariable();
+                        if (!TryBuildScopesArrayForCallee(varExpr.Name, scopesTemp))
+                        {
+                            return false;
+                        }
+                        DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+                        resultTempVar = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRCreateBoundFunctionExpression(callableId, scopesTemp, resultTempVar));
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        return true;
+                    }
+
                     return false;
                 }
 
@@ -2102,10 +2126,44 @@ public sealed class HIRToLIRLowerer
         {
             var symbol = funcVarExpr.Name;
             
-            // Only handle function bindings for now (BindingKind.Function)
+            // If the callee is not a direct function binding (e.g., it's a local/const holding a closure),
+            // invoke via runtime dispatch (Closure.InvokeWithArgs).
             if (symbol.Kind != BindingKind.Function)
             {
-                return false;
+                // Lower callee value
+                if (!TryLowerExpression(funcVarExpr, out var calleeTemp))
+                {
+                    return false;
+                }
+                calleeTemp = EnsureObject(calleeTemp);
+
+                // Lower arguments and pack into an object[]
+                var callArgTemps = new List<TempVariable>();
+                foreach (var arg in callExpr.Arguments)
+                {
+                    if (!TryLowerExpression(arg, out var argTemp))
+                    {
+                        return false;
+                    }
+                    callArgTemps.Add(EnsureObject(argTemp));
+                }
+
+                var argsArrayTemp = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRBuildArray(callArgTemps, argsArrayTemp));
+                DefineTempStorage(argsArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+                // Build a scopes array for the current context. Bound closures ignore the passed scopes,
+                // but unbound function values still require a scopes array.
+                var scopesTemp = CreateTempVariable();
+                if (!TryBuildCurrentScopesArray(scopesTemp))
+                {
+                    return false;
+                }
+                DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+                _methodBodyIR.Instructions.Add(new LIRCallFunctionValue(calleeTemp, scopesTemp, argsArrayTemp, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                return true;
             }
 
             // Check if the function has simple identifier parameters (no defaults, destructuring, rest).
@@ -2142,6 +2200,44 @@ public sealed class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRCallFunction(symbol, scopesTempVar, arguments, resultTempVar, callableId));
             DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
+            return true;
+        }
+
+        // Case 1b: Indirect call where the callee is an expression value (e.g., IIFE:
+        // (function() { ... })(), (() => 1)(), or getFn()()).
+        // Exclude property-access calls here to avoid accidentally breaking method-call semantics
+        // that are handled by intrinsic/typed-member lowering below.
+        if (callExpr.Callee is not HIRVariableExpression && callExpr.Callee is not HIRPropertyAccessExpression)
+        {
+            if (!TryLowerExpression(callExpr.Callee, out var calleeTemp))
+            {
+                return false;
+            }
+            calleeTemp = EnsureObject(calleeTemp);
+
+            var callArgTemps = new List<TempVariable>();
+            foreach (var arg in callExpr.Arguments)
+            {
+                if (!TryLowerExpression(arg, out var argTemp))
+                {
+                    return false;
+                }
+                callArgTemps.Add(EnsureObject(argTemp));
+            }
+
+            var argsArrayTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRBuildArray(callArgTemps, argsArrayTemp));
+            DefineTempStorage(argsArrayTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+            var scopesTemp = CreateTempVariable();
+            if (!TryBuildCurrentScopesArray(scopesTemp))
+            {
+                return false;
+            }
+            DefineTempStorage(scopesTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+
+            _methodBodyIR.Instructions.Add(new LIRCallFunctionValue(calleeTemp, scopesTemp, argsArrayTemp, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
             return true;
         }
 
@@ -2267,6 +2363,32 @@ public sealed class HIRToLIRLowerer
         // console.log returns undefined (null)
         this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
+        return true;
+    }
+
+    /// <summary>
+    /// Builds an object[] scopes array for the current caller context.
+    /// This is used for indirect calls where we cannot statically determine the callee scope chain.
+    /// </summary>
+    private bool TryBuildCurrentScopesArray(TempVariable resultTemp)
+    {
+        if (_environmentLayout == null || _environmentLayout.ScopeChain.Slots.Count == 0)
+        {
+            _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(Array.Empty<ScopeSlotSource>(), resultTemp));
+            return true;
+        }
+
+        var slotSources = new List<ScopeSlotSource>(_environmentLayout.ScopeChain.Slots.Count);
+        foreach (var slot in _environmentLayout.ScopeChain.Slots)
+        {
+            if (!TryMapScopeSlotToSource(slot, out var slotSource))
+            {
+                return false;
+            }
+            slotSources.Add(slotSource);
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRBuildScopesArray(slotSources, resultTemp));
         return true;
     }
 
