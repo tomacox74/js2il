@@ -2801,37 +2801,6 @@ namespace Js2IL.Services.ILGenerators
             // Support `new Identifier(...)` for classes emitted under Classes namespace
             if (newExpression.Callee is Identifier cid)
             {
-                // Special cases for a few built-ins where `IntrinsicObjectRegistry` points at helper/static types
-                // or where constructor semantics don't map cleanly to CLR constructors.
-                //
-                // NOTE: These are intentionally minimal and aligned with existing execution tests.
-                if (cid.Name == "Array")
-                {
-                    // JS Array constructor semantics are implemented by JavaScriptRuntime.Array.Construct(object[]).
-                    // Supports: new Array(), new Array(len), new Array(a,b,...)
-                    EmitBoxedArgsArray(newExpression.Arguments);
-                    var constructRef = _runtime.GetStaticMethodRef(typeof(JavaScriptRuntime.Array), nameof(JavaScriptRuntime.Array.Construct), 0, typeof(object[]));
-                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
-                    _il.Token(constructRef);
-                    return new ExpressionResult { JsType = JavascriptType.Object, ClrType = typeof(JavaScriptRuntime.Array) };
-                }
-
-                if (cid.Name == "String")
-                {
-                    // Minimal "new String" sugar used by tests:
-                    // - new String() => undefined (null)
-                    // - new String(x) => x
-                    // Extra args ignored.
-                    if (newExpression.Arguments.Count == 0)
-                    {
-                        _il.OpCode(System.Reflection.Metadata.ILOpCode.Ldnull);
-                        return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
-                    }
-
-                    Emit(newExpression.Arguments[0], new TypeCoercion() { boxResult = true });
-                    return new ExpressionResult { JsType = JavascriptType.Object, ClrType = null };
-                }
-
                 // General path: if Identifier maps to a JavaScriptRuntime intrinsic via IntrinsicObjectRegistry
                 // and it has a compatible constructor, emit that instead of hardcoding specific names.
                 var intrinsicType = JavaScriptRuntime.IntrinsicObjectRegistry.Get(cid.Name);
@@ -2977,31 +2946,25 @@ namespace Js2IL.Services.ILGenerators
                 }
 
                 // Built-in Error types from JavaScriptRuntime (Error, TypeError, etc.)
-                // Only attempt this fallback if the identifier resolves to an Error-derived runtime type.
-                var maybeErrorClrType = typeof(JavaScriptRuntime.Object).Assembly.GetType($"JavaScriptRuntime.{cid.Name}");
-                if (maybeErrorClrType != null && typeof(JavaScriptRuntime.Error).IsAssignableFrom(maybeErrorClrType))
+                // Build ctor: choose overload by arg count (support 0 or 1(param: string))
+                var argc2 = newExpression.Arguments.Count;
+                if (argc2 > 1)
                 {
-                    // Build ctor: choose overload by arg count (support 0 or 1(param: string))
-                    var argc2 = newExpression.Arguments.Count;
-                    if (argc2 > 1)
-                    {
-                        throw ILEmitHelpers.NotSupported($"Only up to 1 constructor argument supported for built-in Error types (got {argc2})", newExpression);
-                    }
+                    throw ILEmitHelpers.NotSupported($"Only up to 1 constructor argument supported for built-in Error types (got {argc2})", newExpression);
+                }
+                var ctorRef2 = _runtime.GetErrorCtorRef(cid.Name, argc2);
 
-                    var ctorRef2 = _runtime.GetErrorCtorRef(cid.Name, argc2);
-
-                    // Push args
-                    for (int i = 0; i < argc2; i++)
-                    {
-                        Emit(newExpression.Arguments[i], new TypeCoercion() { boxResult = true });
-                    }
-
-                    _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
-                    _il.Token(ctorRef2);
-                    return new ExpressionResult { JsType = JavascriptType.Object, ClrType = maybeErrorClrType };
+                // Push args
+                for (int i = 0; i < argc2; i++)
+                {
+                    Emit(newExpression.Arguments[i], new TypeCoercion() { boxResult = true });
                 }
 
-                throw ILEmitHelpers.NotSupported($"Unsupported constructor target '{cid.Name}'", newExpression);
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Newobj);
+                _il.Token(ctorRef2);
+                // Best-effort map CLR type for known JavaScript error classes
+                Type? errorClrType = typeof(JavaScriptRuntime.Object).Assembly.GetType($"JavaScriptRuntime.{cid.Name}");
+                return new ExpressionResult { JsType = JavascriptType.Object, ClrType = errorClrType };
             }
 
             throw ILEmitHelpers.NotSupported($"Unsupported new-expression callee: {newExpression.Callee.Type}", newExpression.Callee);

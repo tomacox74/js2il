@@ -978,8 +978,10 @@ class HIRMethodBuilder
                 hirExpr = new HIRLiteralExpression(JavascriptType.Boolean, booleanLiteralExpr.Value);
                 return true;
             case Literal regexLiteral when regexLiteral.Raw != null && regexLiteral.Raw.TrimStart().StartsWith("/"):
-                // Regex literal like /pattern/flags
-                if (TryParseRegexLiteralRaw(regexLiteral, out var pattern, out var flags))
+                // Regex literal like /pattern/flags.
+                // NOTE: Acornima 1.1.1 does not expose parsed pattern/flags on Literal,
+                // so we extract from Literal.Value when possible and otherwise parse Literal.Raw.
+                if (TryExtractRegexLiteral(regexLiteral, out var pattern, out var flags))
                 {
                     var regExpSymbol = _currentScope.FindSymbol("RegExp");
                     hirExpr = new HIRNewExpression(
@@ -1076,10 +1078,30 @@ class HIRMethodBuilder
         }
     }
 
-    private static bool TryParseRegexLiteralRaw(Literal literal, out string pattern, out string flags)
+    private static bool TryExtractRegexLiteral(Literal literal, out string pattern, out string flags)
     {
         pattern = string.Empty;
         flags = string.Empty;
+
+        // Prefer structured data if Acornima provides it via Literal.Value (implementation detail).
+        // We use reflection to avoid hard dependency on internal Acornima types.
+        if (literal.Value != null)
+        {
+            var valueType = literal.Value.GetType();
+            var patternProp = valueType.GetProperty("Pattern") ?? valueType.GetProperty("pattern");
+            var flagsProp = valueType.GetProperty("Flags") ?? valueType.GetProperty("flags");
+            if (patternProp != null && flagsProp != null)
+            {
+                var p = patternProp.GetValue(literal.Value) as string;
+                var f = flagsProp.GetValue(literal.Value) as string;
+                if (p != null && f != null)
+                {
+                    pattern = p;
+                    flags = f;
+                    return true;
+                }
+            }
+        }
 
         // Acornima represents regex literals as Literal with Raw like "/b/g".
         var raw = literal.Raw;

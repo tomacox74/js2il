@@ -28,23 +28,6 @@ namespace JavaScriptRuntime
             {
                 var input = DotNet2JSConversions.ToString(receiver);
 
-                // Special-case: String.prototype.replace with a RegExp pattern.
-                // The reflection-based overload selection below can't reliably pick the regex path
-                // because args are object-typed at runtime.
-                if (string.Equals(methodName, "replace", StringComparison.OrdinalIgnoreCase)
-                    && callArgs.Length >= 2
-                    && callArgs[0] is RegExp re)
-                {
-                    var replacement = DotNet2JSConversions.ToString(callArgs[1]) ?? string.Empty;
-                    if (re.Global)
-                    {
-                        return re.Regex.Replace(input, replacement);
-                    }
-
-                    // Non-global replace: first occurrence only.
-                    return re.Regex.Replace(input, replacement, 1);
-                }
-
                 var stringType = typeof(JavaScriptRuntime.String);
                 var candidates = stringType
                     .GetMethods(BindingFlags.Public | BindingFlags.Static)
