@@ -67,21 +67,21 @@ namespace Js2IL.Tests.CommonJS
         public Task CommonJS_Module_Exports_Object()
         {
             // Test that exports and module.exports are aliases to the same object
-            return GenerateTest(nameof(CommonJS_Module_Exports_Object));
+            return GenerateTest(nameof(CommonJS_Module_Exports_Object), assertOnIRPipelineFailure: true);
         }
 
         [Fact]
         public Task CommonJS_Module_Exports_Reassign()
         {
             // Test that reassigning module.exports replaces the entire exports object
-            return GenerateTest(nameof(CommonJS_Module_Exports_Reassign));
+            return GenerateTest(nameof(CommonJS_Module_Exports_Reassign), assertOnIRPipelineFailure: true);
         }
 
         [Fact]
         public Task CommonJS_Module_Exports_Function()
         {
             // Test assigning a function to module.exports
-            return GenerateTest(nameof(CommonJS_Module_Exports_Function));
+            return GenerateTest(nameof(CommonJS_Module_Exports_Function), assertOnIRPipelineFailure: true);
         }
 
         [Fact]
@@ -122,7 +122,7 @@ namespace Js2IL.Tests.CommonJS
                 {
                     "CommonJS_Module_ParentChildren_Child1",
                     "CommonJS_Module_ParentChildren_Child2"
-                });
+                }, assertOnIRPipelineFailure: true);
         }
 
         [Fact]
@@ -131,7 +131,7 @@ namespace Js2IL.Tests.CommonJS
             // Test importing and calling a function exported from another module
             return GenerateTest(
                 "CommonJS_Export_Function_Main",
-                new[] { "CommonJS_Export_Function_Lib" });
+                new[] { "CommonJS_Export_Function_Lib" }, assertOnIRPipelineFailure: true);
         }
 
         [Fact]
@@ -140,7 +140,7 @@ namespace Js2IL.Tests.CommonJS
             // Test importing an object with function properties (issue #156 repro)
             return GenerateTest(
                 "CommonJS_Export_ObjectWithFunctions_Main",
-                new[] { "CommonJS_Export_ObjectWithFunctions_Lib" });
+                new[] { "CommonJS_Export_ObjectWithFunctions_Lib" }, assertOnIRPipelineFailure: true);
         }
 
         [Fact]
@@ -149,7 +149,7 @@ namespace Js2IL.Tests.CommonJS
             // Test importing and instantiating a class from another module
             return GenerateTest(
                 "CommonJS_Export_Class_Main",
-                new[] { "CommonJS_Export_Class_Lib" });
+                new[] { "CommonJS_Export_Class_Lib" }, assertOnIRPipelineFailure: true);
         }
 
         [Fact]
@@ -158,7 +158,7 @@ namespace Js2IL.Tests.CommonJS
             // Test importing a class with constructor parameters from another module
             return GenerateTest(
                 "CommonJS_Export_ClassWithConstructor_Main",
-                new[] { "CommonJS_Export_ClassWithConstructor_Lib" });
+                new[] { "CommonJS_Export_ClassWithConstructor_Lib" }, assertOnIRPipelineFailure: true);
         }
 
         [Fact]
@@ -167,7 +167,7 @@ namespace Js2IL.Tests.CommonJS
             // Test importing nested literal objects with fields and methods
             return GenerateTest(
                 "CommonJS_Export_NestedObjects_Main",
-                new[] { "CommonJS_Export_NestedObjects_Lib" });
+                new[] { "CommonJS_Export_NestedObjects_Lib" }, assertOnIRPipelineFailure: true);
         }
     }
 }

@@ -364,7 +364,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -375,31 +375,46 @@
 	{
 		// Method begins at RVA 0x2234
 		// Header size: 12
-		// Code size: 76 (0x4c)
+		// Code size: 101 (0x65)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.CommonJS_Export_ClassWithConstructor_Lib
+			[0] class Scopes.CommonJS_Export_ClassWithConstructor_Lib,
+			[1] object,
+			[2] object
 		)
 
-		IL_0000: ldarg.2
-		IL_0001: ldstr "exports"
-		IL_0006: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_000b: dup
-		IL_000c: ldstr "createPerson"
-		IL_0011: ldnull
-		IL_0012: ldftn object Functions.FunctionExpression_L16C19::FunctionExpression_L16C19(object[], object, object)
-		IL_0018: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-		IL_001d: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0022: dup
-		IL_0023: ldstr "defaultPerson"
-		IL_0028: ldstr "Default"
-		IL_002d: ldc.r8 25
-		IL_0036: box [System.Runtime]System.Double
-		IL_003b: newobj instance void Classes.CommonJS_Export_ClassWithConstructor_Lib.Person::.ctor(object, object)
-		IL_0040: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetProperty(object, string, object)
-		IL_004a: pop
-		IL_004b: ret
+		IL_0000: newobj instance void Scopes.CommonJS_Export_ClassWithConstructor_Lib::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldnull
+		IL_0007: ldftn object Functions.FunctionExpression_L16C19::FunctionExpression_L16C19(object[], object, object)
+		IL_000d: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.1
+		IL_0022: ldstr "Default"
+		IL_0027: ldc.r8 25
+		IL_0030: box [System.Runtime]System.Double
+		IL_0035: newobj instance void Classes.CommonJS_Export_ClassWithConstructor_Lib.Person::.ctor(object, object)
+		IL_003a: stloc.2
+		IL_003b: ldarg.2
+		IL_003c: ldstr "exports"
+		IL_0041: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0046: dup
+		IL_0047: ldstr "createPerson"
+		IL_004c: ldloc.1
+		IL_004d: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0052: dup
+		IL_0053: ldstr "defaultPerson"
+		IL_0058: ldloc.2
+		IL_0059: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0063: pop
+		IL_0064: ret
 	} // end of method CommonJS_Export_ClassWithConstructor_Lib::Main
 
 } // end of class Scripts.CommonJS_Export_ClassWithConstructor_Lib
@@ -411,7 +426,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x228c
+		// Method begins at RVA 0x22a5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
