@@ -121,12 +121,12 @@ internal sealed class JsMethodCompiler
         if (node is FunctionDeclaration funcDecl)
         {
             functionParams = funcDecl.Params;
-            bodyNode = funcDecl.Body;
+            bodyNode = node;
         }
         else if (node is FunctionExpression funcExpr)
         {
             functionParams = funcExpr.Params;
-            bodyNode = funcExpr.Body;
+            bodyNode = node;
         }
         else if (node is ArrowFunctionExpression arrowExpr)
         {
@@ -139,8 +139,9 @@ internal sealed class JsMethodCompiler
             bodyNode = classMethDef; // HIRBuilder handles MethodDefinition
         }
 
-        // Check for simple identifier parameters only (no destructuring/rest). Defaults are OK.
-        if (functionParams.HasValue && !AllParamsAreSimpleIdentifiers(functionParams.Value))
+        // IR pipeline supports identifier params, simple defaults, and destructuring patterns.
+        // Rest parameters (top-level RestElement) are not supported.
+        if (functionParams.HasValue && !ParamsSupportedForIR(functionParams.Value))
         {
             return null;
         }
@@ -195,7 +196,7 @@ internal sealed class JsMethodCompiler
         if (node is FunctionDeclaration funcDecl)
         {
             functionParams = funcDecl.Params;
-            bodyNode = funcDecl.Body;
+            bodyNode = node;
         }
         else if (node is Acornima.Ast.MethodDefinition classMethDef && classMethDef.Value is FunctionExpression methodFuncExpr)
         {
@@ -203,8 +204,9 @@ internal sealed class JsMethodCompiler
             bodyNode = classMethDef; // HIRBuilder handles MethodDefinition
         }
 
-        // Check for simple identifier parameters only (no defaults, destructuring, rest)
-        if (functionParams.HasValue && !AllParamsAreSimpleIdentifiers(functionParams.Value))
+        // IR pipeline supports identifier params, simple defaults, and destructuring patterns.
+        // Rest parameters (top-level RestElement) are not supported.
+        if (functionParams.HasValue && !ParamsSupportedForIR(functionParams.Value))
         {
             return default;
         }
@@ -255,7 +257,8 @@ internal sealed class JsMethodCompiler
 
     public MethodDefinitionHandle TryCompileArrowFunction(string methodName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
     {
-        // Check for simple identifier parameters only (no defaults, destructuring, rest)
+        // Keep arrow-function IR support conservative for now; parameter destructuring for arrows
+        // remains on the legacy path until snapshots are updated intentionally.
         if (node is ArrowFunctionExpression arrowFunc && !AllParamsAreSimpleIdentifiers(arrowFunc.Params))
         {
             return default;
@@ -386,7 +389,7 @@ internal sealed class JsMethodCompiler
     /// Returns true if all parameters are simple identifiers or simple default parameters.
     /// Supports: Identifier, AssignmentPattern with Identifier left-hand side.
     /// Does not support: destructuring patterns, rest patterns, nested defaults.
-    /// Used to determine if the IR pipeline can be used for a function.
+    /// Used to determine if the IR pipeline can be used for arrow functions.
     /// </summary>
     private static bool AllParamsAreSimpleIdentifiers(in NodeList<Node> parameters)
     {
@@ -394,6 +397,26 @@ internal sealed class JsMethodCompiler
         {
             Identifier => true,
             AssignmentPattern ap => ap.Left is Identifier,
+            _ => false
+        });
+    }
+
+    /// <summary>
+    /// Returns true if parameters are supported by the IR pipeline for function declarations/methods.
+    /// Supports: Identifier, AssignmentPattern with Identifier left-hand side, ObjectPattern, ArrayPattern.
+    /// Does not support: top-level RestElement parameters.
+    /// Note: deeper validation is performed during lowering; this gate is intentionally permissive.
+    /// </summary>
+    private static bool ParamsSupportedForIR(in NodeList<Node> parameters)
+    {
+        return parameters.All(param => param switch
+        {
+            Identifier => true,
+            AssignmentPattern ap => ap.Left is Identifier,
+            ObjectPattern => true,
+            ArrayPattern => true,
+            // RestElement at the parameter list level is a rest parameter (...args), which we don't support.
+            RestElement => false,
             _ => false
         });
     }

@@ -185,7 +185,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -196,62 +196,73 @@
 	{
 		// Method begins at RVA 0x20ec
 		// Header size: 12
-		// Code size: 145 (0x91)
+		// Code size: 155 (0x9b)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.SetImmediate_Multiple_ExecuteInOrder
+			[0] class Scopes.SetImmediate_Multiple_ExecuteInOrder,
+			[1] object
 		)
 
-		IL_0000: ldnull
-		IL_0001: ldftn object Functions.ArrowFunction_L1C14::ArrowFunction_L1C14(object[])
-		IL_0007: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_000c: ldc.i4.1
-		IL_000d: newarr [System.Runtime]System.Object
-		IL_0012: dup
-		IL_0013: ldc.i4.0
-		IL_0014: ldloc.0
-		IL_0015: stelem.ref
-		IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_001b: call !!0[] [System.Runtime]System.Array::Empty<object>()
-		IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_0025: pop
-		IL_0026: ldnull
-		IL_0027: ldftn object Functions.ArrowFunction_L2C14::ArrowFunction_L2C14(object[])
-		IL_002d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0032: ldc.i4.1
-		IL_0033: newarr [System.Runtime]System.Object
-		IL_0038: dup
-		IL_0039: ldc.i4.0
-		IL_003a: ldloc.0
-		IL_003b: stelem.ref
-		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0041: call !!0[] [System.Runtime]System.Array::Empty<object>()
-		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_004b: pop
-		IL_004c: ldnull
-		IL_004d: ldftn object Functions.ArrowFunction_L3C14::ArrowFunction_L3C14(object[])
-		IL_0053: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0058: ldc.i4.1
-		IL_0059: newarr [System.Runtime]System.Object
-		IL_005e: dup
-		IL_005f: ldc.i4.0
-		IL_0060: ldloc.0
-		IL_0061: stelem.ref
-		IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0067: call !!0[] [System.Runtime]System.Array::Empty<object>()
-		IL_006c: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
-		IL_0071: pop
-		IL_0072: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0077: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_007c: ldc.i4.1
-		IL_007d: newarr [System.Runtime]System.Object
-		IL_0082: dup
-		IL_0083: ldc.i4.0
-		IL_0084: ldstr "setImmediate scheduled 3 times."
-		IL_0089: stelem.ref
-		IL_008a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_008f: pop
-		IL_0090: ret
+		IL_0000: newobj instance void Scopes.SetImmediate_Multiple_ExecuteInOrder::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldnull
+		IL_0007: ldftn object Functions.ArrowFunction_L1C14::ArrowFunction_L1C14(object[])
+		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.1
+		IL_0022: ldloc.1
+		IL_0023: ldc.i4.0
+		IL_0024: newarr [System.Runtime]System.Object
+		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_002e: pop
+		IL_002f: ldnull
+		IL_0030: ldftn object Functions.ArrowFunction_L2C14::ArrowFunction_L2C14(object[])
+		IL_0036: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_003b: ldc.i4.1
+		IL_003c: newarr [System.Runtime]System.Object
+		IL_0041: dup
+		IL_0042: ldc.i4.0
+		IL_0043: ldloc.0
+		IL_0044: stelem.ref
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_004a: stloc.1
+		IL_004b: ldloc.1
+		IL_004c: ldc.i4.0
+		IL_004d: newarr [System.Runtime]System.Object
+		IL_0052: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_0057: pop
+		IL_0058: ldnull
+		IL_0059: ldftn object Functions.ArrowFunction_L3C14::ArrowFunction_L3C14(object[])
+		IL_005f: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0064: ldc.i4.1
+		IL_0065: newarr [System.Runtime]System.Object
+		IL_006a: dup
+		IL_006b: ldc.i4.0
+		IL_006c: ldloc.0
+		IL_006d: stelem.ref
+		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0073: stloc.1
+		IL_0074: ldloc.1
+		IL_0075: ldc.i4.0
+		IL_0076: newarr [System.Runtime]System.Object
+		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::setImmediate(object, object[])
+		IL_0080: pop
+		IL_0081: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0086: ldc.i4.1
+		IL_0087: newarr [System.Runtime]System.Object
+		IL_008c: dup
+		IL_008d: ldc.i4.0
+		IL_008e: ldstr "setImmediate scheduled 3 times."
+		IL_0093: stelem.ref
+		IL_0094: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0099: pop
+		IL_009a: ret
 	} // end of method SetImmediate_Multiple_ExecuteInOrder::Main
 
 } // end of class Scripts.SetImmediate_Multiple_ExecuteInOrder
@@ -263,7 +274,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2189
+		// Method begins at RVA 0x2193
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

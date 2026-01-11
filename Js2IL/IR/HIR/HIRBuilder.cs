@@ -25,42 +25,53 @@ public static class HIRBuilder
         {
             case Acornima.Ast.Program programAst:
                 var builder = new HIRMethodBuilder(scope);
-                return builder.TryParseStatements(programAst.Body, out method);
+                return builder.TryParseStatements(programAst.Body, [], out method);
             case Acornima.Ast.BlockStatement blockStmt:
                 // Parse block statements by processing their body statements
                 var blockBuilder = new HIRMethodBuilder(scope);
-                return blockBuilder.TryParseStatements(blockStmt.Body, out method);
+                return blockBuilder.TryParseStatements(blockStmt.Body, [], out method);
             case Acornima.Ast.MethodDefinition classMethodDef:
                 var methodFuncExpr = classMethodDef.Value as FunctionExpression;                
                 var methodBuilder = new HIRMethodBuilder(scope);
-                return methodBuilder.TryParseStatements(methodFuncExpr.Body.Body, out method);
+                if (!methodBuilder.TryParseParameters(methodFuncExpr.Params, out var methodParams))
+                {
+                    method = null!;
+                    return false;
+                }
+                return methodBuilder.TryParseStatements(methodFuncExpr.Body.Body, methodParams, out method);
             case Acornima.Ast.ArrowFunctionExpression arrowFunc:
-                // IR pipeline supports simple identifier parameters only
-                // Fall back to legacy emitter for destructuring, defaults, rest patterns
-                if (!AllParamsAreSimpleIdentifiers(arrowFunc.Params))
+                // IR pipeline supports identifier params, simple defaults, and destructuring patterns.
+                // Rest parameters (top-level RestElement) are not supported.
+                if (!ParamsSupportedForIR(arrowFunc.Params))
                 {
                     method = null!;
                     return false;
                 }
                 var arrowBuilder = new HIRMethodBuilder(scope);
+                if (!arrowBuilder.TryParseParameters(arrowFunc.Params, out var arrowParams))
+                {
+                    method = null!;
+                    return false;
+                }
 
                 // PL3.7a: concise-body arrows wrap implicit return
                 if (arrowFunc.Body is BlockStatement arrowBlock)
                 {
-                    return arrowBuilder.TryParseStatements(arrowBlock.Body, out method);
+                    return arrowBuilder.TryParseStatements(arrowBlock.Body, arrowParams, out method);
                 }
 
                 if (arrowFunc.Body is Expression conciseExpr)
                 {
-                    return arrowBuilder.TryParseConciseBodyExpression(conciseExpr, out method);
+                    return arrowBuilder.TryParseConciseBodyExpression(conciseExpr, arrowParams, out method);
                 }
 
                 method = null!;
                 return false;
             case Acornima.Ast.FunctionExpression funcExpr:
                 // FunctionExpression is used for class constructors and method values
-                // IR pipeline supports simple identifier parameters only
-                if (!AllParamsAreSimpleIdentifiers(funcExpr.Params))
+                // IR pipeline supports identifier params, simple defaults, and destructuring patterns.
+                // Rest parameters (top-level RestElement) are not supported.
+                if (!ParamsSupportedForIR(funcExpr.Params))
                 {
                     method = null!;
                     return false;
@@ -71,7 +82,33 @@ public static class HIRBuilder
                     return false;
                 }
                 var funcExprBuilder = new HIRMethodBuilder(scope);
-                return funcExprBuilder.TryParseStatements(funcBlock.Body, out method);
+                if (!funcExprBuilder.TryParseParameters(funcExpr.Params, out var funcParams))
+                {
+                    method = null!;
+                    return false;
+                }
+                return funcExprBuilder.TryParseStatements(funcBlock.Body, funcParams, out method);
+
+            case Acornima.Ast.FunctionDeclaration funcDecl:
+                // IR pipeline supports identifier params, simple defaults, and destructuring patterns.
+                // Rest parameters (top-level RestElement) are not supported.
+                if (!ParamsSupportedForIR(funcDecl.Params))
+                {
+                    method = null!;
+                    return false;
+                }
+                if (funcDecl.Body is not BlockStatement declBlock)
+                {
+                    method = null!;
+                    return false;
+                }
+                var funcDeclBuilder = new HIRMethodBuilder(scope);
+                if (!funcDeclBuilder.TryParseParameters(funcDecl.Params, out var declParams))
+                {
+                    method = null!;
+                    return false;
+                }
+                return funcDeclBuilder.TryParseStatements(declBlock.Body, declParams, out method);
             // Handle other node types as needed
             default:
                 method = null!;
@@ -90,6 +127,24 @@ public static class HIRBuilder
         {
             Acornima.Ast.Identifier => true,
             Acornima.Ast.AssignmentPattern ap => ap.Left is Acornima.Ast.Identifier,
+            _ => false
+        });
+    }
+
+    /// <summary>
+    /// Returns true if parameters are supported by the IR pipeline for function expressions/arrow functions.
+    /// Supports: Identifier, AssignmentPattern with Identifier left-hand side, ObjectPattern, ArrayPattern.
+    /// Does not support: top-level RestElement parameters.
+    /// </summary>
+    internal static bool ParamsSupportedForIR(in NodeList<Node> parameters)
+    {
+        return parameters.All(param => param switch
+        {
+            Acornima.Ast.Identifier => true,
+            Acornima.Ast.AssignmentPattern ap => ap.Left is Acornima.Ast.Identifier,
+            Acornima.Ast.ObjectPattern => true,
+            Acornima.Ast.ArrayPattern => true,
+            Acornima.Ast.RestElement => false,
             _ => false
         });
     }
@@ -118,7 +173,7 @@ class HIRMethodBuilder
         _currentScope = scope;
     }
 
-    public bool TryParseStatements([In, NotNull] IEnumerable<Acornima.Ast.Statement> statements, out HIRMethod? method)
+    public bool TryParseStatements([In, NotNull] IEnumerable<Acornima.Ast.Statement> statements, IReadOnlyList<HIRPattern> parameters, out HIRMethod? method)
     {
         method = null;
 
@@ -132,13 +187,14 @@ class HIRMethodBuilder
         }
         method = new HIRMethod
         {
+            Parameters = parameters,
             Body = new HIRBlock(_statements)
         };
 
         return true;
     }
 
-    public bool TryParseConciseBodyExpression([In, NotNull] Acornima.Ast.Expression expression, out HIRMethod? method)
+    public bool TryParseConciseBodyExpression([In, NotNull] Acornima.Ast.Expression expression, IReadOnlyList<HIRPattern> parameters, out HIRMethod? method)
     {
         method = null;
 
@@ -149,9 +205,28 @@ class HIRMethodBuilder
 
         method = new HIRMethod
         {
+            Parameters = parameters,
             Body = new HIRBlock(new List<HIRStatement> { new HIRReturnStatement(hirExpr) })
         };
 
+        return true;
+    }
+
+    public bool TryParseParameters(in NodeList<Node> parameters, [NotNullWhen(true)] out IReadOnlyList<HIRPattern>? hirParameters)
+    {
+        hirParameters = null;
+
+        var patterns = new List<HIRPattern>(parameters.Count);
+        foreach (var param in parameters)
+        {
+            if (!TryParsePattern(param, out var pattern) || pattern == null)
+            {
+                return false;
+            }
+            patterns.Add(pattern);
+        }
+
+        hirParameters = patterns;
         return true;
     }
 
@@ -1073,8 +1148,9 @@ class HIRMethodBuilder
             case ArrowFunctionExpression arrowExpr:
                 // PL3.7: ArrowFunctionExpression as an expression (closure creation)
                 // We treat the arrow as an opaque callable value; its body is compiled separately.
-                // Support is intentionally conservative: only simple identifier/default params.
-                if (!HIRBuilder.AllParamsAreSimpleIdentifiers(arrowExpr.Params))
+                // Support matches current IR pipeline: identifiers, simple defaults, and destructuring patterns.
+                // Rest parameters are not supported.
+                if (!HIRBuilder.ParamsSupportedForIR(arrowExpr.Params))
                 {
                     return false;
                 }
@@ -1118,8 +1194,9 @@ class HIRMethodBuilder
             case FunctionExpression funcExpr:
                 // PL3.6: FunctionExpression as an expression (closure creation)
                 // Treat the function expression as an opaque callable value; its body is compiled separately.
-                // Support is intentionally conservative: only simple identifier/default params.
-                if (!HIRBuilder.AllParamsAreSimpleIdentifiers(funcExpr.Params))
+                // Support matches current IR pipeline: identifiers, simple defaults, and destructuring patterns.
+                // Rest parameters are not supported.
+                if (!HIRBuilder.ParamsSupportedForIR(funcExpr.Params))
                 {
                     return false;
                 }

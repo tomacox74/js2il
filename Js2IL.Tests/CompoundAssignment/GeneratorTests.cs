@@ -17,7 +17,7 @@ namespace Js2IL.Tests.CompoundAssignment
         public Task CompoundAssignment_BitwiseAndAssignment() { var testName = nameof(CompoundAssignment_BitwiseAndAssignment); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task CompoundAssignment_ArrayIndexBitwiseOr() { var testName = nameof(CompoundAssignment_ArrayIndexBitwiseOr); return GenerateTest(testName); } // array member access not yet in IR pipeline
+        public Task CompoundAssignment_ArrayIndexBitwiseOr() { var testName = nameof(CompoundAssignment_ArrayIndexBitwiseOr); return GenerateTest(testName, assertOnIRPipelineFailure: true); } // array member access not yet in IR pipeline
 
         [Fact]
         public Task CompoundAssignment_BitwiseXorAssignment() { var testName = nameof(CompoundAssignment_BitwiseXorAssignment); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
@@ -49,6 +49,6 @@ namespace Js2IL.Tests.CompoundAssignment
         public Task CompoundAssignment_ExponentiationAssignment() { var testName = nameof(CompoundAssignment_ExponentiationAssignment); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task CompoundAssignment_LocalVarIndex() { var testName = nameof(CompoundAssignment_LocalVarIndex); return GenerateTest(testName); } // classes not yet in IR pipeline
+        public Task CompoundAssignment_LocalVarIndex() { var testName = nameof(CompoundAssignment_LocalVarIndex); return GenerateTest(testName, assertOnIRPipelineFailure: true); } // classes not yet in IR pipeline
     }
 }

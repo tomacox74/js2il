@@ -1,3 +1,7 @@
+using System;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+
 namespace Js2IL.Tests.Promise;
 
 public class GeneratorTests : GeneratorTestsBase
@@ -5,6 +9,19 @@ public class GeneratorTests : GeneratorTestsBase
     public GeneratorTests() : base("Promise")
     {
     }
+
+    protected new Task GenerateTest(
+        string testName,
+        Action<VerifySettings>? configureSettings = null,
+        string[]? additionalScripts = null,
+        [CallerFilePath] string sourceFilePath = "",
+        bool assertOnIRPipelineFailure = true)
+        => base.GenerateTest(
+            testName,
+            configureSettings,
+            additionalScripts,
+            sourceFilePath,
+            assertOnIRPipelineFailure: assertOnIRPipelineFailure);
 
     [Fact]
     public Task Promise_All_AllResolved()

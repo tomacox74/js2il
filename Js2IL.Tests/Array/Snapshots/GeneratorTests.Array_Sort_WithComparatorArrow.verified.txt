@@ -82,13 +82,26 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 8 (0x8)
+		// Code size: 25 (0x19)
 		.maxstack 32
+		.locals init (
+			[0] float64,
+			[1] object
+		)
 
 		IL_0000: ldarg.1
-		IL_0001: ldarg.2
-		IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Subtract(object, object)
-		IL_0007: ret
+		IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0006: stloc.0
+		IL_0007: ldloc.0
+		IL_0008: ldarg.2
+		IL_0009: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_000e: sub
+		IL_000f: stloc.0
+		IL_0010: ldloc.0
+		IL_0011: box [System.Runtime]System.Double
+		IL_0016: stloc.1
+		IL_0017: ldloc.1
+		IL_0018: ret
 	} // end of method ArrowFunction_L2C10::ArrowFunction_L2C10
 
 } // end of class Functions.ArrowFunction_L2C10
@@ -106,7 +119,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2080
+		// Method begins at RVA 0x2094
 		// Header size: 12
 		// Code size: 236 (0xec)
 		.maxstack 32
@@ -205,7 +218,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2178
+		// Method begins at RVA 0x218c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

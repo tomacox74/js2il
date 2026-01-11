@@ -41,10 +41,10 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_EqualBoolean() { var testName = nameof(BinaryOperator_EqualBoolean); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task BinaryOperator_EqualMethodReturn() { var testName = nameof(BinaryOperator_EqualMethodReturn); return GenerateTest(testName); } // function calls not yet in IR pipeline
+        public Task BinaryOperator_EqualMethodReturn() { var testName = nameof(BinaryOperator_EqualMethodReturn); return GenerateTest(testName, assertOnIRPipelineFailure: true); } // function calls not yet in IR pipeline
 
         [Fact]
-        public Task BinaryOperator_EqualObjectPropertyVsMethodReturn() { var testName = nameof(BinaryOperator_EqualObjectPropertyVsMethodReturn); return GenerateTest(testName); } // function calls not yet in IR pipeline
+        public Task BinaryOperator_EqualObjectPropertyVsMethodReturn() { var testName = nameof(BinaryOperator_EqualObjectPropertyVsMethodReturn); return GenerateTest(testName, assertOnIRPipelineFailure: true); } // function calls not yet in IR pipeline
 
         [Fact]
         public Task BinaryOperator_EqualParameter() { var testName = nameof(BinaryOperator_EqualParameter); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
@@ -54,7 +54,7 @@ namespace Js2IL.Tests.BinaryOperator
 
         // 'in' operator generator snapshot
         [Fact]
-        public Task BinaryOperator_In_Object_OwnAndMissing() { var testName = nameof(BinaryOperator_In_Object_OwnAndMissing); return GenerateTest(testName); } // 'in' operator not yet in IR pipeline
+        public Task BinaryOperator_In_Object_OwnAndMissing() { var testName = nameof(BinaryOperator_In_Object_OwnAndMissing); return GenerateTest(testName, assertOnIRPipelineFailure: true); } // 'in' operator not yet in IR pipeline
 
         [Fact]
         public Task BinaryOperator_GreaterThan() { var testName = nameof(BinaryOperator_GreaterThan); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
@@ -82,7 +82,7 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_LogicalAnd_ShortCircuit() { var testName = nameof(BinaryOperator_LogicalAnd_ShortCircuit); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task BinaryOperator_LogicalOr_ArrayHasData() { var testName = nameof(BinaryOperator_LogicalOr_ArrayHasData); return GenerateTest(testName); } // array length property not yet in IR pipeline
+        public Task BinaryOperator_LogicalOr_ArrayHasData() { var testName = nameof(BinaryOperator_LogicalOr_ArrayHasData); return GenerateTest(testName, assertOnIRPipelineFailure: true); } // array length property not yet in IR pipeline
 
         [Fact]
         public Task BinaryOperator_LogicalOr_Value() { var testName = nameof(BinaryOperator_LogicalOr_Value); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
@@ -106,7 +106,7 @@ namespace Js2IL.Tests.BinaryOperator
         public Task BinaryOperator_RightShiftNumberNumber() { var testName = nameof(BinaryOperator_RightShiftNumberNumber); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
-        public Task BinaryOperator_StrictEqualCapturedVariable() { var testName = nameof(BinaryOperator_StrictEqualCapturedVariable); return GenerateTest(testName); } // captured variables not yet in IR pipeline
+        public Task BinaryOperator_StrictEqualCapturedVariable() { var testName = nameof(BinaryOperator_StrictEqualCapturedVariable); return GenerateTest(testName, assertOnIRPipelineFailure: true); } // captured variables not yet in IR pipeline
 
         [Fact]
         public Task BinaryOperator_SubNumberNumber() { var testName = nameof(BinaryOperator_SubNumberNumber); return GenerateTest(testName, assertOnIRPipelineFailure: true); }

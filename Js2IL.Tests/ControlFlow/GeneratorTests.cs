@@ -9,7 +9,7 @@ namespace Js2IL.Tests.ControlFlow
         }
 
         [Fact]
-        public Task ControlFlow_Conditional_Ternary() { var testName = nameof(ControlFlow_Conditional_Ternary); return GenerateTest(testName); }
+        public Task ControlFlow_Conditional_Ternary() { var testName = nameof(ControlFlow_Conditional_Ternary); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         [Fact]
         public Task ControlFlow_Conditional_Ternary_ShortCircuit() { var testName = nameof(ControlFlow_Conditional_Ternary_ShortCircuit); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
