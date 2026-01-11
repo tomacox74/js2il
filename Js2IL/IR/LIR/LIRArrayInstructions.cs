@@ -38,6 +38,12 @@ public record LIRGetLength(TempVariable Object, TempVariable Result) : LIRInstru
 public record LIRGetItem(TempVariable Object, TempVariable Index, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Sets an item on an object by index/key (calls JavaScriptRuntime.Object.SetItem).
+/// Returns the assigned value.
+/// </summary>
+public record LIRSetItem(TempVariable Object, TempVariable Index, TempVariable Value, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Represents a property key-value pair for object literal construction.
 /// </summary>
 /// <param name="Key">The property key string.</param>

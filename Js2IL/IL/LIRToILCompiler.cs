@@ -1209,6 +1209,29 @@ internal sealed class LIRToILCompiler
                     EmitStoreTemp(getItem.Result, ilEncoder, allocation);
                     break;
                 }
+            case LIRSetItem setItem:
+                {
+                    // Emit: call JavaScriptRuntime.Object.SetItem(object, object, object)
+                    EmitLoadTempAsObject(setItem.Object, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsObject(setItem.Index, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsObject(setItem.Value, ilEncoder, allocation, methodDescriptor);
+                    var setItemMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Object),
+                        nameof(JavaScriptRuntime.Object.SetItem),
+                        parameterTypes: new[] { typeof(object), typeof(object), typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(setItemMethod);
+
+                    if (IsMaterialized(setItem.Result, allocation))
+                    {
+                        EmitStoreTemp(setItem.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+                    break;
+                }
             case LIRArrayPushRange arrayPushRange:
                 {
                     // Emit: ldtemp target, ldtemp source, callvirt PushRange

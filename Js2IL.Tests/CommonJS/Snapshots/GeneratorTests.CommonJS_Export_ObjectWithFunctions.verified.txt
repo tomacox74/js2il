@@ -305,7 +305,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -319,48 +319,63 @@
 		// Code size: 144 (0x90)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.CommonJS_Export_ObjectWithFunctions_Lib
+			[0] class Scopes.CommonJS_Export_ObjectWithFunctions_Lib,
+			[1] object,
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: newobj instance void Scopes.CommonJS_Export_ObjectWithFunctions_Lib::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldnull
-		IL_0008: ldftn object Functions.CommonJS_Export_ObjectWithFunctions_Lib::foo(object[])
-		IL_000e: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0013: stfld object Scopes.CommonJS_Export_ObjectWithFunctions_Lib::foo
-		IL_0018: ldloc.0
-		IL_0019: ldnull
-		IL_001a: ldftn object Functions.CommonJS_Export_ObjectWithFunctions_Lib::'add'(object[], object, object)
-		IL_0020: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-		IL_0025: stfld object Scopes.CommonJS_Export_ObjectWithFunctions_Lib::'add'
-		IL_002a: ldloc.0
-		IL_002b: ldnull
-		IL_002c: ldftn object Functions.CommonJS_Export_ObjectWithFunctions_Lib::multiply(object[], object, object)
-		IL_0032: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-		IL_0037: stfld object Scopes.CommonJS_Export_ObjectWithFunctions_Lib::multiply
-		IL_003c: ldarg.2
-		IL_003d: ldstr "exports"
-		IL_0042: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0047: dup
-		IL_0048: ldstr "foo"
-		IL_004d: ldloc.0
-		IL_004e: castclass Scopes.CommonJS_Export_ObjectWithFunctions_Lib
-		IL_0053: ldfld object Scopes.CommonJS_Export_ObjectWithFunctions_Lib::foo
-		IL_0058: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_005d: dup
-		IL_005e: ldstr "add"
-		IL_0063: ldloc.0
-		IL_0064: castclass Scopes.CommonJS_Export_ObjectWithFunctions_Lib
-		IL_0069: ldfld object Scopes.CommonJS_Export_ObjectWithFunctions_Lib::'add'
-		IL_006e: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0073: dup
-		IL_0074: ldstr "multiply"
-		IL_0079: ldloc.0
-		IL_007a: castclass Scopes.CommonJS_Export_ObjectWithFunctions_Lib
-		IL_007f: ldfld object Scopes.CommonJS_Export_ObjectWithFunctions_Lib::multiply
+		IL_0006: ldnull
+		IL_0007: ldftn object Functions.CommonJS_Export_ObjectWithFunctions_Lib::foo(object[])
+		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.1
+		IL_0022: ldnull
+		IL_0023: ldftn object Functions.CommonJS_Export_ObjectWithFunctions_Lib::'add'(object[], object, object)
+		IL_0029: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_002e: ldc.i4.1
+		IL_002f: newarr [System.Runtime]System.Object
+		IL_0034: dup
+		IL_0035: ldc.i4.0
+		IL_0036: ldloc.0
+		IL_0037: stelem.ref
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_003d: stloc.2
+		IL_003e: ldnull
+		IL_003f: ldftn object Functions.CommonJS_Export_ObjectWithFunctions_Lib::multiply(object[], object, object)
+		IL_0045: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_004a: ldc.i4.1
+		IL_004b: newarr [System.Runtime]System.Object
+		IL_0050: dup
+		IL_0051: ldc.i4.0
+		IL_0052: ldloc.0
+		IL_0053: stelem.ref
+		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0059: stloc.3
+		IL_005a: ldarg.2
+		IL_005b: ldstr "exports"
+		IL_0060: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0065: dup
+		IL_0066: ldstr "foo"
+		IL_006b: ldloc.1
+		IL_006c: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0071: dup
+		IL_0072: ldstr "add"
+		IL_0077: ldloc.2
+		IL_0078: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_007d: dup
+		IL_007e: ldstr "multiply"
+		IL_0083: ldloc.3
 		IL_0084: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetProperty(object, string, object)
+		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
 		IL_008e: pop
 		IL_008f: ret
 	} // end of method CommonJS_Export_ObjectWithFunctions_Lib::Main

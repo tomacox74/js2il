@@ -384,7 +384,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -395,42 +395,61 @@
 	{
 		// Method begins at RVA 0x2288
 		// Header size: 12
-		// Code size: 176 (0xb0)
+		// Code size: 239 (0xef)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.CommonJS_Export_NestedObjects_Lib
+			[0] class Scopes.CommonJS_Export_NestedObjects_Lib,
+			[1] object,
+			[2] object,
+			[3] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
+			[4] class [System.Linq.Expressions]System.Dynamic.ExpandoObject
 		)
 
-		IL_0000: ldarg.2
-		IL_0001: ldstr "exports"
-		IL_0006: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_000b: dup
-		IL_000c: ldstr "name"
-		IL_0011: ldstr "Calculator"
-		IL_0016: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_001b: dup
-		IL_001c: ldstr "version"
-		IL_0021: ldc.r8 1
-		IL_002a: box [System.Runtime]System.Double
-		IL_002f: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0000: newobj instance void Scopes.CommonJS_Export_NestedObjects_Lib::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldnull
+		IL_0007: ldftn object Functions.FunctionExpression_L7C14::FunctionExpression_L7C14(object[], object, object)
+		IL_000d: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.1
+		IL_0022: ldnull
+		IL_0023: ldftn object Functions.FunctionExpression_L10C19::FunctionExpression_L10C19(object[], object, object)
+		IL_0029: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+		IL_002e: ldc.i4.1
+		IL_002f: newarr [System.Runtime]System.Object
 		IL_0034: dup
-		IL_0035: ldstr "math"
-		IL_003a: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_003f: dup
-		IL_0040: ldstr "add"
-		IL_0045: ldnull
-		IL_0046: ldftn object Functions.FunctionExpression_L7C14::FunctionExpression_L7C14(object[], object, object)
-		IL_004c: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-		IL_0051: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0056: dup
-		IL_0057: ldstr "multiply"
+		IL_0035: ldc.i4.0
+		IL_0036: ldloc.0
+		IL_0037: stelem.ref
+		IL_0038: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_003d: stloc.2
+		IL_003e: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0043: dup
+		IL_0044: ldstr "add"
+		IL_0049: ldloc.1
+		IL_004a: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_004f: dup
+		IL_0050: ldstr "multiply"
+		IL_0055: ldloc.2
+		IL_0056: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_005b: stloc.3
 		IL_005c: ldnull
-		IL_005d: ldftn object Functions.FunctionExpression_L10C19::FunctionExpression_L10C19(object[], object, object)
-		IL_0063: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-		IL_0068: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_006d: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0072: dup
-		IL_0073: ldstr "utils"
+		IL_005d: ldftn object Functions.FunctionExpression_L16C20::FunctionExpression_L16C20(object[], object)
+		IL_0063: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0068: ldc.i4.1
+		IL_0069: newarr [System.Runtime]System.Object
+		IL_006e: dup
+		IL_006f: ldc.i4.0
+		IL_0070: ldloc.0
+		IL_0071: stelem.ref
+		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0077: stloc.2
 		IL_0078: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
 		IL_007d: dup
 		IL_007e: ldstr "prefix"
@@ -438,14 +457,32 @@
 		IL_0088: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
 		IL_008d: dup
 		IL_008e: ldstr "formatNum"
-		IL_0093: ldnull
-		IL_0094: ldftn object Functions.FunctionExpression_L16C20::FunctionExpression_L16C20(object[], object)
-		IL_009a: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_009f: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_00a4: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetProperty(object, string, object)
-		IL_00ae: pop
-		IL_00af: ret
+		IL_0093: ldloc.2
+		IL_0094: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0099: stloc.s 4
+		IL_009b: ldarg.2
+		IL_009c: ldstr "exports"
+		IL_00a1: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_00a6: dup
+		IL_00a7: ldstr "name"
+		IL_00ac: ldstr "Calculator"
+		IL_00b1: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_00b6: dup
+		IL_00b7: ldstr "version"
+		IL_00bc: ldc.r8 1
+		IL_00c5: box [System.Runtime]System.Double
+		IL_00ca: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_00cf: dup
+		IL_00d0: ldstr "math"
+		IL_00d5: ldloc.3
+		IL_00d6: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_00db: dup
+		IL_00dc: ldstr "utils"
+		IL_00e1: ldloc.s 4
+		IL_00e3: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_00ed: pop
+		IL_00ee: ret
 	} // end of method CommonJS_Export_NestedObjects_Lib::Main
 
 } // end of class Scripts.CommonJS_Export_NestedObjects_Lib
@@ -457,7 +494,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2344
+		// Method begins at RVA 0x2383
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

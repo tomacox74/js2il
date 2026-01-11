@@ -178,19 +178,33 @@
 	{
 		// Method begins at RVA 0x2170
 		// Header size: 12
-		// Code size: 38 (0x26)
+		// Code size: 77 (0x4d)
 		.maxstack 32
+		.locals init (
+			[0] object
+		)
 
 		IL_0000: ldarg.0
-		IL_0001: ldarg.0
-		IL_0002: ldfld object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
-		IL_0007: ldc.r8 1
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_001a: stfld object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
-		IL_001f: ldarg.0
-		IL_0020: ldfld object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
-		IL_0025: ret
+		IL_0001: ldstr "value"
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_000b: stloc.0
+		IL_000c: ldloc.0
+		IL_000d: ldc.r8 1
+		IL_0016: box [System.Runtime]System.Double
+		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0020: pop
+		IL_0021: ldarg.0
+		IL_0022: ldstr "value"
+		IL_0027: ldloc.0
+		IL_0028: ldc.r8 1
+		IL_0031: box [System.Runtime]System.Double
+		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0040: pop
+		IL_0041: ldarg.0
+		IL_0042: ldstr "value"
+		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_004c: ret
 	} // end of method Counter::getNext
 
 } // end of class Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter
@@ -303,7 +317,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x21a4
+		// Method begins at RVA 0x21cc
 		// Header size: 12
 		// Code size: 60 (0x3c)
 		.maxstack 32
@@ -348,7 +362,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21ec
+		// Method begins at RVA 0x2214
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

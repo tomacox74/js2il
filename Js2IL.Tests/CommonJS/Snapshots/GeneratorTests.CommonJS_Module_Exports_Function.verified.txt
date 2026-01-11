@@ -84,7 +84,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -95,83 +95,82 @@
 	{
 		// Method begins at RVA 0x208c
 		// Header size: 12
-		// Code size: 182 (0xb6)
+		// Code size: 164 (0xa4)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.CommonJS_Module_Exports_Function,
-			[1] object
+			[1] object,
+			[2] object[],
+			[3] object
 		)
 
 		IL_0000: newobj instance void Scopes.CommonJS_Module_Exports_Function::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldnull
-		IL_0008: ldftn object Functions.CommonJS_Module_Exports_Function::greet(object[], object)
-		IL_000e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0013: stfld object Scopes.CommonJS_Module_Exports_Function::greet
-		IL_0018: ldarg.2
-		IL_0019: ldstr "exports"
-		IL_001e: ldloc.0
-		IL_001f: castclass Scopes.CommonJS_Module_Exports_Function
-		IL_0024: ldfld object Scopes.CommonJS_Module_Exports_Function::greet
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetProperty(object, string, object)
-		IL_002e: pop
-		IL_002f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0034: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0039: ldc.i4.2
-		IL_003a: newarr [System.Runtime]System.Object
-		IL_003f: dup
-		IL_0040: ldc.i4.0
-		IL_0041: ldstr "typeof module.exports:"
-		IL_0046: stelem.ref
-		IL_0047: dup
-		IL_0048: ldc.i4.1
-		IL_0049: ldarg.2
-		IL_004a: ldstr "exports"
-		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_0054: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_0059: stelem.ref
-		IL_005a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_005f: pop
-		IL_0060: ldarg.2
-		IL_0061: ldstr "exports"
-		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_006b: stloc.1
-		IL_006c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0071: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0076: ldc.i4.2
-		IL_0077: newarr [System.Runtime]System.Object
-		IL_007c: dup
-		IL_007d: ldc.i4.0
-		IL_007e: ldstr "result:"
-		IL_0083: stelem.ref
-		IL_0084: dup
-		IL_0085: ldc.i4.1
-		IL_0086: ldloc.1
-		IL_0087: dup
-		IL_0088: brtrue.s IL_0091
-
-		IL_008a: pop
-		IL_008b: ldnull
-		IL_008c: br IL_0091
-
-		IL_0091: ldc.i4.1
-		IL_0092: newarr [System.Runtime]System.Object
-		IL_0097: dup
-		IL_0098: ldc.i4.0
-		IL_0099: ldloc.0
-		IL_009a: stelem.ref
-		IL_009b: ldc.i4.1
-		IL_009c: newarr [System.Runtime]System.Object
-		IL_00a1: dup
-		IL_00a2: ldc.i4.0
-		IL_00a3: ldstr "World"
-		IL_00a8: stelem.ref
-		IL_00a9: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_00ae: stelem.ref
-		IL_00af: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00b4: pop
-		IL_00b5: ret
+		IL_0006: ldarg.2
+		IL_0007: ldstr "exports"
+		IL_000c: ldnull
+		IL_000d: ldftn object Functions.CommonJS_Module_Exports_Function::greet(object[], object)
+		IL_0013: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0018: ldc.i4.1
+		IL_0019: newarr [System.Runtime]System.Object
+		IL_001e: dup
+		IL_001f: ldc.i4.0
+		IL_0020: ldloc.0
+		IL_0021: stelem.ref
+		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_002c: pop
+		IL_002d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0032: ldc.i4.2
+		IL_0033: newarr [System.Runtime]System.Object
+		IL_0038: dup
+		IL_0039: ldc.i4.0
+		IL_003a: ldstr "typeof module.exports:"
+		IL_003f: stelem.ref
+		IL_0040: dup
+		IL_0041: ldc.i4.1
+		IL_0042: ldarg.2
+		IL_0043: ldstr "exports"
+		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_004d: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0052: stelem.ref
+		IL_0053: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0058: pop
+		IL_0059: ldarg.2
+		IL_005a: ldstr "exports"
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0064: stloc.1
+		IL_0065: ldc.i4.1
+		IL_0066: newarr [System.Runtime]System.Object
+		IL_006b: dup
+		IL_006c: ldc.i4.0
+		IL_006d: ldstr "World"
+		IL_0072: stelem.ref
+		IL_0073: stloc.2
+		IL_0074: ldloc.1
+		IL_0075: ldc.i4.1
+		IL_0076: newarr [System.Runtime]System.Object
+		IL_007b: dup
+		IL_007c: ldc.i4.0
+		IL_007d: ldnull
+		IL_007e: stelem.ref
+		IL_007f: ldloc.2
+		IL_0080: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_0085: stloc.3
+		IL_0086: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008b: ldc.i4.2
+		IL_008c: newarr [System.Runtime]System.Object
+		IL_0091: dup
+		IL_0092: ldc.i4.0
+		IL_0093: ldstr "result:"
+		IL_0098: stelem.ref
+		IL_0099: dup
+		IL_009a: ldc.i4.1
+		IL_009b: ldloc.3
+		IL_009c: stelem.ref
+		IL_009d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00a2: pop
+		IL_00a3: ret
 	} // end of method CommonJS_Module_Exports_Function::Main
 
 } // end of class Scripts.CommonJS_Module_Exports_Function
@@ -183,7 +182,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x214e
+		// Method begins at RVA 0x213c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -126,23 +126,25 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_DestructuringAssignment_ReportsError()
+    public void Validate_DestructuringAssignment_IsValid()
     {
         var js = "let x, y; [x, y] = [1, 2];";
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Destructuring assignment"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+        Assert.Empty(result.Warnings);
     }
 
     [Fact]
-    public void Validate_ArrayDestructuring_ReportsError()
+    public void Validate_ArrayDestructuring_IsValid()
     {
         var js = "const [a, b] = [1, 2];";
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Array destructuring"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+        Assert.Empty(result.Warnings);
     }
 
     [Fact]
@@ -176,13 +178,14 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_ObjectRestProperties_ReportsError()
+    public void Validate_ObjectRestProperties_IsValid()
     {
         var js = "const obj = {a: 1, b: 2, c: 3}; const {a, ...rest} = obj;";
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Rest parameters/properties"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+        Assert.Empty(result.Warnings);
     }
 
     [Fact]
@@ -217,13 +220,14 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_NestedDestructuring_ReportsError()
+    public void Validate_NestedDestructuring_IsValid()
     {
         var js = "const obj = {inner: {x: 1}}; const {inner: {x}} = obj;";
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Nested destructuring"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+        Assert.Empty(result.Warnings);
     }
 
     [Fact]

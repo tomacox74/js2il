@@ -90,9 +90,8 @@ public class JavaScriptAstValidator : IAstValidator
                     break;
 
                 case NodeType.RestElement:
-                    // Rest parameters (...args) and rest properties are not supported
-                    result.Errors.Add($"Rest parameters/properties are not yet supported (line {node.Location.Start.Line})");
-                    result.IsValid = false;
+                    // RestElement is used for both rest parameters and rest destructuring patterns.
+                    // Rest destructuring is supported; rest parameters are validated in ValidateFunctionParameters.
                     break;
 
                 case NodeType.ForInStatement:
@@ -144,20 +143,15 @@ public class JavaScriptAstValidator : IAstValidator
                     break;
 
                 case NodeType.ArrayPattern:
-                    // Array destructuring is not supported
-                    result.Errors.Add($"Array destructuring is not yet supported (line {node.Location.Start.Line})");
-                    result.IsValid = false;
+                    // Array destructuring is supported.
                     break;
 
                 case NodeType.ObjectPattern:
-                    // Object destructuring in declarations/parameters is supported,
-                    // but check for nested patterns (rest properties handled by RestElement case)
-                    ValidateObjectPattern(node, result);
+                    // Object destructuring is supported.
                     break;
 
                 case NodeType.AssignmentExpression:
-                    // Check for destructuring assignment (not in declarations)
-                    ValidateAssignmentExpression(node, result);
+                    // Destructuring assignment is supported.
                     break;
 
                 case NodeType.Property:
@@ -200,36 +194,7 @@ public class JavaScriptAstValidator : IAstValidator
         return result;
     }
 
-    private void ValidateObjectPattern(Node node, ValidationResult result)
-    {
-        if (node is ObjectPattern pattern)
-        {
-            foreach (var prop in pattern.Properties)
-            {
-                // Check for nested destructuring (combined if statements per review comment)
-                if (prop is AssignmentProperty assignProp &&
-                    (assignProp.Value is ObjectPattern || assignProp.Value is ArrayPattern))
-                {
-                    result.Errors.Add($"Nested destructuring patterns are not yet supported (line {node.Location.Start.Line})");
-                    result.IsValid = false;
-                }
-                // Note: Rest properties (RestElement) are handled by the main RestElement case
-            }
-        }
-    }
-
-    private void ValidateAssignmentExpression(Node node, ValidationResult result)
-    {
-        if (node is AssignmentExpression assign)
-        {
-            // Check for destructuring assignment (left side is a pattern, not an identifier)
-            if (assign.Left is ArrayPattern || assign.Left is ObjectPattern)
-            {
-                result.Errors.Add($"Destructuring assignment is not yet supported (line {node.Location.Start.Line})");
-                result.IsValid = false;
-            }
-        }
-    }
+    // Note: Object/Array patterns (including nested + defaults + rest) and destructuring assignment are supported.
 
     private void ValidateProperty(Node node, ValidationResult result)
     {
@@ -319,19 +284,35 @@ public class JavaScriptAstValidator : IAstValidator
 
     private void ValidateFunctionParameters(Node node, ValidationResult result)
     {
-        int paramCount = node switch
+        NodeList<Node>? parameters = node switch
         {
-            FunctionDeclaration fd => fd.Params.Count,
-            FunctionExpression fe => fe.Params.Count,
-            ArrowFunctionExpression af => af.Params.Count,
-            _ => 0
+            FunctionDeclaration fd => fd.Params,
+            FunctionExpression fe => fe.Params,
+            ArrowFunctionExpression af => af.Params,
+            _ => null
         };
+
+        int paramCount = parameters?.Count ?? 0;
 
         // Check for parameter count limit (issue #220)
         if (paramCount > 6)
         {
             result.Errors.Add($"Functions with more than 6 parameters are not yet supported (line {node.Location.Start.Line})");
             result.IsValid = false;
+        }
+
+        // Rest parameters (...args) are not supported.
+        if (parameters != null)
+        {
+            foreach (var param in parameters)
+            {
+                if (param is RestElement)
+                {
+                    result.Errors.Add($"Rest parameters are not yet supported (line {node.Location.Start.Line})");
+                    result.IsValid = false;
+                    break;
+                }
+            }
         }
     }
 

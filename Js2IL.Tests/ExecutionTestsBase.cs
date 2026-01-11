@@ -58,7 +58,13 @@ namespace Js2IL.Tests
             
             if (!compiler.Compile(testFilePath))
             {
-                throw new InvalidOperationException($"Compilation failed for test {testName}");
+                var details = string.IsNullOrWhiteSpace(testLogger.Errors)
+                    ? string.Empty
+                    : $"\nErrors:\n{testLogger.Errors}";
+                var warnings = string.IsNullOrWhiteSpace(testLogger.Warnings)
+                    ? string.Empty
+                    : $"\nWarnings:\n{testLogger.Warnings}";
+                throw new InvalidOperationException($"Compilation failed for test {testName}.{details}{warnings}");
             }
 
             // Compiler outputs <entryFileBasename>.dll into OutputDirectory.

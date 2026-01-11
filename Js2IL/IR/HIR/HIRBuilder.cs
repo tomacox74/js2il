@@ -598,7 +598,149 @@ class HIRMethodBuilder
             return true;
         }
 
+        // PL4.1: Variable declarator destructuring (object/array patterns, including nested defaults/rest)
+        if (decl.Id is Acornima.Ast.ObjectPattern or Acornima.Ast.ArrayPattern)
+        {
+            if (decl.Init == null)
+            {
+                return false;
+            }
+
+            if (!TryParseExpression(decl.Init, out var hirInitExpr))
+            {
+                return false;
+            }
+
+            if (!TryParsePattern(decl.Id, out var hirPattern))
+            {
+                return false;
+            }
+
+            hirStatement = new HIRDestructuringVariableDeclaration(hirPattern!, hirInitExpr!);
+            return true;
+        }
+
         return false;
+    }
+
+    private bool TryParsePattern(Acornima.Ast.Node node, out HIRPattern? pattern)
+    {
+        pattern = null;
+
+        switch (node)
+        {
+            case Acornima.Ast.Identifier id:
+                pattern = new HIRIdentifierPattern(_currentScope.FindSymbol(id.Name));
+                return true;
+
+            case Acornima.Ast.AssignmentPattern ap:
+                if (!TryParsePattern(ap.Left, out var targetPattern))
+                {
+                    return false;
+                }
+                if (!TryParseExpression(ap.Right, out var defaultExpr))
+                {
+                    return false;
+                }
+                pattern = new HIRDefaultPattern(targetPattern!, defaultExpr!);
+                return true;
+
+            case Acornima.Ast.RestElement rest:
+                if (!TryParsePattern(rest.Argument, out var restTargetPattern))
+                {
+                    return false;
+                }
+                pattern = new HIRRestPattern(restTargetPattern!);
+                return true;
+
+            case Acornima.Ast.ObjectPattern objPat:
+                {
+                    var props = new List<HIRObjectPatternProperty>();
+                    HIRRestPattern? restPattern = null;
+
+                    foreach (var propNode in objPat.Properties)
+                    {
+                        if (propNode is Acornima.Ast.Property p)
+                        {
+                            string? key = p.Key switch
+                            {
+                                Acornima.Ast.Identifier kid => kid.Name,
+                                Acornima.Ast.StringLiteral sl => sl.Value,
+                                Acornima.Ast.NumericLiteral nl => nl.Value.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                                Acornima.Ast.Literal lit when lit.Value is string s => s,
+                                Acornima.Ast.Literal lit when lit.Value is double d => d.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                                _ => null
+                            };
+
+                            if (string.IsNullOrEmpty(key))
+                            {
+                                return false;
+                            }
+
+                            if (!TryParsePattern(p.Value, out var valuePattern))
+                            {
+                                return false;
+                            }
+
+                            props.Add(new HIRObjectPatternProperty(key!, valuePattern!));
+                            continue;
+                        }
+
+                        if (propNode is Acornima.Ast.RestElement re)
+                        {
+                            if (!TryParsePattern(re.Argument, out var restTargetPattern2))
+                            {
+                                return false;
+                            }
+
+                            restPattern = new HIRRestPattern(restTargetPattern2!);
+                            continue;
+                        }
+
+                        return false;
+                    }
+
+                    pattern = new HIRObjectPattern(props, restPattern);
+                    return true;
+                }
+
+            case Acornima.Ast.ArrayPattern arrPat:
+                {
+                    var elements = new List<HIRPattern?>();
+                    HIRRestPattern? restPattern = null;
+
+                    foreach (var el in arrPat.Elements)
+                    {
+                        if (el == null)
+                        {
+                            elements.Add(null);
+                            continue;
+                        }
+
+                        if (el is Acornima.Ast.RestElement re)
+                        {
+                            if (!TryParsePattern(re.Argument, out var restTargetPattern3))
+                            {
+                                return false;
+                            }
+                            restPattern = new HIRRestPattern(restTargetPattern3!);
+                            continue;
+                        }
+
+                        if (!TryParsePattern(el, out var elementPattern))
+                        {
+                            return false;
+                        }
+                        elements.Add(elementPattern);
+                    }
+
+                    pattern = new HIRArrayPattern(elements, restPattern);
+                    return true;
+                }
+
+            default:
+                return false;
+        }
     }
 
     private bool TryParseExpression(Acornima.Ast.Expression? expr, out HIRExpression? hirExpr)
@@ -841,21 +983,65 @@ class HIRMethodBuilder
                 return true;
             case AssignmentExpression assignExpr:
                 // Handle assignment expressions (e.g., x = 5, y = x + 1)
-                // Currently only support simple identifier targets
-                if (assignExpr.Left is not Identifier assignTargetId)
-                {
-                    return false; // Only support identifier targets for now
-                }
-
-                var targetSymbol = _currentScope.FindSymbol(assignTargetId.Name);
-                
                 if (!TryParseExpression(assignExpr.Right, out var assignValueExpr))
                 {
                     return false;
                 }
 
-                hirExpr = new HIRAssignmentExpression(targetSymbol, assignExpr.Operator, assignValueExpr!);
-                return true;
+                // Identifier assignment: x = expr / x += expr
+                if (assignExpr.Left is Identifier assignTargetId)
+                {
+                    var targetSymbol = _currentScope.FindSymbol(assignTargetId.Name);
+                    hirExpr = new HIRAssignmentExpression(targetSymbol, assignExpr.Operator, assignValueExpr!);
+                    return true;
+                }
+
+                // PL4.2a/b: Member assignments (obj.prop = value, obj[index] = value)
+                if (assignExpr.Left is MemberExpression memberTarget)
+                {
+                    if (!TryParseExpression(memberTarget.Object, out var memberObjectExpr))
+                    {
+                        return false;
+                    }
+
+                    if (memberTarget.Computed)
+                    {
+                        if (!TryParseExpression(memberTarget.Property, out var memberIndexExpr))
+                        {
+                            return false;
+                        }
+
+                        hirExpr = new HIRIndexAssignmentExpression(memberObjectExpr!, memberIndexExpr!, assignExpr.Operator, assignValueExpr!);
+                        return true;
+                    }
+
+                    if (memberTarget.Property is not Identifier memberPropId)
+                    {
+                        return false;
+                    }
+
+                    hirExpr = new HIRPropertyAssignmentExpression(memberObjectExpr!, memberPropId.Name, assignExpr.Operator, assignValueExpr!);
+                    return true;
+                }
+
+                // PL4.2c: Destructuring assignment (only simple '=' supported)
+                if (assignExpr.Operator != Acornima.Operator.Assignment)
+                {
+                    return false;
+                }
+
+                if (assignExpr.Left is Acornima.Ast.ObjectPattern or Acornima.Ast.ArrayPattern)
+                {
+                    if (!TryParsePattern(assignExpr.Left, out var hirPattern))
+                    {
+                        return false;
+                    }
+
+                    hirExpr = new HIRDestructuringAssignmentExpression(hirPattern!, assignValueExpr!);
+                    return true;
+                }
+
+                return false;
 
             case MemberExpression memberExpr:
                 // Handle member expressions

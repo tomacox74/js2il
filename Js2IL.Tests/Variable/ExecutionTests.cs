@@ -17,7 +17,15 @@ namespace Js2IL.Tests.Variable
 
         // Object destructuring tests
         [Fact] public Task Variable_ObjectDestructuring_Basic() { var testName = nameof(Variable_ObjectDestructuring_Basic); return ExecutionTest(testName); }
-        [Fact(Skip = "Defaults in variable destructuring not yet implemented")] public Task Variable_ObjectDestructuring_WithDefaults() { var testName = nameof(Variable_ObjectDestructuring_WithDefaults); return ExecutionTest(testName); }
+        [Fact] public Task Variable_ObjectDestructuring_WithDefaults() { var testName = nameof(Variable_ObjectDestructuring_WithDefaults); return ExecutionTest(testName); }
         [Fact] public Task Variable_ObjectDestructuring_Captured() { var testName = nameof(Variable_ObjectDestructuring_Captured); return ExecutionTest(testName); }
+
+        // Destructuring + assignment targets (PL4.*)
+        [Fact] public Task Variable_ArrayDestructuring_Basic() { var testName = nameof(Variable_ArrayDestructuring_Basic); return ExecutionTest(testName); }
+        [Fact] public Task Variable_ArrayDestructuring_DefaultsAndRest() { var testName = nameof(Variable_ArrayDestructuring_DefaultsAndRest); return ExecutionTest(testName); }
+        [Fact] public Task Variable_NestedDestructuring_Defaults() { var testName = nameof(Variable_NestedDestructuring_Defaults); return ExecutionTest(testName); }
+        [Fact] public Task Variable_ObjectDestructuring_Rest() { var testName = nameof(Variable_ObjectDestructuring_Rest); return ExecutionTest(testName); }
+        [Fact] public Task Variable_AssignmentTargets_MemberAndIndex() { var testName = nameof(Variable_AssignmentTargets_MemberAndIndex); return ExecutionTest(testName); }
+        [Fact] public Task Variable_DestructuringAssignment_Basic() { var testName = nameof(Variable_DestructuringAssignment_Basic); return ExecutionTest(testName); }
     }
 }
