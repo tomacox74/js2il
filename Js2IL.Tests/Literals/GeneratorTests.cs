@@ -13,7 +13,7 @@ namespace Js2IL.Tests.Literals
         [Fact] public Task Literals_NullAndUndefined() { var testName = nameof(Literals_NullAndUndefined); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
         [Fact] public Task ObjectLiteral() { var testName = nameof(ObjectLiteral); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
         // Now supported: generate IL for numeric-key object literal
-        [Fact] public Task ObjectLiteral_NumericKey() { var testName = nameof(ObjectLiteral_NumericKey); return GenerateTest(testName); }
+        [Fact] public Task ObjectLiteral_NumericKey() { var testName = nameof(ObjectLiteral_NumericKey); return GenerateTest(testName, assertOnIRPipelineFailure: true); }
 
         // Repro for property assignment on object literal (expected to fail until supported)
         [Fact] public Task ObjectLiteral_PropertyAssign() { var testName = nameof(ObjectLiteral_PropertyAssign); return GenerateTest(testName, assertOnIRPipelineFailure: true); }

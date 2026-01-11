@@ -233,78 +233,78 @@
 
 	.method public hidebysig 
 		instance object 'add' (
-			object ''
+			object $p0
 		) cil managed 
 	{
 		// Method begins at RVA 0x20e0
 		// Header size: 12
-		// Code size: 79 (0x4f)
+		// Code size: 51 (0x33)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ClassMethod_ParameterDestructuring/Calculator/'add'
+			[0] object,
+			[1] object,
+			[2] object
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_ClassMethod_ParameterDestructuring/Calculator/'add'::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldarg.1
-		IL_0008: ldstr "a"
-		IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_0012: stfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Calculator/'add'::a
-		IL_0017: ldloc.0
-		IL_0018: ldarg.1
-		IL_0019: ldstr "b"
-		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_0023: stfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Calculator/'add'::b
-		IL_0028: ldloc.0
-		IL_0029: castclass Scopes.Classes_ClassMethod_ParameterDestructuring/Calculator/'add'
-		IL_002e: ldfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Calculator/'add'::a
-		IL_0033: unbox.any [System.Runtime]System.Double
-		IL_0038: ldloc.0
-		IL_0039: castclass Scopes.Classes_ClassMethod_ParameterDestructuring/Calculator/'add'
-		IL_003e: ldfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Calculator/'add'::b
-		IL_0043: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0048: add
-		IL_0049: box [System.Runtime]System.Double
-		IL_004e: ret
+		IL_0000: ldarg.1
+		IL_0001: brtrue IL_0011
+
+		IL_0006: ldstr "Cannot destructure null or undefined"
+		IL_000b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+		IL_0010: throw
+
+		IL_0011: ldarg.1
+		IL_0012: ldstr "a"
+		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_001c: stloc.0
+		IL_001d: ldarg.1
+		IL_001e: ldstr "b"
+		IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0028: stloc.1
+		IL_0029: ldloc.0
+		IL_002a: ldloc.1
+		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0030: stloc.2
+		IL_0031: ldloc.2
+		IL_0032: ret
 	} // end of method Calculator::'add'
 
 	.method public hidebysig 
 		instance object multiply (
-			object ''
+			object $p0
 		) cil managed 
 	{
-		// Method begins at RVA 0x213c
+		// Method begins at RVA 0x2120
 		// Header size: 12
-		// Code size: 79 (0x4f)
+		// Code size: 51 (0x33)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ClassMethod_ParameterDestructuring/Calculator/multiply
+			[0] object,
+			[1] object,
+			[2] object
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_ClassMethod_ParameterDestructuring/Calculator/multiply::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldarg.1
-		IL_0008: ldstr "x"
-		IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_0012: stfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Calculator/multiply::x
-		IL_0017: ldloc.0
-		IL_0018: ldarg.1
-		IL_0019: ldstr "y"
-		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_0023: stfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Calculator/multiply::y
-		IL_0028: ldloc.0
-		IL_0029: castclass Scopes.Classes_ClassMethod_ParameterDestructuring/Calculator/multiply
-		IL_002e: ldfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Calculator/multiply::x
-		IL_0033: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0038: ldloc.0
-		IL_0039: castclass Scopes.Classes_ClassMethod_ParameterDestructuring/Calculator/multiply
-		IL_003e: ldfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Calculator/multiply::y
-		IL_0043: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0048: mul
-		IL_0049: box [System.Runtime]System.Double
-		IL_004e: ret
+		IL_0000: ldarg.1
+		IL_0001: brtrue IL_0011
+
+		IL_0006: ldstr "Cannot destructure null or undefined"
+		IL_000b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+		IL_0010: throw
+
+		IL_0011: ldarg.1
+		IL_0012: ldstr "x"
+		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_001c: stloc.0
+		IL_001d: ldarg.1
+		IL_001e: ldstr "y"
+		IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0028: stloc.1
+		IL_0029: ldloc.0
+		IL_002a: ldloc.1
+		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
+		IL_0030: stloc.2
+		IL_0031: ldloc.2
+		IL_0032: ret
 	} // end of method Calculator::multiply
 
 } // end of class Classes.Classes_ClassMethod_ParameterDestructuring.Calculator
@@ -328,100 +328,116 @@
 
 	.method public hidebysig 
 		instance object formatPerson (
-			object ''
+			object $p0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2318
+		// Method begins at RVA 0x22b4
 		// Header size: 12
-		// Code size: 131 (0x83)
+		// Code size: 107 (0x6b)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatPerson
+			[0] object,
+			[1] object,
+			[2] object,
+			[3] object
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatPerson::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldarg.1
-		IL_0008: ldstr "name"
-		IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_0012: stfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatPerson::name
-		IL_0017: ldloc.0
-		IL_0018: ldarg.1
-		IL_0019: ldstr "age"
-		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_0023: stfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatPerson::age
-		IL_0028: ldloc.0
+		IL_0000: ldarg.1
+		IL_0001: brtrue IL_0011
+
+		IL_0006: ldstr "Cannot destructure null or undefined"
+		IL_000b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+		IL_0010: throw
+
+		IL_0011: ldarg.1
+		IL_0012: ldstr "name"
+		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_001c: stloc.0
+		IL_001d: ldarg.1
+		IL_001e: ldstr "age"
+		IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0028: stloc.1
 		IL_0029: ldarg.1
 		IL_002a: ldstr "city"
-		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_0034: stfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatPerson::city
-		IL_0039: ldloc.0
-		IL_003a: castclass Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatPerson
-		IL_003f: ldfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatPerson::name
-		IL_0044: ldstr " from "
-		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_004e: ldloc.0
-		IL_004f: castclass Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatPerson
-		IL_0054: ldfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatPerson::city
-		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_005e: ldstr " (age: "
+		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0034: stloc.2
+		IL_0035: ldloc.0
+		IL_0036: ldstr " from "
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0040: stloc.3
+		IL_0041: ldloc.3
+		IL_0042: ldloc.2
+		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0048: stloc.3
+		IL_0049: ldloc.3
+		IL_004a: ldstr " (age: "
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0054: stloc.3
+		IL_0055: ldloc.3
+		IL_0056: ldloc.1
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_005c: stloc.3
+		IL_005d: ldloc.3
+		IL_005e: ldstr ")"
 		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0068: ldloc.0
-		IL_0069: castclass Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatPerson
-		IL_006e: ldfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatPerson::age
-		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0078: ldstr ")"
-		IL_007d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0082: ret
+		IL_0068: stloc.3
+		IL_0069: ldloc.3
+		IL_006a: ret
 	} // end of method Formatter::formatPerson
 
 	.method public hidebysig 
 		instance object formatDate (
-			object ''
+			object $p0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2290
+		// Method begins at RVA 0x2248
 		// Header size: 12
-		// Code size: 121 (0x79)
+		// Code size: 95 (0x5f)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatDate
+			[0] object,
+			[1] object,
+			[2] object,
+			[3] object
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatDate::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldloc.0
-		IL_0007: ldarg.1
-		IL_0008: ldstr "year"
-		IL_000d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_0012: stfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatDate::year
-		IL_0017: ldloc.0
-		IL_0018: ldarg.1
-		IL_0019: ldstr "month"
-		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_0023: stfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatDate::month
-		IL_0028: ldloc.0
+		IL_0000: ldarg.1
+		IL_0001: brtrue IL_0011
+
+		IL_0006: ldstr "Cannot destructure null or undefined"
+		IL_000b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+		IL_0010: throw
+
+		IL_0011: ldarg.1
+		IL_0012: ldstr "year"
+		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_001c: stloc.0
+		IL_001d: ldarg.1
+		IL_001e: ldstr "month"
+		IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0028: stloc.1
 		IL_0029: ldarg.1
 		IL_002a: ldstr "day"
-		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_0034: stfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatDate::day
-		IL_0039: ldloc.0
-		IL_003a: castclass Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatDate
-		IL_003f: ldfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatDate::year
-		IL_0044: ldstr "-"
-		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_004e: ldloc.0
-		IL_004f: castclass Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatDate
-		IL_0054: ldfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatDate::month
-		IL_0059: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_005e: ldstr "-"
-		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0068: ldloc.0
-		IL_0069: castclass Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatDate
-		IL_006e: ldfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Formatter/formatDate::day
-		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0078: ret
+		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0034: stloc.2
+		IL_0035: ldloc.0
+		IL_0036: ldstr "-"
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0040: stloc.3
+		IL_0041: ldloc.3
+		IL_0042: ldloc.1
+		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0048: stloc.3
+		IL_0049: ldloc.3
+		IL_004a: ldstr "-"
+		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0054: stloc.3
+		IL_0055: ldloc.3
+		IL_0056: ldloc.2
+		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_005c: stloc.3
+		IL_005d: ldloc.3
+		IL_005e: ret
 	} // end of method Formatter::formatDate
 
 } // end of class Classes.Classes_ClassMethod_ParameterDestructuring.Formatter
@@ -448,100 +464,110 @@
 
 	.method public hidebysig 
 		instance object setConnection (
-			object ''
+			object $p0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2198
+		// Method begins at RVA 0x2160
 		// Header size: 12
-		// Code size: 235 (0xeb)
+		// Code size: 219 (0xdb)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ClassMethod_ParameterDestructuring/Config/setConnection,
+			[0] object,
 			[1] object,
 			[2] object,
-			[3] object
+			[3] object,
+			[4] bool,
+			[5] object,
+			[6] object
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_ClassMethod_ParameterDestructuring/Config/setConnection::.ctor()
-		IL_0005: stloc.0
-		IL_0006: ldarg.1
-		IL_0007: ldstr "host"
-		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_0011: stloc.1
-		IL_0012: ldloc.1
-		IL_0013: brfalse IL_0024
+		IL_0000: ldarg.1
+		IL_0001: brtrue IL_0011
 
-		IL_0018: ldloc.0
-		IL_0019: ldloc.1
-		IL_001a: stfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Config/setConnection::host
-		IL_001f: br IL_002f
+		IL_0006: ldstr "Cannot destructure null or undefined"
+		IL_000b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
+		IL_0010: throw
 
-		IL_0024: ldloc.0
-		IL_0025: ldstr "localhost"
-		IL_002a: stfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Config/setConnection::host
+		IL_0011: ldarg.1
+		IL_0012: ldstr "host"
+		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_001c: stloc.3
+		IL_001d: ldloc.3
+		IL_001e: brtrue IL_002e
 
-		IL_002f: ldarg.1
-		IL_0030: ldstr "port"
-		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_003a: stloc.2
-		IL_003b: ldloc.2
-		IL_003c: brfalse IL_004d
+		IL_0023: ldstr "localhost"
+		IL_0028: stloc.0
+		IL_0029: br IL_0030
 
-		IL_0041: ldloc.0
-		IL_0042: ldloc.2
-		IL_0043: stfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Config/setConnection::port
-		IL_0048: br IL_0061
+		IL_002e: ldloc.3
+		IL_002f: stloc.0
 
-		IL_004d: ldloc.0
-		IL_004e: ldc.r8 8080
-		IL_0057: box [System.Runtime]System.Double
-		IL_005c: stfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Config/setConnection::port
+		IL_0030: ldarg.1
+		IL_0031: ldstr "port"
+		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_003b: stloc.3
+		IL_003c: ldloc.3
+		IL_003d: brtrue IL_0056
 
-		IL_0061: ldarg.1
-		IL_0062: ldstr "secure"
-		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_006c: stloc.3
-		IL_006d: ldloc.3
-		IL_006e: brfalse IL_007f
+		IL_0042: ldc.r8 8080
+		IL_004b: box [System.Runtime]System.Double
+		IL_0050: stloc.1
+		IL_0051: br IL_0058
 
-		IL_0073: ldloc.0
-		IL_0074: ldloc.3
-		IL_0075: stfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Config/setConnection::secure
-		IL_007a: br IL_008b
+		IL_0056: ldloc.3
+		IL_0057: stloc.1
 
-		IL_007f: ldloc.0
-		IL_0080: ldc.i4.0
-		IL_0081: box [System.Runtime]System.Boolean
-		IL_0086: stfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Config/setConnection::secure
+		IL_0058: ldarg.1
+		IL_0059: ldstr "secure"
+		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0063: stloc.3
+		IL_0064: ldloc.3
+		IL_0065: brtrue IL_0076
 
-		IL_008b: ldarg.0
-		IL_008c: ldloc.0
-		IL_008d: castclass Scopes.Classes_ClassMethod_ParameterDestructuring/Config/setConnection
-		IL_0092: ldfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Config/setConnection::secure
-		IL_0097: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-		IL_009c: brtrue IL_00a6
+		IL_006a: ldc.i4.0
+		IL_006b: box [System.Runtime]System.Boolean
+		IL_0070: stloc.2
+		IL_0071: br IL_0078
 
-		IL_00a1: br IL_00b0
+		IL_0076: ldloc.3
+		IL_0077: stloc.2
 
-		IL_00a6: ldstr "https://"
-		IL_00ab: br IL_00b5
+		IL_0078: ldloc.2
+		IL_0079: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_007e: stloc.s 4
+		IL_0080: ldloc.s 4
+		IL_0082: brfalse IL_0093
 
-		IL_00b0: ldstr "http://"
+		IL_0087: ldstr "https://"
+		IL_008c: stloc.s 6
+		IL_008e: br IL_009a
 
-		IL_00b5: ldloc.0
-		IL_00b6: castclass Scopes.Classes_ClassMethod_ParameterDestructuring/Config/setConnection
-		IL_00bb: ldfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Config/setConnection::host
-		IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00c5: ldstr ":"
-		IL_00ca: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00cf: ldloc.0
-		IL_00d0: castclass Scopes.Classes_ClassMethod_ParameterDestructuring/Config/setConnection
-		IL_00d5: ldfld object Scopes.Classes_ClassMethod_ParameterDestructuring/Config/setConnection::port
-		IL_00da: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00df: stfld object Classes.Classes_ClassMethod_ParameterDestructuring.Config::url
-		IL_00e4: ldarg.0
-		IL_00e5: ldfld object Classes.Classes_ClassMethod_ParameterDestructuring.Config::url
-		IL_00ea: ret
+		IL_0093: ldstr "http://"
+		IL_0098: stloc.s 6
+
+		IL_009a: ldloc.s 6
+		IL_009c: ldloc.0
+		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00a2: stloc.s 6
+		IL_00a4: ldloc.s 6
+		IL_00a6: ldstr ":"
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00b0: stloc.s 6
+		IL_00b2: ldloc.s 6
+		IL_00b4: ldloc.1
+		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00ba: pop
+		IL_00bb: ldarg.0
+		IL_00bc: ldstr "url"
+		IL_00c1: ldloc.s 6
+		IL_00c3: ldloc.1
+		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_00ce: pop
+		IL_00cf: ldarg.0
+		IL_00d0: ldstr "url"
+		IL_00d5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00da: ret
 	} // end of method Config::setConnection
 
 } // end of class Classes.Classes_ClassMethod_ParameterDestructuring.Config
@@ -559,7 +585,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x23a8
+		// Method begins at RVA 0x232c
 		// Header size: 12
 		// Code size: 674 (0x2a2)
 		.maxstack 32
@@ -790,7 +816,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2656
+		// Method begins at RVA 0x25da
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
