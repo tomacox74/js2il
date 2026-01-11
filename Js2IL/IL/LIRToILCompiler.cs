@@ -1352,7 +1352,11 @@ internal sealed class LIRToILCompiler
 
                     var methodHandle = (MethodDefinitionHandle)token;
 
-                    int jsParamCount = callFunc.Arguments.Count;
+                    // IMPORTANT: use the callee's declared parameter count, not the call-site argument count.
+                    // The call-site may omit args (default parameters), but the delegate signature must match
+                    // the target method signature, otherwise the JIT can crash the process.
+                    int jsParamCount = callableId.JsParamCount;
+                    int argsToPass = Math.Min(callFunc.Arguments.Count, jsParamCount);
 
                     // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
                     ilEncoder.OpCode(ILOpCode.Ldnull);
@@ -1365,9 +1369,15 @@ internal sealed class LIRToILCompiler
                     EmitLoadTemp(callFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
 
                     // Load all arguments
-                    foreach (var arg in callFunc.Arguments)
+                    for (int i = 0; i < argsToPass; i++)
                     {
-                        EmitLoadTemp(arg, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTemp(callFunc.Arguments[i], ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    // Pad missing parameters with null (supports default parameter initialization).
+                    for (int i = argsToPass; i < jsParamCount; i++)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
                     }
 
                     // Invoke: callvirt Func<object[], [object, ...], object>::Invoke
@@ -2222,7 +2232,11 @@ internal sealed class LIRToILCompiler
 
                     var methodHandle = (MethodDefinitionHandle)token;
 
-                    int jsParamCount = callFunc.Arguments.Count;
+                    // IMPORTANT: use the callee's declared parameter count, not the call-site argument count.
+                    // The call-site may omit args (default parameters), but the delegate signature must match
+                    // the target method signature, otherwise the JIT can crash the process.
+                    int jsParamCount = callableId.JsParamCount;
+                    int argsToPass = Math.Min(callFunc.Arguments.Count, jsParamCount);
 
                     // Create delegate: ldnull, ldftn, newobj Func<object[], [object, ...], object>::.ctor
                     ilEncoder.OpCode(ILOpCode.Ldnull);
@@ -2235,9 +2249,15 @@ internal sealed class LIRToILCompiler
                     EmitLoadTemp(callFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
 
                     // Load all arguments
-                    foreach (var arg in callFunc.Arguments)
+                    for (int i = 0; i < argsToPass; i++)
                     {
-                        EmitLoadTemp(arg, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTemp(callFunc.Arguments[i], ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    // Pad missing parameters with null (supports default parameter initialization).
+                    for (int i = argsToPass; i < jsParamCount; i++)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
                     }
 
                     // Invoke: callvirt Func<object[], [object, ...], object>::Invoke
