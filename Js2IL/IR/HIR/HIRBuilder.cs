@@ -161,6 +161,12 @@ class HIRMethodBuilder
 
         switch (statement)
         {
+            case EmptyStatement:
+                // Empty statements can appear from stray semicolons (e.g., after function declarations).
+                // Treat as a no-op.
+                hirStatement = new HIRBlock([]);
+                return true;
+
             case VariableDeclaration declStmt:
                 // Variable declarations can have multiple declarators, handle them as a block
                 var declStatements = new List<HIRStatement>();
