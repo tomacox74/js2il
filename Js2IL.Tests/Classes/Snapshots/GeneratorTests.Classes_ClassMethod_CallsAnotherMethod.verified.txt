@@ -157,21 +157,33 @@
 	{
 		// Method begins at RVA 0x20dc
 		// Header size: 12
-		// Code size: 18 (0x12)
+		// Code size: 38 (0x26)
 		.maxstack 32
+		.locals init (
+			[0] object,
+			[1] object
+		)
 
 		IL_0000: ldarg.0
-		IL_0001: callvirt instance object Classes.Classes_ClassMethod_CallsAnotherMethod.Greeter::prefix()
-		IL_0006: ldarg.0
-		IL_0007: ldfld object Classes.Classes_ClassMethod_CallsAnotherMethod.Greeter::name
-		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0011: ret
+		IL_0001: ldstr "prefix"
+		IL_0006: ldc.i4.0
+		IL_0007: newarr [System.Runtime]System.Object
+		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0011: stloc.0
+		IL_0012: ldloc.0
+		IL_0013: ldarg.0
+		IL_0014: ldstr "name"
+		IL_0019: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0023: stloc.1
+		IL_0024: ldloc.1
+		IL_0025: ret
 	} // end of method Greeter::hello
 
 	.method public hidebysig 
 		instance object prefix () cil managed 
 	{
-		// Method begins at RVA 0x20fc
+		// Method begins at RVA 0x2110
 		// Header size: 12
 		// Code size: 6 (0x6)
 		.maxstack 32
@@ -185,11 +197,10 @@
 	{
 		// Method begins at RVA 0x20a4
 		// Header size: 12
-		// Code size: 43 (0x2b)
+		// Code size: 41 (0x29)
 		.maxstack 32
 		.locals init (
-			[0] object,
-			[1] object[]
+			[0] object
 		)
 
 		IL_0000: ldarg.0
@@ -198,19 +209,17 @@
 		IL_0007: newarr [System.Runtime]System.Object
 		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
 		IL_0011: stloc.0
-		IL_0012: ldc.i4.1
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: dup
-		IL_0019: ldc.i4.0
-		IL_001a: ldloc.0
-		IL_001b: stelem.ref
-		IL_001c: stloc.1
-		IL_001d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0022: ldloc.1
-		IL_0023: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0028: pop
-		IL_0029: ldarg.0
-		IL_002a: ret
+		IL_0012: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0017: ldc.i4.1
+		IL_0018: newarr [System.Runtime]System.Object
+		IL_001d: dup
+		IL_001e: ldc.i4.0
+		IL_001f: ldloc.0
+		IL_0020: stelem.ref
+		IL_0021: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0026: pop
+		IL_0027: ldarg.0
+		IL_0028: ret
 	} // end of method Greeter::logHello
 
 } // end of class Classes.Classes_ClassMethod_CallsAnotherMethod.Greeter
@@ -228,7 +237,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2110
+		// Method begins at RVA 0x2124
 		// Header size: 12
 		// Code size: 36 (0x24)
 		.maxstack 32
@@ -260,7 +269,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2140
+		// Method begins at RVA 0x2154
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

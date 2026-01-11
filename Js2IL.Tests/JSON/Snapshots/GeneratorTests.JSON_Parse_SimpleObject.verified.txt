@@ -27,7 +27,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Methods
-	.method public static 
+	.method public hidebysig static 
 		void Main (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
@@ -38,71 +38,69 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 137 (0x89)
+		// Code size: 122 (0x7a)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.JSON_Parse_SimpleObject,
-			[1] object
+			[1] object,
+			[2] string,
+			[3] object,
+			[4] object,
+			[5] object,
+			[6] bool,
+			[7] object
 		)
 
-		IL_0000: ldstr "{\"a\":1,\"b\":true,\"c\":null}"
-		IL_0005: call object [JavaScriptRuntime]JavaScriptRuntime.JSON::Parse(object)
-		IL_000a: stloc.1
-		IL_000b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0010: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0015: ldc.i4.4
-		IL_0016: newarr [System.Runtime]System.Object
-		IL_001b: dup
-		IL_001c: ldc.i4.0
-		IL_001d: ldloc.1
-		IL_001e: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
-		IL_0023: stelem.ref
-		IL_0024: dup
-		IL_0025: ldc.i4.1
-		IL_0026: ldloc.1
-		IL_0027: ldstr "a"
-		IL_002c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_0031: stelem.ref
-		IL_0032: dup
-		IL_0033: ldc.i4.2
-		IL_0034: ldloc.1
-		IL_0035: ldstr "b"
-		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_003f: stelem.ref
-		IL_0040: dup
-		IL_0041: ldc.i4.3
-		IL_0042: ldloc.1
-		IL_0043: ldstr "c"
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetProperty(object, string)
-		IL_004d: ldc.i4.0
-		IL_004e: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0053: pop
-		IL_0054: dup
-		IL_0055: ldnull
-		IL_0056: ceq
-		IL_0058: brtrue IL_007a
-
-		IL_005d: dup
-		IL_005e: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
-		IL_0063: ldnull
-		IL_0064: ceq
-		IL_0066: ldc.i4.0
-		IL_0067: ceq
-		IL_0069: brtrue IL_007a
-
-		IL_006e: pop
-		IL_006f: ldc.i4.0
-		IL_0070: box [System.Runtime]System.Boolean
-		IL_0075: br IL_0081
-
-		IL_007a: pop
-		IL_007b: ldc.i4.1
-		IL_007c: box [System.Runtime]System.Boolean
-
-		IL_0081: stelem.ref
-		IL_0082: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0087: pop
-		IL_0088: ret
+		IL_0000: newobj instance void Scopes.JSON_Parse_SimpleObject::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldstr "{\"a\":1,\"b\":true,\"c\":null}"
+		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.JSON::Parse(object)
+		IL_0010: stloc.1
+		IL_0011: ldloc.1
+		IL_0012: call string [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::Typeof(object)
+		IL_0017: stloc.2
+		IL_0018: ldloc.1
+		IL_0019: ldstr "a"
+		IL_001e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0023: stloc.3
+		IL_0024: ldloc.1
+		IL_0025: ldstr "b"
+		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_002f: stloc.s 4
+		IL_0031: ldloc.1
+		IL_0032: ldstr "c"
+		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_003c: stloc.s 5
+		IL_003e: ldloc.s 5
+		IL_0040: ldc.i4.0
+		IL_0041: box [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0046: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_004b: stloc.s 6
+		IL_004d: ldloc.s 6
+		IL_004f: box [System.Runtime]System.Boolean
+		IL_0054: stloc.s 7
+		IL_0056: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005b: ldc.i4.4
+		IL_005c: newarr [System.Runtime]System.Object
+		IL_0061: dup
+		IL_0062: ldc.i4.0
+		IL_0063: ldloc.2
+		IL_0064: stelem.ref
+		IL_0065: dup
+		IL_0066: ldc.i4.1
+		IL_0067: ldloc.3
+		IL_0068: stelem.ref
+		IL_0069: dup
+		IL_006a: ldc.i4.2
+		IL_006b: ldloc.s 4
+		IL_006d: stelem.ref
+		IL_006e: dup
+		IL_006f: ldc.i4.3
+		IL_0070: ldloc.s 7
+		IL_0072: stelem.ref
+		IL_0073: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0078: pop
+		IL_0079: ret
 	} // end of method JSON_Parse_SimpleObject::Main
 
 } // end of class Scripts.JSON_Parse_SimpleObject
@@ -114,7 +112,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20f1
+		// Method begins at RVA 0x20e2
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

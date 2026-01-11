@@ -404,13 +404,13 @@ internal sealed class JsMethodCompiler
 
         if (!HIRBuilder.TryParseMethod(node, scope, out var hirMethod))
         {
-            IR.IRPipelineMetrics.RecordFailure($"HIR parse failed for node type {node.Type}");
+            IR.IRPipelineMetrics.RecordFailureIfUnset($"HIR parse failed for node type {node.Type}");
             return false;
         }
 
         if (!HIRToLIRLowerer.TryLower(hirMethod!, scope, _scopeMetadataRegistry, callableKind, out var lirMethod))
         {
-            IR.IRPipelineMetrics.RecordFailure($"HIR->LIR lowering failed for scope '{scope.GetQualifiedName()}' (kind={scope.Kind}) node={node.Type}");
+            IR.IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR lowering failed for scope '{scope.GetQualifiedName()}' (kind={scope.Kind}) node={node.Type}");
             return false;
         }
 

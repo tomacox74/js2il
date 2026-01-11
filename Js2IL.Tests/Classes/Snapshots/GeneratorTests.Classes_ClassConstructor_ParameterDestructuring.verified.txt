@@ -276,33 +276,45 @@
 	.method public hidebysig 
 		instance object display () cil managed 
 	{
-		// Method begins at RVA 0x2324
+		// Method begins at RVA 0x234c
 		// Header size: 12
-		// Code size: 74 (0x4a)
+		// Code size: 87 (0x57)
 		.maxstack 32
+		.locals init (
+			[0] object
+		)
 
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_000a: ldc.i4.1
-		IL_000b: newarr [System.Runtime]System.Object
-		IL_0010: dup
-		IL_0011: ldc.i4.0
-		IL_0012: ldstr "Point: ("
-		IL_0017: ldarg.0
-		IL_0018: ldfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Point::x
-		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0022: ldstr ", "
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_002c: ldarg.0
-		IL_002d: ldfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Point::y
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0037: ldstr ")"
-		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0041: stelem.ref
-		IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0047: pop
-		IL_0048: ldarg.0
-		IL_0049: ret
+		IL_0000: ldstr "Point: ("
+		IL_0005: ldarg.0
+		IL_0006: ldstr "x"
+		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0015: stloc.0
+		IL_0016: ldloc.0
+		IL_0017: ldstr ", "
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0021: stloc.0
+		IL_0022: ldloc.0
+		IL_0023: ldarg.0
+		IL_0024: ldstr "y"
+		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0033: stloc.0
+		IL_0034: ldloc.0
+		IL_0035: ldstr ")"
+		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_003f: stloc.0
+		IL_0040: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0045: ldc.i4.1
+		IL_0046: newarr [System.Runtime]System.Object
+		IL_004b: dup
+		IL_004c: ldc.i4.0
+		IL_004d: ldloc.0
+		IL_004e: stelem.ref
+		IL_004f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0054: pop
+		IL_0055: ldarg.0
+		IL_0056: ret
 	} // end of method Point::display
 
 } // end of class Classes.Classes_ClassConstructor_ParameterDestructuring.Point
@@ -369,34 +381,47 @@
 	.method public hidebysig 
 		instance object greet () cil managed 
 	{
-		// Method begins at RVA 0x22cc
+		// Method begins at RVA 0x22e0
 		// Header size: 12
-		// Code size: 75 (0x4b)
+		// Code size: 93 (0x5d)
 		.maxstack 32
+		.locals init (
+			[0] object
+		)
 
-		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_000a: ldc.i4.1
-		IL_000b: newarr [System.Runtime]System.Object
-		IL_0010: dup
-		IL_0011: ldc.i4.0
-		IL_0012: ldarg.0
-		IL_0013: ldfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Person::name
-		IL_0018: ldstr " from "
-		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0022: ldarg.0
-		IL_0023: ldfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Person::city
-		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_002d: ldstr " is "
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0037: ldarg.0
-		IL_0038: ldfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Person::age
-		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0042: stelem.ref
-		IL_0043: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0048: pop
-		IL_0049: ldarg.0
-		IL_004a: ret
+		IL_0000: ldarg.0
+		IL_0001: ldstr "name"
+		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_000b: ldstr " from "
+		IL_0010: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0015: stloc.0
+		IL_0016: ldloc.0
+		IL_0017: ldarg.0
+		IL_0018: ldstr "city"
+		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0027: stloc.0
+		IL_0028: ldloc.0
+		IL_0029: ldstr " is "
+		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0033: stloc.0
+		IL_0034: ldloc.0
+		IL_0035: ldarg.0
+		IL_0036: ldstr "age"
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0045: stloc.0
+		IL_0046: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_004b: ldc.i4.1
+		IL_004c: newarr [System.Runtime]System.Object
+		IL_0051: dup
+		IL_0052: ldc.i4.0
+		IL_0053: ldloc.0
+		IL_0054: stelem.ref
+		IL_0055: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_005a: pop
+		IL_005b: ldarg.0
+		IL_005c: ret
 	} // end of method Person::greet
 
 } // end of class Classes.Classes_ClassConstructor_ParameterDestructuring.Person
@@ -503,40 +528,59 @@
 	{
 		// Method begins at RVA 0x2260
 		// Header size: 12
-		// Code size: 95 (0x5f)
+		// Code size: 113 (0x71)
 		.maxstack 32
+		.locals init (
+			[0] class [JavaScriptRuntime]JavaScriptRuntime.Console,
+			[1] bool,
+			[2] object,
+			[3] object
+		)
 
 		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_000a: ldc.i4.1
-		IL_000b: newarr [System.Runtime]System.Object
-		IL_0010: dup
-		IL_0011: ldc.i4.0
-		IL_0012: ldarg.0
-		IL_0013: ldfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Config::secure
-		IL_0018: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-		IL_001d: brtrue IL_0027
+		IL_0005: stloc.0
+		IL_0006: ldarg.0
+		IL_0007: ldstr "secure"
+		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0011: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0016: stloc.1
+		IL_0017: ldloc.1
+		IL_0018: brfalse IL_0028
 
-		IL_0022: br IL_0031
+		IL_001d: ldstr "https://"
+		IL_0022: stloc.3
+		IL_0023: br IL_002e
 
-		IL_0027: ldstr "https://"
-		IL_002c: br IL_0036
+		IL_0028: ldstr "http://"
+		IL_002d: stloc.3
 
-		IL_0031: ldstr "http://"
-
-		IL_0036: ldarg.0
-		IL_0037: ldfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Config::host
-		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_002e: ldloc.3
+		IL_002f: ldarg.0
+		IL_0030: ldstr "host"
+		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_003f: stloc.3
+		IL_0040: ldloc.3
 		IL_0041: ldstr ":"
 		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_004b: ldarg.0
-		IL_004c: ldfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Config::port
-		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0056: stelem.ref
-		IL_0057: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_005c: pop
-		IL_005d: ldarg.0
-		IL_005e: ret
+		IL_004b: stloc.3
+		IL_004c: ldloc.3
+		IL_004d: ldarg.0
+		IL_004e: ldstr "port"
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0058: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_005d: stloc.3
+		IL_005e: ldloc.0
+		IL_005f: ldc.i4.1
+		IL_0060: newarr [System.Runtime]System.Object
+		IL_0065: dup
+		IL_0066: ldc.i4.0
+		IL_0067: ldloc.3
+		IL_0068: stelem.ref
+		IL_0069: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_006e: pop
+		IL_006f: ldarg.0
+		IL_0070: ret
 	} // end of method Config::display
 
 } // end of class Classes.Classes_ClassConstructor_ParameterDestructuring.Config
@@ -554,7 +598,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x237c
+		// Method begins at RVA 0x23b0
 		// Header size: 12
 		// Code size: 511 (0x1ff)
 		.maxstack 32
@@ -714,7 +758,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2587
+		// Method begins at RVA 0x25bb
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
