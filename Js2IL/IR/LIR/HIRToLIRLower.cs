@@ -53,43 +53,107 @@ public sealed class HIRToLIRLowerer
     // Track whether parameter initialization was successful (affects TryLower result)
     private bool _parameterInitSucceeded = true;
 
-    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, CallableKind callableKind)
+    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, CallableKind callableKind, IReadOnlyList<HIRPattern> parameters)
     {
         _scope = scope;
         _environmentLayout = environmentLayout;
         _environmentLayoutBuilder = environmentLayoutBuilder;
         _callableKind = callableKind;
-        InitializeParameters();
+        InitializeParameters(parameters);
     }
 
-    private void InitializeParameters()
+    private void InitializeParameters(IReadOnlyList<HIRPattern> parameters)
     {
-        if (_scope == null) return;
-
-        // Build ordered parameter list from scope.Parameters
-        // Parameters are simple identifiers or AssignmentPatterns, so scope.Parameters contains the names in order
-        int paramIndex = 0;
-        foreach (var paramName in _scope.Parameters)
+        // Build ordered parameter names from HIR. (No AST peeking in lowering.)
+        for (int i = 0; i < parameters.Count; i++)
         {
-            if (_scope.Bindings.TryGetValue(paramName, out var binding))
+            var p = parameters[i];
+
+            var ilParamName = p switch
             {
-                _parameterIndexMap[binding] = paramIndex;
-                _methodBodyIR.Parameters.Add(paramName);
-            }
-            paramIndex++;
+                HIRIdentifierPattern id => id.Symbol.Name,
+                HIRDefaultPattern def when def.Target is HIRIdentifierPattern id => id.Symbol.Name,
+                _ => $"$p{i}"
+            };
+            _methodBodyIR.Parameters.Add(ilParamName);
         }
 
-        // Emit default parameter initializers for parameters with defaults
-        // If any fail, mark the initialization as failed (will cause TryLower to return false)
-        _parameterInitSucceeded = EmitDefaultParameterInitializers();
+        // If we don't have scope info (e.g., legacy callers), we can't build binding maps or emit
+        // default/destructuring initializers. Parameter names are still populated above.
+        if (_scope == null) return;
+
+        // Map identifier parameters to their 0-based JS parameter index.
+        // Destructuring parameters bind their properties, not the parameter object itself.
+        for (int i = 0; i < parameters.Count; i++)
+        {
+            var p = parameters[i];
+            BindingInfo? binding = p switch
+            {
+                HIRIdentifierPattern id => id.Symbol.BindingInfo,
+                HIRDefaultPattern def when def.Target is HIRIdentifierPattern id => id.Symbol.BindingInfo,
+                _ => null
+            };
+
+            if (binding != null)
+            {
+                _parameterIndexMap[binding] = i;
+            }
+        }
+
+        // Emit default parameter initializers for identifier parameters with defaults.
+        _parameterInitSucceeded = EmitDefaultParameterInitializers(parameters);
+        if (!_parameterInitSucceeded)
+        {
+            return;
+        }
+
+        // Emit parameter destructuring initializers (object/array patterns).
+        if (!EmitDestructuredParameterInitializers(parameters))
+        {
+            _parameterInitSucceeded = false;
+            return;
+        }
 
         // For captured identifier parameters, initialize the corresponding leaf-scope fields.
         // This must happen after default parameter initialization so the final value is stored.
         // Without this, nested functions reading captured parameters will observe null.
-        if (_parameterInitSucceeded)
+        EmitCapturedParameterFieldInitializers();
+    }
+
+    private bool EmitDestructuredParameterInitializers(IReadOnlyList<HIRPattern> parameters)
+    {
+        if (_scope == null)
         {
-            EmitCapturedParameterFieldInitializers();
+            return false;
         }
+
+        for (int i = 0; i < parameters.Count; i++)
+        {
+            var p = parameters[i];
+
+            // Only handle direct Object/Array patterns for now.
+            // (Param-level defaults like ({a} = {}) are not yet supported by the IR pipeline gate.)
+            if (p is not HIRObjectPattern && p is not HIRArrayPattern)
+            {
+                if (p is HIRDefaultPattern def && (def.Target is HIRObjectPattern or HIRArrayPattern))
+                {
+                    return false;
+                }
+                continue;
+            }
+
+            // Load the incoming parameter value and destructure into declared bindings.
+            var paramTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadParameter(i, paramTemp));
+            DefineTempStorage(paramTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+            if (!TryLowerDestructuringPattern(p, paramTemp, isDeclaration: true))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void EmitCapturedParameterFieldInitializers()
@@ -115,49 +179,24 @@ public sealed class HIRToLIRLowerer
     }
 
     /// <summary>
-    /// Extracts the AST parameter list from the scope's AST node (if it's a function).
-    /// Returns null if the scope doesn't have accessible parameters.
-    /// </summary>
-    private NodeList<Node>? GetAstParameters()
-    {
-        if (_scope?.AstNode == null) return null;
-
-        return _scope.AstNode switch
-        {
-            FunctionDeclaration funcDecl => funcDecl.Params,
-            FunctionExpression funcExpr => funcExpr.Params,
-            ArrowFunctionExpression arrowFunc => arrowFunc.Params,
-            _ => null
-        };
-    }
-
-    /// <summary>
     /// Emits LIR instructions to initialize default parameter values.
     /// For each parameter with a default (AssignmentPattern), emits:
     /// - Load parameter, check if null
     /// - If null, evaluate default expression and store back to parameter
     /// </summary>
     /// <returns>True if all default parameters were successfully lowered, false if any failed (method should fall back to legacy)</returns>
-    private bool EmitDefaultParameterInitializers()
+    private bool EmitDefaultParameterInitializers(IReadOnlyList<HIRPattern> parameters)
     {
-        var astParams = GetAstParameters();
-        if (astParams == null) return true; // No parameters, success
-
-        var parameters = astParams.Value;
         for (int i = 0; i < parameters.Count; i++)
         {
-            if (parameters[i] is not AssignmentPattern ap) continue;
-            if (ap.Left is not Identifier paramId) continue;
-
-            // Get the binding for this parameter
-            if (!_scope!.Bindings.TryGetValue(paramId.Name, out var binding)) continue;
-            if (!_parameterIndexMap.TryGetValue(binding, out var paramIndex)) continue;
-
-            // Convert AST default expression to HIR first to check if we can lower it
-            var hirDefaultExpr = ConvertAstToHIRExpression(ap.Right);
-            if (hirDefaultExpr == null)
+            if (parameters[i] is not HIRDefaultPattern def)
             {
-                // Can't convert this default expression - entire method should fall back to legacy
+                continue;
+            }
+
+            // Only support top-level default parameters for identifier params.
+            if (def.Target is not HIRIdentifierPattern)
+            {
                 return false;
             }
 
@@ -169,14 +208,14 @@ public sealed class HIRToLIRLowerer
 
             // Load parameter value
             var paramTemp = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRLoadParameter(paramIndex, paramTemp));
+            _methodBodyIR.Instructions.Add(new LIRLoadParameter(i, paramTemp));
             DefineTempStorage(paramTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
             // Branch if not null (brtrue)
             _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(paramTemp, notNullLabel));
 
             // Evaluate default value expression
-            if (!TryLowerExpression(hirDefaultExpr, out var defaultValueTemp))
+            if (!TryLowerExpression(def.Default, out var defaultValueTemp))
             {
                 // If we can't lower the default expression, roll back all instructions
                 // and signal that the entire method should fall back to legacy.
@@ -194,46 +233,13 @@ public sealed class HIRToLIRLowerer
             defaultValueTemp = EnsureObject(defaultValueTemp);
 
             // Store back to parameter
-            _methodBodyIR.Instructions.Add(new LIRStoreParameter(paramIndex, defaultValueTemp));
+            _methodBodyIR.Instructions.Add(new LIRStoreParameter(i, defaultValueTemp));
 
             // Not-null label
             _methodBodyIR.Instructions.Add(new LIRLabel(notNullLabel));
         }
 
         return true; // All default parameters successfully lowered
-    }
-
-    /// <summary>
-    /// Converts an AST Expression to an HIR Expression for lowering.
-    /// This is a simplified conversion for default parameter expressions.
-    /// </summary>
-    private HIRExpression? ConvertAstToHIRExpression(Expression expr)
-    {
-        return expr switch
-        {
-            NumericLiteral lit => new HIRLiteralExpression(JavascriptType.Number, lit.Value),
-            StringLiteral lit => new HIRLiteralExpression(JavascriptType.String, lit.Value),
-            BooleanLiteral lit => new HIRLiteralExpression(JavascriptType.Boolean, lit.Value),
-            Literal lit when lit.Value is null => new HIRLiteralExpression(JavascriptType.Null, null),
-            Identifier id => ConvertIdentifierToHIRExpression(id),
-            BinaryExpression binExpr => ConvertBinaryExpressionToHIR(binExpr),
-            _ => null
-        };
-    }
-
-    private HIRExpression? ConvertIdentifierToHIRExpression(Identifier id)
-    {
-        if (_scope == null) return null;
-        var symbol = _scope.FindSymbol(id.Name);
-        return new HIRVariableExpression(symbol);
-    }
-
-    private HIRExpression? ConvertBinaryExpressionToHIR(BinaryExpression binExpr)
-    {
-        var left = ConvertAstToHIRExpression(binExpr.Left);
-        var right = ConvertAstToHIRExpression(binExpr.Right);
-        if (left == null || right == null) return null;
-        return new HIRBinaryExpression(binExpr.Operator, left, right);
     }
 
     public static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind callableKind, out MethodBodyIR? lirMethod)
@@ -258,7 +264,7 @@ public sealed class HIRToLIRLowerer
             }
         }
 
-        var lowerer = new HIRToLIRLowerer(scope, environmentLayout, environmentLayoutBuilder, callableKind);
+        var lowerer = new HIRToLIRLowerer(scope, environmentLayout, environmentLayoutBuilder, callableKind, hirMethod.Parameters);
 
         // If default parameter initialization failed, fall back to legacy emitter
         if (!lowerer._parameterInitSucceeded)
@@ -2233,6 +2239,35 @@ public sealed class HIRToLIRLowerer
         if (callExpr.Callee is HIRVariableExpression funcVarExpr)
         {
             var symbol = funcVarExpr.Name;
+
+            // Case 1.0: Intrinsic global function call (e.g., setTimeout(...)).
+            // These are exposed as public static methods on JavaScriptRuntime.GlobalThis.
+            // We lower them directly rather than trying to load them as a value.
+            if (symbol.Kind == BindingKind.Global)
+            {
+                var globalFunctionName = symbol.Name;
+                var gvType = typeof(JavaScriptRuntime.GlobalThis);
+                var gvMethod = gvType.GetMethod(
+                    globalFunctionName,
+                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.IgnoreCase);
+
+                if (gvMethod != null)
+                {
+                    var argTemps = new List<TempVariable>();
+                    foreach (var arg in callExpr.Arguments)
+                    {
+                        if (!TryLowerExpression(arg, out var argTemp))
+                        {
+                            return false;
+                        }
+                        argTemps.Add(EnsureObject(argTemp));
+                    }
+
+                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicGlobalFunction(globalFunctionName, argTemps, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    return true;
+                }
+            }
             
             // If the callee is not a direct function binding (e.g., it's a local/const holding a closure),
             // invoke via runtime dispatch (Closure.InvokeWithArgs).
@@ -2865,15 +2900,17 @@ public sealed class HIRToLIRLowerer
         // Handle subtraction
         if (binaryExpr.Operator == Acornima.Operator.Subtraction)
         {
-            // Number - Number - uses native IL sub instruction
-            if (leftType == typeof(double) && rightType == typeof(double))
+            // JS '-' operator always follows numeric coercion (ToNumber) semantics.
+            // Support both the fast path (double - double) and the general path via EnsureNumber.
+            if (leftType != typeof(double) || rightType != typeof(double))
             {
-                _methodBodyIR.Instructions.Add(new LIRSubNumber(leftTempVar, rightTempVar, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                return true;
+                leftTempVar = EnsureNumber(leftTempVar);
+                rightTempVar = EnsureNumber(rightTempVar);
             }
-            // TODO: Add LIRSubDynamic for unknown types if needed
-            return false;
+
+            _methodBodyIR.Instructions.Add(new LIRSubNumber(leftTempVar, rightTempVar, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            return true;
         }
 
         // Handle division
@@ -4407,6 +4444,17 @@ public sealed class HIRToLIRLowerer
         var leftType = GetTempStorage(currentValue).ClrType;
         var rightType = GetTempStorage(rhsValue).ClrType;
 
+        // Most compound operators follow JS numeric semantics (ToNumber / ToInt32 / ToUint32 depending on op).
+        // In IR lowering, index/property reads come back as object, so we must support numeric coercion here.
+        bool EnsureNumericOperands()
+        {
+            currentValue = EnsureNumber(currentValue);
+            rhsValue = EnsureNumber(rhsValue);
+            leftType = typeof(double);
+            rightType = typeof(double);
+            return true;
+        }
+
         switch (op)
         {
             case Acornima.Operator.AdditionAssignment:
@@ -4432,6 +4480,10 @@ public sealed class HIRToLIRLowerer
                 return true;
 
             case Acornima.Operator.SubtractionAssignment:
+                if (leftType != typeof(double) || rightType != typeof(double))
+                {
+                    EnsureNumericOperands();
+                }
                 if (leftType == typeof(double) && rightType == typeof(double))
                 {
                     _methodBodyIR.Instructions.Add(new LIRSubNumber(currentValue, rhsValue, result));
@@ -4456,6 +4508,10 @@ public sealed class HIRToLIRLowerer
                 return true;
 
             case Acornima.Operator.DivisionAssignment:
+                if (leftType != typeof(double) || rightType != typeof(double))
+                {
+                    EnsureNumericOperands();
+                }
                 if (leftType == typeof(double) && rightType == typeof(double))
                 {
                     _methodBodyIR.Instructions.Add(new LIRDivNumber(currentValue, rhsValue, result));
@@ -4466,6 +4522,10 @@ public sealed class HIRToLIRLowerer
                 return false;
 
             case Acornima.Operator.RemainderAssignment:
+                if (leftType != typeof(double) || rightType != typeof(double))
+                {
+                    EnsureNumericOperands();
+                }
                 if (leftType == typeof(double) && rightType == typeof(double))
                 {
                     _methodBodyIR.Instructions.Add(new LIRModNumber(currentValue, rhsValue, result));
@@ -4476,6 +4536,10 @@ public sealed class HIRToLIRLowerer
                 return false;
 
             case Acornima.Operator.ExponentiationAssignment:
+                if (leftType != typeof(double) || rightType != typeof(double))
+                {
+                    EnsureNumericOperands();
+                }
                 if (leftType == typeof(double) && rightType == typeof(double))
                 {
                     _methodBodyIR.Instructions.Add(new LIRExpNumber(currentValue, rhsValue, result));
@@ -4486,6 +4550,10 @@ public sealed class HIRToLIRLowerer
                 return false;
 
             case Acornima.Operator.BitwiseAndAssignment:
+                if (leftType != typeof(double) || rightType != typeof(double))
+                {
+                    EnsureNumericOperands();
+                }
                 if (leftType == typeof(double) && rightType == typeof(double))
                 {
                     _methodBodyIR.Instructions.Add(new LIRBitwiseAnd(currentValue, rhsValue, result));
@@ -4496,6 +4564,10 @@ public sealed class HIRToLIRLowerer
                 return false;
 
             case Acornima.Operator.BitwiseOrAssignment:
+                if (leftType != typeof(double) || rightType != typeof(double))
+                {
+                    EnsureNumericOperands();
+                }
                 if (leftType == typeof(double) && rightType == typeof(double))
                 {
                     _methodBodyIR.Instructions.Add(new LIRBitwiseOr(currentValue, rhsValue, result));
@@ -4506,6 +4578,10 @@ public sealed class HIRToLIRLowerer
                 return false;
 
             case Acornima.Operator.BitwiseXorAssignment:
+                if (leftType != typeof(double) || rightType != typeof(double))
+                {
+                    EnsureNumericOperands();
+                }
                 if (leftType == typeof(double) && rightType == typeof(double))
                 {
                     _methodBodyIR.Instructions.Add(new LIRBitwiseXor(currentValue, rhsValue, result));
@@ -4516,6 +4592,10 @@ public sealed class HIRToLIRLowerer
                 return false;
 
             case Acornima.Operator.LeftShiftAssignment:
+                if (leftType != typeof(double) || rightType != typeof(double))
+                {
+                    EnsureNumericOperands();
+                }
                 if (leftType == typeof(double) && rightType == typeof(double))
                 {
                     _methodBodyIR.Instructions.Add(new LIRLeftShift(currentValue, rhsValue, result));
@@ -4526,6 +4606,10 @@ public sealed class HIRToLIRLowerer
                 return false;
 
             case Acornima.Operator.RightShiftAssignment:
+                if (leftType != typeof(double) || rightType != typeof(double))
+                {
+                    EnsureNumericOperands();
+                }
                 if (leftType == typeof(double) && rightType == typeof(double))
                 {
                     _methodBodyIR.Instructions.Add(new LIRRightShift(currentValue, rhsValue, result));
@@ -4536,6 +4620,10 @@ public sealed class HIRToLIRLowerer
                 return false;
 
             case Acornima.Operator.UnsignedRightShiftAssignment:
+                if (leftType != typeof(double) || rightType != typeof(double))
+                {
+                    EnsureNumericOperands();
+                }
                 if (leftType == typeof(double) && rightType == typeof(double))
                 {
                     _methodBodyIR.Instructions.Add(new LIRUnsignedRightShift(currentValue, rhsValue, result));
@@ -4666,7 +4754,16 @@ public sealed class HIRToLIRLowerer
             return false;
         }
         
-        // Check that all params are simple identifiers
-        return parameters.Value.All(param => param is Acornima.Ast.Identifier);
+        // Allow identifier params, simple defaults, and destructuring patterns.
+        // Disallow top-level RestElement (...args) for now.
+        return parameters.Value.All(param => param switch
+        {
+            Acornima.Ast.Identifier => true,
+            Acornima.Ast.AssignmentPattern ap => ap.Left is Acornima.Ast.Identifier,
+            Acornima.Ast.ObjectPattern => true,
+            Acornima.Ast.ArrayPattern => true,
+            Acornima.Ast.RestElement => false,
+            _ => false
+        });
     }
 }

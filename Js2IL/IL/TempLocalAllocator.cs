@@ -220,6 +220,13 @@ internal static class TempLocalAllocator
                 yield return call.IntrinsicObject;
                 yield return call.ArgumentsArray;
                 break;
+
+            case LIRCallIntrinsicGlobalFunction callGlobal:
+                foreach (var arg in callGlobal.Arguments)
+                {
+                    yield return arg;
+                }
+                break;
             case LIRCallInstanceMethod callInstance:
                 yield return callInstance.Receiver;
                 foreach (var arg in callInstance.Arguments)
@@ -514,6 +521,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRCallIntrinsic call:
                 defined = call.Result;
+                return true;
+            case LIRCallIntrinsicGlobalFunction callGlobal:
+                defined = callGlobal.Result;
                 return true;
             case LIRCallInstanceMethod callInstance:
                 defined = callInstance.Result;

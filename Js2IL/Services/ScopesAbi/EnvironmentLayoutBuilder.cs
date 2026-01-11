@@ -45,8 +45,9 @@ public class EnvironmentLayoutBuilder
         CallableKind kind,
         ScopesLayoutKind layoutKind = ScopesLayoutKind.GeneralizedScopesLayout)
     {
-        // Count JS parameters (excluding destructured since those become fields)
-        int jsParameterCount = scope.Parameters.Count - scope.DestructuredParameters.Count;
+        // Count JS parameters from the AST parameter list (includes destructuring patterns).
+        // This must be deterministic and reflect the actual callable signature.
+        int jsParameterCount = GetJsParameterCount(scope);
 
         // Determine if this callable needs parent scopes
         bool needsParentScopes = scope.ReferencesParentScopeVariables;
@@ -218,13 +219,65 @@ public class EnvironmentLayoutBuilder
 
     private int GetParameterIndex(Scope scope, string name)
     {
-        int index = 0;
-        foreach (var param in scope.Parameters.Where(p => !scope.DestructuredParameters.Contains(p)))
+        // Parameters are stored as a HashSet on Scope; do NOT enumerate that for indices.
+        // Use the AST parameter list ordering.
+        var parameters = GetOrderedParameterNames(scope);
+        for (int i = 0; i < parameters.Count; i++)
         {
-            if (param == name)
-                return index;
-            index++;
+            if (parameters[i] == name)
+            {
+                return i;
+            }
         }
+
         return -1;
+    }
+
+    private static int GetJsParameterCount(Scope scope)
+    {
+        return scope.AstNode switch
+        {
+            Acornima.Ast.FunctionDeclaration fd => fd.Params.Count,
+            Acornima.Ast.FunctionExpression fe => fe.Params.Count,
+            Acornima.Ast.ArrowFunctionExpression af => af.Params.Count,
+            _ => scope.Parameters.Count - scope.DestructuredParameters.Count
+        };
+    }
+
+    private static List<string> GetOrderedParameterNames(Scope scope)
+    {
+        // Only identifiers and identifier-with-default parameters map to IL arguments.
+        // Destructured bindings (e.g. {a, b}) are excluded and initialized from the incoming object.
+        var result = new List<string>();
+
+        Acornima.Ast.NodeList<Acornima.Ast.Node>? paramList = scope.AstNode switch
+        {
+            Acornima.Ast.FunctionDeclaration fd => fd.Params,
+            Acornima.Ast.FunctionExpression fe => fe.Params,
+            Acornima.Ast.ArrowFunctionExpression af => af.Params,
+            _ => null
+        };
+
+        if (!paramList.HasValue)
+        {
+            // Best-effort fallback; stable ordering isn't guaranteed here.
+            result.AddRange(scope.Parameters.Where(p => !scope.DestructuredParameters.Contains(p)));
+            return result;
+        }
+
+        foreach (var node in paramList.Value)
+        {
+            switch (node)
+            {
+                case Acornima.Ast.Identifier id:
+                    result.Add(id.Name);
+                    break;
+                case Acornima.Ast.AssignmentPattern ap when ap.Left is Acornima.Ast.Identifier apId:
+                    result.Add(apId.Name);
+                    break;
+            }
+        }
+
+        return result;
     }
 }

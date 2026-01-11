@@ -105,9 +105,11 @@ public sealed class CallableDiscovery
             _discovered.Add(callableId);
             
             // Recurse into nested functions
-            var scopeName = funcName != null 
-                ? $"{parentScopeName}/{funcName}" 
-                : $"{parentScopeName}/FunctionExpression_{location}";
+            // IMPORTANT: scope name must match SymbolTableBuilder naming (0-based column) so nested
+            // DeclaringScopeName values line up with Scope.GetQualifiedName() used by the IR pipeline.
+            var scopeName = funcName != null
+                ? $"{parentScopeName}/{funcName}"
+                : $"{parentScopeName}/FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}";
             DiscoverFromScope(functionScope, scopeName);
         }
         else if (astNode is ArrowFunctionExpression arrowExpr)
@@ -136,9 +138,10 @@ public sealed class CallableDiscovery
             _discovered.Add(callableId);
             
             // Recurse into nested functions (arrows can contain nested arrows/functions)
-            var scopeName = assignmentTarget != null 
-                ? $"{parentScopeName}/ArrowFunction_{assignmentTarget}" 
-                : $"{parentScopeName}/ArrowFunction_{location}";
+            // IMPORTANT: scope name must match SymbolTableBuilder naming (0-based column).
+            var scopeName = assignmentTarget != null
+                ? $"{parentScopeName}/ArrowFunction_{assignmentTarget}"
+                : $"{parentScopeName}/ArrowFunction_L{arrowExpr.Location.Start.Line}C{arrowExpr.Location.Start.Column}";
             DiscoverFromScope(functionScope, scopeName);
         }
     }

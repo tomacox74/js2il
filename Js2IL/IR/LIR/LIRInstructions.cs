@@ -34,6 +34,14 @@ public record LIRGetIntrinsicGlobal(string Name, TempVariable Result) : LIRInstr
 public record LIRCallIntrinsic(TempVariable IntrinsicObject, string Name, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Calls a global intrinsic function exposed as a public static method on <see cref="JavaScriptRuntime.GlobalThis"/>
+/// (e.g., setTimeout, clearTimeout, setImmediate).
+/// Arguments are JS arguments (boxed as object). The IL emitter handles ParamArray (params object[])
+/// expansion to match the reflected method signature.
+/// </summary>
+public record LIRCallIntrinsicGlobalFunction(string FunctionName, IReadOnlyList<TempVariable> Arguments, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Calls a known CLR instance method on a known receiver type.
 /// The receiver temp is expected to already be of <paramref name="ReceiverClrType"/>.
 /// Arguments are JS arguments (boxed as object) and may be packed by the IL emitter

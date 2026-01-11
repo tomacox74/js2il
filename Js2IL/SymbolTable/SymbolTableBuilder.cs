@@ -640,6 +640,12 @@ namespace Js2IL.SymbolTables
                                     // Mark as parameter so TypeGenerator creates fields for them
                                     arrowScope.Parameters.Add(bindId.Name);
                                 }
+
+                                // Track that this is a destructured parameter (needs field/local storage; not an IL argument)
+                                if (bindId != null && !arrowScope.DestructuredParameters.Contains(bindId.Name))
+                                {
+                                    arrowScope.DestructuredParameters.Add(bindId.Name);
+                                }
                             }
                             // Parameter list will still receive a synthetic name during codegen; no binding needed for it.
                         }
