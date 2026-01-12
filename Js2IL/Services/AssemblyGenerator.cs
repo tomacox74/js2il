@@ -135,61 +135,8 @@ namespace Js2IL.Services
                 return methodDefinitionHandle;
             }
 
-            // fallback to the legacy path - generate the main method body using legacy emitter
-            var programTypeBuilder = new TypeBuilder(_metadataBuilder, "Scripts", moduleName);
-
-            // Create the method signature for the Main method with parameters
-            var sigBuilder = new BlobBuilder();
-            new BlobEncoder(sigBuilder)
-                .MethodSignature()
-                .Parameters(paramCount, returnType => returnType.Void(), parameters =>
-                {
-                    for (int i = 0; i < paramCount; i++)
-                    {
-                        switch (i)
-                        {
-                            case 0:
-                                parameters.AddParameter().Type().Object();
-                                break;
-                            case 1:
-                                var requireDelegateReference = _typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.CommonJS.RequireDelegate)); 
-                                parameters.AddParameter().Type().Type(requireDelegateReference, false);
-                                break;
-                            case 2:
-                                parameters.AddParameter().Type().Object();
-                                break;
-                            case 3:
-                            case 4:
-                                parameters.AddParameter().Type().String();
-                                break;
-                        }
-                    }
-                });
-            var methodSig = this._metadataBuilder.GetOrAddBlob(sigBuilder);
-            var bodyOffset = mainGenerator.GenerateMethodBody(module.Ast);
-
-            methodDefinitionHandle = programTypeBuilder.AddMethodDefinition(
-                MethodAttributes.Static | MethodAttributes.Public,
-                "Main",
-                methodSig,
-                bodyOffset);
-
-            // Add parameter names to metadata (sequence starts at 1 for first parameter)
-            int sequence = 1;
-            foreach (var paramName in parameterNames)
-            {
-                _metadataBuilder.AddParameter(
-                    ParameterAttributes.None,
-                    _metadataBuilder.GetOrAddString(paramName),
-                    sequence++);
-            }
-
-            // Define the Script main type via TypeBuilder
-            var programTypeDef = programTypeBuilder.AddTypeDefinition(
-                TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
-                _bclReferences.ObjectType);
-
-            return methodDefinitionHandle;
+            throw new NotSupportedException(
+                $"IR pipeline could not compile module '{moduleName}' main method.");
         }
 
         private void createEntryPoint(MethodBodyStreamEncoder methodBodyStream)
@@ -204,12 +151,13 @@ namespace Js2IL.Services
                 hasScopesParam: false, 
                 returnsVoid: true);
 
-            // create a method generator to emit IL for the entry point
-            // variables is unused
-            var variables = new Variables(_variableRegistry!, "EntryPoint");
-            var entryPointGenerator = new ILMethodGenerator(_serviceProvider, variables, _bclReferences, _metadataBuilder, methodBodyStream, new ClassRegistry(), new FunctionRegistry());
-            var ilEncoder = entryPointGenerator.IL;
-            var runtime = entryPointGenerator.Runtime;
+            // Emit IL for the entry point method directly (no legacy method generator dependency).
+            var ilBuilder = new BlobBuilder();
+            var ilEncoder = new InstructionEncoder(ilBuilder);
+            var runtime = new Runtime(
+                ilEncoder,
+                _serviceProvider.GetRequiredService<TypeReferenceRegistry>(),
+                _serviceProvider.GetRequiredService<MemberReferenceRegistry>());
 
 
             // emit IL for the entry point method
@@ -226,7 +174,7 @@ namespace Js2IL.Services
             ilEncoder.Token(_bclReferences.ModuleMainDelegate_Ctor_Ref);
 
             ilEncoder.OpCode(ILOpCode.Callvirt);
-            var engineExecuteRef = entryPointGenerator.Runtime.GetInstanceMethodRef(
+            var engineExecuteRef = runtime.GetInstanceMethodRef(
                 typeof(JavaScriptRuntime.Engine),
                 "Execute",
                 0,
@@ -236,7 +184,7 @@ namespace Js2IL.Services
             ilEncoder.OpCode(ILOpCode.Ret);
 
             var entryPointOffset = methodBodyStream.AddMethodBody(
-                ilEncoder, 
+                ilEncoder,
                 maxStack: 3,
                 localVariablesSignature: default,
                 attributes: MethodBodyAttributes.None);

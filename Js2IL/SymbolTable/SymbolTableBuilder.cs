@@ -421,7 +421,7 @@ namespace Js2IL.SymbolTables
                         break;
                     }
                     _visitedFunctionExpressions.Add(funcExpr);
-                    // Naming must align with ILExpressionGenerator: FunctionExpression_<assignmentTarget> OR FunctionExpression_L{line}C{col}
+                    // Naming must align with function-expression naming: FunctionExpression_<assignmentTarget> OR FunctionExpression_L{line}C{col}
                     var funcExprName = (funcExpr.Id as Identifier)?.Name ??
                         (!string.IsNullOrEmpty(_currentAssignmentTarget)
                             ? $"FunctionExpression_{_currentAssignmentTarget}"
@@ -597,7 +597,7 @@ namespace Js2IL.SymbolTables
                         break;
                     }
                     _visitedArrowFunctions.Add(arrowFunc);
-                    // Match ILExpressionGenerator naming: ArrowFunction_<assignmentTarget> OR ArrowFunction_L{line}C{col}
+                    // Match arrow-function naming: ArrowFunction_<assignmentTarget> OR ArrowFunction_L{line}C{col}
                     var arrowName = !string.IsNullOrEmpty(_currentAssignmentTarget)
                         ? $"ArrowFunction_{_currentAssignmentTarget}"
                         : $"ArrowFunction_L{arrowFunc.Location.Start.Line}C{arrowFunc.Location.Start.Column}";

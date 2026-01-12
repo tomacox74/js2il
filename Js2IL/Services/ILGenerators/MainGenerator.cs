@@ -15,15 +15,13 @@ namespace Js2IL.Services.ILGenerators
     /// </summary>
     internal class MainGenerator
     {
-        private ILMethodGenerator _ilGenerator;
+        private readonly MetadataBuilder _metadataBuilder;
         private JavaScriptFunctionGenerator _functionGenerator;
         private ClassesGenerator _classesGenerator;
         private MethodBodyStreamEncoder _methodBodyStreamEncoder;
         private SymbolTable _symbolTable;
 
         private readonly Variables _rootVariables;
-        private readonly ILogger _logger;
-        private readonly bool _verbose;
 
         private BaseClassLibraryReferences _bclReferences;
 
@@ -43,13 +41,10 @@ namespace Js2IL.Services.ILGenerators
             
             _serviceProvider = serviceProvider;
             _bclReferences = bclReferences;
+            _metadataBuilder = metadataBuilder;
             _methodBodyStreamEncoder = methodBodyStreamEncoder;
-            var compilerOptions = serviceProvider.GetRequiredService<CompilerOptions>();
-            _verbose = compilerOptions.Verbose;
-            _logger = serviceProvider.GetRequiredService<ILogger>();
             _classRegistry = serviceProvider.GetRequiredService<ClassRegistry>();
             _functionGenerator = new JavaScriptFunctionGenerator(serviceProvider, variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, symbolTable);
-            _ilGenerator = new ILMethodGenerator(serviceProvider, variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, _functionGenerator.FunctionRegistry, symbolTable: symbolTable);
             _classesGenerator = new ClassesGenerator(serviceProvider,metadataBuilder, bclReferences, _classRegistry, variables);            
             _twoPhaseCoordinator = serviceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
         }
@@ -96,11 +91,8 @@ namespace Js2IL.Services.ILGenerators
         /// Creates the global scope instance.
         /// The instance is stored in a local variable that can be accessed by variable operations.
         /// </summary>
-        private void CreateGlobalScopeInstance(Variables variables)
-        {
-            // Delegate to shared helper; safe no-op if no registry or scope type is available
-            ScopeInstanceEmitter.EmitCreateLeafScopeInstance(variables, _ilGenerator.IL, _ilGenerator.MetadataBuilder);
-        }
+        private void CreateGlobalScopeInstance(Variables variables) =>
+            throw new NotSupportedException("Legacy main-method emission is no longer supported. Use JsMethodCompiler (IR pipeline) instead.");
 
         /// <summary>
         /// Declares classes and functions and runs the two-phase compilation coordinator.
@@ -113,7 +105,7 @@ namespace Js2IL.Services.ILGenerators
             // Two-phase pipeline is always enabled: coordinator owns ordering and compilation.
             _twoPhaseCoordinator.RunPlannedTwoPhaseCompilation(
                 symbolTable,
-                _ilGenerator.MetadataBuilder,
+                _metadataBuilder,
                 _serviceProvider,
                 _rootVariables,
                 _bclReferences,
@@ -123,7 +115,7 @@ namespace Js2IL.Services.ILGenerators
                 compileAnonymousCallablesPhase2: callables =>
                     _twoPhaseCoordinator.CompilePhase2AnonymousCallables(
                         callables,
-                        _ilGenerator.MetadataBuilder,
+                        _metadataBuilder,
                         _serviceProvider,
                         _rootVariables,
                         _bclReferences,
@@ -144,31 +136,8 @@ namespace Js2IL.Services.ILGenerators
         /// </summary>
         public int GenerateMethodBody(Acornima.Ast.Program ast)
         {
-            var metadataBuilder = _ilGenerator.MetadataBuilder;
-            var variables = _ilGenerator.Variables;
-
-            // Step 1: Only create the global scope instance if it's actually needed
-            // (i.e., variables are captured or classes/functions need parent scope access)
-            if (ShouldCreateGlobalScopeInstance())
-            {
-                CreateGlobalScopeInstance(variables);
-            }
-
-            // Initialize top-level function variables directly (no dispatch table indirection)
-            _ilGenerator.InitializeLocalFunctionVariables(ast.Body.OfType<Acornima.Ast.FunctionDeclaration>());
-
-            _ilGenerator.GenerateStatementsForBody(variables.GetLeafScopeName(), false, ast.Body);
-
-            _ilGenerator.IL.OpCode(ILOpCode.Ret);
-
-            // local variables
-            var (localSignature, methodBodyAttributes) = MethodBuilder.CreateLocalVariableSignature(metadataBuilder, variables, this._bclReferences);
-
-            return _methodBodyStreamEncoder.AddMethodBody(
-                _ilGenerator.IL,
-                maxStack: 32,
-                localVariablesSignature: localSignature,
-                attributes: methodBodyAttributes);
+            throw new NotSupportedException(
+                "Legacy main-method emission is no longer supported. The module main method must be compiled via JsMethodCompiler (IR pipeline)." );
         }
 
         /// <summary>
@@ -177,8 +146,8 @@ namespace Js2IL.Services.ILGenerators
         /// </summary>
         public int GenerateMethod(Acornima.Ast.Program ast)
         {
-            DeclareClassesAndFunctions(_symbolTable);
-            return GenerateMethodBody(ast);
+            throw new NotSupportedException(
+                "Legacy main-method emission is no longer supported. The module main method must be compiled via JsMethodCompiler (IR pipeline)." );
         }
     }
 }
