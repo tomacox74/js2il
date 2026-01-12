@@ -212,6 +212,56 @@ namespace JavaScriptRuntime
             }
         }
 
+        public static object GetItem(object obj, double index)
+        {
+            // Coerce index to int (JS ToInt32-ish truncation)
+            int intIndex = (int)index;
+
+            // String: return character at index as a 1-length string
+            if (obj is string str)
+            {
+                if (intIndex < 0 || intIndex >= str.Length)
+                {
+                    return null!; // undefined
+                }
+                return str[intIndex].ToString();
+            }
+
+            // ExpandoObject (object literal): numeric index coerces to property name string per JS ToPropertyKey
+            if (obj is System.Dynamic.ExpandoObject exp)
+            {
+                var dict = (IDictionary<string, object?>)exp;
+                var propName = DotNet2JSConversions.ToString(index);
+                if (dict.TryGetValue(propName, out var value))
+                {
+                    return value!;
+                }
+                return null!; // closest to JS 'undefined' (we model as null)
+            }
+
+            if (obj is Array array)
+            {
+                // Bounds check: return undefined (null) when OOB to mimic JS behavior
+                if (intIndex < 0 || intIndex >= array.Count)
+                {
+                    return null!; // undefined
+                }
+                return array[intIndex]!;
+            }
+            else if (obj is Int32Array i32)
+            {
+                // Reads outside bounds return 0 per typed array semantics
+                return i32[intIndex];
+            }
+            else
+            {
+                // Generic object index access: treat index as a property key (JS ToPropertyKey -> string)
+                // and fall back to dynamic property lookup (public fields/properties and ExpandoObject).
+                var propName = DotNet2JSConversions.ToString(index);
+                return GetProperty(obj, propName)!;
+            }
+        }
+
         /// <summary>
         /// Sets an item on an object by index/key.
         /// Used by codegen for computed member assignment and property assignment.

@@ -1260,7 +1260,7 @@ public sealed class HIRToLIRLowerer
 
                     // target = iter[idx]
                     var itemTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRGetItem(EnsureObject(iterTemp), EnsureObject(idxTemp), itemTemp));
+                    lirInstructions.Add(new LIRGetItem(EnsureObject(iterTemp), idxTemp, itemTemp));
                     DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     if (!TryStoreToBinding(forOfStmt.Target.BindingInfo, itemTemp, out _))
                     {
@@ -1342,7 +1342,7 @@ public sealed class HIRToLIRLowerer
                     lirInstructions.Add(new LIRBranchIfFalse(condTemp, loopEndLabel));
 
                     var keyTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRGetItem(EnsureObject(keysTemp), EnsureObject(idxTemp), keyTemp));
+                    lirInstructions.Add(new LIRGetItem(EnsureObject(keysTemp), idxTemp, keyTemp));
                     DefineTempStorage(keyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     if (!TryStoreToBinding(forInStmt.Target.BindingInfo, keyTemp, out _))
                     {
@@ -3732,7 +3732,7 @@ public sealed class HIRToLIRLowerer
 
                         var indexTemp = EmitConstNumber(i);
                         var getResult = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRGetItem(sourceValue, EnsureObject(indexTemp), getResult));
+                        _methodBodyIR.Instructions.Add(new LIRGetItem(sourceValue, indexTemp, getResult));
                         DefineTempStorage(getResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                         if (!TryLowerDestructuringPattern(elementPattern, getResult, isDeclaration))
@@ -3791,7 +3791,7 @@ public sealed class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(condTemp, endLabel));
 
         var itemTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRGetItem(sourceObject, EnsureObject(idxTemp), itemTemp));
+        _methodBodyIR.Instructions.Add(new LIRGetItem(sourceObject, idxTemp, itemTemp));
         DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         _methodBodyIR.Instructions.Add(new LIRArrayAdd(restArray, EnsureObject(itemTemp)));
 
@@ -3990,12 +3990,22 @@ public sealed class HIRToLIRLowerer
         }
         else
         {
-            boxedIndex = EnsureObject(indexTemp);
-            hasBoxedIndex = true;
-
             // Compound assignment: obj[index] += expr
+            var indexStorageForGet = GetTempStorage(indexTemp);
+            TempVariable indexForGet;
+            if (indexStorageForGet.Kind == ValueStorageKind.UnboxedValue && indexStorageForGet.ClrType == typeof(double))
+            {
+                indexForGet = indexTemp;
+            }
+            else
+            {
+                boxedIndex = EnsureObject(indexTemp);
+                hasBoxedIndex = true;
+                indexForGet = boxedIndex;
+            }
+
             var current = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRGetItem(objTemp, boxedIndex, current));
+            _methodBodyIR.Instructions.Add(new LIRGetItem(objTemp, indexForGet, current));
             DefineTempStorage(current, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
             if (!TryLowerExpression(assignExpr.Value, out var rhs))
@@ -4928,8 +4938,17 @@ public sealed class HIRToLIRLowerer
         }
 
         var boxedObject = EnsureObject(objectTemp);
-        var boxedIndex = EnsureObject(indexTemp);
-        _methodBodyIR.Instructions.Add(new LIRGetItem(boxedObject, boxedIndex, resultTempVar));
+        var indexStorage = GetTempStorage(indexTemp);
+        TempVariable indexForGet;
+        if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double))
+        {
+            indexForGet = indexTemp;
+        }
+        else
+        {
+            indexForGet = EnsureObject(indexTemp);
+        }
+        _methodBodyIR.Instructions.Add(new LIRGetItem(boxedObject, indexForGet, resultTempVar));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
         return true;
