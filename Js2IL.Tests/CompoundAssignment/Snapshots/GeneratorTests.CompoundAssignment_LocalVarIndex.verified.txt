@@ -122,73 +122,64 @@
 	{
 		// Method begins at RVA 0x20a4
 		// Header size: 12
-		// Code size: 154 (0x9a)
+		// Code size: 138 (0x8a)
 		.maxstack 32
 		.locals init (
 			[0] float64,
 			[1] float64,
-			[2] object,
-			[3] float64
+			[2] float64
 		)
 
 		IL_0000: ldc.r8 2
 		IL_0009: stloc.0
 		IL_000a: ldc.r8 8
 		IL_0013: stloc.1
-		IL_0014: ldarg.0
-		IL_0015: ldstr "arr"
-		IL_001a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_001f: stloc.2
-		IL_0020: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0025: ldc.i4.1
-		IL_0026: newarr [System.Runtime]System.Object
-		IL_002b: dup
-		IL_002c: ldc.i4.0
-		IL_002d: ldloc.2
-		IL_002e: ldloc.0
-		IL_002f: box [System.Runtime]System.Double
-		IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0039: stelem.ref
-		IL_003a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_003f: pop
-		IL_0040: ldarg.0
-		IL_0041: ldstr "arr"
-		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_004b: stloc.2
-		IL_004c: ldloc.2
-		IL_004d: ldloc.0
-		IL_004e: box [System.Runtime]System.Double
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0058: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_005d: conv.i4
-		IL_005e: ldloc.1
-		IL_005f: conv.i4
-		IL_0060: or
-		IL_0061: conv.r8
-		IL_0062: stloc.3
-		IL_0063: ldloc.2
-		IL_0064: ldloc.0
-		IL_0065: ldloc.3
-		IL_0066: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, float64, float64)
-		IL_006b: pop
-		IL_006c: ldarg.0
-		IL_006d: ldstr "arr"
-		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0077: stloc.2
-		IL_0078: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_007d: ldc.i4.1
-		IL_007e: newarr [System.Runtime]System.Object
-		IL_0083: dup
-		IL_0084: ldc.i4.0
-		IL_0085: ldloc.2
-		IL_0086: ldloc.0
-		IL_0087: box [System.Runtime]System.Double
-		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0091: stelem.ref
-		IL_0092: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0097: pop
-		IL_0098: ldarg.0
-		IL_0099: ret
+		IL_0014: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0019: ldc.i4.1
+		IL_001a: newarr [System.Runtime]System.Object
+		IL_001f: dup
+		IL_0020: ldc.i4.0
+		IL_0021: ldarg.0
+		IL_0022: ldfld object Classes.CompoundAssignment_LocalVarIndex.TestClass::arr
+		IL_0027: ldloc.0
+		IL_0028: box [System.Runtime]System.Double
+		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0032: stelem.ref
+		IL_0033: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0038: pop
+		IL_0039: ldarg.0
+		IL_003a: ldfld object Classes.CompoundAssignment_LocalVarIndex.TestClass::arr
+		IL_003f: ldloc.0
+		IL_0040: box [System.Runtime]System.Double
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_004a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_004f: conv.i4
+		IL_0050: ldloc.1
+		IL_0051: conv.i4
+		IL_0052: or
+		IL_0053: conv.r8
+		IL_0054: stloc.2
+		IL_0055: ldarg.0
+		IL_0056: ldfld object Classes.CompoundAssignment_LocalVarIndex.TestClass::arr
+		IL_005b: ldloc.0
+		IL_005c: ldloc.2
+		IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, float64, float64)
+		IL_0062: pop
+		IL_0063: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0068: ldc.i4.1
+		IL_0069: newarr [System.Runtime]System.Object
+		IL_006e: dup
+		IL_006f: ldc.i4.0
+		IL_0070: ldarg.0
+		IL_0071: ldfld object Classes.CompoundAssignment_LocalVarIndex.TestClass::arr
+		IL_0076: ldloc.0
+		IL_0077: box [System.Runtime]System.Double
+		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0081: stelem.ref
+		IL_0082: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0087: pop
+		IL_0088: ldarg.0
+		IL_0089: ret
 	} // end of method TestClass::test
 
 } // end of class Classes.CompoundAssignment_LocalVarIndex.TestClass
@@ -206,7 +197,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x214c
+		// Method begins at RVA 0x213c
 		// Header size: 12
 		// Code size: 31 (0x1f)
 		.maxstack 32
@@ -237,7 +228,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2177
+		// Method begins at RVA 0x2167
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

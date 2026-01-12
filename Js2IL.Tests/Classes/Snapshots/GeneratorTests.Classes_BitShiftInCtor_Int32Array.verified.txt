@@ -162,13 +162,12 @@
 	{
 		// Method begins at RVA 0x20c8
 		// Header size: 12
-		// Code size: 78 (0x4e)
+		// Code size: 71 (0x47)
 		.maxstack 32
 		.locals init (
 			[0] float64,
 			[1] float64,
-			[2] object,
-			[3] float64
+			[2] float64
 		)
 
 		IL_0000: ldarg.1
@@ -187,24 +186,21 @@
 		IL_0025: and
 		IL_0026: conv.r8
 		IL_0027: stloc.1
-		IL_0028: ldarg.0
-		IL_0029: ldstr "buf"
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0033: stloc.2
-		IL_0034: ldc.r8 1
-		IL_003d: conv.i4
-		IL_003e: ldloc.1
-		IL_003f: conv.i4
-		IL_0040: shl
-		IL_0041: conv.r8
-		IL_0042: stloc.3
-		IL_0043: ldloc.2
-		IL_0044: ldloc.0
-		IL_0045: ldloc.3
-		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, float64, float64)
-		IL_004b: pop
-		IL_004c: ldarg.0
-		IL_004d: ret
+		IL_0028: ldc.r8 1
+		IL_0031: conv.i4
+		IL_0032: ldloc.1
+		IL_0033: conv.i4
+		IL_0034: shl
+		IL_0035: conv.r8
+		IL_0036: stloc.2
+		IL_0037: ldarg.0
+		IL_0038: ldfld object Classes.Classes_BitShiftInCtor_Int32Array.BitBag::buf
+		IL_003d: ldloc.0
+		IL_003e: ldloc.2
+		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, float64, float64)
+		IL_0044: pop
+		IL_0045: ldarg.0
+		IL_0046: ret
 	} // end of method BitBag::set
 
 	.method public hidebysig 
@@ -212,9 +208,9 @@
 			object i
 		) cil managed 
 	{
-		// Method begins at RVA 0x2124
+		// Method begins at RVA 0x211c
 		// Header size: 12
-		// Code size: 107 (0x6b)
+		// Code size: 100 (0x64)
 		.maxstack 32
 		.locals init (
 			[0] float64,
@@ -240,37 +236,34 @@
 		IL_0025: and
 		IL_0026: conv.r8
 		IL_0027: stloc.1
-		IL_0028: ldarg.0
-		IL_0029: ldstr "buf"
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0033: stloc.2
-		IL_0034: ldloc.0
-		IL_0035: box [System.Runtime]System.Double
-		IL_003a: stloc.3
-		IL_003b: ldloc.2
-		IL_003c: ldloc.3
-		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0042: stloc.2
-		IL_0043: ldc.r8 1
-		IL_004c: conv.i4
-		IL_004d: ldloc.1
-		IL_004e: conv.i4
-		IL_004f: shl
-		IL_0050: conv.r8
-		IL_0051: stloc.s 4
-		IL_0053: ldloc.2
-		IL_0054: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0059: conv.i4
+		IL_0028: ldloc.0
+		IL_0029: box [System.Runtime]System.Double
+		IL_002e: stloc.2
+		IL_002f: ldarg.0
+		IL_0030: ldfld object Classes.Classes_BitShiftInCtor_Int32Array.BitBag::buf
+		IL_0035: ldloc.2
+		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_003b: stloc.3
+		IL_003c: ldc.r8 1
+		IL_0045: conv.i4
+		IL_0046: ldloc.1
+		IL_0047: conv.i4
+		IL_0048: shl
+		IL_0049: conv.r8
+		IL_004a: stloc.s 4
+		IL_004c: ldloc.3
+		IL_004d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0052: conv.i4
+		IL_0053: ldloc.s 4
+		IL_0055: conv.i4
+		IL_0056: and
+		IL_0057: conv.r8
+		IL_0058: stloc.s 4
 		IL_005a: ldloc.s 4
-		IL_005c: conv.i4
-		IL_005d: and
-		IL_005e: conv.r8
-		IL_005f: stloc.s 4
-		IL_0061: ldloc.s 4
-		IL_0063: box [System.Runtime]System.Double
-		IL_0068: stloc.3
-		IL_0069: ldloc.3
-		IL_006a: ret
+		IL_005c: box [System.Runtime]System.Double
+		IL_0061: stloc.2
+		IL_0062: ldloc.2
+		IL_0063: ret
 	} // end of method BitBag::test
 
 } // end of class Classes.Classes_BitShiftInCtor_Int32Array.BitBag
@@ -288,7 +281,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x219c
+		// Method begins at RVA 0x218c
 		// Header size: 12
 		// Code size: 118 (0x76)
 		.maxstack 32
@@ -347,7 +340,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x221e
+		// Method begins at RVA 0x220e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
