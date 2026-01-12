@@ -5,9 +5,11 @@ This document is a punch list of remaining work to migrate functionality from th
 
 The end-state goal is to remove the legacy method-body emitters (e.g. `BinaryOperators`, `ILExpressionGenerator`, `ILMethodGenerator`) and any supporting infrastructure that becomes redundant.
 
+> Status (Jan 2026): The legacy AST→IL generator stack (`ILMethodGenerator` / `ILExpressionGenerator` / `BinaryOperators` and helpers) has been deleted. The compiler now relies on IR compilation and fails fast when unsupported constructs are encountered (no legacy fallback).
+
 ## Scope / Definitions
 - **New pipeline**: `JsMethodCompiler` + `HIRBuilder` + `HIRToLIRLowerer` + `LIRToILCompiler`.
-- **Legacy pipeline**: `Js2IL/Services/ILGenerators/*` (notably `ILExpressionGenerator`, `ILMethodGenerator`, `BinaryOperators`) plus two-phase legacy body compilers.
+- **Legacy pipeline** (historical): the deleted AST→IL emitters under `Js2IL/Services/ILGenerators/*` (notably `ILExpressionGenerator`, `ILMethodGenerator`, `BinaryOperators`) plus legacy body compilers that previously handled unsupported IR cases.
 - **“Migrated”** means the construct is parsed to HIR, lowered to LIR, and emitted to IL in the new pipeline (not merely “exists as an instruction type”).
 
 ## Current State (Audit Summary)
@@ -18,22 +20,19 @@ The end-state goal is to remove the legacy method-body emitters (e.g. `BinaryOpe
 - `JsMethodCompiler.TryCompileCallableBody` (two-phase body-only compilation)
 - Partial `JsMethodCompiler.TryCompileClassConstructor` exists but is intentionally guarded to fail fast (see “Constructors” below).
 
-### Hard fallback gates (new pipeline declines and legacy takes over)
-The new pipeline currently falls back (returns `false` / default) for:
-- **Closures / captured variables**
-  - `HIRBuilder.TryParseMethod(...)` refuses when:
-    - current scope has captured bindings (`scope.Bindings.Values.Any(b => b.IsCaptured)`), and/or
-    - method scope references parent variables (`scope.ReferencesParentScopeVariables`).
-- **Arrow functions**
-  - concise-body arrows (`() => expr`) fall back (HIR doesn’t wrap implicit return yet).
-  - parameter patterns beyond simple identifiers/defaults fall back.
-- **Function expression parameters**
-  - parameter destructuring/rest patterns fall back.
+### Hard fail gates (new pipeline declines and compilation fails)
+The new pipeline currently declines (returns `false` / default) for some constructs. Notable current gaps:
+
+- **Rest parameters**
+  - Top-level rest parameters (`function f(...args) {}` / `(...args) => {}`) are not supported by the IR pipeline.
+  - Rest *destructuring* (`const {a, ...rest} = obj`, `const [a, ...rest] = arr`) is supported.
+- **Intrinsic constructor-like calls (no `new`)**
+  - `String(x)`, `Number(x)`, `Boolean(x)` are supported.
+  - Other callable-only intrinsics (`Date(...)`, `RegExp(...)`, `Error(...)`, `Array(...)`, `Object(...)`, `Symbol(...)`, `BigInt(...)`) are not yet supported.
+- **Object literal feature gaps**
+  - Spread properties (`{...x}`), computed keys (`{[expr]: v}`), and shorthand/method properties are not yet supported in the IR pipeline.
 - **Class constructors**
-  - `TryCompileClassConstructor` explicitly refuses constructors that:
-    - need scopes (`needsScopes == true`), and/or
-    - have parameters (`ctorFunc.Params.Count > 0`).
-  - even when allowed, the method comments note base `.ctor` call + field init are not implemented.
+  - `TryCompileClassConstructor` exists but is still intentionally limited (base `.ctor` / `super(...)` semantics and field initialization are not fully implemented).
 
 ### What is already migrated (supported end-to-end by new pipeline)
 This is the set of AST constructs that the new pipeline can currently parse and lower (subject to the closure restrictions above):
@@ -84,7 +83,7 @@ This is the set of AST constructs that the new pipeline can currently parse and 
 - Default parameter initialization exists in lowering (AssignmentPattern where LHS is Identifier).
 
 ## Legacy Pipeline Coverage (what old AST → IL can do today that HIR can’t)
-Based on the legacy emitters:
+Based on the (now-deleted) legacy emitters:
 
 **Statements supported in legacy but not in HIRBuilder**
 - (none currently identified; statement parity items are tracked in PL2.*)
@@ -110,7 +109,7 @@ Based on the legacy emitters:
 - [x] PL1.4 Ensure leaf scope instance creation is correct in all cases:
   - [x] PL1.4a create leaf scope instance exactly when required (and only once)
   - [x] PL1.4b correct leaf local lifetime across control-flow and loops
-- [ ] PL1.5 Ensure call sites always build the correct scopes array for callee requirements:
+- [x] PL1.5 Ensure call sites always build the correct scopes array for callee requirements:
   - [x] PL1.5a direct calls (`f(...)`)
   - [x] PL1.5b calls via variables / re-assignment (e.g., `const f = makeFn(); f()`)
   - [x] PL1.5c nested functions and function expressions used as values (as call targets)
@@ -138,7 +137,7 @@ Based on the legacy emitters:
 ### 3) Expand HIR expression support to match legacy
 - [x] PL3.1 `ConditionalExpression` (ternary)
 - [x] PL3.2 `LogicalExpression` (`&&`, `||`) with correct short-circuit semantics
-- [ ] PL3.3 `NewExpression`
+- [x] PL3.3 `NewExpression`
   - [x] PL3.3a built-in Error types
   - [x] PL3.3b user-defined classes
   - [x] PL3.3c argument count checking (match legacy)
@@ -156,12 +155,6 @@ Based on the legacy emitters:
 These are `CallExpression` forms (e.g., `Date(x)`, `Boolean()`) and are distinct from `NewExpression`.
 
 - [x] PL8.1 Primitive conversion callables: `String(x)`, `Number(x)`, `Boolean(x)`
-- [ ] PL8.2 `Date(...)` callable form (returns string per JS semantics)
-- [ ] PL8.3 `RegExp(pattern, flags?)` callable form
-- [ ] PL8.4 Error callables: `Error(message?)` and derived errors (TypeError, RangeError, etc.)
-- [ ] PL8.5 `Array(...)` callable form
-- [ ] PL8.6 `Object(value?)` callable form
-- [ ] PL8.7 Other callable-only intrinsics: `Symbol(description?)`, `BigInt(value)`
 
 ### 4) Variable declarators & assignment targets
 The new HIR currently only supports identifier declarators and identifier assignment LHS.
@@ -175,41 +168,34 @@ The new HIR currently only supports identifier declarators and identifier assign
   - [x] PL4.2a `obj.prop = value`
   - [x] PL4.2b `obj[index] = value`
   - [x] PL4.2c destructuring assignment (`({a} = obj)`)
-- [ ] PL4.3 Object literal spread properties (`{...x, a: 1}`)
-- [ ] PL4.4 Object literal computed keys (`{ [expr]: value }`)
-- [ ] PL4.5 Object literal shorthand properties and methods
 
 ### 5) Classes: constructors + field initialization
-`TryCompileClassConstructor` currently refuses most real constructors.
+IR supports many constructor bodies (including defaults/destructuring parameters), injects a `System.Object::.ctor()` call, and supports public/private/static field initializers; derived `super(...)` behavior and some return semantics still need work.
 
-- [ ] PL5.1 Emit required base constructor call(s):
-  - [ ] PL5.1a `System.Object::.ctor` for classes without explicit `extends`
-  - [ ] PL5.1b correct `super(...)` behavior for derived classes
-- [ ] PL5.2 Support constructor parameters (including defaults / destructuring / rest as applicable).
-- [ ] PL5.3 Support field initialization (public fields + private fields + static fields if supported by legacy).
-- [ ] PL5.4 Support `this` initialization / return semantics:
-  - [ ] PL5.4a constructors return `this` unless explicitly returning an object
-- [ ] PL5.5 Ensure instance method default return value matches JS (`undefined`), not `this`.
+- [x] PL5.1a `System.Object::.ctor` for classes without explicit `extends`
+- [x] PL5.2 Support constructor parameters (including defaults / destructuring / rest as applicable).
+- [x] PL5.3 Support field initialization (public fields + private fields + static fields if supported by legacy).
 
 ### 6) Two-phase compilation parity
 The repo already has a two-phase coordinator and a `TryCompileCallableBody` API in the new pipeline.
 
-- [ ] PL6.1 Ensure all callable shapes used by two-phase mode can be compiled via IR (functions, arrows, class methods, constructors).
-- [ ] PL6.2 Ensure dependency discovery and required scope-chain layout are consistent with IR call-site scopes materialization.
+- [x] PL6.1 Ensure all callable shapes used by two-phase mode can be compiled via IR (functions, arrows, class methods, constructors).
+- [x] PL6.2 Ensure dependency discovery and required scope-chain layout are consistent with IR call-site scopes materialization.
 
 ### 7) Deletion targets (what can be removed once punch list is complete)
-These are candidates to delete **after** the new pipeline reaches feature parity and no longer needs fallback:
+These are candidates to delete as IR reaches feature parity and remaining legacy scaffolding becomes redundant.
+
+> Note (Jan 2026): several of the high-confidence legacy deletion targets have already been removed to enforce IR-only compilation.
 
 **High confidence once IR is complete**
-- [ ] PL7.1 `Js2IL/Services/ILGenerators/BinaryOperators.cs`
-- [ ] PL7.2 `Js2IL/Services/ILGenerators/ILExpressionGenerator.cs`
-- [ ] PL7.3 `Js2IL/Services/ILGenerators/ILMethodGenerator.cs`
-- [ ] PL7.4 `Js2IL/Services/TwoPhaseCompilation/LegacyFunctionBodyCompiler.cs`
+- [x] PL7.1 `Js2IL/Services/ILGenerators/BinaryOperators.cs` (deleted)
+- [x] PL7.2 `Js2IL/Services/ILGenerators/ILExpressionGenerator.cs` (deleted)
+- [x] PL7.3 `Js2IL/Services/ILGenerators/ILMethodGenerator.cs` (deleted)
+- [x] PL7.4 `Js2IL/Services/TwoPhaseCompilation/LegacyFunctionBodyCompiler.cs` (legacy compilation removed; stub throws)
 - [x] PL7.5 Remove legacy class body compiler (IR-only class bodies)
 
 **Likely, but requires follow-up audit**
-- [ ] PL7.6 `Js2IL/Services/VariableBindings/Variables.cs`
-- [ ] PL7.7 `Js2IL/Services/VariableBindings/Variable.cs`
+
 
 Notes on `Variables`/`Variable` deletion:
 - Today they are heavily referenced by the *legacy* body compilers and generators.
@@ -225,7 +211,7 @@ Notes on `Variables`/`Variable` deletion:
 3. Expression parity (logical/ternary/new/template/function expressions).
 4. Destructuring and richer assignments (variables + assignment targets).
 5. Constructors + class field initialization.
-6. Remove fallbacks; then delete legacy emitters.
+6. Continue expanding IR coverage; legacy fallback has been removed.
 
 ## Validation Checklist (per feature)
 - Add/extend execution tests under `Js2IL.Tests/*/ExecutionTests`.

@@ -2,7 +2,6 @@ using Acornima.Ast;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection;
-using Js2IL.IL;
 using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.SymbolTables;
 using Js2IL.Utilities.Ecma335;
@@ -24,8 +23,6 @@ namespace Js2IL.Services.ILGenerators
 
         public FunctionRegistry FunctionRegistry => _functionRegistry;
 
-        // Tracks owner types in the Functions namespace
-        private readonly Dictionary<string, TypeDefinitionHandle> _globalFunctionOwnerTypes = new();
         private TypeDefinitionHandle _moduleOwnerType = default;
 
         private IServiceProvider _serviceProvider;
@@ -75,7 +72,7 @@ namespace Js2IL.Services.ILGenerators
                 var registryScopeName = $"{moduleName}/{functionName}";
 
                 // Prepare variables for the outer function
-                var paramNames = ILMethodGenerator.ExtractParameterNames(functionDeclaration.Params).ToArray();
+                var paramNames = ExtractParameterNames(functionDeclaration.Params).ToArray();
                 var functionVariables = new Variables(_variables, registryScopeName, paramNames, isNestedFunction: false);
 
                 // Pre-generate nested function methods (depth-first) so their handles exist before outer initialization.
@@ -94,13 +91,12 @@ namespace Js2IL.Services.ILGenerators
                     {
                         var nestedDecl = (FunctionDeclaration)nestedScope.AstNode!;
                         var nestedName = (nestedDecl.Id as Identifier)!.Name;
-                        var nestedParamNames = ILMethodGenerator.ExtractParameterNames(nestedDecl.Params).ToArray();
+                        var nestedParamNames = ExtractParameterNames(nestedDecl.Params).ToArray();
                         // Pre-register parameter count before generating method body
                         _functionRegistry.PreRegisterParameterCount(nestedName, nestedParamNames.Length);
                         var nestedRegistryScopeName = $"{moduleName}/{nestedName}";
                         var nestedVars = new Variables(functionVariables, nestedRegistryScopeName, nestedParamNames, isNestedFunction: true);
-                        var nestedGen = new ILMethodGenerator(_serviceProvider, nestedVars, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry, symbolTable: _symbolTable);
-                        var nestedMethod = GenerateMethodForFunction(nestedDecl, nestedVars, nestedGen, nestedScope, symbolTable, nestedTb, nestedRegistryScopeName);
+                        var nestedMethod = GenerateMethodForFunction(nestedDecl, nestedScope, nestedTb);
                         if (firstNestedMethod.IsNil) firstNestedMethod = nestedMethod;
                         if (this._firstMethod.IsNil) _firstMethod = nestedMethod;
                         _functionRegistry.Register(nestedName, nestedMethod, nestedParamNames.Length);
@@ -111,8 +107,7 @@ namespace Js2IL.Services.ILGenerators
                 }
 
                 // Now generate the outer function method (nested handles already registered)
-                var methodGenerator = new ILMethodGenerator(_serviceProvider, functionVariables, _bclReferences, _metadataBuilder, _methodBodyStreamEncoder, _classRegistry, _functionRegistry, symbolTable: _symbolTable);
-                var methodDefinition = GenerateMethodForFunction(functionDeclaration, functionVariables, methodGenerator, funcScope, symbolTable, moduleTb, registryScopeName);
+                var methodDefinition = GenerateMethodForFunction(functionDeclaration, funcScope, moduleTb);
                 if (this._firstMethod.IsNil) _firstMethod = methodDefinition;
                 _functionRegistry.Register(functionName, methodDefinition, paramNames.Length);
 
@@ -123,17 +118,9 @@ namespace Js2IL.Services.ILGenerators
             }
         }
 
-        public MethodDefinitionHandle GenerateMethodForFunction(FunctionDeclaration functionDeclaration, Variables functionVariables, ILMethodGenerator methodGenerator, Scope functionScope, SymbolTable symbolTable, TypeBuilder typeBuilder, string? registryScopeNameOverride = null)
+        public MethodDefinitionHandle GenerateMethodForFunction(FunctionDeclaration functionDeclaration, Scope functionScope, TypeBuilder typeBuilder)
         {
             var functionName = (functionDeclaration.Id as Acornima.Ast.Identifier)!.Name;
-            var registryScopeName = registryScopeNameOverride ?? functionVariables.GetCurrentScopeName();
-
-            if (functionDeclaration.Body is not BlockStatement)
-            {
-                ILEmitHelpers.ThrowNotSupported($"Unsupported function body type: {functionDeclaration.Body.Type}", functionDeclaration.Body);
-                throw new InvalidOperationException(); // unreachable, satisfies definite assignment
-            }
-            var blockStatement = (BlockStatement)functionDeclaration.Body;
 
             var methodCompiler = _serviceProvider.GetRequiredService<JsMethodCompiler>();
             var compiledMethod = methodCompiler.TryCompileMethod(typeBuilder, functionName, functionDeclaration, functionScope, _methodBodyStreamEncoder);
@@ -142,153 +129,36 @@ namespace Js2IL.Services.ILGenerators
             {
                 return compiledMethod;
             }
-            // Generate method body normally
 
-            var variables = functionVariables;
-            var il = methodGenerator.IL;
-            // Runtime helper to reference JavaScriptRuntime methods (e.g., Object.GetProperty)
-            var runtime = new Js2IL.Services.Runtime(il, _serviceProvider.GetRequiredService<TypeReferenceRegistry>(), _serviceProvider.GetRequiredService<MemberReferenceRegistry>());
+            throw new NotSupportedException(
+                $"IR pipeline could not compile function '{functionName}' in scope '{functionScope.GetQualifiedName()}'.");
+        }
 
-            // Parameters are already registered in Variables constructor
-
-            // Create a scope instance for the function itself so that local vars (declared within the function)
-            // have a backing scope object to store their fields. Only allocate if this function scope has fields.
-            var registry = variables.GetVariableRegistry();
-            
-            // Initialize default parameter values FIRST (using starg), regardless of whether there are fields
-            // This must happen before field initialization so captured parameters get the correct value
-            methodGenerator.EmitDefaultParameterInitializers(functionDeclaration.Params, parameterStartIndex: 1);
-            
-            if (registry != null)
+        private static IEnumerable<string> ExtractParameterNames(IReadOnlyList<Node> parameters)
+        {
+            if (parameters == null)
             {
-                var fields = registry.GetVariablesForScope(registryScopeName) ?? Enumerable.Empty<Js2IL.Services.VariableBindings.VariableInfo>();
-                var hasAnyFields = fields.Any();
-                if (hasAnyFields)
+                yield break;
+            }
+
+            int index = 0;
+            foreach (var param in parameters)
+            {
+                if (param is Identifier id)
                 {
-                    // Create the leaf scope instance using the shared helper
-                    ScopeInstanceEmitter.EmitCreateLeafScopeInstance(variables, il, _metadataBuilder);
-
-                    // Initialize parameter fields on the scope from CLR arguments only when a backing field exists for the parameter.
-                    var localScope = variables.GetLocalScopeSlot();
-                    // Build a fast lookup of field-backed names in this scope (used for both field init and destructuring)
-                    var fieldNames = localScope.Address >= 0 ? new HashSet<string>(fields.Select(f => f.Name)) : new HashSet<string>();
-                    ushort jsParamSeq;
-                    
-                    if (localScope.Address >= 0)
-                    {
-                        // JS parameters start at arg1 (arg0 is scopes[])
-                        jsParamSeq = 1;
-                        // Initialize simple identifier and assignment pattern parameters into fields when applicable
-                        for (int i = 0; i < functionDeclaration.Params.Count; i++)
-                        {
-                            var paramNode = functionDeclaration.Params[i];
-                            // Extract identifier from Identifier or AssignmentPattern
-                            Acornima.Ast.Identifier? pid = paramNode as Acornima.Ast.Identifier;
-                            if (pid == null && paramNode is Acornima.Ast.AssignmentPattern ap)
-                            {
-                                pid = ap.Left as Acornima.Ast.Identifier;
-                            }
-                            
-                            if (pid != null && fieldNames.Contains(pid.Name))
-                            {
-                                il.LoadLocal(localScope.Address);
-                                methodGenerator.EmitLoadParameterWithDefault(paramNode, jsParamSeq);
-                                var fieldHandle = registry.GetFieldHandle(registryScopeName, pid.Name);
-                                il.OpCode(ILOpCode.Stfld);
-                                il.Token(fieldHandle);
-                            }
-                            jsParamSeq++;
-                        }
-                    
-                        // Destructure object-pattern parameters into their bound fields (shared helper)
-                        MethodBuilder.EmitObjectPatternParameterDestructuring(
-                            _metadataBuilder,
-                            il,
-                            runtime,
-                            variables,
-                            registryScopeName,
-                            functionDeclaration.Params,
-                            methodGenerator.ExpressionEmitter,
-                            startingJsParamSeq: 1,
-                            castScopeForStore: false);
-                    }
+                    yield return id.Name;
                 }
-            }
-
-            // Emit body statements
-            var hasExplicitReturn = blockStatement.Body.Any(s => s is ReturnStatement);
-
-            // Initialize nested function variables before generating other statements
-            if (functionScope != null)
-            {
-                // Get nested functions from the function's child scopes
-                var nestedFunctions = functionScope.Children
-                    .Where(scope => scope.Kind == ScopeKind.Function && scope.AstNode is FunctionDeclaration)
-                    .Select(scope => (FunctionDeclaration)scope.AstNode!)
-                    .ToList();
-                methodGenerator.InitializeLocalFunctionVariables(nestedFunctions);
-            }
-
-            methodGenerator.GenerateStatementsForBody(functionVariables.GetLeafScopeName(), false, blockStatement.Body);
-            if (!hasExplicitReturn)
-            {
-                // Implicit return undefined => null
-                il.OpCode(ILOpCode.Ldnull);
-                il.OpCode(ILOpCode.Ret);
-            }
-
-            // Add method body including any scope locals we created (function scope instance)
-            var (localSignature, bodyAttributes) = MethodBuilder.CreateLocalVariableSignature(_metadataBuilder, variables, this._bclReferences);
-
-            var bodyoffset = _methodBodyStreamEncoder.AddMethodBody(
-                il,
-                maxStack: 32, // todo - keep track of the pops and pushes so as to provide a accurate value for maxStack
-                localVariablesSignature: localSignature,
-                attributes: bodyAttributes);
-
-            // Build method signature: static object (object[] scopes, object param1, ...)
-            // paramCount: scope array + declared params
-            var paramCount = 1 + functionDeclaration.Params.Count;
-            var methodSig = MethodBuilder.BuildMethodSignature(
-                _metadataBuilder,
-                isInstance: false,
-                paramCount: paramCount,
-                hasScopesParam: true,
-                returnsVoid: false);
-
-            // Add parameters with names
-            var scopeParamName = "scopes";
-            ParameterHandle firstParamHandle = _metadataBuilder.AddParameter(
-                ParameterAttributes.None,
-                _metadataBuilder.GetOrAddString(scopeParamName),
-                sequenceNumber: 1);
-            // subsequent params
-            ushort seq = 2;
-            foreach (var p in functionDeclaration.Params)
-            {
-                if (p is Acornima.Ast.Identifier pid)
+                else if (param is AssignmentPattern ap && ap.Left is Identifier apId)
                 {
-                    _metadataBuilder.AddParameter(ParameterAttributes.None, _metadataBuilder.GetOrAddString(pid.Name), sequenceNumber: seq++);
+                    yield return apId.Name;
                 }
-                else
+                else if (param is ObjectPattern or ArrayPattern)
                 {
-                    _metadataBuilder.AddParameter(ParameterAttributes.None, _metadataBuilder.GetOrAddString($"param{seq-1}"), sequenceNumber: seq++);
+                    yield return "param" + (index + 1);
                 }
+
+                index++;
             }
-
-            if (typeBuilder is null)
-            {
-                throw new InvalidOperationException("TypeBuilder is required for method emission.");
-            }
-
-            var methodDefinition = typeBuilder.AddMethodDefinition(
-                MethodAttributes.Static | MethodAttributes.Public | MethodAttributes.HideBySig,
-                functionName,
-                methodSig,
-                bodyoffset,
-                parameterList: firstParamHandle);
-
-            return methodDefinition;
         }
     }
 }

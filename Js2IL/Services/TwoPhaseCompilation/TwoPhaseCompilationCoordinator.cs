@@ -601,7 +601,7 @@ public sealed class TwoPhaseCompilationCoordinator
                     }
 
                     var registryScopeName = $"{moduleName}/{fnName}";
-                    var paramNames = ILMethodGenerator.ExtractParameterNames(childFuncDecl.Params).ToArray();
+                    var paramNames = JavaScriptParameterNameExtractor.ExtractParameterNames(childFuncDecl.Params).ToArray();
 
                     // If we're inside another function, this is a nested function.
                     var isNestedFunction = currentFunctionVariables.GetCurrentScopeName() != rootVariables.GetCurrentScopeName();
@@ -631,7 +631,7 @@ public sealed class TwoPhaseCompilationCoordinator
             }
 
             var topRegistryScopeName = $"{moduleName}/{topName}";
-            var topParamNames = ILMethodGenerator.ExtractParameterNames(topFuncDecl.Params).ToArray();
+            var topParamNames = JavaScriptParameterNameExtractor.ExtractParameterNames(topFuncDecl.Params).ToArray();
             var topVars = new Variables(rootVariables, topRegistryScopeName, topParamNames, isNestedFunction: false);
             variablesByFunctionDecl[topFuncDecl] = topVars;
 
@@ -664,7 +664,7 @@ public sealed class TwoPhaseCompilationCoordinator
                 var fnName = (fd.Id as Identifier)?.Name;
                 if (!string.IsNullOrEmpty(fnName))
                 {
-                    var jsParamNames = ILMethodGenerator.ExtractParameterNames(fd.Params).ToArray();
+                    var jsParamNames = JavaScriptParameterNameExtractor.ExtractParameterNames(fd.Params).ToArray();
                     functionRegistry.PreRegisterParameterCount(fnName, jsParamNames.Length);
                     functionRegistry.Register(fnName, preallocated, jsParamNames.Length);
                 }
@@ -730,20 +730,8 @@ public sealed class TwoPhaseCompilationCoordinator
             }
             else
             {
-                body = LegacyFunctionBodyCompiler.CompileFunctionDeclarationBody(
-                    serviceProvider,
-                    metadataBuilder,
-                    methodBodyStreamEncoder,
-                    bclReferences,
-                    functionVariables,
-                    classRegistry,
-                    functionRegistry,
-                    symbolTable,
-                    callable,
-                    expected,
-                    funcDecl,
-                    funcScope,
-                    registryScopeName);
+                throw new NotSupportedException(
+                    $"[TwoPhase] IR pipeline could not compile function declaration '{methodName}' in scope '{funcScope.GetQualifiedName()}'.");
             }
 
             compiled[callable] = body;
@@ -815,7 +803,7 @@ public sealed class TwoPhaseCompilationCoordinator
                 case CallableKind.Arrow:
                     if (callable.AstNode is ArrowFunctionExpression arrowExpr)
                     {
-                        CompileArrowFunction(callable, arrowExpr, metadataBuilder, serviceProvider, rootVariables, bclReferences, methodBodyStreamEncoder, classRegistry, functionRegistry, symbolTable);
+                        CompileArrowFunction(callable, arrowExpr, metadataBuilder, serviceProvider, bclReferences, methodBodyStreamEncoder, symbolTable);
                         // Note: body is marked as compiled by the generator (JavaScriptArrowFunctionGenerator)
                         // after it successfully emits the method body. No duplicate call here.
                     }
@@ -825,8 +813,7 @@ public sealed class TwoPhaseCompilationCoordinator
                     if (callable.AstNode is FunctionExpression funcExpr)
                     {
                         CompileFunctionExpression(callable, funcExpr, metadataBuilder, serviceProvider, rootVariables, bclReferences, methodBodyStreamEncoder, classRegistry, functionRegistry, symbolTable);
-                        // Note: body is marked as compiled by the generator (ILMethodGenerator.GenerateFunctionExpressionMethod)
-                        // after it successfully emits the method body. No duplicate call here.
+                        // Note: body is marked as compiled by the coordinator after successful IR compilation.
                     }
                     break;
             }
@@ -838,14 +825,10 @@ public sealed class TwoPhaseCompilationCoordinator
         ArrowFunctionExpression arrowExpr,
         MetadataBuilder metadataBuilder,
         IServiceProvider serviceProvider,
-        Variables rootVariables,
         BaseClassLibraryReferences bclReferences,
         MethodBodyStreamEncoder methodBodyStreamEncoder,
-        ClassRegistry classRegistry,
-        FunctionRegistry functionRegistry,
         SymbolTable symbolTable)
     {
-        var paramNames = ILMethodGenerator.ExtractParameterNames(arrowExpr.Params).ToArray();
         var moduleName = symbolTable.Root.Name;
 
         // Use 1-based column to match the CallableId.SourceLocation format used in Phase 1 declaration
@@ -854,24 +837,16 @@ public sealed class TwoPhaseCompilationCoordinator
             ? $"ArrowFunction_{callable.Name}"
             : $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{col1Based}";
 
-        var registryScopeName = $"{moduleName}/{arrowBaseScopeName}";
         var ilMethodName = $"ArrowFunction_L{arrowExpr.Location.Start.Line}C{col1Based}";
-
-        // Find the arrow function's scope and build Variables representing its parent scope
-        var arrowScope = symbolTable.FindScopeByAstNode(arrowExpr);
-        var parentVariables = BuildParentVariablesForCallable(rootVariables, arrowScope, moduleName);
 
         var arrowGen = new JavaScriptArrowFunctionGenerator(
             serviceProvider,
-            parentVariables,
             bclReferences,
             metadataBuilder,
             methodBodyStreamEncoder,
-            classRegistry,
-            functionRegistry,
             symbolTable);
 
-        arrowGen.GenerateArrowFunctionMethod(arrowExpr, registryScopeName, ilMethodName, paramNames);
+        arrowGen.GenerateArrowFunctionMethod(arrowExpr, ilMethodName);
 
         if (_verbose)
         {
@@ -891,7 +866,22 @@ public sealed class TwoPhaseCompilationCoordinator
         FunctionRegistry functionRegistry,
         SymbolTable symbolTable)
     {
-        var paramNames = ILMethodGenerator.ExtractParameterNames(funcExpr.Params).ToArray();
+        if (_registry.TryGetDeclaredToken(callable, out var existingToken) &&
+            existingToken.Kind == HandleKind.MethodDefinition &&
+            _registry.IsBodyCompiledForAstNode(funcExpr))
+        {
+            return;
+        }
+
+        if (!_registry.TryGetDeclaredToken(callable, out var tok) || tok.Kind != HandleKind.MethodDefinition)
+        {
+            throw new InvalidOperationException($"[TwoPhase] FunctionExpression missing declared token: {callable.DisplayName}");
+        }
+        var expected = (MethodDefinitionHandle)tok;
+        if (expected.IsNil)
+        {
+            throw new InvalidOperationException($"[TwoPhase] FunctionExpression has nil token: {callable.DisplayName}");
+        }
 
         // Use 1-based column to match the CallableId.SourceLocation format used in Phase 1 declaration
         var col1Based = funcExpr.Location.Start.Column + 1;
@@ -910,24 +900,41 @@ public sealed class TwoPhaseCompilationCoordinator
         }
 
         var moduleName = symbolTable.Root.Name;
-        var registryScopeName = $"{moduleName}/{baseScopeName}";
         var ilMethodName = $"FunctionExpression_L{funcExpr.Location.Start.Line}C{col1Based}";
 
-        // Find the function expression's scope and build Variables representing its parent scope
         var funcScope = symbolTable.FindScopeByAstNode(funcExpr);
-        var parentVariables = BuildParentVariablesForCallable(rootVariables, funcScope, moduleName);
+        if (funcScope == null)
+        {
+            throw new InvalidOperationException($"[TwoPhase] FunctionExpression scope not found: {callable.DisplayName}");
+        }
 
-        var methodGen = new ILMethodGenerator(
-            serviceProvider,
-            parentVariables,
-            bclReferences,
-            metadataBuilder,
-            methodBodyStreamEncoder,
-            classRegistry,
-            functionRegistry,
-            symbolTable: symbolTable);
+        var methodCompiler = serviceProvider.GetRequiredService<JsMethodCompiler>();
+        var compiledBody = methodCompiler.TryCompileCallableBody(
+            callable: callable,
+            expectedMethodDef: expected,
+            ilMethodName: ilMethodName,
+            node: funcExpr,
+            scope: funcScope,
+            methodBodyStreamEncoder: methodBodyStreamEncoder,
+            isInstanceMethod: false,
+            hasScopesParameter: true,
+            scopesFieldHandle: null,
+            returnsVoid: false);
 
-        methodGen.GenerateFunctionExpressionMethod(funcExpr, registryScopeName, ilMethodName, paramNames);
+        if (compiledBody == null)
+        {
+            throw new NotSupportedException(
+                $"[TwoPhase] IR pipeline could not compile function expression '{ilMethodName}' in scope '{funcScope.GetQualifiedName()}'.");
+        }
+
+        var irTb = new TypeBuilder(metadataBuilder, FunctionsNamespace, ilMethodName);
+        _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, irTb, compiledBody);
+        irTb.AddTypeDefinition(
+            TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
+            bclReferences.ObjectType);
+
+        _registry.SetDeclaredTokenForAstNode(funcExpr, expected);
+        _registry.MarkBodyCompiledForAstNode(funcExpr);
 
         if (_verbose)
         {

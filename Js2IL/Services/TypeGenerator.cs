@@ -321,7 +321,7 @@ namespace Js2IL.Services
                     // Do NOT mark const bindings as InitOnly (readonly) on scope types.
                     // We assign initial values after constructing the scope instance, not inside its .ctor,
                     // and CLR verification forbids stfld to initonly fields outside the declaring .ctor.
-                    // Const semantics (no reassignment) are enforced at runtime by ILExpressionGenerator
+                    // Const semantics (no reassignment) are enforced at runtime
                     // via a TypeError on any assignment attempts. Keeping these fields mutable here ensures
                     // verifiable IL while preserving JS semantics.
                     break;
