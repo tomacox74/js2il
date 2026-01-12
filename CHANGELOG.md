@@ -4,12 +4,15 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.6.2 - 2026-01-12
+
 ### Performance
 - Removed redundant `castclass` in emitted IL for intrinsic globals (e.g., `GlobalThis.get_console()`).
 - Avoided boxing for numeric indexed reads/writes by selecting typed runtime overloads where possible (`Object.GetItem(object, double)` / `Object.SetItem(object, double, double)`).
 - Lowered safe user-class field loads/stores to direct CLR field access for `this.field` and `this["field"]` (including supported compound assignments).
 - Inlined JavaScript `*`/`*=` as `ToNumber` coercions plus native IL `mul`.
-
 _Follow-up: #311 tracks avoiding boxing typed-array read values._
 
 ## v0.6.1 - 2026-01-12
