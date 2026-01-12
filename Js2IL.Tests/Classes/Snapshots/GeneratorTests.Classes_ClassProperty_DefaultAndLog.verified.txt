@@ -85,7 +85,7 @@
 	{
 		// Method begins at RVA 0x2084
 		// Header size: 12
-		// Code size: 44 (0x2c)
+		// Code size: 49 (0x31)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Classes_ClassProperty_DefaultAndLog,
@@ -97,17 +97,18 @@
 		IL_0006: newobj instance void Classes.Classes_ClassProperty_DefaultAndLog.Greeter::.ctor()
 		IL_000b: stloc.1
 		IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0011: ldc.i4.1
-		IL_0012: newarr [System.Runtime]System.Object
-		IL_0017: dup
-		IL_0018: ldc.i4.0
-		IL_0019: ldloc.1
-		IL_001a: ldstr "message"
-		IL_001f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0024: stelem.ref
-		IL_0025: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_002a: pop
-		IL_002b: ret
+		IL_0011: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_0016: ldc.i4.1
+		IL_0017: newarr [System.Runtime]System.Object
+		IL_001c: dup
+		IL_001d: ldc.i4.0
+		IL_001e: ldloc.1
+		IL_001f: ldstr "message"
+		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0029: stelem.ref
+		IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_002f: pop
+		IL_0030: ret
 	} // end of method Classes_ClassProperty_DefaultAndLog::Main
 
 } // end of class Scripts.Classes_ClassProperty_DefaultAndLog
@@ -119,7 +120,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20bc
+		// Method begins at RVA 0x20c1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

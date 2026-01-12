@@ -60,7 +60,7 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 146 (0x92)
+		// Code size: 151 (0x97)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ControlFlow_ForOf_Array_Basic,
@@ -99,7 +99,7 @@
 			IL_0047: ldloc.s 4
 			IL_0049: ldloc.3
 			IL_004a: clt
-			IL_004c: brfalse IL_0091
+			IL_004c: brfalse IL_0096
 
 			IL_0051: ldloc.s 4
 			IL_0053: box [System.Runtime]System.Double
@@ -109,24 +109,25 @@
 			IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_0062: stloc.s 5
 			IL_0064: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0069: ldc.i4.1
-			IL_006a: newarr [System.Runtime]System.Object
-			IL_006f: dup
-			IL_0070: ldc.i4.0
-			IL_0071: ldloc.s 5
-			IL_0073: stelem.ref
-			IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0079: pop
-			IL_007a: ldloc.s 4
-			IL_007c: ldc.r8 1
-			IL_0085: add
-			IL_0086: stloc.s 7
-			IL_0088: ldloc.s 7
-			IL_008a: stloc.s 4
-			IL_008c: br IL_0047
+			IL_0069: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+			IL_006e: ldc.i4.1
+			IL_006f: newarr [System.Runtime]System.Object
+			IL_0074: dup
+			IL_0075: ldc.i4.0
+			IL_0076: ldloc.s 5
+			IL_0078: stelem.ref
+			IL_0079: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_007e: pop
+			IL_007f: ldloc.s 4
+			IL_0081: ldc.r8 1
+			IL_008a: add
+			IL_008b: stloc.s 7
+			IL_008d: ldloc.s 7
+			IL_008f: stloc.s 4
+			IL_0091: br IL_0047
 		// end loop
 
-		IL_0091: ret
+		IL_0096: ret
 	} // end of method ControlFlow_ForOf_Array_Basic::Main
 
 } // end of class Scripts.ControlFlow_ForOf_Array_Basic
@@ -138,7 +139,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2102
+		// Method begins at RVA 0x2107
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -140,6 +140,12 @@ internal static class TempLocalAllocator
             return true;
         }
 
+        // Pure loads that can safely stay on the stack.
+        if (instruction is LIRLoadUserClassInstanceField)
+        {
+            return true;
+        }
+
         // LIRConvertToObject can be emitted inline if its source is an inline constant
         // AND the source is not backed by a variable slot. If the source is backed by a
         // variable slot, that slot may be overwritten by a later SSA value before the
@@ -472,6 +478,13 @@ internal static class TempLocalAllocator
             case LIRCreateBoundFunctionExpression createFunc:
                 yield return createFunc.ScopesArray;
                 break;
+            case LIRStoreUserClassInstanceField storeInstanceField:
+                yield return storeInstanceField.Value;
+                break;
+
+            case LIRStoreUserClassStaticField storeStaticField:
+                yield return storeStaticField.Value;
+                break;
             // LIRLabel and LIRBranch don't use temps
         }
     }
@@ -652,6 +665,10 @@ internal static class TempLocalAllocator
             case LIRLoadThis loadThis:
                 defined = loadThis.Result;
                 return true;
+            case LIRLoadScopesArgument loadScopesArg:
+                defined = loadScopesArg.Result;
+                return true;
+
             case LIRLoadParameter loadParam:
                 defined = loadParam.Result;
                 return true;
@@ -692,6 +709,10 @@ internal static class TempLocalAllocator
 
             case LIRLoadUserClassStaticField loadStaticField:
                 defined = loadStaticField.Result;
+                return true;
+
+            case LIRLoadUserClassInstanceField loadInstanceField:
+                defined = loadInstanceField.Result;
                 return true;
             default:
                 defined = default;

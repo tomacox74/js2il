@@ -2,6 +2,7 @@ using Acornima.Ast;
 using Js2IL.HIR;
 using Js2IL.Services;
 using Js2IL.Services.ScopesAbi;
+using TwoPhase = Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.Utilities;
 using Js2IL.SymbolTables;
 
@@ -13,6 +14,7 @@ public sealed class HIRToLIRLowerer
     private readonly Scope? _scope;
     private readonly EnvironmentLayout? _environmentLayout;
     private readonly EnvironmentLayoutBuilder? _environmentLayoutBuilder;
+    private readonly Js2IL.Services.ClassRegistry? _classRegistry;
     private readonly CallableKind _callableKind;
 
     private int _tempVarCounter = 0;
@@ -53,11 +55,12 @@ public sealed class HIRToLIRLowerer
     // Track whether parameter initialization was successful (affects TryLower result)
     private bool _parameterInitSucceeded = true;
 
-    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, CallableKind callableKind, IReadOnlyList<HIRPattern> parameters)
+    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, Js2IL.Services.ClassRegistry? classRegistry, CallableKind callableKind, IReadOnlyList<HIRPattern> parameters)
     {
         _scope = scope;
         _environmentLayout = environmentLayout;
         _environmentLayoutBuilder = environmentLayoutBuilder;
+        _classRegistry = classRegistry;
         _callableKind = callableKind;
         InitializeParameters(parameters);
     }
@@ -242,7 +245,7 @@ public sealed class HIRToLIRLowerer
         return true; // All default parameters successfully lowered
     }
 
-    public static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind callableKind, out MethodBodyIR? lirMethod)
+    internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind callableKind, bool hasScopesParameter, Js2IL.Services.ClassRegistry? classRegistry, out MethodBodyIR? lirMethod)
     {
         lirMethod = null;
 
@@ -254,7 +257,10 @@ public sealed class HIRToLIRLowerer
             try
             {
                 environmentLayoutBuilder = new EnvironmentLayoutBuilder(scopeMetadataRegistry);
-                environmentLayout = environmentLayoutBuilder.Build(scope, callableKind);
+                var needsParentScopesOverride = callableKind == Js2IL.Services.ScopesAbi.CallableKind.Constructor
+                    ? hasScopesParameter
+                    : (bool?)null;
+                environmentLayout = environmentLayoutBuilder.Build(scope, callableKind, needsParentScopesOverride: needsParentScopesOverride);
             }
             catch (Exception ex)
             {
@@ -264,7 +270,7 @@ public sealed class HIRToLIRLowerer
             }
         }
 
-        var lowerer = new HIRToLIRLowerer(scope, environmentLayout, environmentLayoutBuilder, callableKind, hirMethod.Parameters);
+        var lowerer = new HIRToLIRLowerer(scope, environmentLayout, environmentLayoutBuilder, classRegistry, callableKind, hirMethod.Parameters);
 
         // If default parameter initialization failed, fall back to legacy emitter
         if (!lowerer._parameterInitSucceeded)
@@ -298,9 +304,35 @@ public sealed class HIRToLIRLowerer
     }
 
     // Backward compatibility overload for callers that don't provide callable kind
-    public static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, out MethodBodyIR? lirMethod)
+    internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, out MethodBodyIR? lirMethod)
     {
-        return TryLower(hirMethod, scope, scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind.Function, out lirMethod);
+        return TryLower(hirMethod, scope, scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind.Function, hasScopesParameter: true, classRegistry: null, out lirMethod);
+    }
+
+    private bool TryGetEnclosingClassRegistryName(out string? registryClassName)
+    {
+        registryClassName = null;
+
+        if (_scope == null)
+        {
+            return false;
+        }
+
+        var current = _scope;
+        while (current != null)
+        {
+            if (current.Kind == ScopeKind.Class)
+            {
+                var ns = current.DotNetNamespace ?? "Classes";
+                var name = current.DotNetTypeName ?? current.Name;
+                registryClassName = $"{ns}.{name}";
+                return true;
+            }
+
+            current = current.Parent;
+        }
+
+        return false;
     }
 
     /// <summary>
@@ -426,6 +458,14 @@ public sealed class HIRToLIRLowerer
         {
             if (!TryMapScopeSlotToSource(slot, out var slotSource))
             {
+                var caller = _scope != null ? _scope.GetQualifiedName() : "<null>";
+                var callerScopesSource = _environmentLayout?.Abi.ScopesSource.ToString() ?? "<null>";
+                var callerChain = _environmentLayout != null
+                    ? string.Join(",", _environmentLayout.ScopeChain.Slots.Select(s => s.ScopeName))
+                    : "<null>";
+                IRPipelineMetrics.RecordFailure(
+                    $"HIR->LIR: failed mapping scope slot '{slot.ScopeName}' for callee '{calleeScope.GetQualifiedName()}' ({callableKind}); caller='{caller}', callerScopesSource={callerScopesSource}, callerChain=[{callerChain}]"
+                );
                 return false;
             }
             slotSources.Add(slotSource);
@@ -461,6 +501,14 @@ public sealed class HIRToLIRLowerer
         var globalSlot = new ScopeSlot(Index: 0, ScopeName: moduleName, ScopeId: new ScopeId(moduleName));
         if (!TryMapScopeSlotToSource(globalSlot, out var globalSlotSource))
         {
+            var caller = _scope != null ? _scope.GetQualifiedName() : "<null>";
+            var callerScopesSource = _environmentLayout?.Abi.ScopesSource.ToString() ?? "<null>";
+            var callerChain = _environmentLayout != null
+                ? string.Join(",", _environmentLayout.ScopeChain.Slots.Select(s => s.ScopeName))
+                : "<null>";
+            IRPipelineMetrics.RecordFailure(
+                $"HIR->LIR: failed mapping global scope '{moduleName}' for class ctor scopes; calleeClass='{classScope.GetQualifiedName()}', caller='{caller}', callerScopesSource={callerScopesSource}, callerChain=[{callerChain}]"
+            );
             return false;
         }
 
@@ -493,8 +541,36 @@ public sealed class HIRToLIRLowerer
     /// </summary>
     private static Scope? FindScopeByDeclarationNode(Acornima.Ast.Node declarationNode, Scope root)
     {
+        static bool NodesMatch(Acornima.Ast.Node a, Acornima.Ast.Node b)
+        {
+            if (ReferenceEquals(a, b))
+            {
+                return true;
+            }
+
+            if (a.GetType() != b.GetType())
+            {
+                return false;
+            }
+
+            // Acornima nodes can be re-parsed between phases, so reference equality can fail.
+            // Fall back to a stable match using source location.
+            var al = a.Location;
+            var bl = b.Location;
+
+            if (al.Start.Line <= 0 || bl.Start.Line <= 0)
+            {
+                return false;
+            }
+
+            return al.Start.Line == bl.Start.Line
+                && al.Start.Column == bl.Start.Column
+                && al.End.Line == bl.End.Line
+                && al.End.Column == bl.End.Column;
+        }
+
         // Check if this scope's AST node matches the declaration
-        if (root.AstNode == declarationNode)
+        if (NodesMatch(root.AstNode, declarationNode))
         {
             return root;
         }
@@ -587,6 +663,35 @@ public sealed class HIRToLIRLowerer
 
         switch (statement)
         {
+            case HIRStoreUserClassInstanceFieldStatement storeInstanceField:
+                {
+                    if (!TryLowerExpression(storeInstanceField.Value, out var valueTemp))
+                    {
+                        return false;
+                    }
+                    valueTemp = EnsureObject(valueTemp);
+                    lirInstructions.Add(new LIRStoreUserClassInstanceField(
+                        storeInstanceField.RegistryClassName,
+                        storeInstanceField.FieldName,
+                        storeInstanceField.IsPrivateField,
+                        valueTemp));
+                    return true;
+                }
+
+            case HIRStoreUserClassStaticFieldStatement storeStaticField:
+                {
+                    if (!TryLowerExpression(storeStaticField.Value, out var valueTemp))
+                    {
+                        return false;
+                    }
+                    valueTemp = EnsureObject(valueTemp);
+                    lirInstructions.Add(new LIRStoreUserClassStaticField(
+                        storeStaticField.RegistryClassName,
+                        storeStaticField.FieldName,
+                        valueTemp));
+                    return true;
+                }
+
             case HIRVariableDeclaration exprStmt:
                 {
                     // Variable declarations define a new binding in the current scope.
@@ -1550,6 +1655,17 @@ public sealed class HIRToLIRLowerer
 
         switch (expression)
         {
+            case HIRScopesArrayExpression:
+                // Only currently emitted for constructors that receive a scopes argument.
+                if (_callableKind != CallableKind.Constructor)
+                {
+                    return false;
+                }
+                resultTempVar = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRLoadScopesArgument(resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object[])));
+                return true;
+
             case HIRThisExpression:
                 // PL3.5: ThisExpression.
                 // Only supported for instance callables where IL arg0 is the receiver.
@@ -1672,6 +1788,16 @@ public sealed class HIRToLIRLowerer
                     IRPipelineMetrics.RecordFailure($"HIR->LIR: failed lowering PropertyAccessExpression (property='{propAccessExpr.PropertyName}')");
                     return false;
                 }
+                return true;
+
+            case HIRLoadUserClassInstanceFieldExpression loadUserField:
+                resultTempVar = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRLoadUserClassInstanceField(
+                    loadUserField.RegistryClassName,
+                    loadUserField.FieldName,
+                    loadUserField.IsPrivateField,
+                    resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                 return true;
 
             case HIRIndexAccessExpression indexAccessExpr:
@@ -1968,14 +2094,10 @@ public sealed class HIRToLIRLowerer
         }
 
         // User-defined class: `new ClassName(...)`
-        if (calleeVar.Name.Kind != BindingKind.Global)
+        // Note: top-level classes live in the global scope but still have a declaration node.
+        if (calleeVar.Name.BindingInfo.DeclarationNode is ClassDeclaration declaredClass)
         {
-            if (calleeVar.Name.BindingInfo.DeclarationNode is not ClassDeclaration classDecl)
-            {
-                return false;
-            }
-
-            return TryLowerNewUserDefinedClass(classDecl, newExpr.Arguments, out resultTempVar);
+            return TryLowerNewUserDefinedClass(declaredClass, newExpr.Arguments, out resultTempVar);
         }
 
         var ctorName = calleeVar.Name.Name;
@@ -2197,12 +2319,13 @@ public sealed class HIRToLIRLowerer
         var ctorMember = classDecl.Body.Body
             .OfType<MethodDefinition>()
             .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
-        Node ctorNodeForToken = (Node?)ctorMember ?? classDecl.Body;
 
         int minArgs = 0;
         int maxArgs = 0;
+        int jsParamCount = 0;
         if (ctorMember?.Value is FunctionExpression ctorFunc)
         {
+            jsParamCount = ctorFunc.Params.Count;
             foreach (var p in ctorFunc.Params)
             {
                 switch (p)
@@ -2220,12 +2343,33 @@ public sealed class HIRToLIRLowerer
             }
         }
 
+        // Build a stable CallableId for the constructor so LIR remains AST-free.
+        // This mirrors CallableDiscovery.DiscoverClass.
+        var moduleName = rootScope.Name;
+        string declaringScopeName;
+        if (classScope.Parent == null || classScope.Parent.Kind == ScopeKind.Global)
+        {
+            declaringScopeName = moduleName;
+        }
+        else
+        {
+            declaringScopeName = $"{moduleName}/{classScope.Parent.GetQualifiedName()}";
+        }
+
         var className = classDecl.Id is Identifier cid ? cid.Name : classScope.Name;
+        var ctorCallableId = new TwoPhase.CallableId
+        {
+            Kind = TwoPhase.CallableKind.ClassConstructor,
+            DeclaringScopeName = declaringScopeName,
+            Name = className,
+            JsParamCount = jsParamCount,
+            AstNode = null
+        };
 
         resultTempVar = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRNewUserClass(
             ClassName: className,
-            ConstructorNode: ctorNodeForToken,
+            ConstructorCallableId: ctorCallableId,
             NeedsScopes: needsScopes,
             ScopesArray: scopesTemp,
             MinArgCount: minArgs,
@@ -3669,6 +3813,57 @@ public sealed class HIRToLIRLowerer
     private bool TryLowerPropertyAssignmentExpression(HIRPropertyAssignmentExpression assignExpr, out TempVariable resultTempVar)
     {
         resultTempVar = default;
+
+        // If this is an assignment to a known instance field on the current user-defined class,
+        // lower to direct field store (stfld) instead of dynamic property set (Object.SetItem).
+        if (_classRegistry != null
+            && assignExpr.Object is HIRThisExpression
+            && TryGetEnclosingClassRegistryName(out var currentClass)
+            && currentClass != null
+            && _classRegistry.TryGetField(currentClass, assignExpr.PropertyName, out _))
+        {
+            TempVariable fieldValueToStore;
+
+            if (assignExpr.Operator == Acornima.Operator.Assignment)
+            {
+                if (!TryLowerExpression(assignExpr.Value, out fieldValueToStore))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                // Compound assignment: this.field += expr
+                var currentValue = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRLoadUserClassInstanceField(
+                    currentClass,
+                    assignExpr.PropertyName,
+                    IsPrivateField: false,
+                    currentValue));
+                DefineTempStorage(currentValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                if (!TryLowerExpression(assignExpr.Value, out var rhs))
+                {
+                    return false;
+                }
+
+                if (!TryLowerCompoundOperation(assignExpr.Operator, currentValue, rhs, out fieldValueToStore))
+                {
+                    return false;
+                }
+            }
+
+            fieldValueToStore = EnsureObject(fieldValueToStore);
+            _methodBodyIR.Instructions.Add(new LIRStoreUserClassInstanceField(
+                currentClass,
+                assignExpr.PropertyName,
+                IsPrivateField: false,
+                fieldValueToStore));
+
+            // Assignment expression result is the value assigned.
+            resultTempVar = fieldValueToStore;
+            return true;
+        }
 
         if (!TryLowerExpression(assignExpr.Object, out var objTemp))
         {

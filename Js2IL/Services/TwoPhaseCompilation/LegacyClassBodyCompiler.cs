@@ -122,6 +122,7 @@ internal static class LegacyClassBodyCompiler
             classRegistry,
             functionRegistry: null,
             inClassMethod: true,
+            inConstructor: true,
             currentClassName: className,
             symbolTable: symbolTable);
 

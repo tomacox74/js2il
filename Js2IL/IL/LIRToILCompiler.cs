@@ -30,6 +30,17 @@ internal sealed class LIRToILCompiler
     private MethodBodyIR? _methodBody;
     private bool _compiled;
 
+    private static int GetIlArgIndexForJsParameter(MethodDescriptor methodDescriptor, int jsParameterIndex)
+    {
+        // Base IL-argument index for JS parameter 0:
+        // - static without scopes: base=0
+        // - static with scopes: base=1 (arg0=scopes)
+        // - instance without scopes: base=1 (arg0=this)
+        // - instance with scopes: base=2 (arg0=this, arg1=scopes)
+        int baseIndex = (methodDescriptor.IsStatic ? 0 : 1) + (methodDescriptor.HasScopesParameter ? 1 : 0);
+        return baseIndex + jsParameterIndex;
+    }
+
     /// <summary>
     /// Gets the method body, throwing if not yet set.
     /// </summary>
@@ -118,7 +129,16 @@ internal sealed class LIRToILCompiler
         }
 
         MethodAttributes methodAttributes = MethodAttributes.Public | MethodAttributes.HideBySig;
-        if (methodDescriptor.IsStatic)
+
+        if (string.Equals(methodDescriptor.Name, ".ctor", StringComparison.Ordinal))
+        {
+            methodAttributes = MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
+        }
+        else if (string.Equals(methodDescriptor.Name, ".cctor", StringComparison.Ordinal))
+        {
+            methodAttributes = MethodAttributes.Private | MethodAttributes.Static | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
+        }
+        else if (methodDescriptor.IsStatic)
         {
             methodAttributes |= MethodAttributes.Static;
         }
@@ -203,7 +223,16 @@ internal sealed class LIRToILCompiler
         var parameterNames = methodParameters.Select(p => p.Name).ToArray();
 
         MethodAttributes methodAttributes = MethodAttributes.Public | MethodAttributes.HideBySig;
-        if (methodDescriptor.IsStatic)
+
+        if (string.Equals(methodDescriptor.Name, ".ctor", StringComparison.Ordinal))
+        {
+            methodAttributes = MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
+        }
+        else if (string.Equals(methodDescriptor.Name, ".cctor", StringComparison.Ordinal))
+        {
+            methodAttributes = MethodAttributes.Private | MethodAttributes.Static | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
+        }
+        else if (methodDescriptor.IsStatic)
         {
             methodAttributes |= MethodAttributes.Static;
         }
@@ -261,6 +290,13 @@ internal sealed class LIRToILCompiler
             .Where(l => !labelMap.ContainsKey(l.LabelId)))
         {
             labelMap[lirLabel.LabelId] = ilEncoder.DefineLabel();
+        }
+
+        // For constructors, emit base System.Object::.ctor() call before any body instructions
+        if (methodDescriptor.IsConstructor)
+        {
+            ilEncoder.OpCode(ILOpCode.Ldarg_0);
+            ilEncoder.Call(_bclReferences.Object_Ctor_Ref);
         }
 
         for (int i = 0; i < MethodBody.Instructions.Count; i++)
@@ -952,14 +988,13 @@ internal sealed class LIRToILCompiler
 
             case LIRNewUserClass newUserClass:
                 {
-                    // Resolve constructor token via CallableRegistry (two-phase declared tokens)
-                    var registry = _serviceProvider.GetService<CallableRegistry>();
-                    if (registry == null)
+                    var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+                    if (reader == null)
                     {
                         return false;
                     }
 
-                    if (!registry.TryGetDeclaredTokenForAstNode(newUserClass.ConstructorNode, out var token) || token.Kind != HandleKind.MethodDefinition)
+                    if (!reader.TryGetDeclaredToken(newUserClass.ConstructorCallableId, out var token) || token.Kind != HandleKind.MethodDefinition)
                     {
                         return false;
                     }
@@ -975,13 +1010,11 @@ internal sealed class LIRToILCompiler
                         if (expectedMinArgs == expectedMaxArgs)
                         {
                             ILEmitHelpers.ThrowNotSupported(
-                                $"Constructor for class '{newUserClass.ClassName}' expects {expectedMinArgs} argument(s) but call site has {argc}.",
-                                newUserClass.ConstructorNode);
+                                $"Constructor for class '{newUserClass.ClassName}' expects {expectedMinArgs} argument(s) but call site has {argc}.");
                         }
 
                         ILEmitHelpers.ThrowNotSupported(
-                            $"Constructor for class '{newUserClass.ClassName}' expects {expectedMinArgs}-{expectedMaxArgs} argument(s) but call site has {argc}.",
-                            newUserClass.ConstructorNode);
+                            $"Constructor for class '{newUserClass.ClassName}' expects {expectedMinArgs}-{expectedMaxArgs} argument(s) but call site has {argc}.");
                     }
 
                     if (newUserClass.NeedsScopes)
@@ -1018,6 +1051,56 @@ internal sealed class LIRToILCompiler
                     break;
                 }
 
+            case LIRStoreUserClassInstanceField storeInstanceField:
+                {
+                    var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+                    if (classRegistry == null)
+                    {
+                        return false;
+                    }
+
+                    FieldDefinitionHandle fieldHandle;
+                    if (storeInstanceField.IsPrivateField)
+                    {
+                        if (!classRegistry.TryGetPrivateField(storeInstanceField.RegistryClassName, storeInstanceField.FieldName, out fieldHandle))
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if (!classRegistry.TryGetField(storeInstanceField.RegistryClassName, storeInstanceField.FieldName, out fieldHandle))
+                        {
+                            return false;
+                        }
+                    }
+
+                    ilEncoder.LoadArgument(0);
+                    EmitLoadTemp(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Stfld);
+                    ilEncoder.Token(fieldHandle);
+                    break;
+                }
+
+            case LIRStoreUserClassStaticField storeStaticField:
+                {
+                    var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+                    if (classRegistry == null)
+                    {
+                        return false;
+                    }
+
+                    if (!classRegistry.TryGetStaticField(storeStaticField.RegistryClassName, storeStaticField.FieldName, out var fieldHandle))
+                    {
+                        return false;
+                    }
+
+                    EmitLoadTemp(storeStaticField.Value, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Stsfld);
+                    ilEncoder.Token(fieldHandle);
+                    break;
+                }
+
             case LIRLoadUserClassStaticField loadStaticField:
                 {
                     var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
@@ -1042,6 +1125,45 @@ internal sealed class LIRToILCompiler
                     {
                         ilEncoder.OpCode(ILOpCode.Pop);
                     }
+
+                    break;
+                }
+
+            case LIRLoadUserClassInstanceField loadInstanceField:
+                {
+                    if (!IsMaterialized(loadInstanceField.Result, allocation))
+                    {
+                        // This temp will be emitted inline at its use site (EmitLoadTemp).
+                        break;
+                    }
+
+                    var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+                    if (classRegistry == null)
+                    {
+                        return false;
+                    }
+
+                    FieldDefinitionHandle fieldHandle;
+                    if (loadInstanceField.IsPrivateField)
+                    {
+                        if (!classRegistry.TryGetPrivateField(loadInstanceField.RegistryClassName, loadInstanceField.FieldName, out fieldHandle))
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if (!classRegistry.TryGetField(loadInstanceField.RegistryClassName, loadInstanceField.FieldName, out fieldHandle))
+                        {
+                            return false;
+                        }
+                    }
+
+                    ilEncoder.LoadArgument(0);
+                    ilEncoder.OpCode(ILOpCode.Ldfld);
+                    ilEncoder.Token(fieldHandle);
+
+                    EmitStoreTemp(loadInstanceField.Result, ilEncoder, allocation);
 
                     break;
                 }
@@ -1259,7 +1381,11 @@ internal sealed class LIRToILCompiler
                     break;
                 }
             case LIRReturn lirReturn:
-                EmitLoadTemp(lirReturn.ReturnValue, ilEncoder, allocation, methodDescriptor);
+                // Constructors are void-returning - don't load any value before ret
+                if (!methodDescriptor.ReturnsVoid)
+                {
+                    EmitLoadTemp(lirReturn.ReturnValue, ilEncoder, allocation, methodDescriptor);
+                }
                 ilEncoder.OpCode(ILOpCode.Ret);
                 break;
             case LIRBuildScopesArray buildScopes:
@@ -1299,32 +1425,40 @@ internal sealed class LIRToILCompiler
                     EmitStoreTemp(loadThis.Result, ilEncoder, allocation);
                     break;
                 }
+
+            case LIRLoadScopesArgument loadScopesArg:
+                {
+                    if (!IsMaterialized(loadScopesArg.Result, allocation))
+                    {
+                        break;
+                    }
+
+                    if (!methodDescriptor.HasScopesParameter)
+                    {
+                        return false;
+                    }
+
+                    // Static functions: scopes is arg0. Instance constructors: scopes is arg1.
+                    ilEncoder.LoadArgument(methodDescriptor.IsStatic ? 0 : 1);
+                    EmitStoreTemp(loadScopesArg.Result, ilEncoder, allocation);
+                    break;
+                }
+
             case LIRLoadParameter loadParam:
                 {
                     if (!IsMaterialized(loadParam.Result, allocation))
                     {
                         break;
                     }
-                    // JS parameter index is 0-based. IL arg index depends on method type:
-                    // - User functions (static): arg0 is scopes array, so JS param 0 -> IL arg 1
-                    // - Instance methods: arg0 is 'this', so JS param 0 -> IL arg 1
-                    // - Module Main (static, no scopes): JS param 0 -> IL arg 0
-                    int ilArgIndex = (methodDescriptor.HasScopesParameter || !methodDescriptor.IsStatic)
-                        ? loadParam.ParameterIndex + 1
-                        : loadParam.ParameterIndex;
+
+                    int ilArgIndex = GetIlArgIndexForJsParameter(methodDescriptor, loadParam.ParameterIndex);
                     ilEncoder.LoadArgument(ilArgIndex);
                     EmitStoreTemp(loadParam.Result, ilEncoder, allocation);
                     break;
                 }
             case LIRStoreParameter storeParam:
                 {
-                    // JS parameter index is 0-based. IL arg index depends on method type:
-                    // - User functions (static): arg0 is scopes array, so JS param 0 -> IL arg 1
-                    // - Instance methods: arg0 is 'this', so JS param 0 -> IL arg 1
-                    // - Module Main (static, no scopes): JS param 0 -> IL arg 0
-                    int ilArgIndex = (methodDescriptor.HasScopesParameter || !methodDescriptor.IsStatic)
-                        ? storeParam.ParameterIndex + 1
-                        : storeParam.ParameterIndex;
+                    int ilArgIndex = GetIlArgIndexForJsParameter(methodDescriptor, storeParam.ParameterIndex);
                     EmitLoadTemp(storeParam.Value, ilEncoder, allocation, methodDescriptor);
                     ilEncoder.StoreArgument(ilArgIndex);
                     break;
@@ -1851,12 +1985,17 @@ internal sealed class LIRToILCompiler
                 }
                 ilEncoder.LoadArgument(0);
                 break;
+            case LIRLoadScopesArgument:
+                if (!methodDescriptor.HasScopesParameter)
+                {
+                    throw new InvalidOperationException("Cannot emit scopes argument when method has no scopes parameter");
+                }
+                // Static functions: scopes is arg0. Instance constructors: scopes is arg1.
+                ilEncoder.LoadArgument(methodDescriptor.IsStatic ? 0 : 1);
+                break;
             case LIRLoadParameter loadParam:
                 // Emit ldarg.X inline - no local slot needed
-                // For instance methods, arg0 is 'this', so JS param 0 -> IL arg 1
-                int ilArgIndex = (methodDescriptor.HasScopesParameter || !methodDescriptor.IsStatic)
-                    ? loadParam.ParameterIndex + 1
-                    : loadParam.ParameterIndex;
+                int ilArgIndex = GetIlArgIndexForJsParameter(methodDescriptor, loadParam.ParameterIndex);
                 ilEncoder.LoadArgument(ilArgIndex);
                 break;
             case LIRConvertToObject convertToObject:
@@ -1937,14 +2076,13 @@ internal sealed class LIRToILCompiler
             case LIRNewUserClass newUserClass:
                 {
                     // Emit inline user-defined class construction (newobj) with optional scopes array.
-                    // Constructor token is resolved via CallableRegistry (two-phase declared tokens).
-                    var registry = _serviceProvider.GetService<CallableRegistry>();
-                    if (registry == null)
+                    var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+                    if (reader == null)
                     {
-                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing CallableRegistry");
+                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing ICallableDeclarationReader");
                     }
 
-                    if (!registry.TryGetDeclaredTokenForAstNode(newUserClass.ConstructorNode, out var token) || token.Kind != HandleKind.MethodDefinition)
+                    if (!reader.TryGetDeclaredToken(newUserClass.ConstructorCallableId, out var token) || token.Kind != HandleKind.MethodDefinition)
                     {
                         throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing declared constructor token for class {newUserClass.ClassName}");
                     }
@@ -1960,13 +2098,11 @@ internal sealed class LIRToILCompiler
                         if (expectedMinArgs == expectedMaxArgs)
                         {
                             ILEmitHelpers.ThrowNotSupported(
-                                $"Constructor for class '{newUserClass.ClassName}' expects {expectedMinArgs} argument(s) but call site has {argc}.",
-                                newUserClass.ConstructorNode);
+                                $"Constructor for class '{newUserClass.ClassName}' expects {expectedMinArgs} argument(s) but call site has {argc}.");
                         }
 
                         ILEmitHelpers.ThrowNotSupported(
-                            $"Constructor for class '{newUserClass.ClassName}' expects {expectedMinArgs}-{expectedMaxArgs} argument(s) but call site has {argc}.",
-                            newUserClass.ConstructorNode);
+                            $"Constructor for class '{newUserClass.ClassName}' expects {expectedMinArgs}-{expectedMaxArgs} argument(s) but call site has {argc}.");
                     }
 
                     if (newUserClass.NeedsScopes)
@@ -2381,6 +2517,37 @@ internal sealed class LIRToILCompiler
                     // Result stays on stack
                     break;
                 }
+
+            case LIRLoadUserClassInstanceField loadInstanceField:
+                {
+                    var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+                    if (classRegistry == null)
+                    {
+                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - ClassRegistry service missing");
+                    }
+
+                    FieldDefinitionHandle fieldHandle;
+                    if (loadInstanceField.IsPrivateField)
+                    {
+                        if (!classRegistry.TryGetPrivateField(loadInstanceField.RegistryClassName, loadInstanceField.FieldName, out fieldHandle))
+                        {
+                            throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing private field '{loadInstanceField.FieldName}' on '{loadInstanceField.RegistryClassName}'");
+                        }
+                    }
+                    else
+                    {
+                        if (!classRegistry.TryGetField(loadInstanceField.RegistryClassName, loadInstanceField.FieldName, out fieldHandle))
+                        {
+                            throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing field '{loadInstanceField.FieldName}' on '{loadInstanceField.RegistryClassName}'");
+                        }
+                    }
+
+                    // Inline: ldarg.0; ldfld <field>
+                    ilEncoder.LoadArgument(0);
+                    ilEncoder.OpCode(ILOpCode.Ldfld);
+                    ilEncoder.Token(fieldHandle);
+                    break;
+                }
             default:
                 throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - unsupported instruction {def.GetType().Name}");
         }
@@ -2519,6 +2686,7 @@ internal sealed class LIRToILCompiler
     /// <summary>
     /// Emits IL to load the scopes array onto the stack.
     /// For static methods with scopes parameter: ldarg.0 (scopes array is first parameter)
+    /// For instance methods with scopes parameter: ldarg.1 (scopes array is second parameter, after this)
     /// For instance methods: ldarg.0 (this), ldfld _scopes (scopes stored in instance field)
     /// </summary>
     private void EmitLoadScopesArray(InstructionEncoder ilEncoder, MethodDescriptor methodDescriptor)
@@ -2527,6 +2695,11 @@ internal sealed class LIRToILCompiler
         {
             // Static function with scopes parameter - scopes is arg 0
             ilEncoder.LoadArgument(0);
+        }
+        else if (!methodDescriptor.IsStatic && methodDescriptor.HasScopesParameter)
+        {
+            // Instance method (e.g., constructor) with scopes parameter - scopes is arg 1
+            ilEncoder.LoadArgument(1);
         }
         else if (!methodDescriptor.IsStatic && methodDescriptor.ScopesFieldHandle.HasValue)
         {
@@ -2688,6 +2861,16 @@ internal sealed class LIRToILCompiler
         var getterMref = _memberRefRegistry.GetOrAddMethod(getterDecl!, gvProp!.GetMethod!.Name);
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(getterMref);
+
+        // Generator snapshots historically expect intrinsic globals to be materialized as object
+        // and then cast to their concrete type at the use site. Emitting an explicit cast keeps
+        // the IL shape stable (even if redundant for strongly-typed getters like get_console()).
+        var propType = gvProp.PropertyType;
+        if (!propType.IsValueType && propType != typeof(object))
+        {
+            ilEncoder.OpCode(ILOpCode.Castclass);
+            ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(propType));
+        }
     }
 
     public void EmitInvokeIntrinsicMethod(Type declaringType, string methodName, InstructionEncoder ilEncoder)

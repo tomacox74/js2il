@@ -343,7 +343,6 @@ public sealed class TwoPhaseCompilationCoordinator
             {
                 case CallableKind.ClassConstructor:
                 {
-                    // Constructors need legacy emission for base ctor call + field initializers.
                     FunctionExpression? ctorFunc = null;
                     if (callable.AstNode is Acornima.Ast.MethodDefinition ctorDef)
                     {
@@ -357,37 +356,31 @@ public sealed class TwoPhaseCompilationCoordinator
                         ctorFunc = ctorMember?.Value as FunctionExpression;
                     }
 
-                    body = LegacyClassBodyCompiler.CompileConstructorBody(
-                        serviceProvider,
-                        metadataBuilder,
-                        methodBodyStreamEncoder,
-                        bclReferences,
-                        classRegistry,
-                        rootVariables,
-                        symbolTable,
-                        callable,
-                        expected,
-                        classScope,
-                        classDecl,
-                        ctorFunc,
+                    body = methodCompiler.CompileClassConstructorBodyTwoPhase(
+                        callable: callable,
+                        expectedMethodDef: expected,
+                        methodBodyStreamEncoder: methodBodyStreamEncoder,
+                        classRegistry: classRegistry,
+                        rootVariables: rootVariables,
+                        symbolTable: symbolTable,
+                        classScope: classScope,
+                        classDecl: classDecl,
+                        ctorFunc: ctorFunc,
                         needsScopes: hasScopes);
                     break;
                 }
 
                 case CallableKind.ClassStaticInitializer:
                 {
-                    body = LegacyClassBodyCompiler.CompileStaticInitializerBody(
-                        serviceProvider,
-                        metadataBuilder,
-                        methodBodyStreamEncoder,
-                        bclReferences,
-                        classRegistry,
-                        rootVariables,
-                        symbolTable,
-                        callable,
-                        expected,
-                        classScope,
-                        classDecl);
+                    body = methodCompiler.CompileClassStaticInitializerBodyTwoPhase(
+                        callable: callable,
+                        expectedMethodDef: expected,
+                        methodBodyStreamEncoder: methodBodyStreamEncoder,
+                        classRegistry: classRegistry,
+                        rootVariables: rootVariables,
+                        symbolTable: symbolTable,
+                        classScope: classScope,
+                        classDecl: classDecl);
                     break;
                 }
 
@@ -406,55 +399,17 @@ public sealed class TwoPhaseCompilationCoordinator
                         _ => memberName
                     };
 
-                    // IR first (body-only), fallback to legacy emitter.
-                    CompiledCallableBody? irBody = null;
-                    try
-                    {
-                        var funcExpr = methodDef.Value as FunctionExpression;
-                        if (funcExpr != null)
-                        {
-                            var methodScope = symbolTable.FindScopeByAstNode(funcExpr);
-                            if (methodScope != null)
-                            {
-                                FieldDefinitionHandle? scopesFieldHandle = null;
-                                if (!methodDef.Static && hasScopes)
-                                {
-                                    scopesFieldHandle = scopesField;
-                                }
-
-                                irBody = methodCompiler.TryCompileCallableBody(
-                                    callable: callable,
-                                    expectedMethodDef: expected,
-                                    ilMethodName: clrMethodName,
-                                    node: methodDef,
-                                    scope: methodScope,
-                                    methodBodyStreamEncoder: methodBodyStreamEncoder,
-                                    isInstanceMethod: !methodDef.Static,
-                                    hasScopesParameter: false,
-                                    scopesFieldHandle: scopesFieldHandle,
-                                    returnsVoid: false);
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        // Fall back to legacy compilation.
-                        irBody = null;
-                    }
-
-                    body = irBody ?? LegacyClassBodyCompiler.CompileMethodBody(
-                        serviceProvider,
-                        metadataBuilder,
-                        methodBodyStreamEncoder,
-                        bclReferences,
-                        classRegistry,
-                        rootVariables,
-                        symbolTable,
-                        callable,
-                        expected,
-                        classScope,
-                        methodDef,
-                        clrMethodName);
+                    body = methodCompiler.CompileClassMethodBodyTwoPhase(
+                        callable: callable,
+                        expectedMethodDef: expected,
+                        methodBodyStreamEncoder: methodBodyStreamEncoder,
+                        classRegistry: classRegistry,
+                        rootVariables: rootVariables,
+                        symbolTable: symbolTable,
+                        classScope: classScope,
+                        methodDef: methodDef,
+                        clrMethodName: clrMethodName,
+                        hasScopes: hasScopes);
                     break;
                 }
             }

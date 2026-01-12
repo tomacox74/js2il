@@ -126,13 +126,13 @@ namespace Js2IL.Tests.Classes
             return ExecutionTest(testName);
         }
 
-        // PL5.4a BUG: Constructor with explicit 'return this;' generates InvalidProgramException
-        // Constructors are void-returning in IL, so 'return this;' produces invalid IL
+        // PL5.4a: Constructor with explicit 'return this;' - should work correctly
+        // Constructors are void-returning in IL, return statements should not push values
         [Fact]
-        public Task Classes_Constructor_ExplicitReturnThis_Bug()
+        public Task Classes_Constructor_ExplicitReturnThis()
         {
-            var testName = nameof(Classes_Constructor_ExplicitReturnThis_Bug);
-            return ExecutionTest(testName, allowUnhandledException: true, preferOutOfProc: true);
+            var testName = nameof(Classes_Constructor_ExplicitReturnThis);
+            return ExecutionTest(testName);
         }
 
         // PL5.5: Test that methods without explicit return return 'undefined', not 'this'

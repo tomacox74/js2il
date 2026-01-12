@@ -38,7 +38,7 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 138 (0x8a)
+		// Code size: 148 (0x94)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ControlFlow_Switch_MultiCaseSharedBody,
@@ -70,30 +70,32 @@
 		IL_0047: ldloc.3
 		IL_0048: brtrue IL_0052
 
-		IL_004d: br IL_0070
+		IL_004d: br IL_0075
 
 		IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0057: ldc.i4.1
-		IL_0058: newarr [System.Runtime]System.Object
-		IL_005d: dup
-		IL_005e: ldc.i4.0
-		IL_005f: ldstr "hit"
-		IL_0064: stelem.ref
-		IL_0065: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_006a: pop
-		IL_006b: br IL_0089
+		IL_0057: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_005c: ldc.i4.1
+		IL_005d: newarr [System.Runtime]System.Object
+		IL_0062: dup
+		IL_0063: ldc.i4.0
+		IL_0064: ldstr "hit"
+		IL_0069: stelem.ref
+		IL_006a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_006f: pop
+		IL_0070: br IL_0093
 
-		IL_0070: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0075: ldc.i4.1
-		IL_0076: newarr [System.Runtime]System.Object
-		IL_007b: dup
-		IL_007c: ldc.i4.0
-		IL_007d: ldstr "miss"
-		IL_0082: stelem.ref
-		IL_0083: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0088: pop
+		IL_0075: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_007a: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_007f: ldc.i4.1
+		IL_0080: newarr [System.Runtime]System.Object
+		IL_0085: dup
+		IL_0086: ldc.i4.0
+		IL_0087: ldstr "miss"
+		IL_008c: stelem.ref
+		IL_008d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0092: pop
 
-		IL_0089: ret
+		IL_0093: ret
 	} // end of method ControlFlow_Switch_MultiCaseSharedBody::Main
 
 } // end of class Scripts.ControlFlow_Switch_MultiCaseSharedBody
@@ -105,7 +107,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20f2
+		// Method begins at RVA 0x20fc
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

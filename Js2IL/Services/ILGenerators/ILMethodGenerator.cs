@@ -25,6 +25,7 @@ namespace Js2IL.Services.ILGenerators
         private IMethodExpressionEmitter _expressionEmitter;
         private ClassRegistry _classRegistry;
         private bool _inClassMethod;
+        private bool _inConstructor;
         private string? _currentClassName;
         private string? _currentAssignmentTarget;
         private readonly Dictionary<string, string> _variableToClass = new();
@@ -68,7 +69,7 @@ namespace Js2IL.Services.ILGenerators
         private readonly FunctionRegistry? _functionRegistry;
         private readonly SymbolTables.SymbolTable? _symbolTable;
 
-        public ILMethodGenerator(IServiceProvider serviceProvider, Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, ClassRegistry? classRegistry = null, FunctionRegistry? functionRegistry = null, bool inClassMethod = false, string? currentClassName = null, SymbolTables.SymbolTable? symbolTable = null)
+        public ILMethodGenerator(IServiceProvider serviceProvider, Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, ClassRegistry? classRegistry = null, FunctionRegistry? functionRegistry = null, bool inClassMethod = false, bool inConstructor = false, string? currentClassName = null, SymbolTables.SymbolTable? symbolTable = null)
         {
             _serviceProvider = serviceProvider;
             _variables = variables;
@@ -85,6 +86,7 @@ namespace Js2IL.Services.ILGenerators
             _classRegistry = classRegistry ?? new ClassRegistry();
             _functionRegistry = functionRegistry;
             _inClassMethod = inClassMethod;
+            _inConstructor = inConstructor;
             _currentClassName = currentClassName;
             _symbolTable = symbolTable;
             _twoPhaseCoordinator = serviceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
@@ -643,6 +645,29 @@ namespace Js2IL.Services.ILGenerators
 
         private void GenerateReturnStatement(ReturnStatement returnStatement)
         {
+            // Constructors are void-returning in IL, so explicit return statements
+            // should not push any value onto the stack before ret.
+            // In JavaScript, `return;` and `return this;` in constructors are valid
+            // and the constructor always returns the instance (handled implicitly).
+            if (_inConstructor)
+            {
+                // If there's a return argument with side effects, evaluate it but discard the value
+                if (returnStatement.Argument != null)
+                {
+                    // Check if this is more than just `return this;` - if it has side effects, evaluate
+                    if (returnStatement.Argument is not ThisExpression)
+                    {
+                        // Emit the expression for side effects, then pop the result
+                        _ = _expressionEmitter.Emit(returnStatement.Argument, new TypeCoercion() { boxResult = true });
+                        _il.OpCode(ILOpCode.Pop);
+                    }
+                    // For `return this;`, we just skip - no need to evaluate
+                }
+                // Emit ret without any value (void return)
+                _il.OpCode(ILOpCode.Ret);
+                return;
+            }
+            
             if (returnStatement.Argument != null)
             {
                 // Special-case: returning a function identifier -> bind closure scopes

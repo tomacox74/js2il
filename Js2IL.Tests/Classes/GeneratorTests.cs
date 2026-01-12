@@ -132,11 +132,11 @@ namespace Js2IL.Tests.Classes
             return GenerateTest(testName);
         }
 
-        // PL5.4a BUG: Constructor with explicit 'return this;' generates InvalidProgramException
+        // PL5.4a: Constructor with explicit 'return this;' - should work correctly
         [Fact]
-        public Task Classes_Constructor_ExplicitReturnThis_Bug()
+        public Task Classes_Constructor_ExplicitReturnThis()
         {
-            var testName = nameof(Classes_Constructor_ExplicitReturnThis_Bug);
+            var testName = nameof(Classes_Constructor_ExplicitReturnThis);
             return GenerateTest(testName);
         }
 
