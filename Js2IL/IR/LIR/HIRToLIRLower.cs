@@ -3246,25 +3246,18 @@ public sealed class HIRToLIRLowerer
         }
 
         // Handle multiplication
-        // LIRMulNumber emitted when both operands are known to be double (uses native IL mul instruction).
-        // LIRMulDynamic emitted otherwise (calls Operators.Multiply at runtime for type coercion).
-        // Type inference could be improved to track numeric types through more expressions to prefer LIRMulNumber.
+        // JS '*' always follows ToNumber semantics. Prefer emitting numeric coercion (only when needed)
+        // and a native IL 'mul' rather than calling Operators.Multiply.
         if (binaryExpr.Operator == Acornima.Operator.Multiplication)
         {
-            // Number * Number - uses native IL mul instruction (optimal path)
-            if (leftType == typeof(double) && rightType == typeof(double))
+            if (leftType != typeof(double) || rightType != typeof(double))
             {
-                _methodBodyIR.Instructions.Add(new LIRMulNumber(leftTempVar, rightTempVar, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                return true;
+                leftTempVar = EnsureNumber(leftTempVar);
+                rightTempVar = EnsureNumber(rightTempVar);
             }
 
-            // Dynamic multiplication - types unknown at compile time, box operands and call Operators.Multiply
-            // This has runtime overhead but handles mixed types correctly (e.g., string to number coercion)
-            var leftBoxed = EnsureObject(leftTempVar);
-            var rightBoxed = EnsureObject(rightTempVar);
-            _methodBodyIR.Instructions.Add(new LIRMulDynamic(leftBoxed, rightBoxed, resultTempVar));
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
+            _methodBodyIR.Instructions.Add(new LIRMulNumber(leftTempVar, rightTempVar, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
             return true;
         }
 
@@ -5087,17 +5080,13 @@ public sealed class HIRToLIRLowerer
                 return false;
 
             case Acornima.Operator.MultiplicationAssignment:
-                if (leftType == typeof(double) && rightType == typeof(double))
+                if (leftType != typeof(double) || rightType != typeof(double))
                 {
-                    _methodBodyIR.Instructions.Add(new LIRMulNumber(currentValue, rhsValue, result));
-                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                    return true;
+                    EnsureNumericOperands();
                 }
-                // Dynamic multiplication
-                var leftMulBoxed = EnsureObject(currentValue);
-                var rightMulBoxed = EnsureObject(rhsValue);
-                _methodBodyIR.Instructions.Add(new LIRMulDynamic(leftMulBoxed, rightMulBoxed, result));
-                DefineTempStorage(result, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
+
+                _methodBodyIR.Instructions.Add(new LIRMulNumber(currentValue, rhsValue, result));
+                DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                 return true;
 
             case Acornima.Operator.DivisionAssignment:
