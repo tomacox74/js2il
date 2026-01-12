@@ -108,33 +108,39 @@
 
 	.method public hidebysig 
 		instance object run (
-			object ''
+			object n
 		) cil managed 
 	{
 		// Method begins at RVA 0x2088
 		// Header size: 12
-		// Code size: 55 (0x37)
+		// Code size: 56 (0x38)
 		.maxstack 32
+		.locals init (
+			[0] float64
+		)
 
 		// loop start
 			IL_0000: ldarg.1
 			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_0006: ldc.r8 3
-			IL_000f: blt IL_0019
+			IL_000f: clt
+			IL_0011: brfalse IL_0036
 
-			IL_0014: br IL_0035
-
-			IL_0019: ldarg.1
-			IL_001a: unbox.any [System.Runtime]System.Double
-			IL_001f: ldc.r8 1
-			IL_0028: add
-			IL_0029: box [System.Runtime]System.Double
-			IL_002e: starg.s 1
-			IL_0030: br IL_0000
+			IL_0016: ldarg.1
+			IL_0017: pop
+			IL_0018: ldarg.1
+			IL_0019: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_001e: ldc.r8 1
+			IL_0027: add
+			IL_0028: stloc.0
+			IL_0029: ldloc.0
+			IL_002a: box [System.Runtime]System.Double
+			IL_002f: starg.s n
+			IL_0031: br IL_0000
 		// end loop
 
-		IL_0035: ldarg.0
-		IL_0036: ret
+		IL_0036: ldarg.0
+		IL_0037: ret
 	} // end of method Counter::run
 
 } // end of class Classes.Classes_ClassMethod_While_Increment_Param_Postfix.Counter

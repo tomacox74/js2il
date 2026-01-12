@@ -60,34 +60,70 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 89 (0x59)
+		// Code size: 135 (0x87)
 		.maxstack 32
+		.locals init (
+			[0] bool,
+			[1] object,
+			[2] float64,
+			[3] object,
+			[4] object,
+			[5] object,
+			[6] object
+		)
 
 		IL_0000: ldarg.1
-		IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0006: ldc.r8 0.0
-		IL_000f: ceq
-		IL_0011: box [System.Runtime]System.Boolean
-		IL_0016: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-		IL_001b: brfalse IL_004d
+		IL_0001: ldc.r8 0.0
+		IL_000a: box [System.Runtime]System.Double
+		IL_000f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0014: stloc.0
+		IL_0015: ldloc.0
+		IL_0016: box [System.Runtime]System.Boolean
+		IL_001b: stloc.1
+		IL_001c: ldloc.1
+		IL_001d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0022: stloc.0
+		IL_0023: ldloc.0
+		IL_0024: brfalse IL_0056
 
-		IL_0020: ldc.r8 1
-		IL_0029: ldarg.1
-		IL_002a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_002f: div
-		IL_0030: ldc.r8 0.0
-		IL_0039: blt IL_0043
+		IL_0029: ldc.r8 1
+		IL_0032: ldarg.1
+		IL_0033: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0038: div
+		IL_0039: stloc.2
+		IL_003a: ldloc.2
+		IL_003b: ldc.r8 0.0
+		IL_0044: clt
+		IL_0046: stloc.0
+		IL_0047: ldloc.0
+		IL_0048: box [System.Runtime]System.Boolean
+		IL_004d: stloc.3
+		IL_004e: ldloc.3
+		IL_004f: stloc.s 5
+		IL_0051: br IL_0059
 
-		IL_003e: br IL_004d
+		IL_0056: ldloc.1
+		IL_0057: stloc.s 5
 
-		IL_0043: ldstr "-0"
-		IL_0048: br IL_0058
+		IL_0059: ldloc.s 5
+		IL_005b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_0060: stloc.0
+		IL_0061: ldloc.0
+		IL_0062: brfalse IL_0073
 
-		IL_004d: ldstr ""
-		IL_0052: ldarg.1
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0067: ldstr "-0"
+		IL_006c: stloc.s 6
+		IL_006e: br IL_0084
 
-		IL_0058: ret
+		IL_0073: ldstr ""
+		IL_0078: ldarg.1
+		IL_0079: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_007e: stloc.s 6
+		IL_0080: ldloc.s 6
+		IL_0082: stloc.s 6
+
+		IL_0084: ldloc.s 6
+		IL_0086: ret
 	} // end of method Math_Fround_SignedZero::toStr
 
 } // end of class Functions.Math_Fround_SignedZero
@@ -105,7 +141,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20cc
+		// Method begins at RVA 0x20f8
 		// Header size: 12
 		// Code size: 133 (0x85)
 		.maxstack 32
@@ -174,7 +210,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x215d
+		// Method begins at RVA 0x2189
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

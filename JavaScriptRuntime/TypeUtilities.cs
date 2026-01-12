@@ -8,7 +8,8 @@ namespace JavaScriptRuntime
         // JS ToNumber coercion used by codegen slow paths when operand type is uncertain
         public static double ToNumber(object? value)
         {
-            if (value == null) return 0d; // undefined => +0
+            // JS ToNumber(undefined) => NaN (undefined is represented as CLR null)
+            if (value == null) return double.NaN;
             switch (value)
             {
                 case double d: return d;

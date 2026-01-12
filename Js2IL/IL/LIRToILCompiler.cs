@@ -263,7 +263,6 @@ internal sealed class LIRToILCompiler
             labelMap[lirLabel.LabelId] = ilEncoder.DefineLabel();
         }
 
-        bool hasExplicitReturn = false;
         for (int i = 0; i < MethodBody.Instructions.Count; i++)
         {
             var instruction = MethodBody.Instructions[i];
@@ -304,14 +303,12 @@ internal sealed class LIRToILCompiler
                 IRPipelineMetrics.RecordFailureIfUnset($"IL compile failed: unsupported LIR instruction {instruction.GetType().Name}");
                 return false;
             }
-            if (instruction is LIRReturn)
-            {
-                hasExplicitReturn = true;
-            }
         }
 
-        // Only emit implicit return if no explicit return was found
-        if (!hasExplicitReturn)
+        // Ensure the method body always ends with a return.
+        // Even if there are explicit returns in some branches, a JS function body can still fall through.
+        // If IR lowering didn't produce an explicit return on all paths, we must add a default return here.
+        if (MethodBody.Instructions.Count == 0 || MethodBody.Instructions[^1] is not LIRReturn)
         {
             if (!methodDescriptor.ReturnsVoid)
             {

@@ -14,14 +14,12 @@ public class GeneratorTests : GeneratorTestsBase
         string testName,
         Action<VerifySettings>? configureSettings = null,
         string[]? additionalScripts = null,
-        [CallerFilePath] string sourceFilePath = "",
-        bool assertOnIRPipelineFailure = true)
+        [CallerFilePath] string sourceFilePath = "")
         => base.GenerateTest(
             testName,
             configureSettings,
             additionalScripts,
-            sourceFilePath,
-            assertOnIRPipelineFailure: assertOnIRPipelineFailure);
+            sourceFilePath);
 
     [Fact]
     public Task Promise_All_AllResolved()

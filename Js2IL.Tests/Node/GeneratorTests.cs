@@ -17,7 +17,7 @@ namespace Js2IL.Tests.Node
 
         [Fact]
         public Task Global___dirname_PrintsDirectory() => GenerateTest(
-            nameof(Global___dirname_PrintsDirectory), assertOnIRPipelineFailure: true);
+            nameof(Global___dirname_PrintsDirectory));
 
         [Fact]
         public Task PerfHooks_PerformanceNow_Basic() => GenerateTest(

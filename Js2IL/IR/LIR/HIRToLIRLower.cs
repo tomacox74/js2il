@@ -962,6 +962,7 @@ public sealed class HIRToLIRLowerer
                     // Evaluate the test condition
                     if (!TryLowerExpression(ifStmt.Test, out var conditionTemp))
                     {
+                        IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering if test expression {ifStmt.Test.GetType().Name}");
                         return false;
                     }
 
@@ -989,6 +990,7 @@ public sealed class HIRToLIRLowerer
                     // Consequent block (then)
                     if (!TryLowerStatement(ifStmt.Consequent))
                     {
+                        IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering if consequent {ifStmt.Consequent.GetType().Name}");
                         return false;
                     }
 
@@ -1004,6 +1006,7 @@ public sealed class HIRToLIRLowerer
 
                         if (!TryLowerStatement(ifStmt.Alternate))
                         {
+                            IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering if alternate {ifStmt.Alternate.GetType().Name}");
                             return false;
                         }
 
@@ -2090,9 +2093,11 @@ public sealed class HIRToLIRLowerer
             TempVariable source;
             if (newExpr.Arguments.Count == 0)
             {
-                source = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRConstUndefined(source));
-                DefineTempStorage(source, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                // JS semantics: new Number() defaults to +0 (like Number())
+                resultTempVar = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRConstNumber(0.0, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                return true;
             }
             else
             {
@@ -2240,12 +2245,166 @@ public sealed class HIRToLIRLowerer
         {
             var symbol = funcVarExpr.Name;
 
+            // PL8.1: Primitive conversion callables: String(x), Number(x), Boolean(x).
+            // These are CallExpression forms (not NewExpression) and should lower to runtime conversions.
+            // Semantics:
+            // - No args: String() => "", Number() => 0, Boolean() => false
+            // - Extra args are evaluated for side-effects and ignored
+            if (symbol.Kind == BindingKind.Global)
+            {
+                var name = symbol.Name;
+                if (string.Equals(name, "String", StringComparison.Ordinal)
+                    || string.Equals(name, "Number", StringComparison.Ordinal)
+                    || string.Equals(name, "Boolean", StringComparison.Ordinal))
+                {
+                    // Evaluate all arguments, but only first participates in conversion.
+                    TempVariable? firstArg = null;
+                    if (callExpr.Arguments.Length > 0)
+                    {
+                        if (!TryLowerExpression(callExpr.Arguments[0], out var arg0))
+                        {
+                            return false;
+                        }
+                        firstArg = EnsureObject(arg0);
+
+                        for (int i = 1; i < callExpr.Arguments.Length; i++)
+                        {
+                            if (!TryLowerExpression(callExpr.Arguments[i], out var _))
+                            {
+                                return false;
+                            }
+                        }
+                    }
+
+                    if (string.Equals(name, "String", StringComparison.Ordinal))
+                    {
+                        if (firstArg == null)
+                        {
+                            _methodBodyIR.Instructions.Add(new LIRConstString(string.Empty, resultTempVar));
+                            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+                            return true;
+                        }
+
+                        _methodBodyIR.Instructions.Add(new LIRConvertToString(firstArg.Value, resultTempVar));
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+                        return true;
+                    }
+
+                    if (string.Equals(name, "Number", StringComparison.Ordinal))
+                    {
+                        if (firstArg == null)
+                        {
+                            _methodBodyIR.Instructions.Add(new LIRConstNumber(0.0, resultTempVar));
+                            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                            return true;
+                        }
+
+                        _methodBodyIR.Instructions.Add(new LIRConvertToNumber(firstArg.Value, resultTempVar));
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                        return true;
+                    }
+
+                    // Boolean
+                    if (firstArg == null)
+                    {
+                        _methodBodyIR.Instructions.Add(new LIRConstBoolean(false, resultTempVar));
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                        return true;
+                    }
+
+                    _methodBodyIR.Instructions.Add(new LIRConvertToBoolean(firstArg.Value, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
+            }
+
             // Case 1.0: Intrinsic global function call (e.g., setTimeout(...)).
             // These are exposed as public static methods on JavaScriptRuntime.GlobalThis.
             // We lower them directly rather than trying to load them as a value.
             if (symbol.Kind == BindingKind.Global)
             {
                 var globalFunctionName = symbol.Name;
+
+                // PL8.1: Primitive conversion callables: String(x), Number(x), Boolean(x)
+                // Distinct from `new String(...)` sugar handled in NewExpression lowering.
+                if (string.Equals(globalFunctionName, "String", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (callExpr.Arguments.Length > 1)
+                    {
+                        return false;
+                    }
+
+                    // String() with no args returns empty string.
+                    if (callExpr.Arguments.Length == 0)
+                    {
+                        _methodBodyIR.Instructions.Add(new LIRConstString(string.Empty, resultTempVar));
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+                        return true;
+                    }
+
+                    if (!TryLowerExpression(callExpr.Arguments[0], out var argTemp))
+                    {
+                        return false;
+                    }
+
+                    var source = EnsureObject(argTemp);
+                    _methodBodyIR.Instructions.Add(new LIRConvertToString(source, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+                    return true;
+                }
+
+                if (string.Equals(globalFunctionName, "Number", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (callExpr.Arguments.Length > 1)
+                    {
+                        return false;
+                    }
+
+                    // Number() with no args returns +0.
+                    if (callExpr.Arguments.Length == 0)
+                    {
+                        _methodBodyIR.Instructions.Add(new LIRConstNumber(0.0, resultTempVar));
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                        return true;
+                    }
+
+                    if (!TryLowerExpression(callExpr.Arguments[0], out var argTemp))
+                    {
+                        return false;
+                    }
+
+                    var source = EnsureObject(argTemp);
+                    _methodBodyIR.Instructions.Add(new LIRConvertToNumber(source, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    return true;
+                }
+
+                if (string.Equals(globalFunctionName, "Boolean", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (callExpr.Arguments.Length > 1)
+                    {
+                        return false;
+                    }
+
+                    // Boolean() with no args returns false.
+                    if (callExpr.Arguments.Length == 0)
+                    {
+                        _methodBodyIR.Instructions.Add(new LIRConstBoolean(false, resultTempVar));
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                        return true;
+                    }
+
+                    if (!TryLowerExpression(callExpr.Arguments[0], out var argTemp))
+                    {
+                        return false;
+                    }
+
+                    var source = EnsureObject(argTemp);
+                    _methodBodyIR.Instructions.Add(new LIRConvertToBoolean(source, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
+
                 var gvType = typeof(JavaScriptRuntime.GlobalThis);
                 var gvMethod = gvType.GetMethod(
                     globalFunctionName,
@@ -2409,6 +2568,35 @@ public sealed class HIRToLIRLowerer
 
                 if (staticMethods.Count > 0)
                 {
+                    // Choose the same overload we will emit in IL (see LIRToILCompiler.EmitIntrinsicStaticCall)
+                    var argCount = callExpr.Arguments.Count();
+                    System.Reflection.MethodInfo? chosen = null;
+                    foreach (var mi in staticMethods)
+                    {
+                        if (mi.GetParameters().Length == argCount)
+                        {
+                            chosen = mi;
+                            break;
+                        }
+                    }
+
+                    if (chosen == null)
+                    {
+                        foreach (var mi in staticMethods)
+                        {
+                            var ps = mi.GetParameters();
+                            if (ps.Length == 1 && ps[0].ParameterType == typeof(object[]))
+                            {
+                                chosen = mi;
+                                break;
+                            }
+                        }
+                    }
+                    if (chosen == null)
+                    {
+                        return false;
+                    }
+
                     // Lower all arguments
                     var staticArgTemps = new List<TempVariable>();
                     foreach (var argExpr in callExpr.Arguments)
@@ -2423,7 +2611,21 @@ public sealed class HIRToLIRLowerer
 
                     // Emit the intrinsic static call
                     _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(intrinsicName, methodName, staticArgTemps, resultTempVar));
-                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                    // Track the correct CLR type to prevent invalid IL (e.g., storing bool into an object local).
+                    var retType = chosen.ReturnType;
+                    if (retType == typeof(void))
+                    {
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    }
+                    else if (retType.IsValueType)
+                    {
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, retType));
+                    }
+                    else
+                    {
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, retType));
+                    }
                     return true;
                 }
             }
@@ -2657,42 +2859,67 @@ public sealed class HIRToLIRLowerer
         }
 
         // IR lowering currently only supports direct calls where the callee is a function binding.
-        // For now, only attach CallableId for function declarations (named function foo() {}).
         if (symbol.BindingInfo.Kind != BindingKind.Function)
         {
             return null;
         }
 
-        if (symbol.BindingInfo.DeclarationNode is not FunctionDeclaration funcDecl)
-        {
-            return null;
-        }
-
+        var declNode = symbol.BindingInfo.DeclarationNode;
         var declaringScope = FindDeclaringScope(symbol.BindingInfo);
         if (declaringScope == null)
         {
             return null;
         }
 
-        var root = declaringScope;
+        // For named function expressions, the function name is bound inside the function scope,
+        // but the callable itself is declared in the parent scope (Phase 1 discovery uses the parent).
+        // If we detect that pattern, shift the DeclaringScopeName to the parent scope.
+        var callableDeclaringScope = declaringScope;
+        if (declNode is FunctionExpression funcExprDecl &&
+            declaringScope.AstNode is FunctionExpression scopeFuncExpr &&
+            ReferenceEquals(funcExprDecl, scopeFuncExpr) &&
+            declaringScope.Parent != null)
+        {
+            callableDeclaringScope = declaringScope.Parent;
+        }
+
+        var root = callableDeclaringScope;
         while (root.Parent != null)
         {
             root = root.Parent;
         }
 
         var moduleName = root.Name;
-        var declaringScopeName = declaringScope.Kind == ScopeKind.Global
+        var declaringScopeName = callableDeclaringScope.Kind == ScopeKind.Global
             ? moduleName
-            : $"{moduleName}/{declaringScope.GetQualifiedName()}";
+            : $"{moduleName}/{callableDeclaringScope.GetQualifiedName()}";
 
-        return new Js2IL.Services.TwoPhaseCompilation.CallableId
+        switch (declNode)
         {
-            Kind = Js2IL.Services.TwoPhaseCompilation.CallableKind.FunctionDeclaration,
-            DeclaringScopeName = declaringScopeName,
-            Name = symbol.Name,
-            JsParamCount = funcDecl.Params.Count,
-            AstNode = funcDecl
-        };
+            case FunctionDeclaration funcDecl:
+                return new Js2IL.Services.TwoPhaseCompilation.CallableId
+                {
+                    Kind = Js2IL.Services.TwoPhaseCompilation.CallableKind.FunctionDeclaration,
+                    DeclaringScopeName = declaringScopeName,
+                    Name = symbol.Name,
+                    JsParamCount = funcDecl.Params.Count,
+                    AstNode = funcDecl
+                };
+
+            case FunctionExpression funcExpr:
+                return new Js2IL.Services.TwoPhaseCompilation.CallableId
+                {
+                    Kind = Js2IL.Services.TwoPhaseCompilation.CallableKind.FunctionExpression,
+                    DeclaringScopeName = declaringScopeName,
+                    Name = (funcExpr.Id as Identifier)?.Name,
+                    Location = Js2IL.Services.TwoPhaseCompilation.SourceLocation.FromNode(funcExpr),
+                    JsParamCount = funcExpr.Params.Count,
+                    AstNode = funcExpr
+                };
+
+            default:
+                return null;
+        }
     }
 
     private Scope? FindDeclaringScope(BindingInfo binding)
@@ -2916,111 +3143,126 @@ public sealed class HIRToLIRLowerer
         // Handle division
         if (binaryExpr.Operator == Acornima.Operator.Division)
         {
-            // Number / Number - uses native IL div instruction
-            if (leftType == typeof(double) && rightType == typeof(double))
+            // JS '/' operator follows ToNumber semantics.
+            if (leftType != typeof(double) || rightType != typeof(double))
             {
-                _methodBodyIR.Instructions.Add(new LIRDivNumber(leftTempVar, rightTempVar, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                return true;
+                leftTempVar = EnsureNumber(leftTempVar);
+                rightTempVar = EnsureNumber(rightTempVar);
             }
-            // TODO: Add LIRDivDynamic for unknown types if needed
-            return false;
+
+            _methodBodyIR.Instructions.Add(new LIRDivNumber(leftTempVar, rightTempVar, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            return true;
         }
 
         // Handle remainder (modulo)
         if (binaryExpr.Operator == Acornima.Operator.Remainder)
         {
-            // Number % Number - uses native IL rem instruction
-            if (leftType == typeof(double) && rightType == typeof(double))
+            // JS '%' operator follows ToNumber semantics.
+            if (leftType != typeof(double) || rightType != typeof(double))
             {
-                _methodBodyIR.Instructions.Add(new LIRModNumber(leftTempVar, rightTempVar, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                return true;
+                leftTempVar = EnsureNumber(leftTempVar);
+                rightTempVar = EnsureNumber(rightTempVar);
             }
-            // TODO: Add LIRModDynamic for unknown types if needed
-            return false;
+
+            _methodBodyIR.Instructions.Add(new LIRModNumber(leftTempVar, rightTempVar, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            return true;
         }
 
         // Handle exponentiation (** operator)
         if (binaryExpr.Operator == Acornima.Operator.Exponentiation)
         {
-            // Number ** Number - calls Math.Pow
-            if (leftType == typeof(double) && rightType == typeof(double))
+            // JS '**' operator follows ToNumber semantics.
+            if (leftType != typeof(double) || rightType != typeof(double))
             {
-                _methodBodyIR.Instructions.Add(new LIRExpNumber(leftTempVar, rightTempVar, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                return true;
+                leftTempVar = EnsureNumber(leftTempVar);
+                rightTempVar = EnsureNumber(rightTempVar);
             }
-            // TODO: Add LIRExpDynamic for unknown types if needed
-            return false;
+
+            _methodBodyIR.Instructions.Add(new LIRExpNumber(leftTempVar, rightTempVar, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            return true;
         }
 
         // Handle bitwise operators
         if (binaryExpr.Operator == Acornima.Operator.BitwiseAnd)
         {
-            if (leftType == typeof(double) && rightType == typeof(double))
+            if (leftType != typeof(double) || rightType != typeof(double))
             {
-                _methodBodyIR.Instructions.Add(new LIRBitwiseAnd(leftTempVar, rightTempVar, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                return true;
+                leftTempVar = EnsureNumber(leftTempVar);
+                rightTempVar = EnsureNumber(rightTempVar);
             }
-            return false;
+
+            _methodBodyIR.Instructions.Add(new LIRBitwiseAnd(leftTempVar, rightTempVar, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            return true;
         }
 
         if (binaryExpr.Operator == Acornima.Operator.BitwiseOr)
         {
-            if (leftType == typeof(double) && rightType == typeof(double))
+            if (leftType != typeof(double) || rightType != typeof(double))
             {
-                _methodBodyIR.Instructions.Add(new LIRBitwiseOr(leftTempVar, rightTempVar, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                return true;
+                leftTempVar = EnsureNumber(leftTempVar);
+                rightTempVar = EnsureNumber(rightTempVar);
             }
-            return false;
+
+            _methodBodyIR.Instructions.Add(new LIRBitwiseOr(leftTempVar, rightTempVar, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            return true;
         }
 
         if (binaryExpr.Operator == Acornima.Operator.BitwiseXor)
         {
-            if (leftType == typeof(double) && rightType == typeof(double))
+            if (leftType != typeof(double) || rightType != typeof(double))
             {
-                _methodBodyIR.Instructions.Add(new LIRBitwiseXor(leftTempVar, rightTempVar, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                return true;
+                leftTempVar = EnsureNumber(leftTempVar);
+                rightTempVar = EnsureNumber(rightTempVar);
             }
-            return false;
+
+            _methodBodyIR.Instructions.Add(new LIRBitwiseXor(leftTempVar, rightTempVar, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            return true;
         }
 
         // Handle shift operators
         if (binaryExpr.Operator == Acornima.Operator.LeftShift)
         {
-            if (leftType == typeof(double) && rightType == typeof(double))
+            if (leftType != typeof(double) || rightType != typeof(double))
             {
-                _methodBodyIR.Instructions.Add(new LIRLeftShift(leftTempVar, rightTempVar, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                return true;
+                leftTempVar = EnsureNumber(leftTempVar);
+                rightTempVar = EnsureNumber(rightTempVar);
             }
-            return false;
+
+            _methodBodyIR.Instructions.Add(new LIRLeftShift(leftTempVar, rightTempVar, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            return true;
         }
 
         if (binaryExpr.Operator == Acornima.Operator.RightShift)
         {
-            if (leftType == typeof(double) && rightType == typeof(double))
+            if (leftType != typeof(double) || rightType != typeof(double))
             {
-                _methodBodyIR.Instructions.Add(new LIRRightShift(leftTempVar, rightTempVar, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                return true;
+                leftTempVar = EnsureNumber(leftTempVar);
+                rightTempVar = EnsureNumber(rightTempVar);
             }
-            return false;
+
+            _methodBodyIR.Instructions.Add(new LIRRightShift(leftTempVar, rightTempVar, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            return true;
         }
 
         if (binaryExpr.Operator == Acornima.Operator.UnsignedRightShift)
         {
-            if (leftType == typeof(double) && rightType == typeof(double))
+            if (leftType != typeof(double) || rightType != typeof(double))
             {
-                _methodBodyIR.Instructions.Add(new LIRUnsignedRightShift(leftTempVar, rightTempVar, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                return true;
+                leftTempVar = EnsureNumber(leftTempVar);
+                rightTempVar = EnsureNumber(rightTempVar);
             }
-            return false;
+
+            _methodBodyIR.Instructions.Add(new LIRUnsignedRightShift(leftTempVar, rightTempVar, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+            return true;
         }
 
         // Handle 'in' operator
@@ -3040,7 +3282,8 @@ public sealed class HIRToLIRLowerer
             case Acornima.Operator.LessThan:
                 if (leftType != typeof(double) || rightType != typeof(double))
                 {
-                    return false;
+                    leftTempVar = EnsureNumber(leftTempVar);
+                    rightTempVar = EnsureNumber(rightTempVar);
                 }
                 _methodBodyIR.Instructions.Add(new LIRCompareNumberLessThan(leftTempVar, rightTempVar, resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
@@ -3049,7 +3292,8 @@ public sealed class HIRToLIRLowerer
             case Acornima.Operator.GreaterThan:
                 if (leftType != typeof(double) || rightType != typeof(double))
                 {
-                    return false;
+                    leftTempVar = EnsureNumber(leftTempVar);
+                    rightTempVar = EnsureNumber(rightTempVar);
                 }
                 _methodBodyIR.Instructions.Add(new LIRCompareNumberGreaterThan(leftTempVar, rightTempVar, resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
@@ -3058,7 +3302,8 @@ public sealed class HIRToLIRLowerer
             case Acornima.Operator.LessThanOrEqual:
                 if (leftType != typeof(double) || rightType != typeof(double))
                 {
-                    return false;
+                    leftTempVar = EnsureNumber(leftTempVar);
+                    rightTempVar = EnsureNumber(rightTempVar);
                 }
                 _methodBodyIR.Instructions.Add(new LIRCompareNumberLessThanOrEqual(leftTempVar, rightTempVar, resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
@@ -3067,7 +3312,8 @@ public sealed class HIRToLIRLowerer
             case Acornima.Operator.GreaterThanOrEqual:
                 if (leftType != typeof(double) || rightType != typeof(double))
                 {
-                    return false;
+                    leftTempVar = EnsureNumber(leftTempVar);
+                    rightTempVar = EnsureNumber(rightTempVar);
                 }
                 _methodBodyIR.Instructions.Add(new LIRCompareNumberGreaterThanOrEqual(leftTempVar, rightTempVar, resultTempVar));
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
@@ -3574,9 +3820,11 @@ public sealed class HIRToLIRLowerer
         // For non-captured numeric locals, we only support double.
         var currentStorage = GetTempStorage(currentValue);
 
-        // Captured variable update: value is boxed (object) and stored in a scope field.
+        // Boxed (object) update path:
+        // - Captured variables live in scope fields
+        // - Non-captured parameters live in IL arguments
         // Implement numeric coercion via runtime TypeUtilities.ToNumber(object?) and then store
-        // the boxed updated value back to the appropriate scope field.
+        // the boxed updated value back to the appropriate storage location.
         if (currentStorage.Kind == ValueStorageKind.Reference && currentStorage.ClrType == typeof(object))
         {
             if (_environmentLayout == null)
@@ -3622,6 +3870,14 @@ public sealed class HIRToLIRLowerer
 
             switch (storage.Kind)
             {
+                case BindingStorageKind.IlArgument:
+                    if (storage.JsParameterIndex < 0)
+                    {
+                        return false;
+                    }
+                    _methodBodyIR.Instructions.Add(new LIRStoreParameter(storage.JsParameterIndex, updatedBoxed));
+                    break;
+
                 case BindingStorageKind.LeafScopeField:
                     if (storage.Field.IsNil || storage.DeclaringScope.IsNil)
                     {
