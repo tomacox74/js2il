@@ -276,12 +276,13 @@
 	{
 		// Method begins at RVA 0x2120
 		// Header size: 12
-		// Code size: 51 (0x33)
+		// Code size: 66 (0x42)
 		.maxstack 32
 		.locals init (
 			[0] object,
 			[1] object,
-			[2] object
+			[2] float64,
+			[3] object
 		)
 
 		IL_0000: ldarg.1
@@ -300,11 +301,18 @@
 		IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 		IL_0028: stloc.1
 		IL_0029: ldloc.0
-		IL_002a: ldloc.1
-		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
-		IL_0030: stloc.2
-		IL_0031: ldloc.2
-		IL_0032: ret
+		IL_002a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_002f: stloc.2
+		IL_0030: ldloc.2
+		IL_0031: ldloc.1
+		IL_0032: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0037: mul
+		IL_0038: stloc.2
+		IL_0039: ldloc.2
+		IL_003a: box [System.Runtime]System.Double
+		IL_003f: stloc.3
+		IL_0040: ldloc.3
+		IL_0041: ret
 	} // end of method Calculator::multiply
 
 } // end of class Classes.Classes_ClassMethod_ParameterDestructuring.Calculator
@@ -331,7 +339,7 @@
 			object $p0
 		) cil managed 
 	{
-		// Method begins at RVA 0x22a4
+		// Method begins at RVA 0x22b4
 		// Header size: 12
 		// Code size: 107 (0x6b)
 		.maxstack 32
@@ -390,7 +398,7 @@
 			object $p0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2238
+		// Method begins at RVA 0x2248
 		// Header size: 12
 		// Code size: 95 (0x5f)
 		.maxstack 32
@@ -467,7 +475,7 @@
 			object $p0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2160
+		// Method begins at RVA 0x2170
 		// Header size: 12
 		// Code size: 203 (0xcb)
 		.maxstack 32
@@ -580,7 +588,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x231c
+		// Method begins at RVA 0x232c
 		// Header size: 12
 		// Code size: 674 (0x2a2)
 		.maxstack 32
@@ -811,7 +819,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x25ca
+		// Method begins at RVA 0x25da
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

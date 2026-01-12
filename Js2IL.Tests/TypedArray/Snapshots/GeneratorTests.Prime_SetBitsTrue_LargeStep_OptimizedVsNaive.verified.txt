@@ -429,7 +429,7 @@
 			object index
 		) cil managed 
 	{
-		// Method begins at RVA 0x2388
+		// Method begins at RVA 0x238c
 		// Header size: 12
 		// Code size: 176 (0xb0)
 		.maxstack 32
@@ -532,7 +532,7 @@
 	{
 		// Method begins at RVA 0x2140
 		// Header size: 12
-		// Code size: 459 (0x1cb)
+		// Code size: 464 (0x1d0)
 		.maxstack 32
 		.locals init (
 			[0] object,
@@ -563,189 +563,192 @@
 		IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 		IL_0029: ldloc.s 8
 		IL_002b: cgt
-		IL_002d: brfalse IL_0188
+		IL_002d: brfalse IL_018d
 
 		IL_0032: ldc.r8 32
-		IL_003b: box [System.Runtime]System.Double
-		IL_0040: ldarg.2
-		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
-		IL_0046: stloc.s 9
-		IL_0048: ldarg.1
-		IL_0049: ldloc.s 9
-		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0050: stloc.0
-		IL_0051: ldloc.0
-		IL_0052: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0057: stloc.s 8
-		IL_0059: ldloc.s 8
-		IL_005b: ldarg.3
-		IL_005c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0061: cgt
-		IL_0063: brfalse IL_00a6
+		IL_003b: ldarg.2
+		IL_003c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0041: mul
+		IL_0042: stloc.s 8
+		IL_0044: ldloc.s 8
+		IL_0046: box [System.Runtime]System.Double
+		IL_004b: stloc.s 9
+		IL_004d: ldarg.1
+		IL_004e: ldloc.s 9
+		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0055: stloc.0
+		IL_0056: ldloc.0
+		IL_0057: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_005c: stloc.s 8
+		IL_005e: ldloc.s 8
+		IL_0060: ldarg.3
+		IL_0061: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0066: cgt
+		IL_0068: brfalse IL_00ab
 
-		IL_0068: ldarg.1
-		IL_0069: stloc.1
-		// loop start (head: IL_006a)
-			IL_006a: ldloc.1
-			IL_006b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0070: stloc.s 8
-			IL_0072: ldloc.s 8
-			IL_0074: ldarg.3
-			IL_0075: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_007a: clt
-			IL_007c: brfalse IL_00a4
+		IL_006d: ldarg.1
+		IL_006e: stloc.1
+		// loop start (head: IL_006f)
+			IL_006f: ldloc.1
+			IL_0070: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0075: stloc.s 8
+			IL_0077: ldloc.s 8
+			IL_0079: ldarg.3
+			IL_007a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_007f: clt
+			IL_0081: brfalse IL_00a9
 
-			IL_0081: ldarg.0
-			IL_0082: ldstr "setBitTrue"
-			IL_0087: ldc.i4.1
-			IL_0088: newarr [System.Runtime]System.Object
-			IL_008d: dup
-			IL_008e: ldc.i4.0
-			IL_008f: ldloc.1
-			IL_0090: stelem.ref
-			IL_0091: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-			IL_0096: pop
-			IL_0097: ldloc.1
-			IL_0098: ldarg.2
-			IL_0099: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_009e: stloc.1
-			IL_009f: br IL_006a
+			IL_0086: ldarg.0
+			IL_0087: ldstr "setBitTrue"
+			IL_008c: ldc.i4.1
+			IL_008d: newarr [System.Runtime]System.Object
+			IL_0092: dup
+			IL_0093: ldc.i4.0
+			IL_0094: ldloc.1
+			IL_0095: stelem.ref
+			IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_009b: pop
+			IL_009c: ldloc.1
+			IL_009d: ldarg.2
+			IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_00a3: stloc.1
+			IL_00a4: br IL_006f
 		// end loop
 
-		IL_00a4: ldnull
-		IL_00a5: ret
+		IL_00a9: ldnull
+		IL_00aa: ret
 
-		IL_00a6: ldarg.3
-		IL_00a7: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_00ac: conv.i4
-		IL_00ad: conv.u4
-		IL_00ae: ldc.r8 5
-		IL_00b7: conv.i4
-		IL_00b8: shr.un
-		IL_00b9: conv.r.un
-		IL_00ba: stloc.2
-		IL_00bb: ldarg.1
-		IL_00bc: stloc.3
-		// loop start (head: IL_00bd)
-			IL_00bd: ldloc.3
-			IL_00be: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00c3: stloc.s 8
-			IL_00c5: ldloc.0
-			IL_00c6: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00cb: stloc.s 10
-			IL_00cd: ldloc.s 8
-			IL_00cf: ldloc.s 10
-			IL_00d1: clt
-			IL_00d3: brfalse IL_0186
+		IL_00ab: ldarg.3
+		IL_00ac: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_00b1: conv.i4
+		IL_00b2: conv.u4
+		IL_00b3: ldc.r8 5
+		IL_00bc: conv.i4
+		IL_00bd: shr.un
+		IL_00be: conv.r.un
+		IL_00bf: stloc.2
+		IL_00c0: ldarg.1
+		IL_00c1: stloc.3
+		// loop start (head: IL_00c2)
+			IL_00c2: ldloc.3
+			IL_00c3: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00c8: stloc.s 8
+			IL_00ca: ldloc.0
+			IL_00cb: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00d0: stloc.s 10
+			IL_00d2: ldloc.s 8
+			IL_00d4: ldloc.s 10
+			IL_00d6: clt
+			IL_00d8: brfalse IL_018b
 
-			IL_00d8: ldloc.3
-			IL_00d9: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00de: stloc.s 10
-			IL_00e0: ldloc.s 10
-			IL_00e2: conv.i4
-			IL_00e3: conv.u4
-			IL_00e4: ldc.r8 5
-			IL_00ed: conv.i4
-			IL_00ee: shr.un
-			IL_00ef: conv.r.un
-			IL_00f0: stloc.s 4
-			IL_00f2: ldloc.3
-			IL_00f3: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00f8: stloc.s 10
-			IL_00fa: ldloc.s 10
-			IL_00fc: conv.i4
-			IL_00fd: ldc.r8 31
-			IL_0106: conv.i4
-			IL_0107: and
-			IL_0108: conv.r8
-			IL_0109: stloc.s 5
-			IL_010b: ldc.r8 1
-			IL_0114: conv.i4
-			IL_0115: ldloc.s 5
-			IL_0117: conv.i4
-			IL_0118: shl
-			IL_0119: conv.r8
-			IL_011a: stloc.s 6
-			// loop start (head: IL_011c)
-				IL_011c: ldarg.0
-				IL_011d: ldfld object Classes.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive.BitArray::wordArray
-				IL_0122: ldloc.s 4
-				IL_0124: box [System.Runtime]System.Double
-				IL_0129: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-				IL_012e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0133: conv.i4
-				IL_0134: ldloc.s 6
-				IL_0136: conv.i4
-				IL_0137: or
-				IL_0138: conv.r8
-				IL_0139: stloc.s 10
-				IL_013b: ldarg.0
-				IL_013c: ldfld object Classes.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive.BitArray::wordArray
-				IL_0141: ldloc.s 4
-				IL_0143: ldloc.s 10
-				IL_0145: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, float64, float64)
-				IL_014a: pop
-				IL_014b: ldloc.s 4
-				IL_014d: box [System.Runtime]System.Double
-				IL_0152: stloc.s 11
-				IL_0154: ldloc.s 11
-				IL_0156: ldarg.2
-				IL_0157: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-				IL_015c: stloc.s 9
-				IL_015e: ldloc.s 9
-				IL_0160: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-				IL_0165: stloc.s 4
-				IL_0167: ldloc.s 4
-				IL_0169: ldloc.2
-				IL_016a: cgt
-				IL_016c: ldc.i4.0
-				IL_016d: ceq
-				IL_016f: brfalse IL_0179
+			IL_00dd: ldloc.3
+			IL_00de: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00e3: stloc.s 10
+			IL_00e5: ldloc.s 10
+			IL_00e7: conv.i4
+			IL_00e8: conv.u4
+			IL_00e9: ldc.r8 5
+			IL_00f2: conv.i4
+			IL_00f3: shr.un
+			IL_00f4: conv.r.un
+			IL_00f5: stloc.s 4
+			IL_00f7: ldloc.3
+			IL_00f8: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00fd: stloc.s 10
+			IL_00ff: ldloc.s 10
+			IL_0101: conv.i4
+			IL_0102: ldc.r8 31
+			IL_010b: conv.i4
+			IL_010c: and
+			IL_010d: conv.r8
+			IL_010e: stloc.s 5
+			IL_0110: ldc.r8 1
+			IL_0119: conv.i4
+			IL_011a: ldloc.s 5
+			IL_011c: conv.i4
+			IL_011d: shl
+			IL_011e: conv.r8
+			IL_011f: stloc.s 6
+			// loop start (head: IL_0121)
+				IL_0121: ldarg.0
+				IL_0122: ldfld object Classes.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive.BitArray::wordArray
+				IL_0127: ldloc.s 4
+				IL_0129: box [System.Runtime]System.Double
+				IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+				IL_0133: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_0138: conv.i4
+				IL_0139: ldloc.s 6
+				IL_013b: conv.i4
+				IL_013c: or
+				IL_013d: conv.r8
+				IL_013e: stloc.s 10
+				IL_0140: ldarg.0
+				IL_0141: ldfld object Classes.Prime_SetBitsTrue_LargeStep_OptimizedVsNaive.BitArray::wordArray
+				IL_0146: ldloc.s 4
+				IL_0148: ldloc.s 10
+				IL_014a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, float64, float64)
+				IL_014f: pop
+				IL_0150: ldloc.s 4
+				IL_0152: box [System.Runtime]System.Double
+				IL_0157: stloc.s 9
+				IL_0159: ldloc.s 9
+				IL_015b: ldarg.2
+				IL_015c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+				IL_0161: stloc.s 11
+				IL_0163: ldloc.s 11
+				IL_0165: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+				IL_016a: stloc.s 4
+				IL_016c: ldloc.s 4
+				IL_016e: ldloc.2
+				IL_016f: cgt
+				IL_0171: ldc.i4.0
+				IL_0172: ceq
+				IL_0174: brfalse IL_017e
 
-				IL_0174: br IL_011c
+				IL_0179: br IL_0121
 			// end loop
 
-			IL_0179: ldloc.3
-			IL_017a: ldarg.2
-			IL_017b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0180: stloc.3
-			IL_0181: br IL_00bd
+			IL_017e: ldloc.3
+			IL_017f: ldarg.2
+			IL_0180: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0185: stloc.3
+			IL_0186: br IL_00c2
 		// end loop
 
-		IL_0186: ldnull
-		IL_0187: ret
+		IL_018b: ldnull
+		IL_018c: ret
 
-		IL_0188: ldarg.1
-		IL_0189: stloc.s 7
-		// loop start (head: IL_018b)
-			IL_018b: ldloc.s 7
-			IL_018d: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_0192: stloc.s 10
-			IL_0194: ldloc.s 10
-			IL_0196: ldarg.3
-			IL_0197: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_019c: clt
-			IL_019e: brfalse IL_01c9
+		IL_018d: ldarg.1
+		IL_018e: stloc.s 7
+		// loop start (head: IL_0190)
+			IL_0190: ldloc.s 7
+			IL_0192: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_0197: stloc.s 10
+			IL_0199: ldloc.s 10
+			IL_019b: ldarg.3
+			IL_019c: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_01a1: clt
+			IL_01a3: brfalse IL_01ce
 
-			IL_01a3: ldarg.0
-			IL_01a4: ldstr "setBitTrue"
-			IL_01a9: ldc.i4.1
-			IL_01aa: newarr [System.Runtime]System.Object
-			IL_01af: dup
-			IL_01b0: ldc.i4.0
-			IL_01b1: ldloc.s 7
-			IL_01b3: stelem.ref
-			IL_01b4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-			IL_01b9: pop
-			IL_01ba: ldloc.s 7
-			IL_01bc: ldarg.2
-			IL_01bd: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_01c2: stloc.s 7
-			IL_01c4: br IL_018b
+			IL_01a8: ldarg.0
+			IL_01a9: ldstr "setBitTrue"
+			IL_01ae: ldc.i4.1
+			IL_01af: newarr [System.Runtime]System.Object
+			IL_01b4: dup
+			IL_01b5: ldc.i4.0
+			IL_01b6: ldloc.s 7
+			IL_01b8: stelem.ref
+			IL_01b9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+			IL_01be: pop
+			IL_01bf: ldloc.s 7
+			IL_01c1: ldarg.2
+			IL_01c2: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_01c7: stloc.s 7
+			IL_01c9: br IL_0190
 		// end loop
 
-		IL_01c9: ldarg.0
-		IL_01ca: ret
+		IL_01ce: ldarg.0
+		IL_01cf: ret
 	} // end of method BitArray::setBitsTrue
 
 	.method public hidebysig 
@@ -755,7 +758,7 @@
 			object range_stop
 		) cil managed 
 	{
-		// Method begins at RVA 0x2318
+		// Method begins at RVA 0x231c
 		// Header size: 12
 		// Code size: 97 (0x61)
 		.maxstack 32
@@ -833,7 +836,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2444
+		// Method begins at RVA 0x2448
 		// Header size: 12
 		// Code size: 1076 (0x434)
 		.maxstack 32
@@ -1232,7 +1235,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2884
+		// Method begins at RVA 0x2888
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

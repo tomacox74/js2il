@@ -180,10 +180,11 @@
 	{
 		// Method begins at RVA 0x20f4
 		// Header size: 12
-		// Code size: 105 (0x69)
+		// Code size: 121 (0x79)
 		.maxstack 32
 		.locals init (
-			[0] object
+			[0] float64,
+			[1] object
 		)
 
 		IL_0000: ldarg.1
@@ -208,24 +209,32 @@
 		IL_0040: starg.s z
 
 		IL_0042: ldarg.1
-		IL_0043: ldarg.2
-		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
-		IL_0049: stloc.0
-		IL_004a: ldloc.0
-		IL_004b: ldarg.3
-		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
+		IL_0043: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0048: stloc.0
+		IL_0049: ldloc.0
+		IL_004a: ldarg.2
+		IL_004b: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0050: mul
 		IL_0051: stloc.0
-		IL_0052: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0057: ldc.i4.1
-		IL_0058: newarr [System.Runtime]System.Object
-		IL_005d: dup
-		IL_005e: ldc.i4.0
-		IL_005f: ldloc.0
-		IL_0060: stelem.ref
-		IL_0061: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0066: pop
-		IL_0067: ldnull
-		IL_0068: ret
+		IL_0052: ldloc.0
+		IL_0053: ldarg.3
+		IL_0054: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0059: mul
+		IL_005a: stloc.0
+		IL_005b: ldloc.0
+		IL_005c: box [System.Runtime]System.Double
+		IL_0061: stloc.1
+		IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0067: ldc.i4.1
+		IL_0068: newarr [System.Runtime]System.Object
+		IL_006d: dup
+		IL_006e: ldc.i4.0
+		IL_006f: ldloc.1
+		IL_0070: stelem.ref
+		IL_0071: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0076: pop
+		IL_0077: ldnull
+		IL_0078: ret
 	} // end of method Function_DefaultParameterValue::multi
 
 } // end of class Functions.Function_DefaultParameterValue
@@ -243,7 +252,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x216c
+		// Method begins at RVA 0x217c
 		// Header size: 12
 		// Code size: 370 (0x172)
 		.maxstack 32
@@ -380,7 +389,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22ea
+		// Method begins at RVA 0x22fa
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
