@@ -38,15 +38,15 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 338 (0x152)
+		// Code size: 347 (0x15b)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.PrimitiveConversion_Number_Callable,
 			[1] float64,
 			[2] object,
 			[3] class [JavaScriptRuntime]JavaScriptRuntime.Console,
-			[4] object,
-			[5] bool,
+			[4] bool,
+			[5] object,
 			[6] object
 		)
 
@@ -139,33 +139,36 @@
 		IL_0106: call bool [JavaScriptRuntime]JavaScriptRuntime.Number::isNaN(object)
 		IL_010b: stloc.s 4
 		IL_010d: ldloc.s 4
-		IL_010f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_010f: box [System.Runtime]System.Boolean
 		IL_0114: stloc.s 5
 		IL_0116: ldloc.s 5
-		IL_0118: brfalse IL_0129
+		IL_0118: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_011d: stloc.s 4
+		IL_011f: ldloc.s 4
+		IL_0121: brfalse IL_0132
 
-		IL_011d: ldstr "NaN"
-		IL_0122: stloc.s 6
-		IL_0124: br IL_0131
+		IL_0126: ldstr "NaN"
+		IL_012b: stloc.s 6
+		IL_012d: br IL_013a
 
-		IL_0129: ldloc.1
-		IL_012a: box [System.Runtime]System.Double
-		IL_012f: stloc.s 6
+		IL_0132: ldloc.1
+		IL_0133: box [System.Runtime]System.Double
+		IL_0138: stloc.s 6
 
-		IL_0131: ldstr "Number(undefined):"
-		IL_0136: ldloc.s 6
-		IL_0138: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_013d: stloc.s 6
-		IL_013f: ldloc.3
-		IL_0140: ldc.i4.1
-		IL_0141: newarr [System.Runtime]System.Object
-		IL_0146: dup
-		IL_0147: ldc.i4.0
-		IL_0148: ldloc.s 6
-		IL_014a: stelem.ref
-		IL_014b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0150: pop
-		IL_0151: ret
+		IL_013a: ldstr "Number(undefined):"
+		IL_013f: ldloc.s 6
+		IL_0141: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0146: stloc.s 6
+		IL_0148: ldloc.3
+		IL_0149: ldc.i4.1
+		IL_014a: newarr [System.Runtime]System.Object
+		IL_014f: dup
+		IL_0150: ldc.i4.0
+		IL_0151: ldloc.s 6
+		IL_0153: stelem.ref
+		IL_0154: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0159: pop
+		IL_015a: ret
 	} // end of method PrimitiveConversion_Number_Callable::Main
 
 } // end of class Scripts.PrimitiveConversion_Number_Callable
@@ -177,7 +180,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21ba
+		// Method begins at RVA 0x21c3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
