@@ -223,7 +223,6 @@ public sealed class TwoPhaseCompilationCoordinator
                 ordered,
                 serviceProvider,
                 rootVariables,
-                bclReferences,
                 methodBodyStreamEncoder,
                 classRegistry);
 
@@ -297,7 +296,6 @@ public sealed class TwoPhaseCompilationCoordinator
         IReadOnlyList<CallableId> plannedOrder,
         IServiceProvider serviceProvider,
         Variables rootVariables,
-        BaseClassLibraryReferences bclReferences,
         MethodBodyStreamEncoder methodBodyStreamEncoder,
         ClassRegistry classRegistry)
     {
@@ -360,8 +358,6 @@ public sealed class TwoPhaseCompilationCoordinator
                         callable: callable,
                         expectedMethodDef: expected,
                         methodBodyStreamEncoder: methodBodyStreamEncoder,
-                        classRegistry: classRegistry,
-                        rootVariables: rootVariables,
                         symbolTable: symbolTable,
                         classScope: classScope,
                         classDecl: classDecl,
@@ -376,9 +372,6 @@ public sealed class TwoPhaseCompilationCoordinator
                         callable: callable,
                         expectedMethodDef: expected,
                         methodBodyStreamEncoder: methodBodyStreamEncoder,
-                        classRegistry: classRegistry,
-                        rootVariables: rootVariables,
-                        symbolTable: symbolTable,
                         classScope: classScope,
                         classDecl: classDecl);
                     break;

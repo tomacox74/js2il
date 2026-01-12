@@ -110,8 +110,6 @@ internal sealed class JsMethodCompiler
         CallableId callable,
         MethodDefinitionHandle expectedMethodDef,
         MethodBodyStreamEncoder methodBodyStreamEncoder,
-        ClassRegistry classRegistry,
-        Variables rootVariables,
         SymbolTable symbolTable,
         Scope classScope,
         ClassDeclaration classDecl,
@@ -148,30 +146,14 @@ internal sealed class JsMethodCompiler
             return irBody;
         }
 
-        // Temporary fallback during IR migration.
-        return LegacyClassBodyCompiler.CompileConstructorBody(
-            _serviceProvider,
-            _metadataBuilder,
-            methodBodyStreamEncoder,
-            _bclReferences,
-            classRegistry,
-            rootVariables,
-            symbolTable,
-            callable,
-            expectedMethodDef,
-            classScope,
-            classDecl,
-            ctorFunc,
-            needsScopes);
+        throw new NotSupportedException(
+            $"IR pipeline could not compile class constructor body for callable '{callable}' (node={ctorNode.Type}, scope='{ctorScope.GetQualifiedName()}').");
     }
 
     public CompiledCallableBody CompileClassStaticInitializerBodyTwoPhase(
         CallableId callable,
         MethodDefinitionHandle expectedMethodDef,
         MethodBodyStreamEncoder methodBodyStreamEncoder,
-        ClassRegistry classRegistry,
-        Variables rootVariables,
-        SymbolTable symbolTable,
         Scope classScope,
         ClassDeclaration classDecl)
     {
@@ -195,19 +177,8 @@ internal sealed class JsMethodCompiler
             return irBody;
         }
 
-        // Temporary fallback during IR migration.
-        return LegacyClassBodyCompiler.CompileStaticInitializerBody(
-            _serviceProvider,
-            _metadataBuilder,
-            methodBodyStreamEncoder,
-            _bclReferences,
-            classRegistry,
-            rootVariables,
-            symbolTable,
-            callable,
-            expectedMethodDef,
-            classScope,
-            classDecl);
+        throw new NotSupportedException(
+            $"IR pipeline could not compile class static initializer body for callable '{callable}' (node={classDecl.Type}, scope='{classScope.GetQualifiedName()}').");
     }
 
     public CompiledCallableBody CompileClassMethodBodyTwoPhase(
@@ -258,20 +229,8 @@ internal sealed class JsMethodCompiler
             return irBody;
         }
 
-        // Temporary fallback during IR migration.
-        return LegacyClassBodyCompiler.CompileMethodBody(
-            _serviceProvider,
-            _metadataBuilder,
-            methodBodyStreamEncoder,
-            _bclReferences,
-            classRegistry,
-            rootVariables,
-            symbolTable,
-            callable,
-            expectedMethodDef,
-            classScope,
-            methodDef,
-            clrMethodName);
+        throw new NotSupportedException(
+            $"IR pipeline could not compile class method body for callable '{callable}' (node={methodDef.Type}, scope='{methodScope.GetQualifiedName()}').");
     }
 
     /// <summary>
