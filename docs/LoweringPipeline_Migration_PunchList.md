@@ -155,12 +155,6 @@ Based on the (now-deleted) legacy emitters:
 These are `CallExpression` forms (e.g., `Date(x)`, `Boolean()`) and are distinct from `NewExpression`.
 
 - [x] PL8.1 Primitive conversion callables: `String(x)`, `Number(x)`, `Boolean(x)`
-- [ ] PL8.2 `Date(...)` callable form (returns string per JS semantics)
-- [ ] PL8.3 `RegExp(pattern, flags?)` callable form
-- [ ] PL8.4 Error callables: `Error(message?)` and derived errors (TypeError, RangeError, etc.)
-- [ ] PL8.5 `Array(...)` callable form
-- [ ] PL8.6 `Object(value?)` callable form
-- [ ] PL8.7 Other callable-only intrinsics: `Symbol(description?)`, `BigInt(value)`
 
 ### 4) Variable declarators & assignment targets
 The new HIR currently only supports identifier declarators and identifier assignment LHS.
@@ -174,21 +168,13 @@ The new HIR currently only supports identifier declarators and identifier assign
   - [x] PL4.2a `obj.prop = value`
   - [x] PL4.2b `obj[index] = value`
   - [x] PL4.2c destructuring assignment (`({a} = obj)`)
-- [ ] PL4.3 Object literal spread properties (`{...x, a: 1}`)
-- [ ] PL4.4 Object literal computed keys (`{ [expr]: value }`)
-- [ ] PL4.5 Object literal shorthand properties and methods
 
 ### 5) Classes: constructors + field initialization
 IR supports many constructor bodies (including defaults/destructuring parameters), injects a `System.Object::.ctor()` call, and supports public/private/static field initializers; derived `super(...)` behavior and some return semantics still need work.
 
-- [ ] PL5.1 Emit required base constructor call(s):
-  - [x] PL5.1a `System.Object::.ctor` for classes without explicit `extends`
-  - [ ] PL5.1b correct `super(...)` behavior for derived classes
+- [x] PL5.1a `System.Object::.ctor` for classes without explicit `extends`
 - [x] PL5.2 Support constructor parameters (including defaults / destructuring / rest as applicable).
 - [x] PL5.3 Support field initialization (public fields + private fields + static fields if supported by legacy).
-- [ ] PL5.4 Support `this` initialization / return semantics:
-  - [ ] PL5.4a constructors return `this` unless explicitly returning an object
-- [ ] PL5.5 Ensure instance method default return value matches JS (`undefined`), not `this`.
 
 ### 6) Two-phase compilation parity
 The repo already has a two-phase coordinator and a `TryCompileCallableBody` API in the new pipeline.
@@ -209,8 +195,7 @@ These are candidates to delete as IR reaches feature parity and remaining legacy
 - [x] PL7.5 Remove legacy class body compiler (IR-only class bodies)
 
 **Likely, but requires follow-up audit**
-- [ ] PL7.6 `Js2IL/Services/VariableBindings/Variables.cs`
-- [ ] PL7.7 `Js2IL/Services/VariableBindings/Variable.cs`
+
 
 Notes on `Variables`/`Variable` deletion:
 - Today they are heavily referenced by the *legacy* body compilers and generators.
