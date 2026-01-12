@@ -194,29 +194,32 @@
 	{
 		// Method begins at RVA 0x210c
 		// Header size: 12
-		// Code size: 46 (0x2e)
+		// Code size: 48 (0x30)
 		.maxstack 32
-		.locals (
-			[0] class Scopes.CommonJS_Export_Function_Lib
+		.locals init (
+			[0] class Scopes.CommonJS_Export_Function_Lib,
+			[1] object
 		)
 
 		IL_0000: newobj instance void Scopes.CommonJS_Export_Function_Lib::.ctor()
 		IL_0005: stloc.0
-		IL_0006: ldarg.2
-		IL_0007: ldstr "exports"
-		IL_000c: ldnull
-		IL_000d: ldftn object Functions.CommonJS_Export_Function_Lib::greet(object[], object)
-		IL_0013: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0018: ldc.i4.1
-		IL_0019: newarr [System.Runtime]System.Object
-		IL_001e: dup
-		IL_001f: ldc.i4.0
-		IL_0020: ldloc.0
-		IL_0021: stelem.ref
-		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_002c: pop
-		IL_002d: ret
+		IL_0006: ldnull
+		IL_0007: ldftn object Functions.CommonJS_Export_Function_Lib::greet(object[], object)
+		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0012: ldc.i4.1
+		IL_0013: newarr [System.Runtime]System.Object
+		IL_0018: dup
+		IL_0019: ldc.i4.0
+		IL_001a: ldloc.0
+		IL_001b: stelem.ref
+		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0021: stloc.1
+		IL_0022: ldarg.2
+		IL_0023: ldstr "exports"
+		IL_0028: ldloc.1
+		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_002e: pop
+		IL_002f: ret
 	} // end of method CommonJS_Export_Function_Lib::Main
 
 } // end of class Scripts.CommonJS_Export_Function_Lib
@@ -228,7 +231,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2146
+		// Method begins at RVA 0x2148
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

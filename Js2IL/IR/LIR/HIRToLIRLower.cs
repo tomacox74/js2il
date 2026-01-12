@@ -4295,7 +4295,8 @@ public sealed class HIRToLIRLowerer
         var slot = GetOrCreateVariableSlot(binding, binding.Name, storageInfo);
         valueToStore = CoerceToVariableSlotStorage(slot, valueToStore);
         _variableMap[binding] = valueToStore;
-        SetTempVariableSlot(valueToStore, slot);
+        valueToStore = EnsureTempMappedToSlot(slot, valueToStore);
+        _variableMap[binding] = valueToStore;
         // for..of/in assigns each iteration; do not treat as single-assignment
         _methodBodyIR.SingleAssignmentSlots.Remove(slot);
 
@@ -4418,7 +4419,7 @@ public sealed class HIRToLIRLowerer
         var storageInfo = GetTempStorage(valueToStore);
         var slot = GetOrCreateVariableSlot(binding, assignExpr.Target.Name, storageInfo);
         valueToStore = CoerceToVariableSlotStorage(slot, valueToStore);
-        SetTempVariableSlot(valueToStore, slot);
+        valueToStore = EnsureTempMappedToSlot(slot, valueToStore);
         _variableMap[binding] = valueToStore;
         resultTempVar = valueToStore;
 
@@ -5128,6 +5129,33 @@ public sealed class HIRToLIRLowerer
             return;
         }
         _methodBodyIR.TempVariableSlots[temp.Index] = slot;
+    }
+
+    private int GetTempVariableSlot(TempVariable temp)
+    {
+        if (temp.Index < 0 || temp.Index >= _methodBodyIR.TempVariableSlots.Count)
+        {
+            return -1;
+        }
+
+        return _methodBodyIR.TempVariableSlots[temp.Index];
+    }
+
+    private TempVariable EnsureTempMappedToSlot(int slot, TempVariable value)
+    {
+        var currentSlot = GetTempVariableSlot(value);
+        if (currentSlot == -1 || currentSlot == slot)
+        {
+            SetTempVariableSlot(value, slot);
+            return value;
+        }
+
+        // Avoid retroactively changing earlier IL for this temp by remapping.
+        var copy = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRCopyTemp(value, copy));
+        DefineTempStorage(copy, GetTempStorage(value));
+        SetTempVariableSlot(copy, slot);
+        return copy;
     }
 
     /// <summary>

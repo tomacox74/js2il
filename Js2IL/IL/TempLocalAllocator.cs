@@ -433,6 +433,11 @@ internal static class TempLocalAllocator
                 yield return getItem.Object;
                 yield return getItem.Index;
                 break;
+            case LIRSetItem setItem:
+                yield return setItem.Object;
+                yield return setItem.Index;
+                yield return setItem.Value;
+                break;
             case LIRArrayPushRange pushRange:
                 yield return pushRange.TargetArray;
                 yield return pushRange.SourceArray;

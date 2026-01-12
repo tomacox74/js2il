@@ -23,5 +23,17 @@ namespace Js2IL.Tests.TypedArray
 
         [Fact]
         public Task Int32Array_ShiftDerived_Index_Access() { var testName = nameof(Int32Array_ShiftDerived_Index_Access); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Prime_SetBitsTrue_SmallStep_WordValueOrAssign() { var testName = nameof(Prime_SetBitsTrue_SmallStep_WordValueOrAssign); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Prime_SetBitsTrue_SmallStep_WordOffsetChangeCheck() { var testName = nameof(Prime_SetBitsTrue_SmallStep_WordOffsetChangeCheck); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Prime_LargeStep_DoWhileCounter() { var testName = nameof(Prime_LargeStep_DoWhileCounter); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Prime_SetBitsTrue_LargeStep_OptimizedVsNaive() { var testName = nameof(Prime_SetBitsTrue_LargeStep_OptimizedVsNaive); return ExecutionTest(testName); }
     }
 }

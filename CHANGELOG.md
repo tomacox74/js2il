@@ -4,7 +4,11 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+### Fixed
+- Fixed temp-local liveness tracking for indexed stores (`LIRSetItem`) to prevent clobbering operands during `Object.SetItem` calls (restores correct `Int32Array` writes and fixes PrimeJavaScript invalid prime counts).
+
+### Added
+- Typed-array regression tests covering Prime bit-marking paths (optimized vs naive) and related control-flow/indexing scenarios.
 
 ## v0.6.0 - 2026-01-12
 
