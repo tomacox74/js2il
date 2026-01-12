@@ -2861,16 +2861,6 @@ internal sealed class LIRToILCompiler
         var getterMref = _memberRefRegistry.GetOrAddMethod(getterDecl!, gvProp!.GetMethod!.Name);
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(getterMref);
-
-        // Generator snapshots historically expect intrinsic globals to be materialized as object
-        // and then cast to their concrete type at the use site. Emitting an explicit cast keeps
-        // the IL shape stable (even if redundant for strongly-typed getters like get_console()).
-        var propType = gvProp.PropertyType;
-        if (!propType.IsValueType && propType != typeof(object))
-        {
-            ilEncoder.OpCode(ILOpCode.Castclass);
-            ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(propType));
-        }
     }
 
     public void EmitInvokeIntrinsicMethod(Type declaringType, string methodName, InstructionEncoder ilEncoder)
