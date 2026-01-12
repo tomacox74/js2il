@@ -1671,6 +1671,23 @@ class HIRMethodBuilder
     /// </summary>
     private Scope? FindChildScopeForAstNode(Node astNode)
     {
-        return _currentScope.Children.FirstOrDefault(child => ReferenceEquals(child.AstNode, astNode));
+        // Primary: exact AST node identity match (fast path when the HIR is built from
+        // the same AST instance that was used to build the SymbolTable).
+        var byReference = _currentScope.Children.FirstOrDefault(child => ReferenceEquals(child.AstNode, astNode));
+        if (byReference != null)
+        {
+            return byReference;
+        }
+
+        // Fallback: match block scopes by deterministic location-based name.
+        // This makes scope resolution resilient if AST nodes are not reference-identical
+        // across phases (e.g., if the AST is reparsed).
+        if (astNode is BlockStatement blockStmt)
+        {
+            var blockName = $"Block_L{blockStmt.Location.Start.Line}C{blockStmt.Location.Start.Column}";
+            return _currentScope.Children.FirstOrDefault(child => child.Kind == ScopeKind.Block && child.Name == blockName);
+        }
+
+        return null;
     }
 }
