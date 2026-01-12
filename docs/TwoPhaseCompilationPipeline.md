@@ -8,7 +8,7 @@ This document describes a proposed **two-phase compilation pipeline** for JS2IL 
 
 The goal is to make IR compilation reliable without relying on “compile-on-demand” during AST→HIR→LIR→IL.
 
-> Status (Jan 2026): Two-phase compilation is always enabled. **Milestone 1**, **Milestone 2a**, **Milestone 2b**, **Milestone 2b1**, and **Milestone 2c** are implemented. Phase 2 compilation uses the Milestone 2b plan ordering (and treats the plan as authoritative).
+> Status (Jan 2026): Two-phase compilation is always enabled. **Milestone 1**, **Milestone 2a**, **Milestone 2b**, **Milestone 2b1**, and **Milestone 2c** are implemented. Phase 2 compilation uses the Milestone 2b plan ordering (and treats the plan as authoritative). The legacy AST→IL generator stack (`ILMethodGenerator` / `ILExpressionGenerator` / `BinaryOperators`) has been removed; method bodies compile via the IR pipeline (`JsMethodCompiler`) or fail fast.
 
 This doc is written **ideal-first**:
 
@@ -31,12 +31,13 @@ JS2IL now has a real two-phase coordinator:
   - Class callables are finalized grouped by class type (TypeDef order) to preserve per-type `MethodList` contiguity.
   - Function declarations are compiled in plan order and finalized as a deterministic contiguous block.
   - Anonymous callables are compiled in plan order after classes/functions are declared.
-  - The main method body is emitted after `DeclareClassesAndFunctions(...)` completes (see `MainGenerator.GenerateMethodBody`).
+  - The main module method body is compiled via IR (`JsMethodCompiler.TryCompileMainMethod`) after `DeclareClassesAndFunctions(...)` has declared/preallocated callable tokens.
+  - The runtime entry point method (`Program.Main`) is emitted directly in `AssemblyGenerator.createEntryPoint` using `InstructionEncoder` + `Runtime` (no legacy generator dependency).
 
 What is *still incomplete* (post-Milestone 2c):
 
 - The planner does not attempt broad dynamic receiver tracking (`obj.m()` / `obj["m"]()`); it only adds high-confidence member edges (`this.m()`, `super.m()`) per Milestone 2b1.
-- Several legacy emitters/registries still exist alongside `CallableRegistry` (see Milestone 3).
+- Some callable lookup paths are still split across multiple registries (e.g., `CallableRegistry` and the string-keyed `FunctionRegistry`). The forward path is to unify on `CallableId`/`BindingInfo`-keyed metadata.
 
 ---
 
@@ -46,7 +47,7 @@ Today, compilation is effectively interleaved by generator call order (e.g., “
 
 - A class method compiled early might reference a function/arrow that hasn’t been compiled yet.
 - IR lowering and/or IL emission can require a callable handle to exist (to emit `ldftn` + delegate construction).
-- When caches aren’t populated yet, the IR pipeline may fail and fall back to legacy emission, which strict-IR tests disallow.
+- When callable tokens aren’t populated yet, the IR pipeline should fail fast (two-phase ordering + strict mode are intended to prevent on-demand compilation).
 
 A two-phase pipeline fixes this by separating:
 
@@ -586,8 +587,7 @@ For each callable in the plan:
 
 If any step fails, the fallback policy is decided centrally:
 
-- strict-IR tests: no fallback (fail)
-- production default: fallback to legacy emitter for that callable only
+- Strict mode / current implementation: no legacy fallback (fail fast)
 
 ### Compiling Main
 
@@ -635,6 +635,8 @@ This is intended to be implemented incrementally and keep the system runnable.
 
 ### Legacy AST→IL pipeline: file-by-file changes
 
+> Note (Jan 2026): this section is largely historical. The legacy AST→IL generator stack (`ILMethodGenerator` / `ILExpressionGenerator` / `BinaryOperators`) has been removed, and the compiler now relies on two-phase declarations + IR compilation.
+
 
 ### Milestone 1: Coordinator + Phase 1 declarations (completed)
 
@@ -652,7 +654,7 @@ Non-goals for Milestone 1:
 Usability expectation:
 
 - After Milestone 1, the compiler should remain in a **fully usable state**.
-- The current behavior (“try IR first, then fall back to legacy AST→IL if IR fails”) remains, but the **IR attempt moves into Phase 2 body compilation** rather than happening during declaration.
+- The intended behavior is that IR compilation happens during Phase 2 body compilation (not during declaration). In the current implementation, there is no legacy AST→IL fallback.
 
 Legacy AST→IL impact:
 
@@ -692,15 +694,13 @@ Recommended sequence (to minimize churn):
   - Move function declarations and class callables (constructors/methods/accessors/static initializers) to the Phase 2 body-compilation model.
   - Preserve ECMA-335 metadata ordering invariants:
     - Class method bodies are compiled in plan order but **finalized** grouped by class type so each `TypeDef.MethodList` points at a contiguous block.
-    - Main method emission happens after planned callables are compiled (via `MainGenerator.DeclareClassesAndFunctions` → `GenerateMethodBody`).
+    - Main module method compilation happens after callable tokens are declared (via `MainGenerator.DeclareClassesAndFunctions` → `JsMethodCompiler.TryCompileMainMethod`).
 
 Legacy AST→IL impact:
 
-- **No semantic changes to AST→IL emission are intended.** The change is *when* it runs:
-  - body compilation is invoked by the coordinator in planned order.
-  - main is emitted after callable bodies so expression emission never needs to compile.
+- The legacy AST→IL emitter stack has been removed; ordering and correctness now depend on two-phase declarations + IR compilation.
 
-### Milestone 3: Finish unifying callable lookups (remaining work)
+### Milestone 3: Finish unifying callable lookups (partial / remaining work)
 
 Milestone 2c makes Phase 2 compilation ordering plan-driven, but some token/metadata lookups are still split across multiple registries.
 
@@ -709,8 +709,7 @@ Remaining work for Milestone 3:
 - Make `CallableRegistry` the single source of truth for callable tokens at all call sites (remove remaining name-based fallback paths).
 - Reduce (or eliminate) reliance on separate registries for callable lookup (`FunctionRegistry`, class constructor caches) where practical.
 - Consolidate the “body-only compilation” surface:
-  - Prefer one API shape (e.g., `TryCompileCallableBody(...)` returning `CompiledCallableBody`) for both IR-first and legacy fallback compilers.
-  - Keep legacy AST→IL emitters as an implementation detail, not as an alternate token source.
+  - Prefer one API shape (e.g., `TryCompileCallableBody(...)` returning `CompiledCallableBody`) across all callable kinds.
 - Keep module-awareness as a hard invariant for callable identity/lookup (avoid cross-module name collisions).
 
 ### Milestone 4: (TBD / optional)
@@ -843,13 +842,13 @@ The tables below are meant to be the “implementation cheat sheet”. When buil
 | Construct | Example JS | `Scope.Name` (SymbolTable) | Registry scope name (VariableRegistry key) | IL method name | .NET owner type / namespace | Primary cache/registry key |
 |---|---|---|---|---|---|---|
 | Module / global scope | *(file)* | `moduleName` | `moduleName` (global) | `Main` / entrypoint (not a scope name) | Global scope type is emitted via scope-as-class machinery | Scope name string (`moduleName`) |
-| Function declaration | `function foo(a){}` | `foo` | `"{moduleName}/foo"` | `foo` | `Functions.{moduleName}` (static method) | IR: `BindingInfo` → `MethodDefinitionHandle` (CompiledMethodCache) / Legacy: string function name |
+| Function declaration | `function foo(a){}` | `foo` | `"{moduleName}/foo"` | `foo` | `Functions.{moduleName}` (static method) | IR: `BindingInfo` / `CallableId` → token (via registries); `FunctionRegistry` remains a string-keyed handle/arity map |
 | Nested function declaration | `function outer(){ function inner(){} }` | `inner` | `"{moduleName}/inner"` (current) | `inner` | `Functions.{moduleName}` + nested type `Functions.{outer}_Nested` | IR: parent `funcScope.Bindings["inner"]` / Legacy: string name `"inner"` |
-| Function expression (assigned) | `const f = function(a){}` | `FunctionExpression_f` | `"{moduleName}/FunctionExpression_f"` | `FunctionExpression_LxCy` | Generated as a nested function method via expression emitter | Legacy: method handle returned from generation; planned: `CallableId(FunctionExpr@loc or assignment)` |
-| Function expression (not assigned) | `(function(a){})` | `FunctionExpression_LxCy` | `"{moduleName}/FunctionExpression_LxCy"` | `FunctionExpression_LxCy` | Generated as a nested function method via expression emitter | Same as above |
+| Function expression (assigned) | `const f = function(a){}` | `FunctionExpression_f` | `"{moduleName}/FunctionExpression_f"` | `FunctionExpression_LxCy` | Compiled as a planned anonymous callable (IR) | `CallableId(FunctionExpr@loc/assignment)` → token |
+| Function expression (not assigned) | `(function(a){})` | `FunctionExpression_LxCy` | `"{moduleName}/FunctionExpression_LxCy"` | `FunctionExpression_LxCy` | Compiled as a planned anonymous callable (IR) | Same as above |
 | Named function expression | `const f = function g(a){}` | `g` (internal) | `"{moduleName}/g"` | `FunctionExpression_LxCy` (still location-based) | Generated as a nested function method; recursion uses internal binding | Same as above |
-| Arrow function (assigned) | `const f = (a)=>a+1` | `ArrowFunction_f` | `"{moduleName}/ArrowFunction_f"` | `ArrowFunction_LxCy` | Generated as a nested function method via arrow emitter | IR: `ArrowFunctionExpression` → token (legacy adapter); planned: `CallableId(Arrow@loc/assignment)` |
-| Arrow function (not assigned) | `arr.map((x)=>x)` | `ArrowFunction_LxCy` | `"{moduleName}/ArrowFunction_LxCy"` | `ArrowFunction_LxCy` | Generated as a nested function method via arrow emitter | Same as above |
+| Arrow function (assigned) | `const f = (a)=>a+1` | `ArrowFunction_f` | `"{moduleName}/ArrowFunction_f"` | `ArrowFunction_LxCy` | Compiled as a planned anonymous callable (IR) | `CallableId(Arrow@loc/assignment)` → token |
+| Arrow function (not assigned) | `arr.map((x)=>x)` | `ArrowFunction_LxCy` | `"{moduleName}/ArrowFunction_LxCy"` | `ArrowFunction_LxCy` | Compiled as a planned anonymous callable (IR) | Same as above |
 | Class declaration | `class C {}` | `C` (or `Class<N>`) | N/A (class itself not a variable scope key) | N/A | Namespace `Classes.{moduleName}`, type name `SanitizeForMetadata(C)` | `ClassRegistry` keyed by class name string |
 | Class constructor | `constructor(a){}` | Method scope name is `constructor` (method pseudo-scope) | `"{moduleName}/constructor"` (current) | `.ctor` | Inside class type `Classes.{moduleName}.C` | `ClassRegistry.RegisterConstructor(className, ...)` |
 | Class instance method | `m(a){}` | `m` (or `Method_LxCy`) | `"{moduleName}/{mname}"` (current) | `m` | Inside class type `Classes.{moduleName}.C` | `ClassRegistry.RegisterMethod(className, methodName, ...)` |
@@ -866,8 +865,8 @@ Notes:
 |---|---|---|---|
 | `VariableRegistry` (scope field lookup) | Resolve captured variables/fields by scope | `string registryScopeName` (often `"{module}/{scope}"`) | Keep string key for storage lookup; also map from `CallableId` → registryScopeName |
 | `CompiledMethodCache` | IR callable token lookup for function decls | `BindingInfo` → `MethodDefinitionHandle` | `CallableId(FunctionDecl)` → token/descriptor (adapter keeps BindingInfo path) |
-| *(legacy arrow-function token cache)* | IR callable token lookup for arrows | `ArrowFunctionExpression` → token | `CallableId(Arrow)` → token/descriptor (adapter keeps AST-node path) |
-| `FunctionRegistry` | Legacy emitter lookup by name (and arity info) | `string functionName` → method handle/arity | Prefer `CallableId` to avoid collisions; keep name-based lookup for legacy compatibility |
+| *(arrow-function token cache)* | IR callable token lookup for arrows | `ArrowFunctionExpression` → token | `CallableId(Arrow)` → token/descriptor (adapter keeps AST-node path) |
+| `FunctionRegistry` | Name-keyed handle/arity lookup for function declarations | `string functionName` → method handle/arity | Prefer `CallableId` to avoid collisions; keep name-based lookup only while needed |
 | `ClassRegistry` | Class type + ctor/method metadata for call sites | `string className` (+ member name) | `CallableId(ClassCtor/ClassMethod)` should carry class name + member name; registry remains class-centered |
 
 ### Module / global scope
@@ -909,9 +908,11 @@ There are **two distinct names** involved:
   - If the expression is assigned: `FunctionExpression_<assignmentTarget>`
   - Else: `FunctionExpression_L<line>C<col>`
 
-This is explicitly required by comments in the builder (“Naming must align with ILExpressionGenerator”).
+This is explicitly required by comments in the builder (historically: naming aligned with the legacy AST→IL emitter stack).
 
-**Registry scope name (ILExpressionGenerator / VariableRegistry key)**
+This was historically aligned with the legacy AST→IL emitter stack; that stack has been deleted, but the naming conventions still matter for registry keys and test snapshots.
+
+**Registry scope name (VariableRegistry key)**
 
 - `baseScopeName` is chosen as:
   - named function expr: `<declaredName>`
@@ -919,7 +920,7 @@ This is explicitly required by comments in the builder (“Naming must align wit
   - else: `FunctionExpression_L<line>C<col>`
 - `registryScopeName` is: `"{moduleName}/{baseScopeName}"`
 
-**IL method name (ILExpressionGenerator)**
+**IL method name (historical convention)**
 
 - Always uses the location form: `FunctionExpression_L<line>C<col>`
   - even when `baseScopeName` uses assignment target.
@@ -934,14 +935,14 @@ Same structure as function expressions: there is a scope/registry name and a met
 - If assigned: `ArrowFunction_<assignmentTarget>`
 - Else: `ArrowFunction_L<line>C<col>`
 
-**Registry scope name (ILExpressionGenerator / VariableRegistry key)**
+**Registry scope name (VariableRegistry key)**
 
 - `arrowBaseScopeName`:
   - if assigned: `ArrowFunction_<assignmentTarget>`
   - else: `ArrowFunction_L<line>C<col>`
 - `registryScopeName`: `"{moduleName}/{arrowBaseScopeName}"`
 
-**IL method name (ILExpressionGenerator)**
+**IL method name (historical convention)**
 
 - Always uses the location form: `ArrowFunction_L<line>C<col>`
 

@@ -5,9 +5,11 @@ This document is a punch list of remaining work to migrate functionality from th
 
 The end-state goal is to remove the legacy method-body emitters (e.g. `BinaryOperators`, `ILExpressionGenerator`, `ILMethodGenerator`) and any supporting infrastructure that becomes redundant.
 
+> Status (Jan 2026): The legacy AST→IL generator stack (`ILMethodGenerator` / `ILExpressionGenerator` / `BinaryOperators` and helpers) has been deleted. The compiler now relies on IR compilation and fails fast when unsupported constructs are encountered (no legacy fallback).
+
 ## Scope / Definitions
 - **New pipeline**: `JsMethodCompiler` + `HIRBuilder` + `HIRToLIRLowerer` + `LIRToILCompiler`.
-- **Legacy pipeline**: `Js2IL/Services/ILGenerators/*` (notably `ILExpressionGenerator`, `ILMethodGenerator`, `BinaryOperators`) plus two-phase legacy body compilers.
+- **Legacy pipeline** (historical): the deleted AST→IL emitters under `Js2IL/Services/ILGenerators/*` (notably `ILExpressionGenerator`, `ILMethodGenerator`, `BinaryOperators`) plus legacy body compilers that previously handled unsupported IR cases.
 - **“Migrated”** means the construct is parsed to HIR, lowered to LIR, and emitted to IL in the new pipeline (not merely “exists as an instruction type”).
 
 ## Current State (Audit Summary)
@@ -18,8 +20,8 @@ The end-state goal is to remove the legacy method-body emitters (e.g. `BinaryOpe
 - `JsMethodCompiler.TryCompileCallableBody` (two-phase body-only compilation)
 - Partial `JsMethodCompiler.TryCompileClassConstructor` exists but is intentionally guarded to fail fast (see “Constructors” below).
 
-### Hard fallback gates (new pipeline declines and legacy takes over)
-The new pipeline currently falls back (returns `false` / default) for:
+### Hard fail gates (new pipeline declines and compilation fails)
+The new pipeline currently declines (returns `false` / default) for:
 - **Closures / captured variables**
   - `HIRBuilder.TryParseMethod(...)` refuses when:
     - current scope has captured bindings (`scope.Bindings.Values.Any(b => b.IsCaptured)`), and/or
@@ -84,7 +86,7 @@ This is the set of AST constructs that the new pipeline can currently parse and 
 - Default parameter initialization exists in lowering (AssignmentPattern where LHS is Identifier).
 
 ## Legacy Pipeline Coverage (what old AST → IL can do today that HIR can’t)
-Based on the legacy emitters:
+Based on the (now-deleted) legacy emitters:
 
 **Statements supported in legacy but not in HIRBuilder**
 - (none currently identified; statement parity items are tracked in PL2.*)
@@ -198,13 +200,15 @@ The repo already has a two-phase coordinator and a `TryCompileCallableBody` API 
 - [ ] PL6.2 Ensure dependency discovery and required scope-chain layout are consistent with IR call-site scopes materialization.
 
 ### 7) Deletion targets (what can be removed once punch list is complete)
-These are candidates to delete **after** the new pipeline reaches feature parity and no longer needs fallback:
+These are candidates to delete as IR reaches feature parity and remaining legacy scaffolding becomes redundant.
+
+> Note (Jan 2026): several of the high-confidence legacy deletion targets have already been removed to enforce IR-only compilation.
 
 **High confidence once IR is complete**
-- [ ] PL7.1 `Js2IL/Services/ILGenerators/BinaryOperators.cs`
-- [ ] PL7.2 `Js2IL/Services/ILGenerators/ILExpressionGenerator.cs`
-- [ ] PL7.3 `Js2IL/Services/ILGenerators/ILMethodGenerator.cs`
-- [ ] PL7.4 `Js2IL/Services/TwoPhaseCompilation/LegacyFunctionBodyCompiler.cs`
+- [x] PL7.1 `Js2IL/Services/ILGenerators/BinaryOperators.cs` (deleted)
+- [x] PL7.2 `Js2IL/Services/ILGenerators/ILExpressionGenerator.cs` (deleted)
+- [x] PL7.3 `Js2IL/Services/ILGenerators/ILMethodGenerator.cs` (deleted)
+- [x] PL7.4 `Js2IL/Services/TwoPhaseCompilation/LegacyFunctionBodyCompiler.cs` (legacy compilation removed; stub throws)
 - [x] PL7.5 Remove legacy class body compiler (IR-only class bodies)
 
 **Likely, but requires follow-up audit**
@@ -225,7 +229,7 @@ Notes on `Variables`/`Variable` deletion:
 3. Expression parity (logical/ternary/new/template/function expressions).
 4. Destructuring and richer assignments (variables + assignment targets).
 5. Constructors + class field initialization.
-6. Remove fallbacks; then delete legacy emitters.
+6. Continue expanding IR coverage; legacy fallback has been removed.
 
 ## Validation Checklist (per feature)
 - Add/extend execution tests under `Js2IL.Tests/*/ExecutionTests`.
