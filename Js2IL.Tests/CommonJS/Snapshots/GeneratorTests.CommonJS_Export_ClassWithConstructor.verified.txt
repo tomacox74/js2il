@@ -379,12 +379,13 @@
 	{
 		// Method begins at RVA 0x2248
 		// Header size: 12
-		// Code size: 101 (0x65)
+		// Code size: 103 (0x67)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.CommonJS_Export_ClassWithConstructor_Lib,
 			[1] object,
-			[2] object
+			[2] object,
+			[3] class [System.Linq.Expressions]System.Dynamic.ExpandoObject
 		)
 
 		IL_0000: newobj instance void Scopes.CommonJS_Export_ClassWithConstructor_Lib::.ctor()
@@ -405,20 +406,22 @@
 		IL_0030: box [System.Runtime]System.Double
 		IL_0035: newobj instance void Classes.CommonJS_Export_ClassWithConstructor_Lib.Person::.ctor(object, object)
 		IL_003a: stloc.2
-		IL_003b: ldarg.2
-		IL_003c: ldstr "exports"
-		IL_0041: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0046: dup
-		IL_0047: ldstr "createPerson"
-		IL_004c: ldloc.1
-		IL_004d: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0052: dup
-		IL_0053: ldstr "defaultPerson"
-		IL_0058: ldloc.2
-		IL_0059: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_0063: pop
-		IL_0064: ret
+		IL_003b: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0040: dup
+		IL_0041: ldstr "createPerson"
+		IL_0046: ldloc.1
+		IL_0047: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_004c: dup
+		IL_004d: ldstr "defaultPerson"
+		IL_0052: ldloc.2
+		IL_0053: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0058: stloc.3
+		IL_0059: ldarg.2
+		IL_005a: ldstr "exports"
+		IL_005f: ldloc.3
+		IL_0060: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0065: pop
+		IL_0066: ret
 	} // end of method CommonJS_Export_ClassWithConstructor_Lib::Main
 
 } // end of class Scripts.CommonJS_Export_ClassWithConstructor_Lib
@@ -430,7 +433,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22b9
+		// Method begins at RVA 0x22bb
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -319,13 +319,14 @@
 	{
 		// Method begins at RVA 0x21d8
 		// Header size: 12
-		// Code size: 144 (0x90)
+		// Code size: 148 (0x94)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.CommonJS_Export_ObjectWithFunctions_Lib,
 			[1] object,
 			[2] object,
-			[3] object
+			[3] object,
+			[4] class [System.Linq.Expressions]System.Dynamic.ExpandoObject
 		)
 
 		IL_0000: newobj instance void Scopes.CommonJS_Export_ObjectWithFunctions_Lib::.ctor()
@@ -363,24 +364,26 @@
 		IL_0053: stelem.ref
 		IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_0059: stloc.3
-		IL_005a: ldarg.2
-		IL_005b: ldstr "exports"
-		IL_0060: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0065: dup
-		IL_0066: ldstr "foo"
-		IL_006b: ldloc.1
-		IL_006c: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0071: dup
-		IL_0072: ldstr "add"
-		IL_0077: ldloc.2
-		IL_0078: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_007d: dup
-		IL_007e: ldstr "multiply"
-		IL_0083: ldloc.3
-		IL_0084: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_008e: pop
-		IL_008f: ret
+		IL_005a: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_005f: dup
+		IL_0060: ldstr "foo"
+		IL_0065: ldloc.1
+		IL_0066: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_006b: dup
+		IL_006c: ldstr "add"
+		IL_0071: ldloc.2
+		IL_0072: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0077: dup
+		IL_0078: ldstr "multiply"
+		IL_007d: ldloc.3
+		IL_007e: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0083: stloc.s 4
+		IL_0085: ldarg.2
+		IL_0086: ldstr "exports"
+		IL_008b: ldloc.s 4
+		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0092: pop
+		IL_0093: ret
 	} // end of method CommonJS_Export_ObjectWithFunctions_Lib::Main
 
 } // end of class Scripts.CommonJS_Export_ObjectWithFunctions_Lib
@@ -392,7 +395,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2274
+		// Method begins at RVA 0x2278
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
