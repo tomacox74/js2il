@@ -205,7 +205,7 @@ These are candidates to delete **after** the new pipeline reaches feature parity
 - [ ] PL7.2 `Js2IL/Services/ILGenerators/ILExpressionGenerator.cs`
 - [ ] PL7.3 `Js2IL/Services/ILGenerators/ILMethodGenerator.cs`
 - [ ] PL7.4 `Js2IL/Services/TwoPhaseCompilation/LegacyFunctionBodyCompiler.cs`
-- [ ] PL7.5 `Js2IL/Services/TwoPhaseCompilation/LegacyClassBodyCompiler.cs`
+- [x] PL7.5 Remove legacy class body compiler (IR-only class bodies)
 
 **Likely, but requires follow-up audit**
 - [ ] PL7.6 `Js2IL/Services/VariableBindings/Variables.cs`

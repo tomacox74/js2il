@@ -104,7 +104,7 @@
 	{
 		// Method begins at RVA 0x2074
 		// Header size: 12
-		// Code size: 145 (0x91)
+		// Code size: 150 (0x96)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ControlFlow_While_LabeledContinue,
@@ -121,7 +121,7 @@
 			IL_0010: ldloc.1
 			IL_0011: ldc.r8 3
 			IL_001a: clt
-			IL_001c: brfalse IL_0090
+			IL_001c: brfalse IL_0095
 
 			IL_0021: ldloc.1
 			IL_0022: ldc.r8 1
@@ -133,7 +133,7 @@
 				IL_0037: ldloc.2
 				IL_0038: ldc.r8 1
 				IL_0041: clt
-				IL_0043: brfalse IL_008b
+				IL_0043: brfalse IL_0090
 
 				IL_0048: ldloc.1
 				IL_0049: ldc.r8 2
@@ -146,25 +146,26 @@
 				IL_005f: box [System.Runtime]System.Double
 				IL_0064: stloc.3
 				IL_0065: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_006a: ldc.i4.1
-				IL_006b: newarr [System.Runtime]System.Object
-				IL_0070: dup
-				IL_0071: ldc.i4.0
-				IL_0072: ldloc.3
-				IL_0073: stelem.ref
-				IL_0074: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-				IL_0079: pop
-				IL_007a: ldloc.2
-				IL_007b: ldc.r8 1
-				IL_0084: add
-				IL_0085: stloc.2
-				IL_0086: br IL_0037
+				IL_006a: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+				IL_006f: ldc.i4.1
+				IL_0070: newarr [System.Runtime]System.Object
+				IL_0075: dup
+				IL_0076: ldc.i4.0
+				IL_0077: ldloc.3
+				IL_0078: stelem.ref
+				IL_0079: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+				IL_007e: pop
+				IL_007f: ldloc.2
+				IL_0080: ldc.r8 1
+				IL_0089: add
+				IL_008a: stloc.2
+				IL_008b: br IL_0037
 			// end loop
 
-			IL_008b: br IL_0010
+			IL_0090: br IL_0010
 		// end loop
 
-		IL_0090: ret
+		IL_0095: ret
 	} // end of method ControlFlow_While_LabeledContinue::Main
 
 } // end of class Scripts.ControlFlow_While_LabeledContinue
@@ -176,7 +177,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2111
+		// Method begins at RVA 0x2116
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

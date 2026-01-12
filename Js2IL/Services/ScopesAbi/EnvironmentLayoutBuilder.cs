@@ -16,6 +16,8 @@ public enum CallableKind
     Constructor,
     /// <summary>Class instance method.</summary>
     ClassMethod,
+    /// <summary>Class static initializer (.cctor).</summary>
+    ClassStaticInitializer,
     /// <summary>Module Main entry point.</summary>
     ModuleMain
 }
@@ -43,14 +45,18 @@ public class EnvironmentLayoutBuilder
     public EnvironmentLayout Build(
         Scope scope,
         CallableKind kind,
-        ScopesLayoutKind layoutKind = ScopesLayoutKind.GeneralizedScopesLayout)
+        ScopesLayoutKind layoutKind = ScopesLayoutKind.GeneralizedScopesLayout,
+        bool? needsParentScopesOverride = null)
     {
         // Count JS parameters from the AST parameter list (includes destructuring patterns).
         // This must be deterministic and reflect the actual callable signature.
         int jsParameterCount = GetJsParameterCount(scope);
 
-        // Determine if this callable needs parent scopes
-        bool needsParentScopes = scope.ReferencesParentScopeVariables;
+        // Determine if this callable needs parent scopes.
+        // Note: for some callables (notably class constructors), the compiler may choose to
+        // include a scopes parameter even when the constructor body doesn't directly reference
+        // parent variables, so it can forward scopes to nested callables (e.g., new Inner()).
+        bool needsParentScopes = needsParentScopesOverride ?? scope.ReferencesParentScopeVariables;
 
         // Build the callable ABI
         var abi = kind switch
@@ -58,6 +64,7 @@ public class EnvironmentLayoutBuilder
             CallableKind.Function => CallableAbi.ForFunction(jsParameterCount, needsParentScopes),
             CallableKind.Constructor => CallableAbi.ForConstructor(jsParameterCount, needsParentScopes),
             CallableKind.ClassMethod => CallableAbi.ForClassMethod(jsParameterCount, needsParentScopes),
+            CallableKind.ClassStaticInitializer => CallableAbi.ForModuleMain(0),
             CallableKind.ModuleMain => CallableAbi.ForModuleMain(jsParameterCount),
             _ => throw new ArgumentException($"Unknown callable kind: {kind}", nameof(kind))
         };

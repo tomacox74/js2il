@@ -123,5 +123,30 @@ namespace Js2IL.Tests.Classes
             var testName = nameof(Classes_PrimeCtor_BitArrayAdd);
             return GenerateTest(testName);
         }
+
+        // PL5.4: Test that constructors implicitly return 'this'
+        [Fact]
+        public Task Classes_Constructor_ImplicitlyReturnsThis()
+        {
+            var testName = nameof(Classes_Constructor_ImplicitlyReturnsThis);
+            return GenerateTest(testName);
+        }
+
+        // PL5.4a: Constructor with explicit 'return this;' - should work correctly
+        [Fact]
+        public Task Classes_Constructor_ExplicitReturnThis()
+        {
+            var testName = nameof(Classes_Constructor_ExplicitReturnThis);
+            return GenerateTest(testName);
+        }
+
+        // PL5.5: Test that methods without explicit return return 'undefined', not 'this'
+        // BUG: Currently methods without explicit return incorrectly return 'this' instead of 'undefined'
+        [Fact]
+        public Task Classes_Method_DefaultReturnUndefined()
+        {
+            var testName = nameof(Classes_Method_DefaultReturnUndefined);
+            return GenerateTest(testName);
+        }
     }
 }

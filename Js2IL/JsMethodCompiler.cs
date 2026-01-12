@@ -10,6 +10,8 @@ using System.Reflection.Metadata.Ecma335;
 using Js2IL.Utilities.Ecma335;
 using Js2IL.Services;
 using Js2IL.Services.TwoPhaseCompilation;
+using Js2IL.Services.VariableBindings;
+using Microsoft.Extensions.DependencyInjection;
 using ScopesCallableKind = Js2IL.Services.ScopesAbi.CallableKind;
 
 namespace Js2IL;
@@ -61,6 +63,12 @@ sealed record MethodDescriptor
     /// When set, IL emission loads scopes via: ldarg.0 (this), ldfld ScopesFieldHandle
     /// </summary>
     public FieldDefinitionHandle? ScopesFieldHandle { get; set; }
+
+    /// <summary>
+    /// True if this method is a class constructor (.ctor).
+    /// When true, the IL emitter will prepend a base System.Object::.ctor() call.
+    /// </summary>
+    public bool IsConstructor { get; set; } = false;
 }
 
 /// <summary>
@@ -98,6 +106,133 @@ internal sealed class JsMethodCompiler
 
     #region Public API - Entry Points
 
+    public CompiledCallableBody CompileClassConstructorBodyTwoPhase(
+        CallableId callable,
+        MethodDefinitionHandle expectedMethodDef,
+        MethodBodyStreamEncoder methodBodyStreamEncoder,
+        SymbolTable symbolTable,
+        Scope classScope,
+        ClassDeclaration classDecl,
+        FunctionExpression? ctorFunc,
+        bool needsScopes)
+    {
+        if (expectedMethodDef.IsNil) throw new ArgumentException("Expected MethodDef cannot be nil.", nameof(expectedMethodDef));
+
+        // Prefer IR pipeline (AST -> HIR -> LIR -> IL). HIRBuilder injects:
+        // - this._scopes = scopes (when needsScopes)
+        // - instance field initializers
+        // LIRToILCompiler injects:
+        // - base System.Object::.ctor() call for constructors
+        var ctorNode = (Node?)ctorFunc ?? classDecl.Body;
+        var ctorScope = ctorFunc != null
+            ? (symbolTable.FindScopeByAstNode(ctorFunc) ?? classScope)
+            : classScope;
+
+        var irBody = TryCompileCallableBody(
+            callable: callable,
+            expectedMethodDef: expectedMethodDef,
+            ilMethodName: ".ctor",
+            node: ctorNode,
+            scope: ctorScope,
+            methodBodyStreamEncoder: methodBodyStreamEncoder,
+            isInstanceMethod: true,
+            hasScopesParameter: needsScopes,
+            scopesFieldHandle: null,
+            returnsVoid: true,
+            callableKindOverride: ScopesCallableKind.Constructor);
+
+        if (irBody != null)
+        {
+            return irBody;
+        }
+
+        throw new NotSupportedException(
+            $"IR pipeline could not compile class constructor body for callable '{callable}' (node={ctorNode.Type}, scope='{ctorScope.GetQualifiedName()}').");
+    }
+
+    public CompiledCallableBody CompileClassStaticInitializerBodyTwoPhase(
+        CallableId callable,
+        MethodDefinitionHandle expectedMethodDef,
+        MethodBodyStreamEncoder methodBodyStreamEncoder,
+        Scope classScope,
+        ClassDeclaration classDecl)
+    {
+        if (expectedMethodDef.IsNil) throw new ArgumentException("Expected MethodDef cannot be nil.", nameof(expectedMethodDef));
+
+        var irBody = TryCompileCallableBody(
+            callable: callable,
+            expectedMethodDef: expectedMethodDef,
+            ilMethodName: ".cctor",
+            node: classDecl,
+            scope: classScope,
+            methodBodyStreamEncoder: methodBodyStreamEncoder,
+            isInstanceMethod: false,
+            hasScopesParameter: false,
+            scopesFieldHandle: null,
+            returnsVoid: true,
+            callableKindOverride: ScopesCallableKind.ClassStaticInitializer);
+
+        if (irBody != null)
+        {
+            return irBody;
+        }
+
+        throw new NotSupportedException(
+            $"IR pipeline could not compile class static initializer body for callable '{callable}' (node={classDecl.Type}, scope='{classScope.GetQualifiedName()}').");
+    }
+
+    public CompiledCallableBody CompileClassMethodBodyTwoPhase(
+        CallableId callable,
+        MethodDefinitionHandle expectedMethodDef,
+        MethodBodyStreamEncoder methodBodyStreamEncoder,
+        ClassRegistry classRegistry,
+        Variables rootVariables,
+        SymbolTable symbolTable,
+        Scope classScope,
+        Acornima.Ast.MethodDefinition methodDef,
+        string clrMethodName,
+        bool hasScopes)
+    {
+        if (expectedMethodDef.IsNil) throw new ArgumentException("Expected MethodDef cannot be nil.", nameof(expectedMethodDef));
+
+        var className = GetRegistryClassName(rootVariables, classScope);
+        var funcExpr = methodDef.Value as FunctionExpression;
+        var methodScope = funcExpr != null ? symbolTable.FindScopeByAstNode(funcExpr) : null;
+        methodScope ??= classScope;
+
+        FieldDefinitionHandle? scopesFieldHandle = null;
+        if (!methodDef.Static && hasScopes)
+        {
+            if (!classRegistry.TryGetPrivateField(className, "_scopes", out var scopesField))
+            {
+                throw new InvalidOperationException($"Class '{className}' expected to have a _scopes field but none was registered.");
+            }
+            scopesFieldHandle = scopesField;
+        }
+
+        var callableKindOverride = methodDef.Static ? (ScopesCallableKind?)null : ScopesCallableKind.ClassMethod;
+        var irBody = TryCompileCallableBody(
+            callable: callable,
+            expectedMethodDef: expectedMethodDef,
+            ilMethodName: clrMethodName,
+            node: methodDef,
+            scope: methodScope,
+            methodBodyStreamEncoder: methodBodyStreamEncoder,
+            isInstanceMethod: !methodDef.Static,
+            hasScopesParameter: false,
+            scopesFieldHandle: scopesFieldHandle,
+            returnsVoid: false,
+            callableKindOverride: callableKindOverride);
+
+        if (irBody != null)
+        {
+            return irBody;
+        }
+
+        throw new NotSupportedException(
+            $"IR pipeline could not compile class method body for callable '{callable}' (node={methodDef.Type}, scope='{methodScope.GetQualifiedName()}').");
+    }
+
     /// <summary>
     /// Two-phase API: attempt to compile a callable body to IL without emitting a MethodDef row.
     /// Phase 1 must preallocate <paramref name="expectedMethodDef"/>.
@@ -112,7 +247,8 @@ internal sealed class JsMethodCompiler
         bool isInstanceMethod,
         bool hasScopesParameter,
         FieldDefinitionHandle? scopesFieldHandle,
-        bool returnsVoid = false)
+        bool returnsVoid = false,
+        ScopesCallableKind? callableKindOverride = null)
     {
         // Extract params/body from supported node shapes
         NodeList<Node>? functionParams = null;
@@ -146,13 +282,15 @@ internal sealed class JsMethodCompiler
             return null;
         }
 
-        var callableKind = ScopesCallableKind.Function;
+        var inferredKind = ScopesCallableKind.Function;
         if (isInstanceMethod)
         {
-            callableKind = hasScopesParameter ? ScopesCallableKind.Constructor : ScopesCallableKind.ClassMethod;
+            inferredKind = hasScopesParameter ? ScopesCallableKind.Constructor : ScopesCallableKind.ClassMethod;
         }
 
-        if (!TryLowerASTToLIR(bodyNode, scope, callableKind, out var lirMethod))
+        var callableKind = callableKindOverride ?? inferredKind;
+
+        if (!TryLowerASTToLIR(bodyNode, scope, callableKind, hasScopesParameter, out var lirMethod))
         {
             return null;
         }
@@ -178,10 +316,45 @@ internal sealed class JsMethodCompiler
             IsStatic = !isInstanceMethod,
             HasScopesParameter = hasScopesParameter,
             ReturnsVoid = returnsVoid,
-            ScopesFieldHandle = scopesFieldHandle
+            ScopesFieldHandle = scopesFieldHandle,
+            IsConstructor = callableKind == ScopesCallableKind.Constructor
         };
 
         return CreateILCompiler().TryCompileCallableBody(callable, expectedMethodDef, methodDescriptor, lirMethod!, methodBodyStreamEncoder);
+    }
+
+    private static string GetRegistryClassName(Variables variables, Scope classScope)
+    {
+        var ns = classScope.DotNetNamespace ?? "Classes";
+        var name = classScope.DotNetTypeName ?? classScope.Name;
+        return $"{ns}.{name}";
+    }
+
+    private static List<string> DetermineParentScopesForClassMethod(Variables variables, Scope classScope)
+    {
+        var scopeNames = new List<string>();
+        var moduleName = variables.GetGlobalScopeName();
+
+        var current = classScope.Parent;
+        var ancestors = new Stack<string>();
+        while (current != null)
+        {
+            var name = current.Name;
+            if (!string.IsNullOrEmpty(name) && !name.Contains('/') && name != moduleName)
+            {
+                name = $"{moduleName}/{name}";
+            }
+
+            ancestors.Push(name);
+            current = current.Parent;
+        }
+
+        while (ancestors.Count > 0)
+        {
+            scopeNames.Add(ancestors.Pop());
+        }
+
+        return scopeNames;
     }
 
     public MethodDefinitionHandle TryCompileMethod(TypeBuilder typeBuilder, string methodName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
@@ -217,7 +390,13 @@ internal sealed class JsMethodCompiler
             callableKind = ScopesCallableKind.ClassMethod;
         }
 
-        if (!TryLowerASTToLIR(bodyNode, scope, callableKind, out var lirMethod))
+        var hasScopesParameter = true;
+        if (node is Acornima.Ast.MethodDefinition md2 && !md2.Static)
+        {
+            hasScopesParameter = false;
+        }
+
+        if (!TryLowerASTToLIR(bodyNode, scope, callableKind, hasScopesParameter, out var lirMethod))
         {
             return default;
         }
@@ -264,7 +443,7 @@ internal sealed class JsMethodCompiler
             return default;
         }
 
-        if (!TryLowerASTToLIR(node, scope, ScopesCallableKind.Function, out var lirMethod))
+        if (!TryLowerASTToLIR(node, scope, ScopesCallableKind.Function, hasScopesParameter: true, out var lirMethod))
         {
             return default;
         }
@@ -323,7 +502,7 @@ internal sealed class JsMethodCompiler
             return default;
         }
 
-        if (!TryLowerASTToLIR(ctorFunc, constructorScope, ScopesCallableKind.Constructor, out var lirMethod))
+        if (!TryLowerASTToLIR(ctorFunc, constructorScope, ScopesCallableKind.Constructor, hasScopesParameter: false, out var lirMethod))
         {
             return default;
         }
@@ -336,6 +515,7 @@ internal sealed class JsMethodCompiler
 
         methodDescriptor.IsStatic = false;
         methodDescriptor.ReturnsVoid = true;
+        methodDescriptor.IsConstructor = true;
 
         // Note: This won't produce valid constructor IL yet because we need:
         // 1. Base constructor call (ldarg.0 + call System.Object::.ctor)
@@ -348,7 +528,7 @@ internal sealed class JsMethodCompiler
 
     public MethodDefinitionHandle TryCompileMainMethod(string moduleName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)
     {
-        if (!TryLowerASTToLIR(node, scope, ScopesCallableKind.ModuleMain, out var lirMethod))
+        if (!TryLowerASTToLIR(node, scope, ScopesCallableKind.ModuleMain, hasScopesParameter: false, out var lirMethod))
         {
             return default;
         }
@@ -421,17 +601,18 @@ internal sealed class JsMethodCompiler
         });
     }
 
-    private bool TryLowerASTToLIR(Node node, Scope scope, ScopesCallableKind callableKind, out MethodBodyIR? methodBody)
+    private bool TryLowerASTToLIR(Node node, Scope scope, ScopesCallableKind callableKind, bool hasScopesParameter, out MethodBodyIR? methodBody)
     {
         methodBody = null;
 
-        if (!HIRBuilder.TryParseMethod(node, scope, out var hirMethod))
+        if (!HIRBuilder.TryParseMethod(node, scope, callableKind, hasScopesParameter, out var hirMethod))
         {
             IR.IRPipelineMetrics.RecordFailureIfUnset($"HIR parse failed for node type {node.Type}");
             return false;
         }
 
-        if (!HIRToLIRLowerer.TryLower(hirMethod!, scope, _scopeMetadataRegistry, callableKind, out var lirMethod))
+        var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+        if (!HIRToLIRLowerer.TryLower(hirMethod!, scope, _scopeMetadataRegistry, callableKind, hasScopesParameter, classRegistry, out var lirMethod))
         {
             IR.IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR lowering failed for scope '{scope.GetQualifiedName()}' (kind={scope.Kind}) node={node.Type}");
             return false;
@@ -443,7 +624,7 @@ internal sealed class JsMethodCompiler
 
     // Backward-compatible helper for existing call sites.
     private bool TryLowerASTToLIR(Node node, Scope scope, out MethodBodyIR? methodBody)
-        => TryLowerASTToLIR(node, scope, ScopesCallableKind.Function, out methodBody);
+        => TryLowerASTToLIR(node, scope, ScopesCallableKind.Function, hasScopesParameter: true, out methodBody);
 
     #endregion
 }

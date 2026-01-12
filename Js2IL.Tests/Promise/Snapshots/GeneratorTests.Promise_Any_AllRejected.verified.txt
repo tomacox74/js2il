@@ -83,20 +83,21 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 27 (0x1b)
+		// Code size: 32 (0x20)
 		.maxstack 32
 
 		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.1
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldstr "Should not reach here"
-		IL_0012: stelem.ref
-		IL_0013: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0018: pop
-		IL_0019: ldnull
-		IL_001a: ret
+		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_000a: ldc.i4.1
+		IL_000b: newarr [System.Runtime]System.Object
+		IL_0010: dup
+		IL_0011: ldc.i4.0
+		IL_0012: ldstr "Should not reach here"
+		IL_0017: stelem.ref
+		IL_0018: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_001d: pop
+		IL_001e: ldnull
+		IL_001f: ret
 	} // end of method ArrowFunction_L6C11::ArrowFunction_L6C11
 
 } // end of class Functions.ArrowFunction_L6C11
@@ -111,45 +112,47 @@
 			object 'error'
 		) cil managed 
 	{
-		// Method begins at RVA 0x2094
+		// Method begins at RVA 0x2098
 		// Header size: 12
-		// Code size: 90 (0x5a)
+		// Code size: 100 (0x64)
 		.maxstack 32
 
 		IL_0000: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0005: ldc.i4.2
-		IL_0006: newarr [System.Runtime]System.Object
-		IL_000b: dup
-		IL_000c: ldc.i4.0
-		IL_000d: ldstr "All rejected, error name:"
-		IL_0012: stelem.ref
-		IL_0013: dup
-		IL_0014: ldc.i4.1
-		IL_0015: ldarg.1
-		IL_0016: ldstr "name"
-		IL_001b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0020: stelem.ref
-		IL_0021: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0026: pop
-		IL_0027: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_002c: ldc.i4.2
-		IL_002d: newarr [System.Runtime]System.Object
-		IL_0032: dup
-		IL_0033: ldc.i4.0
-		IL_0034: ldstr "Errors count:"
-		IL_0039: stelem.ref
-		IL_003a: dup
-		IL_003b: ldc.i4.1
-		IL_003c: ldarg.1
-		IL_003d: ldstr "errors"
-		IL_0042: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0047: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_004c: box [System.Runtime]System.Double
-		IL_0051: stelem.ref
-		IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0057: pop
-		IL_0058: ldnull
-		IL_0059: ret
+		IL_0005: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_000a: ldc.i4.2
+		IL_000b: newarr [System.Runtime]System.Object
+		IL_0010: dup
+		IL_0011: ldc.i4.0
+		IL_0012: ldstr "All rejected, error name:"
+		IL_0017: stelem.ref
+		IL_0018: dup
+		IL_0019: ldc.i4.1
+		IL_001a: ldarg.1
+		IL_001b: ldstr "name"
+		IL_0020: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0025: stelem.ref
+		IL_0026: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_002b: pop
+		IL_002c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0031: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
+		IL_0036: ldc.i4.2
+		IL_0037: newarr [System.Runtime]System.Object
+		IL_003c: dup
+		IL_003d: ldc.i4.0
+		IL_003e: ldstr "Errors count:"
+		IL_0043: stelem.ref
+		IL_0044: dup
+		IL_0045: ldc.i4.1
+		IL_0046: ldarg.1
+		IL_0047: ldstr "errors"
+		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0051: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_0056: box [System.Runtime]System.Double
+		IL_005b: stelem.ref
+		IL_005c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0061: pop
+		IL_0062: ldnull
+		IL_0063: ret
 	} // end of method ArrowFunction_L9C12::ArrowFunction_L9C12
 
 } // end of class Functions.ArrowFunction_L9C12
@@ -167,7 +170,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20fc
+		// Method begins at RVA 0x2108
 		// Header size: 12
 		// Code size: 193 (0xc1)
 		.maxstack 32
@@ -266,7 +269,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21c9
+		// Method begins at RVA 0x21d5
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using Acornima.Ast;
 using Js2IL.Services;
 using Js2IL.Services.TwoPhaseCompilation;
+using ScopesCallableKind = Js2IL.Services.ScopesAbi.CallableKind;
 
 using Js2IL.SymbolTables;
 
@@ -19,8 +20,40 @@ public static class HIRBuilder
     /// <param name="node"></param>
     /// <param name="method"></param>
     /// <returns></returns>
-    public static bool TryParseMethod([In, NotNull] Acornima.Ast.Node node, [In, NotNull] Scope scope, out HIRMethod? method)
+    public static bool TryParseMethod(
+        [In, NotNull] Acornima.Ast.Node node,
+        [In, NotNull] Scope scope,
+        ScopesCallableKind callableKind,
+        bool hasScopesParameter,
+        out HIRMethod? method)
     {
+        static bool TryGetEnclosingClass(Scope startingScope, [NotNullWhen(true)] out Scope? classScope, [NotNullWhen(true)] out ClassDeclaration? classDecl)
+        {
+            classScope = null;
+            classDecl = null;
+
+            var current = startingScope;
+            while (current != null)
+            {
+                if (current.Kind == ScopeKind.Class && current.AstNode is ClassDeclaration cd)
+                {
+                    classScope = current;
+                    classDecl = cd;
+                    return true;
+                }
+                current = current.Parent;
+            }
+
+            return false;
+        }
+
+        static string GetRegistryClassName(Scope classScope)
+        {
+            var ns = classScope.DotNetNamespace ?? "Classes";
+            var name = classScope.DotNetTypeName ?? classScope.Name;
+            return $"{ns}.{name}";
+        }
+
         switch (node)
         {
             case Acornima.Ast.Program programAst:
@@ -30,6 +63,123 @@ public static class HIRBuilder
                 // Parse block statements by processing their body statements
                 var blockBuilder = new HIRMethodBuilder(scope);
                 return blockBuilder.TryParseStatements(blockStmt.Body, [], out method);
+
+            case Acornima.Ast.ClassDeclaration classDeclNode when callableKind == ScopesCallableKind.ClassStaticInitializer:
+                {
+                    // Synthesize a .cctor body from static field initializers.
+                    if (!TryGetEnclosingClass(scope, out var enclosingClassScope, out var enclosingClassDecl))
+                    {
+                        method = null!;
+                        return false;
+                    }
+
+                    var registryClassName = GetRegistryClassName(enclosingClassScope);
+                    var cctorBuilder = new HIRMethodBuilder(scope);
+
+                    foreach (var element in classDeclNode.Body.Body.OfType<PropertyDefinition>())
+                    {
+                        if (!element.Static || element.Value == null) continue;
+
+                        if (!cctorBuilder.TryParseExpressionForPrologue((Expression)element.Value, out var hirValue) || hirValue == null)
+                        {
+                            method = null!;
+                            return false;
+                        }
+
+                        if (element.Key is PrivateIdentifier priv)
+                        {
+                            cctorBuilder.AddPrologueStatement(new HIRStoreUserClassStaticFieldStatement
+                            {
+                                RegistryClassName = registryClassName,
+                                FieldName = priv.Name,
+                                IsPrivateField = true,
+                                Value = hirValue,
+                                Location = SourceLocation.FromNode(element)
+                            });
+                        }
+                        else if (element.Key is Identifier pid)
+                        {
+                            cctorBuilder.AddPrologueStatement(new HIRStoreUserClassStaticFieldStatement
+                            {
+                                RegistryClassName = registryClassName,
+                                FieldName = pid.Name,
+                                IsPrivateField = false,
+                                Value = hirValue,
+                                Location = SourceLocation.FromNode(element)
+                            });
+                        }
+                    }
+
+                    // No JS parameters for .cctor.
+                    return cctorBuilder.TryParseStatements(Array.Empty<Statement>(), Array.Empty<HIRPattern>(), out method);
+                }
+
+            case Acornima.Ast.ClassBody classBody when callableKind == ScopesCallableKind.Constructor:
+                {
+                    // Synthetic/implicit constructor body.
+                    if (!TryGetEnclosingClass(scope, out var enclosingClassScope, out var enclosingClassDecl))
+                    {
+                        method = null!;
+                        return false;
+                    }
+
+                    var registryClassName = GetRegistryClassName(enclosingClassScope);
+                    var ctorBuilder = new HIRMethodBuilder(scope);
+
+                    // Store scopes array to this._scopes if constructor has scopes parameter.
+                    if (hasScopesParameter)
+                    {
+                        ctorBuilder.AddPrologueStatement(new HIRStoreUserClassInstanceFieldStatement
+                        {
+                            RegistryClassName = registryClassName,
+                            FieldName = "_scopes",
+                            IsPrivateField = true,
+                            Value = new HIRScopesArrayExpression(),
+                            Location = SourceLocation.FromNode(classBody)
+                        });
+                    }
+
+                    // Instance field initializers
+                    foreach (var element in enclosingClassDecl.Body.Body.OfType<PropertyDefinition>())
+                    {
+                        if (element.Static || element.Value == null) continue;
+
+                        // Parse initializer expression in the class scope context.
+                        var initBuilder = new HIRMethodBuilder(enclosingClassScope);
+                        if (!initBuilder.TryParseExpressionForPrologue((Expression)element.Value, out var initExpr) || initExpr == null)
+                        {
+                            method = null!;
+                            return false;
+                        }
+
+                        if (element.Key is PrivateIdentifier priv)
+                        {
+                            ctorBuilder.AddPrologueStatement(new HIRStoreUserClassInstanceFieldStatement
+                            {
+                                RegistryClassName = registryClassName,
+                                FieldName = priv.Name,
+                                IsPrivateField = true,
+                                Value = initExpr,
+                                Location = SourceLocation.FromNode(element)
+                            });
+                        }
+                        else if (element.Key is Identifier pid)
+                        {
+                            ctorBuilder.AddPrologueStatement(new HIRStoreUserClassInstanceFieldStatement
+                            {
+                                RegistryClassName = registryClassName,
+                                FieldName = pid.Name,
+                                IsPrivateField = false,
+                                Value = initExpr,
+                                Location = SourceLocation.FromNode(element)
+                            });
+                        }
+                    }
+
+                    // Empty user body.
+                    return ctorBuilder.TryParseStatements(Array.Empty<Statement>(), Array.Empty<HIRPattern>(), out method);
+                }
+
             case Acornima.Ast.MethodDefinition classMethodDef:
                 var methodFuncExpr = classMethodDef.Value as FunctionExpression;                
                 var methodBuilder = new HIRMethodBuilder(scope);
@@ -87,6 +237,66 @@ public static class HIRBuilder
                     method = null!;
                     return false;
                 }
+
+                // If this is a class constructor, prepend implicit initializations.
+                if (callableKind == ScopesCallableKind.Constructor)
+                {
+                    if (!TryGetEnclosingClass(scope, out var enclosingClassScope, out var enclosingClassDecl))
+                    {
+                        method = null!;
+                        return false;
+                    }
+
+                    var registryClassName = GetRegistryClassName(enclosingClassScope);
+
+                    if (hasScopesParameter)
+                    {
+                        funcExprBuilder.AddPrologueStatement(new HIRStoreUserClassInstanceFieldStatement
+                        {
+                            RegistryClassName = registryClassName,
+                            FieldName = "_scopes",
+                            IsPrivateField = true,
+                            Value = new HIRScopesArrayExpression(),
+                            Location = SourceLocation.FromNode(funcExpr)
+                        });
+                    }
+
+                    foreach (var element in enclosingClassDecl.Body.Body.OfType<PropertyDefinition>())
+                    {
+                        if (element.Static || element.Value == null) continue;
+
+                        var initBuilder = new HIRMethodBuilder(enclosingClassScope);
+                        if (!initBuilder.TryParseExpressionForPrologue((Expression)element.Value, out var initExpr) || initExpr == null)
+                        {
+                            method = null!;
+                            return false;
+                        }
+
+                        if (element.Key is PrivateIdentifier priv)
+                        {
+                            funcExprBuilder.AddPrologueStatement(new HIRStoreUserClassInstanceFieldStatement
+                            {
+                                RegistryClassName = registryClassName,
+                                FieldName = priv.Name,
+                                IsPrivateField = true,
+                                Value = initExpr,
+                                Location = SourceLocation.FromNode(element)
+                            });
+                        }
+                        else if (element.Key is Identifier pid)
+                        {
+                            funcExprBuilder.AddPrologueStatement(new HIRStoreUserClassInstanceFieldStatement
+                            {
+                                RegistryClassName = registryClassName,
+                                FieldName = pid.Name,
+                                IsPrivateField = false,
+                                Value = initExpr,
+                                Location = SourceLocation.FromNode(element)
+                            });
+                        }
+                    }
+                }
+
                 return funcExprBuilder.TryParseStatements(funcBlock.Body, funcParams, out method);
 
             case Acornima.Ast.FunctionDeclaration funcDecl:
@@ -171,6 +381,17 @@ class HIRMethodBuilder
         ArgumentNullException.ThrowIfNull(scope, nameof(scope));
         _rootScope = scope;
         _currentScope = scope;
+    }
+
+    public void AddPrologueStatement([In, NotNull] HIRStatement statement)
+    {
+        ArgumentNullException.ThrowIfNull(statement, nameof(statement));
+        _statements.Add(statement);
+    }
+
+    public bool TryParseExpressionForPrologue([In, NotNull] Acornima.Ast.Expression expression, out HIRExpression? hirExpression)
+    {
+        return TryParseExpression(expression, out hirExpression);
     }
 
     public bool TryParseStatements([In, NotNull] IEnumerable<Acornima.Ast.Statement> statements, IReadOnlyList<HIRPattern> parameters, out HIRMethod? method)
@@ -652,6 +873,31 @@ class HIRMethodBuilder
         }
     }
 
+    private static bool TryGetEnclosingClassScope(Scope startingScope, [NotNullWhen(true)] out Scope? classScope)
+    {
+        classScope = null;
+
+        var current = startingScope;
+        while (current != null)
+        {
+            if (current.Kind == ScopeKind.Class)
+            {
+                classScope = current;
+                return true;
+            }
+            current = current.Parent;
+        }
+
+        return false;
+    }
+
+    private static string GetRegistryClassName(Scope classScope)
+    {
+        var ns = classScope.DotNetNamespace ?? "Classes";
+        var name = classScope.DotNetTypeName ?? classScope.Name;
+        return $"{ns}.{name}";
+    }
+
     private bool TryParseDeclarator(Acornima.Ast.VariableDeclarator decl, out HIRStatement? hirStatement)
     {
         hirStatement = null;
@@ -1121,6 +1367,24 @@ class HIRMethodBuilder
             case MemberExpression memberExpr:
                 // Handle member expressions
                 HIRExpression? objectExpr;
+
+                // Private instance field access: this.#name
+                if (!memberExpr.Computed && memberExpr.Object is ThisExpression && memberExpr.Property is Acornima.Ast.PrivateIdentifier ppid)
+                {
+                    if (!TryGetEnclosingClassScope(_currentScope, out var classScope))
+                    {
+                        return false;
+                    }
+
+                    hirExpr = new HIRLoadUserClassInstanceFieldExpression
+                    {
+                        RegistryClassName = GetRegistryClassName(classScope),
+                        FieldName = ppid.Name,
+                        IsPrivateField = true
+                    };
+                    return true;
+                }
+
                 if (!TryParseExpression(memberExpr.Object, out objectExpr))
                 {
                     return false;

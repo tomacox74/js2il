@@ -1,7 +1,6 @@
 using Js2IL.Services.ScopesAbi;
 using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.SymbolTables;
-using Acornima.Ast;
 
 namespace Js2IL.IR;
 
@@ -69,6 +68,13 @@ public record LIRCallIntrinsicStatic(string IntrinsicName, string MethodName, IR
 /// Emitted as IL 'ldarg.0'.
 /// </summary>
 public record LIRLoadThis(TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Loads the scopes array argument for callables that receive it.
+/// For static functions with scopes parameter: scopes is IL arg0.
+/// For instance constructors with scopes parameter: scopes is IL arg1.
+/// </summary>
+public record LIRLoadScopesArgument(TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Loads a function parameter by its index (0-based, relative to JS parameters).
@@ -253,16 +259,45 @@ public record LIRNewIntrinsicObject(string IntrinsicName, IReadOnlyList<TempVari
 
 /// <summary>
 /// Creates a new instance of a user-defined JavaScript class (compiled as a .NET type).
-/// Constructor tokens are resolved via <see cref="CallableRegistry"/> using <see cref="ConstructorNode"/>.
+/// Constructor tokens are resolved via <see cref="CallableRegistry"/> using <see cref="ConstructorCallableId"/>.
 /// </summary>
 public record LIRNewUserClass(
     string ClassName,
-    Node ConstructorNode,
+    CallableId ConstructorCallableId,
     bool NeedsScopes,
     TempVariable? ScopesArray,
     int MinArgCount,
     int MaxArgCount,
     IReadOnlyList<TempVariable> Arguments,
+    TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Stores a value into an instance field on a user-defined JS class instance.
+/// Emits: ldarg.0, <load value>, stfld
+/// </summary>
+public record LIRStoreUserClassInstanceField(
+    string RegistryClassName,
+    string FieldName,
+    bool IsPrivateField,
+    TempVariable Value) : LIRInstruction;
+
+/// <summary>
+/// Stores a value into a static field on a user-defined JS class.
+/// Emits: <load value>, stsfld
+/// </summary>
+public record LIRStoreUserClassStaticField(
+    string RegistryClassName,
+    string FieldName,
+    TempVariable Value) : LIRInstruction;
+
+/// <summary>
+/// Loads an instance field from a user-defined JavaScript class instance (the implicit 'this').
+/// Emits: ldarg.0, ldfld
+/// </summary>
+public record LIRLoadUserClassInstanceField(
+    string RegistryClassName,
+    string FieldName,
+    bool IsPrivateField,
     TempVariable Result) : LIRInstruction;
 
 /// <summary>
