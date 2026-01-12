@@ -306,6 +306,80 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// Fast-path overload for numeric index and numeric value.
+        /// Avoids boxing at the call site when the compiler has unboxed doubles.
+        /// Returns the assigned value (boxed) to match JavaScript assignment expression semantics.
+        /// </summary>
+        public static object SetItem(object? obj, double index, double value)
+        {
+            if (obj is null)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot set properties of null or undefined");
+            }
+
+            if (obj is JsNull)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot set properties of null");
+            }
+
+            int intIndex;
+            if (double.IsNaN(index) || double.IsInfinity(index))
+            {
+                intIndex = 0;
+            }
+            else
+            {
+                try { intIndex = (int)index; }
+                catch { intIndex = 0; }
+            }
+
+            // Strings are immutable in JS; silently ignore and return value.
+            if (obj is string)
+            {
+                return value;
+            }
+
+            // JS Array index assignment
+            if (obj is Array array)
+            {
+                if (intIndex < 0)
+                {
+                    // Negative indices behave like properties in JS; treat as property for host safety.
+                    return SetProperty(array, intIndex.ToString(System.Globalization.CultureInfo.InvariantCulture), value) ?? value;
+                }
+
+                if (intIndex < array.Count)
+                {
+                    array[intIndex] = value;
+                    return value;
+                }
+
+                if (intIndex == array.Count)
+                {
+                    array.Add(value);
+                    return value;
+                }
+
+                while (array.Count < intIndex)
+                {
+                    array.Add(null);
+                }
+                array.Add(value);
+                return value;
+            }
+
+            // Typed arrays: store when in-bounds (non-boxing).
+            if (obj is Int32Array i32)
+            {
+                i32.SetFromDouble(intIndex, value);
+                return value;
+            }
+
+            // Fallback: treat numeric index as a property key string.
+            return SetProperty(obj, DotNet2JSConversions.ToString(index), value) ?? value;
+        }
+
+        /// <summary>
         /// Object rest helper used by destructuring: { a, ...rest }.
         /// Returns a new ExpandoObject with enumerable keys copied excluding the provided keys.
         /// </summary>

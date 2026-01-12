@@ -71,6 +71,12 @@ namespace JavaScriptRuntime
         // JS typed arrays expose a numeric length; keep as double for consistency with runtime helpers
         public double length => _buffer.Length;
 
+        internal void SetFromDouble(int index, double value)
+        {
+            if ((uint)index >= (uint)_buffer.Length) return; // ignore out-of-bounds sets
+            _buffer[index] = ToInt32(value);
+        }
+
         // Indexer aligns with JS semantics: index is dynamic (object) and values are JS numbers (double boxed).
         public object this[object index]
         {
@@ -172,6 +178,11 @@ namespace JavaScriptRuntime
         private static int ToInt32(object o)
         {
             if (!TryToNumber(o, out var d)) return 0;
+            return ToInt32(d);
+        }
+
+        private static int ToInt32(double d)
+        {
             if (double.IsNaN(d) || double.IsInfinity(d) || d == 0.0) return 0;
             // Truncate toward zero
             try

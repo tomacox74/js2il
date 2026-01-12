@@ -3922,7 +3922,8 @@ public sealed class HIRToLIRLowerer
         {
             return false;
         }
-        var boxedIndex = EnsureObject(indexTemp);
+        TempVariable boxedIndex = default;
+        bool hasBoxedIndex = false;
 
         TempVariable valueToStore;
         if (assignExpr.Operator == Acornima.Operator.Assignment)
@@ -3934,6 +3935,9 @@ public sealed class HIRToLIRLowerer
         }
         else
         {
+            boxedIndex = EnsureObject(indexTemp);
+            hasBoxedIndex = true;
+
             // Compound assignment: obj[index] += expr
             var current = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRGetItem(objTemp, boxedIndex, current));
@@ -3950,9 +3954,33 @@ public sealed class HIRToLIRLowerer
             }
         }
 
-        valueToStore = EnsureObject(valueToStore);
+        var indexStorage = GetTempStorage(indexTemp);
+        var valueStorage = GetTempStorage(valueToStore);
+        bool canUseNumericSetItem =
+            indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double) &&
+            valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double);
+
+        TempVariable indexForSet;
+        if (canUseNumericSetItem)
+        {
+            indexForSet = indexTemp;
+        }
+        else
+        {
+            if (!hasBoxedIndex)
+            {
+                boxedIndex = EnsureObject(indexTemp);
+                hasBoxedIndex = true;
+            }
+            indexForSet = boxedIndex;
+        }
+
+        if (!canUseNumericSetItem)
+        {
+            valueToStore = EnsureObject(valueToStore);
+        }
         var setResult = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, boxedIndex, valueToStore, setResult));
+        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, indexForSet, valueToStore, setResult));
         DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         resultTempVar = setResult;
         return true;
