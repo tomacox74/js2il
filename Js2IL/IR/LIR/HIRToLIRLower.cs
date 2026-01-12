@@ -4690,6 +4690,24 @@ public sealed class HIRToLIRLowerer
     {
         resultTempVar = CreateTempVariable();
 
+        // User-defined class instance field access (e.g., this.wordArray).
+        // If the receiver is `this` and we know the generated CLR type has a field with this name,
+        // lower directly to an instance field load (ldfld) instead of dynamic property access.
+        if (_classRegistry != null
+            && propAccessExpr.Object is HIRThisExpression
+            && TryGetEnclosingClassRegistryName(out var currentClass)
+            && currentClass != null
+            && _classRegistry.TryGetField(currentClass, propAccessExpr.PropertyName, out _))
+        {
+            _methodBodyIR.Instructions.Add(new LIRLoadUserClassInstanceField(
+                RegistryClassName: currentClass,
+                FieldName: propAccessExpr.PropertyName,
+                IsPrivateField: false,
+                Result: resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
         // User-defined class static field access (e.g., Greeter.message).
         // Classes are compiled as .NET types, and static class fields are emitted as CLR static fields.
         // When the receiver is the class identifier, lower directly to a static field load.
