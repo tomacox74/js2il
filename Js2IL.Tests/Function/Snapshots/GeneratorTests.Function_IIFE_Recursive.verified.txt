@@ -103,14 +103,13 @@
 	{
 		// Method begins at RVA 0x2074
 		// Header size: 12
-		// Code size: 209 (0xd1)
+		// Code size: 193 (0xc1)
 		.maxstack 32
 		.locals init (
 			[0] float64,
 			[1] object,
 			[2] object,
-			[3] object,
-			[4] object
+			[3] object
 		)
 
 		IL_0000: ldarg.1
@@ -118,83 +117,77 @@
 		IL_0006: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 		IL_000b: stloc.2
 		IL_000c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0011: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0016: ldc.i4.3
-		IL_0017: newarr [System.Runtime]System.Object
-		IL_001c: dup
-		IL_001d: ldc.i4.0
-		IL_001e: ldstr "visit"
-		IL_0023: stelem.ref
-		IL_0024: dup
-		IL_0025: ldc.i4.1
-		IL_0026: ldloc.2
-		IL_0027: stelem.ref
-		IL_0028: dup
-		IL_0029: ldc.i4.2
-		IL_002a: ldarg.2
-		IL_002b: stelem.ref
-		IL_002c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0031: pop
-		IL_0032: ldarg.2
-		IL_0033: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0038: ldc.r8 2
-		IL_0041: cgt
-		IL_0043: brfalse IL_004a
+		IL_0011: ldc.i4.3
+		IL_0012: newarr [System.Runtime]System.Object
+		IL_0017: dup
+		IL_0018: ldc.i4.0
+		IL_0019: ldstr "visit"
+		IL_001e: stelem.ref
+		IL_001f: dup
+		IL_0020: ldc.i4.1
+		IL_0021: ldloc.2
+		IL_0022: stelem.ref
+		IL_0023: dup
+		IL_0024: ldc.i4.2
+		IL_0025: ldarg.2
+		IL_0026: stelem.ref
+		IL_0027: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_002c: pop
+		IL_002d: ldarg.2
+		IL_002e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0033: ldc.r8 2
+		IL_003c: cgt
+		IL_003e: brfalse IL_0045
 
-		IL_0048: ldnull
-		IL_0049: ret
+		IL_0043: ldnull
+		IL_0044: ret
 
-		IL_004a: ldc.r8 0.0
-		IL_0053: stloc.0
-		// loop start (head: IL_0054)
-			IL_0054: ldloc.0
-			IL_0055: ldarg.1
-			IL_0056: ldstr "children"
-			IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0060: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_0065: clt
-			IL_0067: brfalse IL_00cf
+		IL_0045: ldc.r8 0.0
+		IL_004e: stloc.0
+		// loop start (head: IL_004f)
+			IL_004f: ldloc.0
+			IL_0050: ldarg.1
+			IL_0051: ldstr "children"
+			IL_0056: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_005b: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+			IL_0060: clt
+			IL_0062: brfalse IL_00bf
 
-			IL_006c: ldarg.1
-			IL_006d: ldstr "children"
-			IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0077: stloc.2
-			IL_0078: ldloc.0
-			IL_0079: box [System.Runtime]System.Double
-			IL_007e: stloc.3
-			IL_007f: ldloc.2
-			IL_0080: ldloc.3
-			IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0086: stloc.1
-			IL_0087: ldarg.2
-			IL_0088: ldc.r8 1
-			IL_0091: box [System.Runtime]System.Double
-			IL_0096: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_009b: stloc.s 4
-			IL_009d: ldnull
-			IL_009e: ldftn object Functions.FunctionExpression_L2C2::FunctionExpression_L2C2(object[], object, object)
-			IL_00a4: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-			IL_00a9: ldc.i4.1
-			IL_00aa: newarr [System.Runtime]System.Object
-			IL_00af: dup
-			IL_00b0: ldc.i4.0
-			IL_00b1: ldarg.0
-			IL_00b2: ldc.i4.0
-			IL_00b3: ldelem.ref
-			IL_00b4: stelem.ref
-			IL_00b5: ldloc.1
-			IL_00b6: ldloc.s 4
-			IL_00b8: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
-			IL_00bd: pop
-			IL_00be: ldloc.0
-			IL_00bf: ldc.r8 1
-			IL_00c8: add
-			IL_00c9: stloc.0
-			IL_00ca: br IL_0054
+			IL_0067: ldarg.1
+			IL_0068: ldstr "children"
+			IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0072: ldloc.0
+			IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_0078: stloc.1
+			IL_0079: ldarg.2
+			IL_007a: ldc.r8 1
+			IL_0083: box [System.Runtime]System.Double
+			IL_0088: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_008d: stloc.3
+			IL_008e: ldnull
+			IL_008f: ldftn object Functions.FunctionExpression_L2C2::FunctionExpression_L2C2(object[], object, object)
+			IL_0095: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+			IL_009a: ldc.i4.1
+			IL_009b: newarr [System.Runtime]System.Object
+			IL_00a0: dup
+			IL_00a1: ldc.i4.0
+			IL_00a2: ldarg.0
+			IL_00a3: ldc.i4.0
+			IL_00a4: ldelem.ref
+			IL_00a5: stelem.ref
+			IL_00a6: ldloc.1
+			IL_00a7: ldloc.3
+			IL_00a8: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
+			IL_00ad: pop
+			IL_00ae: ldloc.0
+			IL_00af: ldc.r8 1
+			IL_00b8: add
+			IL_00b9: stloc.0
+			IL_00ba: br IL_004f
 		// end loop
 
-		IL_00cf: ldnull
-		IL_00d0: ret
+		IL_00bf: ldnull
+		IL_00c0: ret
 	} // end of method FunctionExpression_L2C2::FunctionExpression_L2C2
 
 } // end of class Functions.FunctionExpression_L2C2
@@ -212,7 +205,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2154
+		// Method begins at RVA 0x2144
 		// Header size: 12
 		// Code size: 254 (0xfe)
 		.maxstack 32
@@ -319,7 +312,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x225e
+		// Method begins at RVA 0x224e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

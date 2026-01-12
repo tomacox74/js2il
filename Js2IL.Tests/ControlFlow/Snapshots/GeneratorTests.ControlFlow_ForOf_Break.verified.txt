@@ -82,7 +82,7 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 177 (0xb1)
+		// Code size: 163 (0xa3)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ControlFlow_ForOf_Break,
@@ -91,9 +91,8 @@
 			[3] float64,
 			[4] float64,
 			[5] object,
-			[6] object,
-			[7] bool,
-			[8] float64
+			[6] bool,
+			[7] float64
 		)
 
 		IL_0000: newobj instance void Scopes.ControlFlow_ForOf_Break::.ctor()
@@ -122,44 +121,40 @@
 			IL_0047: ldloc.s 4
 			IL_0049: ldloc.3
 			IL_004a: clt
-			IL_004c: brfalse IL_00b0
+			IL_004c: brfalse IL_00a2
 
-			IL_0051: ldloc.s 4
-			IL_0053: box [System.Runtime]System.Double
-			IL_0058: stloc.s 6
-			IL_005a: ldloc.2
-			IL_005b: ldloc.s 6
-			IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0062: stloc.s 5
-			IL_0064: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0069: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-			IL_006e: ldc.i4.1
-			IL_006f: newarr [System.Runtime]System.Object
-			IL_0074: dup
-			IL_0075: ldc.i4.0
-			IL_0076: ldloc.s 5
-			IL_0078: stelem.ref
-			IL_0079: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_007e: pop
-			IL_007f: ldloc.s 5
-			IL_0081: ldstr "b"
-			IL_0086: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-			IL_008b: stloc.s 7
-			IL_008d: ldloc.s 7
-			IL_008f: brfalse IL_0099
+			IL_0051: ldloc.2
+			IL_0052: ldloc.s 4
+			IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_0059: stloc.s 5
+			IL_005b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0060: ldc.i4.1
+			IL_0061: newarr [System.Runtime]System.Object
+			IL_0066: dup
+			IL_0067: ldc.i4.0
+			IL_0068: ldloc.s 5
+			IL_006a: stelem.ref
+			IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0070: pop
+			IL_0071: ldloc.s 5
+			IL_0073: ldstr "b"
+			IL_0078: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+			IL_007d: stloc.s 6
+			IL_007f: ldloc.s 6
+			IL_0081: brfalse IL_008b
 
-			IL_0094: br IL_00b0
+			IL_0086: br IL_00a2
 
-			IL_0099: ldloc.s 4
-			IL_009b: ldc.r8 1
-			IL_00a4: add
-			IL_00a5: stloc.s 8
-			IL_00a7: ldloc.s 8
-			IL_00a9: stloc.s 4
-			IL_00ab: br IL_0047
+			IL_008b: ldloc.s 4
+			IL_008d: ldc.r8 1
+			IL_0096: add
+			IL_0097: stloc.s 7
+			IL_0099: ldloc.s 7
+			IL_009b: stloc.s 4
+			IL_009d: br IL_0047
 		// end loop
 
-		IL_00b0: ret
+		IL_00a2: ret
 	} // end of method ControlFlow_ForOf_Break::Main
 
 } // end of class Scripts.ControlFlow_ForOf_Break
@@ -171,7 +166,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2129
+		// Method begins at RVA 0x211b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

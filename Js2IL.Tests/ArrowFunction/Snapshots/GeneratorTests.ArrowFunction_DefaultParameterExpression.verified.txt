@@ -64,47 +64,47 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 100 (0x64)
+		// Code size: 77 (0x4d)
 		.maxstack 32
+		.locals init (
+			[0] float64
+		)
 
 		IL_0000: ldarg.2
-		IL_0001: brtrue IL_0031
+		IL_0001: brtrue IL_001f
 
 		IL_0006: ldarg.1
-		IL_0007: ldc.r8 2
-		IL_0010: box [System.Runtime]System.Double
-		IL_0015: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
-		IL_001a: pop
-		IL_001b: ldarg.1
-		IL_001c: ldc.r8 2
-		IL_0025: box [System.Runtime]System.Double
-		IL_002a: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Multiply(object, object)
-		IL_002f: starg.s b
+		IL_0007: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_000c: ldc.r8 2
+		IL_0015: mul
+		IL_0016: stloc.0
+		IL_0017: ldloc.0
+		IL_0018: box [System.Runtime]System.Double
+		IL_001d: starg.s b
 
-		IL_0031: ldarg.3
-		IL_0032: brtrue IL_0048
+		IL_001f: ldarg.3
+		IL_0020: brtrue IL_0036
 
-		IL_0037: ldarg.1
-		IL_0038: ldarg.2
-		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_003e: pop
-		IL_003f: ldarg.1
-		IL_0040: ldarg.2
-		IL_0041: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0046: starg.s c
+		IL_0025: ldarg.1
+		IL_0026: ldarg.2
+		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_002c: pop
+		IL_002d: ldarg.1
+		IL_002e: ldarg.2
+		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0034: starg.s c
 
-		IL_0048: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_004d: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0052: ldc.i4.1
-		IL_0053: newarr [System.Runtime]System.Object
-		IL_0058: dup
-		IL_0059: ldc.i4.0
-		IL_005a: ldarg.3
-		IL_005b: stelem.ref
-		IL_005c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0061: pop
-		IL_0062: ldnull
-		IL_0063: ret
+		IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003b: ldc.i4.1
+		IL_003c: newarr [System.Runtime]System.Object
+		IL_0041: dup
+		IL_0042: ldc.i4.0
+		IL_0043: ldarg.3
+		IL_0044: stelem.ref
+		IL_0045: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_004a: pop
+		IL_004b: ldnull
+		IL_004c: ret
 	} // end of method ArrowFunction_L2C19::ArrowFunction_L2C19
 
 } // end of class Functions.ArrowFunction_L2C19
@@ -122,7 +122,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20d4
+		// Method begins at RVA 0x20c0
 		// Header size: 12
 		// Code size: 212 (0xd4)
 		.maxstack 32
@@ -226,7 +226,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21b4
+		// Method begins at RVA 0x21a0
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

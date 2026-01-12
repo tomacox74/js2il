@@ -37,7 +37,7 @@ public class IRPipelineAuditTests : IDisposable
     /// This gives a comprehensive view of IR adoption across the entire test suite.
     /// Run with: dotnet test --filter "FullSuiteIRPipelineMetrics" --logger "console;verbosity=detailed"
     /// </summary>
-    [Fact]
+    [Fact(Skip = "This test is for auditing purposes and can be very slow. Run manually when needed.")]
     public void FullSuiteIRPipelineMetrics()
     {
         var assembly = Assembly.GetExecutingAssembly();

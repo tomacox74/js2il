@@ -212,6 +212,56 @@ namespace JavaScriptRuntime
             }
         }
 
+        public static object GetItem(object obj, double index)
+        {
+            // Coerce index to int (JS ToInt32-ish truncation)
+            int intIndex = (int)index;
+
+            // String: return character at index as a 1-length string
+            if (obj is string str)
+            {
+                if (intIndex < 0 || intIndex >= str.Length)
+                {
+                    return null!; // undefined
+                }
+                return str[intIndex].ToString();
+            }
+
+            // ExpandoObject (object literal): numeric index coerces to property name string per JS ToPropertyKey
+            if (obj is System.Dynamic.ExpandoObject exp)
+            {
+                var dict = (IDictionary<string, object?>)exp;
+                var propName = DotNet2JSConversions.ToString(index);
+                if (dict.TryGetValue(propName, out var value))
+                {
+                    return value!;
+                }
+                return null!; // closest to JS 'undefined' (we model as null)
+            }
+
+            if (obj is Array array)
+            {
+                // Bounds check: return undefined (null) when OOB to mimic JS behavior
+                if (intIndex < 0 || intIndex >= array.Count)
+                {
+                    return null!; // undefined
+                }
+                return array[intIndex]!;
+            }
+            else if (obj is Int32Array i32)
+            {
+                // Reads outside bounds return 0 per typed array semantics
+                return i32[intIndex];
+            }
+            else
+            {
+                // Generic object index access: treat index as a property key (JS ToPropertyKey -> string)
+                // and fall back to dynamic property lookup (public fields/properties and ExpandoObject).
+                var propName = DotNet2JSConversions.ToString(index);
+                return GetProperty(obj, propName)!;
+            }
+        }
+
         /// <summary>
         /// Sets an item on an object by index/key.
         /// Used by codegen for computed member assignment and property assignment.
@@ -303,6 +353,80 @@ namespace JavaScriptRuntime
 
             // Generic object: treat as property assignment (ToPropertyKey -> string)
             return SetProperty(obj, propName, value);
+        }
+
+        /// <summary>
+        /// Fast-path overload for numeric index and numeric value.
+        /// Avoids boxing at the call site when the compiler has unboxed doubles.
+        /// Returns the assigned value (boxed) to match JavaScript assignment expression semantics.
+        /// </summary>
+        public static object SetItem(object? obj, double index, double value)
+        {
+            if (obj is null)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot set properties of null or undefined");
+            }
+
+            if (obj is JsNull)
+            {
+                throw new JavaScriptRuntime.TypeError("Cannot set properties of null");
+            }
+
+            int intIndex;
+            if (double.IsNaN(index) || double.IsInfinity(index))
+            {
+                intIndex = 0;
+            }
+            else
+            {
+                try { intIndex = (int)index; }
+                catch { intIndex = 0; }
+            }
+
+            // Strings are immutable in JS; silently ignore and return value.
+            if (obj is string)
+            {
+                return value;
+            }
+
+            // JS Array index assignment
+            if (obj is Array array)
+            {
+                if (intIndex < 0)
+                {
+                    // Negative indices behave like properties in JS; treat as property for host safety.
+                    return SetProperty(array, intIndex.ToString(System.Globalization.CultureInfo.InvariantCulture), value) ?? value;
+                }
+
+                if (intIndex < array.Count)
+                {
+                    array[intIndex] = value;
+                    return value;
+                }
+
+                if (intIndex == array.Count)
+                {
+                    array.Add(value);
+                    return value;
+                }
+
+                while (array.Count < intIndex)
+                {
+                    array.Add(null);
+                }
+                array.Add(value);
+                return value;
+            }
+
+            // Typed arrays: store when in-bounds (non-boxing).
+            if (obj is Int32Array i32)
+            {
+                i32.SetFromDouble(intIndex, value);
+                return value;
+            }
+
+            // Fallback: treat numeric index as a property key string.
+            return SetProperty(obj, DotNet2JSConversions.ToString(index), value) ?? value;
         }
 
         /// <summary>

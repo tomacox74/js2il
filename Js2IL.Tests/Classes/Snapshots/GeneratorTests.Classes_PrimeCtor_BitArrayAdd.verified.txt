@@ -121,7 +121,7 @@
 			object n
 		) cil managed 
 	{
-		// Method begins at RVA 0x20e8
+		// Method begins at RVA 0x20e0
 		// Header size: 12
 		// Code size: 14 (0xe)
 		.maxstack 32
@@ -151,7 +151,7 @@
 	{
 		// Method begins at RVA 0x2080
 		// Header size: 12
-		// Code size: 89 (0x59)
+		// Code size: 82 (0x52)
 		.maxstack 32
 		.locals init (
 			[0] float64,
@@ -177,22 +177,19 @@
 		IL_0022: ldarg.0
 		IL_0023: ldloc.1
 		IL_0024: stfld object Classes.Classes_PrimeCtor_BitArrayAdd.PrimeSieve::sieveSizeInBits
-		IL_0029: ldarg.0
-		IL_002a: ldstr "sieveSizeInBits"
-		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0034: stloc.2
-		IL_0035: ldc.r8 1
-		IL_003e: box [System.Runtime]System.Double
+		IL_0029: ldc.r8 1
+		IL_0032: box [System.Runtime]System.Double
+		IL_0037: ldarg.0
+		IL_0038: ldfld object Classes.Classes_PrimeCtor_BitArrayAdd.PrimeSieve::sieveSizeInBits
+		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0042: stloc.2
 		IL_0043: ldloc.2
-		IL_0044: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0044: newobj instance void Classes.Classes_PrimeCtor_BitArrayAdd.BitArray::.ctor(object)
 		IL_0049: stloc.3
-		IL_004a: ldloc.3
-		IL_004b: newobj instance void Classes.Classes_PrimeCtor_BitArrayAdd.BitArray::.ctor(object)
-		IL_0050: stloc.2
-		IL_0051: ldarg.0
-		IL_0052: ldloc.2
-		IL_0053: stfld object Classes.Classes_PrimeCtor_BitArrayAdd.PrimeSieve::bitArray
-		IL_0058: ret
+		IL_004a: ldarg.0
+		IL_004b: ldloc.3
+		IL_004c: stfld object Classes.Classes_PrimeCtor_BitArrayAdd.PrimeSieve::bitArray
+		IL_0051: ret
 	} // end of method PrimeSieve::.ctor
 
 } // end of class Classes.Classes_PrimeCtor_BitArrayAdd.PrimeSieve
@@ -210,9 +207,9 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2104
+		// Method begins at RVA 0x20fc
 		// Header size: 12
-		// Code size: 57 (0x39)
+		// Code size: 52 (0x34)
 		.maxstack 32
 		.locals (
 			[0] class Scopes.Classes_PrimeCtor_BitArrayAdd
@@ -225,16 +222,15 @@
 		IL_0014: newobj instance void Classes.Classes_PrimeCtor_BitArrayAdd.PrimeSieve::.ctor(object)
 		IL_0019: pop
 		IL_001a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_001f: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-		IL_0024: ldc.i4.1
-		IL_0025: newarr [System.Runtime]System.Object
-		IL_002a: dup
-		IL_002b: ldc.i4.0
-		IL_002c: ldstr "Classes_PrimeCtor_BitArrayAdd"
-		IL_0031: stelem.ref
-		IL_0032: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0037: pop
-		IL_0038: ret
+		IL_001f: ldc.i4.1
+		IL_0020: newarr [System.Runtime]System.Object
+		IL_0025: dup
+		IL_0026: ldc.i4.0
+		IL_0027: ldstr "Classes_PrimeCtor_BitArrayAdd"
+		IL_002c: stelem.ref
+		IL_002d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0032: pop
+		IL_0033: ret
 	} // end of method Classes_PrimeCtor_BitArrayAdd::Main
 
 } // end of class Scripts.Classes_PrimeCtor_BitArrayAdd
@@ -246,7 +242,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2149
+		// Method begins at RVA 0x213c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

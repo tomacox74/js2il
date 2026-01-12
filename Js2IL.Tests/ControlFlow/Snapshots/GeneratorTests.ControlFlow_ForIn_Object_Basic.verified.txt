@@ -60,7 +60,7 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 167 (0xa7)
+		// Code size: 153 (0x99)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ControlFlow_ForIn_Object_Basic,
@@ -69,8 +69,7 @@
 			[3] float64,
 			[4] float64,
 			[5] object,
-			[6] object,
-			[7] float64
+			[6] float64
 		)
 
 		IL_0000: newobj instance void Scopes.ControlFlow_ForIn_Object_Basic::.ctor()
@@ -99,35 +98,31 @@
 			IL_0057: ldloc.s 4
 			IL_0059: ldloc.3
 			IL_005a: clt
-			IL_005c: brfalse IL_00a6
+			IL_005c: brfalse IL_0098
 
-			IL_0061: ldloc.s 4
-			IL_0063: box [System.Runtime]System.Double
-			IL_0068: stloc.s 6
-			IL_006a: ldloc.2
-			IL_006b: ldloc.s 6
-			IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0072: stloc.s 5
-			IL_0074: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0079: castclass [JavaScriptRuntime]JavaScriptRuntime.Console
-			IL_007e: ldc.i4.1
-			IL_007f: newarr [System.Runtime]System.Object
-			IL_0084: dup
-			IL_0085: ldc.i4.0
-			IL_0086: ldloc.s 5
-			IL_0088: stelem.ref
-			IL_0089: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_008e: pop
-			IL_008f: ldloc.s 4
-			IL_0091: ldc.r8 1
-			IL_009a: add
-			IL_009b: stloc.s 7
-			IL_009d: ldloc.s 7
-			IL_009f: stloc.s 4
-			IL_00a1: br IL_0057
+			IL_0061: ldloc.2
+			IL_0062: ldloc.s 4
+			IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_0069: stloc.s 5
+			IL_006b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_0070: ldc.i4.1
+			IL_0071: newarr [System.Runtime]System.Object
+			IL_0076: dup
+			IL_0077: ldc.i4.0
+			IL_0078: ldloc.s 5
+			IL_007a: stelem.ref
+			IL_007b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0080: pop
+			IL_0081: ldloc.s 4
+			IL_0083: ldc.r8 1
+			IL_008c: add
+			IL_008d: stloc.s 6
+			IL_008f: ldloc.s 6
+			IL_0091: stloc.s 4
+			IL_0093: br IL_0057
 		// end loop
 
-		IL_00a6: ret
+		IL_0098: ret
 	} // end of method ControlFlow_ForIn_Object_Basic::Main
 
 } // end of class Scripts.ControlFlow_ForIn_Object_Basic
@@ -139,7 +134,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2117
+		// Method begins at RVA 0x2109
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

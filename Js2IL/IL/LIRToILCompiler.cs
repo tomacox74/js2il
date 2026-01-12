@@ -1320,30 +1320,67 @@ internal sealed class LIRToILCompiler
                         break;
                     }
 
-                    // Emit: call JavaScriptRuntime.Object.GetItem(object, object)
-                    EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
-                    EmitLoadTempAsObject(getItem.Index, ilEncoder, allocation, methodDescriptor);
-                    var getItemMethod = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.Object),
-                        nameof(JavaScriptRuntime.Object.GetItem),
-                        parameterTypes: new[] { typeof(object), typeof(object) });
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(getItemMethod);
+                    var indexStorage = GetTempStorage(getItem.Index);
+                    if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double))
+                    {
+                        // Emit: call JavaScriptRuntime.Object.GetItem(object, double)
+                        EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTemp(getItem.Index, ilEncoder, allocation, methodDescriptor);
+                        var getItemMethod = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Object),
+                            nameof(JavaScriptRuntime.Object.GetItem),
+                            parameterTypes: new[] { typeof(object), typeof(double) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getItemMethod);
+                    }
+                    else
+                    {
+                        // Emit: call JavaScriptRuntime.Object.GetItem(object, object)
+                        EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTempAsObject(getItem.Index, ilEncoder, allocation, methodDescriptor);
+                        var getItemMethod = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Object),
+                            nameof(JavaScriptRuntime.Object.GetItem),
+                            parameterTypes: new[] { typeof(object), typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getItemMethod);
+                    }
+
                     EmitStoreTemp(getItem.Result, ilEncoder, allocation);
                     break;
                 }
             case LIRSetItem setItem:
                 {
-                    // Emit: call JavaScriptRuntime.Object.SetItem(object, object, object)
-                    EmitLoadTempAsObject(setItem.Object, ilEncoder, allocation, methodDescriptor);
-                    EmitLoadTempAsObject(setItem.Index, ilEncoder, allocation, methodDescriptor);
-                    EmitLoadTempAsObject(setItem.Value, ilEncoder, allocation, methodDescriptor);
-                    var setItemMethod = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.Object),
-                        nameof(JavaScriptRuntime.Object.SetItem),
-                        parameterTypes: new[] { typeof(object), typeof(object), typeof(object) });
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(setItemMethod);
+                    var indexStorage = GetTempStorage(setItem.Index);
+                    var valueStorage = GetTempStorage(setItem.Value);
+
+                    if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double) &&
+                        valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double))
+                    {
+                        // Emit: call JavaScriptRuntime.Object.SetItem(object, double, double)
+                        EmitLoadTempAsObject(setItem.Object, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTemp(setItem.Index, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTemp(setItem.Value, ilEncoder, allocation, methodDescriptor);
+                        var setItemMethod = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Object),
+                            nameof(JavaScriptRuntime.Object.SetItem),
+                            parameterTypes: new[] { typeof(object), typeof(double), typeof(double) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(setItemMethod);
+                    }
+                    else
+                    {
+                        // Emit: call JavaScriptRuntime.Object.SetItem(object, object, object)
+                        EmitLoadTempAsObject(setItem.Object, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTempAsObject(setItem.Index, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTempAsObject(setItem.Value, ilEncoder, allocation, methodDescriptor);
+                        var setItemMethod = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Object),
+                            nameof(JavaScriptRuntime.Object.SetItem),
+                            parameterTypes: new[] { typeof(object), typeof(object), typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(setItemMethod);
+                    }
 
                     if (IsMaterialized(setItem.Result, allocation))
                     {
@@ -2861,16 +2898,6 @@ internal sealed class LIRToILCompiler
         var getterMref = _memberRefRegistry.GetOrAddMethod(getterDecl!, gvProp!.GetMethod!.Name);
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(getterMref);
-
-        // Generator snapshots historically expect intrinsic globals to be materialized as object
-        // and then cast to their concrete type at the use site. Emitting an explicit cast keeps
-        // the IL shape stable (even if redundant for strongly-typed getters like get_console()).
-        var propType = gvProp.PropertyType;
-        if (!propType.IsValueType && propType != typeof(object))
-        {
-            ilEncoder.OpCode(ILOpCode.Castclass);
-            ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(propType));
-        }
     }
 
     public void EmitInvokeIntrinsicMethod(Type declaringType, string methodName, InstructionEncoder ilEncoder)

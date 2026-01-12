@@ -1260,7 +1260,7 @@ public sealed class HIRToLIRLowerer
 
                     // target = iter[idx]
                     var itemTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRGetItem(EnsureObject(iterTemp), EnsureObject(idxTemp), itemTemp));
+                    lirInstructions.Add(new LIRGetItem(EnsureObject(iterTemp), idxTemp, itemTemp));
                     DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     if (!TryStoreToBinding(forOfStmt.Target.BindingInfo, itemTemp, out _))
                     {
@@ -1342,7 +1342,7 @@ public sealed class HIRToLIRLowerer
                     lirInstructions.Add(new LIRBranchIfFalse(condTemp, loopEndLabel));
 
                     var keyTemp = CreateTempVariable();
-                    lirInstructions.Add(new LIRGetItem(EnsureObject(keysTemp), EnsureObject(idxTemp), keyTemp));
+                    lirInstructions.Add(new LIRGetItem(EnsureObject(keysTemp), idxTemp, keyTemp));
                     DefineTempStorage(keyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     if (!TryStoreToBinding(forInStmt.Target.BindingInfo, keyTemp, out _))
                     {
@@ -3246,25 +3246,18 @@ public sealed class HIRToLIRLowerer
         }
 
         // Handle multiplication
-        // LIRMulNumber emitted when both operands are known to be double (uses native IL mul instruction).
-        // LIRMulDynamic emitted otherwise (calls Operators.Multiply at runtime for type coercion).
-        // Type inference could be improved to track numeric types through more expressions to prefer LIRMulNumber.
+        // JS '*' always follows ToNumber semantics. Prefer emitting numeric coercion (only when needed)
+        // and a native IL 'mul' rather than calling Operators.Multiply.
         if (binaryExpr.Operator == Acornima.Operator.Multiplication)
         {
-            // Number * Number - uses native IL mul instruction (optimal path)
-            if (leftType == typeof(double) && rightType == typeof(double))
+            if (leftType != typeof(double) || rightType != typeof(double))
             {
-                _methodBodyIR.Instructions.Add(new LIRMulNumber(leftTempVar, rightTempVar, resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                return true;
+                leftTempVar = EnsureNumber(leftTempVar);
+                rightTempVar = EnsureNumber(rightTempVar);
             }
 
-            // Dynamic multiplication - types unknown at compile time, box operands and call Operators.Multiply
-            // This has runtime overhead but handles mixed types correctly (e.g., string to number coercion)
-            var leftBoxed = EnsureObject(leftTempVar);
-            var rightBoxed = EnsureObject(rightTempVar);
-            _methodBodyIR.Instructions.Add(new LIRMulDynamic(leftBoxed, rightBoxed, resultTempVar));
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
+            _methodBodyIR.Instructions.Add(new LIRMulNumber(leftTempVar, rightTempVar, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
             return true;
         }
 
@@ -3732,7 +3725,7 @@ public sealed class HIRToLIRLowerer
 
                         var indexTemp = EmitConstNumber(i);
                         var getResult = CreateTempVariable();
-                        _methodBodyIR.Instructions.Add(new LIRGetItem(sourceValue, EnsureObject(indexTemp), getResult));
+                        _methodBodyIR.Instructions.Add(new LIRGetItem(sourceValue, indexTemp, getResult));
                         DefineTempStorage(getResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
                         if (!TryLowerDestructuringPattern(elementPattern, getResult, isDeclaration))
@@ -3791,7 +3784,7 @@ public sealed class HIRToLIRLowerer
         _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(condTemp, endLabel));
 
         var itemTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRGetItem(sourceObject, EnsureObject(idxTemp), itemTemp));
+        _methodBodyIR.Instructions.Add(new LIRGetItem(sourceObject, idxTemp, itemTemp));
         DefineTempStorage(itemTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         _methodBodyIR.Instructions.Add(new LIRArrayAdd(restArray, EnsureObject(itemTemp)));
 
@@ -3912,6 +3905,61 @@ public sealed class HIRToLIRLowerer
     {
         resultTempVar = default;
 
+        // User-defined class instance field access via bracket notation (e.g., this["wordArray"] = ...).
+        // If the receiver is `this` and the index is a constant string that matches a known field on the
+        // generated CLR type, lower directly to an instance field store (stfld) instead of dynamic SetItem.
+        if (_classRegistry != null
+            && assignExpr.Object is HIRThisExpression
+            && assignExpr.Index is HIRLiteralExpression literalIndex
+            && literalIndex.Kind == JavascriptType.String
+            && literalIndex.Value is string literalFieldName
+            && TryGetEnclosingClassRegistryName(out var currentClass)
+            && currentClass != null
+            && _classRegistry.TryGetField(currentClass, literalFieldName, out _))
+        {
+            TempVariable fieldValueToStore;
+
+            if (assignExpr.Operator == Acornima.Operator.Assignment)
+            {
+                if (!TryLowerExpression(assignExpr.Value, out fieldValueToStore))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                // Compound assignment: this["field"] += expr
+                var currentValue = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRLoadUserClassInstanceField(
+                    currentClass,
+                    literalFieldName,
+                    IsPrivateField: false,
+                    currentValue));
+                DefineTempStorage(currentValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                if (!TryLowerExpression(assignExpr.Value, out var rhs))
+                {
+                    return false;
+                }
+
+                if (!TryLowerCompoundOperation(assignExpr.Operator, currentValue, rhs, out fieldValueToStore))
+                {
+                    return false;
+                }
+            }
+
+            fieldValueToStore = EnsureObject(fieldValueToStore);
+            _methodBodyIR.Instructions.Add(new LIRStoreUserClassInstanceField(
+                currentClass,
+                literalFieldName,
+                IsPrivateField: false,
+                fieldValueToStore));
+
+            // Assignment expression result is the value assigned.
+            resultTempVar = fieldValueToStore;
+            return true;
+        }
+
         if (!TryLowerExpression(assignExpr.Object, out var objTemp))
         {
             return false;
@@ -3922,7 +3970,8 @@ public sealed class HIRToLIRLowerer
         {
             return false;
         }
-        var boxedIndex = EnsureObject(indexTemp);
+        TempVariable boxedIndex = default;
+        bool hasBoxedIndex = false;
 
         TempVariable valueToStore;
         if (assignExpr.Operator == Acornima.Operator.Assignment)
@@ -3935,8 +3984,21 @@ public sealed class HIRToLIRLowerer
         else
         {
             // Compound assignment: obj[index] += expr
+            var indexStorageForGet = GetTempStorage(indexTemp);
+            TempVariable indexForGet;
+            if (indexStorageForGet.Kind == ValueStorageKind.UnboxedValue && indexStorageForGet.ClrType == typeof(double))
+            {
+                indexForGet = indexTemp;
+            }
+            else
+            {
+                boxedIndex = EnsureObject(indexTemp);
+                hasBoxedIndex = true;
+                indexForGet = boxedIndex;
+            }
+
             var current = CreateTempVariable();
-            _methodBodyIR.Instructions.Add(new LIRGetItem(objTemp, boxedIndex, current));
+            _methodBodyIR.Instructions.Add(new LIRGetItem(objTemp, indexForGet, current));
             DefineTempStorage(current, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
             if (!TryLowerExpression(assignExpr.Value, out var rhs))
@@ -3950,9 +4012,33 @@ public sealed class HIRToLIRLowerer
             }
         }
 
-        valueToStore = EnsureObject(valueToStore);
+        var indexStorage = GetTempStorage(indexTemp);
+        var valueStorage = GetTempStorage(valueToStore);
+        bool canUseNumericSetItem =
+            indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double) &&
+            valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double);
+
+        TempVariable indexForSet;
+        if (canUseNumericSetItem)
+        {
+            indexForSet = indexTemp;
+        }
+        else
+        {
+            if (!hasBoxedIndex)
+            {
+                boxedIndex = EnsureObject(indexTemp);
+                hasBoxedIndex = true;
+            }
+            indexForSet = boxedIndex;
+        }
+
+        if (!canUseNumericSetItem)
+        {
+            valueToStore = EnsureObject(valueToStore);
+        }
         var setResult = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, boxedIndex, valueToStore, setResult));
+        _methodBodyIR.Instructions.Add(new LIRSetItem(objTemp, indexForSet, valueToStore, setResult));
         DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         resultTempVar = setResult;
         return true;
@@ -4662,6 +4748,24 @@ public sealed class HIRToLIRLowerer
     {
         resultTempVar = CreateTempVariable();
 
+        // User-defined class instance field access (e.g., this.wordArray).
+        // If the receiver is `this` and we know the generated CLR type has a field with this name,
+        // lower directly to an instance field load (ldfld) instead of dynamic property access.
+        if (_classRegistry != null
+            && propAccessExpr.Object is HIRThisExpression
+            && TryGetEnclosingClassRegistryName(out var currentClass)
+            && currentClass != null
+            && _classRegistry.TryGetField(currentClass, propAccessExpr.PropertyName, out _))
+        {
+            _methodBodyIR.Instructions.Add(new LIRLoadUserClassInstanceField(
+                RegistryClassName: currentClass,
+                FieldName: propAccessExpr.PropertyName,
+                IsPrivateField: false,
+                Result: resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
         // User-defined class static field access (e.g., Greeter.message).
         // Classes are compiled as .NET types, and static class fields are emitted as CLR static fields.
         // When the receiver is the class identifier, lower directly to a static field load.
@@ -4793,6 +4897,27 @@ public sealed class HIRToLIRLowerer
     {
         resultTempVar = CreateTempVariable();
 
+        // User-defined class instance field access via bracket notation (e.g., this["wordArray"]).
+        // If the receiver is `this` and the index is a constant string that matches a known field on the
+        // generated CLR type, lower directly to an instance field load (ldfld) instead of dynamic GetItem.
+        if (_classRegistry != null
+            && indexAccessExpr.Object is HIRThisExpression
+            && indexAccessExpr.Index is HIRLiteralExpression literalIndex
+            && literalIndex.Kind == JavascriptType.String
+            && literalIndex.Value is string literalFieldName
+            && TryGetEnclosingClassRegistryName(out var currentClass)
+            && currentClass != null
+            && _classRegistry.TryGetField(currentClass, literalFieldName, out _))
+        {
+            _methodBodyIR.Instructions.Add(new LIRLoadUserClassInstanceField(
+                RegistryClassName: currentClass,
+                FieldName: literalFieldName,
+                IsPrivateField: false,
+                Result: resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
+
         // Lower the object expression
         if (!TryLowerExpression(indexAccessExpr.Object, out var objectTemp))
         {
@@ -4806,8 +4931,17 @@ public sealed class HIRToLIRLowerer
         }
 
         var boxedObject = EnsureObject(objectTemp);
-        var boxedIndex = EnsureObject(indexTemp);
-        _methodBodyIR.Instructions.Add(new LIRGetItem(boxedObject, boxedIndex, resultTempVar));
+        var indexStorage = GetTempStorage(indexTemp);
+        TempVariable indexForGet;
+        if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double))
+        {
+            indexForGet = indexTemp;
+        }
+        else
+        {
+            indexForGet = EnsureObject(indexTemp);
+        }
+        _methodBodyIR.Instructions.Add(new LIRGetItem(boxedObject, indexForGet, resultTempVar));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
         return true;
@@ -4946,17 +5080,13 @@ public sealed class HIRToLIRLowerer
                 return false;
 
             case Acornima.Operator.MultiplicationAssignment:
-                if (leftType == typeof(double) && rightType == typeof(double))
+                if (leftType != typeof(double) || rightType != typeof(double))
                 {
-                    _methodBodyIR.Instructions.Add(new LIRMulNumber(currentValue, rhsValue, result));
-                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
-                    return true;
+                    EnsureNumericOperands();
                 }
-                // Dynamic multiplication
-                var leftMulBoxed = EnsureObject(currentValue);
-                var rightMulBoxed = EnsureObject(rhsValue);
-                _methodBodyIR.Instructions.Add(new LIRMulDynamic(leftMulBoxed, rightMulBoxed, result));
-                DefineTempStorage(result, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
+
+                _methodBodyIR.Instructions.Add(new LIRMulNumber(currentValue, rhsValue, result));
+                DefineTempStorage(result, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
                 return true;
 
             case Acornima.Operator.DivisionAssignment:
