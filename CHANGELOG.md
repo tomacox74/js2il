@@ -33,14 +33,27 @@ All notable changes to this project are documented here.
   - `StackifyResult.IsStackable()` provides O(1) lookup for temp stackability
   - Checks for control flow barriers (branches/labels) between definition and use
   - `CanEmitInline()` validates instruction types support inline emission
-  - Integration with `LIRToILCompiler` via `MarkStackifiableTemps()` (currently disabled, see #211)
-- **Console.log peephole flag**: Added `EnableConsoleLogPeephole` flag to `LIRToILCompiler` for testing Stackify in isolation
+  - Integrated with `LIRToILCompiler` via `MarkStackifiableTemps()`
 - **IR pipeline function parameter support**: Functions with simple identifier parameters can now be compiled via the IR pipeline:
   - New `LIRLoadParameter` instruction for loading function parameters by index
   - New `LIRCallFunction` instruction for calling user-defined functions with arguments
   - `MethodDescriptor.HasScopesParameter` flag distinguishes Main (no scopes) from user functions (scopes as arg0)
   - Parameter index mapping: JS param 0 → IL arg 1 for user functions, IL arg 0 for Main
   - `AllParamsAreSimpleIdentifiers` check gates IR compilation for functions with complex parameters
+- **Two-phase compilation pipeline**: New default compilation mode that discovers callables first, then compiles bodies:
+  - `CallableRegistry` tracks callable IDs, stable names, signatures, and MethodDef tokens
+  - Dependency discovery + planning (`CallableDependencyCollector`/`CompilationPlanner`) to ensure bodies compile in a deterministic order
+  - Integration tests for dependency planning and two-phase compilation
+- **Lowering pipeline feature expansion (AST → HIR → LIR → IL)**:
+  - Control flow: `for`, `for..of`, `for..in`, `do..while`, labeled break/continue, `switch`, `try/catch/finally`, `throw`
+  - Expressions: template literals (PL3.4), `this` (PL3.5), function expressions as values (PL3.6), arrow functions (including ctor arity checks)
+  - Operators: binary operators (including logical short-circuit), unary operators (`typeof`, `!`, `~`, numeric `-`), update operators (`++`/`--`)
+  - Destructuring + assignment targets: destructuring declarations and destructuring assignment; member/index assignment targets
+  - Calls: lowered member calls via `Object.CallMember` and improved GlobalThis intrinsic call handling
+  - `new` expressions: intrinsics, built-in Error types, and user-defined class instantiation
+- **JavaScript runtime additions**:
+  - `Number` intrinsic implementation
+  - `JsThrownValueException` for propagating non-Exception thrown values through .NET
 
 ### Changed
 - **ScopeMetadataRegistry wired through compilation pipeline**: `ScopeMetadataRegistry` now flows through full compilation:
@@ -59,19 +72,27 @@ All notable changes to this project are documented here.
   - `TypeGenerator` receives `VariableRegistry` via constructor parameter (no longer uses `new VariableRegistry()`)
   - Removed `TypeGenerator.GetVariableRegistry()` method (no longer needed)
   - `EnvironmentLayoutBuilder` depends on `ScopeMetadataRegistry` (minimal interface, not full `VariableRegistry`)
-- **Console.log peephole optimization for parameters**: Extended stack-only emission to handle function parameters:
-  - Added `LIRLoadParameter` to `CanEmitTempStackOnly()` in `ConsoleLogPeepholeOptimizer`
-  - Parameters now emit inline as `ldarg.X` instead of requiring local storage
-  - Result: `printMessage(message) { console.log("Message:", message); }` emits 0 locals instead of 2
+- **Console.log lowering and stackification**: Intrinsic receivers can remain on the evaluation stack (avoids materializing lookups like `GlobalThis.console` into locals)
+- **IR pipeline coverage expanded**: Many more statement/expression forms now compile via IR by default, with explicit fallback assertions and improved failure diagnostics
+- **Classes compilation improvements**: Class constructor bodies can be compiled via the IR pipeline (with automatic fallback to legacy emission)
+- **Performance improvements**:
+  - Stackify keeps intrinsic receivers on the evaluation stack where possible
+  - Inline stackification for `LIRConcatStrings`
+- **Cleanup and maintenance**:
+  - Removed legacy IL generator implementation files (keeping the IR pipeline as the primary path)
+  - Removed the `samples/` folder
+  - Removed `CompiledMethodCache` and the legacy `ConsoleLogPeepholeOptimizer`
+  - Added scripts to run execution/generator tests and report failures
 
 ### Fixed
 - **Main method parameter indexing**: Fixed `InvalidProgramException` for `__dirname`/`__filename` access in Main:
   - Main has no scopes array parameter, so JS param 0 maps to IL arg 0 (not arg 1)
   - `HasScopesParameter = false` for Main ensures correct `ldarg.X` indices
+- **Validator edge case for arrow functions**: Correctly detects `this` usage in arrow functions inside class methods
+- **IR pipeline nested-function correctness**: IR compilation is enabled for nested functions with additional optimization for single-assignment variables
 
 ### Known Issues
-- **Minor IL regression with LIRBuildArray**: Some tests show increased local count due to `ConsoleLogPeepholeOptimizer` not recognizing the new `LIRBuildArray` instruction pattern (tracked: #211, #228). This does not affect correctness, only IL size. The fix is to complete #211 (replace ConsoleLogPeepholeOptimizer with generalized Stackify inline emission).
-- **Obsolete LIR instructions**: `LIRNewObjectArray`, `LIRBeginInitArrayElement`, `LIRStoreElementRef` are now dead code after `LIRBuildArray` introduction (tracked: #227)
+- **IR adoption remains partial**: Many JavaScript constructs still fall back to the legacy emitters; `IRPipelineMetrics` tests track coverage and regressions over time
 
 ## v0.5.4 - 2026-01-02
 
