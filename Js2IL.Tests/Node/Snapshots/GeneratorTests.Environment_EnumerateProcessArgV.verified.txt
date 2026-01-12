@@ -60,14 +60,12 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 194 (0xc2)
+		// Code size: 188 (0xbc)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Environment_EnumerateProcessArgV,
 			[1] float64,
-			[2] object,
-			[3] object,
-			[4] object
+			[2] object
 		)
 
 		IL_0000: newobj instance void Scopes.Environment_EnumerateProcessArgV::.ctor()
@@ -98,49 +96,45 @@
 			IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_0055: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
 			IL_005a: clt
-			IL_005c: brfalse IL_00c1
+			IL_005c: brfalse IL_00bb
 
 			IL_0061: ldloc.1
 			IL_0062: box [System.Runtime]System.Double
 			IL_0067: stloc.2
-			IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-			IL_006d: ldstr "argv"
-			IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0077: stloc.3
-			IL_0078: ldloc.1
-			IL_0079: box [System.Runtime]System.Double
-			IL_007e: stloc.s 4
-			IL_0080: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0085: ldc.i4.4
-			IL_0086: newarr [System.Runtime]System.Object
-			IL_008b: dup
-			IL_008c: ldc.i4.0
-			IL_008d: ldstr "arg"
-			IL_0092: stelem.ref
-			IL_0093: dup
-			IL_0094: ldc.i4.1
-			IL_0095: ldloc.2
-			IL_0096: stelem.ref
-			IL_0097: dup
-			IL_0098: ldc.i4.2
-			IL_0099: ldstr "="
-			IL_009e: stelem.ref
-			IL_009f: dup
-			IL_00a0: ldc.i4.3
-			IL_00a1: ldloc.3
-			IL_00a2: ldloc.s 4
-			IL_00a4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_00a9: stelem.ref
-			IL_00aa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_00af: pop
-			IL_00b0: ldloc.1
-			IL_00b1: ldc.r8 1
-			IL_00ba: add
-			IL_00bb: stloc.1
-			IL_00bc: br IL_0045
+			IL_0068: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_006d: ldc.i4.4
+			IL_006e: newarr [System.Runtime]System.Object
+			IL_0073: dup
+			IL_0074: ldc.i4.0
+			IL_0075: ldstr "arg"
+			IL_007a: stelem.ref
+			IL_007b: dup
+			IL_007c: ldc.i4.1
+			IL_007d: ldloc.2
+			IL_007e: stelem.ref
+			IL_007f: dup
+			IL_0080: ldc.i4.2
+			IL_0081: ldstr "="
+			IL_0086: stelem.ref
+			IL_0087: dup
+			IL_0088: ldc.i4.3
+			IL_0089: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+			IL_008e: ldstr "argv"
+			IL_0093: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0098: ldloc.1
+			IL_0099: box [System.Runtime]System.Double
+			IL_009e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_00a3: stelem.ref
+			IL_00a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_00a9: pop
+			IL_00aa: ldloc.1
+			IL_00ab: ldc.r8 1
+			IL_00b4: add
+			IL_00b5: stloc.1
+			IL_00b6: br IL_0045
 		// end loop
 
-		IL_00c1: ret
+		IL_00bb: ret
 	} // end of method Environment_EnumerateProcessArgV::Main
 
 } // end of class Scripts.Environment_EnumerateProcessArgV
@@ -152,7 +146,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2132
+		// Method begins at RVA 0x212c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

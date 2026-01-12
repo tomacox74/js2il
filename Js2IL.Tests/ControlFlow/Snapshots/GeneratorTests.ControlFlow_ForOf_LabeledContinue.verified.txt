@@ -104,7 +104,7 @@
 	{
 		// Method begins at RVA 0x2074
 		// Header size: 12
-		// Code size: 220 (0xdc)
+		// Code size: 211 (0xd3)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ControlFlow_ForOf_LabeledContinue,
@@ -114,9 +114,8 @@
 			[4] float64,
 			[5] object,
 			[6] float64,
-			[7] object,
-			[8] bool,
-			[9] float64
+			[7] bool,
+			[8] float64
 		)
 
 		IL_0000: newobj instance void Scopes.ControlFlow_ForOf_LabeledContinue::.ctor()
@@ -145,58 +144,55 @@
 			IL_0047: ldloc.s 4
 			IL_0049: ldloc.3
 			IL_004a: clt
-			IL_004c: brfalse IL_00db
+			IL_004c: brfalse IL_00d2
 
-			IL_0051: ldloc.s 4
-			IL_0053: box [System.Runtime]System.Double
-			IL_0058: stloc.s 7
-			IL_005a: ldloc.2
-			IL_005b: ldloc.s 7
-			IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0062: stloc.s 5
-			IL_0064: ldc.r8 0.0
-			IL_006d: stloc.s 6
-			// loop start (head: IL_006f)
-				IL_006f: ldloc.s 6
-				IL_0071: ldc.r8 1
-				IL_007a: clt
-				IL_007c: brfalse IL_00c4
+			IL_0051: ldloc.2
+			IL_0052: ldloc.s 4
+			IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_0059: stloc.s 5
+			IL_005b: ldc.r8 0.0
+			IL_0064: stloc.s 6
+			// loop start (head: IL_0066)
+				IL_0066: ldloc.s 6
+				IL_0068: ldc.r8 1
+				IL_0071: clt
+				IL_0073: brfalse IL_00bb
 
-				IL_0081: ldloc.s 5
-				IL_0083: ldstr "b"
-				IL_0088: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_008d: stloc.s 8
-				IL_008f: ldloc.s 8
-				IL_0091: brfalse IL_009b
+				IL_0078: ldloc.s 5
+				IL_007a: ldstr "b"
+				IL_007f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_0084: stloc.s 7
+				IL_0086: ldloc.s 7
+				IL_0088: brfalse IL_0092
 
-				IL_0096: br IL_00c4
+				IL_008d: br IL_00bb
 
-				IL_009b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_00a0: ldc.i4.1
-				IL_00a1: newarr [System.Runtime]System.Object
-				IL_00a6: dup
-				IL_00a7: ldc.i4.0
-				IL_00a8: ldloc.s 5
-				IL_00aa: stelem.ref
-				IL_00ab: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-				IL_00b0: pop
-				IL_00b1: ldloc.s 6
-				IL_00b3: ldc.r8 1
-				IL_00bc: add
-				IL_00bd: stloc.s 6
-				IL_00bf: br IL_006f
+				IL_0092: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0097: ldc.i4.1
+				IL_0098: newarr [System.Runtime]System.Object
+				IL_009d: dup
+				IL_009e: ldc.i4.0
+				IL_009f: ldloc.s 5
+				IL_00a1: stelem.ref
+				IL_00a2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+				IL_00a7: pop
+				IL_00a8: ldloc.s 6
+				IL_00aa: ldc.r8 1
+				IL_00b3: add
+				IL_00b4: stloc.s 6
+				IL_00b6: br IL_0066
 			// end loop
 
-			IL_00c4: ldloc.s 4
-			IL_00c6: ldc.r8 1
-			IL_00cf: add
-			IL_00d0: stloc.s 9
-			IL_00d2: ldloc.s 9
-			IL_00d4: stloc.s 4
-			IL_00d6: br IL_0047
+			IL_00bb: ldloc.s 4
+			IL_00bd: ldc.r8 1
+			IL_00c6: add
+			IL_00c7: stloc.s 8
+			IL_00c9: ldloc.s 8
+			IL_00cb: stloc.s 4
+			IL_00cd: br IL_0047
 		// end loop
 
-		IL_00db: ret
+		IL_00d2: ret
 	} // end of method ControlFlow_ForOf_LabeledContinue::Main
 
 } // end of class Scripts.ControlFlow_ForOf_LabeledContinue
@@ -208,7 +204,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x215c
+		// Method begins at RVA 0x2153
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
