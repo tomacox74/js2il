@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.6.0 - 2026-01-12
+
 ### Added
 - **Phase 1 Captured Variable Reads**: IR pipeline can now read captured variables from parent scopes:
   - `LIRLoadLeafScopeField`: Loads variable from current scope's field (`ldloc.X` → `ldfld`)
@@ -54,7 +58,6 @@ All notable changes to this project are documented here.
 - **JavaScript runtime additions**:
   - `Number` intrinsic implementation
   - `JsThrownValueException` for propagating non-Exception thrown values through .NET
-
 ### Changed
 - **ScopeMetadataRegistry wired through compilation pipeline**: `ScopeMetadataRegistry` now flows through full compilation:
   - `LIRToILCompiler` receives `ScopeMetadataRegistry` for field handle lookups during IL emission
@@ -83,14 +86,12 @@ All notable changes to this project are documented here.
   - Removed the `samples/` folder
   - Removed `CompiledMethodCache` and the legacy `ConsoleLogPeepholeOptimizer`
   - Added scripts to run execution/generator tests and report failures
-
 ### Fixed
 - **Main method parameter indexing**: Fixed `InvalidProgramException` for `__dirname`/`__filename` access in Main:
   - Main has no scopes array parameter, so JS param 0 maps to IL arg 0 (not arg 1)
   - `HasScopesParameter = false` for Main ensures correct `ldarg.X` indices
 - **Validator edge case for arrow functions**: Correctly detects `this` usage in arrow functions inside class methods
 - **IR pipeline nested-function correctness**: IR compilation is enabled for nested functions with additional optimization for single-assignment variables
-
 ### Known Issues
 - **IR adoption remains partial**: Many JavaScript constructs still fall back to the legacy emitters; `IRPipelineMetrics` tests track coverage and regressions over time
 
