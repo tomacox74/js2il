@@ -392,6 +392,23 @@
                   "notes": "Supported in the new IR pipeline for global (non-shadowed) intrinsic identifiers registered in JavaScriptRuntime.IntrinsicObjectRegistry that are constructible classes. Currently limited to 0–2 constructor arguments."
                 }
               ]
+            },
+            {
+              "paragraph": "13.3.6",
+              "title": "The Function Call",
+              "url": "https://tc39.es/ecma262/#sec-function-calls",
+              "features": [
+                {
+                  "feature": "Primitive conversion callables: String(x), Number(x), Boolean(x)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_String_Callable.js",
+                    "Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Number_Callable.js",
+                    "Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Boolean_Callable.js"
+                  ],
+                  "notes": "Supports the callable form (no new) for global (non-shadowed) String/Number/Boolean. Semantics match JS: no-arg returns default (\"\" / +0 / false); extra arguments are evaluated for side effects but ignored. Conversions are implemented via JavaScriptRuntime.TypeUtilities (ToString/ToNumber/ToBoolean); Number(undefined) yields NaN (undefined represented as CLR null)."
+                }
+              ]
             }
           ]
         },
@@ -1881,6 +1898,35 @@
                     "Js2IL.Tests/Math/JavaScript/Math_Cbrt_Negative.js"
                   ],
                   "notes": "Cube root; handles negative values returning negative result; NaN propagates; Infinity preserved."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "section": "20.1",
+      "title": "Number Objects",
+      "url": "https://tc39.es/ecma262/#sec-number-objects",
+      "subsections": [
+        {
+          "subsection": "20.1.2",
+          "title": "Properties of the Number Constructor",
+          "url": "https://tc39.es/ecma262/#sec-properties-of-the-number-constructor",
+          "paragraphs": [
+            {
+              "paragraph": "20.1.2.4",
+              "title": "Number.isNaN",
+              "url": "https://tc39.es/ecma262/#sec-number.isnan",
+              "features": [
+                {
+                  "feature": "Number.isNaN(x)",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Number_Callable.js"
+                  ],
+                  "notes": "Implements the ES static method with no coercion: returns true only when x is a Number value and is NaN. Backed by JavaScriptRuntime.Number.isNaN(object?)."
                 }
               ]
             }

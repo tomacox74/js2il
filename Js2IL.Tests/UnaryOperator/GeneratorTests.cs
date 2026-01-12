@@ -8,27 +8,27 @@ namespace Js2IL.Tests.UnaryOperator
         public GeneratorTests() : base("UnaryOperator") { }
 
         [Fact]
-        public Task UnaryOperator_MinusMinusPostfix() => GenerateTest(nameof(UnaryOperator_MinusMinusPostfix), assertOnIRPipelineFailure: true);
+        public Task UnaryOperator_MinusMinusPostfix() => GenerateTest(nameof(UnaryOperator_MinusMinusPostfix));
 
         [Fact]
-        public Task UnaryOperator_MinusMinusPrefix() => GenerateTest(nameof(UnaryOperator_MinusMinusPrefix), assertOnIRPipelineFailure: true);
+        public Task UnaryOperator_MinusMinusPrefix() => GenerateTest(nameof(UnaryOperator_MinusMinusPrefix));
 
         [Fact]
-        public Task UnaryOperator_PlusPlusPostfix() => GenerateTest(nameof(UnaryOperator_PlusPlusPostfix), assertOnIRPipelineFailure: true);
+        public Task UnaryOperator_PlusPlusPostfix() => GenerateTest(nameof(UnaryOperator_PlusPlusPostfix));
 
         [Fact]
-        public Task UnaryOperator_PlusPlusPrefix() => GenerateTest(nameof(UnaryOperator_PlusPlusPrefix), assertOnIRPipelineFailure: true);
+        public Task UnaryOperator_PlusPlusPrefix() => GenerateTest(nameof(UnaryOperator_PlusPlusPrefix));
 
         [Fact]
-        public Task UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction() => GenerateTest(nameof(UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction), assertOnIRPipelineFailure: true);
+        public Task UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction() => GenerateTest(nameof(UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction));
 
         [Fact]
-        public Task UnaryOperator_Typeof() => GenerateTest(nameof(UnaryOperator_Typeof), assertOnIRPipelineFailure: true);
+        public Task UnaryOperator_Typeof() => GenerateTest(nameof(UnaryOperator_Typeof));
 
         [Fact]
-        public Task UnaryOperator_BitwiseNot() => GenerateTest(nameof(UnaryOperator_BitwiseNot), assertOnIRPipelineFailure: true);
+        public Task UnaryOperator_BitwiseNot() => GenerateTest(nameof(UnaryOperator_BitwiseNot));
 
         [Fact]
-        public Task UnaryOperator_LogicalNot() => GenerateTest(nameof(UnaryOperator_LogicalNot), assertOnIRPipelineFailure: true);
+        public Task UnaryOperator_LogicalNot() => GenerateTest(nameof(UnaryOperator_LogicalNot));
     }
 }

@@ -155,7 +155,7 @@ Based on the legacy emitters:
 ### 8) Intrinsic constructor-like calls (no `new`)
 These are `CallExpression` forms (e.g., `Date(x)`, `Boolean()`) and are distinct from `NewExpression`.
 
-- [ ] PL8.1 Primitive conversion callables: `String(x)`, `Number(x)`, `Boolean(x)`
+- [x] PL8.1 Primitive conversion callables: `String(x)`, `Number(x)`, `Boolean(x)`
 - [ ] PL8.2 `Date(...)` callable form (returns string per JS semantics)
 - [ ] PL8.3 `RegExp(pattern, flags?)` callable form
 - [ ] PL8.4 Error callables: `Error(message?)` and derived errors (TypeError, RangeError, etc.)

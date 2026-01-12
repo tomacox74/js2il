@@ -1590,6 +1590,33 @@ namespace Js2IL.Services.ILGenerators
                 return typeof(string);
             }
 
+            // Global Number([x]) conversion support
+            // - Number() => +0
+            // - Number(x) => ToNumber(x)
+            if (string.Equals(identifier.Name, "Number", StringComparison.Ordinal))
+            {
+                if (callExpression.Arguments.Count == 0)
+                {
+                    _il.LoadConstantR8(0d);
+                    return typeof(double);
+                }
+                if (callExpression.Arguments.Count != 1)
+                {
+                    throw new ArgumentException("Number() expects 0 or 1 argument");
+                }
+
+                // Emit argument as boxed object, then convert via runtime ToNumber
+                _ = Emit(callExpression.Arguments[0], new TypeCoercion { boxResult = true });
+                var toNumRef = _owner.Runtime.GetStaticMethodRef(
+                    typeof(JavaScriptRuntime.TypeUtilities),
+                    nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                    0,
+                    typeof(object));
+                _il.OpCode(System.Reflection.Metadata.ILOpCode.Call);
+                _il.Token(toNumRef);
+                return typeof(double);
+            }
+
             // generic method for invoking intrusive functions
             // TODO:  This should be done after checking variables not before... much work to be done
             if (_runtime.TryInvokeIntrinsicFunction(this, identifier.Name, callExpression.Arguments)) {

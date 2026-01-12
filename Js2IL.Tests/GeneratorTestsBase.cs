@@ -31,18 +31,15 @@ namespace Js2IL.Tests
             }
         }
 
-        protected Task GenerateTest(string testName, string[]? additionalScripts, [CallerFilePath] string sourceFilePath = "", bool assertOnIRPipelineFailure = false)
-            => GenerateTest(testName, configureSettings: null, additionalScripts: additionalScripts, sourceFilePath: sourceFilePath, assertOnIRPipelineFailure: assertOnIRPipelineFailure);
+        protected Task GenerateTest(string testName, string[]? additionalScripts, [CallerFilePath] string sourceFilePath = "")
+            => GenerateTest(testName, configureSettings: null, additionalScripts: additionalScripts, sourceFilePath: sourceFilePath);
 
-        protected Task GenerateTest(string testName, Action<VerifySettings>? configureSettings = null, string[]? additionalScripts = null, [CallerFilePath] string sourceFilePath = "", bool assertOnIRPipelineFailure = false)
+        protected Task GenerateTest(string testName, Action<VerifySettings>? configureSettings = null, string[]? additionalScripts = null, [CallerFilePath] string sourceFilePath = "")
         {
             async Task RunAsync()
             {
-                if (assertOnIRPipelineFailure)
-                {
-                    IR.IRPipelineMetrics.Enabled = true;
-                    IR.IRPipelineMetrics.Reset();
-                }
+                IR.IRPipelineMetrics.Enabled = true;
+                IR.IRPipelineMetrics.Reset();
 
                 try
                 {
@@ -74,13 +71,13 @@ namespace Js2IL.Tests
 
                     if (!compiler.Compile(testFilePath))
                     {
-                        var details = string.IsNullOrWhiteSpace(testLogger.Errors)
+                        var compileDetails = string.IsNullOrWhiteSpace(testLogger.Errors)
                             ? string.Empty
                             : $"\nErrors:\n{testLogger.Errors}";
                         var warnings = string.IsNullOrWhiteSpace(testLogger.Warnings)
                             ? string.Empty
                             : $"\nWarnings:\n{testLogger.Warnings}";
-                        throw new InvalidOperationException($"Compilation failed for test {testName}.{details}{warnings}");
+                        throw new InvalidOperationException($"Compilation failed for test {testName}.{compileDetails}{warnings}");
                     }
 
                     // Compiler outputs <entryFileBasename>.dll into OutputDirectory.
@@ -100,22 +97,16 @@ namespace Js2IL.Tests
                     }
                     configureSettings?.Invoke(settings);
 
-                    if (assertOnIRPipelineFailure)
-                    {
-                        var stats = IR.IRPipelineMetrics.GetStats();
-                        var lastFailure = IR.IRPipelineMetrics.GetLastFailure();
-                        var details = string.IsNullOrWhiteSpace(lastFailure) ? string.Empty : $" LastFailure: {lastFailure}";
-                        Assert.True(stats.TotalFallbacks == 0, $"IR Pipeline fallback occurred in test {testName}: {stats.TotalFallbacks} fallbacks.{details}");
-                    }
+                    var stats = IR.IRPipelineMetrics.GetStats();
+                    var lastFailure = IR.IRPipelineMetrics.GetLastFailure();
+                    var details = string.IsNullOrWhiteSpace(lastFailure) ? string.Empty : $" LastFailure: {lastFailure}";
+                    Assert.True(stats.TotalFallbacks == 0, $"IR Pipeline fallback occurred in test {testName}: {stats.TotalFallbacks} fallbacks.{details}");
 
                     await Verify(il, settings);
                 }
                 finally
                 {
-                    if (assertOnIRPipelineFailure)
-                    {
-                        IR.IRPipelineMetrics.Enabled = false;
-                    }
+                    IR.IRPipelineMetrics.Enabled = false;
                 }
             }
 

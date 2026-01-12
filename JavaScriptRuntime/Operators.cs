@@ -7,8 +7,9 @@ namespace JavaScriptRuntime
     {
         private static double ToNumber(object? value)
         {
+            // JS ToNumber(undefined) => NaN (undefined is represented as CLR null)
             if (value == null)
-                return 0d;
+                return double.NaN;
             switch (value)
             {
                 case double d:
@@ -39,6 +40,8 @@ namespace JavaScriptRuntime
                     return double.TryParse(trimmed, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed)
                         ? parsed
                         : double.NaN;
+                case JsNull:
+                    return 0d;
             }
             try
             {

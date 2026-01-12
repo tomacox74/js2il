@@ -7,6 +7,6 @@ namespace Js2IL.Tests.JSON
         public GeneratorTests() : base("JSON") { }
 
         [Fact]
-        public Task JSON_Parse_SimpleObject() => GenerateTest(nameof(JSON_Parse_SimpleObject), assertOnIRPipelineFailure: true);
+        public Task JSON_Parse_SimpleObject() => GenerateTest(nameof(JSON_Parse_SimpleObject));
     }
 }

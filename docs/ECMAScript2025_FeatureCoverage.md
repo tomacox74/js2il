@@ -139,6 +139,13 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | NewExpression for constructible runtime intrinsics (e.g., Date, Int32Array) | Supported | `Js2IL.Tests/Date/JavaScript/Date_Construct_FromMs_GetTime_ToISOString.js`<br>`Js2IL.Tests/TypedArray/JavaScript/Int32Array_Construct_Length.js` | Supported in the new IR pipeline for global (non-shadowed) intrinsic identifiers registered in JavaScriptRuntime.IntrinsicObjectRegistry that are constructible classes. Currently limited to 0–2 constructor arguments. | 13.3.1 |
 
 
+#### [The Function Call](https://tc39.es/ecma262/#sec-function-calls)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Primitive conversion callables: String(x), Number(x), Boolean(x) | Supported | `Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_String_Callable.js`<br>`Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Number_Callable.js`<br>`Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Boolean_Callable.js` | Supports the callable form (no new) for global (non-shadowed) String/Number/Boolean. Semantics match JS: no-arg returns default ("" / +0 / false); extra arguments are evaluated for side effects but ignored. Conversions are implemented via JavaScriptRuntime.TypeUtilities (ToString/ToNumber/ToBoolean); Number(undefined) yields NaN (undefined represented as CLR null). | 13.3.6 |
+
+
 ### [Unary Operators](https://tc39.es/ecma262/#sec-ecmascript-language-expressions)
 
 #### [typeof operator](https://tc39.es/ecma262/#sec-typeof-operator)
@@ -675,6 +682,17 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
 | Math.cbrt(x) | Supported | `Js2IL.Tests/Math/JavaScript/Math_Cbrt_Negative.js` | Cube root; handles negative values returning negative result; NaN propagates; Infinity preserved. | 20.2.2.35 |
+
+
+## [Number Objects](https://tc39.es/ecma262/#sec-number-objects)
+
+### [Properties of the Number Constructor](https://tc39.es/ecma262/#sec-properties-of-the-number-constructor)
+
+#### [Number.isNaN](https://tc39.es/ecma262/#sec-number.isnan)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Number.isNaN(x) | Supported | `Js2IL.Tests/PrimitiveConversion/JavaScript/PrimitiveConversion_Number_Callable.js` | Implements the ES static method with no coercion: returns true only when x is a Number value and is NaN. Backed by JavaScriptRuntime.Number.isNaN(object?). | 20.1.2.4 |
 
 
 ## [Date Objects](https://tc39.es/ecma262/#sec-date-objects)

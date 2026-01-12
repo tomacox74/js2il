@@ -55,7 +55,7 @@ public static class IRPipelineMetrics
     public static void RecordFailure(string message)
     {
         if (!Enabled) return;
-        _lastFailure.Value = message;
+        throw new InvalidOperationException(message);
     }
 
     /// <summary>
@@ -65,10 +65,7 @@ public static class IRPipelineMetrics
     public static void RecordFailureIfUnset(string message)
     {
         if (!Enabled) return;
-        if (string.IsNullOrWhiteSpace(_lastFailure.Value))
-        {
-            _lastFailure.Value = message;
-        }
+        throw new InvalidOperationException(message);
     }
 
     public static string? GetLastFailure() => _lastFailure.Value;
