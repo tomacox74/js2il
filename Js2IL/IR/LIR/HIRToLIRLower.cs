@@ -3912,6 +3912,61 @@ public sealed class HIRToLIRLowerer
     {
         resultTempVar = default;
 
+        // User-defined class instance field access via bracket notation (e.g., this["wordArray"] = ...).
+        // If the receiver is `this` and the index is a constant string that matches a known field on the
+        // generated CLR type, lower directly to an instance field store (stfld) instead of dynamic SetItem.
+        if (_classRegistry != null
+            && assignExpr.Object is HIRThisExpression
+            && assignExpr.Index is HIRLiteralExpression literalIndex
+            && literalIndex.Kind == JavascriptType.String
+            && literalIndex.Value is string literalFieldName
+            && TryGetEnclosingClassRegistryName(out var currentClass)
+            && currentClass != null
+            && _classRegistry.TryGetField(currentClass, literalFieldName, out _))
+        {
+            TempVariable fieldValueToStore;
+
+            if (assignExpr.Operator == Acornima.Operator.Assignment)
+            {
+                if (!TryLowerExpression(assignExpr.Value, out fieldValueToStore))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                // Compound assignment: this["field"] += expr
+                var currentValue = CreateTempVariable();
+                _methodBodyIR.Instructions.Add(new LIRLoadUserClassInstanceField(
+                    currentClass,
+                    literalFieldName,
+                    IsPrivateField: false,
+                    currentValue));
+                DefineTempStorage(currentValue, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                if (!TryLowerExpression(assignExpr.Value, out var rhs))
+                {
+                    return false;
+                }
+
+                if (!TryLowerCompoundOperation(assignExpr.Operator, currentValue, rhs, out fieldValueToStore))
+                {
+                    return false;
+                }
+            }
+
+            fieldValueToStore = EnsureObject(fieldValueToStore);
+            _methodBodyIR.Instructions.Add(new LIRStoreUserClassInstanceField(
+                currentClass,
+                literalFieldName,
+                IsPrivateField: false,
+                fieldValueToStore));
+
+            // Assignment expression result is the value assigned.
+            resultTempVar = fieldValueToStore;
+            return true;
+        }
+
         if (!TryLowerExpression(assignExpr.Object, out var objTemp))
         {
             return false;
@@ -4838,6 +4893,27 @@ public sealed class HIRToLIRLowerer
     private bool TryLowerIndexAccessExpression(HIRIndexAccessExpression indexAccessExpr, out TempVariable resultTempVar)
     {
         resultTempVar = CreateTempVariable();
+
+        // User-defined class instance field access via bracket notation (e.g., this["wordArray"]).
+        // If the receiver is `this` and the index is a constant string that matches a known field on the
+        // generated CLR type, lower directly to an instance field load (ldfld) instead of dynamic GetItem.
+        if (_classRegistry != null
+            && indexAccessExpr.Object is HIRThisExpression
+            && indexAccessExpr.Index is HIRLiteralExpression literalIndex
+            && literalIndex.Kind == JavascriptType.String
+            && literalIndex.Value is string literalFieldName
+            && TryGetEnclosingClassRegistryName(out var currentClass)
+            && currentClass != null
+            && _classRegistry.TryGetField(currentClass, literalFieldName, out _))
+        {
+            _methodBodyIR.Instructions.Add(new LIRLoadUserClassInstanceField(
+                RegistryClassName: currentClass,
+                FieldName: literalFieldName,
+                IsPrivateField: false,
+                Result: resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            return true;
+        }
 
         // Lower the object expression
         if (!TryLowerExpression(indexAccessExpr.Object, out var objectTemp))
