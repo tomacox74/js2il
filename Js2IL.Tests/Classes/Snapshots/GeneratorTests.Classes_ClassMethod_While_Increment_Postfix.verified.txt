@@ -156,38 +156,55 @@
 	{
 		// Method begins at RVA 0x20c0
 		// Header size: 12
-		// Code size: 73 (0x49)
+		// Code size: 102 (0x66)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Classes_ClassMethod_While_Increment_Postfix,
-			[1] object
+			[1] object,
+			[2] object[]
 		)
 
 		IL_0000: newobj instance void Scopes.Classes_ClassMethod_While_Increment_Postfix::.ctor()
 		IL_0005: stloc.0
 		IL_0006: newobj instance void Classes.Classes_ClassMethod_While_Increment_Postfix.Counter::.ctor()
 		IL_000b: stloc.1
-		IL_000c: ldloc.1
-		IL_000d: ldstr "run"
-		IL_0012: ldc.i4.1
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: dup
-		IL_0019: ldc.i4.0
-		IL_001a: ldc.r8 3
-		IL_0023: box [System.Runtime]System.Double
-		IL_0028: stelem.ref
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_002e: pop
-		IL_002f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0034: ldc.i4.1
-		IL_0035: newarr [System.Runtime]System.Object
-		IL_003a: dup
-		IL_003b: ldc.i4.0
-		IL_003c: ldstr "Classes_ClassMethod_While_Increment_Postfix"
-		IL_0041: stelem.ref
-		IL_0042: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0047: pop
-		IL_0048: ret
+		IL_000c: ldc.i4.1
+		IL_000d: newarr [System.Runtime]System.Object
+		IL_0012: dup
+		IL_0013: ldc.i4.0
+		IL_0014: ldc.r8 3
+		IL_001d: box [System.Runtime]System.Double
+		IL_0022: stelem.ref
+		IL_0023: stloc.2
+		IL_0024: ldloc.1
+		IL_0025: isinst Classes.Classes_ClassMethod_While_Increment_Postfix.Counter
+		IL_002a: dup
+		IL_002b: brfalse IL_003e
+
+		IL_0030: ldloc.2
+		IL_0031: ldc.i4.0
+		IL_0032: ldelem.ref
+		IL_0033: callvirt instance object Classes.Classes_ClassMethod_While_Increment_Postfix.Counter::run(object)
+		IL_0038: pop
+		IL_0039: br IL_004c
+
+		IL_003e: pop
+		IL_003f: ldloc.1
+		IL_0040: ldstr "run"
+		IL_0045: ldloc.2
+		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_004b: pop
+
+		IL_004c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0051: ldc.i4.1
+		IL_0052: newarr [System.Runtime]System.Object
+		IL_0057: dup
+		IL_0058: ldc.i4.0
+		IL_0059: ldstr "Classes_ClassMethod_While_Increment_Postfix"
+		IL_005e: stelem.ref
+		IL_005f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0064: pop
+		IL_0065: ret
 	} // end of method Classes_ClassMethod_While_Increment_Postfix::Main
 
 } // end of class Scripts.Classes_ClassMethod_While_Increment_Postfix
@@ -199,7 +216,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2115
+		// Method begins at RVA 0x2132
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

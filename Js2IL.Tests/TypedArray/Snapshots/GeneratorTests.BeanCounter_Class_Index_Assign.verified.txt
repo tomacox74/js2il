@@ -155,47 +155,67 @@
 	{
 		// Method begins at RVA 0x20c0
 		// Header size: 12
-		// Code size: 110 (0x6e)
+		// Code size: 142 (0x8e)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.BeanCounter_Class_Index_Assign,
-			[1] object
+			[1] object,
+			[2] object[]
 		)
 
 		IL_0000: newobj instance void Scopes.BeanCounter_Class_Index_Assign::.ctor()
 		IL_0005: stloc.0
 		IL_0006: newobj instance void Classes.BeanCounter_Class_Index_Assign.BeanCounter::.ctor()
 		IL_000b: stloc.1
-		IL_000c: ldloc.1
-		IL_000d: ldstr "setBeanCount"
-		IL_0012: ldc.i4.2
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: dup
-		IL_0019: ldc.i4.0
-		IL_001a: ldc.r8 1
-		IL_0023: box [System.Runtime]System.Double
-		IL_0028: stelem.ref
-		IL_0029: dup
-		IL_002a: ldc.i4.1
-		IL_002b: ldc.r8 42
-		IL_0034: box [System.Runtime]System.Double
-		IL_0039: stelem.ref
-		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_003f: pop
-		IL_0040: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_000c: ldc.i4.2
+		IL_000d: newarr [System.Runtime]System.Object
+		IL_0012: dup
+		IL_0013: ldc.i4.0
+		IL_0014: ldc.r8 1
+		IL_001d: box [System.Runtime]System.Double
+		IL_0022: stelem.ref
+		IL_0023: dup
+		IL_0024: ldc.i4.1
+		IL_0025: ldc.r8 42
+		IL_002e: box [System.Runtime]System.Double
+		IL_0033: stelem.ref
+		IL_0034: stloc.2
+		IL_0035: ldloc.1
+		IL_0036: isinst Classes.BeanCounter_Class_Index_Assign.BeanCounter
+		IL_003b: dup
+		IL_003c: brfalse IL_0052
+
+		IL_0041: ldloc.2
+		IL_0042: ldc.i4.0
+		IL_0043: ldelem.ref
+		IL_0044: ldloc.2
 		IL_0045: ldc.i4.1
-		IL_0046: newarr [System.Runtime]System.Object
-		IL_004b: dup
-		IL_004c: ldc.i4.0
-		IL_004d: ldloc.1
-		IL_004e: ldstr "beanCounts"
-		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0058: ldc.r8 1
-		IL_0061: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-		IL_0066: stelem.ref
-		IL_0067: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_006c: pop
-		IL_006d: ret
+		IL_0046: ldelem.ref
+		IL_0047: callvirt instance object Classes.BeanCounter_Class_Index_Assign.BeanCounter::setBeanCount(object, object)
+		IL_004c: pop
+		IL_004d: br IL_0060
+
+		IL_0052: pop
+		IL_0053: ldloc.1
+		IL_0054: ldstr "setBeanCount"
+		IL_0059: ldloc.2
+		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_005f: pop
+
+		IL_0060: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0065: ldc.i4.1
+		IL_0066: newarr [System.Runtime]System.Object
+		IL_006b: dup
+		IL_006c: ldc.i4.0
+		IL_006d: ldloc.1
+		IL_006e: ldstr "beanCounts"
+		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0078: ldc.r8 1
+		IL_0081: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+		IL_0086: stelem.ref
+		IL_0087: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_008c: pop
+		IL_008d: ret
 	} // end of method BeanCounter_Class_Index_Assign::Main
 
 } // end of class Scripts.BeanCounter_Class_Index_Assign
@@ -207,7 +227,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x213a
+		// Method begins at RVA 0x215a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

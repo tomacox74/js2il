@@ -179,11 +179,12 @@
 	{
 		// Method begins at RVA 0x20ec
 		// Header size: 12
-		// Code size: 59 (0x3b)
+		// Code size: 85 (0x55)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log/testFunction,
-			[1] object
+			[1] object,
+			[2] object[]
 		)
 
 		IL_0000: newobj instance void Scopes.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log/testFunction::.ctor()
@@ -205,14 +206,27 @@
 		IL_0020: stelem.ref
 		IL_0021: newobj instance void Classes.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.MyClass::.ctor(object[])
 		IL_0026: stloc.1
-		IL_0027: ldloc.1
-		IL_0028: ldstr "logValues"
-		IL_002d: ldc.i4.0
-		IL_002e: newarr [System.Runtime]System.Object
-		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0038: pop
-		IL_0039: ldnull
-		IL_003a: ret
+		IL_0027: ldc.i4.0
+		IL_0028: newarr [System.Runtime]System.Object
+		IL_002d: stloc.2
+		IL_002e: ldloc.1
+		IL_002f: isinst Classes.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.MyClass
+		IL_0034: dup
+		IL_0035: brfalse IL_0045
+
+		IL_003a: callvirt instance object Classes.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.MyClass::logValues()
+		IL_003f: pop
+		IL_0040: br IL_0053
+
+		IL_0045: pop
+		IL_0046: ldloc.1
+		IL_0047: ldstr "logValues"
+		IL_004c: ldloc.2
+		IL_004d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0052: pop
+
+		IL_0053: ldnull
+		IL_0054: ret
 	} // end of method Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log::testFunction
 
 } // end of class Functions.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log
@@ -230,7 +244,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2134
+		// Method begins at RVA 0x2150
 		// Header size: 12
 		// Code size: 46 (0x2e)
 		.maxstack 32
@@ -266,7 +280,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x216e
+		// Method begins at RVA 0x218a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

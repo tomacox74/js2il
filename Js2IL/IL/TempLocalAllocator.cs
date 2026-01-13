@@ -400,6 +400,13 @@ internal static class TempLocalAllocator
                 yield return callMember.Receiver;
                 yield return callMember.ArgumentsArray;
                 break;
+
+            case LIRCallUserClassInstanceMethod callUserClass:
+                foreach (var arg in callUserClass.Arguments)
+                {
+                    yield return arg;
+                }
+                break;
             case LIRBuildScopesArray:
                 // LIRBuildScopesArray doesn't consume temps - it loads scope instances from locals/args directly
                 break;
@@ -673,6 +680,10 @@ internal static class TempLocalAllocator
 
             case LIRCallMember callMember:
                 defined = callMember.Result;
+                return true;
+
+            case LIRCallUserClassInstanceMethod callUserClass:
+                defined = callUserClass.Result;
                 return true;
 
             case LIRCreateBoundArrowFunction createArrow:

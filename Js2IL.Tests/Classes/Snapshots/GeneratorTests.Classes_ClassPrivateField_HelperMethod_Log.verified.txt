@@ -129,24 +129,38 @@
 	{
 		// Method begins at RVA 0x20b4
 		// Header size: 12
-		// Code size: 31 (0x1f)
+		// Code size: 57 (0x39)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Classes_ClassPrivateField_HelperMethod_Log,
-			[1] object
+			[1] object,
+			[2] object[]
 		)
 
 		IL_0000: newobj instance void Scopes.Classes_ClassPrivateField_HelperMethod_Log::.ctor()
 		IL_0005: stloc.0
 		IL_0006: newobj instance void Classes.Classes_ClassPrivateField_HelperMethod_Log.Greeter::.ctor()
 		IL_000b: stloc.1
-		IL_000c: ldloc.1
-		IL_000d: ldstr "logSecret"
-		IL_0012: ldc.i4.0
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_001d: pop
-		IL_001e: ret
+		IL_000c: ldc.i4.0
+		IL_000d: newarr [System.Runtime]System.Object
+		IL_0012: stloc.2
+		IL_0013: ldloc.1
+		IL_0014: isinst Classes.Classes_ClassPrivateField_HelperMethod_Log.Greeter
+		IL_0019: dup
+		IL_001a: brfalse IL_002a
+
+		IL_001f: callvirt instance object Classes.Classes_ClassPrivateField_HelperMethod_Log.Greeter::logSecret()
+		IL_0024: pop
+		IL_0025: br IL_0038
+
+		IL_002a: pop
+		IL_002b: ldloc.1
+		IL_002c: ldstr "logSecret"
+		IL_0031: ldloc.2
+		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0037: pop
+
+		IL_0038: ret
 	} // end of method Classes_ClassPrivateField_HelperMethod_Log::Main
 
 } // end of class Scripts.Classes_ClassPrivateField_HelperMethod_Log
@@ -158,7 +172,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20df
+		// Method begins at RVA 0x20f9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

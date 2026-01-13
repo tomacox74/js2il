@@ -1,6 +1,7 @@
 using Js2IL.Services.ScopesAbi;
 using Js2IL.Services.TwoPhaseCompilation;
 using Js2IL.SymbolTables;
+using System.Reflection.Metadata;
 
 namespace Js2IL.IR;
 
@@ -117,6 +118,20 @@ public record LIRCallFunctionValue(TempVariable FunctionValue, TempVariable Scop
 /// Emits: call JavaScriptRuntime.Object.CallMember(object receiver, string methodName, object[]? args)
 /// </summary>
 public record LIRCallMember(TempVariable Receiver, string MethodName, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Calls a user-defined JavaScript class instance method directly on the implicit 'this'.
+/// The method handle and max parameter count are resolved during lowering via <see cref="Js2IL.Services.ClassRegistry"/>
+/// and carried through to IL emission to avoid repeating lookup work.
+/// Emits: ldarg.0, [args], callvirt instance object &lt;Class&gt;::&lt;Method&gt;(...)
+/// </summary>
+public record LIRCallUserClassInstanceMethod(
+    string RegistryClassName,
+    string MethodName,
+    MethodDefinitionHandle MethodHandle,
+    int MaxParamCount,
+    IReadOnlyList<TempVariable> Arguments,
+    TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Calls a declared callable directly via its MethodDefinitionHandle (resolved via CallableRegistry).

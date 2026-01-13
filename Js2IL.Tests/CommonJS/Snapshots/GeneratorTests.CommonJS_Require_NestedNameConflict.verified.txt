@@ -472,11 +472,12 @@
 	{
 		// Method begins at RVA 0x21f4
 		// Header size: 12
-		// Code size: 150 (0x96)
+		// Code size: 176 (0xb0)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.b,
-			[1] object
+			[1] object,
+			[2] object[]
 		)
 
 		IL_0000: newobj instance void Scopes.b::.ctor()
@@ -517,24 +518,37 @@
 		IL_0060: stelem.ref
 		IL_0061: newobj instance void Classes.b.CommonClassName::.ctor(object[])
 		IL_0066: stloc.1
-		IL_0067: ldloc.1
-		IL_0068: ldstr "Log"
-		IL_006d: ldc.i4.0
-		IL_006e: newarr [System.Runtime]System.Object
-		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0078: pop
-		IL_0079: ldnull
-		IL_007a: ldftn object Functions.b::commonFunctionName(object[])
-		IL_0080: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_0085: ldc.i4.1
-		IL_0086: newarr [System.Runtime]System.Object
-		IL_008b: dup
-		IL_008c: ldc.i4.0
-		IL_008d: ldloc.0
-		IL_008e: stelem.ref
-		IL_008f: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_0094: pop
-		IL_0095: ret
+		IL_0067: ldc.i4.0
+		IL_0068: newarr [System.Runtime]System.Object
+		IL_006d: stloc.2
+		IL_006e: ldloc.1
+		IL_006f: isinst Classes.b.CommonClassName
+		IL_0074: dup
+		IL_0075: brfalse IL_0085
+
+		IL_007a: callvirt instance object Classes.b.CommonClassName::Log()
+		IL_007f: pop
+		IL_0080: br IL_0093
+
+		IL_0085: pop
+		IL_0086: ldloc.1
+		IL_0087: ldstr "Log"
+		IL_008c: ldloc.2
+		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0092: pop
+
+		IL_0093: ldnull
+		IL_0094: ldftn object Functions.b::commonFunctionName(object[])
+		IL_009a: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_009f: ldc.i4.1
+		IL_00a0: newarr [System.Runtime]System.Object
+		IL_00a5: dup
+		IL_00a6: ldc.i4.0
+		IL_00a7: ldloc.0
+		IL_00a8: stelem.ref
+		IL_00a9: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_00ae: pop
+		IL_00af: ret
 	} // end of method b::Main
 
 } // end of class Scripts.b
@@ -551,7 +565,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x2298
+		// Method begins at RVA 0x22b0
 		// Header size: 12
 		// Code size: 16 (0x10)
 		.maxstack 32
@@ -572,7 +586,7 @@
 	.method public hidebysig 
 		instance object Log () cil managed 
 	{
-		// Method begins at RVA 0x22b4
+		// Method begins at RVA 0x22cc
 		// Header size: 12
 		// Code size: 71 (0x47)
 		.maxstack 32
@@ -620,7 +634,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x2308
+		// Method begins at RVA 0x2320
 		// Header size: 12
 		// Code size: 66 (0x42)
 		.maxstack 32
@@ -668,7 +682,7 @@
 			object x
 		) cil managed 
 	{
-		// Method begins at RVA 0x2358
+		// Method begins at RVA 0x2370
 		// Header size: 12
 		// Code size: 2 (0x2)
 		.maxstack 32
@@ -692,7 +706,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2368
+		// Method begins at RVA 0x2380
 		// Header size: 12
 		// Code size: 150 (0x96)
 		.maxstack 32
@@ -768,7 +782,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x240a
+		// Method begins at RVA 0x2422
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

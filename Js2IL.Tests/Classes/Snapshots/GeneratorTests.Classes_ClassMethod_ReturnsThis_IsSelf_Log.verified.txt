@@ -113,52 +113,66 @@
 	{
 		// Method begins at RVA 0x2090
 		// Header size: 12
-		// Code size: 90 (0x5a)
+		// Code size: 120 (0x78)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Classes_ClassMethod_ReturnsThis_IsSelf_Log,
 			[1] object,
-			[2] object,
-			[3] bool,
-			[4] object
+			[2] object[],
+			[3] object,
+			[4] bool,
+			[5] object
 		)
 
 		IL_0000: newobj instance void Scopes.Classes_ClassMethod_ReturnsThis_IsSelf_Log::.ctor()
 		IL_0005: stloc.0
 		IL_0006: newobj instance void Classes.Classes_ClassMethod_ReturnsThis_IsSelf_Log.Self::.ctor()
 		IL_000b: stloc.1
-		IL_000c: ldloc.1
-		IL_000d: ldstr "isSelf"
-		IL_0012: ldc.i4.0
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_001d: stloc.2
-		IL_001e: ldloc.2
-		IL_001f: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-		IL_0024: ldc.i4.0
-		IL_0025: ceq
-		IL_0027: stloc.3
-		IL_0028: ldloc.3
-		IL_0029: box [System.Runtime]System.Boolean
-		IL_002e: stloc.s 4
-		IL_0030: ldloc.s 4
-		IL_0032: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-		IL_0037: ldc.i4.0
-		IL_0038: ceq
-		IL_003a: stloc.3
-		IL_003b: ldloc.3
-		IL_003c: box [System.Runtime]System.Boolean
+		IL_000c: ldc.i4.0
+		IL_000d: newarr [System.Runtime]System.Object
+		IL_0012: stloc.2
+		IL_0013: ldloc.1
+		IL_0014: isinst Classes.Classes_ClassMethod_ReturnsThis_IsSelf_Log.Self
+		IL_0019: dup
+		IL_001a: brfalse IL_002a
+
+		IL_001f: callvirt instance object Classes.Classes_ClassMethod_ReturnsThis_IsSelf_Log.Self::isSelf()
+		IL_0024: stloc.3
+		IL_0025: br IL_0038
+
+		IL_002a: pop
+		IL_002b: ldloc.1
+		IL_002c: ldstr "isSelf"
+		IL_0031: ldloc.2
+		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0037: stloc.3
+
+		IL_0038: ldloc.3
+		IL_0039: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+		IL_003e: ldc.i4.0
+		IL_003f: ceq
 		IL_0041: stloc.s 4
-		IL_0043: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0048: ldc.i4.1
-		IL_0049: newarr [System.Runtime]System.Object
-		IL_004e: dup
-		IL_004f: ldc.i4.0
-		IL_0050: ldloc.s 4
-		IL_0052: stelem.ref
-		IL_0053: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0058: pop
-		IL_0059: ret
+		IL_0043: ldloc.s 4
+		IL_0045: box [System.Runtime]System.Boolean
+		IL_004a: stloc.s 5
+		IL_004c: ldloc.s 5
+		IL_004e: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+		IL_0053: ldc.i4.0
+		IL_0054: ceq
+		IL_0056: stloc.s 4
+		IL_0058: ldloc.s 4
+		IL_005a: box [System.Runtime]System.Boolean
+		IL_005f: stloc.s 5
+		IL_0061: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0066: ldc.i4.1
+		IL_0067: newarr [System.Runtime]System.Object
+		IL_006c: dup
+		IL_006d: ldc.i4.0
+		IL_006e: ldloc.s 5
+		IL_0070: stelem.ref
+		IL_0071: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0076: pop
+		IL_0077: ret
 	} // end of method Classes_ClassMethod_ReturnsThis_IsSelf_Log::Main
 
 } // end of class Scripts.Classes_ClassMethod_ReturnsThis_IsSelf_Log
@@ -170,7 +184,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20f6
+		// Method begins at RVA 0x2114
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

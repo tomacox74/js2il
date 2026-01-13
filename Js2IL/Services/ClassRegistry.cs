@@ -166,5 +166,77 @@ namespace Js2IL.Services
             }
             return false;
         }
+
+        /// <summary>
+        /// Attempts to resolve a uniquely-defined instance method across all registered classes
+        /// by method name and call-site argument count. This is used for conservative fast-path
+        /// emission (type-test + direct call) that can fall back to runtime dispatch when the
+        /// receiver is not of the resolved class.
+        /// </summary>
+        public bool TryResolveUniqueInstanceMethod(
+            string methodName,
+            int argumentCount,
+            out string registryClassName,
+            out TypeDefinitionHandle typeHandle,
+            out MethodDefinitionHandle methodHandle,
+            out int maxParamCount)
+        {
+            registryClassName = string.Empty;
+            typeHandle = default;
+            methodHandle = default;
+            maxParamCount = 0;
+
+            if (string.IsNullOrEmpty(methodName))
+            {
+                return false;
+            }
+
+            string? matchClass = null;
+            MethodDefinitionHandle matchMethod = default;
+            int matchMaxParams = 0;
+
+            foreach (var kvp in _methods)
+            {
+                var className = kvp.Key;
+                var methods = kvp.Value;
+
+                if (!methods.TryGetValue(methodName, out var info))
+                {
+                    continue;
+                }
+
+                // Only consider methods that can accept this call-site arity.
+                if (argumentCount < info.MinParamCount || argumentCount > info.MaxParamCount)
+                {
+                    continue;
+                }
+
+                // If there are multiple candidates, it's not safe to pick one.
+                if (matchClass != null)
+                {
+                    return false;
+                }
+
+                matchClass = className;
+                matchMethod = info.Method;
+                matchMaxParams = info.MaxParamCount;
+            }
+
+            if (matchClass == null)
+            {
+                return false;
+            }
+
+            if (!TryGet(matchClass, out var resolvedType))
+            {
+                return false;
+            }
+
+            registryClassName = matchClass;
+            typeHandle = resolvedType;
+            methodHandle = matchMethod;
+            maxParamCount = matchMaxParams;
+            return true;
+        }
     }
 }
