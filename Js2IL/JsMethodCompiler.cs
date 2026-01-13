@@ -589,6 +589,10 @@ internal sealed class JsMethodCompiler
             return false;
         }
 
+        // Normalize intrinsic-specific patterns (e.g., Int32Array element access) into explicit LIR instructions.
+        // This keeps the LIR->IL compiler simpler and avoids fragile late pattern-matching.
+        LIRIntrinsicNormalization.Normalize(lirMethod!, classRegistry);
+
         methodBody = lirMethod!;
         return true;
     }

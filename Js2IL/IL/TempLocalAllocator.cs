@@ -456,6 +456,15 @@ internal static class TempLocalAllocator
                 yield return setItem.Index;
                 yield return setItem.Value;
                 break;
+            case LIRGetInt32ArrayElement getInt32Array:
+                yield return getInt32Array.Receiver;
+                yield return getInt32Array.Index;
+                break;
+            case LIRSetInt32ArrayElement setInt32Array:
+                yield return setInt32Array.Receiver;
+                yield return setInt32Array.Index;
+                yield return setInt32Array.Value;
+                break;
             case LIRArrayPushRange pushRange:
                 yield return pushRange.TargetArray;
                 yield return pushRange.SourceArray;
@@ -726,6 +735,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRGetItem getItem:
                 defined = getItem.Result;
+                return true;
+            case LIRGetInt32ArrayElement getInt32Array:
+                defined = getInt32Array.Result;
                 return true;
             case LIRNewBuiltInError newError:
                 defined = newError.Result;

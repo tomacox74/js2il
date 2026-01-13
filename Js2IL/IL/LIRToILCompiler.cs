@@ -30,9 +30,6 @@ internal sealed class LIRToILCompiler
     private MethodBodyIR? _methodBody;
     private bool _compiled;
 
-    // Populated per-compilation to enable typed fast-paths during inline (unmaterialized) temp emission.
-    private Dictionary<int, Type>? _knownIntrinsicReceiverClrTypes;
-
     private Type GetDeclaredScopeFieldClrType(string scopeName, string fieldName)
     {
         return _scopeMetadataRegistry.TryGetFieldClrType(scopeName, fieldName, out var t)
@@ -470,9 +467,6 @@ internal sealed class LIRToILCompiler
         // is already statically known to be of the target user-class type (e.g., loaded from a strongly
         // typed user-class field).
         var knownUserClassReceiverTypeHandles = new Dictionary<int, EntityHandle>();
-        // Precompute known intrinsic receiver CLR types (JavaScriptRuntime.*) for temps.
-        // This enables typed fast-paths when we can prove the receiver type.
-        var knownIntrinsicReceiverClrTypes = new Dictionary<int, Type>();
         var classRegistryForKnownReceivers = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
         if (classRegistryForKnownReceivers != null)
         {
@@ -492,22 +486,6 @@ internal sealed class LIRToILCompiler
                         {
                             knownUserClassReceiverTypeHandles[loadInstanceField.Result.Index] = fieldTypeHandle;
                         }
-
-                        if (loadInstanceField.Result.Index >= 0)
-                        {
-                            var fieldClrType = GetDeclaredUserClassFieldClrType(
-                                classRegistryForKnownReceivers,
-                                loadInstanceField.RegistryClassName,
-                                loadInstanceField.FieldName,
-                                loadInstanceField.IsPrivateField,
-                                isStaticField: false);
-
-                            if (fieldClrType != typeof(object)
-                                && fieldClrType.Namespace?.StartsWith("JavaScriptRuntime", StringComparison.Ordinal) == true)
-                            {
-                                knownIntrinsicReceiverClrTypes[loadInstanceField.Result.Index] = fieldClrType;
-                            }
-                        }
                         break;
 
                     case LIRCopyTemp copyTemp:
@@ -516,19 +494,10 @@ internal sealed class LIRToILCompiler
                         {
                             knownUserClassReceiverTypeHandles[copyTemp.Destination.Index] = srcHandle;
                         }
-
-                        if (copyTemp.Destination.Index >= 0
-                            && knownIntrinsicReceiverClrTypes.TryGetValue(copyTemp.Source.Index, out var srcClrType))
-                        {
-                            knownIntrinsicReceiverClrTypes[copyTemp.Destination.Index] = srcClrType;
-                        }
                         break;
                 }
             }
         }
-
-        // Make known intrinsic receiver types available to EmitLoadTemp inline emission.
-        _knownIntrinsicReceiverClrTypes = knownIntrinsicReceiverClrTypes;
 
         // The LIRCallMember fast-path may index into the same arguments array multiple times to unpack
         // direct arguments for callvirt. If Stackify inlined the LIRBuildArray, repeatedly loading the
@@ -754,7 +723,7 @@ internal sealed class LIRToILCompiler
                     continue;
             }
 
-            if (!TryCompileInstructionToIL(instruction, ilEncoder, allocation, methodDescriptor, buildArrayElementCounts, knownUserClassReceiverTypeHandles, knownIntrinsicReceiverClrTypes))
+            if (!TryCompileInstructionToIL(instruction, ilEncoder, allocation, methodDescriptor, buildArrayElementCounts, knownUserClassReceiverTypeHandles))
             {
                 // Failed to compile instruction
                 IRPipelineMetrics.RecordFailureIfUnset($"IL compile failed: unsupported LIR instruction {instruction.GetType().Name}");
@@ -832,8 +801,7 @@ internal sealed class LIRToILCompiler
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor,
         Dictionary<int, int> buildArrayElementCounts,
-        Dictionary<int, EntityHandle> knownUserClassReceiverTypeHandles,
-        Dictionary<int, Type> knownIntrinsicReceiverClrTypes)
+        Dictionary<int, EntityHandle> knownUserClassReceiverTypeHandles)
     {
         switch (instruction)
         {
@@ -1859,58 +1827,6 @@ internal sealed class LIRToILCompiler
                     var resultStorage = GetTempStorage(getItem.Result);
                     if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double))
                     {
-                        // If we know this is an Int32Array, emit direct callvirt to the numeric indexer getter:
-                        //   callvirt instance float64 JavaScriptRuntime.Int32Array::get_Item(float64)
-                        // and box the result if the target temp expects an object.
-                        if (knownIntrinsicReceiverClrTypes.TryGetValue(getItem.Object.Index, out var receiverClrType) &&
-                            receiverClrType == typeof(JavaScriptRuntime.Int32Array))
-                        {
-                            // Omit redundant `castclass` when the receiver is produced by a typed field load
-                            // (or a stackified copy thereof). In that case, the emitted IL already has the
-                            // correct static type (Int32Array) on the evaluation stack.
-                            var receiverTemp = getItem.Object;
-                            bool receiverCanOmitCast = !IsMaterialized(receiverTemp, allocation);
-                            if (receiverCanOmitCast)
-                            {
-                                var receiverDef = TryFindDefInstruction(receiverTemp);
-                                while (receiverDef is LIRCopyTemp copyDef)
-                                {
-                                    receiverDef = TryFindDefInstruction(copyDef.Source);
-                                }
-
-                                receiverCanOmitCast = receiverDef is LIRLoadUserClassInstanceField;
-                            }
-
-                            if (receiverCanOmitCast)
-                            {
-                                EmitLoadTemp(getItem.Object, ilEncoder, allocation, methodDescriptor);
-                            }
-                            else
-                            {
-                                EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
-                                ilEncoder.OpCode(ILOpCode.Castclass);
-                                ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Int32Array)));
-                            }
-
-                            EmitLoadTemp(getItem.Index, ilEncoder, allocation, methodDescriptor);
-
-                            var int32ArrayGetter = _memberRefRegistry.GetOrAddMethod(
-                                typeof(JavaScriptRuntime.Int32Array),
-                                "get_Item",
-                                parameterTypes: new[] { typeof(double) });
-                            ilEncoder.OpCode(ILOpCode.Callvirt);
-                            ilEncoder.Token(int32ArrayGetter);
-
-                            if (!(resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double)))
-                            {
-                                ilEncoder.OpCode(ILOpCode.Box);
-                                ilEncoder.Token(_bclReferences.DoubleType);
-                            }
-
-                            EmitStoreTemp(getItem.Result, ilEncoder, allocation);
-                            break;
-                        }
-
                         // Emit: call JavaScriptRuntime.Object.GetItem(object, double)
                         EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
                         EmitLoadTemp(getItem.Index, ilEncoder, allocation, methodDescriptor);
@@ -1959,6 +1875,95 @@ internal sealed class LIRToILCompiler
                     EmitStoreTemp(getItem.Result, ilEncoder, allocation);
                     break;
                 }
+
+            case LIRGetInt32ArrayElement getI32:
+                {
+                    if (!IsMaterialized(getI32.Result, allocation))
+                    {
+                        // Will be emitted inline via EmitLoadTemp when the temp is used.
+                        break;
+                    }
+
+                    // Load receiver as Int32Array (cast only if needed)
+                    var receiverStorage = GetTempStorage(getI32.Receiver);
+                    if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Int32Array))
+                    {
+                        EmitLoadTemp(getI32.Receiver, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(getI32.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Int32Array)));
+                    }
+
+                    // Index must be numeric double
+                    EmitLoadTemp(getI32.Index, ilEncoder, allocation, methodDescriptor);
+
+                    var int32ArrayGetter = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Int32Array),
+                        "get_Item",
+                        parameterTypes: new[] { typeof(double) });
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(int32ArrayGetter);
+
+                    // Store result (box only if the temp expects object)
+                    var resultStorage = GetTempStorage(getI32.Result);
+                    if (!(resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double)))
+                    {
+                        ilEncoder.OpCode(ILOpCode.Box);
+                        ilEncoder.Token(_bclReferences.DoubleType);
+                    }
+
+                    EmitStoreTemp(getI32.Result, ilEncoder, allocation);
+                    break;
+                }
+
+            case LIRSetInt32ArrayElement setI32:
+                {
+                    // Load receiver as Int32Array (cast only if needed)
+                    var receiverStorage = GetTempStorage(setI32.Receiver);
+                    if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Int32Array))
+                    {
+                        EmitLoadTemp(setI32.Receiver, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(setI32.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Int32Array)));
+                    }
+
+                    EmitLoadTemp(setI32.Index, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTemp(setI32.Value, ilEncoder, allocation, methodDescriptor);
+
+                    var int32ArraySetter = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Int32Array),
+                        "set_Item",
+                        parameterTypes: new[] { typeof(double), typeof(double) });
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(int32ArraySetter);
+
+                    // If the assignment expression result is used, return the assigned value.
+                    if (IsMaterialized(setI32.Result, allocation))
+                    {
+                        EmitLoadTemp(setI32.Value, ilEncoder, allocation, methodDescriptor);
+                        var resultStorage = GetTempStorage(setI32.Result);
+                        if (!(resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double)))
+                        {
+                            ilEncoder.OpCode(ILOpCode.Box);
+                            ilEncoder.Token(_bclReferences.DoubleType);
+                        }
+                        EmitStoreTemp(setI32.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        // Ensure stack is balanced if an unmaterialized result was produced.
+                        // (We do not push the value unless needed.)
+                    }
+
+                    break;
+                }
             case LIRSetItem setItem:
                 {
                     var indexStorage = GetTempStorage(setItem.Index);
@@ -1969,56 +1974,6 @@ internal sealed class LIRToILCompiler
                     if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double) &&
                         valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double))
                     {
-                        // If we know this is an Int32Array, emit direct callvirt to the numeric indexer setter:
-                        //   callvirt instance void JavaScriptRuntime.Int32Array::set_Item(float64, float64)
-                        // and (if used) return the assigned value by boxing it.
-                        if (knownIntrinsicReceiverClrTypes.TryGetValue(setItem.Object.Index, out var receiverClrType) &&
-                            receiverClrType == typeof(JavaScriptRuntime.Int32Array))
-                        {
-                            // Same cast elision as in LIRGetItem: typed field loads already yield Int32Array.
-                            var receiverTemp = setItem.Object;
-                            bool receiverCanOmitCast = !IsMaterialized(receiverTemp, allocation);
-                            if (receiverCanOmitCast)
-                            {
-                                var def = TryFindDefInstruction(receiverTemp);
-                                while (def is LIRCopyTemp copyDef)
-                                {
-                                    def = TryFindDefInstruction(copyDef.Source);
-                                }
-
-                                receiverCanOmitCast = def is LIRLoadUserClassInstanceField;
-                            }
-
-                            if (receiverCanOmitCast)
-                            {
-                                EmitLoadTemp(setItem.Object, ilEncoder, allocation, methodDescriptor);
-                            }
-                            else
-                            {
-                                EmitLoadTempAsObject(setItem.Object, ilEncoder, allocation, methodDescriptor);
-                                ilEncoder.OpCode(ILOpCode.Castclass);
-                                ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Int32Array)));
-                            }
-
-                            EmitLoadTemp(setItem.Index, ilEncoder, allocation, methodDescriptor);
-                            EmitLoadTemp(setItem.Value, ilEncoder, allocation, methodDescriptor);
-
-                            var int32ArraySetter = _memberRefRegistry.GetOrAddMethod(
-                                typeof(JavaScriptRuntime.Int32Array),
-                                "set_Item",
-                                parameterTypes: new[] { typeof(double), typeof(double) });
-                            ilEncoder.OpCode(ILOpCode.Callvirt);
-                            ilEncoder.Token(int32ArraySetter);
-
-                            if (isResultMaterialized)
-                            {
-                                EmitLoadTempAsObject(setItem.Value, ilEncoder, allocation, methodDescriptor);
-                                EmitStoreTemp(setItem.Result, ilEncoder, allocation);
-                            }
-
-                            break;
-                        }
-
                         // Emit: call JavaScriptRuntime.Object.SetItem(object, double, double)
                         EmitLoadTempAsObject(setItem.Object, ilEncoder, allocation, methodDescriptor);
                         EmitLoadTemp(setItem.Index, ilEncoder, allocation, methodDescriptor);
@@ -3209,56 +3164,6 @@ internal sealed class LIRToILCompiler
                     var resultStorage = GetTempStorage(getItem.Result);
                     if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double))
                     {
-                        // If we know this is an Int32Array, emit direct callvirt to the numeric indexer getter:
-                        //   callvirt instance float64 JavaScriptRuntime.Int32Array::get_Item(float64)
-                        // and box only if the temp storage expects an object.
-                        if (_knownIntrinsicReceiverClrTypes != null
-                            && _knownIntrinsicReceiverClrTypes.TryGetValue(getItem.Object.Index, out var receiverClrType)
-                            && receiverClrType == typeof(JavaScriptRuntime.Int32Array))
-                        {
-                            // Omit redundant cast when the receiver is produced by a typed field load (or copy thereof).
-                            var receiverTemp = getItem.Object;
-                            bool receiverCanOmitCast = !IsMaterialized(receiverTemp, allocation);
-                            if (receiverCanOmitCast)
-                            {
-                                var receiverDef = TryFindDefInstruction(receiverTemp);
-                                while (receiverDef is LIRCopyTemp copyDef)
-                                {
-                                    receiverDef = TryFindDefInstruction(copyDef.Source);
-                                }
-
-                                receiverCanOmitCast = receiverDef is LIRLoadUserClassInstanceField;
-                            }
-
-                            if (receiverCanOmitCast)
-                            {
-                                EmitLoadTemp(getItem.Object, ilEncoder, allocation, methodDescriptor);
-                            }
-                            else
-                            {
-                                EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
-                                ilEncoder.OpCode(ILOpCode.Castclass);
-                                ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Int32Array)));
-                            }
-
-                            EmitLoadTemp(getItem.Index, ilEncoder, allocation, methodDescriptor);
-
-                            var int32ArrayGetter = _memberRefRegistry.GetOrAddMethod(
-                                typeof(JavaScriptRuntime.Int32Array),
-                                "get_Item",
-                                parameterTypes: new[] { typeof(double) });
-                            ilEncoder.OpCode(ILOpCode.Callvirt);
-                            ilEncoder.Token(int32ArrayGetter);
-
-                            if (!(resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double)))
-                            {
-                                ilEncoder.OpCode(ILOpCode.Box);
-                                ilEncoder.Token(_bclReferences.DoubleType);
-                            }
-
-                            break;
-                        }
-
                         // Emit inline: call JavaScriptRuntime.Object.GetItem(object, double)
                         EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
                         EmitLoadTemp(getItem.Index, ilEncoder, allocation, methodDescriptor);
@@ -3305,6 +3210,34 @@ internal sealed class LIRToILCompiler
                     }
                 }
                 break;
+
+            case LIRGetInt32ArrayElement getI32:
+                {
+                    // Inline: receiver, index, callvirt get_Item(double)
+                    var receiverStorage = GetTempStorage(getI32.Receiver);
+                    if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Int32Array))
+                    {
+                        EmitLoadTemp(getI32.Receiver, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(getI32.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Int32Array)));
+                    }
+
+                    EmitLoadTemp(getI32.Index, ilEncoder, allocation, methodDescriptor);
+
+                    var int32ArrayGetter = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Int32Array),
+                        "get_Item",
+                        parameterTypes: new[] { typeof(double) });
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(int32ArrayGetter);
+
+                    // Leave as double on stack; caller will box if it needs object.
+                    break;
+                }
             case LIRCallIntrinsic callIntrinsic:
                 // Emit inline intrinsic call (e.g., console.log)
                 EmitLoadTemp(callIntrinsic.IntrinsicObject, ilEncoder, allocation, methodDescriptor);
