@@ -115,12 +115,8 @@ namespace Js2IL.Services
             var paramCount = JavaScriptRuntime.CommonJS.ModuleParameters.Count;
             var parameterNames = JavaScriptRuntime.CommonJS.ModuleParameters.ParameterNames;
 
-            // Create Variables for the module - needed for both IR and legacy paths
-            var variables = new Variables(_variableRegistry, moduleName, parameterNames);
-            
-            // Create MainGenerator to handle function/class declarations
-            // This is needed even for IR path because functions must be compiled first
-            var mainGenerator = new MainGenerator(_serviceProvider, variables, _bclReferences, _metadataBuilder, methodBodyStream, module.SymbolTable!);
+            // Declare classes/functions before compiling the module body so call sites can do token lookup (ldftn).
+            var mainGenerator = new MainGenerator(_serviceProvider, moduleName, _bclReferences, _metadataBuilder, methodBodyStream, module.SymbolTable!);
             
             // Declare functions and classes first - this populates CallableRegistry with tokens
             // which is needed for IR pipeline to emit function calls (ldftn)

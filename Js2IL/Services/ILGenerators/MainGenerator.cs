@@ -16,12 +16,11 @@ namespace Js2IL.Services.ILGenerators
     internal class MainGenerator
     {
         private readonly MetadataBuilder _metadataBuilder;
-        private JavaScriptFunctionGenerator _functionGenerator;
         private ClassesGenerator _classesGenerator;
         private MethodBodyStreamEncoder _methodBodyStreamEncoder;
         private SymbolTable _symbolTable;
 
-        private readonly Variables _rootVariables;
+        private readonly string _moduleName;
 
         private BaseClassLibraryReferences _bclReferences;
 
@@ -30,11 +29,11 @@ namespace Js2IL.Services.ILGenerators
         private readonly TwoPhaseCompilationCoordinator _twoPhaseCoordinator;
         private readonly IServiceProvider _serviceProvider;
 
-        public MainGenerator(IServiceProvider serviceProvider, Variables variables, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, SymbolTable symbolTable)
+        public MainGenerator(IServiceProvider serviceProvider, string moduleName, BaseClassLibraryReferences bclReferences, MetadataBuilder metadataBuilder, MethodBodyStreamEncoder methodBodyStreamEncoder, SymbolTable symbolTable)
         {
             _symbolTable = symbolTable ?? throw new ArgumentNullException(nameof(symbolTable));
 
-            _rootVariables = variables ?? throw new ArgumentNullException(nameof(variables));
+            _moduleName = moduleName ?? throw new ArgumentNullException(nameof(moduleName));
 
             if (bclReferences == null) throw new ArgumentNullException(nameof(bclReferences));
             if (metadataBuilder == null) throw new ArgumentNullException(nameof(metadataBuilder));
@@ -44,8 +43,7 @@ namespace Js2IL.Services.ILGenerators
             _metadataBuilder = metadataBuilder;
             _methodBodyStreamEncoder = methodBodyStreamEncoder;
             _classRegistry = serviceProvider.GetRequiredService<ClassRegistry>();
-            _functionGenerator = new JavaScriptFunctionGenerator(serviceProvider, variables, bclReferences, metadataBuilder, methodBodyStreamEncoder, _classRegistry, symbolTable);
-            _classesGenerator = new ClassesGenerator(serviceProvider,metadataBuilder, bclReferences, _classRegistry, variables);            
+            _classesGenerator = new ClassesGenerator(serviceProvider, metadataBuilder, bclReferences, _classRegistry, _moduleName);
             _twoPhaseCoordinator = serviceProvider.GetRequiredService<TwoPhaseCompilationCoordinator>();
         }
 
@@ -91,7 +89,7 @@ namespace Js2IL.Services.ILGenerators
         /// Creates the global scope instance.
         /// The instance is stored in a local variable that can be accessed by variable operations.
         /// </summary>
-        private void CreateGlobalScopeInstance(Variables variables) =>
+        private void CreateGlobalScopeInstance() =>
             throw new NotSupportedException("Legacy main-method emission is no longer supported. Use JsMethodCompiler (IR pipeline) instead.");
 
         /// <summary>
@@ -107,21 +105,16 @@ namespace Js2IL.Services.ILGenerators
                 symbolTable,
                 _metadataBuilder,
                 _serviceProvider,
-                _rootVariables,
                 _bclReferences,
                 _methodBodyStreamEncoder,
                 _classRegistry,
-                _functionGenerator.FunctionRegistry,
                 compileAnonymousCallablesPhase2: callables =>
                     _twoPhaseCoordinator.CompilePhase2AnonymousCallables(
                         callables,
                         _metadataBuilder,
                         _serviceProvider,
-                        _rootVariables,
                         _bclReferences,
                         _methodBodyStreamEncoder,
-                        _classRegistry,
-                        _functionGenerator.FunctionRegistry,
                         _symbolTable),
                 compileClassesAndFunctionsPhase2: () =>
                 {

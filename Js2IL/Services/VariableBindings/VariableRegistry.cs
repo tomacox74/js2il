@@ -15,7 +15,7 @@ namespace Js2IL.Services.VariableBindings
 
     /// <summary>
     /// Registry that contains all variables discovered through static analysis of the JavaScript AST.
-    /// Populated by TypeGenerator and consumed by Variables class.
+    /// Populated by TypeGenerator and consumed by the IR/IL compilation pipeline.
     /// Acts as a facade over ScopeMetadataRegistry for backward compatibility.
     /// </summary>
     public class VariableRegistry
