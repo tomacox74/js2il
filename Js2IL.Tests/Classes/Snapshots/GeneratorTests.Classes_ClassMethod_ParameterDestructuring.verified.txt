@@ -615,423 +615,337 @@
 	{
 		// Method begins at RVA 0x237c
 		// Header size: 12
-		// Code size: 1267 (0x4f3)
+		// Code size: 905 (0x389)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Classes_ClassMethod_ParameterDestructuring,
 			[1] object,
 			[2] object,
 			[3] object,
-			[4] object
+			[4] object[],
+			[5] object
 		)
 
 		IL_0000: newobj instance void Scopes.Classes_ClassMethod_ParameterDestructuring::.ctor()
 		IL_0005: stloc.0
 		IL_0006: newobj instance void Classes.Classes_ClassMethod_ParameterDestructuring.Calculator::.ctor()
 		IL_000b: stloc.1
-		IL_000c: ldloc.1
-		IL_000d: isinst Classes.Classes_ClassMethod_ParameterDestructuring.Calculator
+		IL_000c: ldc.i4.1
+		IL_000d: newarr [System.Runtime]System.Object
 		IL_0012: dup
-		IL_0013: brfalse IL_0066
+		IL_0013: ldc.i4.0
+		IL_0014: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0019: dup
+		IL_001a: ldstr "a"
+		IL_001f: ldc.r8 5
+		IL_0028: box [System.Runtime]System.Double
+		IL_002d: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0032: dup
+		IL_0033: ldstr "b"
+		IL_0038: ldc.r8 3
+		IL_0041: box [System.Runtime]System.Double
+		IL_0046: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_004b: stelem.ref
+		IL_004c: stloc.s 4
+		IL_004e: ldloc.1
+		IL_004f: isinst Classes.Classes_ClassMethod_ParameterDestructuring.Calculator
+		IL_0054: dup
+		IL_0055: brfalse IL_006a
 
-		IL_0018: ldc.i4.1
-		IL_0019: newarr [System.Runtime]System.Object
-		IL_001e: dup
-		IL_001f: ldc.i4.0
-		IL_0020: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0025: dup
-		IL_0026: ldstr "a"
-		IL_002b: ldc.r8 5
-		IL_0034: box [System.Runtime]System.Double
-		IL_0039: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_003e: dup
-		IL_003f: ldstr "b"
-		IL_0044: ldc.r8 3
-		IL_004d: box [System.Runtime]System.Double
-		IL_0052: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0057: stelem.ref
-		IL_0058: ldc.i4.0
-		IL_0059: ldelem.ref
-		IL_005a: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Calculator::'add'(object)
-		IL_005f: stloc.s 4
-		IL_0061: br IL_00b4
+		IL_005a: ldloc.s 4
+		IL_005c: ldc.i4.0
+		IL_005d: ldelem.ref
+		IL_005e: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Calculator::'add'(object)
+		IL_0063: stloc.s 5
+		IL_0065: br IL_007a
 
-		IL_0066: pop
-		IL_0067: ldloc.1
-		IL_0068: ldstr "add"
-		IL_006d: ldc.i4.1
-		IL_006e: newarr [System.Runtime]System.Object
-		IL_0073: dup
-		IL_0074: ldc.i4.0
-		IL_0075: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_007a: dup
-		IL_007b: ldstr "a"
-		IL_0080: ldc.r8 5
-		IL_0089: box [System.Runtime]System.Double
-		IL_008e: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0093: dup
-		IL_0094: ldstr "b"
-		IL_0099: ldc.r8 3
-		IL_00a2: box [System.Runtime]System.Double
-		IL_00a7: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_00ac: stelem.ref
-		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_00b2: stloc.s 4
+		IL_006a: pop
+		IL_006b: ldloc.1
+		IL_006c: ldstr "add"
+		IL_0071: ldloc.s 4
+		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0078: stloc.s 5
 
-		IL_00b4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b9: ldc.i4.1
-		IL_00ba: newarr [System.Runtime]System.Object
-		IL_00bf: dup
-		IL_00c0: ldc.i4.0
-		IL_00c1: ldloc.s 4
-		IL_00c3: stelem.ref
-		IL_00c4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00c9: pop
-		IL_00ca: ldloc.1
-		IL_00cb: isinst Classes.Classes_ClassMethod_ParameterDestructuring.Calculator
-		IL_00d0: dup
-		IL_00d1: brfalse IL_0124
+		IL_007a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_007f: ldc.i4.1
+		IL_0080: newarr [System.Runtime]System.Object
+		IL_0085: dup
+		IL_0086: ldc.i4.0
+		IL_0087: ldloc.s 5
+		IL_0089: stelem.ref
+		IL_008a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_008f: pop
+		IL_0090: ldc.i4.1
+		IL_0091: newarr [System.Runtime]System.Object
+		IL_0096: dup
+		IL_0097: ldc.i4.0
+		IL_0098: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_009d: dup
+		IL_009e: ldstr "x"
+		IL_00a3: ldc.r8 4
+		IL_00ac: box [System.Runtime]System.Double
+		IL_00b1: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_00b6: dup
+		IL_00b7: ldstr "y"
+		IL_00bc: ldc.r8 7
+		IL_00c5: box [System.Runtime]System.Double
+		IL_00ca: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_00cf: stelem.ref
+		IL_00d0: stloc.s 4
+		IL_00d2: ldloc.1
+		IL_00d3: isinst Classes.Classes_ClassMethod_ParameterDestructuring.Calculator
+		IL_00d8: dup
+		IL_00d9: brfalse IL_00ee
 
-		IL_00d6: ldc.i4.1
-		IL_00d7: newarr [System.Runtime]System.Object
-		IL_00dc: dup
-		IL_00dd: ldc.i4.0
-		IL_00de: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_00e3: dup
-		IL_00e4: ldstr "x"
-		IL_00e9: ldc.r8 4
-		IL_00f2: box [System.Runtime]System.Double
-		IL_00f7: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_00fc: dup
-		IL_00fd: ldstr "y"
-		IL_0102: ldc.r8 7
-		IL_010b: box [System.Runtime]System.Double
-		IL_0110: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0115: stelem.ref
-		IL_0116: ldc.i4.0
-		IL_0117: ldelem.ref
-		IL_0118: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Calculator::multiply(object)
-		IL_011d: stloc.s 4
-		IL_011f: br IL_0172
+		IL_00de: ldloc.s 4
+		IL_00e0: ldc.i4.0
+		IL_00e1: ldelem.ref
+		IL_00e2: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Calculator::multiply(object)
+		IL_00e7: stloc.s 5
+		IL_00e9: br IL_00fe
 
-		IL_0124: pop
-		IL_0125: ldloc.1
-		IL_0126: ldstr "multiply"
-		IL_012b: ldc.i4.1
-		IL_012c: newarr [System.Runtime]System.Object
-		IL_0131: dup
-		IL_0132: ldc.i4.0
-		IL_0133: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0138: dup
-		IL_0139: ldstr "x"
-		IL_013e: ldc.r8 4
-		IL_0147: box [System.Runtime]System.Double
-		IL_014c: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0151: dup
-		IL_0152: ldstr "y"
-		IL_0157: ldc.r8 7
-		IL_0160: box [System.Runtime]System.Double
-		IL_0165: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_016a: stelem.ref
-		IL_016b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0170: stloc.s 4
+		IL_00ee: pop
+		IL_00ef: ldloc.1
+		IL_00f0: ldstr "multiply"
+		IL_00f5: ldloc.s 4
+		IL_00f7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_00fc: stloc.s 5
 
-		IL_0172: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0177: ldc.i4.1
-		IL_0178: newarr [System.Runtime]System.Object
-		IL_017d: dup
-		IL_017e: ldc.i4.0
-		IL_017f: ldloc.s 4
-		IL_0181: stelem.ref
-		IL_0182: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0187: pop
-		IL_0188: newobj instance void Classes.Classes_ClassMethod_ParameterDestructuring.Formatter::.ctor()
-		IL_018d: stloc.2
-		IL_018e: ldloc.2
-		IL_018f: isinst Classes.Classes_ClassMethod_ParameterDestructuring.Formatter
-		IL_0194: dup
-		IL_0195: brfalse IL_01ef
+		IL_00fe: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0103: ldc.i4.1
+		IL_0104: newarr [System.Runtime]System.Object
+		IL_0109: dup
+		IL_010a: ldc.i4.0
+		IL_010b: ldloc.s 5
+		IL_010d: stelem.ref
+		IL_010e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0113: pop
+		IL_0114: newobj instance void Classes.Classes_ClassMethod_ParameterDestructuring.Formatter::.ctor()
+		IL_0119: stloc.2
+		IL_011a: ldc.i4.1
+		IL_011b: newarr [System.Runtime]System.Object
+		IL_0120: dup
+		IL_0121: ldc.i4.0
+		IL_0122: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0127: dup
+		IL_0128: ldstr "name"
+		IL_012d: ldstr "Alice"
+		IL_0132: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0137: dup
+		IL_0138: ldstr "age"
+		IL_013d: ldc.r8 30
+		IL_0146: box [System.Runtime]System.Double
+		IL_014b: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0150: dup
+		IL_0151: ldstr "city"
+		IL_0156: ldstr "Seattle"
+		IL_015b: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0160: stelem.ref
+		IL_0161: stloc.s 4
+		IL_0163: ldloc.2
+		IL_0164: isinst Classes.Classes_ClassMethod_ParameterDestructuring.Formatter
+		IL_0169: dup
+		IL_016a: brfalse IL_017f
 
-		IL_019a: ldc.i4.1
-		IL_019b: newarr [System.Runtime]System.Object
-		IL_01a0: dup
-		IL_01a1: ldc.i4.0
-		IL_01a2: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_01a7: dup
-		IL_01a8: ldstr "name"
-		IL_01ad: ldstr "Alice"
-		IL_01b2: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_01b7: dup
-		IL_01b8: ldstr "age"
-		IL_01bd: ldc.r8 30
-		IL_01c6: box [System.Runtime]System.Double
-		IL_01cb: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_01d0: dup
-		IL_01d1: ldstr "city"
-		IL_01d6: ldstr "Seattle"
-		IL_01db: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_01e0: stelem.ref
-		IL_01e1: ldc.i4.0
-		IL_01e2: ldelem.ref
-		IL_01e3: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Formatter::formatPerson(object)
-		IL_01e8: stloc.s 4
-		IL_01ea: br IL_0244
+		IL_016f: ldloc.s 4
+		IL_0171: ldc.i4.0
+		IL_0172: ldelem.ref
+		IL_0173: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Formatter::formatPerson(object)
+		IL_0178: stloc.s 5
+		IL_017a: br IL_018f
 
-		IL_01ef: pop
-		IL_01f0: ldloc.2
-		IL_01f1: ldstr "formatPerson"
-		IL_01f6: ldc.i4.1
-		IL_01f7: newarr [System.Runtime]System.Object
-		IL_01fc: dup
-		IL_01fd: ldc.i4.0
-		IL_01fe: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0203: dup
-		IL_0204: ldstr "name"
-		IL_0209: ldstr "Alice"
-		IL_020e: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0213: dup
-		IL_0214: ldstr "age"
-		IL_0219: ldc.r8 30
-		IL_0222: box [System.Runtime]System.Double
-		IL_0227: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_022c: dup
-		IL_022d: ldstr "city"
-		IL_0232: ldstr "Seattle"
-		IL_0237: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_023c: stelem.ref
-		IL_023d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0242: stloc.s 4
+		IL_017f: pop
+		IL_0180: ldloc.2
+		IL_0181: ldstr "formatPerson"
+		IL_0186: ldloc.s 4
+		IL_0188: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_018d: stloc.s 5
 
-		IL_0244: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0249: ldc.i4.1
-		IL_024a: newarr [System.Runtime]System.Object
-		IL_024f: dup
-		IL_0250: ldc.i4.0
-		IL_0251: ldloc.s 4
-		IL_0253: stelem.ref
-		IL_0254: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0259: pop
-		IL_025a: ldloc.2
-		IL_025b: isinst Classes.Classes_ClassMethod_ParameterDestructuring.Formatter
-		IL_0260: dup
-		IL_0261: brfalse IL_02cd
+		IL_018f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0194: ldc.i4.1
+		IL_0195: newarr [System.Runtime]System.Object
+		IL_019a: dup
+		IL_019b: ldc.i4.0
+		IL_019c: ldloc.s 5
+		IL_019e: stelem.ref
+		IL_019f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_01a4: pop
+		IL_01a5: ldc.i4.1
+		IL_01a6: newarr [System.Runtime]System.Object
+		IL_01ab: dup
+		IL_01ac: ldc.i4.0
+		IL_01ad: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_01b2: dup
+		IL_01b3: ldstr "year"
+		IL_01b8: ldc.r8 2025
+		IL_01c1: box [System.Runtime]System.Double
+		IL_01c6: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_01cb: dup
+		IL_01cc: ldstr "month"
+		IL_01d1: ldc.r8 11
+		IL_01da: box [System.Runtime]System.Double
+		IL_01df: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_01e4: dup
+		IL_01e5: ldstr "day"
+		IL_01ea: ldc.r8 30
+		IL_01f3: box [System.Runtime]System.Double
+		IL_01f8: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_01fd: stelem.ref
+		IL_01fe: stloc.s 4
+		IL_0200: ldloc.2
+		IL_0201: isinst Classes.Classes_ClassMethod_ParameterDestructuring.Formatter
+		IL_0206: dup
+		IL_0207: brfalse IL_021c
 
-		IL_0266: ldc.i4.1
-		IL_0267: newarr [System.Runtime]System.Object
-		IL_026c: dup
-		IL_026d: ldc.i4.0
-		IL_026e: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0273: dup
-		IL_0274: ldstr "year"
-		IL_0279: ldc.r8 2025
-		IL_0282: box [System.Runtime]System.Double
-		IL_0287: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_028c: dup
-		IL_028d: ldstr "month"
-		IL_0292: ldc.r8 11
-		IL_029b: box [System.Runtime]System.Double
-		IL_02a0: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_02a5: dup
-		IL_02a6: ldstr "day"
-		IL_02ab: ldc.r8 30
-		IL_02b4: box [System.Runtime]System.Double
-		IL_02b9: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_02be: stelem.ref
-		IL_02bf: ldc.i4.0
-		IL_02c0: ldelem.ref
-		IL_02c1: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Formatter::formatDate(object)
-		IL_02c6: stloc.s 4
-		IL_02c8: br IL_0334
+		IL_020c: ldloc.s 4
+		IL_020e: ldc.i4.0
+		IL_020f: ldelem.ref
+		IL_0210: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Formatter::formatDate(object)
+		IL_0215: stloc.s 5
+		IL_0217: br IL_022c
 
-		IL_02cd: pop
-		IL_02ce: ldloc.2
-		IL_02cf: ldstr "formatDate"
-		IL_02d4: ldc.i4.1
-		IL_02d5: newarr [System.Runtime]System.Object
-		IL_02da: dup
-		IL_02db: ldc.i4.0
-		IL_02dc: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_02e1: dup
-		IL_02e2: ldstr "year"
-		IL_02e7: ldc.r8 2025
-		IL_02f0: box [System.Runtime]System.Double
-		IL_02f5: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_021c: pop
+		IL_021d: ldloc.2
+		IL_021e: ldstr "formatDate"
+		IL_0223: ldloc.s 4
+		IL_0225: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_022a: stloc.s 5
+
+		IL_022c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0231: ldc.i4.1
+		IL_0232: newarr [System.Runtime]System.Object
+		IL_0237: dup
+		IL_0238: ldc.i4.0
+		IL_0239: ldloc.s 5
+		IL_023b: stelem.ref
+		IL_023c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0241: pop
+		IL_0242: newobj instance void Classes.Classes_ClassMethod_ParameterDestructuring.Config::.ctor()
+		IL_0247: stloc.3
+		IL_0248: ldc.i4.1
+		IL_0249: newarr [System.Runtime]System.Object
+		IL_024e: dup
+		IL_024f: ldc.i4.0
+		IL_0250: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0255: dup
+		IL_0256: ldstr "host"
+		IL_025b: ldstr "example.com"
+		IL_0260: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0265: stelem.ref
+		IL_0266: stloc.s 4
+		IL_0268: ldloc.3
+		IL_0269: isinst Classes.Classes_ClassMethod_ParameterDestructuring.Config
+		IL_026e: dup
+		IL_026f: brfalse IL_0284
+
+		IL_0274: ldloc.s 4
+		IL_0276: ldc.i4.0
+		IL_0277: ldelem.ref
+		IL_0278: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Config::setConnection(object)
+		IL_027d: stloc.s 5
+		IL_027f: br IL_0294
+
+		IL_0284: pop
+		IL_0285: ldloc.3
+		IL_0286: ldstr "setConnection"
+		IL_028b: ldloc.s 4
+		IL_028d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0292: stloc.s 5
+
+		IL_0294: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0299: ldc.i4.1
+		IL_029a: newarr [System.Runtime]System.Object
+		IL_029f: dup
+		IL_02a0: ldc.i4.0
+		IL_02a1: ldloc.s 5
+		IL_02a3: stelem.ref
+		IL_02a4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_02a9: pop
+		IL_02aa: ldc.i4.1
+		IL_02ab: newarr [System.Runtime]System.Object
+		IL_02b0: dup
+		IL_02b1: ldc.i4.0
+		IL_02b2: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_02b7: dup
+		IL_02b8: ldstr "host"
+		IL_02bd: ldstr "api.test.com"
+		IL_02c2: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_02c7: dup
+		IL_02c8: ldstr "port"
+		IL_02cd: ldc.r8 3000
+		IL_02d6: box [System.Runtime]System.Double
+		IL_02db: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_02e0: dup
+		IL_02e1: ldstr "secure"
+		IL_02e6: ldc.i4.1
+		IL_02e7: box [System.Runtime]System.Boolean
+		IL_02ec: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_02f1: stelem.ref
+		IL_02f2: stloc.s 4
+		IL_02f4: ldloc.3
+		IL_02f5: isinst Classes.Classes_ClassMethod_ParameterDestructuring.Config
 		IL_02fa: dup
-		IL_02fb: ldstr "month"
-		IL_0300: ldc.r8 11
-		IL_0309: box [System.Runtime]System.Double
-		IL_030e: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0313: dup
-		IL_0314: ldstr "day"
-		IL_0319: ldc.r8 30
-		IL_0322: box [System.Runtime]System.Double
-		IL_0327: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_032c: stelem.ref
-		IL_032d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0332: stloc.s 4
+		IL_02fb: brfalse IL_0310
 
-		IL_0334: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0339: ldc.i4.1
-		IL_033a: newarr [System.Runtime]System.Object
-		IL_033f: dup
-		IL_0340: ldc.i4.0
-		IL_0341: ldloc.s 4
+		IL_0300: ldloc.s 4
+		IL_0302: ldc.i4.0
+		IL_0303: ldelem.ref
+		IL_0304: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Config::setConnection(object)
+		IL_0309: stloc.s 5
+		IL_030b: br IL_0320
+
+		IL_0310: pop
+		IL_0311: ldloc.3
+		IL_0312: ldstr "setConnection"
+		IL_0317: ldloc.s 4
+		IL_0319: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_031e: stloc.s 5
+
+		IL_0320: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0325: ldc.i4.1
+		IL_0326: newarr [System.Runtime]System.Object
+		IL_032b: dup
+		IL_032c: ldc.i4.0
+		IL_032d: ldloc.s 5
+		IL_032f: stelem.ref
+		IL_0330: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0335: pop
+		IL_0336: ldc.i4.1
+		IL_0337: newarr [System.Runtime]System.Object
+		IL_033c: dup
+		IL_033d: ldc.i4.0
+		IL_033e: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
 		IL_0343: stelem.ref
-		IL_0344: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0349: pop
-		IL_034a: newobj instance void Classes.Classes_ClassMethod_ParameterDestructuring.Config::.ctor()
-		IL_034f: stloc.3
-		IL_0350: ldloc.3
-		IL_0351: isinst Classes.Classes_ClassMethod_ParameterDestructuring.Config
-		IL_0356: dup
-		IL_0357: brfalse IL_0388
+		IL_0344: stloc.s 4
+		IL_0346: ldloc.3
+		IL_0347: isinst Classes.Classes_ClassMethod_ParameterDestructuring.Config
+		IL_034c: dup
+		IL_034d: brfalse IL_0362
 
-		IL_035c: ldc.i4.1
-		IL_035d: newarr [System.Runtime]System.Object
-		IL_0362: dup
-		IL_0363: ldc.i4.0
-		IL_0364: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0369: dup
-		IL_036a: ldstr "host"
-		IL_036f: ldstr "example.com"
-		IL_0374: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0379: stelem.ref
-		IL_037a: ldc.i4.0
-		IL_037b: ldelem.ref
-		IL_037c: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Config::setConnection(object)
-		IL_0381: stloc.s 4
-		IL_0383: br IL_03b4
+		IL_0352: ldloc.s 4
+		IL_0354: ldc.i4.0
+		IL_0355: ldelem.ref
+		IL_0356: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Config::setConnection(object)
+		IL_035b: stloc.s 5
+		IL_035d: br IL_0372
 
-		IL_0388: pop
-		IL_0389: ldloc.3
-		IL_038a: ldstr "setConnection"
-		IL_038f: ldc.i4.1
-		IL_0390: newarr [System.Runtime]System.Object
-		IL_0395: dup
-		IL_0396: ldc.i4.0
-		IL_0397: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_039c: dup
-		IL_039d: ldstr "host"
-		IL_03a2: ldstr "example.com"
-		IL_03a7: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_03ac: stelem.ref
-		IL_03ad: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_03b2: stloc.s 4
+		IL_0362: pop
+		IL_0363: ldloc.3
+		IL_0364: ldstr "setConnection"
+		IL_0369: ldloc.s 4
+		IL_036b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0370: stloc.s 5
 
-		IL_03b4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_03b9: ldc.i4.1
-		IL_03ba: newarr [System.Runtime]System.Object
-		IL_03bf: dup
-		IL_03c0: ldc.i4.0
-		IL_03c1: ldloc.s 4
-		IL_03c3: stelem.ref
-		IL_03c4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_03c9: pop
-		IL_03ca: ldloc.3
-		IL_03cb: isinst Classes.Classes_ClassMethod_ParameterDestructuring.Config
-		IL_03d0: dup
-		IL_03d1: brfalse IL_042c
-
-		IL_03d6: ldc.i4.1
-		IL_03d7: newarr [System.Runtime]System.Object
-		IL_03dc: dup
-		IL_03dd: ldc.i4.0
-		IL_03de: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_03e3: dup
-		IL_03e4: ldstr "host"
-		IL_03e9: ldstr "api.test.com"
-		IL_03ee: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_03f3: dup
-		IL_03f4: ldstr "port"
-		IL_03f9: ldc.r8 3000
-		IL_0402: box [System.Runtime]System.Double
-		IL_0407: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_040c: dup
-		IL_040d: ldstr "secure"
-		IL_0412: ldc.i4.1
-		IL_0413: box [System.Runtime]System.Boolean
-		IL_0418: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_041d: stelem.ref
-		IL_041e: ldc.i4.0
-		IL_041f: ldelem.ref
-		IL_0420: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Config::setConnection(object)
-		IL_0425: stloc.s 4
-		IL_0427: br IL_0482
-
-		IL_042c: pop
-		IL_042d: ldloc.3
-		IL_042e: ldstr "setConnection"
-		IL_0433: ldc.i4.1
-		IL_0434: newarr [System.Runtime]System.Object
-		IL_0439: dup
-		IL_043a: ldc.i4.0
-		IL_043b: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0440: dup
-		IL_0441: ldstr "host"
-		IL_0446: ldstr "api.test.com"
-		IL_044b: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0450: dup
-		IL_0451: ldstr "port"
-		IL_0456: ldc.r8 3000
-		IL_045f: box [System.Runtime]System.Double
-		IL_0464: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0469: dup
-		IL_046a: ldstr "secure"
-		IL_046f: ldc.i4.1
-		IL_0470: box [System.Runtime]System.Boolean
-		IL_0475: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_047a: stelem.ref
-		IL_047b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0480: stloc.s 4
-
-		IL_0482: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0487: ldc.i4.1
-		IL_0488: newarr [System.Runtime]System.Object
-		IL_048d: dup
-		IL_048e: ldc.i4.0
-		IL_048f: ldloc.s 4
-		IL_0491: stelem.ref
-		IL_0492: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0497: pop
-		IL_0498: ldloc.3
-		IL_0499: isinst Classes.Classes_ClassMethod_ParameterDestructuring.Config
-		IL_049e: dup
-		IL_049f: brfalse IL_04c0
-
-		IL_04a4: ldc.i4.1
-		IL_04a5: newarr [System.Runtime]System.Object
-		IL_04aa: dup
-		IL_04ab: ldc.i4.0
-		IL_04ac: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_04b1: stelem.ref
-		IL_04b2: ldc.i4.0
-		IL_04b3: ldelem.ref
-		IL_04b4: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Config::setConnection(object)
-		IL_04b9: stloc.s 4
-		IL_04bb: br IL_04dc
-
-		IL_04c0: pop
-		IL_04c1: ldloc.3
-		IL_04c2: ldstr "setConnection"
-		IL_04c7: ldc.i4.1
-		IL_04c8: newarr [System.Runtime]System.Object
-		IL_04cd: dup
-		IL_04ce: ldc.i4.0
-		IL_04cf: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_04d4: stelem.ref
-		IL_04d5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_04da: stloc.s 4
-
-		IL_04dc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_04e1: ldc.i4.1
-		IL_04e2: newarr [System.Runtime]System.Object
-		IL_04e7: dup
-		IL_04e8: ldc.i4.0
-		IL_04e9: ldloc.s 4
-		IL_04eb: stelem.ref
-		IL_04ec: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_04f1: pop
-		IL_04f2: ret
+		IL_0372: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0377: ldc.i4.1
+		IL_0378: newarr [System.Runtime]System.Object
+		IL_037d: dup
+		IL_037e: ldc.i4.0
+		IL_037f: ldloc.s 5
+		IL_0381: stelem.ref
+		IL_0382: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0387: pop
+		IL_0388: ret
 	} // end of method Classes_ClassMethod_ParameterDestructuring::Main
 
 } // end of class Scripts.Classes_ClassMethod_ParameterDestructuring
@@ -1043,7 +957,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x287b
+		// Method begins at RVA 0x2711
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -353,528 +353,366 @@
 	{
 		// Method begins at RVA 0x2200
 		// Header size: 12
-		// Code size: 1446 (0x5a6)
+		// Code size: 819 (0x333)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Classes_DefaultParameterValue_Method,
-			[1] object
+			[1] object,
+			[2] object[]
 		)
 
 		IL_0000: newobj instance void Scopes.Classes_DefaultParameterValue_Method::.ctor()
 		IL_0005: stloc.0
 		IL_0006: newobj instance void Classes.Classes_DefaultParameterValue_Method.Calculator::.ctor()
 		IL_000b: stloc.1
-		IL_000c: ldloc.1
-		IL_000d: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
-		IL_0012: dup
-		IL_0013: brfalse IL_0024
+		IL_000c: ldc.i4.0
+		IL_000d: newarr [System.Runtime]System.Object
+		IL_0012: stloc.2
+		IL_0013: ldloc.1
+		IL_0014: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
+		IL_0019: dup
+		IL_001a: brfalse IL_002b
 
-		IL_0018: ldnull
-		IL_0019: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::greet(object)
-		IL_001e: pop
-		IL_001f: br IL_0037
+		IL_001f: ldnull
+		IL_0020: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::greet(object)
+		IL_0025: pop
+		IL_0026: br IL_0039
 
-		IL_0024: pop
-		IL_0025: ldloc.1
-		IL_0026: ldstr "greet"
-		IL_002b: ldc.i4.0
-		IL_002c: newarr [System.Runtime]System.Object
-		IL_0031: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0036: pop
+		IL_002b: pop
+		IL_002c: ldloc.1
+		IL_002d: ldstr "greet"
+		IL_0032: ldloc.2
+		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0038: pop
 
-		IL_0037: ldloc.1
-		IL_0038: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
-		IL_003d: dup
-		IL_003e: brfalse IL_005e
+		IL_0039: ldc.i4.1
+		IL_003a: newarr [System.Runtime]System.Object
+		IL_003f: dup
+		IL_0040: ldc.i4.0
+		IL_0041: ldstr "Alice"
+		IL_0046: stelem.ref
+		IL_0047: stloc.2
+		IL_0048: ldloc.1
+		IL_0049: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
+		IL_004e: dup
+		IL_004f: brfalse IL_0062
 
-		IL_0043: ldc.i4.1
-		IL_0044: newarr [System.Runtime]System.Object
-		IL_0049: dup
-		IL_004a: ldc.i4.0
-		IL_004b: ldstr "Alice"
-		IL_0050: stelem.ref
-		IL_0051: ldc.i4.0
-		IL_0052: ldelem.ref
-		IL_0053: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::greet(object)
-		IL_0058: pop
-		IL_0059: br IL_0079
+		IL_0054: ldloc.2
+		IL_0055: ldc.i4.0
+		IL_0056: ldelem.ref
+		IL_0057: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::greet(object)
+		IL_005c: pop
+		IL_005d: br IL_0070
 
-		IL_005e: pop
-		IL_005f: ldloc.1
-		IL_0060: ldstr "greet"
-		IL_0065: ldc.i4.1
-		IL_0066: newarr [System.Runtime]System.Object
-		IL_006b: dup
-		IL_006c: ldc.i4.0
-		IL_006d: ldstr "Alice"
-		IL_0072: stelem.ref
-		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0078: pop
+		IL_0062: pop
+		IL_0063: ldloc.1
+		IL_0064: ldstr "greet"
+		IL_0069: ldloc.2
+		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_006f: pop
 
-		IL_0079: ldloc.1
-		IL_007a: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
-		IL_007f: dup
-		IL_0080: brfalse IL_00aa
+		IL_0070: ldc.i4.1
+		IL_0071: newarr [System.Runtime]System.Object
+		IL_0076: dup
+		IL_0077: ldc.i4.0
+		IL_0078: ldc.r8 5
+		IL_0081: box [System.Runtime]System.Double
+		IL_0086: stelem.ref
+		IL_0087: stloc.2
+		IL_0088: ldloc.1
+		IL_0089: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
+		IL_008e: dup
+		IL_008f: brfalse IL_00a3
 
-		IL_0085: ldc.i4.1
-		IL_0086: newarr [System.Runtime]System.Object
-		IL_008b: dup
-		IL_008c: ldc.i4.0
-		IL_008d: ldc.r8 5
-		IL_0096: box [System.Runtime]System.Double
-		IL_009b: stelem.ref
-		IL_009c: ldc.i4.0
-		IL_009d: ldelem.ref
-		IL_009e: ldnull
-		IL_009f: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::'add'(object, object)
-		IL_00a4: pop
-		IL_00a5: br IL_00ce
+		IL_0094: ldloc.2
+		IL_0095: ldc.i4.0
+		IL_0096: ldelem.ref
+		IL_0097: ldnull
+		IL_0098: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::'add'(object, object)
+		IL_009d: pop
+		IL_009e: br IL_00b1
 
-		IL_00aa: pop
-		IL_00ab: ldloc.1
-		IL_00ac: ldstr "add"
-		IL_00b1: ldc.i4.1
+		IL_00a3: pop
+		IL_00a4: ldloc.1
+		IL_00a5: ldstr "add"
+		IL_00aa: ldloc.2
+		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_00b0: pop
+
+		IL_00b1: ldc.i4.2
 		IL_00b2: newarr [System.Runtime]System.Object
 		IL_00b7: dup
 		IL_00b8: ldc.i4.0
 		IL_00b9: ldc.r8 5
 		IL_00c2: box [System.Runtime]System.Double
 		IL_00c7: stelem.ref
-		IL_00c8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_00cd: pop
-
-		IL_00ce: ldloc.1
-		IL_00cf: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
-		IL_00d4: dup
-		IL_00d5: brfalse IL_0139
-
-		IL_00da: ldc.i4.2
-		IL_00db: newarr [System.Runtime]System.Object
+		IL_00c8: dup
+		IL_00c9: ldc.i4.1
+		IL_00ca: ldc.r8 15
+		IL_00d3: box [System.Runtime]System.Double
+		IL_00d8: stelem.ref
+		IL_00d9: stloc.2
+		IL_00da: ldloc.1
+		IL_00db: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
 		IL_00e0: dup
-		IL_00e1: ldc.i4.0
-		IL_00e2: ldc.r8 5
-		IL_00eb: box [System.Runtime]System.Double
-		IL_00f0: stelem.ref
-		IL_00f1: dup
-		IL_00f2: ldc.i4.1
-		IL_00f3: ldc.r8 15
-		IL_00fc: box [System.Runtime]System.Double
-		IL_0101: stelem.ref
-		IL_0102: ldc.i4.0
-		IL_0103: ldelem.ref
-		IL_0104: ldc.i4.2
-		IL_0105: newarr [System.Runtime]System.Object
-		IL_010a: dup
-		IL_010b: ldc.i4.0
-		IL_010c: ldc.r8 5
-		IL_0115: box [System.Runtime]System.Double
-		IL_011a: stelem.ref
-		IL_011b: dup
-		IL_011c: ldc.i4.1
-		IL_011d: ldc.r8 15
-		IL_0126: box [System.Runtime]System.Double
-		IL_012b: stelem.ref
-		IL_012c: ldc.i4.1
-		IL_012d: ldelem.ref
-		IL_012e: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::'add'(object, object)
+		IL_00e1: brfalse IL_00f7
+
+		IL_00e6: ldloc.2
+		IL_00e7: ldc.i4.0
+		IL_00e8: ldelem.ref
+		IL_00e9: ldloc.2
+		IL_00ea: ldc.i4.1
+		IL_00eb: ldelem.ref
+		IL_00ec: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::'add'(object, object)
+		IL_00f1: pop
+		IL_00f2: br IL_0105
+
+		IL_00f7: pop
+		IL_00f8: ldloc.1
+		IL_00f9: ldstr "add"
+		IL_00fe: ldloc.2
+		IL_00ff: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0104: pop
+
+		IL_0105: ldc.i4.0
+		IL_0106: newarr [System.Runtime]System.Object
+		IL_010b: stloc.2
+		IL_010c: ldloc.1
+		IL_010d: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
+		IL_0112: dup
+		IL_0113: brfalse IL_0126
+
+		IL_0118: ldnull
+		IL_0119: ldnull
+		IL_011a: ldnull
+		IL_011b: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::multiply(object, object, object)
+		IL_0120: pop
+		IL_0121: br IL_0134
+
+		IL_0126: pop
+		IL_0127: ldloc.1
+		IL_0128: ldstr "multiply"
+		IL_012d: ldloc.2
+		IL_012e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
 		IL_0133: pop
-		IL_0134: br IL_016e
 
-		IL_0139: pop
-		IL_013a: ldloc.1
-		IL_013b: ldstr "add"
-		IL_0140: ldc.i4.2
-		IL_0141: newarr [System.Runtime]System.Object
-		IL_0146: dup
-		IL_0147: ldc.i4.0
-		IL_0148: ldc.r8 5
-		IL_0151: box [System.Runtime]System.Double
-		IL_0156: stelem.ref
-		IL_0157: dup
-		IL_0158: ldc.i4.1
-		IL_0159: ldc.r8 15
-		IL_0162: box [System.Runtime]System.Double
-		IL_0167: stelem.ref
-		IL_0168: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_016d: pop
+		IL_0134: ldc.i4.1
+		IL_0135: newarr [System.Runtime]System.Object
+		IL_013a: dup
+		IL_013b: ldc.i4.0
+		IL_013c: ldc.r8 2
+		IL_0145: box [System.Runtime]System.Double
+		IL_014a: stelem.ref
+		IL_014b: stloc.2
+		IL_014c: ldloc.1
+		IL_014d: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
+		IL_0152: dup
+		IL_0153: brfalse IL_0168
 
-		IL_016e: ldloc.1
-		IL_016f: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
-		IL_0174: dup
-		IL_0175: brfalse IL_0188
+		IL_0158: ldloc.2
+		IL_0159: ldc.i4.0
+		IL_015a: ldelem.ref
+		IL_015b: ldnull
+		IL_015c: ldnull
+		IL_015d: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::multiply(object, object, object)
+		IL_0162: pop
+		IL_0163: br IL_0176
 
-		IL_017a: ldnull
-		IL_017b: ldnull
-		IL_017c: ldnull
-		IL_017d: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::multiply(object, object, object)
-		IL_0182: pop
-		IL_0183: br IL_019b
+		IL_0168: pop
+		IL_0169: ldloc.1
+		IL_016a: ldstr "multiply"
+		IL_016f: ldloc.2
+		IL_0170: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0175: pop
 
-		IL_0188: pop
-		IL_0189: ldloc.1
-		IL_018a: ldstr "multiply"
-		IL_018f: ldc.i4.0
-		IL_0190: newarr [System.Runtime]System.Object
-		IL_0195: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_019a: pop
+		IL_0176: ldc.i4.2
+		IL_0177: newarr [System.Runtime]System.Object
+		IL_017c: dup
+		IL_017d: ldc.i4.0
+		IL_017e: ldc.r8 2
+		IL_0187: box [System.Runtime]System.Double
+		IL_018c: stelem.ref
+		IL_018d: dup
+		IL_018e: ldc.i4.1
+		IL_018f: ldc.r8 4
+		IL_0198: box [System.Runtime]System.Double
+		IL_019d: stelem.ref
+		IL_019e: stloc.2
+		IL_019f: ldloc.1
+		IL_01a0: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
+		IL_01a5: dup
+		IL_01a6: brfalse IL_01bd
 
-		IL_019b: ldloc.1
-		IL_019c: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
-		IL_01a1: dup
-		IL_01a2: brfalse IL_01cd
+		IL_01ab: ldloc.2
+		IL_01ac: ldc.i4.0
+		IL_01ad: ldelem.ref
+		IL_01ae: ldloc.2
+		IL_01af: ldc.i4.1
+		IL_01b0: ldelem.ref
+		IL_01b1: ldnull
+		IL_01b2: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::multiply(object, object, object)
+		IL_01b7: pop
+		IL_01b8: br IL_01cb
 
-		IL_01a7: ldc.i4.1
-		IL_01a8: newarr [System.Runtime]System.Object
-		IL_01ad: dup
-		IL_01ae: ldc.i4.0
-		IL_01af: ldc.r8 2
-		IL_01b8: box [System.Runtime]System.Double
-		IL_01bd: stelem.ref
-		IL_01be: ldc.i4.0
-		IL_01bf: ldelem.ref
-		IL_01c0: ldnull
-		IL_01c1: ldnull
-		IL_01c2: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::multiply(object, object, object)
-		IL_01c7: pop
-		IL_01c8: br IL_01f1
+		IL_01bd: pop
+		IL_01be: ldloc.1
+		IL_01bf: ldstr "multiply"
+		IL_01c4: ldloc.2
+		IL_01c5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_01ca: pop
 
-		IL_01cd: pop
-		IL_01ce: ldloc.1
-		IL_01cf: ldstr "multiply"
-		IL_01d4: ldc.i4.1
-		IL_01d5: newarr [System.Runtime]System.Object
-		IL_01da: dup
-		IL_01db: ldc.i4.0
-		IL_01dc: ldc.r8 2
-		IL_01e5: box [System.Runtime]System.Double
-		IL_01ea: stelem.ref
-		IL_01eb: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_01f0: pop
+		IL_01cb: ldc.i4.3
+		IL_01cc: newarr [System.Runtime]System.Object
+		IL_01d1: dup
+		IL_01d2: ldc.i4.0
+		IL_01d3: ldc.r8 2
+		IL_01dc: box [System.Runtime]System.Double
+		IL_01e1: stelem.ref
+		IL_01e2: dup
+		IL_01e3: ldc.i4.1
+		IL_01e4: ldc.r8 4
+		IL_01ed: box [System.Runtime]System.Double
+		IL_01f2: stelem.ref
+		IL_01f3: dup
+		IL_01f4: ldc.i4.2
+		IL_01f5: ldc.r8 3
+		IL_01fe: box [System.Runtime]System.Double
+		IL_0203: stelem.ref
+		IL_0204: stloc.2
+		IL_0205: ldloc.1
+		IL_0206: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
+		IL_020b: dup
+		IL_020c: brfalse IL_0225
 
-		IL_01f1: ldloc.1
-		IL_01f2: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
-		IL_01f7: dup
-		IL_01f8: brfalse IL_025d
-
-		IL_01fd: ldc.i4.2
-		IL_01fe: newarr [System.Runtime]System.Object
-		IL_0203: dup
-		IL_0204: ldc.i4.0
-		IL_0205: ldc.r8 2
-		IL_020e: box [System.Runtime]System.Double
-		IL_0213: stelem.ref
-		IL_0214: dup
+		IL_0211: ldloc.2
+		IL_0212: ldc.i4.0
+		IL_0213: ldelem.ref
+		IL_0214: ldloc.2
 		IL_0215: ldc.i4.1
-		IL_0216: ldc.r8 4
-		IL_021f: box [System.Runtime]System.Double
-		IL_0224: stelem.ref
-		IL_0225: ldc.i4.0
-		IL_0226: ldelem.ref
-		IL_0227: ldc.i4.2
-		IL_0228: newarr [System.Runtime]System.Object
-		IL_022d: dup
-		IL_022e: ldc.i4.0
-		IL_022f: ldc.r8 2
-		IL_0238: box [System.Runtime]System.Double
-		IL_023d: stelem.ref
-		IL_023e: dup
-		IL_023f: ldc.i4.1
-		IL_0240: ldc.r8 4
-		IL_0249: box [System.Runtime]System.Double
-		IL_024e: stelem.ref
-		IL_024f: ldc.i4.1
-		IL_0250: ldelem.ref
-		IL_0251: ldnull
-		IL_0252: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::multiply(object, object, object)
-		IL_0257: pop
-		IL_0258: br IL_0292
+		IL_0216: ldelem.ref
+		IL_0217: ldloc.2
+		IL_0218: ldc.i4.2
+		IL_0219: ldelem.ref
+		IL_021a: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::multiply(object, object, object)
+		IL_021f: pop
+		IL_0220: br IL_0233
 
-		IL_025d: pop
-		IL_025e: ldloc.1
-		IL_025f: ldstr "multiply"
-		IL_0264: ldc.i4.2
-		IL_0265: newarr [System.Runtime]System.Object
-		IL_026a: dup
-		IL_026b: ldc.i4.0
-		IL_026c: ldc.r8 2
-		IL_0275: box [System.Runtime]System.Double
-		IL_027a: stelem.ref
+		IL_0225: pop
+		IL_0226: ldloc.1
+		IL_0227: ldstr "multiply"
+		IL_022c: ldloc.2
+		IL_022d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0232: pop
+
+		IL_0233: ldc.i4.1
+		IL_0234: newarr [System.Runtime]System.Object
+		IL_0239: dup
+		IL_023a: ldc.i4.0
+		IL_023b: ldc.r8 5
+		IL_0244: box [System.Runtime]System.Double
+		IL_0249: stelem.ref
+		IL_024a: stloc.2
+		IL_024b: ldloc.1
+		IL_024c: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
+		IL_0251: dup
+		IL_0252: brfalse IL_0267
+
+		IL_0257: ldloc.2
+		IL_0258: ldc.i4.0
+		IL_0259: ldelem.ref
+		IL_025a: ldnull
+		IL_025b: ldnull
+		IL_025c: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::calculate(object, object, object)
+		IL_0261: pop
+		IL_0262: br IL_0275
+
+		IL_0267: pop
+		IL_0268: ldloc.1
+		IL_0269: ldstr "calculate"
+		IL_026e: ldloc.2
+		IL_026f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0274: pop
+
+		IL_0275: ldc.i4.2
+		IL_0276: newarr [System.Runtime]System.Object
 		IL_027b: dup
-		IL_027c: ldc.i4.1
-		IL_027d: ldc.r8 4
+		IL_027c: ldc.i4.0
+		IL_027d: ldc.r8 5
 		IL_0286: box [System.Runtime]System.Double
 		IL_028b: stelem.ref
-		IL_028c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0291: pop
-
-		IL_0292: ldloc.1
-		IL_0293: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
-		IL_0298: dup
-		IL_0299: brfalse IL_035a
-
-		IL_029e: ldc.i4.3
-		IL_029f: newarr [System.Runtime]System.Object
+		IL_028c: dup
+		IL_028d: ldc.i4.1
+		IL_028e: ldc.r8 8
+		IL_0297: box [System.Runtime]System.Double
+		IL_029c: stelem.ref
+		IL_029d: stloc.2
+		IL_029e: ldloc.1
+		IL_029f: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
 		IL_02a4: dup
-		IL_02a5: ldc.i4.0
-		IL_02a6: ldc.r8 2
-		IL_02af: box [System.Runtime]System.Double
-		IL_02b4: stelem.ref
-		IL_02b5: dup
-		IL_02b6: ldc.i4.1
-		IL_02b7: ldc.r8 4
-		IL_02c0: box [System.Runtime]System.Double
-		IL_02c5: stelem.ref
-		IL_02c6: dup
-		IL_02c7: ldc.i4.2
-		IL_02c8: ldc.r8 3
-		IL_02d1: box [System.Runtime]System.Double
-		IL_02d6: stelem.ref
-		IL_02d7: ldc.i4.0
-		IL_02d8: ldelem.ref
-		IL_02d9: ldc.i4.3
-		IL_02da: newarr [System.Runtime]System.Object
-		IL_02df: dup
-		IL_02e0: ldc.i4.0
-		IL_02e1: ldc.r8 2
-		IL_02ea: box [System.Runtime]System.Double
-		IL_02ef: stelem.ref
-		IL_02f0: dup
-		IL_02f1: ldc.i4.1
-		IL_02f2: ldc.r8 4
-		IL_02fb: box [System.Runtime]System.Double
-		IL_0300: stelem.ref
-		IL_0301: dup
-		IL_0302: ldc.i4.2
-		IL_0303: ldc.r8 3
-		IL_030c: box [System.Runtime]System.Double
-		IL_0311: stelem.ref
-		IL_0312: ldc.i4.1
-		IL_0313: ldelem.ref
-		IL_0314: ldc.i4.3
-		IL_0315: newarr [System.Runtime]System.Object
-		IL_031a: dup
-		IL_031b: ldc.i4.0
-		IL_031c: ldc.r8 2
-		IL_0325: box [System.Runtime]System.Double
-		IL_032a: stelem.ref
-		IL_032b: dup
-		IL_032c: ldc.i4.1
-		IL_032d: ldc.r8 4
-		IL_0336: box [System.Runtime]System.Double
-		IL_033b: stelem.ref
-		IL_033c: dup
-		IL_033d: ldc.i4.2
-		IL_033e: ldc.r8 3
-		IL_0347: box [System.Runtime]System.Double
-		IL_034c: stelem.ref
-		IL_034d: ldc.i4.2
-		IL_034e: ldelem.ref
-		IL_034f: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::multiply(object, object, object)
-		IL_0354: pop
-		IL_0355: br IL_03a0
+		IL_02a5: brfalse IL_02bc
 
-		IL_035a: pop
-		IL_035b: ldloc.1
-		IL_035c: ldstr "multiply"
-		IL_0361: ldc.i4.3
-		IL_0362: newarr [System.Runtime]System.Object
-		IL_0367: dup
-		IL_0368: ldc.i4.0
-		IL_0369: ldc.r8 2
-		IL_0372: box [System.Runtime]System.Double
-		IL_0377: stelem.ref
-		IL_0378: dup
-		IL_0379: ldc.i4.1
-		IL_037a: ldc.r8 4
-		IL_0383: box [System.Runtime]System.Double
-		IL_0388: stelem.ref
-		IL_0389: dup
-		IL_038a: ldc.i4.2
-		IL_038b: ldc.r8 3
-		IL_0394: box [System.Runtime]System.Double
-		IL_0399: stelem.ref
-		IL_039a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_039f: pop
+		IL_02aa: ldloc.2
+		IL_02ab: ldc.i4.0
+		IL_02ac: ldelem.ref
+		IL_02ad: ldloc.2
+		IL_02ae: ldc.i4.1
+		IL_02af: ldelem.ref
+		IL_02b0: ldnull
+		IL_02b1: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::calculate(object, object, object)
+		IL_02b6: pop
+		IL_02b7: br IL_02ca
 
-		IL_03a0: ldloc.1
-		IL_03a1: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
-		IL_03a6: dup
-		IL_03a7: brfalse IL_03d2
+		IL_02bc: pop
+		IL_02bd: ldloc.1
+		IL_02be: ldstr "calculate"
+		IL_02c3: ldloc.2
+		IL_02c4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_02c9: pop
 
-		IL_03ac: ldc.i4.1
-		IL_03ad: newarr [System.Runtime]System.Object
-		IL_03b2: dup
-		IL_03b3: ldc.i4.0
-		IL_03b4: ldc.r8 5
-		IL_03bd: box [System.Runtime]System.Double
-		IL_03c2: stelem.ref
-		IL_03c3: ldc.i4.0
-		IL_03c4: ldelem.ref
-		IL_03c5: ldnull
-		IL_03c6: ldnull
-		IL_03c7: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::calculate(object, object, object)
-		IL_03cc: pop
-		IL_03cd: br IL_03f6
+		IL_02ca: ldc.i4.3
+		IL_02cb: newarr [System.Runtime]System.Object
+		IL_02d0: dup
+		IL_02d1: ldc.i4.0
+		IL_02d2: ldc.r8 5
+		IL_02db: box [System.Runtime]System.Double
+		IL_02e0: stelem.ref
+		IL_02e1: dup
+		IL_02e2: ldc.i4.1
+		IL_02e3: ldc.r8 8
+		IL_02ec: box [System.Runtime]System.Double
+		IL_02f1: stelem.ref
+		IL_02f2: dup
+		IL_02f3: ldc.i4.2
+		IL_02f4: ldc.r8 20
+		IL_02fd: box [System.Runtime]System.Double
+		IL_0302: stelem.ref
+		IL_0303: stloc.2
+		IL_0304: ldloc.1
+		IL_0305: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
+		IL_030a: dup
+		IL_030b: brfalse IL_0324
 
-		IL_03d2: pop
-		IL_03d3: ldloc.1
-		IL_03d4: ldstr "calculate"
-		IL_03d9: ldc.i4.1
-		IL_03da: newarr [System.Runtime]System.Object
-		IL_03df: dup
-		IL_03e0: ldc.i4.0
-		IL_03e1: ldc.r8 5
-		IL_03ea: box [System.Runtime]System.Double
-		IL_03ef: stelem.ref
-		IL_03f0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_03f5: pop
+		IL_0310: ldloc.2
+		IL_0311: ldc.i4.0
+		IL_0312: ldelem.ref
+		IL_0313: ldloc.2
+		IL_0314: ldc.i4.1
+		IL_0315: ldelem.ref
+		IL_0316: ldloc.2
+		IL_0317: ldc.i4.2
+		IL_0318: ldelem.ref
+		IL_0319: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::calculate(object, object, object)
+		IL_031e: pop
+		IL_031f: br IL_0332
 
-		IL_03f6: ldloc.1
-		IL_03f7: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
-		IL_03fc: dup
-		IL_03fd: brfalse IL_0462
+		IL_0324: pop
+		IL_0325: ldloc.1
+		IL_0326: ldstr "calculate"
+		IL_032b: ldloc.2
+		IL_032c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0331: pop
 
-		IL_0402: ldc.i4.2
-		IL_0403: newarr [System.Runtime]System.Object
-		IL_0408: dup
-		IL_0409: ldc.i4.0
-		IL_040a: ldc.r8 5
-		IL_0413: box [System.Runtime]System.Double
-		IL_0418: stelem.ref
-		IL_0419: dup
-		IL_041a: ldc.i4.1
-		IL_041b: ldc.r8 8
-		IL_0424: box [System.Runtime]System.Double
-		IL_0429: stelem.ref
-		IL_042a: ldc.i4.0
-		IL_042b: ldelem.ref
-		IL_042c: ldc.i4.2
-		IL_042d: newarr [System.Runtime]System.Object
-		IL_0432: dup
-		IL_0433: ldc.i4.0
-		IL_0434: ldc.r8 5
-		IL_043d: box [System.Runtime]System.Double
-		IL_0442: stelem.ref
-		IL_0443: dup
-		IL_0444: ldc.i4.1
-		IL_0445: ldc.r8 8
-		IL_044e: box [System.Runtime]System.Double
-		IL_0453: stelem.ref
-		IL_0454: ldc.i4.1
-		IL_0455: ldelem.ref
-		IL_0456: ldnull
-		IL_0457: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::calculate(object, object, object)
-		IL_045c: pop
-		IL_045d: br IL_0497
-
-		IL_0462: pop
-		IL_0463: ldloc.1
-		IL_0464: ldstr "calculate"
-		IL_0469: ldc.i4.2
-		IL_046a: newarr [System.Runtime]System.Object
-		IL_046f: dup
-		IL_0470: ldc.i4.0
-		IL_0471: ldc.r8 5
-		IL_047a: box [System.Runtime]System.Double
-		IL_047f: stelem.ref
-		IL_0480: dup
-		IL_0481: ldc.i4.1
-		IL_0482: ldc.r8 8
-		IL_048b: box [System.Runtime]System.Double
-		IL_0490: stelem.ref
-		IL_0491: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0496: pop
-
-		IL_0497: ldloc.1
-		IL_0498: isinst Classes.Classes_DefaultParameterValue_Method.Calculator
-		IL_049d: dup
-		IL_049e: brfalse IL_055f
-
-		IL_04a3: ldc.i4.3
-		IL_04a4: newarr [System.Runtime]System.Object
-		IL_04a9: dup
-		IL_04aa: ldc.i4.0
-		IL_04ab: ldc.r8 5
-		IL_04b4: box [System.Runtime]System.Double
-		IL_04b9: stelem.ref
-		IL_04ba: dup
-		IL_04bb: ldc.i4.1
-		IL_04bc: ldc.r8 8
-		IL_04c5: box [System.Runtime]System.Double
-		IL_04ca: stelem.ref
-		IL_04cb: dup
-		IL_04cc: ldc.i4.2
-		IL_04cd: ldc.r8 20
-		IL_04d6: box [System.Runtime]System.Double
-		IL_04db: stelem.ref
-		IL_04dc: ldc.i4.0
-		IL_04dd: ldelem.ref
-		IL_04de: ldc.i4.3
-		IL_04df: newarr [System.Runtime]System.Object
-		IL_04e4: dup
-		IL_04e5: ldc.i4.0
-		IL_04e6: ldc.r8 5
-		IL_04ef: box [System.Runtime]System.Double
-		IL_04f4: stelem.ref
-		IL_04f5: dup
-		IL_04f6: ldc.i4.1
-		IL_04f7: ldc.r8 8
-		IL_0500: box [System.Runtime]System.Double
-		IL_0505: stelem.ref
-		IL_0506: dup
-		IL_0507: ldc.i4.2
-		IL_0508: ldc.r8 20
-		IL_0511: box [System.Runtime]System.Double
-		IL_0516: stelem.ref
-		IL_0517: ldc.i4.1
-		IL_0518: ldelem.ref
-		IL_0519: ldc.i4.3
-		IL_051a: newarr [System.Runtime]System.Object
-		IL_051f: dup
-		IL_0520: ldc.i4.0
-		IL_0521: ldc.r8 5
-		IL_052a: box [System.Runtime]System.Double
-		IL_052f: stelem.ref
-		IL_0530: dup
-		IL_0531: ldc.i4.1
-		IL_0532: ldc.r8 8
-		IL_053b: box [System.Runtime]System.Double
-		IL_0540: stelem.ref
-		IL_0541: dup
-		IL_0542: ldc.i4.2
-		IL_0543: ldc.r8 20
-		IL_054c: box [System.Runtime]System.Double
-		IL_0551: stelem.ref
-		IL_0552: ldc.i4.2
-		IL_0553: ldelem.ref
-		IL_0554: callvirt instance object Classes.Classes_DefaultParameterValue_Method.Calculator::calculate(object, object, object)
-		IL_0559: pop
-		IL_055a: br IL_05a5
-
-		IL_055f: pop
-		IL_0560: ldloc.1
-		IL_0561: ldstr "calculate"
-		IL_0566: ldc.i4.3
-		IL_0567: newarr [System.Runtime]System.Object
-		IL_056c: dup
-		IL_056d: ldc.i4.0
-		IL_056e: ldc.r8 5
-		IL_0577: box [System.Runtime]System.Double
-		IL_057c: stelem.ref
-		IL_057d: dup
-		IL_057e: ldc.i4.1
-		IL_057f: ldc.r8 8
-		IL_0588: box [System.Runtime]System.Double
-		IL_058d: stelem.ref
-		IL_058e: dup
-		IL_058f: ldc.i4.2
-		IL_0590: ldc.r8 20
-		IL_0599: box [System.Runtime]System.Double
-		IL_059e: stelem.ref
-		IL_059f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_05a4: pop
-
-		IL_05a5: ret
+		IL_0332: ret
 	} // end of method Classes_DefaultParameterValue_Method::Main
 
 } // end of class Scripts.Classes_DefaultParameterValue_Method
@@ -886,7 +724,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x27b2
+		// Method begins at RVA 0x253f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -472,11 +472,12 @@
 	{
 		// Method begins at RVA 0x21f4
 		// Header size: 12
-		// Code size: 174 (0xae)
+		// Code size: 176 (0xb0)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.b,
-			[1] object
+			[1] object,
+			[2] object[]
 		)
 
 		IL_0000: newobj instance void Scopes.b::.ctor()
@@ -517,35 +518,37 @@
 		IL_0060: stelem.ref
 		IL_0061: newobj instance void Classes.b.CommonClassName::.ctor(object[])
 		IL_0066: stloc.1
-		IL_0067: ldloc.1
-		IL_0068: isinst Classes.b.CommonClassName
-		IL_006d: dup
-		IL_006e: brfalse IL_007e
+		IL_0067: ldc.i4.0
+		IL_0068: newarr [System.Runtime]System.Object
+		IL_006d: stloc.2
+		IL_006e: ldloc.1
+		IL_006f: isinst Classes.b.CommonClassName
+		IL_0074: dup
+		IL_0075: brfalse IL_0085
 
-		IL_0073: callvirt instance object Classes.b.CommonClassName::Log()
-		IL_0078: pop
-		IL_0079: br IL_0091
+		IL_007a: callvirt instance object Classes.b.CommonClassName::Log()
+		IL_007f: pop
+		IL_0080: br IL_0093
 
-		IL_007e: pop
-		IL_007f: ldloc.1
-		IL_0080: ldstr "Log"
-		IL_0085: ldc.i4.0
-		IL_0086: newarr [System.Runtime]System.Object
-		IL_008b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0090: pop
+		IL_0085: pop
+		IL_0086: ldloc.1
+		IL_0087: ldstr "Log"
+		IL_008c: ldloc.2
+		IL_008d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0092: pop
 
-		IL_0091: ldnull
-		IL_0092: ldftn object Functions.b::commonFunctionName(object[])
-		IL_0098: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
-		IL_009d: ldc.i4.1
-		IL_009e: newarr [System.Runtime]System.Object
-		IL_00a3: dup
-		IL_00a4: ldc.i4.0
-		IL_00a5: ldloc.0
-		IL_00a6: stelem.ref
-		IL_00a7: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
-		IL_00ac: pop
-		IL_00ad: ret
+		IL_0093: ldnull
+		IL_0094: ldftn object Functions.b::commonFunctionName(object[])
+		IL_009a: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_009f: ldc.i4.1
+		IL_00a0: newarr [System.Runtime]System.Object
+		IL_00a5: dup
+		IL_00a6: ldc.i4.0
+		IL_00a7: ldloc.0
+		IL_00a8: stelem.ref
+		IL_00a9: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_00ae: pop
+		IL_00af: ret
 	} // end of method b::Main
 
 } // end of class Scripts.b

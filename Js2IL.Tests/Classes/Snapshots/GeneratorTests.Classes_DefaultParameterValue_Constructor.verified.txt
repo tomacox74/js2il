@@ -488,7 +488,7 @@
 	{
 		// Method begins at RVA 0x2260
 		// Header size: 12
-		// Code size: 563 (0x233)
+		// Code size: 595 (0x253)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Classes_DefaultParameterValue_Constructor,
@@ -499,7 +499,8 @@
 			[5] object,
 			[6] object,
 			[7] object,
-			[8] object
+			[8] object,
+			[9] object[]
 		)
 
 		IL_0000: newobj instance void Scopes.Classes_DefaultParameterValue_Constructor::.ctor()
@@ -508,184 +509,200 @@
 		IL_0007: ldnull
 		IL_0008: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Person::.ctor(object, object)
 		IL_000d: stloc.1
-		IL_000e: ldloc.1
-		IL_000f: isinst Classes.Classes_DefaultParameterValue_Constructor.Person
-		IL_0014: dup
-		IL_0015: brfalse IL_0025
+		IL_000e: ldc.i4.0
+		IL_000f: newarr [System.Runtime]System.Object
+		IL_0014: stloc.s 9
+		IL_0016: ldloc.1
+		IL_0017: isinst Classes.Classes_DefaultParameterValue_Constructor.Person
+		IL_001c: dup
+		IL_001d: brfalse IL_002d
 
-		IL_001a: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Person::display()
-		IL_001f: pop
-		IL_0020: br IL_0038
+		IL_0022: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Person::display()
+		IL_0027: pop
+		IL_0028: br IL_003c
 
-		IL_0025: pop
-		IL_0026: ldloc.1
-		IL_0027: ldstr "display"
-		IL_002c: ldc.i4.0
-		IL_002d: newarr [System.Runtime]System.Object
-		IL_0032: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0037: pop
+		IL_002d: pop
+		IL_002e: ldloc.1
+		IL_002f: ldstr "display"
+		IL_0034: ldloc.s 9
+		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_003b: pop
 
-		IL_0038: ldstr "Alice"
-		IL_003d: ldnull
-		IL_003e: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Person::.ctor(object, object)
-		IL_0043: stloc.2
-		IL_0044: ldloc.2
-		IL_0045: isinst Classes.Classes_DefaultParameterValue_Constructor.Person
-		IL_004a: dup
-		IL_004b: brfalse IL_005b
+		IL_003c: ldstr "Alice"
+		IL_0041: ldnull
+		IL_0042: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Person::.ctor(object, object)
+		IL_0047: stloc.2
+		IL_0048: ldc.i4.0
+		IL_0049: newarr [System.Runtime]System.Object
+		IL_004e: stloc.s 9
+		IL_0050: ldloc.2
+		IL_0051: isinst Classes.Classes_DefaultParameterValue_Constructor.Person
+		IL_0056: dup
+		IL_0057: brfalse IL_0067
 
-		IL_0050: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Person::display()
-		IL_0055: pop
-		IL_0056: br IL_006e
+		IL_005c: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Person::display()
+		IL_0061: pop
+		IL_0062: br IL_0076
 
-		IL_005b: pop
-		IL_005c: ldloc.2
-		IL_005d: ldstr "display"
-		IL_0062: ldc.i4.0
-		IL_0063: newarr [System.Runtime]System.Object
-		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_006d: pop
+		IL_0067: pop
+		IL_0068: ldloc.2
+		IL_0069: ldstr "display"
+		IL_006e: ldloc.s 9
+		IL_0070: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0075: pop
 
-		IL_006e: ldstr "Bob"
-		IL_0073: ldc.r8 25
-		IL_007c: box [System.Runtime]System.Double
-		IL_0081: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Person::.ctor(object, object)
-		IL_0086: stloc.3
-		IL_0087: ldloc.3
-		IL_0088: isinst Classes.Classes_DefaultParameterValue_Constructor.Person
-		IL_008d: dup
-		IL_008e: brfalse IL_009e
+		IL_0076: ldstr "Bob"
+		IL_007b: ldc.r8 25
+		IL_0084: box [System.Runtime]System.Double
+		IL_0089: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Person::.ctor(object, object)
+		IL_008e: stloc.3
+		IL_008f: ldc.i4.0
+		IL_0090: newarr [System.Runtime]System.Object
+		IL_0095: stloc.s 9
+		IL_0097: ldloc.3
+		IL_0098: isinst Classes.Classes_DefaultParameterValue_Constructor.Person
+		IL_009d: dup
+		IL_009e: brfalse IL_00ae
 
-		IL_0093: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Person::display()
-		IL_0098: pop
-		IL_0099: br IL_00b1
+		IL_00a3: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Person::display()
+		IL_00a8: pop
+		IL_00a9: br IL_00bd
 
-		IL_009e: pop
-		IL_009f: ldloc.3
-		IL_00a0: ldstr "display"
-		IL_00a5: ldc.i4.0
-		IL_00a6: newarr [System.Runtime]System.Object
-		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_00b0: pop
+		IL_00ae: pop
+		IL_00af: ldloc.3
+		IL_00b0: ldstr "display"
+		IL_00b5: ldloc.s 9
+		IL_00b7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_00bc: pop
 
-		IL_00b1: ldc.r8 10
-		IL_00ba: box [System.Runtime]System.Double
-		IL_00bf: ldnull
-		IL_00c0: ldnull
-		IL_00c1: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Box::.ctor(object, object, object)
-		IL_00c6: stloc.s 4
-		IL_00c8: ldloc.s 4
-		IL_00ca: isinst Classes.Classes_DefaultParameterValue_Constructor.Box
-		IL_00cf: dup
-		IL_00d0: brfalse IL_00e0
+		IL_00bd: ldc.r8 10
+		IL_00c6: box [System.Runtime]System.Double
+		IL_00cb: ldnull
+		IL_00cc: ldnull
+		IL_00cd: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Box::.ctor(object, object, object)
+		IL_00d2: stloc.s 4
+		IL_00d4: ldc.i4.0
+		IL_00d5: newarr [System.Runtime]System.Object
+		IL_00da: stloc.s 9
+		IL_00dc: ldloc.s 4
+		IL_00de: isinst Classes.Classes_DefaultParameterValue_Constructor.Box
+		IL_00e3: dup
+		IL_00e4: brfalse IL_00f4
 
-		IL_00d5: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Box::volume()
-		IL_00da: pop
-		IL_00db: br IL_00f4
+		IL_00e9: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Box::volume()
+		IL_00ee: pop
+		IL_00ef: br IL_0104
 
-		IL_00e0: pop
-		IL_00e1: ldloc.s 4
-		IL_00e3: ldstr "volume"
-		IL_00e8: ldc.i4.0
-		IL_00e9: newarr [System.Runtime]System.Object
-		IL_00ee: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_00f3: pop
+		IL_00f4: pop
+		IL_00f5: ldloc.s 4
+		IL_00f7: ldstr "volume"
+		IL_00fc: ldloc.s 9
+		IL_00fe: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0103: pop
 
-		IL_00f4: ldc.r8 5
-		IL_00fd: box [System.Runtime]System.Double
-		IL_0102: ldc.r8 10
-		IL_010b: box [System.Runtime]System.Double
-		IL_0110: ldnull
-		IL_0111: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Box::.ctor(object, object, object)
-		IL_0116: stloc.s 5
-		IL_0118: ldloc.s 5
-		IL_011a: isinst Classes.Classes_DefaultParameterValue_Constructor.Box
-		IL_011f: dup
-		IL_0120: brfalse IL_0130
+		IL_0104: ldc.r8 5
+		IL_010d: box [System.Runtime]System.Double
+		IL_0112: ldc.r8 10
+		IL_011b: box [System.Runtime]System.Double
+		IL_0120: ldnull
+		IL_0121: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Box::.ctor(object, object, object)
+		IL_0126: stloc.s 5
+		IL_0128: ldc.i4.0
+		IL_0129: newarr [System.Runtime]System.Object
+		IL_012e: stloc.s 9
+		IL_0130: ldloc.s 5
+		IL_0132: isinst Classes.Classes_DefaultParameterValue_Constructor.Box
+		IL_0137: dup
+		IL_0138: brfalse IL_0148
 
-		IL_0125: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Box::volume()
-		IL_012a: pop
-		IL_012b: br IL_0144
+		IL_013d: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Box::volume()
+		IL_0142: pop
+		IL_0143: br IL_0158
 
-		IL_0130: pop
-		IL_0131: ldloc.s 5
-		IL_0133: ldstr "volume"
-		IL_0138: ldc.i4.0
-		IL_0139: newarr [System.Runtime]System.Object
-		IL_013e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0143: pop
+		IL_0148: pop
+		IL_0149: ldloc.s 5
+		IL_014b: ldstr "volume"
+		IL_0150: ldloc.s 9
+		IL_0152: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0157: pop
 
-		IL_0144: ldc.r8 5
-		IL_014d: box [System.Runtime]System.Double
-		IL_0152: ldc.r8 10
-		IL_015b: box [System.Runtime]System.Double
-		IL_0160: ldc.r8 3
-		IL_0169: box [System.Runtime]System.Double
-		IL_016e: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Box::.ctor(object, object, object)
-		IL_0173: stloc.s 6
-		IL_0175: ldloc.s 6
-		IL_0177: isinst Classes.Classes_DefaultParameterValue_Constructor.Box
-		IL_017c: dup
-		IL_017d: brfalse IL_018d
+		IL_0158: ldc.r8 5
+		IL_0161: box [System.Runtime]System.Double
+		IL_0166: ldc.r8 10
+		IL_016f: box [System.Runtime]System.Double
+		IL_0174: ldc.r8 3
+		IL_017d: box [System.Runtime]System.Double
+		IL_0182: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Box::.ctor(object, object, object)
+		IL_0187: stloc.s 6
+		IL_0189: ldc.i4.0
+		IL_018a: newarr [System.Runtime]System.Object
+		IL_018f: stloc.s 9
+		IL_0191: ldloc.s 6
+		IL_0193: isinst Classes.Classes_DefaultParameterValue_Constructor.Box
+		IL_0198: dup
+		IL_0199: brfalse IL_01a9
 
-		IL_0182: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Box::volume()
-		IL_0187: pop
-		IL_0188: br IL_01a1
+		IL_019e: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Box::volume()
+		IL_01a3: pop
+		IL_01a4: br IL_01b9
 
-		IL_018d: pop
-		IL_018e: ldloc.s 6
-		IL_0190: ldstr "volume"
-		IL_0195: ldc.i4.0
-		IL_0196: newarr [System.Runtime]System.Object
-		IL_019b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_01a0: pop
+		IL_01a9: pop
+		IL_01aa: ldloc.s 6
+		IL_01ac: ldstr "volume"
+		IL_01b1: ldloc.s 9
+		IL_01b3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_01b8: pop
 
-		IL_01a1: ldc.r8 5
-		IL_01aa: box [System.Runtime]System.Double
-		IL_01af: ldnull
-		IL_01b0: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Rectangle::.ctor(object, object)
-		IL_01b5: stloc.s 7
-		IL_01b7: ldloc.s 7
-		IL_01b9: isinst Classes.Classes_DefaultParameterValue_Constructor.Rectangle
-		IL_01be: dup
-		IL_01bf: brfalse IL_01cf
+		IL_01b9: ldc.r8 5
+		IL_01c2: box [System.Runtime]System.Double
+		IL_01c7: ldnull
+		IL_01c8: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Rectangle::.ctor(object, object)
+		IL_01cd: stloc.s 7
+		IL_01cf: ldc.i4.0
+		IL_01d0: newarr [System.Runtime]System.Object
+		IL_01d5: stloc.s 9
+		IL_01d7: ldloc.s 7
+		IL_01d9: isinst Classes.Classes_DefaultParameterValue_Constructor.Rectangle
+		IL_01de: dup
+		IL_01df: brfalse IL_01ef
 
-		IL_01c4: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Rectangle::area()
-		IL_01c9: pop
-		IL_01ca: br IL_01e3
+		IL_01e4: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Rectangle::area()
+		IL_01e9: pop
+		IL_01ea: br IL_01ff
 
-		IL_01cf: pop
-		IL_01d0: ldloc.s 7
-		IL_01d2: ldstr "area"
-		IL_01d7: ldc.i4.0
-		IL_01d8: newarr [System.Runtime]System.Object
-		IL_01dd: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_01e2: pop
+		IL_01ef: pop
+		IL_01f0: ldloc.s 7
+		IL_01f2: ldstr "area"
+		IL_01f7: ldloc.s 9
+		IL_01f9: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_01fe: pop
 
-		IL_01e3: ldc.r8 5
-		IL_01ec: box [System.Runtime]System.Double
-		IL_01f1: ldc.r8 10
-		IL_01fa: box [System.Runtime]System.Double
-		IL_01ff: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Rectangle::.ctor(object, object)
-		IL_0204: stloc.s 8
-		IL_0206: ldloc.s 8
-		IL_0208: isinst Classes.Classes_DefaultParameterValue_Constructor.Rectangle
-		IL_020d: dup
-		IL_020e: brfalse IL_021e
+		IL_01ff: ldc.r8 5
+		IL_0208: box [System.Runtime]System.Double
+		IL_020d: ldc.r8 10
+		IL_0216: box [System.Runtime]System.Double
+		IL_021b: newobj instance void Classes.Classes_DefaultParameterValue_Constructor.Rectangle::.ctor(object, object)
+		IL_0220: stloc.s 8
+		IL_0222: ldc.i4.0
+		IL_0223: newarr [System.Runtime]System.Object
+		IL_0228: stloc.s 9
+		IL_022a: ldloc.s 8
+		IL_022c: isinst Classes.Classes_DefaultParameterValue_Constructor.Rectangle
+		IL_0231: dup
+		IL_0232: brfalse IL_0242
 
-		IL_0213: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Rectangle::area()
-		IL_0218: pop
-		IL_0219: br IL_0232
+		IL_0237: callvirt instance object Classes.Classes_DefaultParameterValue_Constructor.Rectangle::area()
+		IL_023c: pop
+		IL_023d: br IL_0252
 
-		IL_021e: pop
-		IL_021f: ldloc.s 8
-		IL_0221: ldstr "area"
-		IL_0226: ldc.i4.0
-		IL_0227: newarr [System.Runtime]System.Object
-		IL_022c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0231: pop
+		IL_0242: pop
+		IL_0243: ldloc.s 8
+		IL_0245: ldstr "area"
+		IL_024a: ldloc.s 9
+		IL_024c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0251: pop
 
-		IL_0232: ret
+		IL_0252: ret
 	} // end of method Classes_DefaultParameterValue_Constructor::Main
 
 } // end of class Scripts.Classes_DefaultParameterValue_Constructor
@@ -697,7 +714,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x249f
+		// Method begins at RVA 0x24bf
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -166,13 +166,14 @@
 	{
 		// Method begins at RVA 0x20cc
 		// Header size: 12
-		// Code size: 183 (0xb7)
+		// Code size: 193 (0xc1)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Classes_ClassConstructor_TwoParams_SubtractMethod,
 			[1] object,
 			[2] object,
-			[3] object
+			[3] object[],
+			[4] object
 		)
 
 		IL_0000: newobj instance void Scopes.Classes_ClassConstructor_TwoParams_SubtractMethod::.ctor()
@@ -187,59 +188,63 @@
 		IL_002d: box [System.Runtime]System.Double
 		IL_0032: newobj instance void Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber::.ctor(object, object)
 		IL_0037: stloc.2
-		IL_0038: ldloc.1
-		IL_0039: isinst Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber
-		IL_003e: dup
-		IL_003f: brfalse IL_004f
+		IL_0038: ldc.i4.0
+		IL_0039: newarr [System.Runtime]System.Object
+		IL_003e: stloc.3
+		IL_003f: ldloc.1
+		IL_0040: isinst Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber
+		IL_0045: dup
+		IL_0046: brfalse IL_0057
 
-		IL_0044: callvirt instance object Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber::'sub'()
-		IL_0049: stloc.3
-		IL_004a: br IL_0062
+		IL_004b: callvirt instance object Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber::'sub'()
+		IL_0050: stloc.s 4
+		IL_0052: br IL_0066
 
-		IL_004f: pop
-		IL_0050: ldloc.1
-		IL_0051: ldstr "sub"
-		IL_0056: ldc.i4.0
-		IL_0057: newarr [System.Runtime]System.Object
-		IL_005c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0061: stloc.3
+		IL_0057: pop
+		IL_0058: ldloc.1
+		IL_0059: ldstr "sub"
+		IL_005e: ldloc.3
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0064: stloc.s 4
 
-		IL_0062: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0067: ldc.i4.1
-		IL_0068: newarr [System.Runtime]System.Object
-		IL_006d: dup
-		IL_006e: ldc.i4.0
-		IL_006f: ldloc.3
-		IL_0070: stelem.ref
-		IL_0071: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0076: pop
-		IL_0077: ldloc.2
-		IL_0078: isinst Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber
-		IL_007d: dup
-		IL_007e: brfalse IL_008e
+		IL_0066: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_006b: ldc.i4.1
+		IL_006c: newarr [System.Runtime]System.Object
+		IL_0071: dup
+		IL_0072: ldc.i4.0
+		IL_0073: ldloc.s 4
+		IL_0075: stelem.ref
+		IL_0076: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_007b: pop
+		IL_007c: ldc.i4.0
+		IL_007d: newarr [System.Runtime]System.Object
+		IL_0082: stloc.3
+		IL_0083: ldloc.2
+		IL_0084: isinst Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber
+		IL_0089: dup
+		IL_008a: brfalse IL_009b
 
-		IL_0083: callvirt instance object Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber::'sub'()
-		IL_0088: stloc.3
-		IL_0089: br IL_00a1
+		IL_008f: callvirt instance object Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber::'sub'()
+		IL_0094: stloc.s 4
+		IL_0096: br IL_00aa
 
-		IL_008e: pop
-		IL_008f: ldloc.2
-		IL_0090: ldstr "sub"
-		IL_0095: ldc.i4.0
-		IL_0096: newarr [System.Runtime]System.Object
-		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_00a0: stloc.3
+		IL_009b: pop
+		IL_009c: ldloc.2
+		IL_009d: ldstr "sub"
+		IL_00a2: ldloc.3
+		IL_00a3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_00a8: stloc.s 4
 
-		IL_00a1: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00a6: ldc.i4.1
-		IL_00a7: newarr [System.Runtime]System.Object
-		IL_00ac: dup
-		IL_00ad: ldc.i4.0
-		IL_00ae: ldloc.3
-		IL_00af: stelem.ref
-		IL_00b0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00b5: pop
-		IL_00b6: ret
+		IL_00aa: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00af: ldc.i4.1
+		IL_00b0: newarr [System.Runtime]System.Object
+		IL_00b5: dup
+		IL_00b6: ldc.i4.0
+		IL_00b7: ldloc.s 4
+		IL_00b9: stelem.ref
+		IL_00ba: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00bf: pop
+		IL_00c0: ret
 	} // end of method Classes_ClassConstructor_TwoParams_SubtractMethod::Main
 
 } // end of class Scripts.Classes_ClassConstructor_TwoParams_SubtractMethod
@@ -251,7 +256,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x218f
+		// Method begins at RVA 0x2199
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
