@@ -79,6 +79,20 @@ namespace Js2IL.Services.VariableBindings
 
             // Delegate field/type registration to ScopeMetadataRegistry
             _scopeMetadata.RegisterField(scopeName, variableName, fieldHandle);
+            if (!fieldHandle.IsNil)
+            {
+                // Emit typed fields for stable inferred primitives; everything else remains object.
+                // Keep this in sync with TypeGenerator's field signature emission.
+                var declaredFieldType = typeof(object);
+                if (isStableType && clrType != null)
+                {
+                    if (clrType == typeof(double) || clrType == typeof(bool) || clrType == typeof(string))
+                    {
+                        declaredFieldType = clrType;
+                    }
+                }
+                _scopeMetadata.RegisterFieldClrType(scopeName, variableName, declaredFieldType);
+            }
             if (!scopeTypeHandle.IsNil)
             {
                 _scopeMetadata.RegisterScopeType(scopeName, scopeTypeHandle);

@@ -112,10 +112,35 @@ namespace Js2IL.Services
 
                 // Create field signature (all variables are object type for now)
                 var fieldSignature = new BlobBuilder();
-                new BlobEncoder(fieldSignature)
+                var fieldTypeEncoder = new BlobEncoder(fieldSignature)
                     .Field()
-                    .Type()
-                    .Object();
+                    .Type();
+
+                // Conservative first step: emit typed fields for stable inferred primitives.
+                // Everything else remains System.Object for conservative semantics.
+                if (binding.IsStableType)
+                {
+                    if (binding.ClrType == typeof(double))
+                    {
+                        fieldTypeEncoder.Double();
+                    }
+                    else if (binding.ClrType == typeof(bool))
+                    {
+                        fieldTypeEncoder.Boolean();
+                    }
+                    else if (binding.ClrType == typeof(string))
+                    {
+                        fieldTypeEncoder.String();
+                    }
+                    else
+                    {
+                        fieldTypeEncoder.Object();
+                    }
+                }
+                else
+                {
+                    fieldTypeEncoder.Object();
+                }
 
                 var fieldSignatureHandle = _metadataBuilder.GetOrAddBlob(fieldSignature);
 

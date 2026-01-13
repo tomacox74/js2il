@@ -1,0 +1,172 @@
+﻿// IL code: Variable_CapturedConst_BoolStringFieldType
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Variable_CapturedConst_BoolStringFieldType
+	extends [System.Runtime]System.Object
+{
+	// Nested Types
+	.class nested public auto ansi beforefieldinit run
+		extends [System.Runtime]System.Object
+	{
+		// Methods
+		.method public hidebysig specialname rtspecialname 
+			instance void .ctor () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+			IL_0006: nop
+			IL_0007: ret
+		} // end of method run::.ctor
+
+	} // end of class run
+
+
+	// Fields
+	.field public bool FLAG
+	.field public string NAME
+	.field public object run
+
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Variable_CapturedConst_BoolStringFieldType::.ctor
+
+} // end of class Scopes.Variable_CapturedConst_BoolStringFieldType
+
+.class public auto ansi abstract sealed beforefieldinit Functions.Variable_CapturedConst_BoolStringFieldType
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		object run (
+			object[] scopes
+		) cil managed 
+	{
+		// Method begins at RVA 0x2064
+		// Header size: 12
+		// Code size: 45 (0x2d)
+		.maxstack 32
+		.locals init (
+			[0] object,
+			[1] object
+		)
+
+		IL_0000: ldarg.0
+		IL_0001: ldc.i4.0
+		IL_0002: ldelem.ref
+		IL_0003: castclass Scopes.Variable_CapturedConst_BoolStringFieldType
+		IL_0008: ldfld bool Scopes.Variable_CapturedConst_BoolStringFieldType::FLAG
+		IL_000d: brfalse IL_0025
+
+		IL_0012: ldarg.0
+		IL_0013: ldc.i4.0
+		IL_0014: ldelem.ref
+		IL_0015: castclass Scopes.Variable_CapturedConst_BoolStringFieldType
+		IL_001a: ldfld string Scopes.Variable_CapturedConst_BoolStringFieldType::NAME
+		IL_001f: stloc.1
+		IL_0020: br IL_002b
+
+		IL_0025: ldstr "untyped"
+		IL_002a: stloc.1
+
+		IL_002b: ldloc.1
+		IL_002c: ret
+	} // end of method Variable_CapturedConst_BoolStringFieldType::run
+
+} // end of class Functions.Variable_CapturedConst_BoolStringFieldType
+
+.class public auto ansi beforefieldinit Scripts.Variable_CapturedConst_BoolStringFieldType
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x20a0
+		// Header size: 12
+		// Code size: 74 (0x4a)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.Variable_CapturedConst_BoolStringFieldType,
+			[1] object
+		)
+
+		IL_0000: newobj instance void Scopes.Variable_CapturedConst_BoolStringFieldType::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldloc.0
+		IL_0007: ldc.i4.1
+		IL_0008: stfld bool Scopes.Variable_CapturedConst_BoolStringFieldType::FLAG
+		IL_000d: ldloc.0
+		IL_000e: ldstr "typed"
+		IL_0013: stfld string Scopes.Variable_CapturedConst_BoolStringFieldType::NAME
+		IL_0018: ldnull
+		IL_0019: ldftn object Functions.Variable_CapturedConst_BoolStringFieldType::run(object[])
+		IL_001f: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0024: ldc.i4.1
+		IL_0025: newarr [System.Runtime]System.Object
+		IL_002a: dup
+		IL_002b: ldc.i4.0
+		IL_002c: ldloc.0
+		IL_002d: stelem.ref
+		IL_002e: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
+		IL_0033: stloc.1
+		IL_0034: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0039: ldc.i4.1
+		IL_003a: newarr [System.Runtime]System.Object
+		IL_003f: dup
+		IL_0040: ldc.i4.0
+		IL_0041: ldloc.1
+		IL_0042: stelem.ref
+		IL_0043: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0048: pop
+		IL_0049: ret
+	} // end of method Variable_CapturedConst_BoolStringFieldType::Main
+
+} // end of class Scripts.Variable_CapturedConst_BoolStringFieldType
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x20f6
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.Variable_CapturedConst_BoolStringFieldType::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

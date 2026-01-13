@@ -60,7 +60,7 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 161 (0xa1)
+		// Code size: 156 (0x9c)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Array_Spread_Copy,
@@ -99,7 +99,7 @@
 			IL_0062: ldloc.2
 			IL_0063: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
 			IL_0068: clt
-			IL_006a: brfalse IL_00a0
+			IL_006a: brfalse IL_009b
 
 			IL_006f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_0074: ldc.i4.1
@@ -108,19 +108,18 @@
 			IL_007b: ldc.i4.0
 			IL_007c: ldloc.2
 			IL_007d: ldloc.3
-			IL_007e: box [System.Runtime]System.Double
-			IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0088: stelem.ref
-			IL_0089: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_008e: pop
-			IL_008f: ldloc.3
-			IL_0090: ldc.r8 1
-			IL_0099: add
-			IL_009a: stloc.3
-			IL_009b: br IL_0061
+			IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_0083: stelem.ref
+			IL_0084: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0089: pop
+			IL_008a: ldloc.3
+			IL_008b: ldc.r8 1
+			IL_0094: add
+			IL_0095: stloc.3
+			IL_0096: br IL_0061
 		// end loop
 
-		IL_00a0: ret
+		IL_009b: ret
 	} // end of method Array_Spread_Copy::Main
 
 } // end of class Scripts.Array_Spread_Copy
@@ -132,7 +131,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2111
+		// Method begins at RVA 0x210c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -30,6 +30,53 @@ internal sealed class LIRToILCompiler
     private MethodBodyIR? _methodBody;
     private bool _compiled;
 
+    private Type GetDeclaredScopeFieldClrType(string scopeName, string fieldName)
+    {
+        return _scopeMetadataRegistry.TryGetFieldClrType(scopeName, fieldName, out var t)
+            ? t
+            : typeof(object);
+    }
+
+    private void EmitBoxIfNeededForTypedScopeFieldLoad(Type fieldClrType, ValueStorage targetStorage, InstructionEncoder ilEncoder)
+    {
+        if (!fieldClrType.IsValueType)
+            return;
+
+        // If the consumer expects an unboxed value with matching CLR type, do not box.
+        if (targetStorage.Kind == ValueStorageKind.UnboxedValue && targetStorage.ClrType == fieldClrType)
+            return;
+
+        // Otherwise, box the loaded value type so downstream code (which is often object-based) continues to work.
+        if (fieldClrType == typeof(double))
+        {
+            ilEncoder.OpCode(ILOpCode.Box);
+            ilEncoder.Token(_bclReferences.DoubleType);
+        }
+        else if (fieldClrType == typeof(bool))
+        {
+            ilEncoder.OpCode(ILOpCode.Box);
+            ilEncoder.Token(_bclReferences.BooleanType);
+        }
+    }
+
+    private void EmitLoadTempAsDouble(TempVariable value, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
+    {
+        var storage = GetTempStorage(value);
+        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(double))
+        {
+            EmitLoadTemp(value, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        EmitLoadTempAsObject(value, ilEncoder, allocation, methodDescriptor);
+        var toNumberMref = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.TypeUtilities),
+            nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+            parameterTypes: new[] { typeof(object) });
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(toNumberMref);
+    }
+
     private static int GetIlArgIndexForJsParameter(MethodDescriptor methodDescriptor, int jsParameterIndex)
     {
         // Base IL-argument index for JS parameter 0:
@@ -1808,6 +1855,9 @@ internal sealed class LIRToILCompiler
                     ilEncoder.LoadLocal(0); // Scope instance is always in local 0
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(fieldHandle);
+
+                    var fieldClrType = GetDeclaredScopeFieldClrType(loadLeafField.Field.ScopeName, loadLeafField.Field.FieldName);
+                    EmitBoxIfNeededForTypedScopeFieldLoad(fieldClrType, GetTempStorage(loadLeafField.Result), ilEncoder);
                     EmitStoreTemp(loadLeafField.Result, ilEncoder, allocation);
                     break;
                 }
@@ -1819,7 +1869,16 @@ internal sealed class LIRToILCompiler
                         storeLeafField.Field.FieldName,
                         "LIRStoreLeafScopeField instruction");
                     ilEncoder.LoadLocal(0); // Scope instance is always in local 0
-                    EmitLoadTemp(storeLeafField.Value, ilEncoder, allocation, methodDescriptor);
+
+                    var fieldClrType = GetDeclaredScopeFieldClrType(storeLeafField.Field.ScopeName, storeLeafField.Field.FieldName);
+                    if (fieldClrType == typeof(double))
+                    {
+                        EmitLoadTempAsDouble(storeLeafField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTemp(storeLeafField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
                     ilEncoder.OpCode(ILOpCode.Stfld);
                     ilEncoder.Token(fieldHandle);
                     break;
@@ -1848,6 +1907,9 @@ internal sealed class LIRToILCompiler
                     ilEncoder.Token(scopeTypeHandle);
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(fieldHandle);
+
+                    var fieldClrType = GetDeclaredScopeFieldClrType(loadParentField.Field.ScopeName, loadParentField.Field.FieldName);
+                    EmitBoxIfNeededForTypedScopeFieldLoad(fieldClrType, GetTempStorage(loadParentField.Result), ilEncoder);
                     EmitStoreTemp(loadParentField.Result, ilEncoder, allocation);
                     break;
                 }
@@ -1868,7 +1930,16 @@ internal sealed class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Ldelem_ref);
                     ilEncoder.OpCode(ILOpCode.Castclass);
                     ilEncoder.Token(scopeTypeHandle);
-                    EmitLoadTemp(storeParentField.Value, ilEncoder, allocation, methodDescriptor);
+
+                    var fieldClrType = GetDeclaredScopeFieldClrType(storeParentField.Field.ScopeName, storeParentField.Field.FieldName);
+                    if (fieldClrType == typeof(double))
+                    {
+                        EmitLoadTempAsDouble(storeParentField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTemp(storeParentField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
                     ilEncoder.OpCode(ILOpCode.Stfld);
                     ilEncoder.Token(fieldHandle);
                     break;
@@ -2277,6 +2348,9 @@ internal sealed class LIRToILCompiler
                     ilEncoder.LoadLocal(0);
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(fieldHandle);
+
+                    var fieldClrType = GetDeclaredScopeFieldClrType(loadLeafField.Field.ScopeName, loadLeafField.Field.FieldName);
+                    EmitBoxIfNeededForTypedScopeFieldLoad(fieldClrType, GetTempStorage(temp), ilEncoder);
                 }
                 break;
             case LIRLoadParentScopeField loadParentField:
@@ -2296,6 +2370,9 @@ internal sealed class LIRToILCompiler
                     ilEncoder.Token(scopeTypeHandle);
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(fieldHandle);
+
+                    var fieldClrType = GetDeclaredScopeFieldClrType(loadParentField.Field.ScopeName, loadParentField.Field.FieldName);
+                    EmitBoxIfNeededForTypedScopeFieldLoad(fieldClrType, GetTempStorage(temp), ilEncoder);
                 }
                 break;
             case LIRGetIntrinsicGlobal getIntrinsicGlobal:
@@ -2417,16 +2494,32 @@ internal sealed class LIRToILCompiler
                 }
                 break;
             case LIRGetItem getItem:
-                // Emit inline: call JavaScriptRuntime.Object.GetItem(object, object)
-                EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTempAsObject(getItem.Index, ilEncoder, allocation, methodDescriptor);
                 {
-                    var getItemMethod = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.Object),
-                        nameof(JavaScriptRuntime.Object.GetItem),
-                        parameterTypes: new[] { typeof(object), typeof(object) });
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(getItemMethod);
+                    var indexStorage = GetTempStorage(getItem.Index);
+                    if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double))
+                    {
+                        // Emit inline: call JavaScriptRuntime.Object.GetItem(object, double)
+                        EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTemp(getItem.Index, ilEncoder, allocation, methodDescriptor);
+                        var getItemMethod = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Object),
+                            nameof(JavaScriptRuntime.Object.GetItem),
+                            parameterTypes: new[] { typeof(object), typeof(double) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getItemMethod);
+                    }
+                    else
+                    {
+                        // Emit inline: call JavaScriptRuntime.Object.GetItem(object, object)
+                        EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTempAsObject(getItem.Index, ilEncoder, allocation, methodDescriptor);
+                        var getItemMethod = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Object),
+                            nameof(JavaScriptRuntime.Object.GetItem),
+                            parameterTypes: new[] { typeof(object), typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getItemMethod);
+                    }
                 }
                 break;
             case LIRCallIntrinsic callIntrinsic:
