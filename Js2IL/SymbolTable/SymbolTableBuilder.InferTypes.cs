@@ -203,20 +203,30 @@ public partial class SymbolTableBuilder
     {
         // Clear any previous results (builder should be single-use, but keep this deterministic).
         classScope.StableInstanceFieldClrTypes.Clear();
+        classScope.StableInstanceFieldUserClassNames.Clear();
 
-        var proposed = new Dictionary<string, Type>(StringComparer.Ordinal);
+        var proposedClr = new Dictionary<string, Type>(StringComparer.Ordinal);
+        var proposedUserClass = new Dictionary<string, string>(StringComparer.Ordinal);
         var conflicted = new HashSet<string>(StringComparer.Ordinal);
 
         void MarkConflict(string name)
         {
             conflicted.Add(name);
-            proposed.Remove(name);
+            proposedClr.Remove(name);
+            proposedUserClass.Remove(name);
         }
 
-        void Propose(string name, Type? t)
+        void ProposeClr(string name, Type? t)
         {
             if (string.IsNullOrEmpty(name)) return;
             if (conflicted.Contains(name)) return;
+
+            // Mixing user-class and primitive proposals is non-stable.
+            if (proposedUserClass.ContainsKey(name))
+            {
+                MarkConflict(name);
+                return;
+            }
 
             // Any unknown assignment makes the field non-stable.
             if (t == null)
@@ -225,9 +235,9 @@ public partial class SymbolTableBuilder
                 return;
             }
 
-            if (!proposed.TryGetValue(name, out var existing))
+            if (!proposedClr.TryGetValue(name, out var existing))
             {
-                proposed[name] = t;
+                proposedClr[name] = t;
                 return;
             }
 
@@ -235,6 +245,79 @@ public partial class SymbolTableBuilder
             {
                 MarkConflict(name);
             }
+        }
+
+        void ProposeUserClass(string name, string? jsClassName)
+        {
+            if (string.IsNullOrEmpty(name)) return;
+            if (conflicted.Contains(name)) return;
+
+            // Any unknown assignment makes the field non-stable.
+            if (string.IsNullOrEmpty(jsClassName))
+            {
+                MarkConflict(name);
+                return;
+            }
+
+            // Mixing primitive and user-class proposals is non-stable.
+            if (proposedClr.ContainsKey(name))
+            {
+                MarkConflict(name);
+                return;
+            }
+
+            if (!proposedUserClass.TryGetValue(name, out var existing))
+            {
+                proposedUserClass[name] = jsClassName;
+                return;
+            }
+
+            if (!string.Equals(existing, jsClassName, StringComparison.Ordinal))
+            {
+                MarkConflict(name);
+            }
+        }
+
+        string? TryInferNewExpressionUserClassName(Node expr)
+        {
+            if (expr is not NewExpression ne)
+            {
+                return null;
+            }
+
+            if (ne.Callee is not Identifier calleeId)
+            {
+                return null;
+            }
+
+            // Only treat it as a stable user class if we can resolve a class scope with that name.
+            var root = classScope;
+            while (root.Parent != null)
+            {
+                root = root.Parent;
+            }
+
+            static Scope? FindClassScopeRecursive(Scope scope, string className)
+            {
+                foreach (var child in scope.Children)
+                {
+                    if (child.Kind == ScopeKind.Class && string.Equals(child.Name, className, StringComparison.Ordinal))
+                    {
+                        return child;
+                    }
+
+                    var found = FindClassScopeRecursive(child, className);
+                    if (found != null)
+                    {
+                        return found;
+                    }
+                }
+
+                return null;
+            }
+
+            var classScopeMatch = FindClassScopeRecursive(root, calleeId.Name);
+            return classScopeMatch != null ? calleeId.Name : null;
         }
 
         // Include class field initializers: `field = <expr>`.
@@ -259,7 +342,15 @@ public partial class SymbolTableBuilder
 
             if (pdef.Value is Node init)
             {
-                Propose(name, InferExpressionClrType(init));
+                var userClassName = TryInferNewExpressionUserClassName(init);
+                if (userClassName != null)
+                {
+                    ProposeUserClass(name, userClassName);
+                }
+                else
+                {
+                    ProposeClr(name, InferExpressionClrType(init));
+                }
             }
         }
 
@@ -282,7 +373,15 @@ public partial class SymbolTableBuilder
 
                 if (propName != null)
                 {
-                    Propose(propName, InferExpressionClrType(assign.Right));
+                    var userClassName = TryInferNewExpressionUserClassName(assign.Right);
+                    if (userClassName != null)
+                    {
+                        ProposeUserClass(propName, userClassName);
+                    }
+                    else
+                    {
+                        ProposeClr(propName, InferExpressionClrType(assign.Right));
+                    }
                 }
             }
 
@@ -301,7 +400,7 @@ public partial class SymbolTableBuilder
                 if (propName != null)
                 {
                     // Update expressions are numeric.
-                    Propose(propName, typeof(double));
+                    ProposeClr(propName, typeof(double));
                 }
             }
 
@@ -321,9 +420,14 @@ public partial class SymbolTableBuilder
         }
 
         // Persist stable results.
-        foreach (var kvp in proposed)
+        foreach (var kvp in proposedClr)
         {
             classScope.StableInstanceFieldClrTypes[kvp.Key] = kvp.Value;
+        }
+
+        foreach (var kvp in proposedUserClass)
+        {
+            classScope.StableInstanceFieldUserClassNames[kvp.Key] = kvp.Value;
         }
     }
 

@@ -85,6 +85,29 @@ internal sealed class LIRToILCompiler
             : typeof(object);
     }
 
+    private static bool TryGetDeclaredUserClassFieldTypeHandle(
+        Js2IL.Services.ClassRegistry classRegistry,
+        string registryClassName,
+        string fieldName,
+        bool isPrivateField,
+        bool isStaticField,
+        out EntityHandle typeHandle)
+    {
+        typeHandle = default;
+
+        if (isStaticField)
+        {
+            return classRegistry.TryGetStaticFieldTypeHandle(registryClassName, fieldName, out typeHandle);
+        }
+
+        if (isPrivateField)
+        {
+            return classRegistry.TryGetPrivateFieldTypeHandle(registryClassName, fieldName, out typeHandle);
+        }
+
+        return classRegistry.TryGetFieldTypeHandle(registryClassName, fieldName, out typeHandle);
+    }
+
     private void EmitBoxIfNeededForTypedUserClassFieldLoad(Type fieldClrType, ValueStorage targetStorage, InstructionEncoder ilEncoder)
     {
         if (!fieldClrType.IsValueType)
@@ -439,6 +462,43 @@ internal sealed class LIRToILCompiler
             }
         }
 
+        // Precompute known user-class receiver types for temps.
+        // This allows the LIRCallMember fast-path to omit redundant `isinst` checks when the receiver
+        // is already statically known to be of the target user-class type (e.g., loaded from a strongly
+        // typed user-class field).
+        var knownUserClassReceiverTypeHandles = new Dictionary<int, EntityHandle>();
+        var classRegistryForKnownReceivers = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+        if (classRegistryForKnownReceivers != null)
+        {
+            foreach (var instruction in MethodBody.Instructions)
+            {
+                switch (instruction)
+                {
+                    case LIRLoadUserClassInstanceField loadInstanceField:
+                        if (loadInstanceField.Result.Index >= 0
+                            && TryGetDeclaredUserClassFieldTypeHandle(
+                                classRegistryForKnownReceivers,
+                                loadInstanceField.RegistryClassName,
+                                loadInstanceField.FieldName,
+                                loadInstanceField.IsPrivateField,
+                                isStaticField: false,
+                                out var fieldTypeHandle))
+                        {
+                            knownUserClassReceiverTypeHandles[loadInstanceField.Result.Index] = fieldTypeHandle;
+                        }
+                        break;
+
+                    case LIRCopyTemp copyTemp:
+                        if (copyTemp.Destination.Index >= 0
+                            && knownUserClassReceiverTypeHandles.TryGetValue(copyTemp.Source.Index, out var srcHandle))
+                        {
+                            knownUserClassReceiverTypeHandles[copyTemp.Destination.Index] = srcHandle;
+                        }
+                        break;
+                }
+            }
+        }
+
         // The LIRCallMember fast-path may index into the same arguments array multiple times to unpack
         // direct arguments for callvirt. If Stackify inlined the LIRBuildArray, repeatedly loading the
         // temp would re-materialize the array on each element access.
@@ -512,7 +572,7 @@ internal sealed class LIRToILCompiler
                     continue;
             }
 
-            if (!TryCompileInstructionToIL(instruction, ilEncoder, allocation, methodDescriptor, buildArrayElementCounts))
+            if (!TryCompileInstructionToIL(instruction, ilEncoder, allocation, methodDescriptor, buildArrayElementCounts, knownUserClassReceiverTypeHandles))
             {
                 // Failed to compile instruction
                 IRPipelineMetrics.RecordFailureIfUnset($"IL compile failed: unsupported LIR instruction {instruction.GetType().Name}");
@@ -584,7 +644,7 @@ internal sealed class LIRToILCompiler
 
     #region Instruction Emission
 
-    private bool TryCompileInstructionToIL(LIRInstruction instruction, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor, Dictionary<int, int> buildArrayElementCounts)
+    private bool TryCompileInstructionToIL(LIRInstruction instruction, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor, Dictionary<int, int> buildArrayElementCounts, Dictionary<int, EntityHandle> knownUserClassReceiverTypeHandles)
     {
         switch (instruction)
         {
@@ -1330,6 +1390,20 @@ internal sealed class LIRToILCompiler
                     {
                         EmitLoadTempAsObject(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
                     }
+
+                    // If the field is declared as a user class type (not object/string), cast before stfld.
+                    // This keeps IL verification correct since `object` is not assignable to a specific class type.
+                    if (TryGetDeclaredUserClassFieldTypeHandle(
+                        classRegistry,
+                        storeInstanceField.RegistryClassName,
+                        storeInstanceField.FieldName,
+                        storeInstanceField.IsPrivateField,
+                        isStaticField: false,
+                        out var declaredTypeHandle))
+                    {
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(declaredTypeHandle);
+                    }
                     ilEncoder.OpCode(ILOpCode.Stfld);
                     ilEncoder.Token(fieldHandle);
                     break;
@@ -1898,6 +1972,54 @@ internal sealed class LIRToILCompiler
                         && buildArrayElementCounts.TryGetValue(callMember.ArgumentsArray.Index, out var argCount)
                         && classRegistry.TryResolveUniqueInstanceMethod(callMember.MethodName, argCount, out _, out var receiverTypeHandle, out var directMethodHandle, out var maxParamCount))
                     {
+                        // If the receiver is already known to be of the resolved user-class type, we can
+                        // emit the direct call without the `isinst` guard and runtime-dispatch fallback.
+                        // This avoids redundant type-tests in cases like strongly typed fields.
+                        if (callMember.Receiver.Index >= 0
+                            && knownUserClassReceiverTypeHandles.TryGetValue(callMember.Receiver.Index, out var knownReceiverHandle)
+                            && knownReceiverHandle.Equals(receiverTypeHandle))
+                        {
+                            // Load receiver as its known type (avoid forcing object so a typed ldfld can stay typed).
+                            if (IsMaterialized(callMember.Receiver, allocation))
+                            {
+                                EmitLoadTempAsObject(callMember.Receiver, ilEncoder, allocation, methodDescriptor);
+                                ilEncoder.OpCode(ILOpCode.Castclass);
+                                ilEncoder.Token(receiverTypeHandle);
+                            }
+                            else
+                            {
+                                EmitLoadTemp(callMember.Receiver, ilEncoder, allocation, methodDescriptor);
+                            }
+
+                            int directJsParamCount = maxParamCount;
+                            int directArgsToPass = Math.Min(argCount, directJsParamCount);
+                            for (int i = 0; i < directArgsToPass; i++)
+                            {
+                                EmitLoadTemp(callMember.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
+                                ilEncoder.LoadConstantI4(i);
+                                ilEncoder.OpCode(ILOpCode.Ldelem_ref);
+                            }
+
+                            for (int i = directArgsToPass; i < directJsParamCount; i++)
+                            {
+                                ilEncoder.OpCode(ILOpCode.Ldnull);
+                            }
+
+                            ilEncoder.OpCode(ILOpCode.Callvirt);
+                            ilEncoder.Token(directMethodHandle);
+
+                            if (IsMaterialized(callMember.Result, allocation))
+                            {
+                                EmitStoreTemp(callMember.Result, ilEncoder, allocation);
+                            }
+                            else
+                            {
+                                ilEncoder.OpCode(ILOpCode.Pop);
+                            }
+
+                            break;
+                        }
+
                         var fallbackLabel = ilEncoder.DefineLabel();
                         var doneLabel = ilEncoder.DefineLabel();
 

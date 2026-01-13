@@ -28,6 +28,13 @@ public class Scope
     /// Only includes fields where all observed assignments agree on a supported CLR type.
     /// </summary>
     public Dictionary<string, Type> StableInstanceFieldClrTypes { get; } = new(StringComparer.Ordinal);
+
+    /// <summary>
+    /// Stable inferred user-class types for JavaScript class instance fields.
+    /// Value is the JavaScript class name (scope name) for the constructed instance.
+    /// Only includes fields where all observed assignments agree on a single user class type.
+    /// </summary>
+    public Dictionary<string, string> StableInstanceFieldUserClassNames { get; } = new(StringComparer.Ordinal);
     // Names of parameters (for function scopes) so we can avoid generating backing fields for them.
     public HashSet<string> Parameters { get; } = new();
     /// <summary>

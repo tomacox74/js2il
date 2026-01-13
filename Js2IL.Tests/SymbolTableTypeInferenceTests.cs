@@ -281,6 +281,29 @@ public class SymbolTableTypeInferenceTests
         Assert.Equal(typeof(double), t);
     }
 
+    [Fact]
+    public void SymbolTable_InferTypes_ClassInstanceFields_UserClass_NewExpression()
+    {
+        var code = @"
+                class Child {
+                    constructor() { }
+                }
+
+                class Parent {
+                    constructor() {
+                        this.child = new Child();
+                    }
+                }
+            ";
+
+        var symbolTable = BuildSymbolTable(code);
+        var classScope = FindClassScope(symbolTable.Root, "Parent");
+        Assert.NotNull(classScope);
+
+        Assert.True(classScope!.StableInstanceFieldUserClassNames.TryGetValue("child", out var inferred));
+        Assert.Equal("Child", inferred);
+    }
+
     private static Js2IL.SymbolTables.Scope? FindClassScope(Js2IL.SymbolTables.Scope scope, string className)
     {
         if (scope.Kind == ScopeKind.Class && string.Equals(scope.Name, className, StringComparison.Ordinal))

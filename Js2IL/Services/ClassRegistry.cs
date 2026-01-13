@@ -18,6 +18,11 @@ namespace Js2IL.Services
         private readonly Dictionary<string, Dictionary<string, Type>> _classFieldClrTypes = new(StringComparer.Ordinal);
         private readonly Dictionary<string, Dictionary<string, Type>> _classPrivateFieldClrTypes = new(StringComparer.Ordinal);
         private readonly Dictionary<string, Dictionary<string, Type>> _classStaticFieldClrTypes = new(StringComparer.Ordinal);
+
+        // For strongly-typed user-class fields, we need the declared metadata type handle for castclass/stfld correctness.
+        private readonly Dictionary<string, Dictionary<string, EntityHandle>> _classFieldTypeHandles = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, Dictionary<string, EntityHandle>> _classPrivateFieldTypeHandles = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, Dictionary<string, EntityHandle>> _classStaticFieldTypeHandles = new(StringComparer.Ordinal);
         private readonly Dictionary<string, Dictionary<string, MemberReferenceHandle>> _classStaticMethods = new(StringComparer.Ordinal);
         // Cache per-class constructor definition + signature + parameter count so call sites can reuse
         // and validate instead of rebuilding duplicate member references.
@@ -57,6 +62,29 @@ namespace Js2IL.Services
                 _classFieldClrTypes[className] = fields;
             }
             fields[fieldName] = fieldClrType;
+        }
+
+        public void RegisterFieldTypeHandle(string className, string fieldName, EntityHandle typeHandle)
+        {
+            if (string.IsNullOrEmpty(className) || string.IsNullOrEmpty(fieldName) || typeHandle.IsNil) return;
+            if (!_classFieldTypeHandles.TryGetValue(className, out var fields))
+            {
+                fields = new Dictionary<string, EntityHandle>(StringComparer.Ordinal);
+                _classFieldTypeHandles[className] = fields;
+            }
+            fields[fieldName] = typeHandle;
+        }
+
+        public bool TryGetFieldTypeHandle(string className, string fieldName, out EntityHandle typeHandle)
+        {
+            typeHandle = default;
+            if (_classFieldTypeHandles.TryGetValue(className, out var fields) &&
+                fields.TryGetValue(fieldName, out var h))
+            {
+                typeHandle = h;
+                return true;
+            }
+            return false;
         }
 
         public bool TryGetFieldClrType(string className, string fieldName, out Type fieldClrType)
@@ -103,6 +131,29 @@ namespace Js2IL.Services
             fields[fieldName] = fieldClrType;
         }
 
+        public void RegisterPrivateFieldTypeHandle(string className, string fieldName, EntityHandle typeHandle)
+        {
+            if (string.IsNullOrEmpty(className) || string.IsNullOrEmpty(fieldName) || typeHandle.IsNil) return;
+            if (!_classPrivateFieldTypeHandles.TryGetValue(className, out var fields))
+            {
+                fields = new Dictionary<string, EntityHandle>(StringComparer.Ordinal);
+                _classPrivateFieldTypeHandles[className] = fields;
+            }
+            fields[fieldName] = typeHandle;
+        }
+
+        public bool TryGetPrivateFieldTypeHandle(string className, string fieldName, out EntityHandle typeHandle)
+        {
+            typeHandle = default;
+            if (_classPrivateFieldTypeHandles.TryGetValue(className, out var fields) &&
+                fields.TryGetValue(fieldName, out var h))
+            {
+                typeHandle = h;
+                return true;
+            }
+            return false;
+        }
+
         public bool TryGetPrivateFieldClrType(string className, string fieldName, out Type fieldClrType)
         {
             fieldClrType = typeof(object);
@@ -145,6 +196,29 @@ namespace Js2IL.Services
                 _classStaticFieldClrTypes[className] = fields;
             }
             fields[fieldName] = fieldClrType;
+        }
+
+        public void RegisterStaticFieldTypeHandle(string className, string fieldName, EntityHandle typeHandle)
+        {
+            if (string.IsNullOrEmpty(className) || string.IsNullOrEmpty(fieldName) || typeHandle.IsNil) return;
+            if (!_classStaticFieldTypeHandles.TryGetValue(className, out var fields))
+            {
+                fields = new Dictionary<string, EntityHandle>(StringComparer.Ordinal);
+                _classStaticFieldTypeHandles[className] = fields;
+            }
+            fields[fieldName] = typeHandle;
+        }
+
+        public bool TryGetStaticFieldTypeHandle(string className, string fieldName, out EntityHandle typeHandle)
+        {
+            typeHandle = default;
+            if (_classStaticFieldTypeHandles.TryGetValue(className, out var fields) &&
+                fields.TryGetValue(fieldName, out var h))
+            {
+                typeHandle = h;
+                return true;
+            }
+            return false;
         }
 
         public bool TryGetStaticFieldClrType(string className, string fieldName, out Type fieldClrType)
