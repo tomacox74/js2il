@@ -114,7 +114,7 @@
 {
 	// Fields
 	.field assembly object __js2il_ctorReturn
-	.field public object 'value'
+	.field public float64 'value'
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -122,7 +122,7 @@
 	{
 		// Method begins at RVA 0x2080
 		// Header size: 12
-		// Code size: 34 (0x22)
+		// Code size: 39 (0x27)
 		.maxstack 32
 
 		IL_0000: ldarg.0
@@ -130,11 +130,12 @@
 		IL_0006: ldarg.0
 		IL_0007: ldc.r8 100
 		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Classes.Classes_Constructor_ExplicitReturnThis.WithExplicitReturn::'value'
-		IL_001a: ldarg.0
-		IL_001b: ldarg.0
-		IL_001c: stfld object Classes.Classes_Constructor_ExplicitReturnThis.WithExplicitReturn::__js2il_ctorReturn
-		IL_0021: ret
+		IL_0015: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_001a: stfld float64 Classes.Classes_Constructor_ExplicitReturnThis.WithExplicitReturn::'value'
+		IL_001f: ldarg.0
+		IL_0020: ldarg.0
+		IL_0021: stfld object Classes.Classes_Constructor_ExplicitReturnThis.WithExplicitReturn::__js2il_ctorReturn
+		IL_0026: ret
 	} // end of method WithExplicitReturn::.ctor
 
 } // end of class Classes.Classes_Constructor_ExplicitReturnThis.WithExplicitReturn
@@ -143,15 +144,15 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public object 'value'
+	.field public float64 'value'
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x20b0
+		// Method begins at RVA 0x20b4
 		// Header size: 12
-		// Code size: 27 (0x1b)
+		// Code size: 32 (0x20)
 		.maxstack 32
 
 		IL_0000: ldarg.0
@@ -159,8 +160,9 @@
 		IL_0006: ldarg.0
 		IL_0007: ldc.r8 200
 		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Classes.Classes_Constructor_ExplicitReturnThis.WithVoidReturn::'value'
-		IL_001a: ret
+		IL_0015: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_001a: stfld float64 Classes.Classes_Constructor_ExplicitReturnThis.WithVoidReturn::'value'
+		IL_001f: ret
 	} // end of method WithVoidReturn::.ctor
 
 } // end of class Classes.Classes_Constructor_ExplicitReturnThis.WithVoidReturn
@@ -178,7 +180,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20d8
+		// Method begins at RVA 0x20e0
 		// Header size: 12
 		// Code size: 79 (0x4f)
 		.maxstack 32
@@ -229,7 +231,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2133
+		// Method begins at RVA 0x213b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

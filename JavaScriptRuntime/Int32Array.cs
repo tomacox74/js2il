@@ -77,8 +77,8 @@ namespace JavaScriptRuntime
             _buffer[index] = ToInt32(value);
         }
 
-        // Indexer aligns with JS semantics: index is dynamic (object) and values are JS numbers (double boxed).
-        public object this[object index]
+        // Indexer aligns with JS semantics: index/value are numeric (double). Callers handle any needed boxing/conversion.
+        public double this[double index]
         {
             get
             {
@@ -90,7 +90,7 @@ namespace JavaScriptRuntime
             {
                 int i = SafeToInt(index);
                 if ((uint)i >= (uint)_buffer.Length) return; // ignore out-of-bounds sets
-                _buffer[i] = ToInt32(value!);
+                _buffer[i] = ToInt32(value);
             }
         }
 
@@ -197,6 +197,12 @@ namespace JavaScriptRuntime
         private static int SafeToInt(object o)
         {
             if (!TryToNumber(o, out var d)) return 0;
+            if (double.IsNaN(d) || double.IsInfinity(d)) return 0;
+            try { return (int)d; } catch { return 0; }
+        }
+
+        private static int SafeToInt(double d)
+        {
             if (double.IsNaN(d) || double.IsInfinity(d)) return 0;
             try { return (int)d; } catch { return 0; }
         }

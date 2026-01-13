@@ -59,6 +59,79 @@ internal sealed class LIRToILCompiler
         }
     }
 
+    private static Type GetDeclaredUserClassFieldClrType(
+        Js2IL.Services.ClassRegistry classRegistry,
+        string registryClassName,
+        string fieldName,
+        bool isPrivateField,
+        bool isStaticField)
+    {
+        if (isStaticField)
+        {
+            return classRegistry.TryGetStaticFieldClrType(registryClassName, fieldName, out var t)
+                ? t
+                : typeof(object);
+        }
+
+        if (isPrivateField)
+        {
+            return classRegistry.TryGetPrivateFieldClrType(registryClassName, fieldName, out var t)
+                ? t
+                : typeof(object);
+        }
+
+        return classRegistry.TryGetFieldClrType(registryClassName, fieldName, out var t2)
+            ? t2
+            : typeof(object);
+    }
+
+    private static bool TryGetDeclaredUserClassFieldTypeHandle(
+        Js2IL.Services.ClassRegistry classRegistry,
+        string registryClassName,
+        string fieldName,
+        bool isPrivateField,
+        bool isStaticField,
+        out EntityHandle typeHandle)
+    {
+        typeHandle = default;
+
+        if (isStaticField)
+        {
+            return classRegistry.TryGetStaticFieldTypeHandle(registryClassName, fieldName, out typeHandle);
+        }
+
+        if (isPrivateField)
+        {
+            return classRegistry.TryGetPrivateFieldTypeHandle(registryClassName, fieldName, out typeHandle);
+        }
+
+        return classRegistry.TryGetFieldTypeHandle(registryClassName, fieldName, out typeHandle);
+    }
+
+    private void EmitBoxIfNeededForTypedUserClassFieldLoad(Type fieldClrType, ValueStorage targetStorage, InstructionEncoder ilEncoder)
+    {
+        if (!fieldClrType.IsValueType)
+        {
+            return;
+        }
+
+        if (targetStorage.Kind == ValueStorageKind.UnboxedValue && targetStorage.ClrType == fieldClrType)
+        {
+            return;
+        }
+
+        if (fieldClrType == typeof(double))
+        {
+            ilEncoder.OpCode(ILOpCode.Box);
+            ilEncoder.Token(_bclReferences.DoubleType);
+        }
+        else if (fieldClrType == typeof(bool))
+        {
+            ilEncoder.OpCode(ILOpCode.Box);
+            ilEncoder.Token(_bclReferences.BooleanType);
+        }
+    }
+
     private void EmitLoadTempAsDouble(TempVariable value, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
     {
         var storage = GetTempStorage(value);
@@ -75,6 +148,38 @@ internal sealed class LIRToILCompiler
             parameterTypes: new[] { typeof(object) });
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(toNumberMref);
+    }
+
+    private void EmitLoadTempAsBoolean(TempVariable value, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
+    {
+        var storage = GetTempStorage(value);
+        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(bool))
+        {
+            EmitLoadTemp(value, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        EmitLoadTempAsObject(value, ilEncoder, allocation, methodDescriptor);
+        var toBooleanMref = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.TypeUtilities),
+            nameof(JavaScriptRuntime.TypeUtilities.ToBoolean),
+            parameterTypes: new[] { typeof(object) });
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(toBooleanMref);
+    }
+
+    private void EmitLoadTempAsString(TempVariable value, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
+    {
+        var storage = GetTempStorage(value);
+        if (storage.Kind == ValueStorageKind.Reference && storage.ClrType == typeof(string))
+        {
+            EmitLoadTemp(value, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        EmitLoadTempAsObject(value, ilEncoder, allocation, methodDescriptor);
+        ilEncoder.OpCode(ILOpCode.Castclass);
+        ilEncoder.Token(_bclReferences.StringType);
     }
 
     private static int GetIlArgIndexForJsParameter(MethodDescriptor methodDescriptor, int jsParameterIndex)
@@ -357,6 +462,43 @@ internal sealed class LIRToILCompiler
             }
         }
 
+        // Precompute known user-class receiver types for temps.
+        // This allows the LIRCallMember fast-path to omit redundant `isinst` checks when the receiver
+        // is already statically known to be of the target user-class type (e.g., loaded from a strongly
+        // typed user-class field).
+        var knownUserClassReceiverTypeHandles = new Dictionary<int, EntityHandle>();
+        var classRegistryForKnownReceivers = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+        if (classRegistryForKnownReceivers != null)
+        {
+            foreach (var instruction in MethodBody.Instructions)
+            {
+                switch (instruction)
+                {
+                    case LIRLoadUserClassInstanceField loadInstanceField:
+                        if (loadInstanceField.Result.Index >= 0
+                            && TryGetDeclaredUserClassFieldTypeHandle(
+                                classRegistryForKnownReceivers,
+                                loadInstanceField.RegistryClassName,
+                                loadInstanceField.FieldName,
+                                loadInstanceField.IsPrivateField,
+                                isStaticField: false,
+                                out var fieldTypeHandle))
+                        {
+                            knownUserClassReceiverTypeHandles[loadInstanceField.Result.Index] = fieldTypeHandle;
+                        }
+                        break;
+
+                    case LIRCopyTemp copyTemp:
+                        if (copyTemp.Destination.Index >= 0
+                            && knownUserClassReceiverTypeHandles.TryGetValue(copyTemp.Source.Index, out var srcHandle))
+                        {
+                            knownUserClassReceiverTypeHandles[copyTemp.Destination.Index] = srcHandle;
+                        }
+                        break;
+                }
+            }
+        }
+
         // The LIRCallMember fast-path may index into the same arguments array multiple times to unpack
         // direct arguments for callvirt. If Stackify inlined the LIRBuildArray, repeatedly loading the
         // temp would re-materialize the array on each element access.
@@ -400,6 +542,157 @@ internal sealed class LIRToILCompiler
         {
             var instruction = MethodBody.Instructions[i];
 
+            // Peephole optimization: fuse `new C(...); this.<field> = <temp>` into a single sequence
+            // `ldarg.0; newobj C(..); stfld <field>`.
+            // This avoids materializing the freshly-constructed instance into an `object` local and
+            // then immediately `castclass`-ing it back to the declared user-class type for `stfld`.
+            //
+            // Only apply when we can preserve JS semantics without requiring PL5.4a ctor return override handling.
+            if (instruction is LIRNewUserClass newUserClass
+                && i + 1 < MethodBody.Instructions.Count
+                && MethodBody.Instructions[i + 1] is LIRStoreUserClassInstanceField storeInstanceField
+                && storeInstanceField.Value.Equals(newUserClass.Result))
+            {
+                var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+                var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+
+                if (classRegistry != null
+                    && reader != null
+                    && (!classRegistry.TryGetPrivateField(newUserClass.RegistryClassName, "__js2il_ctorReturn", out _))
+                    && reader.TryGetDeclaredToken(newUserClass.ConstructorCallableId, out var token)
+                    && token.Kind == HandleKind.MethodDefinition)
+                {
+                    // Resolve the field handle.
+                    FieldDefinitionHandle fieldHandle;
+                    if (storeInstanceField.IsPrivateField)
+                    {
+                        if (!classRegistry.TryGetPrivateField(storeInstanceField.RegistryClassName, storeInstanceField.FieldName, out fieldHandle))
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if (!classRegistry.TryGetField(storeInstanceField.RegistryClassName, storeInstanceField.FieldName, out fieldHandle))
+                        {
+                            return false;
+                        }
+                    }
+
+                    // Emit: ldarg.0
+                    ilEncoder.LoadArgument(0);
+
+                    // Emit the constructor call inline (leave the constructed instance on stack).
+                    var ctorDef = (MethodDefinitionHandle)token;
+
+                    int argc = newUserClass.Arguments.Count;
+                    if (argc < newUserClass.MinArgCount || argc > newUserClass.MaxArgCount)
+                    {
+                        var expectedMinArgs = newUserClass.MinArgCount;
+                        var expectedMaxArgs = newUserClass.MaxArgCount;
+
+                        if (expectedMinArgs == expectedMaxArgs)
+                        {
+                            ILEmitHelpers.ThrowNotSupported(
+                                $"Constructor for class '{newUserClass.ClassName}' expects {expectedMinArgs} argument(s) but call site has {argc}.");
+                        }
+
+                        ILEmitHelpers.ThrowNotSupported(
+                            $"Constructor for class '{newUserClass.ClassName}' expects {expectedMinArgs}-{expectedMaxArgs} argument(s) but call site has {argc}.");
+                    }
+
+                    if (newUserClass.NeedsScopes)
+                    {
+                        if (newUserClass.ScopesArray is not { } scopesTemp)
+                        {
+                            return false;
+                        }
+                        EmitLoadTemp(scopesTemp, ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    foreach (var arg in newUserClass.Arguments)
+                    {
+                        EmitLoadTemp(arg, ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    int paddingNeeded = newUserClass.MaxArgCount - argc;
+                    for (int p = 0; p < paddingNeeded; p++)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(ctorDef);
+
+                    // If the field is declared as a specific user-class type and it matches the constructed type,
+                    // omit the cast. Otherwise, preserve the cast to keep IL verification correct.
+                    if (TryGetDeclaredUserClassFieldTypeHandle(
+                        classRegistry,
+                        storeInstanceField.RegistryClassName,
+                        storeInstanceField.FieldName,
+                        storeInstanceField.IsPrivateField,
+                        isStaticField: false,
+                        out var declaredFieldTypeHandle)
+                        && classRegistry.TryGet(newUserClass.RegistryClassName, out var constructedTypeHandle)
+                        && !declaredFieldTypeHandle.Equals(constructedTypeHandle))
+                    {
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(declaredFieldTypeHandle);
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Stfld);
+                    ilEncoder.Token(fieldHandle);
+
+                    // Skip the following LIRStoreUserClassInstanceField (we just emitted it).
+                    i++;
+                    continue;
+                }
+            }
+
+            // Peephole optimization: fuse `new <Intrinsic>(...); this.<field> = <temp>` into a single sequence
+            // `ldarg.0; newobj <Intrinsic>(..); stfld <field>`.
+            // This avoids materializing the freshly-constructed intrinsic instance into an `object` local and
+            // then immediately `castclass`-ing it back to the declared intrinsic type for `stfld`.
+            if (instruction is LIRNewIntrinsicObject newIntrinsic
+                && i + 1 < MethodBody.Instructions.Count
+                && MethodBody.Instructions[i + 1] is LIRStoreUserClassInstanceField storeIntrinsicField
+                && storeIntrinsicField.Value.Equals(newIntrinsic.Result))
+            {
+                var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+                if (classRegistry != null)
+                {
+                    // Resolve the field handle.
+                    FieldDefinitionHandle fieldHandle;
+                    if (storeIntrinsicField.IsPrivateField)
+                    {
+                        if (!classRegistry.TryGetPrivateField(storeIntrinsicField.RegistryClassName, storeIntrinsicField.FieldName, out fieldHandle))
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if (!classRegistry.TryGetField(storeIntrinsicField.RegistryClassName, storeIntrinsicField.FieldName, out fieldHandle))
+                        {
+                            return false;
+                        }
+                    }
+
+                    // Emit: ldarg.0
+                    ilEncoder.LoadArgument(0);
+
+                    // Emit the intrinsic constructor call inline (leave the constructed instance on stack).
+                    EmitNewIntrinsicObjectCore(newIntrinsic, ilEncoder, allocation, methodDescriptor);
+
+                    ilEncoder.OpCode(ILOpCode.Stfld);
+                    ilEncoder.Token(fieldHandle);
+
+                    // Skip the following LIRStoreUserClassInstanceField (we just emitted it).
+                    i++;
+                    continue;
+                }
+            }
+
             // Handle control flow instructions directly
             switch (instruction)
             {
@@ -430,7 +723,7 @@ internal sealed class LIRToILCompiler
                     continue;
             }
 
-            if (!TryCompileInstructionToIL(instruction, ilEncoder, allocation, methodDescriptor, buildArrayElementCounts))
+            if (!TryCompileInstructionToIL(instruction, ilEncoder, allocation, methodDescriptor, buildArrayElementCounts, knownUserClassReceiverTypeHandles))
             {
                 // Failed to compile instruction
                 IRPipelineMetrics.RecordFailureIfUnset($"IL compile failed: unsupported LIR instruction {instruction.GetType().Name}");
@@ -502,7 +795,13 @@ internal sealed class LIRToILCompiler
 
     #region Instruction Emission
 
-    private bool TryCompileInstructionToIL(LIRInstruction instruction, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor, Dictionary<int, int> buildArrayElementCounts)
+    private bool TryCompileInstructionToIL(
+        LIRInstruction instruction,
+        InstructionEncoder ilEncoder,
+        TempLocalAllocation allocation,
+        MethodDescriptor methodDescriptor,
+        Dictionary<int, int> buildArrayElementCounts,
+        Dictionary<int, EntityHandle> knownUserClassReceiverTypeHandles)
     {
         switch (instruction)
         {
@@ -1225,7 +1524,54 @@ internal sealed class LIRToILCompiler
                     }
 
                     ilEncoder.LoadArgument(0);
-                    EmitLoadTemp(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
+                    var fieldClrType = GetDeclaredUserClassFieldClrType(
+                        classRegistry,
+                        storeInstanceField.RegistryClassName,
+                        storeInstanceField.FieldName,
+                        storeInstanceField.IsPrivateField,
+                        isStaticField: false);
+
+                    if (fieldClrType == typeof(double))
+                    {
+                        EmitLoadTempAsDouble(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else if (fieldClrType == typeof(bool))
+                    {
+                        EmitLoadTempAsBoolean(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else if (fieldClrType == typeof(string))
+                    {
+                        EmitLoadTempAsString(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    // If the field is declared as a user class type (not object/string), cast before stfld.
+                    // This keeps IL verification correct since `object` is not assignable to a specific class type.
+                    if (TryGetDeclaredUserClassFieldTypeHandle(
+                        classRegistry,
+                        storeInstanceField.RegistryClassName,
+                        storeInstanceField.FieldName,
+                        storeInstanceField.IsPrivateField,
+                        isStaticField: false,
+                        out var declaredTypeHandle))
+                    {
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(declaredTypeHandle);
+                    }
+                    else if (fieldClrType != typeof(object)
+                        && fieldClrType != typeof(string)
+                        && fieldClrType != typeof(double)
+                        && fieldClrType != typeof(bool)
+                        && !fieldClrType.IsValueType)
+                    {
+                        // Typed CLR reference field (e.g., JavaScriptRuntime.Int32Array). If the value is currently
+                        // flowing as object (common in our temps), cast to keep IL verification correct.
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(fieldClrType));
+                    }
                     ilEncoder.OpCode(ILOpCode.Stfld);
                     ilEncoder.Token(fieldHandle);
                     break;
@@ -1311,6 +1657,14 @@ internal sealed class LIRToILCompiler
                     ilEncoder.LoadArgument(0);
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(fieldHandle);
+
+                    var fieldClrType = GetDeclaredUserClassFieldClrType(
+                        classRegistry,
+                        loadInstanceField.RegistryClassName,
+                        loadInstanceField.FieldName,
+                        loadInstanceField.IsPrivateField,
+                        isStaticField: false);
+                    EmitBoxIfNeededForTypedUserClassFieldLoad(fieldClrType, GetTempStorage(loadInstanceField.Result), ilEncoder);
 
                     EmitStoreTemp(loadInstanceField.Result, ilEncoder, allocation);
 
@@ -1470,6 +1824,7 @@ internal sealed class LIRToILCompiler
                     }
 
                     var indexStorage = GetTempStorage(getItem.Index);
+                    var resultStorage = GetTempStorage(getItem.Result);
                     if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double))
                     {
                         // Emit: call JavaScriptRuntime.Object.GetItem(object, double)
@@ -1481,6 +1836,17 @@ internal sealed class LIRToILCompiler
                             parameterTypes: new[] { typeof(object), typeof(double) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getItemMethod);
+
+                        // If the temp is typed as an unboxed double, coerce the object result to a number.
+                        if (resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double))
+                        {
+                            var toNumberMref = _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.TypeUtilities),
+                                nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                                parameterTypes: new[] { typeof(object) });
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(toNumberMref);
+                        }
                     }
                     else
                     {
@@ -1493,15 +1859,117 @@ internal sealed class LIRToILCompiler
                             parameterTypes: new[] { typeof(object), typeof(object) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getItemMethod);
+
+                        // If the temp is typed as an unboxed double, coerce the object result to a number.
+                        if (resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double))
+                        {
+                            var toNumberMref = _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.TypeUtilities),
+                                nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                                parameterTypes: new[] { typeof(object) });
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(toNumberMref);
+                        }
                     }
 
                     EmitStoreTemp(getItem.Result, ilEncoder, allocation);
+                    break;
+                }
+
+            case LIRGetInt32ArrayElement getI32:
+                {
+                    if (!IsMaterialized(getI32.Result, allocation))
+                    {
+                        // Will be emitted inline via EmitLoadTemp when the temp is used.
+                        break;
+                    }
+
+                    // Load receiver as Int32Array (cast only if needed)
+                    var receiverStorage = GetTempStorage(getI32.Receiver);
+                    if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Int32Array))
+                    {
+                        EmitLoadTemp(getI32.Receiver, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(getI32.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Int32Array)));
+                    }
+
+                    // Index must be numeric double
+                    EmitLoadTemp(getI32.Index, ilEncoder, allocation, methodDescriptor);
+
+                    var int32ArrayGetter = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Int32Array),
+                        "get_Item",
+                        parameterTypes: new[] { typeof(double) });
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(int32ArrayGetter);
+
+                    // Store result (box only if the temp expects object)
+                    var resultStorage = GetTempStorage(getI32.Result);
+                    if (!(resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double)))
+                    {
+                        ilEncoder.OpCode(ILOpCode.Box);
+                        ilEncoder.Token(_bclReferences.DoubleType);
+                    }
+
+                    EmitStoreTemp(getI32.Result, ilEncoder, allocation);
+                    break;
+                }
+
+            case LIRSetInt32ArrayElement setI32:
+                {
+                    // Load receiver as Int32Array (cast only if needed)
+                    var receiverStorage = GetTempStorage(setI32.Receiver);
+                    if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Int32Array))
+                    {
+                        EmitLoadTemp(setI32.Receiver, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(setI32.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Int32Array)));
+                    }
+
+                    EmitLoadTemp(setI32.Index, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTemp(setI32.Value, ilEncoder, allocation, methodDescriptor);
+
+                    var int32ArraySetter = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Int32Array),
+                        "set_Item",
+                        parameterTypes: new[] { typeof(double), typeof(double) });
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(int32ArraySetter);
+
+                    // If the assignment expression result is used, return the assigned value.
+                    if (IsMaterialized(setI32.Result, allocation))
+                    {
+                        EmitLoadTemp(setI32.Value, ilEncoder, allocation, methodDescriptor);
+                        var resultStorage = GetTempStorage(setI32.Result);
+                        if (!(resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double)))
+                        {
+                            ilEncoder.OpCode(ILOpCode.Box);
+                            ilEncoder.Token(_bclReferences.DoubleType);
+                        }
+                        EmitStoreTemp(setI32.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        // Ensure stack is balanced if an unmaterialized result was produced.
+                        // (We do not push the value unless needed.)
+                    }
+
                     break;
                 }
             case LIRSetItem setItem:
                 {
                     var indexStorage = GetTempStorage(setItem.Index);
                     var valueStorage = GetTempStorage(setItem.Value);
+
+                    bool isResultMaterialized = IsMaterialized(setItem.Result, allocation);
 
                     if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double) &&
                         valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double))
@@ -1531,7 +1999,7 @@ internal sealed class LIRToILCompiler
                         ilEncoder.Token(setItemMethod);
                     }
 
-                    if (IsMaterialized(setItem.Result, allocation))
+                    if (isResultMaterialized)
                     {
                         EmitStoreTemp(setItem.Result, ilEncoder, allocation);
                     }
@@ -1786,6 +2254,54 @@ internal sealed class LIRToILCompiler
                         && buildArrayElementCounts.TryGetValue(callMember.ArgumentsArray.Index, out var argCount)
                         && classRegistry.TryResolveUniqueInstanceMethod(callMember.MethodName, argCount, out _, out var receiverTypeHandle, out var directMethodHandle, out var maxParamCount))
                     {
+                        // If the receiver is already known to be of the resolved user-class type, we can
+                        // emit the direct call without the `isinst` guard and runtime-dispatch fallback.
+                        // This avoids redundant type-tests in cases like strongly typed fields.
+                        if (callMember.Receiver.Index >= 0
+                            && knownUserClassReceiverTypeHandles.TryGetValue(callMember.Receiver.Index, out var knownReceiverHandle)
+                            && knownReceiverHandle.Equals(receiverTypeHandle))
+                        {
+                            // Load receiver as its known type (avoid forcing object so a typed ldfld can stay typed).
+                            if (IsMaterialized(callMember.Receiver, allocation))
+                            {
+                                EmitLoadTempAsObject(callMember.Receiver, ilEncoder, allocation, methodDescriptor);
+                                ilEncoder.OpCode(ILOpCode.Castclass);
+                                ilEncoder.Token(receiverTypeHandle);
+                            }
+                            else
+                            {
+                                EmitLoadTemp(callMember.Receiver, ilEncoder, allocation, methodDescriptor);
+                            }
+
+                            int directJsParamCount = maxParamCount;
+                            int directArgsToPass = Math.Min(argCount, directJsParamCount);
+                            for (int i = 0; i < directArgsToPass; i++)
+                            {
+                                EmitLoadTemp(callMember.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
+                                ilEncoder.LoadConstantI4(i);
+                                ilEncoder.OpCode(ILOpCode.Ldelem_ref);
+                            }
+
+                            for (int i = directArgsToPass; i < directJsParamCount; i++)
+                            {
+                                ilEncoder.OpCode(ILOpCode.Ldnull);
+                            }
+
+                            ilEncoder.OpCode(ILOpCode.Callvirt);
+                            ilEncoder.Token(directMethodHandle);
+
+                            if (IsMaterialized(callMember.Result, allocation))
+                            {
+                                EmitStoreTemp(callMember.Result, ilEncoder, allocation);
+                            }
+                            else
+                            {
+                                ilEncoder.OpCode(ILOpCode.Pop);
+                            }
+
+                            break;
+                        }
+
                         var fallbackLabel = ilEncoder.DefineLabel();
                         var doneLabel = ilEncoder.DefineLabel();
 
@@ -2645,6 +3161,7 @@ internal sealed class LIRToILCompiler
             case LIRGetItem getItem:
                 {
                     var indexStorage = GetTempStorage(getItem.Index);
+                    var resultStorage = GetTempStorage(getItem.Result);
                     if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double))
                     {
                         // Emit inline: call JavaScriptRuntime.Object.GetItem(object, double)
@@ -2656,6 +3173,17 @@ internal sealed class LIRToILCompiler
                             parameterTypes: new[] { typeof(object), typeof(double) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getItemMethod);
+
+                        // If the temp storage expects an unboxed double, coerce the object result to a number.
+                        if (resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double))
+                        {
+                            var toNumberMref = _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.TypeUtilities),
+                                nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                                parameterTypes: new[] { typeof(object) });
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(toNumberMref);
+                        }
                     }
                     else
                     {
@@ -2668,9 +3196,48 @@ internal sealed class LIRToILCompiler
                             parameterTypes: new[] { typeof(object), typeof(object) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getItemMethod);
+
+                        // If the temp storage expects an unboxed double, coerce the object result to a number.
+                        if (resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double))
+                        {
+                            var toNumberMref = _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.TypeUtilities),
+                                nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                                parameterTypes: new[] { typeof(object) });
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(toNumberMref);
+                        }
                     }
                 }
                 break;
+
+            case LIRGetInt32ArrayElement getI32:
+                {
+                    // Inline: receiver, index, callvirt get_Item(double)
+                    var receiverStorage = GetTempStorage(getI32.Receiver);
+                    if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Int32Array))
+                    {
+                        EmitLoadTemp(getI32.Receiver, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(getI32.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Int32Array)));
+                    }
+
+                    EmitLoadTemp(getI32.Index, ilEncoder, allocation, methodDescriptor);
+
+                    var int32ArrayGetter = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Int32Array),
+                        "get_Item",
+                        parameterTypes: new[] { typeof(double) });
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(int32ArrayGetter);
+
+                    // Leave as double on stack; caller will box if it needs object.
+                    break;
+                }
             case LIRCallIntrinsic callIntrinsic:
                 // Emit inline intrinsic call (e.g., console.log)
                 EmitLoadTemp(callIntrinsic.IntrinsicObject, ilEncoder, allocation, methodDescriptor);
@@ -2920,6 +3487,14 @@ internal sealed class LIRToILCompiler
                     ilEncoder.LoadArgument(0);
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(fieldHandle);
+
+                    var fieldClrType = GetDeclaredUserClassFieldClrType(
+                        classRegistry,
+                        loadInstanceField.RegistryClassName,
+                        loadInstanceField.FieldName,
+                        loadInstanceField.IsPrivateField,
+                        isStaticField: false);
+                    EmitBoxIfNeededForTypedUserClassFieldLoad(fieldClrType, GetTempStorage(temp), ilEncoder);
                     break;
                 }
 

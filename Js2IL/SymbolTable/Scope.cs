@@ -1,4 +1,6 @@
 using Acornima.Ast;
+using System;
+using System.Collections.Generic;
 
 namespace Js2IL.SymbolTables;
 
@@ -19,6 +21,20 @@ public class Scope
     public Scope? Parent { get; }
     public List<Scope> Children { get; } = new();
     public Dictionary<string, BindingInfo> Bindings { get; } = new();
+
+    /// <summary>
+    /// Stable inferred CLR types for JavaScript class instance fields.
+    /// Populated by SymbolTableBuilder inference and consumed by class/code generators.
+    /// Only includes fields where all observed assignments agree on a supported CLR type.
+    /// </summary>
+    public Dictionary<string, Type> StableInstanceFieldClrTypes { get; } = new(StringComparer.Ordinal);
+
+    /// <summary>
+    /// Stable inferred user-class types for JavaScript class instance fields.
+    /// Value is the JavaScript class name (scope name) for the constructed instance.
+    /// Only includes fields where all observed assignments agree on a single user class type.
+    /// </summary>
+    public Dictionary<string, string> StableInstanceFieldUserClassNames { get; } = new(StringComparer.Ordinal);
     // Names of parameters (for function scopes) so we can avoid generating backing fields for them.
     public HashSet<string> Parameters { get; } = new();
     /// <summary>

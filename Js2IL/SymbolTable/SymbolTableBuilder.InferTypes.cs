@@ -1,5 +1,8 @@
 using Acornima.Ast;
 using Acornima;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 namespace Js2IL.SymbolTables;
 
 public partial class SymbolTableBuilder
@@ -10,6 +13,11 @@ public partial class SymbolTableBuilder
     private void InferVariableClrTypes(Scope scope)
     {
         InferVariableClrTypesRecursively(scope);
+    }
+
+    private void InferClassInstanceFieldClrTypes(Scope scope)
+    {
+        InferClassInstanceFieldClrTypesRecursively(scope);
     }
 
     void InferVariableClrTypesForScope(Scope scope)
@@ -175,6 +183,277 @@ public partial class SymbolTableBuilder
         foreach (var childScope in scope.Children)
         {
             InferVariableClrTypesRecursively(childScope);
+        }
+    }
+
+    private void InferClassInstanceFieldClrTypesRecursively(Scope scope)
+    {
+        if (scope.Kind == ScopeKind.Class && scope.AstNode is ClassDeclaration classDecl)
+        {
+            InferClassInstanceFieldClrTypesForClassScope(scope, classDecl);
+        }
+
+        foreach (var childScope in scope.Children)
+        {
+            InferClassInstanceFieldClrTypesRecursively(childScope);
+        }
+    }
+
+    private void InferClassInstanceFieldClrTypesForClassScope(Scope classScope, ClassDeclaration classDecl)
+    {
+        // Clear any previous results (builder should be single-use, but keep this deterministic).
+        classScope.StableInstanceFieldClrTypes.Clear();
+        classScope.StableInstanceFieldUserClassNames.Clear();
+
+        var proposedClr = new Dictionary<string, Type>(StringComparer.Ordinal);
+        var proposedUserClass = new Dictionary<string, string>(StringComparer.Ordinal);
+        var conflicted = new HashSet<string>(StringComparer.Ordinal);
+
+        void MarkConflict(string name)
+        {
+            conflicted.Add(name);
+            proposedClr.Remove(name);
+            proposedUserClass.Remove(name);
+        }
+
+        void ProposeClr(string name, Type? t)
+        {
+            if (string.IsNullOrEmpty(name)) return;
+            if (conflicted.Contains(name)) return;
+
+            // Mixing user-class and primitive proposals is non-stable.
+            if (proposedUserClass.ContainsKey(name))
+            {
+                MarkConflict(name);
+                return;
+            }
+
+            // Any unknown assignment makes the field non-stable.
+            if (t == null)
+            {
+                MarkConflict(name);
+                return;
+            }
+
+            if (!proposedClr.TryGetValue(name, out var existing))
+            {
+                proposedClr[name] = t;
+                return;
+            }
+
+            if (existing != t)
+            {
+                MarkConflict(name);
+            }
+        }
+
+        void ProposeUserClass(string name, string? jsClassName)
+        {
+            if (string.IsNullOrEmpty(name)) return;
+            if (conflicted.Contains(name)) return;
+
+            // Any unknown assignment makes the field non-stable.
+            if (string.IsNullOrEmpty(jsClassName))
+            {
+                MarkConflict(name);
+                return;
+            }
+
+            // Mixing primitive and user-class proposals is non-stable.
+            if (proposedClr.ContainsKey(name))
+            {
+                MarkConflict(name);
+                return;
+            }
+
+            if (!proposedUserClass.TryGetValue(name, out var existing))
+            {
+                proposedUserClass[name] = jsClassName;
+                return;
+            }
+
+            if (!string.Equals(existing, jsClassName, StringComparison.Ordinal))
+            {
+                MarkConflict(name);
+            }
+        }
+
+        string? TryInferNewExpressionUserClassName(Node expr)
+        {
+            if (expr is not NewExpression ne)
+            {
+                return null;
+            }
+
+            if (ne.Callee is not Identifier calleeId)
+            {
+                return null;
+            }
+
+            // Only treat it as a stable user class if we can resolve a class scope with that name.
+            var root = classScope;
+            while (root.Parent != null)
+            {
+                root = root.Parent;
+            }
+
+            static Scope? FindClassScopeRecursive(Scope scope, string className)
+            {
+                foreach (var child in scope.Children)
+                {
+                    if (child.Kind == ScopeKind.Class && string.Equals(child.Name, className, StringComparison.Ordinal))
+                    {
+                        return child;
+                    }
+
+                    var found = FindClassScopeRecursive(child, className);
+                    if (found != null)
+                    {
+                        return found;
+                    }
+                }
+
+                return null;
+            }
+
+            var classScopeMatch = FindClassScopeRecursive(root, calleeId.Name);
+            return classScopeMatch != null ? calleeId.Name : null;
+        }
+
+        Type? TryInferNewExpressionIntrinsicClrType(Node expr)
+        {
+            if (expr is not NewExpression ne)
+            {
+                return null;
+            }
+
+            if (ne.Callee is not Identifier calleeId)
+            {
+                return null;
+            }
+
+            // If the callee name maps to an intrinsic runtime type, infer that CLR type.
+            // This enables strongly-typed class fields for patterns like: this.buf = new Int32Array(n)
+            // (and similar intrinsic constructors).
+            return JavaScriptRuntime.IntrinsicObjectRegistry.Get(calleeId.Name);
+        }
+
+        // Include class field initializers: `field = <expr>`.
+        foreach (var pdef in classDecl.Body.Body.Where(n => n is PropertyDefinition).Cast<PropertyDefinition>())
+        {
+            if (pdef.Static)
+            {
+                continue;
+            }
+
+            string? name = pdef.Key switch
+            {
+                Identifier id => id.Name,
+                PrivateIdentifier pid => pid.Name,
+                _ => null
+            };
+
+            if (name == null)
+            {
+                continue;
+            }
+
+            if (pdef.Value is Node init)
+            {
+                var userClassName = TryInferNewExpressionUserClassName(init);
+                if (userClassName != null)
+                {
+                    ProposeUserClass(name, userClassName);
+                }
+                else
+                {
+                    var intrinsicClr = TryInferNewExpressionIntrinsicClrType(init);
+                    ProposeClr(name, intrinsicClr ?? InferExpressionClrType(init));
+                }
+            }
+        }
+
+        void Walk(Node? node)
+        {
+            if (node == null) return;
+
+            // Assignment: this.x = <expr>
+            if (node is AssignmentExpression assign
+                && assign.Left is MemberExpression me
+                && me.Object is ThisExpression
+                && !me.Computed)
+            {
+                var propName = me.Property switch
+                {
+                    Identifier id => id.Name,
+                    PrivateIdentifier pid => pid.Name,
+                    _ => null
+                };
+
+                if (propName != null)
+                {
+                    var userClassName = TryInferNewExpressionUserClassName(assign.Right);
+                    if (userClassName != null)
+                    {
+                        ProposeUserClass(propName, userClassName);
+                    }
+                    else
+                    {
+                        var intrinsicClr = TryInferNewExpressionIntrinsicClrType(assign.Right);
+                        ProposeClr(propName, intrinsicClr ?? InferExpressionClrType(assign.Right));
+                    }
+                }
+            }
+
+            // Update: this.x++ / this.x--
+            if (node is UpdateExpression update
+                && update.Argument is MemberExpression ume
+                && ume.Object is ThisExpression
+                && !ume.Computed)
+            {
+                var propName = ume.Property switch
+                {
+                    Identifier id => id.Name,
+                    PrivateIdentifier pid => pid.Name,
+                    _ => null
+                };
+                if (propName != null)
+                {
+                    // Update expressions are numeric.
+                    ProposeClr(propName, typeof(double));
+                }
+            }
+
+            foreach (var child in node.ChildNodes)
+            {
+                Walk(child);
+            }
+        }
+
+        // Walk all method bodies and collect assignments.
+        foreach (var method in classDecl.Body.Body.Where(n => n is MethodDefinition).Cast<MethodDefinition>())
+        {
+            if (method.Value is FunctionExpression fe)
+            {
+                Walk(fe.Body);
+            }
+            else if (method.Value is not null)
+            {
+                // Normal class methods (including getters/setters) are typically FunctionExpression,
+                // but walk any other representation to avoid missing assignments.
+                Walk(method.Value);
+            }
+        }
+
+        // Persist stable results.
+        foreach (var kvp in proposedClr)
+        {
+            classScope.StableInstanceFieldClrTypes[kvp.Key] = kvp.Value;
+        }
+
+        foreach (var kvp in proposedUserClass)
+        {
+            classScope.StableInstanceFieldUserClassNames[kvp.Key] = kvp.Value;
         }
     }
 

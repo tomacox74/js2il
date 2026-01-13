@@ -65,6 +65,41 @@ public sealed class HIRToLIRLowerer
         InitializeParameters(parameters);
     }
 
+    private Type? TryGetStableThisFieldClrType(string fieldName)
+    {
+        // Find the nearest enclosing class scope.
+        var current = _scope;
+        while (current != null && current.Kind != ScopeKind.Class)
+        {
+            current = current.Parent;
+        }
+
+        if (current == null)
+        {
+            return null;
+        }
+
+        return current.StableInstanceFieldClrTypes.TryGetValue(fieldName, out var t) ? t : null;
+    }
+
+    private static ValueStorage GetPreferredFieldReadStorage(Type? fieldClrType)
+    {
+        if (fieldClrType == typeof(double))
+        {
+            return new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+        }
+        if (fieldClrType == typeof(bool))
+        {
+            return new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool));
+        }
+        if (fieldClrType == typeof(string))
+        {
+            return new ValueStorage(ValueStorageKind.Reference, typeof(string));
+        }
+
+        return new ValueStorage(ValueStorageKind.Reference, typeof(object));
+    }
+
     private void InitializeParameters(IReadOnlyList<HIRPattern> parameters)
     {
         // Build ordered parameter names from HIR. (No AST peeking in lowering.)
@@ -669,7 +704,14 @@ public sealed class HIRToLIRLowerer
                     {
                         return false;
                     }
-                    valueTemp = EnsureObject(valueTemp);
+
+                    // Only force object boxing when the declared field type is unknown/object.
+                    // For stable typed fields (double/bool/string), keep the value in its preferred form.
+                    var stableFieldType = TryGetStableThisFieldClrType(storeInstanceField.FieldName);
+                    if (stableFieldType == null || stableFieldType == typeof(object))
+                    {
+                        valueTemp = EnsureObject(valueTemp);
+                    }
                     lirInstructions.Add(new LIRStoreUserClassInstanceField(
                         storeInstanceField.RegistryClassName,
                         storeInstanceField.FieldName,
@@ -1832,7 +1874,8 @@ public sealed class HIRToLIRLowerer
                     loadUserField.FieldName,
                     loadUserField.IsPrivateField,
                     resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                var stableFieldType = TryGetStableThisFieldClrType(loadUserField.FieldName);
+                DefineTempStorage(resultTempVar, GetPreferredFieldReadStorage(stableFieldType));
                 return true;
 
             case HIRIndexAccessExpression indexAccessExpr:
@@ -4920,7 +4963,14 @@ public sealed class HIRToLIRLowerer
                 FieldName: propAccessExpr.PropertyName,
                 IsPrivateField: false,
                 Result: resultTempVar));
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            var fieldClrType = typeof(object);
+            _classRegistry.TryGetFieldClrType(currentClass, propAccessExpr.PropertyName, out fieldClrType);
+            var storageKind = (fieldClrType == typeof(double)
+                || fieldClrType == typeof(bool)
+                || fieldClrType == typeof(JavaScriptRuntime.JsNull))
+                ? ValueStorageKind.UnboxedValue
+                : ValueStorageKind.Reference;
+            DefineTempStorage(resultTempVar, new ValueStorage(storageKind, fieldClrType));
             return true;
         }
 
@@ -5084,7 +5134,14 @@ public sealed class HIRToLIRLowerer
                 FieldName: literalFieldName,
                 IsPrivateField: false,
                 Result: resultTempVar));
-            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            var fieldClrType = typeof(object);
+            _classRegistry.TryGetFieldClrType(currentClass, literalFieldName, out fieldClrType);
+            var storageKind = (fieldClrType == typeof(double)
+                || fieldClrType == typeof(bool)
+                || fieldClrType == typeof(JavaScriptRuntime.JsNull))
+                ? ValueStorageKind.UnboxedValue
+                : ValueStorageKind.Reference;
+            DefineTempStorage(resultTempVar, new ValueStorage(storageKind, fieldClrType));
             return true;
         }
 
@@ -5112,7 +5169,23 @@ public sealed class HIRToLIRLowerer
             indexForGet = EnsureObject(indexTemp);
         }
         _methodBodyIR.Instructions.Add(new LIRGetItem(boxedObject, indexForGet, resultTempVar));
-        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        // If the receiver is statically known to be an Int32Array and the index is numeric,
+        // lower the result as an unboxed double. This allows IL emission to use the typed
+        // `Int32Array.get_Item(double)` fast-path without boxing, and only box later if
+        // `EnsureObject` is required by usage.
+        var receiverStorage = GetTempStorage(boxedObject);
+        if (receiverStorage.Kind == ValueStorageKind.Reference
+            && receiverStorage.ClrType == typeof(JavaScriptRuntime.Int32Array)
+            && indexStorage.Kind == ValueStorageKind.UnboxedValue
+            && indexStorage.ClrType == typeof(double))
+        {
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+        }
+        else
+        {
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        }
 
         return true;
     }

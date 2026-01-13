@@ -153,7 +153,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public object 'value'
+	.field public float64 'value'
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -161,7 +161,7 @@
 	{
 		// Method begins at RVA 0x20b0
 		// Header size: 12
-		// Code size: 27 (0x1b)
+		// Code size: 32 (0x20)
 		.maxstack 32
 
 		IL_0000: ldarg.0
@@ -169,33 +169,39 @@
 		IL_0006: ldarg.0
 		IL_0007: ldc.r8 0.0
 		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
-		IL_001a: ret
+		IL_0015: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_001a: stfld float64 Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
+		IL_001f: ret
 	} // end of method Counter::.ctor
 
 	.method public hidebysig 
 		instance object getNext () cil managed 
 	{
-		// Method begins at RVA 0x2190
+		// Method begins at RVA 0x2170
 		// Header size: 12
-		// Code size: 40 (0x28)
+		// Code size: 48 (0x30)
 		.maxstack 32
 		.locals init (
-			[0] object
+			[0] float64,
+			[1] object
 		)
 
 		IL_0000: ldarg.0
-		IL_0001: ldfld object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
+		IL_0001: ldfld float64 Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
 		IL_0006: ldc.r8 1
-		IL_000f: box [System.Runtime]System.Double
-		IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0019: stloc.0
-		IL_001a: ldarg.0
-		IL_001b: ldloc.0
-		IL_001c: stfld object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
-		IL_0021: ldarg.0
-		IL_0022: ldfld object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
-		IL_0027: ret
+		IL_000f: add
+		IL_0010: stloc.0
+		IL_0011: ldloc.0
+		IL_0012: box [System.Runtime]System.Double
+		IL_0017: stloc.1
+		IL_0018: ldarg.0
+		IL_0019: ldloc.1
+		IL_001a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_001f: stfld float64 Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
+		IL_0024: ldarg.0
+		IL_0025: ldfld float64 Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
+		IL_002a: box [System.Runtime]System.Double
+		IL_002f: ret
 	} // end of method Counter::getNext
 
 } // end of class Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter
@@ -204,7 +210,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public object counter
+	.field public class Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter counter
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -212,7 +218,7 @@
 	{
 		// Method begins at RVA 0x2090
 		// Header size: 12
-		// Code size: 20 (0x14)
+		// Code size: 18 (0x12)
 		.maxstack 32
 		.locals init (
 			[0] object
@@ -220,20 +226,18 @@
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
-		IL_0006: newobj instance void Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::.ctor()
-		IL_000b: stloc.0
-		IL_000c: ldarg.0
-		IL_000d: ldloc.0
-		IL_000e: stfld object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Calculator::counter
-		IL_0013: ret
+		IL_0006: ldarg.0
+		IL_0007: newobj instance void Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::.ctor()
+		IL_000c: stfld class Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Calculator::counter
+		IL_0011: ret
 	} // end of method Calculator::.ctor
 
 	.method public hidebysig 
 		instance object compute () cil managed 
 	{
-		// Method begins at RVA 0x20d8
+		// Method begins at RVA 0x20dc
 		// Header size: 12
-		// Code size: 170 (0xaa)
+		// Code size: 135 (0x87)
 		.maxstack 32
 		.locals init (
 			[0] float64,
@@ -249,67 +253,53 @@
 		IL_000b: newarr [System.Runtime]System.Object
 		IL_0010: stloc.2
 		IL_0011: ldarg.0
-		IL_0012: ldfld object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Calculator::counter
-		IL_0017: isinst Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter
-		IL_001c: dup
-		IL_001d: brfalse IL_002d
-
-		IL_0022: callvirt instance object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::getNext()
-		IL_0027: stloc.3
-		IL_0028: br IL_0040
-
-		IL_002d: pop
-		IL_002e: ldarg.0
-		IL_002f: ldfld object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Calculator::counter
-		IL_0034: ldstr "getNext"
-		IL_0039: ldloc.2
-		IL_003a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_003f: stloc.3
-
-		IL_0040: ldloc.3
-		IL_0041: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0046: stloc.0
-		IL_0047: ldloc.0
-		IL_0048: box [System.Runtime]System.Double
-		IL_004d: stloc.s 4
-		IL_004f: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0054: ldc.i4.2
-		IL_0055: newarr [System.Runtime]System.Object
-		IL_005a: dup
-		IL_005b: ldc.i4.0
-		IL_005c: ldstr "factor after getNext:"
-		IL_0061: stelem.ref
-		IL_0062: dup
-		IL_0063: ldc.i4.1
-		IL_0064: ldloc.s 4
-		IL_0066: stelem.ref
-		IL_0067: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_006c: pop
-		IL_006d: ldloc.0
-		IL_006e: ldc.r8 2
-		IL_0077: mul
-		IL_0078: stloc.1
-		IL_0079: ldloc.1
-		IL_007a: box [System.Runtime]System.Double
-		IL_007f: stloc.s 4
-		IL_0081: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0086: ldc.i4.2
-		IL_0087: newarr [System.Runtime]System.Object
-		IL_008c: dup
-		IL_008d: ldc.i4.0
-		IL_008e: ldstr "result:"
-		IL_0093: stelem.ref
-		IL_0094: dup
-		IL_0095: ldc.i4.1
-		IL_0096: ldloc.s 4
-		IL_0098: stelem.ref
-		IL_0099: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_009e: pop
-		IL_009f: ldloc.1
-		IL_00a0: box [System.Runtime]System.Double
-		IL_00a5: stloc.s 4
-		IL_00a7: ldloc.s 4
-		IL_00a9: ret
+		IL_0012: ldfld class Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Calculator::counter
+		IL_0017: callvirt instance object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::getNext()
+		IL_001c: stloc.3
+		IL_001d: ldloc.3
+		IL_001e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0023: stloc.0
+		IL_0024: ldloc.0
+		IL_0025: box [System.Runtime]System.Double
+		IL_002a: stloc.s 4
+		IL_002c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0031: ldc.i4.2
+		IL_0032: newarr [System.Runtime]System.Object
+		IL_0037: dup
+		IL_0038: ldc.i4.0
+		IL_0039: ldstr "factor after getNext:"
+		IL_003e: stelem.ref
+		IL_003f: dup
+		IL_0040: ldc.i4.1
+		IL_0041: ldloc.s 4
+		IL_0043: stelem.ref
+		IL_0044: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0049: pop
+		IL_004a: ldloc.0
+		IL_004b: ldc.r8 2
+		IL_0054: mul
+		IL_0055: stloc.1
+		IL_0056: ldloc.1
+		IL_0057: box [System.Runtime]System.Double
+		IL_005c: stloc.s 4
+		IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0063: ldc.i4.2
+		IL_0064: newarr [System.Runtime]System.Object
+		IL_0069: dup
+		IL_006a: ldc.i4.0
+		IL_006b: ldstr "result:"
+		IL_0070: stelem.ref
+		IL_0071: dup
+		IL_0072: ldc.i4.1
+		IL_0073: ldloc.s 4
+		IL_0075: stelem.ref
+		IL_0076: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_007b: pop
+		IL_007c: ldloc.1
+		IL_007d: box [System.Runtime]System.Double
+		IL_0082: stloc.s 4
+		IL_0084: ldloc.s 4
+		IL_0086: ret
 	} // end of method Calculator::compute
 
 } // end of class Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Calculator
@@ -327,7 +317,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x21c4
+		// Method begins at RVA 0x21ac
 		// Header size: 12
 		// Code size: 86 (0x56)
 		.maxstack 32
@@ -386,7 +376,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2226
+		// Method begins at RVA 0x220e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

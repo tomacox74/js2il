@@ -140,8 +140,8 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public object sieveSizeInBits
-	.field public object bitArray
+	.field public float64 sieveSizeInBits
+	.field public class Classes.Classes_PrimeCtor_BitArrayAdd.BitArray bitArray
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -151,13 +151,12 @@
 	{
 		// Method begins at RVA 0x2080
 		// Header size: 12
-		// Code size: 82 (0x52)
+		// Code size: 83 (0x53)
 		.maxstack 32
 		.locals init (
 			[0] float64,
 			[1] object,
-			[2] object,
-			[3] object
+			[2] object
 		)
 
 		IL_0000: ldarg.0
@@ -176,20 +175,21 @@
 		IL_0021: stloc.1
 		IL_0022: ldarg.0
 		IL_0023: ldloc.1
-		IL_0024: stfld object Classes.Classes_PrimeCtor_BitArrayAdd.PrimeSieve::sieveSizeInBits
-		IL_0029: ldc.r8 1
-		IL_0032: box [System.Runtime]System.Double
+		IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0029: stfld float64 Classes.Classes_PrimeCtor_BitArrayAdd.PrimeSieve::sieveSizeInBits
+		IL_002e: ldc.r8 1
 		IL_0037: ldarg.0
-		IL_0038: ldfld object Classes.Classes_PrimeCtor_BitArrayAdd.PrimeSieve::sieveSizeInBits
-		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0042: stloc.2
-		IL_0043: ldloc.2
-		IL_0044: newobj instance void Classes.Classes_PrimeCtor_BitArrayAdd.BitArray::.ctor(object)
-		IL_0049: stloc.3
-		IL_004a: ldarg.0
-		IL_004b: ldloc.3
-		IL_004c: stfld object Classes.Classes_PrimeCtor_BitArrayAdd.PrimeSieve::bitArray
-		IL_0051: ret
+		IL_0038: ldfld float64 Classes.Classes_PrimeCtor_BitArrayAdd.PrimeSieve::sieveSizeInBits
+		IL_003d: add
+		IL_003e: stloc.0
+		IL_003f: ldloc.0
+		IL_0040: box [System.Runtime]System.Double
+		IL_0045: stloc.1
+		IL_0046: ldarg.0
+		IL_0047: ldloc.1
+		IL_0048: newobj instance void Classes.Classes_PrimeCtor_BitArrayAdd.BitArray::.ctor(object)
+		IL_004d: stfld class Classes.Classes_PrimeCtor_BitArrayAdd.BitArray Classes.Classes_PrimeCtor_BitArrayAdd.PrimeSieve::bitArray
+		IL_0052: ret
 	} // end of method PrimeSieve::.ctor
 
 } // end of class Classes.Classes_PrimeCtor_BitArrayAdd.PrimeSieve
