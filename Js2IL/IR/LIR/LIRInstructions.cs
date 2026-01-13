@@ -64,6 +64,13 @@ public record LIRCallInstanceMethod(
 public record LIRCallIntrinsicStatic(string IntrinsicName, string MethodName, IReadOnlyList<TempVariable> Arguments, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Calls a static method on an intrinsic object where the return value is intentionally ignored.
+/// This is used to represent statement-level calls (e.g., throw helpers) without creating an
+/// artificial/unused result temp.
+/// </summary>
+public record LIRCallIntrinsicStaticVoid(string IntrinsicName, string MethodName, IReadOnlyList<TempVariable> Arguments) : LIRInstruction;
+
+/// <summary>
 /// Loads the current receiver ('this') for instance callables (class methods/constructors).
 /// Emitted as IL 'ldarg.0'.
 /// </summary>
@@ -185,6 +192,13 @@ public record LIRNegateNumber(TempVariable Value, TempVariable Result) : LIRInst
 public record LIRBitwiseNotNumber(TempVariable Value, TempVariable Result) : LIRInstruction;
 
 public record LIRLogicalNot(TempVariable Value, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Checks whether <see cref="Value"/> is an instance of <see cref="TargetType"/>.
+/// Emits IL: <c>isinst</c> and stores the result (boxed instance or null).
+/// Useful for fast-path checks without a runtime helper call.
+/// </summary>
+public record LIRIsInstanceOf(Type TargetType, TempVariable Value, TempVariable Result) : LIRInstruction;
 
 // Control flow instructions
 /// <summary>

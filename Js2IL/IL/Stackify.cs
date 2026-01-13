@@ -319,6 +319,10 @@ internal static class Stackify
             case LIRNegateNumber:
                 return true;
 
+            // Type checks - side-effect free IL 'isinst'
+            case LIRIsInstanceOf isInstanceOf:
+                return IsInlineableOperand(isInstanceOf.Value);
+
             // LIRConvertToNumber can be emitted inline if its source can be emitted inline
             // AND the source is not backed by a variable slot that could be modified.
             // This mirrors the postfix increment safety rule used for LIRConvertToObject.
@@ -408,6 +412,10 @@ internal static class Stackify
 
             // LIRCallIntrinsicStatic calls a static method on an intrinsic type (e.g., Array.isArray).
             case LIRCallIntrinsicStatic:
+                return false;
+
+            // Statement-level intrinsic static calls must never be inlined/re-emitted.
+            case LIRCallIntrinsicStaticVoid:
                 return false;
 
             // LIRCallFunction calls a user-defined function.
@@ -591,6 +599,7 @@ internal static class Stackify
             // Unary ops: consume 1, produce 1
             case LIRConvertToObject:
             case LIRConvertToNumber:
+            case LIRIsInstanceOf:
             case LIRTypeof:
             case LIRNegateNumber:
             case LIRBitwiseNotNumber:
@@ -609,6 +618,10 @@ internal static class Stackify
             // Intrinsic static call: consumes N args, produces 1 result
             case LIRCallIntrinsicStatic callStatic:
                 return (callStatic.Arguments.Count, 1);
+
+            // Statement-level intrinsic static call: consumes N args, produces 0
+            case LIRCallIntrinsicStaticVoid callStaticVoid:
+                return (callStaticVoid.Arguments.Count, 0);
 
             // Declared callable direct call: consumes N args, produces 1 result
             case LIRCallDeclaredCallable callDeclared:

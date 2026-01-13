@@ -246,6 +246,13 @@ internal static class TempLocalAllocator
                     yield return arg;
                 }
                 break;
+
+            case LIRCallIntrinsicStaticVoid callStaticVoid:
+                foreach (var arg in callStaticVoid.Arguments)
+                {
+                    yield return arg;
+                }
+                break;
             case LIRConvertToObject conv:
                 yield return conv.Source;
                 break;
@@ -269,6 +276,10 @@ internal static class TempLocalAllocator
                 break;
             case LIRLogicalNot logicalNot:
                 yield return logicalNot.Value;
+                break;
+
+            case LIRIsInstanceOf isInstanceOf:
+                yield return isInstanceOf.Value;
                 break;
             case LIRCompareNumberLessThan cmp:
                 yield return cmp.Left;
@@ -549,6 +560,10 @@ internal static class TempLocalAllocator
             case LIRCallIntrinsicStatic callStatic:
                 defined = callStatic.Result;
                 return true;
+
+            case LIRCallIntrinsicStaticVoid:
+                defined = default;
+                return false;
             case LIRConvertToObject conv:
                 defined = conv.Result;
                 return true;
@@ -560,6 +575,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRConvertToString convString:
                 defined = convString.Result;
+                return true;
+            case LIRIsInstanceOf isInstanceOf:
+                defined = isInstanceOf.Result;
                 return true;
             case LIRTypeof t:
                 defined = t.Result;

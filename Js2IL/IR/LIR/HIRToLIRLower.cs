@@ -150,7 +150,7 @@ public sealed class HIRToLIRLowerer
             _methodBodyIR.Instructions.Add(new LIRLoadParameter(i, paramTemp));
             DefineTempStorage(paramTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
-            if (!TryLowerDestructuringPattern(p, paramTemp, isDeclaration: true))
+            if (!TryLowerDestructuringPattern(p, paramTemp, isDeclaration: true, sourceNameForError: null))
             {
                 return false;
             }
@@ -763,7 +763,8 @@ public sealed class HIRToLIRLowerer
                     // Destructuring operates on JS values (boxed as object).
                     sourceTemp = EnsureObject(sourceTemp);
 
-                    if (!TryLowerDestructuringPattern(destructDecl.Pattern, sourceTemp, isDeclaration: true))
+                    var sourceNameForError = TryGetSimpleSourceNameForDestructuring(destructDecl.Initializer);
+                    if (!TryLowerDestructuringPattern(destructDecl.Pattern, sourceTemp, isDeclaration: true, sourceNameForError))
                     {
                         IRPipelineMetrics.RecordFailureIfUnset("HIR->LIR: failed lowering destructuring variable declaration");
                         return false;
@@ -3605,16 +3606,80 @@ public sealed class HIRToLIRLowerer
         return true;
     }
 
-    private void EmitDestructuringNullGuard(TempVariable sourceObject)
+    private void EmitDestructuringNullGuard(TempVariable sourceObject, string? sourceVariableName, string? targetVariableName)
     {
-        // If source is null (undefined), throw TypeError. JsNull is non-null and is allowed.
-        var notNullLabel = CreateLabel();
-        _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(sourceObject, notNullLabel));
-        _methodBodyIR.Instructions.Add(new LIRThrowNewTypeError("Cannot destructure null or undefined"));
-        _methodBodyIR.Instructions.Add(new LIRLabel(notNullLabel));
+        // Inline the fast-path check to avoid a runtime helper call in the normal case.
+        // Equivalent to:
+        //   if (sourceValue is not null && sourceValue is not JsNull) return;
+        //   ThrowDestructuringNullOrUndefined(...)
+
+        var throwLabel = CreateLabel();
+        var okLabel = CreateLabel();
+
+        // Ensure we branch on an object reference (IL brfalse/brtrue work on object refs, not doubles).
+        sourceObject = EnsureObject(sourceObject);
+
+        // If sourceObject is null (undefined) => jump to throw.
+        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(sourceObject, throwLabel));
+
+        // If sourceObject is boxed JsNull (null), fall through to throw; otherwise jump to ok.
+        var isJsNullTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRIsInstanceOf(typeof(JavaScriptRuntime.JsNull), sourceObject, isJsNullTemp));
+        DefineTempStorage(isJsNullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(isJsNullTemp, okLabel));
+
+        // Shared throw block so we only emit one helper callsite.
+        _methodBodyIR.Instructions.Add(new LIRLabel(throwLabel));
+        EmitDestructuringNullOrUndefinedThrow(sourceObject, sourceVariableName, targetVariableName);
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(okLabel));
     }
 
-    private bool TryLowerDestructuringPattern(HIRPattern pattern, TempVariable sourceValue, bool isDeclaration)
+    private void EmitDestructuringNullOrUndefinedThrow(TempVariable sourceObject, string? sourceVariableName, string? targetVariableName)
+    {
+        // Centralized throw helper so messages/types can match Node/V8 and be localized in the future.
+        var sourceNameTemp = EmitConstString(sourceVariableName ?? string.Empty);
+        var targetNameTemp = EmitConstString(targetVariableName ?? string.Empty);
+
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
+            IntrinsicName: "Object",
+            MethodName: nameof(JavaScriptRuntime.Object.ThrowDestructuringNullOrUndefined),
+            Arguments: new[] { EnsureObject(sourceObject), EnsureObject(sourceNameTemp), EnsureObject(targetNameTemp) }));
+    }
+
+    private static string? TryGetSimpleSourceNameForDestructuring(HIRExpression source)
+    {
+        // Best-effort source name extraction:
+        // - Handles only direct variable references, e.g. `const { a } = obj;` -> "obj".
+        // - More complex sources such as member access (`obj.prop`) or calls (`getObj()`)
+        //   intentionally return null here; the caller falls back to a generic/empty
+        //   source name in the resulting error message.
+        return source is HIRVariableExpression v ? v.Name.Name : null;
+    }
+
+    private static string GetFirstTargetNameForDestructuring(HIRObjectPattern obj)
+    {
+        if (obj.Properties.Count > 0)
+        {
+            return obj.Properties[0].Key;
+        }
+        return "<unknown>";
+    }
+
+    private static string GetFirstTargetNameForDestructuring(HIRArrayPattern arr)
+    {
+        for (int i = 0; i < arr.Elements.Count; i++)
+        {
+            if (arr.Elements[i] != null)
+            {
+                return i.ToString();
+            }
+        }
+        // Even elided/rest-only patterns still require a coercible source.
+        return "0";
+    }
+
+    private bool TryLowerDestructuringPattern(HIRPattern pattern, TempVariable sourceValue, bool isDeclaration, string? sourceNameForError)
     {
         sourceValue = EnsureObject(sourceValue);
 
@@ -3660,16 +3725,16 @@ public sealed class HIRToLIRLowerer
                     _methodBodyIR.Instructions.Add(new LIRCopyTemp(sourceValue, selected));
                     _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
 
-                    return TryLowerDestructuringPattern(def.Target, selected, isDeclaration);
+                    return TryLowerDestructuringPattern(def.Target, selected, isDeclaration, sourceNameForError);
                 }
 
             case HIRRestPattern rest:
                 // Rest patterns are materialized by the containing object/array pattern.
-                return TryLowerDestructuringPattern(rest.Target, sourceValue, isDeclaration);
+                return TryLowerDestructuringPattern(rest.Target, sourceValue, isDeclaration, sourceNameForError);
 
             case HIRObjectPattern obj:
                 {
-                    EmitDestructuringNullGuard(sourceValue);
+                    EmitDestructuringNullGuard(sourceValue, sourceNameForError, GetFirstTargetNameForDestructuring(obj));
 
                     // Collect excluded keys for object rest.
                     var excludedKeyTemps = new List<TempVariable>(obj.Properties.Count);
@@ -3682,7 +3747,7 @@ public sealed class HIRToLIRLowerer
                         _methodBodyIR.Instructions.Add(new LIRGetItem(sourceValue, EnsureObject(keyTemp), getResult));
                         DefineTempStorage(getResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
-                        if (!TryLowerDestructuringPattern(prop.Value, getResult, isDeclaration))
+                        if (!TryLowerDestructuringPattern(prop.Value, getResult, isDeclaration, prop.Key))
                         {
                             return false;
                         }
@@ -3702,7 +3767,7 @@ public sealed class HIRToLIRLowerer
                             Result: restObj));
                         DefineTempStorage(restObj, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
-                        if (!TryLowerDestructuringPattern(obj.Rest.Target, restObj, isDeclaration))
+                        if (!TryLowerDestructuringPattern(obj.Rest.Target, restObj, isDeclaration, "rest"))
                         {
                             return false;
                         }
@@ -3713,7 +3778,7 @@ public sealed class HIRToLIRLowerer
 
             case HIRArrayPattern arr:
                 {
-                    EmitDestructuringNullGuard(sourceValue);
+                    EmitDestructuringNullGuard(sourceValue, sourceNameForError, GetFirstTargetNameForDestructuring(arr));
 
                     for (int i = 0; i < arr.Elements.Count; i++)
                     {
@@ -3728,7 +3793,7 @@ public sealed class HIRToLIRLowerer
                         _methodBodyIR.Instructions.Add(new LIRGetItem(sourceValue, indexTemp, getResult));
                         DefineTempStorage(getResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
 
-                        if (!TryLowerDestructuringPattern(elementPattern, getResult, isDeclaration))
+                        if (!TryLowerDestructuringPattern(elementPattern, getResult, isDeclaration, i.ToString()))
                         {
                             return false;
                         }
@@ -3740,7 +3805,7 @@ public sealed class HIRToLIRLowerer
                         {
                             return false;
                         }
-                        if (!TryLowerDestructuringPattern(arr.Rest.Target, restArray, isDeclaration))
+                        if (!TryLowerDestructuringPattern(arr.Rest.Target, restArray, isDeclaration, "rest"))
                         {
                             return false;
                         }
@@ -4055,7 +4120,8 @@ public sealed class HIRToLIRLowerer
 
         rhsTemp = EnsureObject(rhsTemp);
 
-        if (!TryLowerDestructuringPattern(assignExpr.Pattern, rhsTemp, isDeclaration: false))
+        var sourceNameForError = TryGetSimpleSourceNameForDestructuring(assignExpr.Value);
+        if (!TryLowerDestructuringPattern(assignExpr.Pattern, rhsTemp, isDeclaration: false, sourceNameForError))
         {
             return false;
         }
