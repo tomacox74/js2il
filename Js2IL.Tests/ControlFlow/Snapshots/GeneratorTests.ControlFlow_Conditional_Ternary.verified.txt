@@ -38,16 +38,14 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 168 (0xa8)
+		// Code size: 124 (0x7c)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ControlFlow_Conditional_Ternary,
 			[1] float64,
 			[2] float64,
 			[3] object,
-			[4] object,
-			[5] bool,
-			[6] object
+			[4] object
 		)
 
 		IL_0000: newobj instance void Scopes.ControlFlow_Conditional_Ternary::.ctor()
@@ -59,62 +57,46 @@
 		IL_001a: ldloc.1
 		IL_001b: ldloc.2
 		IL_001c: clt
-		IL_001e: stloc.s 5
-		IL_0020: ldloc.s 5
-		IL_0022: box [System.Runtime]System.Boolean
-		IL_0027: stloc.s 6
-		IL_0029: ldloc.s 6
-		IL_002b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_0030: stloc.s 5
-		IL_0032: ldloc.s 5
-		IL_0034: brfalse IL_0044
+		IL_001e: brfalse IL_002e
 
-		IL_0039: ldstr "lte"
-		IL_003e: stloc.3
-		IL_003f: br IL_004a
+		IL_0023: ldstr "lte"
+		IL_0028: stloc.3
+		IL_0029: br IL_0034
 
-		IL_0044: ldstr "gt"
-		IL_0049: stloc.3
+		IL_002e: ldstr "gt"
+		IL_0033: stloc.3
 
-		IL_004a: ldloc.1
-		IL_004b: ldloc.2
-		IL_004c: cgt
-		IL_004e: stloc.s 5
-		IL_0050: ldloc.s 5
-		IL_0052: box [System.Runtime]System.Boolean
-		IL_0057: stloc.s 6
-		IL_0059: ldloc.s 6
-		IL_005b: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_0060: stloc.s 5
-		IL_0062: ldloc.s 5
-		IL_0064: brfalse IL_0075
+		IL_0034: ldloc.1
+		IL_0035: ldloc.2
+		IL_0036: cgt
+		IL_0038: brfalse IL_0049
 
-		IL_0069: ldstr "gt"
-		IL_006e: stloc.s 4
-		IL_0070: br IL_007c
+		IL_003d: ldstr "gt"
+		IL_0042: stloc.s 4
+		IL_0044: br IL_0050
 
-		IL_0075: ldstr "lte"
-		IL_007a: stloc.s 4
+		IL_0049: ldstr "lte"
+		IL_004e: stloc.s 4
 
-		IL_007c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0081: ldc.i4.1
-		IL_0082: newarr [System.Runtime]System.Object
-		IL_0087: dup
-		IL_0088: ldc.i4.0
-		IL_0089: ldloc.3
-		IL_008a: stelem.ref
-		IL_008b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0090: pop
-		IL_0091: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0096: ldc.i4.1
-		IL_0097: newarr [System.Runtime]System.Object
-		IL_009c: dup
-		IL_009d: ldc.i4.0
-		IL_009e: ldloc.s 4
-		IL_00a0: stelem.ref
-		IL_00a1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00a6: pop
-		IL_00a7: ret
+		IL_0050: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0055: ldc.i4.1
+		IL_0056: newarr [System.Runtime]System.Object
+		IL_005b: dup
+		IL_005c: ldc.i4.0
+		IL_005d: ldloc.3
+		IL_005e: stelem.ref
+		IL_005f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0064: pop
+		IL_0065: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_006a: ldc.i4.1
+		IL_006b: newarr [System.Runtime]System.Object
+		IL_0070: dup
+		IL_0071: ldc.i4.0
+		IL_0072: ldloc.s 4
+		IL_0074: stelem.ref
+		IL_0075: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_007a: pop
+		IL_007b: ret
 	} // end of method ControlFlow_Conditional_Ternary::Main
 
 } // end of class Scripts.ControlFlow_Conditional_Ternary
@@ -126,7 +108,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2110
+		// Method begins at RVA 0x20e4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
