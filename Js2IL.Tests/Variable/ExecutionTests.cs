@@ -27,5 +27,6 @@ namespace Js2IL.Tests.Variable
         [Fact] public Task Variable_ObjectDestructuring_Rest() { var testName = nameof(Variable_ObjectDestructuring_Rest); return ExecutionTest(testName); }
         [Fact] public Task Variable_AssignmentTargets_MemberAndIndex() { var testName = nameof(Variable_AssignmentTargets_MemberAndIndex); return ExecutionTest(testName); }
         [Fact] public Task Variable_DestructuringAssignment_Basic() { var testName = nameof(Variable_DestructuringAssignment_Basic); return ExecutionTest(testName); }
+        [Fact] public Task Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage() { var testName = nameof(Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage); return ExecutionTest(testName); }
     }
 }

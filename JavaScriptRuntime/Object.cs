@@ -487,6 +487,29 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// Throws a Node/V8-compatible TypeError for destructuring when the source value is null or undefined.
+        /// This is centralized to allow future localization of error messages.
+        /// </summary>
+        public static void ThrowDestructuringNullOrUndefined(object? sourceValue, string? sourceVariableName, string? targetVariableName)
+        {
+            // In this runtime:
+            // - JS undefined is represented as CLR null
+            // - JS null is represented as JavaScriptRuntime.JsNull
+            if (sourceValue is not null && sourceValue is not JsNull)
+            {
+                return;
+            }
+
+            string kind = sourceValue is null ? "undefined" : "null";
+            string sourceName = string.IsNullOrWhiteSpace(sourceVariableName) ? kind : sourceVariableName!;
+            string targetName = string.IsNullOrWhiteSpace(targetVariableName) ? "<unknown>" : targetVariableName!;
+
+            // Node/V8 style:
+            // TypeError: Cannot destructure property 'a' of 'x' as it is undefined
+            throw new JavaScriptRuntime.TypeError($"Cannot destructure property '{targetName}' of '{sourceName}' as it is {kind}");
+        }
+
+        /// <summary>
         /// Normalizes an iterable for use by for..of desugaring.
         /// Returns a value compatible with GetLength/GetItem (string, Array, Int32Array).
         /// - string stays string (GetItem returns 1-length strings)

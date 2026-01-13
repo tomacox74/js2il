@@ -38,7 +38,7 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 181 (0xb5)
+		// Code size: 180 (0xb4)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Variable_ArrayDestructuring_Basic,
@@ -65,47 +65,44 @@
 		IL_0043: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_0048: stloc.1
 		IL_0049: ldloc.1
-		IL_004a: brtrue IL_005a
-
-		IL_004f: ldstr "Cannot destructure null or undefined"
-		IL_0054: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_0059: throw
-
-		IL_005a: ldloc.1
-		IL_005b: ldc.r8 0.0
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-		IL_0069: stloc.2
-		IL_006a: ldloc.1
-		IL_006b: ldc.r8 1
-		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-		IL_0079: stloc.3
-		IL_007a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_007f: ldc.i4.2
-		IL_0080: newarr [System.Runtime]System.Object
-		IL_0085: dup
-		IL_0086: ldc.i4.0
-		IL_0087: ldstr "a="
-		IL_008c: stelem.ref
-		IL_008d: dup
-		IL_008e: ldc.i4.1
-		IL_008f: ldloc.2
-		IL_0090: stelem.ref
-		IL_0091: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0096: pop
-		IL_0097: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_009c: ldc.i4.2
-		IL_009d: newarr [System.Runtime]System.Object
-		IL_00a2: dup
-		IL_00a3: ldc.i4.0
-		IL_00a4: ldstr "b="
-		IL_00a9: stelem.ref
-		IL_00aa: dup
-		IL_00ab: ldc.i4.1
-		IL_00ac: ldloc.3
-		IL_00ad: stelem.ref
-		IL_00ae: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00b3: pop
-		IL_00b4: ret
+		IL_004a: ldstr "arr"
+		IL_004f: ldstr "0"
+		IL_0054: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+		IL_0059: ldloc.1
+		IL_005a: ldc.r8 0.0
+		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+		IL_0068: stloc.2
+		IL_0069: ldloc.1
+		IL_006a: ldc.r8 1
+		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+		IL_0078: stloc.3
+		IL_0079: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_007e: ldc.i4.2
+		IL_007f: newarr [System.Runtime]System.Object
+		IL_0084: dup
+		IL_0085: ldc.i4.0
+		IL_0086: ldstr "a="
+		IL_008b: stelem.ref
+		IL_008c: dup
+		IL_008d: ldc.i4.1
+		IL_008e: ldloc.2
+		IL_008f: stelem.ref
+		IL_0090: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0095: pop
+		IL_0096: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_009b: ldc.i4.2
+		IL_009c: newarr [System.Runtime]System.Object
+		IL_00a1: dup
+		IL_00a2: ldc.i4.0
+		IL_00a3: ldstr "b="
+		IL_00a8: stelem.ref
+		IL_00a9: dup
+		IL_00aa: ldc.i4.1
+		IL_00ab: ldloc.3
+		IL_00ac: stelem.ref
+		IL_00ad: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00b2: pop
+		IL_00b3: ret
 	} // end of method Variable_ArrayDestructuring_Basic::Main
 
 } // end of class Scripts.Variable_ArrayDestructuring_Basic
@@ -117,7 +114,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x211d
+		// Method begins at RVA 0x211c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

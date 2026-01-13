@@ -38,7 +38,7 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 245 (0xf5)
+		// Code size: 244 (0xf4)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Variable_ObjectDestructuring_Rest,
@@ -67,69 +67,66 @@
 		IL_0051: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
 		IL_0056: stloc.1
 		IL_0057: ldloc.1
-		IL_0058: brtrue IL_0068
-
-		IL_005d: ldstr "Cannot destructure null or undefined"
-		IL_0062: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_0067: throw
-
-		IL_0068: ldloc.1
-		IL_0069: ldstr "a"
-		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0073: stloc.2
-		IL_0074: ldloc.1
-		IL_0075: ldc.i4.1
-		IL_0076: newarr [System.Runtime]System.Object
-		IL_007b: dup
-		IL_007c: ldc.i4.0
-		IL_007d: ldstr "a"
-		IL_0082: stelem.ref
-		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Object::Rest(object, object[])
-		IL_0088: stloc.3
-		IL_0089: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_008e: ldc.i4.2
-		IL_008f: newarr [System.Runtime]System.Object
-		IL_0094: dup
-		IL_0095: ldc.i4.0
-		IL_0096: ldstr "a="
-		IL_009b: stelem.ref
-		IL_009c: dup
-		IL_009d: ldc.i4.1
-		IL_009e: ldloc.2
-		IL_009f: stelem.ref
-		IL_00a0: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00a5: pop
-		IL_00a6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00ab: ldc.i4.2
-		IL_00ac: newarr [System.Runtime]System.Object
-		IL_00b1: dup
-		IL_00b2: ldc.i4.0
-		IL_00b3: ldstr "rest.b="
-		IL_00b8: stelem.ref
-		IL_00b9: dup
-		IL_00ba: ldc.i4.1
-		IL_00bb: ldloc.3
-		IL_00bc: ldstr "b"
-		IL_00c1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_00c6: stelem.ref
-		IL_00c7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00cc: pop
-		IL_00cd: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00d2: ldc.i4.2
-		IL_00d3: newarr [System.Runtime]System.Object
-		IL_00d8: dup
-		IL_00d9: ldc.i4.0
-		IL_00da: ldstr "rest.c="
-		IL_00df: stelem.ref
-		IL_00e0: dup
-		IL_00e1: ldc.i4.1
-		IL_00e2: ldloc.3
-		IL_00e3: ldstr "c"
-		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_00ed: stelem.ref
-		IL_00ee: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00f3: pop
-		IL_00f4: ret
+		IL_0058: ldstr "obj"
+		IL_005d: ldstr "a"
+		IL_0062: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+		IL_0067: ldloc.1
+		IL_0068: ldstr "a"
+		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0072: stloc.2
+		IL_0073: ldloc.1
+		IL_0074: ldc.i4.1
+		IL_0075: newarr [System.Runtime]System.Object
+		IL_007a: dup
+		IL_007b: ldc.i4.0
+		IL_007c: ldstr "a"
+		IL_0081: stelem.ref
+		IL_0082: call object [JavaScriptRuntime]JavaScriptRuntime.Object::Rest(object, object[])
+		IL_0087: stloc.3
+		IL_0088: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_008d: ldc.i4.2
+		IL_008e: newarr [System.Runtime]System.Object
+		IL_0093: dup
+		IL_0094: ldc.i4.0
+		IL_0095: ldstr "a="
+		IL_009a: stelem.ref
+		IL_009b: dup
+		IL_009c: ldc.i4.1
+		IL_009d: ldloc.2
+		IL_009e: stelem.ref
+		IL_009f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00a4: pop
+		IL_00a5: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00aa: ldc.i4.2
+		IL_00ab: newarr [System.Runtime]System.Object
+		IL_00b0: dup
+		IL_00b1: ldc.i4.0
+		IL_00b2: ldstr "rest.b="
+		IL_00b7: stelem.ref
+		IL_00b8: dup
+		IL_00b9: ldc.i4.1
+		IL_00ba: ldloc.3
+		IL_00bb: ldstr "b"
+		IL_00c0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00c5: stelem.ref
+		IL_00c6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00cb: pop
+		IL_00cc: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00d1: ldc.i4.2
+		IL_00d2: newarr [System.Runtime]System.Object
+		IL_00d7: dup
+		IL_00d8: ldc.i4.0
+		IL_00d9: ldstr "rest.c="
+		IL_00de: stelem.ref
+		IL_00df: dup
+		IL_00e0: ldc.i4.1
+		IL_00e1: ldloc.3
+		IL_00e2: ldstr "c"
+		IL_00e7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_00ec: stelem.ref
+		IL_00ed: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00f2: pop
+		IL_00f3: ret
 	} // end of method Variable_ObjectDestructuring_Rest::Main
 
 } // end of class Scripts.Variable_ObjectDestructuring_Rest
@@ -141,7 +138,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x215d
+		// Method begins at RVA 0x215c
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
