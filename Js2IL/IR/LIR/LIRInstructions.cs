@@ -186,6 +186,13 @@ public record LIRBitwiseNotNumber(TempVariable Value, TempVariable Result) : LIR
 
 public record LIRLogicalNot(TempVariable Value, TempVariable Result) : LIRInstruction;
 
+/// <summary>
+/// Checks whether <see cref="Value"/> is an instance of <see cref="TargetType"/>.
+/// Emits IL: <c>isinst</c> and stores the result (boxed instance or null).
+/// Useful for fast-path checks without a runtime helper call.
+/// </summary>
+public record LIRIsInstanceOf(Type TargetType, TempVariable Value, TempVariable Result) : LIRInstruction;
+
 // Control flow instructions
 /// <summary>
 /// Marks a branch target location. LabelId is assigned during lowering.

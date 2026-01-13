@@ -319,6 +319,10 @@ internal static class Stackify
             case LIRNegateNumber:
                 return true;
 
+            // Type checks - side-effect free IL 'isinst'
+            case LIRIsInstanceOf isInstanceOf:
+                return IsInlineableOperand(isInstanceOf.Value);
+
             // LIRConvertToNumber can be emitted inline if its source can be emitted inline
             // AND the source is not backed by a variable slot that could be modified.
             // This mirrors the postfix increment safety rule used for LIRConvertToObject.
@@ -591,6 +595,7 @@ internal static class Stackify
             // Unary ops: consume 1, produce 1
             case LIRConvertToObject:
             case LIRConvertToNumber:
+            case LIRIsInstanceOf:
             case LIRTypeof:
             case LIRNegateNumber:
             case LIRBitwiseNotNumber:

@@ -270,6 +270,10 @@ internal static class TempLocalAllocator
             case LIRLogicalNot logicalNot:
                 yield return logicalNot.Value;
                 break;
+
+            case LIRIsInstanceOf isInstanceOf:
+                yield return isInstanceOf.Value;
+                break;
             case LIRCompareNumberLessThan cmp:
                 yield return cmp.Left;
                 yield return cmp.Right;
@@ -560,6 +564,9 @@ internal static class TempLocalAllocator
                 return true;
             case LIRConvertToString convString:
                 defined = convString.Result;
+                return true;
+            case LIRIsInstanceOf isInstanceOf:
+                defined = isInstanceOf.Result;
                 return true;
             case LIRTypeof t:
                 defined = t.Result;

@@ -643,6 +643,21 @@ internal sealed class LIRToILCompiler
                 ilEncoder.OpCode(ILOpCode.Ceq);
                 EmitStoreTemp(logicalNot.Result, ilEncoder, allocation);
                 break;
+
+            case LIRIsInstanceOf isInstanceOf:
+                if (!IsMaterialized(isInstanceOf.Result, allocation))
+                {
+                    break;
+                }
+
+                EmitLoadTempAsObject(isInstanceOf.Value, ilEncoder, allocation, methodDescriptor);
+                {
+                    var targetType = _typeReferenceRegistry.GetOrAdd(isInstanceOf.TargetType);
+                    ilEncoder.OpCode(ILOpCode.Isinst);
+                    ilEncoder.Token(targetType);
+                }
+                EmitStoreTemp(isInstanceOf.Result, ilEncoder, allocation);
+                break;
             case LIRCompareNumberLessThan cmpLt:
                 if (!IsMaterialized(cmpLt.Result, allocation))
                 {
@@ -2583,6 +2598,16 @@ internal sealed class LIRToILCompiler
                     ilEncoder.LoadArgument(0);
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(fieldHandle);
+                    break;
+                }
+
+            case LIRIsInstanceOf isInstanceOf:
+                {
+                    // Inline: <value as object>; isinst <TargetType>
+                    EmitLoadTempAsObject(isInstanceOf.Value, ilEncoder, allocation, methodDescriptor);
+                    var targetType = _typeReferenceRegistry.GetOrAdd(isInstanceOf.TargetType);
+                    ilEncoder.OpCode(ILOpCode.Isinst);
+                    ilEncoder.Token(targetType);
                     break;
                 }
             default:

@@ -283,7 +283,7 @@
 	{
 		// Method begins at RVA 0x214c
 		// Header size: 12
-		// Code size: 44 (0x2c)
+		// Code size: 61 (0x3d)
 		.maxstack 32
 		.locals init (
 			[0] object,
@@ -297,15 +297,23 @@
 		IL_0008: ldfld object Scopes.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage::x
 		IL_000d: stloc.1
 		IL_000e: ldloc.1
-		IL_000f: ldstr "x"
-		IL_0014: ldstr "a"
-		IL_0019: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
-		IL_001e: ldloc.1
-		IL_001f: ldstr "a"
-		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0029: stloc.0
-		IL_002a: ldnull
-		IL_002b: ret
+		IL_000f: brfalse IL_001f
+
+		IL_0014: ldloc.1
+		IL_0015: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_001a: brfalse IL_002f
+
+		IL_001f: ldloc.1
+		IL_0020: ldstr "x"
+		IL_0025: ldstr "a"
+		IL_002a: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+
+		IL_002f: ldloc.1
+		IL_0030: ldstr "a"
+		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_003a: stloc.0
+		IL_003b: ldnull
+		IL_003c: ret
 	} // end of method ArrowFunction_L10C10::ArrowFunction_L10C10
 
 } // end of class Functions.ArrowFunction_L10C10
@@ -319,9 +327,9 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x2184
+		// Method begins at RVA 0x2198
 		// Header size: 12
-		// Code size: 44 (0x2c)
+		// Code size: 61 (0x3d)
 		.maxstack 32
 		.locals init (
 			[0] object,
@@ -335,15 +343,23 @@
 		IL_0008: ldfld object Scopes.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage::x
 		IL_000d: stloc.1
 		IL_000e: ldloc.1
-		IL_000f: ldstr "x"
-		IL_0014: ldstr "a"
-		IL_0019: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
-		IL_001e: ldloc.1
-		IL_001f: ldstr "a"
-		IL_0024: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0029: stloc.0
-		IL_002a: ldnull
-		IL_002b: ret
+		IL_000f: brfalse IL_001f
+
+		IL_0014: ldloc.1
+		IL_0015: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_001a: brfalse IL_002f
+
+		IL_001f: ldloc.1
+		IL_0020: ldstr "x"
+		IL_0025: ldstr "a"
+		IL_002a: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+
+		IL_002f: ldloc.1
+		IL_0030: ldstr "a"
+		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_003a: stloc.0
+		IL_003b: ldnull
+		IL_003c: ret
 	} // end of method ArrowFunction_L15C10::ArrowFunction_L15C10
 
 } // end of class Functions.ArrowFunction_L15C10
@@ -357,9 +373,9 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x21bc
+		// Method begins at RVA 0x21e4
 		// Header size: 12
-		// Code size: 48 (0x30)
+		// Code size: 65 (0x41)
 		.maxstack 32
 		.locals init (
 			[0] object,
@@ -373,15 +389,23 @@
 		IL_0008: ldfld object Scopes.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage::y
 		IL_000d: stloc.1
 		IL_000e: ldloc.1
-		IL_000f: ldstr "y"
-		IL_0014: ldstr "0"
-		IL_0019: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
-		IL_001e: ldloc.1
-		IL_001f: ldc.r8 0.0
-		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-		IL_002d: stloc.0
-		IL_002e: ldnull
-		IL_002f: ret
+		IL_000f: brfalse IL_001f
+
+		IL_0014: ldloc.1
+		IL_0015: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_001a: brfalse IL_002f
+
+		IL_001f: ldloc.1
+		IL_0020: ldstr "y"
+		IL_0025: ldstr "0"
+		IL_002a: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+
+		IL_002f: ldloc.1
+		IL_0030: ldc.r8 0.0
+		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+		IL_003e: stloc.0
+		IL_003f: ldnull
+		IL_0040: ret
 	} // end of method ArrowFunction_L20C10::ArrowFunction_L20C10
 
 } // end of class Functions.ArrowFunction_L20C10
@@ -395,9 +419,9 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x21f8
+		// Method begins at RVA 0x2234
 		// Header size: 12
-		// Code size: 48 (0x30)
+		// Code size: 65 (0x41)
 		.maxstack 32
 		.locals init (
 			[0] object,
@@ -411,15 +435,23 @@
 		IL_0008: ldfld object Scopes.Variable_Destructuring_NullOrUndefined_ThrowsNodeMessage::y
 		IL_000d: stloc.1
 		IL_000e: ldloc.1
-		IL_000f: ldstr "y"
-		IL_0014: ldstr "0"
-		IL_0019: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
-		IL_001e: ldloc.1
-		IL_001f: ldc.r8 0.0
-		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-		IL_002d: stloc.0
-		IL_002e: ldnull
-		IL_002f: ret
+		IL_000f: brfalse IL_001f
+
+		IL_0014: ldloc.1
+		IL_0015: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_001a: brfalse IL_002f
+
+		IL_001f: ldloc.1
+		IL_0020: ldstr "y"
+		IL_0025: ldstr "0"
+		IL_002a: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+
+		IL_002f: ldloc.1
+		IL_0030: ldc.r8 0.0
+		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+		IL_003e: stloc.0
+		IL_003f: ldnull
+		IL_0040: ret
 	} // end of method ArrowFunction_L25C10::ArrowFunction_L25C10
 
 } // end of class Functions.ArrowFunction_L25C10
@@ -437,7 +469,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2234
+		// Method begins at RVA 0x2284
 		// Header size: 12
 		// Code size: 273 (0x111)
 		.maxstack 32
@@ -566,7 +598,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2351
+		// Method begins at RVA 0x23a1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -3608,8 +3608,36 @@ public sealed class HIRToLIRLowerer
 
     private void EmitDestructuringNullGuard(TempVariable sourceObject, string? sourceVariableName, string? targetVariableName)
     {
+        // Inline the fast-path check to avoid a runtime helper call in the normal case.
+        // Equivalent to:
+        //   if (sourceValue is not null && sourceValue is not JsNull) return;
+        //   ThrowDestructuringNullOrUndefined(...)
+
+        var throwLabel = CreateLabel();
+        var okLabel = CreateLabel();
+
+        // Ensure we branch on an object reference (IL brfalse/brtrue work on object refs, not doubles).
+        sourceObject = EnsureObject(sourceObject);
+
+        // If sourceObject is null (undefined) => jump to throw.
+        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(sourceObject, throwLabel));
+
+        // If sourceObject is boxed JsNull (null), fall through to throw; otherwise jump to ok.
+        var isJsNullTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRIsInstanceOf(typeof(JavaScriptRuntime.JsNull), sourceObject, isJsNullTemp));
+        DefineTempStorage(isJsNullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(isJsNullTemp, okLabel));
+
+        // Shared throw block so we only emit one helper callsite.
+        _methodBodyIR.Instructions.Add(new LIRLabel(throwLabel));
+        EmitDestructuringNullOrUndefinedThrow(sourceObject, sourceVariableName, targetVariableName);
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(okLabel));
+    }
+
+    private void EmitDestructuringNullOrUndefinedThrow(TempVariable sourceObject, string? sourceVariableName, string? targetVariableName)
+    {
         // Centralized throw helper so messages/types can match Node/V8 and be localized in the future.
-        // The helper is a no-op unless sourceObject is null (undefined) or JsNull (null).
         var sourceNameTemp = EmitConstString(sourceVariableName ?? string.Empty);
         var targetNameTemp = EmitConstString(targetVariableName ?? string.Empty);
 
