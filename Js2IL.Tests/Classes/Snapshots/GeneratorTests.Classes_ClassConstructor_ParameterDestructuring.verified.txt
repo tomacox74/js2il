@@ -238,9 +238,9 @@
 			object $p0
 		) cil managed 
 	{
-		// Method begins at RVA 0x21ac
+		// Method begins at RVA 0x21cc
 		// Header size: 12
-		// Code size: 62 (0x3e)
+		// Code size: 78 (0x4e)
 		.maxstack 32
 		.locals init (
 			[0] object,
@@ -250,33 +250,38 @@
 		IL_0000: ldarg.0
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: ldarg.1
-		IL_0007: brtrue IL_0017
+		IL_0007: brfalse IL_0017
 
-		IL_000c: ldstr "Cannot destructure null or undefined"
-		IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_0016: throw
+		IL_000c: ldarg.1
+		IL_000d: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0012: brfalse IL_0027
 
 		IL_0017: ldarg.1
-		IL_0018: ldstr "x"
-		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0022: stloc.0
-		IL_0023: ldarg.1
-		IL_0024: ldstr "y"
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_002e: stloc.1
-		IL_002f: ldarg.0
-		IL_0030: ldloc.0
-		IL_0031: stfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Point::x
-		IL_0036: ldarg.0
-		IL_0037: ldloc.1
-		IL_0038: stfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Point::y
-		IL_003d: ret
+		IL_0018: ldstr ""
+		IL_001d: ldstr "x"
+		IL_0022: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+
+		IL_0027: ldarg.1
+		IL_0028: ldstr "x"
+		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0032: stloc.0
+		IL_0033: ldarg.1
+		IL_0034: ldstr "y"
+		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_003e: stloc.1
+		IL_003f: ldarg.0
+		IL_0040: ldloc.0
+		IL_0041: stfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Point::x
+		IL_0046: ldarg.0
+		IL_0047: ldloc.1
+		IL_0048: stfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Point::y
+		IL_004d: ret
 	} // end of method Point::.ctor
 
 	.method public hidebysig 
 		instance object display () cil managed 
 	{
-		// Method begins at RVA 0x22c4
+		// Method begins at RVA 0x22f4
 		// Header size: 12
 		// Code size: 77 (0x4d)
 		.maxstack 32
@@ -331,9 +336,9 @@
 			object $p0
 		) cil managed 
 	{
-		// Method begins at RVA 0x214c
+		// Method begins at RVA 0x215c
 		// Header size: 12
-		// Code size: 81 (0x51)
+		// Code size: 97 (0x61)
 		.maxstack 32
 		.locals init (
 			[0] object,
@@ -344,40 +349,45 @@
 		IL_0000: ldarg.0
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: ldarg.1
-		IL_0007: brtrue IL_0017
+		IL_0007: brfalse IL_0017
 
-		IL_000c: ldstr "Cannot destructure null or undefined"
-		IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_0016: throw
+		IL_000c: ldarg.1
+		IL_000d: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0012: brfalse IL_0027
 
 		IL_0017: ldarg.1
-		IL_0018: ldstr "name"
-		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0022: stloc.0
-		IL_0023: ldarg.1
-		IL_0024: ldstr "age"
-		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_002e: stloc.1
-		IL_002f: ldarg.1
-		IL_0030: ldstr "city"
-		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_003a: stloc.2
-		IL_003b: ldarg.0
-		IL_003c: ldloc.0
-		IL_003d: stfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Person::name
-		IL_0042: ldarg.0
-		IL_0043: ldloc.1
-		IL_0044: stfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Person::age
-		IL_0049: ldarg.0
-		IL_004a: ldloc.2
-		IL_004b: stfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Person::city
-		IL_0050: ret
+		IL_0018: ldstr ""
+		IL_001d: ldstr "name"
+		IL_0022: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+
+		IL_0027: ldarg.1
+		IL_0028: ldstr "name"
+		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0032: stloc.0
+		IL_0033: ldarg.1
+		IL_0034: ldstr "age"
+		IL_0039: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_003e: stloc.1
+		IL_003f: ldarg.1
+		IL_0040: ldstr "city"
+		IL_0045: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_004a: stloc.2
+		IL_004b: ldarg.0
+		IL_004c: ldloc.0
+		IL_004d: stfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Person::name
+		IL_0052: ldarg.0
+		IL_0053: ldloc.1
+		IL_0054: stfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Person::age
+		IL_0059: ldarg.0
+		IL_005a: ldloc.2
+		IL_005b: stfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Person::city
+		IL_0060: ret
 	} // end of method Person::.ctor
 
 	.method public hidebysig 
 		instance object greet () cil managed 
 	{
-		// Method begins at RVA 0x2268
+		// Method begins at RVA 0x2298
 		// Header size: 12
 		// Code size: 78 (0x4e)
 		.maxstack 32
@@ -435,7 +445,7 @@
 	{
 		// Method begins at RVA 0x20ac
 		// Header size: 12
-		// Code size: 148 (0x94)
+		// Code size: 164 (0xa4)
 		.maxstack 32
 		.locals init (
 			[0] object,
@@ -447,72 +457,77 @@
 		IL_0000: ldarg.0
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: ldarg.1
-		IL_0007: brtrue IL_0017
+		IL_0007: brfalse IL_0017
 
-		IL_000c: ldstr "Cannot destructure null or undefined"
-		IL_0011: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_0016: throw
+		IL_000c: ldarg.1
+		IL_000d: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_0012: brfalse IL_0027
 
 		IL_0017: ldarg.1
-		IL_0018: ldstr "host"
-		IL_001d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0022: stloc.3
-		IL_0023: ldloc.3
-		IL_0024: brtrue IL_0034
+		IL_0018: ldstr ""
+		IL_001d: ldstr "host"
+		IL_0022: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
 
-		IL_0029: ldstr "localhost"
-		IL_002e: stloc.0
-		IL_002f: br IL_0036
+		IL_0027: ldarg.1
+		IL_0028: ldstr "host"
+		IL_002d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0032: stloc.3
+		IL_0033: ldloc.3
+		IL_0034: brtrue IL_0044
 
-		IL_0034: ldloc.3
-		IL_0035: stloc.0
+		IL_0039: ldstr "localhost"
+		IL_003e: stloc.0
+		IL_003f: br IL_0046
 
-		IL_0036: ldarg.1
-		IL_0037: ldstr "port"
-		IL_003c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0041: stloc.3
-		IL_0042: ldloc.3
-		IL_0043: brtrue IL_005c
+		IL_0044: ldloc.3
+		IL_0045: stloc.0
 
-		IL_0048: ldc.r8 8080
-		IL_0051: box [System.Runtime]System.Double
-		IL_0056: stloc.1
-		IL_0057: br IL_005e
+		IL_0046: ldarg.1
+		IL_0047: ldstr "port"
+		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0051: stloc.3
+		IL_0052: ldloc.3
+		IL_0053: brtrue IL_006c
 
-		IL_005c: ldloc.3
-		IL_005d: stloc.1
+		IL_0058: ldc.r8 8080
+		IL_0061: box [System.Runtime]System.Double
+		IL_0066: stloc.1
+		IL_0067: br IL_006e
 
-		IL_005e: ldarg.1
-		IL_005f: ldstr "secure"
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0069: stloc.3
-		IL_006a: ldloc.3
-		IL_006b: brtrue IL_007c
+		IL_006c: ldloc.3
+		IL_006d: stloc.1
 
-		IL_0070: ldc.i4.0
-		IL_0071: box [System.Runtime]System.Boolean
-		IL_0076: stloc.2
-		IL_0077: br IL_007e
+		IL_006e: ldarg.1
+		IL_006f: ldstr "secure"
+		IL_0074: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0079: stloc.3
+		IL_007a: ldloc.3
+		IL_007b: brtrue IL_008c
 
-		IL_007c: ldloc.3
-		IL_007d: stloc.2
+		IL_0080: ldc.i4.0
+		IL_0081: box [System.Runtime]System.Boolean
+		IL_0086: stloc.2
+		IL_0087: br IL_008e
 
-		IL_007e: ldarg.0
-		IL_007f: ldloc.0
-		IL_0080: stfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Config::host
-		IL_0085: ldarg.0
-		IL_0086: ldloc.1
-		IL_0087: stfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Config::port
-		IL_008c: ldarg.0
-		IL_008d: ldloc.2
-		IL_008e: stfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Config::secure
-		IL_0093: ret
+		IL_008c: ldloc.3
+		IL_008d: stloc.2
+
+		IL_008e: ldarg.0
+		IL_008f: ldloc.0
+		IL_0090: stfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Config::host
+		IL_0095: ldarg.0
+		IL_0096: ldloc.1
+		IL_0097: stfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Config::port
+		IL_009c: ldarg.0
+		IL_009d: ldloc.2
+		IL_009e: stfld object Classes.Classes_ClassConstructor_ParameterDestructuring.Config::secure
+		IL_00a3: ret
 	} // end of method Config::.ctor
 
 	.method public hidebysig 
 		instance object display () cil managed 
 	{
-		// Method begins at RVA 0x21f8
+		// Method begins at RVA 0x2228
 		// Header size: 12
 		// Code size: 98 (0x62)
 		.maxstack 32
@@ -581,7 +596,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2320
+		// Method begins at RVA 0x2350
 		// Header size: 12
 		// Code size: 511 (0x1ff)
 		.maxstack 32
@@ -741,7 +756,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x252b
+		// Method begins at RVA 0x255b
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

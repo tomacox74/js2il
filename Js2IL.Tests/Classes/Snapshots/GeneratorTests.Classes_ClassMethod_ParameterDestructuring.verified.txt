@@ -238,7 +238,7 @@
 	{
 		// Method begins at RVA 0x20e0
 		// Header size: 12
-		// Code size: 51 (0x33)
+		// Code size: 67 (0x43)
 		.maxstack 32
 		.locals init (
 			[0] object,
@@ -247,26 +247,31 @@
 		)
 
 		IL_0000: ldarg.1
-		IL_0001: brtrue IL_0011
+		IL_0001: brfalse IL_0011
 
-		IL_0006: ldstr "Cannot destructure null or undefined"
-		IL_000b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_0010: throw
+		IL_0006: ldarg.1
+		IL_0007: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_000c: brfalse IL_0021
 
 		IL_0011: ldarg.1
-		IL_0012: ldstr "a"
-		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_001c: stloc.0
-		IL_001d: ldarg.1
-		IL_001e: ldstr "b"
-		IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0028: stloc.1
-		IL_0029: ldloc.0
-		IL_002a: ldloc.1
-		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0030: stloc.2
-		IL_0031: ldloc.2
-		IL_0032: ret
+		IL_0012: ldstr ""
+		IL_0017: ldstr "a"
+		IL_001c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+
+		IL_0021: ldarg.1
+		IL_0022: ldstr "a"
+		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_002c: stloc.0
+		IL_002d: ldarg.1
+		IL_002e: ldstr "b"
+		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0038: stloc.1
+		IL_0039: ldloc.0
+		IL_003a: ldloc.1
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0040: stloc.2
+		IL_0041: ldloc.2
+		IL_0042: ret
 	} // end of method Calculator::'add'
 
 	.method public hidebysig 
@@ -274,9 +279,9 @@
 			object $p0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2120
+		// Method begins at RVA 0x2130
 		// Header size: 12
-		// Code size: 66 (0x42)
+		// Code size: 82 (0x52)
 		.maxstack 32
 		.locals init (
 			[0] object,
@@ -286,33 +291,38 @@
 		)
 
 		IL_0000: ldarg.1
-		IL_0001: brtrue IL_0011
+		IL_0001: brfalse IL_0011
 
-		IL_0006: ldstr "Cannot destructure null or undefined"
-		IL_000b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_0010: throw
+		IL_0006: ldarg.1
+		IL_0007: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_000c: brfalse IL_0021
 
 		IL_0011: ldarg.1
-		IL_0012: ldstr "x"
-		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_001c: stloc.0
-		IL_001d: ldarg.1
-		IL_001e: ldstr "y"
-		IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0028: stloc.1
-		IL_0029: ldloc.0
-		IL_002a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_002f: stloc.2
-		IL_0030: ldloc.2
-		IL_0031: ldloc.1
-		IL_0032: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0037: mul
-		IL_0038: stloc.2
-		IL_0039: ldloc.2
-		IL_003a: box [System.Runtime]System.Double
-		IL_003f: stloc.3
-		IL_0040: ldloc.3
-		IL_0041: ret
+		IL_0012: ldstr ""
+		IL_0017: ldstr "x"
+		IL_001c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+
+		IL_0021: ldarg.1
+		IL_0022: ldstr "x"
+		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_002c: stloc.0
+		IL_002d: ldarg.1
+		IL_002e: ldstr "y"
+		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0038: stloc.1
+		IL_0039: ldloc.0
+		IL_003a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_003f: stloc.2
+		IL_0040: ldloc.2
+		IL_0041: ldloc.1
+		IL_0042: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0047: mul
+		IL_0048: stloc.2
+		IL_0049: ldloc.2
+		IL_004a: box [System.Runtime]System.Double
+		IL_004f: stloc.3
+		IL_0050: ldloc.3
+		IL_0051: ret
 	} // end of method Calculator::multiply
 
 } // end of class Classes.Classes_ClassMethod_ParameterDestructuring.Calculator
@@ -339,9 +349,9 @@
 			object $p0
 		) cil managed 
 	{
-		// Method begins at RVA 0x22b4
+		// Method begins at RVA 0x22f4
 		// Header size: 12
-		// Code size: 107 (0x6b)
+		// Code size: 123 (0x7b)
 		.maxstack 32
 		.locals init (
 			[0] object,
@@ -351,46 +361,51 @@
 		)
 
 		IL_0000: ldarg.1
-		IL_0001: brtrue IL_0011
+		IL_0001: brfalse IL_0011
 
-		IL_0006: ldstr "Cannot destructure null or undefined"
-		IL_000b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_0010: throw
+		IL_0006: ldarg.1
+		IL_0007: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_000c: brfalse IL_0021
 
 		IL_0011: ldarg.1
-		IL_0012: ldstr "name"
-		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_001c: stloc.0
-		IL_001d: ldarg.1
-		IL_001e: ldstr "age"
-		IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0028: stloc.1
-		IL_0029: ldarg.1
-		IL_002a: ldstr "city"
-		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0034: stloc.2
-		IL_0035: ldloc.0
-		IL_0036: ldstr " from "
-		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0040: stloc.3
-		IL_0041: ldloc.3
-		IL_0042: ldloc.2
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0048: stloc.3
-		IL_0049: ldloc.3
-		IL_004a: ldstr " (age: "
-		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0054: stloc.3
-		IL_0055: ldloc.3
-		IL_0056: ldloc.1
-		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_005c: stloc.3
-		IL_005d: ldloc.3
-		IL_005e: ldstr ")"
-		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0068: stloc.3
-		IL_0069: ldloc.3
-		IL_006a: ret
+		IL_0012: ldstr ""
+		IL_0017: ldstr "name"
+		IL_001c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+
+		IL_0021: ldarg.1
+		IL_0022: ldstr "name"
+		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_002c: stloc.0
+		IL_002d: ldarg.1
+		IL_002e: ldstr "age"
+		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0038: stloc.1
+		IL_0039: ldarg.1
+		IL_003a: ldstr "city"
+		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0044: stloc.2
+		IL_0045: ldloc.0
+		IL_0046: ldstr " from "
+		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0050: stloc.3
+		IL_0051: ldloc.3
+		IL_0052: ldloc.2
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0058: stloc.3
+		IL_0059: ldloc.3
+		IL_005a: ldstr " (age: "
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0064: stloc.3
+		IL_0065: ldloc.3
+		IL_0066: ldloc.1
+		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_006c: stloc.3
+		IL_006d: ldloc.3
+		IL_006e: ldstr ")"
+		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0078: stloc.3
+		IL_0079: ldloc.3
+		IL_007a: ret
 	} // end of method Formatter::formatPerson
 
 	.method public hidebysig 
@@ -398,9 +413,9 @@
 			object $p0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2248
+		// Method begins at RVA 0x2278
 		// Header size: 12
-		// Code size: 95 (0x5f)
+		// Code size: 111 (0x6f)
 		.maxstack 32
 		.locals init (
 			[0] object,
@@ -410,42 +425,47 @@
 		)
 
 		IL_0000: ldarg.1
-		IL_0001: brtrue IL_0011
+		IL_0001: brfalse IL_0011
 
-		IL_0006: ldstr "Cannot destructure null or undefined"
-		IL_000b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_0010: throw
+		IL_0006: ldarg.1
+		IL_0007: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_000c: brfalse IL_0021
 
 		IL_0011: ldarg.1
-		IL_0012: ldstr "year"
-		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_001c: stloc.0
-		IL_001d: ldarg.1
-		IL_001e: ldstr "month"
-		IL_0023: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0028: stloc.1
-		IL_0029: ldarg.1
-		IL_002a: ldstr "day"
-		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0034: stloc.2
-		IL_0035: ldloc.0
-		IL_0036: ldstr "-"
-		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0040: stloc.3
-		IL_0041: ldloc.3
-		IL_0042: ldloc.1
-		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0048: stloc.3
-		IL_0049: ldloc.3
-		IL_004a: ldstr "-"
-		IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0054: stloc.3
-		IL_0055: ldloc.3
-		IL_0056: ldloc.2
-		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_005c: stloc.3
-		IL_005d: ldloc.3
-		IL_005e: ret
+		IL_0012: ldstr ""
+		IL_0017: ldstr "year"
+		IL_001c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
+
+		IL_0021: ldarg.1
+		IL_0022: ldstr "year"
+		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_002c: stloc.0
+		IL_002d: ldarg.1
+		IL_002e: ldstr "month"
+		IL_0033: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0038: stloc.1
+		IL_0039: ldarg.1
+		IL_003a: ldstr "day"
+		IL_003f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0044: stloc.2
+		IL_0045: ldloc.0
+		IL_0046: ldstr "-"
+		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0050: stloc.3
+		IL_0051: ldloc.3
+		IL_0052: ldloc.1
+		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0058: stloc.3
+		IL_0059: ldloc.3
+		IL_005a: ldstr "-"
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0064: stloc.3
+		IL_0065: ldloc.3
+		IL_0066: ldloc.2
+		IL_0067: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_006c: stloc.3
+		IL_006d: ldloc.3
+		IL_006e: ret
 	} // end of method Formatter::formatDate
 
 } // end of class Classes.Classes_ClassMethod_ParameterDestructuring.Formatter
@@ -475,9 +495,9 @@
 			object $p0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2170
+		// Method begins at RVA 0x2190
 		// Header size: 12
-		// Code size: 203 (0xcb)
+		// Code size: 219 (0xdb)
 		.maxstack 32
 		.locals init (
 			[0] object,
@@ -490,87 +510,92 @@
 		)
 
 		IL_0000: ldarg.1
-		IL_0001: brtrue IL_0011
+		IL_0001: brfalse IL_0011
 
-		IL_0006: ldstr "Cannot destructure null or undefined"
-		IL_000b: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.TypeError::.ctor(string)
-		IL_0010: throw
+		IL_0006: ldarg.1
+		IL_0007: isinst [JavaScriptRuntime]JavaScriptRuntime.JsNull
+		IL_000c: brfalse IL_0021
 
 		IL_0011: ldarg.1
-		IL_0012: ldstr "host"
-		IL_0017: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_001c: stloc.3
-		IL_001d: ldloc.3
-		IL_001e: brtrue IL_002e
+		IL_0012: ldstr ""
+		IL_0017: ldstr "host"
+		IL_001c: call void [JavaScriptRuntime]JavaScriptRuntime.Object::ThrowDestructuringNullOrUndefined(object, string, string)
 
-		IL_0023: ldstr "localhost"
-		IL_0028: stloc.0
-		IL_0029: br IL_0030
+		IL_0021: ldarg.1
+		IL_0022: ldstr "host"
+		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_002c: stloc.3
+		IL_002d: ldloc.3
+		IL_002e: brtrue IL_003e
 
-		IL_002e: ldloc.3
-		IL_002f: stloc.0
+		IL_0033: ldstr "localhost"
+		IL_0038: stloc.0
+		IL_0039: br IL_0040
 
-		IL_0030: ldarg.1
-		IL_0031: ldstr "port"
-		IL_0036: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_003b: stloc.3
-		IL_003c: ldloc.3
-		IL_003d: brtrue IL_0056
+		IL_003e: ldloc.3
+		IL_003f: stloc.0
 
-		IL_0042: ldc.r8 8080
-		IL_004b: box [System.Runtime]System.Double
-		IL_0050: stloc.1
-		IL_0051: br IL_0058
+		IL_0040: ldarg.1
+		IL_0041: ldstr "port"
+		IL_0046: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_004b: stloc.3
+		IL_004c: ldloc.3
+		IL_004d: brtrue IL_0066
 
-		IL_0056: ldloc.3
-		IL_0057: stloc.1
+		IL_0052: ldc.r8 8080
+		IL_005b: box [System.Runtime]System.Double
+		IL_0060: stloc.1
+		IL_0061: br IL_0068
 
-		IL_0058: ldarg.1
-		IL_0059: ldstr "secure"
-		IL_005e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0063: stloc.3
-		IL_0064: ldloc.3
-		IL_0065: brtrue IL_0076
+		IL_0066: ldloc.3
+		IL_0067: stloc.1
 
-		IL_006a: ldc.i4.0
-		IL_006b: box [System.Runtime]System.Boolean
-		IL_0070: stloc.2
-		IL_0071: br IL_0078
+		IL_0068: ldarg.1
+		IL_0069: ldstr "secure"
+		IL_006e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0073: stloc.3
+		IL_0074: ldloc.3
+		IL_0075: brtrue IL_0086
 
-		IL_0076: ldloc.3
-		IL_0077: stloc.2
+		IL_007a: ldc.i4.0
+		IL_007b: box [System.Runtime]System.Boolean
+		IL_0080: stloc.2
+		IL_0081: br IL_0088
 
-		IL_0078: ldloc.2
-		IL_0079: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-		IL_007e: stloc.s 4
-		IL_0080: ldloc.s 4
-		IL_0082: brfalse IL_0093
+		IL_0086: ldloc.3
+		IL_0087: stloc.2
 
-		IL_0087: ldstr "https://"
-		IL_008c: stloc.s 6
-		IL_008e: br IL_009a
+		IL_0088: ldloc.2
+		IL_0089: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+		IL_008e: stloc.s 4
+		IL_0090: ldloc.s 4
+		IL_0092: brfalse IL_00a3
 
-		IL_0093: ldstr "http://"
-		IL_0098: stloc.s 6
+		IL_0097: ldstr "https://"
+		IL_009c: stloc.s 6
+		IL_009e: br IL_00aa
 
-		IL_009a: ldloc.s 6
-		IL_009c: ldloc.0
-		IL_009d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00a2: stloc.s 6
-		IL_00a4: ldloc.s 6
-		IL_00a6: ldstr ":"
-		IL_00ab: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00b0: stloc.s 6
-		IL_00b2: ldloc.s 6
-		IL_00b4: ldloc.1
-		IL_00b5: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_00ba: stloc.s 6
-		IL_00bc: ldarg.0
-		IL_00bd: ldloc.s 6
-		IL_00bf: stfld object Classes.Classes_ClassMethod_ParameterDestructuring.Config::url
-		IL_00c4: ldarg.0
-		IL_00c5: ldfld object Classes.Classes_ClassMethod_ParameterDestructuring.Config::url
-		IL_00ca: ret
+		IL_00a3: ldstr "http://"
+		IL_00a8: stloc.s 6
+
+		IL_00aa: ldloc.s 6
+		IL_00ac: ldloc.0
+		IL_00ad: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00b2: stloc.s 6
+		IL_00b4: ldloc.s 6
+		IL_00b6: ldstr ":"
+		IL_00bb: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00c0: stloc.s 6
+		IL_00c2: ldloc.s 6
+		IL_00c4: ldloc.1
+		IL_00c5: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00ca: stloc.s 6
+		IL_00cc: ldarg.0
+		IL_00cd: ldloc.s 6
+		IL_00cf: stfld object Classes.Classes_ClassMethod_ParameterDestructuring.Config::url
+		IL_00d4: ldarg.0
+		IL_00d5: ldfld object Classes.Classes_ClassMethod_ParameterDestructuring.Config::url
+		IL_00da: ret
 	} // end of method Config::setConnection
 
 } // end of class Classes.Classes_ClassMethod_ParameterDestructuring.Config
@@ -588,7 +613,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x232c
+		// Method begins at RVA 0x237c
 		// Header size: 12
 		// Code size: 674 (0x2a2)
 		.maxstack 32
@@ -819,7 +844,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x25da
+		// Method begins at RVA 0x262a
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
