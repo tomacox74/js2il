@@ -246,6 +246,13 @@ internal static class TempLocalAllocator
                     yield return arg;
                 }
                 break;
+
+            case LIRCallIntrinsicStaticVoid callStaticVoid:
+                foreach (var arg in callStaticVoid.Arguments)
+                {
+                    yield return arg;
+                }
+                break;
             case LIRConvertToObject conv:
                 yield return conv.Source;
                 break;
@@ -553,6 +560,10 @@ internal static class TempLocalAllocator
             case LIRCallIntrinsicStatic callStatic:
                 defined = callStatic.Result;
                 return true;
+
+            case LIRCallIntrinsicStaticVoid:
+                defined = default;
+                return false;
             case LIRConvertToObject conv:
                 defined = conv.Result;
                 return true;

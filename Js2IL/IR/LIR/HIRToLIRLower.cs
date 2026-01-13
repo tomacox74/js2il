@@ -3641,17 +3641,21 @@ public sealed class HIRToLIRLowerer
         var sourceNameTemp = EmitConstString(sourceVariableName ?? string.Empty);
         var targetNameTemp = EmitConstString(targetVariableName ?? string.Empty);
 
-        var unused = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStaticVoid(
             IntrinsicName: "Object",
             MethodName: nameof(JavaScriptRuntime.Object.ThrowDestructuringNullOrUndefined),
-            Arguments: new[] { EnsureObject(sourceObject), EnsureObject(sourceNameTemp), EnsureObject(targetNameTemp) },
-            Result: unused));
-        DefineTempStorage(unused, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            Arguments: new[] { EnsureObject(sourceObject), EnsureObject(sourceNameTemp), EnsureObject(targetNameTemp) }));
     }
 
     private static string? TryGetSimpleSourceNameForDestructuring(HIRExpression source)
-        => source is HIRVariableExpression v ? v.Name.Name : null;
+    {
+        // Best-effort source name extraction:
+        // - Handles only direct variable references, e.g. `const { a } = obj;` -> "obj".
+        // - More complex sources such as member access (`obj.prop`) or calls (`getObj()`)
+        //   intentionally return null here; the caller falls back to a generic/empty
+        //   source name in the resulting error message.
+        return source is HIRVariableExpression v ? v.Name.Name : null;
+    }
 
     private static string GetFirstTargetNameForDestructuring(HIRObjectPattern obj)
     {

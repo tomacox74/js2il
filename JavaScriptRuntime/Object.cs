@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -490,6 +491,7 @@ namespace JavaScriptRuntime
         /// Throws a Node/V8-compatible TypeError for destructuring when the source value is null or undefined.
         /// This is centralized to allow future localization of error messages.
         /// </summary>
+        [DoesNotReturn]
         public static void ThrowDestructuringNullOrUndefined(object? sourceValue, string? sourceVariableName, string? targetVariableName)
         {
             // In this runtime:
@@ -497,7 +499,7 @@ namespace JavaScriptRuntime
             // - JS null is represented as JavaScriptRuntime.JsNull
             if (sourceValue is not null && sourceValue is not JsNull)
             {
-                return;
+                throw new InvalidOperationException($"{nameof(ThrowDestructuringNullOrUndefined)} must only be called for null/undefined source values.");
             }
 
             string kind = sourceValue is null ? "undefined" : "null";
