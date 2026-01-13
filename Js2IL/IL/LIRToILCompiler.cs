@@ -345,15 +345,40 @@ internal sealed class LIRToILCompiler
             }
         }
 
-        var allocation = TempLocalAllocator.Allocate(MethodBody, shouldMaterialize);
-
         // Precompute object[] argument counts for temps produced by LIRBuildArray.
-        // This enables conservative fast-path emission for LIRCallMember (unpack object[] into direct args).
+        // NOTE: This only covers arrays created by LIRBuildArray; if the args array flows from elsewhere
+        // (e.g., passed through a temp without a defining LIRBuildArray), the fast-path below will not apply.
         var buildArrayElementCounts = new Dictionary<int, int>();
         foreach (var instr in MethodBody.Instructions.OfType<LIRBuildArray>())
         {
-            buildArrayElementCounts[instr.Result.Index] = instr.Elements.Count;
+            if (instr.Result.Index >= 0)
+            {
+                buildArrayElementCounts[instr.Result.Index] = instr.Elements.Count;
+            }
         }
+
+        // The LIRCallMember fast-path may index into the same arguments array multiple times to unpack
+        // direct arguments for callvirt. If Stackify inlined the LIRBuildArray, repeatedly loading the
+        // temp would re-materialize the array on each element access.
+        // To keep the fast-path efficient, force materialization only for call-sites where we can
+        // conservatively prove the fast-path will be emitted.
+        var classRegistryForMemberFastPath = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+        if (classRegistryForMemberFastPath != null)
+        {
+            foreach (var callMember in MethodBody.Instructions.OfType<LIRCallMember>())
+            {
+                var argsTempIndex = callMember.ArgumentsArray.Index;
+                if (argsTempIndex >= 0
+                    && argsTempIndex < shouldMaterialize.Length
+                    && buildArrayElementCounts.TryGetValue(argsTempIndex, out var argCount)
+                    && classRegistryForMemberFastPath.TryResolveUniqueInstanceMethod(callMember.MethodName, argCount, out _, out _, out _, out _))
+                {
+                    shouldMaterialize[argsTempIndex] = true;
+                }
+            }
+        }
+
+        var allocation = TempLocalAllocator.Allocate(MethodBody, shouldMaterialize);
 
         // Pre-create IL labels for all LIR labels
         var labelMap = new Dictionary<int, LabelHandle>();
@@ -1714,18 +1739,16 @@ internal sealed class LIRToILCompiler
 
             case LIRCallUserClassInstanceMethod callUserClass:
                 {
-                    var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
-                    if (classRegistry == null
-                        || !classRegistry.TryGetMethod(callUserClass.RegistryClassName, callUserClass.MethodName, out var methodHandle, out _, out _, out var maxParamCount))
+                    if (callUserClass.MethodHandle.IsNil)
                     {
-                        throw new InvalidOperationException($"Cannot emit direct instance call for '{callUserClass.RegistryClassName}.{callUserClass.MethodName}' - missing ClassRegistry method token");
+                        throw new InvalidOperationException($"Cannot emit direct instance call for '{callUserClass.RegistryClassName}.{callUserClass.MethodName}' - missing method token");
                     }
 
                     // Receiver is implicit 'this'
                     ilEncoder.OpCode(ILOpCode.Ldarg_0);
 
                     // Match the declared signature (ignore extra args, pad missing args with null).
-                    int jsParamCount = maxParamCount;
+                    int jsParamCount = callUserClass.MaxParamCount;
                     int argsToPass = Math.Min(callUserClass.Arguments.Count, jsParamCount);
 
                     for (int i = 0; i < argsToPass; i++)
@@ -1739,7 +1762,7 @@ internal sealed class LIRToILCompiler
                     }
 
                     ilEncoder.OpCode(ILOpCode.Callvirt);
-                    ilEncoder.Token(methodHandle);
+                    ilEncoder.Token(callUserClass.MethodHandle);
 
                     if (IsMaterialized(callUserClass.Result, allocation))
                     {
@@ -1757,6 +1780,7 @@ internal sealed class LIRToILCompiler
                     // Fast-path: if the method name+arity uniquely identifies a user-defined class instance method,
                     // emit: isinst <Class>, brfalse fallback, unpack args from object[] and callvirt directly.
                     // Fallback preserves existing runtime dispatch semantics.
+                    // NOTE: This fast-path only triggers when the args array temp is known to come from LIRBuildArray.
                     var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
                     if (classRegistry != null
                         && buildArrayElementCounts.TryGetValue(callMember.ArgumentsArray.Index, out var argCount)
@@ -1777,6 +1801,8 @@ internal sealed class LIRToILCompiler
                         int argsToPass = Math.Min(argCount, jsParamCount);
                         for (int i = 0; i < argsToPass; i++)
                         {
+                            // The arguments array temp is forced materialized for fast-path call-sites in
+                            // TryCompileMethodBodyToIL, so this is typically just an ldloc.
                             EmitLoadTemp(callMember.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
                             ilEncoder.LoadConstantI4(i);
                             ilEncoder.OpCode(ILOpCode.Ldelem_ref);
@@ -2765,16 +2791,14 @@ internal sealed class LIRToILCompiler
 
             case LIRCallUserClassInstanceMethod callUserClass:
                 {
-                    var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
-                    if (classRegistry == null
-                        || !classRegistry.TryGetMethod(callUserClass.RegistryClassName, callUserClass.MethodName, out var methodHandle, out _, out _, out var maxParamCount))
+                    if (callUserClass.MethodHandle.IsNil)
                     {
-                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing ClassRegistry method token for '{callUserClass.RegistryClassName}.{callUserClass.MethodName}'");
+                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing method token for '{callUserClass.RegistryClassName}.{callUserClass.MethodName}'");
                     }
 
                     ilEncoder.OpCode(ILOpCode.Ldarg_0);
 
-                    int jsParamCount = maxParamCount;
+                    int jsParamCount = callUserClass.MaxParamCount;
                     int argsToPass = Math.Min(callUserClass.Arguments.Count, jsParamCount);
                     for (int i = 0; i < argsToPass; i++)
                     {
@@ -2787,7 +2811,7 @@ internal sealed class LIRToILCompiler
                     }
 
                     ilEncoder.OpCode(ILOpCode.Callvirt);
-                    ilEncoder.Token(methodHandle);
+                    ilEncoder.Token(callUserClass.MethodHandle);
                     break;
                 }
 

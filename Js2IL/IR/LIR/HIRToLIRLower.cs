@@ -2971,7 +2971,7 @@ public sealed class HIRToLIRLowerer
                 && calleePropAccess.Object is HIRThisExpression
                 && TryGetEnclosingClassRegistryName(out var currentClass)
                 && currentClass != null
-                && _classRegistry.TryGetMethod(currentClass, calleePropAccess.PropertyName, out _, out _, out _, out _))
+                && _classRegistry.TryGetMethod(currentClass, calleePropAccess.PropertyName, out var methodHandle, out _, out _, out var maxParamCount))
             {
                 var argTemps = new List<TempVariable>();
                 foreach (var argExpr in callExpr.Arguments)
@@ -2987,6 +2987,8 @@ public sealed class HIRToLIRLowerer
                 _methodBodyIR.Instructions.Add(new LIRCallUserClassInstanceMethod(
                     currentClass,
                     calleePropAccess.PropertyName,
+                    methodHandle,
+                    maxParamCount,
                     argTemps,
                     resultTempVar));
 
