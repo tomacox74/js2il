@@ -82,6 +82,27 @@ js2il input.js output                           # Installed tool
 
 **IMPORTANT**: Always create the release branch FIRST, before running any version bump commands.
 
+**Preferred (Automated):**
+
+Use the release automation script (handles branch → bump → commit → PR, and optionally merge + GitHub release/tag):
+
+```powershell
+# Patch / minor / major
+npm run release:cut -- patch
+# npm run release:cut -- minor
+# npm run release:cut -- major
+
+# Fully automate through merge + release creation
+npm run release:cut -- patch --merge
+```
+
+Notes:
+- Requires `gh auth status` to be OK (GitHub CLI authenticated)
+- Without `--merge`, it stops after creating the PR
+- With `--merge`, it waits for checks (`gh pr checks --watch`), merges, then creates the GitHub release using the relevant `CHANGELOG.md` section
+
+**Fallback (Manual):**
+
 Follow these steps IN ORDER:
 
 1. **Create release branch** (from master):
