@@ -785,7 +785,34 @@ public sealed class HIRToLIRLowerer
             case HIRReturnStatement returnStmt:
                 {
                     TempVariable returnTempVar;
-                    if (returnStmt.Expression != null)
+                    if (_callableKind == CallableKind.Constructor && returnStmt.Expression != null)
+                    {
+                        // Constructors are void-returning in IL, but JavaScript allows `return <expr>`.
+                        // Stash the value so the `new` call site can apply JS override semantics.
+                        if (!TryLowerExpression(returnStmt.Expression, out var ctorReturnTemp))
+                        {
+                            return false;
+                        }
+
+                        ctorReturnTemp = EnsureObject(ctorReturnTemp);
+
+                        if (!TryGetEnclosingClassRegistryName(out var registryClassName) || registryClassName == null)
+                        {
+                            return false;
+                        }
+
+                        lirInstructions.Add(new LIRStoreUserClassInstanceField(
+                            RegistryClassName: registryClassName,
+                            FieldName: "__js2il_ctorReturn",
+                            IsPrivateField: true,
+                            Value: ctorReturnTemp));
+
+                        // Control-flow return value is irrelevant for constructors.
+                        returnTempVar = CreateTempVariable();
+                        lirInstructions.Add(new LIRConstUndefined(returnTempVar));
+                        DefineTempStorage(returnTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    }
+                    else if (returnStmt.Expression != null)
                     {
                         // Lower the return expression
                         if (!TryLowerExpression(returnStmt.Expression, out returnTempVar))
@@ -2293,6 +2320,10 @@ public sealed class HIRToLIRLowerer
             return false;
         }
 
+        // Match ClassesGenerator registry key convention: "{ns}.{typeName}".
+        // This allows IL emission to look up type/field handles for the class.
+        var registryClassName = $"{(classScope.DotNetNamespace ?? "Classes")}.{(classScope.DotNetTypeName ?? classScope.Name)}";
+
         bool needsScopes = DoesClassNeedParentScopes(classDecl, classScope);
         TempVariable? scopesTemp = null;
         if (needsScopes)
@@ -2370,6 +2401,7 @@ public sealed class HIRToLIRLowerer
         resultTempVar = CreateTempVariable();
         _methodBodyIR.Instructions.Add(new LIRNewUserClass(
             ClassName: className,
+            RegistryClassName: registryClassName,
             ConstructorCallableId: ctorCallableId,
             NeedsScopes: needsScopes,
             ScopesArray: scopesTemp,

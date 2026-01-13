@@ -281,6 +281,23 @@ internal sealed class LIRToILCompiler
         var stackifyResult = Stackify.Analyze(MethodBody);
         MarkStackifiableTemps(stackifyResult, shouldMaterialize);
 
+        // Constructor return override (PL5.4a) requires post-construction logic that overwrites
+        // the result temp. If a class constructor can return a value, force materialization for
+        // `new C()` results so we have a stable local slot.
+        var classRegistryForCtorReturn = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+        if (classRegistryForCtorReturn != null)
+        {
+            foreach (var instr in MethodBody.Instructions.OfType<LIRNewUserClass>())
+            {
+                if (instr.Result.Index >= 0
+                    && instr.Result.Index < shouldMaterialize.Length
+                    && classRegistryForCtorReturn.TryGetPrivateField(instr.RegistryClassName, "__js2il_ctorReturn", out _))
+                {
+                    shouldMaterialize[instr.Result.Index] = true;
+                }
+            }
+        }
+
         var allocation = TempLocalAllocator.Allocate(MethodBody, shouldMaterialize);
 
         // Pre-create IL labels for all LIR labels
@@ -348,16 +365,9 @@ internal sealed class LIRToILCompiler
         {
             if (!methodDescriptor.ReturnsVoid)
             {
-                if (methodDescriptor.IsStatic)
-                {
-                    // For static methods implicit return is undefined (null in dotnet)
-                    ilEncoder.OpCode(ILOpCode.Ldnull);
-                }
-                else
-                {
-                    // For instance methods, load 'this' reference
-                    ilEncoder.OpCode(ILOpCode.Ldarg_0);
-                }
+                // JavaScript: functions/methods fallthrough returns 'undefined'
+                // (modeled as CLR null in our runtime).
+                ilEncoder.OpCode(ILOpCode.Ldnull);
             }
             ilEncoder.OpCode(ILOpCode.Ret);
         }
@@ -1058,13 +1068,54 @@ internal sealed class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Newobj);
                     ilEncoder.Token(ctorDef);
 
-                    if (IsMaterialized(newUserClass.Result, allocation))
-                    {
-                        EmitStoreTemp(newUserClass.Result, ilEncoder, allocation);
-                    }
-                    else
+                    if (!IsMaterialized(newUserClass.Result, allocation))
                     {
                         ilEncoder.OpCode(ILOpCode.Pop);
+                        break;
+                    }
+
+                    // Store the constructed instance as the default result.
+                    EmitStoreTemp(newUserClass.Result, ilEncoder, allocation);
+
+                    // PL5.4a: If the JS constructor explicitly returned an object, new-expr evaluates to that object;
+                    // if it returned a primitive/null/undefined, the constructed instance is used.
+                    var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+                    if (classRegistry != null
+                        && classRegistry.TryGetPrivateField(newUserClass.RegistryClassName, "__js2il_ctorReturn", out var ctorReturnField)
+                        && classRegistry.TryGet(newUserClass.RegistryClassName, out var classTypeHandle))
+                    {
+                        var keepThis = ilEncoder.DefineLabel();
+                        var done = ilEncoder.DefineLabel();
+
+                        // Load the hidden ctor return field from the constructed instance.
+                        EmitLoadTemp(newUserClass.Result, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(classTypeHandle);
+                        ilEncoder.OpCode(ILOpCode.Ldfld);
+                        ilEncoder.Token(ctorReturnField);
+
+                        // If null/undefined => keep constructed instance.
+                        ilEncoder.OpCode(ILOpCode.Dup);
+                        ilEncoder.Branch(ILOpCode.Brfalse, keepThis);
+
+                        // If not an object (primitive) => keep constructed instance.
+                        ilEncoder.OpCode(ILOpCode.Dup);
+                        var isOverride = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.TypeUtilities),
+                            nameof(JavaScriptRuntime.TypeUtilities.IsConstructorReturnOverride),
+                            parameterTypes: new[] { typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(isOverride);
+                        ilEncoder.Branch(ILOpCode.Brfalse, keepThis);
+
+                        // Override result with the returned object.
+                        EmitStoreTemp(newUserClass.Result, ilEncoder, allocation);
+                        ilEncoder.Branch(ILOpCode.Br, done);
+
+                        // Keep constructed instance; discard the return value.
+                        ilEncoder.MarkLabel(keepThis);
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                        ilEncoder.MarkLabel(done);
                     }
                     break;
                 }
