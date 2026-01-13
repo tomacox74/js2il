@@ -24,6 +24,8 @@ namespace Js2IL.Services
             _typeRefRegistry = typeRefRegistr;
             _memberRefRegistry = memberRefRegistr;
         }
+
+        internal TypeReferenceRegistry TypeReferenceRegistry => _typeRefRegistry;
         
         public TypeReferenceHandle BooleanType => _typeRefRegistry.GetOrAdd(typeof(bool));
         public TypeReferenceHandle DoubleType => _typeRefRegistry.GetOrAdd(typeof(double));

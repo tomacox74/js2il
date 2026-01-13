@@ -1511,6 +1511,17 @@ internal sealed class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Castclass);
                         ilEncoder.Token(declaredTypeHandle);
                     }
+                    else if (fieldClrType != typeof(object)
+                        && fieldClrType != typeof(string)
+                        && fieldClrType != typeof(double)
+                        && fieldClrType != typeof(bool)
+                        && !fieldClrType.IsValueType)
+                    {
+                        // Typed CLR reference field (e.g., JavaScriptRuntime.Int32Array). If the value is currently
+                        // flowing as object (common in our temps), cast to keep IL verification correct.
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(fieldClrType));
+                    }
                     ilEncoder.OpCode(ILOpCode.Stfld);
                     ilEncoder.Token(fieldHandle);
                     break;

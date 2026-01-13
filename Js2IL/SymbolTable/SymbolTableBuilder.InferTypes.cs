@@ -320,6 +320,24 @@ public partial class SymbolTableBuilder
             return classScopeMatch != null ? calleeId.Name : null;
         }
 
+        Type? TryInferNewExpressionIntrinsicClrType(Node expr)
+        {
+            if (expr is not NewExpression ne)
+            {
+                return null;
+            }
+
+            if (ne.Callee is not Identifier calleeId)
+            {
+                return null;
+            }
+
+            // If the callee name maps to an intrinsic runtime type, infer that CLR type.
+            // This enables strongly-typed class fields for patterns like: this.buf = new Int32Array(n)
+            // (and similar intrinsic constructors).
+            return JavaScriptRuntime.IntrinsicObjectRegistry.Get(calleeId.Name);
+        }
+
         // Include class field initializers: `field = <expr>`.
         foreach (var pdef in classDecl.Body.Body.OfType<PropertyDefinition>())
         {
@@ -349,7 +367,8 @@ public partial class SymbolTableBuilder
                 }
                 else
                 {
-                    ProposeClr(name, InferExpressionClrType(init));
+                    var intrinsicClr = TryInferNewExpressionIntrinsicClrType(init);
+                    ProposeClr(name, intrinsicClr ?? InferExpressionClrType(init));
                 }
             }
         }
@@ -380,7 +399,8 @@ public partial class SymbolTableBuilder
                     }
                     else
                     {
-                        ProposeClr(propName, InferExpressionClrType(assign.Right));
+                        var intrinsicClr = TryInferNewExpressionIntrinsicClrType(assign.Right);
+                        ProposeClr(propName, intrinsicClr ?? InferExpressionClrType(assign.Right));
                     }
                 }
             }

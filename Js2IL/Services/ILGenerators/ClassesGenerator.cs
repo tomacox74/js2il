@@ -168,6 +168,11 @@ namespace Js2IL.Services.ILGenerators
                 {
                     t.String();
                 }
+                else if (clrType?.Namespace?.StartsWith("JavaScriptRuntime", StringComparison.Ordinal) == true)
+                {
+                    var typeRef = _bcl.TypeReferenceRegistry.GetOrAdd(clrType);
+                    t.Type(typeRef, isValueType: clrType.IsValueType);
+                }
                 else if (TryGetStableInstanceFieldUserClassTypeHandle(fieldName, out var userClassTypeHandle))
                 {
                     t.Type(userClassTypeHandle, isValueType: false);
