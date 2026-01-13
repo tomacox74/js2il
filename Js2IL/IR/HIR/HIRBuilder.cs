@@ -534,7 +534,7 @@ class HIRMethodBuilder
                 return true;
 
             case FunctionDeclaration:
-                // Function declarations are hoisted and compiled separately by JavaScriptFunctionGenerator.
+                // Function declarations are hoisted and compiled separately by the two-phase IR pipeline.
                 // In the main method body, we skip them (they're not executable statements).
                 hirStatement = new HIRBlock([]); // empty block = no-op
                 return true;

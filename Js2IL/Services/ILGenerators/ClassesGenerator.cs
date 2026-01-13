@@ -16,7 +16,7 @@ namespace Js2IL.Services.ILGenerators
         private readonly MetadataBuilder _metadata;
         private readonly BaseClassLibraryReferences _bcl;
         private readonly ClassRegistry _classRegistry;
-        private readonly Variables _variables;
+        private readonly string _moduleName;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -25,13 +25,13 @@ namespace Js2IL.Services.ILGenerators
             MetadataBuilder metadata,
             BaseClassLibraryReferences bcl,
             ClassRegistry classRegistry,
-            Variables variables)
+            string moduleName)
         {
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _metadata = metadata ?? throw new ArgumentNullException(nameof(metadata));
             _bcl = bcl ?? throw new ArgumentNullException(nameof(bcl));
             _classRegistry = classRegistry ?? throw new ArgumentNullException(nameof(classRegistry));
-            _variables = variables ?? throw new ArgumentNullException(nameof(variables));
+            _moduleName = moduleName ?? throw new ArgumentNullException(nameof(moduleName));
         }
 
         private static int CountRequiredParameters(in NodeList<Node> parameters)
@@ -51,16 +51,15 @@ namespace Js2IL.Services.ILGenerators
         private string GetClassDeclaringScopeName(Scope classScope)
         {
             if (classScope == null) throw new ArgumentNullException(nameof(classScope));
-            var moduleName = _variables.GetGlobalScopeName();
             var parent = classScope.Parent;
             if (parent == null || parent.Kind == ScopeKind.Global)
             {
-                return moduleName;
+                return _moduleName;
             }
 
             // CallableDiscovery uses module-qualified scope paths (e.g., "<module>/<function>").
             // Scope.GetQualifiedName() omits the global scope, so prefix with module.
-            return $"{moduleName}/{parent.GetQualifiedName()}";
+            return $"{_moduleName}/{parent.GetQualifiedName()}";
         }
 
         public void DeclareClasses(SymbolTable table)

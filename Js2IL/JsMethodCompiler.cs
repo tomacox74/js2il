@@ -10,7 +10,6 @@ using System.Reflection.Metadata.Ecma335;
 using Js2IL.Utilities.Ecma335;
 using Js2IL.Services;
 using Js2IL.Services.TwoPhaseCompilation;
-using Js2IL.Services.VariableBindings;
 using Microsoft.Extensions.DependencyInjection;
 using ScopesCallableKind = Js2IL.Services.ScopesAbi.CallableKind;
 
@@ -186,7 +185,6 @@ internal sealed class JsMethodCompiler
         MethodDefinitionHandle expectedMethodDef,
         MethodBodyStreamEncoder methodBodyStreamEncoder,
         ClassRegistry classRegistry,
-        Variables rootVariables,
         SymbolTable symbolTable,
         Scope classScope,
         Acornima.Ast.MethodDefinition methodDef,
@@ -195,7 +193,7 @@ internal sealed class JsMethodCompiler
     {
         if (expectedMethodDef.IsNil) throw new ArgumentException("Expected MethodDef cannot be nil.", nameof(expectedMethodDef));
 
-        var className = GetRegistryClassName(rootVariables, classScope);
+        var className = GetRegistryClassName(classScope);
         var funcExpr = methodDef.Value as FunctionExpression;
         var methodScope = funcExpr != null ? symbolTable.FindScopeByAstNode(funcExpr) : null;
         methodScope ??= classScope;
@@ -323,38 +321,11 @@ internal sealed class JsMethodCompiler
         return CreateILCompiler().TryCompileCallableBody(callable, expectedMethodDef, methodDescriptor, lirMethod!, methodBodyStreamEncoder);
     }
 
-    private static string GetRegistryClassName(Variables variables, Scope classScope)
+    private static string GetRegistryClassName(Scope classScope)
     {
         var ns = classScope.DotNetNamespace ?? "Classes";
         var name = classScope.DotNetTypeName ?? classScope.Name;
         return $"{ns}.{name}";
-    }
-
-    private static List<string> DetermineParentScopesForClassMethod(Variables variables, Scope classScope)
-    {
-        var scopeNames = new List<string>();
-        var moduleName = variables.GetGlobalScopeName();
-
-        var current = classScope.Parent;
-        var ancestors = new Stack<string>();
-        while (current != null)
-        {
-            var name = current.Name;
-            if (!string.IsNullOrEmpty(name) && !name.Contains('/') && name != moduleName)
-            {
-                name = $"{moduleName}/{name}";
-            }
-
-            ancestors.Push(name);
-            current = current.Parent;
-        }
-
-        while (ancestors.Count > 0)
-        {
-            scopeNames.Add(ancestors.Pop());
-        }
-
-        return scopeNames;
     }
 
     public MethodDefinitionHandle TryCompileMethod(TypeBuilder typeBuilder, string methodName, Node node, Scope scope, MethodBodyStreamEncoder methodBodyStreamEncoder)

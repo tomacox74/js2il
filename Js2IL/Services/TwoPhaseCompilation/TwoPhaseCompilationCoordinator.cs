@@ -93,7 +93,7 @@ public sealed class TwoPhaseCompilationCoordinator
 
         if (_discoveredCallables != null)
         {
-            PreallocatePhase1AnonymousCallablesMethodDefs(_discoveredCallables, metadataBuilder);
+            PreallocatePhase1AnonymousCallablesMethodDefsInOrder(_discoveredCallables, _discoveredCallables, metadataBuilder);
         }
 
         // Enable strict mode before any body compilation so expression emission cannot compile.
@@ -145,11 +145,9 @@ public sealed class TwoPhaseCompilationCoordinator
         SymbolTable symbolTable,
         MetadataBuilder metadataBuilder,
         IServiceProvider serviceProvider,
-        Variables rootVariables,
         BaseClassLibraryReferences bclReferences,
         MethodBodyStreamEncoder methodBodyStreamEncoder,
         ClassRegistry classRegistry,
-        FunctionRegistry functionRegistry,
         Action<IReadOnlyList<CallableId>> compileAnonymousCallablesPhase2,
         Action compileClassesAndFunctionsPhase2)
     {
@@ -222,7 +220,6 @@ public sealed class TwoPhaseCompilationCoordinator
                 metadataBuilder,
                 ordered,
                 serviceProvider,
-                rootVariables,
                 methodBodyStreamEncoder,
                 classRegistry);
 
@@ -234,11 +231,9 @@ public sealed class TwoPhaseCompilationCoordinator
                 metadataBuilder,
                 ordered,
                 serviceProvider,
-                rootVariables,
                 bclReferences,
                 methodBodyStreamEncoder,
-                classRegistry,
-                functionRegistry);
+                classRegistry);
 
             if (_methodDefRowCountAtPreallocation.HasValue && _expectedMethodDefsBeforeAnonymousCallables.HasValue)
             {
@@ -295,7 +290,6 @@ public sealed class TwoPhaseCompilationCoordinator
         MetadataBuilder metadataBuilder,
         IReadOnlyList<CallableId> plannedOrder,
         IServiceProvider serviceProvider,
-        Variables rootVariables,
         MethodBodyStreamEncoder methodBodyStreamEncoder,
         ClassRegistry classRegistry)
     {
@@ -397,7 +391,6 @@ public sealed class TwoPhaseCompilationCoordinator
                         expectedMethodDef: expected,
                         methodBodyStreamEncoder: methodBodyStreamEncoder,
                         classRegistry: classRegistry,
-                        rootVariables: rootVariables,
                         symbolTable: symbolTable,
                         classScope: classScope,
                         methodDef: methodDef,
@@ -571,11 +564,9 @@ public sealed class TwoPhaseCompilationCoordinator
         MetadataBuilder metadataBuilder,
         IReadOnlyList<CallableId> plannedOrder,
         IServiceProvider serviceProvider,
-        Variables rootVariables,
         BaseClassLibraryReferences bclReferences,
         MethodBodyStreamEncoder methodBodyStreamEncoder,
-        ClassRegistry classRegistry,
-        FunctionRegistry functionRegistry)
+        ClassRegistry classRegistry)
     {
         if (_discoveredCallables == null)
         {
@@ -583,60 +574,6 @@ public sealed class TwoPhaseCompilationCoordinator
         }
 
         var moduleName = symbolTable.Root.Name;
-
-        // Build Variables for each function declaration with correct parent scope wiring.
-        // This is required for nested function bodies compiled via the legacy emitter path.
-        var variablesByFunctionDecl = new Dictionary<FunctionDeclaration, Variables>();
-        void BuildVariablesForFunctionScopes(Scope currentScope, Variables currentFunctionVariables)
-        {
-            foreach (var child in currentScope.Children)
-            {
-                if (child.Kind == ScopeKind.Function && child.AstNode is FunctionDeclaration childFuncDecl)
-                {
-                    var fnName = (childFuncDecl.Id as Identifier)?.Name;
-                    if (string.IsNullOrEmpty(fnName))
-                    {
-                        // FunctionDeclaration should always be named; keep defensive.
-                        continue;
-                    }
-
-                    var registryScopeName = $"{moduleName}/{fnName}";
-                    var paramNames = JavaScriptParameterNameExtractor.ExtractParameterNames(childFuncDecl.Params).ToArray();
-
-                    // If we're inside another function, this is a nested function.
-                    var isNestedFunction = currentFunctionVariables.GetCurrentScopeName() != rootVariables.GetCurrentScopeName();
-                    var childVars = new Variables(currentFunctionVariables, registryScopeName, paramNames, isNestedFunction: isNestedFunction);
-
-                    variablesByFunctionDecl[childFuncDecl] = childVars;
-
-                    // Recurse: any function declarations underneath are nested within this function.
-                    BuildVariablesForFunctionScopes(child, childVars);
-                }
-                else
-                {
-                    // Keep traversing to find function declarations nested in blocks, etc.
-                    BuildVariablesForFunctionScopes(child, currentFunctionVariables);
-                }
-            }
-        }
-
-        // Seed with top-level functions under the module root.
-        foreach (var topFuncScope in symbolTable.Root.Children.Where(c => c.Kind == ScopeKind.Function && c.AstNode is FunctionDeclaration))
-        {
-            var topFuncDecl = (FunctionDeclaration)topFuncScope.AstNode!;
-            var topName = (topFuncDecl.Id as Identifier)?.Name;
-            if (string.IsNullOrEmpty(topName))
-            {
-                continue;
-            }
-
-            var topRegistryScopeName = $"{moduleName}/{topName}";
-            var topParamNames = JavaScriptParameterNameExtractor.ExtractParameterNames(topFuncDecl.Params).ToArray();
-            var topVars = new Variables(rootVariables, topRegistryScopeName, topParamNames, isNestedFunction: false);
-            variablesByFunctionDecl[topFuncDecl] = topVars;
-
-            BuildVariablesForFunctionScopes(topFuncScope, topVars);
-        }
 
         // Deterministic declaration order for MethodDef row allocation: discovery order.
         var functionDeclCallables = _discoveredCallables
@@ -665,8 +602,6 @@ public sealed class TwoPhaseCompilationCoordinator
                 if (!string.IsNullOrEmpty(fnName))
                 {
                     var jsParamNames = JavaScriptParameterNameExtractor.ExtractParameterNames(fd.Params).ToArray();
-                    functionRegistry.PreRegisterParameterCount(fnName, jsParamNames.Length);
-                    functionRegistry.Register(fnName, preallocated, jsParamNames.Length);
                 }
             }
         }
@@ -701,12 +636,6 @@ public sealed class TwoPhaseCompilationCoordinator
                 throw new InvalidOperationException($"[TwoPhase] FunctionDeclaration scope not found: {callable.DisplayName}");
             }
 
-            if (!variablesByFunctionDecl.TryGetValue(funcDecl, out var functionVariables))
-            {
-                throw new InvalidOperationException($"[TwoPhase] Variables not found for function declaration: {callable.DisplayName}");
-            }
-
-            var registryScopeName = functionVariables.GetCurrentScopeName();
             var methodName = (funcDecl.Id as Identifier)?.Name ?? callable.Name ?? "anonymous";
 
             // IR first
@@ -789,11 +718,8 @@ public sealed class TwoPhaseCompilationCoordinator
         IReadOnlyList<CallableId> callables,
         MetadataBuilder metadataBuilder,
         IServiceProvider serviceProvider,
-        Variables rootVariables,
         BaseClassLibraryReferences bclReferences,
         MethodBodyStreamEncoder methodBodyStreamEncoder,
-        ClassRegistry classRegistry,
-        FunctionRegistry functionRegistry,
         SymbolTable symbolTable)
     {
         foreach (var callable in callables)
@@ -812,7 +738,7 @@ public sealed class TwoPhaseCompilationCoordinator
                 case CallableKind.FunctionExpression:
                     if (callable.AstNode is FunctionExpression funcExpr)
                     {
-                        CompileFunctionExpression(callable, funcExpr, metadataBuilder, serviceProvider, rootVariables, bclReferences, methodBodyStreamEncoder, classRegistry, functionRegistry, symbolTable);
+                        CompileFunctionExpression(callable, funcExpr, metadataBuilder, serviceProvider, bclReferences, methodBodyStreamEncoder, symbolTable);
                         // Note: body is marked as compiled by the coordinator after successful IR compilation.
                     }
                     break;
@@ -859,11 +785,8 @@ public sealed class TwoPhaseCompilationCoordinator
         FunctionExpression funcExpr,
         MetadataBuilder metadataBuilder,
         IServiceProvider serviceProvider,
-        Variables rootVariables,
         BaseClassLibraryReferences bclReferences,
         MethodBodyStreamEncoder methodBodyStreamEncoder,
-        ClassRegistry classRegistry,
-        FunctionRegistry functionRegistry,
         SymbolTable symbolTable)
     {
         if (_registry.TryGetDeclaredToken(callable, out var existingToken) &&
@@ -927,6 +850,9 @@ public sealed class TwoPhaseCompilationCoordinator
                 $"[TwoPhase] IR pipeline could not compile function expression '{ilMethodName}' in scope '{funcScope.GetQualifiedName()}'.");
         }
 
+        // Two-phase: the IR compiler returns a body-only representation. We must finalize it into
+        // a MethodDef/TypeDef so existing call sites (ldftn / delegate creation) reference a real
+        // method body at the preallocated token.
         var irTb = new TypeBuilder(metadataBuilder, FunctionsNamespace, ilMethodName);
         _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, irTb, compiledBody);
         irTb.AddTypeDefinition(
@@ -939,50 +865,6 @@ public sealed class TwoPhaseCompilationCoordinator
         if (_verbose)
         {
             _logger.WriteLine($"[TwoPhase] Phase 2: Compiled function expression: {ilMethodName}");
-        }
-    }
-
-    private void PreallocatePhase1AnonymousCallablesMethodDefs(IReadOnlyList<CallableId> callables, MetadataBuilder metadataBuilder)
-    {
-        // Preallocate MethodDef tokens for anonymous callables.
-        //
-        // Important: we are NOT emitting MethodDef rows here. We are reserving their row ids
-        // deterministically so any IL emitted during class/function compilation can reference the
-        // future MethodDef token. The actual MethodDef rows get emitted later during Phase 2 when
-        // the callable bodies are compiled.
-        //
-        // This relies on the fact that MethodDef row ids are assigned sequentially. As long as the
-        // number of MethodDef rows emitted before anonymous callables is deterministic (and matches
-        // our computed offset), the predicted handles will match the real handles allocated later.
-
-        _methodDefRowCountAtPreallocation = metadataBuilder.GetRowCount(TableIndex.MethodDef);
-
-        // Phase 2 ordering (today): declare classes + function declarations first, then compile anonymous callables.
-        // We assume those steps will emit one MethodDef per corresponding callable.
-        _expectedMethodDefsBeforeAnonymousCallables = callables.Count(c => c.Kind is
-            CallableKind.FunctionDeclaration or
-            CallableKind.ClassConstructor or
-            CallableKind.ClassMethod or
-            CallableKind.ClassStaticMethod or
-            CallableKind.ClassStaticInitializer);
-
-        var nextRowId = _methodDefRowCountAtPreallocation.Value + _expectedMethodDefsBeforeAnonymousCallables.Value + 1;
-
-        foreach (var callable in callables)
-        {
-            if (callable.Kind is not (CallableKind.Arrow or CallableKind.FunctionExpression))
-            {
-                continue;
-            }
-
-            // Idempotent: if token already set, do not overwrite.
-            if (_registry.TryGetDeclaredToken(callable, out var existingToken) && !existingToken.IsNil)
-            {
-                continue;
-            }
-
-            var preallocated = MetadataTokens.MethodDefinitionHandle(nextRowId++);
-            _registry.SetToken(callable, preallocated);
         }
     }
 
@@ -1238,51 +1120,4 @@ public sealed class TwoPhaseCompilationCoordinator
         }
     }
 
-    /// <summary>
-    /// Builds a Variables instance representing the parent scope of a nested callable.
-    /// The generator will then create the actual callable's Variables from this parent.
-    /// This ensures the parent scope chain is properly represented so captured variables can be resolved.
-    /// </summary>
-    private Variables BuildParentVariablesForCallable(Variables rootVariables, Scope? callableScope, string moduleName)
-    {
-        if (callableScope?.Parent == null)
-        {
-            // Callable is at global level, just use rootVariables
-            return rootVariables;
-        }
-
-        var parentScope = callableScope.Parent;
-        
-        // If parent is the global scope, rootVariables already represents it
-        if (parentScope.Kind == ScopeKind.Global)
-        {
-            return rootVariables;
-        }
-
-        // Build a Variables for the parent function scope with its own parent chain
-        // Use the same naming convention as ScopeNaming.GetRegistryScopeName():
-        // {moduleName}/{scopeName} for non-global scopes
-        var parentScopeName = $"{moduleName}/{parentScope.Name}";
-        
-        // Collect grandparent scopes (parent's parents)
-        var grandparentScopeNames = new List<string>();
-        var current = parentScope.Parent;
-        while (current != null)
-        {
-            // Use the correct registry scope name format
-            if (current.Kind == ScopeKind.Global)
-            {
-                grandparentScopeNames.Insert(0, moduleName); // Global scope uses module name
-            }
-            else
-            {
-                grandparentScopeNames.Insert(0, $"{moduleName}/{current.Name}");
-            }
-            current = current.Parent;
-        }
-
-        // Create Variables for the parent scope
-        // Empty parameter names since we're not compiling the parent, just representing its scope
-        return new Variables(rootVariables, parentScopeName, Array.Empty<string>(), grandparentScopeNames, parameterStartIndex: 1);
-    }
 }
