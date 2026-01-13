@@ -118,7 +118,7 @@
 	// Fields
 	.field private object[] _scopes
 	.field assembly object __js2il_ctorReturn
-	.field public object a
+	.field public float64 a
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -128,7 +128,7 @@
 	{
 		// Method begins at RVA 0x2080
 		// Header size: 12
-		// Code size: 72 (0x48)
+		// Code size: 77 (0x4d)
 		.maxstack 32
 		.locals init (
 			[0] object[]
@@ -144,16 +144,17 @@
 		IL_000f: ldarg.0
 		IL_0010: ldc.r8 1
 		IL_0019: box [System.Runtime]System.Double
-		IL_001e: stfld object Classes.Classes_Constructor_ReturnObjectOverridesThis.A::a
-		IL_0023: ldarg.0
-		IL_0024: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0029: dup
-		IL_002a: ldstr "b"
-		IL_002f: ldc.r8 2
-		IL_0038: box [System.Runtime]System.Double
-		IL_003d: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0042: stfld object Classes.Classes_Constructor_ReturnObjectOverridesThis.A::__js2il_ctorReturn
-		IL_0047: ret
+		IL_001e: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0023: stfld float64 Classes.Classes_Constructor_ReturnObjectOverridesThis.A::a
+		IL_0028: ldarg.0
+		IL_0029: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_002e: dup
+		IL_002f: ldstr "b"
+		IL_0034: ldc.r8 2
+		IL_003d: box [System.Runtime]System.Double
+		IL_0042: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0047: stfld object Classes.Classes_Constructor_ReturnObjectOverridesThis.A::__js2il_ctorReturn
+		IL_004c: ret
 	} // end of method A::.ctor
 
 } // end of class Classes.Classes_Constructor_ReturnObjectOverridesThis.A
@@ -163,15 +164,15 @@
 {
 	// Fields
 	.field assembly object __js2il_ctorReturn
-	.field public object a
+	.field public float64 a
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
 		instance void .ctor () cil managed 
 	{
-		// Method begins at RVA 0x20d4
+		// Method begins at RVA 0x20dc
 		// Header size: 12
-		// Code size: 47 (0x2f)
+		// Code size: 52 (0x34)
 		.maxstack 32
 
 		IL_0000: ldarg.0
@@ -179,12 +180,13 @@
 		IL_0006: ldarg.0
 		IL_0007: ldc.r8 1
 		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Classes.Classes_Constructor_ReturnObjectOverridesThis.B::a
-		IL_001a: ldarg.0
-		IL_001b: ldc.r8 1
-		IL_0024: box [System.Runtime]System.Double
-		IL_0029: stfld object Classes.Classes_Constructor_ReturnObjectOverridesThis.B::__js2il_ctorReturn
-		IL_002e: ret
+		IL_0015: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_001a: stfld float64 Classes.Classes_Constructor_ReturnObjectOverridesThis.B::a
+		IL_001f: ldarg.0
+		IL_0020: ldc.r8 1
+		IL_0029: box [System.Runtime]System.Double
+		IL_002e: stfld object Classes.Classes_Constructor_ReturnObjectOverridesThis.B::__js2il_ctorReturn
+		IL_0033: ret
 	} // end of method B::.ctor
 
 } // end of class Classes.Classes_Constructor_ReturnObjectOverridesThis.B
@@ -202,7 +204,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2110
+		// Method begins at RVA 0x211c
 		// Header size: 12
 		// Code size: 204 (0xcc)
 		.maxstack 32
@@ -303,7 +305,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21e8
+		// Method begins at RVA 0x21f4
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

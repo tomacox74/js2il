@@ -121,7 +121,7 @@
 			object n
 		) cil managed 
 	{
-		// Method begins at RVA 0x20e0
+		// Method begins at RVA 0x20e8
 		// Header size: 12
 		// Code size: 14 (0xe)
 		.maxstack 32
@@ -140,7 +140,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public object sieveSizeInBits
+	.field public float64 sieveSizeInBits
 	.field public object bitArray
 
 	// Methods
@@ -151,7 +151,7 @@
 	{
 		// Method begins at RVA 0x2080
 		// Header size: 12
-		// Code size: 82 (0x52)
+		// Code size: 92 (0x5c)
 		.maxstack 32
 		.locals init (
 			[0] float64,
@@ -176,20 +176,22 @@
 		IL_0021: stloc.1
 		IL_0022: ldarg.0
 		IL_0023: ldloc.1
-		IL_0024: stfld object Classes.Classes_PrimeCtor_BitArrayAdd.PrimeSieve::sieveSizeInBits
-		IL_0029: ldc.r8 1
-		IL_0032: box [System.Runtime]System.Double
-		IL_0037: ldarg.0
-		IL_0038: ldfld object Classes.Classes_PrimeCtor_BitArrayAdd.PrimeSieve::sieveSizeInBits
-		IL_003d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-		IL_0042: stloc.2
-		IL_0043: ldloc.2
-		IL_0044: newobj instance void Classes.Classes_PrimeCtor_BitArrayAdd.BitArray::.ctor(object)
-		IL_0049: stloc.3
-		IL_004a: ldarg.0
-		IL_004b: ldloc.3
-		IL_004c: stfld object Classes.Classes_PrimeCtor_BitArrayAdd.PrimeSieve::bitArray
-		IL_0051: ret
+		IL_0024: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_0029: stfld float64 Classes.Classes_PrimeCtor_BitArrayAdd.PrimeSieve::sieveSizeInBits
+		IL_002e: ldc.r8 1
+		IL_0037: box [System.Runtime]System.Double
+		IL_003c: ldarg.0
+		IL_003d: ldfld float64 Classes.Classes_PrimeCtor_BitArrayAdd.PrimeSieve::sieveSizeInBits
+		IL_0042: box [System.Runtime]System.Double
+		IL_0047: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_004c: stloc.2
+		IL_004d: ldloc.2
+		IL_004e: newobj instance void Classes.Classes_PrimeCtor_BitArrayAdd.BitArray::.ctor(object)
+		IL_0053: stloc.3
+		IL_0054: ldarg.0
+		IL_0055: ldloc.3
+		IL_0056: stfld object Classes.Classes_PrimeCtor_BitArrayAdd.PrimeSieve::bitArray
+		IL_005b: ret
 	} // end of method PrimeSieve::.ctor
 
 } // end of class Classes.Classes_PrimeCtor_BitArrayAdd.PrimeSieve
@@ -207,7 +209,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20fc
+		// Method begins at RVA 0x2104
 		// Header size: 12
 		// Code size: 52 (0x34)
 		.maxstack 32
@@ -242,7 +244,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x213c
+		// Method begins at RVA 0x2144
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
