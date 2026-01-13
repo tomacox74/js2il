@@ -163,6 +163,31 @@ public class SymbolTableTypeInferenceTests
         Assert.Equal(expectedType, binding.ClrType);
     }
 
+    [Theory]
+    [InlineData("X", "42", typeof(double), "return X + 1;")]
+    [InlineData("FLAG", "true", typeof(bool), "return FLAG ? 1 : 0;")]
+    [InlineData("NAME", "'hello'", typeof(string), "return NAME;")]
+    public void SymbolTable_InferTypes_CapturedConst(string name, string initializer, Type expectedType, string usage)
+    {
+        var code = $@"
+                const {name} = {initializer};
+
+                function run() {{
+                    {usage}
+                }}
+
+                run();
+            ";
+
+        var symbolTable = BuildSymbolTable(code);
+        var binding = symbolTable.GetBindingInfo(name);
+        Assert.NotNull(binding);
+        Assert.Equal(BindingKind.Const, binding.Kind);
+        Assert.True(binding.IsCaptured);
+        Assert.True(binding.IsStableType);
+        Assert.Equal(expectedType, binding.ClrType);
+    }
+
     private BindingInfo? FindBindingByName(Js2IL.SymbolTables.Scope scope, string name)
     {
         // Check current scope
