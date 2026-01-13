@@ -277,6 +277,7 @@ public record LIRNewIntrinsicObject(string IntrinsicName, IReadOnlyList<TempVari
 /// </summary>
 public record LIRNewUserClass(
     string ClassName,
+    string RegistryClassName,
     CallableId ConstructorCallableId,
     bool NeedsScopes,
     TempVariable? ScopesArray,

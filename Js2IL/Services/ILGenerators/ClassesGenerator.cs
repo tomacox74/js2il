@@ -173,6 +173,84 @@ namespace Js2IL.Services.ILGenerators
                 _classRegistry.RegisterPrivateField(registryClassName, "_scopes", scopesField);
             }
 
+            // PL5.4a: If the constructor explicitly returns a value, stash it in a hidden field
+            // so the `new` call site can decide whether to override the constructed instance.
+            // Only needed when the constructor contains `return <expr>` (not bare `return;`).
+            static bool ConstructorHasReturnValue(Node? node)
+            {
+                if (node == null) return false;
+
+                switch (node)
+                {
+                    case ReturnStatement rs:
+                        return rs.Argument != null;
+
+                    // Don't count returns inside nested functions/arrow functions/classes.
+                    case FunctionDeclaration:
+                    case FunctionExpression:
+                    case ArrowFunctionExpression:
+                    case ClassDeclaration:
+                    case ClassExpression:
+                        return false;
+
+                    case BlockStatement b:
+                        return b.Body.Any(ConstructorHasReturnValue);
+                    case ExpressionStatement es:
+                        return ConstructorHasReturnValue(es.Expression);
+                    case IfStatement ifs:
+                        return ConstructorHasReturnValue(ifs.Test)
+                            || ConstructorHasReturnValue(ifs.Consequent)
+                            || ConstructorHasReturnValue(ifs.Alternate);
+                    case ForStatement fs:
+                        return ConstructorHasReturnValue(fs.Init)
+                            || ConstructorHasReturnValue(fs.Test)
+                            || ConstructorHasReturnValue(fs.Update)
+                            || ConstructorHasReturnValue(fs.Body);
+                    case ForInStatement fis:
+                        return ConstructorHasReturnValue(fis.Left)
+                            || ConstructorHasReturnValue(fis.Right)
+                            || ConstructorHasReturnValue(fis.Body);
+                    case ForOfStatement fos:
+                        return ConstructorHasReturnValue(fos.Left)
+                            || ConstructorHasReturnValue(fos.Right)
+                            || ConstructorHasReturnValue(fos.Body);
+                    case WhileStatement ws:
+                        return ConstructorHasReturnValue(ws.Test) || ConstructorHasReturnValue(ws.Body);
+                    case DoWhileStatement dws:
+                        return ConstructorHasReturnValue(dws.Body) || ConstructorHasReturnValue(dws.Test);
+                    case SwitchStatement ss:
+                        return ConstructorHasReturnValue(ss.Discriminant) || ss.Cases.Any(ConstructorHasReturnValue);
+                    case SwitchCase sc:
+                        return ConstructorHasReturnValue(sc.Test) || sc.Consequent.Any(ConstructorHasReturnValue);
+                    case TryStatement ts:
+                        return ConstructorHasReturnValue(ts.Block)
+                            || ConstructorHasReturnValue(ts.Handler)
+                            || ConstructorHasReturnValue(ts.Finalizer);
+                    case CatchClause cc:
+                        return ConstructorHasReturnValue(cc.Body);
+                }
+
+                return false;
+            }
+
+            var ctorMemberForReturn = cdecl.Body.Body.OfType<Acornima.Ast.MethodDefinition>()
+                .FirstOrDefault(m => (m.Key as Identifier)?.Name == "constructor");
+
+            if (ctorMemberForReturn?.Value is FunctionExpression ctorFuncForReturn
+                && ctorFuncForReturn.Body is BlockStatement ctorBody
+                && ConstructorHasReturnValue(ctorBody))
+            {
+                var fSig = new BlobBuilder();
+                new BlobEncoder(fSig).Field().Type().Object();
+                var fSigHandle = _metadata.GetOrAddBlob(fSig);
+
+                // This field is read from the `new C()` call site (outside the class) to implement
+                // JavaScript constructor return override semantics. It must be accessible from
+                // other types in the same generated assembly.
+                var fh = tb.AddFieldDefinition(FieldAttributes.Assembly, "__js2il_ctorReturn", fSigHandle);
+                _classRegistry.RegisterPrivateField(registryClassName, "__js2il_ctorReturn", fh);
+            }
+
             // Pre-scan methods for this.<prop> assignments to declare backing fields.
             System.Collections.Generic.IEnumerable<string> FindThisAssignedProps(Acornima.Ast.Node node)
             {

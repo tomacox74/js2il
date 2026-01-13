@@ -1296,6 +1296,14 @@
                   "notes": ""
                 },
                 {
+                  "feature": "Instance method implicit fallthrough return is undefined",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Classes/JavaScript/Classes_Method_DefaultReturnUndefined.js"
+                  ],
+                  "notes": "Class/instance methods that reach the end without an explicit return evaluate to JS undefined (represented as CLR null), matching ECMAScript semantics."
+                },
+                {
                   "feature": "Static method (declare and call)",
                   "status": "Supported",
                   "testScripts": [
@@ -1336,6 +1344,15 @@
                     "Js2IL.Tests/Classes/JavaScript/Classes_ClassConstructor_TwoParams_SubtractMethod.js"
                   ],
                   "notes": "Covers multi-parameter constructors and arithmetic in instance methods."
+                },
+                {
+                  "feature": "Constructor return value override semantics",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Classes/JavaScript/Classes_Constructor_ExplicitReturnThis.js",
+                    "Js2IL.Tests/Classes/JavaScript/Classes_Constructor_ReturnObjectOverridesThis.js"
+                  ],
+                  "notes": "Implements ECMAScript constructor behavior: `new C()` returns the constructed instance unless the constructor explicitly returns an object/function (which overrides). Returning a primitive does not override."
                 },
                 {
                   "feature": "Private instance field (#) with helper method access",

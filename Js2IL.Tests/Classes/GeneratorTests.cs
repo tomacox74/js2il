@@ -140,6 +140,16 @@ namespace Js2IL.Tests.Classes
             return GenerateTest(testName);
         }
 
+        // PL5.4a: Constructor return override semantics
+        // - returning an object overrides the constructed instance
+        // - returning a primitive does not override
+        [Fact]
+        public Task Classes_Constructor_ReturnObjectOverridesThis()
+        {
+            var testName = nameof(Classes_Constructor_ReturnObjectOverridesThis);
+            return GenerateTest(testName);
+        }
+
         // PL5.5: Test that methods without explicit return return 'undefined', not 'this'
         // BUG: Currently methods without explicit return incorrectly return 'this' instead of 'undefined'
         [Fact]

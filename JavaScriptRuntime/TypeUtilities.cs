@@ -5,6 +5,26 @@ namespace JavaScriptRuntime
 {
     public static class TypeUtilities
     {
+        /// <summary>
+        /// JavaScript constructor semantics: if a constructor explicitly returns an object (or function),
+        /// the result of <c>new C()</c> is that value; otherwise the constructed instance is used.
+        /// In this runtime, primitives are typically boxed value types (double/bool/etc) or string;
+        /// JS null is represented as <see cref="JsNull"/> and JS undefined is CLR null.
+        /// </summary>
+        public static bool IsConstructorReturnOverride(object? value)
+        {
+            // undefined / null never override
+            if (value is null) return false;
+            if (value is JsNull) return false;
+
+            // JS primitives never override
+            if (value is string) return false;
+            if (value.GetType().IsValueType) return false;
+
+            // Any remaining reference type (ExpandoObject, Array, Delegate, host objects, etc.) counts as an object.
+            return true;
+        }
+
         // JS ToNumber coercion used by codegen slow paths when operand type is uncertain
         public static double ToNumber(object? value)
         {
