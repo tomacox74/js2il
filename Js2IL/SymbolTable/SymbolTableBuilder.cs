@@ -92,6 +92,52 @@ namespace Js2IL.SymbolTables
                            ContainsFreeVariable(fs.Update, localVariables) ||
                            ContainsFreeVariable(fs.Body, localVariables);
 
+                case ForOfStatement forOf:
+                {
+                    // for (const x of iterable) { ... }
+                    // The iteration variable is in scope for the loop body.
+                    var loopLocals = new HashSet<string>(localVariables);
+                    if (forOf.Left is VariableDeclaration forOfDecl)
+                    {
+                        foreach (var decl in forOfDecl.Declarations)
+                        {
+                            if (decl.Id is Identifier vid)
+                            {
+                                loopLocals.Add(vid.Name);
+                            }
+                        }
+                        // For-of decl doesn't have initializer; still scan the iterable (in the outer locals).
+                        return ContainsFreeVariable(forOf.Right, localVariables) ||
+                               ContainsFreeVariable(forOf.Body, loopLocals);
+                    }
+
+                    return ContainsFreeVariable(forOf.Left as Node, localVariables) ||
+                           ContainsFreeVariable(forOf.Right, localVariables) ||
+                           ContainsFreeVariable(forOf.Body, localVariables);
+                }
+
+                case ForInStatement forIn:
+                {
+                    // for (const k in obj) { ... }
+                    var loopLocals = new HashSet<string>(localVariables);
+                    if (forIn.Left is VariableDeclaration forInDecl)
+                    {
+                        foreach (var decl in forInDecl.Declarations)
+                        {
+                            if (decl.Id is Identifier vid)
+                            {
+                                loopLocals.Add(vid.Name);
+                            }
+                        }
+                        return ContainsFreeVariable(forIn.Right, localVariables) ||
+                               ContainsFreeVariable(forIn.Body, loopLocals);
+                    }
+
+                    return ContainsFreeVariable(forIn.Left as Node, localVariables) ||
+                           ContainsFreeVariable(forIn.Right, localVariables) ||
+                           ContainsFreeVariable(forIn.Body, localVariables);
+                }
+
                 case WhileStatement ws:
                     return ContainsFreeVariable(ws.Test, localVariables) ||
                            ContainsFreeVariable(ws.Body, localVariables);
@@ -926,6 +972,57 @@ namespace Js2IL.SymbolTables
                     CollectFreeVariables(fs.Update, localVariables, targetVariables, result);
                     CollectFreeVariables(fs.Body, localVariables, targetVariables, result);
                     break;
+
+                case ForOfStatement forOf:
+                {
+                    // The iteration variable is in scope for the loop body.
+                    var loopLocals = localVariables;
+                    if (forOf.Left is VariableDeclaration forOfDecl)
+                    {
+                        var forOfLocals = new HashSet<string>(localVariables);
+                        foreach (var decl in forOfDecl.Declarations)
+                        {
+                            if (decl.Id is Identifier vid)
+                            {
+                                forOfLocals.Add(vid.Name);
+                            }
+                        }
+                        loopLocals = forOfLocals;
+                    }
+                    else
+                    {
+                        CollectFreeVariables(forOf.Left as Node, localVariables, targetVariables, result);
+                    }
+
+                    CollectFreeVariables(forOf.Right, localVariables, targetVariables, result);
+                    CollectFreeVariables(forOf.Body, loopLocals, targetVariables, result);
+                    break;
+                }
+
+                case ForInStatement forIn:
+                {
+                    var loopLocals = localVariables;
+                    if (forIn.Left is VariableDeclaration forInDecl)
+                    {
+                        var forInLocals = new HashSet<string>(localVariables);
+                        foreach (var decl in forInDecl.Declarations)
+                        {
+                            if (decl.Id is Identifier vid)
+                            {
+                                forInLocals.Add(vid.Name);
+                            }
+                        }
+                        loopLocals = forInLocals;
+                    }
+                    else
+                    {
+                        CollectFreeVariables(forIn.Left as Node, localVariables, targetVariables, result);
+                    }
+
+                    CollectFreeVariables(forIn.Right, localVariables, targetVariables, result);
+                    CollectFreeVariables(forIn.Body, loopLocals, targetVariables, result);
+                    break;
+                }
 
                 case WhileStatement ws:
                     CollectFreeVariables(ws.Test, localVariables, targetVariables, result);

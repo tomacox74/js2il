@@ -51,6 +51,9 @@ namespace Js2IL.Tests.ControlFlow
         public Task ControlFlow_ForOf_Array_Basic() { var testName = nameof(ControlFlow_ForOf_Array_Basic); return GenerateTest(testName); }
 
         [Fact]
+        public Task ControlFlow_ForOf_ClosureCallback() { var testName = nameof(ControlFlow_ForOf_ClosureCallback); return GenerateTest(testName); }
+
+        [Fact]
         public Task ControlFlow_ForIn_Object_Basic() { var testName = nameof(ControlFlow_ForIn_Object_Basic); return GenerateTest(testName); }
 
         [Fact]
