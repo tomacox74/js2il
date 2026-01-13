@@ -7,6 +7,9 @@ All notable changes to this project are documented here.
 ### Fixed
 - Destructuring now throws a Node/V8-style `TypeError` when the source value is `null` or `undefined`, including a more precise message that includes source/target binding names.
 
+### Added
+- Regression tests covering closure binding when functions escape scope via object literals and CommonJS exports (#167).
+
 ### Performance
 - Inlined destructuring null/undefined guards so the runtime helper is only invoked on exceptional paths.
 - Stackify can now inline `LIRIsInstanceOf` (with corresponding IL emission support), reducing unnecessary temp materialization.
