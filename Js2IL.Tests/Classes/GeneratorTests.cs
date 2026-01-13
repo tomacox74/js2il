@@ -104,6 +104,13 @@ namespace Js2IL.Tests.Classes
             return GenerateTest(testName);
         }
 
+        [Fact]
+        public Task Classes_ClassFieldTypeInference_Primitives()
+        {
+            var testName = nameof(Classes_ClassFieldTypeInference_Primitives);
+            return GenerateTest(testName);
+        }
+
         [Fact] public Task Classes_ForLoopMin() { var testName = nameof(Classes_ForLoopMin); return GenerateTest(testName); }
 
         // Bug repro: class method local variable initialized as number, then reassigned from method call.

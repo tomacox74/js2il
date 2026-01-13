@@ -1,5 +1,8 @@
 using Acornima.Ast;
 using Acornima;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 namespace Js2IL.SymbolTables;
 
 public partial class SymbolTableBuilder
@@ -10,6 +13,11 @@ public partial class SymbolTableBuilder
     private void InferVariableClrTypes(Scope scope)
     {
         InferVariableClrTypesRecursively(scope);
+    }
+
+    private void InferClassInstanceFieldClrTypes(Scope scope)
+    {
+        InferClassInstanceFieldClrTypesRecursively(scope);
     }
 
     void InferVariableClrTypesForScope(Scope scope)
@@ -175,6 +183,147 @@ public partial class SymbolTableBuilder
         foreach (var childScope in scope.Children)
         {
             InferVariableClrTypesRecursively(childScope);
+        }
+    }
+
+    private void InferClassInstanceFieldClrTypesRecursively(Scope scope)
+    {
+        if (scope.Kind == ScopeKind.Class && scope.AstNode is ClassDeclaration classDecl)
+        {
+            InferClassInstanceFieldClrTypesForClassScope(scope, classDecl);
+        }
+
+        foreach (var childScope in scope.Children)
+        {
+            InferClassInstanceFieldClrTypesRecursively(childScope);
+        }
+    }
+
+    private void InferClassInstanceFieldClrTypesForClassScope(Scope classScope, ClassDeclaration classDecl)
+    {
+        // Clear any previous results (builder should be single-use, but keep this deterministic).
+        classScope.StableInstanceFieldClrTypes.Clear();
+
+        var proposed = new Dictionary<string, Type>(StringComparer.Ordinal);
+        var conflicted = new HashSet<string>(StringComparer.Ordinal);
+
+        void MarkConflict(string name)
+        {
+            conflicted.Add(name);
+            proposed.Remove(name);
+        }
+
+        void Propose(string name, Type? t)
+        {
+            if (string.IsNullOrEmpty(name)) return;
+            if (conflicted.Contains(name)) return;
+
+            // Any unknown assignment makes the field non-stable.
+            if (t == null)
+            {
+                MarkConflict(name);
+                return;
+            }
+
+            if (!proposed.TryGetValue(name, out var existing))
+            {
+                proposed[name] = t;
+                return;
+            }
+
+            if (existing != t)
+            {
+                MarkConflict(name);
+            }
+        }
+
+        // Include class field initializers: `field = <expr>`.
+        foreach (var pdef in classDecl.Body.Body.OfType<PropertyDefinition>())
+        {
+            if (pdef.Static)
+            {
+                continue;
+            }
+
+            string? name = pdef.Key switch
+            {
+                Identifier id => id.Name,
+                PrivateIdentifier pid => pid.Name,
+                _ => null
+            };
+
+            if (name == null)
+            {
+                continue;
+            }
+
+            if (pdef.Value is Node init)
+            {
+                Propose(name, InferExpressionClrType(init));
+            }
+        }
+
+        void Walk(Node? node)
+        {
+            if (node == null) return;
+
+            // Assignment: this.x = <expr>
+            if (node is AssignmentExpression assign
+                && assign.Left is MemberExpression me
+                && me.Object is ThisExpression
+                && !me.Computed)
+            {
+                var propName = me.Property switch
+                {
+                    Identifier id => id.Name,
+                    PrivateIdentifier pid => pid.Name,
+                    _ => null
+                };
+
+                if (propName != null)
+                {
+                    Propose(propName, InferExpressionClrType(assign.Right));
+                }
+            }
+
+            // Update: this.x++ / this.x--
+            if (node is UpdateExpression update
+                && update.Argument is MemberExpression ume
+                && ume.Object is ThisExpression
+                && !ume.Computed)
+            {
+                var propName = ume.Property switch
+                {
+                    Identifier id => id.Name,
+                    PrivateIdentifier pid => pid.Name,
+                    _ => null
+                };
+                if (propName != null)
+                {
+                    // Update expressions are numeric.
+                    Propose(propName, typeof(double));
+                }
+            }
+
+            foreach (var child in node.ChildNodes)
+            {
+                Walk(child);
+            }
+        }
+
+        // Walk all method bodies and collect assignments.
+        foreach (var method in classDecl.Body.Body.OfType<MethodDefinition>())
+        {
+            if (method.Value is FunctionExpression fe)
+            {
+                Walk(fe.Body);
+            }
+        }
+
+        // Persist stable results.
+        foreach (var kvp in proposed)
+        {
+            classScope.StableInstanceFieldClrTypes[kvp.Key] = kvp.Value;
         }
     }
 

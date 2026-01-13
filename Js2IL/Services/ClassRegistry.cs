@@ -12,8 +12,12 @@ namespace Js2IL.Services
     {
         private readonly Dictionary<string, TypeDefinitionHandle> _classes = new(StringComparer.Ordinal);
         private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _classFields = new(StringComparer.Ordinal);
-    private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _classPrivateFields = new(StringComparer.Ordinal);
-    private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _classStaticFields = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _classPrivateFields = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _classStaticFields = new(StringComparer.Ordinal);
+
+        private readonly Dictionary<string, Dictionary<string, Type>> _classFieldClrTypes = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, Dictionary<string, Type>> _classPrivateFieldClrTypes = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, Dictionary<string, Type>> _classStaticFieldClrTypes = new(StringComparer.Ordinal);
         private readonly Dictionary<string, Dictionary<string, MemberReferenceHandle>> _classStaticMethods = new(StringComparer.Ordinal);
         // Cache per-class constructor definition + signature + parameter count so call sites can reuse
         // and validate instead of rebuilding duplicate member references.
@@ -44,6 +48,29 @@ namespace Js2IL.Services
             fields[fieldName] = fieldHandle;
         }
 
+        public void RegisterFieldClrType(string className, string fieldName, Type fieldClrType)
+        {
+            if (string.IsNullOrEmpty(className) || string.IsNullOrEmpty(fieldName) || fieldClrType == null) return;
+            if (!_classFieldClrTypes.TryGetValue(className, out var fields))
+            {
+                fields = new Dictionary<string, Type>(StringComparer.Ordinal);
+                _classFieldClrTypes[className] = fields;
+            }
+            fields[fieldName] = fieldClrType;
+        }
+
+        public bool TryGetFieldClrType(string className, string fieldName, out Type fieldClrType)
+        {
+            fieldClrType = typeof(object);
+            if (_classFieldClrTypes.TryGetValue(className, out var fields) &&
+                fields.TryGetValue(fieldName, out var t))
+            {
+                fieldClrType = t;
+                return true;
+            }
+            return false;
+        }
+
         public bool TryGetField(string className, string fieldName, out FieldDefinitionHandle fieldHandle)
         {
             fieldHandle = default;
@@ -65,6 +92,29 @@ namespace Js2IL.Services
             fields[fieldName] = fieldHandle;
         }
 
+        public void RegisterPrivateFieldClrType(string className, string fieldName, Type fieldClrType)
+        {
+            if (string.IsNullOrEmpty(className) || string.IsNullOrEmpty(fieldName) || fieldClrType == null) return;
+            if (!_classPrivateFieldClrTypes.TryGetValue(className, out var fields))
+            {
+                fields = new Dictionary<string, Type>(StringComparer.Ordinal);
+                _classPrivateFieldClrTypes[className] = fields;
+            }
+            fields[fieldName] = fieldClrType;
+        }
+
+        public bool TryGetPrivateFieldClrType(string className, string fieldName, out Type fieldClrType)
+        {
+            fieldClrType = typeof(object);
+            if (_classPrivateFieldClrTypes.TryGetValue(className, out var fields) &&
+                fields.TryGetValue(fieldName, out var t))
+            {
+                fieldClrType = t;
+                return true;
+            }
+            return false;
+        }
+
         public bool TryGetPrivateField(string className, string fieldName, out FieldDefinitionHandle fieldHandle)
         {
             fieldHandle = default;
@@ -84,6 +134,29 @@ namespace Js2IL.Services
                 _classStaticFields[className] = fields;
             }
             fields[fieldName] = fieldHandle;
+        }
+
+        public void RegisterStaticFieldClrType(string className, string fieldName, Type fieldClrType)
+        {
+            if (string.IsNullOrEmpty(className) || string.IsNullOrEmpty(fieldName) || fieldClrType == null) return;
+            if (!_classStaticFieldClrTypes.TryGetValue(className, out var fields))
+            {
+                fields = new Dictionary<string, Type>(StringComparer.Ordinal);
+                _classStaticFieldClrTypes[className] = fields;
+            }
+            fields[fieldName] = fieldClrType;
+        }
+
+        public bool TryGetStaticFieldClrType(string className, string fieldName, out Type fieldClrType)
+        {
+            fieldClrType = typeof(object);
+            if (_classStaticFieldClrTypes.TryGetValue(className, out var fields) &&
+                fields.TryGetValue(fieldName, out var t))
+            {
+                fieldClrType = t;
+                return true;
+            }
+            return false;
         }
 
         public bool TryGetStaticField(string className, string fieldName, out FieldDefinitionHandle fieldHandle)

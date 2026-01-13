@@ -126,39 +126,74 @@ namespace Js2IL.Services.ILGenerators
 
             // Fields (instance + static)
             var declaredFieldNames = new System.Collections.Generic.HashSet<string>(StringComparer.Ordinal);
+
+            void EncodeFieldType(BlobEncoder encoder, Type? clrType)
+            {
+                var t = encoder.Field().Type();
+                if (clrType == typeof(double))
+                {
+                    t.Double();
+                }
+                else if (clrType == typeof(bool))
+                {
+                    t.Boolean();
+                }
+                else if (clrType == typeof(string))
+                {
+                    t.String();
+                }
+                else
+                {
+                    t.Object();
+                }
+            }
+
+            Type? TryGetStableInstanceFieldClrType(string fieldName)
+            {
+                return classScope.StableInstanceFieldClrTypes.TryGetValue(fieldName, out var t) ? t : null;
+            }
+
             foreach (var pdef in cdecl.Body.Body.OfType<Acornima.Ast.PropertyDefinition>())
             {
-                var fSig = new BlobBuilder();
-                new BlobEncoder(fSig).Field().Type().Object();
-                var fSigHandle = _metadata.GetOrAddBlob(fSig);
-
                 if (pdef.Key is Acornima.Ast.PrivateIdentifier priv)
                 {
                     var pname = priv.Name;
                     var emittedName = ManglePrivateFieldName(pname);
+                    var clrType = pdef.Static ? typeof(object) : TryGetStableInstanceFieldClrType(pname);
+                    var fSig = new BlobBuilder();
+                    EncodeFieldType(new BlobEncoder(fSig), clrType);
+                    var fSigHandle = _metadata.GetOrAddBlob(fSig);
                     if (pdef.Static)
                     {
                         var fh = tb.AddFieldDefinition(FieldAttributes.Private | FieldAttributes.Static, emittedName, fSigHandle);
                         _classRegistry.RegisterStaticField(registryClassName, pname, fh);
+                        _classRegistry.RegisterStaticFieldClrType(registryClassName, pname, typeof(object));
                     }
                     else
                     {
                         var fh = tb.AddFieldDefinition(FieldAttributes.Private, emittedName, fSigHandle);
                         _classRegistry.RegisterPrivateField(registryClassName, pname, fh);
+                        _classRegistry.RegisterPrivateFieldClrType(registryClassName, pname, clrType ?? typeof(object));
                     }
                     declaredFieldNames.Add(pname);
                 }
                 else if (pdef.Key is Identifier pid)
                 {
+                    var clrType = pdef.Static ? typeof(object) : TryGetStableInstanceFieldClrType(pid.Name);
+                    var fSig = new BlobBuilder();
+                    EncodeFieldType(new BlobEncoder(fSig), clrType);
+                    var fSigHandle = _metadata.GetOrAddBlob(fSig);
                     if (pdef.Static)
                     {
                         var fh = tb.AddFieldDefinition(FieldAttributes.Public | FieldAttributes.Static, pid.Name, fSigHandle);
                         _classRegistry.RegisterStaticField(registryClassName, pid.Name, fh);
+                        _classRegistry.RegisterStaticFieldClrType(registryClassName, pid.Name, typeof(object));
                     }
                     else
                     {
                         var fh = tb.AddFieldDefinition(FieldAttributes.Public, pid.Name, fSigHandle);
                         _classRegistry.RegisterField(registryClassName, pid.Name, fh);
+                        _classRegistry.RegisterFieldClrType(registryClassName, pid.Name, clrType ?? typeof(object));
                     }
                     declaredFieldNames.Add(pid.Name);
                 }
@@ -299,11 +334,13 @@ namespace Js2IL.Services.ILGenerators
                     {
                         if (!declaredFieldNames.Contains(prop))
                         {
+                            var clrType = TryGetStableInstanceFieldClrType(prop);
                             var fSig = new BlobBuilder();
-                            new BlobEncoder(fSig).Field().Type().Object();
+                            EncodeFieldType(new BlobEncoder(fSig), clrType);
                             var fSigHandle = _metadata.GetOrAddBlob(fSig);
                             var fh = tb.AddFieldDefinition(FieldAttributes.Public, prop, fSigHandle);
                             _classRegistry.RegisterField(registryClassName, prop, fh);
+                            _classRegistry.RegisterFieldClrType(registryClassName, prop, clrType ?? typeof(object));
                             declaredFieldNames.Add(prop);
                         }
                     }

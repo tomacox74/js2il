@@ -65,6 +65,41 @@ public sealed class HIRToLIRLowerer
         InitializeParameters(parameters);
     }
 
+    private Type? TryGetStableThisFieldClrType(string fieldName)
+    {
+        // Find the nearest enclosing class scope.
+        var current = _scope;
+        while (current != null && current.Kind != ScopeKind.Class)
+        {
+            current = current.Parent;
+        }
+
+        if (current == null)
+        {
+            return null;
+        }
+
+        return current.StableInstanceFieldClrTypes.TryGetValue(fieldName, out var t) ? t : null;
+    }
+
+    private static ValueStorage GetPreferredFieldReadStorage(Type? fieldClrType)
+    {
+        if (fieldClrType == typeof(double))
+        {
+            return new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+        }
+        if (fieldClrType == typeof(bool))
+        {
+            return new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool));
+        }
+        if (fieldClrType == typeof(string))
+        {
+            return new ValueStorage(ValueStorageKind.Reference, typeof(string));
+        }
+
+        return new ValueStorage(ValueStorageKind.Reference, typeof(object));
+    }
+
     private void InitializeParameters(IReadOnlyList<HIRPattern> parameters)
     {
         // Build ordered parameter names from HIR. (No AST peeking in lowering.)
@@ -669,7 +704,14 @@ public sealed class HIRToLIRLowerer
                     {
                         return false;
                     }
-                    valueTemp = EnsureObject(valueTemp);
+
+                    // Only force object boxing when the declared field type is unknown/object.
+                    // For stable typed fields (double/bool/string), keep the value in its preferred form.
+                    var stableFieldType = TryGetStableThisFieldClrType(storeInstanceField.FieldName);
+                    if (stableFieldType == null || stableFieldType == typeof(object))
+                    {
+                        valueTemp = EnsureObject(valueTemp);
+                    }
                     lirInstructions.Add(new LIRStoreUserClassInstanceField(
                         storeInstanceField.RegistryClassName,
                         storeInstanceField.FieldName,
@@ -1832,7 +1874,8 @@ public sealed class HIRToLIRLowerer
                     loadUserField.FieldName,
                     loadUserField.IsPrivateField,
                     resultTempVar));
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                var stableFieldType = TryGetStableThisFieldClrType(loadUserField.FieldName);
+                DefineTempStorage(resultTempVar, GetPreferredFieldReadStorage(stableFieldType));
                 return true;
 
             case HIRIndexAccessExpression indexAccessExpr:

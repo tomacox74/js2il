@@ -59,6 +59,56 @@ internal sealed class LIRToILCompiler
         }
     }
 
+    private static Type GetDeclaredUserClassFieldClrType(
+        Js2IL.Services.ClassRegistry classRegistry,
+        string registryClassName,
+        string fieldName,
+        bool isPrivateField,
+        bool isStaticField)
+    {
+        if (isStaticField)
+        {
+            return classRegistry.TryGetStaticFieldClrType(registryClassName, fieldName, out var t)
+                ? t
+                : typeof(object);
+        }
+
+        if (isPrivateField)
+        {
+            return classRegistry.TryGetPrivateFieldClrType(registryClassName, fieldName, out var t)
+                ? t
+                : typeof(object);
+        }
+
+        return classRegistry.TryGetFieldClrType(registryClassName, fieldName, out var t2)
+            ? t2
+            : typeof(object);
+    }
+
+    private void EmitBoxIfNeededForTypedUserClassFieldLoad(Type fieldClrType, ValueStorage targetStorage, InstructionEncoder ilEncoder)
+    {
+        if (!fieldClrType.IsValueType)
+        {
+            return;
+        }
+
+        if (targetStorage.Kind == ValueStorageKind.UnboxedValue && targetStorage.ClrType == fieldClrType)
+        {
+            return;
+        }
+
+        if (fieldClrType == typeof(double))
+        {
+            ilEncoder.OpCode(ILOpCode.Box);
+            ilEncoder.Token(_bclReferences.DoubleType);
+        }
+        else if (fieldClrType == typeof(bool))
+        {
+            ilEncoder.OpCode(ILOpCode.Box);
+            ilEncoder.Token(_bclReferences.BooleanType);
+        }
+    }
+
     private void EmitLoadTempAsDouble(TempVariable value, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
     {
         var storage = GetTempStorage(value);
@@ -75,6 +125,38 @@ internal sealed class LIRToILCompiler
             parameterTypes: new[] { typeof(object) });
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(toNumberMref);
+    }
+
+    private void EmitLoadTempAsBoolean(TempVariable value, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
+    {
+        var storage = GetTempStorage(value);
+        if (storage.Kind == ValueStorageKind.UnboxedValue && storage.ClrType == typeof(bool))
+        {
+            EmitLoadTemp(value, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        EmitLoadTempAsObject(value, ilEncoder, allocation, methodDescriptor);
+        var toBooleanMref = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.TypeUtilities),
+            nameof(JavaScriptRuntime.TypeUtilities.ToBoolean),
+            parameterTypes: new[] { typeof(object) });
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(toBooleanMref);
+    }
+
+    private void EmitLoadTempAsString(TempVariable value, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
+    {
+        var storage = GetTempStorage(value);
+        if (storage.Kind == ValueStorageKind.Reference && storage.ClrType == typeof(string))
+        {
+            EmitLoadTemp(value, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
+        EmitLoadTempAsObject(value, ilEncoder, allocation, methodDescriptor);
+        ilEncoder.OpCode(ILOpCode.Castclass);
+        ilEncoder.Token(_bclReferences.StringType);
     }
 
     private static int GetIlArgIndexForJsParameter(MethodDescriptor methodDescriptor, int jsParameterIndex)
@@ -1225,7 +1307,29 @@ internal sealed class LIRToILCompiler
                     }
 
                     ilEncoder.LoadArgument(0);
-                    EmitLoadTemp(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
+                    var fieldClrType = GetDeclaredUserClassFieldClrType(
+                        classRegistry,
+                        storeInstanceField.RegistryClassName,
+                        storeInstanceField.FieldName,
+                        storeInstanceField.IsPrivateField,
+                        isStaticField: false);
+
+                    if (fieldClrType == typeof(double))
+                    {
+                        EmitLoadTempAsDouble(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else if (fieldClrType == typeof(bool))
+                    {
+                        EmitLoadTempAsBoolean(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else if (fieldClrType == typeof(string))
+                    {
+                        EmitLoadTempAsString(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(storeInstanceField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
                     ilEncoder.OpCode(ILOpCode.Stfld);
                     ilEncoder.Token(fieldHandle);
                     break;
@@ -1311,6 +1415,14 @@ internal sealed class LIRToILCompiler
                     ilEncoder.LoadArgument(0);
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(fieldHandle);
+
+                    var fieldClrType = GetDeclaredUserClassFieldClrType(
+                        classRegistry,
+                        loadInstanceField.RegistryClassName,
+                        loadInstanceField.FieldName,
+                        loadInstanceField.IsPrivateField,
+                        isStaticField: false);
+                    EmitBoxIfNeededForTypedUserClassFieldLoad(fieldClrType, GetTempStorage(loadInstanceField.Result), ilEncoder);
 
                     EmitStoreTemp(loadInstanceField.Result, ilEncoder, allocation);
 
@@ -2920,6 +3032,14 @@ internal sealed class LIRToILCompiler
                     ilEncoder.LoadArgument(0);
                     ilEncoder.OpCode(ILOpCode.Ldfld);
                     ilEncoder.Token(fieldHandle);
+
+                    var fieldClrType = GetDeclaredUserClassFieldClrType(
+                        classRegistry,
+                        loadInstanceField.RegistryClassName,
+                        loadInstanceField.FieldName,
+                        loadInstanceField.IsPrivateField,
+                        isStaticField: false);
+                    EmitBoxIfNeededForTypedUserClassFieldLoad(fieldClrType, GetTempStorage(temp), ilEncoder);
                     break;
                 }
 
