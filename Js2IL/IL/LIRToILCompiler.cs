@@ -542,6 +542,113 @@ internal sealed class LIRToILCompiler
         {
             var instruction = MethodBody.Instructions[i];
 
+            // Peephole optimization: fuse `new C(...); this.<field> = <temp>` into a single sequence
+            // `ldarg.0; newobj C(..); stfld <field>`.
+            // This avoids materializing the freshly-constructed instance into an `object` local and
+            // then immediately `castclass`-ing it back to the declared user-class type for `stfld`.
+            //
+            // Only apply when we can preserve JS semantics without requiring PL5.4a ctor return override handling.
+            if (instruction is LIRNewUserClass newUserClass
+                && i + 1 < MethodBody.Instructions.Count
+                && MethodBody.Instructions[i + 1] is LIRStoreUserClassInstanceField storeInstanceField
+                && storeInstanceField.Value.Equals(newUserClass.Result))
+            {
+                var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+                var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+
+                if (classRegistry != null
+                    && reader != null
+                    && (!classRegistry.TryGetPrivateField(newUserClass.RegistryClassName, "__js2il_ctorReturn", out _))
+                    && reader.TryGetDeclaredToken(newUserClass.ConstructorCallableId, out var token)
+                    && token.Kind == HandleKind.MethodDefinition)
+                {
+                    // Resolve the field handle.
+                    FieldDefinitionHandle fieldHandle;
+                    if (storeInstanceField.IsPrivateField)
+                    {
+                        if (!classRegistry.TryGetPrivateField(storeInstanceField.RegistryClassName, storeInstanceField.FieldName, out fieldHandle))
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if (!classRegistry.TryGetField(storeInstanceField.RegistryClassName, storeInstanceField.FieldName, out fieldHandle))
+                        {
+                            return false;
+                        }
+                    }
+
+                    // Emit: ldarg.0
+                    ilEncoder.LoadArgument(0);
+
+                    // Emit the constructor call inline (leave the constructed instance on stack).
+                    var ctorDef = (MethodDefinitionHandle)token;
+
+                    int argc = newUserClass.Arguments.Count;
+                    if (argc < newUserClass.MinArgCount || argc > newUserClass.MaxArgCount)
+                    {
+                        var expectedMinArgs = newUserClass.MinArgCount;
+                        var expectedMaxArgs = newUserClass.MaxArgCount;
+
+                        if (expectedMinArgs == expectedMaxArgs)
+                        {
+                            ILEmitHelpers.ThrowNotSupported(
+                                $"Constructor for class '{newUserClass.ClassName}' expects {expectedMinArgs} argument(s) but call site has {argc}.");
+                        }
+
+                        ILEmitHelpers.ThrowNotSupported(
+                            $"Constructor for class '{newUserClass.ClassName}' expects {expectedMinArgs}-{expectedMaxArgs} argument(s) but call site has {argc}.");
+                    }
+
+                    if (newUserClass.NeedsScopes)
+                    {
+                        if (newUserClass.ScopesArray is not { } scopesTemp)
+                        {
+                            return false;
+                        }
+                        EmitLoadTemp(scopesTemp, ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    foreach (var arg in newUserClass.Arguments)
+                    {
+                        EmitLoadTemp(arg, ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    int paddingNeeded = newUserClass.MaxArgCount - argc;
+                    for (int p = 0; p < paddingNeeded; p++)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(ctorDef);
+
+                    // If the field is declared as a specific user-class type and it matches the constructed type,
+                    // omit the cast. Otherwise, preserve the cast to keep IL verification correct.
+                    if (TryGetDeclaredUserClassFieldTypeHandle(
+                        classRegistry,
+                        storeInstanceField.RegistryClassName,
+                        storeInstanceField.FieldName,
+                        storeInstanceField.IsPrivateField,
+                        isStaticField: false,
+                        out var declaredFieldTypeHandle)
+                        && classRegistry.TryGet(newUserClass.RegistryClassName, out var constructedTypeHandle)
+                        && !declaredFieldTypeHandle.Equals(constructedTypeHandle))
+                    {
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(declaredFieldTypeHandle);
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Stfld);
+                    ilEncoder.Token(fieldHandle);
+
+                    // Skip the following LIRStoreUserClassInstanceField (we just emitted it).
+                    i++;
+                    continue;
+                }
+            }
+
             // Handle control flow instructions directly
             switch (instruction)
             {
