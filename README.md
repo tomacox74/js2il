@@ -131,6 +131,29 @@ dotnet run --project .\Js2IL -- .\tests\simple.js .\out
 
 **IMPORTANT**: Always create the release branch FIRST, before running any version bump commands.
 
+### Preferred (Automated)
+
+Use the release automation script to do the full flow (release branch → version bump → commit → PR → optional merge + tag/release):
+
+```powershell
+# Patch / minor / major
+npm run release:cut -- patch
+# npm run release:cut -- minor
+# npm run release:cut -- major
+
+# Fully automate through merge + GitHub release creation
+npm run release:cut -- patch --merge
+```
+
+What it does:
+- Validates you're on a clean, up-to-date `master`
+- Creates `release/<version>` branch
+- Runs the existing `scripts/bumpVersion.js` to update `CHANGELOG.md` + project versions
+- Commits, pushes, and opens a PR
+- With `--merge`: waits for CI checks, merges the PR, then creates the GitHub release/tag using the `CHANGELOG.md` section
+
+Requirements: `git`, `gh` (authenticated), `node`/`npm`.
+
 ### Complete Release Process
 
 Follow these steps IN ORDER:
