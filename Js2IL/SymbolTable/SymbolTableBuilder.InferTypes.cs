@@ -339,7 +339,7 @@ public partial class SymbolTableBuilder
         }
 
         // Include class field initializers: `field = <expr>`.
-        foreach (var pdef in classDecl.Body.Body.OfType<PropertyDefinition>())
+        foreach (var pdef in classDecl.Body.Body.Where(n => n is PropertyDefinition).Cast<PropertyDefinition>())
         {
             if (pdef.Static)
             {
@@ -431,11 +431,17 @@ public partial class SymbolTableBuilder
         }
 
         // Walk all method bodies and collect assignments.
-        foreach (var method in classDecl.Body.Body.OfType<MethodDefinition>())
+        foreach (var method in classDecl.Body.Body.Where(n => n is MethodDefinition).Cast<MethodDefinition>())
         {
             if (method.Value is FunctionExpression fe)
             {
                 Walk(fe.Body);
+            }
+            else if (method.Value is not null)
+            {
+                // Normal class methods (including getters/setters) are typically FunctionExpression,
+                // but walk any other representation to avoid missing assignments.
+                Walk(method.Value);
             }
         }
 
