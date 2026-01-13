@@ -91,7 +91,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public object arr
+	.field public class [JavaScriptRuntime]JavaScriptRuntime.Int32Array arr
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -99,7 +99,7 @@
 	{
 		// Method begins at RVA 0x2074
 		// Header size: 12
-		// Code size: 34 (0x22)
+		// Code size: 39 (0x27)
 		.maxstack 32
 		.locals init (
 			[0] object
@@ -113,14 +113,15 @@
 		IL_0019: stloc.0
 		IL_001a: ldarg.0
 		IL_001b: ldloc.0
-		IL_001c: stfld object Classes.CompoundAssignment_LocalVarIndex.TestClass::arr
-		IL_0021: ret
+		IL_001c: castclass [JavaScriptRuntime]JavaScriptRuntime.Int32Array
+		IL_0021: stfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.CompoundAssignment_LocalVarIndex.TestClass::arr
+		IL_0026: ret
 	} // end of method TestClass::.ctor
 
 	.method public hidebysig 
 		instance object test () cil managed 
 	{
-		// Method begins at RVA 0x20a4
+		// Method begins at RVA 0x20a8
 		// Header size: 12
 		// Code size: 123 (0x7b)
 		.maxstack 32
@@ -140,14 +141,14 @@
 		IL_001f: dup
 		IL_0020: ldc.i4.0
 		IL_0021: ldarg.0
-		IL_0022: ldfld object Classes.CompoundAssignment_LocalVarIndex.TestClass::arr
+		IL_0022: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.CompoundAssignment_LocalVarIndex.TestClass::arr
 		IL_0027: ldloc.0
 		IL_0028: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
 		IL_002d: stelem.ref
 		IL_002e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0033: pop
 		IL_0034: ldarg.0
-		IL_0035: ldfld object Classes.CompoundAssignment_LocalVarIndex.TestClass::arr
+		IL_0035: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.CompoundAssignment_LocalVarIndex.TestClass::arr
 		IL_003a: ldloc.0
 		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
 		IL_0040: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
@@ -158,7 +159,7 @@
 		IL_0049: conv.r8
 		IL_004a: stloc.2
 		IL_004b: ldarg.0
-		IL_004c: ldfld object Classes.CompoundAssignment_LocalVarIndex.TestClass::arr
+		IL_004c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.CompoundAssignment_LocalVarIndex.TestClass::arr
 		IL_0051: ldloc.0
 		IL_0052: ldloc.2
 		IL_0053: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, float64, float64)
@@ -169,7 +170,7 @@
 		IL_0064: dup
 		IL_0065: ldc.i4.0
 		IL_0066: ldarg.0
-		IL_0067: ldfld object Classes.CompoundAssignment_LocalVarIndex.TestClass::arr
+		IL_0067: ldfld class [JavaScriptRuntime]JavaScriptRuntime.Int32Array Classes.CompoundAssignment_LocalVarIndex.TestClass::arr
 		IL_006c: ldloc.0
 		IL_006d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
 		IL_0072: stelem.ref
@@ -194,7 +195,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x212c
+		// Method begins at RVA 0x2130
 		// Header size: 12
 		// Code size: 57 (0x39)
 		.maxstack 32
@@ -239,7 +240,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2171
+		// Method begins at RVA 0x2175
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
