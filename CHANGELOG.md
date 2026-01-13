@@ -4,7 +4,16 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+### Added
+- Conservative CLR type inference for JavaScript class instance fields (including user class instances and selected intrinsics), enabling strongly-typed generated fields where safe.
+- LIR intrinsic normalization pass that rewrites provably-safe `Int32Array` element access into explicit typed LIR instructions.
+- Unit tests for intrinsic normalization plus updated generator snapshots.
+
+### Performance
+- `Int32Array` element reads/writes can compile to direct `callvirt` to `Int32Array.get_Item(double)` / `set_Item(double, double)` when proven safe, avoiding late-bound `Object.GetItem/SetItem` in hot paths.
+
+### Changed
+- `Int32Array` indexer is now numeric (`double` in/out) to better align with unboxed numeric flows.
 
 ## v0.6.3 - 2026-01-13
 
