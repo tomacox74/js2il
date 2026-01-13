@@ -430,6 +430,11 @@ internal static class Stackify
             case LIRCallMember:
                 return false;
 
+            // LIRCallUserClassInstanceMethod performs a direct callvirt to a generated class method.
+            // Like other calls, it must never be inlined/re-emitted by Stackify.
+            case LIRCallUserClassInstanceMethod:
+                return false;
+
             // LIRCallDeclaredCallable performs a direct call to a declared method.
             // Like other calls, it must never be inlined/re-emitted by Stackify.
             case LIRCallDeclaredCallable:
@@ -545,6 +550,10 @@ internal static class Stackify
             // LIRGetItem: consumes 2 (object + index), produces 1 value
             case LIRGetItem:
                 return (2, 1);
+
+            // Direct instance method call on a user-defined class: consumes N args, produces 1 result.
+            case LIRCallUserClassInstanceMethod callUserClass:
+                return (callUserClass.Arguments.Count, 1);
 
             // LIRArrayPushRange: consumes 2 (target array + source), produces 0 (void return)
             case LIRArrayPushRange:

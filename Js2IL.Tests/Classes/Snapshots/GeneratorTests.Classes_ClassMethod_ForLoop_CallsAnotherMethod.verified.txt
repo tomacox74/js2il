@@ -179,7 +179,7 @@
 			object n
 		) cil managed 
 	{
-		// Method begins at RVA 0x2108
+		// Method begins at RVA 0x20f8
 		// Header size: 12
 		// Code size: 22 (0x16)
 		.maxstack 32
@@ -206,12 +206,11 @@
 	{
 		// Method begins at RVA 0x20ac
 		// Header size: 12
-		// Code size: 77 (0x4d)
+		// Code size: 61 (0x3d)
 		.maxstack 32
 		.locals init (
 			[0] float64,
-			[1] object,
-			[2] object[]
+			[1] object
 		)
 
 		IL_0000: ldc.r8 1
@@ -223,38 +222,30 @@
 			IL_0011: cgt
 			IL_0013: ldc.i4.0
 			IL_0014: ceq
-			IL_0016: brfalse IL_004b
+			IL_0016: brfalse IL_003b
 
 			IL_001b: ldloc.0
 			IL_001c: box [System.Runtime]System.Double
 			IL_0021: stloc.1
-			IL_0022: ldc.i4.1
-			IL_0023: newarr [System.Runtime]System.Object
-			IL_0028: dup
-			IL_0029: ldc.i4.0
-			IL_002a: ldloc.1
-			IL_002b: stelem.ref
-			IL_002c: stloc.2
-			IL_002d: ldarg.0
-			IL_002e: ldstr "add"
-			IL_0033: ldloc.2
-			IL_0034: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-			IL_0039: pop
-			IL_003a: ldloc.0
-			IL_003b: ldc.r8 1
-			IL_0044: add
-			IL_0045: stloc.0
-			IL_0046: br IL_000a
+			IL_0022: ldarg.0
+			IL_0023: ldloc.1
+			IL_0024: callvirt instance object Classes.Classes_ClassMethod_ForLoop_CallsAnotherMethod.Accumulator::'add'(object)
+			IL_0029: pop
+			IL_002a: ldloc.0
+			IL_002b: ldc.r8 1
+			IL_0034: add
+			IL_0035: stloc.0
+			IL_0036: br IL_000a
 		// end loop
 
-		IL_004b: ldnull
-		IL_004c: ret
+		IL_003b: ldnull
+		IL_003c: ret
 	} // end of method Accumulator::addRange
 
 	.method public hidebysig 
 		instance object log () cil managed 
 	{
-		// Method begins at RVA 0x212c
+		// Method begins at RVA 0x211c
 		// Header size: 12
 		// Code size: 28 (0x1c)
 		.maxstack 32
@@ -288,9 +279,9 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2154
+		// Method begins at RVA 0x2144
 		// Header size: 12
-		// Code size: 80 (0x50)
+		// Code size: 153 (0x99)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Classes_ClassMethod_ForLoop_CallsAnotherMethod,
@@ -304,23 +295,54 @@
 		IL_0014: newobj instance void Classes.Classes_ClassMethod_ForLoop_CallsAnotherMethod.Accumulator::.ctor(object)
 		IL_0019: stloc.1
 		IL_001a: ldloc.1
-		IL_001b: ldstr "addRange"
-		IL_0020: ldc.i4.1
-		IL_0021: newarr [System.Runtime]System.Object
-		IL_0026: dup
-		IL_0027: ldc.i4.0
-		IL_0028: ldc.r8 5
-		IL_0031: box [System.Runtime]System.Double
-		IL_0036: stelem.ref
-		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_003c: pop
-		IL_003d: ldloc.1
-		IL_003e: ldstr "log"
-		IL_0043: ldc.i4.0
-		IL_0044: newarr [System.Runtime]System.Object
-		IL_0049: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_004e: pop
-		IL_004f: ret
+		IL_001b: isinst Classes.Classes_ClassMethod_ForLoop_CallsAnotherMethod.Accumulator
+		IL_0020: dup
+		IL_0021: brfalse IL_004a
+
+		IL_0026: ldc.i4.1
+		IL_0027: newarr [System.Runtime]System.Object
+		IL_002c: dup
+		IL_002d: ldc.i4.0
+		IL_002e: ldc.r8 5
+		IL_0037: box [System.Runtime]System.Double
+		IL_003c: stelem.ref
+		IL_003d: ldc.i4.0
+		IL_003e: ldelem.ref
+		IL_003f: callvirt instance object Classes.Classes_ClassMethod_ForLoop_CallsAnotherMethod.Accumulator::addRange(object)
+		IL_0044: pop
+		IL_0045: br IL_006e
+
+		IL_004a: pop
+		IL_004b: ldloc.1
+		IL_004c: ldstr "addRange"
+		IL_0051: ldc.i4.1
+		IL_0052: newarr [System.Runtime]System.Object
+		IL_0057: dup
+		IL_0058: ldc.i4.0
+		IL_0059: ldc.r8 5
+		IL_0062: box [System.Runtime]System.Double
+		IL_0067: stelem.ref
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_006d: pop
+
+		IL_006e: ldloc.1
+		IL_006f: isinst Classes.Classes_ClassMethod_ForLoop_CallsAnotherMethod.Accumulator
+		IL_0074: dup
+		IL_0075: brfalse IL_0085
+
+		IL_007a: callvirt instance object Classes.Classes_ClassMethod_ForLoop_CallsAnotherMethod.Accumulator::log()
+		IL_007f: pop
+		IL_0080: br IL_0098
+
+		IL_0085: pop
+		IL_0086: ldloc.1
+		IL_0087: ldstr "log"
+		IL_008c: ldc.i4.0
+		IL_008d: newarr [System.Runtime]System.Object
+		IL_0092: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0097: pop
+
+		IL_0098: ret
 	} // end of method Classes_ClassMethod_ForLoop_CallsAnotherMethod::Main
 
 } // end of class Scripts.Classes_ClassMethod_ForLoop_CallsAnotherMethod
@@ -332,7 +354,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x21b0
+		// Method begins at RVA 0x21e9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

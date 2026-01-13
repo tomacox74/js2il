@@ -129,7 +129,7 @@
 	{
 		// Method begins at RVA 0x20b4
 		// Header size: 12
-		// Code size: 31 (0x1f)
+		// Code size: 55 (0x37)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Classes_ClassPrivateProperty_HelperMethod_Log,
@@ -141,12 +141,23 @@
 		IL_0006: newobj instance void Classes.Classes_ClassPrivateProperty_HelperMethod_Log.Greeter::.ctor()
 		IL_000b: stloc.1
 		IL_000c: ldloc.1
-		IL_000d: ldstr "logSecret"
-		IL_0012: ldc.i4.0
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_000d: isinst Classes.Classes_ClassPrivateProperty_HelperMethod_Log.Greeter
+		IL_0012: dup
+		IL_0013: brfalse IL_0023
+
+		IL_0018: callvirt instance object Classes.Classes_ClassPrivateProperty_HelperMethod_Log.Greeter::logSecret()
 		IL_001d: pop
-		IL_001e: ret
+		IL_001e: br IL_0036
+
+		IL_0023: pop
+		IL_0024: ldloc.1
+		IL_0025: ldstr "logSecret"
+		IL_002a: ldc.i4.0
+		IL_002b: newarr [System.Runtime]System.Object
+		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0035: pop
+
+		IL_0036: ret
 	} // end of method Classes_ClassPrivateProperty_HelperMethod_Log::Main
 
 } // end of class Scripts.Classes_ClassPrivateProperty_HelperMethod_Log
@@ -158,7 +169,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20df
+		// Method begins at RVA 0x20f7
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

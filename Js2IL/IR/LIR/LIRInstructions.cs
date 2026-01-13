@@ -119,6 +119,17 @@ public record LIRCallFunctionValue(TempVariable FunctionValue, TempVariable Scop
 public record LIRCallMember(TempVariable Receiver, string MethodName, TempVariable ArgumentsArray, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Calls a user-defined JavaScript class instance method directly on the implicit 'this'.
+/// The method handle and signature are resolved via <see cref="Js2IL.Services.ClassRegistry"/>.
+/// Emits: ldarg.0, [args], callvirt instance object &lt;Class&gt;::&lt;Method&gt;(...)
+/// </summary>
+public record LIRCallUserClassInstanceMethod(
+    string RegistryClassName,
+    string MethodName,
+    IReadOnlyList<TempVariable> Arguments,
+    TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Calls a declared callable directly via its MethodDefinitionHandle (resolved via CallableRegistry).
 /// This is intended for cases where runtime dispatch isn't appropriate (e.g., user-defined class static method calls).
 /// The argument list must match the target method signature.

@@ -347,6 +347,14 @@ internal sealed class LIRToILCompiler
 
         var allocation = TempLocalAllocator.Allocate(MethodBody, shouldMaterialize);
 
+        // Precompute object[] argument counts for temps produced by LIRBuildArray.
+        // This enables conservative fast-path emission for LIRCallMember (unpack object[] into direct args).
+        var buildArrayElementCounts = new Dictionary<int, int>();
+        foreach (var instr in MethodBody.Instructions.OfType<LIRBuildArray>())
+        {
+            buildArrayElementCounts[instr.Result.Index] = instr.Elements.Count;
+        }
+
         // Pre-create IL labels for all LIR labels
         var labelMap = new Dictionary<int, LabelHandle>();
         foreach (var lirLabel in MethodBody.Instructions
@@ -397,7 +405,7 @@ internal sealed class LIRToILCompiler
                     continue;
             }
 
-            if (!TryCompileInstructionToIL(instruction, ilEncoder, allocation, methodDescriptor))
+            if (!TryCompileInstructionToIL(instruction, ilEncoder, allocation, methodDescriptor, buildArrayElementCounts))
             {
                 // Failed to compile instruction
                 IRPipelineMetrics.RecordFailureIfUnset($"IL compile failed: unsupported LIR instruction {instruction.GetType().Name}");
@@ -469,7 +477,7 @@ internal sealed class LIRToILCompiler
 
     #region Instruction Emission
 
-    private bool TryCompileInstructionToIL(LIRInstruction instruction, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
+    private bool TryCompileInstructionToIL(LIRInstruction instruction, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor, Dictionary<int, int> buildArrayElementCounts)
     {
         switch (instruction)
         {
@@ -1704,19 +1712,134 @@ internal sealed class LIRToILCompiler
                     break;
                 }
 
+            case LIRCallUserClassInstanceMethod callUserClass:
+                {
+                    var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+                    if (classRegistry == null
+                        || !classRegistry.TryGetMethod(callUserClass.RegistryClassName, callUserClass.MethodName, out var methodHandle, out _, out _, out var maxParamCount))
+                    {
+                        throw new InvalidOperationException($"Cannot emit direct instance call for '{callUserClass.RegistryClassName}.{callUserClass.MethodName}' - missing ClassRegistry method token");
+                    }
+
+                    // Receiver is implicit 'this'
+                    ilEncoder.OpCode(ILOpCode.Ldarg_0);
+
+                    // Match the declared signature (ignore extra args, pad missing args with null).
+                    int jsParamCount = maxParamCount;
+                    int argsToPass = Math.Min(callUserClass.Arguments.Count, jsParamCount);
+
+                    for (int i = 0; i < argsToPass; i++)
+                    {
+                        EmitLoadTemp(callUserClass.Arguments[i], ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    for (int i = argsToPass; i < jsParamCount; i++)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(methodHandle);
+
+                    if (IsMaterialized(callUserClass.Result, allocation))
+                    {
+                        EmitStoreTemp(callUserClass.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        ilEncoder.OpCode(ILOpCode.Pop);
+                    }
+                    break;
+                }
+
             case LIRCallMember callMember:
                 {
-                    // Emit: ldloc/ldarg receiver, ldstr methodName, ldloc/ldarg argsArray, call Object.CallMember
+                    // Fast-path: if the method name+arity uniquely identifies a user-defined class instance method,
+                    // emit: isinst <Class>, brfalse fallback, unpack args from object[] and callvirt directly.
+                    // Fallback preserves existing runtime dispatch semantics.
+                    var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+                    if (classRegistry != null
+                        && buildArrayElementCounts.TryGetValue(callMember.ArgumentsArray.Index, out var argCount)
+                        && classRegistry.TryResolveUniqueInstanceMethod(callMember.MethodName, argCount, out _, out var receiverTypeHandle, out var directMethodHandle, out var maxParamCount))
+                    {
+                        var fallbackLabel = ilEncoder.DefineLabel();
+                        var doneLabel = ilEncoder.DefineLabel();
+
+                        // Receiver type-test
+                        EmitLoadTempAsObject(callMember.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Isinst);
+                        ilEncoder.Token(receiverTypeHandle);
+                        ilEncoder.OpCode(ILOpCode.Dup);
+                        ilEncoder.Branch(ILOpCode.Brfalse, fallbackLabel);
+
+                        // Direct call path (typed receiver on stack)
+                        int jsParamCount = maxParamCount;
+                        int argsToPass = Math.Min(argCount, jsParamCount);
+                        for (int i = 0; i < argsToPass; i++)
+                        {
+                            EmitLoadTemp(callMember.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
+                            ilEncoder.LoadConstantI4(i);
+                            ilEncoder.OpCode(ILOpCode.Ldelem_ref);
+                        }
+
+                        for (int i = argsToPass; i < jsParamCount; i++)
+                        {
+                            ilEncoder.OpCode(ILOpCode.Ldnull);
+                        }
+
+                        ilEncoder.OpCode(ILOpCode.Callvirt);
+                        ilEncoder.Token(directMethodHandle);
+
+                        if (IsMaterialized(callMember.Result, allocation))
+                        {
+                            EmitStoreTemp(callMember.Result, ilEncoder, allocation);
+                        }
+                        else
+                        {
+                            ilEncoder.OpCode(ILOpCode.Pop);
+                        }
+
+                        ilEncoder.Branch(ILOpCode.Br, doneLabel);
+
+                        // Fallback: pop null typed receiver and do runtime dispatch
+                        ilEncoder.MarkLabel(fallbackLabel);
+                        ilEncoder.OpCode(ILOpCode.Pop);
+
+                        EmitLoadTempAsObject(callMember.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.Ldstr(_metadataBuilder, callMember.MethodName);
+                        EmitLoadTemp(callMember.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
+
+                        var callMemberRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Object),
+                            nameof(JavaScriptRuntime.Object.CallMember),
+                            new[] { typeof(object), typeof(string), typeof(object[]) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(callMemberRef);
+
+                        if (IsMaterialized(callMember.Result, allocation))
+                        {
+                            EmitStoreTemp(callMember.Result, ilEncoder, allocation);
+                        }
+                        else
+                        {
+                            ilEncoder.OpCode(ILOpCode.Pop);
+                        }
+
+                        ilEncoder.MarkLabel(doneLabel);
+                        break;
+                    }
+
+                    // Default: runtime dispatcher
                     EmitLoadTempAsObject(callMember.Receiver, ilEncoder, allocation, methodDescriptor);
                     ilEncoder.Ldstr(_metadataBuilder, callMember.MethodName);
                     EmitLoadTemp(callMember.ArgumentsArray, ilEncoder, allocation, methodDescriptor);
 
-                    var callMemberRef = _memberRefRegistry.GetOrAddMethod(
+                    var callMemberRefDefault = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Object),
                         nameof(JavaScriptRuntime.Object.CallMember),
                         new[] { typeof(object), typeof(string), typeof(object[]) });
                     ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(callMemberRef);
+                    ilEncoder.Token(callMemberRefDefault);
 
                     if (IsMaterialized(callMember.Result, allocation))
                     {
@@ -2637,6 +2760,34 @@ internal sealed class LIRToILCompiler
                         new[] { typeof(object), typeof(string), typeof(object[]) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(callMemberRef);
+                    break;
+                }
+
+            case LIRCallUserClassInstanceMethod callUserClass:
+                {
+                    var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
+                    if (classRegistry == null
+                        || !classRegistry.TryGetMethod(callUserClass.RegistryClassName, callUserClass.MethodName, out var methodHandle, out _, out _, out var maxParamCount))
+                    {
+                        throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - missing ClassRegistry method token for '{callUserClass.RegistryClassName}.{callUserClass.MethodName}'");
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Ldarg_0);
+
+                    int jsParamCount = maxParamCount;
+                    int argsToPass = Math.Min(callUserClass.Arguments.Count, jsParamCount);
+                    for (int i = 0; i < argsToPass; i++)
+                    {
+                        EmitLoadTemp(callUserClass.Arguments[i], ilEncoder, allocation, methodDescriptor);
+                    }
+
+                    for (int i = argsToPass; i < jsParamCount; i++)
+                    {
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                    }
+
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(methodHandle);
                     break;
                 }
 

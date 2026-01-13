@@ -2963,6 +2963,36 @@ public sealed class HIRToLIRLowerer
                 DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                 return true;
             }
+
+            // Case 2a.3: Direct calls to known instance methods on the current user-defined class.
+            // Example: `this.setBitTrue(x)` inside a class method can be emitted as a direct callvirt
+            // rather than runtime dispatch through Object.CallMember.
+            if (_classRegistry != null
+                && calleePropAccess.Object is HIRThisExpression
+                && TryGetEnclosingClassRegistryName(out var currentClass)
+                && currentClass != null
+                && _classRegistry.TryGetMethod(currentClass, calleePropAccess.PropertyName, out _, out _, out _, out _))
+            {
+                var argTemps = new List<TempVariable>();
+                foreach (var argExpr in callExpr.Arguments)
+                {
+                    if (!TryLowerExpression(argExpr, out var argTempVar))
+                    {
+                        return false;
+                    }
+
+                    argTemps.Add(EnsureObject(argTempVar));
+                }
+
+                _methodBodyIR.Instructions.Add(new LIRCallUserClassInstanceMethod(
+                    currentClass,
+                    calleePropAccess.PropertyName,
+                    argTemps,
+                    resultTempVar));
+
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                return true;
+            }
         }
 
         // Case 2c: Generic member call via runtime dispatcher.

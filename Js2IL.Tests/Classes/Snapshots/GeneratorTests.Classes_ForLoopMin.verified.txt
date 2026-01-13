@@ -160,7 +160,7 @@
 	{
 		// Method begins at RVA 0x20cc
 		// Header size: 12
-		// Code size: 52 (0x34)
+		// Code size: 76 (0x4c)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Classes_ForLoopMin,
@@ -173,21 +173,32 @@
 		IL_0006: newobj instance void Classes.Classes_ForLoopMin.C::.ctor()
 		IL_000b: stloc.1
 		IL_000c: ldloc.1
-		IL_000d: ldstr "run"
-		IL_0012: ldc.i4.0
-		IL_0013: newarr [System.Runtime]System.Object
-		IL_0018: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_000d: isinst Classes.Classes_ForLoopMin.C
+		IL_0012: dup
+		IL_0013: brfalse IL_0023
+
+		IL_0018: callvirt instance object Classes.Classes_ForLoopMin.C::run()
 		IL_001d: stloc.2
-		IL_001e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0023: ldc.i4.1
-		IL_0024: newarr [System.Runtime]System.Object
-		IL_0029: dup
+		IL_001e: br IL_0036
+
+		IL_0023: pop
+		IL_0024: ldloc.1
+		IL_0025: ldstr "run"
 		IL_002a: ldc.i4.0
-		IL_002b: ldloc.2
-		IL_002c: stelem.ref
-		IL_002d: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0032: pop
-		IL_0033: ret
+		IL_002b: newarr [System.Runtime]System.Object
+		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0035: stloc.2
+
+		IL_0036: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_003b: ldc.i4.1
+		IL_003c: newarr [System.Runtime]System.Object
+		IL_0041: dup
+		IL_0042: ldc.i4.0
+		IL_0043: ldloc.2
+		IL_0044: stelem.ref
+		IL_0045: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_004a: pop
+		IL_004b: ret
 	} // end of method Classes_ForLoopMin::Main
 
 } // end of class Scripts.Classes_ForLoopMin
@@ -199,7 +210,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x210c
+		// Method begins at RVA 0x2124
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

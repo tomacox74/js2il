@@ -250,7 +250,7 @@
 	{
 		// Method begins at RVA 0x2108
 		// Header size: 12
-		// Code size: 307 (0x133)
+		// Code size: 405 (0x195)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Classes_Method_DefaultReturnUndefined,
@@ -274,114 +274,158 @@
 		IL_0014: newobj instance void Classes.Classes_Method_DefaultReturnUndefined.Calculator::.ctor(object)
 		IL_0019: stloc.1
 		IL_001a: ldloc.1
-		IL_001b: ldstr "doNothing"
-		IL_0020: ldc.i4.0
-		IL_0021: newarr [System.Runtime]System.Object
-		IL_0026: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_001b: isinst Classes.Classes_Method_DefaultReturnUndefined.Calculator
+		IL_0020: dup
+		IL_0021: brfalse IL_0031
+
+		IL_0026: callvirt instance object Classes.Classes_Method_DefaultReturnUndefined.Calculator::doNothing()
 		IL_002b: stloc.2
-		IL_002c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0031: stloc.s 6
-		IL_0033: ldloc.2
-		IL_0034: ldnull
-		IL_0035: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_003a: stloc.s 7
-		IL_003c: ldloc.s 7
-		IL_003e: brfalse IL_004f
+		IL_002c: br IL_0044
 
-		IL_0043: ldstr "undefined"
-		IL_0048: stloc.s 9
-		IL_004a: br IL_0056
+		IL_0031: pop
+		IL_0032: ldloc.1
+		IL_0033: ldstr "doNothing"
+		IL_0038: ldc.i4.0
+		IL_0039: newarr [System.Runtime]System.Object
+		IL_003e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0043: stloc.2
 
-		IL_004f: ldstr "not undefined"
-		IL_0054: stloc.s 9
+		IL_0044: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0049: stloc.s 6
+		IL_004b: ldloc.2
+		IL_004c: ldnull
+		IL_004d: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0052: stloc.s 7
+		IL_0054: ldloc.s 7
+		IL_0056: brfalse IL_0067
 
-		IL_0056: ldloc.s 6
-		IL_0058: ldc.i4.1
-		IL_0059: newarr [System.Runtime]System.Object
-		IL_005e: dup
-		IL_005f: ldc.i4.0
-		IL_0060: ldloc.s 9
-		IL_0062: stelem.ref
-		IL_0063: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0068: pop
-		IL_0069: ldloc.1
-		IL_006a: ldstr "returnsUndefined"
-		IL_006f: ldc.i4.0
-		IL_0070: newarr [System.Runtime]System.Object
-		IL_0075: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_007a: stloc.3
-		IL_007b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0080: stloc.s 6
-		IL_0082: ldloc.3
-		IL_0083: ldnull
-		IL_0084: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0089: stloc.s 7
-		IL_008b: ldloc.s 7
-		IL_008d: brfalse IL_009e
+		IL_005b: ldstr "undefined"
+		IL_0060: stloc.s 9
+		IL_0062: br IL_006e
 
-		IL_0092: ldstr "undefined"
-		IL_0097: stloc.s 10
-		IL_0099: br IL_00a5
+		IL_0067: ldstr "not undefined"
+		IL_006c: stloc.s 9
 
-		IL_009e: ldstr "not undefined"
-		IL_00a3: stloc.s 10
+		IL_006e: ldloc.s 6
+		IL_0070: ldc.i4.1
+		IL_0071: newarr [System.Runtime]System.Object
+		IL_0076: dup
+		IL_0077: ldc.i4.0
+		IL_0078: ldloc.s 9
+		IL_007a: stelem.ref
+		IL_007b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0080: pop
+		IL_0081: ldloc.1
+		IL_0082: isinst Classes.Classes_Method_DefaultReturnUndefined.Calculator
+		IL_0087: dup
+		IL_0088: brfalse IL_0098
 
-		IL_00a5: ldloc.s 6
-		IL_00a7: ldc.i4.1
-		IL_00a8: newarr [System.Runtime]System.Object
-		IL_00ad: dup
-		IL_00ae: ldc.i4.0
-		IL_00af: ldloc.s 10
-		IL_00b1: stelem.ref
-		IL_00b2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00b7: pop
-		IL_00b8: ldloc.1
-		IL_00b9: ldstr "returnsValue"
-		IL_00be: ldc.i4.0
-		IL_00bf: newarr [System.Runtime]System.Object
-		IL_00c4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_00c9: stloc.s 4
-		IL_00cb: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00d0: ldc.i4.1
-		IL_00d1: newarr [System.Runtime]System.Object
-		IL_00d6: dup
-		IL_00d7: ldc.i4.0
-		IL_00d8: ldloc.s 4
-		IL_00da: stelem.ref
-		IL_00db: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00e0: pop
-		IL_00e1: ldloc.1
-		IL_00e2: ldstr "returnsThis"
-		IL_00e7: ldc.i4.0
-		IL_00e8: newarr [System.Runtime]System.Object
-		IL_00ed: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_00f2: stloc.s 5
-		IL_00f4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00f9: stloc.s 6
-		IL_00fb: ldloc.s 5
-		IL_00fd: ldloc.1
-		IL_00fe: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-		IL_0103: stloc.s 7
-		IL_0105: ldloc.s 7
-		IL_0107: brfalse IL_0118
+		IL_008d: callvirt instance object Classes.Classes_Method_DefaultReturnUndefined.Calculator::returnsUndefined()
+		IL_0092: stloc.3
+		IL_0093: br IL_00ab
 
-		IL_010c: ldstr "same instance"
-		IL_0111: stloc.s 11
-		IL_0113: br IL_011f
+		IL_0098: pop
+		IL_0099: ldloc.1
+		IL_009a: ldstr "returnsUndefined"
+		IL_009f: ldc.i4.0
+		IL_00a0: newarr [System.Runtime]System.Object
+		IL_00a5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_00aa: stloc.3
 
-		IL_0118: ldstr "different"
-		IL_011d: stloc.s 11
+		IL_00ab: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b0: stloc.s 6
+		IL_00b2: ldloc.3
+		IL_00b3: ldnull
+		IL_00b4: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_00b9: stloc.s 7
+		IL_00bb: ldloc.s 7
+		IL_00bd: brfalse IL_00ce
 
-		IL_011f: ldloc.s 6
-		IL_0121: ldc.i4.1
-		IL_0122: newarr [System.Runtime]System.Object
-		IL_0127: dup
-		IL_0128: ldc.i4.0
-		IL_0129: ldloc.s 11
-		IL_012b: stelem.ref
-		IL_012c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0131: pop
-		IL_0132: ret
+		IL_00c2: ldstr "undefined"
+		IL_00c7: stloc.s 10
+		IL_00c9: br IL_00d5
+
+		IL_00ce: ldstr "not undefined"
+		IL_00d3: stloc.s 10
+
+		IL_00d5: ldloc.s 6
+		IL_00d7: ldc.i4.1
+		IL_00d8: newarr [System.Runtime]System.Object
+		IL_00dd: dup
+		IL_00de: ldc.i4.0
+		IL_00df: ldloc.s 10
+		IL_00e1: stelem.ref
+		IL_00e2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00e7: pop
+		IL_00e8: ldloc.1
+		IL_00e9: isinst Classes.Classes_Method_DefaultReturnUndefined.Calculator
+		IL_00ee: dup
+		IL_00ef: brfalse IL_0100
+
+		IL_00f4: callvirt instance object Classes.Classes_Method_DefaultReturnUndefined.Calculator::returnsValue()
+		IL_00f9: stloc.s 4
+		IL_00fb: br IL_0114
+
+		IL_0100: pop
+		IL_0101: ldloc.1
+		IL_0102: ldstr "returnsValue"
+		IL_0107: ldc.i4.0
+		IL_0108: newarr [System.Runtime]System.Object
+		IL_010d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0112: stloc.s 4
+
+		IL_0114: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0119: ldc.i4.1
+		IL_011a: newarr [System.Runtime]System.Object
+		IL_011f: dup
+		IL_0120: ldc.i4.0
+		IL_0121: ldloc.s 4
+		IL_0123: stelem.ref
+		IL_0124: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0129: pop
+		IL_012a: ldloc.1
+		IL_012b: isinst Classes.Classes_Method_DefaultReturnUndefined.Calculator
+		IL_0130: dup
+		IL_0131: brfalse IL_0142
+
+		IL_0136: callvirt instance object Classes.Classes_Method_DefaultReturnUndefined.Calculator::returnsThis()
+		IL_013b: stloc.s 5
+		IL_013d: br IL_0156
+
+		IL_0142: pop
+		IL_0143: ldloc.1
+		IL_0144: ldstr "returnsThis"
+		IL_0149: ldc.i4.0
+		IL_014a: newarr [System.Runtime]System.Object
+		IL_014f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0154: stloc.s 5
+
+		IL_0156: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_015b: stloc.s 6
+		IL_015d: ldloc.s 5
+		IL_015f: ldloc.1
+		IL_0160: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+		IL_0165: stloc.s 7
+		IL_0167: ldloc.s 7
+		IL_0169: brfalse IL_017a
+
+		IL_016e: ldstr "same instance"
+		IL_0173: stloc.s 11
+		IL_0175: br IL_0181
+
+		IL_017a: ldstr "different"
+		IL_017f: stloc.s 11
+
+		IL_0181: ldloc.s 6
+		IL_0183: ldc.i4.1
+		IL_0184: newarr [System.Runtime]System.Object
+		IL_0189: dup
+		IL_018a: ldc.i4.0
+		IL_018b: ldloc.s 11
+		IL_018d: stelem.ref
+		IL_018e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0193: pop
+		IL_0194: ret
 	} // end of method Classes_Method_DefaultReturnUndefined::Main
 
 } // end of class Scripts.Classes_Method_DefaultReturnUndefined
@@ -393,7 +437,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2247
+		// Method begins at RVA 0x22a9
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
