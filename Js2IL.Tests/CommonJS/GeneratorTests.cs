@@ -169,5 +169,14 @@ namespace Js2IL.Tests.CommonJS
                 "CommonJS_Export_NestedObjects_Main",
                 new[] { "CommonJS_Export_NestedObjects_Lib" });
         }
+
+        [Fact]
+        public Task CommonJS_Export_ObjectWithClosure()
+        {
+            // Issue #167 repro: imported object contains functions that capture module/function scope.
+            return GenerateTest(
+                "CommonJS_Export_ObjectWithClosure_Main",
+                new[] { "CommonJS_Export_ObjectWithClosure_Lib" });
+        }
     }
 }

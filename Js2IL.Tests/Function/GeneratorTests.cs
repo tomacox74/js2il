@@ -69,6 +69,9 @@ namespace Js2IL.Tests.Function
         public Task Function_ReturnsStaticValueAndLogs() { var testName = nameof(Function_ReturnsStaticValueAndLogs); return GenerateTest(testName); }
 
         [Fact]
+        public Task Function_ReturnObjectWithClosure() { var testName = nameof(Function_ReturnObjectWithClosure); return GenerateTest(testName); }
+
+        [Fact]
         public Task Function_ClosureMutatesOuterVariable() { var testName = nameof(Function_ClosureMutatesOuterVariable); return GenerateTest(testName); }
 
         [Fact]
@@ -76,5 +79,8 @@ namespace Js2IL.Tests.Function
 
         [Fact]
         public Task Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter() { var testName = nameof(Function_FunctionExpression_AsExpression_ArrayMapCapturesOuter); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_ClosureEscapesScope_ObjectLiteralProperty() { var testName = nameof(Function_ClosureEscapesScope_ObjectLiteralProperty); return GenerateTest(testName); }
     }
 }
