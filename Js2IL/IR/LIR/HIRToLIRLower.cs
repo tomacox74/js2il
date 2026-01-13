@@ -1851,11 +1851,22 @@ public sealed class HIRToLIRLowerer
                     {
                         static ValueStorage GetPreferredBindingReadStorage(BindingInfo b)
                         {
-                            // Only propagate unboxed doubles for stable types. This matches the current
+                            // Propagate unboxed primitives for stable inferred types. This matches the current
                             // typed-scope-field support in TypeGenerator/VariableRegistry.
-                            if (b.IsStableType && b.ClrType == typeof(double))
+                            //
+                            // Note: We only use unboxed storage when the runtime semantics are identical:
+                            // - bool: JS ToBoolean(bool) is the identity (so conditionals can branch directly).
+                            // - double: used for numeric IL paths (e.g., add) and boxed on demand.
+                            if (b.IsStableType)
                             {
-                                return new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+                                if (b.ClrType == typeof(double))
+                                {
+                                    return new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+                                }
+                                if (b.ClrType == typeof(bool))
+                                {
+                                    return new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool));
+                                }
                             }
 
                             return new ValueStorage(ValueStorageKind.Reference, typeof(object));
@@ -4970,15 +4981,27 @@ public sealed class HIRToLIRLowerer
             return false;
         }
 
-        var conditionBoxed = EnsureObject(conditionTemp);
-        var isTruthyTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRCallIsTruthy(conditionBoxed, isTruthyTemp));
-        DefineTempStorage(isTruthyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        // If the test is already a boolean, we can branch directly.
+        // Otherwise, apply JS truthiness semantics via Operators.IsTruthy(object).
+        TempVariable boolConditionTemp;
+        var conditionStorage = GetTempStorage(conditionTemp);
+        if (conditionStorage.Kind == ValueStorageKind.UnboxedValue && conditionStorage.ClrType == typeof(bool))
+        {
+            boolConditionTemp = conditionTemp;
+        }
+        else
+        {
+            var conditionBoxed = EnsureObject(conditionTemp);
+            var isTruthyTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRCallIsTruthy(conditionBoxed, isTruthyTemp));
+            DefineTempStorage(isTruthyTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            boolConditionTemp = isTruthyTemp;
+        }
 
         int elseLabel = CreateLabel();
         int endLabel = CreateLabel();
 
-        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(isTruthyTemp, elseLabel));
+        _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(boolConditionTemp, elseLabel));
 
         // Consequent branch
         if (!TryLowerExpression(conditionalExpr.Consequent, out var consequentTemp))
