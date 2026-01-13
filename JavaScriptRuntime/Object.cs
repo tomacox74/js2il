@@ -202,7 +202,7 @@ namespace JavaScriptRuntime
             else if (obj is Int32Array i32)
             {
                 // Reads outside bounds return 0 per typed array semantics
-                return i32[intIndex];
+                return i32[(double)intIndex];
             }
             else
             {
@@ -252,7 +252,7 @@ namespace JavaScriptRuntime
             else if (obj is Int32Array i32)
             {
                 // Reads outside bounds return 0 per typed array semantics
-                return i32[intIndex];
+                return i32[(double)intIndex];
             }
             else
             {
@@ -347,8 +347,8 @@ namespace JavaScriptRuntime
             // Typed arrays: coerce and store when in-bounds
             if (obj is Int32Array i32)
             {
-                // Int32Array indexer handles coercion and bounds.
-                i32[index] = value!;
+                // Index/value are numeric for typed arrays; coerce here so Int32Array can remain numeric.
+                i32[(double)intIndex] = JavaScriptRuntime.TypeUtilities.ToNumber(value);
                 return value;
             }
 
@@ -672,7 +672,7 @@ namespace JavaScriptRuntime
                             catch { iv = 0; }
                             break;
                     }
-                    i32[i] = iv;
+                    i32[(double)i] = iv;
                 }
                 return value;
             }
