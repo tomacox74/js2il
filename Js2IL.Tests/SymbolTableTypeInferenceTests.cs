@@ -188,6 +188,118 @@ public class SymbolTableTypeInferenceTests
         Assert.Equal(expectedType, binding.ClrType);
     }
 
+    [Fact]
+    public void SymbolTable_InferTypes_ClassInstanceFields_Primitives()
+    {
+        var code = @"
+                class Counter {
+                    constructor() {
+                        this.value = 0;
+                        this.name = 'test';
+                        this.active = true;
+                    }
+
+                    increment() {
+                        this.value = this.value + 1;
+                    }
+                }
+            ";
+
+        var symbolTable = BuildSymbolTable(code);
+        var classScope = FindClassScope(symbolTable.Root, "Counter");
+        Assert.NotNull(classScope);
+        Assert.Equal(ScopeKind.Class, classScope!.Kind);
+
+        Assert.True(classScope.StableInstanceFieldClrTypes.TryGetValue("value", out var valueType));
+        Assert.Equal(typeof(double), valueType);
+
+        Assert.True(classScope.StableInstanceFieldClrTypes.TryGetValue("name", out var nameType));
+        Assert.Equal(typeof(string), nameType);
+
+        Assert.True(classScope.StableInstanceFieldClrTypes.TryGetValue("active", out var activeType));
+        Assert.Equal(typeof(bool), activeType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_ClassInstanceFields_ConflictingAssignments_NotStable()
+    {
+        var code = @"
+                class C {
+                    constructor() {
+                        this.x = 0;
+                    }
+                    m() {
+                        this.x = 'oops';
+                    }
+                }
+            ";
+
+        var symbolTable = BuildSymbolTable(code);
+        var classScope = FindClassScope(symbolTable.Root, "C");
+        Assert.NotNull(classScope);
+
+        Assert.False(classScope!.StableInstanceFieldClrTypes.ContainsKey("x"));
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_ClassInstanceFields_ComputedAssignment_Ignored()
+    {
+        var code = @"
+                class C {
+                    constructor() {
+                        this['x'] = 1;
+                        this.y = 2;
+                    }
+                }
+            ";
+
+        var symbolTable = BuildSymbolTable(code);
+        var classScope = FindClassScope(symbolTable.Root, "C");
+        Assert.NotNull(classScope);
+
+        Assert.False(classScope!.StableInstanceFieldClrTypes.ContainsKey("x"));
+        Assert.True(classScope.StableInstanceFieldClrTypes.TryGetValue("y", out var yType));
+        Assert.Equal(typeof(double), yType);
+    }
+
+    [Fact]
+    public void SymbolTable_InferTypes_ClassInstanceFields_UpdateExpression_InfersNumber()
+    {
+        var code = @"
+                class C {
+                    m() {
+                        this.count++;
+                    }
+                }
+            ";
+
+        var symbolTable = BuildSymbolTable(code);
+        var classScope = FindClassScope(symbolTable.Root, "C");
+        Assert.NotNull(classScope);
+
+        Assert.True(classScope!.StableInstanceFieldClrTypes.TryGetValue("count", out var t));
+        Assert.Equal(typeof(double), t);
+    }
+
+    private static Js2IL.SymbolTables.Scope? FindClassScope(Js2IL.SymbolTables.Scope scope, string className)
+    {
+        if (scope.Kind == ScopeKind.Class && string.Equals(scope.Name, className, StringComparison.Ordinal))
+        {
+            return scope;
+        }
+
+        foreach (var child in scope.Children)
+        {
+            var found = FindClassScope(child, className);
+            if (found != null)
+            {
+                return found;
+            }
+        }
+
+        return null;
+    }
+
     private BindingInfo? FindBindingByName(Js2IL.SymbolTables.Scope scope, string name)
     {
         // Check current scope
