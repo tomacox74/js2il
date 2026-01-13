@@ -2494,16 +2494,32 @@ internal sealed class LIRToILCompiler
                 }
                 break;
             case LIRGetItem getItem:
-                // Emit inline: call JavaScriptRuntime.Object.GetItem(object, object)
-                EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
-                EmitLoadTempAsObject(getItem.Index, ilEncoder, allocation, methodDescriptor);
                 {
-                    var getItemMethod = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.Object),
-                        nameof(JavaScriptRuntime.Object.GetItem),
-                        parameterTypes: new[] { typeof(object), typeof(object) });
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(getItemMethod);
+                    var indexStorage = GetTempStorage(getItem.Index);
+                    if (indexStorage.Kind == ValueStorageKind.UnboxedValue && indexStorage.ClrType == typeof(double))
+                    {
+                        // Emit inline: call JavaScriptRuntime.Object.GetItem(object, double)
+                        EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTemp(getItem.Index, ilEncoder, allocation, methodDescriptor);
+                        var getItemMethod = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Object),
+                            nameof(JavaScriptRuntime.Object.GetItem),
+                            parameterTypes: new[] { typeof(object), typeof(double) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getItemMethod);
+                    }
+                    else
+                    {
+                        // Emit inline: call JavaScriptRuntime.Object.GetItem(object, object)
+                        EmitLoadTempAsObject(getItem.Object, ilEncoder, allocation, methodDescriptor);
+                        EmitLoadTempAsObject(getItem.Index, ilEncoder, allocation, methodDescriptor);
+                        var getItemMethod = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Object),
+                            nameof(JavaScriptRuntime.Object.GetItem),
+                            parameterTypes: new[] { typeof(object), typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getItemMethod);
+                    }
                 }
                 break;
             case LIRCallIntrinsic callIntrinsic:

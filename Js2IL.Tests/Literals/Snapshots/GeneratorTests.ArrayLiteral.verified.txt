@@ -60,7 +60,7 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 128 (0x80)
+		// Code size: 123 (0x7b)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ArrayLiteral,
@@ -89,7 +89,7 @@
 			IL_0039: ldloc.1
 			IL_003a: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
 			IL_003f: clt
-			IL_0041: brfalse IL_007f
+			IL_0041: brfalse IL_007a
 
 			IL_0046: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 			IL_004b: ldc.i4.2
@@ -102,19 +102,18 @@
 			IL_005a: ldc.i4.1
 			IL_005b: ldloc.1
 			IL_005c: ldloc.2
-			IL_005d: box [System.Runtime]System.Double
-			IL_0062: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0067: stelem.ref
-			IL_0068: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_006d: pop
-			IL_006e: ldloc.2
-			IL_006f: ldc.r8 1
-			IL_0078: add
-			IL_0079: stloc.2
-			IL_007a: br IL_0038
+			IL_005d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_0062: stelem.ref
+			IL_0063: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0068: pop
+			IL_0069: ldloc.2
+			IL_006a: ldc.r8 1
+			IL_0073: add
+			IL_0074: stloc.2
+			IL_0075: br IL_0038
 		// end loop
 
-		IL_007f: ret
+		IL_007a: ret
 	} // end of method ArrayLiteral::Main
 
 } // end of class Scripts.ArrayLiteral
@@ -126,7 +125,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x20f0
+		// Method begins at RVA 0x20eb
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
