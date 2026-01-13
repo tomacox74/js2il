@@ -11,6 +11,7 @@ public class ScopeMetadataRegistry
 {
     private readonly Dictionary<string, TypeDefinitionHandle> _scopeTypes = new();
     private readonly Dictionary<string, Dictionary<string, FieldDefinitionHandle>> _scopeFields = new();
+    private readonly Dictionary<string, Dictionary<string, Type>> _scopeFieldClrTypes = new();
     // Track scope type handles even when no variables (so empty method scopes can still be instantiated)
     private readonly Dictionary<string, TypeDefinitionHandle> _allScopeTypes = new();
 
@@ -32,6 +33,18 @@ public class ScopeMetadataRegistry
             _scopeFields[scopeName] = new Dictionary<string, FieldDefinitionHandle>();
         
         _scopeFields[scopeName][variableName] = fieldHandle;
+    }
+
+    /// <summary>
+    /// Registers the declared CLR type of a scope field.
+    /// This is used by IL emission to box/unbox correctly when fields are not System.Object.
+    /// </summary>
+    public void RegisterFieldClrType(string scopeName, string variableName, Type fieldClrType)
+    {
+        if (!_scopeFieldClrTypes.ContainsKey(scopeName))
+            _scopeFieldClrTypes[scopeName] = new Dictionary<string, Type>();
+
+        _scopeFieldClrTypes[scopeName][variableName] = fieldClrType;
     }
 
     /// <summary>
@@ -94,6 +107,20 @@ public class ScopeMetadataRegistry
             return true;
         }
         fieldHandle = default;
+        return false;
+    }
+
+    public bool TryGetFieldClrType(string scopeName, string variableName, out Type fieldClrType)
+    {
+        if (_scopeFieldClrTypes.TryGetValue(scopeName, out var fields) &&
+            fields.TryGetValue(variableName, out var t) &&
+            t != null)
+        {
+            fieldClrType = t;
+            return true;
+        }
+
+        fieldClrType = typeof(object);
         return false;
     }
 

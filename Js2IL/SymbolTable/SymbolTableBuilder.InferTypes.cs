@@ -84,13 +84,13 @@ public partial class SymbolTableBuilder
         var proposedClrTypes = new Dictionary<string, Type>();
         var unitializedClrTypes = new HashSet<string>();
 
-        // currently only infer types for uncaptured variables
+        // Type inference is currently conservative:
+        // - We infer stable types for uncaptured variables.
+        // - Additionally, we infer stable types for captured const bindings (safe: cannot be reassigned).
         foreach (var binding in scope.Bindings.Values)
         {
-            if (binding.IsCaptured)
-            {
+            if (binding.IsCaptured && binding.Kind != BindingKind.Const)
                 continue;
-            }
 
             if (binding.DeclarationNode is VariableDeclarator variableDeclarator)
             {

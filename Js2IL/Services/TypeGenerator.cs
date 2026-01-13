@@ -112,10 +112,20 @@ namespace Js2IL.Services
 
                 // Create field signature (all variables are object type for now)
                 var fieldSignature = new BlobBuilder();
-                new BlobEncoder(fieldSignature)
+                var fieldTypeEncoder = new BlobEncoder(fieldSignature)
                     .Field()
-                    .Type()
-                    .Object();
+                    .Type();
+
+                // Conservative first step: emit stable inferred Number fields as float64 (System.Double).
+                // Everything else remains System.Object for now.
+                if (binding.IsStableType && binding.ClrType == typeof(double))
+                {
+                    fieldTypeEncoder.Double();
+                }
+                else
+                {
+                    fieldTypeEncoder.Object();
+                }
 
                 var fieldSignatureHandle = _metadataBuilder.GetOrAddBlob(fieldSignature);
 
