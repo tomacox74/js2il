@@ -726,9 +726,16 @@ public sealed class HIRToLIRLowerer
                             !storage.Field.IsNil && 
                             !storage.DeclaringScope.IsNil)
                         {
-                            // Scope fields are always object-typed; box value types before storing.
-                            var boxedValue = EnsureObject(value);
-                            lirInstructions.Add(new LIRStoreLeafScopeField(binding, storage.Field, storage.DeclaringScope, boxedValue));
+                            // Captured variable - store to leaf scope field.
+                            // Most scope fields are object-typed, but stable inferred primitive fields can be typed.
+                            // For typed bool fields, do NOT box (stfld bool cannot consume object).
+                            var fieldValue = value;
+                            if (!(binding.IsStableType && binding.ClrType == typeof(bool)))
+                            {
+                                fieldValue = EnsureObject(value);
+                            }
+
+                            lirInstructions.Add(new LIRStoreLeafScopeField(binding, storage.Field, storage.DeclaringScope, fieldValue));
                             // Also map in SSA for subsequent reads (though they'll use field load)
                             _variableMap[binding] = value;
                             return true;

@@ -116,11 +116,26 @@ namespace Js2IL.Services
                     .Field()
                     .Type();
 
-                // Conservative first step: emit stable inferred Number fields as float64 (System.Double).
-                // Everything else remains System.Object for now.
-                if (binding.IsStableType && binding.ClrType == typeof(double))
+                // Conservative first step: emit typed fields for stable inferred primitives.
+                // Everything else remains System.Object for conservative semantics.
+                if (binding.IsStableType)
                 {
-                    fieldTypeEncoder.Double();
+                    if (binding.ClrType == typeof(double))
+                    {
+                        fieldTypeEncoder.Double();
+                    }
+                    else if (binding.ClrType == typeof(bool))
+                    {
+                        fieldTypeEncoder.Boolean();
+                    }
+                    else if (binding.ClrType == typeof(string))
+                    {
+                        fieldTypeEncoder.String();
+                    }
+                    else
+                    {
+                        fieldTypeEncoder.Object();
+                    }
                 }
                 else
                 {

@@ -10,6 +10,7 @@ namespace Js2IL.Tests.Variable
         [Fact] public Task Variable_ConstReassignmentError() { var testName = nameof(Variable_ConstReassignmentError); return ExecutionTest(testName); }
         [Fact] public Task Variable_ConstSimple() { var testName = nameof(Variable_ConstSimple); return ExecutionTest(testName); }
         [Fact] public Task Variable_CapturedConst_NumberFieldType() { var testName = nameof(Variable_CapturedConst_NumberFieldType); return ExecutionTest(testName); }
+        [Fact] public Task Variable_CapturedConst_BoolStringFieldType() { var testName = nameof(Variable_CapturedConst_BoolStringFieldType); return ExecutionTest(testName); }
         [Fact] public Task Variable_LetBlockScope() { var testName = nameof(Variable_LetBlockScope); return ExecutionTest(testName); }
         [Fact] public Task Variable_LetFunctionNestedShadowing() { var testName = nameof(Variable_LetFunctionNestedShadowing); return ExecutionTest(testName); }
         [Fact] public Task Variable_LetNestedShadowingChain() { var testName = nameof(Variable_LetNestedShadowingChain); return ExecutionTest(testName); }
