@@ -850,7 +850,22 @@ public sealed class TwoPhaseCompilationCoordinator
                 $"[TwoPhase] IR pipeline could not compile function expression '{ilMethodName}' in scope '{funcScope.GetQualifiedName()}'.");
         }
 
+        // Two-phase: the IR compiler returns a body-only representation. We must finalize it into
+        // a MethodDef/TypeDef so existing call sites (ldftn / delegate creation) reference a real
+        // method body at the preallocated token.
+        var irTb = new TypeBuilder(metadataBuilder, FunctionsNamespace, ilMethodName);
+        _ = MethodDefinitionFinalizer.EmitMethod(metadataBuilder, irTb, compiledBody);
+        irTb.AddTypeDefinition(
+            TypeAttributes.Public | TypeAttributes.Abstract | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit,
+            bclReferences.ObjectType);
+
+        _registry.SetDeclaredTokenForAstNode(funcExpr, expected);
         _registry.MarkBodyCompiledForAstNode(funcExpr);
+
+        if (_verbose)
+        {
+            _logger.WriteLine($"[TwoPhase] Phase 2: Compiled function expression: {ilMethodName}");
+        }
     }
 
     private void PreallocatePhase1AnonymousCallablesMethodDefsInOrder(
