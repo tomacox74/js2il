@@ -32,7 +32,7 @@
 
 
 	// Fields
-	.field public object n
+	.field public float64 n
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -63,33 +63,29 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 39 (0x27)
+		// Code size: 32 (0x20)
 		.maxstack 32
 		.locals init (
-			[0] object,
-			[1] float64,
-			[2] object
+			[0] float64,
+			[1] object
 		)
 
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.0
 		IL_0002: ldelem.ref
 		IL_0003: castclass Scopes.ArrowFunction_CapturesOuterVariable
-		IL_0008: ldfld object Scopes.ArrowFunction_CapturesOuterVariable::n
+		IL_0008: ldfld float64 Scopes.ArrowFunction_CapturesOuterVariable::n
 		IL_000d: stloc.0
 		IL_000e: ldarg.1
 		IL_000f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0014: stloc.1
-		IL_0015: ldloc.1
-		IL_0016: ldloc.0
-		IL_0017: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_001c: mul
+		IL_0014: ldloc.0
+		IL_0015: mul
+		IL_0016: stloc.0
+		IL_0017: ldloc.0
+		IL_0018: box [System.Runtime]System.Double
 		IL_001d: stloc.1
 		IL_001e: ldloc.1
-		IL_001f: box [System.Runtime]System.Double
-		IL_0024: stloc.2
-		IL_0025: ldloc.2
-		IL_0026: ret
+		IL_001f: ret
 	} // end of method ArrowFunction_L2C13::ArrowFunction_L2C13
 
 } // end of class Functions.ArrowFunction_L2C13
@@ -107,9 +103,9 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2098
+		// Method begins at RVA 0x2090
 		// Header size: 12
-		// Code size: 126 (0x7e)
+		// Code size: 131 (0x83)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ArrowFunction_CapturesOuterVariable,
@@ -123,50 +119,51 @@
 		IL_0006: ldloc.0
 		IL_0007: ldc.r8 5
 		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Scopes.ArrowFunction_CapturesOuterVariable::n
-		IL_001a: ldnull
-		IL_001b: ldftn object Functions.ArrowFunction_L2C13::ArrowFunction_L2C13(object[], object)
-		IL_0021: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0026: ldc.i4.1
-		IL_0027: newarr [System.Runtime]System.Object
-		IL_002c: dup
-		IL_002d: ldc.i4.0
-		IL_002e: ldloc.0
-		IL_002f: stelem.ref
-		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0035: stloc.1
-		IL_0036: ldc.i4.1
-		IL_0037: newarr [System.Runtime]System.Object
-		IL_003c: dup
-		IL_003d: ldc.i4.0
-		IL_003e: ldc.r8 3
-		IL_0047: box [System.Runtime]System.Double
-		IL_004c: stelem.ref
-		IL_004d: stloc.2
-		IL_004e: ldloc.1
-		IL_004f: ldc.i4.1
-		IL_0050: newarr [System.Runtime]System.Object
-		IL_0055: dup
-		IL_0056: ldc.i4.0
-		IL_0057: ldnull
-		IL_0058: stelem.ref
-		IL_0059: ldloc.2
-		IL_005a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_005f: stloc.3
-		IL_0060: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0065: ldc.i4.2
-		IL_0066: newarr [System.Runtime]System.Object
-		IL_006b: dup
-		IL_006c: ldc.i4.0
-		IL_006d: ldstr "product is "
-		IL_0072: stelem.ref
-		IL_0073: dup
-		IL_0074: ldc.i4.1
-		IL_0075: ldloc.3
-		IL_0076: stelem.ref
-		IL_0077: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_007c: pop
-		IL_007d: ret
+		IL_0015: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_001a: stfld float64 Scopes.ArrowFunction_CapturesOuterVariable::n
+		IL_001f: ldnull
+		IL_0020: ldftn object Functions.ArrowFunction_L2C13::ArrowFunction_L2C13(object[], object)
+		IL_0026: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_002b: ldc.i4.1
+		IL_002c: newarr [System.Runtime]System.Object
+		IL_0031: dup
+		IL_0032: ldc.i4.0
+		IL_0033: ldloc.0
+		IL_0034: stelem.ref
+		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_003a: stloc.1
+		IL_003b: ldc.i4.1
+		IL_003c: newarr [System.Runtime]System.Object
+		IL_0041: dup
+		IL_0042: ldc.i4.0
+		IL_0043: ldc.r8 3
+		IL_004c: box [System.Runtime]System.Double
+		IL_0051: stelem.ref
+		IL_0052: stloc.2
+		IL_0053: ldloc.1
+		IL_0054: ldc.i4.1
+		IL_0055: newarr [System.Runtime]System.Object
+		IL_005a: dup
+		IL_005b: ldc.i4.0
+		IL_005c: ldnull
+		IL_005d: stelem.ref
+		IL_005e: ldloc.2
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_0064: stloc.3
+		IL_0065: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_006a: ldc.i4.2
+		IL_006b: newarr [System.Runtime]System.Object
+		IL_0070: dup
+		IL_0071: ldc.i4.0
+		IL_0072: ldstr "product is "
+		IL_0077: stelem.ref
+		IL_0078: dup
+		IL_0079: ldc.i4.1
+		IL_007a: ldloc.3
+		IL_007b: stelem.ref
+		IL_007c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0081: pop
+		IL_0082: ret
 	} // end of method ArrowFunction_CapturesOuterVariable::Main
 
 } // end of class Scripts.ArrowFunction_CapturesOuterVariable
@@ -178,7 +175,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2122
+		// Method begins at RVA 0x211f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

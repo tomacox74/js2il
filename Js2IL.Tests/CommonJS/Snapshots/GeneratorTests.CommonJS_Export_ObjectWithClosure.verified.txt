@@ -95,7 +95,7 @@
 
 
 	// Fields
-	.field public object moduleFactor
+	.field public float64 moduleFactor
 	.field public object multiplyModuleFactor
 	.field public object createCalculator
 
@@ -251,33 +251,29 @@
 	{
 		// Method begins at RVA 0x21e4
 		// Header size: 12
-		// Code size: 39 (0x27)
+		// Code size: 32 (0x20)
 		.maxstack 32
 		.locals init (
-			[0] object,
-			[1] float64,
-			[2] object
+			[0] float64,
+			[1] object
 		)
 
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.0
 		IL_0002: ldelem.ref
 		IL_0003: castclass Scopes.CommonJS_Export_ObjectWithClosure_Lib
-		IL_0008: ldfld object Scopes.CommonJS_Export_ObjectWithClosure_Lib::moduleFactor
+		IL_0008: ldfld float64 Scopes.CommonJS_Export_ObjectWithClosure_Lib::moduleFactor
 		IL_000d: stloc.0
 		IL_000e: ldarg.1
 		IL_000f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0014: stloc.1
-		IL_0015: ldloc.1
-		IL_0016: ldloc.0
-		IL_0017: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_001c: mul
+		IL_0014: ldloc.0
+		IL_0015: mul
+		IL_0016: stloc.0
+		IL_0017: ldloc.0
+		IL_0018: box [System.Runtime]System.Double
 		IL_001d: stloc.1
 		IL_001e: ldloc.1
-		IL_001f: box [System.Runtime]System.Double
-		IL_0024: stloc.2
-		IL_0025: ldloc.2
-		IL_0026: ret
+		IL_001f: ret
 	} // end of method CommonJS_Export_ObjectWithClosure_Lib::multiplyModuleFactor
 
 	.method public hidebysig static 
@@ -339,7 +335,7 @@
 			object x
 		) cil managed 
 	{
-		// Method begins at RVA 0x2218
+		// Method begins at RVA 0x2210
 		// Header size: 12
 		// Code size: 39 (0x27)
 		.maxstack 32
@@ -385,9 +381,9 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x224c
+		// Method begins at RVA 0x2244
 		// Header size: 12
-		// Code size: 126 (0x7e)
+		// Code size: 131 (0x83)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.CommonJS_Export_ObjectWithClosure_Lib,
@@ -401,45 +397,46 @@
 		IL_0006: ldloc.0
 		IL_0007: ldc.r8 7
 		IL_0010: box [System.Runtime]System.Double
-		IL_0015: stfld object Scopes.CommonJS_Export_ObjectWithClosure_Lib::moduleFactor
-		IL_001a: ldnull
-		IL_001b: ldftn object Functions.CommonJS_Export_ObjectWithClosure_Lib::multiplyModuleFactor(object[], object)
-		IL_0021: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0026: ldc.i4.1
-		IL_0027: newarr [System.Runtime]System.Object
-		IL_002c: dup
-		IL_002d: ldc.i4.0
-		IL_002e: ldloc.0
-		IL_002f: stelem.ref
-		IL_0030: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0035: stloc.1
-		IL_0036: ldnull
-		IL_0037: ldftn object Functions.CommonJS_Export_ObjectWithClosure_Lib::createCalculator(object[], object)
-		IL_003d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0042: ldc.i4.1
-		IL_0043: newarr [System.Runtime]System.Object
-		IL_0048: dup
-		IL_0049: ldc.i4.0
-		IL_004a: ldloc.0
-		IL_004b: stelem.ref
-		IL_004c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0051: stloc.2
-		IL_0052: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
-		IL_0057: dup
-		IL_0058: ldstr "multiplyModuleFactor"
-		IL_005d: ldloc.1
-		IL_005e: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_0063: dup
-		IL_0064: ldstr "createCalculator"
-		IL_0069: ldloc.2
-		IL_006a: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
-		IL_006f: stloc.3
-		IL_0070: ldarg.2
-		IL_0071: ldstr "exports"
-		IL_0076: ldloc.3
-		IL_0077: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-		IL_007c: pop
-		IL_007d: ret
+		IL_0015: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_001a: stfld float64 Scopes.CommonJS_Export_ObjectWithClosure_Lib::moduleFactor
+		IL_001f: ldnull
+		IL_0020: ldftn object Functions.CommonJS_Export_ObjectWithClosure_Lib::multiplyModuleFactor(object[], object)
+		IL_0026: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_002b: ldc.i4.1
+		IL_002c: newarr [System.Runtime]System.Object
+		IL_0031: dup
+		IL_0032: ldc.i4.0
+		IL_0033: ldloc.0
+		IL_0034: stelem.ref
+		IL_0035: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_003a: stloc.1
+		IL_003b: ldnull
+		IL_003c: ldftn object Functions.CommonJS_Export_ObjectWithClosure_Lib::createCalculator(object[], object)
+		IL_0042: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0047: ldc.i4.1
+		IL_0048: newarr [System.Runtime]System.Object
+		IL_004d: dup
+		IL_004e: ldc.i4.0
+		IL_004f: ldloc.0
+		IL_0050: stelem.ref
+		IL_0051: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0056: stloc.2
+		IL_0057: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_005c: dup
+		IL_005d: ldstr "multiplyModuleFactor"
+		IL_0062: ldloc.1
+		IL_0063: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0068: dup
+		IL_0069: ldstr "createCalculator"
+		IL_006e: ldloc.2
+		IL_006f: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
+		IL_0074: stloc.3
+		IL_0075: ldarg.2
+		IL_0076: ldstr "exports"
+		IL_007b: ldloc.3
+		IL_007c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0081: pop
+		IL_0082: ret
 	} // end of method CommonJS_Export_ObjectWithClosure_Lib::Main
 
 } // end of class Scripts.CommonJS_Export_ObjectWithClosure_Lib
@@ -451,7 +448,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22d6
+		// Method begins at RVA 0x22d3
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

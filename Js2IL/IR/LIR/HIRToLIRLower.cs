@@ -1842,6 +1842,18 @@ public sealed class HIRToLIRLowerer
                     var storage = _environmentLayout.GetStorage(binding);
                     if (storage != null)
                     {
+                        static ValueStorage GetPreferredBindingReadStorage(BindingInfo b)
+                        {
+                            // Only propagate unboxed doubles for stable types. This matches the current
+                            // typed-scope-field support in TypeGenerator/VariableRegistry.
+                            if (b.IsStableType && b.ClrType == typeof(double))
+                            {
+                                return new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+                            }
+
+                            return new ValueStorage(ValueStorageKind.Reference, typeof(object));
+                        }
+
                         switch (storage.Kind)
                         {
                             case BindingStorageKind.IlArgument:
@@ -1861,7 +1873,7 @@ public sealed class HIRToLIRLowerer
                                 {
                                     resultTempVar = CreateTempVariable();
                                     _methodBodyIR.Instructions.Add(new LIRLoadLeafScopeField(binding, storage.Field, storage.DeclaringScope, resultTempVar));
-                                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                                    DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
                                     return true;
                                 }
                                 break;
@@ -1872,7 +1884,7 @@ public sealed class HIRToLIRLowerer
                                 {
                                     resultTempVar = CreateTempVariable();
                                     _methodBodyIR.Instructions.Add(new LIRLoadParentScopeField(binding, storage.Field, storage.DeclaringScope, storage.ParentScopeIndex, resultTempVar));
-                                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                                    DefineTempStorage(resultTempVar, GetPreferredBindingReadStorage(binding));
                                     return true;
                                 }
                                 break;
@@ -4195,24 +4207,19 @@ public sealed class HIRToLIRLowerer
             return false;
         }
 
-        // For captured variables loaded from scope fields, the storage is always object (Reference).
-        // For non-captured numeric locals, we only support double.
-        var currentStorage = GetTempStorage(currentValue);
-
-        // Boxed (object) update path:
+        // Environment-stored update path:
         // - Captured variables live in scope fields
-        // - Non-captured parameters live in IL arguments
+        // - Parameters live in IL arguments
+        // Do not rely on the temp storage kind here, since other lowering steps may propagate
+        // stable unboxed types for captured fields.
+        var updateStorage = _environmentLayout?.GetStorage(updateBinding);
+        var isEnvironmentStored = updateStorage != null && updateStorage.Kind != BindingStorageKind.IlLocal;
+
         // Implement numeric coercion via runtime TypeUtilities.ToNumber(object?) and then store
         // the boxed updated value back to the appropriate storage location.
-        if (currentStorage.Kind == ValueStorageKind.Reference && currentStorage.ClrType == typeof(object))
+        if (isEnvironmentStored)
         {
-            if (_environmentLayout == null)
-            {
-                return false;
-            }
-
-            var storage = _environmentLayout.GetStorage(updateBinding);
-            if (storage == null)
+            if (_environmentLayout == null || updateStorage == null)
             {
                 return false;
             }
@@ -4247,30 +4254,30 @@ public sealed class HIRToLIRLowerer
 
             var updatedBoxed = EnsureObject(updatedNumber);
 
-            switch (storage.Kind)
+            switch (updateStorage.Kind)
             {
                 case BindingStorageKind.IlArgument:
-                    if (storage.JsParameterIndex < 0)
+                    if (updateStorage.JsParameterIndex < 0)
                     {
                         return false;
                     }
-                    _methodBodyIR.Instructions.Add(new LIRStoreParameter(storage.JsParameterIndex, updatedBoxed));
+                    _methodBodyIR.Instructions.Add(new LIRStoreParameter(updateStorage.JsParameterIndex, updatedBoxed));
                     break;
 
                 case BindingStorageKind.LeafScopeField:
-                    if (storage.Field.IsNil || storage.DeclaringScope.IsNil)
+                    if (updateStorage.Field.IsNil || updateStorage.DeclaringScope.IsNil)
                     {
                         return false;
                     }
-                    _methodBodyIR.Instructions.Add(new LIRStoreLeafScopeField(updateBinding, storage.Field, storage.DeclaringScope, updatedBoxed));
+                    _methodBodyIR.Instructions.Add(new LIRStoreLeafScopeField(updateBinding, updateStorage.Field, updateStorage.DeclaringScope, updatedBoxed));
                     break;
 
                 case BindingStorageKind.ParentScopeField:
-                    if (storage.ParentScopeIndex < 0 || storage.Field.IsNil || storage.DeclaringScope.IsNil)
+                    if (updateStorage.ParentScopeIndex < 0 || updateStorage.Field.IsNil || updateStorage.DeclaringScope.IsNil)
                     {
                         return false;
                     }
-                    _methodBodyIR.Instructions.Add(new LIRStoreParentScopeField(updateBinding, storage.Field, storage.DeclaringScope, storage.ParentScopeIndex, updatedBoxed));
+                    _methodBodyIR.Instructions.Add(new LIRStoreParentScopeField(updateBinding, updateStorage.Field, updateStorage.DeclaringScope, updateStorage.ParentScopeIndex, updatedBoxed));
                     break;
 
                 default:
@@ -4290,6 +4297,9 @@ public sealed class HIRToLIRLowerer
             resultTempVar = originalSnapshotForPostfix!.Value;
             return true;
         }
+
+        // For non-captured numeric locals, we only support double.
+        var currentStorage = GetTempStorage(currentValue);
 
         // Only support numeric locals (double) for now
         if (currentStorage.ClrType != typeof(double))
@@ -5052,6 +5062,18 @@ public sealed class HIRToLIRLowerer
     {
         result = default;
 
+        static ValueStorage GetPreferredBindingReadStorage(BindingInfo b)
+        {
+            // Only propagate unboxed doubles for stable types. This matches the current
+            // typed-scope-field support in TypeGenerator/VariableRegistry.
+            if (b.IsStableType && b.ClrType == typeof(double))
+            {
+                return new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+            }
+
+            return new ValueStorage(ValueStorageKind.Reference, typeof(object));
+        }
+
         // Check if this binding is stored in a scope field (captured variable)
         if (_environmentLayout != null)
         {
@@ -5077,7 +5099,7 @@ public sealed class HIRToLIRLowerer
                         {
                             result = CreateTempVariable();
                             _methodBodyIR.Instructions.Add(new LIRLoadLeafScopeField(binding, storage.Field, storage.DeclaringScope, result));
-                            DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                            DefineTempStorage(result, GetPreferredBindingReadStorage(binding));
                             return true;
                         }
                         break;
@@ -5088,7 +5110,7 @@ public sealed class HIRToLIRLowerer
                         {
                             result = CreateTempVariable();
                             _methodBodyIR.Instructions.Add(new LIRLoadParentScopeField(binding, storage.Field, storage.DeclaringScope, storage.ParentScopeIndex, result));
-                            DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                            DefineTempStorage(result, GetPreferredBindingReadStorage(binding));
                             return true;
                         }
                         break;
