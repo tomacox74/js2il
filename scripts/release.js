@@ -350,7 +350,15 @@ function main() {
 
   // If merge requested, wait for checks then merge, then create GitHub release.
   const prNumber = run(`gh pr view "${prLink}" --repo ${repo} --json number -q .number`, args);
-  run(`gh pr checks ${prNumber} --repo ${repo} --watch`, args);
+
+  // Some repos/branches may not have status checks configured. In that case
+  // `gh pr checks --watch` can exit non-zero with "no checks reported".
+  // Treat that as a warning and continue to merge.
+  const checksOut = run(`gh pr checks ${prNumber} --repo ${repo} --watch`, { ...args, allowFailure: true });
+  if (checksOut && /no checks reported/i.test(checksOut)) {
+    process.stdout.write(`\nNote: no CI checks reported for ${releaseBranch}; continuing with merge.\n`);
+  }
+
   run(`gh pr merge ${prNumber} --repo ${repo} --merge --delete-branch`, args);
 
   // Update local master to the merged commit
