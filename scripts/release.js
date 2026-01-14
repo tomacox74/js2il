@@ -95,6 +95,30 @@ function parseArgs(argv) {
   return args;
 }
 
+function getEffectiveArgv(processArgv) {
+  // When invoked via `npm run ... -- <args>`, npm does not always forward
+  // dash-prefixed args reliably (notably `--merge`), because npm itself
+  // parses some flags. However, npm exposes the original argv via the
+  // `npm_config_argv` env var. Use it as a fallback so `npm run release:cut -- patch --merge`
+  // behaves the same as `node scripts/release.js patch --merge`.
+  const raw = process.env.npm_config_argv;
+  if (!raw) return processArgv;
+
+  try {
+    const parsed = JSON.parse(raw);
+    const remain = Array.isArray(parsed?.remain) ? parsed.remain : null;
+    if (!remain || remain.length === 0) return processArgv;
+
+    // Only use npm's remain if it includes a release kind.
+    if (!remain.some((x) => /^(patch|minor|major)$/.test(x))) return processArgv;
+
+    // Reconstruct argv in the same shape as process.argv: [node, script, ...args]
+    return [processArgv[0], processArgv[1], ...remain];
+  } catch {
+    return processArgv;
+  }
+}
+
 function run(command, { dryRun = false, verbose = false, allowFailure = false } = {}) {
   if (verbose || dryRun) {
     process.stdout.write(`> ${command}\n`);
@@ -220,7 +244,15 @@ function changelogSectionFor(version) {
 }
 
 function main() {
-  const args = parseArgs(process.argv);
+  const effectiveArgv = getEffectiveArgv(process.argv);
+  const args = parseArgs(effectiveArgv);
+
+  // Convenience: if the user ran `npm run ... --verbose`, npm will typically
+  // consume `--verbose` for itself (setting npm_config_loglevel=verbose).
+  // Treat that as release-script verbosity when our own `--verbose` wasn't forwarded.
+  if (!args.verbose && process.env.npm_config_loglevel === 'verbose') {
+    args.verbose = true;
+  }
 
   ensureTools(args);
 
