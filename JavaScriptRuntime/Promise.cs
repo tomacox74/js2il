@@ -2,7 +2,6 @@ using System;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Dynamic;
 using System.Collections.Generic;
 using JavaScriptRuntime.EngineCore;
 namespace JavaScriptRuntime;
@@ -74,7 +73,7 @@ public sealed class Promise
     /// Returns an object containing a new promise and its associated resolve/reject functions.
     /// Equivalent to the TC39 Promise.withResolvers() proposal (now part of ECMA-262).
     /// </summary>
-    public static object? withResolvers()
+    public static PromiseWithResolvers withResolvers()
     {
         var promise = new Promise();
 
@@ -90,12 +89,7 @@ public sealed class Promise
             return null;
         });
 
-        var result = new ExpandoObject();
-        var dict = (IDictionary<string, object?>)result;
-        dict["promise"] = promise;
-        dict["resolve"] = resolve;
-        dict["reject"] = reject;
-        return result;
+        return new PromiseWithResolvers(promise, resolve, reject);
     }
 
     /// <summary>

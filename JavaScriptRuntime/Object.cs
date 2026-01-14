@@ -145,6 +145,16 @@ namespace JavaScriptRuntime
                 throw new NotSupportedException($"Property not found on object: {methodName}");
             }
 
+            // 3b) Host object properties may also contain function delegates.
+            // This enables patterns like:
+            //   const r = Promise.withResolvers(); r.resolve(123);
+            // where `resolve` is exposed as a delegate-valued property.
+            var memberValue = GetProperty(receiver, methodName);
+            if (memberValue is Delegate)
+            {
+                return Closure.InvokeWithArgs(memberValue, System.Array.Empty<object>(), callArgs);
+            }
+
             // 4) Fallback to reflection on receiver type
             return CallInstanceMethod(receiver, methodName, callArgs);
         }
