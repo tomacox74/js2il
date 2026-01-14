@@ -162,14 +162,15 @@
 	{
 		// Method begins at RVA 0x20cc
 		// Header size: 12
-		// Code size: 185 (0xb9)
+		// Code size: 182 (0xb6)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Promise_WithResolvers_Idempotent,
 			[1] object,
-			[2] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Promise,
 			[3] object,
-			[4] object[]
+			[4] object[],
+			[5] object
 		)
 
 		IL_0000: newobj instance void Scopes.Promise_WithResolvers_Idempotent::.ctor()
@@ -177,76 +178,75 @@
 		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.Promise::withResolvers()
 		IL_000b: stloc.1
 		IL_000c: ldloc.1
-		IL_000d: ldstr "promise"
-		IL_0012: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-		IL_0017: stloc.2
-		IL_0018: ldnull
-		IL_0019: ldftn object Functions.ArrowFunction_L4C11::ArrowFunction_L4C11(object[], object)
-		IL_001f: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_0024: ldc.i4.1
-		IL_0025: newarr [System.Runtime]System.Object
-		IL_002a: dup
-		IL_002b: ldc.i4.0
-		IL_002c: ldloc.0
-		IL_002d: stelem.ref
-		IL_002e: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0033: stloc.3
-		IL_0034: ldc.i4.1
-		IL_0035: newarr [System.Runtime]System.Object
-		IL_003a: dup
-		IL_003b: ldc.i4.0
-		IL_003c: ldloc.3
-		IL_003d: stelem.ref
-		IL_003e: stloc.s 4
-		IL_0040: ldloc.2
-		IL_0041: ldstr "then"
-		IL_0046: ldloc.s 4
-		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_004d: stloc.2
-		IL_004e: ldnull
-		IL_004f: ldftn object Functions.ArrowFunction_L5C12::ArrowFunction_L5C12(object[], object)
-		IL_0055: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
-		IL_005a: ldc.i4.1
-		IL_005b: newarr [System.Runtime]System.Object
-		IL_0060: dup
-		IL_0061: ldc.i4.0
-		IL_0062: ldloc.0
-		IL_0063: stelem.ref
-		IL_0064: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
-		IL_0069: stloc.3
-		IL_006a: ldc.i4.1
-		IL_006b: newarr [System.Runtime]System.Object
-		IL_0070: dup
-		IL_0071: ldc.i4.0
-		IL_0072: ldloc.3
-		IL_0073: stelem.ref
-		IL_0074: stloc.s 4
-		IL_0076: ldloc.2
-		IL_0077: ldstr "catch"
-		IL_007c: ldloc.s 4
-		IL_007e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_0083: pop
-		IL_0084: ldloc.1
-		IL_0085: ldstr "resolve"
-		IL_008a: ldc.i4.1
-		IL_008b: newarr [System.Runtime]System.Object
-		IL_0090: dup
-		IL_0091: ldc.i4.0
-		IL_0092: ldstr "first"
-		IL_0097: stelem.ref
-		IL_0098: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_009d: pop
-		IL_009e: ldloc.1
-		IL_009f: ldstr "reject"
-		IL_00a4: ldc.i4.1
-		IL_00a5: newarr [System.Runtime]System.Object
-		IL_00aa: dup
-		IL_00ab: ldc.i4.0
-		IL_00ac: ldstr "second"
-		IL_00b1: stelem.ref
-		IL_00b2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-		IL_00b7: pop
-		IL_00b8: ret
+		IL_000d: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+		IL_0012: stloc.2
+		IL_0013: ldnull
+		IL_0014: ldftn object Functions.ArrowFunction_L4C11::ArrowFunction_L4C11(object[], object)
+		IL_001a: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_001f: ldc.i4.1
+		IL_0020: newarr [System.Runtime]System.Object
+		IL_0025: dup
+		IL_0026: ldc.i4.0
+		IL_0027: ldloc.0
+		IL_0028: stelem.ref
+		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_002e: stloc.3
+		IL_002f: ldc.i4.1
+		IL_0030: newarr [System.Runtime]System.Object
+		IL_0035: dup
+		IL_0036: ldc.i4.0
+		IL_0037: ldloc.3
+		IL_0038: stelem.ref
+		IL_0039: stloc.s 4
+		IL_003b: ldloc.2
+		IL_003c: ldstr "then"
+		IL_0041: ldloc.s 4
+		IL_0043: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0048: stloc.3
+		IL_0049: ldnull
+		IL_004a: ldftn object Functions.ArrowFunction_L5C12::ArrowFunction_L5C12(object[], object)
+		IL_0050: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
+		IL_0055: ldc.i4.1
+		IL_0056: newarr [System.Runtime]System.Object
+		IL_005b: dup
+		IL_005c: ldc.i4.0
+		IL_005d: ldloc.0
+		IL_005e: stelem.ref
+		IL_005f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_0064: stloc.s 5
+		IL_0066: ldc.i4.1
+		IL_0067: newarr [System.Runtime]System.Object
+		IL_006c: dup
+		IL_006d: ldc.i4.0
+		IL_006e: ldloc.s 5
+		IL_0070: stelem.ref
+		IL_0071: stloc.s 4
+		IL_0073: ldloc.3
+		IL_0074: ldstr "catch"
+		IL_0079: ldloc.s 4
+		IL_007b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_0080: pop
+		IL_0081: ldloc.1
+		IL_0082: ldstr "resolve"
+		IL_0087: ldc.i4.1
+		IL_0088: newarr [System.Runtime]System.Object
+		IL_008d: dup
+		IL_008e: ldc.i4.0
+		IL_008f: ldstr "first"
+		IL_0094: stelem.ref
+		IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_009a: pop
+		IL_009b: ldloc.1
+		IL_009c: ldstr "reject"
+		IL_00a1: ldc.i4.1
+		IL_00a2: newarr [System.Runtime]System.Object
+		IL_00a7: dup
+		IL_00a8: ldc.i4.0
+		IL_00a9: ldstr "second"
+		IL_00ae: stelem.ref
+		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+		IL_00b4: pop
+		IL_00b5: ret
 	} // end of method Promise_WithResolvers_Idempotent::Main
 
 } // end of class Scripts.Promise_WithResolvers_Idempotent
@@ -258,7 +258,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2191
+		// Method begins at RVA 0x218e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
