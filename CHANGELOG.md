@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.6.5 - 2026-01-14
+
 ### Added
 - Added `Promise.withResolvers()`.
 - Reflection-based intrinsic discovery from `JavaScriptRuntime.GlobalThis` and `[IntrinsicObject("...")]` runtime types (explicitly excludes `Buffer` for now).
@@ -11,10 +15,8 @@ All notable changes to this project are documented here.
 - Integration generator test that compiles `scripts/generateNodeSupportMd.js`.
 - Validator checks that reject `async`/`await` usage anywhere (not supported yet).
 - Verify test module initializer to omit snapshot contents from exception output.
-
 ### Fixed
 - Improved IR pipeline failure diagnostics and CommonJS wrapper parameter capture/lowering for integration scripts.
-
 ### Changed
 - IR pipeline metrics now record the first failure message (instead of throwing) so it can be surfaced in higher-level errors.
 - Temporarily skip `Js2IL.Tests.Async` tests until async/await support is implemented.
