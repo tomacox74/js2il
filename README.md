@@ -150,7 +150,7 @@ What it does:
 - Creates `release/<version>` branch
 - Runs the existing `scripts/bumpVersion.js` to update `CHANGELOG.md` + project versions
 - Commits, pushes, and opens a PR
-- With `--merge`: waits for CI checks, merges the PR, then creates the GitHub release/tag using the `CHANGELOG.md` section
+- With `--merge`: waits for CI checks (if configured), merges the PR, then creates the GitHub release/tag using the `CHANGELOG.md` section
 
 Requirements: `git`, `gh` (authenticated), `node`/`npm`.
 
@@ -214,8 +214,6 @@ git checkout master
 git pull
 gh release create v0.x.y --title "v0.x.y" --notes "See CHANGELOG.md for details" --target master
 ```
-
-This creates the tag and triggers the GitHub Actions workflow (`.github/workflows/release.yml`) which builds and publishes to NuGet.
 
 This creates the tag and triggers the GitHub Actions workflow (`.github/workflows/release.yml`) which builds and publishes to NuGet.
 

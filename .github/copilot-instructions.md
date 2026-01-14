@@ -99,7 +99,8 @@ npm run release:cut -- patch --merge
 Notes:
 - Requires `gh auth status` to be OK (GitHub CLI authenticated)
 - Without `--merge`, it stops after creating the PR
-- With `--merge`, it waits for checks (`gh pr checks --watch`), merges, then creates the GitHub release using the relevant `CHANGELOG.md` section
+- With `--merge`, it waits for checks (if any are configured), merges, then creates the GitHub release using the relevant `CHANGELOG.md` section
+- Optional flags: `--skip-empty`, `--dry-run`, `--repo owner/name`, `--base master`, `--verbose`
 
 **Fallback (Manual):**
 
