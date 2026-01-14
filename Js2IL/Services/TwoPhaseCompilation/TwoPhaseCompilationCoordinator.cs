@@ -659,8 +659,10 @@ public sealed class TwoPhaseCompilationCoordinator
             }
             else
             {
+                var lastFailure = IR.IRPipelineMetrics.GetLastFailure();
+                var extra = string.IsNullOrWhiteSpace(lastFailure) ? string.Empty : $" (IR failure: {lastFailure})";
                 throw new NotSupportedException(
-                    $"[TwoPhase] IR pipeline could not compile function declaration '{methodName}' in scope '{funcScope.GetQualifiedName()}'.");
+                    $"[TwoPhase] IR pipeline could not compile function declaration '{methodName}' in scope '{funcScope.GetQualifiedName()}'.{extra}");
             }
 
             compiled[callable] = body;
