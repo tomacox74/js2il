@@ -247,10 +247,38 @@ function main() {
   const effectiveArgv = getEffectiveArgv(process.argv);
   const args = parseArgs(effectiveArgv);
 
+  // npm may consume dash-prefixed args (even after `--`) by turning them into
+  // npm config values (available as npm_config_* env vars) instead of
+  // forwarding them to the script. Support the common ones so the UX is:
+  //   npm run release:cut -- patch --merge
+  // and it still behaves like:
+  //   node scripts/release.js patch --merge
+  const truthy = (v) => v === 'true' || v === '1' || v === 'yes';
+
+  if (!args.merge && truthy(process.env.npm_config_merge)) {
+    args.merge = true;
+  }
+
+  if (!args.skipEmpty && truthy(process.env.npm_config_skip_empty)) {
+    args.skipEmpty = true;
+  }
+
+  if (!args.dryRun && truthy(process.env.npm_config_dry_run)) {
+    args.dryRun = true;
+  }
+
+  if (!args.repo && typeof process.env.npm_config_repo === 'string' && process.env.npm_config_repo.trim()) {
+    args.repo = process.env.npm_config_repo.trim();
+  }
+
+  if (args.base === 'master' && typeof process.env.npm_config_base === 'string' && process.env.npm_config_base.trim()) {
+    args.base = process.env.npm_config_base.trim();
+  }
+
   // Convenience: if the user ran `npm run ... --verbose`, npm will typically
   // consume `--verbose` for itself (setting npm_config_loglevel=verbose).
   // Treat that as release-script verbosity when our own `--verbose` wasn't forwarded.
-  if (!args.verbose && process.env.npm_config_loglevel === 'verbose') {
+  if (!args.verbose && (process.env.npm_config_loglevel === 'verbose' || truthy(process.env.npm_config_verbose))) {
     args.verbose = true;
   }
 
