@@ -119,6 +119,185 @@ If `MoveNext` throws:
 - call deferred.reject(thrownValue)
 - set `_asyncState = -1`
 
+## Worked Example: `for` loop with nested `await`
+
+This example demonstrates the *shape* of the emitted types and the `MoveNext` logic when an async function contains a `for` loop and a nested `await`.
+
+### Input JavaScript
+
+```js
+async function f(n) {
+  let total = 0;
+  for (let i = 0; i < n; i++) {
+  total += await foo(await bar(i));
+  }
+  return total;
+}
+```
+
+Key points:
+
+- The loop body has **two await points** per iteration:
+  - inner: `await bar(i)`
+  - outer: `await foo(<innerResult>)`
+- The loop variables (`i`, `n`, `total`) must survive suspension.
+
+### Emitted Types (conceptual)
+
+JS2IL already emits a scope class per callable. For an async callable, the leaf scope additionally holds async state and any surviving locals.
+
+```csharp
+// Scope-as-class for the invocation of f
+sealed class Scopes.f
+{
+  // --- async state ---
+  public int _asyncState; // -1 = completed, otherwise resume label
+
+  // The deferred produced by Promise.withResolvers()
+  public JavaScriptRuntime.PromiseWithResolvers _deferred;
+
+  // --- locals that survive across await ---
+  public object n;      // parameter (boxed)
+  public double i;      // loop counter (unboxed where possible)
+  public double total;  // accumulator
+
+  // --- temps that survive across await ---
+  public object _awaitedInner; // result of await bar(i)
+
+  public object _awaitedOuter; // result of await foo(_awaitedInner)
+
+  // (Optional) a pending-exception slot if/when try/finally lowering is supported
+  // public object _pendingException;
+}
+
+static class Functions.f
+{
+  // Entry method: returns Promise immediately
+  public static object f(object[] scopes, object n)
+  {
+    var scope = new Scopes.f();
+    scope.n = n;
+    scope.i = 0;
+    scope.total = 0;
+    scope._asyncState = 0;
+    scope._deferred = JavaScriptRuntime.Promise.withResolvers();
+
+    // Start execution synchronously
+    MoveNext(scopes /* includes leaf scope slot */);
+
+    return scope._deferred.promise;
+  }
+
+  // Static state machine driver
+  public static void MoveNext(object[] scopes)
+  {
+    // Implementation shown below.
+  }
+}
+```
+
+Notes:
+
+- The *exact* `scopes` layout and how the leaf scope instance is placed into it must follow the JS2IL scopes ABI.
+- The numeric locals shown as `double` assume stable type inference; otherwise they are boxed as `object`.
+
+### `MoveNext` Shape (pseudo-code)
+
+This is the core of the lowering: a `switch` on `_asyncState` plus explicit scheduling of continuations via `then`.
+
+```csharp
+static void MoveNext(object[] scopes)
+{
+  var scope = (Scopes.f)scopes[0];
+
+  try
+  {
+    while (true)
+    {
+      switch (scope._asyncState)
+      {
+        case 0:
+          // initial entry falls through into the loop
+          goto LoopCheck;
+
+        case 1:
+          // resumed after: await bar(i)
+          // (the continuation has already stored the value into _awaitedInner)
+          goto AfterInnerAwait;
+
+        case 2:
+          // resumed after: await foo(_awaitedInner)
+          goto AfterOuterAwait;
+
+        default:
+          return;
+      }
+
+    LoopCheck:
+      if (scope.i >= JavaScriptRuntime.TypeUtilities.ToNumber(scope.n))
+      {
+        scope._asyncState = -1;
+        scope._deferred.resolve(scope.total);
+        return;
+      }
+
+      // --- inner await: await bar(i) ---
+      {
+        object innerExpr = bar(scope.i);        // normal call lowering
+        var p = JavaScriptRuntime.Promise.resolve(innerExpr);
+
+        scope._asyncState = 1;
+
+        p.then(
+          onFulfilled: v => { scope._awaitedInner = v; MoveNext(scopes); },
+          // In emitted IL this is another bound callable. For the minimal semantics
+          // (no surrounding try/catch), it can directly reject the outer promise.
+          onRejected:  r => { scope._asyncState = -1; scope._deferred.reject(r); }
+        );
+        return; // suspend
+      }
+
+    AfterInnerAwait:
+      // --- outer await: await foo(awaitedInner) ---
+      {
+        object outerExpr = foo(scope._awaitedInner);
+        var p = JavaScriptRuntime.Promise.resolve(outerExpr);
+
+        scope._asyncState = 2;
+        p.then(
+          onFulfilled: v => { scope._awaitedOuter = v; MoveNext(scopes); },
+          onRejected:  r => { scope._asyncState = -1; scope._deferred.reject(r); }
+        );
+        return; // suspend
+      }
+
+    AfterOuterAwait:
+      // total += awaitedOuter
+      scope.total = scope.total + JavaScriptRuntime.TypeUtilities.ToNumber(scope._awaitedOuter);
+      scope.i = scope.i + 1;
+
+      // Next loop iteration
+      scope._asyncState = 0;
+      continue;
+    }
+  }
+  catch (JavaScriptRuntime.JsThrownValueException ex)
+  {
+    scope._asyncState = -1;
+    scope._deferred.reject(ex.Value);
+  }
+}
+```
+
+Important details:
+
+- Each `await` site is assigned a stable resume state id (`1`, `2`, …).
+- The loop variables (`i`, `total`) live on the scope so they survive suspension.
+- Nested awaits become sequential suspension points.
+- In real emitted IL, the `onFulfilled` / `onRejected` lambdas are emitted as normal JS2IL callables (static methods + `Closure.Bind(scopes)`), not as C# closures.
+- The rejection path should flow back into `MoveNext` with “throw into state machine” semantics; the pseudo-code uses `throw r` as shorthand.
+
+
 ## Exception Handling / try-catch-finally
 
 `await` interacts with `try/finally` because the continuation must resume *inside* the correct handler region.
