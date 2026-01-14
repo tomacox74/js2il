@@ -65,24 +65,17 @@ This includes:
 
 Rationale: JS2IL already uses scope instances for closure lifetime; storing async state there keeps lifetime rules consistent and avoids separate heap allocations.
 
-### Where `MoveNext` lives (open design)
+### Where `MoveNext` lives (chosen design)
 
-We have three viable options:
+JS2IL will implement async functions using a **static `MoveNext` method** on the function’s registry type.
 
-1. **Static method** on the function’s registry type
-   - Signature like `static void MoveNext(object[] scopes)` or `static void MoveNext(<ScopeType> scope, object[] scopes)`
-   - Pros: simple metadata model; reuse existing callable plumbing
-   - Cons: must be careful to avoid boxing/casts for typed scope locals
+- Signature shape: `static void MoveNext(object[] scopes)` (optionally `static void MoveNext(<ScopeType> scope, object[] scopes)` as an optimization to reduce casts).
+- Rationale: simple metadata model, fits the existing callable plumbing, and keeps leaf scope types primarily as state containers.
 
-2. **Instance method** on the leaf scope type
-   - Pros: natural encapsulation; `this` is the typed scope
-   - Cons: scope types are currently “data holders”; adding methods affects metadata layout and generator patterns
+Alternatives (not chosen):
 
-3. **Stored delegate** on the scope
-   - Pros: easiest to schedule
-   - Cons: delegate allocation and more runtime plumbing
-
-Recommendation for first implementation: (1) static `MoveNext` plus a small runtime helper to create continuations.
+- Instance `MoveNext` method on the leaf scope type.
+- Storing a `MoveNext` delegate on the scope.
 
 ## Detailed Lowering
 
@@ -180,6 +173,5 @@ Generator tests should verify IL changes are stable via snapshots.
 
 ## Follow-ups
 
-- Decide `MoveNext` placement (static vs instance) once the first async state machine prototype exists.
 - Expand handler support: `await` in `try/catch/finally`.
 - Add `for await (...)` and async iterators.
