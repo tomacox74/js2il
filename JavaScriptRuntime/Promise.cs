@@ -2,6 +2,9 @@ using System;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Dynamic;
+using System.Collections.Generic;
+using JavaScriptRuntime.EngineCore;
 namespace JavaScriptRuntime;
 
 [IntrinsicObject("Promise")]
@@ -65,6 +68,46 @@ public sealed class Promise
         var promise = new Promise();
         promise.Settle(State.Fulfilled, value);
         return promise;
+    }
+
+    /// <summary>
+    /// Returns an object containing a new promise and its associated resolve/reject functions.
+    /// Equivalent to the TC39 Promise.withResolvers() proposal (now part of ECMA-262).
+    /// </summary>
+    public static object? withResolvers()
+    {
+        var promise = new Promise();
+
+        var resolve = new Func<object[]?, object?, object?>((_, value) =>
+        {
+            promise.Settle(State.Fulfilled, value);
+            return null;
+        });
+
+        var reject = new Func<object[]?, object?, object?>((_, reason) =>
+        {
+            promise.Settle(State.Rejected, reason);
+            return null;
+        });
+
+        var result = new ExpandoObject();
+        var dict = (IDictionary<string, object?>)result;
+        dict["promise"] = promise;
+        dict["resolve"] = resolve;
+        dict["reject"] = reject;
+        return result;
+    }
+
+    /// <summary>
+    /// Runtime helper for lowering JavaScript <c>await</c>.
+    /// 
+    /// NOTE: JS2IL currently targets CommonJS. Await is not supported yet.
+    /// When async/await is implemented it should be lowered to a proper state machine
+    /// and must not manually pump the message loop.
+    /// </summary>
+    public static object? @await(object? awaited)
+    {
+        throw new NotSupportedException("Promise.await is not supported. Await must be compiled to a state machine without pumping the message loop.");
     }
 
     public static object? reject(object? reason)
@@ -314,8 +357,10 @@ public sealed class Promise
             throw new JavaScriptRuntime.TypeError("Promise resolver is not a function");
         }
 
-        // the first parameter is ignored.. only exists for consistency
-        var unusedContext = System.Array.Empty<object>();
+        // The first parameter is the scopes array.
+        // JS2IL's scopes ABI expects at least one slot (even when there are no captured scopes).
+        // Using an empty array can cause IndexOutOfRange when nested closures access parent scopes.
+        var unusedContext = new object[1];
         var Resolve = new Func<object[]?, object?, object?>((_, value) =>
         {
             return Settle(State.Fulfilled, value);
@@ -496,12 +541,23 @@ public sealed class Promise
         }
         else
         {
-            // get the number of parameters
+            // Reflection fallback for non-standard delegate types.
+            // JS2IL delegates normally take a leading scopes array parameter.
             var paramCount = jsFunction.Method.GetParameters().Length;
-
-            var args = new object?[paramCount];
-            args[1] = handlerParameter;
-            result = jsFunction.DynamicInvoke(args);
+            if (paramCount == 0)
+            {
+                result = jsFunction.DynamicInvoke(null);
+            }
+            else
+            {
+                var args = new object?[paramCount];
+                args[0] = null; // scopes
+                if (!isFinally && paramCount > 1)
+                {
+                    args[1] = handlerParameter;
+                }
+                result = jsFunction.DynamicInvoke(args);
+            }
         }
 
         // For finally handlers: we need to return the actual result if it's a Promise
