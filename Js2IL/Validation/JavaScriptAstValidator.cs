@@ -2,6 +2,8 @@ using Acornima.Ast;
 using Js2IL.Services;
 using Js2IL.Utilities;
 using System.Collections.Generic;
+using System.Collections;
+using System;
 using System.Reflection;
 
 namespace Js2IL.Validation;
@@ -32,6 +34,10 @@ public class JavaScriptAstValidator : IAstValidator
     public ValidationResult Validate(Acornima.Ast.Program ast)
     {
         var result = new ValidationResult { IsValid = true };
+
+        // async/await are not supported yet. Validate this up-front with a complete AST walk,
+        // since AstWalker intentionally skips some Identifier nodes (e.g., variable declarator IDs).
+        ValidateNoAsyncAwait(ast, result);
         
         // Track whether we're currently inside a class method or constructor,
         // and whether we're inside a nested function within a class method
@@ -76,13 +82,6 @@ public class JavaScriptAstValidator : IAstValidator
                 case NodeType.ExportNamedDeclaration:
                 case NodeType.ExportDefaultDeclaration:
                     result.Errors.Add($"ES6 modules are not yet supported (line {node.Location.Start.Line})");
-                    result.IsValid = false;
-                    break;
-
-                case NodeType.AwaitExpression:
-                    // CommonJS only for now: await is not supported.
-                    // (Async functions currently work when they don't use await.)
-                    result.Errors.Add($"The 'await' keyword is not yet supported (line {node.Location.Start.Line})");
                     result.IsValid = false;
                     break;
 
@@ -194,6 +193,100 @@ public class JavaScriptAstValidator : IAstValidator
         });
 
         return result;
+    }
+
+    private static void ValidateNoAsyncAwait(Node ast, ValidationResult result)
+    {
+        var visited = new HashSet<Node>(ReferenceEqualityComparer<Node>.Default);
+        WalkAllNodes(ast, visited, node =>
+        {
+            if (node is Identifier ident && (ident.Name == "async" || ident.Name == "await"))
+            {
+                result.Errors.Add($"The '{ident.Name}' keyword is not yet supported (line {node.Location.Start.Line})");
+                result.IsValid = false;
+                return;
+            }
+
+            if (node is FunctionDeclaration funcDecl && funcDecl.Async)
+            {
+                result.Errors.Add($"The 'async' keyword is not yet supported (line {node.Location.Start.Line})");
+                result.IsValid = false;
+                return;
+            }
+
+            if (node is FunctionExpression funcExpr && funcExpr.Async)
+            {
+                result.Errors.Add($"The 'async' keyword is not yet supported (line {node.Location.Start.Line})");
+                result.IsValid = false;
+                return;
+            }
+
+            if (node is ArrowFunctionExpression arrowFunc && arrowFunc.Async)
+            {
+                result.Errors.Add($"The 'async' keyword is not yet supported (line {node.Location.Start.Line})");
+                result.IsValid = false;
+                return;
+            }
+
+            if (node.Type == NodeType.AwaitExpression)
+            {
+                result.Errors.Add($"The 'await' keyword is not yet supported (line {node.Location.Start.Line})");
+                result.IsValid = false;
+            }
+        });
+    }
+
+    private static void WalkAllNodes(Node? root, HashSet<Node> visited, Action<Node> visit)
+    {
+        if (root is null) return;
+        if (!visited.Add(root)) return;
+
+        visit(root);
+
+        var type = root.GetType();
+        foreach (var prop in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+        {
+            if (!prop.CanRead) continue;
+            if (prop.GetIndexParameters().Length != 0) continue;
+
+            object? value;
+            try
+            {
+                value = prop.GetValue(root);
+            }
+            catch
+            {
+                continue;
+            }
+
+            if (value is null) continue;
+            if (value is Node childNode)
+            {
+                WalkAllNodes(childNode, visited, visit);
+                continue;
+            }
+
+            if (value is string) continue;
+
+            if (value is IEnumerable enumerable)
+            {
+                foreach (var item in enumerable)
+                {
+                    if (item is Node itemNode)
+                    {
+                        WalkAllNodes(itemNode, visited, visit);
+                    }
+                }
+            }
+        }
+    }
+
+    // Simple reference equality comparer so the visited set doesn't depend on Node.Equals implementations.
+    private sealed class ReferenceEqualityComparer<T> : IEqualityComparer<T> where T : class
+    {
+        public static readonly ReferenceEqualityComparer<T> Default = new();
+        public bool Equals(T? x, T? y) => ReferenceEquals(x, y);
+        public int GetHashCode(T obj) => System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(obj);
     }
 
     // Note: Object/Array patterns (including nested + defaults + rest) and destructuring assignment are supported.

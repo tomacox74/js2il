@@ -106,6 +106,76 @@ public class ValidatorTests
     #region Unsupported Feature Validation Tests
 
     [Fact]
+    public void Validate_AsyncFunctionDeclaration_ReportsError()
+    {
+        var js = "async function f() { return 1; }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("'async' keyword"));
+    }
+
+    [Fact]
+    public void Validate_AsyncArrowFunction_ReportsError()
+    {
+        var js = "const f = async () => 1;";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("'async' keyword"));
+    }
+
+    [Fact]
+    public void Validate_AwaitExpression_ReportsError()
+    {
+        var js = "async function f() { await 1; }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("'await' keyword"));
+    }
+
+    [Fact]
+    public void Validate_IdentifierNamedAsync_ReportsError()
+    {
+        var js = "var async = 1;";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("'async' keyword"));
+    }
+
+    [Fact]
+    public void Validate_IdentifierNamedAwait_ReportsError()
+    {
+        var js = "var await = 1;";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("'await' keyword"));
+    }
+
+    [Fact]
+    public void Validate_ClassAsyncMethod_ReportsError()
+    {
+        var js = "class C { async m() { return 1; } }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("'async' keyword"));
+    }
+
+    [Fact]
+    public void Validate_ObjectPropertyNamedAwait_ReportsError()
+    {
+        var js = "const o = { await: 1 }; console.log(o.await);";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("'await' keyword"));
+    }
+
+    [Fact]
     public void Validate_RestParameters_ReportsError()
     {
         var js = "function foo(...args) { console.log(args); }";

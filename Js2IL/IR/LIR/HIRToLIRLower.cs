@@ -1829,7 +1829,20 @@ public sealed class HIRToLIRLowerer
             case HIRCallExpression callExpr:
                 if (!TryLowerCallExpression(callExpr, out resultTempVar))
                 {
-                    IRPipelineMetrics.RecordFailure($"HIR->LIR: failed lowering CallExpression (callee={callExpr.Callee.GetType().Name})");
+                    if (callExpr.Callee is HIRPropertyAccessExpression pa)
+                    {
+                        var recv = pa.Object;
+                        var recvDesc = recv switch
+                        {
+                            HIRVariableExpression ve => $"{ve.Name.Name} ({ve.Name.Kind})",
+                            _ => recv.GetType().Name
+                        };
+                        IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering CallExpression (property '{pa.PropertyName}' on {recvDesc})");
+                    }
+                    else
+                    {
+                        IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering CallExpression (callee={callExpr.Callee.GetType().Name})");
+                    }
                     return false;
                 }
                 return true;
@@ -1910,6 +1923,48 @@ public sealed class HIRToLIRLowerer
                 if (_environmentLayout != null)
                 {
                     var storage = _environmentLayout.GetStorage(binding);
+                    if (storage == null && _scope != null)
+                    {
+                        // Fallback: if the environment layout didn't include this binding (e.g., due to
+                        // a BindingInfo identity mismatch or overly-conservative storage map), try to
+                        // compute scope-field storage from the caller's scope chain.
+                        //
+                        // This is only valid for captured bindings that are stored as fields on their
+                        // declaring scope type.
+                        if (binding.IsCaptured)
+                        {
+                            var declaringScope = _scope;
+                            while (declaringScope != null)
+                            {
+                                if (declaringScope.Bindings.TryGetValue(binding.Name, out var candidate)
+                                    && ReferenceEquals(candidate, binding))
+                                {
+                                    break;
+                                }
+                                declaringScope = declaringScope.Parent;
+                            }
+
+                            if (declaringScope != null)
+                            {
+                                var declaringRegistryName = ScopeNaming.GetRegistryScopeName(declaringScope);
+                                var scopeId = new ScopeId(declaringRegistryName);
+                                var fieldId = new FieldId(declaringRegistryName, binding.Name);
+
+                                if (!ReferenceEquals(declaringScope, _scope))
+                                {
+                                    var parentIndex = _environmentLayout.ScopeChain.IndexOf(declaringRegistryName);
+                                    if (parentIndex >= 0)
+                                    {
+                                        storage = BindingStorage.ForParentScopeField(fieldId, scopeId, parentIndex);
+                                    }
+                                }
+                                else
+                                {
+                                    storage = BindingStorage.ForLeafScopeField(fieldId, scopeId);
+                                }
+                            }
+                        }
+                    }
                     if (storage != null)
                     {
                         static ValueStorage GetPreferredBindingReadStorage(BindingInfo b)
@@ -2030,6 +2085,8 @@ public sealed class HIRToLIRLowerer
                         return true;
                     }
 
+                    IRPipelineMetrics.RecordFailureIfUnset(
+                        $"HIR->LIR: no storage for variable '{binding.Name}' (kind={binding.Kind}, captured={binding.IsCaptured}, hasEnv={_environmentLayout != null}, scope='{_scope?.GetQualifiedName() ?? "<null>"}')");
                     return false;
                 }
 
@@ -2862,41 +2919,41 @@ public sealed class HIRToLIRLowerer
                             }
                         }
                     }
-                    if (chosen == null)
+                    // If we can't select a compatible overload for the intrinsic static call,
+                    // fall back to generic member-dispatch below.
+                    if (chosen != null)
                     {
-                        return false;
-                    }
-
-                    // Lower all arguments
-                    var staticArgTemps = new List<TempVariable>();
-                    foreach (var argExpr in callExpr.Arguments)
-                    {
-                        if (!TryLowerExpression(argExpr, out var argTempVar))
+                        // Lower all arguments
+                        var staticArgTemps = new List<TempVariable>();
+                        foreach (var argExpr in callExpr.Arguments)
                         {
-                            return false;
+                            if (!TryLowerExpression(argExpr, out var argTempVar))
+                            {
+                                return false;
+                            }
+                            argTempVar = EnsureObject(argTempVar);
+                            staticArgTemps.Add(argTempVar);
                         }
-                        argTempVar = EnsureObject(argTempVar);
-                        staticArgTemps.Add(argTempVar);
-                    }
 
-                    // Emit the intrinsic static call
-                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(intrinsicName, methodName, staticArgTemps, resultTempVar));
+                        // Emit the intrinsic static call
+                        _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(intrinsicName, methodName, staticArgTemps, resultTempVar));
 
-                    // Track the correct CLR type to prevent invalid IL (e.g., storing bool into an object local).
-                    var retType = chosen.ReturnType;
-                    if (retType == typeof(void))
-                    {
-                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        // Track the correct CLR type to prevent invalid IL (e.g., storing bool into an object local).
+                        var retType = chosen.ReturnType;
+                        if (retType == typeof(void))
+                        {
+                            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        }
+                        else if (retType.IsValueType)
+                        {
+                            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, retType));
+                        }
+                        else
+                        {
+                            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, retType));
+                        }
+                        return true;
                     }
-                    else if (retType.IsValueType)
-                    {
-                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, retType));
-                    }
-                    else
-                    {
-                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, retType));
-                    }
-                    return true;
                 }
             }
         }

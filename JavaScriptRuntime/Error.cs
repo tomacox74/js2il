@@ -9,6 +9,7 @@ namespace JavaScriptRuntime
     /// Inherits from System.Exception so it can be thrown/caught with .NET mechanics
     /// while exposing JS-style properties (name, message, stack).
     /// </summary>
+    [IntrinsicObject("Error")]
     public class Error : Exception
     {
         private readonly string _constructedStack;
@@ -56,6 +57,7 @@ namespace JavaScriptRuntime
             => string.IsNullOrEmpty(Message) ? Name : $"{Name}: {Message}";
     }
 
+    [IntrinsicObject("EvalError")]
     public class EvalError : Error
     {
         public EvalError() : base() { Name = "EvalError"; }
@@ -63,6 +65,7 @@ namespace JavaScriptRuntime
         public EvalError(string? message, Exception? inner) : base(message, inner) { Name = "EvalError"; }
     }
 
+    [IntrinsicObject("RangeError")]
     public class RangeError : Error
     {
         public RangeError() : base() { Name = "RangeError"; }
@@ -70,6 +73,7 @@ namespace JavaScriptRuntime
         public RangeError(string? message, Exception? inner) : base(message, inner) { Name = "RangeError"; }
     }
 
+    [IntrinsicObject("ReferenceError")]
     public class ReferenceError : Error
     {
         public ReferenceError() : base() { Name = "ReferenceError"; }
@@ -77,6 +81,7 @@ namespace JavaScriptRuntime
         public ReferenceError(string? message, Exception? inner) : base(message, inner) { Name = "ReferenceError"; }
     }
 
+    [IntrinsicObject("SyntaxError")]
     public class SyntaxError : Error
     {
         public SyntaxError() : base() { Name = "SyntaxError"; }
@@ -84,6 +89,7 @@ namespace JavaScriptRuntime
         public SyntaxError(string? message, Exception? inner) : base(message, inner) { Name = "SyntaxError"; }
     }
 
+    [IntrinsicObject("TypeError")]
     public class TypeError : Error
     {
         public TypeError() : base() { Name = "TypeError"; }
@@ -91,6 +97,7 @@ namespace JavaScriptRuntime
         public TypeError(string? message, Exception? inner) : base(message, inner) { Name = "TypeError"; }
     }
 
+    [IntrinsicObject("URIError")]
     public class URIError : Error
     {
         public URIError() : base() { Name = "URIError"; }
@@ -98,6 +105,7 @@ namespace JavaScriptRuntime
         public URIError(string? message, Exception? inner) : base(message, inner) { Name = "URIError"; }
     }
 
+    [IntrinsicObject("AggregateError")]
     public class AggregateError : Error
     {
         // In JS AggregateError has an iterable of errors. Represent as object[] here.

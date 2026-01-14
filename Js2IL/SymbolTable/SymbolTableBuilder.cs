@@ -1,4 +1,5 @@
 using Acornima.Ast;
+using System.Reflection;
 
 namespace Js2IL.SymbolTables
 {
@@ -249,13 +250,64 @@ namespace Js2IL.SymbolTables
         /// </summary>
         private static bool IsKnownGlobalIntrinsic(string name)
         {
-            return name == "console" || name == "Math" || name == "Object" || name == "Array" ||
-                   name == "String" || name == "Number" || name == "Boolean" || name == "Date" ||
-                   name == "JSON" || name == "undefined" || name == "null" || name == "Infinity" || name == "NaN" ||
-                   name == "process" || name == "__dirname" || name == "__filename" || name == "require" ||
-                   name == "Buffer" || name == "Int32Array" || name == "Error" || name == "Promise" ||
-                   name == "setTimeout" || name == "setInterval" || name == "clearTimeout" || name == "clearInterval" ||
-                   name == "setImmediate" || name == "clearImmediate";
+            if (string.IsNullOrEmpty(name)) return false;
+
+            // These are not real "variables" but can appear as Identifier nodes.
+            if (string.Equals(name, "undefined", StringComparison.Ordinal) ||
+                string.Equals(name, "null", StringComparison.Ordinal))
+            {
+                return true;
+            }
+
+            return KnownGlobalIntrinsicNames.Value.Contains(name);
+        }
+
+        private static readonly Lazy<HashSet<string>> KnownGlobalIntrinsicNames =
+            new(BuildKnownGlobalIntrinsicNameSet, LazyThreadSafetyMode.ExecutionAndPublication);
+
+        private static HashSet<string> BuildKnownGlobalIntrinsicNameSet()
+        {
+            var intrinsicNames = new HashSet<string>(StringComparer.Ordinal)
+            {
+                // Keep these in the set too, in case a caller checks membership directly.
+                "undefined",
+                "null",
+            };
+
+            // Surface globals exposed via the runtime GlobalThis (Node-like today).
+            var globalThisType = typeof(JavaScriptRuntime.GlobalThis);
+            foreach (var prop in globalThisType.GetProperties(BindingFlags.Public | BindingFlags.Static))
+            {
+                intrinsicNames.Add(prop.Name);
+            }
+
+            foreach (var method in globalThisType.GetMethods(BindingFlags.Public | BindingFlags.Static))
+            {
+                if (method.IsSpecialName) continue;
+                if (!ReferenceEquals(method.DeclaringType, globalThisType)) continue;
+                if (string.Equals(method.Name, "Get", StringComparison.Ordinal)) continue;
+
+                intrinsicNames.Add(method.Name);
+            }
+
+            // Surface intrinsic constructors/helpers via [IntrinsicObject("...")] on runtime types.
+            var runtimeAssembly = typeof(JavaScriptRuntime.IntrinsicObjectAttribute).Assembly;
+            foreach (var t in runtimeAssembly.GetTypes())
+            {
+                var attr = (JavaScriptRuntime.IntrinsicObjectAttribute?)
+                    t.GetCustomAttributes(typeof(JavaScriptRuntime.IntrinsicObjectAttribute), inherit: false)
+                        .FirstOrDefault();
+
+                if (attr != null && !string.IsNullOrWhiteSpace(attr.Name))
+                {
+                    intrinsicNames.Add(attr.Name);
+                }
+            }
+
+            // Explicitly excluded: Buffer is not supported yet.
+            intrinsicNames.Remove("Buffer");
+
+            return intrinsicNames;
         }
 
         private static string NormalizeModuleName(string s)
@@ -1216,7 +1268,31 @@ namespace Js2IL.SymbolTables
             
             if (childScope.AstNode != null)
             {
-                CollectFreeVariables(childScope.AstNode, childLocals, ancestorVariables, result);
+                // IMPORTANT: For function/arrow scopes, analyze the body, not the function node.
+                // The free-variable collector intentionally stops at nested function boundaries,
+                // so passing the FunctionDeclaration/FunctionExpression node would yield no results.
+                switch (childScope.AstNode)
+                {
+                    case FunctionDeclaration fd when fd.Body is BlockStatement fdb:
+                        CollectFreeVariables(fdb, childLocals, ancestorVariables, result);
+                        break;
+                    case FunctionExpression fe when fe.Body is BlockStatement feb:
+                        CollectFreeVariables(feb, childLocals, ancestorVariables, result);
+                        break;
+                    case ArrowFunctionExpression af:
+                        if (af.Body is BlockStatement ab)
+                        {
+                            CollectFreeVariables(ab, childLocals, ancestorVariables, result);
+                        }
+                        else
+                        {
+                            CollectFreeVariables(af.Body, childLocals, ancestorVariables, result);
+                        }
+                        break;
+                    default:
+                        CollectFreeVariables(childScope.AstNode, childLocals, ancestorVariables, result);
+                        break;
+                }
             }
             
             return result;
@@ -1235,7 +1311,7 @@ namespace Js2IL.SymbolTables
                 // Block scopes don't create closures, so variables referenced from block scopes
                 // don't need to be captured (they can use locals)
                 // Function scopes create closures, class scopes have field initializers that may reference outer variables
-                if ((child.Kind == ScopeKind.Function || child.Kind == ScopeKind.Class) && child.ReferencesParentScopeVariables)
+                if (child.Kind == ScopeKind.Function || child.Kind == ScopeKind.Class)
                 {
                     // Find which specific variables from this scope (and ancestors) are referenced by the child
                     var capturedVars = CollectReferencedParentVariables(child, scope);

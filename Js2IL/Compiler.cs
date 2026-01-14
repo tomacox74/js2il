@@ -28,6 +28,13 @@ public class Compiler
 
     public bool Compile(string inputFile)
     {
+        // When verbose, capture IR pipeline failure reasons to aid debugging.
+        if (this.verbose)
+        {
+            IR.IRPipelineMetrics.Enabled = true;
+            IR.IRPipelineMetrics.Reset();
+        }
+
         var modules = this._moduleLoader.LoadModules(inputFile);
         if (modules == null)
         {
@@ -147,7 +154,9 @@ public class Compiler
             _logger.WriteLine($"{indent}  Variables:");
             foreach (var binding in scope.Bindings.Values)
             {
-                _logger.WriteLine($"{indent}    - {binding.Name} ({binding.Kind})");
+                var capturedSuffix = binding.IsCaptured ? ", Captured" : string.Empty;
+                var stableSuffix = binding.IsStableType ? ", Stable" : string.Empty;
+                _logger.WriteLine($"{indent}    - {binding.Name} ({binding.Kind}{capturedSuffix}{stableSuffix})");
             }
         }
 
