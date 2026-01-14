@@ -898,6 +898,7 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
 | Promise constructor (executor), Promise.resolve, Promise.reject | Supported | `Js2IL.Tests/Promise/JavaScript/Promise_Executor_Resolved.js`<br>`Js2IL.Tests/Promise/JavaScript/Promise_Executor_Rejected.js` | Constructor accepts an executor delegate and supports the basic resolve/reject fast-paths and dynamic delegate invocation used in tests. Promise.resolve/reject create already-settled Promise instances. | 27.1.1 |
+| Promise.withResolvers() | Supported | `Js2IL.Tests/Promise/JavaScript/Promise_WithResolvers_Resolve.js`<br>`Js2IL.Tests/Promise/JavaScript/Promise_WithResolvers_Reject.js`<br>`Js2IL.Tests/Promise/JavaScript/Promise_WithResolvers_Idempotent.js` | Implements `Promise.withResolvers()` returning `{ promise, resolve, reject }` (resolve/reject are functions that settle the associated promise). | 27.1.1 |
 
 
 #### [Promise.prototype.then / catch / finally](https://tc39.es/ecma262/#sec-promise.prototype.then)

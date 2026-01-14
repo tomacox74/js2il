@@ -2038,7 +2038,21 @@ internal sealed class LIRToILCompiler
                 // Constructors are void-returning - don't load any value before ret
                 if (!methodDescriptor.ReturnsVoid)
                 {
-                    EmitLoadTemp(lirReturn.ReturnValue, ilEncoder, allocation, methodDescriptor);
+                    if (MethodBody.IsAsync)
+                    {
+                        // async function: return Promise.resolve(value)
+                        EmitLoadTempAsObject(lirReturn.ReturnValue, ilEncoder, allocation, methodDescriptor);
+                        var resolveRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Promise),
+                            "resolve",
+                            parameterTypes: new[] { typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(resolveRef);
+                    }
+                    else
+                    {
+                        EmitLoadTemp(lirReturn.ReturnValue, ilEncoder, allocation, methodDescriptor);
+                    }
                 }
                 ilEncoder.OpCode(ILOpCode.Ret);
                 break;

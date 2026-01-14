@@ -1070,6 +1070,17 @@ class HIRMethodBuilder
 
         switch (expr)
         {
+            case AwaitExpression awaitExpr:
+                {
+                    if (!TryParseExpression(awaitExpr.Argument, out var awaitedArg) || awaitedArg == null)
+                    {
+                        return false;
+                    }
+
+                    hirExpr = new HIRAwaitExpression(awaitedArg);
+                    return true;
+                }
+
             case ThisExpression:
                 // PL3.5: ThisExpression support.
                 // For now, only support 'this' inside class instance methods/constructors.

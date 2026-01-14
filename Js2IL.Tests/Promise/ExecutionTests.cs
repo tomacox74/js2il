@@ -206,6 +206,24 @@ public class ExecutionTests : ExecutionTestsBase
     }
 
     [Fact]
+    public Task Promise_WithResolvers_Idempotent()
+    {
+        return ExecutionTest(nameof(Promise_WithResolvers_Idempotent));
+    }
+
+    [Fact]
+    public Task Promise_WithResolvers_Reject()
+    {
+        return ExecutionTest(nameof(Promise_WithResolvers_Reject));
+    }
+
+    [Fact]
+    public Task Promise_WithResolvers_Resolve()
+    {
+        return ExecutionTest(nameof(Promise_WithResolvers_Resolve));
+    }
+
+    [Fact]
     public Task Promise_Race_EmptyArray()
     {
         return ExecutionTest(nameof(Promise_Race_EmptyArray));

@@ -20,10 +20,35 @@ internal static class LIRIntrinsicNormalization
         // Start with strongly typed user-class field loads, then propagate through CopyTemp.
         var knownIntrinsicReceiverClrTypes = new Dictionary<int, Type>();
 
+        // Track temps proven to be constant strings (e.g., property access keys).
+        // This allows safe rewrites like `r.promise` -> direct CLR getter when r is known.
+        var knownConstStrings = new Dictionary<int, string>();
+
+        // Seed known intrinsic receiver types from temp storage when it is already specific.
+        // This covers cases like Promise.withResolvers() which returns a concrete runtime type.
+        for (int tempIndex = 0; tempIndex < methodBody.TempStorages.Count; tempIndex++)
+        {
+            var storage = methodBody.TempStorages[tempIndex];
+            if (storage.Kind == ValueStorageKind.Reference
+                && storage.ClrType != null
+                && storage.ClrType != typeof(object)
+                && storage.ClrType.Namespace?.StartsWith("JavaScriptRuntime", StringComparison.Ordinal) == true)
+            {
+                knownIntrinsicReceiverClrTypes.TryAdd(tempIndex, storage.ClrType);
+            }
+        }
+
         foreach (var instruction in methodBody.Instructions)
         {
             switch (instruction)
             {
+                case LIRConstString constString:
+                    if (constString.Result.Index >= 0)
+                    {
+                        knownConstStrings[constString.Result.Index] = constString.Value;
+                    }
+                    break;
+
                 case LIRLoadUserClassInstanceField loadInstanceField:
                     if (loadInstanceField.Result.Index >= 0)
                     {
@@ -48,6 +73,12 @@ internal static class LIRIntrinsicNormalization
                     {
                         knownIntrinsicReceiverClrTypes[copyTemp.Destination.Index] = srcClrType;
                     }
+
+                    if (copyTemp.Destination.Index >= 0
+                        && knownConstStrings.TryGetValue(copyTemp.Source.Index, out var srcConstString))
+                    {
+                        knownConstStrings[copyTemp.Destination.Index] = srcConstString;
+                    }
                     break;
             }
         }
@@ -58,20 +89,40 @@ internal static class LIRIntrinsicNormalization
 
             if (instruction is LIRGetItem getItem)
             {
-                // Only normalize numeric-index accesses.
-                if (!IsUnboxedDouble(methodBody, getItem.Index))
+                if (!knownIntrinsicReceiverClrTypes.TryGetValue(getItem.Object.Index, out var receiverType))
                 {
                     continue;
                 }
 
-                if (knownIntrinsicReceiverClrTypes.TryGetValue(getItem.Object.Index, out var receiverType)
-                    && receiverType == typeof(JavaScriptRuntime.Int32Array))
+                // Int32Array element access (numeric index).
+                if (receiverType == typeof(JavaScriptRuntime.Int32Array)
+                    && IsUnboxedDouble(methodBody, getItem.Index))
                 {
                     // Rewrite: GetItem(receiver, indexDouble, result) -> GetInt32ArrayElement(receiver, indexDouble, result)
                     methodBody.Instructions[i] = new LIRGetInt32ArrayElement(getItem.Object, getItem.Index, getItem.Result);
 
                     // Ensure result storage is unboxed double.
                     methodBody.TempStorages[getItem.Result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+                    continue;
+                }
+
+                // Promise.withResolvers().promise access (string key).
+                // Rewrite: GetItem(PromiseWithResolvers, "promise", result) -> callvirt PromiseWithResolvers.get_promise()
+                if (receiverType == typeof(JavaScriptRuntime.PromiseWithResolvers)
+                    && knownConstStrings.TryGetValue(getItem.Index.Index, out var key)
+                    && string.Equals(key, "promise", StringComparison.Ordinal))
+                {
+                    methodBody.Instructions[i] = new LIRCallInstanceMethod(
+                        Receiver: getItem.Object,
+                        ReceiverClrType: typeof(JavaScriptRuntime.PromiseWithResolvers),
+                        MethodName: "get_promise",
+                        Arguments: Array.Empty<TempVariable>(),
+                        Result: getItem.Result);
+
+                    // Ensure result storage is the concrete Promise type for better downstream codegen.
+                    methodBody.TempStorages[getItem.Result.Index] = new ValueStorage(
+                        ValueStorageKind.Reference,
+                        typeof(JavaScriptRuntime.Promise));
                 }
 
                 continue;

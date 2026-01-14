@@ -4,7 +4,8 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+### Added
+- Added `Promise.withResolvers()`.
 
 ## v0.6.4 - 2026-01-13
 

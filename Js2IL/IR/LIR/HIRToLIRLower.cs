@@ -384,7 +384,20 @@ public sealed class HIRToLIRLowerer
         // and enables IR lowering to build scopes arrays without falling back.
         if (_scope != null && _scope.Kind == ScopeKind.Global && !_methodBodyIR.NeedsLeafScopeLocal)
         {
-            EnsureLeafScopeInstance(new ScopeId(_scope.Name));
+            EnsureLeafScopeInstance(new ScopeId(ScopeNaming.GetRegistryScopeName(_scope)));
+            return;
+        }
+
+        // If a function contains nested functions/classes, it still needs a concrete leaf scope
+        // instance so closures can include a stable parent slot in their scopes array.
+        // Without this, nested Promise executors/callbacks can IndexOutOfRange when they expect
+        // scopes[1] (or deeper) to exist even if the parent has no captured fields.
+        if (_scope != null
+            && _scope.Kind == ScopeKind.Function
+            && _scope.Children.Any(c => c.Kind == ScopeKind.Function || c.Kind == ScopeKind.Class)
+            && !_methodBodyIR.NeedsLeafScopeLocal)
+        {
+            EnsureLeafScopeInstance(new ScopeId(ScopeNaming.GetRegistryScopeName(_scope)));
             return;
         }
 
@@ -1732,6 +1745,13 @@ public sealed class HIRToLIRLowerer
 
         switch (expression)
         {
+            case HIRAwaitExpression awaitExpr:
+                {
+                    // CommonJS-only for now: await is not supported.
+                    // Long-term: lower to an async state machine (no blocking / no event-loop pumping).
+                    return false;
+                }
+
             case HIRScopesArrayExpression:
                 // Only currently emitted for constructors that receive a scopes argument.
                 if (_callableKind != CallableKind.Constructor)

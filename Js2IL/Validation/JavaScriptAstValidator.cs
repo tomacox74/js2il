@@ -80,7 +80,9 @@ public class JavaScriptAstValidator : IAstValidator
                     break;
 
                 case NodeType.AwaitExpression:
-                    result.Errors.Add($"Async/await is not yet supported (line {node.Location.Start.Line})");
+                    // CommonJS only for now: await is not supported.
+                    // (Async functions currently work when they don't use await.)
+                    result.Errors.Add($"The 'await' keyword is not yet supported (line {node.Location.Start.Line})");
                     result.IsValid = false;
                     break;
 

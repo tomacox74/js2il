@@ -367,6 +367,22 @@ namespace Js2IL.SymbolTables
             {
                 scope.ReferencesParentScopeVariables = CheckArrowFunctionReferencesParentVariables(arrowExpr, scope);
             }
+
+            // IMPORTANT: for function scopes, also propagate child-scope parent references.
+            // Nested functions may reference globals/parent scopes even when the immediate
+            // parent function body does not. Closures still require the parent scope slot(s)
+            // in the scopes array to exist to avoid IndexOutOfRange at runtime.
+            if (scope.Kind == ScopeKind.Function && !scope.ReferencesParentScopeVariables)
+            {
+                foreach (var child in scope.Children.Where(c => c.Kind == ScopeKind.Function || c.Kind == ScopeKind.Class))
+                {
+                    if (child.ReferencesParentScopeVariables)
+                    {
+                        scope.ReferencesParentScopeVariables = true;
+                        break;
+                    }
+                }
+            }
         }
 
         private void BuildScopeRecursive(Scope globalScope, Node node, Scope currentScope)

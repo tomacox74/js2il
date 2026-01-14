@@ -576,6 +576,15 @@ internal sealed class JsMethodCompiler
     {
         methodBody = null;
 
+        var isAsyncCallable = node switch
+        {
+            FunctionDeclaration fd => fd.Async,
+            FunctionExpression fe => fe.Async,
+            ArrowFunctionExpression af => af.Async,
+            Acornima.Ast.MethodDefinition md when md.Value is FunctionExpression mfe => mfe.Async,
+            _ => false
+        };
+
         if (!HIRBuilder.TryParseMethod(node, scope, callableKind, hasScopesParameter, out var hirMethod))
         {
             IR.IRPipelineMetrics.RecordFailureIfUnset($"HIR parse failed for node type {node.Type}");
@@ -592,6 +601,8 @@ internal sealed class JsMethodCompiler
         // Normalize intrinsic-specific patterns (e.g., Int32Array element access) into explicit LIR instructions.
         // This keeps the LIR->IL compiler simpler and avoids fragile late pattern-matching.
         LIRIntrinsicNormalization.Normalize(lirMethod!, classRegistry);
+
+        lirMethod!.IsAsync = isAsyncCallable;
 
         methodBody = lirMethod!;
         return true;

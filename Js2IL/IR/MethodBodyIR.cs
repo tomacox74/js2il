@@ -2,6 +2,12 @@ namespace Js2IL.IR;
 
 public sealed class MethodBodyIR
 {
+    /// <summary>
+    /// Whether this callable is an async function.
+    /// When true, return values are wrapped as Promise.resolve(value).
+    /// </summary>
+    public bool IsAsync { get; set; }
+
     public List<string> Parameters { get; } = new();
 
     /// <summary>

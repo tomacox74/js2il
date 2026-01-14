@@ -214,6 +214,24 @@ public class GeneratorTests : GeneratorTestsBase
     }
 
     [Fact]
+    public Task Promise_WithResolvers_Idempotent()
+    {
+        return GenerateTest(nameof(Promise_WithResolvers_Idempotent));
+    }
+
+    [Fact]
+    public Task Promise_WithResolvers_Reject()
+    {
+        return GenerateTest(nameof(Promise_WithResolvers_Reject));
+    }
+
+    [Fact]
+    public Task Promise_WithResolvers_Resolve()
+    {
+        return GenerateTest(nameof(Promise_WithResolvers_Resolve));
+    }
+
+    [Fact]
     public Task Promise_Race_EmptyArray()
     {
         return GenerateTest(nameof(Promise_Race_EmptyArray));
