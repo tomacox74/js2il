@@ -89,37 +89,102 @@
 	{
 		// Method begins at RVA 0x206c
 		// Header size: 12
-		// Code size: 81 (0x51)
+		// Code size: 250 (0xfa)
 		.maxstack 32
 		.locals init (
-			[0] object
+			[0] class Scopes.Async_SimpleAwait/test,
+			[1] object
 		)
 
-		IL_0000: ldc.r8 42
-		IL_0009: box [System.Runtime]System.Double
-		IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-		IL_0013: pop
-		IL_0014: ldc.r8 42
-		IL_001d: box [System.Runtime]System.Double
-		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-		IL_0027: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::AwaitValue(object)
-		IL_002c: stloc.0
-		IL_002d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0032: ldc.i4.2
-		IL_0033: newarr [System.Runtime]System.Object
-		IL_0038: dup
-		IL_0039: ldc.i4.0
-		IL_003a: ldstr "Result:"
-		IL_003f: stelem.ref
-		IL_0040: dup
-		IL_0041: ldc.i4.1
-		IL_0042: ldloc.0
-		IL_0043: stelem.ref
-		IL_0044: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0049: pop
-		IL_004a: ldloc.0
-		IL_004b: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-		IL_0050: ret
+		IL_0000: ldarg.0
+		IL_0001: ldc.i4.0
+		IL_0002: ldelem.ref
+		IL_0003: isinst Scopes.Async_SimpleAwait/test
+		IL_0008: dup
+		IL_0009: brtrue IL_0046
+
+		IL_000e: pop
+		IL_000f: newobj instance void Scopes.Async_SimpleAwait/test::.ctor()
+		IL_0014: stloc.0
+		IL_0015: ldloc.0
+		IL_0016: ldarg.0
+		IL_0017: call object[] [JavaScriptRuntime]JavaScriptRuntime.Promise::PrependScopeToArray(object, object[])
+		IL_001c: starg.s scopes
+		IL_001e: ldloc.0
+		IL_001f: call class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers [JavaScriptRuntime]JavaScriptRuntime.Promise::withResolvers()
+		IL_0024: stfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_SimpleAwait/test::_deferred
+		IL_0029: ldloc.0
+		IL_002a: ldnull
+		IL_002b: ldftn object Functions.Async_SimpleAwait::test(object[])
+		IL_0031: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
+		IL_0036: ldarg.0
+		IL_0037: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
+		IL_003c: stfld object Scopes.Async_SimpleAwait/test::_moveNext
+		IL_0041: br IL_0047
+
+		IL_0046: stloc.0
+
+		IL_0047: ldloc.0
+		IL_0048: ldfld int32 Scopes.Async_SimpleAwait/test::_asyncState
+		IL_004d: switch (IL_005a, IL_00a7)
+
+		IL_005a: ldc.r8 42
+		IL_0063: box [System.Runtime]System.Double
+		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+		IL_006d: pop
+		IL_006e: ldloc.0
+		IL_006f: ldc.i4.1
+		IL_0070: stfld int32 Scopes.Async_SimpleAwait/test::_asyncState
+		IL_0075: ldc.r8 42
+		IL_007e: box [System.Runtime]System.Double
+		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
+		IL_0088: ldloc.0
+		IL_0089: ldarg.0
+		IL_008a: ldstr "_awaited1"
+		IL_008f: ldloc.0
+		IL_0090: ldfld object Scopes.Async_SimpleAwait/test::_moveNext
+		IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::SetupAwaitContinuation(object, object, object[], string, object)
+		IL_009a: pop
+		IL_009b: ldloc.0
+		IL_009c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_SimpleAwait/test::_deferred
+		IL_00a1: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+		IL_00a6: ret
+
+		IL_00a7: ldloc.0
+		IL_00a8: ldfld object Scopes.Async_SimpleAwait/test::_awaited1
+		IL_00ad: stloc.1
+		IL_00ae: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00b3: ldc.i4.2
+		IL_00b4: newarr [System.Runtime]System.Object
+		IL_00b9: dup
+		IL_00ba: ldc.i4.0
+		IL_00bb: ldstr "Result:"
+		IL_00c0: stelem.ref
+		IL_00c1: dup
+		IL_00c2: ldc.i4.1
+		IL_00c3: ldloc.1
+		IL_00c4: stelem.ref
+		IL_00c5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00ca: pop
+		IL_00cb: ldloc.0
+		IL_00cc: ldc.i4.m1
+		IL_00cd: stfld int32 Scopes.Async_SimpleAwait/test::_asyncState
+		IL_00d2: ldloc.0
+		IL_00d3: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_SimpleAwait/test::_deferred
+		IL_00d8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
+		IL_00dd: ldarg.0
+		IL_00de: ldc.i4.1
+		IL_00df: newarr [System.Runtime]System.Object
+		IL_00e4: dup
+		IL_00e5: ldc.i4.0
+		IL_00e6: ldloc.1
+		IL_00e7: stelem.ref
+		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_00ed: pop
+		IL_00ee: ldloc.0
+		IL_00ef: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_SimpleAwait/test::_deferred
+		IL_00f4: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+		IL_00f9: ret
 	} // end of method Async_SimpleAwait::test
 
 } // end of class Functions.Async_SimpleAwait
@@ -134,7 +199,7 @@
 			object 'value'
 		) cil managed 
 	{
-		// Method begins at RVA 0x20cc
+		// Method begins at RVA 0x2174
 		// Header size: 12
 		// Code size: 31 (0x1f)
 		.maxstack 32
@@ -171,7 +236,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20f8
+		// Method begins at RVA 0x21a0
 		// Header size: 12
 		// Code size: 87 (0x57)
 		.maxstack 32
@@ -230,7 +295,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x215b
+		// Method begins at RVA 0x2203
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

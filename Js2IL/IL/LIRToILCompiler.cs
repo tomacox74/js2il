@@ -538,6 +538,10 @@ internal sealed class LIRToILCompiler
             ilEncoder.Call(_bclReferences.Object_Ctor_Ref);
         }
 
+        // NOTE: For async functions, the state switch is emitted AFTER LIRCreateLeafScopeInstance
+        // because we need the scope instance to be in local 0 first (either newly created or
+        // loaded from arg.0[0] on resume). The state switch is emitted inline with that instruction.
+
         for (int i = 0; i < MethodBody.Instructions.Count; i++)
         {
             var instruction = MethodBody.Instructions[i];
@@ -738,9 +742,56 @@ internal sealed class LIRToILCompiler
         {
             if (!methodDescriptor.ReturnsVoid)
             {
-                // JavaScript: functions/methods fallthrough returns 'undefined'
-                // (modeled as CLR null in our runtime).
-                ilEncoder.OpCode(ILOpCode.Ldnull);
+                if (MethodBody.IsAsync && MethodBody.AsyncInfo is { HasAwaits: true })
+                {
+                    // Full async state machine: resolve _deferred with undefined and return its promise.
+                    var scopeName = MethodBody.LeafScopeId.Name;
+                    
+                    // _asyncState = -1 (completed)
+                    ilEncoder.LoadLocal(0);
+                    ilEncoder.LoadConstantI4(-1);
+                    EmitStoreFieldByName(ilEncoder, scopeName, "_asyncState");
+                    
+                    // Load _deferred.resolve
+                    ilEncoder.LoadLocal(0);
+                    EmitLoadFieldByName(ilEncoder, scopeName, "_deferred");
+                    var getResolveRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.PromiseWithResolvers),
+                        "get_resolve");
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(getResolveRef);
+                    
+                    // Call it with undefined: Closure.InvokeWithArgs(resolve, scopes, [null])
+                    ilEncoder.LoadArgument(0); // scopes array
+                    // Build 1-element array with null (undefined)
+                    ilEncoder.LoadConstantI4(1);
+                    ilEncoder.OpCode(ILOpCode.Newarr);
+                    ilEncoder.Token(_bclReferences.ObjectType);
+                    // Array is initialized to null by default, no need to explicitly set element
+                    
+                    var invokeWithArgsRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Closure),
+                        "InvokeWithArgs",
+                        parameterTypes: new[] { typeof(object), typeof(object[]), typeof(object[]) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(invokeWithArgsRef);
+                    ilEncoder.OpCode(ILOpCode.Pop); // discard result
+                    
+                    // Return _deferred.promise
+                    ilEncoder.LoadLocal(0);
+                    EmitLoadFieldByName(ilEncoder, scopeName, "_deferred");
+                    var getPromiseRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.PromiseWithResolvers),
+                        "get_promise");
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(getPromiseRef);
+                }
+                else
+                {
+                    // JavaScript: functions/methods fallthrough returns 'undefined'
+                    // (modeled as CLR null in our runtime).
+                    ilEncoder.OpCode(ILOpCode.Ldnull);
+                }
             }
             ilEncoder.OpCode(ILOpCode.Ret);
         }
@@ -2039,9 +2090,60 @@ internal sealed class LIRToILCompiler
                 // Constructors are void-returning - don't load any value before ret
                 if (!methodDescriptor.ReturnsVoid)
                 {
-                    if (MethodBody.IsAsync)
+                    if (MethodBody.IsAsync && MethodBody.AsyncInfo is { HasAwaits: true })
                     {
-                        // async function: return Promise.resolve(value)
+                        // Full async state machine: resolve _deferred and return its promise.
+                        // 1. Mark state as completed: _asyncState = -1
+                        // 2. Call _deferred.resolve(value)
+                        // 3. Return _deferred.promise
+                        
+                        var scopeName = MethodBody.LeafScopeId.Name;
+                        
+                        // _asyncState = -1 (completed)
+                        ilEncoder.LoadLocal(0);
+                        ilEncoder.LoadConstantI4(-1);
+                        EmitStoreFieldByName(ilEncoder, scopeName, "_asyncState");
+                        
+                        // Load _deferred.resolve (it's a bound closure)
+                        ilEncoder.LoadLocal(0);
+                        EmitLoadFieldByName(ilEncoder, scopeName, "_deferred");
+                        var getResolveRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.PromiseWithResolvers),
+                            "get_resolve");
+                        ilEncoder.OpCode(ILOpCode.Callvirt);
+                        ilEncoder.Token(getResolveRef);
+                        
+                        // Call it with the return value: Closure.InvokeWithArgs(resolve, scopes, argsArray)
+                        // Build a 1-element array containing the return value
+                        ilEncoder.LoadArgument(0); // scopes array
+                        ilEncoder.LoadConstantI4(1);
+                        ilEncoder.OpCode(ILOpCode.Newarr);
+                        ilEncoder.Token(_bclReferences.ObjectType);
+                        ilEncoder.OpCode(ILOpCode.Dup);
+                        ilEncoder.LoadConstantI4(0);
+                        EmitLoadTempAsObject(lirReturn.ReturnValue, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Stelem_ref);
+                        
+                        var invokeWithArgsRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Closure),
+                            "InvokeWithArgs",
+                            parameterTypes: new[] { typeof(object), typeof(object[]), typeof(object[]) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(invokeWithArgsRef);
+                        ilEncoder.OpCode(ILOpCode.Pop); // discard result
+                        
+                        // Return _deferred.promise
+                        ilEncoder.LoadLocal(0);
+                        EmitLoadFieldByName(ilEncoder, scopeName, "_deferred");
+                        var getPromiseRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.PromiseWithResolvers),
+                            "get_promise");
+                        ilEncoder.OpCode(ILOpCode.Callvirt);
+                        ilEncoder.Token(getPromiseRef);
+                    }
+                    else if (MethodBody.IsAsync)
+                    {
+                        // async function without awaits (MVP): return Promise.resolve(value)
                         EmitLoadTempAsObject(lirReturn.ReturnValue, ilEncoder, allocation, methodDescriptor);
                         var resolveRef = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.Promise),
@@ -2626,20 +2728,53 @@ internal sealed class LIRToILCompiler
                 }
             case LIRCreateLeafScopeInstance createScope:
                 {
-                    // Emit: newobj instance void ScopeType::.ctor(), stloc.0
-                    var scopeTypeHandle = ResolveScopeTypeHandle(
-                        createScope.Scope.Name,
-                        "LIRCreateLeafScopeInstance instruction");
-                    var ctorRef = GetScopeConstructorRef(scopeTypeHandle);
-                    ilEncoder.OpCode(ILOpCode.Newobj);
-                    ilEncoder.Token(ctorRef);
-                    ilEncoder.StoreLocal(0); // Scope instance is always in local 0
-                    
-                    // For async functions with awaits, initialize the async state machine fields
+                    // For async functions with awaits, we need special handling:
+                    // - On initial call: create scope, build modified scopes array with scope at [0]
+                    // - On resume: scopes array already has our scope at [0] (was built on initial call)
+                    //
+                    // We detect initial vs resume by checking if arg.0[0] is our scope type using isinst.
                     var asyncInfo = MethodBody.AsyncInfo;
                     if (MethodBody.IsAsync && asyncInfo != null && asyncInfo.HasAwaits)
                     {
+                        var scopeTypeHandle = ResolveScopeTypeHandle(
+                            createScope.Scope.Name,
+                            "LIRCreateLeafScopeInstance instruction (async)");
+                        var ctorRef = GetScopeConstructorRef(scopeTypeHandle);
                         var scopeName = createScope.Scope.Name;
+                        
+                        // Check if arg.0[0] is our scope type (isinst leaves typed ref or null)
+                        // ldarg.0, ldc.i4.0, ldelem.ref, isinst ScopeType
+                        ilEncoder.LoadArgument(0);
+                        ilEncoder.LoadConstantI4(0);
+                        ilEncoder.OpCode(ILOpCode.Ldelem_ref);
+                        ilEncoder.OpCode(ILOpCode.Isinst);
+                        ilEncoder.Token(scopeTypeHandle);
+                        ilEncoder.OpCode(ILOpCode.Dup); // duplicate for branch check
+                        
+                        // brtrue -> resume path (use existing scope)
+                        var resumeLabel = ilEncoder.DefineLabel();
+                        var afterInitLabel = ilEncoder.DefineLabel();
+                        ilEncoder.Branch(ILOpCode.Brtrue, resumeLabel);
+                        
+                        // --- Initial path: create new scope and modified scopes array ---
+                        ilEncoder.OpCode(ILOpCode.Pop); // pop the null from isinst
+                        
+                        // Create new scope instance
+                        ilEncoder.OpCode(ILOpCode.Newobj);
+                        ilEncoder.Token(ctorRef);
+                        ilEncoder.StoreLocal(0);
+                        
+                        // Build modified scopes array using runtime helper:
+                        // starg.0 = Promise.PrependScopeToArray(leafScope, arg.0)
+                        ilEncoder.LoadLocal(0);  // leafScope
+                        ilEncoder.LoadArgument(0); // parentScopes (original arg.0)
+                        var prependRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Promise),
+                            "PrependScopeToArray",
+                            parameterTypes: new[] { typeof(object), typeof(object[]) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(prependRef);
+                        ilEncoder.StoreArgument(0); // arg.0 = modified scopes array
                         
                         // Initialize _deferred = Promise.withResolvers()
                         ilEncoder.LoadLocal(0);
@@ -2650,9 +2785,9 @@ internal sealed class LIRToILCompiler
                         ilEncoder.Token(withResolversRef);
                         EmitStoreFieldByName(ilEncoder, scopeName, "_deferred");
                         
-                        // Initialize _moveNext = Closure.Bind(methodPtr, scopesArray)
-                        // This creates a bound closure that can be invoked to resume the state machine
-                        ilEncoder.LoadLocal(0);
+                        // Initialize _moveNext = Closure.Bind(delegate, scopesArray)
+                        // Note: arg.0 now contains the modified scopes array with leaf scope at [0]
+                        ilEncoder.LoadLocal(0);  // for stfld _moveNext later
                         
                         var callableId = MethodBody.CallableId;
                         var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
@@ -2660,15 +2795,17 @@ internal sealed class LIRToILCompiler
                         {
                             var methodHandle = (MethodDefinitionHandle)token;
                             
-                            // ldnull + ldftn method -> creates unbound delegate
+                            // Create delegate: ldnull, ldftn, newobj Func<object[], object>::.ctor
                             ilEncoder.OpCode(ILOpCode.Ldnull);
                             ilEncoder.OpCode(ILOpCode.Ldftn);
                             ilEncoder.Token(methodHandle);
+                            ilEncoder.OpCode(ILOpCode.Newobj);
+                            ilEncoder.Token(_bclReferences.GetFuncCtorRef(0)); // Func<object[], object> has 0 JS params
                             
-                            // ldarg.0 (scopes array)
+                            // Load modified scopes array
                             ilEncoder.LoadArgument(0);
                             
-                            // call Closure.Bind(delegate, scopesArray)
+                            // Call Closure.Bind(delegate, scopes)
                             var bindRef = _memberRefRegistry.GetOrAddMethod(
                                 typeof(JavaScriptRuntime.Closure),
                                 "Bind",
@@ -2678,10 +2815,37 @@ internal sealed class LIRToILCompiler
                         }
                         else
                         {
-                            // Fallback: null (will cause runtime error on continuation)
                             ilEncoder.OpCode(ILOpCode.Ldnull);
                         }
                         EmitStoreFieldByName(ilEncoder, scopeName, "_moveNext");
+                        
+                        ilEncoder.Branch(ILOpCode.Br, afterInitLabel);
+                        
+                        // --- Resume path: use existing scope from scopes[0] ---
+                        ilEncoder.MarkLabel(resumeLabel);
+                        // Stack has the typed scope from isinst (dup'd before brtrue)
+                        ilEncoder.StoreLocal(0);
+                        
+                        ilEncoder.MarkLabel(afterInitLabel);
+                        
+                        // Now emit the state switch to dispatch to resume points
+                        // State 0 = initial entry (fall through)
+                        // State 1, 2, ... = resume points after each await
+                        if (asyncInfo.AwaitPoints.Count > 0)
+                        {
+                            EmitAsyncStateSwitch(ilEncoder, labelMap, asyncInfo);
+                        }
+                    }
+                    else
+                    {
+                        // Non-async or async without awaits: just create new scope
+                        var scopeTypeHandle = ResolveScopeTypeHandle(
+                            createScope.Scope.Name,
+                            "LIRCreateLeafScopeInstance instruction");
+                        var ctorRef = GetScopeConstructorRef(scopeTypeHandle);
+                        ilEncoder.OpCode(ILOpCode.Newobj);
+                        ilEncoder.Token(ctorRef);
+                        ilEncoder.StoreLocal(0);
                     }
                     break;
                 }
@@ -4602,6 +4766,60 @@ internal sealed class LIRToILCompiler
         var fieldHandle = _scopeMetadataRegistry.GetFieldHandle(scopeName, fieldName);
         ilEncoder.OpCode(ILOpCode.Stfld);
         ilEncoder.Token(fieldHandle);
+    }
+
+    /// <summary>
+    /// Emits the state switch at the entry of an async function.
+    /// This dispatches to the appropriate resume point based on _asyncState.
+    /// State 0 = initial entry (fall through to function body)
+    /// State 1, 2, 3, ... = resume points after each await
+    /// </summary>
+    private void EmitAsyncStateSwitch(
+        InstructionEncoder ilEncoder,
+        Dictionary<int, LabelHandle> labelMap,
+        AsyncStateMachineInfo asyncInfo)
+    {
+        var scopeName = MethodBody.LeafScopeId.Name;
+        
+        // Load _asyncState from scope instance (local 0)
+        ilEncoder.LoadLocal(0);
+        EmitLoadFieldByName(ilEncoder, scopeName, "_asyncState");
+        
+        // Build switch table for resume states.
+        // The switch instruction expects targets for cases 0, 1, 2, ...
+        // Case 0 = initial entry (fall through - we'll use a label that goes right after the switch)
+        // Case 1, 2, ... = resume points
+        
+        var fallThroughLabel = ilEncoder.DefineLabel();
+        int branchCount = asyncInfo.AwaitPoints.Count + 1;
+        
+        // Collect switch targets
+        var switchTargets = new LabelHandle[branchCount];
+        
+        // Case 0: fall through to function body
+        switchTargets[0] = fallThroughLabel;
+        
+        // Cases 1, 2, 3, ...: jump to resume labels
+        foreach (var awaitPoint in asyncInfo.AwaitPoints)
+        {
+            // Ensure the resume label exists in the map
+            if (!labelMap.TryGetValue(awaitPoint.ResumeLabelId, out var resumeLabel))
+            {
+                resumeLabel = ilEncoder.DefineLabel();
+                labelMap[awaitPoint.ResumeLabelId] = resumeLabel;
+            }
+            switchTargets[awaitPoint.ResumeStateId] = resumeLabel;
+        }
+        
+        // Emit switch instruction using SwitchInstructionEncoder
+        var switchEncoder = ilEncoder.Switch(branchCount);
+        for (int i = 0; i < branchCount; i++)
+        {
+            switchEncoder.Branch(switchTargets[i]);
+        }
+        
+        // Mark the fall-through label (for state 0 or values > max state)
+        ilEncoder.MarkLabel(fallThroughLabel);
     }
 
     #endregion

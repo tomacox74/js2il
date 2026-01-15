@@ -446,15 +446,10 @@ public sealed class HIRToLIRLowerer
             // Pre-scan for await points to set up the state machine.
             int awaitCount = CountAwaitExpressions(hirMethod.Body);
             
-            // If there are await points, we need full state machine infrastructure
+            // If there are await points, enable full state machine infrastructure
             if (awaitCount > 0)
             {
-                // TODO: Full state machine implementation requires:
-                // 1. State switch at function entry to dispatch to resume labels
-                // 2. Proper return handling to resolve _deferred on completion
-                // For now, use MVP approach that throws for pending promises.
-                // Once state switch is implemented, set HasAwaits = true.
-                lowerer._methodBodyIR.AsyncInfo.HasAwaits = false; // MVP: don't use full state machine yet
+                lowerer._methodBodyIR.AsyncInfo.HasAwaits = true;
                 
                 // Reserve state IDs for each await point (they'll be assigned during lowering)
                 // State 0 = initial entry

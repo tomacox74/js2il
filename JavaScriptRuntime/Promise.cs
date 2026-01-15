@@ -136,6 +136,22 @@ public sealed class Promise
     }
 
     /// <summary>
+    /// Creates a new scopes array with the async function's leaf scope prepended.
+    /// This is called on initial invocation of an async function to create the scopes array
+    /// that will be used for resumption.
+    /// </summary>
+    /// <param name="leafScope">The async function's scope instance</param>
+    /// <param name="parentScopes">The original scopes array containing parent scopes</param>
+    /// <returns>A new array: [leafScope, ...parentScopes]</returns>
+    public static object[] PrependScopeToArray(object leafScope, object[] parentScopes)
+    {
+        var result = new object[parentScopes.Length + 1];
+        result[0] = leafScope;
+        System.Array.Copy(parentScopes, 0, result, 1, parentScopes.Length);
+        return result;
+    }
+
+    /// <summary>
     /// Sets up async continuations for an await expression.
     /// Called by compiled async code at each await point to schedule MoveNext resumption.
     /// </summary>
