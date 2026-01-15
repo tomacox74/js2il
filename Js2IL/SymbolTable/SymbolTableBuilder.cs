@@ -313,29 +313,12 @@ namespace Js2IL.SymbolTables
 
         private static string NormalizeModuleName(string s)
         {
-            var trimmed = (s ?? string.Empty).Trim();
-            if (trimmed.StartsWith("node:", StringComparison.OrdinalIgnoreCase))
-                trimmed = trimmed.Substring("node:".Length);
-            return trimmed;
+            return JavaScriptRuntime.Node.NodeModuleRegistry.NormalizeModuleName(s);
         }
 
         private static Type? ResolveNodeModuleType(string key)
         {
-            if (string.IsNullOrWhiteSpace(key)) return null;
-            var asm = typeof(JavaScriptRuntime.Node.NodeModuleAttribute).Assembly;
-            // Scan JavaScriptRuntime.Node namespace for [NodeModule(Name=key)]
-            foreach (var t in asm.GetTypes())
-            {
-                if (!t.IsClass || t.IsAbstract) continue;
-                if (!string.Equals(t.Namespace, "JavaScriptRuntime.Node", StringComparison.Ordinal)) continue;
-                var attr = t.GetCustomAttributes(false).FirstOrDefault(a => a.GetType().FullName == "JavaScriptRuntime.Node.NodeModuleAttribute");
-                if (attr == null) continue;
-                var nameProp = attr.GetType().GetProperty("Name");
-                var nameVal = nameProp?.GetValue(attr) as string;
-                if (string.Equals(nameVal, key, StringComparison.OrdinalIgnoreCase))
-                    return t;
-            }
-            return null;
+            return JavaScriptRuntime.Node.NodeModuleRegistry.TryGetModuleType(key, out var type) ? type : null;
         }
 
         private static string SanitizeForMetadata(string name)

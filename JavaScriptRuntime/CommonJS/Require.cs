@@ -1,5 +1,7 @@
-using System.Reflection;
+using System;
+using System.Collections.Generic;
 using System.Dynamic;
+using System.Reflection;
 
 namespace JavaScriptRuntime.CommonJS
 {
@@ -36,19 +38,9 @@ namespace JavaScriptRuntime.CommonJS
         internal Module? GetModule(string key) => _modules.TryGetValue(key, out var m) ? m : null;
 
         // Deferred type lookup to avoid startup cost; scans assembly only on demand.
-        private Type? FindModuleType(string name)
+        private static Type? FindModuleType(string name)
         {
-            var asm = typeof(Require).Assembly;
-            foreach (var t in asm.GetTypes())
-            {
-                if (!t.IsClass || t.IsAbstract) continue;
-                if (!string.Equals(t.Namespace, "JavaScriptRuntime.Node", StringComparison.Ordinal)) continue;
-                var attr = t.GetCustomAttribute<Node.NodeModuleAttribute>();
-                if (attr == null) continue;
-                if (string.Equals(attr.Name, name, StringComparison.OrdinalIgnoreCase))
-                    return t;
-            }
-            return null;
+            return Node.NodeModuleRegistry.TryGetModuleType(name, out var type) ? type : null;
         }
 
         // require("module") returns a Node core module instance; modules are singletons.

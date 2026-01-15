@@ -12,18 +12,14 @@ public class JavaScriptAstValidator : IAstValidator
 {
     private static readonly Lazy<HashSet<string>> SupportedRequireModules = new(() =>
     {
-        var set = new HashSet<string>();
+        var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         try
         {
-            // Use a known runtime type to locate the assembly (Require lives in runtime assembly)
-            var asm = typeof(JavaScriptRuntime.Node.NodeModuleAttribute).Assembly;
-            foreach (var t in asm.GetTypes())
+            foreach (var name in JavaScriptRuntime.Node.NodeModuleRegistry.GetSupportedModuleNames())
             {
-                if (!t.IsClass || t.IsAbstract) continue;
-                var attr = t.GetCustomAttribute<JavaScriptRuntime.Node.NodeModuleAttribute>(false);
-                if (attr != null && !string.IsNullOrWhiteSpace(attr.Name))
+                if (!string.IsNullOrWhiteSpace(name))
                 {
-                    set.Add(attr.Name);
+                    set.Add(name);
                 }
             }
         }
@@ -418,9 +414,10 @@ public class JavaScriptAstValidator : IAstValidator
                 }
                 else if (call.Arguments[0] is Literal lit && lit.Value is string modName)
                 {
-                    var isLocalModule = modName.StartsWith(".") || modName.StartsWith("/");
+                    var normalizedName = JavaScriptRuntime.Node.NodeModuleRegistry.NormalizeModuleName(modName);
+                    var isLocalModule = normalizedName.StartsWith(".") || normalizedName.StartsWith("/");
 
-                    if (!SupportedRequireModules.Value.Contains(modName) && !isLocalModule)
+                    if (!SupportedRequireModules.Value.Contains(normalizedName) && !isLocalModule)
                     {
                         result.Errors.Add($"Module '{modName}' is not yet supported (line {node.Location.Start.Line})");
                         result.IsValid = false;
