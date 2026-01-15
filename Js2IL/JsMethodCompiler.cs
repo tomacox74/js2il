@@ -592,7 +592,7 @@ internal sealed class JsMethodCompiler
         }
 
         var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
-        if (!HIRToLIRLowerer.TryLower(hirMethod!, scope, _scopeMetadataRegistry, callableKind, hasScopesParameter, classRegistry, out var lirMethod))
+        if (!HIRToLIRLowerer.TryLower(hirMethod!, scope, _scopeMetadataRegistry, callableKind, hasScopesParameter, classRegistry, out var lirMethod, isAsync: isAsyncCallable))
         {
             IR.IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR lowering failed for scope '{scope.GetQualifiedName()}' (kind={scope.Kind}) node={node.Type}");
             return false;
@@ -601,8 +601,6 @@ internal sealed class JsMethodCompiler
         // Normalize intrinsic-specific patterns (e.g., Int32Array element access) into explicit LIR instructions.
         // This keeps the LIR->IL compiler simpler and avoids fragile late pattern-matching.
         LIRIntrinsicNormalization.Normalize(lirMethod!, classRegistry);
-
-        lirMethod!.IsAsync = isAsyncCallable;
 
         methodBody = lirMethod!;
         return true;

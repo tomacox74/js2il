@@ -6,10 +6,16 @@ namespace Js2IL.Tests.Async
         {
         }
 
-        [Fact(Skip = "async/await not supported yet")]
+        [Fact]
         public Task Async_HelloWorld() { var testName = nameof(Async_HelloWorld); return ExecutionTest(testName); }        
 
-        [Fact(Skip = "async/await not supported yet")]
+        [Fact]
+        public Task Async_ReturnValue() { var testName = nameof(Async_ReturnValue); return ExecutionTest(testName); }
+
+        [Fact(Skip = "await lowering to LIR not yet implemented")]
+        public Task Async_SimpleAwait() { var testName = nameof(Async_SimpleAwait); return ExecutionTest(testName); }
+
+        [Fact(Skip = "await not fully implemented yet")]
         public Task Async_RealSuspension_SetTimeout() { var testName = nameof(Async_RealSuspension_SetTimeout); return ExecutionTest(testName); }
     }
 }

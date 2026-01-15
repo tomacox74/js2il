@@ -1401,6 +1401,35 @@
               ]
             }
           ]
+        },
+        {
+          "subsection": "15.8",
+          "title": "Async Function Definitions",
+          "url": "https://tc39.es/ecma262/#sec-async-function-definitions",
+          "paragraphs": [
+            {
+              "paragraph": "15.8.1",
+              "title": "Async Function Declaration",
+              "url": "https://tc39.es/ecma262/#sec-async-function-definitions",
+              "features": [
+                {
+                  "feature": "async function (no await)",
+                  "status": "Partially Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Async/JavaScript/Async_HelloWorld.js",
+                    "Js2IL.Tests/Async/JavaScript/Async_ReturnValue.js"
+                  ],
+                  "notes": "Async functions without await expressions compile successfully. Return values are wrapped in Promise.resolve(). Full await expression support (state machine with suspension/resumption) is scaffolded but not yet functional."
+                },
+                {
+                  "feature": "await expression",
+                  "status": "Not Supported",
+                  "testScripts": [],
+                  "notes": "Await expressions are recognized by the parser and validator allows them within async functions, but IL emission for state machine suspension/resumption is not yet implemented. LIR instructions (LIRAwait, LIRAsyncInitialize, etc.) are scaffolded."
+                }
+              ]
+            }
+          ]
         }
       ]
     },

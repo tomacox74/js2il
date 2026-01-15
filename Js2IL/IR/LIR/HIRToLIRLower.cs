@@ -16,6 +16,7 @@ public sealed class HIRToLIRLowerer
     private readonly EnvironmentLayoutBuilder? _environmentLayoutBuilder;
     private readonly Js2IL.Services.ClassRegistry? _classRegistry;
     private readonly CallableKind _callableKind;
+    private readonly bool _isAsync;
 
     private int _tempVarCounter = 0;
     private int _labelCounter = 0;
@@ -55,13 +56,14 @@ public sealed class HIRToLIRLowerer
     // Track whether parameter initialization was successful (affects TryLower result)
     private bool _parameterInitSucceeded = true;
 
-    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, Js2IL.Services.ClassRegistry? classRegistry, CallableKind callableKind, IReadOnlyList<HIRPattern> parameters)
+    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, Js2IL.Services.ClassRegistry? classRegistry, CallableKind callableKind, IReadOnlyList<HIRPattern> parameters, bool isAsync = false)
     {
         _scope = scope;
         _environmentLayout = environmentLayout;
         _environmentLayoutBuilder = environmentLayoutBuilder;
         _classRegistry = classRegistry;
         _callableKind = callableKind;
+        _isAsync = isAsync;
         InitializeParameters(parameters);
     }
 
@@ -280,7 +282,7 @@ public sealed class HIRToLIRLowerer
         return true; // All default parameters successfully lowered
     }
 
-    internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind callableKind, bool hasScopesParameter, Js2IL.Services.ClassRegistry? classRegistry, out MethodBodyIR? lirMethod)
+    internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind callableKind, bool hasScopesParameter, Js2IL.Services.ClassRegistry? classRegistry, out MethodBodyIR? lirMethod, bool isAsync = false)
     {
         lirMethod = null;
 
@@ -305,12 +307,19 @@ public sealed class HIRToLIRLowerer
             }
         }
 
-        var lowerer = new HIRToLIRLowerer(scope, environmentLayout, environmentLayoutBuilder, classRegistry, callableKind, hirMethod.Parameters);
+        var lowerer = new HIRToLIRLowerer(scope, environmentLayout, environmentLayoutBuilder, classRegistry, callableKind, hirMethod.Parameters, isAsync);
 
         // If default parameter initialization failed, fall back to legacy emitter
         if (!lowerer._parameterInitSucceeded)
         {
             return false;
+        }
+
+        // Initialize async state machine info if this is an async function
+        if (isAsync)
+        {
+            lowerer._methodBodyIR.IsAsync = true;
+            lowerer._methodBodyIR.AsyncInfo = new AsyncStateMachineInfo();
         }
 
         // Emit scope instance creation if there are leaf scope fields
@@ -1747,9 +1756,47 @@ public sealed class HIRToLIRLowerer
         {
             case HIRAwaitExpression awaitExpr:
                 {
-                    // CommonJS-only for now: await is not supported.
-                    // Long-term: lower to an async state machine (no blocking / no event-loop pumping).
-                    return false;
+                    // await is only supported inside async functions
+                    if (!_isAsync || _methodBodyIR.AsyncInfo == null)
+                    {
+                        IRPipelineMetrics.RecordFailure("await expression found outside async function context");
+                        return false;
+                    }
+
+                    // Lower the awaited expression first
+                    if (!TryLowerExpression(awaitExpr.Argument, out var awaitedValueTemp))
+                    {
+                        return false;
+                    }
+
+                    // Ensure the awaited value is boxed to object
+                    awaitedValueTemp = EnsureObject(awaitedValueTemp);
+
+                    // Allocate state ID and label for resumption
+                    var asyncInfo = _methodBodyIR.AsyncInfo;
+                    var resumeStateId = asyncInfo.AllocateStateId();
+                    var resumeLabel = CreateLabel();
+
+                    // Create result temp for the await expression
+                    resultTempVar = CreateTempVariable();
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                    // Record the await point
+                    asyncInfo.AwaitPoints.Add(new AwaitPointInfo
+                    {
+                        ResumeStateId = resumeStateId,
+                        ResumeLabelId = resumeLabel,
+                        ResultTemp = resultTempVar
+                    });
+
+                    // Emit the await instruction
+                    _methodBodyIR.Instructions.Add(new LIRAwait(
+                        awaitedValueTemp,
+                        resumeStateId,
+                        resumeLabel,
+                        resultTempVar));
+
+                    return true;
                 }
 
             case HIRScopesArrayExpression:

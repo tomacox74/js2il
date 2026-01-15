@@ -35,9 +35,8 @@ public class JavaScriptAstValidator : IAstValidator
     {
         var result = new ValidationResult { IsValid = true };
 
-        // async/await are not supported yet. Validate this up-front with a complete AST walk,
-        // since AstWalker intentionally skips some Identifier nodes (e.g., variable declarator IDs).
-        ValidateNoAsyncAwait(ast, result);
+        // Validate async/await usage - await is only valid inside async functions.
+        ValidateAsyncAwait(ast, result);
         
         // Track whether we're currently inside a class method or constructor,
         // and whether we're inside a nested function within a class method
@@ -195,45 +194,79 @@ public class JavaScriptAstValidator : IAstValidator
         return result;
     }
 
-    private static void ValidateNoAsyncAwait(Node ast, ValidationResult result)
+    private static void ValidateAsyncAwait(Node ast, ValidationResult result)
     {
+        // Track whether we're inside an async function for await validation.
+        // async functions themselves are now supported; await is only valid inside them.
+        var asyncFunctionDepth = 0;
         var visited = new HashSet<Node>(ReferenceEqualityComparer<Node>.Default);
-        WalkAllNodes(ast, visited, node =>
+        
+        void WalkForAsyncAwait(Node? node)
         {
-            if (node is Identifier ident && (ident.Name == "async" || ident.Name == "await"))
+            if (node is null) return;
+            if (!visited.Add(node)) return;
+
+            // Track entering async functions
+            bool isAsyncFunction = node switch
             {
-                result.Errors.Add($"The '{ident.Name}' keyword is not yet supported (line {node.Location.Start.Line})");
-                result.IsValid = false;
-                return;
+                FunctionDeclaration fd => fd.Async,
+                FunctionExpression fe => fe.Async,
+                ArrowFunctionExpression af => af.Async,
+                _ => false
+            };
+
+            if (isAsyncFunction)
+            {
+                asyncFunctionDepth++;
             }
 
-            if (node is FunctionDeclaration funcDecl && funcDecl.Async)
-            {
-                result.Errors.Add($"The 'async' keyword is not yet supported (line {node.Location.Start.Line})");
-                result.IsValid = false;
-                return;
-            }
-
-            if (node is FunctionExpression funcExpr && funcExpr.Async)
-            {
-                result.Errors.Add($"The 'async' keyword is not yet supported (line {node.Location.Start.Line})");
-                result.IsValid = false;
-                return;
-            }
-
-            if (node is ArrowFunctionExpression arrowFunc && arrowFunc.Async)
-            {
-                result.Errors.Add($"The 'async' keyword is not yet supported (line {node.Location.Start.Line})");
-                result.IsValid = false;
-                return;
-            }
-
+            // Validate await is only inside async functions
             if (node.Type == NodeType.AwaitExpression)
             {
-                result.Errors.Add($"The 'await' keyword is not yet supported (line {node.Location.Start.Line})");
-                result.IsValid = false;
+                if (asyncFunctionDepth == 0)
+                {
+                    result.Errors.Add($"The 'await' keyword is only valid inside async functions (line {node.Location.Start.Line})");
+                    result.IsValid = false;
+                }
             }
-        });
+
+            // Walk children
+            var type = node.GetType();
+            foreach (var prop in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+            {
+                if (!prop.CanRead) continue;
+                if (prop.GetIndexParameters().Length != 0) continue;
+
+                object? value;
+                try { value = prop.GetValue(node); }
+                catch { continue; }
+
+                if (value is null || value is string) continue;
+                
+                if (value is Node childNode)
+                {
+                    WalkForAsyncAwait(childNode);
+                }
+                else if (value is IEnumerable enumerable)
+                {
+                    foreach (var item in enumerable)
+                    {
+                        if (item is Node itemNode)
+                        {
+                            WalkForAsyncAwait(itemNode);
+                        }
+                    }
+                }
+            }
+
+            // Track exiting async functions
+            if (isAsyncFunction)
+            {
+                asyncFunctionDepth--;
+            }
+        }
+
+        WalkForAsyncAwait(ast);
     }
 
     private static void WalkAllNodes(Node? root, HashSet<Node> visited, Action<Node> visit)

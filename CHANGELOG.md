@@ -4,7 +4,21 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+### Added
+- Basic async function support: async functions without await now compile and return Promises correctly.
+- `AsyncStateMachineInfo` infrastructure in IR for tracking await points and suspended variables.
+- LIR instructions for async state machine (`LIRAwait`, `LIRAsyncInitialize`, etc.) - scaffolding for full await support.
+- Validator now allows `async`/`await` syntax (previously rejected).
+
+### Changed
+- `HIRToLIRLowerer.TryLower` now accepts `isAsync` parameter to enable async-specific lowering paths.
+
+### Tests
+- Added `Async_HelloWorld` and `Async_ReturnValue` execution/generator tests for async functions without await.
+- Updated validator tests to expect async/await to be valid syntax.
+
+### Notes
+- Full `await` expression support (state machine with suspension/resumption) is scaffolded but not yet functional; tests for await remain skipped.
 
 ## v0.6.5 - 2026-01-14
 
