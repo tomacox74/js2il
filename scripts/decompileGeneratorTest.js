@@ -20,6 +20,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
 
+// Compute project root from script location (scripts/ is one level below root)
+const scriptDir = __dirname;
+const projectRoot = path.resolve(scriptDir, '..');
+
 function main() {
   const args = process.argv.slice(2);
 
@@ -35,17 +39,18 @@ function main() {
   const category = args[0];
   const testName = args[1];
   const fullTestName = `Js2IL.Tests.${category}.GeneratorTests.${testName}`;
+  const testProject = path.join(projectRoot, 'Js2IL.Tests');
 
   console.log(`Running test: ${fullTestName}`);
 
   // Step 1: Run the generator test
   const testResult = childProcess.spawnSync(
     'dotnet',
-    ['test', 'Js2IL.Tests', '--filter', `FullyQualifiedName=${fullTestName}`, '--no-build'],
+    ['test', testProject, '--filter', `FullyQualifiedName=${fullTestName}`, '--no-build'],
     {
       stdio: 'inherit',
       shell: true,
-      cwd: process.cwd(),
+      cwd: projectRoot,
     }
   );
 
@@ -54,11 +59,11 @@ function main() {
     console.log('Test failed or not found, retrying with build...');
     const retryResult = childProcess.spawnSync(
       'dotnet',
-      ['test', 'Js2IL.Tests', '--filter', `FullyQualifiedName=${fullTestName}`],
+      ['test', testProject, '--filter', `FullyQualifiedName=${fullTestName}`],
       {
         stdio: 'inherit',
         shell: true,
-        cwd: process.cwd(),
+        cwd: projectRoot,
       }
     );
 
