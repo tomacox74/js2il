@@ -267,6 +267,52 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// JavaScript Array.some(callback[, thisArg])
+        /// Minimal implementation: invokes the callback with (value, index, array) and returns true if any call is truthy.
+        /// </summary>
+        public object some(object[] args)
+        {
+            var cb = (args != null && args.Length > 0) ? args[0] : null;
+
+            for (int i = 0; i < this.Count; i++)
+            {
+                var value = this[i];
+                object? result;
+
+                if (cb is Func<object?[], object?, object?, object?, object?> f3)
+                {
+                    // (scopes, value, index, array)
+                    result = f3(System.Array.Empty<object?>(), value, (double)i, this);
+                }
+                else if (cb is Func<object?[], object?, object?, object?> f2)
+                {
+                    // (scopes, value, index)
+                    result = f2(System.Array.Empty<object?>(), value, (double)i);
+                }
+                else if (cb is Func<object?[], object?, object?> f1)
+                {
+                    // (scopes, value)
+                    result = f1(System.Array.Empty<object?>(), value);
+                }
+                else if (cb is Func<object?[], object?> f0)
+                {
+                    result = f0(System.Array.Empty<object?>());
+                }
+                else
+                {
+                    throw new InvalidOperationException("some callback is not a supported function type");
+                }
+
+                if (Operators.IsTruthy(result))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// JavaScript Array.join([separator]) implementation.
         /// Joins elements by the given separator (default ',') and returns a string.
         /// Each element is converted using DotNet2JSConversions.ToString to approximate JS semantics.

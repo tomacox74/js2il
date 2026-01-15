@@ -113,7 +113,7 @@
 	{
 		// Method begins at RVA 0x2088
 		// Header size: 12
-		// Code size: 56 (0x38)
+		// Code size: 63 (0x3f)
 		.maxstack 32
 		.locals init (
 			[0] float64
@@ -124,23 +124,26 @@
 			IL_0001: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
 			IL_0006: ldc.r8 3
 			IL_000f: clt
-			IL_0011: brfalse IL_0036
+			IL_0011: brfalse IL_003d
 
 			IL_0016: ldarg.1
-			IL_0017: pop
-			IL_0018: ldarg.1
-			IL_0019: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_001e: ldc.r8 1
-			IL_0027: add
-			IL_0028: stloc.0
-			IL_0029: ldloc.0
-			IL_002a: box [System.Runtime]System.Double
-			IL_002f: starg.s n
-			IL_0031: br IL_0000
+			IL_0017: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_001c: stloc.0
+			IL_001d: ldloc.0
+			IL_001e: box [System.Runtime]System.Double
+			IL_0023: pop
+			IL_0024: ldloc.0
+			IL_0025: ldc.r8 1
+			IL_002e: add
+			IL_002f: stloc.0
+			IL_0030: ldloc.0
+			IL_0031: box [System.Runtime]System.Double
+			IL_0036: starg.s n
+			IL_0038: br IL_0000
 		// end loop
 
-		IL_0036: ldnull
-		IL_0037: ret
+		IL_003d: ldnull
+		IL_003e: ret
 	} // end of method Counter::run
 
 } // end of class Classes.Classes_ClassMethod_While_Increment_Param_Postfix.Counter
@@ -158,7 +161,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20cc
+		// Method begins at RVA 0x20d4
 		// Header size: 12
 		// Code size: 102 (0x66)
 		.maxstack 32
@@ -220,7 +223,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x213e
+		// Method begins at RVA 0x2146
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

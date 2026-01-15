@@ -11,13 +11,37 @@ namespace Js2IL.Tests.UnaryOperator
         public Task UnaryOperator_MinusMinusPostfix() => GenerateTest(nameof(UnaryOperator_MinusMinusPostfix));
 
         [Fact]
+        public Task UnaryOperator_MinusMinusPostfix_InFunctionSwitch() => GenerateTest(nameof(UnaryOperator_MinusMinusPostfix_InFunctionSwitch));
+
+        [Fact]
+        public Task UnaryOperator_MinusMinusPostfix_InFunctionSwitch_ObjectLocal() => GenerateTest(nameof(UnaryOperator_MinusMinusPostfix_InFunctionSwitch_ObjectLocal));
+
+        [Fact]
         public Task UnaryOperator_MinusMinusPrefix() => GenerateTest(nameof(UnaryOperator_MinusMinusPrefix));
+
+        [Fact]
+        public Task UnaryOperator_MinusMinusPrefix_InFunctionSwitch() => GenerateTest(nameof(UnaryOperator_MinusMinusPrefix_InFunctionSwitch));
+
+        [Fact]
+        public Task UnaryOperator_MinusMinusPrefix_InFunctionSwitch_ObjectLocal() => GenerateTest(nameof(UnaryOperator_MinusMinusPrefix_InFunctionSwitch_ObjectLocal));
 
         [Fact]
         public Task UnaryOperator_PlusPlusPostfix() => GenerateTest(nameof(UnaryOperator_PlusPlusPostfix));
 
         [Fact]
+        public Task UnaryOperator_PlusPlusPostfix_InFunctionSwitch() => GenerateTest(nameof(UnaryOperator_PlusPlusPostfix_InFunctionSwitch));
+
+        [Fact]
+        public Task UnaryOperator_PlusPlusPostfix_InFunctionSwitch_ObjectLocal() => GenerateTest(nameof(UnaryOperator_PlusPlusPostfix_InFunctionSwitch_ObjectLocal));
+
+        [Fact]
         public Task UnaryOperator_PlusPlusPrefix() => GenerateTest(nameof(UnaryOperator_PlusPlusPrefix));
+
+        [Fact]
+        public Task UnaryOperator_PlusPlusPrefix_InFunctionSwitch() => GenerateTest(nameof(UnaryOperator_PlusPlusPrefix_InFunctionSwitch));
+
+        [Fact]
+        public Task UnaryOperator_PlusPlusPrefix_InFunctionSwitch_ObjectLocal() => GenerateTest(nameof(UnaryOperator_PlusPlusPrefix_InFunctionSwitch_ObjectLocal));
 
         [Fact]
         public Task UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction() => GenerateTest(nameof(UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction));
