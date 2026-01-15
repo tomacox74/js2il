@@ -155,13 +155,11 @@ namespace Js2IL.Tests
             }
 
             var dir = Path.GetDirectoryName(assemblyPath)!;
-            var jsRuntimePath = Path.Combine(dir, "JavaScriptRuntime.dll");
-            Assembly? jsRuntimeAsm = null;
-            if (File.Exists(jsRuntimePath))
-            {
-                try { jsRuntimeAsm = AssemblyLoadContext.Default.LoadFromAssemblyPath(jsRuntimePath); } catch { }
-            }
-            jsRuntimeAsm ??= typeof(JavaScriptRuntime.EnvironmentProvider).Assembly;
+            // IMPORTANT: do not load JavaScriptRuntime.dll from the per-test output directory.
+            // Loading from that path can keep the file locked, and other tests concurrently
+            // compiling into the same output directory may try to copy/overwrite it.
+            // Always use the runtime assembly already loaded with the test host.
+            var jsRuntimeAsm = typeof(JavaScriptRuntime.EnvironmentProvider).Assembly;
 
             var uniquePath = Path.Combine(dir, assemblySimpleName + $".run-{Guid.NewGuid():N}.dll");
 

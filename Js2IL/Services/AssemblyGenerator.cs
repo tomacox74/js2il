@@ -252,12 +252,36 @@ namespace Js2IL.Services
                     }
                 }
 
-                File.Copy(jsRuntimeDll, jsRuntimeDllDest, true);
+                try
+                {
+                    File.Copy(jsRuntimeDll, jsRuntimeDllDest, true);
+                }
+                catch (IOException)
+                {
+                    // In parallel test runs multiple compilations may attempt to write the runtime
+                    // into the same output folder at the same time, or the runtime may already be
+                    // loaded by another process. If the destination exists, treat it as good enough.
+                    if (!File.Exists(jsRuntimeDllDest))
+                    {
+                        throw;
+                    }
+                }
+
                 var jsRuntimePdb = Path.ChangeExtension(jsRuntimeDll, ".pdb");
                 var jsRuntimePdbDest = Path.ChangeExtension(jsRuntimeDllDest, ".pdb");
                 if (File.Exists(jsRuntimePdb))
                 {
-                    File.Copy(jsRuntimePdb, jsRuntimePdbDest, true);
+                    try
+                    {
+                        File.Copy(jsRuntimePdb, jsRuntimePdbDest, true);
+                    }
+                    catch (IOException)
+                    {
+                        if (!File.Exists(jsRuntimePdbDest))
+                        {
+                            throw;
+                        }
+                    }
                 }
             }
         }
