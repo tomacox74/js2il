@@ -515,6 +515,11 @@ namespace Js2IL.SymbolTables
                 case FunctionDeclaration funcDecl:
                     var funcName = (funcDecl.Id as Identifier)?.Name ?? $"Closure{++_closureCounter}";
                     var funcScope = new Scope(funcName, ScopeKind.Function, currentScope, funcDecl);
+                    funcScope.IsAsync = funcDecl.Async;
+                    if (funcDecl.Async)
+                    {
+                        funcScope.AwaitPointCount = CountAwaitExpressions(funcDecl.Body);
+                    }
                     currentScope.Bindings[funcName] = new BindingInfo(funcName, BindingKind.Function, funcDecl);
                         // Register parameters (identifiers + object pattern properties) via helper
                         BindObjectPatternParameters(funcDecl.Params, funcScope);
@@ -543,6 +548,11 @@ namespace Js2IL.SymbolTables
                             : $"FunctionExpression_L{funcExpr.Location.Start.Line}C{funcExpr.Location.Start.Column}");
                     // Create the scope (constructor links it to the parent); no manual add to avoid duplicates
                     var funcExprScope = new Scope(funcExprName, ScopeKind.Function, currentScope, funcExpr);
+                    funcExprScope.IsAsync = funcExpr.Async;
+                    if (funcExpr.Async)
+                    {
+                        funcExprScope.AwaitPointCount = CountAwaitExpressions(funcExpr.Body);
+                    }
                     // Named function expressions create an internal binding for the function name that is
                     // only visible inside the function body (used for recursion). It must not leak to the
                     // outer scope. Authoritative binding here so downstream codegen can allocate a field.
@@ -717,6 +727,11 @@ namespace Js2IL.SymbolTables
                         ? $"ArrowFunction_{_currentAssignmentTarget}"
                         : $"ArrowFunction_L{arrowFunc.Location.Start.Line}C{arrowFunc.Location.Start.Column}";
                     var arrowScope = new Scope(arrowName, ScopeKind.Function, currentScope, arrowFunc);
+                    arrowScope.IsAsync = arrowFunc.Async;
+                    if (arrowFunc.Async)
+                    {
+                        arrowScope.AwaitPointCount = CountAwaitExpressions(arrowFunc.Body);
+                    }
                     int syntheticIndex = 0;
                     foreach (var param in arrowFunc.Params)
                     {
@@ -1468,6 +1483,64 @@ namespace Js2IL.SymbolTables
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Counts the number of await expressions in a function body.
+        /// Does not descend into nested functions (each gets its own count).
+        /// </summary>
+        private static int CountAwaitExpressions(Node? node)
+        {
+            if (node == null) return 0;
+
+            int count = 0;
+
+            // Count this node if it's an await expression
+            if (node is AwaitExpression)
+            {
+                count = 1;
+            }
+
+            // Don't descend into nested functions - they have their own await counts
+            if (node is FunctionDeclaration || node is FunctionExpression || node is ArrowFunctionExpression)
+            {
+                return count;
+            }
+
+            // Recursively count in child nodes using reflection
+            foreach (var prop in node.GetType().GetProperties())
+            {
+                if (!prop.CanRead) continue;
+                var propType = prop.PropertyType;
+
+                // Check for single Node child
+                if (typeof(Node).IsAssignableFrom(propType))
+                {
+                    var childNode = prop.GetValue(node) as Node;
+                    if (childNode != null)
+                    {
+                        count += CountAwaitExpressions(childNode);
+                    }
+                }
+                // Check for IEnumerable<Node> children (NodeList, etc.)
+                else if (typeof(System.Collections.IEnumerable).IsAssignableFrom(propType) 
+                    && propType != typeof(string))
+                {
+                    var enumerable = prop.GetValue(node) as System.Collections.IEnumerable;
+                    if (enumerable != null)
+                    {
+                        foreach (var item in enumerable)
+                        {
+                            if (item is Node childItem)
+                            {
+                                count += CountAwaitExpressions(childItem);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return count;
         }
     }
 }

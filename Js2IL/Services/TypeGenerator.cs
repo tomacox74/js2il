@@ -156,6 +156,76 @@ namespace Js2IL.Services
 
                 scopeFields.Add(fieldHandle);
             }
+
+            // Add async state fields for async function scopes
+            if (scope.IsAsync)
+            {
+                AddAsyncStateFields(typeBuilder, scopeFields, scope.AwaitPointCount, scopeKey);
+            }
+        }
+
+        /// <summary>
+        /// Adds the async state machine fields to an async function's scope class.
+        /// These fields are used by the MoveNext state machine to track execution state.
+        /// </summary>
+        /// <param name="awaitPointCount">Number of await points in the function (to generate _awaited1, _awaited2, etc.)</param>
+        /// <param name="scopeName">The scope name for registering fields in the metadata registry.</param>
+        private void AddAsyncStateFields(TypeBuilder typeBuilder, List<FieldDefinitionHandle> scopeFields, int awaitPointCount, string scopeName)
+        {
+            // Field: _asyncState (int) - the current state of the state machine
+            var stateFieldSig = new BlobBuilder();
+            new BlobEncoder(stateFieldSig).Field().Type().Int32();
+            var stateFieldHandle = typeBuilder.AddFieldDefinition(
+                FieldAttributes.Public,
+                "_asyncState",
+                _metadataBuilder.GetOrAddBlob(stateFieldSig)
+            );
+            scopeFields.Add(stateFieldHandle);
+            _variableRegistry.ScopeMetadata.RegisterField(scopeName, "_asyncState", stateFieldHandle);
+            _variableRegistry.ScopeMetadata.RegisterFieldClrType(scopeName, "_asyncState", typeof(int));
+
+            // Field: _deferred (PromiseWithResolvers) - holds promise, resolve, reject
+            var deferredFieldSig = new BlobBuilder();
+            new BlobEncoder(deferredFieldSig).Field().Type().Type(
+                _bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.PromiseWithResolvers)),
+                isValueType: false);
+            var deferredFieldHandle = typeBuilder.AddFieldDefinition(
+                FieldAttributes.Public,
+                "_deferred",
+                _metadataBuilder.GetOrAddBlob(deferredFieldSig)
+            );
+            scopeFields.Add(deferredFieldHandle);
+            _variableRegistry.ScopeMetadata.RegisterField(scopeName, "_deferred", deferredFieldHandle);
+            _variableRegistry.ScopeMetadata.RegisterFieldClrType(scopeName, "_deferred", typeof(JavaScriptRuntime.PromiseWithResolvers));
+
+            // Field: _moveNext (object) - bound closure reference for self-invocation in continuations
+            var moveNextFieldSig = new BlobBuilder();
+            new BlobEncoder(moveNextFieldSig).Field().Type().Object();
+            var moveNextFieldHandle = typeBuilder.AddFieldDefinition(
+                FieldAttributes.Public,
+                "_moveNext",
+                _metadataBuilder.GetOrAddBlob(moveNextFieldSig)
+            );
+            scopeFields.Add(moveNextFieldHandle);
+            _variableRegistry.ScopeMetadata.RegisterField(scopeName, "_moveNext", moveNextFieldHandle);
+            _variableRegistry.ScopeMetadata.RegisterFieldClrType(scopeName, "_moveNext", typeof(object));
+
+            // Fields for awaited result storage: _awaited1, _awaited2, etc.
+            // State IDs start at 1, so await point N stores its result in _awaitedN
+            for (int i = 1; i <= awaitPointCount; i++)
+            {
+                var fieldName = $"_awaited{i}";
+                var awaitedFieldSig = new BlobBuilder();
+                new BlobEncoder(awaitedFieldSig).Field().Type().Object();
+                var awaitedFieldHandle = typeBuilder.AddFieldDefinition(
+                    FieldAttributes.Public,
+                    fieldName,
+                    _metadataBuilder.GetOrAddBlob(awaitedFieldSig)
+                );
+                scopeFields.Add(awaitedFieldHandle);
+                _variableRegistry.ScopeMetadata.RegisterField(scopeName, fieldName, awaitedFieldHandle);
+                _variableRegistry.ScopeMetadata.RegisterFieldClrType(scopeName, fieldName, typeof(object));
+            }
         }
 
         /// <summary>

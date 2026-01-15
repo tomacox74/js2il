@@ -4,7 +4,30 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+### Added
+- Full async/await state machine with suspension and resumption support.
+- `EmitAsyncStateSwitch()` in IL compiler for dispatch to resume labels based on `_asyncState`.
+- `Promise.PrependScopeToArray()` runtime helper to build modified scopes array for resumption.
+- `Promise.SetupAwaitContinuation()` schedules promise.then() callbacks with MoveNext closure.
+- `_moveNext` field on async scope classes holds bound closure for self-invocation.
+- `_awaited{N}` fields on async scope classes store awaited results across suspension points.
+
+### Changed
+- Enabled `HasAwaits=true` in HIRToLIRLower.cs to activate full state machine path.
+- `await` expression now marked as "Supported" (was "Partially Supported").
+- `Promise.AwaitValue()` is now only used as fallback when `HasAwaits=false` (updated docs and error message).
+- Async function return handling: sets `_asyncState=-1`, resolves `_deferred.promise` with return value.
+
+### Fixed
+- Scope persistence for async function resumption using `isinst` check to distinguish initial vs resume calls.
+- Delegate creation for `_moveNext`: properly uses `newobj Func<>` after `ldftn`.
+- **Nested scope registry naming**: `ScopeNaming.GetRegistryScopeName()` now uses `scope.GetQualifiedName()` instead of `scope.Name`, fixing scope lookup for nested arrow functions and other nested callables. This was causing "scope not found in registry" errors when compiling arrow functions nested inside other functions.
+
+### Tests
+- All async tests now pass including `Async_PendingPromiseAwait` and `Async_RealSuspension_SetTimeout`.
+- Async tests increased from 6 to 14 (added 4 new tests, unskipped 4 previously skipped).
+- New tests: `Async_ArrowFunction_SimpleAwait`, `Async_FunctionExpression_SimpleAwait` (both pass).
+- `Async_TryCatch_AwaitReject` added but skipped - await inside try/catch generates invalid IL (needs proper async exception handling).
 
 ## v0.6.5 - 2026-01-14
 

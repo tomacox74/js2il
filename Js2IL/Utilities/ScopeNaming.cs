@@ -16,7 +16,7 @@ internal static class ScopeNaming
 
     // Stable registry key for a scope across the compilation pipeline.
     // - Global scope uses the module name directly.
-    // - All other scopes are module-qualified to prevent collisions between modules.
+    // - All other scopes are module-qualified with their full path to prevent collisions.
     public static string GetRegistryScopeName(Scope scope)
     {
         if (scope.Kind == ScopeKind.Global)
@@ -25,6 +25,6 @@ internal static class ScopeNaming
         }
 
         var moduleName = GetModuleName(scope);
-        return $"{moduleName}/{scope.Name}";
+        return $"{moduleName}/{scope.GetQualifiedName()}";
     }
 }

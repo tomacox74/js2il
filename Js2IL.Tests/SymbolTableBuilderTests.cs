@@ -820,6 +820,55 @@ namespace Js2IL.Tests
             Assert.Contains("x", funcScope.Parameters);
             Assert.Contains("y", funcScope.Parameters);
         }
+
+        [Fact]
+        public void Build_AsyncFunctionDeclaration_SetsIsAsyncTrue()
+        {
+            // Arrange
+            var code = "async function getValue() { return 42; }";
+            var ast = _parser.ParseJavaScript(code, "test.js");
+
+            // Act
+            var scopeTree = BuildSymbolTable(ast, "test.js");
+
+            // Assert
+            var funcScope = scopeTree.Root.Children[0];
+            Assert.Equal("getValue", funcScope.Name);
+            Assert.Equal(ScopeKind.Function, funcScope.Kind);
+            Assert.True(funcScope.IsAsync, "async function should have IsAsync = true");
+        }
+
+        [Fact]
+        public void Build_AsyncArrowFunction_SetsIsAsyncTrue()
+        {
+            // Arrange
+            var code = "const f = async () => 42;";
+            var ast = _parser.ParseJavaScript(code, "test.js");
+
+            // Act
+            var scopeTree = BuildSymbolTable(ast, "test.js");
+
+            // Assert
+            var arrowScope = scopeTree.Root.Children[0];
+            Assert.Equal(ScopeKind.Function, arrowScope.Kind);
+            Assert.True(arrowScope.IsAsync, "async arrow function should have IsAsync = true");
+        }
+
+        [Fact]
+        public void Build_RegularFunctionDeclaration_SetsIsAsyncFalse()
+        {
+            // Arrange
+            var code = "function getValue() { return 42; }";
+            var ast = _parser.ParseJavaScript(code, "test.js");
+
+            // Act
+            var scopeTree = BuildSymbolTable(ast, "test.js");
+
+            // Assert
+            var funcScope = scopeTree.Root.Children[0];
+            Assert.Equal("getValue", funcScope.Name);
+            Assert.False(funcScope.IsAsync, "regular function should have IsAsync = false");
+        }
     }
 }
 

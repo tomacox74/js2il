@@ -93,15 +93,171 @@ public sealed class Promise
     }
 
     /// <summary>
-    /// Runtime helper for lowering JavaScript <c>await</c>.
+    /// Synchronous helper for lowering JavaScript <c>await</c> when HasAwaits=false.
     /// 
-    /// NOTE: JS2IL currently targets CommonJS. Await is not supported yet.
-    /// When async/await is implemented it should be lowered to a proper state machine
-    /// and must not manually pump the message loop.
+    /// This is a fallback path used only when the compiler determines no actual awaits
+    /// exist in an async function. For already-resolved promises, it extracts the value
+    /// synchronously. For pending promises, it throws (should not happen in practice
+    /// since the full state machine path handles that case).
+    /// 
+    /// The primary await implementation uses <see cref="SetupAwaitContinuation"/> which
+    /// generates proper suspension/resumption via promise.then() callbacks.
     /// </summary>
-    public static object? @await(object? awaited)
+    /// <param name="awaited">The value being awaited (typically a Promise)</param>
+    /// <returns>The resolved value if the promise is already settled</returns>
+    /// <exception cref="NotSupportedException">If the promise is still pending</exception>
+    /// <exception cref="JavaScriptRuntime.JsThrownValueException">If the promise was rejected</exception>
+    public static object? AwaitValue(object? awaited)
     {
-        throw new NotSupportedException("Promise.await is not supported. Await must be compiled to a state machine without pumping the message loop.");
+        // First, ensure we have a promise (Promise.resolve() behavior)
+        if (awaited is not Promise promise)
+        {
+            promise = (Promise)resolve(awaited)!;
+        }
+        
+        // Check the promise state
+        lock (promise._reactions)
+        {
+            switch (promise._state)
+            {
+                case State.Fulfilled:
+                    return promise._result;
+                    
+                case State.Rejected:
+                    throw new JsThrownValueException(promise._result);
+                    
+                case State.Pending:
+                    throw new NotSupportedException(
+                        "Cannot await a pending promise using the synchronous AwaitValue helper. " +
+                        "This code path is only used when HasAwaits=false. For pending promises, " +
+                        "the compiler should generate a full state machine with SetupAwaitContinuation.");
+                    
+                default:
+                    throw new InvalidOperationException($"Unknown promise state: {promise._state}");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Creates a new scopes array with the async function's leaf scope prepended.
+    /// This is called on initial invocation of an async function to create the scopes array
+    /// that will be used for resumption.
+    /// </summary>
+    /// <param name="leafScope">The async function's scope instance</param>
+    /// <param name="parentScopes">The original scopes array containing parent scopes</param>
+    /// <returns>A new array: [leafScope, ...parentScopes]</returns>
+    public static object[] PrependScopeToArray(object leafScope, object[] parentScopes)
+    {
+        var result = new object[parentScopes.Length + 1];
+        result[0] = leafScope;
+        System.Array.Copy(parentScopes, 0, result, 1, parentScopes.Length);
+        return result;
+    }
+
+    /// <summary>
+    /// Sets up async continuations for an await expression.
+    /// Called by compiled async code at each await point to schedule MoveNext resumption.
+    /// </summary>
+    /// <param name="awaited">The value being awaited</param>
+    /// <param name="scope">The async function's scope instance (stores _asyncState, _deferred, awaited result)</param>
+    /// <param name="scopesArray">The scopes array to pass to MoveNext</param>
+    /// <param name="resultFieldName">Name of the field on scope to store the awaited result (e.g., "_awaited1")</param>
+    /// <param name="moveNext">The MoveNext method delegate: Action&lt;object[]&gt; or Func&lt;object[], object&gt;. Can be null if using reflection-based approach.</param>
+    /// <returns>Always null (IL should emit ret after this call)</returns>
+    public static object? SetupAwaitContinuation(
+        object? awaited,
+        object scope,
+        object[] scopesArray,
+        string resultFieldName,
+        object? moveNext)
+    {
+        // Wrap in Promise.resolve() per ECMA-262
+        var promise = awaited is Promise p ? p : (Promise)resolve(awaited)!;
+        
+        // Get the scope type for reflection
+        var scopeType = scope.GetType();
+        var resultField = scopeType.GetField(resultFieldName);
+        var asyncStateField = scopeType.GetField("_asyncState");
+        var deferredField = scopeType.GetField("_deferred");
+        
+        if (deferredField == null)
+        {
+            throw new InvalidOperationException($"Scope type {scopeType.Name} missing _deferred field");
+        }
+        
+        var deferred = (PromiseWithResolvers)deferredField.GetValue(scope)!;
+
+        // If moveNext is null, try to get it from the _moveNext field
+        if (moveNext == null)
+        {
+            var moveNextField = scopeType.GetField("_moveNext");
+            moveNext = moveNextField?.GetValue(scope);
+        }
+        
+        // Create onFulfilled callback: stores result, calls MoveNext
+        object onFulfilled = CreateFulfilledContinuation(scope, scopesArray, resultField, moveNext);
+        
+        // Create onRejected callback: rejects the outer promise
+        object onRejected = CreateRejectedContinuation(scope, asyncStateField, deferred);
+        
+        // Schedule continuations
+        promise.@then(onFulfilled, onRejected);
+        
+        return null;
+    }
+    
+    private static object CreateFulfilledContinuation(
+        object scope,
+        object[] scopesArray,
+        System.Reflection.FieldInfo? resultField,
+        object? moveNext)
+    {
+        // Create a callback that stores the result and calls MoveNext
+        return new Func<object[]?, object?, object?>((_, value) =>
+        {
+            // Store the awaited value to the result field if specified
+            resultField?.SetValue(scope, value);
+            
+            // Call MoveNext to resume the state machine
+            if (moveNext == null)
+            {
+                throw new InvalidOperationException("Cannot resume async function: _moveNext is null. The async function closure was not properly initialized.");
+            }
+            
+            if (moveNext is Func<object[], object> fn)
+            {
+                fn(scopesArray);
+            }
+            else if (moveNext is Action<object[]> action)
+            {
+                action(scopesArray);
+            }
+            else
+            {
+                // Try to invoke via Closure.InvokeWithArgs for bound closures
+                Closure.InvokeWithArgs(moveNext, scopesArray);
+            }
+            
+            return null;
+        });
+    }
+    
+    private static object CreateRejectedContinuation(
+        object scope,
+        System.Reflection.FieldInfo? asyncStateField,
+        PromiseWithResolvers deferred)
+    {
+        // Create a callback that rejects the outer promise
+        return new Func<object[]?, object?, object?>((_, reason) =>
+        {
+            // Mark state as completed
+            asyncStateField?.SetValue(scope, -1);
+            
+            // Reject the outer promise - use empty scopes array since reject doesn't need scopes
+            Closure.InvokeWithArgs(deferred.reject, System.Array.Empty<object>(), reason);
+            
+            return null;
+        });
     }
 
     public static object? reject(object? reason)

@@ -428,6 +428,16 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Instance method default parameters | Supported | `Js2IL.Tests/Classes/JavaScript/Classes_DefaultParameterValue_Method.js`<br>`Js2IL.Tests/Classes/JavaScript/Classes_ClassMethod_ParameterDestructuring.js` | Class instance methods support default parameter values and destructuring with defaults. Methods are registered in ClassRegistry with min/max parameter counts. Call sites validate argument count ranges and pad missing optional parameters with ldnull before callvirt. Object destructuring parameters support default values with conditional IL generation. | 15.1.1 |
 
 
+### [Async Function Definitions](https://tc39.es/ecma262/#sec-async-function-definitions)
+
+#### [Async Function Declaration](https://tc39.es/ecma262/#sec-async-function-definitions)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| async function (no await) | Supported | `Js2IL.Tests/Async/JavaScript/Async_HelloWorld.js`<br>`Js2IL.Tests/Async/JavaScript/Async_ReturnValue.js` | Async functions without await expressions compile successfully. Return values are wrapped in Promise.resolve(). | 15.8.1 |
+| await expression | Supported | `Js2IL.Tests/Async/JavaScript/Async_SimpleAwait.js` | Full state machine implementation with suspension/resumption. Each await point stores _asyncState, schedules promise.then() continuation via SetupAwaitContinuation, and returns. On resume, the state switch dispatches to the appropriate label and loads the awaited result from a scope field. Scope persistence handled via PrependScopeToArray. | 15.8.1 |
+
+
 ## [The Math Object](https://tc39.es/ecma262/#sec-math-object)
 
 ### [Value Properties of the Math Object](https://tc39.es/ecma262/#sec-value-properties-of-the-math-object)
