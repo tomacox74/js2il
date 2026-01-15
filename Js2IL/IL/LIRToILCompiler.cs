@@ -723,7 +723,7 @@ internal sealed class LIRToILCompiler
                     continue;
             }
 
-            if (!TryCompileInstructionToIL(instruction, ilEncoder, allocation, methodDescriptor, buildArrayElementCounts, knownUserClassReceiverTypeHandles))
+            if (!TryCompileInstructionToIL(instruction, ilEncoder, allocation, methodDescriptor, buildArrayElementCounts, knownUserClassReceiverTypeHandles, labelMap))
             {
                 // Failed to compile instruction
                 IRPipelineMetrics.RecordFailureIfUnset($"IL compile failed: unsupported LIR instruction {instruction.GetType().Name}");
@@ -801,7 +801,8 @@ internal sealed class LIRToILCompiler
         TempLocalAllocation allocation,
         MethodDescriptor methodDescriptor,
         Dictionary<int, int> buildArrayElementCounts,
-        Dictionary<int, EntityHandle> knownUserClassReceiverTypeHandles)
+        Dictionary<int, EntityHandle> knownUserClassReceiverTypeHandles,
+        Dictionary<int, LabelHandle> labelMap)
     {
         switch (instruction)
         {
@@ -2633,6 +2634,158 @@ internal sealed class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Newobj);
                     ilEncoder.Token(ctorRef);
                     ilEncoder.StoreLocal(0); // Scope instance is always in local 0
+                    
+                    // For async functions with awaits, initialize the async state machine fields
+                    var asyncInfo = MethodBody.AsyncInfo;
+                    if (MethodBody.IsAsync && asyncInfo != null && asyncInfo.HasAwaits)
+                    {
+                        var scopeName = createScope.Scope.Name;
+                        
+                        // Initialize _deferred = Promise.withResolvers()
+                        ilEncoder.LoadLocal(0);
+                        var withResolversRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Promise),
+                            "withResolvers");
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(withResolversRef);
+                        EmitStoreFieldByName(ilEncoder, scopeName, "_deferred");
+                        
+                        // Initialize _moveNext = Closure.Bind(methodPtr, scopesArray)
+                        // This creates a bound closure that can be invoked to resume the state machine
+                        ilEncoder.LoadLocal(0);
+                        
+                        var callableId = MethodBody.CallableId;
+                        var reader = _serviceProvider.GetService<ICallableDeclarationReader>();
+                        if (callableId != null && reader != null && reader.TryGetDeclaredToken(callableId, out var token) && token.Kind == HandleKind.MethodDefinition)
+                        {
+                            var methodHandle = (MethodDefinitionHandle)token;
+                            
+                            // ldnull + ldftn method -> creates unbound delegate
+                            ilEncoder.OpCode(ILOpCode.Ldnull);
+                            ilEncoder.OpCode(ILOpCode.Ldftn);
+                            ilEncoder.Token(methodHandle);
+                            
+                            // ldarg.0 (scopes array)
+                            ilEncoder.LoadArgument(0);
+                            
+                            // call Closure.Bind(delegate, scopesArray)
+                            var bindRef = _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.Closure),
+                                "Bind",
+                                parameterTypes: new[] { typeof(object), typeof(object[]) });
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(bindRef);
+                        }
+                        else
+                        {
+                            // Fallback: null (will cause runtime error on continuation)
+                            ilEncoder.OpCode(ILOpCode.Ldnull);
+                        }
+                        EmitStoreFieldByName(ilEncoder, scopeName, "_moveNext");
+                    }
+                    break;
+                }
+            case LIRAwait awaitInstr:
+                {
+                    var asyncInfo = MethodBody.AsyncInfo;
+                    
+                    // Check if we need full state machine or MVP approach
+                    if (asyncInfo == null || !asyncInfo.HasAwaits)
+                    {
+                        // MVP await implementation: calls Promise.AwaitValue() helper
+                        // which handles already-resolved promises synchronously.
+                        // For pending promises, it throws NotSupportedException.
+                        
+                        // Load the awaited value
+                        EmitLoadTemp(awaitInstr.AwaitedValue, ilEncoder, allocation, methodDescriptor);
+                        
+                        // Call Promise.AwaitValue(awaited) -> returns the resolved value
+                        var awaitValueRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Promise),
+                            "AwaitValue",
+                            parameterTypes: new[] { typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(awaitValueRef);
+                        
+                        // Store result to the result temp
+                        EmitStoreTemp(awaitInstr.Result, ilEncoder, allocation);
+                    }
+                    else
+                    {
+                        // Full state machine implementation:
+                        // 1. Store state for resumption
+                        // 2. Call SetupAwaitContinuation to schedule .then() callbacks
+                        // 3. Load _deferred.promise and return
+                        // 4. Resume label (jumped to when continuation fires)
+                        // 5. Load awaited result from field
+
+                        var scopeName = MethodBody.LeafScopeId.Name;
+                        var resultFieldName = $"_awaited{awaitInstr.ResumeStateId}";
+                        
+                        // Get the resume label
+                        if (!labelMap.TryGetValue(awaitInstr.ResumeLabelId, out var resumeLabel))
+                        {
+                            resumeLabel = ilEncoder.DefineLabel();
+                            labelMap[awaitInstr.ResumeLabelId] = resumeLabel;
+                        }
+
+                        // --- Step 1: Store state for resumption ---
+                        // ldloc.0 (scope), ldc.i4 resumeStateId, stfld _asyncState
+                        ilEncoder.LoadLocal(0);
+                        ilEncoder.LoadConstantI4(awaitInstr.ResumeStateId);
+                        EmitStoreFieldByName(ilEncoder, scopeName, "_asyncState");
+
+                        // --- Step 2: Call SetupAwaitContinuation ---
+                        // Arguments: awaited, scope, scopesArray, resultFieldName, moveNext
+                        
+                        // arg1: awaited value
+                        EmitLoadTemp(awaitInstr.AwaitedValue, ilEncoder, allocation, methodDescriptor);
+                        
+                        // arg2: scope (ldloc.0)
+                        ilEncoder.LoadLocal(0);
+                        
+                        // arg3: scopesArray (ldarg.0, which is the scopes parameter)
+                        ilEncoder.LoadArgument(0);
+                        
+                        // arg4: resultFieldName
+                        ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString(resultFieldName));
+                        
+                        // arg5: moveNext (ldloc.0, ldfld _moveNext)
+                        ilEncoder.LoadLocal(0);
+                        EmitLoadFieldByName(ilEncoder, scopeName, "_moveNext");
+                        
+                        // call Promise.SetupAwaitContinuation
+                        var setupAwaitRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Promise),
+                            "SetupAwaitContinuation",
+                            parameterTypes: new[] { typeof(object), typeof(object), typeof(object[]), typeof(string), typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(setupAwaitRef);
+                        ilEncoder.OpCode(ILOpCode.Pop); // discard return value (null)
+
+                        // --- Step 3: Return _deferred.promise ---
+                        // ldloc.0, ldfld _deferred, callvirt get_promise, ret
+                        ilEncoder.LoadLocal(0);
+                        EmitLoadFieldByName(ilEncoder, scopeName, "_deferred");
+                        
+                        var getPromiseRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.PromiseWithResolvers),
+                            "get_promise");
+                        ilEncoder.OpCode(ILOpCode.Callvirt);
+                        ilEncoder.Token(getPromiseRef);
+                        ilEncoder.OpCode(ILOpCode.Ret);
+
+                        // --- Step 4: Resume label ---
+                        ilEncoder.MarkLabel(resumeLabel);
+
+                        // --- Step 5: Load awaited result from field ---
+                        // ldloc.0, ldfld _awaitedN
+                        ilEncoder.LoadLocal(0);
+                        EmitLoadFieldByName(ilEncoder, scopeName, resultFieldName);
+                        
+                        // Store to result temp
+                        EmitStoreTemp(awaitInstr.Result, ilEncoder, allocation);
+                    }
                     break;
                 }
             default:
@@ -4427,6 +4580,28 @@ internal sealed class LIRToILCompiler
                 $"Failed to resolve field handle for '{fieldName}' in scope '{scopeName}' during {context}.",
                 ex);
         }
+    }
+
+    /// <summary>
+    /// Emits IL to load a field by name from the scope instance (local 0).
+    /// Assumes the scope instance is already on the stack.
+    /// </summary>
+    private void EmitLoadFieldByName(InstructionEncoder ilEncoder, string scopeName, string fieldName)
+    {
+        var fieldHandle = _scopeMetadataRegistry.GetFieldHandle(scopeName, fieldName);
+        ilEncoder.OpCode(ILOpCode.Ldfld);
+        ilEncoder.Token(fieldHandle);
+    }
+
+    /// <summary>
+    /// Emits IL to store to a field by name on the scope instance.
+    /// Assumes the scope instance and value are on the stack (scope, value).
+    /// </summary>
+    private void EmitStoreFieldByName(InstructionEncoder ilEncoder, string scopeName, string fieldName)
+    {
+        var fieldHandle = _scopeMetadataRegistry.GetFieldHandle(scopeName, fieldName);
+        ilEncoder.OpCode(ILOpCode.Stfld);
+        ilEncoder.Token(fieldHandle);
     }
 
     #endregion

@@ -434,8 +434,8 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| async function (no await) | Partially Supported | `Js2IL.Tests/Async/JavaScript/Async_HelloWorld.js`<br>`Js2IL.Tests/Async/JavaScript/Async_ReturnValue.js` | Async functions without await expressions compile successfully. Return values are wrapped in Promise.resolve(). Full await expression support (state machine with suspension/resumption) is scaffolded but not yet functional. | 15.8.1 |
-| await expression | Not Supported |  | Await expressions are recognized by the parser and validator allows them within async functions, but IL emission for state machine suspension/resumption is not yet implemented. LIR instructions (LIRAwait, LIRAsyncInitialize, etc.) are scaffolded. | 15.8.1 |
+| async function (no await) | Supported | `Js2IL.Tests/Async/JavaScript/Async_HelloWorld.js`<br>`Js2IL.Tests/Async/JavaScript/Async_ReturnValue.js` | Async functions without await expressions compile successfully. Return values are wrapped in Promise.resolve(). | 15.8.1 |
+| await expression (already-resolved promises) | Partially Supported | `Js2IL.Tests/Async/JavaScript/Async_SimpleAwait.js` | MVP implementation: await on already-resolved promises works synchronously via Promise.AwaitValue() helper. Pending promises throw NotSupportedException. Full state machine support with suspension/resumption for real async operations is not yet implemented. | 15.8.1 |
 
 
 ## [The Math Object](https://tc39.es/ecma262/#sec-math-object)

@@ -64,6 +64,20 @@ public class Scope
     /// </summary>
     public bool ReferencesParentScopeVariables { get; set; }
 
+    /// <summary>
+    /// Indicates whether this is an async function scope.
+    /// Set during symbol table construction for function scopes.
+    /// Used by TypeGenerator to add async state fields (_asyncState, _deferred).
+    /// </summary>
+    public bool IsAsync { get; set; }
+
+    /// <summary>
+    /// The number of await expressions in this async function scope.
+    /// Set during symbol table construction for async function scopes.
+    /// Used by TypeGenerator to add awaited result fields (_awaited1, _awaited2, etc.).
+    /// </summary>
+    public int AwaitPointCount { get; set; }
+
     public Scope(string name, ScopeKind kind, Scope? parent, Node astNode)
     {
         Name = name;

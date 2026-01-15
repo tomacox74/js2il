@@ -1414,18 +1414,20 @@
               "features": [
                 {
                   "feature": "async function (no await)",
-                  "status": "Partially Supported",
+                  "status": "Supported",
                   "testScripts": [
                     "Js2IL.Tests/Async/JavaScript/Async_HelloWorld.js",
                     "Js2IL.Tests/Async/JavaScript/Async_ReturnValue.js"
                   ],
-                  "notes": "Async functions without await expressions compile successfully. Return values are wrapped in Promise.resolve(). Full await expression support (state machine with suspension/resumption) is scaffolded but not yet functional."
+                  "notes": "Async functions without await expressions compile successfully. Return values are wrapped in Promise.resolve()."
                 },
                 {
-                  "feature": "await expression",
-                  "status": "Not Supported",
-                  "testScripts": [],
-                  "notes": "Await expressions are recognized by the parser and validator allows them within async functions, but IL emission for state machine suspension/resumption is not yet implemented. LIR instructions (LIRAwait, LIRAsyncInitialize, etc.) are scaffolded."
+                  "feature": "await expression (already-resolved promises)",
+                  "status": "Partially Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Async/JavaScript/Async_SimpleAwait.js"
+                  ],
+                  "notes": "MVP implementation: await on already-resolved promises works synchronously via Promise.AwaitValue() helper. Pending promises throw NotSupportedException. Full state machine support with suspension/resumption for real async operations is not yet implemented."
                 }
               ]
             }

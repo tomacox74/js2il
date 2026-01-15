@@ -5,20 +5,23 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 ### Added
-- Basic async function support: async functions without await now compile and return Promises correctly.
-- `AsyncStateMachineInfo` infrastructure in IR for tracking await points and suspended variables.
-- LIR instructions for async state machine (`LIRAwait`, `LIRAsyncInitialize`, etc.) - scaffolding for full await support.
-- Validator now allows `async`/`await` syntax (previously rejected).
+- MVP `await` expression support for already-resolved promises via `Promise.AwaitValue()` runtime helper.
+- `_asyncState` (int) and `_deferred` (PromiseWithResolvers) fields on async function scope classes.
+- `LIRAwait` IL emission that calls `Promise.AwaitValue()` for synchronous value extraction.
+- `Scope.IsAsync` property to track async function scopes in symbol table.
+- Unit tests for `IsAsync` flag propagation in `SymbolTableBuilderTests`.
 
 ### Changed
-- `HIRToLIRLowerer.TryLower` now accepts `isAsync` parameter to enable async-specific lowering paths.
+- Async functions without await now marked as "Supported" (previously "Partially Supported").
+- `await` on already-resolved promises is now "Partially Supported" (works synchronously; pending promises throw).
 
 ### Tests
-- Added `Async_HelloWorld` and `Async_ReturnValue` execution/generator tests for async functions without await.
-- Updated validator tests to expect async/await to be valid syntax.
+- Enabled `Async_SimpleAwait` execution and generator tests.
+- Added verified snapshots for async function IL generation with await.
 
 ### Notes
-- Full `await` expression support (state machine with suspension/resumption) is scaffolded but not yet functional; tests for await remain skipped.
+- Full state machine support for pending promises (real async suspension/resumption) is not yet implemented.
+- `Async_RealSuspension_SetTimeout` test remains skipped pending full state machine implementation.
 
 ## v0.6.5 - 2026-01-14
 

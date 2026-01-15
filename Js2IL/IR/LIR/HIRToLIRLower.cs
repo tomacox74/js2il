@@ -282,7 +282,123 @@ public sealed class HIRToLIRLowerer
         return true; // All default parameters successfully lowered
     }
 
-    internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind callableKind, bool hasScopesParameter, Js2IL.Services.ClassRegistry? classRegistry, out MethodBodyIR? lirMethod, bool isAsync = false)
+    /// <summary>
+    /// Counts the number of await expressions in an HIR block.
+    /// Used to determine if an async function needs full state machine support.
+    /// </summary>
+    private static int CountAwaitExpressions(HIRBlock block)
+    {
+        int count = 0;
+        foreach (var statement in block.Statements)
+        {
+            count += CountAwaitExpressionsInStatement(statement);
+        }
+        return count;
+    }
+    
+    private static int CountAwaitExpressionsInStatement(HIRStatement statement)
+    {
+        int count = 0;
+        switch (statement)
+        {
+            case HIRExpressionStatement exprStmt:
+                count += CountAwaitExpressionsInExpression(exprStmt.Expression);
+                break;
+            case HIRVariableDeclaration varDecl:
+                if (varDecl.Initializer != null)
+                    count += CountAwaitExpressionsInExpression(varDecl.Initializer);
+                break;
+            case HIRReturnStatement returnStmt:
+                if (returnStmt.Expression != null)
+                    count += CountAwaitExpressionsInExpression(returnStmt.Expression);
+                break;
+            case HIRIfStatement ifStmt:
+                count += CountAwaitExpressionsInExpression(ifStmt.Test);
+                count += CountAwaitExpressionsInStatement(ifStmt.Consequent);
+                if (ifStmt.Alternate != null)
+                    count += CountAwaitExpressionsInStatement(ifStmt.Alternate);
+                break;
+            case HIRWhileStatement whileStmt:
+                count += CountAwaitExpressionsInExpression(whileStmt.Test);
+                count += CountAwaitExpressionsInStatement(whileStmt.Body);
+                break;
+            case HIRForStatement forStmt:
+                if (forStmt.Init != null)
+                    count += CountAwaitExpressionsInStatement(forStmt.Init);
+                if (forStmt.Test != null)
+                    count += CountAwaitExpressionsInExpression(forStmt.Test);
+                if (forStmt.Update != null)
+                    count += CountAwaitExpressionsInExpression(forStmt.Update);
+                count += CountAwaitExpressionsInStatement(forStmt.Body);
+                break;
+            case HIRTryStatement tryStmt:
+                count += CountAwaitExpressionsInStatement(tryStmt.TryBlock);
+                if (tryStmt.CatchBody != null)
+                    count += CountAwaitExpressionsInStatement(tryStmt.CatchBody);
+                if (tryStmt.FinallyBody != null)
+                    count += CountAwaitExpressionsInStatement(tryStmt.FinallyBody);
+                break;
+            case HIRBlock blockStmt:
+                count += CountAwaitExpressions(blockStmt);
+                break;
+            case HIRThrowStatement throwStmt:
+                count += CountAwaitExpressionsInExpression(throwStmt.Argument);
+                break;
+        }
+        return count;
+    }
+    
+    private static int CountAwaitExpressionsInExpression(HIRExpression expression)
+    {
+        int count = 0;
+        switch (expression)
+        {
+            case HIRAwaitExpression awaitExpr:
+                count = 1; // Found one!
+                count += CountAwaitExpressionsInExpression(awaitExpr.Argument);
+                break;
+            case HIRBinaryExpression binExpr:
+                count += CountAwaitExpressionsInExpression(binExpr.Left);
+                count += CountAwaitExpressionsInExpression(binExpr.Right);
+                break;
+            case HIRUnaryExpression unaryExpr:
+                count += CountAwaitExpressionsInExpression(unaryExpr.Argument);
+                break;
+            case HIRCallExpression callExpr:
+                count += CountAwaitExpressionsInExpression(callExpr.Callee);
+                foreach (var arg in callExpr.Arguments)
+                    count += CountAwaitExpressionsInExpression(arg);
+                break;
+            case HIRPropertyAccessExpression propAccessExpr:
+                count += CountAwaitExpressionsInExpression(propAccessExpr.Object);
+                break;
+            case HIRConditionalExpression condExpr:
+                count += CountAwaitExpressionsInExpression(condExpr.Test);
+                count += CountAwaitExpressionsInExpression(condExpr.Consequent);
+                count += CountAwaitExpressionsInExpression(condExpr.Alternate);
+                break;
+            case HIRArrayExpression arrayExpr:
+                foreach (var elem in arrayExpr.Elements)
+                    if (elem != null)
+                        count += CountAwaitExpressionsInExpression(elem);
+                break;
+            case HIRObjectExpression objExpr:
+                foreach (var prop in objExpr.Properties)
+                    count += CountAwaitExpressionsInExpression(prop.Value);
+                break;
+            case HIRAssignmentExpression assignExpr:
+                count += CountAwaitExpressionsInExpression(assignExpr.Value);
+                break;
+            case HIRNewExpression newExpr:
+                count += CountAwaitExpressionsInExpression(newExpr.Callee);
+                foreach (var arg in newExpr.Arguments)
+                    count += CountAwaitExpressionsInExpression(arg);
+                break;
+        }
+        return count;
+    }
+
+    internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind callableKind, bool hasScopesParameter, Js2IL.Services.ClassRegistry? classRegistry, out MethodBodyIR? lirMethod, bool isAsync = false, TwoPhase.CallableId? callableId = null)
     {
         lirMethod = null;
 
@@ -315,14 +431,41 @@ public sealed class HIRToLIRLowerer
             return false;
         }
 
+        // Set CallableId for async functions (needed to create self-referencing closure)
+        if (callableId != null)
+        {
+            lowerer._methodBodyIR.CallableId = callableId;
+        }
+
         // Initialize async state machine info if this is an async function
         if (isAsync)
         {
             lowerer._methodBodyIR.IsAsync = true;
             lowerer._methodBodyIR.AsyncInfo = new AsyncStateMachineInfo();
+            
+            // Pre-scan for await points to set up the state machine.
+            int awaitCount = CountAwaitExpressions(hirMethod.Body);
+            
+            // If there are await points, we need full state machine infrastructure
+            if (awaitCount > 0)
+            {
+                // TODO: Full state machine implementation requires:
+                // 1. State switch at function entry to dispatch to resume labels
+                // 2. Proper return handling to resolve _deferred on completion
+                // For now, use MVP approach that throws for pending promises.
+                // Once state switch is implemented, set HasAwaits = true.
+                lowerer._methodBodyIR.AsyncInfo.HasAwaits = false; // MVP: don't use full state machine yet
+                
+                // Reserve state IDs for each await point (they'll be assigned during lowering)
+                // State 0 = initial entry
+                // State 1, 2, ... = resume points after each await
+                // State -1 = completed
+            }
         }
 
         // Emit scope instance creation if there are leaf scope fields
+        // NOTE: This must come AFTER async info is initialized, because async functions
+        // with awaits need a scope instance even if there are no captured variables.
         lowerer.EmitScopeInstanceCreationIfNeeded();
         
         if (lowerer.TryLowerStatements(hirMethod.Body.Statements))
@@ -404,6 +547,17 @@ public sealed class HIRToLIRLowerer
         if (_scope != null
             && _scope.Kind == ScopeKind.Function
             && _scope.Children.Any(c => c.Kind == ScopeKind.Function || c.Kind == ScopeKind.Class)
+            && !_methodBodyIR.NeedsLeafScopeLocal)
+        {
+            EnsureLeafScopeInstance(new ScopeId(ScopeNaming.GetRegistryScopeName(_scope)));
+            return;
+        }
+
+        // Async functions with awaits need a scope instance for state machine fields
+        // (_asyncState, _deferred, _moveNext, _awaited*) even if there are no captured variables.
+        if (_scope != null
+            && _methodBodyIR.IsAsync
+            && _methodBodyIR.AsyncInfo?.HasAwaits == true
             && !_methodBodyIR.NeedsLeafScopeLocal)
         {
             EnsureLeafScopeInstance(new ScopeId(ScopeNaming.GetRegistryScopeName(_scope)));

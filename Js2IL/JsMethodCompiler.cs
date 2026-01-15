@@ -288,7 +288,7 @@ internal sealed class JsMethodCompiler
 
         var callableKind = callableKindOverride ?? inferredKind;
 
-        if (!TryLowerASTToLIR(bodyNode, scope, callableKind, hasScopesParameter, out var lirMethod))
+        if (!TryLowerASTToLIR(bodyNode, scope, callableKind, hasScopesParameter, out var lirMethod, callableId: callable))
         {
             return null;
         }
@@ -572,7 +572,7 @@ internal sealed class JsMethodCompiler
         });
     }
 
-    private bool TryLowerASTToLIR(Node node, Scope scope, ScopesCallableKind callableKind, bool hasScopesParameter, out MethodBodyIR? methodBody)
+    private bool TryLowerASTToLIR(Node node, Scope scope, ScopesCallableKind callableKind, bool hasScopesParameter, out MethodBodyIR? methodBody, CallableId? callableId = null)
     {
         methodBody = null;
 
@@ -592,7 +592,7 @@ internal sealed class JsMethodCompiler
         }
 
         var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
-        if (!HIRToLIRLowerer.TryLower(hirMethod!, scope, _scopeMetadataRegistry, callableKind, hasScopesParameter, classRegistry, out var lirMethod, isAsync: isAsyncCallable))
+        if (!HIRToLIRLowerer.TryLower(hirMethod!, scope, _scopeMetadataRegistry, callableKind, hasScopesParameter, classRegistry, out var lirMethod, isAsync: isAsyncCallable, callableId: callableId))
         {
             IR.IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR lowering failed for scope '{scope.GetQualifiedName()}' (kind={scope.Kind}) node={node.Type}");
             return false;

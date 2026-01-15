@@ -1,7 +1,15 @@
+using Js2IL.Services.TwoPhaseCompilation;
+
 namespace Js2IL.IR;
 
 public sealed class MethodBodyIR
 {
+    /// <summary>
+    /// The CallableId for this method, if available.
+    /// Used for async functions to create a self-referencing closure for state machine continuations.
+    /// </summary>
+    public CallableId? CallableId { get; set; }
+
     /// <summary>
     /// Whether this callable is an async function.
     /// When true, the callable is lowered to a state machine with entry method + MoveNext.

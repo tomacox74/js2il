@@ -26,6 +26,12 @@ public sealed class AsyncStateMachineInfo
     public List<string> SuspendedTemps { get; } = new();
 
     /// <summary>
+    /// Whether this async function has await expressions that require full state machine support.
+    /// When false, the async function just wraps its return value in Promise.resolve().
+    /// </summary>
+    public bool HasAwaits { get; set; }
+
+    /// <summary>
     /// The next state ID to assign to an await point.
     /// </summary>
     private int _nextStateId = 1;
