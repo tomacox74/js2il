@@ -243,6 +243,13 @@ public class JavaScriptAstValidator : IAstValidator
                 }
             }
 
+            // Validate for-await-of is not yet supported
+            if (node is ForOfStatement forOfStmt && forOfStmt.Await)
+            {
+                result.Errors.Add($"The 'for await...of' statement is not yet supported (line {node.Location.Start.Line}). Use Promise.all() with a regular for...of loop instead.");
+                result.IsValid = false;
+            }
+
             // Walk children
             var type = node.GetType();
             foreach (var prop in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))

@@ -184,6 +184,25 @@ public class ValidatorTests
         Assert.True(result.IsValid);
     }
 
+    [Fact]
+    public void Validate_ForAwaitOf_ReportsError()
+    {
+        var js = "async function f() { for await (const x of []) { console.log(x); } }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("for await...of"));
+    }
+
+    [Fact]
+    public void Validate_RegularForOf_IsValid()
+    {
+        var js = "async function f() { for (const x of [1,2,3]) { console.log(x); } }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+    }
+
     #endregion
 
     #region Unsupported Feature Validation Tests
