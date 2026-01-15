@@ -545,7 +545,7 @@ internal sealed class LIRToILCompiler
                 if (argsTempIndex >= 0
                     && argsTempIndex < shouldMaterialize.Length
                     && buildArrayElementCounts.TryGetValue(argsTempIndex, out var argCount)
-                    && classRegistryForMemberFastPath.TryResolveUniqueInstanceMethod(callMember.MethodName, argCount, out _, out _, out _, out _))
+                    && classRegistryForMemberFastPath.TryResolveUniqueInstanceMethod(callMember.MethodName, argCount, out _, out _, out _, out _, out _))
                 {
                     shouldMaterialize[argsTempIndex] = true;
                 }
@@ -2407,7 +2407,7 @@ internal sealed class LIRToILCompiler
                     var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
                     if (classRegistry != null
                         && buildArrayElementCounts.TryGetValue(callMember.ArgumentsArray.Index, out var argCount)
-                        && classRegistry.TryResolveUniqueInstanceMethod(callMember.MethodName, argCount, out _, out var receiverTypeHandle, out var directMethodHandle, out var maxParamCount))
+                        && classRegistry.TryResolveUniqueInstanceMethod(callMember.MethodName, argCount, out _, out var receiverTypeHandle, out var directMethodHandle, out var directReturnClrType, out var maxParamCount))
                     {
                         // If the receiver is already known to be of the resolved user-class type, we can
                         // emit the direct call without the `isinst` guard and runtime-dispatch fallback.
@@ -2444,6 +2444,19 @@ internal sealed class LIRToILCompiler
 
                             ilEncoder.OpCode(ILOpCode.Callvirt);
                             ilEncoder.Token(directMethodHandle);
+
+                            if (IsMaterialized(callMember.Result, allocation))
+                            {
+                                var resultStorage = GetTempStorage(callMember.Result);
+                                if (resultStorage.Kind == ValueStorageKind.Reference
+                                    && resultStorage.ClrType == typeof(object)
+                                    && directReturnClrType != typeof(object)
+                                    && directReturnClrType.IsValueType)
+                                {
+                                    ilEncoder.OpCode(ILOpCode.Box);
+                                    ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(directReturnClrType));
+                                }
+                            }
 
                             if (IsMaterialized(callMember.Result, allocation))
                             {
@@ -2486,6 +2499,19 @@ internal sealed class LIRToILCompiler
 
                         ilEncoder.OpCode(ILOpCode.Callvirt);
                         ilEncoder.Token(directMethodHandle);
+
+                        if (IsMaterialized(callMember.Result, allocation))
+                        {
+                            var resultStorage = GetTempStorage(callMember.Result);
+                            if (resultStorage.Kind == ValueStorageKind.Reference
+                                && resultStorage.ClrType == typeof(object)
+                                && directReturnClrType != typeof(object)
+                                && directReturnClrType.IsValueType)
+                            {
+                                ilEncoder.OpCode(ILOpCode.Box);
+                                ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(directReturnClrType));
+                            }
+                        }
 
                         if (IsMaterialized(callMember.Result, allocation))
                         {

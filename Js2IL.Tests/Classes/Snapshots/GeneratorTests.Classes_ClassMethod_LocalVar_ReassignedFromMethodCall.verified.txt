@@ -153,7 +153,7 @@
 	extends [System.Runtime]System.Object
 {
 	// Fields
-	.field public float64 'value'
+	.field public object 'value'
 
 	// Methods
 	.method public hidebysig specialname rtspecialname 
@@ -161,45 +161,41 @@
 	{
 		// Method begins at RVA 0x20b0
 		// Header size: 12
-		// Code size: 22 (0x16)
+		// Code size: 27 (0x1b)
 		.maxstack 32
 
 		IL_0000: ldarg.0
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: ldarg.0
 		IL_0007: ldc.r8 0.0
-		IL_0010: stfld float64 Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
-		IL_0015: ret
+		IL_0010: box [System.Runtime]System.Double
+		IL_0015: stfld object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
+		IL_001a: ret
 	} // end of method Counter::.ctor
 
 	.method public hidebysig 
 		instance object getNext () cil managed 
 	{
-		// Method begins at RVA 0x2168
+		// Method begins at RVA 0x216c
 		// Header size: 12
-		// Code size: 48 (0x30)
+		// Code size: 40 (0x28)
 		.maxstack 32
 		.locals init (
-			[0] float64,
-			[1] object
+			[0] object
 		)
 
 		IL_0000: ldarg.0
-		IL_0001: ldfld float64 Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
+		IL_0001: ldfld object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
 		IL_0006: ldc.r8 1
-		IL_000f: add
-		IL_0010: stloc.0
-		IL_0011: ldloc.0
-		IL_0012: box [System.Runtime]System.Double
-		IL_0017: stloc.1
-		IL_0018: ldarg.0
-		IL_0019: ldloc.1
-		IL_001a: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_001f: stfld float64 Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
-		IL_0024: ldarg.0
-		IL_0025: ldfld float64 Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
-		IL_002a: box [System.Runtime]System.Double
-		IL_002f: ret
+		IL_000f: box [System.Runtime]System.Double
+		IL_0014: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_0019: stloc.0
+		IL_001a: ldarg.0
+		IL_001b: ldloc.0
+		IL_001c: stfld object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
+		IL_0021: ldarg.0
+		IL_0022: ldfld object Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter::'value'
+		IL_0027: ret
 	} // end of method Counter::getNext
 
 } // end of class Classes.Classes_ClassMethod_LocalVar_ReassignedFromMethodCall.Counter
@@ -233,7 +229,7 @@
 	.method public hidebysig 
 		instance object compute () cil managed 
 	{
-		// Method begins at RVA 0x20d4
+		// Method begins at RVA 0x20d8
 		// Header size: 12
 		// Code size: 135 (0x87)
 		.maxstack 32
@@ -315,7 +311,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x21a4
+		// Method begins at RVA 0x21a0
 		// Header size: 12
 		// Code size: 86 (0x56)
 		.maxstack 32
@@ -374,7 +370,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2206
+		// Method begins at RVA 0x2202
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

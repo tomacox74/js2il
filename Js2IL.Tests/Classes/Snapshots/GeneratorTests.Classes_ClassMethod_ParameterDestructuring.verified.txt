@@ -232,19 +232,18 @@
 	} // end of method Calculator::.ctor
 
 	.method public hidebysig 
-		instance float64 'add' (
+		instance object 'add' (
 			object $p0
 		) cil managed 
 	{
 		// Method begins at RVA 0x20e0
 		// Header size: 12
-		// Code size: 74 (0x4a)
+		// Code size: 67 (0x43)
 		.maxstack 32
 		.locals init (
 			[0] object,
 			[1] object,
-			[2] object,
-			[3] float64
+			[2] object
 		)
 
 		IL_0000: ldarg.1
@@ -272,25 +271,23 @@
 		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 		IL_0040: stloc.2
 		IL_0041: ldloc.2
-		IL_0042: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0047: stloc.3
-		IL_0048: ldloc.3
-		IL_0049: ret
+		IL_0042: ret
 	} // end of method Calculator::'add'
 
 	.method public hidebysig 
-		instance float64 multiply (
+		instance object multiply (
 			object $p0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2138
+		// Method begins at RVA 0x2130
 		// Header size: 12
-		// Code size: 75 (0x4b)
+		// Code size: 82 (0x52)
 		.maxstack 32
 		.locals init (
 			[0] object,
 			[1] object,
-			[2] float64
+			[2] float64,
+			[3] object
 		)
 
 		IL_0000: ldarg.1
@@ -322,7 +319,10 @@
 		IL_0047: mul
 		IL_0048: stloc.2
 		IL_0049: ldloc.2
-		IL_004a: ret
+		IL_004a: box [System.Runtime]System.Double
+		IL_004f: stloc.3
+		IL_0050: ldloc.3
+		IL_0051: ret
 	} // end of method Calculator::multiply
 
 } // end of class Classes.Classes_ClassMethod_ParameterDestructuring.Calculator
@@ -656,7 +656,7 @@
 		IL_005a: ldloc.s 4
 		IL_005c: ldc.i4.0
 		IL_005d: ldelem.ref
-		IL_005e: callvirt instance float64 Classes.Classes_ClassMethod_ParameterDestructuring.Calculator::'add'(object)
+		IL_005e: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Calculator::'add'(object)
 		IL_0063: stloc.s 5
 		IL_0065: br IL_007a
 
@@ -701,7 +701,7 @@
 		IL_00de: ldloc.s 4
 		IL_00e0: ldc.i4.0
 		IL_00e1: ldelem.ref
-		IL_00e2: callvirt instance float64 Classes.Classes_ClassMethod_ParameterDestructuring.Calculator::multiply(object)
+		IL_00e2: callvirt instance object Classes.Classes_ClassMethod_ParameterDestructuring.Calculator::multiply(object)
 		IL_00e7: stloc.s 5
 		IL_00e9: br IL_00fe
 

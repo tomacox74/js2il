@@ -118,15 +118,16 @@
 	} // end of method Subber::.ctor
 
 	.method public hidebysig 
-		instance float64 'sub' () cil managed 
+		instance object 'sub' () cil managed 
 	{
 		// Method begins at RVA 0x2098
 		// Header size: 12
-		// Code size: 30 (0x1e)
+		// Code size: 37 (0x25)
 		.maxstack 32
 		.locals init (
 			[0] float64,
-			[1] float64
+			[1] float64,
+			[2] object
 		)
 
 		IL_0000: ldarg.0
@@ -142,7 +143,10 @@
 		IL_001a: sub
 		IL_001b: stloc.1
 		IL_001c: ldloc.1
-		IL_001d: ret
+		IL_001d: box [System.Runtime]System.Double
+		IL_0022: stloc.2
+		IL_0023: ldloc.2
+		IL_0024: ret
 	} // end of method Subber::'sub'
 
 } // end of class Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber
@@ -160,7 +164,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20c4
+		// Method begins at RVA 0x20cc
 		// Header size: 12
 		// Code size: 193 (0xc1)
 		.maxstack 32
@@ -192,7 +196,7 @@
 		IL_0045: dup
 		IL_0046: brfalse IL_0057
 
-		IL_004b: callvirt instance float64 Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber::'sub'()
+		IL_004b: callvirt instance object Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber::'sub'()
 		IL_0050: stloc.s 4
 		IL_0052: br IL_0066
 
@@ -220,7 +224,7 @@
 		IL_0089: dup
 		IL_008a: brfalse IL_009b
 
-		IL_008f: callvirt instance float64 Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber::'sub'()
+		IL_008f: callvirt instance object Classes.Classes_ClassConstructor_TwoParams_SubtractMethod.Subber::'sub'()
 		IL_0094: stloc.s 4
 		IL_0096: br IL_00aa
 
@@ -252,7 +256,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2191
+		// Method begins at RVA 0x2199
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

@@ -118,15 +118,14 @@
 	} // end of method Adder::.ctor
 
 	.method public hidebysig 
-		instance float64 'add' () cil managed 
+		instance object 'add' () cil managed 
 	{
 		// Method begins at RVA 0x2098
 		// Header size: 12
-		// Code size: 27 (0x1b)
+		// Code size: 20 (0x14)
 		.maxstack 32
 		.locals init (
-			[0] object,
-			[1] float64
+			[0] object
 		)
 
 		IL_0000: ldarg.0
@@ -136,10 +135,7 @@
 		IL_000c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 		IL_0011: stloc.0
 		IL_0012: ldloc.0
-		IL_0013: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_0018: stloc.1
-		IL_0019: ldloc.1
-		IL_001a: ret
+		IL_0013: ret
 	} // end of method Adder::'add'
 
 } // end of class Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder
@@ -157,7 +153,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20c0
+		// Method begins at RVA 0x20b8
 		// Header size: 12
 		// Code size: 193 (0xc1)
 		.maxstack 32
@@ -189,7 +185,7 @@
 		IL_0045: dup
 		IL_0046: brfalse IL_0057
 
-		IL_004b: callvirt instance float64 Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder::'add'()
+		IL_004b: callvirt instance object Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder::'add'()
 		IL_0050: stloc.s 4
 		IL_0052: br IL_0066
 
@@ -217,7 +213,7 @@
 		IL_0089: dup
 		IL_008a: brfalse IL_009b
 
-		IL_008f: callvirt instance float64 Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder::'add'()
+		IL_008f: callvirt instance object Classes.Classes_ClassConstructor_TwoParams_AddMethod.Adder::'add'()
 		IL_0094: stloc.s 4
 		IL_0096: br IL_00aa
 
@@ -249,7 +245,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x218d
+		// Method begins at RVA 0x2185
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

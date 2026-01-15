@@ -1345,7 +1345,7 @@
 	{
 		// Method begins at RVA 0x292c
 		// Header size: 12
-		// Code size: 125 (0x7d)
+		// Code size: 130 (0x82)
 		.maxstack 32
 		.locals init (
 			[0] float64,
@@ -1365,7 +1365,7 @@
 			IL_0015: ldarg.0
 			IL_0016: ldfld float64 Classes.Compile_Performance_PrimeJavaScript.PrimeSieve::sieveSizeInBits
 			IL_001b: clt
-			IL_001d: brfalse IL_0074
+			IL_001d: brfalse IL_0079
 
 			IL_0022: ldloc.1
 			IL_0023: box [System.Runtime]System.Double
@@ -1383,32 +1383,33 @@
 			IL_003b: ldc.i4.0
 			IL_003c: ldelem.ref
 			IL_003d: callvirt instance float64 Classes.Compile_Performance_PrimeJavaScript.BitArray::testBitTrue(object)
-			IL_0042: stloc.s 4
-			IL_0044: ldloc.s 4
-			IL_0046: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_004b: ldc.i4.0
-			IL_004c: ceq
-			IL_004e: stloc.s 5
-			IL_0050: ldloc.s 5
-			IL_0052: brfalse IL_0063
+			IL_0042: box [System.Runtime]System.Double
+			IL_0047: stloc.s 4
+			IL_0049: ldloc.s 4
+			IL_004b: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0050: ldc.i4.0
+			IL_0051: ceq
+			IL_0053: stloc.s 5
+			IL_0055: ldloc.s 5
+			IL_0057: brfalse IL_0068
 
-			IL_0057: ldloc.0
-			IL_0058: ldc.r8 1
-			IL_0061: add
-			IL_0062: stloc.0
+			IL_005c: ldloc.0
+			IL_005d: ldc.r8 1
+			IL_0066: add
+			IL_0067: stloc.0
 
-			IL_0063: ldloc.1
-			IL_0064: ldc.r8 1
-			IL_006d: add
-			IL_006e: stloc.1
-			IL_006f: br IL_0014
+			IL_0068: ldloc.1
+			IL_0069: ldc.r8 1
+			IL_0072: add
+			IL_0073: stloc.1
+			IL_0074: br IL_0014
 		// end loop
 
-		IL_0074: ldloc.0
-		IL_0075: box [System.Runtime]System.Double
-		IL_007a: stloc.2
-		IL_007b: ldloc.2
-		IL_007c: ret
+		IL_0079: ldloc.0
+		IL_007a: box [System.Runtime]System.Double
+		IL_007f: stloc.2
+		IL_0080: ldloc.2
+		IL_0081: ret
 	} // end of method PrimeSieve::countPrimes
 
 	.method public hidebysig 
@@ -1416,9 +1417,9 @@
 			object max
 		) cil managed 
 	{
-		// Method begins at RVA 0x29b8
+		// Method begins at RVA 0x29bc
 		// Header size: 12
-		// Code size: 240 (0xf0)
+		// Code size: 245 (0xf5)
 		.maxstack 32
 		.locals init (
 			[0] object,
@@ -1454,7 +1455,7 @@
 			IL_0046: ldarg.0
 			IL_0047: ldfld float64 Classes.Compile_Performance_PrimeJavaScript.PrimeSieve::sieveSizeInBits
 			IL_004c: clt
-			IL_004e: brfalse IL_00ee
+			IL_004e: brfalse IL_00f3
 
 			IL_0053: ldloc.2
 			IL_0054: ldarg.1
@@ -1464,7 +1465,7 @@
 			IL_005d: ceq
 			IL_005f: brfalse IL_0069
 
-			IL_0064: br IL_00ee
+			IL_0064: br IL_00f3
 
 			IL_0069: ldloc.1
 			IL_006a: box [System.Runtime]System.Double
@@ -1482,48 +1483,49 @@
 			IL_0084: ldc.i4.0
 			IL_0085: ldelem.ref
 			IL_0086: callvirt instance float64 Classes.Compile_Performance_PrimeJavaScript.BitArray::testBitTrue(object)
-			IL_008b: stloc.s 5
-			IL_008d: ldloc.s 5
-			IL_008f: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-			IL_0094: ldc.i4.0
-			IL_0095: ceq
-			IL_0097: stloc.s 6
-			IL_0099: ldloc.s 6
-			IL_009b: brfalse IL_00dd
+			IL_008b: box [System.Runtime]System.Double
+			IL_0090: stloc.s 5
+			IL_0092: ldloc.s 5
+			IL_0094: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+			IL_0099: ldc.i4.0
+			IL_009a: ceq
+			IL_009c: stloc.s 6
+			IL_009e: ldloc.s 6
+			IL_00a0: brfalse IL_00e2
 
-			IL_00a0: ldloc.1
-			IL_00a1: ldc.r8 2
-			IL_00aa: mul
-			IL_00ab: stloc.s 7
-			IL_00ad: ldloc.s 7
-			IL_00af: ldc.r8 1
-			IL_00b8: add
-			IL_00b9: stloc.s 7
-			IL_00bb: ldloc.s 7
-			IL_00bd: box [System.Runtime]System.Double
-			IL_00c2: stloc.3
-			IL_00c3: ldloc.0
-			IL_00c4: ldc.i4.1
-			IL_00c5: newarr [System.Runtime]System.Object
-			IL_00ca: dup
-			IL_00cb: ldc.i4.0
-			IL_00cc: ldloc.3
-			IL_00cd: stelem.ref
-			IL_00ce: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
-			IL_00d3: stloc.s 5
-			IL_00d5: ldloc.s 5
-			IL_00d7: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00dc: stloc.2
+			IL_00a5: ldloc.1
+			IL_00a6: ldc.r8 2
+			IL_00af: mul
+			IL_00b0: stloc.s 7
+			IL_00b2: ldloc.s 7
+			IL_00b4: ldc.r8 1
+			IL_00bd: add
+			IL_00be: stloc.s 7
+			IL_00c0: ldloc.s 7
+			IL_00c2: box [System.Runtime]System.Double
+			IL_00c7: stloc.3
+			IL_00c8: ldloc.0
+			IL_00c9: ldc.i4.1
+			IL_00ca: newarr [System.Runtime]System.Object
+			IL_00cf: dup
+			IL_00d0: ldc.i4.0
+			IL_00d1: ldloc.3
+			IL_00d2: stelem.ref
+			IL_00d3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
+			IL_00d8: stloc.s 5
+			IL_00da: ldloc.s 5
+			IL_00dc: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00e1: stloc.2
 
-			IL_00dd: ldloc.1
-			IL_00de: ldc.r8 1
-			IL_00e7: add
-			IL_00e8: stloc.1
-			IL_00e9: br IL_0045
+			IL_00e2: ldloc.1
+			IL_00e3: ldc.r8 1
+			IL_00ec: add
+			IL_00ed: stloc.1
+			IL_00ee: br IL_0045
 		// end loop
 
-		IL_00ee: ldloc.0
-		IL_00ef: ret
+		IL_00f3: ldloc.0
+		IL_00f4: ret
 	} // end of method PrimeSieve::getPrimes
 
 	.method public hidebysig 
@@ -1768,7 +1770,7 @@
 			object $p0
 		) cil managed 
 	{
-		// Method begins at RVA 0x2ab4
+		// Method begins at RVA 0x2ac0
 		// Header size: 12
 		// Code size: 527 (0x20f)
 		.maxstack 32
@@ -2014,7 +2016,7 @@
 			object timeLimitSeconds
 		) cil managed 
 	{
-		// Method begins at RVA 0x2cd0
+		// Method begins at RVA 0x2cdc
 		// Header size: 12
 		// Code size: 258 (0x102)
 		.maxstack 32
@@ -2148,7 +2150,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2de0
+		// Method begins at RVA 0x2dec
 		// Header size: 12
 		// Code size: 489 (0x1e9)
 		.maxstack 32
@@ -2335,7 +2337,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2fd5
+		// Method begins at RVA 0x2fe1
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

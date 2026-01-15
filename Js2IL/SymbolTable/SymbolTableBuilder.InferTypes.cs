@@ -612,6 +612,9 @@ public partial class SymbolTableBuilder
                 return typeof(string);
             case BooleanLiteral:
                 return typeof(bool);
+            case NullLiteral:
+                // Treat JavaScript `null` as a distinct known value.
+                return typeof(JavaScriptRuntime.JsNull);
             case NonLogicalBinaryExpression binExpr:
             {
 
@@ -659,13 +662,10 @@ public partial class SymbolTableBuilder
             return typeof(string);
         }
 
-        // Treat C# null as JavaScript null/undefined for inference purposes.
-        // For the supported primitive set (number, boolean, null/undefined):
-        // - If either operand is number, boolean or null/undefined, the result is a number.
-        // - Boolean coerces to number (true -> 1, false -> 0).
-        // - null/undefined coerces to number (null -> 0, undefined -> NaN) but the result type is still Number.
-        bool LeftIsSupportedNumberLike = leftType == typeof(double) || leftType == typeof(bool) || leftType == null;
-        bool RightIsSupportedNumberLike = rightType == typeof(double) || rightType == typeof(bool) || rightType == null;
+        // Only infer numeric `+` when we can prove both sides are number-like.
+        // IMPORTANT: `null` here means "unknown/uninferred", not JavaScript null/undefined.
+        bool LeftIsSupportedNumberLike = leftType == typeof(double) || leftType == typeof(bool) || leftType == typeof(JavaScriptRuntime.JsNull);
+        bool RightIsSupportedNumberLike = rightType == typeof(double) || rightType == typeof(bool) || rightType == typeof(JavaScriptRuntime.JsNull);
 
         if (LeftIsSupportedNumberLike && RightIsSupportedNumberLike)
         {
@@ -682,10 +682,10 @@ public partial class SymbolTableBuilder
         var leftType = InferExpressionClrType(binaryExpression.Left);
         var rightType = InferExpressionClrType(binaryExpression.Right);
 
-        // For the supported primitive set (number, boolean, null/undefined):
-        // numeric operators always coerce to Number.
-        bool leftIsSupportedNumberLike = leftType == typeof(double) || leftType == typeof(bool) || leftType == null;
-        bool rightIsSupportedNumberLike = rightType == typeof(double) || rightType == typeof(bool) || rightType == null;
+        // Only infer numeric operators when we can prove both sides are number-like.
+        // IMPORTANT: `null` here means "unknown/uninferred", not JavaScript null/undefined.
+        bool leftIsSupportedNumberLike = leftType == typeof(double) || leftType == typeof(bool) || leftType == typeof(JavaScriptRuntime.JsNull);
+        bool rightIsSupportedNumberLike = rightType == typeof(double) || rightType == typeof(bool) || rightType == typeof(JavaScriptRuntime.JsNull);
 
         if (leftIsSupportedNumberLike && rightIsSupportedNumberLike)
         {

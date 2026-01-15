@@ -328,11 +328,13 @@ namespace Js2IL.Services
             out string registryClassName,
             out TypeDefinitionHandle typeHandle,
             out MethodDefinitionHandle methodHandle,
+            out Type returnClrType,
             out int maxParamCount)
         {
             registryClassName = string.Empty;
             typeHandle = default;
             methodHandle = default;
+            returnClrType = typeof(object);
             maxParamCount = 0;
 
             if (string.IsNullOrEmpty(methodName))
@@ -343,6 +345,7 @@ namespace Js2IL.Services
             string? matchClass = null;
             MethodDefinitionHandle matchMethod = default;
             int matchMaxParams = 0;
+            Type matchReturnClrType = typeof(object);
 
             foreach (var kvp in _methods)
             {
@@ -369,6 +372,7 @@ namespace Js2IL.Services
                 matchClass = className;
                 matchMethod = info.Method;
                 matchMaxParams = info.MaxParamCount;
+                matchReturnClrType = info.ReturnClrType;
             }
 
             if (matchClass == null)
@@ -384,6 +388,7 @@ namespace Js2IL.Services
             registryClassName = matchClass;
             typeHandle = resolvedType;
             methodHandle = matchMethod;
+            returnClrType = matchReturnClrType;
             maxParamCount = matchMaxParams;
             return true;
         }
