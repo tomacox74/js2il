@@ -28,7 +28,7 @@ public class SymbolTableTypeInferenceTests
     [InlineData(typeof(double), "42")]
     [InlineData(typeof(string), "'hello'")]
     [InlineData(typeof(bool), "true")]
-    [InlineData(null, "null")]
+    [InlineData(typeof(JavaScriptRuntime.JsNull), "null")]
     [InlineData(null, "")]
     [InlineData(typeof(double), "1 + 2")]
     [InlineData(typeof(string), "'1' + '2'")]

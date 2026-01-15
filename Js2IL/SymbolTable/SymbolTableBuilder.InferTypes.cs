@@ -483,6 +483,86 @@ public partial class SymbolTableBuilder
             return JavaScriptRuntime.IntrinsicObjectRegistry.Get(calleeId.Name);
         }
 
+        Type? InferClassFieldExpressionClrType(Node expr)
+        {
+            switch (expr)
+            {
+                case NumericLiteral:
+                    return typeof(double);
+                case StringLiteral:
+                    return typeof(string);
+                case BooleanLiteral:
+                    return typeof(bool);
+                case NullLiteral:
+                    return typeof(JavaScriptRuntime.JsNull);
+                case MemberExpression me when me.Object is ThisExpression && !me.Computed:
+                {
+                    var name = me.Property switch
+                    {
+                        Identifier id => id.Name,
+                        PrivateIdentifier pid => pid.Name,
+                        _ => null
+                    };
+
+                    if (name != null && proposedClr.TryGetValue(name, out var existingType))
+                    {
+                        return existingType;
+                    }
+
+                    return null;
+                }
+                case NonLogicalBinaryExpression binExpr:
+                {
+                    var leftType = InferClassFieldExpressionClrType(binExpr.Left);
+                    var rightType = InferClassFieldExpressionClrType(binExpr.Right);
+
+                    switch (binExpr.Operator)
+                    {
+                        case Operator.Addition:
+                        {
+                            if (leftType == typeof(string) || rightType == typeof(string))
+                            {
+                                return typeof(string);
+                            }
+
+                            bool leftIsSupportedNumberLike = leftType == typeof(double) || leftType == typeof(bool) || leftType == typeof(JavaScriptRuntime.JsNull);
+                            bool rightIsSupportedNumberLike = rightType == typeof(double) || rightType == typeof(bool) || rightType == typeof(JavaScriptRuntime.JsNull);
+
+                            return (leftIsSupportedNumberLike && rightIsSupportedNumberLike) ? typeof(double) : null;
+                        }
+                        case Operator.Subtraction:
+                        case Operator.Multiplication:
+                        case Operator.Division:
+                        {
+                            bool leftIsSupportedNumberLike = leftType == typeof(double) || leftType == typeof(bool) || leftType == typeof(JavaScriptRuntime.JsNull);
+                            bool rightIsSupportedNumberLike = rightType == typeof(double) || rightType == typeof(bool) || rightType == typeof(JavaScriptRuntime.JsNull);
+                            return (leftIsSupportedNumberLike && rightIsSupportedNumberLike) ? typeof(double) : null;
+                        }
+                        case Operator.BitwiseAnd:
+                        case Operator.BitwiseOr:
+                        case Operator.BitwiseXor:
+                        case Operator.LeftShift:
+                        case Operator.RightShift:
+                        case Operator.UnsignedRightShift:
+                            return typeof(double);
+                    }
+
+                    return null;
+                }
+                case NonUpdateUnaryExpression unaryExpr:
+                {
+                    if (unaryExpr.Operator == Operator.BitwiseNot)
+                    {
+                        return typeof(double);
+                    }
+
+                    return null;
+                }
+            }
+
+            return null;
+        }
+
         // Include class field initializers: `field = <expr>`.
         foreach (var pdef in classDecl.Body.Body.Where(n => n is PropertyDefinition).Cast<PropertyDefinition>())
         {
@@ -545,7 +625,7 @@ public partial class SymbolTableBuilder
                     else
                     {
                         var intrinsicClr = TryInferNewExpressionIntrinsicClrType(assign.Right);
-                        ProposeClr(propName, intrinsicClr ?? InferExpressionClrType(assign.Right));
+                        ProposeClr(propName, intrinsicClr ?? InferClassFieldExpressionClrType(assign.Right));
                     }
                 }
             }
