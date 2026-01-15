@@ -15,10 +15,10 @@ namespace Js2IL.Tests.Async
         [Fact]
         public Task Async_SimpleAwait() { var testName = nameof(Async_SimpleAwait); return ExecutionTest(testName); }
 
-        [Fact(Skip = "Arrow function parameter scope issue")]
+        [Fact]
         public Task Async_PendingPromiseAwait() { var testName = nameof(Async_PendingPromiseAwait); return ExecutionTest(testName); }
 
-        [Fact(Skip = "await not fully implemented yet")]
+        [Fact]
         public Task Async_RealSuspension_SetTimeout() { var testName = nameof(Async_RealSuspension_SetTimeout); return ExecutionTest(testName); }
     }
 }

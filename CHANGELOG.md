@@ -21,10 +21,11 @@ All notable changes to this project are documented here.
 ### Fixed
 - Scope persistence for async function resumption using `isinst` check to distinguish initial vs resume calls.
 - Delegate creation for `_moveNext`: properly uses `newobj Func<>` after `ldftn`.
+- **Nested scope registry naming**: `ScopeNaming.GetRegistryScopeName()` now uses `scope.GetQualifiedName()` instead of `scope.Name`, fixing scope lookup for nested arrow functions and other nested callables. This was causing "scope not found in registry" errors when compiling arrow functions nested inside other functions.
 
 ### Tests
-- All async tests pass (Async_HelloWorld, Async_ReturnValue, Async_SimpleAwait).
-- `Async_PendingPromiseAwait` and `Async_RealSuspension_SetTimeout` remain skipped (blocked by separate arrow function parameter scope issue, not async-specific).
+- All async tests now pass including `Async_PendingPromiseAwait` and `Async_RealSuspension_SetTimeout`.
+- Async tests increased from 6 to 10 (unskipped 4 tests).
 
 ## v0.6.5 - 2026-01-14
 
