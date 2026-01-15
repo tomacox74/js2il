@@ -46,6 +46,12 @@ sealed record MethodDescriptor
     public bool ReturnsVoid { get; set; } = false;
 
     /// <summary>
+    /// CLR return type for the emitted method signature when <see cref="ReturnsVoid"/> is false.
+    /// Defaults to <see cref="object"/> (JavaScript value).
+    /// </summary>
+    public Type ReturnClrType { get; set; } = typeof(object);
+
+    /// <summary>
     /// Only class instance methods are not static currently, so we default to static.
     /// </summary>
     public bool IsStatic {get; set; } = true;
@@ -314,6 +320,12 @@ internal sealed class JsMethodCompiler
             IsStatic = !isInstanceMethod,
             HasScopesParameter = hasScopesParameter,
             ReturnsVoid = returnsVoid,
+            ReturnClrType = returnsVoid
+                ? typeof(void)
+                : (((scope.Kind == ScopeKind.Function && scope.Parent?.Kind == ScopeKind.Class)
+                        ? scope.StableReturnClrType
+                        : null)
+                    ?? typeof(object)),
             ScopesFieldHandle = scopesFieldHandle,
             IsConstructor = callableKind == ScopesCallableKind.Constructor
         };

@@ -257,6 +257,14 @@ namespace JavaScriptRuntime
         /// <summary>
         /// Tests if a value is truthy according to JavaScript semantics.
         /// </summary>
+        public static bool IsTruthy(double value)
+        {
+            // JavaScript uses IEEE 754 semantics: 0, -0, and NaN are falsy
+            return value != 0 && !double.IsNaN(value);
+        }
+
+        public static bool IsTruthy(bool value) => value;
+
         public static bool IsTruthy(object? value)
         {
             if (value == null)

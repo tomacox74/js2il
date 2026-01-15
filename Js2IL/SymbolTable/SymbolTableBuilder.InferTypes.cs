@@ -20,6 +20,151 @@ public partial class SymbolTableBuilder
         InferClassInstanceFieldClrTypesRecursively(scope);
     }
 
+    private void InferCallableReturnClrTypes(Scope scope)
+    {
+        InferCallableReturnClrTypesRecursively(scope);
+    }
+
+    private void InferCallableReturnClrTypesRecursively(Scope scope)
+    {
+        // Very conservative: only infer stable return types when we can trivially prove
+        // a single stable primitive return (bool/double) with no control-flow ambiguity.
+        if (scope.Kind == ScopeKind.Function)
+        {
+            scope.StableReturnClrType = InferStableReturnClrTypeForCallableScope(scope);
+        }
+
+        foreach (var child in scope.Children)
+        {
+            InferCallableReturnClrTypesRecursively(child);
+        }
+    }
+
+    private Type? InferStableReturnClrTypeForCallableScope(Scope callableScope)
+    {
+        // Ignore class constructors.
+        if (callableScope.Parent?.Kind == ScopeKind.Class &&
+            string.Equals(callableScope.Name, "constructor", StringComparison.Ordinal))
+        {
+            return null;
+        }
+
+        if (callableScope.AstNode is FunctionExpression funcExpr)
+        {
+            if (funcExpr.Body is not BlockStatement body)
+            {
+                return null;
+            }
+
+            return InferStableReturnClrTypeFromBlockBody(funcExpr, body);
+        }
+
+        if (callableScope.AstNode is FunctionDeclaration funcDecl)
+        {
+            if (funcDecl.Body is not BlockStatement body)
+            {
+                return null;
+            }
+
+            return InferStableReturnClrTypeFromBlockBody(funcDecl, body);
+        }
+
+        if (callableScope.AstNode is ArrowFunctionExpression arrowExpr)
+        {
+            // Expression-bodied arrows are an implicit return.
+            if (arrowExpr.Body is not BlockStatement body)
+            {
+                var inferredExpr = InferExpressionClrType(arrowExpr.Body);
+                return inferredExpr == typeof(double) || inferredExpr == typeof(bool)
+                    ? inferredExpr
+                    : null;
+            }
+
+            return InferStableReturnClrTypeFromBlockBody(arrowExpr, body);
+        }
+
+        return null;
+    }
+
+    private Type? InferStableReturnClrTypeFromBlockBody(Node functionBoundaryNode, BlockStatement body)
+    {
+        // Bail out on try/finally/catch: return epilogues in lowering are currently object-typed.
+        bool hasTry = false;
+        var returns = new List<ReturnStatement>();
+
+        void Walk(Node? node)
+        {
+            if (node == null || hasTry)
+            {
+                return;
+            }
+
+            // Do not traverse into nested function boundaries.
+            if (node is FunctionDeclaration or FunctionExpression or ArrowFunctionExpression)
+            {
+                if (!ReferenceEquals(node, functionBoundaryNode))
+                {
+                    return;
+                }
+            }
+
+            if (node is TryStatement)
+            {
+                hasTry = true;
+                return;
+            }
+
+            if (node is ReturnStatement rs)
+            {
+                returns.Add(rs);
+                return;
+            }
+
+            foreach (var child in node.ChildNodes)
+            {
+                Walk(child);
+                if (hasTry) return;
+            }
+        }
+
+        Walk(body);
+
+        if (hasTry)
+        {
+            return null;
+        }
+
+        // Require exactly one return statement.
+        if (returns.Count != 1)
+        {
+            return null;
+        }
+
+        var onlyReturn = returns[0];
+        if (onlyReturn.Argument == null)
+        {
+            return null;
+        }
+
+        // Require the return to be the final *top-level* statement.
+        // If the return is nested (if/loop), control-flow analysis is required; we don't do that here.
+        if (body.Body.Count == 0 || !ReferenceEquals(body.Body.Last(), onlyReturn))
+        {
+            return null;
+        }
+
+        var inferred = InferExpressionClrType(onlyReturn.Argument);
+
+        // Only allow a small, well-understood value-like primitive set.
+        // (String return typing needs additional lowering guarantees; keep it disabled for now.)
+        if (inferred == typeof(double) || inferred == typeof(bool))
+        {
+            return inferred;
+        }
+
+        return null;
+    }
+
     void InferVariableClrTypesForScope(Scope scope)
     {
         // these are temporary gates as we slowing roll out type inference
@@ -474,6 +619,10 @@ public partial class SymbolTableBuilder
                 {
                     case Operator.Addition:
                         return InferAddOperatorType(binExpr);
+                    case Operator.Subtraction:
+                    case Operator.Multiplication:
+                    case Operator.Division:
+                        return InferNumericBinaryOperatorType(binExpr);
                     case Operator.BitwiseAnd:
                     case Operator.BitwiseOr:
                     case Operator.BitwiseXor:
@@ -525,6 +674,24 @@ public partial class SymbolTableBuilder
 
         // If we get here, at least one side is an unsupported/unknown non-string type
         // (e.g. Object, Symbol, BigInt or some other Type) - we don't infer the result.
+        return null;
+    }
+
+    Type? InferNumericBinaryOperatorType(NonLogicalBinaryExpression binaryExpression)
+    {
+        var leftType = InferExpressionClrType(binaryExpression.Left);
+        var rightType = InferExpressionClrType(binaryExpression.Right);
+
+        // For the supported primitive set (number, boolean, null/undefined):
+        // numeric operators always coerce to Number.
+        bool leftIsSupportedNumberLike = leftType == typeof(double) || leftType == typeof(bool) || leftType == null;
+        bool rightIsSupportedNumberLike = rightType == typeof(double) || rightType == typeof(bool) || rightType == null;
+
+        if (leftIsSupportedNumberLike && rightIsSupportedNumberLike)
+        {
+            return typeof(double);
+        }
+
         return null;
     }
 }

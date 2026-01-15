@@ -472,6 +472,24 @@ namespace Js2IL.Services.ILGenerators
                 var jsParamCount = funcExpr?.Params.Count ?? 0;
                 var minParams = funcExpr != null ? CountRequiredParameters(funcExpr.Params) : 0;
 
+                // Determine an inferred stable return type (if any) from the method scope.
+                // This is conservative and may be null; default ABI remains object.
+                Type returnClrType = typeof(object);
+                if (funcExpr != null)
+                {
+                    Scope? methodScope = null;
+                    foreach (var child in classScope.Children)
+                    {
+                        if (child.Kind == ScopeKind.Function && ReferenceEquals(child.AstNode, funcExpr))
+                        {
+                            methodScope = child;
+                            break;
+                        }
+                    }
+
+                    returnClrType = methodScope?.StableReturnClrType ?? typeof(object);
+                }
+
                 var clrName = member.Kind switch
                 {
                     PropertyKind.Get => $"get_{memberName}",
@@ -484,13 +502,15 @@ namespace Js2IL.Services.ILGenerators
                     isInstance: true,
                     paramCount: jsParamCount,
                     hasScopesParam: false,
-                    returnsVoid: false);
+                    returnsVoid: false,
+                    returnClrType: returnClrType);
 
                 _classRegistry.RegisterMethod(
                     registryClassName,
                     clrName,
                     (MethodDefinitionHandle)methodToken,
                     sig,
+                    returnClrType,
                     minParams,
                     jsParamCount);
             }

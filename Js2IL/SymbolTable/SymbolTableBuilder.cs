@@ -28,6 +28,7 @@ namespace Js2IL.SymbolTables
             AnalyzeFreeVariables(globalScope);
             MarkCapturedVariables(globalScope);
             InferVariableClrTypes(globalScope);
+            InferCallableReturnClrTypes(globalScope);
             InferClassInstanceFieldClrTypes(globalScope);
             module.SymbolTable = new SymbolTable(globalScope);
         }

@@ -30,6 +30,30 @@ internal sealed class LIRToILCompiler
     private MethodBodyIR? _methodBody;
     private bool _compiled;
 
+    private static void EmitReturnType(ReturnTypeEncoder returnType, Type clrReturnType)
+    {
+        if (clrReturnType == typeof(double))
+        {
+            returnType.Type().Double();
+            return;
+        }
+
+        if (clrReturnType == typeof(bool))
+        {
+            returnType.Type().Boolean();
+            return;
+        }
+
+        if (clrReturnType == typeof(string))
+        {
+            returnType.Type().String();
+            return;
+        }
+
+        // Default ABI: JavaScript value as object.
+        returnType.Type().Object();
+    }
+
     private Type GetDeclaredScopeFieldClrType(string scopeName, string fieldName)
     {
         return _scopeMetadataRegistry.TryGetFieldClrType(scopeName, fieldName, out var t)
@@ -141,6 +165,14 @@ internal sealed class LIRToILCompiler
             return;
         }
 
+        // Peephole: avoid boxing a known double just to immediately coerce it back to double.
+        // This happens when lowering inserts ConvertToObject around numeric literals/constants.
+        if (!IsMaterialized(value, allocation) && TryFindDefInstruction(value) is LIRConvertToObject convertToObject && convertToObject.SourceType == typeof(double))
+        {
+            EmitLoadTemp(convertToObject.Source, ilEncoder, allocation, methodDescriptor);
+            return;
+        }
+
         EmitLoadTempAsObject(value, ilEncoder, allocation, methodDescriptor);
         var toNumberMref = _memberRefRegistry.GetOrAddMethod(
             typeof(JavaScriptRuntime.TypeUtilities),
@@ -246,7 +278,7 @@ internal sealed class LIRToILCompiler
                 if (methodDescriptor.ReturnsVoid)
                     returnType.Void();
                 else
-                    returnType.Type().Object();
+                    EmitReturnType(returnType, methodDescriptor.ReturnClrType);
             }, parameters =>
             {
                 for (int i = 0; i < methodParameters.Count; i++)
@@ -336,7 +368,7 @@ internal sealed class LIRToILCompiler
                 if (methodDescriptor.ReturnsVoid)
                     returnType.Void();
                 else
-                    returnType.Type().Object();
+                    EmitReturnType(returnType, methodDescriptor.ReturnClrType);
             }, parameters =>
             {
                 for (int i = 0; i < methodParameters.Count; i++)
@@ -1074,15 +1106,8 @@ internal sealed class LIRToILCompiler
                     break;
                 }
 
-                EmitLoadTempAsObject(logicalNot.Value, ilEncoder, allocation, methodDescriptor);
-                {
-                    var toBooleanMref = _memberRefRegistry.GetOrAddMethod(
-                        typeof(JavaScriptRuntime.TypeUtilities),
-                        nameof(JavaScriptRuntime.TypeUtilities.ToBoolean),
-                        parameterTypes: new[] { typeof(object) });
-                    ilEncoder.OpCode(ILOpCode.Call);
-                    ilEncoder.Token(toBooleanMref);
-                }
+                // Emit JS ToBoolean(value) and then invert.
+                EmitConvertToBooleanCore(logicalNot.Value, ilEncoder, allocation, methodDescriptor);
                 ilEncoder.OpCode(ILOpCode.Ldc_i4_0);
                 ilEncoder.OpCode(ILOpCode.Ceq);
                 EmitStoreTemp(logicalNot.Result, ilEncoder, allocation);
@@ -1288,8 +1313,21 @@ internal sealed class LIRToILCompiler
                 {
                     break;
                 }
+                var truthyInputStorage = GetTempStorage(callIsTruthy.Value);
                 EmitLoadTemp(callIsTruthy.Value, ilEncoder, allocation, methodDescriptor);
-                EmitOperatorsIsTruthy(ilEncoder);
+
+                if (truthyInputStorage.Kind == ValueStorageKind.UnboxedValue && truthyInputStorage.ClrType == typeof(double))
+                {
+                    EmitOperatorsIsTruthyDouble(ilEncoder);
+                }
+                else if (truthyInputStorage.Kind == ValueStorageKind.UnboxedValue && truthyInputStorage.ClrType == typeof(bool))
+                {
+                    EmitOperatorsIsTruthyBool(ilEncoder);
+                }
+                else
+                {
+                    EmitOperatorsIsTruthyObject(ilEncoder);
+                }
                 EmitStoreTemp(callIsTruthy.Result, ilEncoder, allocation);
                 break;
 
@@ -3214,7 +3252,17 @@ internal sealed class LIRToILCompiler
                     break;
                 }
             case LIRConvertToNumber convertToNumber:
-                // Emit inline: load as object, call TypeUtilities.ToNumber(object)
+                // Emit inline: if already an unboxed numeric value, skip boxing + ToNumber.
+                // In this compiler pipeline, the only non-numeric unboxed values are bool and JsNull.
+                if (GetTempStorage(convertToNumber.Source) is { Kind: ValueStorageKind.UnboxedValue, ClrType: var clrType } &&
+                    clrType != typeof(bool) &&
+                    clrType != typeof(JavaScriptRuntime.JsNull))
+                {
+                    EmitLoadTemp(convertToNumber.Source, ilEncoder, allocation, methodDescriptor);
+                    break;
+                }
+
+                // Otherwise load as object, call TypeUtilities.ToNumber(object)
                 EmitLoadTempAsObject(convertToNumber.Source, ilEncoder, allocation, methodDescriptor);
                 {
                     var toNumberMref = _memberRefRegistry.GetOrAddMethod(
@@ -3904,13 +3952,39 @@ internal sealed class LIRToILCompiler
 
     private void EmitConvertToBooleanCore(TempVariable source, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
     {
+        var sourceStorage = GetTempStorage(source);
+
+        // If the value is already a typed primitive, avoid boxing.
+        if (sourceStorage.Kind == ValueStorageKind.UnboxedValue)
+        {
+            if (sourceStorage.ClrType == typeof(bool))
+            {
+                // JS ToBoolean(bool) is identity.
+                EmitLoadTemp(source, ilEncoder, allocation, methodDescriptor);
+                return;
+            }
+
+            if (sourceStorage.ClrType == typeof(double))
+            {
+                EmitLoadTemp(source, ilEncoder, allocation, methodDescriptor);
+                var toBooleanDoubleMref = _memberRefRegistry.GetOrAddMethod(
+                    typeof(JavaScriptRuntime.TypeUtilities),
+                    nameof(JavaScriptRuntime.TypeUtilities.ToBoolean),
+                    parameterTypes: new[] { typeof(double) });
+                ilEncoder.OpCode(ILOpCode.Call);
+                ilEncoder.Token(toBooleanDoubleMref);
+                return;
+            }
+        }
+
+        // Fallback: box and call object-based coercion.
         EmitLoadTempAsObject(source, ilEncoder, allocation, methodDescriptor);
-        var toBooleanMref = _memberRefRegistry.GetOrAddMethod(
+        var toBooleanObjectMref = _memberRefRegistry.GetOrAddMethod(
             typeof(JavaScriptRuntime.TypeUtilities),
             nameof(JavaScriptRuntime.TypeUtilities.ToBoolean),
             parameterTypes: new[] { typeof(object) });
         ilEncoder.OpCode(ILOpCode.Call);
-        ilEncoder.Token(toBooleanMref);
+        ilEncoder.Token(toBooleanObjectMref);
     }
 
     private void EmitConvertToStringCore(TempVariable source, InstructionEncoder ilEncoder, TempLocalAllocation allocation, MethodDescriptor methodDescriptor)
@@ -4666,9 +4740,23 @@ internal sealed class LIRToILCompiler
         ilEncoder.Token(methodRef);
     }
 
-    private void EmitOperatorsIsTruthy(InstructionEncoder ilEncoder)
+    private void EmitOperatorsIsTruthyObject(InstructionEncoder ilEncoder)
     {
-        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "IsTruthy");
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "IsTruthy", new[] { typeof(object) });
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+    }
+
+    private void EmitOperatorsIsTruthyDouble(InstructionEncoder ilEncoder)
+    {
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "IsTruthy", new[] { typeof(double) });
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+    }
+
+    private void EmitOperatorsIsTruthyBool(InstructionEncoder ilEncoder)
+    {
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "IsTruthy", new[] { typeof(bool) });
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
     }

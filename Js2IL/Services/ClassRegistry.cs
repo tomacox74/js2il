@@ -29,7 +29,7 @@ namespace Js2IL.Services
         // MinParamCount = required params (no defaults), MaxParamCount = all params (including defaults)
         private readonly Dictionary<string, (MethodDefinitionHandle Ctor, BlobHandle Signature, int MinParamCount, int MaxParamCount)> _constructors = new(StringComparer.Ordinal);
         // Track instance methods: className -> methodName -> (MethodDef, Signature, MinParams, MaxParams)
-        private readonly Dictionary<string, Dictionary<string, (MethodDefinitionHandle Method, BlobHandle Signature, int MinParamCount, int MaxParamCount)>> _methods = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, Dictionary<string, (MethodDefinitionHandle Method, BlobHandle Signature, Type ReturnClrType, int MinParamCount, int MaxParamCount)>> _methods = new(StringComparer.Ordinal);
 
         public void Register(string className, TypeDefinitionHandle typeHandle)
         {
@@ -285,21 +285,22 @@ namespace Js2IL.Services
             return false;
         }
 
-        public void RegisterMethod(string className, string methodName, MethodDefinitionHandle methodHandle, BlobHandle signature, int minParamCount, int maxParamCount)
+        public void RegisterMethod(string className, string methodName, MethodDefinitionHandle methodHandle, BlobHandle signature, Type returnClrType, int minParamCount, int maxParamCount)
         {
             if (string.IsNullOrEmpty(className) || string.IsNullOrEmpty(methodName)) return;
             if (!_methods.TryGetValue(className, out var methods))
             {
-                methods = new Dictionary<string, (MethodDefinitionHandle, BlobHandle, int, int)>(StringComparer.Ordinal);
+                methods = new Dictionary<string, (MethodDefinitionHandle, BlobHandle, Type, int, int)>(StringComparer.Ordinal);
                 _methods[className] = methods;
             }
-            methods[methodName] = (methodHandle, signature, minParamCount, maxParamCount);
+            methods[methodName] = (methodHandle, signature, returnClrType ?? typeof(object), minParamCount, maxParamCount);
         }
 
-        public bool TryGetMethod(string className, string methodName, out MethodDefinitionHandle methodHandle, out BlobHandle signature, out int minParamCount, out int maxParamCount)
+        public bool TryGetMethod(string className, string methodName, out MethodDefinitionHandle methodHandle, out BlobHandle signature, out Type returnClrType, out int minParamCount, out int maxParamCount)
         {
             methodHandle = default;
             signature = default;
+            returnClrType = typeof(object);
             minParamCount = 0;
             maxParamCount = 0;
             if (_methods.TryGetValue(className, out var methods) && 
@@ -307,6 +308,7 @@ namespace Js2IL.Services
             {
                 methodHandle = info.Method;
                 signature = info.Signature;
+                returnClrType = info.ReturnClrType;
                 minParamCount = info.MinParamCount;
                 maxParamCount = info.MaxParamCount;
                 return true;

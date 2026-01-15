@@ -304,6 +304,86 @@ public class SymbolTableTypeInferenceTests
         Assert.Equal("Child", inferred);
     }
 
+    [Theory]
+    [InlineData("function f() { return 1 + 2; }", "f", typeof(double))]
+    [InlineData("function f() { return true; }", "f", typeof(bool))]
+    public void SymbolTable_InferTypes_StableReturn_FunctionDeclaration(string source, string functionName, Type expectedReturnType)
+    {
+        var symbolTable = BuildSymbolTable(source);
+
+        var functionScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function &&
+            s.Parent?.Kind == ScopeKind.Global &&
+            string.Equals(s.Name, functionName, StringComparison.Ordinal) &&
+            s.AstNode is FunctionDeclaration);
+
+        Assert.NotNull(functionScope);
+        Assert.Equal(expectedReturnType, functionScope!.StableReturnClrType);
+    }
+
+    [Theory]
+    [InlineData("const a = () => 1 + 2;", typeof(double))]
+    [InlineData("const a = () => true;", typeof(bool))]
+    [InlineData("const a = () => { return 1 + 2; };", typeof(double))]
+    [InlineData("const a = () => { return true; };", typeof(bool))]
+    public void SymbolTable_InferTypes_StableReturn_ArrowFunction(string source, Type expectedReturnType)
+    {
+        var symbolTable = BuildSymbolTable(source);
+
+        var arrowScope = FindFirstScope(symbolTable.Root, s =>
+            s.Kind == ScopeKind.Function &&
+            s.Parent?.Kind == ScopeKind.Global &&
+            s.AstNode is ArrowFunctionExpression);
+
+        Assert.NotNull(arrowScope);
+        Assert.Equal(expectedReturnType, arrowScope!.StableReturnClrType);
+    }
+
+    [Theory]
+    [InlineData(@"
+                class C {
+                    m() { return 1 + 2; }
+                }
+            ", "C", "m", typeof(double))]
+    [InlineData(@"
+                class C {
+                    m() { return true; }
+                }
+            ", "C", "m", typeof(bool))]
+    public void SymbolTable_InferTypes_StableReturn_ClassMethod(string source, string className, string methodName, Type expectedReturnType)
+    {
+        var symbolTable = BuildSymbolTable(source);
+        var classScope = FindClassScope(symbolTable.Root, className);
+        Assert.NotNull(classScope);
+
+        var methodScope = FindFirstScope(classScope!, s =>
+            s.Kind == ScopeKind.Function &&
+            s.Parent?.Kind == ScopeKind.Class &&
+            string.Equals(s.Name, methodName, StringComparison.Ordinal));
+
+        Assert.NotNull(methodScope);
+        Assert.Equal(expectedReturnType, methodScope!.StableReturnClrType);
+    }
+
+    private static Js2IL.SymbolTables.Scope? FindFirstScope(Js2IL.SymbolTables.Scope scope, Func<Js2IL.SymbolTables.Scope, bool> predicate)
+    {
+        if (predicate(scope))
+        {
+            return scope;
+        }
+
+        foreach (var child in scope.Children)
+        {
+            var found = FindFirstScope(child, predicate);
+            if (found != null)
+            {
+                return found;
+            }
+        }
+
+        return null;
+    }
+
     private static Js2IL.SymbolTables.Scope? FindClassScope(Js2IL.SymbolTables.Scope scope, string className)
     {
         if (scope.Kind == ScopeKind.Class && string.Equals(scope.Name, className, StringComparison.Ordinal))

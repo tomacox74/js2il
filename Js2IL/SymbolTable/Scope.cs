@@ -35,6 +35,13 @@ public class Scope
     /// Only includes fields where all observed assignments agree on a single user class type.
     /// </summary>
     public Dictionary<string, string> StableInstanceFieldUserClassNames { get; } = new(StringComparer.Ordinal);
+
+    /// <summary>
+    /// Stable inferred CLR return type for this callable scope.
+    /// Only populated for very conservative cases (currently class methods with a single, top-level return).
+    /// When null, the callable returns <see cref="object"/> (JavaScript value) in IL.
+    /// </summary>
+    public Type? StableReturnClrType { get; set; }
     // Names of parameters (for function scopes) so we can avoid generating backing fields for them.
     public HashSet<string> Parameters { get; } = new();
     /// <summary>

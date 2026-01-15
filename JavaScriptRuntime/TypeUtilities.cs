@@ -89,6 +89,12 @@ namespace JavaScriptRuntime
         }
 
         // JS ToBoolean coercion used in conditional tests and logical contexts
+        public static bool ToBoolean(double value)
+        {
+            // JavaScript uses IEEE 754 semantics: 0, -0, and NaN are falsy
+            return value != 0.0 && !double.IsNaN(value);
+        }
+
         public static bool ToBoolean(object? value)
         {
             // undefined (CLR null) and null => false
@@ -102,7 +108,7 @@ namespace JavaScriptRuntime
                 case string s:
                     return s.Length != 0;
                 case double d:
-                    return d != 0.0 && !double.IsNaN(d);
+                    return ToBoolean(d);
                 case float f:
                     return f != 0.0f && !float.IsNaN(f);
                 case int i:

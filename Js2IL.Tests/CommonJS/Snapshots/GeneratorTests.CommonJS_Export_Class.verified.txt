@@ -231,17 +231,18 @@
 	} // end of method Calculator::.ctor
 
 	.method public hidebysig 
-		instance object 'add' (
+		instance float64 'add' (
 			object a,
 			object b
 		) cil managed 
 	{
 		// Method begins at RVA 0x216c
 		// Header size: 12
-		// Code size: 10 (0xa)
+		// Code size: 17 (0x11)
 		.maxstack 32
 		.locals init (
-			[0] object
+			[0] object,
+			[1] float64
 		)
 
 		IL_0000: ldarg.1
@@ -249,22 +250,24 @@
 		IL_0002: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 		IL_0007: stloc.0
 		IL_0008: ldloc.0
-		IL_0009: ret
+		IL_0009: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_000e: stloc.1
+		IL_000f: ldloc.1
+		IL_0010: ret
 	} // end of method Calculator::'add'
 
 	.method public hidebysig 
-		instance object multiply (
+		instance float64 multiply (
 			object a,
 			object b
 		) cil managed 
 	{
-		// Method begins at RVA 0x2184
+		// Method begins at RVA 0x218c
 		// Header size: 12
-		// Code size: 25 (0x19)
+		// Code size: 18 (0x12)
 		.maxstack 32
 		.locals init (
-			[0] float64,
-			[1] object
+			[0] float64
 		)
 
 		IL_0000: ldarg.1
@@ -276,10 +279,7 @@
 		IL_000e: mul
 		IL_000f: stloc.0
 		IL_0010: ldloc.0
-		IL_0011: box [System.Runtime]System.Double
-		IL_0016: stloc.1
-		IL_0017: ldloc.1
-		IL_0018: ret
+		IL_0011: ret
 	} // end of method Calculator::multiply
 
 } // end of class Classes.CommonJS_Export_Class_Lib.Calculator
