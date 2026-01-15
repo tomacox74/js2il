@@ -4,7 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+### Added
+- `NodeModuleRegistry` to normalize module specifiers and resolve `[NodeModule]` types for `require()`.
+- Validator coverage for `require('node:path')`.
+- Internal punch list for missing Node module APIs needed by scripts.
 
 ## v0.7.0 - 2026-01-15
 

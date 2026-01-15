@@ -84,6 +84,16 @@ public class ValidatorTests
     }
 
     [Fact]
+    public void Validate_Require_NodePath_Supported_NoError()
+    {
+        var js = "const p = require('node:path');";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
+    [Fact]
     public void Validate_Require_UnsupportedModule_ReportsError()
     {
         var js = "const c = require('node:crypto');";
