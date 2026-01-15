@@ -5,23 +5,26 @@ All notable changes to this project are documented here.
 ## Unreleased
 
 ### Added
-- MVP `await` expression support for already-resolved promises via `Promise.AwaitValue()` runtime helper.
-- `_asyncState` (int) and `_deferred` (PromiseWithResolvers) fields on async function scope classes.
-- `LIRAwait` IL emission that calls `Promise.AwaitValue()` for synchronous value extraction.
-- `Scope.IsAsync` property to track async function scopes in symbol table.
-- Unit tests for `IsAsync` flag propagation in `SymbolTableBuilderTests`.
+- Full async/await state machine with suspension and resumption support.
+- `EmitAsyncStateSwitch()` in IL compiler for dispatch to resume labels based on `_asyncState`.
+- `Promise.PrependScopeToArray()` runtime helper to build modified scopes array for resumption.
+- `Promise.SetupAwaitContinuation()` schedules promise.then() callbacks with MoveNext closure.
+- `_moveNext` field on async scope classes holds bound closure for self-invocation.
+- `_awaited{N}` fields on async scope classes store awaited results across suspension points.
 
 ### Changed
-- Async functions without await now marked as "Supported" (previously "Partially Supported").
-- `await` on already-resolved promises is now "Partially Supported" (works synchronously; pending promises throw).
+- Enabled `HasAwaits=true` in HIRToLIRLower.cs to activate full state machine path.
+- `await` expression now marked as "Supported" (was "Partially Supported").
+- `Promise.AwaitValue()` is now only used as fallback when `HasAwaits=false` (updated docs and error message).
+- Async function return handling: sets `_asyncState=-1`, resolves `_deferred.promise` with return value.
+
+### Fixed
+- Scope persistence for async function resumption using `isinst` check to distinguish initial vs resume calls.
+- Delegate creation for `_moveNext`: properly uses `newobj Func<>` after `ldftn`.
 
 ### Tests
-- Enabled `Async_SimpleAwait` execution and generator tests.
-- Added verified snapshots for async function IL generation with await.
-
-### Notes
-- Full state machine support for pending promises (real async suspension/resumption) is not yet implemented.
-- `Async_RealSuspension_SetTimeout` test remains skipped pending full state machine implementation.
+- All async tests pass (Async_HelloWorld, Async_ReturnValue, Async_SimpleAwait).
+- `Async_PendingPromiseAwait` and `Async_RealSuspension_SetTimeout` remain skipped (blocked by separate arrow function parameter scope issue, not async-specific).
 
 ## v0.6.5 - 2026-01-14
 

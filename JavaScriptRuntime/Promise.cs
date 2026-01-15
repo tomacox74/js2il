@@ -93,13 +93,15 @@ public sealed class Promise
     }
 
     /// <summary>
-    /// Runtime helper for lowering JavaScript <c>await</c>.
+    /// Synchronous helper for lowering JavaScript <c>await</c> when HasAwaits=false.
     /// 
-    /// This is an MVP implementation that handles already-resolved promises synchronously.
-    /// For pending promises, it throws NotSupportedException.
+    /// This is a fallback path used only when the compiler determines no actual awaits
+    /// exist in an async function. For already-resolved promises, it extracts the value
+    /// synchronously. For pending promises, it throws (should not happen in practice
+    /// since the full state machine path handles that case).
     /// 
-    /// A proper implementation requires the compiler to generate a state machine
-    /// with continuations via Promise.then().
+    /// The primary await implementation uses <see cref="SetupAwaitContinuation"/> which
+    /// generates proper suspension/resumption via promise.then() callbacks.
     /// </summary>
     /// <param name="awaited">The value being awaited (typically a Promise)</param>
     /// <returns>The resolved value if the promise is already settled</returns>
@@ -126,8 +128,9 @@ public sealed class Promise
                     
                 case State.Pending:
                     throw new NotSupportedException(
-                        "Cannot await a pending promise. Full async/await state machine support is not yet implemented. " +
-                        "Use Promise.then() for asynchronous operations.");
+                        "Cannot await a pending promise using the synchronous AwaitValue helper. " +
+                        "This code path is only used when HasAwaits=false. For pending promises, " +
+                        "the compiler should generate a full state machine with SetupAwaitContinuation.");
                     
                 default:
                     throw new InvalidOperationException($"Unknown promise state: {promise._state}");
