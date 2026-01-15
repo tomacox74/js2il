@@ -11,23 +11,35 @@ All notable changes to this project are documented here.
 - `Promise.SetupAwaitContinuation()` schedules promise.then() callbacks with MoveNext closure.
 - `_moveNext` field on async scope classes holds bound closure for self-invocation.
 - `_awaited{N}` fields on async scope classes store awaited results across suspension points.
+- `TypeUtilities.ToBoolean(double)` runtime overload to avoid boxing when coercing unboxed numbers to boolean (`!` / `!!`).
+- New unary-operator regression fixture covering NaN truthiness (`!!(0.0/0.0)` is falsy).
 
 ### Changed
 - Enabled `HasAwaits=true` in HIRToLIRLower.cs to activate full state machine path.
 - `await` expression now marked as "Supported" (was "Partially Supported").
 - `Promise.AwaitValue()` is now only used as fallback when `HasAwaits=false` (updated docs and error message).
 - Async function return handling: sets `_asyncState=-1`, resolves `_deferred.promise` with return value.
+- Unary `!` / `!!` lowering now preserves unboxed numeric/bool temps so IL emission can select typed truthiness/to-boolean helpers.
+- Conservative stable return CLR type inference now drives typed return emission for class instance methods (keeps `object` ABI for other callables).
+- Expanded numeric inference for `-`, `*`, `/` to treat number-like operands as `double` (enables typed flows in more expressions).
+
+### Performance
+- Avoided `box System.Double` in boolean coercion and truthiness checks by calling typed helpers (`ToBoolean(double)` / `IsTruthy(double)`) when possible.
+- Reduced redundant numeric roundtrips (boxing just to immediately `ToNumber(object)`) in some hot-path lowering patterns.
 
 ### Fixed
 - Scope persistence for async function resumption using `isinst` check to distinguish initial vs resume calls.
 - Delegate creation for `_moveNext`: properly uses `newobj Func<>` after `ldftn`.
 - **Nested scope registry naming**: `ScopeNaming.GetRegistryScopeName()` now uses `scope.GetQualifiedName()` instead of `scope.Name`, fixing scope lookup for nested arrow functions and other nested callables. This was causing "scope not found in registry" errors when compiling arrow functions nested inside other functions.
+- Prevented an ABI mismatch that could lead to runtime crashes when typed return lowering and object-typed call sites disagreed (typed returns remain gated to class instance methods).
 
 ### Tests
 - All async tests now pass including `Async_PendingPromiseAwait` and `Async_RealSuspension_SetTimeout`.
 - Async tests increased from 6 to 14 (added 4 new tests, unskipped 4 previously skipped).
 - New tests: `Async_ArrowFunction_SimpleAwait`, `Async_FunctionExpression_SimpleAwait` (both pass).
 - `Async_TryCatch_AwaitReject` added but skipped - await inside try/catch generates invalid IL (needs proper async exception handling).
+- Added execution + generator coverage for NaN truthiness in `!!`.
+- Updated generator snapshots impacted by reduced boxing and typed truthiness/to-boolean call selection.
 
 ## v0.6.5 - 2026-01-14
 
