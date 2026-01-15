@@ -18,5 +18,14 @@ namespace Js2IL.Tests.Async
 
         [Fact]
         public Task Async_RealSuspension_SetTimeout() { var testName = nameof(Async_RealSuspension_SetTimeout); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Async_ArrowFunction_SimpleAwait() { var testName = nameof(Async_ArrowFunction_SimpleAwait); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Async_FunctionExpression_SimpleAwait() { var testName = nameof(Async_FunctionExpression_SimpleAwait); return GenerateTest(testName); }
+
+        [Fact(Skip = "await in try/catch not yet implemented - generates invalid IL")]
+        public Task Async_TryCatch_AwaitReject() { var testName = nameof(Async_TryCatch_AwaitReject); return GenerateTest(testName); }
     }
 }

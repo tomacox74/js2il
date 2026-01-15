@@ -25,7 +25,9 @@ All notable changes to this project are documented here.
 
 ### Tests
 - All async tests now pass including `Async_PendingPromiseAwait` and `Async_RealSuspension_SetTimeout`.
-- Async tests increased from 6 to 10 (unskipped 4 tests).
+- Async tests increased from 6 to 14 (added 4 new tests, unskipped 4 previously skipped).
+- New tests: `Async_ArrowFunction_SimpleAwait`, `Async_FunctionExpression_SimpleAwait` (both pass).
+- `Async_TryCatch_AwaitReject` added but skipped - await inside try/catch generates invalid IL (needs proper async exception handling).
 
 ## v0.6.5 - 2026-01-14
 
