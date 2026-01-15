@@ -11,13 +11,37 @@ namespace Js2IL.Tests.UnaryOperator
         public Task UnaryOperator_MinusMinusPostfix() => ExecutionTest(nameof(UnaryOperator_MinusMinusPostfix));
 
         [Fact]
+        public Task UnaryOperator_MinusMinusPostfix_InFunctionSwitch() => ExecutionTest(nameof(UnaryOperator_MinusMinusPostfix_InFunctionSwitch));
+
+        [Fact]
+        public Task UnaryOperator_MinusMinusPostfix_InFunctionSwitch_ObjectLocal() => ExecutionTest(nameof(UnaryOperator_MinusMinusPostfix_InFunctionSwitch_ObjectLocal));
+
+        [Fact]
         public Task UnaryOperator_MinusMinusPrefix() => ExecutionTest(nameof(UnaryOperator_MinusMinusPrefix));
+
+        [Fact]
+        public Task UnaryOperator_MinusMinusPrefix_InFunctionSwitch() => ExecutionTest(nameof(UnaryOperator_MinusMinusPrefix_InFunctionSwitch));
+
+        [Fact]
+        public Task UnaryOperator_MinusMinusPrefix_InFunctionSwitch_ObjectLocal() => ExecutionTest(nameof(UnaryOperator_MinusMinusPrefix_InFunctionSwitch_ObjectLocal));
 
         [Fact]
         public Task UnaryOperator_PlusPlusPostfix() => ExecutionTest(nameof(UnaryOperator_PlusPlusPostfix));
 
         [Fact]
+        public Task UnaryOperator_PlusPlusPostfix_InFunctionSwitch() => ExecutionTest(nameof(UnaryOperator_PlusPlusPostfix_InFunctionSwitch));
+
+        [Fact]
+        public Task UnaryOperator_PlusPlusPostfix_InFunctionSwitch_ObjectLocal() => ExecutionTest(nameof(UnaryOperator_PlusPlusPostfix_InFunctionSwitch_ObjectLocal));
+
+        [Fact]
         public Task UnaryOperator_PlusPlusPrefix() => ExecutionTest(nameof(UnaryOperator_PlusPlusPrefix));
+
+        [Fact]
+        public Task UnaryOperator_PlusPlusPrefix_InFunctionSwitch() => ExecutionTest(nameof(UnaryOperator_PlusPlusPrefix_InFunctionSwitch));
+
+        [Fact]
+        public Task UnaryOperator_PlusPlusPrefix_InFunctionSwitch_ObjectLocal() => ExecutionTest(nameof(UnaryOperator_PlusPlusPrefix_InFunctionSwitch_ObjectLocal));
 
         [Fact]
         public Task UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction() => ExecutionTest(nameof(UnaryOperator_PlusPlusMinusMinusCapturedFromNestedFunction));

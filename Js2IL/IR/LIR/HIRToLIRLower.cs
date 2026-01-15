@@ -4627,18 +4627,19 @@ public sealed class HIRToLIRLowerer
                 return false;
             }
 
-            // For postfix, we must capture the old value before the field store happens.
+            var currentNumber = EnsureNumber(currentValue);
+
+            // For postfix, we must capture the old (ToNumber-coerced) value before the store happens.
             // Use LIRCopyTemp so Stackify will materialize the captured value.
             TempVariable? originalSnapshotForPostfix = null;
             if (!updateExpr.Prefix)
             {
+                var snapshotValue = EnsureObject(currentNumber);
                 var snapshot = CreateTempVariable();
-                _methodBodyIR.Instructions.Add(new LIRCopyTemp(currentValue, snapshot));
+                _methodBodyIR.Instructions.Add(new LIRCopyTemp(snapshotValue, snapshot));
                 DefineTempStorage(snapshot, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                 originalSnapshotForPostfix = snapshot;
             }
-
-            var currentNumber = EnsureNumber(currentValue);
 
             var deltaOneTemp = CreateTempVariable();
             _methodBodyIR.Instructions.Add(new LIRConstNumber(1.0, deltaOneTemp));
@@ -4701,13 +4702,50 @@ public sealed class HIRToLIRLowerer
             return true;
         }
 
-        // For non-captured numeric locals, we only support double.
+        // For non-captured locals, support both numeric (double) and boxed/object paths.
         var currentStorage = GetTempStorage(currentValue);
 
-        // Only support numeric locals (double) for now
         if (currentStorage.ClrType != typeof(double))
         {
-            return false;
+            // Boxed/local update path (e.g., object-typed locals).
+            var currentNumber = EnsureNumber(currentValue);
+
+            TempVariable? originalSnapshotForPostfix = null;
+            if (!updateExpr.Prefix)
+            {
+                originalSnapshotForPostfix = EnsureObject(currentNumber);
+            }
+
+            var boxedDeltaTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstNumber(1.0, boxedDeltaTemp));
+            DefineTempStorage(boxedDeltaTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+            var boxedUpdatedNumber = CreateTempVariable();
+            if (isIncrement)
+            {
+                _methodBodyIR.Instructions.Add(new LIRAddNumber(currentNumber, boxedDeltaTemp, boxedUpdatedNumber));
+            }
+            else
+            {
+                _methodBodyIR.Instructions.Add(new LIRSubNumber(currentNumber, boxedDeltaTemp, boxedUpdatedNumber));
+            }
+            DefineTempStorage(boxedUpdatedNumber, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+
+            var updatedBoxed = EnsureObject(boxedUpdatedNumber);
+
+            if (!TryStoreToBinding(updateBinding, updatedBoxed, out var storedValue))
+            {
+                return false;
+            }
+
+            if (updateExpr.Prefix)
+            {
+                resultTempVar = EnsureObject(storedValue);
+                return true;
+            }
+
+            resultTempVar = originalSnapshotForPostfix!.Value;
+            return true;
         }
 
         // Get or create a variable slot for this non-captured variable

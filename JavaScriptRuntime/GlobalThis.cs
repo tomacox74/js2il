@@ -1,3 +1,4 @@
+using System;
 using JavaScriptRuntime.DependencyInjection;
 
 namespace JavaScriptRuntime
@@ -95,6 +96,88 @@ namespace JavaScriptRuntime
         public static object? clearInterval(object handle)
         {
             return GetTimers().clearInterval(handle);
+        }
+
+        /// <summary>
+        /// Minimal parseInt implementation for numeric strings (radix 2-36).
+        /// Returns NaN on invalid input.
+        /// </summary>
+        public static object parseInt(object? input, object? radix = null)
+        {
+            if (input == null) return double.NaN;
+
+            var text = DotNet2JSConversions.ToString(input).TrimStart();
+            if (text.Length == 0) return double.NaN;
+
+            int sign = 1;
+            if (text[0] == '+')
+            {
+                text = text.Substring(1);
+            }
+            else if (text[0] == '-')
+            {
+                sign = -1;
+                text = text.Substring(1);
+            }
+
+            int radixValue = 0;
+            if (radix != null)
+            {
+                try
+                {
+                    radixValue = Convert.ToInt32(radix, System.Globalization.CultureInfo.InvariantCulture);
+                }
+                catch
+                {
+                    return double.NaN;
+                }
+            }
+
+            if (radixValue == 0)
+            {
+                if (text.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+                {
+                    radixValue = 16;
+                    text = text.Substring(2);
+                }
+                else
+                {
+                    radixValue = 10;
+                }
+            }
+
+            if (radixValue < 2 || radixValue > 36)
+            {
+                return double.NaN;
+            }
+
+            long value = 0;
+            int digits = 0;
+            foreach (var ch in text)
+            {
+                int d = ch switch
+                {
+                    >= '0' and <= '9' => ch - '0',
+                    >= 'a' and <= 'z' => ch - 'a' + 10,
+                    >= 'A' and <= 'Z' => ch - 'A' + 10,
+                    _ => -1
+                };
+
+                if (d < 0 || d >= radixValue)
+                {
+                    break;
+                }
+
+                value = (value * radixValue) + d;
+                digits++;
+            }
+
+            if (digits == 0)
+            {
+                return double.NaN;
+            }
+
+            return (double)(sign * value);
         }
 
         private static Timers GetTimers()
