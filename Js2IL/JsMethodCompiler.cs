@@ -46,6 +46,12 @@ sealed record MethodDescriptor
     public bool ReturnsVoid { get; set; } = false;
 
     /// <summary>
+    /// CLR return type for the emitted method signature when <see cref="ReturnsVoid"/> is false.
+    /// Defaults to <see cref="object"/> (JavaScript value).
+    /// </summary>
+    public Type ReturnClrType { get; set; } = typeof(object);
+
+    /// <summary>
     /// Only class instance methods are not static currently, so we default to static.
     /// </summary>
     public bool IsStatic {get; set; } = true;
@@ -314,6 +320,12 @@ internal sealed class JsMethodCompiler
             IsStatic = !isInstanceMethod,
             HasScopesParameter = hasScopesParameter,
             ReturnsVoid = returnsVoid,
+            ReturnClrType = returnsVoid
+                ? typeof(void)
+                : (((scope.Kind == ScopeKind.Function && scope.Parent?.Kind == ScopeKind.Class)
+                        ? scope.StableReturnClrType
+                        : null)
+                    ?? typeof(object)),
             ScopesFieldHandle = scopesFieldHandle,
             IsConstructor = callableKind == ScopesCallableKind.Constructor
         };
@@ -601,6 +613,10 @@ internal sealed class JsMethodCompiler
         // Normalize intrinsic-specific patterns (e.g., Int32Array element access) into explicit LIR instructions.
         // This keeps the LIR->IL compiler simpler and avoids fragile late pattern-matching.
         LIRIntrinsicNormalization.Normalize(lirMethod!, classRegistry);
+
+        // Normalize generic LIR patterns into more explicit typed forms when provably safe.
+        // This keeps LIR->IL focused on IL mechanics rather than type-directed rewrites.
+        LIRTypeNormalization.Normalize(lirMethod!, classRegistry);
 
         methodBody = lirMethod!;
         return true;

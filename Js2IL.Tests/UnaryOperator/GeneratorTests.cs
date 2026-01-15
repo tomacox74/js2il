@@ -30,5 +30,8 @@ namespace Js2IL.Tests.UnaryOperator
 
         [Fact]
         public Task UnaryOperator_LogicalNot() => GenerateTest(nameof(UnaryOperator_LogicalNot));
+
+        [Fact]
+        public Task UnaryOperator_DoubleNot_NaNTruthiness() => GenerateTest(nameof(UnaryOperator_DoubleNot_NaNTruthiness));
     }
 }

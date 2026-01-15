@@ -16,7 +16,8 @@ namespace Js2IL.Services.ILGenerators
             bool isInstance,
             int paramCount,
             bool hasScopesParam,
-            bool returnsVoid)
+            bool returnsVoid,
+            Type? returnClrType = null)
         {
             if (hasScopesParam && paramCount == 0)
             {
@@ -37,7 +38,23 @@ namespace Js2IL.Services.ILGenerators
                     }
                     else
                     {
-                        returnType.Type().Object();
+                        var t = returnClrType ?? typeof(object);
+                        if (t == typeof(double))
+                        {
+                            returnType.Type().Double();
+                        }
+                        else if (t == typeof(bool))
+                        {
+                            returnType.Type().Boolean();
+                        }
+                        else if (t == typeof(string))
+                        {
+                            returnType.Type().String();
+                        }
+                        else
+                        {
+                            returnType.Type().Object();
+                        }
                     }
                 },
                 parameters =>

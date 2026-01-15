@@ -1040,8 +1040,25 @@ public sealed class HIRToLIRLowerer
                             return false;
                         }
 
-                        // IR pipeline methods currently return object; ensure boxing/conversion.
-                        returnTempVar = EnsureObject(returnTempVar);
+                        // Default ABI returns object. If we inferred a stable return type for this callable,
+                        // preserve/produce the matching unboxed or typed value.
+                        // Typed/unboxed returns are only supported for class methods currently.
+                        // Keep ABI consistent: other callables must return object.
+                        var stableReturnClrType = (_scope?.Kind == ScopeKind.Function && _scope?.Parent?.Kind == ScopeKind.Class)
+                            ? _scope.StableReturnClrType
+                            : null;
+                        if (stableReturnClrType == typeof(double))
+                        {
+                            returnTempVar = EnsureNumber(returnTempVar);
+                        }
+                        else if (stableReturnClrType == typeof(bool))
+                        {
+                            returnTempVar = EnsureBoolean(returnTempVar);
+                        }
+                        else
+                        {
+                            returnTempVar = EnsureObject(returnTempVar);
+                        }
                     }
                     else
                     {
@@ -1327,7 +1344,8 @@ public sealed class HIRToLIRLowerer
                     // and JavaScript has different truthiness rules (0, "", null, undefined, NaN are falsy).
                     var conditionStorage = GetTempStorage(conditionTemp);
                     bool needsTruthyCheck = conditionStorage.Kind == ValueStorageKind.BoxedValue ||
-                        (conditionStorage.Kind == ValueStorageKind.Reference && conditionStorage.ClrType == typeof(object));
+                        (conditionStorage.Kind == ValueStorageKind.Reference && conditionStorage.ClrType == typeof(object)) ||
+                        (conditionStorage.Kind == ValueStorageKind.UnboxedValue && conditionStorage.ClrType == typeof(double));
                     
                     if (needsTruthyCheck)
                     {
@@ -1409,7 +1427,8 @@ public sealed class HIRToLIRLowerer
                         // If the condition is boxed or is an object reference, convert to boolean using IsTruthy
                         var conditionStorage = GetTempStorage(conditionTemp);
                         bool needsTruthyCheck = conditionStorage.Kind == ValueStorageKind.BoxedValue ||
-                            (conditionStorage.Kind == ValueStorageKind.Reference && conditionStorage.ClrType == typeof(object));
+                            (conditionStorage.Kind == ValueStorageKind.Reference && conditionStorage.ClrType == typeof(object)) ||
+                            (conditionStorage.Kind == ValueStorageKind.UnboxedValue && conditionStorage.ClrType == typeof(double));
                         
                         if (needsTruthyCheck)
                         {
@@ -1646,7 +1665,8 @@ public sealed class HIRToLIRLowerer
                     // If the condition is boxed or is an object reference, convert to boolean using IsTruthy
                     var conditionStorage = GetTempStorage(conditionTemp);
                     bool needsTruthyCheck = conditionStorage.Kind == ValueStorageKind.BoxedValue ||
-                        (conditionStorage.Kind == ValueStorageKind.Reference && conditionStorage.ClrType == typeof(object));
+                        (conditionStorage.Kind == ValueStorageKind.Reference && conditionStorage.ClrType == typeof(object)) ||
+                        (conditionStorage.Kind == ValueStorageKind.UnboxedValue && conditionStorage.ClrType == typeof(double));
 
                     if (needsTruthyCheck)
                     {
@@ -1724,7 +1744,8 @@ public sealed class HIRToLIRLowerer
                     // If the condition is boxed or is an object reference, convert to boolean using IsTruthy
                     var conditionStorage = GetTempStorage(conditionTemp);
                     bool needsTruthyCheck = conditionStorage.Kind == ValueStorageKind.BoxedValue ||
-                        (conditionStorage.Kind == ValueStorageKind.Reference && conditionStorage.ClrType == typeof(object));
+                        (conditionStorage.Kind == ValueStorageKind.Reference && conditionStorage.ClrType == typeof(object)) ||
+                        (conditionStorage.Kind == ValueStorageKind.UnboxedValue && conditionStorage.ClrType == typeof(double));
 
                     if (needsTruthyCheck)
                     {
@@ -3287,7 +3308,7 @@ public sealed class HIRToLIRLowerer
                 && calleePropAccess.Object is HIRThisExpression
                 && TryGetEnclosingClassRegistryName(out var currentClass)
                 && currentClass != null
-                && _classRegistry.TryGetMethod(currentClass, calleePropAccess.PropertyName, out var methodHandle, out _, out _, out var maxParamCount))
+                && _classRegistry.TryGetMethod(currentClass, calleePropAccess.PropertyName, out var methodHandle, out _, out var methodReturnClrType, out _, out var maxParamCount))
             {
                 var argTemps = new List<TempVariable>();
                 foreach (var argExpr in callExpr.Arguments)
@@ -3308,7 +3329,23 @@ public sealed class HIRToLIRLowerer
                     argTemps,
                     resultTempVar));
 
-                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                // Propagate typed return storage when available.
+                if (methodReturnClrType == typeof(double))
+                {
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                }
+                else if (methodReturnClrType == typeof(bool))
+                {
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                }
+                else if (methodReturnClrType == typeof(string))
+                {
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+                }
+                else
+                {
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                }
                 return true;
             }
         }
@@ -3511,8 +3548,8 @@ public sealed class HIRToLIRLowerer
         if (unaryExpr.Operator == Acornima.Operator.LogicalNot)
         {
             // JS logical not: coerce to boolean (truthiness) then invert.
-            // Minimal implementation uses runtime TypeUtilities.ToBoolean(object).
-            unaryArgTempVar = EnsureObject(unaryArgTempVar);
+            // Prefer keeping typed/unboxed values when possible; IL emission will select
+            // the appropriate TypeUtilities.ToBoolean overload to avoid boxing.
             _methodBodyIR.Instructions.Add(new LIRLogicalNot(unaryArgTempVar, resultTempVar));
             this.DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
             return true;
