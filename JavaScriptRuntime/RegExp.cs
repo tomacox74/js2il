@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace JavaScriptRuntime
 {
-    [IntrinsicObject("RegExp")]
+    [IntrinsicObject("RegExp", IntrinsicCallKind.ConstructorLike)]
     public sealed class RegExp
     {
         private readonly Regex _regex;

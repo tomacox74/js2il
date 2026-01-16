@@ -8,9 +8,31 @@ using System.Threading.Tasks;
 
 namespace JavaScriptRuntime
 {
-    [IntrinsicObject("Object")]
+    [IntrinsicObject("Object", IntrinsicCallKind.ObjectConstruct)]
     public class Object
     {
+        /// <summary>
+        /// Implements the JavaScript Object() callable semantics: returns a new empty object.
+        /// </summary>
+        public static object Construct()
+        {
+            return new JavaScriptRuntime.Object();
+        }
+
+        /// <summary>
+        /// Implements the JavaScript Object(value) callable semantics: returns a new empty object
+        /// for null/undefined, otherwise returns the value unchanged (minimal behavior).
+        /// </summary>
+        public static object Construct(object? value)
+        {
+            if (value is null || value is JsNull)
+            {
+                return new JavaScriptRuntime.Object();
+            }
+
+            return value;
+        }
+
         /// <summary>
         /// Generic member-call dispatcher. Given a receiver object, a method name, and arguments,
         /// selects and invokes an appropriate implementation based on runtime type:

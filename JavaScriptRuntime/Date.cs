@@ -14,7 +14,7 @@ namespace JavaScriptRuntime
     ///  - toISOString(): string (UTC ISO 8601, e.g., 1970-01-01T00:00:00.000Z)
     /// Note: This is intentionally small and not spec-complete.
     /// </summary>
-    [IntrinsicObject("Date")]
+    [IntrinsicObject("Date", IntrinsicCallKind.DateToString)]
     public class Date
     {
         private long _msSinceEpoch; // milliseconds since Unix epoch (UTC)

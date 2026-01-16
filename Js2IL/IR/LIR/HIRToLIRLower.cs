@@ -2905,24 +2905,12 @@ public sealed class HIRToLIRLowerer
                     || string.Equals(name, "Number", StringComparison.Ordinal)
                     || string.Equals(name, "Boolean", StringComparison.Ordinal))
                 {
-                    // Evaluate all arguments, but only first participates in conversion.
-                    TempVariable? firstArg = null;
-                    if (callExpr.Arguments.Length > 0)
+                    if (!TryEvaluateCallArguments(callExpr.Arguments, 1, out var conversionArgs))
                     {
-                        if (!TryLowerExpression(callExpr.Arguments[0], out var arg0))
-                        {
-                            return false;
-                        }
-                        firstArg = EnsureObject(arg0);
-
-                        for (int i = 1; i < callExpr.Arguments.Length; i++)
-                        {
-                            if (!TryLowerExpression(callExpr.Arguments[i], out var _))
-                            {
-                                return false;
-                            }
-                        }
+                        return false;
                     }
+
+                    var firstArg = conversionArgs.Count > 0 ? conversionArgs[0] : (TempVariable?)null;
 
                     if (string.Equals(name, "String", StringComparison.Ordinal))
                     {
@@ -2963,6 +2951,88 @@ public sealed class HIRToLIRLowerer
                     _methodBodyIR.Instructions.Add(new LIRConvertToBoolean(firstArg.Value, resultTempVar));
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                     return true;
+                }
+
+                var intrinsicInfo = JavaScriptRuntime.IntrinsicObjectRegistry.GetInfo(name);
+                if (intrinsicInfo != null && intrinsicInfo.CallKind != JavaScriptRuntime.IntrinsicCallKind.None)
+                {
+                    switch (intrinsicInfo.CallKind)
+                    {
+                        case JavaScriptRuntime.IntrinsicCallKind.BuiltInError:
+                            {
+                                if (!TryEvaluateCallArguments(callExpr.Arguments, 1, out var errorArgs))
+                                {
+                                    return false;
+                                }
+
+                                var messageTemp = errorArgs.Count > 0 ? errorArgs[0] : (TempVariable?)null;
+
+                                _methodBodyIR.Instructions.Add(new LIRNewBuiltInError(intrinsicInfo.Name, messageTemp, resultTempVar));
+                                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                                return true;
+                            }
+
+                        case JavaScriptRuntime.IntrinsicCallKind.ArrayConstruct:
+                            {
+                                if (!TryEvaluateCallArguments(callExpr.Arguments, callExpr.Arguments.Length, out var argTemps))
+                                {
+                                    return false;
+                                }
+
+                                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(intrinsicInfo.Name, "Construct", argTemps, resultTempVar));
+                                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                                return true;
+                            }
+
+                        case JavaScriptRuntime.IntrinsicCallKind.ObjectConstruct:
+                            {
+                                if (!TryEvaluateCallArguments(callExpr.Arguments, 1, out var objectArgs))
+                                {
+                                    return false;
+                                }
+
+                                _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(intrinsicInfo.Name, "Construct", objectArgs, resultTempVar));
+                                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                                return true;
+                            }
+
+                        case JavaScriptRuntime.IntrinsicCallKind.DateToString:
+                            {
+                                // ECMAScript Date() called as a function ignores all arguments and
+                                // returns the current date/time as a string. Arguments are still
+                                // evaluated for side effects, but none are passed to the constructor.
+                                if (!TryEvaluateCallArguments(callExpr.Arguments, 0, out var _))
+                                {
+                                    return false;
+                                }
+
+                                var dateTemp = CreateTempVariable();
+                                _methodBodyIR.Instructions.Add(new LIRNewIntrinsicObject(intrinsicInfo.Name, Array.Empty<TempVariable>(), dateTemp));
+                                DefineTempStorage(dateTemp, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Date)));
+
+                                _methodBodyIR.Instructions.Add(new LIRCallInstanceMethod(
+                                    dateTemp,
+                                    typeof(JavaScriptRuntime.Date),
+                                    nameof(JavaScriptRuntime.Date.toISOString),
+                                    Array.Empty<TempVariable>(),
+                                    resultTempVar));
+                                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+                                return true;
+                            }
+
+                        case JavaScriptRuntime.IntrinsicCallKind.ConstructorLike:
+                            {
+                                var maxUsed = Math.Min(callExpr.Arguments.Length, 2);
+                                if (!TryEvaluateCallArguments(callExpr.Arguments, maxUsed, out var argTemps))
+                                {
+                                    return false;
+                                }
+
+                                _methodBodyIR.Instructions.Add(new LIRNewIntrinsicObject(intrinsicInfo.Name, argTemps, resultTempVar));
+                                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                                return true;
+                            }
+                    }
                 }
             }
 
@@ -3476,6 +3546,32 @@ public sealed class HIRToLIRLowerer
 
         _methodBodyIR.Instructions.Add(new LIRCallMember(receiverTempVar, calleePropAccess.PropertyName, argsArrayTempVar, resultTempVar));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        return true;
+    }
+
+    private bool TryEvaluateCallArguments(IReadOnlyList<HIRExpression> arguments, int usedCount, out List<TempVariable> usedTemps)
+    {
+        usedTemps = new List<TempVariable>(Math.Max(usedCount, 0));
+
+        var maxUsed = Math.Max(0, usedCount);
+        if (arguments.Count < maxUsed)
+        {
+            maxUsed = arguments.Count;
+        }
+
+        for (int i = 0; i < arguments.Count; i++)
+        {
+            if (!TryLowerExpression(arguments[i], out var argTemp))
+            {
+                return false;
+            }
+
+            if (i < maxUsed)
+            {
+                usedTemps.Add(EnsureObject(argTemp));
+            }
+        }
+
         return true;
     }
 
