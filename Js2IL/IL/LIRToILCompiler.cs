@@ -2707,6 +2707,26 @@ internal sealed class LIRToILCompiler
                     EmitStoreTemp(loadLeafField.Result, ilEncoder, allocation);
                     break;
                 }
+            case LIRLoadScopeFieldByName loadScopeField:
+                {
+                    if (!IsMaterialized(loadScopeField.Result, allocation))
+                    {
+                        break;
+                    }
+
+                    var fieldHandle = ResolveFieldHandle(
+                        loadScopeField.ScopeName,
+                        loadScopeField.FieldName,
+                        "LIRLoadScopeFieldByName instruction");
+                    ilEncoder.LoadLocal(0);
+                    ilEncoder.OpCode(ILOpCode.Ldfld);
+                    ilEncoder.Token(fieldHandle);
+
+                    var fieldClrType = GetDeclaredScopeFieldClrType(loadScopeField.ScopeName, loadScopeField.FieldName);
+                    EmitBoxIfNeededForTypedScopeFieldLoad(fieldClrType, GetTempStorage(loadScopeField.Result), ilEncoder);
+                    EmitStoreTemp(loadScopeField.Result, ilEncoder, allocation);
+                    break;
+                }
             case LIRStoreLeafScopeField storeLeafField:
                 {
                     // Emit: ldloc.0 (scope instance), ldarg/ldloc Value, stfld (field handle)
@@ -2724,6 +2744,27 @@ internal sealed class LIRToILCompiler
                     else
                     {
                         EmitLoadTemp(storeLeafField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    ilEncoder.OpCode(ILOpCode.Stfld);
+                    ilEncoder.Token(fieldHandle);
+                    break;
+                }
+            case LIRStoreScopeFieldByName storeScopeField:
+                {
+                    var fieldHandle = ResolveFieldHandle(
+                        storeScopeField.ScopeName,
+                        storeScopeField.FieldName,
+                        "LIRStoreScopeFieldByName instruction");
+                    ilEncoder.LoadLocal(0);
+
+                    var fieldClrType = GetDeclaredScopeFieldClrType(storeScopeField.ScopeName, storeScopeField.FieldName);
+                    if (fieldClrType == typeof(double))
+                    {
+                        EmitLoadTempAsDouble(storeScopeField.Value, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTemp(storeScopeField.Value, ilEncoder, allocation, methodDescriptor);
                     }
                     ilEncoder.OpCode(ILOpCode.Stfld);
                     ilEncoder.Token(fieldHandle);
@@ -2895,7 +2936,7 @@ internal sealed class LIRToILCompiler
                         // Now emit the state switch to dispatch to resume points
                         // State 0 = initial entry (fall through)
                         // State 1, 2, ... = resume points after each await
-                        if (asyncInfo.AwaitPoints.Count > 0)
+                        if (asyncInfo.MaxResumeStateId > 0)
                         {
                             EmitAsyncStateSwitch(ilEncoder, labelMap, asyncInfo);
                         }
@@ -2948,7 +2989,7 @@ internal sealed class LIRToILCompiler
                         // 5. Load awaited result from field
 
                         var scopeName = MethodBody.LeafScopeId.Name;
-                        var resultFieldName = $"_awaited{awaitInstr.ResumeStateId}";
+                        var resultFieldName = $"_awaited{awaitInstr.AwaitId}";
                         
                         // Get the resume label
                         if (!labelMap.TryGetValue(awaitInstr.ResumeLabelId, out var resumeLabel))
@@ -2982,14 +3023,29 @@ internal sealed class LIRToILCompiler
                         ilEncoder.LoadLocal(0);
                         EmitLoadFieldByName(ilEncoder, scopeName, "_moveNext");
                         
-                        // call Promise.SetupAwaitContinuation
-                        var setupAwaitRef = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.Promise),
-                            "SetupAwaitContinuation",
-                            parameterTypes: new[] { typeof(object), typeof(object), typeof(object[]), typeof(string), typeof(object) });
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(setupAwaitRef);
-                        ilEncoder.OpCode(ILOpCode.Pop); // discard return value (null)
+                        if (awaitInstr.RejectResumeStateId.HasValue && !string.IsNullOrEmpty(awaitInstr.PendingExceptionFieldName))
+                        {
+                            ilEncoder.LoadConstantI4(awaitInstr.RejectResumeStateId.Value);
+                            ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString(awaitInstr.PendingExceptionFieldName));
+
+                            var setupAwaitRef = _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.Promise),
+                                "SetupAwaitContinuationWithRejectResume",
+                                parameterTypes: new[] { typeof(object), typeof(object), typeof(object[]), typeof(string), typeof(object), typeof(int), typeof(string) });
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(setupAwaitRef);
+                            ilEncoder.OpCode(ILOpCode.Pop); // discard return value (null)
+                        }
+                        else
+                        {
+                            var setupAwaitRef = _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.Promise),
+                                "SetupAwaitContinuation",
+                                parameterTypes: new[] { typeof(object), typeof(object), typeof(object[]), typeof(string), typeof(object) });
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(setupAwaitRef);
+                            ilEncoder.OpCode(ILOpCode.Pop); // discard return value (null)
+                        }
 
                         // --- Step 3: Return _deferred.promise ---
                         // ldloc.0, ldfld _deferred, callvirt get_promise, ret
@@ -3420,6 +3476,21 @@ internal sealed class LIRToILCompiler
                     ilEncoder.Token(fieldHandle);
 
                     var fieldClrType = GetDeclaredScopeFieldClrType(loadLeafField.Field.ScopeName, loadLeafField.Field.FieldName);
+                    EmitBoxIfNeededForTypedScopeFieldLoad(fieldClrType, GetTempStorage(temp), ilEncoder);
+                }
+                break;
+            case LIRLoadScopeFieldByName loadScopeField:
+                // Emit inline: ldloc.0 (scope instance), ldfld (field handle)
+                {
+                    var fieldHandle = ResolveFieldHandle(
+                        loadScopeField.ScopeName,
+                        loadScopeField.FieldName,
+                        "inline LIRLoadScopeFieldByName emission");
+                    ilEncoder.LoadLocal(0);
+                    ilEncoder.OpCode(ILOpCode.Ldfld);
+                    ilEncoder.Token(fieldHandle);
+
+                    var fieldClrType = GetDeclaredScopeFieldClrType(loadScopeField.ScopeName, loadScopeField.FieldName);
                     EmitBoxIfNeededForTypedScopeFieldLoad(fieldClrType, GetTempStorage(temp), ilEncoder);
                 }
                 break;
@@ -4905,24 +4976,32 @@ internal sealed class LIRToILCompiler
         // Case 1, 2, ... = resume points
         
         var fallThroughLabel = ilEncoder.DefineLabel();
-        int branchCount = asyncInfo.AwaitPoints.Count + 1;
+        int branchCount = asyncInfo.MaxResumeStateId + 1;
         
         // Collect switch targets
         var switchTargets = new LabelHandle[branchCount];
         
-        // Case 0: fall through to function body
-        switchTargets[0] = fallThroughLabel;
+        // Default all cases to fall through to function body
+        for (int i = 0; i < branchCount; i++)
+        {
+            switchTargets[i] = fallThroughLabel;
+        }
         
         // Cases 1, 2, 3, ...: jump to resume labels
-        foreach (var awaitPoint in asyncInfo.AwaitPoints)
+        foreach (var kvp in asyncInfo.ResumeLabels)
         {
-            // Ensure the resume label exists in the map
-            if (!labelMap.TryGetValue(awaitPoint.ResumeLabelId, out var resumeLabel))
+            var stateId = kvp.Key;
+            var labelId = kvp.Value;
+            if (stateId <= 0 || stateId >= branchCount)
+            {
+                continue;
+            }
+            if (!labelMap.TryGetValue(labelId, out var resumeLabel))
             {
                 resumeLabel = ilEncoder.DefineLabel();
-                labelMap[awaitPoint.ResumeLabelId] = resumeLabel;
+                labelMap[labelId] = resumeLabel;
             }
-            switchTargets[awaitPoint.ResumeStateId] = resumeLabel;
+            switchTargets[stateId] = resumeLabel;
         }
         
         // Emit switch instruction using SwitchInstructionEncoder

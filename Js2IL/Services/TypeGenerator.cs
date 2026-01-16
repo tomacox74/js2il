@@ -210,6 +210,18 @@ namespace Js2IL.Services
             _variableRegistry.ScopeMetadata.RegisterField(scopeName, "_moveNext", moveNextFieldHandle);
             _variableRegistry.ScopeMetadata.RegisterFieldClrType(scopeName, "_moveNext", typeof(object));
 
+            // Field: _pendingException (object) - used for async try/catch await rejection handling
+            var pendingExceptionSig = new BlobBuilder();
+            new BlobEncoder(pendingExceptionSig).Field().Type().Object();
+            var pendingExceptionHandle = typeBuilder.AddFieldDefinition(
+                FieldAttributes.Public,
+                "_pendingException",
+                _metadataBuilder.GetOrAddBlob(pendingExceptionSig)
+            );
+            scopeFields.Add(pendingExceptionHandle);
+            _variableRegistry.ScopeMetadata.RegisterField(scopeName, "_pendingException", pendingExceptionHandle);
+            _variableRegistry.ScopeMetadata.RegisterFieldClrType(scopeName, "_pendingException", typeof(object));
+
             // Fields for awaited result storage: _awaited1, _awaited2, etc.
             // State IDs start at 1, so await point N stores its result in _awaitedN
             for (int i = 1; i <= awaitPointCount; i++)

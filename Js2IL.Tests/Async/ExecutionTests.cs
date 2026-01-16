@@ -28,12 +28,6 @@ namespace Js2IL.Tests.Async
         public Task Async_FunctionExpression_SimpleAwait() { var testName = nameof(Async_FunctionExpression_SimpleAwait); return ExecutionTest(testName); }
 
         [Fact]
-        public async Task Async_TryCatch_AwaitReject()
-        {
-            var testName = nameof(Async_TryCatch_AwaitReject);
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => ExecutionTest(testName));
-            Assert.Contains("await", ex.Message);
-            Assert.Contains("try/catch/finally", ex.Message);
-        }
+        public Task Async_TryCatch_AwaitReject() { var testName = nameof(Async_TryCatch_AwaitReject); return ExecutionTest(testName); }
     }
 }

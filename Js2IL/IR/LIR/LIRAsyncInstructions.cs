@@ -18,12 +18,22 @@ namespace Js2IL.IR;
 public record LIRAwait(
     /// <summary>The expression being awaited (already evaluated to a temp)</summary>
     TempVariable AwaitedValue,
+    /// <summary>
+    /// The await ID for this await point (used only for selecting awaited-result storage, e.g. _awaited1).
+    /// This is intentionally separate from ResumeStateId so synthetic resume states (e.g. catch resumption)
+    /// don't shift awaited-result field numbering.
+    /// </summary>
+    int AwaitId,
     /// <summary>The state ID to set before suspending (used for resumption)</summary>
     int ResumeStateId,
     /// <summary>The label ID to jump to when resuming</summary>
     int ResumeLabelId,
     /// <summary>The temp variable to store the result value after resumption</summary>
-    TempVariable Result) : LIRInstruction;
+    TempVariable Result,
+    /// <summary>Optional state ID to resume at when the awaited promise rejects</summary>
+    int? RejectResumeStateId = null,
+    /// <summary>Optional scope field name to store the pending exception</summary>
+    string? PendingExceptionFieldName = null) : LIRInstruction;
 
 /// <summary>
 /// Initializes async function state at the start of an async entry method.
