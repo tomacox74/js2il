@@ -50,6 +50,13 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | undefined identifier usage | Supported | `Js2IL.Tests/Literals/JavaScript/Literals_NullAndUndefined.js` | Handled as the ECMAScript undefined value and participates in JS truthiness; see execution snapshot Js2IL.Tests/Literals/ExecutionTests.Literals_NullAndUndefined.verified.txt. | 13.1.6 |
 
 
+#### [ThisExpression](https://tc39.es/ecma262/#sec-this-keyword)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| this binding in non-arrow functions (object literal methods) | Supported | `Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js` | Member calls on object literals bind the receiver as runtime this; non-member calls see undefined (null). | 13.1.7 |
+
+
 ### [Declarations](https://tc39.es/ecma262/#sec-declarations)
 
 #### [let/const](https://tc39.es/ecma262/#sec-let-and-const-declarations)

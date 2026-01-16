@@ -412,14 +412,14 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_ThisExpression_ReportsError()
+    public void Validate_ThisExpression_Valid()
     {
-        // Issue #218: 'this' is not yet supported outside class methods/constructors
+        // 'this' is supported in non-arrow functions.
         var js = "function foo() { console.log(this); }";
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("'this' keyword is not yet supported outside of class methods and constructors"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]
@@ -430,7 +430,7 @@ public class ValidatorTests
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
         Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("'this' keyword is not yet supported outside of class methods and constructors"));
+        Assert.Contains(result.Errors, e => e.Contains("'this' keyword is not yet supported in this context"));
     }
 
     [Fact]
@@ -471,7 +471,7 @@ class Counter {
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
         Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Arrow functions or nested functions using 'this' inside class constructors/methods are not yet supported"));
+        Assert.Contains(result.Errors, e => e.Contains("'this' keyword is not yet supported in this context"));
     }
 
     [Fact]
@@ -490,13 +490,13 @@ class Counter {
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
         Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Arrow functions or nested functions using 'this' inside class constructors/methods are not yet supported"));
+        Assert.Contains(result.Errors, e => e.Contains("'this' keyword is not yet supported in this context"));
     }
 
     [Fact]
-    public void Validate_ThisInNestedFunctionExpressionInsideClassMethod_ReportsError()
+    public void Validate_ThisInNestedFunctionExpressionInsideClassMethod_Valid()
     {
-        // Issue #244: 'this' in function expression inside class method is not yet supported
+        // 'this' is supported in non-arrow functions, even when nested.
         var js = @"
 class Counter {
     doSomething() {
@@ -508,8 +508,8 @@ class Counter {
 }";
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("Arrow functions or nested functions using 'this' inside class constructors/methods are not yet supported"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
     [Fact]

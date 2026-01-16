@@ -2227,7 +2227,11 @@ internal sealed class LIRToILCompiler
 
                     if (methodDescriptor.IsStatic)
                     {
-                        return false; // Fall back to legacy emitter
+                        var getThisRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.RuntimeServices), "GetCurrentThis");
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(getThisRef);
+                        EmitStoreTemp(loadThis.Result, ilEncoder, allocation);
+                        break;
                     }
 
                     ilEncoder.LoadArgument(0);
@@ -3274,7 +3278,10 @@ internal sealed class LIRToILCompiler
             case LIRLoadThis:
                 if (methodDescriptor.IsStatic)
                 {
-                    throw new InvalidOperationException("Cannot emit 'this' in a static method");
+                    var getThisRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.RuntimeServices), "GetCurrentThis");
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(getThisRef);
+                    break;
                 }
                 ilEncoder.LoadArgument(0);
                 break;

@@ -2084,7 +2084,10 @@ public sealed class HIRToLIRLowerer
             case HIRThisExpression:
                 // PL3.5: ThisExpression.
                 // Only supported for instance callables where IL arg0 is the receiver.
-                if (_callableKind is not CallableKind.ClassMethod and not CallableKind.Constructor)
+                if (_callableKind is not CallableKind.ClassMethod
+                    and not CallableKind.Constructor
+                    and not CallableKind.Function
+                    and not CallableKind.ModuleMain)
                 {
                     return false;
                 }

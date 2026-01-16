@@ -138,7 +138,15 @@ namespace JavaScriptRuntime
                     // If the property value is a delegate, invoke it using Closure.InvokeWithArgs
                     if (propValue is Delegate)
                     {
-                        return Closure.InvokeWithArgs(propValue, System.Array.Empty<object>(), callArgs);
+                        var previousThis = RuntimeServices.SetCurrentThis(receiver);
+                        try
+                        {
+                            return Closure.InvokeWithArgs(propValue, System.Array.Empty<object>(), callArgs);
+                        }
+                        finally
+                        {
+                            RuntimeServices.SetCurrentThis(previousThis);
+                        }
                     }
                     throw new NotSupportedException($"Property '{methodName}' on object is not callable (type: {propValue.GetType().FullName})");
                 }
@@ -152,7 +160,15 @@ namespace JavaScriptRuntime
             var memberValue = GetProperty(receiver, methodName);
             if (memberValue is Delegate)
             {
-                return Closure.InvokeWithArgs(memberValue, System.Array.Empty<object>(), callArgs);
+                var previousThis = RuntimeServices.SetCurrentThis(receiver);
+                try
+                {
+                    return Closure.InvokeWithArgs(memberValue, System.Array.Empty<object>(), callArgs);
+                }
+                finally
+                {
+                    RuntimeServices.SetCurrentThis(previousThis);
+                }
             }
 
             // 4) Fallback to reflection on receiver type

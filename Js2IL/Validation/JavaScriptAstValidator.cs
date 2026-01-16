@@ -34,10 +34,9 @@ public class JavaScriptAstValidator : IAstValidator
         // Validate async/await usage - await is only valid inside async functions.
         ValidateAsyncAwait(ast, result);
         
-        // Track whether we're currently inside a class method or constructor,
-        // and whether we're inside a nested function within a class method
+        // Track contexts where 'this' is supported.
         var contextStack = new Stack<ValidationContext>();
-        contextStack.Push(new ValidationContext { IsInClassMethod = false, IsInNestedFunctionInClassMethod = false, MethodDefinitionFunctionValue = null });
+        contextStack.Push(new ValidationContext { AllowsThis = false, ScopeOwner = null, MethodDefinitionFunctionValue = null });
         
         // Visit all nodes in the AST
         var walker = new AstWalker();
@@ -48,20 +47,24 @@ public class JavaScriptAstValidator : IAstValidator
             // Push new context for class methods and constructors
             if (node is MethodDefinition methodDef)
             {
-                contextStack.Push(new ValidationContext 
-                { 
-                    IsInClassMethod = true, 
-                    IsInNestedFunctionInClassMethod = false,
+                contextStack.Push(new ValidationContext
+                {
+                    AllowsThis = true,
+                    ScopeOwner = methodDef,
                     // Track the function expression that is the method body so we don't treat it as nested
                     MethodDefinitionFunctionValue = methodDef.Value
                 });
             }
-            // Push new context for nested functions within class methods (but not the method body itself)
-            else if ((node is ArrowFunctionExpression || node is FunctionExpression || node is FunctionDeclaration) 
-                     && currentContext.IsInClassMethod
+            // Push new context for functions (exclude the method body itself).
+            else if ((node is ArrowFunctionExpression || node is FunctionExpression || node is FunctionDeclaration)
                      && !ReferenceEquals(node, currentContext.MethodDefinitionFunctionValue))
             {
-                contextStack.Push(new ValidationContext { IsInClassMethod = true, IsInNestedFunctionInClassMethod = true, MethodDefinitionFunctionValue = null });
+                contextStack.Push(new ValidationContext
+                {
+                    AllowsThis = node is not ArrowFunctionExpression,
+                    ScopeOwner = node,
+                    MethodDefinitionFunctionValue = null
+                });
             }
             
             // Check for unsupported features
@@ -124,16 +127,10 @@ public class JavaScriptAstValidator : IAstValidator
                     break;
 
                 case NodeType.ThisExpression:
-                    // 'this' is supported in class methods and constructors, but not elsewhere
-                    // or in nested functions within class methods (issue #244)
-                    if (!currentContext.IsInClassMethod)
+                    // 'this' is supported in class methods/constructors and non-arrow functions.
+                    if (!currentContext.AllowsThis)
                     {
-                        result.Errors.Add($"The 'this' keyword is not yet supported outside of class methods and constructors (line {node.Location.Start.Line})");
-                        result.IsValid = false;
-                    }
-                    else if (currentContext.IsInNestedFunctionInClassMethod)
-                    {
-                        result.Errors.Add($"Arrow functions or nested functions using 'this' inside class constructors/methods are not yet supported (line {node.Location.Start.Line})");
+                        result.Errors.Add($"The 'this' keyword is not yet supported in this context (line {node.Location.Start.Line})");
                         result.IsValid = false;
                     }
                     break;
@@ -174,14 +171,7 @@ public class JavaScriptAstValidator : IAstValidator
             }
         }, exitNode =>
         {
-            // Pop context when leaving class methods
-            if (exitNode is MethodDefinition)
-            {
-                contextStack.Pop();
-            }
-            // Pop context when leaving nested functions within class methods
-            else if ((exitNode is ArrowFunctionExpression || exitNode is FunctionExpression || exitNode is FunctionDeclaration)
-                     && contextStack.Count > 1 && contextStack.Peek().IsInNestedFunctionInClassMethod)
+            if (contextStack.Count > 1 && ReferenceEquals(contextStack.Peek().ScopeOwner, exitNode))
             {
                 contextStack.Pop();
             }
@@ -476,8 +466,8 @@ public class JavaScriptAstValidator : IAstValidator
 
     private class ValidationContext
     {
-        public bool IsInClassMethod { get; set; }
-        public bool IsInNestedFunctionInClassMethod { get; set; }
+        public bool AllowsThis { get; set; }
+        public Node? ScopeOwner { get; set; }
         // Track the FunctionExpression that is the direct body of a MethodDefinition
         // so we don't incorrectly treat it as a nested function
         public Node? MethodDefinitionFunctionValue { get; set; }
