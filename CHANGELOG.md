@@ -9,6 +9,9 @@ All notable changes to this project are documented here.
 - Validator coverage for `require('node:path')`.
 - Internal punch list for missing Node module APIs needed by scripts.
 
+### Fixed
+- Async `await` inside `try/catch` now resumes into catch on rejection; validator allows await in try/catch and disallows await in finally.
+
 ## v0.7.0 - 2026-01-15
 
 ### Added

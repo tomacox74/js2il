@@ -1425,9 +1425,10 @@
                   "feature": "await expression",
                   "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/Async/JavaScript/Async_SimpleAwait.js"
+                    "Js2IL.Tests/Async/JavaScript/Async_SimpleAwait.js",
+                    "Js2IL.Tests/Async/JavaScript/Async_TryCatch_AwaitReject.js"
                   ],
-                  "notes": "Full state machine implementation with suspension/resumption. Each await point stores _asyncState, schedules promise.then() continuation via SetupAwaitContinuation, and returns. On resume, the state switch dispatches to the appropriate label and loads the awaited result from a scope field. Scope persistence handled via PrependScopeToArray."
+                  "notes": "Full state machine implementation with suspension/resumption. Each await point stores _asyncState, schedules promise.then() continuation via SetupAwaitContinuation, and returns. On resume, the state switch dispatches to the appropriate label and loads the awaited result from a scope field. Scope persistence handled via PrependScopeToArray. Await rejection inside try/catch resumes into the catch block via pending-exception storage; await in finally is not yet supported."
                 }
               ]
             }
