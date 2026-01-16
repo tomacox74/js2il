@@ -99,7 +99,6 @@ namespace Js2IL.Tests.Function
         public Task Function_ObjectLiteralMethod_ThisBinding() { var testName = nameof(Function_ObjectLiteralMethod_ThisBinding); return ExecutionTest(testName); }
 
         [Fact]
-        [Fact(Skip = "Async continuation for object literal methods is not yet scheduled; enable once microtasks resume in this scenario.")]
         public Task Function_ObjectLiteralMethod_ThisBinding_AsyncAwait() { var testName = nameof(Function_ObjectLiteralMethod_ThisBinding_AsyncAwait); return ExecutionTest(testName); }
     }
 }

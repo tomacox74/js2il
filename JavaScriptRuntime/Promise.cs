@@ -173,6 +173,7 @@ public sealed class Promise
     {
         // Wrap in Promise.resolve() per ECMA-262
         var promise = awaited is Promise p ? p : (Promise)resolve(awaited)!;
+
         
         // Get the scope type for reflection
         var scopeType = scope.GetType();
@@ -203,6 +204,7 @@ public sealed class Promise
         
         // Schedule continuations
         promise.@then(onFulfilled, onRejected);
+
         
         return null;
     }

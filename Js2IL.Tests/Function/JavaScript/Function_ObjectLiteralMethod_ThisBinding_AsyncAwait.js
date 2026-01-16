@@ -6,6 +6,6 @@ const obj = {
     }
 };
 
-(async function () {
-    console.log(await obj.asyncFormat(Promise.resolve(42)));
-})();
+obj.asyncFormat(Promise.resolve(42)).then(function (value) {
+    console.log(value);
+});

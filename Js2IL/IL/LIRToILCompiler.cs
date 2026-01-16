@@ -2904,12 +2904,14 @@ internal sealed class LIRToILCompiler
                         {
                             var methodHandle = (MethodDefinitionHandle)token;
                             
-                            // Create delegate: ldnull, ldftn, newobj Func<object[], object>::.ctor
+                            // Create delegate: ldnull, ldftn, newobj Func<object[], object, ...>::.ctor
+                            // Use the JS parameter count so the delegate signature matches the async method.
+                            int jsParamCount = callableId.JsParamCount;
                             ilEncoder.OpCode(ILOpCode.Ldnull);
                             ilEncoder.OpCode(ILOpCode.Ldftn);
                             ilEncoder.Token(methodHandle);
                             ilEncoder.OpCode(ILOpCode.Newobj);
-                            ilEncoder.Token(_bclReferences.GetFuncCtorRef(0)); // Func<object[], object> has 0 JS params
+                            ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount));
                             
                             // Load modified scopes array
                             ilEncoder.LoadArgument(0);
