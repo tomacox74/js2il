@@ -12,8 +12,7 @@ namespace JavaScriptRuntime
     public class Object
     {
         /// <summary>
-        /// Implements the JavaScript Object() callable semantics for null/undefined.
-        /// For non-null values, returns the value unchanged (minimal behavior).
+        /// Implements the JavaScript Object() callable semantics: returns a new empty object.
         /// </summary>
         public static object Construct()
         {
@@ -21,8 +20,8 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
-        /// Implements the JavaScript Object(value) callable semantics for null/undefined.
-        /// For non-null values, returns the value unchanged (minimal behavior).
+        /// Implements the JavaScript Object(value) callable semantics: returns a new empty object
+        /// for null/undefined, otherwise returns the value unchanged (minimal behavior).
         /// </summary>
         public static object Construct(object? value)
         {
