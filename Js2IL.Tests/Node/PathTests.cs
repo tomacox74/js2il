@@ -41,11 +41,11 @@ namespace Js2IL.Tests.Node
         }
 
         [Fact]
-        public void Join_NoArgs_FollowsCombineBehavior()
+        public void Join_NoArgs_ReturnsDot()
         {
             var p = new NodePath();
             var result = p.join();
-            Assert.Equal(string.Empty, result);
+            Assert.Equal(".", result);
         }
 
         [Fact]
