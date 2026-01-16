@@ -769,6 +769,13 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Array.length property (read) | Supported | `Js2IL.Tests/Array/JavaScript/Array_LengthProperty_ReturnsCount.js`<br>`Js2IL.Tests/Array/JavaScript/Array_EmptyLength_IsZero.js` | length getter returns number of elements; emitted via JavaScriptRuntime.Object.GetLength(object). Used by for-of implementation. | 23.1.2.1 |
 
 
+#### [Array.prototype.find](https://tc39.es/ecma262/#sec-array.prototype.find)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Array.prototype.find | Partially Supported | `Js2IL.Tests/Array/JavaScript/Array_Find_Basic.js` | Implements callback invocation with (value, index, array) depending on the compiled delegate signature and returns the first matching element. thisArg is currently ignored; returns undefined when no element matches. | 23.1.3.8 |
+
+
 #### [Array.prototype.join](https://tc39.es/ecma262/#sec-array.prototype.join)
 
 | Feature | Status | Test Scripts | Notes | Section |
