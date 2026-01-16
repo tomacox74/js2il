@@ -789,7 +789,7 @@ internal sealed class LIRToILCompiler
                     EmitLoadFieldByName(ilEncoder, scopeName, "_deferred");
                     var getResolveRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.PromiseWithResolvers),
-                        "get_resolve");
+                        $"get_{nameof(JavaScriptRuntime.PromiseWithResolvers.resolve)}");
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(getResolveRef);
                     
@@ -803,7 +803,7 @@ internal sealed class LIRToILCompiler
                     
                     var invokeWithArgsRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
-                        "InvokeWithArgs",
+                        nameof(JavaScriptRuntime.Closure.InvokeWithArgs),
                         parameterTypes: new[] { typeof(object), typeof(object[]), typeof(object[]) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(invokeWithArgsRef);
@@ -814,7 +814,7 @@ internal sealed class LIRToILCompiler
                     EmitLoadFieldByName(ilEncoder, scopeName, "_deferred");
                     var getPromiseRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.PromiseWithResolvers),
-                        "get_promise");
+                        $"get_{nameof(JavaScriptRuntime.PromiseWithResolvers.promise)}");
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(getPromiseRef);
                 }
@@ -1381,7 +1381,7 @@ internal sealed class LIRToILCompiler
                     ilEncoder.OpCode(ILOpCode.Pop); // pop ex
                     var getValue = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.JsThrownValueException),
-                        "get_Value");
+                        $"get_{nameof(JavaScriptRuntime.JsThrownValueException.Value)}");
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(getValue);
                     EmitStoreTemp(unwrapCatch.Result, ilEncoder, allocation);
@@ -1845,7 +1845,7 @@ internal sealed class LIRToILCompiler
                     // For each element: dup, load element value (boxed), callvirt Add
                     var addMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(System.Collections.Generic.List<object>),
-                        "Add");
+                        nameof(System.Collections.Generic.List<object>.Add));
                     for (int i = 0; i < newJsArray.Elements.Count; i++)
                     {
                         ilEncoder.OpCode(ILOpCode.Dup);
@@ -1875,7 +1875,7 @@ internal sealed class LIRToILCompiler
                     // For each property: dup, ldstr key, load value, callvirt IDictionary.set_Item
                     var setItemMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(System.Collections.Generic.IDictionary<string, object>),
-                        "set_Item");
+                        $"set_{nameof(System.Collections.Generic.IDictionary<string, object>.Item)}");
                     foreach (var prop in newJsObject.Properties)
                     {
                         ilEncoder.OpCode(ILOpCode.Dup);
@@ -1992,7 +1992,7 @@ internal sealed class LIRToILCompiler
 
                     var int32ArrayGetter = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Int32Array),
-                        "get_Item",
+                        $"get_{nameof(JavaScriptRuntime.Int32Array.Item)}",
                         parameterTypes: new[] { typeof(double) });
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(int32ArrayGetter);
@@ -2029,7 +2029,7 @@ internal sealed class LIRToILCompiler
 
                     var int32ArraySetter = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Int32Array),
-                        "set_Item",
+                        $"set_{nameof(JavaScriptRuntime.Int32Array.Item)}",
                         parameterTypes: new[] { typeof(double), typeof(double) });
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(int32ArraySetter);
@@ -2119,7 +2119,7 @@ internal sealed class LIRToILCompiler
                     EmitLoadTemp(arrayAdd.Element, ilEncoder, allocation, methodDescriptor);
                     var addMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(System.Collections.Generic.List<object>),
-                        "Add");
+                        nameof(System.Collections.Generic.List<object>.Add));
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(addMethod);
                     break;
@@ -2147,7 +2147,7 @@ internal sealed class LIRToILCompiler
                         EmitLoadFieldByName(ilEncoder, scopeName, "_deferred");
                         var getResolveRef = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.PromiseWithResolvers),
-                            "get_resolve");
+                            $"get_{nameof(JavaScriptRuntime.PromiseWithResolvers.resolve)}");
                         ilEncoder.OpCode(ILOpCode.Callvirt);
                         ilEncoder.Token(getResolveRef);
                         
@@ -2164,7 +2164,7 @@ internal sealed class LIRToILCompiler
                         
                         var invokeWithArgsRef = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.Closure),
-                            "InvokeWithArgs",
+                            nameof(JavaScriptRuntime.Closure.InvokeWithArgs),
                             parameterTypes: new[] { typeof(object), typeof(object[]), typeof(object[]) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(invokeWithArgsRef);
@@ -2175,7 +2175,7 @@ internal sealed class LIRToILCompiler
                         EmitLoadFieldByName(ilEncoder, scopeName, "_deferred");
                         var getPromiseRef = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.PromiseWithResolvers),
-                            "get_promise");
+                            $"get_{nameof(JavaScriptRuntime.PromiseWithResolvers.promise)}");
                         ilEncoder.OpCode(ILOpCode.Callvirt);
                         ilEncoder.Token(getPromiseRef);
                     }
@@ -2185,7 +2185,7 @@ internal sealed class LIRToILCompiler
                         EmitLoadTempAsObject(lirReturn.ReturnValue, ilEncoder, allocation, methodDescriptor);
                         var resolveRef = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.Promise),
-                            "resolve",
+                            nameof(JavaScriptRuntime.Promise.resolve),
                             parameterTypes: new[] { typeof(object) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(resolveRef);
@@ -2227,7 +2227,7 @@ internal sealed class LIRToILCompiler
 
                     if (methodDescriptor.IsStatic)
                     {
-                        var getThisRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.RuntimeServices), "GetCurrentThis");
+                        var getThisRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.RuntimeServices), nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis));
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(getThisRef);
                         EmitStoreTemp(loadThis.Result, ilEncoder, allocation);
@@ -2348,7 +2348,7 @@ internal sealed class LIRToILCompiler
 
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
-                        "InvokeWithArgs",
+                        nameof(JavaScriptRuntime.Closure.InvokeWithArgs),
                         new[] { typeof(object), typeof(object[]), typeof(object[]) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(invokeRef);
@@ -2645,7 +2645,7 @@ internal sealed class LIRToILCompiler
                     // Bind delegate to scopes array: Closure.Bind(object, object[])
                     EmitLoadTemp(createArrow.ScopesArray, ilEncoder, allocation, methodDescriptor);
                     ilEncoder.OpCode(ILOpCode.Call);
-                    var bindRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), "Bind", new[] { typeof(object), typeof(object[]) });
+                    var bindRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), nameof(JavaScriptRuntime.Closure.Bind), new[] { typeof(object), typeof(object[]) });
                     ilEncoder.Token(bindRef);
 
                     EmitStoreTemp(createArrow.Result, ilEncoder, allocation);
@@ -2684,7 +2684,7 @@ internal sealed class LIRToILCompiler
                     // Bind delegate to scopes array: Closure.Bind(object, object[])
                     EmitLoadTemp(createFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
                     ilEncoder.OpCode(ILOpCode.Call);
-                    var bindRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), "Bind", new[] { typeof(object), typeof(object[]) });
+                    var bindRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), nameof(JavaScriptRuntime.Closure.Bind), new[] { typeof(object), typeof(object[]) });
                     ilEncoder.Token(bindRef);
 
                     EmitStoreTemp(createFunc.Result, ilEncoder, allocation);
@@ -2879,7 +2879,7 @@ internal sealed class LIRToILCompiler
                         ilEncoder.LoadArgument(0); // parentScopes (original arg.0)
                         var prependRef = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.Promise),
-                            "PrependScopeToArray",
+                            nameof(JavaScriptRuntime.Promise.PrependScopeToArray),
                             parameterTypes: new[] { typeof(object), typeof(object[]) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(prependRef);
@@ -2889,7 +2889,7 @@ internal sealed class LIRToILCompiler
                         ilEncoder.LoadLocal(0);
                         var withResolversRef = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.Promise),
-                            "withResolvers");
+                            nameof(JavaScriptRuntime.Promise.withResolvers));
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(withResolversRef);
                         EmitStoreFieldByName(ilEncoder, scopeName, "_deferred");
@@ -2919,7 +2919,7 @@ internal sealed class LIRToILCompiler
                             // Call Closure.Bind(delegate, scopes)
                             var bindRef = _memberRefRegistry.GetOrAddMethod(
                                 typeof(JavaScriptRuntime.Closure),
-                                "Bind",
+                                nameof(JavaScriptRuntime.Closure.Bind),
                                 parameterTypes: new[] { typeof(object), typeof(object[]) });
                             ilEncoder.OpCode(ILOpCode.Call);
                             ilEncoder.Token(bindRef);
@@ -2977,7 +2977,7 @@ internal sealed class LIRToILCompiler
                         // Call Promise.AwaitValue(awaited) -> returns the resolved value
                         var awaitValueRef = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.Promise),
-                            "AwaitValue",
+                            nameof(JavaScriptRuntime.Promise.AwaitValue),
                             parameterTypes: new[] { typeof(object) });
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(awaitValueRef);
@@ -3036,7 +3036,7 @@ internal sealed class LIRToILCompiler
 
                             var setupAwaitRef = _memberRefRegistry.GetOrAddMethod(
                                 typeof(JavaScriptRuntime.Promise),
-                                "SetupAwaitContinuationWithRejectResume",
+                                nameof(JavaScriptRuntime.Promise.SetupAwaitContinuationWithRejectResume),
                                 parameterTypes: new[] { typeof(object), typeof(object), typeof(object[]), typeof(string), typeof(object), typeof(int), typeof(string) });
                             ilEncoder.OpCode(ILOpCode.Call);
                             ilEncoder.Token(setupAwaitRef);
@@ -3046,7 +3046,7 @@ internal sealed class LIRToILCompiler
                         {
                             var setupAwaitRef = _memberRefRegistry.GetOrAddMethod(
                                 typeof(JavaScriptRuntime.Promise),
-                                "SetupAwaitContinuation",
+                                nameof(JavaScriptRuntime.Promise.SetupAwaitContinuation),
                                 parameterTypes: new[] { typeof(object), typeof(object), typeof(object[]), typeof(string), typeof(object) });
                             ilEncoder.OpCode(ILOpCode.Call);
                             ilEncoder.Token(setupAwaitRef);
@@ -3060,7 +3060,7 @@ internal sealed class LIRToILCompiler
                         
                         var getPromiseRef = _memberRefRegistry.GetOrAddMethod(
                             typeof(JavaScriptRuntime.PromiseWithResolvers),
-                            "get_promise");
+                            $"get_{nameof(JavaScriptRuntime.PromiseWithResolvers.promise)}");
                         ilEncoder.OpCode(ILOpCode.Callvirt);
                         ilEncoder.Token(getPromiseRef);
                         ilEncoder.OpCode(ILOpCode.Ret);
@@ -3280,7 +3280,7 @@ internal sealed class LIRToILCompiler
             case LIRLoadThis:
                 if (methodDescriptor.IsStatic)
                 {
-                    var getThisRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.RuntimeServices), "GetCurrentThis");
+                    var getThisRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.RuntimeServices), nameof(JavaScriptRuntime.RuntimeServices.GetCurrentThis));
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(getThisRef);
                     break;
@@ -3596,7 +3596,7 @@ internal sealed class LIRToILCompiler
                     // For each element: dup, load element value, callvirt Add
                     var addMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(System.Collections.Generic.List<object>),
-                        "Add");
+                        nameof(System.Collections.Generic.List<object>.Add));
                     for (int i = 0; i < newJsArray.Elements.Count; i++)
                     {
                         ilEncoder.OpCode(ILOpCode.Dup);
@@ -3619,7 +3619,7 @@ internal sealed class LIRToILCompiler
                     // For each property: dup, ldstr key, load value, callvirt IDictionary.set_Item
                     var setItemMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(System.Collections.Generic.IDictionary<string, object>),
-                        "set_Item");
+                        $"set_{nameof(System.Collections.Generic.IDictionary<string, object>.Item)}");
                     foreach (var prop in newJsObject.Properties)
                     {
                         ilEncoder.OpCode(ILOpCode.Dup);
@@ -3715,7 +3715,7 @@ internal sealed class LIRToILCompiler
 
                     var int32ArrayGetter = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Int32Array),
-                        "get_Item",
+                        $"get_{nameof(JavaScriptRuntime.Int32Array.Item)}",
                         parameterTypes: new[] { typeof(double) });
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(int32ArrayGetter);
@@ -3809,7 +3809,7 @@ internal sealed class LIRToILCompiler
 
                     var invokeRef = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Closure),
-                        "InvokeWithArgs",
+                        nameof(JavaScriptRuntime.Closure.InvokeWithArgs),
                         new[] { typeof(object), typeof(object[]), typeof(object[]) });
                     ilEncoder.OpCode(ILOpCode.Call);
                     ilEncoder.Token(invokeRef);
@@ -3910,7 +3910,7 @@ internal sealed class LIRToILCompiler
                     // Bind delegate to scopes array: Closure.Bind(object, object[])
                     EmitLoadTemp(createArrow.ScopesArray, ilEncoder, allocation, methodDescriptor);
                     ilEncoder.OpCode(ILOpCode.Call);
-                    var bindRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), "Bind", new[] { typeof(object), typeof(object[]) });
+                    var bindRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), nameof(JavaScriptRuntime.Closure.Bind), new[] { typeof(object), typeof(object[]) });
                     ilEncoder.Token(bindRef);
                     // Result stays on stack
                     break;
@@ -3938,7 +3938,7 @@ internal sealed class LIRToILCompiler
                     // Bind delegate to scopes array: Closure.Bind(object, object[])
                     EmitLoadTemp(createFunc.ScopesArray, ilEncoder, allocation, methodDescriptor);
                     ilEncoder.OpCode(ILOpCode.Call);
-                    var bindRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), "Bind", new[] { typeof(object), typeof(object[]) });
+                    var bindRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), nameof(JavaScriptRuntime.Closure.Bind), new[] { typeof(object), typeof(object[]) });
                     ilEncoder.Token(bindRef);
                     // Result stays on stack
                     break;
@@ -4827,77 +4827,77 @@ internal sealed class LIRToILCompiler
 
     private void EmitOperatorsAdd(InstructionEncoder ilEncoder)
     {
-        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "Add");
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), nameof(JavaScriptRuntime.Operators.Add));
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
     }
 
     private void EmitOperatorsMultiply(InstructionEncoder ilEncoder)
     {
-        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "Multiply");
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), nameof(JavaScriptRuntime.Operators.Multiply));
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
     }
 
     private void EmitMathPow(InstructionEncoder ilEncoder)
     {
-        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(System.Math), "Pow");
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(System.Math), nameof(System.Math.Pow));
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
     }
 
     private void EmitOperatorsIsTruthyObject(InstructionEncoder ilEncoder)
     {
-        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "IsTruthy", new[] { typeof(object) });
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), nameof(JavaScriptRuntime.Operators.IsTruthy), new[] { typeof(object) });
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
     }
 
     private void EmitOperatorsIsTruthyDouble(InstructionEncoder ilEncoder)
     {
-        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "IsTruthy", new[] { typeof(double) });
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), nameof(JavaScriptRuntime.Operators.IsTruthy), new[] { typeof(double) });
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
     }
 
     private void EmitOperatorsIsTruthyBool(InstructionEncoder ilEncoder)
     {
-        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "IsTruthy", new[] { typeof(bool) });
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), nameof(JavaScriptRuntime.Operators.IsTruthy), new[] { typeof(bool) });
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
     }
 
     private void EmitOperatorsIn(InstructionEncoder ilEncoder)
     {
-        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "In");
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), nameof(JavaScriptRuntime.Operators.In));
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
     }
 
     private void EmitOperatorsEqual(InstructionEncoder ilEncoder)
     {
-        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "Equal");
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), nameof(JavaScriptRuntime.Operators.Equal));
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
     }
 
     private void EmitOperatorsNotEqual(InstructionEncoder ilEncoder)
     {
-        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "NotEqual");
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), nameof(JavaScriptRuntime.Operators.NotEqual));
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
     }
 
     private void EmitOperatorsStrictEqual(InstructionEncoder ilEncoder)
     {
-        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "StrictEqual");
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), nameof(JavaScriptRuntime.Operators.StrictEqual));
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
     }
 
     private void EmitOperatorsStrictNotEqual(InstructionEncoder ilEncoder)
     {
-        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "StrictNotEqual");
+        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), nameof(JavaScriptRuntime.Operators.StrictNotEqual));
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
     }

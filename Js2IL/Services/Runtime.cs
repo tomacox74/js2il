@@ -39,56 +39,56 @@ namespace Js2IL.Services
         public void InvokeGetItemFromObject()
         {
             // we assume the object and index are already on the stack
-            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Object), "GetItem");
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetItem));
             _il.Call(mref);
         }
 
         public void InvokeGetLengthFromObject()
         {
             // we assume the object is already on the stack
-            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Object), "GetLength");
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetLength));
             _il.Call(mref);
         }
 
         public void InvokeNormalizeForOfIterable()
         {
             // we assume the object is already on the stack
-            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Object), "NormalizeForOfIterable");
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.NormalizeForOfIterable));
             _il.Call(mref);
         }
 
         public void InvokeGetEnumerableKeysFromObject()
         {
             // we assume the object is already on the stack
-            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Object), "GetEnumerableKeys");
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Object), nameof(JavaScriptRuntime.Object.GetEnumerableKeys));
             _il.Call(mref);
         }
 
         public void InvokeOperatorsAdd()
         {
             // assumes two object operands are on the stack
-            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "Add");
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), nameof(JavaScriptRuntime.Operators.Add));
             _il.Call(mref);
         }
 
         public void InvokeOperatorsSubtract()
         {
             // assumes two object operands are on the stack
-            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), "Subtract");
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), nameof(JavaScriptRuntime.Operators.Subtract));
             _il.Call(mref);
         }
 
         public void InvokeClosureBindObject()
         {
             // assumes [delegateAsObject] [scopesArray] are on the stack
-            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), "Bind", new[] { typeof(object), typeof(object[]) });
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), nameof(JavaScriptRuntime.Closure.Bind), new[] { typeof(object), typeof(object[]) });
             _il.Call(mref);
         }
 
         public void InvokeClosureInvokeWithArgs()
         {
             // assumes [delegateAsObject] [scopesArray] [argsArray] are on the stack
-            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), "InvokeWithArgs", new[] { typeof(object), typeof(object[]), typeof(object[]) });
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Closure), nameof(JavaScriptRuntime.Closure.InvokeWithArgs), new[] { typeof(object), typeof(object[]), typeof(object[]) });
             _il.Call(mref);
         }
 
@@ -168,7 +168,7 @@ namespace Js2IL.Services
 
         public void InvokeRequire()
         {
-            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.CommonJS.RequireDelegate), "Invoke");
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.CommonJS.RequireDelegate), nameof(JavaScriptRuntime.CommonJS.RequireDelegate.Invoke));
             _il.OpCode(ILOpCode.Callvirt);
             _il.Token(mref);
         }

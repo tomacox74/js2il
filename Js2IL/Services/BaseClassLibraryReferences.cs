@@ -38,14 +38,14 @@ namespace Js2IL.Services
 
         public MemberReferenceHandle Expando_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(System.Dynamic.ExpandoObject), Type.EmptyTypes);
         public MemberReferenceHandle Object_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(object), Type.EmptyTypes);
-        public MemberReferenceHandle IDictionary_SetItem_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Collections.Generic.IDictionary<string, object>), "set_Item");
-        public MemberReferenceHandle Array_Add_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Collections.Generic.List<object>), "Add");
-        public MemberReferenceHandle Array_SetItem_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Collections.Generic.List<object>), "set_Item");
-        public MemberReferenceHandle Array_GetCount_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Collections.Generic.List<object>), "get_Count");
+        public MemberReferenceHandle IDictionary_SetItem_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Collections.Generic.IDictionary<string, object>), $"set_{nameof(System.Collections.Generic.IDictionary<string, object>.Item)}");
+        public MemberReferenceHandle Array_Add_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Collections.Generic.List<object>), nameof(System.Collections.Generic.List<object>.Add));
+        public MemberReferenceHandle Array_SetItem_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Collections.Generic.List<object>), $"set_{nameof(System.Collections.Generic.List<object>.Item)}");
+        public MemberReferenceHandle Array_GetCount_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Collections.Generic.List<object>), $"get_{nameof(System.Collections.Generic.List<object>.Count)}");
         public MemberReferenceHandle Action_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(System.Action), new[] { typeof(object), typeof(IntPtr) });
         public MemberReferenceHandle ModuleMainDelegate_Ctor_Ref => _memberRefRegistry.GetOrAddConstructor(typeof(JavaScriptRuntime.CommonJS.ModuleMainDelegate), new[] { typeof(object), typeof(IntPtr) });
-        public MemberReferenceHandle MethodBase_GetCurrentMethod_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Reflection.MethodBase), "GetCurrentMethod", Type.EmptyTypes);
-        public MemberReferenceHandle String_Concat_Ref => _memberRefRegistry.GetOrAddMethod(typeof(string), "Concat", new[] { typeof(string), typeof(string) });
+        public MemberReferenceHandle MethodBase_GetCurrentMethod_Ref => _memberRefRegistry.GetOrAddMethod(typeof(System.Reflection.MethodBase), nameof(System.Reflection.MethodBase.GetCurrentMethod), Type.EmptyTypes);
+        public MemberReferenceHandle String_Concat_Ref => _memberRefRegistry.GetOrAddMethod(typeof(string), nameof(string.Concat), new[] { typeof(string), typeof(string) });
 
         public MemberReferenceHandle GetFuncCtorRef(int jsParamCount)
         {
@@ -64,7 +64,7 @@ namespace Js2IL.Services
                 throw new NotSupportedException($"Delegate for {jsParamCount} parameters not supported");
             }
 
-            return _memberRefRegistry.GetOrAddMethod(funcType, "Invoke");
+            return _memberRefRegistry.GetOrAddMethod(funcType, nameof(System.Func<object[], object>.Invoke));
         }
     }
 }
