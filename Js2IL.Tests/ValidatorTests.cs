@@ -152,13 +152,14 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_AwaitInsideFinally_ReportsError()
+    public void Validate_AwaitInsideFinally_IsValid()
     {
         var js = "async function f() { try { } finally { await 1; } }";
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.Contains("finally"));
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+        Assert.Empty(result.Warnings);
     }
 
     [Fact]

@@ -157,111 +157,16 @@ namespace Js2IL.Services
                 scopeFields.Add(fieldHandle);
             }
 
-            // Add async state fields for async function scopes
+            // Add awaited result storage fields for async function scopes: _awaited1, _awaited2, etc.
+            // State IDs start at 1, so await point N stores its result in _awaitedN.
             if (scope.IsAsync)
             {
-                AddAsyncStateFields(typeBuilder, scopeFields, scope.AwaitPointCount, scopeKey);
+                AddAwaitedResultFields(typeBuilder, scopeFields, scope.AwaitPointCount, scopeKey);
             }
         }
 
-        /// <summary>
-        /// Adds the async state machine fields to an async function's scope class.
-        /// These fields are used by the MoveNext state machine to track execution state.
-        /// </summary>
-        /// <param name="awaitPointCount">Number of await points in the function (to generate _awaited1, _awaited2, etc.)</param>
-        /// <param name="scopeName">The scope name for registering fields in the metadata registry.</param>
-        private void AddAsyncStateFields(TypeBuilder typeBuilder, List<FieldDefinitionHandle> scopeFields, int awaitPointCount, string scopeName)
+        private void AddAwaitedResultFields(TypeBuilder typeBuilder, List<FieldDefinitionHandle> scopeFields, int awaitPointCount, string scopeName)
         {
-            // Field: _asyncState (int) - the current state of the state machine
-            var stateFieldSig = new BlobBuilder();
-            new BlobEncoder(stateFieldSig).Field().Type().Int32();
-            var stateFieldHandle = typeBuilder.AddFieldDefinition(
-                FieldAttributes.Public,
-                "_asyncState",
-                _metadataBuilder.GetOrAddBlob(stateFieldSig)
-            );
-            scopeFields.Add(stateFieldHandle);
-            _variableRegistry.ScopeMetadata.RegisterField(scopeName, "_asyncState", stateFieldHandle);
-            _variableRegistry.ScopeMetadata.RegisterFieldClrType(scopeName, "_asyncState", typeof(int));
-
-            // Field: _deferred (PromiseWithResolvers) - holds promise, resolve, reject
-            var deferredFieldSig = new BlobBuilder();
-            new BlobEncoder(deferredFieldSig).Field().Type().Type(
-                _bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.PromiseWithResolvers)),
-                isValueType: false);
-            var deferredFieldHandle = typeBuilder.AddFieldDefinition(
-                FieldAttributes.Public,
-                "_deferred",
-                _metadataBuilder.GetOrAddBlob(deferredFieldSig)
-            );
-            scopeFields.Add(deferredFieldHandle);
-            _variableRegistry.ScopeMetadata.RegisterField(scopeName, "_deferred", deferredFieldHandle);
-            _variableRegistry.ScopeMetadata.RegisterFieldClrType(scopeName, "_deferred", typeof(JavaScriptRuntime.PromiseWithResolvers));
-
-            // Field: _moveNext (object) - bound closure reference for self-invocation in continuations
-            var moveNextFieldSig = new BlobBuilder();
-            new BlobEncoder(moveNextFieldSig).Field().Type().Object();
-            var moveNextFieldHandle = typeBuilder.AddFieldDefinition(
-                FieldAttributes.Public,
-                "_moveNext",
-                _metadataBuilder.GetOrAddBlob(moveNextFieldSig)
-            );
-            scopeFields.Add(moveNextFieldHandle);
-            _variableRegistry.ScopeMetadata.RegisterField(scopeName, "_moveNext", moveNextFieldHandle);
-            _variableRegistry.ScopeMetadata.RegisterFieldClrType(scopeName, "_moveNext", typeof(object));
-
-            AddAsyncScopeInterfaceMethods(typeBuilder, stateFieldHandle, deferredFieldHandle, moveNextFieldHandle);
-
-            // Field: _pendingException (object) - used for async try/catch await rejection handling
-            var pendingExceptionSig = new BlobBuilder();
-            new BlobEncoder(pendingExceptionSig).Field().Type().Object();
-            var pendingExceptionHandle = typeBuilder.AddFieldDefinition(
-                FieldAttributes.Public,
-                "_pendingException",
-                _metadataBuilder.GetOrAddBlob(pendingExceptionSig)
-            );
-            scopeFields.Add(pendingExceptionHandle);
-            _variableRegistry.ScopeMetadata.RegisterField(scopeName, "_pendingException", pendingExceptionHandle);
-            _variableRegistry.ScopeMetadata.RegisterFieldClrType(scopeName, "_pendingException", typeof(object));
-
-            // Field: _hasPendingException (bool) - tracks exceptional completion even when value is undefined (null)
-            var hasPendingExceptionSig = new BlobBuilder();
-            new BlobEncoder(hasPendingExceptionSig).Field().Type().Boolean();
-            var hasPendingExceptionHandle = typeBuilder.AddFieldDefinition(
-                FieldAttributes.Public,
-                "_hasPendingException",
-                _metadataBuilder.GetOrAddBlob(hasPendingExceptionSig)
-            );
-            scopeFields.Add(hasPendingExceptionHandle);
-            _variableRegistry.ScopeMetadata.RegisterField(scopeName, "_hasPendingException", hasPendingExceptionHandle);
-            _variableRegistry.ScopeMetadata.RegisterFieldClrType(scopeName, "_hasPendingException", typeof(bool));
-
-            // Field: _pendingReturnValue (object) - stores a return value while unwinding finally in async
-            var pendingReturnSig = new BlobBuilder();
-            new BlobEncoder(pendingReturnSig).Field().Type().Object();
-            var pendingReturnHandle = typeBuilder.AddFieldDefinition(
-                FieldAttributes.Public,
-                "_pendingReturnValue",
-                _metadataBuilder.GetOrAddBlob(pendingReturnSig)
-            );
-            scopeFields.Add(pendingReturnHandle);
-            _variableRegistry.ScopeMetadata.RegisterField(scopeName, "_pendingReturnValue", pendingReturnHandle);
-            _variableRegistry.ScopeMetadata.RegisterFieldClrType(scopeName, "_pendingReturnValue", typeof(object));
-
-            // Field: _hasPendingReturn (bool) - tracks return completion even when value is undefined (null)
-            var hasPendingReturnSig = new BlobBuilder();
-            new BlobEncoder(hasPendingReturnSig).Field().Type().Boolean();
-            var hasPendingReturnHandle = typeBuilder.AddFieldDefinition(
-                FieldAttributes.Public,
-                "_hasPendingReturn",
-                _metadataBuilder.GetOrAddBlob(hasPendingReturnSig)
-            );
-            scopeFields.Add(hasPendingReturnHandle);
-            _variableRegistry.ScopeMetadata.RegisterField(scopeName, "_hasPendingReturn", hasPendingReturnHandle);
-            _variableRegistry.ScopeMetadata.RegisterFieldClrType(scopeName, "_hasPendingReturn", typeof(bool));
-
-            // Fields for awaited result storage: _awaited1, _awaited2, etc.
-            // State IDs start at 1, so await point N stores its result in _awaitedN
             for (int i = 1; i <= awaitPointCount; i++)
             {
                 var fieldName = $"_awaited{i}";
@@ -382,19 +287,14 @@ namespace Js2IL.Services
             CreateTypeFields(scope, tb);
 
             // Create the constructor for this type via TypeBuilder so it can track the first method
-            var ctorHandle = CreateScopeConstructor(tb);
+            var ctorHandle = CreateScopeConstructor(tb, scope.IsAsync);
 
             // Create the type definition
-            var typeHandle = tb.AddTypeDefinition(
-                typeAttributes,
-                _bclReferences.ObjectType // base type
-            );
+            var baseType = scope.IsAsync
+                ? _bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.AsyncScope))
+                : _bclReferences.ObjectType;
 
-            if (scope.IsAsync)
-            {
-                var asyncScopeInterface = _bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.IAsyncScope));
-                _metadataBuilder.AddInterfaceImplementation(typeHandle, asyncScopeInterface);
-            }
+            var typeHandle = tb.AddTypeDefinition(typeAttributes, baseType);
 
             // If this is a nested type, establish the nesting relationship
             if (parentType.HasValue)
@@ -412,98 +312,11 @@ namespace Js2IL.Services
             return typeHandle;
         }
 
-        private void AddAsyncScopeInterfaceMethods(
-            TypeBuilder typeBuilder,
-            FieldDefinitionHandle asyncStateField,
-            FieldDefinitionHandle deferredField,
-            FieldDefinitionHandle moveNextField)
-        {
-            var accessorAttributes = MethodAttributes.Public
-                | MethodAttributes.HideBySig
-                | MethodAttributes.SpecialName
-                | MethodAttributes.Virtual
-                | MethodAttributes.Final
-                | MethodAttributes.NewSlot;
-
-            AddAsyncScopeGetter(typeBuilder, "get_AsyncState", asyncStateField, returnType => returnType.Type().Int32(), accessorAttributes);
-            AddAsyncScopeSetter(typeBuilder, "set_AsyncState", asyncStateField, paramType => paramType.Int32(), accessorAttributes);
-
-            AddAsyncScopeGetter(typeBuilder, "get_Deferred", deferredField,
-                returnType => returnType.Type().Type(_bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.PromiseWithResolvers)), false),
-                accessorAttributes);
-            AddAsyncScopeSetter(typeBuilder, "set_Deferred", deferredField,
-                paramType => paramType.Type(_bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.PromiseWithResolvers)), false),
-                accessorAttributes);
-
-            AddAsyncScopeGetter(typeBuilder, "get_MoveNext", moveNextField, returnType => returnType.Type().Object(), accessorAttributes);
-            AddAsyncScopeSetter(typeBuilder, "set_MoveNext", moveNextField, paramType => paramType.Object(), accessorAttributes);
-        }
-
-        private void AddAsyncScopeGetter(
-            TypeBuilder typeBuilder,
-            string methodName,
-            FieldDefinitionHandle fieldHandle,
-            Action<ReturnTypeEncoder> returnType,
-            MethodAttributes attributes)
-        {
-            var sig = new BlobBuilder();
-            new BlobEncoder(sig)
-                .MethodSignature(SignatureCallingConvention.Default, 0, isInstanceMethod: true)
-                .Parameters(0, returnType, parameters => { });
-            var sigHandle = _metadataBuilder.GetOrAddBlob(sig);
-
-            var ilBuilder = new BlobBuilder();
-            var encoder = new InstructionEncoder(ilBuilder);
-            encoder.OpCode(ILOpCode.Ldarg_0);
-            encoder.OpCode(ILOpCode.Ldfld);
-            encoder.Token(fieldHandle);
-            encoder.OpCode(ILOpCode.Ret);
-
-            var bodyOffset = _methodBodyStream.AddMethodBody(
-                encoder,
-                localVariablesSignature: default,
-                attributes: MethodBodyAttributes.None);
-
-            typeBuilder.AddMethodDefinition(attributes, methodName, sigHandle, bodyOffset);
-        }
-
-        private void AddAsyncScopeSetter(
-            TypeBuilder typeBuilder,
-            string methodName,
-            FieldDefinitionHandle fieldHandle,
-            Action<SignatureTypeEncoder> paramType,
-            MethodAttributes attributes)
-        {
-            var sig = new BlobBuilder();
-            new BlobEncoder(sig)
-                .MethodSignature(SignatureCallingConvention.Default, 0, isInstanceMethod: true)
-                .Parameters(1, returnType => returnType.Void(), parameters =>
-                {
-                    var parameter = parameters.AddParameter();
-                    paramType(parameter.Type());
-                });
-            var sigHandle = _metadataBuilder.GetOrAddBlob(sig);
-
-            var ilBuilder = new BlobBuilder();
-            var encoder = new InstructionEncoder(ilBuilder);
-            encoder.OpCode(ILOpCode.Ldarg_0);
-            encoder.OpCode(ILOpCode.Ldarg_1);
-            encoder.OpCode(ILOpCode.Stfld);
-            encoder.Token(fieldHandle);
-            encoder.OpCode(ILOpCode.Ret);
-
-            var bodyOffset = _methodBodyStream.AddMethodBody(
-                encoder,
-                localVariablesSignature: default,
-                attributes: MethodBodyAttributes.None);
-
-            typeBuilder.AddMethodDefinition(attributes, methodName, sigHandle, bodyOffset);
-        }
 
         /// <summary>
         /// Creates a constructor method definition for a scope type.
         /// </summary>
-    private MethodDefinitionHandle CreateScopeConstructor(TypeBuilder tb)
+    private MethodDefinitionHandle CreateScopeConstructor(TypeBuilder tb, bool isAsync)
         {
             // Create constructor method signature
             var ctorSig = new BlobBuilder();
@@ -519,8 +332,8 @@ namespace Js2IL.Services
             // ldarg.0 - load 'this' onto the stack
             encoder.OpCode(ILOpCode.Ldarg_0);
             
-            // call Object::.ctor() - call base constructor
-            encoder.Call(_bclReferences.Object_Ctor_Ref);
+            // call base constructor
+            encoder.Call(isAsync ? _bclReferences.AsyncScope_Ctor_Ref : _bclReferences.Object_Ctor_Ref);
             
             // nop - no operation (matches C# compiler output)
             encoder.OpCode(ILOpCode.Nop);
