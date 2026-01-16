@@ -143,6 +143,25 @@ public class ValidatorTests
     }
 
     [Fact]
+    public void Validate_AwaitInsideTryCatch_IsValid()
+    {
+        var js = "async function f() { try { await 1; } catch (e) { } }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+    }
+
+    [Fact]
+    public void Validate_AwaitInsideFinally_ReportsError()
+    {
+        var js = "async function f() { try { } finally { await 1; } }";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, e => e.Contains("finally"));
+    }
+
+    [Fact]
     public void Validate_AwaitOutsideAsyncFunction_ReportsError()
     {
         // Note: This test validates that await outside async is rejected.

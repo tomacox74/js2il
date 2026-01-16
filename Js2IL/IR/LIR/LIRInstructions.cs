@@ -348,11 +348,23 @@ public record LIRLoadUserClassStaticField(
 public record LIRLoadLeafScopeField(BindingInfo Binding, FieldId Field, ScopeId Scope, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Loads a field from the leaf (current) scope instance by name.
+/// Emits: ldloc.0 (scope instance), ldfld (field handle)
+/// </summary>
+public record LIRLoadScopeFieldByName(string ScopeName, string FieldName, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Stores a value to a captured variable field on the leaf (current) scope instance.
 /// The scope instance is in IL local 0, and the field handle is looked up via BindingInfo.
 /// Emits: ldloc.0 (scope instance), ldarg/ldloc Value, stfld (field handle)
 /// </summary>
 public record LIRStoreLeafScopeField(BindingInfo Binding, FieldId Field, ScopeId Scope, TempVariable Value) : LIRInstruction;
+
+/// <summary>
+/// Stores a value to a field on the leaf (current) scope instance by name.
+/// Emits: ldloc.0 (scope instance), ldarg/ldloc Value, stfld (field handle)
+/// </summary>
+public record LIRStoreScopeFieldByName(string ScopeName, string FieldName, TempVariable Value) : LIRInstruction;
 
 /// <summary>
 /// Loads a captured variable from a field on a parent scope instance.

@@ -14,6 +14,12 @@ public sealed class AsyncStateMachineInfo
     public List<AwaitPointInfo> AwaitPoints { get; } = new();
 
     /// <summary>
+    /// Mapping from async state IDs to their resume label IDs.
+    /// Includes await resume points and other synthetic resume points (e.g., async try/catch).
+    /// </summary>
+    public Dictionary<int, int> ResumeLabels { get; } = new();
+
+    /// <summary>
     /// Names of variables that must be stored on the scope instance because
     /// they are live across at least one await point.
     /// </summary>
@@ -34,12 +40,38 @@ public sealed class AsyncStateMachineInfo
     /// <summary>
     /// The next state ID to assign to an await point.
     /// </summary>
-    private int _nextStateId = 1;
+    private int _nextResumeStateId = 1;
 
     /// <summary>
-    /// Allocates a new state ID for an await point.
+    /// The next await ID to assign to an await point.
+    /// Await IDs are used only for awaited-result storage (e.g., _awaited1, _awaited2, ...).
     /// </summary>
-    public int AllocateStateId() => _nextStateId++;
+    private int _nextAwaitId = 1;
+
+    /// <summary>
+    /// Maximum state ID allocated so far.
+    /// </summary>
+    public int MaxResumeStateId => _nextResumeStateId - 1;
+
+    /// <summary>
+    /// Allocates a new resume state ID.
+    /// Resume state IDs are used for dispatch in the async state switch.
+    /// </summary>
+    public int AllocateResumeStateId() => _nextResumeStateId++;
+
+    /// <summary>
+    /// Allocates a new await ID.
+    /// Await IDs are used only to select the awaited-result storage slot.
+    /// </summary>
+    public int AllocateAwaitId() => _nextAwaitId++;
+
+    /// <summary>
+    /// Registers a resume label for a given async state ID.
+    /// </summary>
+    public void RegisterResumeLabel(int stateId, int labelId)
+    {
+        ResumeLabels[stateId] = labelId;
+    }
 
     /// <summary>
     /// Gets the number of await points in this async function.
@@ -52,6 +84,12 @@ public sealed class AsyncStateMachineInfo
 /// </summary>
 public sealed class AwaitPointInfo
 {
+    /// <summary>
+    /// The await ID for this await point (1, 2, 3, ...).
+    /// This is used to choose which field stores the awaited result (e.g., _awaited1).
+    /// </summary>
+    public required int AwaitId { get; init; }
+
     /// <summary>
     /// The state ID for resuming after this await (1, 2, 3, ...).
     /// </summary>
@@ -71,5 +109,5 @@ public sealed class AwaitPointInfo
     /// Optional name for the field that stores the awaited result on the scope instance.
     /// Generated as "_awaited{StateId}" by default.
     /// </summary>
-    public string ResultFieldName => $"_awaited{ResumeStateId}";
+    public string ResultFieldName => $"_awaited{AwaitId}";
 }

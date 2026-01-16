@@ -196,8 +196,9 @@ public class JavaScriptAstValidator : IAstValidator
         // async functions themselves are now supported; await is only valid inside them.
         var asyncFunctionDepth = 0;
         var tryStatementDepth = 0; // Track if we're inside a try/catch/finally
+        var finallyDepth = 0; // Track if we're inside a finally block
         var visited = new HashSet<Node>(ReferenceEqualityComparer<Node>.Default);
-        
+
         void WalkForAsyncAwait(Node? node)
         {
             if (node is null) return;
@@ -217,11 +218,32 @@ public class JavaScriptAstValidator : IAstValidator
                 asyncFunctionDepth++;
             }
 
-            // Track entering try statements
-            bool isTryStatement = node is TryStatement;
-            if (isTryStatement)
+            // Handle try statements explicitly to distinguish finally blocks
+            if (node is TryStatement tryStmt)
             {
                 tryStatementDepth++;
+
+                WalkForAsyncAwait(tryStmt.Block);
+
+                if (tryStmt.Handler != null)
+                {
+                    WalkForAsyncAwait(tryStmt.Handler);
+                }
+
+                if (tryStmt.Finalizer != null)
+                {
+                    finallyDepth++;
+                    WalkForAsyncAwait(tryStmt.Finalizer);
+                    finallyDepth--;
+                }
+
+                tryStatementDepth--;
+
+                if (isAsyncFunction)
+                {
+                    asyncFunctionDepth--;
+                }
+                return;
             }
 
             // Validate await is only inside async functions
@@ -232,9 +254,9 @@ public class JavaScriptAstValidator : IAstValidator
                     result.Errors.Add($"The 'await' keyword is only valid inside async functions (line {node.Location.Start.Line})");
                     result.IsValid = false;
                 }
-                else if (tryStatementDepth > 0)
+                else if (finallyDepth > 0)
                 {
-                    result.Errors.Add($"The 'await' keyword inside try/catch/finally is not yet supported (line {node.Location.Start.Line}). Move the await outside the try block or use Promise.then() for error handling.");
+                    result.Errors.Add($"The 'await' keyword inside finally is not yet supported (line {node.Location.Start.Line}). Move the await outside the finally block or use Promise.then() for error handling.");
                     result.IsValid = false;
                 }
             }
@@ -258,7 +280,7 @@ public class JavaScriptAstValidator : IAstValidator
                 catch { continue; }
 
                 if (value is null || value is string) continue;
-                
+
                 if (value is Node childNode)
                 {
                     WalkForAsyncAwait(childNode);
@@ -279,12 +301,6 @@ public class JavaScriptAstValidator : IAstValidator
             if (isAsyncFunction)
             {
                 asyncFunctionDepth--;
-            }
-
-            // Track exiting try statements
-            if (isTryStatement)
-            {
-                tryStatementDepth--;
             }
         }
 

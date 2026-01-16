@@ -205,6 +205,55 @@ public sealed class Promise
         
         return null;
     }
+
+    /// <summary>
+    /// Sets up async continuations for an await expression that should resume into a catch block on rejection.
+    /// This stores the rejection reason into a pending-exception field and resumes MoveNext at a given state.
+    /// </summary>
+    public static object? SetupAwaitContinuationWithRejectResume(
+        object? awaited,
+        object scope,
+        object[] scopesArray,
+        string resultFieldName,
+        object? moveNext,
+        int rejectStateId,
+        string pendingExceptionFieldName)
+    {
+        var promise = awaited is Promise p ? p : (Promise)resolve(awaited)!;
+
+        var scopeType = scope.GetType();
+        var resultField = scopeType.GetField(resultFieldName);
+        var asyncStateField = scopeType.GetField("_asyncState");
+        var pendingField = scopeType.GetField(pendingExceptionFieldName);
+
+        if (asyncStateField == null)
+        {
+            throw new InvalidOperationException($"Scope type {scopeType.Name} missing _asyncState field");
+        }
+        if (pendingField == null)
+        {
+            throw new InvalidOperationException($"Scope type {scopeType.Name} missing {pendingExceptionFieldName} field");
+        }
+
+        if (moveNext == null)
+        {
+            var moveNextField = scopeType.GetField("_moveNext");
+            moveNext = moveNextField?.GetValue(scope);
+        }
+
+        object onFulfilled = CreateFulfilledContinuation(scope, scopesArray, resultField, moveNext);
+
+        object onRejected = new Func<object[]?, object?, object?>((_, reason) =>
+        {
+            pendingField.SetValue(scope, reason);
+            asyncStateField.SetValue(scope, rejectStateId);
+            InvokeMoveNext(moveNext, scopesArray);
+            return null;
+        });
+
+        promise.@then(onFulfilled, onRejected);
+        return null;
+    }
     
     private static object CreateFulfilledContinuation(
         object scope,
@@ -219,27 +268,31 @@ public sealed class Promise
             resultField?.SetValue(scope, value);
             
             // Call MoveNext to resume the state machine
-            if (moveNext == null)
-            {
-                throw new InvalidOperationException("Cannot resume async function: _moveNext is null. The async function closure was not properly initialized.");
-            }
-            
-            if (moveNext is Func<object[], object> fn)
-            {
-                fn(scopesArray);
-            }
-            else if (moveNext is Action<object[]> action)
-            {
-                action(scopesArray);
-            }
-            else
-            {
-                // Try to invoke via Closure.InvokeWithArgs for bound closures
-                Closure.InvokeWithArgs(moveNext, scopesArray);
-            }
+            InvokeMoveNext(moveNext, scopesArray);
             
             return null;
         });
+    }
+
+    private static void InvokeMoveNext(object? moveNext, object[] scopesArray)
+    {
+        if (moveNext == null)
+        {
+            throw new InvalidOperationException("Cannot resume async function: _moveNext is null. The async function closure was not properly initialized.");
+        }
+
+        if (moveNext is Func<object[], object> fn)
+        {
+            fn(scopesArray);
+        }
+        else if (moveNext is Action<object[]> action)
+        {
+            action(scopesArray);
+        }
+        else
+        {
+            Closure.InvokeWithArgs(moveNext, scopesArray);
+        }
     }
     
     private static object CreateRejectedContinuation(

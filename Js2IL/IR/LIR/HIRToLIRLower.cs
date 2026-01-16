@@ -28,6 +28,8 @@ public sealed class HIRToLIRLowerer
     private TempVariable? _returnEpilogueLoadTemp;
     private bool _needsReturnEpilogueBlock;
 
+    private readonly Stack<AsyncTryCatchContext> _asyncTryCatchStack = new();
+
     private readonly struct ControlFlowContext
     {
         public ControlFlowContext(int breakLabel, int? continueLabel, string? labelName)
@@ -41,6 +43,8 @@ public sealed class HIRToLIRLowerer
         public int? ContinueLabel { get; }
         public string? LabelName { get; }
     }
+
+    private sealed record AsyncTryCatchContext(int CatchStateId, int CatchLabelId, string PendingExceptionFieldName);
 
     // Source-level variables map to the current SSA value (TempVariable) at the current program point.
     // Keyed by BindingInfo reference to correctly handle shadowed variables with the same name.
@@ -1182,6 +1186,10 @@ public sealed class HIRToLIRLowerer
                 {
                     var hasCatch = tryStmt.CatchBody != null;
                     var hasFinally = tryStmt.FinallyBody != null;
+                    if (_isAsync && hasCatch && !hasFinally && CountAwaitExpressionsInStatement(tryStmt.TryBlock) > 0)
+                    {
+                        return TryLowerAsyncTryCatchWithAwait(tryStmt);
+                    }
                     if (!hasCatch && !hasFinally)
                     {
                         return TryLowerStatement(tryStmt.TryBlock);
@@ -1324,6 +1332,14 @@ public sealed class HIRToLIRLowerer
                     }
 
                     argTemp = EnsureObject(argTemp);
+                    if (_asyncTryCatchStack.Count > 0 && _methodBodyIR.LeafScopeId.IsNil == false)
+                    {
+                        var ctx = _asyncTryCatchStack.Peek();
+                        var scopeName = _methodBodyIR.LeafScopeId.Name;
+                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.PendingExceptionFieldName, argTemp));
+                        _methodBodyIR.Instructions.Add(new LIRBranch(ctx.CatchLabelId));
+                        return true;
+                    }
                     lirInstructions.Add(new LIRThrow(argTemp));
                     return true;
                 }
@@ -1897,6 +1913,75 @@ public sealed class HIRToLIRLowerer
         return true;
     }
 
+    private bool TryLowerAsyncTryCatchWithAwait(HIRTryStatement tryStmt)
+    {
+        if (_methodBodyIR.AsyncInfo == null || _methodBodyIR.LeafScopeId.IsNil)
+        {
+            return false;
+        }
+
+        var asyncInfo = _methodBodyIR.AsyncInfo;
+        var scopeName = _methodBodyIR.LeafScopeId.Name;
+        const string pendingExceptionField = "_pendingException";
+
+        var catchStateId = asyncInfo.AllocateResumeStateId();
+        var catchLabel = CreateLabel();
+        asyncInfo.RegisterResumeLabel(catchStateId, catchLabel);
+
+        var endLabel = CreateLabel();
+
+        // Clear pending exception before entering try
+        var clearTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstUndefined(clearTemp));
+        DefineTempStorage(clearTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, pendingExceptionField, clearTemp));
+
+        _asyncTryCatchStack.Push(new AsyncTryCatchContext(catchStateId, catchLabel, pendingExceptionField));
+        try
+        {
+            if (!TryLowerStatement(tryStmt.TryBlock))
+            {
+                return false;
+            }
+        }
+        finally
+        {
+            _asyncTryCatchStack.Pop();
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+
+        // Catch label (used for both rejected awaits and explicit throws in try)
+        _methodBodyIR.Instructions.Add(new LIRLabel(catchLabel));
+
+        var pendingTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, pendingExceptionField, pendingTemp));
+        DefineTempStorage(pendingTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+        // Clear pending exception after loading
+        var clearAfterTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstUndefined(clearAfterTemp));
+        DefineTempStorage(clearAfterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, pendingExceptionField, clearAfterTemp));
+
+        if (tryStmt.CatchParamBinding != null)
+        {
+            if (!TryStoreToBinding(tryStmt.CatchParamBinding, pendingTemp, out _))
+            {
+                return false;
+            }
+        }
+
+        if (tryStmt.CatchBody != null && !TryLowerStatement(tryStmt.CatchBody))
+        {
+            return false;
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
+        _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+        return true;
+    }
+
     private void EnsureReturnEpilogueStorage()
     {
         if (_returnEpilogueReturnSlot.HasValue && _returnEpilogueLoadTemp.HasValue)
@@ -1944,7 +2029,8 @@ public sealed class HIRToLIRLowerer
 
                     // Allocate state ID and label for resumption
                     var asyncInfo = _methodBodyIR.AsyncInfo;
-                    var resumeStateId = asyncInfo.AllocateStateId();
+                    var awaitId = asyncInfo.AllocateAwaitId();
+                    var resumeStateId = asyncInfo.AllocateResumeStateId();
                     var resumeLabel = CreateLabel();
 
                     // Create result temp for the await expression
@@ -1954,17 +2040,32 @@ public sealed class HIRToLIRLowerer
                     // Record the await point
                     asyncInfo.AwaitPoints.Add(new AwaitPointInfo
                     {
+                        AwaitId = awaitId,
                         ResumeStateId = resumeStateId,
                         ResumeLabelId = resumeLabel,
                         ResultTemp = resultTempVar
                     });
 
+                    asyncInfo.RegisterResumeLabel(resumeStateId, resumeLabel);
+
+                    int? rejectStateId = null;
+                    string? pendingExceptionField = null;
+                    if (_asyncTryCatchStack.Count > 0)
+                    {
+                        var ctx = _asyncTryCatchStack.Peek();
+                        rejectStateId = ctx.CatchStateId;
+                        pendingExceptionField = ctx.PendingExceptionFieldName;
+                    }
+
                     // Emit the await instruction
                     _methodBodyIR.Instructions.Add(new LIRAwait(
                         awaitedValueTemp,
+                        awaitId,
                         resumeStateId,
                         resumeLabel,
-                        resultTempVar));
+                        resultTempVar,
+                        rejectStateId,
+                        pendingExceptionField));
 
                     return true;
                 }
