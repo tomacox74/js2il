@@ -173,35 +173,36 @@ public sealed class Promise
     {
         // Wrap in Promise.resolve() per ECMA-262
         var promise = awaited is Promise p ? p : (Promise)resolve(awaited)!;
+
         
-        // Get the scope type for reflection
+        if (scope is not IAsyncScope asyncScope)
+        {
+            throw new InvalidOperationException($"Scope type {scope.GetType().Name} does not implement {nameof(IAsyncScope)}");
+        }
+
+        // Get the scope type for reflection (awaited result storage)
         var scopeType = scope.GetType();
         var resultField = scopeType.GetField(resultFieldName);
-        var asyncStateField = scopeType.GetField("_asyncState");
-        var deferredField = scopeType.GetField("_deferred");
-        
-        if (deferredField == null)
-        {
-            throw new InvalidOperationException($"Scope type {scopeType.Name} missing _deferred field");
-        }
-        
-        var deferred = (PromiseWithResolvers)deferredField.GetValue(scope)!;
 
-        // If moveNext is null, try to get it from the _moveNext field
+        var deferred = asyncScope.Deferred ?? throw new InvalidOperationException(
+            $"Scope type {scopeType.Name} has null _deferred");
+
+        // If moveNext is null, try to get it from the async scope
         if (moveNext == null)
         {
-            var moveNextField = scopeType.GetField("_moveNext");
-            moveNext = moveNextField?.GetValue(scope);
+            moveNext = asyncScope.MoveNext;
         }
         
         // Create onFulfilled callback: stores result, calls MoveNext
-        object onFulfilled = CreateFulfilledContinuation(scope, scopesArray, resultField, moveNext);
+        var currentThis = RuntimeServices.GetCurrentThis();
+        object onFulfilled = CreateFulfilledContinuation(scope, scopesArray, resultField, moveNext, currentThis);
         
         // Create onRejected callback: rejects the outer promise
-        object onRejected = CreateRejectedContinuation(scope, asyncStateField, deferred);
+        object onRejected = CreateRejectedContinuation(asyncScope, deferred, currentThis);
         
         // Schedule continuations
         promise.@then(onFulfilled, onRejected);
+
         
         return null;
     }
@@ -221,15 +222,14 @@ public sealed class Promise
     {
         var promise = awaited is Promise p ? p : (Promise)resolve(awaited)!;
 
+        if (scope is not IAsyncScope asyncScope)
+        {
+            throw new InvalidOperationException($"Scope type {scope.GetType().Name} does not implement {nameof(IAsyncScope)}");
+        }
+
         var scopeType = scope.GetType();
         var resultField = scopeType.GetField(resultFieldName);
-        var asyncStateField = scopeType.GetField("_asyncState");
         var pendingField = scopeType.GetField(pendingExceptionFieldName);
-
-        if (asyncStateField == null)
-        {
-            throw new InvalidOperationException($"Scope type {scopeType.Name} missing _asyncState field");
-        }
         if (pendingField == null)
         {
             throw new InvalidOperationException($"Scope type {scopeType.Name} missing {pendingExceptionFieldName} field");
@@ -237,19 +237,20 @@ public sealed class Promise
 
         if (moveNext == null)
         {
-            var moveNextField = scopeType.GetField("_moveNext");
-            moveNext = moveNextField?.GetValue(scope);
+            moveNext = asyncScope.MoveNext;
         }
 
-        object onFulfilled = CreateFulfilledContinuation(scope, scopesArray, resultField, moveNext);
+        var currentThis = RuntimeServices.GetCurrentThis();
+        object onFulfilled = CreateFulfilledContinuation(scope, scopesArray, resultField, moveNext, currentThis);
 
         object onRejected = CreateRejectedContinuationWithPendingException(
             scope,
             scopesArray,
             pendingField,
-            asyncStateField,
+            asyncScope,
             rejectStateId,
-            moveNext);
+            moveNext,
+            currentThis);
 
         promise.@then(onFulfilled, onRejected);
         return null;
@@ -259,16 +260,25 @@ public sealed class Promise
         object scope,
         object[] scopesArray,
         System.Reflection.FieldInfo? resultField,
-        object? moveNext)
+        object? moveNext,
+        object? capturedThis)
     {
         // Create a callback that stores the result and calls MoveNext
         return new Func<object[]?, object?, object?>((_, value) =>
         {
-            // Store the awaited value to the result field if specified
-            resultField?.SetValue(scope, value);
-            
-            // Call MoveNext to resume the state machine
-            InvokeMoveNext(moveNext, scopesArray);
+            var previousThis = RuntimeServices.SetCurrentThis(capturedThis);
+            try
+            {
+                // Store the awaited value to the result field if specified
+                resultField?.SetValue(scope, value);
+
+                // Call MoveNext to resume the state machine
+                InvokeMoveNext(moveNext, scopesArray);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
             
             return null;
         });
@@ -278,15 +288,24 @@ public sealed class Promise
         object scope,
         object[] scopesArray,
         System.Reflection.FieldInfo pendingField,
-        System.Reflection.FieldInfo asyncStateField,
+        IAsyncScope asyncScope,
         int rejectStateId,
-        object? moveNext)
+        object? moveNext,
+        object? capturedThis)
     {
         return new Func<object[]?, object?, object?>((_, reason) =>
         {
-            pendingField.SetValue(scope, reason);
-            asyncStateField.SetValue(scope, rejectStateId);
-            InvokeMoveNext(moveNext, scopesArray);
+            var previousThis = RuntimeServices.SetCurrentThis(capturedThis);
+            try
+            {
+                pendingField.SetValue(scope, reason);
+                asyncScope.AsyncState = rejectStateId;
+                InvokeMoveNext(moveNext, scopesArray);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
             return null;
         });
     }
@@ -313,18 +332,26 @@ public sealed class Promise
     }
     
     private static object CreateRejectedContinuation(
-        object scope,
-        System.Reflection.FieldInfo? asyncStateField,
-        PromiseWithResolvers deferred)
+        IAsyncScope scope,
+        PromiseWithResolvers deferred,
+        object? capturedThis)
     {
         // Create a callback that rejects the outer promise
         return new Func<object[]?, object?, object?>((_, reason) =>
         {
-            // Mark state as completed
-            asyncStateField?.SetValue(scope, -1);
-            
-            // Reject the outer promise - use empty scopes array since reject doesn't need scopes
-            Closure.InvokeWithArgs(deferred.reject, System.Array.Empty<object>(), reason);
+            var previousThis = RuntimeServices.SetCurrentThis(capturedThis);
+            try
+            {
+                // Mark state as completed
+                scope.AsyncState = -1;
+
+                // Reject the outer promise - use empty scopes array since reject doesn't need scopes
+                Closure.InvokeWithArgs(deferred.reject, System.Array.Empty<object>(), reason);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
             
             return null;
         });

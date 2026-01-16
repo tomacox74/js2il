@@ -1085,7 +1085,10 @@ class HIRMethodBuilder
                 // PL3.5: ThisExpression support.
                 // For now, only support 'this' inside class instance methods/constructors.
                 // (Top-level/function 'this' semantics are more complex and remain legacy.)
-                if (_rootScope.Parent?.Kind != ScopeKind.Class)
+                var allowsThis = _rootScope.Parent?.Kind == ScopeKind.Class
+                    || _rootScope.AstNode is FunctionExpression
+                    || _rootScope.AstNode is FunctionDeclaration;
+                if (!allowsThis)
                 {
                     return false;
                 }

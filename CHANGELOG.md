@@ -11,6 +11,7 @@ All notable changes to this project are documented here.
 
 ### Fixed
 - Async `await` inside `try/catch` now resumes into catch on rejection; validator allows await in try/catch and disallows await in finally.
+- `this` now works inside object literal methods when invoked via member calls (e.g., `obj.method()`).
 
 ## v0.7.0 - 2026-01-15
 

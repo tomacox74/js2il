@@ -9,6 +9,7 @@
 	// Nested Types
 	.class nested public auto ansi beforefieldinit getValue
 		extends [System.Runtime]System.Object
+		implements [JavaScriptRuntime]JavaScriptRuntime.IAsyncScope
 	{
 		// Fields
 		.field public int32 _asyncState
@@ -17,10 +18,97 @@
 		.field public object _pendingException
 
 		// Methods
+		.method public final hidebysig specialname newslot virtual 
+			instance int32 get_AsyncState () cil managed 
+		{
+			// Method begins at RVA 0x2059
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld int32 Scopes.Async_ReturnValue/getValue::_asyncState
+			IL_0006: ret
+		} // end of method getValue::get_AsyncState
+
+		.method public final hidebysig specialname newslot virtual 
+			instance void set_AsyncState (
+				int32 ''
+			) cil managed 
+		{
+			// Method begins at RVA 0x2061
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: ldarg.1
+			IL_0002: stfld int32 Scopes.Async_ReturnValue/getValue::_asyncState
+			IL_0007: ret
+		} // end of method getValue::set_AsyncState
+
+		.method public final hidebysig specialname newslot virtual 
+			instance class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers get_Deferred () cil managed 
+		{
+			// Method begins at RVA 0x206a
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_ReturnValue/getValue::_deferred
+			IL_0006: ret
+		} // end of method getValue::get_Deferred
+
+		.method public final hidebysig specialname newslot virtual 
+			instance void set_Deferred (
+				class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers ''
+			) cil managed 
+		{
+			// Method begins at RVA 0x2072
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: ldarg.1
+			IL_0002: stfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_ReturnValue/getValue::_deferred
+			IL_0007: ret
+		} // end of method getValue::set_Deferred
+
+		.method public final hidebysig specialname newslot virtual 
+			instance object get_MoveNext () cil managed 
+		{
+			// Method begins at RVA 0x207b
+			// Header size: 1
+			// Code size: 7 (0x7)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: ldfld object Scopes.Async_ReturnValue/getValue::_moveNext
+			IL_0006: ret
+		} // end of method getValue::get_MoveNext
+
+		.method public final hidebysig specialname newslot virtual 
+			instance void set_MoveNext (
+				object ''
+			) cil managed 
+		{
+			// Method begins at RVA 0x2083
+			// Header size: 1
+			// Code size: 8 (0x8)
+			.maxstack 8
+
+			IL_0000: ldarg.0
+			IL_0001: ldarg.1
+			IL_0002: stfld object Scopes.Async_ReturnValue/getValue::_moveNext
+			IL_0007: ret
+		} // end of method getValue::set_MoveNext
+
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2059
+			// Method begins at RVA 0x208c
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -43,7 +131,7 @@
 		.method public hidebysig specialname rtspecialname 
 			instance void .ctor () cil managed 
 		{
-			// Method begins at RVA 0x2062
+			// Method begins at RVA 0x2095
 			// Header size: 1
 			// Code size: 8 (0x8)
 			.maxstack 8
@@ -86,7 +174,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x206c
+		// Method begins at RVA 0x20a0
 		// Header size: 12
 		// Code size: 20 (0x14)
 		.maxstack 32
@@ -109,7 +197,7 @@
 			object 'value'
 		) cil managed 
 	{
-		// Method begins at RVA 0x208c
+		// Method begins at RVA 0x20c0
 		// Header size: 12
 		// Code size: 31 (0x1f)
 		.maxstack 32
@@ -146,7 +234,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x20b8
+		// Method begins at RVA 0x20ec
 		// Header size: 12
 		// Code size: 87 (0x57)
 		.maxstack 32
@@ -205,7 +293,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x211b
+		// Method begins at RVA 0x214f
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

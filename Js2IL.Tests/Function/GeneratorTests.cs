@@ -82,5 +82,8 @@ namespace Js2IL.Tests.Function
 
         [Fact]
         public Task Function_ClosureEscapesScope_ObjectLiteralProperty() { var testName = nameof(Function_ClosureEscapesScope_ObjectLiteralProperty); return GenerateTest(testName); }
+
+        [Fact]
+        public Task Function_ObjectLiteralMethod_ThisBinding() { var testName = nameof(Function_ObjectLiteralMethod_ThisBinding); return GenerateTest(testName); }
     }
 }

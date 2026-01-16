@@ -94,5 +94,11 @@ namespace Js2IL.Tests.Function
 
         [Fact]
         public Task Function_CallViaVariable_Reassignment_ClosureValues() { var testName = nameof(Function_CallViaVariable_Reassignment_ClosureValues); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_ObjectLiteralMethod_ThisBinding() { var testName = nameof(Function_ObjectLiteralMethod_ThisBinding); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Function_ObjectLiteralMethod_ThisBinding_AsyncAwait() { var testName = nameof(Function_ObjectLiteralMethod_ThisBinding_AsyncAwait); return ExecutionTest(testName); }
     }
 }
