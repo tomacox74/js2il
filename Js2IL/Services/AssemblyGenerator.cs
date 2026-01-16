@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
@@ -234,20 +233,21 @@ namespace Js2IL.Services
             RuntimeConfigWriter.WriteRuntimeConfigJson(assemblyDll, typeof(object).Assembly.GetName());
 
             // Copy JavaScriptRuntime.dll to output directory
-            // only if its not already there
+            // when it differs from the source.
             var jsRuntimeDll = typeof(JavaScriptRuntime.Object).Assembly.Location!;
             var jsRuntimeAssemblyFileName = Path.GetFileName(jsRuntimeDll);
             var jsRuntimeDllDest = Path.Combine(outputPath, jsRuntimeAssemblyFileName);
             if (File.Exists(jsRuntimeDll))
             {
-                var sourceVersion = FileVersionInfo.GetVersionInfo(jsRuntimeDll).FileVersion;
+                var sourceInfo = new FileInfo(jsRuntimeDll);
 
+                // Assembly file version often remains constant during local development.
+                // Use metadata on disk to detect changes and avoid leaving stale runtimes in output folders.
                 if (File.Exists(jsRuntimeDllDest))
                 {
-                    var targetVersion = FileVersionInfo.GetVersionInfo(jsRuntimeDllDest).FileVersion;
-                    if (sourceVersion == targetVersion)
+                    var destInfo = new FileInfo(jsRuntimeDllDest);
+                    if (sourceInfo.Length == destInfo.Length && sourceInfo.LastWriteTimeUtc == destInfo.LastWriteTimeUtc)
                     {
-                        // same version, no need to copy
                         return;
                     }
                 }
@@ -255,6 +255,7 @@ namespace Js2IL.Services
                 try
                 {
                     File.Copy(jsRuntimeDll, jsRuntimeDllDest, true);
+                    File.SetLastWriteTimeUtc(jsRuntimeDllDest, sourceInfo.LastWriteTimeUtc);
                 }
                 catch (IOException)
                 {
@@ -271,9 +272,11 @@ namespace Js2IL.Services
                 var jsRuntimePdbDest = Path.ChangeExtension(jsRuntimeDllDest, ".pdb");
                 if (File.Exists(jsRuntimePdb))
                 {
+                    var sourcePdbInfo = new FileInfo(jsRuntimePdb);
                     try
                     {
                         File.Copy(jsRuntimePdb, jsRuntimePdbDest, true);
+                        File.SetLastWriteTimeUtc(jsRuntimePdbDest, sourcePdbInfo.LastWriteTimeUtc);
                     }
                     catch (IOException)
                     {
