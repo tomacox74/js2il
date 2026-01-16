@@ -29,5 +29,20 @@ namespace Js2IL.Tests.Async
 
         [Fact]
         public Task Async_TryCatch_AwaitReject() { var testName = nameof(Async_TryCatch_AwaitReject); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_TryFinally_AwaitInFinally_Normal() { var testName = nameof(Async_TryFinally_AwaitInFinally_Normal); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_TryCatchFinally_AwaitInFinally_OnReject() { var testName = nameof(Async_TryCatchFinally_AwaitInFinally_OnReject); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_TryFinally_PreservesExceptionThroughAwait() { var testName = nameof(Async_TryFinally_PreservesExceptionThroughAwait); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_TryFinally_FinallyThrowOverridesOriginal() { var testName = nameof(Async_TryFinally_FinallyThrowOverridesOriginal); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Async_TryFinally_ReturnPreservedThroughAwait() { var testName = nameof(Async_TryFinally_ReturnPreservedThroughAwait); return ExecutionTest(testName); }
     }
 }

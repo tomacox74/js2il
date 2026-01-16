@@ -235,11 +235,6 @@ public class JavaScriptAstValidator : IAstValidator
                     result.Errors.Add($"The 'await' keyword is only valid inside async functions (line {node.Location.Start.Line})");
                     result.IsValid = false;
                 }
-                else if (finallyDepth > 0)
-                {
-                    result.Errors.Add($"The 'await' keyword inside finally is not yet supported (line {node.Location.Start.Line}). Move the await outside the finally block or use Promise.then() for error handling.");
-                    result.IsValid = false;
-                }
             }
 
             // Validate for-await-of is not yet supported

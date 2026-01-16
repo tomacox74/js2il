@@ -224,6 +224,42 @@ namespace Js2IL.Services
             _variableRegistry.ScopeMetadata.RegisterField(scopeName, "_pendingException", pendingExceptionHandle);
             _variableRegistry.ScopeMetadata.RegisterFieldClrType(scopeName, "_pendingException", typeof(object));
 
+            // Field: _hasPendingException (bool) - tracks exceptional completion even when value is undefined (null)
+            var hasPendingExceptionSig = new BlobBuilder();
+            new BlobEncoder(hasPendingExceptionSig).Field().Type().Boolean();
+            var hasPendingExceptionHandle = typeBuilder.AddFieldDefinition(
+                FieldAttributes.Public,
+                "_hasPendingException",
+                _metadataBuilder.GetOrAddBlob(hasPendingExceptionSig)
+            );
+            scopeFields.Add(hasPendingExceptionHandle);
+            _variableRegistry.ScopeMetadata.RegisterField(scopeName, "_hasPendingException", hasPendingExceptionHandle);
+            _variableRegistry.ScopeMetadata.RegisterFieldClrType(scopeName, "_hasPendingException", typeof(bool));
+
+            // Field: _pendingReturnValue (object) - stores a return value while unwinding finally in async
+            var pendingReturnSig = new BlobBuilder();
+            new BlobEncoder(pendingReturnSig).Field().Type().Object();
+            var pendingReturnHandle = typeBuilder.AddFieldDefinition(
+                FieldAttributes.Public,
+                "_pendingReturnValue",
+                _metadataBuilder.GetOrAddBlob(pendingReturnSig)
+            );
+            scopeFields.Add(pendingReturnHandle);
+            _variableRegistry.ScopeMetadata.RegisterField(scopeName, "_pendingReturnValue", pendingReturnHandle);
+            _variableRegistry.ScopeMetadata.RegisterFieldClrType(scopeName, "_pendingReturnValue", typeof(object));
+
+            // Field: _hasPendingReturn (bool) - tracks return completion even when value is undefined (null)
+            var hasPendingReturnSig = new BlobBuilder();
+            new BlobEncoder(hasPendingReturnSig).Field().Type().Boolean();
+            var hasPendingReturnHandle = typeBuilder.AddFieldDefinition(
+                FieldAttributes.Public,
+                "_hasPendingReturn",
+                _metadataBuilder.GetOrAddBlob(hasPendingReturnSig)
+            );
+            scopeFields.Add(hasPendingReturnHandle);
+            _variableRegistry.ScopeMetadata.RegisterField(scopeName, "_hasPendingReturn", hasPendingReturnHandle);
+            _variableRegistry.ScopeMetadata.RegisterFieldClrType(scopeName, "_hasPendingReturn", typeof(bool));
+
             // Fields for awaited result storage: _awaited1, _awaited2, etc.
             // State IDs start at 1, so await point N stores its result in _awaitedN
             for (int i = 1; i <= awaitPointCount; i++)

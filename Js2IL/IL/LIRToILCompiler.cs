@@ -2197,6 +2197,63 @@ internal sealed class LIRToILCompiler
                 }
                 ilEncoder.OpCode(ILOpCode.Ret);
                 break;
+
+            case LIRAsyncReject asyncReject:
+                {
+                    // Full async state machine: reject _deferred and return its promise.
+                    // 1. Mark state as completed: _asyncState = -1
+                    // 2. Call _deferred.reject(reason)
+                    // 3. Return _deferred.promise
+                    if (!(MethodBody.IsAsync && MethodBody.AsyncInfo is { HasAwaits: true }))
+                    {
+                        throw new InvalidOperationException("LIRAsyncReject is only valid for async methods with awaits.");
+                    }
+
+                    var scopeName = MethodBody.LeafScopeId.Name;
+
+                    // _asyncState = -1 (completed)
+                    ilEncoder.LoadLocal(0);
+                    ilEncoder.LoadConstantI4(-1);
+                    EmitStoreFieldByName(ilEncoder, scopeName, "_asyncState");
+
+                    // Load _deferred.reject (it's a bound closure)
+                    ilEncoder.LoadLocal(0);
+                    EmitLoadFieldByName(ilEncoder, scopeName, "_deferred");
+                    var getRejectRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.PromiseWithResolvers),
+                        $"get_{nameof(JavaScriptRuntime.PromiseWithResolvers.reject)}");
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(getRejectRef);
+
+                    // Call it with the rejection reason: Closure.InvokeWithArgs(reject, scopes, argsArray)
+                    ilEncoder.LoadArgument(0); // scopes array
+                    ilEncoder.LoadConstantI4(1);
+                    ilEncoder.OpCode(ILOpCode.Newarr);
+                    ilEncoder.Token(_bclReferences.ObjectType);
+                    ilEncoder.OpCode(ILOpCode.Dup);
+                    ilEncoder.LoadConstantI4(0);
+                    EmitLoadTempAsObject(asyncReject.Reason, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Stelem_ref);
+
+                    var invokeWithArgsRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Closure),
+                        nameof(JavaScriptRuntime.Closure.InvokeWithArgs),
+                        parameterTypes: new[] { typeof(object), typeof(object[]), typeof(object[]) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(invokeWithArgsRef);
+                    ilEncoder.OpCode(ILOpCode.Pop); // discard result
+
+                    // Return _deferred.promise
+                    ilEncoder.LoadLocal(0);
+                    EmitLoadFieldByName(ilEncoder, scopeName, "_deferred");
+                    var getPromiseRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.PromiseWithResolvers),
+                        $"get_{nameof(JavaScriptRuntime.PromiseWithResolvers.promise)}");
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(getPromiseRef);
+                    ilEncoder.OpCode(ILOpCode.Ret);
+                    break;
+                }
             case LIRBuildScopesArray buildScopes:
                 {
                     if (!IsMaterialized(buildScopes.Result, allocation))
@@ -3256,7 +3313,20 @@ internal sealed class LIRToILCompiler
         var def = TryFindDefInstruction(temp);
         if (def == null)
         {
-            throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - no definition found");
+            // Try to include a little more context: which instruction attempted to use this temp.
+            // This typically indicates a lowering/SSA bug where a temp is referenced without being defined.
+            var firstUse = MethodBody.Instructions
+                .Select((instr, idx) => (instr, idx))
+                .FirstOrDefault(t => TempLocalAllocator.EnumerateUsedTemps(t.instr).Any(u => u == temp));
+
+            if (firstUse.instr != null)
+            {
+                throw new InvalidOperationException(
+                    $"Cannot emit unmaterialized temp {temp.Index} - no definition found. " +
+                    $"First use at instruction #{firstUse.idx}: {firstUse.instr.GetType().Name}");
+            }
+
+            throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - no definition found (and no uses found in method body?)");
         }
 
         // Emit the constant/expression inline
