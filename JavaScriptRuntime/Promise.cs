@@ -719,20 +719,34 @@ public sealed class Promise
 
             if (handler != null)
             {
-                // then and catch change the state if a handler exists to Fulfilled
-                // finally does not change the state
-                newState = reaction.IsFinally ? newState : State.Fulfilled;
-                var handlerResult = ExecuteHandler(handler, _result, reaction.IsFinally);
-                newResult = reaction.IsFinally ? _result : handlerResult;
-
-                // is handler result a Promise?
-                // then we need inject it into the chain
-                if (TryAssimilateThenable(handlerResult, reaction.NextPromise))
+                if (reaction.IsFinally)
                 {
-                    // we are done.. lets bail
+                    var cleanupResult = ExecuteHandler(handler, _result, isFinally: true);
+
+                    // If finally returns a Promise/thenable, we must wait for it.
+                    // On fulfillment: preserve the original state/result.
+                    // On rejection: override with the cleanup error.
+                    if (TryWaitFinally(cleanupResult, reaction.NextPromise, _state, _result))
+                    {
+                        return;
+                    }
+
+                    reaction.NextPromise.Settle(_state, _result);
                     return;
                 }
 
+                // then/catch: handler exists -> state becomes Fulfilled
+                newState = State.Fulfilled;
+                var handlerResult = ExecuteHandler(handler, _result, isFinally: false);
+                newResult = handlerResult;
+
+                if (TryAssimilateThenable(handlerResult, reaction.NextPromise))
+                {
+                    return;
+                }
+
+                reaction.NextPromise.Settle(newState, newResult);
+                return;
             }
 
             reaction.NextPromise.Settle(newState, newResult);
@@ -794,14 +808,6 @@ public sealed class Promise
             }
         }
 
-        // For finally handlers: we need to return the actual result if it's a Promise
-        // (so that ProcessReaction can wait on it), but for non-Promise values,
-        // finally is only an observer and cannot alter the result
-        if (isFinally && result is not Promise)
-        {
-            return previousResult;
-        }
-        
         return result;
     }
 
@@ -882,7 +888,7 @@ public sealed class Promise
             return true;
         }
 
-        if (thenProp is not Delegate)
+        if (thenProp is not Delegate thenDelegate)
         {
             return false;
         }
@@ -906,13 +912,107 @@ public sealed class Promise
 
         try
         {
-            JavaScriptRuntime.Object.CallMember(value, "then", new object[] { resolve, reject });
+            // Invoke the previously retrieved 'then' value, preserving 'this' binding.
+            var previousThis = RuntimeServices.SetCurrentThis(value);
+            try
+            {
+                Closure.InvokeWithArgs(thenDelegate, System.Array.Empty<object>(), resolve, reject);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
         }
         catch (Exception ex)
         {
             if (!alreadyCalled)
             {
                 targetPromise.Settle(State.Rejected, ex.InnerException ?? ex);
+            }
+        }
+
+        return true;
+    }
+
+    private static bool TryWaitFinally(object? cleanupResult, Promise nextPromise, State originalState, object? originalResult)
+    {
+        if (cleanupResult is Promise cleanupPromise)
+        {
+            cleanupPromise.then(
+                new Func<object?[], object?, object?>((_, _) =>
+                {
+                    nextPromise.Settle(originalState, originalResult);
+                    return null;
+                }),
+                new Func<object?[], object?, object?>((_, err) =>
+                {
+                    nextPromise.Settle(State.Rejected, err);
+                    return null;
+                })
+            );
+            return true;
+        }
+
+        if (cleanupResult == null || cleanupResult is JsNull)
+        {
+            return false;
+        }
+
+        if (cleanupResult is string || cleanupResult.GetType().IsValueType)
+        {
+            return false;
+        }
+
+        object? thenProp;
+        try
+        {
+            thenProp = JavaScriptRuntime.Object.GetProperty(cleanupResult, "then");
+        }
+        catch (Exception ex)
+        {
+            nextPromise.Settle(State.Rejected, ex.InnerException ?? ex);
+            return true;
+        }
+
+        if (thenProp is not Delegate thenDelegate)
+        {
+            return false;
+        }
+
+        var alreadyCalled = false;
+        object resolve = new Func<object[]?, object?, object?>((_, __) =>
+        {
+            if (alreadyCalled) return null;
+            alreadyCalled = true;
+            nextPromise.Settle(originalState, originalResult);
+            return null;
+        });
+
+        object reject = new Func<object[]?, object?, object?>((_, err) =>
+        {
+            if (alreadyCalled) return null;
+            alreadyCalled = true;
+            nextPromise.Settle(State.Rejected, err);
+            return null;
+        });
+
+        try
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(cleanupResult);
+            try
+            {
+                Closure.InvokeWithArgs(thenDelegate, System.Array.Empty<object>(), resolve, reject);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+        catch (Exception ex)
+        {
+            if (!alreadyCalled)
+            {
+                nextPromise.Settle(State.Rejected, ex.InnerException ?? ex);
             }
         }
 
