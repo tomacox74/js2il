@@ -906,7 +906,7 @@ public sealed class Promise
 
         try
         {
-            JavaScriptRuntime.Object.CallMember(value, "then", new object?[] { resolve, reject });
+            JavaScriptRuntime.Object.CallMember(value, "then", new object[] { resolve, reject });
         }
         catch (Exception ex)
         {
