@@ -64,8 +64,13 @@ public sealed class Promise
     // Public methods
     public static object? resolve(object? value)
     {
+        if (value is Promise existing)
+        {
+            return existing;
+        }
+
         var promise = new Promise();
-        promise.Settle(State.Fulfilled, value);
+        promise.ResolveValue(value);
         return promise;
     }
 
@@ -79,7 +84,7 @@ public sealed class Promise
 
         var resolve = new Func<object[]?, object?, object?>((_, value) =>
         {
-            promise.Settle(State.Fulfilled, value);
+            promise.ResolveValue(value);
             return null;
         });
 
@@ -610,7 +615,7 @@ public sealed class Promise
         var unusedContext = new object[1];
         var Resolve = new Func<object[]?, object?, object?>((_, value) =>
         {
-            return Settle(State.Fulfilled, value);
+            return ResolveValue(value);
         });
 
         var Reject = new Func<object[]?, object?, object?>((_, reason) =>
@@ -714,38 +719,34 @@ public sealed class Promise
 
             if (handler != null)
             {
-                // then and catch change the state if a handler exists to Fulfilled
-                // finally does not change the state
-                // currently "thenable" scenarios are not yet supported (handler returns something promiselike)
-                newState = reaction.IsFinally ? newState : State.Fulfilled;
-                var handlerResult = ExecuteHandler(handler, _result, reaction.IsFinally);
-                newResult = reaction.IsFinally ? _result : handlerResult;
-
-                // is handler result a Promise?
-                // then we need inject it into the chain
-                if (handlerResult is Promise handlerPromise)
+                if (reaction.IsFinally)
                 {
-                    handlerPromise.then(
-                        new Func<object?[], object?, object?>((_, res) =>
-                        {
-                            // for then/catch.. pass along what ever the result was
-                            // if it is finally.. pass along the previous result.. finally is just an observer
-                            reaction.NextPromise.Settle(newState,  reaction.IsFinally ? _result : res);
-                            return null;
-                        }),
-                        new Func<object?[], object?, object?>((_, err) =>
-                        {
-                            // for then, catch and even finally.. return the error state
-                            // something failed
-                            reaction.NextPromise.Settle(State.Rejected, err);
-                            return null;
-                        })
-                    );
+                    var cleanupResult = ExecuteHandler(handler, _result, isFinally: true);
 
-                    // we are done.. lets bail
+                    // If finally returns a Promise/thenable, we must wait for it.
+                    // On fulfillment: preserve the original state/result.
+                    // On rejection: override with the cleanup error.
+                    if (TryWaitFinally(cleanupResult, reaction.NextPromise, _state, _result))
+                    {
+                        return;
+                    }
+
+                    reaction.NextPromise.Settle(_state, _result);
                     return;
                 }
 
+                // then/catch: handler exists -> state becomes Fulfilled
+                newState = State.Fulfilled;
+                var handlerResult = ExecuteHandler(handler, _result, isFinally: false);
+                newResult = handlerResult;
+
+                if (TryAssimilateThenable(handlerResult, reaction.NextPromise))
+                {
+                    return;
+                }
+
+                reaction.NextPromise.Settle(newState, newResult);
+                return;
             }
 
             reaction.NextPromise.Settle(newState, newResult);
@@ -807,14 +808,6 @@ public sealed class Promise
             }
         }
 
-        // For finally handlers: we need to return the actual result if it's a Promise
-        // (so that ProcessReaction can wait on it), but for non-Promise values,
-        // finally is only an observer and cannot alter the result
-        if (isFinally && result is not Promise)
-        {
-            return previousResult;
-        }
-        
         return result;
     }
 
@@ -837,6 +830,211 @@ public sealed class Promise
         }
 
         return enumerable;
+    }
+
+    /// <summary>
+    /// Resolves this promise with <paramref name="value"/>.
+    /// </summary>
+    /// <remarks>
+    /// This implements the Promise Resolution Procedure behavior:
+    /// if <paramref name="value"/> is a Promise, adopt its state; if it is a thenable
+    /// (an object with a callable <c>then</c> property), invoke <c>then</c> with
+    /// resolving functions; otherwise fulfill with <paramref name="value"/>.
+    /// </remarks>
+    private object? ResolveValue(object? value)
+    {
+        if (TryAssimilateThenable(value, this))
+        {
+            return null;
+        }
+
+        return Settle(State.Fulfilled, value);
+    }
+
+    /// <summary>
+    /// Attempts to assimilate a promise/thenable into <paramref name="targetPromise"/>.
+    /// </summary>
+    /// <param name="value">The value being resolved.</param>
+    /// <param name="targetPromise">The promise whose state should be adopted.</param>
+    /// <returns>
+    /// True if <paramref name="value"/> was a Promise or thenable and assimilation was started;
+    /// false if <paramref name="value"/> should be treated as a non-thenable fulfillment value.
+    /// </returns>
+    private static bool TryAssimilateThenable(object? value, Promise targetPromise)
+    {
+        if (value is Promise promise)
+        {
+            if (ReferenceEquals(promise, targetPromise))
+            {
+                targetPromise.Settle(State.Rejected, new TypeError("Promise cannot resolve itself"));
+                return true;
+            }
+
+            promise.then(
+                new Func<object?[], object?, object?>((_, res) =>
+                {
+                    targetPromise.ResolveValue(res);
+                    return null;
+                }),
+                new Func<object?[], object?, object?>((_, err) =>
+                {
+                    targetPromise.Settle(State.Rejected, err);
+                    return null;
+                })
+            );
+            return true;
+        }
+
+        if (value == null || value is JsNull)
+        {
+            return false;
+        }
+
+        if (value is string || value.GetType().IsValueType)
+        {
+            return false;
+        }
+
+        object? thenProp;
+        try
+        {
+            thenProp = JavaScriptRuntime.Object.GetProperty(value, "then");
+        }
+        catch (Exception ex)
+        {
+            targetPromise.Settle(State.Rejected, ex.InnerException ?? ex);
+            return true;
+        }
+
+        if (thenProp is not Delegate thenDelegate)
+        {
+            return false;
+        }
+
+        int alreadyCalled = 0;
+        object resolve = new Func<object[]?, object?, object?>((_, res) =>
+        {
+            if (System.Threading.Interlocked.Exchange(ref alreadyCalled, 1) == 1) return null;
+            targetPromise.ResolveValue(res);
+            return null;
+        });
+
+        object reject = new Func<object[]?, object?, object?>((_, err) =>
+        {
+            if (System.Threading.Interlocked.Exchange(ref alreadyCalled, 1) == 1) return null;
+            targetPromise.Settle(State.Rejected, err);
+            return null;
+        });
+
+        try
+        {
+            // Invoke the previously retrieved 'then' value, preserving 'this' binding.
+            var previousThis = RuntimeServices.SetCurrentThis(value);
+            try
+            {
+                Closure.InvokeWithArgs(thenDelegate, System.Array.Empty<object>(), resolve, reject);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+        catch (Exception ex)
+        {
+            if (System.Threading.Volatile.Read(ref alreadyCalled) == 0)
+            {
+                targetPromise.Settle(State.Rejected, ex.InnerException ?? ex);
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Implements Promise.prototype.finally pass-through semantics when the finally handler
+    /// returns a Promise/thenable: wait for it, then preserve the original state/result.
+    /// </summary>
+    private static bool TryWaitFinally(object? cleanupResult, Promise nextPromise, State originalState, object? originalResult)
+    {
+        if (cleanupResult is Promise cleanupPromise)
+        {
+            cleanupPromise.then(
+                new Func<object?[], object?, object?>((_, _) =>
+                {
+                    nextPromise.Settle(originalState, originalResult);
+                    return null;
+                }),
+                new Func<object?[], object?, object?>((_, err) =>
+                {
+                    nextPromise.Settle(State.Rejected, err);
+                    return null;
+                })
+            );
+            return true;
+        }
+
+        if (cleanupResult == null || cleanupResult is JsNull)
+        {
+            return false;
+        }
+
+        if (cleanupResult is string || cleanupResult.GetType().IsValueType)
+        {
+            return false;
+        }
+
+        object? thenProp;
+        try
+        {
+            thenProp = JavaScriptRuntime.Object.GetProperty(cleanupResult, "then");
+        }
+        catch (Exception ex)
+        {
+            nextPromise.Settle(State.Rejected, ex.InnerException ?? ex);
+            return true;
+        }
+
+        if (thenProp is not Delegate thenDelegate)
+        {
+            return false;
+        }
+
+        int alreadyCalled = 0;
+        object resolve = new Func<object[]?, object?, object?>((_, __) =>
+        {
+            if (System.Threading.Interlocked.Exchange(ref alreadyCalled, 1) == 1) return null;
+            nextPromise.Settle(originalState, originalResult);
+            return null;
+        });
+
+        object reject = new Func<object[]?, object?, object?>((_, err) =>
+        {
+            if (System.Threading.Interlocked.Exchange(ref alreadyCalled, 1) == 1) return null;
+            nextPromise.Settle(State.Rejected, err);
+            return null;
+        });
+
+        try
+        {
+            var previousThis = RuntimeServices.SetCurrentThis(cleanupResult);
+            try
+            {
+                Closure.InvokeWithArgs(thenDelegate, System.Array.Empty<object>(), resolve, reject);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
+        }
+        catch (Exception ex)
+        {
+            if (System.Threading.Volatile.Read(ref alreadyCalled) == 0)
+            {
+                nextPromise.Settle(State.Rejected, ex.InnerException ?? ex);
+            }
+        }
+
+        return true;
     }
 
     private delegate void CombinePromiseHandler(object? value);

@@ -152,6 +152,24 @@ public class ExecutionTests : ExecutionTestsBase
     }
 
     [Fact]
+    public Task Promise_Finally_ReturnsResolvedPromise_PassThrough_Rejected()
+    {
+        return ExecutionTest(nameof(Promise_Finally_ReturnsResolvedPromise_PassThrough_Rejected));
+    }
+
+    [Fact]
+    public Task Promise_Finally_ReturnsThenable_PassThrough_Fulfilled()
+    {
+        return ExecutionTest(nameof(Promise_Finally_ReturnsThenable_PassThrough_Fulfilled));
+    }
+
+    [Fact]
+    public Task Promise_Finally_ReturnsThenable_PassThrough_Rejected()
+    {
+        return ExecutionTest(nameof(Promise_Finally_ReturnsThenable_PassThrough_Rejected));
+    }
+
+    [Fact]
     public Task Promise_Reject_FinallyCatch()
     {
         return ExecutionTest(nameof(Promise_Reject_FinallyCatch));
@@ -203,6 +221,42 @@ public class ExecutionTests : ExecutionTestsBase
     public Task Promise_Then_ReturnsResolvedPromise()
     {
         return ExecutionTest(nameof(Promise_Then_ReturnsResolvedPromise));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_Nested()
+    {
+        return ExecutionTest(nameof(Promise_Thenable_Nested));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_NonFunctionThen()
+    {
+        return ExecutionTest(nameof(Promise_Thenable_NonFunctionThen));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_Reject()
+    {
+        return ExecutionTest(nameof(Promise_Thenable_Reject));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_Resolve_Delayed()
+    {
+        return ExecutionTest(nameof(Promise_Thenable_Resolve_Delayed));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_Resolve_Immediate()
+    {
+        return ExecutionTest(nameof(Promise_Thenable_Resolve_Immediate));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_Returned_FromHandler()
+    {
+        return ExecutionTest(nameof(Promise_Thenable_Returned_FromHandler));
     }
 
     [Fact]

@@ -154,9 +154,27 @@ public class GeneratorTests : GeneratorTestsBase
     }
 
     [Fact]
+    public Task Promise_Finally_ReturnsResolvedPromise_PassThrough_Rejected()
+    {
+        return GenerateTest(nameof(Promise_Finally_ReturnsResolvedPromise_PassThrough_Rejected));
+    }
+
+    [Fact]
     public Task Promise_Finally_ReturnsRejectedPromise()
     {
         return GenerateTest(nameof(Promise_Finally_ReturnsRejectedPromise));
+    }
+
+    [Fact]
+    public Task Promise_Finally_ReturnsThenable_PassThrough_Fulfilled()
+    {
+        return GenerateTest(nameof(Promise_Finally_ReturnsThenable_PassThrough_Fulfilled));
+    }
+
+    [Fact]
+    public Task Promise_Finally_ReturnsThenable_PassThrough_Rejected()
+    {
+        return GenerateTest(nameof(Promise_Finally_ReturnsThenable_PassThrough_Rejected));
     }
 
     [Fact]
@@ -211,6 +229,42 @@ public class GeneratorTests : GeneratorTestsBase
     public Task Promise_Then_ReturnsRejectedPromise()
     {
         return GenerateTest(nameof(Promise_Then_ReturnsRejectedPromise));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_Nested()
+    {
+        return GenerateTest(nameof(Promise_Thenable_Nested));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_NonFunctionThen()
+    {
+        return GenerateTest(nameof(Promise_Thenable_NonFunctionThen));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_Reject()
+    {
+        return GenerateTest(nameof(Promise_Thenable_Reject));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_Resolve_Delayed()
+    {
+        return GenerateTest(nameof(Promise_Thenable_Resolve_Delayed));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_Resolve_Immediate()
+    {
+        return GenerateTest(nameof(Promise_Thenable_Resolve_Immediate));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_Returned_FromHandler()
+    {
+        return GenerateTest(nameof(Promise_Thenable_Returned_FromHandler));
     }
 
     [Fact]
