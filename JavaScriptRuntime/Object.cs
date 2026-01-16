@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace JavaScriptRuntime
 {
-    [IntrinsicObject("Object")]
+    [IntrinsicObject("Object", IntrinsicCallKind.ObjectConstruct)]
     public class Object
     {
         /// <summary>

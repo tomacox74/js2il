@@ -8,7 +8,7 @@ using System.Globalization;
 
 namespace JavaScriptRuntime
 {
-    [IntrinsicObject("Array")]
+    [IntrinsicObject("Array", IntrinsicCallKind.ArrayConstruct)]
     public class Array : List<object?>
     {
         public Array() : base()
