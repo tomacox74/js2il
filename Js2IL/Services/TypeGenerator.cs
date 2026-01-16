@@ -210,6 +210,8 @@ namespace Js2IL.Services
             _variableRegistry.ScopeMetadata.RegisterField(scopeName, "_moveNext", moveNextFieldHandle);
             _variableRegistry.ScopeMetadata.RegisterFieldClrType(scopeName, "_moveNext", typeof(object));
 
+            AddAsyncScopeInterfaceMethods(typeBuilder, stateFieldHandle, deferredFieldHandle, moveNextFieldHandle);
+
             // Field: _pendingException (object) - used for async try/catch await rejection handling
             var pendingExceptionSig = new BlobBuilder();
             new BlobEncoder(pendingExceptionSig).Field().Type().Object();
@@ -352,6 +354,12 @@ namespace Js2IL.Services
                 _bclReferences.ObjectType // base type
             );
 
+            if (scope.IsAsync)
+            {
+                var asyncScopeInterface = _bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.IAsyncScope));
+                _metadataBuilder.AddInterfaceImplementation(typeHandle, asyncScopeInterface);
+            }
+
             // If this is a nested type, establish the nesting relationship
             if (parentType.HasValue)
             {
@@ -366,6 +374,94 @@ namespace Js2IL.Services
             _variableRegistry.EnsureScopeType(scopeKey, typeHandle);
 
             return typeHandle;
+        }
+
+        private void AddAsyncScopeInterfaceMethods(
+            TypeBuilder typeBuilder,
+            FieldDefinitionHandle asyncStateField,
+            FieldDefinitionHandle deferredField,
+            FieldDefinitionHandle moveNextField)
+        {
+            var accessorAttributes = MethodAttributes.Public
+                | MethodAttributes.HideBySig
+                | MethodAttributes.SpecialName
+                | MethodAttributes.Virtual
+                | MethodAttributes.Final
+                | MethodAttributes.NewSlot;
+
+            AddAsyncScopeGetter(typeBuilder, "get_AsyncState", asyncStateField, returnType => returnType.Int32(), accessorAttributes);
+            AddAsyncScopeSetter(typeBuilder, "set_AsyncState", asyncStateField, paramType => paramType.Int32(), accessorAttributes);
+
+            AddAsyncScopeGetter(typeBuilder, "get_Deferred", deferredField,
+                returnType => returnType.Type(_bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.PromiseWithResolvers)), isValueType: false),
+                accessorAttributes);
+            AddAsyncScopeSetter(typeBuilder, "set_Deferred", deferredField,
+                paramType => paramType.Type(_bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.PromiseWithResolvers)), isValueType: false),
+                accessorAttributes);
+
+            AddAsyncScopeGetter(typeBuilder, "get_MoveNext", moveNextField, returnType => returnType.Object(), accessorAttributes);
+            AddAsyncScopeSetter(typeBuilder, "set_MoveNext", moveNextField, paramType => paramType.Object(), accessorAttributes);
+        }
+
+        private void AddAsyncScopeGetter(
+            TypeBuilder typeBuilder,
+            string methodName,
+            FieldDefinitionHandle fieldHandle,
+            Action<ReturnTypeEncoder> returnType,
+            MethodAttributes attributes)
+        {
+            var sig = new BlobBuilder();
+            new BlobEncoder(sig)
+                .MethodSignature(SignatureCallingConvention.Default, 0, isInstanceMethod: true)
+                .Parameters(0, returnType, parameters => { });
+            var sigHandle = _metadataBuilder.GetOrAddBlob(sig);
+
+            var ilBuilder = new BlobBuilder();
+            var encoder = new InstructionEncoder(ilBuilder);
+            encoder.OpCode(ILOpCode.Ldarg_0);
+            encoder.OpCode(ILOpCode.Ldfld);
+            encoder.Token(fieldHandle);
+            encoder.OpCode(ILOpCode.Ret);
+
+            var bodyOffset = _methodBodyStream.AddMethodBody(
+                encoder,
+                localVariablesSignature: default,
+                attributes: MethodBodyAttributes.None);
+
+            typeBuilder.AddMethodDefinition(attributes, methodName, sigHandle, bodyOffset);
+        }
+
+        private void AddAsyncScopeSetter(
+            TypeBuilder typeBuilder,
+            string methodName,
+            FieldDefinitionHandle fieldHandle,
+            Action<ParameterTypeEncoder> paramType,
+            MethodAttributes attributes)
+        {
+            var sig = new BlobBuilder();
+            new BlobEncoder(sig)
+                .MethodSignature(SignatureCallingConvention.Default, 0, isInstanceMethod: true)
+                .Parameters(1, returnType => returnType.Void(), parameters =>
+                {
+                    var parameter = parameters.AddParameter();
+                    paramType(parameter.Type());
+                });
+            var sigHandle = _metadataBuilder.GetOrAddBlob(sig);
+
+            var ilBuilder = new BlobBuilder();
+            var encoder = new InstructionEncoder(ilBuilder);
+            encoder.OpCode(ILOpCode.Ldarg_0);
+            encoder.OpCode(ILOpCode.Ldarg_1);
+            encoder.OpCode(ILOpCode.Stfld);
+            encoder.Token(fieldHandle);
+            encoder.OpCode(ILOpCode.Ret);
+
+            var bodyOffset = _methodBodyStream.AddMethodBody(
+                encoder,
+                localVariablesSignature: default,
+                attributes: MethodBodyAttributes.None);
+
+            typeBuilder.AddMethodDefinition(attributes, methodName, sigHandle, bodyOffset);
         }
 
         /// <summary>

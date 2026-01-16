@@ -175,24 +175,22 @@ public sealed class Promise
         var promise = awaited is Promise p ? p : (Promise)resolve(awaited)!;
 
         
-        // Get the scope type for reflection
+        if (scope is not IAsyncScope asyncScope)
+        {
+            throw new InvalidOperationException($"Scope type {scope.GetType().Name} does not implement {nameof(IAsyncScope)}");
+        }
+
+        // Get the scope type for reflection (awaited result storage)
         var scopeType = scope.GetType();
         var resultField = scopeType.GetField(resultFieldName);
-        var asyncStateField = scopeType.GetField("_asyncState");
-        var deferredField = scopeType.GetField("_deferred");
-        
-        if (deferredField == null)
-        {
-            throw new InvalidOperationException($"Scope type {scopeType.Name} missing _deferred field");
-        }
-        
-        var deferred = (PromiseWithResolvers)deferredField.GetValue(scope)!;
 
-        // If moveNext is null, try to get it from the _moveNext field
+        var deferred = asyncScope.Deferred ?? throw new InvalidOperationException(
+            $"Scope type {scopeType.Name} has null _deferred");
+
+        // If moveNext is null, try to get it from the async scope
         if (moveNext == null)
         {
-            var moveNextField = scopeType.GetField("_moveNext");
-            moveNext = moveNextField?.GetValue(scope);
+            moveNext = asyncScope.MoveNext;
         }
         
         // Create onFulfilled callback: stores result, calls MoveNext
@@ -200,7 +198,7 @@ public sealed class Promise
         object onFulfilled = CreateFulfilledContinuation(scope, scopesArray, resultField, moveNext, currentThis);
         
         // Create onRejected callback: rejects the outer promise
-        object onRejected = CreateRejectedContinuation(scope, asyncStateField, deferred, currentThis);
+        object onRejected = CreateRejectedContinuation(asyncScope, deferred, currentThis);
         
         // Schedule continuations
         promise.@then(onFulfilled, onRejected);
@@ -224,15 +222,14 @@ public sealed class Promise
     {
         var promise = awaited is Promise p ? p : (Promise)resolve(awaited)!;
 
+        if (scope is not IAsyncScope asyncScope)
+        {
+            throw new InvalidOperationException($"Scope type {scope.GetType().Name} does not implement {nameof(IAsyncScope)}");
+        }
+
         var scopeType = scope.GetType();
         var resultField = scopeType.GetField(resultFieldName);
-        var asyncStateField = scopeType.GetField("_asyncState");
         var pendingField = scopeType.GetField(pendingExceptionFieldName);
-
-        if (asyncStateField == null)
-        {
-            throw new InvalidOperationException($"Scope type {scopeType.Name} missing _asyncState field");
-        }
         if (pendingField == null)
         {
             throw new InvalidOperationException($"Scope type {scopeType.Name} missing {pendingExceptionFieldName} field");
@@ -240,8 +237,7 @@ public sealed class Promise
 
         if (moveNext == null)
         {
-            var moveNextField = scopeType.GetField("_moveNext");
-            moveNext = moveNextField?.GetValue(scope);
+            moveNext = asyncScope.MoveNext;
         }
 
         var currentThis = RuntimeServices.GetCurrentThis();
@@ -251,7 +247,7 @@ public sealed class Promise
             scope,
             scopesArray,
             pendingField,
-            asyncStateField,
+            asyncScope,
             rejectStateId,
             moveNext,
             currentThis);
@@ -292,7 +288,7 @@ public sealed class Promise
         object scope,
         object[] scopesArray,
         System.Reflection.FieldInfo pendingField,
-        System.Reflection.FieldInfo asyncStateField,
+        IAsyncScope asyncScope,
         int rejectStateId,
         object? moveNext,
         object? capturedThis)
@@ -303,7 +299,7 @@ public sealed class Promise
             try
             {
                 pendingField.SetValue(scope, reason);
-                asyncStateField.SetValue(scope, rejectStateId);
+                asyncScope.AsyncState = rejectStateId;
                 InvokeMoveNext(moveNext, scopesArray);
             }
             finally
@@ -336,8 +332,7 @@ public sealed class Promise
     }
     
     private static object CreateRejectedContinuation(
-        object scope,
-        System.Reflection.FieldInfo? asyncStateField,
+        IAsyncScope scope,
         PromiseWithResolvers deferred,
         object? capturedThis)
     {
@@ -348,7 +343,7 @@ public sealed class Promise
             try
             {
                 // Mark state as completed
-                asyncStateField?.SetValue(scope, -1);
+                scope.AsyncState = -1;
 
                 // Reject the outer promise - use empty scopes array since reject doesn't need scopes
                 Closure.InvokeWithArgs(deferred.reject, System.Array.Empty<object>(), reason);
