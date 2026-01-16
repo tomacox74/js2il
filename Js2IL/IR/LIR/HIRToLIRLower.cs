@@ -29,6 +29,7 @@ public sealed class HIRToLIRLowerer
     private bool _needsReturnEpilogueBlock;
 
     private readonly Stack<AsyncTryCatchContext> _asyncTryCatchStack = new();
+    private readonly Stack<AsyncTryFinallyContext> _asyncTryFinallyStack = new();
 
     private readonly struct ControlFlowContext
     {
@@ -45,6 +46,15 @@ public sealed class HIRToLIRLowerer
     }
 
     private sealed record AsyncTryCatchContext(int CatchStateId, int CatchLabelId, string PendingExceptionFieldName);
+
+    private sealed record AsyncTryFinallyContext(
+        int FinallyEntryLabelId,
+        int FinallyExitLabelId,
+        string PendingExceptionFieldName,
+        string HasPendingExceptionFieldName,
+        string PendingReturnFieldName,
+        string HasPendingReturnFieldName,
+        bool IsInFinally);
 
     // Source-level variables map to the current SSA value (TempVariable) at the current program point.
     // Keyed by BindingInfo reference to correctly handle shadowed variables with the same name.
@@ -1072,6 +1082,41 @@ public sealed class HIRToLIRLowerer
                         DefineTempStorage(returnTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
                     }
 
+                    // Async try/finally lowering: a return inside a protected region must flow through finally.
+                    if (_isAsync
+                        && _methodBodyIR.AsyncInfo?.HasAwaits == true
+                        && !_methodBodyIR.LeafScopeId.IsNil
+                        && _asyncTryFinallyStack.Count > 0)
+                    {
+                        var ctx = _asyncTryFinallyStack.Peek();
+                        var scopeName = _methodBodyIR.LeafScopeId.Name;
+
+                        returnTempVar = EnsureObject(returnTempVar);
+
+                        // pendingReturnValue = returnTempVar
+                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.PendingReturnFieldName, returnTempVar));
+
+                        // hasPendingReturn = true
+                        var hasReturnTemp = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRConstBoolean(true, hasReturnTemp));
+                        DefineTempStorage(hasReturnTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.HasPendingReturnFieldName, hasReturnTemp));
+
+                        // hasPendingException = false; pendingException = null (return overrides)
+                        var clearHasExTemp = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRConstBoolean(false, clearHasExTemp));
+                        DefineTempStorage(clearHasExTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.HasPendingExceptionFieldName, clearHasExTemp));
+
+                        var clearExTemp = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRConstNull(clearExTemp));
+                        DefineTempStorage(clearExTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, ctx.PendingExceptionFieldName, clearExTemp));
+
+                        _methodBodyIR.Instructions.Add(new LIRBranch(ctx.IsInFinally ? ctx.FinallyExitLabelId : ctx.FinallyEntryLabelId));
+                        return true;
+                    }
+
                     // If we are inside a protected region with a finally handler, we must use leave
                     // so finally runs before returning.
                     if (_protectedControlFlowDepthStack.Count > 0 && _methodBodyIR.ReturnEpilogueLabelId.HasValue)
@@ -1186,8 +1231,17 @@ public sealed class HIRToLIRLowerer
                 {
                     var hasCatch = tryStmt.CatchBody != null;
                     var hasFinally = tryStmt.FinallyBody != null;
-                    var awaitCount = CountAwaitExpressionsInStatement(tryStmt.TryBlock)
-                        + (tryStmt.CatchBody != null ? CountAwaitExpressionsInStatement(tryStmt.CatchBody) : 0);
+                    var awaitCountTry = CountAwaitExpressionsInStatement(tryStmt.TryBlock);
+                    var awaitCountCatch = tryStmt.CatchBody != null ? CountAwaitExpressionsInStatement(tryStmt.CatchBody) : 0;
+                    var awaitCountFinally = tryStmt.FinallyBody != null ? CountAwaitExpressionsInStatement(tryStmt.FinallyBody) : 0;
+                    var awaitCount = awaitCountTry + awaitCountCatch + awaitCountFinally;
+
+                    // Async try/finally (and try/catch/finally) cannot use IL exception regions when awaits occur
+                    // within the protected region, because awaits suspend MoveNext via 'ret'.
+                    if (_isAsync && hasFinally && awaitCount > 0)
+                    {
+                        return TryLowerAsyncTryWithFinallyWithAwait(tryStmt);
+                    }
                     if (_isAsync && hasCatch && !hasFinally && awaitCount > 0)
                     {
                         return TryLowerAsyncTryCatchWithAwait(tryStmt);
@@ -1334,6 +1388,18 @@ public sealed class HIRToLIRLowerer
                     }
 
                     argTemp = EnsureObject(argTemp);
+
+                    // In async MoveNext with awaits, do not emit CLR throws (they won't be caught by the runtime).
+                    // Instead reject the deferred promise unless we are inside an async try/catch/finally routing context.
+                    if (_isAsync
+                        && _methodBodyIR.AsyncInfo?.HasAwaits == true
+                        && _asyncTryCatchStack.Count == 0
+                        && !_methodBodyIR.LeafScopeId.IsNil)
+                    {
+                        _methodBodyIR.Instructions.Add(new LIRAsyncReject(argTemp));
+                        return true;
+                    }
+
                     if (_asyncTryCatchStack.Count > 0 && !_methodBodyIR.LeafScopeId.IsNil)
                     {
                         var ctx = _asyncTryCatchStack.Peek();
@@ -1979,6 +2045,262 @@ public sealed class HIRToLIRLowerer
 
         _methodBodyIR.Instructions.Add(new LIRBranch(endLabel));
         _methodBodyIR.Instructions.Add(new LIRLabel(endLabel));
+        return true;
+    }
+
+    private bool TryLowerAsyncTryWithFinallyWithAwait(HIRTryStatement tryStmt)
+    {
+        if (_methodBodyIR.AsyncInfo == null || _methodBodyIR.LeafScopeId.IsNil)
+        {
+            return false;
+        }
+
+        if (tryStmt.FinallyBody == null)
+        {
+            return false;
+        }
+
+        var asyncInfo = _methodBodyIR.AsyncInfo;
+        var scopeName = _methodBodyIR.LeafScopeId.Name;
+
+        const string pendingExceptionField = "_pendingException";
+        const string hasPendingExceptionField = "_hasPendingException";
+        const string pendingReturnField = "_pendingReturnValue";
+        const string hasPendingReturnField = "_hasPendingReturn";
+
+        bool hasCatch = tryStmt.CatchBody != null;
+
+        // Synthetic labels used by the async state machine.
+        var afterTryLabel = CreateLabel();
+        var finallyEntryLabel = CreateLabel();
+        var finallyExitLabel = CreateLabel();
+
+        // Rejection/exception routing labels (used as resume targets for await rejection).
+        var exceptionToFinallyStateId = asyncInfo.AllocateResumeStateId();
+        var exceptionToFinallyLabel = CreateLabel();
+        asyncInfo.RegisterResumeLabel(exceptionToFinallyStateId, exceptionToFinallyLabel);
+
+        var exceptionInFinallyStateId = asyncInfo.AllocateResumeStateId();
+        var exceptionInFinallyLabel = CreateLabel();
+        asyncInfo.RegisterResumeLabel(exceptionInFinallyStateId, exceptionInFinallyLabel);
+
+        int catchStateId = 0;
+        int catchLabel = 0;
+        if (hasCatch)
+        {
+            catchStateId = asyncInfo.AllocateResumeStateId();
+            catchLabel = CreateLabel();
+            asyncInfo.RegisterResumeLabel(catchStateId, catchLabel);
+        }
+
+        // Reset pending completion fields on entry.
+        {
+            var nullTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstNull(nullTemp));
+            DefineTempStorage(nullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, pendingExceptionField, nullTemp));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, pendingReturnField, nullTemp));
+
+            var falseTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstBoolean(false, falseTemp));
+            DefineTempStorage(falseTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, hasPendingExceptionField, falseTemp));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, hasPendingReturnField, falseTemp));
+        }
+
+        // --- Try block ---
+        _asyncTryFinallyStack.Push(new AsyncTryFinallyContext(
+            FinallyEntryLabelId: finallyEntryLabel,
+            FinallyExitLabelId: finallyExitLabel,
+            PendingExceptionFieldName: pendingExceptionField,
+            HasPendingExceptionFieldName: hasPendingExceptionField,
+            PendingReturnFieldName: pendingReturnField,
+            HasPendingReturnFieldName: hasPendingReturnField,
+            IsInFinally: false));
+        _asyncTryCatchStack.Push(new AsyncTryCatchContext(
+            CatchStateId: hasCatch ? catchStateId : exceptionToFinallyStateId,
+            CatchLabelId: hasCatch ? catchLabel : exceptionToFinallyLabel,
+            PendingExceptionFieldName: pendingExceptionField));
+        try
+        {
+            if (!TryLowerStatement(tryStmt.TryBlock))
+            {
+                return false;
+            }
+        }
+        finally
+        {
+            _asyncTryCatchStack.Pop();
+            _asyncTryFinallyStack.Pop();
+        }
+
+        // Normal completion flows into finally.
+        _methodBodyIR.Instructions.Add(new LIRBranch(finallyEntryLabel));
+
+        // --- Catch handler (synthetic) ---
+        if (hasCatch)
+        {
+            _methodBodyIR.Instructions.Add(new LIRLabel(catchLabel));
+
+            // Mark that we arrived due to an exception/rejection.
+            var trueTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstBoolean(true, trueTemp));
+            DefineTempStorage(trueTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, hasPendingExceptionField, trueTemp));
+
+            // Load pending exception into temp and clear it (the catch is handling it).
+            var pendingTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, pendingExceptionField, pendingTemp));
+            DefineTempStorage(pendingTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+            var nullTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstNull(nullTemp));
+            DefineTempStorage(nullTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, pendingExceptionField, nullTemp));
+
+            var falseTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstBoolean(false, falseTemp));
+            DefineTempStorage(falseTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, hasPendingExceptionField, falseTemp));
+
+            if (tryStmt.CatchParamBinding != null &&
+                !TryStoreToBinding(tryStmt.CatchParamBinding, pendingTemp, out _))
+            {
+                return false;
+            }
+
+            _asyncTryFinallyStack.Push(new AsyncTryFinallyContext(
+                FinallyEntryLabelId: finallyEntryLabel,
+                FinallyExitLabelId: finallyExitLabel,
+                PendingExceptionFieldName: pendingExceptionField,
+                HasPendingExceptionFieldName: hasPendingExceptionField,
+                PendingReturnFieldName: pendingReturnField,
+                HasPendingReturnFieldName: hasPendingReturnField,
+                IsInFinally: false));
+            _asyncTryCatchStack.Push(new AsyncTryCatchContext(
+                CatchStateId: exceptionToFinallyStateId,
+                CatchLabelId: exceptionToFinallyLabel,
+                PendingExceptionFieldName: pendingExceptionField));
+            try
+            {
+                if (tryStmt.CatchBody != null && !TryLowerStatement(tryStmt.CatchBody))
+                {
+                    return false;
+                }
+            }
+            finally
+            {
+                _asyncTryCatchStack.Pop();
+                _asyncTryFinallyStack.Pop();
+            }
+
+            _methodBodyIR.Instructions.Add(new LIRBranch(finallyEntryLabel));
+        }
+
+        // --- Exception path into finally (synthetic; used for await rejection / throw) ---
+        _methodBodyIR.Instructions.Add(new LIRLabel(exceptionToFinallyLabel));
+        {
+            var trueTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstBoolean(true, trueTemp));
+            DefineTempStorage(trueTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, hasPendingExceptionField, trueTemp));
+
+            var falseTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstBoolean(false, falseTemp));
+            DefineTempStorage(falseTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, hasPendingReturnField, falseTemp));
+
+            _methodBodyIR.Instructions.Add(new LIRBranch(finallyEntryLabel));
+        }
+
+        // --- Finally block ---
+        _methodBodyIR.Instructions.Add(new LIRLabel(finallyEntryLabel));
+        _asyncTryFinallyStack.Push(new AsyncTryFinallyContext(
+            FinallyEntryLabelId: finallyEntryLabel,
+            FinallyExitLabelId: finallyExitLabel,
+            PendingExceptionFieldName: pendingExceptionField,
+            HasPendingExceptionFieldName: hasPendingExceptionField,
+            PendingReturnFieldName: pendingReturnField,
+            HasPendingReturnFieldName: hasPendingReturnField,
+            IsInFinally: true));
+        _asyncTryCatchStack.Push(new AsyncTryCatchContext(
+            CatchStateId: exceptionInFinallyStateId,
+            CatchLabelId: exceptionInFinallyLabel,
+            PendingExceptionFieldName: pendingExceptionField));
+        try
+        {
+            if (!TryLowerStatement(tryStmt.FinallyBody))
+            {
+                return false;
+            }
+        }
+        finally
+        {
+            _asyncTryCatchStack.Pop();
+            _asyncTryFinallyStack.Pop();
+        }
+        _methodBodyIR.Instructions.Add(new LIRBranch(finallyExitLabel));
+
+        // --- Exception inside finally overrides prior completion ---
+        _methodBodyIR.Instructions.Add(new LIRLabel(exceptionInFinallyLabel));
+        {
+            var trueTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstBoolean(true, trueTemp));
+            DefineTempStorage(trueTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, hasPendingExceptionField, trueTemp));
+
+            var falseTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRConstBoolean(false, falseTemp));
+            DefineTempStorage(falseTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, hasPendingReturnField, falseTemp));
+
+            _methodBodyIR.Instructions.Add(new LIRBranch(finallyExitLabel));
+        }
+
+        // --- After finally: dispatch based on completion ---
+        _methodBodyIR.Instructions.Add(new LIRLabel(finallyExitLabel));
+
+        var checkReturnLabel = CreateLabel();
+        {
+            var hasExTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, hasPendingExceptionField, hasExTemp));
+            DefineTempStorage(hasExTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            SetTempVariableSlot(hasExTemp, CreateAnonymousVariableSlot("$finally_hasEx", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool))));
+
+            _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(hasExTemp, checkReturnLabel));
+
+            var exTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, pendingExceptionField, exTemp));
+            DefineTempStorage(exTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+            if (_asyncTryCatchStack.Count > 0)
+            {
+                var outer = _asyncTryCatchStack.Peek();
+                _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, outer.PendingExceptionFieldName, exTemp));
+                _methodBodyIR.Instructions.Add(new LIRBranch(outer.CatchLabelId));
+            }
+            else
+            {
+                _methodBodyIR.Instructions.Add(new LIRAsyncReject(exTemp));
+            }
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(checkReturnLabel));
+        {
+            var hasReturnTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, hasPendingReturnField, hasReturnTemp));
+            DefineTempStorage(hasReturnTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+            SetTempVariableSlot(hasReturnTemp, CreateAnonymousVariableSlot("$finally_hasReturn", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool))));
+
+            _methodBodyIR.Instructions.Add(new LIRBranchIfFalse(hasReturnTemp, afterTryLabel));
+
+            var retTemp = CreateTempVariable();
+            _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, pendingReturnField, retTemp));
+            DefineTempStorage(retTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+            _methodBodyIR.Instructions.Add(new LIRReturn(retTemp));
+        }
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(afterTryLabel));
         return true;
     }
 

@@ -422,9 +422,33 @@ internal static class TempLocalAllocator
             case LIRStoreParentScopeField storeParent:
                 yield return storeParent.Value;
                 break;
+            case LIRStoreScopeFieldByName storeByName:
+                yield return storeByName.Value;
+                break;
             case LIRLoadLeafScopeField:
             case LIRLoadParentScopeField:
+            case LIRLoadScopeFieldByName:
                 // Load instructions don't consume temps (they load from scope fields)
+                break;
+
+            // Async / await state machine instructions
+            case LIRAwait awaitInstr:
+                yield return awaitInstr.AwaitedValue;
+                break;
+            case LIRAsyncCallMoveNext callMoveNext:
+                yield return callMoveNext.ScopesArray;
+                break;
+            case LIRAsyncResolve asyncResolve:
+                yield return asyncResolve.Value;
+                break;
+            case LIRAsyncReject asyncReject:
+                yield return asyncReject.Reason;
+                break;
+            case LIRAsyncStateSwitch stateSwitch:
+                yield return stateSwitch.StateValue;
+                break;
+            case LIRAsyncStoreAwaitedResult storeAwaited:
+                yield return storeAwaited.Value;
                 break;
             case LIRBuildArray buildArray:
                 foreach (var elem in buildArray.Elements)
@@ -578,6 +602,33 @@ internal static class TempLocalAllocator
                 return true;
 
             case LIRCallIntrinsicStaticVoid:
+                defined = default;
+                return false;
+
+            case LIRLoadScopeFieldByName loadScopeByName:
+                defined = loadScopeByName.Result;
+                return true;
+
+            // Async / await state machine instructions
+            case LIRAwait awaitInstr:
+                defined = awaitInstr.Result;
+                return true;
+            case LIRAsyncLoadState loadState:
+                defined = loadState.Result;
+                return true;
+            case LIRAsyncLoadAwaitedResult loadAwaited:
+                defined = loadAwaited.Result;
+                return true;
+
+            // Instructions that do not define temps
+            case LIRAsyncInitialize:
+            case LIRAsyncStoreState:
+            case LIRAsyncCallMoveNext:
+            case LIRAsyncReturnPromise:
+            case LIRAsyncResolve:
+            case LIRAsyncReject:
+            case LIRAsyncStateSwitch:
+            case LIRAsyncStoreAwaitedResult:
                 defined = default;
                 return false;
             case LIRConvertToObject conv:

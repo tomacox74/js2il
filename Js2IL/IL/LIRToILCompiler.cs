@@ -56,9 +56,47 @@ internal sealed class LIRToILCompiler
 
     private Type GetDeclaredScopeFieldClrType(string scopeName, string fieldName)
     {
+        if (TryGetAsyncScopeBaseFieldClrType(fieldName, out var asyncFieldType))
+            return asyncFieldType;
+
         return _scopeMetadataRegistry.TryGetFieldClrType(scopeName, fieldName, out var t)
             ? t
             : typeof(object);
+    }
+
+    private static bool TryGetAsyncScopeBaseFieldClrType(string fieldName, out Type fieldClrType)
+    {
+        fieldClrType = fieldName switch
+        {
+            "_asyncState" => typeof(int),
+            "_deferred" => typeof(JavaScriptRuntime.PromiseWithResolvers),
+            "_moveNext" => typeof(object),
+            "_pendingException" => typeof(object),
+            "_hasPendingException" => typeof(bool),
+            "_pendingReturnValue" => typeof(object),
+            "_hasPendingReturn" => typeof(bool),
+            _ => typeof(object)
+        };
+
+        return fieldName is "_asyncState"
+            or "_deferred"
+            or "_moveNext"
+            or "_pendingException"
+            or "_hasPendingException"
+            or "_pendingReturnValue"
+            or "_hasPendingReturn";
+    }
+
+    private bool TryResolveAsyncScopeBaseFieldToken(string fieldName, out EntityHandle token)
+    {
+        if (!TryGetAsyncScopeBaseFieldClrType(fieldName, out _))
+        {
+            token = default;
+            return false;
+        }
+
+        token = _memberRefRegistry.GetOrAddField(typeof(JavaScriptRuntime.AsyncScope), fieldName);
+        return true;
     }
 
     private void EmitBoxIfNeededForTypedScopeFieldLoad(Type fieldClrType, ValueStorage targetStorage, InstructionEncoder ilEncoder)
@@ -2197,6 +2235,63 @@ internal sealed class LIRToILCompiler
                 }
                 ilEncoder.OpCode(ILOpCode.Ret);
                 break;
+
+            case LIRAsyncReject asyncReject:
+                {
+                    // Full async state machine: reject _deferred and return its promise.
+                    // 1. Mark state as completed: _asyncState = -1
+                    // 2. Call _deferred.reject(reason)
+                    // 3. Return _deferred.promise
+                    if (!(MethodBody.IsAsync && MethodBody.AsyncInfo is { HasAwaits: true }))
+                    {
+                        throw new InvalidOperationException("LIRAsyncReject is only valid for async methods with awaits.");
+                    }
+
+                    var scopeName = MethodBody.LeafScopeId.Name;
+
+                    // _asyncState = -1 (completed)
+                    ilEncoder.LoadLocal(0);
+                    ilEncoder.LoadConstantI4(-1);
+                    EmitStoreFieldByName(ilEncoder, scopeName, "_asyncState");
+
+                    // Load _deferred.reject (it's a bound closure)
+                    ilEncoder.LoadLocal(0);
+                    EmitLoadFieldByName(ilEncoder, scopeName, "_deferred");
+                    var getRejectRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.PromiseWithResolvers),
+                        $"get_{nameof(JavaScriptRuntime.PromiseWithResolvers.reject)}");
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(getRejectRef);
+
+                    // Call it with the rejection reason: Closure.InvokeWithArgs(reject, scopes, argsArray)
+                    ilEncoder.LoadArgument(0); // scopes array
+                    ilEncoder.LoadConstantI4(1);
+                    ilEncoder.OpCode(ILOpCode.Newarr);
+                    ilEncoder.Token(_bclReferences.ObjectType);
+                    ilEncoder.OpCode(ILOpCode.Dup);
+                    ilEncoder.LoadConstantI4(0);
+                    EmitLoadTempAsObject(asyncReject.Reason, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.OpCode(ILOpCode.Stelem_ref);
+
+                    var invokeWithArgsRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Closure),
+                        nameof(JavaScriptRuntime.Closure.InvokeWithArgs),
+                        parameterTypes: new[] { typeof(object), typeof(object[]), typeof(object[]) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(invokeWithArgsRef);
+                    ilEncoder.OpCode(ILOpCode.Pop); // discard result
+
+                    // Return _deferred.promise
+                    ilEncoder.LoadLocal(0);
+                    EmitLoadFieldByName(ilEncoder, scopeName, "_deferred");
+                    var getPromiseRef = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.PromiseWithResolvers),
+                        $"get_{nameof(JavaScriptRuntime.PromiseWithResolvers.promise)}");
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(getPromiseRef);
+                    ilEncoder.OpCode(ILOpCode.Ret);
+                    break;
+                }
             case LIRBuildScopesArray buildScopes:
                 {
                     if (!IsMaterialized(buildScopes.Result, allocation))
@@ -2698,7 +2793,7 @@ internal sealed class LIRToILCompiler
                     }
                     
                     // Emit: ldloc.0 (scope instance), ldfld (field handle)
-                    var fieldHandle = ResolveFieldHandle(
+                    var fieldHandle = ResolveFieldToken(
                         loadLeafField.Field.ScopeName,
                         loadLeafField.Field.FieldName,
                         "LIRLoadLeafScopeField instruction");
@@ -2718,7 +2813,7 @@ internal sealed class LIRToILCompiler
                         break;
                     }
 
-                    var fieldHandle = ResolveFieldHandle(
+                    var fieldHandle = ResolveFieldToken(
                         loadScopeField.ScopeName,
                         loadScopeField.FieldName,
                         "LIRLoadScopeFieldByName instruction");
@@ -2734,7 +2829,7 @@ internal sealed class LIRToILCompiler
             case LIRStoreLeafScopeField storeLeafField:
                 {
                     // Emit: ldloc.0 (scope instance), ldarg/ldloc Value, stfld (field handle)
-                    var fieldHandle = ResolveFieldHandle(
+                    var fieldHandle = ResolveFieldToken(
                         storeLeafField.Field.ScopeName,
                         storeLeafField.Field.FieldName,
                         "LIRStoreLeafScopeField instruction");
@@ -2755,7 +2850,7 @@ internal sealed class LIRToILCompiler
                 }
             case LIRStoreScopeFieldByName storeScopeField:
                 {
-                    var fieldHandle = ResolveFieldHandle(
+                    var fieldHandle = ResolveFieldToken(
                         storeScopeField.ScopeName,
                         storeScopeField.FieldName,
                         "LIRStoreScopeFieldByName instruction");
@@ -2787,7 +2882,7 @@ internal sealed class LIRToILCompiler
                     var scopeTypeHandle = ResolveScopeTypeHandle(
                         loadParentField.Scope.Name,
                         "LIRLoadParentScopeField instruction (castclass)");
-                    var fieldHandle = ResolveFieldHandle(
+                    var fieldHandle = ResolveFieldToken(
                         loadParentField.Field.ScopeName,
                         loadParentField.Field.FieldName,
                         "LIRLoadParentScopeField instruction");
@@ -2812,7 +2907,7 @@ internal sealed class LIRToILCompiler
                     var scopeTypeHandle = ResolveScopeTypeHandle(
                         storeParentField.Scope.Name,
                         "LIRStoreParentScopeField instruction (castclass)");
-                    var fieldHandle = ResolveFieldHandle(
+                    var fieldHandle = ResolveFieldToken(
                         storeParentField.Field.ScopeName,
                         storeParentField.Field.FieldName,
                         "LIRStoreParentScopeField instruction");
@@ -2884,15 +2979,6 @@ internal sealed class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Call);
                         ilEncoder.Token(prependRef);
                         ilEncoder.StoreArgument(0); // arg.0 = modified scopes array
-                        
-                        // Initialize _deferred = Promise.withResolvers()
-                        ilEncoder.LoadLocal(0);
-                        var withResolversRef = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.Promise),
-                            nameof(JavaScriptRuntime.Promise.withResolvers));
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(withResolversRef);
-                        EmitStoreFieldByName(ilEncoder, scopeName, "_deferred");
                         
                         // Initialize _moveNext = Closure.Bind(delegate, scopesArray)
                         // Note: arg.0 now contains the modified scopes array with leaf scope at [0]
@@ -3011,21 +3097,22 @@ internal sealed class LIRToILCompiler
                         EmitStoreFieldByName(ilEncoder, scopeName, "_asyncState");
 
                         // --- Step 2: Call SetupAwaitContinuation ---
-                        // Arguments: awaited, scope, scopesArray, resultFieldName, moveNext
-                        
-                        // arg1: awaited value
-                        EmitLoadTemp(awaitInstr.AwaitedValue, ilEncoder, allocation, methodDescriptor);
-                        
-                        // arg2: scope (ldloc.0)
+                        // Call is emitted as an instance method on AsyncScope.
+                        // Stack: scope(this), awaited, scopesArray, resultFieldName, moveNext, [rejectStateId], [pendingExceptionFieldName]
+
+                        // this: scope (ldloc.0)
                         ilEncoder.LoadLocal(0);
-                        
-                        // arg3: scopesArray (ldarg.0, which is the scopes parameter)
+
+                        // awaited value
+                        EmitLoadTemp(awaitInstr.AwaitedValue, ilEncoder, allocation, methodDescriptor);
+
+                        // scopesArray (ldarg.0, which is the scopes parameter)
                         ilEncoder.LoadArgument(0);
-                        
-                        // arg4: resultFieldName
+
+                        // resultFieldName
                         ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString(resultFieldName));
-                        
-                        // arg5: moveNext (ldloc.0, ldfld _moveNext)
+
+                        // moveNext (ldloc.0, ldfld _moveNext)
                         ilEncoder.LoadLocal(0);
                         EmitLoadFieldByName(ilEncoder, scopeName, "_moveNext");
                         
@@ -3035,22 +3122,20 @@ internal sealed class LIRToILCompiler
                             ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString(awaitInstr.PendingExceptionFieldName));
 
                             var setupAwaitRef = _memberRefRegistry.GetOrAddMethod(
-                                typeof(JavaScriptRuntime.Promise),
-                                nameof(JavaScriptRuntime.Promise.SetupAwaitContinuationWithRejectResume),
-                                parameterTypes: new[] { typeof(object), typeof(object), typeof(object[]), typeof(string), typeof(object), typeof(int), typeof(string) });
-                            ilEncoder.OpCode(ILOpCode.Call);
+                                typeof(JavaScriptRuntime.AsyncScope),
+                                nameof(JavaScriptRuntime.AsyncScope.SetupAwaitContinuationWithRejectResume),
+                                parameterTypes: new[] { typeof(object), typeof(object[]), typeof(string), typeof(object), typeof(int), typeof(string) });
+                            ilEncoder.OpCode(ILOpCode.Callvirt);
                             ilEncoder.Token(setupAwaitRef);
-                            ilEncoder.OpCode(ILOpCode.Pop); // discard return value (null)
                         }
                         else
                         {
                             var setupAwaitRef = _memberRefRegistry.GetOrAddMethod(
-                                typeof(JavaScriptRuntime.Promise),
-                                nameof(JavaScriptRuntime.Promise.SetupAwaitContinuation),
-                                parameterTypes: new[] { typeof(object), typeof(object), typeof(object[]), typeof(string), typeof(object) });
-                            ilEncoder.OpCode(ILOpCode.Call);
+                                typeof(JavaScriptRuntime.AsyncScope),
+                                nameof(JavaScriptRuntime.AsyncScope.SetupAwaitContinuation),
+                                parameterTypes: new[] { typeof(object), typeof(object[]), typeof(string), typeof(object) });
+                            ilEncoder.OpCode(ILOpCode.Callvirt);
                             ilEncoder.Token(setupAwaitRef);
-                            ilEncoder.OpCode(ILOpCode.Pop); // discard return value (null)
                         }
 
                         // --- Step 3: Return _deferred.promise ---
@@ -3256,7 +3341,20 @@ internal sealed class LIRToILCompiler
         var def = TryFindDefInstruction(temp);
         if (def == null)
         {
-            throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - no definition found");
+            // Try to include a little more context: which instruction attempted to use this temp.
+            // This typically indicates a lowering/SSA bug where a temp is referenced without being defined.
+            var firstUse = MethodBody.Instructions
+                .Select((instr, idx) => (instr, idx))
+                .FirstOrDefault(t => TempLocalAllocator.EnumerateUsedTemps(t.instr).Any(u => u == temp));
+
+            if (firstUse.instr != null)
+            {
+                throw new InvalidOperationException(
+                    $"Cannot emit unmaterialized temp {temp.Index} - no definition found. " +
+                    $"First use at instruction #{firstUse.idx}: {firstUse.instr.GetType().Name}");
+            }
+
+            throw new InvalidOperationException($"Cannot emit unmaterialized temp {temp.Index} - no definition found (and no uses found in method body?)");
         }
 
         // Emit the constant/expression inline
@@ -3476,7 +3574,7 @@ internal sealed class LIRToILCompiler
             case LIRLoadLeafScopeField loadLeafField:
                 // Emit inline: ldloc.0 (scope instance), ldfld (field handle)
                 {
-                    var fieldHandle = ResolveFieldHandle(
+                    var fieldHandle = ResolveFieldToken(
                         loadLeafField.Field.ScopeName,
                         loadLeafField.Field.FieldName,
                         "inline LIRLoadLeafScopeField emission");
@@ -3491,7 +3589,7 @@ internal sealed class LIRToILCompiler
             case LIRLoadScopeFieldByName loadScopeField:
                 // Emit inline: ldloc.0 (scope instance), ldfld (field handle)
                 {
-                    var fieldHandle = ResolveFieldHandle(
+                    var fieldHandle = ResolveFieldToken(
                         loadScopeField.ScopeName,
                         loadScopeField.FieldName,
                         "inline LIRLoadScopeFieldByName emission");
@@ -3509,7 +3607,7 @@ internal sealed class LIRToILCompiler
                     var scopeTypeHandle = ResolveScopeTypeHandle(
                         loadParentField.Scope.Name,
                         "inline LIRLoadParentScopeField emission (castclass)");
-                    var fieldHandle = ResolveFieldHandle(
+                    var fieldHandle = ResolveFieldToken(
                         loadParentField.Field.ScopeName,
                         loadParentField.Field.FieldName,
                         "inline LIRLoadParentScopeField emission");
@@ -4926,16 +5024,19 @@ internal sealed class LIRToILCompiler
     /// <summary>
     /// Resolves a field handle from the registry with improved error context.
     /// </summary>
-    private FieldDefinitionHandle ResolveFieldHandle(string scopeName, string fieldName, string context)
+    private EntityHandle ResolveFieldToken(string scopeName, string fieldName, string context)
     {
         try
         {
+            if (TryResolveAsyncScopeBaseFieldToken(fieldName, out var token))
+                return token;
+
             return _scopeMetadataRegistry.GetFieldHandle(scopeName, fieldName);
         }
         catch (KeyNotFoundException ex)
         {
             throw new InvalidOperationException(
-                $"Failed to resolve field handle for '{fieldName}' in scope '{scopeName}' during {context}.",
+                $"Failed to resolve field token for '{fieldName}' in scope '{scopeName}' during {context}.",
                 ex);
         }
     }
@@ -4946,7 +5047,9 @@ internal sealed class LIRToILCompiler
     /// </summary>
     private void EmitLoadFieldByName(InstructionEncoder ilEncoder, string scopeName, string fieldName)
     {
-        var fieldHandle = _scopeMetadataRegistry.GetFieldHandle(scopeName, fieldName);
+        var fieldHandle = TryResolveAsyncScopeBaseFieldToken(fieldName, out var token)
+            ? token
+            : _scopeMetadataRegistry.GetFieldHandle(scopeName, fieldName);
         ilEncoder.OpCode(ILOpCode.Ldfld);
         ilEncoder.Token(fieldHandle);
     }
@@ -4957,7 +5060,9 @@ internal sealed class LIRToILCompiler
     /// </summary>
     private void EmitStoreFieldByName(InstructionEncoder ilEncoder, string scopeName, string fieldName)
     {
-        var fieldHandle = _scopeMetadataRegistry.GetFieldHandle(scopeName, fieldName);
+        var fieldHandle = TryResolveAsyncScopeBaseFieldToken(fieldName, out var token)
+            ? token
+            : _scopeMetadataRegistry.GetFieldHandle(scopeName, fieldName);
         ilEncoder.OpCode(ILOpCode.Stfld);
         ilEncoder.Token(fieldHandle);
     }

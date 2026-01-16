@@ -8,9 +8,10 @@ All notable changes to this project are documented here.
 - `NodeModuleRegistry` to normalize module specifiers and resolve `[NodeModule]` types for `require()`.
 - Validator coverage for `require('node:path')`.
 - Internal punch list for missing Node module APIs needed by scripts.
+- Promise thenable assimilation support for `Promise.resolve` and promise chaining (PR #366, fixes #134).
 
 ### Fixed
-- Async `await` inside `try/catch` now resumes into catch on rejection; validator allows await in try/catch and disallows await in finally.
+- Async `await` inside `try/catch/finally` is supported, including `await` inside `finally` blocks (#340).
 - `this` now works inside object literal methods when invoked via member calls (e.g., `obj.method()`).
 
 ## v0.7.0 - 2026-01-15
