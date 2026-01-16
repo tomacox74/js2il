@@ -3106,21 +3106,22 @@ internal sealed class LIRToILCompiler
                         EmitStoreFieldByName(ilEncoder, scopeName, "_asyncState");
 
                         // --- Step 2: Call SetupAwaitContinuation ---
-                        // Arguments: awaited, scope, scopesArray, resultFieldName, moveNext
-                        
-                        // arg1: awaited value
-                        EmitLoadTemp(awaitInstr.AwaitedValue, ilEncoder, allocation, methodDescriptor);
-                        
-                        // arg2: scope (ldloc.0)
+                        // Call is emitted as an instance method on AsyncScope.
+                        // Stack: scope(this), awaited, scopesArray, resultFieldName, moveNext, [rejectStateId], [pendingExceptionFieldName]
+
+                        // this: scope (ldloc.0)
                         ilEncoder.LoadLocal(0);
-                        
-                        // arg3: scopesArray (ldarg.0, which is the scopes parameter)
+
+                        // awaited value
+                        EmitLoadTemp(awaitInstr.AwaitedValue, ilEncoder, allocation, methodDescriptor);
+
+                        // scopesArray (ldarg.0, which is the scopes parameter)
                         ilEncoder.LoadArgument(0);
-                        
-                        // arg4: resultFieldName
+
+                        // resultFieldName
                         ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString(resultFieldName));
-                        
-                        // arg5: moveNext (ldloc.0, ldfld _moveNext)
+
+                        // moveNext (ldloc.0, ldfld _moveNext)
                         ilEncoder.LoadLocal(0);
                         EmitLoadFieldByName(ilEncoder, scopeName, "_moveNext");
                         
@@ -3130,22 +3131,20 @@ internal sealed class LIRToILCompiler
                             ilEncoder.LoadString(_metadataBuilder.GetOrAddUserString(awaitInstr.PendingExceptionFieldName));
 
                             var setupAwaitRef = _memberRefRegistry.GetOrAddMethod(
-                                typeof(JavaScriptRuntime.Promise),
-                                nameof(JavaScriptRuntime.Promise.SetupAwaitContinuationWithRejectResume),
-                                parameterTypes: new[] { typeof(object), typeof(object), typeof(object[]), typeof(string), typeof(object), typeof(int), typeof(string) });
-                            ilEncoder.OpCode(ILOpCode.Call);
+                                typeof(JavaScriptRuntime.AsyncScope),
+                                nameof(JavaScriptRuntime.AsyncScope.SetupAwaitContinuationWithRejectResume),
+                                parameterTypes: new[] { typeof(object), typeof(object[]), typeof(string), typeof(object), typeof(int), typeof(string) });
+                            ilEncoder.OpCode(ILOpCode.Callvirt);
                             ilEncoder.Token(setupAwaitRef);
-                            ilEncoder.OpCode(ILOpCode.Pop); // discard return value (null)
                         }
                         else
                         {
                             var setupAwaitRef = _memberRefRegistry.GetOrAddMethod(
-                                typeof(JavaScriptRuntime.Promise),
-                                nameof(JavaScriptRuntime.Promise.SetupAwaitContinuation),
-                                parameterTypes: new[] { typeof(object), typeof(object), typeof(object[]), typeof(string), typeof(object) });
-                            ilEncoder.OpCode(ILOpCode.Call);
+                                typeof(JavaScriptRuntime.AsyncScope),
+                                nameof(JavaScriptRuntime.AsyncScope.SetupAwaitContinuation),
+                                parameterTypes: new[] { typeof(object), typeof(object[]), typeof(string), typeof(object) });
+                            ilEncoder.OpCode(ILOpCode.Callvirt);
                             ilEncoder.Token(setupAwaitRef);
-                            ilEncoder.OpCode(ILOpCode.Pop); // discard return value (null)
                         }
 
                         // --- Step 3: Return _deferred.promise ---
