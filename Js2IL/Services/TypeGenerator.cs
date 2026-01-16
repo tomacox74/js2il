@@ -389,17 +389,17 @@ namespace Js2IL.Services
                 | MethodAttributes.Final
                 | MethodAttributes.NewSlot;
 
-            AddAsyncScopeGetter(typeBuilder, "get_AsyncState", asyncStateField, returnType => returnType.Int32(), accessorAttributes);
+            AddAsyncScopeGetter(typeBuilder, "get_AsyncState", asyncStateField, returnType => returnType.Type().Int32(), accessorAttributes);
             AddAsyncScopeSetter(typeBuilder, "set_AsyncState", asyncStateField, paramType => paramType.Int32(), accessorAttributes);
 
             AddAsyncScopeGetter(typeBuilder, "get_Deferred", deferredField,
-                returnType => returnType.Type(_bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.PromiseWithResolvers)), isValueType: false),
+                returnType => returnType.Type().Type(_bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.PromiseWithResolvers)), false),
                 accessorAttributes);
             AddAsyncScopeSetter(typeBuilder, "set_Deferred", deferredField,
-                paramType => paramType.Type(_bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.PromiseWithResolvers)), isValueType: false),
+                paramType => paramType.Type(_bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.PromiseWithResolvers)), false),
                 accessorAttributes);
 
-            AddAsyncScopeGetter(typeBuilder, "get_MoveNext", moveNextField, returnType => returnType.Object(), accessorAttributes);
+            AddAsyncScopeGetter(typeBuilder, "get_MoveNext", moveNextField, returnType => returnType.Type().Object(), accessorAttributes);
             AddAsyncScopeSetter(typeBuilder, "set_MoveNext", moveNextField, paramType => paramType.Object(), accessorAttributes);
         }
 
@@ -435,7 +435,7 @@ namespace Js2IL.Services
             TypeBuilder typeBuilder,
             string methodName,
             FieldDefinitionHandle fieldHandle,
-            Action<ParameterTypeEncoder> paramType,
+            Action<SignatureTypeEncoder> paramType,
             MethodAttributes attributes)
         {
             var sig = new BlobBuilder();
