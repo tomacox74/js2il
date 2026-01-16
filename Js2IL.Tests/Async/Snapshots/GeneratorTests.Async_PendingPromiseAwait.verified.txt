@@ -63,6 +63,9 @@
 		.field public class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers _deferred
 		.field public object _moveNext
 		.field public object _pendingException
+		.field public bool _hasPendingException
+		.field public object _pendingReturnValue
+		.field public bool _hasPendingReturn
 		.field public object _awaited1
 		.field public object _awaited2
 
@@ -225,7 +228,7 @@
 	{
 		// Method begins at RVA 0x20b0
 		// Header size: 12
-		// Code size: 276 (0x114)
+		// Code size: 278 (0x116)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Async_PendingPromiseAwait/test,
@@ -263,7 +266,7 @@
 
 		IL_0047: ldloc.0
 		IL_0048: ldfld int32 Scopes.Async_PendingPromiseAwait/test::_asyncState
-		IL_004d: switch (IL_005a, IL_00c1)
+		IL_004d: switch (IL_005a, IL_00c3)
 
 		IL_005a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_005f: ldc.i4.1
@@ -291,58 +294,60 @@
 		IL_008e: stelem.ref
 		IL_008f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_0094: stloc.2
-		IL_0095: ldloc.0
-		IL_0096: ldc.i4.1
-		IL_0097: stfld int32 Scopes.Async_PendingPromiseAwait/test::_asyncState
-		IL_009c: ldloc.2
-		IL_009d: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Promise::.ctor(object)
-		IL_00a2: ldloc.0
-		IL_00a3: ldarg.0
-		IL_00a4: ldstr "_awaited1"
-		IL_00a9: ldloc.0
-		IL_00aa: ldfld object Scopes.Async_PendingPromiseAwait/test::_moveNext
-		IL_00af: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::SetupAwaitContinuation(object, object, object[], string, object)
-		IL_00b4: pop
-		IL_00b5: ldloc.0
-		IL_00b6: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_PendingPromiseAwait/test::_deferred
-		IL_00bb: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-		IL_00c0: ret
+		IL_0095: ldloc.2
+		IL_0096: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Promise::.ctor(object)
+		IL_009b: stloc.2
+		IL_009c: ldloc.0
+		IL_009d: ldc.i4.1
+		IL_009e: stfld int32 Scopes.Async_PendingPromiseAwait/test::_asyncState
+		IL_00a3: ldloc.2
+		IL_00a4: ldloc.0
+		IL_00a5: ldarg.0
+		IL_00a6: ldstr "_awaited1"
+		IL_00ab: ldloc.0
+		IL_00ac: ldfld object Scopes.Async_PendingPromiseAwait/test::_moveNext
+		IL_00b1: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::SetupAwaitContinuation(object, object, object[], string, object)
+		IL_00b6: pop
+		IL_00b7: ldloc.0
+		IL_00b8: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_PendingPromiseAwait/test::_deferred
+		IL_00bd: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+		IL_00c2: ret
 
-		IL_00c1: ldloc.0
-		IL_00c2: ldfld object Scopes.Async_PendingPromiseAwait/test::_awaited1
-		IL_00c7: stloc.1
-		IL_00c8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00cd: ldc.i4.2
-		IL_00ce: newarr [System.Runtime]System.Object
-		IL_00d3: dup
-		IL_00d4: ldc.i4.0
-		IL_00d5: ldstr "After await, result:"
-		IL_00da: stelem.ref
-		IL_00db: dup
-		IL_00dc: ldc.i4.1
-		IL_00dd: ldloc.1
-		IL_00de: stelem.ref
-		IL_00df: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00e4: pop
-		IL_00e5: ldloc.0
-		IL_00e6: ldc.i4.m1
-		IL_00e7: stfld int32 Scopes.Async_PendingPromiseAwait/test::_asyncState
-		IL_00ec: ldloc.0
-		IL_00ed: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_PendingPromiseAwait/test::_deferred
-		IL_00f2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
-		IL_00f7: ldarg.0
-		IL_00f8: ldc.i4.1
-		IL_00f9: newarr [System.Runtime]System.Object
-		IL_00fe: dup
-		IL_00ff: ldc.i4.0
-		IL_0100: ldloc.1
-		IL_0101: stelem.ref
-		IL_0102: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_0107: pop
-		IL_0108: ldloc.0
-		IL_0109: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_PendingPromiseAwait/test::_deferred
-		IL_010e: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-		IL_0113: ret
+		IL_00c3: ldloc.0
+		IL_00c4: ldfld object Scopes.Async_PendingPromiseAwait/test::_awaited1
+		IL_00c9: stloc.1
+		IL_00ca: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00cf: ldc.i4.2
+		IL_00d0: newarr [System.Runtime]System.Object
+		IL_00d5: dup
+		IL_00d6: ldc.i4.0
+		IL_00d7: ldstr "After await, result:"
+		IL_00dc: stelem.ref
+		IL_00dd: dup
+		IL_00de: ldc.i4.1
+		IL_00df: ldloc.1
+		IL_00e0: stelem.ref
+		IL_00e1: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00e6: pop
+		IL_00e7: ldloc.0
+		IL_00e8: ldc.i4.m1
+		IL_00e9: stfld int32 Scopes.Async_PendingPromiseAwait/test::_asyncState
+		IL_00ee: ldloc.0
+		IL_00ef: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_PendingPromiseAwait/test::_deferred
+		IL_00f4: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
+		IL_00f9: ldarg.0
+		IL_00fa: ldc.i4.1
+		IL_00fb: newarr [System.Runtime]System.Object
+		IL_0100: dup
+		IL_0101: ldc.i4.0
+		IL_0102: ldloc.1
+		IL_0103: stelem.ref
+		IL_0104: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_0109: pop
+		IL_010a: ldloc.0
+		IL_010b: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_PendingPromiseAwait/test::_deferred
+		IL_0110: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+		IL_0115: ret
 	} // end of method Async_PendingPromiseAwait::test
 
 } // end of class Functions.Async_PendingPromiseAwait
@@ -357,7 +362,7 @@
 			object 'value'
 		) cil managed 
 	{
-		// Method begins at RVA 0x21d0
+		// Method begins at RVA 0x21d4
 		// Header size: 12
 		// Code size: 31 (0x1f)
 		.maxstack 32
@@ -391,7 +396,7 @@
 			object resolve
 		) cil managed 
 	{
-		// Method begins at RVA 0x21fc
+		// Method begins at RVA 0x2200
 		// Header size: 12
 		// Code size: 82 (0x52)
 		.maxstack 32
@@ -450,7 +455,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x225c
+		// Method begins at RVA 0x2260
 		// Header size: 12
 		// Code size: 97 (0x61)
 		.maxstack 32
@@ -525,7 +530,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x22cc
+		// Method begins at RVA 0x22d0
 		// Header size: 12
 		// Code size: 137 (0x89)
 		.maxstack 32
@@ -602,7 +607,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2361
+		// Method begins at RVA 0x2365
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

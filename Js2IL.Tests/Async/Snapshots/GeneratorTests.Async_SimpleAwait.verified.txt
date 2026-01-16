@@ -16,6 +16,9 @@
 		.field public class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers _deferred
 		.field public object _moveNext
 		.field public object _pendingException
+		.field public bool _hasPendingException
+		.field public object _pendingReturnValue
+		.field public bool _hasPendingReturn
 		.field public object _awaited1
 		.field public object _awaited2
 
@@ -178,11 +181,12 @@
 	{
 		// Method begins at RVA 0x20a0
 		// Header size: 12
-		// Code size: 250 (0xfa)
+		// Code size: 232 (0xe8)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Async_SimpleAwait/test,
-			[1] object
+			[1] object,
+			[2] object
 		)
 
 		IL_0000: ldarg.0
@@ -215,65 +219,63 @@
 
 		IL_0047: ldloc.0
 		IL_0048: ldfld int32 Scopes.Async_SimpleAwait/test::_asyncState
-		IL_004d: switch (IL_005a, IL_00a7)
+		IL_004d: switch (IL_005a, IL_0095)
 
 		IL_005a: ldc.r8 42
 		IL_0063: box [System.Runtime]System.Double
 		IL_0068: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-		IL_006d: pop
+		IL_006d: stloc.2
 		IL_006e: ldloc.0
 		IL_006f: ldc.i4.1
 		IL_0070: stfld int32 Scopes.Async_SimpleAwait/test::_asyncState
-		IL_0075: ldc.r8 42
-		IL_007e: box [System.Runtime]System.Double
-		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
-		IL_0088: ldloc.0
-		IL_0089: ldarg.0
-		IL_008a: ldstr "_awaited1"
-		IL_008f: ldloc.0
-		IL_0090: ldfld object Scopes.Async_SimpleAwait/test::_moveNext
-		IL_0095: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::SetupAwaitContinuation(object, object, object[], string, object)
-		IL_009a: pop
-		IL_009b: ldloc.0
-		IL_009c: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_SimpleAwait/test::_deferred
-		IL_00a1: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-		IL_00a6: ret
+		IL_0075: ldloc.2
+		IL_0076: ldloc.0
+		IL_0077: ldarg.0
+		IL_0078: ldstr "_awaited1"
+		IL_007d: ldloc.0
+		IL_007e: ldfld object Scopes.Async_SimpleAwait/test::_moveNext
+		IL_0083: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::SetupAwaitContinuation(object, object, object[], string, object)
+		IL_0088: pop
+		IL_0089: ldloc.0
+		IL_008a: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_SimpleAwait/test::_deferred
+		IL_008f: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+		IL_0094: ret
 
-		IL_00a7: ldloc.0
-		IL_00a8: ldfld object Scopes.Async_SimpleAwait/test::_awaited1
-		IL_00ad: stloc.1
-		IL_00ae: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00b3: ldc.i4.2
-		IL_00b4: newarr [System.Runtime]System.Object
-		IL_00b9: dup
-		IL_00ba: ldc.i4.0
-		IL_00bb: ldstr "Result:"
-		IL_00c0: stelem.ref
-		IL_00c1: dup
-		IL_00c2: ldc.i4.1
-		IL_00c3: ldloc.1
-		IL_00c4: stelem.ref
-		IL_00c5: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00ca: pop
-		IL_00cb: ldloc.0
-		IL_00cc: ldc.i4.m1
-		IL_00cd: stfld int32 Scopes.Async_SimpleAwait/test::_asyncState
-		IL_00d2: ldloc.0
-		IL_00d3: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_SimpleAwait/test::_deferred
-		IL_00d8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
-		IL_00dd: ldarg.0
-		IL_00de: ldc.i4.1
-		IL_00df: newarr [System.Runtime]System.Object
-		IL_00e4: dup
-		IL_00e5: ldc.i4.0
-		IL_00e6: ldloc.1
-		IL_00e7: stelem.ref
-		IL_00e8: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_00ed: pop
-		IL_00ee: ldloc.0
-		IL_00ef: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_SimpleAwait/test::_deferred
-		IL_00f4: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-		IL_00f9: ret
+		IL_0095: ldloc.0
+		IL_0096: ldfld object Scopes.Async_SimpleAwait/test::_awaited1
+		IL_009b: stloc.1
+		IL_009c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00a1: ldc.i4.2
+		IL_00a2: newarr [System.Runtime]System.Object
+		IL_00a7: dup
+		IL_00a8: ldc.i4.0
+		IL_00a9: ldstr "Result:"
+		IL_00ae: stelem.ref
+		IL_00af: dup
+		IL_00b0: ldc.i4.1
+		IL_00b1: ldloc.1
+		IL_00b2: stelem.ref
+		IL_00b3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00b8: pop
+		IL_00b9: ldloc.0
+		IL_00ba: ldc.i4.m1
+		IL_00bb: stfld int32 Scopes.Async_SimpleAwait/test::_asyncState
+		IL_00c0: ldloc.0
+		IL_00c1: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_SimpleAwait/test::_deferred
+		IL_00c6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
+		IL_00cb: ldarg.0
+		IL_00cc: ldc.i4.1
+		IL_00cd: newarr [System.Runtime]System.Object
+		IL_00d2: dup
+		IL_00d3: ldc.i4.0
+		IL_00d4: ldloc.1
+		IL_00d5: stelem.ref
+		IL_00d6: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_00db: pop
+		IL_00dc: ldloc.0
+		IL_00dd: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_SimpleAwait/test::_deferred
+		IL_00e2: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+		IL_00e7: ret
 	} // end of method Async_SimpleAwait::test
 
 } // end of class Functions.Async_SimpleAwait
@@ -288,7 +290,7 @@
 			object 'value'
 		) cil managed 
 	{
-		// Method begins at RVA 0x21a8
+		// Method begins at RVA 0x2194
 		// Header size: 12
 		// Code size: 31 (0x1f)
 		.maxstack 32
@@ -325,7 +327,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x21d4
+		// Method begins at RVA 0x21c0
 		// Header size: 12
 		// Code size: 87 (0x57)
 		.maxstack 32
@@ -384,7 +386,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2237
+		// Method begins at RVA 0x2223
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

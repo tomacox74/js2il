@@ -58,6 +58,9 @@
 		.field public class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers _deferred
 		.field public object _moveNext
 		.field public object _pendingException
+		.field public bool _hasPendingException
+		.field public object _pendingReturnValue
+		.field public bool _hasPendingReturn
 		.field public object _awaited1
 		.field public object _awaited2
 		.field public object _awaited3
@@ -219,12 +222,13 @@
 	{
 		// Method begins at RVA 0x20b0
 		// Header size: 12
-		// Code size: 369 (0x171)
+		// Code size: 360 (0x168)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Async_TryCatch_AwaitReject/testTryCatch,
 			[1] object,
-			[2] object
+			[2] object,
+			[3] object
 		)
 
 		IL_0000: ldarg.0
@@ -257,7 +261,7 @@
 
 		IL_0047: ldloc.0
 		IL_0048: ldfld int32 Scopes.Async_TryCatch_AwaitReject/testTryCatch::_asyncState
-		IL_004d: switch (IL_005e, IL_00fd, IL_00d8)
+		IL_004d: switch (IL_005e, IL_00f4, IL_00cf)
 
 		IL_005e: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_0063: ldc.i4.1
@@ -282,85 +286,84 @@
 		IL_0096: pop
 		IL_0097: ldstr "error value"
 		IL_009c: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
-		IL_00a1: pop
+		IL_00a1: stloc.3
 		IL_00a2: ldloc.0
 		IL_00a3: ldc.i4.2
 		IL_00a4: stfld int32 Scopes.Async_TryCatch_AwaitReject/testTryCatch::_asyncState
-		IL_00a9: ldstr "error value"
-		IL_00ae: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
-		IL_00b3: ldloc.0
-		IL_00b4: ldarg.0
-		IL_00b5: ldstr "_awaited1"
-		IL_00ba: ldloc.0
-		IL_00bb: ldfld object Scopes.Async_TryCatch_AwaitReject/testTryCatch::_moveNext
-		IL_00c0: ldc.i4.1
-		IL_00c1: ldstr "_pendingException"
-		IL_00c6: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::SetupAwaitContinuationWithRejectResume(object, object, object[], string, object, int32, string)
-		IL_00cb: pop
-		IL_00cc: ldloc.0
-		IL_00cd: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_TryCatch_AwaitReject/testTryCatch::_deferred
-		IL_00d2: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-		IL_00d7: ret
+		IL_00a9: ldloc.3
+		IL_00aa: ldloc.0
+		IL_00ab: ldarg.0
+		IL_00ac: ldstr "_awaited1"
+		IL_00b1: ldloc.0
+		IL_00b2: ldfld object Scopes.Async_TryCatch_AwaitReject/testTryCatch::_moveNext
+		IL_00b7: ldc.i4.1
+		IL_00b8: ldstr "_pendingException"
+		IL_00bd: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::SetupAwaitContinuationWithRejectResume(object, object, object[], string, object, int32, string)
+		IL_00c2: pop
+		IL_00c3: ldloc.0
+		IL_00c4: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_TryCatch_AwaitReject/testTryCatch::_deferred
+		IL_00c9: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+		IL_00ce: ret
 
-		IL_00d8: ldloc.0
-		IL_00d9: ldfld object Scopes.Async_TryCatch_AwaitReject/testTryCatch::_awaited1
-		IL_00de: stloc.1
-		IL_00df: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_00e4: ldc.i4.1
-		IL_00e5: newarr [System.Runtime]System.Object
-		IL_00ea: dup
-		IL_00eb: ldc.i4.0
-		IL_00ec: ldstr "This should not print"
-		IL_00f1: stelem.ref
-		IL_00f2: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_00f7: pop
-		IL_00f8: br IL_012d
+		IL_00cf: ldloc.0
+		IL_00d0: ldfld object Scopes.Async_TryCatch_AwaitReject/testTryCatch::_awaited1
+		IL_00d5: stloc.1
+		IL_00d6: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00db: ldc.i4.1
+		IL_00dc: newarr [System.Runtime]System.Object
+		IL_00e1: dup
+		IL_00e2: ldc.i4.0
+		IL_00e3: ldstr "This should not print"
+		IL_00e8: stelem.ref
+		IL_00e9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00ee: pop
+		IL_00ef: br IL_0124
 
-		IL_00fd: ldloc.0
-		IL_00fe: ldfld object Scopes.Async_TryCatch_AwaitReject/testTryCatch::_pendingException
-		IL_0103: stloc.2
-		IL_0104: ldloc.0
-		IL_0105: ldc.i4.0
-		IL_0106: stfld object Scopes.Async_TryCatch_AwaitReject/testTryCatch::_pendingException
-		IL_010b: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0110: ldc.i4.2
-		IL_0111: newarr [System.Runtime]System.Object
-		IL_0116: dup
-		IL_0117: ldc.i4.0
-		IL_0118: ldstr "Caught error:"
-		IL_011d: stelem.ref
-		IL_011e: dup
-		IL_011f: ldc.i4.1
-		IL_0120: ldloc.2
-		IL_0121: stelem.ref
-		IL_0122: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0127: pop
-		IL_0128: br IL_012d
+		IL_00f4: ldloc.0
+		IL_00f5: ldfld object Scopes.Async_TryCatch_AwaitReject/testTryCatch::_pendingException
+		IL_00fa: stloc.2
+		IL_00fb: ldloc.0
+		IL_00fc: ldc.i4.0
+		IL_00fd: stfld object Scopes.Async_TryCatch_AwaitReject/testTryCatch::_pendingException
+		IL_0102: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0107: ldc.i4.2
+		IL_0108: newarr [System.Runtime]System.Object
+		IL_010d: dup
+		IL_010e: ldc.i4.0
+		IL_010f: ldstr "Caught error:"
+		IL_0114: stelem.ref
+		IL_0115: dup
+		IL_0116: ldc.i4.1
+		IL_0117: ldloc.2
+		IL_0118: stelem.ref
+		IL_0119: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_011e: pop
+		IL_011f: br IL_0124
 
-		IL_012d: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_0132: ldc.i4.1
-		IL_0133: newarr [System.Runtime]System.Object
-		IL_0138: dup
-		IL_0139: ldc.i4.0
-		IL_013a: ldstr "After try/catch"
-		IL_013f: stelem.ref
-		IL_0140: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_0145: pop
-		IL_0146: ldloc.0
-		IL_0147: ldc.i4.m1
-		IL_0148: stfld int32 Scopes.Async_TryCatch_AwaitReject/testTryCatch::_asyncState
-		IL_014d: ldloc.0
-		IL_014e: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_TryCatch_AwaitReject/testTryCatch::_deferred
-		IL_0153: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
-		IL_0158: ldarg.0
-		IL_0159: ldc.i4.1
-		IL_015a: newarr [System.Runtime]System.Object
-		IL_015f: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
-		IL_0164: pop
-		IL_0165: ldloc.0
-		IL_0166: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_TryCatch_AwaitReject/testTryCatch::_deferred
-		IL_016b: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
-		IL_0170: ret
+		IL_0124: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0129: ldc.i4.1
+		IL_012a: newarr [System.Runtime]System.Object
+		IL_012f: dup
+		IL_0130: ldc.i4.0
+		IL_0131: ldstr "After try/catch"
+		IL_0136: stelem.ref
+		IL_0137: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_013c: pop
+		IL_013d: ldloc.0
+		IL_013e: ldc.i4.m1
+		IL_013f: stfld int32 Scopes.Async_TryCatch_AwaitReject/testTryCatch::_asyncState
+		IL_0144: ldloc.0
+		IL_0145: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_TryCatch_AwaitReject/testTryCatch::_deferred
+		IL_014a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_resolve()
+		IL_014f: ldarg.0
+		IL_0150: ldc.i4.1
+		IL_0151: newarr [System.Runtime]System.Object
+		IL_0156: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
+		IL_015b: pop
+		IL_015c: ldloc.0
+		IL_015d: ldfld class [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers Scopes.Async_TryCatch_AwaitReject/testTryCatch::_deferred
+		IL_0162: callvirt instance class [JavaScriptRuntime]JavaScriptRuntime.Promise [JavaScriptRuntime]JavaScriptRuntime.PromiseWithResolvers::get_promise()
+		IL_0167: ret
 	} // end of method Async_TryCatch_AwaitReject::testTryCatch
 
 } // end of class Functions.Async_TryCatch_AwaitReject
@@ -374,7 +377,7 @@
 			object[] scopes
 		) cil managed 
 	{
-		// Method begins at RVA 0x2230
+		// Method begins at RVA 0x2224
 		// Header size: 12
 		// Code size: 27 (0x1b)
 		.maxstack 32
@@ -407,7 +410,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x2258
+		// Method begins at RVA 0x224c
 		// Header size: 12
 		// Code size: 112 (0x70)
 		.maxstack 32
@@ -475,7 +478,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x22d4
+		// Method begins at RVA 0x22c8
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
