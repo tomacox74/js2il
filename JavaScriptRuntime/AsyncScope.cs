@@ -4,6 +4,11 @@ using System.Reflection;
 
 public class AsyncScope : IAsyncScope
 {
+    public AsyncScope()
+    {
+        _deferred = Promise.withResolvers();
+    }
+
     // State machine fields
     public int _asyncState;
     public PromiseWithResolvers? _deferred;

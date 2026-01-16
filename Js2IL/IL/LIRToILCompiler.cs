@@ -2980,15 +2980,6 @@ internal sealed class LIRToILCompiler
                         ilEncoder.Token(prependRef);
                         ilEncoder.StoreArgument(0); // arg.0 = modified scopes array
                         
-                        // Initialize _deferred = Promise.withResolvers()
-                        ilEncoder.LoadLocal(0);
-                        var withResolversRef = _memberRefRegistry.GetOrAddMethod(
-                            typeof(JavaScriptRuntime.Promise),
-                            nameof(JavaScriptRuntime.Promise.withResolvers));
-                        ilEncoder.OpCode(ILOpCode.Call);
-                        ilEncoder.Token(withResolversRef);
-                        EmitStoreFieldByName(ilEncoder, scopeName, "_deferred");
-                        
                         // Initialize _moveNext = Closure.Bind(delegate, scopesArray)
                         // Note: arg.0 now contains the modified scopes array with leaf scope at [0]
                         ilEncoder.LoadLocal(0);  // for stfld _moveNext later
