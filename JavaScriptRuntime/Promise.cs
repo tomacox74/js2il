@@ -195,10 +195,11 @@ public sealed class Promise
         }
         
         // Create onFulfilled callback: stores result, calls MoveNext
-        object onFulfilled = CreateFulfilledContinuation(scope, scopesArray, resultField, moveNext);
+        var currentThis = RuntimeServices.GetCurrentThis();
+        object onFulfilled = CreateFulfilledContinuation(scope, scopesArray, resultField, moveNext, currentThis);
         
         // Create onRejected callback: rejects the outer promise
-        object onRejected = CreateRejectedContinuation(scope, asyncStateField, deferred);
+        object onRejected = CreateRejectedContinuation(scope, asyncStateField, deferred, currentThis);
         
         // Schedule continuations
         promise.@then(onFulfilled, onRejected);
@@ -241,7 +242,8 @@ public sealed class Promise
             moveNext = moveNextField?.GetValue(scope);
         }
 
-        object onFulfilled = CreateFulfilledContinuation(scope, scopesArray, resultField, moveNext);
+        var currentThis = RuntimeServices.GetCurrentThis();
+        object onFulfilled = CreateFulfilledContinuation(scope, scopesArray, resultField, moveNext, currentThis);
 
         object onRejected = CreateRejectedContinuationWithPendingException(
             scope,
@@ -249,7 +251,8 @@ public sealed class Promise
             pendingField,
             asyncStateField,
             rejectStateId,
-            moveNext);
+            moveNext,
+            currentThis);
 
         promise.@then(onFulfilled, onRejected);
         return null;
@@ -259,16 +262,25 @@ public sealed class Promise
         object scope,
         object[] scopesArray,
         System.Reflection.FieldInfo? resultField,
-        object? moveNext)
+        object? moveNext,
+        object? capturedThis)
     {
         // Create a callback that stores the result and calls MoveNext
         return new Func<object[]?, object?, object?>((_, value) =>
         {
-            // Store the awaited value to the result field if specified
-            resultField?.SetValue(scope, value);
-            
-            // Call MoveNext to resume the state machine
-            InvokeMoveNext(moveNext, scopesArray);
+            var previousThis = RuntimeServices.SetCurrentThis(capturedThis);
+            try
+            {
+                // Store the awaited value to the result field if specified
+                resultField?.SetValue(scope, value);
+
+                // Call MoveNext to resume the state machine
+                InvokeMoveNext(moveNext, scopesArray);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
             
             return null;
         });
@@ -280,13 +292,22 @@ public sealed class Promise
         System.Reflection.FieldInfo pendingField,
         System.Reflection.FieldInfo asyncStateField,
         int rejectStateId,
-        object? moveNext)
+        object? moveNext,
+        object? capturedThis)
     {
         return new Func<object[]?, object?, object?>((_, reason) =>
         {
-            pendingField.SetValue(scope, reason);
-            asyncStateField.SetValue(scope, rejectStateId);
-            InvokeMoveNext(moveNext, scopesArray);
+            var previousThis = RuntimeServices.SetCurrentThis(capturedThis);
+            try
+            {
+                pendingField.SetValue(scope, reason);
+                asyncStateField.SetValue(scope, rejectStateId);
+                InvokeMoveNext(moveNext, scopesArray);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
             return null;
         });
     }
@@ -315,16 +336,25 @@ public sealed class Promise
     private static object CreateRejectedContinuation(
         object scope,
         System.Reflection.FieldInfo? asyncStateField,
-        PromiseWithResolvers deferred)
+        PromiseWithResolvers deferred,
+        object? capturedThis)
     {
         // Create a callback that rejects the outer promise
         return new Func<object[]?, object?, object?>((_, reason) =>
         {
-            // Mark state as completed
-            asyncStateField?.SetValue(scope, -1);
-            
-            // Reject the outer promise - use empty scopes array since reject doesn't need scopes
-            Closure.InvokeWithArgs(deferred.reject, System.Array.Empty<object>(), reason);
+            var previousThis = RuntimeServices.SetCurrentThis(capturedThis);
+            try
+            {
+                // Mark state as completed
+                asyncStateField?.SetValue(scope, -1);
+
+                // Reject the outer promise - use empty scopes array since reject doesn't need scopes
+                Closure.InvokeWithArgs(deferred.reject, System.Array.Empty<object>(), reason);
+            }
+            finally
+            {
+                RuntimeServices.SetCurrentThis(previousThis);
+            }
             
             return null;
         });

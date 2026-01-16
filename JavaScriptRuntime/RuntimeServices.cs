@@ -5,18 +5,17 @@ namespace JavaScriptRuntime;
 
 public class RuntimeServices
 {
-    [ThreadStatic]
-    private static object? _currentThis;
+    private static readonly System.Threading.AsyncLocal<object?> _currentThis = new();
 
     public static object? GetCurrentThis()
     {
-        return _currentThis;
+        return _currentThis.Value;
     }
 
     public static object? SetCurrentThis(object? value)
     {
-        var previous = _currentThis;
-        _currentThis = value;
+        var previous = _currentThis.Value;
+        _currentThis.Value = value;
         return previous;
     }
 
