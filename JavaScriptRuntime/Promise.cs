@@ -832,6 +832,15 @@ public sealed class Promise
         return enumerable;
     }
 
+    /// <summary>
+    /// Resolves this promise with <paramref name="value"/>.
+    /// </summary>
+    /// <remarks>
+    /// This implements the Promise Resolution Procedure behavior:
+    /// if <paramref name="value"/> is a Promise, adopt its state; if it is a thenable
+    /// (an object with a callable <c>then</c> property), invoke <c>then</c> with
+    /// resolving functions; otherwise fulfill with <paramref name="value"/>.
+    /// </remarks>
     private object? ResolveValue(object? value)
     {
         if (TryAssimilateThenable(value, this))
@@ -842,6 +851,15 @@ public sealed class Promise
         return Settle(State.Fulfilled, value);
     }
 
+    /// <summary>
+    /// Attempts to assimilate a promise/thenable into <paramref name="targetPromise"/>.
+    /// </summary>
+    /// <param name="value">The value being resolved.</param>
+    /// <param name="targetPromise">The promise whose state should be adopted.</param>
+    /// <returns>
+    /// True if <paramref name="value"/> was a Promise or thenable and assimilation was started;
+    /// false if <paramref name="value"/> should be treated as a non-thenable fulfillment value.
+    /// </returns>
     private static bool TryAssimilateThenable(object? value, Promise targetPromise)
     {
         if (value is Promise promise)
@@ -893,19 +911,17 @@ public sealed class Promise
             return false;
         }
 
-        var alreadyCalled = false;
+        int alreadyCalled = 0;
         object resolve = new Func<object[]?, object?, object?>((_, res) =>
         {
-            if (alreadyCalled) return null;
-            alreadyCalled = true;
+            if (System.Threading.Interlocked.Exchange(ref alreadyCalled, 1) == 1) return null;
             targetPromise.ResolveValue(res);
             return null;
         });
 
         object reject = new Func<object[]?, object?, object?>((_, err) =>
         {
-            if (alreadyCalled) return null;
-            alreadyCalled = true;
+            if (System.Threading.Interlocked.Exchange(ref alreadyCalled, 1) == 1) return null;
             targetPromise.Settle(State.Rejected, err);
             return null;
         });
@@ -925,7 +941,7 @@ public sealed class Promise
         }
         catch (Exception ex)
         {
-            if (!alreadyCalled)
+            if (System.Threading.Volatile.Read(ref alreadyCalled) == 0)
             {
                 targetPromise.Settle(State.Rejected, ex.InnerException ?? ex);
             }
@@ -934,6 +950,10 @@ public sealed class Promise
         return true;
     }
 
+    /// <summary>
+    /// Implements Promise.prototype.finally pass-through semantics when the finally handler
+    /// returns a Promise/thenable: wait for it, then preserve the original state/result.
+    /// </summary>
     private static bool TryWaitFinally(object? cleanupResult, Promise nextPromise, State originalState, object? originalResult)
     {
         if (cleanupResult is Promise cleanupPromise)
@@ -979,19 +999,17 @@ public sealed class Promise
             return false;
         }
 
-        var alreadyCalled = false;
+        int alreadyCalled = 0;
         object resolve = new Func<object[]?, object?, object?>((_, __) =>
         {
-            if (alreadyCalled) return null;
-            alreadyCalled = true;
+            if (System.Threading.Interlocked.Exchange(ref alreadyCalled, 1) == 1) return null;
             nextPromise.Settle(originalState, originalResult);
             return null;
         });
 
         object reject = new Func<object[]?, object?, object?>((_, err) =>
         {
-            if (alreadyCalled) return null;
-            alreadyCalled = true;
+            if (System.Threading.Interlocked.Exchange(ref alreadyCalled, 1) == 1) return null;
             nextPromise.Settle(State.Rejected, err);
             return null;
         });
@@ -1010,7 +1028,7 @@ public sealed class Promise
         }
         catch (Exception ex)
         {
-            if (!alreadyCalled)
+            if (System.Threading.Volatile.Read(ref alreadyCalled) == 0)
             {
                 nextPromise.Settle(State.Rejected, ex.InnerException ?? ex);
             }
