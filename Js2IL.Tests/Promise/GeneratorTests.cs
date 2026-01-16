@@ -214,6 +214,42 @@ public class GeneratorTests : GeneratorTestsBase
     }
 
     [Fact]
+    public Task Promise_Thenable_Nested()
+    {
+        return GenerateTest(nameof(Promise_Thenable_Nested));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_NonFunctionThen()
+    {
+        return GenerateTest(nameof(Promise_Thenable_NonFunctionThen));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_Reject()
+    {
+        return GenerateTest(nameof(Promise_Thenable_Reject));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_Resolve_Delayed()
+    {
+        return GenerateTest(nameof(Promise_Thenable_Resolve_Delayed));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_Resolve_Immediate()
+    {
+        return GenerateTest(nameof(Promise_Thenable_Resolve_Immediate));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_Returned_FromHandler()
+    {
+        return GenerateTest(nameof(Promise_Thenable_Returned_FromHandler));
+    }
+
+    [Fact]
     public Task Promise_WithResolvers_Idempotent()
     {
         return GenerateTest(nameof(Promise_WithResolvers_Idempotent));

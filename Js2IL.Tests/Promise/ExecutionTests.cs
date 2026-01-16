@@ -206,6 +206,42 @@ public class ExecutionTests : ExecutionTestsBase
     }
 
     [Fact]
+    public Task Promise_Thenable_Nested()
+    {
+        return ExecutionTest(nameof(Promise_Thenable_Nested));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_NonFunctionThen()
+    {
+        return ExecutionTest(nameof(Promise_Thenable_NonFunctionThen));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_Reject()
+    {
+        return ExecutionTest(nameof(Promise_Thenable_Reject));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_Resolve_Delayed()
+    {
+        return ExecutionTest(nameof(Promise_Thenable_Resolve_Delayed));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_Resolve_Immediate()
+    {
+        return ExecutionTest(nameof(Promise_Thenable_Resolve_Immediate));
+    }
+
+    [Fact]
+    public Task Promise_Thenable_Returned_FromHandler()
+    {
+        return ExecutionTest(nameof(Promise_Thenable_Returned_FromHandler));
+    }
+
+    [Fact]
     public Task Promise_WithResolvers_Idempotent()
     {
         return ExecutionTest(nameof(Promise_WithResolvers_Idempotent));
