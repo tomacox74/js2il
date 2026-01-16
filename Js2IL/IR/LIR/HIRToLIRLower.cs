@@ -2964,6 +2964,150 @@ public sealed class HIRToLIRLowerer
                     DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
                     return true;
                 }
+
+                // PL8.2: Callable built-in error types (Error(), TypeError(), etc.)
+                if (BuiltInErrorTypes.IsBuiltInErrorTypeName(name))
+                {
+                    TempVariable? messageTemp = null;
+                    if (callExpr.Arguments.Length > 0)
+                    {
+                        if (!TryLowerExpression(callExpr.Arguments[0], out var arg0))
+                        {
+                            return false;
+                        }
+                        messageTemp = EnsureObject(arg0);
+
+                        for (int i = 1; i < callExpr.Arguments.Length; i++)
+                        {
+                            if (!TryLowerExpression(callExpr.Arguments[i], out var _))
+                            {
+                                return false;
+                            }
+                        }
+                    }
+
+                    _methodBodyIR.Instructions.Add(new LIRNewBuiltInError(name, messageTemp, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    return true;
+                }
+
+                // PL8.2: Callable Array() behaves like new Array(...)
+                if (string.Equals(name, "Array", StringComparison.Ordinal))
+                {
+                    var argTemps = new List<TempVariable>(callExpr.Arguments.Length);
+                    foreach (var arg in callExpr.Arguments)
+                    {
+                        if (!TryLowerExpression(arg, out var argTemp))
+                        {
+                            return false;
+                        }
+                        argTemps.Add(EnsureObject(argTemp));
+                    }
+
+                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic("Array", "Construct", argTemps, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    return true;
+                }
+
+                // PL8.2: Callable RegExp() behaves like new RegExp(...)
+                if (string.Equals(name, "RegExp", StringComparison.Ordinal))
+                {
+                    var argTemps = new List<TempVariable>();
+                    if (callExpr.Arguments.Length > 0)
+                    {
+                        if (!TryLowerExpression(callExpr.Arguments[0], out var arg0))
+                        {
+                            return false;
+                        }
+                        argTemps.Add(EnsureObject(arg0));
+
+                        if (callExpr.Arguments.Length > 1)
+                        {
+                            if (!TryLowerExpression(callExpr.Arguments[1], out var arg1))
+                            {
+                                return false;
+                            }
+                            argTemps.Add(EnsureObject(arg1));
+
+                            for (int i = 2; i < callExpr.Arguments.Length; i++)
+                            {
+                                if (!TryLowerExpression(callExpr.Arguments[i], out var _))
+                                {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+
+                    _methodBodyIR.Instructions.Add(new LIRNewIntrinsicObject("RegExp", argTemps, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    return true;
+                }
+
+                // PL8.2: Callable Date() returns a string representation.
+                if (string.Equals(name, "Date", StringComparison.Ordinal))
+                {
+                    var argTemps = new List<TempVariable>();
+                    if (callExpr.Arguments.Length > 0)
+                    {
+                        if (!TryLowerExpression(callExpr.Arguments[0], out var arg0))
+                        {
+                            return false;
+                        }
+                        argTemps.Add(EnsureObject(arg0));
+
+                        for (int i = 1; i < callExpr.Arguments.Length; i++)
+                        {
+                            if (!TryLowerExpression(callExpr.Arguments[i], out var _))
+                            {
+                                return false;
+                            }
+                        }
+                    }
+
+                    var dateTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRNewIntrinsicObject("Date", argTemps, dateTemp));
+                    DefineTempStorage(dateTemp, new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Date)));
+
+                    _methodBodyIR.Instructions.Add(new LIRCallInstanceMethod(
+                        dateTemp,
+                        typeof(JavaScriptRuntime.Date),
+                        nameof(JavaScriptRuntime.Date.toISOString),
+                        Array.Empty<TempVariable>(),
+                        resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+                    return true;
+                }
+
+                // PL8.2: Callable Object() behaves like Object constructor for null/undefined
+                if (string.Equals(name, "Object", StringComparison.Ordinal))
+                {
+                    TempVariable? firstArg = null;
+                    if (callExpr.Arguments.Length > 0)
+                    {
+                        if (!TryLowerExpression(callExpr.Arguments[0], out var arg0))
+                        {
+                            return false;
+                        }
+                        firstArg = EnsureObject(arg0);
+
+                        for (int i = 1; i < callExpr.Arguments.Length; i++)
+                        {
+                            if (!TryLowerExpression(callExpr.Arguments[i], out var _))
+                            {
+                                return false;
+                            }
+                        }
+                    }
+
+                    var callArgs = firstArg.HasValue
+                        ? new List<TempVariable> { firstArg.Value }
+                        : new List<TempVariable>();
+
+                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic("Object", "Construct", callArgs, resultTempVar));
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    return true;
+                }
             }
 
             // Case 1.0: Intrinsic global function call (e.g., setTimeout(...)).

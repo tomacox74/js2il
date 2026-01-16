@@ -10,6 +10,9 @@ namespace Js2IL.Tests.Array
         public Task Array_AsArray_Ternary() { var testName = nameof(Array_AsArray_Ternary); return GenerateTest(testName); }
 
         [Fact]
+        public Task Array_Callable_Construct() { var testName = nameof(Array_Callable_Construct); return GenerateTest(testName); }
+
+        [Fact]
         public Task Array_EmptyLength_IsZero() { var testName = nameof(Array_EmptyLength_IsZero); return GenerateTest(testName); }
 
         [Fact]

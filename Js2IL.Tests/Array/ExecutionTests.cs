@@ -58,6 +58,9 @@ namespace Js2IL.Tests.Array
         [Fact]
         public Task Array_AsArray_Ternary() { var testName = nameof(Array_AsArray_Ternary); return ExecutionTest(testName); }
 
+        [Fact]
+        public Task Array_Callable_Construct() { var testName = nameof(Array_Callable_Construct); return ExecutionTest(testName); }
+
     // Repro: computed index using (arr.length - 1) should be treated as numeric
     [Fact]
     public Task Array_Index_UsingLengthMinusOne_Read() { var testName = nameof(Array_Index_UsingLengthMinusOne_Read); return ExecutionTest(testName); }
