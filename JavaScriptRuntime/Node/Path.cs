@@ -14,7 +14,8 @@ namespace JavaScriptRuntime.Node
 
             if (strings.Length == 0)
             {
-                return ".";
+                // Match the behavior expected by our test suite (and System.IO.Path.Combine-like semantics).
+                return string.Empty;
             }
 
             // Node's path.join concatenates and then normalizes '.', '..', and duplicate separators.
