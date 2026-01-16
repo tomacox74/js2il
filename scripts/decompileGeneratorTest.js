@@ -20,9 +20,24 @@ const fs = require('node:fs');
 const path = require('node:path');
 const os = require('node:os');
 
-// Compute project root from script location (scripts/ is one level below root)
-const scriptDir = __dirname;
-const projectRoot = path.resolve(scriptDir, '..');
+function findProjectRoot(startDir) {
+  // The compiled DLL may live anywhere (e.g. test_output/...).
+  // Walk upward from __dirname until we find the repo markers.
+  let dir = startDir;
+  while (true) {
+    const sln = path.join(dir, 'js2il.sln');
+    const testsDir = path.join(dir, 'Js2IL.Tests');
+    if (fs.existsSync(sln) && fs.existsSync(testsDir)) {
+      return dir;
+    }
+    const parent = path.dirname(dir);
+    if (!parent || parent === dir) break;
+    dir = parent;
+  }
+  throw new Error(`Could not locate js2il repo root starting from: ${startDir}`);
+}
+
+const projectRoot = findProjectRoot(__dirname);
 
 function main() {
   const args = process.argv.slice(2);
@@ -39,7 +54,7 @@ function main() {
   const category = args[0];
   const testName = args[1];
   const fullTestName = `Js2IL.Tests.${category}.GeneratorTests.${testName}`;
-  const testProject = path.join(projectRoot, 'Js2IL.Tests');
+  const testProject = path.join(projectRoot, 'Js2IL.Tests', 'Js2IL.Tests.csproj');
 
   console.log(`Running test: ${fullTestName}`);
 

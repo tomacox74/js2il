@@ -98,6 +98,18 @@ namespace JavaScriptRuntime.Node
             }
         }
 
+        public string cwd()
+        {
+            try
+            {
+                return System.Environment.CurrentDirectory;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
         /// <summary>
         /// Immediately terminates the current process with the specified exit code.
         /// Overload without arguments uses the current Environment.ExitCode.

@@ -47,6 +47,13 @@ namespace JavaScriptRuntime.Node
             return readdirSync(dir ?? string.Empty);
         }
 
+        public object mkdirSync(object[] args)
+        {
+            var dir = (args != null && args.Length > 0) ? args[0] : null;
+            var options = (args != null && args.Length > 1) ? args[1] : null;
+            return mkdirSync(dir ?? string.Empty, options);
+        }
+
         public object readFileSync(string file)
             => System.IO.File.ReadAllText(file);
 
@@ -54,6 +61,42 @@ namespace JavaScriptRuntime.Node
         {
             System.IO.File.WriteAllText(file, content?.ToString() ?? string.Empty);
             return null!; // JS: undefined
+        }
+
+        public object mkdirSync(object dir, object? options)
+        {
+            var path = dir?.ToString() ?? string.Empty;
+            if (string.IsNullOrEmpty(path)) throw new ArgumentException("Path must be a non-empty string", nameof(dir));
+
+            bool recursive = false;
+            try
+            {
+                if (options != null)
+                {
+                    var val = JavaScriptRuntime.Object.GetProperty(options, "recursive");
+                    recursive = JavaScriptRuntime.TypeUtilities.ToBoolean(val);
+                }
+            }
+            catch { }
+
+            if (!recursive)
+            {
+                // Best-effort Node behavior: do not create parents when recursive is false.
+                var parent = System.IO.Path.GetDirectoryName(path);
+                if (!string.IsNullOrEmpty(parent) && !System.IO.Directory.Exists(parent))
+                {
+                    throw new DirectoryNotFoundException(parent);
+                }
+            }
+
+            System.IO.Directory.CreateDirectory(path);
+            return null!; // undefined
+        }
+
+        // Overload without options parameter for calls supplying only a path.
+        public object mkdirSync(object dir)
+        {
+            return mkdirSync(dir, null);
         }
 
         // Overload supporting Node-style encoding option: 'utf8'
