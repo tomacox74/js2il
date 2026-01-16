@@ -3,6 +3,84 @@
   "generatedAtUtc": "${UTC_NOW}",
   "modules": [
     {
+      "name": "child_process",
+      "status": "partial",
+      "implementation": "JavaScriptRuntime/Node/ChildProcess.cs",
+      "docs": "https://nodejs.org/api/child_process.html",
+      "apis": [
+        {
+          "name": "spawnSync(command, args, options)",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Supports options: cwd, stdio ('inherit'), shell. Returns { status, stdout, stderr }.",
+          "docs": "https://nodejs.org/api/child_process.html#child_processspawnsynccommand-args-options"
+        },
+        {
+          "name": "execSync(command, options)",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Supports options: cwd, stdio ('inherit'), encoding ('utf8'). Throws an Error-like object with stdout/stderr on non-zero exit.",
+          "docs": "https://nodejs.org/api/child_process.html#child_processexecsynccommand-options"
+        }
+      ]
+    },
+    {
+      "name": "fs/promises",
+      "status": "partial",
+      "implementation": "JavaScriptRuntime/Node/FSPromises.cs",
+      "docs": "https://nodejs.org/api/fs.html#fspromisesapi",
+      "apis": [
+        {
+          "name": "access(path, mode)",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Resolves when path exists, rejects otherwise. Mode is accepted but not enforced.",
+          "docs": "https://nodejs.org/api/fs.html#fspromisesaccesspath-mode"
+        },
+        {
+          "name": "readdir(path, { withFileTypes: true })",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Returns an array of DirEnt-like objects with properties: name and methods isDirectory(), isFile().",
+          "docs": "https://nodejs.org/api/fs.html#fspromisesreaddirpath-options"
+        },
+        {
+          "name": "mkdir(path, { recursive: true })",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Creates directories recursively.",
+          "docs": "https://nodejs.org/api/fs.html#fspromisesmkdirpath-options"
+        },
+        {
+          "name": "copyFile(src, dest)",
+          "kind": "function",
+          "status": "supported",
+          "notes": "Copies a file from src to dest (overwrites if destination exists).",
+          "docs": "https://nodejs.org/api/fs.html#fspromisescopyfilesrc-dest-mode"
+        }
+      ]
+    },
+    {
+      "name": "os",
+      "status": "partial",
+      "implementation": "JavaScriptRuntime/Node/OS.cs",
+      "docs": "https://nodejs.org/api/os.html",
+      "apis": [
+        {
+          "name": "tmpdir()",
+          "kind": "function",
+          "status": "supported",
+          "docs": "https://nodejs.org/api/os.html#ostmpdir"
+        },
+        {
+          "name": "homedir()",
+          "kind": "function",
+          "status": "supported",
+          "docs": "https://nodejs.org/api/os.html#oshomedir"
+        }
+      ]
+    },
+    {
       "name": "fs",
       "status": "partial",
       "implementation": "JavaScriptRuntime/Node/FS.cs",
@@ -29,7 +107,7 @@
           "name": "readdirSync(path, { withFileTypes: true })",
           "kind": "function",
           "status": "supported",
-          "notes": "Returns an array of DirEnt-like objects with properties: name (string) and method isDirectory().",
+          "notes": "Returns an array of DirEnt-like objects with properties: name (string) and methods isDirectory(), isFile().",
           "docs": "https://nodejs.org/api/fs.html#fsreaddirsyncpath-options",
           "tests": [
             {

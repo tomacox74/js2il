@@ -1,4 +1,5 @@
 using System;
+using System.Dynamic;
 using System.IO;
 using System.Text;
 
@@ -8,6 +9,18 @@ namespace JavaScriptRuntime.Node
     [NodeModule("fs")]
     public sealed class FS
     {
+        private static readonly object _constants = CreateConstants();
+
+        public object constants => _constants;
+
+        private static object CreateConstants()
+        {
+            dynamic c = new ExpandoObject();
+            // Node's fs.constants.F_OK (value 0) - used as the existence-check mode.
+            c.F_OK = 0.0;
+            return c;
+        }
+
         // Dynamic-friendly overloads first so Object.CallInstanceMethod prefers them
         public object readdirSync(object[] args)
         {
@@ -247,6 +260,8 @@ namespace JavaScriptRuntime.Node
             }
 
             public object isDirectory() => _isDirectory;
+
+            public object isFile() => !_isDirectory;
         }
 
         // Minimal Stats object with a size property used by the script

@@ -8,6 +8,7 @@ All notable changes to this project are documented here.
 - `NodeModuleRegistry` to normalize module specifiers and resolve `[NodeModule]` types for `require()`.
 - Validator coverage for `require('node:path')`.
 - Internal punch list for missing Node module APIs needed by scripts.
+- Node core-module shims for internal scripts: `child_process`, `fs/promises`, and `os`.
 - Promise thenable assimilation support for `Promise.resolve` and promise chaining (PR #366, fixes #134).
 
 ### Fixed
