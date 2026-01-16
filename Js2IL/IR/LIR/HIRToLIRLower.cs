@@ -1186,7 +1186,9 @@ public sealed class HIRToLIRLowerer
                 {
                     var hasCatch = tryStmt.CatchBody != null;
                     var hasFinally = tryStmt.FinallyBody != null;
-                    if (_isAsync && hasCatch && !hasFinally && CountAwaitExpressionsInStatement(tryStmt.TryBlock) > 0)
+                    var awaitCount = CountAwaitExpressionsInStatement(tryStmt.TryBlock)
+                        + (tryStmt.CatchBody != null ? CountAwaitExpressionsInStatement(tryStmt.CatchBody) : 0);
+                    if (_isAsync && hasCatch && !hasFinally && awaitCount > 0)
                     {
                         return TryLowerAsyncTryCatchWithAwait(tryStmt);
                     }
@@ -1332,7 +1334,7 @@ public sealed class HIRToLIRLowerer
                     }
 
                     argTemp = EnsureObject(argTemp);
-                    if (_asyncTryCatchStack.Count > 0 && _methodBodyIR.LeafScopeId.IsNil == false)
+                    if (_asyncTryCatchStack.Count > 0 && !_methodBodyIR.LeafScopeId.IsNil)
                     {
                         var ctx = _asyncTryCatchStack.Peek();
                         var scopeName = _methodBodyIR.LeafScopeId.Name;
@@ -1932,7 +1934,7 @@ public sealed class HIRToLIRLowerer
 
         // Clear pending exception before entering try
         var clearTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRConstUndefined(clearTemp));
+        _methodBodyIR.Instructions.Add(new LIRConstNull(clearTemp));
         DefineTempStorage(clearTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, pendingExceptionField, clearTemp));
 
@@ -1960,16 +1962,14 @@ public sealed class HIRToLIRLowerer
 
         // Clear pending exception after loading
         var clearAfterTemp = CreateTempVariable();
-        _methodBodyIR.Instructions.Add(new LIRConstUndefined(clearAfterTemp));
+        _methodBodyIR.Instructions.Add(new LIRConstNull(clearAfterTemp));
         DefineTempStorage(clearAfterTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
         _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, pendingExceptionField, clearAfterTemp));
 
-        if (tryStmt.CatchParamBinding != null)
+        if (tryStmt.CatchParamBinding != null &&
+            !TryStoreToBinding(tryStmt.CatchParamBinding, pendingTemp, out _))
         {
-            if (!TryStoreToBinding(tryStmt.CatchParamBinding, pendingTemp, out _))
-            {
-                return false;
-            }
+            return false;
         }
 
         if (tryStmt.CatchBody != null && !TryLowerStatement(tryStmt.CatchBody))

@@ -4977,11 +4977,6 @@ internal sealed class LIRToILCompiler
         
         var fallThroughLabel = ilEncoder.DefineLabel();
         int branchCount = asyncInfo.MaxResumeStateId + 1;
-        if (branchCount <= 0)
-        {
-            ilEncoder.MarkLabel(fallThroughLabel);
-            return;
-        }
         
         // Collect switch targets
         var switchTargets = new LabelHandle[branchCount];

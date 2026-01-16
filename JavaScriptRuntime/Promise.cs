@@ -243,13 +243,13 @@ public sealed class Promise
 
         object onFulfilled = CreateFulfilledContinuation(scope, scopesArray, resultField, moveNext);
 
-        object onRejected = new Func<object[]?, object?, object?>((_, reason) =>
-        {
-            pendingField.SetValue(scope, reason);
-            asyncStateField.SetValue(scope, rejectStateId);
-            InvokeMoveNext(moveNext, scopesArray);
-            return null;
-        });
+        object onRejected = CreateRejectedContinuationWithPendingException(
+            scope,
+            scopesArray,
+            pendingField,
+            asyncStateField,
+            rejectStateId,
+            moveNext);
 
         promise.@then(onFulfilled, onRejected);
         return null;
@@ -270,6 +270,23 @@ public sealed class Promise
             // Call MoveNext to resume the state machine
             InvokeMoveNext(moveNext, scopesArray);
             
+            return null;
+        });
+    }
+
+    private static object CreateRejectedContinuationWithPendingException(
+        object scope,
+        object[] scopesArray,
+        System.Reflection.FieldInfo pendingField,
+        System.Reflection.FieldInfo asyncStateField,
+        int rejectStateId,
+        object? moveNext)
+    {
+        return new Func<object[]?, object?, object?>((_, reason) =>
+        {
+            pendingField.SetValue(scope, reason);
+            asyncStateField.SetValue(scope, rejectStateId);
+            InvokeMoveNext(moveNext, scopesArray);
             return null;
         });
     }

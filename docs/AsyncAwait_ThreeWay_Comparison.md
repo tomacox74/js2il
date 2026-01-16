@@ -91,7 +91,7 @@ Important: JS2IL intentionally keeps **await IDs** (result storage) separate fro
 - `await` becomes a `yield` inside the generator body
 
 **Example shape** (conceptual):
-```ts
+```js
 function f() {
   return __awaiter(this, void 0, void 0, function* () {
     try {

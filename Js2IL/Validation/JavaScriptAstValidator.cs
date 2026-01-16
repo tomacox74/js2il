@@ -195,7 +195,6 @@ public class JavaScriptAstValidator : IAstValidator
         // Track whether we're inside an async function for await validation.
         // async functions themselves are now supported; await is only valid inside them.
         var asyncFunctionDepth = 0;
-        var tryStatementDepth = 0; // Track if we're inside a try/catch/finally
         var finallyDepth = 0; // Track if we're inside a finally block
         var visited = new HashSet<Node>(ReferenceEqualityComparer<Node>.Default);
 
@@ -221,8 +220,6 @@ public class JavaScriptAstValidator : IAstValidator
             // Handle try statements explicitly to distinguish finally blocks
             if (node is TryStatement tryStmt)
             {
-                tryStatementDepth++;
-
                 WalkForAsyncAwait(tryStmt.Block);
 
                 if (tryStmt.Handler != null)
@@ -237,12 +234,6 @@ public class JavaScriptAstValidator : IAstValidator
                     finallyDepth--;
                 }
 
-                tryStatementDepth--;
-
-                if (isAsyncFunction)
-                {
-                    asyncFunctionDepth--;
-                }
                 return;
             }
 
