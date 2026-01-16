@@ -54,7 +54,7 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| this binding in non-arrow functions (object literal methods) | Supported | `Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js` | Member calls on object literals bind the receiver as runtime this; non-member calls see undefined (null). | 13.1.7 |
+| this binding in non-arrow functions | Supported | `Js2IL.Tests/Function/JavaScript/Function_ObjectLiteralMethod_ThisBinding.js` | Member calls bind the receiver as runtime this. | 13.1.7 |
 
 
 ### [Declarations](https://tc39.es/ecma262/#sec-declarations)

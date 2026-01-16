@@ -63,7 +63,7 @@ public class JavaScriptAstValidator : IAstValidator
                 {
                     AllowsThis = node is not ArrowFunctionExpression,
                     ScopeOwner = node,
-                    MethodDefinitionFunctionValue = null
+                    MethodDefinitionFunctionValue = currentContext.MethodDefinitionFunctionValue
                 });
             }
             
