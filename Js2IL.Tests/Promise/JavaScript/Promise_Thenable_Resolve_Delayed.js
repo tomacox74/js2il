@@ -1,7 +1,10 @@
-const thenable = {
-  then: function(resolve, reject) {
-    setTimeout(() => resolve(42), 10);
+function thenImpl(resolve, reject) {
+  function later() {
+    resolve(42);
   }
-};
+  setTimeout(later, 10);
+}
+
+const thenable = { then: thenImpl };
 
 Promise.resolve(thenable).then(value => console.log(value));

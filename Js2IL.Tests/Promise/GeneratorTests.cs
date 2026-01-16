@@ -154,9 +154,27 @@ public class GeneratorTests : GeneratorTestsBase
     }
 
     [Fact]
+    public Task Promise_Finally_ReturnsResolvedPromise_PassThrough_Rejected()
+    {
+        return GenerateTest(nameof(Promise_Finally_ReturnsResolvedPromise_PassThrough_Rejected));
+    }
+
+    [Fact]
     public Task Promise_Finally_ReturnsRejectedPromise()
     {
         return GenerateTest(nameof(Promise_Finally_ReturnsRejectedPromise));
+    }
+
+    [Fact]
+    public Task Promise_Finally_ReturnsThenable_PassThrough_Fulfilled()
+    {
+        return GenerateTest(nameof(Promise_Finally_ReturnsThenable_PassThrough_Fulfilled));
+    }
+
+    [Fact]
+    public Task Promise_Finally_ReturnsThenable_PassThrough_Rejected()
+    {
+        return GenerateTest(nameof(Promise_Finally_ReturnsThenable_PassThrough_Rejected));
     }
 
     [Fact]
