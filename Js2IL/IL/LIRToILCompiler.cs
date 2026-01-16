@@ -1875,7 +1875,7 @@ internal sealed class LIRToILCompiler
                     // For each property: dup, ldstr key, load value, callvirt IDictionary.set_Item
                     var setItemMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(System.Collections.Generic.IDictionary<string, object>),
-                        $"set_{nameof(System.Collections.Generic.IDictionary<string, object>.Item)}");
+                        "set_Item");
                     foreach (var prop in newJsObject.Properties)
                     {
                         ilEncoder.OpCode(ILOpCode.Dup);
@@ -1992,7 +1992,7 @@ internal sealed class LIRToILCompiler
 
                     var int32ArrayGetter = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Int32Array),
-                        $"get_{nameof(JavaScriptRuntime.Int32Array.Item)}",
+                        "get_Item",
                         parameterTypes: new[] { typeof(double) });
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(int32ArrayGetter);
@@ -2029,7 +2029,7 @@ internal sealed class LIRToILCompiler
 
                     var int32ArraySetter = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Int32Array),
-                        $"set_{nameof(JavaScriptRuntime.Int32Array.Item)}",
+                        "set_Item",
                         parameterTypes: new[] { typeof(double), typeof(double) });
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(int32ArraySetter);
@@ -3619,7 +3619,7 @@ internal sealed class LIRToILCompiler
                     // For each property: dup, ldstr key, load value, callvirt IDictionary.set_Item
                     var setItemMethod = _memberRefRegistry.GetOrAddMethod(
                         typeof(System.Collections.Generic.IDictionary<string, object>),
-                        $"set_{nameof(System.Collections.Generic.IDictionary<string, object>.Item)}");
+                        "set_Item");
                     foreach (var prop in newJsObject.Properties)
                     {
                         ilEncoder.OpCode(ILOpCode.Dup);
@@ -3715,7 +3715,7 @@ internal sealed class LIRToILCompiler
 
                     var int32ArrayGetter = _memberRefRegistry.GetOrAddMethod(
                         typeof(JavaScriptRuntime.Int32Array),
-                        $"get_{nameof(JavaScriptRuntime.Int32Array.Item)}",
+                        "get_Item",
                         parameterTypes: new[] { typeof(double) });
                     ilEncoder.OpCode(ILOpCode.Callvirt);
                     ilEncoder.Token(int32ArrayGetter);
