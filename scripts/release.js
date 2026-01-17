@@ -31,6 +31,13 @@ const CHANGELOG_PATH = path.join(ROOT, 'CHANGELOG.md');
 const CSPROJ_PATH = path.join(ROOT, 'Js2IL', 'Js2IL.csproj');
 const RUNTIME_CSPROJ_PATH = path.join(ROOT, 'JavaScriptRuntime', 'JavaScriptRuntime.csproj');
 
+function sleep(ms) {
+  // Synchronous sleep without additional deps.
+  const sab = new SharedArrayBuffer(4);
+  const i32 = new Int32Array(sab);
+  Atomics.wait(i32, 0, 0, ms);
+}
+
 function usageAndExit(code = 1) {
   console.error(`\nUsage: node scripts/release.js <patch|minor|major> [--merge] [--skip-empty] [--dry-run] [--repo owner/name] [--base master]\n`);
   process.exit(code);
@@ -243,6 +250,28 @@ function changelogSectionFor(version) {
   return lines.slice(0, endLine).join('\n').trim() + '\n';
 }
 
+function waitForRequiredCheck(prNumber, repo, checkName, { timeoutMs = 10 * 60 * 1000, pollMs = 4000 } = {}, args) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    // We rely on statusCheckRollup so we can detect when checks start existing at all.
+    const q = `.statusCheckRollup[] | select(.name=="${checkName}") | .conclusion`;
+    const conclusion = run(`gh pr view ${prNumber} --repo ${repo} --json statusCheckRollup -q "${q}"`, { ...args, allowFailure: true })
+      .trim();
+
+    if (!conclusion) {
+      sleep(pollMs);
+      continue;
+    }
+
+    if (/^SUCCESS$/i.test(conclusion)) return;
+
+    // Any terminal non-success conclusion should fail the release.
+    throw new Error(`Required status check "${checkName}" did not succeed (conclusion: ${conclusion}).`);
+  }
+
+  throw new Error(`Timed out waiting for required status check "${checkName}" to complete.`);
+}
+
 function main() {
   const effectiveArgv = getEffectiveArgv(process.argv);
   const args = parseArgs(effectiveArgv);
@@ -353,12 +382,15 @@ function main() {
 
   // Some repos/branches may not have status checks configured. In that case
   // `gh pr checks --watch` can exit non-zero with "no checks reported".
-  // Treat that as a warning and continue to merge.
+  // Treat that as a warning and rely on GitHub auto-merge to wait for checks.
   const checksOut = run(`gh pr checks ${prNumber} --repo ${repo} --watch`, { ...args, allowFailure: true });
   if (checksOut && /no checks reported/i.test(checksOut)) {
-    process.stdout.write(`\nNote: no CI checks reported for ${releaseBranch}; continuing with merge.\n`);
+    process.stdout.write(`\nNote: no CI checks reported for ${releaseBranch}; waiting for required checks to appear.\n`);
   }
 
+  // Some repos require checks to have been reported and passed before merge.
+  // If auto-merge is disabled at the repo level, we must wait and then merge.
+  waitForRequiredCheck(prNumber, repo, 'build', undefined, args);
   run(`gh pr merge ${prNumber} --repo ${repo} --merge --delete-branch`, args);
 
   // Update local master to the merged commit
