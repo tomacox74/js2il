@@ -1384,6 +1384,10 @@ internal sealed class LIRToILCompiler
 
             // Copy temp variable
             case LIRCopyTemp copyTemp:
+                if (TryGetSameILLocalSlot(copyTemp.Source, copyTemp.Destination, allocation, out _))
+                {
+                    break;
+                }
                 EmitLoadTemp(copyTemp.Source, ilEncoder, allocation, methodDescriptor);
                 EmitStoreTemp(copyTemp.Destination, ilEncoder, allocation);
                 break;
@@ -3233,6 +3237,44 @@ internal sealed class LIRToILCompiler
             // Load the condition from its local normally
             EmitLoadTemp(condition, ilEncoder, allocation, methodDescriptor);
         }
+    }
+
+    private bool TryGetSameILLocalSlot(TempVariable source, TempVariable destination, TempLocalAllocation allocation, out int slot)
+    {
+        slot = -1;
+
+        // Variable-slot backed temps.
+        int srcVarSlot = (source.Index >= 0 && source.Index < MethodBody.TempVariableSlots.Count)
+            ? MethodBody.TempVariableSlots[source.Index]
+            : -1;
+        int dstVarSlot = (destination.Index >= 0 && destination.Index < MethodBody.TempVariableSlots.Count)
+            ? MethodBody.TempVariableSlots[destination.Index]
+            : -1;
+
+        if (srcVarSlot >= 0 || dstVarSlot >= 0)
+        {
+            if (srcVarSlot >= 0 && dstVarSlot >= 0 && srcVarSlot == dstVarSlot)
+            {
+                slot = srcVarSlot;
+                return true;
+            }
+
+            return false;
+        }
+
+        // Temp-local backed temps.
+        if (allocation.IsMaterialized(source) && allocation.IsMaterialized(destination))
+        {
+            var srcTempSlot = allocation.GetSlot(source);
+            var dstTempSlot = allocation.GetSlot(destination);
+            if (srcTempSlot == dstTempSlot)
+            {
+                slot = srcTempSlot;
+                return true;
+            }
+        }
+
+        return false;
     }
 
     #endregion

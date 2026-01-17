@@ -35,13 +35,41 @@ internal static class LIRTypeNormalization
 
                 if (sourceStorage.Kind == ValueStorageKind.Reference && sourceStorage.ClrType == typeof(JavaScriptRuntime.Array))
                 {
+                    // Preserve the stable loop-carry variable slot (created in lowering) without
+                    // materializing an extra temp local + copy in IL.
+                    //
+                    // If the NormalizeForOfIterable result temp is pinned to a variable slot,
+                    // pin the proven-array source temp to the same slot. This causes the source
+                    // temp to store directly into that slot at its definition site, and downstream
+                    // loads of the result temp will read the same local.
+                    var resultSlot = GetTempVariableSlot(methodBody, normalizeForOf.Result);
+                    if (resultSlot >= 0)
+                    {
+                        var sourceSlot = GetTempVariableSlot(methodBody, source);
+                        if (sourceSlot >= 0)
+                        {
+                            // Prefer reusing an existing stable variable slot (e.g., `arr` in
+                            // `for (x of arr)`) by mapping the iterator temp onto it.
+                            // This avoids introducing a redundant `$forOf_iter` copy.
+                            if (sourceSlot != resultSlot)
+                            {
+                                SetTempVariableSlot(methodBody, normalizeForOf.Result, sourceSlot);
+                            }
+                        }
+                        else
+                        {
+                            // Otherwise, map the source temp into the loop-carry slot so its
+                            // definition stores directly into the iterator local.
+                            SetTempVariableSlot(methodBody, source, resultSlot);
+                        }
+                    }
+
                     methodBody.Instructions[i] = new LIRCopyTemp(source, normalizeForOf.Result);
                     SetTempStorage(methodBody, normalizeForOf.Result, sourceStorage);
 
-                    var slot = GetTempVariableSlot(methodBody, normalizeForOf.Result);
-                    if (slot >= 0 && slot < methodBody.VariableStorages.Count)
+                    if (resultSlot >= 0 && resultSlot < methodBody.VariableStorages.Count)
                     {
-                        methodBody.VariableStorages[slot] = sourceStorage;
+                        methodBody.VariableStorages[resultSlot] = sourceStorage;
                     }
 
                     continue;
@@ -93,6 +121,101 @@ internal static class LIRTypeNormalization
                 i--; // account for removed instruction
             }
         }
+
+        // After rewrites, some anonymous variable slots (e.g., `$forOf_iter`) may become unused
+        // if we coalesce temps onto existing slots. Compact variable slots to avoid emitting
+        // unused IL locals and to keep local indices stable/meaningful.
+        CompactUnusedVariableSlots(methodBody);
+    }
+
+    private static void CompactUnusedVariableSlots(MethodBodyIR methodBody)
+    {
+        int varCount = methodBody.VariableNames.Count;
+        if (varCount == 0)
+        {
+            return;
+        }
+
+        var used = new bool[varCount];
+        foreach (var slot in methodBody.TempVariableSlots)
+        {
+            if (slot >= 0 && slot < varCount)
+            {
+                used[slot] = true;
+            }
+        }
+
+        // Fast path: everything is used.
+        bool anyUnused = false;
+        for (int i = 0; i < used.Length; i++)
+        {
+            if (!used[i])
+            {
+                anyUnused = true;
+                break;
+            }
+        }
+        if (!anyUnused)
+        {
+            return;
+        }
+
+        var oldToNew = new int[varCount];
+        Array.Fill(oldToNew, -1);
+
+        var newNames = new List<string>(varCount);
+        var newStorages = new List<ValueStorage>(varCount);
+        int next = 0;
+        for (int i = 0; i < varCount; i++)
+        {
+            if (!used[i])
+            {
+                continue;
+            }
+
+            oldToNew[i] = next++;
+            newNames.Add(methodBody.VariableNames[i]);
+            newStorages.Add(methodBody.VariableStorages[i]);
+        }
+
+        // Rewrite temp -> variable slot mappings.
+        for (int i = 0; i < methodBody.TempVariableSlots.Count; i++)
+        {
+            var slot = methodBody.TempVariableSlots[i];
+            if (slot >= 0)
+            {
+                methodBody.TempVariableSlots[i] = oldToNew[slot];
+            }
+        }
+
+        // Rewrite single-assignment slot set.
+        if (methodBody.SingleAssignmentSlots.Count > 0)
+        {
+            var remapped = new HashSet<int>();
+            foreach (var slot in methodBody.SingleAssignmentSlots)
+            {
+                if (slot >= 0 && slot < oldToNew.Length)
+                {
+                    var mapped = oldToNew[slot];
+                    if (mapped >= 0)
+                    {
+                        remapped.Add(mapped);
+                    }
+                }
+            }
+
+            methodBody.SingleAssignmentSlots.Clear();
+            foreach (var s in remapped)
+            {
+                methodBody.SingleAssignmentSlots.Add(s);
+            }
+        }
+
+        // Replace variable slot tables.
+        methodBody.VariableNames.Clear();
+        methodBody.VariableNames.AddRange(newNames);
+        methodBody.VariableStorages.Clear();
+        methodBody.VariableStorages.AddRange(newStorages);
     }
 
     private static ValueStorage GetTempStorage(MethodBodyIR methodBody, TempVariable temp)
@@ -121,6 +244,14 @@ internal static class LIRTypeNormalization
         }
 
         return -1;
+    }
+
+    private static void SetTempVariableSlot(MethodBodyIR methodBody, TempVariable temp, int slot)
+    {
+        if (temp.Index >= 0 && temp.Index < methodBody.TempVariableSlots.Count)
+        {
+            methodBody.TempVariableSlots[temp.Index] = slot;
+        }
     }
 
     private static bool IsTempUsedOutside(MethodBodyIR methodBody, TempVariable temp, int ignoreInstructionIndex)
