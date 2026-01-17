@@ -3287,6 +3287,17 @@ internal sealed class LIRToILCompiler
                 {
                     typeEncoder.String();
                 }
+                else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType != null && storage.ClrType.IsArray && storage.ClrType.GetElementType() == typeof(object))
+                {
+                    typeEncoder.SZArray().Object();
+                }
+                else if (storage.Kind == ValueStorageKind.Reference && storage.ClrType != null && storage.ClrType != typeof(object))
+                {
+                    // Preserve known runtime reference types for declared variables (e.g., JavaScriptRuntime.Array)
+                    // so later lowering/emission can take advantage of typed locals.
+                    var typeRef = _typeReferenceRegistry.GetOrAdd(storage.ClrType);
+                    typeEncoder.Type(typeRef, false);
+                }
                 else
                 {
                     typeEncoder.Object();
