@@ -62,6 +62,9 @@ namespace Js2IL.Tests.Array
         public Task Array_Find_Basic() { var testName = nameof(Array_Find_Basic); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Array_MissingMethods_Basic() { var testName = nameof(Array_MissingMethods_Basic); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Array_Callable_Construct() { var testName = nameof(Array_Callable_Construct); return ExecutionTest(testName); }
 
     // Repro: computed index using (arr.length - 1) should be treated as numeric
