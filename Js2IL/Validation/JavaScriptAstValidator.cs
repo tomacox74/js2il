@@ -342,10 +342,12 @@ public class JavaScriptAstValidator : IAstValidator
     {
         if (node is Property prop)
         {
-            // Check for computed property names
-            if (prop.Computed)
+            // Computed property names are supported in object literals (ObjectExpression),
+            // but are still rejected in non-expression contexts (e.g., patterns) for now.
+            // Heuristic: in object literals, the property value is an Expression node.
+            if (prop.Computed && prop.Value is not Acornima.Ast.Expression)
             {
-                result.Errors.Add($"Computed property names are not yet supported (line {node.Location.Start.Line})");
+                result.Errors.Add($"Computed property names are not yet supported in this context (line {node.Location.Start.Line})");
                 result.IsValid = false;
             }
 
