@@ -471,6 +471,12 @@ internal static class TempLocalAllocator
             case LIRGetLength getLength:
                 yield return getLength.Object;
                 break;
+            case LIRGetJsArrayLength getJsArrayLength:
+                yield return getJsArrayLength.Receiver;
+                break;
+            case LIRGetInt32ArrayLength getInt32ArrayLength:
+                yield return getInt32ArrayLength.Receiver;
+                break;
             case LIRGetItem getItem:
                 yield return getItem.Object;
                 yield return getItem.Index;
@@ -792,6 +798,12 @@ internal static class TempLocalAllocator
                 return true;
             case LIRGetLength getLength:
                 defined = getLength.Result;
+                return true;
+            case LIRGetJsArrayLength getJsArrayLength:
+                defined = getJsArrayLength.Result;
+                return true;
+            case LIRGetInt32ArrayLength getInt32ArrayLength:
+                defined = getInt32ArrayLength.Result;
                 return true;
             case LIRGetItem getItem:
                 defined = getItem.Result;

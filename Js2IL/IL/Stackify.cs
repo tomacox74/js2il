@@ -390,6 +390,11 @@ internal static class Stackify
             case LIRGetItem:
                 return true;
 
+            // Proven Array/Int32Array length gets are side-effect free.
+            case LIRGetJsArrayLength:
+            case LIRGetInt32ArrayLength:
+                return true;
+
             // Proven Array element get is side-effect free.
             case LIRGetJsArrayElement:
                 return true;
@@ -562,6 +567,14 @@ internal static class Stackify
 
             // LIRGetLength: consumes 1 object, produces 1 double
             case LIRGetLength:
+                return (1, 1);
+
+            // LIRGetJsArrayLength: consumes 1 receiver, produces 1 double
+            case LIRGetJsArrayLength:
+                return (1, 1);
+
+            // LIRGetInt32ArrayLength: consumes 1 receiver, produces 1 double
+            case LIRGetInt32ArrayLength:
                 return (1, 1);
 
             // LIRGetItem: consumes 2 (object + index), produces 1 value

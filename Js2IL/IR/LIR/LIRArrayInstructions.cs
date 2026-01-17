@@ -33,6 +33,18 @@ public record LIRArrayAdd(TempVariable TargetArray, TempVariable Element) : LIRI
 public record LIRGetLength(TempVariable Object, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Gets the length of a proven JavaScriptRuntime.Array.
+/// Contract: Receiver is a proven Array; Result is an unboxed double.
+/// </summary>
+public record LIRGetJsArrayLength(TempVariable Receiver, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Gets the length of a proven JavaScriptRuntime.Int32Array.
+/// Contract: Receiver is a proven Int32Array; Result is an unboxed double.
+/// </summary>
+public record LIRGetInt32ArrayLength(TempVariable Receiver, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Gets an item from an object by index (calls JavaScriptRuntime.Object.GetItem).
 /// </summary>
 public record LIRGetItem(TempVariable Object, TempVariable Index, TempVariable Result) : LIRInstruction;

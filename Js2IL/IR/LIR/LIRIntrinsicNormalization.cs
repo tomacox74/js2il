@@ -87,6 +87,30 @@ internal static class LIRIntrinsicNormalization
         {
             var instruction = methodBody.Instructions[i];
 
+            if (instruction is LIRGetLength getLength)
+            {
+                if (!knownIntrinsicReceiverClrTypes.TryGetValue(getLength.Object.Index, out var receiverType))
+                {
+                    continue;
+                }
+
+                if (receiverType == typeof(JavaScriptRuntime.Array))
+                {
+                    methodBody.Instructions[i] = new LIRGetJsArrayLength(getLength.Object, getLength.Result);
+                    methodBody.TempStorages[getLength.Result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+                    continue;
+                }
+
+                if (receiverType == typeof(JavaScriptRuntime.Int32Array))
+                {
+                    methodBody.Instructions[i] = new LIRGetInt32ArrayLength(getLength.Object, getLength.Result);
+                    methodBody.TempStorages[getLength.Result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+                    continue;
+                }
+
+                continue;
+            }
+
             if (instruction is LIRGetItem getItem)
             {
                 if (!knownIntrinsicReceiverClrTypes.TryGetValue(getItem.Object.Index, out var receiverType))

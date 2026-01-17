@@ -1961,6 +1961,73 @@ internal sealed class LIRToILCompiler
                     EmitStoreTemp(getLength.Result, ilEncoder, allocation);
                     break;
                 }
+
+            case LIRGetJsArrayLength getJsArrayLength:
+                {
+                    if (!IsMaterialized(getJsArrayLength.Result, allocation))
+                    {
+                        // Will be emitted inline via EmitLoadTemp when the temp is used.
+                        break;
+                    }
+
+                    // Load receiver as Array (cast only if needed)
+                    var receiverStorage = GetTempStorage(getJsArrayLength.Receiver);
+                    if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Array))
+                    {
+                        EmitLoadTemp(getJsArrayLength.Receiver, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(getJsArrayLength.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Array)));
+                    }
+
+                    // Emit: callvirt int32 List<object>.get_Count; conv.r8
+                    var getCountMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(System.Collections.Generic.List<object>),
+                        "get_Count",
+                        parameterTypes: Type.EmptyTypes);
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(getCountMethod);
+                    ilEncoder.OpCode(ILOpCode.Conv_r8);
+
+                    EmitStoreTemp(getJsArrayLength.Result, ilEncoder, allocation);
+                    break;
+                }
+
+            case LIRGetInt32ArrayLength getInt32ArrayLength:
+                {
+                    if (!IsMaterialized(getInt32ArrayLength.Result, allocation))
+                    {
+                        // Will be emitted inline via EmitLoadTemp when the temp is used.
+                        break;
+                    }
+
+                    // Load receiver as Int32Array (cast only if needed)
+                    var receiverStorage = GetTempStorage(getInt32ArrayLength.Receiver);
+                    if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Int32Array))
+                    {
+                        EmitLoadTemp(getInt32ArrayLength.Receiver, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(getInt32ArrayLength.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Int32Array)));
+                    }
+
+                    // Emit: callvirt float64 get_length
+                    var getLengthMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Int32Array),
+                        "get_length",
+                        parameterTypes: Type.EmptyTypes);
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(getLengthMethod);
+
+                    EmitStoreTemp(getInt32ArrayLength.Result, ilEncoder, allocation);
+                    break;
+                }
             case LIRGetItem getItem:
                 {
                     if (!IsMaterialized(getItem.Result, allocation))
@@ -3913,6 +3980,55 @@ internal sealed class LIRToILCompiler
                     ilEncoder.Token(getLengthMethod);
                 }
                 break;
+
+            case LIRGetJsArrayLength getJsArrayLength:
+                {
+                    // Inline: receiver, callvirt get_Count, conv.r8
+                    var receiverStorage = GetTempStorage(getJsArrayLength.Receiver);
+                    if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Array))
+                    {
+                        EmitLoadTemp(getJsArrayLength.Receiver, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(getJsArrayLength.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Array)));
+                    }
+
+                    var getCountMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(System.Collections.Generic.List<object>),
+                        "get_Count",
+                        parameterTypes: Type.EmptyTypes);
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(getCountMethod);
+                    ilEncoder.OpCode(ILOpCode.Conv_r8);
+                    break;
+                }
+
+            case LIRGetInt32ArrayLength getInt32ArrayLength:
+                {
+                    // Inline: receiver, callvirt get_length
+                    var receiverStorage = GetTempStorage(getInt32ArrayLength.Receiver);
+                    if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Int32Array))
+                    {
+                        EmitLoadTemp(getInt32ArrayLength.Receiver, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(getInt32ArrayLength.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Int32Array)));
+                    }
+
+                    var getLengthMethod = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Int32Array),
+                        "get_length",
+                        parameterTypes: Type.EmptyTypes);
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(getLengthMethod);
+                    break;
+                }
             case LIRGetItem getItem:
                 {
                     var indexStorage = GetTempStorage(getItem.Index);
