@@ -2185,16 +2185,25 @@ internal sealed class LIRToILCompiler
                     // If the assignment expression result is used, return the assigned value.
                     if (IsMaterialized(setArray.Result, allocation))
                     {
+                        var valueStorage = GetTempStorage(setArray.Value);
                         var resultStorage = GetTempStorage(setArray.Result);
                         if (resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double))
                         {
-                            EmitLoadTempAsObject(setArray.Value, ilEncoder, allocation, methodDescriptor);
-                            var toNumberMref = _memberRefRegistry.GetOrAddMethod(
-                                typeof(JavaScriptRuntime.TypeUtilities),
-                                nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
-                                parameterTypes: new[] { typeof(object) });
-                            ilEncoder.OpCode(ILOpCode.Call);
-                            ilEncoder.Token(toNumberMref);
+                            if (valueStorage.Kind == ValueStorageKind.UnboxedValue && valueStorage.ClrType == typeof(double))
+                            {
+                                // Directly reuse the numeric RHS as the expression result.
+                                EmitLoadTemp(setArray.Value, ilEncoder, allocation, methodDescriptor);
+                            }
+                            else
+                            {
+                                EmitLoadTempAsObject(setArray.Value, ilEncoder, allocation, methodDescriptor);
+                                var toNumberMref = _memberRefRegistry.GetOrAddMethod(
+                                    typeof(JavaScriptRuntime.TypeUtilities),
+                                    nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                                    parameterTypes: new[] { typeof(object) });
+                                ilEncoder.OpCode(ILOpCode.Call);
+                                ilEncoder.Token(toNumberMref);
+                            }
                         }
                         else
                         {

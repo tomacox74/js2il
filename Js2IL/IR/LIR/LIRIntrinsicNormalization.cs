@@ -145,11 +145,8 @@ internal static class LIRIntrinsicNormalization
                 }
 
                 // Array element set (numeric index).
-                // Only rewrite when the index is an unboxed double AND the value is not an unboxed double,
-                // so we don't regress the existing non-boxing SetItem(object, double, double) fast path.
                 if (receiverType == typeof(JavaScriptRuntime.Array)
-                    && IsUnboxedDouble(methodBody, setItem.Index)
-                    && !IsUnboxedDouble(methodBody, setItem.Value))
+                    && IsUnboxedDouble(methodBody, setItem.Index))
                 {
                     // Rewrite: SetItem(array, indexDouble, valueObj, result) -> SetJsArrayElement(array, indexDouble, valueObj, result)
                     methodBody.Instructions[i] = new LIRSetJsArrayElement(setItem.Object, setItem.Index, setItem.Value, setItem.Result);
