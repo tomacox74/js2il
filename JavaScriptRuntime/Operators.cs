@@ -86,6 +86,40 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// Implements JavaScript '+' semantics where the left operand is already an unboxed double.
+        /// Avoids boxing the double in common numeric hot paths.
+        /// </summary>
+        public static object Add(double a, object? b)
+        {
+            if (b is string)
+            {
+                var sa = DotNet2JSConversions.ToString(a);
+                var sb = DotNet2JSConversions.ToString(b);
+                return string.Concat(sa, sb);
+            }
+
+            var db = ToNumber(b);
+            return a + db; // boxed double
+        }
+
+        /// <summary>
+        /// Implements JavaScript '+' semantics where the right operand is already an unboxed double.
+        /// Avoids boxing the double in common numeric hot paths.
+        /// </summary>
+        public static object Add(object? a, double b)
+        {
+            if (a is string)
+            {
+                var sa = DotNet2JSConversions.ToString(a);
+                var sb = DotNet2JSConversions.ToString(b);
+                return string.Concat(sa, sb);
+            }
+
+            var da = ToNumber(a);
+            return da + b; // boxed double
+        }
+
+        /// <summary>
         /// Implements JavaScript '-' semantics. Both operands are coerced to numbers; result is a double (may be NaN).
         /// </summary>
         public static object Subtract(object? a, object? b)

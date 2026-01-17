@@ -67,7 +67,7 @@ namespace Js2IL.Services
         public void InvokeOperatorsAdd()
         {
             // assumes two object operands are on the stack
-            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), nameof(JavaScriptRuntime.Operators.Add));
+            var mref = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), nameof(JavaScriptRuntime.Operators.Add), new[] { typeof(object), typeof(object) });
             _il.Call(mref);
         }
 

@@ -20,6 +20,16 @@ public record LIRConcatStrings(TempVariable Left, TempVariable Right, TempVariab
 public record LIRAddDynamic(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Dynamic addition using Operators.Add(double, object) to avoid boxing the left double operand.
+/// </summary>
+public record LIRAddDynamicDoubleObject(TempVariable LeftDouble, TempVariable RightObject, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Dynamic addition using Operators.Add(object, double) to avoid boxing the right double operand.
+/// </summary>
+public record LIRAddDynamicObjectDouble(TempVariable LeftObject, TempVariable RightDouble, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Subtraction of two double values using native IL sub instruction.
 /// </summary>
 public record LIRSubNumber(TempVariable Left, TempVariable Right, TempVariable Result) : LIRInstruction;
