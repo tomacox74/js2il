@@ -411,6 +411,8 @@ public sealed class HIRToLIRLowerer
                         case HIRObjectSpreadProperty spread:
                             count += CountAwaitExpressionsInExpression(spread.Argument);
                             break;
+                        default:
+                            throw new NotSupportedException($"Unhandled object literal member type in await counter: {member.GetType().FullName}");
                     }
                 }
                 break;
@@ -5857,15 +5859,7 @@ public sealed class HIRToLIRLowerer
 
         // Fast path: simple object literal with only non-computed properties.
         // Preserve the existing LIRNewJsObject initialization pattern for minimal IL/snapshot churn.
-        bool allSimple = true;
-        foreach (var member in objectExpr.Members)
-        {
-            if (member is not HIRObjectProperty)
-            {
-                allSimple = false;
-                break;
-            }
-        }
+        bool allSimple = objectExpr.Members.All(static member => member is HIRObjectProperty);
 
         if (allSimple)
         {
@@ -5955,7 +5949,7 @@ public sealed class HIRToLIRLowerer
                 }
 
                 default:
-                    return false;
+                    throw new NotSupportedException($"Unhandled object literal member type during lowering: {member.GetType().FullName}");
             }
         }
         return true;

@@ -570,7 +570,27 @@ namespace JavaScriptRuntime
                     SetProperty(target, f.Name, f.GetValue(source));
                 }
             }
-            catch
+            catch (AmbiguousMatchException)
+            {
+                // Swallow to mimic JS permissiveness on exotic host objects.
+            }
+            catch (MethodAccessException)
+            {
+                // Swallow to mimic JS permissiveness on exotic host objects.
+            }
+            catch (NotSupportedException)
+            {
+                // Swallow to mimic JS permissiveness on exotic host objects.
+            }
+            catch (TargetInvocationException)
+            {
+                // Swallow to mimic JS permissiveness on exotic host objects.
+            }
+            catch (TargetException)
+            {
+                // Swallow to mimic JS permissiveness on exotic host objects.
+            }
+            catch (ArgumentException)
             {
                 // Swallow to mimic JS permissiveness on exotic host objects.
             }
@@ -627,7 +647,27 @@ namespace JavaScriptRuntime
                     dict[f.Name] = f.GetValue(obj);
                 }
             }
-            catch
+            catch (AmbiguousMatchException)
+            {
+                // Best-effort; return whatever we could copy.
+            }
+            catch (MethodAccessException)
+            {
+                // Best-effort; return whatever we could copy.
+            }
+            catch (NotSupportedException)
+            {
+                // Best-effort; return whatever we could copy.
+            }
+            catch (TargetInvocationException)
+            {
+                // Best-effort; return whatever we could copy.
+            }
+            catch (TargetException)
+            {
+                // Best-effort; return whatever we could copy.
+            }
+            catch (ArgumentException)
             {
                 // Best-effort; return whatever we could copy.
             }
