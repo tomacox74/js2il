@@ -4235,7 +4235,24 @@ public sealed class HIRToLIRLowerer
                 return true;
             }
 
-            // Dynamic addition (unknown types) - box operands and call Operators.Add
+            // Dynamic addition (unknown types). Prefer avoiding boxing if exactly one side is already an unboxed double.
+            if (leftType == typeof(double) && rightType != typeof(double))
+            {
+                var rightBoxedForAdd = EnsureObject(rightTempVar);
+                _methodBodyIR.Instructions.Add(new LIRAddDynamicDoubleObject(leftTempVar, rightBoxedForAdd, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
+                return true;
+            }
+
+            if (leftType != typeof(double) && rightType == typeof(double))
+            {
+                var leftBoxedForAdd = EnsureObject(leftTempVar);
+                _methodBodyIR.Instructions.Add(new LIRAddDynamicObjectDouble(leftBoxedForAdd, rightTempVar, resultTempVar));
+                DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
+                return true;
+            }
+
+            // General dynamic addition: box operands and call Operators.Add(object, object)
             var leftBoxed = EnsureObject(leftTempVar);
             var rightBoxed = EnsureObject(rightTempVar);
             _methodBodyIR.Instructions.Add(new LIRAddDynamic(leftBoxed, rightBoxed, resultTempVar));
@@ -6211,7 +6228,24 @@ public sealed class HIRToLIRLowerer
                     DefineTempStorage(result, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
                     return true;
                 }
-                // Dynamic addition
+                // Dynamic addition (unknown types). Prefer avoiding boxing if exactly one side is already an unboxed double.
+                if (leftType == typeof(double) && rightType != typeof(double))
+                {
+                    var rightBoxedForAdd = EnsureObject(rhsValue);
+                    _methodBodyIR.Instructions.Add(new LIRAddDynamicDoubleObject(currentValue, rightBoxedForAdd, result));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
+                    return true;
+                }
+
+                if (leftType != typeof(double) && rightType == typeof(double))
+                {
+                    var leftBoxedForAdd = EnsureObject(currentValue);
+                    _methodBodyIR.Instructions.Add(new LIRAddDynamicObjectDouble(leftBoxedForAdd, rhsValue, result));
+                    DefineTempStorage(result, new ValueStorage(ValueStorageKind.BoxedValue, typeof(object)));
+                    return true;
+                }
+
+                // General dynamic addition: box operands and call Operators.Add(object, object)
                 var leftBoxed = EnsureObject(currentValue);
                 var rightBoxed = EnsureObject(rhsValue);
                 _methodBodyIR.Instructions.Add(new LIRAddDynamic(leftBoxed, rightBoxed, result));

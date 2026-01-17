@@ -960,8 +960,20 @@ internal sealed class LIRToILCompiler
             case LIRAddDynamic addDynamic:
                 EmitLoadTemp(addDynamic.Left, ilEncoder, allocation, methodDescriptor);
                 EmitLoadTemp(addDynamic.Right, ilEncoder, allocation, methodDescriptor);
-                EmitOperatorsAdd(ilEncoder);
+                EmitOperatorsAddObjectObject(ilEncoder);
                 EmitStoreTemp(addDynamic.Result, ilEncoder, allocation);
+                break;
+            case LIRAddDynamicDoubleObject addDynamicDoubleObject:
+                EmitLoadTemp(addDynamicDoubleObject.LeftDouble, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(addDynamicDoubleObject.RightObject, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsAddDoubleObject(ilEncoder);
+                EmitStoreTemp(addDynamicDoubleObject.Result, ilEncoder, allocation);
+                break;
+            case LIRAddDynamicObjectDouble addDynamicObjectDouble:
+                EmitLoadTemp(addDynamicObjectDouble.LeftObject, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(addDynamicObjectDouble.RightDouble, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsAddObjectDouble(ilEncoder);
+                EmitStoreTemp(addDynamicObjectDouble.Result, ilEncoder, allocation);
                 break;
             case LIRSubNumber subNumber:
                 EmitLoadTemp(subNumber.Left, ilEncoder, allocation, methodDescriptor);
@@ -3716,6 +3728,37 @@ internal sealed class LIRToILCompiler
                 EmitStringConcat(ilEncoder);
                 break;
 
+            case LIRAddNumber addNumber:
+                EmitLoadTemp(addNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(addNumber.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Add);
+                break;
+            case LIRSubNumber subNumber:
+                EmitLoadTemp(subNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(subNumber.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Sub);
+                break;
+            case LIRMulNumber mulNumber:
+                EmitLoadTemp(mulNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(mulNumber.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Mul);
+                break;
+            case LIRDivNumber divNumber:
+                EmitLoadTemp(divNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(divNumber.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Div);
+                break;
+            case LIRModNumber modNumber:
+                EmitLoadTemp(modNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(modNumber.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Rem);
+                break;
+            case LIRExpNumber expNumber:
+                EmitLoadTemp(expNumber.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(expNumber.Right, ilEncoder, allocation, methodDescriptor);
+                EmitMathPow(ilEncoder);
+                break;
+
             case LIRNewIntrinsicObject newIntrinsic:
                 {
                     EmitNewIntrinsicObjectCore(newIntrinsic, ilEncoder, allocation, methodDescriptor);
@@ -3808,7 +3851,19 @@ internal sealed class LIRToILCompiler
                 // Emit inline dynamic addition
                 EmitLoadTemp(addDynamic.Left, ilEncoder, allocation, methodDescriptor);
                 EmitLoadTemp(addDynamic.Right, ilEncoder, allocation, methodDescriptor);
-                EmitOperatorsAdd(ilEncoder);
+                EmitOperatorsAddObjectObject(ilEncoder);
+                break;
+            case LIRAddDynamicDoubleObject addDynamicDoubleObject:
+                // Mixed dynamic addition: left is unboxed double, right is boxed object
+                EmitLoadTemp(addDynamicDoubleObject.LeftDouble, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(addDynamicDoubleObject.RightObject, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsAddDoubleObject(ilEncoder);
+                break;
+            case LIRAddDynamicObjectDouble addDynamicObjectDouble:
+                // Mixed dynamic addition: left is boxed object, right is unboxed double
+                EmitLoadTemp(addDynamicObjectDouble.LeftObject, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(addDynamicObjectDouble.RightDouble, ilEncoder, allocation, methodDescriptor);
+                EmitOperatorsAddObjectDouble(ilEncoder);
                 break;
             case LIRLoadLeafScopeField loadLeafField:
                 // Emit inline: ldloc.0 (scope instance), ldfld (field handle)
@@ -5250,9 +5305,32 @@ internal sealed class LIRToILCompiler
         ilEncoder.Token(_bclReferences.String_Concat_Ref);
     }
 
-    private void EmitOperatorsAdd(InstructionEncoder ilEncoder)
+    private void EmitOperatorsAddObjectObject(InstructionEncoder ilEncoder)
     {
-        var methodRef = _memberRefRegistry.GetOrAddMethod(typeof(JavaScriptRuntime.Operators), nameof(JavaScriptRuntime.Operators.Add));
+        var methodRef = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.Operators),
+            nameof(JavaScriptRuntime.Operators.Add),
+            new[] { typeof(object), typeof(object) });
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+    }
+
+    private void EmitOperatorsAddDoubleObject(InstructionEncoder ilEncoder)
+    {
+        var methodRef = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.Operators),
+            nameof(JavaScriptRuntime.Operators.Add),
+            new[] { typeof(double), typeof(object) });
+        ilEncoder.OpCode(ILOpCode.Call);
+        ilEncoder.Token(methodRef);
+    }
+
+    private void EmitOperatorsAddObjectDouble(InstructionEncoder ilEncoder)
+    {
+        var methodRef = _memberRefRegistry.GetOrAddMethod(
+            typeof(JavaScriptRuntime.Operators),
+            nameof(JavaScriptRuntime.Operators.Add),
+            new[] { typeof(object), typeof(double) });
         ilEncoder.OpCode(ILOpCode.Call);
         ilEncoder.Token(methodRef);
     }

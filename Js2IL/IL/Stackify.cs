@@ -625,6 +625,8 @@ internal static class Stackify
             // Binary ops: consume 2, produce 1
             case LIRAddNumber:
             case LIRAddDynamic:
+            case LIRAddDynamicDoubleObject:
+            case LIRAddDynamicObjectDouble:
             case LIRSubNumber:
             case LIRMulNumber:
             case LIRMulDynamic:
