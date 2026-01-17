@@ -353,13 +353,15 @@ function main() {
 
   // Some repos/branches may not have status checks configured. In that case
   // `gh pr checks --watch` can exit non-zero with "no checks reported".
-  // Treat that as a warning and continue to merge.
+  // Treat that as a warning and rely on GitHub auto-merge to wait for checks.
   const checksOut = run(`gh pr checks ${prNumber} --repo ${repo} --watch`, { ...args, allowFailure: true });
   if (checksOut && /no checks reported/i.test(checksOut)) {
-    process.stdout.write(`\nNote: no CI checks reported for ${releaseBranch}; continuing with merge.\n`);
+    process.stdout.write(`\nNote: no CI checks reported for ${releaseBranch}; enabling auto-merge to wait for requirements.\n`);
   }
 
-  run(`gh pr merge ${prNumber} --repo ${repo} --merge --delete-branch`, args);
+  // Some repos enforce required status checks / merge policies that prohibit an immediate merge
+  // until checks have been reported and passed. `--auto` will merge once requirements are met.
+  run(`gh pr merge ${prNumber} --repo ${repo} --merge --delete-branch --auto`, args);
 
   // Update local master to the merged commit
   checkoutAndSyncBase(args.base, args);
