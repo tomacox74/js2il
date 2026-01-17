@@ -348,6 +348,25 @@ internal static class Stackify
             case LIRConcatStrings concatStrings:
                 return IsInlineableOperand(concatStrings.Left) && IsInlineableOperand(concatStrings.Right);
 
+            // Typed comparisons are side-effect free and compile to pure IL.
+            // Safe to inline when both operands are inlineable.
+            case LIRCompareNumberLessThan cmpLt:
+                return IsInlineableOperand(cmpLt.Left) && IsInlineableOperand(cmpLt.Right);
+            case LIRCompareNumberGreaterThan cmpGt:
+                return IsInlineableOperand(cmpGt.Left) && IsInlineableOperand(cmpGt.Right);
+            case LIRCompareNumberLessThanOrEqual cmpLe:
+                return IsInlineableOperand(cmpLe.Left) && IsInlineableOperand(cmpLe.Right);
+            case LIRCompareNumberGreaterThanOrEqual cmpGe:
+                return IsInlineableOperand(cmpGe.Left) && IsInlineableOperand(cmpGe.Right);
+            case LIRCompareNumberEqual cmpEq:
+                return IsInlineableOperand(cmpEq.Left) && IsInlineableOperand(cmpEq.Right);
+            case LIRCompareNumberNotEqual cmpNe:
+                return IsInlineableOperand(cmpNe.Left) && IsInlineableOperand(cmpNe.Right);
+            case LIRCompareBooleanEqual cmpBoolEq:
+                return IsInlineableOperand(cmpBoolEq.Left) && IsInlineableOperand(cmpBoolEq.Right);
+            case LIRCompareBooleanNotEqual cmpBoolNe:
+                return IsInlineableOperand(cmpBoolNe.Left) && IsInlineableOperand(cmpBoolNe.Right);
+
             // LIRBuildArray creates an array and initializes elements inline.
             // Safe to inline if all element temps can be emitted inline.
             // Used for call arguments (e.g., console.log) where array is consumed immediately.

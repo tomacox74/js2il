@@ -10,6 +10,7 @@ All notable changes to this project are documented here.
 
 ### Performance
 - Reduced boxing in JavaScript `+` / `+=` hot paths by selecting typed `Operators.Add(double, object)` / `Operators.Add(object, double)` overloads when exactly one operand is an unboxed `double`.
+- Stackify can now inline typed (static) numeric/boolean comparisons when operands are inlineable, reducing temp-local materialization and emitted IL size.
 
 ## v0.7.1 - 2026-01-17
 
