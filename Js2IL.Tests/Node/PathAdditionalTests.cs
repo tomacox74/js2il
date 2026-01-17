@@ -37,5 +37,14 @@ namespace Js2IL.Tests.Node
                     var temp = Path.GetTempPath().Replace('\\', '/');
                     s.AddScrubber(sb => sb.Replace(temp, "{TempPath}"));
                 });
+
+        [Fact]
+        public Task Require_Path_Join_Normalizes_DotDot()
+            => ExecutionTest(
+                nameof(Require_Path_Join_Normalizes_DotDot),
+                configureSettings: s =>
+                {
+                    s.AddScrubber(sb => sb.Replace('\\', '/'));
+                });
     }
 }

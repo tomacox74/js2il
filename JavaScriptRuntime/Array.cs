@@ -313,6 +313,53 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// JavaScript Array.find(callback[, thisArg])
+        /// Minimal implementation: invokes the callback with (value, index, array) and returns the first element for which the callback is truthy.
+        /// Returns undefined (null) if none match.
+        /// </summary>
+        public object? find(object[] args)
+        {
+            var cb = (args != null && args.Length > 0) ? args[0] : null;
+
+            for (int i = 0; i < this.Count; i++)
+            {
+                var value = this[i];
+                object? result;
+
+                if (cb is Func<object?[], object?, object?, object?, object?> f3)
+                {
+                    // (scopes, value, index, array)
+                    result = f3(System.Array.Empty<object?>(), value, (double)i, this);
+                }
+                else if (cb is Func<object?[], object?, object?, object?> f2)
+                {
+                    // (scopes, value, index)
+                    result = f2(System.Array.Empty<object?>(), value, (double)i);
+                }
+                else if (cb is Func<object?[], object?, object?> f1)
+                {
+                    // (scopes, value)
+                    result = f1(System.Array.Empty<object?>(), value);
+                }
+                else if (cb is Func<object?[], object?> f0)
+                {
+                    result = f0(System.Array.Empty<object?>());
+                }
+                else
+                {
+                    throw new InvalidOperationException("find callback is not a supported function type");
+                }
+
+                if (Operators.IsTruthy(result))
+                {
+                    return value;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// JavaScript Array.join([separator]) implementation.
         /// Joins elements by the given separator (default ',') and returns a string.
         /// Each element is converted using DotNet2JSConversions.ToString to approximate JS semantics.

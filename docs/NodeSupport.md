@@ -1,10 +1,42 @@
 # Node Support Coverage
 
 Target: `22.x LTS`
-Generated: `2025-12-23T19:02:35Z`
+Generated: `2026-01-16T21:16:04Z`
 
 
 ## Modules
+
+### child_process (status: partial)
+Docs: [https://nodejs.org/api/child_process.html](https://nodejs.org/api/child_process.html)
+Implementation:
+- `JavaScriptRuntime/Node/ChildProcess.cs`
+
+| API | Kind | Status | Docs |
+| --- | ---- | ------ | ---- |
+| spawnSync(command, args, options) | function | supported | [docs](https://nodejs.org/api/child_process.html#child_processspawnsynccommand-args-options) |
+| execSync(command, options) | function | supported | [docs](https://nodejs.org/api/child_process.html#child_processexecsynccommand-options) |
+
+### fs/promises (status: partial)
+Docs: [https://nodejs.org/api/fs.html#fspromisesapi](https://nodejs.org/api/fs.html#fspromisesapi)
+Implementation:
+- `JavaScriptRuntime/Node/FSPromises.cs`
+
+| API | Kind | Status | Docs |
+| --- | ---- | ------ | ---- |
+| access(path, mode) | function | supported | [docs](https://nodejs.org/api/fs.html#fspromisesaccesspath-mode) |
+| readdir(path, { withFileTypes: true }) | function | supported | [docs](https://nodejs.org/api/fs.html#fspromisesreaddirpath-options) |
+| mkdir(path, { recursive: true }) | function | supported | [docs](https://nodejs.org/api/fs.html#fspromisesmkdirpath-options) |
+| copyFile(src, dest) | function | supported | [docs](https://nodejs.org/api/fs.html#fspromisescopyfilesrc-dest-mode) |
+
+### os (status: partial)
+Docs: [https://nodejs.org/api/os.html](https://nodejs.org/api/os.html)
+Implementation:
+- `JavaScriptRuntime/Node/OS.cs`
+
+| API | Kind | Status | Docs |
+| --- | ---- | ------ | ---- |
+| tmpdir() | function | supported | [docs](https://nodejs.org/api/os.html#ostmpdir) |
+| homedir() | function | supported | [docs](https://nodejs.org/api/os.html#oshomedir) |
 
 ### fs (status: partial)
 Docs: [https://nodejs.org/api/fs.html](https://nodejs.org/api/fs.html)
