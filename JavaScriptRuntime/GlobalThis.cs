@@ -102,7 +102,7 @@ namespace JavaScriptRuntime
         /// Minimal parseInt implementation for numeric strings (radix 2-36).
         /// Returns NaN on invalid input.
         /// </summary>
-        public static object parseInt(object? input, object? radix = null)
+        public static double parseInt(object? input, object? radix = null)
         {
             if (input == null) return double.NaN;
 
@@ -144,6 +144,12 @@ namespace JavaScriptRuntime
                 {
                     radixValue = 10;
                 }
+            }
+
+            // Per spec, if radix is 16, an optional 0x/0X prefix is allowed and must be stripped.
+            if (radixValue == 16 && text.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+            {
+                text = text.Substring(2);
             }
 
             if (radixValue < 2 || radixValue > 36)

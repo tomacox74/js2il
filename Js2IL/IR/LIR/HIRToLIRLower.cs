@@ -3469,7 +3469,22 @@ public sealed class HIRToLIRLowerer
                     }
 
                     _methodBodyIR.Instructions.Add(new LIRCallIntrinsicGlobalFunction(globalFunctionName, argTemps, resultTempVar));
-                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    if (gvMethod.ReturnType == typeof(double))
+                    {
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double)));
+                    }
+                    else if (gvMethod.ReturnType == typeof(bool))
+                    {
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    }
+                    else if (gvMethod.ReturnType == typeof(string))
+                    {
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+                    }
+                    else
+                    {
+                        DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    }
                     return true;
                 }
             }
@@ -3766,6 +3781,13 @@ public sealed class HIRToLIRLowerer
                     calleePropAccess.PropertyName,
                     arrayArgTemps,
                     resultTempVar));
+
+                // Methods with stable unboxed primitive returns.
+                if (string.Equals(calleePropAccess.PropertyName, "some", StringComparison.OrdinalIgnoreCase))
+                {
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+                    return true;
+                }
 
                 // Track a more precise runtime type when we know it, so chained calls can lower.
                 // Example: arr.slice(...).join(',') requires the result of slice() to be treated as an Array receiver.

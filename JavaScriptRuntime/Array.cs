@@ -484,39 +484,22 @@ namespace JavaScriptRuntime
         /// JavaScript Array.some(callback[, thisArg])
         /// Minimal implementation: invokes the callback with (value, index, array) and returns true if any call is truthy.
         /// </summary>
-        public object some(object[] args)
+        public bool some(object? callback)
         {
-            var cb = (args != null && args.Length > 0) ? args[0] : null;
+            return some(callback, null);
+        }
+
+        public bool some(object? callback, object? thisArg)
+        {
+            // Note: thisArg is currently ignored in this runtime/compiler model.
+            if (callback == null)
+            {
+                throw new TypeError("Array.prototype.some requires a callback function");
+            }
 
             for (int i = 0; i < this.Count; i++)
             {
-                var value = this[i];
-                object? result;
-
-                if (cb is Func<object?[], object?, object?, object?, object?> f3)
-                {
-                    // (scopes, value, index, array)
-                    result = f3(System.Array.Empty<object?>(), value, (double)i, this);
-                }
-                else if (cb is Func<object?[], object?, object?, object?> f2)
-                {
-                    // (scopes, value, index)
-                    result = f2(System.Array.Empty<object?>(), value, (double)i);
-                }
-                else if (cb is Func<object?[], object?, object?> f1)
-                {
-                    // (scopes, value)
-                    result = f1(System.Array.Empty<object?>(), value);
-                }
-                else if (cb is Func<object?[], object?> f0)
-                {
-                    result = f0(System.Array.Empty<object?>());
-                }
-                else
-                {
-                    throw new InvalidOperationException("some callback is not a supported function type");
-                }
-
+                var result = InvokeCallback(callback, this[i], (double)i, this);
                 if (Operators.IsTruthy(result))
                 {
                     return true;
