@@ -300,9 +300,22 @@ public class ValidatorTests
     }
 
     [Fact]
-    public void Validate_ComputedPropertyNames_ReportsError()
+    public void Validate_ComputedPropertyNamesInObjectLiterals_IsValid()
     {
         var js = "const key = 'foo'; const obj = { [key]: 123 };";
+        var ast = _parser.ParseJavaScript(js, "test.js");
+        var result = _validator.Validate(ast);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+        Assert.Empty(result.Warnings);
+    }
+
+    [Fact]
+    public void Validate_ComputedPropertyNamesInBindingPatterns_ReportsError()
+    {
+        // Note: ECMAScript allows computed keys in binding patterns, but js2il does not yet support
+        // computed keys in object patterns/destructuring. Keep validator rejection for now.
+        var js = "const key = 'foo'; const { [key]: v } = { foo: 123 };";
         var ast = _parser.ParseJavaScript(js, "test.js");
         var result = _validator.Validate(ast);
         Assert.False(result.IsValid);
