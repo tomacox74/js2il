@@ -253,17 +253,38 @@ function changelogSectionFor(version) {
 function waitForRequiredCheck(prNumber, repo, checkName, { timeoutMs = 10 * 60 * 1000, pollMs = 4000 } = {}, args) {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
-    // We rely on statusCheckRollup so we can detect when checks start existing at all.
-    const q = `.statusCheckRollup[] | select(.name=="${checkName}") | .conclusion`;
-    const conclusion = run(`gh pr view ${prNumber} --repo ${repo} --json statusCheckRollup -q "${q}"`, { ...args, allowFailure: true })
-      .trim();
-
-    if (!conclusion) {
+    // Fetch full JSON and parse it here rather than using `gh ... -q`.
+    // Windows shell quoting can break embedded quotes in jq expressions.
+    const raw = run(`gh pr view ${prNumber} --repo ${repo} --json statusCheckRollup`, { ...args, allowFailure: true });
+    let json;
+    try {
+      json = JSON.parse(raw);
+    } catch {
       sleep(pollMs);
       continue;
     }
 
-    if (/^SUCCESS$/i.test(conclusion)) return;
+    const checks = Array.isArray(json?.statusCheckRollup) ? json.statusCheckRollup : [];
+    const check = checks.find((c) => c && c.name === checkName);
+    if (!check) {
+      sleep(pollMs);
+      continue;
+    }
+
+    const status = (check.status || '').toString().toUpperCase();
+    const conclusion = (check.conclusion || '').toString().toUpperCase();
+
+    // While a check is queued/in-progress, GitHub may report empty conclusion.
+    if (status && status !== 'COMPLETED') {
+      sleep(pollMs);
+      continue;
+    }
+
+    if (conclusion === 'SUCCESS') return;
+    if (!conclusion) {
+      sleep(pollMs);
+      continue;
+    }
 
     // Any terminal non-success conclusion should fail the release.
     throw new Error(`Required status check "${checkName}" did not succeed (conclusion: ${conclusion}).`);
