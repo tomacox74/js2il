@@ -4,7 +4,9 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+### Fixed
+- `parseInt` now returns an unboxed JS number (`double`) consistent with the ECMAScript spec (fixes #357).
+- `Array.prototype.some` now returns an unboxed JS boolean (`bool`) consistent with the ECMAScript spec (fixes #358).
 
 ## v0.7.1 - 2026-01-17
 

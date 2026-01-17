@@ -445,6 +445,17 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | await expression | Supported | `Js2IL.Tests/Async/JavaScript/Async_SimpleAwait.js`<br>`Js2IL.Tests/Async/JavaScript/Async_TryCatch_AwaitReject.js`<br>`Js2IL.Tests/Async/JavaScript/Async_TryFinally_AwaitInFinally_Normal.js`<br>`Js2IL.Tests/Async/JavaScript/Async_TryCatchFinally_AwaitInFinally_OnReject.js`<br>`Js2IL.Tests/Async/JavaScript/Async_TryFinally_PreservesExceptionThroughAwait.js`<br>`Js2IL.Tests/Async/JavaScript/Async_TryFinally_FinallyThrowOverridesOriginal.js`<br>`Js2IL.Tests/Async/JavaScript/Async_TryFinally_ReturnPreservedThroughAwait.js` | Full state machine implementation with suspension/resumption. Each await point stores _asyncState, schedules promise.then() continuation via SetupAwaitContinuation, and returns. On resume, the state switch dispatches to the appropriate label and loads the awaited result from a scope field. Scope persistence handled via PrependScopeToArray. Await rejection inside try/catch resumes into the catch block via pending-exception storage. Await in finally is supported, including correct completion semantics across suspension (preserve throw/return through awaited finally, and allow finally throws to override prior completion). | 15.8.1 |
 
 
+## [The Global Object](https://tc39.es/ecma262/#sec-global-object)
+
+### [Function Properties of the Global Object](https://tc39.es/ecma262/#sec-function-properties-of-the-global-object)
+
+#### [parseInt](https://tc39.es/ecma262/#sec-parseint-string-radix)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| parseInt(string, radix) | Supported | `Js2IL.Tests/IntrinsicCallables/JavaScript/IntrinsicCallables_ParseInt_Basic.js` | Implements the global parseInt(string, radix) function and returns a JS Number (unboxed double). | 19.2.5 |
+
+
 ## [The Math Object](https://tc39.es/ecma262/#sec-math-object)
 
 ### [Value Properties of the Math Object](https://tc39.es/ecma262/#sec-value-properties-of-the-math-object)
@@ -816,6 +827,13 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
 | Array.prototype.slice | Supported | `Js2IL.Tests/Array/JavaScript/Array_Slice_Basic.js` | Returns a shallow copy; handles negative indices and undefined end per spec. | 23.1.3.28 |
+
+
+#### [Array.prototype.some](https://tc39.es/ecma262/#sec-array.prototype.some)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Array.prototype.some | Supported | `Js2IL.Tests/Array/JavaScript/Array_Some_Basic.js` | Calls the predicate callback for each element until it returns a truthy value (then returns true); otherwise returns false. thisArg is accepted but currently ignored; implementation assumes dense arrays. | 23.1.3.29 |
 
 
 #### [Array.prototype.splice](https://tc39.es/ecma262/#sec-array.prototype.splice)
