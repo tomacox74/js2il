@@ -106,6 +106,15 @@ internal static class LIRIntrinsicNormalization
                     continue;
                 }
 
+                // Array element access (numeric index).
+                if (receiverType == typeof(JavaScriptRuntime.Array)
+                    && IsUnboxedDouble(methodBody, getItem.Index))
+                {
+                    // Rewrite: GetItem(array, indexDouble, result) -> GetJsArrayElement(array, indexDouble, result)
+                    methodBody.Instructions[i] = new LIRGetJsArrayElement(getItem.Object, getItem.Index, getItem.Result);
+                    continue;
+                }
+
                 // Promise.withResolvers().promise access (string key).
                 // Rewrite: GetItem(PromiseWithResolvers, "promise", result) -> callvirt PromiseWithResolvers.get_promise()
                 if (receiverType == typeof(JavaScriptRuntime.PromiseWithResolvers)
@@ -130,14 +139,27 @@ internal static class LIRIntrinsicNormalization
 
             if (instruction is LIRSetItem setItem)
             {
-                // Only normalize numeric-index and numeric-value accesses.
-                if (!IsUnboxedDouble(methodBody, setItem.Index) || !IsUnboxedDouble(methodBody, setItem.Value))
+                if (!knownIntrinsicReceiverClrTypes.TryGetValue(setItem.Object.Index, out var receiverType))
                 {
                     continue;
                 }
 
-                if (knownIntrinsicReceiverClrTypes.TryGetValue(setItem.Object.Index, out var receiverType)
-                    && receiverType == typeof(JavaScriptRuntime.Int32Array))
+                // Array element set (numeric index).
+                // Only rewrite when the index is an unboxed double AND the value is not an unboxed double,
+                // so we don't regress the existing non-boxing SetItem(object, double, double) fast path.
+                if (receiverType == typeof(JavaScriptRuntime.Array)
+                    && IsUnboxedDouble(methodBody, setItem.Index)
+                    && !IsUnboxedDouble(methodBody, setItem.Value))
+                {
+                    // Rewrite: SetItem(array, indexDouble, valueObj, result) -> SetJsArrayElement(array, indexDouble, valueObj, result)
+                    methodBody.Instructions[i] = new LIRSetJsArrayElement(setItem.Object, setItem.Index, setItem.Value, setItem.Result);
+                    continue;
+                }
+
+                // Int32Array element set (numeric index + numeric value).
+                if (receiverType == typeof(JavaScriptRuntime.Int32Array)
+                    && IsUnboxedDouble(methodBody, setItem.Index)
+                    && IsUnboxedDouble(methodBody, setItem.Value))
                 {
                     // Rewrite: SetItem(receiver, indexDouble, valueDouble, result) -> SetInt32ArrayElement(receiver, indexDouble, valueDouble, result)
                     methodBody.Instructions[i] = new LIRSetInt32ArrayElement(setItem.Object, setItem.Index, setItem.Value, setItem.Result);

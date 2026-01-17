@@ -2021,6 +2021,53 @@ internal sealed class LIRToILCompiler
                     break;
                 }
 
+            case LIRGetJsArrayElement getArray:
+                {
+                    if (!IsMaterialized(getArray.Result, allocation))
+                    {
+                        // Will be emitted inline via EmitLoadTemp when the temp is used.
+                        break;
+                    }
+
+                    // Load receiver as Array (cast only if needed)
+                    var receiverStorage = GetTempStorage(getArray.Receiver);
+                    if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Array))
+                    {
+                        EmitLoadTemp(getArray.Receiver, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(getArray.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Array)));
+                    }
+
+                    // Index must be numeric double
+                    EmitLoadTemp(getArray.Index, ilEncoder, allocation, methodDescriptor);
+
+                    var arrayGetter = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Array),
+                        "get_Item",
+                        parameterTypes: new[] { typeof(double) });
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(arrayGetter);
+
+                    // If the temp expects an unboxed double, coerce object result to a number.
+                    var resultStorage = GetTempStorage(getArray.Result);
+                    if (resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double))
+                    {
+                        var toNumberMref = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.TypeUtilities),
+                            nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                            parameterTypes: new[] { typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(toNumberMref);
+                    }
+
+                    EmitStoreTemp(getArray.Result, ilEncoder, allocation);
+                    break;
+                }
+
             case LIRGetInt32ArrayElement getI32:
                 {
                     if (!IsMaterialized(getI32.Result, allocation))
@@ -2105,6 +2152,56 @@ internal sealed class LIRToILCompiler
                     {
                         // Ensure stack is balanced if an unmaterialized result was produced.
                         // (We do not push the value unless needed.)
+                    }
+
+                    break;
+                }
+
+            case LIRSetJsArrayElement setArray:
+                {
+                    // Load receiver as Array (cast only if needed)
+                    var receiverStorage = GetTempStorage(setArray.Receiver);
+                    if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Array))
+                    {
+                        EmitLoadTemp(setArray.Receiver, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(setArray.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Array)));
+                    }
+
+                    EmitLoadTemp(setArray.Index, ilEncoder, allocation, methodDescriptor);
+                    EmitLoadTempAsObject(setArray.Value, ilEncoder, allocation, methodDescriptor);
+
+                    var arraySetter = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Array),
+                        "set_Item",
+                        parameterTypes: new[] { typeof(double), typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(arraySetter);
+
+                    // If the assignment expression result is used, return the assigned value.
+                    if (IsMaterialized(setArray.Result, allocation))
+                    {
+                        var resultStorage = GetTempStorage(setArray.Result);
+                        if (resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double))
+                        {
+                            EmitLoadTempAsObject(setArray.Value, ilEncoder, allocation, methodDescriptor);
+                            var toNumberMref = _memberRefRegistry.GetOrAddMethod(
+                                typeof(JavaScriptRuntime.TypeUtilities),
+                                nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                                parameterTypes: new[] { typeof(object) });
+                            ilEncoder.OpCode(ILOpCode.Call);
+                            ilEncoder.Token(toNumberMref);
+                        }
+                        else
+                        {
+                            EmitLoadTempAsObject(setArray.Value, ilEncoder, allocation, methodDescriptor);
+                        }
+
+                        EmitStoreTemp(setArray.Result, ilEncoder, allocation);
                     }
 
                     break;
@@ -3859,6 +3956,45 @@ internal sealed class LIRToILCompiler
                     }
                 }
                 break;
+
+            case LIRGetJsArrayElement getArray:
+                {
+                    // Inline: receiver, index, callvirt Array.get_Item(double)
+                    var receiverStorage = GetTempStorage(getArray.Receiver);
+                    if (receiverStorage.Kind == ValueStorageKind.Reference && receiverStorage.ClrType == typeof(JavaScriptRuntime.Array))
+                    {
+                        EmitLoadTemp(getArray.Receiver, ilEncoder, allocation, methodDescriptor);
+                    }
+                    else
+                    {
+                        EmitLoadTempAsObject(getArray.Receiver, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.OpCode(ILOpCode.Castclass);
+                        ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.Array)));
+                    }
+
+                    EmitLoadTemp(getArray.Index, ilEncoder, allocation, methodDescriptor);
+
+                    var arrayGetter = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.Array),
+                        "get_Item",
+                        parameterTypes: new[] { typeof(double) });
+                    ilEncoder.OpCode(ILOpCode.Callvirt);
+                    ilEncoder.Token(arrayGetter);
+
+                    // If the temp storage expects an unboxed double, coerce the object result to a number.
+                    var resultStorage = GetTempStorage(getArray.Result);
+                    if (resultStorage.Kind == ValueStorageKind.UnboxedValue && resultStorage.ClrType == typeof(double))
+                    {
+                        var toNumberMref = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.TypeUtilities),
+                            nameof(JavaScriptRuntime.TypeUtilities.ToNumber),
+                            parameterTypes: new[] { typeof(object) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(toNumberMref);
+                    }
+
+                    break;
+                }
 
             case LIRGetInt32ArrayElement getI32:
                 {

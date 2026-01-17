@@ -390,6 +390,10 @@ internal static class Stackify
             case LIRGetItem:
                 return true;
 
+            // Proven Array element get is side-effect free.
+            case LIRGetJsArrayElement:
+                return true;
+
             // Typed intrinsic element get is a side-effect free callvirt get_Item(double).
             // Safe to inline/stackify.
             case LIRGetInt32ArrayElement:
@@ -397,6 +401,10 @@ internal static class Stackify
 
             // Typed intrinsic element set mutates the array and must never be re-emitted.
             case LIRSetInt32ArrayElement:
+                return false;
+
+            // Proven Array element set mutates the array and must never be re-emitted.
+            case LIRSetJsArrayElement:
                 return false;
 
             // LIRArrayPushRange and LIRArrayAdd have side effects (mutate the array)
@@ -560,6 +568,10 @@ internal static class Stackify
             case LIRGetItem:
                 return (2, 1);
 
+            // LIRGetJsArrayElement: consumes 2 (receiver + index), produces 1 value
+            case LIRGetJsArrayElement:
+                return (2, 1);
+
             // LIRGetInt32ArrayElement: consumes 2 (receiver + index), produces 1 double
             case LIRGetInt32ArrayElement:
                 return (2, 1);
@@ -567,6 +579,11 @@ internal static class Stackify
             // LIRSetInt32ArrayElement: consumes receiver + index + value; side effects, no net value left on stack
             // (its SSA result is materialized into a local when needed).
             case LIRSetInt32ArrayElement:
+                return (3, 0);
+
+            // LIRSetJsArrayElement: consumes receiver + index + value; side effects, no net value left on stack
+            // (its SSA result is materialized into a local when needed).
+            case LIRSetJsArrayElement:
                 return (3, 0);
 
             // Direct instance method call on a user-defined class: consumes N args, produces 1 result.

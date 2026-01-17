@@ -44,6 +44,20 @@ public record LIRGetItem(TempVariable Object, TempVariable Index, TempVariable R
 public record LIRSetItem(TempVariable Object, TempVariable Index, TempVariable Value, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Gets an element from a proven JavaScriptRuntime.Array by numeric index.
+/// Contract: Receiver is a proven Array; Index is an unboxed double.
+/// Result is an object (or may be coerced to a number by the IL emitter when the temp expects an unboxed double).
+/// </summary>
+public record LIRGetJsArrayElement(TempVariable Receiver, TempVariable Index, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Sets an element on a proven JavaScriptRuntime.Array by numeric index.
+/// Contract: Receiver is a proven Array; Index is an unboxed double.
+/// Result (if materialized) is the assigned value.
+/// </summary>
+public record LIRSetJsArrayElement(TempVariable Receiver, TempVariable Index, TempVariable Value, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Gets an element from a proven JavaScriptRuntime.Int32Array by numeric index.
 /// Contract: Receiver is a proven Int32Array; Index is an unboxed double; Result is an unboxed double.
 /// </summary>

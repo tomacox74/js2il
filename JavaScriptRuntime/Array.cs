@@ -21,6 +21,66 @@ namespace JavaScriptRuntime
         {
         }
 
+        // Numeric indexer overload to support compiler intrinsics.
+        // Semantics intentionally match JavaScriptRuntime.Object.GetItem/SetItem for Array + numeric index:
+        // - Out-of-bounds reads return undefined (null)
+        // - Writes extend the array with undefined (null)
+        // - Negative indices behave like properties (currently ignored for host safety)
+        public object? this[double index]
+        {
+            get
+            {
+                int intIndex = (int)index;
+                if (intIndex < 0 || intIndex >= Count)
+                {
+                    return null; // undefined
+                }
+
+                return base[intIndex];
+            }
+            set
+            {
+                int intIndex;
+                if (double.IsNaN(index) || double.IsInfinity(index))
+                {
+                    intIndex = 0;
+                }
+                else
+                {
+                    try { intIndex = (int)index; }
+                    catch { intIndex = 0; }
+                }
+
+                if (intIndex < 0)
+                {
+                    JavaScriptRuntime.Object.SetProperty(
+                        this,
+                        intIndex.ToString(CultureInfo.InvariantCulture),
+                        value);
+                    return;
+                }
+
+                if (intIndex < Count)
+                {
+                    base[intIndex] = value;
+                    return;
+                }
+
+                if (intIndex == Count)
+                {
+                    Add(value);
+                    return;
+                }
+
+                while (Count < intIndex)
+                {
+                    Add(null);
+                }
+
+                Add(value);
+            }
+        }
+
         /// <summary>
         /// Implements the JavaScript Array constructor semantics:
         ///  - new Array() => []
