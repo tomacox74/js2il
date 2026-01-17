@@ -38,11 +38,11 @@
 	{
 		// Method begins at RVA 0x205c
 		// Header size: 12
-		// Code size: 45 (0x2d)
+		// Code size: 46 (0x2e)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Array_EmptyLength_IsZero,
-			[1] object
+			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array
 		)
 
 		IL_0000: newobj instance void Scopes.Array_EmptyLength_IsZero::.ctor()
@@ -56,12 +56,13 @@
 		IL_0018: dup
 		IL_0019: ldc.i4.0
 		IL_001a: ldloc.1
-		IL_001b: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_0020: box [System.Runtime]System.Double
-		IL_0025: stelem.ref
-		IL_0026: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_002b: pop
-		IL_002c: ret
+		IL_001b: callvirt instance int32 class [System.Collections]System.Collections.Generic.List`1<object>::get_Count()
+		IL_0020: conv.r8
+		IL_0021: box [System.Runtime]System.Double
+		IL_0026: stelem.ref
+		IL_0027: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_002c: pop
+		IL_002d: ret
 	} // end of method Array_EmptyLength_IsZero::Main
 
 } // end of class Scripts.Array_EmptyLength_IsZero
@@ -73,7 +74,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2095
+		// Method begins at RVA 0x2096
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

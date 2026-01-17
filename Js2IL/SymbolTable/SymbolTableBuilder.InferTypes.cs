@@ -695,6 +695,43 @@ public partial class SymbolTableBuilder
             case NullLiteral:
                 // Treat JavaScript `null` as a distinct known value.
                 return typeof(JavaScriptRuntime.JsNull);
+            case ArrayExpression:
+                // Array literals always compile to the runtime Array implementation.
+                return typeof(JavaScriptRuntime.Array);
+            case NewExpression ne:
+            {
+                // new Array(...)
+                if (ne.Callee is Identifier ctorId && string.Equals(ctorId.Name, "Array", StringComparison.Ordinal))
+                {
+                    return typeof(JavaScriptRuntime.Array);
+                }
+
+                return null;
+            }
+            case CallExpression ce:
+            {
+                // Array.of(...) / Array.from(...)
+                if (ce.Callee is MemberExpression me && me.Object is Identifier objId && string.Equals(objId.Name, "Array", StringComparison.Ordinal))
+                {
+                    if (me.Property is Identifier propId)
+                    {
+                        if (string.Equals(propId.Name, "of", StringComparison.Ordinal))
+                        {
+                            return typeof(JavaScriptRuntime.Array);
+                        }
+                        if (string.Equals(propId.Name, "from", StringComparison.Ordinal))
+                        {
+                            return typeof(JavaScriptRuntime.Array);
+                        }
+                        if (string.Equals(propId.Name, "isArray", StringComparison.Ordinal))
+                        {
+                            return typeof(bool);
+                        }
+                    }
+                }
+
+                return null;
+            }
             case NonLogicalBinaryExpression binExpr:
             {
 

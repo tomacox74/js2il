@@ -1189,7 +1189,7 @@
 			object parentSection
 		) cil managed 
 	{
-		// Method begins at RVA 0x2cc0
+		// Method begins at RVA 0x2cb8
 		// Header size: 12
 		// Code size: 458 (0x1ca)
 		.maxstack 32
@@ -1404,7 +1404,7 @@
 	{
 		// Method begins at RVA 0x27f4
 		// Header size: 12
-		// Code size: 1214 (0x4be)
+		// Code size: 1206 (0x4b6)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.Compile_Scripts_GenerateFeatureCoverage/processSections,
@@ -1488,7 +1488,7 @@
 			IL_006c: ldloc.s 5
 			IL_006e: ldloc.s 4
 			IL_0070: clt
-			IL_0072: brfalse IL_04bc
+			IL_0072: brfalse IL_04b4
 
 			IL_0077: ldloc.3
 			IL_0078: ldloc.s 5
@@ -1517,7 +1517,7 @@
 			IL_00bb: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
 			IL_00c0: stloc.s 18
 			IL_00c2: ldloc.s 18
-			IL_00c4: brfalse IL_03d7
+			IL_00c4: brfalse IL_03cf
 
 			IL_00c9: ldloc.s 6
 			IL_00cb: ldstr "subsections"
@@ -1533,7 +1533,7 @@
 				IL_00f0: ldloc.s 10
 				IL_00f2: ldloc.s 9
 				IL_00f4: clt
-				IL_00f6: brfalse IL_03d7
+				IL_00f6: brfalse IL_03cf
 
 				IL_00fb: ldloc.s 8
 				IL_00fd: ldloc.s 10
@@ -1593,291 +1593,285 @@
 				IL_0192: stloc.s 24
 				IL_0194: ldloc.s 24
 				IL_0196: stloc.s 20
-				IL_0198: br IL_01a1
+				IL_0198: br IL_019d
 
 				IL_019d: ldloc.s 20
-				IL_019f: stloc.s 20
+				IL_019f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_01a4: stloc.s 18
+				IL_01a6: ldloc.s 18
+				IL_01a8: brfalse IL_0228
 
-				IL_01a1: ldloc.s 20
-				IL_01a3: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_01a8: stloc.s 18
-				IL_01aa: ldloc.s 18
-				IL_01ac: brfalse IL_022c
+				IL_01ad: ldloc.s 11
+				IL_01af: ldstr "subsection"
+				IL_01b4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+				IL_01b9: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+				IL_01be: stloc.s 21
+				IL_01c0: ldstr "Subsection "
+				IL_01c5: ldloc.s 21
+				IL_01c7: call string [System.Runtime]System.String::Concat(string, string)
+				IL_01cc: stloc.s 21
+				IL_01ce: ldloc.s 21
+				IL_01d0: ldstr " does not belong under section "
+				IL_01d5: call string [System.Runtime]System.String::Concat(string, string)
+				IL_01da: stloc.s 21
+				IL_01dc: ldloc.s 7
+				IL_01de: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+				IL_01e3: stloc.s 25
+				IL_01e5: ldloc.s 21
+				IL_01e7: ldloc.s 25
+				IL_01e9: call string [System.Runtime]System.String::Concat(string, string)
+				IL_01ee: stloc.s 25
+				IL_01f0: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_01f5: ldc.i4.1
+				IL_01f6: newarr [System.Runtime]System.Object
+				IL_01fb: dup
+				IL_01fc: ldc.i4.0
+				IL_01fd: ldloc.s 25
+				IL_01ff: stelem.ref
+				IL_0200: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::'error'(object[])
+				IL_0205: pop
+				IL_0206: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+				IL_020b: stloc.s 26
+				IL_020d: ldloc.s 26
+				IL_020f: ldstr "exitCode"
+				IL_0214: ldc.r8 1
+				IL_021d: box [System.Runtime]System.Double
+				IL_0222: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+				IL_0227: pop
 
-				IL_01b1: ldloc.s 11
-				IL_01b3: ldstr "subsection"
-				IL_01b8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-				IL_01bd: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-				IL_01c2: stloc.s 21
-				IL_01c4: ldstr "Subsection "
-				IL_01c9: ldloc.s 21
-				IL_01cb: call string [System.Runtime]System.String::Concat(string, string)
-				IL_01d0: stloc.s 21
-				IL_01d2: ldloc.s 21
-				IL_01d4: ldstr " does not belong under section "
-				IL_01d9: call string [System.Runtime]System.String::Concat(string, string)
-				IL_01de: stloc.s 21
-				IL_01e0: ldloc.s 7
-				IL_01e2: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-				IL_01e7: stloc.s 25
-				IL_01e9: ldloc.s 21
-				IL_01eb: ldloc.s 25
-				IL_01ed: call string [System.Runtime]System.String::Concat(string, string)
-				IL_01f2: stloc.s 25
-				IL_01f4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_01f9: ldc.i4.1
-				IL_01fa: newarr [System.Runtime]System.Object
-				IL_01ff: dup
-				IL_0200: ldc.i4.0
-				IL_0201: ldloc.s 25
-				IL_0203: stelem.ref
-				IL_0204: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::'error'(object[])
-				IL_0209: pop
-				IL_020a: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-				IL_020f: stloc.s 26
-				IL_0211: ldloc.s 26
-				IL_0213: ldstr "exitCode"
-				IL_0218: ldc.r8 1
-				IL_0221: box [System.Runtime]System.Double
-				IL_0226: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-				IL_022b: pop
+				IL_0228: ldloc.s 11
+				IL_022a: ldstr "paragraphs"
+				IL_022f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+				IL_0234: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+				IL_0239: stloc.s 18
+				IL_023b: ldloc.s 18
+				IL_023d: brfalse IL_03b8
 
-				IL_022c: ldloc.s 11
-				IL_022e: ldstr "paragraphs"
-				IL_0233: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-				IL_0238: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-				IL_023d: stloc.s 18
-				IL_023f: ldloc.s 18
-				IL_0241: brfalse IL_03c0
+				IL_0242: ldloc.s 11
+				IL_0244: ldstr "paragraphs"
+				IL_0249: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+				IL_024e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::NormalizeForOfIterable(object)
+				IL_0253: stloc.s 12
+				IL_0255: ldloc.s 12
+				IL_0257: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+				IL_025c: stloc.s 13
+				IL_025e: ldc.r8 0.0
+				IL_0267: stloc.s 14
+				// loop start (head: IL_0269)
+					IL_0269: ldloc.s 14
+					IL_026b: ldloc.s 13
+					IL_026d: clt
+					IL_026f: brfalse IL_03b8
 
-				IL_0246: ldloc.s 11
-				IL_0248: ldstr "paragraphs"
-				IL_024d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-				IL_0252: call object [JavaScriptRuntime]JavaScriptRuntime.Object::NormalizeForOfIterable(object)
-				IL_0257: stloc.s 12
-				IL_0259: ldloc.s 12
-				IL_025b: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-				IL_0260: stloc.s 13
-				IL_0262: ldc.r8 0.0
-				IL_026b: stloc.s 14
-				// loop start (head: IL_026d)
-					IL_026d: ldloc.s 14
-					IL_026f: ldloc.s 13
-					IL_0271: clt
-					IL_0273: brfalse IL_03c0
+					IL_0274: ldloc.s 12
+					IL_0276: ldloc.s 14
+					IL_0278: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+					IL_027d: stloc.s 15
+					IL_027f: ldloc.s 15
+					IL_0281: ldstr "paragraph"
+					IL_0286: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+					IL_028b: stloc.s 17
+					IL_028d: ldloc.s 17
+					IL_028f: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+					IL_0294: stloc.s 18
+					IL_0296: ldloc.s 18
+					IL_0298: brfalse IL_02a6
 
-					IL_0278: ldloc.s 12
-					IL_027a: ldloc.s 14
-					IL_027c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-					IL_0281: stloc.s 15
-					IL_0283: ldloc.s 15
-					IL_0285: ldstr "paragraph"
-					IL_028a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-					IL_028f: stloc.s 17
-					IL_0291: ldloc.s 17
-					IL_0293: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-					IL_0298: stloc.s 18
-					IL_029a: ldloc.s 18
-					IL_029c: brfalse IL_02aa
+					IL_029d: ldloc.s 7
+					IL_029f: stloc.s 27
+					IL_02a1: br IL_02aa
 
-					IL_02a1: ldloc.s 7
-					IL_02a3: stloc.s 27
-					IL_02a5: br IL_02ae
+					IL_02a6: ldloc.s 17
+					IL_02a8: stloc.s 27
 
-					IL_02aa: ldloc.s 17
-					IL_02ac: stloc.s 27
+					IL_02aa: ldloc.s 27
+					IL_02ac: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+					IL_02b1: stloc.s 18
+					IL_02b3: ldloc.s 18
+					IL_02b5: brfalse IL_0316
 
-					IL_02ae: ldloc.s 27
-					IL_02b0: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-					IL_02b5: stloc.s 18
-					IL_02b7: ldloc.s 18
-					IL_02b9: brfalse IL_031a
+					IL_02ba: ldloc.s 15
+					IL_02bc: ldstr "paragraph"
+					IL_02c1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+					IL_02c6: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+					IL_02cb: stloc.s 25
+					IL_02cd: ldloc.s 7
+					IL_02cf: ldstr "."
+					IL_02d4: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+					IL_02d9: stloc.s 28
+					IL_02db: ldc.i4.1
+					IL_02dc: newarr [System.Runtime]System.Object
+					IL_02e1: dup
+					IL_02e2: ldc.i4.0
+					IL_02e3: ldloc.s 28
+					IL_02e5: stelem.ref
+					IL_02e6: stloc.s 23
+					IL_02e8: ldloc.s 25
+					IL_02ea: ldstr "startsWith"
+					IL_02ef: ldloc.s 23
+					IL_02f1: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
+					IL_02f6: stloc.s 17
+					IL_02f8: ldloc.s 17
+					IL_02fa: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
+					IL_02ff: ldc.i4.0
+					IL_0300: ceq
+					IL_0302: stloc.s 18
+					IL_0304: ldloc.s 18
+					IL_0306: box [System.Runtime]System.Boolean
+					IL_030b: stloc.s 24
+					IL_030d: ldloc.s 24
+					IL_030f: stloc.s 27
+					IL_0311: br IL_0316
 
-					IL_02be: ldloc.s 15
-					IL_02c0: ldstr "paragraph"
-					IL_02c5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-					IL_02ca: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-					IL_02cf: stloc.s 25
-					IL_02d1: ldloc.s 7
-					IL_02d3: ldstr "."
-					IL_02d8: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-					IL_02dd: stloc.s 28
-					IL_02df: ldc.i4.1
-					IL_02e0: newarr [System.Runtime]System.Object
-					IL_02e5: dup
-					IL_02e6: ldc.i4.0
-					IL_02e7: ldloc.s 28
-					IL_02e9: stelem.ref
-					IL_02ea: stloc.s 23
-					IL_02ec: ldloc.s 25
-					IL_02ee: ldstr "startsWith"
-					IL_02f3: ldloc.s 23
-					IL_02f5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
-					IL_02fa: stloc.s 17
-					IL_02fc: ldloc.s 17
-					IL_02fe: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
-					IL_0303: ldc.i4.0
-					IL_0304: ceq
-					IL_0306: stloc.s 18
-					IL_0308: ldloc.s 18
-					IL_030a: box [System.Runtime]System.Boolean
-					IL_030f: stloc.s 24
-					IL_0311: ldloc.s 24
-					IL_0313: stloc.s 27
-					IL_0315: br IL_031e
+					IL_0316: ldloc.s 27
+					IL_0318: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+					IL_031d: stloc.s 18
+					IL_031f: ldloc.s 18
+					IL_0321: brfalse IL_03a1
 
-					IL_031a: ldloc.s 27
-					IL_031c: stloc.s 27
+					IL_0326: ldloc.s 15
+					IL_0328: ldstr "paragraph"
+					IL_032d: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+					IL_0332: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+					IL_0337: stloc.s 25
+					IL_0339: ldstr "Paragraph "
+					IL_033e: ldloc.s 25
+					IL_0340: call string [System.Runtime]System.String::Concat(string, string)
+					IL_0345: stloc.s 25
+					IL_0347: ldloc.s 25
+					IL_0349: ldstr " does not belong under section "
+					IL_034e: call string [System.Runtime]System.String::Concat(string, string)
+					IL_0353: stloc.s 25
+					IL_0355: ldloc.s 7
+					IL_0357: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+					IL_035c: stloc.s 21
+					IL_035e: ldloc.s 25
+					IL_0360: ldloc.s 21
+					IL_0362: call string [System.Runtime]System.String::Concat(string, string)
+					IL_0367: stloc.s 21
+					IL_0369: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+					IL_036e: ldc.i4.1
+					IL_036f: newarr [System.Runtime]System.Object
+					IL_0374: dup
+					IL_0375: ldc.i4.0
+					IL_0376: ldloc.s 21
+					IL_0378: stelem.ref
+					IL_0379: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::'error'(object[])
+					IL_037e: pop
+					IL_037f: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
+					IL_0384: stloc.s 26
+					IL_0386: ldloc.s 26
+					IL_0388: ldstr "exitCode"
+					IL_038d: ldc.r8 1
+					IL_0396: box [System.Runtime]System.Double
+					IL_039b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+					IL_03a0: pop
 
-					IL_031e: ldloc.s 27
-					IL_0320: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-					IL_0325: stloc.s 18
-					IL_0327: ldloc.s 18
-					IL_0329: brfalse IL_03a9
-
-					IL_032e: ldloc.s 15
-					IL_0330: ldstr "paragraph"
-					IL_0335: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-					IL_033a: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-					IL_033f: stloc.s 25
-					IL_0341: ldstr "Paragraph "
-					IL_0346: ldloc.s 25
-					IL_0348: call string [System.Runtime]System.String::Concat(string, string)
-					IL_034d: stloc.s 25
-					IL_034f: ldloc.s 25
-					IL_0351: ldstr " does not belong under section "
-					IL_0356: call string [System.Runtime]System.String::Concat(string, string)
-					IL_035b: stloc.s 25
-					IL_035d: ldloc.s 7
-					IL_035f: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-					IL_0364: stloc.s 21
-					IL_0366: ldloc.s 25
-					IL_0368: ldloc.s 21
-					IL_036a: call string [System.Runtime]System.String::Concat(string, string)
-					IL_036f: stloc.s 21
-					IL_0371: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-					IL_0376: ldc.i4.1
-					IL_0377: newarr [System.Runtime]System.Object
-					IL_037c: dup
-					IL_037d: ldc.i4.0
-					IL_037e: ldloc.s 21
-					IL_0380: stelem.ref
-					IL_0381: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::'error'(object[])
-					IL_0386: pop
-					IL_0387: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
-					IL_038c: stloc.s 26
-					IL_038e: ldloc.s 26
-					IL_0390: ldstr "exitCode"
-					IL_0395: ldc.r8 1
-					IL_039e: box [System.Runtime]System.Double
-					IL_03a3: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
-					IL_03a8: pop
-
-					IL_03a9: ldloc.s 14
-					IL_03ab: ldc.r8 1
-					IL_03b4: add
-					IL_03b5: stloc.s 29
-					IL_03b7: ldloc.s 29
-					IL_03b9: stloc.s 14
-					IL_03bb: br IL_026d
+					IL_03a1: ldloc.s 14
+					IL_03a3: ldc.r8 1
+					IL_03ac: add
+					IL_03ad: stloc.s 29
+					IL_03af: ldloc.s 29
+					IL_03b1: stloc.s 14
+					IL_03b3: br IL_0269
 				// end loop
 
-				IL_03c0: ldloc.s 10
-				IL_03c2: ldc.r8 1
-				IL_03cb: add
-				IL_03cc: stloc.s 29
-				IL_03ce: ldloc.s 29
-				IL_03d0: stloc.s 10
-				IL_03d2: br IL_00f0
+				IL_03b8: ldloc.s 10
+				IL_03ba: ldc.r8 1
+				IL_03c3: add
+				IL_03c4: stloc.s 29
+				IL_03c6: ldloc.s 29
+				IL_03c8: stloc.s 10
+				IL_03ca: br IL_00f0
 			// end loop
 
-			IL_03d7: ldloc.s 6
-			IL_03d9: ldstr "title"
-			IL_03de: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_03e3: stloc.s 17
-			IL_03e5: ldloc.s 17
-			IL_03e7: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
-			IL_03ec: stloc.s 18
-			IL_03ee: ldloc.s 18
-			IL_03f0: brtrue IL_0408
+			IL_03cf: ldloc.s 6
+			IL_03d1: ldstr "title"
+			IL_03d6: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_03db: stloc.s 17
+			IL_03dd: ldloc.s 17
+			IL_03df: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::IsTruthy(object)
+			IL_03e4: stloc.s 18
+			IL_03e6: ldloc.s 18
+			IL_03e8: brtrue IL_0400
 
-			IL_03f5: ldloc.s 6
-			IL_03f7: ldstr "section"
-			IL_03fc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0401: stloc.s 30
-			IL_0403: br IL_040c
+			IL_03ed: ldloc.s 6
+			IL_03ef: ldstr "section"
+			IL_03f4: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_03f9: stloc.s 30
+			IL_03fb: br IL_0404
 
-			IL_0408: ldloc.s 17
-			IL_040a: stloc.s 30
+			IL_0400: ldloc.s 17
+			IL_0402: stloc.s 30
 
-			IL_040c: ldloc.s 6
-			IL_040e: ldstr "url"
-			IL_0413: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0418: stloc.s 17
-			IL_041a: ldnull
-			IL_041b: ldftn object Functions.Compile_Scripts_GenerateFeatureCoverage::link(object[], object, object)
-			IL_0421: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-			IL_0426: ldc.i4.1
-			IL_0427: newarr [System.Runtime]System.Object
-			IL_042c: dup
-			IL_042d: ldc.i4.0
-			IL_042e: ldarg.0
-			IL_042f: ldc.i4.0
-			IL_0430: ldelem.ref
-			IL_0431: stelem.ref
-			IL_0432: ldloc.s 30
-			IL_0434: ldloc.s 17
-			IL_0436: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
-			IL_043b: stloc.s 17
-			IL_043d: ldloc.s 17
-			IL_043f: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
-			IL_0444: stloc.s 21
-			IL_0446: ldstr "\n## "
-			IL_044b: ldloc.s 21
-			IL_044d: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0452: stloc.s 21
-			IL_0454: ldloc.s 21
-			IL_0456: ldstr "\n"
-			IL_045b: call string [System.Runtime]System.String::Concat(string, string)
-			IL_0460: stloc.s 21
-			IL_0462: ldloc.2
-			IL_0463: ldloc.s 21
-			IL_0465: call string [System.Runtime]System.String::Concat(string, string)
-			IL_046a: stloc.2
-			IL_046b: ldloc.s 6
-			IL_046d: ldstr "subsections"
-			IL_0472: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
-			IL_0477: stloc.s 17
-			IL_0479: ldnull
-			IL_047a: ldftn object Functions.Compile_Scripts_GenerateFeatureCoverage::processSubsections(object[], object, object)
-			IL_0480: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
-			IL_0485: ldc.i4.1
-			IL_0486: newarr [System.Runtime]System.Object
-			IL_048b: dup
-			IL_048c: ldc.i4.0
-			IL_048d: ldarg.0
-			IL_048e: ldc.i4.0
-			IL_048f: ldelem.ref
-			IL_0490: stelem.ref
-			IL_0491: ldloc.s 17
-			IL_0493: ldloc.s 7
-			IL_0495: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
-			IL_049a: stloc.s 17
-			IL_049c: ldloc.2
-			IL_049d: ldloc.s 17
-			IL_049f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_04a4: stloc.2
-			IL_04a5: ldloc.s 5
-			IL_04a7: ldc.r8 1
-			IL_04b0: add
-			IL_04b1: stloc.s 29
-			IL_04b3: ldloc.s 29
-			IL_04b5: stloc.s 5
-			IL_04b7: br IL_006c
+			IL_0404: ldloc.s 6
+			IL_0406: ldstr "url"
+			IL_040b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_0410: stloc.s 17
+			IL_0412: ldnull
+			IL_0413: ldftn object Functions.Compile_Scripts_GenerateFeatureCoverage::link(object[], object, object)
+			IL_0419: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+			IL_041e: ldc.i4.1
+			IL_041f: newarr [System.Runtime]System.Object
+			IL_0424: dup
+			IL_0425: ldc.i4.0
+			IL_0426: ldarg.0
+			IL_0427: ldc.i4.0
+			IL_0428: ldelem.ref
+			IL_0429: stelem.ref
+			IL_042a: ldloc.s 30
+			IL_042c: ldloc.s 17
+			IL_042e: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
+			IL_0433: stloc.s 17
+			IL_0435: ldloc.s 17
+			IL_0437: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
+			IL_043c: stloc.s 21
+			IL_043e: ldstr "\n## "
+			IL_0443: ldloc.s 21
+			IL_0445: call string [System.Runtime]System.String::Concat(string, string)
+			IL_044a: stloc.s 21
+			IL_044c: ldloc.s 21
+			IL_044e: ldstr "\n"
+			IL_0453: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0458: stloc.s 21
+			IL_045a: ldloc.2
+			IL_045b: ldloc.s 21
+			IL_045d: call string [System.Runtime]System.String::Concat(string, string)
+			IL_0462: stloc.2
+			IL_0463: ldloc.s 6
+			IL_0465: ldstr "subsections"
+			IL_046a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+			IL_046f: stloc.s 17
+			IL_0471: ldnull
+			IL_0472: ldftn object Functions.Compile_Scripts_GenerateFeatureCoverage::processSubsections(object[], object, object)
+			IL_0478: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
+			IL_047d: ldc.i4.1
+			IL_047e: newarr [System.Runtime]System.Object
+			IL_0483: dup
+			IL_0484: ldc.i4.0
+			IL_0485: ldarg.0
+			IL_0486: ldc.i4.0
+			IL_0487: ldelem.ref
+			IL_0488: stelem.ref
+			IL_0489: ldloc.s 17
+			IL_048b: ldloc.s 7
+			IL_048d: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
+			IL_0492: stloc.s 17
+			IL_0494: ldloc.2
+			IL_0495: ldloc.s 17
+			IL_0497: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_049c: stloc.2
+			IL_049d: ldloc.s 5
+			IL_049f: ldc.r8 1
+			IL_04a8: add
+			IL_04a9: stloc.s 29
+			IL_04ab: ldloc.s 29
+			IL_04ad: stloc.s 5
+			IL_04af: br IL_006c
 		// end loop
 
-		IL_04bc: ldloc.2
-		IL_04bd: ret
+		IL_04b4: ldloc.2
+		IL_04b5: ret
 	} // end of method Compile_Scripts_GenerateFeatureCoverage::processSections
 
 	.method public hidebysig static 
@@ -2042,7 +2036,7 @@
 			object s
 		) cil managed 
 	{
-		// Method begins at RVA 0x2e98
+		// Method begins at RVA 0x2e90
 		// Header size: 12
 		// Code size: 64 (0x40)
 		.maxstack 32
@@ -2093,7 +2087,7 @@
 			object b
 		) cil managed 
 	{
-		// Method begins at RVA 0x2ee4
+		// Method begins at RVA 0x2edc
 		// Header size: 12
 		// Code size: 154 (0x9a)
 		.maxstack 32
@@ -2190,7 +2184,7 @@
 			object b
 		) cil managed 
 	{
-		// Method begins at RVA 0x2f8c
+		// Method begins at RVA 0x2f84
 		// Header size: 12
 		// Code size: 154 (0x9a)
 		.maxstack 32
@@ -2287,7 +2281,7 @@
 			object b
 		) cil managed 
 	{
-		// Method begins at RVA 0x3034
+		// Method begins at RVA 0x302c
 		// Header size: 12
 		// Code size: 154 (0x9a)
 		.maxstack 32
@@ -2386,7 +2380,7 @@
 			string __dirname
 		) cil managed 
 	{
-		// Method begins at RVA 0x30dc
+		// Method begins at RVA 0x30d4
 		// Header size: 12
 		// Code size: 184 (0xb8)
 		.maxstack 32
@@ -2493,7 +2487,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x31a0
+		// Method begins at RVA 0x3198
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

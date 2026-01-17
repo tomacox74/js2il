@@ -471,6 +471,12 @@ internal static class TempLocalAllocator
             case LIRGetLength getLength:
                 yield return getLength.Object;
                 break;
+            case LIRGetJsArrayLength getJsArrayLength:
+                yield return getJsArrayLength.Receiver;
+                break;
+            case LIRGetInt32ArrayLength getInt32ArrayLength:
+                yield return getInt32ArrayLength.Receiver;
+                break;
             case LIRGetItem getItem:
                 yield return getItem.Object;
                 yield return getItem.Index;
@@ -479,6 +485,15 @@ internal static class TempLocalAllocator
                 yield return setItem.Object;
                 yield return setItem.Index;
                 yield return setItem.Value;
+                break;
+            case LIRGetJsArrayElement getJsArray:
+                yield return getJsArray.Receiver;
+                yield return getJsArray.Index;
+                break;
+            case LIRSetJsArrayElement setJsArray:
+                yield return setJsArray.Receiver;
+                yield return setJsArray.Index;
+                yield return setJsArray.Value;
                 break;
             case LIRGetInt32ArrayElement getInt32Array:
                 yield return getInt32Array.Receiver;
@@ -784,8 +799,17 @@ internal static class TempLocalAllocator
             case LIRGetLength getLength:
                 defined = getLength.Result;
                 return true;
+            case LIRGetJsArrayLength getJsArrayLength:
+                defined = getJsArrayLength.Result;
+                return true;
+            case LIRGetInt32ArrayLength getInt32ArrayLength:
+                defined = getInt32ArrayLength.Result;
+                return true;
             case LIRGetItem getItem:
                 defined = getItem.Result;
+                return true;
+            case LIRGetJsArrayElement getJsArray:
+                defined = getJsArray.Result;
                 return true;
             case LIRGetInt32ArrayElement getInt32Array:
                 defined = getInt32Array.Result;

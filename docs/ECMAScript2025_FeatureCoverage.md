@@ -766,14 +766,14 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Array.length property (read) | Supported | `Js2IL.Tests/Array/JavaScript/Array_LengthProperty_ReturnsCount.js`<br>`Js2IL.Tests/Array/JavaScript/Array_EmptyLength_IsZero.js` | length getter returns number of elements; emitted via JavaScriptRuntime.Object.GetLength(object). Used by for-of implementation. | 23.1.2.1 |
+| Array.length property (read) | Supported | `Js2IL.Tests/Array/JavaScript/Array_LengthProperty_ReturnsCount.js`<br>`Js2IL.Tests/Array/JavaScript/Array_EmptyLength_IsZero.js` | length getter returns number of elements. Lowered via JavaScriptRuntime.Object.GetLength(object) and specialized to direct Array/Int32Array length intrinsics when the receiver type is proven. Used by for-of implementation. | 23.1.2.1 |
 
 
 #### [Array.prototype.find](https://tc39.es/ecma262/#sec-array.prototype.find)
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Array.prototype.find | Partially Supported | `Js2IL.Tests/Array/JavaScript/Array_Find_Basic.js` | Implements callback invocation with (value, index, array) depending on the compiled delegate signature and returns the first matching element. thisArg is currently ignored; returns undefined when no element matches. | 23.1.3.8 |
+| Array.prototype.find | Supported | `Js2IL.Tests/Array/JavaScript/Array_Find_Basic.js` | Invokes the callback with (value, index, array) depending on the compiled delegate signature and returns the first matching element; returns undefined when no element matches. thisArg is currently ignored. | 23.1.3.8 |
 
 
 #### [Array.prototype.join](https://tc39.es/ecma262/#sec-array.prototype.join)
@@ -801,14 +801,14 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Array.prototype.map | Partially Supported | `Js2IL.Tests/Array/JavaScript/Array_Map_Basic.js` | Supports value-callback mapping including nested callback closures. thisArg and standard callback parameter injections (index, array) are not yet supported; callback currently receives only the element value. Returns a new array. | 23.1.3.25 |
+| Array.prototype.map | Supported | `Js2IL.Tests/Array/JavaScript/Array_Map_Basic.js`<br>`Js2IL.Tests/Array/JavaScript/Array_Map_NestedParam.js` | Supports callback mapping including nested callback closures. Callback receives (value, index, array) depending on the compiled delegate signature. thisArg is currently ignored. Returns a new array. | 23.1.3.25 |
 
 
 #### [Array.prototype.sort](https://tc39.es/ecma262/#sec-array.prototype.sort)
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Array.prototype.sort (default comparator) | Partially Supported | `Js2IL.Tests/Array/JavaScript/Array_Sort_Basic.js` | Default lexicographic sort implemented in JavaScriptRuntime.Array.sort(); comparator function parameter is not yet supported. Returns the array instance. | 23.1.3.27 |
+| Array.prototype.sort (default comparator and comparator function) | Supported | `Js2IL.Tests/Array/JavaScript/Array_Sort_Basic.js`<br>`Js2IL.Tests/Array/JavaScript/Array_Sort_WithComparatorArrow.js` | Default lexicographic sort implemented in JavaScriptRuntime.Array.sort(). Also supports an optional comparator callback (common delegate shapes produced by the compiler). Returns the array instance. | 23.1.3.27 |
 
 
 #### [Array.prototype.slice](https://tc39.es/ecma262/#sec-array.prototype.slice)

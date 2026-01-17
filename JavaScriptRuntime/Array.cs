@@ -21,6 +21,66 @@ namespace JavaScriptRuntime
         {
         }
 
+        // Numeric indexer overload to support compiler intrinsics.
+        // Semantics intentionally match JavaScriptRuntime.Object.GetItem/SetItem for Array + numeric index:
+        // - Out-of-bounds reads return undefined (null)
+        // - Writes extend the array with undefined (null)
+        // - Negative indices behave like properties (currently ignored for host safety)
+        public object? this[double index]
+        {
+            get
+            {
+                int intIndex = (int)index;
+                if (intIndex < 0 || intIndex >= Count)
+                {
+                    return null; // undefined
+                }
+
+                return base[intIndex];
+            }
+            set
+            {
+                int intIndex;
+                if (double.IsNaN(index) || double.IsInfinity(index))
+                {
+                    intIndex = 0;
+                }
+                else
+                {
+                    try { intIndex = (int)index; }
+                    catch { intIndex = 0; }
+                }
+
+                if (intIndex < 0)
+                {
+                    JavaScriptRuntime.Object.SetProperty(
+                        this,
+                        intIndex.ToString(CultureInfo.InvariantCulture),
+                        value);
+                    return;
+                }
+
+                if (intIndex < Count)
+                {
+                    base[intIndex] = value;
+                    return;
+                }
+
+                if (intIndex == Count)
+                {
+                    Add(value);
+                    return;
+                }
+
+                while (Count < intIndex)
+                {
+                    Add(null);
+                }
+
+                Add(value);
+            }
+        }
+
         /// <summary>
         /// Implements the JavaScript Array constructor semantics:
         ///  - new Array() => []
@@ -118,6 +178,14 @@ namespace JavaScriptRuntime
         public static object isArray(object? value)
         {
             return value is Array;
+        }
+
+        /// <summary>
+        /// JavaScript Array.of(...items)
+        /// </summary>
+        public static object of(object[]? args)
+        {
+            return args == null ? new Array() : new Array(args);
         }
 
         /// <summary>
@@ -266,6 +334,152 @@ namespace JavaScriptRuntime
             return result;
         }
 
+        private static object? InvokeCallback(object? cb, object? a0 = null, object? a1 = null, object? a2 = null, object? a3 = null)
+        {
+            // Most array callbacks use up to 4 JS args (value, index, array) or (acc, value, index, array).
+            // Our delegate shapes include an extra leading "scopes" parameter.
+            var scopes = System.Array.Empty<object?>();
+
+            if (cb is Func<object?[], object?, object?, object?, object?, object?> f4)
+            {
+                return f4(scopes, a0, a1, a2, a3);
+            }
+            if (cb is Func<object?[], object?, object?, object?, object?> f3)
+            {
+                return f3(scopes, a0, a1, a2);
+            }
+            if (cb is Func<object?[], object?, object?, object?> f2)
+            {
+                return f2(scopes, a0, a1);
+            }
+            if (cb is Func<object?[], object?, object?> f1)
+            {
+                return f1(scopes, a0);
+            }
+            if (cb is Func<object?[], object?> f0)
+            {
+                return f0(scopes);
+            }
+
+            throw new InvalidOperationException("array callback is not a supported function type");
+        }
+
+        /// <summary>
+        /// JavaScript Array.forEach(callback[, thisArg])
+        /// </summary>
+        public object? forEach(object[] args)
+        {
+            var cb = (args != null && args.Length > 0) ? args[0] : null;
+            for (int i = 0; i < this.Count; i++)
+            {
+                _ = InvokeCallback(cb, this[i], (double)i, this);
+            }
+            return null; // undefined
+        }
+
+        /// <summary>
+        /// JavaScript Array.filter(callback[, thisArg])
+        /// </summary>
+        public object filter(object[] args)
+        {
+            var cb = (args != null && args.Length > 0) ? args[0] : null;
+            var result = new Array();
+            for (int i = 0; i < this.Count; i++)
+            {
+                var keep = InvokeCallback(cb, this[i], (double)i, this);
+                if (Operators.IsTruthy(keep))
+                {
+                    result.Add(this[i]);
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// JavaScript Array.every(callback[, thisArg])
+        /// </summary>
+        public object every(object[] args)
+        {
+            var cb = (args != null && args.Length > 0) ? args[0] : null;
+            for (int i = 0; i < this.Count; i++)
+            {
+                var ok = InvokeCallback(cb, this[i], (double)i, this);
+                if (!Operators.IsTruthy(ok))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// JavaScript Array.reduce(callback[, initialValue])
+        /// </summary>
+        public object? reduce(object[] args)
+        {
+            var cb = (args != null && args.Length > 0) ? args[0] : null;
+            bool hasInitial = args != null && args.Length > 1;
+
+            if (this.Count == 0 && !hasInitial)
+            {
+                throw new TypeError("Reduce of empty array with no initial value");
+            }
+
+            object? acc;
+            int startIndex;
+            if (hasInitial)
+            {
+                acc = args![1];
+                startIndex = 0;
+            }
+            else
+            {
+                acc = this[0];
+                startIndex = 1;
+            }
+
+            for (int i = startIndex; i < this.Count; i++)
+            {
+                acc = InvokeCallback(cb, acc, this[i], (double)i, this);
+            }
+
+            return acc;
+        }
+
+        /// <summary>
+        /// JavaScript Array.reduceRight(callback[, initialValue])
+        /// </summary>
+        public object? reduceRight(object[] args)
+        {
+            var cb = (args != null && args.Length > 0) ? args[0] : null;
+            bool hasInitial = args != null && args.Length > 1;
+
+            if (this.Count == 0 && !hasInitial)
+            {
+                throw new TypeError("Reduce of empty array with no initial value");
+            }
+
+            object? acc;
+            int startIndex;
+            if (hasInitial)
+            {
+                acc = args![1];
+                startIndex = this.Count - 1;
+            }
+            else
+            {
+                acc = this[this.Count - 1];
+                startIndex = this.Count - 2;
+            }
+
+            for (int i = startIndex; i >= 0; i--)
+            {
+                acc = InvokeCallback(cb, acc, this[i], (double)i, this);
+            }
+
+            return acc;
+        }
+
         /// <summary>
         /// JavaScript Array.some(callback[, thisArg])
         /// Minimal implementation: invokes the callback with (value, index, array) and returns true if any call is truthy.
@@ -310,6 +524,60 @@ namespace JavaScriptRuntime
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// JavaScript Array.findIndex(callback[, thisArg])
+        /// Returns the index of the first element matching the predicate, or -1.
+        /// </summary>
+        public object findIndex(object[] args)
+        {
+            var cb = (args != null && args.Length > 0) ? args[0] : null;
+            for (int i = 0; i < this.Count; i++)
+            {
+                var result = InvokeCallback(cb, this[i], (double)i, this);
+                if (Operators.IsTruthy(result))
+                {
+                    return (double)i;
+                }
+            }
+            return -1d;
+        }
+
+        /// <summary>
+        /// JavaScript Array.findLast(callback[, thisArg])
+        /// Returns the last element matching the predicate, or undefined.
+        /// </summary>
+        public object? findLast(object[] args)
+        {
+            var cb = (args != null && args.Length > 0) ? args[0] : null;
+            for (int i = this.Count - 1; i >= 0; i--)
+            {
+                var result = InvokeCallback(cb, this[i], (double)i, this);
+                if (Operators.IsTruthy(result))
+                {
+                    return this[i];
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// JavaScript Array.findLastIndex(callback[, thisArg])
+        /// Returns the last index matching the predicate, or -1.
+        /// </summary>
+        public object findLastIndex(object[] args)
+        {
+            var cb = (args != null && args.Length > 0) ? args[0] : null;
+            for (int i = this.Count - 1; i >= 0; i--)
+            {
+                var result = InvokeCallback(cb, this[i], (double)i, this);
+                if (Operators.IsTruthy(result))
+                {
+                    return (double)i;
+                }
+            }
+            return -1d;
         }
 
         /// <summary>
@@ -360,6 +628,92 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// JavaScript Array.indexOf(searchElement[, fromIndex])
+        /// Uses strict equality semantics.
+        /// </summary>
+        public object indexOf(object[]? args)
+        {
+            int len = this.Count;
+            if (len == 0) return -1d;
+
+            object? searchElement = (args != null && args.Length > 0) ? args[0] : null;
+            int from = 0;
+            if (args != null && args.Length > 1)
+            {
+                from = ToInt(args[1]!, 0);
+            }
+            if (from < 0)
+            {
+                from = len + from;
+                if (from < 0) from = 0;
+            }
+            if (from >= len) return -1d;
+
+            for (int i = from; i < len; i++)
+            {
+                if (Operators.StrictEqual(this[i], searchElement)) return (double)i;
+            }
+            return -1d;
+        }
+
+        public object indexOf()
+        {
+            return -1d;
+        }
+
+        /// <summary>
+        /// JavaScript Array.lastIndexOf(searchElement[, fromIndex])
+        /// Uses strict equality semantics.
+        /// </summary>
+        public object lastIndexOf(object[]? args)
+        {
+            int len = this.Count;
+            if (len == 0) return -1d;
+
+            object? searchElement = (args != null && args.Length > 0) ? args[0] : null;
+            int from = len - 1;
+            if (args != null && args.Length > 1)
+            {
+                // Spec: fromIndex defaults to len-1
+                from = ToInt(args[1]!, len - 1);
+            }
+            if (from < 0)
+            {
+                from = len + from;
+            }
+            if (from >= len) from = len - 1;
+            if (from < 0) return -1d;
+
+            for (int i = from; i >= 0; i--)
+            {
+                if (Operators.StrictEqual(this[i], searchElement)) return (double)i;
+            }
+            return -1d;
+        }
+
+        public object lastIndexOf()
+        {
+            return -1d;
+        }
+
+        /// <summary>
+        /// JavaScript Array.at(index)
+        /// </summary>
+        public object? at(object index)
+        {
+            int len = this.Count;
+            int i = ToInt(index, 0);
+            if (i < 0) i = len + i;
+            if (i < 0 || i >= len) return null;
+            return this[i];
+        }
+
+        public object? at()
+        {
+            return null;
+        }
+
+        /// <summary>
         /// JavaScript Array.join([separator]) implementation.
         /// Joins elements by the given separator (default ',') and returns a string.
         /// Each element is converted using DotNet2JSConversions.ToString to approximate JS semantics.
@@ -387,6 +741,34 @@ namespace JavaScriptRuntime
         public object join()
         {
             return join(System.Array.Empty<object>());
+        }
+
+        /// <summary>
+        /// JavaScript Array.toString()
+        /// Minimal: delegates to join(',').
+        /// </summary>
+        public object toString(object[]? args)
+        {
+            return join(System.Array.Empty<object>());
+        }
+
+        public object toString()
+        {
+            return join(System.Array.Empty<object>());
+        }
+
+        /// <summary>
+        /// JavaScript Array.toLocaleString()
+        /// Minimal: same as toString for now.
+        /// </summary>
+        public object toLocaleString(object[]? args)
+        {
+            return toString();
+        }
+
+        public object toLocaleString()
+        {
+            return toString();
         }
 
         /// <summary>
@@ -839,6 +1221,305 @@ namespace JavaScriptRuntime
             }
             // Fallback: single item
             this.Add(source);
+        }
+
+        /// <summary>
+        /// JavaScript Array.shift(): removes and returns first element; returns undefined when empty.
+        /// </summary>
+        public object? shift(object[]? args)
+        {
+            if (this.Count == 0) return null;
+            var v = this[0];
+            this.RemoveAt(0);
+            return v;
+        }
+
+        public object? shift()
+        {
+            return shift(null);
+        }
+
+        /// <summary>
+        /// JavaScript Array.unshift(...items): prepends items and returns new length.
+        /// </summary>
+        public object unshift(object[]? args)
+        {
+            if (args != null && args.Length > 0)
+            {
+                // Insert preserving order
+                for (int i = args.Length - 1; i >= 0; i--)
+                {
+                    this.Insert(0, args[i]);
+                }
+            }
+            return (double)this.Count;
+        }
+
+        public object unshift()
+        {
+            return (double)this.Count;
+        }
+
+        /// <summary>
+        /// JavaScript Array.reverse(): in-place reverse.
+        /// </summary>
+        public object reverse(object[]? args)
+        {
+            this.Reverse();
+            return this;
+        }
+
+        public object reverse()
+        {
+            return reverse(null);
+        }
+
+        /// <summary>
+        /// JavaScript Array.concat(...items): returns a new array.
+        /// </summary>
+        public object concat(object[]? args)
+        {
+            var result = new Array(this);
+            if (args == null || args.Length == 0) return result;
+
+            for (int i = 0; i < args.Length; i++)
+            {
+                var item = args[i];
+                if (item is Array arr)
+                {
+                    for (int j = 0; j < arr.Count; j++) result.Add(arr[j]);
+                }
+                else
+                {
+                    result.Add(item);
+                }
+            }
+
+            return result;
+        }
+
+        public object concat()
+        {
+            return new Array(this);
+        }
+
+        /// <summary>
+        /// JavaScript Array.fill(value[, start[, end]])
+        /// </summary>
+        public object fill(object[]? args)
+        {
+            var value = (args != null && args.Length > 0) ? args[0] : null;
+            int len = this.Count;
+            int start = 0;
+            int end = len;
+
+            if (args != null && args.Length > 1)
+            {
+                start = CoerceStartIndex(args[1], len, 0);
+            }
+            if (args != null && args.Length > 2)
+            {
+                var endArg = args[2];
+                end = endArg == null ? len : ToInt(endArg, len);
+                if (end < 0)
+                {
+                    end = len + end;
+                    if (end < 0) end = 0;
+                }
+                else if (end > len)
+                {
+                    end = len;
+                }
+            }
+
+            for (int i = start; i < end; i++)
+            {
+                this[i] = value;
+            }
+            return this;
+        }
+
+        public object fill()
+        {
+            return this;
+        }
+
+        /// <summary>
+        /// JavaScript Array.copyWithin(target[, start[, end]])
+        /// </summary>
+        public object copyWithin(object[]? args)
+        {
+            int len = this.Count;
+            if (len == 0) return this;
+
+            int target = 0;
+            int start = 0;
+            int end = len;
+
+            if (args != null && args.Length > 0)
+            {
+                target = ToInt(args[0]!, 0);
+            }
+            if (args != null && args.Length > 1)
+            {
+                start = ToInt(args[1]!, 0);
+            }
+            if (args != null && args.Length > 2 && args[2] != null)
+            {
+                end = ToInt(args[2]!, len);
+            }
+
+            // Normalize indexes
+            if (target < 0) target = len + target;
+            if (start < 0) start = len + start;
+            if (end < 0) end = len + end;
+
+            if (target < 0) target = 0;
+            if (start < 0) start = 0;
+            if (end > len) end = len;
+            if (target >= len) return this;
+
+            int count = end - start;
+            if (count <= 0) return this;
+            if (count > len - target) count = len - target;
+
+            // Copy via temp buffer to handle overlap safely.
+            var temp = new object?[count];
+            for (int i = 0; i < count; i++) temp[i] = this[start + i];
+            for (int i = 0; i < count; i++) this[target + i] = temp[i];
+
+            return this;
+        }
+
+        public object copyWithin()
+        {
+            return this;
+        }
+
+        /// <summary>
+        /// JavaScript Array.flat([depth])
+        /// </summary>
+        public object flat(object[]? args)
+        {
+            int depth = 1;
+            if (args != null && args.Length > 0 && args[0] != null)
+            {
+                depth = ToInt(args[0], 1);
+            }
+            if (depth < 0) depth = 0;
+
+            var result = new Array();
+            FlattenInto(result, this, depth);
+            return result;
+        }
+
+        public object flat()
+        {
+            return flat(null);
+        }
+
+        private static void FlattenInto(Array target, Array source, int depth)
+        {
+            for (int i = 0; i < source.Count; i++)
+            {
+                var v = source[i];
+                if (depth > 0 && v is Array arr)
+                {
+                    FlattenInto(target, arr, depth - 1);
+                }
+                else
+                {
+                    target.Add(v);
+                }
+            }
+        }
+
+        /// <summary>
+        /// JavaScript Array.flatMap(callback[, thisArg])
+        /// Maps then flattens one level.
+        /// </summary>
+        public object flatMap(object[] args)
+        {
+            var cb = (args != null && args.Length > 0) ? args[0] : null;
+            var mapped = new Array();
+
+            for (int i = 0; i < this.Count; i++)
+            {
+                var m = InvokeCallback(cb, this[i], (double)i, this);
+                mapped.Add(m);
+            }
+
+            return mapped.flat(new object[] { 1d });
+        }
+
+        /// <summary>
+        /// JavaScript Array.toReversed(): returns a reversed copy.
+        /// </summary>
+        public object toReversed(object[]? args)
+        {
+            var copy = new Array(this);
+            copy.Reverse();
+            return copy;
+        }
+
+        public object toReversed()
+        {
+            return toReversed(null);
+        }
+
+        /// <summary>
+        /// JavaScript Array.toSorted([compareFn]): returns a sorted copy.
+        /// </summary>
+        public object toSorted(object[]? args)
+        {
+            var copy = new Array(this);
+            if (args != null && args.Length > 0)
+            {
+                copy.sort(args!);
+            }
+            else
+            {
+                copy.sort();
+            }
+            return copy;
+        }
+
+        public object toSorted()
+        {
+            return toSorted(null);
+        }
+
+        /// <summary>
+        /// JavaScript Array.toSpliced(start, deleteCount, ...items): returns a copy with splice applied.
+        /// </summary>
+        public object toSpliced(object[]? args)
+        {
+            var copy = new Array(this);
+            copy.splice(args);
+            return copy;
+        }
+
+        /// <summary>
+        /// JavaScript Array.with(index, value): returns a copy with element at index replaced.
+        /// </summary>
+        public object with(object[] args)
+        {
+            if (args == null || args.Length < 2)
+            {
+                throw new TypeError("Array.with requires index and value");
+            }
+
+            int len = this.Count;
+            int index = ToInt(args[0]!, 0);
+            if (index < 0) index = len + index;
+            if (index < 0 || index >= len)
+            {
+                throw new RangeError("Invalid index");
+            }
+
+            var copy = new Array(this);
+            copy[index] = args[1];
+            return copy;
         }
     }
 }

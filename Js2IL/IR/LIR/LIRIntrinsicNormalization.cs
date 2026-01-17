@@ -87,6 +87,30 @@ internal static class LIRIntrinsicNormalization
         {
             var instruction = methodBody.Instructions[i];
 
+            if (instruction is LIRGetLength getLength)
+            {
+                if (!knownIntrinsicReceiverClrTypes.TryGetValue(getLength.Object.Index, out var receiverType))
+                {
+                    continue;
+                }
+
+                if (receiverType == typeof(JavaScriptRuntime.Array))
+                {
+                    methodBody.Instructions[i] = new LIRGetJsArrayLength(getLength.Object, getLength.Result);
+                    methodBody.TempStorages[getLength.Result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+                    continue;
+                }
+
+                if (receiverType == typeof(JavaScriptRuntime.Int32Array))
+                {
+                    methodBody.Instructions[i] = new LIRGetInt32ArrayLength(getLength.Object, getLength.Result);
+                    methodBody.TempStorages[getLength.Result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+                    continue;
+                }
+
+                continue;
+            }
+
             if (instruction is LIRGetItem getItem)
             {
                 if (!knownIntrinsicReceiverClrTypes.TryGetValue(getItem.Object.Index, out var receiverType))
@@ -103,6 +127,15 @@ internal static class LIRIntrinsicNormalization
 
                     // Ensure result storage is unboxed double.
                     methodBody.TempStorages[getItem.Result.Index] = new ValueStorage(ValueStorageKind.UnboxedValue, typeof(double));
+                    continue;
+                }
+
+                // Array element access (numeric index).
+                if (receiverType == typeof(JavaScriptRuntime.Array)
+                    && IsUnboxedDouble(methodBody, getItem.Index))
+                {
+                    // Rewrite: GetItem(array, indexDouble, result) -> GetJsArrayElement(array, indexDouble, result)
+                    methodBody.Instructions[i] = new LIRGetJsArrayElement(getItem.Object, getItem.Index, getItem.Result);
                     continue;
                 }
 
@@ -130,14 +163,24 @@ internal static class LIRIntrinsicNormalization
 
             if (instruction is LIRSetItem setItem)
             {
-                // Only normalize numeric-index and numeric-value accesses.
-                if (!IsUnboxedDouble(methodBody, setItem.Index) || !IsUnboxedDouble(methodBody, setItem.Value))
+                if (!knownIntrinsicReceiverClrTypes.TryGetValue(setItem.Object.Index, out var receiverType))
                 {
                     continue;
                 }
 
-                if (knownIntrinsicReceiverClrTypes.TryGetValue(setItem.Object.Index, out var receiverType)
-                    && receiverType == typeof(JavaScriptRuntime.Int32Array))
+                // Array element set (numeric index).
+                if (receiverType == typeof(JavaScriptRuntime.Array)
+                    && IsUnboxedDouble(methodBody, setItem.Index))
+                {
+                    // Rewrite: SetItem(array, indexDouble, valueObj, result) -> SetJsArrayElement(array, indexDouble, valueObj, result)
+                    methodBody.Instructions[i] = new LIRSetJsArrayElement(setItem.Object, setItem.Index, setItem.Value, setItem.Result);
+                    continue;
+                }
+
+                // Int32Array element set (numeric index + numeric value).
+                if (receiverType == typeof(JavaScriptRuntime.Int32Array)
+                    && IsUnboxedDouble(methodBody, setItem.Index)
+                    && IsUnboxedDouble(methodBody, setItem.Value))
                 {
                     // Rewrite: SetItem(receiver, indexDouble, valueDouble, result) -> SetInt32ArrayElement(receiver, indexDouble, valueDouble, result)
                     methodBody.Instructions[i] = new LIRSetInt32ArrayElement(setItem.Object, setItem.Index, setItem.Value, setItem.Result);

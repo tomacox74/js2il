@@ -2137,7 +2137,7 @@
                     "Js2IL.Tests/Array/JavaScript/Array_LengthProperty_ReturnsCount.js",
                     "Js2IL.Tests/Array/JavaScript/Array_EmptyLength_IsZero.js"
                   ],
-                  "notes": "length getter returns number of elements; emitted via JavaScriptRuntime.Object.GetLength(object). Used by for-of implementation."
+                  "notes": "length getter returns number of elements. Lowered via JavaScriptRuntime.Object.GetLength(object) and specialized to direct Array/Int32Array length intrinsics when the receiver type is proven. Used by for-of implementation."
                 }
               ]
             },
@@ -2148,11 +2148,11 @@
               "features": [
                 {
                   "feature": "Array.prototype.find",
-                  "status": "Partially Supported",
+                  "status": "Supported",
                   "testScripts": [
                     "Js2IL.Tests/Array/JavaScript/Array_Find_Basic.js"
                   ],
-                  "notes": "Implements callback invocation with (value, index, array) depending on the compiled delegate signature and returns the first matching element. thisArg is currently ignored; returns undefined when no element matches."
+                  "notes": "Invokes the callback with (value, index, array) depending on the compiled delegate signature and returns the first matching element; returns undefined when no element matches. thisArg is currently ignored."
                 }
               ]
             },
@@ -2208,11 +2208,12 @@
               "features": [
                 {
                   "feature": "Array.prototype.map",
-                  "status": "Partially Supported",
+                  "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/Array/JavaScript/Array_Map_Basic.js"
+                    "Js2IL.Tests/Array/JavaScript/Array_Map_Basic.js",
+                    "Js2IL.Tests/Array/JavaScript/Array_Map_NestedParam.js"
                   ],
-                  "notes": "Supports value-callback mapping including nested callback closures. thisArg and standard callback parameter injections (index, array) are not yet supported; callback currently receives only the element value. Returns a new array."
+                  "notes": "Supports callback mapping including nested callback closures. Callback receives (value, index, array) depending on the compiled delegate signature. thisArg is currently ignored. Returns a new array."
                 }
               ]
             },
@@ -2222,12 +2223,13 @@
               "url": "https://tc39.es/ecma262/#sec-array.prototype.sort",
               "features": [
                 {
-                  "feature": "Array.prototype.sort (default comparator)",
-                  "status": "Partially Supported",
+                  "feature": "Array.prototype.sort (default comparator and comparator function)",
+                  "status": "Supported",
                   "testScripts": [
-                    "Js2IL.Tests/Array/JavaScript/Array_Sort_Basic.js"
+                    "Js2IL.Tests/Array/JavaScript/Array_Sort_Basic.js",
+                    "Js2IL.Tests/Array/JavaScript/Array_Sort_WithComparatorArrow.js"
                   ],
-                  "notes": "Default lexicographic sort implemented in JavaScriptRuntime.Array.sort(); comparator function parameter is not yet supported. Returns the array instance."
+                  "notes": "Default lexicographic sort implemented in JavaScriptRuntime.Array.sort(). Also supports an optional comparator callback (common delegate shapes produced by the compiler). Returns the array instance."
                 }
               ]
             },

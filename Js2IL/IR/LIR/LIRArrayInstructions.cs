@@ -33,6 +33,18 @@ public record LIRArrayAdd(TempVariable TargetArray, TempVariable Element) : LIRI
 public record LIRGetLength(TempVariable Object, TempVariable Result) : LIRInstruction;
 
 /// <summary>
+/// Gets the length of a proven JavaScriptRuntime.Array.
+/// Contract: Receiver is a proven Array; Result is an unboxed double.
+/// </summary>
+public record LIRGetJsArrayLength(TempVariable Receiver, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Gets the length of a proven JavaScriptRuntime.Int32Array.
+/// Contract: Receiver is a proven Int32Array; Result is an unboxed double.
+/// </summary>
+public record LIRGetInt32ArrayLength(TempVariable Receiver, TempVariable Result) : LIRInstruction;
+
+/// <summary>
 /// Gets an item from an object by index (calls JavaScriptRuntime.Object.GetItem).
 /// </summary>
 public record LIRGetItem(TempVariable Object, TempVariable Index, TempVariable Result) : LIRInstruction;
@@ -42,6 +54,20 @@ public record LIRGetItem(TempVariable Object, TempVariable Index, TempVariable R
 /// Returns the assigned value.
 /// </summary>
 public record LIRSetItem(TempVariable Object, TempVariable Index, TempVariable Value, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Gets an element from a proven JavaScriptRuntime.Array by numeric index.
+/// Contract: Receiver is a proven Array; Index is an unboxed double.
+/// Result is an object (or may be coerced to a number by the IL emitter when the temp expects an unboxed double).
+/// </summary>
+public record LIRGetJsArrayElement(TempVariable Receiver, TempVariable Index, TempVariable Result) : LIRInstruction;
+
+/// <summary>
+/// Sets an element on a proven JavaScriptRuntime.Array by numeric index.
+/// Contract: Receiver is a proven Array; Index is an unboxed double.
+/// Result (if materialized) is the assigned value.
+/// </summary>
+public record LIRSetJsArrayElement(TempVariable Receiver, TempVariable Index, TempVariable Value, TempVariable Result) : LIRInstruction;
 
 /// <summary>
 /// Gets an element from a proven JavaScriptRuntime.Int32Array by numeric index.
