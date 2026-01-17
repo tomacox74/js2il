@@ -60,7 +60,7 @@
 	{
 		// Method begins at RVA 0x2064
 		// Header size: 12
-		// Code size: 513 (0x201)
+		// Code size: 514 (0x202)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.CompoundAssignment_ArrayIndexBitwiseOr,
@@ -129,124 +129,125 @@
 		// loop start (head: IL_00cb)
 			IL_00cb: ldloc.2
 			IL_00cc: ldloc.1
-			IL_00cd: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-			IL_00d2: clt
-			IL_00d4: brfalse IL_0185
+			IL_00cd: callvirt instance int32 class [System.Collections]System.Collections.Generic.List`1<object>::get_Count()
+			IL_00d2: conv.r8
+			IL_00d3: clt
+			IL_00d5: brfalse IL_0186
 
-			IL_00d9: ldloc.1
-			IL_00da: ldloc.2
-			IL_00db: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_00e0: stloc.s 5
-			IL_00e2: ldc.r8 1
-			IL_00eb: conv.i4
-			IL_00ec: ldloc.2
-			IL_00ed: conv.i4
-			IL_00ee: shl
-			IL_00ef: conv.r8
-			IL_00f0: stloc.s 4
-			IL_00f2: ldloc.s 5
-			IL_00f4: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-			IL_00f9: conv.i4
-			IL_00fa: ldloc.s 4
-			IL_00fc: conv.i4
-			IL_00fd: or
-			IL_00fe: conv.r8
-			IL_00ff: stloc.s 4
-			IL_0101: ldloc.1
-			IL_0102: ldloc.2
-			IL_0103: ldloc.s 4
-			IL_0105: box [System.Runtime]System.Double
-			IL_010a: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::set_Item(float64, object)
-			IL_010f: ldloc.2
-			IL_0110: box [System.Runtime]System.Double
-			IL_0115: stloc.s 6
-			IL_0117: ldstr "arr["
-			IL_011c: ldloc.s 6
-			IL_011e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0123: stloc.s 7
-			IL_0125: ldloc.s 7
-			IL_0127: ldstr "] after |= (1 << "
-			IL_012c: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0131: stloc.s 7
-			IL_0133: ldloc.2
-			IL_0134: box [System.Runtime]System.Double
-			IL_0139: stloc.s 6
-			IL_013b: ldloc.s 7
-			IL_013d: ldloc.s 6
-			IL_013f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0144: stloc.s 7
-			IL_0146: ldloc.s 7
-			IL_0148: ldstr "):"
-			IL_014d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
-			IL_0152: stloc.s 7
-			IL_0154: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-			IL_0159: ldc.i4.2
-			IL_015a: newarr [System.Runtime]System.Object
-			IL_015f: dup
-			IL_0160: ldc.i4.0
-			IL_0161: ldloc.s 7
-			IL_0163: stelem.ref
-			IL_0164: dup
-			IL_0165: ldc.i4.1
-			IL_0166: ldloc.1
-			IL_0167: ldloc.2
-			IL_0168: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-			IL_016d: stelem.ref
-			IL_016e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-			IL_0173: pop
-			IL_0174: ldloc.2
-			IL_0175: ldc.r8 1
-			IL_017e: add
-			IL_017f: stloc.2
-			IL_0180: br IL_00cb
+			IL_00da: ldloc.1
+			IL_00db: ldloc.2
+			IL_00dc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_00e1: stloc.s 5
+			IL_00e3: ldc.r8 1
+			IL_00ec: conv.i4
+			IL_00ed: ldloc.2
+			IL_00ee: conv.i4
+			IL_00ef: shl
+			IL_00f0: conv.r8
+			IL_00f1: stloc.s 4
+			IL_00f3: ldloc.s 5
+			IL_00f5: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+			IL_00fa: conv.i4
+			IL_00fb: ldloc.s 4
+			IL_00fd: conv.i4
+			IL_00fe: or
+			IL_00ff: conv.r8
+			IL_0100: stloc.s 4
+			IL_0102: ldloc.1
+			IL_0103: ldloc.2
+			IL_0104: ldloc.s 4
+			IL_0106: box [System.Runtime]System.Double
+			IL_010b: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::set_Item(float64, object)
+			IL_0110: ldloc.2
+			IL_0111: box [System.Runtime]System.Double
+			IL_0116: stloc.s 6
+			IL_0118: ldstr "arr["
+			IL_011d: ldloc.s 6
+			IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0124: stloc.s 7
+			IL_0126: ldloc.s 7
+			IL_0128: ldstr "] after |= (1 << "
+			IL_012d: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0132: stloc.s 7
+			IL_0134: ldloc.2
+			IL_0135: box [System.Runtime]System.Double
+			IL_013a: stloc.s 6
+			IL_013c: ldloc.s 7
+			IL_013e: ldloc.s 6
+			IL_0140: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0145: stloc.s 7
+			IL_0147: ldloc.s 7
+			IL_0149: ldstr "):"
+			IL_014e: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+			IL_0153: stloc.s 7
+			IL_0155: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+			IL_015a: ldc.i4.2
+			IL_015b: newarr [System.Runtime]System.Object
+			IL_0160: dup
+			IL_0161: ldc.i4.0
+			IL_0162: ldloc.s 7
+			IL_0164: stelem.ref
+			IL_0165: dup
+			IL_0166: ldc.i4.1
+			IL_0167: ldloc.1
+			IL_0168: ldloc.2
+			IL_0169: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+			IL_016e: stelem.ref
+			IL_016f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+			IL_0174: pop
+			IL_0175: ldloc.2
+			IL_0176: ldc.r8 1
+			IL_017f: add
+			IL_0180: stloc.2
+			IL_0181: br IL_00cb
 		// end loop
 
-		IL_0185: ldc.r8 2
-		IL_018e: stloc.3
-		IL_018f: ldloc.1
-		IL_0190: ldloc.3
-		IL_0191: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-		IL_0196: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
-		IL_019b: conv.i4
-		IL_019c: ldc.r8 32
-		IL_01a5: conv.i4
-		IL_01a6: or
-		IL_01a7: conv.r8
-		IL_01a8: stloc.s 4
-		IL_01aa: ldloc.1
-		IL_01ab: ldloc.3
-		IL_01ac: ldloc.s 4
-		IL_01ae: box [System.Runtime]System.Double
-		IL_01b3: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::set_Item(float64, object)
-		IL_01b8: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01bd: ldc.i4.2
-		IL_01be: newarr [System.Runtime]System.Object
-		IL_01c3: dup
-		IL_01c4: ldc.i4.0
-		IL_01c5: ldstr "arr[2] after |= 32:"
-		IL_01ca: stelem.ref
-		IL_01cb: dup
-		IL_01cc: ldc.i4.1
-		IL_01cd: ldloc.1
-		IL_01ce: ldc.r8 2
-		IL_01d7: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
-		IL_01dc: stelem.ref
-		IL_01dd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_01e2: pop
-		IL_01e3: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-		IL_01e8: ldc.i4.2
-		IL_01e9: newarr [System.Runtime]System.Object
-		IL_01ee: dup
-		IL_01ef: ldc.i4.0
-		IL_01f0: ldstr "Final array:"
-		IL_01f5: stelem.ref
-		IL_01f6: dup
-		IL_01f7: ldc.i4.1
-		IL_01f8: ldloc.1
-		IL_01f9: stelem.ref
-		IL_01fa: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-		IL_01ff: pop
-		IL_0200: ret
+		IL_0186: ldc.r8 2
+		IL_018f: stloc.3
+		IL_0190: ldloc.1
+		IL_0191: ldloc.3
+		IL_0192: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+		IL_0197: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
+		IL_019c: conv.i4
+		IL_019d: ldc.r8 32
+		IL_01a6: conv.i4
+		IL_01a7: or
+		IL_01a8: conv.r8
+		IL_01a9: stloc.s 4
+		IL_01ab: ldloc.1
+		IL_01ac: ldloc.3
+		IL_01ad: ldloc.s 4
+		IL_01af: box [System.Runtime]System.Double
+		IL_01b4: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Array::set_Item(float64, object)
+		IL_01b9: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01be: ldc.i4.2
+		IL_01bf: newarr [System.Runtime]System.Object
+		IL_01c4: dup
+		IL_01c5: ldc.i4.0
+		IL_01c6: ldstr "arr[2] after |= 32:"
+		IL_01cb: stelem.ref
+		IL_01cc: dup
+		IL_01cd: ldc.i4.1
+		IL_01ce: ldloc.1
+		IL_01cf: ldc.r8 2
+		IL_01d8: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::get_Item(float64)
+		IL_01dd: stelem.ref
+		IL_01de: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_01e3: pop
+		IL_01e4: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_01e9: ldc.i4.2
+		IL_01ea: newarr [System.Runtime]System.Object
+		IL_01ef: dup
+		IL_01f0: ldc.i4.0
+		IL_01f1: ldstr "Final array:"
+		IL_01f6: stelem.ref
+		IL_01f7: dup
+		IL_01f8: ldc.i4.1
+		IL_01f9: ldloc.1
+		IL_01fa: stelem.ref
+		IL_01fb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0200: pop
+		IL_0201: ret
 	} // end of method CompoundAssignment_ArrayIndexBitwiseOr::Main
 
 } // end of class Scripts.CompoundAssignment_ArrayIndexBitwiseOr
@@ -258,7 +259,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2271
+		// Method begins at RVA 0x2272
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8
