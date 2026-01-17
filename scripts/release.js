@@ -255,7 +255,7 @@ function waitForRequiredCheck(prNumber, repo, checkName, { timeoutMs = 10 * 60 *
   while (Date.now() < deadline) {
     // We rely on statusCheckRollup so we can detect when checks start existing at all.
     const q = `.statusCheckRollup[] | select(.name=="${checkName}") | .conclusion`;
-    const conclusion = run(`gh pr view ${prNumber} --repo ${repo} --json statusCheckRollup -q '${q}'`, { ...args, allowFailure: true })
+    const conclusion = run(`gh pr view ${prNumber} --repo ${repo} --json statusCheckRollup -q "${q}"`, { ...args, allowFailure: true })
       .trim();
 
     if (!conclusion) {
