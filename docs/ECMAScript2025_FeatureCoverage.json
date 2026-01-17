@@ -348,6 +348,39 @@
                     "Js2IL.Tests/Literals/JavaScript/ObjectLiteral.js"
                   ],
                   "notes": "Covers creation and property access. See also verified output in Literals/GeneratorTests.ObjectLiteral.verified.txt."
+                },
+                {
+                  "feature": "Object literal spread properties ({ ...x })",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_Basic.js"
+                  ],
+                  "notes": "Lowered as: create empty ExpandoObject, then apply members in order. Spread members call JavaScriptRuntime.Object.SpreadInto(target, source). Null/undefined sources are ignored."
+                },
+                {
+                  "feature": "Object literal computed property keys ({ [expr]: value })",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_Basic.js",
+                    "Js2IL.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_EvaluationOrder.js"
+                  ],
+                  "notes": "Lowered as sequential JavaScriptRuntime.Object.SetItem(target, key, value) calls to preserve left-to-right evaluation order and key coercion to string."
+                },
+                {
+                  "feature": "Object literal shorthand properties ({ a })",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Object/JavaScript/ObjectLiteral_ShorthandAndMethod.js"
+                  ],
+                  "notes": "Shorthand properties are parsed and lowered the same as explicit properties ({ a: a })."
+                },
+                {
+                  "feature": "Object literal method definitions ({ m() { ... } })",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Object/JavaScript/ObjectLiteral_ShorthandAndMethod.js"
+                  ],
+                  "notes": "Method definitions are lowered as property assignments whose values are compiled function delegates; calls via member dispatch bind 'this' using RuntimeServices.SetCurrentThis."
                 }
               ]
             }

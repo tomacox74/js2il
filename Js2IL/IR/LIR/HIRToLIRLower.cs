@@ -397,8 +397,24 @@ public sealed class HIRToLIRLowerer
                         count += CountAwaitExpressionsInExpression(elem);
                 break;
             case HIRObjectExpression objExpr:
-                foreach (var prop in objExpr.Properties)
-                    count += CountAwaitExpressionsInExpression(prop.Value);
+                foreach (var member in objExpr.Members)
+                {
+                    switch (member)
+                    {
+                        case HIRObjectProperty prop:
+                            count += CountAwaitExpressionsInExpression(prop.Value);
+                            break;
+                        case HIRObjectComputedProperty computed:
+                            count += CountAwaitExpressionsInExpression(computed.KeyExpression);
+                            count += CountAwaitExpressionsInExpression(computed.Value);
+                            break;
+                        case HIRObjectSpreadProperty spread:
+                            count += CountAwaitExpressionsInExpression(spread.Argument);
+                            break;
+                        default:
+                            throw new NotSupportedException($"Unhandled object literal member type in await counter: {member.GetType().FullName}");
+                    }
+                }
                 break;
             case HIRAssignmentExpression assignExpr:
                 count += CountAwaitExpressionsInExpression(assignExpr.Value);
@@ -5841,22 +5857,101 @@ public sealed class HIRToLIRLowerer
     {
         resultTempVar = CreateTempVariable();
 
-        // Lower all property values first
-        var properties = new List<ObjectProperty>();
-        foreach (var prop in objectExpr.Properties)
+        // Fast path: simple object literal with only non-computed properties.
+        // Preserve the existing LIRNewJsObject initialization pattern for minimal IL/snapshot churn.
+        bool allSimple = objectExpr.Members.All(static member => member is HIRObjectProperty);
+
+        if (allSimple)
         {
-            if (!TryLowerExpression(prop.Value, out var valueTemp))
+            var properties = new List<ObjectProperty>();
+            foreach (HIRObjectProperty prop in objectExpr.Members)
             {
-                return false;
+                if (!TryLowerExpression(prop.Value, out var valueTemp))
+                {
+                    return false;
+                }
+
+                var boxedValue = EnsureObject(valueTemp);
+                properties.Add(new ObjectProperty(prop.Key, boxedValue));
             }
-            // Ensure each value is boxed as object for the dictionary
-            var boxedValue = EnsureObject(valueTemp);
-            properties.Add(new ObjectProperty(prop.Key, boxedValue));
+
+            _methodBodyIR.Instructions.Add(new LIRNewJsObject(properties, resultTempVar));
+            DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(System.Dynamic.ExpandoObject)));
+            return true;
         }
 
-        // Emit the LIRNewJsObject instruction
-        _methodBodyIR.Instructions.Add(new LIRNewJsObject(properties, resultTempVar));
+        // Create an empty object first, then apply members in source evaluation order.
+        // This preserves side-effect order for computed keys and spread members.
+        _methodBodyIR.Instructions.Add(new LIRNewJsObject(new List<ObjectProperty>(), resultTempVar));
         DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(System.Dynamic.ExpandoObject)));
+
+        foreach (var member in objectExpr.Members)
+        {
+            switch (member)
+            {
+                case HIRObjectProperty prop:
+                {
+                    var keyTemp = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRConstString(prop.Key, keyTemp));
+                    DefineTempStorage(keyTemp, new ValueStorage(ValueStorageKind.Reference, typeof(string)));
+
+                    if (!TryLowerExpression(prop.Value, out var valueTemp))
+                    {
+                        return false;
+                    }
+
+                    var boxedKey = EnsureObject(keyTemp);
+                    var boxedValue = EnsureObject(valueTemp);
+                    var setResult = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRSetItem(resultTempVar, boxedKey, boxedValue, setResult));
+                    DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    break;
+                }
+
+                case HIRObjectComputedProperty computed:
+                {
+                    // Evaluate key expression before value expression (ECMA-262 order).
+                    if (!TryLowerExpression(computed.KeyExpression, out var keyExprTemp))
+                    {
+                        return false;
+                    }
+
+                    if (!TryLowerExpression(computed.Value, out var valueTemp))
+                    {
+                        return false;
+                    }
+
+                    var boxedKey = EnsureObject(keyExprTemp);
+                    var boxedValue = EnsureObject(valueTemp);
+                    var setResult = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRSetItem(resultTempVar, boxedKey, boxedValue, setResult));
+                    DefineTempStorage(setResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    break;
+                }
+
+                case HIRObjectSpreadProperty spread:
+                {
+                    if (!TryLowerExpression(spread.Argument, out var spreadTemp))
+                    {
+                        return false;
+                    }
+
+                    var boxedTarget = EnsureObject(resultTempVar);
+                    var boxedSource = EnsureObject(spreadTemp);
+                    var spreadResult = CreateTempVariable();
+                    _methodBodyIR.Instructions.Add(new LIRCallIntrinsicStatic(
+                        IntrinsicName: "Object",
+                        MethodName: "SpreadInto",
+                        Arguments: new List<TempVariable> { boxedTarget, boxedSource },
+                        Result: spreadResult));
+                    DefineTempStorage(spreadResult, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    break;
+                }
+
+                default:
+                    throw new NotSupportedException($"Unhandled object literal member type during lowering: {member.GetType().FullName}");
+            }
+        }
         return true;
     }
 

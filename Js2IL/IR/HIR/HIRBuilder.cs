@@ -1568,13 +1568,114 @@ class HIRMethodBuilder
 
             case ObjectExpression objExpr:
                 // Parse object literal properties
-                var objectProperties = new List<HIRObjectProperty>();
+                var objectMembers = new List<HIRObjectMember>();
                 foreach (var property in objExpr.Properties)
                 {
+                    if (property is SpreadElement spread)
+                    {
+                        // Spread member: { ...expr }
+                        if (!TryParseExpression(spread.Argument, out var spreadArgHir))
+                        {
+                            return false;
+                        }
+
+                        objectMembers.Add(new HIRObjectSpreadProperty(spreadArgHir!));
+                        continue;
+                    }
+
+                    if (property is MethodDefinition methodDef)
+                    {
+                        // Method definition member: { m() { ... } }
+                        // Represented as a property whose value is a function expression.
+                        if (methodDef.Kind != PropertyKind.Init)
+                        {
+                            // getters/setters are not supported
+                            return false;
+                        }
+
+                        if (methodDef.Value is not Acornima.Ast.Expression methodValueExpression)
+                        {
+                            return false;
+                        }
+
+                        if (!TryParseExpression(methodValueExpression, out var methodValueHir))
+                        {
+                            return false;
+                        }
+
+                        if (methodDef.Computed)
+                        {
+                            if (methodDef.Key is not Acornima.Ast.Expression methodKeyExpression)
+                            {
+                                return false;
+                            }
+                            if (!TryParseExpression(methodKeyExpression, out var keyExprHir))
+                            {
+                                return false;
+                            }
+                            objectMembers.Add(new HIRObjectComputedProperty(keyExprHir!, methodValueHir!));
+                        }
+                        else
+                        {
+                            string? methodName = null;
+                            if (methodDef.Key is Identifier methodKeyId)
+                            {
+                                methodName = methodKeyId.Name;
+                            }
+                            else if (methodDef.Key is StringLiteral strLit)
+                            {
+                                methodName = strLit.Value;
+                            }
+                            else if (methodDef.Key is NumericLiteral numLit)
+                            {
+                                methodName = numLit.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                            }
+                            else
+                            {
+                                return false;
+                            }
+
+                            objectMembers.Add(new HIRObjectProperty(methodName!, methodValueHir!));
+                        }
+
+                        continue;
+                    }
+
                     if (property is not ObjectProperty objProp)
                     {
-                        // Spread properties, method definitions etc. not yet supported
+                        // Unhandled object member type
                         return false;
+                    }
+
+                    if (objProp.Kind != PropertyKind.Init)
+                    {
+                        // getters/setters are not supported
+                        return false;
+                    }
+
+                    // Computed property: { [expr]: value }
+                    if (objProp.Computed)
+                    {
+                        if (objProp.Key is not Acornima.Ast.Expression keyExpression)
+                        {
+                            return false;
+                        }
+                        if (!TryParseExpression(keyExpression, out var keyExprHir))
+                        {
+                            return false;
+                        }
+
+                        if (objProp.Value is not Acornima.Ast.Expression computedValueExpression)
+                        {
+                            return false;
+                        }
+                        if (!TryParseExpression(computedValueExpression, out var computedValueExpr))
+                        {
+                            return false;
+                        }
+
+                        objectMembers.Add(new HIRObjectComputedProperty(keyExprHir!, computedValueExpr!));
+                        continue;
                     }
 
                     // Determine property key name
@@ -1593,7 +1694,6 @@ class HIRMethodBuilder
                     }
                     else
                     {
-                        // Computed property keys not yet supported
                         return false;
                     }
 
@@ -1608,9 +1708,9 @@ class HIRMethodBuilder
                         return false;
                     }
 
-                    objectProperties.Add(new HIRObjectProperty(propName!, valueExpr!));
+                    objectMembers.Add(new HIRObjectProperty(propName!, valueExpr!));
                 }
-                hirExpr = new HIRObjectExpression(objectProperties);
+                hirExpr = new HIRObjectExpression(objectMembers);
                 return true;
 
             // Handle other expression types as needed

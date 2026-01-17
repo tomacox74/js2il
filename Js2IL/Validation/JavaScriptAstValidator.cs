@@ -43,6 +43,19 @@ public class JavaScriptAstValidator : IAstValidator
         walker.VisitWithContext(ast, node =>
         {
             var currentContext = contextStack.Peek();
+
+            // Track when we're inside an object binding pattern (destructuring).
+            // We currently support object patterns but do not support computed keys inside them.
+            if (node is ObjectPattern)
+            {
+                contextStack.Push(new ValidationContext
+                {
+                    AllowsThis = currentContext.AllowsThis,
+                    ScopeOwner = node,
+                    MethodDefinitionFunctionValue = currentContext.MethodDefinitionFunctionValue,
+                    InObjectPattern = true
+                });
+            }
             
             // Push new context for class methods and constructors
             if (node is MethodDefinition methodDef)
@@ -149,7 +162,7 @@ public class JavaScriptAstValidator : IAstValidator
 
                 case NodeType.Property:
                     // Check for computed properties, getters/setters in object literals
-                    ValidateProperty(node, result);
+                    ValidateProperty(node, result, contextStack.Peek());
                     break;
 
                 case NodeType.MethodDefinition:
@@ -338,14 +351,14 @@ public class JavaScriptAstValidator : IAstValidator
 
     // Note: Object/Array patterns (including nested + defaults + rest) and destructuring assignment are supported.
 
-    private void ValidateProperty(Node node, ValidationResult result)
+    private void ValidateProperty(Node node, ValidationResult result, ValidationContext currentContext)
     {
         if (node is Property prop)
         {
-            // Check for computed property names
-            if (prop.Computed)
+            // Computed keys are supported in object literals, but not yet supported in object binding patterns.
+            if (prop.Computed && currentContext.InObjectPattern)
             {
-                result.Errors.Add($"Computed property names are not yet supported (line {node.Location.Start.Line})");
+                result.Errors.Add($"Computed property names are not yet supported in this context (line {node.Location.Start.Line})");
                 result.IsValid = false;
             }
 
@@ -466,5 +479,6 @@ public class JavaScriptAstValidator : IAstValidator
         // Track the FunctionExpression that is the direct body of a MethodDefinition
         // so we don't incorrectly treat it as a nested function
         public Node? MethodDefinitionFunctionValue { get; set; }
+        public bool InObjectPattern { get; set; }
     }
 }

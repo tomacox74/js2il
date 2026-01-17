@@ -1,0 +1,124 @@
+﻿// IL code: ObjectLiteral_ComputedKey_Basic
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.ObjectLiteral_ComputedKey_Basic
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method ObjectLiteral_ComputedKey_Basic::.ctor
+
+} // end of class Scopes.ObjectLiteral_ComputedKey_Basic
+
+.class public auto ansi beforefieldinit Scripts.ObjectLiteral_ComputedKey_Basic
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x205c
+		// Header size: 12
+		// Code size: 153 (0x99)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.ObjectLiteral_ComputedKey_Basic,
+			[1] string,
+			[2] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
+			[3] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
+			[4] object
+		)
+
+		IL_0000: newobj instance void Scopes.ObjectLiteral_ComputedKey_Basic::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldstr "x"
+		IL_000b: stloc.1
+		IL_000c: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_0011: stloc.3
+		IL_0012: ldloc.3
+		IL_0013: ldloc.1
+		IL_0014: ldc.r8 1
+		IL_001d: box [System.Runtime]System.Double
+		IL_0022: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0027: pop
+		IL_0028: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_002d: ldc.i4.1
+		IL_002e: newarr [System.Runtime]System.Object
+		IL_0033: dup
+		IL_0034: ldc.i4.0
+		IL_0035: ldloc.3
+		IL_0036: ldstr "x"
+		IL_003b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0040: stelem.ref
+		IL_0041: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0046: pop
+		IL_0047: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
+		IL_004c: stloc.2
+		IL_004d: ldstr "a"
+		IL_0052: ldc.r8 1
+		IL_005b: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, float64)
+		IL_0060: stloc.s 4
+		IL_0062: ldloc.2
+		IL_0063: ldloc.s 4
+		IL_0065: ldc.r8 2
+		IL_006e: box [System.Runtime]System.Double
+		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
+		IL_0078: pop
+		IL_0079: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_007e: ldc.i4.1
+		IL_007f: newarr [System.Runtime]System.Object
+		IL_0084: dup
+		IL_0085: ldc.i4.0
+		IL_0086: ldloc.2
+		IL_0087: ldstr "a1"
+		IL_008c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
+		IL_0091: stelem.ref
+		IL_0092: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0097: pop
+		IL_0098: ret
+	} // end of method ObjectLiteral_ComputedKey_Basic::Main
+
+} // end of class Scripts.ObjectLiteral_ComputedKey_Basic
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x2101
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.ObjectLiteral_ComputedKey_Basic::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

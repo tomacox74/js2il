@@ -479,6 +479,126 @@ namespace JavaScriptRuntime
         }
 
         /// <summary>
+        /// Object spread helper used by object literals: { ...source }.
+        /// Copies enumerable own properties from <paramref name="source"/> into <paramref name="target"/>
+        /// and returns <paramref name="target"/>.
+        ///
+        /// Minimal semantics:
+        ///  - null/undefined (null or JsNull) are ignored
+        ///  - ExpandoObject: copy all keys
+        ///  - JavaScriptRuntime.Array / Int32Array / string: copy index keys
+        ///  - IDictionary&lt;string, object?&gt;: copy keys
+        ///  - host objects: copy public instance properties/fields
+        ///
+        /// This intentionally does not model full ECMAScript property attributes or symbol keys.
+        /// </summary>
+        public static object SpreadInto(object target, object? source)
+        {
+            if (target is null)
+            {
+                throw new ArgumentNullException(nameof(target));
+            }
+
+            // Per object spread semantics: null/undefined are skipped.
+            if (source is null || source is JsNull)
+            {
+                return target;
+            }
+
+            // ExpandoObject: copy all enumerable own properties.
+            if (source is System.Dynamic.ExpandoObject exp)
+            {
+                var src = (IDictionary<string, object?>)exp;
+                foreach (var kvp in src)
+                {
+                    SetProperty(target, kvp.Key, kvp.Value);
+                }
+                return target;
+            }
+
+            // IDictionary<string, object?>: treat keys as enumerable properties.
+            if (source is IDictionary<string, object?> dict)
+            {
+                foreach (var kvp in dict)
+                {
+                    SetProperty(target, kvp.Key, kvp.Value);
+                }
+                return target;
+            }
+
+            // Strings: spread copies enumerable index properties ("0", "1", ...).
+            if (source is string s)
+            {
+                for (int i = 0; i < s.Length; i++)
+                {
+                    SetProperty(target, i.ToString(System.Globalization.CultureInfo.InvariantCulture), s[i].ToString());
+                }
+                return target;
+            }
+
+            // JavaScriptRuntime.Array: spread copies element indices.
+            if (source is Array arr)
+            {
+                for (int i = 0; i < arr.Count; i++)
+                {
+                    SetProperty(target, i.ToString(System.Globalization.CultureInfo.InvariantCulture), arr[i]);
+                }
+                return target;
+            }
+
+            // Int32Array: copy numeric indices as properties.
+            if (source is Int32Array i32)
+            {
+                var len = (int)i32.length;
+                for (int i = 0; i < len; i++)
+                {
+                    SetProperty(target, i.ToString(System.Globalization.CultureInfo.InvariantCulture), i32[(double)i]);
+                }
+                return target;
+            }
+
+            // Reflection fallback for host objects: copy public instance properties/fields.
+            try
+            {
+                var type = source.GetType();
+                foreach (var p in type.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(p => p.CanRead))
+                {
+                    SetProperty(target, p.Name, p.GetValue(source));
+                }
+                foreach (var f in type.GetFields(BindingFlags.Instance | BindingFlags.Public))
+                {
+                    SetProperty(target, f.Name, f.GetValue(source));
+                }
+            }
+            catch (AmbiguousMatchException)
+            {
+                // Swallow to mimic JS permissiveness on exotic host objects.
+            }
+            catch (MethodAccessException)
+            {
+                // Swallow to mimic JS permissiveness on exotic host objects.
+            }
+            catch (NotSupportedException)
+            {
+                // Swallow to mimic JS permissiveness on exotic host objects.
+            }
+            catch (TargetInvocationException)
+            {
+                // Swallow to mimic JS permissiveness on exotic host objects.
+            }
+            catch (TargetException)
+            {
+                // Swallow to mimic JS permissiveness on exotic host objects.
+            }
+            catch (ArgumentException)
+            {
+                // Swallow to mimic JS permissiveness on exotic host objects.
+            }
+
+            return target;
+        }
+
+        /// <summary>
         /// Object rest helper used by destructuring: { a, ...rest }.
         /// Returns a new ExpandoObject with enumerable keys copied excluding the provided keys.
         /// </summary>
@@ -527,7 +647,27 @@ namespace JavaScriptRuntime
                     dict[f.Name] = f.GetValue(obj);
                 }
             }
-            catch
+            catch (AmbiguousMatchException)
+            {
+                // Best-effort; return whatever we could copy.
+            }
+            catch (MethodAccessException)
+            {
+                // Best-effort; return whatever we could copy.
+            }
+            catch (NotSupportedException)
+            {
+                // Best-effort; return whatever we could copy.
+            }
+            catch (TargetInvocationException)
+            {
+                // Best-effort; return whatever we could copy.
+            }
+            catch (TargetException)
+            {
+                // Best-effort; return whatever we could copy.
+            }
+            catch (ArgumentException)
             {
                 // Best-effort; return whatever we could copy.
             }

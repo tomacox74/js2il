@@ -186,6 +186,13 @@ namespace Js2IL.SymbolTables
                     return ContainsFreeVariable(prop.Key as Node, localVariables) ||
                            ContainsFreeVariable(prop.Value as Node, localVariables);
 
+                case SpreadElement se:
+                    return ContainsFreeVariable(se.Argument, localVariables);
+
+                case MethodDefinition md:
+                    return ContainsFreeVariable(md.Key as Node, localVariables) ||
+                           ContainsFreeVariable(md.Value as Node, localVariables);
+
                 case TemplateLiteral tl:
                     // Template strings: only expressions can reference variables (quasis are raw text)
                     return tl.Expressions.Any(expr => ContainsFreeVariable(expr as Node, localVariables));

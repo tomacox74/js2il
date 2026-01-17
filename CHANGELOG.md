@@ -4,7 +4,8 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-_Nothing yet._
+### Added
+- Object literal enhancements: spread properties (`{ ...x }`), computed keys (`{ [expr]: value }`), shorthand properties (`{ a }`), and method definitions (`{ m() { ... } }`) (fixes #290, #291, #292).
 
 ## v0.7.2 - 2026-01-17
 

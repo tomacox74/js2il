@@ -7,21 +7,28 @@ namespace Js2IL.HIR;
 /// </summary>
 public sealed class HIRObjectExpression : HIRExpression
 {
-    public HIRObjectExpression(IEnumerable<HIRObjectProperty> properties)
+    public HIRObjectExpression(IEnumerable<HIRObjectMember> members)
     {
-        Properties = properties.ToImmutableArray();
+        Members = members.ToImmutableArray();
     }
 
     /// <summary>
-    /// The properties of the object literal.
+    /// The members of the object literal, in source evaluation order.
     /// </summary>
-    public ImmutableArray<HIRObjectProperty> Properties { get; init; }
+    public ImmutableArray<HIRObjectMember> Members { get; init; }
 }
 
 /// <summary>
-/// Represents a single property in an object literal (key-value pair).
+/// Base type for object literal members.
 /// </summary>
-public sealed class HIRObjectProperty
+public abstract class HIRObjectMember
+{
+}
+
+/// <summary>
+/// Represents a single non-computed property in an object literal (key-value pair).
+/// </summary>
+public sealed class HIRObjectProperty : HIRObjectMember
 {
     public HIRObjectProperty(string key, HIRExpression value)
     {
@@ -38,4 +45,32 @@ public sealed class HIRObjectProperty
     /// The property value expression.
     /// </summary>
     public HIRExpression Value { get; init; }
+}
+
+/// <summary>
+/// Represents a computed property in an object literal, e.g., { [expr]: value }.
+/// </summary>
+public sealed class HIRObjectComputedProperty : HIRObjectMember
+{
+    public HIRObjectComputedProperty(HIRExpression keyExpression, HIRExpression value)
+    {
+        KeyExpression = keyExpression;
+        Value = value;
+    }
+
+    public HIRExpression KeyExpression { get; init; }
+    public HIRExpression Value { get; init; }
+}
+
+/// <summary>
+/// Represents a spread member in an object literal, e.g., { ...x }.
+/// </summary>
+public sealed class HIRObjectSpreadProperty : HIRObjectMember
+{
+    public HIRObjectSpreadProperty(HIRExpression argument)
+    {
+        Argument = argument;
+    }
+
+    public HIRExpression Argument { get; init; }
 }

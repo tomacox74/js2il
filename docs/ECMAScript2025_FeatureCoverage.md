@@ -131,6 +131,10 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
 | Object literal basic construction | Supported | `Js2IL.Tests/Literals/JavaScript/ObjectLiteral.js` | Covers creation and property access. See also verified output in Literals/GeneratorTests.ObjectLiteral.verified.txt. | 13.2.5.1 |
+| Object literal spread properties ({ ...x }) | Supported | `Js2IL.Tests/Object/JavaScript/ObjectLiteral_Spread_Basic.js` | Lowered as: create empty ExpandoObject, then apply members in order. Spread members call JavaScriptRuntime.Object.SpreadInto(target, source). Null/undefined sources are ignored. | 13.2.5.1 |
+| Object literal computed property keys ({ [expr]: value }) | Supported | `Js2IL.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_Basic.js`<br>`Js2IL.Tests/Object/JavaScript/ObjectLiteral_ComputedKey_EvaluationOrder.js` | Lowered as sequential JavaScriptRuntime.Object.SetItem(target, key, value) calls to preserve left-to-right evaluation order and key coercion to string. | 13.2.5.1 |
+| Object literal shorthand properties ({ a }) | Supported | `Js2IL.Tests/Object/JavaScript/ObjectLiteral_ShorthandAndMethod.js` | Shorthand properties are parsed and lowered the same as explicit properties ({ a: a }). | 13.2.5.1 |
+| Object literal method definitions ({ m() { ... } }) | Supported | `Js2IL.Tests/Object/JavaScript/ObjectLiteral_ShorthandAndMethod.js` | Method definitions are lowered as property assignments whose values are compiled function delegates; calls via member dispatch bind 'this' using RuntimeServices.SetCurrentThis. | 13.2.5.1 |
 
 
 ### [Left-Hand-Side Expressions](https://tc39.es/ecma262/#sec-left-hand-side-expressions)
