@@ -3759,6 +3759,55 @@ internal sealed class LIRToILCompiler
                 EmitMathPow(ilEncoder);
                 break;
 
+            case LIRCompareNumberLessThan cmpLt:
+                EmitLoadTemp(cmpLt.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(cmpLt.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Clt);
+                break;
+            case LIRCompareNumberGreaterThan cmpGt:
+                EmitLoadTemp(cmpGt.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(cmpGt.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Cgt);
+                break;
+            case LIRCompareNumberLessThanOrEqual cmpLe:
+                EmitLoadTemp(cmpLe.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(cmpLe.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Cgt);
+                ilEncoder.OpCode(ILOpCode.Ldc_i4_0);
+                ilEncoder.OpCode(ILOpCode.Ceq);
+                break;
+            case LIRCompareNumberGreaterThanOrEqual cmpGe:
+                EmitLoadTemp(cmpGe.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(cmpGe.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Clt);
+                ilEncoder.OpCode(ILOpCode.Ldc_i4_0);
+                ilEncoder.OpCode(ILOpCode.Ceq);
+                break;
+            case LIRCompareNumberEqual cmpEq:
+                EmitLoadTemp(cmpEq.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(cmpEq.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Ceq);
+                break;
+            case LIRCompareNumberNotEqual cmpNe:
+                EmitLoadTemp(cmpNe.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(cmpNe.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Ceq);
+                ilEncoder.OpCode(ILOpCode.Ldc_i4_0);
+                ilEncoder.OpCode(ILOpCode.Ceq);
+                break;
+            case LIRCompareBooleanEqual cmpBoolEq:
+                EmitLoadTemp(cmpBoolEq.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(cmpBoolEq.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Ceq);
+                break;
+            case LIRCompareBooleanNotEqual cmpBoolNe:
+                EmitLoadTemp(cmpBoolNe.Left, ilEncoder, allocation, methodDescriptor);
+                EmitLoadTemp(cmpBoolNe.Right, ilEncoder, allocation, methodDescriptor);
+                ilEncoder.OpCode(ILOpCode.Ceq);
+                ilEncoder.OpCode(ILOpCode.Ldc_i4_0);
+                ilEncoder.OpCode(ILOpCode.Ceq);
+                break;
+
             case LIRNewIntrinsicObject newIntrinsic:
                 {
                     EmitNewIntrinsicObjectCore(newIntrinsic, ilEncoder, allocation, methodDescriptor);
