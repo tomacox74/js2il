@@ -29,6 +29,11 @@ public class SymbolTableTypeInferenceTests
     [InlineData(typeof(string), "'hello'")]
     [InlineData(typeof(bool), "true")]
     [InlineData(typeof(JavaScriptRuntime.JsNull), "null")]
+    [InlineData(typeof(JavaScriptRuntime.Array), "[]")]
+    [InlineData(typeof(JavaScriptRuntime.Array), "[1, 2, 3]")]
+    [InlineData(typeof(JavaScriptRuntime.Array), "new Array()")]
+    [InlineData(typeof(JavaScriptRuntime.Array), "Array.of(1, 2)")]
+    [InlineData(typeof(JavaScriptRuntime.Array), "Array.from([1, 2])")]
     [InlineData(null, "")]
     [InlineData(typeof(double), "1 + 2")]
     [InlineData(typeof(string), "'1' + '2'")]
@@ -61,6 +66,8 @@ public class SymbolTableTypeInferenceTests
     [InlineData(null, "", "testVar = 3.14")] // single assignment, but type is either number or undefined
     [InlineData(typeof(string), "", "testVar = 'first'; testVar = 'second'")] // multiple consistent assignments
     [InlineData(null, "", "testVar = 10; testVar = 'oops'; testVar = true")] // multiple conflicting assignments
+    [InlineData(typeof(JavaScriptRuntime.Array), "[]", "testVar = [1, 2]")]
+    [InlineData(null, "[]", "testVar = [1]; testVar = 123")]
     public void SymbolTable_InferType_Assignments(Type? expectedType, string initialValue, string assignments)
     {
         var variableName = "testVar";

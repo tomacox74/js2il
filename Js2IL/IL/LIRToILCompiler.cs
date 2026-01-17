@@ -101,6 +101,19 @@ internal sealed class LIRToILCompiler
 
     private void EmitBoxIfNeededForTypedScopeFieldLoad(Type fieldClrType, ValueStorage targetStorage, InstructionEncoder ilEncoder)
     {
+        // If the field is reference-typed (often object) but the consumer expects a more specific
+        // reference type (e.g., JavaScriptRuntime.Array), insert a castclass.
+        if (!fieldClrType.IsValueType &&
+            targetStorage.Kind == ValueStorageKind.Reference &&
+            targetStorage.ClrType != null &&
+            targetStorage.ClrType != typeof(object) &&
+            fieldClrType != targetStorage.ClrType)
+        {
+            ilEncoder.OpCode(ILOpCode.Castclass);
+            ilEncoder.Token(_typeReferenceRegistry.GetOrAdd(targetStorage.ClrType));
+            return;
+        }
+
         if (!fieldClrType.IsValueType)
             return;
 

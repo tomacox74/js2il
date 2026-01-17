@@ -2628,6 +2628,12 @@ public sealed class HIRToLIRLowerer
                                 {
                                     return new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool));
                                 }
+                                if (b.ClrType == typeof(JavaScriptRuntime.Array))
+                                {
+                                    // Keep as a typed reference so downstream lowering can emit direct instance calls
+                                    // (e.g., arr.join(), arr.push(...)) without generic dispatch.
+                                    return new ValueStorage(ValueStorageKind.Reference, typeof(JavaScriptRuntime.Array));
+                                }
                             }
 
                             return new ValueStorage(ValueStorageKind.Reference, typeof(object));
