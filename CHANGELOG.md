@@ -8,6 +8,9 @@ All notable changes to this project are documented here.
 - `parseInt` now returns an unboxed JS number (`double`) consistent with the ECMAScript spec (fixes #357).
 - `Array.prototype.some` now returns an unboxed JS boolean (`bool`) consistent with the ECMAScript spec (fixes #358).
 
+### Performance
+- Reduced boxing in JavaScript `+` / `+=` hot paths by selecting typed `Operators.Add(double, object)` / `Operators.Add(object, double)` overloads when exactly one operand is an unboxed `double`.
+
 ## v0.7.1 - 2026-01-17
 
 ### Added
