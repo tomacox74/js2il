@@ -4,10 +4,13 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.7.2 - 2026-01-17
+
 ### Fixed
 - `parseInt` now returns an unboxed JS number (`double`) consistent with the ECMAScript spec (fixes #357).
 - `Array.prototype.some` now returns an unboxed JS boolean (`bool`) consistent with the ECMAScript spec (fixes #358).
-
 ### Performance
 - Reduced boxing in JavaScript `+` / `+=` hot paths by selecting typed `Operators.Add(double, object)` / `Operators.Add(object, double)` overloads when exactly one operand is an unboxed `double`.
 - Stackify can now inline typed (static) numeric/boolean comparisons when operands are inlineable, reducing temp-local materialization and emitted IL size.
