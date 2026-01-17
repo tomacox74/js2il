@@ -104,12 +104,12 @@
 	{
 		// Method begins at RVA 0x2074
 		// Header size: 12
-		// Code size: 211 (0xd3)
+		// Code size: 206 (0xce)
 		.maxstack 32
 		.locals init (
 			[0] class Scopes.ControlFlow_ForOf_LabeledBreak,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
-			[2] object,
+			[2] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[3] float64,
 			[4] float64,
 			[5] object,
@@ -133,66 +133,65 @@
 		IL_0028: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_002d: stloc.1
 		IL_002e: ldloc.1
-		IL_002f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::NormalizeForOfIterable(object)
-		IL_0034: stloc.2
-		IL_0035: ldloc.2
-		IL_0036: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
-		IL_003b: stloc.3
-		IL_003c: ldc.r8 0.0
-		IL_0045: stloc.s 4
-		// loop start (head: IL_0047)
-			IL_0047: ldloc.s 4
-			IL_0049: ldloc.3
-			IL_004a: clt
-			IL_004c: brfalse IL_00d2
+		IL_002f: stloc.2
+		IL_0030: ldloc.2
+		IL_0031: call float64 [JavaScriptRuntime]JavaScriptRuntime.Object::GetLength(object)
+		IL_0036: stloc.3
+		IL_0037: ldc.r8 0.0
+		IL_0040: stloc.s 4
+		// loop start (head: IL_0042)
+			IL_0042: ldloc.s 4
+			IL_0044: ldloc.3
+			IL_0045: clt
+			IL_0047: brfalse IL_00cd
 
-			IL_0051: ldloc.2
-			IL_0052: ldloc.s 4
-			IL_0054: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
-			IL_0059: stloc.s 5
-			IL_005b: ldc.r8 0.0
-			IL_0064: stloc.s 6
-			// loop start (head: IL_0066)
-				IL_0066: ldloc.s 6
-				IL_0068: ldc.r8 1
-				IL_0071: clt
-				IL_0073: brfalse IL_00bb
+			IL_004c: ldloc.2
+			IL_004d: ldloc.s 4
+			IL_004f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
+			IL_0054: stloc.s 5
+			IL_0056: ldc.r8 0.0
+			IL_005f: stloc.s 6
+			// loop start (head: IL_0061)
+				IL_0061: ldloc.s 6
+				IL_0063: ldc.r8 1
+				IL_006c: clt
+				IL_006e: brfalse IL_00b6
 
-				IL_0078: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
-				IL_007d: ldc.i4.1
-				IL_007e: newarr [System.Runtime]System.Object
-				IL_0083: dup
-				IL_0084: ldc.i4.0
-				IL_0085: ldloc.s 5
-				IL_0087: stelem.ref
-				IL_0088: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
-				IL_008d: pop
-				IL_008e: ldloc.s 5
-				IL_0090: ldstr "b"
-				IL_0095: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
-				IL_009a: stloc.s 7
-				IL_009c: ldloc.s 7
-				IL_009e: brfalse IL_00a8
+				IL_0073: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+				IL_0078: ldc.i4.1
+				IL_0079: newarr [System.Runtime]System.Object
+				IL_007e: dup
+				IL_007f: ldc.i4.0
+				IL_0080: ldloc.s 5
+				IL_0082: stelem.ref
+				IL_0083: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+				IL_0088: pop
+				IL_0089: ldloc.s 5
+				IL_008b: ldstr "b"
+				IL_0090: call bool [JavaScriptRuntime]JavaScriptRuntime.Operators::StrictEqual(object, object)
+				IL_0095: stloc.s 7
+				IL_0097: ldloc.s 7
+				IL_0099: brfalse IL_00a3
 
-				IL_00a3: br IL_00d2
+				IL_009e: br IL_00cd
 
-				IL_00a8: ldloc.s 6
-				IL_00aa: ldc.r8 1
-				IL_00b3: add
-				IL_00b4: stloc.s 6
-				IL_00b6: br IL_0066
+				IL_00a3: ldloc.s 6
+				IL_00a5: ldc.r8 1
+				IL_00ae: add
+				IL_00af: stloc.s 6
+				IL_00b1: br IL_0061
 			// end loop
 
-			IL_00bb: ldloc.s 4
-			IL_00bd: ldc.r8 1
-			IL_00c6: add
-			IL_00c7: stloc.s 8
-			IL_00c9: ldloc.s 8
-			IL_00cb: stloc.s 4
-			IL_00cd: br IL_0047
+			IL_00b6: ldloc.s 4
+			IL_00b8: ldc.r8 1
+			IL_00c1: add
+			IL_00c2: stloc.s 8
+			IL_00c4: ldloc.s 8
+			IL_00c6: stloc.s 4
+			IL_00c8: br IL_0042
 		// end loop
 
-		IL_00d2: ret
+		IL_00cd: ret
 	} // end of method ControlFlow_ForOf_LabeledBreak::Main
 
 } // end of class Scripts.ControlFlow_ForOf_LabeledBreak
@@ -204,7 +203,7 @@
 	.method public static 
 		void Main () cil managed 
 	{
-		// Method begins at RVA 0x2153
+		// Method begins at RVA 0x214e
 		// Header size: 1
 		// Code size: 23 (0x17)
 		.maxstack 8

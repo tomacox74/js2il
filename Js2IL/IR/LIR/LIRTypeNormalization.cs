@@ -22,6 +22,32 @@ internal static class LIRTypeNormalization
 
         for (int i = 0; i < methodBody.Instructions.Count - 1; i++)
         {
+            // Peephole: Object.NormalizeForOfIterable(x) where x is already a known iterable.
+            // Today we only prove this for JavaScriptRuntime.Array.
+            // Rewrite to a direct copy to avoid an unnecessary runtime call.
+            if (methodBody.Instructions[i] is LIRCallIntrinsicStatic normalizeForOf &&
+                string.Equals(normalizeForOf.IntrinsicName, "Object", StringComparison.Ordinal) &&
+                string.Equals(normalizeForOf.MethodName, "NormalizeForOfIterable", StringComparison.Ordinal) &&
+                normalizeForOf.Arguments.Count == 1)
+            {
+                var source = normalizeForOf.Arguments[0];
+                var sourceStorage = GetTempStorage(methodBody, source);
+
+                if (sourceStorage.Kind == ValueStorageKind.Reference && sourceStorage.ClrType == typeof(JavaScriptRuntime.Array))
+                {
+                    methodBody.Instructions[i] = new LIRCopyTemp(source, normalizeForOf.Result);
+                    SetTempStorage(methodBody, normalizeForOf.Result, sourceStorage);
+
+                    var slot = GetTempVariableSlot(methodBody, normalizeForOf.Result);
+                    if (slot >= 0 && slot < methodBody.VariableStorages.Count)
+                    {
+                        methodBody.VariableStorages[slot] = sourceStorage;
+                    }
+
+                    continue;
+                }
+            }
+
             // Peephole: ConvertToObject(double/bool) feeding a typed user-class field store.
             // Rewrite the store to use the unboxed source temp directly.
             // This avoids sequences like: double -> box -> ToNumber(object) -> store double.
@@ -67,6 +93,34 @@ internal static class LIRTypeNormalization
                 i--; // account for removed instruction
             }
         }
+    }
+
+    private static ValueStorage GetTempStorage(MethodBodyIR methodBody, TempVariable temp)
+    {
+        if (temp.Index >= 0 && temp.Index < methodBody.TempStorages.Count)
+        {
+            return methodBody.TempStorages[temp.Index];
+        }
+
+        return new ValueStorage(ValueStorageKind.Unknown);
+    }
+
+    private static void SetTempStorage(MethodBodyIR methodBody, TempVariable temp, ValueStorage storage)
+    {
+        if (temp.Index >= 0 && temp.Index < methodBody.TempStorages.Count)
+        {
+            methodBody.TempStorages[temp.Index] = storage;
+        }
+    }
+
+    private static int GetTempVariableSlot(MethodBodyIR methodBody, TempVariable temp)
+    {
+        if (temp.Index >= 0 && temp.Index < methodBody.TempVariableSlots.Count)
+        {
+            return methodBody.TempVariableSlots[temp.Index];
+        }
+
+        return -1;
     }
 
     private static bool IsTempUsedOutside(MethodBodyIR methodBody, TempVariable temp, int ignoreInstructionIndex)
