@@ -1,0 +1,184 @@
+﻿// IL code: Array_Stringification_Basic
+.class private auto ansi '<Module>'
+{
+} // end of class <Module>
+
+.class public auto ansi beforefieldinit Scopes.Array_Stringification_Basic
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig specialname rtspecialname 
+		instance void .ctor () cil managed 
+	{
+		// Method begins at RVA 0x2050
+		// Header size: 1
+		// Code size: 8 (0x8)
+		.maxstack 8
+
+		IL_0000: ldarg.0
+		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
+		IL_0006: nop
+		IL_0007: ret
+	} // end of method Array_Stringification_Basic::.ctor
+
+} // end of class Scopes.Array_Stringification_Basic
+
+.class public auto ansi beforefieldinit Scripts.Array_Stringification_Basic
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public hidebysig static 
+		void Main (
+			object exports,
+			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
+			object module,
+			string __filename,
+			string __dirname
+		) cil managed 
+	{
+		// Method begins at RVA 0x205c
+		// Header size: 12
+		// Code size: 307 (0x133)
+		.maxstack 32
+		.locals init (
+			[0] class Scopes.Array_Stringification_Basic,
+			[1] object,
+			[2] object,
+			[3] object,
+			[4] object
+		)
+
+		IL_0000: newobj instance void Scopes.Array_Stringification_Basic::.ctor()
+		IL_0005: stloc.0
+		IL_0006: ldc.i4.3
+		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_000c: dup
+		IL_000d: ldc.r8 1
+		IL_0016: box [System.Runtime]System.Double
+		IL_001b: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0020: dup
+		IL_0021: ldc.r8 2
+		IL_002a: box [System.Runtime]System.Double
+		IL_002f: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0034: dup
+		IL_0035: ldc.r8 3
+		IL_003e: box [System.Runtime]System.Double
+		IL_0043: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
+		IL_0048: stloc.1
+		IL_0049: ldloc.1
+		IL_004a: ldc.i4.0
+		IL_004b: newarr [System.Runtime]System.Object
+		IL_0050: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::join(object[])
+		IL_0055: stloc.3
+		IL_0056: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_005b: ldc.i4.1
+		IL_005c: newarr [System.Runtime]System.Object
+		IL_0061: dup
+		IL_0062: ldc.i4.0
+		IL_0063: ldloc.3
+		IL_0064: stelem.ref
+		IL_0065: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_006a: pop
+		IL_006b: ldloc.1
+		IL_006c: ldc.i4.0
+		IL_006d: newarr [System.Runtime]System.Object
+		IL_0072: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::toString(object[])
+		IL_0077: stloc.3
+		IL_0078: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_007d: ldc.i4.1
+		IL_007e: newarr [System.Runtime]System.Object
+		IL_0083: dup
+		IL_0084: ldc.i4.0
+		IL_0085: ldloc.3
+		IL_0086: stelem.ref
+		IL_0087: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_008c: pop
+		IL_008d: ldloc.1
+		IL_008e: ldc.i4.0
+		IL_008f: newarr [System.Runtime]System.Object
+		IL_0094: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::toLocaleString(object[])
+		IL_0099: stloc.3
+		IL_009a: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_009f: ldc.i4.1
+		IL_00a0: newarr [System.Runtime]System.Object
+		IL_00a5: dup
+		IL_00a6: ldc.i4.0
+		IL_00a7: ldloc.3
+		IL_00a8: stelem.ref
+		IL_00a9: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00ae: pop
+		IL_00af: ldc.i4.0
+		IL_00b0: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
+		IL_00b5: stloc.2
+		IL_00b6: ldloc.2
+		IL_00b7: ldc.i4.0
+		IL_00b8: newarr [System.Runtime]System.Object
+		IL_00bd: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::toString(object[])
+		IL_00c2: stloc.3
+		IL_00c3: ldstr "["
+		IL_00c8: ldloc.3
+		IL_00c9: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00ce: stloc.s 4
+		IL_00d0: ldloc.s 4
+		IL_00d2: ldstr "]"
+		IL_00d7: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_00dc: stloc.s 4
+		IL_00de: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_00e3: ldc.i4.1
+		IL_00e4: newarr [System.Runtime]System.Object
+		IL_00e9: dup
+		IL_00ea: ldc.i4.0
+		IL_00eb: ldloc.s 4
+		IL_00ed: stelem.ref
+		IL_00ee: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_00f3: pop
+		IL_00f4: ldloc.2
+		IL_00f5: ldc.i4.0
+		IL_00f6: newarr [System.Runtime]System.Object
+		IL_00fb: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::toLocaleString(object[])
+		IL_0100: stloc.3
+		IL_0101: ldstr "["
+		IL_0106: ldloc.3
+		IL_0107: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_010c: stloc.s 4
+		IL_010e: ldloc.s 4
+		IL_0110: ldstr "]"
+		IL_0115: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
+		IL_011a: stloc.s 4
+		IL_011c: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
+		IL_0121: ldc.i4.1
+		IL_0122: newarr [System.Runtime]System.Object
+		IL_0127: dup
+		IL_0128: ldc.i4.0
+		IL_0129: ldloc.s 4
+		IL_012b: stelem.ref
+		IL_012c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
+		IL_0131: pop
+		IL_0132: ret
+	} // end of method Array_Stringification_Basic::Main
+
+} // end of class Scripts.Array_Stringification_Basic
+
+.class private auto ansi beforefieldinit Program
+	extends [System.Runtime]System.Object
+{
+	// Methods
+	.method public static 
+		void Main () cil managed 
+	{
+		// Method begins at RVA 0x219b
+		// Header size: 1
+		// Code size: 23 (0x17)
+		.maxstack 8
+		.entrypoint
+
+		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
+		IL_0005: ldnull
+		IL_0006: ldftn void Scripts.Array_Stringification_Basic::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
+		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
+		IL_0016: ret
+	} // end of method Program::Main
+
+} // end of class Program
+

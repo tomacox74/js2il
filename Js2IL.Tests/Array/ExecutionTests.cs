@@ -62,7 +62,22 @@ namespace Js2IL.Tests.Array
         public Task Array_Find_Basic() { var testName = nameof(Array_Find_Basic); return ExecutionTest(testName); }
 
         [Fact]
-        public Task Array_MissingMethods_Basic() { var testName = nameof(Array_MissingMethods_Basic); return ExecutionTest(testName); }
+        public Task Array_CallbackOps_Basic() { var testName = nameof(Array_CallbackOps_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_SearchOps_Basic() { var testName = nameof(Array_SearchOps_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_MutationOps_Basic() { var testName = nameof(Array_MutationOps_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_NonMutatingOps_Basic() { var testName = nameof(Array_NonMutatingOps_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_Static_Basic() { var testName = nameof(Array_Static_Basic); return ExecutionTest(testName); }
+
+        [Fact]
+        public Task Array_Stringification_Basic() { var testName = nameof(Array_Stringification_Basic); return ExecutionTest(testName); }
 
         [Fact]
         public Task Array_Callable_Construct() { var testName = nameof(Array_Callable_Construct); return ExecutionTest(testName); }
