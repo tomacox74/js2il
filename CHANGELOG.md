@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
+_Nothing yet._
+
+## v0.7.1 - 2026-01-17
+
 ### Added
 - `NodeModuleRegistry` to normalize module specifiers and resolve `[NodeModule]` types for `require()`.
 - Validator coverage for `require('node:path')`.
@@ -11,11 +15,9 @@ All notable changes to this project are documented here.
 - Node core-module shims for internal scripts: `child_process`, `fs/promises`, and `os`.
 - Promise thenable assimilation support for `Promise.resolve` and promise chaining (PR #366, fixes #134).
 - Expanded `JavaScriptRuntime.Array` API coverage (excluding iterator / `Symbol.iterator`-related behaviors), including callback-style methods and optional `sort` comparator support.
-
 ### Fixed
 - Async `await` inside `try/catch/finally` is supported, including `await` inside `finally` blocks (#340).
 - `this` now works inside object literal methods when invoked via member calls (e.g., `obj.method()`).
-
 ### Performance
 - Type-driven intrinsic lowering for provably-safe `Array` element access and `length` reads, reducing late-bound `Object.GetItem/SetItem/GetLength` calls in hot paths.
 
