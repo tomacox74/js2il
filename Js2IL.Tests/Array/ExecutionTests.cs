@@ -65,6 +65,9 @@ namespace Js2IL.Tests.Array
         public Task Array_CallbackOps_Basic() { var testName = nameof(Array_CallbackOps_Basic); return ExecutionTest(testName); }
 
         [Fact]
+        public Task Array_Some_Basic() { var testName = nameof(Array_Some_Basic); return ExecutionTest(testName); }
+
+        [Fact]
         public Task Array_SearchOps_Basic() { var testName = nameof(Array_SearchOps_Basic); return ExecutionTest(testName); }
 
         [Fact]
