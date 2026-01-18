@@ -1,9 +1,9 @@
-// IL code: TryFinally_Return
+﻿// IL code: TryFinally_Return
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.TryFinally_Return
+.class public auto ansi beforefieldinit Modules.TryFinally_Return.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -86,16 +86,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method TryFinally_Return::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.TryFinally_Return
+} // end of class Modules.TryFinally_Return.Scope
 
-.class public auto ansi abstract sealed beforefieldinit Functions.TryFinally_Return
+.class public auto ansi abstract sealed beforefieldinit Modules.TryFinally_Return.f
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object f (
+		object __js_call__ (
 			object[] scopes
 		) cil managed 
 	{
@@ -142,16 +142,16 @@
 
 		IL_0041: ldloc.0
 		IL_0042: ret
-	} // end of method TryFinally_Return::f
+	} // end of method f::__js_call__
 
-} // end of class Functions.TryFinally_Return
+} // end of class Modules.TryFinally_Return.f
 
 .class public auto ansi beforefieldinit Modules.TryFinally_Return
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -164,13 +164,13 @@
 		// Code size: 35 (0x23)
 		.maxstack 32
 		.locals (
-			[0] class Scopes.TryFinally_Return
+			[0] class Modules.TryFinally_Return.Scope
 		)
 
-		IL_0000: newobj instance void Scopes.TryFinally_Return::.ctor()
+		IL_0000: newobj instance void Modules.TryFinally_Return.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Functions.TryFinally_Return::f(object[])
+		IL_0007: ldftn object Modules.TryFinally_Return.f::__js_call__(object[])
 		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -181,7 +181,7 @@
 		IL_001c: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
 		IL_0021: pop
 		IL_0022: ret
-	} // end of method TryFinally_Return::Main
+	} // end of method TryFinally_Return::__js_module_init__
 
 } // end of class Modules.TryFinally_Return
 
@@ -200,7 +200,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.TryFinally_Return::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.TryFinally_Return::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

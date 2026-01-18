@@ -1,9 +1,9 @@
-// IL code: Math_Fround_SignedZero
+﻿// IL code: Math_Fround_SignedZero
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Math_Fround_SignedZero
+.class public auto ansi beforefieldinit Modules.Math_Fround_SignedZero.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -44,16 +44,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Math_Fround_SignedZero::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Math_Fround_SignedZero
+} // end of class Modules.Math_Fround_SignedZero.Scope
 
-.class public auto ansi abstract sealed beforefieldinit Functions.Math_Fround_SignedZero
+.class public auto ansi abstract sealed beforefieldinit Modules.Math_Fround_SignedZero.toStr
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object toStr (
+		object __js_call__ (
 			object[] scopes,
 			object n
 		) cil managed 
@@ -122,16 +122,16 @@
 
 		IL_0080: ldloc.s 6
 		IL_0082: ret
-	} // end of method Math_Fround_SignedZero::toStr
+	} // end of method toStr::__js_call__
 
-} // end of class Functions.Math_Fround_SignedZero
+} // end of class Modules.Math_Fround_SignedZero.toStr
 
 .class public auto ansi beforefieldinit Modules.Math_Fround_SignedZero
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -144,14 +144,14 @@
 		// Code size: 133 (0x85)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Math_Fround_SignedZero,
+			[0] class Modules.Math_Fround_SignedZero.Scope,
 			[1] object,
 			[2] object,
 			[3] object,
 			[4] object
 		)
 
-		IL_0000: newobj instance void Scopes.Math_Fround_SignedZero::.ctor()
+		IL_0000: newobj instance void Modules.Math_Fround_SignedZero.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.r8 1.337
 		IL_000f: box [System.Runtime]System.Double
@@ -176,7 +176,7 @@
 		IL_004a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_004f: pop
 		IL_0050: ldnull
-		IL_0051: ldftn object Functions.Math_Fround_SignedZero::toStr(object[], object)
+		IL_0051: ldftn object Modules.Math_Fround_SignedZero.toStr::__js_call__(object[], object)
 		IL_0057: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_005c: ldc.i4.1
 		IL_005d: newarr [System.Runtime]System.Object
@@ -197,7 +197,7 @@
 		IL_007e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0083: pop
 		IL_0084: ret
-	} // end of method Math_Fround_SignedZero::Main
+	} // end of method Math_Fround_SignedZero::__js_module_init__
 
 } // end of class Modules.Math_Fround_SignedZero
 
@@ -216,7 +216,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Math_Fround_SignedZero::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Math_Fround_SignedZero::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

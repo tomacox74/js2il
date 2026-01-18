@@ -1,9 +1,9 @@
-// IL code: Promise_Thenable_Resolve_Delayed
+﻿// IL code: Promise_Thenable_Resolve_Delayed
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Promise_Thenable_Resolve_Delayed
+.class public auto ansi beforefieldinit Modules.Promise_Thenable_Resolve_Delayed.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -93,16 +93,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Promise_Thenable_Resolve_Delayed::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Promise_Thenable_Resolve_Delayed
+} // end of class Modules.Promise_Thenable_Resolve_Delayed.Scope
 
-.class public auto ansi abstract sealed beforefieldinit Functions.Promise_Thenable_Resolve_Delayed
+.class public auto ansi abstract sealed beforefieldinit Modules.Promise_Thenable_Resolve_Delayed.thenImpl
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object thenImpl (
+		object __js_call__ (
 			object[] scopes,
 			object resolve,
 			object reject
@@ -113,17 +113,17 @@
 		// Code size: 76 (0x4c)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Promise_Thenable_Resolve_Delayed/thenImpl,
+			[0] class Modules.Promise_Thenable_Resolve_Delayed.Scope/thenImpl,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Scopes.Promise_Thenable_Resolve_Delayed/thenImpl::.ctor()
+		IL_0000: newobj instance void Modules.Promise_Thenable_Resolve_Delayed.Scope/thenImpl::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldarg.1
-		IL_0008: stfld object Scopes.Promise_Thenable_Resolve_Delayed/thenImpl::resolve
+		IL_0008: stfld object Modules.Promise_Thenable_Resolve_Delayed.Scope/thenImpl::resolve
 		IL_000d: ldnull
-		IL_000e: ldftn object Functions.Promise_Thenable_Resolve_Delayed::later(object[])
+		IL_000e: ldftn object Modules.Promise_Thenable_Resolve_Delayed.later::__js_call__(object[])
 		IL_0014: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0019: ldc.i4.2
 		IL_001a: newarr [System.Runtime]System.Object
@@ -148,10 +148,16 @@
 		IL_0049: pop
 		IL_004a: ldnull
 		IL_004b: ret
-	} // end of method Promise_Thenable_Resolve_Delayed::thenImpl
+	} // end of method thenImpl::__js_call__
 
+} // end of class Modules.Promise_Thenable_Resolve_Delayed.thenImpl
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Promise_Thenable_Resolve_Delayed.later
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object later (
+		object __js_call__ (
 			object[] scopes
 		) cil managed 
 	{
@@ -167,8 +173,8 @@
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.1
 		IL_0002: ldelem.ref
-		IL_0003: castclass Scopes.Promise_Thenable_Resolve_Delayed/thenImpl
-		IL_0008: ldfld object Scopes.Promise_Thenable_Resolve_Delayed/thenImpl::resolve
+		IL_0003: castclass Modules.Promise_Thenable_Resolve_Delayed.Scope/thenImpl
+		IL_0008: ldfld object Modules.Promise_Thenable_Resolve_Delayed.Scope/thenImpl::resolve
 		IL_000d: stloc.0
 		IL_000e: ldc.i4.1
 		IL_000f: newarr [System.Runtime]System.Object
@@ -198,9 +204,9 @@
 		IL_003f: pop
 		IL_0040: ldnull
 		IL_0041: ret
-	} // end of method Promise_Thenable_Resolve_Delayed::later
+	} // end of method later::__js_call__
 
-} // end of class Functions.Promise_Thenable_Resolve_Delayed
+} // end of class Modules.Promise_Thenable_Resolve_Delayed.later
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L10C32
 	extends [System.Runtime]System.Object
@@ -240,7 +246,7 @@
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -253,17 +259,17 @@
 		// Code size: 114 (0x72)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Promise_Thenable_Resolve_Delayed,
+			[0] class Modules.Promise_Thenable_Resolve_Delayed.Scope,
 			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
 			[2] object,
 			[3] object,
 			[4] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.Promise_Thenable_Resolve_Delayed::.ctor()
+		IL_0000: newobj instance void Modules.Promise_Thenable_Resolve_Delayed.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Functions.Promise_Thenable_Resolve_Delayed::thenImpl(object[], object, object)
+		IL_0007: ldftn object Modules.Promise_Thenable_Resolve_Delayed.thenImpl::__js_call__(object[], object, object)
 		IL_000d: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -306,7 +312,7 @@
 		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
 		IL_0070: pop
 		IL_0071: ret
-	} // end of method Promise_Thenable_Resolve_Delayed::Main
+	} // end of method Promise_Thenable_Resolve_Delayed::__js_module_init__
 
 } // end of class Modules.Promise_Thenable_Resolve_Delayed
 
@@ -325,7 +331,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Promise_Thenable_Resolve_Delayed::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Promise_Thenable_Resolve_Delayed::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

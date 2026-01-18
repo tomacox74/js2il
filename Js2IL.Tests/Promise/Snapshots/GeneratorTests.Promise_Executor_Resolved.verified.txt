@@ -1,9 +1,9 @@
-// IL code: Promise_Executor_Resolved
+﻿// IL code: Promise_Executor_Resolved
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Promise_Executor_Resolved
+.class public auto ansi beforefieldinit Modules.Promise_Executor_Resolved.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -67,9 +67,9 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Promise_Executor_Resolved::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Promise_Executor_Resolved
+} // end of class Modules.Promise_Executor_Resolved.Scope
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L5C8
 	extends [System.Runtime]System.Object
@@ -153,7 +153,7 @@
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -166,13 +166,13 @@
 		// Code size: 94 (0x5e)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Promise_Executor_Resolved,
+			[0] class Modules.Promise_Executor_Resolved.Scope,
 			[1] object,
 			[2] object,
 			[3] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.Promise_Executor_Resolved::.ctor()
+		IL_0000: newobj instance void Modules.Promise_Executor_Resolved.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
 		IL_0007: ldftn object Functions.ArrowFunction_L1C23::ArrowFunction_L1C23(object[], object)
@@ -212,7 +212,7 @@
 		IL_0057: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
 		IL_005c: pop
 		IL_005d: ret
-	} // end of method Promise_Executor_Resolved::Main
+	} // end of method Promise_Executor_Resolved::__js_module_init__
 
 } // end of class Modules.Promise_Executor_Resolved
 
@@ -231,7 +231,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Promise_Executor_Resolved::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Promise_Executor_Resolved::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

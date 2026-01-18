@@ -1,9 +1,9 @@
-// IL code: Promise_All_MixedValues
+﻿// IL code: Promise_All_MixedValues
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Promise_All_MixedValues
+.class public auto ansi beforefieldinit Modules.Promise_All_MixedValues.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -44,9 +44,9 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Promise_All_MixedValues::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Promise_All_MixedValues
+} // end of class Modules.Promise_All_MixedValues.Scope
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L5C36
 	extends [System.Runtime]System.Object
@@ -109,7 +109,7 @@
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -122,7 +122,7 @@
 		// Code size: 134 (0x86)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Promise_All_MixedValues,
+			[0] class Modules.Promise_All_MixedValues.Scope,
 			[1] object,
 			[2] string,
 			[3] float64,
@@ -132,7 +132,7 @@
 			[7] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.Promise_All_MixedValues::.ctor()
+		IL_0000: newobj instance void Modules.Promise_All_MixedValues.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldstr "promise"
 		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
@@ -181,7 +181,7 @@
 		IL_007f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
 		IL_0084: pop
 		IL_0085: ret
-	} // end of method Promise_All_MixedValues::Main
+	} // end of method Promise_All_MixedValues::__js_module_init__
 
 } // end of class Modules.Promise_All_MixedValues
 
@@ -200,7 +200,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Promise_All_MixedValues::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Promise_All_MixedValues::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

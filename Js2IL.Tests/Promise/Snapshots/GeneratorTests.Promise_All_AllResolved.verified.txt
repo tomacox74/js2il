@@ -1,9 +1,9 @@
-// IL code: Promise_All_AllResolved
+﻿// IL code: Promise_All_AllResolved
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Promise_All_AllResolved
+.class public auto ansi beforefieldinit Modules.Promise_All_AllResolved.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -44,9 +44,9 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Promise_All_AllResolved::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Promise_All_AllResolved
+} // end of class Modules.Promise_All_AllResolved.Scope
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L5C32
 	extends [System.Runtime]System.Object
@@ -109,7 +109,7 @@
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -122,7 +122,7 @@
 		// Code size: 162 (0xa2)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Promise_All_AllResolved,
+			[0] class Modules.Promise_All_AllResolved.Scope,
 			[1] object,
 			[2] object,
 			[3] object,
@@ -132,7 +132,7 @@
 			[7] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.Promise_All_AllResolved::.ctor()
+		IL_0000: newobj instance void Modules.Promise_All_AllResolved.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.r8 1
 		IL_000f: box [System.Runtime]System.Double
@@ -185,7 +185,7 @@
 		IL_009b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
 		IL_00a0: pop
 		IL_00a1: ret
-	} // end of method Promise_All_AllResolved::Main
+	} // end of method Promise_All_AllResolved::__js_module_init__
 
 } // end of class Modules.Promise_All_AllResolved
 
@@ -204,7 +204,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Promise_All_AllResolved::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Promise_All_AllResolved::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

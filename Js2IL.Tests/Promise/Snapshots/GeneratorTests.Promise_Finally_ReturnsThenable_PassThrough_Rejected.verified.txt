@@ -1,9 +1,9 @@
-// IL code: Promise_Finally_ReturnsThenable_PassThrough_Rejected
+﻿// IL code: Promise_Finally_ReturnsThenable_PassThrough_Rejected
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Promise_Finally_ReturnsThenable_PassThrough_Rejected
+.class public auto ansi beforefieldinit Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -88,16 +88,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Promise_Finally_ReturnsThenable_PassThrough_Rejected::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Promise_Finally_ReturnsThenable_PassThrough_Rejected
+} // end of class Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected.Scope
 
-.class public auto ansi abstract sealed beforefieldinit Functions.Promise_Finally_ReturnsThenable_PassThrough_Rejected
+.class public auto ansi abstract sealed beforefieldinit Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected.thenImpl
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object thenImpl (
+		object __js_call__ (
 			object[] scopes,
 			object resolve,
 			object reject
@@ -133,9 +133,9 @@
 		IL_002b: pop
 		IL_002c: ldnull
 		IL_002d: ret
-	} // end of method Promise_Finally_ReturnsThenable_PassThrough_Rejected::thenImpl
+	} // end of method thenImpl::__js_call__
 
-} // end of class Functions.Promise_Finally_ReturnsThenable_PassThrough_Rejected
+} // end of class Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected.thenImpl
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L7C32
 	extends [System.Runtime]System.Object
@@ -154,8 +154,8 @@
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.0
 		IL_0002: ldelem.ref
-		IL_0003: castclass Scopes.Promise_Finally_ReturnsThenable_PassThrough_Rejected
-		IL_0008: ldfld object Scopes.Promise_Finally_ReturnsThenable_PassThrough_Rejected::thenable
+		IL_0003: castclass Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected.Scope
+		IL_0008: ldfld object Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected.Scope::thenable
 		IL_000d: ret
 	} // end of method ArrowFunction_L7C32::ArrowFunction_L7C32
 
@@ -199,7 +199,7 @@
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -212,17 +212,17 @@
 		// Code size: 179 (0xb3)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Promise_Finally_ReturnsThenable_PassThrough_Rejected,
+			[0] class Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected.Scope,
 			[1] object,
 			[2] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
 			[3] object,
 			[4] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.Promise_Finally_ReturnsThenable_PassThrough_Rejected::.ctor()
+		IL_0000: newobj instance void Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Functions.Promise_Finally_ReturnsThenable_PassThrough_Rejected::thenImpl(object[], object, object)
+		IL_0007: ldftn object Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected.thenImpl::__js_call__(object[], object, object)
 		IL_000d: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -240,7 +240,7 @@
 		IL_0033: stloc.2
 		IL_0034: ldloc.0
 		IL_0035: ldloc.2
-		IL_0036: stfld object Scopes.Promise_Finally_ReturnsThenable_PassThrough_Rejected::thenable
+		IL_0036: stfld object Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected.Scope::thenable
 		IL_003b: ldstr "orig"
 		IL_0040: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
 		IL_0045: stloc.1
@@ -291,7 +291,7 @@
 		IL_00ac: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
 		IL_00b1: pop
 		IL_00b2: ret
-	} // end of method Promise_Finally_ReturnsThenable_PassThrough_Rejected::Main
+	} // end of method Promise_Finally_ReturnsThenable_PassThrough_Rejected::__js_module_init__
 
 } // end of class Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected
 
@@ -310,7 +310,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Promise_Finally_ReturnsThenable_PassThrough_Rejected::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

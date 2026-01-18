@@ -1,9 +1,9 @@
-// IL code: String_New_Sugar
+﻿// IL code: String_New_Sugar
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.String_New_Sugar
+.class public auto ansi beforefieldinit Modules.String_New_Sugar.Scope
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -19,16 +19,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method String_New_Sugar::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.String_New_Sugar
+} // end of class Modules.String_New_Sugar.Scope
 
 .class public auto ansi beforefieldinit Modules.String_New_Sugar
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -41,11 +41,11 @@
 		// Code size: 109 (0x6d)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.String_New_Sugar,
+			[0] class Modules.String_New_Sugar.Scope,
 			[1] string
 		)
 
-		IL_0000: newobj instance void Scopes.String_New_Sugar::.ctor()
+		IL_0000: newobj instance void Modules.String_New_Sugar.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
 		IL_0007: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
@@ -86,7 +86,7 @@
 		IL_0066: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_006b: pop
 		IL_006c: ret
-	} // end of method String_New_Sugar::Main
+	} // end of method String_New_Sugar::__js_module_init__
 
 } // end of class Modules.String_New_Sugar
 
@@ -105,7 +105,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.String_New_Sugar::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.String_New_Sugar::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

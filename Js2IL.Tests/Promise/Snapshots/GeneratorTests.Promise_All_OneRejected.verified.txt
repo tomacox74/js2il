@@ -1,9 +1,9 @@
-// IL code: Promise_All_OneRejected
+﻿// IL code: Promise_All_OneRejected
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Promise_All_OneRejected
+.class public auto ansi beforefieldinit Modules.Promise_All_OneRejected.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -67,9 +67,9 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Promise_All_OneRejected::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Promise_All_OneRejected
+} // end of class Modules.Promise_All_OneRejected.Scope
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L6C11
 	extends [System.Runtime]System.Object
@@ -140,7 +140,7 @@
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -153,7 +153,7 @@
 		// Code size: 211 (0xd3)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Promise_All_OneRejected,
+			[0] class Modules.Promise_All_OneRejected.Scope,
 			[1] object,
 			[2] object,
 			[3] object,
@@ -163,7 +163,7 @@
 			[7] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.Promise_All_OneRejected::.ctor()
+		IL_0000: newobj instance void Modules.Promise_All_OneRejected.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.r8 1
 		IL_000f: box [System.Runtime]System.Double
@@ -238,7 +238,7 @@
 		IL_00cc: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
 		IL_00d1: pop
 		IL_00d2: ret
-	} // end of method Promise_All_OneRejected::Main
+	} // end of method Promise_All_OneRejected::__js_module_init__
 
 } // end of class Modules.Promise_All_OneRejected
 
@@ -257,7 +257,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Promise_All_OneRejected::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Promise_All_OneRejected::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

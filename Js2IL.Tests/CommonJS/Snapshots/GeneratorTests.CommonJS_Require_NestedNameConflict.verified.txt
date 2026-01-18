@@ -1,9 +1,9 @@
-// IL code: a
+﻿// IL code: a
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.a
+.class public auto ansi beforefieldinit Modules.a.Scope
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -19,11 +19,11 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method a::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.a
+} // end of class Modules.a.Scope
 
-.class public auto ansi beforefieldinit Scopes.b
+.class public auto ansi beforefieldinit Modules.b.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -130,11 +130,11 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method b::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.b
+} // end of class Modules.b.Scope
 
-.class public auto ansi beforefieldinit Scopes.helpers_b
+.class public auto ansi beforefieldinit Modules.helpers_b.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -241,16 +241,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method helpers_b::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.helpers_b
+} // end of class Modules.helpers_b.Scope
 
 .class public auto ansi beforefieldinit Modules.a
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -263,11 +263,11 @@
 		// Code size: 98 (0x62)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.a,
+			[0] class Modules.a.Scope,
 			[1] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.a::.ctor()
+		IL_0000: newobj instance void Modules.a.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.i4.1
 		IL_0007: newarr [System.Runtime]System.Object
@@ -313,7 +313,7 @@
 		IL_005b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0060: pop
 		IL_0061: ret
-	} // end of method a::Main
+	} // end of method a::__js_module_init__
 
 } // end of class Modules.a
 
@@ -362,8 +362,8 @@
 		IL_0001: ldfld object[] Classes.b.CommonClassName::_scopes
 		IL_0006: ldc.i4.0
 		IL_0007: ldelem.ref
-		IL_0008: castclass Scopes.b
-		IL_000d: ldfld string Scopes.b::moduleName
+		IL_0008: castclass Modules.b.Scope
+		IL_000d: ldfld string Modules.b.Scope::moduleName
 		IL_0012: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
 		IL_0017: stloc.0
 		IL_0018: ldstr "class from "
@@ -389,12 +389,12 @@
 
 } // end of class Classes.b.CommonClassName
 
-.class public auto ansi abstract sealed beforefieldinit Functions.b
+.class public auto ansi abstract sealed beforefieldinit Modules.b.commonFunctionName
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object commonFunctionName (
+		object __js_call__ (
 			object[] scopes
 		) cil managed 
 	{
@@ -409,8 +409,8 @@
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.0
 		IL_0002: ldelem.ref
-		IL_0003: castclass Scopes.b
-		IL_0008: ldfld string Scopes.b::moduleName
+		IL_0003: castclass Modules.b.Scope
+		IL_0008: ldfld string Modules.b.Scope::moduleName
 		IL_000d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
 		IL_0012: stloc.0
 		IL_0013: ldstr "Function from "
@@ -432,9 +432,9 @@
 		IL_003f: pop
 		IL_0040: ldnull
 		IL_0041: ret
-	} // end of method b::commonFunctionName
+	} // end of method commonFunctionName::__js_call__
 
-} // end of class Functions.b
+} // end of class Modules.b.commonFunctionName
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L1C9
 	extends [System.Runtime]System.Object
@@ -462,7 +462,7 @@
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -475,12 +475,12 @@
 		// Code size: 176 (0xb0)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.b,
+			[0] class Modules.b.Scope,
 			[1] object,
 			[2] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.b::.ctor()
+		IL_0000: newobj instance void Modules.b.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
 		IL_0007: ldftn object Functions.ArrowFunction_L1C9::ArrowFunction_L1C9(object[], object)
@@ -509,7 +509,7 @@
 		IL_004b: pop
 		IL_004c: ldloc.0
 		IL_004d: ldstr "CommonJS_Require_NestedNameConflict/b"
-		IL_0052: stfld string Scopes.b::moduleName
+		IL_0052: stfld string Modules.b.Scope::moduleName
 		IL_0057: ldc.i4.1
 		IL_0058: newarr [System.Runtime]System.Object
 		IL_005d: dup
@@ -538,7 +538,7 @@
 		IL_0092: pop
 
 		IL_0093: ldnull
-		IL_0094: ldftn object Functions.b::commonFunctionName(object[])
+		IL_0094: ldftn object Modules.b.commonFunctionName::__js_call__(object[])
 		IL_009a: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_009f: ldc.i4.1
 		IL_00a0: newarr [System.Runtime]System.Object
@@ -549,7 +549,7 @@
 		IL_00a9: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
 		IL_00ae: pop
 		IL_00af: ret
-	} // end of method b::Main
+	} // end of method b::__js_module_init__
 
 } // end of class Modules.b
 
@@ -598,8 +598,8 @@
 		IL_0001: ldfld object[] Classes.helpers_b.CommonClassName::_scopes
 		IL_0006: ldc.i4.0
 		IL_0007: ldelem.ref
-		IL_0008: castclass Scopes.helpers_b
-		IL_000d: ldfld string Scopes.helpers_b::moduleName
+		IL_0008: castclass Modules.helpers_b.Scope
+		IL_000d: ldfld string Modules.helpers_b.Scope::moduleName
 		IL_0012: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
 		IL_0017: stloc.0
 		IL_0018: ldstr "class from "
@@ -625,12 +625,12 @@
 
 } // end of class Classes.helpers_b.CommonClassName
 
-.class public auto ansi abstract sealed beforefieldinit Functions.helpers_b
+.class public auto ansi abstract sealed beforefieldinit Modules.helpers_b.commonFunctionName
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object commonFunctionName (
+		object __js_call__ (
 			object[] scopes
 		) cil managed 
 	{
@@ -645,8 +645,8 @@
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.0
 		IL_0002: ldelem.ref
-		IL_0003: castclass Scopes.helpers_b
-		IL_0008: ldfld string Scopes.helpers_b::moduleName
+		IL_0003: castclass Modules.helpers_b.Scope
+		IL_0008: ldfld string Modules.helpers_b.Scope::moduleName
 		IL_000d: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
 		IL_0012: stloc.0
 		IL_0013: ldstr "Function from "
@@ -668,9 +668,9 @@
 		IL_003f: pop
 		IL_0040: ldnull
 		IL_0041: ret
-	} // end of method helpers_b::commonFunctionName
+	} // end of method commonFunctionName::__js_call__
 
-} // end of class Functions.helpers_b
+} // end of class Modules.helpers_b.commonFunctionName
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L1C9
 	extends [System.Runtime]System.Object
@@ -698,7 +698,7 @@
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -711,11 +711,11 @@
 		// Code size: 150 (0x96)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.helpers_b,
+			[0] class Modules.helpers_b.Scope,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Scopes.helpers_b::.ctor()
+		IL_0000: newobj instance void Modules.helpers_b.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
 		IL_0007: ldftn object Functions.ArrowFunction_L1C9::ArrowFunction_L1C9(object[], object)
@@ -744,7 +744,7 @@
 		IL_004b: pop
 		IL_004c: ldloc.0
 		IL_004d: ldstr "CommonJS_Require_NestedNameConflict/helpers/b"
-		IL_0052: stfld string Scopes.helpers_b::moduleName
+		IL_0052: stfld string Modules.helpers_b.Scope::moduleName
 		IL_0057: ldc.i4.1
 		IL_0058: newarr [System.Runtime]System.Object
 		IL_005d: dup
@@ -760,7 +760,7 @@
 		IL_0073: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
 		IL_0078: pop
 		IL_0079: ldnull
-		IL_007a: ldftn object Functions.helpers_b::commonFunctionName(object[])
+		IL_007a: ldftn object Modules.helpers_b.commonFunctionName::__js_call__(object[])
 		IL_0080: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0085: ldc.i4.1
 		IL_0086: newarr [System.Runtime]System.Object
@@ -771,7 +771,7 @@
 		IL_008f: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
 		IL_0094: pop
 		IL_0095: ret
-	} // end of method helpers_b::Main
+	} // end of method helpers_b::__js_module_init__
 
 } // end of class Modules.helpers_b
 
@@ -790,7 +790,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.a::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.a::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

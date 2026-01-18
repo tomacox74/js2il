@@ -1,9 +1,9 @@
-// IL code: String_StartsWith_NestedParam
+﻿// IL code: String_StartsWith_NestedParam
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.String_StartsWith_NestedParam
+.class public auto ansi beforefieldinit Modules.String_StartsWith_NestedParam.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -70,16 +70,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method String_StartsWith_NestedParam::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.String_StartsWith_NestedParam
+} // end of class Modules.String_StartsWith_NestedParam.Scope
 
-.class public auto ansi abstract sealed beforefieldinit Functions.String_StartsWith_NestedParam
+.class public auto ansi abstract sealed beforefieldinit Modules.String_StartsWith_NestedParam.outer
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object outer (
+		object __js_call__ (
 			object[] scopes,
 			object s
 		) cil managed 
@@ -89,17 +89,17 @@
 		// Code size: 54 (0x36)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.String_StartsWith_NestedParam/outer,
+			[0] class Modules.String_StartsWith_NestedParam.Scope/outer,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Scopes.String_StartsWith_NestedParam/outer::.ctor()
+		IL_0000: newobj instance void Modules.String_StartsWith_NestedParam.Scope/outer::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldarg.1
-		IL_0008: stfld object Scopes.String_StartsWith_NestedParam/outer::s
+		IL_0008: stfld object Modules.String_StartsWith_NestedParam.Scope/outer::s
 		IL_000d: ldnull
-		IL_000e: ldftn object Functions.String_StartsWith_NestedParam::inner(object[], object)
+		IL_000e: ldftn object Modules.String_StartsWith_NestedParam.inner::__js_call__(object[], object)
 		IL_0014: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0019: ldc.i4.2
 		IL_001a: newarr [System.Runtime]System.Object
@@ -118,10 +118,16 @@
 		IL_0033: stloc.1
 		IL_0034: ldloc.1
 		IL_0035: ret
-	} // end of method String_StartsWith_NestedParam::outer
+	} // end of method outer::__js_call__
 
+} // end of class Modules.String_StartsWith_NestedParam.outer
+
+.class public auto ansi abstract sealed beforefieldinit Modules.String_StartsWith_NestedParam.inner
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object inner (
+		object __js_call__ (
 			object[] scopes,
 			object p
 		) cil managed 
@@ -137,8 +143,8 @@
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.1
 		IL_0002: ldelem.ref
-		IL_0003: castclass Scopes.String_StartsWith_NestedParam/outer
-		IL_0008: ldfld object Scopes.String_StartsWith_NestedParam/outer::s
+		IL_0003: castclass Modules.String_StartsWith_NestedParam.Scope/outer
+		IL_0008: ldfld object Modules.String_StartsWith_NestedParam.Scope/outer::s
 		IL_000d: stloc.0
 		IL_000e: ldloc.0
 		IL_000f: ldstr "startsWith"
@@ -152,16 +158,16 @@
 		IL_0023: stloc.0
 		IL_0024: ldloc.0
 		IL_0025: ret
-	} // end of method String_StartsWith_NestedParam::inner
+	} // end of method inner::__js_call__
 
-} // end of class Functions.String_StartsWith_NestedParam
+} // end of class Modules.String_StartsWith_NestedParam.inner
 
 .class public auto ansi beforefieldinit Modules.String_StartsWith_NestedParam
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -174,14 +180,14 @@
 		// Code size: 61 (0x3d)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.String_StartsWith_NestedParam,
+			[0] class Modules.String_StartsWith_NestedParam.Scope,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Scopes.String_StartsWith_NestedParam::.ctor()
+		IL_0000: newobj instance void Modules.String_StartsWith_NestedParam.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Functions.String_StartsWith_NestedParam::outer(object[], object)
+		IL_0007: ldftn object Modules.String_StartsWith_NestedParam.outer::__js_call__(object[], object)
 		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -202,7 +208,7 @@
 		IL_0036: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_003b: pop
 		IL_003c: ret
-	} // end of method String_StartsWith_NestedParam::Main
+	} // end of method String_StartsWith_NestedParam::__js_module_init__
 
 } // end of class Modules.String_StartsWith_NestedParam
 
@@ -221,7 +227,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.String_StartsWith_NestedParam::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.String_StartsWith_NestedParam::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

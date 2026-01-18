@@ -1,9 +1,9 @@
-// IL code: Process_Exit_NoArg_GeneratesCall
+﻿// IL code: Process_Exit_NoArg_GeneratesCall
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Process_Exit_NoArg_GeneratesCall
+.class public auto ansi beforefieldinit Modules.Process_Exit_NoArg_GeneratesCall.Scope
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -19,16 +19,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Process_Exit_NoArg_GeneratesCall::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Process_Exit_NoArg_GeneratesCall
+} // end of class Modules.Process_Exit_NoArg_GeneratesCall.Scope
 
 .class public auto ansi beforefieldinit Modules.Process_Exit_NoArg_GeneratesCall
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -41,10 +41,10 @@
 		// Code size: 29 (0x1d)
 		.maxstack 32
 		.locals (
-			[0] class Scopes.Process_Exit_NoArg_GeneratesCall
+			[0] class Modules.Process_Exit_NoArg_GeneratesCall.Scope
 		)
 
-		IL_0000: newobj instance void Scopes.Process_Exit_NoArg_GeneratesCall::.ctor()
+		IL_0000: newobj instance void Modules.Process_Exit_NoArg_GeneratesCall.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
 		IL_000b: ldstr "exit"
@@ -53,7 +53,7 @@
 		IL_0016: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
 		IL_001b: pop
 		IL_001c: ret
-	} // end of method Process_Exit_NoArg_GeneratesCall::Main
+	} // end of method Process_Exit_NoArg_GeneratesCall::__js_module_init__
 
 } // end of class Modules.Process_Exit_NoArg_GeneratesCall
 
@@ -72,7 +72,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Process_Exit_NoArg_GeneratesCall::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Process_Exit_NoArg_GeneratesCall::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

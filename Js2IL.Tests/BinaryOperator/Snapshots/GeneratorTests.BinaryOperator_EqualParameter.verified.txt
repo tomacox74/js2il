@@ -1,9 +1,9 @@
-// IL code: BinaryOperator_EqualParameter
+﻿// IL code: BinaryOperator_EqualParameter
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.BinaryOperator_EqualParameter
+.class public auto ansi beforefieldinit Modules.BinaryOperator_EqualParameter.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -44,16 +44,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method BinaryOperator_EqualParameter::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.BinaryOperator_EqualParameter
+} // end of class Modules.BinaryOperator_EqualParameter.Scope
 
-.class public auto ansi abstract sealed beforefieldinit Functions.BinaryOperator_EqualParameter
+.class public auto ansi abstract sealed beforefieldinit Modules.BinaryOperator_EqualParameter.testParam
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object testParam (
+		object __js_call__ (
 			object[] scopes,
 			object 'value'
 		) cil managed 
@@ -147,16 +147,16 @@
 		IL_00c7: pop
 		IL_00c8: ldnull
 		IL_00c9: ret
-	} // end of method BinaryOperator_EqualParameter::testParam
+	} // end of method testParam::__js_call__
 
-} // end of class Functions.BinaryOperator_EqualParameter
+} // end of class Modules.BinaryOperator_EqualParameter.testParam
 
 .class public auto ansi beforefieldinit Modules.BinaryOperator_EqualParameter
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -169,13 +169,13 @@
 		// Code size: 133 (0x85)
 		.maxstack 32
 		.locals (
-			[0] class Scopes.BinaryOperator_EqualParameter
+			[0] class Modules.BinaryOperator_EqualParameter.Scope
 		)
 
-		IL_0000: newobj instance void Scopes.BinaryOperator_EqualParameter::.ctor()
+		IL_0000: newobj instance void Modules.BinaryOperator_EqualParameter.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Functions.BinaryOperator_EqualParameter::testParam(object[], object)
+		IL_0007: ldftn object Modules.BinaryOperator_EqualParameter.testParam::__js_call__(object[], object)
 		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -188,7 +188,7 @@
 		IL_002a: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
 		IL_002f: pop
 		IL_0030: ldnull
-		IL_0031: ldftn object Functions.BinaryOperator_EqualParameter::testParam(object[], object)
+		IL_0031: ldftn object Modules.BinaryOperator_EqualParameter.testParam::__js_call__(object[], object)
 		IL_0037: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_003c: ldc.i4.1
 		IL_003d: newarr [System.Runtime]System.Object
@@ -201,7 +201,7 @@
 		IL_0054: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
 		IL_0059: pop
 		IL_005a: ldnull
-		IL_005b: ldftn object Functions.BinaryOperator_EqualParameter::testParam(object[], object)
+		IL_005b: ldftn object Modules.BinaryOperator_EqualParameter.testParam::__js_call__(object[], object)
 		IL_0061: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0066: ldc.i4.1
 		IL_0067: newarr [System.Runtime]System.Object
@@ -214,7 +214,7 @@
 		IL_007e: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
 		IL_0083: pop
 		IL_0084: ret
-	} // end of method BinaryOperator_EqualParameter::Main
+	} // end of method BinaryOperator_EqualParameter::__js_module_init__
 
 } // end of class Modules.BinaryOperator_EqualParameter
 
@@ -233,7 +233,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.BinaryOperator_EqualParameter::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.BinaryOperator_EqualParameter::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

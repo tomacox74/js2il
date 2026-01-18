@@ -1,9 +1,9 @@
-// IL code: Classes_ClassConstructor_AccessFunctionVariable_Log
+﻿// IL code: Classes_ClassConstructor_AccessFunctionVariable_Log
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log
+.class public auto ansi beforefieldinit Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -91,9 +91,9 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Classes_ClassConstructor_AccessFunctionVariable_Log::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log
+} // end of class Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.Scope
 
 .class public auto ansi beforefieldinit Classes.Classes_ClassConstructor_AccessFunctionVariable_Log.MyClass
 	extends [System.Runtime]System.Object
@@ -130,8 +130,8 @@
 		IL_001c: ldarg.1
 		IL_001d: ldc.i4.1
 		IL_001e: ldelem.ref
-		IL_001f: castclass Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction
-		IL_0024: ldfld string Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction::FUNCTION_VALUE
+		IL_001f: castclass Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.Scope/testFunction
+		IL_0024: ldfld string Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.Scope/testFunction::FUNCTION_VALUE
 		IL_0029: stelem.ref
 		IL_002a: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_002f: pop
@@ -140,12 +140,12 @@
 
 } // end of class Classes.Classes_ClassConstructor_AccessFunctionVariable_Log.MyClass
 
-.class public auto ansi abstract sealed beforefieldinit Functions.Classes_ClassConstructor_AccessFunctionVariable_Log
+.class public auto ansi abstract sealed beforefieldinit Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.testFunction
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object testFunction (
+		object __js_call__ (
 			object[] scopes
 		) cil managed 
 	{
@@ -154,15 +154,15 @@
 		// Code size: 41 (0x29)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction,
+			[0] class Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.Scope/testFunction,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction::.ctor()
+		IL_0000: newobj instance void Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.Scope/testFunction::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldstr "Hello from function"
-		IL_000c: stfld string Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log/testFunction::FUNCTION_VALUE
+		IL_000c: stfld string Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.Scope/testFunction::FUNCTION_VALUE
 		IL_0011: ldc.i4.2
 		IL_0012: newarr [System.Runtime]System.Object
 		IL_0017: dup
@@ -179,16 +179,16 @@
 		IL_0026: stloc.1
 		IL_0027: ldnull
 		IL_0028: ret
-	} // end of method Classes_ClassConstructor_AccessFunctionVariable_Log::testFunction
+	} // end of method testFunction::__js_call__
 
-} // end of class Functions.Classes_ClassConstructor_AccessFunctionVariable_Log
+} // end of class Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.testFunction
 
 .class public auto ansi beforefieldinit Modules.Classes_ClassConstructor_AccessFunctionVariable_Log
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -201,13 +201,13 @@
 		// Code size: 35 (0x23)
 		.maxstack 32
 		.locals (
-			[0] class Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log
+			[0] class Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.Scope
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_ClassConstructor_AccessFunctionVariable_Log::.ctor()
+		IL_0000: newobj instance void Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Functions.Classes_ClassConstructor_AccessFunctionVariable_Log::testFunction(object[])
+		IL_0007: ldftn object Modules.Classes_ClassConstructor_AccessFunctionVariable_Log.testFunction::__js_call__(object[])
 		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -218,7 +218,7 @@
 		IL_001c: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
 		IL_0021: pop
 		IL_0022: ret
-	} // end of method Classes_ClassConstructor_AccessFunctionVariable_Log::Main
+	} // end of method Classes_ClassConstructor_AccessFunctionVariable_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassConstructor_AccessFunctionVariable_Log
 
@@ -237,7 +237,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Classes_ClassConstructor_AccessFunctionVariable_Log::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Classes_ClassConstructor_AccessFunctionVariable_Log::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

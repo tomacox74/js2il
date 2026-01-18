@@ -1,9 +1,9 @@
-// IL code: Async_HelloWorld
+﻿// IL code: Async_HelloWorld
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Async_HelloWorld
+.class public auto ansi beforefieldinit Modules.Async_HelloWorld.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -44,16 +44,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Async_HelloWorld::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Async_HelloWorld
+} // end of class Modules.Async_HelloWorld.Scope
 
-.class public auto ansi abstract sealed beforefieldinit Functions.Async_HelloWorld
+.class public auto ansi abstract sealed beforefieldinit Modules.Async_HelloWorld.helloWorld
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object helloWorld (
+		object __js_call__ (
 			object[] scopes
 		) cil managed 
 	{
@@ -73,16 +73,16 @@
 		IL_0018: pop
 		IL_0019: ldnull
 		IL_001a: ret
-	} // end of method Async_HelloWorld::helloWorld
+	} // end of method helloWorld::__js_call__
 
-} // end of class Functions.Async_HelloWorld
+} // end of class Modules.Async_HelloWorld.helloWorld
 
 .class public auto ansi beforefieldinit Modules.Async_HelloWorld
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -95,10 +95,10 @@
 		// Code size: 85 (0x55)
 		.maxstack 32
 		.locals (
-			[0] class Scopes.Async_HelloWorld
+			[0] class Modules.Async_HelloWorld.Scope
 		)
 
-		IL_0000: newobj instance void Scopes.Async_HelloWorld::.ctor()
+		IL_0000: newobj instance void Modules.Async_HelloWorld.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_000b: ldc.i4.1
@@ -110,7 +110,7 @@
 		IL_0019: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_001e: pop
 		IL_001f: ldnull
-		IL_0020: ldftn object Functions.Async_HelloWorld::helloWorld(object[])
+		IL_0020: ldftn object Modules.Async_HelloWorld.helloWorld::__js_call__(object[])
 		IL_0026: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_002b: ldc.i4.1
 		IL_002c: newarr [System.Runtime]System.Object
@@ -130,7 +130,7 @@
 		IL_004e: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0053: pop
 		IL_0054: ret
-	} // end of method Async_HelloWorld::Main
+	} // end of method Async_HelloWorld::__js_module_init__
 
 } // end of class Modules.Async_HelloWorld
 
@@ -149,7 +149,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Async_HelloWorld::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Async_HelloWorld::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

@@ -1,9 +1,9 @@
-// IL code: CommonJS_Module_Exports_Object
+﻿// IL code: CommonJS_Module_Exports_Object
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.CommonJS_Module_Exports_Object
+.class public auto ansi beforefieldinit Modules.CommonJS_Module_Exports_Object.Scope
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -19,16 +19,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method CommonJS_Module_Exports_Object::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.CommonJS_Module_Exports_Object
+} // end of class Modules.CommonJS_Module_Exports_Object.Scope
 
 .class public auto ansi beforefieldinit Modules.CommonJS_Module_Exports_Object
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -41,10 +41,10 @@
 		// Code size: 227 (0xe3)
 		.maxstack 32
 		.locals (
-			[0] class Scopes.CommonJS_Module_Exports_Object
+			[0] class Modules.CommonJS_Module_Exports_Object.Scope
 		)
 
-		IL_0000: newobj instance void Scopes.CommonJS_Module_Exports_Object::.ctor()
+		IL_0000: newobj instance void Modules.CommonJS_Module_Exports_Object.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldarg.0
 		IL_0007: ldstr "foo"
@@ -123,7 +123,7 @@
 		IL_00dc: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_00e1: pop
 		IL_00e2: ret
-	} // end of method CommonJS_Module_Exports_Object::Main
+	} // end of method CommonJS_Module_Exports_Object::__js_module_init__
 
 } // end of class Modules.CommonJS_Module_Exports_Object
 
@@ -142,7 +142,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.CommonJS_Module_Exports_Object::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.CommonJS_Module_Exports_Object::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

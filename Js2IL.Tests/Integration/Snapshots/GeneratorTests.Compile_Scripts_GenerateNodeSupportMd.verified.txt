@@ -1,9 +1,9 @@
-// IL code: Compile_Scripts_GenerateNodeSupportMd
+﻿// IL code: Compile_Scripts_GenerateNodeSupportMd
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Compile_Scripts_GenerateNodeSupportMd
+.class public auto ansi beforefieldinit Modules.Compile_Scripts_GenerateNodeSupportMd.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -559,16 +559,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Compile_Scripts_GenerateNodeSupportMd::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Compile_Scripts_GenerateNodeSupportMd
+} // end of class Modules.Compile_Scripts_GenerateNodeSupportMd.Scope
 
-.class public auto ansi abstract sealed beforefieldinit Functions.Compile_Scripts_GenerateNodeSupportMd
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_GenerateNodeSupportMd.readJson
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object readJson (
+		object __js_call__ (
 			object[] scopes,
 			object p
 		) cil managed 
@@ -584,8 +584,8 @@
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.0
 		IL_0002: ldelem.ref
-		IL_0003: castclass Scopes.Compile_Scripts_GenerateNodeSupportMd
-		IL_0008: ldfld object Scopes.Compile_Scripts_GenerateNodeSupportMd::fs
+		IL_0003: castclass Modules.Compile_Scripts_GenerateNodeSupportMd.Scope
+		IL_0008: ldfld object Modules.Compile_Scripts_GenerateNodeSupportMd.Scope::fs
 		IL_000d: stloc.0
 		IL_000e: ldloc.0
 		IL_000f: ldstr "readFileSync"
@@ -606,10 +606,16 @@
 		IL_0032: stloc.0
 		IL_0033: ldloc.0
 		IL_0034: ret
-	} // end of method Compile_Scripts_GenerateNodeSupportMd::readJson
+	} // end of method readJson::__js_call__
 
+} // end of class Modules.Compile_Scripts_GenerateNodeSupportMd.readJson
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_GenerateNodeSupportMd.asArray
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object asArray (
+		object __js_call__ (
 			object[] scopes,
 			object v
 		) cil managed 
@@ -661,10 +667,16 @@
 
 		IL_004b: ldloc.s 4
 		IL_004d: ret
-	} // end of method Compile_Scripts_GenerateNodeSupportMd::asArray
+	} // end of method asArray::__js_call__
 
+} // end of class Modules.Compile_Scripts_GenerateNodeSupportMd.asArray
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_GenerateNodeSupportMd.fmtCode
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object fmtCode (
+		object __js_call__ (
 			object[] scopes,
 			object s
 		) cil managed 
@@ -702,10 +714,16 @@
 
 		IL_0032: ldloc.2
 		IL_0033: ret
-	} // end of method Compile_Scripts_GenerateNodeSupportMd::fmtCode
+	} // end of method fmtCode::__js_call__
 
+} // end of class Modules.Compile_Scripts_GenerateNodeSupportMd.fmtCode
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_GenerateNodeSupportMd.link
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object link (
+		object __js_call__ (
 			object[] scopes,
 			object href,
 			object text
@@ -785,10 +803,16 @@
 
 		IL_0087: ldloc.s 6
 		IL_0089: ret
-	} // end of method Compile_Scripts_GenerateNodeSupportMd::link
+	} // end of method link::__js_call__
 
+} // end of class Modules.Compile_Scripts_GenerateNodeSupportMd.link
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_GenerateNodeSupportMd.renderHeader
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object renderHeader (
+		object __js_call__ (
 			object[] scopes,
 			object ns
 		) cil managed 
@@ -869,7 +893,7 @@
 		IL_009a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 		IL_009f: stloc.2
 		IL_00a0: ldnull
-		IL_00a1: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::fmtCode(object[], object)
+		IL_00a1: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.fmtCode::__js_call__(object[], object)
 		IL_00a7: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_00ac: ldc.i4.1
 		IL_00ad: newarr [System.Runtime]System.Object
@@ -900,7 +924,7 @@
 		IL_00e6: pop
 
 		IL_00e7: ldnull
-		IL_00e8: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::fmtCode(object[], object)
+		IL_00e8: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.fmtCode::__js_call__(object[], object)
 		IL_00ee: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_00f3: ldc.i4.1
 		IL_00f4: newarr [System.Runtime]System.Object
@@ -949,10 +973,16 @@
 		IL_0157: stloc.2
 		IL_0158: ldloc.2
 		IL_0159: ret
-	} // end of method Compile_Scripts_GenerateNodeSupportMd::renderHeader
+	} // end of method renderHeader::__js_call__
 
+} // end of class Modules.Compile_Scripts_GenerateNodeSupportMd.renderHeader
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_GenerateNodeSupportMd.renderImplementation
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object renderImplementation (
+		object __js_call__ (
 			object[] scopes,
 			object impl
 		) cil managed 
@@ -962,17 +992,17 @@
 		// Code size: 152 (0x98)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Compile_Scripts_GenerateNodeSupportMd/renderImplementation,
+			[0] class Modules.Compile_Scripts_GenerateNodeSupportMd.Scope/renderImplementation,
 			[1] object,
 			[2] bool,
 			[3] object,
 			[4] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.Compile_Scripts_GenerateNodeSupportMd/renderImplementation::.ctor()
+		IL_0000: newobj instance void Modules.Compile_Scripts_GenerateNodeSupportMd.Scope/renderImplementation::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::asArray(object[], object)
+		IL_0007: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.asArray::__js_call__(object[], object)
 		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -1038,10 +1068,16 @@
 		IL_0095: stloc.3
 		IL_0096: ldloc.3
 		IL_0097: ret
-	} // end of method Compile_Scripts_GenerateNodeSupportMd::renderImplementation
+	} // end of method renderImplementation::__js_call__
 
+} // end of class Modules.Compile_Scripts_GenerateNodeSupportMd.renderImplementation
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_GenerateNodeSupportMd.renderApisTable
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object renderApisTable (
+		object __js_call__ (
 			object[] scopes,
 			object apis
 		) cil managed 
@@ -1246,7 +1282,7 @@
 			IL_01cf: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_01d4: stloc.s 10
 			IL_01d6: ldnull
-			IL_01d7: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::link(object[], object, object)
+			IL_01d7: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.link::__js_call__(object[], object, object)
 			IL_01dd: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 			IL_01e2: ldc.i4.1
 			IL_01e3: newarr [System.Runtime]System.Object
@@ -1307,10 +1343,16 @@
 		IL_0269: stloc.s 10
 		IL_026b: ldloc.s 10
 		IL_026d: ret
-	} // end of method Compile_Scripts_GenerateNodeSupportMd::renderApisTable
+	} // end of method renderApisTable::__js_call__
 
+} // end of class Modules.Compile_Scripts_GenerateNodeSupportMd.renderApisTable
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_GenerateNodeSupportMd.renderApiTests
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object renderApiTests (
+		object __js_call__ (
 			object[] scopes,
 			object apis
 		) cil managed 
@@ -1439,7 +1481,7 @@
 			IL_00f2: stloc.s 18
 
 			IL_00f4: ldnull
-			IL_00f5: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::fmtCode(object[], object)
+			IL_00f5: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.fmtCode::__js_call__(object[], object)
 			IL_00fb: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 			IL_0100: ldc.i4.1
 			IL_0101: newarr [System.Runtime]System.Object
@@ -1501,7 +1543,7 @@
 				IL_019c: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 				IL_01a1: stloc.s 17
 				IL_01a3: ldnull
-				IL_01a4: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::fmtCode(object[], object)
+				IL_01a4: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.fmtCode::__js_call__(object[], object)
 				IL_01aa: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 				IL_01af: ldc.i4.1
 				IL_01b0: newarr [System.Runtime]System.Object
@@ -1534,7 +1576,7 @@
 				IL_01f5: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 				IL_01fa: stloc.s 17
 				IL_01fc: ldnull
-				IL_01fd: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::fmtCode(object[], object)
+				IL_01fd: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.fmtCode::__js_call__(object[], object)
 				IL_0203: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 				IL_0208: ldc.i4.1
 				IL_0209: newarr [System.Runtime]System.Object
@@ -1617,10 +1659,16 @@
 		IL_02cf: stloc.s 17
 		IL_02d1: ldloc.s 17
 		IL_02d3: ret
-	} // end of method Compile_Scripts_GenerateNodeSupportMd::renderApiTests
+	} // end of method renderApiTests::__js_call__
 
+} // end of class Modules.Compile_Scripts_GenerateNodeSupportMd.renderApiTests
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_GenerateNodeSupportMd.renderModules
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object renderModules (
+		object __js_call__ (
 			object[] scopes,
 			object ns
 		) cil managed 
@@ -1753,7 +1801,7 @@
 			IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_011d: stloc.s 7
 			IL_011f: ldnull
-			IL_0120: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::link(object[], object, object)
+			IL_0120: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.link::__js_call__(object[], object, object)
 			IL_0126: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 			IL_012b: ldc.i4.1
 			IL_012c: newarr [System.Runtime]System.Object
@@ -1806,7 +1854,7 @@
 			IL_01a0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_01a5: stloc.s 7
 			IL_01a7: ldnull
-			IL_01a8: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::renderImplementation(object[], object)
+			IL_01a8: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.renderImplementation::__js_call__(object[], object)
 			IL_01ae: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 			IL_01b3: ldc.i4.1
 			IL_01b4: newarr [System.Runtime]System.Object
@@ -1857,7 +1905,7 @@
 			IL_021c: stloc.s 13
 
 			IL_021e: ldnull
-			IL_021f: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::renderApisTable(object[], object)
+			IL_021f: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.renderApisTable::__js_call__(object[], object)
 			IL_0225: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 			IL_022a: ldc.i4.1
 			IL_022b: newarr [System.Runtime]System.Object
@@ -1914,7 +1962,7 @@
 			IL_02a3: stloc.s 14
 
 			IL_02a5: ldnull
-			IL_02a6: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::renderApiTests(object[], object)
+			IL_02a6: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.renderApiTests::__js_call__(object[], object)
 			IL_02ac: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 			IL_02b1: ldc.i4.1
 			IL_02b2: newarr [System.Runtime]System.Object
@@ -1981,10 +2029,16 @@
 		IL_033b: stloc.s 7
 		IL_033d: ldloc.s 7
 		IL_033f: ret
-	} // end of method Compile_Scripts_GenerateNodeSupportMd::renderModules
+	} // end of method renderModules::__js_call__
 
+} // end of class Modules.Compile_Scripts_GenerateNodeSupportMd.renderModules
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_GenerateNodeSupportMd.renderGlobals
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object renderGlobals (
+		object __js_call__ (
 			object[] scopes,
 			object ns
 		) cil managed 
@@ -2120,7 +2174,7 @@
 			IL_0118: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_011d: stloc.s 11
 			IL_011f: ldnull
-			IL_0120: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::link(object[], object, object)
+			IL_0120: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.link::__js_call__(object[], object, object)
 			IL_0126: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 			IL_012b: ldc.i4.1
 			IL_012c: newarr [System.Runtime]System.Object
@@ -2173,7 +2227,7 @@
 			IL_01a0: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_01a5: stloc.s 11
 			IL_01a7: ldnull
-			IL_01a8: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::renderImplementation(object[], object)
+			IL_01a8: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.renderImplementation::__js_call__(object[], object)
 			IL_01ae: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 			IL_01b3: ldc.i4.1
 			IL_01b4: newarr [System.Runtime]System.Object
@@ -2294,7 +2348,7 @@
 				IL_02e7: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 				IL_02ec: stloc.s 11
 				IL_02ee: ldnull
-				IL_02ef: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::fmtCode(object[], object)
+				IL_02ef: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.fmtCode::__js_call__(object[], object)
 				IL_02f5: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 				IL_02fa: ldc.i4.1
 				IL_02fb: newarr [System.Runtime]System.Object
@@ -2327,7 +2381,7 @@
 				IL_0340: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 				IL_0345: stloc.s 11
 				IL_0347: ldnull
-				IL_0348: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::fmtCode(object[], object)
+				IL_0348: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.fmtCode::__js_call__(object[], object)
 				IL_034e: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 				IL_0353: ldc.i4.1
 				IL_0354: newarr [System.Runtime]System.Object
@@ -2419,10 +2473,16 @@
 		IL_042f: stloc.s 11
 		IL_0431: ldloc.s 11
 		IL_0433: ret
-	} // end of method Compile_Scripts_GenerateNodeSupportMd::renderGlobals
+	} // end of method renderGlobals::__js_call__
 
+} // end of class Modules.Compile_Scripts_GenerateNodeSupportMd.renderGlobals
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_GenerateNodeSupportMd.renderLimitations
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object renderLimitations (
+		object __js_call__ (
 			object[] scopes,
 			object ns
 		) cil managed 
@@ -2560,10 +2620,16 @@
 		IL_0116: stloc.s 6
 		IL_0118: ldloc.s 6
 		IL_011a: ret
-	} // end of method Compile_Scripts_GenerateNodeSupportMd::renderLimitations
+	} // end of method renderLimitations::__js_call__
 
+} // end of class Modules.Compile_Scripts_GenerateNodeSupportMd.renderLimitations
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_GenerateNodeSupportMd.main
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object main (
+		object __js_call__ (
 			object[] scopes
 		) cil managed 
 	{
@@ -2589,8 +2655,8 @@
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.0
 		IL_0002: ldelem.ref
-		IL_0003: castclass Scopes.Compile_Scripts_GenerateNodeSupportMd
-		IL_0008: ldfld object Scopes.Compile_Scripts_GenerateNodeSupportMd::path
+		IL_0003: castclass Modules.Compile_Scripts_GenerateNodeSupportMd.Scope
+		IL_0008: ldfld object Modules.Compile_Scripts_GenerateNodeSupportMd.Scope::path
 		IL_000d: stloc.s 7
 		IL_000f: ldloc.s 7
 		IL_0011: ldstr "resolve"
@@ -2601,8 +2667,8 @@
 		IL_001e: ldarg.0
 		IL_001f: ldc.i4.0
 		IL_0020: ldelem.ref
-		IL_0021: castclass Scopes.Compile_Scripts_GenerateNodeSupportMd
-		IL_0026: ldfld object Scopes.Compile_Scripts_GenerateNodeSupportMd::__dirname
+		IL_0021: castclass Modules.Compile_Scripts_GenerateNodeSupportMd.Scope
+		IL_0026: ldfld object Modules.Compile_Scripts_GenerateNodeSupportMd.Scope::__dirname
 		IL_002b: stelem.ref
 		IL_002c: dup
 		IL_002d: ldc.i4.1
@@ -2613,8 +2679,8 @@
 		IL_003a: ldarg.0
 		IL_003b: ldc.i4.0
 		IL_003c: ldelem.ref
-		IL_003d: castclass Scopes.Compile_Scripts_GenerateNodeSupportMd
-		IL_0042: ldfld object Scopes.Compile_Scripts_GenerateNodeSupportMd::path
+		IL_003d: castclass Modules.Compile_Scripts_GenerateNodeSupportMd.Scope
+		IL_0042: ldfld object Modules.Compile_Scripts_GenerateNodeSupportMd.Scope::path
 		IL_0047: stloc.s 7
 		IL_0049: ldc.i4.3
 		IL_004a: newarr [System.Runtime]System.Object
@@ -2639,8 +2705,8 @@
 		IL_0074: ldarg.0
 		IL_0075: ldc.i4.0
 		IL_0076: ldelem.ref
-		IL_0077: castclass Scopes.Compile_Scripts_GenerateNodeSupportMd
-		IL_007c: ldfld object Scopes.Compile_Scripts_GenerateNodeSupportMd::path
+		IL_0077: castclass Modules.Compile_Scripts_GenerateNodeSupportMd.Scope
+		IL_007c: ldfld object Modules.Compile_Scripts_GenerateNodeSupportMd.Scope::path
 		IL_0081: stloc.s 7
 		IL_0083: ldc.i4.3
 		IL_0084: newarr [System.Runtime]System.Object
@@ -2663,7 +2729,7 @@
 		IL_00a8: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
 		IL_00ad: stloc.2
 		IL_00ae: ldnull
-		IL_00af: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::readJson(object[], object)
+		IL_00af: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.readJson::__js_call__(object[], object)
 		IL_00b5: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_00ba: ldc.i4.1
 		IL_00bb: newarr [System.Runtime]System.Object
@@ -2680,7 +2746,7 @@
 		IL_00ce: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
 		IL_00d3: stloc.s 4
 		IL_00d5: ldnull
-		IL_00d6: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::renderHeader(object[], object)
+		IL_00d6: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.renderHeader::__js_call__(object[], object)
 		IL_00dc: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_00e1: ldc.i4.1
 		IL_00e2: newarr [System.Runtime]System.Object
@@ -2703,7 +2769,7 @@
 		IL_0102: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 		IL_0107: pop
 		IL_0108: ldnull
-		IL_0109: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::renderModules(object[], object)
+		IL_0109: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.renderModules::__js_call__(object[], object)
 		IL_010f: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0114: ldc.i4.1
 		IL_0115: newarr [System.Runtime]System.Object
@@ -2726,7 +2792,7 @@
 		IL_0135: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 		IL_013a: pop
 		IL_013b: ldnull
-		IL_013c: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::renderGlobals(object[], object)
+		IL_013c: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.renderGlobals::__js_call__(object[], object)
 		IL_0142: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0147: ldc.i4.1
 		IL_0148: newarr [System.Runtime]System.Object
@@ -2749,7 +2815,7 @@
 		IL_0168: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Array::push(object[])
 		IL_016d: pop
 		IL_016e: ldnull
-		IL_016f: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::renderLimitations(object[], object)
+		IL_016f: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.renderLimitations::__js_call__(object[], object)
 		IL_0175: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_017a: ldc.i4.1
 		IL_017b: newarr [System.Runtime]System.Object
@@ -2810,8 +2876,8 @@
 		IL_01fe: ldarg.0
 		IL_01ff: ldc.i4.0
 		IL_0200: ldelem.ref
-		IL_0201: castclass Scopes.Compile_Scripts_GenerateNodeSupportMd
-		IL_0206: ldfld object Scopes.Compile_Scripts_GenerateNodeSupportMd::fs
+		IL_0201: castclass Modules.Compile_Scripts_GenerateNodeSupportMd.Scope
+		IL_0206: ldfld object Modules.Compile_Scripts_GenerateNodeSupportMd.Scope::fs
 		IL_020b: stloc.s 7
 		IL_020d: ldc.i4.3
 		IL_020e: newarr [System.Runtime]System.Object
@@ -2836,8 +2902,8 @@
 		IL_0235: ldarg.0
 		IL_0236: ldc.i4.0
 		IL_0237: ldelem.ref
-		IL_0238: castclass Scopes.Compile_Scripts_GenerateNodeSupportMd
-		IL_023d: ldfld object Scopes.Compile_Scripts_GenerateNodeSupportMd::path
+		IL_0238: castclass Modules.Compile_Scripts_GenerateNodeSupportMd.Scope
+		IL_023d: ldfld object Modules.Compile_Scripts_GenerateNodeSupportMd.Scope::path
 		IL_0242: stloc.s 7
 		IL_0244: ldc.i4.2
 		IL_0245: newarr [System.Runtime]System.Object
@@ -2873,9 +2939,9 @@
 		IL_0290: pop
 		IL_0291: ldnull
 		IL_0292: ret
-	} // end of method Compile_Scripts_GenerateNodeSupportMd::main
+	} // end of method main::__js_call__
 
-} // end of class Functions.Compile_Scripts_GenerateNodeSupportMd
+} // end of class Modules.Compile_Scripts_GenerateNodeSupportMd.main
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L32C20
 	extends [System.Runtime]System.Object
@@ -2897,7 +2963,7 @@
 		)
 
 		IL_0000: ldnull
-		IL_0001: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::fmtCode(object[], object)
+		IL_0001: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.fmtCode::__js_call__(object[], object)
 		IL_0007: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_000c: ldc.i4.1
 		IL_000d: newarr [System.Runtime]System.Object
@@ -2928,7 +2994,7 @@
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -2941,12 +3007,12 @@
 		// Code size: 115 (0x73)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Compile_Scripts_GenerateNodeSupportMd,
+			[0] class Modules.Compile_Scripts_GenerateNodeSupportMd.Scope,
 			[1] object[],
 			[2] object
 		)
 
-		IL_0000: newobj instance void Scopes.Compile_Scripts_GenerateNodeSupportMd::.ctor()
+		IL_0000: newobj instance void Modules.Compile_Scripts_GenerateNodeSupportMd.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.i4.1
 		IL_0007: newarr [System.Runtime]System.Object
@@ -2967,7 +3033,7 @@
 		IL_0026: stloc.2
 		IL_0027: ldloc.0
 		IL_0028: ldloc.2
-		IL_0029: stfld object Scopes.Compile_Scripts_GenerateNodeSupportMd::fs
+		IL_0029: stfld object Modules.Compile_Scripts_GenerateNodeSupportMd.Scope::fs
 		IL_002e: ldc.i4.1
 		IL_002f: newarr [System.Runtime]System.Object
 		IL_0034: dup
@@ -2987,9 +3053,9 @@
 		IL_004e: stloc.2
 		IL_004f: ldloc.0
 		IL_0050: ldloc.2
-		IL_0051: stfld object Scopes.Compile_Scripts_GenerateNodeSupportMd::path
+		IL_0051: stfld object Modules.Compile_Scripts_GenerateNodeSupportMd.Scope::path
 		IL_0056: ldnull
-		IL_0057: ldftn object Functions.Compile_Scripts_GenerateNodeSupportMd::main(object[])
+		IL_0057: ldftn object Modules.Compile_Scripts_GenerateNodeSupportMd.main::__js_call__(object[])
 		IL_005d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0062: ldc.i4.1
 		IL_0063: newarr [System.Runtime]System.Object
@@ -3000,7 +3066,7 @@
 		IL_006c: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
 		IL_0071: pop
 		IL_0072: ret
-	} // end of method Compile_Scripts_GenerateNodeSupportMd::Main
+	} // end of method Compile_Scripts_GenerateNodeSupportMd::__js_module_init__
 
 } // end of class Modules.Compile_Scripts_GenerateNodeSupportMd
 
@@ -3019,7 +3085,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Compile_Scripts_GenerateNodeSupportMd::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Compile_Scripts_GenerateNodeSupportMd::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

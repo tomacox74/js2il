@@ -1,9 +1,9 @@
-// IL code: ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
+﻿// IL code: ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
+.class public auto ansi beforefieldinit Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -69,9 +69,9 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
+} // end of class Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.Scope
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L3C15
 	extends [System.Runtime]System.Object
@@ -88,15 +88,15 @@
 		// Code size: 49 (0x31)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/ArrowFunction_outer,
+			[0] class Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.Scope/ArrowFunction_outer,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/ArrowFunction_outer::.ctor()
+		IL_0000: newobj instance void Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.Scope/ArrowFunction_outer::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldarg.1
-		IL_0008: stfld object Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/ArrowFunction_outer::p
+		IL_0008: stfld object Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.Scope/ArrowFunction_outer::p
 		IL_000d: ldnull
 		IL_000e: ldftn object Functions.ArrowFunction_L4C19::ArrowFunction_L4C19(object[])
 		IL_0014: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
@@ -146,8 +146,8 @@
 		IL_0015: ldarg.0
 		IL_0016: ldc.i4.1
 		IL_0017: ldelem.ref
-		IL_0018: castclass Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/ArrowFunction_outer
-		IL_001d: ldfld object Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal/ArrowFunction_outer::p
+		IL_0018: castclass Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.Scope/ArrowFunction_outer
+		IL_001d: ldfld object Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.Scope/ArrowFunction_outer::p
 		IL_0022: stelem.ref
 		IL_0023: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0028: pop
@@ -163,8 +163,8 @@
 		IL_003e: ldarg.0
 		IL_003f: ldc.i4.0
 		IL_0040: ldelem.ref
-		IL_0041: castclass Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
-		IL_0046: ldfld object Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::g
+		IL_0041: castclass Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.Scope
+		IL_0046: ldfld object Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.Scope::g
 		IL_004b: stelem.ref
 		IL_004c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0051: pop
@@ -179,7 +179,7 @@
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -192,17 +192,17 @@
 		// Code size: 113 (0x71)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal,
+			[0] class Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.Scope,
 			[1] object,
 			[2] object,
 			[3] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::.ctor()
+		IL_0000: newobj instance void Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldstr "Hello"
-		IL_000c: stfld object Scopes.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::g
+		IL_000c: stfld object Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal.Scope::g
 		IL_0011: ldnull
 		IL_0012: ldftn object Functions.ArrowFunction_L3C15::ArrowFunction_L3C15(object[], object)
 		IL_0018: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
@@ -246,7 +246,7 @@
 		IL_006a: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::InvokeWithArgs(object, object[], object[])
 		IL_006f: pop
 		IL_0070: ret
-	} // end of method ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::Main
+	} // end of method ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::__js_module_init__
 
 } // end of class Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal
 
@@ -265,7 +265,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.ArrowFunction_GlobalFunctionReturnsNestedFunction_LogsParamAndGlobal::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

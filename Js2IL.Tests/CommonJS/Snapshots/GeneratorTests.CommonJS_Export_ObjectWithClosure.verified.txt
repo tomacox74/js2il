@@ -1,9 +1,9 @@
-// IL code: CommonJS_Export_ObjectWithClosure_Main
+﻿// IL code: CommonJS_Export_ObjectWithClosure_Main
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.CommonJS_Export_ObjectWithClosure_Main
+.class public auto ansi beforefieldinit Modules.CommonJS_Export_ObjectWithClosure_Main.Scope
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -19,11 +19,11 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method CommonJS_Export_ObjectWithClosure_Main::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.CommonJS_Export_ObjectWithClosure_Main
+} // end of class Modules.CommonJS_Export_ObjectWithClosure_Main.Scope
 
-.class public auto ansi beforefieldinit Scopes.CommonJS_Export_ObjectWithClosure_Lib
+.class public auto ansi beforefieldinit Modules.CommonJS_Export_ObjectWithClosure_Lib.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -112,16 +112,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method CommonJS_Export_ObjectWithClosure_Lib::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.CommonJS_Export_ObjectWithClosure_Lib
+} // end of class Modules.CommonJS_Export_ObjectWithClosure_Lib.Scope
 
 .class public auto ansi beforefieldinit Modules.CommonJS_Export_ObjectWithClosure_Main
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -134,14 +134,14 @@
 		// Code size: 246 (0xf6)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.CommonJS_Export_ObjectWithClosure_Main,
+			[0] class Modules.CommonJS_Export_ObjectWithClosure_Main.Scope,
 			[1] object,
 			[2] object,
 			[3] object[],
 			[4] object
 		)
 
-		IL_0000: newobj instance void Scopes.CommonJS_Export_ObjectWithClosure_Main::.ctor()
+		IL_0000: newobj instance void Modules.CommonJS_Export_ObjectWithClosure_Main.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.i4.1
 		IL_0007: newarr [System.Runtime]System.Object
@@ -235,16 +235,16 @@
 		IL_00ef: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_00f4: pop
 		IL_00f5: ret
-	} // end of method CommonJS_Export_ObjectWithClosure_Main::Main
+	} // end of method CommonJS_Export_ObjectWithClosure_Main::__js_module_init__
 
 } // end of class Modules.CommonJS_Export_ObjectWithClosure_Main
 
-.class public auto ansi abstract sealed beforefieldinit Functions.CommonJS_Export_ObjectWithClosure_Lib
+.class public auto ansi abstract sealed beforefieldinit Modules.CommonJS_Export_ObjectWithClosure_Lib.multiplyModuleFactor
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object multiplyModuleFactor (
+		object __js_call__ (
 			object[] scopes,
 			object x
 		) cil managed 
@@ -261,8 +261,8 @@
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.0
 		IL_0002: ldelem.ref
-		IL_0003: castclass Scopes.CommonJS_Export_ObjectWithClosure_Lib
-		IL_0008: ldfld float64 Scopes.CommonJS_Export_ObjectWithClosure_Lib::moduleFactor
+		IL_0003: castclass Modules.CommonJS_Export_ObjectWithClosure_Lib.Scope
+		IL_0008: ldfld float64 Modules.CommonJS_Export_ObjectWithClosure_Lib.Scope::moduleFactor
 		IL_000d: stloc.0
 		IL_000e: ldarg.1
 		IL_000f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
@@ -274,10 +274,16 @@
 		IL_001d: stloc.1
 		IL_001e: ldloc.1
 		IL_001f: ret
-	} // end of method CommonJS_Export_ObjectWithClosure_Lib::multiplyModuleFactor
+	} // end of method multiplyModuleFactor::__js_call__
 
+} // end of class Modules.CommonJS_Export_ObjectWithClosure_Lib.multiplyModuleFactor
+
+.class public auto ansi abstract sealed beforefieldinit Modules.CommonJS_Export_ObjectWithClosure_Lib.createCalculator
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object createCalculator (
+		object __js_call__ (
 			object[] scopes,
 			object factor
 		) cil managed 
@@ -287,18 +293,18 @@
 		// Code size: 84 (0x54)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.CommonJS_Export_ObjectWithClosure_Lib/createCalculator,
+			[0] class Modules.CommonJS_Export_ObjectWithClosure_Lib.Scope/createCalculator,
 			[1] object,
 			[2] class [System.Linq.Expressions]System.Dynamic.ExpandoObject
 		)
 
-		IL_0000: newobj instance void Scopes.CommonJS_Export_ObjectWithClosure_Lib/createCalculator::.ctor()
+		IL_0000: newobj instance void Modules.CommonJS_Export_ObjectWithClosure_Lib.Scope/createCalculator::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldarg.1
-		IL_0008: stfld object Scopes.CommonJS_Export_ObjectWithClosure_Lib/createCalculator::factor
+		IL_0008: stfld object Modules.CommonJS_Export_ObjectWithClosure_Lib.Scope/createCalculator::factor
 		IL_000d: ldnull
-		IL_000e: ldftn object Functions.CommonJS_Export_ObjectWithClosure_Lib::multiply(object[], object)
+		IL_000e: ldftn object Modules.CommonJS_Export_ObjectWithClosure_Lib.multiply::__js_call__(object[], object)
 		IL_0014: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0019: ldc.i4.2
 		IL_001a: newarr [System.Runtime]System.Object
@@ -322,15 +328,21 @@
 		IL_0040: dup
 		IL_0041: ldstr "factor"
 		IL_0046: ldloc.0
-		IL_0047: ldfld object Scopes.CommonJS_Export_ObjectWithClosure_Lib/createCalculator::factor
+		IL_0047: ldfld object Modules.CommonJS_Export_ObjectWithClosure_Lib.Scope/createCalculator::factor
 		IL_004c: callvirt instance void class [System.Runtime]System.Collections.Generic.IDictionary`2<string, object>::set_Item(!0, !1)
 		IL_0051: stloc.2
 		IL_0052: ldloc.2
 		IL_0053: ret
-	} // end of method CommonJS_Export_ObjectWithClosure_Lib::createCalculator
+	} // end of method createCalculator::__js_call__
 
+} // end of class Modules.CommonJS_Export_ObjectWithClosure_Lib.createCalculator
+
+.class public auto ansi abstract sealed beforefieldinit Modules.CommonJS_Export_ObjectWithClosure_Lib.multiply
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object multiply (
+		object __js_call__ (
 			object[] scopes,
 			object x
 		) cil managed 
@@ -348,8 +360,8 @@
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.1
 		IL_0002: ldelem.ref
-		IL_0003: castclass Scopes.CommonJS_Export_ObjectWithClosure_Lib/createCalculator
-		IL_0008: ldfld object Scopes.CommonJS_Export_ObjectWithClosure_Lib/createCalculator::factor
+		IL_0003: castclass Modules.CommonJS_Export_ObjectWithClosure_Lib.Scope/createCalculator
+		IL_0008: ldfld object Modules.CommonJS_Export_ObjectWithClosure_Lib.Scope/createCalculator::factor
 		IL_000d: stloc.0
 		IL_000e: ldarg.1
 		IL_000f: call float64 [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToNumber(object)
@@ -364,16 +376,16 @@
 		IL_0024: stloc.2
 		IL_0025: ldloc.2
 		IL_0026: ret
-	} // end of method CommonJS_Export_ObjectWithClosure_Lib::multiply
+	} // end of method multiply::__js_call__
 
-} // end of class Functions.CommonJS_Export_ObjectWithClosure_Lib
+} // end of class Modules.CommonJS_Export_ObjectWithClosure_Lib.multiply
 
 .class public auto ansi beforefieldinit Modules.CommonJS_Export_ObjectWithClosure_Lib
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -386,19 +398,19 @@
 		// Code size: 121 (0x79)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.CommonJS_Export_ObjectWithClosure_Lib,
+			[0] class Modules.CommonJS_Export_ObjectWithClosure_Lib.Scope,
 			[1] object,
 			[2] object,
 			[3] class [System.Linq.Expressions]System.Dynamic.ExpandoObject
 		)
 
-		IL_0000: newobj instance void Scopes.CommonJS_Export_ObjectWithClosure_Lib::.ctor()
+		IL_0000: newobj instance void Modules.CommonJS_Export_ObjectWithClosure_Lib.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldc.r8 7
-		IL_0010: stfld float64 Scopes.CommonJS_Export_ObjectWithClosure_Lib::moduleFactor
+		IL_0010: stfld float64 Modules.CommonJS_Export_ObjectWithClosure_Lib.Scope::moduleFactor
 		IL_0015: ldnull
-		IL_0016: ldftn object Functions.CommonJS_Export_ObjectWithClosure_Lib::multiplyModuleFactor(object[], object)
+		IL_0016: ldftn object Modules.CommonJS_Export_ObjectWithClosure_Lib.multiplyModuleFactor::__js_call__(object[], object)
 		IL_001c: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0021: ldc.i4.1
 		IL_0022: newarr [System.Runtime]System.Object
@@ -409,7 +421,7 @@
 		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_0030: stloc.1
 		IL_0031: ldnull
-		IL_0032: ldftn object Functions.CommonJS_Export_ObjectWithClosure_Lib::createCalculator(object[], object)
+		IL_0032: ldftn object Modules.CommonJS_Export_ObjectWithClosure_Lib.createCalculator::__js_call__(object[], object)
 		IL_0038: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_003d: ldc.i4.1
 		IL_003e: newarr [System.Runtime]System.Object
@@ -435,7 +447,7 @@
 		IL_0072: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
 		IL_0077: pop
 		IL_0078: ret
-	} // end of method CommonJS_Export_ObjectWithClosure_Lib::Main
+	} // end of method CommonJS_Export_ObjectWithClosure_Lib::__js_module_init__
 
 } // end of class Modules.CommonJS_Export_ObjectWithClosure_Lib
 
@@ -454,7 +466,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.CommonJS_Export_ObjectWithClosure_Main::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.CommonJS_Export_ObjectWithClosure_Main::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

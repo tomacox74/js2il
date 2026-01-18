@@ -1,9 +1,9 @@
-// IL code: ControlFlow_ForOf_ClosureCallback
+﻿// IL code: ControlFlow_ForOf_ClosureCallback
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.ControlFlow_ForOf_ClosureCallback
+.class public auto ansi beforefieldinit Modules.ControlFlow_ForOf_ClosureCallback.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -114,16 +114,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method ControlFlow_ForOf_ClosureCallback::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.ControlFlow_ForOf_ClosureCallback
+} // end of class Modules.ControlFlow_ForOf_ClosureCallback.Scope
 
-.class public auto ansi abstract sealed beforefieldinit Functions.ControlFlow_ForOf_ClosureCallback
+.class public auto ansi abstract sealed beforefieldinit Modules.ControlFlow_ForOf_ClosureCallback.outer
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object outer (
+		object __js_call__ (
 			object[] scopes,
 			object callback
 		) cil managed 
@@ -133,16 +133,16 @@
 		// Code size: 76 (0x4c)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ControlFlow_ForOf_ClosureCallback/outer,
+			[0] class Modules.ControlFlow_ForOf_ClosureCallback.Scope/outer,
 			[1] object,
 			[2] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.ControlFlow_ForOf_ClosureCallback/outer::.ctor()
+		IL_0000: newobj instance void Modules.ControlFlow_ForOf_ClosureCallback.Scope/outer::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldarg.1
-		IL_0008: stfld object Scopes.ControlFlow_ForOf_ClosureCallback/outer::callback
+		IL_0008: stfld object Modules.ControlFlow_ForOf_ClosureCallback.Scope/outer::callback
 		IL_000d: ldnull
 		IL_000e: ldftn object Functions.FunctionExpression_L2C4::FunctionExpression_L2C4(object[])
 		IL_0014: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
@@ -177,9 +177,9 @@
 		IL_0049: pop
 		IL_004a: ldnull
 		IL_004b: ret
-	} // end of method ControlFlow_ForOf_ClosureCallback::outer
+	} // end of method outer::__js_call__
 
-} // end of class Functions.ControlFlow_ForOf_ClosureCallback
+} // end of class Modules.ControlFlow_ForOf_ClosureCallback.outer
 
 .class public auto ansi abstract sealed beforefieldinit Functions.FunctionExpression_L9C7
 	extends [System.Runtime]System.Object
@@ -267,8 +267,8 @@
 			IL_0065: ldarg.0
 			IL_0066: ldc.i4.1
 			IL_0067: ldelem.ref
-			IL_0068: castclass Scopes.ControlFlow_ForOf_ClosureCallback/outer
-			IL_006d: ldfld object Scopes.ControlFlow_ForOf_ClosureCallback/outer::callback
+			IL_0068: castclass Modules.ControlFlow_ForOf_ClosureCallback.Scope/outer
+			IL_006d: ldfld object Modules.ControlFlow_ForOf_ClosureCallback.Scope/outer::callback
 			IL_0072: stloc.s 4
 			IL_0074: ldc.i4.1
 			IL_0075: newarr [System.Runtime]System.Object
@@ -315,7 +315,7 @@
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -328,11 +328,11 @@
 		// Code size: 64 (0x40)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ControlFlow_ForOf_ClosureCallback,
+			[0] class Modules.ControlFlow_ForOf_ClosureCallback.Scope,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Scopes.ControlFlow_ForOf_ClosureCallback::.ctor()
+		IL_0000: newobj instance void Modules.ControlFlow_ForOf_ClosureCallback.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
 		IL_0007: ldftn object Functions.FunctionExpression_L9C7::FunctionExpression_L9C7(object[], object)
@@ -346,7 +346,7 @@
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_0021: stloc.1
 		IL_0022: ldnull
-		IL_0023: ldftn object Functions.ControlFlow_ForOf_ClosureCallback::outer(object[], object)
+		IL_0023: ldftn object Modules.ControlFlow_ForOf_ClosureCallback.outer::__js_call__(object[], object)
 		IL_0029: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_002e: ldc.i4.1
 		IL_002f: newarr [System.Runtime]System.Object
@@ -358,7 +358,7 @@
 		IL_0039: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
 		IL_003e: pop
 		IL_003f: ret
-	} // end of method ControlFlow_ForOf_ClosureCallback::Main
+	} // end of method ControlFlow_ForOf_ClosureCallback::__js_module_init__
 
 } // end of class Modules.ControlFlow_ForOf_ClosureCallback
 
@@ -377,7 +377,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.ControlFlow_ForOf_ClosureCallback::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.ControlFlow_ForOf_ClosureCallback::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

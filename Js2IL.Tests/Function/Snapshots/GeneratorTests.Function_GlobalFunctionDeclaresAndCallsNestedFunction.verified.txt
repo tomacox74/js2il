@@ -1,9 +1,9 @@
-// IL code: Function_GlobalFunctionDeclaresAndCallsNestedFunction
+﻿// IL code: Function_GlobalFunctionDeclaresAndCallsNestedFunction
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Function_GlobalFunctionDeclaresAndCallsNestedFunction
+.class public auto ansi beforefieldinit Modules.Function_GlobalFunctionDeclaresAndCallsNestedFunction.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -69,16 +69,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Function_GlobalFunctionDeclaresAndCallsNestedFunction::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Function_GlobalFunctionDeclaresAndCallsNestedFunction
+} // end of class Modules.Function_GlobalFunctionDeclaresAndCallsNestedFunction.Scope
 
-.class public auto ansi abstract sealed beforefieldinit Functions.Function_GlobalFunctionDeclaresAndCallsNestedFunction
+.class public auto ansi abstract sealed beforefieldinit Modules.Function_GlobalFunctionDeclaresAndCallsNestedFunction.outerFunction
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object outerFunction (
+		object __js_call__ (
 			object[] scopes
 		) cil managed 
 	{
@@ -87,11 +87,11 @@
 		// Code size: 121 (0x79)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Function_GlobalFunctionDeclaresAndCallsNestedFunction/outerFunction,
+			[0] class Modules.Function_GlobalFunctionDeclaresAndCallsNestedFunction.Scope/outerFunction,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Scopes.Function_GlobalFunctionDeclaresAndCallsNestedFunction/outerFunction::.ctor()
+		IL_0000: newobj instance void Modules.Function_GlobalFunctionDeclaresAndCallsNestedFunction.Scope/outerFunction::.ctor()
 		IL_0005: stloc.0
 		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_000b: ldc.i4.1
@@ -112,7 +112,7 @@
 		IL_0032: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0037: pop
 		IL_0038: ldnull
-		IL_0039: ldftn object Functions.Function_GlobalFunctionDeclaresAndCallsNestedFunction::innerFunction(object[])
+		IL_0039: ldftn object Modules.Function_GlobalFunctionDeclaresAndCallsNestedFunction.innerFunction::__js_call__(object[])
 		IL_003f: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0044: ldc.i4.1
 		IL_0045: newarr [System.Runtime]System.Object
@@ -139,10 +139,16 @@
 		IL_0072: pop
 		IL_0073: ldstr "outer result"
 		IL_0078: ret
-	} // end of method Function_GlobalFunctionDeclaresAndCallsNestedFunction::outerFunction
+	} // end of method outerFunction::__js_call__
 
+} // end of class Modules.Function_GlobalFunctionDeclaresAndCallsNestedFunction.outerFunction
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Function_GlobalFunctionDeclaresAndCallsNestedFunction.innerFunction
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object innerFunction (
+		object __js_call__ (
 			object[] scopes
 		) cil managed 
 	{
@@ -162,16 +168,16 @@
 		IL_0018: pop
 		IL_0019: ldstr "nested result"
 		IL_001e: ret
-	} // end of method Function_GlobalFunctionDeclaresAndCallsNestedFunction::innerFunction
+	} // end of method innerFunction::__js_call__
 
-} // end of class Functions.Function_GlobalFunctionDeclaresAndCallsNestedFunction
+} // end of class Modules.Function_GlobalFunctionDeclaresAndCallsNestedFunction.innerFunction
 
 .class public auto ansi beforefieldinit Modules.Function_GlobalFunctionDeclaresAndCallsNestedFunction
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -184,11 +190,11 @@
 		// Code size: 114 (0x72)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Function_GlobalFunctionDeclaresAndCallsNestedFunction,
+			[0] class Modules.Function_GlobalFunctionDeclaresAndCallsNestedFunction.Scope,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Scopes.Function_GlobalFunctionDeclaresAndCallsNestedFunction::.ctor()
+		IL_0000: newobj instance void Modules.Function_GlobalFunctionDeclaresAndCallsNestedFunction.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Console [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_console()
 		IL_000b: ldc.i4.1
@@ -200,7 +206,7 @@
 		IL_0019: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_001e: pop
 		IL_001f: ldnull
-		IL_0020: ldftn object Functions.Function_GlobalFunctionDeclaresAndCallsNestedFunction::outerFunction(object[])
+		IL_0020: ldftn object Modules.Function_GlobalFunctionDeclaresAndCallsNestedFunction.outerFunction::__js_call__(object[])
 		IL_0026: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_002b: ldc.i4.1
 		IL_002c: newarr [System.Runtime]System.Object
@@ -233,7 +239,7 @@
 		IL_006b: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0070: pop
 		IL_0071: ret
-	} // end of method Function_GlobalFunctionDeclaresAndCallsNestedFunction::Main
+	} // end of method Function_GlobalFunctionDeclaresAndCallsNestedFunction::__js_module_init__
 
 } // end of class Modules.Function_GlobalFunctionDeclaresAndCallsNestedFunction
 
@@ -252,7 +258,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Function_GlobalFunctionDeclaresAndCallsNestedFunction::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Function_GlobalFunctionDeclaresAndCallsNestedFunction::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

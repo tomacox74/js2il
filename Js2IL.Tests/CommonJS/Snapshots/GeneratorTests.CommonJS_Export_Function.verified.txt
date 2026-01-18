@@ -1,9 +1,9 @@
-// IL code: CommonJS_Export_Function_Main
+﻿// IL code: CommonJS_Export_Function_Main
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.CommonJS_Export_Function_Main
+.class public auto ansi beforefieldinit Modules.CommonJS_Export_Function_Main.Scope
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -19,11 +19,11 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method CommonJS_Export_Function_Main::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.CommonJS_Export_Function_Main
+} // end of class Modules.CommonJS_Export_Function_Main.Scope
 
-.class public auto ansi beforefieldinit Scopes.CommonJS_Export_Function_Lib
+.class public auto ansi beforefieldinit Modules.CommonJS_Export_Function_Lib.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -64,16 +64,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method CommonJS_Export_Function_Lib::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.CommonJS_Export_Function_Lib
+} // end of class Modules.CommonJS_Export_Function_Lib.Scope
 
 .class public auto ansi beforefieldinit Modules.CommonJS_Export_Function_Main
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -86,13 +86,13 @@
 		// Code size: 102 (0x66)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.CommonJS_Export_Function_Main,
+			[0] class Modules.CommonJS_Export_Function_Main.Scope,
 			[1] object,
 			[2] object,
 			[3] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.CommonJS_Export_Function_Main::.ctor()
+		IL_0000: newobj instance void Modules.CommonJS_Export_Function_Main.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.i4.1
 		IL_0007: newarr [System.Runtime]System.Object
@@ -142,16 +142,16 @@
 		IL_005f: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0064: pop
 		IL_0065: ret
-	} // end of method CommonJS_Export_Function_Main::Main
+	} // end of method CommonJS_Export_Function_Main::__js_module_init__
 
 } // end of class Modules.CommonJS_Export_Function_Main
 
-.class public auto ansi abstract sealed beforefieldinit Functions.CommonJS_Export_Function_Lib
+.class public auto ansi abstract sealed beforefieldinit Modules.CommonJS_Export_Function_Lib.greet
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object greet (
+		object __js_call__ (
 			object[] scopes,
 			object name
 		) cil managed 
@@ -174,16 +174,16 @@
 		IL_0017: stloc.0
 		IL_0018: ldloc.0
 		IL_0019: ret
-	} // end of method CommonJS_Export_Function_Lib::greet
+	} // end of method greet::__js_call__
 
-} // end of class Functions.CommonJS_Export_Function_Lib
+} // end of class Modules.CommonJS_Export_Function_Lib.greet
 
 .class public auto ansi beforefieldinit Modules.CommonJS_Export_Function_Lib
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -196,14 +196,14 @@
 		// Code size: 48 (0x30)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.CommonJS_Export_Function_Lib,
+			[0] class Modules.CommonJS_Export_Function_Lib.Scope,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Scopes.CommonJS_Export_Function_Lib::.ctor()
+		IL_0000: newobj instance void Modules.CommonJS_Export_Function_Lib.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Functions.CommonJS_Export_Function_Lib::greet(object[], object)
+		IL_0007: ldftn object Modules.CommonJS_Export_Function_Lib.greet::__js_call__(object[], object)
 		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -219,7 +219,7 @@
 		IL_0029: call object [JavaScriptRuntime]JavaScriptRuntime.Object::SetItem(object, object, object)
 		IL_002e: pop
 		IL_002f: ret
-	} // end of method CommonJS_Export_Function_Lib::Main
+	} // end of method CommonJS_Export_Function_Lib::__js_module_init__
 
 } // end of class Modules.CommonJS_Export_Function_Lib
 
@@ -238,7 +238,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.CommonJS_Export_Function_Main::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.CommonJS_Export_Function_Main::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

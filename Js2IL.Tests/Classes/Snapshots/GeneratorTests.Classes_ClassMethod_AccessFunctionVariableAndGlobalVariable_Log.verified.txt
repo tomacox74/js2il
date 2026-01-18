@@ -1,9 +1,9 @@
-// IL code: Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log
+﻿// IL code: Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log
+.class public auto ansi beforefieldinit Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -92,9 +92,9 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log
+} // end of class Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.Scope
 
 .class public auto ansi beforefieldinit Classes.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.MyClass
 	extends [System.Runtime]System.Object
@@ -143,8 +143,8 @@
 		IL_000e: ldfld object[] Classes.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.MyClass::_scopes
 		IL_0013: ldc.i4.0
 		IL_0014: ldelem.ref
-		IL_0015: castclass Scopes.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log
-		IL_001a: ldfld string Scopes.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log::GLOBAL_VALUE
+		IL_0015: castclass Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.Scope
+		IL_001a: ldfld string Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.Scope::GLOBAL_VALUE
 		IL_001f: stelem.ref
 		IL_0020: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0025: pop
@@ -157,8 +157,8 @@
 		IL_0034: ldfld object[] Classes.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.MyClass::_scopes
 		IL_0039: ldc.i4.1
 		IL_003a: ldelem.ref
-		IL_003b: castclass Scopes.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log/testFunction
-		IL_0040: ldfld string Scopes.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log/testFunction::FUNCTION_VALUE
+		IL_003b: castclass Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.Scope/testFunction
+		IL_0040: ldfld string Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.Scope/testFunction::FUNCTION_VALUE
 		IL_0045: stelem.ref
 		IL_0046: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_004b: pop
@@ -168,12 +168,12 @@
 
 } // end of class Classes.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.MyClass
 
-.class public auto ansi abstract sealed beforefieldinit Functions.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log
+.class public auto ansi abstract sealed beforefieldinit Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.testFunction
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object testFunction (
+		object __js_call__ (
 			object[] scopes
 		) cil managed 
 	{
@@ -182,16 +182,16 @@
 		// Code size: 85 (0x55)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log/testFunction,
+			[0] class Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.Scope/testFunction,
 			[1] object,
 			[2] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log/testFunction::.ctor()
+		IL_0000: newobj instance void Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.Scope/testFunction::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldstr "Hello from function"
-		IL_000c: stfld string Scopes.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log/testFunction::FUNCTION_VALUE
+		IL_000c: stfld string Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.Scope/testFunction::FUNCTION_VALUE
 		IL_0011: ldc.i4.2
 		IL_0012: newarr [System.Runtime]System.Object
 		IL_0017: dup
@@ -227,16 +227,16 @@
 
 		IL_0053: ldnull
 		IL_0054: ret
-	} // end of method Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log::testFunction
+	} // end of method testFunction::__js_call__
 
-} // end of class Functions.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log
+} // end of class Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.testFunction
 
 .class public auto ansi beforefieldinit Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -249,16 +249,16 @@
 		// Code size: 46 (0x2e)
 		.maxstack 32
 		.locals (
-			[0] class Scopes.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log
+			[0] class Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.Scope
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log::.ctor()
+		IL_0000: newobj instance void Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldstr "Hello from global"
-		IL_000c: stfld string Scopes.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log::GLOBAL_VALUE
+		IL_000c: stfld string Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.Scope::GLOBAL_VALUE
 		IL_0011: ldnull
-		IL_0012: ldftn object Functions.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log::testFunction(object[])
+		IL_0012: ldftn object Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log.testFunction::__js_call__(object[])
 		IL_0018: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_001d: ldc.i4.1
 		IL_001e: newarr [System.Runtime]System.Object
@@ -269,7 +269,7 @@
 		IL_0027: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
 		IL_002c: pop
 		IL_002d: ret
-	} // end of method Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log::Main
+	} // end of method Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log::__js_module_init__
 
 } // end of class Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log
 
@@ -288,7 +288,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Classes_ClassMethod_AccessFunctionVariableAndGlobalVariable_Log::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

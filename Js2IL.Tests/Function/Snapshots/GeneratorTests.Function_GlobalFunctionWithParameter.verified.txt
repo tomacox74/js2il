@@ -1,9 +1,9 @@
-// IL code: Function_GlobalFunctionWithParameter
+﻿// IL code: Function_GlobalFunctionWithParameter
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Function_GlobalFunctionWithParameter
+.class public auto ansi beforefieldinit Modules.Function_GlobalFunctionWithParameter.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -44,16 +44,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Function_GlobalFunctionWithParameter::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Function_GlobalFunctionWithParameter
+} // end of class Modules.Function_GlobalFunctionWithParameter.Scope
 
-.class public auto ansi abstract sealed beforefieldinit Functions.Function_GlobalFunctionWithParameter
+.class public auto ansi abstract sealed beforefieldinit Modules.Function_GlobalFunctionWithParameter.printMessage
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object printMessage (
+		object __js_call__ (
 			object[] scopes,
 			object message
 		) cil managed 
@@ -78,16 +78,16 @@
 		IL_001c: pop
 		IL_001d: ldnull
 		IL_001e: ret
-	} // end of method Function_GlobalFunctionWithParameter::printMessage
+	} // end of method printMessage::__js_call__
 
-} // end of class Functions.Function_GlobalFunctionWithParameter
+} // end of class Modules.Function_GlobalFunctionWithParameter.printMessage
 
 .class public auto ansi beforefieldinit Modules.Function_GlobalFunctionWithParameter
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -100,13 +100,13 @@
 		// Code size: 40 (0x28)
 		.maxstack 32
 		.locals (
-			[0] class Scopes.Function_GlobalFunctionWithParameter
+			[0] class Modules.Function_GlobalFunctionWithParameter.Scope
 		)
 
-		IL_0000: newobj instance void Scopes.Function_GlobalFunctionWithParameter::.ctor()
+		IL_0000: newobj instance void Modules.Function_GlobalFunctionWithParameter.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Functions.Function_GlobalFunctionWithParameter::printMessage(object[], object)
+		IL_0007: ldftn object Modules.Function_GlobalFunctionWithParameter.printMessage::__js_call__(object[], object)
 		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -118,7 +118,7 @@
 		IL_0021: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
 		IL_0026: pop
 		IL_0027: ret
-	} // end of method Function_GlobalFunctionWithParameter::Main
+	} // end of method Function_GlobalFunctionWithParameter::__js_module_init__
 
 } // end of class Modules.Function_GlobalFunctionWithParameter
 
@@ -137,7 +137,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Function_GlobalFunctionWithParameter::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Function_GlobalFunctionWithParameter::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

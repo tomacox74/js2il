@@ -1,9 +1,9 @@
-// IL code: Generator_BasicNext
+﻿// IL code: Generator_BasicNext
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Generator_BasicNext
+.class public auto ansi beforefieldinit Modules.Generator_BasicNext.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -44,16 +44,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Generator_BasicNext::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Generator_BasicNext
+} // end of class Modules.Generator_BasicNext.Scope
 
-.class public auto ansi abstract sealed beforefieldinit Functions.Generator_BasicNext
+.class public auto ansi abstract sealed beforefieldinit Modules.Generator_BasicNext.g
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object g (
+		object __js_call__ (
 			object[] scopes
 		) cil managed 
 	{
@@ -62,7 +62,7 @@
 		// Code size: 376 (0x178)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Generator_BasicNext/g,
+			[0] class Modules.Generator_BasicNext.Scope/g,
 			[1] bool,
 			[2] object,
 			[3] object
@@ -71,19 +71,19 @@
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.0
 		IL_0002: ldelem.ref
-		IL_0003: isinst Scopes.Generator_BasicNext/g
+		IL_0003: isinst Modules.Generator_BasicNext.Scope/g
 		IL_0008: dup
 		IL_0009: brtrue IL_003d
 
 		IL_000e: pop
-		IL_000f: newobj instance void Scopes.Generator_BasicNext/g::.ctor()
+		IL_000f: newobj instance void Modules.Generator_BasicNext.Scope/g::.ctor()
 		IL_0014: stloc.0
 		IL_0015: ldloc.0
 		IL_0016: ldarg.0
 		IL_0017: call object[] [JavaScriptRuntime]JavaScriptRuntime.Promise::PrependScopeToArray(object, object[])
 		IL_001c: starg.s scopes
 		IL_001e: ldnull
-		IL_001f: ldftn object Functions.Generator_BasicNext::g(object[])
+		IL_001f: ldftn object Modules.Generator_BasicNext.g::__js_call__(object[])
 		IL_0025: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_002a: ldarg.0
 		IL_002b: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
@@ -209,16 +209,16 @@
 		IL_0171: ldc.i4.1
 		IL_0172: call object [JavaScriptRuntime]JavaScriptRuntime.IteratorResult::Create(object, bool)
 		IL_0177: ret
-	} // end of method Generator_BasicNext::g
+	} // end of method g::__js_call__
 
-} // end of class Functions.Generator_BasicNext
+} // end of class Modules.Generator_BasicNext.g
 
 .class public auto ansi beforefieldinit Modules.Generator_BasicNext
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -231,7 +231,7 @@
 		// Code size: 403 (0x193)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Generator_BasicNext,
+			[0] class Modules.Generator_BasicNext.Scope,
 			[1] object,
 			[2] object,
 			[3] object,
@@ -239,10 +239,10 @@
 			[5] object
 		)
 
-		IL_0000: newobj instance void Scopes.Generator_BasicNext::.ctor()
+		IL_0000: newobj instance void Modules.Generator_BasicNext.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Functions.Generator_BasicNext::g(object[])
+		IL_0007: ldftn object Modules.Generator_BasicNext.g::__js_call__(object[])
 		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -379,7 +379,7 @@
 		IL_018c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0191: pop
 		IL_0192: ret
-	} // end of method Generator_BasicNext::Main
+	} // end of method Generator_BasicNext::__js_module_init__
 
 } // end of class Modules.Generator_BasicNext
 
@@ -398,7 +398,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Generator_BasicNext::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Generator_BasicNext::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

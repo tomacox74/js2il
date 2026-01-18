@@ -1,9 +1,9 @@
-// IL code: ObjectLiteral
+﻿// IL code: ObjectLiteral
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.ObjectLiteral
+.class public auto ansi beforefieldinit Modules.ObjectLiteral.Scope
 	extends [System.Runtime]System.Object
 {
 	// Methods
@@ -19,16 +19,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method ObjectLiteral::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.ObjectLiteral
+} // end of class Modules.ObjectLiteral.Scope
 
 .class public auto ansi beforefieldinit Modules.ObjectLiteral
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -41,11 +41,11 @@
 		// Code size: 83 (0x53)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.ObjectLiteral,
+			[0] class Modules.ObjectLiteral.Scope,
 			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject
 		)
 
-		IL_0000: newobj instance void Scopes.ObjectLiteral::.ctor()
+		IL_0000: newobj instance void Modules.ObjectLiteral.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: newobj instance void [System.Linq.Expressions]System.Dynamic.ExpandoObject::.ctor()
 		IL_000b: dup
@@ -72,7 +72,7 @@
 		IL_004c: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0051: pop
 		IL_0052: ret
-	} // end of method ObjectLiteral::Main
+	} // end of method ObjectLiteral::__js_module_init__
 
 } // end of class Modules.ObjectLiteral
 
@@ -91,7 +91,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.ObjectLiteral::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.ObjectLiteral::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

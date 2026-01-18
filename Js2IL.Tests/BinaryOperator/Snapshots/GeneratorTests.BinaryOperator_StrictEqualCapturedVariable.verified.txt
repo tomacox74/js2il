@@ -1,9 +1,9 @@
-// IL code: BinaryOperator_StrictEqualCapturedVariable
+﻿// IL code: BinaryOperator_StrictEqualCapturedVariable
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.BinaryOperator_StrictEqualCapturedVariable
+.class public auto ansi beforefieldinit Modules.BinaryOperator_StrictEqualCapturedVariable.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -111,16 +111,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method BinaryOperator_StrictEqualCapturedVariable::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.BinaryOperator_StrictEqualCapturedVariable
+} // end of class Modules.BinaryOperator_StrictEqualCapturedVariable.Scope
 
-.class public auto ansi abstract sealed beforefieldinit Functions.BinaryOperator_StrictEqualCapturedVariable
+.class public auto ansi abstract sealed beforefieldinit Modules.BinaryOperator_StrictEqualCapturedVariable.process
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object process (
+		object __js_call__ (
 			object[] scopes,
 			object callback
 		) cil managed 
@@ -174,9 +174,9 @@
 
 		IL_0052: ldnull
 		IL_0053: ret
-	} // end of method BinaryOperator_StrictEqualCapturedVariable::process
+	} // end of method process::__js_call__
 
-} // end of class Functions.BinaryOperator_StrictEqualCapturedVariable
+} // end of class Modules.BinaryOperator_StrictEqualCapturedVariable.process
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L12C9
 	extends [System.Runtime]System.Object
@@ -260,7 +260,7 @@
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -273,11 +273,11 @@
 		// Code size: 89 (0x59)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.BinaryOperator_StrictEqualCapturedVariable,
+			[0] class Modules.BinaryOperator_StrictEqualCapturedVariable.Scope,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Scopes.BinaryOperator_StrictEqualCapturedVariable::.ctor()
+		IL_0000: newobj instance void Modules.BinaryOperator_StrictEqualCapturedVariable.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
 		IL_0007: ldftn object Functions.ArrowFunction_L12C9::ArrowFunction_L12C9(object[], object)
@@ -291,7 +291,7 @@
 		IL_001c: call object [JavaScriptRuntime]JavaScriptRuntime.Closure::Bind(object, object[])
 		IL_0021: stloc.1
 		IL_0022: ldnull
-		IL_0023: ldftn object Functions.BinaryOperator_StrictEqualCapturedVariable::process(object[], object)
+		IL_0023: ldftn object Modules.BinaryOperator_StrictEqualCapturedVariable.process::__js_call__(object[], object)
 		IL_0029: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_002e: ldc.i4.1
 		IL_002f: newarr [System.Runtime]System.Object
@@ -312,7 +312,7 @@
 		IL_0052: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0057: pop
 		IL_0058: ret
-	} // end of method BinaryOperator_StrictEqualCapturedVariable::Main
+	} // end of method BinaryOperator_StrictEqualCapturedVariable::__js_module_init__
 
 } // end of class Modules.BinaryOperator_StrictEqualCapturedVariable
 
@@ -331,7 +331,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.BinaryOperator_StrictEqualCapturedVariable::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.BinaryOperator_StrictEqualCapturedVariable::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

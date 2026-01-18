@@ -1,9 +1,9 @@
-// IL code: Classes_ClassConstructor_NewClassReferencingGlobal
+﻿// IL code: Classes_ClassConstructor_NewClassReferencingGlobal
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Classes_ClassConstructor_NewClassReferencingGlobal
+.class public auto ansi beforefieldinit Modules.Classes_ClassConstructor_NewClassReferencingGlobal.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -108,9 +108,9 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Classes_ClassConstructor_NewClassReferencingGlobal::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Classes_ClassConstructor_NewClassReferencingGlobal
+} // end of class Modules.Classes_ClassConstructor_NewClassReferencingGlobal.Scope
 
 .class public auto ansi beforefieldinit Classes.Classes_ClassConstructor_NewClassReferencingGlobal.Inner
 	extends [System.Runtime]System.Object
@@ -144,8 +144,8 @@
 		IL_0010: ldarg.1
 		IL_0011: ldc.i4.0
 		IL_0012: ldelem.ref
-		IL_0013: castclass Scopes.Classes_ClassConstructor_NewClassReferencingGlobal
-		IL_0018: ldfld float64 Scopes.Classes_ClassConstructor_NewClassReferencingGlobal::GLOBAL_VALUE
+		IL_0013: castclass Modules.Classes_ClassConstructor_NewClassReferencingGlobal.Scope
+		IL_0018: ldfld float64 Modules.Classes_ClassConstructor_NewClassReferencingGlobal.Scope::GLOBAL_VALUE
 		IL_001d: box [System.Runtime]System.Double
 		IL_0022: stfld object Classes.Classes_ClassConstructor_NewClassReferencingGlobal.Inner::'value'
 		IL_0027: ret
@@ -203,7 +203,7 @@
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -216,15 +216,15 @@
 		// Code size: 79 (0x4f)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ClassConstructor_NewClassReferencingGlobal,
+			[0] class Modules.Classes_ClassConstructor_NewClassReferencingGlobal.Scope,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_ClassConstructor_NewClassReferencingGlobal::.ctor()
+		IL_0000: newobj instance void Modules.Classes_ClassConstructor_NewClassReferencingGlobal.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldc.r8 42
-		IL_0010: stfld float64 Scopes.Classes_ClassConstructor_NewClassReferencingGlobal::GLOBAL_VALUE
+		IL_0010: stfld float64 Modules.Classes_ClassConstructor_NewClassReferencingGlobal.Scope::GLOBAL_VALUE
 		IL_0015: ldc.i4.1
 		IL_0016: newarr [System.Runtime]System.Object
 		IL_001b: dup
@@ -247,7 +247,7 @@
 		IL_0048: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_004d: pop
 		IL_004e: ret
-	} // end of method Classes_ClassConstructor_NewClassReferencingGlobal::Main
+	} // end of method Classes_ClassConstructor_NewClassReferencingGlobal::__js_module_init__
 
 } // end of class Modules.Classes_ClassConstructor_NewClassReferencingGlobal
 
@@ -266,7 +266,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Classes_ClassConstructor_NewClassReferencingGlobal::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Classes_ClassConstructor_NewClassReferencingGlobal::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

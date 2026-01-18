@@ -1,9 +1,9 @@
-// IL code: Promise_Reject_Then
+﻿// IL code: Promise_Reject_Then
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Promise_Reject_Then
+.class public auto ansi beforefieldinit Modules.Promise_Reject_Then.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -44,9 +44,9 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Promise_Reject_Then::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Promise_Reject_Then
+} // end of class Modules.Promise_Reject_Then.Scope
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L1C57
 	extends [System.Runtime]System.Object
@@ -86,7 +86,7 @@
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -99,13 +99,13 @@
 		// Code size: 79 (0x4f)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Promise_Reject_Then,
+			[0] class Modules.Promise_Reject_Then.Scope,
 			[1] object,
 			[2] object,
 			[3] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.Promise_Reject_Then::.ctor()
+		IL_0000: newobj instance void Modules.Promise_Reject_Then.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldstr "Hello from Promise.reject"
 		IL_000b: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::reject(object)
@@ -139,7 +139,7 @@
 		IL_0048: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
 		IL_004d: pop
 		IL_004e: ret
-	} // end of method Promise_Reject_Then::Main
+	} // end of method Promise_Reject_Then::__js_module_init__
 
 } // end of class Modules.Promise_Reject_Then
 
@@ -158,7 +158,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Promise_Reject_Then::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Promise_Reject_Then::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

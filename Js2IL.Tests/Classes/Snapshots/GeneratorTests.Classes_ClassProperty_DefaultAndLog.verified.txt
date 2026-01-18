@@ -1,9 +1,9 @@
-// IL code: Classes_ClassProperty_DefaultAndLog
+﻿// IL code: Classes_ClassProperty_DefaultAndLog
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Classes_ClassProperty_DefaultAndLog
+.class public auto ansi beforefieldinit Modules.Classes_ClassProperty_DefaultAndLog.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -41,9 +41,9 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Classes_ClassProperty_DefaultAndLog::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Classes_ClassProperty_DefaultAndLog
+} // end of class Modules.Classes_ClassProperty_DefaultAndLog.Scope
 
 .class public auto ansi beforefieldinit Classes.Classes_ClassProperty_DefaultAndLog.Greeter
 	extends [System.Runtime]System.Object
@@ -75,7 +75,7 @@
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -88,11 +88,11 @@
 		// Code size: 44 (0x2c)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Classes_ClassProperty_DefaultAndLog,
+			[0] class Modules.Classes_ClassProperty_DefaultAndLog.Scope,
 			[1] object
 		)
 
-		IL_0000: newobj instance void Scopes.Classes_ClassProperty_DefaultAndLog::.ctor()
+		IL_0000: newobj instance void Modules.Classes_ClassProperty_DefaultAndLog.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: newobj instance void Classes.Classes_ClassProperty_DefaultAndLog.Greeter::.ctor()
 		IL_000b: stloc.1
@@ -108,7 +108,7 @@
 		IL_0025: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_002a: pop
 		IL_002b: ret
-	} // end of method Classes_ClassProperty_DefaultAndLog::Main
+	} // end of method Classes_ClassProperty_DefaultAndLog::__js_module_init__
 
 } // end of class Modules.Classes_ClassProperty_DefaultAndLog
 
@@ -127,7 +127,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Classes_ClassProperty_DefaultAndLog::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Classes_ClassProperty_DefaultAndLog::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

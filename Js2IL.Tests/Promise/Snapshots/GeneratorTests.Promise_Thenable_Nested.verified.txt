@@ -1,9 +1,9 @@
-// IL code: Promise_Thenable_Nested
+﻿// IL code: Promise_Thenable_Nested
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Promise_Thenable_Nested
+.class public auto ansi beforefieldinit Modules.Promise_Thenable_Nested.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -89,16 +89,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Promise_Thenable_Nested::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Promise_Thenable_Nested
+} // end of class Modules.Promise_Thenable_Nested.Scope
 
-.class public auto ansi abstract sealed beforefieldinit Functions.Promise_Thenable_Nested
+.class public auto ansi abstract sealed beforefieldinit Modules.Promise_Thenable_Nested.innerThen
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object innerThen (
+		object __js_call__ (
 			object[] scopes,
 			object resolve2,
 			object reject2
@@ -134,10 +134,16 @@
 		IL_002b: pop
 		IL_002c: ldnull
 		IL_002d: ret
-	} // end of method Promise_Thenable_Nested::innerThen
+	} // end of method innerThen::__js_call__
 
+} // end of class Modules.Promise_Thenable_Nested.innerThen
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Promise_Thenable_Nested.outerThen
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object outerThen (
+		object __js_call__ (
 			object[] scopes,
 			object resolve,
 			object reject
@@ -158,8 +164,8 @@
 		IL_0008: ldarg.0
 		IL_0009: ldc.i4.0
 		IL_000a: ldelem.ref
-		IL_000b: castclass Scopes.Promise_Thenable_Nested
-		IL_0010: ldfld object Scopes.Promise_Thenable_Nested::innerThenable
+		IL_000b: castclass Modules.Promise_Thenable_Nested.Scope
+		IL_0010: ldfld object Modules.Promise_Thenable_Nested.Scope::innerThenable
 		IL_0015: stelem.ref
 		IL_0016: stloc.0
 		IL_0017: ldarg.1
@@ -176,9 +182,9 @@
 		IL_002a: pop
 		IL_002b: ldnull
 		IL_002c: ret
-	} // end of method Promise_Thenable_Nested::outerThen
+	} // end of method outerThen::__js_call__
 
-} // end of class Functions.Promise_Thenable_Nested
+} // end of class Modules.Promise_Thenable_Nested.outerThen
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L13C32
 	extends [System.Runtime]System.Object
@@ -218,7 +224,7 @@
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -231,7 +237,7 @@
 		// Code size: 169 (0xa9)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Promise_Thenable_Nested,
+			[0] class Modules.Promise_Thenable_Nested.Scope,
 			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
 			[2] object,
 			[3] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
@@ -239,10 +245,10 @@
 			[5] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.Promise_Thenable_Nested::.ctor()
+		IL_0000: newobj instance void Modules.Promise_Thenable_Nested.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Functions.Promise_Thenable_Nested::innerThen(object[], object, object)
+		IL_0007: ldftn object Modules.Promise_Thenable_Nested.innerThen::__js_call__(object[], object, object)
 		IL_000d: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -260,9 +266,9 @@
 		IL_0033: stloc.3
 		IL_0034: ldloc.0
 		IL_0035: ldloc.3
-		IL_0036: stfld object Scopes.Promise_Thenable_Nested::innerThenable
+		IL_0036: stfld object Modules.Promise_Thenable_Nested.Scope::innerThenable
 		IL_003b: ldnull
-		IL_003c: ldftn object Functions.Promise_Thenable_Nested::outerThen(object[], object, object)
+		IL_003c: ldftn object Modules.Promise_Thenable_Nested.outerThen::__js_call__(object[], object, object)
 		IL_0042: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_0047: ldc.i4.1
 		IL_0048: newarr [System.Runtime]System.Object
@@ -305,7 +311,7 @@
 		IL_00a2: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
 		IL_00a7: pop
 		IL_00a8: ret
-	} // end of method Promise_Thenable_Nested::Main
+	} // end of method Promise_Thenable_Nested::__js_module_init__
 
 } // end of class Modules.Promise_Thenable_Nested
 
@@ -324,7 +330,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Promise_Thenable_Nested::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Promise_Thenable_Nested::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

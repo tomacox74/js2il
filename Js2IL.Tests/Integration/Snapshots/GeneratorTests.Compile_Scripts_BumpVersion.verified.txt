@@ -1,9 +1,9 @@
-// IL code: Compile_Scripts_BumpVersion
+﻿// IL code: Compile_Scripts_BumpVersion
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Compile_Scripts_BumpVersion
+.class public auto ansi beforefieldinit Modules.Compile_Scripts_BumpVersion.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -459,16 +459,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Compile_Scripts_BumpVersion::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Compile_Scripts_BumpVersion
+} // end of class Modules.Compile_Scripts_BumpVersion.Scope
 
-.class public auto ansi abstract sealed beforefieldinit Functions.Compile_Scripts_BumpVersion
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_BumpVersion.readFile
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object readFile (
+		object __js_call__ (
 			object[] scopes,
 			object p
 		) cil managed 
@@ -484,8 +484,8 @@
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.0
 		IL_0002: ldelem.ref
-		IL_0003: castclass Scopes.Compile_Scripts_BumpVersion
-		IL_0008: ldfld object Scopes.Compile_Scripts_BumpVersion::fs
+		IL_0003: castclass Modules.Compile_Scripts_BumpVersion.Scope
+		IL_0008: ldfld object Modules.Compile_Scripts_BumpVersion.Scope::fs
 		IL_000d: stloc.0
 		IL_000e: ldloc.0
 		IL_000f: ldstr "readFileSync"
@@ -503,10 +503,16 @@
 		IL_002b: stloc.0
 		IL_002c: ldloc.0
 		IL_002d: ret
-	} // end of method Compile_Scripts_BumpVersion::readFile
+	} // end of method readFile::__js_call__
 
+} // end of class Modules.Compile_Scripts_BumpVersion.readFile
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_BumpVersion.writeFile
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object writeFile (
+		object __js_call__ (
 			object[] scopes,
 			object p,
 			object c
@@ -523,8 +529,8 @@
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.0
 		IL_0002: ldelem.ref
-		IL_0003: castclass Scopes.Compile_Scripts_BumpVersion
-		IL_0008: ldfld object Scopes.Compile_Scripts_BumpVersion::fs
+		IL_0003: castclass Modules.Compile_Scripts_BumpVersion.Scope
+		IL_0008: ldfld object Modules.Compile_Scripts_BumpVersion.Scope::fs
 		IL_000d: stloc.0
 		IL_000e: ldloc.0
 		IL_000f: ldstr "writeFileSync"
@@ -546,10 +552,16 @@
 		IL_002f: pop
 		IL_0030: ldnull
 		IL_0031: ret
-	} // end of method Compile_Scripts_BumpVersion::writeFile
+	} // end of method writeFile::__js_call__
 
+} // end of class Modules.Compile_Scripts_BumpVersion.writeFile
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_BumpVersion.parseCurrentVersion
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object parseCurrentVersion (
+		object __js_call__ (
 			object[] scopes,
 			object csprojText
 		) cil managed 
@@ -614,10 +626,16 @@
 		IL_007b: stloc.1
 		IL_007c: ldloc.1
 		IL_007d: ret
-	} // end of method Compile_Scripts_BumpVersion::parseCurrentVersion
+	} // end of method parseCurrentVersion::__js_call__
 
+} // end of class Modules.Compile_Scripts_BumpVersion.parseCurrentVersion
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_BumpVersion.incVersion
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object incVersion (
+		object __js_call__ (
 			object[] scopes,
 			object version,
 			object kind
@@ -628,7 +646,7 @@
 		// Code size: 681 (0x2a9)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Compile_Scripts_BumpVersion/incVersion,
+			[0] class Modules.Compile_Scripts_BumpVersion.Scope/incVersion,
 			[1] object,
 			[2] object,
 			[3] object,
@@ -643,7 +661,7 @@
 			[12] string
 		)
 
-		IL_0000: newobj instance void Scopes.Compile_Scripts_BumpVersion/incVersion::.ctor()
+		IL_0000: newobj instance void Modules.Compile_Scripts_BumpVersion.Scope/incVersion::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldarg.1
 		IL_0007: ldstr "split"
@@ -877,10 +895,16 @@
 		IL_02a4: stloc.s 11
 		IL_02a6: ldloc.s 11
 		IL_02a8: ret
-	} // end of method Compile_Scripts_BumpVersion::incVersion
+	} // end of method incVersion::__js_call__
 
+} // end of class Modules.Compile_Scripts_BumpVersion.incVersion
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_BumpVersion.resolveTargetVersion
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object resolveTargetVersion (
+		object __js_call__ (
 			object[] scopes,
 			object argVersion,
 			object current
@@ -939,7 +963,7 @@
 		IL_0062: brfalse IL_0089
 
 		IL_0067: ldnull
-		IL_0068: ldftn object Functions.Compile_Scripts_BumpVersion::incVersion(object[], object, object)
+		IL_0068: ldftn object Modules.Compile_Scripts_BumpVersion.incVersion::__js_call__(object[], object, object)
 		IL_006e: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_0073: ldc.i4.1
 		IL_0074: newarr [System.Runtime]System.Object
@@ -995,10 +1019,16 @@
 
 		IL_00e3: ldarg.1
 		IL_00e4: ret
-	} // end of method Compile_Scripts_BumpVersion::resolveTargetVersion
+	} // end of method resolveTargetVersion::__js_call__
 
+} // end of class Modules.Compile_Scripts_BumpVersion.resolveTargetVersion
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_BumpVersion.updateCsprojVersion
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object updateCsprojVersion (
+		object __js_call__ (
 			object[] scopes,
 			object text,
 			object newVersion
@@ -1098,10 +1128,16 @@
 		IL_00be: stloc.0
 		IL_00bf: ldloc.0
 		IL_00c0: ret
-	} // end of method Compile_Scripts_BumpVersion::updateCsprojVersion
+	} // end of method updateCsprojVersion::__js_call__
 
+} // end of class Modules.Compile_Scripts_BumpVersion.updateCsprojVersion
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_BumpVersion.extractUnreleased
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object extractUnreleased (
+		object __js_call__ (
 			object[] scopes,
 			object changelog
 		) cil managed 
@@ -1304,10 +1340,16 @@
 		IL_01f2: stloc.s 13
 		IL_01f4: ldloc.s 13
 		IL_01f6: ret
-	} // end of method Compile_Scripts_BumpVersion::extractUnreleased
+	} // end of method extractUnreleased::__js_call__
 
+} // end of class Modules.Compile_Scripts_BumpVersion.extractUnreleased
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_BumpVersion.isPlaceholder
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object isPlaceholder (
+		object __js_call__ (
 			object[] scopes,
 			object line
 		) cil managed 
@@ -1346,10 +1388,16 @@
 		IL_0039: stloc.0
 		IL_003a: ldloc.0
 		IL_003b: ret
-	} // end of method Compile_Scripts_BumpVersion::isPlaceholder
+	} // end of method isPlaceholder::__js_call__
 
+} // end of class Modules.Compile_Scripts_BumpVersion.isPlaceholder
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_BumpVersion.generateReleaseSection
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object generateReleaseSection (
+		object __js_call__ (
 			object[] scopes,
 			object newVersion,
 			object body
@@ -1360,7 +1408,7 @@
 		// Code size: 341 (0x155)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Compile_Scripts_BumpVersion/generateReleaseSection,
+			[0] class Modules.Compile_Scripts_BumpVersion.Scope/generateReleaseSection,
 			[1] object,
 			[2] object,
 			[3] object,
@@ -1371,7 +1419,7 @@
 			[8] string
 		)
 
-		IL_0000: newobj instance void Scopes.Compile_Scripts_BumpVersion/generateReleaseSection::.ctor()
+		IL_0000: newobj instance void Modules.Compile_Scripts_BumpVersion.Scope/generateReleaseSection::.ctor()
 		IL_0005: stloc.0
 		IL_0006: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Date::.ctor()
 		IL_000b: stloc.3
@@ -1498,10 +1546,16 @@
 		IL_0150: stloc.s 7
 		IL_0152: ldloc.s 7
 		IL_0154: ret
-	} // end of method Compile_Scripts_BumpVersion::generateReleaseSection
+	} // end of method generateReleaseSection::__js_call__
 
+} // end of class Modules.Compile_Scripts_BumpVersion.generateReleaseSection
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_BumpVersion.perform
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object perform (
+		object __js_call__ (
 			object[] scopes
 		) cil managed 
 	{
@@ -1510,7 +1564,7 @@
 		// Code size: 1584 (0x630)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Compile_Scripts_BumpVersion/perform,
+			[0] class Modules.Compile_Scripts_BumpVersion.Scope/perform,
 			[1] object,
 			[2] object,
 			[3] object,
@@ -1543,7 +1597,7 @@
 			[30] string
 		)
 
-		IL_0000: newobj instance void Scopes.Compile_Scripts_BumpVersion/perform::.ctor()
+		IL_0000: newobj instance void Modules.Compile_Scripts_BumpVersion.Scope/perform::.ctor()
 		IL_0005: stloc.0
 		IL_0006: call class [JavaScriptRuntime]JavaScriptRuntime.Node.Process [JavaScriptRuntime]JavaScriptRuntime.GlobalThis::get_process()
 		IL_000b: ldstr "argv"
@@ -1568,11 +1622,11 @@
 		IL_0050: ldarg.0
 		IL_0051: ldc.i4.0
 		IL_0052: ldelem.ref
-		IL_0053: castclass Scopes.Compile_Scripts_BumpVersion
-		IL_0058: ldfld object Scopes.Compile_Scripts_BumpVersion::CSPROJ_PATH
+		IL_0053: castclass Modules.Compile_Scripts_BumpVersion.Scope
+		IL_0058: ldfld object Modules.Compile_Scripts_BumpVersion.Scope::CSPROJ_PATH
 		IL_005d: stloc.s 21
 		IL_005f: ldnull
-		IL_0060: ldftn object Functions.Compile_Scripts_BumpVersion::readFile(object[], object)
+		IL_0060: ldftn object Modules.Compile_Scripts_BumpVersion.readFile::__js_call__(object[], object)
 		IL_0066: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_006b: ldc.i4.1
 		IL_006c: newarr [System.Runtime]System.Object
@@ -1588,11 +1642,11 @@
 		IL_007f: ldarg.0
 		IL_0080: ldc.i4.0
 		IL_0081: ldelem.ref
-		IL_0082: castclass Scopes.Compile_Scripts_BumpVersion
-		IL_0087: ldfld object Scopes.Compile_Scripts_BumpVersion::RUNTIME_CSPROJ_PATH
+		IL_0082: castclass Modules.Compile_Scripts_BumpVersion.Scope
+		IL_0087: ldfld object Modules.Compile_Scripts_BumpVersion.Scope::RUNTIME_CSPROJ_PATH
 		IL_008c: stloc.s 21
 		IL_008e: ldnull
-		IL_008f: ldftn object Functions.Compile_Scripts_BumpVersion::readFile(object[], object)
+		IL_008f: ldftn object Modules.Compile_Scripts_BumpVersion.readFile::__js_call__(object[], object)
 		IL_0095: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_009a: ldc.i4.1
 		IL_009b: newarr [System.Runtime]System.Object
@@ -1608,11 +1662,11 @@
 		IL_00af: ldarg.0
 		IL_00b0: ldc.i4.0
 		IL_00b1: ldelem.ref
-		IL_00b2: castclass Scopes.Compile_Scripts_BumpVersion
-		IL_00b7: ldfld object Scopes.Compile_Scripts_BumpVersion::CHANGELOG_PATH
+		IL_00b2: castclass Modules.Compile_Scripts_BumpVersion.Scope
+		IL_00b7: ldfld object Modules.Compile_Scripts_BumpVersion.Scope::CHANGELOG_PATH
 		IL_00bc: stloc.s 21
 		IL_00be: ldnull
-		IL_00bf: ldftn object Functions.Compile_Scripts_BumpVersion::readFile(object[], object)
+		IL_00bf: ldftn object Modules.Compile_Scripts_BumpVersion.readFile::__js_call__(object[], object)
 		IL_00c5: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_00ca: ldc.i4.1
 		IL_00cb: newarr [System.Runtime]System.Object
@@ -1626,7 +1680,7 @@
 		IL_00d8: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
 		IL_00dd: stloc.s 5
 		IL_00df: ldnull
-		IL_00e0: ldftn object Functions.Compile_Scripts_BumpVersion::parseCurrentVersion(object[], object)
+		IL_00e0: ldftn object Modules.Compile_Scripts_BumpVersion.parseCurrentVersion::__js_call__(object[], object)
 		IL_00e6: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_00eb: ldc.i4.1
 		IL_00ec: newarr [System.Runtime]System.Object
@@ -1640,7 +1694,7 @@
 		IL_00f8: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
 		IL_00fd: stloc.s 6
 		IL_00ff: ldnull
-		IL_0100: ldftn object Functions.Compile_Scripts_BumpVersion::resolveTargetVersion(object[], object, object)
+		IL_0100: ldftn object Modules.Compile_Scripts_BumpVersion.resolveTargetVersion::__js_call__(object[], object, object)
 		IL_0106: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_010b: ldc.i4.1
 		IL_010c: newarr [System.Runtime]System.Object
@@ -1696,7 +1750,7 @@
 		IL_0198: pop
 
 		IL_0199: ldnull
-		IL_019a: ldftn object Functions.Compile_Scripts_BumpVersion::extractUnreleased(object[], object)
+		IL_019a: ldftn object Modules.Compile_Scripts_BumpVersion.extractUnreleased::__js_call__(object[], object)
 		IL_01a0: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_01a5: ldc.i4.1
 		IL_01a6: newarr [System.Runtime]System.Object
@@ -1817,7 +1871,7 @@
 		IL_02ce: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_02d3: pop
 		IL_02d4: ldnull
-		IL_02d5: ldftn object Functions.Compile_Scripts_BumpVersion::updateCsprojVersion(object[], object, object)
+		IL_02d5: ldftn object Modules.Compile_Scripts_BumpVersion.updateCsprojVersion::__js_call__(object[], object, object)
 		IL_02db: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_02e0: ldc.i4.1
 		IL_02e1: newarr [System.Runtime]System.Object
@@ -1832,7 +1886,7 @@
 		IL_02ef: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
 		IL_02f4: stloc.s 12
 		IL_02f6: ldnull
-		IL_02f7: ldftn object Functions.Compile_Scripts_BumpVersion::updateCsprojVersion(object[], object, object)
+		IL_02f7: ldftn object Modules.Compile_Scripts_BumpVersion.updateCsprojVersion::__js_call__(object[], object, object)
 		IL_02fd: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_0302: ldc.i4.1
 		IL_0303: newarr [System.Runtime]System.Object
@@ -1849,11 +1903,11 @@
 		IL_0319: ldarg.0
 		IL_031a: ldc.i4.0
 		IL_031b: ldelem.ref
-		IL_031c: castclass Scopes.Compile_Scripts_BumpVersion
-		IL_0321: ldfld object Scopes.Compile_Scripts_BumpVersion::CSPROJ_PATH
+		IL_031c: castclass Modules.Compile_Scripts_BumpVersion.Scope
+		IL_0321: ldfld object Modules.Compile_Scripts_BumpVersion.Scope::CSPROJ_PATH
 		IL_0326: stloc.s 21
 		IL_0328: ldnull
-		IL_0329: ldftn object Functions.Compile_Scripts_BumpVersion::writeFile(object[], object, object)
+		IL_0329: ldftn object Modules.Compile_Scripts_BumpVersion.writeFile::__js_call__(object[], object, object)
 		IL_032f: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_0334: ldc.i4.1
 		IL_0335: newarr [System.Runtime]System.Object
@@ -1870,11 +1924,11 @@
 		IL_034a: ldarg.0
 		IL_034b: ldc.i4.0
 		IL_034c: ldelem.ref
-		IL_034d: castclass Scopes.Compile_Scripts_BumpVersion
-		IL_0352: ldfld object Scopes.Compile_Scripts_BumpVersion::RUNTIME_CSPROJ_PATH
+		IL_034d: castclass Modules.Compile_Scripts_BumpVersion.Scope
+		IL_0352: ldfld object Modules.Compile_Scripts_BumpVersion.Scope::RUNTIME_CSPROJ_PATH
 		IL_0357: stloc.s 21
 		IL_0359: ldnull
-		IL_035a: ldftn object Functions.Compile_Scripts_BumpVersion::writeFile(object[], object, object)
+		IL_035a: ldftn object Modules.Compile_Scripts_BumpVersion.writeFile::__js_call__(object[], object, object)
 		IL_0360: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_0365: ldc.i4.1
 		IL_0366: newarr [System.Runtime]System.Object
@@ -1892,7 +1946,7 @@
 		IL_037c: ret
 
 		IL_037d: ldnull
-		IL_037e: ldftn object Functions.Compile_Scripts_BumpVersion::generateReleaseSection(object[], object, object)
+		IL_037e: ldftn object Modules.Compile_Scripts_BumpVersion.generateReleaseSection::__js_call__(object[], object, object)
 		IL_0384: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_0389: ldc.i4.1
 		IL_038a: newarr [System.Runtime]System.Object
@@ -1946,7 +2000,7 @@
 		IL_0404: call object [JavaScriptRuntime]JavaScriptRuntime.Operators::Add(object, object)
 		IL_0409: stloc.s 18
 		IL_040b: ldnull
-		IL_040c: ldftn object Functions.Compile_Scripts_BumpVersion::updateCsprojVersion(object[], object, object)
+		IL_040c: ldftn object Modules.Compile_Scripts_BumpVersion.updateCsprojVersion::__js_call__(object[], object, object)
 		IL_0412: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_0417: ldc.i4.1
 		IL_0418: newarr [System.Runtime]System.Object
@@ -1961,7 +2015,7 @@
 		IL_0426: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
 		IL_042b: stloc.s 19
 		IL_042d: ldnull
-		IL_042e: ldftn object Functions.Compile_Scripts_BumpVersion::updateCsprojVersion(object[], object, object)
+		IL_042e: ldftn object Modules.Compile_Scripts_BumpVersion.updateCsprojVersion::__js_call__(object[], object, object)
 		IL_0434: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_0439: ldc.i4.1
 		IL_043a: newarr [System.Runtime]System.Object
@@ -1978,11 +2032,11 @@
 		IL_0450: ldarg.0
 		IL_0451: ldc.i4.0
 		IL_0452: ldelem.ref
-		IL_0453: castclass Scopes.Compile_Scripts_BumpVersion
-		IL_0458: ldfld object Scopes.Compile_Scripts_BumpVersion::CHANGELOG_PATH
+		IL_0453: castclass Modules.Compile_Scripts_BumpVersion.Scope
+		IL_0458: ldfld object Modules.Compile_Scripts_BumpVersion.Scope::CHANGELOG_PATH
 		IL_045d: stloc.s 21
 		IL_045f: ldnull
-		IL_0460: ldftn object Functions.Compile_Scripts_BumpVersion::writeFile(object[], object, object)
+		IL_0460: ldftn object Modules.Compile_Scripts_BumpVersion.writeFile::__js_call__(object[], object, object)
 		IL_0466: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_046b: ldc.i4.1
 		IL_046c: newarr [System.Runtime]System.Object
@@ -1999,11 +2053,11 @@
 		IL_0481: ldarg.0
 		IL_0482: ldc.i4.0
 		IL_0483: ldelem.ref
-		IL_0484: castclass Scopes.Compile_Scripts_BumpVersion
-		IL_0489: ldfld object Scopes.Compile_Scripts_BumpVersion::CSPROJ_PATH
+		IL_0484: castclass Modules.Compile_Scripts_BumpVersion.Scope
+		IL_0489: ldfld object Modules.Compile_Scripts_BumpVersion.Scope::CSPROJ_PATH
 		IL_048e: stloc.s 21
 		IL_0490: ldnull
-		IL_0491: ldftn object Functions.Compile_Scripts_BumpVersion::writeFile(object[], object, object)
+		IL_0491: ldftn object Modules.Compile_Scripts_BumpVersion.writeFile::__js_call__(object[], object, object)
 		IL_0497: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_049c: ldc.i4.1
 		IL_049d: newarr [System.Runtime]System.Object
@@ -2020,11 +2074,11 @@
 		IL_04b2: ldarg.0
 		IL_04b3: ldc.i4.0
 		IL_04b4: ldelem.ref
-		IL_04b5: castclass Scopes.Compile_Scripts_BumpVersion
-		IL_04ba: ldfld object Scopes.Compile_Scripts_BumpVersion::RUNTIME_CSPROJ_PATH
+		IL_04b5: castclass Modules.Compile_Scripts_BumpVersion.Scope
+		IL_04ba: ldfld object Modules.Compile_Scripts_BumpVersion.Scope::RUNTIME_CSPROJ_PATH
 		IL_04bf: stloc.s 21
 		IL_04c1: ldnull
-		IL_04c2: ldftn object Functions.Compile_Scripts_BumpVersion::writeFile(object[], object, object)
+		IL_04c2: ldftn object Modules.Compile_Scripts_BumpVersion.writeFile::__js_call__(object[], object, object)
 		IL_04c8: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_04cd: ldc.i4.1
 		IL_04ce: newarr [System.Runtime]System.Object
@@ -2154,9 +2208,9 @@
 		IL_062d: pop
 		IL_062e: ldnull
 		IL_062f: ret
-	} // end of method Compile_Scripts_BumpVersion::perform
+	} // end of method perform::__js_call__
 
-} // end of class Functions.Compile_Scripts_BumpVersion
+} // end of class Modules.Compile_Scripts_BumpVersion.perform
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L95C44
 	extends [System.Runtime]System.Object
@@ -2200,7 +2254,7 @@
 		IL_0031: brfalse IL_006e
 
 		IL_0036: ldnull
-		IL_0037: ldftn object Functions.Compile_Scripts_BumpVersion::isPlaceholder(object[], object)
+		IL_0037: ldftn object Modules.Compile_Scripts_BumpVersion.isPlaceholder::__js_call__(object[], object)
 		IL_003d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0042: ldc.i4.1
 		IL_0043: newarr [System.Runtime]System.Object
@@ -2338,7 +2392,7 @@
 		IL_0026: brfalse IL_0063
 
 		IL_002b: ldnull
-		IL_002c: ldftn object Functions.Compile_Scripts_BumpVersion::isPlaceholder(object[], object)
+		IL_002c: ldftn object Modules.Compile_Scripts_BumpVersion.isPlaceholder::__js_call__(object[], object)
 		IL_0032: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0037: ldc.i4.1
 		IL_0038: newarr [System.Runtime]System.Object
@@ -2377,7 +2431,7 @@
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -2390,7 +2444,7 @@
 		// Code size: 434 (0x1b2)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Compile_Scripts_BumpVersion,
+			[0] class Modules.Compile_Scripts_BumpVersion.Scope,
 			[1] object,
 			[2] object,
 			[3] class [System.Runtime]System.Exception,
@@ -2401,7 +2455,7 @@
 			[8] class [JavaScriptRuntime]JavaScriptRuntime.Node.Process
 		)
 
-		IL_0000: newobj instance void Scopes.Compile_Scripts_BumpVersion::.ctor()
+		IL_0000: newobj instance void Modules.Compile_Scripts_BumpVersion.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.i4.1
 		IL_0007: newarr [System.Runtime]System.Object
@@ -2422,7 +2476,7 @@
 		IL_0028: stloc.s 7
 		IL_002a: ldloc.0
 		IL_002b: ldloc.s 7
-		IL_002d: stfld object Scopes.Compile_Scripts_BumpVersion::fs
+		IL_002d: stfld object Modules.Compile_Scripts_BumpVersion.Scope::fs
 		IL_0032: ldc.i4.1
 		IL_0033: newarr [System.Runtime]System.Object
 		IL_0038: dup
@@ -2476,7 +2530,7 @@
 		IL_009d: stloc.s 7
 		IL_009f: ldloc.0
 		IL_00a0: ldloc.s 7
-		IL_00a2: stfld object Scopes.Compile_Scripts_BumpVersion::CSPROJ_PATH
+		IL_00a2: stfld object Modules.Compile_Scripts_BumpVersion.Scope::CSPROJ_PATH
 		IL_00a7: ldc.i4.3
 		IL_00a8: newarr [System.Runtime]System.Object
 		IL_00ad: dup
@@ -2499,7 +2553,7 @@
 		IL_00d0: stloc.s 7
 		IL_00d2: ldloc.0
 		IL_00d3: ldloc.s 7
-		IL_00d5: stfld object Scopes.Compile_Scripts_BumpVersion::RUNTIME_CSPROJ_PATH
+		IL_00d5: stfld object Modules.Compile_Scripts_BumpVersion.Scope::RUNTIME_CSPROJ_PATH
 		IL_00da: ldc.i4.2
 		IL_00db: newarr [System.Runtime]System.Object
 		IL_00e0: dup
@@ -2518,11 +2572,11 @@
 		IL_00fb: stloc.s 7
 		IL_00fd: ldloc.0
 		IL_00fe: ldloc.s 7
-		IL_0100: stfld object Scopes.Compile_Scripts_BumpVersion::CHANGELOG_PATH
+		IL_0100: stfld object Modules.Compile_Scripts_BumpVersion.Scope::CHANGELOG_PATH
 		.try
 		{
 			IL_0105: ldnull
-			IL_0106: ldftn object Functions.Compile_Scripts_BumpVersion::perform(object[])
+			IL_0106: ldftn object Modules.Compile_Scripts_BumpVersion.perform::__js_call__(object[])
 			IL_010c: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 			IL_0111: ldc.i4.1
 			IL_0112: newarr [System.Runtime]System.Object
@@ -2595,7 +2649,7 @@
 		} // end handler
 
 		IL_01b1: ret
-	} // end of method Compile_Scripts_BumpVersion::Main
+	} // end of method Compile_Scripts_BumpVersion::__js_module_init__
 
 } // end of class Modules.Compile_Scripts_BumpVersion
 
@@ -2614,7 +2668,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Compile_Scripts_BumpVersion::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Compile_Scripts_BumpVersion::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

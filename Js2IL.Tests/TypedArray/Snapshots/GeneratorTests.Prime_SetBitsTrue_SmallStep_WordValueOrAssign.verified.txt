@@ -1,9 +1,9 @@
-// IL code: Prime_SetBitsTrue_SmallStep_WordValueOrAssign
+﻿// IL code: Prime_SetBitsTrue_SmallStep_WordValueOrAssign
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign
+.class public auto ansi beforefieldinit Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -210,9 +210,9 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Prime_SetBitsTrue_SmallStep_WordValueOrAssign::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign
+} // end of class Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.Scope
 
 .class public auto ansi beforefieldinit Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray
 	extends [System.Runtime]System.Object
@@ -415,8 +415,8 @@
 		IL_0084: ldfld object[] Classes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.BitArray::_scopes
 		IL_0089: ldc.i4.0
 		IL_008a: ldelem.ref
-		IL_008b: castclass Scopes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign
-		IL_0090: ldfld float64 Scopes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign::WORD_SIZE
+		IL_008b: castclass Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.Scope
+		IL_0090: ldfld float64 Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.Scope::WORD_SIZE
 		IL_0095: ldc.r8 2
 		IL_009e: div
 		IL_009f: stloc.s 6
@@ -763,7 +763,7 @@
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -776,7 +776,7 @@
 		// Code size: 1005 (0x3ed)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign,
+			[0] class Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.Scope,
 			[1] object,
 			[2] object,
 			[3] float64,
@@ -791,11 +791,11 @@
 			[12] object
 		)
 
-		IL_0000: newobj instance void Scopes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign::.ctor()
+		IL_0000: newobj instance void Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldloc.0
 		IL_0007: ldc.r8 32
-		IL_0010: stfld float64 Scopes.Prime_SetBitsTrue_SmallStep_WordValueOrAssign::WORD_SIZE
+		IL_0010: stfld float64 Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign.Scope::WORD_SIZE
 		IL_0015: ldc.i4.1
 		IL_0016: newarr [System.Runtime]System.Object
 		IL_001b: dup
@@ -1144,7 +1144,7 @@
 		IL_03e6: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_03eb: pop
 		IL_03ec: ret
-	} // end of method Prime_SetBitsTrue_SmallStep_WordValueOrAssign::Main
+	} // end of method Prime_SetBitsTrue_SmallStep_WordValueOrAssign::__js_module_init__
 
 } // end of class Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign
 
@@ -1163,7 +1163,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Prime_SetBitsTrue_SmallStep_WordValueOrAssign::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

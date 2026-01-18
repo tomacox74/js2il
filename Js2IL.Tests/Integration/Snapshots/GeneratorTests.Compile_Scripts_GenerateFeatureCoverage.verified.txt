@@ -1,9 +1,9 @@
-// IL code: Compile_Scripts_GenerateFeatureCoverage
+﻿// IL code: Compile_Scripts_GenerateFeatureCoverage
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Compile_Scripts_GenerateFeatureCoverage
+.class public auto ansi beforefieldinit Modules.Compile_Scripts_GenerateFeatureCoverage.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -509,16 +509,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Compile_Scripts_GenerateFeatureCoverage::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Compile_Scripts_GenerateFeatureCoverage
+} // end of class Modules.Compile_Scripts_GenerateFeatureCoverage.Scope
 
-.class public auto ansi abstract sealed beforefieldinit Functions.Compile_Scripts_GenerateFeatureCoverage
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_GenerateFeatureCoverage.link
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object link (
+		object __js_call__ (
 			object[] scopes,
 			object title,
 			object url
@@ -573,10 +573,16 @@
 
 		IL_0052: ldloc.s 4
 		IL_0054: ret
-	} // end of method Compile_Scripts_GenerateFeatureCoverage::link
+	} // end of method link::__js_call__
 
+} // end of class Modules.Compile_Scripts_GenerateFeatureCoverage.link
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_GenerateFeatureCoverage.escapePipes
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object escapePipes (
+		object __js_call__ (
 			object[] scopes,
 			object text
 		) cil managed 
@@ -616,10 +622,16 @@
 		IL_0036: stloc.1
 		IL_0037: ldloc.1
 		IL_0038: ret
-	} // end of method Compile_Scripts_GenerateFeatureCoverage::escapePipes
+	} // end of method escapePipes::__js_call__
 
+} // end of class Modules.Compile_Scripts_GenerateFeatureCoverage.escapePipes
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_GenerateFeatureCoverage.featureRow
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object featureRow (
+		object __js_call__ (
 			object[] scopes,
 			object feature,
 			object sectionRef
@@ -630,7 +642,7 @@
 		// Code size: 515 (0x203)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Compile_Scripts_GenerateFeatureCoverage/featureRow,
+			[0] class Modules.Compile_Scripts_GenerateFeatureCoverage.Scope/featureRow,
 			[1] object,
 			[2] object,
 			[3] object,
@@ -645,7 +657,7 @@
 			[12] string
 		)
 
-		IL_0000: newobj instance void Scopes.Compile_Scripts_GenerateFeatureCoverage/featureRow::.ctor()
+		IL_0000: newobj instance void Modules.Compile_Scripts_GenerateFeatureCoverage.Scope/featureRow::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldarg.1
 		IL_0007: ldstr "status"
@@ -665,7 +677,7 @@
 		IL_0031: stloc.s 7
 
 		IL_0033: ldnull
-		IL_0034: ldftn object Functions.Compile_Scripts_GenerateFeatureCoverage::escapePipes(object[], object)
+		IL_0034: ldftn object Modules.Compile_Scripts_GenerateFeatureCoverage.escapePipes::__js_call__(object[], object)
 		IL_003a: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_003f: ldc.i4.1
 		IL_0040: newarr [System.Runtime]System.Object
@@ -753,7 +765,7 @@
 		IL_0107: stloc.s 10
 
 		IL_0109: ldnull
-		IL_010a: ldftn object Functions.Compile_Scripts_GenerateFeatureCoverage::escapePipes(object[], object)
+		IL_010a: ldftn object Modules.Compile_Scripts_GenerateFeatureCoverage.escapePipes::__js_call__(object[], object)
 		IL_0110: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0115: ldc.i4.1
 		IL_0116: newarr [System.Runtime]System.Object
@@ -771,7 +783,7 @@
 		IL_012f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 		IL_0134: stloc.s 4
 		IL_0136: ldnull
-		IL_0137: ldftn object Functions.Compile_Scripts_GenerateFeatureCoverage::escapePipes(object[], object)
+		IL_0137: ldftn object Modules.Compile_Scripts_GenerateFeatureCoverage.escapePipes::__js_call__(object[], object)
 		IL_013d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0142: ldc.i4.1
 		IL_0143: newarr [System.Runtime]System.Object
@@ -841,10 +853,16 @@
 		IL_01fe: stloc.s 11
 		IL_0200: ldloc.s 11
 		IL_0202: ret
-	} // end of method Compile_Scripts_GenerateFeatureCoverage::featureRow
+	} // end of method featureRow::__js_call__
 
+} // end of class Modules.Compile_Scripts_GenerateFeatureCoverage.featureRow
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_GenerateFeatureCoverage.processFeatures
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object processFeatures (
+		object __js_call__ (
 			object[] scopes,
 			object features,
 			object sectionRef
@@ -929,7 +947,7 @@
 			IL_0089: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, float64)
 			IL_008e: stloc.s 4
 			IL_0090: ldnull
-			IL_0091: ldftn object Functions.Compile_Scripts_GenerateFeatureCoverage::featureRow(object[], object, object)
+			IL_0091: ldftn object Modules.Compile_Scripts_GenerateFeatureCoverage.featureRow::__js_call__(object[], object, object)
 			IL_0097: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 			IL_009c: ldc.i4.1
 			IL_009d: newarr [System.Runtime]System.Object
@@ -966,10 +984,16 @@
 		IL_00e9: stloc.s 9
 		IL_00eb: ldloc.s 9
 		IL_00ed: ret
-	} // end of method Compile_Scripts_GenerateFeatureCoverage::processFeatures
+	} // end of method processFeatures::__js_call__
 
+} // end of class Modules.Compile_Scripts_GenerateFeatureCoverage.processFeatures
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_GenerateFeatureCoverage.processParagraphs
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object processParagraphs (
+		object __js_call__ (
 			object[] scopes,
 			object paragraphs,
 			object parentSection
@@ -980,7 +1004,7 @@
 		// Code size: 458 (0x1ca)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Compile_Scripts_GenerateFeatureCoverage/processParagraphs,
+			[0] class Modules.Compile_Scripts_GenerateFeatureCoverage.Scope/processParagraphs,
 			[1] object,
 			[2] string,
 			[3] object,
@@ -998,7 +1022,7 @@
 			[15] float64
 		)
 
-		IL_0000: newobj instance void Scopes.Compile_Scripts_GenerateFeatureCoverage/processParagraphs::.ctor()
+		IL_0000: newobj instance void Modules.Compile_Scripts_GenerateFeatureCoverage.Scope/processParagraphs::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldarg.1
 		IL_0007: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
@@ -1117,7 +1141,7 @@
 			IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_0124: stloc.s 10
 			IL_0126: ldnull
-			IL_0127: ldftn object Functions.Compile_Scripts_GenerateFeatureCoverage::link(object[], object, object)
+			IL_0127: ldftn object Modules.Compile_Scripts_GenerateFeatureCoverage.link::__js_call__(object[], object, object)
 			IL_012d: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 			IL_0132: ldc.i4.1
 			IL_0133: newarr [System.Runtime]System.Object
@@ -1151,7 +1175,7 @@
 			IL_017e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_0183: stloc.s 10
 			IL_0185: ldnull
-			IL_0186: ldftn object Functions.Compile_Scripts_GenerateFeatureCoverage::processFeatures(object[], object, object)
+			IL_0186: ldftn object Modules.Compile_Scripts_GenerateFeatureCoverage.processFeatures::__js_call__(object[], object, object)
 			IL_018c: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 			IL_0191: ldc.i4.1
 			IL_0192: newarr [System.Runtime]System.Object
@@ -1180,10 +1204,16 @@
 
 		IL_01c8: ldloc.2
 		IL_01c9: ret
-	} // end of method Compile_Scripts_GenerateFeatureCoverage::processParagraphs
+	} // end of method processParagraphs::__js_call__
 
+} // end of class Modules.Compile_Scripts_GenerateFeatureCoverage.processParagraphs
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_GenerateFeatureCoverage.processSubsections
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object processSubsections (
+		object __js_call__ (
 			object[] scopes,
 			object subsections,
 			object parentSection
@@ -1194,7 +1224,7 @@
 		// Code size: 458 (0x1ca)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Compile_Scripts_GenerateFeatureCoverage/processSubsections,
+			[0] class Modules.Compile_Scripts_GenerateFeatureCoverage.Scope/processSubsections,
 			[1] object,
 			[2] string,
 			[3] object,
@@ -1212,7 +1242,7 @@
 			[15] float64
 		)
 
-		IL_0000: newobj instance void Scopes.Compile_Scripts_GenerateFeatureCoverage/processSubsections::.ctor()
+		IL_0000: newobj instance void Modules.Compile_Scripts_GenerateFeatureCoverage.Scope/processSubsections::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldarg.1
 		IL_0007: call bool [JavaScriptRuntime]JavaScriptRuntime.TypeUtilities::ToBoolean(object)
@@ -1331,7 +1361,7 @@
 			IL_011f: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_0124: stloc.s 10
 			IL_0126: ldnull
-			IL_0127: ldftn object Functions.Compile_Scripts_GenerateFeatureCoverage::link(object[], object, object)
+			IL_0127: ldftn object Modules.Compile_Scripts_GenerateFeatureCoverage.link::__js_call__(object[], object, object)
 			IL_012d: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 			IL_0132: ldc.i4.1
 			IL_0133: newarr [System.Runtime]System.Object
@@ -1365,7 +1395,7 @@
 			IL_017e: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_0183: stloc.s 10
 			IL_0185: ldnull
-			IL_0186: ldftn object Functions.Compile_Scripts_GenerateFeatureCoverage::processParagraphs(object[], object, object)
+			IL_0186: ldftn object Modules.Compile_Scripts_GenerateFeatureCoverage.processParagraphs::__js_call__(object[], object, object)
 			IL_018c: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 			IL_0191: ldc.i4.1
 			IL_0192: newarr [System.Runtime]System.Object
@@ -1394,10 +1424,16 @@
 
 		IL_01c8: ldloc.2
 		IL_01c9: ret
-	} // end of method Compile_Scripts_GenerateFeatureCoverage::processSubsections
+	} // end of method processSubsections::__js_call__
 
+} // end of class Modules.Compile_Scripts_GenerateFeatureCoverage.processSubsections
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_GenerateFeatureCoverage.processSections
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object processSections (
+		object __js_call__ (
 			object[] scopes,
 			object sections
 		) cil managed 
@@ -1407,7 +1443,7 @@
 		// Code size: 1206 (0x4b6)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Compile_Scripts_GenerateFeatureCoverage/processSections,
+			[0] class Modules.Compile_Scripts_GenerateFeatureCoverage.Scope/processSections,
 			[1] object,
 			[2] string,
 			[3] object,
@@ -1440,7 +1476,7 @@
 			[30] object
 		)
 
-		IL_0000: newobj instance void Scopes.Compile_Scripts_GenerateFeatureCoverage/processSections::.ctor()
+		IL_0000: newobj instance void Modules.Compile_Scripts_GenerateFeatureCoverage.Scope/processSections::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.i4.0
 		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
@@ -1809,7 +1845,7 @@
 			IL_040b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_0410: stloc.s 17
 			IL_0412: ldnull
-			IL_0413: ldftn object Functions.Compile_Scripts_GenerateFeatureCoverage::link(object[], object, object)
+			IL_0413: ldftn object Modules.Compile_Scripts_GenerateFeatureCoverage.link::__js_call__(object[], object, object)
 			IL_0419: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 			IL_041e: ldc.i4.1
 			IL_041f: newarr [System.Runtime]System.Object
@@ -1843,7 +1879,7 @@
 			IL_046a: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 			IL_046f: stloc.s 17
 			IL_0471: ldnull
-			IL_0472: ldftn object Functions.Compile_Scripts_GenerateFeatureCoverage::processSubsections(object[], object, object)
+			IL_0472: ldftn object Modules.Compile_Scripts_GenerateFeatureCoverage.processSubsections::__js_call__(object[], object, object)
 			IL_0478: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 			IL_047d: ldc.i4.1
 			IL_047e: newarr [System.Runtime]System.Object
@@ -1872,10 +1908,16 @@
 
 		IL_04b4: ldloc.2
 		IL_04b5: ret
-	} // end of method Compile_Scripts_GenerateFeatureCoverage::processSections
+	} // end of method processSections::__js_call__
 
+} // end of class Modules.Compile_Scripts_GenerateFeatureCoverage.processSections
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Compile_Scripts_GenerateFeatureCoverage.main
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object main (
+		object __js_call__ (
 			object[] scopes
 		) cil managed 
 	{
@@ -1894,8 +1936,8 @@
 		IL_0000: ldarg.0
 		IL_0001: ldc.i4.0
 		IL_0002: ldelem.ref
-		IL_0003: castclass Scopes.Compile_Scripts_GenerateFeatureCoverage
-		IL_0008: ldfld object Scopes.Compile_Scripts_GenerateFeatureCoverage::fs
+		IL_0003: castclass Modules.Compile_Scripts_GenerateFeatureCoverage.Scope
+		IL_0008: ldfld object Modules.Compile_Scripts_GenerateFeatureCoverage.Scope::fs
 		IL_000d: stloc.2
 		IL_000e: ldloc.2
 		IL_000f: ldstr "readFileSync"
@@ -1906,8 +1948,8 @@
 		IL_001c: ldarg.0
 		IL_001d: ldc.i4.0
 		IL_001e: ldelem.ref
-		IL_001f: castclass Scopes.Compile_Scripts_GenerateFeatureCoverage
-		IL_0024: ldfld object Scopes.Compile_Scripts_GenerateFeatureCoverage::jsonPath
+		IL_001f: castclass Modules.Compile_Scripts_GenerateFeatureCoverage.Scope
+		IL_0024: ldfld object Modules.Compile_Scripts_GenerateFeatureCoverage.Scope::jsonPath
 		IL_0029: stelem.ref
 		IL_002a: dup
 		IL_002b: ldc.i4.1
@@ -1933,7 +1975,7 @@
 		IL_0063: call object [JavaScriptRuntime]JavaScriptRuntime.Object::GetItem(object, object)
 		IL_0068: stloc.2
 		IL_0069: ldnull
-		IL_006a: ldftn object Functions.Compile_Scripts_GenerateFeatureCoverage::processSections(object[], object)
+		IL_006a: ldftn object Modules.Compile_Scripts_GenerateFeatureCoverage.processSections::__js_call__(object[], object)
 		IL_0070: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0075: ldc.i4.1
 		IL_0076: newarr [System.Runtime]System.Object
@@ -1973,8 +2015,8 @@
 		IL_00c0: ldarg.0
 		IL_00c1: ldc.i4.0
 		IL_00c2: ldelem.ref
-		IL_00c3: castclass Scopes.Compile_Scripts_GenerateFeatureCoverage
-		IL_00c8: ldfld object Scopes.Compile_Scripts_GenerateFeatureCoverage::fs
+		IL_00c3: castclass Modules.Compile_Scripts_GenerateFeatureCoverage.Scope
+		IL_00c8: ldfld object Modules.Compile_Scripts_GenerateFeatureCoverage.Scope::fs
 		IL_00cd: stloc.2
 		IL_00ce: ldc.i4.3
 		IL_00cf: newarr [System.Runtime]System.Object
@@ -1983,8 +2025,8 @@
 		IL_00d6: ldarg.0
 		IL_00d7: ldc.i4.0
 		IL_00d8: ldelem.ref
-		IL_00d9: castclass Scopes.Compile_Scripts_GenerateFeatureCoverage
-		IL_00de: ldfld object Scopes.Compile_Scripts_GenerateFeatureCoverage::mdPath
+		IL_00d9: castclass Modules.Compile_Scripts_GenerateFeatureCoverage.Scope
+		IL_00de: ldfld object Modules.Compile_Scripts_GenerateFeatureCoverage.Scope::mdPath
 		IL_00e3: stelem.ref
 		IL_00e4: dup
 		IL_00e5: ldc.i4.1
@@ -2003,8 +2045,8 @@
 		IL_00fe: ldarg.0
 		IL_00ff: ldc.i4.0
 		IL_0100: ldelem.ref
-		IL_0101: castclass Scopes.Compile_Scripts_GenerateFeatureCoverage
-		IL_0106: ldfld object Scopes.Compile_Scripts_GenerateFeatureCoverage::mdPath
+		IL_0101: castclass Modules.Compile_Scripts_GenerateFeatureCoverage.Scope
+		IL_0106: ldfld object Modules.Compile_Scripts_GenerateFeatureCoverage.Scope::mdPath
 		IL_010b: call string [JavaScriptRuntime]JavaScriptRuntime.DotNet2JSConversions::ToString(object)
 		IL_0110: stloc.s 4
 		IL_0112: ldstr "Generated "
@@ -2022,9 +2064,9 @@
 		IL_0135: pop
 		IL_0136: ldnull
 		IL_0137: ret
-	} // end of method Compile_Scripts_GenerateFeatureCoverage::main
+	} // end of method main::__js_call__
 
-} // end of class Functions.Compile_Scripts_GenerateFeatureCoverage
+} // end of class Modules.Compile_Scripts_GenerateFeatureCoverage.main
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L18C51
 	extends [System.Runtime]System.Object
@@ -2046,7 +2088,7 @@
 		)
 
 		IL_0000: ldnull
-		IL_0001: ldftn object Functions.Compile_Scripts_GenerateFeatureCoverage::escapePipes(object[], object)
+		IL_0001: ldftn object Modules.Compile_Scripts_GenerateFeatureCoverage.escapePipes::__js_call__(object[], object)
 		IL_0007: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_000c: ldc.i4.1
 		IL_000d: newarr [System.Runtime]System.Object
@@ -2372,7 +2414,7 @@
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -2385,13 +2427,13 @@
 		// Code size: 184 (0xb8)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Compile_Scripts_GenerateFeatureCoverage,
+			[0] class Modules.Compile_Scripts_GenerateFeatureCoverage.Scope,
 			[1] object,
 			[2] object[],
 			[3] object
 		)
 
-		IL_0000: newobj instance void Scopes.Compile_Scripts_GenerateFeatureCoverage::.ctor()
+		IL_0000: newobj instance void Modules.Compile_Scripts_GenerateFeatureCoverage.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.i4.1
 		IL_0007: newarr [System.Runtime]System.Object
@@ -2412,7 +2454,7 @@
 		IL_0026: stloc.3
 		IL_0027: ldloc.0
 		IL_0028: ldloc.3
-		IL_0029: stfld object Scopes.Compile_Scripts_GenerateFeatureCoverage::fs
+		IL_0029: stfld object Modules.Compile_Scripts_GenerateFeatureCoverage.Scope::fs
 		IL_002e: ldc.i4.1
 		IL_002f: newarr [System.Runtime]System.Object
 		IL_0034: dup
@@ -2446,7 +2488,7 @@
 		IL_006d: stloc.3
 		IL_006e: ldloc.0
 		IL_006f: ldloc.3
-		IL_0070: stfld object Scopes.Compile_Scripts_GenerateFeatureCoverage::jsonPath
+		IL_0070: stfld object Modules.Compile_Scripts_GenerateFeatureCoverage.Scope::jsonPath
 		IL_0075: ldloc.1
 		IL_0076: ldstr "join"
 		IL_007b: ldc.i4.2
@@ -2463,9 +2505,9 @@
 		IL_0093: stloc.3
 		IL_0094: ldloc.0
 		IL_0095: ldloc.3
-		IL_0096: stfld object Scopes.Compile_Scripts_GenerateFeatureCoverage::mdPath
+		IL_0096: stfld object Modules.Compile_Scripts_GenerateFeatureCoverage.Scope::mdPath
 		IL_009b: ldnull
-		IL_009c: ldftn object Functions.Compile_Scripts_GenerateFeatureCoverage::main(object[])
+		IL_009c: ldftn object Modules.Compile_Scripts_GenerateFeatureCoverage.main::__js_call__(object[])
 		IL_00a2: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_00a7: ldc.i4.1
 		IL_00a8: newarr [System.Runtime]System.Object
@@ -2476,7 +2518,7 @@
 		IL_00b1: callvirt instance !1 class [System.Runtime]System.Func`2<object[], object>::Invoke(!0)
 		IL_00b6: pop
 		IL_00b7: ret
-	} // end of method Compile_Scripts_GenerateFeatureCoverage::Main
+	} // end of method Compile_Scripts_GenerateFeatureCoverage::__js_module_init__
 
 } // end of class Modules.Compile_Scripts_GenerateFeatureCoverage
 
@@ -2495,7 +2537,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Compile_Scripts_GenerateFeatureCoverage::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Compile_Scripts_GenerateFeatureCoverage::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

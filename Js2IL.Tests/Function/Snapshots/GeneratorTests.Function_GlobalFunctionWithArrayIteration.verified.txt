@@ -1,9 +1,9 @@
-// IL code: Function_GlobalFunctionWithArrayIteration
+﻿// IL code: Function_GlobalFunctionWithArrayIteration
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Function_GlobalFunctionWithArrayIteration
+.class public auto ansi beforefieldinit Modules.Function_GlobalFunctionWithArrayIteration.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -66,16 +66,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Function_GlobalFunctionWithArrayIteration::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Function_GlobalFunctionWithArrayIteration
+} // end of class Modules.Function_GlobalFunctionWithArrayIteration.Scope
 
-.class public auto ansi abstract sealed beforefieldinit Functions.Function_GlobalFunctionWithArrayIteration
+.class public auto ansi abstract sealed beforefieldinit Modules.Function_GlobalFunctionWithArrayIteration.processArray
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object processArray (
+		object __js_call__ (
 			object[] scopes,
 			object arr
 		) cil managed 
@@ -131,16 +131,16 @@
 
 		IL_005f: ldloc.0
 		IL_0060: ret
-	} // end of method Function_GlobalFunctionWithArrayIteration::processArray
+	} // end of method processArray::__js_call__
 
-} // end of class Functions.Function_GlobalFunctionWithArrayIteration
+} // end of class Modules.Function_GlobalFunctionWithArrayIteration.processArray
 
 .class public auto ansi beforefieldinit Modules.Function_GlobalFunctionWithArrayIteration
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -153,13 +153,13 @@
 		// Code size: 170 (0xaa)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Function_GlobalFunctionWithArrayIteration,
+			[0] class Modules.Function_GlobalFunctionWithArrayIteration.Scope,
 			[1] class [JavaScriptRuntime]JavaScriptRuntime.Array,
 			[2] object,
 			[3] object
 		)
 
-		IL_0000: newobj instance void Scopes.Function_GlobalFunctionWithArrayIteration::.ctor()
+		IL_0000: newobj instance void Modules.Function_GlobalFunctionWithArrayIteration.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldc.i4.4
 		IL_0007: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Array::.ctor(int32)
@@ -181,7 +181,7 @@
 		IL_0057: callvirt instance void class [System.Collections]System.Collections.Generic.List`1<object>::Add(!0)
 		IL_005c: stloc.1
 		IL_005d: ldnull
-		IL_005e: ldftn object Functions.Function_GlobalFunctionWithArrayIteration::processArray(object[], object)
+		IL_005e: ldftn object Modules.Function_GlobalFunctionWithArrayIteration.processArray::__js_call__(object[], object)
 		IL_0064: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0069: ldc.i4.1
 		IL_006a: newarr [System.Runtime]System.Object
@@ -212,7 +212,7 @@
 		IL_00a3: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_00a8: pop
 		IL_00a9: ret
-	} // end of method Function_GlobalFunctionWithArrayIteration::Main
+	} // end of method Function_GlobalFunctionWithArrayIteration::__js_module_init__
 
 } // end of class Modules.Function_GlobalFunctionWithArrayIteration
 
@@ -231,7 +231,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Function_GlobalFunctionWithArrayIteration::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Function_GlobalFunctionWithArrayIteration::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

@@ -1,9 +1,9 @@
-// IL code: Promise_Thenable_Reject
+﻿// IL code: Promise_Thenable_Reject
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Promise_Thenable_Reject
+.class public auto ansi beforefieldinit Modules.Promise_Thenable_Reject.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -67,16 +67,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Promise_Thenable_Reject::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Promise_Thenable_Reject
+} // end of class Modules.Promise_Thenable_Reject.Scope
 
-.class public auto ansi abstract sealed beforefieldinit Functions.Promise_Thenable_Reject
+.class public auto ansi abstract sealed beforefieldinit Modules.Promise_Thenable_Reject.thenImpl
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object thenImpl (
+		object __js_call__ (
 			object[] scopes,
 			object resolve,
 			object reject
@@ -111,9 +111,9 @@
 		IL_0022: pop
 		IL_0023: ldnull
 		IL_0024: ret
-	} // end of method Promise_Thenable_Reject::thenImpl
+	} // end of method thenImpl::__js_call__
 
-} // end of class Functions.Promise_Thenable_Reject
+} // end of class Modules.Promise_Thenable_Reject.thenImpl
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L7C33
 	extends [System.Runtime]System.Object
@@ -153,7 +153,7 @@
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -166,17 +166,17 @@
 		// Code size: 114 (0x72)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Promise_Thenable_Reject,
+			[0] class Modules.Promise_Thenable_Reject.Scope,
 			[1] class [System.Linq.Expressions]System.Dynamic.ExpandoObject,
 			[2] object,
 			[3] object,
 			[4] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.Promise_Thenable_Reject::.ctor()
+		IL_0000: newobj instance void Modules.Promise_Thenable_Reject.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Functions.Promise_Thenable_Reject::thenImpl(object[], object, object)
+		IL_0007: ldftn object Modules.Promise_Thenable_Reject.thenImpl::__js_call__(object[], object, object)
 		IL_000d: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -219,7 +219,7 @@
 		IL_006b: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
 		IL_0070: pop
 		IL_0071: ret
-	} // end of method Promise_Thenable_Reject::Main
+	} // end of method Promise_Thenable_Reject::__js_module_init__
 
 } // end of class Modules.Promise_Thenable_Reject
 
@@ -238,7 +238,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Promise_Thenable_Reject::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Promise_Thenable_Reject::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

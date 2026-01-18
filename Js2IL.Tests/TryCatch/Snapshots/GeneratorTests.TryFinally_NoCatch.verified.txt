@@ -1,9 +1,9 @@
-// IL code: TryFinally_NoCatch
+﻿// IL code: TryFinally_NoCatch
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.TryFinally_NoCatch
+.class public auto ansi beforefieldinit Modules.TryFinally_NoCatch.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -61,16 +61,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method TryFinally_NoCatch::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.TryFinally_NoCatch
+} // end of class Modules.TryFinally_NoCatch.Scope
 
 .class public auto ansi beforefieldinit Modules.TryFinally_NoCatch
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -83,10 +83,10 @@
 		// Code size: 88 (0x58)
 		.maxstack 32
 		.locals (
-			[0] class Scopes.TryFinally_NoCatch
+			[0] class Modules.TryFinally_NoCatch.Scope
 		)
 
-		IL_0000: newobj instance void Scopes.TryFinally_NoCatch::.ctor()
+		IL_0000: newobj instance void Modules.TryFinally_NoCatch.Scope::.ctor()
 		IL_0005: stloc.0
 		.try
 		{
@@ -125,7 +125,7 @@
 		IL_0051: callvirt instance object [JavaScriptRuntime]JavaScriptRuntime.Console::log(object[])
 		IL_0056: pop
 		IL_0057: ret
-	} // end of method TryFinally_NoCatch::Main
+	} // end of method TryFinally_NoCatch::__js_module_init__
 
 } // end of class Modules.TryFinally_NoCatch
 
@@ -144,7 +144,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.TryFinally_NoCatch::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.TryFinally_NoCatch::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

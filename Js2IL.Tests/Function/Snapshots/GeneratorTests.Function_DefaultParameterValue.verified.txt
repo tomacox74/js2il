@@ -1,9 +1,9 @@
-// IL code: Function_DefaultParameterValue
+﻿// IL code: Function_DefaultParameterValue
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Function_DefaultParameterValue
+.class public auto ansi beforefieldinit Modules.Function_DefaultParameterValue.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -86,16 +86,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Function_DefaultParameterValue::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Function_DefaultParameterValue
+} // end of class Modules.Function_DefaultParameterValue.Scope
 
-.class public auto ansi abstract sealed beforefieldinit Functions.Function_DefaultParameterValue
+.class public auto ansi abstract sealed beforefieldinit Modules.Function_DefaultParameterValue.greet
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object greet (
+		object __js_call__ (
 			object[] scopes,
 			object name
 		) cil managed 
@@ -129,10 +129,16 @@
 		IL_002d: pop
 		IL_002e: ldnull
 		IL_002f: ret
-	} // end of method Function_DefaultParameterValue::greet
+	} // end of method greet::__js_call__
 
+} // end of class Modules.Function_DefaultParameterValue.greet
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Function_DefaultParameterValue.add
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object 'add' (
+		object __js_call__ (
 			object[] scopes,
 			object a,
 			object b
@@ -168,10 +174,16 @@
 		IL_0032: pop
 		IL_0033: ldnull
 		IL_0034: ret
-	} // end of method Function_DefaultParameterValue::'add'
+	} // end of method 'add'::__js_call__
 
+} // end of class Modules.Function_DefaultParameterValue.add
+
+.class public auto ansi abstract sealed beforefieldinit Modules.Function_DefaultParameterValue.multi
+	extends [System.Runtime]System.Object
+{
+	// Methods
 	.method public hidebysig static 
-		object multi (
+		object __js_call__ (
 			object[] scopes,
 			object x,
 			object y,
@@ -235,16 +247,16 @@
 		IL_0076: pop
 		IL_0077: ldnull
 		IL_0078: ret
-	} // end of method Function_DefaultParameterValue::multi
+	} // end of method multi::__js_call__
 
-} // end of class Functions.Function_DefaultParameterValue
+} // end of class Modules.Function_DefaultParameterValue.multi
 
 .class public auto ansi beforefieldinit Modules.Function_DefaultParameterValue
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -257,13 +269,13 @@
 		// Code size: 370 (0x172)
 		.maxstack 32
 		.locals (
-			[0] class Scopes.Function_DefaultParameterValue
+			[0] class Modules.Function_DefaultParameterValue.Scope
 		)
 
-		IL_0000: newobj instance void Scopes.Function_DefaultParameterValue::.ctor()
+		IL_0000: newobj instance void Modules.Function_DefaultParameterValue.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Functions.Function_DefaultParameterValue::greet(object[], object)
+		IL_0007: ldftn object Modules.Function_DefaultParameterValue.greet::__js_call__(object[], object)
 		IL_000d: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -275,7 +287,7 @@
 		IL_001d: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
 		IL_0022: pop
 		IL_0023: ldnull
-		IL_0024: ldftn object Functions.Function_DefaultParameterValue::greet(object[], object)
+		IL_0024: ldftn object Modules.Function_DefaultParameterValue.greet::__js_call__(object[], object)
 		IL_002a: newobj instance void class [System.Runtime]System.Func`3<object[], object, object>::.ctor(object, native int)
 		IL_002f: ldc.i4.1
 		IL_0030: newarr [System.Runtime]System.Object
@@ -287,7 +299,7 @@
 		IL_003e: callvirt instance !2 class [System.Runtime]System.Func`3<object[], object, object>::Invoke(!0, !1)
 		IL_0043: pop
 		IL_0044: ldnull
-		IL_0045: ldftn object Functions.Function_DefaultParameterValue::'add'(object[], object, object)
+		IL_0045: ldftn object Modules.Function_DefaultParameterValue.add::__js_call__(object[], object, object)
 		IL_004b: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_0050: ldc.i4.1
 		IL_0051: newarr [System.Runtime]System.Object
@@ -301,7 +313,7 @@
 		IL_0069: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
 		IL_006e: pop
 		IL_006f: ldnull
-		IL_0070: ldftn object Functions.Function_DefaultParameterValue::'add'(object[], object, object)
+		IL_0070: ldftn object Modules.Function_DefaultParameterValue.add::__js_call__(object[], object, object)
 		IL_0076: newobj instance void class [System.Runtime]System.Func`4<object[], object, object, object>::.ctor(object, native int)
 		IL_007b: ldc.i4.1
 		IL_007c: newarr [System.Runtime]System.Object
@@ -316,7 +328,7 @@
 		IL_00a1: callvirt instance !3 class [System.Runtime]System.Func`4<object[], object, object, object>::Invoke(!0, !1, !2)
 		IL_00a6: pop
 		IL_00a7: ldnull
-		IL_00a8: ldftn object Functions.Function_DefaultParameterValue::multi(object[], object, object, object)
+		IL_00a8: ldftn object Modules.Function_DefaultParameterValue.multi::__js_call__(object[], object, object, object)
 		IL_00ae: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
 		IL_00b3: ldc.i4.1
 		IL_00b4: newarr [System.Runtime]System.Object
@@ -330,7 +342,7 @@
 		IL_00c0: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
 		IL_00c5: pop
 		IL_00c6: ldnull
-		IL_00c7: ldftn object Functions.Function_DefaultParameterValue::multi(object[], object, object, object)
+		IL_00c7: ldftn object Modules.Function_DefaultParameterValue.multi::__js_call__(object[], object, object, object)
 		IL_00cd: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
 		IL_00d2: ldc.i4.1
 		IL_00d3: newarr [System.Runtime]System.Object
@@ -345,7 +357,7 @@
 		IL_00ec: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
 		IL_00f1: pop
 		IL_00f2: ldnull
-		IL_00f3: ldftn object Functions.Function_DefaultParameterValue::multi(object[], object, object, object)
+		IL_00f3: ldftn object Modules.Function_DefaultParameterValue.multi::__js_call__(object[], object, object, object)
 		IL_00f9: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
 		IL_00fe: ldc.i4.1
 		IL_00ff: newarr [System.Runtime]System.Object
@@ -361,7 +373,7 @@
 		IL_0125: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
 		IL_012a: pop
 		IL_012b: ldnull
-		IL_012c: ldftn object Functions.Function_DefaultParameterValue::multi(object[], object, object, object)
+		IL_012c: ldftn object Modules.Function_DefaultParameterValue.multi::__js_call__(object[], object, object, object)
 		IL_0132: newobj instance void class [System.Runtime]System.Func`5<object[], object, object, object, object>::.ctor(object, native int)
 		IL_0137: ldc.i4.1
 		IL_0138: newarr [System.Runtime]System.Object
@@ -378,7 +390,7 @@
 		IL_016b: callvirt instance !4 class [System.Runtime]System.Func`5<object[], object, object, object, object>::Invoke(!0, !1, !2, !3)
 		IL_0170: pop
 		IL_0171: ret
-	} // end of method Function_DefaultParameterValue::Main
+	} // end of method Function_DefaultParameterValue::__js_module_init__
 
 } // end of class Modules.Function_DefaultParameterValue
 
@@ -397,7 +409,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Function_DefaultParameterValue::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Function_DefaultParameterValue::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret

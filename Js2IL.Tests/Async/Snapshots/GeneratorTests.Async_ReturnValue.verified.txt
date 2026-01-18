@@ -1,9 +1,9 @@
-// IL code: Async_ReturnValue
+﻿// IL code: Async_ReturnValue
 .class private auto ansi '<Module>'
 {
 } // end of class <Module>
 
-.class public auto ansi beforefieldinit Scopes.Async_ReturnValue
+.class public auto ansi beforefieldinit Modules.Async_ReturnValue.Scope
 	extends [System.Runtime]System.Object
 {
 	// Nested Types
@@ -67,16 +67,16 @@
 		IL_0001: call instance void [System.Runtime]System.Object::.ctor()
 		IL_0006: nop
 		IL_0007: ret
-	} // end of method Async_ReturnValue::.ctor
+	} // end of method Scope::.ctor
 
-} // end of class Scopes.Async_ReturnValue
+} // end of class Modules.Async_ReturnValue.Scope
 
-.class public auto ansi abstract sealed beforefieldinit Functions.Async_ReturnValue
+.class public auto ansi abstract sealed beforefieldinit Modules.Async_ReturnValue.getValue
 	extends [System.Runtime]System.Object
 {
 	// Methods
 	.method public hidebysig static 
-		object getValue (
+		object __js_call__ (
 			object[] scopes
 		) cil managed 
 	{
@@ -89,9 +89,9 @@
 		IL_0009: box [System.Runtime]System.Double
 		IL_000e: call object [JavaScriptRuntime]JavaScriptRuntime.Promise::resolve(object)
 		IL_0013: ret
-	} // end of method Async_ReturnValue::getValue
+	} // end of method getValue::__js_call__
 
-} // end of class Functions.Async_ReturnValue
+} // end of class Modules.Async_ReturnValue.getValue
 
 .class public auto ansi abstract sealed beforefieldinit Functions.ArrowFunction_L5C17
 	extends [System.Runtime]System.Object
@@ -132,7 +132,7 @@
 {
 	// Methods
 	.method public hidebysig static 
-		void Main (
+		void __js_module_init__ (
 			object exports,
 			class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate require,
 			object module,
@@ -145,16 +145,16 @@
 		// Code size: 87 (0x57)
 		.maxstack 32
 		.locals init (
-			[0] class Scopes.Async_ReturnValue,
+			[0] class Modules.Async_ReturnValue.Scope,
 			[1] object,
 			[2] object,
 			[3] object[]
 		)
 
-		IL_0000: newobj instance void Scopes.Async_ReturnValue::.ctor()
+		IL_0000: newobj instance void Modules.Async_ReturnValue.Scope::.ctor()
 		IL_0005: stloc.0
 		IL_0006: ldnull
-		IL_0007: ldftn object Functions.Async_ReturnValue::getValue(object[])
+		IL_0007: ldftn object Modules.Async_ReturnValue.getValue::__js_call__(object[])
 		IL_000d: newobj instance void class [System.Runtime]System.Func`2<object[], object>::.ctor(object, native int)
 		IL_0012: ldc.i4.1
 		IL_0013: newarr [System.Runtime]System.Object
@@ -188,7 +188,7 @@
 		IL_0050: call object [JavaScriptRuntime]JavaScriptRuntime.Object::CallMember(object, string, object[])
 		IL_0055: pop
 		IL_0056: ret
-	} // end of method Async_ReturnValue::Main
+	} // end of method Async_ReturnValue::__js_module_init__
 
 } // end of class Modules.Async_ReturnValue
 
@@ -207,7 +207,7 @@
 
 		IL_0000: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::.ctor()
 		IL_0005: ldnull
-		IL_0006: ldftn void Modules.Async_ReturnValue::Main(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
+		IL_0006: ldftn void Modules.Async_ReturnValue::__js_module_init__(object, class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.RequireDelegate, object, string, string)
 		IL_000c: newobj instance void [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate::.ctor(object, native int)
 		IL_0011: callvirt instance void [JavaScriptRuntime]JavaScriptRuntime.Engine::Execute(class [JavaScriptRuntime]JavaScriptRuntime.CommonJS.ModuleMainDelegate)
 		IL_0016: ret
