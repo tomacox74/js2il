@@ -517,7 +517,7 @@ internal sealed class JsMethodCompiler
         }
 
         // create the tools we need to generate the module type and method
-        var programTypeBuilder = new TypeBuilder(_metadataBuilder, "Scripts", moduleName);
+        var programTypeBuilder = new TypeBuilder(_metadataBuilder, "Modules", moduleName);
 
         MethodParameterDescriptor[] parameters = [
             new MethodParameterDescriptor("exports", typeof(object)),
@@ -536,7 +536,7 @@ internal sealed class JsMethodCompiler
 
         var methodDefinitionHandle = CreateILCompiler().TryCompile(methodDescriptor, lirMethod!, methodBodyStreamEncoder);
 
-        // Define the Script main type via TypeBuilder
+        // Define the module main type via TypeBuilder
         programTypeBuilder.AddTypeDefinition(
             TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.BeforeFieldInit,
             _bclReferences.ObjectType);
