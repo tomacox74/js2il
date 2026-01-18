@@ -4,6 +4,416 @@
 
 This file is auto-generated from FeatureCoverage.json.
 
+## [ECMAScript Data Types and Values](https://tc39.es/ecma262/#sec-ecmascript-data-types-and-values)
+
+### [ECMAScript Language Types](https://tc39.es/ecma262/#sec-ecmascript-language-types)
+
+#### [ECMAScript Language Types](https://tc39.es/ecma262/#sec-ecmascript-language-types)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| ECMAScript Language Types | Partially Supported |  |  | 6.1 |
+
+
+#### [The Undefined Type](https://tc39.es/ecma262/#sec-undefined-type)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| The Undefined Type | Supported |  |  | 6.1.1 |
+
+
+#### [The Null Type](https://tc39.es/ecma262/#sec-null-type)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| The Null Type | Supported |  |  | 6.1.2 |
+
+
+#### [The Boolean Type](https://tc39.es/ecma262/#sec-boolean-type)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| The Boolean Type | Supported |  |  | 6.1.3 |
+
+
+#### [The String Type](https://tc39.es/ecma262/#sec-string-type)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| The String Type | Partially Supported |  |  | 6.1.4 |
+
+
+#### [StringIndexOf ( string, searchValue, fromIndex )](https://tc39.es/ecma262/#sec-stringindexof)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| StringIndexOf | Supported |  |  | 6.1.4.1 |
+
+
+#### [StringLastIndexOf ( string, searchValue, fromIndex )](https://tc39.es/ecma262/#sec-stringlastindexof)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| StringLastIndexOf | Not Yet Supported |  |  | 6.1.4.2 |
+
+
+#### [The Symbol Type](https://tc39.es/ecma262/#sec-symbol-type)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| The Symbol Type | Not Yet Supported |  |  | 6.1.5 |
+
+
+#### [Well-Known Symbols](https://tc39.es/ecma262/#sec-well-known-symbols)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Well-Known Symbols | Not Yet Supported |  |  | 6.1.5.1 |
+
+
+#### [Numeric Types](https://tc39.es/ecma262/#sec-numeric-types)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Numeric Types | Partially Supported |  |  | 6.1.6 |
+
+
+#### [The Number Type](https://tc39.es/ecma262/#sec-ecmascript-language-types-number-type)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| The Number Type | Supported |  |  | 6.1.6.1 |
+
+
+#### [Number::unaryMinus ( x )](https://tc39.es/ecma262/#sec-number-unaryminus)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Number::unaryMinus | Supported |  |  | 6.1.6.1.1 |
+
+
+#### [Number::bitwiseNOT ( x )](https://tc39.es/ecma262/#sec-number-bitwisenot)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Number::bitwiseNOT | Supported |  |  | 6.1.6.1.2 |
+
+
+#### [Number::exponentiate ( base, exponent )](https://tc39.es/ecma262/#sec-number-exponentiate)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Number::exponentiate | Supported |  |  | 6.1.6.1.3 |
+
+
+#### [Number::multiply ( x, y )](https://tc39.es/ecma262/#sec-number-multiply)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Number::multiply | Supported |  |  | 6.1.6.1.4 |
+
+
+#### [Number::divide ( x, y )](https://tc39.es/ecma262/#sec-number-divide)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Number::divide | Supported |  |  | 6.1.6.1.5 |
+
+
+#### [Number::remainder ( n, d )](https://tc39.es/ecma262/#sec-number-remainder)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Number::remainder | Supported |  |  | 6.1.6.1.6 |
+
+
+#### [Number::add ( x, y )](https://tc39.es/ecma262/#sec-number-add)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Number::add | Supported |  |  | 6.1.6.1.7 |
+
+
+#### [Number::subtract ( x, y )](https://tc39.es/ecma262/#sec-number-subtract)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Number::subtract | Supported |  |  | 6.1.6.1.8 |
+
+
+#### [Number::leftShift ( x, y )](https://tc39.es/ecma262/#sec-number-leftshift)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Number::leftShift | Supported |  |  | 6.1.6.1.9 |
+
+
+#### [Number::signedRightShift ( x, y )](https://tc39.es/ecma262/#sec-number-signedrightshift)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Number::signedRightShift | Supported |  |  | 6.1.6.1.10 |
+
+
+#### [Number::unsignedRightShift ( x, y )](https://tc39.es/ecma262/#sec-number-unsignedrightshift)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Number::unsignedRightShift | Supported |  |  | 6.1.6.1.11 |
+
+
+#### [Number::lessThan ( x, y )](https://tc39.es/ecma262/#sec-number-lessthan)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Number::lessThan | Supported |  |  | 6.1.6.1.12 |
+
+
+#### [Number::equal ( x, y )](https://tc39.es/ecma262/#sec-number-equal)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Number::equal | Supported |  |  | 6.1.6.1.13 |
+
+
+#### [Number::sameValue ( x, y )](https://tc39.es/ecma262/#sec-number-samevalue)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Number::sameValue | Partially Supported |  |  | 6.1.6.1.14 |
+
+
+#### [Number::sameValueZero ( x, y )](https://tc39.es/ecma262/#sec-number-samevaluezero)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Number::sameValueZero | Supported |  |  | 6.1.6.1.15 |
+
+
+#### [NumberBitwiseOp ( op, x, y )](https://tc39.es/ecma262/#sec-numberbitwiseop)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| NumberBitwiseOp | Supported |  |  | 6.1.6.1.16 |
+
+
+#### [Number::bitwiseAND ( x, y )](https://tc39.es/ecma262/#sec-number-bitwiseand)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Number::bitwiseAND | Supported |  |  | 6.1.6.1.17 |
+
+
+#### [Number::bitwiseXOR ( x, y )](https://tc39.es/ecma262/#sec-number-bitwisexor)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Number::bitwiseXOR | Supported |  |  | 6.1.6.1.18 |
+
+
+#### [Number::bitwiseOR ( x, y )](https://tc39.es/ecma262/#sec-number-bitwiseor)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Number::bitwiseOR | Supported |  |  | 6.1.6.1.19 |
+
+
+#### [Number::toString ( x, radix )](https://tc39.es/ecma262/#sec-number-tostring)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Number::toString | Partially Supported |  |  | 6.1.6.1.20 |
+
+
+#### [The BigInt Type](https://tc39.es/ecma262/#sec-ecmascript-language-types-bigint-type)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| The BigInt Type | Not Yet Supported |  |  | 6.1.6.2 |
+
+
+#### [BigInt::unaryMinus ( x )](https://tc39.es/ecma262/#sec-bigint-unaryminus)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| BigInt::unaryMinus | Not Yet Supported |  |  | 6.1.6.2.1 |
+
+
+#### [BigInt::bitwiseNOT ( x )](https://tc39.es/ecma262/#sec-bigint-bitwisenot)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| BigInt::bitwiseNOT | Not Yet Supported |  |  | 6.1.6.2.2 |
+
+
+#### [BigInt::exponentiate ( base, exponent )](https://tc39.es/ecma262/#sec-bigint-exponentiate)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| BigInt::exponentiate | Not Yet Supported |  |  | 6.1.6.2.3 |
+
+
+#### [BigInt::multiply ( x, y )](https://tc39.es/ecma262/#sec-bigint-multiply)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| BigInt::multiply | Not Yet Supported |  |  | 6.1.6.2.4 |
+
+
+#### [BigInt::divide ( x, y )](https://tc39.es/ecma262/#sec-bigint-divide)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| BigInt::divide | Not Yet Supported |  |  | 6.1.6.2.5 |
+
+
+#### [BigInt::remainder ( n, d )](https://tc39.es/ecma262/#sec-bigint-remainder)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| BigInt::remainder | Not Yet Supported |  |  | 6.1.6.2.6 |
+
+
+#### [BigInt::add ( x, y )](https://tc39.es/ecma262/#sec-bigint-add)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| BigInt::add | Not Yet Supported |  |  | 6.1.6.2.7 |
+
+
+#### [BigInt::subtract ( x, y )](https://tc39.es/ecma262/#sec-bigint-subtract)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| BigInt::subtract | Not Yet Supported |  |  | 6.1.6.2.8 |
+
+
+#### [BigInt::leftShift ( x, y )](https://tc39.es/ecma262/#sec-bigint-leftshift)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| BigInt::leftShift | Not Yet Supported |  |  | 6.1.6.2.9 |
+
+
+#### [BigInt::signedRightShift ( x, y )](https://tc39.es/ecma262/#sec-bigint-signedrightshift)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| BigInt::signedRightShift | Not Yet Supported |  |  | 6.1.6.2.10 |
+
+
+#### [BigInt::unsignedRightShift ( x, y )](https://tc39.es/ecma262/#sec-bigint-unsignedrightshift)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| BigInt::unsignedRightShift | Not Yet Supported |  |  | 6.1.6.2.11 |
+
+
+#### [BigInt::lessThan ( x, y )](https://tc39.es/ecma262/#sec-bigint-lessthan)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| BigInt::lessThan | Not Yet Supported |  |  | 6.1.6.2.12 |
+
+
+#### [BigInt::equal ( x, y )](https://tc39.es/ecma262/#sec-bigint-equal)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| BigInt::equal | Not Yet Supported |  |  | 6.1.6.2.13 |
+
+
+#### [BinaryAnd ( x, y )](https://tc39.es/ecma262/#sec-binaryand)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| BinaryAnd | Not Yet Supported |  |  | 6.1.6.2.14 |
+
+
+#### [BinaryOr ( x, y )](https://tc39.es/ecma262/#sec-binaryor)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| BinaryOr | Not Yet Supported |  |  | 6.1.6.2.15 |
+
+
+#### [BinaryXor ( x, y )](https://tc39.es/ecma262/#sec-binaryxor)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| BinaryXor | Not Yet Supported |  |  | 6.1.6.2.16 |
+
+
+#### [BigIntBitwiseOp ( op, x, y )](https://tc39.es/ecma262/#sec-bigintbitwiseop)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| BigIntBitwiseOp | Not Yet Supported |  |  | 6.1.6.2.17 |
+
+
+#### [BigInt::bitwiseAND ( x, y )](https://tc39.es/ecma262/#sec-bigint-bitwiseand)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| BigInt::bitwiseAND | Not Yet Supported |  |  | 6.1.6.2.18 |
+
+
+#### [BigInt::bitwiseXOR ( x, y )](https://tc39.es/ecma262/#sec-bigint-bitwisexor)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| BigInt::bitwiseXOR | Not Yet Supported |  |  | 6.1.6.2.19 |
+
+
+#### [BigInt::bitwiseOR ( x, y )](https://tc39.es/ecma262/#sec-bigint-bitwiseor)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| BigInt::bitwiseOR | Not Yet Supported |  |  | 6.1.6.2.20 |
+
+
+#### [BigInt::toString ( x, radix )](https://tc39.es/ecma262/#sec-bigint-tostring)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| BigInt::toString | Not Yet Supported |  |  | 6.1.6.2.21 |
+
+
+#### [The Object Type](https://tc39.es/ecma262/#sec-object-type)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| The Object Type | Partially Supported |  |  | 6.1.7 |
+
+
+#### [Property Attributes](https://tc39.es/ecma262/#sec-property-attributes)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Property Attributes | Partially Supported |  |  | 6.1.7.1 |
+
+
+#### [Object Internal Methods and Internal Slots](https://tc39.es/ecma262/#sec-object-internal-methods-and-internal-slots)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Object Internal Methods and Internal Slots | Partially Supported |  |  | 6.1.7.2 |
+
+
+#### [Invariants of the Essential Internal Methods](https://tc39.es/ecma262/#sec-invariants-of-the-essential-internal-methods)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Invariants of the Essential Internal Methods | Partially Supported |  |  | 6.1.7.3 |
+
+
+#### [Well-Known Intrinsic Objects](https://tc39.es/ecma262/#sec-well-known-intrinsic-objects)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Well-Known Intrinsic Objects | Partially Supported |  |  | 6.1.7.4 |
+
+
 ## [ECMAScript Language: Expressions](https://tc39.es/ecma262/#sec-ecmascript-language-expressions)
 
 ### [Primary Expressions](https://tc39.es/ecma262/#sec-primary-expression)
