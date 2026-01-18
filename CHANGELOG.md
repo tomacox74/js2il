@@ -6,6 +6,7 @@ All notable changes to this project are documented here.
 
 ### Added
 - Object literal enhancements: spread properties (`{ ...x }`), computed keys (`{ [expr]: value }`), shorthand properties (`{ a }`), and method definitions (`{ m() { ... } }`) (fixes #290, #291, #292).
+- Synchronous generators (MVP): `function*` + `yield` lowered to a state machine with iterator-style `next()` semantics. Limitations: `yield*` and `async function*` are not supported yet; `throw/return` propagation through `try/finally` is not fully implemented (PR #388).
 
 ## v0.7.2 - 2026-01-17
 
