@@ -859,6 +859,20 @@ This file is auto-generated from FeatureCoverage.json.
 | await expression | Supported | `Js2IL.Tests/Async/JavaScript/Async_SimpleAwait.js`<br>`Js2IL.Tests/Async/JavaScript/Async_TryCatch_AwaitReject.js`<br>`Js2IL.Tests/Async/JavaScript/Async_TryFinally_AwaitInFinally_Normal.js`<br>`Js2IL.Tests/Async/JavaScript/Async_TryCatchFinally_AwaitInFinally_OnReject.js`<br>`Js2IL.Tests/Async/JavaScript/Async_TryFinally_PreservesExceptionThroughAwait.js`<br>`Js2IL.Tests/Async/JavaScript/Async_TryFinally_FinallyThrowOverridesOriginal.js`<br>`Js2IL.Tests/Async/JavaScript/Async_TryFinally_ReturnPreservedThroughAwait.js` | Full state machine implementation with suspension/resumption. Each await point stores _asyncState, schedules promise.then() continuation via SetupAwaitContinuation, and returns. On resume, the state switch dispatches to the appropriate label and loads the awaited result from a scope field. Scope persistence handled via PrependScopeToArray. Await rejection inside try/catch resumes into the catch block via pending-exception storage. Await in finally is supported, including correct completion semantics across suspension (preserve throw/return through awaited finally, and allow finally throws to override prior completion). | 15.8.1 |
 
 
+## [Generator Function Definitions](https://tc39.es/ecma262/#sec-generator-function-definitions)
+
+### [Generator Function Definitions](https://tc39.es/ecma262/#sec-generator-function-definitions)
+
+#### [Generator functions (function* / yield)](https://tc39.es/ecma262/#sec-generator-function-definitions)
+
+| Feature | Status | Test Scripts | Notes | Section |
+|---|---|---|---|---|
+| Generator function declaration/expression (function*) | Partially Supported | `Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js` | MVP support for synchronous generators compiled via lowering to a state machine. Known limitations: yield* is not supported; async generators are rejected; throw/return through try/finally is not fully implemented. | 15.6.1 |
+| yield expression | Supported | `Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js` | Supports yielding values and resumption via next(). yield* is not supported. | 15.6.1 |
+| yield* delegation | Not Yet Supported |  | Explicitly rejected in validator (MVP limitation). | 15.6.1 |
+| async generator functions (async function*) | Not Yet Supported |  | Explicitly rejected in validator (not implemented). | 15.6.1 |
+
+
 ## [The Global Object](https://tc39.es/ecma262/#sec-global-object)
 
 ### [Function Properties of the Global Object](https://tc39.es/ecma262/#sec-function-properties-of-the-global-object)

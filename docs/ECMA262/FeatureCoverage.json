@@ -2258,6 +2258,55 @@
       ]
     },
     {
+      "section": "15.6",
+      "title": "Generator Function Definitions",
+      "url": "https://tc39.es/ecma262/#sec-generator-function-definitions",
+      "subsections": [
+        {
+          "subsection": "15.6",
+          "title": "Generator Function Definitions",
+          "url": "https://tc39.es/ecma262/#sec-generator-function-definitions",
+          "paragraphs": [
+            {
+              "paragraph": "15.6.1",
+              "title": "Generator functions (function* / yield)",
+              "url": "https://tc39.es/ecma262/#sec-generator-function-definitions",
+              "features": [
+                {
+                  "feature": "Generator function declaration/expression (function*)",
+                  "status": "Partially Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js"
+                  ],
+                  "notes": "MVP support for synchronous generators compiled via lowering to a state machine. Known limitations: yield* is not supported; async generators are rejected; throw/return through try/finally is not fully implemented."
+                },
+                {
+                  "feature": "yield expression",
+                  "status": "Supported",
+                  "testScripts": [
+                    "Js2IL.Tests/Generator/JavaScript/Generator_BasicNext.js"
+                  ],
+                  "notes": "Supports yielding values and resumption via next(). yield* is not supported."
+                },
+                {
+                  "feature": "yield* delegation",
+                  "status": "Not Yet Supported",
+                  "testScripts": [],
+                  "notes": "Explicitly rejected in validator (MVP limitation)."
+                },
+                {
+                  "feature": "async generator functions (async function*)",
+                  "status": "Not Yet Supported",
+                  "testScripts": [],
+                  "notes": "Explicitly rejected in validator (not implemented)."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "section": "19",
       "title": "The Global Object",
       "url": "https://tc39.es/ecma262/#sec-global-object",
