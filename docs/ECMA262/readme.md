@@ -21,7 +21,7 @@ Scripts
 - scripts/splitEcma262SectionsIntoSubsections.ps1 (wrapper)
 
 What it does
-- Generates/updates subsection documents (e.g. Section27_3.md) from a parent section’s clause table when applicable.
+- Generates/updates subsection documents (e.g. 27/Section27_3.md) from a parent section’s clause table when applicable.
 - Rebuilds hub pages and updates Index.md rollups.
 
 When to use it
@@ -43,7 +43,7 @@ Steps
    - Section number (from <span class="secnum">…)
    - Title (from the <h1> text)
    - Anchor id (from <emu-clause id="…">)
-3. Update the corresponding docs/ECMA262/SectionXX_Y.md file:
+3. Update the corresponding docs/ECMA262/XX/SectionXX_Y.md file:
    - Keep it **links-only**.
    - Add a “## Subclauses” table with columns: Clause | Title | Status | Spec.
    - For the Spec link, use the extracted id:

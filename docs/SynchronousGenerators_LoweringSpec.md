@@ -1,4 +1,4 @@
-# 0. Synchronous Generator Lowering Spec (JS2IL)
+﻿# 0. Synchronous Generator Lowering Spec (JS2IL)
 
 ## 1. Goals
 
@@ -9,7 +9,7 @@
   - Left-to-right evaluation order.
   - Correct `next(value)`, `throw(error)`, and `return(value)` behavior.
   - Correct interaction with `try/catch/finally` inside generator bodies.
-- Reuse JS2IL’s **scope-as-class** closure model and scopes-array ABI.
+- Reuse JS2ILâ€™s **scope-as-class** closure model and scopes-array ABI.
 - Keep the runtime small and avoid reflection-heavy hot paths.
 
 ## 2. Non-Goals (initial implementation)
@@ -24,7 +24,7 @@
 - **Generator object**: result of calling a generator function; implements `next`, `throw`, `return`.
 - **Suspension point**: a `yield` / `yield*` where execution pauses and control returns to caller.
 - **Resume**: a subsequent `next/throw/return` call.
-- **Leaf scope**: per-invocation scope instance allocated for the generator body (JS2IL “scope-as-class”).
+- **Leaf scope**: per-invocation scope instance allocated for the generator body (JS2IL â€œscope-as-classâ€).
 
 ### 3.1. ECMA-262 references (local docs)
 
@@ -32,17 +32,17 @@ Primary ECMA-262 sections relevant to synchronous generators:
 
 - Index / navigation: [docs/ECMA262/Index.md](ECMA262/Index.md)
 - Generator syntax + semantics:
-  - Generator Function Definitions: [docs/ECMA262/Section15_5.md](ECMA262/Section15_5.md)
-  - Method Definitions (generator methods are a form of method definition): [docs/ECMA262/Section15_4.md](ECMA262/Section15_4.md)
+  - Generator Function Definitions: [docs/ECMA262/15/Section15_5.md](ECMA262/15/Section15_5.md)
+  - Method Definitions (generator methods are a form of method definition): [docs/ECMA262/15/Section15_4.md](ECMA262/15/Section15_4.md)
 - Generator runtime objects:
-  - GeneratorFunction Objects: [docs/ECMA262/Section27_3.md](ECMA262/Section27_3.md)
-  - Generator Objects (`next`/`throw`/`return`): [docs/ECMA262/Section27_5.md](ECMA262/Section27_5.md)
+  - GeneratorFunction Objects: [docs/ECMA262/27/Section27_3.md](ECMA262/27/Section27_3.md)
+  - Generator Objects (`next`/`throw`/`return`): [docs/ECMA262/27/Section27_5.md](ECMA262/27/Section27_5.md)
 - Iterator protocol and iterator closing used by `yield*`:
-  - Operations on Iterator Objects: [docs/ECMA262/Section7_4.md](ECMA262/Section7_4.md)
+  - Operations on Iterator Objects: [docs/ECMA262/7/Section7_4.md](ECMA262/7/Section7_4.md)
 - Statements that interact with generator control flow:
-  - The `return` Statement: [docs/ECMA262/Section14_10.md](ECMA262/Section14_10.md)
-  - The `throw` Statement: [docs/ECMA262/Section14_14.md](ECMA262/Section14_14.md)
-  - The `try` Statement: [docs/ECMA262/Section14_15.md](ECMA262/Section14_15.md)
+  - The `return` Statement: [docs/ECMA262/14/Section14_10.md](ECMA262/14/Section14_10.md)
+  - The `throw` Statement: [docs/ECMA262/14/Section14_14.md](ECMA262/14/Section14_14.md)
+  - The `try` Statement: [docs/ECMA262/14/Section14_15.md](ECMA262/14/Section14_15.md)
 
 Coverage tracking reference:
 
@@ -54,7 +54,7 @@ Coverage tracking reference:
 
 Calling a generator function does **not** execute the body immediately.
 
-Reference: [docs/ECMA262/Section15_5.md](ECMA262/Section15_5.md), [docs/ECMA262/Section27_5.md](ECMA262/Section27_5.md)
+Reference: [docs/ECMA262/15/Section15_5.md](ECMA262/15/Section15_5.md), [docs/ECMA262/27/Section27_5.md](ECMA262/27/Section27_5.md)
 
 - It returns a generator object `gen`.
 - The body runs only when `gen.next(...)` / `gen.throw(...)` / `gen.return(...)` is invoked.
@@ -78,14 +78,14 @@ JS2IL runtime will model this as an `ExpandoObject` (or a small dedicated runtim
 - Produces `{ value: <expr>, done: false }` and suspends.
 - When resumed by `next(v)`, the `yield expr` expression evaluates to `v`.
 
-Reference: [docs/ECMA262/Section15_5.md](ECMA262/Section15_5.md)
+Reference: [docs/ECMA262/15/Section15_5.md](ECMA262/15/Section15_5.md)
 
 ### 4.5. `throw(error)`
 
 - Resumes the generator by throwing `error` at the suspended `yield`.
 - If not caught in the generator, the call to `throw` rethrows to the caller and the generator becomes completed.
 
-Reference: [docs/ECMA262/Section27_5.md](ECMA262/Section27_5.md), [docs/ECMA262/Section14_14.md](ECMA262/Section14_14.md), [docs/ECMA262/Section14_15.md](ECMA262/Section14_15.md)
+Reference: [docs/ECMA262/27/Section27_5.md](ECMA262/27/Section27_5.md), [docs/ECMA262/14/Section14_14.md](ECMA262/14/Section14_14.md), [docs/ECMA262/14/Section14_15.md](ECMA262/14/Section14_15.md)
 
 ### 4.6. `return(value)`
 
@@ -93,7 +93,7 @@ Reference: [docs/ECMA262/Section27_5.md](ECMA262/Section27_5.md), [docs/ECMA262/
 - Runs any pending `finally` blocks.
 - Returns `{ value, done: true }`.
 
-Reference: [docs/ECMA262/Section27_5.md](ECMA262/Section27_5.md), [docs/ECMA262/Section14_10.md](ECMA262/Section14_10.md), [docs/ECMA262/Section14_15.md](ECMA262/Section14_15.md)
+Reference: [docs/ECMA262/27/Section27_5.md](ECMA262/27/Section27_5.md), [docs/ECMA262/14/Section14_10.md](ECMA262/14/Section14_10.md), [docs/ECMA262/14/Section14_15.md](ECMA262/14/Section14_15.md)
 
 ## 5. High-level lowering strategy
 
@@ -102,7 +102,7 @@ Reference: [docs/ECMA262/Section27_5.md](ECMA262/Section27_5.md), [docs/ECMA262/
 Lower each generator function into:
 
 1. An **outer factory method** matching the original callable signature that returns a runtime generator object.
-2. A **state machine step method** (like async’s `MoveNext`) that:
+2. A **state machine step method** (like asyncâ€™s `MoveNext`) that:
    - runs until it hits a `yield` or completes
    - can be resumed with one of three operations: `next`, `throw`, `return`
 
@@ -116,17 +116,17 @@ Proposed approach: have the generated leaf scope type inherit from a runtime bas
 
 Proposed fields on `GeneratorScope`:
 
-- `int _genState` — program counter
-- `bool _started` — whether first `next` has happened
-- `bool _done` — completion flag
-- `object? _resumeValue` — the value passed to `next(v)`
-- `object? _resumeException` — exception passed to `throw(e)`
+- `int _genState` â€” program counter
+- `bool _started` â€” whether first `next` has happened
+- `bool _done` â€” completion flag
+- `object? _resumeValue` â€” the value passed to `next(v)`
+- `object? _resumeException` â€” exception passed to `throw(e)`
 - `bool _hasResumeException`
-- `object? _returnValue` — value passed to `return(v)`
+- `object? _returnValue` â€” value passed to `return(v)`
 - `bool _hasReturn`
 - Spill slots for temps/locals that must survive across yields (same approach as async).
 
-Rationale: matches JS2IL’s existing closure lifetime and avoids separate heap allocations.
+Rationale: matches JS2ILâ€™s existing closure lifetime and avoids separate heap allocations.
 
 ### 5.3. Step method signature
 
@@ -205,7 +205,7 @@ Plan:
   - if `op==Throw`: store into `_resumeException` and set `_hasResumeException`
   - if `op==Return`: store into `_returnValue` and set `_hasReturn`
 
-Then, immediately before executing code “after a yield”, emit:
+Then, immediately before executing code â€œafter a yieldâ€, emit:
 
 - if `_hasReturn`: jump to a dedicated completion/unwind path
 - else if `_hasResumeException`: clear flag and `throw _resumeException`
@@ -222,7 +222,7 @@ Then, immediately before executing code “after a yield”, emit:
 Plan (phase-based):
 
 - Phase 1: support `try/catch` around yields (propagate correctly).
-- Phase 2: support `finally` by adding explicit unwind labels and storing an unwind “reason” in scope:
+- Phase 2: support `finally` by adding explicit unwind labels and storing an unwind â€œreasonâ€ in scope:
   - `int _unwindKind` (0=none, 1=return, 2=throw)
   - `object? _unwindValue`
 
@@ -232,19 +232,19 @@ This mirrors the async lowering style: switch-based resume + explicit labels for
 
 `yield*` delegates iteration to another iterator.
 
-Reference: [docs/ECMA262/Section7_4.md](ECMA262/Section7_4.md), [docs/ECMA262/Section15_5.md](ECMA262/Section15_5.md)
+Reference: [docs/ECMA262/7/Section7_4.md](ECMA262/7/Section7_4.md), [docs/ECMA262/15/Section15_5.md](ECMA262/15/Section15_5.md)
 
 Plan:
 
-- Lower `yield* expr` into a small nested “delegation” sub-state machine:
+- Lower `yield* expr` into a small nested â€œdelegationâ€ sub-state machine:
   - Evaluate `expr` once
   - Get an iterator from runtime (`RuntimeServices.GetIterator(expr)` or similar)
   - Repeatedly call `.next(resumeValue)` and yield each produced value
   - If caller calls `throw(e)`, forward to inner `.throw(e)` if present; otherwise throw into outer generator
   - If caller calls `return(v)`, forward to inner `.return(v)` if present; otherwise complete outer
-  - When inner is done, the `yield*` expression evaluates to the inner iterator’s completion value
+  - When inner is done, the `yield*` expression evaluates to the inner iteratorâ€™s completion value
 
-This requires a runtime helper for “get iterator” and optional `throw/return` forwarding.
+This requires a runtime helper for â€œget iteratorâ€ and optional `throw/return` forwarding.
 
 ## 7. Compiler work breakdown
 
@@ -266,7 +266,7 @@ This requires a runtime helper for “get iterator” and optional `throw/return
   - `HIRYieldExpression` (value expression, location)
   - `HIRYieldStarExpression` (iterable expression, location)
 - LIR:
-  - `LIRYield` / `LIRYieldStar` or reuse a generalized “suspend” instruction, similar to async’s `LIRAwait`.
+  - `LIRYield` / `LIRYieldStar` or reuse a generalized â€œsuspendâ€ instruction, similar to asyncâ€™s `LIRAwait`.
 
 ### 7.4. IL emission
 
@@ -311,3 +311,4 @@ Execution tests should validate observable JS behavior; generator tests can snap
 ---
 
 This document is a plan/spec and intentionally leaves some runtime/API naming flexible so we can fit it cleanly into existing `JavaScriptRuntime` patterns.
+
