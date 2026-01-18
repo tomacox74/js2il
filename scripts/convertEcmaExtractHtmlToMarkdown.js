@@ -2,8 +2,8 @@
  * Convert an extracted ECMA-262 multipage HTML fragment (typically produced by
  * scripts/extractEcma262SectionHtml.js --no-wrap) into a Markdown approximation.
  *
- * This is intentionally dependency-free; it handles the common HTML tags and
- * ecmarkup custom elements found in tc39.es.
+ * This uses `turndown` to convert HTML to Markdown, with a few custom rules to
+ * better handle ecmarkup elements and code blocks.
  *
  * Usage:
  *   node scripts/convertEcmaExtractHtmlToMarkdown.js --in test_output/ecma262-27.3.html --out test_output/ecma262-27.3.md
@@ -13,6 +13,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const TurndownService = require('turndown');
 
 function parseArgs(argv) {
   const args = { inFile: '', outFile: '' };
@@ -46,91 +47,66 @@ function parseArgs(argv) {
   return args;
 }
 
-function decodeEntities(s) {
-  return s
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
-    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(parseInt(dec, 10)));
-}
-
-function stripTags(s) {
-  return s.replace(/<[^>]+>/g, '');
-}
-
 function convertHtmlToMarkdown(html) {
-  let text = html.replace(/\r\n/g, '\n');
-
-  // Convert <pre> blocks first, replacing them with placeholders.
-  const preBlocks = [];
-  text = text.replace(/<pre\b[\s\S]*?<\/pre>/gi, (block) => {
-    const idx = preBlocks.length;
-
-    const langMatch = /class=["'][^"']*language-([^"'\s]+)[^"']*["']/i.exec(block);
-    const lang = (langMatch && langMatch[1]) || '';
-
-    // Prefer inner <code> content if present.
-    let inner = block;
-    inner = inner.replace(/^[\s\S]*?<code\b[^>]*>/i, '');
-    inner = inner.replace(/<\/code>[\s\S]*$/i, '');
-
-    inner = decodeEntities(stripTags(inner));
-
-    const fence = '```' + (lang ? ` ${lang}` : '');
-    preBlocks.push(`\n${fence}\n${inner.trim()}\n\`\`\`\n`);
-
-    return `@@PRE_${idx}@@`;
+  const turndownService = new TurndownService({
+    codeBlockStyle: 'fenced',
+    emDelimiter: '_',
+    strongDelimiter: '**',
+    bulletListMarker: '-',
   });
 
-  // Anchors
-  text = text.replace(
-    /<a\b[^>]*href=\"([^\"]+)\"[^>]*>([\s\S]*?)<\/a>/gi,
-    (_, href, inner) => {
-      const label = decodeEntities(stripTags(inner)).replace(/\s+/g, ' ').trim();
-      return `[${label}](${href})`;
-    }
-  );
+  // tc39/ecmarkup uses nested h1s heavily; prefer lower heading levels to keep output readable.
+  turndownService.addRule('ecmaHeadings', {
+    filter: ['h1', 'h2', 'h3'],
+    replacement(content, node) {
+      const tag = (node.nodeName || '').toLowerCase();
+      const originalLevel = tag === 'h1' ? 1 : tag === 'h2' ? 2 : 3;
+      const mappedLevel = Math.min(6, 2 + originalLevel); // h1->###, h2->####, h3->#####
+      const hashes = '#'.repeat(mappedLevel);
+      const clean = (content || '').replace(/\s+/g, ' ').trim();
+      return `\n\n${hashes} ${clean}\n\n`;
+    },
+  });
 
-  // Headings (ecmarkup tends to use h1 repeatedly inside nested clauses)
-  text = text.replace(/<h1\b[^>]*>/gi, '\n\n### ').replace(/<\/h1>/gi, '\n');
-  text = text.replace(/<h2\b[^>]*>/gi, '\n\n#### ').replace(/<\/h2>/gi, '\n');
-  text = text.replace(/<h3\b[^>]*>/gi, '\n\n##### ').replace(/<\/h3>/gi, '\n');
+  // Wrap common ecmarkup inline elements as code.
+  turndownService.addRule('ecmarkupInlineCode', {
+    filter: ['emu-val', 'emu-const', 'var'],
+    replacement(content) {
+      const clean = (content || '').replace(/\s+/g, ' ').trim();
+      return clean ? `\`${clean}\`` : '';
+    },
+  });
 
-  // Paragraph-ish
-  text = text.replace(/<p\b[^>]*>/gi, '\n\n').replace(/<\/p>/gi, '\n');
-  text = text.replace(/<br\s*\/?>/gi, '\n');
+  // Prefer fenced code blocks and preserve language hints (class="language-xxx") when present.
+  turndownService.addRule('fencedCodeWithLanguage', {
+    filter(node) {
+      return node.nodeName === 'PRE';
+    },
+    replacement(_content, node) {
+      // Use textContent to avoid turndown escaping backticks inside code.
+      const raw = (node.textContent || '').replace(/\r\n/g, '\n');
 
-  // Lists
-  text = text.replace(/<li\b[^>]*>/gi, '\n- ').replace(/<\/li>/gi, '');
-  text = text.replace(/<ul\b[^>]*>/gi, '\n').replace(/<\/ul>/gi, '\n');
-  text = text.replace(/<ol\b[^>]*>/gi, '\n').replace(/<\/ol>/gi, '\n');
+      // Try to find language-xxx on either <pre> or a nested <code>.
+      const langFromClass = (el) => {
+        const className = el && el.getAttribute ? el.getAttribute('class') : '';
+        const m = className && /(?:^|\s)language-([^\s]+)/i.exec(className);
+        return (m && m[1]) || '';
+      };
 
-  // Inline code-ish elements
-  text = text.replace(/<code\b[^>]*>/gi, '`').replace(/<\/code>/gi, '`');
-  text = text.replace(/<var\b[^>]*>/gi, '`').replace(/<\/var>/gi, '`');
-  text = text.replace(/<emu-val\b[^>]*>/gi, '`').replace(/<\/emu-val>/gi, '`');
-  text = text.replace(/<emu-const\b[^>]*>/gi, '`').replace(/<\/emu-const>/gi, '`');
+      let lang = langFromClass(node);
+      if (!lang && node.querySelector) {
+        const code = node.querySelector('code');
+        if (code) lang = langFromClass(code);
+      }
 
-  // Drop remaining tags (including emu-* wrappers)
-  text = stripTags(text);
-  text = decodeEntities(text);
+      const fence = `\n\n\`\`\`${lang ? ` ${lang}` : ''}\n`;
+      const body = raw.replace(/\n$/, '');
+      return `${fence}${body}\n\`\`\`\n\n`;
+    },
+  });
 
-  // Restore pre blocks
-  for (let i = 0; i < preBlocks.length; i++) {
-    text = text.replace(`@@PRE_${i}@@`, preBlocks[i]);
-  }
-
-  // Cleanup
-  text = text
-    .replace(/[ \t]+\n/g, '\n')
-    .replace(/\n{4,}/g, '\n\n\n')
-    .trim();
-
-  return text + '\n';
+  const md = turndownService.turndown(html);
+  return md.replace(/\n{4,}/g, '\n\n\n').trim() + '\n';
 }
 
 function main() {
