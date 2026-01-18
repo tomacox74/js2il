@@ -13,7 +13,7 @@ It is intentionally **implementation-oriented** (what JS2IL emits today), and co
 
 | JavaScript concept | Emitted .NET artifact | Notes |
 |---|---|---|
-| Module | `Scripts.<ModuleId>` type with static `Main(...)` | One per module. Entry point uses CommonJS-style parameters. |
+| Module | `Modules.<ModuleId>` type with static `Main(...)` | One per module. Entry point uses CommonJS-style parameters. |
 | Lexical scope (global/function/block/class/method) | `Scopes.<ModuleId>` root type + **nested scope types** | “Scope-as-class”: each scope becomes a reference type; variables become instance fields when needed. |
 | Function declaration `function f(){}` | static method on `Functions.<ModuleId>` | Method name is the function name. |
 | Function expression `const g = function() {}` | `Functions.FunctionExpression_L<line>C<col>` type with a static method | Uses source location for stable identity. |
@@ -26,7 +26,7 @@ It is intentionally **implementation-oriented** (what JS2IL emits today), and co
 
 JS2IL uses a small number of namespaces to keep generated artifacts discoverable:
 
-- `Scripts`: module entrypoints.
+- `Modules`: module entrypoints.
 - `Scopes`: closure/environment types generated from the symbol-table scope tree.
 - `Functions`: generated methods for functions (declarations) and anonymous callables (arrows/function expressions).
 - `Classes`: generated types for JavaScript classes (can be overridden per class via `Scope.DotNetNamespace`).
@@ -35,16 +35,16 @@ JS2IL uses a small number of namespaces to keep generated artifacts discoverable
 
 JS2IL uses a stable module id (from `ModuleDefinition.Name`) when naming per-module types.
 
-- The module id is used to form type names like `Scripts.<ModuleId>` and `Scopes.<ModuleId>`.
-- In multi-module builds, every module gets its own independent `Scripts/Scopes/Functions` artifacts to avoid name collisions.
+- The module id is used to form type names like `Modules.<ModuleId>` and `Scopes.<ModuleId>`.
+- In multi-module builds, every module gets its own independent `Modules/Scopes/Functions` artifacts to avoid name collisions.
 
 ---
 
-## Module mapping (`Scripts.<ModuleId>.Main`)
+## Module mapping (`Modules.<ModuleId>.Main`)
 
 Each module emits a type:
 
-- `Scripts.<ModuleId>`
+- `Modules.<ModuleId>`
 
 and a method:
 
@@ -244,7 +244,7 @@ class C {
 
 A typical shape of emitted artifacts:
 
-- `Scripts.foo.Main(...)`
+- `Modules.foo.Main(...)`
 - `Scopes.foo` (global scope type)
   - field(s) for captured/hoisted bindings like `x` and `f` (if captured/needed)
   - nested scope types for `f` and the arrow
