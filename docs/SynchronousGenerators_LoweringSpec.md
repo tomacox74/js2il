@@ -26,11 +26,35 @@
 - **Resume**: a subsequent `next/throw/return` call.
 - **Leaf scope**: per-invocation scope instance allocated for the generator body (JS2IL “scope-as-class”).
 
+### 3.1. ECMA-262 references (local docs)
+
+Primary ECMA-262 sections relevant to synchronous generators:
+
+- Index / navigation: [docs/ECMA262/Index.md](ECMA262/Index.md)
+- Generator syntax + semantics:
+  - Generator Function Definitions: [docs/ECMA262/Section15_5.md](ECMA262/Section15_5.md)
+  - Method Definitions (generator methods are a form of method definition): [docs/ECMA262/Section15_4.md](ECMA262/Section15_4.md)
+- Generator runtime objects:
+  - GeneratorFunction Objects: [docs/ECMA262/Section27_3.md](ECMA262/Section27_3.md)
+  - Generator Objects (`next`/`throw`/`return`): [docs/ECMA262/Section27_5.md](ECMA262/Section27_5.md)
+- Iterator protocol and iterator closing used by `yield*`:
+  - Operations on Iterator Objects: [docs/ECMA262/Section7_4.md](ECMA262/Section7_4.md)
+- Statements that interact with generator control flow:
+  - The `return` Statement: [docs/ECMA262/Section14_10.md](ECMA262/Section14_10.md)
+  - The `throw` Statement: [docs/ECMA262/Section14_14.md](ECMA262/Section14_14.md)
+  - The `try` Statement: [docs/ECMA262/Section14_15.md](ECMA262/Section14_15.md)
+
+Coverage tracking reference:
+
+- [docs/ECMA262/FeatureCoverage.md](ECMA262/FeatureCoverage.md)
+
 ## 4. Semantics Summary
 
 ### 4.1. Calling a generator function
 
 Calling a generator function does **not** execute the body immediately.
+
+Reference: [docs/ECMA262/Section15_5.md](ECMA262/Section15_5.md), [docs/ECMA262/Section27_5.md](ECMA262/Section27_5.md)
 
 - It returns a generator object `gen`.
 - The body runs only when `gen.next(...)` / `gen.throw(...)` / `gen.return(...)` is invoked.
@@ -54,16 +78,22 @@ JS2IL runtime will model this as an `ExpandoObject` (or a small dedicated runtim
 - Produces `{ value: <expr>, done: false }` and suspends.
 - When resumed by `next(v)`, the `yield expr` expression evaluates to `v`.
 
+Reference: [docs/ECMA262/Section15_5.md](ECMA262/Section15_5.md)
+
 ### 4.5. `throw(error)`
 
 - Resumes the generator by throwing `error` at the suspended `yield`.
 - If not caught in the generator, the call to `throw` rethrows to the caller and the generator becomes completed.
+
+Reference: [docs/ECMA262/Section27_5.md](ECMA262/Section27_5.md), [docs/ECMA262/Section14_14.md](ECMA262/Section14_14.md), [docs/ECMA262/Section14_15.md](ECMA262/Section14_15.md)
 
 ### 4.6. `return(value)`
 
 - Forces generator completion.
 - Runs any pending `finally` blocks.
 - Returns `{ value, done: true }`.
+
+Reference: [docs/ECMA262/Section27_5.md](ECMA262/Section27_5.md), [docs/ECMA262/Section14_10.md](ECMA262/Section14_10.md), [docs/ECMA262/Section14_15.md](ECMA262/Section14_15.md)
 
 ## 5. High-level lowering strategy
 
@@ -201,6 +231,8 @@ This mirrors the async lowering style: switch-based resume + explicit labels for
 ### 6.4. `yield* iterable`
 
 `yield*` delegates iteration to another iterator.
+
+Reference: [docs/ECMA262/Section7_4.md](ECMA262/Section7_4.md), [docs/ECMA262/Section15_5.md](ECMA262/Section15_5.md)
 
 Plan:
 
