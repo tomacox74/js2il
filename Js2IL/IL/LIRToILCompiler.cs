@@ -3432,14 +3432,10 @@ internal sealed class LIRToILCompiler
                         switchTargets[i] = defaultLabel;
                     }
 
-                    foreach (var kvp in genSwitch.StateToLabel)
+                    foreach (var kvp in genSwitch.StateToLabel.Where(kvp => kvp.Key > 0 && kvp.Key < branchCount))
                     {
                         var stateId = kvp.Key;
                         var labelId = kvp.Value;
-                        if (stateId <= 0 || stateId >= branchCount)
-                        {
-                            continue;
-                        }
                         if (!labelMap.TryGetValue(labelId, out var resumeLabel))
                         {
                             resumeLabel = ilEncoder.DefineLabel();

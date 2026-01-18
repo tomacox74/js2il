@@ -301,10 +301,12 @@ public class JavaScriptAstValidator : IAstValidator
     private static void ValidateGenerators(Node ast, ValidationResult result)
     {
         var generatorFunctionDepth = 0;
+        var visited = new HashSet<Node>(ReferenceEqualityComparer<Node>.Default);
 
         void WalkForGenerators(Node? node)
         {
             if (node == null) return;
+            if (!visited.Add(node)) return;
 
             bool isGeneratorFunction = node switch
             {
@@ -313,6 +315,19 @@ public class JavaScriptAstValidator : IAstValidator
                 // Arrow functions cannot be generators.
                 _ => false
             };
+
+            bool isAsyncGeneratorFunction = node switch
+            {
+                FunctionDeclaration fd => fd.Async && fd.Generator,
+                FunctionExpression fe => fe.Async && fe.Generator,
+                _ => false
+            };
+
+            if (isAsyncGeneratorFunction)
+            {
+                result.Errors.Add($"Async generators (async function*) are not yet supported (line {node.Location.Start.Line})");
+                result.IsValid = false;
+            }
 
             if (isGeneratorFunction)
             {
@@ -334,13 +349,24 @@ public class JavaScriptAstValidator : IAstValidator
                 }
             }
 
-            foreach (var child in node.ChildNodes)
+            // Walk children (reflection-based, consistent with ValidateAsyncAwait)
+            var type = node.GetType();
+            foreach (var prop in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
             {
-                if (child is Node childNode)
+                if (!prop.CanRead) continue;
+                if (prop.GetIndexParameters().Length != 0) continue;
+
+                object? value;
+                try { value = prop.GetValue(node); }
+                catch { continue; }
+
+                if (value is null || value is string) continue;
+
+                if (value is Node childNode)
                 {
                     WalkForGenerators(childNode);
                 }
-                else if (child is IEnumerable enumerable)
+                else if (value is IEnumerable enumerable)
                 {
                     foreach (var item in enumerable)
                     {

@@ -1,5 +1,6 @@
 using Acornima.Ast;
 using System.Reflection;
+using System.Linq;
 
 namespace Js2IL.SymbolTables
 {
@@ -523,19 +524,13 @@ namespace Js2IL.SymbolTables
                         {
                             // Generator frames suspend/resume; parameter bindings must live on the leaf scope.
                             // Mark parameters as captured so they are backed by scope fields.
-                            foreach (var p in funcScope.Parameters)
+                            foreach (var p in funcScope.Parameters.Where(funcScope.Bindings.ContainsKey))
                             {
-                                if (funcScope.Bindings.TryGetValue(p, out var bi))
-                                {
-                                    bi.IsCaptured = true;
-                                }
+                                funcScope.Bindings[p].IsCaptured = true;
                             }
-                            foreach (var p in funcScope.DestructuredParameters)
+                            foreach (var p in funcScope.DestructuredParameters.Where(funcScope.Bindings.ContainsKey))
                             {
-                                if (funcScope.Bindings.TryGetValue(p, out var bi))
-                                {
-                                    bi.IsCaptured = true;
-                                }
+                                funcScope.Bindings[p].IsCaptured = true;
                             }
                         }
                         if (funcDecl.Body is BlockStatement fblock)
@@ -583,19 +578,13 @@ namespace Js2IL.SymbolTables
                     BindObjectPatternParameters(funcExpr.Params, funcExprScope);
                     if (funcExprScope.IsGenerator)
                     {
-                        foreach (var p in funcExprScope.Parameters)
+                        foreach (var p in funcExprScope.Parameters.Where(funcExprScope.Bindings.ContainsKey))
                         {
-                            if (funcExprScope.Bindings.TryGetValue(p, out var bi))
-                            {
-                                bi.IsCaptured = true;
-                            }
+                            funcExprScope.Bindings[p].IsCaptured = true;
                         }
-                        foreach (var p in funcExprScope.DestructuredParameters)
+                        foreach (var p in funcExprScope.DestructuredParameters.Where(funcExprScope.Bindings.ContainsKey))
                         {
-                            if (funcExprScope.Bindings.TryGetValue(p, out var bi))
-                            {
-                                bi.IsCaptured = true;
-                            }
+                            funcExprScope.Bindings[p].IsCaptured = true;
                         }
                     }
                     if (funcExpr.Body is BlockStatement funcExprBlock)
@@ -1584,27 +1573,19 @@ namespace Js2IL.SymbolTables
         {
             if (node == null) return 0;
 
-            int count = 0;
-            if (node is YieldExpression)
+            // Yield counting is for the current function body only; do not descend into nested functions.
+            if (node is FunctionDeclaration or FunctionExpression or ArrowFunctionExpression)
             {
-                count++;
+                return 0;
             }
+
+            int count = node is YieldExpression ? 1 : 0;
 
             foreach (var child in node.ChildNodes)
             {
-                if (child is Node childNode)
+                if (child is not null)
                 {
-                    count += CountYieldExpressions(childNode);
-                }
-                else if (child is System.Collections.IEnumerable items)
-                {
-                    foreach (var item in items)
-                    {
-                        if (item is Node itemNode)
-                        {
-                            count += CountYieldExpressions(itemNode);
-                        }
-                    }
+                    count += CountYieldExpressions(child);
                 }
             }
 
