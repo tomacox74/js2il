@@ -85,6 +85,20 @@ public class Scope
     /// </summary>
     public int AwaitPointCount { get; set; }
 
+    /// <summary>
+    /// Indicates whether this is a generator function scope.
+    /// Set during symbol table construction for function scopes.
+    /// Used by TypeGenerator/IL emission to include generator state fields.
+    /// </summary>
+    public bool IsGenerator { get; set; }
+
+    /// <summary>
+    /// The number of yield expressions in this generator function scope.
+    /// Set during symbol table construction for generator function scopes.
+    /// Used for diagnostics and potential future storage decisions.
+    /// </summary>
+    public int YieldPointCount { get; set; }
+
     public Scope(string name, ScopeKind kind, Scope? parent, Node astNode)
     {
         Name = name;

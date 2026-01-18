@@ -22,6 +22,19 @@ public sealed class MethodBodyIR
     /// </summary>
     public AsyncStateMachineInfo? AsyncInfo { get; set; }
 
+    /// <summary>
+    /// Whether this callable is a synchronous generator function.
+    /// When true, the callable is lowered to a resumable state machine and returns
+    /// a runtime GeneratorObject on initial invocation.
+    /// </summary>
+    public bool IsGenerator { get; set; }
+
+    /// <summary>
+    /// Generator state machine metadata (only populated when IsGenerator is true).
+    /// Contains yield points and state-related information for IL emission.
+    /// </summary>
+    public GeneratorStateMachineInfo? GeneratorInfo { get; set; }
+
     public List<string> Parameters { get; } = new();
 
     /// <summary>

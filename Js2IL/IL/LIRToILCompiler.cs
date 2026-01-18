@@ -59,6 +59,9 @@ internal sealed class LIRToILCompiler
         if (TryGetAsyncScopeBaseFieldClrType(fieldName, out var asyncFieldType))
             return asyncFieldType;
 
+        if (TryGetGeneratorScopeBaseFieldClrType(fieldName, out var generatorFieldType))
+            return generatorFieldType;
+
         return _scopeMetadataRegistry.TryGetFieldClrType(scopeName, fieldName, out var t)
             ? t
             : typeof(object);
@@ -87,6 +90,31 @@ internal sealed class LIRToILCompiler
             or "_hasPendingReturn";
     }
 
+    private static bool TryGetGeneratorScopeBaseFieldClrType(string fieldName, out Type fieldClrType)
+    {
+        fieldClrType = fieldName switch
+        {
+            "_genState" => typeof(int),
+            "_started" => typeof(bool),
+            "_done" => typeof(bool),
+            "_resumeValue" => typeof(object),
+            "_resumeException" => typeof(object),
+            "_hasResumeException" => typeof(bool),
+            "_returnValue" => typeof(object),
+            "_hasReturn" => typeof(bool),
+            _ => typeof(object)
+        };
+
+        return fieldName is "_genState"
+            or "_started"
+            or "_done"
+            or "_resumeValue"
+            or "_resumeException"
+            or "_hasResumeException"
+            or "_returnValue"
+            or "_hasReturn";
+    }
+
     private bool TryResolveAsyncScopeBaseFieldToken(string fieldName, out EntityHandle token)
     {
         if (!TryGetAsyncScopeBaseFieldClrType(fieldName, out _))
@@ -96,6 +124,18 @@ internal sealed class LIRToILCompiler
         }
 
         token = _memberRefRegistry.GetOrAddField(typeof(JavaScriptRuntime.AsyncScope), fieldName);
+        return true;
+    }
+
+    private bool TryResolveGeneratorScopeBaseFieldToken(string fieldName, out EntityHandle token)
+    {
+        if (!TryGetGeneratorScopeBaseFieldClrType(fieldName, out _))
+        {
+            token = default;
+            return false;
+        }
+
+        token = _memberRefRegistry.GetOrAddField(typeof(JavaScriptRuntime.GeneratorScope), fieldName);
         return true;
     }
 
@@ -2368,7 +2408,25 @@ internal sealed class LIRToILCompiler
                 // Constructors are void-returning - don't load any value before ret
                 if (!methodDescriptor.ReturnsVoid)
                 {
-                    if (MethodBody.IsAsync && MethodBody.AsyncInfo is { HasAwaits: true })
+                    if (MethodBody.IsGenerator)
+                    {
+                        // Generator completion: mark done and return { value, done: true }
+                        var scopeName = MethodBody.LeafScopeId.Name;
+
+                        ilEncoder.LoadLocal(0);
+                        ilEncoder.LoadConstantI4(1);
+                        EmitStoreFieldByName(ilEncoder, scopeName, "_done");
+
+                        EmitLoadTempAsObject(lirReturn.ReturnValue, ilEncoder, allocation, methodDescriptor);
+                        ilEncoder.LoadConstantI4(1);
+                        var iterCreate = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.IteratorResult),
+                            nameof(JavaScriptRuntime.IteratorResult.Create),
+                            parameterTypes: new[] { typeof(object), typeof(bool) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(iterCreate);
+                    }
+                    else if (MethodBody.IsAsync && MethodBody.AsyncInfo is { HasAwaits: true })
                     {
                         // Full async state machine: resolve _deferred and return its promise.
                         // 1. Mark state as completed: _asyncState = -1
@@ -3235,6 +3293,102 @@ internal sealed class LIRToILCompiler
                             EmitAsyncStateSwitch(ilEncoder, labelMap, asyncInfo);
                         }
                     }
+                    else if (MethodBody.IsGenerator)
+                    {
+                        // Generators: this method is both the factory (called as a JS function)
+                        // and the step method (called by GeneratorObject on next/throw/return).
+                        // Detect step calls by checking if scopes[0] is our leaf scope type.
+                        var scopeTypeHandle = ResolveScopeTypeHandle(
+                            createScope.Scope.Name,
+                            "LIRCreateLeafScopeInstance instruction (generator)");
+                        var ctorRef = GetScopeConstructorRef(scopeTypeHandle);
+
+                        // ldarg.0, ldc.i4.0, ldelem.ref, isinst ScopeType
+                        ilEncoder.LoadArgument(0);
+                        ilEncoder.LoadConstantI4(0);
+                        ilEncoder.OpCode(ILOpCode.Ldelem_ref);
+                        ilEncoder.OpCode(ILOpCode.Isinst);
+                        ilEncoder.Token(scopeTypeHandle);
+                        ilEncoder.OpCode(ILOpCode.Dup);
+
+                        var stepLabel = ilEncoder.DefineLabel();
+                        ilEncoder.Branch(ILOpCode.Brtrue, stepLabel);
+
+                        // --- Factory path ---
+                        ilEncoder.OpCode(ILOpCode.Pop); // pop null
+
+                        // Create leaf scope instance
+                        ilEncoder.OpCode(ILOpCode.Newobj);
+                        ilEncoder.Token(ctorRef);
+                        ilEncoder.StoreLocal(0);
+
+                        // Build modified scopes array with leaf at [0]
+                        ilEncoder.LoadLocal(0); // leafScope
+                        ilEncoder.LoadArgument(0); // parent scopes
+                        var prependRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Promise),
+                            nameof(JavaScriptRuntime.Promise.PrependScopeToArray),
+                            parameterTypes: new[] { typeof(object), typeof(object[]) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(prependRef);
+                        ilEncoder.StoreArgument(0); // arg.0 = modified scopes
+
+                        // Build step delegate (to this method) and bind to the modified scopes array
+                        var callableId = MethodBody.CallableId
+                            ?? throw new InvalidOperationException("Generator method is missing CallableId.");
+                        var reader = _serviceProvider.GetService<ICallableDeclarationReader>()
+                            ?? throw new InvalidOperationException("ICallableDeclarationReader service is not available.");
+                        if (!reader.TryGetDeclaredToken(callableId, out var token) || token.Kind != HandleKind.MethodDefinition)
+                        {
+                            throw new InvalidOperationException($"Failed to resolve MethodDefinitionHandle for generator callable {callableId}.");
+                        }
+
+                        var methodHandle = (MethodDefinitionHandle)token;
+                        int jsParamCount = callableId.JsParamCount;
+
+                        // ldnull, ldftn <method>, newobj FuncCtor
+                        ilEncoder.OpCode(ILOpCode.Ldnull);
+                        ilEncoder.OpCode(ILOpCode.Ldftn);
+                        ilEncoder.Token(methodHandle);
+                        ilEncoder.OpCode(ILOpCode.Newobj);
+                        ilEncoder.Token(_bclReferences.GetFuncCtorRef(jsParamCount));
+
+                        // Closure.Bind(delegate, scopes)
+                        ilEncoder.LoadArgument(0);
+                        var bindRef = _memberRefRegistry.GetOrAddMethod(
+                            typeof(JavaScriptRuntime.Closure),
+                            nameof(JavaScriptRuntime.Closure.Bind),
+                            parameterTypes: new[] { typeof(object), typeof(object[]) });
+                        ilEncoder.OpCode(ILOpCode.Call);
+                        ilEncoder.Token(bindRef);
+
+                        // Push scopes array (ctor arg 2)
+                        ilEncoder.LoadArgument(0);
+
+                        // Build args array (ctor arg 3)
+                        ilEncoder.LoadConstantI4(jsParamCount);
+                        ilEncoder.OpCode(ILOpCode.Newarr);
+                        ilEncoder.Token(_bclReferences.ObjectType);
+                        for (int i = 0; i < jsParamCount; i++)
+                        {
+                            ilEncoder.OpCode(ILOpCode.Dup);
+                            ilEncoder.LoadConstantI4(i);
+                            ilEncoder.LoadArgument(i + 1); // arg.0 is scopes
+                            ilEncoder.OpCode(ILOpCode.Stelem_ref);
+                        }
+
+                        // new GeneratorObject(step, scopes, args)
+                        var genObjCtor = _memberRefRegistry.GetOrAddConstructor(
+                            typeof(JavaScriptRuntime.GeneratorObject),
+                            parameterTypes: new[] { typeof(object), typeof(object[]), typeof(object[]) });
+                        ilEncoder.OpCode(ILOpCode.Newobj);
+                        ilEncoder.Token(genObjCtor);
+                        ilEncoder.OpCode(ILOpCode.Ret);
+
+                        // --- Step path ---
+                        ilEncoder.MarkLabel(stepLabel);
+                        ilEncoder.StoreLocal(0);
+                    }
                     else
                     {
                         // Non-async or async without awaits: just create new scope
@@ -3245,6 +3399,140 @@ internal sealed class LIRToILCompiler
                         ilEncoder.OpCode(ILOpCode.Newobj);
                         ilEncoder.Token(ctorRef);
                         ilEncoder.StoreLocal(0);
+                    }
+                    break;
+                }
+
+            case LIRGeneratorStateSwitch genSwitch:
+                {
+                    // Dispatch based on GeneratorScope._genState.
+                    // State 0 falls through to DefaultLabel (emitted as a normal LIRLabel).
+                    var scopeName = MethodBody.LeafScopeId.Name;
+
+                    // Load _genState
+                    ilEncoder.LoadLocal(0);
+                    EmitLoadFieldByName(ilEncoder, scopeName, "_genState");
+
+                    if (!labelMap.TryGetValue(genSwitch.DefaultLabel, out var defaultLabel))
+                    {
+                        defaultLabel = ilEncoder.DefineLabel();
+                        labelMap[genSwitch.DefaultLabel] = defaultLabel;
+                    }
+
+                    int maxStateId = 0;
+                    foreach (var kvp in genSwitch.StateToLabel)
+                    {
+                        if (kvp.Key > maxStateId) maxStateId = kvp.Key;
+                    }
+
+                    int branchCount = maxStateId + 1;
+                    var switchTargets = new LabelHandle[branchCount];
+                    for (int i = 0; i < branchCount; i++)
+                    {
+                        switchTargets[i] = defaultLabel;
+                    }
+
+                    foreach (var kvp in genSwitch.StateToLabel)
+                    {
+                        var stateId = kvp.Key;
+                        var labelId = kvp.Value;
+                        if (stateId <= 0 || stateId >= branchCount)
+                        {
+                            continue;
+                        }
+                        if (!labelMap.TryGetValue(labelId, out var resumeLabel))
+                        {
+                            resumeLabel = ilEncoder.DefineLabel();
+                            labelMap[labelId] = resumeLabel;
+                        }
+                        switchTargets[stateId] = resumeLabel;
+                    }
+
+                    var switchEncoder = ilEncoder.Switch(branchCount);
+                    for (int i = 0; i < branchCount; i++)
+                    {
+                        switchEncoder.Branch(switchTargets[i]);
+                    }
+
+                    break;
+                }
+
+            case LIRYield yieldInstr:
+                {
+                    var scopeName = MethodBody.LeafScopeId.Name;
+
+                    // _genState = ResumeStateId
+                    ilEncoder.LoadLocal(0);
+                    ilEncoder.LoadConstantI4(yieldInstr.ResumeStateId);
+                    EmitStoreFieldByName(ilEncoder, scopeName, "_genState");
+
+                    // Return { value: yielded, done: false }
+                    EmitLoadTempAsObject(yieldInstr.YieldedValue, ilEncoder, allocation, methodDescriptor);
+                    ilEncoder.LoadConstantI4(0);
+                    var iterCreate = _memberRefRegistry.GetOrAddMethod(
+                        typeof(JavaScriptRuntime.IteratorResult),
+                        nameof(JavaScriptRuntime.IteratorResult.Create),
+                        parameterTypes: new[] { typeof(object), typeof(bool) });
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(iterCreate);
+                    ilEncoder.OpCode(ILOpCode.Ret);
+
+                    // Resume label
+                    if (!labelMap.TryGetValue(yieldInstr.ResumeLabelId, out var resumeLabel))
+                    {
+                        resumeLabel = ilEncoder.DefineLabel();
+                        labelMap[yieldInstr.ResumeLabelId] = resumeLabel;
+                    }
+                    ilEncoder.MarkLabel(resumeLabel);
+
+                    // If _hasReturn: mark done and return { value: _returnValue, done: true }
+                    var noReturnLabel = ilEncoder.DefineLabel();
+                    ilEncoder.LoadLocal(0);
+                    EmitLoadFieldByName(ilEncoder, scopeName, "_hasReturn");
+                    ilEncoder.Branch(ILOpCode.Brfalse, noReturnLabel);
+
+                    ilEncoder.LoadLocal(0);
+                    ilEncoder.LoadConstantI4(1);
+                    EmitStoreFieldByName(ilEncoder, scopeName, "_done");
+
+                    ilEncoder.LoadLocal(0);
+                    EmitLoadFieldByName(ilEncoder, scopeName, "_returnValue");
+                    ilEncoder.LoadConstantI4(1);
+                    ilEncoder.OpCode(ILOpCode.Call);
+                    ilEncoder.Token(iterCreate);
+                    ilEncoder.OpCode(ILOpCode.Ret);
+
+                    ilEncoder.MarkLabel(noReturnLabel);
+
+                    // If _hasResumeException: throw at yield site
+                    var noThrowLabel = ilEncoder.DefineLabel();
+                    ilEncoder.LoadLocal(0);
+                    EmitLoadFieldByName(ilEncoder, scopeName, "_hasResumeException");
+                    ilEncoder.Branch(ILOpCode.Brfalse, noThrowLabel);
+
+                    // Clear the injected-exception flag before throwing so a caught exception
+                    // doesn't get rethrown on the next resume.
+                    ilEncoder.LoadLocal(0);
+                    ilEncoder.LoadConstantI4(0);
+                    EmitStoreFieldByName(ilEncoder, scopeName, "_hasResumeException");
+
+                    ilEncoder.LoadLocal(0);
+                    EmitLoadFieldByName(ilEncoder, scopeName, "_resumeException");
+                    var thrownCtor = _memberRefRegistry.GetOrAddConstructor(
+                        typeof(JavaScriptRuntime.JsThrownValueException),
+                        parameterTypes: new[] { typeof(object) });
+                    ilEncoder.OpCode(ILOpCode.Newobj);
+                    ilEncoder.Token(thrownCtor);
+                    ilEncoder.OpCode(ILOpCode.Throw);
+
+                    ilEncoder.MarkLabel(noThrowLabel);
+
+                    if (IsMaterialized(yieldInstr.Result, allocation))
+                    {
+                        // yield expression result = _resumeValue
+                        ilEncoder.LoadLocal(0);
+                        EmitLoadFieldByName(ilEncoder, scopeName, "_resumeValue");
+                        EmitStoreTemp(yieldInstr.Result, ilEncoder, allocation);
                     }
                     break;
                 }
@@ -5485,6 +5773,9 @@ internal sealed class LIRToILCompiler
             if (TryResolveAsyncScopeBaseFieldToken(fieldName, out var token))
                 return token;
 
+            if (TryResolveGeneratorScopeBaseFieldToken(fieldName, out token))
+                return token;
+
             return _scopeMetadataRegistry.GetFieldHandle(scopeName, fieldName);
         }
         catch (KeyNotFoundException ex)
@@ -5503,7 +5794,9 @@ internal sealed class LIRToILCompiler
     {
         var fieldHandle = TryResolveAsyncScopeBaseFieldToken(fieldName, out var token)
             ? token
-            : _scopeMetadataRegistry.GetFieldHandle(scopeName, fieldName);
+            : TryResolveGeneratorScopeBaseFieldToken(fieldName, out token)
+                ? token
+                : _scopeMetadataRegistry.GetFieldHandle(scopeName, fieldName);
         ilEncoder.OpCode(ILOpCode.Ldfld);
         ilEncoder.Token(fieldHandle);
     }
@@ -5516,7 +5809,9 @@ internal sealed class LIRToILCompiler
     {
         var fieldHandle = TryResolveAsyncScopeBaseFieldToken(fieldName, out var token)
             ? token
-            : _scopeMetadataRegistry.GetFieldHandle(scopeName, fieldName);
+            : TryResolveGeneratorScopeBaseFieldToken(fieldName, out token)
+                ? token
+                : _scopeMetadataRegistry.GetFieldHandle(scopeName, fieldName);
         ilEncoder.OpCode(ILOpCode.Stfld);
         ilEncoder.Token(fieldHandle);
     }

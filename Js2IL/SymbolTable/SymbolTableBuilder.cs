@@ -511,9 +511,33 @@ namespace Js2IL.SymbolTables
                     {
                         funcScope.AwaitPointCount = CountAwaitExpressions(funcDecl.Body);
                     }
+                    funcScope.IsGenerator = funcDecl.Generator;
+                    if (funcDecl.Generator)
+                    {
+                        funcScope.YieldPointCount = CountYieldExpressions(funcDecl.Body);
+                    }
                     currentScope.Bindings[funcName] = new BindingInfo(funcName, BindingKind.Function, funcDecl);
                         // Register parameters (identifiers + object pattern properties) via helper
                         BindObjectPatternParameters(funcDecl.Params, funcScope);
+                        if (funcScope.IsGenerator)
+                        {
+                            // Generator frames suspend/resume; parameter bindings must live on the leaf scope.
+                            // Mark parameters as captured so they are backed by scope fields.
+                            foreach (var p in funcScope.Parameters)
+                            {
+                                if (funcScope.Bindings.TryGetValue(p, out var bi))
+                                {
+                                    bi.IsCaptured = true;
+                                }
+                            }
+                            foreach (var p in funcScope.DestructuredParameters)
+                            {
+                                if (funcScope.Bindings.TryGetValue(p, out var bi))
+                                {
+                                    bi.IsCaptured = true;
+                                }
+                            }
+                        }
                         if (funcDecl.Body is BlockStatement fblock)
                         {
                             foreach (var statement in fblock.Body)
@@ -544,6 +568,11 @@ namespace Js2IL.SymbolTables
                     {
                         funcExprScope.AwaitPointCount = CountAwaitExpressions(funcExpr.Body);
                     }
+                    funcExprScope.IsGenerator = funcExpr.Generator;
+                    if (funcExpr.Generator)
+                    {
+                        funcExprScope.YieldPointCount = CountYieldExpressions(funcExpr.Body);
+                    }
                     // Named function expressions create an internal binding for the function name that is
                     // only visible inside the function body (used for recursion). It must not leak to the
                     // outer scope. Authoritative binding here so downstream codegen can allocate a field.
@@ -552,6 +581,23 @@ namespace Js2IL.SymbolTables
                         funcExprScope.Bindings[internalId.Name] = new BindingInfo(internalId.Name, BindingKind.Function, funcExpr);
                     }
                     BindObjectPatternParameters(funcExpr.Params, funcExprScope);
+                    if (funcExprScope.IsGenerator)
+                    {
+                        foreach (var p in funcExprScope.Parameters)
+                        {
+                            if (funcExprScope.Bindings.TryGetValue(p, out var bi))
+                            {
+                                bi.IsCaptured = true;
+                            }
+                        }
+                        foreach (var p in funcExprScope.DestructuredParameters)
+                        {
+                            if (funcExprScope.Bindings.TryGetValue(p, out var bi))
+                            {
+                                bi.IsCaptured = true;
+                            }
+                        }
+                    }
                     if (funcExpr.Body is BlockStatement funcExprBlock)
                     {
                         // For function bodies, process statements directly in function scope without creating a block scope
@@ -1526,6 +1572,37 @@ namespace Js2IL.SymbolTables
                             {
                                 count += CountAwaitExpressions(childItem);
                             }
+                        }
+                    }
+                }
+            }
+
+            return count;
+        }
+
+        private static int CountYieldExpressions(Node? node)
+        {
+            if (node == null) return 0;
+
+            int count = 0;
+            if (node is YieldExpression)
+            {
+                count++;
+            }
+
+            foreach (var child in node.ChildNodes)
+            {
+                if (child is Node childNode)
+                {
+                    count += CountYieldExpressions(childNode);
+                }
+                else if (child is System.Collections.IEnumerable items)
+                {
+                    foreach (var item in items)
+                    {
+                        if (item is Node itemNode)
+                        {
+                            count += CountYieldExpressions(itemNode);
                         }
                     }
                 }

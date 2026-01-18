@@ -70,7 +70,9 @@ public sealed class HIRToLIRLowerer
     // Track whether parameter initialization was successful (affects TryLower result)
     private bool _parameterInitSucceeded = true;
 
-    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, Js2IL.Services.ClassRegistry? classRegistry, CallableKind callableKind, IReadOnlyList<HIRPattern> parameters, bool isAsync = false)
+    private readonly bool _isGenerator;
+
+    private HIRToLIRLowerer(Scope? scope, EnvironmentLayout? environmentLayout, EnvironmentLayoutBuilder? environmentLayoutBuilder, Js2IL.Services.ClassRegistry? classRegistry, CallableKind callableKind, IReadOnlyList<HIRPattern> parameters, bool isAsync = false, bool isGenerator = false)
     {
         _scope = scope;
         _environmentLayout = environmentLayout;
@@ -78,6 +80,7 @@ public sealed class HIRToLIRLowerer
         _classRegistry = classRegistry;
         _callableKind = callableKind;
         _isAsync = isAsync;
+        _isGenerator = isGenerator;
         InitializeParameters(parameters);
     }
 
@@ -154,6 +157,14 @@ public sealed class HIRToLIRLowerer
             }
         }
 
+        // For generator functions, parameter initialization must run only when the generator is first started
+        // (i.e., on the first .next()), not when the generator object is created and not on each resumption.
+        // We'll emit this as a one-time guarded block later (see EmitGeneratorParameterInitializationOnce).
+        if (_isGenerator)
+        {
+            return;
+        }
+
         // Emit default parameter initializers for identifier parameters with defaults.
         _parameterInitSucceeded = EmitDefaultParameterInitializers(parameters);
         if (!_parameterInitSucceeded)
@@ -172,6 +183,80 @@ public sealed class HIRToLIRLowerer
         // This must happen after default parameter initialization so the final value is stored.
         // Without this, nested functions reading captured parameters will observe null.
         EmitCapturedParameterFieldInitializers();
+    }
+
+    private bool EmitGeneratorParameterInitializationOnce(IReadOnlyList<HIRPattern> parameters)
+    {
+        if (!_isGenerator)
+        {
+            return true;
+        }
+
+        if (_scope == null)
+        {
+            return false;
+        }
+
+        if (!_methodBodyIR.NeedsLeafScopeLocal || _methodBodyIR.LeafScopeId.IsNil)
+        {
+            // Generator lowering requires a leaf scope local.
+            return false;
+        }
+
+        var scopeName = _methodBodyIR.LeafScopeId.Name;
+
+        var afterInitLabel = CreateLabel();
+
+        // if (_started) goto afterInit;
+        var startedTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRLoadScopeFieldByName(scopeName, "_started", startedTemp));
+        DefineTempStorage(startedTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        SetTempVariableSlot(startedTemp, CreateAnonymousVariableSlot("$gen_started", new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool))));
+        _methodBodyIR.Instructions.Add(new LIRBranchIfTrue(startedTemp, afterInitLabel));
+
+        // Default parameter initialization
+        _parameterInitSucceeded = EmitDefaultParameterInitializers(parameters);
+        if (!_parameterInitSucceeded)
+        {
+            return false;
+        }
+
+        // Destructuring parameter initialization
+        if (!EmitDestructuredParameterInitializers(parameters))
+        {
+            return false;
+        }
+
+        // Store captured parameter fields (so parameter bindings live on the leaf scope)
+        EmitCapturedParameterFieldInitializers();
+
+        // _started = true
+        var trueTemp = CreateTempVariable();
+        _methodBodyIR.Instructions.Add(new LIRConstBoolean(true, trueTemp));
+        DefineTempStorage(trueTemp, new ValueStorage(ValueStorageKind.UnboxedValue, typeof(bool)));
+        _methodBodyIR.Instructions.Add(new LIRStoreScopeFieldByName(scopeName, "_started", trueTemp));
+
+        _methodBodyIR.Instructions.Add(new LIRLabel(afterInitLabel));
+        return true;
+    }
+
+    private void EmitGeneratorStateSwitchIfNeeded()
+    {
+        if (!_isGenerator)
+        {
+            return;
+        }
+
+        if (_methodBodyIR.GeneratorInfo == null)
+        {
+            return;
+        }
+
+        // Emit a dispatch at method entry so resume calls jump to the right label.
+        // State 0 falls through to the normal entry path.
+        var startLabel = CreateLabel();
+        _methodBodyIR.Instructions.Add(new LIRGeneratorStateSwitch(_methodBodyIR.GeneratorInfo.ResumeLabels, startLabel));
+        _methodBodyIR.Instructions.Add(new LIRLabel(startLabel));
     }
 
     private bool EmitDestructuredParameterInitializers(IReadOnlyList<HIRPattern> parameters)
@@ -428,7 +513,7 @@ public sealed class HIRToLIRLowerer
         return count;
     }
 
-    internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind callableKind, bool hasScopesParameter, Js2IL.Services.ClassRegistry? classRegistry, out MethodBodyIR? lirMethod, bool isAsync = false, TwoPhase.CallableId? callableId = null)
+    internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind callableKind, bool hasScopesParameter, Js2IL.Services.ClassRegistry? classRegistry, out MethodBodyIR? lirMethod, bool isAsync = false, bool isGenerator = false, TwoPhase.CallableId? callableId = null)
     {
         lirMethod = null;
 
@@ -453,7 +538,7 @@ public sealed class HIRToLIRLowerer
             }
         }
 
-        var lowerer = new HIRToLIRLowerer(scope, environmentLayout, environmentLayoutBuilder, classRegistry, callableKind, hirMethod.Parameters, isAsync);
+        var lowerer = new HIRToLIRLowerer(scope, environmentLayout, environmentLayoutBuilder, classRegistry, callableKind, hirMethod.Parameters, isAsync, isGenerator);
 
         // If default parameter initialization failed, fall back to legacy emitter
         if (!lowerer._parameterInitSucceeded)
@@ -488,10 +573,28 @@ public sealed class HIRToLIRLowerer
             }
         }
 
+        // Initialize generator state machine info if this is a generator function
+        if (isGenerator)
+        {
+            lowerer._methodBodyIR.IsGenerator = true;
+            lowerer._methodBodyIR.GeneratorInfo = new GeneratorStateMachineInfo();
+        }
+
         // Emit scope instance creation if there are leaf scope fields
         // NOTE: This must come AFTER async info is initialized, because async functions
         // with awaits need a scope instance even if there are no captured variables.
         lowerer.EmitScopeInstanceCreationIfNeeded();
+
+        // For generators, emit one-time parameter initialization guarded by GeneratorScope._started,
+        // then emit a state switch based on GeneratorScope._genState.
+        if (isGenerator)
+        {
+            if (!lowerer.EmitGeneratorParameterInitializationOnce(hirMethod.Parameters))
+            {
+                return false;
+            }
+            lowerer.EmitGeneratorStateSwitchIfNeeded();
+        }
         
         if (lowerer.TryLowerStatements(hirMethod.Body.Statements))
         {
@@ -518,7 +621,7 @@ public sealed class HIRToLIRLowerer
     // Backward compatibility overload for callers that don't provide callable kind
     internal static bool TryLower(HIRMethod hirMethod, Scope? scope, Services.VariableBindings.ScopeMetadataRegistry? scopeMetadataRegistry, out MethodBodyIR? lirMethod)
     {
-        return TryLower(hirMethod, scope, scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind.Function, hasScopesParameter: true, classRegistry: null, out lirMethod);
+        return TryLower(hirMethod, scope, scopeMetadataRegistry, Js2IL.Services.ScopesAbi.CallableKind.Function, hasScopesParameter: true, classRegistry: null, out lirMethod, isAsync: false, isGenerator: false, callableId: null);
     }
 
     private bool TryGetEnclosingClassRegistryName(out string? registryClassName)
@@ -583,6 +686,16 @@ public sealed class HIRToLIRLowerer
         if (_scope != null
             && _methodBodyIR.IsAsync
             && _methodBodyIR.AsyncInfo?.HasAwaits == true
+            && !_methodBodyIR.NeedsLeafScopeLocal)
+        {
+            EnsureLeafScopeInstance(new ScopeId(ScopeNaming.GetRegistryScopeName(_scope)));
+            return;
+        }
+
+        // Generator functions need a scope instance for generator state machine fields
+        // (_genState, _started, _done, resume protocol fields) even if there are no captured variables.
+        if (_scope != null
+            && _methodBodyIR.IsGenerator
             && !_methodBodyIR.NeedsLeafScopeLocal)
         {
             EnsureLeafScopeInstance(new ScopeId(ScopeNaming.GetRegistryScopeName(_scope)));
@@ -2404,6 +2517,62 @@ public sealed class HIRToLIRLowerer
                         resultTempVar,
                         rejectStateId,
                         pendingExceptionField));
+
+                    return true;
+                }
+
+            case HIRYieldExpression yieldExpr:
+                {
+                    if (!_isGenerator || _methodBodyIR.GeneratorInfo == null)
+                    {
+                        IRPipelineMetrics.RecordFailure("yield expression found outside generator function context");
+                        return false;
+                    }
+
+                    if (yieldExpr.IsDelegate)
+                    {
+                        // Phase 1: yield* is not yet supported.
+                        IRPipelineMetrics.RecordFailure("yield* is not yet supported");
+                        return false;
+                    }
+
+                    TempVariable yieldedValueTemp;
+                    if (yieldExpr.Argument == null)
+                    {
+                        yieldedValueTemp = CreateTempVariable();
+                        _methodBodyIR.Instructions.Add(new LIRConstUndefined(yieldedValueTemp));
+                        DefineTempStorage(yieldedValueTemp, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+                    }
+                    else
+                    {
+                        if (!TryLowerExpression(yieldExpr.Argument, out yieldedValueTemp))
+                        {
+                            return false;
+                        }
+                        yieldedValueTemp = EnsureObject(yieldedValueTemp);
+                    }
+
+                    var genInfo = _methodBodyIR.GeneratorInfo;
+                    var resumeStateId = genInfo.AllocateResumeStateId();
+                    var resumeLabel = CreateLabel();
+
+                    resultTempVar = CreateTempVariable();
+                    DefineTempStorage(resultTempVar, new ValueStorage(ValueStorageKind.Reference, typeof(object)));
+
+                    genInfo.YieldPoints.Add(new YieldPointInfo
+                    {
+                        ResumeStateId = resumeStateId,
+                        ResumeLabelId = resumeLabel,
+                        ResultTemp = resultTempVar
+                    });
+
+                    genInfo.RegisterResumeLabel(resumeStateId, resumeLabel);
+
+                    _methodBodyIR.Instructions.Add(new LIRYield(
+                        yieldedValueTemp,
+                        resumeStateId,
+                        resumeLabel,
+                        resultTempVar));
 
                     return true;
                 }

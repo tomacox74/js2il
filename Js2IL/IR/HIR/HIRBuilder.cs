@@ -1081,6 +1081,23 @@ class HIRMethodBuilder
                     return true;
                 }
 
+            case YieldExpression yieldExpr:
+                {
+                    // yield may omit an argument (yield;), which yields undefined.
+                    HIRExpression? yieldedArg = null;
+                    if (yieldExpr.Argument != null)
+                    {
+                        if (!TryParseExpression(yieldExpr.Argument, out var parsed) || parsed == null)
+                        {
+                            return false;
+                        }
+                        yieldedArg = parsed;
+                    }
+
+                    hirExpr = new HIRYieldExpression(yieldedArg, yieldExpr.Delegate);
+                    return true;
+                }
+
             case ThisExpression:
                 // PL3.5: ThisExpression support.
                 // For now, only support 'this' inside class instance methods/constructors.
