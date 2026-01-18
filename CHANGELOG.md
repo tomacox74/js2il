@@ -455,7 +455,7 @@ _Note: This is experimental infrastructure. Full feature parity with the legacy 
 - **Test organization**: Alphabetically sorted test methods in `BinaryOperator` and `Promise` test classes for consistency
 
 ### Documentation
-- Updated `ECMAScript2025_FeatureCoverage.json` with new Promise section (27.1) documenting constructor, static methods, and prototype methods
+- Updated `docs/ECMA262/FeatureCoverage.json` with new Promise section (27.1) documenting constructor, static methods, and prototype methods
 - Enhanced Binary || operator notes to document the strict-equality type coercion fix for captured variables
 
 ## v0.3.6 - 2025-12-11
@@ -590,7 +590,7 @@ _Note: This is experimental infrastructure. Full feature parity with the legacy 
 Added
 - Functions: basic object parameter destructuring for function declarations, function expressions, and arrow functions. Supports shorthand properties (`{a,b}`) and simple aliasing (`{ a: x }`). Each destructured identifier is bound into the function's lexical scope prior to body execution.
 - Symbol/Table & IL Generation: parameter ObjectPattern binding and emission across all function kinds (declaration/expression/arrow) retrieving properties via `JavaScriptRuntime.Object.GetProperty` and storing into scope fields.
-- Docs: updated `ECMAScript2025_FeatureCoverage.json` and regenerated `ECMAScript2025_FeatureCoverage.md` to reflect support for object parameter destructuring.
+- Docs: updated `docs/ECMA262/FeatureCoverage.json` and regenerated `docs/ECMA262/FeatureCoverage.md` to reflect support for object parameter destructuring.
 Changed
 - Docs: arrow function feature notes no longer list parameter destructuring as unsupported; new feature entry added under binding patterns.
 - Tests: adopted received generator snapshots for destructuring tests (Function/Arrow) to align verified output with current emitter formatting and reduce non-semantic churn.
@@ -712,8 +712,8 @@ Fixed
 Docs
 - Updated NodeSupport to note that destructuring perf_hooks (const { performance } = require('perf_hooks')) is supported and enables typed calls.
 - Updated ECMAScript 2025 feature coverage to include partial support for object destructuring in variable declarations (with scope and limitations called out); regenerated markdown.
-- Updated ECMAScript 2025 feature coverage to include Array.prototype.slice, Array.prototype.splice, Array.prototype.push, Array.prototype.pop, and Array.isArray with exact ECMA-262 spec anchors and linked test references; regenerated docs/ECMAScript2025_FeatureCoverage.md from JSON.
-- Updated ECMAScript 2025 feature coverage to include Date constructor, Date.now, Date.parse, Date.prototype.getTime, and Date.prototype.toISOString; regenerated docs/ECMAScript2025_FeatureCoverage.md.
+- Updated ECMAScript 2025 feature coverage to include Array.prototype.slice, Array.prototype.splice, Array.prototype.push, Array.prototype.pop, and Array.isArray with exact ECMA-262 spec anchors and linked test references; regenerated docs/ECMA262/FeatureCoverage.md from JSON.
+- Updated ECMAScript 2025 feature coverage to include Date constructor, Date.now, Date.parse, Date.prototype.getTime, and Date.prototype.toISOString; regenerated docs/ECMA262/FeatureCoverage.md.
 
 Tooling
 - Compiled scripts/generateFeatureCoverage.js with js2il; emitted generateFeatureCoverage.dll and runtimeconfig.json next to the script for faster local runs.
@@ -848,7 +848,7 @@ Fixed
 - Duplicate block scope type emission; improved equality branching with unboxing rules.
 
 Notes
-- See docs/ECMAScript2025_FeatureCoverage.md for updated coverage.
+- See docs/ECMA262/FeatureCoverage.md for updated coverage.
 
 ## v0.1.0-preview.7 - 2025-08-14
 

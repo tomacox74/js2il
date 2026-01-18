@@ -2,7 +2,7 @@
 
 [ECMAScript® 2025 Language Specification](https://tc39.es/ecma262/)
 
-This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
+This file is auto-generated from FeatureCoverage.json.
 
 ## [ECMAScript Language: Expressions](https://tc39.es/ecma262/#sec-ecmascript-language-expressions)
 
@@ -104,14 +104,14 @@ This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
 | Default parameters | Supported | `Js2IL.Tests/Function/JavaScript/Function_DefaultParameterValue.js`<br>`Js2IL.Tests/ArrowFunction/JavaScript/ArrowFunction_DefaultParameterValue.js` | Default parameter values are supported for function declarations, function expressions, and arrow functions. Supports literal defaults (numbers, strings, booleans) and expression defaults that reference previous parameters (e.g., function f(a, b = a * 2)). Implemented using starg IL pattern when arguments are null. Call sites validate argument count ranges and pad missing optional parameters with ldnull. | 13.2.3.1 |
-| Rest parameters | Not Supported |  |  | 13.2.3.1 |
+| Rest parameters | Not Yet Supported |  |  | 13.2.3.1 |
 
 
 #### [Spread syntax](https://tc39.es/ecma262/#sec-argument-lists-runtime-semantics-argumentlistevaluation)
 
 | Feature | Status | Test Scripts | Notes | Section |
 |---|---|---|---|---|
-| Spread syntax | Not Supported |  |  | 13.2.5 |
+| Spread syntax | Not Yet Supported |  |  | 13.2.5 |
 
 
 ### [Array Initializer (ArrayLiteral)](https://tc39.es/ecma262/#sec-array-initializer)
