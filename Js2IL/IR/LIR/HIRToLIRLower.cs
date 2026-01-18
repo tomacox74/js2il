@@ -1138,7 +1138,7 @@ public sealed class HIRToLIRLowerer
             case HIRExpressionStatement exprStmt:
                 {
                     // Lower the expression and discard the result
-                    if (!TryLowerExpression(exprStmt.Expression, out var _))
+                    if (!TryLowerExpressionDiscardResult(exprStmt.Expression))
                     {
                         IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR: failed lowering expression statement {exprStmt.Expression.GetType().Name}");
                         return false;
@@ -1673,7 +1673,7 @@ public sealed class HIRToLIRLowerer
                     lirInstructions.Add(new LIRLabel(loopUpdateLabel));
 
                     // Update expression (if present)
-                    if (forStmt.Update != null && !TryLowerExpression(forStmt.Update, out _))
+                    if (forStmt.Update != null && !TryLowerExpressionDiscardResult(forStmt.Update))
                     {
                         return false;
                     }
@@ -2453,6 +2453,19 @@ public sealed class HIRToLIRLowerer
     }
 
     private int CreateLabel() => _labelCounter++;
+
+    private bool TryLowerExpressionDiscardResult(HIRExpression expression)
+    {
+        // Expression statements and for-loop update clauses do not consume the expression result.
+        // Special-case update expressions so we can avoid materializing the postfix return value
+        // (which otherwise becomes a dead box/pop sequence in the generated IL).
+        if (expression is HIRUpdateExpression updateExpr)
+        {
+            return TryLowerUpdateExpression(updateExpr, out _, resultUsed: false);
+        }
+
+        return TryLowerExpression(expression, out _);
+    }
 
     private bool TryLowerExpression(HIRExpression expression, out TempVariable resultTempVar)
     {
@@ -5330,9 +5343,13 @@ public sealed class HIRToLIRLowerer
         return true;
     }
 
-    private bool TryLowerUpdateExpression(HIRUpdateExpression updateExpr, out TempVariable resultTempVar)
+    private bool TryLowerUpdateExpression(HIRUpdateExpression updateExpr, out TempVariable resultTempVar, bool resultUsed = true)
     {
         resultTempVar = default;
+
+        // If the result is unused (expression statement, for-loop update clause), we can skip
+        // materializing the postfix return value.
+        var needsPostfixValue = resultUsed && !updateExpr.Prefix;
 
         // Only support ++/-- on identifiers
         if (updateExpr.Operator != Acornima.Operator.Increment && updateExpr.Operator != Acornima.Operator.Decrement)
@@ -5384,7 +5401,7 @@ public sealed class HIRToLIRLowerer
             // For postfix, we must capture the old (ToNumber-coerced) value before the store happens.
             // Use LIRCopyTemp so Stackify will materialize the captured value.
             TempVariable? originalSnapshotForPostfix = null;
-            if (!updateExpr.Prefix)
+            if (needsPostfixValue)
             {
                 var snapshotValue = EnsureObject(currentNumber);
                 var snapshot = CreateTempVariable();
@@ -5450,7 +5467,7 @@ public sealed class HIRToLIRLowerer
                 return true;
             }
 
-            resultTempVar = originalSnapshotForPostfix!.Value;
+            resultTempVar = needsPostfixValue ? originalSnapshotForPostfix!.Value : updatedBoxed;
             return true;
         }
 
@@ -5463,7 +5480,7 @@ public sealed class HIRToLIRLowerer
             var currentNumber = EnsureNumber(currentValue);
 
             TempVariable? originalSnapshotForPostfix = null;
-            if (!updateExpr.Prefix)
+            if (needsPostfixValue)
             {
                 originalSnapshotForPostfix = EnsureObject(currentNumber);
             }
@@ -5496,7 +5513,7 @@ public sealed class HIRToLIRLowerer
                 return true;
             }
 
-            resultTempVar = originalSnapshotForPostfix!.Value;
+            resultTempVar = needsPostfixValue ? originalSnapshotForPostfix!.Value : EnsureObject(storedValue);
             return true;
         }
 
@@ -5516,7 +5533,7 @@ public sealed class HIRToLIRLowerer
         // the stable variable local slot. Otherwise, later loads of originalTemp would observe the
         // updated value.
         TempVariable? boxedOriginalForPostfix = null;
-        if (!updateExpr.Prefix)
+        if (needsPostfixValue)
         {
             boxedOriginalForPostfix = EnsureObject(originalTemp);
         }
@@ -5554,7 +5571,7 @@ public sealed class HIRToLIRLowerer
         }
 
         // Postfix returns the original value.
-        resultTempVar = boxedOriginalForPostfix!.Value;
+        resultTempVar = needsPostfixValue ? boxedOriginalForPostfix!.Value : EnsureObject(updatedTemp);
         return true;
     }
 
