@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 26.2: FinalizationRegistry Objects
 
 [Back to Section26](Section26.md) | [Back to Index](Index.md)

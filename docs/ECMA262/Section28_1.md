@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 28.1: The Reflect Object
 
 [Back to Section28](Section28.md) | [Back to Index](Index.md)

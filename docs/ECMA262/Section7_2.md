@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 7.2: Testing and Comparison Operations
 
 [Back to Section7](Section7.md) | [Back to Index](Index.md)

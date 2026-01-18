@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 22.2: RegExp (Regular Expression) Objects
 
 [Back to Section22](Section22.md) | [Back to Index](Index.md)

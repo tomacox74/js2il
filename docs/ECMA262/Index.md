@@ -9,7 +9,7 @@ Important:
 
 ## Summary
 - Total clauses indexed: **2176**
-- Clauses with tracked status: **104** (Supported: **98**, Partial: **5**, Not: **1**)
+- Clauses with tracked status: **104** (Supported: **98**, Partial: **5**, Not Yet Supported: **1**)
 - Untracked clauses: **2072**
 
 ## Sections
@@ -21,7 +21,7 @@ Important:
 | 3 | Normative References | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-normative-references) | [Section3.md](Section3.md) |
 | 4 | Overview | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-overview) | [Section4.md](Section4.md) |
 | 5 | Notational Conventions | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-notational-conventions) | [Section5.md](Section5.md) |
-| 6 | ECMAScript Data Types and Values | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-data-types-and-values) | [Section6.md](Section6.md) |
+| 6 | ECMAScript Data Types and Values | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-data-types-and-values) | [Section6.md](Section6.md) |
 | 7 | Abstract Operations | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-abstract-operations) | [Section7.md](Section7.md) |
 | 8 | Syntax-Directed Operations | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-syntax-directed-operations) | [Section8.md](Section8.md) |
 | 9 | Executable Code and Execution Contexts | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-executable-code-and-execution-contexts) | [Section9.md](Section9.md) |
@@ -30,7 +30,7 @@ Important:
 | 12 | ECMAScript Language: Lexical Grammar | Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-lexical-grammar) | [Section12.md](Section12.md) |
 | 13 | ECMAScript Language: Expressions | Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-expressions) | [Section13.md](Section13.md) |
 | 14 | ECMAScript Language: Statements and Declarations | Partially Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-statements-and-declarations) | [Section14.md](Section14.md) |
-| 15 | ECMAScript Language: Functions and Classes | Not Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-functions-and-classes) | [Section15.md](Section15.md) |
+| 15 | ECMAScript Language: Functions and Classes | Not Yet Supported | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-functions-and-classes) | [Section15.md](Section15.md) |
 | 16 | ECMAScript Language: Scripts and Modules | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-language-scripts-and-modules) | [Section16.md](Section16.md) |
 | 17 | Error Handling and Language Extensions | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-error-handling-and-language-extensions) | [Section17.md](Section17.md) |
 | 18 | ECMAScript Standard Built-in Objects | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-ecmascript-standard-built-in-objects) | [Section18.md](Section18.md) |

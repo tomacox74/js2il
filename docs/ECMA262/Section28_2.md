@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 28.2: Proxy Objects
 
 [Back to Section28](Section28.md) | [Back to Index](Index.md)

@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 17.1: Forbidden Extensions
 
 [Back to Section17](Section17.md) | [Back to Index](Index.md)

@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 6.2: ECMAScript Specification Types
 
 [Back to Section6](Section6.md) | [Back to Index](Index.md)

@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 10.4: Built-in Exotic Object Internal Methods and Slots
 
 [Back to Section10](Section10.md) | [Back to Index](Index.md)

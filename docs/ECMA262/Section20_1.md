@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 20.1: Object Objects
 
 [Back to Section20](Section20.md) | [Back to Index](Index.md)

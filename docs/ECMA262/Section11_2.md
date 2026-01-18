@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 11.2: Types of Source Code
 
 [Back to Section11](Section11.md) | [Back to Index](Index.md)

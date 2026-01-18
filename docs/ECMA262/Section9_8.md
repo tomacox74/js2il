@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 9.8: Forward Progress
 
 [Back to Section9](Section9.md) | [Back to Index](Index.md)

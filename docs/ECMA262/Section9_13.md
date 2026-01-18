@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 9.13: CanBeHeldWeakly ( v )
 
 [Back to Section9](Section9.md) | [Back to Index](Index.md)

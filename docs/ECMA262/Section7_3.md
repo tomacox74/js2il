@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 7.3: Operations on Objects
 
 [Back to Section7](Section7.md) | [Back to Index](Index.md)

@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 23.1: Array Objects
 
 [Back to Section23](Section23.md) | [Back to Index](Index.md)

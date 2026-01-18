@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 9.9: Processing Model of WeakRef and FinalizationRegistry Targets
 
 [Back to Section9](Section9.md) | [Back to Index](Index.md)

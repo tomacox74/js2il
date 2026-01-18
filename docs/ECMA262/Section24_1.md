@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 24.1: Map Objects
 
 [Back to Section24](Section24.md) | [Back to Index](Index.md)

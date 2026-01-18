@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 25.5: The JSON Object
 
 [Back to Section25](Section25.md) | [Back to Index](Index.md)

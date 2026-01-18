@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 2.2: Example Legacy Clause Heading
 
 [Back to Section2](Section2.md) | [Back to Index](Index.md)

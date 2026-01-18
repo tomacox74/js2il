@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 5.1: Syntactic and Lexical Grammars
 
 [Back to Section5](Section5.md) | [Back to Index](Index.md)

@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 9.3: Realms
 
 [Back to Section9](Section9.md) | [Back to Index](Index.md)

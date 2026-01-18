@@ -4,7 +4,7 @@ This document summarizes **ECMA-262 language features that are not yet fully sup
 
 Basis:
 - Source of truth: [docs/ECMA262/FeatureCoverage.json](FeatureCoverage.json)
-- This report lists anything marked `Partially Supported` or `Not Supported` in that file.
+- This report lists anything marked `Partially Supported` or `Not Yet Supported` in that file.
 - If a feature is not tracked in the coverage file yet, it will not appear here.
 
 If you want a **clause-by-clause** view of ECMA-262 (language + built-ins), see:
@@ -19,7 +19,7 @@ Overall (coverage-file rows):
 - Total tracked feature rows: **196**
 - Supported: **187**
 - Partially Supported: **7**
-- Not Supported: **2**
+- Not Yet Supported: **2**
 
 Remaining work (high-level themes):
 - **Function calling / parameters**: rest parameters and spread at call sites are not implemented.
@@ -68,7 +68,7 @@ See [docs/NodeSupport.md](../NodeSupport.md) for the Node-side coverage view.
 From [docs/LoweringPipeline_Migration_PunchList.md](../LoweringPipeline_Migration_PunchList.md):
 - **Callable-only intrinsics (no `new`)**: `String(x)`, `Number(x)`, `Boolean(x)` are supported, but other callable-only intrinsics are not yet supported: `Date(...)`, `RegExp(...)`, `Error(...)`, `Array(...)`, `Object(...)`, `Symbol(...)`, `BigInt(...)`.
 
-## Detailed list (Partially Supported + Not Supported)
+## Detailed list (Partially Supported + Not Yet Supported)
 
 Formatting:
 - Each entry is listed under its paragraph/subsection from the coverage JSON.
@@ -97,14 +97,14 @@ Formatting:
 
 | Status | Feature | Notes |
 |---|---|---|
-| Not Supported | Rest parameters |  |
+| Not Yet Supported | Rest parameters |  |
 
 ##### 13.2.5: Spread syntax
 - Spec: https://tc39.es/ecma262/#sec-argument-lists-runtime-semantics-argumentlistevaluation
 
 | Status | Feature | Notes |
 |---|---|---|
-| Not Supported | Spread syntax |  |
+| Not Yet Supported | Spread syntax |  |
 
 ### Section 14: ECMAScript Language: Statements and Declarations
 

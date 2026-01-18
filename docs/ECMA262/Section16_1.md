@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 16.1: Scripts
 
 [Back to Section16](Section16.md) | [Back to Index](Index.md)

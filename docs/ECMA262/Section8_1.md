@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 8.1: Runtime Semantics: Evaluation
 
 [Back to Section8](Section8.md) | [Back to Index](Index.md)

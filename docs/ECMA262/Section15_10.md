@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 15.10: Tail Position Calls
 
 [Back to Section15](Section15.md) | [Back to Index](Index.md)

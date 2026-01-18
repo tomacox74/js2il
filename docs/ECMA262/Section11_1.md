@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 11.1: Source Text
 
 [Back to Section11](Section11.md) | [Back to Index](Index.md)

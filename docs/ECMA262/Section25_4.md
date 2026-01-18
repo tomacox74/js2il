@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 25.4: The Atomics Object
 
 [Back to Section25](Section25.md) | [Back to Index](Index.md)

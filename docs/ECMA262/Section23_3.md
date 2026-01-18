@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 23.3: Uint8Array Objects
 
 [Back to Section23](Section23.md) | [Back to Index](Index.md)

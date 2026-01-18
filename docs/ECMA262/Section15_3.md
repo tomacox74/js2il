@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 15.3: Arrow Function Definitions
 
 [Back to Section15](Section15.md) | [Back to Index](Index.md)

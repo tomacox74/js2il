@@ -1,3 +1,5 @@
+<!-- AUTO-GENERATED: splitEcma262SectionsIntoSubsections.ps1 -->
+
 # Section 29.5: Abstract Operations for the Memory Model
 
 [Back to Section29](Section29.md) | [Back to Index](Index.md)
