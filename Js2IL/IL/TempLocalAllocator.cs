@@ -443,6 +443,13 @@ internal static class TempLocalAllocator
             case LIRAwait awaitInstr:
                 yield return awaitInstr.AwaitedValue;
                 break;
+            // Generator state machine instructions
+            case LIRYield yieldInstr:
+                yield return yieldInstr.YieldedValue;
+                break;
+            case LIRGeneratorStateSwitch:
+                // Switch does not consume temps.
+                break;
             case LIRAsyncCallMoveNext callMoveNext:
                 yield return callMoveNext.ScopesArray;
                 break;

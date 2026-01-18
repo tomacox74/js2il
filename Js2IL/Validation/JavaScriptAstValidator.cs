@@ -33,6 +33,9 @@ public class JavaScriptAstValidator : IAstValidator
 
         // Validate async/await usage - await is only valid inside async functions.
         ValidateAsyncAwait(ast, result);
+
+        // Validate generator/yield usage - yield is only valid inside generator functions.
+        ValidateGenerators(ast, result);
         
         // Track contexts where 'this' is supported.
         var contextStack = new Stack<ValidationContext>();
@@ -97,8 +100,7 @@ public class JavaScriptAstValidator : IAstValidator
                     break;
 
                 case NodeType.YieldExpression:
-                    result.Errors.Add($"Generators are not yet supported (line {node.Location.Start.Line})");
-                    result.IsValid = false;
+                    // Generator/yield validity is handled by ValidateGenerators.
                     break;
 
                 case NodeType.RestElement:
@@ -294,6 +296,95 @@ public class JavaScriptAstValidator : IAstValidator
         }
 
         WalkForAsyncAwait(ast);
+    }
+
+    private static void ValidateGenerators(Node ast, ValidationResult result)
+    {
+        var generatorFunctionDepth = 0;
+        var visited = new HashSet<Node>(ReferenceEqualityComparer<Node>.Default);
+
+        void WalkForGenerators(Node? node)
+        {
+            if (node == null) return;
+            if (!visited.Add(node)) return;
+
+            bool isGeneratorFunction = node switch
+            {
+                FunctionDeclaration fd => fd.Generator,
+                FunctionExpression fe => fe.Generator,
+                // Arrow functions cannot be generators.
+                _ => false
+            };
+
+            bool isAsyncGeneratorFunction = node switch
+            {
+                FunctionDeclaration fd => fd.Async && fd.Generator,
+                FunctionExpression fe => fe.Async && fe.Generator,
+                _ => false
+            };
+
+            if (isAsyncGeneratorFunction)
+            {
+                result.Errors.Add($"Async generators (async function*) are not yet supported (line {node.Location.Start.Line})");
+                result.IsValid = false;
+            }
+
+            if (isGeneratorFunction)
+            {
+                generatorFunctionDepth++;
+            }
+
+            if (node is YieldExpression ye)
+            {
+                if (generatorFunctionDepth == 0)
+                {
+                    result.Errors.Add($"The 'yield' keyword is only valid inside generator functions (line {node.Location.Start.Line})");
+                    result.IsValid = false;
+                }
+                else if (ye.Delegate)
+                {
+                    // Phase 1: yield* not yet supported.
+                    result.Errors.Add($"The 'yield*' form is not yet supported (line {node.Location.Start.Line})");
+                    result.IsValid = false;
+                }
+            }
+
+            // Walk children (reflection-based, consistent with ValidateAsyncAwait)
+            var type = node.GetType();
+            foreach (var prop in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+            {
+                if (!prop.CanRead) continue;
+                if (prop.GetIndexParameters().Length != 0) continue;
+
+                object? value;
+                try { value = prop.GetValue(node); }
+                catch { continue; }
+
+                if (value is null || value is string) continue;
+
+                if (value is Node childNode)
+                {
+                    WalkForGenerators(childNode);
+                }
+                else if (value is IEnumerable enumerable)
+                {
+                    foreach (var item in enumerable)
+                    {
+                        if (item is Node itemNode)
+                        {
+                            WalkForGenerators(itemNode);
+                        }
+                    }
+                }
+            }
+
+            if (isGeneratorFunction)
+            {
+                generatorFunctionDepth--;
+            }
+        }
+
+        WalkForGenerators(ast);
     }
 
     private static void WalkAllNodes(Node? root, HashSet<Node> visited, Action<Node> visit)

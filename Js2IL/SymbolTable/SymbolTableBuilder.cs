@@ -1,5 +1,6 @@
 using Acornima.Ast;
 using System.Reflection;
+using System.Linq;
 
 namespace Js2IL.SymbolTables
 {
@@ -511,9 +512,27 @@ namespace Js2IL.SymbolTables
                     {
                         funcScope.AwaitPointCount = CountAwaitExpressions(funcDecl.Body);
                     }
+                    funcScope.IsGenerator = funcDecl.Generator;
+                    if (funcDecl.Generator)
+                    {
+                        funcScope.YieldPointCount = CountYieldExpressions(funcDecl.Body);
+                    }
                     currentScope.Bindings[funcName] = new BindingInfo(funcName, BindingKind.Function, funcDecl);
                         // Register parameters (identifiers + object pattern properties) via helper
                         BindObjectPatternParameters(funcDecl.Params, funcScope);
+                        if (funcScope.IsGenerator)
+                        {
+                            // Generator frames suspend/resume; parameter bindings must live on the leaf scope.
+                            // Mark parameters as captured so they are backed by scope fields.
+                            foreach (var p in funcScope.Parameters.Where(funcScope.Bindings.ContainsKey))
+                            {
+                                funcScope.Bindings[p].IsCaptured = true;
+                            }
+                            foreach (var p in funcScope.DestructuredParameters.Where(funcScope.Bindings.ContainsKey))
+                            {
+                                funcScope.Bindings[p].IsCaptured = true;
+                            }
+                        }
                         if (funcDecl.Body is BlockStatement fblock)
                         {
                             foreach (var statement in fblock.Body)
@@ -544,6 +563,11 @@ namespace Js2IL.SymbolTables
                     {
                         funcExprScope.AwaitPointCount = CountAwaitExpressions(funcExpr.Body);
                     }
+                    funcExprScope.IsGenerator = funcExpr.Generator;
+                    if (funcExpr.Generator)
+                    {
+                        funcExprScope.YieldPointCount = CountYieldExpressions(funcExpr.Body);
+                    }
                     // Named function expressions create an internal binding for the function name that is
                     // only visible inside the function body (used for recursion). It must not leak to the
                     // outer scope. Authoritative binding here so downstream codegen can allocate a field.
@@ -552,6 +576,17 @@ namespace Js2IL.SymbolTables
                         funcExprScope.Bindings[internalId.Name] = new BindingInfo(internalId.Name, BindingKind.Function, funcExpr);
                     }
                     BindObjectPatternParameters(funcExpr.Params, funcExprScope);
+                    if (funcExprScope.IsGenerator)
+                    {
+                        foreach (var p in funcExprScope.Parameters.Where(funcExprScope.Bindings.ContainsKey))
+                        {
+                            funcExprScope.Bindings[p].IsCaptured = true;
+                        }
+                        foreach (var p in funcExprScope.DestructuredParameters.Where(funcExprScope.Bindings.ContainsKey))
+                        {
+                            funcExprScope.Bindings[p].IsCaptured = true;
+                        }
+                    }
                     if (funcExpr.Body is BlockStatement funcExprBlock)
                     {
                         // For function bodies, process statements directly in function scope without creating a block scope
@@ -1528,6 +1563,29 @@ namespace Js2IL.SymbolTables
                             }
                         }
                     }
+                }
+            }
+
+            return count;
+        }
+
+        private static int CountYieldExpressions(Node? node)
+        {
+            if (node == null) return 0;
+
+            // Yield counting is for the current function body only; do not descend into nested functions.
+            if (node is FunctionDeclaration or FunctionExpression or ArrowFunctionExpression)
+            {
+                return 0;
+            }
+
+            int count = node is YieldExpression ? 1 : 0;
+
+            foreach (var child in node.ChildNodes)
+            {
+                if (child is not null)
+                {
+                    count += CountYieldExpressions(child);
                 }
             }
 

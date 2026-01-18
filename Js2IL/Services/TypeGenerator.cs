@@ -287,12 +287,14 @@ namespace Js2IL.Services
             CreateTypeFields(scope, tb);
 
             // Create the constructor for this type via TypeBuilder so it can track the first method
-            var ctorHandle = CreateScopeConstructor(tb, scope.IsAsync);
+            var ctorHandle = CreateScopeConstructor(tb, scope);
 
             // Create the type definition
             var baseType = scope.IsAsync
                 ? _bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.AsyncScope))
-                : _bclReferences.ObjectType;
+                : scope.IsGenerator
+                    ? _bclReferences.TypeReferenceRegistry.GetOrAdd(typeof(JavaScriptRuntime.GeneratorScope))
+                    : _bclReferences.ObjectType;
 
             var typeHandle = tb.AddTypeDefinition(typeAttributes, baseType);
 
@@ -316,7 +318,7 @@ namespace Js2IL.Services
         /// <summary>
         /// Creates a constructor method definition for a scope type.
         /// </summary>
-    private MethodDefinitionHandle CreateScopeConstructor(TypeBuilder tb, bool isAsync)
+    private MethodDefinitionHandle CreateScopeConstructor(TypeBuilder tb, Scope scope)
         {
             // Create constructor method signature
             var ctorSig = new BlobBuilder();
@@ -333,7 +335,18 @@ namespace Js2IL.Services
             encoder.OpCode(ILOpCode.Ldarg_0);
             
             // call base constructor
-            encoder.Call(isAsync ? _bclReferences.AsyncScope_Ctor_Ref : _bclReferences.Object_Ctor_Ref);
+            if (scope.IsAsync)
+            {
+                encoder.Call(_bclReferences.AsyncScope_Ctor_Ref);
+            }
+            else if (scope.IsGenerator)
+            {
+                encoder.Call(_bclReferences.GeneratorScope_Ctor_Ref);
+            }
+            else
+            {
+                encoder.Call(_bclReferences.Object_Ctor_Ref);
+            }
             
             // nop - no operation (matches C# compiler output)
             encoder.OpCode(ILOpCode.Nop);

@@ -597,6 +597,15 @@ internal sealed class JsMethodCompiler
             _ => false
         };
 
+        var isGeneratorCallable = node switch
+        {
+            FunctionDeclaration fd => fd.Generator,
+            FunctionExpression fe => fe.Generator,
+            // Arrow functions cannot be generators.
+            Acornima.Ast.MethodDefinition md when md.Value is FunctionExpression mfe => mfe.Generator,
+            _ => false
+        };
+
         if (!HIRBuilder.TryParseMethod(node, scope, callableKind, hasScopesParameter, out var hirMethod))
         {
             IR.IRPipelineMetrics.RecordFailureIfUnset($"HIR parse failed for node type {node.Type}");
@@ -604,7 +613,7 @@ internal sealed class JsMethodCompiler
         }
 
         var classRegistry = _serviceProvider.GetService<Js2IL.Services.ClassRegistry>();
-        if (!HIRToLIRLowerer.TryLower(hirMethod!, scope, _scopeMetadataRegistry, callableKind, hasScopesParameter, classRegistry, out var lirMethod, isAsync: isAsyncCallable, callableId: callableId))
+        if (!HIRToLIRLowerer.TryLower(hirMethod!, scope, _scopeMetadataRegistry, callableKind, hasScopesParameter, classRegistry, out var lirMethod, isAsync: isAsyncCallable, isGenerator: isGeneratorCallable, callableId: callableId))
         {
             IR.IRPipelineMetrics.RecordFailureIfUnset($"HIR->LIR lowering failed for scope '{scope.GetQualifiedName()}' (kind={scope.Kind}) node={node.Type}");
             return false;
