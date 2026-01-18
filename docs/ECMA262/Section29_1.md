@@ -1,0 +1,7 @@
+# Section 29.1: Memory Model Fundamentals
+
+[Back to Section29](Section29.md) | [Back to Index](Index.md)
+
+| Clause | Title | Status | Link |
+|---:|---|---|---|
+| 29.1 | Memory Model Fundamentals | Untracked | [tc39.es](https://tc39.es/ecma262/#sec-memory-model-fundamentals) |

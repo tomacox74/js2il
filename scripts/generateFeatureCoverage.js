@@ -1,9 +1,9 @@
-// Generates ECMAScript2025_FeatureCoverage.md from ECMAScript2025_FeatureCoverage.json
+// Generates docs/ECMA262/FeatureCoverage.md from docs/ECMA262/FeatureCoverage.json
 const fs = require('fs');
 const path = require('path');
 
-const jsonPath = path.join(__dirname, '../docs/ECMAScript2025_FeatureCoverage.json');
-const mdPath = path.join(__dirname, '../docs/ECMAScript2025_FeatureCoverage.md');
+const jsonPath = path.join(__dirname, '../docs/ECMA262/FeatureCoverage.json');
+const mdPath = path.join(__dirname, '../docs/ECMA262/FeatureCoverage.md');
 
 function link(title, url) {
   return url ? `[${title}](${url})` : title;
@@ -89,7 +89,7 @@ function main() {
   const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
   let md = '# ECMAScript 2025 Feature Coverage\n\n';
   md += '[ECMAScript® 2025 Language Specification](https://tc39.es/ecma262/)\n\n';
-  md += 'This file is auto-generated from ECMAScript2025_FeatureCoverage.json.\n';
+  md += 'This file is auto-generated from FeatureCoverage.json.\n';
   // Note removed: previously mentioned exclusion of Js2IL.Tests/JavaScript/Prime; file moved to tests/performance.
   md += processSections(data.sections);
   // Replace placeholder for script links

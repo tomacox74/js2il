@@ -72,7 +72,7 @@ x is  3
 - Experimental.
 - Not all JavaScript features are supported; `eval` is not supported.
 - Two-phase compilation pipeline is always enabled. See `docs/TwoPhaseCompilationPipeline.md`.
-- See [JavaScript Feature Coverage](docs/ECMAScript2025_FeatureCoverage.md) for a comprehensive breakdown of supported JavaScript language features organized by specification section.
+- See [JavaScript Feature Coverage](docs/ECMA262/FeatureCoverage.md) for a comprehensive breakdown of supported JavaScript language features organized by specification section.
 - See [Node.js Feature Coverage](docs/NodeSupport.md) for details on supported Node.js modules, APIs, and globals.
 
 ### Recent improvements (refactor/method-signature-builder branch)

@@ -2,7 +2,7 @@
 
 [ECMAScript® 2025 Language Specification](https://tc39.es/ecma262/)
 
-This file is auto-generated from ECMAScript2025_FeatureCoverage.json.
+This file is auto-generated from FeatureCoverage.json.
 
 ## [ECMAScript Language: Expressions](https://tc39.es/ecma262/#sec-ecmascript-language-expressions)
 
