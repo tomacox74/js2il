@@ -182,14 +182,27 @@ function getSectionIndex(indexPath) {
 
 function listSectionFiles(rootDir) {
   const names = fs.readdirSync(rootDir);
-  return names
-    .filter((n) => /^Section\d+\.md$/.test(n))
-    .sort()
-    .map((n) => path.join(rootDir, n));
+
+  // New layout: docs/ECMA262/<sectionNumber>/Section<sectionNumber>.md
+  const sections = [];
+  for (const n of names) {
+    if (!/^\d+$/.test(n)) continue;
+
+    const sectionDir = path.join(rootDir, n);
+    if (!fs.existsSync(sectionDir) || !fs.statSync(sectionDir).isDirectory()) continue;
+
+    const sectionFile = path.join(sectionDir, `Section${n}.md`);
+    if (!fs.existsSync(sectionFile)) continue;
+
+    sections.push({ section: parseInt(n, 10), filePath: sectionFile });
+  }
+
+  sections.sort((a, b) => a.section - b.section);
+  return sections.map((s) => s.filePath);
 }
 
-function listSubsectionFiles(rootDir, sectionNumber) {
-  const names = fs.readdirSync(rootDir);
+function listSubsectionFiles(sectionDir, sectionNumber) {
+  const names = fs.readdirSync(sectionDir);
 
   const matches = [];
   for (const n of names) {
@@ -218,6 +231,7 @@ function main() {
     if (!mSection) continue;
 
     const sectionNumber = parseInt(mSection[1], 10);
+    const sectionDir = path.dirname(sectionPath);
 
     // If this section still has the full clause table, generate subsection docs.
     const sectionRead = readLines(sectionPath);
@@ -265,7 +279,7 @@ function main() {
           const subTitleRow = subRows.find((r) => r.Clause === subClause);
           const subTitle = subTitleRow ? subTitleRow.Title : subRows[0].Title;
 
-          const subPath = path.join(rootDir, `Section${sectionNumber}_${sub}.md`);
+          const subPath = path.join(sectionDir, `Section${sectionNumber}_${sub}.md`);
           if (!shouldOverwriteSubsectionDoc(subPath)) continue;
 
           const content = [];
@@ -273,7 +287,7 @@ function main() {
           content.push('');
           content.push(`# Section ${subClause}: ${subTitle}`);
           content.push('');
-          content.push(`[Back to Section${sectionNumber}](Section${sectionNumber}.md) | [Back to Index](Index.md)`);
+          content.push(`[Back to Section${sectionNumber}](Section${sectionNumber}.md) | [Back to Index](../Index.md)`);
           content.push('');
           content.push('| Clause | Title | Status | Link |');
           content.push('|---:|---|---|---|');
@@ -288,11 +302,14 @@ function main() {
     }
 
     // If we have subsection docs, rebuild SectionN.md from them (idempotent)
-    const subFiles = listSubsectionFiles(rootDir, sectionNumber);
+    const subFiles = listSubsectionFiles(sectionDir, sectionNumber);
     if (subFiles.length === 0) continue;
 
     const sectionLines = readLines(sectionPath).lines;
-    const backIndex = findLineIndex(sectionLines, '[Back to Index](Index.md)');
+    const backIndex =
+      findLineIndex(sectionLines, '[Back to Index](../Index.md)') >= 0
+        ? findLineIndex(sectionLines, '[Back to Index](../Index.md)')
+        : findLineIndex(sectionLines, '[Back to Index](Index.md)');
     const headerLines =
       backIndex >= 0
         ? sectionLines.slice(0, backIndex + 1)
@@ -306,7 +323,7 @@ function main() {
 
     for (const sf of subFiles) {
       const subClause = `${sectionNumber}.${sf.sub}`;
-      const subPath = path.join(rootDir, sf.fileName);
+      const subPath = path.join(sectionDir, sf.fileName);
 
       const subLines = readLines(subPath).lines;
       const subHeaderIndex = findLineIndex(subLines, '| Clause | Title | Status | Link |');
